@@ -23,8 +23,8 @@ export function getXCallOriginEventDataFromArchway(
     return {
       sn: parseInt(sn),
       eventName: XCallEventType.CallMessageSent,
-      chain: 'archway',
-      destination: 'icon',
+      chain: 'archway-1',
+      destination: '0x1.icon',
       timestamp: new Date().getTime(),
       descriptionAction,
       descriptionAmount,
@@ -49,8 +49,8 @@ export function getXCallDestinationEventDataFromArchwayEvent(
       sn,
       reqId,
       eventName: XCallEventType.CallMessage,
-      chain: 'archway',
-      origin: 'icon',
+      chain: 'archway-1',
+      origin: '0x1.icon',
       //TODO: get autoExecute value from origin event
       autoExecute: archway.autoExecution,
     };
@@ -89,5 +89,5 @@ export function getFeeParam(fee: number): StdFee | 'auto' {
 }
 
 export function isDenomAsset(token: Token): boolean {
-  return !token.address.startsWith('archway');
+  return !token.address.startsWith('archway-1');
 }

@@ -4,17 +4,17 @@ import ClickAwayListener from 'react-click-away-listener';
 import { Box } from 'rebass';
 import styled from 'styled-components';
 
-import { SupportedXCallChains } from 'app/_xcall/types';
-import { getNetworkDisplayName } from 'app/_xcall/utils';
+import { XChainId } from 'app/_xcall/types';
 import { Typography } from 'app/theme';
 
 import { StyledArrowDownIcon, UnderlineText } from '../../../../components/DropdownText';
 import { DropdownPopper } from '../../../../components/Popover';
 import ChainList from './ChainList';
+import { xChainMap } from 'app/_xcall/archway/config1';
 
 type ChainSelectorProps = {
-  chain: SupportedXCallChains;
-  setChain: (chain: SupportedXCallChains) => void;
+  chainId: XChainId;
+  setChainId: (chain: XChainId) => void;
   label: 'from' | 'to';
 };
 
@@ -25,7 +25,7 @@ const Wrap = styled.div`
   color: ${({ theme }) => theme.colors.primaryBright};
 `;
 
-const ChainSelector = ({ chain, setChain, label }: ChainSelectorProps) => {
+const ChainSelector = ({ chainId, setChainId, label }: ChainSelectorProps) => {
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
   const arrowRef = React.useRef(null);
@@ -40,6 +40,8 @@ const ChainSelector = ({ chain, setChain, label }: ChainSelectorProps) => {
     }
   };
 
+  const chain = xChainMap[chainId];
+
   return (
     <Box>
       <Typography variant="label" style={{ textTransform: 'capitalize' }}>
@@ -48,7 +50,7 @@ const ChainSelector = ({ chain, setChain, label }: ChainSelectorProps) => {
       <ClickAwayListener onClickAway={e => closeDropdown(e)}>
         <div>
           <Wrap onClick={handleToggle} style={{ position: 'relative' }}>
-            <UnderlineText style={{ paddingRight: '1px' }}>{getNetworkDisplayName(chain)}</UnderlineText>
+            <UnderlineText style={{ paddingRight: '1px' }}>{chain.name}</UnderlineText>
             <div ref={arrowRef} style={{ display: 'inline-block' }}>
               <StyledArrowDownIcon style={{ transform: 'translate3d(-1px, 1px, 0)' }} />
             </div>
@@ -61,7 +63,7 @@ const ChainSelector = ({ chain, setChain, label }: ChainSelectorProps) => {
             placement="bottom"
             offset={[0, 8]}
           >
-            <ChainList setChain={setChain} chain={chain} />
+            <ChainList setChainId={setChainId} chainId={chainId} />
           </DropdownPopper>
         </div>
       </ClickAwayListener>

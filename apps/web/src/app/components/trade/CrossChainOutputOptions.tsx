@@ -5,16 +5,16 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Box, Flex } from 'rebass';
 
 import { CROSSCHAIN_SUPPORTED_TOKENS } from 'app/_xcall/_icon/config';
-import { SupportedXCallChains } from 'app/_xcall/types';
+import { XChainId } from 'app/_xcall/types';
 import { Typography } from 'app/theme';
 
 import { ChainTabButton, ChainTabs } from '../Header';
 
 type CrossChainOutputOptionsProps = {
   currency?: Currency;
-  destinationChain: SupportedXCallChains;
+  destinationChain: XChainId;
   destinationAddress?: string;
-  setDestinationChain: (chain: SupportedXCallChains) => void;
+  setDestinationChain: (chain: XChainId) => void;
   setDestinationAddress: (address: string) => void;
 };
 
@@ -24,10 +24,10 @@ const CrossChainOutputOptions = ({ currency, destinationChain, setDestinationCha
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     if (!isCrossChainToken) {
-      setDestinationChain('icon');
+      setDestinationChain('0x1.icon');
     }
     return () => {
-      setDestinationChain('icon');
+      setDestinationChain('0x1.icon');
     };
   }, [setDestinationChain, currency?.wrapped.address, isCrossChainToken]);
 
@@ -47,10 +47,16 @@ const CrossChainOutputOptions = ({ currency, destinationChain, setDestinationCha
                 To:
               </Typography>
               <ChainTabs p={'0 !important'}>
-                <ChainTabButton active={destinationChain === 'icon'} onClick={() => setDestinationChain('icon')}>
+                <ChainTabButton
+                  active={destinationChain === '0x1.icon'}
+                  onClick={() => setDestinationChain('0x1.icon')}
+                >
                   ICON
                 </ChainTabButton>
-                <ChainTabButton active={destinationChain === 'archway'} onClick={() => setDestinationChain('archway')}>
+                <ChainTabButton
+                  active={destinationChain === 'archway-1'}
+                  onClick={() => setDestinationChain('archway-1')}
+                >
                   Archway
                 </ChainTabButton>
               </ChainTabs>

@@ -3,9 +3,9 @@ import IconService, { BigNumber } from 'icon-sdk-js';
 
 import { NETWORK_ID } from 'constants/config';
 
-import { OriginXCallData, SupportedXCallChains, XCallEventType } from '../types';
+import { OriginXCallData, XChainId, XCallEventType } from '../types';
 import { ICONBlockType, ICONTxEvent, ICONTxResultType } from './types';
-import { xChains } from '../archway/config1';
+import { xChainMap } from '../archway/config1';
 
 export const httpProvider = new IconService.HttpProvider(CHAIN_INFO[NETWORK_ID].APIEndpoint);
 export const iconService = new IconService(httpProvider);
@@ -65,26 +65,24 @@ export const getICONEventSignature = (eventName: XCallEventType) => {
 
 export function getXCallOriginEventDataFromICON(
   callMessageSentLog: ICONTxEvent,
-  destination: SupportedXCallChains,
+  destination: XChainId,
   descriptionAction: string,
   descriptionAmount: string,
-  autoExecute?: boolean,
 ): OriginXCallData {
   const sn = parseInt(callMessageSentLog.indexed[3], 16);
   const rollback = false;
   const eventName = XCallEventType.CallMessageSent;
-  const autoExec =
-    autoExecute === undefined && destination === 'archway' ? xChains[destination].autoExecution : undefined;
+  const autoExecute = xChainMap[destination].autoExecution;
   return {
     sn,
     rollback,
     eventName,
-    chain: 'icon',
+    chain: '0x1.icon',
     destination: destination,
     timestamp: new Date().getTime(),
     descriptionAction,
     descriptionAmount,
-    autoExecute: autoExecute || !!autoExec,
+    autoExecute: autoExecute,
   };
 }
 

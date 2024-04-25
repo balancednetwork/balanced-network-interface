@@ -8,7 +8,7 @@ import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON }
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { archway } from 'app/_xcall/archway/config1';
 import { getFeeParam } from 'app/_xcall/archway/utils';
-import { DestinationXCallData, OriginXCallData, SupportedXCallChains, XCallEventType } from 'app/_xcall/types';
+import { DestinationXCallData, OriginXCallData, XChainId, XCallEventType } from 'app/_xcall/types';
 import { getOriginEvent } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
@@ -39,13 +39,13 @@ type XCallExecutionHandlerProps = {
   callback?: (success: boolean) => void;
   msgs: {
     txMsgs: {
-      [key in SupportedXCallChains]: {
+      [key in XChainId]: {
         pending: string;
         summary: string;
       };
     };
     managerMsgs: {
-      [key in SupportedXCallChains]: {
+      [key in XChainId]: {
         awaiting: string;
         actionRequired: string;
       };
@@ -79,7 +79,7 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
       };
 
       try {
-        initTransaction('archway', 'Executing rollback...');
+        initTransaction('archway-1', 'Executing rollback...');
         const res = await signingClient.execute(accountArch, archway.contracts.xCall, msg, getFeeParam(600000));
 
         const rollbackExecuted = res.events.some(e => e.type === 'wasm-RollbackExecuted');
@@ -88,14 +88,14 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
           callback && callback(true);
           removeEvent(data.sn, true);
 
-          addTransactionResult('archway', res, 'Rollback executed');
+          addTransactionResult('archway-1', res, 'Rollback executed');
           xCallReset();
         } else {
-          addTransactionResult('archway', res || null, t`Rollback failed.`);
+          addTransactionResult('archway-1', res || null, t`Rollback failed.`);
         }
       } catch (e) {
         console.error(e);
-        addTransactionResult('archway', null, t`Execution failed`);
+        addTransactionResult('archway-1', null, t`Execution failed`);
       }
     }
   };
@@ -120,8 +120,8 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
       addTransaction(
         { hash },
         {
-          pending: msgs.txMsgs.icon.pending,
-          summary: msgs.txMsgs.icon.summary,
+          pending: msgs.txMsgs['0x1.icon'].pending,
+          summary: msgs.txMsgs['0x1.icon'].summary,
           isTxSuccessfulBasedOnEvents: xCallSwapSuccessPredicate,
         },
       );
@@ -135,7 +135,7 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
 
         if (callExecutedEvent?.data[0] === '0x1') {
           callback && callback(true);
-          const sn = xCallState.events['icon'].destination.find(event => event.reqId === data.reqId)?.sn;
+          const sn = xCallState.events['0x1.icon'].destination.find(event => event.reqId === data.reqId)?.sn;
           sn && removeEvent(sn, true);
 
           clearInputs && clearInputs();
@@ -148,11 +148,11 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
             //todo: find the destination event and determine destination for this new origin event
             const originEventData = getXCallOriginEventDataFromICON(
               callMessageSentEvent,
-              'archway',
+              'archway-1',
               'todo event manager',
               'todo event manager',
             );
-            originEventData && addOriginEvent('icon', originEventData);
+            originEventData && addOriginEvent('0x1.icon', originEventData);
           } else {
             xCallReset();
           }
@@ -163,7 +163,7 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
           if (callExecutedEvent?.data[1].toLocaleLowerCase().includes('revert')) {
             rollBackFromOrigin(data.origin, data.sn);
 
-            setListeningTo('archway', XCallEventType.RollbackMessage);
+            setListeningTo('archway-1', XCallEventType.RollbackMessage);
           }
         }
       }
@@ -185,7 +185,7 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
     return (
       <>
         <Typography mb={4}>
-          <Trans>{msgs.managerMsgs.icon.actionRequired}</Trans>
+          <Trans>{msgs.managerMsgs['0x1.icon'].actionRequired}</Trans>
         </Typography>
         <Flex alignItems="center" key={event.reqId}>
           <Button onClick={() => handleICONExecuteXCall(event)} disabled={isICONTxPending}>

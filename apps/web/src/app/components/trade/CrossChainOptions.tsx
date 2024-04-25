@@ -5,19 +5,19 @@ import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { SupportedXCallChains } from 'app/_xcall/types';
-import { getNetworkDisplayName } from 'app/_xcall/utils';
+import { XChainId } from 'app/_xcall/types';
 import { Typography } from 'app/theme';
 
 import ChainList from '../../pages/trade/bridge/_components/ChainList';
 import CrossChainWalletConnect from '../CrossChainWalletConnect';
 import { StyledArrowDownIcon, UnderlineText } from '../DropdownText';
 import { DropdownPopper } from '../Popover';
+import { xChainMap } from 'app/_xcall/archway/config1';
 
 type CrossChainOptionsProps = {
   currency?: Currency;
-  chain: SupportedXCallChains;
-  setChain: (chain: SupportedXCallChains) => void;
+  chain: XChainId;
+  setChain: (chain: XChainId) => void;
   isOpen: boolean;
   setOpen: (isOpen: boolean) => void;
 };
@@ -58,7 +58,7 @@ const CrossChainOptions = ({ currency, chain, setChain, isOpen, setOpen }: Cross
   };
 
   const setChainWrap = React.useCallback(
-    (chain: SupportedXCallChains) => {
+    (chain: XChainId) => {
       setChain(chain);
       setOpen(false);
     },
@@ -80,9 +80,7 @@ const CrossChainOptions = ({ currency, chain, setChain, isOpen, setOpen }: Cross
         <ClickAwayListener onClickAway={e => closeDropdown(e)}>
           <div>
             <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }}>
-              <UnderlineText style={{ paddingRight: '1px', fontSize: '14px' }}>
-                {getNetworkDisplayName(chain)}
-              </UnderlineText>
+              <UnderlineText style={{ paddingRight: '1px', fontSize: '14px' }}>{xChainMap[chain].name}</UnderlineText>
               <div ref={arrowRef} style={{ display: 'inline-block' }}>
                 <StyledArrowDownIcon style={{ transform: 'translate3d(-1px, 1px, 0)' }} />
               </div>
@@ -95,13 +93,13 @@ const CrossChainOptions = ({ currency, chain, setChain, isOpen, setOpen }: Cross
               placement="bottom"
               offset={[0, 8]}
             >
-              <ChainList setChain={setChainWrap} chain={chain} />
+              <ChainList setChainId={setChainWrap} chainId={chain} />
             </DropdownPopper>
           </div>
         </ClickAwayListener>
       </Flex>
 
-      <CrossChainWalletConnect chain={chain} />
+      <CrossChainWalletConnect chainId={chain} />
     </Wrap>
   );
 };

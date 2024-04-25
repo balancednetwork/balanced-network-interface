@@ -43,7 +43,7 @@ export const CONSTANTINE_CHAIN_INFO: ChainInfo = {
   //   bech32PrefixConsPub: string;
   // }
   bech32Config: {
-    bech32PrefixAccAddr: 'archway',
+    bech32PrefixAccAddr: 'archway-1',
     bech32PrefixAccPub: 'archwaypub',
     bech32PrefixValAddr: 'archwayvaloper',
     bech32PrefixValPub: 'archwayvaloperpub',

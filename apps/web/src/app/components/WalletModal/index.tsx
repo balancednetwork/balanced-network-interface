@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState, useMemo } from 'react';
 
 import { t, Trans } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useIconReact } from 'packages/icon-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
 import { Flex, Box } from 'rebass/styled-components';
@@ -14,13 +13,13 @@ import { Link } from 'app/components/Link';
 import { MenuList, LanguageMenuItem } from 'app/components/Menu';
 import Modal, { ModalProps } from 'app/components/Modal';
 import { Typography } from 'app/theme';
-import ArchWalletIcon from 'assets/icons/archway.svg';
+import ArchWalletIcon from 'assets/icons/chains/archway.svg';
 import IconWalletIcon from 'assets/icons/wallets/iconex.svg';
-import AvalancheWalletIcon from 'assets/icons/avalanche.svg';
+import AvalancheWalletIcon from 'assets/icons/chains/avalanche.svg';
 import { LOCALE_LABEL, SupportedLocale, SUPPORTED_LOCALES } from 'constants/locales';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useWalletModalToggle, useModalOpen, useWalletModal } from 'store/application/hooks';
-import { ApplicationModal, WalletModal as WalletModalEnum } from 'store/application/reducer';
+import { ApplicationModal } from 'store/application/reducer';
 import { useSignedInWallets } from 'store/wallet/hooks';
 
 import { DropdownPopper } from '../Popover';
@@ -28,7 +27,8 @@ import SearchInput from '../SearchModal/SearchInput';
 import WalletItem from './WalletItem';
 import { IconWalletModal } from './IconWalletModal';
 import { AvalancheWalletModal } from './AvalancheWalletModal';
-import { useAccount, useDisconnect } from 'wagmi';
+import { useWallets } from 'app/_xcall/hooks';
+import { XWalletType } from 'app/_xcall/types';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {
@@ -60,49 +60,10 @@ const presenceVariants = {
   exit: { opacity: 0, height: 0 },
 };
 
-enum WalletType {
-  ICON,
-  Archway,
-  Avalanche,
-}
-
-const useAvalancheReact = () => {
-  const { address } = useAccount();
-  const { disconnectAsync } = useDisconnect();
-
-  return {
-    account: address,
-    disconnect: disconnectAsync,
-  };
-};
-
-const useWallets = () => {
-  const arch = useArchwayContext();
-  const icon = useIconReact();
-  const avax = useAvalancheReact();
-
-  // const icon = ();
-  return {
-    [WalletType.ICON]: {
-      account: icon.account,
-      disconnect: icon.disconnect,
-    },
-    [WalletType.Archway]: {
-      account: arch.address,
-      disconnect: arch.disconnect,
-    },
-    [WalletType.Avalanche]: {
-      account: avax.account,
-      disconnect: avax.disconnect,
-    },
-  };
-};
-
 export default function WalletModal() {
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
   const toggleWalletModal = useWalletModalToggle();
-  const [, toggleIconWallet] = useWalletModal(WalletModalEnum.ICON);
-  const [, toggleAvaxWallet] = useWalletModal(WalletModalEnum.AVALANCHE);
+  const [, setWalletModal] = useWalletModal();
   const signedInWallets = useSignedInWallets();
   const { connectToWallet: connectToKeplr } = useArchwayContext();
 
@@ -149,29 +110,29 @@ export default function WalletModal() {
       {
         name: 'ICON',
         logo: <IconWalletIcon width="40" height="40" />,
-        connect: toggleIconWallet,
-        disconnect: wallets[WalletType.ICON].disconnect,
+        connect: () => setWalletModal(XWalletType.COSMOS),
+        disconnect: wallets[XWalletType.ICON].disconnect,
         description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain`,
-        address: wallets[WalletType.ICON].account,
+        address: wallets[XWalletType.ICON].account,
       },
       {
         name: 'Archway',
         logo: <ArchWalletIcon width="40" height="40" />,
         connect: handleOpenWalletArchway,
-        disconnect: wallets[WalletType.Archway].disconnect,
+        disconnect: wallets[XWalletType.COSMOS].disconnect,
         description: t`Swap & transfer assets cross-chain.`,
-        address: wallets[WalletType.Archway].account,
+        address: wallets[XWalletType.COSMOS].account,
       },
       {
         name: 'Avalanche',
         logo: <AvalancheWalletIcon width="40" height="40" />,
-        connect: toggleAvaxWallet,
-        disconnect: wallets[WalletType.Avalanche].disconnect,
+        connect: () => setWalletModal(XWalletType.EVM),
+        disconnect: wallets[XWalletType.EVM].disconnect,
         description: t`Swap & transfer assets cross-chain.`,
-        address: wallets[WalletType.Avalanche].account,
+        address: wallets[XWalletType.EVM].account,
       },
     ];
-  }, [toggleIconWallet, handleOpenWalletArchway, toggleAvaxWallet, wallets]);
+  }, [setWalletModal, handleOpenWalletArchway, wallets]);
 
   const filteredWallets = React.useMemo(() => {
     return [...walletConfig].filter(wallet => {

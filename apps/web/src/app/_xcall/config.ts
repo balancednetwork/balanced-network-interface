@@ -2,12 +2,12 @@ import { SupportedChainId } from '@balancednetwork/balanced-js';
 
 import { NETWORK_ID } from 'constants/config';
 
-import { SupportedXCallChains } from './types';
+import { XChainId } from './types';
 
-export const SUPPORTED_XCALL_CHAINS_BY_ICON_NETWORK: { [key in SupportedChainId]: SupportedXCallChains[] } = {
-  [SupportedChainId.MAINNET]: ['archway', 'icon'],
-  [SupportedChainId.BERLIN]: ['archway', 'icon'],
-  [SupportedChainId.LISBON]: ['archway', 'icon'],
+export const SUPPORTED_XCALL_CHAINS_BY_ICON_NETWORK: { [key in SupportedChainId]: XChainId[] } = {
+  [SupportedChainId.MAINNET]: ['archway-1', '0x1.icon'],
+  [SupportedChainId.BERLIN]: ['archway-1', '0x1.icon'],
+  [SupportedChainId.LISBON]: ['archway-1', '0x1.icon'],
   [SupportedChainId.SEJONG]: [],
   [SupportedChainId.YEOUIDO]: [],
 };
@@ -28,9 +28,9 @@ const ASSET_MANAGER_TOKENS_BY_ICON_NETWORK: { [key in SupportedChainId]: string[
   [SupportedChainId.YEOUIDO]: [],
 };
 
-export const DEFAULT_TOKEN_CHAIN: { [key in string]: SupportedXCallChains } = {
-  bnUSD: 'icon',
-  sARCH: 'archway',
+export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
+  bnUSD: '0x1.icon',
+  sARCH: 'archway-1',
 };
 
 export const SUPPORTED_XCALL_CHAINS = SUPPORTED_XCALL_CHAINS_BY_ICON_NETWORK[NETWORK_ID];

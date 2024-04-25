@@ -9,7 +9,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { SupportedXCallChains } from 'app/_xcall/types';
+import { XChainId } from 'app/_xcall/types';
 import bnJs from 'bnJs';
 import { isNativeCurrency, useICX } from 'constants/tokens';
 import { useAllTokens, useCommonBases } from 'hooks/Tokens';
@@ -124,8 +124,8 @@ const useCurrencyDeposit = (
 };
 
 export function useDerivedMintInfo(
-  AChain: SupportedXCallChains = 'icon',
-  BChain: SupportedXCallChains = 'icon',
+  AChain: XChainId = '0x1.icon',
+  BChain: XChainId = '0x1.icon',
 ): {
   dependentField: Field;
   currencies: { [field in Field]?: Currency };

@@ -1,19 +1,11 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import {
-  CurrentXCallStateType,
-  OriginXCallData,
-  SupportedXCallChains,
-  XCallChainState,
-  XCallEventType,
-} from 'app/_xcall/types';
+import { CurrentXCallStateType, OriginXCallData, XChainId, XCallChainState, XCallEventType } from 'app/_xcall/types';
 import { getFollowingEvent } from 'app/_xcall/utils';
 
 import {
   addXCallOriginEvent,
   addXCallDestinationEvent,
-  removeXCallDestinationEvent,
-  removeXCallOriginEvent,
   removeXCallEvent,
   stopListening,
   setListeningTo,
@@ -25,23 +17,26 @@ import {
 export type XCallState = {
   xCall: CurrentXCallStateType;
   listeningTo?: {
-    chain: SupportedXCallChains;
+    chain: XChainId;
     event: XCallEventType;
   };
-  events: { [key in SupportedXCallChains]: XCallChainState };
+  events: { [key in XChainId]: XCallChainState };
+};
+
+const emptyObj: XCallChainState = {
+  origin: [],
+  destination: [],
 };
 
 const initialState: XCallState = {
   xCall: CurrentXCallStateType.IDLE,
   events: {
-    icon: {
-      origin: [],
-      destination: [],
-    },
-    archway: {
-      origin: [],
-      destination: [],
-    },
+    '0x1.icon': emptyObj,
+    'archway-1': emptyObj,
+    '0x2.icon': emptyObj,
+    '0xa869.fuji': emptyObj,
+    '0xa86a.avax': emptyObj,
+    archway: emptyObj,
   },
 };
 
@@ -49,7 +44,7 @@ export default createReducer(initialState, builder =>
   builder
     .addCase(addXCallOriginEvent, (state, { payload: { chain, data } }) => {
       if (chain && data) {
-        state.events[chain].origin.push({ ...data, isPristine: true });
+        state.events[chain]?.origin.push({ ...data, isPristine: true });
         state.xCall = CurrentXCallStateType.AWAITING_DESTINATION_CALL_MESSAGE;
         state.listeningTo = {
           chain: data.destination,
@@ -59,30 +54,25 @@ export default createReducer(initialState, builder =>
     })
     .addCase(addXCallDestinationEvent, (state, { payload: { chain, data } }) => {
       if (chain && data) {
-        state.events[chain].destination.push({ ...data, isPristine: true });
+        state.events[chain]?.destination.push({ ...data, isPristine: true });
         state.xCall = CurrentXCallStateType.AWAITING_USER_CALL_EXECUTION;
         state.listeningTo = undefined;
       }
     })
     .addCase(removeXCallEvent, (state, { payload: { sn, setToIdle } }) => {
       if (sn) {
-        Object.keys(state.events).forEach(chain => {
-          state.events[chain].origin = state.events[chain].origin.filter(data => data.sn !== sn);
-          state.events[chain].destination = state.events[chain].destination.filter(data => data.sn !== sn);
+        // !TODO: make sure the below code is correct
+        Object.values(state.events).forEach(e => {
+          e.origin = e.origin.filter(data => data.sn !== sn);
+          e.destination = e.destination.filter(data => data.sn !== sn);
         });
+        // Object.keys(state.events).forEach((chain: XChainId) => {
+        //   state.events[chain].origin = state.events[chain].origin.filter(data => data.sn !== sn);
+        //   state.events[chain].destination = state.events[chain].destination.filter(data => data.sn !== sn);
+        // });
         if (setToIdle) {
           state.xCall = CurrentXCallStateType.IDLE;
         }
-      }
-    })
-    .addCase(removeXCallOriginEvent, (state, { payload: { chain, sn } }) => {
-      if (chain && sn) {
-        state[chain].origin = state[chain].origin.filter(data => data.sn !== sn);
-      }
-    })
-    .addCase(removeXCallDestinationEvent, (state, { payload: { chain, sn } }) => {
-      if (chain && sn) {
-        state[chain].destination = state[chain].destination.filter(data => data.sn !== sn);
       }
     })
     .addCase(setListeningTo, (state, { payload: { chain, event } }) => {

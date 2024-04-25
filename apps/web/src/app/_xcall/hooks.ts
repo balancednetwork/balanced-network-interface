@@ -1,14 +1,18 @@
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
-import { BridgePair, IXCallFee, MessagingProtocol, MessagingProtocolId, SupportedXCallChains } from './types';
+import { BridgePair, IXCallFee, MessagingProtocol, MessagingProtocolId, XChainId, XWalletType } from './types';
 import { useArchwayContext } from './archway/ArchwayProvider';
 import bnJs from 'bnJs';
-import { archway, xChains } from './archway/config1';
+import { archway, BRIDGE_PAIRS, sortChains, xChainMap, xChains } from './archway/config1';
+import { useIconReact } from 'packages/icon-react';
+import { useAccount, useDisconnect } from 'wagmi';
+import { useEffect, useMemo } from 'react';
+import { useBridgeDirection } from 'store/bridge/hooks';
 
 export function useXCallGasChecker(
-  chain1: SupportedXCallChains,
-  chain2: SupportedXCallChains,
+  chain1: XChainId,
+  chain2: XChainId,
   icon: boolean = false,
 ): UseQueryResult<{ hasEnoughGas: boolean; errorMessage: string }> {
   const wallets = useSignedInWallets();
@@ -48,34 +52,21 @@ export function useXCallGasChecker(
   });
 }
 
-const xCallTable = {
-  icon: {
-    archway: 'archway-1',
-    avalanche: '',
-  },
-  archway: {
-    icon: '0x1.icon',
-  },
-};
-
-const getXCallId = (from, to) => {
-  return xCallTable[from][to];
-};
-
-const fetchFee = async (from: SupportedXCallChains, to: SupportedXCallChains, rollback: boolean, client?: any) => {
-  if (from === 'archway') {
+const fetchFee = async (from: XChainId, to: XChainId, rollback: boolean, client?: any) => {
+  const nId = xChainMap[to].xChainId;
+  if (from === 'archway-1' || from === 'archway') {
     return await client.queryContractSmart(archway.contracts.xCall, {
-      get_fee: { nid: getXCallId(from, to), rollback: rollback },
+      get_fee: { nid: nId, rollback: rollback },
     });
-  } else if (from === 'icon') {
-    return await bnJs.XCall.getFee(getXCallId(from, to), rollback);
+  } else if (from === '0x1.icon' || from === '0x2.icon') {
+    return await bnJs.XCall.getFee(nId, rollback);
   }
 };
 
 // TODO: improve this hook
 export const useXCallFee = (
-  from: SupportedXCallChains,
-  to: SupportedXCallChains,
+  from: XChainId,
+  to: XChainId,
 ): { xCallFee: IXCallFee | undefined; formattedXCallFee: string } => {
   const { client } = useArchwayContext();
 
@@ -96,7 +87,7 @@ export const useXCallFee = (
 
   const { data: xCallFee } = query;
 
-  const chain = xChains[from];
+  const chain = xChainMap[from];
   const formattedXCallFee: string =
     (Number(xCallFee?.rollback) / 10 ** 18).toPrecision(3) + ' ' + chain.nativeCurrency.symbol;
 
@@ -121,16 +112,7 @@ const MESSAGING_PROTOCOLS: { [key in MessagingProtocolId]: MessagingProtocol } =
   },
 };
 
-const sortChains = (a: SupportedXCallChains, b: SupportedXCallChains): [SupportedXCallChains, SupportedXCallChains] => {
-  return a.localeCompare(b) > 0 ? [a, b] : [b, a];
-};
-
-const BRIDGE_PAIRS: BridgePair[] = [
-  { chains: sortChains('icon', 'archway'), protocol: MessagingProtocolId.IBC },
-  // { chains: sortChains('icon', 'avax'), protocol: MessagingProtocolId.C_RELAY },
-];
-
-export const useXCallPair = (from: SupportedXCallChains, to: SupportedXCallChains): BridgePair | undefined => {
+export const useXCallPair = (from: XChainId, to: XChainId): BridgePair | undefined => {
   const chains = sortChains(from, to);
   return BRIDGE_PAIRS.find(pair => pair.chains[0] === chains[0] && pair.chains[1] === chains[1]);
 };
@@ -138,15 +120,58 @@ export const useXCallPair = (from: SupportedXCallChains, to: SupportedXCallChain
 /**
  * This hook returns the fundamental messaging protocol information of xCall from x chain to y chain.
  * @constructor
- * @param {SupportedXCallChains} from - bridge from.
- * @param {SupportedXCallChains} to - bridge to.
+ * @param {XChainId} from - bridge from.
+ * @param {XChainId} to - bridge to.
  */
 
-export const useXCallProtocol = (
-  from: SupportedXCallChains,
-  to: SupportedXCallChains,
-): MessagingProtocol | undefined => {
+export const useXCallProtocol = (from: XChainId, to: XChainId): MessagingProtocol | undefined => {
   const pair = useXCallPair(from, to);
   const id = pair?.protocol;
   if (id) return MESSAGING_PROTOCOLS[id];
+};
+
+export const useXWallet = (chainId: XChainId) => {
+  const chain = xChainMap[chainId];
+  const wallets = useWallets();
+  return wallets[chain.xWalletType];
+};
+
+export const useEVMReact = () => {
+  const { address } = useAccount();
+  const { disconnectAsync } = useDisconnect();
+
+  return useMemo(
+    () => ({
+      account: address,
+      disconnect: disconnectAsync,
+    }),
+    [address, disconnectAsync],
+  );
+};
+
+export const useWallets = () => {
+  const arch = useArchwayContext();
+  const icon = useIconReact();
+  const avax = useEVMReact();
+
+  return useMemo(
+    () => ({
+      [XWalletType.ICON]: {
+        account: icon.account,
+        chain: xChainMap['0x1.icon'],
+        disconnect: icon.disconnect,
+      },
+      [XWalletType.COSMOS]: {
+        account: arch.address,
+        chain: xChainMap['archway-1'],
+        disconnect: arch.disconnect,
+      },
+      [XWalletType.EVM]: {
+        account: avax.account,
+        chain: xChainMap['0xa86a.avax'],
+        disconnect: avax.disconnect,
+      },
+    }),
+    [arch, icon, avax],
+  );
 };

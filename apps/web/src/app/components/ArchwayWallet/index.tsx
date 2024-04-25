@@ -86,7 +86,7 @@ const WalletUI = ({ currency }: { currency: Currency }) => {
   }
 };
 
-const ArchwayWallet = ({ setAnchor, anchor, ...rest }) => {
+const ArchwayWallet = ({ setAnchor, anchor }) => {
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
   const balances = useArchwayWalletBalances();
   const arch = useARCH();

@@ -26,12 +26,12 @@ import {
 export const useICONEventListener = () => {
   const listeningTo = useXCallListeningTo();
   const setListeningTo = useSetListeningTo();
-  const eventName: XCallEventType | null = listeningTo?.chain === 'icon' ? listeningTo.event : null;
+  const eventName: XCallEventType | null = listeningTo?.chain === '0x1.icon' ? listeningTo.event : null;
   const iconBlockHeight = useBlockNumber();
   const blockHeightRef = React.useRef<string | null>(null);
   const addDestinationEvent = useAddDestinationEvent();
-  const archwayOriginEvents = useXCallOriginEvents('archway');
-  const iconDestinationEvents = useXCallDestinationEvents('icon');
+  const archwayOriginEvents = useXCallOriginEvents('archway-1');
+  const iconDestinationEvents = useXCallDestinationEvents('0x1.icon');
   // const xCallState = useXCallState();
   const removeEvent = useRemoveEvent();
   const stopListening = useStopListening();
@@ -91,18 +91,18 @@ export const useICONEventListener = () => {
                     //todo find origin event from arbitrary chain - not archway only
                     const originEvent = archwayOriginEvents.find(e => e.sn === sn);
                     if (originEvent) {
-                      addDestinationEvent('icon', {
+                      addDestinationEvent('0x1.icon', {
                         sn,
                         reqId,
                         data,
                         eventName: XCallEventType.CallMessage,
-                        chain: 'icon',
-                        origin: 'archway',
+                        chain: '0x1.icon',
+                        origin: 'archway-1',
                         autoExecute: originEvent.autoExecute,
                       });
 
                       if (originEvent.autoExecute) {
-                        setListeningTo('icon', XCallEventType.CallExecuted);
+                        setListeningTo('0x1.icon', XCallEventType.CallExecuted);
                       }
                     }
                   }
@@ -136,14 +136,14 @@ export const useICONEventListener = () => {
                           //todo: fill description from the destination event as well
                           const originEventData = getXCallOriginEventDataFromICON(
                             callMessageSentLog,
-                            'archway',
+                            'archway-1',
                             'Swap',
                             '',
                           );
 
                           destinationEvent && removeEvent(destinationEvent.sn, false);
                           //add new origin event
-                          originEventData && addOriginEvent('icon', originEventData);
+                          originEventData && addOriginEvent('0x1.icon', originEventData);
                         } else {
                           destinationEvent && removeEvent(destinationEvent.sn, true);
                           stopListening();

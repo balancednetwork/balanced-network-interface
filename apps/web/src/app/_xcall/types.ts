@@ -1,6 +1,12 @@
 import { Event } from '@cosmjs/cosmwasm-stargate';
 
-export type SupportedXCallChains = 'icon' | 'archway';
+export enum XWalletType {
+  ICON,
+  COSMOS,
+  EVM,
+}
+
+export type XChainId = 'archway-1' | 'archway' | '0x1.icon' | '0x2.icon' | '0xa86a.avax' | '0xa869.fuji';
 
 export enum XCallEventType {
   CallMessageSent = 'CallMessageSent',
@@ -17,8 +23,8 @@ export type OriginXCallData = {
   rollbackRequired?: boolean;
   rollbackReady?: boolean;
   eventName: XCallEventType;
-  chain: SupportedXCallChains;
-  destination: SupportedXCallChains;
+  chain: XChainId;
+  destination: XChainId;
   autoExecute?: boolean;
   timestamp: number;
   descriptionAction: string;
@@ -31,8 +37,8 @@ export type DestinationXCallData = {
   reqId: number;
   data: string;
   eventName: XCallEventType;
-  chain: SupportedXCallChains;
-  origin: SupportedXCallChains;
+  chain: XChainId;
+  origin: XChainId;
   autoExecute?: boolean;
   isPristine?: boolean;
 };
@@ -43,8 +49,8 @@ export type XCallChainState = {
 };
 
 export type XCallDirection = {
-  origin: SupportedXCallChains;
-  destination: SupportedXCallChains;
+  origin: XChainId;
+  destination: XChainId;
 };
 
 export enum CurrentXCallStateType {
@@ -75,7 +81,7 @@ export type CrossChainTxType = {
 };
 
 export type XCallActivityItem = {
-  chain: SupportedXCallChains;
+  chain: XChainId;
   originData: OriginXCallData;
   destinationData?: DestinationXCallData;
   status: 'pending' | 'executable' | 'failed' | 'rollbackReady';
@@ -89,7 +95,6 @@ export interface IXCallFee {
 export type Chain = {
   id: string | number;
   name: string;
-  network: string;
   nativeCurrency: {
     decimals: number;
     name: string;
@@ -103,6 +108,8 @@ export type Chain = {
 };
 
 export type XChain = Chain & {
+  xChainId: XChainId;
+  xWalletType: XWalletType;
   contracts: {
     xCall: string;
     assetManager: string;
@@ -121,7 +128,7 @@ export enum MessagingProtocolId {
 }
 
 export type BridgePair = {
-  chains: [SupportedXCallChains, SupportedXCallChains];
+  chains: [XChainId, XChainId];
   protocol: MessagingProtocolId;
 };
 

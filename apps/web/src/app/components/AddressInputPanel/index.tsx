@@ -14,7 +14,7 @@ const AddressInputLabel = styled.button<{ bg?: string }>`
   background-color: ${({ theme, bg = 'bg4' }) => `${theme.colors[bg]}`};
   display: flex;
   align-items: center;
-  width: 120px;
+  width: 60px;
   height: 43px;
   padding: 4px 15px;
   color: #ffffff;
@@ -75,7 +75,7 @@ export default function AddressInputPanel({
   return (
     <InputContainer className={className}>
       <AddressInputLabel bg={bg}>
-        <Trans>Address</Trans>
+        <Trans>To</Trans>
       </AddressInputLabel>
 
       <AddressInput

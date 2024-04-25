@@ -1,16 +1,15 @@
 import React from 'react';
 
-import { StyledICONLogo } from 'app/components/CurrencyLogo';
-import Archway from 'assets/icons/archway.svg';
-import ICONLogo from 'assets/images/icon-logo.png';
+import { XChain } from '../types';
 
-import { SupportedXCallChains } from '../types';
-
-export const ChainLogo = ({ chain, size = '24px' }: { chain: SupportedXCallChains; size?: string }) => {
-  switch (chain) {
-    case 'icon':
-      return <StyledICONLogo src={ICONLogo} alt="icon logo" size={size} />;
-    case 'archway':
-      return <Archway width={size} height={size} />;
-  }
+export const ChainLogo = ({ chain, size = '24px' }: { chain: XChain; size?: string }) => {
+  return (
+    <img
+      width={size || 50}
+      height={size || 50}
+      src={`/icons/chains/${chain.xChainId}.svg`}
+      srcSet=""
+      alt={chain.name}
+    />
+  );
 };

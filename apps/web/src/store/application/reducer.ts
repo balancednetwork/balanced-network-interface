@@ -1,4 +1,5 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit';
+import { XWalletType } from 'app/_xcall/types';
 
 import { DEFAULT_SLIPPAGE } from 'constants/index';
 import { DEFAULT_TXN_DISMISS_MS } from 'constants/misc';
@@ -10,11 +11,6 @@ export type PopupContent = {
     summary?: string;
   };
 };
-
-export enum WalletModal {
-  ICON,
-  AVALANCHE,
-}
 
 export enum ApplicationModal {
   WALLET,
@@ -36,7 +32,7 @@ export interface ApplicationState {
   chainId: number | null;
   popupList: PopupList;
   openModal: ApplicationModal | null;
-  openWalletModal: WalletModal | null;
+  openWalletModal: XWalletType | null;
   shouldLedgerSign: boolean;
   currentLedgerAddressPage: number;
   slippageTolerance: number;

@@ -15,7 +15,7 @@ import { CROSSCHAIN_SUPPORTED_TOKENS } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useARCH } from 'app/_xcall/archway/tokens';
 import { DEFAULT_TOKEN_CHAIN } from 'app/_xcall/config';
-import { CurrentXCallStateType, SupportedXCallChains } from 'app/_xcall/types';
+import { CurrentXCallStateType, XChainId } from 'app/_xcall/types';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
@@ -51,7 +51,7 @@ import { XCallDescription } from '../XCallDescription';
 import CrossChainOptions from './CrossChainOptions';
 import { BrightPanel, swapMessage } from './utils';
 import XCallSwapModal from './XCallSwapModal';
-import { useXCallFee, useXCallProtocol } from 'app/_xcall/hooks';
+import { useXCallFee, useXCallProtocol, useXWallet } from 'app/_xcall/hooks';
 
 const MemoizedStabilityFund = React.memo(StabilityFund);
 
@@ -59,8 +59,8 @@ export default function SwapPanel() {
   useInitialSwapLoad();
   const { account } = useIconReact();
   const { address: accountArch } = useArchwayContext();
-  const [crossChainOrigin, setCrossChainOrigin] = React.useState<SupportedXCallChains>('icon');
-  const [crossChainDestination, setCrossChainDestination] = React.useState<SupportedXCallChains>('icon');
+  const [crossChainOrigin, setCrossChainOrigin] = React.useState<XChainId>('0x1.icon');
+  const [crossChainDestination, setCrossChainDestination] = React.useState<XChainId>('0x1.icon');
   const [originSelectorOpen, setOriginSelectorOpen] = React.useState(false);
   const [destinationSelectorOpen, setDestinationSelectorOpen] = React.useState(false);
   const setCurrentXCallState = useSetXCallState();
@@ -84,8 +84,8 @@ export default function SwapPanel() {
   const showFundOption =
     isSwapEligibleForStabilityFund &&
     fundMaxSwap?.greaterThan(0) &&
-    crossChainOrigin === 'icon' &&
-    crossChainDestination === 'icon';
+    crossChainOrigin === '0x1.icon' &&
+    crossChainDestination === '0x1.icon';
 
   const ARCH = useARCH();
   const signedInWallets = useSignedInWallets();
@@ -105,7 +105,7 @@ export default function SwapPanel() {
 
   React.useEffect(() => {
     if (isChainDifference) {
-      const wallet = signedInWallets.find(wallet => wallet.chain === crossChainDestination);
+      const wallet = signedInWallets.find(wallet => wallet.chainId === crossChainDestination);
       if (wallet) {
         setDestinationAddress(wallet.address);
       } else {
@@ -156,14 +156,14 @@ export default function SwapPanel() {
         if (isCrossChainCompatible && DEFAULT_TOKEN_CHAIN[currency.symbol as string]) {
           setCrossChainOrigin(DEFAULT_TOKEN_CHAIN[currency.symbol as string]);
         } else {
-          setCrossChainOrigin('icon');
+          setCrossChainOrigin('0x1.icon');
         }
       }
       if (field === Field.OUTPUT) {
         if (isCrossChainCompatible && DEFAULT_TOKEN_CHAIN[currency.symbol as string]) {
           setCrossChainDestination(DEFAULT_TOKEN_CHAIN[currency.symbol as string]);
         } else {
-          setCrossChainDestination('icon');
+          setCrossChainDestination('0x1.icon');
         }
       }
     },
@@ -256,12 +256,12 @@ export default function SwapPanel() {
 
   const [executionTrade, setExecutionTrade] = React.useState<Trade<Currency, Currency, TradeType>>();
   const handleSwap = useCallback(() => {
-    if (crossChainOrigin !== 'icon' || crossChainDestination !== 'icon') {
-      if ((crossChainOrigin === 'archway' || crossChainDestination === 'archway') && !accountArch) {
+    if (crossChainOrigin !== '0x1.icon' || crossChainDestination !== '0x1.icon') {
+      if ((crossChainOrigin === 'archway-1' || crossChainDestination === 'archway-1') && !accountArch) {
         toggleWalletModal();
         return;
       }
-      if ((crossChainOrigin === 'icon' || crossChainDestination === 'icon') && !account) {
+      if ((crossChainOrigin === '0x1.icon' || crossChainDestination === '0x1.icon') && !account) {
         toggleWalletModal();
         return;
       }
@@ -382,7 +382,7 @@ export default function SwapPanel() {
 
   const protocol = useXCallProtocol(crossChainOrigin, crossChainDestination);
   const { formattedXCallFee } = useXCallFee(crossChainOrigin, crossChainDestination);
-
+  const xWallet = useXWallet(crossChainOrigin);
   return (
     <>
       <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
@@ -391,10 +391,7 @@ export default function SwapPanel() {
             <Typography variant="h2">
               <Trans>Swap</Trans>
             </Typography>
-            <Typography
-              as="div"
-              hidden={(crossChainOrigin === 'icon' && !account) || (crossChainOrigin === 'archway' && !accountArch)}
-            >
+            <Typography as="div" hidden={!xWallet.account}>
               <Trans>Wallet:</Trans>{' '}
               {`${
                 currencyBalances[Field.INPUT] ? currencyBalances[Field.INPUT]?.toFixed(4, { groupSeparator: ',' }) : 0
@@ -440,7 +437,8 @@ export default function SwapPanel() {
             <Typography
               as="div"
               hidden={
-                (crossChainDestination === 'icon' && !account) || (crossChainDestination === 'archway' && !accountArch)
+                (crossChainDestination === '0x1.icon' && !account) ||
+                (crossChainDestination === 'archway-1' && !accountArch)
               }
             >
               <Trans>Wallet:</Trans>{' '}
@@ -548,7 +546,7 @@ export default function SwapPanel() {
                       <SlippageSetting rawSlippage={slippageTolerance} setRawSlippage={setSlippageTolerance} />
                     </Flex>
 
-                    {(crossChainOrigin !== 'icon' || crossChainDestination !== 'icon') && (
+                    {(crossChainOrigin !== '0x1.icon' || crossChainDestination !== '0x1.icon') && (
                       <>
                         <Divider my={2} />
                         <Flex alignItems="center" justifyContent="space-between" mb={2}>

@@ -10,7 +10,7 @@ import styled from 'styled-components';
 
 import { CROSSCHAIN_SUPPORTED_TOKENS } from 'app/_xcall/_icon/config';
 import { DEFAULT_TOKEN_CHAIN } from 'app/_xcall/config';
-import { SupportedXCallChains } from 'app/_xcall/types';
+import { XChainId } from 'app/_xcall/types';
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { Typography } from 'app/theme';
@@ -45,7 +45,7 @@ function subtract(
   return CurrencyAmount.fromRawAmount(amountA.currency, diff.quotient);
 }
 
-function WalletSection({ AChain, BChain }: { AChain?: SupportedXCallChains; BChain?: SupportedXCallChains }) {
+function WalletSection({ AChain, BChain }: { AChain?: XChainId; BChain?: XChainId }) {
   const { account } = useIconReact();
   const { currencies, currencyBalances, parsedAmounts } = useDerivedMintInfo(AChain, BChain);
 
@@ -129,8 +129,8 @@ export default function LPPanel() {
 
   const { independentField, typedValue, otherTypedValue, inputType } = useMintState();
   const [chainSelectorOpen, setChainSelectorOpen] = React.useState(false);
-  const [crossChainCurrencyA, setCrossChainCurrencyA] = React.useState<SupportedXCallChains>('icon');
-  const [crossChainCurrencyB] = React.useState<SupportedXCallChains>('icon');
+  const [crossChainCurrencyA, setCrossChainCurrencyA] = React.useState<XChainId>('0x1.icon');
+  const [crossChainCurrencyB] = React.useState<XChainId>('0x1.icon');
   const {
     dependentField,
     parsedAmounts,
@@ -223,7 +223,7 @@ export default function LPPanel() {
           setCrossChainCurrencyA(DEFAULT_TOKEN_CHAIN[currencyA.symbol as string]);
         }
       } else {
-        setCrossChainCurrencyA('icon');
+        setCrossChainCurrencyA('0x1.icon');
       }
     },
     [onCurrencySelection],

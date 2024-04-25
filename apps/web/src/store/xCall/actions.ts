@@ -3,7 +3,7 @@ import { createAction } from '@reduxjs/toolkit';
 import {
   DestinationXCallData,
   OriginXCallData,
-  SupportedXCallChains,
+  XChainId,
   XCallEventType,
   CurrentXCallStateType,
 } from 'app/_xcall/types';
@@ -13,24 +13,14 @@ export const setXCallState = createAction<{
 }>('xCall/setXCallState');
 
 export const addXCallOriginEvent = createAction<{
-  chain?: SupportedXCallChains;
+  chain?: XChainId;
   data?: OriginXCallData;
 }>('xCall/addXCallOriginEvent');
 
 export const addXCallDestinationEvent = createAction<{
-  chain?: SupportedXCallChains;
+  chain?: XChainId;
   data?: DestinationXCallData;
 }>('xCall/addXCallDestinationEvent');
-
-export const removeXCallOriginEvent = createAction<{
-  chain?: SupportedXCallChains;
-  sn?: number;
-}>('xCall/removeXCallOriginEvent');
-
-export const removeXCallDestinationEvent = createAction<{
-  chain?: SupportedXCallChains;
-  sn?: number;
-}>('xCall/removeXCallDestinationEvent');
 
 export const removeXCallEvent = createAction<{
   sn?: number;
@@ -38,17 +28,17 @@ export const removeXCallEvent = createAction<{
 }>('xCall/removeXCallEvent');
 
 export const setListeningTo = createAction<{
-  chain?: SupportedXCallChains;
+  chain?: XChainId;
   event: XCallEventType;
 }>('xCall/setListeningTo');
 
 export const rollBackFromOrigin = createAction<{
-  chain?: SupportedXCallChains;
+  chain?: XChainId;
   sn?: number;
 }>('xCall/rollBackFromOrigin');
 
 export const flagRollBackReady = createAction<{
-  chain?: SupportedXCallChains;
+  chain?: XChainId;
   sn?: number;
 }>('xCall/flagRollBackReady');
 

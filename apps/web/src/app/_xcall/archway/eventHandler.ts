@@ -33,12 +33,12 @@ const ARCHWAY_SOCKET_QUERY = {
 
 export const useArchwayEventListener = () => {
   const listeningTo = useXCallListeningTo();
-  const eventName: XCallEventType | null = listeningTo?.chain === 'archway' ? listeningTo.event : null;
+  const eventName: XCallEventType | null = listeningTo?.chain === 'archway-1' ? listeningTo.event : null;
   const addDestinationEvent = useAddDestinationEvent();
   const setListeningTo = useSetListeningTo();
-  const iconOriginEvents = useXCallOriginEvents('icon');
-  const archwayOriginEvents = useXCallOriginEvents('archway');
-  const archwayDestinationEvents = useXCallDestinationEvents('archway');
+  const iconOriginEvents = useXCallOriginEvents('0x1.icon');
+  const archwayOriginEvents = useXCallOriginEvents('archway-1');
+  const archwayDestinationEvents = useXCallDestinationEvents('archway-1');
   const removeEvent = useRemoveEvent();
   const rollBackFromOrigin = useRollBackFromOrigin();
   const flagRollbackReady = useFlagRollBackReady();
@@ -94,10 +94,10 @@ export const useArchwayEventListener = () => {
               if (destinationEventData) {
                 const originEvent = iconOriginEvents.find(e => e.sn === destinationEventData.sn);
                 if (originEvent) {
-                  addDestinationEvent('archway', { ...destinationEventData, autoExecute: originEvent.autoExecute });
+                  addDestinationEvent('archway-1', { ...destinationEventData, autoExecute: originEvent.autoExecute });
 
                   if (originEvent.autoExecute) {
-                    setListeningTo('archway', XCallEventType.CallExecuted);
+                    setListeningTo('archway-1', XCallEventType.CallExecuted);
                   }
                 }
               }
@@ -128,7 +128,7 @@ export const useArchwayEventListener = () => {
 
               if (rollbackEventData) {
                 if (archwayOriginEvents.some(e => e.sn === parseInt(rollbackEventData.sn))) {
-                  flagRollbackReady('archway', parseInt(rollbackEventData.sn));
+                  flagRollbackReady('archway-1', parseInt(rollbackEventData.sn));
                 }
               }
               break;

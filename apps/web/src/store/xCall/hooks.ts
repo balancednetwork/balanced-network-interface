@@ -14,7 +14,7 @@ import { SUPPORTED_XCALL_CHAINS } from 'app/_xcall/config';
 import {
   OriginXCallData,
   DestinationXCallData,
-  SupportedXCallChains,
+  XChainId,
   XCallChainState,
   XCallEventType,
   XCallActivityItem,
@@ -29,9 +29,7 @@ import {
   addXCallDestinationEvent,
   addXCallOriginEvent,
   flagRollBackReady,
-  removeXCallDestinationEvent,
   removeXCallEvent,
-  removeXCallOriginEvent,
   rollBackFromOrigin,
   setListeningTo,
   setNotPristine,
@@ -51,7 +49,7 @@ export function useXCallListeningTo(): AppState['xCall']['listeningTo'] {
   return useSelector((state: AppState) => state.xCall.listeningTo);
 }
 
-export function useXCallChainState(chain: SupportedXCallChains): XCallChainState {
+export function useXCallChainState(chain: XChainId): XCallChainState {
   return useSelector((state: AppState) => state.xCall.events[chain]);
 }
 
@@ -65,7 +63,7 @@ export function useSetXCallState(): (state: CurrentXCallStateType) => void {
   );
 }
 
-export function useAddOriginEvent(): (chain: SupportedXCallChains, data: OriginXCallData) => void {
+export function useAddOriginEvent(): (chain: XChainId, data: OriginXCallData) => void {
   const dispatch = useDispatch();
   return React.useCallback(
     (chain, data) => {
@@ -75,31 +73,11 @@ export function useAddOriginEvent(): (chain: SupportedXCallChains, data: OriginX
   );
 }
 
-export function useAddDestinationEvent(): (chain: SupportedXCallChains, data: DestinationXCallData) => void {
+export function useAddDestinationEvent(): (chain: XChainId, data: DestinationXCallData) => void {
   const dispatch = useDispatch();
   return React.useCallback(
     (chain, data) => {
       dispatch(addXCallDestinationEvent({ chain, data }));
-    },
-    [dispatch],
-  );
-}
-
-export function useRemoveOriginEvent(): (chain: SupportedXCallChains, sn: number) => void {
-  const dispatch = useDispatch();
-  return React.useCallback(
-    (chain, sn) => {
-      dispatch(removeXCallOriginEvent({ chain, sn }));
-    },
-    [dispatch],
-  );
-}
-
-export function useRemoveDestinationEvent(): (chain: SupportedXCallChains, sn: number) => void {
-  const dispatch = useDispatch();
-  return React.useCallback(
-    (chain, sn) => {
-      dispatch(removeXCallDestinationEvent({ chain, sn }));
     },
     [dispatch],
   );
@@ -115,17 +93,17 @@ export function useRemoveEvent(): (sn: number, setToIdle?: boolean) => void {
   );
 }
 
-export function useXCallOriginEvents(chain: SupportedXCallChains): OriginXCallData[] {
+export function useXCallOriginEvents(chain: XChainId): OriginXCallData[] {
   const state = useXCallChainState(chain);
   return state.origin;
 }
 
-export function useXCallDestinationEvents(chain: SupportedXCallChains): DestinationXCallData[] {
+export function useXCallDestinationEvents(chain: XChainId): DestinationXCallData[] {
   const state = useXCallChainState(chain);
   return state.destination;
 }
 
-export function useSetListeningTo(): (chain: SupportedXCallChains, event: XCallEventType) => void {
+export function useSetListeningTo(): (chain: XChainId, event: XCallEventType) => void {
   const dispatch = useDispatch();
   return React.useCallback((chain, event) => dispatch(setListeningTo({ chain, event })), [dispatch]);
 }
@@ -257,7 +235,7 @@ export function useXCallActivityItems(): UseQueryResult<XCallActivityItem[] | un
   });
 }
 
-export function useRollBackFromOrigin(): (chain: SupportedXCallChains, sn: number) => void {
+export function useRollBackFromOrigin(): (chain: XChainId, sn: number) => void {
   const dispatch = useDispatch();
   return React.useCallback(
     (chain, sn) => {
@@ -267,7 +245,7 @@ export function useRollBackFromOrigin(): (chain: SupportedXCallChains, sn: numbe
   );
 }
 
-export function useFlagRollBackReady(): (chain: SupportedXCallChains, sn: number) => void {
+export function useFlagRollBackReady(): (chain: XChainId, sn: number) => void {
   const dispatch = useDispatch();
   return React.useCallback(
     (chain, sn) => {
@@ -339,7 +317,7 @@ export function useXCallStats(): UseQueryResult<{ transactionCount: number; data
 }
 
 export function useWithdrawableNativeAmount(
-  chain: SupportedXCallChains,
+  chain: XChainId,
   currencyAmount?: CurrencyAmount<Token>,
 ): UseQueryResult<
   | {

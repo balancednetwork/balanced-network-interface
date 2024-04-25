@@ -14,7 +14,13 @@ import {
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { archway } from 'app/_xcall/archway/config1';
 import { getFeeParam } from 'app/_xcall/archway/utils';
-import { DestinationXCallData, OriginXCallData, XCallActivityItem, XCallEventType } from 'app/_xcall/types';
+import {
+  DestinationXCallData,
+  OriginXCallData,
+  XCallActivityItem,
+  XCallEventType,
+  XWalletType,
+} from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 import ArrowIcon from 'assets/icons/arrow-white.svg';
@@ -34,7 +40,6 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { UnderlineText } from '../../../../components/DropdownText';
 import Spinner from '../../../../components/Spinner';
-import { ApplicationModal, WalletModal } from 'store/application/reducer';
 
 const Wrap = styled(Box)`
   display: grid;
@@ -112,7 +117,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
   const rollBackFromOrigin = useRollBackFromOrigin();
   const signedInWallets = useSignedInWallets();
   const toggleWalletModal = useWalletModalToggle();
-  const [, toggleICONleWalletModal] = useWalletModal(WalletModal.ICON);
+  const [, setWalletModal] = useWalletModal();
 
   const handleICONExecuteXCall = async (data: DestinationXCallData) => {
     if (account) {
@@ -150,11 +155,11 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
             //todo: find the destination event and determine destination for this new origin event
             const originEventData = getXCallOriginEventDataFromICON(
               callMessageSentEvent,
-              'archway',
+              'archway-1',
               origin?.descriptionAction || 'Swap',
               origin?.descriptionAmount || '',
             );
-            originEventData && addOriginEvent('icon', originEventData);
+            originEventData && addOriginEvent('0x1.icon', originEventData);
           }
 
           removeEvent(data.sn, true);
@@ -164,7 +169,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
           if (callExecutedEvent?.data[1].toLocaleLowerCase().includes('revert')) {
             rollBackFromOrigin(data.origin, data.sn);
 
-            setListeningTo('archway', XCallEventType.RollbackMessage);
+            setListeningTo('archway-1', XCallEventType.RollbackMessage);
           }
         }
       }
@@ -183,7 +188,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
       };
 
       try {
-        initTransaction('archway', 'Confirming cross-chain transaction.');
+        initTransaction('archway-1', 'Confirming cross-chain transaction.');
         const res = await signingClient.execute(accountArch, archway.contracts.xCall, msg, 'auto');
 
         const callExecuted = res.events.some(
@@ -193,30 +198,30 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
         if (callExecuted) {
           removeEvent(data.sn, true);
 
-          addTransactionResult('archway', res, 'Cross-chain transaction confirmed.');
+          addTransactionResult('archway-1', res, 'Cross-chain transaction confirmed.');
         } else {
-          addTransactionResult('archway', res || null, t`Transfer failed.`);
+          addTransactionResult('archway-1', res || null, t`Transfer failed.`);
           rollBackFromOrigin(data.origin, data.sn);
         }
       } catch (e) {
         console.error(e);
-        addTransactionResult('archway', null, t`Execution failed`);
+        addTransactionResult('archway-1', null, t`Execution failed`);
       }
     }
   };
 
   const handleExecute = async (data: DestinationXCallData) => {
-    if (data.chain === 'archway') {
-      if (signedInWallets.find(w => w.chain === 'archway')?.address) {
+    if (data.chain === 'archway-1') {
+      if (signedInWallets.find(w => w.chainId === 'archway-1')?.address) {
         handleArchwayExecuteXCall(data);
       } else {
         toggleWalletModal();
       }
-    } else if (data.chain === 'icon') {
-      if (signedInWallets.find(w => w.chain === 'icon')?.address) {
+    } else if (data.chain === '0x1.icon') {
+      if (signedInWallets.find(w => w.chainId === '0x1.icon')?.address) {
         handleICONExecuteXCall(data);
       } else {
-        toggleICONleWalletModal();
+        setWalletModal(XWalletType.ICON);
       }
     }
   };
@@ -230,7 +235,7 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
       };
 
       try {
-        initTransaction('archway', 'Reverting cross-chain transaction...');
+        initTransaction('archway-1', 'Reverting cross-chain transaction...');
         const res = await signingClient.execute(accountArch, archway.contracts.xCall, msg, getFeeParam(600000));
 
         //TODO: handle arch rollback response
@@ -239,13 +244,13 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
         if (rollbackExecuted) {
           removeEvent(data.sn, true);
 
-          addTransactionResult('archway', res, 'Cross-chain transaction reverted.');
+          addTransactionResult('archway-1', res, 'Cross-chain transaction reverted.');
         } else {
-          addTransactionResult('archway', res || null, t`Reverting failed.`);
+          addTransactionResult('archway-1', res || null, t`Reverting failed.`);
         }
       } catch (e) {
         console.error(e);
-        addTransactionResult('archway', null, t`Execution failed.`);
+        addTransactionResult('archway-1', null, t`Execution failed.`);
       }
     }
   };
@@ -286,17 +291,17 @@ const XCallItem = ({ chain, destinationData, originData, status }: XCallActivity
   };
 
   const handleRollback = async (data: OriginXCallData) => {
-    if (data.chain === 'archway') {
-      if (signedInWallets.find(w => w.chain === 'archway')?.address) {
+    if (data.chain === 'archway-1') {
+      if (signedInWallets.find(w => w.chainId === 'archway-1')?.address) {
         handleArchwayRollbackXCall(data);
       } else {
         toggleWalletModal();
       }
-    } else if (data.chain === 'icon') {
-      if (signedInWallets.find(w => w.chain === 'icon')?.address) {
+    } else if (data.chain === '0x1.icon') {
+      if (signedInWallets.find(w => w.chainId === '0x1.icon')?.address) {
         handleICONRollbackXCall(data);
       } else {
-        toggleICONleWalletModal();
+        setWalletModal(XWalletType.ICON);
       }
     }
   };

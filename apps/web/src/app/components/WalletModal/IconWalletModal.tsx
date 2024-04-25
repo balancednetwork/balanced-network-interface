@@ -28,8 +28,8 @@ import {
 
 import { VerticalDivider } from '../Divider';
 import { ModalContentWrapper } from '../ModalContent';
-import { WalletModal } from 'store/application/reducer';
 import { WalletOption, UnbreakableText } from './shared';
+import { XWalletType } from 'app/_xcall/types';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 
@@ -82,7 +82,7 @@ export const IconWalletModal = () => {
   const upExtraSmall = useMedia('(min-width: 420px)');
   const upSuperExtraSmall = useMedia('(min-width: 364px)');
   const toggleWalletModal = useWalletModalToggle();
-  const [isICONWalletModalOpen, ICONWalletModalToggle] = useWalletModal(WalletModal.ICON);
+  const [walletModal, , onDismiss] = useWalletModal();
   const [showLedgerAddress, updateShowLedgerAddress] = useState(false);
   const [addressList, updateAddressList] = useState<any>([]);
   const [isLedgerLoading, setLedgerLoading] = useState(false);
@@ -220,7 +220,7 @@ export const IconWalletModal = () => {
     });
     updateShowLedgerAddress(false);
     toggleWalletModal();
-    ICONWalletModalToggle();
+    onDismiss();
   };
 
   function getPageNumbers(index: number) {
@@ -241,12 +241,12 @@ export const IconWalletModal = () => {
     } else {
       if (hasExtension) {
         requestAddress();
-        ICONWalletModalToggle();
+        onDismiss();
       } else {
         window.open('https://chrome.google.com/webstore/detail/hana/jfdlamikmbghhapbgfoogdffldioobgl?hl=en', '_blank');
       }
     }
-  }, [ICONWalletModalToggle, hasExtension, requestAddress]);
+  }, [onDismiss, hasExtension, requestAddress]);
 
   const handleOpenLedger = async () => {
     setLedgerLoading(true);
@@ -298,7 +298,7 @@ export const IconWalletModal = () => {
 
   return (
     <>
-      <Modal isOpen={isICONWalletModalOpen} onDismiss={ICONWalletModalToggle} maxWidth={360}>
+      <Modal isOpen={walletModal === XWalletType.ICON} onDismiss={onDismiss} maxWidth={360}>
         <ModalContentWrapper>
           <Typography textAlign="center" margin={'0 0 25px'}>
             Connect with:

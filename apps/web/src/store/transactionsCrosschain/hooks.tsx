@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { CrossChainTxType, SupportedXCallChains } from 'app/_xcall/types';
+import { CrossChainTxType, XChainId } from 'app/_xcall/types';
 
 import { AppState } from '../index';
 import { addTransactionResult, initTransaction } from './actions';
@@ -11,9 +11,9 @@ export const useTransactionsCrosschainState = (): AppState['transactionsCrosscha
   return useSelector<AppState, AppState['transactionsCrosschain']>(state => state.transactionsCrosschain);
 };
 
-export const useArchwayTransactionsState = (): AppState['transactionsCrosschain']['archway'] => {
-  return useSelector<AppState, AppState['transactionsCrosschain']['archway']>(
-    state => state.transactionsCrosschain.archway,
+export const useArchwayTransactionsState = (): AppState['transactionsCrosschain']['archway-1'] => {
+  return useSelector<AppState, AppState['transactionsCrosschain']['archway-1']>(
+    state => state.transactionsCrosschain['archway-1'],
   );
 };
 
@@ -22,24 +22,20 @@ export const useIsArchwayTxPending = (): boolean => {
   return isTxPending;
 };
 
-export const useAddTransactionResult = (): ((
-  chain: SupportedXCallChains,
-  tx: CrossChainTxType | null,
-  msg: string,
-) => void) => {
+export const useAddTransactionResult = (): ((chain: XChainId, tx: CrossChainTxType | null, msg: string) => void) => {
   const dispatch = useDispatch();
   return useCallback(
-    (chain: SupportedXCallChains, tx: CrossChainTxType | null, msg: string) => {
+    (chain: XChainId, tx: CrossChainTxType | null, msg: string) => {
       dispatch(addTransactionResult({ chain, tx, msg }));
     },
     [dispatch],
   );
 };
 
-export const useInitTransaction = (): ((chain: SupportedXCallChains, msg: string) => void) => {
+export const useInitTransaction = (): ((chain: XChainId, msg: string) => void) => {
   const dispatch = useDispatch();
   return useCallback(
-    (chain: SupportedXCallChains, msg: string) => {
+    (chain: XChainId, msg: string) => {
       dispatch(initTransaction({ chain, msg }));
     },
     [dispatch],

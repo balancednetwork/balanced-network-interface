@@ -1,15 +1,11 @@
 import React from 'react';
 
-import { CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
+import { Fraction } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-
-import { getNetworkDisplayName } from 'app/_xcall/utils';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
@@ -28,7 +24,7 @@ import { XCallDescription } from 'app/components/XCallDescription';
 
 import ChainSelector from './ChainSelector';
 import { useWalletModalToggle } from 'store/application/hooks';
-import { useXCallFee, useXCallProtocol } from 'app/_xcall/hooks';
+import { useXCallFee, useXCallProtocol, useXWallet } from 'app/_xcall/hooks';
 import { Field } from 'store/bridge/reducer';
 
 const ConnectWrap = styled.div`
@@ -45,7 +41,6 @@ const ConnectWrap = styled.div`
 
 export default function BridgeTransferForm({ openModal }) {
   const { account } = useIconReact();
-  const { address: accountArch } = useArchwayContext();
   const crossChainWallet = useCrossChainWalletBalances();
 
   const bridgeState = useBridgeState();
@@ -67,7 +62,7 @@ export default function BridgeTransferForm({ openModal }) {
   };
 
   React.useEffect(() => {
-    const destinationWallet = signedInWallets.find(wallet => wallet.chain === bridgeDirection.to);
+    const destinationWallet = signedInWallets.find(wallet => wallet.chainId === bridgeDirection.to);
     if (destinationWallet) {
       onChangeRecipient(destinationWallet.address);
     } else {
@@ -83,7 +78,7 @@ export default function BridgeTransferForm({ openModal }) {
   const { errorMessage, isAvailable, selectedTokenWalletBalance } = useDerivedBridgeInfo();
 
   const handleSubmit = async () => {
-    if (signedInWallets.some(wallet => wallet.chain === bridgeDirection.from)) {
+    if (signedInWallets.some(wallet => wallet.chainId === bridgeDirection.from)) {
       openModal();
     } else {
       toggleWalletModal();
@@ -92,6 +87,7 @@ export default function BridgeTransferForm({ openModal }) {
 
   const protocol = useXCallProtocol(bridgeDirection.from, bridgeDirection.to);
   const { formattedXCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
+  const xWallet = useXWallet(bridgeDirection.from);
 
   return (
     <>
@@ -101,29 +97,22 @@ export default function BridgeTransferForm({ openModal }) {
             <Trans>Bridge</Trans>
           </Typography>
           <Flex width="100%" alignItems="center" justifyContent="space-between">
-            <ChainSelector label="from" chain={bridgeDirection.from} setChain={c => onChainSelection(Field.FROM, c)} />
+            <ChainSelector
+              label="from"
+              chainId={bridgeDirection.from}
+              setChainId={c => onChainSelection(Field.FROM, c)}
+            />
             <Box sx={{ cursor: 'pointer', marginLeft: '-25px' }} onClick={onSwitchChain}>
               <FlipIcon width={25} height={17} />
             </Box>
-            <ChainSelector label="to" chain={bridgeDirection.to} setChain={c => onChainSelection(Field.TO, c)} />
+            <ChainSelector label="to" chainId={bridgeDirection.to} setChainId={c => onChainSelection(Field.TO, c)} />
           </Flex>
 
-          <Typography
-            as="div"
-            mb={-1}
-            textAlign="right"
-            hidden={
-              (bridgeDirection.from === 'icon' && !account) || (bridgeDirection.from === 'archway' && !accountArch)
-            }
-          >
-            <Trans>Wallet:</Trans>{' '}
-            {`${
-              selectedTokenWalletBalance?.toFixed(4, {
-                groupSeparator: ',',
-              }) ?? 0
-            } 
-                ${currencyToBridge?.symbol}`}
+          <Typography as="div" mb={-1} textAlign="right" hidden={!xWallet.account}>
+            <Trans>Wallet:</Trans>
+            {`${selectedTokenWalletBalance?.toFixed(4, { groupSeparator: ',' }) ?? 0} ${currencyToBridge?.symbol}`}
           </Typography>
+
           <Flex>
             <CurrencyInputPanel
               account={account}
@@ -141,9 +130,9 @@ export default function BridgeTransferForm({ openModal }) {
 
           <Flex style={{ position: 'relative' }}>
             <AddressInputPanel value={recipient || ''} onUserInput={onChangeRecipient} drivenOnly={true} />
-            {!recipient && !signedInWallets.find(wallet => wallet.chain === bridgeDirection.to)?.address && (
+            {!recipient && !signedInWallets.find(wallet => wallet.chainId === bridgeDirection.to)?.address && (
               <ConnectWrap>
-                <CrossChainConnectWallet chain={bridgeDirection.to} />
+                <CrossChainConnectWallet chainId={bridgeDirection.to} />
               </ConnectWrap>
             )}
           </Flex>

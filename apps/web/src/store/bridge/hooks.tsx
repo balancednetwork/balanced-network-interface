@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { SupportedXCallChains } from 'app/_xcall/types';
+import { XChainId } from 'app/_xcall/types';
 import { AppState } from 'store';
 import { setRecipient, selectCurrency, typeInput, selectChain, Field, switchChain, selectPercent } from './reducer';
 import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
@@ -19,8 +19,8 @@ export function useBridgeDirection() {
   const state = useBridgeState();
   return useMemo(() => {
     return {
-      from: state[Field.FROM].chain,
-      to: state[Field.TO].chain,
+      from: state[Field.FROM].chainId,
+      to: state[Field.TO].chainId,
     };
   }, [state]);
 }
@@ -54,11 +54,11 @@ export function useBridgeActionHandlers() {
   );
 
   const onChainSelection = useCallback(
-    (field: Field, chain: SupportedXCallChains) => {
+    (field: Field, chainId: XChainId) => {
       dispatch(
         selectChain({
           field,
-          chain,
+          chainId,
         }),
       );
     },
@@ -112,7 +112,7 @@ export function useDerivedBridgeInfo() {
         if (
           signedInWallets.some(
             wallet =>
-              wallet.chain === bridgeDirection.from &&
+              wallet.chainId === bridgeDirection.from &&
               (!crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address] ||
                 crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address]?.lessThan(
                   currencyAmountToBridge,
@@ -130,7 +130,7 @@ export function useDerivedBridgeInfo() {
   }, [bridgeDirection.from, crossChainWallet, currencyAmountToBridge, signedInWallets]);
 
   const isAvailable = useMemo(() => {
-    if (!signedInWallets.some(wallet => wallet.chain === bridgeDirection.to)) return false;
+    if (!signedInWallets.some(wallet => wallet.chainId === bridgeDirection.to)) return false;
     if (recipient === '') return false;
 
     return true;
@@ -144,11 +144,14 @@ export function useDerivedBridgeInfo() {
 
   const isDenom = currencyAmountToBridge && isDenomAsset(currencyAmountToBridge.currency);
 
+  const account = signedInWallets.find(w => w.chainId === bridgeDirection.from)?.address;
+
   return {
     errorMessage,
     isAvailable,
     currencyAmountToBridge,
     selectedTokenWalletBalance,
     isDenom,
+    account,
   };
 }

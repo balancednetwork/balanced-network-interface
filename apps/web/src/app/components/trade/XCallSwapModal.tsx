@@ -9,7 +9,7 @@ import { useIconReact } from 'packages/icon-react';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { ARCHWAY_FEE_TOKEN_SYMBOL, ARCHWAY_XCALL_NETWORK_ID, ICON_XCALL_NETWORK_ID } from 'app/_xcall/_icon/config';
+import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
@@ -17,7 +17,7 @@ import { archway } from 'app/_xcall/archway/config1';
 import { useARCH } from 'app/_xcall/archway/tokens';
 import { getFeeParam, getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { useXCallFee, useXCallGasChecker } from 'app/_xcall/hooks';
-import { CurrentXCallStateType, SupportedXCallChains, XCallEventType } from 'app/_xcall/types';
+import { CurrentXCallStateType, XChainId, XCallEventType } from 'app/_xcall/types';
 import { getArchwayCounterToken, getBytesFromString, getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
@@ -47,8 +47,8 @@ type XCallSwapModalProps = {
   currencies: { [field in Field]?: Currency };
   executionTrade?: Trade<Currency, Currency, TradeType>;
   clearInputs: () => void;
-  originChain: SupportedXCallChains;
-  destinationChain: SupportedXCallChains;
+  originChain: XChainId;
+  destinationChain: XChainId;
   destinationAddress?: string;
   onClose: () => void;
 };
@@ -129,18 +129,18 @@ const XCallSwapModal = ({
   const initTransaction = useInitTransaction();
   const addTransactionResult = useAddTransactionResult();
   const { isTxPending } = useArchwayTransactionsState();
-  const { xCallFee: archwayXCallFees } = useXCallFee('archway', 'icon');
+  const { xCallFee: archwayXCallFees } = useXCallFee('archway-1', '0x1.icon');
   const { data: gasChecker } = useXCallGasChecker(originChain, destinationChain);
   const currentXCallState = useCurrentXCallState();
   const ARCH = useARCH();
-  const originAddress = signedInWallets.find(wallet => wallet.chain === originChain)?.address;
+  const originAddress = signedInWallets.find(wallet => wallet.chainId === originChain)?.address;
 
   const {
     increaseAllowance,
     allowanceIncreased,
     isIncreaseNeeded: allowanceIncreaseNeeded,
   } = useAllowanceHandler(
-    (originChain === 'archway' && getArchwayCounterToken(executionTrade?.inputAmount.currency.symbol)?.address) || '',
+    (originChain === 'archway-1' && getArchwayCounterToken(executionTrade?.inputAmount.currency.symbol)?.address) || '',
     executionTrade?.inputAmount.quotient.toString() || '0',
   );
 
@@ -162,12 +162,7 @@ const XCallSwapModal = ({
 
   const receivingNetworkAddress: string | undefined = React.useMemo(() => {
     if (destinationAddress) {
-      if (destinationChain === 'icon') {
-        return `${ICON_XCALL_NETWORK_ID}/${destinationAddress}`;
-      }
-      if (destinationChain === 'archway') {
-        return `${ARCHWAY_XCALL_NETWORK_ID}/${destinationAddress}`;
-      }
+      return `${destinationChain}/${destinationAddress}`;
     }
   }, [destinationChain, destinationAddress]);
 
@@ -239,11 +234,11 @@ const XCallSwapModal = ({
         //todo: find the destination event and determine destination for this new origin event
         const originEventData = getXCallOriginEventDataFromICON(
           callMessageSentEvent,
-          'archway',
+          'archway-1',
           descriptionAction,
           descriptionAmount,
         );
-        originEventData && addOriginEvent('icon', originEventData);
+        originEventData && addOriginEvent('0x1.icon', originEventData);
       }
     }
   };
@@ -268,7 +263,7 @@ const XCallSwapModal = ({
       executionTrade.inputAmount.currency.symbol || ''
     } for ${executionTrade.outputAmount.toFixed(2)} ${executionTrade.outputAmount.currency.symbol || ''}`;
 
-    if (originChain === 'icon') {
+    if (originChain === '0x1.icon') {
       window.addEventListener('beforeunload', showMessageOnBeforeUnload);
       if (bnJs.contractSettings.ledgerSettings.actived) {
         changeShouldLedgerSign(true);
@@ -321,7 +316,7 @@ const XCallSwapModal = ({
         }
         cleanupSwap();
       }
-    } else if (originChain === 'archway') {
+    } else if (originChain === 'archway-1') {
       const archToken = getArchwayCounterToken(executionTrade.inputAmount.currency.symbol);
       if (!archToken || !(signingClient && accountArch)) {
         return;
@@ -332,14 +327,14 @@ const XCallSwapModal = ({
         ...(receivingNetworkAddress && { receiver: receivingNetworkAddress }),
       };
 
-      initTransaction('archway', t`Requesting cross-chain swap...`);
+      initTransaction('archway-1', t`Requesting cross-chain swap...`);
       setXCallInProgress(true);
       //handle icon native tokens vs spoke assets
       if (['bnUSD'].includes(archToken.symbol!)) {
         const msg = {
           cross_transfer: {
             amount: executionTrade.inputAmount.quotient.toString(),
-            to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
+            to: `${destinationChain}/${bnJs.Router.address}`,
             data: getBytesFromString(
               JSON.stringify({
                 method: '_swap',
@@ -362,11 +357,11 @@ const XCallSwapModal = ({
           );
 
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
-          addTransactionResult('archway', res, t`Cross-chain swap requested.`);
-          originEventData && addOriginEvent('archway', originEventData);
+          addTransactionResult('archway-1', res, t`Cross-chain swap requested.`);
+          originEventData && addOriginEvent('archway-1', originEventData);
         } catch (e) {
           console.error(e);
-          addTransactionResult('archway', null, 'Swap request failed');
+          addTransactionResult('archway-1', null, 'Swap request failed');
           setXCallInProgress(false);
         }
       } else {
@@ -374,7 +369,7 @@ const XCallSwapModal = ({
           deposit: {
             token_address: archToken.address,
             amount: executionTrade.inputAmount.quotient.toString(),
-            to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
+            to: `${destinationChain}/${bnJs.Router.address}`,
             data: getBytesFromString(
               JSON.stringify({
                 method: '_swap',
@@ -385,7 +380,7 @@ const XCallSwapModal = ({
         };
 
         const fee = await signingClient.queryContractSmart(archway.contracts.xCall, {
-          get_fee: { nid: `${ICON_XCALL_NETWORK_ID}`, rollback: true },
+          get_fee: { nid: `${destinationChain}`, rollback: true },
         });
 
         try {
@@ -398,13 +393,13 @@ const XCallSwapModal = ({
             fee !== undefined && fee !== '0' ? [{ amount: fee, denom: ARCHWAY_FEE_TOKEN_SYMBOL }] : undefined,
           );
 
-          addTransactionResult('archway', res, 'Cross-chain swap requested.');
+          addTransactionResult('archway-1', res, 'Cross-chain swap requested.');
           setXCallInProgress(true);
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
-          originEventData && addOriginEvent('archway', originEventData);
+          originEventData && addOriginEvent('archway-1', originEventData);
         } catch (e) {
           console.error(e);
-          addTransactionResult('archway', null, 'Swap request failed');
+          addTransactionResult('archway-1', null, 'Swap request failed');
           setXCallInProgress(false);
         }
       }
@@ -474,7 +469,7 @@ const XCallSwapModal = ({
           </strong>
           .
         </Typography>
-        {originChain === 'archway' && archwayXCallFees && (
+        {originChain === 'archway-1' && archwayXCallFees && (
           <Typography textAlign="center">
             <Trans>You'll also pay</Trans>{' '}
             <strong>{(Number(archwayXCallFees.rollback) / 10 ** ARCH.decimals).toPrecision(3)} ARCH</strong>{' '}

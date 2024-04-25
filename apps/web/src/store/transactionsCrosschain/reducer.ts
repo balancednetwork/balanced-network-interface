@@ -11,13 +11,13 @@ export interface TransactionDetails {
 }
 
 export interface TransactionsCrosschainState {
-  ['archway']: {
+  ['archway-1']: {
     isTxPending: boolean;
     transactions: TransactionDetails[];
   };
 }
 
-export const initialState: TransactionsCrosschainState = { archway: { isTxPending: false, transactions: [] } };
+export const initialState: TransactionsCrosschainState = { 'archway-1': { isTxPending: false, transactions: [] } };
 
 export default createReducer(initialState, builder =>
   builder

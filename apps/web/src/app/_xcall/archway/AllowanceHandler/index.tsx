@@ -30,7 +30,7 @@ const useAllowanceHandler = (
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
-    if (address && tokenAddress && tokenAddress.includes('archway') && signingClient) {
+    if (address && tokenAddress && tokenAddress.includes('archway-1') && signingClient) {
       signingClient
         .queryContractSmart(tokenAddress, {
           allowance: { owner: address, spender: spenderAddress },
@@ -65,14 +65,14 @@ const useAllowanceHandler = (
       };
       try {
         initTransaction(
-          'archway',
+          'archway-1',
           t`Approving ${ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS[tokenAddress].symbol} for cross-chain transfer...`,
         );
 
         const res = await signingClient.execute(address, tokenAddress, msg, getFeeParam(400000));
         setAllowanceIncreased(true);
         addTransactionResult(
-          'archway',
+          'archway-1',
           res,
           t`${ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS[tokenAddress].symbol} approved for cross-chain transfer.`,
         );
@@ -81,7 +81,7 @@ const useAllowanceHandler = (
       } catch (e) {
         console.error(e);
         addTransactionResult(
-          'archway',
+          'archway-1',
           null,
           t`${ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS[tokenAddress].symbol} transfer approval failed.`,
         );

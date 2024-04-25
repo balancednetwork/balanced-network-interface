@@ -8,7 +8,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { SupportedXCallChains } from 'app/_xcall/types';
+import { XChainId } from 'app/_xcall/types';
 import { canBeQueue } from 'constants/currency';
 import { useAllTokens } from 'hooks/Tokens';
 import { PairState, useV2Pair } from 'hooks/useV2Pairs';
@@ -117,8 +117,8 @@ export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmo
 
 // from the current swap inputs, compute the best trade and return it.
 export function useDerivedSwapInfo(
-  inputChain: SupportedXCallChains = 'icon',
-  outputChain: SupportedXCallChains = 'icon',
+  inputChain: XChainId = '0x1.icon',
+  outputChain: XChainId = '0x1.icon',
 ): {
   trade: Trade<Currency, Currency, TradeType> | undefined;
   currencies: { [field in Field]?: Currency };

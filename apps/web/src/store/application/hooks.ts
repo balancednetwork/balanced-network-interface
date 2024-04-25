@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { CHAIN_INFO } from '@balancednetwork/balanced-js';
 import axios from 'axios';
@@ -16,9 +16,9 @@ import {
   ApplicationModal,
   setOpenModal,
   updateSlippageTolerance,
-  WalletModal,
   setOpenWalletModal,
 } from './reducer';
+import { XWalletType } from 'app/_xcall/types';
 
 type BlockDetails = {
   timestamp: number;
@@ -47,21 +47,24 @@ export function useWalletModalToggle(): () => void {
 }
 
 //////////////////chain wallet ///////////////////////////////////
-export function useChainWalletModalOpen(modal: WalletModal): boolean {
-  const openModal = useSelector((state: AppState) => state.application.openWalletModal);
-  return openModal === modal;
-}
 
-export function useChainWalletToggleModal(modal: WalletModal): () => void {
-  const open = useChainWalletModalOpen(modal);
+export function useWalletModal(): [XWalletType | null, (w: XWalletType | null) => void, () => void] {
   const dispatch = useDispatch<AppDispatch>();
-  return useCallback(() => dispatch(setOpenWalletModal(open ? null : modal)), [dispatch, modal, open]);
-}
 
-export function useWalletModal(modal: WalletModal): [boolean, () => void] {
-  const isOpen = useChainWalletModalOpen(modal);
-  const toggle = useChainWalletToggleModal(modal);
-  return [isOpen, toggle];
+  const setOpen = useCallback(
+    (walletType: XWalletType | null) => {
+      dispatch(setOpenWalletModal(walletType));
+    },
+    [dispatch],
+  );
+
+  const open = useSelector((state: AppState) => state.application.openWalletModal);
+
+  const onDismiss = useCallback(() => {
+    setOpen(null);
+  }, [setOpen]);
+
+  return useMemo(() => [open, setOpen, onDismiss], [open, setOpen, onDismiss]);
 }
 
 export function useTransferAssetsModalToggle(): () => void {

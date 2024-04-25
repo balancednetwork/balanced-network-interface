@@ -9,7 +9,7 @@ import { Box, Flex } from 'rebass';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { archway } from 'app/_xcall/archway/config1';
 import { getFeeParam } from 'app/_xcall/archway/utils';
-import { DestinationXCallData, SupportedXCallChains, XCallEventType } from 'app/_xcall/types';
+import { DestinationXCallData, XChainId, XCallEventType } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 import {
@@ -36,13 +36,13 @@ type XCallEventManagerProps = {
   callback?: (success: boolean) => void;
   msgs: {
     txMsgs: {
-      [key in SupportedXCallChains]: {
+      [key in XChainId]?: {
         pending: string;
         summary: string;
       };
     };
     managerMsgs: {
-      [key in SupportedXCallChains]: {
+      [key in XChainId]?: {
         awaiting: string;
         actionRequired: string;
       };
@@ -52,8 +52,8 @@ type XCallEventManagerProps = {
 
 const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEventManagerProps) => {
   const { signingClient, address: accountArch } = useArchwayContext();
-  const iconDestinationEvents = useXCallDestinationEvents('icon');
-  const archwayDestinationEvents = useXCallDestinationEvents('archway');
+  const iconDestinationEvents = useXCallDestinationEvents('0x1.icon');
+  const archwayDestinationEvents = useXCallDestinationEvents('archway-1');
   const listeningTo = useXCallListeningTo();
   const removeEvent = useRemoveEvent();
   const initTransaction = useInitTransaction();
@@ -79,7 +79,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEve
         pristineEvents[chain] = hasPristineEvents;
         return pristineEvents;
       },
-      {} as { [key in SupportedXCallChains]: boolean },
+      {} as { [key in XChainId]: boolean },
     );
   }, [xCallState.events]);
 
@@ -98,7 +98,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEve
       // }
 
       try {
-        initTransaction('archway', msgs.txMsgs.archway.pending);
+        initTransaction('archway-1', msgs.txMsgs['archway-1']!.pending);
         const res = await signingClient.execute(accountArch, archway.contracts.xCall, msg, getFeeParam(600000));
 
         const callExecuted = res.events.some(
@@ -110,23 +110,23 @@ const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEve
 
           callback && callback(true);
           xCallReset();
-          addTransactionResult('archway', res, msgs.txMsgs.archway.summary);
+          addTransactionResult('archway-1', res, msgs.txMsgs['archway-1']!.summary);
         } else {
           callback && callback(false);
-          addTransactionResult('archway', res || null, t`Transfer failed.`);
+          addTransactionResult('archway-1', res || null, t`Transfer failed.`);
           rollBackFromOrigin(data.origin, data.sn);
         }
       } catch (e) {
         console.error(e);
-        addTransactionResult('archway', null, t`Execution failed`);
+        addTransactionResult('archway-1', null, t`Execution failed`);
       }
     }
   };
 
   const SpinnerControl = () => {
-    if (listeningTo?.chain === 'archway') {
+    if (listeningTo?.chain === 'archway-1') {
       return archwayDestinationEvents.length === 0 ? <Spinner /> : null;
-    } else if (listeningTo?.chain === 'icon') {
+    } else if (listeningTo?.chain === '0x1.icon') {
       return iconDestinationEvents.length === 0 ? <Spinner /> : null;
     }
     return null;
@@ -182,7 +182,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEve
                 ) : (
                   <>
                     <Typography mb={4}>
-                      <Trans>{msgs.managerMsgs.archway.actionRequired}</Trans>
+                      <Trans>{msgs.managerMsgs['archway-1']!.actionRequired}</Trans>
                     </Typography>
                     <Flex alignItems="center">
                       <Button onClick={e => handleArchwayExecuteXCall(event)} disabled={isTxPending}>
@@ -197,7 +197,7 @@ const XCallEventManager = ({ xCallReset, clearInputs, msgs, callback }: XCallEve
         </motion.div>
       )}
 
-      {iconDestinationEvents.length > 0 && anyPristineEvents.icon && (
+      {iconDestinationEvents.length > 0 && anyPristineEvents['0x1.icon'] && (
         <motion.div
           key="event-wrap-awaiting-icon-confirmation"
           initial={{ opacity: 0, height: 0 }}

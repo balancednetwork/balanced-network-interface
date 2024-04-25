@@ -4,7 +4,8 @@ import { COMBINED_TOKENS_LIST } from 'constants/tokens';
 import { XCallState } from 'store/xCall/reducer';
 
 import { ARCHWAY_SUPPORTED_TOKENS_LIST } from './archway/tokens';
-import { OriginXCallData, SupportedXCallChains, XCallEventType } from './types';
+import { OriginXCallData, XChainId, XCallEventType } from './types';
+import { xChainMap } from './archway/config1';
 
 export function getRlpEncodedMsg(msg: string | any[]) {
   return Array.from(rlp.encode(msg));
@@ -29,14 +30,8 @@ export const getFollowingEvent = (event: XCallEventType): XCallEventType => {
   }
 };
 
-export const getNetworkDisplayName = (chain: SupportedXCallChains) => {
-  if (chain === 'icon') {
-    return 'ICON';
-  }
-  if (chain === 'archway') {
-    return 'Archway';
-  }
-  return '';
+export const getNetworkDisplayName = (chain: XChainId) => {
+  return xChainMap[chain].name;
 };
 
 export const getArchwayCounterToken = (symbol?: string) => {
@@ -51,20 +46,20 @@ export const getOriginEvent = (sn: number, xCallState: XCallState): OriginXCallD
     .find(event => event);
 };
 
-export const getCrossChainTokenAddress = (chain: SupportedXCallChains, tokenSymbol?: string): string | undefined => {
+export const getCrossChainTokenAddress = (chain: XChainId, tokenSymbol?: string): string | undefined => {
   if (!tokenSymbol) return;
-  if (chain === 'icon') {
+  if (chain === '0x1.icon') {
     return COMBINED_TOKENS_LIST.find(token => token.symbol === tokenSymbol)?.address;
-  } else if (chain === 'archway') {
+  } else if (chain === 'archway-1') {
     return ARCHWAY_SUPPORTED_TOKENS_LIST.find(token => token.symbol === tokenSymbol)?.address;
   }
 };
 
-export const getCrossChainTokenBySymbol = (chain: SupportedXCallChains, symbol?: string) => {
+export const getCrossChainTokenBySymbol = (chain: XChainId, symbol?: string) => {
   if (!symbol) return;
-  if (chain === 'icon') {
+  if (chain === '0x1.icon') {
     return COMBINED_TOKENS_LIST.find(token => token.symbol === symbol);
-  } else if (chain === 'archway') {
+  } else if (chain === 'archway-1') {
     return ARCHWAY_SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
   }
 };

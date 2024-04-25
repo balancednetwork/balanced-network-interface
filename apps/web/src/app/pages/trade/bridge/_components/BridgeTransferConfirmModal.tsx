@@ -9,8 +9,7 @@ import { COSMOS_NATIVE_AVAILABLE_TOKENS } from 'app/_xcall/_icon/config';
 import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
 import { useARCH } from 'app/_xcall/archway/tokens';
 import { useXCallFee, useXCallGasChecker } from 'app/_xcall/hooks';
-import { getNetworkDisplayName } from 'app/_xcall/utils';
-import { archway } from 'app/_xcall/archway/config1';
+import { archway, xChainMap } from 'app/_xcall/archway/config1';
 import { Typography } from 'app/theme';
 import { useShouldLedgerSign } from 'store/application/hooks';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
@@ -21,9 +20,7 @@ import { useArchwayTransactionsState } from 'store/transactionsCrosschain/hooks'
 import { useWithdrawableNativeAmount } from 'store/xCall/hooks';
 import { useAddOriginEvent } from 'store/xCall/hooks';
 
-import { useIconReact } from 'packages/icon-react';
-
-import { ICON_XCALL_NETWORK_ID, ARCHWAY_XCALL_NETWORK_ID, ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
+import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { getFeeParam, getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
@@ -40,6 +37,7 @@ import Spinner from 'app/components/Spinner';
 import XCallEventManager from 'app/components/trade/XCallEventManager';
 import { presenceVariants, StyledButton as XCallButton } from 'app/components/trade/XCallSwapModal';
 import { StdFee } from '@archwayhq/arch3.js';
+import { getNetworkDisplayName } from 'app/_xcall/utils';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;
@@ -82,14 +80,14 @@ export default function BridgeTransferConfirmModal({
   setXCallInProgress,
 }) {
   const { currency: currencyToBridge, recipient: destinationAddress } = useBridgeState();
-  const { isDenom, currencyAmountToBridge } = useDerivedBridgeInfo();
+  const { isDenom, currencyAmountToBridge, account } = useDerivedBridgeInfo();
 
-  const { account } = useIconReact();
-  const { address: accountArch, signingClient } = useArchwayContext();
+  const { signingClient } = useArchwayContext();
 
   const bridgeDirection = useBridgeDirection();
 
   const { data: gasChecker } = useXCallGasChecker(bridgeDirection.from, bridgeDirection.to);
+
   const shouldLedgerSign = useShouldLedgerSign();
 
   const ARCH = useARCH();
@@ -103,7 +101,7 @@ export default function BridgeTransferConfirmModal({
     allowanceIncreased,
     isIncreaseNeeded: allowanceIncreaseNeeded,
   } = useAllowanceHandler(
-    (bridgeDirection.from === 'archway' && !isDenom && currencyToBridge?.wrapped.address) || '',
+    (bridgeDirection.from === 'archway-1' && !isDenom && currencyToBridge?.wrapped.address) || '',
     `${currencyAmountToBridge ? currencyAmountToBridge.quotient : '0'}`,
   );
 
@@ -171,27 +169,28 @@ export default function BridgeTransferConfirmModal({
           descriptionAction,
           descriptionAmount,
         );
-        originEventData && addOriginEvent('icon', originEventData);
+        addOriginEvent(bridgeDirection.from, originEventData);
       }
     }
   };
 
   const handleBridgeConfirm = async () => {
     if (!currencyAmountToBridge) return;
+    if (!xCallFee) return;
+    if (!account) return;
 
     const messages = {
       pending: `Requesting cross-chain transfer...`,
       summary: `Cross-chain transfer requested.`,
     };
-    if (bridgeDirection.from === 'icon' && account && xCallFee) {
+
+    if (bridgeDirection.from === '0x1.icon') {
       window.addEventListener('beforeunload', showMessageOnBeforeUnload);
       if (bnJs.contractSettings.ledgerSettings.actived) {
         changeShouldLedgerSign(true);
       }
       const tokenAddress = currencyAmountToBridge.currency.address;
-      const destination = `${
-        bridgeDirection.to === 'archway' ? `${ARCHWAY_XCALL_NETWORK_ID}/` : ''
-      }${destinationAddress}`;
+      const destination = `${bridgeDirection.to}/${destinationAddress}`;
 
       if (CROSS_TRANSFER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
         const cx = bnJs.inject({ account }).getContract(tokenAddress);
@@ -232,17 +231,17 @@ export default function BridgeTransferConfirmModal({
           await handleICONTxResult(hash);
         }
       }
-    } else if (bridgeDirection.from === 'archway' && accountArch && signingClient && xCallFee) {
+    } else if (bridgeDirection.from === 'archway-1' && signingClient) {
       const tokenAddress = currencyAmountToBridge.currency.address;
-      const destination = `${bridgeDirection.to === 'icon' ? `${ICON_XCALL_NETWORK_ID}/` : ''}${destinationAddress}`;
+      const destination = `${bridgeDirection.to}/${destinationAddress}`;
 
       const executeTransaction = async (msg: any, contract: string, fee: StdFee | 'auto', assetToBridge?: any) => {
         try {
-          initTransaction('archway', `Requesting cross-chain transfer...`);
+          initTransaction(bridgeDirection.from, `Requesting cross-chain transfer...`);
           setXCallInProgress(true);
 
           const res = await signingClient.execute(
-            accountArch,
+            account,
             contract,
             msg,
             fee,
@@ -258,11 +257,11 @@ export default function BridgeTransferConfirmModal({
           );
 
           const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
-          addTransactionResult('archway', res, t`Cross-chain transfer requested.`);
-          originEventData && addOriginEvent('archway', originEventData);
+          addTransactionResult(bridgeDirection.from, res, t`Cross-chain transfer requested.`);
+          originEventData && addOriginEvent(bridgeDirection.from, originEventData);
         } catch (e) {
           console.error(e);
-          addTransactionResult('archway', null, 'Cross-chain transfer request failed');
+          addTransactionResult(bridgeDirection.from, null, 'Cross-chain transfer request failed');
           setXCallInProgress(false);
         }
       };

@@ -152,6 +152,10 @@ const BTPContent = () => {
   };
 
   useEffect(() => {
+    toggleTransferAssetsModal();
+  }, []);
+
+  useEffect(() => {
     if (isOpenTransferAssetsModal) {
       localStorage.removeItem(ADDRESS_LOCAL_STORAGE);
       resetForm();

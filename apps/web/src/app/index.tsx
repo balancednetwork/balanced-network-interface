@@ -11,7 +11,6 @@ import TransactionUpdater from 'store/transactions/updater';
 
 import { useICONEventListener } from './_xcall/_icon/eventHandlers';
 import { useArchwayEventListener } from './_xcall/archway/eventHandler';
-import TransferAssetsModal from './components/BTP/index';
 import RootRoutes from './Routes';
 
 function Updaters() {
@@ -37,7 +36,6 @@ export function App() {
         <ThemedGlobalStyle />
         <NotificationContainer />
         <WalletModal />
-        <TransferAssetsModal />
         {/* Add message for community */}
 
         <Helmet titleTemplate="%s | Balanced" defaultTitle="Balanced" htmlAttributes={{ lang: i18n.language }} />

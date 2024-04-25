@@ -792,6 +792,10 @@ msgstr "Supplied {pair} liquidity."
 
 #: src/app/components/AppBar/index.tsx
 #: src/app/Routes.tsx
+msgid "Legacy bridge"
+msgstr "Legacy bridge"
+
+#: src/app/Routes.tsx
 msgid "Trade"
 msgstr "Trade"
 

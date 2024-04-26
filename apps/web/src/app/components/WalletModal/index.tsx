@@ -110,7 +110,7 @@ export default function WalletModal() {
       {
         name: 'ICON',
         logo: <IconWalletIcon width="40" height="40" />,
-        connect: () => setWalletModal(XWalletType.COSMOS),
+        connect: () => setWalletModal(XWalletType.ICON),
         disconnect: wallets[XWalletType.ICON].disconnect,
         description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain`,
         address: wallets[XWalletType.ICON].account,

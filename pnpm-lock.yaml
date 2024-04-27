@@ -47,6 +47,9 @@ importers:
       '@cosmjs/cosmwasm-stargate':
         specifier: 0.32.2
         version: 0.32.2
+      '@cosmjs/proto-signing':
+        specifier: 0.32.3
+        version: 0.32.3
       '@cosmjs/stargate':
         specifier: 0.32.2
         version: 0.32.2
@@ -164,6 +167,9 @@ importers:
       icon-sdk-js:
         specifier: 1.5.1
         version: 1.5.1
+      jotai:
+        specifier: 2.8.0
+        version: 2.8.0(@types/react@18.2.67)(react@18.2.0)
       jsbi:
         specifier: 3.1.6
         version: 3.1.6
@@ -293,6 +299,9 @@ importers:
       wagmi:
         specifier: 2.5.20
         version: 2.5.20(@tanstack/react-query@5.29.2)(@types/react@18.2.67)(react-dom@18.2.0)(react-native@0.73.7)(react@18.2.0)(typescript@5.4.2)(viem@2.9.23)
+      zustand:
+        specifier: 4.5.2
+        version: 4.5.2(@types/react@18.2.67)(react@18.2.0)
     devDependencies:
       '@lingui/cli':
         specifier: 4.7.1
@@ -10423,6 +10432,22 @@ packages:
       '@sideway/pinpoint': 2.0.0
     dev: false
 
+  /jotai@2.8.0(@types/react@18.2.67)(react@18.2.0):
+    resolution: {integrity: sha512-yZNMC36FdLOksOr8qga0yLf14miCJlEThlp5DeFJNnqzm2+ZG7wLcJzoOyij5K6U6Xlc5ljQqPDlJRgqW0Y18g==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=17.0.0'
+      react: '>=17.0.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      '@types/react': 18.2.67
+      react: 18.2.0
+    dev: false
+
   /joycon@3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
     engines: {node: '>=10'}
@@ -15946,6 +15971,26 @@ packages:
     peerDependencies:
       '@types/react': '>=16.8'
       immer: '>=9.0'
+      react: '>=16.8'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      '@types/react': 18.2.67
+      react: 18.2.0
+      use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
+
+  /zustand@4.5.2(@types/react@18.2.67)(react@18.2.0):
+    resolution: {integrity: sha512-2cN1tPkDVkwCy5ickKrI7vijSjPksFRfqS6237NzT0vqSsztTNnQdHw9mmN7uBdk3gceVXU0a+21jFzFzAc9+g==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      '@types/react': '>=16.8'
+      immer: '>=9.0.6'
       react: '>=16.8'
     peerDependenciesMeta:
       '@types/react':

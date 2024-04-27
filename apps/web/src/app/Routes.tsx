@@ -21,6 +21,7 @@ const TradePageLayout = lazyLoad(
 import { TradePage } from './pages/trade/page';
 import { SupplyPage } from './pages/trade/supply/page';
 import { BridgePage } from './pages/trade/bridge/page';
+import { BridgeV2Page } from './pages/trade/bridge-v2/page';
 
 const VotePage = lazyLoad(
   () => import('./pages/vote/page'),
@@ -86,6 +87,7 @@ export default function RootRoutes() {
           <Route path="supply" element={<SupplyPage />} />
           <Route path="supply/:pair" element={<SupplyPage />} />
           <Route path="bridge/" element={<BridgePage />} />
+          <Route path="bridge-v2/" element={<BridgeV2Page />} />
         </Route>
 
         <Route path="vote" element={<Outlet />}>

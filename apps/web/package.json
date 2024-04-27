@@ -10,6 +10,7 @@
     "@balancednetwork/v1-sdk": "workspace:*",
     "@chain-registry/types": "0.16.0",
     "@cosmjs/cosmwasm-stargate": "0.32.2",
+    "@cosmjs/proto-signing": "0.32.3",
     "@cosmjs/stargate": "0.32.2",
     "@ethereumjs/rlp": "5.0.0",
     "@ethersproject/address": "5.4.0",
@@ -49,6 +50,7 @@
     "i18next-browser-languagedetector": "6.0.1",
     "i18next-scanner": "2.11.0",
     "icon-sdk-js": "1.5.1",
+    "jotai": "2.8.0",
     "jsbi": "3.1.6",
     "lightweight-charts": "3.2.0",
     "lodash-es": "4.17.21",
@@ -91,7 +93,8 @@
     "viem": "2.x",
     "vite": "5.1.4",
     "vite-tsconfig-paths": "4.3.1",
-    "wagmi": "2.5.20"
+    "wagmi": "2.5.20",
+    "zustand": "4.5.2"
   },
   "scripts": {
     "dev": "vite",

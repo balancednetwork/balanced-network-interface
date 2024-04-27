@@ -88,7 +88,7 @@ export default function LiquidFinanceIntegration() {
     currency: currencyToBridge,
     currencyAmountToBridge,
     bridgeDirection,
-    useLiquidFinance,
+    isLiquidFinanceEnabled,
     isLiquidsARCH,
   } = useBridgeInfo();
   const { onSelectLiquidFinance } = useBridgeActionHandlers();
@@ -104,7 +104,7 @@ export default function LiquidFinanceIntegration() {
         </Typography>
         <Flex justifyContent="space-around">
           <WithdrawOption
-            active={useLiquidFinance !== undefined && useLiquidFinance}
+            active={isLiquidFinanceEnabled !== undefined && isLiquidFinanceEnabled}
             onClick={() => onSelectLiquidFinance(true)}
           >
             {currencyToBridge?.symbol === 'sARCH' && <CurrencyLogo currency={ARCH} />}
@@ -119,7 +119,7 @@ export default function LiquidFinanceIntegration() {
           </WithdrawOption>
 
           <WithdrawOption
-            active={useLiquidFinance !== undefined && !useLiquidFinance}
+            active={isLiquidFinanceEnabled !== undefined && !isLiquidFinanceEnabled}
             onClick={() => onSelectLiquidFinance(false)}
           >
             <CurrencyLogo currency={currencyToBridge} />

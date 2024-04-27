@@ -54,7 +54,7 @@ export default function BridgeTransferConfirmModal({
   xCallInProgress,
   setXCallInProgress,
 }) {
-  const { currency: currencyToBridge, recipient: destinationAddress, useLiquidFinance } = useBridgeState();
+  const { currency: currencyToBridge, recipient: destinationAddress, isLiquidFinanceEnabled } = useBridgeState();
   const { isDenom, currencyAmountToBridge, account } = useDerivedBridgeInfo();
 
   const { signingClient } = useArchwayContext();
@@ -180,7 +180,7 @@ export default function BridgeTransferConfirmModal({
       } else if (ASSET_MANAGER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
         const { result: hash } = await bnJs
           .inject({ account })
-          .AssetManager[useLiquidFinance ? 'withdrawNativeTo' : 'withdrawTo'](
+          .AssetManager[isLiquidFinanceEnabled ? 'withdrawNativeTo' : 'withdrawTo'](
             `${currencyAmountToBridge.quotient}`,
             tokenAddress,
             destination,

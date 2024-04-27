@@ -5,11 +5,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { COSMOS_NATIVE_AVAILABLE_TOKENS } from 'app/_xcall/_icon/config';
 import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
-import { useARCH } from 'app/_xcall/archway/tokens';
 import { useXCallFee, useXCallGasChecker } from 'app/_xcall/hooks';
-import { archway, xChainMap } from 'app/_xcall/archway/config1';
+import { archway } from 'app/_xcall/archway/config1';
 import { Typography } from 'app/theme';
 import { useShouldLedgerSign } from 'store/application/hooks';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
@@ -17,7 +15,6 @@ import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from 'store/
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useAddTransactionResult, useInitTransaction } from 'store/transactionsCrosschain/hooks';
 import { useArchwayTransactionsState } from 'store/transactionsCrosschain/hooks';
-import { useWithdrawableNativeAmount } from 'store/xCall/hooks';
 import { useAddOriginEvent } from 'store/xCall/hooks';
 
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
@@ -30,7 +27,6 @@ import bnJs from 'bnJs';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { Button, TextButton } from 'app/components/Button';
-import CurrencyLogo from 'app/components/CurrencyLogo';
 import Modal from 'app/components/Modal';
 import { ModalContentWrapper } from 'app/components/ModalContent';
 import Spinner from 'app/components/Spinner';
@@ -38,6 +34,7 @@ import XCallEventManager from 'app/components/trade/XCallEventManager';
 import { presenceVariants, StyledButton as XCallButton } from 'app/components/trade/XCallSwapModal';
 import { StdFee } from '@archwayhq/arch3.js';
 import { getNetworkDisplayName } from 'app/_xcall/utils';
+import LiquidFinanceIntegration from './LiquidFinanceIntegration';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;
@@ -49,28 +46,6 @@ const StyledXCallButton = styled(XCallButton)`
   }
 `;
 
-const WithdrawOption = styled.button<{ active: boolean }>`
-  text-align: center;
-  padding: 10px 20px;
-  border-radius: 10px;
-  border: 0;
-  outline: none;
-  cursor: pointer;
-  margin: 15px 15px 0;
-  transition: all 0.2s ease;
-
-  ${({ theme }) => `color: ${theme.colors.text}`};
-  ${({ theme, active }) => `background-color: ${active ? theme.colors.bg3 : 'transparent'}`};
-
-  &:hover {
-    ${({ theme }) => `background-color: ${theme.colors.bg3}`};
-  }
-
-  img {
-    margin-bottom: 5px;
-  }
-`;
-
 export default function BridgeTransferConfirmModal({
   isOpen,
   onDismiss,
@@ -79,7 +54,7 @@ export default function BridgeTransferConfirmModal({
   xCallInProgress,
   setXCallInProgress,
 }) {
-  const { currency: currencyToBridge, recipient: destinationAddress } = useBridgeState();
+  const { currency: currencyToBridge, recipient: destinationAddress, useLiquidFinance } = useBridgeState();
   const { isDenom, currencyAmountToBridge, account } = useDerivedBridgeInfo();
 
   const { signingClient } = useArchwayContext();
@@ -90,11 +65,7 @@ export default function BridgeTransferConfirmModal({
 
   const shouldLedgerSign = useShouldLedgerSign();
 
-  const ARCH = useARCH();
   const { isTxPending } = useArchwayTransactionsState();
-  const [withdrawNative, setWithdrawNative] = React.useState<boolean | undefined>();
-
-  const { data: withdrawableNativeAmount } = useWithdrawableNativeAmount(bridgeDirection.to, currencyAmountToBridge);
 
   const {
     increaseAllowance,
@@ -103,10 +74,6 @@ export default function BridgeTransferConfirmModal({
   } = useAllowanceHandler(
     (bridgeDirection.from === 'archway-1' && !isDenom && currencyToBridge?.wrapped.address) || '',
     `${currencyAmountToBridge ? currencyAmountToBridge.quotient : '0'}`,
-  );
-
-  const isNativeVersionAvailable = COSMOS_NATIVE_AVAILABLE_TOKENS.some(
-    token => token.address === currencyToBridge?.wrapped.address,
   );
 
   const msgs = {
@@ -213,7 +180,7 @@ export default function BridgeTransferConfirmModal({
       } else if (ASSET_MANAGER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
         const { result: hash } = await bnJs
           .inject({ account })
-          .AssetManager[withdrawNative ? 'withdrawNativeTo' : 'withdrawTo'](
+          .AssetManager[useLiquidFinance ? 'withdrawNativeTo' : 'withdrawTo'](
             `${currencyAmountToBridge.quotient}`,
             tokenAddress,
             destination,
@@ -342,44 +309,7 @@ export default function BridgeTransferConfirmModal({
             {destinationAddress}
           </Typography>
 
-          {isNativeVersionAvailable && (
-            <>
-              <Typography textAlign="center" mb="2px" mt={3}>
-                {`Choose what to do with your ${currencyToBridge?.symbol}:`}
-              </Typography>
-              <Flex justifyContent="space-around">
-                <WithdrawOption
-                  active={withdrawNative !== undefined && withdrawNative}
-                  onClick={() => setWithdrawNative(true)}
-                >
-                  {currencyToBridge?.symbol === 'sARCH' && <CurrencyLogo currency={ARCH} />}
-                  <Typography fontWeight="bold" mb={1}>
-                    Unstake
-                  </Typography>
-                  <Typography>
-                    {`${withdrawableNativeAmount?.amount.toFormat(2, { groupSeparator: ',', decimalSeparator: '.' })} ${
-                      withdrawableNativeAmount?.symbol
-                    }`}{' '}
-                  </Typography>
-                </WithdrawOption>
-
-                <WithdrawOption
-                  active={withdrawNative !== undefined && !withdrawNative}
-                  onClick={() => setWithdrawNative(false)}
-                >
-                  <CurrencyLogo currency={currencyToBridge} />
-                  <Typography fontWeight="bold" mb={1}>
-                    Keep {currencyToBridge?.symbol}
-                  </Typography>
-                  <Typography>
-                    {`${currencyAmountToBridge?.toFixed(2, { groupSeparator: ',', decimalSeparator: '.' })} ${
-                      currencyAmountToBridge?.currency.symbol
-                    }`}{' '}
-                  </Typography>
-                </WithdrawOption>
-              </Flex>
-            </>
-          )}
+          <LiquidFinanceIntegration />
 
           <XCallEventManager xCallReset={xCallReset} msgs={msgs} />
 
@@ -429,7 +359,7 @@ export default function BridgeTransferConfirmModal({
                   <StyledXCallButton
                     onClick={handleBridgeConfirm}
                     disabled={xCallInProgress}
-                    className={isNativeVersionAvailable && withdrawNative === undefined ? 'disabled' : ''}
+                    // className={isNativeVersionAvailable && withdrawNative === undefined ? 'disabled' : ''}
                   >
                     {!xCallInProgress ? <Trans>Transfer</Trans> : <Trans>xCall in progress</Trans>}
                   </StyledXCallButton>

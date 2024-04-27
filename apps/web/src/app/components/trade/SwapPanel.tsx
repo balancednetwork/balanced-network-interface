@@ -13,7 +13,6 @@ import styled from 'styled-components';
 
 import { CROSSCHAIN_SUPPORTED_TOKENS } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { useARCH } from 'app/_xcall/archway/tokens';
 import { DEFAULT_TOKEN_CHAIN } from 'app/_xcall/config';
 import { CurrentXCallStateType, XChainId } from 'app/_xcall/types';
 import { Button, TextButton } from 'app/components/Button';
@@ -87,7 +86,6 @@ export default function SwapPanel() {
     crossChainOrigin === '0x1.icon' &&
     crossChainDestination === '0x1.icon';
 
-  const ARCH = useARCH();
   const signedInWallets = useSignedInWallets();
   const isChainDifference = crossChainOrigin !== crossChainDestination;
   const isOutputCrosschainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(

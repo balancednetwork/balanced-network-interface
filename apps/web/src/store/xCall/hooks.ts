@@ -1,15 +1,10 @@
 import React from 'react';
 
 import { CHAIN_INFO } from '@balancednetwork/balanced-js';
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import axios from 'axios';
-import BigNumber from 'bignumber.js';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { COSMOS_NATIVE_AVAILABLE_TOKENS } from 'app/_xcall/_icon/config';
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { archway } from 'app/_xcall/archway/config1';
 import { SUPPORTED_XCALL_CHAINS } from 'app/_xcall/config';
 import {
   OriginXCallData,
@@ -20,7 +15,6 @@ import {
   XCallActivityItem,
   CurrentXCallStateType,
 } from 'app/_xcall/types';
-import { getArchwayCounterToken } from 'app/_xcall/utils';
 import { NETWORK_ID } from 'constants/config';
 import { AppState } from 'store';
 import { ONE_DAY_DURATION } from 'utils';
@@ -313,54 +307,5 @@ export function useXCallStats(): UseQueryResult<{ transactionCount: number; data
     },
     placeholderData: keepPreviousData,
     refetchInterval: 30000,
-  });
-}
-
-export function useWithdrawableNativeAmount(
-  chain: XChainId,
-  currencyAmount?: CurrencyAmount<Token>,
-): UseQueryResult<
-  | {
-      amount: BigNumber;
-      fee: BigNumber;
-      symbol: string;
-    }
-  | undefined
-> {
-  const amount = currencyAmount?.numerator.toString();
-  const address = currencyAmount?.currency.wrapped.address;
-  const { client } = useArchwayContext();
-  const isNativeToken = COSMOS_NATIVE_AVAILABLE_TOKENS.some(token => token.address === address);
-
-  return useQuery({
-    queryKey: ['withdrawableNativeAmount', amount, address, chain],
-    queryFn: async () => {
-      if (!currencyAmount || !amount || !address || !client || chain !== 'archway' || !isNativeToken) return;
-
-      const stakedArchwayAddress = getArchwayCounterToken('sARCH');
-      if (stakedArchwayAddress?.address) {
-        const response = await client!.queryContractSmart(archway.contracts.liquidSwap!, {
-          simulation: {
-            offer_asset: {
-              amount: amount,
-              info: {
-                token: {
-                  contract_addr: stakedArchwayAddress?.address,
-                },
-              },
-            },
-          },
-        });
-
-        return {
-          amount: new BigNumber(response.return_amount).div(10 ** currencyAmount!.currency.decimals),
-          fee: new BigNumber(response.commission_amount).div(10 ** currencyAmount!.currency.decimals),
-          symbol: 'ARCH',
-        };
-      }
-    },
-    placeholderData: keepPreviousData,
-    refetchInterval: 2000,
-    enabled: !!currencyAmount && !!amount && !!address && !!client && chain === 'archway' && isNativeToken,
   });
 }

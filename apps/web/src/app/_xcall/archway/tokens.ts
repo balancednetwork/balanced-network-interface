@@ -7,7 +7,7 @@ import { ARCHWAY_TRANSFORMED_DEFAULT_TOKEN_LIST } from 'store/lists/hooks';
 
 // disable prettier printWidth rule
 // prettier-ignore
-export const StakedArchwayToken: TokenMap = {
+export const sARCH: TokenMap = {
   [ChainId.MAINNET]: new Token(
     ChainId.MAINNET,
     'cxfe94530ee0d159db3e5b7dcffbcd0dfb360075c0',

@@ -2,9 +2,7 @@ import { SupportedChainId } from '@balancednetwork/balanced-js';
 
 import { NETWORK_ID } from 'constants/config';
 
-import { StakedArchwayToken } from '../archway/tokens';
 import { XChainId } from '../types';
-import { Token } from '@balancednetwork/sdk-core';
 
 const ICON_WEBSOCKET_URLS: { [key in SupportedChainId]: string } = {
   [SupportedChainId.MAINNET]: 'wss://ctz.solidwallet.io/api/v3/icon_dex/block',
@@ -44,23 +42,6 @@ const CROSSCHAIN_SUPPORTED_TOKENS_: { [key in SupportedChainId]: any } = {
   [SupportedChainId.SEJONG]: {},
 };
 
-const COSMOS_NATIVE_AVAILABLE_TOKENS_LIST: { [key in SupportedChainId]: Token[] } = {
-  [SupportedChainId.MAINNET]: [StakedArchwayToken[SupportedChainId.MAINNET]],
-  [SupportedChainId.BERLIN]: [StakedArchwayToken[SupportedChainId.BERLIN]],
-  [SupportedChainId.LISBON]: [StakedArchwayToken[SupportedChainId.LISBON]],
-  [SupportedChainId.YEOUIDO]: [],
-  [SupportedChainId.SEJONG]: [],
-};
-
-const AUTO_EXECUTION_ON_ICON_: { [key in SupportedChainId]: boolean } = {
-  [SupportedChainId.MAINNET]: true,
-  [SupportedChainId.BERLIN]: true,
-  [SupportedChainId.LISBON]: true,
-  [SupportedChainId.YEOUIDO]: false,
-  [SupportedChainId.SEJONG]: false,
-};
-
 export const ARCHWAY_FEE_TOKEN_SYMBOL = ARCHWAY_FEE_TOKEN_SYMBOLS[NETWORK_ID];
 export const ICON_WEBSOCKET_URL = ICON_WEBSOCKET_URLS[NETWORK_ID];
 export const CROSSCHAIN_SUPPORTED_TOKENS: TokenChainsType = CROSSCHAIN_SUPPORTED_TOKENS_[NETWORK_ID];
-export const COSMOS_NATIVE_AVAILABLE_TOKENS = COSMOS_NATIVE_AVAILABLE_TOKENS_LIST[NETWORK_ID];

@@ -26,6 +26,8 @@ export interface BridgeState {
   };
   // the typed recipient address or ENS name, or null if swap should go to sender
   recipient: string | null;
+  // when bridging sARCH from ICON to Archway, decide whether unstake sARCH to ARCH using Liquid Finance or keep sARCH
+  useLiquidFinance: boolean;
 }
 
 const initialState: BridgeState = {
@@ -43,6 +45,7 @@ const initialState: BridgeState = {
     percent: 0,
   },
   recipient: null,
+  useLiquidFinance: false,
 };
 
 const bridgeSlice = createSlice({
@@ -89,9 +92,14 @@ const bridgeSlice = createSlice({
         state.typedValue = value;
       },
     ),
+
+    selectLiquidFinance: create.reducer<boolean>((state, { payload }) => {
+      state.useLiquidFinance = payload;
+    }),
   }),
 });
 
 export default bridgeSlice.reducer;
 
-export const { selectChain, typeInput, selectCurrency, setRecipient, switchChain, selectPercent } = bridgeSlice.actions;
+export const { selectChain, typeInput, selectCurrency, setRecipient, switchChain, selectPercent, selectLiquidFinance } =
+  bridgeSlice.actions;

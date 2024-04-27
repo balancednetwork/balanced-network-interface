@@ -4,12 +4,22 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { XChainId } from 'app/_xcall/types';
 import { AppState } from 'store';
-import { setRecipient, selectCurrency, typeInput, selectChain, Field, switchChain, selectPercent } from './reducer';
+import {
+  setRecipient,
+  selectCurrency,
+  typeInput,
+  selectChain,
+  Field,
+  switchChain,
+  selectPercent,
+  selectLiquidFinance,
+} from './reducer';
 import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { Trans, t } from '@lingui/macro';
 import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
 import { isDenomAsset } from 'app/_xcall/archway/utils';
+import { sARCH } from 'app/_xcall/archway/tokens';
 
 export function useBridgeState(): AppState['bridge'] {
   return useSelector((state: AppState) => state.bridge);
@@ -76,6 +86,13 @@ export function useBridgeActionHandlers() {
     [dispatch],
   );
 
+  const onSelectLiquidFinance = useCallback(
+    (v: boolean) => {
+      dispatch(selectLiquidFinance(v));
+    },
+    [dispatch],
+  );
+
   return {
     onChangeRecipient,
     onCurrencySelection,
@@ -83,6 +100,7 @@ export function useBridgeActionHandlers() {
     onChainSelection,
     onSwitchChain,
     onPercentSelection,
+    onSelectLiquidFinance,
   };
 }
 
@@ -146,6 +164,8 @@ export function useDerivedBridgeInfo() {
 
   const account = signedInWallets.find(w => w.chainId === bridgeDirection.from)?.address;
 
+  const isLiquidsARCH = Object.values(sARCH).some(token => token.address === currencyToBridge?.wrapped.address);
+
   return {
     errorMessage,
     isAvailable,
@@ -153,5 +173,18 @@ export function useDerivedBridgeInfo() {
     selectedTokenWalletBalance,
     isDenom,
     account,
+    isLiquidsARCH,
+  };
+}
+
+export function useBridgeInfo() {
+  const state = useBridgeState();
+  const derivedInfo = useDerivedBridgeInfo();
+  const bridgeDirection = useBridgeDirection();
+
+  return {
+    ...state,
+    ...derivedInfo,
+    bridgeDirection,
   };
 }

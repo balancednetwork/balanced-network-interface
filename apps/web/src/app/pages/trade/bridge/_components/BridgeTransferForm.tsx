@@ -109,7 +109,7 @@ export default function BridgeTransferForm({ openModal }) {
           </Flex>
 
           <Typography as="div" mb={-1} textAlign="right" hidden={!xWallet.account}>
-            <Trans>Wallet:</Trans>
+            <Trans>Wallet:</Trans>{' '}
             {`${selectedTokenWalletBalance?.toFixed(4, { groupSeparator: ',' }) ?? 0} ${currencyToBridge?.symbol}`}
           </Typography>
 

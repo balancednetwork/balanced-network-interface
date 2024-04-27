@@ -60,6 +60,8 @@ msgstr ""
 msgid "{0} queue{1}"
 msgstr ""
 
+#: src/app/components/AddressInputPanel/index.tsx
+#: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 msgid "To"
 msgstr ""
@@ -629,7 +631,6 @@ msgstr "Ejecutado"
 msgid "Vote for this pool to receive bribes."
 msgstr ""
 
-#: src/app/components/AddressInputPanel/index.tsx
 #: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Address"
@@ -1163,6 +1164,7 @@ msgid "Forum link"
 msgstr "Enlace al foro"
 
 #: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 msgid "Not enough gas to complete the swap."
 msgstr ""
@@ -1516,6 +1518,7 @@ msgid "Claim ICX"
 msgstr "Cobrar ICX"
 
 #: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 msgid "xCall in progress"
 msgstr ""
@@ -1574,6 +1577,7 @@ msgstr ""
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #: src/app/components/trade/SwapPanel.tsx
 #: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Cancel"
@@ -1624,6 +1628,7 @@ msgstr ""
 msgid "Total supply"
 msgstr "Suministro total"
 
+#: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 msgid "From"
 msgstr ""
@@ -2253,6 +2258,7 @@ msgstr ""
 msgid "Cancelled"
 msgstr "Cancelado"
 
+#: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 msgid "address"
 msgstr ""
@@ -2289,6 +2295,11 @@ msgstr "Haciendo rebalancing para el precio de bnUSD..."
 msgid "Transfer failed."
 msgstr ""
 
+#: src/app/pages/trade/bridge-v2/_components/BridgeTransferStatus.tsx
+msgid "{message}"
+msgstr ""
+
+#: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 msgid "Transfer asset cross-chain?"
 msgstr ""
@@ -2374,6 +2385,7 @@ msgstr ""
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
 msgstr "Cambiados {inputAmount} {inputCurrency} por {outputAmount} {outputCurrency}."
 
+#: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 msgid "Transfer"

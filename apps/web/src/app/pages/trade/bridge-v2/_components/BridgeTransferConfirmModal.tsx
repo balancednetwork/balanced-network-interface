@@ -24,7 +24,6 @@ import { useShouldLedgerSign } from 'store/application/hooks';
 import {
   useBridgeTransferConfirmModalStore,
   bridgeTransferConfirmModalActions,
-  useBridgeTransferConfirmModal,
 } from '../_zustand/useBridgeTransferConfirmModalStore';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
@@ -65,20 +64,19 @@ const WithdrawOption = styled.button<{ active: boolean }>`
 `;
 
 export function BridgeTransferConfirmModal() {
-  const {
-    modalOpen,
-    isWithdrawNativeChecked,
+  const { modalOpen } = useBridgeTransferConfirmModalStore();
 
+  const {
+    isWithdrawNativeChecked,
     // derived
     shouldLedgerSign,
     isTransferring,
     isAllowanceIncreaseNeeded,
     isNativeVersionAvailable,
     withdrawableNativeAmount,
-
     //actions
     setIsWithdrawNativeChecked,
-  } = useBridgeTransferConfirmModal();
+  } = {};
 
   const bridgeDirection = useBridgeDirection();
   const { currency: currencyToBridge, recipient, typedValue } = useBridgeState();

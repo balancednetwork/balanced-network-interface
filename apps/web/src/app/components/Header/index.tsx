@@ -29,6 +29,7 @@ import ArchwayWallet from '../ArchwayWallet';
 import ICONWallet from '../ICONWallet';
 import { notificationCSS } from '../ICONWallet/wallets/utils';
 import { MouseoverTooltip } from '../Tooltip';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
 const StyledLogo = styled(Logo)`
   margin-right: 15px;
@@ -163,15 +164,30 @@ const WalletUIs = {
   'archway-1': ArchwayWallet,
 };
 
+function useClaimableICX(): UseQueryResult<BigNumber> {
+  const { account } = useIconReact();
+  const transactions = useAllTransactions();
+
+  return useQuery({
+    queryKey: ['claimableICX', account, transactions],
+    queryFn: async () => {
+      if (!account) return;
+
+      const result = await bnJs.Staking.getClaimableICX(account);
+      return BalancedJs.utils.toIcx(result);
+    },
+    enabled: !!account,
+  });
+}
+
 export default function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
   const upSmall = useMedia('(min-width: 600px)');
-  const { account, disconnect } = useIconReact();
+  const { disconnect } = useIconReact();
   const { disconnect: disconnectKeplr } = useArchwayContext();
-  const transactions = useAllTransactions();
-  const [claimableICX, setClaimableICX] = useState(new BigNumber(0));
   const [activeTab, setActiveTab] = useState<XChainId | null>(null);
   const signedInWallets = useSignedInWallets();
+  const { data: claimableICX } = useClaimableICX();
 
   useEffect(() => {
     if (signedInWallets.length > 0) setActiveTab(signedInWallets[0].chainId);
@@ -213,16 +229,6 @@ export default function Header(props: { title?: string; className?: string }) {
       setAnchor(null);
     }
   };
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    (async () => {
-      if (account) {
-        const result = await bnJs.Staking.getClaimableICX(account);
-        setClaimableICX(BalancedJs.utils.toIcx(result));
-      }
-    })();
-  }, [account, transactions]);
 
   const handleChainTabClick = (_chainId: XChainId) => {
     setActiveTab(_chainId);
@@ -285,7 +291,7 @@ export default function Header(props: { title?: string; className?: string }) {
               )}
             </WalletInfo>
 
-            <WalletButtonWrapper hasnotification={claimableICX.isGreaterThan(0)}>
+            <WalletButtonWrapper hasnotification={claimableICX?.isGreaterThan(0)}>
               <ClickAwayListener onClickAway={e => handleWalletClose(e)}>
                 <div>
                   <IconButton ref={walletButtonRef} onClick={toggleWalletMenu}>

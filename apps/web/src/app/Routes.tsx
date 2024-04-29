@@ -22,6 +22,7 @@ import { TradePage } from './pages/trade/page';
 import { SupplyPage } from './pages/trade/supply/page';
 import { BridgePage } from './pages/trade/bridge/page';
 import { BridgeV2Page } from './pages/trade/bridge-v2/page';
+import { LegacyBridge } from './pages/legacy-bridge/page';
 
 const VotePage = lazyLoad(
   () => import('./pages/vote/page'),
@@ -49,6 +50,7 @@ const ClaimGoodwillPage = lazyLoad(
 const routeTexts: [string, MessageDescriptor][] = [
   ['/vote', defineMessage({ message: 'Vote' })],
   ['/trade', defineMessage({ message: 'Trade' })],
+  ['/legacy-bridge', defineMessage({ message: 'Legacy bridge' })],
   ['/', defineMessage({ message: 'Home' })],
 ];
 
@@ -97,6 +99,7 @@ export default function RootRoutes() {
           <Route path="proposal/:id" element={<ProposalDetailsPage />} />
         </Route>
 
+        <Route path="legacy-bridge" element={<LegacyBridge />} />
         <Route path="airdrip" element={<Redirect to="https://balanced.network/" />} />
         <Route path="*" element={<Redirect to="https://balanced.network/404" />} />
       </Route>

@@ -27,7 +27,7 @@ export default function ModalContent(props: Props) {
       {props.children}
       {!props.noMessages && (
         <>
-          <LedgerConfirmMessage />
+          <LedgerConfirmMessage mt={2} />
           {!hasEnoughICX && !props.noCurrencyBalanceErrorMessage && <CurrencyBalanceErrorMessage mt={3} />}
         </>
       )}

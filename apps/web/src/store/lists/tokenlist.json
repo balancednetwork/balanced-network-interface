@@ -171,14 +171,6 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/eth.png"
     },
     {
-      "address": "cxb49d82c46be6b61cab62aaf9824b597c6cf8a25d",
-      "chainId": 1,
-      "name": "Binance USD",
-      "symbol": "BUSD",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/busd.png"
-    },
-    {
       "address": "cxc3c552054ba6823107b56086134c2afc26ab1dfa",
       "chainId": 2,
       "name": "Balance Token",
@@ -245,8 +237,8 @@
     {
       "address": "cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f",
       "chainId": 1,
-      "name": "Archway USDC",
-      "symbol": "archUSDC",
+      "name": "USDC",
+      "symbol": "USDC",
       "decimals": 6,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdc.png"
     },
@@ -273,6 +265,14 @@
       "symbol": "AVAX",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/avax.png"
+    },
+    {
+      "address": "cx4297f4b63262507623b6ad575d0d8dd2db980e4e",
+      "chainId": 1,
+      "name": "Injective",
+      "symbol": "INJ",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/inj.png"
     }
   ]
 }

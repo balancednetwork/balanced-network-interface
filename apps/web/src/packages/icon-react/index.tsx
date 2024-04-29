@@ -122,10 +122,12 @@ export function IconReactProvider({ children }) {
       setHasExtension(true);
     };
 
-    window.addEventListener('load', handler);
+    handler();
+    const delayedHandler = () => setTimeout(handler, 200);
+    window.addEventListener('load', delayedHandler);
 
     return () => {
-      window.removeEventListener('load', handler);
+      window.removeEventListener('load', delayedHandler);
     };
   }, []);
 

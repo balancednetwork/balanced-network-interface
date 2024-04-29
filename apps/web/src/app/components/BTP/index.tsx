@@ -153,6 +153,11 @@ const BTPContent = () => {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
+    toggleTransferAssetsModal();
+  }, []);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
     if (isOpenTransferAssetsModal) {
       localStorage.removeItem(ADDRESS_LOCAL_STORAGE);
       resetForm();

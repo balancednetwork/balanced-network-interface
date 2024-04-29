@@ -1,3 +1,4 @@
+import { Token } from '@balancednetwork/sdk-core';
 import { Event } from '@cosmjs/cosmwasm-stargate';
 
 export enum XWalletType {
@@ -137,3 +138,37 @@ export interface MessagingProtocol {
   name: string;
   description: string;
 }
+
+export class XToken extends Token {
+  xChainId: XChainId;
+
+  public constructor(
+    xChainId: XChainId,
+    chainId: number | string,
+    address: string,
+    decimals: number,
+    symbol?: string,
+    name?: string,
+    searchableTerms?: string,
+  ) {
+    super(chainId, address, decimals, symbol, name, searchableTerms);
+    this.xChainId = xChainId;
+    // super(chainId, decimals, symbol, name);
+    // this.address = validateAndParseAddress(address);
+    // this.searchableTerms = searchableTerms || '';
+  }
+
+  static getXToken(xChainId: XChainId, token: Token) {
+    return new XToken(
+      xChainId,
+      token.chainId,
+      token.address,
+      token.decimals,
+      token.symbol,
+      token.name,
+      token.searchableTerms,
+    );
+  }
+}
+
+export type XTokenMap = { [key: string | number]: XToken };

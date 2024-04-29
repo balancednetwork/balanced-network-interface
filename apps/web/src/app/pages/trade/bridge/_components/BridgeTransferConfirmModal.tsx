@@ -72,7 +72,7 @@ export default function BridgeTransferConfirmModal({
     allowanceIncreased,
     isIncreaseNeeded: allowanceIncreaseNeeded,
   } = useAllowanceHandler(
-    (bridgeDirection.from === 'archway-1' && !isDenom && currencyToBridge?.wrapped.address) || '',
+    bridgeDirection.from === 'archway-1' && !isDenom ? currencyToBridge : undefined,
     `${currencyAmountToBridge ? currencyAmountToBridge.quotient : '0'}`,
   );
 

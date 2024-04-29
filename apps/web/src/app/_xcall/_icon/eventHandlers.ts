@@ -15,13 +15,13 @@ import {
 } from 'store/xCall/hooks';
 
 import { XCallEventType } from '../types';
-import { ICON_WEBSOCKET_URL } from './config';
 import {
   getCallMessageSentEventFromLogs,
   getICONEventSignature,
   getTxFromCallExecutedLog,
   getXCallOriginEventDataFromICON,
 } from './utils';
+import { xChainMap } from '../archway/config1';
 
 export const useICONEventListener = () => {
   const listeningTo = useXCallListeningTo();
@@ -50,7 +50,7 @@ export const useICONEventListener = () => {
 
   React.useEffect(() => {
     if (eventName) {
-      const websocket = new WebSocket(ICON_WEBSOCKET_URL);
+      const websocket = new WebSocket(xChainMap['0x1.icon'].rpc.ws!);
 
       const eventSignature = getICONEventSignature(eventName);
       const query = {

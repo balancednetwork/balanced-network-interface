@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Fraction } from '@balancednetwork/sdk-core';
+import { Currency, Fraction } from '@balancednetwork/sdk-core';
 import { t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
@@ -12,11 +12,10 @@ import {
 
 import { useArchwayContext } from '../ArchwayProvider';
 import { archway } from '../config1';
-import { ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '../tokens';
 import { getFeeParam } from '../utils';
 
 const useAllowanceHandler = (
-  tokenAddress: string,
+  token: Currency | undefined,
   amountNeeded: string,
   spenderAddress: string = archway.contracts.assetManager,
   callback?: (success: boolean) => void,
@@ -27,6 +26,7 @@ const useAllowanceHandler = (
   const { transactions } = useArchwayTransactionsState();
   const [allowance, setAllowance] = React.useState<string>('0');
   const [allowanceIncreased, setAllowanceIncreased] = React.useState<boolean>(false);
+  const tokenAddress = token?.wrapped.address;
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
@@ -64,27 +64,16 @@ const useAllowanceHandler = (
         },
       };
       try {
-        initTransaction(
-          'archway-1',
-          t`Approving ${ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS[tokenAddress].symbol} for cross-chain transfer...`,
-        );
+        initTransaction('archway-1', t`Approving ${token.symbol} for cross-chain transfer...`);
 
         const res = await signingClient.execute(address, tokenAddress, msg, getFeeParam(400000));
         setAllowanceIncreased(true);
-        addTransactionResult(
-          'archway-1',
-          res,
-          t`${ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS[tokenAddress].symbol} approved for cross-chain transfer.`,
-        );
+        addTransactionResult('archway-1', res, t`${token.symbol} approved for cross-chain transfer.`);
 
         callback && callback(true);
       } catch (e) {
         console.error(e);
-        addTransactionResult(
-          'archway-1',
-          null,
-          t`${ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS[tokenAddress].symbol} transfer approval failed.`,
-        );
+        addTransactionResult('archway-1', null, t`${token.symbol} transfer approval failed.`);
       }
     }
   };

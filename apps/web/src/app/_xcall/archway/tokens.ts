@@ -3,7 +3,7 @@ import { Token } from '@balancednetwork/sdk-core';
 
 import { NETWORK_ID } from 'constants/config';
 import { TokenMap } from 'constants/tokens';
-import { ARCHWAY_TRANSFORMED_DEFAULT_TOKEN_LIST } from 'store/lists/hooks';
+import { XToken, XTokenMap } from '../types';
 
 // disable prettier printWidth rule
 // prettier-ignore
@@ -31,25 +31,31 @@ export const sARCH: TokenMap = {
   ),
 };
 
+export const sARCHOnArchway: XTokenMap = {
+  ['archway-1']: new XToken(
+    'archway-1',
+    'archway-1',
+    'archway1t2llqsvwwunf98v692nqd5juudcmmlu3zk55utx7xtfvznel030saclvq6',
+    18,
+    'sARCH',
+    'Staked Archway',
+  ),
+  ['archway']: new XToken(
+    'archway',
+    'archway',
+    'archway1erqguqc3hmfajgu7e2dvgaccx6feu5ru3gyatdxu94p66j9hp7msn2kcqp',
+    18,
+    'sARCH',
+    'Staked Archway',
+  ),
+};
+
 export const ArchwayToken: TokenMap = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'NativeArchFakeAddrress', 18, 'ARCH', 'Archway'),
   [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'NativeArchFakeAddrress', 18, 'ARCH', 'Archway'),
   [ChainId.LISBON]: new Token(ChainId.LISBON, 'NativeArchFakeAddrress', 18, 'ARCH', 'Archway'),
 };
 
-const chainId = NETWORK_ID;
-
-export const ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS = Object.keys(
-  ARCHWAY_TRANSFORMED_DEFAULT_TOKEN_LIST[chainId] ?? {},
-).reduce<{
-  [address: string]: Token;
-}>((newMap, address) => {
-  newMap[address] = ARCHWAY_TRANSFORMED_DEFAULT_TOKEN_LIST[chainId][address].token;
-  return newMap;
-}, {});
-
 export const useARCH = () => {
   return ArchwayToken[NETWORK_ID];
 };
-
-export const ARCHWAY_SUPPORTED_TOKENS_LIST: Token[] = Object.values(ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS);

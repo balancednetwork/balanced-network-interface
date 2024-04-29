@@ -15,12 +15,12 @@ import {
 } from 'store/xCall/hooks';
 
 import { CrossChainTxType, XCallEventType } from '../types';
-import { ARCHWAY_WEBSOCKET_URL } from './config';
 import {
   getCallExecutedEventDataFromArchwayEvent,
   getRollbackEventDataFromArchwayEvent,
   getXCallDestinationEventDataFromArchwayEvent,
 } from './utils';
+import { xChainMap } from './config1';
 
 const ARCHWAY_SOCKET_QUERY = {
   jsonrpc: '2.0',
@@ -52,7 +52,7 @@ export const useArchwayEventListener = () => {
   // initialize the websocket connection
   useEffect(() => {
     // create a new websocket
-    socketRef.current = new WebSocket(ARCHWAY_WEBSOCKET_URL);
+    socketRef.current = new WebSocket(xChainMap['archway-1'].rpc.ws!);
 
     // set the ready state
     socketRef.current.onopen = () => {

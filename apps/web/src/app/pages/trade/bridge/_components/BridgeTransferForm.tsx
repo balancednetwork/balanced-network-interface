@@ -55,7 +55,8 @@ export default function BridgeTransferForm({ openModal }) {
   const toggleWalletModal = useWalletModalToggle();
 
   const handleInputPercentSelect = (percent: number) => {
-    const currencyAmount = currencyToBridge && crossChainWallet[bridgeDirection.from][currencyToBridge.wrapped.address];
+    const currencyAmount =
+      currencyToBridge && crossChainWallet[bridgeDirection.from]?.[currencyToBridge.wrapped.address];
     if (currencyAmount) {
       onPercentSelection(Field.FROM, percent, currencyAmount.multiply(new Fraction(percent, 100)).toFixed());
     }

@@ -7,8 +7,8 @@ import bnJs from 'bnJs';
 import { archway, BRIDGE_PAIRS, sortChains, xChainMap, xChains } from './archway/config1';
 import { useIconReact } from 'packages/icon-react';
 import { useAccount, useDisconnect } from 'wagmi';
-import { useEffect, useMemo } from 'react';
-import { useBridgeDirection } from 'store/bridge/hooks';
+import { useMemo } from 'react';
+import { xTokenMap } from './config';
 
 export function useXCallGasChecker(
   chain1: XChainId,
@@ -28,7 +28,7 @@ export function useXCallGasChecker(
         const xChain = xChains[chain];
         const nativeCurrency = xChain.nativeCurrency;
         // !TODO: use native property to fetch native currency balance
-        const gasAmount = balances[chain] && balances[chain]['native'];
+        const gasAmount = balances[chain] && balances[chain]?.['native'];
         const hasEnoughGas =
           xChain.autoExecution ||
           (gasAmount
@@ -174,4 +174,12 @@ export const useWallets = () => {
     }),
     [arch, icon, avax],
   );
+};
+
+export const useXTokens = (from: XChainId, to?: XChainId) => {
+  if (to) {
+    return xTokenMap[from]?.[to];
+  } else {
+    return Object.values(xTokenMap[from] || {}).flat();
+  }
 };

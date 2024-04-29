@@ -1,0 +1,118 @@
+{
+  "name": "Balanced Tokens",
+  "timestamp": "2022-07-01T08:37:27.276Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "tags": {},
+  "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/baln.png",
+  "keywords": ["balanced", "default"],
+  "tokens": [
+    {
+      "address": "cx88fd7df7ddff82f7cc735c871dc519838cb235bb",
+      "chainId": 1,
+      "name": "Balanced Dollar",
+      "symbol": "bnUSD",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
+    },
+    {
+      "address": "cxae3034235540b924dfcc1b45836c293dcc82bfb7",
+      "chainId": 1,
+      "name": "ICON USD Coin",
+      "symbol": "IUSDC",
+      "decimals": 6,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdc.png"
+    },
+    {
+      "address": "cxd06f80e28e989a67e297799ab1fb501cdddc2b4d",
+      "chainId": 7,
+      "name": "Balanced Dollar",
+      "symbol": "bnUSD",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
+    },
+    {
+      "address": "cx538a925f49427d4f1078aed638c8cb525071fc68",
+      "chainId": 7,
+      "name": "ICON USD Coin",
+      "symbol": "IUSDC",
+      "decimals": 6,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdc.png"
+    },
+    {
+      "address": "cx87f7f8ceaa054d46ba7343a2ecd21208e12913c6",
+      "chainId": 2,
+      "name": "Balanced Dollar",
+      "symbol": "bnUSD",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
+    },
+    {
+      "address": "cx9634be155fc77754c4b2e1bceddc1c63d973f1f3",
+      "chainId": 2,
+      "name": "ICON USD Coin",
+      "symbol": "IUSDC",
+      "decimals": 6,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdc.png"
+    },
+    {
+      "address": "cx4761756e11195947dd27d765ac01e931b836065c",
+      "chainId": 7,
+      "name": "Staked Archway",
+      "symbol": "sARCH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sarch.png"
+    },
+    {
+      "address": "cx1f94585b61e47db9d5e036307f96a3251a0486a1",
+      "chainId": 2,
+      "name": "Staked Archway",
+      "symbol": "sARCH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sarch.png"
+    },
+    {
+      "address": "cxfe94530ee0d159db3e5b7dcffbcd0dfb360075c0",
+      "chainId": 1,
+      "name": "Staked Archway",
+      "symbol": "sARCH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sarch.png"
+    },
+    {
+      "address": "cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f",
+      "chainId": 1,
+      "name": "USDC",
+      "symbol": "USDC",
+      "decimals": 6,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdc.png"
+    },
+    {
+      "address": "cxf0a30d09ade391d7b570908b9b46cfa5b3cbc8f8",
+      "chainId": 1,
+      "name": "HiYield Treasury Bill",
+      "symbol": "hyTB",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/hyTB.png"
+    },
+    {
+      "address": "cx66a031cc3bd305c76371fb586e93801b948254f0",
+      "chainId": 1,
+      "name": "AVAX",
+      "symbol": "AVAX",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/avax.png"
+    },
+    {
+      "address": "cx4297f4b63262507623b6ad575d0d8dd2db980e4e",
+      "chainId": 1,
+      "name": "Injective",
+      "symbol": "INJ",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/inj.png"
+    }
+  ]
+}

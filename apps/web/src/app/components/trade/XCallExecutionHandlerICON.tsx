@@ -39,13 +39,13 @@ type XCallExecutionHandlerProps = {
   callback?: (success: boolean) => void;
   msgs: {
     txMsgs: {
-      [key in XChainId]: {
+      [key in XChainId]?: {
         pending: string;
         summary: string;
       };
     };
     managerMsgs: {
-      [key in XChainId]: {
+      [key in XChainId]?: {
         awaiting: string;
         actionRequired: string;
       };
@@ -120,8 +120,8 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
       addTransaction(
         { hash },
         {
-          pending: msgs.txMsgs['0x1.icon'].pending,
-          summary: msgs.txMsgs['0x1.icon'].summary,
+          pending: msgs.txMsgs['0x1.icon']?.pending,
+          summary: msgs.txMsgs['0x1.icon']?.summary,
           isTxSuccessfulBasedOnEvents: xCallSwapSuccessPredicate,
         },
       );
@@ -185,7 +185,7 @@ const XCallExecutionHandlerICON = ({ event, msgs, clearInputs, xCallReset, callb
     return (
       <>
         <Typography mb={4}>
-          <Trans>{msgs.managerMsgs['0x1.icon'].actionRequired}</Trans>
+          <Trans>{msgs.managerMsgs['0x1.icon']?.actionRequired}</Trans>
         </Typography>
         <Flex alignItems="center" key={event.reqId}>
           <Button onClick={() => handleICONExecuteXCall(event)} disabled={isICONTxPending}>

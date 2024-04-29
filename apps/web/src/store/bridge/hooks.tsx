@@ -131,8 +131,8 @@ export function useDerivedBridgeInfo() {
           signedInWallets.some(
             wallet =>
               wallet.chainId === bridgeDirection.from &&
-              (!crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address] ||
-                crossChainWallet[bridgeDirection.from][currencyAmountToBridge.currency.address]?.lessThan(
+              (!crossChainWallet[bridgeDirection.from]?.[currencyAmountToBridge.currency.address] ||
+                crossChainWallet[bridgeDirection.from]?.[currencyAmountToBridge.currency.address]?.lessThan(
                   currencyAmountToBridge,
                 )),
           )
@@ -156,7 +156,7 @@ export function useDerivedBridgeInfo() {
 
   const selectedTokenWalletBalance = React.useMemo(() => {
     if (currencyToBridge) {
-      return crossChainWallet[bridgeDirection.from][currencyToBridge.wrapped.address];
+      return crossChainWallet[bridgeDirection.from]?.[currencyToBridge.wrapped.address];
     }
   }, [bridgeDirection.from, crossChainWallet, currencyToBridge]);
 

@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppState } from 'store';
 
 import { changeConfig } from './actions';
-import ARCHWAY_DEFAULT_TOKEN_LIST from './archwayTokenlist.json';
 import COMMUNITY_TOKEN_LIST from './communitylist.json';
 import DEFAULT_TOKEN_LIST from './tokenlist.json';
 import { WrappedTokenInfo } from './wrappedTokenInfo';
@@ -20,11 +19,11 @@ export function useChangeCommunityConfig() {
   return useCallback((value: boolean) => dispatch(changeConfig({ community: value })), [dispatch]);
 }
 
-export type TokenAddressMap = Readonly<{
-  [chainId: number]: Readonly<{
+export type TokenAddressMap = {
+  [chainId: number | string]: {
     [tokenAddress: string]: { token: WrappedTokenInfo; list: TokenList };
-  }>;
-}>;
+  };
+};
 
 export const ArchToICONNetworkMap: { [key: string]: number } = {
   'archway-1': 1,
@@ -68,12 +67,10 @@ export function listToTokenMap(list: TokenList): TokenAddressMap {
 export const TRANSFORMED_DEFAULT_TOKEN_LIST = listToTokenMap(DEFAULT_TOKEN_LIST);
 export const TRANSFORMED_COMBINED_TOKEN_LIST = listToTokenMap(COMMUNITY_TOKEN_LIST);
 
-export const ARCHWAY_TRANSFORMED_DEFAULT_TOKEN_LIST = listToTokenMap(ARCHWAY_DEFAULT_TOKEN_LIST);
-
-Object.keys(TRANSFORMED_DEFAULT_TOKEN_LIST).forEach(chain => {
-  if (!TRANSFORMED_COMBINED_TOKEN_LIST[chain]) TRANSFORMED_COMBINED_TOKEN_LIST[chain] = {};
-  Object.keys(TRANSFORMED_DEFAULT_TOKEN_LIST[chain]).forEach(cx => {
-    TRANSFORMED_COMBINED_TOKEN_LIST[chain][cx] = { ...TRANSFORMED_DEFAULT_TOKEN_LIST[chain][cx] };
+Object.keys(TRANSFORMED_DEFAULT_TOKEN_LIST).forEach((chainId: string | number) => {
+  if (!TRANSFORMED_COMBINED_TOKEN_LIST[chainId]) TRANSFORMED_COMBINED_TOKEN_LIST[chainId] = {};
+  Object.keys(TRANSFORMED_DEFAULT_TOKEN_LIST[chainId]).forEach(cx => {
+    TRANSFORMED_COMBINED_TOKEN_LIST[chainId][cx] = { ...TRANSFORMED_DEFAULT_TOKEN_LIST[chainId][cx] };
   });
 });
 

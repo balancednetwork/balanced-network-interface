@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { ARCHWAY_SUPPORTED_TOKENS_LIST, useARCH } from 'app/_xcall/archway/tokens';
+import { useARCH } from 'app/_xcall/archway/tokens';
 import { isDenomAsset } from 'app/_xcall/archway/utils';
 import { SUPPORTED_XCALL_CHAINS } from 'app/_xcall/config';
 import { XChain, XChainId } from 'app/_xcall/types';
@@ -38,14 +38,14 @@ import { useUserAddedTokens } from 'store/user/hooks';
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
 import { changeArchwayBalances, changeICONBalances } from './actions';
-import { useWallets } from 'app/_xcall/hooks';
+import { useWallets, useXTokens } from 'app/_xcall/hooks';
 
 export function useCrossChainWalletBalances(): AppState['wallet'] {
   return useSelector((state: AppState) => state.wallet);
 }
 
-export function useICONWalletBalances(): AppState['wallet']['0x1.icon'] {
-  return useSelector((state: AppState) => state.wallet['0x1.icon']);
+export function useICONWalletBalances(): { [address: string]: CurrencyAmount<Currency> } {
+  return useSelector((state: AppState) => state.wallet['0x1.icon']!);
 }
 
 export function useArchwayWalletBalances(): AppState['wallet']['archway-1'] {
@@ -135,7 +135,7 @@ export function useWalletFetchBalances(account?: string | null, accountArch?: st
       ? [...COMBINED_TOKENS_LIST, ...userAddedTokens]
       : [...SUPPORTED_TOKENS_LIST, ...userAddedTokens];
   }, [userAddedTokens, tokenListConfig]);
-  const tokensArch = [...ARCHWAY_SUPPORTED_TOKENS_LIST];
+  const tokensArch = useXTokens('archway-1') || [];
 
   const balances = useAvailableBalances(account || undefined, tokens);
   const { data: balancesArch } = useArchwayBalances(accountArch || undefined, tokensArch);
@@ -274,7 +274,7 @@ export function useCrossChainCurrencyBalances(
             if (crossChainBalances[chain] && currency) {
               const tokenAddress = getCrossChainTokenAddress(chain, currency.wrapped.symbol);
               const balance: CurrencyAmount<Currency> | undefined = tokenAddress
-                ? crossChainBalances[chain][tokenAddress]
+                ? crossChainBalances[chain]?.[tokenAddress]
                 : undefined;
               balances[chain] = balance;
               return balances;
@@ -298,7 +298,7 @@ export const useCurrencyBalanceCrossChains = (currency: Currency): BigNumber => 
         if (crossChainBalances[chain]) {
           const tokenAddress = getCrossChainTokenAddress(chain, currency.wrapped.symbol);
           if (tokenAddress) {
-            const balance = new BigNumber(crossChainBalances[chain][tokenAddress]?.toFixed() || 0);
+            const balance = new BigNumber(crossChainBalances[chain]?.[tokenAddress]?.toFixed() || 0);
             balances = balances.plus(balance);
           }
         }

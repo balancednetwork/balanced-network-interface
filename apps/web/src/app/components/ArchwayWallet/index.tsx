@@ -10,11 +10,7 @@ import { useMedia } from 'react-use';
 import { Flex } from 'rebass/styled-components';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import {
-  ARCHWAY_SUPPORTED_TOKENS_LIST,
-  ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS,
-  useARCH,
-} from 'app/_xcall/archway/tokens';
+import { useARCH } from 'app/_xcall/archway/tokens';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
@@ -53,6 +49,7 @@ import { useTokenComparator } from '../SearchModal/sorting';
 import ICXWallet from './wallets/ICXWallet';
 import SendPanel from './wallets/SendPanel';
 import SICXWallet from './wallets/SICXWallet';
+import { useXTokens } from 'app/_xcall/hooks';
 
 const WalletUIs = {
   ICX: ICXWallet,
@@ -60,8 +57,6 @@ const WalletUIs = {
 };
 
 const walletBreakpoint = '499px';
-
-const ADDRESSES = ARCHWAY_SUPPORTED_TOKENS_LIST.map(currency => currency.address);
 
 const WalletUI = ({ currency }: { currency: Currency }) => {
   const [claimableICX, setClaimableICX] = useState(new BigNumber(0));
@@ -104,21 +99,23 @@ const ArchwayWallet = ({ setAnchor, anchor }) => {
 
   const tokenComparator = useTokenComparator(accountArch, false);
 
-  // const icxAddress = bnJs.ICX.address;
-
+  const xTokens = useXTokens('archway-1');
   const addressesWithAmount = useMemo(
-    () => ADDRESSES.filter(address => !isDPZeroCA(balances[address], HIGH_PRICE_ASSET_DP[address] || 2)),
-    [balances],
+    () =>
+      xTokens
+        ?.map(t => t.address)
+        .filter(address => !isDPZeroCA(balances?.[address], HIGH_PRICE_ASSET_DP[address] || 2)),
+    [balances, xTokens],
   );
 
   const filteredTokens: Token[] = useMemo(() => {
-    return filterTokens(Object.values(ARCHWAY_SUPPORTED_TOKENS_MAP_BY_ADDRESS), debouncedQuery).filter(
-      token => addressesWithAmount.indexOf(token.address) >= 0,
+    return filterTokens(xTokens || [], debouncedQuery).filter(
+      token => (addressesWithAmount || [])?.indexOf(token.address) >= 0,
     );
-  }, [debouncedQuery, addressesWithAmount]);
+  }, [debouncedQuery, addressesWithAmount, xTokens]);
 
   const sortedTokens: Token[] = useMemo(() => {
-    if (balances[arch.address]?.greaterThan(0)) {
+    if (balances?.[arch.address]?.greaterThan(0)) {
       return [arch, ...filteredTokens].sort(tokenComparator);
     } else {
       return filteredTokens.sort(tokenComparator);
@@ -222,13 +219,13 @@ const ArchwayWallet = ({ setAnchor, anchor }) => {
           <DataText as="div">
             {!accountArch
               ? '-'
-              : balances[address]?.toFixed(HIGH_PRICE_ASSET_DP[address] || 2, { groupSeparator: ',' })}
+              : balances?.[address]?.toFixed(HIGH_PRICE_ASSET_DP[address] || 2, { groupSeparator: ',' })}
           </DataText>
 
           <DataText as="div">
             {!accountArch || !rates || !symbol || !rates[symbol] || !rateFracs
               ? '-'
-              : `$${balances[address]?.multiply(rateFracs[symbol]).toFixed(2, { groupSeparator: ',' })}`}
+              : `$${balances?.[address]?.multiply(rateFracs[symbol]).toFixed(2, { groupSeparator: ',' })}`}
           </DataText>
         </BalanceAndValueWrap>
       </>

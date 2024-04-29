@@ -1,11 +1,11 @@
 import rlp from 'rlp';
 
-import { COMBINED_TOKENS_LIST } from 'constants/tokens';
 import { XCallState } from 'store/xCall/reducer';
 
-import { ARCHWAY_SUPPORTED_TOKENS_LIST } from './archway/tokens';
 import { OriginXCallData, XChainId, XCallEventType } from './types';
 import { xChainMap } from './archway/config1';
+import { xTokenMap } from './config';
+import { Currency } from '@balancednetwork/sdk-core';
 
 export function getRlpEncodedMsg(msg: string | any[]) {
   return Array.from(rlp.encode(msg));
@@ -36,7 +36,7 @@ export const getNetworkDisplayName = (chain: XChainId) => {
 
 export const getArchwayCounterToken = (symbol?: string) => {
   if (symbol) {
-    return ARCHWAY_SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
+    return xTokenMap['archway-1']?.['0x1.icon']?.find(t => t.symbol === symbol);
   }
 };
 
@@ -48,18 +48,24 @@ export const getOriginEvent = (sn: number, xCallState: XCallState): OriginXCallD
 
 export const getCrossChainTokenAddress = (chain: XChainId, tokenSymbol?: string): string | undefined => {
   if (!tokenSymbol) return;
-  if (chain === '0x1.icon') {
-    return COMBINED_TOKENS_LIST.find(token => token.symbol === tokenSymbol)?.address;
-  } else if (chain === 'archway-1') {
-    return ARCHWAY_SUPPORTED_TOKENS_LIST.find(token => token.symbol === tokenSymbol)?.address;
-  }
+
+  return Object.values(xTokenMap[chain] || {})
+    .flat()
+    .find(t => t.symbol === tokenSymbol)?.address;
 };
 
 export const getCrossChainTokenBySymbol = (chain: XChainId, symbol?: string) => {
   if (!symbol) return;
-  if (chain === '0x1.icon') {
-    return COMBINED_TOKENS_LIST.find(token => token.symbol === symbol);
-  } else if (chain === 'archway-1') {
-    return ARCHWAY_SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
-  }
+
+  return Object.values(xTokenMap[chain] || {})
+    .flat()
+    .find(t => t.symbol === symbol);
+};
+
+export const isXToken = (token?: Currency) => {
+  if (!token) return false;
+
+  return Object.values(xTokenMap)
+    .flatMap(t => Object.values(t).flat())
+    .some(t => t.address === token.wrapped.address);
 };

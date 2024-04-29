@@ -3,7 +3,7 @@ import { createAction } from '@reduxjs/toolkit';
 import { SupportedLocale } from 'constants/locales';
 
 export interface SerializedToken {
-  chainId: number;
+  chainId: number | string;
   address: string;
   decimals: number;
   symbol?: string;

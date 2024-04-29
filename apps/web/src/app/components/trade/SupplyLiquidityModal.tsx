@@ -13,7 +13,7 @@ import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { archway } from 'app/_xcall/archway/config1';
 import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { CurrentXCallStateType, XChainId } from 'app/_xcall/types';
-import { getBytesFromString, getCrossChainTokenAddress } from 'app/_xcall/utils';
+import { getBytesFromString, getCrossChainTokenAddress, getCrossChainTokenBySymbol } from 'app/_xcall/utils';
 import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
@@ -76,8 +76,7 @@ export default function SupplyLiquidityModal({
   const addTransactionResult = useAddTransactionResult();
   const { isTxPending } = useArchwayTransactionsState();
   const { increaseAllowance: increaseAllowanceA, isIncreaseNeeded: allowanceIncreaseNeededA } = useAllowanceHandler(
-    (AChain === 'archway-1' && getCrossChainTokenAddress('archway-1', currencies[Field.CURRENCY_A]?.wrapped.symbol)) ||
-      '',
+    AChain === 'archway-1' ? getCrossChainTokenBySymbol('archway-1', currencies[Field.CURRENCY_A]?.symbol) : undefined,
     parsedAmounts[Field.CURRENCY_A]?.quotient.toString() || '0',
   );
 

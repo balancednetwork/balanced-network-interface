@@ -2,16 +2,6 @@ import { SupportedChainId } from '@balancednetwork/balanced-js';
 
 import { NETWORK_ID } from 'constants/config';
 
-import { XChainId } from '../types';
-
-const ICON_WEBSOCKET_URLS: { [key in SupportedChainId]: string } = {
-  [SupportedChainId.MAINNET]: 'wss://ctz.solidwallet.io/api/v3/icon_dex/block',
-  [SupportedChainId.BERLIN]: 'wss://berlin.net.solidwallet.io/api/v3/icon_dex/block',
-  [SupportedChainId.LISBON]: 'wss://lisbon.net.solidwallet.io/api/v3/icon_dex/block',
-  [SupportedChainId.SEJONG]: 'wss://sejong.net.solidwallet.io/api/v3/icon_dex/block',
-  [SupportedChainId.YEOUIDO]: 'wss://yeouido.net.solidwallet.io/api/v3/icon_dex/block',
-};
-
 const ARCHWAY_FEE_TOKEN_SYMBOLS: { [key in SupportedChainId]: string } = {
   [SupportedChainId.MAINNET]: 'aarch',
   [SupportedChainId.BERLIN]: 'aconst',
@@ -20,28 +10,4 @@ const ARCHWAY_FEE_TOKEN_SYMBOLS: { [key in SupportedChainId]: string } = {
   [SupportedChainId.YEOUIDO]: 'aconst',
 };
 
-type TokenChainsType = {
-  [ICONtokenAddress: string]: [XChainId];
-};
-
-const CROSSCHAIN_SUPPORTED_TOKENS_: { [key in SupportedChainId]: any } = {
-  [SupportedChainId.MAINNET]: {
-    cx88fd7df7ddff82f7cc735c871dc519838cb235bb: ['0x1.icon', 'archway-1'],
-    cxfe94530ee0d159db3e5b7dcffbcd0dfb360075c0: ['0x1.icon', 'archway-1'],
-  },
-  //TODO: refactor
-  [SupportedChainId.BERLIN]: {
-    cxd06f80e28e989a67e297799ab1fb501cdddc2b4d: ['0x1.icon', 'archway-1'],
-    cx4761756e11195947dd27d765ac01e931b836065c: ['0x1.icon', 'archway-1'],
-  },
-  [SupportedChainId.LISBON]: {
-    cx1f94585b61e47db9d5e036307f96a3251a0486a1: ['0x1.icon', 'archway-1'],
-    cx87f7f8ceaa054d46ba7343a2ecd21208e12913c6: ['0x1.icon', 'archway-1'],
-  },
-  [SupportedChainId.YEOUIDO]: {},
-  [SupportedChainId.SEJONG]: {},
-};
-
 export const ARCHWAY_FEE_TOKEN_SYMBOL = ARCHWAY_FEE_TOKEN_SYMBOLS[NETWORK_ID];
-export const ICON_WEBSOCKET_URL = ICON_WEBSOCKET_URLS[NETWORK_ID];
-export const CROSSCHAIN_SUPPORTED_TOKENS: TokenChainsType = CROSSCHAIN_SUPPORTED_TOKENS_[NETWORK_ID];

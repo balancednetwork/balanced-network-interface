@@ -11,7 +11,6 @@ import { ChevronRight } from 'react-feather';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { CROSSCHAIN_SUPPORTED_TOKENS } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { DEFAULT_TOKEN_CHAIN } from 'app/_xcall/config';
 import { CurrentXCallStateType, XChainId } from 'app/_xcall/types';
@@ -47,10 +46,10 @@ import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';
 import StabilityFund from '../StabilityFund';
 import { XCallDescription } from '../XCallDescription';
-import CrossChainOptions from './CrossChainOptions';
 import { BrightPanel, swapMessage } from './utils';
 import XCallSwapModal from './XCallSwapModal';
 import { useXCallFee, useXCallProtocol, useXWallet } from 'app/_xcall/hooks';
+import { isXToken } from 'app/_xcall/utils';
 
 const MemoizedStabilityFund = React.memo(StabilityFund);
 
@@ -88,12 +87,8 @@ export default function SwapPanel() {
 
   const signedInWallets = useSignedInWallets();
   const isChainDifference = crossChainOrigin !== crossChainDestination;
-  const isOutputCrosschainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(
-    currencies?.OUTPUT?.wrapped.address || '',
-  );
-  const isInputCrosschainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(
-    currencies?.INPUT?.wrapped.address || '',
-  );
+  const isOutputCrosschainCompatible = isXToken(currencies?.OUTPUT);
+  const isInputCrosschainCompatible = isXToken(currencies?.INPUT);
   const [crossChainSwapModalOpen, setCrossChainSwapModalOpen] = React.useState(false);
   const closeCrossChainSwapModal = React.useCallback(() => {
     setCrossChainSwapModalOpen(false);
@@ -147,7 +142,7 @@ export default function SwapPanel() {
 
   const onCurrencySelectionWithChainControl = useCallback(
     (field: Field, currency: Currency) => {
-      const isCrossChainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(currency.wrapped.address || '');
+      const isCrossChainCompatible = isXToken(currency);
       onCurrencySelection(field, currency);
 
       if (field === Field.INPUT) {
@@ -195,9 +190,8 @@ export default function SwapPanel() {
         onSwitchTokensWithChainControl();
         return;
       }
-      const isCrossChainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(
-        inputCurrency.wrapped.address || '',
-      );
+
+      const isCrossChainCompatible = isXToken(inputCurrency);
       onCurrencySelectionWithChainControl(Field.INPUT, inputCurrency);
       if (isCrossChainCompatible) {
         setOriginSelectorOpen(true);
@@ -213,9 +207,7 @@ export default function SwapPanel() {
         onSwitchTokensWithChainControl();
         return;
       }
-      const isCrossChainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(
-        outputCurrency.wrapped.address || '',
-      );
+      const isCrossChainCompatible = isXToken(outputCurrency);
       onCurrencySelectionWithChainControl(Field.OUTPUT, outputCurrency);
       if (isCrossChainCompatible) {
         setDestinationSelectorOpen(true);
@@ -409,18 +401,10 @@ export default function SwapPanel() {
               percent={percents[Field.INPUT]}
               selectedCurrency={currencies[Field.OUTPUT]}
               isCrossChainToken={isInputCrosschainCompatible}
+              xChainId={crossChainOrigin}
+              onChainSelect={isInputCrosschainCompatible ? setCrossChainOrigin : undefined}
             />
           </Flex>
-
-          {isInputCrosschainCompatible && (
-            <CrossChainOptions
-              currency={currencies[Field.INPUT]}
-              chain={crossChainOrigin}
-              setChain={setCrossChainOrigin}
-              isOpen={originSelectorOpen}
-              setOpen={setOriginSelectorOpen}
-            />
-          )}
 
           <Flex alignItems="center" justifyContent="center" my={-1}>
             <FlipButton onClick={onSwitchTokensWithChainControl}>
@@ -455,20 +439,11 @@ export default function SwapPanel() {
               onUserInput={handleTypeOutput}
               onCurrencySelect={handleOutputSelect}
               selectedCurrency={currencies[Field.INPUT]}
-              // isChainDifference={isChainDifference}
               isCrossChainToken={isOutputCrosschainCompatible}
+              xChainId={crossChainDestination}
+              onChainSelect={setCrossChainDestination}
             />
           </Flex>
-
-          {isOutputCrosschainCompatible && (
-            <CrossChainOptions
-              currency={currencies[Field.OUTPUT]}
-              chain={crossChainDestination}
-              setChain={setCrossChainDestination}
-              isOpen={destinationSelectorOpen}
-              setOpen={setDestinationSelectorOpen}
-            />
-          )}
         </AutoColumn>
 
         <AutoColumn gap="5px" mt={5}>

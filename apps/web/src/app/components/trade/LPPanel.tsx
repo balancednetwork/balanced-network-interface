@@ -8,7 +8,6 @@ import Nouislider from 'packages/nouislider-react';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { CROSSCHAIN_SUPPORTED_TOKENS } from 'app/_xcall/_icon/config';
 import { DEFAULT_TOKEN_CHAIN } from 'app/_xcall/config';
 import { XChainId } from 'app/_xcall/types';
 import { Button } from 'app/components/Button';
@@ -23,10 +22,10 @@ import { useMintState, useDerivedMintInfo, useMintActionHandlers, useInitialSupp
 import { maxAmountSpend } from 'utils';
 
 import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
-import CrossChainOptions from './CrossChainOptions';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 import { SectionPanel, BrightPanel } from './utils';
+import { isXToken } from 'app/_xcall/utils';
 
 const Slider = styled(Box)`
   margin-top: 40px;
@@ -150,9 +149,7 @@ export default function LPPanel() {
 
   const [{ percent, needUpdate }, setPercent] = React.useState({ percent: 0, needUpdate: false });
 
-  const isCurrencyACrosschainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(
-    currencies?.CURRENCY_A?.wrapped.address || '',
-  );
+  const isCurrencyACrosschainCompatible = isXToken(currencies?.CURRENCY_A);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
@@ -216,7 +213,7 @@ export default function LPPanel() {
     (currencyA: Currency) => {
       onCurrencySelection(Field.CURRENCY_A, currencyA);
 
-      const isCrossChainCompatible = Object.keys(CROSSCHAIN_SUPPORTED_TOKENS).includes(currencyA.wrapped.address || '');
+      const isCrossChainCompatible = isXToken(currencyA);
       if (isCrossChainCompatible) {
         setChainSelectorOpen(true);
         if (DEFAULT_TOKEN_CHAIN[currencyA.symbol as string]) {
@@ -298,17 +295,10 @@ export default function LPPanel() {
                   onCurrencySelect={handleCurrencyASelect}
                   onPercentSelect={handlePercentSelect(Field.CURRENCY_A)}
                   isCrossChainToken={isCurrencyACrosschainCompatible}
+                  xChainId={crossChainCurrencyA}
+                  onChainSelect={isCurrencyACrosschainCompatible ? setCrossChainCurrencyA : undefined}
                 />
               </Flex>
-              {isCurrencyACrosschainCompatible && (
-                <CrossChainOptions
-                  currency={currencies[Field.CURRENCY_A]}
-                  chain={crossChainCurrencyA}
-                  setChain={setCrossChainCurrencyA}
-                  isOpen={chainSelectorOpen}
-                  setOpen={setChainSelectorOpen}
-                />
-              )}
             </AutoColumn>
 
             <AutoColumn gap="md" hidden={isQueue}>

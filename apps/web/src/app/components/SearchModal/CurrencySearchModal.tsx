@@ -9,6 +9,7 @@ import { PopperWithoutArrow } from '../Popover';
 import { CurrencySearch, CurrencySelectionType } from './CurrencySearch';
 import { ImportToken } from './ImportToken';
 import { RemoveToken } from './RemoveToken';
+import { XChainId } from 'app/_xcall/types';
 
 interface CurrencySearchModalProps {
   account?: string | null;
@@ -23,6 +24,7 @@ interface CurrencySearchModalProps {
   width?: number;
   anchorEl?: any;
   showCommunityListControl: boolean;
+  xChainId: XChainId;
 }
 
 export enum CurrencyModalView {
@@ -46,6 +48,7 @@ export default function CurrencySearchModal({
   width,
   anchorEl,
   showCommunityListControl,
+  xChainId,
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage);
   const lastOpen = useLast(isOpen);
@@ -115,6 +118,7 @@ export default function CurrencySearchModal({
           showManageView={showManageView}
           width={width}
           showCommunityListControl={showCommunityListControl}
+          xChainId={xChainId}
         />
       </PopperWithoutArrow>
 

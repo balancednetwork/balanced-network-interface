@@ -19,7 +19,7 @@ export abstract class BaseCurrency {
   /**
    * The chain ID on which this currency resides
    */
-  public readonly chainId: number;
+  public readonly chainId: number | string;
   /**
    * The decimals used in representing currency amounts
    */
@@ -40,8 +40,8 @@ export abstract class BaseCurrency {
    * @param symbol symbol of the currency
    * @param name of the currency
    */
-  protected constructor(chainId: number, decimals: number, symbol?: string, name?: string) {
-    invariant(Number.isSafeInteger(chainId), 'CHAIN_ID');
+  protected constructor(chainId: number | string, decimals: number, symbol?: string, name?: string) {
+    // invariant(Number.isSafeInteger(chainId), 'CHAIN_ID');
     invariant(decimals >= 0 && decimals < 255 && Number.isInteger(decimals), 'DECIMALS');
 
     this.chainId = chainId;

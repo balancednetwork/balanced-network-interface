@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Typography } from 'app/theme';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { useBridgeActionHandlers, useBridgeInfo } from 'store/bridge/hooks';
-import { sARCH, useARCH } from 'app/_xcall/archway/tokens';
+import { sARCHOnArchway, useARCH } from 'app/_xcall/archway/tokens';
 import { XChainId } from 'app/_xcall/types';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
@@ -12,7 +12,6 @@ import { archway } from 'app/_xcall/archway/config1';
 
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
-import { getArchwayCounterToken } from 'app/_xcall/utils';
 
 const WithdrawOption = styled.button<{ active: boolean }>`
   text-align: center;
@@ -53,17 +52,17 @@ export function useWithdrawableNativeAmount(
   return useQuery({
     queryKey: ['withdrawableNativeAmount', currencyAmount, chain],
     queryFn: async () => {
-      if (!currencyAmount || !client || chain !== 'archway-1' || !isLiquidsARCH) return;
+      if (!currencyAmount || !client || (chain !== 'archway-1' && chain !== 'archway') || !isLiquidsARCH) return;
 
-      const sARCHOnArchway = getArchwayCounterToken('sARCH');
-      if (sARCHOnArchway?.address) {
+      const sARCH = sARCHOnArchway[chain];
+      if (sARCH?.address) {
         const response = await client!.queryContractSmart(archway.contracts.liquidSwap!, {
           simulation: {
             offer_asset: {
               amount: currencyAmount?.numerator.toString(),
               info: {
                 token: {
-                  contract_addr: sARCHOnArchway?.address,
+                  contract_addr: sARCH?.address,
                 },
               },
             },
@@ -79,7 +78,7 @@ export function useWithdrawableNativeAmount(
     },
     placeholderData: keepPreviousData,
     refetchInterval: 2000,
-    enabled: !!currencyAmount && !!client && chain === 'archway-1' && isLiquidsARCH,
+    enabled: !!currencyAmount && !!client && (chain === 'archway-1' || chain === 'archway') && isLiquidsARCH,
   });
 }
 

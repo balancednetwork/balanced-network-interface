@@ -140,7 +140,7 @@ const XCallSwapModal = ({
     allowanceIncreased,
     isIncreaseNeeded: allowanceIncreaseNeeded,
   } = useAllowanceHandler(
-    (originChain === 'archway-1' && getArchwayCounterToken(executionTrade?.inputAmount.currency.symbol)?.address) || '',
+    originChain === 'archway-1' ? getArchwayCounterToken(executionTrade?.inputAmount.currency.symbol) : undefined,
     executionTrade?.inputAmount.quotient.toString() || '0',
   );
 

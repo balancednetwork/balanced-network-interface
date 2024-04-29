@@ -14,6 +14,9 @@ import { escapeRegExp } from 'utils';
 import { HorizontalList, Option } from '../List';
 import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
+import CrossChainOptions from '../trade/CrossChainOptions';
+import { XChainId } from 'app/_xcall/types';
+import { Box } from 'rebass/styled-components';
 
 const InputContainer = styled.div`
   display: inline-flex;
@@ -101,6 +104,10 @@ interface CurrencyInputPanelProps {
   isChainDifference?: boolean;
   showCommunityListControl?: boolean;
   isCrossChainToken?: boolean;
+
+  // cross chain stuff
+  xChainId?: XChainId;
+  onChainSelect?: (_chainId: XChainId) => void;
 }
 
 export const inputRegex = /^\d*(?:\\[.])?\d*$/; // match escaped "." characters via in a non-capturing group
@@ -121,6 +128,10 @@ export default function CurrencyInputPanel({
   isChainDifference,
   showCommunityListControl = true,
   isCrossChainToken = false,
+
+  // cross chain stuff
+  xChainId = '0x1.icon',
+  onChainSelect,
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
@@ -144,76 +155,85 @@ export default function CurrencyInputPanel({
     setOpen(false);
   }, []);
 
+  const [open1, setOpen1] = React.useState(false);
+
   return (
-    <InputContainer ref={ref} className={className}>
-      <ClickAwayListener onClickAway={() => setOpen(false)}>
-        <div>
-          <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect} active={isCrossChainToken}>
-            {currency ? (
-              <>
-                <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
-                <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName>
-              </>
-            ) : (
-              <StyledTokenName>Choose a token</StyledTokenName>
+    <Box>
+      <InputContainer ref={ref} className={className}>
+        <ClickAwayListener onClickAway={() => setOpen(false)}>
+          <div>
+            <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect} active={isCrossChainToken}>
+              {currency ? (
+                <>
+                  <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
+                  <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName>
+                </>
+              ) : (
+                <StyledTokenName>Choose a token</StyledTokenName>
+              )}
+              {onCurrencySelect && <StyledDropDown selected={!!currency} />}
+            </CurrencySelect>
+
+            {onCurrencySelect && (
+              <CurrencySearchModal
+                account={account}
+                isOpen={open}
+                onDismiss={handleDismiss}
+                onCurrencySelect={onCurrencySelect}
+                currencySelectionType={currencySelectionType}
+                showCurrencyAmount={false}
+                anchorEl={ref.current}
+                width={width ? width + 40 : undefined}
+                selectedCurrency={selectedCurrency}
+                showCommunityListControl={showCommunityListControl}
+                xChainId={xChainId}
+              />
             )}
-            {onCurrencySelect && <StyledDropDown selected={!!currency} />}
-          </CurrencySelect>
+          </div>
+        </ClickAwayListener>
 
-          {onCurrencySelect && (
-            <CurrencySearchModal
-              account={account}
-              isOpen={open}
-              onDismiss={handleDismiss}
-              onCurrencySelect={onCurrencySelect}
-              currencySelectionType={currencySelectionType}
-              showCurrencyAmount={false}
-              anchorEl={ref.current}
-              width={width ? width + 40 : undefined}
-              selectedCurrency={selectedCurrency}
-              showCommunityListControl={showCommunityListControl}
-            />
-          )}
-        </div>
-      </ClickAwayListener>
+        <NumberInput
+          placeholder={placeholder}
+          value={value}
+          onClick={() => setIsActive(!isActive)}
+          onBlur={() => setIsActive(false)}
+          onChange={event => {
+            enforcer(event.target.value.replace(/,/g, '.'));
+          }}
+          // universal input options
+          inputMode="decimal"
+          title="Token Amount"
+          autoComplete="off"
+          autoCorrect="off"
+          // text-specific options
+          type="text"
+          pattern="^[0-9]*[.,]?[0-9]*$"
+          minLength={1}
+          maxLength={79}
+          spellCheck="false"
+          //style
+          bg={bg}
+          active={(onPercentSelect && isActive) || isChainDifference || isCrossChainToken}
+        />
 
-      <NumberInput
-        placeholder={placeholder}
-        value={value}
-        onClick={() => setIsActive(!isActive)}
-        onBlur={() => setIsActive(false)}
-        onChange={event => {
-          enforcer(event.target.value.replace(/,/g, '.'));
-        }}
-        // universal input options
-        inputMode="decimal"
-        title="Token Amount"
-        autoComplete="off"
-        autoCorrect="off"
-        // text-specific options
-        type="text"
-        pattern="^[0-9]*[.,]?[0-9]*$"
-        minLength={1}
-        maxLength={79}
-        spellCheck="false"
-        //style
-        bg={bg}
-        active={(onPercentSelect && isActive) || isChainDifference || isCrossChainToken}
-      />
+        {onPercentSelect && (
+          <SelectorPopover show={isActive} anchorEl={ref.current} placement="bottom-end">
+            <HorizontalList justifyContent="center" alignItems="center">
+              {COMMON_PERCENTS.map(value => (
+                <ItemList
+                  key={value}
+                  onClick={handlePercentSelect(value)}
+                  selected={value === percent}
+                >{`${value}%`}</ItemList>
+              ))}
+            </HorizontalList>
+          </SelectorPopover>
+        )}
+      </InputContainer>
 
-      {onPercentSelect && (
-        <SelectorPopover show={isActive} anchorEl={ref.current} placement="bottom-end">
-          <HorizontalList justifyContent="center" alignItems="center">
-            {COMMON_PERCENTS.map(value => (
-              <ItemList
-                key={value}
-                onClick={handlePercentSelect(value)}
-                selected={value === percent}
-              >{`${value}%`}</ItemList>
-            ))}
-          </HorizontalList>
-        </SelectorPopover>
+      {onChainSelect && (
+        <CrossChainOptions chainId={xChainId} setChainId={onChainSelect} isOpen={open1} setOpen={setOpen1} />
       )}
-    </InputContainer>
+    </Box>
   );
 }

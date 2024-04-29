@@ -1,7 +1,6 @@
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { createReducer } from '@reduxjs/toolkit';
 
-import { ARCHWAY_SUPPORTED_TOKENS_LIST } from 'app/_xcall/archway/tokens';
 import { XChainId } from 'app/_xcall/types';
 import { ZERO } from 'constants/index';
 import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
@@ -9,7 +8,7 @@ import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { changeICONBalances, changeArchwayBalances, resetBalances } from './actions';
 
 export type WalletState = {
-  [key in XChainId]: { [address: string]: CurrencyAmount<Currency> };
+  [key in XChainId]?: { [address: string]: CurrencyAmount<Currency> };
 };
 
 const initialState: WalletState = {
@@ -17,10 +16,7 @@ const initialState: WalletState = {
     p[t?.symbol!] = ZERO;
     return p;
   }, {}),
-  'archway-1': ARCHWAY_SUPPORTED_TOKENS_LIST.reduce((p, t) => {
-    p[t?.symbol!] = ZERO;
-    return p;
-  }, {}),
+  'archway-1': {},
 };
 
 export default createReducer(initialState, builder =>

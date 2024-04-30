@@ -15,7 +15,7 @@ import { PairState, useBalance, useSuppliedTokens } from 'hooks/useV2Pairs';
 import { useAllPairsByName } from 'queries/backendv2';
 import { useICXConversionFee } from 'queries/reward';
 import { useBBalnAmount, useResponsivePoolRewardShare, useSources } from 'store/bbaln/hooks';
-import { Field } from 'store/mint/actions';
+import { Field } from 'store/mint/reducer';
 import { useDerivedMintInfo, useMintState } from 'store/mint/hooks';
 import { useReward } from 'store/reward/hooks';
 import { useWithdrawnPercent } from 'store/stakedLP/hooks';

@@ -11,7 +11,7 @@ import { useCollateralType, useSupportedCollateralTokens } from 'store/collatera
 import { formatUnits } from 'utils';
 
 import { AppState } from '..';
-import { changeOraclePrice } from './actions';
+import { changeOraclePrice } from './reducer';
 
 export function useOraclePrices(): AppState['oracle']['prices'] {
   return useSelector((state: AppState) => state.oracle.prices);

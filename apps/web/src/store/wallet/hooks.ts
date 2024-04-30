@@ -37,7 +37,7 @@ import { useUserAddedTokens } from 'store/user/hooks';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
-import { changeArchwayBalances, changeICONBalances } from './actions';
+import { changeArchwayBalances, changeICONBalances } from './reducer';
 import { useWallets, useXTokens } from 'app/_xcall/hooks';
 
 export function useCrossChainWalletBalances(): AppState['wallet'] {

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { AppState } from 'store';
 
-import { changeConfig } from './actions';
+import { changeConfig } from './reducer';
 import COMMUNITY_TOKEN_LIST from './communitylist.json';
 import DEFAULT_TOKEN_LIST from './tokenlist.json';
 import { WrappedTokenInfo } from './wrappedTokenInfo';

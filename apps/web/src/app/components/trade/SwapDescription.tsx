@@ -21,7 +21,7 @@ import { useV2Pair } from 'hooks/useV2Pairs';
 import useWidth from 'hooks/useWidth';
 import { usePriceChartDataQuery } from 'queries/swap';
 import { useRatio } from 'store/ratio/hooks';
-import { Field } from 'store/swap/actions';
+import { Field } from 'store/swap/reducer';
 import { useDerivedSwapInfo, useSwapActionHandlers } from 'store/swap/hooks';
 import { generateChartData, toFraction } from 'utils';
 

@@ -17,8 +17,15 @@ import { useCrossChainCurrencyBalances, useCurrencyBalances } from 'store/wallet
 import { parseUnits } from 'utils';
 
 import { AppDispatch, AppState } from '../index';
-import { Field, selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput } from './actions';
-import { INITIAL_SWAP } from './reducer';
+import {
+  INITIAL_SWAP,
+  Field,
+  selectCurrency,
+  selectPercent,
+  setRecipient,
+  switchCurrencies,
+  typeInput,
+} from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
 
 export function useSwapState(): AppState['swap'] {

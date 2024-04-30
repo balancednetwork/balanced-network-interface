@@ -45,6 +45,10 @@ msgstr "Interest rate"
 msgid "Redemptions"
 msgstr "Redemptions"
 
+#: src/app/Routes.tsx
+msgid "Legacy bridge"
+msgstr "Legacy bridge"
+
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "then create the pool."
 msgstr "then create the pool."
@@ -794,10 +798,6 @@ msgid "Supplied {pair} liquidity."
 msgstr "Supplied {pair} liquidity."
 
 #: src/app/components/AppBar/index.tsx
-#: src/app/Routes.tsx
-msgid "Legacy bridge"
-msgstr "Legacy bridge"
-
 #: src/app/Routes.tsx
 msgid "Trade"
 msgstr "Trade"

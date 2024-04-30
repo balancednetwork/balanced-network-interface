@@ -20,7 +20,7 @@ import { Typography } from 'app/theme';
 import CheckIcon from 'assets/icons/tick.svg';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { Field } from 'store/mint/actions';
+import { Field } from 'store/mint/reducer';
 import { useDerivedMintInfo } from 'store/mint/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
 import {

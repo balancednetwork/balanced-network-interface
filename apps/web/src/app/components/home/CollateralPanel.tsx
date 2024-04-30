@@ -24,7 +24,7 @@ import { NETWORK_ID } from 'constants/config';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import useWidth from 'hooks/useWidth';
 import { useChangeShouldLedgerSign, useICXUnstakingTime, useShouldLedgerSign } from 'store/application/hooks';
-import { Field } from 'store/collateral/actions';
+import { Field } from 'store/collateral/reducer';
 import {
   useCollateralState,
   useCollateralActionHandlers,

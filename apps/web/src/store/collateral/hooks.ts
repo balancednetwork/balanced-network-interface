@@ -26,7 +26,7 @@ import {
   changeIcxDisplayType,
   type,
   Field,
-} from './actions';
+} from './reducer';
 
 export const DEFAULT_COLLATERAL_TOKEN = 'sICX';
 

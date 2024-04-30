@@ -8,7 +8,7 @@ import { ZERO } from 'constants/index';
 import { useBalance } from 'hooks/useV2Pairs';
 import { AppState } from 'store';
 
-import { setStakedLPPercent, setWithdrawnValue } from './actions';
+import { setStakedLPPercent, setWithdrawnValue } from './reducer';
 
 export function useChangeStakedLPPercent(): (poolId: number, percent: BigNumber) => void {
   const dispatch = useDispatch();

@@ -1,16 +1,10 @@
-import { createReducer } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
-import {
-  changeBorrowedAmount,
-  changeBadDebt,
-  changeTotalSupply,
-  adjust,
-  cancel,
-  type,
-  Field,
-  setLockingRatio,
-} from './actions';
+export enum Field {
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT',
+}
 
 export interface LoanState {
   badDebt: BigNumber;
@@ -50,34 +44,44 @@ const initialState: LoanState = {
   },
 };
 
-export default createReducer(initialState, builder =>
-  builder
-    .addCase(adjust, (state, { payload }) => {
+const loanSlice = createSlice({
+  name: 'loan',
+  initialState,
+  reducers: create => ({
+    adjust: create.reducer<void>(state => {
       state.state.isAdjusting = true;
-    })
-    .addCase(cancel, (state, { payload }) => {
+    }),
+    cancel: create.reducer<void>(state => {
       // reset typedValue, independentField, isAdjusting values
       state.state.isAdjusting = false;
-    })
-    .addCase(type, (state, { payload: { independentField, typedValue, inputType } }) => {
-      state.state.independentField = independentField || state.state.independentField;
-      state.state.typedValue = typedValue ?? state.state.typedValue;
-      state.state.inputType = inputType || state.state.inputType;
-    })
-    .addCase(changeBorrowedAmount, (state, { payload: { borrowedAmount, collateralType } }) => {
-      const updatedAmounts = { ...state.borrowedAmounts };
-      updatedAmounts[collateralType] = borrowedAmount;
-      state.borrowedAmounts = updatedAmounts;
-    })
-    .addCase(changeBadDebt, (state, { payload: { badDebt } }) => {
-      state.badDebt = badDebt;
-    })
-    .addCase(changeTotalSupply, (state, { payload: { totalSupply } }) => {
-      state.totalSupply = totalSupply;
-    })
-    .addCase(setLockingRatio, (state, { payload: { lockingRatio, collateralType } }) => {
-      const updatedRatios = { ...state.lockingRatios };
-      updatedRatios[collateralType] = lockingRatio;
-      state.lockingRatios = updatedRatios;
     }),
-);
+    type: create.reducer<{ independentField: Field; typedValue: string; inputType: 'slider' | 'text' }>(
+      (state, { payload: { independentField, typedValue, inputType } }) => {
+        state.state.independentField = independentField || state.state.independentField;
+        state.state.typedValue = typedValue ?? state.state.typedValue;
+        state.state.inputType = inputType || state.state.inputType;
+      },
+    ),
+    changeBorrowedAmount: create.reducer<{ borrowedAmount: BigNumber; collateralType: string }>(
+      (state, { payload: { borrowedAmount, collateralType } }) => {
+        state.borrowedAmounts[collateralType] = borrowedAmount;
+      },
+    ),
+    changeBadDebt: create.reducer<{ badDebt: BigNumber }>((state, { payload: { badDebt } }) => {
+      state.badDebt = badDebt;
+    }),
+    changeTotalSupply: create.reducer<{ totalSupply: BigNumber }>((state, { payload: { totalSupply } }) => {
+      state.totalSupply = totalSupply;
+    }),
+    setLockingRatio: create.reducer<{ lockingRatio: number; collateralType: string }>(
+      (state, { payload: { lockingRatio, collateralType } }) => {
+        state.lockingRatios[collateralType] = lockingRatio;
+      },
+    ),
+  }),
+});
+
+export const { changeBorrowedAmount, changeBadDebt, changeTotalSupply, adjust, cancel, type, setLockingRatio } =
+  loanSlice.actions;
+
+export default loanSlice.reducer;

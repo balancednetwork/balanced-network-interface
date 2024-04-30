@@ -1,17 +1,12 @@
-import { createReducer } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
 import { CurrencyKey, IcxDisplayType } from 'types';
 
-import {
-  changeDepositedAmount,
-  changeCollateralType,
-  changeIcxDisplayType,
-  adjust,
-  cancel,
-  type,
-  Field,
-} from './actions';
+export enum Field {
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT',
+}
 
 export interface CollateralState {
   depositedAmount: BigNumber;
@@ -41,29 +36,40 @@ const initialState: CollateralState = {
   },
 };
 
-export default createReducer(initialState, builder =>
-  builder
-    .addCase(adjust, (state, { payload }) => {
+const collateralSlice = createSlice({
+  name: 'collateral',
+  initialState,
+  reducers: create => ({
+    adjust: create.reducer<void>(state => {
       state.state.isAdjusting = true;
-    })
-    .addCase(cancel, (state, { payload }) => {
-      // reset typedValue, independentField, isAdjusting values
-      state.state.isAdjusting = false;
-    })
-    .addCase(type, (state, { payload: { independentField, typedValue, inputType } }) => {
-      state.state.independentField = independentField || state.state.independentField;
-      state.state.typedValue = typedValue ?? state.state.typedValue;
-      state.state.inputType = inputType || state.state.inputType;
-    })
-    .addCase(changeDepositedAmount, (state, { payload: { depositedAmount, token } }) => {
-      const updatedAmounts = { ...state.depositedAmounts };
-      updatedAmounts[token] = depositedAmount;
-      state.depositedAmounts = updatedAmounts;
-    })
-    .addCase(changeCollateralType, (state, { payload: { collateralType } }) => {
-      state.collateralType = collateralType;
-    })
-    .addCase(changeIcxDisplayType, (state, { payload: { icxDisplayType } }) => {
-      state.icxDisplayType = icxDisplayType;
     }),
-);
+    cancel: create.reducer<void>(state => {
+      state.state.isAdjusting = false;
+    }),
+    type: create.reducer<{ independentField: Field; typedValue: string; inputType: 'slider' | 'text' }>(
+      (state, { payload: { independentField, typedValue, inputType } }) => {
+        state.state.independentField = independentField || state.state.independentField;
+        state.state.typedValue = typedValue ?? state.state.typedValue;
+        state.state.inputType = inputType || state.state.inputType;
+      },
+    ),
+    changeDepositedAmount: create.reducer<{ depositedAmount: BigNumber; token: string }>(
+      (state, { payload: { depositedAmount, token } }) => {
+        state.depositedAmounts[token] = depositedAmount;
+      },
+    ),
+    changeCollateralType: create.reducer<{ collateralType: CurrencyKey }>((state, { payload: { collateralType } }) => {
+      state.collateralType = collateralType;
+    }),
+    changeIcxDisplayType: create.reducer<{ icxDisplayType: IcxDisplayType }>(
+      (state, { payload: { icxDisplayType } }) => {
+        state.icxDisplayType = icxDisplayType;
+      },
+    ),
+  }),
+});
+
+export const { changeDepositedAmount, changeCollateralType, changeIcxDisplayType, adjust, cancel, type } =
+  collateralSlice.actions;
+
+export default collateralSlice.reducer;

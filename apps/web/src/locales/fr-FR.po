@@ -48,6 +48,10 @@ msgstr ""
 msgid "Redemptions"
 msgstr ""
 
+#: src/app/Routes.tsx
+msgid "Legacy bridge"
+msgstr ""
+
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 msgid "then create the pool."
 msgstr "puis créer le pool."

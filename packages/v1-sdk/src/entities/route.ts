@@ -13,7 +13,7 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
 
   public constructor(pairs: Pair[], input: TInput, output: TOutput) {
     invariant(pairs.length > 0, 'PAIRS');
-    const chainId: number = pairs[0].chainId;
+    const chainId: number | string = pairs[0].chainId;
     invariant(
       pairs.every(pair => pair.chainId === chainId),
       'CHAIN_IDS',
@@ -57,7 +57,7 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
     return (this._midPrice = new Price(this.input, this.output, reduced.denominator, reduced.numerator));
   }
 
-  public get chainId(): number {
+  public get chainId(): number | string {
     return this.pairs[0].chainId;
   }
 

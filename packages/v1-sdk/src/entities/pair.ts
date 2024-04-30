@@ -125,7 +125,7 @@ export class Pair {
   /**
    * Returns the chain ID of the tokens in the pair.
    */
-  public get chainId(): number {
+  public get chainId(): number | string {
     return this.token0.chainId;
   }
 

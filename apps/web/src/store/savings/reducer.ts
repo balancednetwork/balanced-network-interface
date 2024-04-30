@@ -1,8 +1,7 @@
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { createReducer } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
-import { Field } from '../loan/actions';
-import { adjust, cancel, type, changeLockedAmount } from './actions';
+import { Field } from '../loan/reducer';
 
 export interface SavingsState {
   lockedAmount: CurrencyAmount<Token> | undefined;
@@ -26,20 +25,31 @@ const initialState: SavingsState = {
   },
 };
 
-export default createReducer(initialState, builder =>
-  builder
-    .addCase(changeLockedAmount, (state, { payload }) => {
-      state.lockedAmount = payload.lockedAmount;
-    })
-    .addCase(adjust, (state, { payload }) => {
+const savingsSlice = createSlice({
+  name: 'savings',
+  initialState,
+  reducers: create => ({
+    changeLockedAmount: create.reducer<{ lockedAmount: CurrencyAmount<Token> | undefined }>(
+      (state, { payload: { lockedAmount } }) => {
+        state.lockedAmount = lockedAmount;
+      },
+    ),
+    adjust: create.reducer<void>(state => {
       state.state.isAdjusting = true;
-    })
-    .addCase(cancel, (state, { payload }) => {
-      state.state.isAdjusting = false;
-    })
-    .addCase(type, (state, { payload: { independentField, typedValue, inputType } }) => {
-      state.state.independentField = independentField || state.state.independentField;
-      state.state.typedValue = typedValue ?? state.state.typedValue;
-      state.state.inputType = inputType || state.state.inputType;
     }),
-);
+    cancel: create.reducer<void>(state => {
+      state.state.isAdjusting = false;
+    }),
+    type: create.reducer<{ independentField: Field; typedValue: string; inputType: 'slider' | 'text' }>(
+      (state, { payload: { independentField, typedValue, inputType } }) => {
+        state.state.independentField = independentField || state.state.independentField;
+        state.state.typedValue = typedValue ?? state.state.typedValue;
+        state.state.inputType = inputType || state.state.inputType;
+      },
+    ),
+  }),
+});
+
+export const { adjust, cancel, type, changeLockedAmount } = savingsSlice.actions;
+
+export default savingsSlice.reducer;

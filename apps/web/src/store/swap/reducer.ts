@@ -1,18 +1,15 @@
 import { Currency } from '@balancednetwork/sdk-core';
-import { createReducer } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 import { NETWORK_ID } from 'constants/config';
 import { bnUSD, BALN } from 'constants/tokens';
 
-import {
-  Field,
-  replaceSwapState,
-  selectCurrency,
-  selectPercent,
-  setRecipient,
-  switchCurrencies,
-  typeInput,
-} from './actions';
+export enum Field {
+  INPUT = 'INPUT',
+  OUTPUT = 'OUTPUT',
+}
+
+export const COMMON_PERCENTS = [25, 50, 75, 100];
 
 export interface SwapState {
   readonly independentField: Field;
@@ -46,61 +43,70 @@ const initialState: SwapState = {
   recipient: null,
 };
 
-export default createReducer<SwapState>(initialState, builder =>
-  builder
-    .addCase(
-      replaceSwapState,
-      (state, { payload: { typedValue, recipient, field, inputCurrency, outputCurrency } }) => {
+const swapSlice = createSlice({
+  name: 'swap',
+  initialState,
+  reducers: create => ({
+    replaceSwapState: create.reducer<{
+      typedValue: string;
+      recipient: string | null;
+      field: Field;
+      inputCurrency: Currency | undefined;
+      outputCurrency: Currency | undefined;
+    }>((state, { payload: { typedValue, recipient, field, inputCurrency, outputCurrency } }) => {
+      return {
+        [Field.INPUT]: {
+          currency: inputCurrency,
+          percent: 0,
+        },
+        [Field.OUTPUT]: {
+          currency: outputCurrency,
+        },
+        independentField: field,
+        typedValue: typedValue,
+        recipient,
+      };
+    }),
+    selectCurrency: create.reducer<{ currency: Currency | undefined; field: Field }>(
+      (state, { payload: { currency, field } }) => {
+        const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
+
+        if (currency === state[otherField].currency) {
+          // the case where we have to swap the order
+          return {
+            ...state,
+            independentField: state.independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
+            [field]: { ...state[field], currency: currency, percent: 0 },
+            [otherField]: { ...state[otherField], currency: state[field].currency, percent: 0 },
+          };
+        } else {
+          // the normal case
+          return {
+            ...state,
+            [field]: { ...state[field], currency: currency, percent: 0 },
+          };
+        }
+      },
+    ),
+    selectPercent: create.reducer<{ percent: number; field: Field; value: string }>(
+      (state, { payload: { percent, field, value } }) => {
         return {
-          [Field.INPUT]: {
-            currency: inputCurrency,
-            percent: 0,
-          },
-          [Field.OUTPUT]: {
-            currency: outputCurrency,
-          },
+          ...state,
           independentField: field,
-          typedValue: typedValue,
-          recipient,
+          typedValue: value,
+          [field]: { ...state[field], percent: percent },
         };
       },
-    )
-    .addCase(selectCurrency, (state, { payload: { currency, field } }) => {
-      const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
-
-      if (currency === state[otherField].currency) {
-        // the case where we have to swap the order
-        return {
-          ...state,
-          independentField: state.independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
-          [field]: { ...state[field], currency: currency, percent: 0 },
-          [otherField]: { ...state[otherField], currency: state[field].currency, percent: 0 },
-        };
-      } else {
-        // the normal case
-        return {
-          ...state,
-          [field]: { ...state[field], currency: currency, percent: 0 },
-        };
-      }
-    })
-    .addCase(selectPercent, (state, { payload: { percent, field, value } }) => {
-      return {
-        ...state,
-        independentField: field,
-        typedValue: value,
-        [field]: { ...state[field], percent: percent },
-      };
-    })
-    .addCase(switchCurrencies, state => {
+    ),
+    switchCurrencies: create.reducer<void>(state => {
       return {
         ...state,
         independentField: state.independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
         [Field.INPUT]: { ...state[Field.OUTPUT], currency: state[Field.OUTPUT].currency, percent: 0 },
         [Field.OUTPUT]: { ...state[Field.INPUT], currency: state[Field.INPUT].currency },
       };
-    })
-    .addCase(typeInput, (state, { payload: { field, typedValue } }) => {
+    }),
+    typeInput: create.reducer<{ field: Field; typedValue: string }>((state, { payload: { field, typedValue } }) => {
       const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 
       return {
@@ -110,8 +116,14 @@ export default createReducer<SwapState>(initialState, builder =>
         [field]: { ...state[field], percent: 0 },
         [otherField]: { ...state[otherField], percent: 0 },
       };
-    })
-    .addCase(setRecipient, (state, { payload: { recipient } }) => {
+    }),
+    setRecipient: create.reducer<{ recipient: string | null }>((state, { payload: { recipient } }) => {
       state.recipient = recipient;
     }),
-);
+  }),
+});
+
+export const { replaceSwapState, selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput } =
+  swapSlice.actions;
+
+export default swapSlice.reducer;

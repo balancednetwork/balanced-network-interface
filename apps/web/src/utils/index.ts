@@ -12,7 +12,7 @@ import { BIGINT_ZERO } from 'constants/misc';
 import { PairInfo } from 'constants/pairs';
 import { COMBINED_TOKENS_LIST } from 'constants/tokens';
 import { PairData, PairState } from 'hooks/useV2Pairs';
-import { Field } from 'store/swap/actions';
+import { Field } from 'store/swap/reducer';
 
 const { isEoaAddress, isScoreAddress } = Validator;
 

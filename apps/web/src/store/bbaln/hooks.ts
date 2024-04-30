@@ -19,8 +19,8 @@ import { useAllTransactions } from 'store/transactions/hooks';
 import { formatUnits } from 'utils';
 
 import { AppState } from '..';
-import { Field } from '../loan/actions';
-import { adjust, cancel, type, changeData, changePeriod, changeSources, changeTotalSupply } from './actions';
+import { Field } from '../loan/reducer';
+import { adjust, cancel, type, changeData, changePeriod, changeSources, changeTotalSupply } from './reducer';
 
 const PERCENTAGE_DISTRIBUTED = new BigNumber(0.3);
 const ENSHRINEMENT_RATIO = new BigNumber(0.5);

@@ -8,7 +8,7 @@ import CurrencyLogo from 'app/components/CurrencyLogo';
 import { SelectorPopover } from 'app/components/Popover';
 import DropDown from 'assets/icons/arrow-down.svg';
 import useWidth from 'hooks/useWidth';
-import { COMMON_PERCENTS } from 'store/swap/actions';
+import { COMMON_PERCENTS } from 'store/swap/reducer';
 import { escapeRegExp } from 'utils';
 
 import { HorizontalList, Option } from '../List';

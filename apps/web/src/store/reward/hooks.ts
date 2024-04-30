@@ -21,7 +21,7 @@ import { useLockedAmount, useUnclaimedRewards } from 'store/savings/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
-import { setReward } from './actions';
+import { setReward } from './reducer';
 
 export function useRewards(): AppState['reward'] {
   return useSelector((state: AppState) => state.reward);

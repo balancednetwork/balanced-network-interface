@@ -13,7 +13,7 @@ import { useRewardsPercentDistribution } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { ONE_DAY_DURATION } from 'utils';
 
-import { changeEditing, changeInputValue, changePowerLeft, changeShowConfirmation, changeUserData } from './actions';
+import { changeEditing, changeInputValue, changePowerLeft, changeShowConfirmation, changeUserData } from './reducer';
 import { VoteItemInfo, VoteItemInfoRaw, VoteSource, VoteSourceRaw } from './types';
 
 export const WEIGHT_CONST = 10 ** 18;

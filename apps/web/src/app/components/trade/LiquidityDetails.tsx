@@ -22,7 +22,7 @@ import { BalanceData, useBalance, useSuppliedTokens } from 'hooks/useV2Pairs';
 import { PairData, useAllPairsById } from 'queries/backendv2';
 import { Source, useBBalnAmount, useSources, useTotalSupply } from 'store/bbaln/hooks';
 import { useTokenListConfig } from 'store/lists/hooks';
-import { Field } from 'store/mint/actions';
+import { Field } from 'store/mint/reducer';
 import { useMintActionHandlers } from 'store/mint/hooks';
 import { useRewards } from 'store/reward/hooks';
 import { useStakedLPPercent, useWithdrawnPercent } from 'store/stakedLP/hooks';

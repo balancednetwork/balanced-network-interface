@@ -21,8 +21,7 @@ import { useCrossChainCurrencyBalances, useCurrencyBalances } from 'store/wallet
 import { useCurrentXCallState } from 'store/xCall/hooks';
 
 import { AppDispatch, AppState } from '../index';
-import { Field, typeInput, selectCurrency } from './actions';
-import { INITIAL_MINT } from './reducer';
+import { Field, INITIAL_MINT, typeInput, selectCurrency } from './reducer';
 
 export function useMintState(): AppState['mint'] {
   return useSelector<AppState, AppState['mint']>(state => state.mint);

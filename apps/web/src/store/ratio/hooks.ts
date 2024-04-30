@@ -7,7 +7,7 @@ import bnJs from 'bnJs';
 import useInterval from 'hooks/useInterval';
 
 import { AppState } from '..';
-import { changeRatioValue } from './actions';
+import { changeRatioValue } from './reducer';
 import { RatioState } from './reducer';
 
 // #redux-step-5: define function get value of variable from store

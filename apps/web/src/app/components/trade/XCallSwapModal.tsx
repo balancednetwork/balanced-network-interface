@@ -23,7 +23,7 @@ import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from 'store/application/hooks';
-import { Field } from 'store/swap/actions';
+import { Field } from 'store/swap/reducer';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import {
   useAddTransactionResult,

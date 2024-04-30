@@ -24,7 +24,7 @@ import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
 import { BalanceData } from 'hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { Source } from 'store/bbaln/hooks';
-import { Field } from 'store/mint/actions';
+import { Field } from 'store/mint/reducer';
 import { useChangeWithdrawnValue, useStakedLPPercent } from 'store/stakedLP/hooks';
 import { tryParseAmount } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';

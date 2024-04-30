@@ -12,7 +12,7 @@ import QuestionIcon from 'assets/icons/question.svg';
 import { PairInfo } from 'constants/pairs';
 import useSort from 'hooks/useSort';
 import { MIN_LIQUIDITY_TO_INCLUDE, PairData, useAllPairsById } from 'queries/backendv2';
-import { Field } from 'store/mint/actions';
+import { Field } from 'store/mint/reducer';
 import { useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
 import { getFormattedNumber } from 'utils/formatter';
 
@@ -401,21 +401,21 @@ export default function AllPoolsPanel() {
             <PairItem key={index} pair={pair} onClick={handlePoolLick} isLast={array.length - 1 === index} />
           ))
         ) : (
-        <>
-          <SkeletonPairPlaceholder />
-          <Divider />
-          <SkeletonPairPlaceholder />
-          <Divider />
-          <SkeletonPairPlaceholder />
-          <Divider />
-          <SkeletonPairPlaceholder />
-          <Divider />
-          <SkeletonPairPlaceholder />
-          <Divider />
-          <SkeletonPairPlaceholder />
-          <Divider />
-          <SkeletonPairPlaceholder />
-        </>
+          <>
+            <SkeletonPairPlaceholder />
+            <Divider />
+            <SkeletonPairPlaceholder />
+            <Divider />
+            <SkeletonPairPlaceholder />
+            <Divider />
+            <SkeletonPairPlaceholder />
+            <Divider />
+            <SkeletonPairPlaceholder />
+            <Divider />
+            <SkeletonPairPlaceholder />
+            <Divider />
+            <SkeletonPairPlaceholder />
+          </>
         )}
       </List>
     </Box>

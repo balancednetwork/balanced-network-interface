@@ -13,7 +13,7 @@ import { useBnJsContractQuery } from 'queries/utils';
 import { AppState } from 'store';
 import { formatUnits } from 'utils';
 
-import { setBalances } from './actions';
+import { setBalances } from './reducer';
 
 const bnUSDAddress = bnJs.bnUSD.address;
 const stabilityFundAddress = bnJs.StabilityFund.address;

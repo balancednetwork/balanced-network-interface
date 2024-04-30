@@ -13,8 +13,8 @@ import { useSupportedCollateralTokens } from 'store/collateral/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
-import { Field } from '../loan/actions';
-import { adjust, cancel, type, changeLockedAmount } from './actions';
+import { Field } from '../loan/reducer';
+import { adjust, cancel, type, changeLockedAmount } from './reducer';
 
 export function useLockedAmount(): AppState['savings']['lockedAmount'] {
   return useSelector((state: AppState) => state.savings.lockedAmount);

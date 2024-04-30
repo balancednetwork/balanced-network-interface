@@ -1,7 +1,5 @@
-import { createReducer } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
-
-import { changeRatioValue } from './actions';
 
 export interface RatioState {
   ICXUSDratio: BigNumber;
@@ -19,15 +17,22 @@ const initialState: RatioState = {
   BALNsICXratio: new BigNumber(0),
 };
 
-export default createReducer(initialState, builder =>
-  builder.addCase(
-    changeRatioValue,
-    (state, { payload: { ICXUSDratio, sICXbnUSDratio, sICXICXratio, BALNbnUSDratio, BALNsICXratio } }) => {
-      state.ICXUSDratio = ICXUSDratio || state.ICXUSDratio;
-      state.sICXbnUSDratio = sICXbnUSDratio || state.sICXbnUSDratio;
-      state.sICXICXratio = sICXICXratio || state.sICXICXratio;
-      state.BALNbnUSDratio = BALNbnUSDratio || state.BALNbnUSDratio;
-      state.BALNsICXratio = BALNsICXratio || state.BALNsICXratio;
-    },
-  ),
-);
+const ratioSlice = createSlice({
+  name: 'ratio',
+  initialState,
+  reducers: create => ({
+    changeRatioValue: create.reducer<Partial<RatioState>>(
+      (state, { payload: { ICXUSDratio, sICXbnUSDratio, sICXICXratio, BALNbnUSDratio, BALNsICXratio } }) => {
+        state.ICXUSDratio = ICXUSDratio || state.ICXUSDratio;
+        state.sICXbnUSDratio = sICXbnUSDratio || state.sICXbnUSDratio;
+        state.sICXICXratio = sICXICXratio || state.sICXICXratio;
+        state.BALNbnUSDratio = BALNbnUSDratio || state.BALNbnUSDratio;
+        state.BALNsICXratio = BALNsICXratio || state.BALNsICXratio;
+      },
+    ),
+  }),
+});
+
+export const { changeRatioValue } = ratioSlice.actions;
+
+export default ratioSlice.reducer;

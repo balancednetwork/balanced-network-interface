@@ -17,7 +17,7 @@ import { BIGINT_ZERO } from 'constants/misc';
 import { HIGH_PRICE_ASSET_DP, isNativeCurrency } from 'constants/tokens';
 import { PairState } from 'hooks/useV2Pairs';
 import { useWalletModalToggle } from 'store/application/hooks';
-import { Field } from 'store/mint/actions';
+import { Field } from 'store/mint/reducer';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers, useInitialSupplyLoad } from 'store/mint/hooks';
 import { maxAmountSpend } from 'utils';
 

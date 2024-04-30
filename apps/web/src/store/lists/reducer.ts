@@ -1,6 +1,4 @@
-import { createReducer } from '@reduxjs/toolkit';
-
-import { changeConfig } from './actions';
+import { createSlice } from '@reduxjs/toolkit';
 
 export interface TokenListState {
   community: boolean;
@@ -10,8 +8,16 @@ const initialState: TokenListState = {
   community: false,
 };
 
-export default createReducer(initialState, builder =>
-  builder.addCase(changeConfig, (state, { payload: { community } }) => {
-    state.community = community;
+const listsSlice = createSlice({
+  name: 'lists',
+  initialState,
+  reducers: create => ({
+    changeConfig: create.reducer<{ community: boolean }>((state, { payload: { community } }) => {
+      state.community = community;
+    }),
   }),
-);
+});
+
+export const { changeConfig } = listsSlice.actions;
+
+export default listsSlice.reducer;

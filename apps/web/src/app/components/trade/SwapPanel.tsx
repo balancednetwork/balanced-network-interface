@@ -33,7 +33,7 @@ import {
   useShouldLedgerSign,
 } from 'store/application/hooks';
 import { useCAMemo, useIsSwapEligible, useMaxSwapSize } from 'store/stabilityFund/hooks';
-import { Field } from 'store/swap/actions';
+import { Field } from 'store/swap/reducer';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX, useSignedInWallets } from 'store/wallet/hooks';

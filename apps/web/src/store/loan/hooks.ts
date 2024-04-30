@@ -33,7 +33,7 @@ import {
   cancel,
   type,
   setLockingRatio,
-} from './actions';
+} from './reducer';
 
 export function useLoanBorrowedAmount(): BigNumber {
   const borrowedAmounts = useBorrowedAmounts();

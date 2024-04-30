@@ -62,18 +62,16 @@ export class ArchwayXCallService {
     // return {};
   }
 
-  async executeTransfer(transferData) {
+  async executeTransfer(bridgeInfo) {
     const {
-      bridgeInfo: {
-        bridgeDirection,
-        currencyAmountToBridge,
-        recipient: destinationAddress,
-        account,
-        xCallFee,
-        isLiquidFinanceEnabled,
-        isDenom,
-      },
-    } = transferData;
+      bridgeDirection,
+      currencyAmountToBridge,
+      recipient: destinationAddress,
+      account,
+      xCallFee,
+      isLiquidFinanceEnabled,
+      isDenom,
+    } = bridgeInfo;
 
     if (this.signedClient) {
       const tokenAddress = currencyAmountToBridge.currency.address;

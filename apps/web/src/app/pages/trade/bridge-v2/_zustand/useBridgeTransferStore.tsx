@@ -48,14 +48,12 @@ export const bridgeTransferActions = {
     useBridgeTransferStore.setState({ isTransferring });
   },
 
-  executeTransfer: async transferData => {
-    const {
-      bridgeInfo: { bridgeDirection },
-    } = transferData;
+  executeTransfer: async bridgeInfo => {
+    const { bridgeDirection } = bridgeInfo;
     const srcChainXCallService = xCallServiceActions.getXCallService(bridgeDirection.from);
     const dstChainXCallService = xCallServiceActions.getXCallService(bridgeDirection.to);
 
-    const transfer = await srcChainXCallService.executeTransfer(transferData);
+    const transfer = await srcChainXCallService.executeTransfer(bridgeInfo);
     const blockHeight = (await dstChainXCallService.fetchBlockHeight()) - 1;
 
     if (!transfer) {

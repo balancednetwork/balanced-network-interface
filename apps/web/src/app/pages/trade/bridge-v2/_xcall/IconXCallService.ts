@@ -58,8 +58,7 @@ export class IconXCallService {
     return {};
   }
 
-  async executeTransfer(transferData) {
-    const { bridgeInfo } = transferData;
+  async executeTransfer(bridgeInfo) {
     const {
       bridgeDirection,
       currencyAmountToBridge,

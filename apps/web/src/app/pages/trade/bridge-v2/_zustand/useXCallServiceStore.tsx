@@ -5,11 +5,15 @@ import { useIconReact } from 'packages/icon-react';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
-import { useBridgeInfo, useDerivedBridgeInfo } from 'store/bridge/hooks';
+import { useBridgeInfo } from 'store/bridge/hooks';
 import { IconXCallService } from '../_xcall/IconXCallService';
 import { ArchwayXCallService } from '../_xcall/ArchwayXCallService';
 
-export const useXCallServiceStore = create(set => ({
+type XCallServiceStore = {
+  xCallServices: Record<string, IconXCallService | ArchwayXCallService>;
+};
+
+export const useXCallServiceStore = create<XCallServiceStore>(set => ({
   xCallServices: {},
 }));
 

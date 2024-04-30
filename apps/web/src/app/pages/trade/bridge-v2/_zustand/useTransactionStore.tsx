@@ -2,7 +2,7 @@ import React from 'react';
 import { create } from 'zustand';
 import { t } from '@lingui/macro';
 import { toast } from 'react-toastify';
-import { useQuery, useQueries } from '@tanstack/react-query';
+import { useQueries } from '@tanstack/react-query';
 
 import { useIconReact } from 'packages/icon-react';
 import { Converter } from 'icon-sdk-js';

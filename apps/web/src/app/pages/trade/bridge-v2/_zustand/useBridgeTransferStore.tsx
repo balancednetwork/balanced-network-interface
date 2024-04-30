@@ -59,8 +59,13 @@ export const bridgeTransferActions = {
   },
 
   updateTransferEvents: (events: any) => {
+    const transfer = useBridgeTransferStore.getState().transfer;
+    if (!transfer) {
+      return;
+    }
+
     const newEvents = {
-      ...useBridgeTransferStore.getState().transfer.events,
+      ...transfer.events,
       ...events,
     };
     const newStatus = deriveStatus(newEvents);
@@ -70,7 +75,7 @@ export const bridgeTransferActions = {
 
     useBridgeTransferStore.setState({
       transfer: {
-        ...useBridgeTransferStore.getState().transfer,
+        ...transfer,
         events: newEvents,
         status: newStatus,
       },
@@ -93,6 +98,10 @@ export const useFetchBridgeTransferEvents = () => {
   useQuery({
     queryKey: ['bridge-transfer-events', transfer?.id],
     queryFn: async () => {
+      if (!transfer) {
+        return {};
+      }
+
       const {
         bridgeInfo: { bridgeDirection },
       } = transfer;

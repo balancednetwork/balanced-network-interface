@@ -15,7 +15,7 @@ type XCallServiceStore = {
   xCallServices: Record<string, XCallService>;
 };
 
-export const useXCallServiceStore = create<XCallServiceStore>(set => ({
+export const useXCallServiceStore = create<XCallServiceStore>()(set => ({
   xCallServices: {},
 }));
 

@@ -1,6 +1,10 @@
 import { create } from 'zustand';
 
-export const useBridgeTransferConfirmModalStore = create<{ modalOpen: boolean }>()(set => ({
+type BridgeTransferConfirmModalStore = {
+  modalOpen: boolean;
+};
+
+export const useBridgeTransferConfirmModalStore = create<BridgeTransferConfirmModalStore>()(set => ({
   modalOpen: false,
 }));
 

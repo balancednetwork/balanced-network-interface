@@ -11,7 +11,7 @@ type BridgeTransferStore = {
   isTransferring: boolean;
 };
 
-export const useBridgeTransferStore = create<BridgeTransferStore>(set => ({
+export const useBridgeTransferStore = create<BridgeTransferStore>()(set => ({
   transfer: null,
   isTransferring: false,
 }));

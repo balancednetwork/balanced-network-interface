@@ -30,7 +30,7 @@ type TransactionStore = {
   transactions: Transaction[];
 };
 
-export const useTransactionStore = create<TransactionStore>(set => ({
+export const useTransactionStore = create<TransactionStore>()(set => ({
   transactions: [],
 }));
 

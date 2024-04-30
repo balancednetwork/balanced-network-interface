@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import { create } from 'zustand';
 import { t } from '@lingui/macro';
@@ -13,6 +12,7 @@ import {
   NotificationSuccess,
   NotificationError,
 } from 'app/components/Notification/TransactionNotification';
+import { Transaction, TransactionStatus } from './types';
 
 //TODO: this is mock function, need to be replaced with real function
 const getChainType = xChainId => {
@@ -26,13 +26,11 @@ const getChainType = xChainId => {
   }
 };
 
-export enum TransactionStatus {
-  pending = 'pending',
-  success = 'success',
-  failure = 'failure',
-}
+type TransactionStore = {
+  transactions: Transaction[];
+};
 
-export const useTransactionStore = create(set => ({
+export const useTransactionStore = create<TransactionStore>(set => ({
   transactions: [],
 }));
 
@@ -80,33 +78,37 @@ export const transactionActions = {
 
     const transactions = useTransactionStore.getState().transactions;
     const _transaction = transactions.find(item => item.hash === hash && item.xChainId === xChainId);
-    const toastProps = {
-      onClick: () => window.open(getTrackerLink(xChainId, hash, 'transaction'), '_blank'),
-    };
-    toast.update(_transaction.hash, {
-      ...toastProps,
-      render: (
-        <NotificationSuccess
-          summary={_transaction?.successMessage}
-          redirectOnSuccess={_transaction?.redirectOnSuccess}
-        />
-      ),
-      autoClose: 5000,
-    });
+    if (_transaction) {
+      const toastProps = {
+        onClick: () => window.open(getTrackerLink(xChainId, hash, 'transaction'), '_blank'),
+      };
+      toast.update(_transaction.hash, {
+        ...toastProps,
+        render: (
+          <NotificationSuccess
+            summary={_transaction?.successMessage}
+            redirectOnSuccess={_transaction?.redirectOnSuccess}
+          />
+        ),
+        autoClose: 5000,
+      });
+    }
   },
   fail: (xChainId, hash, transaction) => {
     transactionActions.update(xChainId, hash, { ...transaction, status: TransactionStatus.failure });
 
     const transactions = useTransactionStore.getState().transactions;
     const _transaction = transactions.find(item => item.hash === hash && item.xChainId === xChainId);
-    const toastProps = {
-      onClick: () => window.open(getTrackerLink(xChainId, hash, 'transaction'), '_blank'),
-    };
-    toast.update(_transaction.txHash, {
-      ...toastProps,
-      render: <NotificationError failureReason={(_transaction?.failure as any)?.message} />,
-      autoClose: 5000,
-    });
+    if (_transaction) {
+      const toastProps = {
+        onClick: () => window.open(getTrackerLink(xChainId, hash, 'transaction'), '_blank'),
+      };
+      toast.update(_transaction.hash, {
+        ...toastProps,
+        render: <NotificationError failureReason={(_transaction?.failure as any)?.message} />,
+        autoClose: 5000,
+      });
+    }
   },
 
   remove: (xChainId, hash) => {
@@ -168,7 +170,7 @@ export const useTransactionsUpdater = () => {
 
             return txResult;
           } catch (err) {
-            console.error(`failed to check transaction hash: ${hash}`, error);
+            console.error(`failed to check transaction hash: ${hash}`, err);
             throw new Error(err.message);
           }
         },
@@ -181,14 +183,3 @@ export const useTransactionsUpdater = () => {
 
   return null;
 };
-
-/*
-hash
-xChainId
-status
-receipt
-redirectOnSuccess - ?
-pendingMessage
-successMessage
-errorMessage - ?
-*/

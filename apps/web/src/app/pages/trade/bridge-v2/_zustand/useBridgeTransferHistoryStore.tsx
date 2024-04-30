@@ -12,17 +12,3 @@ export const bridgeTransferHistoryActions = {
     }));
   },
 };
-
-/*
-transferId: string;
-sourceChain: string;
-destinationChain: string;
-sourceAddress: string;
-destinationAddress: string;
-
-transferToken: string;
-transferAmount: string;
-
-status: 'pending' | 'completed' | 'failed';
-events: any[];
-*/

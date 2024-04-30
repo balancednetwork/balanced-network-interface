@@ -1,33 +1,23 @@
-// @ts-nocheck
 import { create } from 'zustand';
 import { useBridgeDirection, useDerivedBridgeInfo } from 'store/bridge/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { XCallEventType } from 'app/_xcall/types';
 import { xCallServiceActions } from './useXCallServiceStore';
 import { bridgeTransferConfirmModalActions } from './useBridgeTransferConfirmModalStore';
+import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, XCallEvent } from './types';
 
-export enum BridgeTransferStatus {
-  AWAITING_CALL_MESSAGE_SENT = 'AWAITING_CALL_MESSAGE_SENT',
-  CALL_MESSAGE_SENT = 'CALL_MESSAGE_SENT',
-  CALL_MESSAGE = 'CALL_MESSAGE',
-  CALL_EXECUTED = 'CALL_EXECUTED',
-}
+type BridgeTransferStore = {
+  transfer: BridgeTransfer | null;
+  isTransferring: boolean;
+};
 
-export const useBridgeTransferStore = create(set => ({
-  transfer: {
-    id: '1',
-    bridgeInfo: {},
-    transactions: [],
-    events: {},
-    status: BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT,
-    destinationChainInitialBlockHeight: -1,
-  },
-
+export const useBridgeTransferStore = create<BridgeTransferStore>(set => ({
+  transfer: null,
   isTransferring: false,
 }));
 
 // TODO: review logic
-const deriveStatus = events => {
+const deriveStatus = (events: any) => {
   if (!events[XCallEventType.CallMessageSent]) {
     return BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT;
   }
@@ -48,7 +38,7 @@ export const bridgeTransferActions = {
     useBridgeTransferStore.setState({ isTransferring });
   },
 
-  executeTransfer: async bridgeInfo => {
+  executeTransfer: async (bridgeInfo: BridgeInfo) => {
     const { bridgeDirection } = bridgeInfo;
     const srcChainXCallService = xCallServiceActions.getXCallService(bridgeDirection.from);
     const dstChainXCallService = xCallServiceActions.getXCallService(bridgeDirection.to);
@@ -68,7 +58,7 @@ export const bridgeTransferActions = {
     });
   },
 
-  updateTransferEvents: events => {
+  updateTransferEvents: (events: any) => {
     const newEvents = {
       ...useBridgeTransferStore.getState().transfer.events,
       ...events,
@@ -91,7 +81,7 @@ export const bridgeTransferActions = {
     bridgeTransferConfirmModalActions.closeModal();
 
     useBridgeTransferStore.setState({
-      transfer: {},
+      transfer: null,
       isTransferring: false,
     });
   },

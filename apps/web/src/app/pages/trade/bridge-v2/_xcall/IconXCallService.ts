@@ -1,7 +1,8 @@
 import bnJs from 'bnJs';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import { BridgeTransferStatus, bridgeTransferActions } from '../_zustand/useBridgeTransferStore';
+import { BridgeInfo, BridgeTransfer, BridgeTransferStatus } from '../_zustand/types';
+import { bridgeTransferActions } from '../_zustand/useBridgeTransferStore';
 import { transactionActions } from '../_zustand/useTransactionStore';
 
 import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/_xcall/config';
@@ -33,7 +34,7 @@ export class IconXCallService implements XCallService {
     return lastBlock.height;
   }
 
-  async fetchSourceEvents(transfer) {
+  async fetchSourceEvents(transfer: BridgeTransfer) {
     console.log('fetchSourceEvents executed');
     const transaction = transfer.transactions[0];
     const hash = transaction.hash;
@@ -53,13 +54,13 @@ export class IconXCallService implements XCallService {
     return {};
   }
 
-  async fetchDestinationEvents() {
+  async fetchDestinationEvents(transfer: BridgeTransfer) {
     //TODO: implement this
     console.log('fetchDestinationEvents executed');
     return {};
   }
 
-  async executeTransfer(bridgeInfo) {
+  async executeTransfer(bridgeInfo: BridgeInfo) {
     const {
       bridgeDirection,
       currencyAmountToBridge,

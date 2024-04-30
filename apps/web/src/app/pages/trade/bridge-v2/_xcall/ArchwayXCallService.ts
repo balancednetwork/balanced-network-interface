@@ -9,6 +9,7 @@ import { bridgeTransferActions } from '../_zustand/useBridgeTransferStore';
 import { transactionActions } from '../_zustand/useTransactionStore';
 import { XCallEventType, XChainId } from 'app/_xcall/types';
 import { XCallService } from './types';
+import { BridgeInfo, BridgeTransfer } from '../_zustand/types';
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -34,13 +35,13 @@ export class ArchwayXCallService implements XCallService {
     return height;
   }
 
-  async fetchSourceEvents(transfer) {
+  async fetchSourceEvents(transfer: BridgeTransfer) {
     //TODO: implement this
     console.log('fetchSourceEvents executed');
     return {};
   }
 
-  async fetchDestinationEvents(transfer) {
+  async fetchDestinationEvents(transfer: BridgeTransfer) {
     //TODO: implement this
     console.log('fetchDestinationEvents executed');
 
@@ -63,7 +64,7 @@ export class ArchwayXCallService implements XCallService {
     // return {};
   }
 
-  async executeTransfer(bridgeInfo) {
+  async executeTransfer(bridgeInfo: BridgeInfo) {
     const {
       bridgeDirection,
       currencyAmountToBridge,

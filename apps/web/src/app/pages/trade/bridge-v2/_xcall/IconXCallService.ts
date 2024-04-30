@@ -10,14 +10,15 @@ import { iconService } from 'app/_xcall/_icon/utils';
 import { XCallEventType, XChainId } from 'app/_xcall/types';
 import { xChainMap } from 'app/_xcall/archway/config1';
 
-import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
+import { fetchTxResult } from 'app/_xcall/_icon/utils';
+import { XCallService } from './types';
 
-export class IconXCallService {
-  xChainId: any;
+export class IconXCallService implements XCallService {
+  xChainId: XChainId;
   iconService: any;
   changeShouldLedgerSign: any;
 
-  constructor(xChainId, iconService, changeShouldLedgerSign) {
+  constructor(xChainId: XChainId, iconService, changeShouldLedgerSign) {
     this.xChainId = xChainId;
     this.iconService = iconService;
     this.changeShouldLedgerSign = changeShouldLedgerSign;

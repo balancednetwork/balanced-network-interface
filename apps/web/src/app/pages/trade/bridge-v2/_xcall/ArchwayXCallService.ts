@@ -8,15 +8,16 @@ import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { bridgeTransferActions } from '../_zustand/useBridgeTransferStore';
 import { transactionActions } from '../_zustand/useTransactionStore';
 import { XCallEventType, XChainId } from 'app/_xcall/types';
+import { XCallService } from './types';
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-export class ArchwayXCallService {
+export class ArchwayXCallService implements XCallService {
+  xChainId: XChainId;
   client: any;
   signedClient: any;
-  xChainId: any;
 
-  constructor(xChainId, client, signedClient) {
+  constructor(xChainId: XChainId, client, signedClient) {
     this.xChainId = xChainId;
     this.client = client;
     this.signedClient = signedClient;

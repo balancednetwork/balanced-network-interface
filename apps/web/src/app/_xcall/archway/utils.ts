@@ -89,5 +89,5 @@ export function getFeeParam(fee: number): StdFee | 'auto' {
 }
 
 export function isDenomAsset(token: Token): boolean {
-  return !token.address.startsWith('archway-1');
+  return token.address.startsWith('ibc/');
 }

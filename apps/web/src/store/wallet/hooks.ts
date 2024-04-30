@@ -83,7 +83,7 @@ export function useArchwayBalances(
   const arch = useARCH();
 
   return useQuery({
-    queryKey: [`archwayBalances`, signingClient, address, tokens ? tokens.length : ''],
+    queryKey: [`archwayBalances`, signingClient, address, tokens],
     queryFn: async () => {
       if (!signingClient || !address) return;
 
@@ -100,9 +100,7 @@ export function useArchwayBalances(
       const nativeBalances = await Promise.all(
         denoms.map(async token => {
           const nativeBalance = await signingClient.getBalance(address, token.address);
-          const tokenObj = new Token(NETWORK_ID, token.address, token.decimals, token.symbol, token.name);
-          const balance = CurrencyAmount.fromRawAmount(tokenObj, nativeBalance.amount ?? 0);
-          return balance;
+          return CurrencyAmount.fromRawAmount(token, nativeBalance.amount ?? 0);
         }),
       );
 

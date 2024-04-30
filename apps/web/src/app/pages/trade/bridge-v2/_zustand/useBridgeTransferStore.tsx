@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { XCallEventType } from 'app/_xcall/types';
 import { xCallServiceActions } from './useXCallServiceStore';
 import { bridgeTransferConfirmModalActions } from './useBridgeTransferConfirmModalStore';
-import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, XCallEvent } from './types';
+import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, XCallEvent, XCallEventMap } from './types';
 
 type BridgeTransferStore = {
   transfer: BridgeTransfer | null;
@@ -17,7 +17,7 @@ export const useBridgeTransferStore = create<BridgeTransferStore>(set => ({
 }));
 
 // TODO: review logic
-const deriveStatus = (events: any) => {
+const deriveStatus = (events: XCallEventMap) => {
   if (!events[XCallEventType.CallMessageSent]) {
     return BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT;
   }
@@ -58,7 +58,7 @@ export const bridgeTransferActions = {
     });
   },
 
-  updateTransferEvents: (events: any) => {
+  updateTransferEvents: (events: XCallEventMap) => {
     const transfer = useBridgeTransferStore.getState().transfer;
     if (!transfer) {
       return;
@@ -106,7 +106,7 @@ export const useFetchBridgeTransferEvents = () => {
         bridgeInfo: { bridgeDirection },
       } = transfer;
 
-      let events = [];
+      let events: XCallEventMap = {};
       if (transfer.status === BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT) {
         // fetch source events
         const srcChainXCallService = xCallServiceActions.getXCallService(bridgeDirection.from);

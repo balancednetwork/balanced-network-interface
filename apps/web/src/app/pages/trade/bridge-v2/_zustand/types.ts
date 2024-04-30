@@ -1,4 +1,4 @@
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { IXCallFee, XCallEventType, XChainId } from 'app/_xcall/types';
 
 export enum BridgeTransferStatus {
@@ -19,9 +19,9 @@ export type BridgeInfo = {
     from: XChainId;
     to: XChainId;
   };
-  currencyAmountToBridge: any; //CurrencyAmount<Token>;
+  currencyAmountToBridge: CurrencyAmount<Currency>;
   recipient: string;
-  account: any;
+  account: string;
   xCallFee: IXCallFee;
   isLiquidFinanceEnabled?: boolean;
   isDenom?: boolean;
@@ -68,11 +68,13 @@ export type XCallDestinationEvent = {
 
 export type XCallEvent = XCallSourceEvent | XCallDestinationEvent;
 
+export type XCallEventMap = { [key in XCallEventType]?: XCallEvent };
+
 export type BridgeTransfer = {
   id: string;
   bridgeInfo: BridgeInfo;
   transactions: Transaction[];
-  events: Record<string, XCallEvent>;
+  events: XCallEventMap;
   status: BridgeTransferStatus;
   destinationChainInitialBlockHeight: number;
 };

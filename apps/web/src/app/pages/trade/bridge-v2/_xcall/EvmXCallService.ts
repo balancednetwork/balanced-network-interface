@@ -12,15 +12,15 @@ export class EvmXCallService implements XCallService {
     return Promise.resolve();
   }
   fetchBlockHeight() {
-    return Promise.resolve();
+    return Promise.resolve(12);
   }
   fetchSourceEvents(transfer: BridgeTransfer) {
-    return Promise.resolve();
+    return Promise.resolve({});
   }
   fetchDestinationEvents(transfer: BridgeTransfer) {
-    return Promise.resolve();
+    return Promise.resolve({});
   }
   executeTransfer(bridgeInfo: BridgeInfo) {
-    return Promise.resolve();
+    return Promise.resolve(null);
   }
 }

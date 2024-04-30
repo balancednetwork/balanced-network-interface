@@ -6,10 +6,9 @@ import { getFeeParam } from 'app/_xcall/archway/utils';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 
 import { bridgeTransferActions } from '../_zustand/useBridgeTransferStore';
-import { transactionActions } from '../_zustand/useTransactionStore';
 import { XCallEventType, XChainId } from 'app/_xcall/types';
 import { XCallService } from './types';
-import { BridgeInfo, BridgeTransfer } from '../_zustand/types';
+import { BridgeInfo, BridgeTransfer, XCallEventMap } from '../_zustand/types';
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -41,11 +40,12 @@ export class ArchwayXCallService implements XCallService {
     return {};
   }
 
-  async fetchDestinationEvents(transfer: BridgeTransfer) {
+  async fetchDestinationEvents(transfer: BridgeTransfer): Promise<XCallEventMap> {
     //TODO: implement this
     console.log('fetchDestinationEvents executed');
 
     await delay(3000);
+
     return {
       [XCallEventType.CallMessage]: {
         hash: '0x1234',
@@ -64,7 +64,7 @@ export class ArchwayXCallService implements XCallService {
     // return {};
   }
 
-  async executeTransfer(bridgeInfo: BridgeInfo) {
+  async executeTransfer(bridgeInfo: BridgeInfo): Promise<BridgeTransfer | null> {
     const {
       bridgeDirection,
       currencyAmountToBridge,
@@ -76,7 +76,7 @@ export class ArchwayXCallService implements XCallService {
     } = bridgeInfo;
 
     if (this.signedClient) {
-      const tokenAddress = currencyAmountToBridge.currency.address;
+      const tokenAddress = currencyAmountToBridge.wrapped.currency.address;
       const destination = `${bridgeDirection.to}/${destinationAddress}`;
 
       const executeTransaction = async (msg: any, contract: string, fee: StdFee | 'auto', assetToBridge?: any) => {

@@ -1,7 +1,7 @@
 import bnJs from 'bnJs';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import { BridgeInfo, BridgeTransfer, BridgeTransferStatus } from '../_zustand/types';
+import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, XCallEventMap } from '../_zustand/types';
 import { bridgeTransferActions } from '../_zustand/useBridgeTransferStore';
 import { transactionActions } from '../_zustand/useTransactionStore';
 
@@ -34,7 +34,7 @@ export class IconXCallService implements XCallService {
     return lastBlock.height;
   }
 
-  async fetchSourceEvents(transfer: BridgeTransfer) {
+  async fetchSourceEvents(transfer: BridgeTransfer): Promise<XCallEventMap> {
     console.log('fetchSourceEvents executed');
     const transaction = transfer.transactions[0];
     const hash = transaction.hash;
@@ -77,11 +77,11 @@ export class IconXCallService implements XCallService {
         this.changeShouldLedgerSign(true);
       }
 
-      const tokenAddress = currencyAmountToBridge.currency.address;
+      const tokenAddress = currencyAmountToBridge.wrapped.currency.address;
       const destination = `${bridgeDirection.to}/${destinationAddress}`;
 
       let txResult;
-      if (CROSS_TRANSFER_TOKENS.includes(currencyAmountToBridge.currency.symbol)) {
+      if (CROSS_TRANSFER_TOKENS.includes(currencyAmountToBridge.currency.symbol!)) {
         const cx = bnJs.inject({ account }).getContract(tokenAddress);
         txResult = await cx.crossTransfer(destination, `${currencyAmountToBridge.quotient}`, xCallFee.rollback);
       } else if (ASSET_MANAGER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {

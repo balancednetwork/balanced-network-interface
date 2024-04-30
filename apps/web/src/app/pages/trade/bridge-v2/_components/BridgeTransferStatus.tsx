@@ -29,7 +29,7 @@ const BridgeTransferStatus = () => {
           <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
             <Typography mb={4}>
               <Trans>{transfer?.status}</Trans>
-              {Object.keys(transfer.events).map(eventType => {
+              {Object.keys(transfer?.events || {}).map(eventType => {
                 return <div>{eventType}</div>;
               })}
             </Typography>

@@ -65,16 +65,18 @@ export function BridgeTransferConfirmModal() {
   };
 
   const handleTransfer = async () => {
-    const bridgeInfo = {
-      bridgeDirection,
-      currencyAmountToBridge,
-      recipient,
-      account,
-      xCallFee,
-      isDenom,
-      isLiquidFinanceEnabled,
-    };
-    await bridgeTransferActions.executeTransfer(bridgeInfo);
+    if (currencyAmountToBridge && recipient && account && xCallFee) {
+      const bridgeInfo = {
+        bridgeDirection,
+        currencyAmountToBridge,
+        recipient,
+        account,
+        xCallFee,
+        isDenom,
+        isLiquidFinanceEnabled,
+      };
+      await bridgeTransferActions.executeTransfer(bridgeInfo);
+    }
   };
 
   return (

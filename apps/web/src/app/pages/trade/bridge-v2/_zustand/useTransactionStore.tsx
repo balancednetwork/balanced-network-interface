@@ -169,9 +169,9 @@ export const useTransactionsUpdater = () => {
             }
 
             return txResult;
-          } catch (err) {
+          } catch (err: any) {
             console.error(`failed to check transaction hash: ${hash}`, err);
-            throw new Error(err.message);
+            throw new Error(err?.message);
           }
         },
 

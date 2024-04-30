@@ -9,6 +9,7 @@ import { useBridgeInfo } from 'store/bridge/hooks';
 import { IconXCallService } from '../_xcall/IconXCallService';
 import { ArchwayXCallService } from '../_xcall/ArchwayXCallService';
 import { XCallService } from '../_xcall/types';
+import { XChainId } from 'app/_xcall/types';
 
 type XCallServiceStore = {
   xCallServices: Record<string, XCallService>;
@@ -19,11 +20,11 @@ export const useXCallServiceStore = create<XCallServiceStore>(set => ({
 }));
 
 export const xCallServiceActions = {
-  getXCallService: xChainId => {
+  getXCallService: (xChainId: XChainId) => {
     const xCallService = useXCallServiceStore.getState().xCallServices[xChainId];
     return xCallService;
   },
-  setXCallService: (xChainId, xCallService) => {
+  setXCallService: (xChainId: XChainId, xCallService: XCallService) => {
     useXCallServiceStore.setState({
       xCallServices: {
         ...useXCallServiceStore.getState().xCallServices,
@@ -32,7 +33,7 @@ export const xCallServiceActions = {
     });
   },
 
-  removeXCallService: xChainId => {
+  removeXCallService: (xChainId: XChainId) => {
     const xCallServices = useXCallServiceStore.getState().xCallServices;
     delete xCallServices[xChainId];
     useXCallServiceStore.setState({ xCallServices });
@@ -52,11 +53,11 @@ export const useXCallServiceFactory = () => {
   const { client, signingClient } = useArchwayContext();
 
   useEffect(() => {
-    const createXCallService = xChainId => {
+    const createXCallService = (xChainId: XChainId) => {
       if (xChainId === '0x1.icon' || xChainId === '0x2.icon') {
         const iconXCallService = new IconXCallService(xChainId, iconService, changeShouldLedgerSign);
         xCallServiceActions.setXCallService(xChainId, iconXCallService);
-      } else if (xChainId === 'archway-1') {
+      } else if (xChainId === 'archway-1' || xChainId === 'archway') {
         const archwayXCallService = new ArchwayXCallService(xChainId, client, signingClient);
         xCallServiceActions.setXCallService(xChainId, archwayXCallService);
       }

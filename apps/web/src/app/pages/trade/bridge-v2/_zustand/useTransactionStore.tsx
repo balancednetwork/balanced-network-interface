@@ -8,7 +8,11 @@ import { useQuery, useQueries } from '@tanstack/react-query';
 import { useIconReact } from 'packages/icon-react';
 import { Converter } from 'icon-sdk-js';
 
-import { NotificationPending, NotificationError } from 'app/components/Notification/TransactionNotification';
+import {
+  NotificationPending,
+  NotificationSuccess,
+  NotificationError,
+} from 'app/components/Notification/TransactionNotification';
 
 //TODO: this is mock function, need to be replaced with real function
 const getChainType = chainId => {
@@ -32,12 +36,30 @@ export const useTransactionStore = create(set => ({
   transactions: [],
 }));
 
+const getTrackerLink = (chainId, hash, type) => {
+  // TODO: handle different chain types
+  return `https://tracker.icon.foundation/transaction/${hash}?network=${chainId}`;
+};
+
 export const transactionActions = {
   add: (chainId, transaction) => {
     const newItem = { ...transaction, status: TransactionStatus.pending, chainId };
     useTransactionStore.setState(state => {
       return { transactions: [...state.transactions, newItem] };
     });
+
+    const { hash } = transaction;
+    const link = getTrackerLink(chainId, hash, 'transaction');
+    const toastProps = {
+      onClick: () => window.open(link, '_blank'),
+    };
+
+    toast(<NotificationPending summary={transaction.pendingMessage || t`Processing transaction...`} />, {
+      ...toastProps,
+      toastId: hash,
+    });
+
+    return newItem;
   },
 
   update: (chainId, hash, transaction) => {
@@ -55,9 +77,36 @@ export const transactionActions = {
 
   success: (chainId, hash, transaction) => {
     transactionActions.update(chainId, hash, { ...transaction, status: TransactionStatus.success });
+
+    const transactions = useTransactionStore.getState().transactions;
+    const _transaction = transactions.find(item => item.hash === hash && item.chainId === chainId);
+    const toastProps = {
+      onClick: () => window.open(getTrackerLink(chainId, hash, 'transaction'), '_blank'),
+    };
+    toast.update(_transaction.hash, {
+      ...toastProps,
+      render: (
+        <NotificationSuccess
+          summary={_transaction?.successMessage}
+          redirectOnSuccess={_transaction?.redirectOnSuccess}
+        />
+      ),
+      autoClose: 5000,
+    });
   },
   fail: (chainId, hash, transaction) => {
     transactionActions.update(chainId, hash, { ...transaction, status: TransactionStatus.failure });
+
+    const transactions = useTransactionStore.getState().transactions;
+    const _transaction = transactions.find(item => item.hash === hash && item.chainId === chainId);
+    const toastProps = {
+      onClick: () => window.open(getTrackerLink(chainId, hash, 'transaction'), '_blank'),
+    };
+    toast.update(_transaction.txHash, {
+      ...toastProps,
+      render: <NotificationError failureReason={(_transaction?.failure as any)?.message} />,
+      autoClose: 5000,
+    });
   },
 
   remove: (chainId, hash) => {
@@ -85,10 +134,9 @@ export const useTransactions = () => {};
 // hook for updating transactions status by fetching transaction status from the chain
 export const useTransactionsUpdater = () => {
   const { networkId, iconService } = useIconReact();
-
   const { transactions } = useTransactionStore();
-
   const iconTransactions = transactionActions.getTransactionsByChainType('icon');
+  // console.log('iconTransactions', iconTransactions);
 
   const queries = iconTransactions
     .filter(x => x.status === TransactionStatus.pending)
@@ -98,7 +146,7 @@ export const useTransactionsUpdater = () => {
         queryKey: ['transaction', transaction.chainId, hash],
         queryFn: async () => {
           try {
-            const txResult = iconService.getTransactionResult(hash).execute();
+            const txResult = await iconService.getTransactionResult(hash).execute();
 
             const receipt = {
               blockHash: txResult.blockHash,
@@ -139,7 +187,8 @@ hash
 chainId
 status
 receipt
+redirectOnSuccess - ?
 pendingMessage
 successMessage
-errorMessage
+errorMessage - ?
 */

@@ -9,10 +9,14 @@ import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { Typography } from 'app/theme';
 
 import Spinner from 'app/components/Spinner';
+import { useBridgeTransferStore } from '../_zustand/useBridgeTransferStore';
 
 const BridgeTransferStatus = () => {
   // const message = `Awaiting confirmation on ${getNetworkDisplayName()}.`;
-  const message = `Awaiting confirmation on ICON.`;
+  // const message = `Awaiting confirmation on ICON.`;
+
+  const { transfer } = useBridgeTransferStore();
+
   return (
     <AnimatePresence>
       <motion.div
@@ -24,7 +28,10 @@ const BridgeTransferStatus = () => {
         <Box pt={3}>
           <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
             <Typography mb={4}>
-              <Trans>{message}</Trans>
+              <Trans>{transfer?.status}</Trans>
+              {Object.keys(transfer.events).map(eventType => {
+                return <div>{eventType}</div>;
+              })}
             </Typography>
             <Spinner />
           </Flex>

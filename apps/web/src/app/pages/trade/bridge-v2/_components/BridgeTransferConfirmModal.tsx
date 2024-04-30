@@ -1,9 +1,5 @@
 import React, { useEffect } from 'react';
 
-import { defaultRegistryTypes as defaultStargateTypes, SigningStargateClient } from '@cosmjs/stargate';
-import { decodeTxRaw, Registry } from '@cosmjs/proto-signing';
-import { wasmTypes } from '@cosmjs/cosmwasm-stargate/build/modules';
-
 import { Trans, t } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -15,7 +11,6 @@ import { StyledButton as XCallButton } from 'app/components/trade/XCallSwapModal
 import { AnimatePresence, motion } from 'framer-motion';
 import { Button, TextButton } from 'app/components/Button';
 import Spinner from 'app/components/Spinner';
-import CurrencyLogo from 'app/components/CurrencyLogo';
 
 import { getNetworkDisplayName } from 'app/_xcall/utils';
 import { useXCallFee, useXCallGasChecker } from 'app/_xcall/hooks';
@@ -26,10 +21,15 @@ import {
   bridgeTransferConfirmModalActions,
 } from '../_zustand/useBridgeTransferConfirmModalStore';
 
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { useARCH } from 'app/_xcall/archway/tokens';
 import BridgeTransferStatus from './BridgeTransferStatus';
+import LiquidFinanceIntegration from '../../bridge/_components/LiquidFinanceIntegration';
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from 'store/bridge/hooks';
+import {
+  bridgeTransferActions,
+  useBridgeTransferStore,
+  useFetchBridgeTransferEvents,
+} from '../_zustand/useBridgeTransferStore';
+import { useXCallServiceFactory } from '../_zustand/useXCallServiceStore';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;
@@ -41,92 +41,43 @@ const StyledXCallButton = styled(XCallButton)`
   }
 `;
 
-const WithdrawOption = styled.button<{ active: boolean }>`
-  text-align: center;
-  padding: 10px 20px;
-  border-radius: 10px;
-  border: 0;
-  outline: none;
-  cursor: pointer;
-  margin: 15px 15px 0;
-  transition: all 0.2s ease;
-
-  ${({ theme }) => `color: ${theme.colors.text}`};
-  ${({ theme, active }) => `background-color: ${active ? theme.colors.bg3 : 'transparent'}`};
-
-  &:hover {
-    ${({ theme }) => `background-color: ${theme.colors.bg3}`};
-  }
-
-  img {
-    margin-bottom: 5px;
-  }
-`;
-
 export function BridgeTransferConfirmModal() {
-  const { modalOpen } = useBridgeTransferConfirmModalStore();
+  useFetchBridgeTransferEvents();
+  useXCallServiceFactory();
 
-  const {
-    isWithdrawNativeChecked,
-    // derived
-    shouldLedgerSign,
-    isTransferring,
-    isAllowanceIncreaseNeeded,
-    isNativeVersionAvailable,
-    withdrawableNativeAmount,
-    //actions
-    setIsWithdrawNativeChecked,
-  } = {};
+  const { modalOpen } = useBridgeTransferConfirmModalStore();
+  const { isTransferring } = useBridgeTransferStore();
+
+  //TODO: allowance/approve
+  const isAllowanceIncreaseNeeded = false;
 
   const bridgeDirection = useBridgeDirection();
-  const { currency: currencyToBridge, recipient, typedValue } = useBridgeState();
-  const { currencyAmountToBridge } = useDerivedBridgeInfo();
+  const { currency: currencyToBridge, recipient, typedValue, isLiquidFinanceEnabled } = useBridgeState();
+  const { currencyAmountToBridge, account, isDenom } = useDerivedBridgeInfo();
+  const { xCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
 
-  // const shouldLedgerSign = useShouldLedgerSign();
-  const { client } = useArchwayContext();
+  const shouldLedgerSign = useShouldLedgerSign();
 
   const { data: gasChecker } = useXCallGasChecker(bridgeDirection.from, bridgeDirection.to);
-  const ARCH = useARCH();
-
-  useEffect(() => {
-    const foo = async () => {
-      // const height = await client.getHeight();
-      // console.log('height', height);
-      // 4268760;
-      // const block = await client.getBlock(4268760);
-      // console.log('block', block);
-      // // console.log(block.txs[0]);
-      // const decoded = decodeTxRaw(block.txs[0]);
-      // console.log('decoded', decoded);
-      // //"archway19hzhgd90etqc3z2qswumq80ag2d8het38r0al0r4ulrly72t20psdrpna6"
-      // // const msg = {
-      // //   get_count: {},
-      // // };
-      // // const { count } = await client.queryContractSmart(contractAddress, msg);
-      // const registry = new Registry([...defaultStargateTypes, ...wasmTypes]);
-      // for (const message of decoded.body.messages) {
-      //   const decodedMsg = registry.decode(message);
-      //   console.log('originalMsg', message);
-      //   console.log('decodedMsg', decoded);
-      // }
-      // const tx = await client.getTx('F4B6B5C0FA8A5E10C004466012CE67289ED46FE14A9E3758A2E415489BDEC608');
-      // console.log('tx', tx);
-      // const searchResults = await client.searchTx([{ key: 'tx.height', value: 4268760 }]);
-      // console.log('searchResults', searchResults);
-    };
-    if (client) {
-      foo();
-    }
-  }, [client]);
-
-  //allowance/approve
-  //isNativeVersionAvailable
 
   const handleDismiss = () => {
     bridgeTransferConfirmModalActions.closeModal();
   };
 
-  const handleTransfer = () => {};
+  const handleTransfer = async () => {
+    const transferData = {
+      bridgeInfo: {
+        bridgeDirection,
+        currencyAmountToBridge,
+        recipient,
+        account,
+        xCallFee,
+        isDenom,
+        isLiquidFinanceEnabled,
+      },
+    };
+    await bridgeTransferActions.executeTransfer(transferData);
+  };
 
   return (
     <>
@@ -169,46 +120,9 @@ export function BridgeTransferConfirmModal() {
             {recipient}
           </Typography>
 
-          {isNativeVersionAvailable && (
-            <>
-              <Typography textAlign="center" mb="2px" mt={3}>
-                {`Choose what to do with your ${currencyToBridge?.symbol}:`}
-              </Typography>
-              <Flex justifyContent="space-around">
-                <WithdrawOption
-                  active={isWithdrawNativeChecked !== undefined && isWithdrawNativeChecked}
-                  onClick={() => setIsWithdrawNativeChecked(true)}
-                >
-                  {currencyToBridge?.symbol === 'sARCH' && <CurrencyLogo currency={ARCH} />}
-                  <Typography fontWeight="bold" mb={1}>
-                    Unstake
-                  </Typography>
-                  <Typography>
-                    {`${withdrawableNativeAmount?.amount.toFormat(2, { groupSeparator: ',', decimalSeparator: '.' })} ${
-                      withdrawableNativeAmount?.symbol
-                    }`}{' '}
-                  </Typography>
-                </WithdrawOption>
+          <LiquidFinanceIntegration />
 
-                <WithdrawOption
-                  active={isWithdrawNativeChecked !== undefined && !isWithdrawNativeChecked}
-                  onClick={() => setIsWithdrawNativeChecked(false)}
-                >
-                  <CurrencyLogo currency={currencyToBridge} />
-                  <Typography fontWeight="bold" mb={1}>
-                    Keep {currencyToBridge?.symbol}
-                  </Typography>
-                  <Typography>
-                    {`${currencyAmountToBridge?.toFixed(2, { groupSeparator: ',', decimalSeparator: '.' })} ${
-                      currencyAmountToBridge?.currency.symbol
-                    }`}{' '}
-                  </Typography>
-                </WithdrawOption>
-              </Flex>
-            </>
-          )}
-
-          <BridgeTransferStatus />
+          {isTransferring && <BridgeTransferStatus />}
 
           {gasChecker && gasChecker.hasEnoughGas && (
             <AnimatePresence>
@@ -256,7 +170,7 @@ export function BridgeTransferConfirmModal() {
                   <StyledXCallButton
                     onClick={handleTransfer}
                     disabled={isTransferring}
-                    className={isNativeVersionAvailable && isWithdrawNativeChecked === undefined ? 'disabled' : ''}
+                    // className={isNativeVersionAvailable && isWithdrawNativeChecked === undefined ? 'disabled' : ''}
                   >
                     {!isTransferring ? <Trans>Transfer</Trans> : <Trans>xCall in progress</Trans>}
                   </StyledXCallButton>

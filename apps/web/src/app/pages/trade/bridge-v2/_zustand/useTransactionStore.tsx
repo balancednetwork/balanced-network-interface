@@ -40,7 +40,7 @@ const getTrackerLink = (xChainId, hash, type) => {
 };
 
 export const transactionActions = {
-  add: (xChainId, transaction) => {
+  add: (xChainId, transaction): Transaction => {
     const newItem = { ...transaction, status: TransactionStatus.pending, xChainId };
     useTransactionStore.setState(state => {
       return { transactions: [...state.transactions, newItem] };

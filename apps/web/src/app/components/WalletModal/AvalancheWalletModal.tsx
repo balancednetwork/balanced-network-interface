@@ -32,7 +32,7 @@ export const AvalancheWalletModal = () => {
 
   return (
     <>
-      <Modal isOpen={walletModal === XWalletType.COSMOS} onDismiss={onDismiss} maxWidth={360}>
+      <Modal isOpen={walletModal === XWalletType.EVM} onDismiss={onDismiss} maxWidth={360}>
         <ModalContentWrapper>
           <Typography textAlign="center" margin={'0 0 25px'}>
             Connect with:

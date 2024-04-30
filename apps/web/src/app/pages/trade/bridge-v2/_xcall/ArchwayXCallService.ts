@@ -14,10 +14,10 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 export class ArchwayXCallService {
   client: any;
   signedClient: any;
-  chainId: any;
+  xChainId: any;
 
-  constructor(chainId, client, signedClient) {
-    this.chainId = chainId;
+  constructor(xChainId, client, signedClient) {
+    this.xChainId = xChainId;
     this.client = client;
     this.signedClient = signedClient;
   }

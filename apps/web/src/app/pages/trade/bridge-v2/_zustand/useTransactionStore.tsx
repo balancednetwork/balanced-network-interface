@@ -15,8 +15,8 @@ import {
 } from 'app/components/Notification/TransactionNotification';
 
 //TODO: this is mock function, need to be replaced with real function
-const getChainType = chainId => {
-  switch (chainId) {
+const getChainType = xChainId => {
+  switch (xChainId) {
     case '0x1.icon':
       return 'icon';
     case '0x2.icon':
@@ -36,20 +36,20 @@ export const useTransactionStore = create(set => ({
   transactions: [],
 }));
 
-const getTrackerLink = (chainId, hash, type) => {
+const getTrackerLink = (xChainId, hash, type) => {
   // TODO: handle different chain types
-  return `https://tracker.icon.foundation/transaction/${hash}?network=${chainId}`;
+  return `https://tracker.icon.foundation/transaction/${hash}?network=${xChainId}`;
 };
 
 export const transactionActions = {
-  add: (chainId, transaction) => {
-    const newItem = { ...transaction, status: TransactionStatus.pending, chainId };
+  add: (xChainId, transaction) => {
+    const newItem = { ...transaction, status: TransactionStatus.pending, xChainId };
     useTransactionStore.setState(state => {
       return { transactions: [...state.transactions, newItem] };
     });
 
     const { hash } = transaction;
-    const link = getTrackerLink(chainId, hash, 'transaction');
+    const link = getTrackerLink(xChainId, hash, 'transaction');
     const toastProps = {
       onClick: () => window.open(link, '_blank'),
     };
@@ -62,11 +62,11 @@ export const transactionActions = {
     return newItem;
   },
 
-  update: (chainId, hash, transaction) => {
+  update: (xChainId, hash, transaction) => {
     useTransactionStore.setState(state => {
       return {
         transactions: state.transactions.map(item => {
-          if (item.hash === hash && item.chainId === chainId) {
+          if (item.hash === hash && item.xChainId === xChainId) {
             return { ...item, ...transaction };
           }
           return item;
@@ -75,13 +75,13 @@ export const transactionActions = {
     });
   },
 
-  success: (chainId, hash, transaction) => {
-    transactionActions.update(chainId, hash, { ...transaction, status: TransactionStatus.success });
+  success: (xChainId, hash, transaction) => {
+    transactionActions.update(xChainId, hash, { ...transaction, status: TransactionStatus.success });
 
     const transactions = useTransactionStore.getState().transactions;
-    const _transaction = transactions.find(item => item.hash === hash && item.chainId === chainId);
+    const _transaction = transactions.find(item => item.hash === hash && item.xChainId === xChainId);
     const toastProps = {
-      onClick: () => window.open(getTrackerLink(chainId, hash, 'transaction'), '_blank'),
+      onClick: () => window.open(getTrackerLink(xChainId, hash, 'transaction'), '_blank'),
     };
     toast.update(_transaction.hash, {
       ...toastProps,
@@ -94,13 +94,13 @@ export const transactionActions = {
       autoClose: 5000,
     });
   },
-  fail: (chainId, hash, transaction) => {
-    transactionActions.update(chainId, hash, { ...transaction, status: TransactionStatus.failure });
+  fail: (xChainId, hash, transaction) => {
+    transactionActions.update(xChainId, hash, { ...transaction, status: TransactionStatus.failure });
 
     const transactions = useTransactionStore.getState().transactions;
-    const _transaction = transactions.find(item => item.hash === hash && item.chainId === chainId);
+    const _transaction = transactions.find(item => item.hash === hash && item.xChainId === xChainId);
     const toastProps = {
-      onClick: () => window.open(getTrackerLink(chainId, hash, 'transaction'), '_blank'),
+      onClick: () => window.open(getTrackerLink(xChainId, hash, 'transaction'), '_blank'),
     };
     toast.update(_transaction.txHash, {
       ...toastProps,
@@ -109,23 +109,23 @@ export const transactionActions = {
     });
   },
 
-  remove: (chainId, hash) => {
+  remove: (xChainId, hash) => {
     useTransactionStore.setState(state => {
       return {
-        transactions: state.transactions.filter(item => !(item.hash === hash && item.chainId === chainId)),
+        transactions: state.transactions.filter(item => !(item.hash === hash && item.xChainId === xChainId)),
       };
     });
   },
-  removeAll: chainId => {
+  removeAll: xChainId => {
     useTransactionStore.setState(state => {
       return {
-        transactions: state.transactions.filter(item => item.chainId !== chainId),
+        transactions: state.transactions.filter(item => item.xChainId !== xChainId),
       };
     });
   },
 
   getTransactionsByChainType: chainType => {
-    return useTransactionStore.getState().transactions.filter(item => getChainType(item.chainId) === chainType);
+    return useTransactionStore.getState().transactions.filter(item => getChainType(item.xChainId) === chainType);
   },
 };
 
@@ -143,7 +143,7 @@ export const useTransactionsUpdater = () => {
     .map(transaction => {
       const hash = transaction.hash;
       return {
-        queryKey: ['transaction', transaction.chainId, hash],
+        queryKey: ['transaction', transaction.xChainId, hash],
         queryFn: async () => {
           try {
             const txResult = await iconService.getTransactionResult(hash).execute();
@@ -161,9 +161,9 @@ export const useTransactionsUpdater = () => {
             };
 
             if (receipt.status === 1) {
-              transactionActions.success(transaction.chainId, hash, { receipt });
+              transactionActions.success(transaction.xChainId, hash, { receipt });
             } else {
-              transactionActions.fail(transaction.chainId, hash, { receipt });
+              transactionActions.fail(transaction.xChainId, hash, { receipt });
             }
 
             return txResult;
@@ -184,7 +184,7 @@ export const useTransactionsUpdater = () => {
 
 /*
 hash
-chainId
+xChainId
 status
 receipt
 redirectOnSuccess - ?

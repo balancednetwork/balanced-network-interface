@@ -13,12 +13,12 @@ import { xChainMap } from 'app/_xcall/archway/config1';
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 
 export class IconXCallService {
-  chainId: any;
+  xChainId: any;
   iconService: any;
   changeShouldLedgerSign: any;
 
-  constructor(chainId, iconService, changeShouldLedgerSign) {
-    this.chainId = chainId;
+  constructor(xChainId, iconService, changeShouldLedgerSign) {
+    this.xChainId = xChainId;
     this.iconService = iconService;
     this.changeShouldLedgerSign = changeShouldLedgerSign;
   }

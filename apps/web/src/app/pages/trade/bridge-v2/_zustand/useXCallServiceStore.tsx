@@ -14,22 +14,22 @@ export const useXCallServiceStore = create(set => ({
 }));
 
 export const xCallServiceActions = {
-  getXCallService: chainId => {
-    const xCallService = useXCallServiceStore.getState().xCallServices[chainId];
+  getXCallService: xChainId => {
+    const xCallService = useXCallServiceStore.getState().xCallServices[xChainId];
     return xCallService;
   },
-  setXCallService: (chainId, xCallService) => {
+  setXCallService: (xChainId, xCallService) => {
     useXCallServiceStore.setState({
       xCallServices: {
         ...useXCallServiceStore.getState().xCallServices,
-        [chainId]: xCallService,
+        [xChainId]: xCallService,
       },
     });
   },
 
-  removeXCallService: chainId => {
+  removeXCallService: xChainId => {
     const xCallServices = useXCallServiceStore.getState().xCallServices;
-    delete xCallServices[chainId];
+    delete xCallServices[xChainId];
     useXCallServiceStore.setState({ xCallServices });
   },
   removeAllXCallServices: () => {
@@ -47,13 +47,13 @@ export const useXCallServiceFactory = () => {
   const { client, signingClient } = useArchwayContext();
 
   useEffect(() => {
-    const createXCallService = chainId => {
-      if (chainId === '0x1.icon' || chainId === '0x2.icon') {
-        const iconXCallService = new IconXCallService(chainId, iconService, changeShouldLedgerSign);
-        xCallServiceActions.setXCallService(chainId, iconXCallService);
-      } else if (chainId === 'archway-1') {
-        const archwayXCallService = new ArchwayXCallService(chainId, client, signingClient);
-        xCallServiceActions.setXCallService(chainId, archwayXCallService);
+    const createXCallService = xChainId => {
+      if (xChainId === '0x1.icon' || xChainId === '0x2.icon') {
+        const iconXCallService = new IconXCallService(xChainId, iconService, changeShouldLedgerSign);
+        xCallServiceActions.setXCallService(xChainId, iconXCallService);
+      } else if (xChainId === 'archway-1') {
+        const archwayXCallService = new ArchwayXCallService(xChainId, client, signingClient);
+        xCallServiceActions.setXCallService(xChainId, archwayXCallService);
       }
     };
 

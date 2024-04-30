@@ -8,9 +8,10 @@ import { useChangeShouldLedgerSign } from 'store/application/hooks';
 import { useBridgeInfo } from 'store/bridge/hooks';
 import { IconXCallService } from '../_xcall/IconXCallService';
 import { ArchwayXCallService } from '../_xcall/ArchwayXCallService';
+import { XCallService } from '../_xcall/types';
 
 type XCallServiceStore = {
-  xCallServices: Record<string, IconXCallService | ArchwayXCallService>;
+  xCallServices: Record<string, XCallService>;
 };
 
 export const useXCallServiceStore = create<XCallServiceStore>(set => ({

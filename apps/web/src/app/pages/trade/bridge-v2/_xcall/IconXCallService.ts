@@ -14,6 +14,28 @@ import { xChainMap } from 'app/_xcall/archway/config1';
 import { fetchTxResult } from 'app/_xcall/_icon/utils';
 import { XCallService } from './types';
 
+export const getICONEventSignature = (eventName: XCallEventType) => {
+  switch (eventName) {
+    case XCallEventType.CallMessage: {
+      return 'CallMessage(str,str,int,int,bytes)';
+    }
+    case XCallEventType.CallExecuted: {
+      return 'CallExecuted(int,int,str)';
+    }
+    case XCallEventType.CallMessageSent: {
+      return 'CallMessageSent(Address,str,int)';
+    }
+    case XCallEventType.ResponseMessage: {
+      return 'ResponseMessage(int,int,str)';
+    }
+    case XCallEventType.RollbackMessage: {
+      return 'RollbackMessage(int)';
+    }
+    default:
+      return 'none';
+  }
+};
+
 export class IconXCallService implements XCallService {
   xChainId: XChainId;
   iconService: any;
@@ -34,6 +56,10 @@ export class IconXCallService implements XCallService {
     return lastBlock.height;
   }
 
+  getCallMessageSentEventFromLogs(logs) {
+    return logs.find(event => event.indexed.includes(getICONEventSignature(XCallEventType.CallMessageSent)));
+  }
+
   async fetchSourceEvents(transfer: BridgeTransfer): Promise<XCallEventMap> {
     console.log('fetchSourceEvents executed');
     const transaction = transfer.transactions[0];
@@ -41,16 +67,18 @@ export class IconXCallService implements XCallService {
     const txResult = await fetchTxResult(hash);
 
     if (txResult?.status === 1 && txResult.eventLogs.length) {
+      const callMessageSentLog = this.getCallMessageSentEventFromLogs(txResult.eventLogs);
+      const sn = parseInt(callMessageSentLog.indexed[3], 16);
+
       return {
         [XCallEventType.CallMessageSent]: {
-          hash,
-          blockHeight: txResult.blockHeight,
-          blockHash: txResult.blockHash,
-          eventLogs: txResult.eventLogs,
+          eventType: XCallEventType.CallMessageSent,
+          sn,
+          xChainId: this.xChainId,
+          rawEventData: callMessageSentLog,
         },
       };
     }
-
     return {};
   }
 

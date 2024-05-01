@@ -8,9 +8,12 @@ import { BridgeTransferConfirmModal } from './_components/BridgeTransferConfirmM
 
 import { useTransactionsUpdater } from './_zustand/useTransactionStore';
 import { bridgeTransferConfirmModalActions } from './_zustand/useBridgeTransferConfirmModalStore';
+import { useXCallEventScanner } from './_zustand/useXCallEventStore';
 
 export function BridgeV2Page() {
   useTransactionsUpdater();
+  useXCallEventScanner('archway-1');
+  useXCallEventScanner('0x1.icon');
 
   return (
     <SectionPanel bg="bg2">

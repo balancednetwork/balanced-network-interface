@@ -10,6 +10,8 @@
     "@balancednetwork/v1-sdk": "workspace:*",
     "@chain-registry/types": "0.16.0",
     "@cosmjs/cosmwasm-stargate": "0.32.2",
+    "@cosmjs/crypto": "0.32.3",
+    "@cosmjs/encoding": "0.32.3",
     "@cosmjs/proto-signing": "0.32.3",
     "@cosmjs/stargate": "0.32.2",
     "@ethereumjs/rlp": "5.0.0",
@@ -112,7 +114,11 @@
     "prepare": "pnpm run i18n:compile"
   },
   "proxy": "https://balanced.sudoblock.io",
-  "browserslist": [">0.2%", "not dead", "not op_mini all"],
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ],
   "engines": {
     "node": ">=18.0.0"
   },

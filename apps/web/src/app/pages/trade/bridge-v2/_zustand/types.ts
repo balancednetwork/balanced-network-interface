@@ -40,35 +40,22 @@ export type Transaction = {
 
 export type XCallSourceEvent = {
   eventType: XCallEventType;
-  xChainId: XChainId;
   sn: number;
-  timestamp: number;
-
-  rollback?: boolean;
-  rollbackRequired?: boolean;
-  rollbackReady?: boolean;
-  destination: XChainId;
-  descriptionAction: string;
-  descriptionAmount: string;
+  xChainId: XChainId;
+  rawEventData: any;
 };
 
 export type XCallDestinationEvent = {
   eventType: XCallEventType;
-  xChainId: XChainId;
   sn: number;
-  timestamp: number;
-
-  rollback?: boolean;
-  rollbackRequired?: boolean;
-  rollbackReady?: boolean;
-  destination: XChainId;
-  descriptionAction: string;
-  descriptionAmount: string;
+  reqId: number;
+  xChainId: XChainId;
+  rawEventData: any;
 };
 
 export type XCallEvent = XCallSourceEvent | XCallDestinationEvent;
 
-export type XCallEventMap = { [key in XCallEventType]?: XCallEvent };
+export type XCallEventMap = Partial<Record<XCallEventType, XCallEvent>>;
 
 export type BridgeTransfer = {
   id: string;

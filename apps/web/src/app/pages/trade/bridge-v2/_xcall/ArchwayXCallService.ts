@@ -1,3 +1,5 @@
+import { sha256 } from '@cosmjs/crypto';
+import { toHex } from '@cosmjs/encoding';
 import { StdFee } from '@archwayhq/arch3.js';
 
 import { archway, xChainMap } from 'app/_xcall/archway/config1';
@@ -8,9 +10,25 @@ import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { bridgeTransferActions } from '../_zustand/useBridgeTransferStore';
 import { XCallEventType, XChainId } from 'app/_xcall/types';
 import { XCallService } from './types';
-import { BridgeInfo, BridgeTransfer, XCallEventMap } from '../_zustand/types';
+import { BridgeInfo, BridgeTransfer, XCallEvent, XCallEventMap } from '../_zustand/types';
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+// const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// export const Cache = {
+//   cache: new Map(),
+
+//   has(key: string) {
+//     return Cache.cache.has(key);
+//   },
+
+//   get(key: string) {
+//     return Cache.cache.get(key);
+//   },
+
+//   set(key: string, value: any) {
+//     Cache.cache.set(key, value);
+//   },
+// };
 
 export class ArchwayXCallService implements XCallService {
   xChainId: XChainId;
@@ -40,29 +58,81 @@ export class ArchwayXCallService implements XCallService {
     return {};
   }
 
-  async fetchDestinationEvents(transfer: BridgeTransfer): Promise<XCallEventMap> {
-    //TODO: implement this
-    console.log('fetchDestinationEvents executed');
+  async getBlock(blockHeight) {
+    const block = await this.client.getBlock(blockHeight);
+    return block;
+  }
 
-    await delay(3000);
+  async getTx(txHash) {
+    const tx = await this.client.getTx(txHash);
+    return tx;
+  }
+
+  async filterEvent(rawTx, signature) {
+    const txHash = toHex(sha256(Buffer.from(rawTx, 'base64')));
+    // console.log(txHash);
+    const tx = await this.getTx(txHash);
+
+    if (tx.events.length > 0) {
+      for (const event of tx.events) {
+        if (event.type === signature) {
+          return event;
+        }
+      }
+    }
+  }
+
+  async filterCallMessageEvent(rawTx) {
+    const eventFiltered = await this.filterEvent(rawTx, 'wasm-CallMessage');
+    console.log('eventFiltered', eventFiltered);
+    return eventFiltered;
+  }
+
+  async filterCallExecutedEvent(rawTx) {
+    const eventFiltered = await this.filterEvent(rawTx, 'wasm-CallExecuted');
+    console.log('eventFiltered', eventFiltered);
+    return eventFiltered;
+  }
+
+  parseDestinationEventData(eventType, eventData): XCallEvent {
+    const sn = eventData.attributes.find(a => a.key === 'sn')?.value;
+    const reqId = eventData.attributes.find(a => a.key === 'reqId')?.value;
 
     return {
-      [XCallEventType.CallMessage]: {
-        hash: '0x1234',
-        blockHeight: 1234,
-        blockHash: '0x1234',
-        eventLogs: [],
-      },
-      [XCallEventType.CallExecuted]: {
-        hash: '0x1234',
-        blockHeight: 1234,
-        blockHash: '0x1234',
-        eventLogs: [],
-      },
+      eventType,
+      sn: sn ? parseInt(sn) : -1,
+      reqId: reqId && parseInt(reqId),
+      rawEventData: eventData,
+      xChainId: this.xChainId,
     };
-
-    // return {};
   }
+
+  async fetchDestinationEventsByBlock(blockHeight) {
+    const events: any = [];
+
+    const block = await this.getBlock(blockHeight);
+
+    if (block) {
+      if (block.txs.length > 0) {
+        for (const rawTx of block.txs) {
+          const callMessageEvent = await this.filterCallMessageEvent(rawTx);
+          const callExecutedEvent = await this.filterCallExecutedEvent(rawTx);
+
+          if (callMessageEvent) {
+            events.push(this.parseDestinationEventData(XCallEventType.CallMessage, callMessageEvent));
+          }
+          if (callExecutedEvent) {
+            events.push(this.parseDestinationEventData(XCallEventType.CallExecuted, callExecutedEvent));
+          }
+        }
+      }
+    } else {
+      return null;
+    }
+    return events;
+  }
+
+  async fetchDestinationEvents(transfer: BridgeTransfer): Promise<XCallEventMap> {}
 
   async executeTransfer(bridgeInfo: BridgeInfo): Promise<BridgeTransfer | null> {
     const {

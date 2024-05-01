@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Trans, t } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
@@ -29,7 +29,8 @@ import {
   useBridgeTransferStore,
   useFetchBridgeTransferEvents,
 } from '../_zustand/useBridgeTransferStore';
-import { useXCallServiceFactory } from '../_zustand/useXCallServiceStore';
+import { useXCallServiceFactory, xCallServiceActions } from '../_zustand/useXCallServiceStore';
+import { xCallEventActions } from '../_zustand/useXCallEventStore';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;
@@ -77,7 +78,25 @@ export function BridgeTransferConfirmModal() {
       };
       await bridgeTransferActions.executeTransfer(bridgeInfo);
     }
+
+    // await xCallEventActions.startScanner(bridgeDirection.to, 4393620);
   };
+
+  // const [currentHeight, setCurrentHeight] = useState(0);
+  // useEffect(() => {
+  //   const interval = setInterval(async () => {
+  //     setCurrentHeight(currentHeight + 1);
+  //   }, 1000);
+
+  //   return () => clearInterval(interval);
+  // }, [currentHeight]);
+
+  // useEffect(() => {
+  //   const foo = () => {
+  //     console.log('foo', currentHeight);
+  //   };
+  //   foo();
+  // }, [currentHeight]);
 
   return (
     <>

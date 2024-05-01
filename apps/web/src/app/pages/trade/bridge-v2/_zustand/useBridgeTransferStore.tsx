@@ -5,6 +5,7 @@ import { XCallEventType } from 'app/_xcall/types';
 import { xCallServiceActions } from './useXCallServiceStore';
 import { bridgeTransferConfirmModalActions } from './useBridgeTransferConfirmModalStore';
 import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, XCallEvent, XCallEventMap } from './types';
+import { xCallEventActions } from './useXCallEventStore';
 
 type BridgeTransferStore = {
   transfer: BridgeTransfer | null;
@@ -56,9 +57,14 @@ export const bridgeTransferActions = {
         destinationChainInitialBlockHeight: blockHeight,
       },
     });
+
+    console.log('blockHeight', blockHeight);
+
+    xCallEventActions.startScanner(bridgeDirection.to, blockHeight);
   },
 
   updateTransferEvents: (events: XCallEventMap) => {
+    console.log('update transfer events', events);
     const transfer = useBridgeTransferStore.getState().transfer;
     if (!transfer) {
       return;
@@ -69,9 +75,6 @@ export const bridgeTransferActions = {
       ...events,
     };
     const newStatus = deriveStatus(newEvents);
-    if (newStatus === BridgeTransferStatus.CALL_EXECUTED) {
-      bridgeTransferActions.success();
-    }
 
     useBridgeTransferStore.setState({
       transfer: {
@@ -80,9 +83,16 @@ export const bridgeTransferActions = {
         status: newStatus,
       },
     });
+
+    // TODO: is it right place to call success
+    if (newStatus === BridgeTransferStatus.CALL_EXECUTED) {
+      bridgeTransferActions.success();
+    }
   },
 
   success: () => {
+    xCallEventActions.stopAllScanners();
+
     bridgeTransferConfirmModalActions.closeModal();
 
     useBridgeTransferStore.setState({
@@ -98,6 +108,7 @@ export const useFetchBridgeTransferEvents = () => {
   useQuery({
     queryKey: ['bridge-transfer-events', transfer?.id],
     queryFn: async () => {
+      console.log('transfer', transfer);
       if (!transfer) {
         return {};
       }
@@ -112,9 +123,10 @@ export const useFetchBridgeTransferEvents = () => {
         const srcChainXCallService = xCallServiceActions.getXCallService(bridgeDirection.from);
         events = await srcChainXCallService.fetchSourceEvents(transfer);
       } else {
-        // fetch destination events
-        const dstChainXCallService = xCallServiceActions.getXCallService(bridgeDirection.to);
-        events = await dstChainXCallService.fetchDestinationEvents(transfer);
+        const callMessageSentEvent = transfer.events[XCallEventType.CallMessageSent];
+        if (callMessageSentEvent) {
+          events = xCallEventActions.getDestinationEvents(bridgeDirection.to, callMessageSentEvent.sn);
+        }
       }
 
       bridgeTransferActions.updateTransferEvents(events);

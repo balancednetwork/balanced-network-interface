@@ -8,18 +8,25 @@ export class EvmXCallService implements XCallService {
   constructor(xChainId) {
     this.xChainId = xChainId;
   }
+
   fetchXCallFee(to: XChainId, rollback: boolean) {
-    return Promise.resolve();
+    return Promise.resolve({
+      rollback: '0',
+      noRollback: '0',
+    });
   }
+
   fetchBlockHeight() {
     return Promise.resolve(12);
   }
   fetchSourceEvents(transfer: BridgeTransfer) {
     return Promise.resolve({});
   }
-  fetchDestinationEvents(transfer: BridgeTransfer) {
-    return Promise.resolve({});
+
+  fetchDestinationEventsByBlock(blockHeight) {
+    return Promise.resolve([]);
   }
+
   executeTransfer(bridgeInfo: BridgeInfo) {
     return Promise.resolve(null);
   }

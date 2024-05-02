@@ -3,9 +3,9 @@ import { create } from 'zustand';
 import { t } from '@lingui/macro';
 import { toast } from 'react-toastify';
 import { useQueries } from '@tanstack/react-query';
-
 import { useIconReact } from 'packages/icon-react';
 import { Converter } from 'icon-sdk-js';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   NotificationPending,
@@ -37,34 +37,48 @@ export const useTransactionStore = create<TransactionStore>()(set => ({
 const getTrackerLink = (xChainId, hash, type) => {
   // TODO: handle different chain types
   return `https://tracker.icon.foundation/transaction/${hash}?network=${xChainId}`;
+
+  // archway
+  // window.open(`${archway.tracker}/${tx.transactionHash}`, '_blank');
 };
 
 export const transactionActions = {
+  getTransaction: (xChainId, id) => {
+    return useTransactionStore.getState().transactions.find(item => item.id === id && item.xChainId === xChainId);
+  },
+
   add: (xChainId, transaction): Transaction => {
-    const newItem = { ...transaction, status: TransactionStatus.pending, xChainId };
+    const id = uuidv4().toString();
+    const newItem = { ...transaction, status: TransactionStatus.pending, xChainId, id };
     useTransactionStore.setState(state => {
       return { transactions: [...state.transactions, newItem] };
     });
 
     const { hash } = transaction;
-    const link = getTrackerLink(xChainId, hash, 'transaction');
-    const toastProps = {
-      onClick: () => window.open(link, '_blank'),
-    };
+    if (hash) {
+      const link = getTrackerLink(xChainId, hash, 'transaction');
+      const toastProps = {
+        onClick: () => window.open(link, '_blank'),
+      };
 
-    toast(<NotificationPending summary={transaction.pendingMessage || t`Processing transaction...`} />, {
-      ...toastProps,
-      toastId: hash,
-    });
+      toast(<NotificationPending summary={transaction.pendingMessage || t`Processing transaction...`} />, {
+        ...toastProps,
+        toastId: id,
+      });
+    } else {
+      toast(<NotificationPending summary={transaction.pendingMessage || t`Processing transaction...`} />, {
+        toastId: id,
+      });
+    }
 
     return newItem;
   },
 
-  update: (xChainId, hash, transaction) => {
+  update: (xChainId, id, transaction) => {
     useTransactionStore.setState(state => {
       return {
         transactions: state.transactions.map(item => {
-          if (item.hash === hash && item.xChainId === xChainId) {
+          if (item.id === id && item.xChainId === xChainId) {
             return { ...item, ...transaction };
           }
           return item;
@@ -73,16 +87,16 @@ export const transactionActions = {
     });
   },
 
-  success: (xChainId, hash, transaction) => {
-    transactionActions.update(xChainId, hash, { ...transaction, status: TransactionStatus.success });
+  success: (xChainId, id, transaction) => {
+    transactionActions.update(xChainId, id, { ...transaction, status: TransactionStatus.success });
 
     const transactions = useTransactionStore.getState().transactions;
-    const _transaction = transactions.find(item => item.hash === hash && item.xChainId === xChainId);
+    const _transaction = transactions.find(item => item.id === id && item.xChainId === xChainId);
     if (_transaction) {
       const toastProps = {
-        onClick: () => window.open(getTrackerLink(xChainId, hash, 'transaction'), '_blank'),
+        onClick: () => window.open(getTrackerLink(xChainId, _transaction.hash, 'transaction'), '_blank'),
       };
-      toast.update(_transaction.hash, {
+      toast.update(_transaction.id, {
         ...toastProps,
         render: (
           <NotificationSuccess
@@ -94,27 +108,27 @@ export const transactionActions = {
       });
     }
   },
-  fail: (xChainId, hash, transaction) => {
-    transactionActions.update(xChainId, hash, { ...transaction, status: TransactionStatus.failure });
+  fail: (xChainId, id, transaction) => {
+    transactionActions.update(xChainId, id, { ...transaction, status: TransactionStatus.failure });
 
     const transactions = useTransactionStore.getState().transactions;
-    const _transaction = transactions.find(item => item.hash === hash && item.xChainId === xChainId);
+    const _transaction = transactions.find(item => item.id === id && item.xChainId === xChainId);
     if (_transaction) {
       const toastProps = {
-        onClick: () => window.open(getTrackerLink(xChainId, hash, 'transaction'), '_blank'),
+        onClick: () => window.open(getTrackerLink(xChainId, _transaction.hash, 'transaction'), '_blank'),
       };
-      toast.update(_transaction.hash, {
+      toast.update(_transaction.id, {
         ...toastProps,
-        render: <NotificationError failureReason={(_transaction?.failure as any)?.message} />,
+        render: <NotificationError failureReason={_transaction.errorMessage} />, // TODO: handle error message
         autoClose: 5000,
       });
     }
   },
 
-  remove: (xChainId, hash) => {
+  remove: (xChainId, id) => {
     useTransactionStore.setState(state => {
       return {
-        transactions: state.transactions.filter(item => !(item.hash === hash && item.xChainId === xChainId)),
+        transactions: state.transactions.filter(item => !(item.id === id && item.xChainId === xChainId)),
       };
     });
   },
@@ -135,15 +149,14 @@ export const useTransactions = () => {};
 
 // hook for updating transactions status by fetching transaction status from the chain
 export const useTransactionsUpdater = () => {
-  const { networkId, iconService } = useIconReact();
+  const { iconService } = useIconReact();
   const { transactions } = useTransactionStore();
   const iconTransactions = transactionActions.getTransactionsByChainType('icon');
-  // console.log('iconTransactions', iconTransactions);
 
   const queries = iconTransactions
     .filter(x => x.status === TransactionStatus.pending)
     .map(transaction => {
-      const hash = transaction.hash;
+      const { id, hash } = transaction;
       return {
         queryKey: ['transaction', transaction.xChainId, hash],
         queryFn: async () => {
@@ -163,9 +176,9 @@ export const useTransactionsUpdater = () => {
             };
 
             if (receipt.status === 1) {
-              transactionActions.success(transaction.xChainId, hash, { receipt });
+              transactionActions.success(transaction.xChainId, id, { receipt });
             } else {
-              transactionActions.fail(transaction.xChainId, hash, { receipt });
+              transactionActions.fail(transaction.xChainId, id, { receipt });
             }
 
             return txResult;

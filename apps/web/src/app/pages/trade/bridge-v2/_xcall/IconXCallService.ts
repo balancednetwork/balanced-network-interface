@@ -1,7 +1,7 @@
 import bnJs from 'bnJs';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, XCallEventMap } from '../_zustand/types';
+import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
 import { bridgeTransferActions } from '../_zustand/useBridgeTransferStore';
 import { transactionActions } from '../_zustand/useTransactionStore';
 
@@ -82,10 +82,8 @@ export class IconXCallService implements XCallService {
     return {};
   }
 
-  async fetchDestinationEvents(transfer: BridgeTransfer) {
-    //TODO: implement this
-    console.log('fetchDestinationEvents executed');
-    return {};
+  fetchDestinationEventsByBlock(blockHeight): Promise<XCallEvent[]> {
+    return Promise.resolve([]);
   }
 
   async executeTransfer(bridgeInfo: BridgeInfo) {
@@ -140,7 +138,7 @@ export class IconXCallService implements XCallService {
         });
 
         return {
-          id: hash,
+          id: `${this.xChainId}/${hash}`,
           bridgeInfo,
           transactions: [transaction],
           status: BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT,

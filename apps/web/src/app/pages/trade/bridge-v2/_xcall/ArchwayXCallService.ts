@@ -10,25 +10,9 @@ import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { bridgeTransferActions } from '../_zustand/useBridgeTransferStore';
 import { XCallEventType, XChainId } from 'app/_xcall/types';
 import { XCallService } from './types';
-import { BridgeInfo, BridgeTransfer, XCallEvent, XCallEventMap } from '../_zustand/types';
-
-// const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-// export const Cache = {
-//   cache: new Map(),
-
-//   has(key: string) {
-//     return Cache.cache.has(key);
-//   },
-
-//   get(key: string) {
-//     return Cache.cache.get(key);
-//   },
-
-//   set(key: string, value: any) {
-//     Cache.cache.set(key, value);
-//   },
-// };
+import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
+import { transactionActions } from '../_zustand/useTransactionStore';
+import { Transaction } from '../_zustand/types';
 
 export class ArchwayXCallService implements XCallService {
   xChainId: XChainId;
@@ -52,9 +36,49 @@ export class ArchwayXCallService implements XCallService {
     return height;
   }
 
+  parseSourceEventData(eventType, eventData) {
+    const sn = eventData.attributes.find(a => a.key === 'sn')?.value;
+
+    if (sn) {
+      return {
+        eventType,
+        sn: parseInt(sn),
+        rawEventData: eventData,
+        xChainId: this.xChainId,
+      };
+    }
+  }
+
+  parseDestinationEventData(eventType, eventData): XCallEvent {
+    const sn = eventData.attributes.find(a => a.key === 'sn')?.value;
+    const reqId = eventData.attributes.find(a => a.key === 'reqId')?.value;
+
+    return {
+      eventType,
+      sn: sn ? parseInt(sn) : -1,
+      reqId: reqId && parseInt(reqId),
+      rawEventData: eventData,
+      xChainId: this.xChainId,
+    };
+  }
+
+  async filterCallMessageSentEvent(events) {
+    const eventFiltered = events.find(e => e.type === 'wasm-send_packet');
+    return eventFiltered;
+  }
+
   async fetchSourceEvents(transfer: BridgeTransfer) {
-    //TODO: implement this
-    console.log('fetchSourceEvents executed');
+    try {
+      const callMessageSentEvent = this.filterCallMessageSentEvent(transfer.transactions[0].rawTx.events);
+      return {
+        [XCallEventType.CallMessageSent]: this.parseSourceEventData(
+          XCallEventType.CallMessageSent,
+          callMessageSentEvent,
+        ),
+      };
+    } catch (e) {
+      console.error(e);
+    }
     return {};
   }
 
@@ -70,7 +94,6 @@ export class ArchwayXCallService implements XCallService {
 
   async filterEvent(rawTx, signature) {
     const txHash = toHex(sha256(Buffer.from(rawTx, 'base64')));
-    // console.log(txHash);
     const tx = await this.getTx(txHash);
 
     if (tx.events.length > 0) {
@@ -84,27 +107,12 @@ export class ArchwayXCallService implements XCallService {
 
   async filterCallMessageEvent(rawTx) {
     const eventFiltered = await this.filterEvent(rawTx, 'wasm-CallMessage');
-    console.log('eventFiltered', eventFiltered);
     return eventFiltered;
   }
 
   async filterCallExecutedEvent(rawTx) {
     const eventFiltered = await this.filterEvent(rawTx, 'wasm-CallExecuted');
-    console.log('eventFiltered', eventFiltered);
     return eventFiltered;
-  }
-
-  parseDestinationEventData(eventType, eventData): XCallEvent {
-    const sn = eventData.attributes.find(a => a.key === 'sn')?.value;
-    const reqId = eventData.attributes.find(a => a.key === 'reqId')?.value;
-
-    return {
-      eventType,
-      sn: sn ? parseInt(sn) : -1,
-      reqId: reqId && parseInt(reqId),
-      rawEventData: eventData,
-      xChainId: this.xChainId,
-    };
   }
 
   async fetchDestinationEventsByBlock(blockHeight) {
@@ -132,8 +140,6 @@ export class ArchwayXCallService implements XCallService {
     return events;
   }
 
-  async fetchDestinationEvents(transfer: BridgeTransfer): Promise<XCallEventMap> {}
-
   async executeTransfer(bridgeInfo: BridgeInfo): Promise<BridgeTransfer | null> {
     const {
       bridgeDirection,
@@ -141,7 +147,6 @@ export class ArchwayXCallService implements XCallService {
       recipient: destinationAddress,
       account,
       xCallFee,
-      isLiquidFinanceEnabled,
       isDenom,
     } = bridgeInfo;
 
@@ -150,9 +155,14 @@ export class ArchwayXCallService implements XCallService {
       const destination = `${bridgeDirection.to}/${destinationAddress}`;
 
       const executeTransaction = async (msg: any, contract: string, fee: StdFee | 'auto', assetToBridge?: any) => {
+        let transaction: Transaction;
         try {
-          // initTransaction(bridgeDirection.from, `Requesting cross-chain transfer...`);
-          bridgeTransferActions.setIsTransferring(true);
+          transaction = transactionActions.add(this.xChainId, {
+            status: 'pending',
+            pendingMessage: 'Requesting cross-chain transfer...',
+            successMessage: 'Cross-chain transfer requested.',
+            errorMessage: 'Cross-chain transfer request failed',
+          });
 
           const res = await this.signedClient.execute(
             account,
@@ -170,15 +180,26 @@ export class ArchwayXCallService implements XCallService {
                 : undefined,
           );
 
-          // const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
-          // addTransactionResult(bridgeDirection.from, res, t`Cross-chain transfer requested.`);
-          // originEventData && addOriginEvent(bridgeDirection.from, originEventData);
+          const {
+            payload: { tx },
+          } = res;
+          if (tx) {
+            transactionActions.success(this.xChainId, transaction.id, { hash: tx.transactionHash, rawTx: res });
+
+            return transactionActions.getTransaction(this.xChainId, transaction.id);
+          } else {
+            transactionActions.fail(this.xChainId, transaction.id, {});
+          }
         } catch (e) {
           console.error(e);
-          // addTransactionResult(bridgeDirection.from, null, 'Cross-chain transfer request failed');
-          bridgeTransferActions.setIsTransferring(false);
+
+          // @ts-ignore
+          transactionActions.fail(this.xChainId, transaction.id, {});
         }
       };
+
+      let transaction: Transaction | undefined;
+      bridgeTransferActions.setIsTransferring(true);
 
       if (isDenom) {
         const msg = { deposit_denom: { denom: tokenAddress, to: destination, data: [] } };
@@ -187,7 +208,12 @@ export class ArchwayXCallService implements XCallService {
           amount: `${currencyAmountToBridge.quotient}`,
         };
 
-        executeTransaction(msg, archway.contracts.assetManager, getFeeParam(1200000), assetToBridge);
+        transaction = await executeTransaction(
+          msg,
+          archway.contracts.assetManager,
+          getFeeParam(1200000),
+          assetToBridge,
+        );
       } else {
         if (CROSS_TRANSFER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
           const msg = {
@@ -198,7 +224,7 @@ export class ArchwayXCallService implements XCallService {
             },
           };
 
-          executeTransaction(msg, tokenAddress, 'auto');
+          transaction = await executeTransaction(msg, tokenAddress, 'auto');
         } else if (ASSET_MANAGER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
           const msg = {
             deposit: {
@@ -209,9 +235,23 @@ export class ArchwayXCallService implements XCallService {
             },
           };
 
-          executeTransaction(msg, archway.contracts.assetManager, getFeeParam(1200000));
+          transaction = await executeTransaction(msg, archway.contracts.assetManager, getFeeParam(1200000));
         }
       }
+      if (transaction) {
+        return {
+          id: `${this.xChainId}/${transaction.hash}`,
+          bridgeInfo,
+          transactions: [transaction],
+          status: BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT,
+          events: {},
+          destinationChainInitialBlockHeight: -1,
+        };
+      } else {
+        bridgeTransferActions.setIsTransferring(false);
+      }
     }
+
+    return null;
   }
 }

@@ -84,7 +84,7 @@ export const bridgeTransferActions = {
       },
     });
 
-    // TODO: is it right place to call success
+    // TODO: is it right place to call success?
     if (newStatus === BridgeTransferStatus.CALL_EXECUTED) {
       bridgeTransferActions.success();
     }

@@ -28,6 +28,7 @@ export type BridgeInfo = {
 };
 
 export type Transaction = {
+  id: string;
   hash: string;
   xChainId: number;
   status: TransactionStatus;
@@ -36,6 +37,8 @@ export type Transaction = {
   pendingMessage: string;
   successMessage: string;
   errorMessage?: string;
+
+  rawTx?: any;
 };
 
 export type XCallSourceEvent = {

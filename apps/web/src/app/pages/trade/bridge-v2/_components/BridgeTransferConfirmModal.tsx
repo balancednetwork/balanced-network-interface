@@ -23,12 +23,14 @@ import {
 
 import BridgeTransferStatus from './BridgeTransferStatus';
 import LiquidFinanceIntegration from '../../bridge/_components/LiquidFinanceIntegration';
-import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from 'store/bridge/hooks';
+import { useBridgeInfo } from 'store/bridge/hooks';
 import {
   bridgeTransferActions,
   useBridgeTransferStore,
   useFetchBridgeTransferEvents,
 } from '../_zustand/useBridgeTransferStore';
+import { ApprovalState, useApproveCallback } from 'app/_xcall/archway/AllowanceHandler';
+import { xChainMap } from 'app/_xcall/archway/config1';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;
@@ -46,13 +48,21 @@ export function BridgeTransferConfirmModal() {
   const { modalOpen } = useBridgeTransferConfirmModalStore();
   const { isTransferring } = useBridgeTransferStore();
 
-  //TODO: allowance/approve
-  const isAllowanceIncreaseNeeded = false;
+  const {
+    currency: currencyToBridge,
+    recipient,
+    typedValue,
+    isLiquidFinanceEnabled,
+    currencyAmountToBridge,
+    account,
+    isDenom,
+    bridgeDirection,
+  } = useBridgeInfo();
 
-  const bridgeDirection = useBridgeDirection();
-  const { currency: currencyToBridge, recipient, typedValue, isLiquidFinanceEnabled } = useBridgeState();
-  const { currencyAmountToBridge, account, isDenom } = useDerivedBridgeInfo();
   const { xCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
+
+  const xChain = xChainMap[bridgeDirection.from];
+  const { approvalState, approveCallback } = useApproveCallback(currencyAmountToBridge, xChain.contracts.assetManager);
 
   const shouldLedgerSign = useShouldLedgerSign();
 
@@ -79,21 +89,9 @@ export function BridgeTransferConfirmModal() {
     // await xCallEventActions.startScanner(bridgeDirection.to, 4393620);
   };
 
-  // const [currentHeight, setCurrentHeight] = useState(0);
-  // useEffect(() => {
-  //   const interval = setInterval(async () => {
-  //     setCurrentHeight(currentHeight + 1);
-  //   }, 1000);
-
-  //   return () => clearInterval(interval);
-  // }, [currentHeight]);
-
-  // useEffect(() => {
-  //   const foo = () => {
-  //     console.log('foo', currentHeight);
-  //   };
-  //   foo();
-  // }, [currentHeight]);
+  const handleApprove = () => {
+    approveCallback();
+  };
 
   return (
     <>
@@ -179,17 +177,19 @@ export function BridgeTransferConfirmModal() {
                 <TextButton onClick={handleDismiss}>
                   <Trans>Cancel</Trans>
                 </TextButton>
-
-                {isAllowanceIncreaseNeeded && !isTransferring ? (
-                  <Button disabled>Transfer</Button>
-                ) : (
-                  <StyledXCallButton
-                    onClick={handleTransfer}
-                    disabled={isTransferring}
-                    // className={isNativeVersionAvailable && isWithdrawNativeChecked === undefined ? 'disabled' : ''}
-                  >
-                    {!isTransferring ? <Trans>Transfer</Trans> : <Trans>xCall in progress</Trans>}
-                  </StyledXCallButton>
+                {approvalState !== ApprovalState.APPROVED && (
+                  <>
+                    <Button onClick={handleApprove} disabled={approvalState === ApprovalState.PENDING}>
+                      {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve'}
+                    </Button>
+                  </>
+                )}
+                {approvalState === ApprovalState.APPROVED && (
+                  <>
+                    <StyledXCallButton onClick={handleTransfer} disabled={isTransferring}>
+                      {!isTransferring ? <Trans>Transfer</Trans> : <Trans>xCall in progress</Trans>}
+                    </StyledXCallButton>
+                  </>
                 )}
               </>
             )}

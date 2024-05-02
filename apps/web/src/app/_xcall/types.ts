@@ -147,7 +147,7 @@ export class XToken extends Token {
     chainId: number | string,
     address: string,
     decimals: number,
-    symbol?: string,
+    symbol: string,
     name?: string,
     searchableTerms?: string,
   ) {

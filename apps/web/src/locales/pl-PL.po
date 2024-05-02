@@ -395,6 +395,7 @@ msgid "Review the community token list on GitHub."
 msgstr ""
 
 #: src/app/_xcall/archway/AllowanceHandler/index.tsx
+#: src/app/_xcall/archway/AllowanceHandler/index.tsx
 msgid "Approving {0} for cross-chain transfer..."
 msgstr ""
 
@@ -820,6 +821,7 @@ msgstr ""
 #: src/app/components/trade/XCallSwapModal.tsx
 #: src/app/components/trade/XCallSwapModal.tsx
 #: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/bridge-v2/_components/BridgeTransferStatus.tsx
 msgid "{0}"
 msgstr "{0}"
 
@@ -1415,6 +1417,8 @@ msgstr ""
 msgid "Approve"
 msgstr "Za"
 
+#: src/app/pages/trade/bridge-v2/_zustand/useTransactionStore.tsx
+#: src/app/pages/trade/bridge-v2/_zustand/useTransactionStore.tsx
 #: src/btp/src/connectors/helper.ts
 #: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
@@ -2300,8 +2304,8 @@ msgid "Transfer failed."
 msgstr ""
 
 #: src/app/pages/trade/bridge-v2/_components/BridgeTransferStatus.tsx
-msgid "{message}"
-msgstr ""
+#~ msgid "{message}"
+#~ msgstr ""
 
 #: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx

@@ -41,6 +41,7 @@ import { bnUSD } from 'constants/tokens';
 
 import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
 import { sARCH } from './archway/tokens';
+import { zeroAddress } from 'viem';
 
 export const xTokenMap: { [key1 in XChainId]?: { [key2 in XChainId]?: XToken[] } } = {
   '0x1.icon': {
@@ -57,6 +58,14 @@ export const xTokenMap: { [key1 in XChainId]?: { [key2 in XChainId]?: XToken[] }
         18,
         'hyTB',
         'HiYield Treasury Bill',
+      ),
+      new XToken(
+        '0x1.icon',
+        ChainId.MAINNET,
+        'cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f',
+        6,
+        'IUSDC',
+        'ICON USD Coin',
       ),
     ],
   },
@@ -82,7 +91,7 @@ export const xTokenMap: { [key1 in XChainId]?: { [key2 in XChainId]?: XToken[] }
   },
   '0xa86a.avax': {
     '0x1.icon': [
-      new XToken('0xa86a.avax', 43114, '0x8275509d391e6ee5A8b7133221CE17019D307B3E', 18, 'AVAX', 'AVAX'),
+      new XToken('0xa86a.avax', 43114, zeroAddress, 18, 'AVAX', 'AVAX'),
       new XToken(
         '0xa86a.avax',
         43114,
@@ -91,6 +100,7 @@ export const xTokenMap: { [key1 in XChainId]?: { [key2 in XChainId]?: XToken[] }
         'hyTB',
         'HiYield Treasury Bill',
       ),
+      new XToken('0xa86a.avax', 43114, '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E', 6, 'USDC', 'USD Coin'),
     ],
   },
 };

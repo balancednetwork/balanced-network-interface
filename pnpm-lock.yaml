@@ -128,6 +128,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: 4.2.1
         version: 4.2.1(vite@5.1.4)
+      '@wagmi/core':
+        specifier: 2.9.0
+        version: 2.9.0(@types/react@18.2.67)(react@18.2.0)(typescript@5.4.2)(viem@2.9.23)
       axios:
         specifier: 0.21.3
         version: 0.21.3
@@ -5798,6 +5801,32 @@ packages:
 
   /@wagmi/core@2.6.17(@types/react@18.2.67)(react@18.2.0)(typescript@5.4.2)(viem@2.9.23):
     resolution: {integrity: sha512-Ghr7PlD5HO1YJrsaC52j/csgaigBAiTR7cFiwrY7WdwvWLsR5na4Dv6KfHTU3d3al0CKDLanQdRS5nB4mX1M+g==}
+    peerDependencies:
+      '@tanstack/query-core': '>=5.0.0'
+      typescript: '>=5.0.4'
+      viem: 2.x
+    peerDependenciesMeta:
+      '@tanstack/query-core':
+        optional: true
+      typescript:
+        optional: true
+    dependencies:
+      eventemitter3: 5.0.1
+      mipd: 0.0.5(typescript@5.4.2)
+      typescript: 5.4.2
+      viem: 2.9.23(typescript@5.4.2)
+      zustand: 4.4.1(@types/react@18.2.67)(react@18.2.0)
+    transitivePeerDependencies:
+      - '@types/react'
+      - bufferutil
+      - immer
+      - react
+      - utf-8-validate
+      - zod
+    dev: false
+
+  /@wagmi/core@2.9.0(@types/react@18.2.67)(react@18.2.0)(typescript@5.4.2)(viem@2.9.23):
+    resolution: {integrity: sha512-LPfZPZe2VTAu35m+o2Ej31RN/8zdgv2aeESLb/QVf9n2Rskek0oz23uTMeW51RbYj6amo9wPR2ok20i3F18YLw==}
     peerDependencies:
       '@tanstack/query-core': '>=5.0.0'
       typescript: '>=5.0.4'

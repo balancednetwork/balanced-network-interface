@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { XChainId } from 'app/_xcall/types';
+import { XChainId, XToken } from 'app/_xcall/types';
 import { AppState } from 'store';
 import {
   setRecipient,
@@ -112,12 +112,12 @@ export function useDerivedBridgeInfo() {
   const currencyAmountToBridge = React.useMemo(() => {
     if (currencyToBridge && typedValue && !Number.isNaN(parseFloat(typedValue))) {
       return CurrencyAmount.fromRawAmount(
-        currencyToBridge.wrapped,
+        XToken.getXToken(bridgeDirection.from, currencyToBridge.wrapped),
         new BigNumber(typedValue).times(10 ** currencyToBridge.wrapped.decimals).toFixed(0),
       );
     }
     return undefined;
-  }, [typedValue, currencyToBridge]);
+  }, [typedValue, currencyToBridge, bridgeDirection]);
 
   const signedInWallets = useSignedInWallets();
   const crossChainWallet = useCrossChainWalletBalances();

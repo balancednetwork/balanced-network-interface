@@ -25,7 +25,7 @@ export class Token extends BaseCurrency {
     chainId: number | string,
     address: string,
     decimals: number,
-    symbol?: string,
+    symbol: string,
     name?: string,
     searchableTerms?: string,
   ) {

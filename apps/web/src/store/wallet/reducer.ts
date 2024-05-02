@@ -29,12 +29,17 @@ const walletSlice = createSlice({
       state['archway-1'] = payload;
     }),
 
+    changeBalances: create.reducer<{ xChainId: XChainId; balances: { [key: string]: CurrencyAmount<Currency> } }>(
+      (state, { payload }) => {
+        state[payload.xChainId] = payload.balances;
+      },
+    ),
     resetBalances: create.reducer<void>(state => {
       return initialState;
     }),
   }),
 });
 
-export const { changeICONBalances, changeArchwayBalances, resetBalances } = walletSlice.actions;
+export const { changeICONBalances, changeArchwayBalances, resetBalances, changeBalances } = walletSlice.actions;
 
 export default walletSlice.reducer;

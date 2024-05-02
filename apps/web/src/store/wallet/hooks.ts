@@ -37,7 +37,7 @@ import { useUserAddedTokens } from 'store/user/hooks';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
-import { changeArchwayBalances, changeICONBalances } from './reducer';
+import { changeArchwayBalances, changeBalances, changeICONBalances } from './reducer';
 import { useWallets, useXTokens } from 'app/_xcall/hooks';
 
 export function useCrossChainWalletBalances(): AppState['wallet'] {
@@ -50,6 +50,10 @@ export function useICONWalletBalances(): { [address: string]: CurrencyAmount<Cur
 
 export function useArchwayWalletBalances(): AppState['wallet']['archway-1'] {
   return useSelector((state: AppState) => state.wallet['archway-1']);
+}
+
+export function useWalletBalances(xChainId: XChainId): { [address: string]: CurrencyAmount<Currency> } | undefined {
+  return useSelector((state: AppState) => state.wallet[xChainId]);
 }
 
 export function useAvailableBalances(
@@ -123,6 +127,47 @@ export function useArchwayBalances(
   });
 }
 
+import { coreConfig } from 'config/wagmi';
+import { erc20Abi, zeroAddress } from 'viem';
+import { useAccount, useBalance } from 'wagmi';
+import { multicall } from '@wagmi/core';
+
+export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined) {
+  const { data } = useBalance({ address: account });
+  const nativeBalance = useMemo(
+    () =>
+      data?.value
+        ? CurrencyAmount.fromRawAmount(new Token(43114, zeroAddress, 18, 'AVAX', 'AVAX'), data?.value.toString())
+        : undefined,
+    [data],
+  );
+
+  return useQuery({
+    queryKey: [account, tokens, nativeBalance],
+    queryFn: async () => {
+      if (!account || !tokens || !nativeBalance) return;
+      console.log('result crazy', nativeBalance);
+      const result = await multicall(coreConfig, {
+        contracts: tokens.map(token => ({
+          abi: erc20Abi,
+          address: token.address as `0x${string}`,
+          functionName: 'balanceOf',
+          args: [account],
+        })),
+      });
+
+      return [
+        nativeBalance,
+        ...tokens.map((token, index) => CurrencyAmount.fromRawAmount(token, result[index].result?.toString() || '0')),
+      ].reduce((acc, balance) => {
+        acc[balance.currency.wrapped.address] = balance;
+        return acc;
+      }, {});
+    },
+    enabled: Boolean(account && tokens && nativeBalance),
+  });
+}
+
 export function useWalletFetchBalances(account?: string | null, accountArch?: string | null) {
   const dispatch = useDispatch();
   const tokenListConfig = useTokenListConfig();
@@ -133,18 +178,27 @@ export function useWalletFetchBalances(account?: string | null, accountArch?: st
       ? [...COMBINED_TOKENS_LIST, ...userAddedTokens]
       : [...SUPPORTED_TOKENS_LIST, ...userAddedTokens];
   }, [userAddedTokens, tokenListConfig]);
-  const tokensArch = useXTokens('archway-1') || [];
 
+  // fetch balances on icon
   const balances = useAvailableBalances(account || undefined, tokens);
-  const { data: balancesArch } = useArchwayBalances(accountArch || undefined, tokensArch);
-
   React.useEffect(() => {
     dispatch(changeICONBalances(balances));
   }, [balances, dispatch]);
 
+  // fetch balances on archway
+  const tokensArch = useXTokens('archway-1') || [];
+  const { data: balancesArch } = useArchwayBalances(accountArch || undefined, tokensArch);
   React.useEffect(() => {
     balancesArch && dispatch(changeArchwayBalances(balancesArch));
   }, [balancesArch, dispatch]);
+
+  // fetch balances on avax
+  const { address } = useAccount();
+  const avaxTokens = useXTokens('0xa86a.avax');
+  const { data: avaxBalances } = useEVMBalances(address, avaxTokens);
+  React.useEffect(() => {
+    avaxBalances && dispatch(changeBalances({ xChainId: '0xa86a.avax', balances: avaxBalances }));
+  }, [avaxBalances, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {

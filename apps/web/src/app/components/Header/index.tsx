@@ -30,6 +30,7 @@ import ICONWallet from '../ICONWallet';
 import { notificationCSS } from '../ICONWallet/wallets/utils';
 import { MouseoverTooltip } from '../Tooltip';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
+import EVMWallet from '../EVMWallet';
 
 const StyledLogo = styled(Logo)`
   margin-right: 15px;
@@ -162,6 +163,7 @@ export const CopyableAddress = ({
 const WalletUIs = {
   '0x1.icon': ICONWallet,
   'archway-1': ArchwayWallet,
+  '0xa86a.avax': EVMWallet,
 };
 
 function useClaimableICX(): UseQueryResult<BigNumber> {

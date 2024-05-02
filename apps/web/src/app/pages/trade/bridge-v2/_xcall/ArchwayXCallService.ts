@@ -36,52 +36,6 @@ export class ArchwayXCallService implements XCallService {
     return height;
   }
 
-  parseSourceEventData(eventType, eventData) {
-    const sn = eventData.attributes.find(a => a.key === 'sn')?.value;
-
-    if (sn) {
-      return {
-        eventType,
-        sn: parseInt(sn),
-        rawEventData: eventData,
-        xChainId: this.xChainId,
-      };
-    }
-  }
-
-  parseDestinationEventData(eventType, eventData): XCallEvent {
-    const sn = eventData.attributes.find(a => a.key === 'sn')?.value;
-    const reqId = eventData.attributes.find(a => a.key === 'reqId')?.value;
-
-    return {
-      eventType,
-      sn: sn ? parseInt(sn) : -1,
-      reqId: reqId && parseInt(reqId),
-      rawEventData: eventData,
-      xChainId: this.xChainId,
-    };
-  }
-
-  async filterCallMessageSentEvent(events) {
-    const eventFiltered = events.find(e => e.type === 'wasm-send_packet');
-    return eventFiltered;
-  }
-
-  async fetchSourceEvents(transfer: BridgeTransfer) {
-    try {
-      const callMessageSentEvent = this.filterCallMessageSentEvent(transfer.transactions[0].rawTx.events);
-      return {
-        [XCallEventType.CallMessageSent]: this.parseSourceEventData(
-          XCallEventType.CallMessageSent,
-          callMessageSentEvent,
-        ),
-      };
-    } catch (e) {
-      console.error(e);
-    }
-    return {};
-  }
-
   async getBlock(blockHeight) {
     const block = await this.client.getBlock(blockHeight);
     return block;
@@ -92,12 +46,43 @@ export class ArchwayXCallService implements XCallService {
     return tx;
   }
 
-  async filterEvent(rawTx, signature) {
-    const txHash = toHex(sha256(Buffer.from(rawTx, 'base64')));
-    const tx = await this.getTx(txHash);
+  parseCallMessageSentEventLog(eventLog) {
+    const sn = eventLog.attributes.find(a => a.key === 'sn')?.value;
 
-    if (tx.events.length > 0) {
-      for (const event of tx.events) {
+    return {
+      eventType: XCallEventType.CallMessageSent,
+      sn: parseInt(sn),
+      xChainId: this.xChainId,
+      rawEventData: eventLog,
+    };
+  }
+  parseCallMessageEventLog(eventLog) {
+    const sn = eventLog.attributes.find(a => a.key === 'sn')?.value;
+    const reqId = eventLog.attributes.find(a => a.key === 'reqId')?.value;
+
+    return {
+      eventType: XCallEventType.CallMessage,
+      sn: parseInt(sn),
+      reqId,
+      xChainId: this.xChainId,
+      rawEventData: eventLog,
+    };
+  }
+  parseCallExecutedEventLog(eventLog) {
+    const reqId = eventLog.attributes.find(a => a.key === 'reqId')?.value;
+
+    return {
+      eventType: XCallEventType.CallExecuted,
+      sn: -1,
+      reqId,
+      xChainId: this.xChainId,
+      rawEventData: eventLog,
+    };
+  }
+
+  async filterEventLog(eventLogs, signature) {
+    if (eventLogs && eventLogs.length > 0) {
+      for (const event of eventLogs) {
         if (event.type === signature) {
           return event;
         }
@@ -105,14 +90,31 @@ export class ArchwayXCallService implements XCallService {
     }
   }
 
-  async filterCallMessageEvent(rawTx) {
-    const eventFiltered = await this.filterEvent(rawTx, 'wasm-CallMessage');
+  async filterCallMessageSentEventLog(eventLogs) {
+    const eventFiltered = eventLogs.find(e => e.type === 'wasm-send_packet');
     return eventFiltered;
   }
 
-  async filterCallExecutedEvent(rawTx) {
-    const eventFiltered = await this.filterEvent(rawTx, 'wasm-CallExecuted');
+  async filterCallMessageEventLog(eventLogs) {
+    const eventFiltered = await this.filterEventLog(eventLogs, 'wasm-CallMessage');
     return eventFiltered;
+  }
+
+  async filterCallExecutedEventLog(eventLogs) {
+    const eventFiltered = await this.filterEventLog(eventLogs, 'wasm-CallExecuted');
+    return eventFiltered;
+  }
+
+  async fetchSourceEvents(transfer: BridgeTransfer) {
+    try {
+      const callMessageSentEventLog = this.filterCallMessageSentEventLog(transfer.transactions[0].rawTx.events);
+      return {
+        [XCallEventType.CallMessageSent]: this.parseCallMessageSentEventLog(callMessageSentEventLog),
+      };
+    } catch (e) {
+      console.error(e);
+    }
+    return {};
   }
 
   async fetchDestinationEventsByBlock(blockHeight) {
@@ -123,14 +125,17 @@ export class ArchwayXCallService implements XCallService {
     if (block) {
       if (block.txs.length > 0) {
         for (const rawTx of block.txs) {
-          const callMessageEvent = await this.filterCallMessageEvent(rawTx);
-          const callExecutedEvent = await this.filterCallExecutedEvent(rawTx);
+          const txHash = toHex(sha256(Buffer.from(rawTx, 'base64')));
+          const tx = await this.getTx(txHash);
 
-          if (callMessageEvent) {
-            events.push(this.parseDestinationEventData(XCallEventType.CallMessage, callMessageEvent));
+          const callMessageEventLog = await this.filterCallMessageEventLog(tx.events);
+          const callExecutedEventLog = await this.filterCallExecutedEventLog(tx.events);
+
+          if (callMessageEventLog) {
+            events.push(this.parseCallMessageEventLog(callMessageEventLog));
           }
-          if (callExecutedEvent) {
-            events.push(this.parseDestinationEventData(XCallEventType.CallExecuted, callExecutedEvent));
+          if (callExecutedEventLog) {
+            events.push(this.parseCallExecutedEventLog(callExecutedEventLog));
           }
         }
       }

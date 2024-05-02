@@ -56,34 +56,113 @@ export class IconXCallService implements XCallService {
     return lastBlock.height;
   }
 
-  getCallMessageSentEventFromLogs(logs) {
-    return logs.find(event => event.indexed.includes(getICONEventSignature(XCallEventType.CallMessageSent)));
+  async getBlock(blockHeight: number) {
+    const block = await this.iconService.getBlockByHeight(blockHeight).execute();
+    return block;
+  }
+
+  async getTx(txHash: string) {
+    return await fetchTxResult(txHash);
+  }
+
+  filterEventLog(eventLogs, sig, address = null) {
+    const result = eventLogs.find(event => {
+      return event.indexed && event.indexed[0] === sig && (!address || address === event.scoreAddress);
+    });
+
+    return result;
+  }
+
+  filterCallMessageSentEventLog(eventLogs) {
+    const signature = getICONEventSignature(XCallEventType.CallMessageSent);
+    return eventLogs.find(event => event.indexed.includes(signature));
+  }
+
+  filterCallMessageEventLog(eventLogs) {
+    const signature = getICONEventSignature(XCallEventType.CallMessage);
+    return this.filterEventLog(eventLogs, signature);
+  }
+
+  filterCallExecutedEventLog(eventLogs) {
+    const signature = getICONEventSignature(XCallEventType.CallExecuted);
+    return this.filterEventLog(eventLogs, signature);
+  }
+
+  parseCallMessageSentEventLog(eventLog) {
+    const sn = parseInt(eventLog.indexed[3], 16);
+
+    return {
+      eventType: XCallEventType.CallMessageSent,
+      sn,
+      xChainId: this.xChainId,
+      rawEventData: eventLog,
+    };
+  }
+  parseCallMessageEventLog(eventLog) {
+    const sn = parseInt(eventLog.indexed[3], 16);
+    const reqId = parseInt(eventLog.indexed[1], 16);
+
+    return {
+      eventType: XCallEventType.CallMessage,
+      sn,
+      reqId,
+      xChainId: this.xChainId,
+      rawEventData: eventLog,
+    };
+  }
+  parseCallExecutedEventLog(eventLog) {
+    const reqId = parseInt(eventLog.indexed[1], 16);
+
+    return {
+      eventType: XCallEventType.CallExecuted,
+      sn: -1,
+      reqId,
+      xChainId: this.xChainId,
+      rawEventData: eventLog,
+    };
   }
 
   async fetchSourceEvents(transfer: BridgeTransfer): Promise<XCallEventMap> {
     console.log('fetchSourceEvents executed');
     const transaction = transfer.transactions[0];
     const hash = transaction.hash;
-    const txResult = await fetchTxResult(hash);
+    const txResult = await this.getTx(hash);
 
-    if (txResult?.status === 1 && txResult.eventLogs.length) {
-      const callMessageSentLog = this.getCallMessageSentEventFromLogs(txResult.eventLogs);
-      const sn = parseInt(callMessageSentLog.indexed[3], 16);
-
+    const callMessageSentLog = this.filterCallMessageSentEventLog(txResult?.eventLogs || []);
+    if (callMessageSentLog) {
       return {
-        [XCallEventType.CallMessageSent]: {
-          eventType: XCallEventType.CallMessageSent,
-          sn,
-          xChainId: this.xChainId,
-          rawEventData: callMessageSentLog,
-        },
+        [XCallEventType.CallMessageSent]: this.parseCallMessageSentEventLog(callMessageSentLog),
       };
     }
+
     return {};
   }
 
-  fetchDestinationEventsByBlock(blockHeight): Promise<XCallEvent[]> {
-    return Promise.resolve([]);
+  async fetchDestinationEventsByBlock(blockHeight) {
+    const events: any = [];
+
+    const block = await this.getBlock(blockHeight);
+
+    if (block) {
+      if (block.txs.length > 0) {
+        for (const tx of block.confirmedTransactionList) {
+          const txResult = await this.getTx(tx.txHash);
+
+          const callMessageEventLog = this.filterCallMessageEventLog(txResult?.eventLogs || []);
+          const callExecutedEventLog = this.filterCallExecutedEventLog(txResult?.eventLogs || []);
+
+          if (callMessageEventLog) {
+            events.push(this.parseCallMessageEventLog(callMessageEventLog));
+          }
+          if (callExecutedEventLog) {
+            events.push(this.parseCallExecutedEventLog(callExecutedEventLog));
+          }
+        }
+      }
+    } else {
+      return null;
+    }
+    return events;
   }
 
   async executeTransfer(bridgeInfo: BridgeInfo) {

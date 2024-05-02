@@ -29,8 +29,6 @@ import {
   useBridgeTransferStore,
   useFetchBridgeTransferEvents,
 } from '../_zustand/useBridgeTransferStore';
-import { useXCallServiceFactory, xCallServiceActions } from '../_zustand/useXCallServiceStore';
-import { xCallEventActions } from '../_zustand/useXCallEventStore';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;
@@ -44,7 +42,6 @@ const StyledXCallButton = styled(XCallButton)`
 
 export function BridgeTransferConfirmModal() {
   useFetchBridgeTransferEvents();
-  useXCallServiceFactory();
 
   const { modalOpen } = useBridgeTransferConfirmModalStore();
   const { isTransferring } = useBridgeTransferStore();

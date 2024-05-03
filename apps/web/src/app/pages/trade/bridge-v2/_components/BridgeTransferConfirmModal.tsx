@@ -93,6 +93,8 @@ export function BridgeTransferConfirmModal() {
     approveCallback();
   };
 
+  // TODO: isApproveNeeded && !isApproving && !isApproved
+
   return (
     <>
       <Modal isOpen={modalOpen} onDismiss={handleDismiss}>

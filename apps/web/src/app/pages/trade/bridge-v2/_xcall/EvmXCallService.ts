@@ -11,6 +11,7 @@ import {
   PublicClient,
   WalletClient,
   zeroAddress,
+  parseEther,
 } from 'viem';
 
 const assetManagerContractAbi = [
@@ -387,25 +388,17 @@ export class EvmXCallService implements XCallService {
       // console.log('account', account);
       // console.log('tokenAddress', tokenAddress);
       // console.log('destination', destination);
-      // // const { request } = await this.publicClient.simulateContract({
-      // //   address: avalanche.contracts.assetManager,
-      // //   abi: assetManagerContractAbi,
-      // //   functionName: 'deposit',
-      // //   args: [tokenAddress, 0, destination, '0x'],
-      // //   account,
-      // // });
-      // // console.log('request', request);
-
-      // console.log('writeContract');
-      // // const hash = await this.walletClient.writeContract(request);
-
-      const hash = await this.walletClient.writeContract({
-        address: avalanche.contracts.assetManager,
+      const { request } = await this.publicClient.simulateContract({
+        account: account as `0x${string}`,
+        address: avalanche.contracts.assetManager as `0x${string}`,
         abi: assetManagerContractAbi,
         functionName: 'deposit',
-        args: [tokenAddress, amount, destination, ''],
-        gas: 20000000n,
+        args: [tokenAddress as `0x${string}`, amount, '0x1.icon/hxb9ceac1faf1265741f4485a586af82502af0cc18'],
+        // use fetched protocol fee
+        value: parseEther('0.03'),
       });
+
+      const hash = await this.walletClient.writeContract(request);
 
       console.log('hash', hash);
     }

@@ -4,7 +4,7 @@ import { SectionPanel } from 'app/components/trade/utils';
 
 import BridgeTransferForm from '../bridge/_components/BridgeTransferForm';
 import { BridgeTransferConfirmModal } from './_components/BridgeTransferConfirmModal';
-// import { BridgeActivity } from './_components/BridgeActivity';
+import BridgeActivity from './_components/BridgeActivity';
 
 import { AllTransactionsStatusUpdater } from './_zustand/useTransactionStore';
 import { bridgeTransferConfirmModalActions } from './_zustand/useBridgeTransferConfirmModalStore';
@@ -19,6 +19,7 @@ export function BridgeV2Page() {
   return (
     <SectionPanel bg="bg2">
       <BridgeTransferForm openModal={bridgeTransferConfirmModalActions.openModal} />
+      <BridgeActivity />
       <BridgeTransferConfirmModal />
 
       <AllTransactionsStatusUpdater />

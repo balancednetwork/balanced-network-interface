@@ -142,13 +142,14 @@ export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token
     [data],
   );
 
+  const _tokens = useMemo(() => tokens?.filter(token => token.address !== zeroAddress), [tokens]);
+
   return useQuery({
-    queryKey: [account, tokens, nativeBalance],
+    queryKey: [account, _tokens, nativeBalance],
     queryFn: async () => {
-      if (!account || !tokens || !nativeBalance) return;
-      console.log('result crazy', nativeBalance);
+      if (!account || !_tokens || !nativeBalance) return;
       const result = await multicall(coreConfig, {
-        contracts: tokens.map(token => ({
+        contracts: _tokens.map(token => ({
           abi: erc20Abi,
           address: token.address as `0x${string}`,
           functionName: 'balanceOf',
@@ -158,13 +159,13 @@ export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token
 
       return [
         nativeBalance,
-        ...tokens.map((token, index) => CurrencyAmount.fromRawAmount(token, result[index].result?.toString() || '0')),
+        ..._tokens.map((token, index) => CurrencyAmount.fromRawAmount(token, result[index].result?.toString() || '0')),
       ].reduce((acc, balance) => {
         acc[balance.currency.wrapped.address] = balance;
         return acc;
       }, {});
     },
-    enabled: Boolean(account && tokens && nativeBalance),
+    enabled: Boolean(account && _tokens && nativeBalance),
   });
 }
 

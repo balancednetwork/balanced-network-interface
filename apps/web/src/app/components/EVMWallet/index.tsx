@@ -1,20 +1,14 @@
 import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { BalancedJs } from '@balancednetwork/balanced-js';
-import { Currency, Token } from '@balancednetwork/sdk-core';
+import { Token } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
 import { Flex } from 'rebass/styled-components';
 
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { useARCH } from 'app/_xcall/archway/tokens';
 import CurrencyLogo from 'app/components/CurrencyLogo';
-import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
-import bnJs from 'bnJs';
 import '@reach/tabs/styles.css';
 import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import useArrowControl from 'hooks/useArrowControl';
@@ -22,8 +16,7 @@ import useDebounce from 'hooks/useDebounce';
 import useKeyPress from 'hooks/useKeyPress';
 import { useRatesWithOracle } from 'queries/reward';
 import { useWalletModalToggle } from 'store/application/hooks';
-import { useAllTransactions } from 'store/transactions/hooks';
-import { useArchwayWalletBalances, useSignedInWallets, useWalletBalances } from 'store/wallet/hooks';
+import { useSignedInWallets, useWalletBalances } from 'store/wallet/hooks';
 import { isDPZeroCA, toFraction } from 'utils';
 
 import Divider from '../Divider';
@@ -36,7 +29,6 @@ import {
   DataText,
   HeaderText,
   List,
-  ModalContent,
   StandardCursorListItem,
   WalletAssets,
   WalletTotal,
@@ -46,14 +38,15 @@ import { filterTokens, useSortedTokensByQuery } from '../SearchModal/filtering';
 import SearchInput from '../SearchModal/SearchInput';
 import { useTokenComparator } from '../SearchModal/sorting';
 import { useXTokens, useXWallet } from 'app/_xcall/hooks';
+import { XChainId } from 'app/_xcall/types';
 
 const walletBreakpoint = '499px';
 
 const EVMWallet = ({ setAnchor, anchor }) => {
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
-  const balances = useWalletBalances('0xa86a.avax');
-  const arch = useARCH();
-  const xWallet = useXWallet('0xa86a.avax');
+  const xChainId: XChainId = '0xa86a.avax';
+  const balances = useWalletBalances(xChainId);
+  const xWallet = useXWallet(xChainId);
   const account = xWallet.account;
 
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -62,13 +55,13 @@ const EVMWallet = ({ setAnchor, anchor }) => {
   const debouncedQuery = useDebounce(searchQuery, 200);
   const enter = useKeyPress('Enter');
   const handleEscape = useKeyPress('Escape');
-  const [isOpen, setOpen] = useState(false);
   const toggleWalletModal = useWalletModalToggle();
   const signedInWallets = useSignedInWallets();
 
   const tokenComparator = useTokenComparator(account, false);
 
-  const xTokens = useXTokens('0xa86a.avax');
+  const xTokens = useXTokens(xChainId);
+
   const addressesWithAmount = useMemo(
     () =>
       xTokens
@@ -84,12 +77,8 @@ const EVMWallet = ({ setAnchor, anchor }) => {
   }, [debouncedQuery, addressesWithAmount, xTokens]);
 
   const sortedTokens: Token[] = useMemo(() => {
-    if (balances?.[arch.address]?.greaterThan(0)) {
-      return [arch, ...filteredTokens].sort(tokenComparator);
-    } else {
-      return filteredTokens.sort(tokenComparator);
-    }
-  }, [arch, balances, filteredTokens, tokenComparator]);
+    return filteredTokens.sort(tokenComparator);
+  }, [filteredTokens, tokenComparator]);
 
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery);
 
@@ -135,26 +124,11 @@ const EVMWallet = ({ setAnchor, anchor }) => {
     [filteredSortedTokens, balances, rateFracs],
   );
 
-  // const handleAssetClick = (asset: string) => {
-  //   setModalAsset(asset);
-  //   showModal();
-  // };
-
-  const showModal = useCallback(() => {
-    setOpen(true);
-  }, []);
-
   useEffect(() => {
     if (handleEscape) {
       setAnchor(null);
     }
   }, [handleEscape, setAnchor]);
-
-  useEffect(() => {
-    if (enter && anchor) {
-      showModal();
-    }
-  }, [enter, anchor, showModal]);
 
   useEffect(() => {
     if (anchor) {

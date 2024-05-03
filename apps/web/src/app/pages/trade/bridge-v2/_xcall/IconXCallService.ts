@@ -164,20 +164,18 @@ export class IconXCallService implements XCallService {
 
     const block = await this.getBlock(blockHeight);
 
-    if (block) {
-      if (block.txs.length > 0) {
-        for (const tx of block.confirmedTransactionList) {
-          const txResult = await this.getTx(tx.txHash);
+    if (block && block.txs.length > 0) {
+      for (const tx of block.confirmedTransactionList) {
+        const txResult = await this.getTx(tx.txHash);
 
-          const callMessageEventLog = this.filterCallMessageEventLog(txResult?.eventLogs || []);
-          const callExecutedEventLog = this.filterCallExecutedEventLog(txResult?.eventLogs || []);
+        const callMessageEventLog = this.filterCallMessageEventLog(txResult?.eventLogs || []);
+        const callExecutedEventLog = this.filterCallExecutedEventLog(txResult?.eventLogs || []);
 
-          if (callMessageEventLog) {
-            events.push(this.parseCallMessageEventLog(callMessageEventLog));
-          }
-          if (callExecutedEventLog) {
-            events.push(this.parseCallExecutedEventLog(callExecutedEventLog));
-          }
+        if (callMessageEventLog) {
+          events.push(this.parseCallMessageEventLog(callMessageEventLog));
+        }
+        if (callExecutedEventLog) {
+          events.push(this.parseCallExecutedEventLog(callExecutedEventLog));
         }
       }
     } else {

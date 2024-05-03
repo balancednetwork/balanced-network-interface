@@ -139,21 +139,19 @@ export class ArchwayXCallService implements XCallService {
 
     const block = await this.getBlock(blockHeight);
 
-    if (block) {
-      if (block.txs.length > 0) {
-        for (const rawTx of block.txs) {
-          const txHash = toHex(sha256(Buffer.from(rawTx, 'base64')));
-          const tx = await this.getTx(txHash);
+    if (block && block.txs.length > 0) {
+      for (const rawTx of block.txs) {
+        const txHash = toHex(sha256(Buffer.from(rawTx, 'base64')));
+        const tx = await this.getTx(txHash);
 
-          const callMessageEventLog = await this.filterCallMessageEventLog(tx.events);
-          const callExecutedEventLog = await this.filterCallExecutedEventLog(tx.events);
+        const callMessageEventLog = await this.filterCallMessageEventLog(tx.events);
+        const callExecutedEventLog = await this.filterCallExecutedEventLog(tx.events);
 
-          if (callMessageEventLog) {
-            events.push(this.parseCallMessageEventLog(callMessageEventLog));
-          }
-          if (callExecutedEventLog) {
-            events.push(this.parseCallExecutedEventLog(callExecutedEventLog));
-          }
+        if (callMessageEventLog) {
+          events.push(this.parseCallMessageEventLog(callMessageEventLog));
+        }
+        if (callExecutedEventLog) {
+          events.push(this.parseCallExecutedEventLog(callExecutedEventLog));
         }
       }
     } else {

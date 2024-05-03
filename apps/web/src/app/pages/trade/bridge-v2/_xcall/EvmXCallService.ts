@@ -1,18 +1,842 @@
-import { XChainId } from 'app/_xcall/types';
+import { XCallEventType, XChainId } from 'app/_xcall/types';
 import { XCallService } from './types';
-import { BridgeInfo, BridgeTransfer, TransactionStatus } from '../_zustand/types';
+import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, TransactionStatus } from '../_zustand/types';
 import { avalanche } from 'app/_xcall/archway/config1';
-import {
-  erc20Abi,
-  Address,
-  getContract,
-  Abi,
-  WriteContractReturnType,
-  PublicClient,
-  WalletClient,
-  zeroAddress,
-  parseEther,
-} from 'viem';
+import { Address, PublicClient, WalletClient, parseEther, parseEventLogs } from 'viem';
+import { bridgeTransferActions } from '../_zustand/useBridgeTransferStore';
+import { transactionActions } from '../_zustand/useTransactionStore';
+
+export class EvmXCallService implements XCallService {
+  xChainId: XChainId;
+  publicClient: PublicClient;
+  walletClient: WalletClient;
+
+  constructor(xChainId: XChainId, serviceConfig: any) {
+    const { publicClient, walletClient } = serviceConfig;
+    this.xChainId = xChainId;
+    this.publicClient = publicClient;
+    this.walletClient = walletClient;
+  }
+
+  // TODO: complete this
+  fetchXCallFee(to: XChainId, rollback: boolean) {
+    return Promise.resolve({
+      rollback: '0',
+      noRollback: '0',
+    });
+  }
+
+  async fetchBlockHeight() {
+    const blockNumber = await this.publicClient.getBlockNumber();
+    return blockNumber;
+  }
+
+  async getBlock(blockHeight: bigint) {
+    const block = await this.publicClient.getBlock({ blockNumber: blockHeight });
+    return block;
+  }
+
+  async getTx(txHash: string) {
+    const tx = await this.publicClient.getTransactionReceipt({ hash: txHash as Address });
+    return tx;
+  }
+
+  deriveTxStatus(rawTx): TransactionStatus {
+    try {
+      if (rawTx.transactionHash) {
+        if (rawTx.status === 'success') {
+          return TransactionStatus.success;
+        } else {
+          return TransactionStatus.failure;
+        }
+      }
+    } catch (e) {}
+
+    return TransactionStatus.pending;
+  }
+
+  parseCallMessageSentEventLog(eventLog) {
+    const sn = eventLog.args._sn;
+
+    return {
+      eventType: XCallEventType.CallMessageSent,
+      sn: sn,
+      xChainId: this.xChainId,
+      rawEventData: eventLog,
+    };
+  }
+  parseCallMessageEventLog(eventLog) {
+    const sn = eventLog.args._sn;
+    const reqId = eventLog.args._reqId;
+
+    return {
+      eventType: XCallEventType.CallMessage,
+      sn: sn,
+      reqId,
+      xChainId: this.xChainId,
+      rawEventData: eventLog,
+    };
+  }
+  parseCallExecutedEventLog(eventLog) {
+    const reqId = eventLog.args._reqId;
+
+    return {
+      eventType: XCallEventType.CallExecuted,
+      sn: -1,
+      reqId,
+      xChainId: this.xChainId,
+      rawEventData: eventLog,
+    };
+  }
+
+  async filterEventLog(eventLogs, signature) {
+    if (eventLogs && eventLogs.length > 0) {
+      for (const event of eventLogs) {
+        if (event.eventName === signature) {
+          return event;
+        }
+      }
+    }
+  }
+
+  async filterCallMessageSentEventLog(eventLogs) {
+    const eventFiltered = eventLogs.find(e => e.eventName === 'CallMessageSent');
+    return eventFiltered;
+  }
+
+  async filterCallMessageEventLog(eventLogs) {
+    const eventFiltered = await this.filterEventLog(eventLogs, 'CallMessage');
+    return eventFiltered;
+  }
+
+  async filterCallExecutedEventLog(eventLogs) {
+    const eventFiltered = await this.filterEventLog(eventLogs, 'CallExecuted');
+    return eventFiltered;
+  }
+
+  async fetchSourceEvents(transfer: BridgeTransfer) {
+    try {
+      const rawTx = transfer.transactions[0].rawTx;
+
+      const parsedLogs = parseEventLogs({
+        abi: xCallContractAbi,
+        logs: rawTx.logs,
+      });
+
+      const callMessageSentEventLog = this.filterCallMessageSentEventLog(parsedLogs);
+      return {
+        [XCallEventType.CallMessageSent]: this.parseCallMessageSentEventLog(callMessageSentEventLog),
+      };
+    } catch (e) {
+      console.error(e);
+    }
+    return {};
+  }
+
+  async fetchDestinationEventsByBlock(blockHeight) {
+    const events: any = [];
+
+    const block = await this.getBlock(blockHeight);
+
+    console.log('block', block);
+
+    if (block && block.transactions.length > 0) {
+      for (const txHash of block.transactions) {
+        const rawTx = await this.getTx(txHash);
+        const parsedLogs = parseEventLogs({
+          abi: xCallContractAbi,
+          logs: rawTx.logs,
+        });
+
+        const callMessageEventLog = await this.filterCallMessageEventLog(parsedLogs);
+        const callExecutedEventLog = await this.filterCallExecutedEventLog(parsedLogs);
+
+        if (callMessageEventLog) {
+          events.push(this.parseCallMessageEventLog(callMessageEventLog));
+        }
+        if (callExecutedEventLog) {
+          events.push(this.parseCallExecutedEventLog(callExecutedEventLog));
+        }
+      }
+    } else {
+      return null;
+    }
+    return events;
+  }
+
+  // TODO: complete this
+  async executeTransfer(bridgeInfo: BridgeInfo) {
+    const { bridgeDirection, currencyAmountToBridge, recipient: destinationAddress, account, xCallFee } = bridgeInfo;
+
+    if (this.walletClient) {
+      const tokenAddress = currencyAmountToBridge.wrapped.currency.address;
+      const destination = `${bridgeDirection.to}/${destinationAddress}`;
+      const amount = BigInt(currencyAmountToBridge.quotient.toString());
+
+      const { request } = await this.publicClient.simulateContract({
+        account: account as Address,
+        address: avalanche.contracts.assetManager as Address,
+        abi: assetManagerContractAbi,
+        functionName: 'deposit',
+        args: [tokenAddress as Address, amount, destination],
+        value: parseEther('0.03'), // TODO: use fetched protocol fee
+      });
+
+      const hash = await this.walletClient.writeContract(request);
+      console.log('hash', hash);
+
+      if (hash) {
+        bridgeTransferActions.setIsTransferring(true);
+
+        const transaction = transactionActions.add(bridgeDirection.from, {
+          hash,
+          pendingMessage: 'Requesting cross-chain transfer...',
+          successMessage: 'Cross-chain transfer requested.',
+          errorMessage: 'Cross-chain transfer failed.',
+        });
+
+        return {
+          id: `${this.xChainId}/${transaction.hash}`,
+          bridgeInfo,
+          transactions: [transaction],
+          status: BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT,
+          events: {},
+          destinationChainInitialBlockHeight: -1,
+        };
+      } else {
+        bridgeTransferActions.setIsTransferring(false);
+      }
+    }
+    return null;
+  }
+}
+
+const xCallContractAbi = [
+  {
+    inputs: [],
+    name: 'InvalidInitialization',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'NotInitializing',
+    type: 'error',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: '_reqId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'int256',
+        name: '_code',
+        type: 'int256',
+      },
+      {
+        indexed: false,
+        internalType: 'string',
+        name: '_msg',
+        type: 'string',
+      },
+    ],
+    name: 'CallExecuted',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'string',
+        name: '_from',
+        type: 'string',
+      },
+      {
+        indexed: true,
+        internalType: 'string',
+        name: '_to',
+        type: 'string',
+      },
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: '_sn',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: '_reqId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'bytes',
+        name: '_data',
+        type: 'bytes',
+      },
+    ],
+    name: 'CallMessage',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: '_from',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'string',
+        name: '_to',
+        type: 'string',
+      },
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: '_sn',
+        type: 'uint256',
+      },
+    ],
+    name: 'CallMessageSent',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint64',
+        name: 'version',
+        type: 'uint64',
+      },
+    ],
+    name: 'Initialized',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: '_sn',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'int256',
+        name: '_code',
+        type: 'int256',
+      },
+    ],
+    name: 'ResponseMessage',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: '_sn',
+        type: 'uint256',
+      },
+    ],
+    name: 'RollbackExecuted',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: '_sn',
+        type: 'uint256',
+      },
+    ],
+    name: 'RollbackMessage',
+    type: 'event',
+  },
+  {
+    inputs: [],
+    name: 'admin',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_reqId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes',
+        name: '_data',
+        type: 'bytes',
+      },
+    ],
+    name: 'executeCall',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'to',
+        type: 'address',
+      },
+      {
+        internalType: 'string',
+        name: 'from',
+        type: 'string',
+      },
+      {
+        internalType: 'bytes',
+        name: 'data',
+        type: 'bytes',
+      },
+      {
+        internalType: 'string[]',
+        name: 'protocols',
+        type: 'string[]',
+      },
+    ],
+    name: 'executeMessage',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_sn',
+        type: 'uint256',
+      },
+    ],
+    name: 'executeRollback',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'string',
+        name: '_nid',
+        type: 'string',
+      },
+    ],
+    name: 'getDefaultConnection',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'string',
+        name: '_net',
+        type: 'string',
+      },
+      {
+        internalType: 'bool',
+        name: '_rollback',
+        type: 'bool',
+      },
+      {
+        internalType: 'string[]',
+        name: '_sources',
+        type: 'string[]',
+      },
+    ],
+    name: 'getFee',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'string',
+        name: '_net',
+        type: 'string',
+      },
+      {
+        internalType: 'bool',
+        name: '_rollback',
+        type: 'bool',
+      },
+    ],
+    name: 'getFee',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getNetworkAddress',
+    outputs: [
+      {
+        internalType: 'string',
+        name: '',
+        type: 'string',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getNetworkId',
+    outputs: [
+      {
+        internalType: 'string',
+        name: '',
+        type: 'string',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getProtocolFee',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getProtocolFeeHandler',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'string',
+        name: '_src',
+        type: 'string',
+      },
+      {
+        internalType: 'string',
+        name: '_svc',
+        type: 'string',
+      },
+      {
+        internalType: 'uint256',
+        name: '_sn',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_code',
+        type: 'uint256',
+      },
+      {
+        internalType: 'string',
+        name: '_msg',
+        type: 'string',
+      },
+    ],
+    name: 'handleBTPError',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'string',
+        name: '_from',
+        type: 'string',
+      },
+      {
+        internalType: 'string',
+        name: '_svc',
+        type: 'string',
+      },
+      {
+        internalType: 'uint256',
+        name: '_sn',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes',
+        name: '_msg',
+        type: 'bytes',
+      },
+    ],
+    name: 'handleBTPMessage',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_sn',
+        type: 'uint256',
+      },
+    ],
+    name: 'handleError',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'string',
+        name: '_from',
+        type: 'string',
+      },
+      {
+        internalType: 'bytes',
+        name: '_msg',
+        type: 'bytes',
+      },
+    ],
+    name: 'handleMessage',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'string',
+        name: '_nid',
+        type: 'string',
+      },
+    ],
+    name: 'initialize',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'string',
+        name: '_to',
+        type: 'string',
+      },
+      {
+        internalType: 'bytes',
+        name: '_data',
+        type: 'bytes',
+      },
+    ],
+    name: 'sendCall',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'string',
+        name: '_to',
+        type: 'string',
+      },
+      {
+        internalType: 'bytes',
+        name: '_data',
+        type: 'bytes',
+      },
+      {
+        internalType: 'bytes',
+        name: '_rollback',
+        type: 'bytes',
+      },
+    ],
+    name: 'sendCallMessage',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'string',
+        name: '_to',
+        type: 'string',
+      },
+      {
+        internalType: 'bytes',
+        name: '_data',
+        type: 'bytes',
+      },
+      {
+        internalType: 'bytes',
+        name: '_rollback',
+        type: 'bytes',
+      },
+      {
+        internalType: 'string[]',
+        name: 'sources',
+        type: 'string[]',
+      },
+      {
+        internalType: 'string[]',
+        name: 'destinations',
+        type: 'string[]',
+      },
+    ],
+    name: 'sendCallMessage',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_address',
+        type: 'address',
+      },
+    ],
+    name: 'setAdmin',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'string',
+        name: '_nid',
+        type: 'string',
+      },
+      {
+        internalType: 'address',
+        name: 'connection',
+        type: 'address',
+      },
+    ],
+    name: 'setDefaultConnection',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_value',
+        type: 'uint256',
+      },
+    ],
+    name: 'setProtocolFee',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_addr',
+        type: 'address',
+      },
+    ],
+    name: 'setProtocolFeeHandler',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_sn',
+        type: 'uint256',
+      },
+    ],
+    name: 'verifySuccess',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const;
 
 const assetManagerContractAbi = [
   { inputs: [{ internalType: 'address', name: 'target', type: 'address' }], name: 'AddressEmptyCode', type: 'error' },
@@ -286,121 +1110,3 @@ const assetManagerContractAbi = [
     type: 'function',
   },
 ] as const;
-
-export class EvmXCallService implements XCallService {
-  xChainId: XChainId;
-  publicClient: PublicClient;
-  walletClient: WalletClient;
-
-  constructor(xChainId: XChainId, serviceConfig: any) {
-    const { publicClient, walletClient } = serviceConfig;
-    this.xChainId = xChainId;
-    this.publicClient = publicClient;
-    this.walletClient = walletClient;
-  }
-
-  // TODO: complete this
-  fetchXCallFee(to: XChainId, rollback: boolean) {
-    return Promise.resolve({
-      rollback: '0',
-      noRollback: '0',
-    });
-  }
-
-  async fetchBlockHeight() {
-    const blockNumber = await this.publicClient.getBlockNumber();
-    console.log('blockNumber', blockNumber);
-    return blockNumber;
-  }
-
-  // TODO: complete this
-  async getBlock(blockHeight: number) {}
-
-  // TODO: complete this
-  async getTx(txHash: string) {}
-
-  // TODO: complete this
-  deriveTxStatus(rawTx): TransactionStatus {
-    return TransactionStatus.pending;
-  }
-
-  // TODO: complete this
-  fetchSourceEvents(transfer: BridgeTransfer) {
-    return Promise.resolve({});
-  }
-
-  fetchDestinationEventsByBlock(blockHeight) {
-    return Promise.resolve([]);
-  }
-
-  // TODO: complete this
-  async executeTransfer(bridgeInfo: BridgeInfo) {
-    const { bridgeDirection, currencyAmountToBridge, recipient: destinationAddress, account, xCallFee } = bridgeInfo;
-
-    if (this.walletClient) {
-      const tokenAddress = currencyAmountToBridge.wrapped.currency.address;
-      const destination = `${bridgeDirection.to}/${destinationAddress}`;
-
-      const msg = {
-        deposit: {
-          token_address: tokenAddress,
-          amount: `${currencyAmountToBridge.quotient}`,
-          to: destination,
-          data: [],
-        },
-      };
-
-      const amount = BigInt(currencyAmountToBridge.quotient.toString());
-
-      // const assetManagerContract = getContract({
-      //   abi: assetManagerContractAbi,
-      //   address: avalanche.contracts.assetManager as `0x${string}`,
-      //   client: { public: this.publicClient, wallet: this.walletClient },
-      // });
-
-      // const estimatedGas = await assetManagerContract.estimateGas.deposit(
-      //   [tokenAddress as `0x${string}`, amount, destination, '0x'],
-      //   {
-      //     account: account as `0x${string}`,
-      //   },
-      // );
-
-      // assetManagerContract.estimateGas.deposit([zeroAddress, 0n, zeroAddress, '0x'], {
-      //   account: account as `0x${string}`,
-      // });
-      // console.log('estimatedGas', estimatedGas);
-
-      // console.log('assetManagerContract', assetManagerContract);
-
-      // console.log('estimating gas');
-
-      // const estimatedGas = await assetManagerContract.estimateGas
-      //   .deposit([tokenAddress, amount, destination, '0x'], {
-      //     account,
-      //   })
-      //   .catch((error: any) => {
-      //     console.error('error', error);
-      //   });
-
-      // console.log('estimatedGas', estimatedGas);
-
-      // console.log('simulateContract', avalanche.contracts.assetManager);
-      // console.log('account', account);
-      // console.log('tokenAddress', tokenAddress);
-      // console.log('destination', destination);
-      const { request } = await this.publicClient.simulateContract({
-        account: account as `0x${string}`,
-        address: avalanche.contracts.assetManager as `0x${string}`,
-        abi: assetManagerContractAbi,
-        functionName: 'deposit',
-        args: [tokenAddress as `0x${string}`, amount, '0x1.icon/hxb9ceac1faf1265741f4485a586af82502af0cc18'],
-        // use fetched protocol fee
-        value: parseEther('0.03'),
-      });
-
-      const hash = await this.walletClient.writeContract(request);
-
-      console.log('hash', hash);
-    }
-  }
-}

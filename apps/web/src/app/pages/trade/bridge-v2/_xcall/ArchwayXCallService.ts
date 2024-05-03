@@ -26,7 +26,8 @@ export class ArchwayXCallService implements XCallService {
   client: any;
   signedClient: any;
 
-  constructor(xChainId: XChainId, client, signedClient) {
+  constructor(xChainId: XChainId, serviceConfig: any) {
+    const { client, signedClient } = serviceConfig;
     this.xChainId = xChainId;
     this.client = client;
     this.signedClient = signedClient;

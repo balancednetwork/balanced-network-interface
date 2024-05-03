@@ -49,7 +49,8 @@ export class IconXCallService implements XCallService {
   iconService: any;
   changeShouldLedgerSign: any;
 
-  constructor(xChainId: XChainId, iconService, changeShouldLedgerSign) {
+  constructor(xChainId: XChainId, serviceConfig: any) {
+    const { iconService, changeShouldLedgerSign } = serviceConfig;
     this.xChainId = xChainId;
     this.iconService = iconService;
     this.changeShouldLedgerSign = changeShouldLedgerSign;

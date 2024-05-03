@@ -4,9 +4,14 @@ import { BridgeInfo, BridgeTransfer } from '../_zustand/types';
 
 export class EvmXCallService implements XCallService {
   xChainId: XChainId;
+  publicClient: any;
+  walletClient: any;
 
-  constructor(xChainId) {
+  constructor(xChainId: XChainId, serviceConfig: any) {
+    const { publicClient, walletClient } = serviceConfig;
     this.xChainId = xChainId;
+    this.publicClient = publicClient;
+    this.walletClient = walletClient;
   }
 
   fetchXCallFee(to: XChainId, rollback: boolean) {
@@ -16,8 +21,10 @@ export class EvmXCallService implements XCallService {
     });
   }
 
-  fetchBlockHeight() {
-    return Promise.resolve(12);
+  async fetchBlockHeight() {
+    const blockNumber = await this.publicClient.getBlockNumber();
+    console.log('blockNumber', blockNumber);
+    return blockNumber;
   }
   fetchSourceEvents(transfer: BridgeTransfer) {
     return Promise.resolve({});

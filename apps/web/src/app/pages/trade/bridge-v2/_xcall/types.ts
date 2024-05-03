@@ -13,6 +13,8 @@ export interface XCallService {
   // parseCallMessageEventLog(eventLog)
   // parseCallExecutedEventLog(eventLog)
 
+  // updateServiceConfig(serviceConfig: any): void;
+
   fetchXCallFee(to: XChainId, rollback: boolean): Promise<IXCallFee>;
   fetchBlockHeight(): Promise<number>;
   fetchSourceEvents(transfer: BridgeTransfer): Promise<XCallEventMap>;

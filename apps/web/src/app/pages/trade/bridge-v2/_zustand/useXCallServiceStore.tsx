@@ -10,6 +10,8 @@ import { IconXCallService } from '../_xcall/IconXCallService';
 import { ArchwayXCallService } from '../_xcall/ArchwayXCallService';
 import { XCallService } from '../_xcall/types';
 import { XChainId } from 'app/_xcall/types';
+import { EvmXCallService } from '../_xcall/EvmXCallService';
+import { usePublicClient, useWalletClient } from 'wagmi';
 
 type XCallServiceStore = {
   xCallServices: Record<string, XCallService>;
@@ -52,19 +54,27 @@ export const useXCallServiceFactory = () => {
 
   const { client, signingClient } = useArchwayContext();
 
+  const publicClient = usePublicClient();
+  const { data: walletClient } = useWalletClient();
+
+  const createXCallService = (XCallServiceClass, xChainId: XChainId, serviceConfig: any) => {
+    const xCallService = new XCallServiceClass(xChainId, serviceConfig);
+    xCallServiceActions.setXCallService(xChainId, xCallService);
+  };
+
   useEffect(() => {
-    const createXCallService = (xChainId: XChainId) => {
+    const setupXCallService = (xChainId: XChainId) => {
       if (xChainId === '0x1.icon' || xChainId === '0x2.icon') {
-        const iconXCallService = new IconXCallService(xChainId, iconService, changeShouldLedgerSign);
-        xCallServiceActions.setXCallService(xChainId, iconXCallService);
+        createXCallService(IconXCallService, xChainId, { iconService, changeShouldLedgerSign });
       } else if (xChainId === 'archway-1' || xChainId === 'archway') {
-        const archwayXCallService = new ArchwayXCallService(xChainId, client, signingClient);
-        xCallServiceActions.setXCallService(xChainId, archwayXCallService);
+        createXCallService(ArchwayXCallService, xChainId, { client, signingClient });
+      } else if (xChainId === '0xa86a.avax' || xChainId === '0xa869.fuji') {
+        createXCallService(EvmXCallService, xChainId, { publicClient, walletClient });
       }
     };
 
-    createXCallService(bridgeDirection.from);
-    createXCallService(bridgeDirection.to);
+    setupXCallService(bridgeDirection.from);
+    setupXCallService(bridgeDirection.to);
   }, [
     bridgeDirection,
     bridgeDirection.from,
@@ -73,6 +83,9 @@ export const useXCallServiceFactory = () => {
     signingClient,
     iconService,
     changeShouldLedgerSign,
+    publicClient,
+    walletClient,
+    createXCallService,
   ]);
 
   return true;

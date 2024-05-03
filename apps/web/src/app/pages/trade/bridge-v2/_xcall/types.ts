@@ -1,9 +1,10 @@
 import { IXCallFee, XChainId } from 'app/_xcall/types';
-import { BridgeInfo, BridgeTransfer, XCallEvent, XCallEventMap } from '../_zustand/types';
+import { BridgeInfo, BridgeTransfer, TransactionStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
 
 export interface XCallService {
   // getBlock(blockHeight);
-  // getTx(txHash);
+  getTx(txHash): Promise<any>;
+  deriveTxStatus(rawTx): TransactionStatus;
   // filterEventLog(eventLogs)
   // filterCallMessageEventLog(eventLogs)
   // filterCallExecutedEventLog(eventLogs)

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { create } from 'zustand';
 import { t } from '@lingui/macro';
 import { toast } from 'react-toastify';
-import { useQueries } from '@tanstack/react-query';
+import { useQuery, useQueries } from '@tanstack/react-query';
 import { useIconReact } from 'packages/icon-react';
 import { Converter } from 'icon-sdk-js';
 import { v4 as uuidv4 } from 'uuid';
@@ -13,6 +13,7 @@ import {
   NotificationError,
 } from 'app/components/Notification/TransactionNotification';
 import { Transaction, TransactionStatus } from './types';
+import { xCallServiceActions } from './useXCallServiceStore';
 
 //TODO: this is mock function, need to be replaced with real function
 const getChainType = xChainId => {
@@ -145,54 +146,60 @@ export const transactionActions = {
   },
 };
 
-export const useTransactions = () => {};
+export const useFetchTransactionStatus = transaction => {
+  const { xChainId, hash } = transaction;
+  const { data: txResult, isLoading } = useQuery({
+    queryKey: ['transaction', xChainId, hash],
+    queryFn: async () => {
+      const xCallService = xCallServiceActions.getXCallService(xChainId);
+      try {
+        const txResult = await xCallService.getTx(hash);
+        return txResult;
+      } catch (err: any) {
+        console.error(`failed to check transaction hash: ${hash}`, err);
+        throw new Error(err?.message);
+      }
+    },
+    refetchInterval: 2000,
+    enabled: transaction.status === TransactionStatus.pending,
+  });
 
-// hook for updating transactions status by fetching transaction status from the chain
-export const useTransactionsUpdater = () => {
-  const { iconService } = useIconReact();
-  const { transactions } = useTransactionStore();
-  const iconTransactions = transactionActions.getTransactionsByChainType('icon');
+  const xCallService = xCallServiceActions.getXCallService(transaction.xChainId);
+  const status = xCallService.deriveTxStatus(txResult);
 
-  const queries = iconTransactions
-    .filter(x => x.status === TransactionStatus.pending)
-    .map(transaction => {
-      const { id, hash } = transaction;
-      return {
-        queryKey: ['transaction', transaction.xChainId, hash],
-        queryFn: async () => {
-          try {
-            const txResult = await iconService.getTransactionResult(hash).execute();
+  return { txResult, status };
+};
 
-            const receipt = {
-              blockHash: txResult.blockHash,
-              blockHeight: txResult.blockHeight,
-              scoreAddress: txResult.scoreAddress,
-              // from: receipt.from,
-              status: Converter.toNumber(txResult.status),
-              to: txResult.to,
-              txHash: txResult.txHash,
-              txIndex: txResult.txIndex,
-              eventLogs: txResult.eventLogs,
-            };
+export const TransactionStatusUpdater = ({ transaction }) => {
+  const { txResult, status } = useFetchTransactionStatus(transaction);
+  const { xChainId, id } = transaction;
 
-            if (receipt.status === 1) {
-              transactionActions.success(transaction.xChainId, id, { receipt });
-            } else {
-              transactionActions.fail(transaction.xChainId, id, { receipt });
-            }
+  // const receipt = {
+  //   blockHash: txResult.blockHash,
+  //   blockHeight: txResult.blockHeight,
+  //   scoreAddress: txResult.scoreAddress,
+  //   // from: receipt.from,
+  //   status: Converter.toNumber(txResult.status),
+  //   to: txResult.to,
+  //   txHash: txResult.txHash,
+  //   txIndex: txResult.txIndex,
+  //   eventLogs: txResult.eventLogs,
+  // };
 
-            return txResult;
-          } catch (err: any) {
-            console.error(`failed to check transaction hash: ${hash}`, err);
-            throw new Error(err?.message);
-          }
-        },
-
-        refetchInterval: 2000,
-      };
-    });
-
-  useQueries({ queries });
+  useEffect(() => {
+    if (status === TransactionStatus.success) {
+      transactionActions.success(xChainId, id, { rawTx: txResult });
+    } else if (status === TransactionStatus.failure) {
+      transactionActions.fail(xChainId, id, { rawTx: txResult });
+    }
+  }, [status, xChainId, id, txResult]);
 
   return null;
+};
+
+export const AllTransactionsStatusUpdater = () => {
+  const { transactions } = useTransactionStore();
+
+  // TODO: exclude archway transactions and filter pending transactions
+  return transactions.map(transaction => <TransactionStatusUpdater key={transaction.id} transaction={transaction} />);
 };

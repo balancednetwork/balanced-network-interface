@@ -32,11 +32,11 @@ export type Transaction = {
   hash: string;
   xChainId: number;
   status: TransactionStatus;
-  receipt: any;
-  redirectOnSuccess?: string; // URL to redirect on success
-  pendingMessage: string;
-  successMessage: string;
+
+  pendingMessage?: string;
+  successMessage?: string;
   errorMessage?: string;
+  redirectOnSuccess?: string; // URL to redirect on success
 
   rawTx?: any;
 };

@@ -1,7 +1,14 @@
 import bnJs from 'bnJs';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
+import {
+  BridgeInfo,
+  BridgeTransfer,
+  BridgeTransferStatus,
+  TransactionStatus,
+  XCallEvent,
+  XCallEventMap,
+} from '../_zustand/types';
 import { bridgeTransferActions } from '../_zustand/useBridgeTransferStore';
 import { transactionActions } from '../_zustand/useTransactionStore';
 
@@ -13,6 +20,7 @@ import { xChainMap } from 'app/_xcall/archway/config1';
 
 import { fetchTxResult } from 'app/_xcall/_icon/utils';
 import { XCallService } from './types';
+import { Converter } from 'icon-sdk-js';
 
 export const getICONEventSignature = (eventName: XCallEventType) => {
   switch (eventName) {
@@ -63,6 +71,18 @@ export class IconXCallService implements XCallService {
 
   async getTx(txHash: string) {
     return await fetchTxResult(txHash);
+  }
+
+  deriveTxStatus(rawTx): TransactionStatus {
+    if (rawTx) {
+      const status = Converter.toNumber(rawTx.status);
+      if (status === 1) {
+        return TransactionStatus.success;
+      } else {
+        return TransactionStatus.failure;
+      }
+    }
+    return TransactionStatus.pending;
   }
 
   filterEventLog(eventLogs, sig, address = null) {

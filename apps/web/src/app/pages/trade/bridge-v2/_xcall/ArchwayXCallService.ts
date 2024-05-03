@@ -10,7 +10,14 @@ import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { bridgeTransferActions } from '../_zustand/useBridgeTransferStore';
 import { XCallEventType, XChainId } from 'app/_xcall/types';
 import { XCallService } from './types';
-import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
+import {
+  BridgeInfo,
+  BridgeTransfer,
+  BridgeTransferStatus,
+  TransactionStatus,
+  XCallEvent,
+  XCallEventMap,
+} from '../_zustand/types';
 import { transactionActions } from '../_zustand/useTransactionStore';
 import { Transaction } from '../_zustand/types';
 
@@ -44,6 +51,15 @@ export class ArchwayXCallService implements XCallService {
   async getTx(txHash) {
     const tx = await this.client.getTx(txHash);
     return tx;
+  }
+
+  // TODO: fix this
+  deriveTxStatus(rawTx: any): TransactionStatus {
+    if (rawTx.code) {
+      return TransactionStatus.failure;
+    }
+
+    return TransactionStatus.success;
   }
 
   parseCallMessageSentEventLog(eventLog) {

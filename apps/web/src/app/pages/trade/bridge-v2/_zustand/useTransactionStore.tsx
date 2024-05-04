@@ -75,131 +75,114 @@ export const transactionActions = {
     return newItem;
   },
 
-  update: (xChainId, id, transaction) => {
+  updateTx: (xChainId, id, transaction) => {
+    const { hash, rawTx } = transaction;
+    const status = xCallServiceActions.getXCallService(xChainId).deriveTxStatus(rawTx);
+
     useTransactionStore.setState(state => {
       return {
         transactions: state.transactions.map(item => {
           if (item.id === id && item.xChainId === xChainId) {
-            return { ...item, ...transaction };
+            if (hash) {
+              return { ...item, rawTx, status, hash };
+            } else {
+              return { ...item, rawTx, status };
+            }
           }
           return item;
         }),
       };
     });
-  },
-
-  success: (xChainId, id, transaction) => {
-    transactionActions.update(xChainId, id, { ...transaction, status: TransactionStatus.success });
 
     const transactions = useTransactionStore.getState().transactions;
     const _transaction = transactions.find(item => item.id === id && item.xChainId === xChainId);
     if (_transaction) {
-      const toastProps = {
-        onClick: () => window.open(getTrackerLink(xChainId, _transaction.hash, 'transaction'), '_blank'),
-      };
-      toast.update(_transaction.id, {
-        ...toastProps,
-        render: (
-          <NotificationSuccess
-            summary={_transaction?.successMessage}
-            redirectOnSuccess={_transaction?.redirectOnSuccess}
-          />
-        ),
-        autoClose: 5000,
-      });
-    }
-  },
-  fail: (xChainId, id, transaction) => {
-    transactionActions.update(xChainId, id, { ...transaction, status: TransactionStatus.failure });
-
-    const transactions = useTransactionStore.getState().transactions;
-    const _transaction = transactions.find(item => item.id === id && item.xChainId === xChainId);
-    if (_transaction) {
-      const toastProps = {
-        onClick: () => window.open(getTrackerLink(xChainId, _transaction.hash, 'transaction'), '_blank'),
-      };
-      toast.update(_transaction.id, {
-        ...toastProps,
-        render: <NotificationError failureReason={_transaction.errorMessage} />, // TODO: handle error message
-        autoClose: 5000,
-      });
+      if (status === TransactionStatus.success) {
+        const toastProps = {
+          onClick: () => window.open(getTrackerLink(xChainId, _transaction.hash, 'transaction'), '_blank'),
+        };
+        toast.update(_transaction.id, {
+          ...toastProps,
+          render: (
+            <NotificationSuccess
+              summary={_transaction?.successMessage}
+              redirectOnSuccess={_transaction?.redirectOnSuccess}
+            />
+          ),
+          autoClose: 5000,
+        });
+      }
+      if (status === TransactionStatus.failure) {
+        const toastProps = {
+          onClick: () => window.open(getTrackerLink(xChainId, _transaction.hash, 'transaction'), '_blank'),
+        };
+        toast.update(_transaction.id, {
+          ...toastProps,
+          render: <NotificationError failureReason={_transaction.errorMessage} />, // TODO: handle error message
+          autoClose: 5000,
+        });
+      }
     }
   },
 
-  remove: (xChainId, id) => {
-    useTransactionStore.setState(state => {
-      return {
-        transactions: state.transactions.filter(item => !(item.id === id && item.xChainId === xChainId)),
-      };
-    });
-  },
-  removeAll: xChainId => {
-    useTransactionStore.setState(state => {
-      return {
-        transactions: state.transactions.filter(item => item.xChainId !== xChainId),
-      };
-    });
-  },
+  // remove: (xChainId, id) => {
+  //   useTransactionStore.setState(state => {
+  //     return {
+  //       transactions: state.transactions.filter(item => !(item.id === id && item.xChainId === xChainId)),
+  //     };
+  //   });
+  // },
+  // removeAll: xChainId => {
+  //   useTransactionStore.setState(state => {
+  //     return {
+  //       transactions: state.transactions.filter(item => item.xChainId !== xChainId),
+  //     };
+  //   });
+  // },
 
-  getTransactionsByChainType: chainType => {
-    return useTransactionStore.getState().transactions.filter(item => getChainType(item.xChainId) === chainType);
-  },
+  // getTransactionsByChainType: chainType => {
+  //   return useTransactionStore.getState().transactions.filter(item => getChainType(item.xChainId) === chainType);
+  // },
 };
 
-export const useFetchTransactionStatus = transaction => {
-  const { xChainId, hash } = transaction;
-  const { data: txResult, isLoading } = useQuery({
+export const useFetchTransaction = transaction => {
+  const { xChainId, hash, status } = transaction || {};
+  const { data: rawTx, isLoading } = useQuery({
     queryKey: ['transaction', xChainId, hash],
     queryFn: async () => {
       const xCallService = xCallServiceActions.getXCallService(xChainId);
       try {
-        const txResult = await xCallService.getTx(hash);
-        return txResult;
+        const rawTx = await xCallService.getTx(hash);
+        return rawTx;
       } catch (err: any) {
         console.error(`failed to check transaction hash: ${hash}`, err);
         throw new Error(err?.message);
       }
     },
     refetchInterval: 2000,
-    enabled: transaction.status === TransactionStatus.pending,
+    enabled: status === TransactionStatus.pending && !!hash,
   });
 
-  const xCallService = xCallServiceActions.getXCallService(transaction.xChainId);
-  const status = xCallService.deriveTxStatus(txResult);
-
-  return { txResult, status };
+  return { rawTx, isLoading };
 };
 
-export const TransactionStatusUpdater = ({ transaction }) => {
-  const { txResult, status } = useFetchTransactionStatus(transaction);
+export const TransactionUpdater = ({ transaction }) => {
+  const { rawTx } = useFetchTransaction(transaction);
   const { xChainId, id } = transaction;
 
-  // const receipt = {
-  //   blockHash: txResult.blockHash,
-  //   blockHeight: txResult.blockHeight,
-  //   scoreAddress: txResult.scoreAddress,
-  //   // from: receipt.from,
-  //   status: Converter.toNumber(txResult.status),
-  //   to: txResult.to,
-  //   txHash: txResult.txHash,
-  //   txIndex: txResult.txIndex,
-  //   eventLogs: txResult.eventLogs,
-  // };
-
   useEffect(() => {
-    if (status === TransactionStatus.success) {
-      transactionActions.success(xChainId, id, { rawTx: txResult });
-    } else if (status === TransactionStatus.failure) {
-      transactionActions.fail(xChainId, id, { rawTx: txResult });
+    if (rawTx) {
+      transactionActions.updateTx(xChainId, id, { rawTx });
     }
-  }, [status, xChainId, id, txResult]);
+  }, [xChainId, id, rawTx]);
 
   return null;
 };
 
-export const AllTransactionsStatusUpdater = () => {
+export const AllTransactionsUpdater = () => {
   const { transactions } = useTransactionStore();
 
-  // TODO: exclude archway transactions and filter pending transactions
-  return transactions.map(transaction => <TransactionStatusUpdater key={transaction.id} transaction={transaction} />);
+  return transactions
+    .filter(({ status, hash }) => status === TransactionStatus.pending && !!hash)
+    .map(transaction => <TransactionUpdater key={transaction.id} transaction={transaction} />);
 };

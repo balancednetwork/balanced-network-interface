@@ -16,7 +16,7 @@ export const useXCallEventStore = create<XCallEventStore>()(set => ({
 }));
 
 export const xCallEventActions = {
-  startScanner: (xChainId: XChainId, startBlockHeight: number) => {
+  startScanner: (xChainId: XChainId, startBlockHeight: bigint) => {
     console.log('start scanner');
     useXCallEventStore.setState(state => {
       state.scanners[xChainId] = {
@@ -123,13 +123,17 @@ export const xCallEventActions = {
   },
 };
 
-export const useXCallEventScanner = (xChainId: XChainId) => {
+export const useXCallEventScanner = (xChainId: XChainId | undefined) => {
   const { scanners } = useXCallEventStore();
-  const scanner = scanners?.[xChainId];
+  const scanner = xChainId ? scanners?.[xChainId] : null;
   const { enabled, currentHeight, chainHeight } = scanner || {};
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
+    if (!xChainId) {
+      return;
+    }
+
     setTimeout(() => {
       if (enabled) {
         xCallEventActions.incrementCurrentHeight(xChainId);
@@ -139,6 +143,10 @@ export const useXCallEventScanner = (xChainId: XChainId) => {
 
   //update chainHeight every 1 second
   useEffect(() => {
+    if (!xChainId) {
+      return;
+    }
+
     const updateChainHeight = async () => {
       if (enabled) {
         await xCallEventActions.updateChainHeight(xChainId);
@@ -151,6 +159,10 @@ export const useXCallEventScanner = (xChainId: XChainId) => {
   }, [xChainId, enabled]);
 
   useEffect(() => {
+    if (!xChainId) {
+      return;
+    }
+
     const scan = async () => {
       if (!enabled) {
         return;

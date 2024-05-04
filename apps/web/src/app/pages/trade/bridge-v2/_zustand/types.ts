@@ -2,6 +2,10 @@ import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { IXCallFee, XCallEventType, XChainId } from 'app/_xcall/types';
 
 export enum BridgeTransferStatus {
+  TRANSFER_REQUESTED = 'TRANSFER_REQUESTED',
+  TRANSFER_FAILED = 'TRANSFER_FAILED',
+  // TRANSFER_COMPLETED = 'TRANSFER_COMPLETED',
+
   AWAITING_CALL_MESSAGE_SENT = 'AWAITING_CALL_MESSAGE_SENT',
   CALL_MESSAGE_SENT = 'CALL_MESSAGE_SENT',
   CALL_MESSAGE = 'CALL_MESSAGE',
@@ -63,8 +67,8 @@ export type XCallEventMap = Partial<Record<XCallEventType, XCallEvent>>;
 export type BridgeTransfer = {
   id: string;
   bridgeInfo: BridgeInfo;
-  transactions: Transaction[];
+  sourceTransaction: Transaction;
   events: XCallEventMap;
   status: BridgeTransferStatus;
-  destinationChainInitialBlockHeight: number;
+  destinationChainInitialBlockHeight: bigint;
 };

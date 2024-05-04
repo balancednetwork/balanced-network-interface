@@ -16,7 +16,7 @@ export interface XCallService {
   // updateServiceConfig(serviceConfig: any): void;
 
   fetchXCallFee(to: XChainId, rollback: boolean): Promise<IXCallFee>;
-  fetchBlockHeight(): Promise<number | bigint>;
+  fetchBlockHeight(): Promise<bigint>;
   fetchSourceEvents(transfer: BridgeTransfer): Promise<XCallEventMap>;
   fetchDestinationEventsByBlock(blockHeight): Promise<XCallEvent[]>;
   executeTransfer(bridgeInfo: BridgeInfo): Promise<BridgeTransfer | null>;

@@ -62,7 +62,7 @@ export class IconXCallService implements XCallService {
 
   async fetchBlockHeight() {
     const lastBlock = await iconService.getLastBlock().execute();
-    return lastBlock.height;
+    return BigInt(lastBlock.height);
   }
 
   async getBlock(blockHeight: number) {
@@ -144,12 +144,9 @@ export class IconXCallService implements XCallService {
   }
 
   async fetchSourceEvents(transfer: BridgeTransfer): Promise<XCallEventMap> {
-    console.log('fetchSourceEvents executed');
-    const transaction = transfer.transactions[0];
-    const hash = transaction.hash;
-    const txResult = await this.getTx(hash);
+    const rawTx = transfer.sourceTransaction.rawTx;
 
-    const callMessageSentLog = this.filterCallMessageSentEventLog(txResult?.eventLogs || []);
+    const callMessageSentLog = this.filterCallMessageSentEventLog(rawTx?.eventLogs || []);
     if (callMessageSentLog) {
       return {
         [XCallEventType.CallMessageSent]: this.parseCallMessageSentEventLog(callMessageSentLog),
@@ -238,10 +235,10 @@ export class IconXCallService implements XCallService {
         return {
           id: `${this.xChainId}/${hash}`,
           bridgeInfo,
-          transactions: [transaction],
-          status: BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT,
+          sourceTransaction: transaction,
+          status: BridgeTransferStatus.TRANSFER_REQUESTED,
           events: {},
-          destinationChainInitialBlockHeight: -1,
+          destinationChainInitialBlockHeight: -1n,
         };
       }
     }

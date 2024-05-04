@@ -116,7 +116,7 @@ export class EvmXCallService implements XCallService {
 
   async fetchSourceEvents(transfer: BridgeTransfer) {
     try {
-      const rawTx = transfer.transactions[0].rawTx;
+      const rawTx = transfer.sourceTransaction.rawTx;
 
       const parsedLogs = parseEventLogs({
         abi: xCallContractAbi,
@@ -198,10 +198,10 @@ export class EvmXCallService implements XCallService {
         return {
           id: `${this.xChainId}/${transaction.hash}`,
           bridgeInfo,
-          transactions: [transaction],
-          status: BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT,
+          sourceTransaction: transaction,
+          status: BridgeTransferStatus.TRANSFER_REQUESTED,
           events: {},
-          destinationChainInitialBlockHeight: -1,
+          destinationChainInitialBlockHeight: -1n,
         };
       } else {
         bridgeTransferActions.setIsTransferring(false);

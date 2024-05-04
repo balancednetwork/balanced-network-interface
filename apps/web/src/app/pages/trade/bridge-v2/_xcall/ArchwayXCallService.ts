@@ -41,7 +41,7 @@ export class ArchwayXCallService implements XCallService {
 
   async fetchBlockHeight() {
     const height = await this.client.getHeight();
-    return height;
+    return BigInt(height);
   }
 
   async getBlock(blockHeight) {
@@ -56,11 +56,15 @@ export class ArchwayXCallService implements XCallService {
 
   // TODO: fix this
   deriveTxStatus(rawTx: any): TransactionStatus {
-    if (rawTx.code) {
-      return TransactionStatus.failure;
+    if (rawTx) {
+      if (rawTx.code) {
+        return TransactionStatus.failure;
+      }
+
+      return TransactionStatus.success;
     }
 
-    return TransactionStatus.success;
+    return TransactionStatus.failure;
   }
 
   parseCallMessageSentEventLog(eventLog) {
@@ -124,7 +128,7 @@ export class ArchwayXCallService implements XCallService {
 
   async fetchSourceEvents(transfer: BridgeTransfer) {
     try {
-      const callMessageSentEventLog = this.filterCallMessageSentEventLog(transfer.transactions[0].rawTx.events);
+      const callMessageSentEventLog = this.filterCallMessageSentEventLog(transfer.sourceTransaction.rawTx.events);
       return {
         [XCallEventType.CallMessageSent]: this.parseCallMessageSentEventLog(callMessageSentEventLog),
       };
@@ -204,17 +208,17 @@ export class ArchwayXCallService implements XCallService {
             payload: { tx },
           } = res;
           if (tx) {
-            transactionActions.success(this.xChainId, transaction.id, { hash: tx.transactionHash, rawTx: res });
+            transactionActions.updateTx(this.xChainId, transaction.id, { hash: tx.transactionHash, rawTx: res });
 
             return transactionActions.getTransaction(this.xChainId, transaction.id);
           } else {
-            transactionActions.fail(this.xChainId, transaction.id, {});
+            transactionActions.updateTx(this.xChainId, transaction.id, {});
           }
         } catch (e) {
           console.error(e);
 
           // @ts-ignore
-          transactionActions.fail(this.xChainId, transaction.id, {});
+          transactionActions.updateTx(this.xChainId, transaction.id, {});
         }
       };
 
@@ -262,10 +266,10 @@ export class ArchwayXCallService implements XCallService {
         return {
           id: `${this.xChainId}/${transaction.hash}`,
           bridgeInfo,
-          transactions: [transaction],
-          status: BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT,
+          sourceTransaction: transaction,
+          status: BridgeTransferStatus.TRANSFER_REQUESTED,
           events: {},
-          destinationChainInitialBlockHeight: -1,
+          destinationChainInitialBlockHeight: -1n,
         };
       } else {
         bridgeTransferActions.setIsTransferring(false);

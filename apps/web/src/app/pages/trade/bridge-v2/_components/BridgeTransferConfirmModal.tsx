@@ -27,7 +27,7 @@ import { useBridgeInfo } from 'store/bridge/hooks';
 import {
   bridgeTransferActions,
   useBridgeTransferStore,
-  useFetchBridgeTransferEvents,
+  BridgeTransferStatusUpdater,
 } from '../_zustand/useBridgeTransferStore';
 import { ApprovalState, useApproveCallback } from 'app/_xcall/archway/AllowanceHandler';
 import { xChainMap } from 'app/_xcall/archway/config1';
@@ -43,8 +43,6 @@ const StyledXCallButton = styled(XCallButton)`
 `;
 
 export function BridgeTransferConfirmModal() {
-  useFetchBridgeTransferEvents();
-
   const { modalOpen } = useBridgeTransferConfirmModalStore();
   const { isTransferring } = useBridgeTransferStore();
 
@@ -95,6 +93,7 @@ export function BridgeTransferConfirmModal() {
 
   return (
     <>
+      <BridgeTransferStatusUpdater />
       <Modal isOpen={modalOpen} onDismiss={handleDismiss}>
         <ModalContentWrapper>
           <Typography textAlign="center" mb="5px">

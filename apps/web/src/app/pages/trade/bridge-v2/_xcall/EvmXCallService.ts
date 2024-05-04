@@ -98,7 +98,7 @@ export class EvmXCallService implements XCallService {
     };
   }
 
-  async filterEventLog(eventLogs, signature) {
+  filterEventLog(eventLogs, signature) {
     if (eventLogs && eventLogs.length > 0) {
       for (const event of eventLogs) {
         if (event.eventName === signature) {
@@ -108,18 +108,18 @@ export class EvmXCallService implements XCallService {
     }
   }
 
-  async filterCallMessageSentEventLog(eventLogs) {
+  filterCallMessageSentEventLog(eventLogs) {
     const eventFiltered = eventLogs.find(e => e.eventName === 'CallMessageSent');
     return eventFiltered;
   }
 
-  async filterCallMessageEventLog(eventLogs) {
-    const eventFiltered = await this.filterEventLog(eventLogs, 'CallMessage');
+  filterCallMessageEventLog(eventLogs) {
+    const eventFiltered = this.filterEventLog(eventLogs, 'CallMessage');
     return eventFiltered;
   }
 
-  async filterCallExecutedEventLog(eventLogs) {
-    const eventFiltered = await this.filterEventLog(eventLogs, 'CallExecuted');
+  filterCallExecutedEventLog(eventLogs) {
+    const eventFiltered = this.filterEventLog(eventLogs, 'CallExecuted');
     return eventFiltered;
   }
 
@@ -159,8 +159,8 @@ export class EvmXCallService implements XCallService {
           logs: rawTx.logs,
         });
 
-        const callMessageEventLog = await this.filterCallMessageEventLog(parsedLogs);
-        const callExecutedEventLog = await this.filterCallExecutedEventLog(parsedLogs);
+        const callMessageEventLog = this.filterCallMessageEventLog(parsedLogs);
+        const callExecutedEventLog = this.filterCallExecutedEventLog(parsedLogs);
 
         console.log('fetchDestinationEventsByBlock', callMessageEventLog, callExecutedEventLog);
 

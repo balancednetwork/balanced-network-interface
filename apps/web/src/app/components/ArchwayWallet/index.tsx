@@ -10,7 +10,7 @@ import { useMedia } from 'react-use';
 import { Flex } from 'rebass/styled-components';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { useARCH } from 'app/_xcall/archway/tokens';
+import { useARCH } from 'app/pages/trade/bridge-v2/_config/tokens';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';

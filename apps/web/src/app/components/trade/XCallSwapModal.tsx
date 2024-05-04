@@ -14,7 +14,7 @@ import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON }
 import useAllowanceHandler from 'app/pages/trade/bridge-v2/_hooks/useApproveCallback';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { archway } from 'app/pages/trade/bridge-v2/_config/xChains';
-import { useARCH } from 'app/_xcall/archway/tokens';
+import { useARCH } from 'app/pages/trade/bridge-v2/_config/tokens';
 import { getFeeParam, getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { useXCallFee, useXCallGasChecker } from 'app/pages/trade/bridge-v2/_hooks/hooks';
 import { CurrentXCallStateType, XChainId, XCallEventType } from 'app/pages/trade/bridge-v2/types';

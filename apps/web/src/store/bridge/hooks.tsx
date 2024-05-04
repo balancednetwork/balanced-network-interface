@@ -19,7 +19,7 @@ import BigNumber from 'bignumber.js';
 import { Trans, t } from '@lingui/macro';
 import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
 import { isDenomAsset } from 'app/_xcall/archway/utils';
-import { sARCH } from 'app/_xcall/archway/tokens';
+import { sARCH } from 'app/pages/trade/bridge-v2/_config/tokens';
 
 export function useBridgeState(): AppState['bridge'] {
   return useSelector((state: AppState) => state.bridge);

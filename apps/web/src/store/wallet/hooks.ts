@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { useARCH } from 'app/_xcall/archway/tokens';
+import { useARCH } from 'app/pages/trade/bridge-v2/_config/tokens';
 import { isDenomAsset } from 'app/_xcall/archway/utils';
 import { SUPPORTED_XCALL_CHAINS } from 'app/pages/trade/bridge-v2/_config/xTokens';
 import { XChain, XChainId } from 'app/pages/trade/bridge-v2/types';

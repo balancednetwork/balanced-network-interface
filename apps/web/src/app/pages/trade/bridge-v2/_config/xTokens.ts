@@ -40,7 +40,7 @@ export const ASSET_MANAGER_TOKENS = ASSET_MANAGER_TOKENS_BY_ICON_NETWORK[NETWORK
 import { bnUSD } from 'constants/tokens';
 
 import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
-import { sARCH } from '../../../../_xcall/archway/tokens';
+import { sARCH } from './tokens';
 import { NATIVE_ADDRESS } from 'constants/index';
 
 export const xTokenMap: { [key1 in XChainId]?: { [key2 in XChainId]?: XToken[] } } = {

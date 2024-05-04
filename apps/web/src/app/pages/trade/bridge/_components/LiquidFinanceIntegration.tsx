@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Typography } from 'app/theme';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { useBridgeActionHandlers, useBridgeInfo } from 'store/bridge/hooks';
-import { sARCHOnArchway, useARCH } from 'app/_xcall/archway/tokens';
+import { sARCHOnArchway, useARCH } from 'app/pages/trade/bridge-v2/_config/tokens';
 import { XChainId } from 'app/pages/trade/bridge-v2/types';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';

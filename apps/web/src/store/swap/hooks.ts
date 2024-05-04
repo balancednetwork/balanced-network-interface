@@ -8,7 +8,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { XChainId } from 'app/_xcall/types';
+import { XChainId } from 'app/pages/trade/bridge-v2/types';
 import { canBeQueue } from 'constants/currency';
 import { useAllTokens } from 'hooks/Tokens';
 import { PairState, useV2Pair } from 'hooks/useV2Pairs';

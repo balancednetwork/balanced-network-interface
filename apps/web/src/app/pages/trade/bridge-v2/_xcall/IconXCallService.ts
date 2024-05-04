@@ -12,10 +12,10 @@ import {
 import { bridgeTransferActions } from '../_zustand/useBridgeTransferStore';
 import { transactionActions } from '../_zustand/useTransactionStore';
 
-import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/_xcall/config';
+import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens';
 
 import { iconService } from 'app/_xcall/_icon/utils';
-import { XCallEventType, XChainId } from 'app/_xcall/types';
+import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
 
 import { fetchTxResult } from 'app/_xcall/_icon/utils';
 import { XCallService } from './types';

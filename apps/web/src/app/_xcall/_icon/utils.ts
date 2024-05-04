@@ -3,9 +3,9 @@ import IconService, { BigNumber } from 'icon-sdk-js';
 
 import { NETWORK_ID } from 'constants/config';
 
-import { OriginXCallData, XChainId, XCallEventType } from '../types';
+import { OriginXCallData, XChainId, XCallEventType } from '../../pages/trade/bridge-v2/types';
 import { ICONBlockType, ICONTxEvent, ICONTxResultType } from './types';
-import { xChainMap } from '../../pages/trade/bridge-v2/config';
+import { xChainMap } from '../../pages/trade/bridge-v2/_config/xChains';
 
 export const httpProvider = new IconService.HttpProvider(CHAIN_INFO[NETWORK_ID].APIEndpoint);
 export const iconService = new IconService(httpProvider);

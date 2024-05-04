@@ -5,7 +5,7 @@ import axios from 'axios';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { SUPPORTED_XCALL_CHAINS } from 'app/_xcall/config';
+import { SUPPORTED_XCALL_CHAINS } from 'app/pages/trade/bridge-v2/_config/xTokens';
 import {
   OriginXCallData,
   DestinationXCallData,
@@ -14,7 +14,7 @@ import {
   XCallEventType,
   XCallActivityItem,
   CurrentXCallStateType,
-} from 'app/_xcall/types';
+} from 'app/pages/trade/bridge-v2/types';
 import { NETWORK_ID } from 'constants/config';
 import { AppState } from 'store';
 import { ONE_DAY_DURATION } from 'utils';

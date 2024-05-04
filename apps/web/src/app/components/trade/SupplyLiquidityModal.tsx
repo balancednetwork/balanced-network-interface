@@ -10,10 +10,14 @@ import styled from 'styled-components';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import useAllowanceHandler from 'app/pages/trade/bridge-v2/_hooks/useApproveCallback';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { archway } from 'app/pages/trade/bridge-v2/config';
+import { archway } from 'app/pages/trade/bridge-v2/_config/xChains';
 import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
-import { CurrentXCallStateType, XChainId } from 'app/_xcall/types';
-import { getBytesFromString, getCrossChainTokenAddress, getCrossChainTokenBySymbol } from 'app/_xcall/utils';
+import { CurrentXCallStateType, XChainId } from 'app/pages/trade/bridge-v2/types';
+import {
+  getBytesFromString,
+  getCrossChainTokenAddress,
+  getCrossChainTokenBySymbol,
+} from 'app/pages/trade/bridge-v2/utils';
 import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';

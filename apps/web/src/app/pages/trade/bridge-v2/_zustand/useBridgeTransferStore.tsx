@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { useBridgeDirection, useDerivedBridgeInfo } from 'store/bridge/hooks';
 import { useQuery } from '@tanstack/react-query';
-import { XCallEventType } from 'app/_xcall/types';
+import { XCallEventType } from 'app/pages/trade/bridge-v2/types';
 import { xCallServiceActions } from './useXCallServiceStore';
 import { bridgeTransferConfirmModalActions } from './useBridgeTransferConfirmModalStore';
 import {

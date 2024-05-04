@@ -4,7 +4,7 @@ import { Trans } from '@lingui/macro';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
-import { XCallActivityItem } from 'app/_xcall/types';
+import { XCallActivityItem } from 'app/pages/trade/bridge-v2/types';
 import { Typography } from 'app/theme';
 import { useSignedInWallets } from 'store/wallet/hooks';
 import { useXCallActivityItems, useXCallStats } from 'store/xCall/hooks';

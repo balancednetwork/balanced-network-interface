@@ -14,13 +14,13 @@ import {
   useXCallOriginEvents,
 } from 'store/xCall/hooks';
 
-import { CrossChainTxType, XCallEventType } from '../types';
+import { CrossChainTxType, XCallEventType } from '../../pages/trade/bridge-v2/types';
 import {
   getCallExecutedEventDataFromArchwayEvent,
   getRollbackEventDataFromArchwayEvent,
   getXCallDestinationEventDataFromArchwayEvent,
 } from './utils';
-import { xChainMap } from '../../pages/trade/bridge-v2/config';
+import { xChainMap } from '../../pages/trade/bridge-v2/_config/xChains';
 
 const ARCHWAY_SOCKET_QUERY = {
   jsonrpc: '2.0',

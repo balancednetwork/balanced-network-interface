@@ -28,7 +28,7 @@ import WalletItem from './WalletItem';
 import { IconWalletModal } from './IconWalletModal';
 import { AvalancheWalletModal } from './AvalancheWalletModal';
 import { useWallets } from 'app/pages/trade/bridge-v2/_hooks/hooks';
-import { XWalletType } from 'app/_xcall/types';
+import { XWalletType } from 'app/pages/trade/bridge-v2/types';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {

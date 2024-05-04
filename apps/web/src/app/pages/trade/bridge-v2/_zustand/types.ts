@@ -1,5 +1,5 @@
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
-import { IXCallFee, XCallEventType, XChainId } from 'app/_xcall/types';
+import { IXCallFee, XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
 
 export enum BridgeTransferStatus {
   TRANSFER_REQUESTED = 'TRANSFER_REQUESTED',

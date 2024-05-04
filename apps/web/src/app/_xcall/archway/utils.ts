@@ -1,12 +1,12 @@
 import { Token } from '@balancednetwork/sdk-core';
 import { Event } from '@cosmjs/cosmwasm-stargate';
 
-import { DestinationXCallData, OriginXCallData, XCallEventType } from 'app/_xcall/types';
+import { DestinationXCallData, OriginXCallData, XCallEventType } from 'app/pages/trade/bridge-v2/types';
 import { NETWORK_ID } from 'constants/config';
 
 import { ARCHWAY_EVENT_XCALL_MSG_SENT } from './types';
 import { StdFee } from '@archwayhq/arch3.js';
-import { archway, icon } from '../../pages/trade/bridge-v2/config';
+import { archway, icon } from '../../pages/trade/bridge-v2/_config/xChains';
 
 export function getXCallOriginEventDataFromArchway(
   events: readonly Event[],

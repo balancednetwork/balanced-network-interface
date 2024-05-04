@@ -4,8 +4,8 @@ import { t, Trans } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Box, Flex } from 'rebass';
 
-import { XCallEventType } from 'app/_xcall/types';
-import { getNetworkDisplayName } from 'app/_xcall/utils';
+import { XCallEventType } from 'app/pages/trade/bridge-v2/types';
+import { getNetworkDisplayName } from 'app/pages/trade/bridge-v2/utils';
 import { Typography } from 'app/theme';
 
 import Spinner from 'app/components/Spinner';

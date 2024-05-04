@@ -1,5 +1,5 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit';
-import { XWalletType } from 'app/_xcall/types';
+import { XWalletType } from 'app/pages/trade/bridge-v2/types';
 
 import { DEFAULT_SLIPPAGE } from 'constants/index';
 import { DEFAULT_TXN_DISMISS_MS } from 'constants/misc';

@@ -10,8 +10,8 @@ import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { XChainId } from 'app/_xcall/types';
-import { getNetworkDisplayName } from 'app/_xcall/utils';
+import { XChainId } from 'app/pages/trade/bridge-v2/types';
+import { getNetworkDisplayName } from 'app/pages/trade/bridge-v2/utils';
 import { IconButton, Button } from 'app/components/Button';
 import { Link } from 'app/components/Link';
 import Logo from 'app/components/Logo';

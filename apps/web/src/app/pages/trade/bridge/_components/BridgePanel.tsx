@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { CurrentXCallStateType } from 'app/_xcall/types';
+import { CurrentXCallStateType } from 'app/pages/trade/bridge-v2/types';
 import { useCurrentXCallState, useSetNotPristine, useSetXCallState } from 'store/xCall/hooks';
 
 import BridgeTransferConfirmModal from './BridgeTransferConfirmModal';

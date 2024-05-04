@@ -7,10 +7,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Box, Flex } from 'rebass';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { archway } from 'app/pages/trade/bridge-v2/config';
+import { archway } from 'app/pages/trade/bridge-v2/_config/xChains';
 import { getFeeParam } from 'app/_xcall/archway/utils';
-import { DestinationXCallData, XChainId, XCallEventType } from 'app/_xcall/types';
-import { getNetworkDisplayName } from 'app/_xcall/utils';
+import { DestinationXCallData, XChainId, XCallEventType } from 'app/pages/trade/bridge-v2/types';
+import { getNetworkDisplayName } from 'app/pages/trade/bridge-v2/utils';
 import { Typography } from 'app/theme';
 import {
   useAddTransactionResult,

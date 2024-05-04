@@ -27,8 +27,8 @@ import {
 } from 'wagmi';
 import { erc20Abi, Address, getContract, Abi, WriteContractReturnType } from 'viem';
 
-import { XToken } from 'app/_xcall/types';
-import { archway, xChainMap } from '../config';
+import { XToken } from 'app/pages/trade/bridge-v2/types';
+import { archway, xChainMap } from '../_config/xChains';
 import { useSignedInWallets } from 'store/wallet/hooks';
 import { useXWallet } from 'app/pages/trade/bridge-v2/_hooks/hooks';
 import { useBridgeDirection } from 'store/bridge/hooks';

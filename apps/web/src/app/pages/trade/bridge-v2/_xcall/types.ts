@@ -1,4 +1,4 @@
-import { IXCallFee, XChainId } from 'app/_xcall/types';
+import { IXCallFee, XChainId } from 'app/pages/trade/bridge-v2/types';
 import { BridgeInfo, BridgeTransfer, TransactionStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
 
 export interface XCallService {

@@ -3,7 +3,7 @@ import { Token } from '@balancednetwork/sdk-core';
 
 import { NETWORK_ID } from 'constants/config';
 import { TokenMap } from 'constants/tokens';
-import { XToken, XTokenMap } from '../types';
+import { XToken, XTokenMap } from '../../pages/trade/bridge-v2/types';
 
 // disable prettier printWidth rule
 // prettier-ignore

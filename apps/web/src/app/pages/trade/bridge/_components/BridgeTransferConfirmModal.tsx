@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 import useAllowanceHandler from 'app/pages/trade/bridge-v2/_hooks/useApproveCallback';
 import { useXCallFee, useXCallGasChecker } from 'app/pages/trade/bridge-v2/_hooks/hooks';
-import { archway } from 'app/pages/trade/bridge-v2/config';
+import { archway } from 'app/pages/trade/bridge-v2/_config/xChains';
 import { Typography } from 'app/theme';
 import { useShouldLedgerSign } from 'store/application/hooks';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
@@ -21,8 +21,8 @@ import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { getFeeParam, getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
-import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/_xcall/config';
-import { XCallEventType } from 'app/_xcall/types';
+import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens';
+import { XCallEventType } from 'app/pages/trade/bridge-v2/types';
 import bnJs from 'bnJs';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
@@ -33,7 +33,7 @@ import Spinner from 'app/components/Spinner';
 import XCallEventManager from 'app/components/trade/XCallEventManager';
 import { presenceVariants, StyledButton as XCallButton } from 'app/components/trade/XCallSwapModal';
 import { StdFee } from '@archwayhq/arch3.js';
-import { getNetworkDisplayName } from 'app/_xcall/utils';
+import { getNetworkDisplayName } from 'app/pages/trade/bridge-v2/utils';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
 
 const StyledXCallButton = styled(XCallButton)`

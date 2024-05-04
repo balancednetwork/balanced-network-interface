@@ -12,7 +12,7 @@ import {
   getXCallOriginEventDataFromICON,
 } from 'app/_xcall/_icon/utils';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { archway } from 'app/pages/trade/bridge-v2/config';
+import { archway } from 'app/pages/trade/bridge-v2/_config/xChains';
 import { getFeeParam } from 'app/_xcall/archway/utils';
 import {
   DestinationXCallData,
@@ -20,8 +20,8 @@ import {
   XCallActivityItem,
   XCallEventType,
   XWalletType,
-} from 'app/_xcall/types';
-import { getNetworkDisplayName } from 'app/_xcall/utils';
+} from 'app/pages/trade/bridge-v2/types';
+import { getNetworkDisplayName } from 'app/pages/trade/bridge-v2/utils';
 import { Typography } from 'app/theme';
 import ArrowIcon from 'assets/icons/arrow-white.svg';
 import bnJs from 'bnJs';

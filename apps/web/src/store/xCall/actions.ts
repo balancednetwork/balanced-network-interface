@@ -6,7 +6,7 @@ import {
   XChainId,
   XCallEventType,
   CurrentXCallStateType,
-} from 'app/_xcall/types';
+} from 'app/pages/trade/bridge-v2/types';
 
 export const setXCallState = createAction<{
   state?: CurrentXCallStateType;

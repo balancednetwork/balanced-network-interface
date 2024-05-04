@@ -14,14 +14,14 @@ import {
   useXCallOriginEvents,
 } from 'store/xCall/hooks';
 
-import { XCallEventType } from '../types';
+import { XCallEventType } from '../../pages/trade/bridge-v2/types';
 import {
   getCallMessageSentEventFromLogs,
   getICONEventSignature,
   getTxFromCallExecutedLog,
   getXCallOriginEventDataFromICON,
 } from './utils';
-import { xChainMap } from '../../pages/trade/bridge-v2/config';
+import { xChainMap } from '../../pages/trade/bridge-v2/_config/xChains';
 
 export const useICONEventListener = () => {
   const listeningTo = useXCallListeningTo();

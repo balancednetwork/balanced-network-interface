@@ -1,7 +1,13 @@
 import { createReducer } from '@reduxjs/toolkit';
 
-import { CurrentXCallStateType, OriginXCallData, XChainId, XCallChainState, XCallEventType } from 'app/_xcall/types';
-import { getFollowingEvent } from 'app/_xcall/utils';
+import {
+  CurrentXCallStateType,
+  OriginXCallData,
+  XChainId,
+  XCallChainState,
+  XCallEventType,
+} from 'app/pages/trade/bridge-v2/types';
+import { getFollowingEvent } from 'app/pages/trade/bridge-v2/utils';
 
 import {
   addXCallOriginEvent,

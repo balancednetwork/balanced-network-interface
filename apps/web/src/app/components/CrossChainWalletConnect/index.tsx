@@ -1,14 +1,14 @@
 import React from 'react';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { XChainId, XWalletType } from 'app/_xcall/types';
+import { XChainId, XWalletType } from 'app/pages/trade/bridge-v2/types';
 import { Typography } from 'app/theme';
 import { useWalletModal } from 'store/application/hooks';
 import { useSignedInWallets } from 'store/wallet/hooks';
 import { shortenAddress } from 'utils';
 
 import { UnderlineText } from '../DropdownText';
-import { xChainMap } from 'app/pages/trade/bridge-v2/config';
+import { xChainMap } from 'app/pages/trade/bridge-v2/_config/xChains';
 
 const CrossChainWalletConnect = ({ chainId }: { chainId: XChainId }) => {
   const signedInWallets = useSignedInWallets();

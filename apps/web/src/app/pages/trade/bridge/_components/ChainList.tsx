@@ -4,8 +4,8 @@ import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
 import { ChainLogo } from 'app/_xcall/ChainLogo';
-import { XChainId, XChain } from 'app/_xcall/types';
-import { xChains } from 'app/pages/trade/bridge-v2/config';
+import { XChainId, XChain } from 'app/pages/trade/bridge-v2/types';
+import { xChains } from 'app/pages/trade/bridge-v2/_config/xChains';
 
 type ChainListProps = {
   chainId: XChainId;

@@ -3,8 +3,8 @@ import rlp from 'rlp';
 import { XCallState } from 'store/xCall/reducer';
 
 import { OriginXCallData, XChainId, XCallEventType } from './types';
-import { xChainMap } from '../pages/trade/bridge-v2/config';
-import { xTokenMap } from './config';
+import { xChainMap } from './_config/xChains';
+import { xTokenMap } from './_config/xTokens';
 import { Currency } from '@balancednetwork/sdk-core';
 
 export function getRlpEncodedMsg(msg: string | any[]) {

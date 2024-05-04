@@ -5,14 +5,14 @@ import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { XChainId } from 'app/_xcall/types';
+import { XChainId } from 'app/pages/trade/bridge-v2/types';
 import { Typography } from 'app/theme';
 
 import ChainList from '../../pages/trade/bridge/_components/ChainList';
 import CrossChainWalletConnect from '../CrossChainWalletConnect';
 import { StyledArrowDownIcon, UnderlineText } from '../DropdownText';
 import { DropdownPopper } from '../Popover';
-import { xChainMap } from 'app/pages/trade/bridge-v2/config';
+import { xChainMap } from 'app/pages/trade/bridge-v2/_config/xChains';
 
 type CrossChainOptionsProps = {
   chainId: XChainId;

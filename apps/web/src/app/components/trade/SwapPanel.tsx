@@ -12,8 +12,8 @@ import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { DEFAULT_TOKEN_CHAIN } from 'app/_xcall/config';
-import { CurrentXCallStateType, XChainId } from 'app/_xcall/types';
+import { DEFAULT_TOKEN_CHAIN } from 'app/pages/trade/bridge-v2/_config/xTokens';
+import { CurrentXCallStateType, XChainId } from 'app/pages/trade/bridge-v2/types';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
@@ -49,7 +49,7 @@ import { XCallDescription } from '../XCallDescription';
 import { BrightPanel, swapMessage } from './utils';
 import XCallSwapModal from './XCallSwapModal';
 import { useXCallFee, useXCallProtocol, useXWallet } from 'app/pages/trade/bridge-v2/_hooks/hooks';
-import { isXToken } from 'app/_xcall/utils';
+import { isXToken } from 'app/pages/trade/bridge-v2/utils';
 
 const MemoizedStabilityFund = React.memo(StabilityFund);
 

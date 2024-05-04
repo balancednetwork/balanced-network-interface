@@ -12,7 +12,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Button, TextButton } from 'app/components/Button';
 import Spinner from 'app/components/Spinner';
 
-import { getNetworkDisplayName } from 'app/_xcall/utils';
+import { getNetworkDisplayName } from 'app/pages/trade/bridge-v2/utils';
 import { useXCallFee, useXCallGasChecker } from 'app/pages/trade/bridge-v2/_hooks/hooks';
 import { useShouldLedgerSign } from 'store/application/hooks';
 
@@ -30,7 +30,7 @@ import {
   BridgeTransferStatusUpdater,
 } from '../_zustand/useBridgeTransferStore';
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge-v2/_hooks/useApproveCallback';
-import { xChainMap } from 'app/pages/trade/bridge-v2/config';
+import { xChainMap } from 'app/pages/trade/bridge-v2/_config/xChains';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;

@@ -4,11 +4,11 @@ import { Currency } from '@balancednetwork/sdk-core';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Box, Flex } from 'rebass';
 
-import { XChainId } from 'app/_xcall/types';
+import { XChainId } from 'app/pages/trade/bridge-v2/types';
 import { Typography } from 'app/theme';
 
 import { ChainTabButton, ChainTabs } from '../Header';
-import { isXToken } from 'app/_xcall/utils';
+import { isXToken } from 'app/pages/trade/bridge-v2/utils';
 
 type CrossChainOutputOptionsProps = {
   currency?: Currency;

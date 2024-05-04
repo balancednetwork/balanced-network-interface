@@ -29,7 +29,7 @@ import {
 import { VerticalDivider } from '../Divider';
 import { ModalContentWrapper } from '../ModalContent';
 import { WalletOption, UnbreakableText } from './shared';
-import { XWalletType } from 'app/_xcall/types';
+import { XWalletType } from 'app/pages/trade/bridge-v2/types';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 

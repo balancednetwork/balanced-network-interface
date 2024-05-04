@@ -5,10 +5,10 @@ import { Typography } from 'app/theme';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { useBridgeActionHandlers, useBridgeInfo } from 'store/bridge/hooks';
 import { sARCHOnArchway, useARCH } from 'app/_xcall/archway/tokens';
-import { XChainId } from 'app/_xcall/types';
+import { XChainId } from 'app/pages/trade/bridge-v2/types';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { archway } from 'app/pages/trade/bridge-v2/config';
+import { archway } from 'app/pages/trade/bridge-v2/_config/xChains';
 
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';

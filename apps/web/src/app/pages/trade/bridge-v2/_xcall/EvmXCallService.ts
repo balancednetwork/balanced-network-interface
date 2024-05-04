@@ -1,7 +1,7 @@
-import { XCallEventType, XChainId } from 'app/_xcall/types';
+import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
 import { XCallService } from './types';
 import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, TransactionStatus } from '../_zustand/types';
-import { avalanche } from 'app/pages/trade/bridge-v2/config';
+import { avalanche } from 'app/pages/trade/bridge-v2/_config/xChains';
 import {
   Address,
   PublicClient,

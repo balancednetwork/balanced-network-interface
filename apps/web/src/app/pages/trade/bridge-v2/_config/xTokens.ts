@@ -2,7 +2,7 @@ import { SupportedChainId } from '@balancednetwork/balanced-js';
 
 import { NETWORK_ID } from 'constants/config';
 
-import { XChainId, XToken } from './types';
+import { XChainId, XToken } from '../types';
 
 export const SUPPORTED_XCALL_CHAINS_BY_ICON_NETWORK: { [key in SupportedChainId]: XChainId[] } = {
   [SupportedChainId.MAINNET]: ['archway-1', '0x1.icon'],
@@ -40,7 +40,7 @@ export const ASSET_MANAGER_TOKENS = ASSET_MANAGER_TOKENS_BY_ICON_NETWORK[NETWORK
 import { bnUSD } from 'constants/tokens';
 
 import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
-import { sARCH } from './archway/tokens';
+import { sARCH } from '../../../../_xcall/archway/tokens';
 import { NATIVE_ADDRESS } from 'constants/index';
 
 export const xTokenMap: { [key1 in XChainId]?: { [key2 in XChainId]?: XToken[] } } = {

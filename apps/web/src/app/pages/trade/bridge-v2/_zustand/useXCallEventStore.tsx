@@ -105,7 +105,7 @@ export const xCallEventActions = {
     });
   },
 
-  getDestinationEvents: (xChainId: XChainId, sn: number) => {
+  getDestinationEvents: (xChainId: XChainId, sn: bigint) => {
     try {
       console.log('BBBB', xChainId);
       const events = useXCallEventStore.getState().destinationXCallEvents?.[xChainId];

@@ -1,6 +1,6 @@
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
 import { XCallService } from './types';
-import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, TransactionStatus } from '../_zustand/types';
+import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, TransactionStatus, XCallEvent } from '../_zustand/types';
 import { avalanche } from 'app/pages/trade/bridge-v2/_config/xChains';
 import {
   Address,
@@ -64,7 +64,7 @@ export class EvmXCallService implements XCallService {
     return TransactionStatus.pending;
   }
 
-  parseCallMessageSentEventLog(eventLog) {
+  parseCallMessageSentEventLog(eventLog): XCallEvent {
     const sn = eventLog.args._sn;
 
     return {
@@ -74,7 +74,7 @@ export class EvmXCallService implements XCallService {
       rawEventData: eventLog,
     };
   }
-  parseCallMessageEventLog(eventLog) {
+  parseCallMessageEventLog(eventLog): XCallEvent {
     const sn = eventLog.args._sn;
     const reqId = eventLog.args._reqId;
 
@@ -86,12 +86,12 @@ export class EvmXCallService implements XCallService {
       rawEventData: eventLog,
     };
   }
-  parseCallExecutedEventLog(eventLog) {
+  parseCallExecutedEventLog(eventLog): XCallEvent {
     const reqId = eventLog.args._reqId;
 
     return {
       eventType: XCallEventType.CallExecuted,
-      sn: -1,
+      sn: -1n,
       reqId,
       xChainId: this.xChainId,
       rawEventData: eventLog,
@@ -147,11 +147,13 @@ export class EvmXCallService implements XCallService {
 
     const block = await this.getBlock(blockHeight);
 
-    console.log('block', block);
+    console.log('fetchDestinationEventsByBlock', block);
 
     if (block && block.transactions.length > 0) {
       for (const txHash of block.transactions) {
         const rawTx = await this.getTx(txHash);
+
+        console.log('rawTx', rawTx);
         const parsedLogs = parseEventLogs({
           abi: xCallContractAbi,
           logs: rawTx.logs,
@@ -159,6 +161,8 @@ export class EvmXCallService implements XCallService {
 
         const callMessageEventLog = await this.filterCallMessageEventLog(parsedLogs);
         const callExecutedEventLog = await this.filterCallExecutedEventLog(parsedLogs);
+
+        console.log('fetchDestinationEventsByBlock', callMessageEventLog, callExecutedEventLog);
 
         if (callMessageEventLog) {
           events.push(this.parseCallMessageEventLog(callMessageEventLog));

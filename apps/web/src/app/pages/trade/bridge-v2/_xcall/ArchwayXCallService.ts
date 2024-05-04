@@ -67,35 +67,35 @@ export class ArchwayXCallService implements XCallService {
     return TransactionStatus.failure;
   }
 
-  parseCallMessageSentEventLog(eventLog) {
+  parseCallMessageSentEventLog(eventLog): XCallEvent {
     const sn = eventLog.attributes.find(a => a.key === 'sn')?.value;
 
     return {
       eventType: XCallEventType.CallMessageSent,
-      sn: parseInt(sn),
+      sn: BigInt(sn),
       xChainId: this.xChainId,
       rawEventData: eventLog,
     };
   }
-  parseCallMessageEventLog(eventLog) {
+  parseCallMessageEventLog(eventLog): XCallEvent {
     const sn = eventLog.attributes.find(a => a.key === 'sn')?.value;
     const reqId = eventLog.attributes.find(a => a.key === 'reqId')?.value;
 
     return {
       eventType: XCallEventType.CallMessage,
-      sn: parseInt(sn),
-      reqId,
+      sn: BigInt(sn),
+      reqId: BigInt(reqId),
       xChainId: this.xChainId,
       rawEventData: eventLog,
     };
   }
-  parseCallExecutedEventLog(eventLog) {
+  parseCallExecutedEventLog(eventLog): XCallEvent {
     const reqId = eventLog.attributes.find(a => a.key === 'reqId')?.value;
 
     return {
       eventType: XCallEventType.CallExecuted,
-      sn: -1,
-      reqId,
+      sn: -1n,
+      reqId: BigInt(reqId),
       xChainId: this.xChainId,
       rawEventData: eventLog,
     };

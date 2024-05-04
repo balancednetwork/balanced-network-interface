@@ -47,15 +47,15 @@ export type Transaction = {
 
 export type XCallSourceEvent = {
   eventType: XCallEventType;
-  sn: number;
+  sn: bigint;
   xChainId: XChainId;
   rawEventData: any;
 };
 
 export type XCallDestinationEvent = {
   eventType: XCallEventType;
-  sn: number;
-  reqId: number;
+  sn: bigint;
+  reqId: bigint;
   xChainId: XChainId;
   rawEventData: any;
 };

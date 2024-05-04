@@ -111,37 +111,37 @@ export class IconXCallService implements XCallService {
     return this.filterEventLog(eventLogs, signature);
   }
 
-  parseCallMessageSentEventLog(eventLog) {
+  parseCallMessageSentEventLog(eventLog): XCallEvent {
     const sn = parseInt(eventLog.indexed[3], 16);
 
     return {
       eventType: XCallEventType.CallMessageSent,
-      sn,
+      sn: BigInt(sn),
       xChainId: this.xChainId,
       rawEventData: eventLog,
     };
   }
-  parseCallMessageEventLog(eventLog) {
+  parseCallMessageEventLog(eventLog): XCallEvent {
     const sn = parseInt(eventLog.indexed[3], 16);
     const reqId = parseInt(eventLog.data[0], 16);
 
     return {
       eventType: XCallEventType.CallMessage,
-      sn,
-      reqId,
+      sn: BigInt(sn),
+      reqId: BigInt(reqId),
       xChainId: this.xChainId,
       rawEventData: eventLog,
     };
   }
-  parseCallExecutedEventLog(eventLog) {
+  parseCallExecutedEventLog(eventLog): XCallEvent {
     const reqId = parseInt(eventLog.indexed[1], 16);
     // TODO: check for success?
     // const success = eventLog.data[0] === '0x1';
 
     return {
       eventType: XCallEventType.CallExecuted,
-      sn: -1,
-      reqId,
+      sn: -1n,
+      reqId: BigInt(reqId),
       xChainId: this.xChainId,
       rawEventData: eventLog,
     };

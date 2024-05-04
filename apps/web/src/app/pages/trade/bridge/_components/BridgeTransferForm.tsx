@@ -12,7 +12,6 @@ import { Typography } from 'app/theme';
 import FlipIcon from 'assets/icons/horizontal-flip.svg';
 import { useBridgeActionHandlers, useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from 'store/bridge/hooks';
 import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
-import { useSetNotPristine } from 'store/xCall/hooks';
 
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import { Button } from 'app/components/Button';
@@ -51,7 +50,6 @@ export default function BridgeTransferForm({ openModal }) {
   const percentAmount = bridgeState[Field.FROM].percent;
 
   const signedInWallets = useSignedInWallets();
-  const setNotPristine = useSetNotPristine();
   const toggleWalletModal = useWalletModalToggle();
 
   const handleInputPercentSelect = (percent: number) => {
@@ -70,11 +68,6 @@ export default function BridgeTransferForm({ openModal }) {
       onChangeRecipient(null);
     }
   }, [bridgeDirection.to, onChangeRecipient, signedInWallets]);
-
-  // TODO: understand the purpose of this useEffect
-  React.useEffect(() => {
-    return () => setNotPristine();
-  }, [setNotPristine]);
 
   const { errorMessage, isAvailable, selectedTokenWalletBalance } = useDerivedBridgeInfo();
 

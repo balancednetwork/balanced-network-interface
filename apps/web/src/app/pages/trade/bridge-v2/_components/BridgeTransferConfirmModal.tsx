@@ -93,8 +93,6 @@ export function BridgeTransferConfirmModal() {
     approveCallback();
   };
 
-  // TODO: isApproveNeeded && !isApproving && !isApproved
-
   return (
     <>
       <Modal isOpen={modalOpen} onDismiss={handleDismiss}>
@@ -139,32 +137,6 @@ export function BridgeTransferConfirmModal() {
           <LiquidFinanceIntegration />
 
           {isTransferring && <BridgeTransferStatus />}
-
-          {gasChecker && gasChecker.hasEnoughGas && (
-            <AnimatePresence>
-              {/* {!isTransferring && isAllowanceIncreaseNeeded && !allowanceIncreased && (
-                <motion.div key="allowance-handler" {...presenceVariants} style={{ overflow: 'hidden' }}>
-                  <Box pt={3}>
-                    <Flex
-                      pt={3}
-                      alignItems="center"
-                      justifyContent="center"
-                      flexDirection="column"
-                      className="border-top"
-                    >
-                      <Typography
-                        pb={4}
-                      >{t`Approve ${currencyAmountToBridge?.currency.symbol} for cross-chain transfer.`}</Typography>
-                      {!isTxPending && isAllowanceIncreaseNeeded && !allowanceIncreased && (
-                        <Button onClick={increaseAllowance}>Approve</Button>
-                      )}
-                      {isTxPending && <Button disabled>Approving...</Button>}
-                    </Flex>
-                  </Box>
-                </motion.div>
-              )} */}
-            </AnimatePresence>
-          )}
 
           {gasChecker && !gasChecker.hasEnoughGas && (
             <Typography mt={4} mb={-1} textAlign="center" color="alert">

@@ -351,8 +351,8 @@ const XCallSwapModal = ({
             msg,
             'auto',
             undefined,
-            archwayXCallFees?.rollback && archwayXCallFees.rollback !== '0'
-              ? [{ amount: archwayXCallFees?.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL }]
+            archwayXCallFees && archwayXCallFees.rollback !== 0n
+              ? [{ amount: archwayXCallFees?.rollback.toString(), denom: ARCHWAY_FEE_TOKEN_SYMBOL }]
               : undefined,
           );
 

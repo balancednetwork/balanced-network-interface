@@ -28,10 +28,11 @@ import {
 import { erc20Abi, Address, getContract, Abi, WriteContractReturnType } from 'viem';
 
 import { XToken } from 'app/_xcall/types';
-import { archway } from '../config1';
+import { archway, xChainMap } from '../config1';
 import { useSignedInWallets } from 'store/wallet/hooks';
 import { useXWallet } from 'app/_xcall/hooks';
 import { useBridgeDirection } from 'store/bridge/hooks';
+import { NATIVE_ADDRESS } from 'constants/index';
 
 export const FAST_INTERVAL = 10000;
 
@@ -119,7 +120,8 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
     if (!amountToApprove || !spender) return ApprovalState.UNKNOWN;
-    if (amountToApprove.currency?.isNative) return ApprovalState.APPROVED;
+    const isNative = amountToApprove.currency.wrapped.address === NATIVE_ADDRESS;
+    if (isNative) return ApprovalState.APPROVED;
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN;
 

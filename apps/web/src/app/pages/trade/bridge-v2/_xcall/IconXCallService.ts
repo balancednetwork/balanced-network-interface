@@ -57,7 +57,10 @@ export class IconXCallService implements XCallService {
   }
 
   async fetchXCallFee(to: XChainId, rollback: boolean) {
-    return await bnJs.XCall.getFee(xChainMap[to].xChainId, rollback);
+    return Promise.resolve({
+      rollback: 0n,
+      noRollback: 0n,
+    });
   }
 
   async fetchBlockHeight() {
@@ -204,7 +207,11 @@ export class IconXCallService implements XCallService {
       let txResult;
       if (CROSS_TRANSFER_TOKENS.includes(currencyAmountToBridge.currency.symbol!)) {
         const cx = bnJs.inject({ account }).getContract(tokenAddress);
-        txResult = await cx.crossTransfer(destination, `${currencyAmountToBridge.quotient}`, xCallFee.rollback);
+        txResult = await cx.crossTransfer(
+          destination,
+          `${currencyAmountToBridge.quotient}`,
+          xCallFee.rollback.toString(),
+        );
       } else if (ASSET_MANAGER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
         try {
           txResult = await bnJs
@@ -213,7 +220,7 @@ export class IconXCallService implements XCallService {
               `${currencyAmountToBridge.quotient}`,
               tokenAddress,
               destination,
-              xCallFee.rollback,
+              xCallFee.rollback.toString(),
             );
         } catch (e) {
           console.log(e);

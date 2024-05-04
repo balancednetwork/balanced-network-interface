@@ -19,8 +19,7 @@ import { SUPPORTED_XCALL_CHAINS } from 'app/_xcall/config';
 import { XChain, XChainId } from 'app/_xcall/types';
 import { getCrossChainTokenAddress } from 'app/_xcall/utils';
 import bnJs from 'bnJs';
-import { NETWORK_ID } from 'constants/config';
-import { MINIMUM_ICX_FOR_TX } from 'constants/index';
+import { MINIMUM_ICX_FOR_TX, NATIVE_ADDRESS } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
 import {
   SUPPORTED_TOKENS_LIST,
@@ -128,7 +127,7 @@ export function useArchwayBalances(
 }
 
 import { coreConfig } from 'config/wagmi';
-import { erc20Abi, zeroAddress } from 'viem';
+import { erc20Abi } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 import { multicall } from '@wagmi/core';
 
@@ -137,12 +136,12 @@ export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token
   const nativeBalance = useMemo(
     () =>
       data?.value
-        ? CurrencyAmount.fromRawAmount(new Token(43114, zeroAddress, 18, 'AVAX', 'AVAX'), data?.value.toString())
+        ? CurrencyAmount.fromRawAmount(new Token(43114, NATIVE_ADDRESS, 18, 'AVAX', 'AVAX'), data?.value.toString())
         : undefined,
     [data],
   );
 
-  const _tokens = useMemo(() => tokens?.filter(token => token.address !== zeroAddress), [tokens]);
+  const _tokens = useMemo(() => tokens?.filter(token => token.address !== NATIVE_ADDRESS), [tokens]);
 
   return useQuery({
     queryKey: [account, _tokens, nativeBalance],

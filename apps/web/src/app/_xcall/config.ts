@@ -41,7 +41,7 @@ import { bnUSD } from 'constants/tokens';
 
 import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
 import { sARCH } from './archway/tokens';
-import { zeroAddress } from 'viem';
+import { NATIVE_ADDRESS } from 'constants/index';
 
 export const xTokenMap: { [key1 in XChainId]?: { [key2 in XChainId]?: XToken[] } } = {
   '0x1.icon': {
@@ -91,7 +91,7 @@ export const xTokenMap: { [key1 in XChainId]?: { [key2 in XChainId]?: XToken[] }
   },
   '0xa86a.avax': {
     '0x1.icon': [
-      new XToken('0xa86a.avax', 43114, zeroAddress, 18, 'AVAX', 'AVAX'),
+      new XToken('0xa86a.avax', 43114, NATIVE_ADDRESS, 18, 'AVAX', 'AVAX'),
       new XToken(
         '0xa86a.avax',
         43114,

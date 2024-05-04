@@ -1,14 +1,26 @@
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
-import { BridgePair, IXCallFee, MessagingProtocol, MessagingProtocolId, XChainId, XWalletType } from './types';
+import {
+  BridgePair,
+  IXCallFee,
+  MessagingProtocol,
+  MessagingProtocolId,
+  XChainId,
+  XChainType,
+  XWalletType,
+} from './types';
 import { useArchwayContext } from './archway/ArchwayProvider';
 import bnJs from 'bnJs';
 import { archway, BRIDGE_PAIRS, sortChains, xChainMap, xChains } from './archway/config1';
 import { useIconReact } from 'packages/icon-react';
-import { useAccount, useDisconnect } from 'wagmi';
+import { useAccount, useDisconnect, usePublicClient } from 'wagmi';
 import { useMemo } from 'react';
 import { xTokenMap } from './config';
+import { ArchwayClient } from '@archwayhq/arch3.js/build';
+import { BalancedJs } from '@balancednetwork/balanced-js';
+import { formatEther, getContract, PublicClient } from 'viem';
+import { xCallContractAbi } from 'app/pages/trade/bridge-v2/_xcall/EvmXCallService';
 
 export function useXCallGasChecker(
   chain1: XChainId,
@@ -52,15 +64,38 @@ export function useXCallGasChecker(
   });
 }
 
-const fetchFee = async (from: XChainId, to: XChainId, rollback: boolean, client?: any) => {
-  const nId = xChainMap[to].xChainId;
-  if (from === 'archway-1' || from === 'archway') {
-    return await client.queryContractSmart(archway.contracts.xCall, {
+const fetchFee = async (
+  from: XChainId,
+  to: XChainId,
+  rollback: boolean,
+  client: ArchwayClient | BalancedJs | PublicClient,
+): Promise<bigint> => {
+  const xChain = xChainMap[from];
+  const xChainType = xChainMap[from].xChainType;
+  const nId = to;
+
+  if (xChainType === 'ICON') {
+    const res = await (client as BalancedJs).XCall.getFee(nId, rollback);
+    return BigInt(res);
+  }
+
+  if (xChainType === 'ARCHWAY') {
+    const res = await (client as ArchwayClient)?.queryContractSmart(archway.contracts.xCall, {
       get_fee: { nid: nId, rollback: rollback },
     });
-  } else if (from === '0x1.icon' || from === '0x2.icon') {
-    return await bnJs.XCall.getFee(nId, rollback);
+    return BigInt(res);
   }
+
+  if (xChainType === 'EVM') {
+    const contract = getContract({
+      abi: xCallContractAbi,
+      address: xChain.contracts.xCall as `0x${string}`,
+      client: client as PublicClient,
+    });
+    return contract.read.getProtocolFee();
+  }
+
+  return 0n;
 };
 
 // TODO: improve this hook
@@ -69,27 +104,41 @@ export const useXCallFee = (
   to: XChainId,
 ): { xCallFee: IXCallFee | undefined; formattedXCallFee: string } => {
   const { client } = useArchwayContext();
+  const publicClient = usePublicClient();
+
+  const publicClientMap: { [key in XChainType]?: PublicClient | ArchwayClient | BalancedJs } = useMemo(
+    () => ({
+      ICON: bnJs,
+      ARCHWAY: client,
+      EVM: publicClient,
+    }),
+    [publicClient, client],
+  );
+
+  const xChainType = xChainMap[from].xChainType;
+  const pClient = publicClientMap[xChainType];
 
   const query = useQuery({
-    queryKey: [`xcall-fees`, from, to],
+    queryKey: [`xcall-fees`, from, to, pClient],
     queryFn: async () => {
-      const feeWithRollback = await fetchFee(from, to, true, client);
-      const feeNoRollback = await fetchFee(from, to, false, client);
+      if (!pClient) return;
+
+      const feeWithRollback = await fetchFee(from, to, true, pClient);
+      const feeNoRollback = await fetchFee(from, to, false, pClient);
 
       return {
         noRollback: feeNoRollback,
         rollback: feeWithRollback,
       };
     },
-    enabled: !!client,
-    placeholderData: keepPreviousData,
+    enabled: !!pClient,
   });
 
   const { data: xCallFee } = query;
 
   const chain = xChainMap[from];
-  const formattedXCallFee: string =
-    (Number(xCallFee?.rollback) / 10 ** 18).toPrecision(3) + ' ' + chain.nativeCurrency.symbol;
+
+  const formattedXCallFee: string = xCallFee ? formatEther(xCallFee.rollback) + ' ' + chain.nativeCurrency.symbol : '';
 
   return { xCallFee, formattedXCallFee };
 };

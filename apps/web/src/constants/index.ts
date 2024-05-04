@@ -15,3 +15,5 @@ export const DEFAULT_SLIPPAGE = 50;
 export const MINIMUM_B_BALANCE_TO_SHOW_POOL = 0.01;
 
 export const MODAL_FADE_DURATION = 200;
+
+export const NATIVE_ADDRESS = 'native';

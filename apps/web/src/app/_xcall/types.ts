@@ -9,6 +9,8 @@ export enum XWalletType {
 
 export type XChainId = 'archway-1' | 'archway' | '0x1.icon' | '0x2.icon' | '0xa86a.avax' | '0xa869.fuji';
 
+export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY';
+
 export enum XCallEventType {
   CallMessageSent = 'CallMessageSent',
   CallMessage = 'CallMessage',
@@ -89,8 +91,8 @@ export type XCallActivityItem = {
 };
 
 export interface IXCallFee {
-  noRollback: string;
-  rollback: string;
+  noRollback: bigint;
+  rollback: bigint;
 }
 
 export type Chain = {
@@ -110,6 +112,7 @@ export type Chain = {
 
 export type XChain = Chain & {
   xChainId: XChainId;
+  xChainType: XChainType;
   xWalletType: XWalletType;
   contracts: {
     xCall: string;

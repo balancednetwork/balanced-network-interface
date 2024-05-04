@@ -164,7 +164,7 @@ export default function BridgeTransferConfirmModal({
         const { result: hash } = await cx.crossTransfer(
           destination,
           `${currencyAmountToBridge.quotient}`,
-          xCallFee.rollback,
+          xCallFee.rollback.toString(),
         );
         if (hash) {
           setXCallInProgress(true);
@@ -184,7 +184,7 @@ export default function BridgeTransferConfirmModal({
             `${currencyAmountToBridge.quotient}`,
             tokenAddress,
             destination,
-            xCallFee.rollback,
+            xCallFee.rollback.toString(),
           );
         if (hash) {
           setXCallInProgress(true);
@@ -213,7 +213,7 @@ export default function BridgeTransferConfirmModal({
             msg,
             fee,
             undefined,
-            xCallFee.rollback !== '0'
+            xCallFee.rollback !== 0n
               ? [
                   { amount: xCallFee.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL },
                   ...(assetToBridge ? [assetToBridge] : []),

@@ -2,9 +2,18 @@ import { XCallEventType, XChainId } from 'app/_xcall/types';
 import { XCallService } from './types';
 import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, TransactionStatus } from '../_zustand/types';
 import { avalanche } from 'app/_xcall/archway/config1';
-import { Address, PublicClient, WalletClient, parseEther, parseEventLogs } from 'viem';
+import {
+  Address,
+  PublicClient,
+  WalletClient,
+  WriteContractParameters,
+  parseEther,
+  parseEventLogs,
+  zeroAddress,
+} from 'viem';
 import { bridgeTransferActions } from '../_zustand/useBridgeTransferStore';
 import { transactionActions } from '../_zustand/useTransactionStore';
+import { NATIVE_ADDRESS } from 'constants/index';
 
 export class EvmXCallService implements XCallService {
   xChainId: XChainId;
@@ -21,8 +30,8 @@ export class EvmXCallService implements XCallService {
   // TODO: complete this
   fetchXCallFee(to: XChainId, rollback: boolean) {
     return Promise.resolve({
-      rollback: '0',
-      noRollback: '0',
+      rollback: 0n,
+      noRollback: 0n,
     });
   }
 
@@ -173,17 +182,33 @@ export class EvmXCallService implements XCallService {
       const destination = `${bridgeDirection.to}/${destinationAddress}`;
       const amount = BigInt(currencyAmountToBridge.quotient.toString());
 
-      const { request } = await this.publicClient.simulateContract({
-        account: account as Address,
-        address: avalanche.contracts.assetManager as Address,
-        abi: assetManagerContractAbi,
-        functionName: 'deposit',
-        args: [tokenAddress as Address, amount, destination],
-        value: parseEther('0.03'), // TODO: use fetched protocol fee
-      });
+      // check if the bridge asset is native
+      const isNative = currencyAmountToBridge.currency.wrapped.address === NATIVE_ADDRESS;
+
+      let request: WriteContractParameters;
+      if (!isNative) {
+        const res = await this.publicClient.simulateContract({
+          account: account as Address,
+          address: avalanche.contracts.assetManager as Address,
+          abi: assetManagerContractAbi,
+          functionName: 'deposit',
+          args: [tokenAddress as Address, amount, destination],
+          value: xCallFee.rollback,
+        });
+        request = res.request;
+      } else {
+        const res = await this.publicClient.simulateContract({
+          account: account as Address,
+          address: avalanche.contracts.assetManager as Address,
+          abi: assetManagerContractAbi,
+          functionName: 'depositNative',
+          args: [amount, destination],
+          value: xCallFee.rollback + amount,
+        });
+        request = res.request;
+      }
 
       const hash = await this.walletClient.writeContract(request);
-      console.log('hash', hash);
 
       if (hash) {
         bridgeTransferActions.setIsTransferring(true);
@@ -211,7 +236,7 @@ export class EvmXCallService implements XCallService {
   }
 }
 
-const xCallContractAbi = [
+export const xCallContractAbi = [
   {
     inputs: [],
     name: 'InvalidInitialization',
@@ -838,7 +863,7 @@ const xCallContractAbi = [
   },
 ] as const;
 
-const assetManagerContractAbi = [
+export const assetManagerContractAbi = [
   { inputs: [{ internalType: 'address', name: 'target', type: 'address' }], name: 'AddressEmptyCode', type: 'error' },
   {
     inputs: [{ internalType: 'address', name: 'account', type: 'address' }],

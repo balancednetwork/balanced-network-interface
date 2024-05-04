@@ -34,6 +34,7 @@ export class ArchwayXCallService implements XCallService {
   }
 
   async fetchXCallFee(to: XChainId, rollback: boolean) {
+    // TODO: fix this
     return await this.client.queryContractSmart(archway.contracts.xCall, {
       get_fee: { nid: xChainMap[to].xChainId, rollback },
     });
@@ -194,7 +195,7 @@ export class ArchwayXCallService implements XCallService {
             msg,
             fee,
             undefined,
-            xCallFee.rollback !== '0'
+            xCallFee.rollback !== 0n
               ? [
                   { amount: xCallFee.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL },
                   ...(assetToBridge ? [assetToBridge] : []),

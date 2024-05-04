@@ -4,6 +4,7 @@ export const archway: XChain = {
   id: 'archway-1',
   name: 'Archway',
   xChainId: 'archway-1',
+  xChainType: 'ARCHWAY',
   xWalletType: XWalletType.COSMOS,
   nativeCurrency: {
     decimals: 18,
@@ -29,6 +30,7 @@ export const archwayTestnet: XChain = {
   id: 'archway',
   name: 'archway testnet',
   xChainId: 'archway-1',
+  xChainType: 'ARCHWAY',
   xWalletType: XWalletType.COSMOS,
   nativeCurrency: {
     decimals: 18,
@@ -54,6 +56,7 @@ export const icon: XChain = {
   id: 1,
   name: 'ICON',
   xChainId: '0x1.icon',
+  xChainType: 'ICON',
   xWalletType: XWalletType.ICON,
   tracker: '',
   nativeCurrency: {
@@ -79,6 +82,7 @@ export const lisbon: XChain = {
   id: 2,
   name: 'Lisbon Testnet',
   xChainId: '0x2.icon',
+  xChainType: 'ICON',
   xWalletType: XWalletType.ICON,
   tracker: '',
   nativeCurrency: {
@@ -104,6 +108,7 @@ export const avalanche: XChain = {
   id: 43_114,
   name: 'Avalanche',
   xChainId: '0xa86a.avax',
+  xChainType: 'EVM',
   xWalletType: XWalletType.EVM,
   tracker: 'https://snowscan.xyz',
   nativeCurrency: {
@@ -127,6 +132,7 @@ export const fuji: XChain = {
   id: 43_113,
   name: 'Fuji Testnet',
   xChainId: '0xa869.fuji',
+  xChainType: 'EVM',
   xWalletType: XWalletType.EVM,
   tracker: 'https://snowscan.xyz',
   nativeCurrency: {

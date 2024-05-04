@@ -12,7 +12,7 @@ import {
 import { bridgeTransferActions } from '../_zustand/useBridgeTransferStore';
 import { transactionActions } from '../_zustand/useTransactionStore';
 
-import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens';
+import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens';
 
 import { iconService } from 'app/_xcall/_icon/utils';
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
@@ -204,30 +204,25 @@ export class IconXCallService implements XCallService {
       const destination = `${bridgeDirection.to}/${destinationAddress}`;
 
       let txResult;
-      if (CROSS_TRANSFER_TOKENS.includes(currencyAmountToBridge.currency.symbol!)) {
+      if (CROSS_TRANSFER_TOKENS.includes(currencyAmountToBridge.currency.symbol)) {
         const cx = bnJs.inject({ account }).getContract(tokenAddress);
         txResult = await cx.crossTransfer(
           destination,
           `${currencyAmountToBridge.quotient}`,
           xCallFee.rollback.toString(),
         );
-      } else if (ASSET_MANAGER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
-        try {
-          txResult = await bnJs
-            .inject({ account })
-            .AssetManager[isLiquidFinanceEnabled ? 'withdrawNativeTo' : 'withdrawTo'](
-              `${currencyAmountToBridge.quotient}`,
-              tokenAddress,
-              destination,
-              xCallFee.rollback.toString(),
-            );
-        } catch (e) {
-          console.log(e);
-        }
+      } else {
+        txResult = await bnJs
+          .inject({ account })
+          .AssetManager[isLiquidFinanceEnabled ? 'withdrawNativeTo' : 'withdrawTo'](
+            `${currencyAmountToBridge.quotient}`,
+            tokenAddress,
+            destination,
+            xCallFee.rollback.toString(),
+          );
       }
 
       const { result: hash } = txResult || {};
-      console.log('hash', hash);
 
       if (hash) {
         bridgeTransferActions.setIsTransferring(true);

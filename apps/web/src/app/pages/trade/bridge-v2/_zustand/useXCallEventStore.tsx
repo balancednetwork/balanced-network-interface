@@ -50,7 +50,7 @@ export const xCallEventActions = {
   },
 
   incrementCurrentHeight: (xChainId: XChainId) => {
-    console.log('incrementCurrentHeight', xChainId);
+    // console.log('incrementCurrentHeight', xChainId);
     try {
       if (
         useXCallEventStore.getState().scanners[xChainId].currentHeight >=
@@ -58,27 +58,36 @@ export const xCallEventActions = {
       ) {
         return;
       }
-      console.log('incrementing currentHeight', xChainId);
+
+      // console.log('incrementing currentHeight', xChainId);
       useXCallEventStore.setState(state => {
-        state.scanners[xChainId].currentHeight += 1;
+        state.scanners[xChainId].currentHeight += 1n;
         return state;
       });
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
   },
   updateChainHeight: async (xChainId: XChainId) => {
-    console.log('updateChainHeight', xChainId);
+    // console.log('updateChainHeight', xChainId);
     try {
       const xCallService = xCallServiceActions.getXCallService(xChainId);
       const chainHeight = await xCallService.fetchBlockHeight();
       useXCallEventStore.setState(state => {
+        if (!state.scanners[xChainId]) {
+          return state;
+        }
+
         state.scanners[xChainId].chainHeight = chainHeight;
         return state;
       });
-    } catch (e) {}
+    } catch (e) {
+      console.log(e);
+    }
   },
 
-  scanBlock: async (xChainId: XChainId, blockHeight: number) => {
-    if (useXCallEventStore.getState().destinationXCallEvents?.[xChainId]?.[blockHeight]) {
+  scanBlock: async (xChainId: XChainId, blockHeight: bigint) => {
+    if (useXCallEventStore.getState().destinationXCallEvents?.[xChainId]?.[Number(blockHeight)]) {
       return;
     }
 
@@ -97,29 +106,45 @@ export const xCallEventActions = {
   },
 
   getDestinationEvents: (xChainId: XChainId, sn: number) => {
-    const events = useXCallEventStore.getState().destinationXCallEvents?.[xChainId];
+    try {
+      console.log('BBBB', xChainId);
+      const events = useXCallEventStore.getState().destinationXCallEvents?.[xChainId];
 
-    const result = {};
-    for (const blockHeight in events) {
-      for (const event of events[blockHeight]) {
-        if (event.sn === sn) {
-          result[event.eventType] = event;
-        }
-      }
-    }
+      console.log('AAAA', events);
+      const result = {};
 
-    const callMessageEvent = result[XCallEventType.CallMessage];
-    if (callMessageEvent) {
       for (const blockHeight in events) {
-        for (const event of events[blockHeight]) {
-          if (event.reqId === callMessageEvent.reqId) {
-            result[event.eventType] = event;
+        if (events[blockHeight]) {
+          for (const event of events[blockHeight]) {
+            if (event.sn === sn) {
+              result[event.eventType] = event;
+            }
           }
         }
       }
-    }
 
-    return result;
+      console.log('CCCC', result);
+
+      const callMessageEvent = result[XCallEventType.CallMessage];
+      if (callMessageEvent) {
+        for (const blockHeight in events) {
+          if (events[blockHeight]) {
+            for (const event of events[blockHeight]) {
+              if (event.reqId === callMessageEvent.reqId) {
+                result[event.eventType] = event;
+              }
+            }
+          }
+        }
+      }
+
+      console.log('CCCC', result);
+
+      return result;
+    } catch (e) {
+      console.log(e);
+    }
+    return {};
   },
 };
 

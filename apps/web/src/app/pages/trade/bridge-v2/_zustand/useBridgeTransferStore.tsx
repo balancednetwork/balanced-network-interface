@@ -71,6 +71,13 @@ export const bridgeTransferActions = {
     const srcChainXCallService = xCallServiceActions.getXCallService(bridgeDirection.from);
     const dstChainXCallService = xCallServiceActions.getXCallService(bridgeDirection.to);
 
+    console.log('bridgeInfo', bridgeInfo);
+    console.log('all xCallServices', xCallServiceActions.getAllXCallServices());
+    console.log('srcChainXCallService', srcChainXCallService);
+    console.log('dstChainXCallService', dstChainXCallService);
+
+    // return;
+
     const transfer = await srcChainXCallService.executeTransfer(bridgeInfo);
     const blockHeight = (await dstChainXCallService.fetchBlockHeight()) - 1n;
 
@@ -192,10 +199,18 @@ export const useFetchBridgeTransferEvents = transfer => {
       if (transfer.status === BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT) {
         const srcChainXCallService = xCallServiceActions.getXCallService(bridgeDirection.from);
         events = await srcChainXCallService.fetchSourceEvents(transfer);
-      } else {
+      } else if (
+        transfer.status === BridgeTransferStatus.CALL_MESSAGE_SENT ||
+        transfer.status === BridgeTransferStatus.CALL_MESSAGE
+        // || transfer.status === BridgeTransferStatus.CALL_EXECUTED
+      ) {
+        console.log('transfer.status !== BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT', transfer.events);
         const callMessageSentEvent = transfer.events[XCallEventType.CallMessageSent];
+        console.log('callMessageSentEvent', callMessageSentEvent);
         if (callMessageSentEvent) {
+          console.log('callMessageSentEvent', callMessageSentEvent);
           events = xCallEventActions.getDestinationEvents(bridgeDirection.to, callMessageSentEvent.sn);
+          console.log('events', events);
         }
       }
 

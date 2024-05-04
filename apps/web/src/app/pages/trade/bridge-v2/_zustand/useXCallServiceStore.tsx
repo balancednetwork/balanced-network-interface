@@ -22,6 +22,9 @@ export const useXCallServiceStore = create<XCallServiceStore>()(set => ({
 }));
 
 export const xCallServiceActions = {
+  getAllXCallServices: () => {
+    return useXCallServiceStore.getState().xCallServices;
+  },
   getXCallService: (xChainId: XChainId) => {
     const xCallService = useXCallServiceStore.getState().xCallServices[xChainId];
     return xCallService;

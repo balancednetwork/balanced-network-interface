@@ -18,6 +18,6 @@ export interface XCallService {
   fetchXCallFee(to: XChainId, rollback: boolean): Promise<IXCallFee>;
   fetchBlockHeight(): Promise<bigint>;
   fetchSourceEvents(transfer: BridgeTransfer): Promise<XCallEventMap>;
-  fetchDestinationEventsByBlock(blockHeight): Promise<XCallEvent[]>;
+  fetchDestinationEventsByBlock(blockHeight: bigint): Promise<XCallEvent[]>;
   executeTransfer(bridgeInfo: BridgeInfo): Promise<BridgeTransfer | null>;
 }

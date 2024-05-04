@@ -24,17 +24,16 @@ import { Transaction } from '../_zustand/types';
 export class ArchwayXCallService implements XCallService {
   xChainId: XChainId;
   client: any;
-  signedClient: any;
+  signingClient: any;
 
   constructor(xChainId: XChainId, serviceConfig: any) {
-    const { client, signedClient } = serviceConfig;
+    const { client, signingClient } = serviceConfig;
     this.xChainId = xChainId;
     this.client = client;
-    this.signedClient = signedClient;
+    this.signingClient = signingClient;
   }
 
   async fetchXCallFee(to: XChainId, rollback: boolean) {
-    // TODO: fix this
     return await this.client.queryContractSmart(archway.contracts.xCall, {
       get_fee: { nid: xChainMap[to].xChainId, rollback },
     });
@@ -45,8 +44,8 @@ export class ArchwayXCallService implements XCallService {
     return BigInt(height);
   }
 
-  async getBlock(blockHeight) {
-    const block = await this.client.getBlock(blockHeight);
+  async getBlock(blockHeight: bigint) {
+    const block = await this.client.getBlock(Number(blockHeight));
     return block;
   }
 
@@ -55,7 +54,7 @@ export class ArchwayXCallService implements XCallService {
     return tx;
   }
 
-  // TODO: fix this
+  // TODO: review again
   deriveTxStatus(rawTx: any): TransactionStatus {
     if (rawTx) {
       if (rawTx.code) {
@@ -112,23 +111,24 @@ export class ArchwayXCallService implements XCallService {
     }
   }
 
-  async filterCallMessageSentEventLog(eventLogs) {
-    const eventFiltered = eventLogs.find(e => e.type === 'wasm-send_packet');
+  filterCallMessageSentEventLog(eventLogs) {
+    const eventFiltered = eventLogs.find(e => e.type === 'wasm-CallMessageSent');
     return eventFiltered;
   }
 
-  async filterCallMessageEventLog(eventLogs) {
-    const eventFiltered = await this.filterEventLog(eventLogs, 'wasm-CallMessage');
+  filterCallMessageEventLog(eventLogs) {
+    const eventFiltered = this.filterEventLog(eventLogs, 'wasm-CallMessage');
     return eventFiltered;
   }
 
-  async filterCallExecutedEventLog(eventLogs) {
-    const eventFiltered = await this.filterEventLog(eventLogs, 'wasm-CallExecuted');
+  filterCallExecutedEventLog(eventLogs) {
+    const eventFiltered = this.filterEventLog(eventLogs, 'wasm-CallExecuted');
     return eventFiltered;
   }
 
   async fetchSourceEvents(transfer: BridgeTransfer) {
     try {
+      console.log('fetchSourceEvents', transfer.sourceTransaction.rawTx.events);
       const callMessageSentEventLog = this.filterCallMessageSentEventLog(transfer.sourceTransaction.rawTx.events);
       return {
         [XCallEventType.CallMessageSent]: this.parseCallMessageSentEventLog(callMessageSentEventLog),
@@ -139,7 +139,7 @@ export class ArchwayXCallService implements XCallService {
     return {};
   }
 
-  async fetchDestinationEventsByBlock(blockHeight) {
+  async fetchDestinationEventsByBlock(blockHeight: bigint) {
     const events: any = [];
 
     const block = await this.getBlock(blockHeight);
@@ -175,7 +175,7 @@ export class ArchwayXCallService implements XCallService {
       isDenom,
     } = bridgeInfo;
 
-    if (this.signedClient) {
+    if (this.signingClient) {
       const tokenAddress = currencyAmountToBridge.wrapped.currency.address;
       const destination = `${bridgeDirection.to}/${destinationAddress}`;
 
@@ -189,7 +189,7 @@ export class ArchwayXCallService implements XCallService {
             errorMessage: 'Cross-chain transfer request failed',
           });
 
-          const res = await this.signedClient.execute(
+          const txResult = await this.signingClient.execute(
             account,
             contract,
             msg,
@@ -205,13 +205,13 @@ export class ArchwayXCallService implements XCallService {
                 : undefined,
           );
 
-          const {
-            payload: { tx },
-          } = res;
-          if (tx) {
-            transactionActions.updateTx(this.xChainId, transaction.id, { hash: tx.transactionHash, rawTx: res });
+          console.log(txResult);
 
-            return transactionActions.getTransaction(this.xChainId, transaction.id);
+          if (txResult) {
+            return transactionActions.updateTx(this.xChainId, transaction.id, {
+              hash: txResult.transactionHash,
+              rawTx: txResult,
+            });
           } else {
             transactionActions.updateTx(this.xChainId, transaction.id, {});
           }

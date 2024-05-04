@@ -123,6 +123,7 @@ export const transactionActions = {
         });
       }
     }
+    return _transaction;
   },
 
   // remove: (xChainId, id) => {

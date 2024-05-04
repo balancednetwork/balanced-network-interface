@@ -24,7 +24,7 @@ import { XCallDescription } from 'app/components/XCallDescription';
 
 import ChainSelector from './ChainSelector';
 import { useWalletModalToggle } from 'store/application/hooks';
-import { useXCallFee, useXCallProtocol, useXWallet } from 'app/_xcall/hooks';
+import { useXCallFee, useXCallProtocol, useXWallet } from 'app/pages/trade/bridge-v2/_hooks/hooks';
 import { Field } from 'store/bridge/reducer';
 
 const ConnectWrap = styled.div`

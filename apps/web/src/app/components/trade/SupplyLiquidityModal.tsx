@@ -8,9 +8,9 @@ import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
-import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
+import useAllowanceHandler from 'app/pages/trade/bridge-v2/_hooks/useApproveCallback';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { archway } from 'app/_xcall/archway/config1';
+import { archway } from 'app/pages/trade/bridge-v2/config';
 import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
 import { CurrentXCallStateType, XChainId } from 'app/_xcall/types';
 import { getBytesFromString, getCrossChainTokenAddress, getCrossChainTokenBySymbol } from 'app/_xcall/utils';

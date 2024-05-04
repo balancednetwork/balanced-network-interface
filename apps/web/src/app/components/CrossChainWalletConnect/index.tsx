@@ -8,7 +8,7 @@ import { useSignedInWallets } from 'store/wallet/hooks';
 import { shortenAddress } from 'utils';
 
 import { UnderlineText } from '../DropdownText';
-import { xChainMap } from 'app/_xcall/archway/config1';
+import { xChainMap } from 'app/pages/trade/bridge-v2/config';
 
 const CrossChainWalletConnect = ({ chainId }: { chainId: XChainId }) => {
   const signedInWallets = useSignedInWallets();

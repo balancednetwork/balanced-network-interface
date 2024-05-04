@@ -5,9 +5,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import useAllowanceHandler from 'app/_xcall/archway/AllowanceHandler';
-import { useXCallFee, useXCallGasChecker } from 'app/_xcall/hooks';
-import { archway } from 'app/_xcall/archway/config1';
+import useAllowanceHandler from 'app/pages/trade/bridge-v2/_hooks/useApproveCallback';
+import { useXCallFee, useXCallGasChecker } from 'app/pages/trade/bridge-v2/_hooks/hooks';
+import { archway } from 'app/pages/trade/bridge-v2/config';
 import { Typography } from 'app/theme';
 import { useShouldLedgerSign } from 'store/application/hooks';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';

@@ -4,7 +4,7 @@ import { openToast } from 'btp/src/connectors/transactionToast';
 import { TransactionStatus } from 'store/transactions/hooks';
 
 import { initTransaction, addTransactionResult } from './actions';
-import { archway } from 'app/_xcall/archway/config1';
+import { archway } from 'app/pages/trade/bridge-v2/config';
 
 export interface TransactionDetails {
   hash: string;

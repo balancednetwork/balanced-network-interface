@@ -5,7 +5,7 @@ import { NETWORK_ID } from 'constants/config';
 
 import { OriginXCallData, XChainId, XCallEventType } from '../types';
 import { ICONBlockType, ICONTxEvent, ICONTxResultType } from './types';
-import { xChainMap } from '../archway/config1';
+import { xChainMap } from '../../pages/trade/bridge-v2/config';
 
 export const httpProvider = new IconService.HttpProvider(CHAIN_INFO[NETWORK_ID].APIEndpoint);
 export const iconService = new IconService(httpProvider);

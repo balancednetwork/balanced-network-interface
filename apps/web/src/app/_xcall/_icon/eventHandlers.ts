@@ -21,7 +21,7 @@ import {
   getTxFromCallExecutedLog,
   getXCallOriginEventDataFromICON,
 } from './utils';
-import { xChainMap } from '../archway/config1';
+import { xChainMap } from '../../pages/trade/bridge-v2/config';
 
 export const useICONEventListener = () => {
   const listeningTo = useXCallListeningTo();

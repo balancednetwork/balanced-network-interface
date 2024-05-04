@@ -8,7 +8,7 @@ import { sARCHOnArchway, useARCH } from 'app/_xcall/archway/tokens';
 import { XChainId } from 'app/_xcall/types';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { archway } from 'app/_xcall/archway/config1';
+import { archway } from 'app/pages/trade/bridge-v2/config';
 
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';

@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Box, Flex } from 'rebass';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { archway } from 'app/_xcall/archway/config1';
+import { archway } from 'app/pages/trade/bridge-v2/config';
 import { getFeeParam } from 'app/_xcall/archway/utils';
 import { DestinationXCallData, XChainId, XCallEventType } from 'app/_xcall/types';
 import { getNetworkDisplayName } from 'app/_xcall/utils';

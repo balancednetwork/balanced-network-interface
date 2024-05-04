@@ -6,7 +6,7 @@ import { NETWORK_ID } from 'constants/config';
 
 import { ARCHWAY_EVENT_XCALL_MSG_SENT } from './types';
 import { StdFee } from '@archwayhq/arch3.js';
-import { archway, icon } from './config1';
+import { archway, icon } from '../../pages/trade/bridge-v2/config';
 
 export function getXCallOriginEventDataFromArchway(
   events: readonly Event[],

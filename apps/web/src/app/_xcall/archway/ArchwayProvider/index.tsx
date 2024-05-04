@@ -9,7 +9,7 @@ import { NETWORK_ID } from 'constants/config';
 import { useLocalStorageWithExpiry } from 'hooks/useLocalStorage';
 
 import { CONSTANTINE_CHAIN_INFO } from '../testnetChainInfo';
-import { archway } from '../config1';
+import { archway } from '../../../pages/trade/bridge-v2/config';
 
 interface ArchwayContextType {
   address: string;

@@ -12,7 +12,7 @@ import ChainList from '../../pages/trade/bridge/_components/ChainList';
 import CrossChainWalletConnect from '../CrossChainWalletConnect';
 import { StyledArrowDownIcon, UnderlineText } from '../DropdownText';
 import { DropdownPopper } from '../Popover';
-import { xChainMap } from 'app/_xcall/archway/config1';
+import { xChainMap } from 'app/pages/trade/bridge-v2/config';
 
 type CrossChainOptionsProps = {
   chainId: XChainId;

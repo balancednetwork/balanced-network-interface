@@ -12,7 +12,7 @@ import {
   getXCallOriginEventDataFromICON,
 } from 'app/_xcall/_icon/utils';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { archway } from 'app/_xcall/archway/config1';
+import { archway } from 'app/pages/trade/bridge-v2/config';
 import { getFeeParam } from 'app/_xcall/archway/utils';
 import {
   DestinationXCallData,

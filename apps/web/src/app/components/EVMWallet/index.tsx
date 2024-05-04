@@ -37,7 +37,7 @@ import {
 import { filterTokens, useSortedTokensByQuery } from '../SearchModal/filtering';
 import SearchInput from '../SearchModal/SearchInput';
 import { useTokenComparator } from '../SearchModal/sorting';
-import { useXTokens, useXWallet } from 'app/_xcall/hooks';
+import { useXTokens, useXWallet } from 'app/pages/trade/bridge-v2/_hooks/hooks';
 import { XChainId } from 'app/_xcall/types';
 
 const walletBreakpoint = '499px';

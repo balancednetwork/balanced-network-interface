@@ -2,7 +2,7 @@ import { sha256 } from '@cosmjs/crypto';
 import { toHex } from '@cosmjs/encoding';
 import { StdFee } from '@archwayhq/arch3.js';
 
-import { archway, xChainMap } from 'app/_xcall/archway/config1';
+import { archway, xChainMap } from 'app/pages/trade/bridge-v2/config';
 import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/_xcall/config';
 import { getFeeParam } from 'app/_xcall/archway/utils';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';

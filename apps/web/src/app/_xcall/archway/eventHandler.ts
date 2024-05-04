@@ -20,7 +20,7 @@ import {
   getRollbackEventDataFromArchwayEvent,
   getXCallDestinationEventDataFromArchwayEvent,
 } from './utils';
-import { xChainMap } from './config1';
+import { xChainMap } from '../../pages/trade/bridge-v2/config';
 
 const ARCHWAY_SOCKET_QUERY = {
   jsonrpc: '2.0',

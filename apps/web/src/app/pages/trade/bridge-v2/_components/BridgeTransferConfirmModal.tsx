@@ -13,7 +13,7 @@ import { Button, TextButton } from 'app/components/Button';
 import Spinner from 'app/components/Spinner';
 
 import { getNetworkDisplayName } from 'app/_xcall/utils';
-import { useXCallFee, useXCallGasChecker } from 'app/_xcall/hooks';
+import { useXCallFee, useXCallGasChecker } from 'app/pages/trade/bridge-v2/_hooks/hooks';
 import { useShouldLedgerSign } from 'store/application/hooks';
 
 import {
@@ -29,8 +29,8 @@ import {
   useBridgeTransferStore,
   BridgeTransferStatusUpdater,
 } from '../_zustand/useBridgeTransferStore';
-import { ApprovalState, useApproveCallback } from 'app/_xcall/archway/AllowanceHandler';
-import { xChainMap } from 'app/_xcall/archway/config1';
+import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge-v2/_hooks/useApproveCallback';
+import { xChainMap } from 'app/pages/trade/bridge-v2/config';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;

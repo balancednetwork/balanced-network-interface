@@ -49,7 +49,7 @@ import { useTokenComparator } from '../SearchModal/sorting';
 import ICXWallet from './wallets/ICXWallet';
 import SendPanel from './wallets/SendPanel';
 import SICXWallet from './wallets/SICXWallet';
-import { useXTokens } from 'app/_xcall/hooks';
+import { useXTokens } from 'app/pages/trade/bridge-v2/_hooks/hooks';
 
 const WalletUIs = {
   ICX: ICXWallet,

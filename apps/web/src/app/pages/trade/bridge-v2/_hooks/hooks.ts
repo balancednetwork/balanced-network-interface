@@ -9,14 +9,14 @@ import {
   XChainId,
   XChainType,
   XWalletType,
-} from './types';
-import { useArchwayContext } from './archway/ArchwayProvider';
+} from '../../../../_xcall/types';
+import { useArchwayContext } from '../../../../_xcall/archway/ArchwayProvider';
 import bnJs from 'bnJs';
-import { archway, BRIDGE_PAIRS, sortChains, xChainMap, xChains } from './archway/config1';
+import { archway, BRIDGE_PAIRS, sortChains, xChainMap, xChains } from '../config';
 import { useIconReact } from 'packages/icon-react';
 import { useAccount, useDisconnect, usePublicClient } from 'wagmi';
 import { useMemo } from 'react';
-import { xTokenMap } from './config';
+import { xTokenMap } from '../../../../_xcall/config';
 import { ArchwayClient } from '@archwayhq/arch3.js/build';
 import { BalancedJs } from '@balancednetwork/balanced-js';
 import { formatEther, getContract, PublicClient } from 'viem';

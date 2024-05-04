@@ -10,8 +10,8 @@ import {
   useInitTransaction,
 } from 'store/transactionsCrosschain/hooks';
 
-import { useArchwayContext } from '../ArchwayProvider';
-import { getFeeParam } from '../utils';
+import { useArchwayContext } from '../../../../_xcall/archway/ArchwayProvider';
+import { getFeeParam } from '../../../../_xcall/archway/utils';
 
 import { Token, CurrencyAmount } from '@balancednetwork/sdk-core';
 
@@ -28,9 +28,9 @@ import {
 import { erc20Abi, Address, getContract, Abi, WriteContractReturnType } from 'viem';
 
 import { XToken } from 'app/_xcall/types';
-import { archway, xChainMap } from '../config1';
+import { archway, xChainMap } from '../config';
 import { useSignedInWallets } from 'store/wallet/hooks';
-import { useXWallet } from 'app/_xcall/hooks';
+import { useXWallet } from 'app/pages/trade/bridge-v2/_hooks/hooks';
 import { useBridgeDirection } from 'store/bridge/hooks';
 import { NATIVE_ADDRESS } from 'constants/index';
 

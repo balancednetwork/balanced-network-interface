@@ -27,7 +27,7 @@ import SearchInput from '../SearchModal/SearchInput';
 import WalletItem from './WalletItem';
 import { IconWalletModal } from './IconWalletModal';
 import { AvalancheWalletModal } from './AvalancheWalletModal';
-import { useWallets } from 'app/_xcall/hooks';
+import { useWallets } from 'app/pages/trade/bridge-v2/_hooks/hooks';
 import { XWalletType } from 'app/_xcall/types';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`

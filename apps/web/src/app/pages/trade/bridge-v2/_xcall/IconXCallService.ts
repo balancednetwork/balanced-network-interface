@@ -16,7 +16,6 @@ import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/_xcall/config';
 
 import { iconService } from 'app/_xcall/_icon/utils';
 import { XCallEventType, XChainId } from 'app/_xcall/types';
-import { xChainMap } from 'app/_xcall/archway/config1';
 
 import { fetchTxResult } from 'app/_xcall/_icon/utils';
 import { XCallService } from './types';

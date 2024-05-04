@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { ChainLogo } from 'app/_xcall/ChainLogo';
 import { XChainId, XChain } from 'app/_xcall/types';
-import { xChains } from 'app/_xcall/archway/config1';
+import { xChains } from 'app/pages/trade/bridge-v2/config';
 
 type ChainListProps = {
   chainId: XChainId;

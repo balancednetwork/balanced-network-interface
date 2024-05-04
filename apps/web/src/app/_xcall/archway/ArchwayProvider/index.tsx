@@ -8,7 +8,6 @@ import { LOCAL_STORAGE_ADDRESS_EXPIRY } from 'packages/icon-react';
 import { NETWORK_ID } from 'constants/config';
 import { useLocalStorageWithExpiry } from 'hooks/useLocalStorage';
 
-import { CONSTANTINE_CHAIN_INFO } from '../testnetChainInfo';
 import { archway } from '../../../pages/trade/bridge-v2/_config/xChains';
 
 interface ArchwayContextType {
@@ -71,13 +70,6 @@ const ArchwayProvider = ({ children }) => {
         await leap.enable(chain_id);
       } else {
         await keplr.enable(chain_id);
-      }
-    }
-    if (chain_id === 'constantine-3') {
-      if (leap) {
-        await leap.experimentalSuggestChain(CONSTANTINE_CHAIN_INFO);
-      } else {
-        await keplr.experimentalSuggestChain(CONSTANTINE_CHAIN_INFO);
       }
     }
 

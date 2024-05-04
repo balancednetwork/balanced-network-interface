@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { XChain } from '../../pages/trade/bridge-v2/types';
+import { XChain } from '../../types';
 
 export const ChainLogo = ({ chain, size = '24px' }: { chain: XChain; size?: string }) => {
   return (

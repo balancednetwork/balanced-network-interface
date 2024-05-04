@@ -25,17 +25,6 @@ export type TokenAddressMap = {
   };
 };
 
-export const ArchToICONNetworkMap: { [key: string]: number } = {
-  'archway-1': 1,
-  'constantine-3': 7,
-};
-
-export const ICONToArchNetworkMap: { [key: number]: string } = {
-  1: 'archway-1',
-  2: 'constantine-3',
-  7: 'constantine-3',
-};
-
 const listCache: WeakMap<TokenList, TokenAddressMap> | null =
   typeof WeakMap !== 'undefined' ? new WeakMap<TokenList, TokenAddressMap>() : null;
 

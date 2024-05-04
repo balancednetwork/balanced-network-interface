@@ -4,16 +4,15 @@ import { Trans } from '@lingui/macro';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
-import { XCallActivityItem } from 'app/pages/trade/bridge-v2/types';
 import { Typography } from 'app/theme';
 import { useSignedInWallets } from 'store/wallet/hooks';
-import { useXCallActivityItems, useXCallStats } from 'store/xCall/hooks';
+import { useXCallStats } from 'store/xCall/hooks';
 
 import Spinner from '../../../../components/Spinner';
 import ActivityBarChart from '../../bridge/_components/ActivityBarChart';
+import BridgeTransferHistoryItem from './BridgeTransferHistoryItem';
 
 export default function BridgeActivity() {
-  const { data: activityItems } = useXCallActivityItems();
   const { data: xCallStats } = useXCallStats();
   const isSmall = useMedia('(max-width: 600px)');
   const isMedium = useMedia('(max-width: 1100px) and (min-width: 800px)');
@@ -56,6 +55,8 @@ export default function BridgeActivity() {
         </Flex>
       </Box>
       <Box className="border-top" py={4}>
+        <BridgeTransferHistoryItem />
+        <BridgeTransferHistoryItem />
         {/* {activityItems?.map((item: XCallActivityItem) => (
           <MemoizedItem key={item.originData.sn} {...item} />
         ))}

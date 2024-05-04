@@ -16,7 +16,7 @@ import {
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { useFetchTransaction } from './useTransactionStore';
 import { useEffect } from 'react';
-import { update } from 'lodash-es';
+import { bridgeTransferHistoryActions } from './useBridgeTransferHistoryStore';
 
 type BridgeTransferStore = {
   transfer: BridgeTransfer | null;
@@ -29,7 +29,7 @@ export const useBridgeTransferStore = create<BridgeTransferStore>()(set => ({
 }));
 
 // TODO: review logic
-const deriveStatus = (sourceTransaction: Transaction, events: XCallEventMap): BridgeTransferStatus => {
+export const deriveStatus = (sourceTransaction: Transaction, events: XCallEventMap): BridgeTransferStatus => {
   if (!sourceTransaction) {
     return BridgeTransferStatus.TRANSFER_FAILED;
   }
@@ -97,6 +97,7 @@ export const bridgeTransferActions = {
     xCallEventActions.startScanner(bridgeDirection.to, blockHeight);
 
     // TODO:  add transfer to history
+    bridgeTransferHistoryActions.add(transfer);
   },
 
   updateSourceTransaction: ({ rawTx }) => {

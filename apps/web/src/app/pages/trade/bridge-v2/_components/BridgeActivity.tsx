@@ -11,12 +11,15 @@ import { useXCallStats } from 'store/xCall/hooks';
 import Spinner from '../../../../components/Spinner';
 import ActivityBarChart from '../../bridge/_components/ActivityBarChart';
 import BridgeTransferHistoryItem from './BridgeTransferHistoryItem';
+import { useBridgeTransferHistoryStore } from '../_zustand/useBridgeTransferHistoryStore';
 
 export default function BridgeActivity() {
   const { data: xCallStats } = useXCallStats();
   const isSmall = useMedia('(max-width: 600px)');
   const isMedium = useMedia('(max-width: 1100px) and (min-width: 800px)');
   const signedInWallets = useSignedInWallets();
+
+  const { transfers } = useBridgeTransferHistoryStore();
 
   return (
     <Box bg="bg2" flex={1} p={['25px', '35px']}>
@@ -55,8 +58,10 @@ export default function BridgeActivity() {
         </Flex>
       </Box>
       <Box className="border-top" py={4}>
-        <BridgeTransferHistoryItem />
-        <BridgeTransferHistoryItem />
+        {transfers.map((transfer, index) => (
+          <BridgeTransferHistoryItem key={index} transfer={transfer} />
+        ))}
+
         {/* {activityItems?.map((item: XCallActivityItem) => (
           <MemoizedItem key={item.originData.sn} {...item} />
         ))}

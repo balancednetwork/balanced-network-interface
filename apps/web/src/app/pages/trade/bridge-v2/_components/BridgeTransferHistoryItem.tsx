@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { t } from '@lingui/macro';
 import { Box, Flex } from 'rebass';
@@ -9,6 +9,11 @@ import { Typography } from 'app/theme';
 import ArrowIcon from 'assets/icons/arrow-white.svg';
 
 import Spinner from '../../../../components/Spinner';
+import { useXCallEventScanner } from '../_zustand/useXCallEventStore';
+import { useFetchTransaction } from '../_zustand/useTransactionStore';
+import { bridgeTransferActions, useFetchBridgeTransferEvents } from '../_zustand/useBridgeTransferStore';
+import BridgeTransferStatus from './BridgeTransferStatus';
+import { bridgeTransferHistoryActions } from '../_zustand/useBridgeTransferHistoryStore';
 
 const Wrap = styled(Box)`
   display: grid;
@@ -67,13 +72,33 @@ const FailedX = styled(Box)`
   }
 `;
 
-const BridgeTransferHistoryItem = () => {
+const BridgeTransferHistoryItem = ({ transfer }) => {
+  useXCallEventScanner(transfer?.bridgeInfo?.bridgeDirection.from);
+  useXCallEventScanner(transfer?.bridgeInfo?.bridgeDirection.to);
+
+  const { rawTx } = useFetchTransaction(transfer?.sourceTransaction);
+  const { events } = useFetchBridgeTransferEvents(transfer);
+
+  const { id } = transfer;
+
+  useEffect(() => {
+    if (rawTx) {
+      bridgeTransferHistoryActions.updateSourceTransaction(id, { rawTx });
+    }
+  }, [rawTx, id]);
+
+  useEffect(() => {
+    if (events) {
+      bridgeTransferHistoryActions.updateTransferEvents(id, events);
+    }
+  }, [events, id]);
+
   return (
     <Wrap>
       <Flex alignItems="center">
-        {getNetworkDisplayName('archway-1')}
+        {getNetworkDisplayName(transfer.bridgeInfo.bridgeDirection.from)}
         <ArrowIcon width="13px" style={{ margin: '0 7px' }} />
-        {getNetworkDisplayName('0x1.icon')}
+        {getNetworkDisplayName(transfer.bridgeInfo.bridgeDirection.to)}
       </Flex>
       <Flex justifyContent="center" flexDirection="column">
         <Typography fontWeight={700} color="text">
@@ -84,7 +109,7 @@ const BridgeTransferHistoryItem = () => {
         </Typography>
       </Flex>
       <Flex justifyContent="center" flexDirection="column" alignItems="flex-end" className="status-check">
-        <>
+        {/* <>
           <Flex alignItems="center">
             <Spinner size={15} />
             <Status style={{ transform: 'translateY(1px)' }}>pending</Status>
@@ -92,7 +117,12 @@ const BridgeTransferHistoryItem = () => {
           <Typography opacity={0.75} fontSize={14}>
             10m 20s
           </Typography>
-        </>
+        </> */}
+
+        <Flex alignItems="center">
+          <Spinner size={15} />
+          <Status style={{ transform: 'translateY(1px)' }}>{transfer.status}</Status>
+        </Flex>
       </Flex>
     </Wrap>
   );

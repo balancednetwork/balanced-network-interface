@@ -179,7 +179,7 @@ export function BridgeTransferConfirmModal() {
                 <TextButton onClick={handleDismiss}>
                   <Trans>Cancel</Trans>
                 </TextButton>
-                {approvalState !== ApprovalState.APPROVED && (
+                {approvalState !== ApprovalState.APPROVED && !isTransferring && (
                   <>
                     <Button onClick={handleApprove} disabled={approvalState === ApprovalState.PENDING}>
                       {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve'}

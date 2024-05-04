@@ -197,15 +197,13 @@ export class ArchwayXCallService implements XCallService {
             undefined,
             xCallFee.rollback !== 0n
               ? [
-                  { amount: xCallFee.rollback, denom: ARCHWAY_FEE_TOKEN_SYMBOL },
+                  { amount: xCallFee.rollback.toString(), denom: ARCHWAY_FEE_TOKEN_SYMBOL },
                   ...(assetToBridge ? [assetToBridge] : []),
                 ]
               : assetToBridge
                 ? [assetToBridge]
                 : undefined,
           );
-
-          console.log(txResult);
 
           if (txResult) {
             return transactionActions.updateTx(this.xChainId, transaction.id, {

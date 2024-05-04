@@ -67,8 +67,8 @@ export class IconXCallService implements XCallService {
     return BigInt(lastBlock.height);
   }
 
-  async getBlock(blockHeight: number) {
-    const block = await this.iconService.getBlockByHeight(blockHeight).execute();
+  async getBlock(blockHeight: bigint) {
+    const block = await this.iconService.getBlockByHeight(Number(blockHeight)).execute();
     return block;
   }
 
@@ -123,7 +123,7 @@ export class IconXCallService implements XCallService {
   }
   parseCallMessageEventLog(eventLog) {
     const sn = parseInt(eventLog.indexed[3], 16);
-    const reqId = parseInt(eventLog.indexed[1], 16);
+    const reqId = parseInt(eventLog.data[0], 16);
 
     return {
       eventType: XCallEventType.CallMessage,
@@ -135,6 +135,8 @@ export class IconXCallService implements XCallService {
   }
   parseCallExecutedEventLog(eventLog) {
     const reqId = parseInt(eventLog.indexed[1], 16);
+    // TODO: check for success?
+    // const success = eventLog.data[0] === '0x1';
 
     return {
       eventType: XCallEventType.CallExecuted,
@@ -158,12 +160,12 @@ export class IconXCallService implements XCallService {
     return {};
   }
 
-  async fetchDestinationEventsByBlock(blockHeight) {
+  async fetchDestinationEventsByBlock(blockHeight: bigint) {
     const events: any = [];
 
     const block = await this.getBlock(blockHeight);
 
-    if (block && block.txs.length > 0) {
+    if (block && block.confirmedTransactionList && block.confirmedTransactionList.length > 0) {
       for (const tx of block.confirmedTransactionList) {
         const txResult = await this.getTx(tx.txHash);
 

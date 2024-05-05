@@ -7,6 +7,7 @@ type BridgeTransferHistoryStore = {
   transfers: BridgeTransfer[];
 };
 
+//TODO: persist this store
 export const useBridgeTransferHistoryStore = create<BridgeTransferHistoryStore>()(set => ({
   transfers: [],
 }));

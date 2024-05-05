@@ -218,7 +218,10 @@ export const useFetchBridgeTransferEvents = transfer => {
       return events;
     },
     refetchInterval: 2000,
-    enabled: !!transfer?.id,
+    enabled:
+      !!transfer?.id &&
+      transfer.status !== BridgeTransferStatus.CALL_EXECUTED &&
+      transfer.status !== BridgeTransferStatus.TRANSFER_FAILED,
   });
 
   return {

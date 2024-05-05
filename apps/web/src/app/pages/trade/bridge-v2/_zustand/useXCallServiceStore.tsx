@@ -48,10 +48,8 @@ export const xCallServiceActions = {
   },
 };
 
-// TODO: review logic
-export const useXCallServiceFactory = () => {
-  const { bridgeDirection } = useBridgeInfo();
-
+// TODO: create or update?
+export const useCreateXCallService = (xChainId: XChainId) => {
   const { iconService } = useIconReact();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
@@ -76,12 +74,9 @@ export const useXCallServiceFactory = () => {
       }
     };
 
-    setupXCallService(bridgeDirection.from);
-    setupXCallService(bridgeDirection.to);
+    setupXCallService(xChainId);
   }, [
-    bridgeDirection,
-    bridgeDirection.from,
-    bridgeDirection.to,
+    xChainId,
     client,
     signingClient,
     iconService,

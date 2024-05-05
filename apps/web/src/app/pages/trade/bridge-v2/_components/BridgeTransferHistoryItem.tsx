@@ -14,6 +14,7 @@ import { useFetchTransaction } from '../_zustand/useTransactionStore';
 import { bridgeTransferActions, useFetchBridgeTransferEvents } from '../_zustand/useBridgeTransferStore';
 import BridgeTransferStatus from './BridgeTransferStatus';
 import { bridgeTransferHistoryActions } from '../_zustand/useBridgeTransferHistoryStore';
+import { useCreateXCallService } from '../_zustand/useXCallServiceStore';
 
 const Wrap = styled(Box)`
   display: grid;
@@ -73,8 +74,14 @@ const FailedX = styled(Box)`
 `;
 
 const BridgeTransferHistoryItem = ({ transfer }) => {
-  useXCallEventScanner(transfer?.bridgeInfo?.bridgeDirection.from);
-  useXCallEventScanner(transfer?.bridgeInfo?.bridgeDirection.to);
+  const {
+    bridgeInfo: { bridgeDirection },
+  } = transfer;
+  useXCallEventScanner(bridgeDirection.from);
+  useXCallEventScanner(bridgeDirection.to);
+
+  useCreateXCallService(bridgeDirection.from);
+  useCreateXCallService(bridgeDirection.to);
 
   const { rawTx } = useFetchTransaction(transfer?.sourceTransaction);
   const { events } = useFetchBridgeTransferEvents(transfer);

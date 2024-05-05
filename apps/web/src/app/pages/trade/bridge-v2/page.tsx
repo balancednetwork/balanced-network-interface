@@ -8,10 +8,13 @@ import BridgeActivity from './_components/BridgeActivity';
 
 import { AllTransactionsUpdater } from './_zustand/useTransactionStore';
 import { bridgeTransferConfirmModalActions } from './_zustand/useBridgeTransferConfirmModalStore';
-import { useXCallServiceFactory } from './_zustand/useXCallServiceStore';
+import { useCreateXCallService } from './_zustand/useXCallServiceStore';
+import { useBridgeInfo } from 'store/bridge/hooks';
 
 export function BridgeV2Page() {
-  useXCallServiceFactory();
+  const { bridgeDirection } = useBridgeInfo();
+  useCreateXCallService(bridgeDirection.from);
+  useCreateXCallService(bridgeDirection.to);
 
   return (
     <SectionPanel bg="bg2">

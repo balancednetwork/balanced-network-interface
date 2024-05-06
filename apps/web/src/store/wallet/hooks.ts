@@ -120,8 +120,8 @@ export function useArchwayBalances(
       }, {});
     },
     placeholderData: keepPreviousData,
-    enabled: !!signingClient && !!address,
-    refetchInterval: 10000,
+    enabled: Boolean(signingClient && address),
+    refetchInterval: 5_000,
   });
 }
 
@@ -166,6 +166,7 @@ export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token
       }, {});
     },
     enabled: Boolean(account && _tokens && nativeBalance),
+    refetchInterval: 5_000,
   });
 }
 
@@ -240,59 +241,49 @@ export function useTokenBalances(
   account: string | undefined,
   tokens: Token[],
 ): { [address: string]: CurrencyAmount<Token> | undefined } {
-  const [balances, setBalances] = useState<(string | number | BigNumber)[]>([]);
+  const { data } = useQuery<{ [address: string]: CurrencyAmount<Token> } | undefined>({
+    queryKey: [account, tokens],
+    queryFn: async () => {
+      if (!account) return;
+      if (tokens.length === 0) return;
 
-  const transactions = useAllTransactions();
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    const fetchBalances = async () => {
-      if (account) {
-        const cds: CallData[] = tokens.map(token => {
-          if (isBALN(token))
-            return {
-              target: bnJs.BALN.address,
-              method: 'availableBalanceOf',
-              params: [account],
-            };
-          if (isFIN(token))
-            return {
-              target: token.address,
-              method: 'availableBalanceOf',
-              params: [account],
-            };
-
+      const cds: CallData[] = tokens.map(token => {
+        if (isBALN(token))
           return {
-            target: token.address,
-            method: 'balanceOf',
+            target: bnJs.BALN.address,
+            method: 'availableBalanceOf',
             params: [account],
           };
-        });
+        if (isFIN(token))
+          return {
+            target: token.address,
+            method: 'availableBalanceOf',
+            params: [account],
+          };
 
-        const data: any[] = await bnJs.Multicall.getAggregateData(cds.filter(cd => cd.target.startsWith('cx')));
-        const result = data.map(bal => (bal === null ? undefined : bal));
+        return {
+          target: token.address,
+          method: 'balanceOf',
+          params: [account],
+        };
+      });
 
-        setBalances(result);
-      } else {
-        setBalances(Array(tokens.length).fill(undefined));
-      }
-    };
+      const data: any[] = await bnJs.Multicall.getAggregateData(cds.filter(cd => cd.target.startsWith('cx')));
 
-    if (tokens.length > 0) {
-      fetchBalances();
-    }
-  }, [transactions, tokens, account]);
+      return tokens.reduce((agg, token, idx) => {
+        const balance = data[idx];
 
-  return useMemo(() => {
-    return tokens.reduce((agg, token, idx) => {
-      const balance = balances[idx];
+        if (balance) agg[token.address] = CurrencyAmount.fromRawAmount(token, String(balance));
+        else agg[token.address] = CurrencyAmount.fromRawAmount(token, 0);
 
-      if (balance) agg[token.address] = CurrencyAmount.fromRawAmount(token, String(balance));
-      else agg[token.address] = CurrencyAmount.fromRawAmount(token, 0);
+        return agg;
+      }, {});
+    },
+    enabled: Boolean(account && tokens && tokens.length > 0),
+    refetchInterval: 5_000,
+  });
 
-      return agg;
-    }, {});
-  }, [balances, tokens]);
+  return useMemo(() => data || {}, [data]);
 }
 
 export function useAllTokenBalances(account: string | undefined | null): {

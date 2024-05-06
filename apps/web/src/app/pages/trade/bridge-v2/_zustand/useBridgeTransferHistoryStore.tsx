@@ -2,12 +2,13 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 import { useQuery } from '@tanstack/react-query';
+import JSBI from 'jsbi';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 
 import { XCallEventType } from '../types';
 import { BridgeTransfer, BridgeTransferStatus, Transaction, TransactionStatus, XCallEventMap } from './types';
 import { xCallServiceActions } from './useXCallServiceStore';
 import { xCallEventActions } from './useXCallEventStore';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
 
 type BridgeTransferHistoryStore = {
   transfers: BridgeTransfer[];
@@ -18,16 +19,36 @@ const storage = createJSONStorage(() => sessionStorage, {
     if (typeof value === 'string' && value.startsWith('BIGINT::')) {
       return BigInt(value.substr(8));
     }
-    if (value && value.type === 'CurrencyAmount') {
-      return 'currencyamount::' + value.currencyAddress;
+    if (typeof value === 'string' && value.startsWith('JSBI::')) {
+      return JSBI.BigInt(value.substr(6));
     }
+
+    if (
+      typeof value === 'object' &&
+      // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
+      value.hasOwnProperty('numerator') &&
+      // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
+      value.hasOwnProperty('denominator') &&
+      // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
+      value.hasOwnProperty('currency') &&
+      // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
+      value.hasOwnProperty('decimalScale')
+    ) {
+      try {
+        const obj = CurrencyAmount.fromFractionalAmount(value.currency, value.numerator, value.denominator);
+        return obj;
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
     return value;
   },
   replacer: (key, value) => {
     if (typeof value === 'bigint') {
       return `BIGINT::${value}`;
-    } else if (value instanceof CurrencyAmount) {
-      return { type: 'CurrencyAmount', currencyAddress: value.currency.address };
+    } else if (value instanceof JSBI) {
+      return `JSBI::${value.toString()}`;
     } else {
       return value;
     }

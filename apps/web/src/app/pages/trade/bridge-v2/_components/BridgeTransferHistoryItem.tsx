@@ -123,10 +123,8 @@ const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) =
       return {};
     }
 
-    // const token = transfer.bridgeInfo.currencyAmountToBridge.currency.symbol;
-    // const amount = transfer.bridgeInfo.currencyAmountToBridge.toFixed(2);
-    const token = 'USDC';
-    const amount = 'xx';
+    const token = transfer.bridgeInfo.currencyAmountToBridge.currency.symbol;
+    const amount = transfer.bridgeInfo.currencyAmountToBridge.toFixed(2);
     return { descriptionAction: `Transfer ${token}`, descriptionAmount: `${amount} ${token}` };
   }, [transfer]);
 

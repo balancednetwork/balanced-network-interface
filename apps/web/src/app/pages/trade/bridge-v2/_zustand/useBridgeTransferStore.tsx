@@ -98,15 +98,19 @@ export const bridgeTransferActions = {
     }
   },
 
+  reset: () => {
+    useBridgeTransferStore.setState({
+      transferId: null,
+      isTransferring: false,
+    });
+  },
+
   success: () => {
     xCallEventActions.stopAllScanners();
 
     bridgeTransferConfirmModalActions.closeModal();
 
-    useBridgeTransferStore.setState({
-      transferId: null,
-      isTransferring: false,
-    });
+    bridgeTransferActions.reset();
 
     // TODO: show success message
     console.log('bridge transfer success');
@@ -115,10 +119,7 @@ export const bridgeTransferActions = {
   fail: () => {
     xCallEventActions.stopAllScanners();
 
-    useBridgeTransferStore.setState({
-      transferId: null,
-      isTransferring: false,
-    });
+    bridgeTransferActions.reset();
 
     // TODO: show error message
     console.log('bridge transfer fail');

@@ -71,6 +71,9 @@ export function BridgeTransferConfirmModal() {
 
   const handleDismiss = () => {
     bridgeTransferConfirmModalActions.closeModal();
+    setTimeout(() => {
+      bridgeTransferActions.reset();
+    }, 500);
   };
 
   const handleTransfer = async () => {

@@ -8,7 +8,6 @@ import { Typography } from 'app/theme';
 import Modal from 'app/components/Modal';
 import { ModalContentWrapper } from 'app/components/ModalContent';
 import { StyledButton as XCallButton } from 'app/components/trade/XCallSwapModal';
-import { AnimatePresence, motion } from 'framer-motion';
 import { Button, TextButton } from 'app/components/Button';
 import Spinner from 'app/components/Spinner';
 

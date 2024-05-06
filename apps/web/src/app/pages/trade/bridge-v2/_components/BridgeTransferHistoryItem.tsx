@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 
-import { t } from '@lingui/macro';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 

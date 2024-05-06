@@ -20,7 +20,7 @@ import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { getFeeParam, getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
-import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens';
+import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens';
 import { XCallEventType } from 'app/pages/trade/bridge-v2/types';
 import bnJs from 'bnJs';
 import { showMessageOnBeforeUnload } from 'utils/messages';
@@ -178,7 +178,7 @@ export default function BridgeTransferConfirmModal({
           );
           await handleICONTxResult(hash);
         }
-      } else if (ASSET_MANAGER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
+      } else {
         const { result: hash } = await bnJs
           .inject({ account })
           .AssetManager[isLiquidFinanceEnabled ? 'withdrawNativeTo' : 'withdrawTo'](
@@ -253,7 +253,7 @@ export default function BridgeTransferConfirmModal({
           };
 
           executeTransaction(msg, tokenAddress, 'auto');
-        } else if (ASSET_MANAGER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
+        } else {
           const msg = {
             deposit: {
               token_address: tokenAddress,

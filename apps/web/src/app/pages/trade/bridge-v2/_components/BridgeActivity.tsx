@@ -5,7 +5,6 @@ import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
 import { Typography } from 'app/theme';
-import { useSignedInWallets } from 'store/wallet/hooks';
 import { useXCallStats } from 'store/xCall/hooks';
 
 import Spinner from '../../../../components/Spinner';
@@ -17,7 +16,6 @@ export default function BridgeActivity() {
   const { data: xCallStats } = useXCallStats();
   const isSmall = useMedia('(max-width: 600px)');
   const isMedium = useMedia('(max-width: 1100px) and (min-width: 800px)');
-  const signedInWallets = useSignedInWallets();
 
   const { transfers } = useBridgeTransferHistoryStore();
 

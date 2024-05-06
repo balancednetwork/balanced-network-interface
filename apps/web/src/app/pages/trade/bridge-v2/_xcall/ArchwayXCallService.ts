@@ -3,7 +3,7 @@ import { toHex } from '@cosmjs/encoding';
 import { StdFee } from '@archwayhq/arch3.js';
 
 import { archway, xChainMap } from 'app/pages/trade/bridge-v2/_config/xChains';
-import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens';
+import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens';
 import { getFeeParam } from 'app/_xcall/archway/utils';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 
@@ -220,7 +220,7 @@ export class ArchwayXCallService implements XCallService {
           };
 
           transaction = await executeTransaction(msg, tokenAddress, 'auto');
-        } else if (ASSET_MANAGER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
+        } else {
           const msg = {
             deposit: {
               token_address: tokenAddress,

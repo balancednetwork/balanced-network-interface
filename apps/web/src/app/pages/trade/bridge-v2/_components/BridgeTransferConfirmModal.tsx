@@ -19,7 +19,7 @@ import {
   bridgeTransferConfirmModalActions,
 } from '../_zustand/useBridgeTransferConfirmModalStore';
 
-import BridgeTransferStatus from './BridgeTransferStatus';
+import BridgeTransferState from './BridgeTransferState';
 import LiquidFinanceIntegration from '../../bridge/_components/LiquidFinanceIntegration';
 import { useBridgeInfo } from 'store/bridge/hooks';
 import {
@@ -135,7 +135,7 @@ export function BridgeTransferConfirmModal() {
 
           <LiquidFinanceIntegration />
 
-          {isTransferring && <BridgeTransferStatus />}
+          {isTransferring && <BridgeTransferState />}
 
           {gasChecker && !gasChecker.hasEnoughGas && (
             <Typography mt={4} mb={-1} textAlign="center" color="alert">

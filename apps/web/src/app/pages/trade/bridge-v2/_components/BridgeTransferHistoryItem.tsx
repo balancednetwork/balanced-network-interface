@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
@@ -12,6 +12,7 @@ import { useXCallEventScanner } from '../_zustand/useXCallEventStore';
 import { useFetchTransaction } from '../_zustand/useTransactionStore';
 import { bridgeTransferHistoryActions, useFetchBridgeTransferEvents } from '../_zustand/useBridgeTransferHistoryStore';
 import { useCreateXCallService } from '../_zustand/useXCallServiceStore';
+import { BridgeTransfer, BridgeTransferStatus } from '../_zustand/types';
 
 const Wrap = styled(Box)`
   display: grid;
@@ -70,7 +71,7 @@ const FailedX = styled(Box)`
   }
 `;
 
-const BridgeTransferHistoryItem = ({ transfer }) => {
+const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) => {
   const {
     bridgeInfo: { bridgeDirection },
   } = transfer;
@@ -97,6 +98,36 @@ const BridgeTransferHistoryItem = ({ transfer }) => {
     }
   }, [events, id]);
 
+  const message = useMemo(() => {
+    if (!transfer) {
+      return `Transfer not found.`;
+    }
+
+    switch (transfer.status) {
+      case BridgeTransferStatus.TRANSFER_FAILED:
+        return `Failed`;
+      case BridgeTransferStatus.TRANSFER_REQUESTED:
+      case BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT:
+      case BridgeTransferStatus.CALL_MESSAGE_SENT:
+      case BridgeTransferStatus.CALL_MESSAGE:
+        return `Pending`;
+      case BridgeTransferStatus.CALL_EXECUTED:
+        return `Call Executed`;
+      default:
+        return `Unknown`;
+    }
+  }, [transfer]);
+
+  const { descriptionAction, descriptionAmount } = useMemo(() => {
+    if (!transfer) {
+      return {};
+    }
+
+    const token = transfer.bridgeInfo.currencyAmountToBridge.currency.symbol;
+    const amount = transfer.bridgeInfo.currencyAmountToBridge.toFixed(2);
+    return { descriptionAction: `Transfer ${token}`, descriptionAmount: `${amount} ${token}` };
+  }, [transfer]);
+
   return (
     <Wrap>
       <Flex alignItems="center">
@@ -106,10 +137,10 @@ const BridgeTransferHistoryItem = ({ transfer }) => {
       </Flex>
       <Flex justifyContent="center" flexDirection="column">
         <Typography fontWeight={700} color="text">
-          {'Transfer bnUSD'}
+          {descriptionAction}
         </Typography>
         <Typography opacity={0.75} fontSize={14}>
-          {'0.3 bnUSD'}
+          {descriptionAmount}
         </Typography>
       </Flex>
       <Flex justifyContent="center" flexDirection="column" alignItems="flex-end" className="status-check">
@@ -124,8 +155,9 @@ const BridgeTransferHistoryItem = ({ transfer }) => {
         </> */}
 
         <Flex alignItems="center">
-          <Spinner size={15} />
-          <Status style={{ transform: 'translateY(1px)' }}>{transfer.status}</Status>
+          {transfer.status !== BridgeTransferStatus.TRANSFER_FAILED &&
+            transfer.status !== BridgeTransferStatus.CALL_EXECUTED && <Spinner size={15} />}
+          <Status style={{ transform: 'translateY(1px)' }}>{message}</Status>
         </Flex>
       </Flex>
     </Wrap>

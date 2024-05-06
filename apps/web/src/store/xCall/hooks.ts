@@ -5,6 +5,8 @@ import axios from 'axios';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { useIconReact } from 'packages/icon-react';
+
 import { SUPPORTED_XCALL_CHAINS } from 'app/pages/trade/bridge-v2/_config/xTokens';
 import {
   OriginXCallData,
@@ -255,13 +257,14 @@ export type xCallActivityDataType = {
 };
 
 export function useXCallStats(): UseQueryResult<{ transactionCount: number; data: xCallActivityDataType[] }> {
-  const IBC_HANDLER_CX = 'cx622bbab73698f37dbef53955fd3decffeb0b0c16';
+  const { account } = useIconReact();
+
+  const IBC_HANDLER_CX = account; //'cx622bbab73698f37dbef53955fd3decffeb0b0c16';
   const yesterdayTimestamp = (new Date().getTime() - ONE_DAY_DURATION) * 1000;
 
   async function getTxs(skip: number) {
-    const response = await axios.get(
-      `${CHAIN_INFO[NETWORK_ID].tracker}/api/v1/transactions/address/${IBC_HANDLER_CX}?limit=100&skip=${skip}`,
-    );
+    const apiUrl = `${CHAIN_INFO[NETWORK_ID].tracker}/api/v1/transactions/address/${IBC_HANDLER_CX}?limit=100&skip=${skip}`;
+    const response = await axios.get(apiUrl);
     return response.data;
   }
 
@@ -296,9 +299,7 @@ export function useXCallStats(): UseQueryResult<{ transactionCount: number; data
       const txs = txBatches.flat();
       const oldTxIndex = txs.findIndex(tx => tx.block_timestamp < yesterdayTimestamp + 3600000000);
       const relevantTxs = txs.slice(0, oldTxIndex);
-      const xCallTransactions = relevantTxs.filter(
-        tx => tx.method === 'recvPacket' || tx.method === 'acknowledgePacket',
-      );
+      const xCallTransactions = relevantTxs.filter(tx => tx.method === 'recvPacket' || tx.method === 'crossTransfer');
 
       return {
         transactionCount: xCallTransactions.length,

@@ -49,7 +49,8 @@ export const bridgeTransferActions = {
         errorMessage: 'Cross-chain transfer request failed',
       });
 
-      const { sourceTransactionHash, sourceTransactionResult } = await srcChainXCallService.executeTransfer(bridgeInfo);
+      const { sourceTransactionHash, sourceTransactionResult } =
+        (await srcChainXCallService.executeTransfer(bridgeInfo)) || {};
 
       if (sourceTransactionHash) {
         sourceTransaction = transactionActions.updateTx(bridgeDirection.from, sourceTransaction.id, {

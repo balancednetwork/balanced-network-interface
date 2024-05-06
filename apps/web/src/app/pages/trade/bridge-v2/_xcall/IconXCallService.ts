@@ -1,16 +1,7 @@
 import bnJs from 'bnJs';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import {
-  BridgeInfo,
-  BridgeTransfer,
-  BridgeTransferStatus,
-  TransactionStatus,
-  XCallEvent,
-  XCallEventMap,
-} from '../_zustand/types';
-import { bridgeTransferActions } from '../_zustand/useBridgeTransferStore';
-import { transactionActions } from '../_zustand/useTransactionStore';
+import { BridgeInfo, BridgeTransfer, TransactionStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
 
 import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens';
 
@@ -227,24 +218,8 @@ export class IconXCallService implements XCallService {
       const { result: hash } = txResult || {};
 
       if (hash) {
-        bridgeTransferActions.setIsTransferring(true);
-        const transaction = transactionActions.add(bridgeDirection.from, {
-          hash,
-          pendingMessage: 'Requesting cross-chain transfer...',
-          successMessage: 'Cross-chain transfer requested.',
-          errorMessage: 'Cross-chain transfer failed.',
-        });
-
-        return {
-          id: `${this.xChainId}/${hash}`,
-          bridgeInfo,
-          sourceTransaction: transaction,
-          status: BridgeTransferStatus.TRANSFER_REQUESTED,
-          events: {},
-          destinationChainInitialBlockHeight: -1n,
-        };
+        return { sourceTransactionHash: hash };
       }
     }
-    return null;
   }
 }

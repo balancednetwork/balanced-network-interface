@@ -1,5 +1,12 @@
 import { IXCallFee, XChainId } from 'app/pages/trade/bridge-v2/types';
-import { BridgeInfo, BridgeTransfer, TransactionStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
+import {
+  BridgeInfo,
+  BridgeTransfer,
+  Transaction,
+  TransactionStatus,
+  XCallEvent,
+  XCallEventMap,
+} from '../_zustand/types';
 
 export interface XCallService {
   // getBlock(blockHeight);
@@ -19,5 +26,7 @@ export interface XCallService {
   fetchBlockHeight(): Promise<bigint>;
   fetchSourceEvents(transfer: BridgeTransfer): Promise<XCallEventMap>;
   fetchDestinationEventsByBlock(blockHeight: bigint): Promise<XCallEvent[]>;
-  executeTransfer(bridgeInfo: BridgeInfo): Promise<BridgeTransfer | null>;
+  executeTransfer(
+    bridgeInfo: BridgeInfo,
+  ): Promise<{ sourceTransactionHash: string; sourceTransactionResult?: any } | undefined>;
 }

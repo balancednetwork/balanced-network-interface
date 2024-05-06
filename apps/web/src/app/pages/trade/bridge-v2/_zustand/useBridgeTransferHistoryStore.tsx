@@ -13,6 +13,12 @@ export const useBridgeTransferHistoryStore = create<BridgeTransferHistoryStore>(
 }));
 
 export const bridgeTransferHistoryActions = {
+  get: id => {
+    if (id) {
+      return useBridgeTransferHistoryStore.getState().transfers.find(transfer => transfer.id === id);
+    }
+  },
+
   add: (transfer: BridgeTransfer) => {
     useBridgeTransferHistoryStore.setState(state => ({
       transfers: [transfer, ...state.transfers],

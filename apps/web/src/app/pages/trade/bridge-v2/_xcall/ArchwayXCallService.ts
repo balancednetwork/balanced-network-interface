@@ -7,19 +7,9 @@ import { ASSET_MANAGER_TOKENS, CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bri
 import { getFeeParam } from 'app/_xcall/archway/utils';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 
-import { bridgeTransferActions } from '../_zustand/useBridgeTransferStore';
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
 import { XCallService } from './types';
-import {
-  BridgeInfo,
-  BridgeTransfer,
-  BridgeTransferStatus,
-  TransactionStatus,
-  XCallEvent,
-  XCallEventMap,
-} from '../_zustand/types';
-import { transactionActions } from '../_zustand/useTransactionStore';
-import { Transaction } from '../_zustand/types';
+import { BridgeInfo, BridgeTransfer, TransactionStatus, XCallEvent, Transaction } from '../_zustand/types';
 
 export class ArchwayXCallService implements XCallService {
   xChainId: XChainId;
@@ -165,7 +155,7 @@ export class ArchwayXCallService implements XCallService {
     return events;
   }
 
-  async executeTransfer(bridgeInfo: BridgeInfo): Promise<BridgeTransfer | null> {
+  async executeTransfer(bridgeInfo: BridgeInfo) {
     const {
       bridgeDirection,
       currencyAmountToBridge,
@@ -180,15 +170,7 @@ export class ArchwayXCallService implements XCallService {
       const destination = `${bridgeDirection.to}/${destinationAddress}`;
 
       const executeTransaction = async (msg: any, contract: string, fee: StdFee | 'auto', assetToBridge?: any) => {
-        let transaction: Transaction;
         try {
-          transaction = transactionActions.add(this.xChainId, {
-            status: 'pending',
-            pendingMessage: 'Requesting cross-chain transfer...',
-            successMessage: 'Cross-chain transfer requested.',
-            errorMessage: 'Cross-chain transfer request failed',
-          });
-
           const txResult = await this.signingClient.execute(
             account,
             contract,
@@ -206,24 +188,14 @@ export class ArchwayXCallService implements XCallService {
           );
 
           if (txResult) {
-            return transactionActions.updateTx(this.xChainId, transaction.id, {
-              hash: txResult.transactionHash,
-              rawTx: txResult,
-            });
-          } else {
-            transactionActions.updateTx(this.xChainId, transaction.id, {});
+            return { sourceTransactionHash: txResult.transactionHash, sourceTransactionResult: txResult };
           }
         } catch (e) {
           console.error(e);
-
-          // @ts-ignore
-          transactionActions.updateTx(this.xChainId, transaction.id, {});
         }
       };
 
-      let transaction: Transaction | undefined;
-      bridgeTransferActions.setIsTransferring(true);
-
+      let transaction: any;
       if (isDenom) {
         const msg = { deposit_denom: { denom: tokenAddress, to: destination, data: [] } };
         const assetToBridge = {
@@ -261,20 +233,7 @@ export class ArchwayXCallService implements XCallService {
           transaction = await executeTransaction(msg, archway.contracts.assetManager, getFeeParam(1200000));
         }
       }
-      if (transaction) {
-        return {
-          id: `${this.xChainId}/${transaction.hash}`,
-          bridgeInfo,
-          sourceTransaction: transaction,
-          status: BridgeTransferStatus.TRANSFER_REQUESTED,
-          events: {},
-          destinationChainInitialBlockHeight: -1n,
-        };
-      } else {
-        bridgeTransferActions.setIsTransferring(false);
-      }
+      return transaction;
     }
-
-    return null;
   }
 }

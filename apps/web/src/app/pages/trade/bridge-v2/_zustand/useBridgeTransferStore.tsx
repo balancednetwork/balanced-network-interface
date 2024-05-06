@@ -14,17 +14,18 @@ import {
   XCallEventMap,
 } from './types';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
-import { useFetchTransaction } from './useTransactionStore';
+import { transactionActions, useFetchTransaction } from './useTransactionStore';
 import { useEffect } from 'react';
-import { bridgeTransferHistoryActions } from './useBridgeTransferHistoryStore';
+import { bridgeTransferHistoryActions, useBridgeTransferHistoryStore } from './useBridgeTransferHistoryStore';
+import { ArchwayXCallService } from '../_xcall/ArchwayXCallService';
 
 type BridgeTransferStore = {
-  transfer: BridgeTransfer | null;
+  transferId: string | null;
   isTransferring: boolean;
 };
 
 export const useBridgeTransferStore = create<BridgeTransferStore>()(set => ({
-  transfer: null,
+  transferId: null,
   isTransferring: false,
 }));
 
@@ -76,84 +77,79 @@ export const bridgeTransferActions = {
     console.log('srcChainXCallService', srcChainXCallService);
     console.log('dstChainXCallService', dstChainXCallService);
 
-    // return;
+    let sourceTransaction: Transaction | undefined;
 
-    const transfer = await srcChainXCallService.executeTransfer(bridgeInfo);
-    const blockHeight = (await dstChainXCallService.fetchBlockHeight()) - 1n;
+    if (srcChainXCallService instanceof ArchwayXCallService) {
+      bridgeTransferActions.setIsTransferring(true);
 
-    if (!transfer) {
-      return;
+      sourceTransaction = transactionActions.add(bridgeDirection.from, {
+        status: 'pending',
+        pendingMessage: 'Requesting cross-chain transfer...',
+        successMessage: 'Cross-chain transfer requested.',
+        errorMessage: 'Cross-chain transfer request failed',
+      });
+
+      const { sourceTransactionHash, sourceTransactionResult } = await srcChainXCallService.executeTransfer(bridgeInfo);
+
+      if (sourceTransactionHash) {
+        sourceTransaction = transactionActions.updateTx(bridgeDirection.from, sourceTransaction.id, {
+          hash: sourceTransactionHash,
+          rawTx: sourceTransactionResult,
+        });
+      } else {
+        bridgeTransferActions.setIsTransferring(false);
+        transactionActions.updateTx(bridgeDirection.from, sourceTransaction.id, {});
+      }
+    } else {
+      const { sourceTransactionHash } = (await srcChainXCallService.executeTransfer(bridgeInfo)) || {};
+
+      if (!sourceTransactionHash) {
+        bridgeTransferActions.setIsTransferring(false);
+        return;
+      }
+
+      bridgeTransferActions.setIsTransferring(true);
+      sourceTransaction = transactionActions.add(bridgeDirection.from, {
+        hash: sourceTransactionHash,
+        pendingMessage: 'Requesting cross-chain transfer...',
+        successMessage: 'Cross-chain transfer requested.',
+        errorMessage: 'Cross-chain transfer failed.',
+      });
     }
 
-    useBridgeTransferStore.setState({
-      transfer: {
-        ...transfer,
+    if (sourceTransaction && sourceTransaction.hash) {
+      const blockHeight = (await dstChainXCallService.fetchBlockHeight()) - 1n;
+      console.log('blockHeight', blockHeight);
+
+      const transfer = {
+        id: `${bridgeDirection.from}/${sourceTransaction.hash}`,
+        bridgeInfo,
+        sourceTransaction,
+        status: BridgeTransferStatus.TRANSFER_REQUESTED,
+        events: {},
         destinationChainInitialBlockHeight: blockHeight,
-      },
-    });
+      };
 
-    console.log('blockHeight', blockHeight);
+      bridgeTransferHistoryActions.add(transfer);
+      useBridgeTransferStore.setState({ transferId: transfer.id });
 
-    xCallEventActions.startScanner(bridgeDirection.to, blockHeight);
-
-    // TODO:  add transfer to history
-    bridgeTransferHistoryActions.add(transfer);
+      // TODO: is it right place to start scanner?
+      xCallEventActions.startScanner(bridgeDirection.to, blockHeight);
+    }
   },
 
   updateSourceTransaction: ({ rawTx }) => {
-    useBridgeTransferStore.setState((prevState: BridgeTransferStore) => {
-      if (!prevState.transfer) {
-        return prevState;
-      }
-
-      const transfer = prevState.transfer;
-
-      const newSourceTransactionStatus = xCallServiceActions
-        .getXCallService(transfer.bridgeInfo.bridgeDirection.from)
-        .deriveTxStatus(rawTx);
-
-      const newSourceTransaction = {
-        ...prevState.transfer.sourceTransaction,
-        rawTx,
-        status: newSourceTransactionStatus,
-      };
-      const newStatus = deriveStatus(newSourceTransaction, transfer.events);
-
-      return {
-        ...prevState,
-        transfer: {
-          ...prevState.transfer,
-          sourceTransaction: newSourceTransaction,
-          status: newStatus,
-        },
-      };
-    });
+    const transferId = useBridgeTransferStore.getState().transferId;
+    if (transferId) {
+      bridgeTransferHistoryActions.updateSourceTransaction(transferId, { rawTx });
+    }
   },
 
   updateTransferEvents: (events: XCallEventMap) => {
-    useBridgeTransferStore.setState((prevState: BridgeTransferStore) => {
-      if (!prevState.transfer) {
-        return prevState;
-      }
-
-      const transfer = prevState.transfer;
-
-      const newEvents = {
-        ...transfer.events,
-        ...events,
-      };
-
-      const newStatus = deriveStatus(transfer.sourceTransaction, newEvents);
-
-      return {
-        ...prevState,
-        transfer: {
-          ...transfer,
-          events: newEvents,
-          status: newStatus,
-        },
-      };
-    });
+    const transferId = useBridgeTransferStore.getState().transferId;
+    if (transferId) {
+      bridgeTransferHistoryActions.updateTransferEvents(transferId, events);
+    }
   },
 
   success: () => {
@@ -162,7 +158,7 @@ export const bridgeTransferActions = {
     bridgeTransferConfirmModalActions.closeModal();
 
     useBridgeTransferStore.setState({
-      transfer: null,
+      transferId: null,
       isTransferring: false,
     });
 
@@ -174,7 +170,7 @@ export const bridgeTransferActions = {
     xCallEventActions.stopAllScanners();
 
     useBridgeTransferStore.setState({
-      transfer: null,
+      transferId: null,
       isTransferring: false,
     });
 
@@ -231,7 +227,9 @@ export const useFetchBridgeTransferEvents = transfer => {
 };
 
 export const BridgeTransferStatusUpdater = () => {
-  const { transfer } = useBridgeTransferStore();
+  useBridgeTransferHistoryStore();
+  const { transferId } = useBridgeTransferStore();
+  const transfer = bridgeTransferHistoryActions.get(transferId);
 
   useXCallEventScanner(transfer?.bridgeInfo?.bridgeDirection.from);
   useXCallEventScanner(transfer?.bridgeInfo?.bridgeDirection.to);

@@ -1,6 +1,6 @@
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
 import { XCallService } from './types';
-import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, TransactionStatus, XCallEvent } from '../_zustand/types';
+import { BridgeInfo, BridgeTransfer, TransactionStatus, XCallEvent } from '../_zustand/types';
 import { avalanche } from 'app/pages/trade/bridge-v2/_config/xChains';
 import {
   Address,
@@ -11,8 +11,6 @@ import {
   parseEventLogs,
   zeroAddress,
 } from 'viem';
-import { bridgeTransferActions } from '../_zustand/useBridgeTransferStore';
-import { transactionActions } from '../_zustand/useTransactionStore';
 import { NATIVE_ADDRESS } from 'constants/index';
 
 export class EvmXCallService implements XCallService {
@@ -177,7 +175,6 @@ export class EvmXCallService implements XCallService {
     return events;
   }
 
-  // TODO: complete this
   async executeTransfer(bridgeInfo: BridgeInfo) {
     const { bridgeDirection, currencyAmountToBridge, recipient: destinationAddress, account, xCallFee } = bridgeInfo;
 
@@ -215,28 +212,9 @@ export class EvmXCallService implements XCallService {
       const hash = await this.walletClient.writeContract(request);
 
       if (hash) {
-        bridgeTransferActions.setIsTransferring(true);
-
-        const transaction = transactionActions.add(bridgeDirection.from, {
-          hash,
-          pendingMessage: 'Requesting cross-chain transfer...',
-          successMessage: 'Cross-chain transfer requested.',
-          errorMessage: 'Cross-chain transfer failed.',
-        });
-
-        return {
-          id: `${this.xChainId}/${transaction.hash}`,
-          bridgeInfo,
-          sourceTransaction: transaction,
-          status: BridgeTransferStatus.TRANSFER_REQUESTED,
-          events: {},
-          destinationChainInitialBlockHeight: -1n,
-        };
-      } else {
-        bridgeTransferActions.setIsTransferring(false);
+        return { sourceTransactionHash: hash };
       }
     }
-    return null;
   }
 }
 

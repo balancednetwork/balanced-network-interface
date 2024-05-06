@@ -85,7 +85,8 @@ msgstr ""
 msgid "Your transaction has failed. Please go back and try again."
 msgstr "Your transaction has failed. Please go back and try again."
 
-#: src/app/_xcall/archway/AllowanceHandler/index.tsx
+#: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
+#: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
 msgid "{0} transfer approval failed."
 msgstr "{0} transfer approval failed."
 
@@ -338,11 +339,13 @@ msgid "Proposals"
 msgstr "Proposals"
 
 #: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Search assets"
 msgstr "Search assets"
 
 #: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Total"
 msgstr "Total"
@@ -381,8 +384,8 @@ msgstr "Approved"
 msgid "Review the community token list on GitHub."
 msgstr "Review the community token list on GitHub."
 
-#: src/app/_xcall/archway/AllowanceHandler/index.tsx
-#: src/app/_xcall/archway/AllowanceHandler/index.tsx
+#: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
+#: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
 msgid "Approving {0} for cross-chain transfer..."
 msgstr "Approving {0} for cross-chain transfer..."
 
@@ -664,7 +667,8 @@ msgstr "Before"
 msgid "Active"
 msgstr "Active"
 
-#: src/app/_xcall/archway/AllowanceHandler/index.tsx
+#: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
+#: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
 msgstr "{0} approved for cross-chain transfer."
 
@@ -739,6 +743,7 @@ msgstr "You'll also pay"
 msgid "1H"
 msgstr "1H"
 
+#: src/app/pages/trade/bridge-v2/_components/BridgeActivity.tsx
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "Cross-chain transactions (24H)"
 msgstr "Cross-chain transactions (24H)"
@@ -1046,6 +1051,7 @@ msgid "Not now"
 msgstr "Not now"
 
 #: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "No assets available."
 msgstr "No assets available."
@@ -1312,6 +1318,7 @@ msgstr "Create liquidity pool?"
 msgid "Locked until"
 msgstr "Locked until"
 
+#: src/app/pages/trade/bridge-v2/_components/BridgeActivity.tsx
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "Activity"
 msgstr "Activity"
@@ -1430,6 +1437,7 @@ msgstr "Swap & transfer assets cross-chain."
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/SearchModal/CurrencyList.tsx
@@ -1605,6 +1613,7 @@ msgstr "N/A"
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Balance"
@@ -2048,6 +2057,7 @@ msgid "You approved"
 msgstr "You approved"
 
 #: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Sign in with"
 msgstr "Sign in with"
@@ -2219,6 +2229,7 @@ msgstr "Test your contract calls before you submit the proposal."
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Value"
@@ -2304,6 +2315,7 @@ msgid "Sign in on ICON, then deposit bnUSD to earn rewards."
 msgstr "Sign in on ICON, then deposit bnUSD to earn rewards."
 
 #: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
 msgid "Archway wallet"
 msgstr "Archway wallet"
 

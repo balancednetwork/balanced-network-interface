@@ -16,7 +16,6 @@ import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { archway } from 'app/pages/trade/bridge-v2/_config/xChains';
 import { useARCH } from 'app/pages/trade/bridge-v2/_config/tokens';
 import { getFeeParam, getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
-import { useXCallFee, useXCallGasChecker } from 'app/pages/trade/bridge-v2/_hooks/hooks';
 import { CurrentXCallStateType, XChainId, XCallEventType } from 'app/pages/trade/bridge-v2/types';
 import { getArchwayCounterToken, getBytesFromString, getNetworkDisplayName } from 'app/pages/trade/bridge-v2/utils';
 import { Typography } from 'app/theme';
@@ -41,6 +40,8 @@ import Spinner from '../Spinner';
 import { swapMessage } from './utils';
 import XCallEventManager from './XCallEventManager';
 import ModalContent from '../ModalContent';
+import useXCallFee from 'app/pages/trade/bridge-v2/_hooks/useXCallFee';
+import useXCallGasChecker from 'app/pages/trade/bridge-v2/_hooks/useXCallGasChecker';
 
 type XCallSwapModalProps = {
   isOpen: boolean;

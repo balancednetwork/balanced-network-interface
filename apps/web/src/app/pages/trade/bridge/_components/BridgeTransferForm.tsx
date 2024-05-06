@@ -23,8 +23,10 @@ import { XCallDescription } from 'app/components/XCallDescription';
 
 import ChainSelector from './ChainSelector';
 import { useWalletModalToggle } from 'store/application/hooks';
-import { useXCallFee, useXCallProtocol, useXWallet } from 'app/pages/trade/bridge-v2/_hooks/hooks';
 import { Field } from 'store/bridge/reducer';
+import useXCallFee from '../../bridge-v2/_hooks/useXCallFee';
+import useXCallProtocol from '../../bridge-v2/_hooks/useXCallProtocol';
+import useXWallet from '../../bridge-v2/_hooks/useXWallet';
 
 const ConnectWrap = styled.div`
   position: absolute;

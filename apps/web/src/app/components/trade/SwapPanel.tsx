@@ -48,8 +48,10 @@ import StabilityFund from '../StabilityFund';
 import { XCallDescription } from '../XCallDescription';
 import { BrightPanel, swapMessage } from './utils';
 import XCallSwapModal from './XCallSwapModal';
-import { useXCallFee, useXCallProtocol, useXWallet } from 'app/pages/trade/bridge-v2/_hooks/hooks';
 import { isXToken } from 'app/pages/trade/bridge-v2/utils';
+import useXCallFee from 'app/pages/trade/bridge-v2/_hooks/useXCallFee';
+import useXCallProtocol from 'app/pages/trade/bridge-v2/_hooks/useXCallProtocol';
+import useXWallet from 'app/pages/trade/bridge-v2/_hooks/useXWallet';
 
 const MemoizedStabilityFund = React.memo(StabilityFund);
 

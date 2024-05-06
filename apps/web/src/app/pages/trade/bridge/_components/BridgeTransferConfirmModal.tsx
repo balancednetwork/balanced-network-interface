@@ -6,7 +6,6 @@ import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import useAllowanceHandler from 'app/pages/trade/bridge-v2/_hooks/useApproveCallback';
-import { useXCallFee, useXCallGasChecker } from 'app/pages/trade/bridge-v2/_hooks/hooks';
 import { archway } from 'app/pages/trade/bridge-v2/_config/xChains';
 import { Typography } from 'app/theme';
 import { useShouldLedgerSign } from 'store/application/hooks';
@@ -35,6 +34,8 @@ import { presenceVariants, StyledButton as XCallButton } from 'app/components/tr
 import { StdFee } from '@archwayhq/arch3.js';
 import { getNetworkDisplayName } from 'app/pages/trade/bridge-v2/utils';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
+import useXCallFee from '../../bridge-v2/_hooks/useXCallFee';
+import useXCallGasChecker from '../../bridge-v2/_hooks/useXCallGasChecker';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;

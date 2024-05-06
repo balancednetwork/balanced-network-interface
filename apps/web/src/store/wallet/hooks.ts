@@ -37,7 +37,6 @@ import { useUserAddedTokens } from 'store/user/hooks';
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
 import { changeArchwayBalances, changeBalances, changeICONBalances } from './reducer';
-import { useWallets, useXTokens } from 'app/pages/trade/bridge-v2/_hooks/hooks';
 
 export function useCrossChainWalletBalances(): AppState['wallet'] {
   return useSelector((state: AppState) => state.wallet);
@@ -130,6 +129,8 @@ import { coreConfig } from 'config/wagmi';
 import { erc20Abi } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 import { multicall } from '@wagmi/core';
+import useWallets from 'app/pages/trade/bridge-v2/_hooks/useWallets';
+import useXTokens from 'app/pages/trade/bridge-v2/_hooks/useXTokens';
 
 export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined) {
   const { data } = useBalance({ address: account });

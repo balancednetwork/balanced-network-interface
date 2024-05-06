@@ -13,7 +13,6 @@ import { Button, TextButton } from 'app/components/Button';
 import Spinner from 'app/components/Spinner';
 
 import { getNetworkDisplayName } from 'app/pages/trade/bridge-v2/utils';
-import { useXCallFee, useXCallGasChecker } from 'app/pages/trade/bridge-v2/_hooks/hooks';
 import { useShouldLedgerSign } from 'store/application/hooks';
 
 import {
@@ -31,6 +30,8 @@ import {
 } from '../_zustand/useBridgeTransferStore';
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge-v2/_hooks/useApproveCallback';
 import { xChainMap } from 'app/pages/trade/bridge-v2/_config/xChains';
+import useXCallFee from '../_hooks/useXCallFee';
+import useXCallGasChecker from '../_hooks/useXCallGasChecker';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;

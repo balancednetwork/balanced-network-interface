@@ -5,6 +5,8 @@ import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
 import { XCallEvent } from './types';
 import { xCallServiceActions } from './useXCallServiceStore';
 
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 type XCallEventStore = {
   destinationXCallEvents: Partial<Record<XChainId, Record<number, XCallEvent[]>>>;
   scanners: Partial<Record<XChainId, any>>;
@@ -49,7 +51,7 @@ export const xCallEventActions = {
     });
   },
 
-  incrementCurrentHeight: (xChainId: XChainId) => {
+  incrementCurrentHeight: async (xChainId: XChainId) => {
     // console.log('incrementCurrentHeight', xChainId);
     try {
       if (
@@ -60,27 +62,36 @@ export const xCallEventActions = {
       }
 
       // console.log('incrementing currentHeight', xChainId);
-      useXCallEventStore.setState(state => {
-        state.scanners[xChainId].currentHeight += 1n;
-        return state;
-      });
+      useXCallEventStore.setState(prevState => ({
+        ...prevState,
+        scanners: {
+          ...prevState.scanners,
+          [xChainId]: {
+            ...prevState.scanners[xChainId],
+            currentHeight: prevState.scanners[xChainId].currentHeight + 1n,
+          },
+        },
+      }));
     } catch (e) {
       console.log(e);
     }
+    await delay(1000);
   },
   updateChainHeight: async (xChainId: XChainId) => {
     // console.log('updateChainHeight', xChainId);
     try {
       const xCallService = xCallServiceActions.getXCallService(xChainId);
       const chainHeight = await xCallService.fetchBlockHeight();
-      useXCallEventStore.setState(state => {
-        if (!state.scanners[xChainId]) {
-          return state;
-        }
-
-        state.scanners[xChainId].chainHeight = chainHeight;
-        return state;
-      });
+      useXCallEventStore.setState(prevState => ({
+        ...prevState,
+        scanners: {
+          ...prevState.scanners,
+          [xChainId]: {
+            ...prevState.scanners[xChainId],
+            chainHeight,
+          },
+        },
+      }));
     } catch (e) {
       console.log(e);
     }
@@ -107,10 +118,8 @@ export const xCallEventActions = {
 
   getDestinationEvents: (xChainId: XChainId, sn: bigint) => {
     try {
-      console.log('BBBB', xChainId);
       const events = useXCallEventStore.getState().destinationXCallEvents?.[xChainId];
 
-      console.log('AAAA', events);
       const result = {};
 
       for (const blockHeight in events) {
@@ -122,8 +131,6 @@ export const xCallEventActions = {
           }
         }
       }
-
-      console.log('CCCC', result);
 
       const callMessageEvent = result[XCallEventType.CallMessage];
       if (callMessageEvent) {
@@ -138,8 +145,6 @@ export const xCallEventActions = {
         }
       }
 
-      console.log('CCCC', result);
-
       return result;
     } catch (e) {
       console.log(e);
@@ -148,23 +153,24 @@ export const xCallEventActions = {
   },
 };
 
+// TODO: review logic to scan all blocks
 export const useXCallEventScanner = (xChainId: XChainId | undefined) => {
   const { scanners } = useXCallEventStore();
   const scanner = xChainId ? scanners?.[xChainId] : null;
   const { enabled, currentHeight, chainHeight } = scanner || {};
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    if (!xChainId) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!xChainId) {
+  //     return;
+  //   }
 
-    setTimeout(() => {
-      if (enabled) {
-        xCallEventActions.incrementCurrentHeight(xChainId);
-      }
-    }, 100);
-  }, [xChainId, enabled, chainHeight]);
+  //   setTimeout(() => {
+  //     if (enabled) {
+  //       xCallEventActions.incrementCurrentHeight(xChainId);
+  //     }
+  //   }, 100);
+  // }, [xChainId, enabled, chainHeight]);
 
   //update chainHeight every 1 second
   useEffect(() => {
@@ -183,6 +189,7 @@ export const useXCallEventScanner = (xChainId: XChainId | undefined) => {
     return () => clearInterval(interval);
   }, [xChainId, enabled]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!xChainId) {
       return;
@@ -196,8 +203,9 @@ export const useXCallEventScanner = (xChainId: XChainId | undefined) => {
       console.log('scanning block', currentHeight);
 
       await xCallEventActions.scanBlock(xChainId, currentHeight);
+      await xCallEventActions.incrementCurrentHeight(xChainId);
     };
 
     scan();
-  }, [xChainId, enabled, currentHeight]);
+  }, [xChainId, enabled, currentHeight, chainHeight]);
 };

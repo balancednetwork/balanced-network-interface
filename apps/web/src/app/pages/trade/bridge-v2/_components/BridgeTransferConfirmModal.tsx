@@ -31,6 +31,7 @@ import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge-v2/_ho
 import { xChainMap } from 'app/pages/trade/bridge-v2/_config/xChains';
 import useXCallFee from '../_hooks/useXCallFee';
 import useXCallGasChecker from '../_hooks/useXCallGasChecker';
+import { xCallEventActions, useXCallEventScanner } from '../_zustand/useXCallEventStore';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;
@@ -45,6 +46,8 @@ const StyledXCallButton = styled(XCallButton)`
 export function BridgeTransferConfirmModal() {
   const { modalOpen } = useBridgeTransferConfirmModalStore();
   const { isTransferring } = useBridgeTransferStore();
+
+  // useXCallEventScanner('0x1.icon');
 
   const {
     currency: currencyToBridge,
@@ -84,7 +87,7 @@ export function BridgeTransferConfirmModal() {
       await bridgeTransferActions.executeTransfer(bridgeInfo);
     }
 
-    // await xCallEventActions.startScanner(bridgeDirection.to, 4393620);
+    // await xCallEventActions.startScanner(bridgeDirection.to, 4393620n);
   };
 
   const handleApprove = () => {

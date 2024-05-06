@@ -1,19 +1,51 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+
 import { useQuery } from '@tanstack/react-query';
 
 import { XCallEventType } from '../types';
 import { BridgeTransfer, BridgeTransferStatus, Transaction, TransactionStatus, XCallEventMap } from './types';
 import { xCallServiceActions } from './useXCallServiceStore';
 import { xCallEventActions } from './useXCallEventStore';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 
 type BridgeTransferHistoryStore = {
   transfers: BridgeTransfer[];
 };
 
+const storage = createJSONStorage(() => sessionStorage, {
+  reviver: (key, value: any) => {
+    if (typeof value === 'string' && value.startsWith('BIGINT::')) {
+      return BigInt(value.substr(8));
+    }
+    if (value && value.type === 'CurrencyAmount') {
+      return 'currencyamount::' + value.currencyAddress;
+    }
+    return value;
+  },
+  replacer: (key, value) => {
+    if (typeof value === 'bigint') {
+      return `BIGINT::${value}`;
+    } else if (value instanceof CurrencyAmount) {
+      return { type: 'CurrencyAmount', currencyAddress: value.currency.address };
+    } else {
+      return value;
+    }
+  },
+});
+
 //TODO: persist this store
-export const useBridgeTransferHistoryStore = create<BridgeTransferHistoryStore>()(set => ({
-  transfers: [],
-}));
+export const useBridgeTransferHistoryStore = create<BridgeTransferHistoryStore>()(
+  persist(
+    set => ({
+      transfers: [],
+    }),
+    {
+      name: 'bridge-transfer-history-store',
+      storage,
+    },
+  ),
+);
 
 // TODO: review logic
 export const deriveStatus = (sourceTransaction: Transaction, events: XCallEventMap): BridgeTransferStatus => {

@@ -16,36 +16,19 @@ import { getFeeParam } from '../../../../_xcall/archway/utils';
 import { Token, CurrencyAmount } from '@balancednetwork/sdk-core';
 
 import { useQuery } from '@tanstack/react-query';
-import {
-  useAccount,
-  useChainId,
-  usePublicClient,
-  useReadContract,
-  useWaitForTransactionReceipt,
-  useWalletClient,
-  useWriteContract,
-} from 'wagmi';
+import { usePublicClient, useWaitForTransactionReceipt, useWalletClient } from 'wagmi';
 import { erc20Abi, Address, getContract, Abi, WriteContractReturnType } from 'viem';
 
 import { XToken } from 'app/pages/trade/bridge-v2/types';
 import { archway, xChainMap } from '../_config/xChains';
-import { useSignedInWallets } from 'store/wallet/hooks';
 
 import { useBridgeDirection } from 'store/bridge/hooks';
 import { NATIVE_ADDRESS } from 'constants/index';
 import useXWallet from './useXWallet';
+import { openToast } from 'btp/src/connectors/transactionToast';
+import { TransactionStatus } from 'store/transactions/hooks';
 
 export const FAST_INTERVAL = 10000;
-
-// export function useApproveCallback(
-//   amountToApprove?: CurrencyAmount<Currency>,
-//   spender?: string,
-//   options: {
-//     addToTransaction
-//     targetAmount?: bigint
-//   } = {
-//     addToTransaction: true,
-//   },
 
 export enum ApprovalState {
   UNKNOWN,
@@ -81,8 +64,6 @@ export function useTokenContract(tokenAddress?: Address) {
 export const MaxUint256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
 
 export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spender?: string) => {
-  const addTransactionResult = useAddTransactionResult();
-  const initTransaction = useInitTransaction();
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined;
   // const pendingApproval = useHasPendingApproval(token?.address, spender);
   const [isPendingError, setIsPendingError] = useState<boolean>(false);
@@ -95,28 +76,32 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
   const account = xWallet.account;
 
   const xChainId = amountToApprove?.currency.xChainId;
+  const xChainType = xChainId ? xChainMap[xChainId].xChainType : undefined;
 
   // archway stuff
   const { signingClient } = useArchwayContext();
 
   // evm stuff
-  const { writeContractAsync } = useWriteContract();
+  const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
   const tokenContract = useTokenContract(token?.address as `0x${string}`);
   const { allowance: currentAllowance, refetch } = useTokenAllowance(token, account, spender);
-  const [hash, setHash] = useState<string>();
-  const { data } = useWaitForTransactionReceipt({ hash: hash as `0x${string}` | undefined });
-  // const pendingApproval = hash ? !data : false;
-  const pendingApproval = hash ? !data : false;
 
-  useEffect(() => {
-    if (pendingApproval) {
-      setPending(true);
-    } else if (pending) {
-      refetch().then(() => {
-        setPending(false);
-      });
-    }
-  }, [pendingApproval, pending, refetch]);
+  // !TODO: temporary solution. revisit it later
+  // const [hash, setHash] = useState<string>();
+  // const { data } = useWaitForTransactionReceipt({ hash: hash as `0x${string}` | undefined });
+  // const pendingApproval = hash ? !data : false;
+  // const pendingApproval = hash ? !data : false;
+
+  // useEffect(() => {
+  //   if (pendingApproval) {
+  //     setPending(true);
+  //   } else if (pending) {
+  //     refetch().then(() => {
+  //       setPending(false);
+  //     });
+  //   }
+  // }, [pendingApproval, pending, refetch]);
 
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
@@ -176,97 +161,57 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
         return undefined;
       }
 
-      const estimatedGas = await tokenContract.estimateGas
-        .approve(
-          [
-            spender as `0x${string}`,
-            overrideAmountApprove ??
-              (amountToApprove?.quotient ? BigInt(amountToApprove.quotient.toString()) : MaxUint256),
-          ],
-          {
-            account: account as `0x${string}`,
-          },
-        )
-        .catch((e: any) => {
-          console.error('estimate gas failure', e);
-          // toastError(t('Error'), t('Unexpected error. Could not estimate gas for the approve.'));
-          setIsPendingError(true);
-          return null;
-        });
+      if (!walletClient) {
+        console.error('no wallet client');
+        setIsPendingError(true);
+        return undefined;
+      }
 
-      if (!estimatedGas) return undefined;
-      // setPending(true);
-      // initTransaction('0xa86a.avax', t`Approving ${token.symbol} for cross-chain transfer...`);
+      if (!publicClient) {
+        console.error('no public client');
+        setIsPendingError(true);
+        return undefined;
+      }
 
-      return writeContractAsync({
-        abi: erc20Abi,
-        address: token.address as `0x${string}`,
-        functionName: 'approve',
-        args: [
+      const { request } = await tokenContract.simulate.approve(
+        [
           spender as `0x${string}`,
           overrideAmountApprove ??
             (amountToApprove?.quotient ? BigInt(amountToApprove.quotient.toString()) : MaxUint256),
         ],
-      })
-        .then(response => {
-          // addTransactionResult('0xa86a.avax', response, t`${token.symbol} approved for cross-chain transfer.`);
-          // callback && callback(true);
-          return response;
-        })
-        .catch((e: any) => {
-          return undefined;
+        {
+          account: account as `0x${string}`,
+        },
+      );
+
+      try {
+        const hash = await walletClient?.writeContract({ ...request, account: account as `0x${string}` });
+        openToast({
+          id: hash,
+          message: t`Approving ${token.symbol} for cross-chain transfer...`,
+          transactionStatus: TransactionStatus.pending,
+        });
+        setPending(true);
+        await publicClient?.waitForTransactionReceipt({ hash: hash });
+        await refetch();
+        setPending(false);
+        openToast({
+          id: hash,
+          message: t`${token.symbol} approved for cross-chain transfer.`,
+          transactionStatus: TransactionStatus.success,
         });
 
-      // return callWithGasPrice(
-      //   tokenContract,
-      //   'approve' as const,
-      //   [
-      //     spender as Address,
-      //     overrideAmountApprove ?? (useExact ? amountToApprove?.quotient ?? MaxUint256 : MaxUint256),
-      //   ],
-      //   {
-      //     gas: calculateGasMargin(estimatedGas),
-      //   },
-      // )
-      //   .then(response => {
-      //     if (addToTransaction) {
-      //       addTransaction(response, {
-      //         summary: `Approve ${overrideAmountApprove ?? amountToApprove?.currency?.symbol}`,
-      //         translatableSummary: {
-      //           text: 'Approve %symbol%',
-      //           data: { symbol: overrideAmountApprove?.toString() ?? amountToApprove?.currency?.symbol },
-      //         },
-      //         approval: { tokenAddress: token?.address, spender },
-      //         type: 'approve',
-      //       });
-      //     }
-      //     return response;
-      //   })
-      //   .catch((error: any) => {
-      //     // logError(error);
-      //     console.error('Failed to approve token', error);
-      //     // if (!isUserRejected(error)) {
-      //     //   toastError(t('Error'), error.message);
-      //     // }
-      //     throw error;
-      //   });
+        return hash;
+      } catch (e) {
+        openToast({
+          message: t`${token.symbol} transfer approval failed.`,
+          transactionStatus: TransactionStatus.failure,
+        });
+
+        return;
+      }
     },
-    [
-      account,
-      approvalState,
-      token,
-      tokenContract,
-      amountToApprove,
-      spender,
-      writeContractAsync,
-      // initTransaction,
-      // callWithGasPrice,
-      // targetAmount,
-      // toastError,
-      // t,
-      // addToTransaction,
-      // addTransaction,
-    ],
+    [account, approvalState, token, tokenContract, amountToApprove, spender, walletClient, publicClient, refetch],
   );
 
   const approve1 = useCallback(async () => {
@@ -292,23 +237,33 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
         amount: amountToApprove?.quotient ? amountToApprove?.quotient.toString() : MaxUint256.toString(),
       },
     };
+
     try {
-      initTransaction('archway-1', t`Approving ${token.symbol} for cross-chain transfer...`);
+      // !TODO: breaking the execution into two stages. approving & approved
       const res = await signingClient.execute(account, token.address, msg, getFeeParam(400000));
-      addTransactionResult('archway-1', res, t`${token.symbol} approved for cross-chain transfer.`);
+      await refetch();
+      openToast({
+        message: t`${token.symbol} approved for cross-chain transfer.`,
+        transactionStatus: TransactionStatus.success,
+      });
+      return res.transactionHash;
     } catch (e) {
-      console.error(e);
-      addTransactionResult('archway-1', null, t`${token.symbol} transfer approval failed.`);
+      openToast({
+        message: t`${token.symbol} transfer approval failed.`,
+        transactionStatus: TransactionStatus.failure,
+      });
     }
-  }, [addTransactionResult, spender, token, account, amountToApprove, initTransaction, signingClient]);
+  }, [spender, token, account, amountToApprove, signingClient, refetch]);
 
   const approveCallback = useCallback(() => {
-    if (xChainId === '0xa86a.avax' || xChainId === '0xa869.fuji') {
+    if (!xChainType) return;
+
+    if (xChainType === 'EVM') {
       return approve();
-    } else if (xChainId === 'archway-1' || xChainId === 'archway') {
+    } else if (xChainType === 'ARCHWAY') {
       return approve1();
-    }
-  }, [xChainId, approve, approve1]);
+    } else if (xChainType === 'ICON') return;
+  }, [xChainType, approve, approve1]);
 
   const revokeCallback = useCallback(() => {
     return approve(0n);
@@ -326,16 +281,16 @@ export function useTokenAllowance(
   refetch: () => Promise<any>;
 } {
   const inputs = useMemo(() => [owner, spender] as [`0x${string}`, `0x${string}`], [owner, spender]);
-  const evePublicClient = usePublicClient();
-
+  const evmPublicClient = usePublicClient();
   const { client: archwayPublicClient } = useArchwayContext();
+
   const { data: allowance, refetch } = useQuery({
     queryKey: [token?.xChainId, token?.address, owner, spender],
     queryFn: async () => {
       if (!token) {
         throw new Error('No token');
       }
-      if (!evePublicClient) {
+      if (!evmPublicClient) {
         throw new Error('No EVM client');
       }
 
@@ -345,7 +300,7 @@ export function useTokenAllowance(
 
       // EVM
       if (token.xChainId === '0xa86a.avax' || token.xChainId === '0xa869.fuji') {
-        return evePublicClient.readContract({
+        return evmPublicClient.readContract({
           abi: erc20Abi,
           address: token?.address as `0x${string}`,
           functionName: 'allowance',

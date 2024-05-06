@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { BridgeTransfer, XCallEventMap } from './types';
-import { deriveStatus } from './useBridgeTransferStore';
+import { BridgeTransfer, BridgeTransferStatus, Transaction, TransactionStatus, XCallEventMap } from './types';
 import { xCallServiceActions } from './useXCallServiceStore';
+import { XCallEventType } from '../types';
 
 type BridgeTransferHistoryStore = {
   transfers: BridgeTransfer[];
@@ -11,6 +11,39 @@ type BridgeTransferHistoryStore = {
 export const useBridgeTransferHistoryStore = create<BridgeTransferHistoryStore>()(set => ({
   transfers: [],
 }));
+
+// TODO: review logic
+export const deriveStatus = (sourceTransaction: Transaction, events: XCallEventMap): BridgeTransferStatus => {
+  if (!sourceTransaction) {
+    return BridgeTransferStatus.TRANSFER_FAILED;
+  }
+
+  if (sourceTransaction.status === TransactionStatus.pending) {
+    return BridgeTransferStatus.TRANSFER_REQUESTED;
+  }
+
+  if (sourceTransaction.status === TransactionStatus.failure) {
+    return BridgeTransferStatus.TRANSFER_FAILED;
+  }
+
+  if (sourceTransaction.status === TransactionStatus.success) {
+    if (!events[XCallEventType.CallMessageSent]) {
+      return BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT;
+    }
+
+    if (!events[XCallEventType.CallMessage]) {
+      return BridgeTransferStatus.CALL_MESSAGE_SENT;
+    }
+
+    if (!events[XCallEventType.CallExecuted]) {
+      return BridgeTransferStatus.CALL_MESSAGE;
+    } else {
+      return BridgeTransferStatus.CALL_EXECUTED;
+    }
+  }
+
+  return BridgeTransferStatus.TRANSFER_FAILED;
+};
 
 export const bridgeTransferHistoryActions = {
   get: id => {

@@ -1,18 +1,9 @@
 import { create } from 'zustand';
-import { useBridgeDirection, useDerivedBridgeInfo } from 'store/bridge/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { XCallEventType } from 'app/pages/trade/bridge-v2/types';
 import { xCallServiceActions } from './useXCallServiceStore';
 import { bridgeTransferConfirmModalActions } from './useBridgeTransferConfirmModalStore';
-import {
-  BridgeInfo,
-  BridgeTransfer,
-  BridgeTransferStatus,
-  Transaction,
-  TransactionStatus,
-  XCallEvent,
-  XCallEventMap,
-} from './types';
+import { BridgeInfo, BridgeTransferStatus, Transaction, XCallEventMap } from './types';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { transactionActions, useFetchTransaction } from './useTransactionStore';
 import { useEffect } from 'react';
@@ -28,39 +19,6 @@ export const useBridgeTransferStore = create<BridgeTransferStore>()(set => ({
   transferId: null,
   isTransferring: false,
 }));
-
-// TODO: review logic
-export const deriveStatus = (sourceTransaction: Transaction, events: XCallEventMap): BridgeTransferStatus => {
-  if (!sourceTransaction) {
-    return BridgeTransferStatus.TRANSFER_FAILED;
-  }
-
-  if (sourceTransaction.status === TransactionStatus.pending) {
-    return BridgeTransferStatus.TRANSFER_REQUESTED;
-  }
-
-  if (sourceTransaction.status === TransactionStatus.failure) {
-    return BridgeTransferStatus.TRANSFER_FAILED;
-  }
-
-  if (sourceTransaction.status === TransactionStatus.success) {
-    if (!events[XCallEventType.CallMessageSent]) {
-      return BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT;
-    }
-
-    if (!events[XCallEventType.CallMessage]) {
-      return BridgeTransferStatus.CALL_MESSAGE_SENT;
-    }
-
-    if (!events[XCallEventType.CallExecuted]) {
-      return BridgeTransferStatus.CALL_MESSAGE;
-    } else {
-      return BridgeTransferStatus.CALL_EXECUTED;
-    }
-  }
-
-  return BridgeTransferStatus.TRANSFER_FAILED;
-};
 
 export const bridgeTransferActions = {
   setIsTransferring: (isTransferring: boolean) => {
@@ -135,20 +93,6 @@ export const bridgeTransferActions = {
 
       // TODO: is it right place to start scanner?
       xCallEventActions.startScanner(bridgeDirection.to, blockHeight);
-    }
-  },
-
-  updateSourceTransaction: ({ rawTx }) => {
-    const transferId = useBridgeTransferStore.getState().transferId;
-    if (transferId) {
-      bridgeTransferHistoryActions.updateSourceTransaction(transferId, { rawTx });
-    }
-  },
-
-  updateTransferEvents: (events: XCallEventMap) => {
-    const transferId = useBridgeTransferStore.getState().transferId;
-    if (transferId) {
-      bridgeTransferHistoryActions.updateTransferEvents(transferId, events);
     }
   },
 
@@ -238,16 +182,16 @@ export const BridgeTransferStatusUpdater = () => {
   const { events } = useFetchBridgeTransferEvents(transfer);
 
   useEffect(() => {
-    if (rawTx) {
-      bridgeTransferActions.updateSourceTransaction({ rawTx });
+    if (transferId && rawTx) {
+      bridgeTransferHistoryActions.updateSourceTransaction(transferId, { rawTx });
     }
-  }, [rawTx]);
+  }, [transferId, rawTx]);
 
   useEffect(() => {
-    if (events) {
-      bridgeTransferActions.updateTransferEvents(events);
+    if (transferId && events) {
+      bridgeTransferHistoryActions.updateTransferEvents(transferId, events);
     }
-  }, [events]);
+  }, [transferId, events]);
 
   useEffect(() => {
     if (transfer) {

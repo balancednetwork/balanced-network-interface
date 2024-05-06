@@ -293,7 +293,7 @@ export function useXCallStats(): UseQueryResult<{ transactionCount: number; data
   }
 
   return useQuery({
-    queryKey: ['xCallStats'],
+    queryKey: ['xCallStats', account],
     queryFn: async () => {
       const txBatches = await Promise.all([getTxs(0), getTxs(100)]);
       const txs = txBatches.flat();

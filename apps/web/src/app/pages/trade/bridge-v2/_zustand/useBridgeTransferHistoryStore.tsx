@@ -1,7 +1,10 @@
 import { create } from 'zustand';
+import { useQuery } from '@tanstack/react-query';
+
+import { XCallEventType } from '../types';
 import { BridgeTransfer, BridgeTransferStatus, Transaction, TransactionStatus, XCallEventMap } from './types';
 import { xCallServiceActions } from './useXCallServiceStore';
-import { XCallEventType } from '../types';
+import { xCallEventActions } from './useXCallEventStore';
 
 type BridgeTransferHistoryStore = {
   transfers: BridgeTransfer[];
@@ -121,4 +124,51 @@ export const bridgeTransferHistoryActions = {
       transfers: state.transfers.filter(transfer => transfer.id !== id),
     }));
   },
+};
+
+export const useFetchBridgeTransferEvents = transfer => {
+  const { data: events, isLoading } = useQuery({
+    queryKey: ['bridge-transfer-events', transfer?.id],
+    queryFn: async () => {
+      console.log('transfer', transfer);
+      if (!transfer) {
+        return null;
+      }
+
+      const {
+        bridgeInfo: { bridgeDirection },
+      } = transfer;
+
+      let events: XCallEventMap = {};
+      if (transfer.status === BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT) {
+        const srcChainXCallService = xCallServiceActions.getXCallService(bridgeDirection.from);
+        events = await srcChainXCallService.fetchSourceEvents(transfer);
+      } else if (
+        transfer.status === BridgeTransferStatus.CALL_MESSAGE_SENT ||
+        transfer.status === BridgeTransferStatus.CALL_MESSAGE
+        // || transfer.status === BridgeTransferStatus.CALL_EXECUTED
+      ) {
+        console.log('transfer.status !== BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT', transfer.events);
+        const callMessageSentEvent = transfer.events[XCallEventType.CallMessageSent];
+        console.log('callMessageSentEvent', callMessageSentEvent);
+        if (callMessageSentEvent) {
+          console.log('callMessageSentEvent', callMessageSentEvent);
+          events = xCallEventActions.getDestinationEvents(bridgeDirection.to, callMessageSentEvent.sn);
+          console.log('events', events);
+        }
+      }
+
+      return events;
+    },
+    refetchInterval: 2000,
+    enabled:
+      !!transfer?.id &&
+      transfer.status !== BridgeTransferStatus.CALL_EXECUTED &&
+      transfer.status !== BridgeTransferStatus.TRANSFER_FAILED,
+  });
+
+  return {
+    events,
+    isLoading,
+  };
 };

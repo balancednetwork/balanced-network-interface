@@ -1,13 +1,15 @@
 import { create } from 'zustand';
-import { useQuery } from '@tanstack/react-query';
-import { XCallEventType } from 'app/pages/trade/bridge-v2/types';
 import { xCallServiceActions } from './useXCallServiceStore';
 import { bridgeTransferConfirmModalActions } from './useBridgeTransferConfirmModalStore';
-import { BridgeInfo, BridgeTransferStatus, Transaction, XCallEventMap } from './types';
+import { BridgeInfo, BridgeTransferStatus, Transaction } from './types';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { transactionActions, useFetchTransaction } from './useTransactionStore';
 import { useEffect } from 'react';
-import { bridgeTransferHistoryActions, useBridgeTransferHistoryStore } from './useBridgeTransferHistoryStore';
+import {
+  bridgeTransferHistoryActions,
+  useBridgeTransferHistoryStore,
+  useFetchBridgeTransferEvents,
+} from './useBridgeTransferHistoryStore';
 import { ArchwayXCallService } from '../_xcall/ArchwayXCallService';
 
 type BridgeTransferStore = {
@@ -121,53 +123,6 @@ export const bridgeTransferActions = {
     // TODO: show error message
     console.log('bridge transfer fail');
   },
-};
-
-export const useFetchBridgeTransferEvents = transfer => {
-  const { data: events, isLoading } = useQuery({
-    queryKey: ['bridge-transfer-events', transfer?.id],
-    queryFn: async () => {
-      console.log('transfer', transfer);
-      if (!transfer) {
-        return null;
-      }
-
-      const {
-        bridgeInfo: { bridgeDirection },
-      } = transfer;
-
-      let events: XCallEventMap = {};
-      if (transfer.status === BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT) {
-        const srcChainXCallService = xCallServiceActions.getXCallService(bridgeDirection.from);
-        events = await srcChainXCallService.fetchSourceEvents(transfer);
-      } else if (
-        transfer.status === BridgeTransferStatus.CALL_MESSAGE_SENT ||
-        transfer.status === BridgeTransferStatus.CALL_MESSAGE
-        // || transfer.status === BridgeTransferStatus.CALL_EXECUTED
-      ) {
-        console.log('transfer.status !== BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT', transfer.events);
-        const callMessageSentEvent = transfer.events[XCallEventType.CallMessageSent];
-        console.log('callMessageSentEvent', callMessageSentEvent);
-        if (callMessageSentEvent) {
-          console.log('callMessageSentEvent', callMessageSentEvent);
-          events = xCallEventActions.getDestinationEvents(bridgeDirection.to, callMessageSentEvent.sn);
-          console.log('events', events);
-        }
-      }
-
-      return events;
-    },
-    refetchInterval: 2000,
-    enabled:
-      !!transfer?.id &&
-      transfer.status !== BridgeTransferStatus.CALL_EXECUTED &&
-      transfer.status !== BridgeTransferStatus.TRANSFER_FAILED,
-  });
-
-  return {
-    events,
-    isLoading,
-  };
 };
 
 export const BridgeTransferStatusUpdater = () => {

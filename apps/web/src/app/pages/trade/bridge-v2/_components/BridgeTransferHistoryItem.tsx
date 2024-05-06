@@ -11,9 +11,7 @@ import ArrowIcon from 'assets/icons/arrow-white.svg';
 import Spinner from '../../../../components/Spinner';
 import { useXCallEventScanner } from '../_zustand/useXCallEventStore';
 import { useFetchTransaction } from '../_zustand/useTransactionStore';
-import { bridgeTransferActions, useFetchBridgeTransferEvents } from '../_zustand/useBridgeTransferStore';
-import BridgeTransferStatus from './BridgeTransferStatus';
-import { bridgeTransferHistoryActions } from '../_zustand/useBridgeTransferHistoryStore';
+import { bridgeTransferHistoryActions, useFetchBridgeTransferEvents } from '../_zustand/useBridgeTransferHistoryStore';
 import { useCreateXCallService } from '../_zustand/useXCallServiceStore';
 
 const Wrap = styled(Box)`

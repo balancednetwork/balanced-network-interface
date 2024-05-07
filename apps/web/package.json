@@ -14,6 +14,7 @@
     "@cosmjs/encoding": "0.32.3",
     "@cosmjs/proto-signing": "0.32.3",
     "@cosmjs/stargate": "0.32.2",
+    "@cosmjs/tendermint-rpc": "0.32.3",
     "@ethereumjs/rlp": "5.0.0",
     "@ethersproject/address": "5.4.0",
     "@ethersproject/rlp": "5.7.0",
@@ -44,6 +45,7 @@
     "bignumber.js": "9.0.1",
     "chain-registry": "1.18.1",
     "chalk": "4.1.0",
+    "cosmjs-types": "0.9.0",
     "dayjs": "1.10.7",
     "decimal.js-light": "2.5.1",
     "ethers": "5.6.1",
@@ -115,7 +117,11 @@
     "prepare": "pnpm run i18n:compile"
   },
   "proxy": "https://balanced.sudoblock.io",
-  "browserslist": [">0.2%", "not dead", "not op_mini all"],
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ],
   "engines": {
     "node": ">=18.0.0"
   },

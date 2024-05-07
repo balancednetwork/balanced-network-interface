@@ -59,6 +59,9 @@ importers:
       '@cosmjs/stargate':
         specifier: 0.32.2
         version: 0.32.2
+      '@cosmjs/tendermint-rpc':
+        specifier: 0.32.3
+        version: 0.32.3
       '@ethereumjs/rlp':
         specifier: 5.0.0
         version: 5.0.0
@@ -149,6 +152,9 @@ importers:
       chalk:
         specifier: 4.1.0
         version: 4.1.0
+      cosmjs-types:
+        specifier: 0.9.0
+        version: 0.9.0
       dayjs:
         specifier: 1.10.7
         version: 1.10.7

@@ -257,21 +257,17 @@ export type xCallActivityDataType = {
 };
 
 export function useXCallStats(): UseQueryResult<{ transactionCount: number; data: xCallActivityDataType[] }> {
-  const { account } = useIconReact();
-
-  const IBC_HANDLER_CX = account; //'cx622bbab73698f37dbef53955fd3decffeb0b0c16';
-  const yesterdayTimestamp = (new Date().getTime() - ONE_DAY_DURATION) * 1000;
-
-  async function getTxs(skip: number) {
-    const apiUrl = `${CHAIN_INFO[NETWORK_ID].tracker}/api/v1/transactions/address/${IBC_HANDLER_CX}?limit=100&skip=${skip}`;
+  const yesterdayTimestamp = new Date().getTime() - ONE_DAY_DURATION;
+  async function getTxs(skip: number, limit: number) {
+    const apiUrl = `https://xcallscan.xyz/api/messages?skip=${skip}&limit=${limit}`;
     const response = await axios.get(apiUrl);
-    return response.data;
+    return response.data.data;
   }
 
-  function countTransactionsByHour(transactions: { block_timestamp: number }[]): xCallActivityDataType[] {
+  function countTransactionsByHour(transactions: { created_at: number }[]): xCallActivityDataType[] {
     const transactionCountByHour: { count: number; hour: string }[] = [];
 
-    const yesterdayDate = new Date(yesterdayTimestamp / 1000);
+    const yesterdayDate = new Date(yesterdayTimestamp);
     const currentHour = yesterdayDate.getHours();
 
     for (let i = 0; i < 24; i++) {
@@ -283,7 +279,7 @@ export function useXCallStats(): UseQueryResult<{ transactionCount: number; data
     }
 
     return transactions.reduce((acc, transaction) => {
-      const date = new Date(Math.floor(transaction.block_timestamp / 1000));
+      const date = new Date(transaction.created_at * 1000);
       const hour = date.getHours().toString().padStart(2, '0');
 
       const currentHour = acc.find(item => item.hour === hour);
@@ -293,20 +289,32 @@ export function useXCallStats(): UseQueryResult<{ transactionCount: number; data
   }
 
   return useQuery({
-    queryKey: ['xCallStats', account],
+    queryKey: ['xCallStats'],
     queryFn: async () => {
-      const txBatches = await Promise.all([getTxs(0), getTxs(100)]);
-      const txs = txBatches.flat();
-      const oldTxIndex = txs.findIndex(tx => tx.block_timestamp < yesterdayTimestamp + 3600000000);
-      const relevantTxs = txs.slice(0, oldTxIndex);
-      const xCallTransactions = relevantTxs.filter(tx => tx.method === 'recvPacket' || tx.method === 'crossTransfer');
+      const txBatches: any[] = [];
 
+      for (let i = 0; i < 10; i++) {
+        const txs: any[] = await getTxs(i * 100, 100);
+        const last24hoursIndex = txs.findIndex(tx => tx.created_at * 1000 < yesterdayTimestamp);
+        if (last24hoursIndex >= 0) {
+          txs.splice(last24hoursIndex);
+          txBatches.push(...txs);
+          break;
+        }
+
+        txBatches.push(...txs);
+      }
+
+      const filtered = txBatches.filter(tx => tx.status === 'executed');
+
+      const transactionsByHour = countTransactionsByHour(filtered);
       return {
-        transactionCount: xCallTransactions.length,
-        data: countTransactionsByHour(xCallTransactions),
+        transactionCount: filtered.length,
+        data: transactionsByHour,
       };
     },
+
     placeholderData: keepPreviousData,
-    refetchInterval: 30000,
+    refetchInterval: 100000,
   });
 }

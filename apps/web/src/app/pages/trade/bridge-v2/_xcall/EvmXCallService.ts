@@ -212,7 +212,7 @@ export class EvmXCallService implements XCallService {
       const hash = await this.walletClient.writeContract(request);
 
       if (hash) {
-        return { sourceTransactionHash: hash };
+        return hash;
       }
     }
   }

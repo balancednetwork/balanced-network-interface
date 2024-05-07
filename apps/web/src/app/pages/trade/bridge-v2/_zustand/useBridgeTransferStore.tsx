@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { xCallServiceActions } from './useXCallServiceStore';
 import { bridgeTransferConfirmModalActions } from './useBridgeTransferConfirmModalStore';
-import { BridgeInfo, BridgeTransferStatus, Transaction } from './types';
+import { BridgeInfo, BridgeTransferStatus } from './types';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { transactionActions, useFetchTransaction } from './useTransactionStore';
 import { useEffect } from 'react';
@@ -10,7 +10,6 @@ import {
   useBridgeTransferHistoryStore,
   useFetchBridgeTransferEvents,
 } from './useBridgeTransferHistoryStore';
-import { ArchwayXCallService } from '../_xcall/ArchwayXCallService';
 
 type BridgeTransferStore = {
   transferId: string | null;
@@ -37,46 +36,20 @@ export const bridgeTransferActions = {
     console.log('srcChainXCallService', srcChainXCallService);
     console.log('dstChainXCallService', dstChainXCallService);
 
-    let sourceTransaction: Transaction | undefined;
+    const sourceTransactionHash = await srcChainXCallService.executeTransfer(bridgeInfo);
 
-    if (srcChainXCallService instanceof ArchwayXCallService) {
-      bridgeTransferActions.setIsTransferring(true);
-
-      sourceTransaction = transactionActions.add(bridgeDirection.from, {
-        status: 'pending',
-        pendingMessage: 'Requesting cross-chain transfer...',
-        successMessage: 'Cross-chain transfer requested.',
-        errorMessage: 'Cross-chain transfer request failed',
-      });
-
-      const { sourceTransactionHash, sourceTransactionResult } =
-        (await srcChainXCallService.executeTransfer(bridgeInfo)) || {};
-
-      if (sourceTransactionHash) {
-        sourceTransaction = transactionActions.updateTx(bridgeDirection.from, sourceTransaction.id, {
-          hash: sourceTransactionHash,
-          rawTx: sourceTransactionResult,
-        });
-      } else {
-        bridgeTransferActions.setIsTransferring(false);
-        transactionActions.updateTx(bridgeDirection.from, sourceTransaction.id, {});
-      }
-    } else {
-      const { sourceTransactionHash } = (await srcChainXCallService.executeTransfer(bridgeInfo)) || {};
-
-      if (!sourceTransactionHash) {
-        bridgeTransferActions.setIsTransferring(false);
-        return;
-      }
-
-      bridgeTransferActions.setIsTransferring(true);
-      sourceTransaction = transactionActions.add(bridgeDirection.from, {
-        hash: sourceTransactionHash,
-        pendingMessage: 'Requesting cross-chain transfer...',
-        successMessage: 'Cross-chain transfer requested.',
-        errorMessage: 'Cross-chain transfer failed.',
-      });
+    if (!sourceTransactionHash) {
+      bridgeTransferActions.reset();
+      return;
     }
+
+    bridgeTransferActions.setIsTransferring(true);
+    const sourceTransaction = transactionActions.add(bridgeDirection.from, {
+      hash: sourceTransactionHash,
+      pendingMessage: 'Requesting cross-chain transfer...',
+      successMessage: 'Cross-chain transfer requested.',
+      errorMessage: 'Cross-chain transfer failed.',
+    });
 
     if (sourceTransaction && sourceTransaction.hash) {
       const blockHeight = (await dstChainXCallService.fetchBlockHeight()) - 1n;

@@ -171,7 +171,7 @@ export class ArchwayXCallService implements XCallService {
 
       const executeTransaction = async (msg: any, contract: string, fee: StdFee | 'auto', assetToBridge?: any) => {
         try {
-          const txResult = await this.signingClient.execute(
+          const hash = await this.signingClient.executeSync(
             account,
             contract,
             msg,
@@ -187,9 +187,7 @@ export class ArchwayXCallService implements XCallService {
                 : undefined,
           );
 
-          if (txResult) {
-            return { sourceTransactionHash: txResult.transactionHash, sourceTransactionResult: txResult };
-          }
+          return hash;
         } catch (e) {
           console.error(e);
         }

@@ -26,7 +26,5 @@ export interface XCallService {
   fetchBlockHeight(): Promise<bigint>;
   fetchSourceEvents(transfer: BridgeTransfer): Promise<XCallEventMap>;
   fetchDestinationEventsByBlock(blockHeight: bigint): Promise<XCallEvent[]>;
-  executeTransfer(
-    bridgeInfo: BridgeInfo,
-  ): Promise<{ sourceTransactionHash: string; sourceTransactionResult?: any } | undefined>;
+  executeTransfer(bridgeInfo: BridgeInfo): Promise<string | undefined>;
 }

@@ -218,7 +218,7 @@ export class IconXCallService implements XCallService {
       const { result: hash } = txResult || {};
 
       if (hash) {
-        return { sourceTransactionHash: hash };
+        return hash;
       }
     }
   }

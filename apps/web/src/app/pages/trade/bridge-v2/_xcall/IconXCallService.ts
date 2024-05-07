@@ -1,16 +1,16 @@
 import bnJs from 'bnJs';
+import IconService, { Converter, BigNumber } from 'icon-sdk-js';
+
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { BridgeInfo, BridgeTransfer, TransactionStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
 
 import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens';
 
-import { iconService } from 'app/_xcall/_icon/utils';
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
 
 import { fetchTxResult } from 'app/_xcall/_icon/utils';
 import { XCallService } from './types';
-import { Converter } from 'icon-sdk-js';
 
 export const getICONEventSignature = (eventName: XCallEventType) => {
   switch (eventName) {
@@ -36,13 +36,15 @@ export const getICONEventSignature = (eventName: XCallEventType) => {
 
 export class IconXCallService implements XCallService {
   xChainId: XChainId;
-  iconService: any;
+  publicClient: IconService;
+  walletClient: IconService; // reserved for future use
   changeShouldLedgerSign: any;
 
   constructor(xChainId: XChainId, serviceConfig: any) {
-    const { iconService, changeShouldLedgerSign } = serviceConfig;
+    const { publicClient, walletClient, changeShouldLedgerSign } = serviceConfig;
     this.xChainId = xChainId;
-    this.iconService = iconService;
+    this.publicClient = publicClient;
+    this.walletClient = walletClient;
     this.changeShouldLedgerSign = changeShouldLedgerSign;
   }
 
@@ -52,18 +54,17 @@ export class IconXCallService implements XCallService {
       noRollback: 0n,
     });
   }
-
   async fetchBlockHeight() {
-    const lastBlock = await iconService.getLastBlock().execute();
+    const lastBlock = await this.publicClient.getLastBlock().execute();
     return BigInt(lastBlock.height);
   }
-
   async getBlock(blockHeight: bigint) {
-    const block = await this.iconService.getBlockByHeight(Number(blockHeight)).execute();
+    const block = await this.publicClient.getBlockByHeight(new BigNumber(blockHeight.toString())).execute();
     return block;
   }
 
   async getTx(txHash: string) {
+    //TODO: update to use this.publicClient
     return await fetchTxResult(txHash);
   }
 

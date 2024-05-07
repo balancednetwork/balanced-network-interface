@@ -66,9 +66,13 @@ export const useCreateXCallService = (xChainId: XChainId) => {
   useEffect(() => {
     const setupXCallService = (xChainId: XChainId) => {
       if (xChainId === '0x1.icon' || xChainId === '0x2.icon') {
-        createXCallService(IconXCallService, xChainId, { iconService, changeShouldLedgerSign });
+        createXCallService(IconXCallService, xChainId, {
+          publicClient: iconService,
+          walletClient: iconService,
+          changeShouldLedgerSign,
+        });
       } else if (xChainId === 'archway-1' || xChainId === 'archway') {
-        createXCallService(ArchwayXCallService, xChainId, { client, signingClient });
+        createXCallService(ArchwayXCallService, xChainId, { publicClient: client, walletClient: signingClient });
       } else if (xChainId === '0xa86a.avax' || xChainId === '0xa869.fuji') {
         createXCallService(EvmXCallService, xChainId, { publicClient, walletClient });
       }

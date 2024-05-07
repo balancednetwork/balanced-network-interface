@@ -1,6 +1,8 @@
 import { sha256 } from '@cosmjs/crypto';
 import { toHex } from '@cosmjs/encoding';
-import { StdFee } from '@archwayhq/arch3.js';
+import { ArchwayClient, StdFee } from '@archwayhq/arch3.js';
+
+import { XSigningArchwayClient } from 'lib/archway/XSigningArchwayClient';
 
 import { archway, xChainMap } from 'app/pages/trade/bridge-v2/_config/xChains';
 import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens';
@@ -9,38 +11,38 @@ import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
 import { XCallService } from './types';
-import { BridgeInfo, BridgeTransfer, TransactionStatus, XCallEvent, Transaction } from '../_zustand/types';
+import { BridgeInfo, BridgeTransfer, TransactionStatus, XCallEvent } from '../_zustand/types';
 
 export class ArchwayXCallService implements XCallService {
   xChainId: XChainId;
-  client: any;
-  signingClient: any;
+  publicClient: ArchwayClient;
+  walletClient: XSigningArchwayClient;
 
   constructor(xChainId: XChainId, serviceConfig: any) {
-    const { client, signingClient } = serviceConfig;
+    const { publicClient, walletClient } = serviceConfig;
     this.xChainId = xChainId;
-    this.client = client;
-    this.signingClient = signingClient;
+    this.publicClient = publicClient;
+    this.walletClient = walletClient;
   }
 
   async fetchXCallFee(to: XChainId, rollback: boolean) {
-    return await this.client.queryContractSmart(archway.contracts.xCall, {
+    return await this.publicClient.queryContractSmart(archway.contracts.xCall, {
       get_fee: { nid: xChainMap[to].xChainId, rollback },
     });
   }
 
   async fetchBlockHeight() {
-    const height = await this.client.getHeight();
+    const height = await this.publicClient.getHeight();
     return BigInt(height);
   }
 
   async getBlock(blockHeight: bigint) {
-    const block = await this.client.getBlock(Number(blockHeight));
+    const block = await this.publicClient.getBlock(Number(blockHeight));
     return block;
   }
 
   async getTx(txHash) {
-    const tx = await this.client.getTx(txHash);
+    const tx = await this.publicClient.getTx(txHash);
     return tx;
   }
 
@@ -136,17 +138,19 @@ export class ArchwayXCallService implements XCallService {
 
     if (block && block.txs.length > 0) {
       for (const rawTx of block.txs) {
-        const txHash = toHex(sha256(Buffer.from(rawTx, 'base64')));
+        // TODO: Buffer.from(rawTx) is correct? or Buffer.from(rawTx, 'base64')?
+        const txHash = toHex(sha256(Buffer.from(rawTx)));
         const tx = await this.getTx(txHash);
+        if (tx) {
+          const callMessageEventLog = await this.filterCallMessageEventLog(tx.events);
+          const callExecutedEventLog = await this.filterCallExecutedEventLog(tx.events);
 
-        const callMessageEventLog = await this.filterCallMessageEventLog(tx.events);
-        const callExecutedEventLog = await this.filterCallExecutedEventLog(tx.events);
-
-        if (callMessageEventLog) {
-          events.push(this.parseCallMessageEventLog(callMessageEventLog));
-        }
-        if (callExecutedEventLog) {
-          events.push(this.parseCallExecutedEventLog(callExecutedEventLog));
+          if (callMessageEventLog) {
+            events.push(this.parseCallMessageEventLog(callMessageEventLog));
+          }
+          if (callExecutedEventLog) {
+            events.push(this.parseCallExecutedEventLog(callExecutedEventLog));
+          }
         }
       }
     } else {
@@ -165,13 +169,13 @@ export class ArchwayXCallService implements XCallService {
       isDenom,
     } = bridgeInfo;
 
-    if (this.signingClient) {
+    if (this.walletClient) {
       const tokenAddress = currencyAmountToBridge.wrapped.currency.address;
       const destination = `${bridgeDirection.to}/${destinationAddress}`;
 
       const executeTransaction = async (msg: any, contract: string, fee: StdFee | 'auto', assetToBridge?: any) => {
         try {
-          const hash = await this.signingClient.executeSync(
+          const hash = await this.walletClient.executeSync(
             account,
             contract,
             msg,

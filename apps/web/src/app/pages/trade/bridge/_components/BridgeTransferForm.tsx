@@ -41,7 +41,6 @@ const ConnectWrap = styled.div`
 `;
 
 export default function BridgeTransferForm({ openModal }) {
-  const { account } = useIconReact();
   const crossChainWallet = useCrossChainWalletBalances();
 
   const bridgeState = useBridgeState();
@@ -71,10 +70,10 @@ export default function BridgeTransferForm({ openModal }) {
     }
   }, [bridgeDirection.to, onChangeRecipient, signedInWallets]);
 
-  const { errorMessage, isAvailable, selectedTokenWalletBalance } = useDerivedBridgeInfo();
+  const { errorMessage, selectedTokenWalletBalance, account } = useDerivedBridgeInfo();
 
   const handleSubmit = async () => {
-    if (signedInWallets.some(wallet => wallet.chainId === bridgeDirection.from)) {
+    if (account) {
       openModal();
     } else {
       toggleWalletModal();
@@ -111,7 +110,6 @@ export default function BridgeTransferForm({ openModal }) {
 
           <Flex>
             <CurrencyInputPanel
-              account={account}
               value={typedValue}
               currency={currencyToBridge}
               selectedCurrency={currencyToBridge}
@@ -167,9 +165,13 @@ export default function BridgeTransferForm({ openModal }) {
           </Flex>
 
           <Flex alignItems="center" justifyContent="center" mt={4}>
-            <Button onClick={handleSubmit} disabled={!isAvailable || !!errorMessage}>
-              {errorMessage ? errorMessage : <Trans>Transfer</Trans>}
-            </Button>
+            {account ? (
+              <Button onClick={handleSubmit} disabled={!!errorMessage}>
+                {errorMessage ? errorMessage : <Trans>Transfer</Trans>}
+              </Button>
+            ) : (
+              <Button onClick={handleSubmit}>{<Trans>Connect Wallet</Trans>}</Button>
+            )}
           </Flex>
         </AutoColumn>
       </BrightPanel>

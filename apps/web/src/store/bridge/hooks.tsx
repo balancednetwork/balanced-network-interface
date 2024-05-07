@@ -122,37 +122,34 @@ export function useDerivedBridgeInfo() {
   const signedInWallets = useSignedInWallets();
   const crossChainWallet = useCrossChainWalletBalances();
 
+  const account = signedInWallets.find(w => w.chainId === bridgeDirection.from)?.address;
+
   const errorMessage = useMemo(() => {
-    if (currencyAmountToBridge) {
-      if (currencyAmountToBridge.equalTo(0)) {
-        return t`Enter amount`;
-      } else {
-        if (
-          signedInWallets.some(
-            wallet =>
-              wallet.chainId === bridgeDirection.from &&
-              (!crossChainWallet[bridgeDirection.from]?.[currencyAmountToBridge.currency.address] ||
-                crossChainWallet[bridgeDirection.from]?.[currencyAmountToBridge.currency.address]?.lessThan(
-                  currencyAmountToBridge,
-                )),
-          )
-        ) {
-          return t`Insufficient ${currencyAmountToBridge.currency.symbol}`;
-        } else {
-          return undefined;
-        }
-      }
-    } else {
+    if (!account) return t`Connect wallet`;
+
+    if (!currencyAmountToBridge) return t`Enter amount`;
+
+    if (!recipient) return t`Enter recipient`;
+
+    if (currencyAmountToBridge.equalTo(0)) {
       return t`Enter amount`;
+    } else {
+      if (
+        signedInWallets.some(
+          wallet =>
+            wallet.chainId === bridgeDirection.from &&
+            (!crossChainWallet[bridgeDirection.from]?.[currencyAmountToBridge.currency.address] ||
+              crossChainWallet[bridgeDirection.from]?.[currencyAmountToBridge.currency.address]?.lessThan(
+                currencyAmountToBridge,
+              )),
+        )
+      ) {
+        return t`Insufficient ${currencyAmountToBridge.currency.symbol}`;
+      } else {
+        return undefined;
+      }
     }
-  }, [bridgeDirection.from, crossChainWallet, currencyAmountToBridge, signedInWallets]);
-
-  const isAvailable = useMemo(() => {
-    if (!signedInWallets.some(wallet => wallet.chainId === bridgeDirection.to)) return false;
-    if (recipient === '') return false;
-
-    return true;
-  }, [bridgeDirection.to, recipient, signedInWallets]);
+  }, [bridgeDirection.from, crossChainWallet, currencyAmountToBridge, signedInWallets, account, recipient]);
 
   const selectedTokenWalletBalance = React.useMemo(() => {
     if (currencyToBridge) {
@@ -162,13 +159,10 @@ export function useDerivedBridgeInfo() {
 
   const isDenom = currencyAmountToBridge && isDenomAsset(currencyAmountToBridge.currency);
 
-  const account = signedInWallets.find(w => w.chainId === bridgeDirection.from)?.address;
-
   const isLiquidsARCH = Object.values(sARCH).some(token => token.address === currencyToBridge?.wrapped.address);
 
   return {
     errorMessage,
-    isAvailable,
     currencyAmountToBridge,
     selectedTokenWalletBalance,
     isDenom,

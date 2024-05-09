@@ -41,13 +41,13 @@ import { useCurrentXCallState, useSetNotPristine, useSetXCallState } from 'store
 import { formatBigNumber, formatPercent, maxAmountSpend, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import Divider from '../Divider';
-import ModalContent from '../ModalContent';
-import Spinner from '../Spinner';
-import StabilityFund from '../StabilityFund';
-import { XCallDescription } from '../XCallDescription';
-import { BrightPanel, swapMessage } from './utils';
-import XCallSwapModal from './XCallSwapModal';
+import Divider from 'app/components/Divider';
+import ModalContent from 'app/components/ModalContent';
+import Spinner from 'app/components/Spinner';
+import StabilityFund from 'app/components/StabilityFund';
+import { XCallDescription } from 'app/components/XCallDescription';
+import { BrightPanel, swapMessage } from 'app/components/trade/utils';
+import XCallSwapModal from 'app/components/trade/XCallSwapModal';
 import { isXToken } from 'app/pages/trade/bridge-v2/utils';
 import useXCallFee from 'app/pages/trade/bridge-v2/_hooks/useXCallFee';
 import useXCallProtocol from 'app/pages/trade/bridge-v2/_hooks/useXCallProtocol';

@@ -7,7 +7,8 @@ import { Box, Flex } from 'rebass';
 import { XCallActivityItem } from 'app/pages/trade/bridge-v2/types';
 import { Typography } from 'app/theme';
 import { useSignedInWallets } from 'store/wallet/hooks';
-import { useXCallActivityItems, useXCallStats } from 'store/xCall/hooks';
+import { useXCallActivityItems } from 'store/xCall/hooks';
+import { useXCallStats } from '../../bridge-v2/_hooks/useXCallStats';
 
 import Spinner from '../../../../components/Spinner';
 import ActivityBarChart from './ActivityBarChart';

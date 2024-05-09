@@ -5,7 +5,7 @@ import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
 import { Typography } from 'app/theme';
-import { useXCallStats } from 'store/xCall/hooks';
+import { useXCallStats } from '../_hooks/useXCallStats';
 
 import Spinner from '../../../../components/Spinner';
 import ActivityBarChart from '../../bridge/_components/ActivityBarChart';

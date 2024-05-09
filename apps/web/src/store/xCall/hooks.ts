@@ -251,11 +251,13 @@ export function useFlagRollBackReady(): (chain: XChainId, sn: number) => void {
   );
 }
 
+// TODO: deprecated, remove later
 export type xCallActivityDataType = {
   hour: string;
   count: number;
 };
 
+// TODO: deprecated, remove later
 export function useXCallStats(): UseQueryResult<{ transactionCount: number; data: xCallActivityDataType[] }> {
   const yesterdayTimestamp = new Date().getTime() - ONE_DAY_DURATION;
   async function getTxs(skip: number, limit: number) {

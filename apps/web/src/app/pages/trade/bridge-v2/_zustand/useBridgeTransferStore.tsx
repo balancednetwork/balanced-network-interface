@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { xCallServiceActions } from './useXCallServiceStore';
 import { bridgeTransferConfirmModalActions } from './useBridgeTransferConfirmModalStore';
-import { BridgeInfo, BridgeTransfer, BridgeTransferStatus } from './types';
+import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, BridgeTransferType } from './types';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { transactionActions, useFetchTransaction } from './useTransactionStore';
 import { useEffect } from 'react';
@@ -57,6 +57,7 @@ export const bridgeTransferActions = {
 
       const transfer: BridgeTransfer = {
         id: `${bridgeDirection.from}/${sourceTransaction.hash}`,
+        type: BridgeTransferType.BRIDGE,
         sourceChainId: bridgeDirection.from,
         destinationChainId: bridgeDirection.to,
         sourceTransaction,

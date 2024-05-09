@@ -65,8 +65,14 @@ export type XCallEvent = XCallSourceEvent | XCallDestinationEvent;
 
 export type XCallEventMap = Partial<Record<XCallEventType, XCallEvent>>;
 
+export enum BridgeTransferType {
+  SWAP = 'swap',
+  BRIDGE = 'bridge',
+}
+
 export type BridgeTransfer = {
   id: string;
+  type: BridgeTransferType;
   sourceChainId: XChainId;
   destinationChainId: XChainId;
   // bridgeInfo: BridgeInfo;

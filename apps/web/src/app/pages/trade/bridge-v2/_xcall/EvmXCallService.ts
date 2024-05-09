@@ -175,6 +175,8 @@ export class EvmXCallService implements XCallService {
     return events;
   }
 
+  async approve(token, owner, spender, currencyAmountToApprove) {}
+
   async executeTransfer(bridgeInfo: BridgeInfo) {
     const { bridgeDirection, currencyAmountToBridge, recipient: destinationAddress, account, xCallFee } = bridgeInfo;
 

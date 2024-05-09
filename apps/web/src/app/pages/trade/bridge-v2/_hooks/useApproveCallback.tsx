@@ -27,6 +27,8 @@ import { NATIVE_ADDRESS } from 'constants/index';
 import useXWallet from './useXWallet';
 import { openToast } from 'btp/src/connectors/transactionToast';
 import { TransactionStatus } from 'store/transactions/hooks';
+import { xCallServiceActions } from '../_zustand/useXCallServiceStore';
+import { transactionActions } from '../_zustand/useTransactionStore';
 
 export const FAST_INTERVAL = 10000;
 
@@ -186,6 +188,9 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
 
       try {
         const hash = await walletClient?.writeContract({ ...request, account: account as `0x${string}` });
+
+        //add transaction - onSuccess(refetch) callback
+
         openToast({
           id: hash,
           message: t`Approving ${token.symbol} for cross-chain transfer...`,
@@ -221,39 +226,38 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
       return undefined;
     }
 
-    if (!account) {
-      console.error('No Account');
-      return undefined;
-    }
+    // if (!account) {
+    //   console.error('No Account');
+    //   return undefined;
+    // }
 
-    if (!signingClient) {
-      console.error('No archway wallet client');
-      return undefined;
-    }
+    // if (!signingClient) {
+    //   console.error('No archway wallet client');
+    //   return undefined;
+    // }
 
-    const msg = {
-      increase_allowance: {
-        spender: spender,
-        amount: amountToApprove?.quotient ? amountToApprove?.quotient.toString() : MaxUint256.toString(),
-      },
-    };
+    const xChainId = token.xChainId;
+    const xCallService = xCallServiceActions.getXCallService(xChainId);
 
     try {
-      // !TODO: breaking the execution into two stages. approving & approved
-      const res = await signingClient.execute(account, token.address, msg, getFeeParam(400000));
-      await refetch();
-      openToast({
-        message: t`${token.symbol} approved for cross-chain transfer.`,
-        transactionStatus: TransactionStatus.success,
-      });
-      return res.transactionHash;
+      const hash = await xCallService.approve(token, account as `0x${string}`, spender, amountToApprove);
+
+      if (hash) {
+        transactionActions.add(xChainId, {
+          hash: hash,
+          pendingMessage: 'Requesting approve for cross-chain transfer...',
+          successMessage: t`${token.symbol} approved for cross-chain transfer.`,
+          errorMessage: t`${token.symbol} transfer approval failed.`,
+          onSuccess: refetch,
+        });
+      }
     } catch (e) {
       openToast({
         message: t`${token.symbol} transfer approval failed.`,
         transactionStatus: TransactionStatus.failure,
       });
     }
-  }, [spender, token, account, amountToApprove, signingClient, refetch]);
+  }, [spender, token, account, amountToApprove, refetch]);
 
   const approveCallback = useCallback(() => {
     if (!xChainType) return;

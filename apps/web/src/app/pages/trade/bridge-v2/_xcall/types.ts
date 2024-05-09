@@ -1,4 +1,4 @@
-import { IXCallFee, XChainId } from 'app/pages/trade/bridge-v2/types';
+import { IXCallFee, XChainId, XToken } from 'app/pages/trade/bridge-v2/types';
 import {
   BridgeInfo,
   BridgeTransfer,
@@ -21,6 +21,9 @@ export interface XCallService {
   // parseCallExecutedEventLog(eventLog)
 
   // updateServiceConfig(serviceConfig: any): void;
+
+  // getAllowance(token: XToken, owner: string | null, spender: string): Promise<string>;
+  approve(token, owner, spender, currencyAmountToApprove);
 
   fetchXCallFee(to: XChainId, rollback: boolean): Promise<IXCallFee>;
   fetchBlockHeight(): Promise<bigint>;

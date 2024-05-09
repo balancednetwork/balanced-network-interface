@@ -177,6 +177,8 @@ export class IconXCallService implements XCallService {
     return events;
   }
 
+  async approve(token, owner, spender, currencyAmountToApprove) {}
+
   async executeTransfer(bridgeInfo: BridgeInfo) {
     const {
       bridgeDirection,

@@ -75,7 +75,7 @@ export const transactionActions = {
     return newItem;
   },
 
-  updateTx: (xChainId, id, transaction) => {
+  updateTx: async (xChainId, id, transaction) => {
     const { hash, rawTx } = transaction;
     const status = xCallServiceActions.getXCallService(xChainId).deriveTxStatus(rawTx);
 
@@ -111,6 +111,10 @@ export const transactionActions = {
           ),
           autoClose: 5000,
         });
+
+        if (_transaction.onSuccess) {
+          await _transaction.onSuccess();
+        }
       }
       if (status === TransactionStatus.failure) {
         const toastProps = {

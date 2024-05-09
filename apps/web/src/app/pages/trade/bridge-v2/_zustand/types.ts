@@ -41,6 +41,7 @@ export type Transaction = {
   successMessage?: string;
   errorMessage?: string;
   redirectOnSuccess?: string; // URL to redirect on success
+  onSuccess?: () => void; // Callback on success
 
   rawTx?: any;
 };

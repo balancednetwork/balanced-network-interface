@@ -9,9 +9,10 @@ import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens
 import { getFeeParam } from 'app/_xcall/archway/utils';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 
-import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
+import { XCallEventType, XChainId, XToken } from 'app/pages/trade/bridge-v2/types';
 import { XCallService } from './types';
 import { BridgeInfo, BridgeTransfer, TransactionStatus, XCallEvent } from '../_zustand/types';
+import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
 
 export class ArchwayXCallService implements XCallService {
   xChainId: XChainId;
@@ -157,6 +158,23 @@ export class ArchwayXCallService implements XCallService {
       return null;
     }
     return events;
+  }
+
+  async approve(token: XToken, owner: string, spender: string, currencyAmountToApprove: CurrencyAmount<XToken>) {
+    const msg = {
+      increase_allowance: {
+        spender: spender,
+        amount: currencyAmountToApprove?.quotient
+          ? currencyAmountToApprove?.quotient.toString()
+          : MaxUint256.toString(),
+      },
+    };
+
+    const hash = await this.walletClient.executeSync(owner, token.address, msg, getFeeParam(400000));
+
+    if (hash) {
+      return hash;
+    }
   }
 
   async executeTransfer(bridgeInfo: BridgeInfo) {

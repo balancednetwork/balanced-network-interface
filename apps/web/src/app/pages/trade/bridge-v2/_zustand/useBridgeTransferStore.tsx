@@ -55,11 +55,15 @@ export const bridgeTransferActions = {
       const blockHeight = (await dstChainXCallService.fetchBlockHeight()) - 1n;
       console.log('blockHeight', blockHeight);
 
+      const _tokenSymbol = bridgeInfo.currencyAmountToBridge.currency.symbol;
+      const _formattedAmount = bridgeInfo.currencyAmountToBridge.toFixed(2);
       const transfer: BridgeTransfer = {
         id: `${bridgeDirection.from}/${sourceTransaction.hash}`,
         type: BridgeTransferType.BRIDGE,
         sourceChainId: bridgeDirection.from,
         destinationChainId: bridgeDirection.to,
+        descriptionAction: `Transfer ${_tokenSymbol}`,
+        descriptionAmount: `${_formattedAmount} ${_tokenSymbol}`,
         sourceTransaction,
         // bridgeInfo,
         status: BridgeTransferStatus.TRANSFER_REQUESTED,

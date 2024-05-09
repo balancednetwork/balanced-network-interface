@@ -7,7 +7,7 @@ import { getNetworkDisplayName } from 'app/pages/trade/bridge-v2/utils';
 import { Typography } from 'app/theme';
 import ArrowIcon from 'assets/icons/arrow-white.svg';
 
-import Spinner from '../../../../components/Spinner';
+import Spinner from 'app/components/Spinner';
 import { useXCallEventScanner } from '../_zustand/useXCallEventStore';
 import { useFetchTransaction } from '../_zustand/useTransactionStore';
 import { bridgeTransferHistoryActions, useFetchBridgeTransferEvents } from '../_zustand/useBridgeTransferHistoryStore';
@@ -116,19 +116,6 @@ const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) =
     }
   }, [transfer]);
 
-  const { descriptionAction, descriptionAmount } = useMemo(() => {
-    if (!transfer) {
-      return {};
-    }
-
-    // TODO: make new fields in BridgeTransfer to store this info
-    // const token = transfer.bridgeInfo.currencyAmountToBridge.currency.symbol;
-    // const amount = transfer.bridgeInfo.currencyAmountToBridge.toFixed(2);
-    const token = 'token';
-    const amount = 'amount';
-    return { descriptionAction: `Transfer ${token}`, descriptionAmount: `${amount} ${token}` };
-  }, [transfer]);
-
   return (
     <Wrap>
       <Flex alignItems="center">
@@ -138,10 +125,10 @@ const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) =
       </Flex>
       <Flex justifyContent="center" flexDirection="column">
         <Typography fontWeight={700} color="text">
-          {descriptionAction}
+          {transfer.descriptionAction}
         </Typography>
         <Typography opacity={0.75} fontSize={14}>
-          {descriptionAmount}
+          {transfer.descriptionAmount}
         </Typography>
       </Flex>
       <Flex justifyContent="center" flexDirection="column" alignItems="flex-end" className="status-check">

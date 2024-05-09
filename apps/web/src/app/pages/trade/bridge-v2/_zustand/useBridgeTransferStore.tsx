@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { xCallServiceActions } from './useXCallServiceStore';
 import { bridgeTransferConfirmModalActions } from './useBridgeTransferConfirmModalStore';
-import { BridgeInfo, BridgeTransferStatus } from './types';
+import { BridgeInfo, BridgeTransfer, BridgeTransferStatus } from './types';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { transactionActions, useFetchTransaction } from './useTransactionStore';
 import { useEffect } from 'react';
@@ -55,10 +55,12 @@ export const bridgeTransferActions = {
       const blockHeight = (await dstChainXCallService.fetchBlockHeight()) - 1n;
       console.log('blockHeight', blockHeight);
 
-      const transfer = {
+      const transfer: BridgeTransfer = {
         id: `${bridgeDirection.from}/${sourceTransaction.hash}`,
-        bridgeInfo,
+        sourceChainId: bridgeDirection.from,
+        destinationChainId: bridgeDirection.to,
         sourceTransaction,
+        // bridgeInfo,
         status: BridgeTransferStatus.TRANSFER_REQUESTED,
         events: {},
         destinationChainInitialBlockHeight: blockHeight,
@@ -105,8 +107,8 @@ export const BridgeTransferStatusUpdater = () => {
   const { transferId } = useBridgeTransferStore();
   const transfer = bridgeTransferHistoryActions.get(transferId);
 
-  useXCallEventScanner(transfer?.bridgeInfo?.bridgeDirection.from);
-  useXCallEventScanner(transfer?.bridgeInfo?.bridgeDirection.to);
+  useXCallEventScanner(transfer?.sourceChainId);
+  useXCallEventScanner(transfer?.destinationChainId);
 
   const { rawTx } = useFetchTransaction(transfer?.sourceTransaction);
   const { events } = useFetchBridgeTransferEvents(transfer);

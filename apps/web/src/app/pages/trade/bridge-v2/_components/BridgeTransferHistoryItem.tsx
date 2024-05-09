@@ -72,14 +72,12 @@ const FailedX = styled(Box)`
 `;
 
 const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) => {
-  const {
-    bridgeInfo: { bridgeDirection },
-  } = transfer;
-  useXCallEventScanner(bridgeDirection.from);
-  useXCallEventScanner(bridgeDirection.to);
+  const { sourceChainId, destinationChainId } = transfer;
+  useXCallEventScanner(sourceChainId);
+  useXCallEventScanner(destinationChainId);
 
-  useCreateXCallService(bridgeDirection.from);
-  useCreateXCallService(bridgeDirection.to);
+  useCreateXCallService(sourceChainId);
+  useCreateXCallService(destinationChainId);
 
   const { rawTx } = useFetchTransaction(transfer?.sourceTransaction);
   const { events } = useFetchBridgeTransferEvents(transfer);
@@ -123,17 +121,20 @@ const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) =
       return {};
     }
 
-    const token = transfer.bridgeInfo.currencyAmountToBridge.currency.symbol;
-    const amount = transfer.bridgeInfo.currencyAmountToBridge.toFixed(2);
+    // TODO: make new fields in BridgeTransfer to store this info
+    // const token = transfer.bridgeInfo.currencyAmountToBridge.currency.symbol;
+    // const amount = transfer.bridgeInfo.currencyAmountToBridge.toFixed(2);
+    const token = 'token';
+    const amount = 'amount';
     return { descriptionAction: `Transfer ${token}`, descriptionAmount: `${amount} ${token}` };
   }, [transfer]);
 
   return (
     <Wrap>
       <Flex alignItems="center">
-        {getNetworkDisplayName(transfer.bridgeInfo.bridgeDirection.from)}
+        {getNetworkDisplayName(sourceChainId)}
         <ArrowIcon width="13px" style={{ margin: '0 7px' }} />
-        {getNetworkDisplayName(transfer.bridgeInfo.bridgeDirection.to)}
+        {getNetworkDisplayName(destinationChainId)}
       </Flex>
       <Flex justifyContent="center" flexDirection="column">
         <Typography fontWeight={700} color="text">

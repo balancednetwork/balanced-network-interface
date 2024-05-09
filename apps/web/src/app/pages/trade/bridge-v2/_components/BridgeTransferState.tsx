@@ -24,15 +24,15 @@ const BridgeTransferState = () => {
 
     switch (transfer.status) {
       case BridgeTransferStatus.TRANSFER_REQUESTED:
-        return `Awaiting confirmation on ${getNetworkDisplayName(transfer.bridgeInfo.bridgeDirection.from)}`;
+        return `Awaiting confirmation on ${getNetworkDisplayName(transfer.sourceChainId)}`;
       case BridgeTransferStatus.TRANSFER_FAILED:
         return `Transfer failed.`;
       case BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT:
-        return `Awaiting confirmation on ${getNetworkDisplayName(transfer.bridgeInfo.bridgeDirection.from)}`;
+        return `Awaiting confirmation on ${getNetworkDisplayName(transfer.sourceChainId)}`;
       case BridgeTransferStatus.CALL_MESSAGE_SENT:
-        return `Awaiting execution on ${getNetworkDisplayName(transfer.bridgeInfo.bridgeDirection.to)}`;
+        return `Awaiting execution on ${getNetworkDisplayName(transfer.destinationChainId)}`;
       case BridgeTransferStatus.CALL_MESSAGE:
-        return `Awaiting execution on ${getNetworkDisplayName(transfer.bridgeInfo.bridgeDirection.to)}`;
+        return `Awaiting execution on ${getNetworkDisplayName(transfer.destinationChainId)}`;
       case BridgeTransferStatus.CALL_EXECUTED:
         return `Call executed.`;
       default:

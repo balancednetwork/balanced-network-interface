@@ -109,6 +109,7 @@ export const bridgeTransferHistoryActions = {
   },
 
   add: (transfer: BridgeTransfer) => {
+    // TODO: check if transfer already exists
     useBridgeTransferHistoryStore.setState(state => ({
       transfers: [transfer, ...state.transfers],
     }));
@@ -119,7 +120,7 @@ export const bridgeTransferHistoryActions = {
       if (!transfer) return state;
 
       const newSourceTransactionStatus = xCallServiceActions
-        .getXCallService(transfer.bridgeInfo.bridgeDirection.from)
+        .getXCallService(transfer.sourceChainId)
         .deriveTxStatus(rawTx);
 
       const newSourceTransaction = {
@@ -179,7 +180,7 @@ export const bridgeTransferHistoryActions = {
   },
 };
 
-export const useFetchBridgeTransferEvents = transfer => {
+export const useFetchBridgeTransferEvents = (transfer?: BridgeTransfer) => {
   const { data: events, isLoading } = useQuery({
     queryKey: ['bridge-transfer-events', transfer?.id],
     queryFn: async () => {
@@ -188,14 +189,11 @@ export const useFetchBridgeTransferEvents = transfer => {
         return null;
       }
 
-      const {
-        bridgeInfo: { bridgeDirection },
-        sourceTransaction,
-      } = transfer;
+      const { sourceChainId, destinationChainId, sourceTransaction } = transfer;
 
       let events: XCallEventMap = {};
       if (transfer.status === BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT) {
-        const srcChainXCallService = xCallServiceActions.getXCallService(bridgeDirection.from);
+        const srcChainXCallService = xCallServiceActions.getXCallService(sourceChainId);
         events = await srcChainXCallService.fetchSourceEvents(sourceTransaction);
       } else if (
         transfer.status === BridgeTransferStatus.CALL_MESSAGE_SENT ||
@@ -207,7 +205,7 @@ export const useFetchBridgeTransferEvents = transfer => {
         console.log('callMessageSentEvent', callMessageSentEvent);
         if (callMessageSentEvent) {
           console.log('callMessageSentEvent', callMessageSentEvent);
-          events = xCallEventActions.getDestinationEvents(bridgeDirection.to, callMessageSentEvent.sn);
+          events = xCallEventActions.getDestinationEvents(destinationChainId, callMessageSentEvent.sn);
           console.log('events', events);
         }
       }
@@ -217,8 +215,8 @@ export const useFetchBridgeTransferEvents = transfer => {
     refetchInterval: 2000,
     enabled:
       !!transfer?.id &&
-      transfer.status !== BridgeTransferStatus.CALL_EXECUTED &&
-      transfer.status !== BridgeTransferStatus.TRANSFER_FAILED,
+      transfer?.status !== BridgeTransferStatus.CALL_EXECUTED &&
+      transfer?.status !== BridgeTransferStatus.TRANSFER_FAILED,
   });
 
   return {

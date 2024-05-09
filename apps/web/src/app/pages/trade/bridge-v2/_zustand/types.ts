@@ -67,9 +67,9 @@ export type XCallEventMap = Partial<Record<XCallEventType, XCallEvent>>;
 
 export type BridgeTransfer = {
   id: string;
-  // sourceChainId: XChainId;
-  // destinationChainId: XChainId;
-  bridgeInfo: BridgeInfo;
+  sourceChainId: XChainId;
+  destinationChainId: XChainId;
+  // bridgeInfo: BridgeInfo;
   sourceTransaction: Transaction;
   events: XCallEventMap;
   status: BridgeTransferStatus;

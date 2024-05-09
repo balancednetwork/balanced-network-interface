@@ -34,12 +34,12 @@ import { useAddOriginEvent, useCurrentXCallState } from 'store/xCall/hooks';
 import { formatBigNumber, shortenAddress, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import { Button, TextButton } from '../Button';
-import Modal from '../Modal';
-import Spinner from '../Spinner';
-import { swapMessage } from './utils';
-import XCallEventManager from './XCallEventManager';
-import ModalContent from '../ModalContent';
+import { Button, TextButton } from '../../../components/Button';
+import Modal from '../../../components/Modal';
+import Spinner from '../../../components/Spinner';
+import { swapMessage } from '../../../components/trade/utils';
+import XCallEventManager from '../../../components/trade/XCallEventManager';
+import ModalContent from '../../../components/ModalContent';
 import useXCallFee from 'app/pages/trade/bridge-v2/_hooks/useXCallFee';
 import useXCallGasChecker from 'app/pages/trade/bridge-v2/_hooks/useXCallGasChecker';
 

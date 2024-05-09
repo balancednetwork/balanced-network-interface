@@ -47,11 +47,12 @@ import Spinner from 'app/components/Spinner';
 import StabilityFund from 'app/components/StabilityFund';
 import { XCallDescription } from 'app/components/XCallDescription';
 import { BrightPanel, swapMessage } from 'app/components/trade/utils';
-import XCallSwapModal from 'app/components/trade/XCallSwapModal';
 import { isXToken } from 'app/pages/trade/bridge-v2/utils';
 import useXCallFee from 'app/pages/trade/bridge-v2/_hooks/useXCallFee';
 import useXCallProtocol from 'app/pages/trade/bridge-v2/_hooks/useXCallProtocol';
 import useXWallet from 'app/pages/trade/bridge-v2/_hooks/useXWallet';
+
+import XCallSwapModal from './XCallSwapModal';
 
 const MemoizedStabilityFund = React.memo(StabilityFund);
 

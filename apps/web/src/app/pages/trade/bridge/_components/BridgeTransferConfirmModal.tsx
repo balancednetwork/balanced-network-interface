@@ -30,7 +30,7 @@ import Modal from 'app/components/Modal';
 import { ModalContentWrapper } from 'app/components/ModalContent';
 import Spinner from 'app/components/Spinner';
 import XCallEventManager from 'app/components/trade/XCallEventManager';
-import { presenceVariants, StyledButton as XCallButton } from 'app/components/trade/XCallSwapModal';
+import { presenceVariants, StyledButton as XCallButton } from 'app/pages/trade/_components/XCallSwapModal';
 import { StdFee } from '@archwayhq/arch3.js';
 import { getNetworkDisplayName } from 'app/pages/trade/bridge-v2/utils';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';

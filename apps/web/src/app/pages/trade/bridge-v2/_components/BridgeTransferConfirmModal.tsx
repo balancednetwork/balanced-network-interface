@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { Typography } from 'app/theme';
 import Modal from 'app/components/Modal';
 import { ModalContentWrapper } from 'app/components/ModalContent';
-import { StyledButton as XCallButton } from 'app/components/trade/XCallSwapModal';
+import { StyledButton as XCallButton } from 'app/pages/trade/_components/XCallSwapModal';
 import { Button, TextButton } from 'app/components/Button';
 import Spinner from 'app/components/Spinner';
 

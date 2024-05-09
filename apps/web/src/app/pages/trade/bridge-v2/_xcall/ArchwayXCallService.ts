@@ -1,8 +1,10 @@
 import { sha256 } from '@cosmjs/crypto';
 import { toHex } from '@cosmjs/encoding';
 import { ArchwayClient, StdFee } from '@archwayhq/arch3.js';
+import bnJs from 'bnJs';
 
 import { XSigningArchwayClient } from 'lib/archway/XSigningArchwayClient';
+import { getArchwayCounterToken, getBytesFromString } from 'app/pages/trade/bridge-v2/utils';
 
 import { archway, xChainMap } from 'app/pages/trade/bridge-v2/_config/xChains';
 import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens';
@@ -253,6 +255,89 @@ export class ArchwayXCallService implements XCallService {
         }
       }
       return transaction;
+    }
+  }
+
+  async executeSwap(swapInfo: any) {
+    const {
+      destinationChainId,
+      executionTrade,
+      receivingNetworkAddress,
+      account,
+      archwayXCallFees: xCallFee,
+    } = swapInfo;
+    const archToken = getArchwayCounterToken(executionTrade.inputAmount.currency.symbol);
+    if (!archToken || !(this.walletClient && account)) {
+      return;
+    }
+
+    const swapParams = {
+      path: executionTrade.route.pathForSwap,
+      ...(receivingNetworkAddress && { receiver: receivingNetworkAddress }),
+    };
+
+    if (['bnUSD'].includes(archToken.symbol!)) {
+      //handle icon native tokens vs spoke assets
+      const msg = {
+        cross_transfer: {
+          amount: executionTrade.inputAmount.quotient.toString(),
+          to: `${destinationChainId}/${bnJs.Router.address}`,
+          data: getBytesFromString(
+            JSON.stringify({
+              method: '_swap',
+              params: swapParams,
+            }),
+          ),
+        },
+      };
+
+      try {
+        const hash = await this.walletClient.executeSync(
+          account,
+          archway.contracts.bnUSD!,
+          msg,
+          'auto',
+          undefined,
+          xCallFee && xCallFee.rollback !== 0n
+            ? [{ amount: xCallFee?.rollback.toString(), denom: ARCHWAY_FEE_TOKEN_SYMBOL }]
+            : undefined,
+        );
+        return hash;
+      } catch (e) {
+        console.error(e);
+      }
+    } else {
+      const msg = {
+        deposit: {
+          token_address: archToken.address,
+          amount: executionTrade.inputAmount.quotient.toString(),
+          to: `${destinationChainId}/${bnJs.Router.address}`,
+          data: getBytesFromString(
+            JSON.stringify({
+              method: '_swap',
+              params: swapParams,
+            }),
+          ),
+        },
+      };
+
+      const fee = await this.walletClient.queryContractSmart(archway.contracts.xCall, {
+        get_fee: { nid: `${destinationChainId}`, rollback: true },
+      });
+
+      try {
+        const hash = await this.walletClient.executeSync(
+          account,
+          archway.contracts.assetManager,
+          msg,
+          getFeeParam(1500000),
+          undefined,
+          fee !== undefined && fee !== '0' ? [{ amount: fee, denom: ARCHWAY_FEE_TOKEN_SYMBOL }] : undefined,
+        );
+        return hash;
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 }

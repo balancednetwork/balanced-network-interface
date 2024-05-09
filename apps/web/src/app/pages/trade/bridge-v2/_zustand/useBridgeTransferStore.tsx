@@ -28,8 +28,10 @@ export const bridgeTransferActions = {
 
   executeTransfer: async (bridgeInfo: BridgeInfo) => {
     const { bridgeDirection } = bridgeInfo;
-    const srcChainXCallService = xCallServiceActions.getXCallService(bridgeDirection.from);
-    const dstChainXCallService = xCallServiceActions.getXCallService(bridgeDirection.to);
+    const sourceChainId = bridgeDirection.from;
+    const destinationChainId = bridgeDirection.to;
+    const srcChainXCallService = xCallServiceActions.getXCallService(sourceChainId);
+    const dstChainXCallService = xCallServiceActions.getXCallService(destinationChainId);
 
     console.log('bridgeInfo', bridgeInfo);
     console.log('all xCallServices', xCallServiceActions.getAllXCallServices());
@@ -44,7 +46,7 @@ export const bridgeTransferActions = {
     }
 
     bridgeTransferActions.setIsTransferring(true);
-    const sourceTransaction = transactionActions.add(bridgeDirection.from, {
+    const sourceTransaction = transactionActions.add(sourceChainId, {
       hash: sourceTransactionHash,
       pendingMessage: 'Requesting cross-chain transfer...',
       successMessage: 'Cross-chain transfer requested.',
@@ -58,10 +60,10 @@ export const bridgeTransferActions = {
       const _tokenSymbol = bridgeInfo.currencyAmountToBridge.currency.symbol;
       const _formattedAmount = bridgeInfo.currencyAmountToBridge.toFixed(2);
       const transfer: BridgeTransfer = {
-        id: `${bridgeDirection.from}/${sourceTransaction.hash}`,
+        id: `${sourceChainId}/${sourceTransaction.hash}`,
         type: BridgeTransferType.BRIDGE,
-        sourceChainId: bridgeDirection.from,
-        destinationChainId: bridgeDirection.to,
+        sourceChainId: sourceChainId,
+        destinationChainId: destinationChainId,
         descriptionAction: `Transfer ${_tokenSymbol}`,
         descriptionAmount: `${_formattedAmount} ${_tokenSymbol}`,
         sourceTransaction,
@@ -75,7 +77,7 @@ export const bridgeTransferActions = {
       useBridgeTransferStore.setState({ transferId: transfer.id });
 
       // TODO: is it right place to start scanner?
-      xCallEventActions.startScanner(bridgeDirection.to, blockHeight);
+      xCallEventActions.startScanner(destinationChainId, blockHeight);
     }
   },
 

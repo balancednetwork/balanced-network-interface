@@ -1,14 +1,14 @@
 import bnJs from 'bnJs';
 import IconService, { Converter, BigNumber } from 'icon-sdk-js';
+import { Percent, Token } from '@balancednetwork/sdk-core';
 
 import { showMessageOnBeforeUnload } from 'utils/messages';
-
-import { BridgeInfo, Transaction, TransactionStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
+import { toDec } from 'utils';
+import { NETWORK_ID } from 'constants/config';
 
 import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens';
-
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
-
+import { BridgeInfo, Transaction, TransactionStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
 import { fetchTxResult } from 'app/_xcall/_icon/utils';
 import { XCallService } from './types';
 
@@ -223,6 +223,46 @@ export class IconXCallService implements XCallService {
       if (hash) {
         return hash;
       }
+    }
+  }
+
+  async executeSwap(swapInfo: any) {
+    const { executionTrade, account, receivingNetworkAddress, slippageTolerance } = swapInfo;
+    const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
+
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+    if (bnJs.contractSettings.ledgerSettings.actived && this.changeShouldLedgerSign) {
+      this.changeShouldLedgerSign(true);
+    }
+
+    let txResult;
+    if (executionTrade.inputAmount.currency.symbol === 'ICX') {
+      txResult = await bnJs
+        .inject({ account })
+        .Router.swapICX(
+          toDec(executionTrade.inputAmount),
+          executionTrade.route.pathForSwap,
+          NETWORK_ID === 1 ? toDec(minReceived) : '0x0',
+          receivingNetworkAddress,
+        );
+    } else {
+      const token = executionTrade.inputAmount.currency as Token;
+      const outputToken = executionTrade.outputAmount.currency as Token;
+
+      const cx = bnJs.inject({ account }).getContract(token.address);
+
+      txResult = await cx.swapUsingRoute(
+        toDec(executionTrade.inputAmount),
+        outputToken.address,
+        toDec(minReceived),
+        executionTrade.route.pathForSwap,
+        receivingNetworkAddress,
+      );
+    }
+
+    const { result: hash } = txResult || {};
+    if (hash) {
+      return hash;
     }
   }
 }

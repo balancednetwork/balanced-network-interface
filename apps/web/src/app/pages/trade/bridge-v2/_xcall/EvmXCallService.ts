@@ -218,6 +218,10 @@ export class EvmXCallService implements XCallService {
       }
     }
   }
+
+  async executeSwap(swapInfo: any) {
+    return '';
+  }
 }
 
 export const xCallContractAbi = [

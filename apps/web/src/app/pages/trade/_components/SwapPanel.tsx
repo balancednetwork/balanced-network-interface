@@ -53,6 +53,8 @@ import useXCallProtocol from 'app/pages/trade/bridge-v2/_hooks/useXCallProtocol'
 import useXWallet from 'app/pages/trade/bridge-v2/_hooks/useXWallet';
 
 import XCallSwapModal from './XCallSwapModal';
+import { xCallSwapModalActions } from '../_zustand/useXCallSwapModalStore';
+import { useCreateXCallService } from '../bridge-v2/_zustand/useXCallServiceStore';
 
 const MemoizedStabilityFund = React.memo(StabilityFund);
 
@@ -98,6 +100,9 @@ export default function SwapPanel() {
     setCurrentXCallState(CurrentXCallStateType.IDLE);
     setNotPristine();
   }, [setCurrentXCallState, setNotPristine]);
+
+  useCreateXCallService(crossChainOrigin);
+  useCreateXCallService(crossChainDestination);
 
   React.useEffect(() => {
     if (isChainDifference) {
@@ -259,8 +264,9 @@ export default function SwapPanel() {
         return;
       }
       setExecutionTrade(trade);
-      setCrossChainSwapModalOpen(true);
       setCurrentXCallState(CurrentXCallStateType.AWAKE);
+
+      xCallSwapModalActions.openModal();
     } else {
       if (!account) {
         toggleWalletModal();

@@ -77,10 +77,10 @@ export type BridgeTransfer = {
   destinationChainId: XChainId;
   descriptionAction: string;
   descriptionAmount: string;
-
-  // bridgeInfo: BridgeInfo;
   sourceTransaction: Transaction;
   events: XCallEventMap;
   status: BridgeTransferStatus;
   destinationChainInitialBlockHeight: bigint;
+  bridgeInfo?: BridgeInfo;
+  swapInfo?: any; // TODO: add type for swapInfo
 };

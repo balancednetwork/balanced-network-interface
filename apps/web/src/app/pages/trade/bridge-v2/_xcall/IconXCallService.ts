@@ -3,7 +3,7 @@ import IconService, { Converter, BigNumber } from 'icon-sdk-js';
 
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import { BridgeInfo, BridgeTransfer, TransactionStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
+import { BridgeInfo, Transaction, TransactionStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
 
 import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens';
 
@@ -139,8 +139,8 @@ export class IconXCallService implements XCallService {
     };
   }
 
-  async fetchSourceEvents(transfer: BridgeTransfer): Promise<XCallEventMap> {
-    const rawTx = transfer.sourceTransaction.rawTx;
+  async fetchSourceEvents(sourceTransaction: Transaction): Promise<XCallEventMap> {
+    const rawTx = sourceTransaction.rawTx;
 
     const callMessageSentLog = this.filterCallMessageSentEventLog(rawTx?.eventLogs || []);
     if (callMessageSentLog) {

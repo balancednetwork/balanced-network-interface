@@ -11,7 +11,7 @@ import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 
 import { XCallEventType, XChainId, XToken } from 'app/pages/trade/bridge-v2/types';
 import { XCallService } from './types';
-import { BridgeInfo, BridgeTransfer, TransactionStatus, XCallEvent } from '../_zustand/types';
+import { BridgeInfo, TransactionStatus, XCallEvent, Transaction } from '../_zustand/types';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
 
 export class ArchwayXCallService implements XCallService {
@@ -119,10 +119,9 @@ export class ArchwayXCallService implements XCallService {
     return eventFiltered;
   }
 
-  async fetchSourceEvents(transfer: BridgeTransfer) {
+  async fetchSourceEvents(sourceTransaction: Transaction) {
     try {
-      console.log('fetchSourceEvents', transfer.sourceTransaction.rawTx.events);
-      const callMessageSentEventLog = this.filterCallMessageSentEventLog(transfer.sourceTransaction.rawTx.events);
+      const callMessageSentEventLog = this.filterCallMessageSentEventLog(sourceTransaction.rawTx.events);
       return {
         [XCallEventType.CallMessageSent]: this.parseCallMessageSentEventLog(callMessageSentEventLog),
       };

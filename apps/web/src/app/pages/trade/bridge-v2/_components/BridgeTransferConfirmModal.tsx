@@ -31,7 +31,6 @@ import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge-v2/_ho
 import { xChainMap } from 'app/pages/trade/bridge-v2/_config/xChains';
 import useXCallFee from '../_hooks/useXCallFee';
 import useXCallGasChecker from '../_hooks/useXCallGasChecker';
-import { xCallEventActions, useXCallEventScanner } from '../_zustand/useXCallEventStore';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;

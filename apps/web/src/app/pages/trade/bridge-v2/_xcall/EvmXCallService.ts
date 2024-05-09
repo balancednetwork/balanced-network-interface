@@ -1,6 +1,6 @@
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
 import { XCallService } from './types';
-import { BridgeInfo, BridgeTransfer, TransactionStatus, XCallEvent } from '../_zustand/types';
+import { BridgeInfo, Transaction, TransactionStatus, XCallEvent } from '../_zustand/types';
 import { avalanche } from 'app/pages/trade/bridge-v2/_config/xChains';
 import {
   Address,
@@ -121,9 +121,9 @@ export class EvmXCallService implements XCallService {
     return eventFiltered;
   }
 
-  async fetchSourceEvents(transfer: BridgeTransfer) {
+  async fetchSourceEvents(sourceTransaction: Transaction) {
     try {
-      const rawTx = transfer.sourceTransaction.rawTx;
+      const rawTx = sourceTransaction.rawTx;
 
       const parsedLogs = parseEventLogs({
         abi: xCallContractAbi,

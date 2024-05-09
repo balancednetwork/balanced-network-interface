@@ -190,12 +190,13 @@ export const useFetchBridgeTransferEvents = transfer => {
 
       const {
         bridgeInfo: { bridgeDirection },
+        sourceTransaction,
       } = transfer;
 
       let events: XCallEventMap = {};
       if (transfer.status === BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT) {
         const srcChainXCallService = xCallServiceActions.getXCallService(bridgeDirection.from);
-        events = await srcChainXCallService.fetchSourceEvents(transfer);
+        events = await srcChainXCallService.fetchSourceEvents(sourceTransaction);
       } else if (
         transfer.status === BridgeTransferStatus.CALL_MESSAGE_SENT ||
         transfer.status === BridgeTransferStatus.CALL_MESSAGE

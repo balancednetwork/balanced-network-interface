@@ -8,7 +8,14 @@ import { NETWORK_ID } from 'constants/config';
 
 import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens';
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
-import { BridgeInfo, Transaction, TransactionStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
+import {
+  BridgeInfo,
+  Transaction,
+  TransactionStatus,
+  XCallDestinationEvent,
+  XCallEvent,
+  XCallEventMap,
+} from '../_zustand/types';
 import { fetchTxResult } from 'app/_xcall/_icon/utils';
 import { XCallService } from './types';
 
@@ -88,22 +95,22 @@ export class IconXCallService implements XCallService {
     return result;
   }
 
-  filterCallMessageSentEventLog(eventLogs) {
+  filterCallMessageSentEventLog(eventLogs: any[]) {
     const signature = getICONEventSignature(XCallEventType.CallMessageSent);
     return eventLogs.find(event => event.indexed.includes(signature));
   }
 
-  filterCallMessageEventLog(eventLogs) {
+  filterCallMessageEventLog(eventLogs: any[]) {
     const signature = getICONEventSignature(XCallEventType.CallMessage);
     return this.filterEventLog(eventLogs, signature);
   }
 
-  filterCallExecutedEventLog(eventLogs) {
+  filterCallExecutedEventLog(eventLogs: any[]) {
     const signature = getICONEventSignature(XCallEventType.CallExecuted);
     return this.filterEventLog(eventLogs, signature);
   }
 
-  parseCallMessageSentEventLog(eventLog): XCallEvent {
+  parseCallMessageSentEventLog(eventLog, txHash: string): XCallEvent {
     const sn = parseInt(eventLog.indexed[3], 16);
 
     return {
@@ -111,9 +118,10 @@ export class IconXCallService implements XCallService {
       sn: BigInt(sn),
       xChainId: this.xChainId,
       rawEventData: eventLog,
+      txHash,
     };
   }
-  parseCallMessageEventLog(eventLog): XCallEvent {
+  parseCallMessageEventLog(eventLog, txHash: string): XCallDestinationEvent {
     const sn = parseInt(eventLog.indexed[3], 16);
     const reqId = parseInt(eventLog.data[0], 16);
 
@@ -123,9 +131,12 @@ export class IconXCallService implements XCallService {
       reqId: BigInt(reqId),
       xChainId: this.xChainId,
       rawEventData: eventLog,
+      txHash,
+      isSuccess: true,
     };
   }
-  parseCallExecutedEventLog(eventLog): XCallEvent {
+
+  parseCallExecutedEventLog(eventLog, txHash: string): XCallDestinationEvent {
     const reqId = parseInt(eventLog.indexed[1], 16);
     // TODO: check for success?
     // const success = eventLog.data[0] === '0x1';
@@ -136,6 +147,8 @@ export class IconXCallService implements XCallService {
       reqId: BigInt(reqId),
       xChainId: this.xChainId,
       rawEventData: eventLog,
+      txHash,
+      isSuccess: true,
     };
   }
 
@@ -145,7 +158,7 @@ export class IconXCallService implements XCallService {
     const callMessageSentLog = this.filterCallMessageSentEventLog(rawTx?.eventLogs || []);
     if (callMessageSentLog) {
       return {
-        [XCallEventType.CallMessageSent]: this.parseCallMessageSentEventLog(callMessageSentLog),
+        [XCallEventType.CallMessageSent]: this.parseCallMessageSentEventLog(callMessageSentLog, sourceTransaction.hash),
       };
     }
 
@@ -165,10 +178,10 @@ export class IconXCallService implements XCallService {
         const callExecutedEventLog = this.filterCallExecutedEventLog(txResult?.eventLogs || []);
 
         if (callMessageEventLog) {
-          events.push(this.parseCallMessageEventLog(callMessageEventLog));
+          events.push(this.parseCallMessageEventLog(callMessageEventLog, tx.txHash));
         }
         if (callExecutedEventLog) {
-          events.push(this.parseCallExecutedEventLog(callExecutedEventLog));
+          events.push(this.parseCallExecutedEventLog(callExecutedEventLog, tx.txHash));
         }
       }
     } else {

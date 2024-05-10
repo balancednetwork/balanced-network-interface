@@ -51,6 +51,7 @@ export type XCallSourceEvent = {
   sn: bigint;
   xChainId: XChainId;
   rawEventData: any;
+  txHash: string;
 };
 
 export type XCallDestinationEvent = {
@@ -59,11 +60,17 @@ export type XCallDestinationEvent = {
   reqId: bigint;
   xChainId: XChainId;
   rawEventData: any;
+  txHash: string;
+  isSuccess: boolean;
 };
 
 export type XCallEvent = XCallSourceEvent | XCallDestinationEvent;
 
-export type XCallEventMap = Partial<Record<XCallEventType, XCallEvent>>;
+export type XCallEventMap = Partial<{
+  [XCallEventType.CallMessageSent]: XCallSourceEvent;
+  [XCallEventType.CallMessage]: XCallDestinationEvent;
+  [XCallEventType.CallExecuted]: XCallDestinationEvent;
+}>;
 
 export enum BridgeTransferType {
   SWAP = 'swap',
@@ -78,6 +85,7 @@ export type BridgeTransfer = {
   descriptionAction: string;
   descriptionAmount: string;
   sourceTransaction: Transaction;
+  destinationTransaction?: Transaction;
   events: XCallEventMap;
   status: BridgeTransferStatus;
   destinationChainInitialBlockHeight: bigint;

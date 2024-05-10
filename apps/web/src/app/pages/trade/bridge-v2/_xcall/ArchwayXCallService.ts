@@ -13,7 +13,14 @@ import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 
 import { XCallEventType, XChainId, XToken } from 'app/pages/trade/bridge-v2/types';
 import { XCallService } from './types';
-import { BridgeInfo, TransactionStatus, XCallEvent, Transaction } from '../_zustand/types';
+import {
+  BridgeInfo,
+  TransactionStatus,
+  XCallEvent,
+  Transaction,
+  XCallDestinationEvent,
+  XCallSourceEvent,
+} from '../_zustand/types';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 
@@ -63,7 +70,7 @@ export class ArchwayXCallService implements XCallService {
     return TransactionStatus.failure;
   }
 
-  parseCallMessageSentEventLog(eventLog): XCallEvent {
+  parseCallMessageSentEventLog(eventLog, txHash: string): XCallSourceEvent {
     const sn = eventLog.attributes.find(a => a.key === 'sn')?.value;
 
     return {
@@ -71,9 +78,10 @@ export class ArchwayXCallService implements XCallService {
       sn: BigInt(sn),
       xChainId: this.xChainId,
       rawEventData: eventLog,
+      txHash,
     };
   }
-  parseCallMessageEventLog(eventLog): XCallEvent {
+  parseCallMessageEventLog(eventLog, txHash: string): XCallDestinationEvent {
     const sn = eventLog.attributes.find(a => a.key === 'sn')?.value;
     const reqId = eventLog.attributes.find(a => a.key === 'reqId')?.value;
 
@@ -83,9 +91,11 @@ export class ArchwayXCallService implements XCallService {
       reqId: BigInt(reqId),
       xChainId: this.xChainId,
       rawEventData: eventLog,
+      txHash,
+      isSuccess: true,
     };
   }
-  parseCallExecutedEventLog(eventLog): XCallEvent {
+  parseCallExecutedEventLog(eventLog, txHash: string): XCallDestinationEvent {
     const reqId = eventLog.attributes.find(a => a.key === 'reqId')?.value;
 
     return {
@@ -94,6 +104,8 @@ export class ArchwayXCallService implements XCallService {
       reqId: BigInt(reqId),
       xChainId: this.xChainId,
       rawEventData: eventLog,
+      txHash,
+      isSuccess: true,
     };
   }
 
@@ -126,7 +138,10 @@ export class ArchwayXCallService implements XCallService {
     try {
       const callMessageSentEventLog = this.filterCallMessageSentEventLog(sourceTransaction.rawTx.events);
       return {
-        [XCallEventType.CallMessageSent]: this.parseCallMessageSentEventLog(callMessageSentEventLog),
+        [XCallEventType.CallMessageSent]: this.parseCallMessageSentEventLog(
+          callMessageSentEventLog,
+          sourceTransaction.hash,
+        ),
       };
     } catch (e) {
       console.error(e);
@@ -149,10 +164,10 @@ export class ArchwayXCallService implements XCallService {
           const callExecutedEventLog = await this.filterCallExecutedEventLog(tx.events);
 
           if (callMessageEventLog) {
-            events.push(this.parseCallMessageEventLog(callMessageEventLog));
+            events.push(this.parseCallMessageEventLog(callMessageEventLog, txHash));
           }
           if (callExecutedEventLog) {
-            events.push(this.parseCallExecutedEventLog(callExecutedEventLog));
+            events.push(this.parseCallExecutedEventLog(callExecutedEventLog, txHash));
           }
         }
       }

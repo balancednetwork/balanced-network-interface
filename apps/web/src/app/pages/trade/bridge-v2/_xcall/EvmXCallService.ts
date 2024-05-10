@@ -1,6 +1,13 @@
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
 import { XCallService } from './types';
-import { BridgeInfo, Transaction, TransactionStatus, XCallEvent } from '../_zustand/types';
+import {
+  BridgeInfo,
+  Transaction,
+  TransactionStatus,
+  XCallDestinationEvent,
+  XCallEvent,
+  XCallSourceEvent,
+} from '../_zustand/types';
 import { avalanche } from 'app/pages/trade/bridge-v2/_config/xChains';
 import {
   Address,
@@ -62,7 +69,7 @@ export class EvmXCallService implements XCallService {
     return TransactionStatus.pending;
   }
 
-  parseCallMessageSentEventLog(eventLog): XCallEvent {
+  parseCallMessageSentEventLog(eventLog, txHash: string): XCallSourceEvent {
     const sn = eventLog.args._sn;
 
     return {
@@ -70,9 +77,10 @@ export class EvmXCallService implements XCallService {
       sn: sn,
       xChainId: this.xChainId,
       rawEventData: eventLog,
+      txHash,
     };
   }
-  parseCallMessageEventLog(eventLog): XCallEvent {
+  parseCallMessageEventLog(eventLog, txHash: string): XCallDestinationEvent {
     const sn = eventLog.args._sn;
     const reqId = eventLog.args._reqId;
 
@@ -82,9 +90,11 @@ export class EvmXCallService implements XCallService {
       reqId,
       xChainId: this.xChainId,
       rawEventData: eventLog,
+      txHash,
+      isSuccess: true,
     };
   }
-  parseCallExecutedEventLog(eventLog): XCallEvent {
+  parseCallExecutedEventLog(eventLog, txHash: string): XCallDestinationEvent {
     const reqId = eventLog.args._reqId;
 
     return {
@@ -93,6 +103,8 @@ export class EvmXCallService implements XCallService {
       reqId,
       xChainId: this.xChainId,
       rawEventData: eventLog,
+      txHash,
+      isSuccess: true,
     };
   }
 
@@ -132,7 +144,10 @@ export class EvmXCallService implements XCallService {
 
       const callMessageSentEventLog = this.filterCallMessageSentEventLog(parsedLogs);
       return {
-        [XCallEventType.CallMessageSent]: this.parseCallMessageSentEventLog(callMessageSentEventLog),
+        [XCallEventType.CallMessageSent]: this.parseCallMessageSentEventLog(
+          callMessageSentEventLog,
+          sourceTransaction.hash,
+        ),
       };
     } catch (e) {
       console.error(e);
@@ -163,10 +178,10 @@ export class EvmXCallService implements XCallService {
         console.log('getDestinationEventsByBlock', callMessageEventLog, callExecutedEventLog);
 
         if (callMessageEventLog) {
-          events.push(this.parseCallMessageEventLog(callMessageEventLog));
+          events.push(this.parseCallMessageEventLog(callMessageEventLog, txHash));
         }
         if (callExecutedEventLog) {
-          events.push(this.parseCallExecutedEventLog(callExecutedEventLog));
+          events.push(this.parseCallExecutedEventLog(callExecutedEventLog, txHash));
         }
       }
     } else {

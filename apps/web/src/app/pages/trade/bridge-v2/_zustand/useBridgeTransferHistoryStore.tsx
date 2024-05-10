@@ -63,7 +63,11 @@ export const useBridgeTransferHistoryStore = create<BridgeTransferHistoryStore>(
 );
 
 // TODO: review logic
-export const deriveStatus = (sourceTransaction: Transaction, events: XCallEventMap): BridgeTransferStatus => {
+export const deriveStatus = (
+  sourceTransaction: Transaction,
+  events: XCallEventMap,
+  destinationTransaction: Transaction | undefined = undefined,
+): BridgeTransferStatus => {
   if (!sourceTransaction) {
     return BridgeTransferStatus.TRANSFER_FAILED;
   }
@@ -77,19 +81,24 @@ export const deriveStatus = (sourceTransaction: Transaction, events: XCallEventM
   }
 
   if (sourceTransaction.status === TransactionStatus.success) {
-    if (!events[XCallEventType.CallMessageSent]) {
-      return BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT;
+    if (events[XCallEventType.CallExecuted] && events[XCallEventType.CallExecuted].isSuccess) {
+      if (destinationTransaction && destinationTransaction.status === TransactionStatus.success) {
+        return BridgeTransferStatus.CALL_EXECUTED;
+        // return BridgeTransferStatus.TRANSFER_COMPLETED;
+      }
+
+      // return BridgeTransferStatus.CALL_EXECUTED;
     }
 
-    if (!events[XCallEventType.CallMessage]) {
+    if (events[XCallEventType.CallMessage]) {
+      return BridgeTransferStatus.CALL_MESSAGE;
+    }
+
+    if (events[XCallEventType.CallMessageSent]) {
       return BridgeTransferStatus.CALL_MESSAGE_SENT;
     }
 
-    if (!events[XCallEventType.CallExecuted]) {
-      return BridgeTransferStatus.CALL_MESSAGE;
-    } else {
-      return BridgeTransferStatus.CALL_EXECUTED;
-    }
+    return BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT;
   }
 
   return BridgeTransferStatus.TRANSFER_FAILED;
@@ -140,17 +149,41 @@ export const bridgeTransferHistoryActions = {
       };
     });
   },
-  updateTransferEvents: (id: string, events: XCallEventMap) => {
-    useBridgeTransferHistoryStore.setState(state => {
-      const transfer = state.transfers.find(transfer => transfer.id === id);
-      if (!transfer) return state;
+  updateTransferEvents: async (id: string, events: XCallEventMap) => {
+    const transfer = useBridgeTransferHistoryStore.getState().transfers.find(transfer => transfer.id === id);
+    if (!transfer) return;
 
-      const newEvents = {
-        ...transfer.events,
-        ...events,
+    let destinationTransaction: Transaction | undefined = undefined;
+
+    const newEvents = {
+      ...transfer.events,
+      ...events,
+    };
+
+    if (newEvents[XCallEventType.CallExecuted]) {
+      const dstXCallService = xCallServiceActions.getXCallService(transfer.destinationChainId);
+      const destinationTransactionHash = newEvents[XCallEventType.CallExecuted].txHash;
+      const tx = await dstXCallService.getTxReceipt(destinationTransactionHash);
+
+      destinationTransaction = {
+        id: destinationTransactionHash,
+        hash: destinationTransactionHash,
+        xChainId: transfer.destinationChainId,
+        status: dstXCallService.deriveTxStatus(tx),
+        rawTx: tx,
       };
+    }
 
-      const newStatus = deriveStatus(transfer.sourceTransaction, newEvents);
+    useBridgeTransferHistoryStore.setState(state => {
+      // const transfer = state.transfers.find(transfer => transfer.id === id);
+      // if (!transfer) return state;
+
+      // const newEvents = {
+      //   ...transfer.events,
+      //   ...events,
+      // };
+
+      const newStatus = deriveStatus(transfer.sourceTransaction, newEvents, destinationTransaction);
 
       return {
         ...state,
@@ -160,6 +193,7 @@ export const bridgeTransferHistoryActions = {
               ...transfer,
               events: newEvents,
               status: newStatus,
+              destinationTransaction,
             };
           }
           return transfer;

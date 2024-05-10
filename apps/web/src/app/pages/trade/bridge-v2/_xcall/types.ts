@@ -20,7 +20,7 @@ export interface XCallService {
 
   getXCallFee(to: XChainId, rollback: boolean): Promise<IXCallFee>;
   getBlockHeight(): Promise<bigint>;
-  getSourceEvents(transfer: Transaction): Promise<XCallEventMap>;
+  getSourceEvents(transaction: Transaction): Promise<XCallEventMap>;
   getDestinationEventsByBlock(blockHeight: bigint): Promise<XCallEvent[]>;
   executeTransfer(bridgeInfo: BridgeInfo): Promise<string | undefined>;
   executeSwap(swapInfo: any): Promise<string | undefined>;

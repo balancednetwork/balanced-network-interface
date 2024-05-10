@@ -127,6 +127,12 @@ const XCallSwapModal = ({
     changeShouldLedgerSign(false);
   };
 
+  const receivingNetworkAddress: string | undefined = React.useMemo(() => {
+    if (destinationAddress) {
+      return `${destinationChain}/${destinationAddress}`;
+    }
+  }, [destinationChain, destinationAddress]);
+
   const handleDismiss = () => {
     xCallSwapModalActions.closeModal();
     setTimeout(() => {
@@ -146,7 +152,7 @@ const XCallSwapModal = ({
       destinationChainId: destinationChain,
       executionTrade,
       cleanupSwap,
-      receivingNetworkAddress: `${destinationChain}/${destinationAddress}`,
+      receivingNetworkAddress,
       account,
       slippageTolerance,
       archwayXCallFees,

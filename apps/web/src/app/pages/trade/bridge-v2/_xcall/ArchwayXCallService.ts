@@ -15,6 +15,7 @@ import { XCallEventType, XChainId, XToken } from 'app/pages/trade/bridge-v2/type
 import { XCallService } from './types';
 import { BridgeInfo, TransactionStatus, XCallEvent, Transaction } from '../_zustand/types';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
+import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 
 export class ArchwayXCallService implements XCallService {
   xChainId: XChainId;
@@ -281,7 +282,7 @@ export class ArchwayXCallService implements XCallService {
       const msg = {
         cross_transfer: {
           amount: executionTrade.inputAmount.quotient.toString(),
-          to: `${destinationChainId}/${bnJs.Router.address}`,
+          to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
           data: getBytesFromString(
             JSON.stringify({
               method: '_swap',
@@ -311,7 +312,7 @@ export class ArchwayXCallService implements XCallService {
         deposit: {
           token_address: archToken.address,
           amount: executionTrade.inputAmount.quotient.toString(),
-          to: `${destinationChainId}/${bnJs.Router.address}`,
+          to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
           data: getBytesFromString(
             JSON.stringify({
               method: '_swap',

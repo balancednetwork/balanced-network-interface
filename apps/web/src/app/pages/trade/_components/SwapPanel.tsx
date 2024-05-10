@@ -55,6 +55,7 @@ import useXWallet from 'app/pages/trade/bridge-v2/_hooks/useXWallet';
 import XCallSwapModal from './XCallSwapModal';
 import { xCallSwapModalActions } from '../_zustand/useXCallSwapModalStore';
 import { useCreateXCallService } from '../bridge-v2/_zustand/useXCallServiceStore';
+import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 
 const MemoizedStabilityFund = React.memo(StabilityFund);
 
@@ -103,6 +104,7 @@ export default function SwapPanel() {
 
   useCreateXCallService(crossChainOrigin);
   useCreateXCallService(crossChainDestination);
+  useCreateXCallService(ICON_XCALL_NETWORK_ID);
 
   React.useEffect(() => {
     if (isChainDifference) {

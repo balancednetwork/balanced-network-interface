@@ -91,4 +91,7 @@ export type BridgeTransfer = {
   destinationChainInitialBlockHeight: bigint;
   bridgeInfo?: BridgeInfo;
   swapInfo?: any; // TODO: add type for swapInfo
+  childTransferNeeded: boolean;
+  childTransferId?: string;
+  parentTransferId?: string;
 };

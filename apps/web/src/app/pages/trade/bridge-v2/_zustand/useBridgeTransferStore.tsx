@@ -71,6 +71,7 @@ export const bridgeTransferActions = {
         status: BridgeTransferStatus.TRANSFER_REQUESTED,
         events: {},
         destinationChainInitialBlockHeight: blockHeight,
+        childTransferNeeded: false,
       };
 
       bridgeTransferHistoryActions.add(transfer);

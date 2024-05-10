@@ -89,7 +89,11 @@ export const xCallSwapActions = {
         status: BridgeTransferStatus.TRANSFER_REQUESTED,
         events: {},
         destinationChainInitialBlockHeight: blockHeight,
-        // swapInfo,
+        childTransferNeeded: destinationChainId !== _destinationChainId,
+        swapInfo: {
+          sourceChainId,
+          destinationChainId,
+        },
       };
 
       bridgeTransferHistoryActions.add(transfer);
@@ -98,6 +102,42 @@ export const xCallSwapActions = {
       // TODO: is it right place to start scanner?
       xCallEventActions.startScanner(_destinationChainId, blockHeight);
     }
+  },
+
+  createChildTransfer: async (transfer: BridgeTransfer) => {
+    if (!transfer.destinationTransaction) {
+      throw new Error('destinationTransaction is not found'); // it should not happen
+    }
+
+    console.log('createChildTransfer');
+    const sourceChainId = transfer.destinationChainId;
+    const destinationChainId = transfer.swapInfo?.destinationChainId;
+    const sourceTransaction = transfer.destinationTransaction;
+
+    const dstChainXCallService = xCallServiceActions.getXCallService(destinationChainId);
+
+    const blockHeight = (await dstChainXCallService.getBlockHeight()) - 1n;
+
+    const childTransferId = `${sourceChainId}/${sourceTransaction?.hash}`;
+    const childTransfer: BridgeTransfer = {
+      id: childTransferId,
+      type: BridgeTransferType.SWAP,
+      sourceChainId,
+      destinationChainId,
+      descriptionAction: transfer.descriptionAction,
+      descriptionAmount: transfer.descriptionAmount,
+      sourceTransaction: sourceTransaction,
+      status: BridgeTransferStatus.TRANSFER_REQUESTED,
+      events: {},
+      destinationChainInitialBlockHeight: blockHeight,
+      childTransferNeeded: false,
+      parentTransferId: transfer.id,
+    };
+
+    bridgeTransferHistoryActions.add(childTransfer);
+
+    useXCallSwapStore.setState({ childTransferId: childTransfer.id });
+    xCallEventActions.startScanner(childTransfer.destinationChainId, childTransfer.destinationChainInitialBlockHeight);
   },
 
   reset: () => {
@@ -131,7 +171,7 @@ export const xCallSwapActions = {
 
 export const XCallSwapStatusUpdater = () => {
   useBridgeTransferHistoryStore();
-  const { transferId } = useXCallSwapStore();
+  const { transferId, childTransferId } = useXCallSwapStore();
   const transfer = bridgeTransferHistoryActions.get(transferId);
 
   useXCallEventScanner(transfer?.sourceChainId);
@@ -155,13 +195,50 @@ export const XCallSwapStatusUpdater = () => {
   useEffect(() => {
     if (transfer) {
       if (transfer.status === BridgeTransferStatus.CALL_EXECUTED) {
-        xCallSwapActions.success();
+        xCallEventActions.stopScanner(transfer.destinationChainId);
+
+        if (transfer.childTransferNeeded) {
+          xCallSwapActions.createChildTransfer(transfer);
+        } else {
+          xCallSwapActions.success();
+        }
       }
       if (transfer.status === BridgeTransferStatus.TRANSFER_FAILED) {
         xCallSwapActions.fail();
       }
     }
   }, [transfer, transfer?.status]);
+
+  const childTransfer = bridgeTransferHistoryActions.get(childTransferId);
+
+  useXCallEventScanner(childTransfer?.sourceChainId);
+  useXCallEventScanner(childTransfer?.destinationChainId);
+
+  const { events: childEvents } = useFetchBridgeTransferEvents(childTransfer);
+  // const { rawTx: childRawTx } = useFetchTransaction(childTransfer?.sourceTransaction);
+
+  // useEffect(() => {
+  //   if (childTransferId && childRawTx) {
+  //     bridgeTransferHistoryActions.updateSourceTransaction(childTransferId, { rawTx: childRawTx });
+  //   }
+  // }, [childTransferId, childRawTx]);
+
+  useEffect(() => {
+    if (childTransferId && childEvents) {
+      bridgeTransferHistoryActions.updateTransferEvents(childTransferId, childEvents);
+    }
+  }, [childTransferId, childEvents]);
+
+  useEffect(() => {
+    if (childTransfer) {
+      if (childTransfer.status === BridgeTransferStatus.CALL_EXECUTED) {
+        xCallSwapActions.success();
+      }
+      if (childTransfer.status === BridgeTransferStatus.TRANSFER_FAILED) {
+        xCallSwapActions.fail();
+      }
+    }
+  }, [childTransfer, childTransfer?.status]);
 
   return null;
 };

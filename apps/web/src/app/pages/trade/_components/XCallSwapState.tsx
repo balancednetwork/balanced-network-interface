@@ -11,20 +11,17 @@ import {
   bridgeTransferHistoryActions,
   useBridgeTransferHistoryStore,
 } from '../bridge-v2/_zustand/useBridgeTransferHistoryStore';
-import { BridgeTransferStatus } from '../bridge-v2/_zustand/types';
+import { BridgeTransfer, BridgeTransferStatus } from '../bridge-v2/_zustand/types';
 import { useXCallSwapStore } from '../_zustand/useXCallSwapStore';
 import { getNetworkDisplayName } from '../bridge-v2/utils';
 
 const XCallSwapState = () => {
-  const { transferId } = useXCallSwapStore();
+  const { transferId, childTransferId } = useXCallSwapStore();
   useBridgeTransferHistoryStore();
   const transfer = bridgeTransferHistoryActions.get(transferId);
+  const childTransfer = bridgeTransferHistoryActions.get(childTransferId);
 
-  const message = useMemo(() => {
-    if (!transfer) {
-      return `Transfer not found.`;
-    }
-
+  const getMessage = (transfer: BridgeTransfer) => {
     switch (transfer.status) {
       case BridgeTransferStatus.TRANSFER_REQUESTED:
         return `Awaiting confirmation on ${getNetworkDisplayName(transfer.sourceChainId)}`;
@@ -41,7 +38,23 @@ const XCallSwapState = () => {
       default:
         return `Unknown state.`;
     }
-  }, [transfer]);
+  };
+
+  const message = useMemo(() => {
+    if (!transfer) {
+      return `Transfer not found.`;
+    }
+
+    return getMessage(transfer);
+  }, [transfer, getMessage]);
+
+  const childMessage = useMemo(() => {
+    if (!childTransfer) {
+      return `Child transfer not found.`;
+    }
+
+    return getMessage(childTransfer);
+  }, [childTransfer, getMessage]);
 
   if (!transfer) {
     return null;
@@ -59,6 +72,11 @@ const XCallSwapState = () => {
             <Typography mb={4}>
               <Trans>{message}</Trans>
             </Typography>
+            {childTransfer && (
+              <Typography mb={4}>
+                <Trans>{childMessage}</Trans>
+              </Typography>
+            )}
             <Spinner />
           </Flex>
         </Box>

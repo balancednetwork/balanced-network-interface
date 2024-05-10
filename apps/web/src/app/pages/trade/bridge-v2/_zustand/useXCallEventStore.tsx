@@ -81,7 +81,7 @@ export const xCallEventActions = {
     // console.log('updateChainHeight', xChainId);
     try {
       const xCallService = xCallServiceActions.getXCallService(xChainId);
-      const chainHeight = await xCallService.fetchBlockHeight();
+      const chainHeight = await xCallService.getBlockHeight();
       useXCallEventStore.setState(prevState => ({
         ...prevState,
         scanners: {
@@ -103,7 +103,7 @@ export const xCallEventActions = {
     }
 
     const xCallService = xCallServiceActions.getXCallService(xChainId);
-    const events = await xCallService.fetchDestinationEventsByBlock(blockHeight);
+    const events = await xCallService.getDestinationEventsByBlock(blockHeight);
 
     useXCallEventStore.setState(state => {
       state.destinationXCallEvents ??= {};
@@ -184,9 +184,9 @@ export const useXCallEventScanner = (xChainId: XChainId | undefined) => {
       }
     };
 
-    const interval = setInterval(updateChainHeight, 1000);
+    const intervalId = window.setInterval(updateChainHeight, 1000);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(intervalId);
   }, [xChainId, enabled]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>

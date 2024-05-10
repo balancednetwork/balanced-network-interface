@@ -46,18 +46,8 @@ export function BridgeTransferConfirmModal() {
   const { modalOpen } = useBridgeTransferConfirmModalStore();
   const { isProcessing } = useBridgeTransferStore();
 
-  // useXCallEventScanner('0x1.icon');
-
-  const {
-    currency: currencyToBridge,
-    recipient,
-    typedValue,
-    isLiquidFinanceEnabled,
-    currencyAmountToBridge,
-    account,
-    isDenom,
-    bridgeDirection,
-  } = useBridgeInfo();
+  const { recipient, isLiquidFinanceEnabled, currencyAmountToBridge, account, isDenom, bridgeDirection } =
+    useBridgeInfo();
 
   const { xCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
 
@@ -88,8 +78,6 @@ export function BridgeTransferConfirmModal() {
       };
       await bridgeTransferActions.executeTransfer(bridgeInfo);
     }
-
-    // await xCallEventActions.startScanner(bridgeDirection.to, 4393620n);
   };
 
   const handleApprove = () => {

@@ -34,7 +34,7 @@ export type BridgeInfo = {
 export type Transaction = {
   id: string;
   hash: string;
-  xChainId: number;
+  xChainId: XChainId;
   status: TransactionStatus;
 
   pendingMessage?: string;

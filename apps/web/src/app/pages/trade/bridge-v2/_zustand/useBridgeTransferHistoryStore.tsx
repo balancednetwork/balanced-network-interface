@@ -102,7 +102,7 @@ export const deriveStatus = (sourceTransaction: Transaction, events: XCallEventM
 };
 
 export const bridgeTransferHistoryActions = {
-  get: id => {
+  get: (id: string | null) => {
     if (id) {
       return useBridgeTransferHistoryStore.getState().transfers.find(transfer => transfer.id === id);
     }
@@ -114,6 +114,7 @@ export const bridgeTransferHistoryActions = {
       transfers: [transfer, ...state.transfers],
     }));
   },
+
   updateSourceTransaction: (id: string, { rawTx }) => {
     useBridgeTransferHistoryStore.setState(state => {
       const transfer = state.transfers.find(transfer => transfer.id === id);
@@ -194,7 +195,7 @@ export const useFetchBridgeTransferEvents = (transfer?: BridgeTransfer) => {
       let events: XCallEventMap = {};
       if (transfer.status === BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT) {
         const srcChainXCallService = xCallServiceActions.getXCallService(sourceChainId);
-        events = await srcChainXCallService.fetchSourceEvents(sourceTransaction);
+        events = await srcChainXCallService.getSourceEvents(sourceTransaction);
       } else if (
         transfer.status === BridgeTransferStatus.CALL_MESSAGE_SENT ||
         transfer.status === BridgeTransferStatus.CALL_MESSAGE

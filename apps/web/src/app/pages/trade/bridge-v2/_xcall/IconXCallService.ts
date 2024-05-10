@@ -48,13 +48,13 @@ export class IconXCallService implements XCallService {
     this.changeShouldLedgerSign = changeShouldLedgerSign;
   }
 
-  async fetchXCallFee(to: XChainId, rollback: boolean) {
+  async getXCallFee(to: XChainId, rollback: boolean) {
     return Promise.resolve({
       rollback: 0n,
       noRollback: 0n,
     });
   }
-  async fetchBlockHeight() {
+  async getBlockHeight() {
     const lastBlock = await this.publicClient.getLastBlock().execute();
     return BigInt(lastBlock.height);
   }
@@ -63,7 +63,7 @@ export class IconXCallService implements XCallService {
     return block;
   }
 
-  async getTx(txHash: string) {
+  async getTxReceipt(txHash: string) {
     //TODO: update to use this.publicClient
     return await fetchTxResult(txHash);
   }
@@ -139,7 +139,7 @@ export class IconXCallService implements XCallService {
     };
   }
 
-  async fetchSourceEvents(sourceTransaction: Transaction): Promise<XCallEventMap> {
+  async getSourceEvents(sourceTransaction: Transaction): Promise<XCallEventMap> {
     const rawTx = sourceTransaction.rawTx;
 
     const callMessageSentLog = this.filterCallMessageSentEventLog(rawTx?.eventLogs || []);
@@ -152,14 +152,14 @@ export class IconXCallService implements XCallService {
     return {};
   }
 
-  async fetchDestinationEventsByBlock(blockHeight: bigint) {
+  async getDestinationEventsByBlock(blockHeight: bigint) {
     const events: any = [];
 
     const block = await this.getBlock(blockHeight);
 
     if (block && block.confirmedTransactionList && block.confirmedTransactionList.length > 0) {
       for (const tx of block.confirmedTransactionList) {
-        const txResult = await this.getTx(tx.txHash);
+        const txResult = await this.getTxReceipt(tx.txHash);
 
         const callMessageEventLog = this.filterCallMessageEventLog(txResult?.eventLogs || []);
         const callExecutedEventLog = this.filterCallExecutedEventLog(txResult?.eventLogs || []);

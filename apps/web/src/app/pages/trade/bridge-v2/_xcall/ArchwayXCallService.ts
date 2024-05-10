@@ -29,13 +29,13 @@ export class ArchwayXCallService implements XCallService {
     this.walletClient = walletClient;
   }
 
-  async fetchXCallFee(to: XChainId, rollback: boolean) {
+  async getXCallFee(to: XChainId, rollback: boolean) {
     return await this.publicClient.queryContractSmart(archway.contracts.xCall, {
       get_fee: { nid: xChainMap[to].xChainId, rollback },
     });
   }
 
-  async fetchBlockHeight() {
+  async getBlockHeight() {
     const height = await this.publicClient.getHeight();
     return BigInt(height);
   }
@@ -45,7 +45,7 @@ export class ArchwayXCallService implements XCallService {
     return block;
   }
 
-  async getTx(txHash) {
+  async getTxReceipt(txHash) {
     const tx = await this.publicClient.getTx(txHash);
     return tx;
   }
@@ -122,7 +122,7 @@ export class ArchwayXCallService implements XCallService {
     return eventFiltered;
   }
 
-  async fetchSourceEvents(sourceTransaction: Transaction) {
+  async getSourceEvents(sourceTransaction: Transaction) {
     try {
       const callMessageSentEventLog = this.filterCallMessageSentEventLog(sourceTransaction.rawTx.events);
       return {
@@ -134,7 +134,7 @@ export class ArchwayXCallService implements XCallService {
     return {};
   }
 
-  async fetchDestinationEventsByBlock(blockHeight: bigint) {
+  async getDestinationEventsByBlock(blockHeight: bigint) {
     const events: any = [];
 
     const block = await this.getBlock(blockHeight);
@@ -143,7 +143,7 @@ export class ArchwayXCallService implements XCallService {
       for (const rawTx of block.txs) {
         // TODO: Buffer.from(rawTx) is correct? or Buffer.from(rawTx, 'base64')?
         const txHash = toHex(sha256(Buffer.from(rawTx)));
-        const tx = await this.getTx(txHash);
+        const tx = await this.getTxReceipt(txHash);
         if (tx) {
           const callMessageEventLog = await this.filterCallMessageEventLog(tx.events);
           const callExecutedEventLog = await this.filterCallExecutedEventLog(tx.events);

@@ -14,18 +14,7 @@ import {
 } from 'app/components/Notification/TransactionNotification';
 import { Transaction, TransactionStatus } from './types';
 import { xCallServiceActions } from './useXCallServiceStore';
-
-//TODO: this is mock function, need to be replaced with real function
-const getChainType = xChainId => {
-  switch (xChainId) {
-    case '0x1.icon':
-      return 'icon';
-    case '0x2.icon':
-      return 'icon';
-    default:
-      return 'unknown';
-  }
-};
+import { XChainId } from '../types';
 
 type TransactionStore = {
   transactions: Transaction[];
@@ -35,7 +24,7 @@ export const useTransactionStore = create<TransactionStore>()(set => ({
   transactions: [],
 }));
 
-const getTrackerLink = (xChainId, hash, type) => {
+const getTrackerLink = (xChainId: XChainId, hash: string, type) => {
   // TODO: handle different chain types
   return `https://tracker.icon.foundation/transaction/${hash}?network=${xChainId}`;
 
@@ -44,50 +33,48 @@ const getTrackerLink = (xChainId, hash, type) => {
 };
 
 export const transactionActions = {
-  getTransaction: (xChainId, id) => {
+  getTransaction: (xChainId: XChainId, id: string) => {
     return useTransactionStore.getState().transactions.find(item => item.id === id && item.xChainId === xChainId);
   },
 
-  add: (xChainId, transaction): Transaction => {
-    const id = uuidv4().toString();
-    const newItem = { ...transaction, status: TransactionStatus.pending, xChainId, id };
+  add: (
+    xChainId: XChainId,
+    transaction: {
+      hash: string;
+      pendingMessage: string;
+      successMessage: string;
+      errorMessage: string;
+      onSuccess?: () => void;
+    },
+  ): Transaction => {
+    const { hash } = transaction;
+    const newItem = { ...transaction, status: TransactionStatus.pending, xChainId, id: hash };
     useTransactionStore.setState(state => {
       return { transactions: [...state.transactions, newItem] };
     });
 
-    const { hash } = transaction;
-    if (hash) {
-      const link = getTrackerLink(xChainId, hash, 'transaction');
-      const toastProps = {
-        onClick: () => window.open(link, '_blank'),
-      };
+    const link = getTrackerLink(xChainId, hash, 'transaction');
+    const toastProps = {
+      onClick: () => window.open(link, '_blank'),
+    };
 
-      toast(<NotificationPending summary={transaction.pendingMessage || t`Processing transaction...`} />, {
-        ...toastProps,
-        toastId: id,
-      });
-    } else {
-      toast(<NotificationPending summary={transaction.pendingMessage || t`Processing transaction...`} />, {
-        toastId: id,
-      });
-    }
+    toast(<NotificationPending summary={transaction.pendingMessage || t`Processing transaction...`} />, {
+      ...toastProps,
+      toastId: hash,
+    });
 
     return newItem;
   },
 
-  updateTx: async (xChainId, id, transaction) => {
-    const { hash, rawTx } = transaction;
+  updateTx: async (xChainId: XChainId, id: string, transaction: { rawTx: any }) => {
+    const { rawTx } = transaction;
     const status = xCallServiceActions.getXCallService(xChainId).deriveTxStatus(rawTx);
 
     useTransactionStore.setState(state => {
       return {
         transactions: state.transactions.map(item => {
-          if (item.id === id && item.xChainId === xChainId) {
-            if (hash) {
-              return { ...item, rawTx, status, hash };
-            } else {
-              return { ...item, rawTx, status };
-            }
+          if (item.id === id) {
+            return { ...item, rawTx, status };
           }
           return item;
         }),
@@ -112,10 +99,9 @@ export const transactionActions = {
           autoClose: 5000,
         });
 
-        if (_transaction.onSuccess) {
-          await _transaction.onSuccess();
-        }
+        _transaction.onSuccess?.();
       }
+
       if (status === TransactionStatus.failure) {
         const toastProps = {
           onClick: () => window.open(getTrackerLink(xChainId, _transaction.hash, 'transaction'), '_blank'),
@@ -150,14 +136,16 @@ export const transactionActions = {
   // },
 };
 
-export const useFetchTransaction = transaction => {
+export const useFetchTransaction = (transaction: Transaction | undefined) => {
   const { xChainId, hash, status } = transaction || {};
   const { data: rawTx, isLoading } = useQuery({
     queryKey: ['transaction', xChainId, hash],
     queryFn: async () => {
+      if (!xChainId) return;
+
       const xCallService = xCallServiceActions.getXCallService(xChainId);
       try {
-        const rawTx = await xCallService.getTx(hash);
+        const rawTx = await xCallService.getTxReceipt(hash);
         return rawTx;
       } catch (err: any) {
         console.error(`failed to check transaction hash: ${hash}`, err);
@@ -165,13 +153,13 @@ export const useFetchTransaction = transaction => {
       }
     },
     refetchInterval: 2000,
-    enabled: status === TransactionStatus.pending && !!hash,
+    enabled: Boolean(status === TransactionStatus.pending && hash && xChainId),
   });
 
   return { rawTx, isLoading };
 };
 
-export const TransactionUpdater = ({ transaction }) => {
+export const TransactionUpdater = ({ transaction }: { transaction: Transaction }) => {
   const { rawTx } = useFetchTransaction(transaction);
   const { xChainId, id } = transaction;
 

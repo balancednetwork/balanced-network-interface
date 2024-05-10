@@ -54,7 +54,7 @@ export const bridgeTransferActions = {
     });
 
     if (sourceTransaction && sourceTransaction.hash) {
-      const blockHeight = (await dstChainXCallService.fetchBlockHeight()) - 1n;
+      const blockHeight = (await dstChainXCallService.getBlockHeight()) - 1n;
       console.log('blockHeight', blockHeight);
 
       const _tokenSymbol = bridgeInfo.currencyAmountToBridge.currency.symbol;

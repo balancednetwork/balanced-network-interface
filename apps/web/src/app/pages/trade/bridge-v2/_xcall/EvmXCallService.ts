@@ -26,14 +26,14 @@ export class EvmXCallService implements XCallService {
   }
 
   // TODO: complete this
-  fetchXCallFee(to: XChainId, rollback: boolean) {
+  getXCallFee(to: XChainId, rollback: boolean) {
     return Promise.resolve({
       rollback: 0n,
       noRollback: 0n,
     });
   }
 
-  async fetchBlockHeight() {
+  async getBlockHeight() {
     const blockNumber = await this.publicClient.getBlockNumber();
     return blockNumber;
   }
@@ -43,7 +43,7 @@ export class EvmXCallService implements XCallService {
     return block;
   }
 
-  async getTx(txHash: string) {
+  async getTxReceipt(txHash: string) {
     const tx = await this.publicClient.getTransactionReceipt({ hash: txHash as Address });
     return tx;
   }
@@ -121,7 +121,7 @@ export class EvmXCallService implements XCallService {
     return eventFiltered;
   }
 
-  async fetchSourceEvents(sourceTransaction: Transaction) {
+  async getSourceEvents(sourceTransaction: Transaction) {
     try {
       const rawTx = sourceTransaction.rawTx;
 
@@ -140,16 +140,16 @@ export class EvmXCallService implements XCallService {
     return {};
   }
 
-  async fetchDestinationEventsByBlock(blockHeight) {
+  async getDestinationEventsByBlock(blockHeight) {
     const events: any = [];
 
     const block = await this.getBlock(blockHeight);
 
-    console.log('fetchDestinationEventsByBlock', block);
+    console.log('getDestinationEventsByBlock', block);
 
     if (block && block.transactions.length > 0) {
       for (const txHash of block.transactions) {
-        const rawTx = await this.getTx(txHash);
+        const rawTx = await this.getTxReceipt(txHash);
 
         console.log('rawTx', rawTx);
         const parsedLogs = parseEventLogs({
@@ -160,7 +160,7 @@ export class EvmXCallService implements XCallService {
         const callMessageEventLog = this.filterCallMessageEventLog(parsedLogs);
         const callExecutedEventLog = this.filterCallExecutedEventLog(parsedLogs);
 
-        console.log('fetchDestinationEventsByBlock', callMessageEventLog, callExecutedEventLog);
+        console.log('getDestinationEventsByBlock', callMessageEventLog, callExecutedEventLog);
 
         if (callMessageEventLog) {
           events.push(this.parseCallMessageEventLog(callMessageEventLog));

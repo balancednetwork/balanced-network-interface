@@ -28,7 +28,7 @@ export async function fetchTxResult(hash: string): Promise<ICONTxResultType | un
   }
 }
 
-export async function fetchBlock(height: string): Promise<ICONBlockType | undefined> {
+export async function getBlock(height: string): Promise<ICONBlockType | undefined> {
   const heightNumber = new BigNumber(height, 16).minus(1);
   for (let i = 0; i < 10; i++) {
     try {
@@ -95,7 +95,7 @@ export async function getTxFromCallExecutedLog(
   indexes: string[],
   reqId: string,
 ): Promise<ICONTxResultType | undefined> {
-  const block = await fetchBlock(blockHash);
+  const block = await getBlock(blockHash);
   if (block) {
     const indexesDecimal = indexes.map(i => parseInt(i, 16));
     const transactions = await Promise.all(

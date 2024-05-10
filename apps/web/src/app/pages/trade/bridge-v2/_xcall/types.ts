@@ -3,7 +3,7 @@ import { BridgeInfo, Transaction, TransactionStatus, XCallEvent, XCallEventMap }
 
 export interface XCallService {
   // getBlock(blockHeight);
-  getTx(txHash): Promise<any>;
+  getTxReceipt(txHash): Promise<any>;
   deriveTxStatus(rawTx): TransactionStatus;
   // filterEventLog(eventLogs)
   // filterCallMessageEventLog(eventLogs)
@@ -18,10 +18,10 @@ export interface XCallService {
   // getAllowance(token: XToken, owner: string | null, spender: string): Promise<string>;
   approve(token, owner, spender, currencyAmountToApprove);
 
-  fetchXCallFee(to: XChainId, rollback: boolean): Promise<IXCallFee>;
-  fetchBlockHeight(): Promise<bigint>;
-  fetchSourceEvents(transfer: Transaction): Promise<XCallEventMap>;
-  fetchDestinationEventsByBlock(blockHeight: bigint): Promise<XCallEvent[]>;
+  getXCallFee(to: XChainId, rollback: boolean): Promise<IXCallFee>;
+  getBlockHeight(): Promise<bigint>;
+  getSourceEvents(transfer: Transaction): Promise<XCallEventMap>;
+  getDestinationEventsByBlock(blockHeight: bigint): Promise<XCallEvent[]>;
   executeTransfer(bridgeInfo: BridgeInfo): Promise<string | undefined>;
   executeSwap(swapInfo: any): Promise<string | undefined>;
 }

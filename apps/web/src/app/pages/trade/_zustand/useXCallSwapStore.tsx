@@ -70,7 +70,7 @@ export const xCallSwapActions = {
     cleanupSwap?.();
 
     if (sourceTransaction && sourceTransaction.hash) {
-      const blockHeight = (await dstChainXCallService.fetchBlockHeight()) - 1n;
+      const blockHeight = (await dstChainXCallService.getBlockHeight()) - 1n;
       console.log('blockHeight', blockHeight);
 
       const _inputTokenSymbol = executionTrade.inputAmount.currency.symbol || '';

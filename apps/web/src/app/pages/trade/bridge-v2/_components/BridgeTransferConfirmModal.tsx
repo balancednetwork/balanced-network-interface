@@ -44,7 +44,7 @@ const StyledXCallButton = styled(XCallButton)`
 
 export function BridgeTransferConfirmModal() {
   const { modalOpen } = useBridgeTransferConfirmModalStore();
-  const { isTransferring } = useBridgeTransferStore();
+  const { isProcessing } = useBridgeTransferStore();
 
   // useXCallEventScanner('0x1.icon');
 
@@ -140,7 +140,7 @@ export function BridgeTransferConfirmModal() {
 
           <LiquidFinanceIntegration />
 
-          {isTransferring && <BridgeTransferState />}
+          {isProcessing && <BridgeTransferState />}
 
           {gasChecker && !gasChecker.hasEnoughGas && (
             <Typography mt={4} mb={-1} textAlign="center" color="alert">
@@ -155,7 +155,7 @@ export function BridgeTransferConfirmModal() {
                 <TextButton onClick={handleDismiss}>
                   <Trans>Cancel</Trans>
                 </TextButton>
-                {approvalState !== ApprovalState.APPROVED && !isTransferring && (
+                {approvalState !== ApprovalState.APPROVED && !isProcessing && (
                   <>
                     <Button onClick={handleApprove} disabled={approvalState === ApprovalState.PENDING}>
                       {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve'}
@@ -164,8 +164,8 @@ export function BridgeTransferConfirmModal() {
                 )}
                 {approvalState === ApprovalState.APPROVED && (
                   <>
-                    <StyledXCallButton onClick={handleTransfer} disabled={isTransferring}>
-                      {!isTransferring ? <Trans>Transfer</Trans> : <Trans>xCall in progress</Trans>}
+                    <StyledXCallButton onClick={handleTransfer} disabled={isProcessing}>
+                      {!isProcessing ? <Trans>Transfer</Trans> : <Trans>xCall in progress</Trans>}
                     </StyledXCallButton>
                   </>
                 )}

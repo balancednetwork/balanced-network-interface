@@ -13,17 +13,17 @@ import {
 
 type BridgeTransferStore = {
   transferId: string | null;
-  isTransferring: boolean;
+  isProcessing: boolean;
 };
 
 export const useBridgeTransferStore = create<BridgeTransferStore>()(set => ({
   transferId: null,
-  isTransferring: false,
+  isProcessing: false,
 }));
 
 export const bridgeTransferActions = {
-  setIsTransferring: (isTransferring: boolean) => {
-    useBridgeTransferStore.setState({ isTransferring });
+  setIsProcessing: (isProcessing: boolean) => {
+    useBridgeTransferStore.setState({ isProcessing });
   },
 
   executeTransfer: async (bridgeInfo: BridgeInfo) => {
@@ -45,7 +45,7 @@ export const bridgeTransferActions = {
       return;
     }
 
-    bridgeTransferActions.setIsTransferring(true);
+    bridgeTransferActions.setIsProcessing(true);
     const sourceTransaction = transactionActions.add(sourceChainId, {
       hash: sourceTransactionHash,
       pendingMessage: 'Requesting cross-chain transfer...',
@@ -84,7 +84,7 @@ export const bridgeTransferActions = {
   reset: () => {
     useBridgeTransferStore.setState({
       transferId: null,
-      isTransferring: false,
+      isProcessing: false,
     });
   },
 

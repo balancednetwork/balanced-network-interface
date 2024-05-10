@@ -251,7 +251,7 @@ const XCallSwapModal = ({
                 <TextButton onClick={handleDismiss}>
                   <Trans>Cancel</Trans>
                 </TextButton>
-                {/* {approvalState !== ApprovalState.APPROVED && !isTransferring && (
+                {/* {approvalState !== ApprovalState.APPROVED && !isProcessing && (
                 <>
                   <Button onClick={handleApprove} disabled={approvalState === ApprovalState.PENDING}>
                     {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve'}

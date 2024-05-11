@@ -10,6 +10,7 @@ import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
 import {
   BridgeInfo,
+  SwapInfo,
   Transaction,
   TransactionStatus,
   XCallDestinationEvent,
@@ -239,9 +240,10 @@ export class IconXCallService implements XCallService {
     }
   }
 
-  async executeSwap(swapInfo: any) {
-    const { executionTrade, account, receivingNetworkAddress, slippageTolerance } = swapInfo;
+  async executeSwap(swapInfo: SwapInfo) {
+    const { executionTrade, account, direction, recipient, slippageTolerance } = swapInfo;
     const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
+    const receiver = `${direction.to}/${recipient}`;
 
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
     if (bnJs.contractSettings.ledgerSettings.actived && this.changeShouldLedgerSign) {
@@ -256,20 +258,20 @@ export class IconXCallService implements XCallService {
           toDec(executionTrade.inputAmount),
           executionTrade.route.pathForSwap,
           NETWORK_ID === 1 ? toDec(minReceived) : '0x0',
-          receivingNetworkAddress,
+          receiver,
         );
     } else {
-      const token = executionTrade.inputAmount.currency as Token;
-      const outputToken = executionTrade.outputAmount.currency as Token;
+      const inputToken = executionTrade.inputAmount.currency.wrapped;
+      const outputToken = executionTrade.outputAmount.currency.wrapped;
 
-      const cx = bnJs.inject({ account }).getContract(token.address);
+      const cx = bnJs.inject({ account }).getContract(inputToken.address);
 
       txResult = await cx.swapUsingRoute(
         toDec(executionTrade.inputAmount),
         outputToken.address,
         toDec(minReceived),
         executionTrade.route.pathForSwap,
-        receivingNetworkAddress,
+        receiver,
       );
     }
 

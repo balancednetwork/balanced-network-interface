@@ -20,6 +20,7 @@ import {
   Transaction,
   XCallDestinationEvent,
   XCallSourceEvent,
+  SwapInfo,
 } from '../_zustand/types';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
@@ -274,29 +275,28 @@ export class ArchwayXCallService implements XCallService {
     }
   }
 
-  async executeSwap(swapInfo: any) {
+  async executeSwap(swapInfo: SwapInfo) {
     const {
-      destinationChainId,
+      direction,
+      inputAmount,
       executionTrade,
-      receivingNetworkAddress,
       account,
-      archwayXCallFees: xCallFee,
+      recipient,
+      xCallFee, //
     } = swapInfo;
-    const archToken = getArchwayCounterToken(executionTrade.inputAmount.currency.symbol);
-    if (!archToken || !(this.walletClient && account)) {
-      return;
-    }
+    const receiver = `${direction.to}/${recipient}`;
+    const token = inputAmount.currency.wrapped;
 
     const swapParams = {
       path: executionTrade.route.pathForSwap,
-      ...(receivingNetworkAddress && { receiver: receivingNetworkAddress }),
+      receiver: receiver,
     };
 
-    if (['bnUSD'].includes(archToken.symbol!)) {
+    if (['bnUSD'].includes(token.symbol)) {
       //handle icon native tokens vs spoke assets
       const msg = {
         cross_transfer: {
-          amount: executionTrade.inputAmount.quotient.toString(),
+          amount: inputAmount.quotient.toString(),
           to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
           data: getBytesFromString(
             JSON.stringify({
@@ -309,14 +309,12 @@ export class ArchwayXCallService implements XCallService {
 
       try {
         const hash = await this.walletClient.executeSync(
-          account,
+          account, //
           archway.contracts.bnUSD!,
           msg,
           'auto',
           undefined,
-          xCallFee && xCallFee.rollback !== 0n
-            ? [{ amount: xCallFee?.rollback.toString(), denom: ARCHWAY_FEE_TOKEN_SYMBOL }]
-            : undefined,
+          [{ amount: xCallFee?.rollback.toString(), denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
         );
         return hash;
       } catch (e) {
@@ -325,8 +323,8 @@ export class ArchwayXCallService implements XCallService {
     } else {
       const msg = {
         deposit: {
-          token_address: archToken.address,
-          amount: executionTrade.inputAmount.quotient.toString(),
+          token_address: token.address,
+          amount: inputAmount.quotient.toString(),
           to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
           data: getBytesFromString(
             JSON.stringify({
@@ -337,18 +335,14 @@ export class ArchwayXCallService implements XCallService {
         },
       };
 
-      const fee = await this.walletClient.queryContractSmart(archway.contracts.xCall, {
-        get_fee: { nid: `${destinationChainId}`, rollback: true },
-      });
-
       try {
         const hash = await this.walletClient.executeSync(
           account,
           archway.contracts.assetManager,
           msg,
-          getFeeParam(1500000),
+          'auto',
           undefined,
-          fee !== undefined && fee !== '0' ? [{ amount: fee, denom: ARCHWAY_FEE_TOKEN_SYMBOL }] : undefined,
+          [{ amount: xCallFee.rollback.toString(), denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
         );
         return hash;
       } catch (e) {

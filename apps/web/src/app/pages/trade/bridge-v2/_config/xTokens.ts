@@ -51,12 +51,12 @@ export const xTokenMap: { [key1 in XChainId]?: { [key2 in XChainId]?: XToken[] }
         'HiYield Treasury Bill',
       ),
       new XToken(
-        '0x1.icon',
+        '0x1.icon', //
         ChainId.MAINNET,
         'cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f',
         6,
-        'IUSDC',
-        'ICON USD Coin',
+        'USDC',
+        'Archway USDC',
       ),
     ],
   },

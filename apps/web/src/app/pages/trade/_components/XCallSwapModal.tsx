@@ -38,7 +38,7 @@ type XCallSwapModalProps = {
     from: XChainId;
     to: XChainId;
   };
-  destinationAddress?: string | null;
+  recipient?: string | null;
 };
 
 export const StyledButton = styled(Button)`
@@ -100,7 +100,7 @@ const XCallSwapModal = ({
   currencies,
   executionTrade,
   direction,
-  destinationAddress,
+  recipient,
   clearInputs,
   onClose,
 }: XCallSwapModalProps) => {
@@ -139,21 +139,22 @@ const XCallSwapModal = ({
   };
 
   const handleXCallSwap = async () => {
-    if (!executionTrade) {
-      return;
-    }
-
+    if (!executionTrade) return;
     if (!account) return;
+    if (!recipient) return;
+    if (!xCallFee) return;
+    if (!_inputAmount) return;
 
-    const swapInfo = {
+    await xCallSwapActions.executeSwap({
       direction,
       executionTrade,
-      cleanupSwap,
       account,
+      recipient,
+      inputAmount: _inputAmount,
       slippageTolerance,
       xCallFee,
-    };
-    await xCallSwapActions.executeSwap(swapInfo);
+      cleanupSwap,
+    });
   };
 
   return (
@@ -189,7 +190,7 @@ const XCallSwapModal = ({
                 <Trans>{getNetworkDisplayName(direction.from)}</Trans>
               </Typography>
               <Typography textAlign="center">
-                <Trans>{destinationAddress && account && shortenAddress(account, 5)}</Trans>
+                <Trans>{recipient && account && shortenAddress(account, 5)}</Trans>
               </Typography>
             </Box>
 
@@ -205,7 +206,7 @@ const XCallSwapModal = ({
                 <Trans>{getNetworkDisplayName(direction.to)}</Trans>
               </Typography>
               <Typography textAlign="center">
-                <Trans>{destinationAddress && shortenAddress(destinationAddress, 5)}</Trans>
+                <Trans>{recipient && shortenAddress(recipient, 5)}</Trans>
               </Typography>
             </Box>
           </Flex>

@@ -430,7 +430,7 @@ export default function SwapPanel() {
         currencies={currencies}
         executionTrade={executionTrade}
         direction={direction}
-        destinationAddress={recipient}
+        recipient={recipient}
         clearInputs={clearSwapInputOutput}
       />
     </>

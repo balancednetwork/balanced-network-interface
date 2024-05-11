@@ -18,7 +18,7 @@ const fetchFee = async (
 ): Promise<bigint> => {
   const xChain = xChainMap[from];
   const xChainType = xChainMap[from].xChainType;
-  const nId = to;
+  const nId: XChainId = from === '0x1.icon' ? to : '0x1.icon';
 
   if (xChainType === 'ICON') {
     const res = await (client as BalancedJs).XCall.getFee(nId, rollback);

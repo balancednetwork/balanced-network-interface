@@ -1,4 +1,5 @@
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
+import { Trade } from '@balancednetwork/v1-sdk';
 import { IXCallFee, XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
 
 export enum BridgeTransferStatus {
@@ -29,6 +30,19 @@ export type BridgeInfo = {
   xCallFee: IXCallFee;
   isLiquidFinanceEnabled?: boolean;
   isDenom?: boolean;
+};
+
+export type SwapInfo = {
+  direction: {
+    from: XChainId;
+    to: XChainId;
+  };
+  inputAmount: CurrencyAmount<Currency>;
+  account: string;
+  recipient: string;
+  xCallFee: IXCallFee;
+  executionTrade: Trade<Currency, Currency, TradeType>;
+  slippageTolerance: number;
 };
 
 export type Transaction = {

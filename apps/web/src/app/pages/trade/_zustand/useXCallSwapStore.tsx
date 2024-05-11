@@ -4,7 +4,7 @@ import { create } from 'zustand';
 import { swapMessage } from 'app/components/trade/utils';
 
 import { xCallServiceActions } from '../bridge-v2/_zustand/useXCallServiceStore';
-import { BridgeTransfer, BridgeTransferStatus, BridgeTransferType } from '../bridge-v2/_zustand/types';
+import { BridgeTransfer, BridgeTransferStatus, BridgeTransferType, SwapInfo } from '../bridge-v2/_zustand/types';
 import { useXCallEventScanner, xCallEventActions } from '../bridge-v2/_zustand/useXCallEventStore';
 import { transactionActions, useFetchTransaction } from '../bridge-v2/_zustand/useTransactionStore';
 import {
@@ -33,14 +33,7 @@ export const xCallSwapActions = {
     useXCallSwapStore.setState({ isProcessing });
   },
 
-  executeSwap: async (swapInfo: {
-    direction: {
-      from: XChainId;
-      to: XChainId;
-    };
-    executionTrade: Trade<Currency, Currency, TradeType>;
-    cleanupSwap: () => void;
-  }) => {
+  executeSwap: async (swapInfo: SwapInfo & { cleanupSwap: () => void }) => {
     const iconChainId: XChainId = '0x1.icon';
     const { direction, executionTrade, cleanupSwap } = swapInfo;
     const sourceChainId = direction.from;

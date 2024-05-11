@@ -5,7 +5,6 @@ import { Token, CurrencyAmount, Currency } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
-import JSBI from 'jsbi';
 import { forEach } from 'lodash-es';
 import { useIconReact } from 'packages/icon-react';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
@@ -65,7 +64,7 @@ export function useAvailableBalances(
   return React.useMemo(() => {
     return balances.reduce((acc, balance) => {
       if (!balance) return acc;
-      if (!JSBI.greaterThan(balance.quotient, BIGINT_ZERO) && balance.currency.wrapped.address !== bnJs.BALN.address) {
+      if (!(balance.quotient > BIGINT_ZERO) && balance.currency.wrapped.address !== bnJs.BALN.address) {
         return acc;
       }
       acc[balance.currency.wrapped.address] = balance;
@@ -112,7 +111,7 @@ export function useArchwayBalances(
 
       return [archBalance, ...nativeBalances, ...cw20Balances].reduce((acc, balance) => {
         if (!balance) return acc;
-        if (!JSBI.greaterThan(balance.quotient, BIGINT_ZERO)) {
+        if (!(balance.quotient > BIGINT_ZERO)) {
           return acc;
         }
         acc[balance.currency.wrapped.address] = balance;

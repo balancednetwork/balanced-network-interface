@@ -6,7 +6,6 @@ import { Trans } from '@lingui/macro';
 import { Accordion } from '@reach/accordion';
 import BigNumber from 'bignumber.js';
 import { AnimatePresence, motion } from 'framer-motion';
-import JSBI from 'jsbi';
 import { omit } from 'lodash-es';
 import { useMedia } from 'react-use';
 import { Flex } from 'rebass/styled-components';
@@ -57,8 +56,8 @@ export default function LiquidityDetails() {
   const shouldShowQueue =
     queuePair &&
     queueBalance &&
-    (JSBI.greaterThan(queueBalance.balance.quotient, BIGINT_ZERO) ||
-      (queueBalance.balance1 && JSBI.greaterThan(queueBalance.balance1.quotient, BIGINT_ZERO)));
+    (queueBalance.balance.quotient > BIGINT_ZERO ||
+      (queueBalance.balance1 && queueBalance.balance1.quotient > BIGINT_ZERO));
 
   const pairsWithoutQ = omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
   const balancesWithoutQ = omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);

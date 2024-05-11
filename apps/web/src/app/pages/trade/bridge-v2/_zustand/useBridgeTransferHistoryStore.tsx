@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 import { useQuery } from '@tanstack/react-query';
-import JSBI from 'jsbi';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 
 import { XCallEventType } from '../types';
@@ -18,9 +17,6 @@ const storage = createJSONStorage(() => sessionStorage, {
   reviver: (key, value: any) => {
     if (typeof value === 'string' && value.startsWith('BIGINT::')) {
       return BigInt(value.substr(8));
-    }
-    if (typeof value === 'string' && value.startsWith('JSBI::')) {
-      return JSBI.BigInt(value.substr(6));
     }
 
     if (
@@ -47,8 +43,6 @@ const storage = createJSONStorage(() => sessionStorage, {
   replacer: (key, value) => {
     if (typeof value === 'bigint') {
       return `BIGINT::${value}`;
-    } else if (value instanceof JSBI) {
-      return `JSBI::${value.toString()}`;
     } else {
       return value;
     }

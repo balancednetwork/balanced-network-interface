@@ -4,7 +4,6 @@ import { Currency, CurrencyAmount, Token, Percent, Price } from '@balancednetwor
 import { Pair } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -98,7 +97,7 @@ export function useMintActionHandlers(noLiquidity: boolean | undefined): {
   };
 }
 
-const ZERO = JSBI.BigInt(0);
+const ZERO = 0n;
 
 const useCurrencyDeposit = (
   account: string | undefined | null,
@@ -119,7 +118,7 @@ const useCurrencyDeposit = (
     })();
   }, [transactions, token, account, currentXCallState]);
 
-  return token && result ? CurrencyAmount.fromRawAmount<Currency>(token, JSBI.BigInt(result)) : undefined;
+  return token && result ? CurrencyAmount.fromRawAmount<Currency>(token, BigInt(result)) : undefined;
 };
 
 export function useDerivedMintInfo(
@@ -173,12 +172,9 @@ export function useDerivedMintInfo(
   const totalSupply = pair?.totalSupply;
   const noLiquidity: boolean =
     pairState === PairState.NOT_EXISTS ||
-    Boolean(totalSupply && JSBI.equal(totalSupply.quotient, ZERO)) ||
+    Boolean(totalSupply && totalSupply.quotient === ZERO) ||
     Boolean(
-      pairState === PairState.EXISTS &&
-        pair &&
-        JSBI.equal(pair.reserve0.quotient, ZERO) &&
-        JSBI.equal(pair.reserve1.quotient, ZERO),
+      pairState === PairState.EXISTS && pair && pair.reserve0.quotient === ZERO && pair.reserve1.quotient === ZERO,
     );
 
   // balances

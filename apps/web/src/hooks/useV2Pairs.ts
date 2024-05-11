@@ -4,7 +4,6 @@ import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
-import JSBI from 'jsbi';
 
 import { usePoolPanelContext } from 'app/components/trade/PoolPanelContext';
 import bnJs from 'bnJs';
@@ -116,7 +115,7 @@ export function usePoolShare(poolId: number, tokenA?: Currency, tokenB?: Currenc
   const pair = useV2Pair(tokenA, tokenB)[1];
 
   return useMemo(() => {
-    if (balance && pair && JSBI.greaterThan(pair.totalSupply?.quotient || BIGINT_ZERO, BIGINT_ZERO)) {
+    if (balance && pair && (pair.totalSupply?.quotient || BIGINT_ZERO) > BIGINT_ZERO) {
       const res = balance.stakedLPBalance
         ? balance.balance.add(balance.stakedLPBalance).divide(pair.totalSupply || BIGINT_ZERO)
         : balance.balance.divide(pair.totalSupply || BIGINT_ZERO);

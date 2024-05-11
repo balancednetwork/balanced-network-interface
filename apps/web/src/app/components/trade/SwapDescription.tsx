@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Price, Currency } from '@balancednetwork/sdk-core';
 import { defineMessage, Trans } from '@lingui/macro';
 import { LanguageCode, ResolutionString } from 'charting_library/charting_library';
-import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
@@ -71,14 +70,14 @@ export default function SwapDescription() {
         ? new Price(
             currencies.INPUT,
             SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address],
-            JSBI.multiply(price.denominator, qratioFrac.denominator),
-            JSBI.multiply(price.numerator, qratioFrac.numerator),
+            price.denominator * qratioFrac.denominator,
+            price.numerator * qratioFrac.numerator,
           )
         : new Price(
             SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address],
             currencies.OUTPUT,
-            JSBI.multiply(price.denominator, qratioFrac.numerator),
-            JSBI.multiply(price.numerator, qratioFrac.denominator),
+            price.denominator * qratioFrac.numerator,
+            price.numerator * qratioFrac.denominator,
           );
   }
 

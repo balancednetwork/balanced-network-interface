@@ -87,6 +87,8 @@ msgstr "Your transaction has failed. Please go back and try again."
 
 #: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
 #: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
+#: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
+#: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
 msgid "{0} transfer approval failed."
 msgstr "{0} transfer approval failed."
 
@@ -170,8 +172,8 @@ msgstr "Reject"
 msgid "Your allocation"
 msgstr "Your allocation"
 
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 msgid "Wallet:"
 msgstr "Wallet:"
@@ -235,8 +237,9 @@ msgid "Weekly"
 msgstr "Weekly"
 
 #: src/app/components/StabilityFund/index.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Pay"
 msgstr "Pay"
 
@@ -245,7 +248,7 @@ msgid "Vote to incentivise specific liquidity pools and earn a kickback for it."
 msgstr "Vote to incentivise specific liquidity pools and earn a kickback for it."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Awaiting message from Archway network"
 msgstr "Awaiting message from Archway network"
 
@@ -413,7 +416,7 @@ msgstr "All proposals"
 msgid "Use the Stability Fund to swap {0} for {1}"
 msgstr "Use the Stability Fund to swap {0} for {1}"
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Transfer {0} to Archway."
 msgstr "Transfer {0} to Archway."
 
@@ -461,7 +464,7 @@ msgstr "Past day"
 msgid "Adjust liquidity allocation?"
 msgstr "Adjust liquidity allocation?"
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Transferring {0} to Archway..."
 msgstr "Transferring {0} to Archway..."
 
@@ -473,7 +476,7 @@ msgstr "Sending"
 msgid "Deposit bnUSD?"
 msgstr "Deposit bnUSD?"
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Requesting cross-chain swap..."
 msgstr "Requesting cross-chain swap..."
 
@@ -577,6 +580,7 @@ msgstr "Average lock-up time"
 msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."
 msgstr "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."
 
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/store/mint/hooks.tsx
 #: src/store/swap/hooks.ts
 msgid "Connect Wallet"
@@ -669,6 +673,7 @@ msgstr "Active"
 
 #: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
 #: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
+#: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
 msgstr "{0} approved for cross-chain transfer."
 
@@ -688,7 +693,7 @@ msgstr "Locked"
 msgid "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
 msgstr "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 msgid "Slippage tolerance"
 msgstr "Slippage tolerance"
 
@@ -735,7 +740,8 @@ msgstr "ICON wallet"
 msgid "Locking BALN..."
 msgstr "Locking BALN..."
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "You'll also pay"
 msgstr "You'll also pay"
 
@@ -779,15 +785,18 @@ msgstr "Lock up Balance Tokens?"
 #: src/app/components/trade/LPDescription.tsx
 #: src/app/components/trade/XCallEventManager.tsx
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
-#: src/app/pages/trade/bridge-v2/_components/BridgeTransferStatus.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "{0}"
 msgstr "{0}"
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/layout.tsx
@@ -847,7 +856,7 @@ msgstr "Recieve sICX, which you can trade or unstake from the wallet section lat
 msgid "Liquidity incentives"
 msgstr "Liquidity incentives"
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 msgid "Transfer time"
 msgstr "Transfer time"
@@ -883,7 +892,8 @@ msgstr "Withdraw:"
 msgid "Unlock {0} BALN"
 msgstr "Unlock {0} BALN"
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "to transfer cross-chain."
 msgstr "to transfer cross-chain."
 
@@ -912,8 +922,9 @@ msgstr "The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receiv
 msgid "Title"
 msgstr "Title"
 
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Swap {0} for {1}?"
 msgstr "Swap {0} for {1}?"
 
@@ -1015,7 +1026,7 @@ msgstr "Add <0>{0}</0> item"
 msgid "Revert transaction."
 msgstr "Revert transaction."
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Cross-chain swap requested."
 msgstr "Cross-chain swap requested."
 
@@ -1056,7 +1067,7 @@ msgstr "Not now"
 msgid "No assets available."
 msgstr "No assets available."
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 msgid "Fee"
 msgstr "Fee"
@@ -1108,7 +1119,7 @@ msgstr "Invalid pair"
 msgid "Send {0}"
 msgstr "Send {0}"
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "{0} {1} for {2} {3}"
 msgstr "{0} {1} for {2} {3}"
 
@@ -1132,7 +1143,8 @@ msgstr "Wallet: {0} {1}"
 msgid "Forum link"
 msgstr "Forum link"
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 msgid "Not enough gas to complete the swap."
@@ -1170,7 +1182,7 @@ msgid "Borrow"
 msgstr "Borrow"
 
 #: src/app/components/StabilityFund/index.tsx
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 msgid "Includes a fee of {0} {1}."
 msgstr "Includes a fee of {0} {1}."
 
@@ -1208,8 +1220,9 @@ msgstr "There's no ICX unstaking."
 
 #: src/app/components/trade/SwapDescription.tsx
 #: src/app/components/trade/SwapDescription.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "{0} {1} per {2}"
 msgstr "{0} {1} per {2}"
 
@@ -1249,6 +1262,10 @@ msgstr "Total locked"
 #: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "Search name or contract"
 msgstr "Search name or contract"
+
+#: src/store/bridge/hooks.tsx
+msgid "Connect wallet"
+msgstr "Connect wallet"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -1298,7 +1315,7 @@ msgstr "Approving {0} for cross-chain transfers..."
 msgid "Future incentives"
 msgstr "Future incentives"
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 msgid "Minimum to receive"
 msgstr "Minimum to receive"
 
@@ -1344,7 +1361,7 @@ msgstr "Withdrawing sICX..."
 msgid "{currency} sent to the {pair} pool."
 msgstr "{currency} sent to the {pair} pool."
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 msgid "For"
 msgstr "For"
 
@@ -1397,7 +1414,7 @@ msgid "Price"
 msgstr "Price"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Awaiting message from ICON network"
 msgstr "Awaiting message from ICON network"
 
@@ -1475,7 +1492,8 @@ msgstr "The BALN APY is calculated from the USD value of BALN rewards allocated 
 msgid "Claim ICX"
 msgstr "Claim ICX"
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 msgid "xCall in progress"
@@ -1489,7 +1507,7 @@ msgstr "Fees:"
 msgid "47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
 msgstr "47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Transferred {0} {1} to Archway."
 msgstr "Transferred {0} {1} to Archway."
 
@@ -1529,8 +1547,9 @@ msgstr "Send {0} to {1}."
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
@@ -1566,7 +1585,7 @@ msgstr "Claiming bribe..."
 msgid "Unlock Balance Tokens?"
 msgstr "Unlock Balance Tokens?"
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 msgid "If the price slips by more than this amount, your swap will fail."
 msgstr "If the price slips by more than this amount, your swap will fail."
 
@@ -1591,7 +1610,8 @@ msgstr "From"
 msgid "Rejected"
 msgstr "Rejected"
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Includes a fee of"
 msgstr "Includes a fee of"
 
@@ -1743,9 +1763,13 @@ msgstr "Current unlock date"
 msgid "Claim network fees?"
 msgstr "Claim network fees?"
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 msgid "Price impact"
 msgstr "Price impact"
+
+#: src/store/bridge/hooks.tsx
+msgid "Enter recipient"
+msgstr "Enter recipient"
 
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 msgid "You"
@@ -1776,8 +1800,9 @@ msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
 msgstr "Buy or borrow bnUSD, then deposit it here to earn rewards."
 
 #: src/app/components/StabilityFund/index.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Receive"
 msgstr "Receive"
 
@@ -1842,7 +1867,7 @@ msgstr "The ICX/sICX Deposited value is the same. The Wallet value is your avail
 msgid "Sent {0} to the bridge contract."
 msgstr "Sent {0} to the bridge contract."
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Swap {0} for {1}"
 msgstr "Swap {0} for {1}"
 
@@ -1905,7 +1930,7 @@ msgstr "Pool"
 msgid "Sign the transaction, then check the banner notification message for the result."
 msgstr "Sign the transaction, then check the banner notification message for the result."
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Swap {0} for {1}."
 msgstr "Swap {0} for {1}."
 
@@ -2036,7 +2061,7 @@ msgstr "Transferred {0} {1} to {2}."
 msgid "APY"
 msgstr "APY"
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 msgid "Route"
 msgstr "Route"
 
@@ -2090,7 +2115,7 @@ msgstr "You rejected"
 msgid "for"
 msgstr "for"
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 msgid "Exchange rate"
 msgstr "Exchange rate"
 
@@ -2160,7 +2185,7 @@ msgstr "All collateral locked"
 msgid "<0>{0}</0> {1}."
 msgstr "<0>{0}</0> {1}."
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 msgid "Approve {0} for cross-chain transfer."
 msgstr "Approve {0} for cross-chain transfer."
@@ -2171,12 +2196,13 @@ msgid "Learn how to resolve common transaction errors."
 msgstr "Learn how to resolve common transaction errors."
 
 #: src/app/components/StabilityFund/index.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #: src/app/pages/trade/layout.tsx
 msgid "Swap"
 msgstr "Swap"
@@ -2189,7 +2215,7 @@ msgstr "There's no liquidity pool for this pair yet."
 msgid "Unlocking BALN early..."
 msgstr "Unlocking BALN early..."
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 msgid "Bridge fee"
 msgstr "Bridge fee"
 
@@ -2248,9 +2274,10 @@ msgstr "Rebalancing the bnUSD price..."
 msgid "Transfer failed."
 msgstr "Transfer failed."
 
-#: src/app/pages/trade/bridge-v2/_components/BridgeTransferStatus.tsx
-#~ msgid "{message}"
-#~ msgstr "{message}"
+#: src/app/pages/trade/_components/XCallSwapState.tsx
+#: src/app/pages/trade/bridge-v2/_components/BridgeTransferState.tsx
+msgid "{message}"
+msgstr "{message}"
 
 #: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx

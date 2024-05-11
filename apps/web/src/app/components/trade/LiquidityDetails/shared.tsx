@@ -1,5 +1,4 @@
 import { BalancedJs } from '@balancednetwork/balanced-js';
-import JSBI from 'jsbi';
 import { omit } from 'lodash-es';
 import styled from 'styled-components';
 
@@ -19,8 +18,8 @@ export const useHasLiquidity = (): boolean => {
   const shouldShowQueue =
     queuePair &&
     queueBalance &&
-    (JSBI.greaterThan(queueBalance.balance.quotient, BIGINT_ZERO) ||
-      (queueBalance.balance1 && JSBI.greaterThan(queueBalance.balance1.quotient, BIGINT_ZERO)));
+    (queueBalance.balance.quotient > BIGINT_ZERO ||
+      (queueBalance.balance1 && queueBalance.balance1.quotient > BIGINT_ZERO));
 
   const pairsWithoutQ = omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
   const userPools = Object.keys(pairsWithoutQ).filter(

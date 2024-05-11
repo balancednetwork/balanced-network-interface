@@ -3,7 +3,6 @@ import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
-import JSBI from 'jsbi';
 
 import { NETWORK_ID } from 'constants/config';
 import { canBeQueue } from 'constants/currency';
@@ -99,21 +98,18 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
   }
 }
 
-const MIN_NATIVE_CURRENCY_FOR_GAS: JSBI = JSBI.multiply(
-  JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18)),
-  JSBI.BigInt(MINIMUM_ICX_FOR_ACTION),
-); // 2 ICX
+const MIN_NATIVE_CURRENCY_FOR_GAS: bigint = 10n ** 18n * BigInt(MINIMUM_ICX_FOR_ACTION); // 2 ICX
 
 export function maxAmountSpend(currencyAmount?: CurrencyAmount<Currency>): CurrencyAmount<Currency> | undefined {
   if (!currencyAmount) return undefined;
   if (currencyAmount.currency.symbol === 'ICX') {
-    if (JSBI.greaterThan(currencyAmount.quotient, MIN_NATIVE_CURRENCY_FOR_GAS)) {
+    if (currencyAmount.quotient > MIN_NATIVE_CURRENCY_FOR_GAS) {
       return CurrencyAmount.fromRawAmount(
         currencyAmount.currency,
-        JSBI.subtract(currencyAmount.quotient, MIN_NATIVE_CURRENCY_FOR_GAS),
+        currencyAmount.quotient - MIN_NATIVE_CURRENCY_FOR_GAS,
       );
     } else {
-      return CurrencyAmount.fromRawAmount(currencyAmount.currency, JSBI.BigInt(0));
+      return CurrencyAmount.fromRawAmount(currencyAmount.currency, 0n);
     }
   }
   return currencyAmount;
@@ -276,13 +272,13 @@ export function multiplyCABN(ca: CurrencyAmount<Currency>, bn: BigNumber): Curre
   const bnFrac = toFraction(bn);
   return CurrencyAmount.fromFractionalAmount(
     ca.currency,
-    JSBI.multiply(ca.numerator, bnFrac.numerator),
-    JSBI.multiply(ca.denominator, bnFrac.denominator),
+    ca.numerator * bnFrac.numerator,
+    ca.denominator * bnFrac.denominator,
   );
 }
 
 export function isZeroCA(ca: CurrencyAmount<Currency>): boolean {
-  return JSBI.equal(ca.quotient, BIGINT_ZERO);
+  return ca.quotient === BIGINT_ZERO;
 }
 
 export function toBigNumber(ca: CurrencyAmount<Currency> | undefined): BigNumber {

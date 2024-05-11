@@ -185,9 +185,6 @@ importers:
       jotai:
         specifier: 2.8.0
         version: 2.8.0(@types/react@18.2.67)(react@18.2.0)
-      jsbi:
-        specifier: 3.1.6
-        version: 3.1.6
       lightweight-charts:
         specifier: 3.2.0
         version: 3.2.0
@@ -403,9 +400,6 @@ importers:
       decimal.js-light:
         specifier: ^2.5.0
         version: 2.5.1
-      jsbi:
-        specifier: 3.1.6
-        version: 3.1.6
       tiny-invariant:
         specifier: ^1.1.0
         version: 1.1.0
@@ -440,9 +434,6 @@ importers:
       '@ethersproject/solidity':
         specifier: ^5.0.0
         version: 5.4.0
-      jsbi:
-        specifier: 3.1.6
-        version: 3.1.6
       tiny-invariant:
         specifier: ^1.1.0
         version: 1.1.0
@@ -10521,10 +10512,6 @@ packages:
     hasBin: true
     dependencies:
       argparse: 2.0.1
-
-  /jsbi@3.1.6:
-    resolution: {integrity: sha512-CGjq13y28FrBA5mAU+rsfHaVKEF9jrw3PhzZpIzTeMiPsT0XRDAS6E7QS8/ZTmFQUtl2MDJsxKQoYJzAhF7B1w==}
-    dev: false
 
   /jsc-android@250231.0.0:
     resolution: {integrity: sha512-rS46PvsjYmdmuz1OAWXY/1kCYG7pnf1TBqeTiOJr1iDz7s5DLxxC9n/ZMknLDxzYzNVfI7R95MH10emSSG1Wuw==}

@@ -4,7 +4,6 @@ import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
@@ -41,7 +40,7 @@ export default function LPDescription() {
     !!totalPoolTokens &&
     !!userPoolBalance &&
     // this condition is a short-circuit in the case where useTokenBalance updates sooner than useTotalSupply
-    JSBI.greaterThanOrEqual(totalPoolTokens.quotient, userPoolBalance.quotient) &&
+    totalPoolTokens.quotient >= userPoolBalance.quotient &&
     totalPoolTokens.greaterThan(0)
       ? pair.getLiquidityValue(pair.token0, totalPoolTokens, userPoolBalance, false)
       : undefined;

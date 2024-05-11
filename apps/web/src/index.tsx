@@ -27,6 +27,10 @@ import { LanguageProvider } from './i18n';
 import { WagmiProvider } from 'wagmi';
 import { wagmiConfig } from './config/wagmi';
 
+BigInt.prototype['toJSON'] = function () {
+  return this.toString();
+};
+
 const queryClient = new QueryClient();
 // Set the global formatting options
 const fmt = {

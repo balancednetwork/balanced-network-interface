@@ -56,7 +56,6 @@
     "i18next-scanner": "2.11.0",
     "icon-sdk-js": "1.5.1",
     "jotai": "2.8.0",
-    "jsbi": "3.1.6",
     "lightweight-charts": "3.2.0",
     "lodash-es": "4.17.21",
     "nouislider": "14.6.4",
@@ -117,11 +116,7 @@
     "prepare": "pnpm run i18n:compile"
   },
   "proxy": "https://balanced.sudoblock.io",
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not op_mini all"
-  ],
+  "browserslist": [">0.2%", "not dead", "not op_mini all"],
   "engines": {
     "node": ">=18.0.0"
   },

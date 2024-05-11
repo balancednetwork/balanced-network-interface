@@ -4,7 +4,6 @@ import { Currency, CurrencyAmount, Fraction, Percent } from '@balancednetwork/sd
 import { Pair } from '@balancednetwork/v1-sdk';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { useMedia } from 'react-use';
@@ -55,7 +54,7 @@ const Wrapper = styled(Flex)`
 
 export function getRate(pair: Pair, balance: BalanceData, stakedRatio = new Fraction(1)): Fraction {
   //When balance = 0, use stakedLPBalance to calculate rate
-  if (pair.totalSupply && JSBI.greaterThan(pair.totalSupply.quotient, BIGINT_ZERO) && balance) {
+  if (pair.totalSupply && pair.totalSupply.quotient > BIGINT_ZERO && balance) {
     const amount = (balance?.stakedLPBalance ? balance.balance.add(balance.stakedLPBalance) : balance.balance).divide(
       pair.totalSupply.multiply(stakedRatio),
     );
@@ -550,7 +549,7 @@ export const WithdrawPanelQ = ({
 
         <Flex alignItems="center" justifyContent="center" flexWrap="wrap">
           <OptionButton
-            disabled={JSBI.equal(balance.balance1?.quotient || BIGINT_ZERO, BIGINT_ZERO)}
+            disabled={(balance.balance1?.quotient || BIGINT_ZERO) === BIGINT_ZERO}
             onClick={handleOption2}
             m={1}
           >
@@ -561,7 +560,7 @@ export const WithdrawPanelQ = ({
           </OptionButton>
 
           <OptionButton
-            disabled={JSBI.equal(balance.balance.quotient || BIGINT_ZERO, BIGINT_ZERO)}
+            disabled={(balance.balance.quotient || BIGINT_ZERO) === BIGINT_ZERO}
             onClick={handleOption1}
             m={1}
           >

@@ -88,6 +88,8 @@ msgstr ""
 
 #: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
 #: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
+#: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
+#: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
 msgid "{0} transfer approval failed."
 msgstr ""
 
@@ -171,8 +173,8 @@ msgstr "Từ chối"
 msgid "Your allocation"
 msgstr ""
 
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 msgid "Wallet:"
 msgstr "Ví:"
@@ -240,8 +242,9 @@ msgstr ""
 #~ msgstr "Phần thưởng"
 
 #: src/app/components/StabilityFund/index.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Pay"
 msgstr "Thanh toán"
 
@@ -250,7 +253,7 @@ msgid "Vote to incentivise specific liquidity pools and earn a kickback for it."
 msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Awaiting message from Archway network"
 msgstr ""
 
@@ -426,7 +429,7 @@ msgstr ""
 msgid "Use the Stability Fund to swap {0} for {1}"
 msgstr ""
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Transfer {0} to Archway."
 msgstr ""
 
@@ -478,7 +481,7 @@ msgstr "Hôm qua"
 msgid "Adjust liquidity allocation?"
 msgstr ""
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Transferring {0} to Archway..."
 msgstr ""
 
@@ -494,7 +497,7 @@ msgstr "Đang gửi"
 msgid "Deposit bnUSD?"
 msgstr ""
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Requesting cross-chain swap..."
 msgstr ""
 
@@ -610,6 +613,7 @@ msgstr ""
 msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."
 msgstr "Bạn cần ít nhất {MINIMUM_ICX_FOR_TX} ICX trong ví để hoàn tất giao dịch này."
 
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/store/mint/hooks.tsx
 #: src/store/swap/hooks.ts
 msgid "Connect Wallet"
@@ -702,6 +706,7 @@ msgstr "Kích hoạt"
 
 #: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
 #: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
+#: src/app/pages/trade/bridge-v2/_hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
 msgstr ""
 
@@ -723,7 +728,7 @@ msgstr "Đã khóa"
 msgid "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
 msgstr ""
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 msgid "Slippage tolerance"
 msgstr "Khả năng trượt giá"
 
@@ -774,7 +779,8 @@ msgstr ""
 #~ msgid "Claimed {0} BALN."
 #~ msgstr "Đã nhận {0} BALN."
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "You'll also pay"
 msgstr ""
 
@@ -822,15 +828,18 @@ msgstr ""
 #: src/app/components/trade/LPDescription.tsx
 #: src/app/components/trade/XCallEventManager.tsx
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
-#: src/app/pages/trade/bridge-v2/_components/BridgeTransferStatus.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "{0}"
 msgstr "{0}"
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/layout.tsx
@@ -890,7 +899,7 @@ msgstr ""
 msgid "Liquidity incentives"
 msgstr ""
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 msgid "Transfer time"
 msgstr ""
@@ -926,7 +935,8 @@ msgstr "Rút:"
 msgid "Unlock {0} BALN"
 msgstr ""
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "to transfer cross-chain."
 msgstr ""
 
@@ -955,8 +965,9 @@ msgstr ""
 msgid "Title"
 msgstr "Tiêu đề"
 
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Swap {0} for {1}?"
 msgstr "Đổi {0} thành {1}"
 
@@ -1058,7 +1069,7 @@ msgstr ""
 msgid "Revert transaction."
 msgstr ""
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Cross-chain swap requested."
 msgstr ""
 
@@ -1099,7 +1110,7 @@ msgstr "Không phải bây giờ"
 msgid "No assets available."
 msgstr "Ko có tài sản sẵn có."
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 msgid "Fee"
 msgstr "Mức phí"
@@ -1151,7 +1162,7 @@ msgstr "Cặp đôi không hợp lệ"
 msgid "Send {0}"
 msgstr "Gửi {0}"
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "{0} {1} for {2} {3}"
 msgstr ""
 
@@ -1175,7 +1186,8 @@ msgstr "Ví: {0}{1}"
 msgid "Forum link"
 msgstr "Đường dẫn vào diễn đàn"
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 msgid "Not enough gas to complete the swap."
@@ -1213,7 +1225,7 @@ msgid "Borrow"
 msgstr "Vay"
 
 #: src/app/components/StabilityFund/index.tsx
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 msgid "Includes a fee of {0} {1}."
 msgstr "Bao gồm tiền phí {0} {1}."
 
@@ -1251,8 +1263,9 @@ msgstr "Hiện tại ko có ICX nào đang được gỡ ra."
 
 #: src/app/components/trade/SwapDescription.tsx
 #: src/app/components/trade/SwapDescription.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "{0} {1} per {2}"
 msgstr "{0}{1} cho mỗi {2}"
 
@@ -1297,6 +1310,10 @@ msgstr ""
 #: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "Search name or contract"
 msgstr "Tìm kiếm tên hợp đồng"
+
+#: src/store/bridge/hooks.tsx
+msgid "Connect wallet"
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -1346,7 +1363,7 @@ msgstr ""
 msgid "Future incentives"
 msgstr ""
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 msgid "Minimum to receive"
 msgstr "Nhận được tối thiểu"
 
@@ -1400,7 +1417,7 @@ msgstr "Đang rút sICX..."
 msgid "{currency} sent to the {pair} pool."
 msgstr "{currency} gửi tới ao {pair} thanh khoản."
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 msgid "For"
 msgstr "Thành"
 
@@ -1453,7 +1470,7 @@ msgid "Price"
 msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Awaiting message from ICON network"
 msgstr ""
 
@@ -1533,7 +1550,8 @@ msgstr ""
 msgid "Claim ICX"
 msgstr "Nhận ICX"
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 msgid "xCall in progress"
@@ -1547,7 +1565,7 @@ msgstr ""
 msgid "47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
 msgstr ""
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Transferred {0} {1} to Archway."
 msgstr ""
 
@@ -1591,8 +1609,9 @@ msgstr ""
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
@@ -1628,7 +1647,7 @@ msgstr ""
 msgid "Unlock Balance Tokens?"
 msgstr ""
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 msgid "If the price slips by more than this amount, your swap will fail."
 msgstr "Nếu giá cả bị vượt quá mức này, vụ trao đổi này sẽ thất bại."
 
@@ -1653,7 +1672,8 @@ msgstr ""
 msgid "Rejected"
 msgstr "Đã từ chối"
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Includes a fee of"
 msgstr ""
 
@@ -1805,13 +1825,17 @@ msgstr ""
 msgid "Claim network fees?"
 msgstr "Nhận phí hoạt động từ balanced?"
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 msgid "Price impact"
 msgstr "Tác động Giá"
 
 #: src/app/components/home/RewardsPanel.tsx
 #~ msgid "Claim Balance Tokens?"
 #~ msgstr "Nhận đồng xu Balance?"
+
+#: src/store/bridge/hooks.tsx
+msgid "Enter recipient"
+msgstr ""
 
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 msgid "You"
@@ -1842,8 +1866,9 @@ msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
 msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Receive"
 msgstr "Nhận"
 
@@ -1908,7 +1933,7 @@ msgstr ""
 msgid "Sent {0} to the bridge contract."
 msgstr ""
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Swap {0} for {1}"
 msgstr ""
 
@@ -1971,7 +1996,7 @@ msgstr "Pool"
 msgid "Sign the transaction, then check the banner notification message for the result."
 msgstr ""
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 msgid "Swap {0} for {1}."
 msgstr ""
 
@@ -2102,7 +2127,7 @@ msgstr ""
 msgid "APY"
 msgstr ""
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 msgid "Route"
 msgstr "Tuyến đường"
 
@@ -2156,7 +2181,7 @@ msgstr "Bạn đã phản đối"
 msgid "for"
 msgstr ""
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 msgid "Exchange rate"
 msgstr "Tỷ giá"
 
@@ -2226,7 +2251,7 @@ msgstr "Tất cả tài sản thế chấp sẽ bị khóa"
 msgid "<0>{0}</0> {1}."
 msgstr ""
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 msgid "Approve {0} for cross-chain transfer."
 msgstr ""
@@ -2237,12 +2262,13 @@ msgid "Learn how to resolve common transaction errors."
 msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #: src/app/pages/trade/layout.tsx
 msgid "Swap"
 msgstr "Đổi"
@@ -2255,7 +2281,7 @@ msgstr "Hiện chưa có thanh khoản trong ao này."
 msgid "Unlocking BALN early..."
 msgstr ""
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/_components/SwapPanel.tsx
 msgid "Bridge fee"
 msgstr ""
 
@@ -2314,9 +2340,10 @@ msgstr "Đang tái cân bằng giá bnUSD..."
 msgid "Transfer failed."
 msgstr ""
 
-#: src/app/pages/trade/bridge-v2/_components/BridgeTransferStatus.tsx
-#~ msgid "{message}"
-#~ msgstr ""
+#: src/app/pages/trade/_components/XCallSwapState.tsx
+#: src/app/pages/trade/bridge-v2/_components/BridgeTransferState.tsx
+msgid "{message}"
+msgstr ""
 
 #: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx

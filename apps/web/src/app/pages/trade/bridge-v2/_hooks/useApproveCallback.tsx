@@ -72,16 +72,15 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
 
   const [pending, setPending] = useState<boolean>(false);
 
-  const bridgeDirection = useBridgeDirection();
-  const xWallet = useXWallet(bridgeDirection.from);
+  const xWallet = useXWallet(amountToApprove?.currency.xChainId);
 
-  const account = xWallet.account;
+  const account = xWallet?.account;
 
   const xChainId = amountToApprove?.currency.xChainId;
   const xChainType = xChainId ? xChainMap[xChainId].xChainType : undefined;
 
   // archway stuff
-  const { signingClient } = useArchwayContext();
+  // const { signingClient } = useArchwayContext();
 
   // evm stuff
   const { data: walletClient } = useWalletClient();

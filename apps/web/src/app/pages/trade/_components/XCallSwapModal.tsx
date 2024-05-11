@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
-import { Currency, TradeType } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -8,12 +8,11 @@ import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
 import { useARCH } from 'app/pages/trade/bridge-v2/_config/tokens';
-import { XChainId } from 'app/pages/trade/bridge-v2/types';
+import { XChainId, XToken } from 'app/pages/trade/bridge-v2/types';
 import { getNetworkDisplayName } from 'app/pages/trade/bridge-v2/utils';
 import { Typography } from 'app/theme';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from 'store/application/hooks';
 import { Field } from 'store/swap/reducer';
-import { useSignedInWallets } from 'store/wallet/hooks';
 import { formatBigNumber, shortenAddress } from 'utils';
 
 import { Button, TextButton } from 'app/components/Button';
@@ -22,21 +21,24 @@ import Spinner from 'app/components/Spinner';
 import ModalContent from 'app/components/ModalContent';
 import useXCallFee from 'app/pages/trade/bridge-v2/_hooks/useXCallFee';
 import useXCallGasChecker from 'app/pages/trade/bridge-v2/_hooks/useXCallGasChecker';
-import { useXCallSwapModalStore, xCallSwapModalActions } from '../_zustand/useXCallSwapModalStore';
 import { XCallSwapStatusUpdater, useXCallSwapStore, xCallSwapActions } from '../_zustand/useXCallSwapStore';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge-v2/_hooks/useApproveCallback';
 import XCallSwapState from './XCallSwapState';
+import { xChainMap } from '../bridge-v2/_config/xChains';
 
 type XCallSwapModalProps = {
   isOpen: boolean;
+  onClose: () => void;
+  account: string | undefined;
   currencies: { [field in Field]?: Currency };
   executionTrade?: Trade<Currency, Currency, TradeType>;
   clearInputs: () => void;
-  originChain: XChainId;
-  destinationChain: XChainId;
-  destinationAddress?: string;
-  onClose: () => void;
+  direction: {
+    from: XChainId;
+    to: XChainId;
+  };
+  destinationAddress?: string | null;
 };
 
 export const StyledButton = styled(Button)`
@@ -94,32 +96,34 @@ export const presenceVariants = {
 
 const XCallSwapModal = ({
   isOpen,
+  account,
   currencies,
   executionTrade,
-  originChain,
-  destinationChain,
+  direction,
   destinationAddress,
   clearInputs,
   onClose,
 }: XCallSwapModalProps) => {
-  const { modalOpen } = useXCallSwapModalStore();
   const { isProcessing } = useXCallSwapStore();
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const slippageTolerance = useSwapSlippageTolerance();
 
-  const signedInWallets = useSignedInWallets();
-  const { xCallFee: archwayXCallFees } = useXCallFee('archway-1', '0x1.icon');
-  const { data: gasChecker } = useXCallGasChecker(originChain, destinationChain);
-  const ARCH = useARCH();
-  const originAddress = signedInWallets.find(wallet => wallet.chainId === originChain)?.address;
+  const { xCallFee, formattedXCallFee } = useXCallFee(direction.from, direction.to);
+  const { data: gasChecker } = useXCallGasChecker(direction.from, direction.to);
 
-  const approvalState = ApprovalState.APPROVED;
-  // const { approvalState, approveCallback } = useApproveCallback(
-  //   executionTrade?.inputAmount,
-  //   xChain.contracts.assetManager,
-  // );
+  const xChain = xChainMap[direction.from];
+  const _inputAmount = useMemo(() => {
+    return executionTrade?.inputAmount && currencies[Field.INPUT]
+      ? CurrencyAmount.fromFractionalAmount(
+          XToken.getXToken(direction.from, currencies[Field.INPUT].wrapped),
+          executionTrade.inputAmount.numerator,
+          executionTrade.inputAmount.denominator,
+        )
+      : undefined;
+  }, [executionTrade, direction.from, currencies]);
+  const { approvalState, approveCallback } = useApproveCallback(_inputAmount, xChain.contracts.assetManager);
 
   const cleanupSwap = () => {
     clearInputs();
@@ -127,14 +131,8 @@ const XCallSwapModal = ({
     changeShouldLedgerSign(false);
   };
 
-  const receivingNetworkAddress: string | undefined = React.useMemo(() => {
-    if (destinationAddress) {
-      return `${destinationChain}/${destinationAddress}`;
-    }
-  }, [destinationChain, destinationAddress]);
-
   const handleDismiss = () => {
-    xCallSwapModalActions.closeModal();
+    onClose();
     setTimeout(() => {
       xCallSwapActions.reset();
     }, 500);
@@ -145,27 +143,23 @@ const XCallSwapModal = ({
       return;
     }
 
-    const account = signedInWallets.find(w => w.chainId === originChain)?.address;
+    if (!account) return;
 
     const swapInfo = {
-      sourceChainId: originChain,
-      destinationChainId: destinationChain,
+      direction,
       executionTrade,
       cleanupSwap,
-      receivingNetworkAddress,
       account,
       slippageTolerance,
-      archwayXCallFees,
+      xCallFee,
     };
     await xCallSwapActions.executeSwap(swapInfo);
-
-    console.log('handleXCallSwap');
   };
 
   return (
     <>
       <XCallSwapStatusUpdater />
-      <Modal isOpen={modalOpen} onDismiss={handleDismiss}>
+      <Modal isOpen={isOpen} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing}>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
             <Trans>
@@ -192,10 +186,10 @@ const XCallSwapModal = ({
                 {currencies[Field.INPUT]?.symbol}
               </Typography>
               <Typography textAlign="center">
-                <Trans>{getNetworkDisplayName(originChain)}</Trans>
+                <Trans>{getNetworkDisplayName(direction.from)}</Trans>
               </Typography>
               <Typography textAlign="center">
-                <Trans>{destinationAddress && originAddress && shortenAddress(originAddress, 5)}</Trans>
+                <Trans>{destinationAddress && account && shortenAddress(account, 5)}</Trans>
               </Typography>
             </Box>
 
@@ -208,7 +202,7 @@ const XCallSwapModal = ({
                 {currencies[Field.OUTPUT]?.symbol}
               </Typography>
               <Typography textAlign="center">
-                <Trans>{getNetworkDisplayName(destinationChain)}</Trans>
+                <Trans>{getNetworkDisplayName(direction.to)}</Trans>
               </Typography>
               <Typography textAlign="center">
                 <Trans>{destinationAddress && shortenAddress(destinationAddress, 5)}</Trans>
@@ -228,13 +222,9 @@ const XCallSwapModal = ({
             .
           </Typography>
 
-          {originChain === 'archway-1' && archwayXCallFees && (
-            <Typography textAlign="center">
-              <Trans>You'll also pay</Trans>{' '}
-              <strong>{(Number(archwayXCallFees.rollback) / 10 ** ARCH.decimals).toPrecision(3)} ARCH</strong>{' '}
-              <Trans>to transfer cross-chain.</Trans>
-            </Typography>
-          )}
+          <Typography textAlign="center">
+            <Trans>You'll also pay</Trans> <strong>{formattedXCallFee}</strong> <Trans>to transfer cross-chain.</Trans>
+          </Typography>
 
           {isProcessing && <XCallSwapState />}
 
@@ -251,13 +241,13 @@ const XCallSwapModal = ({
                 <TextButton onClick={handleDismiss}>
                   <Trans>Cancel</Trans>
                 </TextButton>
-                {/* {approvalState !== ApprovalState.APPROVED && !isProcessing && (
-                <>
-                  <Button onClick={handleApprove} disabled={approvalState === ApprovalState.PENDING}>
-                    {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve'}
-                  </Button>
-                </>
-              )} */}
+                {approvalState !== ApprovalState.APPROVED && !isProcessing && (
+                  <>
+                    <Button onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
+                      {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve'}
+                    </Button>
+                  </>
+                )}
                 {approvalState === ApprovalState.APPROVED && (
                   <>
                     <StyledButton onClick={handleXCallSwap} disabled={isProcessing}>

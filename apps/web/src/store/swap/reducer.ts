@@ -1,5 +1,8 @@
 import { Currency } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
+import { DEFAULT_TOKEN_CHAIN } from 'app/pages/trade/bridge-v2/_config/xTokens';
+import { XChainId } from 'app/pages/trade/bridge-v2/types';
+import { getCrossChainTokenBySymbol, isXToken } from 'app/pages/trade/bridge-v2/utils';
 
 import { NETWORK_ID } from 'constants/config';
 import { bnUSD, BALN } from 'constants/tokens';
@@ -15,10 +18,12 @@ export interface SwapState {
   readonly independentField: Field;
   readonly typedValue: string;
   readonly [Field.INPUT]: {
+    readonly xChainId: XChainId;
     readonly currency: Currency | undefined;
     readonly percent: number;
   };
   readonly [Field.OUTPUT]: {
+    readonly xChainId: XChainId;
     readonly currency: Currency | undefined;
   };
   // the typed recipient address or ENS name, or null if swap should go to sender
@@ -34,10 +39,12 @@ const initialState: SwapState = {
   independentField: Field.INPUT,
   typedValue: '',
   [Field.INPUT]: {
+    xChainId: '0x1.icon',
     currency: INITIAL_SWAP.base,
     percent: 0,
   },
   [Field.OUTPUT]: {
+    xChainId: '0x1.icon',
     currency: INITIAL_SWAP.quote,
   },
   recipient: null,
@@ -47,26 +54,6 @@ const swapSlice = createSlice({
   name: 'swap',
   initialState,
   reducers: create => ({
-    replaceSwapState: create.reducer<{
-      typedValue: string;
-      recipient: string | null;
-      field: Field;
-      inputCurrency: Currency | undefined;
-      outputCurrency: Currency | undefined;
-    }>((state, { payload: { typedValue, recipient, field, inputCurrency, outputCurrency } }) => {
-      return {
-        [Field.INPUT]: {
-          currency: inputCurrency,
-          percent: 0,
-        },
-        [Field.OUTPUT]: {
-          currency: outputCurrency,
-        },
-        independentField: field,
-        typedValue: typedValue,
-        recipient,
-      };
-    }),
     selectCurrency: create.reducer<{ currency: Currency | undefined; field: Field }>(
       (state, { payload: { currency, field } }) => {
         const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
@@ -81,9 +68,11 @@ const swapSlice = createSlice({
           };
         } else {
           // the normal case
+          const xChainId: XChainId =
+            currency && isXToken(currency) ? DEFAULT_TOKEN_CHAIN[currency.symbol] ?? '0x1.icon' : '0x1.icon';
           return {
             ...state,
-            [field]: { ...state[field], currency: currency, percent: 0 },
+            [field]: { ...state[field], currency: currency, percent: 0, xChainId },
           };
         }
       },
@@ -106,6 +95,22 @@ const swapSlice = createSlice({
         [Field.OUTPUT]: { ...state[Field.INPUT], currency: state[Field.INPUT].currency },
       };
     }),
+    selectChain: create.reducer<{ field: Field; xChainId: XChainId }>((state, { payload: { field, xChainId } }) => {
+      const updatedCurrency = getCrossChainTokenBySymbol(xChainId, state[field].currency?.symbol);
+      if (updatedCurrency) {
+        state[field].xChainId = xChainId;
+        state[field].currency = updatedCurrency;
+      }
+    }),
+    switchChain: create.reducer<void>(state => {
+      const fromChain = state[Field.INPUT].xChainId;
+      state[Field.INPUT].xChainId = state[Field.OUTPUT].xChainId;
+      state[Field.OUTPUT].xChainId = fromChain;
+
+      const fromCurrency = state[Field.INPUT].currency;
+      state[Field.INPUT].currency = state[Field.OUTPUT].currency;
+      state[Field.OUTPUT].currency = fromCurrency;
+    }),
     typeInput: create.reducer<{ field: Field; typedValue: string }>((state, { payload: { field, typedValue } }) => {
       const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 
@@ -123,7 +128,7 @@ const swapSlice = createSlice({
   }),
 });
 
-export const { replaceSwapState, selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput } =
+export const { selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput, switchChain, selectChain } =
   swapSlice.actions;
 
 export default swapSlice.reducer;

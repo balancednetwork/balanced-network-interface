@@ -48,7 +48,7 @@ const EVMWallet = ({ setAnchor, anchor }) => {
   const xChainId: XChainId = '0xa86a.avax';
   const balances = useWalletBalances(xChainId);
   const xWallet = useXWallet(xChainId);
-  const account = xWallet.account;
+  const account = xWallet?.account;
 
   const [searchQuery, setSearchQuery] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>();

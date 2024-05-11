@@ -3,7 +3,6 @@ import React, { useCallback, useMemo } from 'react';
 import { TradeType, Currency, CurrencyAmount, Token, Price } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { t } from '@lingui/macro';
-import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -12,7 +11,7 @@ import { canBeQueue } from 'constants/currency';
 import { useAllTokens } from 'hooks/Tokens';
 import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { useSwapSlippageTolerance } from 'store/application/hooks';
-import { useCrossChainCurrencyBalances, useCurrencyBalances } from 'store/wallet/hooks';
+import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
 
 import { AppDispatch, AppState } from '../index';
@@ -24,20 +23,17 @@ import {
   setRecipient,
   switchCurrencies,
   typeInput,
+  switchChain,
+  selectChain,
 } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
+import { getCrossChainTokenBySymbol } from 'app/pages/trade/bridge-v2/utils';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);
 }
 
-export function useSwapActionHandlers(): {
-  onCurrencySelection: (field: Field, currency: Currency) => void;
-  onPercentSelection: (field: Field, percent: number, value: string) => void;
-  onSwitchTokens: () => void;
-  onUserInput: (field: Field, typedValue: string) => void;
-  onChangeRecipient: (recipient: string | null) => void;
-} {
+export function useSwapActionHandlers() {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { pair = '' } = useParams<{ pair: string }>();
@@ -64,6 +60,22 @@ export function useSwapActionHandlers(): {
     },
     [dispatch, pair, navigate],
   );
+
+  const onChainSelection = useCallback(
+    (field: Field, xChainId: XChainId) => {
+      dispatch(
+        selectChain({
+          field,
+          xChainId,
+        }),
+      );
+    },
+    [dispatch],
+  );
+
+  const onSwitchChain = useCallback(() => {
+    dispatch(switchChain());
+  }, [dispatch]);
 
   const onPercentSelection = useCallback(
     (field: Field, percent: number, value: string) => {
@@ -100,6 +112,8 @@ export function useSwapActionHandlers(): {
     onUserInput,
     onChangeRecipient,
     onPercentSelection,
+    onChainSelection,
+    onSwitchChain,
   };
 }
 
@@ -122,10 +136,8 @@ export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmo
 }
 
 // from the current swap inputs, compute the best trade and return it.
-export function useDerivedSwapInfo(
-  inputChain: XChainId = '0x1.icon',
-  outputChain: XChainId = '0x1.icon',
-): {
+export function useDerivedSwapInfo(): {
+  account: string | undefined;
   trade: Trade<Currency, Currency, TradeType> | undefined;
   currencies: { [field in Field]?: Currency };
   percents: { [field in Field]?: number };
@@ -134,37 +146,38 @@ export function useDerivedSwapInfo(
   inputError?: string;
   allowedSlippage: number;
   price: Price<Token, Token> | undefined;
+  direction: {
+    from: XChainId;
+    to: XChainId;
+  };
+  dependentField: Field;
+  parsedAmounts: {
+    [field in Field]: CurrencyAmount<Currency> | undefined;
+  };
+  formattedAmounts: {
+    [field in Field]: string;
+  };
 } {
-  const { account } = useIconReact();
-
   const {
     independentField,
     typedValue,
-    [Field.INPUT]: { currency: inputCurrency, percent: inputPercent },
-    [Field.OUTPUT]: { currency: outputCurrency },
+    [Field.INPUT]: { currency: inputCurrency, percent: inputPercent, xChainId: inputXChainId },
+    [Field.OUTPUT]: { currency: outputCurrency, xChainId: outputXChainId },
   } = useSwapState();
 
-  const relevantTokenBalances = useCurrencyBalances(
-    account ?? undefined,
-    useMemo(() => [inputCurrency ?? undefined, outputCurrency ?? undefined], [inputCurrency, outputCurrency]),
-  );
-  const balancesCrossChain = useCrossChainCurrencyBalances([inputCurrency, outputCurrency]);
+  const signedInWallets = useSignedInWallets();
+  const account = signedInWallets.find(w => w.chainId === inputXChainId)?.address;
+
+  const crossChainWallet = useCrossChainWalletBalances();
 
   const isExactIn: boolean = independentField === Field.INPUT;
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
   const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(() => {
-    if (inputChain && outputChain && balancesCrossChain) {
-      return {
-        [Field.INPUT]: balancesCrossChain[0]?.[inputChain],
-        [Field.OUTPUT]: balancesCrossChain[1]?.[outputChain],
-      };
-    } else {
-      return {
-        [Field.INPUT]: relevantTokenBalances[0],
-        [Field.OUTPUT]: relevantTokenBalances[1],
-      };
-    }
-  }, [inputChain, outputChain, relevantTokenBalances, balancesCrossChain]);
+    return {
+      [Field.INPUT]: inputCurrency ? crossChainWallet[inputXChainId]?.[inputCurrency?.wrapped.address] : undefined,
+      [Field.OUTPUT]: outputCurrency ? crossChainWallet[outputXChainId]?.[outputCurrency?.wrapped.address] : undefined,
+    };
+  }, [inputXChainId, outputXChainId, crossChainWallet, inputCurrency, outputCurrency]);
 
   const currencies: { [field in Field]?: Currency } = useMemo(() => {
     return {
@@ -180,12 +193,17 @@ export function useDerivedSwapInfo(
     [inputPercent],
   );
 
+  const _inputCurrency =
+    inputXChainId === '0x1.icon' ? inputCurrency : getCrossChainTokenBySymbol('0x1.icon', inputCurrency?.symbol);
+  const _outputCurrency =
+    outputXChainId === '0x1.icon' ? outputCurrency : getCrossChainTokenBySymbol('0x1.icon', outputCurrency?.symbol);
+  const _parsedAmount = tryParseAmount(typedValue, (isExactIn ? _inputCurrency : _outputCurrency) ?? undefined);
   // cannot call `useTradeExactIn` or `useTradeExactOut` conditionally because they are hooks
-  const queue = canBeQueue(inputCurrency, outputCurrency);
-  const trade1 = useTradeExactIn(isExactIn ? parsedAmount : undefined, outputCurrency, {
+  const queue = canBeQueue(_inputCurrency, _outputCurrency);
+  const trade1 = useTradeExactIn(isExactIn ? _parsedAmount : undefined, _outputCurrency, {
     maxHops: queue ? 1 : undefined,
   });
-  const trade2 = useTradeExactOut(inputCurrency, !isExactIn ? parsedAmount : undefined, {
+  const trade2 = useTradeExactOut(_inputCurrency, !isExactIn ? _parsedAmount : undefined, {
     maxHops: queue ? 1 : undefined,
   });
   const trade = isExactIn ? trade1 : trade2;
@@ -227,7 +245,33 @@ export function useDerivedSwapInfo(
     else price = pair.token0Price; // pair not ready, just set dummy price
   }
 
+  const direction = useMemo(
+    () => ({
+      from: inputXChainId,
+      to: outputXChainId,
+    }),
+    [inputXChainId, outputXChainId],
+  );
+
+  const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
+
+  const parsedAmounts = React.useMemo(
+    () => ({
+      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+    }),
+    [independentField, parsedAmount, trade],
+  );
+
+  const formattedAmounts = React.useMemo(() => {
+    return {
+      [independentField]: typedValue,
+      [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
+    } as { [field in Field]: string };
+  }, [dependentField, independentField, parsedAmounts, typedValue]);
+
   return {
+    account,
     trade,
     currencies,
     currencyBalances,
@@ -236,6 +280,10 @@ export function useDerivedSwapInfo(
     allowedSlippage,
     percents,
     price,
+    direction,
+    dependentField,
+    parsedAmounts,
+    formattedAmounts,
   };
 }
 

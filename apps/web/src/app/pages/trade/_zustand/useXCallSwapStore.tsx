@@ -12,8 +12,9 @@ import {
   useBridgeTransferHistoryStore,
   useFetchBridgeTransferEvents,
 } from '../bridge-v2/_zustand/useBridgeTransferHistoryStore';
-import { xCallSwapModalActions } from './useXCallSwapModalStore';
 import { XChainId } from '../bridge-v2/types';
+import { Trade } from '@balancednetwork/v1-sdk';
+import { Currency, TradeType } from '@balancednetwork/sdk-core';
 
 type XCallSwapStore = {
   transferId: string | null;
@@ -32,10 +33,18 @@ export const xCallSwapActions = {
     useXCallSwapStore.setState({ isProcessing });
   },
 
-  executeSwap: async (swapInfo: any) => {
+  executeSwap: async (swapInfo: {
+    direction: {
+      from: XChainId;
+      to: XChainId;
+    };
+    executionTrade: Trade<Currency, Currency, TradeType>;
+    cleanupSwap: () => void;
+  }) => {
     const iconChainId: XChainId = '0x1.icon';
-    const { sourceChainId, destinationChainId, executionTrade, cleanupSwap } = swapInfo;
-
+    const { direction, executionTrade, cleanupSwap } = swapInfo;
+    const sourceChainId = direction.from;
+    const destinationChainId = direction.to;
     const _destinationChainId = sourceChainId === iconChainId ? destinationChainId : iconChainId;
 
     const srcChainXCallService = xCallServiceActions.getXCallService(sourceChainId);
@@ -151,7 +160,7 @@ export const xCallSwapActions = {
   success: () => {
     xCallEventActions.stopAllScanners();
 
-    xCallSwapModalActions.closeModal();
+    // xCallSwapModalActions.closeModal();
 
     xCallSwapActions.reset();
 

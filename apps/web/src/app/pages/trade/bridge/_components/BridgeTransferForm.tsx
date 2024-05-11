@@ -82,7 +82,6 @@ export default function BridgeTransferForm({ openModal }) {
 
   const protocol = useXCallProtocol(bridgeDirection.from, bridgeDirection.to);
   const { formattedXCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
-  const xWallet = useXWallet(bridgeDirection.from);
 
   return (
     <>
@@ -103,7 +102,7 @@ export default function BridgeTransferForm({ openModal }) {
             <ChainSelector label="to" chainId={bridgeDirection.to} setChainId={c => onChainSelection(Field.TO, c)} />
           </Flex>
 
-          <Typography as="div" mb={-1} textAlign="right" hidden={!xWallet.account}>
+          <Typography as="div" mb={-1} textAlign="right" hidden={!account}>
             <Trans>Wallet:</Trans>{' '}
             {`${selectedTokenWalletBalance?.toFixed(4, { groupSeparator: ',' }) ?? 0} ${currencyToBridge?.symbol}`}
           </Typography>

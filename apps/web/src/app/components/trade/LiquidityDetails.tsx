@@ -246,7 +246,6 @@ const ListItem = styled(DashGrid)`
 
 const APYItem = styled(Flex)`
   align-items: flex-end;
-  line-height: 25px;
 `;
 
 const PoolRecord = ({
@@ -332,7 +331,7 @@ const PoolRecord = ({
                 <>
                   {pairData.balnApy && (
                     <APYItem>
-                      <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                      <Typography fontSize={16} marginRight={'5px'}>
                         BALN:
                       </Typography>
                       {`${getFormattedNumber(pairData.balnApy, 'percent2')} - ${getFormattedNumber(
@@ -343,7 +342,7 @@ const PoolRecord = ({
                   )}
                   {pairData.feesApy && (
                     <APYItem>
-                      <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                      <Typography fontSize={16} marginRight={'5px'}>
                         <Trans>Fees:</Trans>
                       </Typography>
                       {getFormattedNumber(pairData.feesApy, 'percent2')}

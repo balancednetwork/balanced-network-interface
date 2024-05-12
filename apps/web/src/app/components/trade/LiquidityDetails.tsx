@@ -19,7 +19,7 @@ import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
 import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import { BalanceData, useBalance, useSuppliedTokens } from 'hooks/useV2Pairs';
-import { PairData, useAllPairsById } from 'queries/backendv2';
+import { MIN_LIQUIDITY_TO_INCLUDE, PairData, useAllPairsById } from 'queries/backendv2';
 import { Source, useBBalnAmount, useSources, useTotalSupply } from 'store/bbaln/hooks';
 import { useTokenListConfig } from 'store/lists/hooks';
 import { Field } from 'store/mint/actions';
@@ -36,6 +36,8 @@ import { WithdrawPanel, WithdrawPanelQ, getABBalance, getShareReward } from './L
 import { usePoolPanelContext } from './PoolPanelContext';
 import { getFormattedRewards, totalSupply, stakedFraction } from './utils';
 import Skeleton from '../Skeleton';
+import { getFormattedNumber } from 'utils/formatter';
+import { MAX_BOOST } from '../home/BBaln/utils';
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
@@ -113,7 +115,7 @@ export default function LiquidityDetails() {
             </HeaderText>
             {upSmall && (
               <HeaderText>
-                <Trans>BALN APY</Trans>
+                <Trans>APR</Trans>
               </HeaderText>
             )}
             {upSmall && (
@@ -165,7 +167,6 @@ export default function LiquidityDetails() {
                           : new BigNumber(0)
                       }
                       boostData={sources}
-                      apy={allPairs && allPairs[parseInt(poolId)] ? allPairs[parseInt(poolId)].balnApy : 0}
                     />
                   </StyledAccordionButton>
                   <StyledAccordionPanel hidden={isHided}>
@@ -243,6 +244,11 @@ const ListItem = styled(DashGrid)`
   color: #ffffff;
 `;
 
+const APYItem = styled(Flex)`
+  align-items: flex-end;
+  line-height: 25px;
+`;
+
 const PoolRecord = ({
   poolId,
   pair,
@@ -250,7 +256,6 @@ const PoolRecord = ({
   balance,
   totalReward,
   boostData,
-  apy,
 }: {
   pair: Pair;
   pairData?: PairData;
@@ -258,7 +263,6 @@ const PoolRecord = ({
   poolId: number;
   totalReward: BigNumber;
   boostData: { [key in string]: Source } | undefined;
-  apy: number | null;
 }) => {
   const upSmall = useMedia('(min-width: 800px)');
   const stakedLPPercent = useStakedLPPercent(poolId);
@@ -323,19 +327,29 @@ const PoolRecord = ({
 
         {upSmall && (
           <DataText>
-            {boostData ? (
-              apy &&
-              boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName] &&
-              boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].balance.isGreaterThan(0) ? (
-                `${new BigNumber(apy)
-                  .times(
-                    //hotfix pairName due to wrong source name on contract side
-                    boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].workingBalance.dividedBy(
-                      boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].balance,
-                    ),
-                  )
-                  .times(100)
-                  .toFormat(2)}%`
+            {boostData && !!pairData ? (
+              pairData.liquidity > MIN_LIQUIDITY_TO_INCLUDE ? (
+                <>
+                  {pairData.balnApy && (
+                    <APYItem>
+                      <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                        BALN:
+                      </Typography>
+                      {`${getFormattedNumber(pairData.balnApy, 'percent2')} - ${getFormattedNumber(
+                        MAX_BOOST.times(pairData.balnApy).toNumber(),
+                        'percent2',
+                      )}`}
+                    </APYItem>
+                  )}
+                  {pairData.feesApy && (
+                    <APYItem>
+                      <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                        <Trans>Fees:</Trans>
+                      </Typography>
+                      {getFormattedNumber(pairData.feesApy, 'percent2')}
+                    </APYItem>
+                  )}
+                </>
               ) : (
                 '-'
               )
@@ -344,6 +358,7 @@ const PoolRecord = ({
             )}
           </DataText>
         )}
+
         {upSmall && (
           //hotfix pairName due to wrong source name on contract side
           <DataText>{getFormattedRewards(reward)}</DataText>

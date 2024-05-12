@@ -401,21 +401,21 @@ export default function AllPoolsPanel() {
             <PairItem key={index} pair={pair} onClick={handlePoolLick} isLast={array.length - 1 === index} />
           ))
         ) : (
-        <>
-          <SkeletonPairPlaceholder />
-          <Divider />
-          <SkeletonPairPlaceholder />
-          <Divider />
-          <SkeletonPairPlaceholder />
-          <Divider />
-          <SkeletonPairPlaceholder />
-          <Divider />
-          <SkeletonPairPlaceholder />
-          <Divider />
-          <SkeletonPairPlaceholder />
-          <Divider />
-          <SkeletonPairPlaceholder />
-        </>
+          <>
+            <SkeletonPairPlaceholder />
+            <Divider />
+            <SkeletonPairPlaceholder />
+            <Divider />
+            <SkeletonPairPlaceholder />
+            <Divider />
+            <SkeletonPairPlaceholder />
+            <Divider />
+            <SkeletonPairPlaceholder />
+            <Divider />
+            <SkeletonPairPlaceholder />
+            <Divider />
+            <SkeletonPairPlaceholder />
+          </>
         )}
       </List>
     </Box>

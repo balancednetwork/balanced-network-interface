@@ -22,6 +22,7 @@ import { useWithdrawnPercent } from 'store/stakedLP/hooks';
 import { tryParseAmount } from 'store/swap/hooks';
 import { useLiquidityTokenBalance } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
+import { getFormattedNumber } from 'utils/formatter';
 
 import { MAX_BOOST } from '../home/BBaln/utils';
 import QuestionHelper, { QuestionWrapper } from '../QuestionHelper';
@@ -56,10 +57,7 @@ export default function LPDescription() {
   const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
 
   const { data: allPairs } = useAllPairsByName();
-  const apy = useMemo(
-    () => allPairs && allPairs[pairName] && new BigNumber(allPairs[pairName].balnApy),
-    [allPairs, pairName],
-  );
+  const apr = useMemo(() => allPairs && allPairs[pairName], [allPairs, pairName]);
 
   const balances = useSuppliedTokens(
     pair?.poolId ?? -1,
@@ -163,12 +161,11 @@ export default function LPDescription() {
                     liquidity pool${upSmall ? ': ' : ''}`
                   : t`${currencies[Field.CURRENCY_A]?.symbol} queue${upSmall ? ': ' : ''}`}{' '}
                 <Typography fontWeight="normal" fontSize={16} as={upSmall ? 'span' : 'p'}>
-                  {apy
-                    ? `${apy.times(100).dp(2, BigNumber.ROUND_HALF_UP).toFixed()}% - ${apy
-                        .times(MAX_BOOST)
-                        .times(100)
-                        .dp(2)
-                        .toFixed()}%`
+                  {apr
+                    ? `${`${getFormattedNumber(apr.balnApy + apr.feesApy, 'percent2')} - ${getFormattedNumber(
+                        MAX_BOOST.times(apr.balnApy).plus(apr.feesApy).toNumber(),
+                        'percent2',
+                      )}`}`
                     : '-'}
                   {' APY'}
                   {pair?.poolId === BalancedJs.utils.POOL_IDS.sICXICX && (

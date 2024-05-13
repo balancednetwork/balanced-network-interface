@@ -71,6 +71,11 @@ export class IconXCallService implements XCallService {
     return block;
   }
 
+  // TODO: complete this function
+  async getEventLogs(blockHeight: bigint) {
+    return [];
+  }
+
   async getTxReceipt(txHash: string) {
     //TODO: update to use this.publicClient
     return await fetchTxResult(txHash);

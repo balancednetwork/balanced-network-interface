@@ -4,7 +4,7 @@ import { ArchwayClient, StdFee } from '@archwayhq/arch3.js';
 import bnJs from 'bnJs';
 
 import { XSigningArchwayClient } from 'lib/archway/XSigningArchwayClient';
-import { getArchwayCounterToken, getBytesFromString } from 'app/pages/trade/bridge-v2/utils';
+import { getBytesFromString } from 'app/pages/trade/bridge-v2/utils';
 
 import { archway, xChainMap } from 'app/pages/trade/bridge-v2/_config/xChains';
 import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens';
@@ -51,6 +51,11 @@ export class ArchwayXCallService implements XCallService {
   async getBlock(blockHeight: bigint) {
     const block = await this.publicClient.getBlock(Number(blockHeight));
     return block;
+  }
+
+  // TODO: complete this function
+  async getEventLogs(blockHeight: bigint) {
+    return [];
   }
 
   async getTxReceipt(txHash) {
@@ -274,7 +279,6 @@ export class ArchwayXCallService implements XCallService {
       return transaction;
     }
   }
-
   async executeSwap(swapInfo: SwapInfo) {
     const {
       direction,

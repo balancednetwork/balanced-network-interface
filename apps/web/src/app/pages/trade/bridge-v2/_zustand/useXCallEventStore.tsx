@@ -1,20 +1,20 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { create } from 'zustand';
 
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
 import { XCallEvent } from './types';
 import { xCallServiceActions } from './useXCallServiceStore';
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
 type XCallEventStore = {
   destinationXCallEvents: Partial<Record<XChainId, Record<number, XCallEvent[]>>>;
   scanners: Partial<Record<XChainId, any>>;
+  timers: any;
 };
 
 export const useXCallEventStore = create<XCallEventStore>()(set => ({
   destinationXCallEvents: {},
   scanners: {},
+  timers: {},
 }));
 
 export const xCallEventActions = {
@@ -51,6 +51,64 @@ export const xCallEventActions = {
     });
   },
 
+  setScanner: (xChainId, data) => {
+    useXCallEventStore.setState(state => {
+      state.scanners[xChainId] = {
+        ...state.scanners[xChainId],
+        ...data,
+      };
+      return state;
+    });
+  },
+
+  startTimer: (id, timerFn) => {
+    if (!id) {
+      return;
+    }
+
+    const intervalId = useXCallEventStore.getState().timers[id];
+
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
+
+    const newIntervalId = setInterval(timerFn, 2000);
+
+    useXCallEventStore.setState(prevState => {
+      return {
+        ...prevState,
+        timers: {
+          ...prevState.timers,
+          [id]: newIntervalId,
+        },
+      };
+    });
+  },
+
+  stopTimer: id => {
+    if (!id) {
+      return;
+    }
+
+    const intervalId = useXCallEventStore.getState().timers[id];
+
+    if (intervalId) {
+      clearInterval(intervalId);
+    } else {
+      return;
+    }
+
+    useXCallEventStore.setState(prevState => {
+      return {
+        ...prevState,
+        timers: {
+          ...prevState.timers,
+          [id]: null,
+        },
+      };
+    });
+  },
+
   incrementCurrentHeight: async (xChainId: XChainId) => {
     // console.log('incrementCurrentHeight', xChainId);
     try {
@@ -61,7 +119,6 @@ export const xCallEventActions = {
         return;
       }
 
-      // console.log('incrementing currentHeight', xChainId);
       useXCallEventStore.setState(prevState => ({
         ...prevState,
         scanners: {
@@ -75,7 +132,6 @@ export const xCallEventActions = {
     } catch (e) {
       console.log(e);
     }
-    await delay(1000);
   },
   updateChainHeight: async (xChainId: XChainId) => {
     // console.log('updateChainHeight', xChainId);
@@ -153,59 +209,35 @@ export const xCallEventActions = {
   },
 };
 
-// TODO: review logic to scan all blocks
+// TODO: improve performance
 export const useXCallEventScanner = (xChainId: XChainId | undefined) => {
   const { scanners } = useXCallEventStore();
   const scanner = xChainId ? scanners?.[xChainId] : null;
-  const { enabled, currentHeight, chainHeight } = scanner || {};
+  const { enabled } = scanner || {};
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  // useEffect(() => {
-  //   if (!xChainId) {
-  //     return;
-  //   }
-
-  //   setTimeout(() => {
-  //     if (enabled) {
-  //       xCallEventActions.incrementCurrentHeight(xChainId);
-  //     }
-  //   }, 100);
-  // }, [xChainId, enabled, chainHeight]);
-
-  //update chainHeight every 1 second
-  useEffect(() => {
-    if (!xChainId) {
+  const scanFn = useCallback(async () => {
+    console.log('scan', xChainId, enabled);
+    if (!enabled || !xChainId) {
       return;
     }
 
-    const updateChainHeight = async () => {
-      if (enabled) {
-        await xCallEventActions.updateChainHeight(xChainId);
-      }
-    };
+    const { currentHeight } = useXCallEventStore.getState().scanners[xChainId] || {};
+    console.log('scan started', xChainId, useXCallEventStore.getState().scanners, currentHeight);
 
-    const intervalId = window.setInterval(updateChainHeight, 1000);
-
-    return () => clearInterval(intervalId);
+    await xCallEventActions.scanBlock(xChainId, currentHeight);
+    await xCallEventActions.updateChainHeight(xChainId);
+    await xCallEventActions.incrementCurrentHeight(xChainId);
   }, [xChainId, enabled]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (!xChainId) {
+    if (!enabled) {
       return;
     }
 
-    const scan = async () => {
-      if (!enabled) {
-        return;
-      }
+    xCallEventActions.startTimer(xChainId, scanFn);
 
-      console.log('scanning block', currentHeight);
-
-      await xCallEventActions.scanBlock(xChainId, currentHeight);
-      await xCallEventActions.incrementCurrentHeight(xChainId);
+    return () => {
+      xCallEventActions.stopTimer(xChainId);
     };
-
-    scan();
-  }, [xChainId, enabled, currentHeight, chainHeight]);
+  }, [xChainId, enabled, scanFn]);
 };

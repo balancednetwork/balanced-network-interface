@@ -9,6 +9,8 @@ import {
   XCallSourceEvent,
 } from '../_zustand/types';
 import { avalanche } from 'app/pages/trade/bridge-v2/_config/xChains';
+import { getBytesFromString } from 'app/pages/trade/bridge-v2/utils';
+
 import {
   Address,
   PublicClient,
@@ -19,6 +21,8 @@ import {
   zeroAddress,
 } from 'viem';
 import { NATIVE_ADDRESS } from 'constants/index';
+import { call } from 'viem/actions';
+import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 
 export class EvmXCallService implements XCallService {
   xChainId: XChainId;
@@ -48,6 +52,26 @@ export class EvmXCallService implements XCallService {
   async getBlock(blockHeight: bigint) {
     const block = await this.publicClient.getBlock({ blockNumber: blockHeight });
     return block;
+  }
+
+  async getEventLogs(blockHeight: bigint) {
+    const eventLogs = await this.publicClient.getLogs({
+      fromBlock: blockHeight,
+      toBlock: blockHeight,
+      // fromBlock: 45272443n,
+      // toBlock: 45272459n,
+      // address: avalanche.contracts.xCall as Address, // TODO: is it right?
+      // TODO: need to add more filters?
+    });
+
+    // const parsedLogs = parseEventLogs({
+    //   abi: xCallContractAbi,
+    //   logs: eventLogs,
+    // });
+
+    // console.log(parsedLogs);
+
+    return eventLogs;
   }
 
   async getTxReceipt(txHash: string) {
@@ -108,14 +132,8 @@ export class EvmXCallService implements XCallService {
     };
   }
 
-  filterEventLog(eventLogs, signature) {
-    if (eventLogs && eventLogs.length > 0) {
-      for (const event of eventLogs) {
-        if (event.eventName === signature) {
-          return event;
-        }
-      }
-    }
+  filterEventLogs(eventLogs, signature) {
+    return eventLogs.filter(e => e.eventName === signature);
   }
 
   filterCallMessageSentEventLog(eventLogs) {
@@ -123,13 +141,13 @@ export class EvmXCallService implements XCallService {
     return eventFiltered;
   }
 
-  filterCallMessageEventLog(eventLogs) {
-    const eventFiltered = this.filterEventLog(eventLogs, 'CallMessage');
+  filterCallMessageEventLogs(eventLogs) {
+    const eventFiltered = this.filterEventLogs(eventLogs, 'CallMessage');
     return eventFiltered;
   }
 
-  filterCallExecutedEventLog(eventLogs) {
-    const eventFiltered = this.filterEventLog(eventLogs, 'CallExecuted');
+  filterCallExecutedEventLogs(eventLogs) {
+    const eventFiltered = this.filterEventLogs(eventLogs, 'CallExecuted');
     return eventFiltered;
   }
 
@@ -157,37 +175,30 @@ export class EvmXCallService implements XCallService {
 
   async getDestinationEventsByBlock(blockHeight) {
     const events: any = [];
+    try {
+      const eventLogs = await this.getEventLogs(blockHeight);
+      const parsedLogs = parseEventLogs({
+        abi: xCallContractAbi,
+        logs: eventLogs,
+      });
 
-    const block = await this.getBlock(blockHeight);
+      const callMessageEventLogs = this.filterCallMessageEventLogs(parsedLogs);
+      const callExecutedEventLogs = this.filterCallExecutedEventLogs(parsedLogs);
 
-    console.log('getDestinationEventsByBlock', block);
+      console.log('callMessageEventLogs', callMessageEventLogs);
+      console.log('callExecutedEventLogs', callExecutedEventLogs);
 
-    if (block && block.transactions.length > 0) {
-      for (const txHash of block.transactions) {
-        const rawTx = await this.getTxReceipt(txHash);
-
-        console.log('rawTx', rawTx);
-        const parsedLogs = parseEventLogs({
-          abi: xCallContractAbi,
-          logs: rawTx.logs,
-        });
-
-        const callMessageEventLog = this.filterCallMessageEventLog(parsedLogs);
-        const callExecutedEventLog = this.filterCallExecutedEventLog(parsedLogs);
-
-        console.log('getDestinationEventsByBlock', callMessageEventLog, callExecutedEventLog);
-
-        if (callMessageEventLog) {
-          events.push(this.parseCallMessageEventLog(callMessageEventLog, txHash));
-        }
-        if (callExecutedEventLog) {
-          events.push(this.parseCallExecutedEventLog(callExecutedEventLog, txHash));
-        }
-      }
-    } else {
-      return null;
+      callMessageEventLogs.forEach(eventLog => {
+        events.push(this.parseCallMessageEventLog(eventLog, eventLog.transactionHash));
+      });
+      callExecutedEventLogs.forEach(eventLog => {
+        events.push(this.parseCallExecutedEventLog(eventLog, eventLog.transactionHash));
+      });
+      return events;
+    } catch (e) {
+      console.log(e);
     }
-    return events;
+    return null;
   }
 
   async approve(token, owner, spender, currencyAmountToApprove) {}
@@ -235,7 +246,69 @@ export class EvmXCallService implements XCallService {
   }
 
   async executeSwap(swapInfo: any) {
-    return '';
+    const {
+      direction,
+      inputAmount,
+      executionTrade,
+      account,
+      recipient,
+      xCallFee, //
+    } = swapInfo;
+
+    if (this.walletClient) {
+      const receiver = `${direction.to}/${recipient}`;
+      const swapParams = {
+        path: executionTrade.route.pathForSwap,
+        receiver: receiver,
+      };
+
+      // TODO: fix this
+      const swapParamsBytes = Buffer.from(
+        JSON.stringify({
+          method: '_swap',
+          params: swapParams,
+        }),
+        'utf8',
+      ).toString('hex');
+
+      console.log('swapParamsBytes', swapParamsBytes);
+
+      const tokenAddress = inputAmount.wrapped.currency.address;
+      const destination = `${ICON_XCALL_NETWORK_ID}/${recipient}`;
+      const amount = BigInt(inputAmount.quotient.toString());
+
+      // check if the bridge asset is native
+      const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
+
+      let request: WriteContractParameters;
+      if (!isNative) {
+        const res = await this.publicClient.simulateContract({
+          account: account as Address,
+          address: avalanche.contracts.assetManager as Address,
+          abi: assetManagerContractAbi,
+          functionName: 'deposit',
+          args: [tokenAddress as Address, amount, destination, '0x' + swapParamsBytes],
+          value: xCallFee.rollback,
+        });
+        request = res.request;
+      } else {
+        const res = await this.publicClient.simulateContract({
+          account: account as Address,
+          address: avalanche.contracts.assetManager as Address,
+          abi: assetManagerContractAbi,
+          functionName: 'depositNative',
+          args: [amount, destination, '0x' + swapParamsBytes],
+          value: xCallFee.rollback + amount,
+        });
+        request = res.request;
+      }
+
+      const hash = await this.walletClient.writeContract(request);
+
+      if (hash) {
+        return hash;
+      }
+    }
   }
 }
 

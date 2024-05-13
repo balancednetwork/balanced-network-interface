@@ -40,6 +40,7 @@ import XCallSwapModal from './XCallSwapModal';
 import { useCreateXCallService } from '../bridge-v2/_zustand/useXCallServiceStore';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import SwapModal from './SwapModal';
+import { MODAL_IDS, modalActions } from '../bridge-v2/_zustand/useModalStore';
 
 const MemoizedStabilityFund = React.memo(StabilityFund);
 
@@ -149,14 +150,6 @@ export default function SwapPanel() {
     clearSwapInputOutput();
   };
 
-  // handle xswap modal
-  const [showXSwapConfirm, setShowXSwapConfirm] = React.useState(false);
-  const handleXSwapConfirmDismiss = React.useCallback(() => {
-    setShowXSwapConfirm(false);
-    setCurrentXCallState(CurrentXCallStateType.IDLE);
-    setNotPristine();
-  }, [setCurrentXCallState, setNotPristine]);
-
   const toggleWalletModal = useWalletModalToggle();
 
   const [executionTrade, setExecutionTrade] = React.useState<Trade<Currency, Currency, TradeType>>();
@@ -169,8 +162,8 @@ export default function SwapPanel() {
         toggleWalletModal();
       }
       setExecutionTrade(trade);
-      setCurrentXCallState(CurrentXCallStateType.AWAKE);
-      setShowXSwapConfirm(true);
+      // setCurrentXCallState(CurrentXCallStateType.AWAKE);
+      modalActions.openModal(MODAL_IDS.XCALL_SWAP_MODAL);
     } else {
       if (!account) {
         toggleWalletModal();
@@ -179,7 +172,7 @@ export default function SwapPanel() {
         setExecutionTrade(trade);
       }
     }
-  }, [account, setCurrentXCallState, toggleWalletModal, trade, isXSwap]);
+  }, [account, toggleWalletModal, trade, isXSwap]);
 
   const minimumToReceive = trade?.minimumAmountOut(new Percent(slippageTolerance, 10_000));
   const priceImpact = formatPercent(new BigNumber(trade?.priceImpact.toFixed() || 0));
@@ -424,8 +417,6 @@ export default function SwapPanel() {
       />
 
       <XCallSwapModal
-        isOpen={showXSwapConfirm}
-        onClose={handleXSwapConfirmDismiss}
         account={account}
         currencies={currencies}
         executionTrade={executionTrade}

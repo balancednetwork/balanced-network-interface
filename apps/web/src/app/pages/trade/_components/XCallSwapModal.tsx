@@ -26,10 +26,9 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge-v2/_hooks/useApproveCallback';
 import XCallSwapState from './XCallSwapState';
 import { xChainMap } from '../bridge-v2/_config/xChains';
+import { useModalStore, modalActions, MODAL_IDS } from '../bridge-v2/_zustand/useModalStore';
 
 type XCallSwapModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
   account: string | undefined;
   currencies: { [field in Field]?: Currency };
   executionTrade?: Trade<Currency, Currency, TradeType>;
@@ -95,15 +94,14 @@ export const presenceVariants = {
 };
 
 const XCallSwapModal = ({
-  isOpen,
   account,
   currencies,
   executionTrade,
   direction,
   recipient,
   clearInputs,
-  onClose,
 }: XCallSwapModalProps) => {
+  useModalStore();
   const { isProcessing } = useXCallSwapStore();
 
   const shouldLedgerSign = useShouldLedgerSign();
@@ -132,7 +130,7 @@ const XCallSwapModal = ({
   };
 
   const handleDismiss = () => {
-    onClose();
+    modalActions.closeModal(MODAL_IDS.XCALL_SWAP_MODAL);
     setTimeout(() => {
       xCallSwapActions.reset();
     }, 500);
@@ -160,7 +158,7 @@ const XCallSwapModal = ({
   return (
     <>
       <XCallSwapStatusUpdater />
-      <Modal isOpen={isOpen} onDismiss={handleDismiss}>
+      <Modal isOpen={modalActions.isModalOpen(MODAL_IDS.XCALL_SWAP_MODAL)} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing}>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
             <Trans>

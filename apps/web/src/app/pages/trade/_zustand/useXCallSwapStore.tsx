@@ -15,6 +15,7 @@ import {
 import { XChainId } from '../bridge-v2/types';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { Currency, TradeType } from '@balancednetwork/sdk-core';
+import { MODAL_IDS, modalActions } from '../bridge-v2/_zustand/useModalStore';
 
 type XCallSwapStore = {
   transferId: string | null;
@@ -153,7 +154,7 @@ export const xCallSwapActions = {
   success: () => {
     xCallEventActions.stopAllScanners();
 
-    // xCallSwapModalActions.closeModal();
+    modalActions.closeModal(MODAL_IDS.XCALL_SWAP_MODAL);
 
     xCallSwapActions.reset();
 

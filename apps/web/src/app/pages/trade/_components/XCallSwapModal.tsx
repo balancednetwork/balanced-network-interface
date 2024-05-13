@@ -254,15 +254,6 @@ const XCallSwapModal = ({
                     </StyledButton>
                   </>
                 )}
-                {/* {allowanceIncreaseNeeded && !isProcessing ? (
-                <Button disabled={true}>Swap</Button>
-              ) : gasChecker && !gasChecker.hasEnoughGas ? (
-                <Button disabled={true}>Swap</Button>
-              ) : (
-                <StyledButton onClick={handleXCallSwap} disabled={isProcessing}>
-                  {!isProcessing ? <Trans>Swap</Trans> : <Trans>xCall in progress</Trans>}
-                </StyledButton>
-              )} */}
               </>
             )}
           </Flex>

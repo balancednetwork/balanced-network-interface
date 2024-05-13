@@ -139,7 +139,7 @@ export default function BridgeTransferForm({ openModal }) {
 
             {protocol && (
               <Typography color="text">
-                {protocol.name} + GMB
+                {protocol.name} + GMP
                 <QuestionWrapper style={{ marginLeft: '3px', transform: 'translateY(1px)' }}>
                   <QuestionHelper width={310} text={<XCallDescription protocol={protocol} />} />
                 </QuestionWrapper>

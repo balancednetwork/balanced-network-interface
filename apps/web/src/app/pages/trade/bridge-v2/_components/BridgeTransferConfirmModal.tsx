@@ -14,10 +14,7 @@ import Spinner from 'app/components/Spinner';
 import { getNetworkDisplayName } from 'app/pages/trade/bridge-v2/utils';
 import { useShouldLedgerSign } from 'store/application/hooks';
 
-import {
-  useBridgeTransferConfirmModalStore,
-  bridgeTransferConfirmModalActions,
-} from '../_zustand/useBridgeTransferConfirmModalStore';
+import { useModalStore, modalActions, MODAL_IDS } from '../_zustand/useModalStore';
 
 import BridgeTransferState from './BridgeTransferState';
 import LiquidFinanceIntegration from '../../bridge/_components/LiquidFinanceIntegration';
@@ -43,7 +40,7 @@ const StyledXCallButton = styled(XCallButton)`
 `;
 
 export function BridgeTransferConfirmModal() {
-  const { modalOpen } = useBridgeTransferConfirmModalStore();
+  const { modals } = useModalStore();
   const { isProcessing } = useBridgeTransferStore();
 
   const { recipient, isLiquidFinanceEnabled, currencyAmountToBridge, account, isDenom, bridgeDirection } =
@@ -59,7 +56,7 @@ export function BridgeTransferConfirmModal() {
   const { data: gasChecker } = useXCallGasChecker(bridgeDirection.from, bridgeDirection.to);
 
   const handleDismiss = () => {
-    bridgeTransferConfirmModalActions.closeModal();
+    modalActions.closeModal(MODAL_IDS.BRIDGE_TRANSFER_CONFIRM_MODAL);
     setTimeout(() => {
       bridgeTransferActions.reset();
     }, 500);
@@ -87,7 +84,7 @@ export function BridgeTransferConfirmModal() {
   return (
     <>
       <BridgeTransferStatusUpdater />
-      <Modal isOpen={modalOpen} onDismiss={handleDismiss}>
+      <Modal isOpen={modalActions.isModalOpen(MODAL_IDS.BRIDGE_TRANSFER_CONFIRM_MODAL)} onDismiss={handleDismiss}>
         <ModalContentWrapper>
           <Typography textAlign="center" mb="5px">
             {t`Transfer asset cross-chain?`}

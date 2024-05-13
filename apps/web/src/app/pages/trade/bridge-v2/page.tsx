@@ -7,7 +7,7 @@ import { BridgeTransferConfirmModal } from './_components/BridgeTransferConfirmM
 import BridgeActivity from './_components/BridgeActivity';
 
 import { AllTransactionsUpdater } from './_zustand/useTransactionStore';
-import { bridgeTransferConfirmModalActions } from './_zustand/useBridgeTransferConfirmModalStore';
+import { modalActions, MODAL_IDS } from './_zustand/useModalStore';
 import { useCreateXCallService } from './_zustand/useXCallServiceStore';
 import { useBridgeInfo } from 'store/bridge/hooks';
 
@@ -18,7 +18,11 @@ export function BridgeV2Page() {
 
   return (
     <SectionPanel bg="bg2">
-      <BridgeTransferForm openModal={bridgeTransferConfirmModalActions.openModal} />
+      <BridgeTransferForm
+        openModal={() => {
+          modalActions.openModal(MODAL_IDS.BRIDGE_TRANSFER_CONFIRM_MODAL);
+        }}
+      />
       <BridgeActivity />
       <BridgeTransferConfirmModal />
 

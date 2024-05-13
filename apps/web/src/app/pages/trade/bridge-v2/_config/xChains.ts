@@ -156,10 +156,10 @@ export const xChains = [
   archway,
   icon,
   avalanche,
-  // add testnets
-  archwayTestnet,
-  lisbon,
-  fuji,
+  // remove testnets
+  // archwayTestnet,
+  // lisbon,
+  // fuji,
 ];
 
 export const xChainMap: { [key in XChainId]: XChain } = {

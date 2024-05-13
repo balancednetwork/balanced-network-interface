@@ -15,8 +15,8 @@ export const XCallDescription = ({ protocol }: { protocol: MessagingProtocol }) 
       </Typography>
       <Typography>
         <Trans>
-          <strong>xCall</strong> is a cross-chain messaging service that can interact with smart contracts on other
-          blockchains.
+          <strong>GMP</strong> (general message passing) is a cross-chain messenger that interacts with smart contracts
+          on supported chains.
         </Trans>
       </Typography>
     </>

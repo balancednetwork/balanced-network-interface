@@ -14,8 +14,9 @@ const MESSAGING_PROTOCOLS: { [key in MessagingProtocolId]: MessagingProtocol } =
   },
   [MessagingProtocolId.C_RELAY]: {
     id: MessagingProtocolId.C_RELAY,
-    name: 'Centralised Relay',
-    description: 'is the interoperability protocol based on centralized relay',
+    name: 'Custom Relay',
+    description:
+      "can connect any chain to ICON's GMP service. Connections are secured by multiple relays, which are managed by different entities",
   },
 };
 

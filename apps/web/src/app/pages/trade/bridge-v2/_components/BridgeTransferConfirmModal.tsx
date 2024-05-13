@@ -153,7 +153,7 @@ export function BridgeTransferConfirmModal() {
                 {approvalState === ApprovalState.APPROVED && (
                   <>
                     <StyledXCallButton onClick={handleTransfer} disabled={isProcessing}>
-                      {!isProcessing ? <Trans>Transfer</Trans> : <Trans>xCall in progress</Trans>}
+                      {!isProcessing ? <Trans>Transfer</Trans> : <Trans>Transfer in progress</Trans>}
                     </StyledXCallButton>
                   </>
                 )}

@@ -88,7 +88,7 @@ export default function BridgeTransferForm({ openModal }) {
       <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
         <AutoColumn gap="md">
           <Typography variant="h2">
-            <Trans>Bridge</Trans>
+            <Trans>Transfer</Trans>
           </Typography>
           <Flex width="100%" alignItems="center" justifyContent="space-between">
             <ChainSelector
@@ -139,9 +139,9 @@ export default function BridgeTransferForm({ openModal }) {
 
             {protocol && (
               <Typography color="text">
-                {protocol?.name} + xCall
+                {protocol.name} + GMB
                 <QuestionWrapper style={{ marginLeft: '3px', transform: 'translateY(1px)' }}>
-                  <QuestionHelper width={300} text={<XCallDescription protocol={protocol} />} />
+                  <QuestionHelper width={310} text={<XCallDescription protocol={protocol} />} />
                 </QuestionWrapper>
               </Typography>
             )}
@@ -169,7 +169,7 @@ export default function BridgeTransferForm({ openModal }) {
                 {errorMessage ? errorMessage : <Trans>Transfer</Trans>}
               </Button>
             ) : (
-              <Button onClick={handleSubmit}>{<Trans>Connect Wallet</Trans>}</Button>
+              <Button onClick={handleSubmit}>{<Trans>Transfer</Trans>}</Button>
             )}
           </Flex>
         </AutoColumn>

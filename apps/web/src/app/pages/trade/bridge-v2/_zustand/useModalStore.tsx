@@ -1,7 +1,12 @@
 import { create } from 'zustand';
 
+export enum MODAL_ID {
+  BRIDGE_TRANSFER_CONFIRM_MODAL = 'BRIDGE_TRANSFER_CONFIRM_MODAL',
+  XCALL_SWAP_MODAL = 'XCALL_SWAP_MODAL',
+}
+
 type ModalStore = {
-  modals: {};
+  modals: Partial<Record<MODAL_ID, boolean>>;
 };
 
 export const useModalStore = create<ModalStore>()(() => ({
@@ -9,10 +14,10 @@ export const useModalStore = create<ModalStore>()(() => ({
 }));
 
 export const modalActions = {
-  isModalOpen: id => {
+  isModalOpen: (id: MODAL_ID) => {
     return !!useModalStore.getState().modals?.[id];
   },
-  openModal: id => {
+  openModal: (id: MODAL_ID) => {
     useModalStore.setState(prevState => {
       return {
         ...prevState,
@@ -23,7 +28,7 @@ export const modalActions = {
       };
     });
   },
-  closeModal: id => {
+  closeModal: (id: MODAL_ID) => {
     useModalStore.setState(prevState => {
       return {
         ...prevState,
@@ -34,9 +39,4 @@ export const modalActions = {
       };
     });
   },
-};
-
-export const MODAL_IDS = {
-  BRIDGE_TRANSFER_CONFIRM_MODAL: 'BRIDGE_TRANSFER_CONFIRM_MODAL',
-  XCALL_SWAP_MODAL: 'XCALL_SWAP_MODAL',
 };

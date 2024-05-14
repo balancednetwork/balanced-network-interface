@@ -26,7 +26,7 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge-v2/_hooks/useApproveCallback';
 import XCallSwapState from './XCallSwapState';
 import { xChainMap } from '../bridge-v2/_config/xChains';
-import { useModalStore, modalActions, MODAL_IDS } from '../bridge-v2/_zustand/useModalStore';
+import { useModalStore, modalActions, MODAL_ID } from '../bridge-v2/_zustand/useModalStore';
 
 type XCallSwapModalProps = {
   account: string | undefined;
@@ -130,7 +130,7 @@ const XCallSwapModal = ({
   };
 
   const handleDismiss = () => {
-    modalActions.closeModal(MODAL_IDS.XCALL_SWAP_MODAL);
+    modalActions.closeModal(MODAL_ID.XCALL_SWAP_MODAL);
     setTimeout(() => {
       xCallSwapActions.reset();
     }, 500);
@@ -158,7 +158,7 @@ const XCallSwapModal = ({
   return (
     <>
       <XCallSwapStatusUpdater />
-      <Modal isOpen={modalActions.isModalOpen(MODAL_IDS.XCALL_SWAP_MODAL)} onDismiss={handleDismiss}>
+      <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XCALL_SWAP_MODAL)} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing}>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
             <Trans>

@@ -40,7 +40,7 @@ import XCallSwapModal from './XCallSwapModal';
 import { useCreateXCallService } from '../bridge-v2/_zustand/useXCallServiceStore';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import SwapModal from './SwapModal';
-import { MODAL_IDS, modalActions } from '../bridge-v2/_zustand/useModalStore';
+import { MODAL_ID, modalActions } from '../bridge-v2/_zustand/useModalStore';
 
 const MemoizedStabilityFund = React.memo(StabilityFund);
 
@@ -163,7 +163,7 @@ export default function SwapPanel() {
       }
       setExecutionTrade(trade);
       // setCurrentXCallState(CurrentXCallStateType.AWAKE);
-      modalActions.openModal(MODAL_IDS.XCALL_SWAP_MODAL);
+      modalActions.openModal(MODAL_ID.XCALL_SWAP_MODAL);
     } else {
       if (!account) {
         toggleWalletModal();

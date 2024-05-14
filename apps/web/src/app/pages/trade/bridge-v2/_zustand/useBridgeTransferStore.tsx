@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { xCallServiceActions } from './useXCallServiceStore';
-import { modalActions, MODAL_IDS } from './useModalStore';
+import { modalActions, MODAL_ID } from './useModalStore';
 import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, BridgeTransferType } from './types';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { transactionActions, useFetchTransaction } from './useTransactionStore';
@@ -92,7 +92,7 @@ export const bridgeTransferActions = {
   success: () => {
     xCallEventActions.stopAllScanners();
 
-    modalActions.closeModal(MODAL_IDS.BRIDGE_TRANSFER_CONFIRM_MODAL);
+    modalActions.closeModal(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL);
 
     bridgeTransferActions.reset();
 

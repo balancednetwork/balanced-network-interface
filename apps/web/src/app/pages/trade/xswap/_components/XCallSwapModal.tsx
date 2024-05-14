@@ -102,7 +102,8 @@ const XCallSwapModal = ({
   clearInputs,
 }: XCallSwapModalProps) => {
   useModalStore();
-  const { isProcessing } = useXCallSwapStore();
+  const { transferId, childTransferId } = useXCallSwapStore();
+  const isProcessing: boolean = transferId || childTransferId;
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();

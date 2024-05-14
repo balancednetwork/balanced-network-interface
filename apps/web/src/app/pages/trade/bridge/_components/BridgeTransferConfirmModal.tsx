@@ -41,7 +41,8 @@ const StyledXCallButton = styled(XCallButton)`
 
 export function BridgeTransferConfirmModal() {
   const { modals } = useModalStore();
-  const { isProcessing } = useBridgeTransferStore();
+  const { transferId } = useBridgeTransferStore();
+  const isProcessing = transferId !== null;
 
   const { recipient, isLiquidFinanceEnabled, currencyAmountToBridge, account, isDenom, bridgeDirection } =
     useBridgeInfo();

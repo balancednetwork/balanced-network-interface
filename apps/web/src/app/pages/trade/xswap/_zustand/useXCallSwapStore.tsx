@@ -18,20 +18,14 @@ import { MODAL_ID, modalActions } from '../../bridge/_zustand/useModalStore';
 type XCallSwapStore = {
   transferId: string | null;
   childTransferId: string | null;
-  isProcessing: boolean;
 };
 
 export const useXCallSwapStore = create<XCallSwapStore>()(() => ({
   transferId: null,
   childTransferId: null,
-  isProcessing: false,
 }));
 
 export const xCallSwapActions = {
-  setIsProcessing: (isProcessing: boolean) => {
-    useXCallSwapStore.setState({ isProcessing });
-  },
-
   executeSwap: async (swapInfo: SwapInfo & { cleanupSwap: () => void }) => {
     const iconChainId: XChainId = '0x1.icon';
     const { direction, executionTrade, cleanupSwap } = swapInfo;
@@ -61,7 +55,6 @@ export const xCallSwapActions = {
       executionTrade.outputAmount.currency.symbol || 'OUT',
     );
 
-    xCallSwapActions.setIsProcessing(true);
     const sourceTransaction = transactionActions.add(sourceChainId, {
       hash: sourceTransactionHash,
       pendingMessage: swapMessages.pendingMessage,
@@ -145,7 +138,6 @@ export const xCallSwapActions = {
     useXCallSwapStore.setState({
       transferId: null,
       childTransferId: null,
-      isProcessing: false,
     });
   },
 

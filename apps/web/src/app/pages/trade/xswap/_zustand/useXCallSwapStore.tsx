@@ -67,18 +67,11 @@ export const xCallSwapActions = {
       const blockHeight = (await dstChainXCallService.getBlockHeight()) - 1n;
       console.log('blockHeight', blockHeight);
 
-      const _inputTokenSymbol = executionTrade.inputAmount.currency.symbol || '';
-      const _outputTokenSymbol = executionTrade.outputAmount.currency.symbol || '';
-      const _inputAmount = executionTrade.inputAmount.toFixed(2);
-      const _outputAmount = executionTrade.outputAmount.toFixed(2);
-
       const transfer: BridgeTransfer = {
         id: `${sourceChainId}/${sourceTransaction.hash}`,
         type: BridgeTransferType.SWAP,
         sourceChainId: sourceChainId,
         destinationChainId: _destinationChainId,
-        descriptionAction: `Swap ${_inputTokenSymbol} for ${_outputTokenSymbol}`,
-        descriptionAmount: `${_inputAmount} ${_inputTokenSymbol} for ${_outputAmount} ${_outputTokenSymbol}`,
         sourceTransaction,
         status: BridgeTransferStatus.TRANSFER_REQUESTED,
         events: {},
@@ -115,8 +108,6 @@ export const xCallSwapActions = {
       type: BridgeTransferType.SWAP,
       sourceChainId,
       destinationChainId,
-      descriptionAction: transfer.descriptionAction,
-      descriptionAmount: transfer.descriptionAmount,
       sourceTransaction: sourceTransaction,
       status: BridgeTransferStatus.TRANSFER_REQUESTED,
       events: {},

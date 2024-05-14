@@ -112,8 +112,6 @@ export type BridgeTransfer = {
   type: BridgeTransferType;
   sourceChainId: XChainId;
   destinationChainId: XChainId;
-  descriptionAction: string;
-  descriptionAmount: string;
   sourceTransaction: Transaction;
   destinationTransaction?: Transaction;
   events: XCallEventMap;

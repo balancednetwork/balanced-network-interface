@@ -12,7 +12,7 @@ import { useXCallEventScanner, xCallEventActions } from '../_zustand/useXCallEve
 import { useFetchTransaction } from '../_zustand/useTransactionStore';
 import { bridgeTransferHistoryActions, useFetchBridgeTransferEvents } from '../_zustand/useBridgeTransferHistoryStore';
 import { useCreateXCallService } from '../_zustand/useXCallServiceStore';
-import { BridgeTransfer, BridgeTransferStatus } from '../_zustand/types';
+import { BridgeTransfer, BridgeTransferStatus, BridgeTransferType } from '../_zustand/types';
 
 const Wrap = styled(Box)`
   display: grid;
@@ -105,7 +105,7 @@ const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) =
     }
   }, [transfer, destinationChainId, destinationChainInitialBlockHeight]);
 
-  const message = useMemo(() => {
+  const statusMessage = useMemo(() => {
     if (!transfer) {
       return `Transfer not found.`;
     }
@@ -125,6 +125,33 @@ const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) =
     }
   }, [transfer]);
 
+  const { descriptionAction, descriptionAmount } = useMemo(() => {
+    let descriptionAction, descriptionAmount;
+
+    if (!transfer) {
+      return { descriptionAction, descriptionAmount };
+    }
+
+    if (transfer.type === BridgeTransferType.BRIDGE) {
+      const _tokenSymbol = transfer.xSwapInfo.inputAmount.currency.symbol;
+      const _formattedAmount = transfer.xSwapInfo.inputAmount.toFixed(2);
+
+      descriptionAction = `Transfer ${_tokenSymbol}`;
+      descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+    } else if (transfer.type === BridgeTransferType.SWAP) {
+      const { executionTrade } = transfer.xSwapInfo;
+      const _inputTokenSymbol = executionTrade?.inputAmount.currency.symbol || '';
+      const _outputTokenSymbol = executionTrade?.outputAmount.currency.symbol || '';
+      const _inputAmount = executionTrade?.inputAmount.toFixed(2);
+      const _outputAmount = executionTrade?.outputAmount.toFixed(2);
+
+      descriptionAction = `Swap ${_inputTokenSymbol} for ${_outputTokenSymbol}`;
+      descriptionAmount = `${_inputAmount} ${_inputTokenSymbol} for ${_outputAmount} ${_outputTokenSymbol}`;
+    }
+
+    return { descriptionAction, descriptionAmount };
+  }, [transfer]);
+
   return (
     <Wrap>
       <Flex alignItems="center">
@@ -134,10 +161,10 @@ const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) =
       </Flex>
       <Flex justifyContent="center" flexDirection="column">
         <Typography fontWeight={700} color="text">
-          {transfer.descriptionAction}
+          {descriptionAction}
         </Typography>
         <Typography opacity={0.75} fontSize={14}>
-          {transfer.descriptionAmount}
+          {descriptionAmount}
         </Typography>
       </Flex>
       <Flex justifyContent="center" flexDirection="column" alignItems="flex-end" className="status-check">
@@ -154,7 +181,7 @@ const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) =
         <Flex alignItems="center">
           {transfer.status !== BridgeTransferStatus.TRANSFER_FAILED &&
             transfer.status !== BridgeTransferStatus.CALL_EXECUTED && <Spinner size={15} />}
-          <Status style={{ transform: 'translateY(1px)' }}>{message}</Status>
+          <Status style={{ transform: 'translateY(1px)' }}>{statusMessage}</Status>
         </Flex>
       </Flex>
     </Wrap>

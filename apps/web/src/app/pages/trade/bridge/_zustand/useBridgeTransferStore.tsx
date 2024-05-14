@@ -50,15 +50,11 @@ export const bridgeTransferActions = {
       const blockHeight = (await dstChainXCallService.getBlockHeight()) - 1n;
       console.log('blockHeight', blockHeight);
 
-      const _tokenSymbol = xSwapInfo.inputAmount.currency.symbol;
-      const _formattedAmount = xSwapInfo.inputAmount.toFixed(2);
       const transfer: BridgeTransfer = {
         id: `${sourceChainId}/${sourceTransaction.hash}`,
         type: BridgeTransferType.BRIDGE,
         sourceChainId: sourceChainId,
         destinationChainId: destinationChainId,
-        descriptionAction: `Transfer ${_tokenSymbol}`,
-        descriptionAmount: `${_formattedAmount} ${_tokenSymbol}`,
         sourceTransaction,
         xSwapInfo,
         status: BridgeTransferStatus.TRANSFER_REQUESTED,

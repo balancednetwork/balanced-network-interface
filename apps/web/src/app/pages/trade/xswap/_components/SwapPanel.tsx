@@ -37,10 +37,10 @@ import useXCallFee from 'app/pages/trade/bridge-v2/_hooks/useXCallFee';
 import useXCallProtocol from 'app/pages/trade/bridge-v2/_hooks/useXCallProtocol';
 
 import XCallSwapModal from './XCallSwapModal';
-import { useCreateXCallService } from '../bridge-v2/_zustand/useXCallServiceStore';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import SwapModal from './SwapModal';
-import { MODAL_ID, modalActions } from '../bridge-v2/_zustand/useModalStore';
+import { useCreateXCallService } from '../../bridge-v2/_zustand/useXCallServiceStore';
+import { MODAL_ID, modalActions } from '../../bridge-v2/_zustand/useModalStore';
 
 const MemoizedStabilityFund = React.memo(StabilityFund);
 

@@ -17,7 +17,7 @@ import AddressInputPanel from 'app/components/AddressInputPanel';
 import { Button } from 'app/components/Button';
 import CrossChainConnectWallet from 'app/components/CrossChainWalletConnect';
 import { CurrencySelectionType } from 'app/components/SearchModal/CurrencySearch';
-import { AutoColumn } from 'app/pages/trade/_components/SwapPanel';
+import { AutoColumn } from 'app/pages/trade/xswap/_components/SwapPanel';
 import { BrightPanel } from 'app/components/trade/utils';
 import { XCallDescription } from 'app/components/XCallDescription';
 

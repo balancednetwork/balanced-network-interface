@@ -18,7 +18,7 @@ const TradePageLayout = lazyLoad(
   () => import('./pages/trade/layout'),
   module => module.TradePageLayout,
 );
-import { TradePage } from './pages/trade/page';
+import { TradePage } from './pages/trade/xswap/page';
 import { SupplyPage } from './pages/trade/supply/page';
 import { BridgePage } from './pages/trade/bridge/page';
 import { BridgeV2Page } from './pages/trade/bridge-v2/page';

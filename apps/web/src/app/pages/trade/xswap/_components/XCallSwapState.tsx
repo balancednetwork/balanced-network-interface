@@ -10,10 +10,10 @@ import Spinner from 'app/components/Spinner';
 import {
   bridgeTransferHistoryActions,
   useBridgeTransferHistoryStore,
-} from '../bridge-v2/_zustand/useBridgeTransferHistoryStore';
-import { BridgeTransfer, BridgeTransferStatus } from '../bridge-v2/_zustand/types';
+} from '../../bridge-v2/_zustand/useBridgeTransferHistoryStore';
+import { BridgeTransfer, BridgeTransferStatus } from '../../bridge-v2/_zustand/types';
+import { getNetworkDisplayName } from '../../bridge-v2/utils';
 import { useXCallSwapStore } from '../_zustand/useXCallSwapStore';
-import { getNetworkDisplayName } from '../bridge-v2/utils';
 
 const XCallSwapState = () => {
   const { transferId, childTransferId } = useXCallSwapStore();

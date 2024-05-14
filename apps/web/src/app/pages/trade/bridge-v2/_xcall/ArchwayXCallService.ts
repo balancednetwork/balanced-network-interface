@@ -2,6 +2,7 @@ import { sha256 } from '@cosmjs/crypto';
 import { toHex } from '@cosmjs/encoding';
 import { ArchwayClient, StdFee } from '@archwayhq/arch3.js';
 import bnJs from 'bnJs';
+import { Percent } from '@balancednetwork/sdk-core';
 
 import { XSigningArchwayClient } from 'lib/archway/XSigningArchwayClient';
 import { getBytesFromString } from 'app/pages/trade/bridge-v2/utils';
@@ -287,7 +288,10 @@ export class ArchwayXCallService implements XCallService {
       account,
       recipient,
       xCallFee, //
+      slippageTolerance,
     } = swapInfo;
+    const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
+
     const receiver = `${direction.to}/${recipient}`;
     const token = inputAmount.currency.wrapped;
 
@@ -296,18 +300,21 @@ export class ArchwayXCallService implements XCallService {
       receiver: receiver,
     };
 
+    const data = getBytesFromString(
+      JSON.stringify({
+        method: '_swap',
+        params: swapParams,
+        minimumReceive: minReceived.quotient.toString(),
+      }),
+    );
+
     if (['bnUSD'].includes(token.symbol)) {
       //handle icon native tokens vs spoke assets
       const msg = {
         cross_transfer: {
           amount: inputAmount.quotient.toString(),
           to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
-          data: getBytesFromString(
-            JSON.stringify({
-              method: '_swap',
-              params: swapParams,
-            }),
-          ),
+          data,
         },
       };
 
@@ -330,12 +337,7 @@ export class ArchwayXCallService implements XCallService {
           token_address: token.address,
           amount: inputAmount.quotient.toString(),
           to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
-          data: getBytesFromString(
-            JSON.stringify({
-              method: '_swap',
-              params: swapParams,
-            }),
-          ),
+          data,
         },
       };
 

@@ -2,27 +2,20 @@ import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
 import { XCallService } from './types';
 import {
   BridgeInfo,
+  SwapInfo,
   Transaction,
   TransactionStatus,
   XCallDestinationEvent,
-  XCallEvent,
   XCallSourceEvent,
 } from '../_zustand/types';
 import { avalanche } from 'app/pages/trade/bridge-v2/_config/xChains';
 import { getBytesFromString } from 'app/pages/trade/bridge-v2/utils';
 
-import {
-  Address,
-  PublicClient,
-  WalletClient,
-  WriteContractParameters,
-  parseEther,
-  parseEventLogs,
-  zeroAddress,
-} from 'viem';
+import { Address, PublicClient, WalletClient, WriteContractParameters, parseEventLogs, toHex } from 'viem';
 import { NATIVE_ADDRESS } from 'constants/index';
-import { call } from 'viem/actions';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
+import { Percent } from '@balancednetwork/sdk-core';
+import bnJs from 'bnJs';
 
 export class EvmXCallService implements XCallService {
   xChainId: XChainId;
@@ -231,7 +224,7 @@ export class EvmXCallService implements XCallService {
           address: avalanche.contracts.assetManager as Address,
           abi: assetManagerContractAbi,
           functionName: 'depositNative',
-          args: [amount, destination],
+          args: [amount, destination, '0x'],
           value: xCallFee.rollback + amount,
         });
         request = res.request;
@@ -245,7 +238,7 @@ export class EvmXCallService implements XCallService {
     }
   }
 
-  async executeSwap(swapInfo: any) {
+  async executeSwap(swapInfo: SwapInfo) {
     const {
       direction,
       inputAmount,
@@ -253,30 +246,26 @@ export class EvmXCallService implements XCallService {
       account,
       recipient,
       xCallFee, //
+      slippageTolerance,
     } = swapInfo;
+    const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
 
     if (this.walletClient) {
       const receiver = `${direction.to}/${recipient}`;
-      const swapParams = {
-        path: executionTrade.route.pathForSwap,
-        receiver: receiver,
-      };
-
-      // TODO: fix this
-      const swapParamsBytes = Buffer.from(
-        JSON.stringify({
-          method: '_swap',
-          params: swapParams,
-        }),
-        'utf8',
-      ).toString('hex');
-
-      console.log('swapParamsBytes', swapParamsBytes);
 
       const tokenAddress = inputAmount.wrapped.currency.address;
-      const destination = `${ICON_XCALL_NETWORK_ID}/${recipient}`;
       const amount = BigInt(inputAmount.quotient.toString());
-
+      const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
+      const data = toHex(
+        JSON.stringify({
+          method: '_swap',
+          params: {
+            path: executionTrade.route.pathForSwap,
+            receiver: receiver,
+            minimumReceive: minReceived.quotient.toString(),
+          },
+        }),
+      );
       // check if the bridge asset is native
       const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
 
@@ -287,7 +276,7 @@ export class EvmXCallService implements XCallService {
           address: avalanche.contracts.assetManager as Address,
           abi: assetManagerContractAbi,
           functionName: 'deposit',
-          args: [tokenAddress as Address, amount, destination, '0x' + swapParamsBytes],
+          args: [tokenAddress as Address, amount, destination, data],
           value: xCallFee.rollback,
         });
         request = res.request;
@@ -297,7 +286,7 @@ export class EvmXCallService implements XCallService {
           address: avalanche.contracts.assetManager as Address,
           abi: assetManagerContractAbi,
           functionName: 'depositNative',
-          args: [amount, destination, '0x' + swapParamsBytes],
+          args: [amount, destination, data],
           value: xCallFee.rollback + amount,
         });
         request = res.request;
@@ -1059,27 +1048,10 @@ export const assetManagerContractAbi = [
     type: 'function',
   },
   {
-    inputs: [{ internalType: 'uint256', name: 'amount', type: 'uint256' }],
-    name: 'depositNative',
-    outputs: [],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-  {
     inputs: [
       { internalType: 'uint256', name: 'amount', type: 'uint256' },
       { internalType: 'string', name: 'to', type: 'string' },
       { internalType: 'bytes', name: 'data', type: 'bytes' },
-    ],
-    name: 'depositNative',
-    outputs: [],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      { internalType: 'uint256', name: 'amount', type: 'uint256' },
-      { internalType: 'string', name: 'to', type: 'string' },
     ],
     name: 'depositNative',
     outputs: [],

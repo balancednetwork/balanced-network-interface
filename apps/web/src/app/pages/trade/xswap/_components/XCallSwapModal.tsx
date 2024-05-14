@@ -27,6 +27,7 @@ import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks
 import XCallSwapState from './XCallSwapState';
 import { xChainMap } from '../../bridge/_config/xChains';
 import { useModalStore, modalActions, MODAL_ID } from '../../bridge/_zustand/useModalStore';
+import { BridgeTransferType, XSwapInfo } from '../../bridge/_zustand/types';
 
 type XCallSwapModalProps = {
   account: string | undefined;
@@ -144,7 +145,8 @@ const XCallSwapModal = ({
     if (!xCallFee) return;
     if (!_inputAmount) return;
 
-    await xCallSwapActions.executeSwap({
+    const xSwapInfo: XSwapInfo & { cleanupSwap: () => void } = {
+      type: BridgeTransferType.SWAP,
       direction,
       executionTrade,
       account,
@@ -153,7 +155,9 @@ const XCallSwapModal = ({
       slippageTolerance,
       xCallFee,
       cleanupSwap,
-    });
+    };
+
+    await xCallSwapActions.executeSwap(xSwapInfo);
   };
 
   return (

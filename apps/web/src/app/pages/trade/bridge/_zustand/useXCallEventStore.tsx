@@ -18,6 +18,9 @@ export const useXCallEventStore = create<XCallEventStore>()(set => ({
 }));
 
 export const xCallEventActions = {
+  isScannerEnabled: (xChainId: XChainId) => {
+    return useXCallEventStore.getState().scanners[xChainId]?.enabled;
+  },
   startScanner: (xChainId: XChainId, startBlockHeight: bigint) => {
     console.log('start scanner');
     useXCallEventStore.setState(state => {
@@ -175,6 +178,8 @@ export const xCallEventActions = {
   getDestinationEvents: (xChainId: XChainId, sn: bigint) => {
     try {
       const events = useXCallEventStore.getState().destinationXCallEvents?.[xChainId];
+
+      console.log('getDestinationEvents', xChainId, sn, events);
 
       const result = {};
 

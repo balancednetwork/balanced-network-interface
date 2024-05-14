@@ -9,8 +9,7 @@ import { NETWORK_ID } from 'constants/config';
 import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge/_config/xTokens';
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
 import {
-  BridgeInfo,
-  SwapInfo,
+  XSwapInfo,
   Transaction,
   TransactionStatus,
   XCallDestinationEvent,
@@ -198,15 +197,15 @@ export class IconXCallService implements XCallService {
 
   async approve(token, owner, spender, currencyAmountToApprove) {}
 
-  async executeTransfer(bridgeInfo: BridgeInfo) {
+  async executeTransfer(xSwapInfo: XSwapInfo) {
     const {
-      bridgeDirection,
-      currencyAmountToBridge,
+      direction,
+      inputAmount,
       recipient: destinationAddress,
       account,
       xCallFee,
       isLiquidFinanceEnabled,
-    } = bridgeInfo;
+    } = xSwapInfo;
 
     if (account && xCallFee) {
       window.addEventListener('beforeunload', showMessageOnBeforeUnload);
@@ -215,22 +214,18 @@ export class IconXCallService implements XCallService {
         this.changeShouldLedgerSign(true);
       }
 
-      const tokenAddress = currencyAmountToBridge.wrapped.currency.address;
-      const destination = `${bridgeDirection.to}/${destinationAddress}`;
+      const tokenAddress = inputAmount.wrapped.currency.address;
+      const destination = `${direction.to}/${destinationAddress}`;
 
       let txResult;
-      if (CROSS_TRANSFER_TOKENS.includes(currencyAmountToBridge.currency.symbol)) {
+      if (CROSS_TRANSFER_TOKENS.includes(inputAmount.currency.symbol)) {
         const cx = bnJs.inject({ account }).getContract(tokenAddress);
-        txResult = await cx.crossTransfer(
-          destination,
-          `${currencyAmountToBridge.quotient}`,
-          xCallFee.rollback.toString(),
-        );
+        txResult = await cx.crossTransfer(destination, `${inputAmount.quotient}`, xCallFee.rollback.toString());
       } else {
         txResult = await bnJs
           .inject({ account })
           .AssetManager[isLiquidFinanceEnabled ? 'withdrawNativeTo' : 'withdrawTo'](
-            `${currencyAmountToBridge.quotient}`,
+            `${inputAmount.quotient}`,
             tokenAddress,
             destination,
             xCallFee.rollback.toString(),
@@ -245,8 +240,13 @@ export class IconXCallService implements XCallService {
     }
   }
 
-  async executeSwap(swapInfo: SwapInfo) {
-    const { executionTrade, account, direction, recipient, slippageTolerance } = swapInfo;
+  async executeSwap(xSwapInfo: XSwapInfo) {
+    const { executionTrade, account, direction, recipient, slippageTolerance } = xSwapInfo;
+
+    if (!executionTrade || !slippageTolerance) {
+      return;
+    }
+
     const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
     const receiver = `${direction.to}/${recipient}`;
 

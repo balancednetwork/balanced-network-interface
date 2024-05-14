@@ -19,30 +19,46 @@ export enum TransactionStatus {
   failure = 'failure',
 }
 
-export type BridgeInfo = {
-  bridgeDirection: {
-    from: XChainId;
-    to: XChainId;
-  };
-  currencyAmountToBridge: CurrencyAmount<Currency>;
-  recipient: string;
-  account: string;
-  xCallFee: IXCallFee;
-  isLiquidFinanceEnabled?: boolean;
-  isDenom?: boolean;
-};
+// export type BridgeInfo = {
+//   bridgeDirection: {
+//     from: XChainId;
+//     to: XChainId;
+//   };
+//   currencyAmountToBridge: CurrencyAmount<Currency>;
+//   recipient: string;
+//   account: string;
+//   xCallFee: IXCallFee;
+//   isLiquidFinanceEnabled?: boolean;
+//   isDenom?: boolean;
+// };
 
-export type SwapInfo = {
+// export type SwapInfo = {
+//   direction: {
+//     from: XChainId;
+//     to: XChainId;
+//   };
+//   inputAmount: CurrencyAmount<Currency>;
+//   account: string;
+//   recipient: string;
+//   xCallFee: IXCallFee;
+//   executionTrade: Trade<Currency, Currency, TradeType>;
+//   slippageTolerance: number;
+// };
+
+export type XSwapInfo = {
   direction: {
     from: XChainId;
     to: XChainId;
   };
+  type: BridgeTransferType;
   inputAmount: CurrencyAmount<Currency>;
   account: string;
   recipient: string;
   xCallFee: IXCallFee;
-  executionTrade: Trade<Currency, Currency, TradeType>;
-  slippageTolerance: number;
+  // xswap
+  executionTrade?: Trade<Currency, Currency, TradeType>;
+  slippageTolerance?: number;
+  isLiquidFinanceEnabled?: boolean;
 };
 
 export type Transaction = {
@@ -103,8 +119,7 @@ export type BridgeTransfer = {
   events: XCallEventMap;
   status: BridgeTransferStatus;
   destinationChainInitialBlockHeight: bigint;
-  bridgeInfo?: BridgeInfo;
-  swapInfo?: any; // TODO: add type for swapInfo
+  xSwapInfo: XSwapInfo;
   childTransferNeeded: boolean;
   childTransferId?: string;
   parentTransferId?: string;

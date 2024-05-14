@@ -28,6 +28,7 @@ import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import useXCallFee from '../_hooks/useXCallFee';
 import useXCallGasChecker from '../_hooks/useXCallGasChecker';
+import { BridgeTransferType, XSwapInfo } from '../_zustand/types';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;
@@ -65,13 +66,13 @@ export function BridgeTransferConfirmModal() {
 
   const handleTransfer = async () => {
     if (currencyAmountToBridge && recipient && account && xCallFee) {
-      const bridgeInfo = {
-        bridgeDirection,
-        currencyAmountToBridge,
+      const bridgeInfo: XSwapInfo = {
+        type: BridgeTransferType.BRIDGE,
+        direction: bridgeDirection,
+        inputAmount: currencyAmountToBridge,
         recipient,
         account,
         xCallFee,
-        isDenom,
         isLiquidFinanceEnabled,
       };
       await bridgeTransferActions.executeTransfer(bridgeInfo);

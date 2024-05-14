@@ -4,7 +4,7 @@ import { create } from 'zustand';
 import { swapMessage } from 'app/components/trade/utils';
 
 import { xCallServiceActions } from '../../bridge/_zustand/useXCallServiceStore';
-import { BridgeTransfer, BridgeTransferStatus, BridgeTransferType, SwapInfo } from '../../bridge/_zustand/types';
+import { BridgeTransfer, BridgeTransferStatus, BridgeTransferType, XSwapInfo } from '../../bridge/_zustand/types';
 import { useXCallEventScanner, xCallEventActions } from '../../bridge/_zustand/useXCallEventStore';
 import { transactionActions, useFetchTransaction } from '../../bridge/_zustand/useTransactionStore';
 import {
@@ -26,9 +26,9 @@ export const useXCallSwapStore = create<XCallSwapStore>()(() => ({
 }));
 
 export const xCallSwapActions = {
-  executeSwap: async (swapInfo: SwapInfo & { cleanupSwap: () => void }) => {
+  executeSwap: async (xSwapInfo: XSwapInfo & { cleanupSwap: () => void }) => {
     const iconChainId: XChainId = '0x1.icon';
-    const { direction, executionTrade, cleanupSwap } = swapInfo;
+    const { direction, executionTrade, cleanupSwap } = xSwapInfo;
     const sourceChainId = direction.from;
     const destinationChainId = direction.to;
     const _destinationChainId = sourceChainId === iconChainId ? destinationChainId : iconChainId;
@@ -36,14 +36,14 @@ export const xCallSwapActions = {
     const srcChainXCallService = xCallServiceActions.getXCallService(sourceChainId);
     const dstChainXCallService = xCallServiceActions.getXCallService(_destinationChainId);
 
-    console.log('swapInfo', swapInfo);
+    console.log('xSwapInfo', xSwapInfo);
     console.log('all xCallServices', xCallServiceActions.getAllXCallServices());
     console.log('srcChainXCallService', srcChainXCallService);
     console.log('dstChainXCallService', dstChainXCallService);
 
-    const sourceTransactionHash = await srcChainXCallService.executeSwap(swapInfo);
+    const sourceTransactionHash = await srcChainXCallService.executeSwap(xSwapInfo);
 
-    if (!sourceTransactionHash) {
+    if (!sourceTransactionHash || !executionTrade) {
       xCallSwapActions.reset();
       return;
     }
@@ -84,10 +84,7 @@ export const xCallSwapActions = {
         events: {},
         destinationChainInitialBlockHeight: blockHeight,
         childTransferNeeded: destinationChainId !== _destinationChainId,
-        swapInfo: {
-          sourceChainId,
-          destinationChainId,
-        },
+        xSwapInfo,
       };
 
       bridgeTransferHistoryActions.add(transfer);
@@ -105,7 +102,7 @@ export const xCallSwapActions = {
 
     console.log('createChildTransfer');
     const sourceChainId = transfer.destinationChainId;
-    const destinationChainId = transfer.swapInfo?.destinationChainId;
+    const destinationChainId = transfer.xSwapInfo?.direction.to;
     const sourceTransaction = transfer.destinationTransaction;
 
     const dstChainXCallService = xCallServiceActions.getXCallService(destinationChainId);
@@ -126,6 +123,7 @@ export const xCallSwapActions = {
       destinationChainInitialBlockHeight: blockHeight,
       childTransferNeeded: false,
       parentTransferId: transfer.id,
+      xSwapInfo: transfer.xSwapInfo,
     };
 
     bridgeTransferHistoryActions.add(childTransfer);

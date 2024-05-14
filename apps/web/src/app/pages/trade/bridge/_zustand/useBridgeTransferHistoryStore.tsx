@@ -229,13 +229,9 @@ export const useFetchBridgeTransferEvents = (transfer?: BridgeTransfer) => {
         transfer.status === BridgeTransferStatus.CALL_MESSAGE
         // || transfer.status === BridgeTransferStatus.CALL_EXECUTED
       ) {
-        console.log('transfer.status !== BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT', transfer.events);
         const callMessageSentEvent = transfer.events[XCallEventType.CallMessageSent];
-        console.log('callMessageSentEvent', callMessageSentEvent);
         if (callMessageSentEvent) {
-          console.log('callMessageSentEvent', callMessageSentEvent);
           events = xCallEventActions.getDestinationEvents(destinationChainId, callMessageSentEvent.sn);
-          console.log('events', events);
         }
       }
 

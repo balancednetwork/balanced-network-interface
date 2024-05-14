@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { xCallServiceActions } from './useXCallServiceStore';
 import { modalActions, MODAL_ID } from './useModalStore';
-import { BridgeInfo, BridgeTransfer, BridgeTransferStatus, BridgeTransferType } from './types';
+import { BridgeTransfer, BridgeTransferStatus, BridgeTransferType, XSwapInfo } from './types';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { transactionActions, useFetchTransaction } from './useTransactionStore';
 import { useEffect } from 'react';
@@ -20,19 +20,19 @@ export const useBridgeTransferStore = create<BridgeTransferStore>()(set => ({
 }));
 
 export const bridgeTransferActions = {
-  executeTransfer: async (bridgeInfo: BridgeInfo) => {
-    const { bridgeDirection } = bridgeInfo;
-    const sourceChainId = bridgeDirection.from;
-    const destinationChainId = bridgeDirection.to;
+  executeTransfer: async (xSwapInfo: XSwapInfo) => {
+    const { direction } = xSwapInfo;
+    const sourceChainId = direction.from;
+    const destinationChainId = direction.to;
     const srcChainXCallService = xCallServiceActions.getXCallService(sourceChainId);
     const dstChainXCallService = xCallServiceActions.getXCallService(destinationChainId);
 
-    console.log('bridgeInfo', bridgeInfo);
+    console.log('xSwapInfo', xSwapInfo);
     console.log('all xCallServices', xCallServiceActions.getAllXCallServices());
     console.log('srcChainXCallService', srcChainXCallService);
     console.log('dstChainXCallService', dstChainXCallService);
 
-    const sourceTransactionHash = await srcChainXCallService.executeTransfer(bridgeInfo);
+    const sourceTransactionHash = await srcChainXCallService.executeTransfer(xSwapInfo);
 
     if (!sourceTransactionHash) {
       bridgeTransferActions.reset();
@@ -50,8 +50,8 @@ export const bridgeTransferActions = {
       const blockHeight = (await dstChainXCallService.getBlockHeight()) - 1n;
       console.log('blockHeight', blockHeight);
 
-      const _tokenSymbol = bridgeInfo.currencyAmountToBridge.currency.symbol;
-      const _formattedAmount = bridgeInfo.currencyAmountToBridge.toFixed(2);
+      const _tokenSymbol = xSwapInfo.inputAmount.currency.symbol;
+      const _formattedAmount = xSwapInfo.inputAmount.toFixed(2);
       const transfer: BridgeTransfer = {
         id: `${sourceChainId}/${sourceTransaction.hash}`,
         type: BridgeTransferType.BRIDGE,
@@ -60,7 +60,7 @@ export const bridgeTransferActions = {
         descriptionAction: `Transfer ${_tokenSymbol}`,
         descriptionAmount: `${_formattedAmount} ${_tokenSymbol}`,
         sourceTransaction,
-        // bridgeInfo,
+        xSwapInfo,
         status: BridgeTransferStatus.TRANSFER_REQUESTED,
         events: {},
         destinationChainInitialBlockHeight: blockHeight,

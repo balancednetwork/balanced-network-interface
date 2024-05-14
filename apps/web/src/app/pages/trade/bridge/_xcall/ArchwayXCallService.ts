@@ -9,19 +9,18 @@ import { getBytesFromString } from 'app/pages/trade/bridge/utils';
 
 import { archway, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge/_config/xTokens';
-import { getFeeParam } from 'app/_xcall/archway/utils';
+import { getFeeParam, isDenomAsset } from 'app/_xcall/archway/utils';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 
 import { XCallEventType, XChainId, XToken } from 'app/pages/trade/bridge/types';
 import { XCallService } from './types';
 import {
-  BridgeInfo,
+  XSwapInfo,
   TransactionStatus,
   XCallEvent,
   Transaction,
   XCallDestinationEvent,
   XCallSourceEvent,
-  SwapInfo,
 } from '../_zustand/types';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
@@ -201,19 +200,13 @@ export class ArchwayXCallService implements XCallService {
     }
   }
 
-  async executeTransfer(bridgeInfo: BridgeInfo) {
-    const {
-      bridgeDirection,
-      currencyAmountToBridge,
-      recipient: destinationAddress,
-      account,
-      xCallFee,
-      isDenom,
-    } = bridgeInfo;
+  async executeTransfer(xSwapInfo: XSwapInfo) {
+    const { direction, inputAmount, recipient: destinationAddress, account, xCallFee } = xSwapInfo;
+    const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
 
     if (this.walletClient) {
-      const tokenAddress = currencyAmountToBridge.wrapped.currency.address;
-      const destination = `${bridgeDirection.to}/${destinationAddress}`;
+      const tokenAddress = inputAmount.wrapped.currency.address;
+      const destination = `${direction.to}/${destinationAddress}`;
 
       const executeTransaction = async (msg: any, contract: string, fee: StdFee | 'auto', assetToBridge?: any) => {
         try {
@@ -244,7 +237,7 @@ export class ArchwayXCallService implements XCallService {
         const msg = { deposit_denom: { denom: tokenAddress, to: destination, data: [] } };
         const assetToBridge = {
           denom: tokenAddress,
-          amount: `${currencyAmountToBridge.quotient}`,
+          amount: `${inputAmount.quotient}`,
         };
 
         transaction = await executeTransaction(
@@ -254,10 +247,10 @@ export class ArchwayXCallService implements XCallService {
           assetToBridge,
         );
       } else {
-        if (CROSS_TRANSFER_TOKENS.includes(currencyAmountToBridge.currency.symbol || '')) {
+        if (CROSS_TRANSFER_TOKENS.includes(inputAmount.currency.symbol || '')) {
           const msg = {
             cross_transfer: {
-              amount: `${currencyAmountToBridge.quotient}`,
+              amount: `${inputAmount.quotient}`,
               to: destination,
               data: [],
             },
@@ -268,7 +261,7 @@ export class ArchwayXCallService implements XCallService {
           const msg = {
             deposit: {
               token_address: tokenAddress,
-              amount: `${currencyAmountToBridge.quotient}`,
+              amount: `${inputAmount.quotient}`,
               to: destination,
               data: [],
             },
@@ -280,16 +273,13 @@ export class ArchwayXCallService implements XCallService {
       return transaction;
     }
   }
-  async executeSwap(swapInfo: SwapInfo) {
-    const {
-      direction,
-      inputAmount,
-      executionTrade,
-      account,
-      recipient,
-      xCallFee, //
-      slippageTolerance,
-    } = swapInfo;
+  async executeSwap(xSwapInfo: XSwapInfo) {
+    const { direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } = xSwapInfo;
+
+    if (!executionTrade || !slippageTolerance) {
+      return;
+    }
+
     const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
 
     const receiver = `${direction.to}/${recipient}`;

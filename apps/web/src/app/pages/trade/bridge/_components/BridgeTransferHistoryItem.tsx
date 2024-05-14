@@ -8,7 +8,7 @@ import { Typography } from 'app/theme';
 import ArrowIcon from 'assets/icons/arrow-white.svg';
 
 import Spinner from 'app/components/Spinner';
-import { useXCallEventScanner } from '../_zustand/useXCallEventStore';
+import { useXCallEventScanner, xCallEventActions } from '../_zustand/useXCallEventStore';
 import { useFetchTransaction } from '../_zustand/useTransactionStore';
 import { bridgeTransferHistoryActions, useFetchBridgeTransferEvents } from '../_zustand/useBridgeTransferHistoryStore';
 import { useCreateXCallService } from '../_zustand/useXCallServiceStore';
@@ -72,7 +72,7 @@ const FailedX = styled(Box)`
 `;
 
 const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) => {
-  const { sourceChainId, destinationChainId } = transfer;
+  const { sourceChainId, destinationChainId, destinationChainInitialBlockHeight } = transfer;
   useXCallEventScanner(sourceChainId);
   useXCallEventScanner(destinationChainId);
 
@@ -95,6 +95,15 @@ const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) =
       bridgeTransferHistoryActions.updateTransferEvents(id, events);
     }
   }, [events, id]);
+
+  useEffect(() => {
+    if (
+      transfer.status !== BridgeTransferStatus.CALL_EXECUTED &&
+      !xCallEventActions.isScannerEnabled(destinationChainId)
+    ) {
+      xCallEventActions.startScanner(destinationChainId, BigInt(destinationChainInitialBlockHeight));
+    }
+  }, [transfer, destinationChainId, destinationChainInitialBlockHeight]);
 
   const message = useMemo(() => {
     if (!transfer) {

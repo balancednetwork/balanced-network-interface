@@ -1,13 +1,6 @@
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
 import { XCallService } from './types';
-import {
-  BridgeInfo,
-  SwapInfo,
-  Transaction,
-  TransactionStatus,
-  XCallDestinationEvent,
-  XCallSourceEvent,
-} from '../_zustand/types';
+import { XSwapInfo, Transaction, TransactionStatus, XCallDestinationEvent, XCallSourceEvent } from '../_zustand/types';
 import { avalanche } from 'app/pages/trade/bridge/_config/xChains';
 import { getBytesFromString } from 'app/pages/trade/bridge/utils';
 
@@ -196,16 +189,16 @@ export class EvmXCallService implements XCallService {
 
   async approve(token, owner, spender, currencyAmountToApprove) {}
 
-  async executeTransfer(bridgeInfo: BridgeInfo) {
-    const { bridgeDirection, currencyAmountToBridge, recipient: destinationAddress, account, xCallFee } = bridgeInfo;
+  async executeTransfer(xSwapInfo: XSwapInfo) {
+    const { direction, inputAmount, recipient: destinationAddress, account, xCallFee } = xSwapInfo;
 
     if (this.walletClient) {
-      const tokenAddress = currencyAmountToBridge.wrapped.currency.address;
-      const destination = `${bridgeDirection.to}/${destinationAddress}`;
-      const amount = BigInt(currencyAmountToBridge.quotient.toString());
+      const tokenAddress = inputAmount.wrapped.currency.address;
+      const destination = `${direction.to}/${destinationAddress}`;
+      const amount = BigInt(inputAmount.quotient.toString());
 
       // check if the bridge asset is native
-      const isNative = currencyAmountToBridge.currency.wrapped.address === NATIVE_ADDRESS;
+      const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
 
       let request: WriteContractParameters;
       if (!isNative) {
@@ -238,16 +231,13 @@ export class EvmXCallService implements XCallService {
     }
   }
 
-  async executeSwap(swapInfo: SwapInfo) {
-    const {
-      direction,
-      inputAmount,
-      executionTrade,
-      account,
-      recipient,
-      xCallFee, //
-      slippageTolerance,
-    } = swapInfo;
+  async executeSwap(xSwapInfo: XSwapInfo) {
+    const { direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } = xSwapInfo;
+
+    if (!executionTrade || !slippageTolerance) {
+      return;
+    }
+
     const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
 
     if (this.walletClient) {

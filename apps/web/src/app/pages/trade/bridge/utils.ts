@@ -2,8 +2,8 @@ import rlp from 'rlp';
 
 import { XCallState } from 'store/xCall/reducer';
 
-import { OriginXCallData, XChainId, XCallEventType } from './types';
-import { xChainMap } from './_config/xChains';
+import { OriginXCallData, XChainId, XCallEventType, XChain } from './types';
+import { xChainMap, xChains } from './_config/xChains';
 import { xTokenMap } from './_config/xTokens';
 import { Currency } from '@balancednetwork/sdk-core';
 
@@ -68,4 +68,16 @@ export const isXToken = (token?: Currency) => {
   return Object.values(xTokenMap)
     .flatMap(t => Object.values(t).flat())
     .some(t => t.address === token.wrapped.address);
+};
+
+export const getAvailableXChains = (currency?: Currency | null): XChain[] | undefined => {
+  if (!currency) return;
+
+  const allXTokens = Object.values(xTokenMap)
+    .map(x => Object.values(x))
+    .flat(2);
+
+  const xChainIds = allXTokens.filter(t => t.symbol === currency.symbol).map(t => t.xChainId);
+
+  return xChains.filter(x => xChainIds.includes(x.xChainId));
 };

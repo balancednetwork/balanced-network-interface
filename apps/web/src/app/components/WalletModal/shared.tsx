@@ -11,7 +11,7 @@ export const WalletOption = styled(Box)`
   align-items: center;
   cursor: pointer;
   padding: 10px 20px;
-  margin: 0px 10px;
+  margin: 10px 10px;
   border-radius: 10px;
   text-decoration: none;
   color: white;

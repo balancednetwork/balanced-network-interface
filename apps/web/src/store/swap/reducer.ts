@@ -7,6 +7,7 @@ import { getCrossChainTokenBySymbol, isXToken } from 'app/pages/trade/bridge/uti
 import { NETWORK_ID } from 'constants/config';
 import { bnUSD, BALN } from 'constants/tokens';
 
+// !TODO: use one Field for swap and bridge panel
 export enum Field {
   INPUT = 'INPUT',
   OUTPUT = 'OUTPUT',

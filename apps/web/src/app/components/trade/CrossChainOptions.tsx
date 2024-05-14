@@ -5,7 +5,7 @@ import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { XChainId } from 'app/pages/trade/bridge/types';
+import { XChain, XChainId } from 'app/pages/trade/bridge/types';
 import { Typography } from 'app/theme';
 
 import ChainList from '../../pages/trade/bridge/_components/ChainList';
@@ -15,8 +15,9 @@ import { DropdownPopper } from '../Popover';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 
 type CrossChainOptionsProps = {
-  chainId: XChainId;
-  setChainId: (chain: XChainId) => void;
+  xChains?: XChain[];
+  xChainId: XChainId;
+  setXChainId: (chain: XChainId) => void;
   isOpen: boolean;
   setOpen: (isOpen: boolean) => void;
 };
@@ -36,7 +37,7 @@ export const SelectorWrap = styled.div`
   color: ${({ theme }) => theme.colors.primaryBright};
 `;
 
-const CrossChainOptions = ({ chainId, setChainId, isOpen, setOpen }: CrossChainOptionsProps) => {
+const CrossChainOptions = ({ xChainId, setXChainId, isOpen, setOpen, xChains }: CrossChainOptionsProps) => {
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
   const arrowRef = React.useRef(null);
@@ -57,10 +58,10 @@ const CrossChainOptions = ({ chainId, setChainId, isOpen, setOpen }: CrossChainO
 
   const setChainWrap = React.useCallback(
     (chainId_: XChainId) => {
-      setChainId(chainId_);
+      setXChainId(chainId_);
       setOpen(false);
     },
-    [setChainId, setOpen],
+    [setXChainId, setOpen],
   );
 
   React.useEffect(() => {
@@ -78,7 +79,9 @@ const CrossChainOptions = ({ chainId, setChainId, isOpen, setOpen }: CrossChainO
         <ClickAwayListener onClickAway={closeDropdown}>
           <div>
             <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }}>
-              <UnderlineText style={{ paddingRight: '1px', fontSize: '14px' }}>{xChainMap[chainId].name}</UnderlineText>
+              <UnderlineText style={{ paddingRight: '1px', fontSize: '14px' }}>
+                {xChainMap[xChainId].name}
+              </UnderlineText>
               <div ref={arrowRef} style={{ display: 'inline-block' }}>
                 <StyledArrowDownIcon style={{ transform: 'translate3d(-1px, 1px, 0)' }} />
               </div>
@@ -91,13 +94,13 @@ const CrossChainOptions = ({ chainId, setChainId, isOpen, setOpen }: CrossChainO
               placement="bottom"
               offset={[0, 8]}
             >
-              <ChainList setChainId={setChainWrap} chainId={chainId} />
+              <ChainList setChainId={setChainWrap} chainId={xChainId} chains={xChains} />
             </DropdownPopper>
           </div>
         </ClickAwayListener>
       </Flex>
 
-      <CrossChainWalletConnect chainId={chainId} />
+      <CrossChainWalletConnect chainId={xChainId} />
     </Wrap>
   );
 };

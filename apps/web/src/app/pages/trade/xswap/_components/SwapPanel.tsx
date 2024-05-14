@@ -10,7 +10,6 @@ import { ChevronRight } from 'react-feather';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { CurrentXCallStateType } from 'app/pages/trade/bridge/types';
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
@@ -25,7 +24,6 @@ import { useCAMemo, useIsSwapEligible, useMaxSwapSize } from 'store/stabilityFun
 import { Field } from 'store/swap/reducer';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { useSignedInWallets } from 'store/wallet/hooks';
-import { useCurrentXCallState, useSetNotPristine, useSetXCallState } from 'store/xCall/hooks';
 import { formatPercent, maxAmountSpend } from 'utils';
 
 import Divider from 'app/components/Divider';
@@ -47,9 +45,6 @@ const MemoizedStabilityFund = React.memo(StabilityFund);
 export default function SwapPanel() {
   useInitialSwapLoad();
 
-  const setCurrentXCallState = useSetXCallState();
-  const currentXCallState = useCurrentXCallState();
-  const setNotPristine = useSetNotPristine();
   const { recipient } = useSwapState();
   const { trade, currencyBalances, currencies, inputError, percents, account, direction, formattedAmounts } =
     useDerivedSwapInfo();
@@ -228,8 +223,6 @@ export default function SwapPanel() {
               onCurrencySelect={handleInputSelect}
               onPercentSelect={signedInWallets.length > 0 ? handleInputPercentSelect : undefined}
               percent={percents[Field.INPUT]}
-              selectedCurrency={currencies[Field.OUTPUT]}
-              isCrossChainToken={isInputCrosschainCompatible}
               xChainId={direction.from}
               onChainSelect={
                 isInputCrosschainCompatible ? xChainId => onChainSelection(Field.INPUT, xChainId) : undefined
@@ -263,10 +256,10 @@ export default function SwapPanel() {
               currency={currencies[Field.OUTPUT]}
               onUserInput={handleTypeOutput}
               onCurrencySelect={handleOutputSelect}
-              selectedCurrency={currencies[Field.INPUT]}
-              isCrossChainToken={isOutputCrosschainCompatible}
               xChainId={direction.to}
-              onChainSelect={xChainId => onChainSelection(Field.OUTPUT, xChainId)}
+              onChainSelect={
+                isOutputCrosschainCompatible ? xChainId => onChainSelection(Field.OUTPUT, xChainId) : undefined
+              }
             />
           </Flex>
         </AutoColumn>

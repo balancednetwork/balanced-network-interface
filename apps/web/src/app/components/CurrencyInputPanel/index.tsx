@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { Currency } from '@balancednetwork/sdk-core';
 import ClickAwayListener from 'react-click-away-listener';
@@ -17,6 +17,7 @@ import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 import CrossChainOptions from '../trade/CrossChainOptions';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import { Box } from 'rebass/styled-components';
+import { getAvailableXChains } from 'app/pages/trade/bridge/utils';
 
 const InputContainer = styled.div`
   display: inline-flex;
@@ -100,10 +101,7 @@ interface CurrencyInputPanelProps {
   placeholder?: string;
   className?: string;
   account?: string | null;
-  selectedCurrency?: Currency | null;
-  isChainDifference?: boolean;
   showCommunityListControl?: boolean;
-  isCrossChainToken?: boolean;
 
   // cross chain stuff
   xChainId?: XChainId;
@@ -124,10 +122,7 @@ export default function CurrencyInputPanel({
   placeholder = '0',
   className,
   account,
-  selectedCurrency,
-  isChainDifference,
   showCommunityListControl = true,
-  isCrossChainToken = false,
 
   // cross chain stuff
   xChainId = '0x1.icon',
@@ -156,13 +151,14 @@ export default function CurrencyInputPanel({
   }, []);
 
   const [open1, setOpen1] = React.useState(false);
+  const xChains = useMemo(() => getAvailableXChains(currency), [currency]);
 
   return (
     <Box>
       <InputContainer ref={ref} className={className}>
         <ClickAwayListener onClickAway={() => setOpen(false)}>
           <div>
-            <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect} active={isCrossChainToken}>
+            <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect} active={!!onChainSelect}>
               {currency ? (
                 <>
                   <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
@@ -184,7 +180,7 @@ export default function CurrencyInputPanel({
                 showCurrencyAmount={false}
                 anchorEl={ref.current}
                 width={width ? width + 40 : undefined}
-                selectedCurrency={selectedCurrency}
+                selectedCurrency={currency}
                 showCommunityListControl={showCommunityListControl}
                 xChainId={xChainId}
               />
@@ -213,7 +209,7 @@ export default function CurrencyInputPanel({
           spellCheck="false"
           //style
           bg={bg}
-          active={(onPercentSelect && isActive) || isChainDifference || isCrossChainToken}
+          active={(onPercentSelect && isActive) || !!onChainSelect}
         />
 
         {onPercentSelect && (
@@ -232,7 +228,13 @@ export default function CurrencyInputPanel({
       </InputContainer>
 
       {onChainSelect && (
-        <CrossChainOptions chainId={xChainId} setChainId={onChainSelect} isOpen={open1} setOpen={setOpen1} />
+        <CrossChainOptions
+          xChainId={xChainId}
+          setXChainId={onChainSelect}
+          isOpen={open1}
+          setOpen={setOpen1}
+          xChains={xChains}
+        />
       )}
     </Box>
   );

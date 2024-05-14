@@ -6,10 +6,10 @@ import { Flex } from 'rebass';
 
 import { fetchTxResult, getICONEventSignature, getXCallOriginEventDataFromICON } from 'app/_xcall/_icon/utils';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { archway } from 'app/pages/trade/bridge-v2/_config/xChains';
+import { archway } from 'app/pages/trade/bridge/_config/xChains';
 import { getFeeParam } from 'app/_xcall/archway/utils';
-import { DestinationXCallData, OriginXCallData, XChainId, XCallEventType } from 'app/pages/trade/bridge-v2/types';
-import { getOriginEvent } from 'app/pages/trade/bridge-v2/utils';
+import { DestinationXCallData, OriginXCallData, XChainId, XCallEventType } from 'app/pages/trade/bridge/types';
+import { getOriginEvent } from 'app/pages/trade/bridge/utils';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';

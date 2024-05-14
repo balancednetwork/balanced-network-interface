@@ -9,7 +9,7 @@ import { useBridgeInfo } from 'store/bridge/hooks';
 import { IconXCallService } from '../_xcall/IconXCallService';
 import { ArchwayXCallService } from '../_xcall/ArchwayXCallService';
 import { XCallService } from '../_xcall/types';
-import { XChainId } from 'app/pages/trade/bridge-v2/types';
+import { XChainId } from 'app/pages/trade/bridge/types';
 import { EvmXCallService } from '../_xcall/EvmXCallService';
 import { usePublicClient, useWalletClient } from 'wagmi';
 

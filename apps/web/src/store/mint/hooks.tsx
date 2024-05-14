@@ -8,7 +8,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { XChainId } from 'app/pages/trade/bridge-v2/types';
+import { XChainId } from 'app/pages/trade/bridge/types';
 import bnJs from 'bnJs';
 import { isNativeCurrency, useICX } from 'constants/tokens';
 import { useAllTokens, useCommonBases } from 'hooks/Tokens';

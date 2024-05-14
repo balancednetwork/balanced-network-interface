@@ -6,7 +6,7 @@ import { t } from '@lingui/macro';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { XChainId } from 'app/pages/trade/bridge-v2/types';
+import { XChainId } from 'app/pages/trade/bridge/types';
 import { canBeQueue } from 'constants/currency';
 import { useAllTokens } from 'hooks/Tokens';
 import { PairState, useV2Pair } from 'hooks/useV2Pairs';
@@ -27,7 +27,7 @@ import {
   selectChain,
 } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
-import { getCrossChainTokenBySymbol } from 'app/pages/trade/bridge-v2/utils';
+import { getCrossChainTokenBySymbol } from 'app/pages/trade/bridge/utils';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);

@@ -15,7 +15,7 @@ import { HorizontalList, Option } from '../List';
 import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 import CrossChainOptions from '../trade/CrossChainOptions';
-import { XChainId } from 'app/pages/trade/bridge-v2/types';
+import { XChainId } from 'app/pages/trade/bridge/types';
 import { Box } from 'rebass/styled-components';
 
 const InputContainer = styled.div`

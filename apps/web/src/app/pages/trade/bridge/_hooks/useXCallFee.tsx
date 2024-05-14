@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 import { ArchwayClient } from '@archwayhq/arch3.js/build';
 import { BalancedJs } from '@balancednetwork/balanced-js';
 import { formatEther, getContract, PublicClient } from 'viem';
-import { xCallContractAbi } from 'app/pages/trade/bridge-v2/_xcall/EvmXCallService';
+import { xCallContractAbi } from 'app/pages/trade/bridge/_xcall/EvmXCallService';
 
 const fetchFee = async (
   from: XChainId,

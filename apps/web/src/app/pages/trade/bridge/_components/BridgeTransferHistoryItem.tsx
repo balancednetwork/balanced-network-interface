@@ -3,7 +3,7 @@ import React, { useEffect, useMemo } from 'react';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { getNetworkDisplayName } from 'app/pages/trade/bridge-v2/utils';
+import { getNetworkDisplayName } from 'app/pages/trade/bridge/utils';
 import { Typography } from 'app/theme';
 import ArrowIcon from 'assets/icons/arrow-white.svg';
 

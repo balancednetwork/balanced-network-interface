@@ -10,7 +10,7 @@ import { ChevronRight } from 'react-feather';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { CurrentXCallStateType } from 'app/pages/trade/bridge-v2/types';
+import { CurrentXCallStateType } from 'app/pages/trade/bridge/types';
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
@@ -32,15 +32,15 @@ import Divider from 'app/components/Divider';
 import StabilityFund from 'app/components/StabilityFund';
 import { XCallDescription } from 'app/components/XCallDescription';
 import { BrightPanel } from 'app/components/trade/utils';
-import { isXToken } from 'app/pages/trade/bridge-v2/utils';
-import useXCallFee from 'app/pages/trade/bridge-v2/_hooks/useXCallFee';
-import useXCallProtocol from 'app/pages/trade/bridge-v2/_hooks/useXCallProtocol';
+import { isXToken } from 'app/pages/trade/bridge/utils';
+import useXCallFee from 'app/pages/trade/bridge/_hooks/useXCallFee';
+import useXCallProtocol from 'app/pages/trade/bridge/_hooks/useXCallProtocol';
 
 import XCallSwapModal from './XCallSwapModal';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import SwapModal from './SwapModal';
-import { useCreateXCallService } from '../../bridge-v2/_zustand/useXCallServiceStore';
-import { MODAL_ID, modalActions } from '../../bridge-v2/_zustand/useModalStore';
+import { useCreateXCallService } from '../../bridge/_zustand/useXCallServiceStore';
+import { MODAL_ID, modalActions } from '../../bridge/_zustand/useModalStore';
 
 const MemoizedStabilityFund = React.memo(StabilityFund);
 

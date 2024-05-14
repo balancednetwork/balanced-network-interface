@@ -4,24 +4,20 @@ import { Trans } from '@lingui/macro';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
-import { XCallActivityItem } from 'app/pages/trade/bridge-v2/types';
 import { Typography } from 'app/theme';
-import { useSignedInWallets } from 'store/wallet/hooks';
-import { useXCallActivityItems } from 'store/xCall/hooks';
-import { useXCallStats } from '../../bridge-v2/_hooks/useXCallStats';
+import { useXCallStats } from '../_hooks/useXCallStats';
 
 import Spinner from '../../../../components/Spinner';
 import ActivityBarChart from './ActivityBarChart';
-import XCallItem from './XCallItem';
-
-const MemoizedItem = React.memo(XCallItem);
+import BridgeTransferHistoryItem from './BridgeTransferHistoryItem';
+import { useBridgeTransferHistoryStore } from '../_zustand/useBridgeTransferHistoryStore';
 
 export default function BridgeActivity() {
-  const { data: activityItems } = useXCallActivityItems();
   const { data: xCallStats } = useXCallStats();
   const isSmall = useMedia('(max-width: 600px)');
   const isMedium = useMedia('(max-width: 1100px) and (min-width: 800px)');
-  const signedInWallets = useSignedInWallets();
+
+  const { transfers } = useBridgeTransferHistoryStore();
 
   return (
     <Box bg="bg2" flex={1} p={['25px', '35px']}>
@@ -60,7 +56,11 @@ export default function BridgeActivity() {
         </Flex>
       </Box>
       <Box className="border-top" py={4}>
-        {activityItems?.map((item: XCallActivityItem) => (
+        {transfers.map((transfer, index) => (
+          <BridgeTransferHistoryItem key={index} transfer={transfer} />
+        ))}
+
+        {/* {activityItems?.map((item: XCallActivityItem) => (
           <MemoizedItem key={item.originData.sn} {...item} />
         ))}
         {activityItems?.length === 0 &&
@@ -72,7 +72,7 @@ export default function BridgeActivity() {
             <Typography textAlign="center">
               <Trans>There are no pending cross-chain transactions.</Trans>
             </Typography>
-          ))}
+          ))} */}
       </Box>
     </Box>
   );

@@ -10,7 +10,7 @@ import { useMedia } from 'react-use';
 import { Flex } from 'rebass/styled-components';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { useARCH } from 'app/pages/trade/bridge-v2/_config/tokens';
+import { useARCH } from 'app/pages/trade/bridge/_config/tokens';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
@@ -49,7 +49,7 @@ import { useTokenComparator } from '../SearchModal/sorting';
 import ICXWallet from './wallets/ICXWallet';
 import SendPanel from './wallets/SendPanel';
 import SICXWallet from './wallets/SICXWallet';
-import useXTokens from 'app/pages/trade/bridge-v2/_hooks/useXTokens';
+import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 
 const WalletUIs = {
   ICX: ICXWallet,

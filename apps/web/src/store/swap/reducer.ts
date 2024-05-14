@@ -1,8 +1,8 @@
 import { Currency } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
-import { DEFAULT_TOKEN_CHAIN } from 'app/pages/trade/bridge-v2/_config/xTokens';
-import { XChainId } from 'app/pages/trade/bridge-v2/types';
-import { getCrossChainTokenBySymbol, isXToken } from 'app/pages/trade/bridge-v2/utils';
+import { DEFAULT_TOKEN_CHAIN } from 'app/pages/trade/bridge/_config/xTokens';
+import { XChainId } from 'app/pages/trade/bridge/types';
+import { getCrossChainTokenBySymbol, isXToken } from 'app/pages/trade/bridge/utils';
 
 import { NETWORK_ID } from 'constants/config';
 import { bnUSD, BALN } from 'constants/tokens';

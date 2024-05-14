@@ -12,11 +12,11 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { useARCH } from 'app/pages/trade/bridge-v2/_config/tokens';
+import { useARCH } from 'app/pages/trade/bridge/_config/tokens';
 import { isDenomAsset } from 'app/_xcall/archway/utils';
-import { SUPPORTED_XCALL_CHAINS } from 'app/pages/trade/bridge-v2/_config/xTokens';
-import { XChain, XChainId } from 'app/pages/trade/bridge-v2/types';
-import { getCrossChainTokenAddress } from 'app/pages/trade/bridge-v2/utils';
+import { SUPPORTED_XCALL_CHAINS } from 'app/pages/trade/bridge/_config/xTokens';
+import { XChain, XChainId } from 'app/pages/trade/bridge/types';
+import { getCrossChainTokenAddress } from 'app/pages/trade/bridge/utils';
 import bnJs from 'bnJs';
 import { MINIMUM_ICX_FOR_TX, NATIVE_ADDRESS } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
@@ -128,8 +128,8 @@ import { coreConfig } from 'config/wagmi';
 import { erc20Abi } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 import { multicall } from '@wagmi/core';
-import useWallets from 'app/pages/trade/bridge-v2/_hooks/useWallets';
-import useXTokens from 'app/pages/trade/bridge-v2/_hooks/useXTokens';
+import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
+import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 
 export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined) {
   const { data } = useBalance({ address: account });

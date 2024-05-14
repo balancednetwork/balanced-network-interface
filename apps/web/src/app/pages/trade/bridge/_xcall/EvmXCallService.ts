@@ -1,4 +1,4 @@
-import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
+import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
 import { XCallService } from './types';
 import {
   BridgeInfo,
@@ -8,8 +8,8 @@ import {
   XCallDestinationEvent,
   XCallSourceEvent,
 } from '../_zustand/types';
-import { avalanche } from 'app/pages/trade/bridge-v2/_config/xChains';
-import { getBytesFromString } from 'app/pages/trade/bridge-v2/utils';
+import { avalanche } from 'app/pages/trade/bridge/_config/xChains';
+import { getBytesFromString } from 'app/pages/trade/bridge/utils';
 
 import { Address, PublicClient, WalletClient, WriteContractParameters, parseEventLogs, toHex } from 'viem';
 import { NATIVE_ADDRESS } from 'constants/index';

@@ -5,14 +5,14 @@ import bnJs from 'bnJs';
 import { Percent } from '@balancednetwork/sdk-core';
 
 import { XSigningArchwayClient } from 'lib/archway/XSigningArchwayClient';
-import { getBytesFromString } from 'app/pages/trade/bridge-v2/utils';
+import { getBytesFromString } from 'app/pages/trade/bridge/utils';
 
-import { archway, xChainMap } from 'app/pages/trade/bridge-v2/_config/xChains';
-import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens';
+import { archway, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge/_config/xTokens';
 import { getFeeParam } from 'app/_xcall/archway/utils';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 
-import { XCallEventType, XChainId, XToken } from 'app/pages/trade/bridge-v2/types';
+import { XCallEventType, XChainId, XToken } from 'app/pages/trade/bridge/types';
 import { XCallService } from './types';
 import {
   BridgeInfo,

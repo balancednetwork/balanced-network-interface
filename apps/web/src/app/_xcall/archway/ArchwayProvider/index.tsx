@@ -8,7 +8,7 @@ import { LOCAL_STORAGE_ADDRESS_EXPIRY } from 'packages/icon-react';
 import { NETWORK_ID } from 'constants/config';
 import { useLocalStorageWithExpiry } from 'hooks/useLocalStorage';
 
-import { archway } from '../../../pages/trade/bridge-v2/_config/xChains';
+import { archway } from '../../../pages/trade/bridge/_config/xChains';
 import { XSigningArchwayClient } from 'lib/archway/XSigningArchwayClient';
 
 interface ArchwayContextType {

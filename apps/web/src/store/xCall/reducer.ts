@@ -6,8 +6,8 @@ import {
   XChainId,
   XCallChainState,
   XCallEventType,
-} from 'app/pages/trade/bridge-v2/types';
-import { getFollowingEvent } from 'app/pages/trade/bridge-v2/utils';
+} from 'app/pages/trade/bridge/types';
+import { getFollowingEvent } from 'app/pages/trade/bridge/utils';
 
 import {
   addXCallOriginEvent,

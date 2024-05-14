@@ -8,16 +8,16 @@ import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
-import useAllowanceHandler from 'app/pages/trade/bridge-v2/_hooks/useApproveCallback';
+import useAllowanceHandler from 'app/pages/trade/bridge/_hooks/useApproveCallback';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { archway } from 'app/pages/trade/bridge-v2/_config/xChains';
+import { archway } from 'app/pages/trade/bridge/_config/xChains';
 import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
-import { CurrentXCallStateType, XChainId } from 'app/pages/trade/bridge-v2/types';
+import { CurrentXCallStateType, XChainId } from 'app/pages/trade/bridge/types';
 import {
   getBytesFromString,
   getCrossChainTokenAddress,
   getCrossChainTokenBySymbol,
-} from 'app/pages/trade/bridge-v2/utils';
+} from 'app/pages/trade/bridge/utils';
 import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';

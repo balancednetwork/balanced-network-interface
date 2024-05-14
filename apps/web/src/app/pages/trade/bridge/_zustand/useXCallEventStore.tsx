@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { create } from 'zustand';
 
-import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
+import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
 import { XCallEvent } from './types';
 import { xCallServiceActions } from './useXCallServiceStore';
 

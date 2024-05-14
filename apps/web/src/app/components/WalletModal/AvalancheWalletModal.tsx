@@ -12,7 +12,7 @@ import { ModalContentWrapper } from '../ModalContent';
 import { Connector, useConnect, useConnectors } from 'wagmi';
 import { avalanche } from 'wagmi/chains';
 import { WalletOption, UnbreakableText } from './shared';
-import { XWalletType } from 'app/pages/trade/bridge-v2/types';
+import { XWalletType } from 'app/pages/trade/bridge/types';
 
 const icons = {
   walletConnect: WalletConnectIcon,

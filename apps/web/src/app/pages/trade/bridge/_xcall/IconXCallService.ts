@@ -6,8 +6,8 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import { toDec } from 'utils';
 import { NETWORK_ID } from 'constants/config';
 
-import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge-v2/_config/xTokens';
-import { XCallEventType, XChainId } from 'app/pages/trade/bridge-v2/types';
+import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge/_config/xTokens';
+import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
 import {
   BridgeInfo,
   SwapInfo,

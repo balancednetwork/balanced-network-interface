@@ -7,9 +7,9 @@ import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { useARCH } from 'app/pages/trade/bridge-v2/_config/tokens';
-import { XChainId, XToken } from 'app/pages/trade/bridge-v2/types';
-import { getNetworkDisplayName } from 'app/pages/trade/bridge-v2/utils';
+import { useARCH } from 'app/pages/trade/bridge/_config/tokens';
+import { XChainId, XToken } from 'app/pages/trade/bridge/types';
+import { getNetworkDisplayName } from 'app/pages/trade/bridge/utils';
 import { Typography } from 'app/theme';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from 'store/application/hooks';
 import { Field } from 'store/swap/reducer';
@@ -19,14 +19,14 @@ import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import ModalContent from 'app/components/ModalContent';
-import useXCallFee from 'app/pages/trade/bridge-v2/_hooks/useXCallFee';
-import useXCallGasChecker from 'app/pages/trade/bridge-v2/_hooks/useXCallGasChecker';
+import useXCallFee from 'app/pages/trade/bridge/_hooks/useXCallFee';
+import useXCallGasChecker from 'app/pages/trade/bridge/_hooks/useXCallGasChecker';
 import { XCallSwapStatusUpdater, useXCallSwapStore, xCallSwapActions } from '../_zustand/useXCallSwapStore';
 import { showMessageOnBeforeUnload } from 'utils/messages';
-import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge-v2/_hooks/useApproveCallback';
+import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks/useApproveCallback';
 import XCallSwapState from './XCallSwapState';
-import { xChainMap } from '../../bridge-v2/_config/xChains';
-import { useModalStore, modalActions, MODAL_ID } from '../../bridge-v2/_zustand/useModalStore';
+import { xChainMap } from '../../bridge/_config/xChains';
+import { useModalStore, modalActions, MODAL_ID } from '../../bridge/_zustand/useModalStore';
 
 type XCallSwapModalProps = {
   account: string | undefined;

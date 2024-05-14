@@ -22,9 +22,9 @@ import { filterTokens, useSortedTokensByQuery } from './filtering';
 import ImportRow from './ImportRow';
 import SearchInput from './SearchInput';
 import { useTokenComparator } from './sorting';
-import { XChainId } from 'app/pages/trade/bridge-v2/types';
+import { XChainId } from 'app/pages/trade/bridge/types';
 import { useBridgeDirection } from 'store/bridge/hooks';
-import useXTokens from 'app/pages/trade/bridge-v2/_hooks/useXTokens';
+import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 
 export enum CurrencySelectionType {
   NORMAL,

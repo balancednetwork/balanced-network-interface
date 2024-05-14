@@ -8,8 +8,8 @@ import Nouislider from 'packages/nouislider-react';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { DEFAULT_TOKEN_CHAIN } from 'app/pages/trade/bridge-v2/_config/xTokens';
-import { XChainId } from 'app/pages/trade/bridge-v2/types';
+import { DEFAULT_TOKEN_CHAIN } from 'app/pages/trade/bridge/_config/xTokens';
+import { XChainId } from 'app/pages/trade/bridge/types';
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { Typography } from 'app/theme';
@@ -25,7 +25,7 @@ import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 import { SectionPanel, BrightPanel } from './utils';
-import { isXToken } from 'app/pages/trade/bridge-v2/utils';
+import { isXToken } from 'app/pages/trade/bridge/utils';
 
 const Slider = styled(Box)`
   margin-top: 40px;

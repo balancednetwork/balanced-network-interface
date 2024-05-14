@@ -9,7 +9,7 @@ import { PopperWithoutArrow } from '../Popover';
 import { CurrencySearch, CurrencySelectionType } from './CurrencySearch';
 import { ImportToken } from './ImportToken';
 import { RemoveToken } from './RemoveToken';
-import { XChainId } from 'app/pages/trade/bridge-v2/types';
+import { XChainId } from 'app/pages/trade/bridge/types';
 
 interface CurrencySearchModalProps {
   account?: string | null;

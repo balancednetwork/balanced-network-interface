@@ -1,7 +1,7 @@
 import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
 import { Token } from '@balancednetwork/sdk-core';
 
-import { sARCH } from 'app/pages/trade/bridge-v2/_config/tokens';
+import { sARCH } from 'app/pages/trade/bridge/_config/tokens';
 
 import { ICX, sICX, bnUSD, IUSDC, USDS, OMM, IUSDT, BTCB } from './tokens';
 

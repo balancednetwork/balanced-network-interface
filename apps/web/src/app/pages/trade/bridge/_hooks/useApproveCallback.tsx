@@ -19,7 +19,7 @@ import { useQuery } from '@tanstack/react-query';
 import { usePublicClient, useWaitForTransactionReceipt, useWalletClient } from 'wagmi';
 import { erc20Abi, Address, getContract, Abi, WriteContractReturnType } from 'viem';
 
-import { XToken } from 'app/pages/trade/bridge-v2/types';
+import { XToken } from 'app/pages/trade/bridge/types';
 import { archway, xChainMap } from '../_config/xChains';
 
 import { useBridgeDirection } from 'store/bridge/hooks';

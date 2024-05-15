@@ -31,6 +31,7 @@ import { notificationCSS } from '../ICONWallet/wallets/utils';
 import { MouseoverTooltip } from '../Tooltip';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import EVMWallet from '../EVMWallet';
+import useEVMReact from 'app/pages/trade/bridge/_hooks/useEVMReact';
 
 const StyledLogo = styled(Logo)`
   margin-right: 15px;
@@ -187,6 +188,7 @@ export default function Header(props: { title?: string; className?: string }) {
   const upSmall = useMedia('(min-width: 600px)');
   const { disconnect } = useIconReact();
   const { disconnect: disconnectKeplr } = useArchwayContext();
+  const { disconnect: disconnectAvax } = useEVMReact();
   const [activeTab, setActiveTab] = useState<XChainId | null>(null);
   const signedInWallets = useSignedInWallets();
   const { data: claimableICX } = useClaimableICX();
@@ -217,6 +219,7 @@ export default function Header(props: { title?: string; className?: string }) {
   const handleDisconnectWallet = async () => {
     closeWalletMenu();
     disconnectKeplr();
+    disconnectAvax();
 
     if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
       bnJs.contractSettings.ledgerSettings.transport.close();

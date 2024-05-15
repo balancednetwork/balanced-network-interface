@@ -42,6 +42,11 @@ const ChainSelector = ({ chainId, setChainId, label }: ChainSelectorProps) => {
 
   const chain = xChainMap[chainId];
 
+  const handleSelect = _chainId => {
+    setChainId(_chainId);
+    setAnchor(null);
+  };
+
   return (
     <Box>
       <Typography variant="label" style={{ textTransform: 'capitalize' }}>
@@ -63,7 +68,7 @@ const ChainSelector = ({ chainId, setChainId, label }: ChainSelectorProps) => {
             placement="bottom"
             offset={[0, 8]}
           >
-            <ChainList setChainId={setChainId} chainId={chainId} />
+            <ChainList setChainId={handleSelect} chainId={chainId} />
           </DropdownPopper>
         </div>
       </ClickAwayListener>

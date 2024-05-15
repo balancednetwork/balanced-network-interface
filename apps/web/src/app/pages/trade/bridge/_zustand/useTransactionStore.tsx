@@ -115,25 +115,6 @@ export const transactionActions = {
     }
     return _transaction;
   },
-
-  // remove: (xChainId, id) => {
-  //   useTransactionStore.setState(state => {
-  //     return {
-  //       transactions: state.transactions.filter(item => !(item.id === id && item.xChainId === xChainId)),
-  //     };
-  //   });
-  // },
-  // removeAll: xChainId => {
-  //   useTransactionStore.setState(state => {
-  //     return {
-  //       transactions: state.transactions.filter(item => item.xChainId !== xChainId),
-  //     };
-  //   });
-  // },
-
-  // getTransactionsByChainType: chainType => {
-  //   return useTransactionStore.getState().transactions.filter(item => getChainType(item.xChainId) === chainType);
-  // },
 };
 
 export const useFetchTransaction = (transaction: Transaction | undefined) => {

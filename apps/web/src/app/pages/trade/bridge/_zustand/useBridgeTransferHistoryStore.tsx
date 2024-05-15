@@ -90,7 +90,7 @@ const storage = createJSONStorage(() => sessionStorage, {
 
 type BridgeTransferHistoryStore = {
   transfers: Record<string, BridgeTransfer>;
-  getTransfer: (id: string) => BridgeTransfer | undefined;
+  getTransfer: (id: string | null) => BridgeTransfer | undefined;
   addTransfer: (transfer: BridgeTransfer) => void;
   updateSourceTransaction: (id: string, { rawTx }: { rawTx: any }) => void;
   updateTransferEvents: (id: string, events: XCallEventMap) => Promise<void>;
@@ -102,8 +102,8 @@ export const useBridgeTransferHistoryStore = create<BridgeTransferHistoryStore>(
     persist(
       immer((set, get) => ({
         transfers: {},
-        getTransfer: (id: string) => {
-          return get().transfers[id];
+        getTransfer: (id: string | null) => {
+          if (id) return get().transfers[id];
         },
         addTransfer: (transfer: BridgeTransfer) => {
           set(state => {
@@ -183,7 +183,7 @@ export const useBridgeTransferHistoryStore = create<BridgeTransferHistoryStore>(
 );
 
 export const bridgeTransferHistoryActions = {
-  get: (id: string) => {
+  get: (id: string | null) => {
     return useBridgeTransferHistoryStore.getState().getTransfer(id);
   },
 

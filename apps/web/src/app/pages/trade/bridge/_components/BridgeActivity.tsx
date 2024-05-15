@@ -56,7 +56,8 @@ export default function BridgeActivity() {
         </Flex>
       </Box>
       <Box className="border-top" py={4}>
-        {transfers.map((transfer, index) => (
+        {/* TODO: sort by timestamp */}
+        {Object.values(transfers).map((transfer, index) => (
           <BridgeTransferHistoryItem key={index} transfer={transfer} />
         ))}
 

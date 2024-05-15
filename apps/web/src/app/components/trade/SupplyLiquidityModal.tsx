@@ -408,7 +408,7 @@ export default function SupplyLiquidityModal({
       <Modal isOpen={isOpen} onDismiss={() => undefined}>
         <ModalContent>
           <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-            {pair ? t`Supply liquidity?` : t`Create liquidity pool?`}aaa
+            {pair ? t`Supply liquidity?` : t`Create liquidity pool?`}
           </Typography>
           <Typography variant="p" textAlign="center" mb={4} hidden={isQueue}>
             <Trans>Send each asset to the contract</Trans>, <br />

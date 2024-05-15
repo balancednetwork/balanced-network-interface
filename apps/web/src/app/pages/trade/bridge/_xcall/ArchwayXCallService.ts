@@ -63,6 +63,10 @@ export class ArchwayXCallService implements XCallService {
     return tx;
   }
 
+  getTxEventLogs(rawTx) {
+    return rawTx?.events;
+  }
+
   // TODO: review again
   deriveTxStatus(rawTx: any): TransactionStatus {
     if (rawTx) {
@@ -142,7 +146,7 @@ export class ArchwayXCallService implements XCallService {
 
   async getSourceEvents(sourceTransaction: Transaction) {
     try {
-      const callMessageSentEventLog = this.filterCallMessageSentEventLog(sourceTransaction.rawTx.events);
+      const callMessageSentEventLog = this.filterCallMessageSentEventLog(sourceTransaction.rawEventLogs);
       return {
         [XCallEventType.CallMessageSent]: this.parseCallMessageSentEventLog(
           callMessageSentEventLog,

@@ -61,15 +61,21 @@ export const transactionActions = {
 
   updateTx: async (xChainId: XChainId, id: string, transaction: { rawTx: any }) => {
     const { rawTx } = transaction;
-    const status = xCallServiceActions.getXCallService(xChainId).deriveTxStatus(rawTx);
+    const xCallService = xCallServiceActions.getXCallService(xChainId);
+    const status = xCallService.deriveTxStatus(rawTx);
 
     useTransactionStore.setState(state => {
       return {
-        transactions: state.transactions.map(item => {
-          if (item.id === id) {
-            return { ...item, rawTx, status };
+        transactions: state.transactions.map((transaction: Transaction) => {
+          if (transaction.id === id) {
+            const newTransaction: Transaction = {
+              ...transaction,
+              rawEventLogs: xCallService.getTxEventLogs(rawTx),
+              status,
+            };
+            return newTransaction;
           }
-          return item;
+          return transaction;
         }),
       };
     });

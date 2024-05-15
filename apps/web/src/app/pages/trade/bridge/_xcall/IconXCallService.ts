@@ -80,6 +80,10 @@ export class IconXCallService implements XCallService {
     return await fetchTxResult(txHash);
   }
 
+  getTxEventLogs(rawTx) {
+    return rawTx?.eventLogs;
+  }
+
   deriveTxStatus(rawTx): TransactionStatus {
     if (rawTx) {
       const status = Converter.toNumber(rawTx.status);
@@ -158,9 +162,7 @@ export class IconXCallService implements XCallService {
   }
 
   async getSourceEvents(sourceTransaction: Transaction): Promise<XCallEventMap> {
-    const rawTx = sourceTransaction.rawTx;
-
-    const callMessageSentLog = this.filterCallMessageSentEventLog(rawTx?.eventLogs || []);
+    const callMessageSentLog = this.filterCallMessageSentEventLog(sourceTransaction.rawEventLogs || []);
     if (callMessageSentLog) {
       return {
         [XCallEventType.CallMessageSent]: this.parseCallMessageSentEventLog(callMessageSentLog, sourceTransaction.hash),

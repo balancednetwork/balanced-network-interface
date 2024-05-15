@@ -65,6 +65,10 @@ export class EvmXCallService implements XCallService {
     return tx;
   }
 
+  getTxEventLogs(rawTx) {
+    return rawTx?.logs;
+  }
+
   deriveTxStatus(rawTx): TransactionStatus {
     try {
       if (rawTx.transactionHash) {
@@ -139,11 +143,12 @@ export class EvmXCallService implements XCallService {
 
   async getSourceEvents(sourceTransaction: Transaction) {
     try {
-      const rawTx = sourceTransaction.rawTx;
-
+      if (!sourceTransaction.rawEventLogs) {
+        return {};
+      }
       const parsedLogs = parseEventLogs({
         abi: xCallContractAbi,
-        logs: rawTx.logs,
+        logs: sourceTransaction.rawEventLogs,
       });
 
       const callMessageSentEventLog = this.filterCallMessageSentEventLog(parsedLogs);

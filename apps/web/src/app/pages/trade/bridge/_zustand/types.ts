@@ -73,7 +73,7 @@ export type Transaction = {
   redirectOnSuccess?: string; // URL to redirect on success
   onSuccess?: () => void; // Callback on success
 
-  rawTx?: any;
+  rawEventLogs?: any[];
 };
 
 export type XCallSourceEvent = {

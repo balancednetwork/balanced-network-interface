@@ -118,13 +118,12 @@ export const useBridgeTransferHistoryStore = create<BridgeTransferHistoryStore>(
           const transfer = get().transfers[id];
           if (!transfer) return;
 
-          const newSourceTransactionStatus = xCallServiceActions
-            .getXCallService(transfer.sourceChainId)
-            .deriveTxStatus(rawTx);
+          const xCallService = xCallServiceActions.getXCallService(transfer.sourceChainId);
+          const newSourceTransactionStatus = xCallService.deriveTxStatus(rawTx);
 
           const newSourceTransaction = {
             ...transfer.sourceTransaction,
-            rawTx,
+            rawEventLogs: xCallService.getTxEventLogs(rawTx),
             status: newSourceTransactionStatus,
           };
           const newStatus = deriveStatus(newSourceTransaction, transfer.events, transfer.destinationTransaction);
@@ -151,14 +150,14 @@ export const useBridgeTransferHistoryStore = create<BridgeTransferHistoryStore>(
           if (newEvents[XCallEventType.CallExecuted]) {
             const dstXCallService = xCallServiceActions.getXCallService(transfer.destinationChainId);
             const destinationTransactionHash = newEvents[XCallEventType.CallExecuted].txHash;
-            const tx = await dstXCallService.getTxReceipt(destinationTransactionHash);
+            const rawTx = await dstXCallService.getTxReceipt(destinationTransactionHash);
 
             destinationTransaction = {
               id: destinationTransactionHash,
               hash: destinationTransactionHash,
               xChainId: transfer.destinationChainId,
-              status: dstXCallService.deriveTxStatus(tx),
-              rawTx: tx,
+              status: dstXCallService.deriveTxStatus(rawTx),
+              rawEventLogs: dstXCallService.getTxEventLogs(rawTx),
             };
           }
           const newStatus = deriveStatus(transfer.sourceTransaction, newEvents, destinationTransaction);

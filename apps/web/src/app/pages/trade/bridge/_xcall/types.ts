@@ -17,6 +17,7 @@ export interface XCallService {
   getBlockHeight(): Promise<bigint>;
   getEventLogs(blockHeight: bigint): Promise<any[]>;
   getTxReceipt(txHash): Promise<any>;
+  getTxEventLogs(rawTx): any[];
   deriveTxStatus(rawTx): TransactionStatus;
 
   getSourceEvents(transaction: Transaction): Promise<XCallEventMap>;

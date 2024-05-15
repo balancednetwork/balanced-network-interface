@@ -127,7 +127,7 @@ export const useBridgeTransferHistoryStore = create<BridgeTransferHistoryStore>(
             rawTx,
             status: newSourceTransactionStatus,
           };
-          const newStatus = deriveStatus(newSourceTransaction, transfer.events);
+          const newStatus = deriveStatus(newSourceTransaction, transfer.events, transfer.destinationTransaction);
 
           set(state => {
             state.transfers[id] = {

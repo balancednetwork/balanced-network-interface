@@ -183,6 +183,7 @@ export const useBridgeTransferHistoryStore = create<BridgeTransferHistoryStore>(
         storage,
       },
     ),
+    { name: 'BridgeTransferHistoryStore' },
   ),
 );
 

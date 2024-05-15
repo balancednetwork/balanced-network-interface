@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
@@ -23,107 +24,110 @@ type XCallEventStore = {
 };
 
 export const useXCallEventStore = create<XCallEventStore>()(
-  immer((set, get) => ({
-    destinationXCallEvents: {},
-    scanners: {},
+  devtools(
+    immer((set, get) => ({
+      destinationXCallEvents: {},
+      scanners: {},
 
-    isScannerEnabled: (xChainId: XChainId) => {
-      return get().scanners[xChainId]?.enabled;
-    },
+      isScannerEnabled: (xChainId: XChainId) => {
+        return get().scanners[xChainId]?.enabled;
+      },
 
-    startScanner: (xChainId: XChainId, startBlockHeight: bigint) => {
-      set(state => {
-        state.scanners[xChainId] = {
-          enabled: true,
-          startBlockHeight,
-          currentHeight: startBlockHeight,
-          chainHeight: startBlockHeight,
-        };
-      });
-    },
-    stopScanner: (xChainId: XChainId) => {
-      set(state => {
-        state.scanners[xChainId] = {
-          enabled: false,
-          startBlockHeight: 0,
-          currentHeight: 0,
-          chainHeight: 0,
-        };
-      });
-    },
-    stopAllScanners: () => {
-      set(state => {
-        state.scanners = {};
-      });
-    },
+      startScanner: (xChainId: XChainId, startBlockHeight: bigint) => {
+        set(state => {
+          state.scanners[xChainId] = {
+            enabled: true,
+            startBlockHeight,
+            currentHeight: startBlockHeight,
+            chainHeight: startBlockHeight,
+          };
+        });
+      },
+      stopScanner: (xChainId: XChainId) => {
+        set(state => {
+          state.scanners[xChainId] = {
+            enabled: false,
+            startBlockHeight: 0,
+            currentHeight: 0,
+            chainHeight: 0,
+          };
+        });
+      },
+      stopAllScanners: () => {
+        set(state => {
+          state.scanners = {};
+        });
+      },
 
-    incrementCurrentHeight: (xChainId: XChainId) => {
-      const scanner = get().scanners[xChainId];
-      if (scanner.currentHeight >= scanner.chainHeight) {
-        return;
-      }
-
-      set(state => {
-        state.scanners[xChainId].currentHeight += 1n;
-      });
-    },
-
-    updateChainHeight: async (xChainId: XChainId) => {
-      const xCallService = xCallServiceActions.getXCallService(xChainId);
-      const chainHeight = await xCallService.getBlockHeight();
-      set(state => {
-        state.scanners[xChainId].chainHeight = chainHeight;
-      });
-    },
-
-    scanBlock: async (xChainId: XChainId, blockHeight: bigint) => {
-      if (get().destinationXCallEvents[xChainId]?.[Number(blockHeight)]) {
-        return;
-      }
-
-      const xCallService = xCallServiceActions.getXCallService(xChainId);
-      const events = await xCallService.getDestinationEventsByBlock(blockHeight);
-
-      set(state => {
-        state.destinationXCallEvents ??= {};
-        state.destinationXCallEvents[xChainId] ??= {};
-
-        // @ts-ignore
-        state.destinationXCallEvents[xChainId][blockHeight] = events;
-      });
-    },
-
-    getDestinationEvents: (xChainId: XChainId, sn: bigint) => {
-      const events = get().destinationXCallEvents?.[xChainId];
-
-      const result = {};
-
-      for (const blockHeight in events) {
-        if (events[blockHeight]) {
-          for (const event of events[blockHeight]) {
-            if (event.sn === sn) {
-              result[event.eventType] = event;
-            }
-          }
+      incrementCurrentHeight: (xChainId: XChainId) => {
+        const scanner = get().scanners[xChainId];
+        if (scanner.currentHeight >= scanner.chainHeight) {
+          return;
         }
-      }
 
-      const callMessageEvent = result[XCallEventType.CallMessage];
-      if (callMessageEvent) {
+        set(state => {
+          state.scanners[xChainId].currentHeight += 1n;
+        });
+      },
+
+      updateChainHeight: async (xChainId: XChainId) => {
+        const xCallService = xCallServiceActions.getXCallService(xChainId);
+        const chainHeight = await xCallService.getBlockHeight();
+        set(state => {
+          state.scanners[xChainId].chainHeight = chainHeight;
+        });
+      },
+
+      scanBlock: async (xChainId: XChainId, blockHeight: bigint) => {
+        if (get().destinationXCallEvents[xChainId]?.[Number(blockHeight)]) {
+          return;
+        }
+
+        const xCallService = xCallServiceActions.getXCallService(xChainId);
+        const events = await xCallService.getDestinationEventsByBlock(blockHeight);
+
+        set(state => {
+          state.destinationXCallEvents ??= {};
+          state.destinationXCallEvents[xChainId] ??= {};
+
+          // @ts-ignore
+          state.destinationXCallEvents[xChainId][blockHeight] = events;
+        });
+      },
+
+      getDestinationEvents: (xChainId: XChainId, sn: bigint) => {
+        const events = get().destinationXCallEvents?.[xChainId];
+
+        const result = {};
+
         for (const blockHeight in events) {
           if (events[blockHeight]) {
             for (const event of events[blockHeight]) {
-              if (event.reqId === callMessageEvent.reqId) {
+              if (event.sn === sn) {
                 result[event.eventType] = event;
               }
             }
           }
         }
-      }
 
-      return result;
-    },
-  })),
+        const callMessageEvent = result[XCallEventType.CallMessage];
+        if (callMessageEvent) {
+          for (const blockHeight in events) {
+            if (events[blockHeight]) {
+              for (const event of events[blockHeight]) {
+                if (event.reqId === callMessageEvent.reqId) {
+                  result[event.eventType] = event;
+                }
+              }
+            }
+          }
+        }
+
+        return result;
+      },
+    })),
+    { name: 'XCallEventStore' },
+  ),
 );
 
 export const xCallEventActions = {

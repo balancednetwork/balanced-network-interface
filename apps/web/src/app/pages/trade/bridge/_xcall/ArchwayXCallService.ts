@@ -53,9 +53,20 @@ export class ArchwayXCallService implements XCallService {
     return block;
   }
 
-  // TODO: complete this function
   async getEventLogs(blockHeight: bigint) {
-    return [];
+    let txs;
+
+    // TODO: is 10 iterations enough?
+    for (let i = 0; i < 10; i++) {
+      txs = await this.publicClient.searchTx(`tx.height=${blockHeight}`);
+      if (txs && txs.length > 0) {
+        break;
+      }
+    }
+
+    // txs is an array of tx, each tx has events, which is an array of event, return all events merged
+    const events = txs.flatMap(tx => tx.events.map(e => ({ ...e, transactionHash: tx.hash })));
+    return events;
   }
 
   async getTxReceipt(txHash) {
@@ -119,14 +130,8 @@ export class ArchwayXCallService implements XCallService {
     };
   }
 
-  async filterEventLog(eventLogs, signature) {
-    if (eventLogs && eventLogs.length > 0) {
-      for (const event of eventLogs) {
-        if (event.type === signature) {
-          return event;
-        }
-      }
-    }
+  async filterEventLogs(eventLogs, signature) {
+    return eventLogs.filter(e => e.type === signature);
   }
 
   filterCallMessageSentEventLog(eventLogs) {
@@ -134,13 +139,13 @@ export class ArchwayXCallService implements XCallService {
     return eventFiltered;
   }
 
-  filterCallMessageEventLog(eventLogs) {
-    const eventFiltered = this.filterEventLog(eventLogs, 'wasm-CallMessage');
+  filterCallMessageEventLogs(eventLogs) {
+    const eventFiltered = this.filterEventLogs(eventLogs, 'wasm-CallMessage');
     return eventFiltered;
   }
 
-  filterCallExecutedEventLog(eventLogs) {
-    const eventFiltered = this.filterEventLog(eventLogs, 'wasm-CallExecuted');
+  filterCallExecutedEventLogs(eventLogs) {
+    const eventFiltered = this.filterEventLogs(eventLogs, 'wasm-CallExecuted');
     return eventFiltered;
   }
 
@@ -160,31 +165,25 @@ export class ArchwayXCallService implements XCallService {
   }
 
   async getDestinationEventsByBlock(blockHeight: bigint) {
-    const events: any = [];
+    try {
+      const events: any = [];
 
-    const block = await this.getBlock(blockHeight);
+      const eventLogs = await this.getEventLogs(blockHeight);
+      const callMessageEventLogs = await this.filterCallMessageEventLogs(eventLogs);
+      const callExecutedEventLogs = await this.filterCallExecutedEventLogs(eventLogs);
 
-    if (block && block.txs.length > 0) {
-      for (const rawTx of block.txs) {
-        // TODO: Buffer.from(rawTx) is correct? or Buffer.from(rawTx, 'base64')?
-        const txHash = toHex(sha256(Buffer.from(rawTx)));
-        const tx = await this.getTxReceipt(txHash);
-        if (tx) {
-          const callMessageEventLog = await this.filterCallMessageEventLog(tx.events);
-          const callExecutedEventLog = await this.filterCallExecutedEventLog(tx.events);
+      callMessageEventLogs.forEach(eventLog => {
+        events.push(this.parseCallMessageEventLog(eventLog, eventLog.transactionHash));
+      });
+      callExecutedEventLogs.forEach(eventLog => {
+        events.push(this.parseCallExecutedEventLog(eventLog, eventLog.transactionHash));
+      });
 
-          if (callMessageEventLog) {
-            events.push(this.parseCallMessageEventLog(callMessageEventLog, txHash));
-          }
-          if (callExecutedEventLog) {
-            events.push(this.parseCallExecutedEventLog(callExecutedEventLog, txHash));
-          }
-        }
-      }
-    } else {
-      return null;
+      return events;
+    } catch (e) {
+      console.log(e);
     }
-    return events;
+    return null;
   }
 
   async approve(token: XToken, owner: string, spender: string, currencyAmountToApprove: CurrencyAmount<XToken>) {

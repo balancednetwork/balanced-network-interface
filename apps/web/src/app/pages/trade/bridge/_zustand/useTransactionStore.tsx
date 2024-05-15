@@ -2,10 +2,7 @@ import React, { useEffect } from 'react';
 import { create } from 'zustand';
 import { t } from '@lingui/macro';
 import { toast } from 'react-toastify';
-import { useQuery, useQueries } from '@tanstack/react-query';
-import { useIconReact } from 'packages/icon-react';
-import { Converter } from 'icon-sdk-js';
-import { v4 as uuidv4 } from 'uuid';
+import { useQuery } from '@tanstack/react-query';
 
 import {
   NotificationPending,
@@ -33,10 +30,6 @@ const getTrackerLink = (xChainId: XChainId, hash: string, type) => {
 };
 
 export const transactionActions = {
-  getTransaction: (xChainId: XChainId, id: string) => {
-    return useTransactionStore.getState().transactions.find(item => item.id === id && item.xChainId === xChainId);
-  },
-
   add: (
     xChainId: XChainId,
     transaction: {

@@ -4,17 +4,16 @@ import { create } from 'zustand';
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
 import { XCallEvent } from './types';
 import { xCallServiceActions } from './useXCallServiceStore';
+import { useTimerStore } from './useTimerStore';
 
 type XCallEventStore = {
   destinationXCallEvents: Partial<Record<XChainId, Record<number, XCallEvent[]>>>;
   scanners: Partial<Record<XChainId, any>>;
-  timers: any;
 };
 
 export const useXCallEventStore = create<XCallEventStore>()(set => ({
   destinationXCallEvents: {},
   scanners: {},
-  timers: {},
 }));
 
 export const xCallEventActions = {
@@ -61,54 +60,6 @@ export const xCallEventActions = {
         ...data,
       };
       return state;
-    });
-  },
-
-  startTimer: (id, timerFn) => {
-    if (!id) {
-      return;
-    }
-
-    const intervalId = useXCallEventStore.getState().timers[id];
-
-    if (intervalId) {
-      clearInterval(intervalId);
-    }
-
-    const newIntervalId = setInterval(timerFn, 2000);
-
-    useXCallEventStore.setState(prevState => {
-      return {
-        ...prevState,
-        timers: {
-          ...prevState.timers,
-          [id]: newIntervalId,
-        },
-      };
-    });
-  },
-
-  stopTimer: id => {
-    if (!id) {
-      return;
-    }
-
-    const intervalId = useXCallEventStore.getState().timers[id];
-
-    if (intervalId) {
-      clearInterval(intervalId);
-    } else {
-      return;
-    }
-
-    useXCallEventStore.setState(prevState => {
-      return {
-        ...prevState,
-        timers: {
-          ...prevState.timers,
-          [id]: null,
-        },
-      };
     });
   },
 
@@ -216,6 +167,7 @@ export const xCallEventActions = {
 
 // TODO: improve performance
 export const useXCallEventScanner = (xChainId: XChainId | undefined) => {
+  const { startTimer, stopTimer } = useTimerStore();
   const { scanners } = useXCallEventStore();
   const scanner = xChainId ? scanners?.[xChainId] : null;
   const { enabled } = scanner || {};
@@ -239,10 +191,9 @@ export const useXCallEventScanner = (xChainId: XChainId | undefined) => {
       return;
     }
 
-    xCallEventActions.startTimer(xChainId, scanFn);
-
+    startTimer(xChainId, scanFn);
     return () => {
-      xCallEventActions.stopTimer(xChainId);
+      stopTimer(xChainId);
     };
-  }, [xChainId, enabled, scanFn]);
+  }, [xChainId, enabled, scanFn, startTimer, stopTimer]);
 };

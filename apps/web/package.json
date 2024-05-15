@@ -55,6 +55,7 @@
     "i18next-browser-languagedetector": "6.0.1",
     "i18next-scanner": "2.11.0",
     "icon-sdk-js": "1.5.1",
+    "immer": "10.1.1",
     "jotai": "2.8.0",
     "lightweight-charts": "3.2.0",
     "lodash-es": "4.17.21",

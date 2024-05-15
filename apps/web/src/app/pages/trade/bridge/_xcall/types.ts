@@ -15,7 +15,7 @@ export interface XCallService {
 
   getXCallFee(to: XChainId, rollback: boolean): Promise<IXCallFee>;
   getBlockHeight(): Promise<bigint>;
-  getEventLogs(blockHeight: bigint): Promise<any[]>;
+  getBlockEventLogs(blockHeight: bigint): Promise<any[]>;
   getTxReceipt(txHash): Promise<any>;
   getTxEventLogs(rawTx): any[];
   deriveTxStatus(rawTx): TransactionStatus;

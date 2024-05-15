@@ -53,7 +53,7 @@ export class ArchwayXCallService implements XCallService {
     return block;
   }
 
-  async getEventLogs(blockHeight: bigint) {
+  async getBlockEventLogs(blockHeight: bigint) {
     let txs;
 
     // TODO: is 10 iterations enough?
@@ -168,7 +168,7 @@ export class ArchwayXCallService implements XCallService {
     try {
       const events: any = [];
 
-      const eventLogs = await this.getEventLogs(blockHeight);
+      const eventLogs = await this.getBlockEventLogs(blockHeight);
       const callMessageEventLogs = await this.filterCallMessageEventLogs(eventLogs);
       const callExecutedEventLogs = await this.filterCallExecutedEventLogs(eventLogs);
 

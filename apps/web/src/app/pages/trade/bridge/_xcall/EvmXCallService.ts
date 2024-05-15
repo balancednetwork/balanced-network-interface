@@ -40,7 +40,7 @@ export class EvmXCallService implements XCallService {
     return block;
   }
 
-  async getEventLogs(blockHeight: bigint) {
+  async getBlockEventLogs(blockHeight: bigint) {
     const eventLogs = await this.publicClient.getLogs({
       fromBlock: blockHeight,
       toBlock: blockHeight,
@@ -167,7 +167,7 @@ export class EvmXCallService implements XCallService {
   async getDestinationEventsByBlock(blockHeight) {
     const events: any = [];
     try {
-      const eventLogs = await this.getEventLogs(blockHeight);
+      const eventLogs = await this.getBlockEventLogs(blockHeight);
       const parsedLogs = parseEventLogs({
         abi: xCallContractAbi,
         logs: eventLogs,

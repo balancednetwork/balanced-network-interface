@@ -71,7 +71,7 @@ export class IconXCallService implements XCallService {
   }
 
   // TODO: complete this function
-  async getEventLogs(blockHeight: bigint) {
+  async getBlockEventLogs(blockHeight: bigint) {
     return [];
   }
 

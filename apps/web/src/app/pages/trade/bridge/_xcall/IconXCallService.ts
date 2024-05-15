@@ -70,9 +70,23 @@ export class IconXCallService implements XCallService {
     return block;
   }
 
-  // TODO: complete this function
+  // didn't find rpc method to get event logs for a block, used getBlock and getTxReceipt instead
   async getBlockEventLogs(blockHeight: bigint) {
-    return [];
+    const events: any = [];
+    const block = await this.getBlock(blockHeight);
+    if (block && block.confirmedTransactionList && block.confirmedTransactionList.length > 0) {
+      for (const tx of block.confirmedTransactionList) {
+        const txResult = await this.getTxReceipt(tx.txHash);
+
+        if (txResult && txResult.txHash) {
+          const eventLogs = txResult.eventLogs.map(e => ({ ...e, transactionHash: txResult.txHash }));
+          events.push(...eventLogs);
+        } else {
+          throw new Error('Failed to get tx result');
+        }
+      }
+    }
+    return events;
   }
 
   async getTxReceipt(txHash: string) {
@@ -96,12 +110,10 @@ export class IconXCallService implements XCallService {
     return TransactionStatus.pending;
   }
 
-  filterEventLog(eventLogs, sig, address = null) {
-    const result = eventLogs.find(event => {
+  filterEventLogs(eventLogs, sig, address = null) {
+    return eventLogs.filter(event => {
       return event.indexed && event.indexed[0] === sig && (!address || address === event.scoreAddress);
     });
-
-    return result;
   }
 
   filterCallMessageSentEventLog(eventLogs: any[]) {
@@ -109,14 +121,14 @@ export class IconXCallService implements XCallService {
     return eventLogs.find(event => event.indexed.includes(signature));
   }
 
-  filterCallMessageEventLog(eventLogs: any[]) {
+  filterCallMessageEventLogs(eventLogs: any[]) {
     const signature = getICONEventSignature(XCallEventType.CallMessage);
-    return this.filterEventLog(eventLogs, signature);
+    return this.filterEventLogs(eventLogs, signature);
   }
 
-  filterCallExecutedEventLog(eventLogs: any[]) {
+  filterCallExecutedEventLogs(eventLogs: any[]) {
     const signature = getICONEventSignature(XCallEventType.CallExecuted);
-    return this.filterEventLog(eventLogs, signature);
+    return this.filterEventLogs(eventLogs, signature);
   }
 
   parseCallMessageSentEventLog(eventLog, txHash: string): XCallEvent {
@@ -174,27 +186,23 @@ export class IconXCallService implements XCallService {
 
   async getDestinationEventsByBlock(blockHeight: bigint) {
     const events: any = [];
+    try {
+      const eventLogs = await this.getBlockEventLogs(blockHeight);
 
-    const block = await this.getBlock(blockHeight);
+      const callMessageEventLogs = this.filterCallMessageEventLogs(eventLogs);
+      const callExecutedEventLogs = this.filterCallExecutedEventLogs(eventLogs);
 
-    if (block && block.confirmedTransactionList && block.confirmedTransactionList.length > 0) {
-      for (const tx of block.confirmedTransactionList) {
-        const txResult = await this.getTxReceipt(tx.txHash);
-
-        const callMessageEventLog = this.filterCallMessageEventLog(txResult?.eventLogs || []);
-        const callExecutedEventLog = this.filterCallExecutedEventLog(txResult?.eventLogs || []);
-
-        if (callMessageEventLog) {
-          events.push(this.parseCallMessageEventLog(callMessageEventLog, tx.txHash));
-        }
-        if (callExecutedEventLog) {
-          events.push(this.parseCallExecutedEventLog(callExecutedEventLog, tx.txHash));
-        }
-      }
-    } else {
-      return null;
+      callMessageEventLogs.forEach(eventLog => {
+        events.push(this.parseCallMessageEventLog(eventLog, eventLog.transactionHash));
+      });
+      callExecutedEventLogs.forEach(eventLog => {
+        events.push(this.parseCallExecutedEventLog(eventLog, eventLog.transactionHash));
+      });
+      return events;
+    } catch (e) {
+      console.log(e);
     }
-    return events;
+    return null;
   }
 
   async approve(token, owner, spender, currencyAmountToApprove) {}

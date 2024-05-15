@@ -176,9 +176,6 @@ export class EvmXCallService implements XCallService {
       const callMessageEventLogs = this.filterCallMessageEventLogs(parsedLogs);
       const callExecutedEventLogs = this.filterCallExecutedEventLogs(parsedLogs);
 
-      console.log('callMessageEventLogs', callMessageEventLogs);
-      console.log('callExecutedEventLogs', callExecutedEventLogs);
-
       callMessageEventLogs.forEach(eventLog => {
         events.push(this.parseCallMessageEventLog(eventLog, eventLog.transactionHash));
       });

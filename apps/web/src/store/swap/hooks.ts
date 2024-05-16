@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { TradeType, Currency, CurrencyAmount, Token, Price } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
@@ -6,7 +6,7 @@ import { t } from '@lingui/macro';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { XChainId } from 'app/pages/trade/bridge/types';
+import { XChainId, XToken } from 'app/pages/trade/bridge/types';
 import { canBeQueue } from 'constants/currency';
 import { useAllTokens } from 'hooks/Tokens';
 import { PairState, useV2Pair } from 'hooks/useV2Pairs';
@@ -35,9 +35,6 @@ export function useSwapState(): AppState['swap'] {
 
 export function useSwapActionHandlers() {
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
-  const { pair = '' } = useParams<{ pair: string }>();
-  // console.log('pair', pair); // TODO: console logged continuously on swap page, need to fix
 
   const onCurrencySelection = useCallback(
     (field: Field, currency: Currency) => {
@@ -47,18 +44,8 @@ export function useSwapActionHandlers() {
           currency: currency,
         }),
       );
-      if (field === Field.INPUT) {
-        const currentQuote = pair.split('_')[1];
-        // history.replace(`/trade/${currency.symbol}_${currentQuote}`);
-        navigate(`/trade/${currency.symbol}_${currentQuote}`, { replace: true });
-      }
-      if (field === Field.OUTPUT) {
-        const currentBase = pair.split('_')[0];
-        // history.replace(`/trade/${currentBase}_${currency.symbol}`);
-        navigate(`/trade/${currentBase}_${currency.symbol}`, { replace: true });
-      }
     },
-    [dispatch, pair, navigate],
+    [dispatch],
   );
 
   const onChainSelection = useCallback(
@@ -85,12 +72,8 @@ export function useSwapActionHandlers() {
   );
 
   const onSwitchTokens = useCallback(() => {
-    const currentBase = pair.split('_')[0];
-    const currentQuote = pair.split('_')[1];
-    // history.replace(`/trade/${currentQuote}_${currentBase}`);
-    navigate(`/trade/${currentQuote}_${currentBase}`, { replace: true });
     dispatch(switchCurrencies());
-  }, [pair, dispatch, navigate]);
+  }, [dispatch]);
 
   const onUserInput = useCallback(
     (field: Field, typedValue: string) => {
@@ -292,30 +275,49 @@ export function useInitialSwapLoad(): void {
   const navigate = useNavigate();
   const tokens = useAllTokens();
   const { pair = '' } = useParams<{ pair: string }>();
-  const { onCurrencySelection } = useSwapActionHandlers();
+  const { onCurrencySelection, onChainSelection } = useSwapActionHandlers();
   const { currencies } = useDerivedSwapInfo();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (firstLoad && Object.values(tokens).length > 0) {
       const tokensArray = Object.values(tokens);
-      const currentBase = pair.split('_')[0];
-      const currentQuote = pair.split('_')[1];
+
+      const inputToken = pair.split('_')[0];
+      const outputToken = pair.split('_')[1] || '';
+      const [currentBase, currentBaseXChainId] = inputToken.split(':');
+      const [currentQuote, currentQuoteXChainId] = outputToken.split(':');
+
       const quote =
         currentQuote && tokensArray.find(token => token.symbol?.toLowerCase() === currentQuote?.toLocaleLowerCase());
       const base = currentBase && tokensArray.find(token => token.symbol?.toLowerCase() === currentBase?.toLowerCase());
       if (quote && base) {
         onCurrencySelection(Field.INPUT, base);
         onCurrencySelection(Field.OUTPUT, quote);
-      } else {
-        if (currencies.INPUT && currencies.OUTPUT) {
-          // history.replace(`/trade/${currencies.INPUT.symbol}_${currencies.OUTPUT.symbol}`);
-          navigate(`/trade/${currencies.INPUT.symbol}_${currencies.OUTPUT.symbol}`, { replace: true });
-        } else {
-          // history.replace(`/trade/${INITIAL_SWAP.base.symbol}_${INITIAL_SWAP.quote.symbol}`);
-          navigate(`/trade/${INITIAL_SWAP.base.symbol}_${INITIAL_SWAP.quote.symbol}`, { replace: true });
+
+        if (currentBaseXChainId) {
+          onChainSelection(Field.INPUT, currentBaseXChainId as XChainId);
+        }
+        if (currentQuoteXChainId) {
+          onChainSelection(Field.OUTPUT, currentQuoteXChainId as XChainId);
         }
       }
       setFirstLoad(false);
     }
-  }, [firstLoad, tokens, onCurrencySelection, currencies.INPUT, currencies.OUTPUT, pair, navigate]);
+  }, [firstLoad, tokens, onCurrencySelection, onChainSelection, pair]);
+
+  useEffect(() => {
+    if (!firstLoad && currencies.INPUT && currencies.OUTPUT) {
+      const inputXChainId = currencies.INPUT instanceof XToken ? currencies.INPUT.xChainId : undefined;
+      const outputXChainId = currencies.OUTPUT instanceof XToken ? currencies.OUTPUT.xChainId : undefined;
+
+      const inputCurrency = `${currencies.INPUT.symbol}${inputXChainId ? `:${inputXChainId}` : ''}`;
+      const outputCurrency = `${currencies.OUTPUT.symbol}${outputXChainId ? `:${outputXChainId}` : ''}`;
+      const newPair = `${inputCurrency}_${outputCurrency}`;
+
+      if (pair !== newPair) {
+        console.log('navigating to new pair', newPair);
+        navigate(`/trade/${newPair}`, { replace: true });
+      }
+    }
+  }, [currencies, pair, navigate, firstLoad]);
 }

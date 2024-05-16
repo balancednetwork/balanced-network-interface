@@ -3,13 +3,13 @@ import { XSwapInfo, Transaction, TransactionStatus, XCallEvent, XCallEventMap } 
 
 export interface XCallService {
   // getBlock(blockHeight);
-  // filterEventLog(eventLogs)
-  // filterCallMessageEventLog(eventLogs)
-  // filterCallExecutedEventLog(eventLogs)
+  // filterEventLogs(eventLogs)
+  // filterCallMessageEventLogs(eventLogs)
+  // filterCallExecutedEventLogs(eventLogs)
   // filterCallMessageSentEventLog(eventLogs)
-  // parseCallMessageSentEventLog(eventLog)
   // parseCallMessageEventLog(eventLog)
   // parseCallExecutedEventLog(eventLog)
+  // parseCallMessageSentEventLog(eventLog)
 
   // updateServiceConfig(serviceConfig: any): void;
 

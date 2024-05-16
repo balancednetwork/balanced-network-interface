@@ -37,15 +37,12 @@ export function TradePageLayout() {
   const handleTabClick = (event: React.MouseEvent, value: number) => {
     setValue(value);
     if (value === 0) {
-      // history.replace('/trade');
       navigate('/trade', { replace: true });
     }
     if (value === 1) {
-      // history.replace('/trade/supply');
       navigate('/trade/supply', { replace: true });
     }
     if (value === 2) {
-      // history.replace('/trade/bridge');
       navigate('/trade/bridge', { replace: true });
     }
   };

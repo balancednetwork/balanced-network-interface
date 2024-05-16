@@ -73,7 +73,6 @@ const swapSlice = createSlice({
             currency && isXToken(currency) ? DEFAULT_TOKEN_CHAIN[currency.symbol] ?? '0x1.icon' : '0x1.icon';
           const _currency =
             currency && isXToken(currency) ? getCrossChainTokenBySymbol(xChainId, currency.symbol) : currency;
-          console.log('usdc', currency, _currency, xChainId);
           return {
             ...state,
             [field]: { ...state[field], currency: _currency, percent: 0, xChainId },

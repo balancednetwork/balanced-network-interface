@@ -1,26 +1,26 @@
 import { create } from 'zustand';
-import { xCallServiceActions } from './useXCallServiceStore';
-import { modalActions, MODAL_ID } from './useModalStore';
-import { BridgeTransfer, BridgeTransferStatus, BridgeTransferType, XSwapInfo } from './types';
-import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
-import { transactionActions, useFetchTransaction } from './useTransactionStore';
+import { xCallServiceActions } from '../../bridge/_zustand/useXCallServiceStore';
+import { modalActions, MODAL_ID } from '../../bridge/_zustand/useModalStore';
+import { BridgeTransfer, BridgeTransferStatus, BridgeTransferType, XSwapInfo } from '../../bridge/_zustand/types';
+import { useXCallEventScanner, xCallEventActions } from '../../bridge/_zustand/useXCallEventStore';
+import { transactionActions, useFetchTransaction } from '../../bridge/_zustand/useTransactionStore';
 import { useEffect } from 'react';
 import {
   bridgeTransferHistoryActions,
   useBridgeTransferHistoryStore,
   useFetchBridgeTransferEvents,
-} from './useBridgeTransferHistoryStore';
+} from '../../bridge/_zustand/useBridgeTransferHistoryStore';
 
-type BridgeTransferStore = {
+type XSupplyStore = {
   transferId: string | null;
 };
 
-export const useBridgeTransferStore = create<BridgeTransferStore>()(set => ({
+export const useXSupplyStore = create<XSupplyStore>()(set => ({
   transferId: null,
 }));
 
-export const bridgeTransferActions = {
-  executeTransfer: async (xSwapInfo: XSwapInfo, onSuccess = () => {}) => {
+export const xSupplyActions = {
+  sendXToken: async (xSwapInfo: XSwapInfo, onSuccess = () => {}) => {
     const { direction } = xSwapInfo;
     const sourceChainId = direction.from;
     const destinationChainId = direction.to;
@@ -35,7 +35,7 @@ export const bridgeTransferActions = {
     const sourceTransactionHash = await srcChainXCallService.executeTransfer(xSwapInfo);
 
     if (!sourceTransactionHash) {
-      bridgeTransferActions.reset();
+      xSupplyActions.reset();
       return;
     }
 
@@ -65,7 +65,7 @@ export const bridgeTransferActions = {
       };
 
       bridgeTransferHistoryActions.add(transfer);
-      useBridgeTransferStore.setState({ transferId: transfer.id });
+      useXSupplyStore.setState({ transferId: transfer.id });
 
       // TODO: is it right place to start scanner?
       xCallEventActions.startScanner(destinationChainId, blockHeight);
@@ -73,7 +73,7 @@ export const bridgeTransferActions = {
   },
 
   reset: () => {
-    useBridgeTransferStore.setState({
+    useXSupplyStore.setState({
       transferId: null,
     });
   },
@@ -85,7 +85,7 @@ export const bridgeTransferActions = {
 
     modalActions.closeModal(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL);
 
-    bridgeTransferActions.reset();
+    xSupplyActions.reset();
 
     // TODO: show success message
     console.log('bridge transfer success');
@@ -94,16 +94,16 @@ export const bridgeTransferActions = {
   fail: transfer => {
     xCallEventActions.stopScanner(transfer.destinationChainId);
 
-    bridgeTransferActions.reset();
+    xSupplyActions.reset();
 
     // TODO: show error message
     console.log('bridge transfer fail');
   },
 };
 
-export const BridgeTransferStatusUpdater = () => {
+export const XSupplyStatusUpdater = () => {
   useBridgeTransferHistoryStore();
-  const { transferId } = useBridgeTransferStore();
+  const { transferId } = useXSupplyStore();
   const transfer = bridgeTransferHistoryActions.get(transferId);
 
   useXCallEventScanner(transfer?.sourceChainId);
@@ -127,10 +127,10 @@ export const BridgeTransferStatusUpdater = () => {
   useEffect(() => {
     if (transfer) {
       if (transfer.status === BridgeTransferStatus.CALL_EXECUTED) {
-        bridgeTransferActions.success(transfer);
+        xSupplyActions.success(transfer);
       }
       if (transfer.status === BridgeTransferStatus.TRANSFER_FAILED) {
-        bridgeTransferActions.fail(transfer);
+        xSupplyActions.fail(transfer);
       }
     }
   }, [transfer, transfer?.status]);

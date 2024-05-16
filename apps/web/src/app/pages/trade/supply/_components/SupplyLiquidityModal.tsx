@@ -7,17 +7,9 @@ import { useIconReact } from 'packages/icon-react';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import useAllowanceHandler from 'app/pages/trade/bridge/_hooks/useApproveCallback';
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { archway } from 'app/pages/trade/bridge/_config/xChains';
-import { getXCallOriginEventDataFromArchway } from 'app/_xcall/archway/utils';
-import { CurrentXCallStateType, XChainId } from 'app/pages/trade/bridge/types';
-import {
-  getBytesFromString,
-  getCrossChainTokenAddress,
-  getCrossChainTokenBySymbol,
-} from 'app/pages/trade/bridge/utils';
+import { XChainId } from 'app/pages/trade/bridge/types';
+import { getCrossChainTokenBySymbol } from 'app/pages/trade/bridge/utils';
 import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
@@ -27,20 +19,20 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { Field } from 'store/mint/reducer';
 import { useDerivedMintInfo } from 'store/mint/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from 'store/transactions/hooks';
-import {
-  useAddTransactionResult,
-  useArchwayTransactionsState,
-  useInitTransaction,
-} from 'store/transactionsCrosschain/hooks';
+import { useArchwayTransactionsState } from 'store/transactionsCrosschain/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
-import { useAddOriginEvent, useCurrentXCallState, useIsAnyEventPristine, useSetXCallState } from 'store/xCall/hooks';
 import { toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import ModalContent, { ModalContentWrapper } from '../../../../components/ModalContent';
-import Spinner from '../../../../components/Spinner';
+import ModalContent, { ModalContentWrapper } from 'app/components/ModalContent';
+import Spinner from 'app/components/Spinner';
 import { depositMessage, supplyMessage } from './utils';
-import XCallEventManager from './XCallEventManager';
+import { BridgeTransferType, XSwapInfo } from '../../bridge/_zustand/types';
+import { ICON_XCALL_NETWORK_ID } from 'constants/config';
+import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
+import useXCallFee from '../../bridge/_hooks/useXCallFee';
+import BridgeTransferState from '../../bridge/_components/BridgeTransferState';
+import { XSupplyStatusUpdater, useXSupplyStore, xSupplyActions } from '../_zustand/useXSupplyStore';
 
 interface ModalProps {
   isOpen: boolean;
@@ -65,19 +57,14 @@ export default function SupplyLiquidityModal({
   BChain,
 }: ModalProps) {
   const { account } = useIconReact();
-  const { signingClient, address: accountArch } = useArchwayContext();
+  const { address: accountArch } = useArchwayContext();
+  const { transferId } = useXSupplyStore();
 
   const { currencyDeposits, pair } = useDerivedMintInfo();
   const addTransaction = useTransactionAdder();
 
   const shouldLedgerSign = useShouldLedgerSign();
-  const isAnyEventPristine = useIsAnyEventPristine();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
-  const currentXCallState = useCurrentXCallState();
-  const setCurrentXCallState = useSetXCallState();
-  const addOriginEvent = useAddOriginEvent();
-  const initTransaction = useInitTransaction();
-  const addTransactionResult = useAddTransactionResult();
   const { isTxPending } = useArchwayTransactionsState();
   const { increaseAllowance: increaseAllowanceA, isIncreaseNeeded: allowanceIncreaseNeededA } = useAllowanceHandler(
     AChain === 'archway-1' ? getCrossChainTokenBySymbol('archway-1', currencies[Field.CURRENCY_A]?.symbol) : undefined,
@@ -89,81 +76,6 @@ export default function SupplyLiquidityModal({
     [Field.CURRENCY_A]: false,
     [Field.CURRENCY_B]: false,
   });
-
-  const handleAddArchway = async (field: Field) => {
-    const token = currencies[field] as Token;
-    const address = getCrossChainTokenAddress('archway-1', token.wrapped.symbol);
-    if (!address || !account || !signingClient || !accountArch) return;
-
-    const descriptionAction = `Supply ${token.symbol} liquidity.`;
-    const descriptionAmount = `${parsedAmounts[field]?.toFixed(2) || '0'} ${token.symbol}`;
-    initTransaction('archway-1', t`Requesting cross-chain supply...`);
-
-    const msg = {
-      deposit: {
-        token_address: address,
-        amount: parsedAmounts[field]?.quotient.toString(),
-        to: `${BChain}/${bnJs.Dex.address}`,
-        data: getBytesFromString(
-          JSON.stringify({
-            method: '_deposit',
-            params: {
-              address: `${account}`,
-            },
-          }),
-        ),
-      },
-    };
-
-    const fee = await signingClient.queryContractSmart(archway.contracts.xCall, {
-      get_fee: { nid: `${BChain}`, rollback: true },
-    });
-
-    try {
-      const res = await signingClient.execute(accountArch, archway.contracts.assetManager, msg, 'auto', undefined, [
-        { amount: fee, denom: ARCHWAY_FEE_TOKEN_SYMBOL },
-      ]);
-
-      addTransactionResult('archway-1', res, 'Cross-chain supply requested.');
-      setCurrentXCallState(CurrentXCallStateType.AWAKE);
-      const originEventData = getXCallOriginEventDataFromArchway(res.events, descriptionAction, descriptionAmount);
-      originEventData && addOriginEvent('archway-1', originEventData);
-    } catch (e) {
-      console.error(e);
-      addTransactionResult('archway-1', null, 'Supply request failed');
-      setCurrentXCallState(CurrentXCallStateType.IDLE);
-    }
-  };
-
-  const handleAddICON = async (field: Field) => {
-    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    const token = currencies[field] as Token;
-
-    try {
-      if (bnJs.contractSettings.ledgerSettings.actived) {
-        setShouldAddAssets({ ...shouldAddAssets, [field]: true });
-      }
-
-      const res: any = await bnJs.inject({ account }).getContract(token.address).deposit(toDec(parsedAmounts[field]));
-
-      addTransaction(
-        { hash: res.result },
-        {
-          pending: depositMessage(token.symbol!, getPairName(currencies)).pendingMessage,
-          summary: depositMessage(token.symbol!, getPairName(currencies)).successMessage,
-        },
-      );
-
-      setAddingTxs(state => ({ ...state, [field]: res.result }));
-    } catch (error) {
-      console.error('error', error);
-      setAddingTxs(state => ({ ...state, [field]: '' }));
-    } finally {
-      window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-      setShouldAddAssets({ ...shouldAddAssets, [field]: false });
-    }
-  };
 
   const [removingTxs, setRemovingTxs] = React.useState({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
   const [shouldRemoveAssets, setShouldRemoveAssets] = React.useState({
@@ -197,14 +109,6 @@ export default function SupplyLiquidityModal({
     } finally {
       window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       setShouldRemoveAssets({ ...shouldRemoveAssets, [field]: false });
-    }
-  };
-
-  const handleAdd = (field: Field) => () => {
-    if (UIStatus[field].chain === 'archway-1') {
-      handleAddArchway(field);
-    } else if (UIStatus[field].chain === '0x1.icon') {
-      handleAddICON(field);
     }
   };
 
@@ -352,59 +256,74 @@ export default function SupplyLiquidityModal({
 
   const hasEnoughICX = useHasEnoughICX();
 
-  const xCallReset = () => {
-    setCurrentXCallState(CurrentXCallStateType.IDLE);
-  };
-
   const executeCallback = React.useCallback((success: boolean) => {
     setAddingTxs(state => ({ ...state, CURRENCY_A: success ? 'success' : '' }));
-    // setCurrentXCallState(CurrentXCallStateType.IDLE);
   }, []);
 
-  // React.useEffect(() => {
-  //   if (
-  //     UIStatus[Field.CURRENCY_A].chain !== '0x1.icon' &&
-  //     currentXCallState === CurrentXCallStateType.IDLE &&
-  //     !UIStatus[Field.CURRENCY_A].shouldSend &&
-  //     isOpen
-  //   ) {
-  //     executeCallback(true);
-  //   }
-  // }, [UIStatus, currentXCallState, executeCallback, isOpen]);
+  const { xCallFee } = useXCallFee(AChain, ICON_XCALL_NETWORK_ID);
 
-  const msgs = {
-    txMsgs: {
-      icon: {
-        pending: t`Supplying liquidity...`,
-        summary: t`Liquidity supplied.`,
-      },
-      archway: {
-        pending: t`none`,
-        summary: t`none`,
-      },
-    },
-    managerMsgs: {
-      icon: {
-        awaiting: t`Awaiting message from ICON network`,
-        actionRequired: t`Supply ${parsedAmounts['CURRENCY_A']?.toFixed(2, { groupSeparator: ',' })} ${
-          currencies['CURRENCY_A']?.symbol
-        }`,
-      },
-      archway: {
-        awaiting: t`Awaiting message from Archway network`,
-        actionRequired: t`N/A`,
-      },
-    },
+  const handleAddArchway = async (field: Field) => {
+    const inputAmount = parsedAmounts[field];
+    if (inputAmount && accountArch && xCallFee) {
+      const xSwapInfo: XSwapInfo = {
+        type: BridgeTransferType.SUPPLY,
+        direction: {
+          from: AChain,
+          to: ICON_XCALL_NETWORK_ID,
+        },
+        inputAmount: inputAmount,
+        recipient: bnJs.Dex.address,
+        account: accountArch,
+        xCallFee,
+      };
+      await xSupplyActions.sendXToken(xSwapInfo, () => executeCallback(true));
+    }
+  };
+
+  const handleAddICON = async (field: Field) => {
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
+    const token = currencies[field] as Token;
+
+    try {
+      if (bnJs.contractSettings.ledgerSettings.actived) {
+        setShouldAddAssets({ ...shouldAddAssets, [field]: true });
+      }
+
+      const res: any = await bnJs.inject({ account }).getContract(token.address).deposit(toDec(parsedAmounts[field]));
+
+      addTransaction(
+        { hash: res.result },
+        {
+          pending: depositMessage(token.symbol!, getPairName(currencies)).pendingMessage,
+          summary: depositMessage(token.symbol!, getPairName(currencies)).successMessage,
+        },
+      );
+
+      setAddingTxs(state => ({ ...state, [field]: res.result }));
+    } catch (error) {
+      console.error('error', error);
+      setAddingTxs(state => ({ ...state, [field]: '' }));
+    } finally {
+      window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+      setShouldAddAssets({ ...shouldAddAssets, [field]: false });
+    }
+  };
+
+  const handleAdd = (field: Field) => () => {
+    if (UIStatus[field].chain === 'archway-1') {
+      handleAddArchway(field);
+    } else if (UIStatus[field].chain === '0x1.icon') {
+      handleAddICON(field);
+    }
   };
 
   const isXCallModalOpen =
-    isAnyEventPristine &&
-    currentXCallState !== CurrentXCallStateType.IDLE &&
-    UIStatus[Field.CURRENCY_A].chain !== '0x1.icon' &&
-    !UIStatus[Field.CURRENCY_A].isAddPending;
+    transferId !== null && UIStatus[Field.CURRENCY_A].chain !== '0x1.icon' && !UIStatus[Field.CURRENCY_A].isAddPending;
 
   return (
     <>
+      <XSupplyStatusUpdater />
       <Modal isOpen={isOpen} onDismiss={() => undefined}>
         <ModalContent>
           <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
@@ -562,7 +481,7 @@ export default function SupplyLiquidityModal({
             <Typography mb={3} textAlign="center" fontSize={16}>
               {t`Transfer ${currencies[Field.CURRENCY_A]?.symbol} to ICON.`}
             </Typography>
-            <XCallEventManager xCallReset={xCallReset} msgs={msgs} callback={executeCallback} />
+            <BridgeTransferState />
           </ModalContentWrapper>
         </Modal>
       )}

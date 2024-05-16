@@ -105,6 +105,7 @@ export type XCallEventMap = Partial<{
 export enum BridgeTransferType {
   SWAP = 'swap',
   BRIDGE = 'bridge',
+  SUPPLY = 'supply',
 }
 
 export type BridgeTransfer = {
@@ -121,4 +122,5 @@ export type BridgeTransfer = {
   childTransferNeeded: boolean;
   childTransferId?: string;
   parentTransferId?: string;
+  onSuccess?: () => void;
 };

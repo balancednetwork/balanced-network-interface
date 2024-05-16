@@ -24,7 +24,7 @@ import { Field } from 'store/swap/reducer';
 import { useDerivedSwapInfo, useSwapActionHandlers } from 'store/swap/hooks';
 import { generateChartData, toFraction } from 'utils';
 
-import { ChartContainer, ChartControlGroup, ChartControlButton } from '../../pages/trade/supply/_components/utils';
+import { ChartContainer, ChartControlGroup, ChartControlButton } from '../../supply/_components/utils';
 
 const CHART_TYPES_LABELS = {
   [CHART_TYPES.AREA]: defineMessage({ message: 'Line' }),

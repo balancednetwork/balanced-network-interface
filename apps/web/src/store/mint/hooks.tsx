@@ -17,7 +17,6 @@ import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { tryParseAmount } from 'store/swap/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useCrossChainCurrencyBalances, useCurrencyBalances } from 'store/wallet/hooks';
-import { useCurrentXCallState } from 'store/xCall/hooks';
 
 import { AppDispatch, AppState } from '../index';
 import { Field, INITIAL_MINT, typeInput, selectCurrency } from './reducer';
@@ -99,6 +98,7 @@ export function useMintActionHandlers(noLiquidity: boolean | undefined): {
 
 const ZERO = 0n;
 
+// TODO: update this function not to use useCurrentXCallState, which is removed
 const useCurrencyDeposit = (
   account: string | undefined | null,
   currency: Currency | undefined,
@@ -106,7 +106,7 @@ const useCurrencyDeposit = (
   const token = currency?.wrapped;
   const transactions = useAllTransactions();
   const [result, setResult] = React.useState<string | undefined>();
-  const currentXCallState = useCurrentXCallState();
+  // const currentXCallState = useCurrentXCallState();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
@@ -116,7 +116,7 @@ const useCurrencyDeposit = (
         setResult(res);
       }
     })();
-  }, [transactions, token, account, currentXCallState]);
+  }, [transactions, token, account]);
 
   return token && result ? CurrencyAmount.fromRawAmount<Currency>(token, BigInt(result)) : undefined;
 };

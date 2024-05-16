@@ -1,8 +1,6 @@
 import rlp from 'rlp';
 
-import { XCallState } from 'store/xCall/reducer';
-
-import { OriginXCallData, XChainId, XCallEventType, XChain } from './types';
+import { XChainId, XCallEventType, XChain } from './types';
 import { xChainMap, xChains } from './_config/xChains';
 import { xTokenMap } from './_config/xTokens';
 import { Currency } from '@balancednetwork/sdk-core';
@@ -38,12 +36,6 @@ export const getArchwayCounterToken = (symbol?: string) => {
   if (symbol) {
     return xTokenMap['archway-1']?.['0x1.icon']?.find(t => t.symbol === symbol);
   }
-};
-
-export const getOriginEvent = (sn: number, xCallState: XCallState): OriginXCallData | undefined => {
-  return Object.keys(xCallState.events)
-    .map(chain => xCallState.events[chain].origin.find(e => e.sn === sn))
-    .find(event => event);
 };
 
 export const getCrossChainTokenAddress = (chain: XChainId, tokenSymbol?: string): string | undefined => {

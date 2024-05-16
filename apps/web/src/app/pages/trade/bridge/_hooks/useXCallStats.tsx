@@ -2,12 +2,12 @@ import axios from 'axios';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import { ONE_DAY_DURATION } from 'utils';
 
-export type xCallActivityDataType = {
+export type XCallActivityDataType = {
   hour: string;
   count: number;
 };
 
-export function useXCallStats(): UseQueryResult<{ transactionCount: number; data: xCallActivityDataType[] }> {
+export function useXCallStats(): UseQueryResult<{ transactionCount: number; data: XCallActivityDataType[] }> {
   const yesterdayTimestamp = new Date().getTime() - ONE_DAY_DURATION;
   async function getTxs(skip: number, limit: number) {
     const apiUrl = `https://xcallscan.xyz/api/messages?skip=${skip}&limit=${limit}`;
@@ -15,7 +15,7 @@ export function useXCallStats(): UseQueryResult<{ transactionCount: number; data
     return response.data.data;
   }
 
-  function countTransactionsByHour(transactions: { created_at: number }[]): xCallActivityDataType[] {
+  function countTransactionsByHour(transactions: { created_at: number }[]): XCallActivityDataType[] {
     const transactionCountByHour: { count: number; hour: string }[] = [];
 
     const yesterdayDate = new Date(yesterdayTimestamp);

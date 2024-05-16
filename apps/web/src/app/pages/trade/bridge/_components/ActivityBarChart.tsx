@@ -3,7 +3,7 @@ import React from 'react';
 import { BarChart, Bar, Tooltip, ResponsiveContainer } from 'recharts';
 import styled, { useTheme } from 'styled-components';
 
-import { xCallActivityDataType } from 'store/xCall/hooks';
+import { XCallActivityDataType } from '../_hooks/useXCallStats';
 
 const TooltipWrapper = styled.div`
   background: ${({ theme }) => theme.colors.bg4};
@@ -63,7 +63,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-const ActivityBarChart = ({ data }: { data: xCallActivityDataType[] }) => {
+const ActivityBarChart = ({ data }: { data: XCallActivityDataType[] }) => {
   const theme = useTheme();
 
   return (

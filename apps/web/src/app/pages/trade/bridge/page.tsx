@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { SectionPanel } from 'app/components/trade/utils';
+import { SectionPanel } from 'app/pages/trade/supply/_components/utils';
 
 import BridgeTransferForm from './_components/BridgeTransferForm';
 import { BridgeTransferConfirmModal } from './_components/BridgeTransferConfirmModal';

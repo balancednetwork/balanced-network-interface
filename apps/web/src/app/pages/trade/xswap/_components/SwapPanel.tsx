@@ -29,7 +29,7 @@ import { formatPercent, maxAmountSpend } from 'utils';
 import Divider from 'app/components/Divider';
 import StabilityFund from 'app/components/StabilityFund';
 import { XCallDescription } from 'app/components/XCallDescription';
-import { BrightPanel } from 'app/components/trade/utils';
+import { BrightPanel } from 'app/pages/trade/supply/_components/utils';
 import { isXToken } from 'app/pages/trade/bridge/utils';
 import useXCallFee from 'app/pages/trade/bridge/_hooks/useXCallFee';
 import useXCallProtocol from 'app/pages/trade/bridge/_hooks/useXCallProtocol';

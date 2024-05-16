@@ -25,8 +25,8 @@ import {
   useXCallState,
 } from 'store/xCall/hooks';
 
-import { Button } from '../Button';
-import Spinner from '../Spinner';
+import { Button } from '../../../../components/Button';
+import Spinner from '../../../../components/Spinner';
 import XCallExecutionHandlerICON from './XCallExecutionHandlerICON';
 
 type XCallEventManagerProps = {

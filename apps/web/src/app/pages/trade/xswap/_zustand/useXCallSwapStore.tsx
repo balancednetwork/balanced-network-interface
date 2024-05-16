@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { create } from 'zustand';
 
-import { swapMessage } from 'app/components/trade/utils';
+import { swapMessage } from 'app/pages/trade/supply/_components/utils';
 
 import { xCallServiceActions } from '../../bridge/_zustand/useXCallServiceStore';
 import { BridgeTransfer, BridgeTransferStatus, BridgeTransferType, XSwapInfo } from '../../bridge/_zustand/types';

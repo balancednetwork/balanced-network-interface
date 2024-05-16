@@ -1,7 +1,7 @@
 import React from 'react';
 
 import SwapDescription from 'app/components/trade/SwapDescription';
-import { SectionPanel } from 'app/components/trade/utils';
+import { SectionPanel } from 'app/pages/trade/supply/_components/utils';
 import { AllTransactionsUpdater } from '../bridge/_zustand/useTransactionStore';
 import SwapPanel from './_components/SwapPanel';
 

@@ -26,15 +26,15 @@ import { useMintActionHandlers } from 'store/mint/hooks';
 import { useRewards } from 'store/reward/hooks';
 import { useStakedLPPercent, useWithdrawnPercent } from 'store/stakedLP/hooks';
 
-import { Banner } from '../Banner';
-import Spinner from '../Spinner';
+import { Banner } from '../../../../components/Banner';
+import Spinner from '../../../../components/Spinner';
 import { StyledAccordionButton, StyledAccordionPanel, StyledAccordionItem } from './LiquidityDetails/Accordion';
 import { StyledBoxPanel } from './LiquidityDetails/shared';
 import StakeLPPanel from './LiquidityDetails/StakeLPPanel';
 import { WithdrawPanel, WithdrawPanelQ, getABBalance, getShareReward } from './LiquidityDetails/WithdrawPanel';
 import { usePoolPanelContext } from './PoolPanelContext';
 import { getFormattedRewards, totalSupply, stakedFraction } from './utils';
-import Skeleton from '../Skeleton';
+import Skeleton from '../../../../components/Skeleton';
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');

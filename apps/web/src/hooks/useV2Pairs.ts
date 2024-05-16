@@ -5,7 +5,7 @@ import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 
-import { usePoolPanelContext } from 'app/components/trade/PoolPanelContext';
+import { usePoolPanelContext } from 'app/pages/trade/supply/_components/PoolPanelContext';
 import bnJs from 'bnJs';
 import { canBeQueue } from 'constants/currency';
 import { BIGINT_ZERO, FRACTION_ZERO } from 'constants/misc';

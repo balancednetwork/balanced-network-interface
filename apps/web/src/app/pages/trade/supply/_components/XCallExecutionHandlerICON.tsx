@@ -29,8 +29,8 @@ import {
 } from 'store/xCall/hooks';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import { Button } from '../Button';
-import Spinner from '../Spinner';
+import { Button } from 'app/components/Button';
+import Spinner from 'app/components/Spinner';
 
 type XCallExecutionHandlerProps = {
   event: DestinationXCallData;

@@ -21,7 +21,7 @@ import { Field } from 'store/mint/reducer';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers, useInitialSupplyLoad } from 'store/mint/hooks';
 import { maxAmountSpend } from 'utils';
 
-import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
+import { CurrencySelectionType } from 'app/components/SearchModal/CurrencySearch';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 import { SectionPanel, BrightPanel } from './utils';

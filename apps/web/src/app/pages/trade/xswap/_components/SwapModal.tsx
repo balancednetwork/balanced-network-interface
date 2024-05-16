@@ -18,7 +18,7 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import ModalContent from 'app/components/ModalContent';
 import Spinner from 'app/components/Spinner';
-import { swapMessage } from 'app/components/trade/utils';
+import { swapMessage } from 'app/pages/trade/supply/_components/utils';
 import { useTransactionAdder } from 'store/transactions/hooks';
 
 type SwapModalProps = {

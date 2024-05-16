@@ -37,8 +37,8 @@ import { useAddOriginEvent, useCurrentXCallState, useIsAnyEventPristine, useSetX
 import { toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import ModalContent, { ModalContentWrapper } from '../ModalContent';
-import Spinner from '../Spinner';
+import ModalContent, { ModalContentWrapper } from '../../../../components/ModalContent';
+import Spinner from '../../../../components/Spinner';
 import { depositMessage, supplyMessage } from './utils';
 import XCallEventManager from './XCallEventManager';
 

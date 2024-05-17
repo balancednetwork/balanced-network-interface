@@ -55,7 +55,8 @@ export const deriveStatus = (
 const storage = createJSONStorage(() => sessionStorage, {
   reviver: (key, value: any) => {
     if (typeof value === 'string' && value.startsWith('BIGINT::')) {
-      return BigInt(value.substr(8));
+      console.log('AAA', key, value, BigInt(value.substring(8)));
+      return BigInt(value.substring(8));
     }
 
     if (
@@ -98,88 +99,88 @@ type BridgeTransferHistoryStore = {
 };
 
 export const useBridgeTransferHistoryStore = create<BridgeTransferHistoryStore>()(
-  devtools(
-    persist(
-      immer((set, get) => ({
-        transfers: {},
-        getTransfer: (id: string | null) => {
-          if (id) return get().transfers[id];
-        },
-        addTransfer: (transfer: BridgeTransfer) => {
-          set(state => {
-            state.transfers[transfer.id] = transfer;
-          });
-        },
-        updateSourceTransaction: (id: string, { rawTx }) => {
-          const transfer = get().transfers[id];
-          if (!transfer) return;
-
-          const xCallService = xCallServiceActions.getXCallService(transfer.sourceChainId);
-          const newSourceTransactionStatus = xCallService.deriveTxStatus(rawTx);
-
-          const newSourceTransaction = {
-            ...transfer.sourceTransaction,
-            rawEventLogs: xCallService.getTxEventLogs(rawTx),
-            status: newSourceTransactionStatus,
-          };
-          const newStatus = deriveStatus(newSourceTransaction, transfer.events, transfer.destinationTransaction);
-
-          set(state => {
-            state.transfers[id] = {
-              ...transfer,
-              sourceTransaction: newSourceTransaction,
-              status: newStatus,
-            };
-          });
-        },
-        updateTransferEvents: async (id: string, events: XCallEventMap) => {
-          const transfer = get().transfers[id];
-          if (!transfer) return;
-
-          let destinationTransaction: Transaction | undefined = undefined;
-
-          const newEvents = {
-            ...transfer.events,
-            ...events,
-          };
-
-          if (newEvents[XCallEventType.CallExecuted]) {
-            const dstXCallService = xCallServiceActions.getXCallService(transfer.destinationChainId);
-            const destinationTransactionHash = newEvents[XCallEventType.CallExecuted].txHash;
-            const rawTx = await dstXCallService.getTxReceipt(destinationTransactionHash);
-
-            destinationTransaction = {
-              id: destinationTransactionHash,
-              hash: destinationTransactionHash,
-              xChainId: transfer.destinationChainId,
-              status: dstXCallService.deriveTxStatus(rawTx),
-              rawEventLogs: dstXCallService.getTxEventLogs(rawTx),
-            };
-          }
-          const newStatus = deriveStatus(transfer.sourceTransaction, newEvents, destinationTransaction);
-
-          set(state => {
-            state.transfers[id] = {
-              ...transfer,
-              events: newEvents,
-              status: newStatus,
-              destinationTransaction,
-            };
-          });
-        },
-        remove: (id: string) => {
-          set(state => {
-            delete state.transfers[id];
-          });
-        },
-      })),
-      {
-        name: 'bridge-transfer-history-store',
-        storage,
+  // devtools(
+  persist(
+    immer((set, get) => ({
+      transfers: {},
+      getTransfer: (id: string | null) => {
+        if (id) return get().transfers[id];
       },
-    ),
-    { name: 'BridgeTransferHistoryStore' },
+      addTransfer: (transfer: BridgeTransfer) => {
+        set(state => {
+          state.transfers[transfer.id] = transfer;
+        });
+      },
+      updateSourceTransaction: (id: string, { rawTx }) => {
+        const transfer = get().transfers[id];
+        if (!transfer) return;
+
+        const xCallService = xCallServiceActions.getXCallService(transfer.sourceChainId);
+        const newSourceTransactionStatus = xCallService.deriveTxStatus(rawTx);
+
+        const newSourceTransaction = {
+          ...transfer.sourceTransaction,
+          rawEventLogs: xCallService.getTxEventLogs(rawTx),
+          status: newSourceTransactionStatus,
+        };
+        const newStatus = deriveStatus(newSourceTransaction, transfer.events, transfer.destinationTransaction);
+
+        set(state => {
+          state.transfers[id] = {
+            ...transfer,
+            sourceTransaction: newSourceTransaction,
+            status: newStatus,
+          };
+        });
+      },
+      updateTransferEvents: async (id: string, events: XCallEventMap) => {
+        const transfer = get().transfers[id];
+        if (!transfer) return;
+
+        let destinationTransaction: Transaction | undefined = undefined;
+
+        const newEvents = {
+          ...transfer.events,
+          ...events,
+        };
+
+        if (newEvents[XCallEventType.CallExecuted]) {
+          const dstXCallService = xCallServiceActions.getXCallService(transfer.destinationChainId);
+          const destinationTransactionHash = newEvents[XCallEventType.CallExecuted].txHash;
+          const rawTx = await dstXCallService.getTxReceipt(destinationTransactionHash);
+
+          destinationTransaction = {
+            id: destinationTransactionHash,
+            hash: destinationTransactionHash,
+            xChainId: transfer.destinationChainId,
+            status: dstXCallService.deriveTxStatus(rawTx),
+            rawEventLogs: dstXCallService.getTxEventLogs(rawTx),
+          };
+        }
+        const newStatus = deriveStatus(transfer.sourceTransaction, newEvents, destinationTransaction);
+
+        set(state => {
+          state.transfers[id] = {
+            ...transfer,
+            events: newEvents,
+            status: newStatus,
+            destinationTransaction,
+          };
+        });
+      },
+      remove: (id: string) => {
+        set(state => {
+          delete state.transfers[id];
+        });
+      },
+    })),
+    {
+      name: 'bridge-transfer-history-store',
+      storage,
+    },
   ),
+  //   { name: 'BridgeTransferHistoryStore' },
+  // ),
 );
 
 export const bridgeTransferHistoryActions = {

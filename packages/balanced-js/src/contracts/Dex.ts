@@ -32,7 +32,7 @@ export default class Dex extends Contract {
     return this.call(callParams);
   }
 
-  add(baseToken: string, quoteToken: string, baseValue: string, quoteValue: string) {
+  add(baseToken: string, quoteToken: string, baseValue: string, quoteValue: string, slippage: number = 200) {
     const payload = this.transactionParamsBuilder({
       method: 'add',
       params: {
@@ -40,6 +40,7 @@ export default class Dex extends Contract {
         _quoteToken: quoteToken,
         _baseValue: IconConverter.toHexNumber(baseValue),
         _quoteValue: IconConverter.toHexNumber(quoteValue),
+        _slippagePercentage: IconConverter.toHex(slippage),
       },
     });
 

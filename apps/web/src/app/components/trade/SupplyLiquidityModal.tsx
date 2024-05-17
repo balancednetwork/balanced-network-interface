@@ -37,6 +37,7 @@ import ModalContent, { ModalContentWrapper } from '../ModalContent';
 import Spinner from '../Spinner';
 import { depositMessage, supplyMessage } from './utils';
 import XCallEventManager from './XCallEventManager';
+import { DEFAULT_SLIPPAGE_LP } from 'constants/index';
 
 interface ModalProps {
   isOpen: boolean;
@@ -250,6 +251,7 @@ export default function SupplyLiquidityModal({
           quoteToken.address,
           toDec(currencyDeposits[Field.CURRENCY_A]),
           toDec(currencyDeposits[Field.CURRENCY_B]),
+          DEFAULT_SLIPPAGE_LP,
         )
         .then((res: any) => {
           addTransaction(

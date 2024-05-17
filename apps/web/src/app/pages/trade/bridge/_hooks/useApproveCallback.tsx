@@ -11,7 +11,7 @@ import {
 } from 'store/transactionsCrosschain/hooks';
 
 import { useArchwayContext } from '../../../../_xcall/archway/ArchwayProvider';
-import { getFeeParam } from '../../../../_xcall/archway/utils';
+import { getFeeParam, isDenomAsset } from '../../../../_xcall/archway/utils';
 
 import { Token, CurrencyAmount } from '@balancednetwork/sdk-core';
 
@@ -108,7 +108,8 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
   const approvalState: ApprovalState = useMemo(() => {
     if (!amountToApprove || !spender) return ApprovalState.UNKNOWN;
     const isNative = amountToApprove.currency.wrapped.address === NATIVE_ADDRESS;
-    if (isNative) return ApprovalState.APPROVED;
+    const isDenom = isDenomAsset(amountToApprove.currency);
+    if (isNative || isDenom) return ApprovalState.APPROVED;
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN;
 

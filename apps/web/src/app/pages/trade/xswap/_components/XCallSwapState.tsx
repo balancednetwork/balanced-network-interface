@@ -34,7 +34,7 @@ const XCallSwapState = () => {
       case BridgeTransferStatus.CALL_MESSAGE:
         return `Awaiting execution on ${getNetworkDisplayName(transfer.destinationChainId)}`;
       case BridgeTransferStatus.CALL_EXECUTED:
-        return `Call executed.`;
+        return `Complete.`;
       default:
         return `Unknown state.`;
     }

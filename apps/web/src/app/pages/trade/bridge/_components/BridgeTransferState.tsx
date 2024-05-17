@@ -34,7 +34,7 @@ const BridgeTransferState = () => {
       case BridgeTransferStatus.CALL_MESSAGE:
         return `Finalising transaction on ${getNetworkDisplayName(transfer.destinationChainId)}...`;
       case BridgeTransferStatus.CALL_EXECUTED:
-        return `Call executed.`;
+        return `Complete.`;
       default:
         return `Unknown state.`;
     }

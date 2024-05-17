@@ -119,7 +119,7 @@ const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) =
       case BridgeTransferStatus.CALL_MESSAGE:
         return `Pending`;
       case BridgeTransferStatus.CALL_EXECUTED:
-        return `Call Executed`;
+        return `Complete`;
       default:
         return `Unknown`;
     }

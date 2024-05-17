@@ -28,7 +28,7 @@ import { WagmiProvider } from 'wagmi';
 import { wagmiConfig } from './config/wagmi';
 
 BigInt.prototype['toJSON'] = function () {
-  return this.toString();
+  return 'BIGINT::' + this.toString();
 };
 
 const queryClient = new QueryClient();

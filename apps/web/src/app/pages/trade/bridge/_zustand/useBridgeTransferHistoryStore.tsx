@@ -10,10 +10,6 @@ import { BridgeTransfer, BridgeTransferStatus, Transaction, TransactionStatus, X
 import { xCallServiceActions } from './useXCallServiceStore';
 import { xCallEventActions } from './useXCallEventStore';
 
-BigInt.prototype['toJSON'] = function () {
-  return 'BIGINT::' + this.toString();
-};
-
 // TODO: review logic
 export const deriveStatus = (
   sourceTransaction: Transaction,

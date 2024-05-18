@@ -178,7 +178,6 @@ export default function LPPanel() {
       sliderInstance.current?.noUiSlider.set(sliderValue);
       setPercent({ percent: sliderValue, needUpdate: false });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputType, sliderValue]);
 
   React.useEffect(() => {
@@ -198,7 +197,6 @@ export default function LPPanel() {
         }
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [percent, needUpdate, currencyBalances, onSlide, pair, currencies]);
 
   // get formatted amounts
@@ -216,8 +214,8 @@ export default function LPPanel() {
       const isCrossChainCompatible = isXToken(currencyA);
       if (isCrossChainCompatible) {
         setChainSelectorOpen(true);
-        if (DEFAULT_TOKEN_CHAIN[currencyA.symbol as string]) {
-          setCrossChainCurrencyA(DEFAULT_TOKEN_CHAIN[currencyA.symbol as string]);
+        if (DEFAULT_TOKEN_CHAIN[currencyA.symbol]) {
+          setCrossChainCurrencyA(DEFAULT_TOKEN_CHAIN[currencyA.symbol]);
         }
       } else {
         setCrossChainCurrencyA('0x1.icon');

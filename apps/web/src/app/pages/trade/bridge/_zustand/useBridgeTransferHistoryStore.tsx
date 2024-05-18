@@ -5,7 +5,7 @@ import { immer } from 'zustand/middleware/immer';
 import { useQuery } from '@tanstack/react-query';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 
-import { XCallEventType } from '../types';
+import { XCallEventType, XChain, XChainId } from '../types';
 import { BridgeTransfer, BridgeTransferStatus, Transaction, TransactionStatus, XCallEventMap } from './types';
 import { useCreateXCallService, xCallServiceActions } from './useXCallServiceStore';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
@@ -217,6 +217,18 @@ export const bridgeTransferHistoryActions = {
 
   remove: (id: string) => {
     useBridgeTransferHistoryStore.getState().remove(id);
+  },
+
+  getPendingTransfers: (signedWallets: { chain: XChain; chainId: XChainId; address: string }[]) => {
+    return Object.values(useBridgeTransferHistoryStore.getState().transfers).filter(
+      transfer =>
+        transfer.status !== BridgeTransferStatus.CALL_EXECUTED &&
+        transfer.status !== BridgeTransferStatus.TRANSFER_FAILED &&
+        signedWallets.some(
+          wallet => wallet.chainId === transfer.sourceChainId,
+          // && wallet.address === transfer.from,
+        ),
+    );
   },
 };
 

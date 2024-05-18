@@ -10,14 +10,17 @@ import { useXCallStats } from '../_hooks/useXCallStats';
 import Spinner from '../../../../components/Spinner';
 import ActivityBarChart from './ActivityBarChart';
 import BridgeTransferHistoryItem from './BridgeTransferHistoryItem';
-import { useBridgeTransferHistoryStore } from '../_zustand/useBridgeTransferHistoryStore';
+import { bridgeTransferHistoryActions, useBridgeTransferHistoryStore } from '../_zustand/useBridgeTransferHistoryStore';
+import { useSignedInWallets } from 'store/wallet/hooks';
 
 export default function BridgeActivity() {
   const { data: xCallStats } = useXCallStats();
   const isSmall = useMedia('(max-width: 600px)');
   const isMedium = useMedia('(max-width: 1100px) and (min-width: 800px)');
+  const signedInWallets = useSignedInWallets();
 
-  const { transfers } = useBridgeTransferHistoryStore();
+  useBridgeTransferHistoryStore();
+  const pendingTransfers = bridgeTransferHistoryActions.getPendingTransfers(signedInWallets);
 
   return (
     <Box bg="bg2" flex={1} p={['25px', '35px']}>
@@ -57,14 +60,10 @@ export default function BridgeActivity() {
       </Box>
       <Box className="border-top" py={4}>
         {/* TODO: sort by timestamp */}
-        {Object.values(transfers).map((transfer, index) => (
+        {pendingTransfers.map((transfer, index) => (
           <BridgeTransferHistoryItem key={index} transfer={transfer} />
         ))}
-
-        {/* {activityItems?.map((item: XCallActivityItem) => (
-          <MemoizedItem key={item.originData.sn} {...item} />
-        ))}
-        {activityItems?.length === 0 &&
+        {pendingTransfers?.length === 0 &&
           (signedInWallets.length ? (
             <Typography textAlign="center">
               <Trans>You have no pending or failed cross-chain transactions.</Trans>
@@ -73,7 +72,7 @@ export default function BridgeActivity() {
             <Typography textAlign="center">
               <Trans>There are no pending cross-chain transactions.</Trans>
             </Typography>
-          ))} */}
+          ))}
       </Box>
     </Box>
   );

@@ -11,6 +11,7 @@ import { useCreateXCallService, xCallServiceActions } from './useXCallServiceSto
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { useFetchTransaction } from './useTransactionStore';
 import { useEffect } from 'react';
+import { getNetworkDisplayName } from '../utils';
 
 // TODO: review logic
 export const deriveStatus = (
@@ -57,7 +58,6 @@ export const deriveStatus = (
 const storage = createJSONStorage(() => sessionStorage, {
   reviver: (key, value: any) => {
     if (typeof value === 'string' && value.startsWith('BIGINT::')) {
-      console.log('AAA', key, value, BigInt(value.substring(8)));
       return BigInt(value.substring(8));
     }
 
@@ -229,6 +229,25 @@ export const bridgeTransferHistoryActions = {
           // && wallet.address === transfer.from,
         ),
     );
+  },
+
+  getTransferStatusMessage: (transfer: BridgeTransfer) => {
+    switch (transfer.status) {
+      case BridgeTransferStatus.TRANSFER_REQUESTED:
+        return `Awaiting confirmation on ${getNetworkDisplayName(transfer.sourceChainId)}...`;
+      case BridgeTransferStatus.TRANSFER_FAILED:
+        return `Transfer failed.`;
+      case BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT:
+        return `Awaiting confirmation on ${getNetworkDisplayName(transfer.sourceChainId)}...`;
+      case BridgeTransferStatus.CALL_MESSAGE_SENT:
+        return `Finalising transaction on ${getNetworkDisplayName(transfer.destinationChainId)}...`;
+      case BridgeTransferStatus.CALL_MESSAGE:
+        return `Finalising transaction on ${getNetworkDisplayName(transfer.destinationChainId)}...`;
+      case BridgeTransferStatus.CALL_EXECUTED:
+        return `Complete.`;
+      default:
+        return `Unknown state.`;
+    }
   },
 };
 

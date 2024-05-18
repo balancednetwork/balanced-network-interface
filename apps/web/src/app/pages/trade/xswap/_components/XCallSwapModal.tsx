@@ -262,7 +262,7 @@ const XCallSwapModal = ({
                 {approvalState === ApprovalState.APPROVED && (
                   <>
                     <StyledButton onClick={handleXCallSwap} disabled={isProcessing}>
-                      {!isProcessing ? <Trans>Swap</Trans> : <Trans>xCall in progress</Trans>}
+                      {!isProcessing ? <Trans>Swap</Trans> : <Trans>Swap in progress</Trans>}
                     </StyledButton>
                   </>
                 )}

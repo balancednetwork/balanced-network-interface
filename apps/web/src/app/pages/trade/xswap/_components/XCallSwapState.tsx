@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { Trans } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -11,50 +11,13 @@ import {
   bridgeTransferHistoryActions,
   useBridgeTransferHistoryStore,
 } from '../../bridge/_zustand/useBridgeTransferHistoryStore';
-import { BridgeTransfer, BridgeTransferStatus } from '../../bridge/_zustand/types';
-import { getNetworkDisplayName } from '../../bridge/utils';
 import { useXCallSwapStore } from '../_zustand/useXCallSwapStore';
 
 const XCallSwapState = () => {
-  const { transferId, childTransferId } = useXCallSwapStore();
   useBridgeTransferHistoryStore();
+  const { transferId, childTransferId } = useXCallSwapStore();
   const transfer = bridgeTransferHistoryActions.get(transferId);
   const childTransfer = bridgeTransferHistoryActions.get(childTransferId);
-
-  const getMessage = (transfer: BridgeTransfer) => {
-    switch (transfer.status) {
-      case BridgeTransferStatus.TRANSFER_REQUESTED:
-        return `Awaiting confirmation on ${getNetworkDisplayName(transfer.sourceChainId)}`;
-      case BridgeTransferStatus.TRANSFER_FAILED:
-        return `Transfer failed.`;
-      case BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT:
-        return `Awaiting confirmation on ${getNetworkDisplayName(transfer.sourceChainId)}`;
-      case BridgeTransferStatus.CALL_MESSAGE_SENT:
-        return `Awaiting execution on ${getNetworkDisplayName(transfer.destinationChainId)}`;
-      case BridgeTransferStatus.CALL_MESSAGE:
-        return `Awaiting execution on ${getNetworkDisplayName(transfer.destinationChainId)}`;
-      case BridgeTransferStatus.CALL_EXECUTED:
-        return `Complete.`;
-      default:
-        return `Unknown state.`;
-    }
-  };
-
-  const message = useMemo(() => {
-    if (!transfer) {
-      return `Transfer not found.`;
-    }
-
-    return getMessage(transfer);
-  }, [transfer, getMessage]);
-
-  const childMessage = useMemo(() => {
-    if (!childTransfer) {
-      return `Child transfer not found.`;
-    }
-
-    return getMessage(childTransfer);
-  }, [childTransfer, getMessage]);
 
   if (!transfer) {
     return null;
@@ -70,11 +33,11 @@ const XCallSwapState = () => {
         <Box pt={3}>
           <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
             <Typography mb={4}>
-              <Trans>{message}</Trans>
+              <Trans>{bridgeTransferHistoryActions.getTransferStatusMessage(transfer)}</Trans>
             </Typography>
             {childTransfer && (
               <Typography mb={4}>
-                <Trans>{childMessage}</Trans>
+                <Trans>{bridgeTransferHistoryActions.getTransferStatusMessage(childTransfer)}</Trans>
               </Typography>
             )}
             <Spinner />

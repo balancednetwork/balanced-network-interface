@@ -88,7 +88,7 @@ export function BridgeTransferConfirmModal() {
 
   return (
     <>
-      <BridgeTransferStatusUpdater transfer={bridgeTransferHistoryActions.get(transferId)} />
+      {transferId && <BridgeTransferStatusUpdater transfer={bridgeTransferHistoryActions.get(transferId)} />}
       <Modal isOpen={modalActions.isModalOpen(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL)} onDismiss={handleDismiss}>
         <ModalContentWrapper>
           <Typography textAlign="center" mb="5px">

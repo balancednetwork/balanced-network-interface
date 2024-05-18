@@ -168,8 +168,8 @@ const XCallSwapModal = ({
 
   return (
     <>
-      <BridgeTransferStatusUpdater transfer={bridgeTransferHistoryActions.get(transferId)} />
-      <BridgeTransferStatusUpdater transfer={bridgeTransferHistoryActions.get(childTransferId)} />
+      {transferId && <BridgeTransferStatusUpdater transfer={bridgeTransferHistoryActions.get(transferId)} />}
+      {childTransferId && <BridgeTransferStatusUpdater transfer={bridgeTransferHistoryActions.get(childTransferId)} />}
       <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XCALL_SWAP_MODAL)} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing}>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">

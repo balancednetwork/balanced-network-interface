@@ -330,7 +330,7 @@ export default function SupplyLiquidityModal({
 
   return (
     <>
-      <BridgeTransferStatusUpdater transfer={bridgeTransferHistoryActions.get(transferId)} />
+      {transferId && <BridgeTransferStatusUpdater transfer={bridgeTransferHistoryActions.get(transferId)} />}
       <Modal isOpen={isOpen} onDismiss={() => undefined}>
         <ModalContent>
           <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">

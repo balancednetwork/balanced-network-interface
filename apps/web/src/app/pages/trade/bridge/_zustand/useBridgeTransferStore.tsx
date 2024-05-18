@@ -2,14 +2,8 @@ import { create } from 'zustand';
 import { xCallServiceActions } from './useXCallServiceStore';
 import { modalActions, MODAL_ID } from './useModalStore';
 import { BridgeTransfer, BridgeTransferStatus, BridgeTransferType, XSwapInfo } from './types';
-import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
-import { transactionActions, useFetchTransaction } from './useTransactionStore';
-import { useEffect } from 'react';
-import {
-  bridgeTransferHistoryActions,
-  useBridgeTransferHistoryStore,
-  useFetchBridgeTransferEvents,
-} from './useBridgeTransferHistoryStore';
+import { transactionActions } from './useTransactionStore';
+import { bridgeTransferHistoryActions } from './useBridgeTransferHistoryStore';
 
 type BridgeTransferStore = {
   transferId: string | null;
@@ -61,14 +55,17 @@ export const bridgeTransferActions = {
         events: {},
         destinationChainInitialBlockHeight: blockHeight,
         childTransferNeeded: false,
-        onSuccess,
+        onSuccess: async transfer => {
+          onSuccess();
+          bridgeTransferActions.success(transfer);
+        },
+        onFail: async transfer => {
+          bridgeTransferActions.fail(transfer);
+        },
       };
 
       bridgeTransferHistoryActions.add(transfer);
       useBridgeTransferStore.setState({ transferId: transfer.id });
-
-      // TODO: is it right place to start scanner?
-      xCallEventActions.startScanner(destinationChainId, blockHeight);
     }
   },
 
@@ -79,10 +76,6 @@ export const bridgeTransferActions = {
   },
 
   success: transfer => {
-    xCallEventActions.stopScanner(transfer.destinationChainId);
-
-    transfer.onSuccess?.();
-
     modalActions.closeModal(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL);
 
     bridgeTransferActions.reset();
@@ -92,48 +85,9 @@ export const bridgeTransferActions = {
   },
 
   fail: transfer => {
-    xCallEventActions.stopScanner(transfer.destinationChainId);
-
     bridgeTransferActions.reset();
 
     // TODO: show error message
     console.log('bridge transfer fail');
   },
-};
-
-export const BridgeTransferStatusUpdater = () => {
-  useBridgeTransferHistoryStore();
-  const { transferId } = useBridgeTransferStore();
-  const transfer = bridgeTransferHistoryActions.get(transferId);
-
-  useXCallEventScanner(transfer?.sourceChainId);
-  useXCallEventScanner(transfer?.destinationChainId);
-
-  const { rawTx } = useFetchTransaction(transfer?.sourceTransaction);
-  const { events } = useFetchBridgeTransferEvents(transfer);
-
-  useEffect(() => {
-    if (transferId && rawTx) {
-      bridgeTransferHistoryActions.updateSourceTransaction(transferId, { rawTx });
-    }
-  }, [transferId, rawTx]);
-
-  useEffect(() => {
-    if (transferId && events) {
-      bridgeTransferHistoryActions.updateTransferEvents(transferId, events);
-    }
-  }, [transferId, events]);
-
-  useEffect(() => {
-    if (transfer) {
-      if (transfer.status === BridgeTransferStatus.CALL_EXECUTED) {
-        bridgeTransferActions.success(transfer);
-      }
-      if (transfer.status === BridgeTransferStatus.TRANSFER_FAILED) {
-        bridgeTransferActions.fail(transfer);
-      }
-    }
-  }, [transfer, transfer?.status]);
-
-  return null;
 };

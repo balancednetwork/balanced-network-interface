@@ -61,14 +61,17 @@ export const xSupplyActions = {
         events: {},
         destinationChainInitialBlockHeight: blockHeight,
         childTransferNeeded: false,
-        onSuccess,
+        onSuccess: async transfer => {
+          onSuccess();
+          xSupplyActions.success(transfer);
+        },
+        onFail: async transfer => {
+          xSupplyActions.fail(transfer);
+        },
       };
 
       bridgeTransferHistoryActions.add(transfer);
       useXSupplyStore.setState({ transferId: transfer.id });
-
-      // TODO: is it right place to start scanner?
-      xCallEventActions.startScanner(destinationChainId, blockHeight);
     }
   },
 
@@ -79,12 +82,7 @@ export const xSupplyActions = {
   },
 
   success: transfer => {
-    xCallEventActions.stopScanner(transfer.destinationChainId);
-
-    transfer.onSuccess?.();
-
     modalActions.closeModal(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL);
-
     xSupplyActions.reset();
 
     // TODO: show success message
@@ -92,48 +90,9 @@ export const xSupplyActions = {
   },
 
   fail: transfer => {
-    xCallEventActions.stopScanner(transfer.destinationChainId);
-
     xSupplyActions.reset();
 
     // TODO: show error message
     console.log('bridge transfer fail');
   },
-};
-
-export const XSupplyStatusUpdater = () => {
-  useBridgeTransferHistoryStore();
-  const { transferId } = useXSupplyStore();
-  const transfer = bridgeTransferHistoryActions.get(transferId);
-
-  useXCallEventScanner(transfer?.sourceChainId);
-  useXCallEventScanner(transfer?.destinationChainId);
-
-  const { rawTx } = useFetchTransaction(transfer?.sourceTransaction);
-  const { events } = useFetchBridgeTransferEvents(transfer);
-
-  useEffect(() => {
-    if (transferId && rawTx) {
-      bridgeTransferHistoryActions.updateSourceTransaction(transferId, { rawTx });
-    }
-  }, [transferId, rawTx]);
-
-  useEffect(() => {
-    if (transferId && events) {
-      bridgeTransferHistoryActions.updateTransferEvents(transferId, events);
-    }
-  }, [transferId, events]);
-
-  useEffect(() => {
-    if (transfer) {
-      if (transfer.status === BridgeTransferStatus.CALL_EXECUTED) {
-        xSupplyActions.success(transfer);
-      }
-      if (transfer.status === BridgeTransferStatus.TRANSFER_FAILED) {
-        xSupplyActions.fail(transfer);
-      }
-    }
-  }, [transfer, transfer?.status]);
-
-  return null;
 };

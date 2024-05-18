@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { Trans, t } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
@@ -19,16 +19,17 @@ import { useModalStore, modalActions, MODAL_ID } from '../_zustand/useModalStore
 import BridgeTransferState from './BridgeTransferState';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
 import { useBridgeInfo } from 'store/bridge/hooks';
-import {
-  bridgeTransferActions,
-  useBridgeTransferStore,
-  BridgeTransferStatusUpdater,
-} from '../_zustand/useBridgeTransferStore';
+import { bridgeTransferActions, useBridgeTransferStore } from '../_zustand/useBridgeTransferStore';
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks/useApproveCallback';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import useXCallFee from '../_hooks/useXCallFee';
 import useXCallGasChecker from '../_hooks/useXCallGasChecker';
 import { BridgeTransferType, XSwapInfo } from '../_zustand/types';
+import {
+  BridgeTransferStatusUpdater,
+  bridgeTransferHistoryActions,
+  useBridgeTransferHistoryStore,
+} from '../_zustand/useBridgeTransferHistoryStore';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;
@@ -41,8 +42,10 @@ const StyledXCallButton = styled(XCallButton)`
 `;
 
 export function BridgeTransferConfirmModal() {
-  const { modals } = useModalStore();
+  useModalStore();
+  useBridgeTransferHistoryStore();
   const { transferId } = useBridgeTransferStore();
+
   const isProcessing = transferId !== null;
 
   const { recipient, isLiquidFinanceEnabled, currencyAmountToBridge, account, isDenom, bridgeDirection } =
@@ -85,7 +88,7 @@ export function BridgeTransferConfirmModal() {
 
   return (
     <>
-      <BridgeTransferStatusUpdater />
+      <BridgeTransferStatusUpdater transfer={bridgeTransferHistoryActions.get(transferId)} />
       <Modal isOpen={modalActions.isModalOpen(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL)} onDismiss={handleDismiss}>
         <ModalContentWrapper>
           <Typography textAlign="center" mb="5px">

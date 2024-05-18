@@ -21,13 +21,18 @@ import Spinner from 'app/components/Spinner';
 import ModalContent from 'app/components/ModalContent';
 import useXCallFee from 'app/pages/trade/bridge/_hooks/useXCallFee';
 import useXCallGasChecker from 'app/pages/trade/bridge/_hooks/useXCallGasChecker';
-import { XCallSwapStatusUpdater, useXCallSwapStore, xCallSwapActions } from '../_zustand/useXCallSwapStore';
+import { useXCallSwapStore, xCallSwapActions } from '../_zustand/useXCallSwapStore';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks/useApproveCallback';
 import XCallSwapState from './XCallSwapState';
 import { xChainMap } from '../../bridge/_config/xChains';
 import { useModalStore, modalActions, MODAL_ID } from '../../bridge/_zustand/useModalStore';
 import { BridgeTransferType, XSwapInfo } from '../../bridge/_zustand/types';
+import {
+  BridgeTransferStatusUpdater,
+  bridgeTransferHistoryActions,
+  useBridgeTransferHistoryStore,
+} from '../../bridge/_zustand/useBridgeTransferHistoryStore';
 
 type XCallSwapModalProps = {
   account: string | undefined;
@@ -103,6 +108,7 @@ const XCallSwapModal = ({
   clearInputs,
 }: XCallSwapModalProps) => {
   useModalStore();
+  useBridgeTransferHistoryStore();
   const { transferId, childTransferId } = useXCallSwapStore();
   const isProcessing: boolean = transferId !== null || childTransferId !== null;
 
@@ -162,7 +168,8 @@ const XCallSwapModal = ({
 
   return (
     <>
-      <XCallSwapStatusUpdater />
+      <BridgeTransferStatusUpdater transfer={bridgeTransferHistoryActions.get(transferId)} />
+      <BridgeTransferStatusUpdater transfer={bridgeTransferHistoryActions.get(childTransferId)} />
       <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XCALL_SWAP_MODAL)} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing}>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">

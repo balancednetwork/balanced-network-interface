@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
@@ -8,10 +8,7 @@ import { Typography } from 'app/theme';
 import ArrowIcon from 'assets/icons/arrow-white.svg';
 
 import Spinner from 'app/components/Spinner';
-import { useXCallEventScanner, xCallEventActions } from '../_zustand/useXCallEventStore';
-import { useFetchTransaction } from '../_zustand/useTransactionStore';
-import { bridgeTransferHistoryActions, useFetchBridgeTransferEvents } from '../_zustand/useBridgeTransferHistoryStore';
-import { useCreateXCallService } from '../_zustand/useXCallServiceStore';
+import { BridgeTransferStatusUpdater } from '../_zustand/useBridgeTransferHistoryStore';
 import { BridgeTransfer, BridgeTransferStatus, BridgeTransferType } from '../_zustand/types';
 
 const Wrap = styled(Box)`
@@ -72,38 +69,7 @@ const FailedX = styled(Box)`
 `;
 
 const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) => {
-  const { sourceChainId, destinationChainId, destinationChainInitialBlockHeight } = transfer;
-  useXCallEventScanner(sourceChainId);
-  useXCallEventScanner(destinationChainId);
-
-  useCreateXCallService(sourceChainId);
-  useCreateXCallService(destinationChainId);
-
-  const { rawTx } = useFetchTransaction(transfer?.sourceTransaction);
-  const { events } = useFetchBridgeTransferEvents(transfer);
-
-  const { id } = transfer;
-
-  useEffect(() => {
-    if (rawTx) {
-      bridgeTransferHistoryActions.updateSourceTransaction(id, { rawTx });
-    }
-  }, [rawTx, id]);
-
-  useEffect(() => {
-    if (events) {
-      bridgeTransferHistoryActions.updateTransferEvents(id, events);
-    }
-  }, [events, id]);
-
-  useEffect(() => {
-    if (
-      transfer.status !== BridgeTransferStatus.CALL_EXECUTED &&
-      !xCallEventActions.isScannerEnabled(destinationChainId)
-    ) {
-      xCallEventActions.startScanner(destinationChainId, BigInt(destinationChainInitialBlockHeight));
-    }
-  }, [transfer, destinationChainId, destinationChainInitialBlockHeight]);
+  const { sourceChainId, destinationChainId } = transfer;
 
   const statusMessage = useMemo(() => {
     if (!transfer) {
@@ -153,22 +119,24 @@ const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) =
   }, [transfer]);
 
   return (
-    <Wrap>
-      <Flex alignItems="center">
-        {getNetworkDisplayName(sourceChainId)}
-        <ArrowIcon width="13px" style={{ margin: '0 7px' }} />
-        {getNetworkDisplayName(destinationChainId)}
-      </Flex>
-      <Flex justifyContent="center" flexDirection="column">
-        <Typography fontWeight={700} color="text">
-          {descriptionAction}
-        </Typography>
-        <Typography opacity={0.75} fontSize={14}>
-          {descriptionAmount}
-        </Typography>
-      </Flex>
-      <Flex justifyContent="center" flexDirection="column" alignItems="flex-end" className="status-check">
-        {/* <>
+    <>
+      <BridgeTransferStatusUpdater transfer={transfer} />
+      <Wrap>
+        <Flex alignItems="center">
+          {getNetworkDisplayName(sourceChainId)}
+          <ArrowIcon width="13px" style={{ margin: '0 7px' }} />
+          {getNetworkDisplayName(destinationChainId)}
+        </Flex>
+        <Flex justifyContent="center" flexDirection="column">
+          <Typography fontWeight={700} color="text">
+            {descriptionAction}
+          </Typography>
+          <Typography opacity={0.75} fontSize={14}>
+            {descriptionAmount}
+          </Typography>
+        </Flex>
+        <Flex justifyContent="center" flexDirection="column" alignItems="flex-end" className="status-check">
+          {/* <>
           <Flex alignItems="center">
             <Spinner size={15} />
             <Status style={{ transform: 'translateY(1px)' }}>pending</Status>
@@ -178,13 +146,14 @@ const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) =
           </Typography>
         </> */}
 
-        <Flex alignItems="center">
-          {transfer.status !== BridgeTransferStatus.TRANSFER_FAILED &&
-            transfer.status !== BridgeTransferStatus.CALL_EXECUTED && <Spinner size={15} />}
-          <Status style={{ transform: 'translateY(1px)' }}>{statusMessage}</Status>
+          <Flex alignItems="center">
+            {transfer.status !== BridgeTransferStatus.TRANSFER_FAILED &&
+              transfer.status !== BridgeTransferStatus.CALL_EXECUTED && <Spinner size={15} />}
+            <Status style={{ transform: 'translateY(1px)' }}>{statusMessage}</Status>
+          </Flex>
         </Flex>
-      </Flex>
-    </Wrap>
+      </Wrap>
+    </>
   );
 };
 

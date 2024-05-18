@@ -122,5 +122,6 @@ export type BridgeTransfer = {
   childTransferNeeded: boolean;
   childTransferId?: string;
   parentTransferId?: string;
-  onSuccess?: () => void;
+  onSuccess: (transfer: BridgeTransfer) => Promise<void>;
+  onFail: (transfer: BridgeTransfer) => Promise<void>;
 };

@@ -32,7 +32,12 @@ import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import useXCallFee from '../../bridge/_hooks/useXCallFee';
 import BridgeTransferState from '../../bridge/_components/BridgeTransferState';
-import { XSupplyStatusUpdater, useXSupplyStore, xSupplyActions } from '../_zustand/useXSupplyStore';
+import { useXSupplyStore, xSupplyActions } from '../_zustand/useXSupplyStore';
+import {
+  BridgeTransferStatusUpdater,
+  bridgeTransferHistoryActions,
+  useBridgeTransferHistoryStore,
+} from '../../bridge/_zustand/useBridgeTransferHistoryStore';
 
 interface ModalProps {
   isOpen: boolean;
@@ -56,6 +61,8 @@ export default function SupplyLiquidityModal({
   AChain,
   BChain,
 }: ModalProps) {
+  useBridgeTransferHistoryStore();
+
   const { account } = useIconReact();
   const { address: accountArch } = useArchwayContext();
   const { transferId } = useXSupplyStore();
@@ -323,7 +330,7 @@ export default function SupplyLiquidityModal({
 
   return (
     <>
-      <XSupplyStatusUpdater />
+      <BridgeTransferStatusUpdater transfer={bridgeTransferHistoryActions.get(transferId)} />
       <Modal isOpen={isOpen} onDismiss={() => undefined}>
         <ModalContent>
           <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">

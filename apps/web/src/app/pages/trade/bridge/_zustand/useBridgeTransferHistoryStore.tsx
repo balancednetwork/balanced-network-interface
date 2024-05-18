@@ -7,8 +7,10 @@ import { CurrencyAmount } from '@balancednetwork/sdk-core';
 
 import { XCallEventType } from '../types';
 import { BridgeTransfer, BridgeTransferStatus, Transaction, TransactionStatus, XCallEventMap } from './types';
-import { xCallServiceActions } from './useXCallServiceStore';
-import { xCallEventActions } from './useXCallEventStore';
+import { useCreateXCallService, xCallServiceActions } from './useXCallServiceStore';
+import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
+import { useFetchTransaction } from './useTransactionStore';
+import { useEffect } from 'react';
 
 // TODO: review logic
 export const deriveStatus = (
@@ -139,6 +141,8 @@ export const useBridgeTransferHistoryStore = create<BridgeTransferHistoryStore>(
 
         let destinationTransaction: Transaction | undefined = undefined;
 
+        const oldStatus = transfer.status;
+
         const newEvents = {
           ...transfer.events,
           ...events,
@@ -159,14 +163,26 @@ export const useBridgeTransferHistoryStore = create<BridgeTransferHistoryStore>(
         }
         const newStatus = deriveStatus(transfer.sourceTransaction, newEvents, destinationTransaction);
 
+        const newTransfer = {
+          ...transfer,
+          events: newEvents,
+          status: newStatus,
+          destinationTransaction,
+        };
+
         set(state => {
-          state.transfers[id] = {
-            ...transfer,
-            events: newEvents,
-            status: newStatus,
-            destinationTransaction,
-          };
+          state.transfers[id] = newTransfer;
         });
+
+        if (newStatus !== oldStatus) {
+          if (newStatus === BridgeTransferStatus.CALL_EXECUTED) {
+            xCallEventActions.stopScanner(newTransfer.destinationChainId);
+            await transfer.onSuccess(newTransfer);
+          } else if (newStatus === BridgeTransferStatus.TRANSFER_FAILED) {
+            xCallEventActions.stopScanner(newTransfer.destinationChainId);
+            await transfer.onFail(newTransfer);
+          }
+        }
       },
       remove: (id: string) => {
         set(state => {
@@ -243,4 +259,39 @@ export const useFetchBridgeTransferEvents = (transfer?: BridgeTransfer) => {
     events,
     isLoading,
   };
+};
+
+export const BridgeTransferStatusUpdater = ({ transfer }) => {
+  const { id, sourceChainId, destinationChainId, destinationChainInitialBlockHeight, status } = transfer || {};
+
+  useCreateXCallService(sourceChainId);
+  useCreateXCallService(destinationChainId);
+
+  useXCallEventScanner(sourceChainId);
+  useXCallEventScanner(destinationChainId);
+
+  const { rawTx } = useFetchTransaction(transfer?.sourceTransaction);
+  const { events } = useFetchBridgeTransferEvents(transfer);
+
+  useEffect(() => {
+    if (id && rawTx) {
+      bridgeTransferHistoryActions.updateSourceTransaction(id, { rawTx });
+    }
+  }, [id, rawTx]);
+
+  useEffect(() => {
+    if (id && events) {
+      bridgeTransferHistoryActions.updateTransferEvents(id, events);
+    }
+  }, [id, events]);
+
+  useEffect(() => {
+    if (id) {
+      if (status !== BridgeTransferStatus.CALL_EXECUTED && !xCallEventActions.isScannerEnabled(destinationChainId)) {
+        xCallEventActions.startScanner(destinationChainId, BigInt(destinationChainInitialBlockHeight));
+      }
+    }
+  }, [id, status, destinationChainId, destinationChainInitialBlockHeight]);
+
+  return null;
 };

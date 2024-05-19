@@ -167,7 +167,7 @@ export default function LPDescription() {
                         'percent2',
                       )}`}`
                     : '-'}
-                  {' APY'}
+                  {' APR'}
                   {pair?.poolId === BalancedJs.utils.POOL_IDS.sICXICX && (
                     <QuestionWrapper style={{ marginLeft: '3px' }}>
                       <QuestionHelper

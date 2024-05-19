@@ -359,7 +359,7 @@ export default function AllPoolsPanel() {
                 </QuestionWrapper>
               </MouseoverTooltip>
             </TooltipWrapper>
-            <Trans>APY</Trans>
+            <Trans>APR</Trans>
           </HeaderText>
           <HeaderText
             role="button"

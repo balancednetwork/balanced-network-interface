@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { Currency } from '@balancednetwork/sdk-core';
 import ClickAwayListener from 'react-click-away-listener';
@@ -66,13 +66,16 @@ const CrossChainOptions = ({ xChainId, setXChainId, isOpen, setOpen, xChains }: 
     [setXChainId, setOpen],
   );
 
-  React.useEffect(() => {
+  const isCrossChain: boolean = useMemo(() => {
+    return (xChains?.length ?? 0) > 1;
+  }, [xChains]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
     if (arrowRef.current) {
       setAnchor(arrowRef.current);
     }
-  }, []);
-
-  const isCrossChain = (xChains?.length ?? 0) > 1;
+  }, [isCrossChain]);
 
   return (
     <Wrap>

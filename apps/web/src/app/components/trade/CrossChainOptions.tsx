@@ -75,55 +75,49 @@ const CrossChainOptions = ({ xChainId, setXChainId, isOpen, setOpen, xChains }: 
   const isCrossChain = (xChains?.length ?? 0) > 1;
 
   return (
-    <>
+    <Wrap>
       {isCrossChain ? (
-        <Wrap>
-          <Flex>
-            <Typography mr={1} lineHeight="1.7">
-              On
-            </Typography>
-            <ClickAwayListener onClickAway={closeDropdown}>
-              <div>
-                <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }}>
-                  <UnderlineText style={{ paddingRight: '1px', fontSize: '14px' }}>
-                    {xChainMap[xChainId].name}
-                  </UnderlineText>
-                  <div ref={arrowRef} style={{ display: 'inline-block' }}>
-                    <StyledArrowDownIcon style={{ transform: 'translate3d(-1px, 1px, 0)' }} />
-                  </div>
-                </SelectorWrap>
+        <Flex>
+          <Typography mr={1} lineHeight="1.7">
+            On
+          </Typography>
+          <ClickAwayListener onClickAway={closeDropdown}>
+            <div>
+              <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }}>
+                <UnderlineText style={{ paddingRight: '1px', fontSize: '14px' }}>
+                  {xChainMap[xChainId].name}
+                </UnderlineText>
+                <div ref={arrowRef} style={{ display: 'inline-block' }}>
+                  <StyledArrowDownIcon style={{ transform: 'translate3d(-1px, 1px, 0)' }} />
+                </div>
+              </SelectorWrap>
 
-                <DropdownPopper
-                  show={isOpen}
-                  anchorEl={anchor}
-                  arrowEl={arrowRef.current}
-                  placement="bottom"
-                  offset={[0, 8]}
-                >
-                  <ChainList setChainId={setChainWrap} chainId={xChainId} chains={xChains} />
-                </DropdownPopper>
-              </div>
-            </ClickAwayListener>
-          </Flex>
-
-          <CrossChainWalletConnect chainId={xChainId} />
-        </Wrap>
+              <DropdownPopper
+                show={isOpen}
+                anchorEl={anchor}
+                arrowEl={arrowRef.current}
+                placement="bottom"
+                offset={[0, 8]}
+              >
+                <ChainList setChainId={setChainWrap} chainId={xChainId} chains={xChains} />
+              </DropdownPopper>
+            </div>
+          </ClickAwayListener>
+        </Flex>
       ) : (
-        <Wrap>
-          <Flex>
-            <Typography mr={1} lineHeight="1.7">
-              On
-            </Typography>
-            <Typography mr={1} lineHeight="1.7" color={theme.colors.primaryBright}>
-              {xChainMap[xChainId].name}
-            </Typography>
-            <Typography lineHeight="1.7">Only</Typography>
-          </Flex>
-
-          <CrossChainWalletConnect chainId={xChainId} />
-        </Wrap>
+        <Flex>
+          <Typography mr={1} lineHeight="1.7">
+            On
+          </Typography>
+          <Typography mr={1} lineHeight="1.7" color={theme.colors.primaryBright}>
+            {xChainMap[xChainId].name}
+          </Typography>
+          <Typography lineHeight="1.7">Only</Typography>
+        </Flex>
       )}
-    </>
+
+      <CrossChainWalletConnect chainId={xChainId} />
+    </Wrap>
   );
 };
 

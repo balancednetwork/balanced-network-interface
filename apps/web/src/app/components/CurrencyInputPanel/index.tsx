@@ -106,6 +106,7 @@ interface CurrencyInputPanelProps {
   // cross chain stuff
   xChainId?: XChainId;
   onChainSelect?: (_chainId: XChainId) => void;
+  showCrossChainOptions?: boolean;
 }
 
 export const inputRegex = /^\d*(?:\\[.])?\d*$/; // match escaped "." characters via in a non-capturing group
@@ -127,6 +128,7 @@ export default function CurrencyInputPanel({
   // cross chain stuff
   xChainId = '0x1.icon',
   onChainSelect,
+  showCrossChainOptions = false,
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
@@ -158,7 +160,7 @@ export default function CurrencyInputPanel({
       <InputContainer ref={ref} className={className}>
         <ClickAwayListener onClickAway={() => setOpen(false)}>
           <div>
-            <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect} active={!!onChainSelect}>
+            <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect} active={!!showCrossChainOptions}>
               {currency ? (
                 <>
                   <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
@@ -209,7 +211,7 @@ export default function CurrencyInputPanel({
           spellCheck="false"
           //style
           bg={bg}
-          active={(onPercentSelect && isActive) || !!onChainSelect}
+          active={(onPercentSelect && isActive) || !!showCrossChainOptions}
         />
 
         {onPercentSelect && (
@@ -227,10 +229,10 @@ export default function CurrencyInputPanel({
         )}
       </InputContainer>
 
-      {onChainSelect && (
+      {showCrossChainOptions && (
         <CrossChainOptions
           xChainId={xChainId}
-          setXChainId={onChainSelect}
+          setXChainId={onChainSelect || (() => {})}
           isOpen={open1}
           setOpen={setOpen1}
           xChains={xChains}

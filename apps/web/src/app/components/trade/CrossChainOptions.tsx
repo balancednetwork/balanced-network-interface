@@ -3,7 +3,7 @@ import React from 'react';
 import { Currency } from '@balancednetwork/sdk-core';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import { XChain, XChainId } from 'app/pages/trade/bridge/types';
 import { Typography } from 'app/theme';
@@ -38,6 +38,8 @@ export const SelectorWrap = styled.div`
 `;
 
 const CrossChainOptions = ({ xChainId, setXChainId, isOpen, setOpen, xChains }: CrossChainOptionsProps) => {
+  const theme = useTheme();
+
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
   const arrowRef = React.useRef(null);
@@ -70,38 +72,58 @@ const CrossChainOptions = ({ xChainId, setXChainId, isOpen, setOpen, xChains }: 
     }
   }, []);
 
+  const isCrossChain = (xChains?.length ?? 0) > 1;
+
   return (
-    <Wrap>
-      <Flex>
-        <Typography mr={1} lineHeight="1.7">
-          On
-        </Typography>
-        <ClickAwayListener onClickAway={closeDropdown}>
-          <div>
-            <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }}>
-              <UnderlineText style={{ paddingRight: '1px', fontSize: '14px' }}>
-                {xChainMap[xChainId].name}
-              </UnderlineText>
-              <div ref={arrowRef} style={{ display: 'inline-block' }}>
-                <StyledArrowDownIcon style={{ transform: 'translate3d(-1px, 1px, 0)' }} />
+    <>
+      {isCrossChain ? (
+        <Wrap>
+          <Flex>
+            <Typography mr={1} lineHeight="1.7">
+              On
+            </Typography>
+            <ClickAwayListener onClickAway={closeDropdown}>
+              <div>
+                <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }}>
+                  <UnderlineText style={{ paddingRight: '1px', fontSize: '14px' }}>
+                    {xChainMap[xChainId].name}
+                  </UnderlineText>
+                  <div ref={arrowRef} style={{ display: 'inline-block' }}>
+                    <StyledArrowDownIcon style={{ transform: 'translate3d(-1px, 1px, 0)' }} />
+                  </div>
+                </SelectorWrap>
+
+                <DropdownPopper
+                  show={isOpen}
+                  anchorEl={anchor}
+                  arrowEl={arrowRef.current}
+                  placement="bottom"
+                  offset={[0, 8]}
+                >
+                  <ChainList setChainId={setChainWrap} chainId={xChainId} chains={xChains} />
+                </DropdownPopper>
               </div>
-            </SelectorWrap>
+            </ClickAwayListener>
+          </Flex>
 
-            <DropdownPopper
-              show={isOpen}
-              anchorEl={anchor}
-              arrowEl={arrowRef.current}
-              placement="bottom"
-              offset={[0, 8]}
-            >
-              <ChainList setChainId={setChainWrap} chainId={xChainId} chains={xChains} />
-            </DropdownPopper>
-          </div>
-        </ClickAwayListener>
-      </Flex>
+          <CrossChainWalletConnect chainId={xChainId} />
+        </Wrap>
+      ) : (
+        <Wrap>
+          <Flex>
+            <Typography mr={1} lineHeight="1.7">
+              On
+            </Typography>
+            <Typography mr={1} lineHeight="1.7" color={theme.colors.primaryBright}>
+              {xChainMap[xChainId].name}
+            </Typography>
+            <Typography lineHeight="1.7">Only</Typography>
+          </Flex>
 
-      <CrossChainWalletConnect chainId={xChainId} />
-    </Wrap>
+          <CrossChainWalletConnect chainId={xChainId} />
+        </Wrap>
+      )}
+    </>
   );
 };
 

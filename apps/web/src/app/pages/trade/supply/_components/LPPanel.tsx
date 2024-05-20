@@ -294,6 +294,7 @@ export default function LPPanel() {
                   onPercentSelect={handlePercentSelect(Field.CURRENCY_A)}
                   xChainId={crossChainCurrencyA}
                   onChainSelect={isCurrencyACrosschainCompatible ? setCrossChainCurrencyA : undefined}
+                  showCrossChainOptions={true}
                 />
               </Flex>
             </AutoColumn>

@@ -227,6 +227,7 @@ export default function SwapPanel() {
               onChainSelect={
                 isInputCrosschainCompatible ? xChainId => onChainSelection(Field.INPUT, xChainId) : undefined
               }
+              showCrossChainOptions={true}
             />
           </Flex>
 
@@ -260,6 +261,7 @@ export default function SwapPanel() {
               onChainSelect={
                 isOutputCrosschainCompatible ? xChainId => onChainSelection(Field.OUTPUT, xChainId) : undefined
               }
+              showCrossChainOptions={true}
             />
           </Flex>
         </AutoColumn>

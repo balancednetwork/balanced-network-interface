@@ -38,8 +38,6 @@ export const SelectorWrap = styled.div`
 `;
 
 const CrossChainOptions = ({ xChainId, setXChainId, isOpen, setOpen, xChains }: CrossChainOptionsProps) => {
-  const theme = useTheme();
-
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
   const arrowRef = React.useRef(null);
@@ -110,12 +108,8 @@ const CrossChainOptions = ({ xChainId, setXChainId, isOpen, setOpen, xChains }: 
       ) : (
         <Flex>
           <Typography mr={1} lineHeight="1.7">
-            On
+            On {xChainMap[xChainId].name}
           </Typography>
-          <Typography mr={1} lineHeight="1.7" color={theme.colors.primaryBright}>
-            {xChainMap[xChainId].name}
-          </Typography>
-          <Typography lineHeight="1.7">Only</Typography>
         </Flex>
       )}
 

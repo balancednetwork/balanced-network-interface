@@ -18,6 +18,7 @@ import CrossChainOptions from '../trade/CrossChainOptions';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import { Box } from 'rebass/styled-components';
 import { getAvailableXChains } from 'app/pages/trade/bridge/utils';
+import { DEFAULT_TOKEN_CHAIN } from 'app/pages/trade/bridge/_config/xTokens';
 
 const InputContainer = styled.div`
   display: inline-flex;
@@ -152,8 +153,22 @@ export default function CurrencyInputPanel({
     setOpen(false);
   }, []);
 
-  const [open1, setOpen1] = React.useState(false);
+  const [xChainOptionsOpen, setXChainOptionsOpen] = React.useState(false);
   const xChains = useMemo(() => getAvailableXChains(currency), [currency]);
+
+  const onCurrencySelectWithXChain = useCallback(
+    (currency: Currency) => {
+      onCurrencySelect && onCurrencySelect(currency);
+
+      const xChains = getAvailableXChains(currency);
+      const defaultXChainId = DEFAULT_TOKEN_CHAIN[currency.symbol];
+      if (defaultXChainId && (xChains?.length ?? 0) > 1) {
+        onChainSelect && onChainSelect(defaultXChainId);
+        setTimeout(() => setXChainOptionsOpen(true), 100);
+      }
+    },
+    [onCurrencySelect, onChainSelect],
+  );
 
   return (
     <Box>
@@ -177,7 +192,7 @@ export default function CurrencyInputPanel({
                 account={account}
                 isOpen={open}
                 onDismiss={handleDismiss}
-                onCurrencySelect={onCurrencySelect}
+                onCurrencySelect={onCurrencySelectWithXChain}
                 currencySelectionType={currencySelectionType}
                 showCurrencyAmount={false}
                 anchorEl={ref.current}
@@ -233,8 +248,8 @@ export default function CurrencyInputPanel({
         <CrossChainOptions
           xChainId={xChainId}
           setXChainId={onChainSelect || (() => {})}
-          isOpen={open1}
-          setOpen={setOpen1}
+          isOpen={xChainOptionsOpen}
+          setOpen={setXChainOptionsOpen}
           xChains={xChains}
         />
       )}

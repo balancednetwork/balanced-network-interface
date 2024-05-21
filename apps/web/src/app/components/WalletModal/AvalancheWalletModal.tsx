@@ -38,7 +38,7 @@ export const AvalancheWalletModal = () => {
             Connect with:
           </Typography>
           <Flex alignItems="stretch" justifyContent="space-around" flexWrap="wrap">
-            {connectors?.toReversed()?.map(connector => (
+            {connectors?.toReversed?.()?.map(connector => (
               <WalletOption key={connector.id} onClick={() => handleConnect(connector)}>
                 <img width={50} height={50} src={connector.icon ?? icons[connector.id]} />
                 <UnbreakableText>{connector.name}</UnbreakableText>

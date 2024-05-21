@@ -175,7 +175,7 @@ export default function CurrencyInputPanel({
   );
 
   return (
-    <Box>
+    <Box width={1}>
       <InputContainer ref={ref} className={className}>
         <ClickAwayListener onClickAway={() => setOpen(false)}>
           <div>

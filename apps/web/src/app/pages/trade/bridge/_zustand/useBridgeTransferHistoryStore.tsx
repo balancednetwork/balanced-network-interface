@@ -55,7 +55,7 @@ export const deriveStatus = (
   return BridgeTransferStatus.TRANSFER_FAILED;
 };
 
-const storage = createJSONStorage(() => sessionStorage, {
+const storage = createJSONStorage(() => localStorage, {
   reviver: (key, value: any) => {
     if (typeof value === 'string' && value.startsWith('BIGINT::')) {
       return BigInt(value.substring(8));

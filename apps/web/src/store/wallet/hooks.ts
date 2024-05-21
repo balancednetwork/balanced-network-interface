@@ -16,7 +16,7 @@ import { useARCH } from 'app/pages/trade/bridge/_config/tokens';
 import { isDenomAsset } from 'app/_xcall/archway/utils';
 import { SUPPORTED_XCALL_CHAINS } from 'app/pages/trade/bridge/_config/xTokens';
 import { XChain, XChainId } from 'app/pages/trade/bridge/types';
-import { getCrossChainTokenAddress } from 'app/pages/trade/bridge/utils';
+import { getCrossChainTokenAddress, isXToken } from 'app/pages/trade/bridge/utils';
 import bnJs from 'bnJs';
 import { MINIMUM_ICX_FOR_TX, NATIVE_ADDRESS } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
@@ -332,25 +332,26 @@ export function useCrossChainCurrencyBalances(
   }, [crossChainBalances, account, currencies, icxBalance]);
 }
 
-export const useCurrencyBalanceCrossChains = (currency: Currency): BigNumber => {
-  const crossChainBalances = useCrossChainWalletBalances();
+export const useXCurrencyBalance = (currency: Currency): BigNumber | undefined => {
+  const xBalances = useCrossChainWalletBalances();
 
   return React.useMemo(() => {
-    if (crossChainBalances) {
-      return SUPPORTED_XCALL_CHAINS.reduce((balances, chain) => {
-        if (crossChainBalances[chain]) {
-          const tokenAddress = getCrossChainTokenAddress(chain, currency.wrapped.symbol);
-          if (tokenAddress) {
-            const balance = new BigNumber(crossChainBalances[chain]?.[tokenAddress]?.toFixed() || 0);
-            balances = balances.plus(balance);
-          }
+    if (!xBalances) return;
+
+    if (isXToken(currency)) {
+      return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
+        if (xBalances[xChainId]) {
+          const tokenAddress = getCrossChainTokenAddress(xChainId, currency.wrapped.symbol);
+          console.log('hello', currency.symbol, currency.wrapped.address, tokenAddress);
+          const balance = new BigNumber(xBalances[xChainId]?.[tokenAddress ?? -1]?.toFixed() || 0);
+          sum = sum.plus(balance);
         }
-        return balances;
+        return sum;
       }, new BigNumber(0));
     } else {
-      return new BigNumber(0);
+      return new BigNumber(xBalances['0x1.icon']?.[currency.wrapped.address]?.toFixed() || 0);
     }
-  }, [crossChainBalances, currency]);
+  }, [xBalances, currency]);
 };
 
 export function useCurrencyBalances(

@@ -16,7 +16,7 @@ import useArrowControl from 'hooks/useArrowControl';
 import useKeyPress from 'hooks/useKeyPress';
 import { useRatesWithOracle } from 'queries/reward';
 import { useIsUserAddedToken } from 'store/user/hooks';
-import { useCurrencyBalanceCrossChains, useSignedInWallets } from 'store/wallet/hooks';
+import { useXCurrencyBalance, useSignedInWallets } from 'store/wallet/hooks';
 import { toFraction } from 'utils';
 
 function currencyKey(currency: Currency): string {
@@ -57,7 +57,7 @@ function CurrencyRow({
   rateFracs: { [key in string]: Fraction } | undefined;
 }) {
   // const balance = useCurrencyBalance(account ?? undefined, currency);
-  const balance = useCurrencyBalanceCrossChains(currency);
+  const balance = useXCurrencyBalance(currency);
   const signedInWallets = useSignedInWallets();
 
   const isUserAddedToken = useIsUserAddedToken(currency as Token);
@@ -91,9 +91,7 @@ function CurrencyRow({
         </Flex>
         <Flex justifyContent="flex-end" alignItems="center">
           <DataText variant="p" textAlign="right">
-            {balance && balance.isGreaterThan(0)
-              ? balance.toFormat(HIGH_PRICE_ASSET_DP[currency.wrapped.address] || 2)
-              : 0}
+            {balance?.isGreaterThan(0) ? balance.toFormat(HIGH_PRICE_ASSET_DP[currency.wrapped.address] || 2) : 0}
 
             {balance?.isGreaterThan(0) && rateFracs && rateFracs[currency.symbol!] && (
               <Typography variant="span" fontSize={14} color="text2" display="block">

@@ -15,7 +15,7 @@ import ModalContent from '../ModalContent';
 import { ExternalLink } from '../SearchModal/components';
 
 const COMMUNITY_TOKEN_LIST_URL =
-  'https://github.com/balancednetwork/balanced-network-interface/blob/master/src/store/lists/communitylist.json';
+  'https://github.com/balancednetwork/balanced-network-interface/blob/master/apps/web/src/store/lists/communitylist.json';
 
 export default function CommunityListToggle({
   onMessage = t`Add community token list`,

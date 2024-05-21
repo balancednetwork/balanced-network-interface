@@ -5,7 +5,7 @@ import { NETWORK_ID } from 'constants/config';
 import { XChainId, XToken } from '../types';
 
 export const SUPPORTED_XCALL_CHAINS_BY_ICON_NETWORK: { [key in SupportedChainId]: XChainId[] } = {
-  [SupportedChainId.MAINNET]: ['archway-1', '0x1.icon'],
+  [SupportedChainId.MAINNET]: ['archway-1', '0x1.icon', '0xa86a.avax'],
   [SupportedChainId.BERLIN]: ['archway-1', '0x1.icon'],
   [SupportedChainId.LISBON]: ['archway-1', '0x1.icon'],
   [SupportedChainId.SEJONG]: [],

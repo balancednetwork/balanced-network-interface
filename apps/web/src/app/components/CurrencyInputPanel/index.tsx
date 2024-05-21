@@ -154,20 +154,24 @@ export default function CurrencyInputPanel({
   }, []);
 
   const [xChainOptionsOpen, setXChainOptionsOpen] = React.useState(false);
-  const xChains = useMemo(() => getAvailableXChains(currency), [currency]);
+  const xChains = useMemo(
+    () => (currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ? [] : getAvailableXChains(currency)),
+    [currency, currencySelectionType],
+  );
 
   const onCurrencySelectWithXChain = useCallback(
     (currency: Currency) => {
       onCurrencySelect && onCurrencySelect(currency);
 
-      const xChains = getAvailableXChains(currency);
+      const xChains =
+        currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ? [] : getAvailableXChains(currency);
       const defaultXChainId = DEFAULT_TOKEN_CHAIN[currency.symbol];
       if (defaultXChainId && (xChains?.length ?? 0) > 1) {
         onChainSelect && onChainSelect(defaultXChainId);
         setTimeout(() => setXChainOptionsOpen(true), 100);
       }
     },
-    [onCurrencySelect, onChainSelect],
+    [onCurrencySelect, onChainSelect, currencySelectionType],
   );
 
   return (

@@ -292,7 +292,7 @@ export default function LPPanel() {
                   onUserInput={handleTypeAInput}
                   onCurrencySelect={handleCurrencyASelect}
                   onPercentSelect={handlePercentSelect(Field.CURRENCY_A)}
-                  xChainId={crossChainCurrencyA}
+                  xChainId={'0x1.icon'}
                   onChainSelect={isCurrencyACrosschainCompatible ? setCrossChainCurrencyA : undefined}
                   showCrossChainOptions={true}
                 />

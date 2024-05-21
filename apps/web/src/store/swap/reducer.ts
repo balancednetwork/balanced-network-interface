@@ -58,14 +58,13 @@ const swapSlice = createSlice({
     selectCurrency: create.reducer<{ currency: Currency | undefined; field: Field }>(
       (state, { payload: { currency, field } }) => {
         const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
-
-        if (currency === state[otherField].currency) {
+        if (currency?.symbol === state[otherField].currency?.symbol) {
           // the case where we have to swap the order
           return {
             ...state,
             independentField: state.independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
-            [field]: { ...state[field], currency: currency, percent: 0 },
-            [otherField]: { ...state[otherField], currency: state[field].currency, percent: 0 },
+            [field]: state[otherField],
+            [otherField]: state[field],
           };
         } else {
           // the normal case

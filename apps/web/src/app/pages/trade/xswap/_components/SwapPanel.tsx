@@ -153,12 +153,12 @@ export default function SwapPanel() {
 
   const handleSwap = useCallback(() => {
     if (isXSwap) {
-      if (!account) {
+      if (!account || !recipient) {
         toggleWalletModal();
+      } else {
+        setExecutionTrade(trade);
+        modalActions.openModal(MODAL_ID.XCALL_SWAP_MODAL);
       }
-      setExecutionTrade(trade);
-      // setCurrentXCallState(CurrentXCallStateType.AWAKE);
-      modalActions.openModal(MODAL_ID.XCALL_SWAP_MODAL);
     } else {
       if (!account) {
         toggleWalletModal();
@@ -167,7 +167,7 @@ export default function SwapPanel() {
         setExecutionTrade(trade);
       }
     }
-  }, [account, toggleWalletModal, trade, isXSwap]);
+  }, [account, toggleWalletModal, trade, isXSwap, recipient]);
 
   const minimumToReceive = trade?.minimumAmountOut(new Percent(slippageTolerance, 10_000));
   const priceImpact = formatPercent(new BigNumber(trade?.priceImpact.toFixed() || 0));

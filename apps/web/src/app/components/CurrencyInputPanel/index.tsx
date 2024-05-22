@@ -163,12 +163,14 @@ export default function CurrencyInputPanel({
     (currency: Currency) => {
       onCurrencySelect && onCurrencySelect(currency);
 
-      const xChains =
-        currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ? [] : getAvailableXChains(currency);
-      const defaultXChainId = DEFAULT_TOKEN_CHAIN[currency.symbol];
-      if (defaultXChainId && (xChains?.length ?? 0) > 1) {
-        onChainSelect && onChainSelect(defaultXChainId);
-        setTimeout(() => setXChainOptionsOpen(true), 100);
+      if (currency?.symbol) {
+        const xChains =
+          currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ? [] : getAvailableXChains(currency);
+        const defaultXChainId = DEFAULT_TOKEN_CHAIN[currency.symbol];
+        if (defaultXChainId && (xChains?.length ?? 0) > 1) {
+          onChainSelect && onChainSelect(defaultXChainId);
+          setTimeout(() => setXChainOptionsOpen(true), 100);
+        }
       }
     },
     [onCurrencySelect, onChainSelect, currencySelectionType],

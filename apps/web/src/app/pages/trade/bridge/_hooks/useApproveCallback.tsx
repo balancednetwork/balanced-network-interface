@@ -245,7 +245,7 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
       if (hash) {
         transactionActions.add(xChainId, {
           hash: hash,
-          pendingMessage: 'Requesting approve for cross-chain transfer...',
+          pendingMessage: t`Approving ${token.symbol} for cross-chain transfer...`,
           successMessage: t`${token.symbol} approved for cross-chain transfer.`,
           errorMessage: t`${token.symbol} transfer approval failed.`,
           onSuccess: refetch,

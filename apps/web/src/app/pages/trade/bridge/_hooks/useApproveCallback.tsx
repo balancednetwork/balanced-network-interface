@@ -121,7 +121,7 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
       : ApprovalState.APPROVED;
   }, [amountToApprove, currentAllowance, pending, spender]);
 
-  const approve = useCallback(
+  const approveEvm = useCallback(
     async (overrideAmountApprove?: bigint): Promise<WriteContractReturnType | undefined> => {
       if (approvalState !== ApprovalState.NOT_APPROVED && overrideAmountApprove) {
         // toastError(t('Error'), t('Approve was called unnecessarily'));
@@ -219,7 +219,7 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
     [account, approvalState, token, tokenContract, amountToApprove, spender, walletClient, publicClient, refetch],
   );
 
-  const approve1 = useCallback(async () => {
+  const approveArchway = useCallback(async () => {
     if (!token) {
       // toastError(t('Error'), t('No token'));
       console.error('no token');
@@ -263,15 +263,15 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
     if (!xChainType) return;
 
     if (xChainType === 'EVM') {
-      return approve();
+      return approveEvm();
     } else if (xChainType === 'ARCHWAY') {
-      return approve1();
+      return approveArchway();
     } else if (xChainType === 'ICON') return;
-  }, [xChainType, approve, approve1]);
+  }, [xChainType, approveEvm, approveArchway]);
 
   const revokeCallback = useCallback(() => {
-    return approve(0n);
-  }, [approve]);
+    return approveEvm(0n);
+  }, [approveEvm]);
 
   return { approvalState, approveCallback, revokeCallback, currentAllowance, isPendingError };
 };

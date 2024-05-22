@@ -255,7 +255,7 @@ const XCallSwapModal = ({
                 {approvalState !== ApprovalState.APPROVED && !isProcessing && (
                   <>
                     <Button onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
-                      {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve'}
+                      {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
                     </Button>
                   </>
                 )}

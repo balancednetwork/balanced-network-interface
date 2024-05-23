@@ -11,6 +11,7 @@ import bnJs from 'bnJs';
 
 import { xCallContractAbi } from './abis/xCallContractAbi';
 import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
+import { bnUSDContractAbi } from './abis/bnUSDContractAbi';
 
 export class EvmXCallService implements XCallService {
   xChainId: XChainId;
@@ -203,30 +204,42 @@ export class EvmXCallService implements XCallService {
 
       // check if the bridge asset is native
       const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
+      const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
       let request: WriteContractParameters;
-      if (!isNative) {
+      if (isBnUSD) {
         const res = await this.publicClient.simulateContract({
           account: account as Address,
-          address: avalanche.contracts.assetManager as Address,
-          abi: assetManagerContractAbi,
-          functionName: 'deposit',
-          args: [tokenAddress as Address, amount, destination],
+          address: avalanche.contracts.bnUSD as Address,
+          abi: bnUSDContractAbi,
+          functionName: 'crossTransfer',
+          args: [destination, amount, '0x'],
           value: xCallFee.rollback,
         });
         request = res.request;
       } else {
-        const res = await this.publicClient.simulateContract({
-          account: account as Address,
-          address: avalanche.contracts.assetManager as Address,
-          abi: assetManagerContractAbi,
-          functionName: 'depositNative',
-          args: [amount, destination, '0x'],
-          value: xCallFee.rollback + amount,
-        });
-        request = res.request;
+        if (!isNative) {
+          const res = await this.publicClient.simulateContract({
+            account: account as Address,
+            address: avalanche.contracts.assetManager as Address,
+            abi: assetManagerContractAbi,
+            functionName: 'deposit',
+            args: [tokenAddress as Address, amount, destination],
+            value: xCallFee.rollback,
+          });
+          request = res.request;
+        } else {
+          const res = await this.publicClient.simulateContract({
+            account: account as Address,
+            address: avalanche.contracts.assetManager as Address,
+            abi: assetManagerContractAbi,
+            functionName: 'depositNative',
+            args: [amount, destination, '0x'],
+            value: xCallFee.rollback + amount,
+          });
+          request = res.request;
+        }
       }
-
       const hash = await this.walletClient.writeContract(request);
 
       if (hash) {
@@ -262,30 +275,42 @@ export class EvmXCallService implements XCallService {
       );
       // check if the bridge asset is native
       const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
+      const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
       let request: WriteContractParameters;
-      if (!isNative) {
+      if (isBnUSD) {
         const res = await this.publicClient.simulateContract({
           account: account as Address,
-          address: avalanche.contracts.assetManager as Address,
-          abi: assetManagerContractAbi,
-          functionName: 'deposit',
-          args: [tokenAddress as Address, amount, destination, data],
+          address: avalanche.contracts.bnUSD as Address,
+          abi: bnUSDContractAbi,
+          functionName: 'crossTransfer',
+          args: [destination, amount, data],
           value: xCallFee.rollback,
         });
         request = res.request;
       } else {
-        const res = await this.publicClient.simulateContract({
-          account: account as Address,
-          address: avalanche.contracts.assetManager as Address,
-          abi: assetManagerContractAbi,
-          functionName: 'depositNative',
-          args: [amount, destination, data],
-          value: xCallFee.rollback + amount,
-        });
-        request = res.request;
+        if (!isNative) {
+          const res = await this.publicClient.simulateContract({
+            account: account as Address,
+            address: avalanche.contracts.assetManager as Address,
+            abi: assetManagerContractAbi,
+            functionName: 'deposit',
+            args: [tokenAddress as Address, amount, destination, data],
+            value: xCallFee.rollback,
+          });
+          request = res.request;
+        } else {
+          const res = await this.publicClient.simulateContract({
+            account: account as Address,
+            address: avalanche.contracts.assetManager as Address,
+            abi: assetManagerContractAbi,
+            functionName: 'depositNative',
+            args: [amount, destination, data],
+            value: xCallFee.rollback + amount,
+          });
+          request = res.request;
+        }
       }
-
       const hash = await this.walletClient.writeContract(request);
 
       if (hash) {

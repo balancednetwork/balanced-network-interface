@@ -3,7 +3,7 @@ import { getCurrencyDecimalDisplay } from 'app/components/SearchModal/CurrencyLi
 import { SUPPORTED_XCALL_CHAINS } from 'app/pages/trade/bridge/_config/xTokens';
 import { isXToken, getCrossChainTokenAddress } from 'app/pages/trade/bridge/utils';
 import BigNumber from 'bignumber.js';
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
 import { WalletState } from 'store/wallet/reducer';
 
@@ -14,6 +14,7 @@ type SortingType = {
 
 const getXCurrencyBalance = (xBalances: WalletState, currency: Currency): BigNumber | undefined => {
   if (isXToken(currency)) {
+    console.log('isXToken', isXToken);
     return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
       if (xBalances[xChainId]) {
         const tokenAddress = getCrossChainTokenAddress(xChainId, currency.wrapped.symbol);
@@ -33,13 +34,15 @@ export default function useSortCurrency(initialState: SortingType) {
 
   const [sortBy, setSortBy] = useState<SortingType>(initialState);
 
-  useEffect(() => {
+  console.log('xBalances: ' + xBalances);
+  console.log('signedInWallets.length: ' + signedInWallets.length);
+  useCallback(() => {
     if (signedInWallets.length > 0) {
       setSortBy({ key: 'value', order: 'DESC' });
     } else {
       setSortBy({ key: 'symbol', order: 'ASC' });
     }
-  }, [signedInWallets]);
+  }, [signedInWallets.length]);
 
   const handleSortSelect = (clickedSortBy: SortingType) => {
     if (clickedSortBy.key === sortBy.key) {
@@ -60,7 +63,7 @@ export default function useSortCurrency(initialState: SortingType) {
       });
     }
 
-    if (sortBy.key === 'value') {
+    if (signedInWallets.length > 0 && sortBy.key === 'value') {
       data.sort((a, b) => {
         if (a.symbol === 'ICX' || b.symbol === 'ICX') return 1 * direction;
         const aBalance = getXCurrencyBalance(xBalances, a) || new BigNumber(0);
@@ -71,7 +74,7 @@ export default function useSortCurrency(initialState: SortingType) {
       });
     }
 
-    if (sortBy.key === 'price') {
+    if (signedInWallets.length === 0 && sortBy.key === 'price') {
       data.sort((a, b) => {
         if (a.symbol === 'ICX' || b.symbol === 'ICX') return 1 * direction;
         const aPrice =

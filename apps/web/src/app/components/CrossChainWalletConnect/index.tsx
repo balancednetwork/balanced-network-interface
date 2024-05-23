@@ -71,10 +71,10 @@ const CrossChainWalletConnect = ({ chainId, editable }: { chainId: XChainId; edi
           </Typography>
           <AddressInput onSave={closeModal} chainId={chainId} />
           <Typography textAlign="center" mt={3}>
-            <Trans>Or connect</Trans>{' '}
+            <Trans>Or connect your</Trans>{' '}
             <UnderlineText color={'red'} onClick={handleConnect}>
               <Typography color={'primaryBright'}>
-                <Trans>your wallet</Trans>
+                {`${xChainMap[chainId].name}`} <Trans>wallet</Trans>
               </Typography>
             </UnderlineText>
             .

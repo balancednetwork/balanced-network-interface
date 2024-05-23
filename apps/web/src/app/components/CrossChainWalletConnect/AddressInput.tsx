@@ -125,6 +125,7 @@ const AddressInput = ({ onSave, chainId }: { onSave?: () => void; chainId: XChai
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
           >
             <Typography mt={1} textAlign="center" color="alert">
               Invalid address format.

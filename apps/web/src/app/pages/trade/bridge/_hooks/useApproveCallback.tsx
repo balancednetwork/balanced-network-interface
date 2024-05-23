@@ -109,7 +109,8 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
     if (!amountToApprove || !spender) return ApprovalState.UNKNOWN;
     const isNative = amountToApprove.currency.wrapped.address === NATIVE_ADDRESS;
     const isDenom = isDenomAsset(amountToApprove.currency);
-    if (isNative || isDenom) return ApprovalState.APPROVED;
+    const isBnUSD = amountToApprove.currency.symbol === 'bnUSD';
+    if (isNative || isDenom || isBnUSD) return ApprovalState.APPROVED;
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN;
 

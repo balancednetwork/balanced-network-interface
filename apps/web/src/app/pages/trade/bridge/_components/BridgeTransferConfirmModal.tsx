@@ -145,18 +145,23 @@ export function BridgeTransferConfirmModal() {
                 <TextButton onClick={handleDismiss}>
                   <Trans>Cancel</Trans>
                 </TextButton>
-                {approvalState !== ApprovalState.APPROVED && !isProcessing && (
+                {isProcessing ? (
                   <>
-                    <Button onClick={handleApprove} disabled={approvalState === ApprovalState.PENDING}>
-                      {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
-                    </Button>
-                  </>
-                )}
-                {approvalState === ApprovalState.APPROVED && (
-                  <>
-                    <StyledXCallButton onClick={handleTransfer} disabled={isProcessing}>
-                      {!isProcessing ? <Trans>Transfer</Trans> : <Trans>Transfer in progress</Trans>}
+                    <StyledXCallButton disabled>
+                      <Trans>Transfer in progress</Trans>
                     </StyledXCallButton>
+                  </>
+                ) : (
+                  <>
+                    {approvalState !== ApprovalState.APPROVED ? (
+                      <Button onClick={handleApprove} disabled={approvalState === ApprovalState.PENDING}>
+                        {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
+                      </Button>
+                    ) : (
+                      <StyledXCallButton onClick={handleTransfer}>
+                        <Trans>Transfer</Trans>
+                      </StyledXCallButton>
+                    )}
                   </>
                 )}
               </>

@@ -171,7 +171,7 @@ const XCallSwapModal = ({
       {transferId && <BridgeTransferStatusUpdater transfer={bridgeTransferHistoryActions.get(transferId)} />}
       {childTransferId && <BridgeTransferStatusUpdater transfer={bridgeTransferHistoryActions.get(childTransferId)} />}
       <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XCALL_SWAP_MODAL)} onDismiss={handleDismiss}>
-        <ModalContent noMessages={isProcessing}>
+        <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
             <Trans>
               Swap {currencies[Field.INPUT]?.symbol} for {currencies[Field.OUTPUT]?.symbol}?
@@ -252,18 +252,24 @@ const XCallSwapModal = ({
                 <TextButton onClick={handleDismiss}>
                   <Trans>Cancel</Trans>
                 </TextButton>
-                {approvalState !== ApprovalState.APPROVED && !isProcessing && (
+
+                {isProcessing ? (
                   <>
-                    <Button onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
-                      {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
-                    </Button>
-                  </>
-                )}
-                {approvalState === ApprovalState.APPROVED && (
-                  <>
-                    <StyledButton onClick={handleXCallSwap} disabled={isProcessing}>
-                      {!isProcessing ? <Trans>Swap</Trans> : <Trans>Swap in progress</Trans>}
+                    <StyledButton disabled>
+                      <Trans>Swap in progress</Trans>
                     </StyledButton>
+                  </>
+                ) : (
+                  <>
+                    {approvalState !== ApprovalState.APPROVED ? (
+                      <Button onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
+                        {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
+                      </Button>
+                    ) : (
+                      <StyledButton onClick={handleXCallSwap}>
+                        <Trans>Swap</Trans>
+                      </StyledButton>
+                    )}
                   </>
                 )}
               </>

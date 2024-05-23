@@ -342,7 +342,6 @@ export const useXCurrencyBalance = (currency: Currency): BigNumber | undefined =
       return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
         if (xBalances[xChainId]) {
           const tokenAddress = getCrossChainTokenAddress(xChainId, currency.wrapped.symbol);
-          console.log('hello', currency.symbol, currency.wrapped.address, tokenAddress);
           const balance = new BigNumber(xBalances[xChainId]?.[tokenAddress ?? -1]?.toFixed() || 0);
           sum = sum.plus(balance);
         }

@@ -140,6 +140,9 @@ importers:
       babel-runtime:
         specifier: 6.26.0
         version: 6.26.0
+      bech32:
+        specifier: 2.0.0
+        version: 2.0.0
       big.js:
         specifier: 6.1.1
         version: 6.1.1
@@ -6983,6 +6986,10 @@ packages:
 
   /bech32@1.1.4:
     resolution: {integrity: sha512-s0IrSOzLlbvX7yp4WBfPITzpAU8sqQcpsmwXDiKwrG4r491vwCO/XpejasRNl0piBMe/DvP4Tz0mIS/X1DPJBQ==}
+    dev: false
+
+  /bech32@2.0.0:
+    resolution: {integrity: sha512-LcknSilhIGatDAsY1ak2I8VtGaHNhgMSYVxFrGLXv+xLHytaKZKcaUJJUE7qmBr7h33o5YQwP55pMI0xmkpJwg==}
     dev: false
 
   /big.js@6.1.1:

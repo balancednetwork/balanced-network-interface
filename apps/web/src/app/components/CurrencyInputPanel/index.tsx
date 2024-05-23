@@ -19,6 +19,7 @@ import { XChainId } from 'app/pages/trade/bridge/types';
 import { Box } from 'rebass/styled-components';
 import { getAvailableXChains } from 'app/pages/trade/bridge/utils';
 import { DEFAULT_TOKEN_CHAIN } from 'app/pages/trade/bridge/_config/xTokens';
+import { useDerivedSwapInfo } from 'store/swap/hooks';
 
 const InputContainer = styled.div`
   display: inline-flex;
@@ -108,6 +109,7 @@ interface CurrencyInputPanelProps {
   xChainId?: XChainId;
   onChainSelect?: (_chainId: XChainId) => void;
   showCrossChainOptions?: boolean;
+  addressEditable?: boolean;
 }
 
 export const inputRegex = /^\d*(?:\\[.])?\d*$/; // match escaped "." characters via in a non-capturing group
@@ -130,6 +132,7 @@ export default function CurrencyInputPanel({
   xChainId = '0x1.icon',
   onChainSelect,
   showCrossChainOptions = false,
+  addressEditable = false,
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
@@ -257,6 +260,7 @@ export default function CurrencyInputPanel({
           isOpen={xChainOptionsOpen}
           setOpen={setXChainOptionsOpen}
           xChains={xChains}
+          editable={addressEditable}
         />
       )}
     </Box>

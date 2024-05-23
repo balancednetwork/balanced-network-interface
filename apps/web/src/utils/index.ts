@@ -12,11 +12,24 @@ import { PairInfo } from 'constants/pairs';
 import { COMBINED_TOKENS_LIST } from 'constants/tokens';
 import { PairData, PairState } from 'hooks/useV2Pairs';
 import { Field } from 'store/swap/reducer';
+import { XChainId } from 'app/pages/trade/bridge/types';
+import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { bech32 } from 'bech32';
+import { ethers } from 'ethers';
 
 const { isEoaAddress, isScoreAddress } = Validator;
 
+const isBech32 = (string: string) => {
+  try {
+    bech32.decode(string);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 const isArchEoaAddress = (address: string) => {
-  return address.startsWith('archway');
+  return isBech32(address) && address.startsWith('archway');
 };
 
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
@@ -308,4 +321,15 @@ export function getAccumulatedInterest(principal: BigNumber, rate: BigNumber, da
   const dailyRate = rate.div(365);
   const accumulatedInterest = principal.times(dailyRate.plus(1).pow(days)).minus(principal);
   return accumulatedInterest;
+}
+
+export function validateAddress(address: string, chainId: XChainId): boolean {
+  switch (xChainMap[chainId].xChainType) {
+    case 'ICON':
+      return isScoreAddress(address) || isEoaAddress(address);
+    case 'EVM':
+      return ethers.utils.isAddress(address);
+    case 'ARCHWAY':
+      return isArchEoaAddress(address);
+  }
 }

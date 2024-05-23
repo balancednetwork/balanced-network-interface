@@ -45,7 +45,6 @@ const MemoizedStabilityFund = React.memo(StabilityFund);
 export default function SwapPanel() {
   useInitialSwapLoad();
 
-  const { recipient } = useSwapState();
   const { trade, currencyBalances, currencies, inputError, percents, account, direction, formattedAmounts } =
     useDerivedSwapInfo();
   const memoizedInputAmount = useCAMemo(trade?.inputAmount);
@@ -63,6 +62,8 @@ export default function SwapPanel() {
     direction.to === '0x1.icon';
 
   const signedInWallets = useSignedInWallets();
+  const { recipient } = useSwapState();
+  const isRecipientCustom = recipient !== null && !signedInWallets.some(wallet => wallet.address === recipient);
   const isOutputCrosschainCompatible = isXToken(currencies?.OUTPUT);
   const isInputCrosschainCompatible = isXToken(currencies?.INPUT);
 
@@ -243,10 +244,16 @@ export default function SwapPanel() {
             </Typography>
             <Typography as="div" hidden={!account}>
               <Trans>Wallet:</Trans>{' '}
-              {`${
-                currencyBalances[Field.OUTPUT] ? currencyBalances[Field.OUTPUT]?.toFixed(4, { groupSeparator: ',' }) : 0
-              } 
-                ${currencies[Field.OUTPUT]?.symbol}`}
+              {isRecipientCustom ? (
+                <Trans>Custom</Trans>
+              ) : (
+                `${
+                  currencyBalances[Field.OUTPUT]
+                    ? currencyBalances[Field.OUTPUT]?.toFixed(4, { groupSeparator: ',' })
+                    : 0
+                } 
+                ${currencies[Field.OUTPUT]?.symbol}`
+              )}
             </Typography>
           </Flex>
 
@@ -262,6 +269,7 @@ export default function SwapPanel() {
                 isOutputCrosschainCompatible ? xChainId => onChainSelection(Field.OUTPUT, xChainId) : undefined
               }
               showCrossChainOptions={true}
+              addressEditable
             />
           </Flex>
         </AutoColumn>

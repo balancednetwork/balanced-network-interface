@@ -20,6 +20,7 @@ type CrossChainOptionsProps = {
   setXChainId: (chain: XChainId) => void;
   isOpen: boolean;
   setOpen: (isOpen: boolean) => void;
+  editable?: boolean;
 };
 
 export const Wrap = styled(Flex)`
@@ -37,7 +38,7 @@ export const SelectorWrap = styled.div`
   color: ${({ theme }) => theme.colors.primaryBright};
 `;
 
-const CrossChainOptions = ({ xChainId, setXChainId, isOpen, setOpen, xChains }: CrossChainOptionsProps) => {
+const CrossChainOptions = ({ xChainId, setXChainId, isOpen, setOpen, xChains, editable }: CrossChainOptionsProps) => {
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
   const arrowRef = React.useRef(null);
@@ -113,7 +114,7 @@ const CrossChainOptions = ({ xChainId, setXChainId, isOpen, setOpen, xChains }: 
         </Flex>
       )}
 
-      <CrossChainWalletConnect chainId={xChainId} />
+      <CrossChainWalletConnect chainId={xChainId} editable={editable} />
     </Wrap>
   );
 };

@@ -14,7 +14,6 @@ type SortingType = {
 
 const getXCurrencyBalance = (xBalances: WalletState, currency: Currency): BigNumber | undefined => {
   if (isXToken(currency)) {
-    console.log('isXToken', isXToken);
     return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
       if (xBalances[xChainId]) {
         const tokenAddress = getCrossChainTokenAddress(xChainId, currency.wrapped.symbol);
@@ -34,8 +33,6 @@ export default function useSortCurrency(initialState: SortingType) {
 
   const [sortBy, setSortBy] = useState<SortingType>(initialState);
 
-  console.log('xBalances: ' + xBalances);
-  console.log('signedInWallets.length: ' + signedInWallets.length);
   useCallback(() => {
     if (signedInWallets.length > 0) {
       setSortBy({ key: 'value', order: 'DESC' });
@@ -54,17 +51,19 @@ export default function useSortCurrency(initialState: SortingType) {
   };
 
   const sortData = (data: Currency[], rateFracs: {}) => {
+    const dataToSort = [...data];
+
     const direction = sortBy.order === 'ASC' ? -1 : 1;
 
     if (sortBy.key === 'symbol') {
-      data.sort((a, b) => {
+      dataToSort.sort((a, b) => {
         if (a.symbol === 'ICX' || b.symbol === 'ICX') return 1 * direction;
         return a.symbol > b.symbol ? -1 * direction : 1 * direction;
       });
     }
 
     if (signedInWallets.length > 0 && sortBy.key === 'value') {
-      data.sort((a, b) => {
+      dataToSort.sort((a, b) => {
         if (a.symbol === 'ICX' || b.symbol === 'ICX') return 1 * direction;
         const aBalance = getXCurrencyBalance(xBalances, a) || new BigNumber(0);
         const bBalance = getXCurrencyBalance(xBalances, b) || new BigNumber(0);
@@ -75,7 +74,7 @@ export default function useSortCurrency(initialState: SortingType) {
     }
 
     if (signedInWallets.length === 0 && sortBy.key === 'price') {
-      data.sort((a, b) => {
+      dataToSort.sort((a, b) => {
         if (a.symbol === 'ICX' || b.symbol === 'ICX') return 1 * direction;
         const aPrice =
           (rateFracs &&
@@ -95,7 +94,7 @@ export default function useSortCurrency(initialState: SortingType) {
       });
     }
 
-    return data;
+    return dataToSort;
   };
 
   return { sortBy, handleSortSelect, sortData };

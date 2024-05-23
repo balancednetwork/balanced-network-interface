@@ -242,13 +242,18 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
     try {
       const hash = await xCallService.approve(token, account as `0x${string}`, spender, amountToApprove);
 
+      setPending(true);
+
       if (hash) {
         transactionActions.add(xChainId, {
           hash: hash,
           pendingMessage: t`Approving ${token.symbol} for cross-chain transfer...`,
           successMessage: t`${token.symbol} approved for cross-chain transfer.`,
           errorMessage: t`${token.symbol} transfer approval failed.`,
-          onSuccess: refetch,
+          onSuccess: async () => {
+            await refetch();
+            setPending(false);
+          },
         });
       }
     } catch (e) {

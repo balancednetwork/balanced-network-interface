@@ -54,17 +54,18 @@ export default function useSortCurrency(initialState: SortingType) {
     const dataToSort = [...data];
 
     const direction = sortBy.order === 'ASC' ? -1 : 1;
-
     if (sortBy.key === 'symbol') {
       dataToSort.sort((a, b) => {
-        if (a.symbol === 'ICX' || b.symbol === 'ICX') return 1 * direction;
-        return a.symbol > b.symbol ? -1 * direction : 1 * direction;
+        if (a.symbol === 'ICX') return -1;
+        if (b.symbol === 'ICX') return 1;
+        return a.symbol.toUpperCase() > b.symbol.toUpperCase() ? -1 * direction : 1 * direction;
       });
     }
 
     if (signedInWallets.length > 0 && sortBy.key === 'value') {
       dataToSort.sort((a, b) => {
-        if (a.symbol === 'ICX' || b.symbol === 'ICX') return 1 * direction;
+        if (a.symbol === 'ICX') return -1;
+        if (b.symbol === 'ICX') return 1;
         const aBalance = getXCurrencyBalance(xBalances, a) || new BigNumber(0);
         const bBalance = getXCurrencyBalance(xBalances, b) || new BigNumber(0);
         const aValue = aBalance.times(new BigNumber(rateFracs[a.symbol!].toFixed(8))).toFormat(2);
@@ -75,7 +76,8 @@ export default function useSortCurrency(initialState: SortingType) {
 
     if (signedInWallets.length === 0 && sortBy.key === 'price') {
       dataToSort.sort((a, b) => {
-        if (a.symbol === 'ICX' || b.symbol === 'ICX') return 1 * direction;
+        if (a.symbol === 'ICX') return -1;
+        if (b.symbol === 'ICX') return 1;
         const aPrice =
           (rateFracs &&
             rateFracs[a.symbol!] &&

@@ -30,11 +30,6 @@ export const xCallSwapActions = {
     const srcChainXCallService = xCallServiceActions.getXCallService(sourceChainId);
     const dstChainXCallService = xCallServiceActions.getXCallService(_destinationChainId);
 
-    console.log('xSwapInfo', xSwapInfo);
-    console.log('all xCallServices', xCallServiceActions.getAllXCallServices());
-    console.log('srcChainXCallService', srcChainXCallService);
-    console.log('dstChainXCallService', dstChainXCallService);
-
     const sourceTransactionHash = await srcChainXCallService.executeSwap(xSwapInfo);
 
     if (!sourceTransactionHash || !executionTrade) {
@@ -59,7 +54,6 @@ export const xCallSwapActions = {
 
     if (sourceTransaction && sourceTransaction.hash) {
       const blockHeight = (await dstChainXCallService.getBlockHeight()) - 1n;
-      console.log('blockHeight', blockHeight);
 
       const transfer: BridgeTransfer = {
         id: `${sourceChainId}/${sourceTransaction.hash}`,
@@ -94,7 +88,6 @@ export const xCallSwapActions = {
       throw new Error('destinationTransaction is not found'); // it should not happen
     }
 
-    console.log('createChildTransfer');
     const sourceChainId = transfer.destinationChainId;
     const destinationChainId = transfer.xSwapInfo?.direction.to;
     const sourceTransaction = transfer.destinationTransaction;
@@ -141,13 +134,11 @@ export const xCallSwapActions = {
     xCallSwapActions.reset();
 
     // TODO: show success message
-    console.log('xcall swap success');
   },
 
   fail: () => {
     xCallSwapActions.reset();
 
     // TODO: show error message
-    console.log('xcall swap fail');
   },
 };

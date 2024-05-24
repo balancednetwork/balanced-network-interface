@@ -255,7 +255,6 @@ export const useFetchBridgeTransferEvents = (transfer?: BridgeTransfer) => {
   const { data: events, isLoading } = useQuery({
     queryKey: ['bridge-transfer-events', transfer?.id],
     queryFn: async () => {
-      console.log('transfer', transfer);
       if (!transfer) {
         return null;
       }

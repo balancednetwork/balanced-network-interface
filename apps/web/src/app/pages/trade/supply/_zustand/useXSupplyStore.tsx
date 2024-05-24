@@ -27,11 +27,6 @@ export const xSupplyActions = {
     const srcChainXCallService = xCallServiceActions.getXCallService(sourceChainId);
     const dstChainXCallService = xCallServiceActions.getXCallService(destinationChainId);
 
-    console.log('xSwapInfo', xSwapInfo);
-    console.log('all xCallServices', xCallServiceActions.getAllXCallServices());
-    console.log('srcChainXCallService', srcChainXCallService);
-    console.log('dstChainXCallService', dstChainXCallService);
-
     const sourceTransactionHash = await srcChainXCallService.executeTransfer(xSwapInfo);
 
     if (!sourceTransactionHash) {
@@ -48,7 +43,6 @@ export const xSupplyActions = {
 
     if (sourceTransaction && sourceTransaction.hash) {
       const blockHeight = (await dstChainXCallService.getBlockHeight()) - 1n;
-      console.log('blockHeight', blockHeight);
 
       const transfer: BridgeTransfer = {
         id: `${sourceChainId}/${sourceTransaction.hash}`,
@@ -86,13 +80,11 @@ export const xSupplyActions = {
     xSupplyActions.reset();
 
     // TODO: show success message
-    console.log('bridge transfer success');
   },
 
   fail: transfer => {
     xSupplyActions.reset();
 
     // TODO: show error message
-    console.log('bridge transfer fail');
   },
 };

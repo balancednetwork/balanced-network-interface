@@ -169,13 +169,11 @@ export const useXCallEventScanner = (xChainId: XChainId | undefined) => {
   const { enabled } = scanner || {};
 
   const scanFn = useCallback(async () => {
-    console.log('scan', xChainId, enabled);
     if (!enabled || !xChainId) {
       return;
     }
 
     const { currentHeight } = useXCallEventStore.getState().scanners[xChainId] || {};
-    console.log('scan started', xChainId, useXCallEventStore.getState().scanners, currentHeight);
 
     await xCallEventActions.scanBlock(xChainId, currentHeight);
     await xCallEventActions.updateChainHeight(xChainId);

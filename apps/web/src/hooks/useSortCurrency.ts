@@ -73,7 +73,7 @@ export default function useSortCurrency(initialState: SortingType) {
           0;
         const bValue =
           (rateFracs &&
-            rateFracs[a.symbol!] &&
+            rateFracs[b.symbol!] &&
             bBalance.times(new BigNumber(rateFracs[b.symbol!].toFixed(8))).toFormat(2)) ||
           0;
         return aValue > bValue ? -1 * direction : 1 * direction;

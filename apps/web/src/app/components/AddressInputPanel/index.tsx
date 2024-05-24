@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Trans } from '@lingui/macro';
 import styled from 'styled-components';
+import Warning from '../Warning';
+import { Box } from 'rebass';
 
 const InputContainer = styled.div`
   display: inline-flex;
@@ -25,7 +27,7 @@ const AddressInputLabel = styled.button<{ bg?: string }>`
   justify-content: center;
 `;
 
-const AddressInput = styled.input<{ bg?: string; drivenOnly?: boolean }>`
+const AddressInput = styled.input<{ bg?: string }>`
   flex: 1;
   width: 100%;
   height: 43px;
@@ -42,26 +44,26 @@ const AddressInput = styled.input<{ bg?: string; drivenOnly?: boolean }>`
   font-size: 14px;
   font-weight: normal;
   line-height: 1.15;
-  margin: 0;
+  margin: 0; 
 
-  ${({ drivenOnly }) => drivenOnly && `cursor: default;`};
 
-  ${({ drivenOnly }) =>
-    !drivenOnly &&
-    `
-    &:hover, &:focus {
-      border: 2px solid #2ca9b7;
+
+  &.invalid {
+      border-color: ${({ theme }) => theme.colors.alert} !important;
     }
-  `};
+  
+  &:hover, &:focus {
+    border: 2px solid #2ca9b7;
+  }
 `;
 
 interface AddressInputPanelProps {
   value: string;
   onUserInput: (value: string) => void;
+  isValid?: boolean;
   bg?: string;
   className?: string;
   placeholder?: string;
-  drivenOnly?: boolean;
 }
 
 export default function AddressInputPanel({
@@ -70,21 +72,26 @@ export default function AddressInputPanel({
   bg,
   className,
   placeholder,
-  drivenOnly,
+  isValid = true,
 }: AddressInputPanelProps) {
   return (
-    <InputContainer className={className}>
-      <AddressInputLabel bg={bg}>
-        <Trans>To</Trans>
-      </AddressInputLabel>
+    <Box width="100%">
+      <InputContainer className={className}>
+        <AddressInputLabel bg={bg}>
+          <Trans>To</Trans>
+        </AddressInputLabel>
 
-      <AddressInput
-        placeholder={drivenOnly ? '' : placeholder || 'hx00000...'}
-        value={value}
-        onChange={event => onUserInput(event.target.value)}
-        bg={bg}
-        drivenOnly={drivenOnly}
-      />
-    </InputContainer>
+        <AddressInput
+          placeholder={placeholder || 'hx00000...'}
+          value={value}
+          onChange={event => onUserInput(event.target.value)}
+          bg={bg}
+          autoComplete="off"
+          spellCheck="false"
+          className={value.length === 0 ? 'empty' : isValid ? 'valid' : 'invalid'}
+        />
+      </InputContainer>
+      <Warning message="Invalid address format" show={value.length !== 0 && !isValid} mt={1} />
+    </Box>
   );
 }

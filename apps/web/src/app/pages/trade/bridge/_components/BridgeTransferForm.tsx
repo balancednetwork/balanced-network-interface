@@ -14,7 +14,6 @@ import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/ho
 
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import { Button } from 'app/components/Button';
-import CrossChainConnectWallet from 'app/components/CrossChainWalletConnect';
 import { CurrencySelectionType } from 'app/components/SearchModal/CurrencySearch';
 import { AutoColumn } from 'app/pages/trade/xswap/_components/SwapPanel';
 import { BrightPanel } from 'app/pages/trade/supply/_components/utils';
@@ -25,22 +24,12 @@ import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/bridge/reducer';
 import useXCallFee from '../_hooks/useXCallFee';
 import useXCallProtocol from '../_hooks/useXCallProtocol';
-
-const ConnectWrap = styled.div`
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  top: 0;
-  right: 0;
-  padding-right: 15px;
-`;
+import { xChainMap } from '../_config/xChains';
+import { validateAddress } from 'utils';
 
 export default function BridgeTransferForm({ openModal }) {
   const crossChainWallet = useCrossChainWalletBalances();
-
+  const [isValid, setValid] = React.useState(true);
   const bridgeState = useBridgeState();
   const { currency: currencyToBridge, recipient, typedValue } = bridgeState;
   const { onChangeRecipient, onCurrencySelection, onUserInput, onChainSelection, onSwitchChain, onPercentSelection } =
@@ -81,6 +70,10 @@ export default function BridgeTransferForm({ openModal }) {
   const protocol = useXCallProtocol(bridgeDirection.from, bridgeDirection.to);
   const { formattedXCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
 
+  React.useEffect(() => {
+    setValid(validateAddress(recipient || '', bridgeDirection.to));
+  }, [recipient, bridgeDirection.to]);
+
   return (
     <>
       <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
@@ -119,12 +112,12 @@ export default function BridgeTransferForm({ openModal }) {
           </Flex>
 
           <Flex style={{ position: 'relative' }}>
-            <AddressInputPanel value={recipient || ''} onUserInput={onChangeRecipient} drivenOnly={true} />
-            {!recipient && !signedInWallets.find(wallet => wallet.chainId === bridgeDirection.to)?.address && (
-              <ConnectWrap>
-                <CrossChainConnectWallet chainId={bridgeDirection.to} />
-              </ConnectWrap>
-            )}
+            <AddressInputPanel
+              value={recipient || ''}
+              onUserInput={onChangeRecipient}
+              placeholder={`${xChainMap[bridgeDirection.to].name} address`}
+              isValid={isValid}
+            />
           </Flex>
         </AutoColumn>
 
@@ -162,11 +155,13 @@ export default function BridgeTransferForm({ openModal }) {
 
           <Flex alignItems="center" justifyContent="center" mt={4}>
             {account ? (
-              <Button onClick={handleSubmit} disabled={!!errorMessage}>
+              <Button onClick={handleSubmit} disabled={!!errorMessage || !isValid}>
                 {errorMessage ? errorMessage : <Trans>Transfer</Trans>}
               </Button>
             ) : (
-              <Button onClick={handleSubmit}>{<Trans>Transfer</Trans>}</Button>
+              <Button onClick={handleSubmit} disabled={!isValid}>
+                {<Trans>Transfer</Trans>}
+              </Button>
             )}
           </Flex>
         </AutoColumn>

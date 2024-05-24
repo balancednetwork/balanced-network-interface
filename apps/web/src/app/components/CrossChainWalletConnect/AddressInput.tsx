@@ -1,12 +1,11 @@
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { XChainId } from 'app/pages/trade/bridge/types';
-import { Typography } from 'app/theme';
-import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
-import { Box, Flex } from 'rebass';
+import { Flex } from 'rebass';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import styled from 'styled-components';
 import { validateAddress } from 'utils';
+import Warning from '../Warning';
 
 const InputWrap = styled(Flex)`
 
@@ -119,21 +118,7 @@ const AddressInput = ({ onSave, chainId }: { onSave?: () => void; chainId: XChai
           Use
         </button>
       </InputWrap>
-      <AnimatePresence>
-        {value && !isValid && (
-          <motion.div
-            key="address-warning"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Typography mt={1} textAlign="center" color="alert">
-              Invalid address format.
-            </Typography>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Warning message="Invalid address format" show={value?.length !== 0 && !isValid} mt={1} />
     </>
   );
 };

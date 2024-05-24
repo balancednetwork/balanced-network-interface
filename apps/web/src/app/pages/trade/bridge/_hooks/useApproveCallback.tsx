@@ -107,10 +107,19 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
     if (!amountToApprove || !spender) return ApprovalState.UNKNOWN;
+
+    const xChainId = amountToApprove.currency.xChainId;
+
+    if (xChainId === '0x1.icon') return ApprovalState.APPROVED;
+
+    if (xChainId === 'archway-1') {
+      const isDenom = isDenomAsset(amountToApprove.currency);
+      const isBnUSD = amountToApprove.currency.symbol === 'bnUSD';
+      if (isDenom || isBnUSD) return ApprovalState.APPROVED;
+    }
+
     const isNative = amountToApprove.currency.wrapped.address === NATIVE_ADDRESS;
-    const isDenom = isDenomAsset(amountToApprove.currency);
-    const isBnUSD = amountToApprove.currency.symbol === 'bnUSD';
-    if (isNative || isDenom || isBnUSD) return ApprovalState.APPROVED;
+    if (isNative) return ApprovalState.APPROVED;
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN;
 

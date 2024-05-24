@@ -218,6 +218,11 @@ export default function CurrencyList({
   }, [rates]);
 
   const { sortBy, handleSortSelect, sortData } = useSortCurrency({ key: 'symbol', order: 'ASC' });
+  const sortedCurrencies = React.useMemo(() => {
+    if (currencies && rateFracs) {
+      return sortData(currencies, rateFracs);
+    }
+  }, [currencies, rateFracs, sortData]);
 
   useEffect(() => {
     if (isOpen) {
@@ -280,23 +285,21 @@ export default function CurrencyList({
         )}
       </DashGrid>
 
-      {currencies &&
-        rateFracs &&
-        sortData(currencies, rateFracs).map((currency, index) => (
-          <CurrencyRow
-            account={account}
-            key={currencyKey(currency)}
-            currency={currency}
-            onSelect={() => onCurrencySelect(currency)}
-            onRemove={() => {
-              setRemoveToken(currency as Token);
-              showRemoveView();
-            }}
-            isFocused={index === activeIndex}
-            onFocus={() => setActiveIndex(index)}
-            rateFracs={rateFracs}
-          />
-        ))}
+      {sortedCurrencies?.map((currency, index) => (
+        <CurrencyRow
+          account={account}
+          key={currencyKey(currency)}
+          currency={currency}
+          onSelect={() => onCurrencySelect(currency)}
+          onRemove={() => {
+            setRemoveToken(currency as Token);
+            showRemoveView();
+          }}
+          isFocused={index === activeIndex}
+          onFocus={() => setActiveIndex(index)}
+          rateFracs={rateFracs}
+        />
+      ))}
     </List1>
   );
 }

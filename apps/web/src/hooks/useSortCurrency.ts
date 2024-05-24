@@ -56,8 +56,6 @@ export default function useSortCurrency(initialState: SortingType) {
 
     if (sortBy.key === 'symbol') {
       dataToSort.sort((a, b) => {
-        // if (a.symbol === 'ICX') return -1;
-        // if (b.symbol === 'ICX') return 1;
         return a.symbol.toUpperCase() > b.symbol.toUpperCase() ? -1 * direction : 1 * direction;
       });
     }
@@ -66,37 +64,16 @@ export default function useSortCurrency(initialState: SortingType) {
       dataToSort.sort((a, b) => {
         const aBalance = getXCurrencyBalance(xBalances, a) || new BigNumber(0);
         const bBalance = getXCurrencyBalance(xBalances, b) || new BigNumber(0);
-        const aValue =
-          (rateFracs &&
-            rateFracs[a.symbol!] &&
-            aBalance.times(new BigNumber(rateFracs[a.symbol!].toFixed(8))).toFormat(2)) ||
-          0;
-        const bValue =
-          (rateFracs &&
-            rateFracs[b.symbol!] &&
-            bBalance.times(new BigNumber(rateFracs[b.symbol!].toFixed(8))).toFormat(2)) ||
-          0;
-        return aValue > bValue ? -1 * direction : 1 * direction;
+        const aValue = aBalance.times(new BigNumber(rateFracs[a.symbol]?.toFixed(8) || '0'));
+        const bValue = bBalance.times(new BigNumber(rateFracs[b.symbol]?.toFixed(8) || '0'));
+        return aValue.isGreaterThan(bValue) ? -1 * direction : 1 * direction;
       });
     }
 
     if (signedInWallets.length === 0 && sortBy.key === 'price') {
       dataToSort.sort((a, b) => {
-        const aPrice =
-          (rateFracs &&
-            rateFracs[a.symbol!] &&
-            rateFracs[a.symbol!].toFixed(getCurrencyDecimalDisplay(rateFracs[a.symbol!]), {
-              groupSeparator: ',',
-            })) ||
-          0;
-        const bPrice =
-          (rateFracs &&
-            rateFracs[b.symbol!] &&
-            rateFracs[b.symbol!].toFixed(getCurrencyDecimalDisplay(rateFracs[b.symbol!]), {
-              groupSeparator: ',',
-            })) ||
-          0;
-        return aPrice > bPrice ? -1 * direction : 1 * direction;
+        if (!rateFracs[a.symbol] || !rateFracs[b.symbol]) return 0;
+        return rateFracs[a.symbol].greaterThan(rateFracs[b.symbol]) ? -1 * direction : 1 * direction;
       });
     }
 

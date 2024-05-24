@@ -66,8 +66,16 @@ export default function useSortCurrency(initialState: SortingType) {
       dataToSort.sort((a, b) => {
         const aBalance = getXCurrencyBalance(xBalances, a) || new BigNumber(0);
         const bBalance = getXCurrencyBalance(xBalances, b) || new BigNumber(0);
-        const aValue = aBalance.times(new BigNumber(rateFracs[a.symbol!].toFixed(8))).toFormat(2);
-        const bValue = bBalance.times(new BigNumber(rateFracs[b.symbol!].toFixed(8))).toFormat(2);
+        const aValue =
+          (rateFracs &&
+            rateFracs[a.symbol!] &&
+            aBalance.times(new BigNumber(rateFracs[a.symbol!].toFixed(8))).toFormat(2)) ||
+          0;
+        const bValue =
+          (rateFracs &&
+            rateFracs[a.symbol!] &&
+            bBalance.times(new BigNumber(rateFracs[b.symbol!].toFixed(8))).toFormat(2)) ||
+          0;
         return aValue > bValue ? -1 * direction : 1 * direction;
       });
     }

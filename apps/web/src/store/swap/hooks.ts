@@ -123,6 +123,7 @@ export function useDerivedSwapInfo(): {
   account: string | undefined;
   trade: Trade<Currency, Currency, TradeType> | undefined;
   currencies: { [field in Field]?: Currency };
+  _currencies: { [field in Field]?: Currency };
   percents: { [field in Field]?: number };
   currencyBalances: { [field in Field]?: CurrencyAmount<Currency> | undefined };
   parsedAmount: CurrencyAmount<Currency> | undefined;
@@ -180,6 +181,12 @@ export function useDerivedSwapInfo(): {
     inputXChainId === '0x1.icon' ? inputCurrency : getCrossChainTokenBySymbol('0x1.icon', inputCurrency?.symbol);
   const _outputCurrency =
     outputXChainId === '0x1.icon' ? outputCurrency : getCrossChainTokenBySymbol('0x1.icon', outputCurrency?.symbol);
+  const _currencies: { [field in Field]?: Currency } = useMemo(() => {
+    return {
+      [Field.INPUT]: _inputCurrency ?? undefined,
+      [Field.OUTPUT]: _outputCurrency ?? undefined,
+    };
+  }, [_inputCurrency, _outputCurrency]);
   const _parsedAmount = tryParseAmount(typedValue, (isExactIn ? _inputCurrency : _outputCurrency) ?? undefined);
   // cannot call `useTradeExactIn` or `useTradeExactOut` conditionally because they are hooks
   const queue = canBeQueue(_inputCurrency, _outputCurrency);
@@ -220,11 +227,11 @@ export function useDerivedSwapInfo(): {
 
   if (userHasSpecifiedInputOutput && !trade) inputError = t`Insufficient liquidity`;
 
-  const [pairState, pair] = useV2Pair(inputCurrency, outputCurrency);
+  const [pairState, pair] = useV2Pair(_inputCurrency, _outputCurrency);
 
   let price: Price<Token, Token> | undefined;
-  if (pair && pairState === PairState.EXISTS && inputCurrency) {
-    if (pair.involvesToken(inputCurrency.wrapped)) price = pair.priceOf(inputCurrency.wrapped);
+  if (pair && pairState === PairState.EXISTS && _inputCurrency) {
+    if (pair.involvesToken(_inputCurrency.wrapped)) price = pair.priceOf(_inputCurrency.wrapped);
     else price = pair.token0Price; // pair not ready, just set dummy price
   }
 
@@ -257,6 +264,7 @@ export function useDerivedSwapInfo(): {
     account,
     trade,
     currencies,
+    _currencies,
     currencyBalances,
     parsedAmount,
     inputError,

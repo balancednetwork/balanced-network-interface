@@ -40,7 +40,7 @@ const CHART_PERIODS_LABELS = {
 };
 
 export default function SwapDescription() {
-  const { currencies, price } = useDerivedSwapInfo();
+  const { _currencies: currencies, price } = useDerivedSwapInfo();
   const [tradingViewActive, setTradingViewActive] = useState(false);
 
   const [chartOption, setChartOption] = React.useState<{ type: CHART_TYPES; period: CHART_PERIODS }>({

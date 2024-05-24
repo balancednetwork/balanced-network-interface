@@ -334,6 +334,10 @@ msgstr "Claiming network fees..."
 msgid "Copied"
 msgstr "Copied"
 
+#: src/app/components/CrossChainWalletConnect/index.tsx
+msgid "wallet"
+msgstr "wallet"
+
 #: src/app/pages/vote/_components/ProposalsPanel/index.tsx
 #: src/app/pages/vote/proposals/page.tsx
 msgid "Proposals"
@@ -385,6 +389,7 @@ msgstr "Review the community token list on GitHub."
 
 #: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
 #: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
+#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
 msgid "Approving {0} for cross-chain transfer..."
 msgstr "Approving {0} for cross-chain transfer..."
 
@@ -415,6 +420,10 @@ msgstr "Use the Stability Fund to swap {0} for {1}"
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Transfer {0} to Archway."
 #~ msgstr "Transfer {0} to Archway."
+
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "Custom"
+msgstr "Custom"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Includes a fee of {0} bnUSD."
@@ -600,6 +609,10 @@ msgstr "Swapping {inputCurrency} for {outputCurrency}..."
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Enacted"
 msgstr "Enacted"
+
+#: src/app/components/CrossChainWalletConnect/index.tsx
+msgid "Enter a recipient address:"
+msgstr "Enter a recipient address:"
 
 #: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "Vote for this pool to receive bribes."
@@ -1314,6 +1327,10 @@ msgstr "Minimum to receive"
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "Supply liquidity for these assets in any quantity to create a new pool."
 msgstr "Supply liquidity for these assets in any quantity to create a new pool."
+
+#: src/app/components/CrossChainWalletConnect/index.tsx
+msgid "Or connect your"
+msgstr "Or connect your"
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "{0} ICX added to your wallet."

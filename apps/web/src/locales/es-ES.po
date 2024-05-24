@@ -343,6 +343,10 @@ msgstr ""
 msgid "Copied"
 msgstr "Copiado"
 
+#: src/app/components/CrossChainWalletConnect/index.tsx
+msgid "wallet"
+msgstr ""
+
 #: src/app/pages/vote/_components/ProposalsPanel/index.tsx
 #: src/app/pages/vote/proposals/page.tsx
 msgid "Proposals"
@@ -398,6 +402,7 @@ msgstr ""
 
 #: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
 #: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
+#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
 msgid "Approving {0} for cross-chain transfer..."
 msgstr ""
 
@@ -428,6 +433,10 @@ msgstr ""
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Transfer {0} to Archway."
 #~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "Custom"
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Includes a fee of {0} bnUSD."
@@ -633,6 +642,10 @@ msgstr "Cambiando {inputCurrency} por {outputCurrency}..."
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Enacted"
 msgstr "Ejecutado"
+
+#: src/app/components/CrossChainWalletConnect/index.tsx
+msgid "Enter a recipient address:"
+msgstr ""
 
 #: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "Vote for this pool to receive bribes."
@@ -1362,6 +1375,10 @@ msgstr "Mínimo a recibir"
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "Supply liquidity for these assets in any quantity to create a new pool."
 msgstr "Suministrar liquidez para estos activos en cualquier cantidad para crear un nuevo pool."
+
+#: src/app/components/CrossChainWalletConnect/index.tsx
+msgid "Or connect your"
+msgstr ""
 
 #: src/app/components/home/BBaln/BBalnPanel.tsx
 #~ msgid "Your share of the fees distributed to bBALN holders, calculated with Your bBALN ÷ Total bBALN."

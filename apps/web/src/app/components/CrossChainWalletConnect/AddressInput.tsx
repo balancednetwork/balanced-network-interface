@@ -112,6 +112,7 @@ const AddressInput = ({ onSave, chainId }: { onSave?: () => void; chainId: XChai
           onChange={handleChange}
           className={value.length === 0 ? 'empty' : isValid ? 'valid' : 'invalid'}
           autoComplete="off"
+          spellCheck="false"
           aria-label="Enter recipient address"
         />
         <button disabled={!isValid} type="button" onClick={handleClick} aria-label="Use entered address">

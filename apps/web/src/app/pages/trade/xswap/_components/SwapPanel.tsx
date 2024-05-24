@@ -269,7 +269,7 @@ export default function SwapPanel() {
                 isOutputCrosschainCompatible ? xChainId => onChainSelection(Field.OUTPUT, xChainId) : undefined
               }
               showCrossChainOptions={true}
-              addressEditable
+              addressEditable={!(direction.from === '0x1.icon' && direction.to === '0x1.icon')}
             />
           </Flex>
         </AutoColumn>

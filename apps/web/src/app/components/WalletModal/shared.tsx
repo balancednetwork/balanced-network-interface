@@ -17,7 +17,7 @@ export const WalletOption = styled(Box)`
   color: white;
   user-select: none;
   width: 130px;
-  max-width: 100px;
+  max-width: 125px;
 
   ${ChainIcons}, ${WalletIcons} {
     position: absolute;

@@ -3,7 +3,7 @@ import { getCurrencyDecimalDisplay } from 'app/components/SearchModal/CurrencyLi
 import { SUPPORTED_XCALL_CHAINS } from 'app/pages/trade/bridge/_config/xTokens';
 import { isXToken, getCrossChainTokenAddress } from 'app/pages/trade/bridge/utils';
 import BigNumber from 'bignumber.js';
-import { useCallback, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
 import { WalletState } from 'store/wallet/reducer';
 
@@ -33,7 +33,7 @@ export default function useSortCurrency(initialState: SortingType) {
 
   const [sortBy, setSortBy] = useState<SortingType>(initialState);
 
-  useCallback(() => {
+  useEffect(() => {
     if (signedInWallets.length > 0) {
       setSortBy({ key: 'value', order: 'DESC' });
     } else {
@@ -52,20 +52,18 @@ export default function useSortCurrency(initialState: SortingType) {
 
   const sortData = (data: Currency[], rateFracs: {}) => {
     const dataToSort = [...data];
-
     const direction = sortBy.order === 'ASC' ? -1 : 1;
+
     if (sortBy.key === 'symbol') {
       dataToSort.sort((a, b) => {
-        if (a.symbol === 'ICX') return -1;
-        if (b.symbol === 'ICX') return 1;
+        // if (a.symbol === 'ICX') return -1;
+        // if (b.symbol === 'ICX') return 1;
         return a.symbol.toUpperCase() > b.symbol.toUpperCase() ? -1 * direction : 1 * direction;
       });
     }
 
     if (signedInWallets.length > 0 && sortBy.key === 'value') {
       dataToSort.sort((a, b) => {
-        if (a.symbol === 'ICX') return -1;
-        if (b.symbol === 'ICX') return 1;
         const aBalance = getXCurrencyBalance(xBalances, a) || new BigNumber(0);
         const bBalance = getXCurrencyBalance(xBalances, b) || new BigNumber(0);
         const aValue = aBalance.times(new BigNumber(rateFracs[a.symbol!].toFixed(8))).toFormat(2);
@@ -76,8 +74,6 @@ export default function useSortCurrency(initialState: SortingType) {
 
     if (signedInWallets.length === 0 && sortBy.key === 'price') {
       dataToSort.sort((a, b) => {
-        if (a.symbol === 'ICX') return -1;
-        if (b.symbol === 'ICX') return 1;
         const aPrice =
           (rateFracs &&
             rateFracs[a.symbol!] &&

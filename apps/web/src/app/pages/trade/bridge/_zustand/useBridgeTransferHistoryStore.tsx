@@ -176,10 +176,10 @@ export const useBridgeTransferHistoryStore = create<BridgeTransferHistoryStore>(
 
         if (newStatus !== oldStatus) {
           if (newStatus === BridgeTransferStatus.CALL_EXECUTED) {
-            xCallEventActions.stopScanner(newTransfer.destinationChainId);
+            xCallEventActions.disableScanner(newTransfer.id);
             await transfer.onSuccess(newTransfer);
           } else if (newStatus === BridgeTransferStatus.TRANSFER_FAILED) {
-            xCallEventActions.stopScanner(newTransfer.destinationChainId);
+            xCallEventActions.disableScanner(newTransfer.id);
             await transfer.onFail(newTransfer);
           }
         }
@@ -297,8 +297,7 @@ export const BridgeTransferStatusUpdater = ({ transfer }) => {
   useCreateXCallService(sourceChainId);
   useCreateXCallService(destinationChainId);
 
-  useXCallEventScanner(sourceChainId);
-  useXCallEventScanner(destinationChainId);
+  useXCallEventScanner(id);
 
   const { rawTx } = useFetchTransaction(transfer?.sourceTransaction);
   const { events } = useFetchBridgeTransferEvents(transfer);
@@ -318,7 +317,7 @@ export const BridgeTransferStatusUpdater = ({ transfer }) => {
   useEffect(() => {
     if (id) {
       if (status !== BridgeTransferStatus.CALL_EXECUTED && !xCallEventActions.isScannerEnabled(destinationChainId)) {
-        xCallEventActions.startScanner(destinationChainId, BigInt(destinationChainInitialBlockHeight));
+        xCallEventActions.enableScanner(id, destinationChainId, BigInt(destinationChainInitialBlockHeight));
       }
     }
   }, [id, status, destinationChainId, destinationChainInitialBlockHeight]);

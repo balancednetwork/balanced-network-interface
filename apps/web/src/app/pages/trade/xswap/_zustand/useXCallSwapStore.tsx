@@ -94,7 +94,7 @@ export const xCallSwapActions = {
 
     const dstChainXCallService = xCallServiceActions.getXCallService(destinationChainId);
 
-    const blockHeight = (await dstChainXCallService.getBlockHeight()) - 1n;
+    const blockHeight = (await dstChainXCallService.getBlockHeight()) - 10n;
 
     const childTransferId = `${sourceChainId}/${sourceTransaction?.hash}`;
     const childTransfer: BridgeTransfer = {

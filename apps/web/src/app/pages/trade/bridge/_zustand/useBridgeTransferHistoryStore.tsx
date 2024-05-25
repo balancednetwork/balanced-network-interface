@@ -222,15 +222,20 @@ export const bridgeTransferHistoryActions = {
   },
 
   getPendingTransfers: (signedWallets: { chain: XChain; chainId: XChainId; address: string }[]) => {
-    return Object.values(useBridgeTransferHistoryStore.getState().transfers).filter(
-      transfer =>
-        transfer.status !== BridgeTransferStatus.CALL_EXECUTED &&
-        transfer.status !== BridgeTransferStatus.TRANSFER_FAILED &&
-        signedWallets.some(
-          wallet => wallet.chainId === transfer.sourceChainId,
-          // && wallet.address === transfer.from,
-        ),
-    );
+    return Object.values(useBridgeTransferHistoryStore.getState().transfers).filter(transfer => {
+      const parentTransfer = transfer.parentTransferId
+        ? useBridgeTransferHistoryStore.getState().transfers[transfer.parentTransferId]
+        : undefined;
+      return (
+        (transfer.status !== BridgeTransferStatus.CALL_EXECUTED &&
+          transfer.status !== BridgeTransferStatus.TRANSFER_FAILED &&
+          signedWallets.some(wallet => wallet.chainId === transfer.sourceChainId)) ||
+        (parentTransfer &&
+          parentTransfer.status !== BridgeTransferStatus.CALL_EXECUTED &&
+          parentTransfer.status !== BridgeTransferStatus.TRANSFER_FAILED &&
+          signedWallets.some(wallet => wallet.chainId === parentTransfer.sourceChainId))
+      );
+    });
   },
 
   getTransferStatusMessage: (transfer: BridgeTransfer) => {
@@ -318,7 +323,11 @@ export const BridgeTransferStatusUpdater = ({ transfer }) => {
 
   useEffect(() => {
     if (id) {
-      if (status !== BridgeTransferStatus.CALL_EXECUTED && !xCallEventActions.isScannerEnabled(destinationChainId)) {
+      if (
+        status !== BridgeTransferStatus.CALL_EXECUTED &&
+        status !== BridgeTransferStatus.TRANSFER_FAILED &&
+        !xCallEventActions.isScannerEnabled(destinationChainId)
+      ) {
         xCallEventActions.enableScanner(id, destinationChainId, BigInt(destinationChainInitialBlockHeight));
       }
     }

@@ -66,6 +66,7 @@ export type Transaction = {
   hash: string;
   xChainId: XChainId;
   status: TransactionStatus;
+  timestamp: number;
 
   pendingMessage?: string;
   successMessage?: string;

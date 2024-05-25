@@ -159,6 +159,8 @@ export const useBridgeTransferHistoryStore = create<BridgeTransferHistoryStore>(
             xChainId: transfer.destinationChainId,
             status: dstXCallService.deriveTxStatus(rawTx),
             rawEventLogs: dstXCallService.getTxEventLogs(rawTx),
+            timestamp: Date.now(),
+            // timestamp: newEvents[XCallEventType.CallExecuted].timestamp,
           };
         }
         const newStatus = deriveStatus(transfer.sourceTransaction, newEvents, destinationTransaction);

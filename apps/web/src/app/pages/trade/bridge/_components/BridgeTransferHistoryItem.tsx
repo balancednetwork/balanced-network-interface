@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
@@ -71,11 +71,13 @@ const FailedX = styled(Box)`
 const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) => {
   const { sourceChainId, destinationChainId } = transfer;
 
-  const statusMessage = useMemo(() => {
-    if (!transfer) {
-      return `Transfer not found.`;
-    }
+  const isPending = useMemo(() => {
+    return (
+      transfer.status !== BridgeTransferStatus.TRANSFER_FAILED && transfer.status !== BridgeTransferStatus.CALL_EXECUTED
+    );
+  }, [transfer]);
 
+  const statusMessage = useMemo(() => {
     switch (transfer.status) {
       case BridgeTransferStatus.TRANSFER_FAILED:
         return `Failed`;
@@ -118,6 +120,24 @@ const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) =
     return { descriptionAction, descriptionAmount };
   }, [transfer]);
 
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const timestamp = transfer.sourceTransaction.timestamp;
+
+  useEffect(() => {
+    if (isPending) {
+      const interval = setInterval(() => {
+        const now = Date.now();
+        const elapsed = Math.floor((now - timestamp) / 1000);
+        setElapsedTime(elapsed);
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [timestamp, isPending]);
+
+  const minutes = Math.floor(elapsedTime / 60);
+  const seconds = elapsedTime % 60;
+
   return (
     <>
       <BridgeTransferStatusUpdater transfer={transfer} />
@@ -136,21 +156,21 @@ const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) =
           </Typography>
         </Flex>
         <Flex justifyContent="center" flexDirection="column" alignItems="flex-end" className="status-check">
-          {/* <>
-          <Flex alignItems="center">
-            <Spinner size={15} />
-            <Status style={{ transform: 'translateY(1px)' }}>pending</Status>
-          </Flex>
-          <Typography opacity={0.75} fontSize={14}>
-            10m 20s
-          </Typography>
-        </> */}
-
-          <Flex alignItems="center">
-            {transfer.status !== BridgeTransferStatus.TRANSFER_FAILED &&
-              transfer.status !== BridgeTransferStatus.CALL_EXECUTED && <Spinner size={15} />}
-            <Status style={{ transform: 'translateY(1px)' }}>{statusMessage}</Status>
-          </Flex>
+          {isPending ? (
+            <>
+              <Flex alignItems="center">
+                <Spinner size={15} />
+                <Status style={{ transform: 'translateY(1px)' }}>{statusMessage}</Status>
+              </Flex>
+              <Typography opacity={0.75} fontSize={14}>
+                {elapsedTime ? `${minutes ? minutes + 'm' : ''} ${seconds}s` : '...'}
+              </Typography>
+            </>
+          ) : (
+            <Flex alignItems="center">
+              <Status style={{ transform: 'translateY(1px)' }}>{statusMessage}</Status>
+            </Flex>
+          )}
         </Flex>
       </Wrap>
     </>

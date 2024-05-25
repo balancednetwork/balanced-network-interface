@@ -41,7 +41,7 @@ export const transactionActions = {
     },
   ): Transaction => {
     const { hash } = transaction;
-    const newItem = { ...transaction, status: TransactionStatus.pending, xChainId, id: hash };
+    const newItem = { ...transaction, status: TransactionStatus.pending, xChainId, id: hash, timestamp: Date.now() };
     useTransactionStore.setState(state => {
       return { transactions: [...state.transactions, newItem] };
     });

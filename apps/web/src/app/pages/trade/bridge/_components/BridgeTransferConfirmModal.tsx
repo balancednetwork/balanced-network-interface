@@ -141,7 +141,7 @@ export function BridgeTransferConfirmModal() {
                 </TextButton>
                 {isProcessing ? (
                   <>
-                    <StyledXCallButton disabled loading>
+                    <StyledXCallButton disabled $loading>
                       <Trans>Transfer in progress</Trans>
                     </StyledXCallButton>
                   </>
@@ -162,7 +162,7 @@ export function BridgeTransferConfirmModal() {
             )}
           </Flex>
 
-          {!gasChecker.hasEnoughGas && (
+          {!isProcessing && !gasChecker.hasEnoughGas && (
             <Flex justifyContent="center" paddingY={2}>
               <Typography maxWidth="320px" color="alert" textAlign="center">
                 {gasChecker.errorMessage}

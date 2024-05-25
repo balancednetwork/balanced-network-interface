@@ -46,7 +46,7 @@ type XCallSwapModalProps = {
   recipient?: string | null;
 };
 
-export const StyledButton = styled(Button)<{ loading?: boolean }>`
+export const StyledButton = styled(Button)<{ $loading?: boolean }>`
   position: relative;
 
   &:after,
@@ -86,8 +86,8 @@ export const StyledButton = styled(Button)<{ loading?: boolean }>`
     }
   }
 
-  ${({ loading }) =>
-    loading &&
+  ${({ $loading }) =>
+    $loading &&
     css`
     &:after {
       animation: expand 2s infinite;
@@ -253,7 +253,7 @@ const XCallSwapModal = ({
 
                 {isProcessing ? (
                   <>
-                    <StyledButton disabled loading>
+                    <StyledButton disabled $loading>
                       <Trans>Swap in progress</Trans>
                     </StyledButton>
                   </>
@@ -274,7 +274,7 @@ const XCallSwapModal = ({
             )}
           </Flex>
 
-          {!gasChecker.hasEnoughGas && (
+          {!isProcessing && !gasChecker.hasEnoughGas && (
             <Flex justifyContent="center" paddingY={2}>
               <Typography maxWidth="320px" color="alert" textAlign="center">
                 {gasChecker.errorMessage}

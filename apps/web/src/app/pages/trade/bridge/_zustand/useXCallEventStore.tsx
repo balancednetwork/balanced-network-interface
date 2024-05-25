@@ -20,6 +20,7 @@ type XCallEventStore = {
   incrementCurrentHeight: (id: string) => void;
   updateChainHeight: (id: string) => Promise<void>;
   scanBlock: (xChainId: XChainId, blockHeight: bigint) => void;
+  isScanned: (xChainId: XChainId, blockHeight: bigint) => boolean;
   setIsScanning: (id: string, isScanning: boolean) => void; // TODO: rename to setIsScanningBlock?
   getDestinationEvents: (xChainId: XChainId, sn: bigint) => Partial<Record<XCallEventType, XCallDestinationEvent>>;
 };
@@ -86,8 +87,12 @@ export const useXCallEventStore = create<XCallEventStore>()(
         }
       },
 
+      isScanned: (xChainId: XChainId, blockHeight: bigint) => {
+        return !!get().destinationXCallEvents[xChainId]?.[Number(blockHeight)];
+      },
+
       scanBlock: async (xChainId: XChainId, blockHeight: bigint) => {
-        if (get().destinationXCallEvents[xChainId]?.[Number(blockHeight)]) {
+        if (get().isScanned(xChainId, blockHeight)) {
           return;
         }
 
@@ -166,6 +171,10 @@ export const xCallEventActions = {
     await useXCallEventStore.getState().updateChainHeight(id);
   },
 
+  isScanned: (xChainId: XChainId, blockHeight: bigint) => {
+    return useXCallEventStore.getState().isScanned(xChainId, blockHeight);
+  },
+
   scanBlock: async (xChainId: XChainId, blockHeight: bigint) => {
     await useXCallEventStore.getState().scanBlock(xChainId, blockHeight);
   },
@@ -204,7 +213,10 @@ export const useXCallEventScanner = (id: string | undefined) => {
 
       await xCallEventActions.scanBlock(xChainId, currentHeight);
       await xCallEventActions.updateChainHeight(id);
-      await xCallEventActions.incrementCurrentHeight(id);
+
+      if (xCallEventActions.isScanned(xChainId, currentHeight)) {
+        await xCallEventActions.incrementCurrentHeight(id);
+      }
     } catch (error) {
       console.error('Error during block scan:', error);
     } finally {

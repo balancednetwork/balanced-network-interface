@@ -182,17 +182,12 @@ export function useDerivedMintInfo(
   const balances = useCurrencyBalances(account ?? undefined, currencyArr);
   const balancesCrossChain = useCrossChainCurrencyBalances(currencyArr);
   const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(() => {
-    if (AChain && BChain && balancesCrossChain) {
-      return {
-        [Field.CURRENCY_A]: balancesCrossChain[0]?.[AChain], // base token
-        [Field.CURRENCY_B]: balancesCrossChain[1]?.[BChain], // quote token
-      };
-    } else {
-      return {
-        [Field.CURRENCY_A]: balances[0], // base token
-        [Field.CURRENCY_B]: balances[1], // quote token
-      };
-    }
+    const currencyABalance = balancesCrossChain?.[0]?.[AChain] ?? balances[0];
+    const currencyBBalance = balancesCrossChain?.[1]?.[BChain] ?? balances[1];
+    return {
+      [Field.CURRENCY_A]: currencyABalance, // base token
+      [Field.CURRENCY_B]: currencyBBalance, // quote token
+    };
   }, [AChain, BChain, balances, balancesCrossChain]);
 
   // deposits

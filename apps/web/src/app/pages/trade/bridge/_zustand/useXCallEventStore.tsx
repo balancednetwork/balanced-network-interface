@@ -52,9 +52,9 @@ export const useXCallEventStore = create<XCallEventStore>()(
             ...state.scanners[id],
             enabled: false,
             isScanning: false,
-            startBlockHeight: 0,
-            currentHeight: 0,
-            chainHeight: 0,
+            startBlockHeight: 0n,
+            currentHeight: 0n,
+            chainHeight: 0n,
           };
         });
       },

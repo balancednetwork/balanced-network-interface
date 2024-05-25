@@ -23,7 +23,7 @@ export const archway: XChain = {
     liquidSwap: 'archway1ywv0gxrw3kv25kn9f05dtqf6577fer5pc2vewvgcagpm5p8l4kuqc4qfp6',
   },
   autoExecution: true,
-  gasThreshold: 5,
+  gasThreshold: 1,
 };
 
 export const archwayTestnet: XChain = {
@@ -75,7 +75,7 @@ export const icon: XChain = {
     liquidSwap: '',
   },
   autoExecution: true,
-  gasThreshold: 4,
+  gasThreshold: 1,
 };
 
 export const lisbon: XChain = {
@@ -125,7 +125,7 @@ export const avalanche: XChain = {
     bnUSD: '0xdBDd50997361522495EcFE57EBb6850dA0E4C699',
   },
   autoExecution: true,
-  gasThreshold: 0,
+  gasThreshold: 0.01,
 };
 
 export const fuji: XChain = {

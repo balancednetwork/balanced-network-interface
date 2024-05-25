@@ -23,13 +23,13 @@ import { bridgeTransferActions, useBridgeTransferStore } from '../_zustand/useBr
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks/useApproveCallback';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import useXCallFee from '../_hooks/useXCallFee';
-import useXCallGasChecker from '../_hooks/useXCallGasChecker';
 import { BridgeTransferType, XSwapInfo } from '../_zustand/types';
 import {
   BridgeTransferStatusUpdater,
   bridgeTransferHistoryActions,
   useBridgeTransferHistoryStore,
 } from '../_zustand/useBridgeTransferHistoryStore';
+import useXCallGasChecker from '../_hooks/useXCallGasChecker';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;
@@ -58,8 +58,6 @@ export function BridgeTransferConfirmModal() {
 
   const shouldLedgerSign = useShouldLedgerSign();
 
-  const { data: gasChecker } = useXCallGasChecker(bridgeDirection.from, bridgeDirection.to);
-
   const handleDismiss = () => {
     modalActions.closeModal(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL);
     setTimeout(() => {
@@ -85,6 +83,8 @@ export function BridgeTransferConfirmModal() {
   const handleApprove = () => {
     approveCallback();
   };
+
+  const gasChecker = useXCallGasChecker(bridgeDirection.from);
 
   return (
     <>
@@ -132,12 +132,6 @@ export function BridgeTransferConfirmModal() {
 
           {isProcessing && <BridgeTransferState />}
 
-          {gasChecker && !gasChecker.hasEnoughGas && (
-            <Typography mt={4} mb={-1} textAlign="center" color="alert">
-              {gasChecker.errorMessage || t`Not enough gas to complete the swap.`}
-            </Typography>
-          )}
-
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}
             {!shouldLedgerSign && (
@@ -147,7 +141,7 @@ export function BridgeTransferConfirmModal() {
                 </TextButton>
                 {isProcessing ? (
                   <>
-                    <StyledXCallButton disabled>
+                    <StyledXCallButton disabled loading>
                       <Trans>Transfer in progress</Trans>
                     </StyledXCallButton>
                   </>
@@ -158,7 +152,7 @@ export function BridgeTransferConfirmModal() {
                         {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
                       </Button>
                     ) : (
-                      <StyledXCallButton onClick={handleTransfer}>
+                      <StyledXCallButton onClick={handleTransfer} disabled={!gasChecker.hasEnoughGas}>
                         <Trans>Transfer</Trans>
                       </StyledXCallButton>
                     )}
@@ -167,6 +161,14 @@ export function BridgeTransferConfirmModal() {
               </>
             )}
           </Flex>
+
+          {!gasChecker.hasEnoughGas && (
+            <Flex justifyContent="center" paddingY={2}>
+              <Typography maxWidth="320px" color="alert" textAlign="center">
+                {gasChecker.errorMessage}
+              </Typography>
+            </Flex>
+          )}
         </ModalContentWrapper>
       </Modal>
     </>

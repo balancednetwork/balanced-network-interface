@@ -5,7 +5,7 @@ import { Trade } from '@balancednetwork/v1-sdk';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { useARCH } from 'app/pages/trade/bridge/_config/tokens';
 import { XChainId, XToken } from 'app/pages/trade/bridge/types';
@@ -20,7 +20,6 @@ import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import ModalContent from 'app/components/ModalContent';
 import useXCallFee from 'app/pages/trade/bridge/_hooks/useXCallFee';
-import useXCallGasChecker from 'app/pages/trade/bridge/_hooks/useXCallGasChecker';
 import { useXCallSwapStore, xCallSwapActions } from '../_zustand/useXCallSwapStore';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks/useApproveCallback';
@@ -33,6 +32,7 @@ import {
   bridgeTransferHistoryActions,
   useBridgeTransferHistoryStore,
 } from '../../bridge/_zustand/useBridgeTransferHistoryStore';
+import useXCallGasChecker from '../../bridge/_hooks/useXCallGasChecker';
 
 type XCallSwapModalProps = {
   account: string | undefined;
@@ -46,7 +46,7 @@ type XCallSwapModalProps = {
   recipient?: string | null;
 };
 
-export const StyledButton = styled(Button)`
+export const StyledButton = styled(Button)<{ loading?: boolean }>`
   position: relative;
 
   &:after,
@@ -86,11 +86,14 @@ export const StyledButton = styled(Button)`
     }
   }
 
-  &:disabled {
+  ${({ loading }) =>
+    loading &&
+    css`
     &:after {
       animation: expand 2s infinite;
     }
-  }
+    `}
+
 `;
 
 export const presenceVariants = {
@@ -117,7 +120,6 @@ const XCallSwapModal = ({
   const slippageTolerance = useSwapSlippageTolerance();
 
   const { xCallFee, formattedXCallFee } = useXCallFee(direction.from, direction.to);
-  const { data: gasChecker } = useXCallGasChecker(direction.from, direction.to);
 
   const xChain = xChainMap[direction.from];
   const _inputAmount = useMemo(() => {
@@ -165,6 +167,8 @@ const XCallSwapModal = ({
 
     await xCallSwapActions.executeSwap(xSwapInfo);
   };
+
+  const gasChecker = useXCallGasChecker(direction.from);
 
   return (
     <>
@@ -239,12 +243,6 @@ const XCallSwapModal = ({
 
           {isProcessing && <XCallSwapState />}
 
-          {gasChecker && !gasChecker.hasEnoughGas && (
-            <Typography mt={4} mb={-1} textAlign="center" color="alert">
-              {gasChecker.errorMessage || t`Not enough gas to complete the swap.`}
-            </Typography>
-          )}
-
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}
             {!shouldLedgerSign && (
@@ -255,7 +253,7 @@ const XCallSwapModal = ({
 
                 {isProcessing ? (
                   <>
-                    <StyledButton disabled>
+                    <StyledButton disabled loading>
                       <Trans>Swap in progress</Trans>
                     </StyledButton>
                   </>
@@ -266,7 +264,7 @@ const XCallSwapModal = ({
                         {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
                       </Button>
                     ) : (
-                      <StyledButton onClick={handleXCallSwap}>
+                      <StyledButton onClick={handleXCallSwap} disabled={!gasChecker.hasEnoughGas}>
                         <Trans>Swap</Trans>
                       </StyledButton>
                     )}
@@ -275,6 +273,14 @@ const XCallSwapModal = ({
               </>
             )}
           </Flex>
+
+          {!gasChecker.hasEnoughGas && (
+            <Flex justifyContent="center" paddingY={2}>
+              <Typography maxWidth="320px" color="alert" textAlign="center">
+                {gasChecker.errorMessage}
+              </Typography>
+            </Flex>
+          )}
         </ModalContent>
       </Modal>
     </>

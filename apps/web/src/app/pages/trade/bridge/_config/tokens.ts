@@ -51,9 +51,9 @@ export const sARCHOnArchway: XTokenMap = {
 };
 
 export const ArchwayToken: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'NativeArchFakeAddrress', 18, 'ARCH', 'Archway'),
-  [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'NativeArchFakeAddrress', 18, 'ARCH', 'Archway'),
-  [ChainId.LISBON]: new Token(ChainId.LISBON, 'NativeArchFakeAddrress', 18, 'ARCH', 'Archway'),
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'native', 18, 'ARCH', 'Archway'),
+  [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'native', 18, 'ARCH', 'Archway'),
+  [ChainId.LISBON]: new Token(ChainId.LISBON, 'native', 18, 'ARCH', 'Archway'),
 };
 
 export const useARCH = () => {

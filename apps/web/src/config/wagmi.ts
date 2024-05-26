@@ -1,6 +1,6 @@
 import { http, createConfig } from 'wagmi';
 import { avalanche, avalancheFuji } from 'wagmi/chains';
-import { walletConnect } from 'wagmi/connectors';
+// import { walletConnect } from 'wagmi/connectors';
 import { createConfig as createCoreConfig } from '@wagmi/core';
 export const noopStorage = {
   getItem: (_key: any) => '',
@@ -11,14 +11,14 @@ export const noopStorage = {
 export const wagmiConfig = createConfig({
   chains: [avalanche, avalancheFuji],
   connectors: [
-    walletConnect({
-      projectId: '6757abd2c11f58508b9bc73a9c8fed85',
-      qrModalOptions: {
-        themeVariables: {
-          '--wcm-z-index': '999999',
-        },
-      },
-    }),
+    // walletConnect({
+    //   projectId: '6757abd2c11f58508b9bc73a9c8fed85',
+    //   qrModalOptions: {
+    //     themeVariables: {
+    //       '--wcm-z-index': '999999',
+    //     },
+    //   },
+    // }),
   ],
   transports: {
     [avalanche.id]: http(),

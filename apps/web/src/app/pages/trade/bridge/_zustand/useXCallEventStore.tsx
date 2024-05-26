@@ -211,8 +211,7 @@ export const useXCallEventScanner = (id: string | undefined) => {
     try {
       const { currentHeight } = useXCallEventStore.getState().scanners[id] || {};
 
-      console.log('Scanning block:', currentHeight);
-
+      // console.log('Scanning block:', currentHeight);
       await xCallEventActions.scanBlock(xChainId, currentHeight);
       await xCallEventActions.updateChainHeight(id);
 

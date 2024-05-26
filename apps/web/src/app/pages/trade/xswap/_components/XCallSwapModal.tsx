@@ -26,7 +26,11 @@ import { xChainMap } from '../../bridge/_config/xChains';
 import { useModalStore, modalActions, MODAL_ID } from '../../bridge/_zustand/useModalStore';
 import { XCallTransactionType, XSwapInfo } from '../../bridge/_zustand/types';
 import useXCallGasChecker from '../../bridge/_hooks/useXCallGasChecker';
-import { useXCallTransactionStore, xCallTransactionActions } from '../../bridge/_zustand/useXCallTransactionStore';
+import {
+  useXCallTransactionStore,
+  xCallTransactionActions,
+  XCallTransactionUpdater,
+} from '../../bridge/_zustand/useXCallTransactionStore';
 import XCallTransactionState from '../../bridge/_components/XCallTransactionState';
 
 type XCallSwapModalProps = {
@@ -167,6 +171,7 @@ const XCallSwapModal = ({
 
   return (
     <>
+      {currentXCallTransaction && <XCallTransactionUpdater xCallTransaction={currentXCallTransaction} />}
       <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XCALL_SWAP_MODAL)} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">

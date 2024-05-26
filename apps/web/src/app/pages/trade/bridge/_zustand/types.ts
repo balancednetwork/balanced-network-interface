@@ -109,5 +109,6 @@ export type XCallTransaction = {
   secondaryMessageId?: string;
   secondaryMessageRequired: boolean;
 
+  destinationChainInitialBlockHeight?: bigint;
   xSwapInfo: XSwapInfo;
 };

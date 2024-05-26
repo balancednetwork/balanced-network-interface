@@ -1,3 +1,4 @@
+import React from 'react';
 import { create } from 'zustand';
 import { devtools, persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -14,7 +15,7 @@ import {
 } from './types';
 import { xCallServiceActions } from './useXCallServiceStore';
 import { transactionActions } from './useTransactionStore';
-import { xCallMessageActions } from './useXCallMessageStore';
+import { XCallMessageUpdater, useXCallMessageStore, xCallMessageActions } from './useXCallMessageStore';
 import { swapMessage } from '../../supply/_components/utils';
 import { XChain, XChainId } from '../types';
 import { MODAL_ID, modalActions } from './useModalStore';
@@ -115,7 +116,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
         });
 
         if (sourceTransaction && sourceTransaction.hash) {
-          const blockHeight = (await dstChainXCallService.getBlockHeight()) - 1n;
+          const destinationChainInitialBlockHeight = (await dstChainXCallService.getBlockHeight()) - 1n;
 
           const xCallMessage: XCallMessage = {
             id: `${sourceChainId}/${sourceTransaction.hash}`,
@@ -124,7 +125,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
             sourceTransaction,
             status: XCallMessageStatus.REQUESTED,
             events: {},
-            destinationChainInitialBlockHeight: blockHeight,
+            destinationChainInitialBlockHeight,
           };
 
           xCallMessageActions.add(xCallMessage);
@@ -152,7 +153,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
         const _destinationChainId = sourceChainId === iconChainId ? destinationChainId : iconChainId;
 
         const srcChainXCallService = xCallServiceActions.getXCallService(sourceChainId);
-        const dstChainXCallService = xCallServiceActions.getXCallService(_destinationChainId);
+        const _dstChainXCallService = xCallServiceActions.getXCallService(_destinationChainId);
 
         const sourceTransactionHash = await srcChainXCallService.executeSwap(xSwapInfo);
 
@@ -177,7 +178,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
         cleanupSwap?.();
 
         if (sourceTransaction && sourceTransaction.hash) {
-          const blockHeight = (await dstChainXCallService.getBlockHeight()) - 1n;
+          const destinationChainInitialBlockHeight = (await _dstChainXCallService.getBlockHeight()) - 1n;
 
           const xCallMessage: XCallMessage = {
             id: `${sourceChainId}/${sourceTransaction.hash}`,
@@ -186,7 +187,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
             sourceTransaction,
             status: XCallMessageStatus.REQUESTED,
             events: {},
-            destinationChainInitialBlockHeight: blockHeight,
+            destinationChainInitialBlockHeight,
           };
 
           xCallMessageActions.add(xCallMessage);
@@ -198,6 +199,13 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
             secondaryMessageRequired: destinationChainId !== _destinationChainId,
             xSwapInfo,
           };
+
+          // TODO: set destinationChainInitialBlockHeight for secondary message?
+          // if (xCallTransaction.secondaryMessageRequired) {
+          //   const dstChainXCallService = xCallServiceActions.getXCallService(destinationChainId);
+          //   const destinationChainInitialBlockHeight = (await dstChainXCallService.getBlockHeight()) - 1n;
+          //   xCallTransaction.destinationChainInitialBlockHeight = destinationChainInitialBlockHeight;
+          // }
 
           set(state => {
             state.transactions[xCallTransaction.id] = xCallTransaction;
@@ -216,8 +224,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
         const sourceTransaction = primaryMessage.destinationTransaction;
 
         const dstChainXCallService = xCallServiceActions.getXCallService(destinationChainId);
-
-        const blockHeight = (await dstChainXCallService.getBlockHeight()) - 10n;
+        const destinationChainInitialBlockHeight = (await dstChainXCallService.getBlockHeight()) - 20n;
 
         const secondaryMessageId = `${sourceChainId}/${sourceTransaction?.hash}`;
         const secondaryMessage: XCallMessage = {
@@ -227,7 +234,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
           sourceTransaction: sourceTransaction,
           status: XCallMessageStatus.REQUESTED,
           events: {},
-          destinationChainInitialBlockHeight: blockHeight,
+          destinationChainInitialBlockHeight,
         };
 
         xCallMessageActions.add(secondaryMessage);
@@ -309,13 +316,13 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
       },
 
       getPendingTransactions: (signedWallets: { chain: XChain; chainId: XChainId; address: string }[]) => {
-        return Object.values(get().transactions);
-        // return Object.values(get().transactions).filter((transaction: XCallTransaction) => {
-        //   return (
-        //     transaction.status === XCallTransactionStatus.pending &&
-        //     signedWallets.some(wallet => wallet.chainId === transaction.xSwapInfo.direction.from)
-        //   );
-        // });
+        // return Object.values(get().transactions);
+        return Object.values(get().transactions).filter((transaction: XCallTransaction) => {
+          return (
+            transaction.status === XCallTransactionStatus.pending &&
+            signedWallets.some(wallet => wallet.chainId === transaction.xSwapInfo.direction.from)
+          );
+        });
       },
     })),
     {
@@ -417,4 +424,19 @@ export const xCallTransactionActions = {
   //     useXSupplyStore.setState({ transferId: transfer.id });
   //   }
   // },
+};
+
+export const XCallTransactionUpdater = ({ xCallTransaction }: { xCallTransaction: XCallTransaction }) => {
+  useXCallMessageStore();
+  const { primaryMessageId, secondaryMessageId } = xCallTransaction;
+
+  const primaryMessage = xCallMessageActions.get(primaryMessageId);
+  const secondaryMessage = secondaryMessageId && xCallMessageActions.get(secondaryMessageId);
+
+  return (
+    <>
+      {primaryMessage && <XCallMessageUpdater xCallMessage={primaryMessage} />}
+      {secondaryMessage && <XCallMessageUpdater xCallMessage={secondaryMessage} />}
+    </>
+  );
 };

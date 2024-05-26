@@ -346,9 +346,6 @@ export default function AllPoolsPanel() {
                     <br />
                     <br />
                     <Trans>The fee APR is calculated from the swap fees earned by a pool in the last 30 days.</Trans>
-                    <Typography marginTop={'20px'} color="text1" fontSize={14}>
-                      <Trans>Impermanent loss is not factored in.</Trans>
-                    </Typography>
                   </>
                 }
                 placement="top"

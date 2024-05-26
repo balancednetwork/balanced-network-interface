@@ -2,10 +2,28 @@ import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { IXCallFee, XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
 
-export enum BridgeTransferStatus {
-  TRANSFER_REQUESTED = 'TRANSFER_REQUESTED',
-  TRANSFER_FAILED = 'TRANSFER_FAILED',
-  // TRANSFER_COMPLETED = 'TRANSFER_COMPLETED',
+export enum TransactionStatus {
+  pending = 'pending',
+  success = 'success',
+  failure = 'failure',
+}
+
+export enum XCallTransactionStatus {
+  pending = 'pending',
+  success = 'success',
+  failure = 'failure',
+}
+
+export enum XCallTransactionType {
+  SWAP = 'swap',
+  BRIDGE = 'bridge',
+  SUPPLY = 'supply',
+}
+
+export enum XCallMessageStatus {
+  REQUESTED = 'REQUESTED',
+  FAILED = 'FAILED',
+  // COMPLETED = 'COMPLETED',
 
   AWAITING_CALL_MESSAGE_SENT = 'AWAITING_CALL_MESSAGE_SENT',
   CALL_MESSAGE_SENT = 'CALL_MESSAGE_SENT',
@@ -13,44 +31,12 @@ export enum BridgeTransferStatus {
   CALL_EXECUTED = 'CALL_EXECUTED',
 }
 
-export enum TransactionStatus {
-  pending = 'pending',
-  success = 'success',
-  failure = 'failure',
-}
-
-// export type BridgeInfo = {
-//   bridgeDirection: {
-//     from: XChainId;
-//     to: XChainId;
-//   };
-//   currencyAmountToBridge: CurrencyAmount<Currency>;
-//   recipient: string;
-//   account: string;
-//   xCallFee: IXCallFee;
-//   isLiquidFinanceEnabled?: boolean;
-//   isDenom?: boolean;
-// };
-
-// export type SwapInfo = {
-//   direction: {
-//     from: XChainId;
-//     to: XChainId;
-//   };
-//   inputAmount: CurrencyAmount<Currency>;
-//   account: string;
-//   recipient: string;
-//   xCallFee: IXCallFee;
-//   executionTrade: Trade<Currency, Currency, TradeType>;
-//   slippageTolerance: number;
-// };
-
 export type XSwapInfo = {
   direction: {
     from: XChainId;
     to: XChainId;
   };
-  type: BridgeTransferType;
+  type: XCallTransactionType;
   inputAmount: CurrencyAmount<Currency>;
   account: string;
   recipient: string;
@@ -103,26 +89,25 @@ export type XCallEventMap = Partial<{
   [XCallEventType.CallExecuted]: XCallDestinationEvent;
 }>;
 
-export enum BridgeTransferType {
-  SWAP = 'swap',
-  BRIDGE = 'bridge',
-  SUPPLY = 'supply',
-}
-
-export type BridgeTransfer = {
+export type XCallMessage = {
   id: string;
-  type: BridgeTransferType;
   sourceChainId: XChainId;
   destinationChainId: XChainId;
   sourceTransaction: Transaction;
   destinationTransaction?: Transaction;
   events: XCallEventMap;
-  status: BridgeTransferStatus;
+  status: XCallMessageStatus;
   destinationChainInitialBlockHeight: bigint;
+  // onSuccess: (xCallMessage: XCallMessage) => Promise<void>;
+  // onFail: (xCallMessage: XCallMessage) => Promise<void>;
+};
+
+export type XCallTransaction = {
+  id: string;
+  status: XCallTransactionStatus;
+  primaryMessageId: string;
+  secondaryMessageId?: string;
+  secondaryMessageRequired: boolean;
+
   xSwapInfo: XSwapInfo;
-  childTransferNeeded: boolean;
-  childTransferId?: string;
-  parentTransferId?: string;
-  onSuccess: (transfer: BridgeTransfer) => Promise<void>;
-  onFail: (transfer: BridgeTransfer) => Promise<void>;
 };

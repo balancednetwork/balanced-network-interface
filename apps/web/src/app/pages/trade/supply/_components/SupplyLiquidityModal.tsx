@@ -27,18 +27,12 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import ModalContent, { ModalContentWrapper } from 'app/components/ModalContent';
 import Spinner from 'app/components/Spinner';
 import { depositMessage, supplyMessage } from './utils';
-import { BridgeTransferType, XSwapInfo } from '../../bridge/_zustand/types';
+import { XCallTransactionType, XSwapInfo } from '../../bridge/_zustand/types';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import useXCallFee from '../../bridge/_hooks/useXCallFee';
-import BridgeTransferState from '../../bridge/_components/BridgeTransferState';
-import { useXSupplyStore, xSupplyActions } from '../_zustand/useXSupplyStore';
-import {
-  BridgeTransferStatusUpdater,
-  bridgeTransferHistoryActions,
-  useBridgeTransferHistoryStore,
-} from '../../bridge/_zustand/useBridgeTransferHistoryStore';
 import { DEFAULT_SLIPPAGE_LP } from 'constants/index';
+import { xCallTransactionActions } from '../../bridge/_zustand/useXCallTransactionStore';
 
 interface ModalProps {
   isOpen: boolean;
@@ -62,11 +56,8 @@ export default function SupplyLiquidityModal({
   AChain,
   BChain,
 }: ModalProps) {
-  useBridgeTransferHistoryStore();
-
   const { account } = useIconReact();
   const { address: accountArch } = useArchwayContext();
-  const { transferId } = useXSupplyStore();
 
   const { currencyDeposits, pair } = useDerivedMintInfo();
   const addTransaction = useTransactionAdder();
@@ -275,7 +266,7 @@ export default function SupplyLiquidityModal({
     const inputAmount = parsedAmounts[field];
     if (inputAmount && accountArch && xCallFee) {
       const xSwapInfo: XSwapInfo = {
-        type: BridgeTransferType.SUPPLY,
+        type: XCallTransactionType.SUPPLY,
         direction: {
           from: AChain,
           to: ICON_XCALL_NETWORK_ID,
@@ -285,7 +276,7 @@ export default function SupplyLiquidityModal({
         account: accountArch,
         xCallFee,
       };
-      await xSupplyActions.sendXToken(xSwapInfo, () => executeCallback(true));
+      // await xCallTransactionActions.sendXToken(xSwapInfo, () => executeCallback(true));
     }
   };
 
@@ -328,11 +319,10 @@ export default function SupplyLiquidityModal({
   };
 
   const isXCallModalOpen =
-    transferId !== null && UIStatus[Field.CURRENCY_A].chain !== '0x1.icon' && !UIStatus[Field.CURRENCY_A].isAddPending;
+    false && UIStatus[Field.CURRENCY_A].chain !== '0x1.icon' && !UIStatus[Field.CURRENCY_A].isAddPending;
 
   return (
     <>
-      {transferId && <BridgeTransferStatusUpdater transfer={bridgeTransferHistoryActions.get(transferId)} />}
       <Modal isOpen={isOpen} onDismiss={() => undefined}>
         <ModalContent>
           <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
@@ -490,7 +480,6 @@ export default function SupplyLiquidityModal({
             <Typography mb={3} textAlign="center" fontSize={16}>
               {t`Transfer ${currencies[Field.CURRENCY_A]?.symbol} to ICON.`}
             </Typography>
-            <BridgeTransferState />
           </ModalContentWrapper>
         </Modal>
       )}

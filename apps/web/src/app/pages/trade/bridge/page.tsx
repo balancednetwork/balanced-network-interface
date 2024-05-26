@@ -7,11 +7,13 @@ import { BridgeTransferConfirmModal } from './_components/BridgeTransferConfirmM
 import BridgeActivity from './_components/BridgeActivity';
 
 import { AllTransactionsUpdater } from './_zustand/useTransactionStore';
+import { AllXCallMessagesUpdater } from './_zustand/useXCallMessageStore';
 import { modalActions, MODAL_ID } from './_zustand/useModalStore';
 import { useCreateXCallService } from './_zustand/useXCallServiceStore';
 import { useBridgeInfo } from 'store/bridge/hooks';
 
 export function BridgePage() {
+  // TODO: review this
   const { bridgeDirection } = useBridgeInfo();
   useCreateXCallService(bridgeDirection.from);
   useCreateXCallService(bridgeDirection.to);
@@ -25,8 +27,8 @@ export function BridgePage() {
       />
       <BridgeActivity />
       <BridgeTransferConfirmModal />
-
       <AllTransactionsUpdater />
+      <AllXCallMessagesUpdater />
     </SectionPanel>
   );
 }

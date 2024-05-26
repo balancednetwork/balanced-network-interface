@@ -7,21 +7,11 @@ import { Box, Flex } from 'rebass';
 import { Typography } from 'app/theme';
 
 import Spinner from 'app/components/Spinner';
-import {
-  bridgeTransferHistoryActions,
-  useBridgeTransferHistoryStore,
-} from '../../bridge/_zustand/useBridgeTransferHistoryStore';
-import { useXCallSwapStore } from '../_zustand/useXCallSwapStore';
+import { XCallTransaction } from '../_zustand/types';
+import { xCallMessageActions } from '../_zustand/useXCallMessageStore';
 
-const XCallSwapState = () => {
-  useBridgeTransferHistoryStore();
-  const { transferId, childTransferId } = useXCallSwapStore();
-  const transfer = bridgeTransferHistoryActions.get(transferId);
-  const childTransfer = bridgeTransferHistoryActions.get(childTransferId);
-
-  if (!transfer) {
-    return null;
-  }
+const XCallTransactionState = ({ xCallTransaction }: { xCallTransaction: XCallTransaction }) => {
+  const { primaryMessageId, secondaryMessageId } = xCallTransaction;
 
   return (
     <AnimatePresence>
@@ -33,11 +23,11 @@ const XCallSwapState = () => {
         <Box pt={3}>
           <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
             <Typography mb={4}>
-              <Trans>{bridgeTransferHistoryActions.getTransferStatusMessage(transfer)}</Trans>
+              <Trans>{xCallMessageActions.getXCallMessageStatusDescription(primaryMessageId)}</Trans>
             </Typography>
-            {childTransfer && (
+            {secondaryMessageId && (
               <Typography mb={4}>
-                <Trans>{bridgeTransferHistoryActions.getTransferStatusMessage(childTransfer)}</Trans>
+                <Trans>{xCallMessageActions.getXCallMessageStatusDescription(secondaryMessageId)}</Trans>
               </Typography>
             )}
             <Spinner />
@@ -48,4 +38,4 @@ const XCallSwapState = () => {
   );
 };
 
-export default XCallSwapState;
+export default XCallTransactionState;

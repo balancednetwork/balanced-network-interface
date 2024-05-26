@@ -16,20 +16,16 @@ import { useShouldLedgerSign } from 'store/application/hooks';
 
 import { useModalStore, modalActions, MODAL_ID } from '../_zustand/useModalStore';
 
-import BridgeTransferState from './BridgeTransferState';
+import XCallTransactionState from './XCallTransactionState';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
 import { useBridgeInfo } from 'store/bridge/hooks';
-import { bridgeTransferActions, useBridgeTransferStore } from '../_zustand/useBridgeTransferStore';
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks/useApproveCallback';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import useXCallFee from '../_hooks/useXCallFee';
-import { BridgeTransferType, XSwapInfo } from '../_zustand/types';
-import {
-  BridgeTransferStatusUpdater,
-  bridgeTransferHistoryActions,
-  useBridgeTransferHistoryStore,
-} from '../_zustand/useBridgeTransferHistoryStore';
+import { XCallTransactionType, XSwapInfo } from '../_zustand/types';
+import { useXCallMessageStore } from '../_zustand/useXCallMessageStore';
 import useXCallGasChecker from '../_hooks/useXCallGasChecker';
+import { useXCallTransactionStore, xCallTransactionActions } from '../_zustand/useXCallTransactionStore';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;
@@ -43,10 +39,10 @@ const StyledXCallButton = styled(XCallButton)`
 
 export function BridgeTransferConfirmModal() {
   useModalStore();
-  useBridgeTransferHistoryStore();
-  const { transferId } = useBridgeTransferStore();
-
-  const isProcessing = transferId !== null;
+  useXCallMessageStore();
+  const { currentId } = useXCallTransactionStore();
+  const currentXCallTransaction = xCallTransactionActions.get(currentId);
+  const isProcessing = currentId !== null; // TODO: can be swap is processing
 
   const { recipient, isLiquidFinanceEnabled, currencyAmountToBridge, account, isDenom, bridgeDirection } =
     useBridgeInfo();
@@ -61,14 +57,14 @@ export function BridgeTransferConfirmModal() {
   const handleDismiss = () => {
     modalActions.closeModal(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL);
     setTimeout(() => {
-      bridgeTransferActions.reset();
+      xCallTransactionActions.reset();
     }, 500);
   };
 
   const handleTransfer = async () => {
     if (currencyAmountToBridge && recipient && account && xCallFee) {
       const bridgeInfo: XSwapInfo = {
-        type: BridgeTransferType.BRIDGE,
+        type: XCallTransactionType.BRIDGE,
         direction: bridgeDirection,
         inputAmount: currencyAmountToBridge,
         recipient,
@@ -76,7 +72,7 @@ export function BridgeTransferConfirmModal() {
         xCallFee,
         isLiquidFinanceEnabled,
       };
-      await bridgeTransferActions.executeTransfer(bridgeInfo);
+      await xCallTransactionActions.executeTransfer(bridgeInfo);
     }
   };
 
@@ -88,7 +84,6 @@ export function BridgeTransferConfirmModal() {
 
   return (
     <>
-      {transferId && <BridgeTransferStatusUpdater transfer={bridgeTransferHistoryActions.get(transferId)} />}
       <Modal isOpen={modalActions.isModalOpen(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL)} onDismiss={handleDismiss}>
         <ModalContentWrapper>
           <Typography textAlign="center" mb="5px">
@@ -130,7 +125,7 @@ export function BridgeTransferConfirmModal() {
 
           <LiquidFinanceIntegration />
 
-          {isProcessing && <BridgeTransferState />}
+          {currentXCallTransaction && <XCallTransactionState xCallTransaction={currentXCallTransaction} />}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}

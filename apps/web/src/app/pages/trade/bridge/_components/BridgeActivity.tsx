@@ -9,9 +9,9 @@ import { useXCallStats } from '../_hooks/useXCallStats';
 
 import Spinner from '../../../../components/Spinner';
 import ActivityBarChart from './ActivityBarChart';
-import BridgeTransferHistoryItem from './BridgeTransferHistoryItem';
-import { bridgeTransferHistoryActions, useBridgeTransferHistoryStore } from '../_zustand/useBridgeTransferHistoryStore';
+import XCallTransactionHistoryItem from './XCallTransactionHistoryItem';
 import { useSignedInWallets } from 'store/wallet/hooks';
+import { useXCallTransactionStore, xCallTransactionActions } from '../_zustand/useXCallTransactionStore';
 
 export default function BridgeActivity() {
   const { data: xCallStats } = useXCallStats();
@@ -19,8 +19,8 @@ export default function BridgeActivity() {
   const isMedium = useMedia('(max-width: 1100px) and (min-width: 800px)');
   const signedInWallets = useSignedInWallets();
 
-  useBridgeTransferHistoryStore();
-  const pendingTransfers = bridgeTransferHistoryActions.getPendingTransfers(signedInWallets);
+  const { getPendingTransactions } = useXCallTransactionStore();
+  const pendingTransactions = getPendingTransactions(signedInWallets);
 
   return (
     <Box bg="bg2" flex={1} p={['25px', '35px']}>
@@ -60,10 +60,10 @@ export default function BridgeActivity() {
       </Box>
       <Box className="border-top" py={4}>
         {/* TODO: sort by timestamp */}
-        {pendingTransfers.map((transfer, index) => (
-          <BridgeTransferHistoryItem key={index} transfer={transfer} />
+        {pendingTransactions.map((x, index) => (
+          <XCallTransactionHistoryItem key={index} xCallTransaction={x} />
         ))}
-        {pendingTransfers?.length === 0 &&
+        {pendingTransactions?.length === 0 &&
           (signedInWallets.length ? (
             <Typography textAlign="center">
               <Trans>You have no pending or failed cross-chain transactions.</Trans>

@@ -8,8 +8,7 @@ import { Typography } from 'app/theme';
 import ArrowIcon from 'assets/icons/arrow-white.svg';
 
 import Spinner from 'app/components/Spinner';
-import { BridgeTransferStatusUpdater } from '../_zustand/useBridgeTransferHistoryStore';
-import { BridgeTransfer, BridgeTransferStatus, BridgeTransferType } from '../_zustand/types';
+import { XCallMessage, XCallMessageStatus, XCallTransaction, XCallTransactionType } from '../_zustand/types';
 
 const Wrap = styled(Box)`
   display: grid;
@@ -68,46 +67,49 @@ const FailedX = styled(Box)`
   }
 `;
 
-const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) => {
-  const { sourceChainId, destinationChainId } = transfer;
+const XCallMessageHistoryItem = ({
+  xCallMessage,
+  xCallTransaction,
+}: { xCallMessage: XCallMessage; xCallTransaction: XCallTransaction }) => {
+  const { sourceChainId, destinationChainId } = xCallMessage;
 
   const isPending = useMemo(() => {
     return (
-      transfer.status !== BridgeTransferStatus.TRANSFER_FAILED && transfer.status !== BridgeTransferStatus.CALL_EXECUTED
+      xCallMessage.status !== XCallMessageStatus.FAILED && xCallMessage.status !== XCallMessageStatus.CALL_EXECUTED
     );
-  }, [transfer]);
+  }, [xCallMessage]);
 
   const statusMessage = useMemo(() => {
-    switch (transfer.status) {
-      case BridgeTransferStatus.TRANSFER_FAILED:
+    switch (xCallMessage.status) {
+      case XCallMessageStatus.FAILED:
         return `Failed`;
-      case BridgeTransferStatus.TRANSFER_REQUESTED:
-      case BridgeTransferStatus.AWAITING_CALL_MESSAGE_SENT:
-      case BridgeTransferStatus.CALL_MESSAGE_SENT:
-      case BridgeTransferStatus.CALL_MESSAGE:
+      case XCallMessageStatus.REQUESTED:
+      case XCallMessageStatus.AWAITING_CALL_MESSAGE_SENT:
+      case XCallMessageStatus.CALL_MESSAGE_SENT:
+      case XCallMessageStatus.CALL_MESSAGE:
         return `Pending`;
-      case BridgeTransferStatus.CALL_EXECUTED:
+      case XCallMessageStatus.CALL_EXECUTED:
         return `Complete`;
       default:
         return `Unknown`;
     }
-  }, [transfer]);
+  }, [xCallMessage]);
 
   const { descriptionAction, descriptionAmount } = useMemo(() => {
     let descriptionAction, descriptionAmount;
 
-    if (!transfer) {
+    if (!xCallMessage) {
       return { descriptionAction, descriptionAmount };
     }
 
-    if (transfer.type === BridgeTransferType.BRIDGE) {
-      const _tokenSymbol = transfer.xSwapInfo.inputAmount.currency.symbol;
-      const _formattedAmount = transfer.xSwapInfo.inputAmount.toFixed(2);
+    if (xCallTransaction.xSwapInfo.type === XCallTransactionType.BRIDGE) {
+      const _tokenSymbol = xCallTransaction.xSwapInfo.inputAmount.currency.symbol;
+      const _formattedAmount = xCallTransaction.xSwapInfo.inputAmount.toFixed(2);
 
       descriptionAction = `Transfer ${_tokenSymbol}`;
       descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
-    } else if (transfer.type === BridgeTransferType.SWAP) {
-      const { executionTrade } = transfer.xSwapInfo;
+    } else if (xCallTransaction.xSwapInfo.type === XCallTransactionType.SWAP) {
+      const { executionTrade } = xCallTransaction.xSwapInfo;
       const _inputTokenSymbol = executionTrade?.inputAmount.currency.symbol || '';
       const _outputTokenSymbol = executionTrade?.outputAmount.currency.symbol || '';
       const _inputAmount = executionTrade?.inputAmount.toFixed(2);
@@ -118,10 +120,10 @@ const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) =
     }
 
     return { descriptionAction, descriptionAmount };
-  }, [transfer]);
+  }, [xCallMessage, xCallTransaction]);
 
   const [elapsedTime, setElapsedTime] = useState(0);
-  const timestamp = transfer.sourceTransaction.timestamp;
+  const timestamp = xCallMessage.sourceTransaction.timestamp;
 
   useEffect(() => {
     if (isPending) {
@@ -140,7 +142,6 @@ const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) =
 
   return (
     <>
-      <BridgeTransferStatusUpdater transfer={transfer} />
       <Wrap>
         <Flex alignItems="center">
           {getNetworkDisplayName(sourceChainId)}
@@ -177,4 +178,4 @@ const BridgeTransferHistoryItem = ({ transfer }: { transfer: BridgeTransfer }) =
   );
 };
 
-export default BridgeTransferHistoryItem;
+export default XCallMessageHistoryItem;

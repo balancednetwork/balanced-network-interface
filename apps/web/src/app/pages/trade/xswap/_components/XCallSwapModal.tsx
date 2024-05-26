@@ -20,19 +20,14 @@ import Modal from 'app/components/Modal';
 import Spinner from 'app/components/Spinner';
 import ModalContent from 'app/components/ModalContent';
 import useXCallFee from 'app/pages/trade/bridge/_hooks/useXCallFee';
-import { useXCallSwapStore, xCallSwapActions } from '../_zustand/useXCallSwapStore';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks/useApproveCallback';
-import XCallSwapState from './XCallSwapState';
 import { xChainMap } from '../../bridge/_config/xChains';
 import { useModalStore, modalActions, MODAL_ID } from '../../bridge/_zustand/useModalStore';
-import { BridgeTransferType, XSwapInfo } from '../../bridge/_zustand/types';
-import {
-  BridgeTransferStatusUpdater,
-  bridgeTransferHistoryActions,
-  useBridgeTransferHistoryStore,
-} from '../../bridge/_zustand/useBridgeTransferHistoryStore';
+import { XCallTransactionType, XSwapInfo } from '../../bridge/_zustand/types';
 import useXCallGasChecker from '../../bridge/_hooks/useXCallGasChecker';
+import { useXCallTransactionStore, xCallTransactionActions } from '../../bridge/_zustand/useXCallTransactionStore';
+import XCallTransactionState from '../../bridge/_components/XCallTransactionState';
 
 type XCallSwapModalProps = {
   account: string | undefined;
@@ -111,9 +106,9 @@ const XCallSwapModal = ({
   clearInputs,
 }: XCallSwapModalProps) => {
   useModalStore();
-  useBridgeTransferHistoryStore();
-  const { transferId, childTransferId } = useXCallSwapStore();
-  const isProcessing: boolean = transferId !== null || childTransferId !== null;
+  const { currentId } = useXCallTransactionStore();
+  const currentXCallTransaction = xCallTransactionActions.get(currentId);
+  const isProcessing: boolean = currentId !== null;
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -142,7 +137,7 @@ const XCallSwapModal = ({
   const handleDismiss = () => {
     modalActions.closeModal(MODAL_ID.XCALL_SWAP_MODAL);
     setTimeout(() => {
-      xCallSwapActions.reset();
+      xCallTransactionActions.reset();
     }, 500);
   };
 
@@ -154,7 +149,7 @@ const XCallSwapModal = ({
     if (!_inputAmount) return;
 
     const xSwapInfo: XSwapInfo & { cleanupSwap: () => void } = {
-      type: BridgeTransferType.SWAP,
+      type: XCallTransactionType.SWAP,
       direction,
       executionTrade,
       account,
@@ -165,15 +160,13 @@ const XCallSwapModal = ({
       cleanupSwap,
     };
 
-    await xCallSwapActions.executeSwap(xSwapInfo);
+    await xCallTransactionActions.executeSwap(xSwapInfo);
   };
 
   const gasChecker = useXCallGasChecker(direction.from);
 
   return (
     <>
-      {transferId && <BridgeTransferStatusUpdater transfer={bridgeTransferHistoryActions.get(transferId)} />}
-      {childTransferId && <BridgeTransferStatusUpdater transfer={bridgeTransferHistoryActions.get(childTransferId)} />}
       <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XCALL_SWAP_MODAL)} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
@@ -241,7 +234,7 @@ const XCallSwapModal = ({
             <Trans>You'll also pay</Trans> <strong>{formattedXCallFee}</strong> <Trans>to transfer cross-chain.</Trans>
           </Typography>
 
-          {isProcessing && <XCallSwapState />}
+          {currentXCallTransaction && <XCallTransactionState xCallTransaction={currentXCallTransaction} />}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}

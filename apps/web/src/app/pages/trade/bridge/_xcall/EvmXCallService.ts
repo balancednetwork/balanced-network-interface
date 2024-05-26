@@ -63,6 +63,26 @@ export class EvmXCallService implements XCallService {
     return eventLogs;
   }
 
+  async getEventLogs({ startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
+    const eventLogs = await this.publicClient.getLogs({
+      fromBlock: startBlockHeight,
+      toBlock: endBlockHeight,
+      // fromBlock: 45272443n,
+      // toBlock: 45272459n,
+      // address: avalanche.contracts.xCall as Address, // TODO: is it right?
+      // TODO: need to add more filters?
+    });
+
+    // const parsedLogs = parseEventLogs({
+    //   abi: xCallContractAbi,
+    //   logs: eventLogs,
+    // });
+
+    // console.log(parsedLogs);
+
+    return eventLogs;
+  }
+
   async getTxReceipt(txHash: string) {
     const tx = await this.publicClient.getTransactionReceipt({ hash: txHash as Address });
     return tx;
@@ -165,6 +185,38 @@ export class EvmXCallService implements XCallService {
       console.error(e);
     }
     return {};
+  }
+
+  getScanBlockCount() {
+    return 10n;
+  }
+
+  async getDestinationEvents({
+    startBlockHeight,
+    endBlockHeight,
+  }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
+    const events: any = [];
+    try {
+      const eventLogs = await this.getEventLogs({ startBlockHeight, endBlockHeight });
+      const parsedLogs = parseEventLogs({
+        abi: xCallContractAbi,
+        logs: eventLogs,
+      });
+
+      const callMessageEventLogs = this.filterCallMessageEventLogs(parsedLogs);
+      const callExecutedEventLogs = this.filterCallExecutedEventLogs(parsedLogs);
+
+      callMessageEventLogs.forEach(eventLog => {
+        events.push(this.parseCallMessageEventLog(eventLog, eventLog.transactionHash));
+      });
+      callExecutedEventLogs.forEach(eventLog => {
+        events.push(this.parseCallExecutedEventLog(eventLog, eventLog.transactionHash));
+      });
+      return events;
+    } catch (e) {
+      console.log(e);
+    }
+    return null;
   }
 
   async getDestinationEventsByBlock(blockHeight) {

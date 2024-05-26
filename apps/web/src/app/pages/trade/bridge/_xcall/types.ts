@@ -20,7 +20,9 @@ export interface XCallService {
   getTxEventLogs(rawTx): any[];
   deriveTxStatus(rawTx): TransactionStatus;
 
+  getScanBlockCount(): bigint;
   getSourceEvents(transaction: Transaction): Promise<XCallEventMap>;
+  getDestinationEvents({ startBlockHeight, endBlockHeight }): Promise<XCallEvent[]>;
   getDestinationEventsByBlock(blockHeight: bigint): Promise<XCallEvent[]>;
 
   // getAllowance(token: XToken, owner: string | null, spender: string): Promise<string>;

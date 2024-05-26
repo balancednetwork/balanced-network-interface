@@ -8,18 +8,30 @@ import { XCallDestinationEvent, XCallEvent } from './types';
 import { xCallServiceActions } from './useXCallServiceStore';
 import { useTimerStore } from './useTimerStore';
 
+type XCallScanner = {
+  id: string;
+  enabled: boolean;
+  xChainId: XChainId;
+  isScanning: boolean;
+  startBlockHeight: bigint;
+  currentHeight: bigint;
+  chainHeight: bigint;
+};
+
 type XCallEventStore = {
-  destinationXCallEvents: Partial<Record<XChainId, Record<number, XCallDestinationEvent[]>>>;
-  scanners: Partial<Record<string, any>>;
+  destinationXCallEvents: Partial<Record<XChainId, XCallDestinationEvent[]>>;
+  scannedBlocks: Partial<Record<XChainId, Record<string, boolean>>>;
+  scanners: Record<string, XCallScanner>;
 
   isScannerEnabled: (id: string) => boolean;
   enableScanner: (id: string, xChainId: XChainId, startBlockHeight: bigint) => void;
   disableScanner: (id: string) => void;
   disableAllScanners: () => void;
 
-  incrementCurrentHeight: (id: string) => void;
+  incrementCurrentHeight: (id: string, step: bigint) => void;
   updateChainHeight: (id: string) => Promise<void>;
-  scanBlock: (xChainId: XChainId, blockHeight: bigint) => void;
+  // scanBlock: (xChainId: XChainId, blockHeight: bigint) => void;
+  scanBlocks: (id: string, xChainId: XChainId) => Promise<void>;
   isScanned: (xChainId: XChainId, blockHeight: bigint) => boolean;
   setIsScanning: (id: string, isScanning: boolean) => void; // TODO: rename to setIsScanningBlock?
   getDestinationEvents: (xChainId: XChainId, sn: bigint) => Partial<Record<XCallEventType, XCallDestinationEvent>>;
@@ -29,6 +41,7 @@ export const useXCallEventStore = create<XCallEventStore>()(
   devtools(
     immer((set, get) => ({
       destinationXCallEvents: {},
+      scannedBlocks: {},
       scanners: {},
 
       isScannerEnabled: (id: string) => {
@@ -38,8 +51,9 @@ export const useXCallEventStore = create<XCallEventStore>()(
       enableScanner: (id: string, xChainId: XChainId, startBlockHeight: bigint) => {
         set(state => {
           state.scanners[id] = {
-            xChainId,
+            id,
             enabled: true,
+            xChainId,
             isScanning: false,
             startBlockHeight,
             currentHeight: startBlockHeight,
@@ -65,14 +79,14 @@ export const useXCallEventStore = create<XCallEventStore>()(
         });
       },
 
-      incrementCurrentHeight: (id: string) => {
-        const scanner = get().scanners[id];
-        if (scanner.currentHeight >= scanner.chainHeight) {
-          return;
-        }
-
+      incrementCurrentHeight: (id: string, step = 1n) => {
         set(state => {
-          state.scanners[id].currentHeight += 1n;
+          const newCurrentHeight = state.scanners[id].currentHeight + step;
+          if (newCurrentHeight > state.scanners[id].chainHeight) {
+            state.scanners[id].currentHeight = state.scanners[id].chainHeight;
+          } else {
+            state.scanners[id].currentHeight = newCurrentHeight;
+          }
         });
       },
 
@@ -88,24 +102,58 @@ export const useXCallEventStore = create<XCallEventStore>()(
       },
 
       isScanned: (xChainId: XChainId, blockHeight: bigint) => {
-        return !!get().destinationXCallEvents[xChainId]?.[Number(blockHeight)];
+        return !!get().scannedBlocks[xChainId]?.[blockHeight.toString()];
       },
 
-      scanBlock: async (xChainId: XChainId, blockHeight: bigint) => {
-        if (get().isScanned(xChainId, blockHeight)) {
+      scanBlocks: async (id: string, xChainId: XChainId) => {
+        const scanner = get().scanners[id];
+
+        if (!scanner) {
           return;
         }
 
+        let currentHeight = scanner.currentHeight;
+
+        while (currentHeight <= scanner.chainHeight) {
+          if (get().isScanned(xChainId, currentHeight)) {
+            currentHeight += 1n;
+          } else {
+            break;
+          }
+        }
+
         const xCallService = xCallServiceActions.getXCallService(xChainId);
-        const events = await xCallService.getDestinationEventsByBlock(blockHeight);
 
-        set(state => {
-          state.destinationXCallEvents ??= {};
-          state.destinationXCallEvents[xChainId] ??= {};
+        let scanBlockCount = xCallService.getScanBlockCount();
+        if (currentHeight + scanBlockCount > scanner.chainHeight) {
+          scanBlockCount = scanner.chainHeight - currentHeight + 1n;
+        }
 
-          // @ts-ignore
-          state.destinationXCallEvents[xChainId][blockHeight] = events;
+        console.log('Scanning blocks:', currentHeight, currentHeight + scanBlockCount);
+
+        const events = await xCallService.getDestinationEvents({
+          startBlockHeight: currentHeight,
+          endBlockHeight: currentHeight + scanBlockCount - 1n,
         });
+
+        if (events) {
+          set(state => {
+            state.destinationXCallEvents ??= {};
+            state.destinationXCallEvents[xChainId] ??= [];
+
+            // @ts-ignore
+            state.destinationXCallEvents[xChainId] = [...state.destinationXCallEvents[xChainId], ...events];
+
+            for (let i = currentHeight; i < currentHeight + scanBlockCount; i += 1n) {
+              state.scannedBlocks[xChainId] ??= {};
+
+              // @ts-ignore
+              state.scannedBlocks[xChainId][i.toString()] = true;
+            }
+          });
+
+          get().incrementCurrentHeight(id, scanBlockCount);
+        }
       },
 
       setIsScanning: (id: string, isScanning: boolean) => {
@@ -117,27 +165,23 @@ export const useXCallEventStore = create<XCallEventStore>()(
       getDestinationEvents: (xChainId: XChainId, sn: bigint) => {
         const events = get().destinationXCallEvents?.[xChainId];
 
+        if (!events) {
+          return {};
+        }
+
         const result = {};
 
-        for (const blockHeight in events) {
-          if (events[blockHeight]) {
-            for (const event of events[blockHeight]) {
-              if (event.sn === sn) {
-                result[event.eventType] = event;
-              }
-            }
+        for (const event of events) {
+          if (event.sn === sn) {
+            result[event.eventType] = event;
           }
         }
 
         const callMessageEvent = result[XCallEventType.CallMessage];
         if (callMessageEvent) {
-          for (const blockHeight in events) {
-            if (events[blockHeight]) {
-              for (const event of events[blockHeight]) {
-                if (event.reqId === callMessageEvent.reqId) {
-                  result[event.eventType] = event;
-                }
-              }
+          for (const event of events) {
+            if (event.reqId === callMessageEvent.reqId) {
+              result[event.eventType] = event;
             }
           }
         }
@@ -164,8 +208,8 @@ export const xCallEventActions = {
     useXCallEventStore.getState().disableAllScanners();
   },
 
-  incrementCurrentHeight: async (id: string) => {
-    useXCallEventStore.getState().incrementCurrentHeight(id);
+  incrementCurrentHeight: async (id: string, step: bigint) => {
+    useXCallEventStore.getState().incrementCurrentHeight(id, step);
   },
   updateChainHeight: async (id: string) => {
     await useXCallEventStore.getState().updateChainHeight(id);
@@ -175,8 +219,8 @@ export const xCallEventActions = {
     return useXCallEventStore.getState().isScanned(xChainId, blockHeight);
   },
 
-  scanBlock: async (xChainId: XChainId, blockHeight: bigint) => {
-    await useXCallEventStore.getState().scanBlock(xChainId, blockHeight);
+  scanBlocks: async (id: string, xChainId: XChainId) => {
+    await useXCallEventStore.getState().scanBlocks(id, xChainId);
   },
 
   setIsScanning: (id: string, isScanning: boolean) => {
@@ -209,15 +253,8 @@ export const useXCallEventScanner = (id: string | undefined) => {
     xCallEventActions.setIsScanning(id, true);
 
     try {
-      const { currentHeight } = useXCallEventStore.getState().scanners[id] || {};
-
-      // console.log('Scanning block:', currentHeight);
-      await xCallEventActions.scanBlock(xChainId, currentHeight);
+      await xCallEventActions.scanBlocks(id, xChainId);
       await xCallEventActions.updateChainHeight(id);
-
-      if (xCallEventActions.isScanned(xChainId, currentHeight)) {
-        await xCallEventActions.incrementCurrentHeight(id);
-      }
     } catch (error) {
       console.error('Error during block scan:', error);
     } finally {
@@ -229,6 +266,8 @@ export const useXCallEventScanner = (id: string | undefined) => {
     if (!enabled) {
       return;
     }
+
+    console.log('Starting timer for scanner:', id);
 
     startTimer(id, scanFn);
     return () => {

@@ -164,6 +164,28 @@ export class ArchwayXCallService implements XCallService {
     return {};
   }
 
+  getScanBlockCount() {
+    return 1n;
+  }
+
+  async getDestinationEvents({
+    startBlockHeight,
+    endBlockHeight,
+  }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
+    let events: any = [];
+
+    for (let i = startBlockHeight; i <= endBlockHeight; i++) {
+      const blockEvents = await this.getDestinationEventsByBlock(i);
+
+      if (!blockEvents) {
+        return null;
+      }
+      events = events.concat(blockEvents);
+    }
+
+    return events;
+  }
+
   async getDestinationEventsByBlock(blockHeight: bigint) {
     try {
       const events: any = [];

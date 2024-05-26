@@ -316,13 +316,21 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
       },
 
       getPendingTransactions: (signedWallets: { chain: XChain; chainId: XChainId; address: string }[]) => {
-        // return Object.values(get().transactions);
-        return Object.values(get().transactions).filter((transaction: XCallTransaction) => {
-          return (
-            transaction.status === XCallTransactionStatus.pending &&
-            signedWallets.some(wallet => wallet.chainId === transaction.xSwapInfo.direction.from)
-          );
-        });
+        return Object.values(get().transactions)
+          .filter((transaction: XCallTransaction) => {
+            return (
+              transaction.status === XCallTransactionStatus.pending &&
+              signedWallets.some(wallet => wallet.chainId === transaction.xSwapInfo.direction.from)
+            );
+          })
+          .sort((a, b) => {
+            const aPrimaryMessage = xCallMessageActions.get(a.primaryMessageId);
+            const bPrimaryMessage = xCallMessageActions.get(b.primaryMessageId);
+            if (aPrimaryMessage && bPrimaryMessage) {
+              return bPrimaryMessage?.sourceTransaction.timestamp - aPrimaryMessage?.sourceTransaction.timestamp;
+            }
+            return 0;
+          });
       },
     })),
     {

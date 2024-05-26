@@ -19,7 +19,6 @@ import { XChainId } from 'app/pages/trade/bridge/types';
 import { Box } from 'rebass/styled-components';
 import { getAvailableXChains } from 'app/pages/trade/bridge/utils';
 import { DEFAULT_TOKEN_CHAIN } from 'app/pages/trade/bridge/_config/xTokens';
-import { useDerivedSwapInfo } from 'store/swap/hooks';
 
 const InputContainer = styled.div`
   display: inline-flex;

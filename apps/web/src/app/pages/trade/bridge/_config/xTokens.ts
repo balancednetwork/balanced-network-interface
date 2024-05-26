@@ -97,6 +97,16 @@ export const xTokenMap: { [key1 in XChainId]?: { [key2 in XChainId]?: XToken[] }
         'USDC on Archway',
       ),
     ],
+    '0xa86a.avax': [
+      new XToken(
+        'archway-1',
+        'archway-1',
+        'archway1l3m84nf7xagkdrcced2y0g367xphnea5uqc3mww3f83eh6h38nqqxnsxz7',
+        18,
+        'bnUSD',
+        'Balanced Dollar',
+      ),
+    ],
   },
   '0xa86a.avax': {
     '0x1.icon': [
@@ -110,6 +120,9 @@ export const xTokenMap: { [key1 in XChainId]?: { [key2 in XChainId]?: XToken[] }
         'HiYield Treasury Bill',
       ),
       new XToken('0xa86a.avax', 43114, '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E', 6, 'USDC', 'USD Coin'),
+      new XToken('0xa86a.avax', 43114, '0xdBDd50997361522495EcFE57EBb6850dA0E4C699', 18, 'bnUSD', 'Balanced Dollar'),
+    ],
+    'archway-1': [
       new XToken('0xa86a.avax', 43114, '0xdBDd50997361522495EcFE57EBb6850dA0E4C699', 18, 'bnUSD', 'Balanced Dollar'),
     ],
   },

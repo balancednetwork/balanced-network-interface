@@ -129,7 +129,7 @@ export function useDerivedBridgeInfo() {
 
     if (!currencyAmountToBridge) return t`Enter amount`;
 
-    if (!recipient) return t`Enter recipient`;
+    if (!recipient) return t`Enter address`;
 
     if (currencyAmountToBridge.equalTo(0)) {
       return t`Enter amount`;

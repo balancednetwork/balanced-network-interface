@@ -3,7 +3,6 @@ import React from 'react';
 import { Fraction } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
 
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
@@ -150,7 +149,7 @@ export default function BridgeTransferForm({ openModal }) {
               <Trans>Transfer time</Trans>
             </Typography>
 
-            <Typography color="text">~ 15s</Typography>
+            <Typography color="text">~ 30s</Typography>
           </Flex>
 
           <Flex alignItems="center" justifyContent="center" mt={4}>

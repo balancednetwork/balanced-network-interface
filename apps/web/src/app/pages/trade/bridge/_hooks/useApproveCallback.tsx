@@ -112,11 +112,14 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
 
     if (xChainId === '0x1.icon') return ApprovalState.APPROVED;
 
+    const isBnUSD = amountToApprove.currency.symbol === 'bnUSD';
+
     if (xChainId === 'archway-1') {
       const isDenom = isDenomAsset(amountToApprove.currency);
-      const isBnUSD = amountToApprove.currency.symbol === 'bnUSD';
       if (isDenom || isBnUSD) return ApprovalState.APPROVED;
     }
+
+    if (xChainId === '0xa86a.avax' && isBnUSD) return ApprovalState.APPROVED;
 
     const isNative = amountToApprove.currency.wrapped.address === NATIVE_ADDRESS;
     if (isNative) return ApprovalState.APPROVED;

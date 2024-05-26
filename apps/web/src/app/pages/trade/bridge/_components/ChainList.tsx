@@ -43,10 +43,10 @@ const ChainItem = ({ chain, isActive, isLast }: ChainItemProps) => {
 
 const ChainList = ({ chainId, setChainId, chains }: ChainListProps) => {
   const relevantChains = chains || xChains;
-
+  const sortedChains = relevantChains.sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1));
   return (
     <Box p={'5px 15px'}>
-      {relevantChains.map((chainItem, index) => (
+      {sortedChains.map((chainItem, index) => (
         <Box key={index} onClick={e => setChainId(chainItem.xChainId)}>
           <ChainItem
             chain={chainItem}

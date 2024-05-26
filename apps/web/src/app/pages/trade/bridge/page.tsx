@@ -10,11 +10,11 @@ import { AllTransactionsUpdater } from './_zustand/useTransactionStore';
 import { AllXCallMessagesUpdater } from './_zustand/useXCallMessageStore';
 import { modalActions, MODAL_ID } from './_zustand/useModalStore';
 import { useCreateXCallService } from './_zustand/useXCallServiceStore';
-import { useBridgeInfo } from 'store/bridge/hooks';
+import { useBridgeDirection } from 'store/bridge/hooks';
 
 export function BridgePage() {
   // TODO: review this
-  const { bridgeDirection } = useBridgeInfo();
+  const bridgeDirection = useBridgeDirection();
   useCreateXCallService(bridgeDirection.from);
   useCreateXCallService(bridgeDirection.to);
 

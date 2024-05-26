@@ -22,9 +22,11 @@ const XCallTransactionState = ({ xCallTransaction }: { xCallTransaction: XCallTr
       >
         <Box pt={3}>
           <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
-            <Typography mb={4}>
-              <Trans>{xCallMessageActions.getXCallMessageStatusDescription(primaryMessageId)}</Trans>
-            </Typography>
+            {!secondaryMessageId && (
+              <Typography mb={4}>
+                <Trans>{xCallMessageActions.getXCallMessageStatusDescription(primaryMessageId)}</Trans>
+              </Typography>
+            )}
             {secondaryMessageId && (
               <Typography mb={4}>
                 <Trans>{xCallMessageActions.getXCallMessageStatusDescription(secondaryMessageId)}</Trans>

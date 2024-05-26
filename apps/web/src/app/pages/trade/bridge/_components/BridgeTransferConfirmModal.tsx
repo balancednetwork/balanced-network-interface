@@ -18,7 +18,6 @@ import { useModalStore, modalActions, MODAL_ID } from '../_zustand/useModalStore
 
 import XCallTransactionState from './XCallTransactionState';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
-import { useBridgeInfo } from 'store/bridge/hooks';
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks/useApproveCallback';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import useXCallFee from '../_hooks/useXCallFee';
@@ -26,6 +25,7 @@ import { XCallTransactionType, XSwapInfo } from '../_zustand/types';
 import { useXCallMessageStore } from '../_zustand/useXCallMessageStore';
 import useXCallGasChecker from '../_hooks/useXCallGasChecker';
 import { useXCallTransactionStore, xCallTransactionActions } from '../_zustand/useXCallTransactionStore';
+import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from 'store/bridge/hooks';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;
@@ -44,8 +44,9 @@ export function BridgeTransferConfirmModal() {
   const currentXCallTransaction = xCallTransactionActions.get(currentId);
   const isProcessing = currentId !== null; // TODO: can be swap is processing
 
-  const { recipient, isLiquidFinanceEnabled, currencyAmountToBridge, account, isDenom, bridgeDirection } =
-    useBridgeInfo();
+  const { recipient, isLiquidFinanceEnabled } = useBridgeState();
+  const { currencyAmountToBridge, account } = useDerivedBridgeInfo();
+  const bridgeDirection = useBridgeDirection();
 
   const { xCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
 

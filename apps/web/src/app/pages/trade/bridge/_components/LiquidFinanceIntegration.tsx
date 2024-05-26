@@ -3,7 +3,7 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 import { Typography } from 'app/theme';
 import CurrencyLogo from 'app/components/CurrencyLogo';
-import { useBridgeActionHandlers, useBridgeInfo } from 'store/bridge/hooks';
+import { useBridgeActionHandlers, useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from 'store/bridge/hooks';
 import { sARCHOnArchway, useARCH } from 'app/pages/trade/bridge/_config/tokens';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
@@ -47,7 +47,7 @@ export function useWithdrawableNativeAmount(
   | undefined
 > {
   const { client } = useArchwayContext();
-  const { isLiquidsARCH } = useBridgeInfo();
+  const { isLiquidsARCH } = useDerivedBridgeInfo();
 
   return useQuery({
     queryKey: ['withdrawableNativeAmount', currencyAmount, chain],
@@ -83,13 +83,10 @@ export function useWithdrawableNativeAmount(
 }
 
 export default function LiquidFinanceIntegration() {
-  const {
-    currency: currencyToBridge,
-    currencyAmountToBridge,
-    bridgeDirection,
-    isLiquidFinanceEnabled,
-    isLiquidsARCH,
-  } = useBridgeInfo();
+  const { currency: currencyToBridge, isLiquidFinanceEnabled } = useBridgeState();
+  const { isLiquidsARCH, currencyAmountToBridge } = useDerivedBridgeInfo();
+  const bridgeDirection = useBridgeDirection();
+
   const { onSelectLiquidFinance } = useBridgeActionHandlers();
 
   const { data: withdrawableNativeAmount } = useWithdrawableNativeAmount(bridgeDirection.to, currencyAmountToBridge);

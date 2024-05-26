@@ -5,7 +5,6 @@ import { useIconReact } from 'packages/icon-react';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
-import { useBridgeInfo } from 'store/bridge/hooks';
 import { IconXCallService } from '../_xcall/IconXCallService';
 import { ArchwayXCallService } from '../_xcall/ArchwayXCallService';
 import { XCallService } from '../_xcall/types';

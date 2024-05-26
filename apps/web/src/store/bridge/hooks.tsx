@@ -170,15 +170,3 @@ export function useDerivedBridgeInfo() {
     isLiquidsARCH,
   };
 }
-
-export function useBridgeInfo() {
-  const state = useBridgeState();
-  const derivedInfo = useDerivedBridgeInfo();
-  const bridgeDirection = useBridgeDirection();
-
-  return {
-    ...state,
-    ...derivedInfo,
-    bridgeDirection,
-  };
-}

@@ -340,12 +340,12 @@ export default function AllPoolsPanel() {
                 text={
                   <>
                     <Trans>
-                      The BALN APY is calculated from the USD value of BALN rewards allocated to a pool. Your rate will
+                      The BALN APR is calculated from the USD value of BALN rewards allocated to a pool. Your rate will
                       vary based on the amount of bBALN you hold.
                     </Trans>
                     <br />
                     <br />
-                    <Trans>The fee APY is calculated from the swap fees earned by a pool in the last 30 days.</Trans>
+                    <Trans>The fee APR is calculated from the swap fees earned by a pool in the last 30 days.</Trans>
                     <Typography marginTop={'20px'} color="text1" fontSize={14}>
                       <Trans>Impermanent loss is not factored in.</Trans>
                     </Typography>
@@ -359,7 +359,7 @@ export default function AllPoolsPanel() {
                 </QuestionWrapper>
               </MouseoverTooltip>
             </TooltipWrapper>
-            <Trans>APY</Trans>
+            <Trans>APR</Trans>
           </HeaderText>
           <HeaderText
             role="button"
@@ -401,21 +401,21 @@ export default function AllPoolsPanel() {
             <PairItem key={index} pair={pair} onClick={handlePoolLick} isLast={array.length - 1 === index} />
           ))
         ) : (
-        <>
-          <SkeletonPairPlaceholder />
-          <Divider />
-          <SkeletonPairPlaceholder />
-          <Divider />
-          <SkeletonPairPlaceholder />
-          <Divider />
-          <SkeletonPairPlaceholder />
-          <Divider />
-          <SkeletonPairPlaceholder />
-          <Divider />
-          <SkeletonPairPlaceholder />
-          <Divider />
-          <SkeletonPairPlaceholder />
-        </>
+          <>
+            <SkeletonPairPlaceholder />
+            <Divider />
+            <SkeletonPairPlaceholder />
+            <Divider />
+            <SkeletonPairPlaceholder />
+            <Divider />
+            <SkeletonPairPlaceholder />
+            <Divider />
+            <SkeletonPairPlaceholder />
+            <Divider />
+            <SkeletonPairPlaceholder />
+            <Divider />
+            <SkeletonPairPlaceholder />
+          </>
         )}
       </List>
     </Box>

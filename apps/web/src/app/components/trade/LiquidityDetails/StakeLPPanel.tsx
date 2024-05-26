@@ -209,13 +209,14 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
 
         <Box sx={{ textAlign: 'right' }}>
           <Typography color="text2">
-            <Trans>APY</Trans>
+            <Trans>APR</Trans>
           </Typography>
           <Typography color="text" fontSize={16}>
             {!allPairs || !sources ? (
               <Skeleton width={100}></Skeleton>
             ) : sources[sourceName] ? (
               `${new BigNumber(allPairs[pair.poolId!].balnApy)
+                .plus(allPairs[poolId].feesApy)
                 .times(sources[sourceName].workingBalance.dividedBy(sources[sourceName].balance))
                 .times(100)
                 .toFormat(2)}%`

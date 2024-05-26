@@ -36,6 +36,10 @@ import { WithdrawPanel, WithdrawPanelQ, getABBalance, getShareReward } from './L
 import { usePoolPanelContext } from './PoolPanelContext';
 import { getFormattedRewards, totalSupply, stakedFraction } from './utils';
 import Skeleton from '../Skeleton';
+import { getFormattedNumber } from 'utils/formatter';
+import { MouseoverTooltip } from '../Tooltip';
+import { QuestionWrapper } from '../QuestionHelper';
+import QuestionIcon from 'assets/icons/question.svg';
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
@@ -113,7 +117,31 @@ export default function LiquidityDetails() {
             </HeaderText>
             {upSmall && (
               <HeaderText>
-                <Trans>BALN APY</Trans>
+                <MouseoverTooltip
+                  width={330}
+                  text={
+                    <>
+                      <Trans>
+                        The BALN APR is calculated from the USD value of BALN rewards allocated to a pool. Your rate
+                        will vary based on the amount of bBALN you hold.
+                      </Trans>
+                      <br />
+                      <br />
+                      <Trans>The fee APR is calculated from the swap fees earned by a pool in the last 30 days.</Trans>
+                      <Typography marginTop={'20px'} color="text1" fontSize={14}>
+                        <Trans>Impermanent loss is not factored in.</Trans>
+                      </Typography>
+                    </>
+                  }
+                  placement="top"
+                  strategy="absolute"
+                >
+                  <QuestionWrapper>
+                    <QuestionIcon className="header-tooltip" width={14} />
+                  </QuestionWrapper>
+                </MouseoverTooltip>
+
+                <Trans>APR</Trans>
               </HeaderText>
             )}
             {upSmall && (
@@ -218,6 +246,9 @@ export const HeaderText = styled(Typography)`
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 3px;
+  display: flex;
+  gap: 5px;
+  align-items: center;
 `;
 
 const DataText = styled(Flex)`
@@ -241,6 +272,11 @@ const StyledDataText = styled(Flex)`
 const ListItem = styled(DashGrid)`
   padding: 20px 0;
   color: #ffffff;
+`;
+
+const APYItem = styled(Flex)`
+  align-items: flex-end;
+  line-height: 25px;
 `;
 
 const PoolRecord = ({
@@ -327,15 +363,32 @@ const PoolRecord = ({
               apy &&
               boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName] &&
               boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].balance.isGreaterThan(0) ? (
-                `${new BigNumber(apy)
-                  .times(
-                    //hotfix pairName due to wrong source name on contract side
-                    boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].workingBalance.dividedBy(
-                      boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].balance,
-                    ),
-                  )
-                  .times(100)
-                  .toFormat(2)}%`
+                <>
+                  <APYItem>
+                    <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                      BALN:
+                    </Typography>
+                    {new BigNumber(apy)
+                      .times(
+                        //hotfix pairName due to wrong source name on contract side
+                        boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].workingBalance.dividedBy(
+                          boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].balance,
+                        ),
+                      )
+                      .times(100)
+                      .toFormat(2)}
+                    %
+                  </APYItem>
+
+                  {pairData?.feesApy && (
+                    <APYItem>
+                      <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                        <Trans>Fees:</Trans>
+                      </Typography>
+                      {getFormattedNumber(pairData.feesApy, 'percent2')}
+                    </APYItem>
+                  )}
+                </>
               ) : (
                 '-'
               )

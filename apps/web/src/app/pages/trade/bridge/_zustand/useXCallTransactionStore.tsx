@@ -37,6 +37,8 @@ type XCallTransactionStore = {
   ) => XCallTransaction[];
 };
 
+const iconChainId: XChainId = '0x1.icon';
+
 const storage = createJSONStorage(() => localStorage, {
   reviver: (key, value: any) => {
     if (!value) return value;
@@ -95,9 +97,12 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
       executeTransfer: async (xSwapInfo: XSwapInfo, onSuccess = () => {}) => {
         const { direction } = xSwapInfo;
         const sourceChainId = direction.from;
-        const destinationChainId = direction.to;
+        const finalDestinationChainId = direction.to;
+        const primaryDestinationChainId = sourceChainId === iconChainId ? finalDestinationChainId : iconChainId;
+
         const srcChainXCallService = xCallServiceActions.getXCallService(sourceChainId);
-        const dstChainXCallService = xCallServiceActions.getXCallService(destinationChainId);
+        const finalDstChainXCallService = xCallServiceActions.getXCallService(finalDestinationChainId);
+        const primaryDstChainXCallService = xCallServiceActions.getXCallService(primaryDestinationChainId);
 
         console.log('xSwapInfo', xSwapInfo);
 
@@ -116,12 +121,12 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
         });
 
         if (sourceTransaction && sourceTransaction.hash) {
-          const destinationChainInitialBlockHeight = (await dstChainXCallService.getBlockHeight()) - 1n;
+          const destinationChainInitialBlockHeight = (await primaryDstChainXCallService.getBlockHeight()) - 1n;
 
           const xCallMessage: XCallMessage = {
             id: `${sourceChainId}/${sourceTransaction.hash}`,
             sourceChainId: sourceChainId,
-            destinationChainId: destinationChainId,
+            destinationChainId: primaryDestinationChainId,
             sourceTransaction,
             status: XCallMessageStatus.REQUESTED,
             events: {},
@@ -133,7 +138,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
           const xCallTransaction: XCallTransaction = {
             id: xCallMessage.id,
             primaryMessageId: xCallMessage.id,
-            secondaryMessageRequired: false,
+            secondaryMessageRequired: primaryDestinationChainId !== finalDestinationChainId,
             xSwapInfo,
             status: XCallTransactionStatus.pending,
           };
@@ -146,14 +151,13 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
       },
 
       executeSwap: async (xSwapInfo: XSwapInfo & { cleanupSwap: () => void }) => {
-        const iconChainId: XChainId = '0x1.icon';
         const { direction, executionTrade, cleanupSwap } = xSwapInfo;
         const sourceChainId = direction.from;
         const destinationChainId = direction.to;
-        const _destinationChainId = sourceChainId === iconChainId ? destinationChainId : iconChainId;
+        const primaryDestinationChainId = sourceChainId === iconChainId ? destinationChainId : iconChainId;
 
         const srcChainXCallService = xCallServiceActions.getXCallService(sourceChainId);
-        const _dstChainXCallService = xCallServiceActions.getXCallService(_destinationChainId);
+        const _dstChainXCallService = xCallServiceActions.getXCallService(primaryDestinationChainId);
 
         const sourceTransactionHash = await srcChainXCallService.executeSwap(xSwapInfo);
 
@@ -183,7 +187,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
           const xCallMessage: XCallMessage = {
             id: `${sourceChainId}/${sourceTransaction.hash}`,
             sourceChainId: sourceChainId,
-            destinationChainId: _destinationChainId,
+            destinationChainId: primaryDestinationChainId,
             sourceTransaction,
             status: XCallMessageStatus.REQUESTED,
             events: {},
@@ -196,7 +200,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
             id: xCallMessage.id,
             status: XCallTransactionStatus.pending,
             primaryMessageId: xCallMessage.id,
-            secondaryMessageRequired: destinationChainId !== _destinationChainId,
+            secondaryMessageRequired: destinationChainId !== primaryDestinationChainId,
             xSwapInfo,
           };
 
@@ -220,7 +224,8 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
         }
 
         const sourceChainId = primaryMessage.destinationChainId;
-        const destinationChainId = xCallTransaction.xSwapInfo?.direction.to;
+        const destinationChainId = xCallTransaction.xSwapInfo.direction.to;
+
         const sourceTransaction = primaryMessage.destinationTransaction;
 
         const dstChainXCallService = xCallServiceActions.getXCallService(destinationChainId);

@@ -309,6 +309,8 @@ export default function LPPanel() {
                   onUserInput={handleTypeBInput}
                   onCurrencySelect={handleCurrencyBSelect}
                   onPercentSelect={handlePercentSelect(Field.CURRENCY_B)}
+                  xChainId={'0x1.icon'}
+                  showCrossChainOptions={true}
                 />
               </Flex>
             </AutoColumn>

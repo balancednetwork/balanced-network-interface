@@ -356,7 +356,7 @@ export default function SwapPanel() {
                           </Typography>
                           {protocol && (
                             <Typography color="text">
-                              {protocol?.name} + xCall
+                              {protocol?.name} + GMP
                               <QuestionWrapper style={{ marginLeft: '3px', transform: 'translateY(1px)' }}>
                                 <QuestionHelper width={300} text={<XCallDescription protocol={protocol} />} />
                               </QuestionWrapper>

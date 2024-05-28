@@ -1,12 +1,11 @@
-import { useCallback, useEffect, useRef } from 'react';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import { useQuery } from '@tanstack/react-query';
 
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
-import { XCallDestinationEvent, XCallEvent } from './types';
+import { XCallDestinationEvent } from './types';
 import { xCallServiceActions } from './useXCallServiceStore';
-import { useTimerStore } from './useTimerStore';
 
 type XCallScanner = {
   id: string;
@@ -234,44 +233,37 @@ export const xCallEventActions = {
 
 // TODO: improve performance
 export const useXCallEventScanner = (id: string | undefined) => {
-  const { startTimer, stopTimer } = useTimerStore();
   const { scanners } = useXCallEventStore();
   const scanner = id ? scanners?.[id] : null;
-  const { xChainId, enabled } = scanner || {};
 
-  const scanFn = useCallback(async () => {
-    if (!enabled || !xChainId || !id) {
-      return;
-    }
+  useQuery({
+    queryKey: ['xCallEventScanner', id],
+    queryFn: async () => {
+      // const scanner = useXCallEventStore.getState().scanners[id];
+      if (!scanner || !scanner.enabled) {
+        return null;
+      }
 
-    const scanner = useXCallEventStore.getState().scanners[id];
+      if (scanner.isScanning) {
+        return null;
+      }
 
-    if (scanner.isScanning) {
-      return;
-    }
+      const { id, xChainId } = scanner;
 
-    xCallEventActions.setIsScanning(id, true);
+      xCallEventActions.setIsScanning(id, true);
 
-    try {
-      await xCallEventActions.scanBlocks(id, xChainId);
-      await xCallEventActions.updateChainHeight(id);
-    } catch (error) {
-      console.error('Error during block scan:', error);
-    } finally {
-      xCallEventActions.setIsScanning(id, false);
-    }
-  }, [id, xChainId, enabled]);
+      try {
+        await xCallEventActions.scanBlocks(id, xChainId);
+        await xCallEventActions.updateChainHeight(id);
+      } catch (error) {
+        console.error('Error during block scan:', error);
+      } finally {
+        xCallEventActions.setIsScanning(id, false);
+      }
 
-  useEffect(() => {
-    if (!enabled) {
-      return;
-    }
-
-    console.log('Starting timer for scanner:', id);
-
-    startTimer(id, scanFn);
-    return () => {
-      stopTimer(id);
-    };
-  }, [id, enabled, scanFn, startTimer, stopTimer]);
+      return { id, xChainId };
+    },
+    enabled: !!scanner && scanner?.enabled,
+    refetchInterval: 2000,
+  });
 };

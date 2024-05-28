@@ -164,7 +164,7 @@ const XCallSwapModal = ({
       cleanupSwap,
     };
 
-    await xCallTransactionActions.executeSwap(xSwapInfo);
+    await xCallTransactionActions.executeTransfer(xSwapInfo);
   };
 
   const gasChecker = useXCallGasChecker(direction.from);

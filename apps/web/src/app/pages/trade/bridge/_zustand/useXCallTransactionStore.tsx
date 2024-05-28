@@ -25,8 +25,7 @@ type XCallTransactionStore = {
   currentId: string | null;
   get: (id: string | null) => XCallTransaction | undefined;
   // add: (transaction: XCallTransaction) => void;
-  executeTransfer: (xSwapInfo: XSwapInfo, onSuccess?: () => void) => void;
-  executeSwap: (xSwapInfo: XSwapInfo & { cleanupSwap: () => void }) => void;
+  executeTransfer: (xSwapInfo: XSwapInfo & { cleanupSwap?: () => void }, onSuccess?: () => void) => void;
   createSecondaryMessage: (xCallTransaction: XCallTransaction, primaryMessage: XCallMessage) => void;
   reset: () => void;
   success: (id) => void;
@@ -94,7 +93,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
       //   });
       // },
 
-      executeTransfer: async (xSwapInfo: XSwapInfo, onSuccess = () => {}) => {
+      executeTransfer: async (xSwapInfo: XSwapInfo & { cleanupSwap?: () => void }, onSuccess = () => {}) => {
         const { direction } = xSwapInfo;
         const sourceChainId = direction.from;
         const finalDestinationChainId = direction.to;
@@ -106,18 +105,61 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
 
         console.log('xSwapInfo', xSwapInfo);
 
-        const sourceTransactionHash = await srcChainXCallService.executeTransfer(xSwapInfo);
+        let sourceTransactionHash;
+        if (xSwapInfo.type === XCallTransactionType.BRIDGE) {
+          sourceTransactionHash = await srcChainXCallService.executeTransfer(xSwapInfo);
+        } else if (xSwapInfo.type === XCallTransactionType.SWAP) {
+          sourceTransactionHash = await srcChainXCallService.executeSwap(xSwapInfo);
+        } else {
+          throw new Error('Unsupported XCallTransactionType');
+        }
 
         if (!sourceTransactionHash) {
           xCallTransactionActions.reset();
           return;
         }
 
+        let pendingMessage, successMessage, errorMessage;
+        let descriptionAction, descriptionAmount;
+        if (xSwapInfo.type === XCallTransactionType.BRIDGE) {
+          pendingMessage = 'Requesting cross-chain transfer...';
+          successMessage = 'Cross-chain transfer requested.';
+          errorMessage = 'Cross-chain transfer failed.';
+
+          const _tokenSymbol = xSwapInfo.inputAmount.currency.symbol;
+          const _formattedAmount = xSwapInfo.inputAmount.toFixed(2);
+          descriptionAction = `Transfer ${_tokenSymbol}`;
+          descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+        } else if (xSwapInfo.type === XCallTransactionType.SWAP) {
+          const { executionTrade } = xSwapInfo;
+          if (executionTrade) {
+            const swapMessages = swapMessage(
+              executionTrade.inputAmount.toFixed(2),
+              executionTrade.inputAmount.currency.symbol || 'IN',
+              executionTrade.outputAmount.toFixed(2),
+              executionTrade.outputAmount.currency.symbol || 'OUT',
+            );
+
+            pendingMessage = swapMessages.pendingMessage;
+            successMessage = swapMessages.successMessage;
+            errorMessage = 'Cross-chain swap failed.';
+
+            const _inputTokenSymbol = executionTrade?.inputAmount.currency.symbol || '';
+            const _outputTokenSymbol = executionTrade?.outputAmount.currency.symbol || '';
+            const _inputAmount = executionTrade?.inputAmount.toFixed(2);
+            const _outputAmount = executionTrade?.outputAmount.toFixed(2);
+            descriptionAction = `Swap ${_inputTokenSymbol} for ${_outputTokenSymbol}`;
+            descriptionAmount = `${_inputAmount} ${_inputTokenSymbol} for ${_outputAmount} ${_outputTokenSymbol}`;
+          }
+        }
+
+        xSwapInfo?.cleanupSwap?.();
+
         const sourceTransaction = transactionActions.add(sourceChainId, {
           hash: sourceTransactionHash,
-          pendingMessage: 'Requesting cross-chain transfer...',
-          successMessage: 'Cross-chain transfer requested.',
-          errorMessage: 'Cross-chain transfer failed.',
+          pendingMessage,
+          successMessage,
+          errorMessage,
         });
 
         if (sourceTransaction && sourceTransaction.hash) {
@@ -137,79 +179,17 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
 
           const xCallTransaction: XCallTransaction = {
             id: xCallMessage.id,
+            type: xSwapInfo.type,
+            status: XCallTransactionStatus.pending,
             primaryMessageId: xCallMessage.id,
             secondaryMessageRequired: primaryDestinationChainId !== finalDestinationChainId,
-            xSwapInfo,
-            status: XCallTransactionStatus.pending,
-          };
-
-          set(state => {
-            state.transactions[xCallTransaction.id] = xCallTransaction;
-            state.currentId = xCallTransaction.id;
-          });
-        }
-      },
-
-      executeSwap: async (xSwapInfo: XSwapInfo & { cleanupSwap: () => void }) => {
-        const { direction, executionTrade, cleanupSwap } = xSwapInfo;
-        const sourceChainId = direction.from;
-        const destinationChainId = direction.to;
-        const primaryDestinationChainId = sourceChainId === iconChainId ? destinationChainId : iconChainId;
-
-        const srcChainXCallService = xCallServiceActions.getXCallService(sourceChainId);
-        const _dstChainXCallService = xCallServiceActions.getXCallService(primaryDestinationChainId);
-
-        const sourceTransactionHash = await srcChainXCallService.executeSwap(xSwapInfo);
-
-        if (!sourceTransactionHash || !executionTrade) {
-          xCallTransactionActions.reset();
-          return;
-        }
-
-        const swapMessages = swapMessage(
-          executionTrade.inputAmount.toFixed(2),
-          executionTrade.inputAmount.currency.symbol || 'IN',
-          executionTrade.outputAmount.toFixed(2),
-          executionTrade.outputAmount.currency.symbol || 'OUT',
-        );
-
-        const sourceTransaction = transactionActions.add(sourceChainId, {
-          hash: sourceTransactionHash,
-          pendingMessage: swapMessages.pendingMessage,
-          successMessage: swapMessages.successMessage,
-          errorMessage: 'Cross-chain swap failed.',
-        });
-        cleanupSwap?.();
-
-        if (sourceTransaction && sourceTransaction.hash) {
-          const destinationChainInitialBlockHeight = (await _dstChainXCallService.getBlockHeight()) - 1n;
-
-          const xCallMessage: XCallMessage = {
-            id: `${sourceChainId}/${sourceTransaction.hash}`,
             sourceChainId: sourceChainId,
-            destinationChainId: primaryDestinationChainId,
-            sourceTransaction,
-            status: XCallMessageStatus.REQUESTED,
-            events: {},
-            destinationChainInitialBlockHeight,
+            desctinationChainId: finalDestinationChainId,
+            attributes: {
+              descriptionAction,
+              descriptionAmount,
+            },
           };
-
-          xCallMessageActions.add(xCallMessage);
-
-          const xCallTransaction: XCallTransaction = {
-            id: xCallMessage.id,
-            status: XCallTransactionStatus.pending,
-            primaryMessageId: xCallMessage.id,
-            secondaryMessageRequired: destinationChainId !== primaryDestinationChainId,
-            xSwapInfo,
-          };
-
-          // TODO: set destinationChainInitialBlockHeight for secondary message?
-          // if (xCallTransaction.secondaryMessageRequired) {
-          //   const dstChainXCallService = xCallServiceActions.getXCallService(destinationChainId);
-          //   const destinationChainInitialBlockHeight = (await dstChainXCallService.getBlockHeight()) - 1n;
-          //   xCallTransaction.destinationChainInitialBlockHeight = destinationChainInitialBlockHeight;
-          // }
 
           set(state => {
             state.transactions[xCallTransaction.id] = xCallTransaction;
@@ -224,7 +204,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
         }
 
         const sourceChainId = primaryMessage.destinationChainId;
-        const destinationChainId = xCallTransaction.xSwapInfo.direction.to;
+        const destinationChainId = xCallTransaction.desctinationChainId;
 
         const sourceTransaction = primaryMessage.destinationTransaction;
 
@@ -258,10 +238,10 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
       success: (id: string) => {
         if (id === get().currentId) {
           const currentXCallTransaction = get().transactions[id];
-          if (currentXCallTransaction.xSwapInfo.type === XCallTransactionType.SWAP) {
+          if (currentXCallTransaction.type === XCallTransactionType.SWAP) {
             modalActions.closeModal(MODAL_ID.XCALL_SWAP_MODAL);
           }
-          if (currentXCallTransaction.xSwapInfo.type === XCallTransactionType.BRIDGE) {
+          if (currentXCallTransaction.type === XCallTransactionType.BRIDGE) {
             modalActions.closeModal(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL);
           }
         }
@@ -274,10 +254,10 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
       fail: (id: string) => {
         if (id === get().currentId) {
           const currentXCallTransaction = get().transactions[id];
-          if (currentXCallTransaction.xSwapInfo.type === XCallTransactionType.SWAP) {
+          if (currentXCallTransaction.type === XCallTransactionType.SWAP) {
             modalActions.closeModal(MODAL_ID.XCALL_SWAP_MODAL);
           }
-          if (currentXCallTransaction.xSwapInfo.type === XCallTransactionType.BRIDGE) {
+          if (currentXCallTransaction.type === XCallTransactionType.BRIDGE) {
             modalActions.closeModal(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL);
           }
         }
@@ -325,7 +305,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
           .filter((transaction: XCallTransaction) => {
             return (
               transaction.status === XCallTransactionStatus.pending &&
-              signedWallets.some(wallet => wallet.chainId === transaction.xSwapInfo.direction.from)
+              signedWallets.some(wallet => wallet.chainId === transaction.sourceChainId)
             );
           })
           .sort((a, b) => {
@@ -355,12 +335,8 @@ export const xCallTransactionActions = {
   //   useXCallTransactionStore.getState().add(transaction);
   // },
 
-  executeTransfer: (xSwapInfo: XSwapInfo, onSuccess = () => {}) => {
+  executeTransfer: (xSwapInfo: XSwapInfo & { cleanupSwap?: () => void }, onSuccess = () => {}) => {
     useXCallTransactionStore.getState().executeTransfer(xSwapInfo, onSuccess);
-  },
-
-  executeSwap: (xSwapInfo: XSwapInfo & { cleanupSwap: () => void }) => {
-    useXCallTransactionStore.getState().executeSwap(xSwapInfo);
   },
 
   reset: () => {
@@ -389,54 +365,6 @@ export const xCallTransactionActions = {
       transaction => transaction.primaryMessageId === messageId || transaction.secondaryMessageId === messageId,
     );
   },
-
-  // sendXToken: async (xSwapInfo: XSwapInfo, onSuccess = () => {}) => {
-  //   const { direction } = xSwapInfo;
-  //   const sourceChainId = direction.from;
-  //   const destinationChainId = direction.to;
-  //   const srcChainXCallService = xCallServiceActions.getXCallService(sourceChainId);
-  //   const dstChainXCallService = xCallServiceActions.getXCallService(destinationChainId);
-
-  //   const sourceTransactionHash = await srcChainXCallService.executeTransfer(xSwapInfo);
-
-  //   if (!sourceTransactionHash) {
-  //     xSupplyActions.reset();
-  //     return;
-  //   }
-
-  //   const sourceTransaction = transactionActions.add(sourceChainId, {
-  //     hash: sourceTransactionHash,
-  //     pendingMessage: 'Requesting cross-chain transfer...',
-  //     successMessage: 'Cross-chain transfer requested.',
-  //     errorMessage: 'Cross-chain transfer failed.',
-  //   });
-
-  //   if (sourceTransaction && sourceTransaction.hash) {
-  //     const blockHeight = (await dstChainXCallService.getBlockHeight()) - 1n;
-
-  //     const transfer: XCallMessage = {
-  //       id: `${sourceChainId}/${sourceTransaction.hash}`,
-  //       sourceChainId: sourceChainId,
-  //       destinationChainId: destinationChainId,
-  //       sourceTransaction,
-  //       xSwapInfo,
-  //       status: XCallMessageStatus.REQUESTED,
-  //       events: {},
-  //       destinationChainInitialBlockHeight: blockHeight,
-  //       childTransferNeeded: false,
-  //       onSuccess: async transfer => {
-  //         onSuccess();
-  //         xSupplyActions.success(transfer);
-  //       },
-  //       onFail: async transfer => {
-  //         xSupplyActions.fail(transfer);
-  //       },
-  //     };
-
-  //     bridgeTransferHistoryActions.add(transfer);
-  //     useXSupplyStore.setState({ transferId: transfer.id });
-  //   }
-  // },
 };
 
 export const XCallTransactionUpdater = ({ xCallTransaction }: { xCallTransaction: XCallTransaction }) => {

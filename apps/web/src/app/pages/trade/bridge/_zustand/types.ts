@@ -104,11 +104,16 @@ export type XCallMessage = {
 
 export type XCallTransaction = {
   id: string;
+  type: XCallTransactionType;
   status: XCallTransactionStatus;
+
   primaryMessageId: string;
   secondaryMessageId?: string;
   secondaryMessageRequired: boolean;
 
+  sourceChainId: XChainId;
+  desctinationChainId: XChainId;
   destinationChainInitialBlockHeight?: bigint;
-  xSwapInfo: XSwapInfo;
+
+  attributes: Record<string, any>;
 };

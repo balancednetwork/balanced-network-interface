@@ -8,7 +8,7 @@ import { Typography } from 'app/theme';
 import ArrowIcon from 'assets/icons/arrow-white.svg';
 
 import Spinner from 'app/components/Spinner';
-import { XCallMessage, XCallMessageStatus, XCallTransaction, XCallTransactionType } from '../_zustand/types';
+import { XCallMessage, XCallMessageStatus, XCallTransaction } from '../_zustand/types';
 
 const Wrap = styled(Box)`
   display: grid;
@@ -95,33 +95,6 @@ const XCallMessageHistoryItem = ({
     }
   }, [xCallMessage]);
 
-  const { descriptionAction, descriptionAmount } = useMemo(() => {
-    let descriptionAction, descriptionAmount;
-
-    if (!xCallMessage) {
-      return { descriptionAction, descriptionAmount };
-    }
-
-    if (xCallTransaction.xSwapInfo.type === XCallTransactionType.BRIDGE) {
-      const _tokenSymbol = xCallTransaction.xSwapInfo.inputAmount.currency.symbol;
-      const _formattedAmount = xCallTransaction.xSwapInfo.inputAmount.toFixed(2);
-
-      descriptionAction = `Transfer ${_tokenSymbol}`;
-      descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
-    } else if (xCallTransaction.xSwapInfo.type === XCallTransactionType.SWAP) {
-      const { executionTrade } = xCallTransaction.xSwapInfo;
-      const _inputTokenSymbol = executionTrade?.inputAmount.currency.symbol || '';
-      const _outputTokenSymbol = executionTrade?.outputAmount.currency.symbol || '';
-      const _inputAmount = executionTrade?.inputAmount.toFixed(2);
-      const _outputAmount = executionTrade?.outputAmount.toFixed(2);
-
-      descriptionAction = `Swap ${_inputTokenSymbol} for ${_outputTokenSymbol}`;
-      descriptionAmount = `${_inputAmount} ${_inputTokenSymbol} for ${_outputAmount} ${_outputTokenSymbol}`;
-    }
-
-    return { descriptionAction, descriptionAmount };
-  }, [xCallMessage, xCallTransaction]);
-
   const [elapsedTime, setElapsedTime] = useState(0);
   const timestamp = xCallMessage.sourceTransaction.timestamp;
 
@@ -150,10 +123,10 @@ const XCallMessageHistoryItem = ({
         </Flex>
         <Flex justifyContent="center" flexDirection="column">
           <Typography fontWeight={700} color="text">
-            {descriptionAction}
+            {xCallTransaction.attributes?.descriptionAction}
           </Typography>
           <Typography opacity={0.75} fontSize={14}>
-            {descriptionAmount}
+            {xCallTransaction.attributes?.descriptionAmount}
           </Typography>
         </Flex>
         <Flex justifyContent="center" flexDirection="column" alignItems="flex-end" className="status-check">

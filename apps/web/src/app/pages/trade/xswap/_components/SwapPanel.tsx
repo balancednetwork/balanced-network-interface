@@ -190,8 +190,8 @@ export default function SwapPanel() {
       <Trans>Swap</Trans>
     </Button>
   ) : (
-    <Button disabled={!!account} color="primary" onClick={handleSwap}>
-      {account ? inputError || t`Swap` : t`Swap`}
+    <Button disabled={!account || !!inputError} color="primary" onClick={handleSwap}>
+      {inputError || t`Swap`}
     </Button>
   );
 
@@ -243,16 +243,20 @@ export default function SwapPanel() {
               <Trans>For</Trans>
             </Typography>
             <Typography as="div" hidden={!account}>
-              <Trans>Wallet:</Trans>{' '}
-              {isRecipientCustom ? (
-                <Trans>Custom</Trans>
-              ) : (
-                `${
-                  currencyBalances[Field.OUTPUT]
-                    ? currencyBalances[Field.OUTPUT]?.toFixed(4, { groupSeparator: ',' })
-                    : 0
-                } 
+              {recipient && (
+                <>
+                  <Trans>Wallet:</Trans>{' '}
+                  {isRecipientCustom ? (
+                    <Trans>Custom</Trans>
+                  ) : (
+                    `${
+                      currencyBalances[Field.OUTPUT]
+                        ? currencyBalances[Field.OUTPUT]?.toFixed(4, { groupSeparator: ',' })
+                        : 0
+                    } 
                 ${currencies[Field.OUTPUT]?.symbol}`
+                  )}
+                </>
               )}
             </Typography>
           </Flex>

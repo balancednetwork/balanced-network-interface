@@ -145,6 +145,7 @@ export function useDerivedSwapInfo(): {
   const {
     independentField,
     typedValue,
+    recipient,
     [Field.INPUT]: { currency: inputCurrency, percent: inputPercent, xChainId: inputXChainId },
     [Field.OUTPUT]: { currency: outputCurrency, xChainId: outputXChainId },
   } = useSwapState();
@@ -199,6 +200,10 @@ export function useDerivedSwapInfo(): {
   const trade = isExactIn ? trade1 : trade2;
 
   let inputError: string | undefined;
+  if (!recipient) {
+    inputError = t`Choose address`;
+  }
+
   if (!account) {
     inputError = t`Connect Wallet`;
   }

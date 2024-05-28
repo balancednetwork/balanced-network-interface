@@ -3,8 +3,6 @@ import { create } from 'zustand';
 import { devtools, persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
-
 import {
   XCallMessageStatus,
   XCallMessage,
@@ -38,31 +36,12 @@ type XCallTransactionStore = {
 
 const iconChainId: XChainId = '0x1.icon';
 
-const storage = createJSONStorage(() => localStorage, {
+const jsonStorageOptions = {
   reviver: (key, value: any) => {
     if (!value) return value;
 
     if (typeof value === 'string' && value.startsWith('BIGINT::')) {
       return BigInt(value.substring(8));
-    }
-
-    if (
-      typeof value === 'object' &&
-      // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-      value.hasOwnProperty('numerator') &&
-      // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-      value.hasOwnProperty('denominator') &&
-      // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-      value.hasOwnProperty('currency') &&
-      // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-      value.hasOwnProperty('decimalScale')
-    ) {
-      try {
-        const obj = CurrencyAmount.fromFractionalAmount(value.currency, value.numerator, value.denominator);
-        return obj;
-      } catch (e) {
-        console.log(e);
-      }
     }
 
     return value;
@@ -74,7 +53,7 @@ const storage = createJSONStorage(() => localStorage, {
       return value;
     }
   },
-});
+};
 
 export const useXCallTransactionStore = create<XCallTransactionStore>()(
   persist(
@@ -320,7 +299,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
     })),
     {
       name: 'xCallTransaction-store',
-      storage,
+      storage: createJSONStorage(() => localStorage, jsonStorageOptions),
     },
   ),
 );

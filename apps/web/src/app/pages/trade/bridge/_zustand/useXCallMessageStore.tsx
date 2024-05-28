@@ -1,9 +1,9 @@
+import React from 'react';
 import { create } from 'zustand';
-import { devtools, persist, createJSONStorage } from 'zustand/middleware';
+import { createJSONStorage, devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { useQuery } from '@tanstack/react-query';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
 
 import { XCallEventType } from '../types';
 import { XCallMessage, XCallMessageStatus, Transaction, TransactionStatus, XCallEventMap } from './types';
@@ -13,7 +13,25 @@ import { useFetchTransaction } from './useTransactionStore';
 import { useEffect } from 'react';
 import { getNetworkDisplayName } from '../utils';
 import { xCallTransactionActions } from './useXCallTransactionStore';
-import React from 'react';
+
+const jsonStorageOptions = {
+  reviver: (key, value: any) => {
+    if (!value) return value;
+
+    if (typeof value === 'string' && value.startsWith('BIGINT::')) {
+      return BigInt(value.substring(8));
+    }
+
+    return value;
+  },
+  replacer: (key, value) => {
+    if (typeof value === 'bigint') {
+      return `BIGINT::${value}`;
+    } else {
+      return value;
+    }
+  },
+};
 
 // TODO: review logic
 export const deriveStatus = (
@@ -56,44 +74,6 @@ export const deriveStatus = (
 
   return XCallMessageStatus.FAILED;
 };
-
-const storage = createJSONStorage(() => localStorage, {
-  reviver: (key, value: any) => {
-    if (!value) return value;
-
-    if (typeof value === 'string' && value.startsWith('BIGINT::')) {
-      return BigInt(value.substring(8));
-    }
-
-    if (
-      typeof value === 'object' &&
-      // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-      value.hasOwnProperty('numerator') &&
-      // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-      value.hasOwnProperty('denominator') &&
-      // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-      value.hasOwnProperty('currency') &&
-      // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-      value.hasOwnProperty('decimalScale')
-    ) {
-      try {
-        const obj = CurrencyAmount.fromFractionalAmount(value.currency, value.numerator, value.denominator);
-        return obj;
-      } catch (e) {
-        console.log(e);
-      }
-    }
-
-    return value;
-  },
-  replacer: (key, value) => {
-    if (typeof value === 'bigint') {
-      return `BIGINT::${value}`;
-    } else {
-      return value;
-    }
-  },
-});
 
 type XCallMessageStore = {
   messages: Record<string, XCallMessage>;
@@ -198,7 +178,7 @@ export const useXCallMessageStore = create<XCallMessageStore>()(
     })),
     {
       name: 'xCallMessage-store',
-      storage,
+      storage: createJSONStorage(() => localStorage, jsonStorageOptions),
     },
   ),
   //   { name: 'XCallMessageStore' },

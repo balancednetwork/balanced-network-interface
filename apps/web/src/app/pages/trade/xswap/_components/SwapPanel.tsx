@@ -269,7 +269,7 @@ export default function SwapPanel() {
                 isOutputCrosschainCompatible ? xChainId => onChainSelection(Field.OUTPUT, xChainId) : undefined
               }
               showCrossChainOptions={true}
-              addressEditable={!(direction.from === '0x1.icon' && direction.to === '0x1.icon')}
+              addressEditable
             />
           </Flex>
         </AutoColumn>
@@ -417,6 +417,7 @@ export default function SwapPanel() {
         account={account}
         currencies={currencies}
         executionTrade={executionTrade}
+        recipient={recipient || undefined}
       />
 
       <XCallSwapModal

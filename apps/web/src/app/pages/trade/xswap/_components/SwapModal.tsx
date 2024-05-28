@@ -13,24 +13,26 @@ import bnJs from 'bnJs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from 'store/application/hooks';
 import { Field } from 'store/swap/reducer';
 import { useHasEnoughICX } from 'store/wallet/hooks';
-import { formatBigNumber, toDec } from 'utils';
+import { formatBigNumber, shortenAddress, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import ModalContent from 'app/components/ModalContent';
 import Spinner from 'app/components/Spinner';
 import { swapMessage } from 'app/pages/trade/supply/_components/utils';
 import { useTransactionAdder } from 'store/transactions/hooks';
+import { useSwapState } from 'store/swap/hooks';
 
 type SwapModalProps = {
   isOpen: boolean;
   onClose: () => void;
   account: string | undefined;
+  recipient: string | undefined;
   currencies: { [field in Field]?: Currency };
   executionTrade?: Trade<Currency, Currency, TradeType>;
 };
 
 const SwapModal = (props: SwapModalProps) => {
-  const { isOpen, onClose, executionTrade, currencies, account } = props;
+  const { isOpen, onClose, executionTrade, currencies, account, recipient } = props;
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -66,7 +68,12 @@ const SwapModal = (props: SwapModalProps) => {
     if (executionTrade.inputAmount.currency.symbol === 'ICX') {
       bnJs
         .inject({ account })
-        .Router.swapICX(toDec(executionTrade.inputAmount), executionTrade.route.pathForSwap, toDec(minReceived))
+        .Router.swapICX(
+          toDec(executionTrade.inputAmount),
+          executionTrade.route.pathForSwap,
+          toDec(minReceived),
+          recipient,
+        )
         .then((res: any) => {
           addTransaction(
             { hash: res.result },
@@ -96,6 +103,7 @@ const SwapModal = (props: SwapModalProps) => {
           outputToken.address,
           toDec(minReceived),
           executionTrade.route.pathForSwap,
+          recipient,
         )
         .then((res: any) => {
           addTransaction(
@@ -142,20 +150,40 @@ const SwapModal = (props: SwapModalProps) => {
             <Typography textAlign="center">
               <Trans>Pay</Trans>
             </Typography>
-            <Typography variant="p" textAlign="center">
+            <Typography variant="p" textAlign="center" py="5px">
               {formatBigNumber(new BigNumber(executionTrade?.inputAmount.toFixed() || 0), 'currency')}{' '}
               {currencies[Field.INPUT]?.symbol}
             </Typography>
+            {account !== recipient && (
+              <>
+                <Typography textAlign="center">
+                  <Trans>ICON</Trans>
+                </Typography>
+                <Typography textAlign="center">
+                  <Trans>{account && shortenAddress(account, 5)}</Trans>
+                </Typography>
+              </>
+            )}
           </Box>
 
           <Box width={1 / 2}>
             <Typography textAlign="center">
               <Trans>Receive</Trans>
             </Typography>
-            <Typography variant="p" textAlign="center">
+            <Typography variant="p" textAlign="center" py="5px">
               {formatBigNumber(new BigNumber(executionTrade?.outputAmount.toFixed() || 0), 'currency')}{' '}
               {currencies[Field.OUTPUT]?.symbol}
             </Typography>
+            {account !== recipient && (
+              <>
+                <Typography textAlign="center">
+                  <Trans>ICON</Trans>
+                </Typography>
+                <Typography textAlign="center">
+                  <Trans>{recipient && shortenAddress(recipient, 5)}</Trans>
+                </Typography>
+              </>
+            )}
           </Box>
         </Flex>
 

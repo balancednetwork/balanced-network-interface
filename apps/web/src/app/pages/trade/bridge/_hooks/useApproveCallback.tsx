@@ -250,7 +250,13 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
     // }
 
     const xChainId = token.xChainId;
-    const xService = xServiceActions.getXService(xChainId);
+    const xService = xServiceActions.getWalletXService(xChainId);
+
+    if (!xService) {
+      // toastError(t('Error'), t('No xService'));
+      console.error('no archway WalletXService');
+      return undefined;
+    }
 
     try {
       const hash = await xService.approve(token, account as `0x${string}`, spender, amountToApprove);

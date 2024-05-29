@@ -61,7 +61,7 @@ export const transactionActions = {
 
   updateTx: async (xChainId: XChainId, id: string, transaction: { rawTx: any }) => {
     const { rawTx } = transaction;
-    const xService = xServiceActions.getXService(xChainId);
+    const xService = xServiceActions.getPublicXService(xChainId);
     const status = xService.deriveTxStatus(rawTx);
 
     useTransactionStore.setState(state => {
@@ -123,7 +123,7 @@ export const useFetchTransaction = (transaction: Transaction | undefined) => {
     queryFn: async () => {
       if (!xChainId) return;
 
-      const xService = xServiceActions.getXService(xChainId);
+      const xService = xServiceActions.getPublicXService(xChainId);
       try {
         const rawTx = await xService.getTxReceipt(hash);
         return rawTx;

@@ -1,7 +1,7 @@
 import { IXCallFee, XChainId, XToken } from 'app/pages/trade/bridge/types';
 import { XTransactionInput, Transaction, TransactionStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
 
-export interface XService {
+export interface IPublicXService {
   // getBlock(blockHeight);
   // filterEventLogs(eventLogs)
   // filterCallMessageEventLogs(eventLogs)
@@ -24,10 +24,11 @@ export interface XService {
   getSourceEvents(transaction: Transaction): Promise<XCallEventMap>;
   getDestinationEvents({ startBlockHeight, endBlockHeight }): Promise<XCallEvent[]>;
   getDestinationEventsByBlock(blockHeight: bigint): Promise<XCallEvent[]>;
+}
 
+export interface IWalletXService extends IPublicXService {
   // getAllowance(token: XToken, owner: string | null, spender: string): Promise<string>;
   approve(token, owner, spender, currencyAmountToApprove);
-
   executeTransfer(xTransactionInput: XTransactionInput): Promise<string | undefined>;
   executeSwap(xTransactionInput: XTransactionInput): Promise<string | undefined>;
 }

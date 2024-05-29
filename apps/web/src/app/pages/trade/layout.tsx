@@ -16,6 +16,8 @@ import { useFetchRewardsInfo } from 'store/reward/hooks';
 import { useFetchStabilityFundBalances } from 'store/stabilityFund/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
 import { AllTransactionsUpdater } from './bridge/_zustand/useTransactionStore';
+import { AllXMessagesUpdater } from './bridge/_zustand/useXMessageStore';
+import { useCreatePublicXService } from './bridge/_zustand/useXServiceStore';
 
 export function TradePageLayout() {
   const { account } = useIconReact();
@@ -48,9 +50,15 @@ export function TradePageLayout() {
     }
   };
 
+  useCreatePublicXService('0x1.icon');
+  useCreatePublicXService('archway-1');
+  useCreatePublicXService('0xa86a.avax');
+
   return (
     <>
       <AllTransactionsUpdater />
+      <AllXMessagesUpdater />
+
       <Box flex={1}>
         <Flex mb={10} flexDirection="column">
           <Flex alignItems="center" justifyContent="space-between">

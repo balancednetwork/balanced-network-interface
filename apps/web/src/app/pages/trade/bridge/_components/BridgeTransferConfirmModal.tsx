@@ -26,6 +26,7 @@ import { useXMessageStore } from '../_zustand/useXMessageStore';
 import useXCallGasChecker from '../_hooks/useXCallGasChecker';
 import { useXTransactionStore, xTransactionActions } from '../_zustand/useXTransactionStore';
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from 'store/bridge/hooks';
+import { useCreateWalletXService } from '../_zustand/useXServiceStore';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;
@@ -47,6 +48,8 @@ export function BridgeTransferConfirmModal() {
   const { recipient, isLiquidFinanceEnabled } = useBridgeState();
   const { currencyAmountToBridge, account } = useDerivedBridgeInfo();
   const bridgeDirection = useBridgeDirection();
+
+  useCreateWalletXService(bridgeDirection.from);
 
   const { xCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
 

@@ -92,7 +92,7 @@ export const useXCallEventStore = create<XCallEventStore>()(
       updateChainHeight: async (id: string) => {
         const scanner = get().scanners[id];
         if (scanner && scanner.xChainId) {
-          const xService = xServiceActions.getXService(scanner.xChainId);
+          const xService = xServiceActions.getPublicXService(scanner.xChainId);
           const chainHeight = await xService.getBlockHeight();
           set(state => {
             state.scanners[id].chainHeight = chainHeight;
@@ -121,7 +121,7 @@ export const useXCallEventStore = create<XCallEventStore>()(
           }
         }
 
-        const xService = xServiceActions.getXService(xChainId);
+        const xService = xServiceActions.getPublicXService(xChainId);
 
         let scanBlockCount = xService.getScanBlockCount();
         if (currentHeight + scanBlockCount > scanner.chainHeight) {

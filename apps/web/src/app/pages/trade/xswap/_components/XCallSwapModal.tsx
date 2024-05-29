@@ -32,6 +32,7 @@ import {
   XTransactionUpdater,
 } from '../../bridge/_zustand/useXTransactionStore';
 import XTransactionState from '../../bridge/_components/XTransactionState';
+import { useCreateWalletXService } from '../../bridge/_zustand/useXServiceStore';
 
 type XCallSwapModalProps = {
   account: string | undefined;
@@ -113,6 +114,8 @@ const XCallSwapModal = ({
   const { currentId } = useXTransactionStore();
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
+
+  useCreateWalletXService(direction.from);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();

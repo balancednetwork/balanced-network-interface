@@ -1,23 +1,9 @@
-import bnJs from 'bnJs';
 import IconService, { Converter, BigNumber } from 'icon-sdk-js';
-import { Percent, Token } from '@balancednetwork/sdk-core';
 
-import { showMessageOnBeforeUnload } from 'utils/messages';
-import { toDec } from 'utils';
-import { NETWORK_ID } from 'constants/config';
-
-import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge/_config/xTokens';
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
-import {
-  XTransactionInput,
-  Transaction,
-  TransactionStatus,
-  XCallDestinationEvent,
-  XCallEvent,
-  XCallEventMap,
-} from '../_zustand/types';
+import { Transaction, TransactionStatus, XCallDestinationEvent, XCallEvent, XCallEventMap } from '../_zustand/types';
 import { fetchTxResult } from 'app/_xcall/_icon/utils';
-import { XService } from './types';
+import { IPublicXService } from './types';
 
 export const getICONEventSignature = (eventName: XCallEventType) => {
   switch (eventName) {
@@ -41,18 +27,13 @@ export const getICONEventSignature = (eventName: XCallEventType) => {
   }
 };
 
-export class IconXService implements XService {
+export class IconPublicXService implements IPublicXService {
   xChainId: XChainId;
   publicClient: IconService;
-  walletClient: IconService; // reserved for future use
-  changeShouldLedgerSign: any;
 
-  constructor(xChainId: XChainId, serviceConfig: any) {
-    const { publicClient, walletClient, changeShouldLedgerSign } = serviceConfig;
+  constructor(xChainId: XChainId, publicClient: IconService) {
     this.xChainId = xChainId;
     this.publicClient = publicClient;
-    this.walletClient = walletClient;
-    this.changeShouldLedgerSign = changeShouldLedgerSign;
   }
 
   async getXCallFee(to: XChainId, rollback: boolean) {
@@ -225,96 +206,5 @@ export class IconXService implements XService {
       console.log(e);
     }
     return null;
-  }
-
-  async approve(token, owner, spender, currencyAmountToApprove) {}
-
-  async executeTransfer(xTransactionInput: XTransactionInput) {
-    const {
-      direction,
-      inputAmount,
-      recipient: destinationAddress,
-      account,
-      xCallFee,
-      isLiquidFinanceEnabled,
-    } = xTransactionInput;
-
-    if (account && xCallFee) {
-      window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-      if (bnJs.contractSettings.ledgerSettings.actived && this.changeShouldLedgerSign) {
-        this.changeShouldLedgerSign(true);
-      }
-
-      const tokenAddress = inputAmount.wrapped.currency.address;
-      const destination = `${direction.to}/${destinationAddress}`;
-
-      let txResult;
-      if (CROSS_TRANSFER_TOKENS.includes(inputAmount.currency.symbol)) {
-        const cx = bnJs.inject({ account }).getContract(tokenAddress);
-        txResult = await cx.crossTransfer(destination, `${inputAmount.quotient}`, xCallFee.rollback.toString());
-      } else {
-        txResult = await bnJs
-          .inject({ account })
-          .AssetManager[isLiquidFinanceEnabled ? 'withdrawNativeTo' : 'withdrawTo'](
-            `${inputAmount.quotient}`,
-            tokenAddress,
-            destination,
-            xCallFee.rollback.toString(),
-          );
-      }
-
-      const { result: hash } = txResult || {};
-
-      if (hash) {
-        return hash;
-      }
-    }
-  }
-
-  async executeSwap(xTransactionInput: XTransactionInput) {
-    const { executionTrade, account, direction, recipient, slippageTolerance } = xTransactionInput;
-
-    if (!executionTrade || !slippageTolerance) {
-      return;
-    }
-
-    const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-    const receiver = `${direction.to}/${recipient}`;
-
-    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-    if (bnJs.contractSettings.ledgerSettings.actived && this.changeShouldLedgerSign) {
-      this.changeShouldLedgerSign(true);
-    }
-
-    let txResult;
-    if (executionTrade.inputAmount.currency.symbol === 'ICX') {
-      txResult = await bnJs
-        .inject({ account })
-        .Router.swapICX(
-          toDec(executionTrade.inputAmount),
-          executionTrade.route.pathForSwap,
-          NETWORK_ID === 1 ? toDec(minReceived) : '0x0',
-          receiver,
-        );
-    } else {
-      const inputToken = executionTrade.inputAmount.currency.wrapped;
-      const outputToken = executionTrade.outputAmount.currency.wrapped;
-
-      const cx = bnJs.inject({ account }).getContract(inputToken.address);
-
-      txResult = await cx.swapUsingRoute(
-        toDec(executionTrade.inputAmount),
-        outputToken.address,
-        toDec(minReceived),
-        executionTrade.route.pathForSwap,
-        receiver,
-      );
-    }
-
-    const { result: hash } = txResult || {};
-    if (hash) {
-      return hash;
-    }
   }
 }

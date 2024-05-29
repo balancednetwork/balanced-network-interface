@@ -28,9 +28,7 @@ import { BrightPanel } from 'app/pages/trade/supply/_components/utils';
 import { isXToken } from 'app/pages/trade/bridge/utils';
 
 import XCallSwapModal from './XCallSwapModal';
-import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import SwapModal from './SwapModal';
-import { useCreateXService } from '../../bridge/_zustand/useXServiceStore';
 import { MODAL_ID, modalActions } from '../../bridge/_zustand/useModalStore';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 
@@ -60,10 +58,6 @@ export default function SwapPanel() {
   const isRecipientCustom = recipient !== null && !signedInWallets.some(wallet => wallet.address === recipient);
   const isOutputCrosschainCompatible = isXToken(currencies?.OUTPUT);
   const isInputCrosschainCompatible = isXToken(currencies?.INPUT);
-
-  useCreateXService(direction.from);
-  useCreateXService(direction.to);
-  useCreateXService(ICON_XCALL_NETWORK_ID);
 
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
     useSwapActionHandlers();

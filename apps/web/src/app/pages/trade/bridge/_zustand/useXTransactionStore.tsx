@@ -23,15 +23,16 @@ type XTransactionStore = {
   currentId: string | null;
   get: (id: string | null) => XTransaction | undefined;
   // add: (transaction: XTransaction) => void;
-  executeTransfer: (xTransactionInput: XTransactionInput & { cleanupSwap?: () => void }, onSuccess?: () => void) => void;
+  executeTransfer: (
+    xTransactionInput: XTransactionInput & { cleanupSwap?: () => void },
+    onSuccess?: () => void,
+  ) => void;
   createSecondaryMessage: (xTransaction: XTransaction, primaryMessage: XMessage) => void;
   reset: () => void;
   success: (id) => void;
   fail: (id) => void;
   onMessageUpdate: (id: string, xMessage: XMessage) => void;
-  getPendingTransactions: (
-    signedWallets: { chain: XChain; chainId: XChainId; address: string }[],
-  ) => XTransaction[];
+  getPendingTransactions: (signedWallets: { chain: XChain; chainId: XChainId; address: string }[]) => XTransaction[];
 };
 
 const iconChainId: XChainId = '0x1.icon';
@@ -72,15 +73,23 @@ export const useXTransactionStore = create<XTransactionStore>()(
       //   });
       // },
 
-      executeTransfer: async (xTransactionInput: XTransactionInput & { cleanupSwap?: () => void }, onSuccess = () => {}) => {
+      executeTransfer: async (
+        xTransactionInput: XTransactionInput & { cleanupSwap?: () => void },
+        onSuccess = () => {},
+      ) => {
         const { direction } = xTransactionInput;
         const sourceChainId = direction.from;
         const finalDestinationChainId = direction.to;
         const primaryDestinationChainId = sourceChainId === iconChainId ? finalDestinationChainId : iconChainId;
 
-        const srcChainXService = xServiceActions.getXService(sourceChainId);
-        const finalDstChainXService = xServiceActions.getXService(finalDestinationChainId);
-        const primaryDstChainXService = xServiceActions.getXService(primaryDestinationChainId);
+        const srcChainXService = xServiceActions.getWalletXService(sourceChainId);
+
+        if (!srcChainXService) {
+          throw new Error('WalletXService for source chain is not found');
+        }
+
+        const finalDstChainXService = xServiceActions.getPublicXService(finalDestinationChainId);
+        const primaryDstChainXService = xServiceActions.getPublicXService(primaryDestinationChainId);
 
         console.log('xTransactionInput', xTransactionInput);
 
@@ -187,7 +196,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
 
         const sourceTransaction = primaryMessage.destinationTransaction;
 
-        const dstChainXService = xServiceActions.getXService(destinationChainId);
+        const dstChainXService = xServiceActions.getPublicXService(destinationChainId);
         const destinationChainInitialBlockHeight = (await dstChainXService.getBlockHeight()) - 20n;
 
         const secondaryMessageId = `${sourceChainId}/${sourceTransaction?.hash}`;

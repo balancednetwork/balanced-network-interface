@@ -69,6 +69,23 @@ export class ArchwayXCallService implements XCallService {
     return events;
   }
 
+  async getEventLogs({ startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
+    let txs;
+
+    // TODO: is 10 iterations enough?
+    for (let i = 0; i < 10; i++) {
+      txs = await this.publicClient.searchTx(`tx.height>=${startBlockHeight} AND tx.height<=${endBlockHeight}`);
+      if (txs && txs.length > 0) {
+        break;
+      }
+    }
+
+    // txs is an array of tx, each tx has events, which is an array of event, return all events merged
+    const events = txs.flatMap(tx => tx.events.map(e => ({ ...e, transactionHash: tx.hash })));
+
+    return events;
+  }
+
   async getTxReceipt(txHash) {
     const tx = await this.publicClient.getTx(txHash);
     return tx;
@@ -165,25 +182,32 @@ export class ArchwayXCallService implements XCallService {
   }
 
   getScanBlockCount() {
-    return 1n;
+    return 10n;
   }
 
   async getDestinationEvents({
     startBlockHeight,
     endBlockHeight,
   }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
-    let events: any = [];
+    try {
+      const events: any = [];
 
-    for (let i = startBlockHeight; i <= endBlockHeight; i++) {
-      const blockEvents = await this.getDestinationEventsByBlock(i);
+      const eventLogs = await this.getEventLogs({ startBlockHeight, endBlockHeight });
+      const callMessageEventLogs = await this.filterCallMessageEventLogs(eventLogs);
+      const callExecutedEventLogs = await this.filterCallExecutedEventLogs(eventLogs);
 
-      if (!blockEvents) {
-        return null;
-      }
-      events = events.concat(blockEvents);
+      callMessageEventLogs.forEach(eventLog => {
+        events.push(this.parseCallMessageEventLog(eventLog, eventLog.transactionHash));
+      });
+      callExecutedEventLogs.forEach(eventLog => {
+        events.push(this.parseCallExecutedEventLog(eventLog, eventLog.transactionHash));
+      });
+
+      return events;
+    } catch (e) {
+      console.log(e);
     }
-
-    return events;
+    return null;
   }
 
   async getDestinationEventsByBlock(blockHeight: bigint) {

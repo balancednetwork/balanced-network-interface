@@ -1,12 +1,11 @@
 import React, { useCallback } from 'react';
 
-import { Price, TradeType, Currency, Percent, Token } from '@balancednetwork/sdk-core';
-import { Trade, Route } from '@balancednetwork/v1-sdk';
+import { TradeType, Currency, Percent } from '@balancednetwork/sdk-core';
+import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
-import { ChevronRight } from 'react-feather';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -14,31 +13,26 @@ import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import Popover, { DropdownPopper } from 'app/components/Popover';
-import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
-import SlippageSetting from 'app/components/SlippageSetting';
 import { Typography } from 'app/theme';
 import FlipIcon from 'assets/icons/flip.svg';
 import { SLIPPAGE_WARNING_THRESHOLD } from 'constants/misc';
-import { useSwapSlippageTolerance, useWalletModalToggle, useSetSlippageTolerance } from 'store/application/hooks';
+import { useSwapSlippageTolerance, useWalletModalToggle } from 'store/application/hooks';
 import { useCAMemo, useIsSwapEligible, useMaxSwapSize } from 'store/stabilityFund/hooks';
 import { Field } from 'store/swap/reducer';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { useSignedInWallets } from 'store/wallet/hooks';
 import { formatPercent, maxAmountSpend } from 'utils';
 
-import Divider from 'app/components/Divider';
 import StabilityFund from 'app/components/StabilityFund';
-import { XCallDescription } from 'app/components/XCallDescription';
 import { BrightPanel } from 'app/pages/trade/supply/_components/utils';
 import { isXToken } from 'app/pages/trade/bridge/utils';
-import useXCallFee from 'app/pages/trade/bridge/_hooks/useXCallFee';
-import useXCallProtocol from 'app/pages/trade/bridge/_hooks/useXCallProtocol';
 
 import XCallSwapModal from './XCallSwapModal';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import SwapModal from './SwapModal';
 import { useCreateXCallService } from '../../bridge/_zustand/useXCallServiceStore';
 import { MODAL_ID, modalActions } from '../../bridge/_zustand/useModalStore';
+import AdvancedSwapDetails from './AdvancedSwapDetails';
 
 const MemoizedStabilityFund = React.memo(StabilityFund);
 
@@ -71,15 +65,8 @@ export default function SwapPanel() {
   useCreateXCallService(direction.to);
   useCreateXCallService(ICON_XCALL_NETWORK_ID);
 
-  const {
-    onUserInput,
-    onCurrencySelection,
-    onSwitchTokens,
-    onPercentSelection,
-    onChangeRecipient,
-    onSwitchChain,
-    onChainSelection,
-  } = useSwapActionHandlers();
+  const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
+    useSwapActionHandlers();
 
   React.useEffect(() => {
     const destinationWallet = signedInWallets.find(wallet => wallet.chainId === direction.to);
@@ -133,9 +120,7 @@ export default function SwapPanel() {
     [onPercentSelection, maxInputAmount],
   );
 
-  const [showInverted, setShowInverted] = React.useState<boolean>(false);
   const slippageTolerance = useSwapSlippageTolerance();
-  const setSlippageTolerance = useSetSlippageTolerance();
   const isValid = !inputError;
 
   // handle swap modal
@@ -194,9 +179,6 @@ export default function SwapPanel() {
       {inputError || t`Swap`}
     </Button>
   );
-
-  const protocol = useXCallProtocol(direction.from, direction.to);
-  const { formattedXCallFee } = useXCallFee(direction.from, direction.to);
 
   return (
     <>
@@ -310,80 +292,7 @@ export default function SwapPanel() {
                 />
 
                 <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
-                  <Box padding={5} bg="bg4" width={328}>
-                    <Flex alignItems="center" justifyContent="space-between" mb={2}>
-                      <Typography>
-                        <Trans>Exchange rate</Trans>
-                      </Typography>
-
-                      {trade && (
-                        <TradePrice
-                          price={trade.executionPrice}
-                          showInverted={showInverted}
-                          setShowInverted={setShowInverted}
-                        />
-                      )}
-                    </Flex>
-
-                    <Flex alignItems="center" justifyContent="space-between" mb={2}>
-                      <Typography>
-                        <Trans>Route</Trans>
-                      </Typography>
-
-                      <Typography textAlign="right">{trade ? <TradeRoute route={trade.route} /> : '-'}</Typography>
-                    </Flex>
-
-                    <Flex alignItems="center" justifyContent="space-between" mb={2}>
-                      <Typography>
-                        <Trans>Fee</Trans>
-                      </Typography>
-
-                      <Typography textAlign="right">
-                        {trade ? trade.fee.toFixed(4) : '0'} {currencies[Field.INPUT]?.symbol}
-                      </Typography>
-                    </Flex>
-
-                    <Flex alignItems="baseline" justifyContent="space-between">
-                      <Typography as="span">
-                        <Trans>Slippage tolerance</Trans>
-                        <QuestionHelper text={t`If the price slips by more than this amount, your swap will fail.`} />
-                      </Typography>
-                      <SlippageSetting rawSlippage={slippageTolerance} setRawSlippage={setSlippageTolerance} />
-                    </Flex>
-
-                    {isXSwap && (
-                      <>
-                        <Divider my={2} />
-                        <Flex alignItems="center" justifyContent="space-between" mb={2}>
-                          <Typography>
-                            <Trans>Bridge</Trans>
-                          </Typography>
-                          {protocol && (
-                            <Typography color="text">
-                              {protocol?.name} + GMP
-                              <QuestionWrapper style={{ marginLeft: '3px', transform: 'translateY(1px)' }}>
-                                <QuestionHelper width={300} text={<XCallDescription protocol={protocol} />} />
-                              </QuestionWrapper>
-                            </Typography>
-                          )}{' '}
-                        </Flex>
-                        <Flex alignItems="center" justifyContent="space-between" mb={2}>
-                          <Typography>
-                            <Trans>Bridge fee</Trans>
-                          </Typography>
-
-                          <Typography color="text">{formattedXCallFee ?? ''}</Typography>
-                        </Flex>
-                        <Flex alignItems="center" justifyContent="space-between" mb={2}>
-                          <Typography>
-                            <Trans>Transfer time</Trans>
-                          </Typography>
-
-                          <Typography textAlign="right">~ 30s</Typography>
-                        </Flex>
-                      </>
-                    )}
-                  </Box>
+                  <AdvancedSwapDetails />
                 </DropdownPopper>
               </div>
             </ClickAwayListener>
@@ -432,57 +341,6 @@ export default function SwapPanel() {
         recipient={recipient}
         clearInputs={clearSwapInputOutput}
       />
-    </>
-  );
-}
-
-interface TradePriceProps {
-  price: Price<Currency, Currency>;
-  showInverted: boolean;
-  setShowInverted: (showInverted: boolean) => void;
-}
-
-const StyledPriceContainer = styled(Box)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  user-select: none;
-  padding: 0;
-  border: none;
-  cursor: pointer;
-`;
-
-function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
-  let formattedPrice: string;
-  try {
-    formattedPrice = showInverted ? price.toSignificant(4) : price.invert()?.toSignificant(4);
-  } catch (error) {
-    formattedPrice = '0';
-  }
-
-  const label = showInverted ? `${price.quoteCurrency?.symbol}` : `${price.baseCurrency?.symbol} `;
-  const labelInverted = showInverted ? `${price.baseCurrency?.symbol} ` : `${price.quoteCurrency?.symbol}`;
-  const flipPrice = useCallback(() => setShowInverted(!showInverted), [setShowInverted, showInverted]);
-
-  const text = `${'1 ' + labelInverted + ' = ' + formattedPrice ?? '-'} ${label}`;
-
-  return (
-    <StyledPriceContainer onClick={flipPrice} title={text}>
-      <div style={{ alignItems: 'center', display: 'flex', width: 'fit-content' }}>
-        <Typography textAlign="right">{text}</Typography>
-      </div>
-    </StyledPriceContainer>
-  );
-}
-
-function TradeRoute({ route }: { route: Route<Currency, Currency> }) {
-  return (
-    <>
-      {route.path.map((token: Token, index: number) => (
-        <span key={token.address}>
-          {index > 0 && <ChevronRight size={14} />} {token.symbol}
-        </span>
-      ))}
     </>
   );
 }

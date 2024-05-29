@@ -229,7 +229,7 @@ export class IconXCallService implements XCallService {
 
   async approve(token, owner, spender, currencyAmountToApprove) {}
 
-  async executeTransfer(xSwapInfo: XTransactionInput) {
+  async executeTransfer(xTransactionInput: XTransactionInput) {
     const {
       direction,
       inputAmount,
@@ -237,7 +237,7 @@ export class IconXCallService implements XCallService {
       account,
       xCallFee,
       isLiquidFinanceEnabled,
-    } = xSwapInfo;
+    } = xTransactionInput;
 
     if (account && xCallFee) {
       window.addEventListener('beforeunload', showMessageOnBeforeUnload);
@@ -272,8 +272,8 @@ export class IconXCallService implements XCallService {
     }
   }
 
-  async executeSwap(xSwapInfo: XTransactionInput) {
-    const { executionTrade, account, direction, recipient, slippageTolerance } = xSwapInfo;
+  async executeSwap(xTransactionInput: XTransactionInput) {
+    const { executionTrade, account, direction, recipient, slippageTolerance } = xTransactionInput;
 
     if (!executionTrade || !slippageTolerance) {
       return;

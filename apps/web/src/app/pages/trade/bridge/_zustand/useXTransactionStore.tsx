@@ -23,7 +23,7 @@ type XTransactionStore = {
   currentId: string | null;
   get: (id: string | null) => XTransaction | undefined;
   // add: (transaction: XTransaction) => void;
-  executeTransfer: (xSwapInfo: XTransactionInput & { cleanupSwap?: () => void }, onSuccess?: () => void) => void;
+  executeTransfer: (xTransactionInput: XTransactionInput & { cleanupSwap?: () => void }, onSuccess?: () => void) => void;
   createSecondaryMessage: (xTransaction: XTransaction, primaryMessage: XMessage) => void;
   reset: () => void;
   success: (id) => void;
@@ -72,8 +72,8 @@ export const useXTransactionStore = create<XTransactionStore>()(
       //   });
       // },
 
-      executeTransfer: async (xSwapInfo: XTransactionInput & { cleanupSwap?: () => void }, onSuccess = () => {}) => {
-        const { direction } = xSwapInfo;
+      executeTransfer: async (xTransactionInput: XTransactionInput & { cleanupSwap?: () => void }, onSuccess = () => {}) => {
+        const { direction } = xTransactionInput;
         const sourceChainId = direction.from;
         const finalDestinationChainId = direction.to;
         const primaryDestinationChainId = sourceChainId === iconChainId ? finalDestinationChainId : iconChainId;
@@ -82,13 +82,13 @@ export const useXTransactionStore = create<XTransactionStore>()(
         const finalDstChainXCallService = xCallServiceActions.getXCallService(finalDestinationChainId);
         const primaryDstChainXCallService = xCallServiceActions.getXCallService(primaryDestinationChainId);
 
-        console.log('xSwapInfo', xSwapInfo);
+        console.log('xTransactionInput', xTransactionInput);
 
         let sourceTransactionHash;
-        if (xSwapInfo.type === XTransactionType.BRIDGE) {
-          sourceTransactionHash = await srcChainXCallService.executeTransfer(xSwapInfo);
-        } else if (xSwapInfo.type === XTransactionType.SWAP) {
-          sourceTransactionHash = await srcChainXCallService.executeSwap(xSwapInfo);
+        if (xTransactionInput.type === XTransactionType.BRIDGE) {
+          sourceTransactionHash = await srcChainXCallService.executeTransfer(xTransactionInput);
+        } else if (xTransactionInput.type === XTransactionType.SWAP) {
+          sourceTransactionHash = await srcChainXCallService.executeSwap(xTransactionInput);
         } else {
           throw new Error('Unsupported XTransactionType');
         }
@@ -100,17 +100,17 @@ export const useXTransactionStore = create<XTransactionStore>()(
 
         let pendingMessage, successMessage, errorMessage;
         let descriptionAction, descriptionAmount;
-        if (xSwapInfo.type === XTransactionType.BRIDGE) {
+        if (xTransactionInput.type === XTransactionType.BRIDGE) {
           pendingMessage = 'Requesting cross-chain transfer...';
           successMessage = 'Cross-chain transfer requested.';
           errorMessage = 'Cross-chain transfer failed.';
 
-          const _tokenSymbol = xSwapInfo.inputAmount.currency.symbol;
-          const _formattedAmount = xSwapInfo.inputAmount.toFixed(2);
+          const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
+          const _formattedAmount = xTransactionInput.inputAmount.toFixed(2);
           descriptionAction = `Transfer ${_tokenSymbol}`;
           descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
-        } else if (xSwapInfo.type === XTransactionType.SWAP) {
-          const { executionTrade } = xSwapInfo;
+        } else if (xTransactionInput.type === XTransactionType.SWAP) {
+          const { executionTrade } = xTransactionInput;
           if (executionTrade) {
             const swapMessages = swapMessage(
               executionTrade.inputAmount.toFixed(2),
@@ -132,7 +132,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
           }
         }
 
-        xSwapInfo?.cleanupSwap?.();
+        xTransactionInput?.cleanupSwap?.();
 
         const sourceTransaction = transactionActions.add(sourceChainId, {
           hash: sourceTransactionHash,
@@ -158,7 +158,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
 
           const xTransaction: XTransaction = {
             id: xMessage.id,
-            type: xSwapInfo.type,
+            type: xTransactionInput.type,
             status: XTransactionStatus.pending,
             primaryMessageId: xMessage.id,
             secondaryMessageRequired: primaryDestinationChainId !== finalDestinationChainId,
@@ -314,8 +314,8 @@ export const xTransactionActions = {
   //   useXTransactionStore.getState().add(transaction);
   // },
 
-  executeTransfer: (xSwapInfo: XTransactionInput & { cleanupSwap?: () => void }, onSuccess = () => {}) => {
-    useXTransactionStore.getState().executeTransfer(xSwapInfo, onSuccess);
+  executeTransfer: (xTransactionInput: XTransactionInput & { cleanupSwap?: () => void }, onSuccess = () => {}) => {
+    useXTransactionStore.getState().executeTransfer(xTransactionInput, onSuccess);
   },
 
   reset: () => {

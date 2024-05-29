@@ -265,7 +265,7 @@ export default function SupplyLiquidityModal({
   const handleAddArchway = async (field: Field) => {
     const inputAmount = parsedAmounts[field];
     if (inputAmount && accountArch && xCallFee) {
-      const xSwapInfo: XTransactionInput = {
+      const xTransactionInput: XTransactionInput = {
         type: XTransactionType.SUPPLY,
         direction: {
           from: AChain,
@@ -276,7 +276,7 @@ export default function SupplyLiquidityModal({
         account: accountArch,
         xCallFee,
       };
-      // await xTransactionActions.sendXToken(xSwapInfo, () => executeCallback(true));
+      // await xTransactionActions.sendXToken(xTransactionInput, () => executeCallback(true));
     }
   };
 

@@ -152,7 +152,7 @@ const XCallSwapModal = ({
     if (!xCallFee) return;
     if (!_inputAmount) return;
 
-    const xSwapInfo: XTransactionInput & { cleanupSwap: () => void } = {
+    const xTransactionInput: XTransactionInput & { cleanupSwap: () => void } = {
       type: XTransactionType.SWAP,
       direction,
       executionTrade,
@@ -164,7 +164,7 @@ const XCallSwapModal = ({
       cleanupSwap,
     };
 
-    await xTransactionActions.executeTransfer(xSwapInfo);
+    await xTransactionActions.executeTransfer(xTransactionInput);
   };
 
   const gasChecker = useXCallGasChecker(direction.from);

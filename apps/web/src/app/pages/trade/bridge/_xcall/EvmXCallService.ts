@@ -246,8 +246,8 @@ export class EvmXCallService implements XCallService {
 
   async approve(token, owner, spender, currencyAmountToApprove) {}
 
-  async executeTransfer(xSwapInfo: XTransactionInput) {
-    const { direction, inputAmount, recipient: destinationAddress, account, xCallFee } = xSwapInfo;
+  async executeTransfer(xTransactionInput: XTransactionInput) {
+    const { direction, inputAmount, recipient: destinationAddress, account, xCallFee } = xTransactionInput;
 
     if (this.walletClient) {
       const tokenAddress = inputAmount.wrapped.currency.address;
@@ -300,8 +300,8 @@ export class EvmXCallService implements XCallService {
     }
   }
 
-  async executeSwap(xSwapInfo: XTransactionInput) {
-    const { direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } = xSwapInfo;
+  async executeSwap(xTransactionInput: XTransactionInput) {
+    const { direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } = xTransactionInput;
 
     if (!executionTrade || !slippageTolerance) {
       return;

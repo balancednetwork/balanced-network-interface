@@ -28,6 +28,6 @@ export interface XCallService {
   // getAllowance(token: XToken, owner: string | null, spender: string): Promise<string>;
   approve(token, owner, spender, currencyAmountToApprove);
 
-  executeTransfer(xSwapInfo: XTransactionInput): Promise<string | undefined>;
-  executeSwap(xSwapInfo: XTransactionInput): Promise<string | undefined>;
+  executeTransfer(xTransactionInput: XTransactionInput): Promise<string | undefined>;
+  executeSwap(xTransactionInput: XTransactionInput): Promise<string | undefined>;
 }

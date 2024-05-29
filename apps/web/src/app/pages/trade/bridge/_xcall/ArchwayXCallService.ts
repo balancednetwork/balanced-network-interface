@@ -252,8 +252,8 @@ export class ArchwayXCallService implements XCallService {
     }
   }
 
-  async executeTransfer(xSwapInfo: XTransactionInput) {
-    const { direction, inputAmount, recipient: destinationAddress, account, xCallFee } = xSwapInfo;
+  async executeTransfer(xTransactionInput: XTransactionInput) {
+    const { direction, inputAmount, recipient: destinationAddress, account, xCallFee } = xTransactionInput;
     const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
 
     if (this.walletClient) {
@@ -325,8 +325,8 @@ export class ArchwayXCallService implements XCallService {
       return transaction;
     }
   }
-  async executeSwap(xSwapInfo: XTransactionInput) {
-    const { direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } = xSwapInfo;
+  async executeSwap(xTransactionInput: XTransactionInput) {
+    const { direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } = xTransactionInput;
 
     if (!executionTrade || !slippageTolerance) {
       return;

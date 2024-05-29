@@ -13,37 +13,37 @@ import { EvmXService } from '../_xcall/EvmXService';
 import { usePublicClient, useWalletClient } from 'wagmi';
 
 type XServiceStore = {
-  xCallServices: Record<string, XService>;
+  xServices: Record<string, XService>;
 };
 
 export const useXServiceStore = create<XServiceStore>()(set => ({
-  xCallServices: {},
+  xServices: {},
 }));
 
-export const xCallServiceActions = {
+export const xServiceActions = {
   getAllXServices: () => {
-    return useXServiceStore.getState().xCallServices;
+    return useXServiceStore.getState().xServices;
   },
   getXService: (xChainId: XChainId) => {
-    const xCallService = useXServiceStore.getState().xCallServices[xChainId];
-    return xCallService;
+    const xService = useXServiceStore.getState().xServices[xChainId];
+    return xService;
   },
-  setXService: (xChainId: XChainId, xCallService: XService) => {
+  setXService: (xChainId: XChainId, xService: XService) => {
     useXServiceStore.setState({
-      xCallServices: {
-        ...useXServiceStore.getState().xCallServices,
-        [xChainId]: xCallService,
+      xServices: {
+        ...useXServiceStore.getState().xServices,
+        [xChainId]: xService,
       },
     });
   },
 
   removeXService: (xChainId: XChainId) => {
-    const xCallServices = useXServiceStore.getState().xCallServices;
-    delete xCallServices[xChainId];
-    useXServiceStore.setState({ xCallServices });
+    const xServices = useXServiceStore.getState().xServices;
+    delete xServices[xChainId];
+    useXServiceStore.setState({ xServices });
   },
   removeAllXServices: () => {
-    useXServiceStore.setState({ xCallServices: {} });
+    useXServiceStore.setState({ xServices: {} });
   },
 };
 
@@ -58,8 +58,8 @@ export const useCreateXService = (xChainId: XChainId) => {
   const { data: walletClient } = useWalletClient();
 
   const createXService = (XServiceClass, xChainId: XChainId, serviceConfig: any) => {
-    const xCallService = new XServiceClass(xChainId, serviceConfig);
-    xCallServiceActions.setXService(xChainId, xCallService);
+    const xService = new XServiceClass(xChainId, serviceConfig);
+    xServiceActions.setXService(xChainId, xService);
   };
 
   useEffect(() => {

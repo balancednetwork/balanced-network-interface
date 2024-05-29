@@ -10,7 +10,7 @@ import {
   NotificationError,
 } from 'app/components/Notification/TransactionNotification';
 import { Transaction, TransactionStatus } from './types';
-import { xCallServiceActions } from './useXServiceStore';
+import { xServiceActions } from './useXServiceStore';
 import { XChainId } from '../types';
 
 type TransactionStore = {
@@ -61,8 +61,8 @@ export const transactionActions = {
 
   updateTx: async (xChainId: XChainId, id: string, transaction: { rawTx: any }) => {
     const { rawTx } = transaction;
-    const xCallService = xCallServiceActions.getXService(xChainId);
-    const status = xCallService.deriveTxStatus(rawTx);
+    const xService = xServiceActions.getXService(xChainId);
+    const status = xService.deriveTxStatus(rawTx);
 
     useTransactionStore.setState(state => {
       return {
@@ -70,7 +70,7 @@ export const transactionActions = {
           if (transaction.id === id) {
             const newTransaction: Transaction = {
               ...transaction,
-              rawEventLogs: xCallService.getTxEventLogs(rawTx),
+              rawEventLogs: xService.getTxEventLogs(rawTx),
               status,
             };
             return newTransaction;
@@ -123,9 +123,9 @@ export const useFetchTransaction = (transaction: Transaction | undefined) => {
     queryFn: async () => {
       if (!xChainId) return;
 
-      const xCallService = xCallServiceActions.getXService(xChainId);
+      const xService = xServiceActions.getXService(xChainId);
       try {
-        const rawTx = await xCallService.getTxReceipt(hash);
+        const rawTx = await xService.getTxReceipt(hash);
         return rawTx;
       } catch (err: any) {
         console.error(`failed to check transaction hash: ${hash}`, err);

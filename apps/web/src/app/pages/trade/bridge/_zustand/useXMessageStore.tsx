@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { XCallEventType } from '../types';
 import { XMessage, XMessageStatus, Transaction, TransactionStatus, XCallEventMap } from './types';
-import { useCreateXService, xCallServiceActions } from './useXServiceStore';
+import { useCreateXService, xServiceActions } from './useXServiceStore';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { useFetchTransaction } from './useTransactionStore';
 import { useEffect } from 'react';
@@ -101,12 +101,12 @@ export const useXMessageStore = create<XMessageStore>()(
         const xMessage = get().messages[id];
         if (!xMessage) return;
 
-        const xCallService = xCallServiceActions.getXService(xMessage.sourceChainId);
-        const newSourceTransactionStatus = xCallService.deriveTxStatus(rawTx);
+        const xService = xServiceActions.getXService(xMessage.sourceChainId);
+        const newSourceTransactionStatus = xService.deriveTxStatus(rawTx);
 
         const newSourceTransaction = {
           ...xMessage.sourceTransaction,
-          rawEventLogs: xCallService.getTxEventLogs(rawTx),
+          rawEventLogs: xService.getTxEventLogs(rawTx),
           status: newSourceTransactionStatus,
         };
         const newStatus = deriveStatus(newSourceTransaction, xMessage.events, xMessage.destinationTransaction);
@@ -133,7 +133,7 @@ export const useXMessageStore = create<XMessageStore>()(
         };
 
         if (newEvents[XCallEventType.CallExecuted]) {
-          const dstXService = xCallServiceActions.getXService(xMessage.destinationChainId);
+          const dstXService = xServiceActions.getXService(xMessage.destinationChainId);
           const destinationTransactionHash = newEvents[XCallEventType.CallExecuted].txHash;
           const rawTx = await dstXService.getTxReceipt(destinationTransactionHash);
 
@@ -241,7 +241,7 @@ export const useFetchXMessageEvents = (xMessage?: XMessage) => {
 
       let events: XCallEventMap = {};
       if (xMessage.status === XMessageStatus.AWAITING_CALL_MESSAGE_SENT) {
-        const srcChainXService = xCallServiceActions.getXService(sourceChainId);
+        const srcChainXService = xServiceActions.getXService(sourceChainId);
         events = await srcChainXService.getSourceEvents(sourceTransaction);
       } else if (
         xMessage.status === XMessageStatus.CALL_MESSAGE_SENT ||

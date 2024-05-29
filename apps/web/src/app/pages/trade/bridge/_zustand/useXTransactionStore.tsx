@@ -11,7 +11,7 @@ import {
   XTransactionInput,
   XTransactionType,
 } from './types';
-import { xCallServiceActions } from './useXServiceStore';
+import { xServiceActions } from './useXServiceStore';
 import { transactionActions } from './useTransactionStore';
 import { XMessageUpdater, useXMessageStore, xMessageActions } from './useXMessageStore';
 import { swapMessage } from '../../supply/_components/utils';
@@ -78,9 +78,9 @@ export const useXTransactionStore = create<XTransactionStore>()(
         const finalDestinationChainId = direction.to;
         const primaryDestinationChainId = sourceChainId === iconChainId ? finalDestinationChainId : iconChainId;
 
-        const srcChainXService = xCallServiceActions.getXService(sourceChainId);
-        const finalDstChainXService = xCallServiceActions.getXService(finalDestinationChainId);
-        const primaryDstChainXService = xCallServiceActions.getXService(primaryDestinationChainId);
+        const srcChainXService = xServiceActions.getXService(sourceChainId);
+        const finalDstChainXService = xServiceActions.getXService(finalDestinationChainId);
+        const primaryDstChainXService = xServiceActions.getXService(primaryDestinationChainId);
 
         console.log('xTransactionInput', xTransactionInput);
 
@@ -187,7 +187,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
 
         const sourceTransaction = primaryMessage.destinationTransaction;
 
-        const dstChainXService = xCallServiceActions.getXService(destinationChainId);
+        const dstChainXService = xServiceActions.getXService(destinationChainId);
         const destinationChainInitialBlockHeight = (await dstChainXService.getBlockHeight()) - 20n;
 
         const secondaryMessageId = `${sourceChainId}/${sourceTransaction?.hash}`;

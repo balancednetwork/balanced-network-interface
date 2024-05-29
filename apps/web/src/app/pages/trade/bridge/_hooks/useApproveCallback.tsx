@@ -27,7 +27,7 @@ import { NATIVE_ADDRESS } from 'constants/index';
 import useXWallet from './useXWallet';
 import { openToast } from 'btp/src/connectors/transactionToast';
 import { TransactionStatus } from 'store/transactions/hooks';
-import { xCallServiceActions } from '../_zustand/useXCallServiceStore';
+import { xCallServiceActions } from '../_zustand/useXServiceStore';
 import { transactionActions } from '../_zustand/useTransactionStore';
 
 export const FAST_INTERVAL = 10000;
@@ -250,7 +250,7 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
     // }
 
     const xChainId = token.xChainId;
-    const xCallService = xCallServiceActions.getXCallService(xChainId);
+    const xCallService = xCallServiceActions.getXService(xChainId);
 
     try {
       const hash = await xCallService.approve(token, account as `0x${string}`, spender, amountToApprove);

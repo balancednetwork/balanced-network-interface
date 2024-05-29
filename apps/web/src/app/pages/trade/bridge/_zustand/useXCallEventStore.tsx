@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
 import { XCallDestinationEvent } from './types';
-import { xCallServiceActions } from './useXCallServiceStore';
+import { xCallServiceActions } from './useXServiceStore';
 
 type XCallScanner = {
   id: string;
@@ -92,7 +92,7 @@ export const useXCallEventStore = create<XCallEventStore>()(
       updateChainHeight: async (id: string) => {
         const scanner = get().scanners[id];
         if (scanner && scanner.xChainId) {
-          const xCallService = xCallServiceActions.getXCallService(scanner.xChainId);
+          const xCallService = xCallServiceActions.getXService(scanner.xChainId);
           const chainHeight = await xCallService.getBlockHeight();
           set(state => {
             state.scanners[id].chainHeight = chainHeight;
@@ -121,7 +121,7 @@ export const useXCallEventStore = create<XCallEventStore>()(
           }
         }
 
-        const xCallService = xCallServiceActions.getXCallService(xChainId);
+        const xCallService = xCallServiceActions.getXService(xChainId);
 
         let scanBlockCount = xCallService.getScanBlockCount();
         if (currentHeight + scanBlockCount > scanner.chainHeight) {

@@ -1,5 +1,5 @@
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
-import { XCallService } from './types';
+import { XService } from './types';
 import { XTransactionInput, Transaction, TransactionStatus, XCallDestinationEvent, XCallSourceEvent } from '../_zustand/types';
 import { avalanche } from 'app/pages/trade/bridge/_config/xChains';
 
@@ -13,7 +13,7 @@ import { xCallContractAbi } from './abis/xCallContractAbi';
 import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
 import { bnUSDContractAbi } from './abis/bnUSDContractAbi';
 
-export class EvmXCallService implements XCallService {
+export class EvmXService implements XService {
   xChainId: XChainId;
   publicClient: PublicClient;
   walletClient: WalletClient;

@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { XCallEventType } from '../types';
 import { XMessage, XMessageStatus, Transaction, TransactionStatus, XCallEventMap } from './types';
-import { useCreateXCallService, xCallServiceActions } from './useXCallServiceStore';
+import { useCreateXService, xCallServiceActions } from './useXServiceStore';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { useFetchTransaction } from './useTransactionStore';
 import { useEffect } from 'react';
@@ -101,7 +101,7 @@ export const useXMessageStore = create<XMessageStore>()(
         const xMessage = get().messages[id];
         if (!xMessage) return;
 
-        const xCallService = xCallServiceActions.getXCallService(xMessage.sourceChainId);
+        const xCallService = xCallServiceActions.getXService(xMessage.sourceChainId);
         const newSourceTransactionStatus = xCallService.deriveTxStatus(rawTx);
 
         const newSourceTransaction = {
@@ -133,16 +133,16 @@ export const useXMessageStore = create<XMessageStore>()(
         };
 
         if (newEvents[XCallEventType.CallExecuted]) {
-          const dstXCallService = xCallServiceActions.getXCallService(xMessage.destinationChainId);
+          const dstXService = xCallServiceActions.getXService(xMessage.destinationChainId);
           const destinationTransactionHash = newEvents[XCallEventType.CallExecuted].txHash;
-          const rawTx = await dstXCallService.getTxReceipt(destinationTransactionHash);
+          const rawTx = await dstXService.getTxReceipt(destinationTransactionHash);
 
           destinationTransaction = {
             id: destinationTransactionHash,
             hash: destinationTransactionHash,
             xChainId: xMessage.destinationChainId,
-            status: dstXCallService.deriveTxStatus(rawTx),
-            rawEventLogs: dstXCallService.getTxEventLogs(rawTx),
+            status: dstXService.deriveTxStatus(rawTx),
+            rawEventLogs: dstXService.getTxEventLogs(rawTx),
             timestamp: Date.now(),
             // timestamp: newEvents[XCallEventType.CallExecuted].timestamp,
           };
@@ -241,8 +241,8 @@ export const useFetchXMessageEvents = (xMessage?: XMessage) => {
 
       let events: XCallEventMap = {};
       if (xMessage.status === XMessageStatus.AWAITING_CALL_MESSAGE_SENT) {
-        const srcChainXCallService = xCallServiceActions.getXCallService(sourceChainId);
-        events = await srcChainXCallService.getSourceEvents(sourceTransaction);
+        const srcChainXService = xCallServiceActions.getXService(sourceChainId);
+        events = await srcChainXService.getSourceEvents(sourceTransaction);
       } else if (
         xMessage.status === XMessageStatus.CALL_MESSAGE_SENT ||
         xMessage.status === XMessageStatus.CALL_MESSAGE
@@ -272,8 +272,8 @@ export const useFetchXMessageEvents = (xMessage?: XMessage) => {
 export const XMessageUpdater = ({ xMessage }: { xMessage: XMessage }) => {
   const { id, sourceChainId, destinationChainId, destinationChainInitialBlockHeight, status } = xMessage || {};
 
-  useCreateXCallService(sourceChainId);
-  useCreateXCallService(destinationChainId);
+  useCreateXService(sourceChainId);
+  useCreateXService(destinationChainId);
 
   useXCallEventScanner(id);
 

@@ -17,7 +17,7 @@ import {
   XCallEventMap,
 } from '../_zustand/types';
 import { fetchTxResult } from 'app/_xcall/_icon/utils';
-import { XCallService } from './types';
+import { XService } from './types';
 
 export const getICONEventSignature = (eventName: XCallEventType) => {
   switch (eventName) {
@@ -41,7 +41,7 @@ export const getICONEventSignature = (eventName: XCallEventType) => {
   }
 };
 
-export class IconXCallService implements XCallService {
+export class IconXService implements XService {
   xChainId: XChainId;
   publicClient: IconService;
   walletClient: IconService; // reserved for future use

@@ -1,7 +1,7 @@
 import { IXCallFee, XChainId, XToken } from 'app/pages/trade/bridge/types';
 import { XTransactionInput, Transaction, TransactionStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
 
-export interface XCallService {
+export interface XService {
   // getBlock(blockHeight);
   // filterEventLogs(eventLogs)
   // filterCallMessageEventLogs(eventLogs)

@@ -10,7 +10,7 @@ import {
   NotificationError,
 } from 'app/components/Notification/TransactionNotification';
 import { Transaction, TransactionStatus } from './types';
-import { xCallServiceActions } from './useXCallServiceStore';
+import { xCallServiceActions } from './useXServiceStore';
 import { XChainId } from '../types';
 
 type TransactionStore = {
@@ -61,7 +61,7 @@ export const transactionActions = {
 
   updateTx: async (xChainId: XChainId, id: string, transaction: { rawTx: any }) => {
     const { rawTx } = transaction;
-    const xCallService = xCallServiceActions.getXCallService(xChainId);
+    const xCallService = xCallServiceActions.getXService(xChainId);
     const status = xCallService.deriveTxStatus(rawTx);
 
     useTransactionStore.setState(state => {
@@ -123,7 +123,7 @@ export const useFetchTransaction = (transaction: Transaction | undefined) => {
     queryFn: async () => {
       if (!xChainId) return;
 
-      const xCallService = xCallServiceActions.getXCallService(xChainId);
+      const xCallService = xCallServiceActions.getXService(xChainId);
       try {
         const rawTx = await xCallService.getTxReceipt(hash);
         return rawTx;

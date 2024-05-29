@@ -13,7 +13,7 @@ import { getFeeParam, isDenomAsset } from 'app/_xcall/archway/utils';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 
 import { XCallEventType, XChainId, XToken } from 'app/pages/trade/bridge/types';
-import { XCallService } from './types';
+import { XService } from './types';
 import {
   XTransactionInput,
   TransactionStatus,
@@ -25,7 +25,7 @@ import {
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 
-export class ArchwayXCallService implements XCallService {
+export class ArchwayXService implements XService {
   xChainId: XChainId;
   publicClient: ArchwayClient;
   walletClient: XSigningArchwayClient;

@@ -9,14 +9,14 @@ import BridgeActivity from './_components/BridgeActivity';
 import { AllTransactionsUpdater } from './_zustand/useTransactionStore';
 import { AllXMessagesUpdater } from './_zustand/useXMessageStore';
 import { modalActions, MODAL_ID } from './_zustand/useModalStore';
-import { useCreateXCallService } from './_zustand/useXCallServiceStore';
+import { useCreateXService } from './_zustand/useXServiceStore';
 import { useBridgeDirection } from 'store/bridge/hooks';
 
 export function BridgePage() {
   // TODO: review this
   const bridgeDirection = useBridgeDirection();
-  useCreateXCallService(bridgeDirection.from);
-  useCreateXCallService(bridgeDirection.to);
+  useCreateXService(bridgeDirection.from);
+  useCreateXService(bridgeDirection.to);
 
   return (
     <SectionPanel bg="bg2">

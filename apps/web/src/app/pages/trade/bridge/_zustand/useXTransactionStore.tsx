@@ -11,7 +11,7 @@ import {
   XTransactionInput,
   XTransactionType,
 } from './types';
-import { xCallServiceActions } from './useXCallServiceStore';
+import { xCallServiceActions } from './useXServiceStore';
 import { transactionActions } from './useTransactionStore';
 import { XMessageUpdater, useXMessageStore, xMessageActions } from './useXMessageStore';
 import { swapMessage } from '../../supply/_components/utils';
@@ -78,17 +78,17 @@ export const useXTransactionStore = create<XTransactionStore>()(
         const finalDestinationChainId = direction.to;
         const primaryDestinationChainId = sourceChainId === iconChainId ? finalDestinationChainId : iconChainId;
 
-        const srcChainXCallService = xCallServiceActions.getXCallService(sourceChainId);
-        const finalDstChainXCallService = xCallServiceActions.getXCallService(finalDestinationChainId);
-        const primaryDstChainXCallService = xCallServiceActions.getXCallService(primaryDestinationChainId);
+        const srcChainXService = xCallServiceActions.getXService(sourceChainId);
+        const finalDstChainXService = xCallServiceActions.getXService(finalDestinationChainId);
+        const primaryDstChainXService = xCallServiceActions.getXService(primaryDestinationChainId);
 
         console.log('xTransactionInput', xTransactionInput);
 
         let sourceTransactionHash;
         if (xTransactionInput.type === XTransactionType.BRIDGE) {
-          sourceTransactionHash = await srcChainXCallService.executeTransfer(xTransactionInput);
+          sourceTransactionHash = await srcChainXService.executeTransfer(xTransactionInput);
         } else if (xTransactionInput.type === XTransactionType.SWAP) {
-          sourceTransactionHash = await srcChainXCallService.executeSwap(xTransactionInput);
+          sourceTransactionHash = await srcChainXService.executeSwap(xTransactionInput);
         } else {
           throw new Error('Unsupported XTransactionType');
         }
@@ -142,7 +142,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
         });
 
         if (sourceTransaction && sourceTransaction.hash) {
-          const destinationChainInitialBlockHeight = (await primaryDstChainXCallService.getBlockHeight()) - 1n;
+          const destinationChainInitialBlockHeight = (await primaryDstChainXService.getBlockHeight()) - 1n;
 
           const xMessage: XMessage = {
             id: `${sourceChainId}/${sourceTransaction.hash}`,
@@ -187,8 +187,8 @@ export const useXTransactionStore = create<XTransactionStore>()(
 
         const sourceTransaction = primaryMessage.destinationTransaction;
 
-        const dstChainXCallService = xCallServiceActions.getXCallService(destinationChainId);
-        const destinationChainInitialBlockHeight = (await dstChainXCallService.getBlockHeight()) - 20n;
+        const dstChainXService = xCallServiceActions.getXService(destinationChainId);
+        const destinationChainInitialBlockHeight = (await dstChainXService.getBlockHeight()) - 20n;
 
         const secondaryMessageId = `${sourceChainId}/${sourceTransaction?.hash}`;
         const secondaryMessage: XMessage = {

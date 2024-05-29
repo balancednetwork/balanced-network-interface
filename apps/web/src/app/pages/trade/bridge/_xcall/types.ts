@@ -1,5 +1,5 @@
 import { IXCallFee, XChainId, XToken } from 'app/pages/trade/bridge/types';
-import { XSwapInfo, Transaction, TransactionStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
+import { XTransactionInput, Transaction, TransactionStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
 
 export interface XCallService {
   // getBlock(blockHeight);
@@ -28,6 +28,6 @@ export interface XCallService {
   // getAllowance(token: XToken, owner: string | null, spender: string): Promise<string>;
   approve(token, owner, spender, currencyAmountToApprove);
 
-  executeTransfer(xSwapInfo: XSwapInfo): Promise<string | undefined>;
-  executeSwap(xSwapInfo: XSwapInfo): Promise<string | undefined>;
+  executeTransfer(xSwapInfo: XTransactionInput): Promise<string | undefined>;
+  executeSwap(xSwapInfo: XTransactionInput): Promise<string | undefined>;
 }

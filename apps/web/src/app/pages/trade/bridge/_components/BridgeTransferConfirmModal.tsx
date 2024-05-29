@@ -21,7 +21,7 @@ import LiquidFinanceIntegration from './LiquidFinanceIntegration';
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks/useApproveCallback';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import useXCallFee from '../_hooks/useXCallFee';
-import { XTransactionType, XSwapInfo } from '../_zustand/types';
+import { XTransactionType, XTransactionInput } from '../_zustand/types';
 import { useXMessageStore } from '../_zustand/useXMessageStore';
 import useXCallGasChecker from '../_hooks/useXCallGasChecker';
 import { useXTransactionStore, xTransactionActions } from '../_zustand/useXTransactionStore';
@@ -64,7 +64,7 @@ export function BridgeTransferConfirmModal() {
 
   const handleTransfer = async () => {
     if (currencyAmountToBridge && recipient && account && xCallFee) {
-      const bridgeInfo: XSwapInfo = {
+      const bridgeInfo: XTransactionInput = {
         type: XTransactionType.BRIDGE,
         direction: bridgeDirection,
         inputAmount: currencyAmountToBridge,

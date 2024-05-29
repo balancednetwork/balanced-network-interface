@@ -1,6 +1,6 @@
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
 import { XCallService } from './types';
-import { XSwapInfo, Transaction, TransactionStatus, XCallDestinationEvent, XCallSourceEvent } from '../_zustand/types';
+import { XTransactionInput, Transaction, TransactionStatus, XCallDestinationEvent, XCallSourceEvent } from '../_zustand/types';
 import { avalanche } from 'app/pages/trade/bridge/_config/xChains';
 
 import { Address, PublicClient, WalletClient, WriteContractParameters, parseEventLogs, toHex } from 'viem';
@@ -246,7 +246,7 @@ export class EvmXCallService implements XCallService {
 
   async approve(token, owner, spender, currencyAmountToApprove) {}
 
-  async executeTransfer(xSwapInfo: XSwapInfo) {
+  async executeTransfer(xSwapInfo: XTransactionInput) {
     const { direction, inputAmount, recipient: destinationAddress, account, xCallFee } = xSwapInfo;
 
     if (this.walletClient) {
@@ -300,7 +300,7 @@ export class EvmXCallService implements XCallService {
     }
   }
 
-  async executeSwap(xSwapInfo: XSwapInfo) {
+  async executeSwap(xSwapInfo: XTransactionInput) {
     const { direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } = xSwapInfo;
 
     if (!executionTrade || !slippageTolerance) {

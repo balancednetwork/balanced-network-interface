@@ -31,7 +31,7 @@ export enum XMessageStatus {
   CALL_EXECUTED = 'CALL_EXECUTED',
 }
 
-export type XSwapInfo = {
+export type XTransactionInput = {
   direction: {
     from: XChainId;
     to: XChainId;

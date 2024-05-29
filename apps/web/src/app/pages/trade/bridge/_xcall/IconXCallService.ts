@@ -9,7 +9,7 @@ import { NETWORK_ID } from 'constants/config';
 import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge/_config/xTokens';
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
 import {
-  XSwapInfo,
+  XTransactionInput,
   Transaction,
   TransactionStatus,
   XCallDestinationEvent,
@@ -229,7 +229,7 @@ export class IconXCallService implements XCallService {
 
   async approve(token, owner, spender, currencyAmountToApprove) {}
 
-  async executeTransfer(xSwapInfo: XSwapInfo) {
+  async executeTransfer(xSwapInfo: XTransactionInput) {
     const {
       direction,
       inputAmount,
@@ -272,7 +272,7 @@ export class IconXCallService implements XCallService {
     }
   }
 
-  async executeSwap(xSwapInfo: XSwapInfo) {
+  async executeSwap(xSwapInfo: XTransactionInput) {
     const { executionTrade, account, direction, recipient, slippageTolerance } = xSwapInfo;
 
     if (!executionTrade || !slippageTolerance) {

@@ -15,7 +15,7 @@ import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { XCallEventType, XChainId, XToken } from 'app/pages/trade/bridge/types';
 import { XCallService } from './types';
 import {
-  XSwapInfo,
+  XTransactionInput,
   TransactionStatus,
   XCallEvent,
   Transaction,
@@ -252,7 +252,7 @@ export class ArchwayXCallService implements XCallService {
     }
   }
 
-  async executeTransfer(xSwapInfo: XSwapInfo) {
+  async executeTransfer(xSwapInfo: XTransactionInput) {
     const { direction, inputAmount, recipient: destinationAddress, account, xCallFee } = xSwapInfo;
     const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
 
@@ -325,7 +325,7 @@ export class ArchwayXCallService implements XCallService {
       return transaction;
     }
   }
-  async executeSwap(xSwapInfo: XSwapInfo) {
+  async executeSwap(xSwapInfo: XTransactionInput) {
     const { direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } = xSwapInfo;
 
     if (!executionTrade || !slippageTolerance) {

@@ -8,7 +8,7 @@ import {
   XMessage,
   XTransaction,
   XTransactionStatus,
-  XSwapInfo,
+  XTransactionInput,
   XTransactionType,
 } from './types';
 import { xCallServiceActions } from './useXCallServiceStore';
@@ -23,7 +23,7 @@ type XTransactionStore = {
   currentId: string | null;
   get: (id: string | null) => XTransaction | undefined;
   // add: (transaction: XTransaction) => void;
-  executeTransfer: (xSwapInfo: XSwapInfo & { cleanupSwap?: () => void }, onSuccess?: () => void) => void;
+  executeTransfer: (xSwapInfo: XTransactionInput & { cleanupSwap?: () => void }, onSuccess?: () => void) => void;
   createSecondaryMessage: (xTransaction: XTransaction, primaryMessage: XMessage) => void;
   reset: () => void;
   success: (id) => void;
@@ -72,7 +72,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
       //   });
       // },
 
-      executeTransfer: async (xSwapInfo: XSwapInfo & { cleanupSwap?: () => void }, onSuccess = () => {}) => {
+      executeTransfer: async (xSwapInfo: XTransactionInput & { cleanupSwap?: () => void }, onSuccess = () => {}) => {
         const { direction } = xSwapInfo;
         const sourceChainId = direction.from;
         const finalDestinationChainId = direction.to;
@@ -314,7 +314,7 @@ export const xTransactionActions = {
   //   useXTransactionStore.getState().add(transaction);
   // },
 
-  executeTransfer: (xSwapInfo: XSwapInfo & { cleanupSwap?: () => void }, onSuccess = () => {}) => {
+  executeTransfer: (xSwapInfo: XTransactionInput & { cleanupSwap?: () => void }, onSuccess = () => {}) => {
     useXTransactionStore.getState().executeTransfer(xSwapInfo, onSuccess);
   },
 

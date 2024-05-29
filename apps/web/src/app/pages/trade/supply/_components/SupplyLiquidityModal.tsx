@@ -27,7 +27,7 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import ModalContent, { ModalContentWrapper } from 'app/components/ModalContent';
 import Spinner from 'app/components/Spinner';
 import { depositMessage, supplyMessage } from './utils';
-import { XTransactionType, XSwapInfo } from '../../bridge/_zustand/types';
+import { XTransactionType, XTransactionInput } from '../../bridge/_zustand/types';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import useXCallFee from '../../bridge/_hooks/useXCallFee';
@@ -265,7 +265,7 @@ export default function SupplyLiquidityModal({
   const handleAddArchway = async (field: Field) => {
     const inputAmount = parsedAmounts[field];
     if (inputAmount && accountArch && xCallFee) {
-      const xSwapInfo: XSwapInfo = {
+      const xSwapInfo: XTransactionInput = {
         type: XTransactionType.SUPPLY,
         direction: {
           from: AChain,

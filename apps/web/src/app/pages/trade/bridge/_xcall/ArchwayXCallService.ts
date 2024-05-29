@@ -53,13 +53,14 @@ export class ArchwayXCallService implements XCallService {
     return block;
   }
 
+  // TODO: deprecate
   async getBlockEventLogs(blockHeight: bigint) {
     let txs;
 
     // TODO: is 10 iterations enough?
     for (let i = 0; i < 10; i++) {
       txs = await this.publicClient.searchTx(`tx.height=${blockHeight}`);
-      if (txs && txs.length > 0) {
+      if (txs) {
         break;
       }
     }
@@ -75,7 +76,8 @@ export class ArchwayXCallService implements XCallService {
     // TODO: is 10 iterations enough?
     for (let i = 0; i < 10; i++) {
       txs = await this.publicClient.searchTx(`tx.height>=${startBlockHeight} AND tx.height<=${endBlockHeight}`);
-      if (txs && txs.length > 0) {
+
+      if (txs) {
         break;
       }
     }
@@ -210,6 +212,7 @@ export class ArchwayXCallService implements XCallService {
     return null;
   }
 
+  // TODO: deprecate
   async getDestinationEventsByBlock(blockHeight: bigint) {
     try {
       const events: any = [];

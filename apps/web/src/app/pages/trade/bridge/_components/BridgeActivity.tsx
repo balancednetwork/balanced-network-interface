@@ -9,9 +9,9 @@ import { useXCallStats } from '../_hooks/useXCallStats';
 
 import Spinner from '../../../../components/Spinner';
 import ActivityBarChart from './ActivityBarChart';
-import XCallTransactionHistoryItem from './XCallTransactionHistoryItem';
+import XTransactionHistoryItem from './XTransactionHistoryItem';
 import { useSignedInWallets } from 'store/wallet/hooks';
-import { useXCallTransactionStore, xCallTransactionActions } from '../_zustand/useXCallTransactionStore';
+import { useXTransactionStore, xCallTransactionActions } from '../_zustand/useXTransactionStore';
 
 export default function BridgeActivity() {
   const { data: xCallStats } = useXCallStats();
@@ -19,7 +19,7 @@ export default function BridgeActivity() {
   const isMedium = useMedia('(max-width: 1100px) and (min-width: 800px)');
   const signedInWallets = useSignedInWallets();
 
-  const { getPendingTransactions } = useXCallTransactionStore();
+  const { getPendingTransactions } = useXTransactionStore();
   const pendingTransactions = getPendingTransactions(signedInWallets);
 
   const messageCount = useMemo(() => {
@@ -72,7 +72,7 @@ export default function BridgeActivity() {
           style={messageCount >= 4 ? { overflowY: 'scroll', maxHeight: '180px' } : {}}
         >
           {pendingTransactions.map((x, index) => (
-            <XCallTransactionHistoryItem key={index} xCallTransaction={x} />
+            <XTransactionHistoryItem key={index} xCallTransaction={x} />
           ))}
           {pendingTransactions?.length === 0 &&
             (signedInWallets.length ? (

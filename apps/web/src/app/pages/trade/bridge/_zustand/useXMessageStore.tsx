@@ -12,7 +12,7 @@ import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { useFetchTransaction } from './useTransactionStore';
 import { useEffect } from 'react';
 import { getNetworkDisplayName } from '../utils';
-import { xCallTransactionActions } from './useXCallTransactionStore';
+import { xCallTransactionActions } from './useXTransactionStore';
 
 const jsonStorageOptions = {
   reviver: (key, value: any) => {

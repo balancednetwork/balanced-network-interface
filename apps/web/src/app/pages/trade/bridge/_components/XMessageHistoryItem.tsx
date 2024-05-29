@@ -8,7 +8,7 @@ import { Typography } from 'app/theme';
 import ArrowIcon from 'assets/icons/arrow-white.svg';
 
 import Spinner from 'app/components/Spinner';
-import { XMessage, XMessageStatus, XCallTransaction } from '../_zustand/types';
+import { XMessage, XMessageStatus, XTransaction } from '../_zustand/types';
 
 const Wrap = styled(Box)`
   display: grid;
@@ -70,7 +70,7 @@ const FailedX = styled(Box)`
 const XMessageHistoryItem = ({
   xMessage,
   xCallTransaction,
-}: { xMessage: XMessage; xCallTransaction: XCallTransaction }) => {
+}: { xMessage: XMessage; xCallTransaction: XTransaction }) => {
   const { sourceChainId, destinationChainId } = xMessage;
 
   const isPending = useMemo(() => {

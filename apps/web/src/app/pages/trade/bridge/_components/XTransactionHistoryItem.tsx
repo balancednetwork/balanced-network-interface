@@ -3,11 +3,11 @@ import React, { useMemo } from 'react';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { XCallTransaction } from '../_zustand/types';
+import { XTransaction } from '../_zustand/types';
 import { useXMessageStore, xMessageActions } from '../_zustand/useXMessageStore';
 import XMessageHistoryItem from './XMessageHistoryItem';
 
-const XCallTransactionHistoryItem = ({ xCallTransaction }: { xCallTransaction: XCallTransaction }) => {
+const XTransactionHistoryItem = ({ xCallTransaction }: { xCallTransaction: XTransaction }) => {
   useXMessageStore();
   const { primaryMessageId, secondaryMessageId } = xCallTransaction;
   const primaryMessage = xMessageActions.get(primaryMessageId);
@@ -23,4 +23,4 @@ const XCallTransactionHistoryItem = ({ xCallTransaction }: { xCallTransaction: X
   );
 };
 
-export default XCallTransactionHistoryItem;
+export default XTransactionHistoryItem;

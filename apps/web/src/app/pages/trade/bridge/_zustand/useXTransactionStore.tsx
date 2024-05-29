@@ -6,10 +6,10 @@ import { immer } from 'zustand/middleware/immer';
 import {
   XMessageStatus,
   XMessage,
-  XCallTransaction,
-  XCallTransactionStatus,
+  XTransaction,
+  XTransactionStatus,
   XSwapInfo,
-  XCallTransactionType,
+  XTransactionType,
 } from './types';
 import { xCallServiceActions } from './useXCallServiceStore';
 import { transactionActions } from './useTransactionStore';
@@ -18,20 +18,20 @@ import { swapMessage } from '../../supply/_components/utils';
 import { XChain, XChainId } from '../types';
 import { MODAL_ID, modalActions } from './useModalStore';
 
-type XCallTransactionStore = {
-  transactions: Record<string, XCallTransaction>;
+type XTransactionStore = {
+  transactions: Record<string, XTransaction>;
   currentId: string | null;
-  get: (id: string | null) => XCallTransaction | undefined;
-  // add: (transaction: XCallTransaction) => void;
+  get: (id: string | null) => XTransaction | undefined;
+  // add: (transaction: XTransaction) => void;
   executeTransfer: (xSwapInfo: XSwapInfo & { cleanupSwap?: () => void }, onSuccess?: () => void) => void;
-  createSecondaryMessage: (xCallTransaction: XCallTransaction, primaryMessage: XMessage) => void;
+  createSecondaryMessage: (xCallTransaction: XTransaction, primaryMessage: XMessage) => void;
   reset: () => void;
   success: (id) => void;
   fail: (id) => void;
   onMessageUpdate: (id: string, xMessage: XMessage) => void;
   getPendingTransactions: (
     signedWallets: { chain: XChain; chainId: XChainId; address: string }[],
-  ) => XCallTransaction[];
+  ) => XTransaction[];
 };
 
 const iconChainId: XChainId = '0x1.icon';
@@ -55,7 +55,7 @@ const jsonStorageOptions = {
   },
 };
 
-export const useXCallTransactionStore = create<XCallTransactionStore>()(
+export const useXTransactionStore = create<XTransactionStore>()(
   persist(
     immer((set, get) => ({
       transactions: {},
@@ -66,7 +66,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
       },
 
       // reserved for future use
-      // add: (transaction: XCallTransaction) => {
+      // add: (transaction: XTransaction) => {
       //   set(state => {
       //     state.transactions[transaction.id] = transaction;
       //   });
@@ -85,12 +85,12 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
         console.log('xSwapInfo', xSwapInfo);
 
         let sourceTransactionHash;
-        if (xSwapInfo.type === XCallTransactionType.BRIDGE) {
+        if (xSwapInfo.type === XTransactionType.BRIDGE) {
           sourceTransactionHash = await srcChainXCallService.executeTransfer(xSwapInfo);
-        } else if (xSwapInfo.type === XCallTransactionType.SWAP) {
+        } else if (xSwapInfo.type === XTransactionType.SWAP) {
           sourceTransactionHash = await srcChainXCallService.executeSwap(xSwapInfo);
         } else {
-          throw new Error('Unsupported XCallTransactionType');
+          throw new Error('Unsupported XTransactionType');
         }
 
         if (!sourceTransactionHash) {
@@ -100,7 +100,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
 
         let pendingMessage, successMessage, errorMessage;
         let descriptionAction, descriptionAmount;
-        if (xSwapInfo.type === XCallTransactionType.BRIDGE) {
+        if (xSwapInfo.type === XTransactionType.BRIDGE) {
           pendingMessage = 'Requesting cross-chain transfer...';
           successMessage = 'Cross-chain transfer requested.';
           errorMessage = 'Cross-chain transfer failed.';
@@ -109,7 +109,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
           const _formattedAmount = xSwapInfo.inputAmount.toFixed(2);
           descriptionAction = `Transfer ${_tokenSymbol}`;
           descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
-        } else if (xSwapInfo.type === XCallTransactionType.SWAP) {
+        } else if (xSwapInfo.type === XTransactionType.SWAP) {
           const { executionTrade } = xSwapInfo;
           if (executionTrade) {
             const swapMessages = swapMessage(
@@ -156,10 +156,10 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
 
           xMessageActions.add(xMessage);
 
-          const xCallTransaction: XCallTransaction = {
+          const xCallTransaction: XTransaction = {
             id: xMessage.id,
             type: xSwapInfo.type,
-            status: XCallTransactionStatus.pending,
+            status: XTransactionStatus.pending,
             primaryMessageId: xMessage.id,
             secondaryMessageRequired: primaryDestinationChainId !== finalDestinationChainId,
             sourceChainId: sourceChainId,
@@ -177,7 +177,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
         }
       },
 
-      createSecondaryMessage: async (xCallTransaction: XCallTransaction, primaryMessage: XMessage) => {
+      createSecondaryMessage: async (xCallTransaction: XTransaction, primaryMessage: XMessage) => {
         if (!primaryMessage.destinationTransaction) {
           throw new Error('destinationTransaction is not found'); // it should not happen
         }
@@ -216,33 +216,33 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
 
       success: (id: string) => {
         if (id === get().currentId) {
-          const currentXCallTransaction = get().transactions[id];
-          if (currentXCallTransaction.type === XCallTransactionType.SWAP) {
+          const currentXTransaction = get().transactions[id];
+          if (currentXTransaction.type === XTransactionType.SWAP) {
             modalActions.closeModal(MODAL_ID.XCALL_SWAP_MODAL);
           }
-          if (currentXCallTransaction.type === XCallTransactionType.BRIDGE) {
+          if (currentXTransaction.type === XTransactionType.BRIDGE) {
             modalActions.closeModal(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL);
           }
         }
 
         set(state => {
-          state.transactions[id].status = XCallTransactionStatus.success;
+          state.transactions[id].status = XTransactionStatus.success;
           state.currentId = null;
         });
       },
       fail: (id: string) => {
         if (id === get().currentId) {
-          const currentXCallTransaction = get().transactions[id];
-          if (currentXCallTransaction.type === XCallTransactionType.SWAP) {
+          const currentXTransaction = get().transactions[id];
+          if (currentXTransaction.type === XTransactionType.SWAP) {
             modalActions.closeModal(MODAL_ID.XCALL_SWAP_MODAL);
           }
-          if (currentXCallTransaction.type === XCallTransactionType.BRIDGE) {
+          if (currentXTransaction.type === XTransactionType.BRIDGE) {
             modalActions.closeModal(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL);
           }
         }
 
         set(state => {
-          state.transactions[id].status = XCallTransactionStatus.failure;
+          state.transactions[id].status = XTransactionStatus.failure;
           state.currentId = null;
         });
       },
@@ -281,9 +281,9 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
 
       getPendingTransactions: (signedWallets: { chain: XChain; chainId: XChainId; address: string }[]) => {
         return Object.values(get().transactions)
-          .filter((transaction: XCallTransaction) => {
+          .filter((transaction: XTransaction) => {
             return (
-              transaction.status === XCallTransactionStatus.pending &&
+              transaction.status === XTransactionStatus.pending &&
               signedWallets.some(wallet => wallet.chainId === transaction.sourceChainId)
             );
           })
@@ -306,47 +306,47 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
 
 export const xCallTransactionActions = {
   get: (id: string | null) => {
-    return useXCallTransactionStore.getState().get(id);
+    return useXTransactionStore.getState().get(id);
   },
 
   // reserved for future use
-  // add: (transaction: XCallTransaction) => {
-  //   useXCallTransactionStore.getState().add(transaction);
+  // add: (transaction: XTransaction) => {
+  //   useXTransactionStore.getState().add(transaction);
   // },
 
   executeTransfer: (xSwapInfo: XSwapInfo & { cleanupSwap?: () => void }, onSuccess = () => {}) => {
-    useXCallTransactionStore.getState().executeTransfer(xSwapInfo, onSuccess);
+    useXTransactionStore.getState().executeTransfer(xSwapInfo, onSuccess);
   },
 
   reset: () => {
-    useXCallTransactionStore.getState().reset();
+    useXTransactionStore.getState().reset();
   },
 
   success: (id: string) => {
-    useXCallTransactionStore.getState().success(id);
+    useXTransactionStore.getState().success(id);
   },
 
   fail: (id: string) => {
-    useXCallTransactionStore.getState().fail(id);
+    useXTransactionStore.getState().fail(id);
   },
 
   onMessageUpdate: (id: string, xMessage: XMessage) => {
-    useXCallTransactionStore.getState().onMessageUpdate(id, xMessage);
+    useXTransactionStore.getState().onMessageUpdate(id, xMessage);
   },
 
   getPendingTransactions: (signedWallets: { chain: XChain; chainId: XChainId; address: string }[]) => {
-    return useXCallTransactionStore.getState().getPendingTransactions(signedWallets);
+    return useXTransactionStore.getState().getPendingTransactions(signedWallets);
   },
 
   getByMessageId: (messageId: string) => {
-    const transactions = useXCallTransactionStore.getState().transactions;
+    const transactions = useXTransactionStore.getState().transactions;
     return Object.values(transactions).find(
       transaction => transaction.primaryMessageId === messageId || transaction.secondaryMessageId === messageId,
     );
   },
 };
 
-export const XCallTransactionUpdater = ({ xCallTransaction }: { xCallTransaction: XCallTransaction }) => {
+export const XTransactionUpdater = ({ xCallTransaction }: { xCallTransaction: XTransaction }) => {
   useXMessageStore();
   const { primaryMessageId, secondaryMessageId } = xCallTransaction;
 

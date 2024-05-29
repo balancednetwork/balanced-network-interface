@@ -16,15 +16,15 @@ import { useShouldLedgerSign } from 'store/application/hooks';
 
 import { useModalStore, modalActions, MODAL_ID } from '../_zustand/useModalStore';
 
-import XCallTransactionState from './XCallTransactionState';
+import XTransactionState from './XTransactionState';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks/useApproveCallback';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import useXCallFee from '../_hooks/useXCallFee';
-import { XCallTransactionType, XSwapInfo } from '../_zustand/types';
+import { XTransactionType, XSwapInfo } from '../_zustand/types';
 import { useXMessageStore } from '../_zustand/useXMessageStore';
 import useXCallGasChecker from '../_hooks/useXCallGasChecker';
-import { useXCallTransactionStore, xCallTransactionActions } from '../_zustand/useXCallTransactionStore';
+import { useXTransactionStore, xCallTransactionActions } from '../_zustand/useXTransactionStore';
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from 'store/bridge/hooks';
 
 const StyledXCallButton = styled(XCallButton)`
@@ -40,8 +40,8 @@ const StyledXCallButton = styled(XCallButton)`
 export function BridgeTransferConfirmModal() {
   useModalStore();
   useXMessageStore();
-  const { currentId } = useXCallTransactionStore();
-  const currentXCallTransaction = xCallTransactionActions.get(currentId);
+  const { currentId } = useXTransactionStore();
+  const currentXTransaction = xCallTransactionActions.get(currentId);
   const isProcessing = currentId !== null; // TODO: can be swap is processing
 
   const { recipient, isLiquidFinanceEnabled } = useBridgeState();
@@ -65,7 +65,7 @@ export function BridgeTransferConfirmModal() {
   const handleTransfer = async () => {
     if (currencyAmountToBridge && recipient && account && xCallFee) {
       const bridgeInfo: XSwapInfo = {
-        type: XCallTransactionType.BRIDGE,
+        type: XTransactionType.BRIDGE,
         direction: bridgeDirection,
         inputAmount: currencyAmountToBridge,
         recipient,
@@ -126,7 +126,7 @@ export function BridgeTransferConfirmModal() {
 
           <LiquidFinanceIntegration />
 
-          {currentXCallTransaction && <XCallTransactionState xCallTransaction={currentXCallTransaction} />}
+          {currentXTransaction && <XTransactionState xCallTransaction={currentXTransaction} />}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}

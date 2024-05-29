@@ -24,14 +24,14 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks/useApproveCallback';
 import { xChainMap } from '../../bridge/_config/xChains';
 import { useModalStore, modalActions, MODAL_ID } from '../../bridge/_zustand/useModalStore';
-import { XCallTransactionType, XSwapInfo } from '../../bridge/_zustand/types';
+import { XTransactionType, XSwapInfo } from '../../bridge/_zustand/types';
 import useXCallGasChecker from '../../bridge/_hooks/useXCallGasChecker';
 import {
-  useXCallTransactionStore,
+  useXTransactionStore,
   xCallTransactionActions,
-  XCallTransactionUpdater,
-} from '../../bridge/_zustand/useXCallTransactionStore';
-import XCallTransactionState from '../../bridge/_components/XCallTransactionState';
+  XTransactionUpdater,
+} from '../../bridge/_zustand/useXTransactionStore';
+import XTransactionState from '../../bridge/_components/XTransactionState';
 
 type XCallSwapModalProps = {
   account: string | undefined;
@@ -110,8 +110,8 @@ const XCallSwapModal = ({
   clearInputs,
 }: XCallSwapModalProps) => {
   useModalStore();
-  const { currentId } = useXCallTransactionStore();
-  const currentXCallTransaction = xCallTransactionActions.get(currentId);
+  const { currentId } = useXTransactionStore();
+  const currentXTransaction = xCallTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
 
   const shouldLedgerSign = useShouldLedgerSign();
@@ -153,7 +153,7 @@ const XCallSwapModal = ({
     if (!_inputAmount) return;
 
     const xSwapInfo: XSwapInfo & { cleanupSwap: () => void } = {
-      type: XCallTransactionType.SWAP,
+      type: XTransactionType.SWAP,
       direction,
       executionTrade,
       account,
@@ -171,7 +171,7 @@ const XCallSwapModal = ({
 
   return (
     <>
-      {currentXCallTransaction && <XCallTransactionUpdater xCallTransaction={currentXCallTransaction} />}
+      {currentXTransaction && <XTransactionUpdater xCallTransaction={currentXTransaction} />}
       <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XCALL_SWAP_MODAL)} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
@@ -239,7 +239,7 @@ const XCallSwapModal = ({
             <Trans>You'll also pay</Trans> <strong>{formattedXCallFee}</strong> <Trans>to transfer cross-chain.</Trans>
           </Typography>
 
-          {currentXCallTransaction && <XCallTransactionState xCallTransaction={currentXCallTransaction} />}
+          {currentXTransaction && <XTransactionState xCallTransaction={currentXTransaction} />}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}

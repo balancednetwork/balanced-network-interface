@@ -7,10 +7,10 @@ import { Box, Flex } from 'rebass';
 import { Typography } from 'app/theme';
 
 import Spinner from 'app/components/Spinner';
-import { XCallTransaction } from '../_zustand/types';
+import { XTransaction } from '../_zustand/types';
 import { xMessageActions } from '../_zustand/useXMessageStore';
 
-const XCallTransactionState = ({ xCallTransaction }: { xCallTransaction: XCallTransaction }) => {
+const XTransactionState = ({ xCallTransaction }: { xCallTransaction: XTransaction }) => {
   const { primaryMessageId, secondaryMessageId } = xCallTransaction;
 
   return (
@@ -40,4 +40,4 @@ const XCallTransactionState = ({ xCallTransaction }: { xCallTransaction: XCallTr
   );
 };
 
-export default XCallTransactionState;
+export default XTransactionState;

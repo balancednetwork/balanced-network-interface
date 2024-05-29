@@ -11,7 +11,7 @@ import Spinner from '../../../../components/Spinner';
 import ActivityBarChart from './ActivityBarChart';
 import XTransactionHistoryItem from './XTransactionHistoryItem';
 import { useSignedInWallets } from 'store/wallet/hooks';
-import { useXTransactionStore, xCallTransactionActions } from '../_zustand/useXTransactionStore';
+import { useXTransactionStore, xTransactionActions } from '../_zustand/useXTransactionStore';
 
 export default function BridgeActivity() {
   const { data: xCallStats } = useXCallStats();
@@ -72,7 +72,7 @@ export default function BridgeActivity() {
           style={messageCount >= 4 ? { overflowY: 'scroll', maxHeight: '180px' } : {}}
         >
           {pendingTransactions.map((x, index) => (
-            <XTransactionHistoryItem key={index} xCallTransaction={x} />
+            <XTransactionHistoryItem key={index} xTransaction={x} />
           ))}
           {pendingTransactions?.length === 0 &&
             (signedInWallets.length ? (

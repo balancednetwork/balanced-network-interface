@@ -28,7 +28,7 @@ import { XTransactionType, XSwapInfo } from '../../bridge/_zustand/types';
 import useXCallGasChecker from '../../bridge/_hooks/useXCallGasChecker';
 import {
   useXTransactionStore,
-  xCallTransactionActions,
+  xTransactionActions,
   XTransactionUpdater,
 } from '../../bridge/_zustand/useXTransactionStore';
 import XTransactionState from '../../bridge/_components/XTransactionState';
@@ -111,7 +111,7 @@ const XCallSwapModal = ({
 }: XCallSwapModalProps) => {
   useModalStore();
   const { currentId } = useXTransactionStore();
-  const currentXTransaction = xCallTransactionActions.get(currentId);
+  const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
 
   const shouldLedgerSign = useShouldLedgerSign();
@@ -141,7 +141,7 @@ const XCallSwapModal = ({
   const handleDismiss = () => {
     modalActions.closeModal(MODAL_ID.XCALL_SWAP_MODAL);
     setTimeout(() => {
-      xCallTransactionActions.reset();
+      xTransactionActions.reset();
     }, 500);
   };
 
@@ -164,14 +164,14 @@ const XCallSwapModal = ({
       cleanupSwap,
     };
 
-    await xCallTransactionActions.executeTransfer(xSwapInfo);
+    await xTransactionActions.executeTransfer(xSwapInfo);
   };
 
   const gasChecker = useXCallGasChecker(direction.from);
 
   return (
     <>
-      {currentXTransaction && <XTransactionUpdater xCallTransaction={currentXTransaction} />}
+      {currentXTransaction && <XTransactionUpdater xTransaction={currentXTransaction} />}
       <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XCALL_SWAP_MODAL)} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
@@ -239,7 +239,7 @@ const XCallSwapModal = ({
             <Trans>You'll also pay</Trans> <strong>{formattedXCallFee}</strong> <Trans>to transfer cross-chain.</Trans>
           </Typography>
 
-          {currentXTransaction && <XTransactionState xCallTransaction={currentXTransaction} />}
+          {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}

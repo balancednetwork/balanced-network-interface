@@ -32,7 +32,7 @@ import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import useXCallFee from '../../bridge/_hooks/useXCallFee';
 import { DEFAULT_SLIPPAGE_LP } from 'constants/index';
-import { xCallTransactionActions } from '../../bridge/_zustand/useXTransactionStore';
+import { xTransactionActions } from '../../bridge/_zustand/useXTransactionStore';
 
 interface ModalProps {
   isOpen: boolean;
@@ -276,7 +276,7 @@ export default function SupplyLiquidityModal({
         account: accountArch,
         xCallFee,
       };
-      // await xCallTransactionActions.sendXToken(xSwapInfo, () => executeCallback(true));
+      // await xTransactionActions.sendXToken(xSwapInfo, () => executeCallback(true));
     }
   };
 

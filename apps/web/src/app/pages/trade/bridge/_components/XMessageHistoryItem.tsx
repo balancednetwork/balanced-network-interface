@@ -69,8 +69,8 @@ const FailedX = styled(Box)`
 
 const XMessageHistoryItem = ({
   xMessage,
-  xCallTransaction,
-}: { xMessage: XMessage; xCallTransaction: XTransaction }) => {
+  xTransaction,
+}: { xMessage: XMessage; xTransaction: XTransaction }) => {
   const { sourceChainId, destinationChainId } = xMessage;
 
   const isPending = useMemo(() => {
@@ -123,10 +123,10 @@ const XMessageHistoryItem = ({
         </Flex>
         <Flex justifyContent="center" flexDirection="column">
           <Typography fontWeight={700} color="text">
-            {xCallTransaction.attributes?.descriptionAction}
+            {xTransaction.attributes?.descriptionAction}
           </Typography>
           <Typography opacity={0.75} fontSize={14}>
-            {xCallTransaction.attributes?.descriptionAmount}
+            {xTransaction.attributes?.descriptionAmount}
           </Typography>
         </Flex>
         <Flex justifyContent="center" flexDirection="column" alignItems="flex-end" className="status-check">

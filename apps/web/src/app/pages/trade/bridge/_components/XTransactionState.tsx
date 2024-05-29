@@ -10,8 +10,8 @@ import Spinner from 'app/components/Spinner';
 import { XTransaction } from '../_zustand/types';
 import { xMessageActions } from '../_zustand/useXMessageStore';
 
-const XTransactionState = ({ xCallTransaction }: { xCallTransaction: XTransaction }) => {
-  const { primaryMessageId, secondaryMessageId } = xCallTransaction;
+const XTransactionState = ({ xTransaction }: { xTransaction: XTransaction }) => {
+  const { primaryMessageId, secondaryMessageId } = xTransaction;
 
   return (
     <AnimatePresence>

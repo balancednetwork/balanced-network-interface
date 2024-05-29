@@ -12,7 +12,7 @@ import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { useFetchTransaction } from './useTransactionStore';
 import { useEffect } from 'react';
 import { getNetworkDisplayName } from '../utils';
-import { xCallTransactionActions } from './useXTransactionStore';
+import { xTransactionActions } from './useXTransactionStore';
 
 const jsonStorageOptions = {
   reviver: (key, value: any) => {
@@ -163,9 +163,9 @@ export const useXMessageStore = create<XMessageStore>()(
         if (newStatus !== oldStatus) {
           if (newStatus === XMessageStatus.CALL_EXECUTED || newStatus === XMessageStatus.FAILED) {
             xCallEventActions.disableScanner(newXMessage.id);
-            const xCallTransaction = xCallTransactionActions.getByMessageId(newXMessage.id);
-            if (xCallTransaction) {
-              xCallTransactionActions.onMessageUpdate(xCallTransaction.id, newXMessage);
+            const xTransaction = xTransactionActions.getByMessageId(newXMessage.id);
+            if (xTransaction) {
+              xTransactionActions.onMessageUpdate(xTransaction.id, newXMessage);
             }
           }
         }

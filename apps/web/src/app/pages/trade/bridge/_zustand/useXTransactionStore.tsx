@@ -24,7 +24,7 @@ type XTransactionStore = {
   get: (id: string | null) => XTransaction | undefined;
   // add: (transaction: XTransaction) => void;
   executeTransfer: (xSwapInfo: XSwapInfo & { cleanupSwap?: () => void }, onSuccess?: () => void) => void;
-  createSecondaryMessage: (xCallTransaction: XTransaction, primaryMessage: XMessage) => void;
+  createSecondaryMessage: (xTransaction: XTransaction, primaryMessage: XMessage) => void;
   reset: () => void;
   success: (id) => void;
   fail: (id) => void;
@@ -94,7 +94,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
         }
 
         if (!sourceTransactionHash) {
-          xCallTransactionActions.reset();
+          xTransactionActions.reset();
           return;
         }
 
@@ -156,7 +156,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
 
           xMessageActions.add(xMessage);
 
-          const xCallTransaction: XTransaction = {
+          const xTransaction: XTransaction = {
             id: xMessage.id,
             type: xSwapInfo.type,
             status: XTransactionStatus.pending,
@@ -171,19 +171,19 @@ export const useXTransactionStore = create<XTransactionStore>()(
           };
 
           set(state => {
-            state.transactions[xCallTransaction.id] = xCallTransaction;
-            state.currentId = xCallTransaction.id;
+            state.transactions[xTransaction.id] = xTransaction;
+            state.currentId = xTransaction.id;
           });
         }
       },
 
-      createSecondaryMessage: async (xCallTransaction: XTransaction, primaryMessage: XMessage) => {
+      createSecondaryMessage: async (xTransaction: XTransaction, primaryMessage: XMessage) => {
         if (!primaryMessage.destinationTransaction) {
           throw new Error('destinationTransaction is not found'); // it should not happen
         }
 
         const sourceChainId = primaryMessage.destinationChainId;
-        const destinationChainId = xCallTransaction.desctinationChainId;
+        const destinationChainId = xTransaction.desctinationChainId;
 
         const sourceTransaction = primaryMessage.destinationTransaction;
 
@@ -204,7 +204,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
         xMessageActions.add(secondaryMessage);
 
         set(state => {
-          state.transactions[xCallTransaction.id].secondaryMessageId = secondaryMessageId;
+          state.transactions[xTransaction.id].secondaryMessageId = secondaryMessageId;
         });
       },
 
@@ -248,16 +248,16 @@ export const useXTransactionStore = create<XTransactionStore>()(
       },
 
       onMessageUpdate: (id: string, xMessage: XMessage) => {
-        const xCallTransaction = get().transactions[id];
-        if (!xCallTransaction) return;
+        const xTransaction = get().transactions[id];
+        if (!xTransaction) return;
 
-        const isPrimary = xCallTransaction.primaryMessageId === xMessage.id;
-        const isSecondary = xCallTransaction.secondaryMessageId === xMessage.id;
+        const isPrimary = xTransaction.primaryMessageId === xMessage.id;
+        const isSecondary = xTransaction.secondaryMessageId === xMessage.id;
 
         if (isPrimary) {
           if (xMessage.status === XMessageStatus.CALL_EXECUTED) {
-            if (xCallTransaction.secondaryMessageRequired) {
-              get().createSecondaryMessage(xCallTransaction, xMessage);
+            if (xTransaction.secondaryMessageRequired) {
+              get().createSecondaryMessage(xTransaction, xMessage);
             } else {
               get().success(id);
             }
@@ -298,13 +298,13 @@ export const useXTransactionStore = create<XTransactionStore>()(
       },
     })),
     {
-      name: 'xCallTransaction-store',
+      name: 'xTransaction-store',
       storage: createJSONStorage(() => localStorage, jsonStorageOptions),
     },
   ),
 );
 
-export const xCallTransactionActions = {
+export const xTransactionActions = {
   get: (id: string | null) => {
     return useXTransactionStore.getState().get(id);
   },
@@ -346,9 +346,9 @@ export const xCallTransactionActions = {
   },
 };
 
-export const XTransactionUpdater = ({ xCallTransaction }: { xCallTransaction: XTransaction }) => {
+export const XTransactionUpdater = ({ xTransaction }: { xTransaction: XTransaction }) => {
   useXMessageStore();
-  const { primaryMessageId, secondaryMessageId } = xCallTransaction;
+  const { primaryMessageId, secondaryMessageId } = xTransaction;
 
   const primaryMessage = xMessageActions.get(primaryMessageId);
   const secondaryMessage = secondaryMessageId && xMessageActions.get(secondaryMessageId);

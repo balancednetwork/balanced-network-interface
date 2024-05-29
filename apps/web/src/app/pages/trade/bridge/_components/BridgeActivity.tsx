@@ -67,7 +67,10 @@ export default function BridgeActivity() {
         </Flex>
       </Box>
       <Box className="border-top" py={4}>
-        <Box pr={messageCount > 4 ? 2 : 0} style={messageCount > 4 ? { overflowY: 'scroll', maxHeight: '240px' } : {}}>
+        <Box
+          pr={messageCount >= 4 ? 2 : 0}
+          style={messageCount >= 4 ? { overflowY: 'scroll', maxHeight: '180px' } : {}}
+        >
           {pendingTransactions.map((x, index) => (
             <XCallTransactionHistoryItem key={index} xCallTransaction={x} />
           ))}

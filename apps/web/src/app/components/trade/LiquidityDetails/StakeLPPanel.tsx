@@ -216,8 +216,8 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
               <Skeleton width={100}></Skeleton>
             ) : sources[sourceName] ? (
               `${new BigNumber(allPairs[pair.poolId!].balnApy)
-                .plus(allPairs[poolId].feesApy)
                 .times(sources[sourceName].workingBalance.dividedBy(sources[sourceName].balance))
+                .plus(allPairs[poolId].feesApy)
                 .times(100)
                 .toFormat(2)}%`
             ) : (

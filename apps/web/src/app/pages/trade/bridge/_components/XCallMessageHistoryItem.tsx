@@ -43,7 +43,7 @@ const Wrap = styled(Box)`
 
   @media (min-width: 1050px) {
     display: grid;
-    grid-template-columns: 3.5fr 4fr 3fr;
+    grid-template-columns: 3.8fr 4fr 3fr;
   }
 `;
 

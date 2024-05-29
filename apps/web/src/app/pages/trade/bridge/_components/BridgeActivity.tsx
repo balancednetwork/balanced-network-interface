@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Trans } from '@lingui/macro';
 import { useMedia } from 'react-use';
@@ -21,6 +21,14 @@ export default function BridgeActivity() {
 
   const { getPendingTransactions } = useXCallTransactionStore();
   const pendingTransactions = getPendingTransactions(signedInWallets);
+
+  const messageCount = useMemo(() => {
+    return pendingTransactions.reduce((acc: number, x) => {
+      if (x.primaryMessageId) acc++;
+      if (x.secondaryMessageId) acc++;
+      return acc;
+    }, 0);
+  }, [pendingTransactions]);
 
   return (
     <Box bg="bg2" flex={1} p={['25px', '35px']}>
@@ -59,20 +67,21 @@ export default function BridgeActivity() {
         </Flex>
       </Box>
       <Box className="border-top" py={4}>
-        {/* TODO: sort by timestamp */}
-        {pendingTransactions.map((x, index) => (
-          <XCallTransactionHistoryItem key={index} xCallTransaction={x} />
-        ))}
-        {pendingTransactions?.length === 0 &&
-          (signedInWallets.length ? (
-            <Typography textAlign="center">
-              <Trans>You have no pending or failed cross-chain transactions.</Trans>
-            </Typography>
-          ) : (
-            <Typography textAlign="center">
-              <Trans>There are no pending cross-chain transactions.</Trans>
-            </Typography>
+        <Box pr={messageCount > 4 ? 2 : 0} style={messageCount > 4 ? { overflowY: 'scroll', maxHeight: '240px' } : {}}>
+          {pendingTransactions.map((x, index) => (
+            <XCallTransactionHistoryItem key={index} xCallTransaction={x} />
           ))}
+          {pendingTransactions?.length === 0 &&
+            (signedInWallets.length ? (
+              <Typography textAlign="center">
+                <Trans>You have no pending or failed cross-chain transactions.</Trans>
+              </Typography>
+            ) : (
+              <Typography textAlign="center">
+                <Trans>There are no pending cross-chain transactions.</Trans>
+              </Typography>
+            ))}
+        </Box>
       </Box>
     </Box>
   );

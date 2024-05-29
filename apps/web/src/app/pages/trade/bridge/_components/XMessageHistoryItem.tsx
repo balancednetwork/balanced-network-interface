@@ -68,19 +68,19 @@ const FailedX = styled(Box)`
 `;
 
 const XMessageHistoryItem = ({
-  xCallMessage,
+  xMessage,
   xCallTransaction,
-}: { xCallMessage: XMessage; xCallTransaction: XCallTransaction }) => {
-  const { sourceChainId, destinationChainId } = xCallMessage;
+}: { xMessage: XMessage; xCallTransaction: XCallTransaction }) => {
+  const { sourceChainId, destinationChainId } = xMessage;
 
   const isPending = useMemo(() => {
     return (
-      xCallMessage.status !== XMessageStatus.FAILED && xCallMessage.status !== XMessageStatus.CALL_EXECUTED
+      xMessage.status !== XMessageStatus.FAILED && xMessage.status !== XMessageStatus.CALL_EXECUTED
     );
-  }, [xCallMessage]);
+  }, [xMessage]);
 
   const statusMessage = useMemo(() => {
-    switch (xCallMessage.status) {
+    switch (xMessage.status) {
       case XMessageStatus.FAILED:
         return `Failed`;
       case XMessageStatus.REQUESTED:
@@ -93,10 +93,10 @@ const XMessageHistoryItem = ({
       default:
         return `Unknown`;
     }
-  }, [xCallMessage]);
+  }, [xMessage]);
 
   const [elapsedTime, setElapsedTime] = useState(0);
-  const timestamp = xCallMessage.sourceTransaction.timestamp;
+  const timestamp = xMessage.sourceTransaction.timestamp;
 
   useEffect(() => {
     if (isPending) {

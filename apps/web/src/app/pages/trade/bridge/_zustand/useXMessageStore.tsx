@@ -78,7 +78,7 @@ export const deriveStatus = (
 type XMessageStore = {
   messages: Record<string, XMessage>;
   get: (id: string | null) => XMessage | undefined;
-  add: (xCallMessage: XMessage) => void;
+  add: (xMessage: XMessage) => void;
   updateSourceTransaction: (id: string, { rawTx }: { rawTx: any }) => void;
   updateXMessageEvents: (id: string, events: XCallEventMap) => Promise<void>;
   remove: (id: string) => void;
@@ -92,65 +92,65 @@ export const useXMessageStore = create<XMessageStore>()(
       get: (id: string | null) => {
         if (id) return get().messages[id];
       },
-      add: (xCallMessage: XMessage) => {
+      add: (xMessage: XMessage) => {
         set(state => {
-          state.messages[xCallMessage.id] = xCallMessage;
+          state.messages[xMessage.id] = xMessage;
         });
       },
       updateSourceTransaction: (id: string, { rawTx }) => {
-        const xCallMessage = get().messages[id];
-        if (!xCallMessage) return;
+        const xMessage = get().messages[id];
+        if (!xMessage) return;
 
-        const xCallService = xCallServiceActions.getXCallService(xCallMessage.sourceChainId);
+        const xCallService = xCallServiceActions.getXCallService(xMessage.sourceChainId);
         const newSourceTransactionStatus = xCallService.deriveTxStatus(rawTx);
 
         const newSourceTransaction = {
-          ...xCallMessage.sourceTransaction,
+          ...xMessage.sourceTransaction,
           rawEventLogs: xCallService.getTxEventLogs(rawTx),
           status: newSourceTransactionStatus,
         };
-        const newStatus = deriveStatus(newSourceTransaction, xCallMessage.events, xCallMessage.destinationTransaction);
+        const newStatus = deriveStatus(newSourceTransaction, xMessage.events, xMessage.destinationTransaction);
 
         set(state => {
           state.messages[id] = {
-            ...xCallMessage,
+            ...xMessage,
             sourceTransaction: newSourceTransaction,
             status: newStatus,
           };
         });
       },
       updateXMessageEvents: async (id: string, events: XCallEventMap) => {
-        const xCallMessage = get().messages[id];
-        if (!xCallMessage) return;
+        const xMessage = get().messages[id];
+        if (!xMessage) return;
 
         let destinationTransaction: Transaction | undefined = undefined;
 
-        const oldStatus = xCallMessage.status;
+        const oldStatus = xMessage.status;
 
         const newEvents = {
-          ...xCallMessage.events,
+          ...xMessage.events,
           ...events,
         };
 
         if (newEvents[XCallEventType.CallExecuted]) {
-          const dstXCallService = xCallServiceActions.getXCallService(xCallMessage.destinationChainId);
+          const dstXCallService = xCallServiceActions.getXCallService(xMessage.destinationChainId);
           const destinationTransactionHash = newEvents[XCallEventType.CallExecuted].txHash;
           const rawTx = await dstXCallService.getTxReceipt(destinationTransactionHash);
 
           destinationTransaction = {
             id: destinationTransactionHash,
             hash: destinationTransactionHash,
-            xChainId: xCallMessage.destinationChainId,
+            xChainId: xMessage.destinationChainId,
             status: dstXCallService.deriveTxStatus(rawTx),
             rawEventLogs: dstXCallService.getTxEventLogs(rawTx),
             timestamp: Date.now(),
             // timestamp: newEvents[XCallEventType.CallExecuted].timestamp,
           };
         }
-        const newStatus = deriveStatus(xCallMessage.sourceTransaction, newEvents, destinationTransaction);
+        const newStatus = deriveStatus(xMessage.sourceTransaction, newEvents, destinationTransaction);
 
         const newXMessage = {
-          ...xCallMessage,
+          ...xMessage,
           events: newEvents,
           status: newStatus,
           destinationTransaction,
@@ -177,7 +177,7 @@ export const useXMessageStore = create<XMessageStore>()(
       },
     })),
     {
-      name: 'xCallMessage-store',
+      name: 'xMessage-store',
       storage: createJSONStorage(() => localStorage, jsonStorageOptions),
     },
   ),
@@ -185,13 +185,13 @@ export const useXMessageStore = create<XMessageStore>()(
   // ),
 );
 
-export const xCallMessageActions = {
+export const xMessageActions = {
   get: (id: string | null) => {
     return useXMessageStore.getState().get(id);
   },
 
-  add: (xCallMessage: XMessage) => {
-    useXMessageStore.getState().add(xCallMessage);
+  add: (xMessage: XMessage) => {
+    useXMessageStore.getState().add(xMessage);
   },
 
   updateSourceTransaction: (id: string, { rawTx }) => {
@@ -205,22 +205,22 @@ export const xCallMessageActions = {
     useXMessageStore.getState().remove(id);
   },
 
-  getXMessageStatusDescription: (xCallMessageId: string) => {
-    const xCallMessage = useXMessageStore.getState().get(xCallMessageId);
-    if (!xCallMessage) {
+  getXMessageStatusDescription: (xMessageId: string) => {
+    const xMessage = useXMessageStore.getState().get(xMessageId);
+    if (!xMessage) {
       return 'Unknown state.';
     }
-    switch (xCallMessage.status) {
+    switch (xMessage.status) {
       case XMessageStatus.REQUESTED:
-        return `Awaiting confirmation on ${getNetworkDisplayName(xCallMessage.sourceChainId)}...`;
+        return `Awaiting confirmation on ${getNetworkDisplayName(xMessage.sourceChainId)}...`;
       case XMessageStatus.FAILED:
         return `Transfer failed.`;
       case XMessageStatus.AWAITING_CALL_MESSAGE_SENT:
-        return `Awaiting confirmation on ${getNetworkDisplayName(xCallMessage.sourceChainId)}...`;
+        return `Awaiting confirmation on ${getNetworkDisplayName(xMessage.sourceChainId)}...`;
       case XMessageStatus.CALL_MESSAGE_SENT:
-        return `Finalising transaction on ${getNetworkDisplayName(xCallMessage.destinationChainId)}...`;
+        return `Finalising transaction on ${getNetworkDisplayName(xMessage.destinationChainId)}...`;
       case XMessageStatus.CALL_MESSAGE:
-        return `Finalising transaction on ${getNetworkDisplayName(xCallMessage.destinationChainId)}...`;
+        return `Finalising transaction on ${getNetworkDisplayName(xMessage.destinationChainId)}...`;
       case XMessageStatus.CALL_EXECUTED:
         return `Complete.`;
       default:
@@ -229,26 +229,26 @@ export const xCallMessageActions = {
   },
 };
 
-export const useFetchXMessageEvents = (xCallMessage?: XMessage) => {
+export const useFetchXMessageEvents = (xMessage?: XMessage) => {
   const { data: events, isLoading } = useQuery({
-    queryKey: ['xCallMessage-events', xCallMessage?.id],
+    queryKey: ['xMessage-events', xMessage?.id],
     queryFn: async () => {
-      if (!xCallMessage) {
+      if (!xMessage) {
         return null;
       }
 
-      const { sourceChainId, destinationChainId, sourceTransaction } = xCallMessage;
+      const { sourceChainId, destinationChainId, sourceTransaction } = xMessage;
 
       let events: XCallEventMap = {};
-      if (xCallMessage.status === XMessageStatus.AWAITING_CALL_MESSAGE_SENT) {
+      if (xMessage.status === XMessageStatus.AWAITING_CALL_MESSAGE_SENT) {
         const srcChainXCallService = xCallServiceActions.getXCallService(sourceChainId);
         events = await srcChainXCallService.getSourceEvents(sourceTransaction);
       } else if (
-        xCallMessage.status === XMessageStatus.CALL_MESSAGE_SENT ||
-        xCallMessage.status === XMessageStatus.CALL_MESSAGE
-        // || xCallMessage.status === XMessageStatus.CALL_EXECUTED
+        xMessage.status === XMessageStatus.CALL_MESSAGE_SENT ||
+        xMessage.status === XMessageStatus.CALL_MESSAGE
+        // || xMessage.status === XMessageStatus.CALL_EXECUTED
       ) {
-        const callMessageSentEvent = xCallMessage.events[XCallEventType.CallMessageSent];
+        const callMessageSentEvent = xMessage.events[XCallEventType.CallMessageSent];
         if (callMessageSentEvent) {
           events = xCallEventActions.getDestinationEvents(destinationChainId, callMessageSentEvent.sn);
         }
@@ -258,9 +258,9 @@ export const useFetchXMessageEvents = (xCallMessage?: XMessage) => {
     },
     refetchInterval: 2000,
     enabled:
-      !!xCallMessage?.id &&
-      xCallMessage?.status !== XMessageStatus.CALL_EXECUTED &&
-      xCallMessage?.status !== XMessageStatus.FAILED,
+      !!xMessage?.id &&
+      xMessage?.status !== XMessageStatus.CALL_EXECUTED &&
+      xMessage?.status !== XMessageStatus.FAILED,
   });
 
   return {
@@ -269,26 +269,26 @@ export const useFetchXMessageEvents = (xCallMessage?: XMessage) => {
   };
 };
 
-export const XMessageUpdater = ({ xCallMessage }: { xCallMessage: XMessage }) => {
-  const { id, sourceChainId, destinationChainId, destinationChainInitialBlockHeight, status } = xCallMessage || {};
+export const XMessageUpdater = ({ xMessage }: { xMessage: XMessage }) => {
+  const { id, sourceChainId, destinationChainId, destinationChainInitialBlockHeight, status } = xMessage || {};
 
   useCreateXCallService(sourceChainId);
   useCreateXCallService(destinationChainId);
 
   useXCallEventScanner(id);
 
-  const { rawTx } = useFetchTransaction(xCallMessage?.sourceTransaction);
-  const { events } = useFetchXMessageEvents(xCallMessage);
+  const { rawTx } = useFetchTransaction(xMessage?.sourceTransaction);
+  const { events } = useFetchXMessageEvents(xMessage);
 
   useEffect(() => {
     if (id && rawTx) {
-      xCallMessageActions.updateSourceTransaction(id, { rawTx });
+      xMessageActions.updateSourceTransaction(id, { rawTx });
     }
   }, [id, rawTx]);
 
   useEffect(() => {
     if (id && events) {
-      xCallMessageActions.updateXMessageEvents(id, events);
+      xMessageActions.updateXMessageEvents(id, events);
     }
   }, [id, events]);
 
@@ -308,14 +308,14 @@ export const XMessageUpdater = ({ xCallMessage }: { xCallMessage: XMessage }) =>
 };
 
 export const AllXMessagesUpdater = () => {
-  const xCallMessages = useXMessageStore(state => Object.values(state.messages));
+  const xMessages = useXMessageStore(state => Object.values(state.messages));
 
   return (
     <>
-      {xCallMessages
+      {xMessages
         .filter(x => x.status !== XMessageStatus.CALL_EXECUTED && x.status !== XMessageStatus.FAILED)
-        .map(xCallMessage => (
-          <XMessageUpdater key={xCallMessage.id} xCallMessage={xCallMessage} />
+        .map(xMessage => (
+          <XMessageUpdater key={xMessage.id} xMessage={xMessage} />
         ))}
     </>
   );

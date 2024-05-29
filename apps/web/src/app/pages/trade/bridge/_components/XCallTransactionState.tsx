@@ -8,7 +8,7 @@ import { Typography } from 'app/theme';
 
 import Spinner from 'app/components/Spinner';
 import { XCallTransaction } from '../_zustand/types';
-import { xCallMessageActions } from '../_zustand/useXMessageStore';
+import { xMessageActions } from '../_zustand/useXMessageStore';
 
 const XCallTransactionState = ({ xCallTransaction }: { xCallTransaction: XCallTransaction }) => {
   const { primaryMessageId, secondaryMessageId } = xCallTransaction;
@@ -24,12 +24,12 @@ const XCallTransactionState = ({ xCallTransaction }: { xCallTransaction: XCallTr
           <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
             {!secondaryMessageId && (
               <Typography mb={4}>
-                <Trans>{xCallMessageActions.getXMessageStatusDescription(primaryMessageId)}</Trans>
+                <Trans>{xMessageActions.getXMessageStatusDescription(primaryMessageId)}</Trans>
               </Typography>
             )}
             {secondaryMessageId && (
               <Typography mb={4}>
-                <Trans>{xCallMessageActions.getXMessageStatusDescription(secondaryMessageId)}</Trans>
+                <Trans>{xMessageActions.getXMessageStatusDescription(secondaryMessageId)}</Trans>
               </Typography>
             )}
             <Spinner />

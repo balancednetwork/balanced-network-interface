@@ -98,8 +98,8 @@ export type XMessage = {
   events: XCallEventMap;
   status: XMessageStatus;
   destinationChainInitialBlockHeight: bigint;
-  // onSuccess: (xCallMessage: XMessage) => Promise<void>;
-  // onFail: (xCallMessage: XMessage) => Promise<void>;
+  // onSuccess: (xMessage: XMessage) => Promise<void>;
+  // onFail: (xMessage: XMessage) => Promise<void>;
 };
 
 export type XCallTransaction = {

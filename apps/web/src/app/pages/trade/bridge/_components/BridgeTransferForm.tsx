@@ -158,9 +158,7 @@ export default function BridgeTransferForm({ openModal }) {
                 {errorMessage ? errorMessage : <Trans>Transfer</Trans>}
               </Button>
             ) : (
-              <Button onClick={handleSubmit} disabled={!isValid}>
-                {<Trans>Transfer</Trans>}
-              </Button>
+              <Button onClick={handleSubmit}>{<Trans>Transfer</Trans>}</Button>
             )}
           </Flex>
         </AutoColumn>

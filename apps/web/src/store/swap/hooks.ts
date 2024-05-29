@@ -200,16 +200,12 @@ export function useDerivedSwapInfo(): {
   const trade = isExactIn ? trade1 : trade2;
 
   let inputError: string | undefined;
-  if (!recipient) {
+  if (account && !recipient) {
     inputError = t`Choose address`;
   }
 
-  if (!account) {
-    inputError = t`Connect Wallet`;
-  }
-
-  if (!parsedAmount) {
-    inputError = inputError ?? t`Enter amount`;
+  if (account && !parsedAmount) {
+    inputError = t`Enter amount`;
   }
 
   if (!currencies[Field.INPUT] || !currencies[Field.OUTPUT]) {

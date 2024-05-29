@@ -335,7 +335,7 @@ export function useDerivedMintInfo(
 
   if (isQueue) {
     if (!parsedAmounts[Field.CURRENCY_A]) {
-      error = error ?? <Trans>Enter an amount</Trans>;
+      error = error ?? <Trans>Enter amount</Trans>;
     }
 
     const { [Field.CURRENCY_A]: currencyAAmount } = parsedAmounts;
@@ -345,7 +345,7 @@ export function useDerivedMintInfo(
     }
   } else {
     if (!parsedAmounts[Field.CURRENCY_A] || !parsedAmounts[Field.CURRENCY_B]) {
-      error = error ?? <Trans>Enter an amount</Trans>;
+      error = error ?? <Trans>Enter amount</Trans>;
     }
 
     const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;

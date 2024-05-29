@@ -22,7 +22,7 @@ import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import useXCallFee from '../_hooks/useXCallFee';
 import { XCallTransactionType, XSwapInfo } from '../_zustand/types';
-import { useXCallMessageStore } from '../_zustand/useXCallMessageStore';
+import { useXMessageStore } from '../_zustand/useXMessageStore';
 import useXCallGasChecker from '../_hooks/useXCallGasChecker';
 import { useXCallTransactionStore, xCallTransactionActions } from '../_zustand/useXCallTransactionStore';
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from 'store/bridge/hooks';
@@ -39,7 +39,7 @@ const StyledXCallButton = styled(XCallButton)`
 
 export function BridgeTransferConfirmModal() {
   useModalStore();
-  useXCallMessageStore();
+  useXMessageStore();
   const { currentId } = useXCallTransactionStore();
   const currentXCallTransaction = xCallTransactionActions.get(currentId);
   const isProcessing = currentId !== null; // TODO: can be swap is processing

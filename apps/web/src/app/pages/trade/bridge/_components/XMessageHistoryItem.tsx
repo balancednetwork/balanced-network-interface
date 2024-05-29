@@ -8,7 +8,7 @@ import { Typography } from 'app/theme';
 import ArrowIcon from 'assets/icons/arrow-white.svg';
 
 import Spinner from 'app/components/Spinner';
-import { XCallMessage, XCallMessageStatus, XCallTransaction } from '../_zustand/types';
+import { XMessage, XMessageStatus, XCallTransaction } from '../_zustand/types';
 
 const Wrap = styled(Box)`
   display: grid;
@@ -67,28 +67,28 @@ const FailedX = styled(Box)`
   }
 `;
 
-const XCallMessageHistoryItem = ({
+const XMessageHistoryItem = ({
   xCallMessage,
   xCallTransaction,
-}: { xCallMessage: XCallMessage; xCallTransaction: XCallTransaction }) => {
+}: { xCallMessage: XMessage; xCallTransaction: XCallTransaction }) => {
   const { sourceChainId, destinationChainId } = xCallMessage;
 
   const isPending = useMemo(() => {
     return (
-      xCallMessage.status !== XCallMessageStatus.FAILED && xCallMessage.status !== XCallMessageStatus.CALL_EXECUTED
+      xCallMessage.status !== XMessageStatus.FAILED && xCallMessage.status !== XMessageStatus.CALL_EXECUTED
     );
   }, [xCallMessage]);
 
   const statusMessage = useMemo(() => {
     switch (xCallMessage.status) {
-      case XCallMessageStatus.FAILED:
+      case XMessageStatus.FAILED:
         return `Failed`;
-      case XCallMessageStatus.REQUESTED:
-      case XCallMessageStatus.AWAITING_CALL_MESSAGE_SENT:
-      case XCallMessageStatus.CALL_MESSAGE_SENT:
-      case XCallMessageStatus.CALL_MESSAGE:
+      case XMessageStatus.REQUESTED:
+      case XMessageStatus.AWAITING_CALL_MESSAGE_SENT:
+      case XMessageStatus.CALL_MESSAGE_SENT:
+      case XMessageStatus.CALL_MESSAGE:
         return `Pending`;
-      case XCallMessageStatus.CALL_EXECUTED:
+      case XMessageStatus.CALL_EXECUTED:
         return `Complete`;
       default:
         return `Unknown`;
@@ -151,4 +151,4 @@ const XCallMessageHistoryItem = ({
   );
 };
 
-export default XCallMessageHistoryItem;
+export default XMessageHistoryItem;

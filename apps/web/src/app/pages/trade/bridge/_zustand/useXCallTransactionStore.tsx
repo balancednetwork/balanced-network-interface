@@ -4,8 +4,8 @@ import { devtools, persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import {
-  XCallMessageStatus,
-  XCallMessage,
+  XMessageStatus,
+  XMessage,
   XCallTransaction,
   XCallTransactionStatus,
   XSwapInfo,
@@ -13,7 +13,7 @@ import {
 } from './types';
 import { xCallServiceActions } from './useXCallServiceStore';
 import { transactionActions } from './useTransactionStore';
-import { XCallMessageUpdater, useXCallMessageStore, xCallMessageActions } from './useXCallMessageStore';
+import { XMessageUpdater, useXMessageStore, xCallMessageActions } from './useXMessageStore';
 import { swapMessage } from '../../supply/_components/utils';
 import { XChain, XChainId } from '../types';
 import { MODAL_ID, modalActions } from './useModalStore';
@@ -24,11 +24,11 @@ type XCallTransactionStore = {
   get: (id: string | null) => XCallTransaction | undefined;
   // add: (transaction: XCallTransaction) => void;
   executeTransfer: (xSwapInfo: XSwapInfo & { cleanupSwap?: () => void }, onSuccess?: () => void) => void;
-  createSecondaryMessage: (xCallTransaction: XCallTransaction, primaryMessage: XCallMessage) => void;
+  createSecondaryMessage: (xCallTransaction: XCallTransaction, primaryMessage: XMessage) => void;
   reset: () => void;
   success: (id) => void;
   fail: (id) => void;
-  onMessageUpdate: (id: string, xCallMessage: XCallMessage) => void;
+  onMessageUpdate: (id: string, xCallMessage: XMessage) => void;
   getPendingTransactions: (
     signedWallets: { chain: XChain; chainId: XChainId; address: string }[],
   ) => XCallTransaction[];
@@ -144,12 +144,12 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
         if (sourceTransaction && sourceTransaction.hash) {
           const destinationChainInitialBlockHeight = (await primaryDstChainXCallService.getBlockHeight()) - 1n;
 
-          const xCallMessage: XCallMessage = {
+          const xCallMessage: XMessage = {
             id: `${sourceChainId}/${sourceTransaction.hash}`,
             sourceChainId: sourceChainId,
             destinationChainId: primaryDestinationChainId,
             sourceTransaction,
-            status: XCallMessageStatus.REQUESTED,
+            status: XMessageStatus.REQUESTED,
             events: {},
             destinationChainInitialBlockHeight,
           };
@@ -177,7 +177,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
         }
       },
 
-      createSecondaryMessage: async (xCallTransaction: XCallTransaction, primaryMessage: XCallMessage) => {
+      createSecondaryMessage: async (xCallTransaction: XCallTransaction, primaryMessage: XMessage) => {
         if (!primaryMessage.destinationTransaction) {
           throw new Error('destinationTransaction is not found'); // it should not happen
         }
@@ -191,12 +191,12 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
         const destinationChainInitialBlockHeight = (await dstChainXCallService.getBlockHeight()) - 20n;
 
         const secondaryMessageId = `${sourceChainId}/${sourceTransaction?.hash}`;
-        const secondaryMessage: XCallMessage = {
+        const secondaryMessage: XMessage = {
           id: secondaryMessageId,
           sourceChainId,
           destinationChainId,
           sourceTransaction: sourceTransaction,
-          status: XCallMessageStatus.REQUESTED,
+          status: XMessageStatus.REQUESTED,
           events: {},
           destinationChainInitialBlockHeight,
         };
@@ -247,7 +247,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
         });
       },
 
-      onMessageUpdate: (id: string, xCallMessage: XCallMessage) => {
+      onMessageUpdate: (id: string, xCallMessage: XMessage) => {
         const xCallTransaction = get().transactions[id];
         if (!xCallTransaction) return;
 
@@ -255,7 +255,7 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
         const isSecondary = xCallTransaction.secondaryMessageId === xCallMessage.id;
 
         if (isPrimary) {
-          if (xCallMessage.status === XCallMessageStatus.CALL_EXECUTED) {
+          if (xCallMessage.status === XMessageStatus.CALL_EXECUTED) {
             if (xCallTransaction.secondaryMessageRequired) {
               get().createSecondaryMessage(xCallTransaction, xCallMessage);
             } else {
@@ -263,17 +263,17 @@ export const useXCallTransactionStore = create<XCallTransactionStore>()(
             }
           }
 
-          if (xCallMessage.status === XCallMessageStatus.FAILED) {
+          if (xCallMessage.status === XMessageStatus.FAILED) {
             get().fail(id);
           }
         }
 
         if (isSecondary) {
-          if (xCallMessage.status === XCallMessageStatus.CALL_EXECUTED) {
+          if (xCallMessage.status === XMessageStatus.CALL_EXECUTED) {
             get().success(id);
           }
 
-          if (xCallMessage.status === XCallMessageStatus.FAILED) {
+          if (xCallMessage.status === XMessageStatus.FAILED) {
             get().fail(id);
           }
         }
@@ -330,7 +330,7 @@ export const xCallTransactionActions = {
     useXCallTransactionStore.getState().fail(id);
   },
 
-  onMessageUpdate: (id: string, xCallMessage: XCallMessage) => {
+  onMessageUpdate: (id: string, xCallMessage: XMessage) => {
     useXCallTransactionStore.getState().onMessageUpdate(id, xCallMessage);
   },
 
@@ -347,7 +347,7 @@ export const xCallTransactionActions = {
 };
 
 export const XCallTransactionUpdater = ({ xCallTransaction }: { xCallTransaction: XCallTransaction }) => {
-  useXCallMessageStore();
+  useXMessageStore();
   const { primaryMessageId, secondaryMessageId } = xCallTransaction;
 
   const primaryMessage = xCallMessageActions.get(primaryMessageId);
@@ -355,8 +355,8 @@ export const XCallTransactionUpdater = ({ xCallTransaction }: { xCallTransaction
 
   return (
     <>
-      {primaryMessage && <XCallMessageUpdater xCallMessage={primaryMessage} />}
-      {secondaryMessage && <XCallMessageUpdater xCallMessage={secondaryMessage} />}
+      {primaryMessage && <XMessageUpdater xCallMessage={primaryMessage} />}
+      {secondaryMessage && <XMessageUpdater xCallMessage={secondaryMessage} />}
     </>
   );
 };

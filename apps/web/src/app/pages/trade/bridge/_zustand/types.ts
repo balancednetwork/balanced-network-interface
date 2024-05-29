@@ -20,7 +20,7 @@ export enum XCallTransactionType {
   SUPPLY = 'supply',
 }
 
-export enum XCallMessageStatus {
+export enum XMessageStatus {
   REQUESTED = 'REQUESTED',
   FAILED = 'FAILED',
   // COMPLETED = 'COMPLETED',
@@ -89,17 +89,17 @@ export type XCallEventMap = Partial<{
   [XCallEventType.CallExecuted]: XCallDestinationEvent;
 }>;
 
-export type XCallMessage = {
+export type XMessage = {
   id: string;
   sourceChainId: XChainId;
   destinationChainId: XChainId;
   sourceTransaction: Transaction;
   destinationTransaction?: Transaction;
   events: XCallEventMap;
-  status: XCallMessageStatus;
+  status: XMessageStatus;
   destinationChainInitialBlockHeight: bigint;
-  // onSuccess: (xCallMessage: XCallMessage) => Promise<void>;
-  // onFail: (xCallMessage: XCallMessage) => Promise<void>;
+  // onSuccess: (xCallMessage: XMessage) => Promise<void>;
+  // onFail: (xCallMessage: XMessage) => Promise<void>;
 };
 
 export type XCallTransaction = {

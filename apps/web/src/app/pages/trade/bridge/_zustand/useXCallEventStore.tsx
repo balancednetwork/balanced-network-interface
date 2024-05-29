@@ -264,6 +264,6 @@ export const useXCallEventScanner = (id: string | undefined) => {
       return { id, xChainId };
     },
     enabled: !!scanner && scanner?.enabled,
-    refetchInterval: 2000,
+    refetchInterval: 1000,
   });
 };

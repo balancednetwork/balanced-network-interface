@@ -16,7 +16,6 @@ import { useDerivedSwapInfo } from 'store/swap/hooks';
 
 import Divider from 'app/components/Divider';
 import useXCallFee from 'app/pages/trade/bridge/_hooks/useXCallFee';
-import useXCallRoute from '../../bridge/_hooks/useXCallRoute';
 import { XChainId } from '../../bridge/types';
 import { xChainMap } from '../../bridge/_config/xChains';
 
@@ -29,7 +28,6 @@ export default function AdvancedSwapDetails() {
 
   const isXSwap = !(direction.from === '0x1.icon' && direction.to === '0x1.icon');
 
-  const bridgeRoute = useXCallRoute(direction.from, direction.to);
   const { formattedXCallFee } = useXCallFee(direction.from, direction.to);
 
   return (
@@ -76,19 +74,12 @@ export default function AdvancedSwapDetails() {
 
           <Flex alignItems="center" justifyContent="space-between" mb={2}>
             <Typography>
-              <Trans>Bridge Route</Trans>
-            </Typography>
-
-            <Typography textAlign="right">{bridgeRoute ? <BridgeRoute route={bridgeRoute} /> : '-'}</Typography>
-          </Flex>
-
-          <Flex alignItems="center" justifyContent="space-between" mb={2}>
-            <Typography>
               <Trans>Bridge fee</Trans>
             </Typography>
 
             <Typography color="text">{formattedXCallFee ?? ''}</Typography>
           </Flex>
+
           <Flex alignItems="center" justifyContent="space-between" mb={2}>
             <Typography>
               <Trans>Transfer time</Trans>

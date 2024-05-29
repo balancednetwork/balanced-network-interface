@@ -113,7 +113,7 @@ export const useXCallEventStore = create<XCallEventStore>()(
 
         let currentHeight = scanner.currentHeight;
 
-        while (currentHeight <= scanner.chainHeight) {
+        while (currentHeight < scanner.chainHeight) {
           if (get().isScanned(xChainId, currentHeight)) {
             currentHeight += 1n;
           } else {
@@ -128,12 +128,19 @@ export const useXCallEventStore = create<XCallEventStore>()(
           scanBlockCount = scanner.chainHeight - currentHeight + 1n;
         }
 
-        console.log('Scanning blocks:', currentHeight, currentHeight + scanBlockCount);
+        const startBlockHeight: bigint = currentHeight;
+        const endBlockHeight: bigint = currentHeight + scanBlockCount - 1n;
+        // console.log('Scanning blocks:', startBlockHeight, endBlockHeight);
+        if (
+          startBlockHeight === endBlockHeight &&
+          endBlockHeight === currentHeight &&
+          get().isScanned(xChainId, currentHeight)
+        ) {
+          // console.log('Block already scanned:', currentHeight);
+          return;
+        }
 
-        const events = await xCallService.getDestinationEvents({
-          startBlockHeight: currentHeight,
-          endBlockHeight: currentHeight + scanBlockCount - 1n,
-        });
+        const events = await xCallService.getDestinationEvents({ startBlockHeight, endBlockHeight });
 
         if (events) {
           set(state => {

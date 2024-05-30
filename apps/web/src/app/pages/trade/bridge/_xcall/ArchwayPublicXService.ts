@@ -78,11 +78,22 @@ export class ArchwayPublicXService extends AbstractPublicXService {
     return events;
   }
 
-  filterEventLogs(eventLogs, xCallEventType: XCallEventType) {
+  parseEventLogs(eventLogs: any[]): XCallEvent[] {
+    const events: any[] = [];
+    [XCallEventType.CallMessageSent, XCallEventType.CallMessage, XCallEventType.CallExecuted].forEach(eventType => {
+      const parsedEventLogs = this._filterEventLogs(eventLogs, eventType).map(eventLog =>
+        this._parseEventLog(eventLog, eventLog.transactionHash, eventType),
+      );
+      events.push(...parsedEventLogs);
+    });
+    return events;
+  }
+
+  _filterEventLogs(eventLogs, xCallEventType: XCallEventType) {
     return eventLogs.filter(e => XCallEventSignatureMap[xCallEventType] === e.type);
   }
 
-  parseEventLog(eventLog: any, txHash: string, eventType: XCallEventType): XCallEvent {
+  _parseEventLog(eventLog: any, txHash: string, eventType: XCallEventType): XCallEvent {
     if (eventType === XCallEventType.CallMessageSent) {
       return this._parseCallMessageSentEventLog(eventLog, txHash);
     }

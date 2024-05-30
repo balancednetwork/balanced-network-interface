@@ -14,10 +14,10 @@ export interface IPublicXService {
     startBlockHeight,
     endBlockHeight,
   }: { startBlockHeight: bigint; endBlockHeight: bigint }): Promise<any[]>;
-  filterEventLogs(eventLogs, xCallEventType: XCallEventType): any[];
-  parseEventLog(eventLog: any, txHash: string, eventType: XCallEventType): XCallEvent;
+  parseEventLogs(eventLogs: any[]): XCallEvent[];
+  filterEventLogs(eventLogs: XCallEvent[], xCallEventType: XCallEventType): any[];
   getSourceEvents(transaction: Transaction): Promise<XCallEventMap>;
-  getDestinationEvents({ startBlockHeight, endBlockHeight }): Promise<XCallEvent[]>;
+  getDestinationEvents({ startBlockHeight, endBlockHeight }): Promise<XCallEvent[] | null>;
 }
 
 export abstract class AbstractPublicXService implements IPublicXService {
@@ -31,25 +31,21 @@ export abstract class AbstractPublicXService implements IPublicXService {
     startBlockHeight,
     endBlockHeight,
   }: { startBlockHeight: bigint; endBlockHeight: bigint }): Promise<any[]>;
-  abstract filterEventLogs(eventLogs, xCallEventType: XCallEventType): any[];
-  abstract parseEventLog(eventLog: any, txHash: string, eventType: XCallEventType): XCallEvent;
+  abstract parseEventLogs(eventLogs: any[]): XCallEvent[];
 
   getScanBlockCount() {
     return 10n;
   }
 
+  filterEventLogs(eventLogs: XCallEvent[], xCallEventType: XCallEventType) {
+    return eventLogs.filter(x => x.eventType === xCallEventType);
+  }
+
   async getSourceEvents(sourceTransaction: Transaction) {
     try {
-      const callMessageSentEventLog = this.filterEventLogs(
-        sourceTransaction.rawEventLogs,
-        XCallEventType.CallMessageSent,
-      )[0];
+      const events = this.parseEventLogs(sourceTransaction.rawEventLogs || []);
       return {
-        [XCallEventType.CallMessageSent]: this.parseEventLog(
-          callMessageSentEventLog,
-          sourceTransaction.hash,
-          XCallEventType.CallMessageSent,
-        ),
+        [XCallEventType.CallMessageSent]: this.filterEventLogs(events, XCallEventType.CallMessageSent)[0],
       };
     } catch (e) {
       console.error(e);
@@ -62,15 +58,11 @@ export abstract class AbstractPublicXService implements IPublicXService {
     endBlockHeight,
   }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
     try {
-      const events: any = [];
-
       const eventLogs = await this.getEventLogs({ startBlockHeight, endBlockHeight });
-      [XCallEventType.CallMessage, XCallEventType.CallExecuted].forEach(eventType => {
-        const parsedEventLogs = this.filterEventLogs(eventLogs, eventType).map(eventLog =>
-          this.parseEventLog(eventLog, eventLog.transactionHash, eventType),
-        );
-        events.push(...parsedEventLogs);
-      });
+      const parsedEventsLogs = this.parseEventLogs(eventLogs);
+      const events = [XCallEventType.CallMessage, XCallEventType.CallExecuted].flatMap(eventType =>
+        this.filterEventLogs(parsedEventsLogs, eventType),
+      );
 
       return events;
     } catch (e) {

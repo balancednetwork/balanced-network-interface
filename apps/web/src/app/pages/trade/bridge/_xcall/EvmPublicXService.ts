@@ -4,6 +4,7 @@ import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
 import { AbstractPublicXService } from './types';
 import { TransactionStatus, XCallDestinationEvent, XCallEvent, XCallSourceEvent } from '../_zustand/types';
 import { xCallContractAbi } from './abis/xCallContractAbi';
+import { xChainMap } from '../_config/xChains';
 
 const XCallEventSignatureMap = {
   [XCallEventType.CallMessageSent]: 'CallMessageSent',
@@ -43,10 +44,7 @@ export class EvmPublicXService extends AbstractPublicXService {
     const eventLogs = await this.publicClient.getLogs({
       fromBlock: startBlockHeight,
       toBlock: endBlockHeight,
-      // fromBlock: 45272443n,
-      // toBlock: 45272459n,
-      // address: avalanche.contracts.xCall as Address, // TODO: is it right?
-      // TODO: need to add more filters?
+      address: xChainMap[this.xChainId].contracts.xCall as Address,
     });
 
     const parsedLogs = parseEventLogs({
@@ -83,11 +81,22 @@ export class EvmPublicXService extends AbstractPublicXService {
     return TransactionStatus.pending;
   }
 
-  filterEventLogs(eventLogs, xCallEventType: XCallEventType) {
+  parseEventLogs(eventLogs: any[]): XCallEvent[] {
+    const events: any[] = [];
+    [XCallEventType.CallMessageSent, XCallEventType.CallMessage, XCallEventType.CallExecuted].forEach(eventType => {
+      const parsedEventLogs = this._filterEventLogs(eventLogs, eventType).map(eventLog =>
+        this._parseEventLog(eventLog, eventLog.transactionHash, eventType),
+      );
+      events.push(...parsedEventLogs);
+    });
+    return events;
+  }
+
+  _filterEventLogs(eventLogs, xCallEventType: XCallEventType) {
     return eventLogs.filter(e => e.eventName === XCallEventSignatureMap[xCallEventType]);
   }
 
-  parseEventLog(eventLog: any, txHash: string, eventType: XCallEventType): XCallEvent {
+  _parseEventLog(eventLog: any, txHash: string, eventType: XCallEventType): XCallEvent {
     if (eventType === XCallEventType.CallMessageSent) {
       return this._parseCallMessageSentEventLog(eventLog, txHash);
     }

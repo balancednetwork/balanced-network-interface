@@ -105,13 +105,24 @@ export class IconPublicXService extends AbstractPublicXService {
     return events;
   }
 
-  // filterEventLogs(eventLogs, sig, address = null) {
+  parseEventLogs(eventLogs: any[]): XCallEvent[] {
+    const events: any[] = [];
+    [XCallEventType.CallMessageSent, XCallEventType.CallMessage, XCallEventType.CallExecuted].forEach(eventType => {
+      const parsedEventLogs = this._filterEventLogs(eventLogs, eventType).map(eventLog =>
+        this._parseEventLog(eventLog, eventLog.transactionHash, eventType),
+      );
+      events.push(...parsedEventLogs);
+    });
+    return events;
+  }
+
+  // _filterEventLogs(eventLogs, sig, address = null) {
   //   return eventLogs.filter(event => {
   //     return event.indexed && event.indexed[0] === sig && (!address || address === event.scoreAddress);
   //   });
   // }
 
-  filterEventLogs(eventLogs, eventType: XCallEventType) {
+  _filterEventLogs(eventLogs, eventType: XCallEventType) {
     const signature = getICONEventSignature(eventType);
 
     if (eventType === XCallEventType.CallMessageSent) {
@@ -123,7 +134,7 @@ export class IconPublicXService extends AbstractPublicXService {
     throw new Error(`Unknown xCall event type: ${eventType}`);
   }
 
-  parseEventLog(eventLog: any, txHash: string, eventType: XCallEventType): XCallEvent {
+  _parseEventLog(eventLog: any, txHash: string, eventType: XCallEventType): XCallEvent {
     if (eventType === XCallEventType.CallMessageSent) {
       return this._parseCallMessageSentEventLog(eventLog, txHash);
     } else if (eventType === XCallEventType.CallMessage) {

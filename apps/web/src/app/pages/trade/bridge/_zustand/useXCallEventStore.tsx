@@ -200,8 +200,8 @@ export const useXCallEventStore = create<XCallEventStore>()(
 );
 
 export const xCallEventActions = {
-  isScannerEnabled: (xChainId: XChainId) => {
-    return useXCallEventStore.getState().isScannerEnabled(xChainId);
+  isScannerEnabled: (id: string) => {
+    return useXCallEventStore.getState().isScannerEnabled(id);
   },
   enableScanner: (id: string, xChainId: XChainId, startBlockHeight: bigint) => {
     useXCallEventStore.getState().enableScanner(id, xChainId, startBlockHeight);

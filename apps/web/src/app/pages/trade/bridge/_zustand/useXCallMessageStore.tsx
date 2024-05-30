@@ -297,7 +297,7 @@ export const XCallMessageUpdater = ({ xCallMessage }: { xCallMessage: XCallMessa
       if (
         status !== XCallMessageStatus.CALL_EXECUTED &&
         status !== XCallMessageStatus.FAILED &&
-        !xCallEventActions.isScannerEnabled(destinationChainId)
+        !xCallEventActions.isScannerEnabled(id)
       ) {
         xCallEventActions.enableScanner(id, destinationChainId, BigInt(destinationChainInitialBlockHeight));
       }

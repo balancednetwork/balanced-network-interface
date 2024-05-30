@@ -8,7 +8,6 @@ import Nouislider from 'packages/nouislider-react';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { DEFAULT_TOKEN_CHAIN } from 'app/pages/trade/bridge/_config/xTokens';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
@@ -25,7 +24,6 @@ import { CurrencySelectionType } from 'app/components/SearchModal/CurrencySearch
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 import { SectionPanel, BrightPanel } from './utils';
-import { isXToken } from 'app/pages/trade/bridge/utils';
 
 const Slider = styled(Box)`
   margin-top: 40px;
@@ -127,8 +125,7 @@ export default function LPPanel() {
   };
 
   const { independentField, typedValue, otherTypedValue, inputType } = useMintState();
-  const [chainSelectorOpen, setChainSelectorOpen] = React.useState(false);
-  const [crossChainCurrencyA, setCrossChainCurrencyA] = React.useState<XChainId>('0x1.icon');
+  const [crossChainCurrencyA] = React.useState<XChainId>('0x1.icon');
   const [crossChainCurrencyB] = React.useState<XChainId>('0x1.icon');
   const {
     dependentField,
@@ -148,8 +145,6 @@ export default function LPPanel() {
   const sliderInstance = React.useRef<any>(null);
 
   const [{ percent, needUpdate }, setPercent] = React.useState({ percent: 0, needUpdate: false });
-
-  const isCurrencyACrosschainCompatible = isXToken(currencies?.CURRENCY_A);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
@@ -210,16 +205,6 @@ export default function LPPanel() {
   const handleCurrencyASelect = React.useCallback(
     (currencyA: Currency) => {
       onCurrencySelection(Field.CURRENCY_A, currencyA);
-
-      const isCrossChainCompatible = isXToken(currencyA);
-      if (isCrossChainCompatible) {
-        setChainSelectorOpen(true);
-        if (DEFAULT_TOKEN_CHAIN[currencyA.symbol]) {
-          setCrossChainCurrencyA(DEFAULT_TOKEN_CHAIN[currencyA.symbol]);
-        }
-      } else {
-        setCrossChainCurrencyA('0x1.icon');
-      }
     },
     [onCurrencySelection],
   );
@@ -293,7 +278,6 @@ export default function LPPanel() {
                   onCurrencySelect={handleCurrencyASelect}
                   onPercentSelect={handlePercentSelect(Field.CURRENCY_A)}
                   xChainId={'0x1.icon'}
-                  onChainSelect={isCurrencyACrosschainCompatible ? setCrossChainCurrencyA : undefined}
                   showCrossChainOptions={true}
                 />
               </Flex>

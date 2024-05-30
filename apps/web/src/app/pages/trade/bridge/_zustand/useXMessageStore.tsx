@@ -292,7 +292,7 @@ export const XMessageUpdater = ({ xMessage }: { xMessage: XMessage }) => {
       if (
         status !== XMessageStatus.CALL_EXECUTED &&
         status !== XMessageStatus.FAILED &&
-        !xCallEventActions.isScannerEnabled(destinationChainId)
+        !xCallEventActions.isScannerEnabled(id)
       ) {
         xCallEventActions.enableScanner(id, destinationChainId, BigInt(destinationChainInitialBlockHeight));
       }

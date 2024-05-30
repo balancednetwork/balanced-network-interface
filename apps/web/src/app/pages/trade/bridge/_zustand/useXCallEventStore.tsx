@@ -200,8 +200,8 @@ export const useXCallEventStore = create<XCallEventStore>()(
 );
 
 export const xCallEventActions = {
-  isScannerEnabled: (xChainId: XChainId) => {
-    return useXCallEventStore.getState().isScannerEnabled(xChainId);
+  isScannerEnabled: (id: string) => {
+    return useXCallEventStore.getState().isScannerEnabled(id);
   },
   enableScanner: (id: string, xChainId: XChainId, startBlockHeight: bigint) => {
     useXCallEventStore.getState().enableScanner(id, xChainId, startBlockHeight);
@@ -274,5 +274,3 @@ export const useXCallEventScanner = (id: string | undefined) => {
     refetchInterval: 1000,
   });
 };
-
-// TODO: scanner is starting from start again after CallMessage event, should continue from next block

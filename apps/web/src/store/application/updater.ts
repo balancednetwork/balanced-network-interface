@@ -30,15 +30,16 @@ export default function Updater(): null {
         return state;
       });
     },
-    [chainId, setState],
+    [chainId],
   );
 
   //call useEffect per 4000ms
   const [last, setLast] = useState(0);
-  const increment = useCallback(() => setLast(last => last + 1), [setLast]);
+  const increment = useCallback(() => setLast(last => last + 1), []);
   useInterval(increment, 4000);
 
   // attach/detach listeners
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!iconService || !chainId || !windowVisible) return undefined;
 

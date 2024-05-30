@@ -10,7 +10,7 @@ import { inputRegex } from 'app/components/CurrencyInputPanel';
 import { UnderlineText } from 'app/components/DropdownText';
 import { SelectorPopover } from 'app/components/Popover';
 import useWidth from 'hooks/useWidth';
-import { COMMON_PERCENTS } from 'store/swap/actions';
+import { COMMON_PERCENTS } from 'store/swap/reducer';
 // import { Currency } from 'types/balanced-sdk-core';
 import { escapeRegExp } from 'utils';
 
@@ -127,6 +127,7 @@ const AssetToTransfer = ({
 
   const fromNetwork = useFromNetwork();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     setBalance('');
   }, [balanceOfAssetName, setBalance]);

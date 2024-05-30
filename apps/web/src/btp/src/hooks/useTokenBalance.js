@@ -8,6 +8,7 @@ export const useTokenBalance = coinNames => {
   const [balances, setBalance] = useState([]);
   const getBTPService = useGetBTPService();
   const { accountInfo } = useBTPSelector(accountSelector);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (accountInfo != null) {
       const { address, balance, symbol } = accountInfo;
@@ -31,7 +32,6 @@ export const useTokenBalance = coinNames => {
 
       fetchBalances();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountInfo?.balance, accountInfo?.id, getBTPService]);
   return balances;
 };

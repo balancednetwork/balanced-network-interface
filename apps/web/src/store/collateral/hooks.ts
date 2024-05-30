@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { addresses, CallData } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
@@ -26,7 +26,7 @@ import {
   changeIcxDisplayType,
   type,
   Field,
-} from './actions';
+} from './reducer';
 
 export const DEFAULT_COLLATERAL_TOKEN = 'sICX';
 
@@ -125,6 +125,7 @@ export function useCollateralFetchInfo(account?: string | null) {
     [changeDepositedAmount, supportedCollateralTokens],
   );
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     if (account) {
       fetchCollateralInfo(account);
@@ -342,28 +343,31 @@ export function useAllCollateralData(): CollateralInfo[] | undefined {
 }
 
 export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]: string }> {
-  return useQuery('getCollateralTokens', async () => {
-    const data = await bnJs.Loans.getCollateralTokens();
+  return useQuery({
+    queryKey: ['getCollateralTokens'],
+    queryFn: async () => {
+      const data = await bnJs.Loans.getCollateralTokens();
 
-    const cds: CallData[] = Object.keys(data).map(symbol => ({
-      target: addresses[NETWORK_ID].loans,
-      method: 'getDebtCeiling',
-      params: [symbol],
-    }));
+      const cds: CallData[] = Object.keys(data).map(symbol => ({
+        target: addresses[NETWORK_ID].loans,
+        method: 'getDebtCeiling',
+        params: [symbol],
+      }));
 
-    const debtCeilingsData = await bnJs.Multicall.getAggregateData(cds);
+      const debtCeilingsData = await bnJs.Multicall.getAggregateData(cds);
 
-    const debtCeilings = debtCeilingsData.map(ceiling => (ceiling === null ? 1 : parseInt(formatUnits(ceiling))));
+      const debtCeilings = debtCeilingsData.map(ceiling => (ceiling === null ? 1 : parseInt(formatUnits(ceiling))));
 
-    const supportedTokens = {};
-    Object.keys(data).forEach((symbol, index) => {
-      //temporarily allow BTCB with 0 debt ceiling
-      if (debtCeilings[index] > 0 || symbol === 'BTCB') {
-        supportedTokens[symbol] = data[symbol];
-      }
-    });
+      const supportedTokens = {};
+      Object.keys(data).forEach((symbol, index) => {
+        //temporarily allow BTCB with 0 debt ceiling
+        if (debtCeilings[index] > 0 || symbol === 'BTCB') {
+          supportedTokens[symbol] = data[symbol];
+        }
+      });
 
-    return supportedTokens;
+      return supportedTokens;
+    },
   });
 }
 

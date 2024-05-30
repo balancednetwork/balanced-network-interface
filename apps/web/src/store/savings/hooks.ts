@@ -2,19 +2,19 @@ import React, { useCallback, useEffect } from 'react';
 
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { BigNumber } from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
-import { UseQueryResult, useQuery } from 'react-query';
+import { NETWORK_ID, useIconReact } from 'packages/icon-react';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS, bnUSD } from 'constants/tokens';
 import { useTokenPrices } from 'queries/backendv2';
 import { useSupportedCollateralTokens } from 'store/collateral/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 
 import { AppState } from '..';
-import { Field } from '../loan/actions';
-import { adjust, cancel, type, changeLockedAmount } from './actions';
+import { Field } from '../loan/reducer';
+import { adjust, cancel, type, changeLockedAmount } from './reducer';
 
 export function useLockedAmount(): AppState['savings']['lockedAmount'] {
   return useSelector((state: AppState) => state.savings.lockedAmount);
@@ -35,22 +35,15 @@ export function useSavingsChangeLockedAmount(): (lockedAmount: CurrencyAmount<To
 }
 
 export function useTotalBnUSDLocked(): UseQueryResult<CurrencyAmount<Token> | undefined> {
-  return useQuery(
-    'bnUSDtotalLocked',
-    async () => {
-      try {
-        const totalLocked = await bnJs.bnUSD.balanceOf(bnJs.Savings.address);
-        return CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address], totalLocked);
-      } catch (e) {
-        console.error('Error while fetching total locked bnUSD, return 0: ', e);
-        return CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address], '0');
-      }
+  return useQuery({
+    queryKey: ['bnUSDtotalLocked'],
+    queryFn: async () => {
+      const totalLocked = await bnJs.bnUSD.balanceOf(bnJs.Savings.address);
+      return CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.bnUSD.address], totalLocked);
     },
-    {
-      refetchInterval: 2000,
-      keepPreviousData: true,
-    },
-  );
+    refetchInterval: 2000,
+    placeholderData: keepPreviousData,
+  });
 }
 
 export function useFetchSavingsInfo(account?: string | null) {
@@ -81,6 +74,7 @@ export function useFetchSavingsInfo(account?: string | null) {
     [changeLockedAmount],
   );
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (account) {
       fetchSavingsInfo(account);
@@ -133,57 +127,41 @@ export function useSavingsSliderActionHandlers() {
 export function useUnclaimedRewards(): UseQueryResult<CurrencyAmount<Token>[] | undefined> {
   const { account } = useIconReact();
 
-  return useQuery(
-    ['savingsRewards', account],
-    async () => {
+  return useQuery({
+    queryKey: ['savingsRewards', account],
+    queryFn: async () => {
       if (!account) return;
 
-      try {
-        const rewardsRaw = await bnJs.Savings.getUnclaimedRewards(account);
+      const rewardsRaw = await bnJs.Savings.getUnclaimedRewards(account);
 
-        const rewards = Object.entries(rewardsRaw).reduce((acc, cur) => {
-          const [address, rawAmount] = cur;
-          acc.push(CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[address], rawAmount as string));
-          return acc;
-        }, [] as CurrencyAmount<Token>[]);
+      const rewards = Object.entries(rewardsRaw).reduce((acc, cur) => {
+        const [address, rawAmount] = cur;
+        acc.push(CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[address], rawAmount as string));
+        return acc;
+      }, [] as CurrencyAmount<Token>[]);
 
-        return rewards;
-      } catch (e) {
-        console.log(e);
-      }
+      return rewards;
     },
-    {
-      keepPreviousData: true,
-      enabled: !!account,
-      refetchInterval: 5000,
-    },
-  );
+    placeholderData: keepPreviousData,
+    enabled: !!account,
+    refetchInterval: 5000,
+  });
 }
 
 function useTricklerAllowedTokens(): UseQueryResult<string[] | undefined> {
-  return useQuery(
-    'tricklerTokens',
-    async () => {
-      const tokens = await bnJs.Trickler.getAllowListTokens();
-      return tokens;
-    },
-    {
-      keepPreviousData: true,
-    },
-  );
+  return useQuery({
+    queryKey: ['tricklerTokens'],
+    queryFn: () => bnJs.Trickler.getAllowListTokens(),
+    placeholderData: keepPreviousData,
+  });
 }
 
 function useTricklerDistributionPeriod(): UseQueryResult<number | undefined> {
-  return useQuery(
-    'tricklerDistributionPeriod',
-    async () => {
-      const periodInBlocks = await bnJs.Trickler.getDistributionPeriod();
-      return periodInBlocks;
-    },
-    {
-      keepPreviousData: true,
-    },
-  );
+  return useQuery({
+    queryKey: ['tricklerDistributionPeriod'],
+    queryFn: () => bnJs.Trickler.getDistributionPeriod(),
+    placeholderData: keepPreviousData,
+  });
 }
 
 export function useSavingsRateInfo(): UseQueryResult<
@@ -195,19 +173,10 @@ export function useSavingsRateInfo(): UseQueryResult<
   const { data: periodInBlocks } = useTricklerDistributionPeriod();
   const { data: collateralTokens } = useSupportedCollateralTokens();
 
-  return useQuery(
-    `savingsRate-${totalLocked?.toFixed() || ''}-${Object.keys(tokenPrices ?? {}).length}-${tokenList?.length ?? ''}-${
-      Object.keys(collateralTokens ?? {}).length
-    }-${periodInBlocks ?? ''}`,
-    async () => {
-      if (
-        tokenPrices === undefined ||
-        totalLocked === undefined ||
-        tokenList === undefined ||
-        collateralTokens === undefined ||
-        periodInBlocks === undefined
-      )
-        return;
+  return useQuery({
+    queryKey: [`savingsRate`, totalLocked, tokenPrices, tokenList, collateralTokens, periodInBlocks],
+    queryFn: async () => {
+      if (!tokenPrices || !tokenList || !collateralTokens || !totalLocked || !periodInBlocks) return;
 
       async function getTricklerBalance(): Promise<BigNumber> {
         const amounts: BigNumber[] = await Promise.all(
@@ -235,12 +204,11 @@ export function useSavingsRateInfo(): UseQueryResult<
       const tricklerPayoutPerYear = tricklerBalance.times(yearlyRatio);
 
       const rewardsFromInterests = await Promise.all(
-        Object.entries(collateralTokens).map(async ([symbol, address]) => {
-          const token = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address];
+        Object.keys(collateralTokens).map(async symbol => {
           const totalDebtRaw = await bnJs.Loans.getTotalCollateralDebt(symbol, 'bnUSD');
           const interest = await bnJs.Loans.getInterestRate(symbol);
           const rate = new BigNumber(interest ?? 0).div(10000);
-          const totalDebt = CurrencyAmount.fromRawAmount(token, totalDebtRaw);
+          const totalDebt = CurrencyAmount.fromRawAmount(bnUSD[NETWORK_ID], totalDebtRaw);
           return rate.times(new BigNumber(totalDebt.toFixed()));
         }),
       );
@@ -258,9 +226,7 @@ export function useSavingsRateInfo(): UseQueryResult<
         APR,
       };
     },
-    {
-      keepPreviousData: true,
-      enabled: !!tokenPrices && !!tokenList && !!collateralTokens,
-    },
-  );
+    placeholderData: keepPreviousData,
+    enabled: !!tokenPrices && !!tokenList && !!collateralTokens && !!totalLocked && !!periodInBlocks,
+  });
 }

@@ -3,19 +3,18 @@ import React from 'react';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { ChainLogo } from 'app/_xcall/ChainLogo';
-import { SUPPORTED_XCALL_CHAINS } from 'app/_xcall/config';
-import { SupportedXCallChains } from 'app/_xcall/types';
-import { getNetworkDisplayName } from 'app/_xcall/utils';
+import { ChainLogo } from 'app/pages/trade/bridge/_components/ChainLogo';
+import { XChainId, XChain } from 'app/pages/trade/bridge/types';
+import { xChains } from 'app/pages/trade/bridge/_config/xChains';
 
 type ChainListProps = {
-  chain: SupportedXCallChains;
-  setChain: (chain: SupportedXCallChains) => void;
-  chains?: SupportedXCallChains[];
+  chainId: XChainId;
+  setChainId: (chain: XChainId) => void;
+  chains?: XChain[];
 };
 
 type ChainItemProps = {
-  chain: SupportedXCallChains;
+  chain: XChain;
   isActive: boolean;
   isLast: boolean;
 };
@@ -37,19 +36,23 @@ const ChainItem = ({ chain, isActive, isLast }: ChainItemProps) => {
       <Box pr="10px">
         <ChainLogo chain={chain} />
       </Box>
-      {getNetworkDisplayName(chain)}
+      {chain.name}
     </ChainItemWrap>
   );
 };
 
-const ChainList = ({ chain, setChain, chains }: ChainListProps) => {
-  const relevantChains = chains || SUPPORTED_XCALL_CHAINS;
-
+const ChainList = ({ chainId, setChainId, chains }: ChainListProps) => {
+  const relevantChains = chains || xChains;
+  const sortedChains = relevantChains.sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1));
   return (
     <Box p={'5px 15px'}>
-      {relevantChains.map((chainItem, index) => (
-        <Box key={index} onClick={e => setChain(chainItem)}>
-          <ChainItem chain={chainItem} isActive={chain === chainItem} isLast={relevantChains.length === index + 1} />
+      {sortedChains.map((chainItem, index) => (
+        <Box key={index} onClick={e => setChainId(chainItem.xChainId)}>
+          <ChainItem
+            chain={chainItem}
+            isActive={chainId === chainItem.xChainId}
+            isLast={relevantChains.length === index + 1}
+          />
         </Box>
       ))}
     </Box>

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { Fraction } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
-import { useQuery, UseQueryResult } from 'react-query';
+import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { getClosestUnixWeekStart } from 'app/components/home/BBaln/utils';
@@ -13,7 +13,7 @@ import { useRewardsPercentDistribution } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { ONE_DAY_DURATION } from 'utils';
 
-import { changeEditing, changeInputValue, changePowerLeft, changeShowConfirmation, changeUserData } from './actions';
+import { changeEditing, changeInputValue, changePowerLeft, changeShowConfirmation, changeUserData } from './reducer';
 import { VoteItemInfo, VoteItemInfoRaw, VoteSource, VoteSourceRaw } from './types';
 
 export const WEIGHT_CONST = 10 ** 18;
@@ -32,62 +32,56 @@ export function usePowerLeft(): AppState['liveVoting']['powerLeft'] {
 
 export function useSourceVoteData(): UseQueryResult<Map<string, VoteSource>, Error> {
   const transactions = useAllTransactions();
-  return useQuery(
-    [`sourceVoteData-${transactions && Object.keys(transactions).length}`],
-    async () => {
+  return useQuery({
+    queryKey: [`sourceVoteData`, transactions && Object.keys(transactions).length],
+    queryFn: async () => {
       const data: { [key in string]: VoteSourceRaw } = await bnJs.Rewards.getSourceVoteData();
 
       return Object.keys(data).reduce((sources, source) => {
-        try {
-          const votable = parseInt(data[source].votable, 16) === 1;
-          if (votable)
-            sources[source] = {
-              type: parseInt(data[source].type, 16),
-              weight: new Fraction(data[source].weight, WEIGHT_CONST),
-              currentWeight: new Fraction(data[source].currentWeight, WEIGHT_CONST),
-              currentBias: new BigNumber(data[source].currentBias),
-              currentSlope: new BigNumber(data[source].currentSlope),
-            };
-        } catch (e) {
-          console.error(e);
-        } finally {
-          return sources;
-        }
+        const votable = parseInt(data[source].votable, 16) === 1;
+        if (votable)
+          sources[source] = {
+            type: parseInt(data[source].type, 16),
+            weight: new Fraction(data[source].weight, WEIGHT_CONST),
+            currentWeight: new Fraction(data[source].currentWeight, WEIGHT_CONST),
+            currentBias: new BigNumber(data[source].currentBias),
+            currentSlope: new BigNumber(data[source].currentSlope),
+          };
+        return sources;
       }, {});
     },
-    { keepPreviousData: true },
-  );
+    placeholderData: keepPreviousData,
+  });
 }
 
 export function useCombinedVoteData(): UseQueryResult<Map<string, VoteSource>, Error> {
   const { data: voteData } = useSourceVoteData();
   const { data: distribution } = useRewardsPercentDistribution();
 
-  return useQuery(
-    `combinedVoteData${voteData && Object.keys(voteData).length}${distribution && Object.keys(distribution).length}`,
-    () => {
-      if (voteData && distribution) {
-        const distributionFixedSources = Object.keys(distribution.Fixed);
+  return useQuery({
+    queryKey: [
+      `combinedVoteData`,
+      voteData && Object.keys(voteData).length,
+      distribution && Object.keys(distribution).length,
+    ],
+    queryFn: () => {
+      if (!voteData || !distribution) return;
 
-        return Object.keys(voteData).reduce((sources, source) => {
-          if (distributionFixedSources.indexOf(source) >= 0) {
-            try {
-              sources[source].weight = sources[source].weight.add(distribution.Fixed[source]);
-            } catch (e) {
-              console.error(e);
-            }
-          }
-          return sources;
-        }, voteData);
-      }
+      const distributionFixedSources = Object.keys(distribution.Fixed);
+
+      return Object.keys(voteData).reduce((sources, source) => {
+        if (distributionFixedSources.indexOf(source) >= 0) {
+          sources![source].weight = sources![source].weight.add(distribution.Fixed[source]);
+        }
+        return sources;
+      }, voteData);
     },
-    {
-      keepPreviousData: true,
-      refetchInterval: undefined,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    },
-  );
+    enabled: !!voteData && !!distribution,
+    placeholderData: keepPreviousData,
+    refetchInterval: undefined,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 }
 
 function useChangeUserVoteData() {
@@ -182,6 +176,7 @@ export function useFetchUserVoteData(): void {
     }
   }, [account, changeUserData, changePowerLeft]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     fetchData();
   }, [transactions, account, fetchData]);
@@ -209,8 +204,11 @@ export function useUnlockDateToBeSet(): UseQueryResult<string, Error> {
   const now = Math.floor(new Date().getTime() / oneMinPeriod) * oneMinPeriod;
   const unlockDate = new Date(now + ONE_DAY_DURATION * 10);
 
-  return useQuery('unlockDate', async () => {
-    return unlockDate.toLocaleDateString('en-US', { month: 'long', day: '2-digit' });
+  return useQuery({
+    queryKey: ['unlockDate'],
+    queryFn: async () => {
+      return unlockDate.toLocaleDateString('en-US', { month: 'long', day: '2-digit' });
+    },
   });
 }
 
@@ -225,8 +223,11 @@ export function useTotalBBalnAllocated(): UseQueryResult<BigNumber | undefined, 
   const { data: voteData } = useSourceVoteData();
   const types = useMemo(() => voteData && Object.values(voteData).map(source => source.type), [voteData]);
 
-  return useQuery(['totalBBalnAllocation', types], async () => {
-    if (types) {
+  return useQuery({
+    queryKey: ['totalBBalnAllocation', types],
+    queryFn: async () => {
+      if (!types) return;
+
       const allocations: string[] = [];
       await Promise.all(
         types
@@ -246,6 +247,7 @@ export function useTotalBBalnAllocated(): UseQueryResult<BigNumber | undefined, 
             new BigNumber(0),
           )
         : undefined;
-    }
+    },
+    enabled: !!types,
   });
 }

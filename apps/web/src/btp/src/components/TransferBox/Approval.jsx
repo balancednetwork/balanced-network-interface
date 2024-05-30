@@ -119,7 +119,7 @@ export const Approval = memo(({ setStep, values, sendingInfo, account, form, isC
 
   const getBTPService = useGetBTPService();
 
-  /* eslint-disable react-hooks/exhaustive-deps */
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (isCurrent)
       getBTPfee().then(result => {

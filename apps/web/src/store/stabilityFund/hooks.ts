@@ -2,8 +2,7 @@ import React, { useMemo } from 'react';
 
 import { CallData } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
-import JSBI from 'jsbi';
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
@@ -13,12 +12,12 @@ import { useBnJsContractQuery } from 'queries/utils';
 import { AppState } from 'store';
 import { formatUnits } from 'utils';
 
-import { setBalances } from './actions';
+import { setBalances } from './reducer';
 
 const bnUSDAddress = bnJs.bnUSD.address;
 const stabilityFundAddress = bnJs.StabilityFund.address;
-const SWAP_DOLLAR_LIMIT_CUSHION = JSBI.BigInt(5);
-const TEN = JSBI.BigInt(10);
+const SWAP_DOLLAR_LIMIT_CUSHION = 5n;
+const TEN = 10n;
 
 export function useStabilityFundInfo(): AppState['stabilityFund'] {
   return useSelector((state: AppState) => state.stabilityFund);
@@ -113,10 +112,8 @@ export function useMaxSwapSize(
       if (isBnUSDGoingIn && balances) {
         return CurrencyAmount.fromRawAmount(
           inputAmount.currency.wrapped,
-          JSBI.multiply(
-            balances[outputAmount.currency.wrapped.address].numerator,
-            JSBI.exponentiate(TEN, JSBI.BigInt(inputAmount.currency.decimals - outputAmount.currency.decimals)),
-          ),
+          balances[outputAmount.currency.wrapped.address].numerator *
+            TEN ** BigInt(inputAmount.currency.decimals - outputAmount.currency.decimals),
         );
       } else {
         const tokenAddress = inputAmount.currency.wrapped.address;
@@ -129,10 +126,7 @@ export function useMaxSwapSize(
             .subtract(
               CurrencyAmount.fromRawAmount(
                 inputAmount.currency.wrapped,
-                JSBI.multiply(
-                  SWAP_DOLLAR_LIMIT_CUSHION,
-                  JSBI.exponentiate(TEN, JSBI.BigInt(inputAmount.currency.decimals)),
-                ),
+                SWAP_DOLLAR_LIMIT_CUSHION * TEN ** BigInt(inputAmount.currency.decimals),
               ),
             )
         );
@@ -157,9 +151,9 @@ export function useFeeAmount(inputAmount: CurrencyAmount<Currency> | undefined):
 export function useFundLimits(): UseQueryResult<{ [key: string]: CurrencyAmount<Token> }> {
   const whitelistedTokenAddresses = useWhitelistedTokenAddresses() || [];
 
-  return useQuery<{ [key: string]: CurrencyAmount<Token> }>(
-    `useFundLimitsQuery${whitelistedTokenAddresses.length}`,
-    async () => {
+  return useQuery<{ [key: string]: CurrencyAmount<Token> }>({
+    queryKey: [`useFundLimitsQuery`, whitelistedTokenAddresses.length],
+    queryFn: async () => {
       const cds: CallData[] = whitelistedTokenAddresses.map(address => {
         return {
           target: stabilityFundAddress,
@@ -181,7 +175,7 @@ export function useFundLimits(): UseQueryResult<{ [key: string]: CurrencyAmount<
 
       return limits;
     },
-  );
+  });
 }
 
 function useFeeIn(): string | undefined {

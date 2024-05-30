@@ -8,7 +8,7 @@ import { ZERO } from 'constants/index';
 import { useBalance } from 'hooks/useV2Pairs';
 import { AppState } from 'store';
 
-import { setStakedLPPercent, setWithdrawnValue } from './actions';
+import { setStakedLPPercent, setWithdrawnValue } from './reducer';
 
 export function useChangeStakedLPPercent(): (poolId: number, percent: BigNumber) => void {
   const dispatch = useDispatch();
@@ -41,9 +41,9 @@ export const useTotalStaked = (poolId: number) => {
   const stakedBalance = balance?.stakedLPBalance || ZERO;
   const availableStake = balance?.balance || ZERO;
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   return React.useMemo(
     () => new BigNumber(stakedBalance.toFixed()).plus(availableStake.toFixed()),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [stakedBalance.toFixed(), availableStake.toFixed()],
   );
 };

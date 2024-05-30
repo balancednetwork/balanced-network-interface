@@ -1,7 +1,5 @@
-import { createReducer } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
-
-import { setReward } from './actions';
 
 export interface RewardState {
   [poolId: string]: BigNumber;
@@ -9,9 +7,16 @@ export interface RewardState {
 
 const initialState: RewardState = {};
 
-export default createReducer(initialState, builder =>
-  builder.addCase(setReward, (state, { payload }) => {
-    const { poolId, reward } = payload;
-    state[poolId] = reward;
+const rewardSlice = createSlice({
+  name: 'reward',
+  initialState,
+  reducers: create => ({
+    setReward: create.reducer<{ poolId: string; reward: BigNumber }>((state, { payload: { poolId, reward } }) => {
+      state[poolId] = reward;
+    }),
   }),
-);
+});
+
+export const { setReward } = rewardSlice.actions;
+
+export default rewardSlice.reducer;

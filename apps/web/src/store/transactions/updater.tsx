@@ -27,6 +27,7 @@ export default function Updater(): null {
 
   const transactions = useAllTransactions();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     if (!networkId || !iconService || !transactions) return;
 

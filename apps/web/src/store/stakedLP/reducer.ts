@@ -1,8 +1,6 @@
 import { CurrencyAmount, Currency } from '@balancednetwork/sdk-core';
-import { createReducer } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
-
-import { setStakedLPPercent, setWithdrawnValue } from './actions';
 
 export interface StakedLPState {
   stakedLp: { [poolId: number]: BigNumber };
@@ -20,18 +18,30 @@ const initialState: StakedLPState = {
   withdrawn: {},
 };
 
-export default createReducer(initialState, builder =>
-  builder
-    .addCase(setStakedLPPercent, (state, { payload }) => {
-      const { poolId, percent } = payload;
-      state.stakedLp[poolId] = percent;
-    })
-    .addCase(setWithdrawnValue, (state, { payload }) => {
-      const { poolId, percent, baseValue, quoteValue } = payload;
+const stakedLPSlice = createSlice({
+  name: 'stakedLP',
+  initialState,
+  reducers: create => ({
+    setStakedLPPercent: create.reducer<{ poolId: number; percent: BigNumber }>(
+      (state, { payload: { poolId, percent } }) => {
+        state.stakedLp[poolId] = percent;
+      },
+    ),
+    setWithdrawnValue: create.reducer<{
+      poolId: number;
+      percent: BigNumber;
+      baseValue: CurrencyAmount<Currency>;
+      quoteValue: CurrencyAmount<Currency>;
+    }>((state, { payload: { poolId, percent, baseValue, quoteValue } }) => {
       state.withdrawn[poolId] = {
         percent: percent,
         baseValue: baseValue,
         quoteValue: quoteValue,
       };
     }),
-);
+  }),
+});
+
+export const { setStakedLPPercent, setWithdrawnValue } = stakedLPSlice.actions;
+
+export default stakedLPSlice.reducer;

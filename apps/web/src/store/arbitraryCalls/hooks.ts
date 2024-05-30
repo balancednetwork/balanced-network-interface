@@ -17,8 +17,9 @@ import {
   updateCallStructParam,
   removeCallListItem,
   updateCallListParam,
-} from './actions';
-import { ArbitraryCallParameterType, EditableArbitraryCall } from './reducer';
+  ArbitraryCallParameterType,
+  EditableArbitraryCall,
+} from './reducer';
 
 export function useEditableContractCalls(): EditableArbitraryCall[] {
   return useSelector((state: AppState) => state.arbitraryCalls.editing);

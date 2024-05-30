@@ -47,8 +47,8 @@ export const TransferBox = () => {
     setSendingInfo(sendingInfo => ({ ...sendingInfo, ...info }));
   };
 
-  const memoizedSetStep = useCallback(param => setStep(param), [setStep]);
-  const memoizedSetTokenValue = useCallback(param => setTokenValue(param), [setTokenValue]);
+  const memoizedSetStep = useCallback(param => setStep(param), []);
+  const memoizedSetTokenValue = useCallback(param => setTokenValue(param), []);
   const onSubmit = () => {};
 
   return (

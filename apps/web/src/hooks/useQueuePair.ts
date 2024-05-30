@@ -17,6 +17,7 @@ export function useQueuePair(): PairData {
 
   const last = useLastCount(10000);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const fetchReserves = async () => {
       try {

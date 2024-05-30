@@ -77,8 +77,8 @@ const PositionDetailPanel = () => {
   const heightenBars =
     (useMedia('(max-width: 359px)') && 'es-ES,nl-NL,de-DE,fr-FR'.indexOf(locale) >= 0) || 'pl-PL'.indexOf(locale) >= 0;
 
-  const open = React.useCallback(() => setShow(true), [setShow]);
-  const close = React.useCallback(() => setShow(false), [setShow]);
+  const open = React.useCallback(() => setShow(true), []);
+  const close = React.useCallback(() => setShow(false), []);
 
   // ratio
   const ratio = useRatio();
@@ -150,8 +150,8 @@ const PositionDetailPanel = () => {
 
   const pos = useCollateralLockedSliderPos();
 
-  const openRebalancing = React.useCallback(() => setShowRebalancing(true), [setShowRebalancing]);
-  const closeRebalancing = React.useCallback(() => setShowRebalancing(false), [setShowRebalancing]);
+  const openRebalancing = React.useCallback(() => setShowRebalancing(true), []);
+  const closeRebalancing = React.useCallback(() => setShowRebalancing(false), []);
   const [shouldShowRebalancingAveragePrice, setShouldShowRebalancingAveragePrice] = React.useState(false);
   const shouldShowSeparateTooltip = useMedia('(min-width: 1000px)');
   const rebalancingTotal = data?.totalRepaid || new BigNumber(0);
@@ -170,7 +170,7 @@ const PositionDetailPanel = () => {
 
   React.useEffect(() => {
     setShouldShowRebalancingAveragePrice(totalCollateralSold ? !totalCollateralSold.isZero() : false);
-  }, [totalCollateralSold, setShouldShowRebalancingAveragePrice]);
+  }, [totalCollateralSold]);
 
   return (
     <AnimatePresence>

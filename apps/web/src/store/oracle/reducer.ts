@@ -1,7 +1,5 @@
-import { createReducer } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
-
-import { changeOraclePrice } from './actions';
 
 export interface OracleState {
   prices: {
@@ -13,10 +11,16 @@ const initialState: OracleState = {
   prices: {},
 };
 
-export default createReducer(initialState, builder =>
-  builder.addCase(changeOraclePrice, (state, { payload: { symbol, price } }) => {
-    const updatedPrices = { ...state.prices };
-    updatedPrices[symbol] = price;
-    state.prices = updatedPrices;
+const oracleSlice = createSlice({
+  name: 'oracle',
+  initialState,
+  reducers: create => ({
+    changeOraclePrice: create.reducer<{ symbol: string; price: BigNumber }>((state, { payload: { symbol, price } }) => {
+      state.prices[symbol] = price;
+    }),
   }),
-);
+});
+
+export const { changeOraclePrice } = oracleSlice.actions;
+
+export default oracleSlice.reducer;

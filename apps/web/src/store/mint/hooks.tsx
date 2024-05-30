@@ -4,12 +4,11 @@ import { Currency, CurrencyAmount, Token, Percent, Price } from '@balancednetwor
 import { Pair } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import JSBI from 'jsbi';
 import { useIconReact } from 'packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { SupportedXCallChains } from 'app/_xcall/types';
+import { XChainId } from 'app/pages/trade/bridge/types';
 import bnJs from 'bnJs';
 import { isNativeCurrency, useICX } from 'constants/tokens';
 import { useAllTokens, useCommonBases } from 'hooks/Tokens';
@@ -18,11 +17,9 @@ import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { tryParseAmount } from 'store/swap/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useCrossChainCurrencyBalances, useCurrencyBalances } from 'store/wallet/hooks';
-import { useCurrentXCallState } from 'store/xCall/hooks';
 
 import { AppDispatch, AppState } from '../index';
-import { Field, typeInput, selectCurrency } from './actions';
-import { INITIAL_MINT } from './reducer';
+import { Field, INITIAL_MINT, typeInput, selectCurrency } from './reducer';
 
 export function useMintState(): AppState['mint'] {
   return useSelector<AppState, AppState['mint']>(state => state.mint);
@@ -63,7 +60,7 @@ export function useMintActionHandlers(noLiquidity: boolean | undefined): {
         navigate(`/trade/supply/${currentBase}_${currency.symbol}`, { replace: true });
       }
     },
-    [dispatch, pair],
+    [dispatch, pair, navigate],
   );
 
   const onFieldAInput = useCallback(
@@ -99,8 +96,9 @@ export function useMintActionHandlers(noLiquidity: boolean | undefined): {
   };
 }
 
-const ZERO = JSBI.BigInt(0);
+const ZERO = 0n;
 
+// TODO: update this function not to use useCurrentXCallState, which is removed
 const useCurrencyDeposit = (
   account: string | undefined | null,
   currency: Currency | undefined,
@@ -108,8 +106,9 @@ const useCurrencyDeposit = (
   const token = currency?.wrapped;
   const transactions = useAllTransactions();
   const [result, setResult] = React.useState<string | undefined>();
-  const currentXCallState = useCurrentXCallState();
+  // const currentXCallState = useCurrentXCallState();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     (async () => {
       if (token?.address && account) {
@@ -117,14 +116,14 @@ const useCurrencyDeposit = (
         setResult(res);
       }
     })();
-  }, [transactions, token, account, currentXCallState]);
+  }, [transactions, token, account]);
 
-  return token && result ? CurrencyAmount.fromRawAmount<Currency>(token, JSBI.BigInt(result)) : undefined;
+  return token && result ? CurrencyAmount.fromRawAmount<Currency>(token, BigInt(result)) : undefined;
 };
 
 export function useDerivedMintInfo(
-  AChain: SupportedXCallChains = 'icon',
-  BChain: SupportedXCallChains = 'icon',
+  AChain: XChainId = '0x1.icon',
+  BChain: XChainId = '0x1.icon',
 ): {
   dependentField: Field;
   currencies: { [field in Field]?: Currency };
@@ -173,12 +172,9 @@ export function useDerivedMintInfo(
   const totalSupply = pair?.totalSupply;
   const noLiquidity: boolean =
     pairState === PairState.NOT_EXISTS ||
-    Boolean(totalSupply && JSBI.equal(totalSupply.quotient, ZERO)) ||
+    Boolean(totalSupply && totalSupply.quotient === ZERO) ||
     Boolean(
-      pairState === PairState.EXISTS &&
-        pair &&
-        JSBI.equal(pair.reserve0.quotient, ZERO) &&
-        JSBI.equal(pair.reserve1.quotient, ZERO),
+      pairState === PairState.EXISTS && pair && pair.reserve0.quotient === ZERO && pair.reserve1.quotient === ZERO,
     );
 
   // balances
@@ -186,17 +182,12 @@ export function useDerivedMintInfo(
   const balances = useCurrencyBalances(account ?? undefined, currencyArr);
   const balancesCrossChain = useCrossChainCurrencyBalances(currencyArr);
   const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(() => {
-    if (AChain && BChain && balancesCrossChain) {
-      return {
-        [Field.CURRENCY_A]: balancesCrossChain[0]?.[AChain], // base token
-        [Field.CURRENCY_B]: balancesCrossChain[1]?.[BChain], // quote token
-      };
-    } else {
-      return {
-        [Field.CURRENCY_A]: balances[0], // base token
-        [Field.CURRENCY_B]: balances[1], // quote token
-      };
-    }
+    const currencyABalance = balancesCrossChain?.[0]?.[AChain] ?? balances[0];
+    const currencyBBalance = balancesCrossChain?.[1]?.[BChain] ?? balances[1];
+    return {
+      [Field.CURRENCY_A]: currencyABalance, // base token
+      [Field.CURRENCY_B]: currencyBBalance, // quote token
+    };
   }, [AChain, BChain, balances, balancesCrossChain]);
 
   // deposits
@@ -344,7 +335,7 @@ export function useDerivedMintInfo(
 
   if (isQueue) {
     if (!parsedAmounts[Field.CURRENCY_A]) {
-      error = error ?? <Trans>Enter an amount</Trans>;
+      error = error ?? <Trans>Enter amount</Trans>;
     }
 
     const { [Field.CURRENCY_A]: currencyAAmount } = parsedAmounts;
@@ -354,7 +345,7 @@ export function useDerivedMintInfo(
     }
   } else {
     if (!parsedAmounts[Field.CURRENCY_A] || !parsedAmounts[Field.CURRENCY_B]) {
-      error = error ?? <Trans>Enter an amount</Trans>;
+      error = error ?? <Trans>Enter amount</Trans>;
     }
 
     const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
@@ -423,5 +414,15 @@ export function useInitialSupplyLoad(): void {
       }
       setFirstLoad(false);
     }
-  }, [firstLoad, tokens, onCurrencySelection, currencies.CURRENCY_A, currencies.CURRENCY_B, bases, ICX, pair]);
+  }, [
+    firstLoad,
+    tokens,
+    onCurrencySelection,
+    currencies.CURRENCY_A,
+    currencies.CURRENCY_B,
+    bases,
+    ICX,
+    pair,
+    navigate,
+  ]);
 }

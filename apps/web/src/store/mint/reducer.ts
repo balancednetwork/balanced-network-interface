@@ -1,10 +1,13 @@
 import { Currency } from '@balancednetwork/sdk-core';
-import { createReducer } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 import { NETWORK_ID } from 'constants/config';
 import { bnUSD, sICX } from 'constants/tokens';
 
-import { Field, resetMintState, typeInput, selectCurrency } from './actions';
+export enum Field {
+  CURRENCY_A = 'CURRENCY_A',
+  CURRENCY_B = 'CURRENCY_B',
+}
 
 export interface MintState {
   readonly independentField: Field;
@@ -39,41 +42,45 @@ const initialState: MintState = {
   },
 };
 
-export default createReducer<MintState>(initialState, builder =>
-  builder
-    .addCase(resetMintState, () => initialState)
-    .addCase(typeInput, (state, { payload: { field, typedValue, noLiquidity, inputType } }) => {
-      if (noLiquidity) {
-        // they're typing into the field they've last typed in
-        if (field === state.independentField) {
+const mintSlice = createSlice({
+  name: 'mint',
+  initialState,
+  reducers: create => ({
+    resetMintState: create.reducer<void>(() => initialState),
+    typeInput: create.reducer<{ field: Field; typedValue: string; noLiquidity: boolean; inputType: string }>(
+      (state, { payload: { field, typedValue, noLiquidity, inputType } }) => {
+        if (noLiquidity) {
+          // they're typing into the field they've last typed in
+          if (field === state.independentField) {
+            return {
+              ...state,
+              independentField: field,
+              typedValue,
+              inputType,
+            };
+          }
+          // they're typing into a new field, store the other value
+          else {
+            return {
+              ...state,
+              independentField: field,
+              typedValue,
+              otherTypedValue: state.typedValue,
+              inputType,
+            };
+          }
+        } else {
           return {
             ...state,
             independentField: field,
             typedValue,
+            otherTypedValue: '',
             inputType,
           };
         }
-        // they're typing into a new field, store the other value
-        else {
-          return {
-            ...state,
-            independentField: field,
-            typedValue,
-            otherTypedValue: state.typedValue,
-            inputType,
-          };
-        }
-      } else {
-        return {
-          ...state,
-          independentField: field,
-          typedValue,
-          otherTypedValue: '',
-          inputType,
-        };
-      }
-    })
-    .addCase(selectCurrency, (state, { payload: { currency, field } }) => {
+      },
+    ),
+    selectCurrency: create.reducer<{ currency: Currency; field: Field }>((state, { payload: { currency, field } }) => {
       // const otherField = field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
 
       // if (currency === state[otherField].currency) {
@@ -92,4 +99,9 @@ export default createReducer<MintState>(initialState, builder =>
       };
       // }
     }),
-);
+  }),
+});
+
+export const { resetMintState, typeInput, selectCurrency } = mintSlice.actions;
+
+export default mintSlice.reducer;

@@ -1,53 +1,34 @@
 import React from 'react';
 
-import { CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
-import { Trans, t } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
+import { Fraction } from '@balancednetwork/sdk-core';
+import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
 
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-
-import { getNetworkDisplayName } from 'app/_xcall/utils';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import FlipIcon from 'assets/icons/horizontal-flip.svg';
 import { useBridgeActionHandlers, useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from 'store/bridge/hooks';
 import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
-import { useSetNotPristine } from 'store/xCall/hooks';
 
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import { Button } from 'app/components/Button';
-import CrossChainConnectWallet from 'app/components/CrossChainWalletConnect';
 import { CurrencySelectionType } from 'app/components/SearchModal/CurrencySearch';
-import { AutoColumn } from 'app/components/trade/SwapPanel';
-import { BrightPanel } from 'app/components/trade/utils';
-import { IBCDescription } from 'app/components/XCallDescription';
+import { AutoColumn } from 'app/pages/trade/xswap/_components/SwapPanel';
+import { BrightPanel } from 'app/pages/trade/supply/_components/utils';
+import { XCallDescription } from 'app/components/XCallDescription';
 
 import ChainSelector from './ChainSelector';
 import { useWalletModalToggle } from 'store/application/hooks';
-import { useXCallFee } from 'app/_xcall/hooks';
 import { Field } from 'store/bridge/reducer';
-
-const ConnectWrap = styled.div`
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  top: 0;
-  right: 0;
-  padding-right: 15px;
-`;
+import useXCallFee from '../_hooks/useXCallFee';
+import useXCallProtocol from '../_hooks/useXCallProtocol';
+import { xChainMap } from '../_config/xChains';
+import { validateAddress } from 'utils';
 
 export default function BridgeTransferForm({ openModal }) {
-  const { account } = useIconReact();
-  const { address: accountArch } = useArchwayContext();
   const crossChainWallet = useCrossChainWalletBalances();
-
+  const [isValid, setValid] = React.useState(true);
   const bridgeState = useBridgeState();
   const { currency: currencyToBridge, recipient, typedValue } = bridgeState;
   const { onChangeRecipient, onCurrencySelection, onUserInput, onChainSelection, onSwitchChain, onPercentSelection } =
@@ -56,19 +37,18 @@ export default function BridgeTransferForm({ openModal }) {
   const percentAmount = bridgeState[Field.FROM].percent;
 
   const signedInWallets = useSignedInWallets();
-  const { formattedXCallFee } = useXCallFee(bridgeDirection.from);
-  const setNotPristine = useSetNotPristine();
   const toggleWalletModal = useWalletModalToggle();
 
   const handleInputPercentSelect = (percent: number) => {
-    const currencyAmount = currencyToBridge && crossChainWallet[bridgeDirection.from][currencyToBridge.wrapped.address];
+    const currencyAmount =
+      currencyToBridge && crossChainWallet[bridgeDirection.from]?.[currencyToBridge.wrapped.address];
     if (currencyAmount) {
       onPercentSelection(Field.FROM, percent, currencyAmount.multiply(new Fraction(percent, 100)).toFixed());
     }
   };
 
   React.useEffect(() => {
-    const destinationWallet = signedInWallets.find(wallet => wallet.chain === bridgeDirection.to);
+    const destinationWallet = signedInWallets.find(wallet => wallet.chainId === bridgeDirection.to);
     if (destinationWallet) {
       onChangeRecipient(destinationWallet.address);
     } else {
@@ -76,58 +56,51 @@ export default function BridgeTransferForm({ openModal }) {
     }
   }, [bridgeDirection.to, onChangeRecipient, signedInWallets]);
 
-  // TODO: understand the purpose of this useEffect
-  React.useEffect(() => {
-    return () => setNotPristine();
-  }, [setNotPristine]);
-
-  const { errorMessage, isAvailable, selectedTokenWalletBalance } = useDerivedBridgeInfo();
+  const { errorMessage, selectedTokenWalletBalance, account } = useDerivedBridgeInfo();
 
   const handleSubmit = async () => {
-    if (signedInWallets.some(wallet => wallet.chain === bridgeDirection.from)) {
+    if (account) {
       openModal();
     } else {
       toggleWalletModal();
     }
   };
 
+  const protocol = useXCallProtocol(bridgeDirection.from, bridgeDirection.to);
+  const { formattedXCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
+
+  React.useEffect(() => {
+    setValid(validateAddress(recipient || '', bridgeDirection.to));
+  }, [recipient, bridgeDirection.to]);
+
   return (
     <>
       <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
         <AutoColumn gap="md">
           <Typography variant="h2">
-            <Trans>Bridge</Trans>
+            <Trans>Transfer</Trans>
           </Typography>
           <Flex width="100%" alignItems="center" justifyContent="space-between">
-            <ChainSelector label="from" chain={bridgeDirection.from} setChain={c => onChainSelection(Field.FROM, c)} />
+            <ChainSelector
+              label="from"
+              chainId={bridgeDirection.from}
+              setChainId={c => onChainSelection(Field.FROM, c)}
+            />
             <Box sx={{ cursor: 'pointer', marginLeft: '-25px' }} onClick={onSwitchChain}>
               <FlipIcon width={25} height={17} />
             </Box>
-            <ChainSelector label="to" chain={bridgeDirection.to} setChain={c => onChainSelection(Field.TO, c)} />
+            <ChainSelector label="to" chainId={bridgeDirection.to} setChainId={c => onChainSelection(Field.TO, c)} />
           </Flex>
 
-          <Typography
-            as="div"
-            mb={-1}
-            textAlign="right"
-            hidden={
-              (bridgeDirection.from === 'icon' && !account) || (bridgeDirection.from === 'archway' && !accountArch)
-            }
-          >
+          <Typography as="div" mb={-1} textAlign="right" hidden={!account}>
             <Trans>Wallet:</Trans>{' '}
-            {`${
-              selectedTokenWalletBalance?.toFixed(4, {
-                groupSeparator: ',',
-              }) ?? 0
-            } 
-                ${currencyToBridge?.symbol}`}
+            {`${selectedTokenWalletBalance?.toFixed(4, { groupSeparator: ',' }) ?? 0} ${currencyToBridge?.symbol}`}
           </Typography>
+
           <Flex>
             <CurrencyInputPanel
-              account={account}
               value={typedValue}
               currency={currencyToBridge}
-              selectedCurrency={currencyToBridge}
               onUserInput={onUserInput}
               onCurrencySelect={onCurrencySelection}
               onPercentSelect={!!account ? handleInputPercentSelect : undefined}
@@ -138,12 +111,12 @@ export default function BridgeTransferForm({ openModal }) {
           </Flex>
 
           <Flex style={{ position: 'relative' }}>
-            <AddressInputPanel value={recipient || ''} onUserInput={onChangeRecipient} drivenOnly={true} />
-            {!recipient && !signedInWallets.find(wallet => wallet.chain === bridgeDirection.to)?.address && (
-              <ConnectWrap>
-                <CrossChainConnectWallet chain={bridgeDirection.to} />
-              </ConnectWrap>
-            )}
+            <AddressInputPanel
+              value={recipient || ''}
+              onUserInput={onChangeRecipient}
+              placeholder={`${xChainMap[bridgeDirection.to].name} address`}
+              isValid={isValid}
+            />
           </Flex>
         </AutoColumn>
 
@@ -153,12 +126,14 @@ export default function BridgeTransferForm({ openModal }) {
               <Trans>Bridge</Trans>
             </Typography>
 
-            <Typography color="text">
-              IBC + xCall
-              <QuestionWrapper style={{ marginLeft: '3px', transform: 'translateY(1px)' }}>
-                <QuestionHelper width={300} text={<IBCDescription />}></QuestionHelper>
-              </QuestionWrapper>
-            </Typography>
+            {protocol && (
+              <Typography color="text">
+                {protocol.name} + GMP
+                <QuestionWrapper style={{ marginLeft: '3px', transform: 'translateY(1px)' }}>
+                  <QuestionHelper width={310} text={<XCallDescription protocol={protocol} />} />
+                </QuestionWrapper>
+              </Typography>
+            )}
           </Flex>
 
           <Flex alignItems="center" justifyContent="space-between">
@@ -166,20 +141,25 @@ export default function BridgeTransferForm({ openModal }) {
               <Trans>Fee</Trans>
             </Typography>
 
-            <Typography color="text">{formattedXCallFee && formattedXCallFee}</Typography>
+            <Typography color="text">{formattedXCallFee ?? ''}</Typography>
           </Flex>
+
           <Flex alignItems="center" justifyContent="space-between">
             <Typography>
               <Trans>Transfer time</Trans>
             </Typography>
 
-            <Typography color="text">~ 15s</Typography>
+            <Typography color="text">~ 30s</Typography>
           </Flex>
 
           <Flex alignItems="center" justifyContent="center" mt={4}>
-            <Button onClick={handleSubmit} disabled={!isAvailable || !!errorMessage}>
-              {errorMessage ? errorMessage : <Trans>Transfer</Trans>}
-            </Button>
+            {account ? (
+              <Button onClick={handleSubmit} disabled={!!errorMessage || !isValid}>
+                {errorMessage ? errorMessage : <Trans>Transfer</Trans>}
+              </Button>
+            ) : (
+              <Button onClick={handleSubmit}>{<Trans>Transfer</Trans>}</Button>
+            )}
           </Flex>
         </AutoColumn>
       </BrightPanel>

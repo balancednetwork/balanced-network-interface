@@ -1,23 +1,23 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { openToast } from 'btp/src/connectors/transactionToast';
 
-import { ARCHWAY_TRACKER_LINK } from 'app/_xcall/archway/config';
 import { TransactionStatus } from 'store/transactions/hooks';
 
 import { initTransaction, addTransactionResult } from './actions';
+import { archway } from 'app/pages/trade/bridge/_config/xChains';
 
 export interface TransactionDetails {
   hash: string;
 }
 
 export interface TransactionsCrosschainState {
-  ['archway']: {
+  ['archway-1']: {
     isTxPending: boolean;
     transactions: TransactionDetails[];
   };
 }
 
-export const initialState: TransactionsCrosschainState = { archway: { isTxPending: false, transactions: [] } };
+export const initialState: TransactionsCrosschainState = { 'archway-1': { isTxPending: false, transactions: [] } };
 
 export default createReducer(initialState, builder =>
   builder
@@ -33,7 +33,7 @@ export default createReducer(initialState, builder =>
     .addCase(addTransactionResult, (state, { payload: { chain, tx, msg } }) => {
       const toastProps = tx && {
         onClick: () => {
-          window.open(`${ARCHWAY_TRACKER_LINK}/${tx.transactionHash}`, '_blank');
+          window.open(`${archway.tracker}/${tx.transactionHash}`, '_blank');
         },
       };
 

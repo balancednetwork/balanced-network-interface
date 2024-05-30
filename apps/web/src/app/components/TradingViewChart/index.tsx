@@ -116,6 +116,7 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
 
   const dataPrev = usePrevious(data);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     if (data !== dataPrev && chartCreated) {
       // remove the tooltip element
@@ -126,7 +127,7 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
   }, [chartCreated, data, dataPrev, type]);
 
   // adjust the scale based on the type of chart
-  const topScale = type === CHART_TYPES.AREA ? 0.32 : 0.2;
+  // const topScale = type === CHART_TYPES.AREA ? 0.32 : 0.2;
 
   // if no chart created yet, create one with options and add to DOM manually
   useEffect(() => {
@@ -183,7 +184,7 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, volumeData, width }) 
         setChartCreated(null);
       };
     }
-  }, [data, topScale, type, width, volumeData]);
+  }, [data, type, width, volumeData]);
 
   // responsiveness
   useEffect(() => {

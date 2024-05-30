@@ -21,7 +21,7 @@ import USDTIcon from 'btp/src/assets/images/USDT.png';
 import { wallets } from 'btp/src/utils/constants';
 import styled from 'styled-components';
 
-import iconexIcon from 'assets/icons/iconex.svg';
+import iconexIcon from 'assets/icons/wallets/iconex.svg';
 
 const sizes = {
   s: '20px',

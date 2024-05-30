@@ -5,25 +5,42 @@ import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
 import { MinusCircle } from 'react-feather';
-import { Flex } from 'rebass/styled-components';
-import { useTheme } from 'styled-components';
+import { Box, Flex } from 'rebass/styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import CurrencyLogo from 'app/components/CurrencyLogo';
-import { ListItem, DashGrid, HeaderText, DataText, List1 } from 'app/components/List';
+import { ListItem, DataText, List1 } from 'app/components/List';
 import { Typography } from 'app/theme';
 import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import useArrowControl from 'hooks/useArrowControl';
 import useKeyPress from 'hooks/useKeyPress';
 import { useRatesWithOracle } from 'queries/reward';
 import { useIsUserAddedToken } from 'store/user/hooks';
-import { useCurrencyBalanceCrossChains, useSignedInWallets } from 'store/wallet/hooks';
+import { useXCurrencyBalance, useSignedInWallets } from 'store/wallet/hooks';
 import { toFraction } from 'utils';
+import useSortCurrency from 'hooks/useSortCurrency';
+import { HeaderText } from 'app/pages/trade/supply/_components/AllPoolsPanel';
+
+const DashGrid = styled(Box)`
+  display: grid;
+  gap: 1em;
+  align-items: center;
+  grid-template-columns: repeat(2, 1fr);
+
+  > * {
+    justify-content: flex-end;
+    &:first-child {
+      justify-content: flex-start;
+      text-align: left;
+    }
+  }
+`;
 
 function currencyKey(currency: Currency): string {
   return currency.isToken ? currency.address : 'ICX';
 }
 
-function getCurrencyDecimalDisplay(price: Fraction): number {
+export function getCurrencyDecimalDisplay(price: Fraction): number {
   const defaultDP = 2;
   if (price.greaterThan(1000)) return 0;
   if (price.lessThan(new Fraction(1, 100))) return 6;
@@ -57,7 +74,7 @@ function CurrencyRow({
   rateFracs: { [key in string]: Fraction } | undefined;
 }) {
   // const balance = useCurrencyBalance(account ?? undefined, currency);
-  const balance = useCurrencyBalanceCrossChains(currency);
+  const balance = useXCurrencyBalance(currency);
   const signedInWallets = useSignedInWallets();
 
   const isUserAddedToken = useIsUserAddedToken(currency as Token);
@@ -65,8 +82,8 @@ function CurrencyRow({
 
   // only show add or remove buttons if not on selected list
   const [show, setShow] = useState(false);
-  const open = useCallback(() => setShow(true), [setShow]);
-  const close = useCallback(() => setShow(false), [setShow]);
+  const open = useCallback(() => setShow(true), []);
+  const close = useCallback(() => setShow(false), []);
 
   const focusCombined = () => {
     onFocus();
@@ -91,9 +108,7 @@ function CurrencyRow({
         </Flex>
         <Flex justifyContent="flex-end" alignItems="center">
           <DataText variant="p" textAlign="right">
-            {balance && balance.isGreaterThan(0)
-              ? balance.toFormat(HIGH_PRICE_ASSET_DP[currency.wrapped.address] || 2)
-              : 0}
+            {balance?.isGreaterThan(0) ? balance.toFormat(HIGH_PRICE_ASSET_DP[currency.wrapped.address] || 2) : 0}
 
             {balance?.isGreaterThan(0) && rateFracs && rateFracs[currency.symbol!] && (
               <Typography variant="span" fontSize={14} color="text2" display="block">
@@ -190,6 +205,7 @@ export default function CurrencyList({
   const enter = useKeyPress('Enter');
   const handleEscape = useKeyPress('Escape');
   const { activeIndex, setActiveIndex } = useArrowControl(isOpen, currencies?.length || 0);
+  const signedInWallets = useSignedInWallets();
 
   const rates = useRatesWithOracle();
   const rateFracs = React.useMemo(() => {
@@ -200,6 +216,13 @@ export default function CurrencyList({
       }, {});
     }
   }, [rates]);
+
+  const { sortBy, handleSortSelect, sortData } = useSortCurrency({ key: 'symbol', order: 'ASC' });
+  const sortedCurrencies = React.useMemo(() => {
+    if (currencies && rateFracs) {
+      return sortData(currencies, rateFracs);
+    }
+  }, [currencies, rateFracs, sortData]);
 
   useEffect(() => {
     if (isOpen) {
@@ -222,13 +245,47 @@ export default function CurrencyList({
   return (
     <List1 mt={4}>
       <DashGrid>
-        <HeaderText>
-          <Trans>Asset</Trans>
+        <HeaderText
+          role="button"
+          className={sortBy.key === 'symbol' ? sortBy.order : ''}
+          onClick={() =>
+            handleSortSelect({
+              key: 'symbol',
+            })
+          }
+        >
+          <span>
+            <Trans>Asset</Trans>
+          </span>
         </HeaderText>
-        <HeaderText textAlign="right">{account ? <Trans>Wallet</Trans> : <Trans>Price</Trans>}</HeaderText>
+        {signedInWallets.length > 0 ? (
+          <HeaderText
+            role="button"
+            className={sortBy.key === 'value' ? sortBy.order : ''}
+            onClick={() =>
+              handleSortSelect({
+                key: 'value',
+              })
+            }
+          >
+            <Trans>Wallet</Trans>
+          </HeaderText>
+        ) : (
+          <HeaderText
+            role="button"
+            className={sortBy.key === 'price' ? sortBy.order : ''}
+            onClick={() =>
+              handleSortSelect({
+                key: 'price',
+              })
+            }
+          >
+            <Trans>Price</Trans>
+          </HeaderText>
+        )}
       </DashGrid>
 
-      {currencies.map((currency, index) => (
+      {sortedCurrencies?.map((currency, index) => (
         <CurrencyRow
           account={account}
           key={currencyKey(currency)}

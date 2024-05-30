@@ -1,12 +1,12 @@
 import { Currency, Token } from '@balancednetwork/sdk-core';
 import axios from 'axios';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { CHART_PERIODS } from 'app/components/TradingViewChart';
 import bnJs from 'bnJs';
 import { ONE } from 'constants/index';
 import QUERY_KEYS from 'queries/queryKeys';
-import { Field } from 'store/swap/actions';
+import { Field } from 'store/swap/reducer';
 
 import { API_ENDPOINT } from '../constants';
 
@@ -49,34 +49,37 @@ function getStartTimestampBasedOnPeriod(period: CHART_PERIODS, end: number) {
 }
 
 export const usePriceChartDataQuery = (currencies: { [field in Field]?: Currency }, period: CHART_PERIODS) => {
-  return useQuery<BarType[]>(QUERY_KEYS.Swap.PriceChart(currencies, period), async () => {
-    const data = await bnJs.Dex.getPoolStatsForPair(
-      (currencies[Field.INPUT] as Token)?.address,
-      (currencies[Field.OUTPUT] as Token)?.address,
-    );
+  return useQuery<BarType[]>({
+    queryKey: QUERY_KEYS.Swap.PriceChart(currencies, period),
+    queryFn: async () => {
+      const data = await bnJs.Dex.getPoolStatsForPair(
+        (currencies[Field.INPUT] as Token)?.address,
+        (currencies[Field.OUTPUT] as Token)?.address,
+      );
 
-    const pairId = parseInt(data.id);
-    const inverse = data.base_token !== (currencies[Field.INPUT] as Token)?.address;
+      const pairId = parseInt(data.id);
+      const inverse = data.base_token !== (currencies[Field.INPUT] as Token)?.address;
 
-    // the first pair is sICX/ICX pair
-    if (data && data.id > 1) {
-      const now = Math.floor(new Date().getTime() / 1000);
-      const start = getStartTimestampBasedOnPeriod(period, now);
-      const {
-        data: result,
-      }: {
-        data: BarTypeRaw[];
-      } = await axios.get(`${API_ENDPOINT}/pools/series/${pairId}/${period.toLowerCase()}/${start}/${now}`);
+      // the first pair is sICX/ICX pair
+      if (data && data.id > 1) {
+        const now = Math.floor(new Date().getTime() / 1000);
+        const start = getStartTimestampBasedOnPeriod(period, now);
+        const {
+          data: result,
+        }: {
+          data: BarTypeRaw[];
+        } = await axios.get(`${API_ENDPOINT}/pools/series/${pairId}/${period.toLowerCase()}/${start}/${now}`);
 
-      const baseToken = inverse ? currencies[Field.OUTPUT] : currencies[Field.INPUT];
-      const quoteToken = inverse ? currencies[Field.INPUT] : currencies[Field.OUTPUT];
+        const baseToken = inverse ? currencies[Field.OUTPUT] : currencies[Field.INPUT];
+        const quoteToken = inverse ? currencies[Field.INPUT] : currencies[Field.OUTPUT];
 
-      const decimal = (quoteToken?.decimals ?? 0) - (baseToken?.decimals ?? 0) + 18;
+        const decimal = (quoteToken?.decimals ?? 0) - (baseToken?.decimals ?? 0) + 18;
 
-      return result.map(bar => formatBarItem(bar, decimal, !!inverse));
-    }
+        return result.map(bar => formatBarItem(bar, decimal, !!inverse));
+      }
 
-    return [];
+      return [];
+    },
   });
 };
 

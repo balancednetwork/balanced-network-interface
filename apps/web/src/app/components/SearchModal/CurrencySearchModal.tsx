@@ -9,6 +9,7 @@ import { PopperWithoutArrow } from '../Popover';
 import { CurrencySearch, CurrencySelectionType } from './CurrencySearch';
 import { ImportToken } from './ImportToken';
 import { RemoveToken } from './RemoveToken';
+import { XChainId } from 'app/pages/trade/bridge/types';
 
 interface CurrencySearchModalProps {
   account?: string | null;
@@ -23,6 +24,7 @@ interface CurrencySearchModalProps {
   width?: number;
   anchorEl?: any;
   showCommunityListControl: boolean;
+  xChainId: XChainId;
 }
 
 export enum CurrencyModalView {
@@ -46,6 +48,7 @@ export default function CurrencySearchModal({
   width,
   anchorEl,
   showCommunityListControl,
+  xChainId,
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage);
   const lastOpen = useLast(isOpen);
@@ -65,18 +68,18 @@ export default function CurrencySearchModal({
   const showImportView = useCallback(() => {
     setModalView(CurrencyModalView.importToken);
     onDismiss();
-  }, [setModalView, onDismiss]);
+  }, [onDismiss]);
   const closeImportView = useCallback(() => {
     setModalView(CurrencyModalView.search);
   }, []);
   const showRemoveView = useCallback(() => {
     setModalView(CurrencyModalView.removeToken);
     onDismiss();
-  }, [setModalView, onDismiss]);
+  }, [onDismiss]);
   const closeRemoveView = useCallback(() => {
     setModalView(CurrencyModalView.search);
   }, []);
-  const showManageView = useCallback(() => setModalView(CurrencyModalView.manage), [setModalView]);
+  const showManageView = useCallback(() => setModalView(CurrencyModalView.manage), []);
 
   const handleCurrencySelect = useCallback(
     (currency: Currency) => {
@@ -115,6 +118,7 @@ export default function CurrencySearchModal({
           showManageView={showManageView}
           width={width}
           showCommunityListControl={showCommunityListControl}
+          xChainId={xChainId}
         />
       </PopperWithoutArrow>
 

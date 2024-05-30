@@ -8,7 +8,7 @@ import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS } from 'constants/routing';
 import { useAllTokens } from 'hooks/Tokens';
 import { useAppDispatch, useAppSelector } from 'store/hooks';
 
-import { addSerializedToken, SerializedToken, removeSerializedToken, updateUserLocale } from './actions';
+import { addSerializedToken, SerializedToken, removeSerializedToken, updateUserLocale } from './reducer';
 
 function serializeToken(token: Token): SerializedToken {
   return {

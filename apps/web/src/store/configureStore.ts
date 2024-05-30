@@ -26,7 +26,6 @@ import transactions from './transactions/reducer';
 import transactionsCrosschain from './transactionsCrosschain/reducer';
 import user from './user/reducer';
 import wallet from './wallet/reducer';
-import xCall from './xCall/reducer';
 
 const PERSISTED_KEYS: string[] = ['user', 'transactions', 'lists', 'xCall'];
 
@@ -51,7 +50,6 @@ export function configureAppStore() {
       lists,
       liveVoting,
       arbitraryCalls,
-      xCall,
       transactionsCrosschain,
       bridge,
       savings,

@@ -17,6 +17,7 @@ export default function useKeyPress(targetKey: string, preventDefault?: boolean)
     }
   };
   // Add event listeners
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     window.addEventListener('keydown', downHandler);
     window.addEventListener('keyup', upHandler);
@@ -31,7 +32,6 @@ export default function useKeyPress(targetKey: string, preventDefault?: boolean)
       window.removeEventListener('keydown', downHandler);
       window.removeEventListener('keyup', upHandler);
     };
-    // eslint-disable-next-line
   }, []); // Empty array ensures that effect is only run on mount and unmount
   return keyPressed;
 }

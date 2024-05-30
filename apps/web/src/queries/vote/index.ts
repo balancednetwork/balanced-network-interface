@@ -3,7 +3,7 @@ import * as React from 'react';
 import { BalancedJs } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
-import { useQuery, UseQueryResult } from 'react-query';
+import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 
 import bnJs from 'bnJs';
 import QUERY_KEYS from 'queries/queryKeys';
@@ -12,35 +12,38 @@ import { useAllTransactions } from 'store/transactions/hooks';
 import { ProposalInterface } from 'types';
 
 export const useProposalInfoQuery = (pId: number) => {
-  return useQuery<ProposalInterface | undefined>(QUERY_KEYS.Vote.VoteInfo(pId), async () => {
-    const res = await bnJs.Governance.checkVote(pId);
-    if (!res.id) return;
-    const _against = BalancedJs.utils.toIcx(res['against']);
-    const _for = BalancedJs.utils.toIcx(res['for']);
+  return useQuery<ProposalInterface | undefined>({
+    queryKey: QUERY_KEYS.Vote.VoteInfo(pId),
+    queryFn: async () => {
+      const res = await bnJs.Governance.checkVote(pId);
+      if (!res.id) return;
+      const _against = BalancedJs.utils.toIcx(res['against']);
+      const _for = BalancedJs.utils.toIcx(res['for']);
 
-    const _against1 = _against.isZero() ? 0 : _against.div(_against.plus(_for)).times(100).dp(2).toNumber();
-    const _for1 = _for.isZero() ? 0 : _for.div(_against.plus(_for)).times(100).dp(2).toNumber();
+      const _against1 = _against.isZero() ? 0 : _against.div(_against.plus(_for)).times(100).dp(2).toNumber();
+      const _for1 = _for.isZero() ? 0 : _for.div(_against.plus(_for)).times(100).dp(2).toNumber();
 
-    return {
-      id: parseInt(res.id, 16),
-      name: res['name'],
-      description: res['description'],
-      proposer: res['proposer'],
-      against: _against1,
-      for: _for1,
-      snapshotBlock: parseInt(res['vote snapshot'], 16),
-      startDay: parseInt(res['start day'], 16),
-      endDay: parseInt(res['end day'], 16),
-      majority: BalancedJs.utils.toIcx(res['majority']).times(100).dp(2).toNumber(),
-      quorum: BalancedJs.utils.toIcx(res['quorum']).times(100).dp(2).toNumber(),
-      sum: _against.plus(_for).times(100).dp(2).toNumber(),
-      uniqueApproveVoters: parseInt(res['for_voter_count'], 16),
-      uniqueRejectVoters: parseInt(res['against_voter_count'], 16),
-      voters: parseInt(res['for_voter_count'], 16) + parseInt(res['against_voter_count'], 16),
-      status: res['status'],
-      actions: res['actions'],
-      forumLink: res['forum link'],
-    };
+      return {
+        id: parseInt(res.id, 16),
+        name: res['name'],
+        description: res['description'],
+        proposer: res['proposer'],
+        against: _against1,
+        for: _for1,
+        snapshotBlock: parseInt(res['vote snapshot'], 16),
+        startDay: parseInt(res['start day'], 16),
+        endDay: parseInt(res['end day'], 16),
+        majority: BalancedJs.utils.toIcx(res['majority']).times(100).dp(2).toNumber(),
+        quorum: BalancedJs.utils.toIcx(res['quorum']).times(100).dp(2).toNumber(),
+        sum: _against.plus(_for).times(100).dp(2).toNumber(),
+        uniqueApproveVoters: parseInt(res['for_voter_count'], 16),
+        uniqueRejectVoters: parseInt(res['against_voter_count'], 16),
+        voters: parseInt(res['for_voter_count'], 16) + parseInt(res['against_voter_count'], 16),
+        status: res['status'],
+        actions: res['actions'],
+        forumLink: res['forum link'],
+      };
+    },
   });
 };
 
@@ -51,9 +54,9 @@ export const useUserVoteStatusQuery = (pId?: number) => {
     hasVoted: boolean;
     reject: BigNumber;
     approval: BigNumber;
-  }>(
-    QUERY_KEYS.Vote.UserVoteStatus(pId || 0, account ?? ''),
-    async () => {
+  }>({
+    queryKey: QUERY_KEYS.Vote.UserVoteStatus(pId || 0, account ?? ''),
+    queryFn: async () => {
       const res = await bnJs.Governance.getVotesOfUser(pId!, account!);
       const approval = BalancedJs.utils.toIcx(res['for']);
       const reject = BalancedJs.utils.toIcx(res['against']);
@@ -64,64 +67,64 @@ export const useUserVoteStatusQuery = (pId?: number) => {
         reject: reject,
       };
     },
-    {
-      enabled: !!account && !!pId,
-    },
-  );
+    enabled: !!account && !!pId,
+  });
 };
 
 export const useUserWeightQuery = (block?: number) => {
   const { account } = useIconReact();
 
-  return useQuery<BigNumber>(
-    QUERY_KEYS.Vote.UserWeight(account ?? ''),
-    async () => {
+  return useQuery<BigNumber>({
+    queryKey: QUERY_KEYS.Vote.UserWeight(account ?? ''),
+    queryFn: async () => {
       const res = await bnJs.Governance.myVotingWeight(account!, block!);
       return BalancedJs.utils.toIcx(res);
     },
-    {
-      enabled: !!account && !!block,
-    },
-  );
+    enabled: !!account && !!block,
+  });
 };
 
 export const useTotalStakedBalanceAtQuery = (day?: number) => {
-  return useQuery<BigNumber>(
-    QUERY_KEYS.Vote.TotalStakedBalanceAt(day ?? 0),
-    async () => {
+  return useQuery<BigNumber>({
+    queryKey: QUERY_KEYS.Vote.TotalStakedBalanceAt(day ?? 0),
+    queryFn: async () => {
       const res = await bnJs.BALN.totalStakedBalanceOfAt(day!);
       return BalancedJs.utils.toIcx(res);
     },
-    {
-      enabled: !!day,
-    },
-  );
+    enabled: !!day,
+  });
 };
 
 export const useTotalCollectedFeesQuery = () => {
-  return useQuery<{ [key in string]: BigNumber }>(QUERY_KEYS.Vote.TotalCollectedFees, async () => {
-    const data = await bnJs.Dividends.getBalances();
-    const t = {};
-    Object.keys(data).forEach(key => {
-      t[key] = BalancedJs.utils.toIcx(data[key]);
-    });
-    return t;
+  return useQuery<{ [key in string]: BigNumber }>({
+    queryKey: QUERY_KEYS.Vote.TotalCollectedFees,
+    queryFn: async () => {
+      const data = await bnJs.Dividends.getBalances();
+      const t = {};
+      Object.keys(data).forEach(key => {
+        t[key] = BalancedJs.utils.toIcx(data[key]);
+      });
+      return t;
+    },
   });
 };
 
 export const useProposalCount = (): UseQueryResult<number> => {
-  return useQuery('proposalCounts', async () => {
-    const res = await bnJs.Governance.getTotalProposal();
-    return (parseInt(res, 16) || -1) + 1;
+  return useQuery({
+    queryKey: ['proposalCounts'],
+    queryFn: async () => {
+      const res = await bnJs.Governance.getTotalProposal();
+      return (parseInt(res, 16) || -1) + 1;
+    },
   });
 };
 
 export const useTotalProposalQuery = (offset: number = 0, batchSize: number = 20) => {
   const { data: proposalCount } = useProposalCount();
 
-  return useQuery<Array<ProposalInterface>>(
-    [QUERY_KEYS.Vote.TotalProposals, proposalCount, offset, batchSize],
-    async () => {
+  return useQuery<Array<ProposalInterface>>({
+    queryKey: [QUERY_KEYS.Vote.TotalProposals, proposalCount, offset, batchSize],
+    queryFn: async () => {
       const res = await bnJs.Governance.getProposals(
         Math.max((proposalCount as number) - (offset + batchSize), 0),
         batchSize,
@@ -157,17 +160,18 @@ export const useTotalProposalQuery = (offset: number = 0, batchSize: number = 20
         .filter(r => r.status !== 'Cancelled');
       return data;
     },
-    {
-      keepPreviousData: true,
-      enabled: !!proposalCount,
-    },
-  );
+    placeholderData: keepPreviousData,
+    enabled: !!proposalCount,
+  });
 };
 
 export const useTotalProposalCountQuery = () => {
-  return useQuery<number>(QUERY_KEYS.Vote.TotalProposalsCount, async () => {
-    const res = await bnJs.Governance.getTotalProposal();
-    return parseInt(res, 16);
+  return useQuery<number>({
+    queryKey: QUERY_KEYS.Vote.TotalProposalsCount,
+    queryFn: async () => {
+      const res = await bnJs.Governance.getTotalProposal();
+      return parseInt(res, 16);
+    },
   });
 };
 
@@ -178,42 +182,43 @@ export const useActiveProposals = () => {
   const txCount = React.useMemo(() => (transactions ? Object.keys(transactions).length : 0), [transactions]);
   const { data: proposals } = useTotalProposalQuery();
 
-  return useQuery(
-    `activeProposals-${proposals ? proposals.length : ''}-${account}-${txCount}-${platformDay}`,
-    async () => {
-      if (account && proposals) {
-        const activeProposals = await Promise.all(
-          proposals.map(async proposal => {
-            if (
-              platformDay &&
-              proposal.status === 'Active' &&
-              proposal.startDay <= platformDay &&
-              proposal.endDay > platformDay
-            ) {
-              const res = await bnJs.Governance.getVotesOfUser(proposal.id, account!);
-              const approval = BalancedJs.utils.toIcx(res['for']);
-              const reject = BalancedJs.utils.toIcx(res['against']);
-              const hasVoted = !(approval.isZero() && reject.isZero());
+  return useQuery({
+    queryKey: [`activeProposals`, proposals ? proposals.length : '', account, txCount, platformDay],
+    queryFn: async () => {
+      if (!account || !platformDay || !proposals) return;
 
-              return !hasVoted;
-            } else {
-              return false;
-            }
-          }),
-        ).then(results => proposals.filter((_proposal, index) => results[index]));
+      const activeProposals = await Promise.all(
+        proposals.map(async proposal => {
+          if (
+            platformDay &&
+            proposal.status === 'Active' &&
+            proposal.startDay <= platformDay &&
+            proposal.endDay > platformDay
+          ) {
+            const res = await bnJs.Governance.getVotesOfUser(proposal.id, account);
+            const approval = BalancedJs.utils.toIcx(res['for']);
+            const reject = BalancedJs.utils.toIcx(res['against']);
+            const hasVoted = !(approval.isZero() && reject.isZero());
 
-        return activeProposals;
-      }
+            return !hasVoted;
+          } else {
+            return false;
+          }
+        }),
+      ).then(results => proposals.filter((_proposal, index) => results[index]));
+
+      return activeProposals;
     },
-    {
-      enabled: !!account && !!platformDay && !!proposals,
-    },
-  );
+    enabled: !!account && !!platformDay && !!proposals,
+  });
 };
 
 export const useMinBBalnPercentageToSubmit = () => {
-  return useQuery<BigNumber, Error>('minBbalnRequired', async () => {
-    const points = await bnJs.Governance.getBalnVoteDefinitionCriterion();
-    return new BigNumber(points || 0).div(10000);
+  return useQuery<BigNumber, Error>({
+    queryKey: ['minBbalnRequired'],
+    queryFn: async () => {
+      const points = await bnJs.Governance.getBalnVoteDefinitionCriterion();
+      return new BigNumber(points || 0).div(10000);
+    },
   });
 };

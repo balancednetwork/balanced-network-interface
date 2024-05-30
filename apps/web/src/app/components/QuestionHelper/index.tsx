@@ -39,8 +39,8 @@ export default function QuestionHelper({
 }) {
   const [show, setShow] = useState<boolean>(false);
 
-  const open = useCallback(() => setShow(true), [setShow]);
-  const close = useCallback(() => setShow(false), [setShow]);
+  const open = useCallback(() => setShow(true), []);
+  const close = useCallback(() => setShow(false), []);
 
   const smallSp = useMedia('(max-width: 360px)');
   const shouldShow = hideOnSmall ? !smallSp : true;

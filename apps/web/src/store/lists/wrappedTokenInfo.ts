@@ -34,7 +34,7 @@ export class WrappedTokenInfo implements Token {
     // return (this._checksummedAddress = checksummedAddress);
   }
 
-  public get chainId(): number {
+  public get chainId(): number | string {
     return this.tokenInfo.chainId;
   }
 

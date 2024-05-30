@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom/client';
 import BigNumber from 'bignumber.js';
 import { IconReactProvider } from 'packages/icon-react';
 import { HelmetProvider } from 'react-helmet-async';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -23,6 +23,13 @@ import store from 'store';
 
 // Initialize languages
 import { LanguageProvider } from './i18n';
+
+import { WagmiProvider } from 'wagmi';
+import { wagmiConfig } from './config/wagmi';
+
+BigInt.prototype['toJSON'] = function () {
+  return 'BIGINT::' + this.toString();
+};
 
 const queryClient = new QueryClient();
 // Set the global formatting options
@@ -45,15 +52,17 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
       <BrowserRouter>
         <HelmetProvider>
-          <QueryClientProvider client={queryClient}>
-            <IconReactProvider>
-              <ArchwayProvider>
-                <LanguageProvider>
-                  <App />
-                </LanguageProvider>
-              </ArchwayProvider>
-            </IconReactProvider>
-          </QueryClientProvider>
+          <WagmiProvider config={wagmiConfig}>
+            <QueryClientProvider client={queryClient}>
+              <IconReactProvider>
+                <ArchwayProvider>
+                  <LanguageProvider>
+                    <App />
+                  </LanguageProvider>
+                </ArchwayProvider>
+              </IconReactProvider>
+            </QueryClientProvider>
+          </WagmiProvider>
         </HelmetProvider>
       </BrowserRouter>
     </Provider>

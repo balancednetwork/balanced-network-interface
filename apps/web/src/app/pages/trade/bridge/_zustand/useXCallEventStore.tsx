@@ -274,3 +274,5 @@ export const useXCallEventScanner = (id: string | undefined) => {
     refetchInterval: 1000,
   });
 };
+
+// TODO: scanner is starting from start again after CallMessage event, should continue from next block

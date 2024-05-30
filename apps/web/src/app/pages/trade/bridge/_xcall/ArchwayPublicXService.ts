@@ -3,14 +3,21 @@ import { ArchwayClient } from '@archwayhq/arch3.js';
 import { archway, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
-import { IPublicXService } from './types';
-import { TransactionStatus, Transaction, XCallDestinationEvent, XCallSourceEvent } from '../_zustand/types';
+import { AbstractPublicXService } from './types';
+import { TransactionStatus, XCallEvent, XCallSourceEvent, XCallDestinationEvent } from '../_zustand/types';
 
-export class ArchwayPublicXService implements IPublicXService {
+const XCallEventSignatureMap = {
+  [XCallEventType.CallMessageSent]: 'wasm-CallMessageSent',
+  [XCallEventType.CallMessage]: 'wasm-CallMessage',
+  [XCallEventType.CallExecuted]: 'wasm-CallExecuted',
+};
+
+export class ArchwayPublicXService extends AbstractPublicXService {
   xChainId: XChainId;
   publicClient: ArchwayClient;
 
   constructor(xChainId: XChainId, publicClient: ArchwayClient) {
+    super();
     this.xChainId = xChainId;
     this.publicClient = publicClient;
   }
@@ -29,41 +36,6 @@ export class ArchwayPublicXService implements IPublicXService {
   async getBlock(blockHeight: bigint) {
     const block = await this.publicClient.getBlock(Number(blockHeight));
     return block;
-  }
-
-  // TODO: deprecate
-  async getBlockEventLogs(blockHeight: bigint) {
-    let txs;
-
-    // TODO: is 10 iterations enough?
-    for (let i = 0; i < 10; i++) {
-      txs = await this.publicClient.searchTx(`tx.height=${blockHeight}`);
-      if (txs) {
-        break;
-      }
-    }
-
-    // txs is an array of tx, each tx has events, which is an array of event, return all events merged
-    const events = txs.flatMap(tx => tx.events.map(e => ({ ...e, transactionHash: tx.hash })));
-    return events;
-  }
-
-  async getEventLogs({ startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
-    let txs;
-
-    // TODO: is 10 iterations enough?
-    for (let i = 0; i < 10; i++) {
-      txs = await this.publicClient.searchTx(`tx.height>=${startBlockHeight} AND tx.height<=${endBlockHeight}`);
-
-      if (txs) {
-        break;
-      }
-    }
-
-    // txs is an array of tx, each tx has events, which is an array of event, return all events merged
-    const events = txs.flatMap(tx => tx.events.map(e => ({ ...e, transactionHash: tx.hash })));
-
-    return events;
   }
 
   async getTxReceipt(txHash) {
@@ -88,7 +60,43 @@ export class ArchwayPublicXService implements IPublicXService {
     return TransactionStatus.failure;
   }
 
-  parseCallMessageSentEventLog(eventLog, txHash: string): XCallSourceEvent {
+  async getEventLogs({ startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
+    let txs;
+
+    // TODO: is 10 iterations enough?
+    for (let i = 0; i < 10; i++) {
+      txs = await this.publicClient.searchTx(`tx.height>=${startBlockHeight} AND tx.height<=${endBlockHeight}`);
+
+      if (txs) {
+        break;
+      }
+    }
+
+    // txs is an array of tx, each tx has events, which is an array of event, return all events merged
+    const events = txs.flatMap(tx => tx.events.map(e => ({ ...e, transactionHash: tx.hash })));
+
+    return events;
+  }
+
+  filterEventLogs(eventLogs, xCallEventType: XCallEventType) {
+    return eventLogs.filter(e => XCallEventSignatureMap[xCallEventType] === e.type);
+  }
+
+  parseEventLog(eventLog: any, txHash: string, eventType: XCallEventType): XCallEvent {
+    if (eventType === XCallEventType.CallMessageSent) {
+      return this._parseCallMessageSentEventLog(eventLog, txHash);
+    }
+    if (eventType === XCallEventType.CallMessage) {
+      return this._parseCallMessageEventLog(eventLog, txHash);
+    }
+    if (eventType === XCallEventType.CallExecuted) {
+      return this._parseCallExecutedEventLog(eventLog, txHash);
+    }
+
+    throw new Error(`Unknown xCall event type: ${eventType}`);
+  }
+
+  _parseCallMessageSentEventLog(eventLog, txHash: string): XCallSourceEvent {
     const sn = eventLog.attributes.find(a => a.key === 'sn')?.value;
 
     return {
@@ -99,7 +107,7 @@ export class ArchwayPublicXService implements IPublicXService {
       txHash,
     };
   }
-  parseCallMessageEventLog(eventLog, txHash: string): XCallDestinationEvent {
+  _parseCallMessageEventLog(eventLog, txHash: string): XCallDestinationEvent {
     const sn = eventLog.attributes.find(a => a.key === 'sn')?.value;
     const reqId = eventLog.attributes.find(a => a.key === 'reqId')?.value;
 
@@ -113,7 +121,7 @@ export class ArchwayPublicXService implements IPublicXService {
       isSuccess: true,
     };
   }
-  parseCallExecutedEventLog(eventLog, txHash: string): XCallDestinationEvent {
+  _parseCallExecutedEventLog(eventLog, txHash: string): XCallDestinationEvent {
     const reqId = eventLog.attributes.find(a => a.key === 'reqId')?.value;
 
     return {
@@ -125,91 +133,5 @@ export class ArchwayPublicXService implements IPublicXService {
       txHash,
       isSuccess: true,
     };
-  }
-
-  async filterEventLogs(eventLogs, signature) {
-    return eventLogs.filter(e => e.type === signature);
-  }
-
-  filterCallMessageSentEventLog(eventLogs) {
-    const eventFiltered = eventLogs.find(e => e.type === 'wasm-CallMessageSent');
-    return eventFiltered;
-  }
-
-  filterCallMessageEventLogs(eventLogs) {
-    const eventFiltered = this.filterEventLogs(eventLogs, 'wasm-CallMessage');
-    return eventFiltered;
-  }
-
-  filterCallExecutedEventLogs(eventLogs) {
-    const eventFiltered = this.filterEventLogs(eventLogs, 'wasm-CallExecuted');
-    return eventFiltered;
-  }
-
-  async getSourceEvents(sourceTransaction: Transaction) {
-    try {
-      const callMessageSentEventLog = this.filterCallMessageSentEventLog(sourceTransaction.rawEventLogs);
-      return {
-        [XCallEventType.CallMessageSent]: this.parseCallMessageSentEventLog(
-          callMessageSentEventLog,
-          sourceTransaction.hash,
-        ),
-      };
-    } catch (e) {
-      console.error(e);
-    }
-    return {};
-  }
-
-  getScanBlockCount() {
-    return 10n;
-  }
-
-  async getDestinationEvents({
-    startBlockHeight,
-    endBlockHeight,
-  }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
-    try {
-      const events: any = [];
-
-      const eventLogs = await this.getEventLogs({ startBlockHeight, endBlockHeight });
-      const callMessageEventLogs = await this.filterCallMessageEventLogs(eventLogs);
-      const callExecutedEventLogs = await this.filterCallExecutedEventLogs(eventLogs);
-
-      callMessageEventLogs.forEach(eventLog => {
-        events.push(this.parseCallMessageEventLog(eventLog, eventLog.transactionHash));
-      });
-      callExecutedEventLogs.forEach(eventLog => {
-        events.push(this.parseCallExecutedEventLog(eventLog, eventLog.transactionHash));
-      });
-
-      return events;
-    } catch (e) {
-      console.log(e);
-    }
-    return null;
-  }
-
-  // TODO: deprecate
-  async getDestinationEventsByBlock(blockHeight: bigint) {
-    try {
-      const events: any = [];
-
-      const eventLogs = await this.getBlockEventLogs(blockHeight);
-      const callMessageEventLogs = await this.filterCallMessageEventLogs(eventLogs);
-      const callExecutedEventLogs = await this.filterCallExecutedEventLogs(eventLogs);
-
-      callMessageEventLogs.forEach(eventLog => {
-        events.push(this.parseCallMessageEventLog(eventLog, eventLog.transactionHash));
-      });
-      callExecutedEventLogs.forEach(eventLog => {
-        events.push(this.parseCallExecutedEventLog(eventLog, eventLog.transactionHash));
-      });
-
-      return events;
-    } catch (e) {
-      console.log(e);
-    }
-    return null;
   }
 }

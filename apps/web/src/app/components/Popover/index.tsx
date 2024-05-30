@@ -7,10 +7,10 @@ import styled from 'styled-components';
 
 import useInterval from 'hooks/useInterval';
 
-const PopoverContainer = styled.div<{ show: boolean; zIndex?: number }>`
-  z-index: ${({ zIndex, theme }) => zIndex || theme.zIndices.tooltip};
-  visibility: ${props => (props.show ? 'visible' : 'hidden')};
-  opacity: ${props => (props.show ? 1 : 0)};
+const PopoverContainer = styled.div<{ $show: boolean; $zIndex?: number }>`
+  z-index: ${({ $zIndex, theme }) => $zIndex || theme.zIndices.tooltip};
+  visibility: ${({ $show }) => ($show ? 'visible' : 'hidden')};
+  opacity: ${({ $show }) => ($show ? 1 : 0)};
   transition: visibility 150ms linear, opacity 150ms linear;
 `;
 
@@ -131,10 +131,10 @@ export default function Popover({
       </ReferenceElement>
       <Portal>
         <PopoverContainer
-          show={show}
+          $show={show}
           ref={setPopperElement as any}
           style={{ ...style, ...styles.popper }}
-          zIndex={zIndex}
+          $zIndex={zIndex}
           {...attributes.popper}
         >
           <ContentWrapper>{content}</ContentWrapper>
@@ -179,7 +179,7 @@ export function PopperWithoutArrow({ show, children, placement = 'auto', anchorE
 
   return (
     <Portal>
-      <PopoverContainer show={show} ref={setPopperElement as any} style={{ ...styles.popper }} {...attributes.popper}>
+      <PopoverContainer $show={show} ref={setPopperElement as any} style={{ ...styles.popper }} {...attributes.popper}>
         <ContentWrapper>{children}</ContentWrapper>
       </PopoverContainer>
     </Portal>
@@ -239,9 +239,9 @@ export function DropdownPopper({
   return (
     <Portal>
       <PopoverContainer
-        show={show}
+        $show={show}
         ref={setPopperElement as any}
-        zIndex={zIndex}
+        $zIndex={zIndex}
         style={styles.popper}
         {...attributes.popper}
       >
@@ -279,7 +279,7 @@ export function SelectorPopover({ show, children, placement = 'auto', anchorEl }
   useInterval(updateCallback, show ? 100 : null);
   return (
     <Portal>
-      <PopoverContainer show={show} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
+      <PopoverContainer $show={show} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
         <SelectorPopoverWrapper>{children}</SelectorPopoverWrapper>
       </PopoverContainer>
     </Portal>
@@ -312,11 +312,11 @@ export function PopperWithoutArrowAndBorder({ content, show, children, zIndex, p
       <ReferenceElement ref={setReferenceElement as any}>{children}</ReferenceElement>
       <Portal>
         <PopoverContainer
-          show={show}
+          $show={show}
           ref={setPopperElement as any}
           style={styles.popper}
           {...attributes.popper}
-          zIndex={zIndex}
+          $zIndex={zIndex}
         >
           <ContentWrapper style={{ border: 'none' }}>{content}</ContentWrapper>
         </PopoverContainer>

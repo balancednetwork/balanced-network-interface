@@ -565,7 +565,7 @@ export default function BBalnSlider({
             </Flex>
 
             {stakedBalance?.isEqualTo(0) && (
-              <ButtonsWrap verticalButtons={!simple}>
+              <ButtonsWrap $verticalButtons={!simple}>
                 {isAdjusting ? (
                   <>
                     <TextButton
@@ -608,7 +608,7 @@ export default function BBalnSlider({
             <UnstakePrompt stakedBalance={stakedBalance} availableBalance={balnBalanceAvailable} />
           ) : (
             <>
-              <SliderWrap sliderBg={sliderBg} sliderMargin={sliderMargin}>
+              <SliderWrap sliderBg={sliderBg} $sliderMargin={sliderMargin}>
                 {lockupNotice && (
                   <Typography className={`lockup-notice${isAdjusting ? '' : ' show'}`}>{lockupNotice}</Typography>
                 )}

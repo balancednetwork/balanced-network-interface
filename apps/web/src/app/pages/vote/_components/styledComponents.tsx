@@ -55,9 +55,9 @@ export const ProposalPreview = styled(FlexPanel)<{ noHover?: boolean }>`
   `};
 `;
 
-export const StyledTypography = styled(Typography)<{ notification: boolean }>`
+export const StyledTypography = styled(Typography)<{ $notification: boolean }>`
   position: relative;
-  ${({ notification }) => notification && notificationCSS};
+  ${({ $notification }) => $notification && notificationCSS};
   &:before,
   &:after {
     left: -25px;
@@ -65,11 +65,11 @@ export const StyledTypography = styled(Typography)<{ notification: boolean }>`
   }
 `;
 
-export const VotingGrid = styled(Flex)<{ auth: boolean }>`
+export const VotingGrid = styled(Flex)<{ $auth: boolean }>`
   display: grid;
 
-  ${({ auth, theme }) =>
-    auth
+  ${({ $auth, theme }) =>
+    $auth
       ? css`
           grid-template-columns: 1fr;
           ${theme.mediaWidth.upSmall`grid-template-columns: 9fr 8fr 8fr 6fr;`}

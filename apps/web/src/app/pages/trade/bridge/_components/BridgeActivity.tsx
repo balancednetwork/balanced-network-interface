@@ -59,7 +59,7 @@ export default function BridgeActivity() {
                 <ActivityBarChart data={xCallStats.data} />
               ) : (
                 <Box alignSelf="stretch" className="FUK" style={{ position: 'relative', paddingTop: '50px' }}>
-                  <Spinner centered />
+                  <Spinner $centered />
                 </Box>
               )}
             </Box>

@@ -16,15 +16,15 @@ const StyledHr = styled.div`
   background-color: ${({ theme }) => theme.colors.divider};
 `;
 
-const StyledWrapper = styled.div<{ horizontal?: boolean; margin?: string }>`
+const StyledWrapper = styled.div<{ horizontal?: boolean; $margin?: string }>`
   display: flex;
   flex-direction: column;
   align-items: center;
 
-  ${({ margin }) =>
-    margin &&
+  ${({ $margin }) =>
+    $margin &&
     css`
-      margin: ${margin};
+      margin: ${$margin};
     `};
 
   span {
@@ -60,9 +60,9 @@ export const HorizontalDivider = ({ text, ...rest }: { text: string }) => {
   );
 };
 
-export const VerticalDivider = ({ text, margin, ...rest }: { text?: string; margin?: string }) => {
+export const VerticalDivider = ({ text, $margin, ...rest }: { text?: string; $margin?: string }) => {
   return (
-    <StyledWrapper margin={margin}>
+    <StyledWrapper $margin={$margin}>
       <StyledHr />
       {text && (
         <>

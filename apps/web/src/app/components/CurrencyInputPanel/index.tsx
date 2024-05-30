@@ -25,7 +25,7 @@ const InputContainer = styled.div`
   width: 100%;
 `;
 
-const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean; active: boolean }>`
+const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean; $active: boolean }>`
   border: ${({ theme, bg = 'bg2' }) => `2px solid ${theme.colors[bg]}`};
   background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
   border-right: ${({ theme }) => `1px solid ${theme.colors.divider}`};
@@ -46,7 +46,7 @@ const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean; active: 
     border-right: ${({ theme }) => `1px solid ${theme.colors.primary}`};
   }
 
-  ${props => props.active && 'border-bottom-left-radius: 0;'}
+  ${({ $active }) => $active && 'border-bottom-left-radius: 0;'}
 `;
 
 const StyledTokenName = styled.span`
@@ -56,7 +56,7 @@ const StyledTokenName = styled.span`
   font-weight: bold;
 `;
 
-const NumberInput = styled.input<{ bg?: string; active?: boolean }>`
+const NumberInput = styled.input<{ bg?: string; $active?: boolean }>`
   flex: 1;
   width: 100%;
   height: 43px;
@@ -79,7 +79,7 @@ const NumberInput = styled.input<{ bg?: string; active?: boolean }>`
     border: 2px solid #2ca9b7;
   }
 
-  ${props => props.active && 'border-bottom-right-radius: 0;'}
+  ${({ $active }) => $active && 'border-bottom-right-radius: 0;'}
 `;
 
 const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
@@ -190,7 +190,7 @@ export default function CurrencyInputPanel({
       <InputContainer ref={ref} className={className}>
         <ClickAwayListener onClickAway={() => setOpen(false)}>
           <div>
-            <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect} active={!!showCrossChainOptions}>
+            <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect} $active={!!showCrossChainOptions}>
               {currency ? (
                 <>
                   <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
@@ -241,7 +241,7 @@ export default function CurrencyInputPanel({
           spellCheck="false"
           //style
           bg={bg}
-          active={(onPercentSelect && isActive) || !!showCrossChainOptions}
+          $active={(onPercentSelect && isActive) || !!showCrossChainOptions}
         />
 
         {onPercentSelect && (

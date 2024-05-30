@@ -237,7 +237,7 @@ const EVMWallet = ({ setAnchor, anchor }) => {
                   <StandardCursorListItem
                     className={index === activeIndex ? 'active' : ''}
                     key={symbol}
-                    border={index !== arr.length - 1}
+                    $border={index !== arr.length - 1}
                     // onMouseEnter={() => setActiveIndex(index)}
                     // onClick={() => handleAssetClick(symbol)}
                   >

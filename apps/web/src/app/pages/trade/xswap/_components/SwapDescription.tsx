@@ -164,7 +164,7 @@ export default function SwapDescription() {
                 type="button"
                 value={CHART_PERIODS[key]}
                 onClick={handleChartPeriodChange}
-                active={chartOption.period === CHART_PERIODS[key]}
+                $active={chartOption.period === CHART_PERIODS[key]}
               >
                 {/* @ts-ignore */}
                 <Trans id={CHART_PERIODS_LABELS[CHART_PERIODS[key]].id} />
@@ -179,7 +179,7 @@ export default function SwapDescription() {
                 type="button"
                 value={CHART_TYPES[key]}
                 onClick={handleChartTypeChange}
-                active={chartOption.type === CHART_TYPES[key]}
+                $active={chartOption.type === CHART_TYPES[key]}
               >
                 {/* @ts-ignore */}
                 <Trans id={CHART_TYPES_LABELS[CHART_TYPES[key]].id} />
@@ -187,7 +187,7 @@ export default function SwapDescription() {
             ))}
 
             {!isSuperSmall && (
-              <ChartControlButton type="button" onClick={() => setTradingViewActive(true)} active={tradingViewActive}>
+              <ChartControlButton type="button" onClick={() => setTradingViewActive(true)} $active={tradingViewActive}>
                 TradingView
               </ChartControlButton>
             )}
@@ -199,7 +199,7 @@ export default function SwapDescription() {
           {pair ? (
             <>
               {isChartLoading ? (
-                <Spinner size={75} centered />
+                <Spinner size={75} $centered />
               ) : (
                 <>
                   {chartOption.type === CHART_TYPES.AREA && (

@@ -295,7 +295,7 @@ const ArchwayWallet = ({ setAnchor, anchor }) => {
                   <StandardCursorListItem
                     className={index === activeIndex ? 'active' : ''}
                     key={symbol}
-                    border={index !== arr.length - 1}
+                    $border={index !== arr.length - 1}
                     // onMouseEnter={() => setActiveIndex(index)}
                     // onClick={() => handleAssetClick(symbol)}
                   >
@@ -331,7 +331,7 @@ const ArchwayWallet = ({ setAnchor, anchor }) => {
                     )}
                   </BalanceAndValueWrap>
                 </DashGrid>
-                <StandardCursorListItem border={false}>
+                <StandardCursorListItem $border={false}>
                   <TokenInfo
                     currency={
                       filteredSortedTokens.find(currency => currency.wrapped.symbol === modalAsset) ||

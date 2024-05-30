@@ -14,11 +14,11 @@ import { CurrencyKey } from 'types';
 import { escapeRegExp } from 'utils'; // match escaped "." characters via in a non-capturing group
 import Skeleton from '../Skeleton';
 
-export const CheckBox = styled(Box)<{ isActive: boolean }>`
+export const CheckBox = styled(Box)<{ $isActive: boolean }>`
   width: 20px;
   height: 5px;
   border-radius: 5px;
-  background-color: ${props => (props.isActive ? props.theme.colors.primary : '#03334f')};
+  background-color: ${props => (props.$isActive ? props.theme.colors.primary : '#03334f')};
   position: absolute;
   top: -12px;
 
@@ -122,7 +122,7 @@ export const CurrencyField: React.FC<{
     <Flex flexDirection="column">
       <Flex alignItems="center">
         <Flex alignItems="center" sx={{ position: 'relative' }}>
-          <CheckBox isActive={isActive} mr={2} />
+          <CheckBox $isActive={isActive} mr={2} />
           <Typography as="label" htmlFor={label} unselectable="on" sx={{ userSelect: 'none' }}>
             {label}{' '}
             {tooltip && (

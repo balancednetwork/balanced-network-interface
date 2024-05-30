@@ -47,9 +47,9 @@ const WalletInfo = styled(Box)`
   min-height: 42px;
 `;
 
-const WalletButtonWrapper = styled(Box)<{ hasnotification?: boolean }>`
+const WalletButtonWrapper = styled(Box)<{ $hasnotification?: boolean }>`
   position: relative;
-  ${({ hasnotification }) => (hasnotification ? notificationCSS : '')}
+  ${({ $hasnotification }) => ($hasnotification ? notificationCSS : '')}
   &::before, &::after {
     left: 7px;
     top: 13px;
@@ -105,12 +105,12 @@ export const ChainTabs = styled(Flex)`
   padding: 0 25px 25px;
 `;
 
-export const ChainTabButton = styled(Button)<{ active?: boolean }>`
+export const ChainTabButton = styled(Button)<{ $active?: boolean }>`
   padding: 1px 12px;
   border-radius: 100px;
   color: #ffffff;
   font-size: 14px;
-  background-color: ${({ theme, active }) => (active ? theme.colors.primary : theme.colors.bg3)};
+  background-color: ${({ theme, $active }) => ($active ? theme.colors.primary : theme.colors.bg3)};
   transition: background-color 0.3s ease;
   margin-right: 10px;
 
@@ -296,7 +296,7 @@ export default function Header(props: { title?: string; className?: string }) {
               )}
             </WalletInfo>
 
-            <WalletButtonWrapper hasnotification={claimableICX?.isGreaterThan(0)}>
+            <WalletButtonWrapper $hasnotification={claimableICX?.isGreaterThan(0)}>
               <ClickAwayListener onClickAway={e => handleWalletClose(e)}>
                 <div>
                   <IconButton ref={walletButtonRef} onClick={toggleWalletMenu}>
@@ -335,7 +335,7 @@ export default function Header(props: { title?: string; className?: string }) {
                           {signedInWallets.map(wallet => (
                             <ChainTabButton
                               onClick={() => handleChainTabClick(wallet.chainId)}
-                              active={wallet.chainId === activeTab}
+                              $active={wallet.chainId === activeTab}
                             >
                               {wallet.chain.name}
                             </ChainTabButton>

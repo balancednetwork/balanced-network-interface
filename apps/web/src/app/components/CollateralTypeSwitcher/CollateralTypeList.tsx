@@ -17,15 +17,15 @@ import { useLoanActionHandlers } from 'store/loan/hooks';
 import Skeleton from '../Skeleton';
 
 const CollateralTypesGrid = styled.div<{
-  border?: boolean;
-  negativeMargin?: boolean;
-  hideCollateralInfoColumn?: boolean;
+  $border?: boolean;
+  $negativeMargin?: boolean;
+  $hideCollateralInfoColumn?: boolean;
 }>`
   display: grid;
-  grid-template-columns: ${({ hideCollateralInfoColumn }) => (hideCollateralInfoColumn ? '1fr 1fr' : '5fr 5fr 4fr')};
+  grid-template-columns: ${({ $hideCollateralInfoColumn }) => ($hideCollateralInfoColumn ? '1fr 1fr' : '5fr 5fr 4fr')};
   width: 100%;
-  ${({ border }) => (border ? 'border-bottom: 1px solid #304a68;' : '')}
-  ${({ negativeMargin }) => (negativeMargin ? 'margin-top: -10px;' : '')}
+  ${({ $border }) => ($border ? 'border-bottom: 1px solid #304a68;' : '')}
+  ${({ $negativeMargin }) => ($negativeMargin ? 'margin-top: -10px;' : '')}
   transition: transform ease .3s;
 
   .white,
@@ -131,7 +131,7 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
     <Box p={'25px 0 5px'} width={width}>
       {allCollateralData?.length ? (
         <GridWrap>
-          <CollateralTypesGrid hideCollateralInfoColumn={hideCollateralInfoColumn}>
+          <CollateralTypesGrid $hideCollateralInfoColumn={hideCollateralInfoColumn}>
             <CollateralTypesGridHeader>Asset</CollateralTypesGridHeader>
             {!hideCollateralInfoColumn && <CollateralTypesGridHeader>Collateral</CollateralTypesGridHeader>}
             <CollateralTypesGridHeader>Loan</CollateralTypesGridHeader>
@@ -151,9 +151,9 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
             return (
               <CollateralTypesGrid
                 key={i}
-                border={!isLast}
-                negativeMargin={isFirst}
-                hideCollateralInfoColumn={hideCollateralInfoColumn}
+                $border={!isLast}
+                $negativeMargin={isFirst}
+                $hideCollateralInfoColumn={hideCollateralInfoColumn}
                 onClick={() => handleCollateralTypeChange(collateralType.symbol)}
               >
                 <CollateralTypesGridItem>

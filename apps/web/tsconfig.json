@@ -22,6 +22,6 @@
     "incremental": true
   },
   "include": ["lingui.config.ts", "vite.config.ts", "src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["src/charting_library/**/*", "src/locales/**/*", "src/btp/**/*"],
+  "exclude": ["src/charting_library/**/*", "src/locales/**/*"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

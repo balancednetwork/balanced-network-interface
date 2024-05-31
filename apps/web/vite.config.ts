@@ -1,11 +1,12 @@
 import { lingui } from '@lingui/vite-plugin';
 import react from '@vitejs/plugin-react';
+import { ConfigEnv } from 'vite';
 import { defineConfig, loadEnv } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import svgr from 'vite-plugin-svgr';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 
-export default defineConfig((command, mode) => {
+export default defineConfig(({ command, mode }: ConfigEnv) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
@@ -26,7 +27,7 @@ export default defineConfig((command, mode) => {
       }),
       nodePolyfills({
         include: ['buffer'],
-        global: {
+        globals: {
           Buffer: true,
           global: false,
           process: false,

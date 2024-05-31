@@ -7,7 +7,6 @@ import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 import styled, { css } from 'styled-components';
 
-import { useARCH } from 'app/pages/trade/bridge/_config/tokens';
 import { XChainId, XToken } from 'app/pages/trade/bridge/types';
 import { getNetworkDisplayName } from 'app/pages/trade/bridge/utils';
 import { Typography } from 'app/theme';
@@ -33,6 +32,8 @@ import {
 } from '../../bridge/_zustand/useXTransactionStore';
 import XTransactionState from '../../bridge/_components/XTransactionState';
 import { useCreateWalletXService } from '../../bridge/_zustand/useXServiceStore';
+import useWallets from '../../bridge/_hooks/useWallets';
+import { useSwitchChain } from 'wagmi';
 
 type XCallSwapModalProps = {
   account: string | undefined;
@@ -172,6 +173,15 @@ const XCallSwapModal = ({
 
   const gasChecker = useXCallGasChecker(direction.from);
 
+  // switch chain between evm chains
+  const wallets = useWallets();
+  const walletType = xChainMap[direction.from].xWalletType;
+  const isWrongChain = wallets[walletType].xChainId !== direction.from;
+  const { switchChain } = useSwitchChain();
+  const handleSwitchChain = () => {
+    switchChain({ chainId: xChainMap[direction.from].id as number });
+  };
+
   return (
     <>
       {currentXTransaction && <XTransactionUpdater xTransaction={currentXTransaction} />}
@@ -252,7 +262,11 @@ const XCallSwapModal = ({
                   <Trans>Cancel</Trans>
                 </TextButton>
 
-                {isProcessing ? (
+                {isWrongChain ? (
+                  <StyledButton onClick={handleSwitchChain}>
+                    <Trans>Switch Network</Trans>
+                  </StyledButton>
+                ) : isProcessing ? (
                   <>
                     <StyledButton disabled $loading>
                       <Trans>Swap in progress</Trans>

@@ -63,7 +63,7 @@ export default function SwapPanel() {
     useSwapActionHandlers();
 
   React.useEffect(() => {
-    const destinationWallet = signedInWallets.find(wallet => wallet.chainId === direction.to);
+    const destinationWallet = signedInWallets.find(wallet => wallet.xChainId === direction.to);
     if (destinationWallet) {
       onChangeRecipient(destinationWallet.address);
     } else {

@@ -24,6 +24,7 @@ export const archway: XChain = {
   },
   autoExecution: true,
   gasThreshold: 1,
+  testnet: false,
 };
 
 export const archwayTestnet: XChain = {
@@ -50,6 +51,7 @@ export const archwayTestnet: XChain = {
   },
   autoExecution: true,
   gasThreshold: 5,
+  testnet: true,
 };
 
 export const icon: XChain = {
@@ -76,6 +78,7 @@ export const icon: XChain = {
   },
   autoExecution: true,
   gasThreshold: 1,
+  testnet: false,
 };
 
 export const lisbon: XChain = {
@@ -102,6 +105,7 @@ export const lisbon: XChain = {
   },
   autoExecution: true,
   gasThreshold: 4,
+  testnet: true,
 };
 
 export const avalanche: XChain = {
@@ -126,6 +130,7 @@ export const avalanche: XChain = {
   },
   autoExecution: true,
   gasThreshold: 0.01,
+  testnet: false,
 };
 
 export const fuji: XChain = {
@@ -150,17 +155,33 @@ export const fuji: XChain = {
   },
   autoExecution: true,
   gasThreshold: 0,
+  testnet: true,
 };
 
-export const xChains = [
-  archway,
-  icon,
-  avalanche,
-  // remove testnets
-  // archwayTestnet,
-  // lisbon,
-  // fuji,
-];
+export const bsc: XChain = {
+  id: 56,
+  name: 'BNB Chain',
+  xChainId: '0x38.bsc',
+  xChainType: 'EVM',
+  xWalletType: XWalletType.EVM,
+  tracker: 'https://bscscan.com/',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'BNB',
+    symbol: 'BNB',
+  },
+  rpc: {
+    http: 'https://bsc-dataseed.bnbchain.org',
+  },
+  contracts: {
+    xCall: '0xfc83a3f252090b26f92f91dfb9dc3eb710adaf1b',
+    assetManager: '0x69e81Cea7889608A63947814893ad1B86DcC03Aa',
+    bnUSD: '0xc65132325bD4FcF2Ec5F3a9375487163B6999206',
+  },
+  autoExecution: true,
+  gasThreshold: 0,
+  testnet: false,
+};
 
 export const xChainMap: { [key in XChainId]: XChain } = {
   '0x1.icon': icon,
@@ -169,7 +190,10 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   '0xa86a.avax': avalanche,
   archway: archwayTestnet,
   'archway-1': archway,
+  '0x38.bsc': bsc,
 };
+
+export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);
 
 export const sortChains = (a: XChainId, b: XChainId): [XChainId, XChainId] => {
   return a.localeCompare(b) > 0 ? [a, b] : [b, a];

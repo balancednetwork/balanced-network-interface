@@ -43,9 +43,16 @@ import useXWallet from 'app/pages/trade/bridge/_hooks/useXWallet';
 
 const walletBreakpoint = '499px';
 
-const EVMWallet = ({ setAnchor, anchor }) => {
+const EVMWallet = ({
+  setAnchor,
+  anchor,
+  xChainId,
+}: {
+  anchor: HTMLElement | null;
+  setAnchor: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
+  xChainId: XChainId;
+}) => {
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
-  const xChainId: XChainId = '0xa86a.avax';
   const balances = useWalletBalances(xChainId);
   const xWallet = useXWallet(xChainId);
   const account = xWallet?.account;
@@ -63,6 +70,7 @@ const EVMWallet = ({ setAnchor, anchor }) => {
 
   const xTokens = useXTokens(xChainId);
 
+  console.log('balances', balances);
   const addressesWithAmount = useMemo(
     () =>
       xTokens

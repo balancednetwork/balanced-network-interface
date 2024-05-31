@@ -25,10 +25,6 @@ const walletSlice = createSlice({
       state['0x1.icon'] = payload;
     }),
 
-    changeArchwayBalances: create.reducer<{ [key: string]: CurrencyAmount<Currency> }>((state, { payload }) => {
-      state['archway-1'] = payload;
-    }),
-
     changeBalances: create.reducer<{ xChainId: XChainId; balances: { [key: string]: CurrencyAmount<Currency> } }>(
       (state, { payload }) => {
         state[payload.xChainId] = payload.balances;
@@ -40,6 +36,6 @@ const walletSlice = createSlice({
   }),
 });
 
-export const { changeICONBalances, changeArchwayBalances, resetBalances, changeBalances } = walletSlice.actions;
+export const { changeICONBalances, resetBalances, changeBalances } = walletSlice.actions;
 
 export default walletSlice.reducer;

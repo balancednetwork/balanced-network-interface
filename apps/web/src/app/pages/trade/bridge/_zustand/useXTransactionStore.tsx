@@ -32,7 +32,7 @@ type XTransactionStore = {
   success: (id) => void;
   fail: (id) => void;
   onMessageUpdate: (id: string, xMessage: XMessage) => void;
-  getPendingTransactions: (signedWallets: { chain: XChain; chainId: XChainId; address: string }[]) => XTransaction[];
+  getPendingTransactions: (signedWallets: { xChainId: XChainId | undefined; address: string }[]) => XTransaction[];
 };
 
 const iconChainId: XChainId = '0x1.icon';
@@ -288,12 +288,12 @@ export const useXTransactionStore = create<XTransactionStore>()(
         }
       },
 
-      getPendingTransactions: (signedWallets: { chain: XChain; chainId: XChainId; address: string }[]) => {
+      getPendingTransactions: (signedWallets: { xChainId: XChainId | undefined; address: string }[]) => {
         return Object.values(get().transactions)
           .filter((transaction: XTransaction) => {
             return (
               transaction.status === XTransactionStatus.pending &&
-              signedWallets.some(wallet => wallet.chainId === transaction.sourceChainId)
+              signedWallets.some(wallet => wallet.xChainId === transaction.sourceChainId)
             );
           })
           .sort((a, b) => {
@@ -343,7 +343,7 @@ export const xTransactionActions = {
     useXTransactionStore.getState().onMessageUpdate(id, xMessage);
   },
 
-  getPendingTransactions: (signedWallets: { chain: XChain; chainId: XChainId; address: string }[]) => {
+  getPendingTransactions: (signedWallets: { xChainId: XChainId | undefined; address: string }[]) => {
     return useXTransactionStore.getState().getPendingTransactions(signedWallets);
   },
 

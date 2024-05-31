@@ -26,7 +26,7 @@ import { DropdownPopper } from '../Popover';
 import SearchInput from '../SearchModal/SearchInput';
 import WalletItem from './WalletItem';
 import { IconWalletModal } from './IconWalletModal';
-import { AvalancheWalletModal } from './AvalancheWalletModal';
+import { EVMWalletModal } from './EVMWalletModal';
 import { XWalletType } from 'app/pages/trade/bridge/types';
 import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
 
@@ -68,11 +68,6 @@ export default function WalletModal() {
   const { connectToWallet: connectToKeplr } = useArchwayContext();
 
   const wallets = useWallets();
-
-  const handleOpenWalletArchway = React.useCallback(() => {
-    connectToKeplr();
-  }, [connectToKeplr]);
-
   //
   const activeLocale = useActiveLocale();
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
@@ -118,7 +113,7 @@ export default function WalletModal() {
       {
         name: 'Archway',
         logo: <ArchWalletIcon width="40" height="40" />,
-        connect: handleOpenWalletArchway,
+        connect: connectToKeplr,
         disconnect: wallets[XWalletType.COSMOS].disconnect,
         description: t`Swap & transfer assets cross-chain.`,
         address: wallets[XWalletType.COSMOS].account,
@@ -132,7 +127,7 @@ export default function WalletModal() {
         address: wallets[XWalletType.EVM].account,
       },
     ];
-  }, [setWalletModal, handleOpenWalletArchway, wallets]);
+  }, [setWalletModal, connectToKeplr, wallets]);
 
   const filteredWallets = React.useMemo(() => {
     return [...walletConfig].filter(wallet => {
@@ -230,7 +225,7 @@ export default function WalletModal() {
 
       <IconWalletModal />
 
-      <AvalancheWalletModal />
+      <EVMWalletModal />
     </>
   );
 }

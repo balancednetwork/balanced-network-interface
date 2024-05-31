@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 
 import { useIconReact } from 'packages/icon-react';
 
-import { SectionPanel } from 'app/pages/trade/supply/_components/utils';
 import LPPanel from './_components/LPPanel';
 import { PoolPanelContext } from './_components/PoolPanelContext';
 import LiquidityPoolsPanel from './_components/LiquidityPoolsPanel';

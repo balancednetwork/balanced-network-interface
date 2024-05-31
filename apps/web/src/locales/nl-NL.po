@@ -619,7 +619,6 @@ msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete thi
 msgstr "Je hebt minstens {MINIMUM_ICX_FOR_TX} ICX in je wallet nodig om deze transactie te voltooien."
 
 #: src/store/mint/hooks.tsx
-#: src/store/swap/hooks.ts
 msgid "Connect Wallet"
 msgstr "Koppel je wallet"
 
@@ -736,7 +735,7 @@ msgstr "Vergrendeld"
 msgid "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
 msgstr ""
 
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Slippage tolerance"
 msgstr "Slippage tolerantie"
 
@@ -831,25 +830,27 @@ msgid "Lock up Balance Tokens?"
 msgstr "Balance Tokens vergrendelen?"
 
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/pages/trade/bridge/_components/BridgeTransferState.tsx
+#: src/app/pages/trade/bridge/_components/XCallTransactionState.tsx
+#: src/app/pages/trade/bridge/_components/XCallTransactionState.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapState.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapState.tsx
 msgid "{0}"
 msgstr "{0}"
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/layout.tsx
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "Bridge"
 msgstr ""
 
 #: src/store/bridge/hooks.tsx
 #: src/store/bridge/hooks.tsx
+#: src/store/mint/hooks.tsx
+#: src/store/mint/hooks.tsx
 #: src/store/swap/hooks.ts
 msgid "Enter amount"
 msgstr "Vul bedrag in"
@@ -902,7 +903,7 @@ msgid "Liquidity incentives"
 msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Transfer time"
 msgstr ""
 
@@ -1115,7 +1116,7 @@ msgid "No assets available."
 msgstr "Geen activa beschikbaar."
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Fee"
 msgstr "Transactiekosten"
 
@@ -1192,8 +1193,8 @@ msgstr "Forum link"
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
-msgid "Not enough gas to complete the swap."
-msgstr ""
+#~ msgid "Not enough gas to complete the swap."
+#~ msgstr ""
 
 #: src/app/components/XCallDescription/index.tsx
 #~ msgid "<0>xCall</0> is a cross-chain messaging service that can interact with smart contracts on other blockchains."
@@ -1303,6 +1304,11 @@ msgstr ""
 #: src/store/swap/hooks.ts
 msgid "Insufficient {0}"
 msgstr "Onvoldoende {0}"
+
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+msgid "ICON"
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repay Balanced Dollars?"
@@ -1497,6 +1503,10 @@ msgstr "Gebruikt"
 msgid "Transfer in progress"
 msgstr ""
 
+#: src/store/swap/hooks.ts
+msgid "Choose address"
+msgstr ""
+
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "You'll need to relock BALN to hold voting power and boost your earning potential."
 msgstr ""
@@ -1656,7 +1666,7 @@ msgstr ""
 msgid "Unlock Balance Tokens?"
 msgstr ""
 
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "If the price slips by more than this amount, your swap will fail."
 msgstr "Als de prijs meer dan dit bedrag daalt, zal de wissel niet doorgaan."
 
@@ -1773,8 +1783,8 @@ msgstr "Home"
 
 #: src/store/mint/hooks.tsx
 #: src/store/mint/hooks.tsx
-msgid "Enter an amount"
-msgstr "Vul bedrag in"
+#~ msgid "Enter an amount"
+#~ msgstr "Vul bedrag in"
 
 #: src/app/pages/trade/bridge/_components/XCallItem.tsx
 #~ msgid "Execution failed."
@@ -1842,8 +1852,8 @@ msgstr "Prijsimpact"
 #~ msgstr "Balance Tokens claimen?"
 
 #: src/store/bridge/hooks.tsx
-msgid "Enter recipient"
-msgstr ""
+#~ msgid "Enter recipient"
+#~ msgstr ""
 
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 msgid "You"
@@ -2025,6 +2035,10 @@ msgstr ""
 msgid "{title}"
 msgstr ""
 
+#: src/store/bridge/hooks.tsx
+msgid "Enter address"
+msgstr ""
+
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Add token list"
 msgstr "Token lijst toevoegen"
@@ -2132,7 +2146,7 @@ msgstr ""
 msgid "APY"
 msgstr "APY"
 
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Route"
 msgstr "Route"
 
@@ -2186,7 +2200,7 @@ msgstr "Je hebt geweigerd"
 msgid "for"
 msgstr ""
 
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Exchange rate"
 msgstr "Wisselkoers"
 
@@ -2272,7 +2286,6 @@ msgstr ""
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
 msgid "Swap"
 msgstr "Verwissel"
@@ -2285,7 +2298,7 @@ msgstr "Er is nog geen liquiditeitspool voor dit paar."
 msgid "Unlocking BALN early..."
 msgstr ""
 
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Bridge fee"
 msgstr ""
 

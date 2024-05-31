@@ -132,7 +132,7 @@ import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 
 export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined) {
-  const { data } = useBalance({ address: account });
+  const { data } = useBalance({ address: account, query: { refetchInterval: 5_000 } });
   const nativeBalance = useMemo(
     () =>
       data?.value

@@ -3,7 +3,7 @@ import React from 'react';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
 import { Helmet } from 'react-helmet-async';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -76,16 +76,16 @@ const useClaimableAmountQuery = () => {
   const { account } = useIconReact();
   const txs = useAllTransactions();
 
-  return useQuery(
-    ['claimableAmount', account, txs],
-    async () => {
-      const result = await bnJs.LiquidationDisbursement.getDisbursementDetail(account ?? '');
+  return useQuery({
+    queryKey: ['claimableAmount', account, txs],
+    queryFn: async () => {
+      if (!account) return;
+
+      const result = await bnJs.LiquidationDisbursement.getDisbursementDetail(account);
       return result['claimableTokens']['cx2609b924e33ef00b648a409245c7ea394c467824'];
     },
-    {
-      enabled: !!account,
-    },
-  );
+    enabled: !!account,
+  });
 };
 
 export function ClaimGoodwillPage() {
@@ -184,7 +184,7 @@ export function ClaimGoodwillPage() {
             </>
           )}
 
-          {account && claimableAmountQuery.status === 'loading' && <Spinner />}
+          {account && claimableAmountQuery.status === 'pending' && <Spinner />}
           {account && claimableAmountQuery.status === 'success' && hasClaimed && (
             <>
               <Typography variant="p" fontSize="16px" fontWeight="bold">

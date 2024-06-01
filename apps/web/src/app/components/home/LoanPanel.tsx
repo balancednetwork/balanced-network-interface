@@ -21,7 +21,7 @@ import { useActiveLocale } from 'hooks/useActiveLocale';
 import useInterval from 'hooks/useInterval';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
 import { useCollateralActionHandlers, useCollateralType } from 'store/collateral/hooks';
-import { Field } from 'store/loan/actions';
+import { Field } from 'store/loan/reducer';
 import {
   useLoanBorrowedAmount,
   useLoanState,

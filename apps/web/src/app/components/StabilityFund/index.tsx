@@ -25,7 +25,7 @@ import { HorizontalDivider } from '../Divider';
 import ModalContent from '../ModalContent';
 import QuestionHelper from '../QuestionHelper';
 import Spinner from '../Spinner';
-import { swapMessage } from '../trade/utils';
+import { swapMessage } from '../../pages/trade/supply/_components/utils';
 
 interface StabilityFundProps {
   clearSwapInputOutput: () => void;

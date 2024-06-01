@@ -1,10 +1,10 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { CHAIN_INFO } from '@balancednetwork/balanced-js';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
-import { useQuery } from 'react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { NETWORK_ID } from 'constants/config';
@@ -16,8 +16,9 @@ import {
   ApplicationModal,
   setOpenModal,
   updateSlippageTolerance,
-  toggleICONWalletModal,
+  setOpenWalletModal,
 } from './reducer';
+import { XWalletType } from 'app/pages/trade/bridge/types';
 
 type BlockDetails = {
   timestamp: number;
@@ -41,21 +42,29 @@ export function useToggleModal(modal: ApplicationModal): () => void {
   return useCallback(() => dispatch(setOpenModal(open ? null : modal)), [dispatch, modal, open]);
 }
 
-export function useICONWalletModalToggle(): () => void {
-  const isOpen = useSelector((state: AppState) => state.application.iconWalletModal);
-  const dispatch = useDispatch<AppDispatch>();
-  return useCallback(() => {
-    console.log(isOpen);
-    dispatch(toggleICONWalletModal({ isOpen: !isOpen }));
-  }, [dispatch, isOpen]);
-}
-
-export function useIsICONWalletModalOpen(): boolean {
-  return useSelector((state: AppState) => state.application.iconWalletModal);
-}
-
 export function useWalletModalToggle(): () => void {
   return useToggleModal(ApplicationModal.WALLET);
+}
+
+//////////////////chain wallet ///////////////////////////////////
+
+export function useWalletModal(): [XWalletType | null, (w: XWalletType | null) => void, () => void] {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const setOpen = useCallback(
+    (walletType: XWalletType | null) => {
+      dispatch(setOpenWalletModal(walletType));
+    },
+    [dispatch],
+  );
+
+  const open = useSelector((state: AppState) => state.application.openWalletModal);
+
+  const onDismiss = useCallback(() => {
+    setOpen(null);
+  }, [setOpen]);
+
+  return useMemo(() => [open, setOpen, onDismiss], [open, setOpen, onDismiss]);
 }
 
 export function useTransferAssetsModalToggle(): () => void {
@@ -111,13 +120,16 @@ export const useBlockDetails = (timestamp: number) => {
     const { data } = await axios.get(`${CHAIN_INFO[NETWORK_ID].tracker}/api/v1/blocks/timestamp/${timestamp * 1000}`);
     return data;
   };
-  return useQuery<BlockDetails>(`getBlock${timestamp}`, getBlock);
+  return useQuery<BlockDetails>({
+    queryKey: [`getBlock`, timestamp],
+    queryFn: getBlock,
+  });
 };
 
 export function useICXUnstakingTime() {
-  return useQuery(
-    'icxUnstakingTime',
-    async () => {
+  return useQuery({
+    queryKey: ['icxUnstakingTime'],
+    queryFn: async () => {
       const totalICXRequest = {
         jsonrpc: '2.0',
         method: 'icx_getTotalSupply',
@@ -135,22 +147,16 @@ export function useICXUnstakingTime() {
           },
         },
       };
-      try {
-        const totalICXStakedResponse = await axios.post(CHAIN_INFO[1].APIEndpoint, totalStakedRequest);
-        const totalICXResponse = await axios.post(CHAIN_INFO[1].APIEndpoint, totalICXRequest);
-        const totalICXStaked = new BigNumber(totalICXStakedResponse.data.result.totalStake).div(10 ** 18).toNumber();
-        const totalICX = new BigNumber(totalICXResponse.data.result).div(10 ** 18).toNumber();
+      const totalICXStakedResponse = await axios.post(CHAIN_INFO[1].APIEndpoint, totalStakedRequest);
+      const totalICXResponse = await axios.post(CHAIN_INFO[1].APIEndpoint, totalICXRequest);
+      const totalICXStaked = new BigNumber(totalICXStakedResponse.data.result.totalStake).div(10 ** 18).toNumber();
+      const totalICX = new BigNumber(totalICXResponse.data.result).div(10 ** 18).toNumber();
 
-        //70% is threshold when unstaking time is the same
-        //20 is max unstaking time
-        //5 is min unstaking time
-        return new BigNumber(((20 - 5) / 0.7 ** 2) * (totalICXStaked / totalICX - 0.7) ** 2 + 5);
-      } catch (e) {
-        console.error('Error while fetching total ICX staked info', e);
-      }
+      //70% is threshold when unstaking time is the same
+      //20 is max unstaking time
+      //5 is min unstaking time
+      return new BigNumber(((20 - 5) / 0.7 ** 2) * (totalICXStaked / totalICX - 0.7) ** 2 + 5);
     },
-    {
-      keepPreviousData: true,
-    },
-  );
+    placeholderData: keepPreviousData,
+  });
 }

@@ -2,10 +2,9 @@ import React, { useMemo } from 'react';
 
 import { useIconReact } from 'packages/icon-react';
 
-import { SectionPanel } from 'app/components/trade/utils';
-import LPPanel from 'app/components/trade/LPPanel';
-import { PoolPanelContext } from 'app/components/trade/PoolPanelContext';
-import LiquidityPoolsPanel from 'app/components/trade/LiquidityPoolsPanel';
+import LPPanel from './_components/LPPanel';
+import { PoolPanelContext } from './_components/PoolPanelContext';
+import LiquidityPoolsPanel from './_components/LiquidityPoolsPanel';
 
 import { useTrackedTokenPairs } from 'store/user/hooks';
 import { useAvailablePairs, useBalances } from 'hooks/useV2Pairs';

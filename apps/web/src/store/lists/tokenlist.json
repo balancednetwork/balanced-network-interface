@@ -237,7 +237,7 @@
     {
       "address": "cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f",
       "chainId": 1,
-      "name": "USDC",
+      "name": "Archway USDC",
       "symbol": "USDC",
       "decimals": 6,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdc.png"

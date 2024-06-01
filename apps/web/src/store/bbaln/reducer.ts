@@ -1,12 +1,11 @@
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { createReducer } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
 import { LockedPeriod } from 'app/components/home/BBaln/types';
 import { lockingPeriods } from 'app/components/home/BBaln/utils';
 
-import { Field } from '../loan/actions';
-import { adjust, cancel, type, changeData, changePeriod, changeSources, changeTotalSupply } from './actions';
+import { Field } from '../loan/reducer';
 import { Source } from './hooks';
 
 export interface BBalnState {
@@ -43,36 +42,52 @@ const initialState: BBalnState = {
   },
 };
 
-export default createReducer(initialState, builder =>
-  builder
-    .addCase(changeData, (state, { payload }) => {
-      state.bbalnAmount = payload.bbalnAmount;
-      state.totalSupply = payload.totalSupply;
-      if (!state.lockedBaln?.equalTo(payload.lockedBaln)) {
-        state.lockedBaln = payload.lockedBaln;
+const bbalnSlice = createSlice({
+  name: 'bbaln',
+  initialState,
+  reducers: create => ({
+    changeData: create.reducer<{
+      bbalnAmount: BigNumber;
+      totalSupply: BigNumber;
+      lockedBaln: CurrencyAmount<Token>;
+      lockEnd: Date;
+    }>((state, { payload: { bbalnAmount, totalSupply, lockedBaln, lockEnd } }) => {
+      state.bbalnAmount = bbalnAmount;
+      state.totalSupply = totalSupply;
+      if (!state.lockedBaln?.equalTo(lockedBaln)) {
+        state.lockedBaln = lockedBaln;
       }
-      if (state.lockedUntil?.getTime() !== payload.lockEnd.getTime()) {
-        state.lockedUntil = payload.lockEnd;
+      if (state.lockedUntil?.getTime() !== lockEnd.getTime()) {
+        state.lockedUntil = lockEnd;
       }
-    })
-    .addCase(changeTotalSupply, (state, { payload }) => {
-      state.totalSupply = payload.totalSupply;
-    })
-    .addCase(changeSources, (state, { payload }) => {
-      state.sources = payload.sources;
-    })
-    .addCase(adjust, (state, { payload }) => {
-      state.state.isAdjusting = true;
-    })
-    .addCase(cancel, (state, { payload }) => {
-      state.state.isAdjusting = false;
-    })
-    .addCase(changePeriod, (state, { payload }) => {
-      state.state.selectedPeriod = payload.period;
-    })
-    .addCase(type, (state, { payload: { independentField, typedValue, inputType } }) => {
-      state.state.independentField = independentField || state.state.independentField;
-      state.state.typedValue = typedValue ?? state.state.typedValue;
-      state.state.inputType = inputType || state.state.inputType;
     }),
-);
+    changeTotalSupply: create.reducer<{ totalSupply: BigNumber | undefined }>((state, { payload: { totalSupply } }) => {
+      state.totalSupply = totalSupply;
+    }),
+    changeSources: create.reducer<{ sources: { [key in string]: Source } | undefined }>(
+      (state, { payload: { sources } }) => {
+        state.sources = sources;
+      },
+    ),
+    adjust: create.reducer<void>(state => {
+      state.state.isAdjusting = true;
+    }),
+    cancel: create.reducer<void>(state => {
+      state.state.isAdjusting = false;
+    }),
+    changePeriod: create.reducer<{ period: LockedPeriod }>((state, { payload: { period } }) => {
+      state.state.selectedPeriod = period;
+    }),
+    type: create.reducer<{ independentField: Field; typedValue: string; inputType: 'slider' | 'text' }>(
+      (state, { payload: { independentField, typedValue, inputType } }) => {
+        state.state.independentField = independentField || state.state.independentField;
+        state.state.typedValue = typedValue ?? state.state.typedValue;
+        state.state.inputType = inputType || state.state.inputType;
+      },
+    ),
+  }),
+});
+
+export const { adjust, cancel, type, changeData, changePeriod, changeSources, changeTotalSupply } = bbalnSlice.actions;
+
+export default bbalnSlice.reducer;

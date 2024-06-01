@@ -35,7 +35,7 @@ export default class XCall extends Contract {
     return this.call(callParams);
   }
 
-  getFee(_net: string, _rollback: boolean) {
+  getFee(_net: string, _rollback: boolean): Promise<string> {
     const callParams = this.paramsBuilder({
       method: 'getFee',
       params: {
@@ -43,7 +43,6 @@ export default class XCall extends Contract {
         _rollback: _rollback ? '0x1' : '0x0',
       },
     });
-
     return this.call(callParams);
   }
 

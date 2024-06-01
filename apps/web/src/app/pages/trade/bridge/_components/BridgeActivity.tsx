@@ -1,26 +1,34 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Trans } from '@lingui/macro';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
-import { XCallActivityItem } from 'app/_xcall/types';
 import { Typography } from 'app/theme';
-import { useSignedInWallets } from 'store/wallet/hooks';
-import { useXCallActivityItems, useXCallStats } from 'store/xCall/hooks';
+import { useXCallStats } from '../_hooks/useXCallStats';
 
 import Spinner from '../../../../components/Spinner';
 import ActivityBarChart from './ActivityBarChart';
-import XCallItem from './XCallItem';
-
-const MemoizedItem = React.memo(XCallItem);
+import XCallTransactionHistoryItem from './XCallTransactionHistoryItem';
+import { useSignedInWallets } from 'store/wallet/hooks';
+import { useXCallTransactionStore, xCallTransactionActions } from '../_zustand/useXCallTransactionStore';
 
 export default function BridgeActivity() {
-  const { data: activityItems } = useXCallActivityItems();
   const { data: xCallStats } = useXCallStats();
   const isSmall = useMedia('(max-width: 600px)');
   const isMedium = useMedia('(max-width: 1100px) and (min-width: 800px)');
   const signedInWallets = useSignedInWallets();
+
+  const { getPendingTransactions } = useXCallTransactionStore();
+  const pendingTransactions = getPendingTransactions(signedInWallets);
+
+  const messageCount = useMemo(() => {
+    return pendingTransactions.reduce((acc: number, x) => {
+      if (x.primaryMessageId) acc++;
+      if (x.secondaryMessageId) acc++;
+      return acc;
+    }, 0);
+  }, [pendingTransactions]);
 
   return (
     <Box bg="bg2" flex={1} p={['25px', '35px']}>
@@ -59,19 +67,24 @@ export default function BridgeActivity() {
         </Flex>
       </Box>
       <Box className="border-top" py={4}>
-        {activityItems?.map((item: XCallActivityItem) => (
-          <MemoizedItem key={item.originData.sn} {...item} />
-        ))}
-        {activityItems?.length === 0 &&
-          (signedInWallets.length ? (
-            <Typography textAlign="center">
-              <Trans>You have no pending or failed cross-chain transactions.</Trans>
-            </Typography>
-          ) : (
-            <Typography textAlign="center">
-              <Trans>There are no pending cross-chain transactions.</Trans>
-            </Typography>
+        <Box
+          pr={messageCount >= 4 ? 2 : 0}
+          style={messageCount >= 4 ? { overflowY: 'scroll', maxHeight: '180px' } : {}}
+        >
+          {pendingTransactions.map((x, index) => (
+            <XCallTransactionHistoryItem key={index} xCallTransaction={x} />
           ))}
+          {pendingTransactions?.length === 0 &&
+            (signedInWallets.length ? (
+              <Typography textAlign="center">
+                <Trans>You have no pending or failed cross-chain transactions.</Trans>
+              </Typography>
+            ) : (
+              <Typography textAlign="center">
+                <Trans>There are no pending cross-chain transactions.</Trans>
+              </Typography>
+            ))}
+        </Box>
       </Box>
     </Box>
   );

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { SectionPanel } from 'app/components/trade/utils';
+import { SectionPanel } from 'app/pages/trade/supply/_components/utils';
 import TransferAssetsModal from 'app/components/BTP/index';
 import styled, { css } from 'styled-components';
 import { UnderlineText } from 'app/components/DropdownText';

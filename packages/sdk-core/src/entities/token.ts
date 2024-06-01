@@ -22,10 +22,10 @@ export class Token extends BaseCurrency {
   public readonly searchableTerms: string = '';
 
   public constructor(
-    chainId: number,
+    chainId: number | string,
     address: string,
     decimals: number,
-    symbol?: string,
+    symbol: string,
     name?: string,
     searchableTerms?: string,
   ) {

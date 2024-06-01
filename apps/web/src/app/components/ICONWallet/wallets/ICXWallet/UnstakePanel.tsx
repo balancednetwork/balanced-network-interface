@@ -68,6 +68,7 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
   const [unstakes, setUnstakes] = React.useState<{ amount: BigNumber; unstakesOn: Date }[]>([]);
   const currentBlockHeight = useBlockNumber();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     const fetchUserUnstakeInfo = async () => {
       if (account && currentBlockHeight) {

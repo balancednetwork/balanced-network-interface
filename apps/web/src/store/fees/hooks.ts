@@ -7,7 +7,7 @@ import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import useInterval from 'hooks/useInterval';
 import { AppState } from 'store';
 
-import { setFees } from './actions';
+import { setFees } from './reducer';
 
 export function useUnclaimedFees(): { [key: string]: CurrencyAmount<Token> } {
   return useSelector((state: AppState) => state.fees.fees);

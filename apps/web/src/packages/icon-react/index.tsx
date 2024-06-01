@@ -52,6 +52,12 @@ const IconReactContext = React.createContext<ICONReactContextInterface>({
   networkId: NetworkId.MAINNET,
 });
 
+const disconnectLedger = () => {
+  if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
+    bnJs.contractSettings.ledgerSettings.transport.close();
+  }
+};
+
 export function IconReactProvider({ children }) {
   const [ledgerAddressPoint, setLedgerAddressPoint] = useLocalStorageWithExpiry<number>(
     'ledgerAddressPointWithExpiry',
@@ -65,6 +71,7 @@ export function IconReactProvider({ children }) {
   );
   const [hasExtension, setHasExtension] = React.useState<boolean>(false);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     async function createConnection() {
       if (ledgerAddressPoint >= 0) {
@@ -80,7 +87,6 @@ export function IconReactProvider({ children }) {
       }
     }
     createConnection();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const requestAddress = React.useCallback(
@@ -107,6 +113,7 @@ export function IconReactProvider({ children }) {
     setAccount(null);
     setLedgerAddressPoint(-1);
     bnJs.resetContractLedgerSettings();
+    disconnectLedger();
   }, [setAccount, setLedgerAddressPoint]);
 
   React.useEffect(() => {

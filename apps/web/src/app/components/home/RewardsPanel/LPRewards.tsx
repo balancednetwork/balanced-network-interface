@@ -200,7 +200,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
             <Box width={1 / 2}>
               <Typography textAlign="center">After</Typography>
               <Typography variant="p" textAlign="center">
-                {reward && `${balnBalance.add(reward).toFixed(2, { groupSeparator: ',' })} BALN`}
+                {reward && `${balnBalance?.add(reward).toFixed(2, { groupSeparator: ',' })} BALN`}
               </Typography>
             </Box>
           </Flex>

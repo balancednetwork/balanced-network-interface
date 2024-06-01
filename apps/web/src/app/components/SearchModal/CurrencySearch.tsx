@@ -7,14 +7,12 @@ import { isMobile } from 'react-device-detect';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { ARCHWAY_SUPPORTED_TOKENS_LIST } from 'app/_xcall/archway/tokens';
 import { Typography } from 'app/theme';
 import { FUNDING_TOKENS_LIST, useICX } from 'constants/tokens';
 import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from 'hooks/Tokens';
 import useDebounce from 'hooks/useDebounce';
 import { useOnClickOutside } from 'hooks/useOnClickOutside';
 import useToggle from 'hooks/useToggle';
-import { useBridgeDirection } from 'store/bridge/hooks';
 import { isAddress } from 'utils';
 
 import Column from '../Column';
@@ -24,6 +22,9 @@ import { filterTokens, useSortedTokensByQuery } from './filtering';
 import ImportRow from './ImportRow';
 import SearchInput from './SearchInput';
 import { useTokenComparator } from './sorting';
+import { XChainId } from 'app/pages/trade/bridge/types';
+import { useBridgeDirection } from 'store/bridge/hooks';
+import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 
 export enum CurrencySelectionType {
   NORMAL,
@@ -60,6 +61,7 @@ interface CurrencySearchProps {
   width?: number;
   balanceList?: { [key: string]: BigNumber };
   showCommunityListControl?: boolean;
+  xChainId: XChainId;
 }
 
 export function CurrencySearch({
@@ -80,6 +82,7 @@ export function CurrencySearch({
   width,
   balanceList,
   showCommunityListControl,
+  xChainId,
 }: CurrencySearchProps) {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const debouncedQuery = useDebounce(searchQuery, 200);
@@ -88,9 +91,9 @@ export function CurrencySearch({
 
   const tokens = useAllTokens();
   const bases = useCommonBases();
-  const bridgeDirection = useBridgeDirection();
 
-  const bridgeDirectionString = `${bridgeDirection.from}-${bridgeDirection.to}`;
+  const bridgeDirection = useBridgeDirection();
+  const xTokens = useXTokens(bridgeDirection.from, bridgeDirection.to);
 
   const allTokens: { [address: string]: Token } = useMemo(() => {
     switch (currencySelectionType) {
@@ -103,32 +106,10 @@ export function CurrencySearch({
       case CurrencySelectionType.VOTE_FUNDING:
         return FUNDING_TOKENS_LIST;
       case CurrencySelectionType.BRIDGE: {
-        //TODO: handle for multiple chain selections in the future
-        if (bridgeDirectionString === 'archway-icon') {
-          return ARCHWAY_SUPPORTED_TOKENS_LIST.reduce(
-            (tokens, token) => {
-              tokens[token.address] = token;
-              return tokens;
-            },
-            {} as { [address: string]: Token },
-          );
-        } else if (bridgeDirectionString === 'icon-archway') {
-          const archSymbols = ARCHWAY_SUPPORTED_TOKENS_LIST.map(token => token.symbol);
-          return Object.keys(tokens).reduce(
-            (tokenUnion, token) => {
-              if (archSymbols.includes(tokens[token].symbol)) {
-                tokenUnion[token] = tokens[token];
-              }
-              return tokenUnion;
-            },
-            {} as { [address: string]: Token },
-          );
-        } else {
-          return tokens;
-        }
+        return xTokens || [];
       }
     }
-  }, [currencySelectionType, tokens, bases, bridgeDirectionString]);
+  }, [currencySelectionType, tokens, bases, xTokens]);
 
   //select first currency from list if there is none selected for bridging
   useEffect(() => {
@@ -160,7 +141,7 @@ export function CurrencySearch({
 
   const filteredSortedTokensWithICX: Currency[] = useMemo(() => {
     const s = debouncedQuery.toLowerCase().trim();
-    if ('icon'.indexOf(s) >= 0 || 'icx'.indexOf(s) >= 0) {
+    if ('0x1.icon'.indexOf(s) >= 0 || 'icx'.indexOf(s) >= 0) {
       return icx ? [icx, ...filteredSortedTokens] : filteredSortedTokens;
     }
     return filteredSortedTokens;

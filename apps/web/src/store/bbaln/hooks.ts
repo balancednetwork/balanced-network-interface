@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { BigNumber } from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
-import { useQuery, UseQueryResult } from 'react-query';
+import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { LockedPeriod } from 'app/components/home/BBaln/types';
@@ -19,8 +19,8 @@ import { useAllTransactions } from 'store/transactions/hooks';
 import { formatUnits } from 'utils';
 
 import { AppState } from '..';
-import { Field } from '../loan/actions';
-import { adjust, cancel, type, changeData, changePeriod, changeSources, changeTotalSupply } from './actions';
+import { Field } from '../loan/reducer';
+import { adjust, cancel, type, changeData, changePeriod, changeSources, changeTotalSupply } from './reducer';
 
 const PERCENTAGE_DISTRIBUTED = new BigNumber(0.3);
 const ENSHRINEMENT_RATIO = new BigNumber(0.5);
@@ -139,6 +139,7 @@ export function useFetchBBalnInfo(account?: string | null) {
     }
   }, [changeTotalSupply]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (account) {
       fetchBBalnInfo(account);
@@ -198,8 +199,14 @@ export function useHasLockExpired() {
   const lockedUntil = useLockedUntil();
   const now = new Date();
 
-  return useQuery<boolean | undefined>(`hasLockExpired${lockedUntil?.getTime()}`, () => {
-    return lockedUntil && now.getTime() > lockedUntil.getTime();
+  return useQuery<boolean | undefined>({
+    queryKey: [`hasLockExpired`, lockedUntil?.getTime()],
+    queryFn: () => {
+      if (!lockedUntil) return;
+
+      return now.getTime() > lockedUntil.getTime();
+    },
+    enabled: !!lockedUntil,
   });
 }
 
@@ -351,65 +358,62 @@ export const usePastMonthFeesDistributed = () => {
   const { data: blockThen } = useBlockDetails(new Date(now).setDate(new Date().getDate() - 30));
   const { data: rates } = useRatesQuery();
 
-  return useQuery(
-    `PastMonthFeesDistributed${blockThen && blockThen.number}${rates && Object.keys(rates).length}`,
-    async () => {
-      if (blockThen?.number && rates) {
-        try {
-          const loanFeesNow = await bnJs.FeeHandler.getLoanFeesAccrued();
-          const loanFeesThen = await bnJs.FeeHandler.getLoanFeesAccrued(blockThen.number);
+  return useQuery({
+    queryKey: [`PastMonthFeesDistributed`, blockThen && blockThen.number, rates && Object.keys(rates).length],
+    queryFn: async () => {
+      if (!blockThen || !rates) return;
 
-          const fundFeesNow = await bnJs.FeeHandler.getStabilityFundFeesAccrued();
-          const fundFeesThen = await bnJs.FeeHandler.getStabilityFundFeesAccrued(blockThen.number);
+      const loanFeesNow = await bnJs.FeeHandler.getLoanFeesAccrued();
+      const loanFeesThen = await bnJs.FeeHandler.getLoanFeesAccrued(blockThen.number);
 
-          //swap fees
-          const bnUSDFeesNow = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.bnUSD.address);
-          const bnUSDFeesThen = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.bnUSD.address, blockThen.number);
+      const fundFeesNow = await bnJs.FeeHandler.getStabilityFundFeesAccrued();
+      const fundFeesThen = await bnJs.FeeHandler.getStabilityFundFeesAccrued(blockThen.number);
 
-          const sICXFeesNow = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.sICX.address);
-          const sICXFeesThen = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.sICX.address, blockThen.number);
+      //swap fees
+      const bnUSDFeesNow = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.bnUSD.address);
+      const bnUSDFeesThen = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.bnUSD.address, blockThen.number);
 
-          const balnFeesNow = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.BALN.address);
-          const balnFeesThen = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.BALN.address, blockThen.number);
+      const sICXFeesNow = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.sICX.address);
+      const sICXFeesThen = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.sICX.address, blockThen.number);
 
-          const bnUSDFees = new BigNumber(formatUnits(bnUSDFeesNow))
-            .minus(new BigNumber(formatUnits(bnUSDFeesThen)))
-            .times(ENSHRINEMENT_RATIO)
-            .times(PERCENTAGE_DISTRIBUTED);
-          const sICXFees = new BigNumber(formatUnits(sICXFeesNow))
-            .minus(new BigNumber(formatUnits(sICXFeesThen)))
-            .times(rates['sICX'])
-            .times(ENSHRINEMENT_RATIO)
-            .times(PERCENTAGE_DISTRIBUTED);
-          const balnFees = new BigNumber(formatUnits(balnFeesNow))
-            .minus(new BigNumber(formatUnits(balnFeesThen)))
-            .times(rates['BALN'])
-            .times(ENSHRINEMENT_RATIO)
-            .times(PERCENTAGE_DISTRIBUTED);
-          const loansFees = new BigNumber(formatUnits(loanFeesNow))
-            .minus(new BigNumber(formatUnits(loanFeesThen)))
-            .times(ENSHRINEMENT_RATIO)
-            .times(PERCENTAGE_DISTRIBUTED);
-          const fundFees = new BigNumber(formatUnits(fundFeesNow))
-            .minus(new BigNumber(formatUnits(fundFeesThen)))
-            .times(ENSHRINEMENT_RATIO)
-            .times(PERCENTAGE_DISTRIBUTED);
+      const balnFeesNow = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.BALN.address);
+      const balnFeesThen = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.BALN.address, blockThen.number);
 
-          return {
-            loans: loansFees,
-            fund: fundFees,
-            swapsBALN: balnFees,
-            swapsSICX: sICXFees,
-            swapsBnUSD: bnUSDFees,
-            total: loansFees.plus(fundFees).plus(balnFees).plus(sICXFees).plus(bnUSDFees),
-          };
-        } catch (e) {
-          console.error('Error calculating distributed fees: ', e);
-        }
-      }
+      const bnUSDFees = new BigNumber(formatUnits(bnUSDFeesNow))
+        .minus(new BigNumber(formatUnits(bnUSDFeesThen)))
+        .times(ENSHRINEMENT_RATIO)
+        .times(PERCENTAGE_DISTRIBUTED);
+      const sICXFees = new BigNumber(formatUnits(sICXFeesNow))
+        .minus(new BigNumber(formatUnits(sICXFeesThen)))
+        .times(rates['sICX'])
+        .times(ENSHRINEMENT_RATIO)
+        .times(PERCENTAGE_DISTRIBUTED);
+      const balnFees = new BigNumber(formatUnits(balnFeesNow))
+        .minus(new BigNumber(formatUnits(balnFeesThen)))
+        .times(rates['BALN'])
+        .times(ENSHRINEMENT_RATIO)
+        .times(PERCENTAGE_DISTRIBUTED);
+      const loansFees = new BigNumber(formatUnits(loanFeesNow))
+        .minus(new BigNumber(formatUnits(loanFeesThen)))
+        .times(ENSHRINEMENT_RATIO)
+        .times(PERCENTAGE_DISTRIBUTED);
+      const fundFees = new BigNumber(formatUnits(fundFeesNow))
+        .minus(new BigNumber(formatUnits(fundFeesThen)))
+        .times(ENSHRINEMENT_RATIO)
+        .times(PERCENTAGE_DISTRIBUTED);
+
+      return {
+        loans: loansFees,
+        fund: fundFees,
+        swapsBALN: balnFees,
+        swapsSICX: sICXFees,
+        swapsBnUSD: bnUSDFees,
+        total: loansFees.plus(fundFees).plus(balnFees).plus(sICXFees).plus(bnUSDFees),
+      };
     },
-    { keepPreviousData: true },
-  );
+    enabled: !!blockThen && !!rates,
+    placeholderData: keepPreviousData,
+  });
 };
 
 export const useTimeRemaining = () => {
@@ -421,9 +425,12 @@ export const useTimeRemaining = () => {
 };
 
 export const useTotalBalnLocked = () => {
-  return useQuery('totalBalnLocked', async () => {
-    const data = await bnJs.BBALN.getTotalLocked();
-    return new BigNumber(formatUnits(data));
+  return useQuery({
+    queryKey: ['totalBalnLocked'],
+    queryFn: async () => {
+      const data = await bnJs.BBALN.getTotalLocked();
+      return new BigNumber(formatUnits(data));
+    },
   });
 };
 
@@ -432,15 +439,20 @@ export function useBBalnApr(): UseQueryResult<BigNumber | undefined> {
   const { data: prices } = useTokenPrices();
   const bBALNSupply = useTotalSupply();
 
-  return useQuery(
-    `bbalnApr-${pastMonthDistributed ? 'fees' : 'nofees'}-${bBALNSupply ? bBALNSupply.toFixed(0) : ''}-${
-      prices ? Object.keys(prices).length : ''
-    }`,
-    async () => {
+  return useQuery({
+    queryKey: [
+      `bbalnApr`,
+      pastMonthDistributed ? 'fees' : 'nofees',
+      bBALNSupply ? bBALNSupply.toFixed(0) : '',
+      prices ? Object.keys(prices).length : '',
+    ],
+    queryFn: async () => {
       if (!pastMonthDistributed || !prices || !bBALNSupply) return;
+
       const assumedYearlyDistribution = pastMonthDistributed.total.times(12);
       return assumedYearlyDistribution.div(bBALNSupply.times(prices['BALN'])).times(100);
     },
-    { keepPreviousData: true },
-  );
+    enabled: !!pastMonthDistributed && !!prices && !!bBALNSupply,
+    placeholderData: keepPreviousData,
+  });
 }

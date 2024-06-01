@@ -4,7 +4,7 @@ import { addresses, BalancedJs, CallData } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { useIconReact } from 'packages/icon-react';
-import { useQuery, UseQueryResult } from 'react-query';
+import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
@@ -20,13 +20,15 @@ export const BATCH_SIZE = 10;
 export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) => {
   const { account } = useIconReact();
 
-  return useQuery<({ [address in string]: CurrencyAmount<Currency> } | null)[]>(
-    QUERY_KEYS.Reward.UserCollectedFees(account ?? '', start, end),
-    async () => {
+  return useQuery<({ [address in string]: CurrencyAmount<Currency> } | null)[] | undefined>({
+    queryKey: QUERY_KEYS.Reward.UserCollectedFees(account ?? '', start, end),
+    queryFn: async () => {
+      if (!account) return;
+
       const promises: Promise<any>[] = [];
       for (let i = end; i > 1; i -= BATCH_SIZE) {
         const startValue = i - BATCH_SIZE;
-        promises.push(bnJs.Dividends.getUserDividends(account!, startValue > 0 ? startValue : 0, i));
+        promises.push(bnJs.Dividends.getUserDividends(account, startValue > 0 ? startValue : 0, i));
       }
 
       let feesArr = await Promise.all(promises);
@@ -46,49 +48,51 @@ export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) =>
 
       return feesArr;
     },
-    {
-      enabled: !!account,
-    },
-  );
-};
-
-export const usePlatformDayQuery = () => {
-  return useQuery<number>(QUERY_KEYS.Reward.PlatformDay, async () => {
-    const res = await bnJs.Governance.getDay();
-    return parseInt(res, 16);
+    enabled: !!account,
   });
 };
 
-export const useLPReward = (): UseQueryResult<CurrencyAmount<Token>> => {
+export const usePlatformDayQuery = () => {
+  return useQuery<number>({
+    queryKey: QUERY_KEYS.Reward.PlatformDay,
+    queryFn: async () => {
+      const res = await bnJs.Governance.getDay();
+      return parseInt(res, 16);
+    },
+  });
+};
+
+export const useLPReward = () => {
   const { account } = useIconReact();
   const blockNumber = useBlockNumber();
 
-  return useQuery<CurrencyAmount<Token>>(
-    `${QUERY_KEYS.Reward.UserReward(account ?? '')}-${blockNumber}`,
-    async () => {
-      const res = await bnJs.Rewards.getBalnHolding(account!);
+  return useQuery<CurrencyAmount<Token> | undefined>({
+    queryKey: [QUERY_KEYS.Reward.UserReward(account ?? ''), blockNumber],
+    queryFn: async () => {
+      if (!account) return;
+
+      const res = await bnJs.Rewards.getBalnHolding(account);
       return CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.BALN.address], res);
     },
-    { keepPreviousData: true, enabled: !!account },
-  );
+    placeholderData: keepPreviousData,
+    enabled: !!account,
+  });
 };
 
 export const useRatesQuery = () => {
   const { data: allTokens, isSuccess: allTokensSuccess } = useAllTokens();
 
-  return useQuery<{ [key in string]: BigNumber }>(
-    `tokenPrices${allTokens}`,
-    () => {
+  return useQuery<{ [key in string]: BigNumber }>({
+    queryKey: [`tokenPrices`, allTokens],
+    queryFn: () => {
       return allTokens.reduce((tokens, item) => {
         tokens[item['symbol']] = new BigNumber(item.price);
         return tokens;
       }, {});
     },
-    {
-      keepPreviousData: true,
-      enabled: allTokensSuccess,
-    },
-  );
+    placeholderData: keepPreviousData,
+    enabled: allTokensSuccess,
+  });
 };
 
 export const useRatesWithOracle = () => {
@@ -111,49 +115,45 @@ export const useIncentivisedPairs = (): UseQueryResult<
 > => {
   const { data: rewards } = useFlattenedRewardsDistribution();
 
-  return useQuery(
-    ['incentivisedPairs', rewards],
-    async () => {
-      if (rewards) {
-        const lpData = await bnJs.StakedLP.getDataSources();
-        const lpSources: string[] = ['sICX/ICX', ...lpData];
+  return useQuery({
+    queryKey: ['incentivisedPairs', rewards],
+    queryFn: async () => {
+      if (!rewards) return;
 
-        const cds: CallData[] = lpSources.map(source => ({
-          target: addresses[NETWORK_ID].stakedLp,
-          method: 'getSourceId',
-          params: [source],
-        }));
+      const lpData = await bnJs.StakedLP.getDataSources();
+      const lpSources: string[] = ['sICX/ICX', ...lpData];
 
-        const sourceIDs = await bnJs.Multicall.getAggregateData(cds);
+      const cds: CallData[] = lpSources.map(source => ({
+        target: addresses[NETWORK_ID].stakedLp,
+        method: 'getSourceId',
+        params: [source],
+      }));
 
-        const sourcesTotalStaked = await Promise.all(
-          sourceIDs.map(
-            async (source, index) => await bnJs.StakedLP.totalStaked(index === 0 ? 1 : parseInt(source, 16)),
-          ),
-        );
+      const sourceIDs = await bnJs.Multicall.getAggregateData(cds);
 
-        return lpSources.map((source, index) => ({
-          name: source,
-          id: index === 0 ? 1 : parseInt(sourceIDs[index], 16),
-          rewards: rewards[source],
-          totalStaked: parseInt((sourcesTotalStaked[index] as string) ?? '0x0', 16),
-        }));
-      }
+      const sourcesTotalStaked = await Promise.all(
+        sourceIDs.map(async (source, index) => await bnJs.StakedLP.totalStaked(index === 0 ? 1 : parseInt(source, 16))),
+      );
+
+      return lpSources.map((source, index) => ({
+        name: source,
+        id: index === 0 ? 1 : parseInt(sourceIDs[index], 16),
+        rewards: rewards[source],
+        totalStaked: parseInt((sourcesTotalStaked[index] as string) ?? '0x0', 16),
+      }));
     },
-    {
-      keepPreviousData: true,
-    },
-  );
+    enabled: !!rewards,
+    placeholderData: keepPreviousData,
+  });
 };
 
 export const useICXConversionFee = () => {
-  return useQuery('icxConversionFee', async () => {
-    try {
+  return useQuery({
+    queryKey: ['icxConversionFee'],
+    queryFn: async () => {
       const feesRaw = await bnJs.Dex.getFees();
       const fee = new Fraction(feesRaw['icx_conversion_fee'], 100);
       return fee;
-    } catch (e) {
-      console.error(e);
-    }
+    },
   });
 };

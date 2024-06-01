@@ -1,7 +1,6 @@
 import { Fraction } from '@balancednetwork/sdk-core';
-import { createReducer } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
-import { changeEditing, changeInputValue, changePowerLeft, changeShowConfirmation, changeUserData } from './actions';
 import { VoteItemInfo } from './types';
 
 export interface LiveVotingState {
@@ -24,21 +23,33 @@ const initialState: LiveVotingState = {
   },
 };
 
-export default createReducer(initialState, builder =>
-  builder
-    .addCase(changeUserData, (state, { payload: { userData } }) => {
-      state.userData = userData;
-    })
-    .addCase(changeEditing, (state, { payload: { editing } }) => {
+const liveVotingSlice = createSlice({
+  name: 'liveVoting',
+  initialState,
+  reducers: create => ({
+    changeUserData: create.reducer<{ userData: Map<string, VoteItemInfo> | undefined }>(
+      (state, { payload: { userData } }) => {
+        state.userData = userData;
+      },
+    ),
+    changeEditing: create.reducer<{ editing: string }>((state, { payload: { editing } }) => {
       state.editState.editing = editing;
-    })
-    .addCase(changePowerLeft, (state, { payload: { powerLeft } }) => {
-      state.powerLeft = powerLeft;
-    })
-    .addCase(changeInputValue, (state, { payload: { inputValue } }) => {
-      state.editState.inputValue = inputValue;
-    })
-    .addCase(changeShowConfirmation, (state, { payload: { showConfirmation } }) => {
-      state.editState.showConfirmation = showConfirmation;
     }),
-);
+    changePowerLeft: create.reducer<{ powerLeft: Fraction | undefined }>((state, { payload: { powerLeft } }) => {
+      state.powerLeft = powerLeft;
+    }),
+    changeInputValue: create.reducer<{ inputValue: string }>((state, { payload: { inputValue } }) => {
+      state.editState.inputValue = inputValue;
+    }),
+    changeShowConfirmation: create.reducer<{ showConfirmation: boolean }>(
+      (state, { payload: { showConfirmation } }) => {
+        state.editState.showConfirmation = showConfirmation;
+      },
+    ),
+  }),
+});
+
+export const { changeEditing, changeInputValue, changePowerLeft, changeShowConfirmation, changeUserData } =
+  liveVotingSlice.actions;
+
+export default liveVotingSlice.reducer;

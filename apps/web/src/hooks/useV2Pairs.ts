@@ -4,9 +4,8 @@ import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
-import JSBI from 'jsbi';
 
-import { usePoolPanelContext } from 'app/components/trade/PoolPanelContext';
+import { usePoolPanelContext } from 'app/pages/trade/supply/_components/PoolPanelContext';
 import bnJs from 'bnJs';
 import { canBeQueue } from 'constants/currency';
 import { BIGINT_ZERO, FRACTION_ZERO } from 'constants/misc';
@@ -39,6 +38,7 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
     setPairs(Array(tokens.length).fill([PairState.LOADING, null]));
   }, [tokens]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const fetchReserves = async () => {
       try {
@@ -115,7 +115,7 @@ export function usePoolShare(poolId: number, tokenA?: Currency, tokenB?: Currenc
   const pair = useV2Pair(tokenA, tokenB)[1];
 
   return useMemo(() => {
-    if (balance && pair && JSBI.greaterThan(pair.totalSupply?.quotient || BIGINT_ZERO, BIGINT_ZERO)) {
+    if (balance && pair && (pair.totalSupply?.quotient || BIGINT_ZERO) > BIGINT_ZERO) {
       const res = balance.stakedLPBalance
         ? balance.balance.add(balance.stakedLPBalance).divide(pair.totalSupply || BIGINT_ZERO)
         : balance.balance.divide(pair.totalSupply || BIGINT_ZERO);
@@ -168,6 +168,7 @@ export function useBalances(
 
   const last = useLastCount(10000);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     async function fetchBalances() {
       if (!account) return;

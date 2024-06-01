@@ -25,7 +25,6 @@ import { TransactionState } from 'store/transactions/reducer';
 import { TransactionsCrosschainState } from 'store/transactionsCrosschain/reducer';
 import { UserState } from 'store/user/reducer';
 import { WalletState } from 'store/wallet/reducer';
-import { XCallState } from 'store/xCall/reducer';
 
 // #redux-step-3: define interface for RootState (the root tree view on Redux Devtool chrome extension)
 export interface RootState {
@@ -48,7 +47,6 @@ export interface RootState {
   lists: TokenListState;
   liveVoting: LiveVotingState;
   arbitraryCalls: ArbitraryCallsState;
-  xCall: XCallState;
   transactionsCrosschain: TransactionsCrosschainState;
   bridge: BridgeState;
   savings: SavingsState;

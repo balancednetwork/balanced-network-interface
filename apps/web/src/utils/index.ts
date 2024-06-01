@@ -3,7 +3,6 @@ import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
-import JSBI from 'jsbi';
 
 import { NETWORK_ID } from 'constants/config';
 import { canBeQueue } from 'constants/currency';
@@ -12,19 +11,33 @@ import { BIGINT_ZERO } from 'constants/misc';
 import { PairInfo } from 'constants/pairs';
 import { COMBINED_TOKENS_LIST } from 'constants/tokens';
 import { PairData, PairState } from 'hooks/useV2Pairs';
-import { Field } from 'store/swap/actions';
+import { Field } from 'store/swap/reducer';
+import { XChainId } from 'app/pages/trade/bridge/types';
+import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { bech32 } from 'bech32';
+import { ethers } from 'ethers';
 
 const { isEoaAddress, isScoreAddress } = Validator;
 
+const isBech32 = (string: string) => {
+  try {
+    bech32.decode(string);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 const isArchEoaAddress = (address: string) => {
-  return address.startsWith('archway');
+  return isBech32(address) && address.startsWith('archway');
 };
 
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
 export function shortenAddress(address: string, chars = 7): string {
-  if (!isEoaAddress(address) && !isArchEoaAddress(address)) {
-    throw Error(`Invalid 'address' parameter '${address}'.`);
-  }
+  // !TODO: fix it later
+  // if (!isEoaAddress(address) && !isArchEoaAddress(address)) {
+  //   throw Error(`Invalid 'address' parameter '${address}'.`);
+  // }
   return `${address.substring(0, chars + 2)}...${address.substring(address.length - chars)}`;
 }
 
@@ -98,21 +111,18 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
   }
 }
 
-const MIN_NATIVE_CURRENCY_FOR_GAS: JSBI = JSBI.multiply(
-  JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(18)),
-  JSBI.BigInt(MINIMUM_ICX_FOR_ACTION),
-); // 2 ICX
+const MIN_NATIVE_CURRENCY_FOR_GAS: bigint = 10n ** 18n * BigInt(MINIMUM_ICX_FOR_ACTION); // 2 ICX
 
 export function maxAmountSpend(currencyAmount?: CurrencyAmount<Currency>): CurrencyAmount<Currency> | undefined {
   if (!currencyAmount) return undefined;
   if (currencyAmount.currency.symbol === 'ICX') {
-    if (JSBI.greaterThan(currencyAmount.quotient, MIN_NATIVE_CURRENCY_FOR_GAS)) {
+    if (currencyAmount.quotient > MIN_NATIVE_CURRENCY_FOR_GAS) {
       return CurrencyAmount.fromRawAmount(
         currencyAmount.currency,
-        JSBI.subtract(currencyAmount.quotient, MIN_NATIVE_CURRENCY_FOR_GAS),
+        currencyAmount.quotient - MIN_NATIVE_CURRENCY_FOR_GAS,
       );
     } else {
-      return CurrencyAmount.fromRawAmount(currencyAmount.currency, JSBI.BigInt(0));
+      return CurrencyAmount.fromRawAmount(currencyAmount.currency, 0n);
     }
   }
   return currencyAmount;
@@ -275,13 +285,13 @@ export function multiplyCABN(ca: CurrencyAmount<Currency>, bn: BigNumber): Curre
   const bnFrac = toFraction(bn);
   return CurrencyAmount.fromFractionalAmount(
     ca.currency,
-    JSBI.multiply(ca.numerator, bnFrac.numerator),
-    JSBI.multiply(ca.denominator, bnFrac.denominator),
+    ca.numerator * bnFrac.numerator,
+    ca.denominator * bnFrac.denominator,
   );
 }
 
 export function isZeroCA(ca: CurrencyAmount<Currency>): boolean {
-  return JSBI.equal(ca.quotient, BIGINT_ZERO);
+  return ca.quotient === BIGINT_ZERO;
 }
 
 export function toBigNumber(ca: CurrencyAmount<Currency> | undefined): BigNumber {
@@ -311,4 +321,15 @@ export function getAccumulatedInterest(principal: BigNumber, rate: BigNumber, da
   const dailyRate = rate.div(365);
   const accumulatedInterest = principal.times(dailyRate.plus(1).pow(days)).minus(principal);
   return accumulatedInterest;
+}
+
+export function validateAddress(address: string, chainId: XChainId): boolean {
+  switch (xChainMap[chainId].xChainType) {
+    case 'ICON':
+      return isScoreAddress(address) || isEoaAddress(address);
+    case 'EVM':
+      return ethers.utils.isAddress(address);
+    case 'ARCHWAY':
+      return isArchEoaAddress(address);
+  }
 }

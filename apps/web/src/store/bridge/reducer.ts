@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { SupportedXCallChains } from 'app/_xcall/types';
+import { XChainId } from 'app/pages/trade/bridge/types';
 
-import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
-import { getCrossChainTokenBySymbol } from 'app/_xcall/utils';
+import { Currency } from '@balancednetwork/sdk-core';
+import { getCrossChainTokenBySymbol } from 'app/pages/trade/bridge/utils';
 
 export enum Field {
   FROM = 'FROM',
@@ -15,17 +15,19 @@ export interface BridgeState {
   currency: Currency | undefined;
 
   [Field.FROM]: {
-    chain: SupportedXCallChains;
+    chainId: XChainId;
     currency: Currency | undefined;
     percent: number;
   };
   [Field.TO]: {
-    chain: SupportedXCallChains;
+    chainId: XChainId;
     currency: Currency | undefined;
     percent: number;
   };
   // the typed recipient address or ENS name, or null if swap should go to sender
   recipient: string | null;
+  // when bridging sARCH from ICON to Archway, decide whether unstake sARCH to ARCH using Liquid Finance or keep sARCH
+  isLiquidFinanceEnabled: boolean;
 }
 
 const initialState: BridgeState = {
@@ -33,39 +35,38 @@ const initialState: BridgeState = {
   currency: undefined,
 
   [Field.FROM]: {
-    chain: 'archway',
+    chainId: 'archway-1',
     currency: undefined,
     percent: 0,
   },
   [Field.TO]: {
-    chain: 'icon',
+    chainId: '0x1.icon',
     currency: undefined,
     percent: 0,
   },
   recipient: null,
+  isLiquidFinanceEnabled: false,
 };
 
 const bridgeSlice = createSlice({
   name: 'bridge',
   initialState,
   reducers: create => ({
-    selectChain: create.reducer<{ field: Field; chain: SupportedXCallChains }>(
-      (state, { payload: { field, chain } }) => {
-        const otherField = field === Field.FROM ? Field.TO : Field.FROM;
-        if (chain === state[otherField].chain) {
-          state[otherField].chain = state[field].chain;
-        }
-        state[field].chain = chain;
-        state.currency = undefined;
-      },
-    ),
+    selectChain: create.reducer<{ field: Field; chainId: XChainId }>((state, { payload: { field, chainId } }) => {
+      const otherField = field === Field.FROM ? Field.TO : Field.FROM;
+      if (chainId === state[otherField].chainId) {
+        state[otherField].chainId = state[field].chainId;
+      }
+      state[field].chainId = chainId;
+      state.currency = undefined;
+    }),
 
     switchChain: create.reducer<void>(state => {
-      const fromChain = state[Field.FROM].chain;
-      state[Field.FROM].chain = state[Field.TO].chain;
-      state[Field.TO].chain = fromChain;
+      const fromChain = state[Field.FROM].chainId;
+      state[Field.FROM].chainId = state[Field.TO].chainId;
+      state[Field.TO].chainId = fromChain;
 
-      state.currency = getCrossChainTokenBySymbol(state[Field.FROM].chain, state.currency?.symbol);
+      state.currency = getCrossChainTokenBySymbol(state[Field.FROM].chainId, state.currency?.symbol);
       // const fromCurrency = state[Field.FROM].currency;
       // state[Field.FROM].currency = state[Field.TO].currency;
       // state[Field.TO].currency = fromCurrency;
@@ -91,9 +92,14 @@ const bridgeSlice = createSlice({
         state.typedValue = value;
       },
     ),
+
+    selectLiquidFinance: create.reducer<boolean>((state, { payload }) => {
+      state.isLiquidFinanceEnabled = payload;
+    }),
   }),
 });
 
 export default bridgeSlice.reducer;
 
-export const { selectChain, typeInput, selectCurrency, setRecipient, switchChain, selectPercent } = bridgeSlice.actions;
+export const { selectChain, typeInput, selectCurrency, setRecipient, switchChain, selectPercent, selectLiquidFinance } =
+  bridgeSlice.actions;

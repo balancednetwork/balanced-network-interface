@@ -17,8 +17,8 @@ msgstr ""
 "X-Crowdin-File-ID: 12\n"
 
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
-msgid "Rollback failed."
-msgstr ""
+#~ msgid "Rollback failed."
+#~ msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Monthly"
@@ -32,7 +32,7 @@ msgstr "투표 제출?"
 msgid "The current bnUSD price is"
 msgstr "현재 bnUSD 가격은"
 
-#: src/app/components/trade/LPDescription.tsx
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "{0} / {1} liquidity pool"
 msgstr "{0} / {1} 유동성 풀"
 
@@ -48,7 +48,11 @@ msgstr ""
 msgid "Redemptions"
 msgstr ""
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/Routes.tsx
+msgid "Legacy bridge"
+msgstr ""
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "then create the pool."
 msgstr "그런 다음 풀을 만듭니다."
 
@@ -56,15 +60,16 @@ msgstr "그런 다음 풀을 만듭니다."
 msgid "Your ICX is staked (sICX). Choose what to do with it:"
 msgstr ""
 
-#: src/app/components/trade/LPDescription.tsx
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "{0} queue{1}"
 msgstr ""
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/components/AddressInputPanel/index.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 msgid "To"
 msgstr ""
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Removing"
 msgstr "제거 중"
 
@@ -80,15 +85,18 @@ msgstr ""
 msgid "Your transaction has failed. Please go back and try again."
 msgstr ""
 
-#: src/app/_xcall/archway/AllowanceHandler/index.tsx
+#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
+#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
+#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
+#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
 msgid "{0} transfer approval failed."
 msgstr ""
 
-#: src/app/components/trade/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 msgid "4H"
 msgstr "4시간"
 
-#: src/app/components/trade/utils.tsx
+#: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Supplying {pair} liquidity..."
 msgstr "{pair} 유동성을 제공하는 중..."
 
@@ -101,7 +109,7 @@ msgstr "{0} ICX"
 msgid "Withdraw Balance Tokens"
 msgstr ""
 
-#: src/app/components/trade/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 msgid "15m"
 msgstr "15분"
 
@@ -119,8 +127,8 @@ msgid "Rebalancing complete."
 msgstr "재조정 완료."
 
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
-msgid "Reverting..."
-msgstr ""
+#~ msgid "Reverting..."
+#~ msgstr ""
 
 #: src/app/components/home/RewardsPanel/SavingsRewards.tsx
 msgid "Claim Savings Rate rewards?"
@@ -130,7 +138,7 @@ msgstr ""
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
-#: src/app/containers/HomePage/index.tsx
+#: src/app/pages/page.tsx
 msgid "Loan"
 msgstr "대출"
 
@@ -146,40 +154,40 @@ msgid "Unstaking"
 msgstr "스테이킹 해제"
 
 #: src/app/components/ProposalModal/index.tsx
-#: src/app/containers/ProposalPage/index.tsx
-#: src/app/containers/ProposalPage/index.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "Change vote"
 msgstr "투표 변경"
 
 #: src/app/components/ProposalModal/index.tsx
-#: src/app/containers/ProposalPage/index.tsx
-#: src/app/containers/ProposalPage/index.tsx
-#: src/app/containers/ProposalPage/index.tsx
-#: src/app/containers/ProposalPage/index.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "Reject"
 msgstr "거부하다"
 
-#: src/app/containers/VotePage/LieVotingPanel/index.tsx
-#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Your allocation"
 msgstr ""
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "Wallet:"
 msgstr "지갑:"
 
-#: src/app/containers/VotePage/utils.ts
+#: src/app/pages/vote/_components/utils.ts
 #: src/utils/timeformat.ts
 msgid "h"
 msgstr ""
 
-#: src/app/containers/VotePage/LieVotingPanel/index.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 msgid ", the current incentives will be adjusted to reflect this allocation."
 msgstr ", 현재 인센티브는 이 할당을 반영하도록 조정될 것이다."
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Assets to send"
 msgstr "송금할 자산"
 
@@ -187,10 +195,11 @@ msgstr "송금할 자산"
 msgid "Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity pools."
 msgstr ""
 
-#: src/app/containers/VotePage/VotingPowerPanel/index.tsx
+#: src/app/pages/vote/_components/VotingPowerPanel/index.tsx
 msgid "Total voting power"
 msgstr ""
 
+#: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repay"
 msgstr "상환"
@@ -211,7 +220,7 @@ msgstr ""
 msgid "Sending {0} to the bridge contract..."
 msgstr ""
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Supplying"
 msgstr "공급 중"
 
@@ -219,7 +228,7 @@ msgstr "공급 중"
 msgid "for 100% earning power."
 msgstr ""
 
-#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "Contract calls"
 msgstr ""
 
@@ -232,19 +241,19 @@ msgstr ""
 #~ msgstr "보상"
 
 #: src/app/components/StabilityFund/index.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
 msgid "Pay"
 msgstr "지불"
 
-#: src/app/containers/VotePage/BribesPanel/index.tsx
+#: src/app/pages/vote/_components/BribesPanel/index.tsx
 msgid "Vote to incentivise specific liquidity pools and earn a kickback for it."
 msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
-msgid "Awaiting message from Archway network"
-msgstr ""
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "Awaiting message from Archway network"
+#~ msgstr ""
 
 #: src/app/components/home/RewardsPanel/index.tsx
 msgid "Earning potential"
@@ -254,29 +263,29 @@ msgstr ""
 #~ msgid "Boost rewards"
 #~ msgstr ""
 
-#: src/app/containers/VotePage/LieVotingPanel/index.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 msgid "Incentives will be updated in"
 msgstr ""
 
-#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "{0} {1} available"
 msgstr ""
 
-#: src/app/containers/HomePage/index.tsx
+#: src/app/pages/page.tsx
 msgid "To deposit collateral, sign in on ICON."
 msgstr ""
 
-#: src/app/containers/NewProposalPage/index.tsx
-#: src/app/containers/VotePage/ProposalsPanel/index.tsx
-#: src/app/containers/VotePage/ProposalsPanel/ProposalList.tsx
+#: src/app/pages/vote/_components/ProposalsPanel/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
+#: src/app/pages/vote/proposals/page.tsx
 msgid "New proposal"
 msgstr "새로운 제안"
 
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
-msgid "Awaiting execution on ICON."
-msgstr ""
+#~ msgid "Awaiting execution on ICON."
+#~ msgstr ""
 
-#: src/app/components/trade/utils.tsx
+#: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Couldn't transfer {inputCurrency} to {network}. Try again."
 msgstr ""
 
@@ -284,11 +293,11 @@ msgstr ""
 msgid "Available since {0}"
 msgstr ""
 
-#: src/app/containers/VotePage/BribesPanel/index.tsx
+#: src/app/pages/vote/_components/BribesPanel/index.tsx
 msgid "Liquidity bribes"
 msgstr ""
 
-#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "Add a contract call"
 msgstr ""
 
@@ -296,16 +305,16 @@ msgstr ""
 msgid "Sign in"
 msgstr "연결하기"
 
-#: src/app/components/trade/LiquidityDetails.tsx
-#: src/app/components/trade/LiquidityDetails/StakeLPPanel.tsx
-#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "Daily rewards"
 msgstr "1일 보상"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
-#: src/app/containers/HomePage/index.tsx
+#: src/app/pages/page.tsx
 msgid "Collateral"
 msgstr "담보"
 
@@ -327,33 +336,39 @@ msgid "Claiming network fees..."
 msgstr ""
 
 #: src/app/components/trade/SwapPanel.tsx
-msgid "Transfer fee"
-msgstr ""
+#~ msgid "Transfer fee"
+#~ msgstr ""
 
 #: src/app/components/Header/index.tsx
 msgid "Copied"
 msgstr "복사 됨"
 
-#: src/app/containers/VotePage/ProposalsPanel/index.tsx
-#: src/app/containers/VotePage/ProposalsPanel/ProposalList.tsx
+#: src/app/components/CrossChainWalletConnect/index.tsx
+msgid "wallet"
+msgstr ""
+
+#: src/app/pages/vote/_components/ProposalsPanel/index.tsx
+#: src/app/pages/vote/proposals/page.tsx
 msgid "Proposals"
 msgstr "제안"
 
 #: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Search assets"
 msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Total"
 msgstr ""
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Transfer {0} to ICON."
 msgstr ""
 
-#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "Bribe available in"
 msgstr ""
 
@@ -365,9 +380,7 @@ msgstr "최대"
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/Savings/index.tsx
-#: src/app/components/trade/XCallEventManager.tsx
-#: src/app/components/trade/XCallExecutionHandlerICON.tsx
-#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Confirm"
 msgstr "확인"
 
@@ -387,15 +400,17 @@ msgstr "승인됨"
 msgid "Review the community token list on GitHub."
 msgstr ""
 
-#: src/app/_xcall/archway/AllowanceHandler/index.tsx
+#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
+#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
+#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
 msgid "Approving {0} for cross-chain transfer..."
 msgstr ""
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "In contract"
 msgstr "계약중"
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "Proposal submitted."
 msgstr ""
 
@@ -407,7 +422,7 @@ msgstr ""
 msgid "${0}"
 msgstr ""
 
-#: src/app/containers/VotePage/ProposalsPanel/ProposalList.tsx
+#: src/app/pages/vote/proposals/page.tsx
 msgid "All proposals"
 msgstr ""
 
@@ -415,8 +430,12 @@ msgstr ""
 msgid "Use the Stability Fund to swap {0} for {1}"
 msgstr ""
 
-#: src/app/components/trade/XCallSwapModal.tsx
-msgid "Transfer {0} to Archway."
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "Transfer {0} to Archway."
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "Custom"
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
@@ -427,27 +446,27 @@ msgstr "{0} bnUSD의 수수료가 포함됩니다."
 msgid "{0} receive {1}of the fees shared with bBALN holders"
 msgstr ""
 
-#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "You'll be able to readjust your allocation for this pool on"
 msgstr ""
 
-#: src/app/containers/VotePage/LieVotingPanel/index.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 msgid "Where bBALN holders have allocated their voting power, updated live."
 msgstr ""
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "Verify contract calls?"
 msgstr ""
 
-#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "Verify contract calls"
 msgstr ""
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "Submitting a proposal..."
 msgstr "제안 제출 중..."
 
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 msgid "BALN APY"
 msgstr ""
 
@@ -463,15 +482,15 @@ msgstr ""
 msgid "Past day"
 msgstr "하루 동안"
 
-#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Adjust liquidity allocation?"
 msgstr ""
 
-#: src/app/components/trade/XCallSwapModal.tsx
-msgid "Transferring {0} to Archway..."
-msgstr ""
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "Transferring {0} to Archway..."
+#~ msgstr ""
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Sending"
 msgstr "보내는 중"
 
@@ -483,11 +502,11 @@ msgstr "보내는 중"
 msgid "Deposit bnUSD?"
 msgstr ""
 
-#: src/app/components/trade/XCallSwapModal.tsx
-msgid "Requesting cross-chain swap..."
-msgstr ""
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "Requesting cross-chain swap..."
+#~ msgstr ""
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Send each asset to the contract"
 msgstr "각 자산을 계약으로 보냅니다."
 
@@ -503,11 +522,11 @@ msgstr "투표 제출"
 msgid "You'll receive BALN in your wallet immediately"
 msgstr ""
 
-#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw sICX?"
 msgstr "sICX를 회수하겠습니까?"
 
-#: src/app/components/trade/LPDescription.tsx
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "{0} queue"
 msgstr ""
 
@@ -524,7 +543,7 @@ msgstr "당신의 sICX를 담보에 추가합니다."
 msgid "Withdrawing BALN..."
 msgstr ""
 
-#: src/app/components/trade/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 msgid "1D"
 msgstr "1일"
 
@@ -533,7 +552,7 @@ msgstr "1일"
 msgid "Deposit sICX"
 msgstr "sICX 담보"
 
-#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "Lock up BALN and vote for this pool to receive bribes."
 msgstr ""
 
@@ -545,7 +564,7 @@ msgstr ""
 msgid "Remove community token list"
 msgstr ""
 
-#: src/app/components/trade/utils.tsx
+#: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
 msgstr "{inputCurrency} / {outputCurrency} 유동성 공급을 해제할 수 없습니다. 다시 시도하십시오."
 
@@ -553,19 +572,19 @@ msgstr "{inputCurrency} / {outputCurrency} 유동성 공급을 해제할 수 없
 #~ msgid "${0} was distributed over the last 30 days"
 #~ msgstr ""
 
-#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "Verify contract call"
 msgstr ""
 
-#: src/app/components/bridge/XCallItem.tsx
-msgid "Reverting failed."
-msgstr ""
+#: src/app/pages/trade/bridge/_components/XCallItem.tsx
+#~ msgid "Reverting failed."
+#~ msgstr ""
 
-#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/IconWalletModal.tsx
 msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
 msgstr "Ledger에서 보류 중인 트랜잭션을 취소하거나, Chrome에서 사용 권한을 부여하세요."
 
-#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/IconWalletModal.tsx
 msgid "or"
 msgstr ""
 
@@ -574,24 +593,24 @@ msgstr ""
 msgid "Deposit sICX collateral?"
 msgstr "sICX를 담보로 예치하시겠습니까?"
 
-#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "Claimed {0} {1}."
 msgstr ""
 
-#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "left until you can adjust your allocation."
 msgstr ""
 
-#: src/app/components/trade/LPPanel.tsx
+#: src/app/pages/trade/supply/_components/LPPanel.tsx
 msgid "Supply liquidity"
 msgstr "유동성 공급"
 
-#: src/app/containers/NewProposalPage/index.tsx
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "Go back"
 msgstr "돌아가기"
 
-#: src/app/containers/VotePage/VotingPowerPanel/index.tsx
+#: src/app/pages/vote/_components/VotingPowerPanel/index.tsx
 msgid "Average lock-up time"
 msgstr ""
 
@@ -600,35 +619,37 @@ msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete thi
 msgstr "이 거래를 완료하려면 지갑에 최소 {MINIMUM_ICX_FOR_TX} ICX가 필요합니다."
 
 #: src/store/mint/hooks.tsx
-#: src/store/swap/hooks.ts
 msgid "Connect Wallet"
 msgstr "지갑 연결"
 
-#: src/app/components/trade/LiquidityPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
 msgid "Liquidity pools"
 msgstr ""
 
-#: src/app/components/trade/utils.tsx
+#: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Swapping {inputCurrency} for {outputCurrency}..."
 msgstr "{inputCurrency} 을 {outputCurrency} 으로 스왑하는 중..."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
-msgid "Liquidity supplied."
-msgstr ""
+#~ msgid "Liquidity supplied."
+#~ msgstr ""
 
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
-msgid "Couldn't complete transaction. Revert requested."
-msgstr ""
+#~ msgid "Couldn't complete transaction. Revert requested."
+#~ msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Enacted"
 msgstr "제정됨"
 
-#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+#: src/app/components/CrossChainWalletConnect/index.tsx
+msgid "Enter a recipient address:"
+msgstr ""
+
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "Vote for this pool to receive bribes."
 msgstr ""
 
-#: src/app/components/AddressInputPanel/index.tsx
 #: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Address"
@@ -646,13 +667,13 @@ msgstr ""
 msgid "Deposited {0} {collateralType} as collateral."
 msgstr ""
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "100 bnUSD"
 msgstr "100 bnUSD"
 
-#: src/app/components/bridge/BridgePanel.tsx
-msgid "Awaiting archway manager message"
-msgstr ""
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#~ msgid "Awaiting archway manager message"
+#~ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
@@ -663,7 +684,7 @@ msgstr ""
 msgid "Unstaking BALN..."
 msgstr "BALN 스테이킹 해제 중..."
 
-#: src/app/components/trade/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 msgid "LIQUIDITY"
 msgstr ""
 
@@ -690,7 +711,9 @@ msgstr "적용 전"
 msgid "Active"
 msgstr "활성화"
 
-#: src/app/_xcall/archway/AllowanceHandler/index.tsx
+#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
+#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
+#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
 msgstr ""
 
@@ -708,11 +731,11 @@ msgstr "잠김"
 #~ msgid "${0}."
 #~ msgstr ""
 
-#: src/app/containers/VotePage/BribesPanel/index.tsx
+#: src/app/pages/vote/_components/BribesPanel/index.tsx
 msgid "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
 msgstr ""
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Slippage tolerance"
 msgstr "오차 범위"
 
@@ -720,10 +743,10 @@ msgstr "오차 범위"
 msgid "For every bnUSD they redeem, they'll receive ${redeemLimit} of collateral. The bnUSD is burned, and {redeemRepaidAmt} bnUSD of borrower debt repaid."
 msgstr ""
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/bridge/BridgePanel.tsx
-msgid "Transferring {0} to {1}..."
-msgstr ""
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#~ msgid "Transferring {0} to {1}..."
+#~ msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
 msgid "Use the Stability Fund to swap a maximum of"
@@ -733,7 +756,7 @@ msgstr ""
 msgid "Withdrew {0} bnUSD."
 msgstr ""
 
-#: src/app/components/trade/utils.tsx
+#: src/app/pages/trade/supply/_components/utils.tsx
 msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
 msgstr "{inputAmount} {inputCurrency} 및 {outputAmount} {outputCurrency} 가 지갑에 추가되었습니다."
 
@@ -741,7 +764,7 @@ msgstr "{inputAmount} {inputCurrency} 및 {outputAmount} {outputCurrency} 가 �
 msgid "Change vote?"
 msgstr "투표 변경?"
 
-#: src/app/containers/VotePage/utils.ts
+#: src/app/pages/vote/_components/utils.ts
 #: src/utils/timeformat.ts
 msgid "d"
 msgstr ""
@@ -763,15 +786,15 @@ msgstr ""
 #~ msgid "Claimed {0} BALN."
 #~ msgstr "청구된 {0} BALN."
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
 msgid "You'll also pay"
 msgstr ""
 
-#: src/app/components/trade/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 msgid "1H"
 msgstr "1시간"
 
-#: src/app/components/bridge/BridgeActivity.tsx
+#: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "Cross-chain transactions (24H)"
 msgstr ""
 
@@ -780,19 +803,19 @@ msgstr ""
 msgid "The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee."
 msgstr ""
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Supply liquidity?"
 msgstr "유동성 물량을 공급하겠습니까?"
 
-#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "Claim bribe?"
 msgstr ""
 
-#: src/app/components/bridge/XCallItem.tsx
 #: src/app/components/trade/XCallEventManager.tsx
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
-msgid "Execution failed"
-msgstr ""
+#: src/app/pages/trade/bridge/_components/XCallItem.tsx
+#~ msgid "Execution failed"
+#~ msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
 #~ msgid "Lock up BALN to earn network fees."
@@ -807,29 +830,32 @@ msgid "Lock up Balance Tokens?"
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/components/trade/LPDescription.tsx
-#: src/app/components/trade/XCallEventManager.tsx
-#: src/app/components/trade/XCallExecutionHandlerICON.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/bridge/_components/XCallTransactionState.tsx
+#: src/app/pages/trade/bridge/_components/XCallTransactionState.tsx
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
 msgid "{0}"
 msgstr "{0}"
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/containers/TradePage/index.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/layout.tsx
 msgid "Bridge"
 msgstr ""
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/store/bridge/hooks.tsx
+#: src/store/bridge/hooks.tsx
+#: src/store/mint/hooks.tsx
+#: src/store/mint/hooks.tsx
 #: src/store/swap/hooks.ts
 msgid "Enter amount"
 msgstr "수량을 입력하세요."
 
-#: src/app/components/trade/utils.tsx
+#: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Supplied {pair} liquidity."
 msgstr "{pair} 공급된 유동성."
 
@@ -839,12 +865,12 @@ msgid "Trade"
 msgstr "거래"
 
 #: src/app/components/LedgerConfirmMessage/index.tsx
-#: src/app/components/trade/SupplyLiquidityModal.tsx
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Confirm the transaction on your Ledger."
 msgstr "당신의 렛저 지갑의 트랜잭션을 확인하세요."
 
-#: src/app/containers/VotePage/LieVotingPanel/index.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 msgid "Incentives are recalculated every week. You can adjust your allocation once every 10 days."
 msgstr ""
 
@@ -856,11 +882,11 @@ msgstr ""
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/index.tsx
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Send"
 msgstr "송금하기"
 
-#: src/app/components/trade/LiquidityPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
 msgid "Your pools"
 msgstr ""
 
@@ -872,12 +898,12 @@ msgstr ""
 msgid "Recieve sICX, which you can trade or unstake from the wallet section later."
 msgstr ""
 
-#: src/app/containers/VotePage/LieVotingPanel/index.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 msgid "Liquidity incentives"
 msgstr ""
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Transfer time"
 msgstr ""
 
@@ -895,7 +921,7 @@ msgstr ""
 msgid "Deposited {0} sICX as collateral."
 msgstr "{0} sICX를 담보로 예치했습니다."
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Remove your assets to cancel this transaction."
 msgstr "이 거래를 취소하려면 자산을 제거하십시오."
 
@@ -903,8 +929,8 @@ msgstr "이 거래를 취소하려면 자산을 제거하십시오."
 msgid "{0} BALN withdrawn."
 msgstr ""
 
-#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
-#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw:"
 msgstr "회수하기:"
 
@@ -912,11 +938,11 @@ msgstr "회수하기:"
 msgid "Unlock {0} BALN"
 msgstr ""
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
 msgid "to transfer cross-chain."
 msgstr ""
 
-#: src/app/containers/ProposalPage/index.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "Casting your vote..."
 msgstr "투표하는 중..."
 
@@ -937,12 +963,12 @@ msgstr "청산 됨"
 msgid "The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will decrease over time."
 msgstr ""
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "Title"
 msgstr "제목"
 
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
 msgid "Swap {0} for {1}?"
 msgstr "{0} 을 {1} 로 스왑하시겠습니까?"
 
@@ -955,8 +981,8 @@ msgid "Lock up BALN to hold voting power and boost your earning potential by up 
 msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
-msgid "Supply {0} {1}"
-msgstr ""
+#~ msgid "Supply {0} {1}"
+#~ msgstr ""
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "No results found."
@@ -978,7 +1004,7 @@ msgstr ""
 msgid "Risk ratio"
 msgstr "위험율"
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "Voting will begin at 5pm UTC,"
 msgstr "투표는 오전 2시부터 시작됩니다."
 
@@ -1000,12 +1026,12 @@ msgstr "적용 후"
 msgid "{0} BALN added to your wallet."
 msgstr ""
 
-#: src/app/containers/NewProposalPage/index.tsx
-#: src/app/containers/ProposalPage/index.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "Description"
 msgstr "설명"
 
-#: src/app/components/trade/utils.tsx
+#: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Couldn't supply {pair} liquidity. Try again."
 msgstr "{pair} 에 유동성 물량을 공급할 수 없습니다. 다시 시도하십시오."
 
@@ -1021,7 +1047,7 @@ msgstr "이 임계값을 초과하면 담보를 인출 할 수 없습니다."
 msgid "Deposited {0} bnUSD."
 msgstr ""
 
-#: src/app/components/trade/utils.tsx
+#: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Couldn't swap {inputCurrency} for {outputCurrency}. Try again."
 msgstr "{outputCurrency} 를 {inputCurrency} 와 스왑할 수 없습니다. 다시 시도하십시오."
 
@@ -1036,28 +1062,32 @@ msgstr ""
 msgid "Unstake"
 msgstr "스테이킹 해제"
 
-#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallMethodParameter.tsx
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallMethodParameter.tsx
 msgid "Add <0>{0}</0> item"
 msgstr ""
 
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
-msgid "Revert transaction."
-msgstr ""
+#~ msgid "Revert transaction."
+#~ msgstr ""
 
-#: src/app/components/trade/XCallSwapModal.tsx
-msgid "Cross-chain swap requested."
-msgstr ""
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "Cross-chain swap requested."
+#~ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/Savings/index.tsx
-#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
-#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
-#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw"
 msgstr "회수하기"
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/components/XCallDescription/index.tsx
+msgid "<0>GMP</0> (general message passing) is a cross-chain messenger that interacts with smart contracts on supported chains."
+msgstr ""
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "then click Supply."
 msgstr "공급을 클릭합니다."
 
@@ -1066,7 +1096,7 @@ msgstr "공급을 클릭합니다."
 msgid "Withdraw BALN"
 msgstr ""
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "Check that your contract calls are set up correctly before you submit the proposal."
 msgstr ""
 
@@ -1075,17 +1105,18 @@ msgstr ""
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #: src/app/components/home/RewardsPanel/SavingsRewards.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
-#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "Not now"
 msgstr "지금은 안됩니다"
 
 #: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "No assets available."
 msgstr "사용 가능한 자산이 없습니다."
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Fee"
 msgstr "수수료"
 
@@ -1098,7 +1129,7 @@ msgstr ""
 msgid "Depositing bnUSD..."
 msgstr ""
 
-#: src/app/containers/VotePage/utils.ts
+#: src/app/pages/vote/_components/utils.ts
 #: src/utils/timeformat.ts
 msgid "less then a minute"
 msgstr ""
@@ -1115,7 +1146,7 @@ msgstr ""
 msgid "Your loan will increase at a rate of {0} per year."
 msgstr ""
 
-#: src/app/components/trade/utils.tsx
+#: src/app/pages/trade/supply/_components/utils.tsx
 msgid "{outputAmount} {outputCurrency} added to your wallet."
 msgstr "{outputAmount} {outputCurrency} 가 지갑에 추가되었습니다."
 
@@ -1123,7 +1154,7 @@ msgstr "{outputAmount} {outputCurrency} 가 지갑에 추가되었습니다."
 msgid "for maximum rewards."
 msgstr ""
 
-#: src/app/components/bridge/BridgeActivity.tsx
+#: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "You have no pending or failed cross-chain transactions."
 msgstr ""
 
@@ -1136,13 +1167,13 @@ msgstr "유효하지 않은 페어"
 msgid "Send {0}"
 msgstr "송금 {0}"
 
-#: src/app/components/trade/XCallSwapModal.tsx
-msgid "{0} {1} for {2} {3}"
-msgstr ""
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "{0} {1} for {2} {3}"
+#~ msgstr ""
 
 #: src/app/components/XCallDescription/index.tsx
-msgid "<0>IBC</0> is the Cosmos interoperability protocol."
-msgstr ""
+#~ msgid "<0>IBC</0> is the Cosmos interoperability protocol."
+#~ msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "If bnUSD ever falls below ${redeemLimit}, traders can use the smart contracts to redeem it for borrower collateral."
@@ -1152,29 +1183,29 @@ msgstr ""
 msgid "Claim Balanced incentives?"
 msgstr ""
 
-#: src/app/components/trade/LPPanel.tsx
+#: src/app/pages/trade/supply/_components/LPPanel.tsx
 msgid "Wallet: {0} {1}"
 msgstr "지갑: {0} {1}"
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "Forum link"
 msgstr "포럼 링크"
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
-msgid "Not enough gas to complete the swap."
-msgstr ""
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#~ msgid "Not enough gas to complete the swap."
+#~ msgstr ""
 
 #: src/app/components/XCallDescription/index.tsx
-msgid "<0>xCall</0> is a cross-chain messaging service that can interact with smart contracts on other blockchains."
-msgstr ""
+#~ msgid "<0>xCall</0> is a cross-chain messaging service that can interact with smart contracts on other blockchains."
+#~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "You’ll receive sICX when you withdraw, which you can unstake or swap for ICX on the Trade page."
 msgstr ""
 
-#: src/app/containers/ProposalPage/index.tsx
-#: src/app/containers/ProposalPage/index.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "({0}% required)"
 msgstr "({0}% 필요)"
 
@@ -1191,17 +1222,21 @@ msgstr ""
 msgid "Select a token"
 msgstr "토큰 선택"
 
+#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+msgid "Swap in progress"
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrow"
 msgstr "대출"
 
 #: src/app/components/StabilityFund/index.tsx
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
 msgid "Includes a fee of {0} {1}."
 msgstr "{0} {1} 의 수수료가 포함됩니다."
 
-#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCall.tsx
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
 msgid "Contract address"
 msgstr ""
 
@@ -1233,10 +1268,10 @@ msgstr ""
 msgid "There's no ICX unstaking."
 msgstr "스테이킹 해제 중인 ICX는 없습니다."
 
-#: src/app/components/trade/SwapDescription.tsx
-#: src/app/components/trade/SwapDescription.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
 msgid "{0} {1} per {2}"
 msgstr "{2} 당 {0} {1}"
 
@@ -1261,20 +1296,25 @@ msgstr ""
 msgid "Pending"
 msgstr "보류 중"
 
-#: src/app/components/trade/utils.tsx
+#: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Transfer {inputCurrency} to {network}..."
 msgstr ""
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/store/bridge/hooks.tsx
 #: src/store/swap/hooks.ts
 msgid "Insufficient {0}"
 msgstr "{0} 가 부족합니다."
+
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+msgid "ICON"
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repay Balanced Dollars?"
 msgstr "Balanced 달러를 상환하겠습니까?"
 
-#: src/app/containers/VotePage/VotingPowerPanel/index.tsx
+#: src/app/pages/vote/_components/VotingPowerPanel/index.tsx
 msgid "Total locked"
 msgstr ""
 
@@ -1282,13 +1322,17 @@ msgstr ""
 msgid "Search name or contract"
 msgstr "이름 또는 계약 검색"
 
+#: src/store/bridge/hooks.tsx
+msgid "Connect wallet"
+msgstr ""
+
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Withdrawing collateral..."
 msgstr "담보를 회수 중"
 
-#: src/app/containers/Claim/LegacyFees/index.tsx
+#: src/app/pages/claim-legacy-fees/page.tsx
 msgid "No fees to claim"
 msgstr ""
 
@@ -1297,15 +1341,15 @@ msgstr ""
 msgid "Unstaking {0} sICX. Check the ICX entry in your wallet for details."
 msgstr "{0} sICX를 스테이킹 해제하고 있습니다. 자세한 내용은 '지갑' 메뉴 > 'ICX' 항목을 확인하십시오."
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "How long the vote should last (1 – 14 days)."
 msgstr ""
 
-#: src/app/components/trade/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 msgid "POOL"
 msgstr ""
 
-#: src/app/containers/Claim/LegacyFees/index.tsx
+#: src/app/pages/claim-legacy-fees/page.tsx
 msgid "Claimed fees."
 msgstr "청구된 수수료."
 
@@ -1317,7 +1361,7 @@ msgstr ""
 msgid "Borrow Balanced Dollars?"
 msgstr "Balanced 달러를 대출 하겠습니까?"
 
-#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCall.tsx
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
 msgid "Contract doesn't exist on this network."
 msgstr ""
 
@@ -1325,18 +1369,22 @@ msgstr ""
 msgid "Approving {0} for cross-chain transfers..."
 msgstr ""
 
-#: src/app/containers/VotePage/LieVotingPanel/index.tsx
-#: src/app/containers/VotePage/LieVotingPanel/index.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 msgid "Future incentives"
 msgstr ""
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "Minimum to receive"
 msgstr "오차범위 고려 최소 값"
 
-#: src/app/components/trade/LPDescription.tsx
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "Supply liquidity for these assets in any quantity to create a new pool."
 msgstr "새로운 풀을 만들기 위해 이 자산들을 임의의 수량으로 유동성 물량을 공급합니다."
+
+#: src/app/components/CrossChainWalletConnect/index.tsx
+msgid "Or connect your"
+msgstr ""
 
 #: src/app/components/home/BBaln/BBalnPanel.tsx
 #~ msgid "Your share of the fees distributed to bBALN holders, calculated with Your bBALN ÷ Total bBALN."
@@ -1346,11 +1394,11 @@ msgstr "새로운 풀을 만들기 위해 이 자산들을 임의의 수량으�
 #~ msgid "To take out a loan, deposit collateral."
 #~ msgstr "대출을 받으려면, 담보를 예치하십시오."
 
-#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "{0} ICX added to your wallet."
 msgstr "{0} ICX가 지갑에 추가되었습니다."
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Create liquidity pool?"
 msgstr "유동성 풀을 만드시겠습니까?"
 
@@ -1358,7 +1406,7 @@ msgstr "유동성 풀을 만드시겠습니까?"
 msgid "Locked until"
 msgstr ""
 
-#: src/app/components/bridge/BridgeActivity.tsx
+#: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "Activity"
 msgstr ""
 
@@ -1375,19 +1423,19 @@ msgstr ""
 msgid "Couldn't SEND {0} for cross-chain transfers."
 msgstr ""
 
-#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdrawing sICX..."
 msgstr "sICX 회수하는 중..."
 
-#: src/app/components/trade/utils.tsx
+#: src/app/pages/trade/supply/_components/utils.tsx
 msgid "{currency} sent to the {pair} pool."
 msgstr "{currency} 를 {pair} 풀로 보냈습니다."
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "For"
 msgstr "되려는"
 
-#: src/app/containers/VotePage/LieVotingPanel/PowerLeftComponent.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/PowerLeftComponent.tsx
 msgid "Voting power available: {0}"
 msgstr ""
 
@@ -1400,13 +1448,14 @@ msgid "You'll"
 msgstr ""
 
 #: src/app/components/ProposalModal/index.tsx
-#: src/app/containers/ProposalPage/index.tsx
-#: src/app/containers/ProposalPage/index.tsx
-#: src/app/containers/ProposalPage/index.tsx
-#: src/app/containers/ProposalPage/index.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "Approve"
 msgstr "승인"
 
+#: src/app/pages/trade/bridge/_zustand/useTransactionStore.tsx
 #: src/btp/src/connectors/helper.ts
 #: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
@@ -1418,8 +1467,8 @@ msgid "Or"
 msgstr ""
 
 #: src/app/components/trade/XCallEventManager.tsx
-msgid "Awaiting confirmation on {0}."
-msgstr ""
+#~ msgid "Awaiting confirmation on {0}."
+#~ msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 #~ msgid "For every bnUSD they redeem, they'll receive $0.90 of collateral. The bnUSD is burned, and 0.995 bnUSD of borrower debt repaid."
@@ -1434,9 +1483,9 @@ msgid "Price"
 msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
-msgid "Awaiting message from ICON network"
-msgstr ""
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "Awaiting message from ICON network"
+#~ msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #~ msgid "Loan rewards"
@@ -1447,14 +1496,22 @@ msgid "Used"
 msgstr "사용 됨"
 
 #: src/app/components/trade/XCallEventManager.tsx
-msgid "Awaiting execution on Archway."
+#~ msgid "Awaiting execution on Archway."
+#~ msgstr ""
+
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+msgid "Transfer in progress"
+msgstr ""
+
+#: src/store/swap/hooks.ts
+msgid "Choose address"
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "You'll need to relock BALN to hold voting power and boost your earning potential."
 msgstr ""
 
-#: src/app/components/trade/LPDescription.tsx
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid ""
 "{0} / {1}\n"
 "liquidity pool{2}"
@@ -1470,11 +1527,13 @@ msgid "{0} wallet"
 msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
 msgid "Swap & transfer assets cross-chain."
 msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/SearchModal/CurrencyList.tsx
@@ -1485,14 +1544,14 @@ msgstr "자산"
 msgid "Borrowing bnUSD..."
 msgstr "대출 중인 bnUSD..."
 
-#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "{0} sICX added to your wallet."
 msgstr "{0} sICX가 지갑에 추가되었습니다."
 
-#: src/app/components/trade/LPPanel.tsx
-#: src/app/components/trade/LPPanel.tsx
-#: src/app/components/trade/SupplyLiquidityModal.tsx
-#: src/app/containers/TradePage/index.tsx
+#: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/supply/_components/LPPanel.tsx
+#: src/app/pages/trade/supply/_components/LPPanel.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Supply"
 msgstr "공급"
 
@@ -1501,7 +1560,7 @@ msgstr "공급"
 msgid "Unstake sICX?"
 msgstr "sICX 스테이킹을 해제하시겠습니까?"
 
-#: src/app/components/trade/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 msgid "The BALN APY is calculated from the USD value of BALN rewards allocated to a pool. Your rate will vary based on the amount of bBALN you hold."
 msgstr ""
 
@@ -1512,22 +1571,24 @@ msgstr ""
 msgid "Claim ICX"
 msgstr "ICX 요구하기"
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
-msgid "xCall in progress"
-msgstr ""
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#~ msgid "xCall in progress"
+#~ msgstr ""
 
-#: src/app/components/trade/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 msgid "Fees:"
 msgstr ""
 
-#: src/app/containers/VotePage/LieVotingPanel/index.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 msgid "47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
 msgstr "일일 BALN 인플레이션의 47%는 유동성을 장려하기 위해 사용됩니다. bBALN 보유자는 \"라이브 보팅\"를 통해 각 유동성 풀에 할당된 금액을 조정할 수 있습니다."
 
-#: src/app/components/trade/XCallSwapModal.tsx
-msgid "Transferred {0} {1} to Archway."
-msgstr ""
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "Transferred {0} {1} to Archway."
+#~ msgstr ""
 
 #: src/app/components/home/RewardsPanel.tsx
 #~ msgid "Balance Tokens"
@@ -1546,15 +1607,14 @@ msgstr ""
 msgid "BALN staking has been upgraded to a lock-up model called Boosted BALN."
 msgstr ""
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/bridge/BridgePanel.tsx
-msgid "Send {0} to {1}."
-msgstr ""
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#~ msgid "Send {0} to {1}."
+#~ msgstr ""
 
 #: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
-#: src/app/components/bridge/BridgePanel.tsx
 #: src/app/components/CommunityListToggle/index.tsx
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -1567,21 +1627,22 @@ msgstr ""
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/components/StabilityFund/index.tsx
-#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
-#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
-#: src/app/components/trade/SupplyLiquidityModal.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
-#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Cancel"
 msgstr "취소"
 
-#: src/app/containers/VotePage/LieVotingPanel/index.tsx
-#: src/app/containers/VotePage/LieVotingPanel/index.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 msgid "Current incentives"
 msgstr ""
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "It costs 100 bnUSD to submit a proposal."
 msgstr "제안서를 제출하는 데 100 bnUSD 가 필요합니다."
 
@@ -1593,11 +1654,11 @@ msgstr ""
 msgid "Insufficient liquidity"
 msgstr "유동성 물량 부족"
 
-#: src/app/containers/ProposalPage/index.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "Smart contract details"
 msgstr ""
 
-#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "Claiming bribe..."
 msgstr ""
 
@@ -1605,7 +1666,7 @@ msgstr ""
 msgid "Unlock Balance Tokens?"
 msgstr ""
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "If the price slips by more than this amount, your swap will fail."
 msgstr "이 금액보다 가격이 차이가 많이 나는 경우 스왑이 실패합니다."
 
@@ -1617,11 +1678,11 @@ msgstr "투표 가중치"
 msgid "Your position requires"
 msgstr ""
 
-#: src/app/components/trade/LPDescription.tsx
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "Total supply"
 msgstr "공급량 합계"
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 msgid "From"
 msgstr ""
 
@@ -1629,7 +1690,7 @@ msgstr ""
 msgid "Rejected"
 msgstr "거부됨"
 
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
 msgid "Includes a fee of"
 msgstr ""
 
@@ -1641,16 +1702,17 @@ msgstr "연결 해제"
 msgid "Use Balanced in"
 msgstr "언어 선택"
 
-#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallMethodSelector.tsx
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallMethodSelector.tsx
 msgid "Method"
 msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
-msgid "N/A"
-msgstr ""
+#~ msgid "N/A"
+#~ msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Balance"
@@ -1664,15 +1726,15 @@ msgstr ""
 msgid "Remove token list"
 msgstr ""
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Withdrawing {0}"
 msgstr "{0} 를 회수하는 중"
 
-#: src/app/components/trade/LiquidityPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
 msgid "Incentivised pools"
 msgstr ""
 
-#: src/app/containers/VotePage/utils.ts
+#: src/app/pages/vote/_components/utils.ts
 #: src/utils/timeformat.ts
 msgid "m"
 msgstr ""
@@ -1690,15 +1752,15 @@ msgstr ""
 msgid "unstakes within {0}"
 msgstr ""
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "Submit"
 msgstr "제출하기"
 
-#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCall.tsx
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
 msgid "Invalid contract address"
 msgstr ""
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "You must have at least {0} bBALN to propose a change."
 msgstr ""
 
@@ -1708,9 +1770,9 @@ msgstr ""
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #: src/app/components/home/RewardsPanel/SavingsRewards.tsx
 #: src/app/components/home/RewardsPanel/SavingsRewards.tsx
-#: src/app/containers/Claim/LegacyFees/index.tsx
-#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
-#: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
+#: src/app/pages/claim-legacy-fees/page.tsx
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "Claim"
 msgstr "요구하기"
 
@@ -1721,14 +1783,14 @@ msgstr "홈"
 
 #: src/store/mint/hooks.tsx
 #: src/store/mint/hooks.tsx
-msgid "Enter an amount"
-msgstr "수량을 입력하세요."
+#~ msgid "Enter an amount"
+#~ msgstr "수량을 입력하세요."
 
-#: src/app/components/bridge/XCallItem.tsx
-msgid "Execution failed."
-msgstr ""
+#: src/app/pages/trade/bridge/_components/XCallItem.tsx
+#~ msgid "Execution failed."
+#~ msgstr ""
 
-#: src/app/components/trade/LPPanel.tsx
+#: src/app/pages/trade/supply/_components/LPPanel.tsx
 msgid ""
 "Wallet: {0} {1} /\n"
 "{2} {3}"
@@ -1736,15 +1798,15 @@ msgstr ""
 "지갑: {0} {1} /\n"
 "{2} {3}"
 
-#: src/app/components/bridge/BridgePanel.tsx
-msgid "Awaiting icon manager message"
-msgstr ""
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#~ msgid "Awaiting icon manager message"
+#~ msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 #~ msgid "If bnUSD ever falls below $0.90, traders can use the smart contracts to redeem it for borrower collateral."
 #~ msgstr ""
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "Executed."
 msgstr ""
 
@@ -1752,13 +1814,13 @@ msgstr ""
 msgid "Unlocked {0} BALN."
 msgstr ""
 
-#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/IconWalletModal.tsx
 msgid "Choose a wallet from your Ledger:"
 msgstr "Ledger에서 지갑 선택:"
 
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
-msgid "Revert"
-msgstr ""
+#~ msgid "Revert"
+#~ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "To apply your increased voting power to liquidity incentives, update your allocation for each pool."
@@ -1768,7 +1830,7 @@ msgstr ""
 msgid "Unstake your BALN, then lock it up for 1 week – 4 years. You'll receive bBALN, which determines your voting power, network fee earnings, and BALN rewards."
 msgstr ""
 
-#: src/app/components/trade/LPDescription.tsx
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "Sign in to view your liquidity details."
 msgstr "자세한 유동성 현황을 보려면 지갑을 연결하세요."
 
@@ -1780,13 +1842,17 @@ msgstr ""
 msgid "Claim network fees?"
 msgstr "네트워크 수수료를 요구하겠습니까?"
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "Price impact"
 msgstr "가격 영향"
 
 #: src/app/components/home/RewardsPanel.tsx
 #~ msgid "Claim Balance Tokens?"
 #~ msgstr "Balance 토큰을 요구하겠습니까?"
+
+#: src/store/bridge/hooks.tsx
+#~ msgid "Enter recipient"
+#~ msgstr ""
 
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 msgid "You"
@@ -1796,7 +1862,7 @@ msgstr ""
 msgid "You can withdraw at any time."
 msgstr ""
 
-#: src/app/containers/VotePage/BribesPanel/index.tsx
+#: src/app/pages/vote/_components/BribesPanel/index.tsx
 msgid "Bribes are released every Thursday at 12am UTC, and must be claimed within 7 days."
 msgstr ""
 
@@ -1807,8 +1873,8 @@ msgstr ""
 msgid "Deposit"
 msgstr "예치"
 
-#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
-#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw liquidity?"
 msgstr "유동성 물량을 회수하겠습니까?"
 
@@ -1817,8 +1883,8 @@ msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
 msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
 msgid "Receive"
 msgstr "송금받기"
 
@@ -1828,9 +1894,9 @@ msgid "You receive maximum rewards for your position."
 msgstr ""
 
 #: src/app/components/AppBar/index.tsx
-#: src/app/containers/NewProposalPage/index.tsx
-#: src/app/containers/ProposalPage/index.tsx
-#: src/app/containers/VotePage/ProposalsPanel/ProposalList.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
+#: src/app/pages/vote/proposals/page.tsx
 #: src/app/Routes.tsx
 msgid "Vote"
 msgstr "투표"
@@ -1839,15 +1905,15 @@ msgstr "투표"
 msgid "Your transaction has successed."
 msgstr ""
 
-#: src/app/components/trade/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 msgid "The fee APY is calculated from the swap fees earned by a pool in the last 30 days."
 msgstr ""
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "Duration"
 msgstr ""
 
-#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "On Hana:"
 msgstr ""
 
@@ -1863,15 +1929,15 @@ msgstr "담보를 예치하는 중..."
 msgid "Insufficient {0} balance"
 msgstr "{0} 잔액이 부족합니다."
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "5 days is standard. Use less for an emergency vote, more for maximum participation."
 msgstr "5일을 기본으로 하고 있으며. 긴급 투표에는 적게, 최대 참여에는 더 많이 사용하세요."
 
-#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "{inputValue}% of bBALN allocated to {editing}."
 msgstr ""
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Creating pool"
 msgstr "풀 생성 중"
 
@@ -1883,11 +1949,11 @@ msgstr ""
 msgid "Sent {0} to the bridge contract."
 msgstr ""
 
-#: src/app/components/trade/XCallSwapModal.tsx
-msgid "Swap {0} for {1}"
-msgstr ""
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "Swap {0} for {1}"
+#~ msgstr ""
 
-#: src/app/components/trade/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 msgid "Impermanent loss is not factored in."
 msgstr ""
 
@@ -1900,7 +1966,7 @@ msgstr ""
 msgid "from network fees in the last 30 days."
 msgstr ""
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "Verifying contract calls..."
 msgstr ""
 
@@ -1910,7 +1976,7 @@ msgstr ""
 msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
 msgstr ""
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "and ends after {duration} days."
 msgstr ""
 
@@ -1918,7 +1984,7 @@ msgstr ""
 msgid "Loan interest"
 msgstr ""
 
-#: src/app/components/trade/utils.tsx
+#: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
 msgstr "{inputCurrency} / {outputCurrency} 유동성 물량 회수 중..."
 
@@ -1926,11 +1992,11 @@ msgstr "{inputCurrency} / {outputCurrency} 유동성 물량 회수 중..."
 msgid "Connected to {numberOfConnectedWallets} blockchains"
 msgstr ""
 
-#: src/app/components/trade/utils.tsx
+#: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Couldn't send {currency} to the {pair} pool. Try again."
 msgstr "{pair} 풀에 {currency} 를 보낼 수 없습니다. 다시 시도하십시오."
 
-#: src/app/components/trade/LPDescription.tsx
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "Total daily rewards"
 msgstr "1일 보상 합계"
 
@@ -1938,24 +2004,24 @@ msgstr "1일 보상 합계"
 msgid "Swap {sendSymbol} for {0}?"
 msgstr ""
 
-#: src/app/components/trade/LiquidityDetails.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 msgid "Pool"
 msgstr "풀"
 
-#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "Sign the transaction, then check the banner notification message for the result."
 msgstr ""
 
-#: src/app/components/trade/XCallSwapModal.tsx
-msgid "Swap {0} for {1}."
-msgstr ""
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "Swap {0} for {1}."
+#~ msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
 msgid "1 {sendSymbol} per {0}"
 msgstr "{0} 당 1 {sendSymbol} 개"
 
-#: src/app/components/trade/LiquidityDetails.tsx
-#: src/app/components/trade/LPDescription.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "Your supply"
 msgstr "당신의 공급량"
 
@@ -1964,7 +2030,12 @@ msgid "Minus unlock fee of {0} BALN"
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/Notification/TransactionNotification.tsx
 msgid "{title}"
+msgstr ""
+
+#: src/store/bridge/hooks.tsx
+msgid "Enter address"
 msgstr ""
 
 #: src/app/components/CommunityListToggle/index.tsx
@@ -1975,7 +2046,7 @@ msgstr "Add token list"
 msgid "Couldn't complete your transaction."
 msgstr "트랜잭션을 완료할 수 없습니다."
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "Submit proposal?"
 msgstr "제안을 제출하겠습니까?"
 
@@ -1983,16 +2054,14 @@ msgstr "제안을 제출하겠습니까?"
 msgid "Unstake BALN?"
 msgstr ""
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/bridge/BridgePanel.tsx
-msgid "Cross-chain transfer requested."
-msgstr ""
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#~ msgid "Cross-chain transfer requested."
+#~ msgstr ""
 
 #: src/app/components/trade/XCallEventManager.tsx
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
-msgid "Confirming..."
-msgstr ""
+#~ msgid "Confirming..."
+#~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
 msgid "View disclaimer"
@@ -2002,7 +2071,7 @@ msgstr "면책조항 보기"
 msgid "Your positions require"
 msgstr ""
 
-#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdrawing ICX..."
 msgstr "ICX 회수하는 중..."
 
@@ -2010,7 +2079,7 @@ msgstr "ICX 회수하는 중..."
 msgid "Your BALN will be locked until"
 msgstr ""
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this happens."
 msgstr ""
 
@@ -2019,7 +2088,7 @@ msgstr ""
 msgid "{0} BALN locked until {1}."
 msgstr ""
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "{0} {1} added to your wallet"
 msgstr "{0} {1} 이 지갑에 추가되었습니다."
 
@@ -2031,7 +2100,7 @@ msgstr "{0} bnUSD 상환했습니다."
 msgid "Claiming Savings Rate rewards..."
 msgstr ""
 
-#: src/app/components/trade/utils.tsx
+#: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Transfer {inputAmount} {inputCurrency} to {network} with {address}."
 msgstr ""
 
@@ -2051,10 +2120,10 @@ msgstr "조정하기"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
-msgid "none"
-msgstr ""
+#~ msgid "none"
+#~ msgstr ""
 
-#: src/app/containers/Claim/LegacyFees/index.tsx
+#: src/app/pages/claim-legacy-fees/page.tsx
 msgid "Claiming fees..."
 msgstr "수수료 승인 중..."
 
@@ -2062,27 +2131,25 @@ msgstr "수수료 승인 중..."
 msgid "You need"
 msgstr ""
 
-#: src/app/components/trade/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 msgid "No price chart available for this pair."
 msgstr "이 거래의 가격 차트는 준비되지 않았습니다."
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/bridge/BridgePanel.tsx
 #: src/btp/src/connectors/helper.ts
 msgid "Transferred {0} {1} to {2}."
 msgstr ""
 
-#: src/app/components/trade/AllPoolsPanel.tsx
-#: src/app/components/trade/LiquidityDetails/StakeLPPanel.tsx
-#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "APY"
 msgstr "APY"
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Route"
 msgstr "변환 과정"
 
-#: src/app/containers/Claim/LegacyFees/index.tsx
+#: src/app/pages/claim-legacy-fees/page.tsx
 msgid "All fees claimed"
 msgstr ""
 
@@ -2090,40 +2157,41 @@ msgstr ""
 msgid "Deposit {0} collateral?"
 msgstr ""
 
-#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Allocating bBALN..."
 msgstr ""
 
-#: src/app/containers/ProposalPage/index.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "You approved"
 msgstr "승인했습니다"
 
 #: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Sign in with"
 msgstr "연결과 함께"
 
-#: src/app/components/trade/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 msgid "Line"
 msgstr "선"
 
-#: src/app/components/trade/LPDescription.tsx
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "liquidity pool"
 msgstr "유동성 풀"
 
-#: src/app/components/trade/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 msgid "Candles"
 msgstr "캔들"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
-msgid "Supplying liquidity..."
-msgstr ""
+#~ msgid "Supplying liquidity..."
+#~ msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Past month"
 msgstr "한 달 동안"
 
-#: src/app/containers/ProposalPage/index.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "You rejected"
 msgstr "반려되었습니다."
 
@@ -2131,7 +2199,7 @@ msgstr "반려되었습니다."
 msgid "for"
 msgstr ""
 
-#: src/app/components/trade/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Exchange rate"
 msgstr "거래 비율"
 
@@ -2141,31 +2209,31 @@ msgid "Wallet"
 msgstr "지갑"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
-msgid "Requesting cross-chain supply..."
-msgstr ""
+#~ msgid "Requesting cross-chain supply..."
+#~ msgstr ""
 
 #: src/btp/src/connectors/helper.ts
 msgid "Transferring {0} from {1} to {2}..."
 msgstr ""
 
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Remove"
 msgstr "제거"
 
-#: src/app/containers/ProposalPage/index.tsx
-#: src/app/containers/ProposalPage/index.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "Voting weight: {0} bBALN"
 msgstr ""
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "Submit proposal"
 msgstr "제안 제출"
 
-#: src/app/components/trade/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 msgid "FEES (24H)"
 msgstr ""
 
-#: src/app/components/trade/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 msgid "1W"
 msgstr "1주"
 
@@ -2173,11 +2241,15 @@ msgstr "1주"
 msgid "Position details"
 msgstr "현재 상황"
 
-#: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Adjust allocation"
 msgstr ""
 
-#: src/app/containers/NewProposalPage/index.tsx
+#: src/app/components/WalletModal/IconWalletModal.tsx
+msgid "Make sure it's connected and try again."
+msgstr ""
+
+#: src/app/pages/vote/proposals/new/page.tsx
 msgid "Verify"
 msgstr ""
 
@@ -2185,7 +2257,7 @@ msgstr ""
 msgid "Your earning potential depends on your bBALN holdings and position size compared to everyone else's."
 msgstr ""
 
-#: src/app/components/bridge/BridgeActivity.tsx
+#: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "There are no pending cross-chain transactions."
 msgstr ""
 
@@ -2193,10 +2265,14 @@ msgstr ""
 msgid "All collateral locked"
 msgstr "모든 담보물 잠김"
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
-msgid "Approve {0} for cross-chain transfer."
+#: src/app/components/XCallDescription/index.tsx
+msgid "<0>{0}</0> {1}."
 msgstr ""
+
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#~ msgid "Approve {0} for cross-chain transfer."
+#~ msgstr ""
 
 #: src/btp/src/connectors/transactionToast.tsx
 #: src/store/transactions/hooks.tsx
@@ -2204,22 +2280,25 @@ msgid "Learn how to resolve common transaction errors."
 msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/SwapPanel.tsx
-#: src/app/components/trade/XCallSwapModal.tsx
-#: src/app/containers/TradePage/index.tsx
+#: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
 msgid "Swap"
 msgstr "스왑"
 
-#: src/app/components/trade/LPDescription.tsx
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "There's no liquidity pool for this pair yet."
 msgstr "아직 이 페어에 대한 유동성 풀이 없습니다."
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Unlocking BALN early..."
+msgstr ""
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Bridge fee"
 msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
@@ -2239,24 +2318,25 @@ msgstr ""
 msgid "Cancelled"
 msgstr "취소됨"
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 msgid "address"
 msgstr ""
 
-#: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw liquidity"
 msgstr "유동성 물량 인출"
 
-#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "On Ledger:"
 msgstr ""
 
-#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "Test your contract calls before you submit the proposal."
 msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Value"
@@ -2270,20 +2350,25 @@ msgstr "커뮤니티 토큰 목록 추가?"
 msgid "Rebalancing the bnUSD price..."
 msgstr "bnUSD 가격 재조정 중..."
 
-#: src/app/components/bridge/XCallItem.tsx
 #: src/app/components/trade/XCallEventManager.tsx
-msgid "Transfer failed."
-msgstr ""
+#: src/app/pages/trade/bridge/_components/XCallItem.tsx
+#~ msgid "Transfer failed."
+#~ msgstr ""
 
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/pages/trade/_components/XCallSwapState.tsx
+#: src/app/pages/trade/bridge-v2/_components/BridgeTransferState.tsx
+#~ msgid "{message}"
+#~ msgstr ""
+
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 msgid "Transfer asset cross-chain?"
 msgstr ""
 
-#: src/app/containers/VotePage/BribesPanel/index.tsx
+#: src/app/pages/vote/_components/BribesPanel/index.tsx
 msgid "There are no bribes this week."
 msgstr ""
 
-#: src/app/containers/VotePage/LieVotingPanel/index.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 msgid "In"
 msgstr ""
 
@@ -2296,13 +2381,13 @@ msgstr "담보로 예치"
 msgid "Withdraw {0} collateral?"
 msgstr ""
 
-#: src/app/components/trade/LPPanel.tsx
-#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/LPPanel.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Create pool"
 msgstr "풀 생성하기"
 
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/containers/HomePage/index.tsx
+#: src/app/pages/page.tsx
 msgid "To borrow bnUSD, deposit collateral."
 msgstr ""
 
@@ -2315,7 +2400,7 @@ msgstr "{0} ICX를 청구할 수 있습니다."
 msgid "Pay a {0} BALN fee to unlock early."
 msgstr ""
 
-#: src/app/components/trade/utils.tsx
+#: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Sending {currency} to the {pair} pool..."
 msgstr "{pair} 풀로 {currency} 를 보내는 중..."
 
@@ -2328,7 +2413,7 @@ msgstr "sICX 스테이킹 해제 준비 중..."
 #~ msgid ", so you would have received"
 #~ msgstr ""
 
-#: src/app/components/trade/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 msgid "VOLUME (24H)"
 msgstr ""
 
@@ -2341,10 +2426,11 @@ msgid "Sign in on ICON, then deposit bnUSD to earn rewards."
 msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
 msgid "Archway wallet"
 msgstr ""
 
-#: src/app/containers/ProposalPage/index.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "Vote cast."
 msgstr "투표 하기."
 
@@ -2356,17 +2442,18 @@ msgstr "네트워크 수수료"
 msgid "The current {0} price is"
 msgstr ""
 
-#: src/app/components/trade/utils.tsx
+#: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
 msgstr "{inputAmount} {inputCurrency} 을 {outputAmount} {outputCurrency} 으로 스왑했습니다."
 
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/bridge/BridgePanel.tsx
-#: src/app/components/bridge/BridgePanel.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 msgid "Transfer"
 msgstr ""
 
-#: src/app/containers/Claim/LegacyFees/index.tsx
+#: src/app/pages/claim-legacy-fees/page.tsx
 msgid "Claim (1 of {count})"
 msgstr "요구하기 (1 of {count})"
 
@@ -2374,7 +2461,7 @@ msgstr "요구하기 (1 of {count})"
 msgid "Yearly"
 msgstr ""
 
-#: src/app/containers/NewProposalPage/ArbitraryCalls/ArbitraryCallsForm.tsx
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "You'll see an error message before you sign the transaction. If it ends with Reverted(20), the contract calls have been verified."
 msgstr ""
 

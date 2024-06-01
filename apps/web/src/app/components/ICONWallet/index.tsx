@@ -208,6 +208,7 @@ const WalletUI = ({ currency }: { currency: Currency }) => {
   const { account } = useIconReact();
   const transactions = useAllTransactions();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     (async () => {
       if (account) {
@@ -225,7 +226,7 @@ const WalletUI = ({ currency }: { currency: Currency }) => {
   }
 };
 
-const ICONWallet = ({ setAnchor, anchor, ...rest }) => {
+const ICONWallet = ({ setAnchor, anchor }) => {
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
   const balances = useICONWalletBalances();
   const transactions = useAllTransactions();
@@ -284,7 +285,7 @@ const ICONWallet = ({ setAnchor, anchor, ...rest }) => {
 
   const filteredSortedTokensWithICX: Currency[] = useMemo(() => {
     const s = debouncedQuery.toLowerCase().trim();
-    if (!isDPZeroCA(balances[icxAddress], 2) && ('icon'.indexOf(s) >= 0 || 'icx'.indexOf(s) >= 0)) {
+    if (!isDPZeroCA(balances[icxAddress], 2) && ('0x1.icon'.indexOf(s) >= 0 || 'icx'.indexOf(s) >= 0)) {
       return icx ? [icx, ...filteredSortedTokens] : filteredSortedTokens;
     }
     return filteredSortedTokens;
@@ -326,6 +327,7 @@ const ICONWallet = ({ setAnchor, anchor, ...rest }) => {
     showModal();
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     (async () => {
       if (account) {
@@ -337,7 +339,7 @@ const ICONWallet = ({ setAnchor, anchor, ...rest }) => {
 
   const showModal = useCallback(() => {
     setOpen(true);
-  }, [setOpen]);
+  }, []);
 
   useEffect(() => {
     if (handleEscape) {

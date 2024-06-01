@@ -151,10 +151,12 @@ const BTPContent = () => {
     setIsOpenConfirm(true);
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     toggleTransferAssetsModal();
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (isOpenTransferAssetsModal) {
       localStorage.removeItem(ADDRESS_LOCAL_STORAGE);
@@ -163,7 +165,6 @@ const BTPContent = () => {
       setNetworkSrc('');
       dispatch(setAccountInfo(null));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpenTransferAssetsModal]);
 
   const getFee = async tokenSymbol => {
@@ -211,6 +212,7 @@ const BTPContent = () => {
 
   const userAssets = useTokenBalance(defaultOptions);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const tokenList = useMemo(() => {
     // NOTE: it should update after userAssets update, userAssets should be updated after wallet was changed or completed transfer transaction
     if (userAssets.length > 0 && fromNetwork) {
@@ -228,14 +230,14 @@ const BTPContent = () => {
       return assets;
     }
     return defaultOptions;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userAssets, fromNetwork]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     checkApprovedBalance();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assetName]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     // NOTE: this effect should only run when wallet was changed
     const assestName = nativeCoin || defaultOptions[0].label;
@@ -243,12 +245,11 @@ const BTPContent = () => {
     setBalanceOfAssetName(Number(accountInfo?.balance || 0));
     getFee(nativeCoin);
     // NOTE: remove accountInfo?.balance from dept to prevent reset assetName and balanceOfAssetName after complete a transfer transition.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [networkId, nativeCoin]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!fromNetwork) setAssetName(defaultOptions[0].value);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromNetwork]);
 
   useEffect(() => {

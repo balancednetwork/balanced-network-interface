@@ -55,8 +55,8 @@ export default function LPDescription() {
   const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
 
   const { data: allPairs } = useAllPairsByName();
-  const apr = useMemo(
-    () => allPairs && allPairs[pairName] && new BigNumber(allPairs[pairName].balnApy).plus(allPairs[pairName].feesApy),
+  const apy = useMemo(
+    () => allPairs && allPairs[pairName] && new BigNumber(allPairs[pairName].balnApy),
     [allPairs, pairName],
   );
 
@@ -162,9 +162,14 @@ export default function LPDescription() {
                     liquidity pool${upSmall ? ': ' : ''}`
                   : t`${currencies[Field.CURRENCY_A]?.symbol} queue${upSmall ? ': ' : ''}`}{' '}
                 <Typography fontWeight="normal" fontSize={16} as={upSmall ? 'span' : 'p'}>
-                  {apr
-                    ? `${apr.times(100).dp(2, BigNumber.ROUND_HALF_UP).toFixed()}% - ${apr
+                  {apy && allPairs
+                    ? `${apy
+                        .plus(allPairs[pairName].feesApy)
+                        .times(100)
+                        .dp(2, BigNumber.ROUND_HALF_UP)
+                        .toFixed()}% - ${apy
                         .times(MAX_BOOST)
+                        .plus(allPairs[pairName].feesApy)
                         .times(100)
                         .dp(2)
                         .toFixed()}%`

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
@@ -7,7 +7,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 
-import { XChainId } from 'app/pages/trade/bridge/types';
+import { XChainId, XChain } from 'app/pages/trade/bridge/types';
 import { IPublicXService, IWalletXService } from '../_xcall/types';
 import { IconPublicXService } from '../_xcall/IconPublicXService';
 import { ArchwayPublicXService } from '../_xcall/ArchwayPublicXService';
@@ -140,4 +140,19 @@ export const useCreateWalletXService = (xChainId: XChainId) => {
   ]);
 
   return true;
+};
+
+export const PublicXServiceCreator = ({ xChainId }: { xChainId: XChainId }) => {
+  useCreatePublicXService(xChainId);
+  return null;
+};
+
+export const AllPublicXServicesCreator = ({ xChains }: { xChains: XChain[] }) => {
+  return (
+    <>
+      {xChains.map(xChain => (
+        <PublicXServiceCreator key={xChain.xChainId} xChainId={xChain.xChainId} />
+      ))}
+    </>
+  );
 };

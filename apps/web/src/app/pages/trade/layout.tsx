@@ -17,7 +17,8 @@ import { useFetchStabilityFundBalances } from 'store/stabilityFund/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
 import { AllTransactionsUpdater } from './bridge/_zustand/useTransactionStore';
 import { AllXMessagesUpdater } from './bridge/_zustand/useXMessageStore';
-import { useCreatePublicXService } from './bridge/_zustand/useXServiceStore';
+import { AllPublicXServicesCreator } from './bridge/_zustand/useXServiceStore';
+import { xChains } from './bridge/_config/xChains';
 
 export function TradePageLayout() {
   const { account } = useIconReact();
@@ -50,15 +51,11 @@ export function TradePageLayout() {
     }
   };
 
-  useCreatePublicXService('0x1.icon');
-  useCreatePublicXService('archway-1');
-  useCreatePublicXService('0xa86a.avax');
-  useCreatePublicXService('0x38.bsc');
-
   return (
     <>
       <AllTransactionsUpdater />
       <AllXMessagesUpdater />
+      <AllPublicXServicesCreator xChains={xChains} />
 
       <Box flex={1}>
         <Flex mb={10} flexDirection="column">

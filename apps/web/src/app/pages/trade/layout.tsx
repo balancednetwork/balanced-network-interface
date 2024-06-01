@@ -53,6 +53,7 @@ export function TradePageLayout() {
   useCreatePublicXService('0x1.icon');
   useCreatePublicXService('archway-1');
   useCreatePublicXService('0xa86a.avax');
+  useCreatePublicXService('0x38.bsc');
 
   return (
     <>

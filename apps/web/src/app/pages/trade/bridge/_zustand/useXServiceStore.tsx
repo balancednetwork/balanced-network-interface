@@ -84,6 +84,8 @@ export const useCreatePublicXService = (xChainId: XChainId) => {
         createPublicXService(ArchwayPublicXService, xChainId, client);
       } else if (xChainId === '0xa86a.avax' || xChainId === '0xa869.fuji') {
         createPublicXService(EvmPublicXService, xChainId, publicClient);
+      } else if (xChainId === '0x38.bsc') {
+        createPublicXService(EvmWalletXService, xChainId, publicClient);
       }
     };
 
@@ -119,6 +121,8 @@ export const useCreateWalletXService = (xChainId: XChainId) => {
       } else if (xChainId === 'archway-1' || xChainId === 'archway') {
         createWalletXService(ArchwayWalletXService, xChainId, client, signingClient);
       } else if (xChainId === '0xa86a.avax' || xChainId === '0xa869.fuji') {
+        createWalletXService(EvmWalletXService, xChainId, publicClient, walletClient);
+      } else if (xChainId === '0x38.bsc') {
         createWalletXService(EvmWalletXService, xChainId, publicClient, walletClient);
       }
     };

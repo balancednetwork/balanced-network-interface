@@ -70,7 +70,6 @@ const EVMWallet = ({
 
   const xTokens = useXTokens(xChainId);
 
-  console.log('balances', balances);
   const addressesWithAmount = useMemo(
     () =>
       xTokens

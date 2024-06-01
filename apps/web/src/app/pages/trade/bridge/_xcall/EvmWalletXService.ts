@@ -3,7 +3,7 @@ import { Address, PublicClient, WalletClient, WriteContractParameters, toHex } f
 import { Percent } from '@balancednetwork/sdk-core';
 
 import { XChainId } from 'app/pages/trade/bridge/types';
-import { avalanche } from 'app/pages/trade/bridge/_config/xChains';
+import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { NATIVE_ADDRESS } from 'constants/index';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 
@@ -39,7 +39,7 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
       if (isBnUSD) {
         const res = await this.publicClient.simulateContract({
           account: account as Address,
-          address: avalanche.contracts.bnUSD as Address,
+          address: xChainMap[this.xChainId].contracts.bnUSD as Address,
           abi: bnUSDContractAbi,
           functionName: 'crossTransfer',
           args: [destination, amount, '0x'],
@@ -50,7 +50,7 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
         if (!isNative) {
           const res = await this.publicClient.simulateContract({
             account: account as Address,
-            address: avalanche.contracts.assetManager as Address,
+            address: xChainMap[this.xChainId].contracts.assetManager as Address,
             abi: assetManagerContractAbi,
             functionName: 'deposit',
             args: [tokenAddress as Address, amount, destination],
@@ -60,7 +60,7 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
         } else {
           const res = await this.publicClient.simulateContract({
             account: account as Address,
-            address: avalanche.contracts.assetManager as Address,
+            address: xChainMap[this.xChainId].contracts.assetManager as Address,
             abi: assetManagerContractAbi,
             functionName: 'depositNative',
             args: [amount, destination, '0x'],
@@ -111,7 +111,7 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
       if (isBnUSD) {
         const res = await this.publicClient.simulateContract({
           account: account as Address,
-          address: avalanche.contracts.bnUSD as Address,
+          address: xChainMap[this.xChainId].contracts.bnUSD as Address,
           abi: bnUSDContractAbi,
           functionName: 'crossTransfer',
           args: [destination, amount, data],
@@ -122,7 +122,7 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
         if (!isNative) {
           const res = await this.publicClient.simulateContract({
             account: account as Address,
-            address: avalanche.contracts.assetManager as Address,
+            address: xChainMap[this.xChainId].contracts.assetManager as Address,
             abi: assetManagerContractAbi,
             functionName: 'deposit',
             args: [tokenAddress as Address, amount, destination, data],
@@ -132,7 +132,7 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
         } else {
           const res = await this.publicClient.simulateContract({
             account: account as Address,
-            address: avalanche.contracts.assetManager as Address,
+            address: xChainMap[this.xChainId].contracts.assetManager as Address,
             abi: assetManagerContractAbi,
             functionName: 'depositNative',
             args: [amount, destination, data],

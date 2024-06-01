@@ -8,3 +8,6 @@ build/
 
 # typescript
 *.tsbuildinfo
+
+
+.DS_Store

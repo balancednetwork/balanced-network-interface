@@ -1,3 +1,4 @@
+import bnJs from 'bnJs';
 import IconService, { Converter, BigNumber } from 'icon-sdk-js';
 
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
@@ -37,16 +38,16 @@ export class IconPublicXService extends AbstractPublicXService {
     this.publicClient = publicClient;
   }
 
-  async getXCallFee(to: XChainId, rollback: boolean) {
-    return Promise.resolve({
-      rollback: 0n,
-      noRollback: 0n,
-    });
+  async getXCallFee(nid: XChainId, rollback: boolean) {
+    const res = await bnJs.XCall.getFee(nid, rollback);
+    return BigInt(res);
   }
+
   async getBlockHeight() {
     const lastBlock = await this.publicClient.getLastBlock().execute();
     return BigInt(lastBlock.height);
   }
+
   async getBlock(blockHeight: bigint) {
     const block = await this.publicClient.getBlockByHeight(new BigNumber(blockHeight.toString())).execute();
     return block;

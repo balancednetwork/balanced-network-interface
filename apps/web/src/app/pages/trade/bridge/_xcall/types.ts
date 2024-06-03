@@ -1,9 +1,9 @@
-import { IXCallFee, XChainId, XCallEventType } from 'app/pages/trade/bridge/types';
+import { XChainId, XCallEventType } from 'app/pages/trade/bridge/types';
 import { XTransactionInput, Transaction, TransactionStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
 
 export interface IPublicXService {
   // getBlock(blockHeight);
-  getXCallFee(to: XChainId, rollback: boolean): Promise<IXCallFee>;
+  getXCallFee(nid: XChainId, rollback: boolean): Promise<bigint>;
   getBlockHeight(): Promise<bigint>;
   getTxReceipt(txHash): Promise<any>;
   getTxEventLogs(rawTx): any[];
@@ -21,7 +21,7 @@ export interface IPublicXService {
 }
 
 export abstract class AbstractPublicXService implements IPublicXService {
-  abstract getXCallFee(to: XChainId, rollback: boolean): Promise<IXCallFee>;
+  abstract getXCallFee(nid: XChainId, rollback: boolean): Promise<bigint>;
   abstract getBlockHeight(): Promise<bigint>;
   abstract getTxReceipt(txHash): Promise<any>;
   abstract getTxEventLogs(rawTx): any[];

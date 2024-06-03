@@ -6,7 +6,6 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import { toDec } from 'utils';
 import { NETWORK_ID } from 'constants/config';
 
-import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge/_config/xTokens';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import { XTransactionInput } from '../_zustand/types';
 import { IWalletXService } from './types';
@@ -47,7 +46,9 @@ export class IconWalletXService extends IconPublicXService implements IWalletXSe
       const destination = `${direction.to}/${destinationAddress}`;
 
       let txResult;
-      if (CROSS_TRANSFER_TOKENS.includes(inputAmount.currency.symbol)) {
+      const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
+
+      if (isBnUSD) {
         const cx = bnJs.inject({ account }).getContract(tokenAddress);
         txResult = await cx.crossTransfer(destination, `${inputAmount.quotient}`, xCallFee.rollback.toString());
       } else {

@@ -278,6 +278,9 @@ export const FixedGlobalStyle = createGlobalStyle`
     display: none !important;
   }
 
+  .drop-shadow {
+    box-shadow: 0px 10px 25px 0px rgba(1, 0, 42, 0.35);
+  }
 `;
 
 export const ThemedGlobalStyle = createGlobalStyle`

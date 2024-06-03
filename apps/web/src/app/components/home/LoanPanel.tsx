@@ -233,7 +233,7 @@ const LoanPanel = () => {
   return (
     <>
       <BoxPanelWrap>
-        <BoxPanel bg="bg3">
+        <BoxPanel bg="bg3" className="drop-shadow">
           <Flex justifyContent="space-between" alignItems="center">
             <Typography variant="h2">
               <Trans>Loan</Trans>

@@ -340,7 +340,7 @@ const CollateralPanel = () => {
   return (
     <>
       <BoxPanelWrap>
-        <BoxPanel bg="bg3" sx={{ position: 'relative' }}>
+        <BoxPanel bg="bg3" sx={{ position: 'relative' }} className="drop-shadow">
           <Flex
             flexWrap="wrap"
             alignItems={isSuperSmall ? 'flex-start' : 'center'}

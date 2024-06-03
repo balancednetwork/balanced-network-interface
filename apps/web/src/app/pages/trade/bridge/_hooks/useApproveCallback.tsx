@@ -27,7 +27,7 @@ import { NATIVE_ADDRESS } from 'constants/index';
 import useXWallet from './useXWallet';
 import { openToast } from 'btp/src/connectors/transactionToast';
 import { TransactionStatus } from 'store/transactions/hooks';
-import { xCallServiceActions } from '../_zustand/useXCallServiceStore';
+import { xServiceActions } from '../_zustand/useXServiceStore';
 import { transactionActions } from '../_zustand/useTransactionStore';
 
 export const FAST_INTERVAL = 10000;
@@ -250,10 +250,16 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
     // }
 
     const xChainId = token.xChainId;
-    const xCallService = xCallServiceActions.getXCallService(xChainId);
+    const xService = xServiceActions.getWalletXService(xChainId);
+
+    if (!xService) {
+      // toastError(t('Error'), t('No xService'));
+      console.error('no archway WalletXService');
+      return undefined;
+    }
 
     try {
-      const hash = await xCallService.approve(token, account as `0x${string}`, spender, amountToApprove);
+      const hash = await xService.approve(token, account as `0x${string}`, spender, amountToApprove);
 
       setPending(true);
 

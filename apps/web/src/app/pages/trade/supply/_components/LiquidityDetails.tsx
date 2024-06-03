@@ -101,7 +101,7 @@ export default function LiquidityDetails() {
             animate={{ opacity: 1 }}
             style={{ height: '100px', position: 'relative' }}
           >
-            <Spinner size={75} centered></Spinner>
+            <Spinner size={75} $centered></Spinner>
           </motion.div>
         )}
       </AnimatePresence>
@@ -150,7 +150,7 @@ export default function LiquidityDetails() {
 
           <Accordion collapsible>
             {shouldShowQueue && (
-              <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} border={userPools.length !== 0}>
+              <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} $border={userPools.length !== 0}>
                 <StyledAccordionButton onClick={() => setIsHided(false)}>
                   <PoolRecordQ
                     balance={queueBalance}
@@ -175,7 +175,7 @@ export default function LiquidityDetails() {
             )}
             {balancesWithoutQ &&
               userPools.map((poolId, index, arr) => (
-                <StyledAccordionItem key={poolId} border={index !== arr.length - 1}>
+                <StyledAccordionItem key={poolId} $border={index !== arr.length - 1}>
                   <StyledAccordionButton onClick={() => setIsHided(false)}>
                     <PoolRecord
                       poolId={parseInt(poolId)}

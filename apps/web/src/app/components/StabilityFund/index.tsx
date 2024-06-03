@@ -151,7 +151,7 @@ const StabilityFund = ({ clearSwapInputOutput, setInput, inputAmount, outputAmou
       <Wrapper>
         {hasFundEnoughBalance === 'loading' ? (
           <Box paddingTop={4}>
-            <Spinner centered />
+            <Spinner $centered />
           </Box>
         ) : hasFundEnoughBalance && sendAmount && feeAmount ? (
           <>

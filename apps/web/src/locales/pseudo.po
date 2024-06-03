@@ -783,8 +783,8 @@ msgid "Lock up Balance Tokens?"
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/pages/trade/bridge/_components/XCallTransactionState.tsx
-#: src/app/pages/trade/bridge/_components/XCallTransactionState.tsx
+#: src/app/pages/trade/bridge/_components/XTransactionState.tsx
+#: src/app/pages/trade/bridge/_components/XTransactionState.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx

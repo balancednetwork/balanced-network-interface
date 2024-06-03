@@ -29,7 +29,7 @@ export default function VotingPowerPanel() {
           sliderBg="#144a68"
         />
       )}
-      <BoostedInfo showBorder={!!account}>
+      <BoostedInfo $showBorder={!!account}>
         <BoostedBox>
           <Typography fontSize={16} color="#FFF">
             {totalSupply ? `${totalSupply.toFormat(0)} bBALN` : <LoaderComponent />}

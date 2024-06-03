@@ -122,7 +122,7 @@ export function useDerivedBridgeInfo() {
   const signedInWallets = useSignedInWallets();
   const crossChainWallet = useCrossChainWalletBalances();
 
-  const account = signedInWallets.find(w => w.chainId === bridgeDirection.from)?.address;
+  const account = signedInWallets.find(w => w.xChainId === bridgeDirection.from)?.address;
 
   const errorMessage = useMemo(() => {
     if (!account) return t`Connect wallet`;
@@ -137,7 +137,7 @@ export function useDerivedBridgeInfo() {
       if (
         signedInWallets.some(
           wallet =>
-            wallet.chainId === bridgeDirection.from &&
+            wallet.xChainId === bridgeDirection.from &&
             (!crossChainWallet[bridgeDirection.from]?.[currencyAmountToBridge.currency.address] ||
               crossChainWallet[bridgeDirection.from]?.[currencyAmountToBridge.currency.address]?.lessThan(
                 currencyAmountToBridge,

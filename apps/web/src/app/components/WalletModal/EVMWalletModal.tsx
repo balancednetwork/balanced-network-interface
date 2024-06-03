@@ -10,7 +10,6 @@ import { useWalletModal } from 'store/application/hooks';
 import { ModalContentWrapper } from '../ModalContent';
 
 import { Connector, useConnect, useConnectors } from 'wagmi';
-import { avalanche } from 'wagmi/chains';
 import { WalletOption, UnbreakableText } from './shared';
 import { XWalletType } from 'app/pages/trade/bridge/types';
 
@@ -18,7 +17,7 @@ const icons = {
   walletConnect: WalletConnectIcon,
 };
 
-export const AvalancheWalletModal = () => {
+export const EVMWalletModal = () => {
   const [walletModal, , onDismiss] = useWalletModal();
 
   const connectors = useConnectors();
@@ -26,7 +25,7 @@ export const AvalancheWalletModal = () => {
   const { connectAsync } = useConnect();
 
   const handleConnect = async (connector: Connector) => {
-    await connectAsync({ connector: connector, chainId: avalanche.id });
+    await connectAsync({ connector: connector });
     onDismiss();
   };
 

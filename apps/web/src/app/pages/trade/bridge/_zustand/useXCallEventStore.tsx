@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
 import { XCallDestinationEvent } from './types';
-import { xCallServiceActions } from './useXCallServiceStore';
+import { xServiceActions } from './useXServiceStore';
 
 type XCallScanner = {
   id: string;
@@ -92,8 +92,8 @@ export const useXCallEventStore = create<XCallEventStore>()(
       updateChainHeight: async (id: string) => {
         const scanner = get().scanners[id];
         if (scanner && scanner.xChainId) {
-          const xCallService = xCallServiceActions.getXCallService(scanner.xChainId);
-          const chainHeight = await xCallService.getBlockHeight();
+          const xService = xServiceActions.getPublicXService(scanner.xChainId);
+          const chainHeight = await xService.getBlockHeight();
           set(state => {
             state.scanners[id].chainHeight = chainHeight;
           });
@@ -121,9 +121,9 @@ export const useXCallEventStore = create<XCallEventStore>()(
           }
         }
 
-        const xCallService = xCallServiceActions.getXCallService(xChainId);
+        const xService = xServiceActions.getPublicXService(xChainId);
 
-        let scanBlockCount = xCallService.getScanBlockCount();
+        let scanBlockCount = xService.getScanBlockCount();
         if (currentHeight + scanBlockCount > scanner.chainHeight) {
           scanBlockCount = scanner.chainHeight - currentHeight + 1n;
         }
@@ -140,7 +140,7 @@ export const useXCallEventStore = create<XCallEventStore>()(
           return;
         }
 
-        const events = await xCallService.getDestinationEvents({ startBlockHeight, endBlockHeight });
+        const events = await xService.getDestinationEvents({ startBlockHeight, endBlockHeight });
 
         if (events) {
           set(state => {

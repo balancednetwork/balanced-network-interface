@@ -1,34 +1,35 @@
-import { XWalletType } from '../types';
+import { XChainId, XWalletType } from '../types';
 import { useArchwayContext } from '../../../../_xcall/archway/ArchwayProvider';
-import { xChainMap } from '../_config/xChains';
 import { useIconReact } from 'packages/icon-react';
 import { useMemo } from 'react';
 import useEVMReact from './useEVMReact';
 
-const useWallets = () => {
+const useWallets = (): {
+  [key in XWalletType]: { account: string | undefined | null; xChainId: XChainId | undefined; disconnect: () => void };
+} => {
   const arch = useArchwayContext();
   const icon = useIconReact();
-  const avax = useEVMReact();
+  const evm = useEVMReact();
 
   return useMemo(
     () => ({
       [XWalletType.ICON]: {
         account: icon.account,
-        chain: xChainMap['0x1.icon'],
+        xChainId: '0x1.icon',
         disconnect: icon.disconnect,
       },
       [XWalletType.COSMOS]: {
         account: arch.address,
-        chain: xChainMap['archway-1'],
+        xChainId: 'archway-1',
         disconnect: arch.disconnect,
       },
       [XWalletType.EVM]: {
-        account: avax.account,
-        chain: xChainMap['0xa86a.avax'],
-        disconnect: avax.disconnect,
+        account: evm.account,
+        xChainId: evm.xChainId,
+        disconnect: evm.disconnect,
       },
     }),
-    [arch, icon, avax],
+    [arch, icon, evm],
   );
 };
 

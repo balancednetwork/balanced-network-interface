@@ -5,11 +5,11 @@ import { Typography } from 'app/theme';
 
 import { MetaData } from '../PositionDetailPanel';
 
-export const ButtonsWrap = styled(Flex)<{ verticalButtons?: boolean }>`
+export const ButtonsWrap = styled(Flex)<{ $verticalButtons?: boolean }>`
   margin-left: auto;
   flex-direction: row;
-  ${({ verticalButtons }) =>
-    verticalButtons &&
+  ${({ $verticalButtons }) =>
+    $verticalButtons &&
     css`
       @media screen and (max-width: 400px) {
         flex-direction: column;
@@ -17,8 +17,8 @@ export const ButtonsWrap = styled(Flex)<{ verticalButtons?: boolean }>`
     `};
 `;
 
-export const SliderWrap = styled(Box)<{ sliderBg?: string; sliderMargin?: string }>`
-  ${({ sliderMargin }) => (sliderMargin ? `margin: ${sliderMargin};` : 'margin: 25px 0;')}
+export const SliderWrap = styled(Box)<{ sliderBg?: string; $sliderMargin?: string }>`
+  ${({ $sliderMargin }) => ($sliderMargin ? `margin: ${$sliderMargin};` : 'margin: 25px 0;')}
   .noUi-horizontal .noUi-connects {
     ${({ sliderBg }) => sliderBg && `background: ${sliderBg};`}
   }
@@ -33,9 +33,9 @@ export const SliderWrap = styled(Box)<{ sliderBg?: string; sliderMargin?: string
   }
 `;
 
-export const BoostedInfo = styled(Flex)<{ showBorder?: boolean }>`
-  ${({ showBorder }) =>
-    showBorder &&
+export const BoostedInfo = styled(Flex)<{ $showBorder?: boolean }>`
+  ${({ $showBorder }) =>
+    $showBorder &&
     css`
       margin-top: 15px;
       padding-top: 15px;

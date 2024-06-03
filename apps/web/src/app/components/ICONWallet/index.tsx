@@ -105,12 +105,12 @@ export const List = styled(Box)`
   margin: 0 -25px;
 `;
 
-export const ListItem = styled(DashGrid)<{ border?: boolean }>`
+const ListItem = styled(DashGrid)<{ $border?: boolean }>`
   padding: 20px 0;
   cursor: pointer;
   color: #ffffff;
   transition: all 0.2s ease;
-  border-bottom: ${({ border = true }) => (border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
+  border-bottom: ${({ $border = true }) => ($border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
   @media screen and (max-width: ${walletBreakpoint}) {
     padding: 15px 0;
   }
@@ -119,12 +119,12 @@ export const ListItem = styled(DashGrid)<{ border?: boolean }>`
   }
 `;
 
-export const StandardCursorListItem = styled(DashGrid)<{ border?: boolean }>`
+export const StandardCursorListItem = styled(DashGrid)<{ $border?: boolean }>`
   padding: 20px 0;
   cursor: default; // Standard cursor style
   color: #ffffff;
   transition: all 0.2s ease;
-  border-bottom: ${({ border = true }) => (border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
+  border-bottom: ${({ $border = true }) => ($border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
   @media screen and (max-width: ${walletBreakpoint}) {
     padding: 15px 0;
   }
@@ -133,13 +133,13 @@ export const StandardCursorListItem = styled(DashGrid)<{ border?: boolean }>`
   }
 `;
 
-export const AssetSymbol = styled.div<{ hasNotification?: boolean }>`
+export const AssetSymbol = styled.div<{ $hasNotification?: boolean }>`
   display: grid;
   grid-column-gap: 12px;
   grid-template-columns: auto 1fr;
   align-items: center;
   position: relative;
-  ${({ hasNotification }) => hasNotification && notificationCSS}
+  ${({ $hasNotification }) => $hasNotification && notificationCSS}
   &:before, &:after {
     right: initial;
     left: -18px;
@@ -375,7 +375,7 @@ const ICONWallet = ({ setAnchor, anchor }) => {
     const { symbol, address } = currency;
     return (
       <>
-        <AssetSymbol hasNotification={symbol.toLowerCase() === 'icx' && claimableICX.isGreaterThan(0)}>
+        <AssetSymbol $hasNotification={symbol.toLowerCase() === 'icx' && claimableICX.isGreaterThan(0)}>
           <CurrencyLogo currency={currency} />
           <Typography fontSize={16} fontWeight="bold">
             {symbol}
@@ -459,7 +459,7 @@ const ICONWallet = ({ setAnchor, anchor }) => {
                   <ListItem
                     className={index === activeIndex ? 'active' : ''}
                     key={symbol}
-                    border={index !== arr.length - 1}
+                    $border={index !== arr.length - 1}
                     onMouseEnter={() => setActiveIndex(index)}
                     onClick={() => handleAssetClick(symbol)}
                   >
@@ -495,7 +495,7 @@ const ICONWallet = ({ setAnchor, anchor }) => {
                     )}
                   </BalanceAndValueWrap>
                 </DashGrid>
-                <ListItem border={false}>
+                <ListItem $border={false}>
                   <TokenInfo
                     currency={
                       filteredSortedTokensWithICX.find(currency => currency.wrapped.symbol === modalAsset) ||

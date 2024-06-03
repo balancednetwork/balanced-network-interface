@@ -60,14 +60,14 @@ export default function LiquidityPoolsPanel() {
             <ChartControlButton
               type="button"
               onClick={() => handleSwitch(PanelType.YourPools)}
-              active={panelType === PanelType.YourPools}
+              $active={panelType === PanelType.YourPools}
             >
               <Trans>Your pools</Trans>
             </ChartControlButton>
             <ChartControlButton
               type="button"
               onClick={() => handleSwitch(PanelType.AllPools)}
-              active={panelType === PanelType.AllPools}
+              $active={panelType === PanelType.AllPools}
             >
               <Trans>Incentivised pools</Trans>
             </ChartControlButton>

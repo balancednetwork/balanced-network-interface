@@ -28,9 +28,7 @@ import { BrightPanel } from 'app/pages/trade/supply/_components/utils';
 import { isXToken } from 'app/pages/trade/bridge/utils';
 
 import XCallSwapModal from './XCallSwapModal';
-import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import SwapModal from './SwapModal';
-import { useCreateXCallService } from '../../bridge/_zustand/useXCallServiceStore';
 import { MODAL_ID, modalActions } from '../../bridge/_zustand/useModalStore';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 
@@ -61,15 +59,11 @@ export default function SwapPanel() {
   const isOutputCrosschainCompatible = isXToken(currencies?.OUTPUT);
   const isInputCrosschainCompatible = isXToken(currencies?.INPUT);
 
-  useCreateXCallService(direction.from);
-  useCreateXCallService(direction.to);
-  useCreateXCallService(ICON_XCALL_NETWORK_ID);
-
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
     useSwapActionHandlers();
 
   React.useEffect(() => {
-    const destinationWallet = signedInWallets.find(wallet => wallet.chainId === direction.to);
+    const destinationWallet = signedInWallets.find(wallet => wallet.xChainId === direction.to);
     if (destinationWallet) {
       onChangeRecipient(destinationWallet.address);
     } else {

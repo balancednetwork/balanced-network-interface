@@ -18,8 +18,10 @@
     "noFallthroughCasesInSwitch": true,
     "jsx": "react",
     "baseUrl": "./src",
-    "sourceMap": true
+    "sourceMap": true,
+    "incremental": true
   },
-  "include": ["src"],
+  "include": ["lingui.config.ts", "vite.config.ts", "src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["src/charting_library/**/*", "src/locales/**/*"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

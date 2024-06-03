@@ -4,7 +4,7 @@ import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { XChainId, XWalletType } from 'app/pages/trade/bridge/types';
 import { Typography } from 'app/theme';
 import { useWalletModal } from 'store/application/hooks';
-import { useSignedInWallets } from 'store/wallet/hooks';
+import { useAvailableWallets } from 'store/wallet/hooks';
 import { shortenAddress } from 'utils';
 
 import { UnderlineText } from '../DropdownText';
@@ -16,14 +16,16 @@ import { useSwapState } from 'store/swap/hooks';
 import { Trans } from '@lingui/macro';
 
 const CrossChainWalletConnect = ({ chainId, editable }: { chainId: XChainId; editable?: boolean }) => {
-  const signedInWallets = useSignedInWallets();
+  const signedInWallets = useAvailableWallets();
   const [editableAddressModalOpen, setEditableAddressModalOpen] = React.useState(false);
   const { connectToWallet: connectKeplr } = useArchwayContext();
   const [, setWalletModal] = useWalletModal();
   const { recipient } = useSwapState();
 
   const getChainAddress = (_chainId: XChainId): string | undefined => {
-    const wallet = signedInWallets.find(wallet => wallet.chainId === _chainId);
+    const wallet = signedInWallets.find(
+      wallet => xChainMap[wallet.xChainId].xWalletType === xChainMap[_chainId].xWalletType,
+    );
     if (wallet) {
       return wallet.address;
     }

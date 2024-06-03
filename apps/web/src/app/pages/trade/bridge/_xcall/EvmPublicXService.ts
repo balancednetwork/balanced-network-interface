@@ -22,14 +22,13 @@ export class EvmPublicXService extends AbstractPublicXService {
     this.publicClient = publicClient;
   }
 
-  // TODO: complete this
-  getXCallFee(nid: XChainId, rollback: boolean) {
+  getXCallFee(nid: XChainId, rollback: boolean, sources: string[] = []) {
     const contract = getContract({
       abi: xCallContractAbi,
       address: xChainMap[this.xChainId].contracts.xCall as Address,
       client: this.publicClient,
     });
-    return contract.read.getProtocolFee();
+    return contract.read.getFee([nid, rollback, sources]);
   }
 
   async getBlockHeight() {

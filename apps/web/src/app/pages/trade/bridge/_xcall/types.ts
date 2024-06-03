@@ -3,7 +3,7 @@ import { XTransactionInput, Transaction, TransactionStatus, XCallEvent, XCallEve
 
 export interface IPublicXService {
   // getBlock(blockHeight);
-  getXCallFee(nid: XChainId, rollback: boolean): Promise<bigint>;
+  getXCallFee(nid: XChainId, rollback: boolean, sources?: string[]): Promise<bigint>;
   getBlockHeight(): Promise<bigint>;
   getTxReceipt(txHash): Promise<any>;
   getTxEventLogs(rawTx): any[];

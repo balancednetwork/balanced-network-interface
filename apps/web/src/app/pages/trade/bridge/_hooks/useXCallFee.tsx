@@ -12,7 +12,7 @@ const useXCallFee = (from: XChainId, to: XChainId): { xCallFee: IXCallFee | unde
   const { data: xCallFee } = useQuery({
     queryKey: [`xcall-fees`, from, to],
     queryFn: async () => {
-      const nid = to;
+      const nid: XChainId = from === '0x1.icon' ? to : '0x1.icon';
       const feeWithRollback = await sourcePublicXService.getXCallFee(nid, true);
       const feeNoRollback = await sourcePublicXService.getXCallFee(nid, false);
 

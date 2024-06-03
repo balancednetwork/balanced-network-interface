@@ -201,6 +201,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
 };
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);
+export const SUPPORTED_XCALL_CHAINS = xChains.map(({ xChainId }) => xChainId);
 
 export const sortChains = (a: XChainId, b: XChainId): [XChainId, XChainId] => {
   return a.localeCompare(b) > 0 ? [a, b] : [b, a];

@@ -14,7 +14,6 @@ import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useARCH } from 'app/pages/trade/bridge/_config/tokens';
 import { isDenomAsset } from 'app/_xcall/archway/utils';
-import { SUPPORTED_XCALL_CHAINS } from 'app/pages/trade/bridge/_config/xTokens';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import { getCrossChainTokenAddress, isXToken } from 'app/pages/trade/bridge/utils';
 import bnJs from 'bnJs';
@@ -130,7 +129,7 @@ import { useAccount, useBalance } from 'wagmi';
 import { multicall } from '@wagmi/core';
 import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
-import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 
 export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined, xChainId: XChainId) {
   const { data } = useBalance({ address: account, query: { refetchInterval: 5_000 } });

@@ -1,6 +1,5 @@
 import { Currency } from '@balancednetwork/sdk-core';
-import { getCurrencyDecimalDisplay } from 'app/components/SearchModal/CurrencyList';
-import { SUPPORTED_XCALL_CHAINS } from 'app/pages/trade/bridge/_config/xTokens';
+import { SUPPORTED_XCALL_CHAINS } from 'app/pages/trade/bridge/_config/xChains';
 import { isXToken, getCrossChainTokenAddress } from 'app/pages/trade/bridge/utils';
 import BigNumber from 'bignumber.js';
 import { useEffect, useState } from 'react';

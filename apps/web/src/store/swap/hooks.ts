@@ -11,7 +11,7 @@ import { canBeQueue } from 'constants/currency';
 import { useAllTokens } from 'hooks/Tokens';
 import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { useSwapSlippageTolerance } from 'store/application/hooks';
-import { useAvailableWallets, useCrossChainWalletBalances } from 'store/wallet/hooks';
+import { useCrossChainWalletBalances } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
 
 import { AppDispatch, AppState } from '../index';
@@ -29,6 +29,7 @@ import {
 import { useTradeExactIn, useTradeExactOut } from './trade';
 import { getCrossChainTokenBySymbol } from 'app/pages/trade/bridge/utils';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);

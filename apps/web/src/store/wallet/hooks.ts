@@ -457,25 +457,3 @@ export function useLiquidityTokenBalance(account: string | undefined | null, pai
   const { data } = query;
   return pair && data ? CurrencyAmount.fromRawAmount<Token>(pair.liquidityToken, data) : undefined;
 }
-
-export function useSignedInWallets(): { address: string; xChainId: XChainId | undefined }[] {
-  const wallets = useWallets();
-  return useMemo(
-    () =>
-      Object.values(wallets)
-        .filter(w => !!w.account)
-        .map(w => ({ xChainId: w.xChainId, address: w.account! })),
-    [wallets],
-  );
-}
-
-export function useAvailableWallets(): { address: string; xChainId: XChainId }[] {
-  const wallets = useWallets();
-  return useMemo(
-    () =>
-      Object.values(wallets)
-        .filter(w => !!w.account && !!w.xChainId)
-        .map(w => ({ xChainId: w.xChainId!, address: w.account! })),
-    [wallets],
-  );
-}

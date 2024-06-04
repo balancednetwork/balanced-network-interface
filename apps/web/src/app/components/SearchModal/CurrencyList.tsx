@@ -16,10 +16,11 @@ import useArrowControl from 'hooks/useArrowControl';
 import useKeyPress from 'hooks/useKeyPress';
 import { useRatesWithOracle } from 'queries/reward';
 import { useIsUserAddedToken } from 'store/user/hooks';
-import { useXCurrencyBalance, useSignedInWallets } from 'store/wallet/hooks';
+import { useXCurrencyBalance } from 'store/wallet/hooks';
 import { toFraction } from 'utils';
 import useSortCurrency from 'hooks/useSortCurrency';
 import { HeaderText } from 'app/pages/trade/supply/_components/AllPoolsPanel';
+import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 
 const DashGrid = styled(Box)`
   display: grid;

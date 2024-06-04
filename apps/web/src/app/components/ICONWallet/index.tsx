@@ -25,7 +25,7 @@ import { useRatesWithOracle } from 'queries/reward';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { useTokenListConfig } from 'store/lists/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
-import { useICONWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
+import { useICONWalletBalances } from 'store/wallet/hooks';
 import { isDPZeroCA, toFraction } from 'utils';
 
 import Divider from '../Divider';
@@ -38,6 +38,7 @@ import ICXWallet from './wallets/ICXWallet';
 import SendPanel from './wallets/SendPanel';
 import SICXWallet from './wallets/SICXWallet';
 import { notificationCSS } from './wallets/utils';
+import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 
 const WalletUIs = {
   ICX: ICXWallet,

@@ -8,7 +8,7 @@ import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { Typography } from 'app/theme';
 import FlipIcon from 'assets/icons/horizontal-flip.svg';
 import { useBridgeActionHandlers, useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from 'store/bridge/hooks';
-import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
+import { useCrossChainWalletBalances } from 'store/wallet/hooks';
 
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import { Button } from 'app/components/Button';
@@ -22,6 +22,7 @@ import { Field } from 'store/bridge/reducer';
 import useXCallFee from '../_hooks/useXCallFee';
 import { xChainMap } from '../_config/xChains';
 import { validateAddress } from 'utils';
+import { useSignedInWallets } from '../_hooks/useWallets';
 
 export default function BridgeTransferForm({ openModal }) {
   const crossChainWallet = useCrossChainWalletBalances();

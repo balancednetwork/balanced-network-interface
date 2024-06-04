@@ -23,11 +23,12 @@ import {
   useSavingsSliderState,
 } from 'store/savings/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX, useICONWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
+import { useHasEnoughICX, useICONWalletBalances } from 'store/wallet/hooks';
 import { escapeRegExp, parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { BalnPreviewInput as SavingsPreviewInput } from '../BBaln/styledComponents';
+import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 
 const Savings = () => {
   const lockedAmount = useLockedAmount();

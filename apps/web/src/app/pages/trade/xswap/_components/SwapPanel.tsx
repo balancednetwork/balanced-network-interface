@@ -20,7 +20,6 @@ import { useSwapSlippageTolerance, useWalletModalToggle } from 'store/applicatio
 import { useCAMemo, useIsSwapEligible, useMaxSwapSize } from 'store/stabilityFund/hooks';
 import { Field } from 'store/swap/reducer';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
-import { useSignedInWallets } from 'store/wallet/hooks';
 import { formatPercent, maxAmountSpend } from 'utils';
 
 import StabilityFund from 'app/components/StabilityFund';
@@ -31,6 +30,7 @@ import XCallSwapModal from './XCallSwapModal';
 import SwapModal from './SwapModal';
 import { MODAL_ID, modalActions } from '../../bridge/_zustand/useModalStore';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
+import { useSignedInWallets } from '../../bridge/_hooks/useWallets';
 
 const MemoizedStabilityFund = React.memo(StabilityFund);
 

@@ -1,9 +1,10 @@
 import { Currency } from '@balancednetwork/sdk-core';
 import { SUPPORTED_XCALL_CHAINS } from 'app/pages/trade/bridge/_config/xChains';
+import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { isXToken, getCrossChainTokenAddress } from 'app/pages/trade/bridge/utils';
 import BigNumber from 'bignumber.js';
 import { useEffect, useState } from 'react';
-import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
+import { useCrossChainWalletBalances } from 'store/wallet/hooks';
 import { WalletState } from 'store/wallet/reducer';
 
 type SortingType = {

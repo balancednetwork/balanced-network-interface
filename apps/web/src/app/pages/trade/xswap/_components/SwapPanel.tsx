@@ -137,7 +137,7 @@ export default function SwapPanel() {
         toggleWalletModal();
       } else {
         setExecutionTrade(trade);
-        modalActions.openModal(MODAL_ID.XCALL_SWAP_MODAL);
+        modalActions.openModal(MODAL_ID.XSWAP_CONFIRM_MODAL);
       }
     } else {
       if (!account) {

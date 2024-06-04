@@ -143,7 +143,7 @@ const XCallSwapModal = ({
   };
 
   const handleDismiss = () => {
-    modalActions.closeModal(MODAL_ID.XCALL_SWAP_MODAL);
+    modalActions.closeModal(MODAL_ID.XSWAP_CONFIRM_MODAL);
     setTimeout(() => {
       xTransactionActions.reset();
     }, 500);
@@ -185,7 +185,7 @@ const XCallSwapModal = ({
   return (
     <>
       {currentXTransaction && <XTransactionUpdater xTransaction={currentXTransaction} />}
-      <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XCALL_SWAP_MODAL)} onDismiss={handleDismiss}>
+      <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XSWAP_CONFIRM_MODAL)} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
             <Trans>

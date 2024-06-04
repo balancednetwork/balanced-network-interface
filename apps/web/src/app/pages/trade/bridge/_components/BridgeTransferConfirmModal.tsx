@@ -27,6 +27,8 @@ import useXCallGasChecker from '../_hooks/useXCallGasChecker';
 import { useXTransactionStore, xTransactionActions } from '../_zustand/useXTransactionStore';
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from 'store/bridge/hooks';
 import { useCreateWalletXService } from '../_zustand/useXServiceStore';
+import useWallets from '../_hooks/useWallets';
+import { useSwitchChain } from 'wagmi';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;
@@ -47,19 +49,19 @@ export function BridgeTransferConfirmModal() {
 
   const { recipient, isLiquidFinanceEnabled } = useBridgeState();
   const { currencyAmountToBridge, account } = useDerivedBridgeInfo();
-  const bridgeDirection = useBridgeDirection();
+  const direction = useBridgeDirection();
 
-  useCreateWalletXService(bridgeDirection.from);
+  useCreateWalletXService(direction.from);
 
-  const { xCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
+  const { xCallFee } = useXCallFee(direction.from, direction.to);
 
-  const xChain = xChainMap[bridgeDirection.from];
+  const xChain = xChainMap[direction.from];
   const { approvalState, approveCallback } = useApproveCallback(currencyAmountToBridge, xChain.contracts.assetManager);
 
   const shouldLedgerSign = useShouldLedgerSign();
 
   const handleDismiss = () => {
-    modalActions.closeModal(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL);
+    modalActions.closeModal(MODAL_ID.XTRANSFER_CONFIRM_MODAL);
     setTimeout(() => {
       xTransactionActions.reset();
     }, 500);
@@ -69,7 +71,7 @@ export function BridgeTransferConfirmModal() {
     if (currencyAmountToBridge && recipient && account && xCallFee) {
       const bridgeInfo: XTransactionInput = {
         type: XTransactionType.BRIDGE,
-        direction: bridgeDirection,
+        direction: direction,
         inputAmount: currencyAmountToBridge,
         recipient,
         account,
@@ -84,11 +86,20 @@ export function BridgeTransferConfirmModal() {
     approveCallback();
   };
 
-  const gasChecker = useXCallGasChecker(bridgeDirection.from);
+  const gasChecker = useXCallGasChecker(direction.from);
+
+  // switch chain between evm chains
+  const wallets = useWallets();
+  const walletType = xChainMap[direction.from].xWalletType;
+  const isWrongChain = wallets[walletType].xChainId !== direction.from;
+  const { switchChain } = useSwitchChain();
+  const handleSwitchChain = () => {
+    switchChain({ chainId: xChainMap[direction.from].id as number });
+  };
 
   return (
     <>
-      <Modal isOpen={modalActions.isModalOpen(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL)} onDismiss={handleDismiss}>
+      <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XTRANSFER_CONFIRM_MODAL)} onDismiss={handleDismiss}>
         <ModalContentWrapper>
           <Typography textAlign="center" mb="5px">
             {t`Transfer asset cross-chain?`}
@@ -104,7 +115,7 @@ export function BridgeTransferConfirmModal() {
                 <Trans>From</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {getNetworkDisplayName(bridgeDirection.from)}
+                {getNetworkDisplayName(direction.from)}
               </Typography>
             </Box>
 
@@ -113,13 +124,13 @@ export function BridgeTransferConfirmModal() {
                 <Trans>To</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {getNetworkDisplayName(bridgeDirection.to)}
+                {getNetworkDisplayName(direction.to)}
               </Typography>
             </Box>
           </Flex>
 
           <Typography textAlign="center" mb="2px">
-            {`${getNetworkDisplayName(bridgeDirection.to)} `}
+            {`${getNetworkDisplayName(direction.to)} `}
             <Trans>address</Trans>
           </Typography>
 
@@ -138,7 +149,12 @@ export function BridgeTransferConfirmModal() {
                 <TextButton onClick={handleDismiss}>
                   <Trans>Cancel</Trans>
                 </TextButton>
-                {isProcessing ? (
+
+                {isWrongChain ? (
+                  <StyledXCallButton onClick={handleSwitchChain}>
+                    <Trans>Switch Network</Trans>
+                  </StyledXCallButton>
+                ) : isProcessing ? (
                   <>
                     <StyledXCallButton disabled $loading>
                       <Trans>Transfer in progress</Trans>

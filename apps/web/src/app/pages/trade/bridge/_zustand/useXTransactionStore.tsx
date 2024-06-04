@@ -227,10 +227,10 @@ export const useXTransactionStore = create<XTransactionStore>()(
         if (id === get().currentId) {
           const currentXTransaction = get().transactions[id];
           if (currentXTransaction.type === XTransactionType.SWAP) {
-            modalActions.closeModal(MODAL_ID.XCALL_SWAP_MODAL);
+            modalActions.closeModal(MODAL_ID.XSWAP_CONFIRM_MODAL);
           }
           if (currentXTransaction.type === XTransactionType.BRIDGE) {
-            modalActions.closeModal(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL);
+            modalActions.closeModal(MODAL_ID.XTRANSFER_CONFIRM_MODAL);
           }
         }
 
@@ -243,10 +243,10 @@ export const useXTransactionStore = create<XTransactionStore>()(
         if (id === get().currentId) {
           const currentXTransaction = get().transactions[id];
           if (currentXTransaction.type === XTransactionType.SWAP) {
-            modalActions.closeModal(MODAL_ID.XCALL_SWAP_MODAL);
+            modalActions.closeModal(MODAL_ID.XSWAP_CONFIRM_MODAL);
           }
           if (currentXTransaction.type === XTransactionType.BRIDGE) {
-            modalActions.closeModal(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL);
+            modalActions.closeModal(MODAL_ID.XTRANSFER_CONFIRM_MODAL);
           }
         }
 

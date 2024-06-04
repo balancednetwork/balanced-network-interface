@@ -13,7 +13,7 @@ export function BridgePage() {
     <SectionPanel bg="bg2">
       <BridgeTransferForm
         openModal={() => {
-          modalActions.openModal(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL);
+          modalActions.openModal(MODAL_ID.XTRANSFER_CONFIRM_MODAL);
         }}
       />
       <BridgeActivity />

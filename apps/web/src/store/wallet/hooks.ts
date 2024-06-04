@@ -127,12 +127,12 @@ import { coreConfig } from 'config/wagmi';
 import { erc20Abi } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 import { multicall } from '@wagmi/core';
-import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 
 export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined, xChainId: XChainId) {
-  const { data } = useBalance({ address: account, query: { refetchInterval: 5_000 } });
+  const chainId = xChainMap[xChainId].id;
+  const { data } = useBalance({ address: account, chainId: chainId as number, query: { refetchInterval: 5_000 } });
 
   const xChain = xChainMap[xChainId];
   const nativeBalance = useMemo(

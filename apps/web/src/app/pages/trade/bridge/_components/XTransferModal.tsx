@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { Typography } from 'app/theme';
 import Modal from 'app/components/Modal';
 import { ModalContentWrapper } from 'app/components/ModalContent';
-import { StyledButton as XCallButton } from 'app/pages/trade/xswap/_components/XCallSwapModal';
+import { StyledButton as XCallButton } from 'app/pages/trade/xswap/_components/shared';
 import { Button, TextButton } from 'app/components/Button';
 import Spinner from 'app/components/Spinner';
 
@@ -40,7 +40,7 @@ const StyledXCallButton = styled(XCallButton)`
   }
 `;
 
-export function BridgeTransferConfirmModal() {
+function XTransferModal() {
   useModalStore();
   useXMessageStore();
   const { currentId } = useXTransactionStore();
@@ -189,3 +189,5 @@ export function BridgeTransferConfirmModal() {
     </>
   );
 }
+
+export default XTransferModal;

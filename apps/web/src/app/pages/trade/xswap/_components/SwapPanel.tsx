@@ -26,7 +26,7 @@ import StabilityFund from 'app/components/StabilityFund';
 import { BrightPanel } from 'app/pages/trade/supply/_components/utils';
 import { isXToken } from 'app/pages/trade/bridge/utils';
 
-import XCallSwapModal from './XCallSwapModal';
+import XSwapModal from './XSwapModal';
 import SwapModal from './SwapModal';
 import { MODAL_ID, modalActions } from '../../bridge/_zustand/useModalStore';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
@@ -327,7 +327,7 @@ export default function SwapPanel() {
         recipient={recipient || undefined}
       />
 
-      <XCallSwapModal
+      <XSwapModal
         account={account}
         currencies={currencies}
         executionTrade={executionTrade}

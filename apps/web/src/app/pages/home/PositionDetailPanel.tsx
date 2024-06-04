@@ -37,9 +37,8 @@ import { useRatio } from 'store/ratio/hooks';
 import { useCurrentCollateralRatio } from 'store/reward/hooks';
 import { InterestPeriod } from 'types';
 import { formatBigNumber, getAccumulatedInterest } from 'utils';
-
-import { DropdownPopper } from '../Popover';
-import Skeleton from '../Skeleton';
+import { DropdownPopper } from 'app/components/Popover';
+import Skeleton from 'app/components/Skeleton';
 
 const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
 

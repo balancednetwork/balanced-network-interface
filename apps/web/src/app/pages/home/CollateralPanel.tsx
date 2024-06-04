@@ -41,10 +41,9 @@ import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
-
-import CollateralTypeSwitcher, { CollateralTypeSwitcherWrap } from '../CollateralTypeSwitcher';
-import ICXDisplayTypeSwitcher from '../ICXDisplayTypeSwitcher';
-import ModalContent from '../ModalContent';
+import CollateralTypeSwitcher, { CollateralTypeSwitcherWrap } from 'app/components/CollateralTypeSwitcher';
+import ModalContent from 'app/components/ModalContent';
+import ICXDisplayTypeSwitcher from 'app/components/ICXDisplayTypeSwitcher';
 
 export const PanelInfoWrap = styled(Flex)`
   justify-content: space-between;

@@ -37,8 +37,8 @@ import { useHasEnoughICX } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import ModalContent from '../ModalContent';
 import { PanelInfoWrap, PanelInfoItem } from './CollateralPanel';
+import ModalContent from 'app/components/ModalContent';
 
 const LoanPanel = () => {
   const { account } = useIconReact();

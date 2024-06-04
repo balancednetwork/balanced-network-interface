@@ -6,7 +6,7 @@ import { useIconReact } from 'packages/icon-react';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getClosestUnixWeekStart } from 'app/components/home/BBaln/utils';
+import { getClosestUnixWeekStart } from 'app/pages/home/BBaln/utils';
 import bnJs from 'bnJs';
 import { AppState } from 'store';
 import { useRewardsPercentDistribution } from 'store/reward/hooks';

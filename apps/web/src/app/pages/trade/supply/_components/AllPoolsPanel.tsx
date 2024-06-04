@@ -16,7 +16,7 @@ import { Field } from 'store/mint/reducer';
 import { useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
 import { getFormattedNumber } from 'utils/formatter';
 
-import { MAX_BOOST } from 'app/components/home/BBaln/utils';
+import { MAX_BOOST } from 'app/pages/home/BBaln/utils';
 import Skeleton from 'app/components/Skeleton';
 
 const List = styled(Box)`

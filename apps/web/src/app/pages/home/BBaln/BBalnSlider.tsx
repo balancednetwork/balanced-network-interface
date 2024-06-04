@@ -48,8 +48,6 @@ import { parseUnits } from 'utils';
 import { getFormattedNumber } from 'utils/formatter';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import { DropdownPopper } from '../../Popover';
-import QuestionHelper, { QuestionWrapper } from '../../QuestionHelper';
 import { MetaData } from '../PositionDetailPanel';
 import { BalnPreviewInput, ButtonsWrap, SliderWrap, Threshold } from './styledComponents';
 import { LockedPeriod } from './types';
@@ -63,6 +61,8 @@ import {
   comparePeriods,
 } from './utils';
 import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
+import { DropdownPopper } from 'app/components/Popover';
 
 const StyledThreshold = styled(Threshold)`
   height: 20px;

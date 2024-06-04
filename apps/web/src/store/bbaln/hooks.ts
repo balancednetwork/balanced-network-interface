@@ -6,8 +6,8 @@ import { useIconReact } from 'packages/icon-react';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { LockedPeriod } from 'app/components/home/BBaln/types';
-import { EXA, getBbalnAmount, WEIGHT } from 'app/components/home/BBaln/utils';
+import { LockedPeriod } from 'app/pages/home/BBaln/types';
+import { EXA, getBbalnAmount, WEIGHT } from 'app/pages/home/BBaln/utils';
 import bnJs from 'bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import useInterval from 'hooks/useInterval';

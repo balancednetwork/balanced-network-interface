@@ -3,6 +3,8 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
 import { usePublicClient, useWalletClient } from 'wagmi';
+import { avalanche, bsc } from 'wagmi/chains';
+
 import { useIconReact } from 'packages/icon-react';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
@@ -69,7 +71,8 @@ export const xServiceActions = {
 export const useCreatePublicXService = (xChainId: XChainId) => {
   const { iconService } = useIconReact();
   const { client } = useArchwayContext();
-  const publicClient = usePublicClient();
+  const avalanchePublicClient = usePublicClient({ chainId: avalanche.id });
+  const bscPublicClient = usePublicClient({ chainId: bsc.id });
 
   const createPublicXService = (PublicXServiceClass, xChainId: XChainId, publicClient: any) => {
     const publicXService = new PublicXServiceClass(xChainId, publicClient);
@@ -82,15 +85,15 @@ export const useCreatePublicXService = (xChainId: XChainId) => {
         createPublicXService(IconPublicXService, xChainId, iconService);
       } else if (xChainId === 'archway-1' || xChainId === 'archway') {
         createPublicXService(ArchwayPublicXService, xChainId, client);
-      } else if (xChainId === '0xa86a.avax' || xChainId === '0xa869.fuji') {
-        createPublicXService(EvmPublicXService, xChainId, publicClient);
+      } else if (xChainId === '0xa86a.avax') {
+        createPublicXService(EvmPublicXService, xChainId, avalanchePublicClient);
       } else if (xChainId === '0x38.bsc') {
-        createPublicXService(EvmWalletXService, xChainId, publicClient);
+        createPublicXService(EvmWalletXService, xChainId, bscPublicClient);
       }
     };
 
     setupPublicXService(xChainId);
-  }, [xChainId, client, iconService, publicClient, createPublicXService]);
+  }, [xChainId, client, iconService, avalanchePublicClient, bscPublicClient, createPublicXService]);
 
   return true;
 };
@@ -100,8 +103,10 @@ export const useCreateWalletXService = (xChainId: XChainId) => {
 
   const { iconService } = useIconReact();
   const { client, signingClient } = useArchwayContext();
-  const publicClient = usePublicClient();
+  const avalanchePublicClient = usePublicClient({ chainId: avalanche.id });
   const { data: walletClient } = useWalletClient();
+
+  const bscPublicClient = usePublicClient({ chainId: bsc.id });
 
   const createWalletXService = (
     WalletXServiceClass,
@@ -120,10 +125,10 @@ export const useCreateWalletXService = (xChainId: XChainId) => {
         createWalletXService(IconWalletXService, xChainId, iconService, iconService, { changeShouldLedgerSign });
       } else if (xChainId === 'archway-1' || xChainId === 'archway') {
         createWalletXService(ArchwayWalletXService, xChainId, client, signingClient);
-      } else if (xChainId === '0xa86a.avax' || xChainId === '0xa869.fuji') {
-        createWalletXService(EvmWalletXService, xChainId, publicClient, walletClient);
+      } else if (xChainId === '0xa86a.avax') {
+        createWalletXService(EvmWalletXService, xChainId, avalanchePublicClient, walletClient);
       } else if (xChainId === '0x38.bsc') {
-        createWalletXService(EvmWalletXService, xChainId, publicClient, walletClient);
+        createWalletXService(EvmWalletXService, xChainId, bscPublicClient, walletClient);
       }
     };
 
@@ -133,8 +138,9 @@ export const useCreateWalletXService = (xChainId: XChainId) => {
     client,
     signingClient,
     iconService,
-    publicClient,
+    avalanchePublicClient,
     walletClient,
+    bscPublicClient,
     createWalletXService,
     changeShouldLedgerSign,
   ]);

@@ -20,17 +20,17 @@ import { useSwapSlippageTolerance, useWalletModalToggle } from 'store/applicatio
 import { useCAMemo, useIsSwapEligible, useMaxSwapSize } from 'store/stabilityFund/hooks';
 import { Field } from 'store/swap/reducer';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
-import { useSignedInWallets } from 'store/wallet/hooks';
 import { formatPercent, maxAmountSpend } from 'utils';
 
 import StabilityFund from 'app/components/StabilityFund';
 import { BrightPanel } from 'app/pages/trade/supply/_components/utils';
 import { isXToken } from 'app/pages/trade/bridge/utils';
 
-import XCallSwapModal from './XCallSwapModal';
+import XSwapModal from './XSwapModal';
 import SwapModal from './SwapModal';
 import { MODAL_ID, modalActions } from '../../bridge/_zustand/useModalStore';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
+import { useSignedInWallets } from '../../bridge/_hooks/useWallets';
 
 const MemoizedStabilityFund = React.memo(StabilityFund);
 
@@ -137,7 +137,7 @@ export default function SwapPanel() {
         toggleWalletModal();
       } else {
         setExecutionTrade(trade);
-        modalActions.openModal(MODAL_ID.XCALL_SWAP_MODAL);
+        modalActions.openModal(MODAL_ID.XSWAP_CONFIRM_MODAL);
       }
     } else {
       if (!account) {
@@ -327,7 +327,7 @@ export default function SwapPanel() {
         recipient={recipient || undefined}
       />
 
-      <XCallSwapModal
+      <XSwapModal
         account={account}
         currencies={currencies}
         executionTrade={executionTrade}

@@ -20,7 +20,6 @@ import { LOCALE_LABEL, SupportedLocale, SUPPORTED_LOCALES } from 'constants/loca
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useWalletModalToggle, useModalOpen, useWalletModal } from 'store/application/hooks';
 import { ApplicationModal } from 'store/application/reducer';
-import { useSignedInWallets } from 'store/wallet/hooks';
 
 import { DropdownPopper } from '../Popover';
 import SearchInput from '../SearchModal/SearchInput';
@@ -28,7 +27,7 @@ import WalletItem from './WalletItem';
 import { IconWalletModal } from './IconWalletModal';
 import { EVMWalletModal } from './EVMWalletModal';
 import { XWalletType } from 'app/pages/trade/bridge/types';
-import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
+import useWallets, { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {
@@ -119,7 +118,7 @@ export default function WalletModal() {
         address: wallets[XWalletType.COSMOS].account,
       },
       {
-        name: 'Avalanche',
+        name: 'EVM',
         logo: <AvalancheWalletIcon width="40" height="40" />,
         connect: () => setWalletModal(XWalletType.EVM),
         disconnect: wallets[XWalletType.EVM].disconnect,

@@ -1,4 +1,4 @@
-import { Address, PublicClient, parseEventLogs } from 'viem';
+import { Address, PublicClient, getContract, parseEventLogs } from 'viem';
 
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
 import { AbstractPublicXService } from './types';
@@ -22,12 +22,13 @@ export class EvmPublicXService extends AbstractPublicXService {
     this.publicClient = publicClient;
   }
 
-  // TODO: complete this
-  getXCallFee(to: XChainId, rollback: boolean) {
-    return Promise.resolve({
-      rollback: 0n,
-      noRollback: 0n,
+  getXCallFee(nid: XChainId, rollback: boolean, sources: string[] = []) {
+    const contract = getContract({
+      abi: xCallContractAbi,
+      address: xChainMap[this.xChainId].contracts.xCall as Address,
+      client: this.publicClient,
     });
+    return contract.read.getFee([nid, rollback, sources]);
   }
 
   async getBlockHeight() {

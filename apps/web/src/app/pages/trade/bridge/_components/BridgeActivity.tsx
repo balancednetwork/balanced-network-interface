@@ -10,8 +10,8 @@ import { useXCallStats } from '../_hooks/useXCallStats';
 import Spinner from '../../../../components/Spinner';
 import ActivityBarChart from './ActivityBarChart';
 import XTransactionHistoryItem from './XTransactionHistoryItem';
-import { useSignedInWallets } from 'store/wallet/hooks';
-import { useXTransactionStore, xTransactionActions } from '../_zustand/useXTransactionStore';
+import { useXTransactionStore } from '../_zustand/useXTransactionStore';
+import { useSignedInWallets } from '../_hooks/useWallets';
 
 export default function BridgeActivity() {
   const { data: xCallStats } = useXCallStats();

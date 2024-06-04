@@ -14,7 +14,6 @@ import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useARCH } from 'app/pages/trade/bridge/_config/tokens';
 import { isDenomAsset } from 'app/_xcall/archway/utils';
-import { SUPPORTED_XCALL_CHAINS } from 'app/pages/trade/bridge/_config/xTokens';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import { getCrossChainTokenAddress, isXToken } from 'app/pages/trade/bridge/utils';
 import bnJs from 'bnJs';
@@ -128,12 +127,12 @@ import { coreConfig } from 'config/wagmi';
 import { erc20Abi } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
 import { multicall } from '@wagmi/core';
-import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
-import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 
 export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined, xChainId: XChainId) {
-  const { data } = useBalance({ address: account, query: { refetchInterval: 5_000 } });
+  const chainId = xChainMap[xChainId].id;
+  const { data } = useBalance({ address: account, chainId: chainId as number, query: { refetchInterval: 5_000 } });
 
   const xChain = xChainMap[xChainId];
   const nativeBalance = useMemo(
@@ -457,26 +456,4 @@ export function useLiquidityTokenBalance(account: string | undefined | null, pai
   const query = useBnJsContractQuery<string>('Dex', 'balanceOf', [account, pair?.poolId]);
   const { data } = query;
   return pair && data ? CurrencyAmount.fromRawAmount<Token>(pair.liquidityToken, data) : undefined;
-}
-
-export function useSignedInWallets(): { address: string; xChainId: XChainId | undefined }[] {
-  const wallets = useWallets();
-  return useMemo(
-    () =>
-      Object.values(wallets)
-        .filter(w => !!w.account)
-        .map(w => ({ xChainId: w.xChainId, address: w.account! })),
-    [wallets],
-  );
-}
-
-export function useAvailableWallets(): { address: string; xChainId: XChainId }[] {
-  const wallets = useWallets();
-  return useMemo(
-    () =>
-      Object.values(wallets)
-        .filter(w => !!w.account && !!w.xChainId)
-        .map(w => ({ xChainId: w.xChainId!, address: w.account! })),
-    [wallets],
-  );
 }

@@ -6,7 +6,6 @@ import { XSigningArchwayClient } from 'lib/archway/XSigningArchwayClient';
 import { getBytesFromString } from 'app/pages/trade/bridge/utils';
 
 import { archway } from 'app/pages/trade/bridge/_config/xChains';
-import { CROSS_TRANSFER_TOKENS } from 'app/pages/trade/bridge/_config/xTokens';
 import { getFeeParam, isDenomAsset } from 'app/_xcall/archway/utils';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 
@@ -89,7 +88,9 @@ export class ArchwayWalletXService extends ArchwayPublicXService implements IWal
           assetToBridge,
         );
       } else {
-        if (CROSS_TRANSFER_TOKENS.includes(inputAmount.currency.symbol || '')) {
+        const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
+
+        if (isBnUSD) {
           const msg = {
             cross_transfer: {
               amount: `${inputAmount.quotient}`,

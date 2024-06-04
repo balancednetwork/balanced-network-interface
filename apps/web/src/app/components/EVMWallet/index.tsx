@@ -16,7 +16,7 @@ import useDebounce from 'hooks/useDebounce';
 import useKeyPress from 'hooks/useKeyPress';
 import { useRatesWithOracle } from 'queries/reward';
 import { useWalletModalToggle } from 'store/application/hooks';
-import { useSignedInWallets, useWalletBalances } from 'store/wallet/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 import { isDPZeroCA, toFraction } from 'utils';
 
 import Divider from '../Divider';
@@ -40,6 +40,7 @@ import { useTokenComparator } from '../SearchModal/sorting';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 import useXWallet from 'app/pages/trade/bridge/_hooks/useXWallet';
+import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 
 const walletBreakpoint = '499px';
 

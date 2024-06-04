@@ -34,3 +34,25 @@ const useWallets = (): {
 };
 
 export default useWallets;
+
+export function useSignedInWallets(): { address: string; xChainId: XChainId | undefined }[] {
+  const wallets = useWallets();
+  return useMemo(
+    () =>
+      Object.values(wallets)
+        .filter(w => !!w.account)
+        .map(w => ({ xChainId: w.xChainId, address: w.account! })),
+    [wallets],
+  );
+}
+
+export function useAvailableWallets(): { address: string; xChainId: XChainId }[] {
+  const wallets = useWallets();
+  return useMemo(
+    () =>
+      Object.values(wallets)
+        .filter(w => !!w.account && !!w.xChainId)
+        .map(w => ({ xChainId: w.xChainId!, address: w.account! })),
+    [wallets],
+  );
+}

@@ -2,10 +2,9 @@ import React, { useMemo } from 'react';
 
 import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
-import { t, Trans } from '@lingui/macro';
+import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
-import styled, { css } from 'styled-components';
 
 import { XChainId, XToken } from 'app/pages/trade/bridge/types';
 import { getNetworkDisplayName } from 'app/pages/trade/bridge/utils';
@@ -34,8 +33,9 @@ import XTransactionState from '../../bridge/_components/XTransactionState';
 import { useCreateWalletXService } from '../../bridge/_zustand/useXServiceStore';
 import useWallets from '../../bridge/_hooks/useWallets';
 import { useSwitchChain } from 'wagmi';
+import { StyledButton } from './shared';
 
-type XCallSwapModalProps = {
+type XSwapModalProps = {
   account: string | undefined;
   currencies: { [field in Field]?: Currency };
   executionTrade?: Trade<Currency, Currency, TradeType>;
@@ -47,70 +47,13 @@ type XCallSwapModalProps = {
   recipient?: string | null;
 };
 
-export const StyledButton = styled(Button)<{ $loading?: boolean }>`
-  position: relative;
-
-  &:after,
-  &:before {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    left: 0;
-    border-radius: 5px;
-    background: ${({ theme }) => theme.colors.primaryBright};
-  }
-
-  &:after {
-    bottom: 0;
-  }
-
-  &:before {
-    top: 0;
-  }
-
-  @keyframes expand {
-    0% {
-      width: 0;
-      left: 50%;
-      opacity: 0;
-    }
-    50% {
-      width: 28%;
-      left: 36%;
-      opacity: 1;
-    }
-    100% {
-      width: 100%;
-      left: 0%;
-      opacity: 0;
-    }
-  }
-
-  ${({ $loading }) =>
-    $loading &&
-    css`
-    &:after {
-      animation: expand 2s infinite;
-    }
-    `}
-
-`;
-
 export const presenceVariants = {
   initial: { opacity: 0, height: 0 },
   animate: { opacity: 1, height: 'auto' },
   exit: { opacity: 0, height: 0 },
 };
 
-const XCallSwapModal = ({
-  account,
-  currencies,
-  executionTrade,
-  direction,
-  recipient,
-  clearInputs,
-}: XCallSwapModalProps) => {
+const XSwapModal = ({ account, currencies, executionTrade, direction, recipient, clearInputs }: XSwapModalProps) => {
   useModalStore();
   const { currentId } = useXTransactionStore();
   const currentXTransaction = xTransactionActions.get(currentId);
@@ -143,7 +86,7 @@ const XCallSwapModal = ({
   };
 
   const handleDismiss = () => {
-    modalActions.closeModal(MODAL_ID.XCALL_SWAP_MODAL);
+    modalActions.closeModal(MODAL_ID.XSWAP_CONFIRM_MODAL);
     setTimeout(() => {
       xTransactionActions.reset();
     }, 500);
@@ -185,7 +128,7 @@ const XCallSwapModal = ({
   return (
     <>
       {currentXTransaction && <XTransactionUpdater xTransaction={currentXTransaction} />}
-      <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XCALL_SWAP_MODAL)} onDismiss={handleDismiss}>
+      <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XSWAP_CONFIRM_MODAL)} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
             <Trans>
@@ -302,4 +245,4 @@ const XCallSwapModal = ({
   );
 };
 
-export default XCallSwapModal;
+export default XSwapModal;

@@ -1,6 +1,6 @@
 import { ArchwayClient } from '@archwayhq/arch3.js';
 
-import { archway, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { archway } from 'app/pages/trade/bridge/_config/xChains';
 
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
 import { AbstractPublicXService } from './types';
@@ -22,9 +22,9 @@ export class ArchwayPublicXService extends AbstractPublicXService {
     this.publicClient = publicClient;
   }
 
-  async getXCallFee(to: XChainId, rollback: boolean) {
+  async getXCallFee(nid: XChainId, rollback: boolean) {
     return await this.publicClient.queryContractSmart(archway.contracts.xCall, {
-      get_fee: { nid: xChainMap[to].xChainId, rollback },
+      get_fee: { nid: nid, rollback },
     });
   }
 

@@ -116,6 +116,7 @@ export type XChain = Chain & {
   xChainType: XChainType;
   xWalletType: XWalletType;
   contracts: {
+    sources: string[];
     xCall: string;
     assetManager: string;
     bnUSD?: string;

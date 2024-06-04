@@ -20,7 +20,6 @@ import WalletIcon from 'assets/icons/wallet.svg';
 import bnJs from 'bnJs';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
-import { useAvailableWallets } from 'store/wallet/hooks';
 import { shortenAddress } from 'utils';
 
 import ArchwayWallet from '../ArchwayWallet';
@@ -30,7 +29,7 @@ import { MouseoverTooltip } from '../Tooltip';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import EVMWallet from '../EVMWallet';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
+import useWallets, { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 
 const StyledLogo = styled(Logo)`
   margin-right: 15px;

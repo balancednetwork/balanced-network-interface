@@ -4,7 +4,6 @@ import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { XChainId, XWalletType } from 'app/pages/trade/bridge/types';
 import { Typography } from 'app/theme';
 import { useWalletModal } from 'store/application/hooks';
-import { useAvailableWallets } from 'store/wallet/hooks';
 import { shortenAddress } from 'utils';
 
 import { UnderlineText } from '../DropdownText';
@@ -14,6 +13,7 @@ import { ModalContentWrapper } from '../ModalContent';
 import AddressInput from './AddressInput';
 import { useSwapState } from 'store/swap/hooks';
 import { Trans } from '@lingui/macro';
+import { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 
 const CrossChainWalletConnect = ({ chainId, editable }: { chainId: XChainId; editable?: boolean }) => {
   const signedInWallets = useAvailableWallets();

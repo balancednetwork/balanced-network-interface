@@ -289,6 +289,14 @@
       "symbol": "INJ",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/inj.png"
+    },
+    {
+       "address": "cx07b184a37f03c6ab681fcbd0b45aec6dc3eafbeb",
+       "chainId": 1,
+       "name": "Bitcoin",
+       "symbol": "BTC",
+       "decimals": 18,
+       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/btcb.png"
     }
   ]
 }

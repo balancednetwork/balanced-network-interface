@@ -9,6 +9,8 @@ export interface IPublicXService {
   getTxEventLogs(rawTx): any[];
   deriveTxStatus(rawTx): TransactionStatus;
 
+  getPublicClient(): any;
+
   getScanBlockCount(): bigint;
   getEventLogs({
     startBlockHeight,
@@ -26,6 +28,7 @@ export abstract class AbstractPublicXService implements IPublicXService {
   abstract getTxReceipt(txHash): Promise<any>;
   abstract getTxEventLogs(rawTx): any[];
   abstract deriveTxStatus(rawTx): TransactionStatus;
+  abstract getPublicClient();
 
   abstract getEventLogs({
     startBlockHeight,

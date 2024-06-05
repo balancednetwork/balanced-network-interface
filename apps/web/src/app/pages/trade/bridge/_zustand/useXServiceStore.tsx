@@ -103,13 +103,11 @@ export const useCreatePublicXService = (xChainId: XChainId) => {
 
 export const useCreateWalletXService = (xChainId: XChainId) => {
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
+  const publicClient = useXServiceStore(state => state.publicXServices?.[xChainId]);
 
   const { iconService } = useIconReact();
-  const { client, signingClient } = useArchwayContext();
-  const avalanchePublicClient = usePublicClient({ chainId: avalanche.id });
-  const { data: walletClient } = useWalletClient();
-
-  const bscPublicClient = usePublicClient({ chainId: bsc.id });
+  const { signingClient: archwayWalletClient } = useArchwayContext();
+  const { data: evmWalletClient } = useWalletClient();
 
   const createWalletXService = (
     WalletXServiceClass,
@@ -125,25 +123,23 @@ export const useCreateWalletXService = (xChainId: XChainId) => {
   useEffect(() => {
     const setupWalletXService = (xChainId: XChainId) => {
       if (xChainId === '0x1.icon' || xChainId === '0x2.icon') {
-        createWalletXService(IconWalletXService, xChainId, iconService, iconService, { changeShouldLedgerSign });
+        createWalletXService(IconWalletXService, xChainId, publicClient, iconService, { changeShouldLedgerSign });
       } else if (xChainId === 'archway-1' || xChainId === 'archway') {
-        createWalletXService(ArchwayWalletXService, xChainId, client, signingClient);
-      } else if (xChainId === '0xa86a.avax') {
-        createWalletXService(EvmWalletXService, xChainId, avalanchePublicClient, walletClient);
-      } else if (xChainId === '0x38.bsc') {
-        createWalletXService(EvmWalletXService, xChainId, bscPublicClient, walletClient);
+        createWalletXService(ArchwayWalletXService, xChainId, publicClient, archwayWalletClient);
+      } else if (xChainId === '0xa86a.avax' || xChainId === '0x38.bsc' || xChainId === '0xa4b1.arbitrum') {
+        createWalletXService(EvmWalletXService, xChainId, publicClient, evmWalletClient);
       }
     };
 
-    setupWalletXService(xChainId);
+    if (publicClient) {
+      setupWalletXService(xChainId);
+    }
   }, [
     xChainId,
-    client,
-    signingClient,
     iconService,
-    avalanchePublicClient,
-    walletClient,
-    bscPublicClient,
+    archwayWalletClient,
+    evmWalletClient,
+    publicClient,
     createWalletXService,
     changeShouldLedgerSign,
   ]);

@@ -212,6 +212,13 @@ export function useWalletFetchBalances(account?: string | null, accountArch?: st
   React.useEffect(() => {
     bscBalances && dispatch(changeBalances({ xChainId: '0x38.bsc', balances: bscBalances }));
   }, [bscBalances, dispatch]);
+
+  // fetch balances on arb
+  const arbTokens = useXTokens('0xa4b1.arbitrum');
+  const { data: arbBalances } = useEVMBalances(address, arbTokens, '0xa4b1.arbitrum');
+  React.useEffect(() => {
+    arbBalances && dispatch(changeBalances({ xChainId: '0xa4b1.arbitrum', balances: arbBalances }));
+  }, [arbBalances, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {

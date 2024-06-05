@@ -7,7 +7,15 @@ export enum XWalletType {
   EVM,
 }
 
-export type XChainId = 'archway-1' | 'archway' | '0x1.icon' | '0x2.icon' | '0xa86a.avax' | '0xa869.fuji' | '0x38.bsc';
+export type XChainId =
+  | 'archway-1'
+  | 'archway'
+  | '0x1.icon'
+  | '0x2.icon'
+  | '0xa86a.avax'
+  | '0xa869.fuji'
+  | '0x38.bsc'
+  | '0xa4b1.arbitrum';
 
 export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY';
 
@@ -116,7 +124,6 @@ export type XChain = Chain & {
   xChainType: XChainType;
   xWalletType: XWalletType;
   contracts: {
-    sources: string[];
     xCall: string;
     assetManager: string;
     bnUSD?: string;

@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
 import { usePublicClient, useWalletClient } from 'wagmi';
-import { avalanche, bsc } from 'wagmi/chains';
+import { avalanche, bsc, arbitrum } from 'wagmi/chains';
 
 import { useIconReact } from 'packages/icon-react';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
@@ -73,6 +73,7 @@ export const useCreatePublicXService = (xChainId: XChainId) => {
   const { client } = useArchwayContext();
   const avalanchePublicClient = usePublicClient({ chainId: avalanche.id });
   const bscPublicClient = usePublicClient({ chainId: bsc.id });
+  const arbPublicClient = usePublicClient({ chainId: arbitrum.id });
 
   const createPublicXService = (PublicXServiceClass, xChainId: XChainId, publicClient: any) => {
     const publicXService = new PublicXServiceClass(xChainId, publicClient);
@@ -89,11 +90,13 @@ export const useCreatePublicXService = (xChainId: XChainId) => {
         createPublicXService(EvmPublicXService, xChainId, avalanchePublicClient);
       } else if (xChainId === '0x38.bsc') {
         createPublicXService(EvmWalletXService, xChainId, bscPublicClient);
+      } else if (xChainId === '0xa4b1.arbitrum') {
+        createPublicXService(EvmWalletXService, xChainId, arbPublicClient);
       }
     };
 
     setupPublicXService(xChainId);
-  }, [xChainId, client, iconService, avalanchePublicClient, bscPublicClient, createPublicXService]);
+  }, [xChainId, client, iconService, avalanchePublicClient, bscPublicClient, arbPublicClient, createPublicXService]);
 
   return true;
 };

@@ -38,8 +38,8 @@ export class IconPublicXService extends AbstractPublicXService {
     this.publicClient = publicClient;
   }
 
-  async getXCallFee(nid: XChainId, rollback: boolean) {
-    const res = await bnJs.XCall.getFee(nid, rollback);
+  async getXCallFee(nid: XChainId, rollback: boolean, sources?: string[]) {
+    const res = await bnJs.XCall.getFee(nid, rollback, sources);
     return BigInt(res);
   }
 

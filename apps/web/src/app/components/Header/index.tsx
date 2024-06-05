@@ -164,6 +164,7 @@ const WalletUIs: Partial<Record<XChainId, any>> = {
   'archway-1': ArchwayWallet,
   '0xa86a.avax': EVMWallet,
   '0x38.bsc': EVMWallet,
+  '0xa4b1.arbitrum': EVMWallet,
 };
 
 function useClaimableICX(): UseQueryResult<BigNumber> {

@@ -22,7 +22,7 @@ import { Field } from 'store/bridge/reducer';
 import useXCallFee from '../_hooks/useXCallFee';
 import { xChainMap } from '../_config/xChains';
 import { validateAddress } from 'utils';
-import { useSignedInWallets } from '../_hooks/useWallets';
+import { useAvailableWallets } from '../_hooks/useWallets';
 
 export default function BridgeTransferForm({ openModal }) {
   const crossChainWallet = useCrossChainWalletBalances();
@@ -34,7 +34,7 @@ export default function BridgeTransferForm({ openModal }) {
   const bridgeDirection = useBridgeDirection();
   const percentAmount = bridgeState[Field.FROM].percent;
 
-  const signedInWallets = useSignedInWallets();
+  const signedInWallets = useAvailableWallets();
   const toggleWalletModal = useWalletModalToggle();
 
   const handleInputPercentSelect = (percent: number) => {
@@ -46,7 +46,9 @@ export default function BridgeTransferForm({ openModal }) {
   };
 
   React.useEffect(() => {
-    const destinationWallet = signedInWallets.find(wallet => wallet.xChainId === bridgeDirection.to);
+    const destinationWallet = signedInWallets.find(
+      wallet => xChainMap[wallet.xChainId].xWalletType === xChainMap[bridgeDirection.to].xWalletType,
+    );
     if (destinationWallet) {
       onChangeRecipient(destinationWallet.address);
     } else {

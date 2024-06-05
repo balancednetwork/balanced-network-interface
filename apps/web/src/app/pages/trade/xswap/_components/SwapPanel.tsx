@@ -30,7 +30,8 @@ import XSwapModal from './XSwapModal';
 import SwapModal from './SwapModal';
 import { MODAL_ID, modalActions } from '../../bridge/_zustand/useModalStore';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
-import { useSignedInWallets } from '../../bridge/_hooks/useWallets';
+import { useAvailableWallets } from '../../bridge/_hooks/useWallets';
+import { xChainMap } from '../../bridge/_config/xChains';
 
 const MemoizedStabilityFund = React.memo(StabilityFund);
 
@@ -53,7 +54,7 @@ export default function SwapPanel() {
     direction.from === '0x1.icon' &&
     direction.to === '0x1.icon';
 
-  const signedInWallets = useSignedInWallets();
+  const signedInWallets = useAvailableWallets();
   const { recipient } = useSwapState();
   const isRecipientCustom = recipient !== null && !signedInWallets.some(wallet => wallet.address === recipient);
   const isOutputCrosschainCompatible = isXToken(currencies?.OUTPUT);
@@ -63,7 +64,9 @@ export default function SwapPanel() {
     useSwapActionHandlers();
 
   React.useEffect(() => {
-    const destinationWallet = signedInWallets.find(wallet => wallet.xChainId === direction.to);
+    const destinationWallet = signedInWallets.find(
+      wallet => xChainMap[wallet.xChainId].xWalletType === xChainMap[direction.to].xWalletType,
+    );
     if (destinationWallet) {
       onChangeRecipient(destinationWallet.address);
     } else {

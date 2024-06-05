@@ -68,6 +68,10 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('0x38.bsc', 56, '0x2170ed0880ac9a755fd29b2688956bd959f933f8', 18, 'ETH', 'Ethereum'),
     new XToken('0x38.bsc', 56, '0xc65132325bD4FcF2Ec5F3a9375487163B6999206', 18, 'bnUSD', 'Balanced Dollar'),
   ],
+  '0xa4b1.arbitrum': [
+    new XToken('0xa4b1.arbitrum', 42161, NATIVE_ADDRESS, 18, 'ETH', 'ETH'),
+    new XToken('0xa4b1.arbitrum', 42161, '0xA67f4b09Eed22f8201Ee0637CbE9d654E63F946e', 18, 'bnUSD', 'Balanced Dollar'),
+  ],
   '0x2.icon': [],
   '0xa869.fuji': [],
   archway: [],

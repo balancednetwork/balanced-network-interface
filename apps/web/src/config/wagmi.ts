@@ -1,5 +1,5 @@
 import { http, createConfig } from 'wagmi';
-import { avalanche, avalancheFuji, bsc } from 'wagmi/chains';
+import { avalanche, avalancheFuji, bsc, arbitrum } from 'wagmi/chains';
 // import { walletConnect } from 'wagmi/connectors';
 import { createConfig as createCoreConfig } from '@wagmi/core';
 export const noopStorage = {
@@ -9,7 +9,7 @@ export const noopStorage = {
 };
 
 export const wagmiConfig = createConfig({
-  chains: [avalanche, bsc, avalancheFuji],
+  chains: [avalanche, bsc, avalancheFuji, arbitrum],
   connectors: [
     // walletConnect({
     //   projectId: '6757abd2c11f58508b9bc73a9c8fed85',
@@ -24,14 +24,16 @@ export const wagmiConfig = createConfig({
     [avalanche.id]: http(),
     [bsc.id]: http(),
     [avalancheFuji.id]: http(),
+    [arbitrum.id]: http(),
   },
 });
 
 export const coreConfig = createCoreConfig({
-  chains: [avalanche, bsc, avalancheFuji],
+  chains: [avalanche, bsc, avalancheFuji, arbitrum],
   transports: {
     [avalanche.id]: http(),
     [bsc.id]: http(),
     [avalancheFuji.id]: http(),
+    [arbitrum.id]: http(),
   },
 });

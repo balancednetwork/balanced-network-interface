@@ -15,7 +15,7 @@ import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import Popover, { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import FlipIcon from 'assets/icons/flip.svg';
-import { SLIPPAGE_WARNING_THRESHOLD } from 'constants/misc';
+import { SLIPPAGE_SIGNIFICANT_WARNING_THRESHOLD, SLIPPAGE_WARNING_THRESHOLD } from 'constants/misc';
 import { useSwapSlippageTolerance, useWalletModalToggle } from 'store/application/hooks';
 import { useCAMemo, useIsSwapEligible, useMaxSwapSize } from 'store/stabilityFund/hooks';
 import { Field } from 'store/swap/reducer';
@@ -49,6 +49,7 @@ export default function SwapPanel() {
   );
   const fundMaxSwap = useMaxSwapSize(memoizedInputAmount, memoizedOutputAmount);
   const showSlippageWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
+  const showSignificantSlippageWarning = trade?.priceImpact.greaterThan(SLIPPAGE_SIGNIFICANT_WARNING_THRESHOLD);
   const showFundOption =
     isSwapEligibleForStabilityFund &&
     fundMaxSwap?.greaterThan(0) &&
@@ -171,8 +172,16 @@ export default function SwapPanel() {
   };
 
   const swapButton = isValid ? (
-    <Button color="primary" onClick={handleSwap}>
+    <Button
+      color="primary"
+      onClick={handleSwap}
+      warning={showSignificantSlippageWarning}
+      disabled={showFundOption && showSlippageWarning}
+    >
       <Trans>Swap</Trans>
+      {!showFundOption && showSignificantSlippageWarning && (
+        <Typography fontSize={14}>{t`(${priceImpact} price impact)`}</Typography>
+      )}
     </Button>
   ) : (
     <Button disabled={!account || !!inputError} color="primary" onClick={handleSwap}>

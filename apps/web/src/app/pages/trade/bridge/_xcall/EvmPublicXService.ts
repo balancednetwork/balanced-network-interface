@@ -22,6 +22,10 @@ export class EvmPublicXService extends AbstractPublicXService {
     this.publicClient = publicClient;
   }
 
+  getPublicClient() {
+    return this.publicClient;
+  }
+
   getXCallFee(nid: XChainId, rollback: boolean, sources: string[] = []) {
     const contract = getContract({
       abi: xCallContractAbi,

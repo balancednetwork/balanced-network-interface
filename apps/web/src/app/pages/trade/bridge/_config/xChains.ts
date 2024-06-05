@@ -17,7 +17,6 @@ export const archway: XChain = {
     ws: 'wss://rpc.mainnet.archway.io:443/websocket',
   },
   contracts: {
-    sources: [],
     xCall: 'archway19hzhgd90etqc3z2qswumq80ag2d8het38r0al0r4ulrly72t20psdrpna6',
     assetManager: 'archway1sg2kgqjhj7vyu0x9tflx4ju9vjn2x6c7g39vx3tv9ethfg9d9zns6ajpja',
     bnUSD: 'archway1l3m84nf7xagkdrcced2y0g367xphnea5uqc3mww3f83eh6h38nqqxnsxz7',
@@ -45,7 +44,6 @@ export const archwayTestnet: XChain = {
     ws: 'wss://rpc.mainnet.archway.io:443/websocket',
   },
   contracts: {
-    sources: [],
     xCall: 'archway1h04c8eqr99dnsw6wqx80juj2vtuxth70eh65cf6pnj4zan6ms4jqshc5wk',
     assetManager: 'archway1sg2kgqjhj7vyu0x9tflx4ju9vjn2x6c7g39vx3tv9ethfg9d9zns6ajpja',
     bnUSD: 'archway1l3m84nf7xagkdrcced2y0g367xphnea5uqc3mww3f83eh6h38nqqxnsxz7',
@@ -73,7 +71,6 @@ export const icon: XChain = {
     ws: 'wss://ctz.solidwallet.io/api/v3/icon_dex/block',
   },
   contracts: {
-    sources: [],
     xCall: 'cxa07f426062a1384bdd762afa6a87d123fbc81c75',
     assetManager: 'cxabea09a8c5f3efa54d0a0370b14715e6f2270591',
     bnUSD: 'cx88fd7df7ddff82f7cc735c871dc519838cb235bb',
@@ -101,7 +98,6 @@ export const lisbon: XChain = {
     ws: 'wss://ctz.solidwallet.io/api/v3/icon_dex/block',
   },
   contracts: {
-    sources: [],
     xCall: 'cx15a339fa60bd86225050b22ea8cd4a9d7cd8bb83',
     assetManager: 'cxabea09a8c5f3efa54d0a0370b14715e6f2270591',
     bnUSD: 'cx88fd7df7ddff82f7cc735c871dc519838cb235bb',
@@ -128,7 +124,6 @@ export const avalanche: XChain = {
     http: 'https://api.avax.network/ext/bc/C/rpc',
   },
   contracts: {
-    sources: ['0xC1a39C4e7AA98DEC394eF54559960873Bd619cA3', '0x7F3665eF19258cD5cE15eA39d014F47Fc942AE0C'],
     xCall: '0xfC83a3F252090B26f92F91DFB9dC3Eb710AdAf1b',
     assetManager: '0xdf851B4f0D9b2323e03B3980b1C4Cf56273c0bd9',
     bnUSD: '0xdBDd50997361522495EcFE57EBb6850dA0E4C699',
@@ -154,7 +149,6 @@ export const fuji: XChain = {
     http: 'https://api.avax.network/ext/bc/C/rpc',
   },
   contracts: {
-    sources: [],
     xCall: '0x28ecb198e86a7FcA1cf51032635967fc26cDDAaD',
     assetManager: '0xdf851B4f0D9b2323e03B3980b1C4Cf56273c0bd9',
     bnUSD: '0xdBDd50997361522495EcFE57EBb6850dA0E4C699',
@@ -180,10 +174,34 @@ export const bsc: XChain = {
     http: 'https://bsc-dataseed.bnbchain.org',
   },
   contracts: {
-    sources: ['0x24415977c566f9300Ea6F0aC75AEA0c09C500e46'],
     xCall: '0xfc83a3f252090b26f92f91dfb9dc3eb710adaf1b',
     assetManager: '0x69e81Cea7889608A63947814893ad1B86DcC03Aa',
     bnUSD: '0xc65132325bD4FcF2Ec5F3a9375487163B6999206',
+  },
+  autoExecution: true,
+  gasThreshold: 0,
+  testnet: false,
+};
+
+export const arbitrum: XChain = {
+  id: 42161,
+  name: 'Arbitrum One',
+  xChainId: '0xa4b1.arbitrum',
+  xChainType: 'EVM',
+  xWalletType: XWalletType.EVM,
+  tracker: 'https://arbiscan.io/',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'ETH',
+    symbol: 'ETH',
+  },
+  rpc: {
+    http: 'https://arb1.arbitrum.io/rpc',
+  },
+  contracts: {
+    xCall: '0xfC83a3F252090B26f92F91DFB9dC3Eb710AdAf1b',
+    assetManager: '0x78b7CD9308287DEb724527d8703c889e2d6C3708',
+    bnUSD: '0xA67f4b09Eed22f8201Ee0637CbE9d654E63F946e',
   },
   autoExecution: true,
   gasThreshold: 0,
@@ -198,6 +216,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   archway: archwayTestnet,
   'archway-1': archway,
   '0x38.bsc': bsc,
+  '0xa4b1.arbitrum': arbitrum,
 };
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);
@@ -211,3 +230,17 @@ export const BRIDGE_PAIRS: BridgePair[] = [
   { chains: sortChains('0x1.icon', 'archway-1'), protocol: MessagingProtocolId.IBC },
   { chains: sortChains('0x1.icon', '0xa86a.avax'), protocol: MessagingProtocolId.C_RELAY },
 ];
+
+/** from other chain to icon sources */
+export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
+  '0xa4b1.arbitrum': ['0x4c6C68E8F5206EE4a1690C808cfF5c3fD35b512F', '0x1F8B1e9d3633229d38BDFc93dCa50B6453Ad8E97'],
+  '0x38.bsc': ['0x24415977c566f9300Ea6F0aC75AEA0c09C500e46'],
+  '0xa86a.avax': ['0xC1a39C4e7AA98DEC394eF54559960873Bd619cA3', '0x7F3665eF19258cD5cE15eA39d014F47Fc942AE0C'],
+};
+
+/** to other chain from icon sources */
+export const TO_SOURCES: { [key in XChainId]?: string[] } = {
+  '0xa4b1.arbitrum': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
+  '0x38.bsc': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
+  '0xa86a.avax': ['cx59d899fce52cadd1feb5128ff5e6672f03943eec', 'cx917f88460d4ebec1fd656d4dbe51131a37d16837'],
+};

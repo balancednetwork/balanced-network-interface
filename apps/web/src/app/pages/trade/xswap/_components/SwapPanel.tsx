@@ -15,7 +15,7 @@ import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import Popover, { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import FlipIcon from 'assets/icons/flip.svg';
-import { SLIPPAGE_SWAP_DISABLED_THRESHOLD, SLIPPAGE_WARNING_THRESHOLD } from 'constants/misc';
+import { SLIPPAGE_WARNING_THRESHOLD } from 'constants/misc';
 import { useSwapSlippageTolerance, useWalletModalToggle } from 'store/application/hooks';
 import { useCAMemo, useIsSwapEligible, useMaxSwapSize } from 'store/stabilityFund/hooks';
 import { Field } from 'store/swap/reducer';
@@ -49,7 +49,6 @@ export default function SwapPanel() {
   );
   const fundMaxSwap = useMaxSwapSize(memoizedInputAmount, memoizedOutputAmount);
   const showSlippageWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
-  const swapDisabled = trade?.priceImpact.greaterThan(SLIPPAGE_SWAP_DISABLED_THRESHOLD);
   const showFundOption =
     isSwapEligibleForStabilityFund &&
     fundMaxSwap?.greaterThan(0) &&

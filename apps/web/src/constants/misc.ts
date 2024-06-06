@@ -26,7 +26,7 @@ export const BLOCKED_PRICE_IMPACT_NON_EXPERT: Percent = new Percent(1500n, BIPS_
 export const BETTER_TRADE_LESS_HOPS_THRESHOLD = new Percent(50n, BIPS_BASE);
 
 export const SLIPPAGE_WARNING_THRESHOLD = new Percent(250n, BIPS_BASE); //2.5%
-export const SLIPPAGE_SIGNIFICANT_WARNING_THRESHOLD = new Percent(500n, BIPS_BASE); //5%
+export const SLIPPAGE_SWAP_DISABLED_THRESHOLD = new Percent(1000n, BIPS_BASE); //10%
 
 export const ZERO_PERCENT = new Percent('0');
 export const TWO_PERCENT = new Percent(200n, BIPS_BASE);

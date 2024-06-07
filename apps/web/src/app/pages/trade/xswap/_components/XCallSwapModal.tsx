@@ -32,7 +32,7 @@ import {
   XCallTransactionUpdater,
 } from '../../bridge/_zustand/useXCallTransactionStore';
 import XCallTransactionState from '../../bridge/_components/XCallTransactionState';
-import { SLIPPAGE_WARNING_THRESHOLD } from 'constants/misc';
+import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from 'constants/misc';
 
 type XCallSwapModalProps = {
   account: string | undefined;
@@ -118,7 +118,7 @@ const XCallSwapModal = ({
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const slippageTolerance = useSwapSlippageTolerance();
-  const showWarning = executionTrade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
+  const showWarning = executionTrade?.priceImpact.greaterThan(SLIPPAGE_MODAL_WARNING_THRESHOLD);
 
   const { xCallFee, formattedXCallFee } = useXCallFee(direction.from, direction.to);
 

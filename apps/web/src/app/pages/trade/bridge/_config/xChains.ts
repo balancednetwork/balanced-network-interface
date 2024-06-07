@@ -185,7 +185,7 @@ export const bsc: XChain = {
 
 export const arbitrum: XChain = {
   id: 42161,
-  name: 'Arbitrum One',
+  name: 'Arbitrum',
   xChainId: '0xa4b1.arbitrum',
   xChainType: 'EVM',
   xWalletType: XWalletType.EVM,

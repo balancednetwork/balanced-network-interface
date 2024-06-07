@@ -72,6 +72,7 @@ const StyledNavLink = styled(NavLink)`
   transition: background-color 0.3s ease, color 0.3s ease;
   font-size: 14px;
   position: relative;
+  box-shadow: 0px 0px 0px 0px rgba(1, 0, 42, 0.35);
 
   svg {
     display: none;
@@ -84,25 +85,11 @@ const StyledNavLink = styled(NavLink)`
     }
   `};
 
-  &:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    box-shadow: 0px 10px 25px 0px rgba(1, 0, 42, 0.35);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
   &.active {
     color: ${({ theme }) => theme.colors.bg1};
     background-color: ${({ theme }) => theme.colors.primary};
 
-    &:before {
-      opacity: 1;
-    }
+    box-shadow: 0px 10px 25px 0px rgba(1, 0, 42, 0.35);
   }
 
   &:hover,
@@ -140,6 +127,7 @@ const StyledNavLinkWithNotification = styled(
       background-color: ${theme.colors.primary};
       right: 25px;
       top: 10px;
+      left: initial;
     }
 
     &:hover, &.active {

@@ -3,7 +3,6 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { addresses } from '@balancednetwork/balanced-js';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
@@ -28,12 +27,9 @@ import { Field } from 'store/collateral/reducer';
 import {
   useCollateralState,
   useCollateralActionHandlers,
-  useCollateralType,
-  useDepositedCollateral,
-  useTotalCollateral,
   useSupportedCollateralTokens,
   useIsHandlingICX,
-  useCollateralDecimalPlaces,
+  useDerivedCollateralInfo,
 } from 'store/collateral/hooks';
 import { useLoanActionHandlers, useLockedCollateralAmount } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
@@ -44,6 +40,8 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import CollateralTypeSwitcher, { CollateralTypeSwitcherWrap } from 'app/components/CollateralTypeSwitcher';
 import ModalContent from 'app/components/ModalContent';
 import ICXDisplayTypeSwitcher from 'app/components/ICXDisplayTypeSwitcher';
+import XCollateralModal, { XCollateralAction } from './_components/xCollateralModal';
+import CollateralChainSelector from './_components/CollateralChainSelector';
 
 export const PanelInfoWrap = styled(Flex)`
   justify-content: space-between;
@@ -85,6 +83,22 @@ export const PanelInfoItem = styled(Box)`
   }
 `;
 
+export const UnderPanel = styled(Flex)`
+  position: static;
+  padding: 35px 25px 15px;
+  margin-top: -20px;
+  background-color: ${({ theme }) => theme.colors.bg2};
+  border-radius: 0 0 10px 10px;
+
+  svg {
+    margin-top: 10px;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 35px 35px 15px;
+  `}
+`;
+
 const UnstakingOption = styled(Flex)<{ isActive: boolean }>`
   padding: 10px 20px;
   margin: 15px;
@@ -108,13 +122,23 @@ enum ICXWithdrawOptions {
 }
 
 const CollateralPanel = () => {
-  const { account } = useIconReact();
+  const {
+    account,
+    sourceChain,
+    collateralType,
+    availableCollateralAmount,
+    collateralDeposit,
+    collateralTotal,
+    parsedAmount,
+    collateralDecimalPlaces,
+    formattedAmounts,
+  } = useDerivedCollateralInfo();
+
+  const { isAdjusting, inputType } = useCollateralState();
   const ratio = useRatio();
-  const collateralType = useCollateralType();
   const isHandlingICX = useIsHandlingICX();
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
   const [ICXWithdrawOption, setICXWithdrawOption] = useState<ICXWithdrawOptions>(ICXWithdrawOptions.EMPTY);
-  const collateralDecimalPlaces = useCollateralDecimalPlaces();
   const { data: icxUnstakingTime } = useICXUnstakingTime();
 
   const isSuperSmall = useMedia(`(max-width: 450px)`);
@@ -126,8 +150,8 @@ const CollateralPanel = () => {
   const sliderInstance = React.useRef<any>(null);
 
   // user interaction logic
-  const { independentField, typedValue, isAdjusting, inputType } = useCollateralState();
-  const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
+  // const { independentField, typedValue, isAdjusting, inputType } = useCollateralState();
+  // const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
 
   const { onFieldAInput, onFieldBInput, onSlide, onAdjust: adjust } = useCollateralActionHandlers();
   const { onAdjust: adjustLoan } = useLoanActionHandlers();
@@ -140,26 +164,6 @@ const CollateralPanel = () => {
   const handleCancelAdjusting = useCallback(() => {
     adjust(false);
   }, [adjust]);
-
-  const collateralDeposit = useDepositedCollateral();
-  const collateralTotal = useTotalCollateral();
-
-  //  calculate dependentField value
-  const parsedAmount = useMemo(() => {
-    return {
-      [independentField]: new BigNumber(typedValue || '0'),
-      [dependentField]: collateralTotal.minus(new BigNumber(typedValue || '0')),
-    };
-  }, [independentField, dependentField, typedValue, collateralTotal]);
-
-  const formattedAmounts = useMemo(() => {
-    return {
-      [independentField]: typedValue,
-      [dependentField]: parsedAmount[dependentField].isZero()
-        ? '0'
-        : parsedAmount[dependentField].toFixed(collateralDecimalPlaces),
-    };
-  }, [independentField, dependentField, typedValue, parsedAmount, collateralDecimalPlaces]);
 
   const buttonText = collateralDeposit.isZero() ? t`Deposit` : t`Adjust`;
 
@@ -427,8 +431,18 @@ const CollateralPanel = () => {
             </PanelInfoItem>
           </PanelInfoWrap>
         </BoxPanel>
-        <ICXDisplayTypeSwitcher handleCancelAdjusting={handleCancelAdjusting} />
+        <UnderPanel justifyContent="space-between">
+          <CollateralChainSelector />
+          <ICXDisplayTypeSwitcher handleCancelAdjusting={handleCancelAdjusting} />
+        </UnderPanel>
       </BoxPanelWrap>
+
+      <XCollateralModal
+        account={undefined}
+        currencyAmount={undefined}
+        sourceChain={'archway-1'}
+        action={XCollateralAction.DEPOSIT}
+      />
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>

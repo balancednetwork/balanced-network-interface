@@ -11,8 +11,12 @@ import { ZERO } from 'constants/index';
 import { useBnJsContractQuery } from 'queries/utils';
 import {
   DEFAULT_COLLATERAL_TOKEN,
+  useCollateralDecimalPlaces,
   useCollateralInputAmountAbsolute,
+  useCollateralState,
   useCollateralType,
+  useCollateralXChain,
+  useDepositedCollateral,
   useIsHandlingICX,
   useSupportedCollateralTokens,
 } from 'store/collateral/hooks';
@@ -20,7 +24,7 @@ import { useOraclePrice } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useRewards } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
-import { useICONWalletBalances } from 'store/wallet/hooks';
+import { useCrossChainWalletBalances, useICONWalletBalances } from 'store/wallet/hooks';
 import { formatUnits, toBigNumber } from 'utils';
 
 import { AppState } from '..';

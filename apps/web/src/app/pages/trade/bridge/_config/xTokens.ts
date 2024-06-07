@@ -4,6 +4,8 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   bnUSD: '0x1.icon',
   sARCH: 'archway-1',
   AVAX: '0xa86a.avax',
+  BNB: '0x38.bsc',
+  ETH: '0xa4b1.arbitrum',
 };
 
 import { bnUSD } from 'constants/tokens';

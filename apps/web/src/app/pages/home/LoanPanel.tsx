@@ -37,8 +37,9 @@ import { useHasEnoughICX } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import { PanelInfoWrap, PanelInfoItem } from './CollateralPanel';
+import { PanelInfoWrap, PanelInfoItem, UnderPanel } from './CollateralPanel';
 import ModalContent from 'app/components/ModalContent';
+import CollateralChainSelector from './_components/CollateralChainSelector';
 
 const LoanPanel = () => {
   const { account } = useIconReact();
@@ -233,7 +234,7 @@ const LoanPanel = () => {
   return (
     <>
       <BoxPanelWrap>
-        <BoxPanel bg="bg3" className="drop-shadow">
+        <BoxPanel bg="bg3" sx={{ position: 'relative' }} className="drop-shadow">
           <Flex justifyContent="space-between" alignItems="center">
             <Typography variant="h2">
               <Trans>Loan</Trans>
@@ -332,6 +333,9 @@ const LoanPanel = () => {
             </PanelInfoItem>
           </PanelInfoWrap>
         </BoxPanel>
+        <UnderPanel justifyContent="space-between">
+          <CollateralChainSelector />
+        </UnderPanel>
       </BoxPanelWrap>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>

@@ -28,6 +28,7 @@ import {
 } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
 import { getCrossChainTokenBySymbol } from 'app/pages/trade/bridge/utils';
+import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from 'constants/misc';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);
@@ -198,6 +199,7 @@ export function useDerivedSwapInfo(): {
     maxHops: queue ? 1 : undefined,
   });
   const trade = isExactIn ? trade1 : trade2;
+  const swapDisabled = trade?.priceImpact.greaterThan(SLIPPAGE_SWAP_DISABLED_THRESHOLD);
 
   let inputError: string | undefined;
   if (account && !recipient) {
@@ -206,6 +208,10 @@ export function useDerivedSwapInfo(): {
 
   if (account && !parsedAmount) {
     inputError = t`Enter amount`;
+  }
+
+  if (account && swapDisabled) {
+    inputError = t`Reduce price impact`;
   }
 
   if (!currencies[Field.INPUT] || !currencies[Field.OUTPUT]) {

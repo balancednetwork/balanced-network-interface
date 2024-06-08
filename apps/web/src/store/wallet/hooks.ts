@@ -351,25 +351,32 @@ export function useCrossChainCurrencyBalances(
   }, [crossChainBalances, account, currencies, icxBalance]);
 }
 
-export const useXCurrencyBalance = (currency: Currency): BigNumber | undefined => {
+export const useXCurrencyBalance = (
+  currency: Currency,
+  selectedChainId: XChainId | undefined,
+): BigNumber | undefined => {
   const xBalances = useCrossChainWalletBalances();
 
   return React.useMemo(() => {
     if (!xBalances) return;
 
-    if (isXToken(currency)) {
-      return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
-        if (xBalances[xChainId]) {
-          const tokenAddress = getCrossChainTokenAddress(xChainId, currency.wrapped.symbol);
-          const balance = new BigNumber(xBalances[xChainId]?.[tokenAddress ?? -1]?.toFixed() || 0);
-          sum = sum.plus(balance);
-        }
-        return sum;
-      }, new BigNumber(0));
+    if (selectedChainId) {
+      return new BigNumber(xBalances[selectedChainId]?.[currency.wrapped.address]?.toFixed() || 0);
     } else {
-      return new BigNumber(xBalances['0x1.icon']?.[currency.wrapped.address]?.toFixed() || 0);
+      if (isXToken(currency)) {
+        return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
+          if (xBalances[xChainId]) {
+            const tokenAddress = getCrossChainTokenAddress(xChainId, currency.wrapped.symbol);
+            const balance = new BigNumber(xBalances[xChainId]?.[tokenAddress ?? -1]?.toFixed() || 0);
+            sum = sum.plus(balance);
+          }
+          return sum;
+        }, new BigNumber(0));
+      } else {
+        return new BigNumber(xBalances['0x1.icon']?.[currency.wrapped.address]?.toFixed() || 0);
+      }
     }
-  }, [xBalances, currency]);
+  }, [xBalances, currency, selectedChainId]);
 };
 
 export function useCurrencyBalances(

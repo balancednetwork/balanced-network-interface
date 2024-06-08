@@ -27,9 +27,10 @@ export class ArchwayPublicXService extends AbstractPublicXService {
   }
 
   async getXCallFee(nid: XChainId, rollback: boolean) {
-    return await this.publicClient.queryContractSmart(archway.contracts.xCall, {
+    const fee = await this.publicClient.queryContractSmart(archway.contracts.xCall, {
       get_fee: { nid: nid, rollback },
     });
+    return BigInt(fee);
   }
 
   async getBlockHeight() {

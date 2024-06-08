@@ -195,6 +195,10 @@ export function CurrencySearch({
     return currencies;
   }, [currencySelectionType, filteredSortedTokens, filteredSortedTokensWithICX]);
 
+  const selectedChainId = useMemo(() => {
+    return currencySelectionType === CurrencySelectionType.NORMAL ? undefined : xChainId;
+  }, [currencySelectionType, xChainId]);
+
   return (
     <Wrapper width={width}>
       <Flex>
@@ -231,6 +235,7 @@ export function CurrencySearch({
           showCurrencyAmount={showCurrencyAmount}
           isOpen={isOpen}
           onDismiss={onDismiss}
+          selectedChainId={selectedChainId}
         />
       ) : (
         <Column style={{ padding: '20px', height: '100%' }}>

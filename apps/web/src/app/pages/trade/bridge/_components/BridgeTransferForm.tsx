@@ -106,6 +106,7 @@ export default function BridgeTransferForm({ openModal }) {
               percent={percentAmount}
               currencySelectionType={CurrencySelectionType.BRIDGE}
               showCommunityListControl={false}
+              xChainId={bridgeDirection.from}
             />
           </Flex>
 

@@ -202,12 +202,12 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={handleDismiss}>
-                  <Trans>Cancel</Trans>
+                  <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
                 </TextButton>
 
                 {isWrongChain ? (
                   <StyledButton onClick={handleSwitchChain}>
-                    <Trans>Switch Network</Trans>
+                    <Trans>Switch {xChainMap[direction.from].name}</Trans>
                   </StyledButton>
                 ) : isProcessing ? (
                   <>

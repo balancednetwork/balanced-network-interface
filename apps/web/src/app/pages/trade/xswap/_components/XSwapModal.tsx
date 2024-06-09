@@ -207,7 +207,7 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
 
                 {isWrongChain ? (
                   <StyledButton onClick={handleSwitchChain}>
-                    <Trans>Switch {xChainMap[direction.from].name}</Trans>
+                    <Trans>Switch to {xChainMap[direction.from].name}</Trans>
                   </StyledButton>
                 ) : isProcessing ? (
                   <>

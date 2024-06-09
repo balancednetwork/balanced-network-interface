@@ -82,10 +82,10 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
   } else {
     switch (type) {
       case 'currency': {
-        if (value.isLessThan(new BigNumber(1)) && value.isGreaterThanOrEqualTo(new BigNumber(0))) {
-          return value.precision(2, BigNumber.ROUND_DOWN).toString();
+        if (value.isLessThan(new BigNumber(0.00001)) && value.isGreaterThanOrEqualTo(new BigNumber(0))) {
+          return value.dp(8, BigNumber.ROUND_DOWN).toFormat();
         } else {
-          return value.dp(2).toFormat();
+          return value.dp(5, BigNumber.ROUND_DOWN).toFormat();
         }
       }
       case 'input': {
@@ -101,7 +101,7 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
         if (value.decimalPlaces() === 0) {
           return value.toFormat(0, BigNumber.ROUND_UP);
         } else {
-          return value.toFixed(4, 1);
+          return value.toFixed(4, BigNumber.ROUND_DOWN);
         }
       }
       case 'price': {

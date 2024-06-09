@@ -4,6 +4,8 @@ import { xChainMap } from '../_config/xChains';
 import { useMemo } from 'react';
 import { getNetworkDisplayName } from '../utils';
 import { useICX } from 'constants/tokens';
+import { formatBigNumber } from 'utils';
+import BigNumber from 'bignumber.js';
 
 function useXCallGasChecker(xChainId: XChainId): { hasEnoughGas: boolean; errorMessage: string } {
   const balances = useCrossChainWalletBalances();
@@ -14,7 +16,6 @@ function useXCallGasChecker(xChainId: XChainId): { hasEnoughGas: boolean; errorM
       const xChain: XChain = xChainMap[xChainId];
       const nativeCurrency = xChain?.nativeCurrency;
 
-      // TODO: balances[xChainId]?.['native'] is undefined, used ICX.address instead
       const hasEnoughGas =
         xChainId === '0x1.icon'
           ? balances[xChainId] &&
@@ -23,7 +24,7 @@ function useXCallGasChecker(xChainId: XChainId): { hasEnoughGas: boolean; errorM
             balances[xChainId]?.['native'].greaterThan(xChain.gasThreshold * 10 ** nativeCurrency.decimals);
 
       const errorMessage = !hasEnoughGas
-        ? `You need at least ${xChain.gasThreshold} ${
+        ? `You need at least ${formatBigNumber(new BigNumber(xChain.gasThreshold), 'currency')} ${
             nativeCurrency.symbol
           } in your wallet to pay for transaction fees on ${getNetworkDisplayName(xChainId)}.`
         : '';

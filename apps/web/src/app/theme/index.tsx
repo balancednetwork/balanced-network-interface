@@ -70,6 +70,8 @@ export function theme(): DefaultTheme {
 
       bg5: '#021338',
 
+      bg6: '#05193b',
+
       // Balanced turqoise
       primary: '#2ca9b7',
 

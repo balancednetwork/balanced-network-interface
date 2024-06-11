@@ -79,11 +79,11 @@ export function useArchwayBalances(
 ): UseQueryResult<{
   [key: string]: CurrencyAmount<Currency>;
 }> {
-  const { signingClient } = useArchwayContext();
+  const { signingClient, chain_id } = useArchwayContext();
   const arch = useARCH();
 
   return useQuery({
-    queryKey: [`archwayBalances`, signingClient, address, tokens],
+    queryKey: [`archwayBalances`, chain_id, address, tokens],
     queryFn: async () => {
       if (!signingClient || !address) return;
 

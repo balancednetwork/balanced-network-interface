@@ -1,7 +1,7 @@
 import styled, { css, keyframes } from 'styled-components';
 import SearchInput from '../SearchModal/SearchInput';
 
-const mobileWalletBreakpoint = '640px';
+const mobileWalletBreakpoint = '530px';
 
 export const MainLogo = styled.div`
   img, svg {
@@ -90,13 +90,28 @@ export const WalletItemGrid = styled.div`
 `;
 export const ActiveIndicator = styled.div<{ active: boolean }>`
   position: relative;
-  transition: opacity 0.2s ease;
+  
+  &:before {
+    content: '';
+    background-color: ${({ theme }) => theme.colors.primary};
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    display: block;
+    position: absolute;
+    top: 2px;
+    left: 21px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
 
   ${({ active }) =>
     active &&
     css`
-      cursor: default !important;
+    &:before {
       animation: ${pulseAnimation} 1s infinite;
+    }
+    cursor: default !important;
   `};
 `;
 
@@ -115,10 +130,11 @@ export const XChainsWrap = styled.div<{ signedIn: boolean }>`
     css`
     ${ActiveIndicator} {
       cursor: pointer;
-      opacity: 0.8;
 
       &:hover {
-        opacity: 1;
+        &:before {
+          opacity: 1;
+        }
       }
     }
   `};

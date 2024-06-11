@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
 import { Flex, Box } from 'rebass/styled-components';
+import ExternalIcon from 'assets/icons/external.svg';
 import styled from 'styled-components';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
@@ -30,15 +31,12 @@ import useWallets, { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/us
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { useSwitchChain } from 'wagmi';
 import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
+import useDebounce from 'hooks/useDebounce';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {
-    width: 320px;
-
-    @media (min-width: 600px) {
-      width: 100%;
-      max-width: 530px;
-    }
+    width: 100%;
+    max-width: 530px;
   }
 `;
 
@@ -80,6 +78,7 @@ export default function WalletModal() {
   const numberOfConnectedWallets = Object.values(wallets).filter(w => !!w.account).length;
   const isLoggedInSome = numberOfConnectedWallets > 0;
   const [chainQuery, setChainQuery] = useState('');
+  const debouncedQuery = useDebounce(chainQuery, 200);
 
   const handleChainQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
     setChainQuery(e.target.value);
@@ -92,11 +91,11 @@ export default function WalletModal() {
   const walletConfig = useMemo(() => {
     return [
       {
-        name: 'Ethereum ecosystem',
+        name: 'Ethereum & EVM ecosystem',
         logo: <ETHIcon width="32" />,
         connect: () => setWalletModal(XWalletType.EVM),
         disconnect: wallets[XWalletType.EVM].disconnect,
-        description: t`Swap & transfer assets cross-chain.`,
+        description: t`Swap & transfer crypto cross-chain.`,
         keyWords: [
           'evm',
           'ethereum',
@@ -121,7 +120,7 @@ export default function WalletModal() {
         logo: <IconWalletIcon width="32" />,
         connect: () => setWalletModal(XWalletType.ICON),
         disconnect: wallets[XWalletType.ICON].disconnect,
-        description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain`,
+        description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer crypto cross-chain`,
         keyWords: ['iconex', 'hana'],
         address: wallets[XWalletType.ICON].account,
         xChains: undefined,
@@ -132,31 +131,31 @@ export default function WalletModal() {
         logo: <ArchWalletIcon width="32" />,
         connect: connectToKeplr,
         disconnect: wallets[XWalletType.COSMOS].disconnect,
-        description: t`Swap & transfer assets cross-chain.`,
+        description: t`Swap & transfer crypto cross-chain.`,
         keyWords: ['archway', 'cosmos', 'keplr', 'leap'],
         address: wallets[XWalletType.COSMOS].account,
         xChains: undefined,
         switchChain: undefined,
       },
-    ];
+    ].sort((a, b) => a.name.localeCompare(b.name));
   }, [setWalletModal, connectToKeplr, wallets, switchChain]);
 
   const filteredWallets = React.useMemo(() => {
     return [...walletConfig].filter(wallet => {
       return (
-        wallet.name.toLowerCase().includes(chainQuery.toLowerCase()) ||
-        wallet.keyWords.some(kw => kw.toLowerCase().includes(chainQuery.toLowerCase())) ||
-        wallet.description.toLowerCase().includes(chainQuery.toLowerCase())
+        wallet.name.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+        wallet.keyWords.some(kw => kw.toLowerCase().includes(debouncedQuery.toLowerCase())) ||
+        wallet.description.toLowerCase().includes(debouncedQuery.toLowerCase())
       );
     });
-  }, [walletConfig, chainQuery]);
+  }, [walletConfig, debouncedQuery]);
 
   return (
     <>
       <StyledModal isOpen={walletModalOpen} onDismiss={toggleWalletModal} mobile={isMobile}>
         <Wrapper>
           {isLoggedInSome ? (
-            <Flex mb={1} justifyContent="space-between" flexWrap={['wrap', 'nowrap']}>
+            <Flex mb={1} justifyContent="space-between" flexDirection={['column', 'row']} flexWrap="nowrap">
               <Typography variant="h2">Manage wallets</Typography>
               <Flex flexDirection="column" alignItems={['flex-start', 'flex-end']} justifyContent="center" mt={1}>
                 <Typography>
@@ -232,9 +231,10 @@ export default function WalletModal() {
           {!signedInWallets.length && (
             <Typography textAlign="center" as="div" maxWidth={300} mx="auto" mt={2}>
               <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
-              <Box>
+              <Box pt={'5px'}>
                 <Link href="https://balanced.network/disclaimer/" target="_blank">
-                  <Trans>View disclaimer</Trans>
+                  <Trans>View disclaimer.</Trans>
+                  <ExternalIcon width="11" height="11" style={{ marginLeft: '7px', marginTop: '-3px' }} />
                 </Link>
               </Box>
             </Typography>

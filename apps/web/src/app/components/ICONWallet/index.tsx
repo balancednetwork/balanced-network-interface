@@ -429,6 +429,7 @@ const ICONWallet = ({ setAnchor, anchor }) => {
           autoComplete="off"
           value={searchQuery}
           ref={inputRef as RefObject<HTMLInputElement>}
+          tabIndex={isMobile ? -1 : 1}
           onChange={e => {
             setSearchQuery(e.target.value);
             activeIndex === undefined && setActiveIndex(0);

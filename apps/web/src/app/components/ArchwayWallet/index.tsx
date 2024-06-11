@@ -264,6 +264,7 @@ const ArchwayWallet = ({ setAnchor, anchor }) => {
           placeholder={t`Search assets`}
           autoComplete="off"
           value={searchQuery}
+          tabIndex={isMobile ? -1 : 1}
           ref={inputRef as RefObject<HTMLInputElement>}
           onChange={e => {
             setSearchQuery(e.target.value);

@@ -209,6 +209,7 @@ export function CurrencySearch({
           autoComplete="off"
           value={searchQuery}
           ref={inputRef as RefObject<HTMLInputElement>}
+          tabIndex={isMobile ? -1 : 1}
           onChange={handleInput}
         />
       </Flex>

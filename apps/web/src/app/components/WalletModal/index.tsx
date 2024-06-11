@@ -120,7 +120,7 @@ export default function WalletModal() {
         logo: <IconWalletIcon width="32" />,
         connect: () => setWalletModal(XWalletType.ICON),
         disconnect: wallets[XWalletType.ICON].disconnect,
-        description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer crypto cross-chain`,
+        description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer crypto cross-chain.`,
         keyWords: ['iconex', 'hana'],
         address: wallets[XWalletType.ICON].account,
         xChains: undefined,
@@ -209,6 +209,7 @@ export default function WalletModal() {
             onChange={handleChainQuery}
             placeholder="Search for blockchains..."
             style={{ minHeight: '40px' }}
+            tabIndex={isMobile ? -1 : 1}
           />
 
           <SignInOptionsWrap>

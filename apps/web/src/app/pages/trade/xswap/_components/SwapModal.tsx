@@ -21,6 +21,7 @@ import Spinner from 'app/components/Spinner';
 import { swapMessage } from 'app/pages/trade/supply/_components/utils';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useSwapState } from 'store/swap/hooks';
+import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from 'constants/misc';
 
 type SwapModalProps = {
   isOpen: boolean;
@@ -33,6 +34,7 @@ type SwapModalProps = {
 
 const SwapModal = (props: SwapModalProps) => {
   const { isOpen, onClose, executionTrade, currencies, account, recipient } = props;
+  const showWarning = executionTrade?.priceImpact.greaterThan(SLIPPAGE_MODAL_WARNING_THRESHOLD);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -136,7 +138,7 @@ const SwapModal = (props: SwapModalProps) => {
           </Trans>
         </Typography>
 
-        <Typography variant="p" fontWeight="bold" textAlign="center">
+        <Typography variant="p" fontWeight="bold" textAlign="center" color={showWarning ? 'alert' : 'text'}>
           <Trans>
             {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
               executionTrade?.executionPrice.quoteCurrency.symbol

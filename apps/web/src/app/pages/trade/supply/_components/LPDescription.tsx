@@ -162,14 +162,19 @@ export default function LPDescription() {
                     liquidity pool${upSmall ? ': ' : ''}`
                   : t`${currencies[Field.CURRENCY_A]?.symbol} queue${upSmall ? ': ' : ''}`}{' '}
                 <Typography fontWeight="normal" fontSize={16} as={upSmall ? 'span' : 'p'}>
-                  {apy
-                    ? `${apy.times(100).dp(2, BigNumber.ROUND_HALF_UP).toFixed()}% - ${apy
+                  {apy && allPairs
+                    ? `${apy
+                        .plus(allPairs[pairName].feesApy)
+                        .times(100)
+                        .dp(2, BigNumber.ROUND_HALF_UP)
+                        .toFixed()}% - ${apy
                         .times(MAX_BOOST)
+                        .plus(allPairs[pairName].feesApy)
                         .times(100)
                         .dp(2)
                         .toFixed()}%`
                     : '-'}
-                  {' APY'}
+                  {' APR'}
                   {pair?.poolId === BalancedJs.utils.POOL_IDS.sICXICX && (
                     <QuestionWrapper style={{ marginLeft: '3px' }}>
                       <QuestionHelper

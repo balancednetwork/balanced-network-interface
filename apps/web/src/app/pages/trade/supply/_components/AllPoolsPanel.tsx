@@ -340,15 +340,12 @@ export default function AllPoolsPanel() {
                 text={
                   <>
                     <Trans>
-                      The BALN APY is calculated from the USD value of BALN rewards allocated to a pool. Your rate will
+                      The BALN APR is calculated from the USD value of BALN rewards allocated to a pool. Your rate will
                       vary based on the amount of bBALN you hold.
                     </Trans>
                     <br />
                     <br />
-                    <Trans>The fee APY is calculated from the swap fees earned by a pool in the last 30 days.</Trans>
-                    <Typography marginTop={'20px'} color="text1" fontSize={14}>
-                      <Trans>Impermanent loss is not factored in.</Trans>
-                    </Typography>
+                    <Trans>The fee APR is calculated from the swap fees earned by a pool in the last 30 days.</Trans>
                   </>
                 }
                 placement="top"
@@ -359,7 +356,7 @@ export default function AllPoolsPanel() {
                 </QuestionWrapper>
               </MouseoverTooltip>
             </TooltipWrapper>
-            <Trans>APY</Trans>
+            <Trans>APR</Trans>
           </HeaderText>
           <HeaderText
             role="button"

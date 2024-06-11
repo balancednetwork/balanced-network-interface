@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
@@ -25,22 +26,25 @@ export enum PairState {
 
 export type PairData = [PairState, Pair | null, BigNumber | null] | [PairState, Pair | null];
 
+const chunkArray = <T>(array: T[], chunkSize: number): T[][] => {
+  return array.reduce((resultArray: T[][], item, index) => {
+    const chunkIndex = Math.floor(index / chunkSize);
+    if (!resultArray[chunkIndex]) {
+      resultArray[chunkIndex] = [];
+    }
+    resultArray[chunkIndex].push(item);
+    return resultArray;
+  }, []);
+};
+
 export function useV2Pairs(currencies: [Currency | undefined, Currency | undefined][]): PairData[] {
   const tokens = useMemo(() => {
     return currencies.map(([currencyA, currencyB]) => [currencyA?.wrapped, currencyB?.wrapped]);
   }, [currencies]);
 
-  const [pairs, setPairs] = useState<PairData[]>(Array(tokens.length).fill([PairState.LOADING, null]));
-
-  const last = useLastCount(10000);
-
-  useEffect(() => {
-    setPairs(Array(tokens.length).fill([PairState.LOADING, null]));
-  }, [tokens]);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    const fetchReserves = async () => {
+  const { data: pairs } = useQuery({
+    queryKey: ['v2Pairs', tokens],
+    queryFn: async () => {
       try {
         const cds: CallData[] = tokens.map(([tokenA, tokenB]) => {
           if (tokenA && tokenB && tokenA.chainId === tokenB.chainId && !tokenA.equals(tokenB)) {
@@ -67,16 +71,7 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
           }
         });
 
-        const chunks = cds.reduce((resultArray, item, index) => {
-          const chunkIndex = Math.floor(index / MULTI_CALL_BATCH_SIZE);
-          if (!resultArray[chunkIndex]) {
-            //@ts-ignore
-            resultArray[chunkIndex] = [];
-          }
-          //@ts-ignore
-          resultArray[chunkIndex].push(item);
-          return resultArray;
-        }, []);
+        const chunks = chunkArray(cds, MULTI_CALL_BATCH_SIZE);
 
         const chunkedData = await Promise.all(chunks.map(async chunk => await bnJs.Multicall.getAggregateData(chunk)));
         const data: any[] = chunkedData.flat();
@@ -91,18 +86,16 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
           return getPair(stats, tokenA, tokenB);
         });
 
-        setPairs(ps);
+        return ps;
       } catch (err) {
-        setPairs(Array(tokens.length).fill([PairState.INVALID, null]));
+        return Array(tokens.length).fill([PairState.INVALID, null]);
       }
-    };
+    },
+    enabled: tokens.length > 0,
+    refetchInterval: 10_000,
+  });
 
-    if (tokens.length > 0) {
-      fetchReserves();
-    }
-  }, [tokens, last]);
-
-  return pairs;
+  return pairs || Array(tokens.length).fill([PairState.LOADING, null]);
 }
 
 export function useV2Pair(tokenA?: Currency, tokenB?: Currency): PairData {

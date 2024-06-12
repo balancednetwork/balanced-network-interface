@@ -32,6 +32,8 @@ import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { useSwitchChain } from 'wagmi';
 import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
 import useDebounce from 'hooks/useDebounce';
+import Divider from '../Divider';
+import { TextButton } from '../Button';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {
@@ -89,55 +91,58 @@ export default function WalletModal() {
   };
 
   const walletConfig = useMemo(() => {
+    const iconConfig = {
+      name: 'ICON',
+      logo: <IconWalletIcon width="32" />,
+      connect: () => setWalletModal(XWalletType.ICON),
+      disconnect: wallets[XWalletType.ICON].disconnect,
+      description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer crypto cross-chain.`,
+      keyWords: ['iconex', 'hana'],
+      address: wallets[XWalletType.ICON].account,
+      xChains: undefined,
+      switchChain: undefined,
+    };
     return [
-      {
-        name: 'Ethereum & EVM ecosystem',
-        logo: <ETHIcon width="32" />,
-        connect: () => setWalletModal(XWalletType.EVM),
-        disconnect: wallets[XWalletType.EVM].disconnect,
-        description: t`Swap & transfer crypto cross-chain.`,
-        keyWords: [
-          'evm',
-          'ethereum',
-          'metamask',
-          'rabby',
-          'avalanche',
-          'avax',
-          'bnb',
-          'bsc',
-          'arb',
-          'arbitrum',
-          'binance',
-        ],
-        address: wallets[XWalletType.EVM].account,
-        xChains: Object.values(xChainMap)
-          .filter(xChain => xChain.xWalletType === XWalletType.EVM && !xChain.testnet)
-          .sort((a, b) => a.name.localeCompare(b.name)),
-        switchChain: switchChain,
-      },
-      {
-        name: 'ICON',
-        logo: <IconWalletIcon width="32" />,
-        connect: () => setWalletModal(XWalletType.ICON),
-        disconnect: wallets[XWalletType.ICON].disconnect,
-        description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer crypto cross-chain.`,
-        keyWords: ['iconex', 'hana'],
-        address: wallets[XWalletType.ICON].account,
-        xChains: undefined,
-        switchChain: undefined,
-      },
-      {
-        name: 'Archway',
-        logo: <ArchWalletIcon width="32" />,
-        connect: connectToKeplr,
-        disconnect: wallets[XWalletType.COSMOS].disconnect,
-        description: t`Swap & transfer crypto cross-chain.`,
-        keyWords: ['archway', 'cosmos', 'keplr', 'leap'],
-        address: wallets[XWalletType.COSMOS].account,
-        xChains: undefined,
-        switchChain: undefined,
-      },
-    ].sort((a, b) => a.name.localeCompare(b.name));
+      iconConfig,
+      ...[
+        {
+          name: 'Ethereum & EVM ecosystem',
+          logo: <ETHIcon width="32" />,
+          connect: () => setWalletModal(XWalletType.EVM),
+          disconnect: wallets[XWalletType.EVM].disconnect,
+          description: t`Swap & transfer crypto cross-chain.`,
+          keyWords: [
+            'evm',
+            'ethereum',
+            'metamask',
+            'rabby',
+            'avalanche',
+            'avax',
+            'bnb',
+            'bsc',
+            'arb',
+            'arbitrum',
+            'binance',
+          ],
+          address: wallets[XWalletType.EVM].account,
+          xChains: Object.values(xChainMap)
+            .filter(xChain => xChain.xWalletType === XWalletType.EVM && !xChain.testnet)
+            .sort((a, b) => a.name.localeCompare(b.name)),
+          switchChain: switchChain,
+        },
+        {
+          name: 'Archway',
+          logo: <ArchWalletIcon width="32" />,
+          connect: connectToKeplr,
+          disconnect: wallets[XWalletType.COSMOS].disconnect,
+          description: t`Swap & transfer crypto cross-chain.`,
+          keyWords: ['archway', 'cosmos', 'keplr', 'leap'],
+          address: wallets[XWalletType.COSMOS].account,
+          xChains: undefined,
+          switchChain: undefined,
+        },
+      ].sort((a, b) => a.name.localeCompare(b.name)),
+    ];
   }, [setWalletModal, connectToKeplr, wallets, switchChain]);
 
   const filteredWallets = React.useMemo(() => {
@@ -239,6 +244,17 @@ export default function WalletModal() {
                 </Link>
               </Box>
             </Typography>
+          )}
+
+          {isMobile && (
+            <>
+              <Divider />
+              <Flex justifyContent="center">
+                <Typography onClick={toggleWalletModal}>
+                  <Trans>Close</Trans>
+                </Typography>
+              </Flex>
+            </>
           )}
         </Wrapper>
       </StyledModal>

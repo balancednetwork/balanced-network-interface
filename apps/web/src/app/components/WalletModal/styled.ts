@@ -1,11 +1,44 @@
 import styled, { css, keyframes } from 'styled-components';
 import SearchInput from '../SearchModal/SearchInput';
+import { Box } from 'rebass';
+import { Typography } from 'app/theme';
 
 const mobileWalletBreakpoint = '530px';
 
 export const MainLogo = styled.div`
+  position: relative;
+
   img, svg {
-    max-height: 45px
+    max-width: 20px;
+    max-height: 20px;
+    transform: translateY(-2px);
+  }
+
+  @media screen and (min-width: ${mobileWalletBreakpoint}) {
+
+    img, svg {
+      max-width: 60px;
+      max-height: 45px;
+      transform: translateY(0);
+    }
+  }
+`;
+
+export const ChainInfo = styled(Box)`
+  /* padding-left: 65px;
+
+
+  @media screen and (min-width: ${mobileWalletBreakpoint}) {
+    padding-left: 0;
+  } */
+`;
+
+export const ChainName = styled(Typography)`
+  padding-left: 30px;
+
+
+  @media screen and (min-width: ${mobileWalletBreakpoint}) {
+    padding-left: 0;
   }
 `;
 
@@ -67,6 +100,7 @@ export const WalletActions = styled.div`
 
 export const WalletItemGrid = styled.div`
   padding: 15px 0;
+  position: relative;
 
   @media screen and (min-width: ${mobileWalletBreakpoint}) {
     display: flex;
@@ -74,11 +108,11 @@ export const WalletItemGrid = styled.div`
   }
 
   ${MainLogo} {
-    display: none;
-    
+    max-width: 60px;
+    position: absolute;
+
     @media screen and (min-width: ${mobileWalletBreakpoint}) {
-      max-width: 60px;
-      display: block;
+      position: relative;
     }
   }
 

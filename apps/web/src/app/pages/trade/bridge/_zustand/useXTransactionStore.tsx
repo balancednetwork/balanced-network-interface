@@ -292,23 +292,21 @@ export const useXTransactionStore = create<XTransactionStore>()(
       },
 
       getPendingTransactions: (signedWallets: { xChainId: XChainId | undefined; address: string }[]) => {
-        return (
-          Object.values(get().transactions)
-            // .filter((transaction: XTransaction) => {
-            //   return (
-            //     transaction.status !== XTransactionStatus.success &&
-            //     signedWallets.some(wallet => wallet.xChainId === transaction.sourceChainId)
-            //   );
-            // })
-            .sort((a, b) => {
-              const aPrimaryMessage = xMessageActions.get(a.primaryMessageId);
-              const bPrimaryMessage = xMessageActions.get(b.primaryMessageId);
-              if (aPrimaryMessage && bPrimaryMessage) {
-                return bPrimaryMessage?.sourceTransaction.timestamp - aPrimaryMessage?.sourceTransaction.timestamp;
-              }
-              return 0;
-            })
-        );
+        return Object.values(get().transactions)
+          .filter((transaction: XTransaction) => {
+            return (
+              transaction.status !== XTransactionStatus.success &&
+              signedWallets.some(wallet => wallet.xChainId === transaction.sourceChainId)
+            );
+          })
+          .sort((a, b) => {
+            const aPrimaryMessage = xMessageActions.get(a.primaryMessageId);
+            const bPrimaryMessage = xMessageActions.get(b.primaryMessageId);
+            if (aPrimaryMessage && bPrimaryMessage) {
+              return bPrimaryMessage?.sourceTransaction.timestamp - aPrimaryMessage?.sourceTransaction.timestamp;
+            }
+            return 0;
+          });
       },
       remove: (id: string) => {
         set(state => {

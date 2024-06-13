@@ -22,6 +22,7 @@ import { TradePage } from './pages/trade/xswap/page';
 import { SupplyPage } from './pages/trade/supply/page';
 import { BridgePage } from './pages/trade/bridge/page';
 import { LegacyBridge } from './pages/legacy-bridge/page';
+import { TestPage } from './pages/test/page';
 
 const VotePage = lazyLoad(
   () => import('./pages/vote/page'),
@@ -96,6 +97,8 @@ export default function RootRoutes() {
           <Route path="new-proposal" element={<ProposalNewPage />} />
           <Route path="proposal/:id" element={<ProposalDetailsPage />} />
         </Route>
+
+        {process.env.NODE_ENV === 'development' && <Route path="test" element={<TestPage />} />}
 
         <Route path="legacy-bridge" element={<LegacyBridge />} />
         <Route path="airdrip" element={<Redirect to="https://balanced.network/" />} />

@@ -77,7 +77,7 @@ export default function BridgeActivity() {
           {pendingTransactions?.length === 0 &&
             (signedInWallets.length ? (
               <Typography textAlign="center">
-                <Trans>You have no pending or failed cross-chain transactions.</Trans>
+                <Trans>You have no pending cross-chain transactions.</Trans>
               </Typography>
             ) : (
               <Typography textAlign="center">

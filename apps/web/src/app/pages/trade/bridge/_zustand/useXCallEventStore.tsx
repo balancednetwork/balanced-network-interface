@@ -4,7 +4,7 @@ import { immer } from 'zustand/middleware/immer';
 import { useQuery } from '@tanstack/react-query';
 
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
-import { XCallDestinationEvent } from './types';
+import { XCallExecutedEvent, XCallMessageEvent, XCallDestinationEvent } from './types';
 import { xServiceActions } from './useXServiceStore';
 
 type XCallScanner = {
@@ -16,6 +16,11 @@ type XCallScanner = {
   currentHeight: bigint;
   chainHeight: bigint;
 };
+
+type XCallDestinationEventMap = Partial<{
+  [XCallEventType.CallMessage]: XCallMessageEvent;
+  [XCallEventType.CallExecuted]: XCallExecutedEvent;
+}>;
 
 type XCallEventStore = {
   destinationXCallEvents: Partial<Record<XChainId, XCallDestinationEvent[]>>;
@@ -33,7 +38,7 @@ type XCallEventStore = {
   scanBlocks: (id: string, xChainId: XChainId) => Promise<void>;
   isScanned: (xChainId: XChainId, blockHeight: bigint) => boolean;
   setIsScanning: (id: string, isScanning: boolean) => void; // TODO: rename to setIsScanningBlock?
-  getDestinationEvents: (xChainId: XChainId, sn: bigint) => Partial<Record<XCallEventType, XCallDestinationEvent>>;
+  getDestinationEvents: (xChainId: XChainId, sn: bigint) => XCallDestinationEventMap;
 };
 
 export const useXCallEventStore = create<XCallEventStore>()(
@@ -130,7 +135,7 @@ export const useXCallEventStore = create<XCallEventStore>()(
 
         const startBlockHeight: bigint = currentHeight;
         const endBlockHeight: bigint = currentHeight + scanBlockCount - 1n;
-        // console.log('Scanning blocks:', startBlockHeight, endBlockHeight);
+        console.log('Scanning blocks:', startBlockHeight, endBlockHeight);
         if (
           startBlockHeight === endBlockHeight &&
           endBlockHeight === currentHeight &&
@@ -141,6 +146,7 @@ export const useXCallEventStore = create<XCallEventStore>()(
         }
 
         const events = await xService.getDestinationEvents({ startBlockHeight, endBlockHeight });
+        console.log('events', events);
 
         if (events) {
           set(state => {
@@ -176,9 +182,8 @@ export const useXCallEventStore = create<XCallEventStore>()(
         }
 
         const result = {};
-
         for (const event of events) {
-          if (event.sn === sn) {
+          if ((event as XCallMessageEvent).sn === sn) {
             result[event.eventType] = event;
           }
         }

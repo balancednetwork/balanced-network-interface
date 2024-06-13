@@ -173,7 +173,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
             primaryMessageId: xMessage.id,
             secondaryMessageRequired: primaryDestinationChainId !== finalDestinationChainId,
             sourceChainId: sourceChainId,
-            desctinationChainId: finalDestinationChainId,
+            finalDestinationChainId: finalDestinationChainId,
             attributes: {
               descriptionAction,
               descriptionAmount,
@@ -193,7 +193,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
         }
 
         const sourceChainId = primaryMessage.destinationChainId;
-        const destinationChainId = xTransaction.desctinationChainId;
+        const destinationChainId = xTransaction.finalDestinationChainId;
 
         const sourceTransaction = primaryMessage.destinationTransaction;
 

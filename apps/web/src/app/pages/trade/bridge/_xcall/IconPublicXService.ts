@@ -2,7 +2,13 @@ import bnJs from 'bnJs';
 import IconService, { Converter, BigNumber } from 'icon-sdk-js';
 
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
-import { TransactionStatus, XCallDestinationEvent, XCallEvent } from '../_zustand/types';
+import {
+  TransactionStatus,
+  XCallEvent,
+  XCallExecutedEvent,
+  XCallMessageEvent,
+  XCallMessageSentEvent,
+} from '../_zustand/types';
 import { fetchTxResult } from 'app/_xcall/_icon/utils';
 import { AbstractPublicXService } from './types';
 
@@ -151,44 +157,48 @@ export class IconPublicXService extends AbstractPublicXService {
     throw new Error(`Unknown xCall event type: ${eventType}`);
   }
 
-  _parseCallMessageSentEventLog(eventLog, txHash: string): XCallEvent {
-    const sn = parseInt(eventLog.indexed[3], 16);
+  _parseCallMessageSentEventLog(eventLog, txHash: string): XCallMessageSentEvent {
+    const indexed = eventLog.indexed || [];
+    // const data = eventLog.data || [];
 
     return {
       eventType: XCallEventType.CallMessageSent,
-      sn: BigInt(sn),
       xChainId: this.xChainId,
-      rawEventData: eventLog,
       txHash,
+      // rawEventData: eventLog,
+      from: indexed[1],
+      to: indexed[2],
+      sn: BigInt(parseInt(indexed[3], 16)),
     };
   }
-  _parseCallMessageEventLog(eventLog, txHash: string): XCallDestinationEvent {
-    const sn = parseInt(eventLog.indexed[3], 16);
-    const reqId = parseInt(eventLog.data[0], 16);
+  _parseCallMessageEventLog(eventLog, txHash: string): XCallMessageEvent {
+    const indexed = eventLog.indexed || [];
+    const data = eventLog.data || [];
 
     return {
       eventType: XCallEventType.CallMessage,
-      sn: BigInt(sn),
-      reqId: BigInt(reqId),
       xChainId: this.xChainId,
-      rawEventData: eventLog,
       txHash,
-      isSuccess: true,
+      // rawEventData: eventLog,
+      sn: BigInt(parseInt(indexed[3], 16)),
+      reqId: BigInt(parseInt(data[0], 16)),
+      from: indexed[1],
+      to: indexed[2],
+      data: data[1],
     };
   }
-  _parseCallExecutedEventLog(eventLog, txHash: string): XCallDestinationEvent {
-    const reqId = parseInt(eventLog.indexed[1], 16);
-    // TODO: check for success?
-    // const success = eventLog.data[0] === '0x1';
+  _parseCallExecutedEventLog(eventLog, txHash: string): XCallExecutedEvent {
+    const indexed = eventLog.indexed || [];
+    const data = eventLog.data || [];
 
     return {
       eventType: XCallEventType.CallExecuted,
-      sn: -1n,
-      reqId: BigInt(reqId),
       xChainId: this.xChainId,
-      rawEventData: eventLog,
       txHash,
-      isSuccess: true,
+      // rawEventData: eventLog,
+      reqId: BigInt(parseInt(indexed[1], 16)),
+      code: parseInt(data[0], 16),
+      msg: data[1],
     };
   }
 }

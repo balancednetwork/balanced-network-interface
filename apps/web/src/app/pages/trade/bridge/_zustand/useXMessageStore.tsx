@@ -52,7 +52,7 @@ export const deriveStatus = (
   }
 
   if (sourceTransaction.status === TransactionStatus.success) {
-    if (events[XCallEventType.CallExecuted] && events[XCallEventType.CallExecuted].isSuccess) {
+    if (events[XCallEventType.CallExecuted] && events[XCallEventType.CallExecuted].code === 1) {
       if (destinationTransaction && destinationTransaction.status === TransactionStatus.success) {
         return XMessageStatus.CALL_EXECUTED;
         // return XMessageStatus.COMPLETED;
@@ -242,7 +242,12 @@ export const useFetchXMessageEvents = (xMessage?: XMessage) => {
       let events: XCallEventMap = {};
       if (xMessage.status === XMessageStatus.AWAITING_CALL_MESSAGE_SENT) {
         const srcChainXService = xServiceActions.getPublicXService(sourceChainId);
-        events = await srcChainXService.getSourceEvents(sourceTransaction);
+        const callMessageSentEvent = await srcChainXService.getCallMessageSentEvent(sourceTransaction);
+        if (callMessageSentEvent) {
+          return {
+            [XCallEventType.CallMessageSent]: callMessageSentEvent,
+          };
+        }
       } else if (
         xMessage.status === XMessageStatus.CALL_MESSAGE_SENT ||
         xMessage.status === XMessageStatus.CALL_MESSAGE

@@ -39,6 +39,8 @@ export class Pair {
   public readonly liquidityToken: Token;
   private readonly tokenAmounts: [CurrencyAmount<Token>, CurrencyAmount<Token>];
 
+  public readonly isStabilityFund: boolean;
+
   public readonly poolId?: number;
   public readonly totalSupply?: CurrencyAmount<Token>;
   public readonly baseAddress?: string;
@@ -54,37 +56,61 @@ export class Pair {
       poolId?: number;
       totalSupply?: string;
       baseAddress?: string;
+      isStabilityFund?: boolean;
     },
   ) {
-    let tokenAmounts = [currencyAmountA, tokenAmountB];
-    // Also, as a rule, sICX is always on the right side (except for sICX/bnUSD). bnUSD is also always on the right side (Exception for sICX/BTCB)
-    if (
-      currencyAmountA.currency.symbol === 'bnUSD' ||
-      (tokenAmountB.currency.symbol === 'sICX' && currencyAmountA.currency.symbol === 'bnUSD') ||
-      (currencyAmountA.currency.symbol === 'sICX' &&
-        tokenAmountB.currency.symbol !== 'bnUSD' &&
-        tokenAmountB.currency.symbol !== 'BTCB')
-    ) {
-      tokenAmounts = [tokenAmountB, currencyAmountA];
-    }
+    if (additionalArgs?.isStabilityFund) {
+      // TODO implement stability fund pair constructor
+      this.isStabilityFund = true;
 
-    const tokenADecimals = tokenAmounts[0].currency.decimals;
-    const tokenBDecimals = tokenAmounts[1].currency.decimals;
-    const decimals = tokenADecimals !== tokenBDecimals ? (tokenADecimals + tokenBDecimals) / 2 : tokenADecimals;
-    this.liquidityToken = new Token(
-      tokenAmounts[0].currency.chainId,
-      // Pair.getAddress(tokenAmounts[0].currency, tokenAmounts[1].currency),
-      'cx0000000000000000000000000000000000000002',
-      decimals,
-      'BALN-V2',
-      'Balanced V2',
-    );
-    this.tokenAmounts = tokenAmounts as [CurrencyAmount<Token>, CurrencyAmount<Token>];
+      const tokenAmounts = [currencyAmountA, tokenAmountB];
+      const tokenADecimals = tokenAmounts[0].currency.decimals;
+      const tokenBDecimals = tokenAmounts[1].currency.decimals;
+      const decimals = tokenADecimals !== tokenBDecimals ? (tokenADecimals + tokenBDecimals) / 2 : tokenADecimals;
+      this.liquidityToken = new Token(
+        tokenAmounts[0].currency.chainId,
+        // Pair.getAddress(tokenAmounts[0].currency, tokenAmounts[1].currency),
+        'cx0000000000000000000000000000000000000002',
+        decimals,
+        'BALN-V2',
+        'Balanced V2',
+      );
+      this.tokenAmounts = tokenAmounts as [CurrencyAmount<Token>, CurrencyAmount<Token>];
 
-    if (additionalArgs) {
-      this.poolId = additionalArgs.poolId;
       this.totalSupply = CurrencyAmount.fromRawAmount(this.liquidityToken, additionalArgs.totalSupply || '0');
-      this.baseAddress = additionalArgs.baseAddress;
+    } else {
+      this.isStabilityFund = false;
+
+      let tokenAmounts = [currencyAmountA, tokenAmountB];
+      // Also, as a rule, sICX is always on the right side (except for sICX/bnUSD). bnUSD is also always on the right side (Exception for sICX/BTCB)
+      if (
+        currencyAmountA.currency.symbol === 'bnUSD' ||
+        (tokenAmountB.currency.symbol === 'sICX' && currencyAmountA.currency.symbol === 'bnUSD') ||
+        (currencyAmountA.currency.symbol === 'sICX' &&
+          tokenAmountB.currency.symbol !== 'bnUSD' &&
+          tokenAmountB.currency.symbol !== 'BTCB')
+      ) {
+        tokenAmounts = [tokenAmountB, currencyAmountA];
+      }
+
+      const tokenADecimals = tokenAmounts[0].currency.decimals;
+      const tokenBDecimals = tokenAmounts[1].currency.decimals;
+      const decimals = tokenADecimals !== tokenBDecimals ? (tokenADecimals + tokenBDecimals) / 2 : tokenADecimals;
+      this.liquidityToken = new Token(
+        tokenAmounts[0].currency.chainId,
+        // Pair.getAddress(tokenAmounts[0].currency, tokenAmounts[1].currency),
+        'cx0000000000000000000000000000000000000002',
+        decimals,
+        'BALN-V2',
+        'Balanced V2',
+      );
+      this.tokenAmounts = tokenAmounts as [CurrencyAmount<Token>, CurrencyAmount<Token>];
+
+      if (additionalArgs) {
+        this.poolId = additionalArgs.poolId;
+        this.totalSupply = CurrencyAmount.fromRawAmount(this.liquidityToken, additionalArgs.totalSupply || '0');
+        this.baseAddress = additionalArgs.baseAddress;
+      }
     }
   }
 

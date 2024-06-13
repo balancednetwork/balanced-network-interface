@@ -4,7 +4,7 @@ import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
 import { Pair, Trade } from '@balancednetwork/v1-sdk';
 
 import { useAllCurrencyCombinations } from 'hooks/useAllCurrencyCombinations';
-import { PairState, useV2Pairs } from 'hooks/useV2Pairs';
+import { PairState, useStabilityFundPairs, useV2Pairs } from 'hooks/useV2Pairs';
 import { isTradeBetter } from 'utils/isTradeBetter';
 
 import { BETTER_TRADE_LESS_HOPS_THRESHOLD } from '../../constants/misc';
@@ -40,6 +40,13 @@ export function useTradeExactIn(
   );
 
   const pairs = useAllCommonPairs(currencyA, currencyB);
+
+  console.log(
+    'all pairs',
+    pairs.map(pair => pair.token0.symbol + '-' + pair.token1.symbol),
+  );
+
+  // const pairs1 = useStabilityFundPairs();
 
   return useMemo(() => {
     if (currencyAmountIn && currencyOut && pairs.length > 0) {

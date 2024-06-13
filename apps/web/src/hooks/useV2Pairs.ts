@@ -1,3 +1,6 @@
+import rlp from 'rlp';
+import { Converter as IconConverter } from 'icon-sdk-js';
+
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
@@ -13,6 +16,8 @@ import { BIGINT_ZERO, FRACTION_ZERO } from 'constants/misc';
 import { getPair } from 'utils';
 
 import useLastCount from './useLastCount';
+import { useStabilityFundInfo, useWhitelistedTokenAddresses } from 'store/stabilityFund/hooks';
+import { getBytesFromString, getRlpEncodedMsg } from 'app/pages/trade/bridge/utils';
 
 const NON_EXISTENT_POOL_ID = 0;
 const MULTI_CALL_BATCH_SIZE = 25;
@@ -36,6 +41,37 @@ const chunkArray = <T>(array: T[], chunkSize: number): T[][] => {
     return resultArray;
   }, []);
 };
+
+function getBytesFromNumber(value) {
+  const hexString = value.toString(16).padStart(2, '0');
+  return Buffer.from(hexString.length % 2 === 1 ? '0' + hexString : hexString, 'hex');
+}
+
+function getBytesFromAddress(address) {
+  return Buffer.from(address.replace('cx', '01'), 'hex');
+}
+
+export function useStabilityFundPairs() {
+  const info = useStabilityFundInfo();
+  console.log('AAA', info);
+
+  const whitelistedTokens = useWhitelistedTokenAddresses() || [];
+  console.log([...whitelistedTokens.map(x => ['bnUSD', x]), ...whitelistedTokens.map(x => [x, 'bnUSD'])]);
+
+  // const data = [
+  //   Buffer.from('_swap', 'utf-8'),
+  //   Buffer.from('0xa86a.avax/0x9920c45570dC76ACb48b215308B7D3791E3518ce', 'utf-8'),
+  //   getBytesFromNumber(1000000),
+  //   [getBytesFromNumber(1), getBytesFromAddress('cx2609b924e33ef00b648a409245c7ea394c467824')],
+  //   [getBytesFromNumber(1), getBytesFromAddress('cx88fd7df7ddff82f7cc735c871dc519838cb235bb')],
+  //   [getBytesFromNumber(2), getBytesFromAddress('cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f')],
+  // ];
+
+  // console.log('AAA', data);
+  // console.log('stailbility fund info', getRlpEncodedMsg(data));
+
+  return 5;
+}
 
 export function useV2Pairs(currencies: [Currency | undefined, Currency | undefined][]): PairData[] {
   const tokens = useMemo(() => {

@@ -230,37 +230,25 @@ export default function LPDescription() {
                       <Typography textAlign="center" variant="p">
                         {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
                           <>
-                            {formattedAmounts[Field.CURRENCY_A]
-                              ? new BigNumber(baseCurrencyTotalSupply)
-                                  .plus(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0)
-                                  .dp(HIGH_PRICE_ASSET_DP[pair.reserve0.currency?.address || ''] || 2)
-                                  .toFormat() || '...'
-                              : baseCurrencyTotalSupply
-                                  ?.dp(HIGH_PRICE_ASSET_DP[pair.reserve0.currency?.address || ''] || 2)
-                                  .toFormat() || '...'}{' '}
+                            {formatBigNumber(
+                              baseCurrencyTotalSupply.plus(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0),
+                              'currency',
+                            )}{' '}
                             {pair?.reserve0.currency?.symbol}
                             <br />
-                            {formattedAmounts[Field.CURRENCY_B]
-                              ? new BigNumber(quoteCurrencyTotalSupply)
-                                  .plus(formattedAmounts[Field.CURRENCY_B]?.toFixed() || 0)
-                                  .dp(HIGH_PRICE_ASSET_DP[pair.reserve1.currency?.address || ''] || 2)
-                                  .toFormat() || '...'
-                              : quoteCurrencyTotalSupply
-                                  ?.dp(HIGH_PRICE_ASSET_DP[pair.reserve1.currency?.address || ''] || 2)
-                                  .toFormat() || '...'}{' '}
+                            {formatBigNumber(
+                              quoteCurrencyTotalSupply.plus(formattedAmounts[Field.CURRENCY_B]?.toFixed() || 0),
+                              'currency',
+                            )}{' '}
                             {pair?.reserve1.currency?.symbol}
                           </>
                         ) : (
-                          `${
-                            formattedAmounts[Field.CURRENCY_A]
-                              ? new BigNumber(token0Deposited?.toFixed() || 0)
-                                  .plus(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0)
-                                  .dp(2)
-                                  .toFormat()
-                              : token0Deposited?.toFixed(2, {
-                                  groupSeparator: ',',
-                                }) || 0
-                          } ${pair?.reserve0.currency?.symbol}`
+                          `${formatBigNumber(
+                            new BigNumber(token0Deposited?.toFixed() || 0).plus(
+                              formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0,
+                            ),
+                            'currency',
+                          )} ${pair?.reserve0.currency?.symbol}`
                         )}
                       </Typography>
                     </Box>
@@ -278,11 +266,14 @@ export default function LPDescription() {
                         <Typography textAlign="center" variant="p">
                           {poolRewards
                             ? isInitialSupply
-                              ? `${poolRewards.times(responsiveRewardShare).toFormat(2)} - ${poolRewards
-                                  .times(responsiveRewardShare)
-                                  .times(2.5)
-                                  .toFormat(2)} BALN`
-                              : `${poolRewards.times(responsiveRewardShare).toFormat(2)} BALN`
+                              ? `${formatBigNumber(
+                                  poolRewards.times(responsiveRewardShare),
+                                  'currency',
+                                )} - ${formatBigNumber(
+                                  poolRewards.times(responsiveRewardShare).times(2.5),
+                                  'currency',
+                                )} BALN`
+                              : `${formatBigNumber(poolRewards.times(responsiveRewardShare), 'currency')} BALN`
                             : 'N/A'}
                         </Typography>
                       </Box>

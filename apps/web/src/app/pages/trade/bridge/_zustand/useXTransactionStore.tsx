@@ -33,6 +33,7 @@ type XTransactionStore = {
   fail: (id) => void;
   onMessageUpdate: (id: string, xMessage: XMessage) => void;
   getPendingTransactions: (signedWallets: { xChainId: XChainId | undefined; address: string }[]) => XTransaction[];
+  remove: (id: string) => void;
 };
 
 const iconChainId: XChainId = '0x1.icon';
@@ -305,6 +306,11 @@ export const useXTransactionStore = create<XTransactionStore>()(
             return 0;
           });
       },
+      remove: (id: string) => {
+        set(state => {
+          delete state.transactions[id];
+        });
+      },
     })),
     {
       name: 'xTransaction-store',
@@ -352,6 +358,10 @@ export const xTransactionActions = {
     return Object.values(transactions).find(
       transaction => transaction.primaryMessageId === messageId || transaction.secondaryMessageId === messageId,
     );
+  },
+
+  remove: (id: string) => {
+    useXTransactionStore.getState().remove(id);
   },
 };
 

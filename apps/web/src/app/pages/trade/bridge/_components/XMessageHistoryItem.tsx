@@ -9,6 +9,7 @@ import ArrowIcon from 'assets/icons/arrow-white.svg';
 
 import Spinner from 'app/components/Spinner';
 import { XMessage, XMessageStatus, XTransaction } from '../_zustand/types';
+import { xMessageActions } from '../_zustand/useXMessageStore';
 
 const Wrap = styled(Box)`
   display: grid;
@@ -67,16 +68,11 @@ const FailedX = styled(Box)`
   }
 `;
 
-const XMessageHistoryItem = ({
-  xMessage,
-  xTransaction,
-}: { xMessage: XMessage; xTransaction: XTransaction }) => {
+const XMessageHistoryItem = ({ xMessage, xTransaction }: { xMessage: XMessage; xTransaction: XTransaction }) => {
   const { sourceChainId, destinationChainId } = xMessage;
 
   const isPending = useMemo(() => {
-    return (
-      xMessage.status !== XMessageStatus.FAILED && xMessage.status !== XMessageStatus.CALL_EXECUTED
-    );
+    return xMessage.status !== XMessageStatus.FAILED && xMessage.status !== XMessageStatus.CALL_EXECUTED;
   }, [xMessage]);
 
   const statusMessage = useMemo(() => {
@@ -113,6 +109,10 @@ const XMessageHistoryItem = ({
   const minutes = Math.floor(elapsedTime / 60);
   const seconds = elapsedTime % 60;
 
+  const handleRemove = () => {
+    xMessageActions.remove(xMessage.id);
+  };
+
   return (
     <>
       <Wrap>
@@ -141,9 +141,15 @@ const XMessageHistoryItem = ({
               </Typography>
             </>
           ) : (
-            <Flex alignItems="center">
-              <Status style={{ transform: 'translateY(1px)' }}>{statusMessage}</Status>
-            </Flex>
+            <>
+              <Flex alignItems="center">
+                <Status style={{ transform: 'translateY(1px)' }}>{statusMessage}</Status>
+              </Flex>
+
+              <Typography color="alert" onClick={handleRemove} style={{ cursor: 'pointer' }}>
+                REMOVE
+              </Typography>
+            </>
           )}
         </Flex>
       </Wrap>

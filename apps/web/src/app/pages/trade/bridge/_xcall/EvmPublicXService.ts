@@ -147,15 +147,13 @@ export class EvmPublicXService extends AbstractPublicXService {
     };
   }
   _parseCallExecutedEventLog(eventLog, txHash: string): XCallExecutedEvent {
-    const reqId = eventLog.args._reqId;
-
     return {
       eventType: XCallEventType.CallExecuted,
       xChainId: this.xChainId,
       txHash,
       // rawEventData: eventLog,
       reqId: eventLog.args._reqId,
-      code: eventLog.args._code,
+      code: parseInt(eventLog.args._code),
       msg: eventLog.args._msg,
     };
   }

@@ -124,7 +124,7 @@ export type XTransaction = {
   sourceChainId: XChainId;
   // primaryDestinationChainId: XChainId;
   finalDestinationChainId: XChainId;
-  destinationChainInitialBlockHeight?: bigint;
+  finalDestinationChainInitialBlockHeight: bigint;
 
   attributes: Record<string, any>;
 };

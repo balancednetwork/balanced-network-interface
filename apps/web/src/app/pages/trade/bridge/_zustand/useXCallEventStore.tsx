@@ -135,7 +135,7 @@ export const useXCallEventStore = create<XCallEventStore>()(
 
         const startBlockHeight: bigint = currentHeight;
         const endBlockHeight: bigint = currentHeight + scanBlockCount - 1n;
-        console.log('Scanning blocks:', startBlockHeight, endBlockHeight);
+        // console.log('Scanning blocks:', startBlockHeight, endBlockHeight);
         if (
           startBlockHeight === endBlockHeight &&
           endBlockHeight === currentHeight &&
@@ -146,7 +146,7 @@ export const useXCallEventStore = create<XCallEventStore>()(
         }
 
         const events = await xService.getDestinationEvents({ startBlockHeight, endBlockHeight });
-        console.log('events', events);
+        // console.log('events', events);
 
         if (events) {
           set(state => {

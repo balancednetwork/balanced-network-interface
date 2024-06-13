@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { Trans } from '@lingui/macro';
 import { useMedia } from 'react-use';
@@ -12,8 +12,7 @@ import ActivityBarChart from './ActivityBarChart';
 import XTransactionHistoryItem from './XTransactionHistoryItem';
 import { useXTransactionStore } from '../_zustand/useXTransactionStore';
 import { useSignedInWallets } from '../_hooks/useWallets';
-import { useXMessageStore, xMessageActions } from '../_zustand/useXMessageStore';
-import { XMessageStatus } from '../_zustand/types';
+import { useXMessageStore } from '../_zustand/useXMessageStore';
 
 export default function BridgeActivity() {
   const { data: xCallStats } = useXCallStats();
@@ -25,16 +24,6 @@ export default function BridgeActivity() {
   const { getPendingTransactions } = useXTransactionStore();
   const pendingTransactions = getPendingTransactions(signedInWallets);
 
-  const messageCount = useMemo(() => {
-    return pendingTransactions.reduce((acc: number, x) => {
-      const primaryMessage = xMessageActions.get(x.primaryMessageId);
-      const secondMessage = x.secondaryMessageId && xMessageActions.get(x.secondaryMessageId);
-
-      if (primaryMessage && primaryMessage.status !== XMessageStatus.CALL_EXECUTED) acc++;
-      if (secondMessage && secondMessage.status !== XMessageStatus.CALL_EXECUTED) acc++;
-      return acc;
-    }, 0);
-  }, [pendingTransactions]);
   return (
     <Box bg="bg2" flex={1} p={['25px', '35px']}>
       <Box mb="35px">
@@ -73,12 +62,12 @@ export default function BridgeActivity() {
       </Box>
       <Box className="border-top" py={4}>
         <Box
-          pr={messageCount >= 4 ? 2 : 0}
-          style={messageCount >= 4 ? { overflowY: 'scroll', maxHeight: '180px' } : {}}
+          pr={pendingTransactions.length >= 4 ? 2 : 0}
+          style={pendingTransactions.length >= 4 ? { overflowY: 'scroll', maxHeight: '180px' } : {}}
         >
-          {messageCount > 0 &&
+          {pendingTransactions.length > 0 &&
             pendingTransactions.map((x, index) => <XTransactionHistoryItem key={index} xTransaction={x} />)}
-          {(messageCount === 0 || pendingTransactions?.length === 0) &&
+          {pendingTransactions.length === 0 &&
             (signedInWallets.length ? (
               <Typography textAlign="center">
                 <Trans>You have no pending cross-chain transactions.</Trans>

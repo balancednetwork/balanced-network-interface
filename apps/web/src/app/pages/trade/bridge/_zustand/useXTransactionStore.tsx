@@ -17,6 +17,8 @@ import { XMessageUpdater, useXMessageStore, xMessageActions } from './useXMessag
 import { swapMessage } from '../../supply/_components/utils';
 import { XChain, XChainId } from '../types';
 import { MODAL_ID, modalActions } from './useModalStore';
+import { formatBigNumber } from 'utils';
+import BigNumber from 'bignumber.js';
 
 type XTransactionStore = {
   transactions: Record<string, XTransaction>;
@@ -116,27 +118,33 @@ export const useXTransactionStore = create<XTransactionStore>()(
           errorMessage = 'Cross-chain transfer failed.';
 
           const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
-          const _formattedAmount = xTransactionInput.inputAmount.toFixed(4);
+          const _formattedAmount = formatBigNumber(
+            new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
+            'currency',
+          );
           descriptionAction = `Transfer ${_tokenSymbol}`;
           descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
         } else if (xTransactionInput.type === XTransactionType.SWAP) {
           const { executionTrade } = xTransactionInput;
           if (executionTrade) {
+            const _inputTokenSymbol = executionTrade?.inputAmount.currency.symbol || '';
+            const _outputTokenSymbol = executionTrade?.outputAmount.currency.symbol || '';
+            const _inputAmount = formatBigNumber(new BigNumber(executionTrade?.inputAmount.toFixed() || 0), 'currency');
+            const _outputAmount = formatBigNumber(
+              new BigNumber(executionTrade?.outputAmount.toFixed() || 0),
+              'currency',
+            );
+
             const swapMessages = swapMessage(
-              executionTrade.inputAmount.toFixed(4),
-              executionTrade.inputAmount.currency.symbol || 'IN',
-              executionTrade.outputAmount.toFixed(4),
-              executionTrade.outputAmount.currency.symbol || 'OUT',
+              _inputAmount,
+              _inputTokenSymbol === '' ? 'IN' : _inputTokenSymbol,
+              _outputAmount,
+              _outputTokenSymbol === '' ? 'OUT' : _outputTokenSymbol,
             );
 
             pendingMessage = swapMessages.pendingMessage;
             successMessage = swapMessages.successMessage;
             errorMessage = 'Cross-chain swap failed.';
-
-            const _inputTokenSymbol = executionTrade?.inputAmount.currency.symbol || '';
-            const _outputTokenSymbol = executionTrade?.outputAmount.currency.symbol || '';
-            const _inputAmount = executionTrade?.inputAmount.toFixed(4);
-            const _outputAmount = executionTrade?.outputAmount.toFixed(4);
             descriptionAction = `Swap ${_inputTokenSymbol} for ${_outputTokenSymbol}`;
             descriptionAmount = `${_inputAmount} ${_inputTokenSymbol} for ${_outputAmount} ${_outputTokenSymbol}`;
           }

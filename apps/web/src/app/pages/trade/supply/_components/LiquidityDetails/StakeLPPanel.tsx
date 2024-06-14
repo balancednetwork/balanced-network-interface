@@ -25,7 +25,7 @@ import { useRewards } from 'store/reward/hooks';
 import { useChangeStakedLPPercent, useStakedLPPercent, useTotalStaked } from 'store/stakedLP/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
-import { parseUnits } from 'utils';
+import { formatBigNumber, parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { getFormattedRewards, stakedFraction } from '../utils';
@@ -256,8 +256,8 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
 
           <Flex my={1} alignItems="center" justifyContent="space-between">
             <Typography>
-              {stakedPercent.multipliedBy(totalStaked).div(100).dp(2).toFormat()} / {totalStaked.dp(2).toFormat()} LP
-              tokens
+              {formatBigNumber(stakedPercent.multipliedBy(totalStaked).div(100), 'currency')} /{' '}
+              {formatBigNumber(totalStaked, 'currency')} LP tokens
             </Typography>
           </Flex>
 
@@ -322,7 +322,7 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
         <Typography my={1}>
           You have
           <Typography as="span" fontWeight="bold" color="white">
-            {` ${totalStaked.dp(2).toFormat()} LP tokens`}
+            {` ${formatBigNumber(totalStaked, 'currency')} LP tokens`}
           </Typography>
           . You may be able to stake them on another platform to earn more rewards.
         </Typography>

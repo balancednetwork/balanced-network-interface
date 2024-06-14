@@ -39,6 +39,7 @@ import QuestionIcon from 'assets/icons/question.svg';
 import Skeleton from 'app/components/Skeleton';
 import { MouseoverTooltip } from 'app/components/Tooltip';
 import { QuestionWrapper } from 'app/components/QuestionHelper';
+import { formatBigNumber } from 'utils';
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
@@ -336,17 +337,17 @@ const PoolRecord = ({
         </StyledDataText>
         <DataText>
           {baseCurrencyTotalSupply ? (
-            <Typography fontSize={16}>{`${baseCurrencyTotalSupply.toFixed(
-              HIGH_PRICE_ASSET_DP[aBalance.currency.address] || 2,
-              { groupSeparator: ',' },
+            <Typography fontSize={16}>{`${formatBigNumber(
+              new BigNumber(baseCurrencyTotalSupply?.toFixed() || 0),
+              'currency',
             )} ${aBalance.currency.symbol}`}</Typography>
           ) : (
             <Skeleton width={100}></Skeleton>
           )}
           {quoteCurrencyTotalSupply ? (
-            <Typography fontSize={16}>{`${quoteCurrencyTotalSupply?.toFixed(
-              HIGH_PRICE_ASSET_DP[bBalance.currency.address] || 2,
-              { groupSeparator: ',' },
+            <Typography fontSize={16}>{`${formatBigNumber(
+              new BigNumber(quoteCurrencyTotalSupply?.toFixed() || 0),
+              'currency',
             )} ${bBalance.currency.symbol}`}</Typography>
           ) : (
             <Skeleton width={100}></Skeleton>

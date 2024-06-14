@@ -59,9 +59,9 @@ const SwapModal = (props: SwapModalProps) => {
     }
 
     const message = swapMessage(
-      executionTrade.inputAmount.toFixed(2),
+      formatBigNumber(new BigNumber(executionTrade?.inputAmount?.toFixed() || 0), 'currency'),
       executionTrade.inputAmount.currency.symbol || 'IN',
-      executionTrade.outputAmount.toFixed(2),
+      formatBigNumber(new BigNumber(executionTrade?.outputAmount?.toFixed() || 0), 'currency'),
       executionTrade.outputAmount.currency.symbol || 'OUT',
     );
 

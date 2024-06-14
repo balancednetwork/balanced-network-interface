@@ -28,7 +28,7 @@ import { useChangeWithdrawnValue, useStakedLPPercent } from 'store/stakedLP/hook
 import { tryParseAmount } from 'store/swap/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
-import { multiplyCABN, toDec } from 'utils';
+import { formatBigNumber, multiplyCABN, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { withdrawMessage } from '../utils';
@@ -330,10 +330,22 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
         </Box>
         <Typography mb={5} textAlign="right">
           {`Available:
-            ${availableCurrency(parsedAmount[Field.CURRENCY_A], availableBase)} ${balances[0]?.currency.symbol || '...'} /
-            ${availableCurrency(parsedAmount[Field.CURRENCY_B], availableQuote)} ${
-              balances[1]?.currency.symbol || '...'
-            }`}
+          ${formatBigNumber(
+            new BigNumber(
+              parsedAmount[Field.CURRENCY_A]
+                ? (availableBase as CurrencyAmount<Currency>)?.subtract(parsedAmount[Field.CURRENCY_A]).toFixed()
+                : availableBase?.toFixed() || 0,
+            ),
+            'currency',
+          )} ${balances[0]?.currency.symbol || '...'} /
+          ${formatBigNumber(
+            new BigNumber(
+              parsedAmount[Field.CURRENCY_B]
+                ? (availableQuote as CurrencyAmount<Currency>)?.subtract(parsedAmount[Field.CURRENCY_B]).toFixed()
+                : availableQuote?.toFixed() || 0,
+            ),
+            'currency',
+          )} ${balances[1]?.currency.symbol || '...'}`}
         </Typography>
         <Box mb={5}>
           {hasUnstakedLP && (
@@ -368,12 +380,12 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {parsedAmount[Field.CURRENCY_A]?.toFixed(2, { groupSeparator: ',' })}{' '}
+            {formatBigNumber(new BigNumber(parsedAmount[Field.CURRENCY_A]?.toFixed() || 0), 'currency')}{' '}
             {parsedAmount[Field.CURRENCY_A]?.currency.symbol || '...'}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
-            {parsedAmount[Field.CURRENCY_B]?.toFixed(2, { groupSeparator: ',' })}{' '}
+            {formatBigNumber(new BigNumber(parsedAmount[Field.CURRENCY_B]?.toFixed() || 0), 'currency')}{' '}
             {parsedAmount[Field.CURRENCY_B]?.currency.symbol || '...'}
           </Typography>
 

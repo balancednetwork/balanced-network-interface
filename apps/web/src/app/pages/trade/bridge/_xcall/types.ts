@@ -43,7 +43,7 @@ export abstract class AbstractPublicXService implements IPublicXService {
   abstract parseEventLogs(eventLogs: any[]): XCallEvent[];
 
   getScanBlockCount() {
-    return 10n;
+    return 30n;
   }
 
   filterEventLogs(eventLogs: XCallEvent[], xCallEventType: XCallEventType) {

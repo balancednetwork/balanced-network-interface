@@ -16,7 +16,6 @@ interface ConnectResultType {
 interface SignResultType {
   signature: string;
 }
-
 interface SendTransactionResultType {
   txHash: string;
   type: string; // success, close, cancel, fail
@@ -46,10 +45,21 @@ const HavahProvider: React.FC<HavahProviderProps> = ({ children }) => {
   const [address, setAddress] = useState<string>('');
   const [chain_id, setChainId] = useState<string>('');
   const [addressStored, setAddressStored] = useLocalStorageWithExpiry<string | null>(
-    'archAccountWithExpiry',
+    'havahAccountWithExpiry',
     null,
     LOCAL_STORAGE_ADDRESS_EXPIRY,
   );
+
+  useEffect(() => {
+    const { havah } = window as any;
+    havah.on('accountsChanged', ({ address }: { address: string }) => {
+      setAddress(address);
+      setAddressStored(address);
+    });
+    havah.on('networkChanged', ({ nid }: { nid: string }) => {
+      setChainId(nid);
+    });
+  }, [setAddressStored]);
 
   const connectToWallet = useCallback(async () => {
     try {
@@ -90,17 +100,6 @@ const HavahProvider: React.FC<HavahProviderProps> = ({ children }) => {
     connectToWallet,
     disconnect,
   };
-
-  useEffect(() => {
-    const { havah } = window as any;
-    havah.on('accountsChanged', (address: string) => {
-      setAddress(address);
-      setAddressStored(address);
-    });
-    havah.on('networkChanged', (nid: string) => {
-      setChainId(nid);
-    });
-  }, [setAddressStored]);
 
   useEffect(() => {
     if (addressStored) {

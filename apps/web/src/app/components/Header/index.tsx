@@ -32,6 +32,8 @@ import { MouseoverTooltip } from '../Tooltip';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import EVMWallet from '../EVMWallet';
 import useEVMReact from 'app/pages/trade/bridge/_hooks/useEVMReact';
+import { useHavahContext } from 'app/_xcall/havah/HavahProvider';
+import HavahWallet from '../HavahWallet';
 
 const StyledLogo = styled(Logo)`
   margin-right: 15px;
@@ -165,6 +167,7 @@ const WalletUIs = {
   '0x1.icon': ICONWallet,
   'archway-1': ArchwayWallet,
   '0xa86a.avax': EVMWallet,
+  '0x100.havah': HavahWallet,
 };
 
 function useClaimableICX(): UseQueryResult<BigNumber> {
@@ -188,6 +191,7 @@ export default function Header(props: { title?: string; className?: string }) {
   const upSmall = useMedia('(min-width: 600px)');
   const { disconnect } = useIconReact();
   const { disconnect: disconnectKeplr } = useArchwayContext();
+  const { disconnect: disconnectHavah } = useHavahContext();
   const { disconnect: disconnectAvax } = useEVMReact();
   const [activeTab, setActiveTab] = useState<XChainId | null>(null);
   const signedInWallets = useSignedInWallets();
@@ -220,6 +224,7 @@ export default function Header(props: { title?: string; className?: string }) {
     closeWalletMenu();
     disconnectKeplr();
     disconnectAvax();
+    disconnectHavah();
 
     if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
       bnJs.contractSettings.ledgerSettings.transport.close();

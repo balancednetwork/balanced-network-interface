@@ -152,10 +152,34 @@ export const fuji: XChain = {
   gasThreshold: 0,
 };
 
+export const havah: XChain = {
+  id: 'havah',
+  name: 'Havah',
+  xChainId: '0x100.havah',
+  xChainType: 'EVM',
+  xWalletType: XWalletType.EVM,
+  tracker: 'https://scan.havah.io',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Havah',
+    symbol: 'HVH',
+  },
+  rpc: {
+    http: 'https://ctz.havah.io/api/v3',
+  },
+  contracts: {
+    xCall: '0xfC83a3F252090B26f92F91DFB9dC3Eb710AdAf1b',
+    assetManager: '0xdf851B4f0D9b2323e03B3980b1C4Cf56273c0bd9',
+    bnUSD: '0xdBDd50997361522495EcFE57EBb6850dA0E4C699',
+  },
+  autoExecution: true,
+  gasThreshold: 0.01,
+};
 export const xChains = [
   archway,
   icon,
   avalanche,
+  havah,
   // remove testnets
   // archwayTestnet,
   // lisbon,
@@ -169,6 +193,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   '0xa86a.avax': avalanche,
   archway: archwayTestnet,
   'archway-1': archway,
+  '0x100.havah': havah,
 };
 
 export const sortChains = (a: XChainId, b: XChainId): [XChainId, XChainId] => {

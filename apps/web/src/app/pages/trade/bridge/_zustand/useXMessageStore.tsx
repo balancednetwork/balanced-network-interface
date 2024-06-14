@@ -52,13 +52,16 @@ export const deriveStatus = (
   }
 
   if (sourceTransaction.status === TransactionStatus.success) {
-    if (events[XCallEventType.CallExecuted] && events[XCallEventType.CallExecuted].code === 1) {
-      if (destinationTransaction && destinationTransaction.status === TransactionStatus.success) {
+    if (events[XCallEventType.CallExecuted]) {
+      if (
+        events[XCallEventType.CallExecuted].code === 1 &&
+        destinationTransaction &&
+        destinationTransaction.status === TransactionStatus.success
+      ) {
         return XMessageStatus.CALL_EXECUTED;
-        // return XMessageStatus.COMPLETED;
+      } else {
+        return XMessageStatus.FAILED; // REVERTED?
       }
-
-      // return XMessageStatus.CALL_EXECUTED;
     }
 
     if (events[XCallEventType.CallMessage]) {
@@ -82,6 +85,7 @@ type XMessageStore = {
   updateSourceTransaction: (id: string, { rawTx }: { rawTx: any }) => void;
   updateXMessageEvents: (id: string, events: XCallEventMap) => Promise<void>;
   remove: (id: string) => void;
+  refreshXMessage: (id: string) => void;
 };
 
 export const useXMessageStore = create<XMessageStore>()(
@@ -175,6 +179,23 @@ export const useXMessageStore = create<XMessageStore>()(
           delete state.messages[id];
         });
       },
+      refreshXMessage: (id: string) => {
+        const xMessage = get().messages[id];
+        if (!xMessage) return;
+
+        const { sourceTransaction, events, destinationTransaction, status: oldStatus } = xMessage;
+
+        const newStatus = deriveStatus(sourceTransaction, events, destinationTransaction);
+
+        set(state => {
+          state.messages[id]['status'] = newStatus;
+        });
+
+        const xTransaction = xTransactionActions.getByMessageId(xMessage.id);
+        if (xTransaction) {
+          xTransactionActions.onMessageUpdate(xTransaction.id, xMessage);
+        }
+      },
     })),
     {
       name: 'xMessage-store',
@@ -203,6 +224,10 @@ export const xMessageActions = {
 
   remove: (id: string) => {
     useXMessageStore.getState().remove(id);
+  },
+
+  refreshXMessage: (id: string) => {
+    useXMessageStore.getState().refreshXMessage(id);
   },
 
   getXMessageStatusDescription: (xMessageId: string) => {

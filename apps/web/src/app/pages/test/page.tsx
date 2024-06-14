@@ -23,6 +23,7 @@ import { isTradeBetter } from 'utils/isTradeBetter';
 import { BETTER_TRADE_LESS_HOPS_THRESHOLD } from 'constants/misc';
 import { formatBigNumber, toDec } from 'utils';
 import { DEFAULT_SLIPPAGE } from 'constants/index';
+import { getRlpEncodedMsg } from 'app/pages/trade/bridge/utils';
 
 const ICX = new Token(ChainId.MAINNET, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
 const bnUSD = new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD', 'Balanced Dollar');
@@ -36,7 +37,7 @@ const calculateTrade = async (
   currencyInValue: string,
   maxHops = 3,
 ): Promise<Trade<Currency, Currency, TradeType.EXACT_INPUT> | undefined> => {
-  const currencyAmountIn = tryParseAmount(currencyInValue, currencyIn);
+  const currencyAmountIn: CurrencyAmount<Currency> | undefined = tryParseAmount(currencyInValue, currencyIn);
 
   const allCurrencyCombinations = getAllCurrencyCombinations(currencyIn, currencyOut);
   const allPairs = await fetchV2Pairs(allCurrencyCombinations);
@@ -72,6 +73,34 @@ const calculateTrade = async (
 
   return undefined;
 };
+
+function getBytesFromNumber(value) {
+  const hexString = value.toString(16).padStart(2, '0');
+  return Buffer.from(hexString.length % 2 === 1 ? '0' + hexString : hexString, 'hex');
+}
+
+function getBytesFromAddress(address) {
+  return Buffer.from(address.replace('cx', '01'), 'hex');
+}
+
+type RouteAction = {
+  type: number;
+  address: string;
+};
+
+export function foo(method: string, recipient: string, minimumReceive: BigInt, _path: RouteAction[]) {
+  const data: any[] = [
+    Buffer.from(method, 'utf-8'),
+    Buffer.from(recipient, 'utf-8'),
+    getBytesFromNumber(minimumReceive),
+  ];
+
+  for (let i = 0; i < _path.length; i++) {
+    data.push([getBytesFromNumber(_path[i].type), getBytesFromAddress(_path[i].address)]);
+  }
+
+  return Buffer.from(getRlpEncodedMsg(data)).toString('hex');
+}
 
 export function TestPage() {
   const { account } = useIconReact();
@@ -140,16 +169,39 @@ export function TestPage() {
         const token = executionTrade.inputAmount.currency as Token;
         const outputToken = executionTrade.outputAmount.currency as Token;
 
+        const rlpEncodedSwapData = foo(
+          '_swap',
+          recipient,
+          BigInt(toDec(minReceived)),
+
+          //@ts-ignore
+          executionTrade.route.pathForSwap.map(x => ({
+            type: 1,
+            address: x,
+          })),
+        );
+
+        console.log('rlpEncodedSwapData', rlpEncodedSwapData);
+
+        // throw new Error('Not implemented');
+
+        console.log('toDec(executionTrade.inputAmount)', toDec(executionTrade.inputAmount));
+
         const res = await bnJs
           .inject({ account })
           .getContract(token.address)
-          .swapUsingRoute(
-            toDec(executionTrade.inputAmount),
-            outputToken.address,
-            toDec(minReceived),
-            executionTrade.route.pathForSwap,
-            recipient,
-          );
+          .swapUsingRoute2(toDec(executionTrade.inputAmount), rlpEncodedSwapData);
+
+        // const res = await bnJs
+        //   .inject({ account })
+        //   .getContract(token.address)
+        //   .swapUsingRoute(
+        //     toDec(executionTrade.inputAmount),
+        //     outputToken.address,
+        //     toDec(minReceived),
+        //     executionTrade.route.pathForSwap,
+        //     recipient,
+        //   );
         console.log('res', res);
         console.log('hash', res.result);
       }
@@ -194,8 +246,13 @@ export function TestPage() {
     await swap(ICX, bnUSD, '1');
   };
 
+  const handleSwapBALNForbnUSD = async () => {
+    console.log('handleSwapBLANForbnUSD');
+    await swap(BALN, bnUSD, '2');
+  };
+
   return (
-    <Box bg="bg3" flex={1} p={2}>
+    <Flex bg="bg3" flex={1} p={2} style={{ gap: 2 }} flexDirection={'column'}>
       <Flex flexDirection={'row'} style={{ gap: 2 }}>
         <Button onClick={handleShowTradeICXForbnUSD} disabled={isProcessing}>
           Show Trade for swapping ICX for bnUSD
@@ -204,7 +261,15 @@ export function TestPage() {
           Swap ICX for bnUSD
         </Button>
       </Flex>
+      <Flex flexDirection={'row'} style={{ gap: 2 }}>
+        {/* <Button onClick={handleShowTradeICXForbnUSD} disabled={isProcessing}>
+          Show Trade for swapping ICX for bnUSD
+        </Button> */}
+        <Button onClick={handleSwapBALNForbnUSD} disabled={isProcessing}>
+          Swap BALN for bnUSD
+        </Button>
+      </Flex>
       <Flex>{/* Result here */}</Flex>
-    </Box>
+    </Flex>
   );
 }

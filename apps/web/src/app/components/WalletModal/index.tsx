@@ -16,6 +16,7 @@ import { Typography } from 'app/theme';
 import ArchWalletIcon from 'assets/icons/chains/archway.svg';
 import IconWalletIcon from 'assets/icons/wallets/iconex.svg';
 import AvalancheWalletIcon from 'assets/icons/chains/avalanche.svg';
+import HavahWalletIcon from 'assets/icons/chains/havah.svg';
 import { LOCALE_LABEL, SupportedLocale, SUPPORTED_LOCALES } from 'constants/locales';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useWalletModalToggle, useModalOpen, useWalletModal } from 'store/application/hooks';
@@ -29,6 +30,7 @@ import { IconWalletModal } from './IconWalletModal';
 import { AvalancheWalletModal } from './AvalancheWalletModal';
 import { XWalletType } from 'app/pages/trade/bridge/types';
 import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
+import { useHavahContext } from 'app/_xcall/havah/HavahProvider';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {
@@ -66,12 +68,17 @@ export default function WalletModal() {
   const [, setWalletModal] = useWalletModal();
   const signedInWallets = useSignedInWallets();
   const { connectToWallet: connectToKeplr } = useArchwayContext();
+  const { connectToWallet: connectToHavah } = useHavahContext();
 
   const wallets = useWallets();
 
   const handleOpenWalletArchway = React.useCallback(() => {
     connectToKeplr();
   }, [connectToKeplr]);
+
+  const handleOpenWalletHavah = React.useCallback(() => {
+    connectToHavah();
+  }, [connectToHavah]);
 
   //
   const activeLocale = useActiveLocale();
@@ -131,8 +138,16 @@ export default function WalletModal() {
         description: t`Swap & transfer assets cross-chain.`,
         address: wallets[XWalletType.EVM].account,
       },
+      {
+        name: 'Havah',
+        logo: <HavahWalletIcon width="40" height="40" />,
+        connect: handleOpenWalletHavah,
+        disconnect: wallets[XWalletType.HAVAH].disconnect,
+        description: t`Swap & transfer assets cross-chain.`,
+        address: wallets[XWalletType.HAVAH].account,
+      },
     ];
-  }, [setWalletModal, handleOpenWalletArchway, wallets]);
+  }, [setWalletModal, handleOpenWalletArchway, handleOpenWalletHavah, wallets]);
 
   const filteredWallets = React.useMemo(() => {
     return [...walletConfig].filter(wallet => {

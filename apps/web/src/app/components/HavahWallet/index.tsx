@@ -12,7 +12,6 @@ import { useARCH } from 'app/pages/trade/bridge/_config/tokens';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
-import bnJs from 'bnJs';
 import '@reach/tabs/styles.css';
 import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import useArrowControl from 'hooks/useArrowControl';
@@ -50,7 +49,7 @@ const HavahWallet = ({ setAnchor, anchor }) => {
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
   const balances = useHavahWalletBalances();
   const arch = useARCH();
-  const { address: accountArch } = useHavahContext();
+  const { address: accountHavah } = useHavahContext();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>();
   const [modalAsset] = useState<string | undefined>();
@@ -62,7 +61,7 @@ const HavahWallet = ({ setAnchor, anchor }) => {
   const toggleWalletModal = useWalletModalToggle();
   const signedInWallets = useSignedInWallets();
 
-  const tokenComparator = useTokenComparator(accountArch, false);
+  const tokenComparator = useTokenComparator(accountHavah, false);
 
   const xTokens = useXTokens('0x100.havah');
   const addressesWithAmount = useMemo(
@@ -177,13 +176,13 @@ const HavahWallet = ({ setAnchor, anchor }) => {
         </AssetSymbol>
         <BalanceAndValueWrap>
           <DataText as="div">
-            {!accountArch
+            {!accountHavah
               ? '-'
               : balances?.[address]?.toFixed(HIGH_PRICE_ASSET_DP[address] || 2, { groupSeparator: ',' })}
           </DataText>
 
           <DataText as="div">
-            {!accountArch || !rates || !symbol || !rates[symbol] || !rateFracs
+            {!accountHavah || !rates || !symbol || !rates[symbol] || !rateFracs
               ? '-'
               : `$${balances?.[address]?.multiply(rateFracs[symbol]).toFixed(2, { groupSeparator: ',' })}`}
           </DataText>
@@ -192,7 +191,7 @@ const HavahWallet = ({ setAnchor, anchor }) => {
     );
   };
 
-  if (!accountArch) {
+  if (!accountHavah) {
     return (
       <WalletAssets>
         <Flex pb="25px">
@@ -214,7 +213,7 @@ const HavahWallet = ({ setAnchor, anchor }) => {
       <WalletAssets>
         {signedInWallets.length > 1 && (
           <Flex padding="0 0 20px">
-            <CopyableAddress account={accountArch} closeAfterDelay={1000} copyIcon />
+            <CopyableAddress account={accountHavah} closeAfterDelay={1000} copyIcon />
           </Flex>
         )}
         <SearchInput

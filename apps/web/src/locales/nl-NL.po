@@ -101,8 +101,8 @@ msgid "Supplying {pair} liquidity..."
 msgstr "{pair} liquiditeit leveren..."
 
 #: src/app/pages/home/_components/xCollateralModal/index.tsx
-msgid "Collateral action"
-msgstr ""
+#~ msgid "Collateral action"
+#~ msgstr ""
 
 #: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
@@ -727,6 +727,7 @@ msgstr "BALN vergrendelen"
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
+#: src/app/pages/home/_components/xCollateralModal/index.tsx
 #: src/app/pages/home/BBaln/UnstakePrompt.tsx
 #: src/app/pages/home/CollateralPanel.tsx
 #: src/app/pages/home/LoanPanel.tsx
@@ -1049,6 +1050,7 @@ msgstr "De stemming begint om 17.00 uur UTC,"
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
+#: src/app/pages/home/_components/xCollateralModal/index.tsx
 #: src/app/pages/home/BBaln/UnstakePrompt.tsx
 #: src/app/pages/home/CollateralPanel.tsx
 #: src/app/pages/home/LoanPanel.tsx
@@ -2209,6 +2211,7 @@ msgstr "Route"
 msgid "All fees claimed"
 msgstr "Alle vergoedingen claimed"
 
+#: src/app/pages/home/_components/xCollateralModal/index.tsx
 #: src/app/pages/home/CollateralPanel.tsx
 msgid "Deposit {0} collateral?"
 msgstr "{0} storten als onderpand?"
@@ -2433,6 +2436,7 @@ msgstr ""
 msgid "Deposit as collateral"
 msgstr "Storten als onderpand"
 
+#: src/app/pages/home/_components/xCollateralModal/index.tsx
 #: src/app/pages/home/CollateralPanel.tsx
 msgid "Withdraw {0} collateral?"
 msgstr ""

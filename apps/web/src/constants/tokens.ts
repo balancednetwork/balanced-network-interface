@@ -214,7 +214,9 @@ export const FUNDING_TOKENS_LIST = FUNDING_TOKENS[NETWORK_ID];
 
 export const HIGH_PRICE_ASSET_DP: { [key in string]: number } = {
   cx5b5a03cb525a1845d0af3a872d525b18a810acb0: 6,
+  cx2d552c485ec8bcaa75aac02424e2aca6ffdb2f1b: 5,
   cx99c79fd6dee53335f686c7f2cb513745622634f2: 5,
   cx288d13e1b63563459a2ac6179f237711f6851cb5: 5,
+  cx66a031cc3bd305c76371fb586e93801b948254f0: 4,
   native: 5,
 };

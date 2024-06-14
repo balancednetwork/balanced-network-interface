@@ -100,8 +100,8 @@ msgid "Supplying {pair} liquidity..."
 msgstr "Supplying {pair} liquidity..."
 
 #: src/app/pages/home/_components/xCollateralModal/index.tsx
-msgid "Collateral action"
-msgstr "Collateral action"
+#~ msgid "Collateral action"
+#~ msgstr "Collateral action"
 
 #: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
@@ -694,6 +694,7 @@ msgstr "Lock up BALN"
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
+#: src/app/pages/home/_components/xCollateralModal/index.tsx
 #: src/app/pages/home/BBaln/UnstakePrompt.tsx
 #: src/app/pages/home/CollateralPanel.tsx
 #: src/app/pages/home/LoanPanel.tsx
@@ -1006,6 +1007,7 @@ msgstr "Voting will begin at 5pm UTC,"
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
+#: src/app/pages/home/_components/xCollateralModal/index.tsx
 #: src/app/pages/home/BBaln/UnstakePrompt.tsx
 #: src/app/pages/home/CollateralPanel.tsx
 #: src/app/pages/home/LoanPanel.tsx
@@ -2142,6 +2144,7 @@ msgstr "Route"
 msgid "All fees claimed"
 msgstr "All fees claimed"
 
+#: src/app/pages/home/_components/xCollateralModal/index.tsx
 #: src/app/pages/home/CollateralPanel.tsx
 msgid "Deposit {0} collateral?"
 msgstr "Deposit {0} collateral?"
@@ -2366,6 +2369,7 @@ msgstr "In"
 msgid "Deposit as collateral"
 msgstr "Deposit as collateral"
 
+#: src/app/pages/home/_components/xCollateralModal/index.tsx
 #: src/app/pages/home/CollateralPanel.tsx
 msgid "Withdraw {0} collateral?"
 msgstr "Withdraw {0} collateral?"

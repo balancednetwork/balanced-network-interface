@@ -38,6 +38,8 @@ import {
   type,
   setLockingRatio,
 } from './reducer';
+import { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 
 export function useLoanBorrowedAmount(): BigNumber {
   const borrowedAmounts = useBorrowedAmounts();
@@ -479,4 +481,24 @@ export function useRedemptionDaoFee(): UseQueryResult<number> {
       }
     },
   });
+}
+
+export function useDerivedLoanInfo(): {
+  account: string | undefined;
+  receiver: string | undefined;
+} {
+  const sourceChain = useCollateralXChain();
+  const signedInWallets = useAvailableWallets();
+  const collateralType = useCollateralType();
+  const crossChainWallet = useCrossChainWalletBalances();
+  const account = signedInWallets.find(
+    w => xChainMap[w.xChainId].xWalletType === xChainMap[sourceChain].xWalletType,
+  )?.address;
+
+  const receiver = undefined;
+
+  return {
+    account,
+    receiver,
+  };
 }

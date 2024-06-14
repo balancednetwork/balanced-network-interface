@@ -98,8 +98,8 @@ msgid "Supplying {pair} liquidity..."
 msgstr ""
 
 #: src/app/pages/home/_components/xCollateralModal/index.tsx
-msgid "Collateral action"
-msgstr ""
+#~ msgid "Collateral action"
+#~ msgstr ""
 
 #: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
@@ -692,6 +692,7 @@ msgstr ""
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
+#: src/app/pages/home/_components/xCollateralModal/index.tsx
 #: src/app/pages/home/BBaln/UnstakePrompt.tsx
 #: src/app/pages/home/CollateralPanel.tsx
 #: src/app/pages/home/LoanPanel.tsx
@@ -1002,6 +1003,7 @@ msgstr ""
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
+#: src/app/pages/home/_components/xCollateralModal/index.tsx
 #: src/app/pages/home/BBaln/UnstakePrompt.tsx
 #: src/app/pages/home/CollateralPanel.tsx
 #: src/app/pages/home/LoanPanel.tsx
@@ -2134,6 +2136,7 @@ msgstr ""
 msgid "All fees claimed"
 msgstr ""
 
+#: src/app/pages/home/_components/xCollateralModal/index.tsx
 #: src/app/pages/home/CollateralPanel.tsx
 msgid "Deposit {0} collateral?"
 msgstr ""
@@ -2358,6 +2361,7 @@ msgstr ""
 msgid "Deposit as collateral"
 msgstr ""
 
+#: src/app/pages/home/_components/xCollateralModal/index.tsx
 #: src/app/pages/home/CollateralPanel.tsx
 msgid "Withdraw {0} collateral?"
 msgstr ""

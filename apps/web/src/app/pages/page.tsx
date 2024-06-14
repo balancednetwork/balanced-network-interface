@@ -20,6 +20,10 @@ import { useFetchPrice } from 'store/ratio/hooks';
 import { useFetchRewardsInfo } from 'store/reward/hooks';
 import { useFetchSavingsInfo } from 'store/savings/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
+import { AllTransactionsUpdater } from './trade/bridge/_zustand/useTransactionStore';
+import { AllXMessagesUpdater } from './trade/bridge/_zustand/useXMessageStore';
+import { AllPublicXServicesCreator } from './trade/bridge/_zustand/useXServiceStore';
+import { xChains } from './trade/bridge/_config/xChains';
 
 const Grid = styled.div`
   flex: 1;
@@ -52,6 +56,10 @@ export function HomePage() {
 
   return (
     <>
+      <AllTransactionsUpdater />
+      <AllXMessagesUpdater />
+      <AllPublicXServicesCreator xChains={xChains} />
+
       {account ? (
         <Grid>
           <CollateralPanel />

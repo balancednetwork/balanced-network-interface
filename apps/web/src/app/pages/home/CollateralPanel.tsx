@@ -35,13 +35,16 @@ import { useLoanActionHandlers, useLockedCollateralAmount } from 'store/loan/hoo
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
-import { parseUnits } from 'utils';
+import { bufferToHex, parseUnits, uintToBytes } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 import CollateralTypeSwitcher, { CollateralTypeSwitcherWrap } from 'app/components/CollateralTypeSwitcher';
 import ModalContent from 'app/components/ModalContent';
 import ICXDisplayTypeSwitcher from 'app/components/ICXDisplayTypeSwitcher';
 import XCollateralModal, { XCollateralAction } from './_components/xCollateralModal';
 import CollateralChainSelector from './_components/CollateralChainSelector';
+import { MODAL_ID, modalActions } from '../trade/bridge/_zustand/useModalStore';
+import { toHex } from 'viem';
+import { RLP } from '@ethereumjs/rlp';
 
 export const PanelInfoWrap = styled(Flex)`
   justify-content: space-between;
@@ -132,6 +135,8 @@ const CollateralPanel = () => {
     parsedAmount,
     collateralDecimalPlaces,
     formattedAmounts,
+    differenceAmount,
+    xTokenAmount,
   } = useDerivedCollateralInfo();
 
   const { isAdjusting, inputType } = useCollateralState();
@@ -170,15 +175,18 @@ const CollateralPanel = () => {
   // collateral confirm modal logic & value
   const [open, setOpen] = React.useState(false);
 
+  const isCrossChain = !(sourceChain === '0x1.icon' || sourceChain === '0x2.icon');
+
   const toggleOpen = () => {
-    if (shouldLedgerSign) return;
-    setOpen(!open);
-    changeShouldLedgerSign(false);
+    if (isCrossChain) {
+      modalActions.openModal(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL);
+    } else {
+      if (shouldLedgerSign) return;
+      setOpen(!open);
+      changeShouldLedgerSign(false);
+    }
   };
 
-  const beforeAmount = collateralDeposit;
-  const afterAmount = parsedAmount[Field.LEFT];
-  const differenceAmount = afterAmount.minus(beforeAmount);
   const collateralDifference = differenceAmount.abs();
   const shouldDeposit = differenceAmount.isPositive();
 
@@ -309,9 +317,9 @@ const CollateralPanel = () => {
   // change slider value if only a user types
   React.useEffect(() => {
     if (inputType === 'text') {
-      sliderInstance.current.noUiSlider.set(afterAmount.toNumber());
+      sliderInstance.current.noUiSlider.set(parsedAmount[Field.LEFT].toNumber());
     }
-  }, [afterAmount, inputType]);
+  }, [parsedAmount[Field.LEFT], inputType]);
 
   React.useEffect(() => {
     sliderInstance.current.noUiSlider.updateOptions(
@@ -438,10 +446,10 @@ const CollateralPanel = () => {
       </BoxPanelWrap>
 
       <XCollateralModal
-        account={undefined}
-        currencyAmount={undefined}
-        sourceChain={'archway-1'}
-        action={XCollateralAction.DEPOSIT}
+        account={account}
+        currencyAmount={xTokenAmount}
+        sourceChain={sourceChain}
+        action={shouldDeposit ? XCollateralAction.DEPOSIT : XCollateralAction.WITHDRAW}
       />
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
@@ -468,7 +476,8 @@ const CollateralPanel = () => {
                 <Trans>Before</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {beforeAmount.dp(collateralDecimalPlaces).toFormat() + (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
+                {collateralDeposit.dp(collateralDecimalPlaces).toFormat() +
+                  (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
               </Typography>
             </Box>
 
@@ -477,7 +486,8 @@ const CollateralPanel = () => {
                 <Trans>After</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {afterAmount.dp(collateralDecimalPlaces).toFormat() + (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
+                {parsedAmount[Field.LEFT].dp(collateralDecimalPlaces).toFormat() +
+                  (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
               </Typography>
             </Box>
           </Flex>

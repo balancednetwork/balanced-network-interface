@@ -101,8 +101,8 @@ msgid "Supplying {pair} liquidity..."
 msgstr "{pair} 유동성을 제공하는 중..."
 
 #: src/app/pages/home/_components/xCollateralModal/index.tsx
-msgid "Collateral action"
-msgstr ""
+#~ msgid "Collateral action"
+#~ msgstr ""
 
 #: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
@@ -727,6 +727,7 @@ msgstr ""
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
+#: src/app/pages/home/_components/xCollateralModal/index.tsx
 #: src/app/pages/home/BBaln/UnstakePrompt.tsx
 #: src/app/pages/home/CollateralPanel.tsx
 #: src/app/pages/home/LoanPanel.tsx
@@ -1049,6 +1050,7 @@ msgstr "투표는 오전 2시부터 시작됩니다."
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
+#: src/app/pages/home/_components/xCollateralModal/index.tsx
 #: src/app/pages/home/BBaln/UnstakePrompt.tsx
 #: src/app/pages/home/CollateralPanel.tsx
 #: src/app/pages/home/LoanPanel.tsx
@@ -2208,6 +2210,7 @@ msgstr "변환 과정"
 msgid "All fees claimed"
 msgstr ""
 
+#: src/app/pages/home/_components/xCollateralModal/index.tsx
 #: src/app/pages/home/CollateralPanel.tsx
 msgid "Deposit {0} collateral?"
 msgstr ""
@@ -2432,6 +2435,7 @@ msgstr ""
 msgid "Deposit as collateral"
 msgstr "담보로 예치"
 
+#: src/app/pages/home/_components/xCollateralModal/index.tsx
 #: src/app/pages/home/CollateralPanel.tsx
 msgid "Withdraw {0} collateral?"
 msgstr ""

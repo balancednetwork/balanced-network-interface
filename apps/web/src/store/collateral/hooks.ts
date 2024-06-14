@@ -510,12 +510,13 @@ export function useCollateralDecimalPlaces() {
 export function useDerivedCollateralInfo(): {
   account: string | undefined;
   availableCollateralAmount: CurrencyAmount<XToken | Currency> | undefined;
-  // parsedCollateralAmount: CurrencyAmount<XToken | Currency> | undefined;
   sourceChain: XChainId;
   collateralType: string;
   collateralDeposit: BigNumber;
   collateralTotal: BigNumber;
   collateralDecimalPlaces: number;
+  differenceAmount: BigNumber;
+  xTokenAmount: CurrencyAmount<XToken> | undefined;
   formattedAmounts: {
     [x: string]: string;
   };
@@ -570,6 +571,14 @@ export function useDerivedCollateralInfo(): {
     };
   }, [independentField, dependentField, typedValue, parsedAmount, collateralDecimalPlaces]);
 
+  const differenceAmount = parsedAmount[Field.LEFT].minus(collateralDeposit);
+
+  const xToken = xTokenMap[sourceChain].find(t => t.symbol === collateralType);
+  const xTokenAmount =
+    xToken && differenceAmount
+      ? CurrencyAmount.fromRawAmount(xToken, differenceAmount.times(10 ** xToken.decimals).toFixed(0))
+      : undefined;
+
   return {
     account,
     sourceChain,
@@ -580,5 +589,7 @@ export function useDerivedCollateralInfo(): {
     formattedAmounts,
     parsedAmount,
     collateralDecimalPlaces,
+    differenceAmount,
+    xTokenAmount,
   };
 }

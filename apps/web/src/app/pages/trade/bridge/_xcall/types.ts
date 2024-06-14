@@ -80,4 +80,8 @@ export interface IWalletXService extends IPublicXService {
   approve(token, owner, spender, currencyAmountToApprove);
   executeTransfer(xTransactionInput: XTransactionInput): Promise<string | undefined>;
   executeSwap(xTransactionInput: XTransactionInput): Promise<string | undefined>;
+  executeDepositCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined>;
+  executeWithdrawCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined>;
+  executeBorrow(xTransactionInput: XTransactionInput): Promise<string | undefined>;
+  executeRepay(xTransactionInput: XTransactionInput): Promise<string | undefined>;
 }

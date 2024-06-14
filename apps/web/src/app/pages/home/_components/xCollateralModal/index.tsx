@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
-import { Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 
@@ -10,7 +10,6 @@ import { XChainId, XToken } from 'app/pages/trade/bridge/types';
 import { getNetworkDisplayName } from 'app/pages/trade/bridge/utils';
 import { Typography } from 'app/theme';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from 'store/application/hooks';
-import { Field } from 'store/swap/reducer';
 import { formatBigNumber, shortenAddress } from 'utils';
 import { MODAL_ID, modalActions, useModalStore } from 'app/pages/trade/bridge/_zustand/useModalStore';
 import {
@@ -22,7 +21,7 @@ import { useCreateWalletXService } from 'app/pages/trade/bridge/_zustand/useXSer
 import useXCallFee from 'app/pages/trade/bridge/_hooks/useXCallFee';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks/useApproveCallback';
-import { XTransactionInput } from 'app/pages/trade/bridge/_zustand/types';
+import { XTransactionInput, XTransactionType } from 'app/pages/trade/bridge/_zustand/types';
 import useXCallGasChecker from 'app/pages/trade/bridge/_hooks/useXCallGasChecker';
 import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
 import { useSwitchChain } from 'wagmi';
@@ -31,6 +30,8 @@ import ModalContent from 'app/components/ModalContent';
 import XTransactionState from 'app/pages/trade/bridge/_components/XTransactionState';
 import { Button, TextButton } from 'app/components/Button';
 import { StyledButton } from 'app/pages/trade/xswap/_components/shared';
+import { useDerivedCollateralInfo } from 'store/collateral/hooks';
+import { Field } from 'store/collateral/reducer';
 
 export enum XCollateralAction {
   DEPOSIT = 'DEPOSIT',
@@ -52,6 +53,7 @@ export const presenceVariants = {
 
 const XCollateralModal = ({ account, currencyAmount, sourceChain, action }: XCollateralModalProps) => {
   useModalStore();
+  const { collateralDecimalPlaces, collateralDeposit, parsedAmount, collateralType } = useDerivedCollateralInfo();
   const { currentId } = useXTransactionStore();
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
@@ -59,6 +61,7 @@ const XCollateralModal = ({ account, currencyAmount, sourceChain, action }: XCol
   useCreateWalletXService(sourceChain);
 
   const { xCallFee, formattedXCallFee } = useXCallFee(sourceChain, '0x1.icon');
+  console.log('xCallFee', xCallFee);
 
   const xChain = xChainMap[sourceChain];
   const _inputAmount = useMemo(() => {
@@ -78,19 +81,24 @@ const XCollateralModal = ({ account, currencyAmount, sourceChain, action }: XCol
     if (!xCallFee) return;
     if (!_inputAmount) return;
 
-    // const xTransactionInput: XTransactionInput = {
-    //   type: XTransactionType.SWAP,
-    //   direction,
-    //   executionTrade,
-    //   account,
-    //   recipient,
-    //   inputAmount: _inputAmount,
-    //   slippageTolerance,
-    //   xCallFee,
-    //   cleanupSwap,
-    // };
+    const type =
+      action === XCollateralAction.DEPOSIT ? XTransactionType.DEPOSIT_COLLATERAL : XTransactionType.WITHDRAW_COLLATERAL;
 
-    // await xTransactionActions.executeTransfer(xTransactionInput);
+    const direction = {
+      from: sourceChain,
+      to: '0x1.icon' as XChainId,
+    };
+
+    const xTransactionInput: XTransactionInput = {
+      type,
+      direction,
+      account,
+      inputAmount: _inputAmount,
+      xCallFee,
+      usedCollateral: collateralType,
+    };
+
+    await xTransactionActions.executeTransfer(xTransactionInput);
   };
 
   const gasChecker = useXCallGasChecker(sourceChain);
@@ -109,9 +117,37 @@ const XCollateralModal = ({ account, currencyAmount, sourceChain, action }: XCol
       {currentXTransaction && <XTransactionUpdater xTransaction={currentXTransaction} />}
       <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL)} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
-          <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
-            <Trans>Collateral action</Trans>
+          <Typography textAlign="center" mb="5px">
+            {action === XCollateralAction.DEPOSIT
+              ? t`Deposit ${_inputAmount?.currency.symbol} collateral?`
+              : t`Withdraw ${_inputAmount?.currency.symbol} collateral?`}
           </Typography>
+
+          <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
+            {`${_inputAmount?.toFixed(collateralDecimalPlaces, { groupSeparator: ',' })} ${
+              _inputAmount?.currency.symbol
+            }`}
+          </Typography>
+
+          <Flex my={4}>
+            <Box width={1 / 2} className="border-right">
+              <Typography textAlign="center">
+                <Trans>Before</Trans>
+              </Typography>
+              <Typography variant="p" textAlign="center">
+                {`${collateralDeposit.dp(collateralDecimalPlaces).toFormat()} ${_inputAmount?.currency.symbol}`}
+              </Typography>
+            </Box>
+
+            <Box width={1 / 2}>
+              <Typography textAlign="center">
+                <Trans>After</Trans>
+              </Typography>
+              <Typography variant="p" textAlign="center">
+                {`${parsedAmount[Field.LEFT].dp(collateralDecimalPlaces).toFormat()} ${_inputAmount?.currency.symbol}`}
+              </Typography>
+            </Box>
+          </Flex>
 
           <Typography textAlign="center">
             <Trans>You'll also pay</Trans> <strong>{formattedXCallFee}</strong> <Trans>to transfer cross-chain.</Trans>

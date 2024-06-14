@@ -41,13 +41,6 @@ export function useTradeExactIn(
 
   const pairs = useAllCommonPairs(currencyA, currencyB);
 
-  console.log(
-    'all pairs',
-    pairs.map(pair => pair.token0.symbol + '-' + pair.token1.symbol),
-  );
-
-  // const pairs1 = useStabilityFundPairs();
-
   return useMemo(() => {
     if (currencyAmountIn && currencyOut && pairs.length > 0) {
       if (maxHops === 1) {

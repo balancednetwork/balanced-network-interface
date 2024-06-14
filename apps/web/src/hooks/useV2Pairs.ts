@@ -73,6 +73,53 @@ export function useStabilityFundPairs() {
   return 5;
 }
 
+export async function fetchV2Pairs(currencies: [Currency | undefined, Currency | undefined][]): Promise<PairData[]> {
+  const tokens = currencies.map(([currencyA, currencyB]) => [currencyA?.wrapped, currencyB?.wrapped]);
+
+  try {
+    const callData: CallData[] = tokens.map(([tokenA, tokenB]) => {
+      if (tokenA && tokenB && tokenA.chainId === tokenB.chainId && !tokenA.equals(tokenB)) {
+        if (canBeQueue(tokenA, tokenB)) {
+          return {
+            target: bnJs.Dex.address,
+            method: 'getPoolStats',
+            params: [`0x${BalancedJs.utils.POOL_IDS.sICXICX.toString(16)}`],
+          };
+        } else {
+          return {
+            target: bnJs.Dex.address,
+            method: 'getPoolStatsForPair',
+            params: [tokenA.address, tokenB.address],
+          };
+        }
+      } else {
+        // Useless, just a placeholder
+        return {
+          target: bnJs.Multicall.address,
+          method: 'getBlockNumber',
+          params: [],
+        };
+      }
+    });
+
+    const chunks = chunkArray(callData, MULTI_CALL_BATCH_SIZE);
+    const chunkedData = await Promise.all(chunks.map(async chunk => await bnJs.Multicall.getAggregateData(chunk)));
+    const data: any[] = chunkedData.flat();
+
+    const pairs = data.map((stats, idx): PairData => {
+      const [tokenA, tokenB] = tokens[idx];
+      if (!tokenA || !tokenB || !stats) {
+        return [PairState.NOT_EXISTS, null, null];
+      }
+      return getPair(stats, tokenA, tokenB);
+    });
+
+    return pairs;
+  } catch (err) {
+    return Array(tokens.length).fill([PairState.INVALID, null]);
+  }
+}
+
 export function useV2Pairs(currencies: [Currency | undefined, Currency | undefined][]): PairData[] {
   const tokens = useMemo(() => {
     return currencies.map(([currencyA, currencyB]) => [currencyA?.wrapped, currencyB?.wrapped]);
@@ -80,53 +127,7 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
 
   const { data: pairs } = useQuery({
     queryKey: ['v2Pairs', tokens],
-    queryFn: async () => {
-      try {
-        const cds: CallData[] = tokens.map(([tokenA, tokenB]) => {
-          if (tokenA && tokenB && tokenA.chainId === tokenB.chainId && !tokenA.equals(tokenB)) {
-            if (canBeQueue(tokenA, tokenB)) {
-              return {
-                target: bnJs.Dex.address,
-                method: 'getPoolStats',
-                params: [`0x${BalancedJs.utils.POOL_IDS.sICXICX.toString(16)}`],
-              };
-            } else {
-              return {
-                target: bnJs.Dex.address,
-                method: 'getPoolStatsForPair',
-                params: [tokenA.address, tokenB.address],
-              };
-            }
-          } else {
-            // useless, just a placeholder
-            return {
-              target: bnJs.Multicall.address,
-              method: 'getBlockNumber',
-              params: [],
-            };
-          }
-        });
-
-        const chunks = chunkArray(cds, MULTI_CALL_BATCH_SIZE);
-
-        const chunkedData = await Promise.all(chunks.map(async chunk => await bnJs.Multicall.getAggregateData(chunk)));
-        const data: any[] = chunkedData.flat();
-
-        const ps = data.map((stats, idx): PairData => {
-          const [tokenA, tokenB] = tokens[idx];
-
-          if (!tokenA || !tokenB || !stats) {
-            return [PairState.NOT_EXISTS, null, null];
-          }
-
-          return getPair(stats, tokenA, tokenB);
-        });
-
-        return ps;
-      } catch (err) {
-        return Array(tokens.length).fill([PairState.INVALID, null]);
-      }
-    },
+    queryFn: () => fetchV2Pairs(currencies),
     enabled: tokens.length > 0,
     refetchInterval: 10_000,
   });

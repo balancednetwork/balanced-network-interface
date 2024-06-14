@@ -26,6 +26,7 @@ import { LanguageProvider } from './i18n';
 
 import { WagmiProvider } from 'wagmi';
 import { wagmiConfig } from './config/wagmi';
+import { HavahProvider } from 'app/_xcall/havah/HavahProvider';
 
 BigInt.prototype['toJSON'] = function () {
   return 'BIGINT::' + this.toString();
@@ -56,9 +57,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <QueryClientProvider client={queryClient}>
               <IconReactProvider>
                 <ArchwayProvider>
-                  <LanguageProvider>
-                    <App />
-                  </LanguageProvider>
+                  <HavahProvider>
+                    <LanguageProvider>
+                      <App />
+                    </LanguageProvider>
+                  </HavahProvider>
                 </ArchwayProvider>
               </IconReactProvider>
             </QueryClientProvider>

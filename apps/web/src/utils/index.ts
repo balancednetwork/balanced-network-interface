@@ -331,5 +331,7 @@ export function validateAddress(address: string, chainId: XChainId): boolean {
       return ethers.utils.isAddress(address);
     case 'ARCHWAY':
       return isArchEoaAddress(address);
+    case 'HAVAH':
+      return ethers.utils.isAddress(address);
   }
 }

@@ -85,8 +85,8 @@ export default class IRC2 extends Contract {
     return this.transfer(addresses[this.nid].router, value, JSON.stringify(data));
   }
 
-  swapUsingRoute2(value: string, encodedRLPData: string) {
-    return this.transfer(addresses[this.nid].router, value, encodedRLPData, false);
+  swapUsingRouteV2(value: string, rlpEncodedData: string) {
+    return this.transfer(addresses[this.nid].router, value, rlpEncodedData, false);
   }
 
   transfer(to: string, value: string, data?: string, shouldConvertDataToHex: boolean = true) {

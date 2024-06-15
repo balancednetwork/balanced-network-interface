@@ -45,6 +45,36 @@ export function useCAMemo(CA: CurrencyAmount<Currency> | undefined) {
   return areCAsConsideredTheSame ? ref.current : CA;
 }
 
+export async function getAcceptedTokens(): Promise<string[]> {
+  const acceptedTokens = await bnJs.StabilityFund.getAcceptedTokens();
+  return acceptedTokens;
+}
+
+export async function fetchStabilityFundBalances(
+  tokenAddresses: string[],
+): Promise<{ [key: string]: CurrencyAmount<Token> }> {
+  const cds = tokenAddresses.map(address => {
+    return {
+      target: address,
+      method: 'balanceOf',
+      params: [stabilityFundAddress],
+    };
+  });
+
+  const data = await bnJs.Multicall.getAggregateData(cds);
+
+  const balances = {};
+  data.forEach((balance, index) => {
+    const address = tokenAddresses[index];
+    const token = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address] as Token;
+    if (token) {
+      balances[address] = CurrencyAmount.fromRawAmount<Token>(token, balance);
+    }
+  });
+
+  return balances;
+}
+
 export function useWhitelistedTokenAddresses(): string[] {
   const { data } = useBnJsContractQuery<string[]>('StabilityFund', 'getAcceptedTokens', [], false);
   return data || [];

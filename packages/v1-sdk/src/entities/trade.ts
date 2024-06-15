@@ -405,17 +405,24 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
 
     let result = new Fraction(ONE);
     for (let i = 0; i < this.route.path.length - 1; i++) {
+      const pair = this.route.pairs[i];
       const inputCurrencySymbol = this.route.path[i].symbol;
       const outputCurrencySymbol = this.route.path[i + 1].symbol;
 
-      if (inputCurrencySymbol === 'sICX' && outputCurrencySymbol === 'ICX') {
-        result = result.multiply(new Fraction(99, 100));
-      } else if (inputCurrencySymbol === 'ICX' && outputCurrencySymbol === 'sICX') {
-        // result = result.multiply(new Fraction(ONE));
-      } else if (outputCurrencySymbol === 'ARCH') {
-        result = result.multiply(new Fraction(99, 100));
+      if (pair.isStabilityFund) {
+        if (inputCurrencySymbol === 'bnUSD') {
+          result = result.multiply(new Fraction(999, 1000));
+        }
       } else {
-        result = result.multiply(new Fraction(997, 1000));
+        if (inputCurrencySymbol === 'sICX' && outputCurrencySymbol === 'ICX') {
+          result = result.multiply(new Fraction(99, 100));
+        } else if (inputCurrencySymbol === 'ICX' && outputCurrencySymbol === 'sICX') {
+          // result = result.multiply(new Fraction(ONE));
+        } else if (outputCurrencySymbol === 'ARCH') {
+          result = result.multiply(new Fraction(99, 100));
+        } else {
+          result = result.multiply(new Fraction(997, 1000));
+        }
       }
     }
 

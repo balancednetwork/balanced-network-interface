@@ -77,7 +77,7 @@ export class Pair {
       );
       this.tokenAmounts = tokenAmounts as [CurrencyAmount<Token>, CurrencyAmount<Token>];
 
-      this.totalSupply = CurrencyAmount.fromRawAmount(this.liquidityToken, additionalArgs.totalSupply || '0');
+      // this.totalSupply = CurrencyAmount.fromRawAmount(this.liquidityToken, additionalArgs.totalSupply || '0');
     } else {
       this.isStabilityFund = false;
 
@@ -184,76 +184,149 @@ export class Pair {
 
   public getOutputAmount(inputAmount: CurrencyAmount<Token>): [CurrencyAmount<Token>, Pair] {
     invariant(this.involvesToken(inputAmount.currency), 'TOKEN');
-    if (this.reserve0.quotient === ZERO || this.reserve1.quotient === ZERO) {
-      throw new InsufficientReservesError();
-    }
 
-    const inputReserve = this.reserveOf(inputAmount.currency);
-    const outputReserve = this.reserveOf(inputAmount.currency.equals(this.token0) ? this.token1 : this.token0);
+    if (this.isStabilityFund) {
+      const token0Scalar = 10n ** BigInt(this.token0.decimals);
+      const token1Scalar = 10n ** BigInt(this.token1.decimals);
 
-    if (this.isQueue) {
-      if (inputAmount.currency.address === NULL_CONTRACT_ADDRESS) {
-        // ICX -> sICX
-        const numerator = inputAmount.numerator * outputReserve.quotient;
-        const denominator = inputAmount.denominator * inputReserve.quotient;
-        const outputAmount = CurrencyAmount.fromRawAmount(outputReserve.currency, numerator / denominator);
-        return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+      const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
+      const isToken0 = inputAmount.currency.equals(this.token0);
+
+      if (isBnUSD) {
+        // bnUSD -> USDC
+        if (isToken0) {
+          return [
+            CurrencyAmount.fromRawAmount(this.token1, (inputAmount.quotient * token1Scalar) / token0Scalar),
+            this,
+          ];
+        } else {
+          return [
+            CurrencyAmount.fromRawAmount(this.token0, (inputAmount.quotient * token0Scalar) / token1Scalar),
+            this,
+          ];
+        }
       } else {
-        const numerator = inputAmount.numerator * _99 * outputReserve.quotient;
-        const denominator = inputAmount.denominator * _100 * inputReserve.quotient;
-        const outputAmount = CurrencyAmount.fromRawAmount(outputReserve.currency, numerator / denominator);
-        return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+        // USDC -> bnUSD
+        if (isToken0) {
+          return [
+            CurrencyAmount.fromRawAmount(this.token1, (inputAmount.quotient * token1Scalar) / token0Scalar),
+            this,
+          ];
+        } else {
+          return [
+            CurrencyAmount.fromRawAmount(this.token0, (inputAmount.quotient * token0Scalar) / token1Scalar),
+            this,
+          ];
+        }
       }
-    }
+    } else {
+      if (this.reserve0.quotient === ZERO || this.reserve1.quotient === ZERO) {
+        throw new InsufficientReservesError();
+      }
 
-    const inputAmountWithFee = inputAmount.quotient * _997;
-    const numerator = inputAmountWithFee * outputReserve.quotient;
-    const denominator = inputReserve.quotient * _1000 + inputAmountWithFee;
-    const outputAmount = CurrencyAmount.fromRawAmount(
-      inputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
-      numerator / denominator,
-    );
-    if (outputAmount.quotient === ZERO) {
-      throw new InsufficientInputAmountError();
+      const inputReserve = this.reserveOf(inputAmount.currency);
+      const outputReserve = this.reserveOf(inputAmount.currency.equals(this.token0) ? this.token1 : this.token0);
+
+      if (this.isQueue) {
+        if (inputAmount.currency.address === NULL_CONTRACT_ADDRESS) {
+          // ICX -> sICX
+          const numerator = inputAmount.numerator * outputReserve.quotient;
+          const denominator = inputAmount.denominator * inputReserve.quotient;
+          const outputAmount = CurrencyAmount.fromRawAmount(outputReserve.currency, numerator / denominator);
+          return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+        } else {
+          const numerator = inputAmount.numerator * _99 * outputReserve.quotient;
+          const denominator = inputAmount.denominator * _100 * inputReserve.quotient;
+          const outputAmount = CurrencyAmount.fromRawAmount(outputReserve.currency, numerator / denominator);
+          return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+        }
+      }
+
+      const inputAmountWithFee = inputAmount.quotient * _997;
+      const numerator = inputAmountWithFee * outputReserve.quotient;
+      const denominator = inputReserve.quotient * _1000 + inputAmountWithFee;
+      const outputAmount = CurrencyAmount.fromRawAmount(
+        inputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
+        numerator / denominator,
+      );
+      if (outputAmount.quotient === ZERO) {
+        throw new InsufficientInputAmountError();
+      }
+      return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
     }
-    return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
   }
 
   public getInputAmount(outputAmount: CurrencyAmount<Token>): [CurrencyAmount<Token>, Pair] {
     invariant(this.involvesToken(outputAmount.currency), 'TOKEN');
-    if (
-      this.reserve0.quotient === ZERO ||
-      this.reserve1.quotient === ZERO ||
-      outputAmount.quotient >= this.reserveOf(outputAmount.currency).quotient
-    ) {
-      throw new InsufficientReservesError();
-    }
+    if (this.isStabilityFund) {
+      const token0Scalar = 10n ** BigInt(this.token0.decimals);
+      const token1Scalar = 10n ** BigInt(this.token1.decimals);
 
-    const outputReserve = this.reserveOf(outputAmount.currency);
-    const inputReserve = this.reserveOf(outputAmount.currency.equals(this.token0) ? this.token1 : this.token0);
+      const isBnUSD = outputAmount.currency.symbol === 'bnUSD';
+      const isToken0 = outputAmount.currency.equals(this.token0);
 
-    if (this.isQueue) {
-      if (outputAmount.currency.address === NULL_CONTRACT_ADDRESS) {
-        // sICX -> ICX
-        const numerator = outputAmount.numerator * _100 * inputReserve.quotient;
-        const denominator = outputAmount.denominator * _99 * outputReserve.quotient;
-        const inputAmount = CurrencyAmount.fromRawAmount(inputReserve.currency, numerator / denominator);
-        return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+      if (isBnUSD) {
+        // USDC -> bnUSD
+        if (isToken0) {
+          return [
+            CurrencyAmount.fromRawAmount(this.token1, (outputAmount.quotient * token1Scalar) / token0Scalar),
+            this,
+          ];
+        } else {
+          return [
+            CurrencyAmount.fromRawAmount(this.token0, (outputAmount.quotient * token0Scalar) / token1Scalar),
+            this,
+          ];
+        }
       } else {
-        const numerator = outputAmount.numerator * inputReserve.quotient;
-        const denominator = outputAmount.denominator * outputReserve.quotient;
-        const inputAmount = CurrencyAmount.fromRawAmount(inputReserve.currency, numerator / denominator);
-        return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+        // bnUSD -> USDC
+        if (isToken0) {
+          return [
+            CurrencyAmount.fromRawAmount(this.token1, (outputAmount.quotient * token1Scalar) / token0Scalar),
+            this,
+          ];
+        } else {
+          return [
+            CurrencyAmount.fromRawAmount(this.token0, (outputAmount.quotient * token0Scalar) / token1Scalar),
+            this,
+          ];
+        }
       }
-    }
+    } else {
+      if (
+        this.reserve0.quotient === ZERO ||
+        this.reserve1.quotient === ZERO ||
+        outputAmount.quotient >= this.reserveOf(outputAmount.currency).quotient
+      ) {
+        throw new InsufficientReservesError();
+      }
 
-    const numerator = inputReserve.quotient * outputAmount.quotient * _1000;
-    const denominator = (outputReserve.quotient - outputAmount.quotient) * _997;
-    const inputAmount = CurrencyAmount.fromRawAmount(
-      outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
-      numerator / denominator + ONE,
-    );
-    return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+      const outputReserve = this.reserveOf(outputAmount.currency);
+      const inputReserve = this.reserveOf(outputAmount.currency.equals(this.token0) ? this.token1 : this.token0);
+
+      if (this.isQueue) {
+        if (outputAmount.currency.address === NULL_CONTRACT_ADDRESS) {
+          // sICX -> ICX
+          const numerator = outputAmount.numerator * _100 * inputReserve.quotient;
+          const denominator = outputAmount.denominator * _99 * outputReserve.quotient;
+          const inputAmount = CurrencyAmount.fromRawAmount(inputReserve.currency, numerator / denominator);
+          return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+        } else {
+          const numerator = outputAmount.numerator * inputReserve.quotient;
+          const denominator = outputAmount.denominator * outputReserve.quotient;
+          const inputAmount = CurrencyAmount.fromRawAmount(inputReserve.currency, numerator / denominator);
+          return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+        }
+      }
+
+      const numerator = inputReserve.quotient * outputAmount.quotient * _1000;
+      const denominator = (outputReserve.quotient - outputAmount.quotient) * _997;
+      const inputAmount = CurrencyAmount.fromRawAmount(
+        outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
+        numerator / denominator + ONE,
+      );
+      return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+    }
   }
 
   public getLiquidityMinted(

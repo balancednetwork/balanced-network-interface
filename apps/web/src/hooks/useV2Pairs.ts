@@ -13,7 +13,6 @@ import { BIGINT_ZERO, FRACTION_ZERO } from 'constants/misc';
 import { getPair } from 'utils';
 
 import useLastCount from './useLastCount';
-import { useStabilityFundInfo, useWhitelistedTokenAddresses } from 'store/stabilityFund/hooks';
 
 const NON_EXISTENT_POOL_ID = 0;
 const MULTI_CALL_BATCH_SIZE = 25;
@@ -37,16 +36,6 @@ const chunkArray = <T>(array: T[], chunkSize: number): T[][] => {
     return resultArray;
   }, []);
 };
-
-export function useStabilityFundPairs() {
-  const info = useStabilityFundInfo();
-  console.log('AAA', info);
-
-  const whitelistedTokens = useWhitelistedTokenAddresses() || [];
-  console.log([...whitelistedTokens.map(x => ['bnUSD', x]), ...whitelistedTokens.map(x => [x, 'bnUSD'])]);
-
-  return 5;
-}
 
 export async function fetchV2Pairs(currencies: [Currency | undefined, Currency | undefined][]): Promise<PairData[]> {
   const tokens = currencies.map(([currencyA, currencyB]) => [currencyA?.wrapped, currencyB?.wrapped]);

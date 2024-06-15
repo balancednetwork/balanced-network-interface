@@ -24,12 +24,23 @@ import { BETTER_TRADE_LESS_HOPS_THRESHOLD } from 'constants/misc';
 import { formatBigNumber, toDec } from 'utils';
 import { DEFAULT_SLIPPAGE } from 'constants/index';
 import { getRlpEncodedMsg } from 'app/pages/trade/bridge/utils';
+import { fetchStabilityFundBalances, getAcceptedTokens } from 'store/stabilityFund/hooks';
 
 const ICX = new Token(ChainId.MAINNET, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
 const bnUSD = new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD', 'Balanced Dollar');
 const BALN = new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].baln, 18, 'BALN', 'Balance Token');
+const USDC = new Token(ChainId.MAINNET, 'cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f', 6, 'USDC', 'Archway USDC');
 
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const fetchStabilityFundPairs = async () => {
+  // return [];
+  const acceptedTokens = await getAcceptedTokens();
+  const stabilityFundBalances = await fetchStabilityFundBalances(acceptedTokens.filter(x => x === USDC.address));
+  const stabilityFundPairs = Object.values(stabilityFundBalances).map(balance => {
+    return new Pair(balance, CurrencyAmount.fromRawAmount(bnUSD, '1'), { isStabilityFund: true });
+  });
+  console.log('stabilityFundPairs', stabilityFundPairs);
+  return stabilityFundPairs;
+};
 
 const calculateTrade = async (
   currencyIn: Currency,
@@ -41,10 +52,12 @@ const calculateTrade = async (
 
   const allCurrencyCombinations = getAllCurrencyCombinations(currencyIn, currencyOut);
   const allPairs = await fetchV2Pairs(allCurrencyCombinations);
+  const stabilityFundPairs = await fetchStabilityFundPairs();
 
   const pairs = allPairs
     .filter((result): result is [PairState.EXISTS, Pair] => Boolean(result[0] === PairState.EXISTS && result[1]))
-    .map(([, pair]) => pair);
+    .map(([, pair]) => pair)
+    .concat(stabilityFundPairs);
 
   console.log('pairs', pairs);
 
@@ -68,6 +81,22 @@ const calculateTrade = async (
         bestTradeSoFar = currentTrade;
       }
     }
+    if (bestTradeSoFar) {
+      const trade = bestTradeSoFar;
+      const slippageTolerance = new Percent(DEFAULT_SLIPPAGE, 10_000);
+      const minReceived = trade.minimumAmountOut(slippageTolerance);
+      console.log('slippageTolerance', slippageTolerance.toSignificant(4));
+      console.log('minReceived', minReceived.toSignificant(4));
+      console.log('trade route path', trade.route.path);
+      console.log('trade route pairs', trade.route.pairs);
+      console.log('trade priceImpact', trade.priceImpact.toSignificant(4));
+
+      console.log('trade mid price', trade.route.midPrice.toDebugString());
+      console.log('trade execution price', trade.executionPrice.toDebugString());
+      console.log('trade input amount', trade.inputAmount.toExact());
+      console.log('trade output amount', trade.outputAmount.toExact());
+      console.log('trade fee', trade.fee.toExact());
+    }
     return bestTradeSoFar;
   }
 
@@ -88,15 +117,24 @@ type RouteAction = {
   address: string;
 };
 
-export function foo(method: string, recipient: string, minimumReceive: BigInt, _path: RouteAction[]) {
+export function foo(method: string, recipient: string, minimumReceive: BigInt, route: any) {
   const data: any[] = [
     Buffer.from(method, 'utf-8'),
     Buffer.from(recipient, 'utf-8'),
     getBytesFromNumber(minimumReceive),
   ];
 
-  for (let i = 0; i < _path.length; i++) {
-    data.push([getBytesFromNumber(_path[i].type), getBytesFromAddress(_path[i].address)]);
+  const path: RouteAction[] = [];
+
+  console.log(route.pairs.length === route.pathForSwap.length, 'pairs and pathForSwap length should be equal');
+  for (let i = 0; i < route.pairs.length; i++) {
+    const pair: Pair = route.pairs[i];
+    path.push({ type: pair.isStabilityFund ? 2 : 1, address: route.pathForSwap[i] });
+  }
+  console.log('route action path', path);
+
+  for (let i = 0; i < path.length; i++) {
+    data.push([getBytesFromNumber(path[i].type), getBytesFromAddress(path[i].address)]);
   }
 
   return Buffer.from(getRlpEncodedMsg(data)).toString('hex');
@@ -147,9 +185,6 @@ export function TestPage() {
 
     const slippageTolerance = new Percent(DEFAULT_SLIPPAGE, 10_000);
     const minReceived = executionTrade.minimumAmountOut(slippageTolerance);
-    console.log('slippageTolerance', slippageTolerance.toSignificant(4));
-    console.log('minReceived', minReceived.toExact());
-    console.log('trade', executionTrade.route.path);
 
     const recipient = account;
     try {
@@ -173,12 +208,12 @@ export function TestPage() {
           '_swap',
           recipient,
           BigInt(toDec(minReceived)),
-
+          executionTrade.route,
           //@ts-ignore
-          executionTrade.route.pathForSwap.map(x => ({
-            type: 1,
-            address: x,
-          })),
+          // executionTrade.route.pathForSwap.map(x => ({
+          //   type: 1,
+          //   address: x,
+          // })),
         );
 
         console.log('rlpEncodedSwapData', rlpEncodedSwapData);
@@ -190,7 +225,7 @@ export function TestPage() {
         const res = await bnJs
           .inject({ account })
           .getContract(token.address)
-          .swapUsingRoute2(toDec(executionTrade.inputAmount), rlpEncodedSwapData);
+          .swapUsingRouteV2(toDec(executionTrade.inputAmount), rlpEncodedSwapData);
 
         // const res = await bnJs
         //   .inject({ account })
@@ -230,13 +265,7 @@ export function TestPage() {
   const handleShowTradeICXForbnUSD = async () => {
     const trade = await calculateTrade(ICX, bnUSD, '1');
 
-    if (trade) {
-      const slippageTolerance = new Percent(DEFAULT_SLIPPAGE, 10_000);
-      const minReceived = trade.minimumAmountOut(slippageTolerance);
-      console.log('slippageTolerance', slippageTolerance.toSignificant(4));
-      console.log('minReceived', minReceived.toExact());
-      console.log('trade', trade.route.path);
-    } else {
+    if (!trade) {
       console.log('No trade found');
     }
   };
@@ -246,27 +275,54 @@ export function TestPage() {
     await swap(ICX, bnUSD, '1');
   };
 
+  const handleShowTradeBALNForbnUSD = async () => {
+    const trade = await calculateTrade(BALN, bnUSD, '1');
+
+    if (!trade) {
+      console.log('No trade found');
+    }
+  };
   const handleSwapBALNForbnUSD = async () => {
     console.log('handleSwapBLANForbnUSD');
-    await swap(BALN, bnUSD, '2');
+    await swap(BALN, bnUSD, '1');
+  };
+
+  const handleShowTradeBALNForUSDC = async () => {
+    const trade = await calculateTrade(BALN, USDC, '1');
+
+    if (!trade) {
+      console.log('No trade found');
+    }
+  };
+  const handleSwapBALNForUSDC = async () => {
+    console.log('handleSwapBLANForUSDC');
+    await swap(BALN, USDC, '1');
   };
 
   return (
     <Flex bg="bg3" flex={1} p={2} style={{ gap: 2 }} flexDirection={'column'}>
       <Flex flexDirection={'row'} style={{ gap: 2 }}>
         <Button onClick={handleShowTradeICXForbnUSD} disabled={isProcessing}>
-          Show Trade for swapping ICX for bnUSD
+          Show Trade for swapping ICX:ICON for bnUSD:ICON
         </Button>
         <Button onClick={handleSwapICXForbnUSD} disabled={isProcessing}>
-          Swap ICX for bnUSD
+          Swap ICX:ICON for bnUSD:ICON
         </Button>
       </Flex>
       <Flex flexDirection={'row'} style={{ gap: 2 }}>
-        {/* <Button onClick={handleShowTradeICXForbnUSD} disabled={isProcessing}>
-          Show Trade for swapping ICX for bnUSD
-        </Button> */}
+        <Button onClick={handleShowTradeBALNForbnUSD} disabled={isProcessing}>
+          Show Trade for swapping BALN:ICON for bnUSD:ICON
+        </Button>
         <Button onClick={handleSwapBALNForbnUSD} disabled={isProcessing}>
-          Swap BALN for bnUSD
+          Swap BALN:ICON for bnUSD:ICON
+        </Button>
+      </Flex>
+      <Flex flexDirection={'row'} style={{ gap: 2 }}>
+        <Button onClick={handleShowTradeBALNForUSDC} disabled={isProcessing}>
+          Show Trade for swapping BALN:ICON for USDC:ICON
+        </Button>
+        <Button onClick={handleSwapBALNForUSDC} disabled={isProcessing}>
+          Swap BALN:ICON for USDC:ICON
         </Button>
       </Flex>
       <Flex>{/* Result here */}</Flex>

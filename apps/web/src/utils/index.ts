@@ -224,21 +224,6 @@ export function getQueuePair(stats, tokenA: Token, tokenB: Token) {
   return pair;
 }
 
-//TODO: complete
-export function getStabilityFundPair(stats, tokenA: Token, tokenB: Token) {
-  const minQuoteTokenAmount = BalancedJs.utils.toFormat(new BigNumber(stats['min_quote'], 16), stats['quote_decimals']);
-
-  const pair: [PairState, Pair, BigNumber] = [
-    PairState.EXISTS,
-    new Pair(CurrencyAmount.fromRawAmount(tokenA, 0), CurrencyAmount.fromRawAmount(tokenB, 0), {
-      isStabilityFund: true,
-    }),
-    minQuoteTokenAmount,
-  ];
-
-  return pair;
-}
-
 export function getPair(stats, tokenA: Token, tokenB: Token): PairData {
   if (canBeQueue(tokenA, tokenB)) return getQueuePair(stats, tokenA, tokenB);
 

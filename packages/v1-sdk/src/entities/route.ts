@@ -45,12 +45,31 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
     const prices: Price<Currency, Currency>[] = [];
     /* @ts-ignore */
     for (const [i, pair] of this.pairs.entries()) {
-      prices.push(
-        this.path[i].equals(pair.token0)
-          ? new Price(pair.reserve0.currency, pair.reserve1.currency, pair.reserve0.quotient, pair.reserve1.quotient)
-          : new Price(pair.reserve1.currency, pair.reserve0.currency, pair.reserve1.quotient, pair.reserve0.quotient),
-      );
+      if (pair.isStabilityFund) {
+        prices.push(
+          this.path[i].equals(pair.token0)
+            ? new Price(
+                pair.reserve0.currency,
+                pair.reserve1.currency,
+                10n ** BigInt(pair.reserve0.currency.decimals),
+                10n ** BigInt(pair.reserve1.currency.decimals),
+              )
+            : new Price(
+                pair.reserve1.currency,
+                pair.reserve0.currency,
+                10n ** BigInt(pair.reserve1.currency.decimals),
+                10n ** BigInt(pair.reserve0.currency.decimals),
+              ),
+        );
+      } else {
+        prices.push(
+          this.path[i].equals(pair.token0)
+            ? new Price(pair.reserve0.currency, pair.reserve1.currency, pair.reserve0.quotient, pair.reserve1.quotient)
+            : new Price(pair.reserve1.currency, pair.reserve0.currency, pair.reserve1.quotient, pair.reserve0.quotient),
+        );
+      }
     }
+
     const reduced = prices
       .slice(1)
       .reduce((accumulator, currentValue) => accumulator.multiply(currentValue), prices[0]);

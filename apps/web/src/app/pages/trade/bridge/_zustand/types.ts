@@ -69,30 +69,40 @@ export type Transaction = {
   rawEventLogs?: any[];
 };
 
-export type XCallSourceEvent = {
+export type XCallMessageEvent = {
   eventType: XCallEventType;
-  sn: bigint;
   xChainId: XChainId;
-  rawEventData: any;
   txHash: string;
-};
-
-export type XCallDestinationEvent = {
-  eventType: XCallEventType;
   sn: bigint;
   reqId: bigint;
+  from: string;
+  to: string;
+  data: any;
+};
+export type XCallExecutedEvent = {
+  eventType: XCallEventType;
   xChainId: XChainId;
-  rawEventData: any;
   txHash: string;
-  isSuccess: boolean;
+  reqId: bigint;
+  code: number;
+  msg: string;
+};
+export type XCallMessageSentEvent = {
+  eventType: XCallEventType;
+  xChainId: XChainId;
+  txHash: string;
+  sn: bigint;
+  from: string;
+  to: string;
 };
 
-export type XCallEvent = XCallSourceEvent | XCallDestinationEvent;
+export type XCallDestinationEvent = XCallMessageEvent | XCallExecutedEvent;
+export type XCallEvent = XCallDestinationEvent | XCallMessageSentEvent;
 
 export type XCallEventMap = Partial<{
-  [XCallEventType.CallMessageSent]: XCallSourceEvent;
-  [XCallEventType.CallMessage]: XCallDestinationEvent;
-  [XCallEventType.CallExecuted]: XCallDestinationEvent;
+  [XCallEventType.CallMessageSent]: XCallMessageSentEvent;
+  [XCallEventType.CallMessage]: XCallMessageEvent;
+  [XCallEventType.CallExecuted]: XCallExecutedEvent;
 }>;
 
 export type XMessage = {
@@ -118,8 +128,9 @@ export type XTransaction = {
   secondaryMessageRequired: boolean;
 
   sourceChainId: XChainId;
-  desctinationChainId: XChainId;
-  destinationChainInitialBlockHeight?: bigint;
+  // primaryDestinationChainId: XChainId;
+  finalDestinationChainId: XChainId;
+  finalDestinationChainInitialBlockHeight: bigint;
 
   attributes: Record<string, any>;
 };

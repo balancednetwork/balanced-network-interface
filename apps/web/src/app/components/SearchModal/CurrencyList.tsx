@@ -21,6 +21,7 @@ import { toFraction } from 'utils';
 import useSortCurrency from 'hooks/useSortCurrency';
 import { HeaderText } from 'app/pages/trade/supply/_components/AllPoolsPanel';
 import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { XChainId } from 'app/pages/trade/bridge/types';
 
 const DashGrid = styled(Box)`
   display: grid;
@@ -61,6 +62,7 @@ function CurrencyRow({
   isFocused,
   onFocus,
   rateFracs,
+  selectedChainId,
 }: {
   currency: Currency;
   onSelect: () => void;
@@ -73,9 +75,9 @@ function CurrencyRow({
   isFocused: boolean;
   onFocus: () => void;
   rateFracs: { [key in string]: Fraction } | undefined;
+  selectedChainId: XChainId | undefined;
 }) {
-  // const balance = useCurrencyBalance(account ?? undefined, currency);
-  const balance = useXCurrencyBalance(currency);
+  const balance = useXCurrencyBalance(currency, selectedChainId);
   const signedInWallets = useSignedInWallets();
 
   const isUserAddedToken = useIsUserAddedToken(currency as Token);
@@ -190,6 +192,7 @@ export default function CurrencyList({
   account,
   isOpen,
   onDismiss,
+  selectedChainId,
 }: {
   currencies: Currency[];
   onCurrencySelect: (currency: Currency) => void;
@@ -202,6 +205,7 @@ export default function CurrencyList({
   account?: string | null;
   isOpen: boolean;
   onDismiss: () => void;
+  selectedChainId: XChainId | undefined;
 }) {
   const enter = useKeyPress('Enter');
   const handleEscape = useKeyPress('Escape');
@@ -299,6 +303,7 @@ export default function CurrencyList({
           isFocused={index === activeIndex}
           onFocus={() => setActiveIndex(index)}
           rateFracs={rateFracs}
+          selectedChainId={selectedChainId}
         />
       ))}
     </List1>

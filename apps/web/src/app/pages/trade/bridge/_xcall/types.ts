@@ -1,5 +1,11 @@
 import { XChainId, XCallEventType } from 'app/pages/trade/bridge/types';
-import { XTransactionInput, Transaction, TransactionStatus, XCallEvent, XCallEventMap } from '../_zustand/types';
+import {
+  XTransactionInput,
+  Transaction,
+  TransactionStatus,
+  XCallEvent,
+  XCallMessageSentEvent,
+} from '../_zustand/types';
 
 export interface IPublicXService {
   // getBlock(blockHeight);
@@ -17,8 +23,8 @@ export interface IPublicXService {
     endBlockHeight,
   }: { startBlockHeight: bigint; endBlockHeight: bigint }): Promise<any[]>;
   parseEventLogs(eventLogs: any[]): XCallEvent[];
-  filterEventLogs(eventLogs: XCallEvent[], xCallEventType: XCallEventType): any[];
-  getSourceEvents(transaction: Transaction): Promise<XCallEventMap>;
+  filterEventLogs(eventLogs: XCallEvent[], xCallEventType: XCallEventType): XCallEvent[];
+  getCallMessageSentEvent(transaction: Transaction): XCallMessageSentEvent | null;
   getDestinationEvents({ startBlockHeight, endBlockHeight }): Promise<XCallEvent[] | null>;
 }
 
@@ -37,23 +43,22 @@ export abstract class AbstractPublicXService implements IPublicXService {
   abstract parseEventLogs(eventLogs: any[]): XCallEvent[];
 
   getScanBlockCount() {
-    return 10n;
+    return 30n;
   }
 
   filterEventLogs(eventLogs: XCallEvent[], xCallEventType: XCallEventType) {
     return eventLogs.filter(x => x.eventType === xCallEventType);
   }
 
-  async getSourceEvents(sourceTransaction: Transaction) {
+  getCallMessageSentEvent(sourceTransaction: Transaction) {
     try {
       const events = this.parseEventLogs(sourceTransaction.rawEventLogs || []);
-      return {
-        [XCallEventType.CallMessageSent]: this.filterEventLogs(events, XCallEventType.CallMessageSent)[0],
-      };
+      const callMessageSentEvent = this.filterEventLogs(events, XCallEventType.CallMessageSent)[0];
+      return callMessageSentEvent as XCallMessageSentEvent;
     } catch (e) {
       console.error(e);
     }
-    return {};
+    return null;
   }
 
   async getDestinationEvents({

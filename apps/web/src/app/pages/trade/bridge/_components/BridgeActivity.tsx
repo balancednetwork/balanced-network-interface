@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { Trans } from '@lingui/macro';
 import { useMedia } from 'react-use';
@@ -12,6 +12,7 @@ import ActivityBarChart from './ActivityBarChart';
 import XTransactionHistoryItem from './XTransactionHistoryItem';
 import { useXTransactionStore } from '../_zustand/useXTransactionStore';
 import { useSignedInWallets } from '../_hooks/useWallets';
+import { useXMessageStore } from '../_zustand/useXMessageStore';
 
 export default function BridgeActivity() {
   const { data: xCallStats } = useXCallStats();
@@ -19,16 +20,9 @@ export default function BridgeActivity() {
   const isMedium = useMedia('(max-width: 1100px) and (min-width: 800px)');
   const signedInWallets = useSignedInWallets();
 
+  useXMessageStore();
   const { getPendingTransactions } = useXTransactionStore();
   const pendingTransactions = getPendingTransactions(signedInWallets);
-
-  const messageCount = useMemo(() => {
-    return pendingTransactions.reduce((acc: number, x) => {
-      if (x.primaryMessageId) acc++;
-      if (x.secondaryMessageId) acc++;
-      return acc;
-    }, 0);
-  }, [pendingTransactions]);
 
   return (
     <Box bg="bg2" flex={1} p={['25px', '35px']}>
@@ -68,16 +62,15 @@ export default function BridgeActivity() {
       </Box>
       <Box className="border-top" py={4}>
         <Box
-          pr={messageCount >= 4 ? 2 : 0}
-          style={messageCount >= 4 ? { overflowY: 'scroll', maxHeight: '180px' } : {}}
+          pr={pendingTransactions.length >= 4 ? 2 : 0}
+          style={pendingTransactions.length >= 4 ? { overflowY: 'scroll', maxHeight: '180px' } : {}}
         >
-          {pendingTransactions.map((x, index) => (
-            <XTransactionHistoryItem key={index} xTransaction={x} />
-          ))}
-          {pendingTransactions?.length === 0 &&
+          {pendingTransactions.length > 0 &&
+            pendingTransactions.map((x, index) => <XTransactionHistoryItem key={index} xTransaction={x} />)}
+          {pendingTransactions.length === 0 &&
             (signedInWallets.length ? (
               <Typography textAlign="center">
-                <Trans>You have no pending or failed cross-chain transactions.</Trans>
+                <Trans>You have no pending cross-chain transactions.</Trans>
               </Typography>
             ) : (
               <Typography textAlign="center">

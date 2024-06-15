@@ -2,7 +2,13 @@ import { Address, PublicClient, getContract, parseEventLogs } from 'viem';
 
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
 import { AbstractPublicXService } from './types';
-import { TransactionStatus, XCallDestinationEvent, XCallEvent, XCallSourceEvent } from '../_zustand/types';
+import {
+  TransactionStatus,
+  XCallEvent,
+  XCallExecutedEvent,
+  XCallMessageEvent,
+  XCallMessageSentEvent,
+} from '../_zustand/types';
 import { xCallContractAbi } from './abis/xCallContractAbi';
 import { xChainMap } from '../_config/xChains';
 
@@ -26,13 +32,14 @@ export class EvmPublicXService extends AbstractPublicXService {
     return this.publicClient;
   }
 
-  getXCallFee(nid: XChainId, rollback: boolean, sources: string[] = []) {
+  async getXCallFee(nid: XChainId, rollback: boolean, sources: string[] = []) {
     const contract = getContract({
       abi: xCallContractAbi,
       address: xChainMap[this.xChainId].contracts.xCall as Address,
       client: this.publicClient,
     });
-    return contract.read.getFee([nid, rollback, sources]);
+    const fee = await contract.read.getFee([nid, rollback, sources]);
+    return BigInt(fee);
   }
 
   async getBlockHeight() {
@@ -115,42 +122,39 @@ export class EvmPublicXService extends AbstractPublicXService {
     throw new Error(`Unknown xCall event type: ${eventType}`);
   }
 
-  _parseCallMessageSentEventLog(eventLog, txHash: string): XCallSourceEvent {
-    const sn = eventLog.args._sn;
-
+  _parseCallMessageSentEventLog(eventLog, txHash: string): XCallMessageSentEvent {
     return {
       eventType: XCallEventType.CallMessageSent,
-      sn: sn,
       xChainId: this.xChainId,
-      rawEventData: eventLog,
       txHash,
+      // rawEventData: eventLog,
+      sn: eventLog.args._sn,
+      from: eventLog.args._from,
+      to: eventLog.args._to,
     };
   }
-  _parseCallMessageEventLog(eventLog, txHash: string): XCallDestinationEvent {
-    const sn = eventLog.args._sn;
-    const reqId = eventLog.args._reqId;
-
+  _parseCallMessageEventLog(eventLog, txHash: string): XCallMessageEvent {
     return {
       eventType: XCallEventType.CallMessage,
-      sn: sn,
-      reqId,
-      xChainId: this.xChainId,
-      rawEventData: eventLog,
       txHash,
-      isSuccess: true,
+      xChainId: this.xChainId,
+      // rawEventData: eventLog,
+      sn: eventLog.args._sn,
+      reqId: eventLog.args._reqId,
+      from: eventLog.args._from,
+      to: eventLog.args._to,
+      data: eventLog.args._data,
     };
   }
-  _parseCallExecutedEventLog(eventLog, txHash: string): XCallDestinationEvent {
-    const reqId = eventLog.args._reqId;
-
+  _parseCallExecutedEventLog(eventLog, txHash: string): XCallExecutedEvent {
     return {
       eventType: XCallEventType.CallExecuted,
-      sn: -1n,
-      reqId,
       xChainId: this.xChainId,
-      rawEventData: eventLog,
       txHash,
-      isSuccess: true,
+      // rawEventData: eventLog,
+      reqId: eventLog.args._reqId,
+      code: parseInt(eventLog.args._code),
+      msg: eventLog.args._msg,
     };
   }
 }

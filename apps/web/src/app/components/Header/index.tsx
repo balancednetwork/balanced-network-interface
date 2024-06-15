@@ -30,6 +30,7 @@ import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import EVMWallet from '../EVMWallet';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import useWallets, { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { Placement } from '@popperjs/core';
 
 const StyledLogo = styled(Logo)`
   margin-right: 15px;
@@ -127,10 +128,12 @@ export const CopyableAddress = ({
   account,
   closeAfterDelay,
   copyIcon,
+  placement = 'left',
 }: {
   account: string | null | undefined;
   closeAfterDelay?: number;
   copyIcon?: boolean;
+  placement?: Placement;
 }) => {
   const [isCopied, updateCopyState] = React.useState(false);
   const copyAddress = React.useCallback(async (account: string) => {
@@ -140,8 +143,8 @@ export const CopyableAddress = ({
 
   return account ? (
     <MouseoverTooltip
-      text={isCopied ? t`Copied` : t`Copy address`}
-      placement={'left'}
+      text={isCopied ? t`Copied` : t`Copy`}
+      placement={placement}
       noArrowAndBorder
       closeAfterDelay={closeAfterDelay}
       zIndex={9999}

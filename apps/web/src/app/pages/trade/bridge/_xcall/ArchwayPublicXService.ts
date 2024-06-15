@@ -4,7 +4,13 @@ import { archway } from 'app/pages/trade/bridge/_config/xChains';
 
 import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
 import { AbstractPublicXService } from './types';
-import { TransactionStatus, XCallEvent, XCallSourceEvent, XCallDestinationEvent } from '../_zustand/types';
+import {
+  TransactionStatus,
+  XCallEvent,
+  XCallExecutedEvent,
+  XCallMessageEvent,
+  XCallMessageSentEvent,
+} from '../_zustand/types';
 
 const XCallEventSignatureMap = {
   [XCallEventType.CallMessageSent]: 'wasm-CallMessageSent',
@@ -27,9 +33,10 @@ export class ArchwayPublicXService extends AbstractPublicXService {
   }
 
   async getXCallFee(nid: XChainId, rollback: boolean) {
-    return await this.publicClient.queryContractSmart(archway.contracts.xCall, {
+    const fee = await this.publicClient.queryContractSmart(archway.contracts.xCall, {
       get_fee: { nid: nid, rollback },
     });
+    return BigInt(fee);
   }
 
   async getBlockHeight() {
@@ -111,42 +118,41 @@ export class ArchwayPublicXService extends AbstractPublicXService {
     throw new Error(`Unknown xCall event type: ${eventType}`);
   }
 
-  _parseCallMessageSentEventLog(eventLog, txHash: string): XCallSourceEvent {
-    const sn = eventLog.attributes.find(a => a.key === 'sn')?.value;
-
+  _parseCallMessageSentEventLog(eventLog, txHash: string): XCallMessageSentEvent {
     return {
       eventType: XCallEventType.CallMessageSent,
-      sn: BigInt(sn),
       xChainId: this.xChainId,
-      rawEventData: eventLog,
       txHash,
+      // rawEventData: eventLog,
+      from: eventLog.attributes.find(attr => attr.key === 'from')?.value,
+      to: eventLog.attributes.find(attr => attr.key === 'to')?.value,
+      sn: BigInt(eventLog.attributes.find(attr => attr.key === 'sn')?.value),
     };
   }
-  _parseCallMessageEventLog(eventLog, txHash: string): XCallDestinationEvent {
-    const sn = eventLog.attributes.find(a => a.key === 'sn')?.value;
-    const reqId = eventLog.attributes.find(a => a.key === 'reqId')?.value;
-
+  _parseCallMessageEventLog(eventLog, txHash: string): XCallMessageEvent {
     return {
       eventType: XCallEventType.CallMessage,
-      sn: BigInt(sn),
-      reqId: BigInt(reqId),
       xChainId: this.xChainId,
-      rawEventData: eventLog,
       txHash,
-      isSuccess: true,
+      // rawEventData: eventLog,
+      from: eventLog.attributes.find(attr => attr.key === 'from')?.value,
+      to: eventLog.attributes.find(attr => attr.key === 'to')?.value,
+      sn: BigInt(eventLog.attributes.find(attr => attr.key === 'sn')?.value),
+      reqId: BigInt(eventLog.attributes.find(attr => attr.key === 'reqId')?.value),
+      data: eventLog.attributes.find(attr => attr.key === 'data')?.value,
     };
   }
-  _parseCallExecutedEventLog(eventLog, txHash: string): XCallDestinationEvent {
+  _parseCallExecutedEventLog(eventLog, txHash: string): XCallExecutedEvent {
     const reqId = eventLog.attributes.find(a => a.key === 'reqId')?.value;
 
     return {
       eventType: XCallEventType.CallExecuted,
-      sn: -1n,
-      reqId: BigInt(reqId),
       xChainId: this.xChainId,
-      rawEventData: eventLog,
       txHash,
-      isSuccess: true,
+      // rawEventData: eventLog,
+      reqId: BigInt(eventLog.attributes.find(attr => attr.key === 'reqId')?.value),
+      code: parseInt(eventLog.attributes.find(attr => attr.key === 'code')?.value),
+      msg: eventLog.attributes.find(attr => attr.key === 'msg')?.value,
     };
   }
 }

@@ -29,6 +29,8 @@ import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from 'store/
 import { useCreateWalletXService } from '../_zustand/useXServiceStore';
 import useWallets from '../_hooks/useWallets';
 import { useSwitchChain } from 'wagmi';
+import BigNumber from 'bignumber.js';
+import { formatBigNumber } from 'utils';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;
@@ -106,7 +108,9 @@ function XTransferModal() {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {`${currencyAmountToBridge?.toFixed(2)} ${currencyAmountToBridge?.currency.symbol}`}
+            {`${formatBigNumber(new BigNumber(currencyAmountToBridge?.toFixed() || 0), 'currency')} ${
+              currencyAmountToBridge?.currency.symbol
+            }`}
           </Typography>
 
           <Flex my={5}>
@@ -152,7 +156,7 @@ function XTransferModal() {
 
                 {isWrongChain ? (
                   <StyledXCallButton onClick={handleSwitchChain}>
-                    <Trans>Switch Network</Trans>
+                    <Trans>Switch to {xChainMap[direction.from].name}</Trans>
                   </StyledXCallButton>
                 ) : isProcessing ? (
                   <>

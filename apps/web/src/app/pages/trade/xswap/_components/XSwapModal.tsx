@@ -34,6 +34,7 @@ import { useCreateWalletXService } from '../../bridge/_zustand/useXServiceStore'
 import useWallets from '../../bridge/_hooks/useWallets';
 import { useSwitchChain } from 'wagmi';
 import { StyledButton } from './shared';
+import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from 'constants/misc';
 
 type XSwapModalProps = {
   account: string | undefined;
@@ -64,6 +65,7 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const slippageTolerance = useSwapSlippageTolerance();
+  const showWarning = executionTrade?.priceImpact.greaterThan(SLIPPAGE_MODAL_WARNING_THRESHOLD);
 
   const { xCallFee, formattedXCallFee } = useXCallFee(direction.from, direction.to);
 
@@ -136,7 +138,7 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
             </Trans>
           </Typography>
 
-          <Typography variant="p" fontWeight="bold" textAlign="center">
+          <Typography variant="p" fontWeight="bold" textAlign="center" color={showWarning ? 'alert' : 'text'}>
             <Trans>
               {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
                 executionTrade?.executionPrice.quoteCurrency.symbol
@@ -202,12 +204,12 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={handleDismiss}>
-                  <Trans>Cancel</Trans>
+                  <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
                 </TextButton>
 
                 {isWrongChain ? (
                   <StyledButton onClick={handleSwitchChain}>
-                    <Trans>Switch Network</Trans>
+                    <Trans>Switch to {xChainMap[direction.from].name}</Trans>
                   </StyledButton>
                 ) : isProcessing ? (
                   <>

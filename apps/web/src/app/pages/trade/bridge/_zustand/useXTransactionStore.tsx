@@ -17,6 +17,8 @@ import { XMessageUpdater, useXMessageStore, xMessageActions } from './useXMessag
 import { swapMessage } from '../../supply/_components/utils';
 import { XChain, XChainId } from '../types';
 import { MODAL_ID, modalActions } from './useModalStore';
+import { formatBigNumber } from 'utils';
+import BigNumber from 'bignumber.js';
 
 type XTransactionStore = {
   transactions: Record<string, XTransaction>;
@@ -33,6 +35,7 @@ type XTransactionStore = {
   fail: (id) => void;
   onMessageUpdate: (id: string, xMessage: XMessage) => void;
   getPendingTransactions: (signedWallets: { xChainId: XChainId | undefined; address: string }[]) => XTransaction[];
+  remove: (id: string) => void;
 };
 
 const iconChainId: XChainId = '0x1.icon';
@@ -123,27 +126,33 @@ export const useXTransactionStore = create<XTransactionStore>()(
           errorMessage = 'Cross-chain transfer failed.';
 
           const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
-          const _formattedAmount = xTransactionInput.inputAmount.toFixed(2);
+          const _formattedAmount = formatBigNumber(
+            new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
+            'currency',
+          );
           descriptionAction = `Transfer ${_tokenSymbol}`;
           descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
         } else if (xTransactionInput.type === XTransactionType.SWAP) {
           const { executionTrade } = xTransactionInput;
           if (executionTrade) {
+            const _inputTokenSymbol = executionTrade?.inputAmount.currency.symbol || '';
+            const _outputTokenSymbol = executionTrade?.outputAmount.currency.symbol || '';
+            const _inputAmount = formatBigNumber(new BigNumber(executionTrade?.inputAmount.toFixed() || 0), 'currency');
+            const _outputAmount = formatBigNumber(
+              new BigNumber(executionTrade?.outputAmount.toFixed() || 0),
+              'currency',
+            );
+
             const swapMessages = swapMessage(
-              executionTrade.inputAmount.toFixed(2),
-              executionTrade.inputAmount.currency.symbol || 'IN',
-              executionTrade.outputAmount.toFixed(2),
-              executionTrade.outputAmount.currency.symbol || 'OUT',
+              _inputAmount,
+              _inputTokenSymbol === '' ? 'IN' : _inputTokenSymbol,
+              _outputAmount,
+              _outputTokenSymbol === '' ? 'OUT' : _outputTokenSymbol,
             );
 
             pendingMessage = swapMessages.pendingMessage;
             successMessage = swapMessages.successMessage;
             errorMessage = 'Cross-chain swap failed.';
-
-            const _inputTokenSymbol = executionTrade?.inputAmount.currency.symbol || '';
-            const _outputTokenSymbol = executionTrade?.outputAmount.currency.symbol || '';
-            const _inputAmount = executionTrade?.inputAmount.toFixed(2);
-            const _outputAmount = executionTrade?.outputAmount.toFixed(2);
             descriptionAction = `Swap ${_inputTokenSymbol} for ${_outputTokenSymbol}`;
             descriptionAmount = `${_inputAmount} ${_inputTokenSymbol} for ${_outputAmount} ${_outputTokenSymbol}`;
           }
@@ -208,8 +217,12 @@ export const useXTransactionStore = create<XTransactionStore>()(
             events: {},
             destinationChainInitialBlockHeight,
           };
-
           xMessageActions.add(xMessage);
+
+          let finalDestinationChainInitialBlockHeight = destinationChainInitialBlockHeight;
+          if (primaryDestinationChainId !== finalDestinationChainId) {
+            finalDestinationChainInitialBlockHeight = (await finalDstChainXService.getBlockHeight()) - 1n;
+          }
 
           const xTransaction: XTransaction = {
             id: xMessage.id,
@@ -218,7 +231,8 @@ export const useXTransactionStore = create<XTransactionStore>()(
             primaryMessageId: xMessage.id,
             secondaryMessageRequired: primaryDestinationChainId !== finalDestinationChainId,
             sourceChainId: sourceChainId,
-            desctinationChainId: finalDestinationChainId,
+            finalDestinationChainId: finalDestinationChainId,
+            finalDestinationChainInitialBlockHeight,
             attributes: {
               descriptionAction,
               descriptionAmount,
@@ -238,12 +252,9 @@ export const useXTransactionStore = create<XTransactionStore>()(
         }
 
         const sourceChainId = primaryMessage.destinationChainId;
-        const destinationChainId = xTransaction.desctinationChainId;
+        const destinationChainId = xTransaction.finalDestinationChainId;
 
         const sourceTransaction = primaryMessage.destinationTransaction;
-
-        const dstChainXService = xServiceActions.getPublicXService(destinationChainId);
-        const destinationChainInitialBlockHeight = (await dstChainXService.getBlockHeight()) - 20n;
 
         const secondaryMessageId = `${sourceChainId}/${sourceTransaction?.hash}`;
         const secondaryMessage: XMessage = {
@@ -253,7 +264,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
           sourceTransaction: sourceTransaction,
           status: XMessageStatus.REQUESTED,
           events: {},
-          destinationChainInitialBlockHeight,
+          destinationChainInitialBlockHeight: xTransaction.finalDestinationChainInitialBlockHeight,
         };
 
         xMessageActions.add(secondaryMessage);
@@ -362,7 +373,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
         return Object.values(get().transactions)
           .filter((transaction: XTransaction) => {
             return (
-              transaction.status === XTransactionStatus.pending &&
+              transaction.status !== XTransactionStatus.success &&
               signedWallets.some(wallet => wallet.xChainId === transaction.sourceChainId)
             );
           })
@@ -374,6 +385,11 @@ export const useXTransactionStore = create<XTransactionStore>()(
             }
             return 0;
           });
+      },
+      remove: (id: string) => {
+        set(state => {
+          delete state.transactions[id];
+        });
       },
     })),
     {
@@ -422,6 +438,10 @@ export const xTransactionActions = {
     return Object.values(transactions).find(
       transaction => transaction.primaryMessageId === messageId || transaction.secondaryMessageId === messageId,
     );
+  },
+
+  remove: (id: string) => {
+    useXTransactionStore.getState().remove(id);
   },
 };
 

@@ -166,7 +166,7 @@ const EVMWallet = ({
         </AssetSymbol>
         <BalanceAndValueWrap>
           <DataText as="div">
-            {!account ? '-' : balances?.[address]?.toFixed(HIGH_PRICE_ASSET_DP[address] || 2, { groupSeparator: ',' })}
+            {!account ? '-' : balances?.[address]?.toFixed(HIGH_PRICE_ASSET_DP[address] || 5, { groupSeparator: ',' })}
           </DataText>
 
           <DataText as="div">

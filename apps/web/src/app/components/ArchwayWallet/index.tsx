@@ -217,7 +217,7 @@ const ArchwayWallet = ({ setAnchor, anchor }) => {
           <DataText as="div">
             {!accountArch
               ? '-'
-              : balances?.[address]?.toFixed(HIGH_PRICE_ASSET_DP[address] || 2, { groupSeparator: ',' })}
+              : balances?.[address]?.toFixed(HIGH_PRICE_ASSET_DP[address] || 5, { groupSeparator: ',' })}
           </DataText>
 
           <DataText as="div">

@@ -254,8 +254,8 @@ const ICONWallet = ({ setAnchor, anchor }) => {
   const addressesWithAmount = useMemo(
     () =>
       tokenListConfig.community
-        ? COMBINED_ADDRESSES.filter(address => !isDPZeroCA(balances[address], HIGH_PRICE_ASSET_DP[address] || 2))
-        : ADDRESSES.filter(address => !isDPZeroCA(balances[address], HIGH_PRICE_ASSET_DP[address] || 2)),
+        ? COMBINED_ADDRESSES.filter(address => balances?.[address]?.greaterThan(0))
+        : ADDRESSES.filter(address => balances?.[address]?.greaterThan(0)),
     [tokenListConfig, balances],
   );
 

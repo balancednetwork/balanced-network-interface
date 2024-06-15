@@ -222,7 +222,7 @@ export default function CurrencyList({
     }
   }, [rates]);
 
-  const { sortBy, handleSortSelect, sortData } = useSortCurrency({ key: 'symbol', order: 'ASC' });
+  const { sortBy, handleSortSelect, sortData } = useSortCurrency({ key: 'symbol', order: 'ASC' }, selectedChainId);
   const sortedCurrencies = React.useMemo(() => {
     if (currencies && rateFracs) {
       return sortData(currencies, rateFracs);

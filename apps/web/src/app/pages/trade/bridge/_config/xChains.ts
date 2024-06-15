@@ -23,7 +23,7 @@ export const archway: XChain = {
     liquidSwap: 'archway1ywv0gxrw3kv25kn9f05dtqf6577fer5pc2vewvgcagpm5p8l4kuqc4qfp6',
   },
   autoExecution: true,
-  gasThreshold: 1,
+  gasThreshold: 2,
   testnet: false,
 };
 
@@ -77,7 +77,7 @@ export const icon: XChain = {
     liquidSwap: '',
   },
   autoExecution: true,
-  gasThreshold: 1,
+  gasThreshold: 2,
   testnet: false,
 };
 
@@ -129,7 +129,7 @@ export const avalanche: XChain = {
     bnUSD: '0xdBDd50997361522495EcFE57EBb6850dA0E4C699',
   },
   autoExecution: true,
-  gasThreshold: 0.01,
+  gasThreshold: 0.05,
   testnet: false,
 };
 
@@ -179,7 +179,7 @@ export const bsc: XChain = {
     bnUSD: '0xc65132325bD4FcF2Ec5F3a9375487163B6999206',
   },
   autoExecution: true,
-  gasThreshold: 0,
+  gasThreshold: 0.005,
   testnet: false,
 };
 
@@ -204,7 +204,7 @@ export const arbitrum: XChain = {
     bnUSD: '0xA67f4b09Eed22f8201Ee0637CbE9d654E63F946e',
   },
   autoExecution: true,
-  gasThreshold: 0,
+  gasThreshold: 0.0001,
   testnet: false,
 };
 

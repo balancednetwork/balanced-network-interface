@@ -72,10 +72,7 @@ const EVMWallet = ({
   const xTokens = useXTokens(xChainId);
 
   const addressesWithAmount = useMemo(
-    () =>
-      xTokens
-        ?.map(t => t.address)
-        .filter(address => !isDPZeroCA(balances?.[address], HIGH_PRICE_ASSET_DP[address] || 2)),
+    () => xTokens?.map(t => t.address).filter(address => balances?.[address]?.greaterThan(0)),
     [balances, xTokens],
   );
 

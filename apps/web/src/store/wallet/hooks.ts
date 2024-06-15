@@ -123,9 +123,9 @@ export function useArchwayBalances(
   });
 }
 
-import { coreConfig } from 'config/wagmi';
+import { coreConfig, viemClients } from 'config/wagmi';
 import { erc20Abi } from 'viem';
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount, useBalance, usePublicClient } from 'wagmi';
 import { multicall } from '@wagmi/core';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
@@ -147,17 +147,20 @@ export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token
   );
 
   const _tokens = useMemo(() => tokens?.filter(token => token.address !== NATIVE_ADDRESS), [tokens]);
-
+  const client = usePublicClient();
+  client?.multicall;
   return useQuery({
-    queryKey: [account, _tokens, nativeBalance],
+    queryKey: [account, _tokens, nativeBalance, chainId],
     queryFn: async () => {
-      if (!account || !_tokens || !nativeBalance) return;
-      const result = await multicall(coreConfig, {
+      if (!account || !_tokens || !nativeBalance || !chainId) return;
+
+      const result = await viemClients[chainId].multicall({
         contracts: _tokens.map(token => ({
           abi: erc20Abi,
           address: token.address as `0x${string}`,
           functionName: 'balanceOf',
           args: [account],
+          chainId: chainId,
         })),
       });
 

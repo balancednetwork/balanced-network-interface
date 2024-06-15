@@ -93,7 +93,10 @@ export default function SwapPanel() {
     handleTypeOutput('');
   }, [handleTypeInput, handleTypeOutput]);
 
-  const maxInputAmount = React.useMemo(() => maxAmountSpend(currencyBalances[Field.INPUT]), [currencyBalances]);
+  const maxInputAmount = React.useMemo(
+    () => maxAmountSpend(currencyBalances[Field.INPUT], direction.from),
+    [currencyBalances, direction.from],
+  );
 
   const handleInputSelect = useCallback(
     (inputCurrency: Currency) => {
@@ -221,7 +224,7 @@ export default function SwapPanel() {
             <Typography variant="h2">
               <Trans>For</Trans>
             </Typography>
-            <Typography as="div" hidden={!account}>
+            <Typography as="div" hidden={!currencyBalances[Field.OUTPUT]}>
               {recipient && (
                 <>
                   <Trans>Wallet:</Trans>{' '}

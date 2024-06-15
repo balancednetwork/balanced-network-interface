@@ -4,6 +4,11 @@ import { Currency, Price, Token } from '@balancednetwork/sdk-core';
 
 import { Pair } from './pair';
 
+export type RouteAction = {
+  type: number;
+  address: string | null;
+};
+
 export class Route<TInput extends Currency, TOutput extends Currency> {
   public readonly pairs: Pair[];
   public readonly path: Token[];
@@ -93,5 +98,14 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
       })
       .slice(1)
       .flat();
+  }
+
+  public get routeActionPath(): RouteAction[] {
+    const path: RouteAction[] = [];
+    for (let i = 0; i < this.pairs.length; i++) {
+      const pair: Pair = this.pairs[i];
+      path.push({ type: pair.isStabilityFund ? 2 : 1, address: this.pathForSwap[i] });
+    }
+    return path;
   }
 }

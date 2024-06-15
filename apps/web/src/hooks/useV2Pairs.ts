@@ -11,8 +11,11 @@ import bnJs from 'bnJs';
 import { canBeQueue } from 'constants/currency';
 import { BIGINT_ZERO, FRACTION_ZERO } from 'constants/misc';
 import { getPair } from 'utils';
+import { fetchStabilityFundBalances, getAcceptedTokens } from 'store/stabilityFund/hooks';
+import { bnUSD } from 'constants/tokens';
 
 import useLastCount from './useLastCount';
+import { NETWORK_ID } from 'constants/config';
 
 const NON_EXISTENT_POOL_ID = 0;
 const MULTI_CALL_BATCH_SIZE = 25;
@@ -25,6 +28,28 @@ export enum PairState {
 }
 
 export type PairData = [PairState, Pair | null, BigNumber | null] | [PairState, Pair | null];
+
+export const fetchStabilityFundPairs = async () => {
+  const acceptedTokens = await getAcceptedTokens();
+  const stabilityFundBalances = await fetchStabilityFundBalances(
+    acceptedTokens.filter(x => x === 'cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f'), // only USDC address
+  );
+  const stabilityFundPairs = Object.values(stabilityFundBalances).map(balance => {
+    return new Pair(balance, CurrencyAmount.fromRawAmount(bnUSD[NETWORK_ID], '1'), { isStabilityFund: true });
+  });
+  console.log('stabilityFundPairs', stabilityFundPairs);
+  return stabilityFundPairs;
+};
+
+export const useStabilityFundPairs = () => {
+  const { data: stabilityFundPairs } = useQuery({
+    queryKey: ['stabilityFundPairs'],
+    queryFn: fetchStabilityFundPairs,
+    refetchInterval: 10_000,
+  });
+
+  return stabilityFundPairs || [];
+};
 
 const chunkArray = <T>(array: T[], chunkSize: number): T[][] => {
   return array.reduce((resultArray: T[][], item, index) => {

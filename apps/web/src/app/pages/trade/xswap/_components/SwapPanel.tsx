@@ -296,27 +296,7 @@ export default function SwapPanel() {
           </Flex>
 
           <Flex justifyContent="center" mt={4}>
-            {showFundOption ? (
-              <Popover
-                content={
-                  <MemoizedStabilityFund
-                    clearSwapInputOutput={clearSwapInputOutput}
-                    setInput={handleTypeInput}
-                    inputAmount={memoizedInputAmount}
-                    outputAmount={memoizedOutputAmount}
-                  />
-                }
-                show={true}
-                placement="bottom"
-                fallbackPlacements={isMobile ? [] : ['right-start', 'top']}
-                zIndex={10}
-                strategy="absolute"
-              >
-                {swapButton}
-              </Popover>
-            ) : (
-              swapButton
-            )}
+            {swapButton}
           </Flex>
         </AutoColumn>
       </BrightPanel>

@@ -17,30 +17,18 @@ import { TransactionStatus } from '../trade/bridge/_zustand/types';
 import { openToast } from 'btp/src/connectors/transactionToast';
 import { NULL_CONTRACT_ADDRESS } from 'constants/tokens';
 import { getAllCurrencyCombinations } from 'hooks/useAllCurrencyCombinations';
-import { PairState, fetchV2Pairs } from 'hooks/useV2Pairs';
+import { PairState, fetchStabilityFundPairs, fetchV2Pairs } from 'hooks/useV2Pairs';
 import { tryParseAmount } from 'store/swap/hooks';
 import { isTradeBetter } from 'utils/isTradeBetter';
 import { BETTER_TRADE_LESS_HOPS_THRESHOLD } from 'constants/misc';
 import { formatBigNumber, toDec } from 'utils';
 import { DEFAULT_SLIPPAGE } from 'constants/index';
-import { getRlpEncodedMsg } from 'app/pages/trade/bridge/utils';
-import { fetchStabilityFundBalances, getAcceptedTokens } from 'store/stabilityFund/hooks';
+import { getBytesFromAddress, getBytesFromNumber, getRlpEncodedMsg } from 'app/pages/trade/bridge/utils';
 
 const ICX = new Token(ChainId.MAINNET, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
 const bnUSD = new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD', 'Balanced Dollar');
 const BALN = new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].baln, 18, 'BALN', 'Balance Token');
 const USDC = new Token(ChainId.MAINNET, 'cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f', 6, 'USDC', 'Archway USDC');
-
-const fetchStabilityFundPairs = async () => {
-  // return [];
-  const acceptedTokens = await getAcceptedTokens();
-  const stabilityFundBalances = await fetchStabilityFundBalances(acceptedTokens.filter(x => x === USDC.address));
-  const stabilityFundPairs = Object.values(stabilityFundBalances).map(balance => {
-    return new Pair(balance, CurrencyAmount.fromRawAmount(bnUSD, '1'), { isStabilityFund: true });
-  });
-  console.log('stabilityFundPairs', stabilityFundPairs);
-  return stabilityFundPairs;
-};
 
 const calculateTrade = async (
   currencyIn: Currency,
@@ -103,60 +91,6 @@ const calculateTrade = async (
   return undefined;
 };
 
-function getBytesFromNumber(value) {
-  const hexString = value.toString(16).padStart(2, '0');
-  return Buffer.from(hexString.length % 2 === 1 ? '0' + hexString : hexString, 'hex');
-}
-
-function getBytesFromAddress(address) {
-  return Buffer.from(address.replace('cx', '01'), 'hex');
-}
-
-type RouteAction = {
-  type: number;
-  address: string;
-};
-
-export function foo(method: string, recipient: string, minimumReceive: BigInt, route: any) {
-  const data: any[] = [
-    Buffer.from(method, 'utf-8'),
-    Buffer.from(recipient, 'utf-8'),
-    getBytesFromNumber(minimumReceive),
-  ];
-
-  const path: RouteAction[] = [];
-
-  console.log(route.pairs.length === route.pathForSwap.length, 'pairs and pathForSwap length should be equal');
-  for (let i = 0; i < route.pairs.length; i++) {
-    const pair: Pair = route.pairs[i];
-    path.push({ type: pair.isStabilityFund ? 2 : 1, address: route.pathForSwap[i] });
-  }
-  console.log('route action path', path);
-
-  for (let i = 0; i < path.length; i++) {
-    data.push([getBytesFromNumber(path[i].type), getBytesFromAddress(path[i].address)]);
-  }
-
-  return Buffer.from(getRlpEncodedMsg(data)).toString('hex');
-}
-export function foo1(route: any) {
-  const data: any[] = [];
-
-  const path: RouteAction[] = [];
-  console.log(route.pairs.length === route.pathForSwap.length, 'pairs and pathForSwap length should be equal');
-  for (let i = 0; i < route.pairs.length; i++) {
-    const pair: Pair = route.pairs[i];
-    path.push({ type: pair.isStabilityFund ? 2 : 1, address: route.pathForSwap[i] });
-  }
-  console.log('route action path', path);
-
-  for (let i = 0; i < path.length; i++) {
-    data.push([getBytesFromNumber(path[i].type), getBytesFromAddress(path[i].address)]);
-  }
-
-  return Buffer.from(getRlpEncodedMsg(data)).toString('hex');
-}
-
 export function TestPage() {
   const { account } = useIconReact();
   const { address: accountArch } = useArchwayContext();
@@ -206,14 +140,18 @@ export function TestPage() {
     const recipient = account;
     try {
       if (executionTrade.inputAmount.currency.symbol === 'ICX') {
+        const rlpEncodedPath = Buffer.from(
+          getRlpEncodedMsg([
+            ...executionTrade.route.routeActionPath.map(action => [
+              getBytesFromNumber(action.type),
+              getBytesFromAddress(action.address),
+            ]),
+          ]),
+        ).toString('hex');
+
         const res = await bnJs
           .inject({ account })
-          .Router.swapICXV2(
-            toDec(executionTrade.inputAmount),
-            foo1(executionTrade.route),
-            toDec(minReceived),
-            recipient,
-          );
+          .Router.swapICXV2(toDec(executionTrade.inputAmount), rlpEncodedPath, toDec(minReceived), recipient);
 
         console.log('res', res);
         console.log('hash', res.result);
@@ -221,39 +159,25 @@ export function TestPage() {
         const token = executionTrade.inputAmount.currency as Token;
         const outputToken = executionTrade.outputAmount.currency as Token;
 
-        const rlpEncodedSwapData = foo(
-          '_swap',
-          recipient,
-          BigInt(toDec(minReceived)),
-          executionTrade.route,
-          //@ts-ignore
-          // executionTrade.route.pathForSwap.map(x => ({
-          //   type: 1,
-          //   address: x,
-          // })),
-        );
+        const rlpEncodedData = Buffer.from(
+          getRlpEncodedMsg([
+            Buffer.from('_swap', 'utf-8'),
+            Buffer.from(recipient, 'utf-8'),
+            getBytesFromNumber(BigInt(toDec(minReceived))),
+            ...executionTrade.route.routeActionPath.map(action => [
+              getBytesFromNumber(action.type),
+              getBytesFromAddress(action.address),
+            ]),
+          ]),
+        ).toString('hex');
 
-        console.log('rlpEncodedSwapData', rlpEncodedSwapData);
-
-        // throw new Error('Not implemented');
-
-        console.log('toDec(executionTrade.inputAmount)', toDec(executionTrade.inputAmount));
+        console.log('rlpEncodedSwapData', rlpEncodedData);
 
         const res = await bnJs
           .inject({ account })
           .getContract(token.address)
-          .swapUsingRouteV2(toDec(executionTrade.inputAmount), rlpEncodedSwapData);
+          .swapUsingRouteV2(toDec(executionTrade.inputAmount), rlpEncodedData);
 
-        // const res = await bnJs
-        //   .inject({ account })
-        //   .getContract(token.address)
-        //   .swapUsingRoute(
-        //     toDec(executionTrade.inputAmount),
-        //     outputToken.address,
-        //     toDec(minReceived),
-        //     executionTrade.route.pathForSwap,
-        //     recipient,
-        //   );
         console.log('res', res);
         console.log('hash', res.result);
       }

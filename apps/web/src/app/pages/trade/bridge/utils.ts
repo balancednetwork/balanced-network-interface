@@ -5,6 +5,15 @@ import { xChainMap, xChains } from './_config/xChains';
 import { xTokenMap } from './_config/xTokens';
 import { Currency } from '@balancednetwork/sdk-core';
 
+export function getBytesFromNumber(value) {
+  const hexString = value.toString(16).padStart(2, '0');
+  return Buffer.from(hexString.length % 2 === 1 ? '0' + hexString : hexString, 'hex');
+}
+
+export function getBytesFromAddress(address) {
+  return Buffer.from(address.replace('cx', '01'), 'hex');
+}
+
 export function getRlpEncodedMsg(msg: string | any[]) {
   return Array.from(rlp.encode(msg));
 }

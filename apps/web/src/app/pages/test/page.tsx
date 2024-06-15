@@ -139,6 +139,23 @@ export function foo(method: string, recipient: string, minimumReceive: BigInt, r
 
   return Buffer.from(getRlpEncodedMsg(data)).toString('hex');
 }
+export function foo1(route: any) {
+  const data: any[] = [];
+
+  const path: RouteAction[] = [];
+  console.log(route.pairs.length === route.pathForSwap.length, 'pairs and pathForSwap length should be equal');
+  for (let i = 0; i < route.pairs.length; i++) {
+    const pair: Pair = route.pairs[i];
+    path.push({ type: pair.isStabilityFund ? 2 : 1, address: route.pathForSwap[i] });
+  }
+  console.log('route action path', path);
+
+  for (let i = 0; i < path.length; i++) {
+    data.push([getBytesFromNumber(path[i].type), getBytesFromAddress(path[i].address)]);
+  }
+
+  return Buffer.from(getRlpEncodedMsg(data)).toString('hex');
+}
 
 export function TestPage() {
   const { account } = useIconReact();
@@ -191,9 +208,9 @@ export function TestPage() {
       if (executionTrade.inputAmount.currency.symbol === 'ICX') {
         const res = await bnJs
           .inject({ account })
-          .Router.swapICX(
+          .Router.swapICXV2(
             toDec(executionTrade.inputAmount),
-            executionTrade.route.pathForSwap,
+            foo1(executionTrade.route),
             toDec(minReceived),
             recipient,
           );
@@ -275,6 +292,19 @@ export function TestPage() {
     await swap(ICX, bnUSD, '1');
   };
 
+  const handleShowTradeICXForUSDC = async () => {
+    const trade = await calculateTrade(ICX, USDC, '1');
+
+    if (!trade) {
+      console.log('No trade found');
+    }
+  };
+
+  const handleSwapICXForUSDC = async () => {
+    console.log('handleSwapICXForUSDC');
+    await swap(ICX, USDC, '1');
+  };
+
   const handleShowTradeBALNForbnUSD = async () => {
     const trade = await calculateTrade(BALN, bnUSD, '1');
 
@@ -307,6 +337,14 @@ export function TestPage() {
         </Button>
         <Button onClick={handleSwapICXForbnUSD} disabled={isProcessing}>
           Swap ICX:ICON for bnUSD:ICON
+        </Button>
+      </Flex>
+      <Flex flexDirection={'row'} style={{ gap: 2 }}>
+        <Button onClick={handleShowTradeICXForUSDC} disabled={isProcessing}>
+          Show Trade for swapping ICX:ICON for USDC:ICON
+        </Button>
+        <Button onClick={handleSwapICXForUSDC} disabled={isProcessing}>
+          Swap ICX:ICON for USDC:ICON
         </Button>
       </Flex>
       <Flex flexDirection={'row'} style={{ gap: 2 }}>

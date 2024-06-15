@@ -61,7 +61,6 @@ const XCollateralModal = ({ account, currencyAmount, sourceChain, action }: XCol
   useCreateWalletXService(sourceChain);
 
   const { xCallFee, formattedXCallFee } = useXCallFee(sourceChain, '0x1.icon');
-  console.log('xCallFee', xCallFee);
 
   const xChain = xChainMap[sourceChain];
   const _inputAmount = useMemo(() => {

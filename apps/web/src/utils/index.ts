@@ -341,7 +341,7 @@ export function bufferToHex(buffer): string {
 }
 
 // Function to get the last i bytes of an integer
-function lastBytesOf(x: bigint, i: number) {
+function lastBytesOf(x: bigint, i: number): Uint8Array {
   const buffer = new ArrayBuffer(i);
   const view = new DataView(buffer);
   for (let j = 0; j < i; j++) {
@@ -351,7 +351,7 @@ function lastBytesOf(x: bigint, i: number) {
 }
 
 // Function to convert an unsigned integer to bytes
-export function uintToBytes(x: bigint) {
+export function uintToBytes(x: bigint): Uint8Array {
   if (x === BigInt(0)) {
     return new Uint8Array([0]);
   }

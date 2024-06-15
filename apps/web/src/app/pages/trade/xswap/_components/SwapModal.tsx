@@ -22,6 +22,7 @@ import { swapMessage } from 'app/pages/trade/supply/_components/utils';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useSwapState } from 'store/swap/hooks';
 import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from 'constants/misc';
+import { getBytesFromAddress, getBytesFromNumber, getRlpEncodedMsg } from 'app/pages/trade/bridge/utils';
 
 type SwapModalProps = {
   isOpen: boolean;
@@ -68,14 +69,18 @@ const SwapModal = (props: SwapModalProps) => {
     const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
 
     if (executionTrade.inputAmount.currency.symbol === 'ICX') {
+      const rlpEncodedPath = Buffer.from(
+        getRlpEncodedMsg([
+          ...executionTrade.route.routeActionPath.map(action => [
+            getBytesFromNumber(action.type),
+            getBytesFromAddress(action.address),
+          ]),
+        ]),
+      ).toString('hex');
+
       bnJs
         .inject({ account })
-        .Router.swapICX(
-          toDec(executionTrade.inputAmount),
-          executionTrade.route.pathForSwap,
-          toDec(minReceived),
-          recipient,
-        )
+        .Router.swapICXV2(toDec(executionTrade.inputAmount), rlpEncodedPath, toDec(minReceived), recipient)
         .then((res: any) => {
           addTransaction(
             { hash: res.result },
@@ -97,16 +102,23 @@ const SwapModal = (props: SwapModalProps) => {
       const token = executionTrade.inputAmount.currency as Token;
       const outputToken = executionTrade.outputAmount.currency as Token;
 
+      const rlpEncodedData = Buffer.from(
+        getRlpEncodedMsg([
+          Buffer.from('_swap', 'utf-8'),
+          // @ts-ignore
+          Buffer.from(recipient, 'utf-8'),
+          getBytesFromNumber(BigInt(toDec(minReceived))),
+          ...executionTrade.route.routeActionPath.map(action => [
+            getBytesFromNumber(action.type),
+            getBytesFromAddress(action.address),
+          ]),
+        ]),
+      ).toString('hex');
+
       bnJs
         .inject({ account })
         .getContract(token.address)
-        .swapUsingRoute(
-          toDec(executionTrade.inputAmount),
-          outputToken.address,
-          toDec(minReceived),
-          executionTrade.route.pathForSwap,
-          recipient,
-        )
+        .swapUsingRouteV2(toDec(executionTrade.inputAmount), rlpEncodedData)
         .then((res: any) => {
           addTransaction(
             { hash: res.result },

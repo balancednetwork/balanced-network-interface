@@ -37,7 +37,6 @@ export const fetchStabilityFundPairs = async () => {
   const stabilityFundPairs = Object.values(stabilityFundBalances).map(balance => {
     return new Pair(balance, CurrencyAmount.fromRawAmount(bnUSD[NETWORK_ID], '1'), { isStabilityFund: true });
   });
-  console.log('stabilityFundPairs', stabilityFundPairs);
   return stabilityFundPairs;
 };
 

@@ -1,5 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { XChainId } from 'app/pages/trade/bridge/types';
 import BigNumber from 'bignumber.js';
+import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 
 export enum Field {
   LEFT = 'LEFT',
@@ -25,6 +27,9 @@ export interface LoanState {
     independentField: Field;
     inputType: 'slider' | 'text';
   };
+
+  // loan cross-chain recipient network
+  recipientNetwork: XChainId;
 }
 
 const initialState: LoanState = {
@@ -42,6 +47,8 @@ const initialState: LoanState = {
     independentField: Field.LEFT,
     inputType: 'text',
   },
+
+  recipientNetwork: ICON_XCALL_NETWORK_ID,
 };
 
 const loanSlice = createSlice({
@@ -78,10 +85,21 @@ const loanSlice = createSlice({
         state.lockingRatios[collateralType] = lockingRatio;
       },
     ),
+    setRecipientNetwork: create.reducer<{ recipientNetwork: XChainId }>((state, { payload: { recipientNetwork } }) => {
+      state.recipientNetwork = recipientNetwork;
+    }),
   }),
 });
 
-export const { changeBorrowedAmount, changeBadDebt, changeTotalSupply, adjust, cancel, type, setLockingRatio } =
-  loanSlice.actions;
+export const {
+  changeBorrowedAmount,
+  changeBadDebt,
+  changeTotalSupply,
+  adjust,
+  cancel,
+  type,
+  setLockingRatio,
+  setRecipientNetwork,
+} = loanSlice.actions;
 
 export default loanSlice.reducer;

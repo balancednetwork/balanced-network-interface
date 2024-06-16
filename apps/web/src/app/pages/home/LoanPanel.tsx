@@ -20,7 +20,7 @@ import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import useInterval from 'hooks/useInterval';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useCollateralActionHandlers, useCollateralType } from 'store/collateral/hooks';
+import { useCollateralActionHandlers, useCollateralType, useDerivedCollateralInfo } from 'store/collateral/hooks';
 import { Field } from 'store/loan/reducer';
 import {
   useLoanBorrowedAmount,
@@ -31,6 +31,8 @@ import {
   useLoanParameters,
   useBorrowableAmountWithReserve,
   useInterestRate,
+  useDerivedLoanInfo,
+  useLoanRecipientNetwork,
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
@@ -39,26 +41,34 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { PanelInfoWrap, PanelInfoItem, UnderPanel } from './CollateralPanel';
 import ModalContent from 'app/components/ModalContent';
-import CollateralChainSelector from './_components/CollateralChainSelector';
+import LoanChainSelector from './_components/LoanChainSelector';
 
 const LoanPanel = () => {
-  const { account } = useIconReact();
-  const collateralType = useCollateralType();
+  const { account, sourceChain, collateralType } = useDerivedCollateralInfo();
+  const {
+    borrowedAmount,
+    borrowableAmountWithReserve,
+    differenceAmount,
+    formattedAmounts,
+    parsedAmount,
+    totalBorrowableAmount,
+  } = useDerivedLoanInfo();
+
+  const loanRecipientNetwork = useLoanRecipientNetwork();
+  console.log('loanRecipientNetwork', loanRecipientNetwork);
+
+  const { isAdjusting, inputType } = useLoanState();
+
   const locale = useActiveLocale();
   const { data: interestRate } = useInterestRate(collateralType);
 
   const isSuperSmall = useMedia(`(max-width: ${'es-ES,nl-NL,de-DE,pl-PL'.indexOf(locale) >= 0 ? '450px' : '300px'})`);
 
   const shouldLedgerSign = useShouldLedgerSign();
-
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
-
-  // user interaction logic
-  const { independentField, typedValue, isAdjusting, inputType } = useLoanState();
-  const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
 
   const { onFieldAInput, onFieldBInput, onSlide, onAdjust: adjust } = useLoanActionHandlers();
   const { onAdjust: adjustCollateral } = useCollateralActionHandlers();
@@ -71,25 +81,6 @@ const LoanPanel = () => {
   const handleCancelAdjusting = () => {
     adjust(false);
     changeShouldLedgerSign(false);
-  };
-
-  //
-  const borrowedAmount = useLoanBorrowedAmount();
-  const totalBorrowableAmount = useLoanTotalBorrowableAmount();
-  const borrowableAmountWithReserve = useBorrowableAmountWithReserve();
-
-  //  calculate dependentField value
-  const parsedAmount = {
-    [independentField]: new BigNumber(typedValue || '0'),
-    [dependentField]: borrowableAmountWithReserve.minus(new BigNumber(typedValue || '0')),
-  };
-
-  const formattedAmounts = {
-    [independentField]: typedValue,
-    [dependentField]:
-      parsedAmount[dependentField].isZero() || parsedAmount[dependentField].isNegative()
-        ? '0'
-        : parsedAmount[dependentField].toFixed(2),
   };
 
   //BTCB tmp fix
@@ -111,14 +102,6 @@ const LoanPanel = () => {
     if (shouldLedgerSign) return;
     setOpen(!open);
   };
-
-  //before
-  const beforeAmount = borrowedAmount;
-  //after
-  const afterAmount = parsedAmount[Field.LEFT];
-  //difference = after-before
-  const differenceAmount = afterAmount.minus(beforeAmount);
-  const roundedDisplayDiffAmount = afterAmount.minus(beforeAmount.dp(2));
 
   const { originationFee = 0 } = useLoanParameters() || {};
   //whether if repay or borrow
@@ -200,9 +183,11 @@ const LoanPanel = () => {
   // change slider value if only a user types
   React.useEffect(() => {
     if (inputType === 'text') {
-      sliderInstance.current?.noUiSlider.set(afterAmount.toNumber());
+      sliderInstance.current?.noUiSlider.set(parsedAmount[Field.LEFT].toNumber());
     }
-  }, [afterAmount, inputType]);
+  }, [parsedAmount[Field.LEFT], inputType]);
+
+  const roundedDisplayDiffAmount = parsedAmount[Field.LEFT].minus(borrowedAmount.dp(2));
 
   const usedAmount = useLoanUsedAmount();
   const percent = borrowableAmountWithReserve.isZero()
@@ -334,7 +319,7 @@ const LoanPanel = () => {
           </PanelInfoWrap>
         </BoxPanel>
         <UnderPanel justifyContent="space-between">
-          <CollateralChainSelector />
+          <LoanChainSelector />
         </UnderPanel>
       </BoxPanelWrap>
 
@@ -354,7 +339,7 @@ const LoanPanel = () => {
                 <Trans>Before</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {beforeAmount.dp(2).toFormat()} bnUSD
+                {borrowedAmount.dp(2).toFormat()} bnUSD
               </Typography>
             </Box>
 
@@ -363,7 +348,7 @@ const LoanPanel = () => {
                 <Trans>After</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {afterAmount.dp(2).toFormat()} bnUSD
+                {parsedAmount[Field.LEFT].dp(2).toFormat()} bnUSD
               </Typography>
             </Box>
           </Flex>

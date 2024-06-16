@@ -37,9 +37,11 @@ import {
   cancel,
   type,
   setLockingRatio,
+  setRecipientNetwork,
 } from './reducer';
 import { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { XChainId } from 'app/pages/trade/bridge/types';
 
 export function useLoanBorrowedAmount(): BigNumber {
   const borrowedAmounts = useBorrowedAmounts();
@@ -53,6 +55,10 @@ export function useBorrowedAmounts(): AppState['loan']['borrowedAmounts'] {
 
 export function useLockingRatios(): AppState['loan']['lockingRatios'] {
   return useSelector((state: AppState) => state.loan.lockingRatios);
+}
+
+export function useLoanRecipientNetwork(): AppState['loan']['recipientNetwork'] {
+  return useSelector((state: AppState) => state.loan.recipientNetwork);
 }
 
 export function useLoanBadDebt(): AppState['loan']['badDebt'] {
@@ -88,6 +94,17 @@ export function useLoanChangeTotalSupply(): (totalSupply: BigNumber) => void {
   return React.useCallback(
     (totalSupply: BigNumber) => {
       dispatch(changeTotalSupply({ totalSupply }));
+    },
+    [dispatch],
+  );
+}
+
+export function useSetLoanRecipientNetwork(): (recipientNetwork: XChainId) => void {
+  const dispatch = useDispatch();
+
+  return React.useCallback(
+    (recipientNetwork: XChainId) => {
+      dispatch(setRecipientNetwork({ recipientNetwork }));
     },
     [dispatch],
   );
@@ -486,6 +503,17 @@ export function useRedemptionDaoFee(): UseQueryResult<number> {
 export function useDerivedLoanInfo(): {
   account: string | undefined;
   receiver: string | undefined;
+  differenceAmount: BigNumber;
+  borrowedAmount: BigNumber;
+  borrowableAmountWithReserve: BigNumber;
+  totalBorrowableAmount: BigNumber;
+  formattedAmounts: {
+    [x: string]: string;
+  };
+  parsedAmount: {
+    [x: string]: BigNumber;
+    [x: number]: BigNumber;
+  };
 } {
   const sourceChain = useCollateralXChain();
   const signedInWallets = useAvailableWallets();
@@ -495,10 +523,40 @@ export function useDerivedLoanInfo(): {
     w => xChainMap[w.xChainId].xWalletType === xChainMap[sourceChain].xWalletType,
   )?.address;
 
+  const { independentField, typedValue, isAdjusting, inputType } = useLoanState();
+  const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
+
   const receiver = undefined;
+
+  //todo: xRefactor refactor
+  const borrowedAmount = useLoanBorrowedAmount();
+  const totalBorrowableAmount = useLoanTotalBorrowableAmount();
+  const borrowableAmountWithReserve = useBorrowableAmountWithReserve();
+  //end of xRefactor
+
+  const parsedAmount = {
+    [independentField]: new BigNumber(typedValue || '0'),
+    [dependentField]: borrowableAmountWithReserve.minus(new BigNumber(typedValue || '0')),
+  };
+
+  const formattedAmounts = {
+    [independentField]: typedValue,
+    [dependentField]:
+      parsedAmount[dependentField].isZero() || parsedAmount[dependentField].isNegative()
+        ? '0'
+        : parsedAmount[dependentField].toFixed(2),
+  };
+
+  const differenceAmount = parsedAmount[Field.LEFT].minus(borrowedAmount);
 
   return {
     account,
     receiver,
+    borrowedAmount,
+    parsedAmount,
+    formattedAmounts,
+    borrowableAmountWithReserve,
+    totalBorrowableAmount,
+    differenceAmount,
   };
 }

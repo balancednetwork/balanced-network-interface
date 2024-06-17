@@ -2,7 +2,7 @@ import { getCreate2Address } from '@ethersproject/address';
 import { pack, keccak256 } from '@ethersproject/solidity';
 import invariant from 'tiny-invariant';
 
-import { BigintIsh, Price, sqrt, Token, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { BigintIsh, Price, sqrt, Token, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
 
 import {
   FACTORY_ADDRESS,
@@ -186,38 +186,14 @@ export class Pair {
     invariant(this.involvesToken(inputAmount.currency), 'TOKEN');
 
     if (this.isStabilityFund) {
-      const token0Scalar = 10n ** BigInt(this.token0.decimals);
-      const token1Scalar = 10n ** BigInt(this.token1.decimals);
-
-      const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
-      const isToken0 = inputAmount.currency.equals(this.token0);
-
-      if (isBnUSD) {
+      // this.token1 is always bnUSD
+      if (inputAmount.currency.symbol === 'bnUSD') {
         // bnUSD -> USDC
-        if (isToken0) {
-          return [
-            CurrencyAmount.fromRawAmount(this.token1, (inputAmount.quotient * token1Scalar) / token0Scalar),
-            this,
-          ];
-        } else {
-          return [
-            CurrencyAmount.fromRawAmount(this.token0, (inputAmount.quotient * token0Scalar) / token1Scalar),
-            this,
-          ];
-        }
+        // apply fee 0.1%
+        return [CurrencyAmount.fromCurrencyAmount(inputAmount, this.token0).multiply(new Fraction(999, 1000)), this];
       } else {
         // USDC -> bnUSD
-        if (isToken0) {
-          return [
-            CurrencyAmount.fromRawAmount(this.token1, (inputAmount.quotient * token1Scalar) / token0Scalar),
-            this,
-          ];
-        } else {
-          return [
-            CurrencyAmount.fromRawAmount(this.token0, (inputAmount.quotient * token0Scalar) / token1Scalar),
-            this,
-          ];
-        }
+        return [CurrencyAmount.fromCurrencyAmount(inputAmount, this.token1), this];
       }
     } else {
       if (this.reserve0.quotient === ZERO || this.reserve1.quotient === ZERO) {
@@ -259,38 +235,21 @@ export class Pair {
   public getInputAmount(outputAmount: CurrencyAmount<Token>): [CurrencyAmount<Token>, Pair] {
     invariant(this.involvesToken(outputAmount.currency), 'TOKEN');
     if (this.isStabilityFund) {
-      const token0Scalar = 10n ** BigInt(this.token0.decimals);
-      const token1Scalar = 10n ** BigInt(this.token1.decimals);
-
       const isBnUSD = outputAmount.currency.symbol === 'bnUSD';
       const isToken0 = outputAmount.currency.equals(this.token0);
 
       if (isBnUSD) {
         // USDC -> bnUSD
-        if (isToken0) {
-          return [
-            CurrencyAmount.fromRawAmount(this.token1, (outputAmount.quotient * token1Scalar) / token0Scalar),
-            this,
-          ];
-        } else {
-          return [
-            CurrencyAmount.fromRawAmount(this.token0, (outputAmount.quotient * token0Scalar) / token1Scalar),
-            this,
-          ];
-        }
+        return [CurrencyAmount.fromCurrencyAmount(outputAmount, isToken0 ? this.token1 : this.token0), this];
       } else {
         // bnUSD -> USDC
-        if (isToken0) {
-          return [
-            CurrencyAmount.fromRawAmount(this.token1, (outputAmount.quotient * token1Scalar) / token0Scalar),
-            this,
-          ];
-        } else {
-          return [
-            CurrencyAmount.fromRawAmount(this.token0, (outputAmount.quotient * token0Scalar) / token1Scalar),
-            this,
-          ];
-        }
+        // apply fee 0.1%
+        return [
+          CurrencyAmount.fromCurrencyAmount(outputAmount, isToken0 ? this.token1 : this.token0).divide(
+            new Fraction(999, 1000),
+          ),
+          this,
+        ];
       }
     } else {
       if (

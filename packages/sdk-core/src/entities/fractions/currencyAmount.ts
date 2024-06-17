@@ -36,6 +36,15 @@ export class CurrencyAmount<T extends Currency> extends Fraction {
     return new CurrencyAmount(currency, numerator, denominator);
   }
 
+  public static fromCurrencyAmount(currencyAmount: CurrencyAmount<Token>, newToken: Token): CurrencyAmount<Token> {
+    const newTokenDecimalScale = 10n ** BigInt(newToken.decimals);
+
+    return CurrencyAmount.fromRawAmount(
+      newToken,
+      (currencyAmount.quotient * newTokenDecimalScale) / currencyAmount.decimalScale,
+    );
+  }
+
   protected constructor(currency: T, numerator: BigintIsh, denominator?: BigintIsh) {
     super(numerator, denominator);
     invariant(this.quotient <= MaxUint256, 'AMOUNT');

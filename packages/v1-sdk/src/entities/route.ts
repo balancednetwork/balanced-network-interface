@@ -51,21 +51,26 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
     /* @ts-ignore */
     for (const [i, pair] of this.pairs.entries()) {
       if (pair.isStabilityFund) {
-        prices.push(
-          this.path[i].equals(pair.token0)
-            ? new Price(
-                pair.reserve0.currency,
-                pair.reserve1.currency,
-                10n ** BigInt(pair.reserve0.currency.decimals),
-                10n ** BigInt(pair.reserve1.currency.decimals),
-              )
-            : new Price(
-                pair.reserve1.currency,
-                pair.reserve0.currency,
-                10n ** BigInt(pair.reserve1.currency.decimals),
-                10n ** BigInt(pair.reserve0.currency.decimals),
-              ),
-        );
+        let price;
+        // pair.token1 is always bnUSD
+        if (this.path[i].symbol === 'bnUSD') {
+          // bnUSD -> USDC
+          price = new Price(
+            pair.token1,
+            pair.token0,
+            10n ** BigInt(pair.token1.decimals),
+            10n ** BigInt(pair.token0.decimals),
+          );
+        } else {
+          // USDC -> bnUSD
+          price = new Price(
+            pair.token0,
+            pair.token1,
+            10n ** BigInt(pair.token0.decimals),
+            10n ** BigInt(pair.token1.decimals),
+          );
+        }
+        prices.push(price);
       } else {
         prices.push(
           this.path[i].equals(pair.token0)

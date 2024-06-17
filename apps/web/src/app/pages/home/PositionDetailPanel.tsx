@@ -537,7 +537,7 @@ const Chip = styled(Box)`
   font-weight: bold;
   color: #ffffff;
   line-height: 14px;
-  height: 16px;
+  height: 15px;
 `;
 
 const LeftChip = styled(Chip)`

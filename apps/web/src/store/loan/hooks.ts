@@ -42,6 +42,8 @@ import {
 import { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { XChainId } from 'app/pages/trade/bridge/types';
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { bnUSD } from 'constants/tokens';
 
 export function useLoanBorrowedAmount(): BigNumber {
   const borrowedAmounts = useBorrowedAmounts();
@@ -507,6 +509,11 @@ export function useDerivedLoanInfo(): {
   borrowedAmount: BigNumber;
   borrowableAmountWithReserve: BigNumber;
   totalBorrowableAmount: BigNumber;
+  bnUSDAmount: CurrencyAmount<Token> | undefined;
+  direction: {
+    from: XChainId;
+    to: XChainId;
+  };
   formattedAmounts: {
     [x: string]: string;
   };
@@ -525,6 +532,7 @@ export function useDerivedLoanInfo(): {
 
   const { independentField, typedValue, isAdjusting, inputType } = useLoanState();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
+  const recipientNetwork = useLoanRecipientNetwork();
 
   const receiver = undefined;
 
@@ -549,6 +557,18 @@ export function useDerivedLoanInfo(): {
 
   const differenceAmount = parsedAmount[Field.LEFT].minus(borrowedAmount);
 
+  const bnUSDAmount = differenceAmount
+    ? CurrencyAmount.fromRawAmount(
+        bnUSD[NETWORK_ID],
+        differenceAmount.times(10 ** bnUSD[NETWORK_ID].decimals).toFixed(0),
+      )
+    : undefined;
+
+  const direction = {
+    from: sourceChain,
+    to: recipientNetwork,
+  };
+
   return {
     account,
     receiver,
@@ -558,5 +578,7 @@ export function useDerivedLoanInfo(): {
     borrowableAmountWithReserve,
     totalBorrowableAmount,
     differenceAmount,
+    bnUSDAmount,
+    direction,
   };
 }

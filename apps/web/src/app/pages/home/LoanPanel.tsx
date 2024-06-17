@@ -42,6 +42,8 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import { PanelInfoWrap, PanelInfoItem, UnderPanel } from './CollateralPanel';
 import ModalContent from 'app/components/ModalContent';
 import LoanChainSelector from './_components/LoanChainSelector';
+import XLoanModal, { XLoanAction } from './_components/xLoanModal';
+import { MODAL_ID, modalActions } from '../trade/bridge/_zustand/useModalStore';
 
 const LoanPanel = () => {
   const { account, sourceChain, collateralType } = useDerivedCollateralInfo();
@@ -52,6 +54,7 @@ const LoanPanel = () => {
     formattedAmounts,
     parsedAmount,
     totalBorrowableAmount,
+    bnUSDAmount,
   } = useDerivedLoanInfo();
 
   const loanRecipientNetwork = useLoanRecipientNetwork();
@@ -97,9 +100,16 @@ const LoanPanel = () => {
   // loan confirm modal logic & value
   const [open, setOpen] = React.useState(false);
 
+  const isCrossChain = !(sourceChain === '0x1.icon' || sourceChain === '0x2.icon');
+
   const toggleOpen = () => {
-    if (shouldLedgerSign) return;
-    setOpen(!open);
+    if (isCrossChain) {
+      modalActions.openModal(MODAL_ID.XLOAN_CONFIRM_MODAL);
+    } else {
+      if (shouldLedgerSign) return;
+      setOpen(!open);
+      changeShouldLedgerSign(false);
+    }
   };
 
   const { originationFee = 0 } = useLoanParameters() || {};
@@ -321,6 +331,15 @@ const LoanPanel = () => {
           <LoanChainSelector />
         </UnderPanel>
       </BoxPanelWrap>
+
+      <XLoanModal
+        account={account}
+        bnUSDAmount={bnUSDAmount}
+        sourceChain={sourceChain}
+        action={shouldBorrow ? XLoanAction.BORROW : XLoanAction.REPAY}
+        originationFee={fee}
+        interestRate={interestRate}
+      />
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>

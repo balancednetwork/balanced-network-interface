@@ -154,7 +154,7 @@ const XCollateralModal = ({ account, currencyAmount, sourceChain, action }: XCol
 
           {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
 
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+          <Flex justifyContent="center" mt="20px" pt="20px" className="border-top">
             <>
               <TextButton onClick={handleDismiss}>
                 <Trans>Cancel</Trans>

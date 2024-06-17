@@ -217,7 +217,6 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
         ]),
       );
 
-      console.log('envelope amount', amount.toString());
       console.log('envelope data', envelope);
 
       const res = await this.publicClient.simulateContract({
@@ -242,7 +241,6 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
 
   async executeBorrow(xTransactionInput: XTransactionInput) {
     //todo: implement receiver address to receive on different chain than the caller chain/address
-    //direction will be used to determine the receiver chain/address
     const { direction, inputAmount, account, xCallFee, usedCollateral } = xTransactionInput;
 
     if (!inputAmount || !usedCollateral) {
@@ -255,12 +253,15 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
       const data = toHex(RLP.encode(['xBorrow', usedCollateral, uintToBytes(amount)]));
       const envelope = toHex(
         RLP.encode([
-          0,
+          Buffer.from([0]),
           data,
           FROM_SOURCES[this.xChainId]?.map(Buffer.from),
           TO_SOURCES[this.xChainId]?.map(Buffer.from),
         ]),
       );
+
+      console.log('envelope amount', inputAmount.toFixed(2));
+      console.log('envelope', envelope);
 
       const res = await this.publicClient.simulateContract({
         account: account as Address,

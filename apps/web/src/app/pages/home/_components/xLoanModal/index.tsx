@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 
-import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
-import { Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 
@@ -10,7 +10,7 @@ import { XChainId, XToken } from 'app/pages/trade/bridge/types';
 import { getNetworkDisplayName } from 'app/pages/trade/bridge/utils';
 import { Typography } from 'app/theme';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from 'store/application/hooks';
-import { Field } from 'store/swap/reducer';
+import { Field } from 'store/loan/reducer';
 import { formatBigNumber, shortenAddress } from 'utils';
 import { MODAL_ID, modalActions, useModalStore } from 'app/pages/trade/bridge/_zustand/useModalStore';
 import {
@@ -22,7 +22,7 @@ import { useCreateWalletXService } from 'app/pages/trade/bridge/_zustand/useXSer
 import useXCallFee from 'app/pages/trade/bridge/_hooks/useXCallFee';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks/useApproveCallback';
-import { XTransactionInput } from 'app/pages/trade/bridge/_zustand/types';
+import { XTransactionInput, XTransactionType } from 'app/pages/trade/bridge/_zustand/types';
 import useXCallGasChecker from 'app/pages/trade/bridge/_hooks/useXCallGasChecker';
 import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
 import { useSwitchChain } from 'wagmi';
@@ -31,6 +31,8 @@ import ModalContent from 'app/components/ModalContent';
 import XTransactionState from 'app/pages/trade/bridge/_components/XTransactionState';
 import { Button, TextButton } from 'app/components/Button';
 import { StyledButton } from 'app/pages/trade/xswap/_components/shared';
+import { useDerivedLoanInfo, useLoanRecipientNetwork } from 'store/loan/hooks';
+import { useCollateralType } from 'store/collateral/hooks';
 
 export enum XLoanAction {
   BORROW = 'BORROW',
@@ -41,7 +43,9 @@ type XLoanModalProps = {
   account: string | undefined;
   sourceChain: XChainId;
   action: XLoanAction;
-  currencyAmount?: CurrencyAmount<XToken>;
+  originationFee: BigNumber;
+  bnUSDAmount?: CurrencyAmount<Token>;
+  interestRate?: BigNumber;
 };
 
 export const presenceVariants = {
@@ -50,21 +54,23 @@ export const presenceVariants = {
   exit: { opacity: 0, height: 0 },
 };
 
-const XLoanModal = ({ account, currencyAmount, sourceChain, action }: XLoanModalProps) => {
+const XLoanModal = ({ account, bnUSDAmount, sourceChain, action, originationFee, interestRate }: XLoanModalProps) => {
   useModalStore();
   const { currentId } = useXTransactionStore();
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
+  const receiverNetwork = useLoanRecipientNetwork();
+  const { borrowedAmount, parsedAmount, direction } = useDerivedLoanInfo();
+  const collateralType = useCollateralType();
 
   useCreateWalletXService(sourceChain);
 
-  const { xCallFee, formattedXCallFee } = useXCallFee(sourceChain, '0x1.icon');
+  const { xCallFee, formattedXCallFee } = useXCallFee(sourceChain, receiverNetwork);
 
   const xChain = xChainMap[sourceChain];
   const _inputAmount = useMemo(() => {
-    return currencyAmount ? currencyAmount : undefined;
-  }, [currencyAmount]);
-  const { approvalState, approveCallback } = useApproveCallback(_inputAmount, xChain.contracts.assetManager);
+    return bnUSDAmount ? bnUSDAmount : undefined;
+  }, [bnUSDAmount]);
 
   const handleDismiss = () => {
     modalActions.closeModal(MODAL_ID.XLOAN_CONFIRM_MODAL);
@@ -77,20 +83,18 @@ const XLoanModal = ({ account, currencyAmount, sourceChain, action }: XLoanModal
     if (!account) return;
     if (!xCallFee) return;
     if (!_inputAmount) return;
+    if (!collateralType) return;
 
-    // const xTransactionInput: XTransactionInput = {
-    //   type: XTransactionType.SWAP,
-    //   direction,
-    //   executionTrade,
-    //   account,
-    //   recipient,
-    //   inputAmount: _inputAmount,
-    //   slippageTolerance,
-    //   xCallFee,
-    //   cleanupSwap,
-    // };
+    const xTransactionInput: XTransactionInput = {
+      type: XTransactionType.BORROW,
+      direction,
+      account,
+      inputAmount: _inputAmount,
+      usedCollateral: collateralType,
+      xCallFee,
+    };
 
-    // await xTransactionActions.executeTransfer(xTransactionInput);
+    await xTransactionActions.executeTransfer(xTransactionInput);
   };
 
   const gasChecker = useXCallGasChecker(sourceChain);
@@ -109,9 +113,48 @@ const XLoanModal = ({ account, currencyAmount, sourceChain, action }: XLoanModal
       {currentXTransaction && <XTransactionUpdater xTransaction={currentXTransaction} />}
       <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XLOAN_CONFIRM_MODAL)} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
-          <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
-            <Trans>Loan action</Trans>
+          <Typography textAlign="center" mb="5px">
+            {action === XLoanAction.BORROW ? t`Borrow Balanced Dollars?` : t`Repay Balanced Dollars?`}
           </Typography>
+
+          <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
+            {`${_inputAmount?.toFixed(2, { groupSeparator: ',' })} ${_inputAmount?.currency.symbol}`}
+          </Typography>
+
+          <Flex my={4}>
+            <Box width={1 / 2} className="border-right">
+              <Typography textAlign="center">
+                <Trans>Before</Trans>
+              </Typography>
+              <Typography variant="p" textAlign="center">
+                {borrowedAmount.dp(2).toFormat()} bnUSD
+              </Typography>
+            </Box>
+
+            <Box width={1 / 2}>
+              <Typography textAlign="center">
+                <Trans>After</Trans>
+              </Typography>
+              <Typography variant="p" textAlign="center">
+                {parsedAmount[Field.LEFT].dp(2).toFormat()} bnUSD
+              </Typography>
+            </Box>
+          </Flex>
+
+          {action === XLoanAction.BORROW && (
+            <Typography textAlign="center">
+              <Trans>Includes a fee of {originationFee.dp(2).toFormat()} bnUSD.</Trans>
+            </Typography>
+          )}
+
+          {interestRate && interestRate.isGreaterThan(0) && action === XLoanAction.BORROW && (
+            <Typography textAlign="center">
+              <Trans>
+                Your loan will increase at a rate of {`${interestRate.times(100).toFixed(2)}%`.replace('.00%', '%')} per
+                year.
+              </Trans>
+            </Typography>
+          )}
 
           <Typography textAlign="center">
             <Trans>You'll also pay</Trans> <strong>{formattedXCallFee}</strong> <Trans>to transfer cross-chain.</Trans>
@@ -119,7 +162,7 @@ const XLoanModal = ({ account, currencyAmount, sourceChain, action }: XLoanModal
 
           {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
 
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+          <Flex justifyContent="center" mt="20px" pt="20px" className="border-top">
             <>
               <TextButton onClick={handleDismiss}>
                 <Trans>Cancel</Trans>
@@ -140,17 +183,9 @@ const XLoanModal = ({ account, currencyAmount, sourceChain, action }: XLoanModal
                   </StyledButton>
                 </>
               ) : (
-                <>
-                  {approvalState !== ApprovalState.APPROVED ? (
-                    <Button onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
-                      {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
-                    </Button>
-                  ) : (
-                    <StyledButton onClick={handleXCollateralAction} disabled={!gasChecker.hasEnoughGas}>
-                      {action === XLoanAction.BORROW ? <Trans>Borrow</Trans> : <Trans>Repay</Trans>}
-                    </StyledButton>
-                  )}
-                </>
+                <StyledButton onClick={handleXCollateralAction} disabled={!gasChecker.hasEnoughGas}>
+                  {action === XLoanAction.BORROW ? <Trans>Borrow</Trans> : <Trans>Repay</Trans>}
+                </StyledButton>
               )}
             </>
           </Flex>

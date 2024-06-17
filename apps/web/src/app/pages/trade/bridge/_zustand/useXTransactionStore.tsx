@@ -171,12 +171,13 @@ export const useXTransactionStore = create<XTransactionStore>()(
             events: {},
             destinationChainInitialBlockHeight,
           };
-          xMessageActions.add(xMessage);
 
           let finalDestinationChainInitialBlockHeight = destinationChainInitialBlockHeight;
           if (primaryDestinationChainId !== finalDestinationChainId) {
             finalDestinationChainInitialBlockHeight = (await finalDstChainXService.getBlockHeight()) - 1n;
           }
+
+          xMessageActions.add(xMessage);
 
           const xTransaction: XTransaction = {
             id: xMessage.id,
@@ -200,7 +201,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
         }
       },
 
-      createSecondaryMessage: async (xTransaction: XTransaction, primaryMessage: XMessage) => {
+      createSecondaryMessage: (xTransaction: XTransaction, primaryMessage: XMessage) => {
         if (!primaryMessage.destinationTransaction) {
           throw new Error('destinationTransaction is not found'); // it should not happen
         }
@@ -268,6 +269,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
       },
 
       onMessageUpdate: (id: string, xMessage: XMessage) => {
+        console.log('onMessageUpdate', { id, xMessage });
         const xTransaction = get().transactions[id];
         if (!xTransaction) return;
 

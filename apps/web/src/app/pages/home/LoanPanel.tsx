@@ -55,7 +55,6 @@ const LoanPanel = () => {
   } = useDerivedLoanInfo();
 
   const loanRecipientNetwork = useLoanRecipientNetwork();
-  console.log('loanRecipientNetwork', loanRecipientNetwork);
 
   const { isAdjusting, inputType } = useLoanState();
 

@@ -1,6 +1,7 @@
 import { Currency } from '@balancednetwork/sdk-core';
 import { SUPPORTED_XCALL_CHAINS } from 'app/pages/trade/bridge/_config/xChains';
 import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { XChainId } from 'app/pages/trade/bridge/types';
 import { isXToken, getCrossChainTokenAddress } from 'app/pages/trade/bridge/utils';
 import BigNumber from 'bignumber.js';
 import { useEffect, useState } from 'react';
@@ -12,22 +13,32 @@ type SortingType = {
   order?: 'ASC' | 'DESC';
 };
 
-const getXCurrencyBalance = (xBalances: WalletState, currency: Currency): BigNumber | undefined => {
-  if (isXToken(currency)) {
-    return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
-      if (xBalances[xChainId]) {
-        const tokenAddress = getCrossChainTokenAddress(xChainId, currency.wrapped.symbol);
-        const balance = new BigNumber(xBalances[xChainId]?.[tokenAddress ?? -1]?.toFixed() || 0);
-        sum = sum.plus(balance);
-      }
-      return sum;
-    }, new BigNumber(0));
+const getXCurrencyBalance = (
+  xBalances: WalletState,
+  currency: Currency,
+  selectedChainId: XChainId | undefined,
+): BigNumber | undefined => {
+  if (!xBalances) return;
+
+  if (selectedChainId) {
+    return new BigNumber(xBalances[selectedChainId]?.[currency.wrapped.address]?.toFixed() || 0);
   } else {
-    return new BigNumber(xBalances['0x1.icon']?.[currency.wrapped.address]?.toFixed() || 0);
+    if (isXToken(currency)) {
+      return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
+        if (xBalances[xChainId]) {
+          const tokenAddress = getCrossChainTokenAddress(xChainId, currency.wrapped.symbol);
+          const balance = new BigNumber(xBalances[xChainId]?.[tokenAddress ?? -1]?.toFixed() || 0);
+          sum = sum.plus(balance);
+        }
+        return sum;
+      }, new BigNumber(0));
+    } else {
+      return new BigNumber(xBalances['0x1.icon']?.[currency.wrapped.address]?.toFixed() || 0);
+    }
   }
 };
 
-export default function useSortCurrency(initialState: SortingType) {
+export default function useSortCurrency(initialState: SortingType, selectedChainId: XChainId | undefined) {
   const xBalances = useCrossChainWalletBalances();
   const signedInWallets = useSignedInWallets();
 
@@ -62,8 +73,8 @@ export default function useSortCurrency(initialState: SortingType) {
 
     if (signedInWallets.length > 0 && sortBy.key === 'value') {
       dataToSort.sort((a, b) => {
-        const aBalance = getXCurrencyBalance(xBalances, a) || new BigNumber(0);
-        const bBalance = getXCurrencyBalance(xBalances, b) || new BigNumber(0);
+        const aBalance = getXCurrencyBalance(xBalances, a, selectedChainId) || new BigNumber(0);
+        const bBalance = getXCurrencyBalance(xBalances, b, selectedChainId) || new BigNumber(0);
         const aValue = aBalance.times(new BigNumber(rateFracs[a.symbol]?.toFixed(8) || '0'));
         const bValue = bBalance.times(new BigNumber(rateFracs[b.symbol]?.toFixed(8) || '0'));
         return aValue.isGreaterThan(bValue) ? -1 * direction : 1 * direction;

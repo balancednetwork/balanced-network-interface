@@ -6,7 +6,7 @@ import { Validator } from 'icon-sdk-js';
 
 import { NETWORK_ID } from 'constants/config';
 import { canBeQueue } from 'constants/currency';
-import { MINIMUM_ICX_FOR_ACTION, ONE } from 'constants/index';
+import { ONE, NATIVE_ADDRESS } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
 import { PairInfo } from 'constants/pairs';
 import { COMBINED_TOKENS_LIST } from 'constants/tokens';
@@ -112,21 +112,27 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
   }
 }
 
-const MIN_NATIVE_CURRENCY_FOR_GAS: bigint = 10n ** 18n * BigInt(MINIMUM_ICX_FOR_ACTION); // 2 ICX
-
-export function maxAmountSpend(currencyAmount?: CurrencyAmount<Currency>): CurrencyAmount<Currency> | undefined {
+export function maxAmountSpend(
+  currencyAmount?: CurrencyAmount<Currency>,
+  xChainId: XChainId = '0x1.icon',
+): CurrencyAmount<Currency> | undefined {
   if (!currencyAmount) return undefined;
-  if (currencyAmount.currency.symbol === 'ICX') {
-    if (currencyAmount.quotient > MIN_NATIVE_CURRENCY_FOR_GAS) {
-      return CurrencyAmount.fromRawAmount(
-        currencyAmount.currency,
-        currencyAmount.quotient - MIN_NATIVE_CURRENCY_FOR_GAS,
-      );
-    } else {
-      return CurrencyAmount.fromRawAmount(currencyAmount.currency, 0n);
-    }
+
+  let minCurrencyGas: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(currencyAmount?.currency, 0);
+
+  if (
+    (xChainId === '0x1.icon' && currencyAmount.currency.symbol === 'ICX') ||
+    (xChainId === 'archway-1' && currencyAmount.currency.symbol === 'ARCH') ||
+    currencyAmount.currency.wrapped.address === NATIVE_ADDRESS
+  ) {
+    minCurrencyGas = CurrencyAmount.fromRawAmount(
+      currencyAmount.currency,
+      new BigNumber(xChainMap[xChainId].gasThreshold * 2 * Number(10 ** currencyAmount.currency.decimals)).toString(),
+    );
   }
-  return currencyAmount;
+  return currencyAmount.subtract(minCurrencyGas).greaterThan(0)
+    ? currencyAmount.subtract(minCurrencyGas)
+    : CurrencyAmount.fromRawAmount(currencyAmount.currency, 0n);
 }
 
 export function formatPercent(percent: BigNumber | undefined) {

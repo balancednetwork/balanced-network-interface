@@ -151,7 +151,7 @@ function XTransferModal() {
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={handleDismiss}>
-                  <Trans>Cancel</Trans>
+                  <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
                 </TextButton>
 
                 {isWrongChain ? (

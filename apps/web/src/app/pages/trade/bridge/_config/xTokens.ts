@@ -5,6 +5,7 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   sARCH: 'archway-1',
   AVAX: '0xa86a.avax',
   BNB: '0x38.bsc',
+  BTCB: '0x38.bsc',
   ETH: '0xa4b1.arbitrum',
 };
 

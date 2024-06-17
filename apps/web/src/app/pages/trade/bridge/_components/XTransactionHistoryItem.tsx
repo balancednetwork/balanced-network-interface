@@ -134,7 +134,7 @@ const XTransactionHistoryItem = ({ xTransaction }: { xTransaction: XTransaction 
           {xTransaction.status === XTransactionStatus.failure && (
             <>
               <Flex alignItems="center">
-                <Status style={{ transform: 'translateY(1px)' }}>Failed</Status>
+                <Status style={{ transform: 'translateY(1px)' }}>Reverted</Status>
               </Flex>
 
               <Typography color="alert" onClick={handleRemove} style={{ cursor: 'pointer' }}>

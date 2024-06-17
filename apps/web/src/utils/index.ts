@@ -129,7 +129,9 @@ export function maxAmountSpend(
       new BigNumber(xChainMap[xChainId].gasThreshold * 2 * Number(10 ** currencyAmount.currency.decimals)).toString(),
     );
   }
-  return currencyAmount.subtract(minCurrencyGas).greaterThan(0) ? currencyAmount.subtract(minCurrencyGas) : undefined;
+  return currencyAmount.subtract(minCurrencyGas).greaterThan(0)
+    ? currencyAmount.subtract(minCurrencyGas)
+    : CurrencyAmount.fromRawAmount(currencyAmount.currency, 0n);
 }
 
 export function formatPercent(percent: BigNumber | undefined) {

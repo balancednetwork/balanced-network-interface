@@ -224,7 +224,7 @@ export default function SwapPanel() {
             <Typography variant="h2">
               <Trans>For</Trans>
             </Typography>
-            <Typography as="div" hidden={!currencyBalances[Field.OUTPUT]}>
+            <Typography as="div" hidden={!recipient}>
               {recipient && (
                 <>
                   <Trans>Wallet:</Trans>{' '}

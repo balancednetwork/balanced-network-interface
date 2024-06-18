@@ -91,9 +91,6 @@ export const useXTransactionStore = create<XTransactionStore>()(
           throw new Error('WalletXService for source chain is not found');
         }
 
-        const finalDstChainXService = xServiceActions.getPublicXService(finalDestinationChainId);
-        const primaryDstChainXService = xServiceActions.getPublicXService(primaryDestinationChainId);
-
         console.log('xTransactionInput', xTransactionInput);
 
         let sourceTransactionHash;
@@ -104,6 +101,9 @@ export const useXTransactionStore = create<XTransactionStore>()(
         } else {
           throw new Error('Unsupported XTransactionType');
         }
+
+        const primaryDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(primaryDestinationChainId);
+        const finalDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(finalDestinationChainId);
 
         if (!sourceTransactionHash) {
           xTransactionActions.reset();
@@ -160,8 +160,6 @@ export const useXTransactionStore = create<XTransactionStore>()(
         });
 
         if (sourceTransaction && sourceTransaction.hash) {
-          const destinationChainInitialBlockHeight = (await primaryDstChainXService.getBlockHeight()) - 1n;
-
           const xMessage: XMessage = {
             id: `${sourceChainId}/${sourceTransaction.hash}`,
             sourceChainId: sourceChainId,
@@ -169,13 +167,8 @@ export const useXTransactionStore = create<XTransactionStore>()(
             sourceTransaction,
             status: XMessageStatus.REQUESTED,
             events: {},
-            destinationChainInitialBlockHeight,
+            destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
           };
-
-          let finalDestinationChainInitialBlockHeight = destinationChainInitialBlockHeight;
-          if (primaryDestinationChainId !== finalDestinationChainId) {
-            finalDestinationChainInitialBlockHeight = (await finalDstChainXService.getBlockHeight()) - 1n;
-          }
 
           xMessageActions.add(xMessage);
 

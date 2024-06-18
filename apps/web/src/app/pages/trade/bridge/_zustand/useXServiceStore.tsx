@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
+import { useQuery } from '@tanstack/react-query';
 
 import { usePublicClient, useWalletClient } from 'wagmi';
 
@@ -21,16 +22,30 @@ import { EvmWalletXService } from '../_xcall/EvmWalletXService';
 type XServiceStore = {
   publicXServices: Partial<Record<XChainId, IPublicXService>>;
   walletXServices: Partial<Record<XChainId, IWalletXService>>;
+  xChainHeights: Partial<Record<XChainId, bigint>>;
   getPublicXService: (xChainId: XChainId) => IPublicXService;
   setPublicXService: (xChainId: XChainId, publicXService: IPublicXService) => void;
   getWalletXService: (xChainId: XChainId) => IWalletXService | undefined;
   setWalletXService: (xChainId: XChainId, walletXService: IWalletXService) => void;
+  getXChainHeight: (xChainId: XChainId) => bigint;
+  setXChainHeight: (xChainId: XChainId, height: bigint) => void;
 };
 
 export const useXServiceStore = create<XServiceStore>()(
   immer((set, get) => ({
     publicXServices: {},
     walletXServices: {},
+    xChainHeights: {},
+
+    getXChainHeight: (xChainId: XChainId) => {
+      const height = get().xChainHeights?.[xChainId];
+      return height ? BigInt(height) : BigInt(0);
+    },
+    setXChainHeight: (xChainId: XChainId, height: bigint) => {
+      set(state => {
+        state.xChainHeights[xChainId] = height;
+      });
+    },
 
     // @ts-ignore
     getPublicXService: (xChainId: XChainId) => {
@@ -65,6 +80,12 @@ export const xServiceActions = {
   },
   setWalletXService: (xChainId: XChainId, walletXService: IWalletXService) => {
     return useXServiceStore.getState().setWalletXService(xChainId, walletXService);
+  },
+  getXChainHeight: (xChainId: XChainId) => {
+    return useXServiceStore.getState().getXChainHeight(xChainId);
+  },
+  setXChainHeight: (xChainId: XChainId, height: bigint) => {
+    return useXServiceStore.getState().setXChainHeight(xChainId, height);
   },
 };
 
@@ -178,6 +199,43 @@ export const AllPublicXServicesCreator = ({ xChains }: { xChains: XChain[] }) =>
     <>
       {xChains.map(xChain => (
         <PublicXServiceCreator key={xChain.xChainId} xChainId={xChain.xChainId} />
+      ))}
+    </>
+  );
+};
+
+export const XChainHeightUpdater = ({ xChainId }: { xChainId: XChainId }) => {
+  const publicXService = useXServiceStore(state => state.publicXServices?.[xChainId]);
+
+  useQuery({
+    queryKey: ['xChainHeight', xChainId, publicXService],
+    queryFn: async () => {
+      if (!publicXService) return 0n;
+
+      try {
+        const blockHeight = await publicXService.getBlockHeight();
+        if (blockHeight) {
+          xServiceActions.setXChainHeight(xChainId, blockHeight);
+        }
+        return blockHeight;
+      } catch (e) {
+        console.log(e);
+        return 0n;
+      }
+    },
+    refetchInterval: 1000,
+    enabled: Boolean(publicXService),
+    placeholderData: prev => prev,
+  });
+
+  return null;
+};
+
+export const AllXChainHeightsUpdater = ({ xChains }: { xChains: XChain[] }) => {
+  return (
+    <>
+      {xChains.map(xChain => (
+        <XChainHeightUpdater key={xChain.xChainId} xChainId={xChain.xChainId} />
       ))}
     </>
   );

@@ -17,7 +17,7 @@ import { useFetchStabilityFundBalances } from 'store/stabilityFund/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
 import { AllTransactionsUpdater } from './bridge/_zustand/useTransactionStore';
 import { AllXMessagesUpdater } from './bridge/_zustand/useXMessageStore';
-import { AllPublicXServicesCreator } from './bridge/_zustand/useXServiceStore';
+import { AllPublicXServicesCreator, AllXChainHeightsUpdater } from './bridge/_zustand/useXServiceStore';
 import { xChains } from './bridge/_config/xChains';
 
 export function TradePageLayout() {
@@ -56,6 +56,7 @@ export function TradePageLayout() {
       <AllTransactionsUpdater />
       <AllXMessagesUpdater />
       <AllPublicXServicesCreator xChains={xChains} />
+      <AllXChainHeightsUpdater xChains={xChains} />
 
       <Box flex={1}>
         <Flex mb={10} flexDirection="column">

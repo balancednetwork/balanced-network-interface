@@ -76,7 +76,14 @@ const calculateTrade = async (
       console.log('slippageTolerance', slippageTolerance.toSignificant(4));
       console.log('minReceived', minReceived.toSignificant(4));
       console.log('trade route path', trade.route.path);
-      console.log('trade route pairs', trade.route.pairs);
+      console.log(
+        'trade route pairs',
+        trade.route.pairs.map((pair, index) =>
+          trade.route.path[index].equals(pair.token1)
+            ? pair.token1.symbol + (pair.isStabilityFund ? ' **> ' : '-->') + pair.token0.symbol
+            : pair.token0.symbol + (pair.isStabilityFund ? ' **> ' : '-->') + pair.token1.symbol,
+        ),
+      );
       console.log('trade priceImpact', trade.priceImpact.toSignificant(4));
 
       console.log('trade mid price', trade.route.midPrice.toDebugString());

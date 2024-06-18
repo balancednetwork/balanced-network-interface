@@ -1,5 +1,5 @@
 import bnJs from 'bnJs';
-import { Address, PublicClient, WalletClient, WriteContractParameters, toHex } from 'viem';
+import { Address, PublicClient, WalletClient, WriteContractParameters, bytesToHex, toHex } from 'viem';
 import { Percent } from '@balancednetwork/sdk-core';
 
 import { XChainId } from 'app/pages/trade/bridge/types';
@@ -7,11 +7,14 @@ import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { NATIVE_ADDRESS } from 'constants/index';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 
+import { getBytesFromAddress, getBytesFromNumber, getRlpEncodedMsg } from 'app/pages/trade/bridge/utils';
+
 import { XTransactionInput } from '../_zustand/types';
 import { IWalletXService } from './types';
 import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
 import { bnUSDContractAbi } from './abis/bnUSDContractAbi';
 import { EvmPublicXService } from './EvmPublicXService';
+import { uintToBytes } from 'utils';
 
 export class EvmWalletXService extends EvmPublicXService implements IWalletXService {
   walletClient: WalletClient;
@@ -93,28 +96,43 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
       const tokenAddress = inputAmount.wrapped.currency.address;
       const amount = BigInt(inputAmount.quotient.toString());
       const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
-      const data = toHex(
-        JSON.stringify({
-          method: '_swap',
-          params: {
-            path: executionTrade.route.pathForSwap,
-            receiver: receiver,
-            minimumReceive: minReceived.quotient.toString(),
-          },
-        }),
-      );
+      // const data = toHex(
+      //   JSON.stringify({
+      //     method: '_swap',
+      //     params: {
+      //       path: executionTrade.route.pathForSwap,
+      //       receiver: receiver,
+      //       minimumReceive: minReceived.quotient.toString(),
+      //     },
+      //   }),
+      // );
+
+      const rlpEncodedData = Buffer.from(
+        getRlpEncodedMsg([
+          Buffer.from('_swap', 'utf-8'),
+          // @ts-ignore
+          Buffer.from(receiver, 'utf-8'),
+          uintToBytes(minReceived.quotient),
+          ...executionTrade.route.routeActionPath.map(action => [
+            getBytesFromNumber(action.type),
+            getBytesFromAddress(action.address),
+          ]),
+        ]),
+      ).toString('hex');
+      console.log('rlpEncodedData', rlpEncodedData);
       // check if the bridge asset is native
       const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
       const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
       let request: WriteContractParameters;
       if (isBnUSD) {
+        console.log('CCC');
         const res = await this.publicClient.simulateContract({
           account: account as Address,
           address: xChainMap[this.xChainId].contracts.bnUSD as Address,
           abi: bnUSDContractAbi,
           functionName: 'crossTransfer',
-          args: [destination, amount, data],
+          args: [destination, amount, `0x${rlpEncodedData}`],
           value: xCallFee.rollback,
         });
         request = res.request;
@@ -125,7 +143,7 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
             address: xChainMap[this.xChainId].contracts.assetManager as Address,
             abi: assetManagerContractAbi,
             functionName: 'deposit',
-            args: [tokenAddress as Address, amount, destination, data],
+            args: [tokenAddress as Address, amount, destination, `0x${rlpEncodedData}`],
             value: xCallFee.rollback,
           });
           request = res.request;
@@ -135,7 +153,7 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
             address: xChainMap[this.xChainId].contracts.assetManager as Address,
             abi: assetManagerContractAbi,
             functionName: 'depositNative',
-            args: [amount, destination, data],
+            args: [amount, destination, `0x${rlpEncodedData}`],
             value: xCallFee.rollback + amount,
           });
           request = res.request;

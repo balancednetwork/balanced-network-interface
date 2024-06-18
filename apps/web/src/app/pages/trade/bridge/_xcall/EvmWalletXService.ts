@@ -24,12 +24,22 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
   async approve(token, owner, spender, currencyAmountToApprove) {}
 
   async executeTransfer(xTransactionInput: XTransactionInput) {
-    const { direction, inputAmount, recipient: destinationAddress, account, xCallFee } = xTransactionInput;
+    const { direction, inputAmount, recipient, account, xCallFee } = xTransactionInput;
 
     if (this.walletClient) {
+      const receiver = `${direction.to}/${recipient}`;
       const tokenAddress = inputAmount.wrapped.currency.address;
-      const destination = `${direction.to}/${destinationAddress}`;
       const amount = BigInt(inputAmount.quotient.toString());
+      const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
+      const data = toHex(
+        JSON.stringify({
+          method: '_swap',
+          params: {
+            path: [],
+            receiver: receiver,
+          },
+        }),
+      );
 
       // check if the bridge asset is native
       const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
@@ -42,7 +52,7 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
           address: xChainMap[this.xChainId].contracts.bnUSD as Address,
           abi: bnUSDContractAbi,
           functionName: 'crossTransfer',
-          args: [destination, amount, '0x'],
+          args: [destination, amount, data],
           value: xCallFee.rollback,
         });
         request = res.request;
@@ -53,7 +63,7 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
             address: xChainMap[this.xChainId].contracts.assetManager as Address,
             abi: assetManagerContractAbi,
             functionName: 'deposit',
-            args: [tokenAddress as Address, amount, destination],
+            args: [tokenAddress as Address, amount, destination, data],
             value: xCallFee.rollback,
           });
           request = res.request;
@@ -63,7 +73,7 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
             address: xChainMap[this.xChainId].contracts.assetManager as Address,
             abi: assetManagerContractAbi,
             functionName: 'depositNative',
-            args: [amount, destination, '0x'],
+            args: [amount, destination, data],
             value: xCallFee.rollback + amount,
           });
           request = res.request;
@@ -89,7 +99,6 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
 
     if (this.walletClient) {
       const receiver = `${direction.to}/${recipient}`;
-
       const tokenAddress = inputAmount.wrapped.currency.address;
       const amount = BigInt(inputAmount.quotient.toString());
       const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;

@@ -17,7 +17,7 @@ import useKeyPress from 'hooks/useKeyPress';
 import { useRatesWithOracle } from 'queries/reward';
 import { useIsUserAddedToken } from 'store/user/hooks';
 import { useXCurrencyBalance } from 'store/wallet/hooks';
-import { toFraction } from 'utils';
+import { formatBigNumber, toFraction } from 'utils';
 import useSortCurrency from 'hooks/useSortCurrency';
 import { HeaderText } from 'app/pages/trade/supply/_components/AllPoolsPanel';
 import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
@@ -111,7 +111,7 @@ function CurrencyRow({
         </Flex>
         <Flex justifyContent="flex-end" alignItems="center">
           <DataText variant="p" textAlign="right">
-            {balance?.isGreaterThan(0) ? balance.toFormat(HIGH_PRICE_ASSET_DP[currency.wrapped.address] || 2) : 0}
+            {balance?.isGreaterThan(0) ? formatBigNumber(balance, 'currency') : 0}
 
             {balance?.isGreaterThan(0) && rateFracs && rateFracs[currency.symbol!] && (
               <Typography variant="span" fontSize={14} color="text2" display="block">

@@ -71,7 +71,7 @@ const LoanChainSelector = () => {
   return (
     <Flex>
       <Typography mr={1} lineHeight="1.7">
-        Blockchain:
+        Borrow / repay on:
       </Typography>
       {isCrossChain ? (
         <ClickAwayListener onClickAway={closeDropdown}>

@@ -39,6 +39,7 @@ import { DEFAULT_TOKEN_CHAIN, xTokenMap } from 'app/pages/trade/bridge/_config/x
 import { useAvailableWallets, useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { setRecipientNetwork } from 'store/loan/reducer';
 
 export const DEFAULT_COLLATERAL_TOKEN = 'sICX';
 
@@ -66,6 +67,7 @@ export function useCollateralChangeCollateralType(): (collateralType: CurrencyKe
       const defaultXChainId = DEFAULT_TOKEN_CHAIN[collateralType];
       if (defaultXChainId) {
         dispatch(changeCollateralXChain({ collateralXChain: defaultXChainId }));
+        dispatch(setRecipientNetwork({ recipientNetwork: defaultXChainId }));
       } else {
         dispatch(changeCollateralXChain({ collateralXChain: NETWORK_ID === 1 ? '0x1.icon' : '0x2.icon' }));
       }

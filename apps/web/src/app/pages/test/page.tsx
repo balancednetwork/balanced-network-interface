@@ -24,6 +24,8 @@ import { BETTER_TRADE_LESS_HOPS_THRESHOLD } from 'constants/misc';
 import { formatBigNumber, toDec } from 'utils';
 import { DEFAULT_SLIPPAGE } from 'constants/index';
 import { getBytesFromAddress, getBytesFromNumber, getRlpEncodedMsg } from 'app/pages/trade/bridge/utils';
+import { AllPublicXServicesCreator, xServiceActions } from '../trade/bridge/_zustand/useXServiceStore';
+import { xChains } from '../trade/bridge/_config/xChains';
 
 const ICX = new Token(ChainId.MAINNET, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
 const bnUSD = new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD', 'Balanced Dollar');
@@ -260,8 +262,17 @@ export function TestPage() {
     await swap(BALN, USDC, '1');
   };
 
+  const handleFetchIconEventLogs = async () => {
+    const startBlockHeight = 83073062n;
+    const endBlockHeight = 83073112n;
+    const iconPublicXService = xServiceActions.getPublicXService('0x1.icon');
+    const events = await iconPublicXService.getEventLogs({ startBlockHeight, endBlockHeight });
+    console.log(events);
+  };
+
   return (
     <Flex bg="bg3" flex={1} p={2} style={{ gap: 2 }} flexDirection={'column'}>
+      <AllPublicXServicesCreator xChains={xChains} />
       <Flex flexDirection={'row'} style={{ gap: 2 }}>
         <Button onClick={handleShowTradeICXForbnUSD} disabled={isProcessing}>
           Show Trade for swapping ICX:ICON for bnUSD:ICON
@@ -293,6 +304,9 @@ export function TestPage() {
         <Button onClick={handleSwapBALNForUSDC} disabled={isProcessing}>
           Swap BALN:ICON for USDC:ICON
         </Button>
+      </Flex>
+      <Flex>
+        <Button onClick={handleFetchIconEventLogs}>get icon event logs from 83073062 to 83073072</Button>
       </Flex>
       <Flex>{/* Result here */}</Flex>
     </Flex>

@@ -14,7 +14,9 @@ export interface LoanState {
   totalRepaid: BigNumber;
   totalCollateralSold: BigNumber;
   borrowedAmounts: {
-    [key in string]: BigNumber;
+    [CollateralType in string]: {
+      [Address in string]: BigNumber;
+    };
   };
   lockingRatios: {
     [key in string]: number;
@@ -69,9 +71,12 @@ const loanSlice = createSlice({
         state.state.inputType = inputType || state.state.inputType;
       },
     ),
-    changeBorrowedAmount: create.reducer<{ borrowedAmount: BigNumber; collateralType: string }>(
-      (state, { payload: { borrowedAmount, collateralType } }) => {
-        state.borrowedAmounts[collateralType] = borrowedAmount;
+    changeBorrowedAmount: create.reducer<{ borrowedAmount: BigNumber; address: string; collateralType: string }>(
+      (state, { payload: { borrowedAmount, address, collateralType } }) => {
+        if (!state.borrowedAmounts[collateralType]) {
+          state.borrowedAmounts[collateralType] = {};
+        }
+        state.borrowedAmounts[collateralType][address] = borrowedAmount;
       },
     ),
     changeBadDebt: create.reducer<{ badDebt: BigNumber }>((state, { payload: { badDebt } }) => {

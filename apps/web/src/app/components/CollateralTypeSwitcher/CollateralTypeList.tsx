@@ -191,11 +191,11 @@ const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
                 )}
 
                 <CollateralTypesGridItem>
-                  <Typography className="white">{`$${collateralType.loanTaken.toFormat(0)}`}</Typography>
-                  <Typography className="grey">
-                    {/* BTCB tmp fix */}
-                    {collateralType.symbol === 'BTCB' ? '$0' : `$${collateralType.loanAvailable.toFormat(0)}`}
-                  </Typography>
+                  {/* <Typography className="white">{`$-`}</Typography>
+                  <Typography className="grey"> */}
+                  {/* BTCB tmp fix */}
+                  {/* {collateralType.symbol === 'BTCB' ? '$0' : `$-`}
+                  </Typography> */}
                 </CollateralTypesGridItem>
               </CollateralTypesGrid>
             );

@@ -6,7 +6,7 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { NETWORK_ID } from 'constants/config';
+import { ICON_XCALL_NETWORK_ID, NETWORK_ID } from 'constants/config';
 import { ZERO } from 'constants/index';
 import { useBnJsContractQuery } from 'queries/utils';
 import {
@@ -39,16 +39,20 @@ import {
   setLockingRatio,
   setRecipientNetwork,
 } from './reducer';
-import { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { useAvailableWallets, useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { bnUSD } from 'constants/tokens';
+import { getCrossChainTokenAddress } from 'app/pages/trade/bridge/utils';
 
-export function useLoanBorrowedAmount(): BigNumber {
+export function useLoanBorrowedAmount(address?: string): BigNumber {
   const borrowedAmounts = useBorrowedAmounts();
   const collateralType = useCollateralType();
-  return borrowedAmounts[collateralType] ? borrowedAmounts[collateralType] : new BigNumber(0);
+  if (!address) return new BigNumber(0);
+  if (!borrowedAmounts[collateralType] || !borrowedAmounts[collateralType][address]) return new BigNumber(0);
+
+  return borrowedAmounts[collateralType][address];
 }
 
 export function useBorrowedAmounts(): AppState['loan']['borrowedAmounts'] {
@@ -71,11 +75,25 @@ export function useLoanTotalSupply(): AppState['loan']['totalSupply'] {
   return useSelector((state: AppState) => state.loan.totalSupply);
 }
 
-export function useLoanChangeBorrowedAmount(): (borrowedAmount: BigNumber, collateralType?: string) => void {
+export function useActiveLoanAddress(): string | undefined {
+  const collateralXChain = useCollateralXChain();
+  const signedInWallets = useSignedInWallets();
+  const account = signedInWallets.find(
+    w => xChainMap[w.xChainId || ICON_XCALL_NETWORK_ID].xWalletType === xChainMap[collateralXChain].xWalletType,
+  )?.address;
+
+  return collateralXChain === ICON_XCALL_NETWORK_ID ? account : `${collateralXChain}/${account}`;
+}
+
+export function useLoanChangeBorrowedAmount(): (
+  borrowedAmount: BigNumber,
+  address: string,
+  collateralType?: string,
+) => void {
   const dispatch = useDispatch();
   return React.useCallback(
-    (borrowedAmount: BigNumber, collateralType: string = DEFAULT_COLLATERAL_TOKEN) => {
-      dispatch(changeBorrowedAmount({ borrowedAmount, collateralType }));
+    (borrowedAmount: BigNumber, address: string, collateralType: string = DEFAULT_COLLATERAL_TOKEN) => {
+      dispatch(changeBorrowedAmount({ borrowedAmount, address, collateralType }));
     },
     [dispatch],
   );
@@ -121,14 +139,22 @@ export function useLoanFetchInfo(account?: string | null) {
   const supportedSymbols = React.useMemo(() => collateralTokens && Object.keys(collateralTokens), [collateralTokens]);
 
   const transactions = useAllTransactions();
+  const allWallets = useSignedInWallets();
 
   const fetchLoanInfo = React.useCallback(
-    (account: string) => {
-      if (account) {
+    (wallet: {
+      address: string;
+      xChainId: XChainId | undefined;
+    }) => {
+      const address =
+        wallet.xChainId === '0x1.icon' || wallet.xChainId === '0x2.icon'
+          ? wallet.address
+          : `${wallet.xChainId}/${wallet.address}`;
+      if (address) {
         Promise.all([
           bnJs.Loans.getAvailableAssets(),
           bnJs.bnUSD.totalSupply(),
-          bnJs.Loans.getAccountPositions(account),
+          bnJs.Loans.getAccountPositions(address),
         ])
           .then(([resultAvailableAssets, resultTotalSupply, resultDebt]: Array<any>) => {
             const bnUSDbadDebt = resultAvailableAssets['bnUSD']
@@ -136,10 +162,11 @@ export function useLoanFetchInfo(account?: string | null) {
               : new BigNumber(0);
             const bnUSDTotalSupply = BalancedJs.utils.toIcx(resultTotalSupply);
 
+            console.log('resultDebt', resultDebt);
             resultDebt.holdings &&
               Object.keys(resultDebt.holdings).forEach(token => {
                 const depositedAmount = new BigNumber(formatUnits(resultDebt.holdings[token]['bnUSD'] || 0, 18, 18));
-                changeBorrowedAmount(depositedAmount, token);
+                changeBorrowedAmount(depositedAmount, address, token);
               });
 
             changeBadDebt(bnUSDbadDebt);
@@ -147,7 +174,7 @@ export function useLoanFetchInfo(account?: string | null) {
           })
           .catch(e => {
             if (e.toString().indexOf('does not have a position')) {
-              supportedSymbols?.forEach(token => changeBorrowedAmount(new BigNumber(0), token));
+              supportedSymbols?.forEach(token => changeBorrowedAmount(new BigNumber(0), address, token));
             }
           });
       }
@@ -157,10 +184,15 @@ export function useLoanFetchInfo(account?: string | null) {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
-    if (account) {
-      fetchLoanInfo(account);
-    }
-  }, [fetchLoanInfo, account, transactions]);
+    const fetchData = async () => {
+      try {
+        await Promise.all(allWallets.map(fetchLoanInfo));
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchData();
+  }, [fetchLoanInfo, allWallets, transactions]);
 
   React.useEffect(() => {
     (async () => {
@@ -253,8 +285,9 @@ export function useLoanTotalBorrowableAmount() {
 
 export function useLoanInputAmount() {
   const { independentField, typedValue } = useLoanState();
+  const activeLoanAddress = useActiveLoanAddress();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
-  const borrowableAmountWithReserve = useBorrowableAmountWithReserve();
+  const borrowableAmountWithReserve = useBorrowableAmountWithReserve(activeLoanAddress);
 
   //  calculate dependentField value
   const parsedAmount = {
@@ -267,7 +300,8 @@ export function useLoanInputAmount() {
 
 export function useLoanAvailableAmount() {
   const inputAmount = useLoanInputAmount();
-  const borrowableAmount = useBorrowableAmountWithReserve();
+  const activeLoanAddress = useActiveLoanAddress();
+  const borrowableAmount = useBorrowableAmountWithReserve(activeLoanAddress);
 
   return borrowableAmount.minus(inputAmount).dp(2);
 }
@@ -327,16 +361,24 @@ export function useLoanDebtHoldingShare() {
   }, [loanInputAmount, loanBadDebt, loanTotalSupply]);
 }
 
-export function useLoanUsedAmount(): BigNumber {
-  const bnusdAddress = bnJs.bnUSD.address;
-  const balances = useICONWalletBalances();
-  const remainingAmountCA = balances[bnusdAddress];
-  const remainingAmount = toBigNumber(remainingAmountCA);
-  const borrowedAmount = useLoanBorrowedAmount();
+export function useLoanUsedAmount(address?: string): BigNumber {
+  const loanNetwork = useLoanRecipientNetwork();
+  const borrowedAmount = useLoanBorrowedAmount(address);
+
+  //todo: refactor for all evm balances
+  //! in wallet there is only active chain balances, so selecting non active EVM chain in loan panel leads to an error
+  const xBalances = useCrossChainWalletBalances();
+  const balances = xBalances[loanNetwork];
 
   return React.useMemo(() => {
+    const xBnUSDAddress = getCrossChainTokenAddress(loanNetwork, 'bnUSD');
+
+    if (!balances || !address || !xBnUSDAddress) return ZERO;
+
+    const remainingAmountCA = balances[xBnUSDAddress];
+    const remainingAmount = toBigNumber(remainingAmountCA);
     return borrowedAmount.isGreaterThan(remainingAmount) ? borrowedAmount.minus(remainingAmount).plus(0.1) : ZERO;
-  }, [borrowedAmount, remainingAmount]);
+  }, [balances, address, borrowedAmount, loanNetwork]);
 }
 
 export function useLoanTotalbnUSDDebt() {
@@ -449,8 +491,8 @@ export const useCollateralLockedSliderPos = () => {
   }, [lockingRatio, liquidationRatio]);
 };
 
-export function useBorrowableAmountWithReserve() {
-  const borrowedAmount = useLoanBorrowedAmount();
+export function useBorrowableAmountWithReserve(address?: string) {
+  const borrowedAmount = useLoanBorrowedAmount(address);
   const totalBorrowableAmount = useLoanTotalBorrowableAmount();
   const { originationFee = 0 } = useLoanParameters() || {};
 
@@ -526,9 +568,7 @@ export function useDerivedLoanInfo(): {
   const signedInWallets = useAvailableWallets();
   const collateralType = useCollateralType();
   const crossChainWallet = useCrossChainWalletBalances();
-  const account = signedInWallets.find(
-    w => xChainMap[w.xChainId].xWalletType === xChainMap[sourceChain].xWalletType,
-  )?.address;
+  const activeLoanAddress = useActiveLoanAddress();
 
   const { independentField, typedValue, isAdjusting, inputType } = useLoanState();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
@@ -537,9 +577,9 @@ export function useDerivedLoanInfo(): {
   const receiver = undefined;
 
   //todo: xRefactor refactor
-  const borrowedAmount = useLoanBorrowedAmount();
+  const borrowedAmount = useLoanBorrowedAmount(activeLoanAddress);
   const totalBorrowableAmount = useLoanTotalBorrowableAmount();
-  const borrowableAmountWithReserve = useBorrowableAmountWithReserve();
+  const borrowableAmountWithReserve = useBorrowableAmountWithReserve(activeLoanAddress);
   //end of xRefactor
 
   const parsedAmount = {
@@ -570,7 +610,7 @@ export function useDerivedLoanInfo(): {
   };
 
   return {
-    account,
+    account: activeLoanAddress,
     receiver,
     borrowedAmount,
     parsedAmount,

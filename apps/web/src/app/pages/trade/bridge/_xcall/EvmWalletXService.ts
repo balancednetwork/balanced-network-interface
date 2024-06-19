@@ -284,7 +284,32 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
   }
 
   async executeRepay(xTransactionInput: XTransactionInput) {
-    //todo: executeRepay EVM
-    return Promise.resolve('todo');
+    const { inputAmount, account, xCallFee, usedCollateral } = xTransactionInput;
+
+    if (!inputAmount || !usedCollateral) {
+      return;
+    }
+
+    if (this.walletClient) {
+      const amount = BigInt(inputAmount.multiply(-1).quotient.toString());
+      const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
+      const data = toHex(JSON.stringify({ _collateral: usedCollateral }));
+
+      const res = await this.publicClient.simulateContract({
+        account: account as Address,
+        address: xChainMap[this.xChainId].contracts.bnUSD as Address,
+        abi: bnUSDContractAbi,
+        functionName: 'crossTransfer',
+        args: [destination, amount, data],
+        value: xCallFee.rollback,
+      });
+
+      const request: WriteContractParameters = res.request;
+      const hash = await this.walletClient.writeContract(request);
+
+      if (hash) {
+        return hash;
+      }
+    }
   }
 }

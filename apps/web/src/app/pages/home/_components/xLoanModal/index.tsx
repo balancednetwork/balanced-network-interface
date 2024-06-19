@@ -33,6 +33,7 @@ import { Button, TextButton } from 'app/components/Button';
 import { StyledButton } from 'app/pages/trade/xswap/_components/shared';
 import { useDerivedLoanInfo, useLoanRecipientNetwork } from 'store/loan/hooks';
 import { useCollateralType } from 'store/collateral/hooks';
+import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 
 export enum XLoanAction {
   BORROW = 'BORROW',
@@ -86,8 +87,8 @@ const XLoanModal = ({ account, bnUSDAmount, sourceChain, action, originationFee,
     if (!collateralType) return;
 
     const xTransactionInput: XTransactionInput = {
-      type: XTransactionType.BORROW,
-      direction,
+      type: action === XLoanAction.BORROW ? XTransactionType.BORROW : XTransactionType.REPAY,
+      direction: action === XLoanAction.BORROW ? direction : { from: receiverNetwork, to: ICON_XCALL_NETWORK_ID },
       account,
       inputAmount: _inputAmount,
       usedCollateral: collateralType,

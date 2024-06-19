@@ -1,12 +1,9 @@
 import React from 'react';
 
 import { t, Trans } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import { CurrencyField } from 'app/components/Form';
@@ -23,16 +20,14 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/applicatio
 import { useCollateralActionHandlers, useCollateralType, useDerivedCollateralInfo } from 'store/collateral/hooks';
 import { Field } from 'store/loan/reducer';
 import {
-  useLoanBorrowedAmount,
   useLoanState,
-  useLoanTotalBorrowableAmount,
-  useLoanActionHandlers,
   useLoanUsedAmount,
   useLoanParameters,
-  useBorrowableAmountWithReserve,
   useInterestRate,
   useDerivedLoanInfo,
   useLoanRecipientNetwork,
+  useLoanActionHandlers,
+  useActiveLoanAddress,
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
@@ -198,7 +193,8 @@ const LoanPanel = () => {
 
   const roundedDisplayDiffAmount = parsedAmount[Field.LEFT].minus(borrowedAmount.dp(2));
 
-  const usedAmount = useLoanUsedAmount();
+  const activeLoanAccount = useActiveLoanAddress();
+  const usedAmount = useLoanUsedAmount(activeLoanAccount);
   const percent = borrowableAmountWithReserve.isZero()
     ? 0
     : usedAmount.div(borrowableAmountWithReserve).times(100).toNumber();
@@ -257,7 +253,7 @@ const LoanPanel = () => {
             </Flex>
           </Flex>
 
-          {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Used`} />}
+          {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Repayable`} />}
 
           <Box marginY={6}>
             <Nouislider

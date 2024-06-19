@@ -648,6 +648,11 @@ export const ThemedGlobalStyle = createGlobalStyle`
   #indicator-used .label {
     margin-left: -17px;
   }
+
+  #indicator-locked.text-repayable .label {
+    margin-left: -41px;
+  }
+
   #indicator-locked.active,
   #indicator-used.active {
     opacity: 1;

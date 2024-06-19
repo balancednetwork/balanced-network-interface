@@ -50,7 +50,7 @@ export const archwayTestnet: XChain = {
     liquidSwap: 'archway1ywv0gxrw3kv25kn9f05dtqf6577fer5pc2vewvgcagpm5p8l4kuqc4qfp6',
   },
   autoExecution: true,
-  gasThreshold: 5,
+  gasThreshold: 10,
   testnet: true,
 };
 
@@ -77,7 +77,7 @@ export const icon: XChain = {
     liquidSwap: '',
   },
   autoExecution: true,
-  gasThreshold: 2,
+  gasThreshold: 5,
   testnet: false,
 };
 

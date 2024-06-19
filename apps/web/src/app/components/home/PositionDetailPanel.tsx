@@ -294,7 +294,7 @@ const PositionDetailPanel = () => {
                       sliderInstance.current = instance;
                     }
                   }}
-                  style={{ height: '16' }}
+                  style={{ height: '16px' }}
                 />
               </Box>
 

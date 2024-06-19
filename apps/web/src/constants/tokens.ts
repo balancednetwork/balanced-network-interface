@@ -218,3 +218,5 @@ export const HIGH_PRICE_ASSET_DP: { [key in string]: number } = {
   cx288d13e1b63563459a2ac6179f237711f6851cb5: 5,
   native: 5,
 };
+
+export const ORACLE_PRICED_TOKENS = ['USDC'];

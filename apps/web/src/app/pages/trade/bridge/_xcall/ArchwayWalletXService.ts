@@ -42,80 +42,90 @@ export class ArchwayWalletXService extends ArchwayPublicXService implements IWal
   }
 
   async executeTransfer(xTransactionInput: XTransactionInput) {
-    const { direction, inputAmount, recipient: destinationAddress, account, xCallFee } = xTransactionInput;
+    const { direction, inputAmount, account, recipient, xCallFee } = xTransactionInput;
+
     const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
+    const isBnUSD = inputAmount.currency?.symbol === 'bnUSD';
 
-    if (this.walletClient) {
-      const tokenAddress = inputAmount.wrapped.currency.address;
-      const destination = `${direction.to}/${destinationAddress}`;
+    const receiver = `${direction.to}/${recipient}`;
+    const token = inputAmount.currency.wrapped;
 
-      const executeTransaction = async (msg: any, contract: string, fee: StdFee | 'auto', assetToBridge?: any) => {
-        try {
-          const hash = await this.walletClient.executeSync(
-            account,
-            contract,
-            msg,
-            fee,
-            undefined,
-            xCallFee.rollback !== 0n
-              ? [
-                  { amount: xCallFee.rollback.toString(), denom: ARCHWAY_FEE_TOKEN_SYMBOL },
-                  ...(assetToBridge ? [assetToBridge] : []),
-                ]
-              : assetToBridge
-                ? [assetToBridge]
-                : undefined,
-          );
+    const swapParams = {
+      path: [],
+      receiver: receiver,
+    };
 
-          return hash;
-        } catch (e) {
-          console.error(e);
-        }
+    const data = getBytesFromString(
+      JSON.stringify({
+        method: '_swap',
+        params: swapParams,
+      }),
+    );
+
+    if (isBnUSD) {
+      //handle icon native tokens vs spoke assets
+      const msg = {
+        cross_transfer: {
+          amount: inputAmount.quotient.toString(),
+          to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
+          data,
+        },
       };
 
-      let transaction: any;
+      const hash = await this.walletClient.executeSync(
+        account, //
+        archway.contracts.bnUSD!,
+        msg,
+        'auto',
+        undefined,
+        [{ amount: xCallFee?.rollback.toString(), denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
+      );
+      return hash;
+    } else {
       if (isDenom) {
-        const msg = { deposit_denom: { denom: tokenAddress, to: destination, data: [] } };
-        const assetToBridge = {
-          denom: tokenAddress,
-          amount: `${inputAmount.quotient}`,
+        const msg = {
+          deposit_denom: {
+            denom: token.address,
+            to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
+            data,
+          },
         };
 
-        transaction = await executeTransaction(
-          msg,
+        const hash = await this.walletClient.executeSync(
+          account,
           archway.contracts.assetManager,
+          msg,
           getFeeParam(1200000),
-          assetToBridge,
+          undefined,
+          [
+            { amount: xCallFee.rollback.toString(), denom: ARCHWAY_FEE_TOKEN_SYMBOL },
+            { amount: `${inputAmount.quotient}`, denom: token.address },
+          ],
         );
+        return hash;
       } else {
-        const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
+        const msg = {
+          deposit: {
+            token_address: token.address,
+            amount: inputAmount.quotient.toString(),
+            to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
+            data,
+          },
+        };
 
-        if (isBnUSD) {
-          const msg = {
-            cross_transfer: {
-              amount: `${inputAmount.quotient}`,
-              to: destination,
-              data: [],
-            },
-          };
-
-          transaction = await executeTransaction(msg, tokenAddress, 'auto');
-        } else {
-          const msg = {
-            deposit: {
-              token_address: tokenAddress,
-              amount: `${inputAmount.quotient}`,
-              to: destination,
-              data: [],
-            },
-          };
-
-          transaction = await executeTransaction(msg, archway.contracts.assetManager, getFeeParam(1200000));
-        }
+        const hash = await this.walletClient.executeSync(
+          account,
+          archway.contracts.assetManager,
+          msg,
+          'auto',
+          undefined,
+          [{ amount: xCallFee.rollback.toString(), denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
+        );
+        return hash;
       }
-      return transaction;
     }
   }
+
   async executeSwap(xTransactionInput: XTransactionInput) {
     const { direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } =
       xTransactionInput;
@@ -123,6 +133,9 @@ export class ArchwayWalletXService extends ArchwayPublicXService implements IWal
     if (!executionTrade || !slippageTolerance) {
       return;
     }
+
+    const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
+    const isBnUSD = inputAmount.currency?.symbol === 'bnUSD';
 
     const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
 
@@ -142,7 +155,7 @@ export class ArchwayWalletXService extends ArchwayPublicXService implements IWal
       }),
     );
 
-    if (['bnUSD'].includes(token.symbol)) {
+    if (isBnUSD) {
       //handle icon native tokens vs spoke assets
       const msg = {
         cross_transfer: {
@@ -152,30 +165,47 @@ export class ArchwayWalletXService extends ArchwayPublicXService implements IWal
         },
       };
 
-      try {
+      const hash = await this.walletClient.executeSync(
+        account, //
+        archway.contracts.bnUSD!,
+        msg,
+        'auto',
+        undefined,
+        [{ amount: xCallFee?.rollback.toString(), denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
+      );
+      return hash;
+    } else {
+      if (isDenom) {
+        const msg = {
+          deposit_denom: {
+            denom: token.address,
+            to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
+            data,
+          },
+        };
+
         const hash = await this.walletClient.executeSync(
-          account, //
-          archway.contracts.bnUSD!,
+          account,
+          archway.contracts.assetManager,
           msg,
-          'auto',
+          getFeeParam(1200000),
           undefined,
-          [{ amount: xCallFee?.rollback.toString(), denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
+          [
+            { amount: xCallFee.rollback.toString(), denom: ARCHWAY_FEE_TOKEN_SYMBOL },
+            { amount: `${inputAmount.quotient}`, denom: token.address },
+          ],
         );
         return hash;
-      } catch (e) {
-        console.error(e);
-      }
-    } else {
-      const msg = {
-        deposit: {
-          token_address: token.address,
-          amount: inputAmount.quotient.toString(),
-          to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
-          data,
-        },
-      };
+      } else {
+        const msg = {
+          deposit: {
+            token_address: token.address,
+            amount: inputAmount.quotient.toString(),
+            to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
+            data,
+          },
+        };
 
-      try {
         const hash = await this.walletClient.executeSync(
           account,
           archway.contracts.assetManager,
@@ -185,8 +215,6 @@ export class ArchwayWalletXService extends ArchwayPublicXService implements IWal
           [{ amount: xCallFee.rollback.toString(), denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
         );
         return hash;
-      } catch (e) {
-        console.error(e);
       }
     }
   }

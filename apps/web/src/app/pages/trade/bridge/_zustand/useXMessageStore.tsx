@@ -202,6 +202,10 @@ export const useXMessageStore = create<XMessageStore>()(
     {
       name: 'xMessage-store',
       storage: createJSONStorage(() => localStorage, jsonStorageOptions),
+      version: 1,
+      migrate: (state, version) => {
+        return { messages: {} };
+      },
     },
   ),
   //   { name: 'XMessageStore' },

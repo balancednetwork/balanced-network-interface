@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { BalancedJs, CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
 import { t, Trans } from '@lingui/macro';
@@ -9,9 +9,7 @@ import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { XChainId } from 'app/pages/trade/bridge/types';
-import { getNetworkDisplayName } from 'app/pages/trade/bridge/utils';
+import { XChainId, XWalletType } from 'app/pages/trade/bridge/types';
 import { IconButton, Button } from 'app/components/Button';
 import { Link } from 'app/components/Link';
 import Logo from 'app/components/Logo';
@@ -22,7 +20,6 @@ import WalletIcon from 'assets/icons/wallet.svg';
 import bnJs from 'bnJs';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
-import { useSignedInWallets } from 'store/wallet/hooks';
 import { shortenAddress } from 'utils';
 
 import ArchwayWallet from '../ArchwayWallet';
@@ -31,7 +28,9 @@ import { notificationCSS } from '../ICONWallet/wallets/utils';
 import { MouseoverTooltip } from '../Tooltip';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import EVMWallet from '../EVMWallet';
-import useEVMReact from 'app/pages/trade/bridge/_hooks/useEVMReact';
+import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import useWallets, { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { Placement } from '@popperjs/core';
 
 const StyledLogo = styled(Logo)`
   margin-right: 15px;
@@ -47,9 +46,9 @@ const WalletInfo = styled(Box)`
   min-height: 42px;
 `;
 
-const WalletButtonWrapper = styled(Box)<{ hasnotification?: boolean }>`
+const WalletButtonWrapper = styled(Box)<{ $hasnotification?: boolean }>`
   position: relative;
-  ${({ hasnotification }) => (hasnotification ? notificationCSS : '')}
+  ${({ $hasnotification }) => ($hasnotification ? notificationCSS : '')}
   &::before, &::after {
     left: 7px;
     top: 13px;
@@ -105,12 +104,12 @@ export const ChainTabs = styled(Flex)`
   padding: 0 25px 25px;
 `;
 
-export const ChainTabButton = styled(Button)<{ active?: boolean }>`
+export const ChainTabButton = styled(Button)<{ $active?: boolean }>`
   padding: 1px 12px;
   border-radius: 100px;
   color: #ffffff;
   font-size: 14px;
-  background-color: ${({ theme, active }) => (active ? theme.colors.primary : theme.colors.bg3)};
+  background-color: ${({ theme, $active }) => ($active ? theme.colors.primary : theme.colors.bg3)};
   transition: background-color 0.3s ease;
   margin-right: 10px;
 
@@ -129,10 +128,12 @@ export const CopyableAddress = ({
   account,
   closeAfterDelay,
   copyIcon,
+  placement = 'left',
 }: {
   account: string | null | undefined;
   closeAfterDelay?: number;
   copyIcon?: boolean;
+  placement?: Placement;
 }) => {
   const [isCopied, updateCopyState] = React.useState(false);
   const copyAddress = React.useCallback(async (account: string) => {
@@ -142,8 +143,8 @@ export const CopyableAddress = ({
 
   return account ? (
     <MouseoverTooltip
-      text={isCopied ? t`Copied` : t`Copy address`}
-      placement={'left'}
+      text={isCopied ? t`Copied` : t`Copy`}
+      placement={placement}
       noArrowAndBorder
       closeAfterDelay={closeAfterDelay}
       zIndex={9999}
@@ -161,10 +162,12 @@ export const CopyableAddress = ({
   ) : null;
 };
 
-const WalletUIs = {
+const WalletUIs: Partial<Record<XChainId, any>> = {
   '0x1.icon': ICONWallet,
   'archway-1': ArchwayWallet,
   '0xa86a.avax': EVMWallet,
+  '0x38.bsc': EVMWallet,
+  '0xa4b1.arbitrum': EVMWallet,
 };
 
 function useClaimableICX(): UseQueryResult<BigNumber> {
@@ -186,17 +189,15 @@ function useClaimableICX(): UseQueryResult<BigNumber> {
 export default function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
   const upSmall = useMedia('(min-width: 600px)');
-  const { disconnect } = useIconReact();
-  const { disconnect: disconnectKeplr } = useArchwayContext();
-  const { disconnect: disconnectAvax } = useEVMReact();
-  const [activeTab, setActiveTab] = useState<XChainId | null>(null);
-  const signedInWallets = useSignedInWallets();
+  const [activeTab, setActiveTab] = useState<XChainId | null | undefined>(null);
+  const wallets = useAvailableWallets();
+  const allWallets = useWallets();
   const { data: claimableICX } = useClaimableICX();
 
   useEffect(() => {
-    if (signedInWallets.length > 0) setActiveTab(signedInWallets[0].chainId);
+    if (wallets.length > 0) setActiveTab(wallets[0].xChainId);
     else setActiveTab(null);
-  }, [signedInWallets]);
+  }, [wallets]);
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
   const walletButtonRef = React.useRef<HTMLElement>(null);
@@ -218,15 +219,15 @@ export default function Header(props: { title?: string; className?: string }) {
 
   const handleDisconnectWallet = async () => {
     closeWalletMenu();
-    disconnectKeplr();
-    disconnectAvax();
 
     if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
       bnJs.contractSettings.ledgerSettings.transport.close();
     }
 
     // disconnect function includes resetContractLedgerSettings, so put it below the transport.close()
-    disconnect();
+    allWallets[XWalletType.ICON]?.disconnect();
+    allWallets[XWalletType.COSMOS]?.disconnect();
+    allWallets[XWalletType.EVM]?.disconnect();
   };
 
   const handleWalletClose = e => {
@@ -257,7 +258,7 @@ export default function Header(props: { title?: string; className?: string }) {
           )}
         </Flex>
 
-        {signedInWallets.length === 0 && (
+        {wallets.length === 0 && (
           <Flex alignItems="center">
             <Button onClick={toggleWalletModal}>
               <Trans>Sign in</Trans>
@@ -265,21 +266,21 @@ export default function Header(props: { title?: string; className?: string }) {
           </Flex>
         )}
 
-        {signedInWallets.length > 0 && (
+        {wallets.length > 0 && (
           <Flex alignItems="center">
             <WalletInfo>
               {upSmall && (
                 <>
-                  {signedInWallets.length > 1 ? (
+                  {wallets.length > 1 ? (
                     <>
                       <Typography variant="p" textAlign="right">
                         <Trans>Multi-chain wallet</Trans>
                       </Typography>
                       <ConnectionStatus>
-                        {signedInWallets.map((wallet, index) => (
+                        {wallets.map((wallet, index) => (
                           <span key={index}>
-                            {wallet.chain.name}
-                            {index + 1 < signedInWallets.length ? ', ' : ''}
+                            {xChainMap[wallet.xChainId].name}
+                            {index + 1 < wallets.length ? ', ' : ''}
                           </span>
                         ))}
                       </ConnectionStatus>
@@ -287,16 +288,16 @@ export default function Header(props: { title?: string; className?: string }) {
                   ) : (
                     <>
                       <Typography variant="p" textAlign="right">
-                        {t`${signedInWallets[0].chain.name} wallet`}
+                        {t`${xChainMap[wallets[0].xChainId].name} wallet`}
                       </Typography>
-                      <CopyableAddress account={signedInWallets[0].address} />
+                      <CopyableAddress account={wallets[0].address} />
                     </>
                   )}
                 </>
               )}
             </WalletInfo>
 
-            <WalletButtonWrapper hasnotification={claimableICX?.isGreaterThan(0)}>
+            <WalletButtonWrapper $hasnotification={claimableICX?.isGreaterThan(0)}>
               <ClickAwayListener onClickAway={e => handleWalletClose(e)}>
                 <div>
                   <IconButton ref={walletButtonRef} onClick={toggleWalletMenu}>
@@ -325,25 +326,25 @@ export default function Header(props: { title?: string; className?: string }) {
                           </WalletButton>
                         </WalletButtons>
                       </WalletMenu>
-                      {signedInWallets.length === 1 && !upSmall && (
+                      {wallets.length === 1 && !upSmall && (
                         <Flex justifyContent={'flex-end'} width={'100%'} padding={'2px 25px 25px'}>
-                          <CopyableAddress account={signedInWallets[0].address} closeAfterDelay={1000} copyIcon />
+                          <CopyableAddress account={wallets[0].address} closeAfterDelay={1000} copyIcon />
                         </Flex>
                       )}
-                      {signedInWallets.length > 1 && (
+                      {wallets.length > 1 && (
                         <ChainTabs>
-                          {signedInWallets.map(wallet => (
+                          {wallets.map(wallet => (
                             <ChainTabButton
-                              onClick={() => handleChainTabClick(wallet.chainId)}
-                              active={wallet.chainId === activeTab}
+                              onClick={() => handleChainTabClick(wallet.xChainId)}
+                              $active={wallet.xChainId === activeTab}
                             >
-                              {wallet.chain.name}
+                              {xChainMap[wallet.xChainId].name}
                             </ChainTabButton>
                           ))}
                         </ChainTabs>
                       )}
 
-                      {WalletUI && <WalletUI anchor={anchor} setAnchor={setAnchor} />}
+                      {WalletUI && <WalletUI anchor={anchor} setAnchor={setAnchor} xChainId={activeTab} />}
                     </WalletWrap>
                   </DropdownPopper>
                 </div>

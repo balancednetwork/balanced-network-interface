@@ -35,7 +35,7 @@ const initialState: BridgeState = {
   currency: undefined,
 
   [Field.FROM]: {
-    chainId: 'archway-1',
+    chainId: '0xa4b1.arbitrum',
     currency: undefined,
     percent: 0,
   },

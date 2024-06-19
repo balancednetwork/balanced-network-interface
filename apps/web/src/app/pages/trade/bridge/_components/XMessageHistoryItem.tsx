@@ -1,3 +1,4 @@
+// TODO: deprecated
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { Box, Flex } from 'rebass';
@@ -8,7 +9,8 @@ import { Typography } from 'app/theme';
 import ArrowIcon from 'assets/icons/arrow-white.svg';
 
 import Spinner from 'app/components/Spinner';
-import { XCallMessage, XCallMessageStatus, XCallTransaction } from '../_zustand/types';
+import { XMessage, XMessageStatus, XTransaction } from '../_zustand/types';
+import { xMessageActions } from '../_zustand/useXMessageStore';
 
 const Wrap = styled(Box)`
   display: grid;
@@ -67,36 +69,31 @@ const FailedX = styled(Box)`
   }
 `;
 
-const XCallMessageHistoryItem = ({
-  xCallMessage,
-  xCallTransaction,
-}: { xCallMessage: XCallMessage; xCallTransaction: XCallTransaction }) => {
-  const { sourceChainId, destinationChainId } = xCallMessage;
+const XMessageHistoryItem = ({ xMessage, xTransaction }: { xMessage: XMessage; xTransaction: XTransaction }) => {
+  const { sourceChainId, destinationChainId } = xMessage;
 
   const isPending = useMemo(() => {
-    return (
-      xCallMessage.status !== XCallMessageStatus.FAILED && xCallMessage.status !== XCallMessageStatus.CALL_EXECUTED
-    );
-  }, [xCallMessage]);
+    return xMessage.status !== XMessageStatus.FAILED && xMessage.status !== XMessageStatus.CALL_EXECUTED;
+  }, [xMessage]);
 
   const statusMessage = useMemo(() => {
-    switch (xCallMessage.status) {
-      case XCallMessageStatus.FAILED:
+    switch (xMessage.status) {
+      case XMessageStatus.FAILED:
         return `Failed`;
-      case XCallMessageStatus.REQUESTED:
-      case XCallMessageStatus.AWAITING_CALL_MESSAGE_SENT:
-      case XCallMessageStatus.CALL_MESSAGE_SENT:
-      case XCallMessageStatus.CALL_MESSAGE:
+      case XMessageStatus.REQUESTED:
+      case XMessageStatus.AWAITING_CALL_MESSAGE_SENT:
+      case XMessageStatus.CALL_MESSAGE_SENT:
+      case XMessageStatus.CALL_MESSAGE:
         return `Pending`;
-      case XCallMessageStatus.CALL_EXECUTED:
+      case XMessageStatus.CALL_EXECUTED:
         return `Complete`;
       default:
         return `Unknown`;
     }
-  }, [xCallMessage]);
+  }, [xMessage]);
 
   const [elapsedTime, setElapsedTime] = useState(0);
-  const timestamp = xCallMessage.sourceTransaction.timestamp;
+  const timestamp = xMessage.sourceTransaction.timestamp;
 
   useEffect(() => {
     if (isPending) {
@@ -113,6 +110,10 @@ const XCallMessageHistoryItem = ({
   const minutes = Math.floor(elapsedTime / 60);
   const seconds = elapsedTime % 60;
 
+  const handleRemove = () => {
+    xMessageActions.remove(xMessage.id);
+  };
+
   return (
     <>
       <Wrap>
@@ -123,10 +124,10 @@ const XCallMessageHistoryItem = ({
         </Flex>
         <Flex justifyContent="center" flexDirection="column">
           <Typography fontWeight={700} color="text">
-            {xCallTransaction.attributes?.descriptionAction}
+            {xTransaction.attributes?.descriptionAction}
           </Typography>
           <Typography opacity={0.75} fontSize={14}>
-            {xCallTransaction.attributes?.descriptionAmount}
+            {xTransaction.attributes?.descriptionAmount}
           </Typography>
         </Flex>
         <Flex justifyContent="center" flexDirection="column" alignItems="flex-end" className="status-check">
@@ -141,9 +142,15 @@ const XCallMessageHistoryItem = ({
               </Typography>
             </>
           ) : (
-            <Flex alignItems="center">
-              <Status style={{ transform: 'translateY(1px)' }}>{statusMessage}</Status>
-            </Flex>
+            <>
+              <Flex alignItems="center">
+                <Status style={{ transform: 'translateY(1px)' }}>{statusMessage}</Status>
+              </Flex>
+
+              <Typography color="alert" onClick={handleRemove} style={{ cursor: 'pointer' }}>
+                REMOVE
+              </Typography>
+            </>
           )}
         </Flex>
       </Wrap>
@@ -151,4 +158,4 @@ const XCallMessageHistoryItem = ({
   );
 };
 
-export default XCallMessageHistoryItem;
+export default XMessageHistoryItem;

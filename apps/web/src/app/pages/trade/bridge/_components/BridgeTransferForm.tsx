@@ -5,26 +5,24 @@ import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
 import { Typography } from 'app/theme';
 import FlipIcon from 'assets/icons/horizontal-flip.svg';
 import { useBridgeActionHandlers, useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from 'store/bridge/hooks';
-import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
+import { useCrossChainWalletBalances } from 'store/wallet/hooks';
 
 import AddressInputPanel from 'app/components/AddressInputPanel';
 import { Button } from 'app/components/Button';
 import { CurrencySelectionType } from 'app/components/SearchModal/CurrencySearch';
 import { AutoColumn } from 'app/pages/trade/xswap/_components/SwapPanel';
 import { BrightPanel } from 'app/pages/trade/supply/_components/utils';
-import { XCallDescription } from 'app/components/XCallDescription';
 
 import ChainSelector from './ChainSelector';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/bridge/reducer';
 import useXCallFee from '../_hooks/useXCallFee';
-import useXCallProtocol from '../_hooks/useXCallProtocol';
 import { xChainMap } from '../_config/xChains';
 import { validateAddress } from 'utils';
+import { useAvailableWallets } from '../_hooks/useWallets';
 
 export default function BridgeTransferForm({ openModal }) {
   const crossChainWallet = useCrossChainWalletBalances();
@@ -36,7 +34,7 @@ export default function BridgeTransferForm({ openModal }) {
   const bridgeDirection = useBridgeDirection();
   const percentAmount = bridgeState[Field.FROM].percent;
 
-  const signedInWallets = useSignedInWallets();
+  const signedInWallets = useAvailableWallets();
   const toggleWalletModal = useWalletModalToggle();
 
   const handleInputPercentSelect = (percent: number) => {
@@ -48,7 +46,9 @@ export default function BridgeTransferForm({ openModal }) {
   };
 
   React.useEffect(() => {
-    const destinationWallet = signedInWallets.find(wallet => wallet.chainId === bridgeDirection.to);
+    const destinationWallet = signedInWallets.find(
+      wallet => xChainMap[wallet.xChainId].xWalletType === xChainMap[bridgeDirection.to].xWalletType,
+    );
     if (destinationWallet) {
       onChangeRecipient(destinationWallet.address);
     } else {
@@ -66,7 +66,6 @@ export default function BridgeTransferForm({ openModal }) {
     }
   };
 
-  const protocol = useXCallProtocol(bridgeDirection.from, bridgeDirection.to);
   const { formattedXCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
 
   React.useEffect(() => {
@@ -107,6 +106,7 @@ export default function BridgeTransferForm({ openModal }) {
               percent={percentAmount}
               currencySelectionType={CurrencySelectionType.BRIDGE}
               showCommunityListControl={false}
+              xChainId={bridgeDirection.from}
             />
           </Flex>
 
@@ -121,21 +121,6 @@ export default function BridgeTransferForm({ openModal }) {
         </AutoColumn>
 
         <AutoColumn gap="5px" mt={5}>
-          <Flex alignItems="center" justifyContent="space-between">
-            <Typography>
-              <Trans>Bridge</Trans>
-            </Typography>
-
-            {protocol && (
-              <Typography color="text">
-                {protocol.name} + GMP
-                <QuestionWrapper style={{ marginLeft: '3px', transform: 'translateY(1px)' }}>
-                  <QuestionHelper width={310} text={<XCallDescription protocol={protocol} />} />
-                </QuestionWrapper>
-              </Typography>
-            )}
-          </Flex>
-
           <Flex alignItems="center" justifyContent="space-between">
             <Typography>
               <Trans>Fee</Trans>

@@ -80,7 +80,7 @@ export default function ProposalsPanel() {
                         variant="h3"
                         fontSize={16}
                         mt={-1}
-                        notification={!!shouldShowNotification(proposal)}
+                        $notification={!!shouldShowNotification(proposal)}
                       >
                         {normalizeContent(proposal.name, 55)}
                       </StyledTypography>

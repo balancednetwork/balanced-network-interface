@@ -32,42 +32,30 @@ export const getNetworkDisplayName = (chain: XChainId) => {
   return xChainMap[chain].name;
 };
 
-export const getArchwayCounterToken = (symbol?: string) => {
-  if (symbol) {
-    return xTokenMap['archway-1']?.['0x1.icon']?.find(t => t.symbol === symbol);
-  }
-};
-
 export const getCrossChainTokenAddress = (chain: XChainId, tokenSymbol?: string): string | undefined => {
   if (!tokenSymbol) return;
 
-  return Object.values(xTokenMap[chain] || {})
-    .flat()
-    .find(t => t.symbol === tokenSymbol)?.address;
+  return xTokenMap[chain].find(t => t.symbol === tokenSymbol)?.address;
 };
 
 export const getCrossChainTokenBySymbol = (chain: XChainId, symbol?: string) => {
   if (!symbol) return;
 
-  return Object.values(xTokenMap[chain] || {})
-    .flat()
-    .find(t => t.symbol === symbol);
+  return Object.values(xTokenMap[chain]).find(t => t.symbol === symbol);
 };
 
 export const isXToken = (token?: Currency) => {
   if (!token) return false;
 
   return Object.values(xTokenMap)
-    .flatMap(t => Object.values(t).flat())
+    .flat()
     .some(t => t.address === token.wrapped.address);
 };
 
 export const getAvailableXChains = (currency?: Currency | null): XChain[] | undefined => {
   if (!currency) return;
 
-  const allXTokens = Object.values(xTokenMap)
-    .map(x => Object.values(x))
-    .flat(2);
+  const allXTokens = Object.values(xTokenMap).flat();
 
   const xChainIds = allXTokens.filter(t => t.symbol === currency.symbol).map(t => t.xChainId);
 

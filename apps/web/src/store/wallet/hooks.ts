@@ -14,8 +14,7 @@ import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useARCH } from 'app/pages/trade/bridge/_config/tokens';
 import { isDenomAsset } from 'app/_xcall/archway/utils';
-import { SUPPORTED_XCALL_CHAINS } from 'app/pages/trade/bridge/_config/xTokens';
-import { XChain, XChainId } from 'app/pages/trade/bridge/types';
+import { XChainId } from 'app/pages/trade/bridge/types';
 import { getCrossChainTokenAddress, isXToken } from 'app/pages/trade/bridge/utils';
 import bnJs from 'bnJs';
 import { MINIMUM_ICX_FOR_TX, NATIVE_ADDRESS } from 'constants/index';
@@ -35,7 +34,7 @@ import { useUserAddedTokens } from 'store/user/hooks';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
-import { changeArchwayBalances, changeBalances, changeICONBalances } from './reducer';
+import { changeBalances, changeICONBalances } from './reducer';
 
 export function useCrossChainWalletBalances(): AppState['wallet'] {
   return useSelector((state: AppState) => state.wallet);
@@ -124,35 +123,44 @@ export function useArchwayBalances(
   });
 }
 
-import { coreConfig } from 'config/wagmi';
+import { coreConfig, viemClients } from 'config/wagmi';
 import { erc20Abi } from 'viem';
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount, useBalance, usePublicClient } from 'wagmi';
 import { multicall } from '@wagmi/core';
-import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
+import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 
-export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined) {
-  const { data } = useBalance({ address: account, query: { refetchInterval: 5_000 } });
+export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined, xChainId: XChainId) {
+  const chainId = xChainMap[xChainId].id;
+  const { data } = useBalance({ address: account, chainId: chainId as number, query: { refetchInterval: 5_000 } });
+
+  const xChain = xChainMap[xChainId];
   const nativeBalance = useMemo(
     () =>
       data?.value
-        ? CurrencyAmount.fromRawAmount(new Token(43114, NATIVE_ADDRESS, 18, 'AVAX', 'AVAX'), data?.value.toString())
+        ? CurrencyAmount.fromRawAmount(
+            new Token(xChain.id, NATIVE_ADDRESS, 18, xChain.nativeCurrency.symbol, xChain.nativeCurrency.name),
+            data?.value.toString(),
+          )
         : undefined,
-    [data],
+    [data, xChain],
   );
 
   const _tokens = useMemo(() => tokens?.filter(token => token.address !== NATIVE_ADDRESS), [tokens]);
-
+  const client = usePublicClient();
+  client?.multicall;
   return useQuery({
-    queryKey: [account, _tokens, nativeBalance],
+    queryKey: [account, _tokens, nativeBalance, chainId],
     queryFn: async () => {
-      if (!account || !_tokens || !nativeBalance) return;
-      const result = await multicall(coreConfig, {
+      if (!account || !_tokens || !nativeBalance || !chainId) return;
+
+      const result = await viemClients[chainId].multicall({
         contracts: _tokens.map(token => ({
           abi: erc20Abi,
           address: token.address as `0x${string}`,
           functionName: 'balanceOf',
           args: [account],
+          chainId: chainId,
         })),
       });
 
@@ -190,16 +198,30 @@ export function useWalletFetchBalances(account?: string | null, accountArch?: st
   const tokensArch = useXTokens('archway-1') || [];
   const { data: balancesArch } = useArchwayBalances(accountArch || undefined, tokensArch);
   React.useEffect(() => {
-    balancesArch && dispatch(changeArchwayBalances(balancesArch));
+    balancesArch && dispatch(changeBalances({ xChainId: 'archway-1', balances: balancesArch }));
   }, [balancesArch, dispatch]);
 
-  // fetch balances on avax
   const { address } = useAccount();
+  // fetch balances on avax
   const avaxTokens = useXTokens('0xa86a.avax');
-  const { data: avaxBalances } = useEVMBalances(address, avaxTokens);
+  const { data: avaxBalances } = useEVMBalances(address, avaxTokens, '0xa86a.avax');
   React.useEffect(() => {
     avaxBalances && dispatch(changeBalances({ xChainId: '0xa86a.avax', balances: avaxBalances }));
   }, [avaxBalances, dispatch]);
+
+  // fetch balances on bsc
+  const bscTokens = useXTokens('0x38.bsc');
+  const { data: bscBalances } = useEVMBalances(address, bscTokens, '0x38.bsc');
+  React.useEffect(() => {
+    bscBalances && dispatch(changeBalances({ xChainId: '0x38.bsc', balances: bscBalances }));
+  }, [bscBalances, dispatch]);
+
+  // fetch balances on arb
+  const arbTokens = useXTokens('0xa4b1.arbitrum');
+  const { data: arbBalances } = useEVMBalances(address, arbTokens, '0xa4b1.arbitrum');
+  React.useEffect(() => {
+    arbBalances && dispatch(changeBalances({ xChainId: '0xa4b1.arbitrum', balances: arbBalances }));
+  }, [arbBalances, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {
@@ -332,25 +354,32 @@ export function useCrossChainCurrencyBalances(
   }, [crossChainBalances, account, currencies, icxBalance]);
 }
 
-export const useXCurrencyBalance = (currency: Currency): BigNumber | undefined => {
+export const useXCurrencyBalance = (
+  currency: Currency,
+  selectedChainId: XChainId | undefined,
+): BigNumber | undefined => {
   const xBalances = useCrossChainWalletBalances();
 
   return React.useMemo(() => {
     if (!xBalances) return;
 
-    if (isXToken(currency)) {
-      return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
-        if (xBalances[xChainId]) {
-          const tokenAddress = getCrossChainTokenAddress(xChainId, currency.wrapped.symbol);
-          const balance = new BigNumber(xBalances[xChainId]?.[tokenAddress ?? -1]?.toFixed() || 0);
-          sum = sum.plus(balance);
-        }
-        return sum;
-      }, new BigNumber(0));
+    if (selectedChainId) {
+      return new BigNumber(xBalances[selectedChainId]?.[currency.wrapped.address]?.toFixed() || 0);
     } else {
-      return new BigNumber(xBalances['0x1.icon']?.[currency.wrapped.address]?.toFixed() || 0);
+      if (isXToken(currency)) {
+        return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
+          if (xBalances[xChainId]) {
+            const tokenAddress = getCrossChainTokenAddress(xChainId, currency.wrapped.symbol);
+            const balance = new BigNumber(xBalances[xChainId]?.[tokenAddress ?? -1]?.toFixed() || 0);
+            sum = sum.plus(balance);
+          }
+          return sum;
+        }, new BigNumber(0));
+      } else {
+        return new BigNumber(xBalances['0x1.icon']?.[currency.wrapped.address]?.toFixed() || 0);
+      }
     }
-  }, [xBalances, currency]);
+  }, [xBalances, currency, selectedChainId]);
 };
 
 export function useCurrencyBalances(
@@ -444,15 +473,4 @@ export function useLiquidityTokenBalance(account: string | undefined | null, pai
   const query = useBnJsContractQuery<string>('Dex', 'balanceOf', [account, pair?.poolId]);
   const { data } = query;
   return pair && data ? CurrencyAmount.fromRawAmount<Token>(pair.liquidityToken, data) : undefined;
-}
-
-export function useSignedInWallets(): { chain: XChain; chainId: XChainId; address: string }[] {
-  const wallets = useWallets();
-  return useMemo(
-    () =>
-      Object.values(wallets)
-        .filter(w => !!w.account)
-        .map(w => ({ chainId: w.chain.xChainId, address: w.account!, chain: w.chain })),
-    [wallets],
-  );
 }

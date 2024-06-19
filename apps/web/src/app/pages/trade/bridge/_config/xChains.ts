@@ -23,7 +23,8 @@ export const archway: XChain = {
     liquidSwap: 'archway1ywv0gxrw3kv25kn9f05dtqf6577fer5pc2vewvgcagpm5p8l4kuqc4qfp6',
   },
   autoExecution: true,
-  gasThreshold: 1,
+  gasThreshold: 2,
+  testnet: false,
 };
 
 export const archwayTestnet: XChain = {
@@ -49,7 +50,8 @@ export const archwayTestnet: XChain = {
     liquidSwap: 'archway1ywv0gxrw3kv25kn9f05dtqf6577fer5pc2vewvgcagpm5p8l4kuqc4qfp6',
   },
   autoExecution: true,
-  gasThreshold: 5,
+  gasThreshold: 10,
+  testnet: true,
 };
 
 export const icon: XChain = {
@@ -75,7 +77,8 @@ export const icon: XChain = {
     liquidSwap: '',
   },
   autoExecution: true,
-  gasThreshold: 1,
+  gasThreshold: 5,
+  testnet: false,
 };
 
 export const lisbon: XChain = {
@@ -102,6 +105,7 @@ export const lisbon: XChain = {
   },
   autoExecution: true,
   gasThreshold: 4,
+  testnet: true,
 };
 
 export const avalanche: XChain = {
@@ -125,7 +129,8 @@ export const avalanche: XChain = {
     bnUSD: '0xdBDd50997361522495EcFE57EBb6850dA0E4C699',
   },
   autoExecution: true,
-  gasThreshold: 0.01,
+  gasThreshold: 0.05,
+  testnet: false,
 };
 
 export const fuji: XChain = {
@@ -150,17 +155,58 @@ export const fuji: XChain = {
   },
   autoExecution: true,
   gasThreshold: 0,
+  testnet: true,
 };
 
-export const xChains = [
-  archway,
-  icon,
-  avalanche,
-  // remove testnets
-  // archwayTestnet,
-  // lisbon,
-  // fuji,
-];
+export const bsc: XChain = {
+  id: 56,
+  name: 'BNB Chain',
+  xChainId: '0x38.bsc',
+  xChainType: 'EVM',
+  xWalletType: XWalletType.EVM,
+  tracker: 'https://bscscan.com/',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'BNB',
+    symbol: 'BNB',
+  },
+  rpc: {
+    http: 'https://bsc-dataseed.bnbchain.org',
+  },
+  contracts: {
+    xCall: '0xfc83a3f252090b26f92f91dfb9dc3eb710adaf1b',
+    assetManager: '0x69e81Cea7889608A63947814893ad1B86DcC03Aa',
+    bnUSD: '0xc65132325bD4FcF2Ec5F3a9375487163B6999206',
+  },
+  autoExecution: true,
+  gasThreshold: 0.005,
+  testnet: false,
+};
+
+export const arbitrum: XChain = {
+  id: 42161,
+  name: 'Arbitrum',
+  xChainId: '0xa4b1.arbitrum',
+  xChainType: 'EVM',
+  xWalletType: XWalletType.EVM,
+  tracker: 'https://arbiscan.io/',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'ETH',
+    symbol: 'ETH',
+  },
+  rpc: {
+    http: 'https://arb1.arbitrum.io/rpc',
+  },
+  contracts: {
+    xCall: '0xfC83a3F252090B26f92F91DFB9dC3Eb710AdAf1b',
+    assetManager: '0x78b7CD9308287DEb724527d8703c889e2d6C3708',
+    bnUSD: '0xA67f4b09Eed22f8201Ee0637CbE9d654E63F946e',
+  },
+  autoExecution: true,
+  gasThreshold: 0.0001,
+  testnet: false,
+};
 
 export const xChainMap: { [key in XChainId]: XChain } = {
   '0x1.icon': icon,
@@ -169,7 +215,12 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   '0xa86a.avax': avalanche,
   archway: archwayTestnet,
   'archway-1': archway,
+  '0x38.bsc': bsc,
+  '0xa4b1.arbitrum': arbitrum,
 };
+
+export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);
+export const SUPPORTED_XCALL_CHAINS = xChains.map(({ xChainId }) => xChainId);
 
 export const sortChains = (a: XChainId, b: XChainId): [XChainId, XChainId] => {
   return a.localeCompare(b) > 0 ? [a, b] : [b, a];
@@ -179,3 +230,17 @@ export const BRIDGE_PAIRS: BridgePair[] = [
   { chains: sortChains('0x1.icon', 'archway-1'), protocol: MessagingProtocolId.IBC },
   { chains: sortChains('0x1.icon', '0xa86a.avax'), protocol: MessagingProtocolId.C_RELAY },
 ];
+
+/** from other chain to icon sources */
+export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
+  '0xa4b1.arbitrum': ['0x4c6C68E8F5206EE4a1690C808cfF5c3fD35b512F', '0x1F8B1e9d3633229d38BDFc93dCa50B6453Ad8E97'],
+  '0x38.bsc': ['0x24415977c566f9300Ea6F0aC75AEA0c09C500e46'],
+  '0xa86a.avax': ['0xC1a39C4e7AA98DEC394eF54559960873Bd619cA3', '0x7F3665eF19258cD5cE15eA39d014F47Fc942AE0C'],
+};
+
+/** to other chain from icon sources */
+export const TO_SOURCES: { [key in XChainId]?: string[] } = {
+  '0xa4b1.arbitrum': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
+  '0x38.bsc': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
+  '0xa86a.avax': ['cx59d899fce52cadd1feb5128ff5e6672f03943eec', 'cx917f88460d4ebec1fd656d4dbe51131a37d16837'],
+};

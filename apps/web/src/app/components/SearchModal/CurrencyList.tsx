@@ -16,10 +16,12 @@ import useArrowControl from 'hooks/useArrowControl';
 import useKeyPress from 'hooks/useKeyPress';
 import { useRatesWithOracle } from 'queries/reward';
 import { useIsUserAddedToken } from 'store/user/hooks';
-import { useXCurrencyBalance, useSignedInWallets } from 'store/wallet/hooks';
-import { toFraction } from 'utils';
+import { useXCurrencyBalance } from 'store/wallet/hooks';
+import { formatBigNumber, toFraction } from 'utils';
 import useSortCurrency from 'hooks/useSortCurrency';
 import { HeaderText } from 'app/pages/trade/supply/_components/AllPoolsPanel';
+import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { XChainId } from 'app/pages/trade/bridge/types';
 
 const DashGrid = styled(Box)`
   display: grid;
@@ -60,6 +62,7 @@ function CurrencyRow({
   isFocused,
   onFocus,
   rateFracs,
+  selectedChainId,
 }: {
   currency: Currency;
   onSelect: () => void;
@@ -72,9 +75,9 @@ function CurrencyRow({
   isFocused: boolean;
   onFocus: () => void;
   rateFracs: { [key in string]: Fraction } | undefined;
+  selectedChainId: XChainId | undefined;
 }) {
-  // const balance = useCurrencyBalance(account ?? undefined, currency);
-  const balance = useXCurrencyBalance(currency);
+  const balance = useXCurrencyBalance(currency, selectedChainId);
   const signedInWallets = useSignedInWallets();
 
   const isUserAddedToken = useIsUserAddedToken(currency as Token);
@@ -108,7 +111,7 @@ function CurrencyRow({
         </Flex>
         <Flex justifyContent="flex-end" alignItems="center">
           <DataText variant="p" textAlign="right">
-            {balance?.isGreaterThan(0) ? balance.toFormat(HIGH_PRICE_ASSET_DP[currency.wrapped.address] || 2) : 0}
+            {balance?.isGreaterThan(0) ? formatBigNumber(balance, 'currency') : 0}
 
             {balance?.isGreaterThan(0) && rateFracs && rateFracs[currency.symbol!] && (
               <Typography variant="span" fontSize={14} color="text2" display="block">
@@ -189,6 +192,7 @@ export default function CurrencyList({
   account,
   isOpen,
   onDismiss,
+  selectedChainId,
 }: {
   currencies: Currency[];
   onCurrencySelect: (currency: Currency) => void;
@@ -201,6 +205,7 @@ export default function CurrencyList({
   account?: string | null;
   isOpen: boolean;
   onDismiss: () => void;
+  selectedChainId: XChainId | undefined;
 }) {
   const enter = useKeyPress('Enter');
   const handleEscape = useKeyPress('Escape');
@@ -217,7 +222,7 @@ export default function CurrencyList({
     }
   }, [rates]);
 
-  const { sortBy, handleSortSelect, sortData } = useSortCurrency({ key: 'symbol', order: 'ASC' });
+  const { sortBy, handleSortSelect, sortData } = useSortCurrency({ key: 'symbol', order: 'ASC' }, selectedChainId);
   const sortedCurrencies = React.useMemo(() => {
     if (currencies && rateFracs) {
       return sortData(currencies, rateFracs);
@@ -298,6 +303,7 @@ export default function CurrencyList({
           isFocused={index === activeIndex}
           onFocus={() => setActiveIndex(index)}
           rateFracs={rateFracs}
+          selectedChainId={selectedChainId}
         />
       ))}
     </List1>

@@ -11,7 +11,7 @@ import { canBeQueue } from 'constants/currency';
 import { useAllTokens } from 'hooks/Tokens';
 import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { useSwapSlippageTolerance } from 'store/application/hooks';
-import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
+import { useCrossChainWalletBalances } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
 
 import { AppDispatch, AppState } from '../index';
@@ -28,6 +28,8 @@ import {
 } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
 import { getCrossChainTokenBySymbol } from 'app/pages/trade/bridge/utils';
+import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from 'constants/misc';
 
 export function useSwapState(): AppState['swap'] {
@@ -151,9 +153,10 @@ export function useDerivedSwapInfo(): {
     [Field.OUTPUT]: { currency: outputCurrency, xChainId: outputXChainId },
   } = useSwapState();
 
-  const signedInWallets = useSignedInWallets();
-  const account = signedInWallets.find(w => w.chainId === inputXChainId)?.address;
-
+  const signedInWallets = useAvailableWallets();
+  const account = signedInWallets.find(
+    w => xChainMap[w.xChainId].xWalletType === xChainMap[inputXChainId].xWalletType,
+  )?.address;
   const crossChainWallet = useCrossChainWalletBalances();
 
   const isExactIn: boolean = independentField === Field.INPUT;

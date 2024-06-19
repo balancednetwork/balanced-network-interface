@@ -27,12 +27,12 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import ModalContent, { ModalContentWrapper } from 'app/components/ModalContent';
 import Spinner from 'app/components/Spinner';
 import { depositMessage, supplyMessage } from './utils';
-import { XCallTransactionType, XSwapInfo } from '../../bridge/_zustand/types';
+import { XTransactionType, XTransactionInput } from '../../bridge/_zustand/types';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import useXCallFee from '../../bridge/_hooks/useXCallFee';
 import { DEFAULT_SLIPPAGE_LP } from 'constants/index';
-import { xCallTransactionActions } from '../../bridge/_zustand/useXCallTransactionStore';
+import { xTransactionActions } from '../../bridge/_zustand/useXTransactionStore';
 
 interface ModalProps {
   isOpen: boolean;
@@ -265,8 +265,8 @@ export default function SupplyLiquidityModal({
   const handleAddArchway = async (field: Field) => {
     const inputAmount = parsedAmounts[field];
     if (inputAmount && accountArch && xCallFee) {
-      const xSwapInfo: XSwapInfo = {
-        type: XCallTransactionType.SUPPLY,
+      const xTransactionInput: XTransactionInput = {
+        type: XTransactionType.SUPPLY,
         direction: {
           from: AChain,
           to: ICON_XCALL_NETWORK_ID,
@@ -276,7 +276,7 @@ export default function SupplyLiquidityModal({
         account: accountArch,
         xCallFee,
       };
-      // await xCallTransactionActions.sendXToken(xSwapInfo, () => executeCallback(true));
+      // await xTransactionActions.sendXToken(xTransactionInput, () => executeCallback(true));
     }
   };
 

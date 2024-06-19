@@ -65,7 +65,7 @@ msgid "{0} queue{1}"
 msgstr ""
 
 #: src/app/components/AddressInputPanel/index.tsx
-#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 msgid "To"
 msgstr ""
 
@@ -242,7 +242,7 @@ msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Pay"
 msgstr "지불"
 
@@ -351,6 +351,11 @@ msgstr ""
 #: src/app/pages/vote/proposals/page.tsx
 msgid "Proposals"
 msgstr "제안"
+
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+msgid "Switch Network"
+msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
@@ -786,7 +791,7 @@ msgstr ""
 #~ msgid "Claimed {0} BALN."
 #~ msgstr "청구된 {0} BALN."
 
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "You'll also pay"
 msgstr ""
 
@@ -830,19 +835,18 @@ msgid "Lock up Balance Tokens?"
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/pages/trade/bridge/_components/XCallTransactionState.tsx
-#: src/app/pages/trade/bridge/_components/XCallTransactionState.tsx
+#: src/app/pages/trade/bridge/_components/XTransactionState.tsx
+#: src/app/pages/trade/bridge/_components/XTransactionState.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "{0}"
 msgstr "{0}"
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/layout.tsx
 msgid "Bridge"
 msgstr ""
@@ -938,7 +942,7 @@ msgstr "회수하기:"
 msgid "Unlock {0} BALN"
 msgstr ""
 
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "to transfer cross-chain."
 msgstr ""
 
@@ -968,7 +972,7 @@ msgid "Title"
 msgstr "제목"
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap {0} for {1}?"
 msgstr "{0} 을 {1} 로 스왑하시겠습니까?"
 
@@ -1222,7 +1226,7 @@ msgstr ""
 msgid "Select a token"
 msgstr "토큰 선택"
 
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap in progress"
 msgstr ""
 
@@ -1271,7 +1275,7 @@ msgstr "스테이킹 해제 중인 ICX는 없습니다."
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "{0} {1} per {2}"
 msgstr "{2} 당 {0} {1}"
 
@@ -1499,7 +1503,7 @@ msgstr "사용 됨"
 #~ msgid "Awaiting execution on Archway."
 #~ msgstr ""
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 msgid "Transfer in progress"
 msgstr ""
 
@@ -1627,12 +1631,12 @@ msgstr ""
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/components/StabilityFund/index.tsx
-#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Cancel"
 msgstr "취소"
@@ -1682,7 +1686,7 @@ msgstr ""
 msgid "Total supply"
 msgstr "공급량 합계"
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 msgid "From"
 msgstr ""
 
@@ -1690,7 +1694,7 @@ msgstr ""
 msgid "Rejected"
 msgstr "거부됨"
 
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Includes a fee of"
 msgstr ""
 
@@ -1884,7 +1888,7 @@ msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Receive"
 msgstr "송금받기"
 
@@ -2285,7 +2289,7 @@ msgstr ""
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap"
 msgstr "스왑"
 
@@ -2318,7 +2322,7 @@ msgstr ""
 msgid "Cancelled"
 msgstr "취소됨"
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 msgid "address"
 msgstr ""
 
@@ -2360,7 +2364,7 @@ msgstr "bnUSD 가격 재조정 중..."
 #~ msgid "{message}"
 #~ msgstr ""
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 msgid "Transfer asset cross-chain?"
 msgstr ""
 
@@ -2446,10 +2450,10 @@ msgstr ""
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
 msgstr "{inputAmount} {inputCurrency} 을 {outputAmount} {outputCurrency} 으로 스왑했습니다."
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 msgid "Transfer"
 msgstr ""
 

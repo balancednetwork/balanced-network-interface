@@ -17,9 +17,11 @@ import {
 import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { Trans, t } from '@lingui/macro';
-import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
+import { useCrossChainWalletBalances } from 'store/wallet/hooks';
 import { isDenomAsset } from 'app/_xcall/archway/utils';
 import { sARCH } from 'app/pages/trade/bridge/_config/tokens';
+import useWallets, { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 
 export function useBridgeState(): AppState['bridge'] {
   return useSelector((state: AppState) => state.bridge);
@@ -120,9 +122,11 @@ export function useDerivedBridgeInfo() {
   }, [typedValue, currencyToBridge, bridgeDirection]);
 
   const signedInWallets = useSignedInWallets();
+  const wallets = useWallets();
+  const xChain = xChainMap[bridgeDirection.from];
   const crossChainWallet = useCrossChainWalletBalances();
 
-  const account = signedInWallets.find(w => w.chainId === bridgeDirection.from)?.address;
+  const account = wallets[xChain.xWalletType].account;
 
   const errorMessage = useMemo(() => {
     if (!account) return t`Connect wallet`;
@@ -137,7 +141,7 @@ export function useDerivedBridgeInfo() {
       if (
         signedInWallets.some(
           wallet =>
-            wallet.chainId === bridgeDirection.from &&
+            wallet.xChainId === bridgeDirection.from &&
             (!crossChainWallet[bridgeDirection.from]?.[currencyAmountToBridge.currency.address] ||
               crossChainWallet[bridgeDirection.from]?.[currencyAmountToBridge.currency.address]?.lessThan(
                 currencyAmountToBridge,

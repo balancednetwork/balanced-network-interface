@@ -65,7 +65,7 @@ msgid "{0} queue{1}"
 msgstr ""
 
 #: src/app/components/AddressInputPanel/index.tsx
-#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 msgid "To"
 msgstr ""
 
@@ -242,7 +242,7 @@ msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Pay"
 msgstr "Payer"
 
@@ -351,6 +351,11 @@ msgstr ""
 #: src/app/pages/vote/proposals/page.tsx
 msgid "Proposals"
 msgstr "Propositions"
+
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+msgid "Switch Network"
+msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
@@ -786,7 +791,7 @@ msgstr ""
 #~ msgid "Claimed {0} BALN."
 #~ msgstr "{0} BALN réclamé."
 
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "You'll also pay"
 msgstr ""
 
@@ -830,19 +835,18 @@ msgid "Lock up Balance Tokens?"
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/pages/trade/bridge/_components/XCallTransactionState.tsx
-#: src/app/pages/trade/bridge/_components/XCallTransactionState.tsx
+#: src/app/pages/trade/bridge/_components/XTransactionState.tsx
+#: src/app/pages/trade/bridge/_components/XTransactionState.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "{0}"
 msgstr "{0}"
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/layout.tsx
 msgid "Bridge"
 msgstr ""
@@ -938,7 +942,7 @@ msgstr "Retrait :"
 msgid "Unlock {0} BALN"
 msgstr ""
 
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "to transfer cross-chain."
 msgstr ""
 
@@ -968,7 +972,7 @@ msgid "Title"
 msgstr "Titre"
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap {0} for {1}?"
 msgstr "Échanger {0} contre {1} ?"
 
@@ -1222,7 +1226,7 @@ msgstr ""
 msgid "Select a token"
 msgstr "Sélectionner un jeton"
 
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap in progress"
 msgstr ""
 
@@ -1271,7 +1275,7 @@ msgstr "Il n'y a pas de déstaking d'ICX."
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "{0} {1} per {2}"
 msgstr "{0} {1} par {2}"
 
@@ -1499,7 +1503,7 @@ msgstr "Utilisé"
 #~ msgid "Awaiting execution on Archway."
 #~ msgstr ""
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 msgid "Transfer in progress"
 msgstr ""
 
@@ -1627,12 +1631,12 @@ msgstr ""
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/components/StabilityFund/index.tsx
-#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Cancel"
 msgstr "Annuler"
@@ -1682,7 +1686,7 @@ msgstr ""
 msgid "Total supply"
 msgstr "Offre totale"
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 msgid "From"
 msgstr ""
 
@@ -1690,7 +1694,7 @@ msgstr ""
 msgid "Rejected"
 msgstr "Rejeté"
 
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Includes a fee of"
 msgstr ""
 
@@ -1882,7 +1886,7 @@ msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Receive"
 msgstr "Recevoir"
 
@@ -2283,7 +2287,7 @@ msgstr ""
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap"
 msgstr "Échanger"
 
@@ -2316,7 +2320,7 @@ msgstr ""
 msgid "Cancelled"
 msgstr "Annulé"
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 msgid "address"
 msgstr ""
 
@@ -2358,7 +2362,7 @@ msgstr "Rééquilibrage du prix du bnUSD..."
 #~ msgid "{message}"
 #~ msgstr ""
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 msgid "Transfer asset cross-chain?"
 msgstr ""
 
@@ -2444,10 +2448,10 @@ msgstr ""
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
 msgstr "{inputAmount} {inputCurrency} échangé contre {outputAmount} {outputCurrency}"
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 msgid "Transfer"
 msgstr ""
 

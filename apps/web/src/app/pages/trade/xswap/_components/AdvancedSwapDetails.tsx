@@ -80,7 +80,7 @@ export default function AdvancedSwapDetails() {
             <Typography color="text">{formattedXCallFee ?? ''}</Typography>
           </Flex>
 
-          <Flex alignItems="center" justifyContent="space-between" mb={2}>
+          <Flex alignItems="center" justifyContent="space-between">
             <Typography>
               <Trans>Transfer time</Trans>
             </Typography>

@@ -43,7 +43,7 @@ import {
 import { usePowerLeft } from 'store/liveVoting/hooks';
 import { useHasAnyKindOfRewards } from 'store/reward/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
-import { useBALNDetails, useHasEnoughICX, useSignedInWallets } from 'store/wallet/hooks';
+import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
 import { getFormattedNumber } from 'utils/formatter';
 import { showMessageOnBeforeUnload } from 'utils/messages';
@@ -62,6 +62,7 @@ import {
   getWeekOffsetTimestamp,
   comparePeriods,
 } from './utils';
+import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 
 const StyledThreshold = styled(Threshold)`
   height: 20px;
@@ -565,7 +566,7 @@ export default function BBalnSlider({
             </Flex>
 
             {stakedBalance?.isEqualTo(0) && (
-              <ButtonsWrap verticalButtons={!simple}>
+              <ButtonsWrap $verticalButtons={!simple}>
                 {isAdjusting ? (
                   <>
                     <TextButton
@@ -608,7 +609,7 @@ export default function BBalnSlider({
             <UnstakePrompt stakedBalance={stakedBalance} availableBalance={balnBalanceAvailable} />
           ) : (
             <>
-              <SliderWrap sliderBg={sliderBg} sliderMargin={sliderMargin}>
+              <SliderWrap sliderBg={sliderBg} $sliderMargin={sliderMargin}>
                 {lockupNotice && (
                   <Typography className={`lockup-notice${isAdjusting ? '' : ' show'}`}>{lockupNotice}</Typography>
                 )}

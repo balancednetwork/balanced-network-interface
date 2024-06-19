@@ -22,12 +22,11 @@ import { erc20Abi, Address, getContract, Abi, WriteContractReturnType } from 'vi
 import { XToken } from 'app/pages/trade/bridge/types';
 import { archway, xChainMap } from '../_config/xChains';
 
-import { useBridgeDirection } from 'store/bridge/hooks';
 import { NATIVE_ADDRESS } from 'constants/index';
 import useXWallet from './useXWallet';
 import { openToast } from 'btp/src/connectors/transactionToast';
 import { TransactionStatus } from 'store/transactions/hooks';
-import { xCallServiceActions } from '../_zustand/useXCallServiceStore';
+import { xServiceActions } from '../_zustand/useXServiceStore';
 import { transactionActions } from '../_zustand/useTransactionStore';
 
 export const FAST_INTERVAL = 10000;
@@ -106,20 +105,18 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
 
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
-    if (!amountToApprove || !spender) return ApprovalState.UNKNOWN;
+    if (!amountToApprove || !spender || !xChainType) return ApprovalState.UNKNOWN;
 
-    const xChainId = amountToApprove.currency.xChainId;
-
-    if (xChainId === '0x1.icon') return ApprovalState.APPROVED;
+    if (xChainType === 'ICON') return ApprovalState.APPROVED;
 
     const isBnUSD = amountToApprove.currency.symbol === 'bnUSD';
 
-    if (xChainId === 'archway-1') {
+    if (xChainType === 'ARCHWAY') {
       const isDenom = isDenomAsset(amountToApprove.currency);
       if (isDenom || isBnUSD) return ApprovalState.APPROVED;
     }
 
-    if (xChainId === '0xa86a.avax' && isBnUSD) return ApprovalState.APPROVED;
+    if (xChainType === 'EVM' && isBnUSD) return ApprovalState.APPROVED;
 
     const isNative = amountToApprove.currency.wrapped.address === NATIVE_ADDRESS;
     if (isNative) return ApprovalState.APPROVED;
@@ -132,7 +129,7 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
         ? ApprovalState.PENDING
         : ApprovalState.NOT_APPROVED
       : ApprovalState.APPROVED;
-  }, [amountToApprove, currentAllowance, pending, spender]);
+  }, [amountToApprove, currentAllowance, pending, spender, xChainType]);
 
   const approveEvm = useCallback(
     async (overrideAmountApprove?: bigint): Promise<WriteContractReturnType | undefined> => {
@@ -250,10 +247,16 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
     // }
 
     const xChainId = token.xChainId;
-    const xCallService = xCallServiceActions.getXCallService(xChainId);
+    const xService = xServiceActions.getWalletXService(xChainId);
+
+    if (!xService) {
+      // toastError(t('Error'), t('No xService'));
+      console.error('no archway WalletXService');
+      return undefined;
+    }
 
     try {
-      const hash = await xCallService.approve(token, account as `0x${string}`, spender, amountToApprove);
+      const hash = await xService.approve(token, account as `0x${string}`, spender, amountToApprove);
 
       setPending(true);
 
@@ -320,8 +323,10 @@ export function useTokenAllowance(
         throw new Error('No Archway client');
       }
 
+      const xChain = xChainMap[token.xChainId];
+
       // EVM
-      if (token.xChainId === '0xa86a.avax' || token.xChainId === '0xa869.fuji') {
+      if (xChain.xChainType === 'EVM') {
         return evmPublicClient.readContract({
           abi: erc20Abi,
           address: token?.address as `0x${string}`,
@@ -331,7 +336,7 @@ export function useTokenAllowance(
       }
 
       // Archway
-      if (token.xChainId === 'archway' || token.xChainId === 'archway-1') {
+      if (xChain.xChainType === 'ARCHWAY') {
         const res = await archwayPublicClient.queryContractSmart(token?.address, {
           allowance: { owner, spender },
         });

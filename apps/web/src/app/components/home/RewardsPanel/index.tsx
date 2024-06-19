@@ -60,7 +60,7 @@ const RewardsPanel = () => {
         <SliderWrap>
           <Savings />
         </SliderWrap>
-        {isMedium ? <Divider my="30px" /> : <VerticalDivider margin={'3px 50px'} />}
+        {isMedium ? <Divider my="30px" /> : <VerticalDivider $margin={'3px 50px'} />}
         <SliderWrap>
           <BBalnSlider
             title={t`Earning potential`}
@@ -78,13 +78,13 @@ const RewardsPanel = () => {
           <Flex flexWrap={isSmall ? 'wrap' : 'nowrap'}>
             <SavingsRewards />
             {!isSmall ? (
-              <VerticalDivider margin={isMedium ? '3px 15px' : '3px 30px'} />
+              <VerticalDivider $margin={isMedium ? '3px 15px' : '3px 30px'} />
             ) : (
               <Divider width="100%" my={4} />
             )}
             <LPRewards showGlobalTooltip={showGlobalTooltip} />
             {!isSmall ? (
-              <VerticalDivider margin={isMedium ? '3px 15px' : '3px 30px'} />
+              <VerticalDivider $margin={isMedium ? '3px 15px' : '3px 30px'} />
             ) : (
               <Divider width="100%" my={4} />
             )}

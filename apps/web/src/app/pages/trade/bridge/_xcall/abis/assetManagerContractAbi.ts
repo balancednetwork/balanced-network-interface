@@ -118,10 +118,27 @@ export const assetManagerContractAbi = [
     type: 'function',
   },
   {
+    inputs: [{ internalType: 'uint256', name: 'amount', type: 'uint256' }],
+    name: 'depositNative',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
     inputs: [
       { internalType: 'uint256', name: 'amount', type: 'uint256' },
       { internalType: 'string', name: 'to', type: 'string' },
       { internalType: 'bytes', name: 'data', type: 'bytes' },
+    ],
+    name: 'depositNative',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'uint256', name: 'amount', type: 'uint256' },
+      { internalType: 'string', name: 'to', type: 'string' },
     ],
     name: 'depositNative',
     outputs: [],

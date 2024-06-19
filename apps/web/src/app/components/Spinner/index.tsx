@@ -7,11 +7,11 @@ import spinnerImg from 'assets/images/spinner-big.png';
 type SpinnerProps = {
   size?: number;
   className?: string;
-  centered?: boolean;
+  $centered?: boolean;
 };
 
-const Spinner: FC<SpinnerProps> = ({ size = 20, className, centered = false, ...rest }) => (
-  <Container className={className} centered={centered} {...rest}>
+const Spinner: FC<SpinnerProps> = ({ size = 20, className, $centered = false, ...rest }) => (
+  <Container className={className} $centered={$centered} {...rest}>
     <Img src={spinnerImg} alt="spinner" width={size} height={size} />
   </Container>
 );
@@ -23,8 +23,8 @@ export const absoluteCenteredCSS = css`
   transform: translate(-50%, -50%);
 `;
 
-const Container = styled.div<{ centered: boolean }>`
-  ${props => props.centered && absoluteCenteredCSS}
+const Container = styled.div<{ $centered: boolean }>`
+  ${({ $centered }) => $centered && absoluteCenteredCSS}
 `;
 
 const imageRotation = keyframes`

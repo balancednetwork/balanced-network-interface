@@ -102,7 +102,8 @@ export const useXTransactionStore = create<XTransactionStore>()(
           throw new Error('Unsupported XTransactionType');
         }
 
-        const primaryDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(primaryDestinationChainId);
+        const primaryDestinationChainInitialBlockHeight =
+          xServiceActions.getXChainHeight(primaryDestinationChainId) - 5n;
         const finalDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(finalDestinationChainId);
 
         if (!sourceTransactionHash) {

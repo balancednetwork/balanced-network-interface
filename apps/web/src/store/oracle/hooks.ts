@@ -12,6 +12,7 @@ import { formatUnits } from 'utils';
 
 import { AppState } from '..';
 import { changeOraclePrice } from './reducer';
+import { ORACLE_PRICED_TOKENS } from 'constants/tokens';
 
 export function useOraclePrices(): AppState['oracle']['prices'] {
   return useSelector((state: AppState) => state.oracle.prices);
@@ -37,9 +38,11 @@ export function useFetchOraclePrices() {
     [supportedCollateralTokens],
   );
 
+  const oracleSymbols = supportedSymbols ? [...ORACLE_PRICED_TOKENS, ...supportedSymbols] : undefined;
+
   useInterval(async () => {
-    if (supportedSymbols) {
-      const cds: CallData[] = supportedSymbols.map(symbol => {
+    if (oracleSymbols) {
+      const cds: CallData[] = oracleSymbols.map(symbol => {
         return {
           target: addresses[NETWORK_ID].balancedOracle,
           method: 'getLastPriceInLoop',
@@ -67,7 +70,7 @@ export function useFetchOraclePrices() {
           price != null &&
             dispatch(
               changeOraclePrice({
-                symbol: supportedSymbols[index],
+                symbol: oracleSymbols[index],
                 price: new BigNumber(formatUnits(price, 18, 6)).dividedBy(new BigNumber(formatUnits(USDloop, 18, 6))),
               }),
             );

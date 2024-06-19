@@ -85,14 +85,15 @@ export class IconPublicXService extends AbstractPublicXService {
     return TransactionStatus.pending;
   }
 
-  getScanBlockCount() {
-    return 1n;
-  }
-
   async getEventLogs({ startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
     // https://tracker.icon.community/api/v1/logs?block_start=83073062&address=cxa07f426062a1384bdd762afa6a87d123fbc81c75
     const url = `https://tracker.icon.community/api/v1/logs?block_start=${startBlockHeight}&block_end=${endBlockHeight}&address=${'cxa07f426062a1384bdd762afa6a87d123fbc81c75'}`;
     const res = await axios.get(url);
+
+    if (res.status === 204) {
+      return [];
+    }
+
     const events = res.data;
     return events.map(({ data, indexed, transaction_hash, method, address, block_number }) => ({
       data: JSON.parse(data),

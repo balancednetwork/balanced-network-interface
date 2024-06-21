@@ -70,6 +70,7 @@ export function useCollateralChangeCollateralType(): (collateralType: CurrencyKe
         dispatch(setRecipientNetwork({ recipientNetwork: defaultXChainId }));
       } else {
         dispatch(changeCollateralXChain({ collateralXChain: NETWORK_ID === 1 ? '0x1.icon' : '0x2.icon' }));
+        dispatch(setRecipientNetwork({ recipientNetwork: NETWORK_ID === 1 ? '0x1.icon' : '0x2.icon' }));
       }
     },
     [dispatch],

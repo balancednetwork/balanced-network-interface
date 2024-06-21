@@ -283,6 +283,14 @@ export const FixedGlobalStyle = createGlobalStyle`
   .drop-shadow {
     box-shadow: 0px 10px 25px 0px rgba(1, 0, 42, 0.35);
   }
+
+  .drop-shadow-right {
+    box-shadow: 10px 0px 25px 0px rgba(1, 0, 42, 0.35);
+  }
+
+  .drop-shadow-inset {
+    box-shadow: 0px 10px 15px 0px rgba(1, 0, 42, 0.25) inset;
+  }
 `;
 
 export const ThemedGlobalStyle = createGlobalStyle`

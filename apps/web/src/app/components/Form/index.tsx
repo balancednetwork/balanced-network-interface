@@ -34,7 +34,7 @@ const CurrencyInput = styled(Box)`
   display: inline-flex;
   align-items: center;
   text-align: right;
-  border: 2px solid #0c2a4d;
+  border: 2px solid ${({ theme }) => theme.colors.bg3};
   background-color: #0c2a4d;
   color: #ffffff;
   padding: 3px 7px;
@@ -60,9 +60,12 @@ const NumberInput = styled.input`
   color: white;
   outline: none;
   padding-right: 4px;
+  font-size: 14px;
 `;
 
-const CurrencyUnit = styled.span``;
+const CurrencyUnit = styled.span`
+  font-size: 14px;
+`;
 
 export const inputRegex = /^\d+(?:\\[.])?\d*$/; //test for number or [digits].[digits]
 
@@ -151,7 +154,7 @@ export const CurrencyField: React.FC<{
       {editable &&
         (noticeShow ? (
           <Tooltip containerStyle={{ width: 'auto' }} placement="bottom" text={noticeText} show={true}>
-            <CurrencyInput mt={1}>
+            <CurrencyInput mt={2} className="drop-shadow-inset">
               <NumberInput
                 id={label}
                 value={value}
@@ -172,7 +175,7 @@ export const CurrencyField: React.FC<{
             </CurrencyInput>
           </Tooltip>
         ) : (
-          <CurrencyInput mt={1}>
+          <CurrencyInput mt={2} className="drop-shadow-inset">
             <NumberInput
               id={label}
               value={value}

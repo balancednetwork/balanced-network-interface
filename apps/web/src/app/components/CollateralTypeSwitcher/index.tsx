@@ -8,11 +8,13 @@ import { useCollateralType } from 'store/collateral/hooks';
 
 import { DropdownPopper } from '../Popover';
 import CollateralTypeList from './CollateralTypeList';
+import CollateralIcon from './CollateralIcon';
 
 const Wrap = styled.span`
-  transform: translate3d(0, 3px, 0);
   cursor: pointer;
   font-size: 18px;
+  position: relative;
+  top: 3px;
   color: ${({ theme }) => theme.colors.primaryBright};
 `;
 
@@ -47,8 +49,13 @@ const CollateralTypeSwitcher = ({ width, containerRef }) => {
     <>
       <ClickAwayListener onClickAway={e => closeDropdown(e)}>
         <div>
-          <Wrap onClick={handleToggle} style={{ position: 'relative' }}>
-            <UnderlineText>{collateralType === 'sICX' ? 'ICX' : collateralType}</UnderlineText>
+          <Wrap onClick={handleToggle}>
+            <UnderlineText>
+              <>
+                <CollateralIcon icon={collateralType === 'sICX' ? 'ICX' : collateralType} />
+                {collateralType === 'sICX' ? 'ICX' : collateralType}
+              </>
+            </UnderlineText>
             <div ref={arrowRef} style={{ display: 'inline-block' }}>
               <StyledArrowDownIcon />
             </div>

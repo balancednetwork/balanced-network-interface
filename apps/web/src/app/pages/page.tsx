@@ -60,34 +60,12 @@ export function HomePage() {
       <AllXMessagesUpdater />
       <AllPublicXServicesCreator xChains={xChains} />
 
-      {account ? (
-        <Grid>
-          <CollateralPanel />
-          <LoanPanel />
-          <PositionDetailPanel />
-          <RewardsPanel />
-        </Grid>
-      ) : (
-        <Grid>
-          <BoxPanel bg="bg3" sx={{ position: 'relative' }}>
-            <Typography variant="h2" paddingRight={'7px'}>
-              <Trans>Collateral</Trans>
-            </Typography>
-            <Typography mt={8} mb={7} textAlign="center">
-              <Trans>To deposit collateral, sign in on ICON.</Trans>
-            </Typography>
-          </BoxPanel>
-          <BoxPanel bg="bg3" sx={{ position: 'relative' }}>
-            <Typography variant="h2" paddingRight={'7px'}>
-              <Trans>Loan</Trans>
-            </Typography>
-            <Typography mt={8} mb={7} textAlign="center">
-              <Trans>To borrow bnUSD, deposit collateral.</Trans>
-            </Typography>
-          </BoxPanel>
-          <RewardsPanel />
-        </Grid>
-      )}
+      <Grid>
+        <CollateralPanel />
+        <LoanPanel />
+        <PositionDetailPanel />
+        <RewardsPanel />
+      </Grid>
     </>
   );
 }

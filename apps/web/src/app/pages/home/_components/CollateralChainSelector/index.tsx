@@ -1,6 +1,7 @@
 import { StyledArrowDownIcon, UnderlineText } from 'app/components/DropdownText';
 import { DropdownPopper } from 'app/components/Popover';
 import ChainList from 'app/pages/trade/bridge/_components/ChainList';
+import { ChainLogo } from 'app/pages/trade/bridge/_components/ChainLogo';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { xTokenMap } from 'app/pages/trade/bridge/_config/xTokens';
 import { XChainId } from 'app/pages/trade/bridge/types';
@@ -13,6 +14,7 @@ import { Flex } from 'rebass';
 import { useChangeCollateralXChain, useCollateralType, useCollateralXChain } from 'store/collateral/hooks';
 import { useSetLoanRecipientNetwork } from 'store/loan/hooks';
 import styled from 'styled-components';
+import ChainSelectorLogo from './ChainSelectorLogo';
 
 export const SelectorWrap = styled.div`
   min-width: 110px;
@@ -79,6 +81,7 @@ const CollateralChainSelector = () => {
           <div>
             <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }}>
               <UnderlineText style={{ paddingRight: '1px', fontSize: '14px' }}>
+                <ChainSelectorLogo chain={xChainMap[collateralXChain]} />
                 {xChainMap[collateralXChain].name}
               </UnderlineText>
               <div ref={arrowRef} style={{ display: 'inline-block' }}>
@@ -100,6 +103,7 @@ const CollateralChainSelector = () => {
       ) : (
         <Flex>
           <Typography mr={1} lineHeight="1.7">
+            <ChainSelectorLogo chain={xChainMap[collateralXChain]} />
             {xChainMap[collateralXChain].name}
           </Typography>
         </Flex>

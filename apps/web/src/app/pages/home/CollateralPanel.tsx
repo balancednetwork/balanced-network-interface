@@ -22,7 +22,12 @@ import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import useWidth from 'hooks/useWidth';
-import { useChangeShouldLedgerSign, useICXUnstakingTime, useShouldLedgerSign } from 'store/application/hooks';
+import {
+  useChangeShouldLedgerSign,
+  useICXUnstakingTime,
+  useShouldLedgerSign,
+  useWalletModalToggle,
+} from 'store/application/hooks';
 import { Field } from 'store/collateral/reducer';
 import {
   useCollateralState,
@@ -30,6 +35,7 @@ import {
   useSupportedCollateralTokens,
   useIsHandlingICX,
   useDerivedCollateralInfo,
+  useCollateralXChain,
 } from 'store/collateral/hooks';
 import { useLoanActionHandlers, useLockedCollateralAmount } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';
@@ -41,10 +47,12 @@ import CollateralTypeSwitcher, { CollateralTypeSwitcherWrap } from 'app/componen
 import ModalContent from 'app/components/ModalContent';
 import ICXDisplayTypeSwitcher from 'app/components/ICXDisplayTypeSwitcher';
 import XCollateralModal, { XCollateralAction } from './_components/xCollateralModal';
-import CollateralChainSelector from './_components/CollateralChainSelector';
 import { MODAL_ID, modalActions } from '../trade/bridge/_zustand/useModalStore';
 import { toHex } from 'viem';
 import { RLP } from '@ethereumjs/rlp';
+import { UnderlineText } from 'app/components/DropdownText';
+import { xChainMap } from '../trade/bridge/_config/xChains';
+import CollateralChainSelector from './_components/CollateralChainSelector';
 
 export const PanelInfoWrap = styled(Flex)`
   justify-content: space-between;
@@ -92,13 +100,14 @@ export const UnderPanel = styled(Flex)`
   margin-top: -20px;
   background-color: ${({ theme }) => theme.colors.bg2};
   border-radius: 0 0 10px 10px;
+  color: ${({ theme }) => theme.colors.text};
 
   svg {
     margin-top: 10px;
   }
 
   ${({ theme }) => theme.mediaWidth.upExtraSmall`
-    padding: 35px 35px 15px;
+    padding: 32px 35px 12px;
   `}
 `;
 
@@ -146,6 +155,7 @@ const CollateralPanel = () => {
   const [ICXWithdrawOption, setICXWithdrawOption] = useState<ICXWithdrawOptions>(ICXWithdrawOptions.EMPTY);
   const { data: icxUnstakingTime } = useICXUnstakingTime();
 
+  const toggleWalletModal = useWalletModalToggle();
   const isSuperSmall = useMedia(`(max-width: 450px)`);
 
   const shouldLedgerSign = useShouldLedgerSign();
@@ -317,12 +327,12 @@ const CollateralPanel = () => {
   // change slider value if only a user types
   React.useEffect(() => {
     if (inputType === 'text') {
-      sliderInstance.current.noUiSlider.set(parsedAmount[Field.LEFT].toNumber());
+      sliderInstance.current?.noUiSlider.set(parsedAmount[Field.LEFT].toNumber());
     }
   }, [parsedAmount[Field.LEFT], inputType]);
 
   React.useEffect(() => {
-    sliderInstance.current.noUiSlider.updateOptions(
+    sliderInstance.current?.noUiSlider.updateOptions(
       {
         format: {
           to: (value: number) => value.toFixed(collateralDecimalPlaces),
@@ -383,61 +393,79 @@ const CollateralPanel = () => {
             </Flex>
           </Flex>
 
-          {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Locked`} />}
+          {!account && (
+            <Flex minHeight={125} alignItems="center" justifyContent="center">
+              <Typography mr={1}>{t`To deposit ${collateralType} from ${xChainMap[sourceChain].name},`}</Typography>
+              <Typography color="primaryBright">
+                <UnderlineText onClick={toggleWalletModal}>
+                  <Trans>sign in</Trans>
+                </UnderlineText>
+              </Typography>
+              <Typography>.</Typography>
+            </Flex>
+          )}
 
-          <Box marginY={6}>
-            <Nouislider
-              id="slider-collateral"
-              disabled={!isAdjusting}
-              start={collateralDeposit.toNumber()}
-              padding={[Math.max(tLockedAmount.dp(collateralDecimalPlaces).toNumber(), 0), 0]}
-              connect={[true, false]}
-              range={{
-                min: [0],
-                max: [
-                  collateralTotal.isZero()
-                    ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
-                    : collateralTotal.dp(collateralDecimalPlaces).toNumber(),
-                ],
-              }}
-              instanceRef={instance => {
-                if (instance) {
-                  sliderInstance.current = instance;
-                }
-              }}
-              onSlide={onSlide}
-            />
-          </Box>
+          {account && (
+            <>
+              {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Locked`} />}
 
-          <PanelInfoWrap>
-            <PanelInfoItem>
-              <CurrencyField
-                editable={isAdjusting}
-                isActive
-                label="Deposited"
-                tooltip={false}
-                value={formattedAmounts[Field.LEFT]}
-                decimalPlaces={collateralDecimalPlaces}
-                currency={isHandlingICX ? 'ICX' : collateralType}
-                maxValue={collateralTotal}
-                onUserInput={onFieldAInput}
-              />
-            </PanelInfoItem>
+              <Box marginY={6}>
+                <Nouislider
+                  id="slider-collateral"
+                  disabled={!isAdjusting}
+                  start={collateralDeposit.toNumber()}
+                  padding={[Math.max(tLockedAmount.dp(collateralDecimalPlaces).toNumber(), 0), 0]}
+                  connect={[true, false]}
+                  range={{
+                    min: [0],
+                    max: [
+                      collateralTotal.isZero()
+                        ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
+                        : collateralTotal.dp(collateralDecimalPlaces).toNumber(),
+                    ],
+                  }}
+                  instanceRef={instance => {
+                    if (instance) {
+                      sliderInstance.current = instance;
+                    }
+                  }}
+                  onSlide={onSlide}
+                />
+              </Box>
 
-            <PanelInfoItem>
-              <CurrencyField
-                editable={isAdjusting}
-                isActive={false}
-                label="Wallet"
-                tooltipText={collateralType === 'sICX' && 'The amount of ICX available to deposit from your wallet.'}
-                value={formattedAmounts[Field.RIGHT]}
-                decimalPlaces={collateralDecimalPlaces}
-                currency={isHandlingICX ? 'ICX' : collateralType}
-                maxValue={collateralTotal}
-                onUserInput={onFieldBInput}
-              />
-            </PanelInfoItem>
-          </PanelInfoWrap>
+              <PanelInfoWrap>
+                <PanelInfoItem>
+                  <CurrencyField
+                    editable={isAdjusting}
+                    isActive
+                    label="Deposited"
+                    tooltip={false}
+                    value={formattedAmounts[Field.LEFT]}
+                    decimalPlaces={collateralDecimalPlaces}
+                    currency={isHandlingICX ? 'ICX' : collateralType}
+                    maxValue={collateralTotal}
+                    onUserInput={onFieldAInput}
+                  />
+                </PanelInfoItem>
+
+                <PanelInfoItem>
+                  <CurrencyField
+                    editable={isAdjusting}
+                    isActive={false}
+                    label="Wallet"
+                    tooltipText={
+                      collateralType === 'sICX' && 'The amount of ICX available to deposit from your wallet.'
+                    }
+                    value={formattedAmounts[Field.RIGHT]}
+                    decimalPlaces={collateralDecimalPlaces}
+                    currency={isHandlingICX ? 'ICX' : collateralType}
+                    maxValue={collateralTotal}
+                    onUserInput={onFieldBInput}
+                  />
+                </PanelInfoItem>
+              </PanelInfoWrap>
+            </>
+          )}
         </BoxPanel>
         <UnderPanel justifyContent="space-between">
           <CollateralChainSelector />

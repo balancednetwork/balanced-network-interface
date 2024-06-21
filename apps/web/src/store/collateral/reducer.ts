@@ -28,8 +28,8 @@ export interface CollateralState {
 
 const initialState: CollateralState = {
   depositedAmount: new BigNumber(0),
-  collateralType: 'sICX',
-  collateralXChain: NETWORK_ID === 1 ? '0x1.icon' : '0x2.icon',
+  collateralType: 'ETH',
+  collateralXChain: '0xa4b1.arbitrum',
   icxDisplayType: 'ICX',
   depositedAmounts: {},
   state: {

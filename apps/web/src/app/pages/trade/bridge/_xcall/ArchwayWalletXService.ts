@@ -3,7 +3,12 @@ import bnJs from 'bnJs';
 import { Percent } from '@balancednetwork/sdk-core';
 
 import { XSigningArchwayClient } from 'lib/archway/XSigningArchwayClient';
-import { getBytesFromString } from 'app/pages/trade/bridge/utils';
+import {
+  getBytesFromString,
+  getBytesFromAddress,
+  getBytesFromNumber,
+  getRlpEncodedMsg,
+} from 'app/pages/trade/bridge/utils';
 
 import { archway } from 'app/pages/trade/bridge/_config/xChains';
 import { getFeeParam, isDenomAsset } from 'app/_xcall/archway/utils';
@@ -15,6 +20,7 @@ import { XTransactionInput, XTransactionType } from '../_zustand/types';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import { ArchwayPublicXService } from './ArchwayPublicXService';
+import { uintToBytes } from 'utils';
 
 export class ArchwayWalletXService extends ArchwayPublicXService implements IWalletXService {
   walletClient: XSigningArchwayClient;
@@ -60,16 +66,21 @@ export class ArchwayWalletXService extends ArchwayPublicXService implements IWal
 
       const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
 
-      data = getBytesFromString(
-        JSON.stringify({
-          method: '_swap',
-          params: {
-            path: executionTrade.route.pathForSwap,
-            receiver: receiver,
-          },
-          minimumReceive: minReceived.quotient.toString(),
-        }),
+      const rlpEncodedData = Array.from(
+        Buffer.from(
+          getRlpEncodedMsg([
+            Buffer.from('_swap', 'utf-8'),
+            Buffer.from(receiver, 'utf-8'),
+            uintToBytes(minReceived.quotient),
+            ...executionTrade.route.routeActionPath.map(action => [
+              getBytesFromNumber(action.type),
+              getBytesFromAddress(action.address),
+            ]),
+          ]),
+        ),
       );
+
+      data = rlpEncodedData;
     } else if (type === XTransactionType.BRIDGE) {
       data = getBytesFromString(
         JSON.stringify({

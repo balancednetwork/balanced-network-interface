@@ -375,22 +375,24 @@ const CollateralPanel = () => {
               <CollateralTypeSwitcher width={width} containerRef={ref.current} />
             </CollateralTypeSwitcherWrap>
 
-            <Flex flexDirection={isSuperSmall ? 'column' : 'row'} ml="auto" paddingTop={isSuperSmall ? '4px' : '0'}>
-              {isAdjusting ? (
-                <>
-                  <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
-                    <Trans>Cancel</Trans>
-                  </TextButton>
-                  <Button onClick={toggleOpen} fontSize={14}>
-                    <Trans>Confirm</Trans>
+            {account && (
+              <Flex flexDirection={isSuperSmall ? 'column' : 'row'} ml="auto" paddingTop={isSuperSmall ? '4px' : '0'}>
+                {isAdjusting ? (
+                  <>
+                    <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
+                      <Trans>Cancel</Trans>
+                    </TextButton>
+                    <Button onClick={toggleOpen} fontSize={14}>
+                      <Trans>Confirm</Trans>
+                    </Button>
+                  </>
+                ) : (
+                  <Button onClick={handleEnableAdjusting} fontSize={14}>
+                    {buttonText}
                   </Button>
-                </>
-              ) : (
-                <Button onClick={handleEnableAdjusting} fontSize={14}>
-                  {buttonText}
-                </Button>
-              )}
-            </Flex>
+                )}
+              </Flex>
+            )}
           </Flex>
 
           {!account && (

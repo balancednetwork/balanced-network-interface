@@ -229,28 +229,32 @@ const LoanPanel = () => {
             <Typography variant="h2">
               <Trans>Loan</Trans>
             </Typography>
-            <Flex flexDirection={isSuperSmall ? 'column' : 'row'} paddingTop={isSuperSmall ? '4px' : '0'}>
-              {isAdjusting ? (
-                <>
-                  <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
-                    <Trans>Cancel</Trans>
-                  </TextButton>
-                  <Button
-                    disabled={
-                      borrowedAmount.isLessThanOrEqualTo(0) ? currentValue >= 0 && currentValue < 10 : currentValue < 0
-                    }
-                    onClick={toggleOpen}
-                    fontSize={14}
-                  >
-                    <Trans>Confirm</Trans>
+            {account && (
+              <Flex flexDirection={isSuperSmall ? 'column' : 'row'} paddingTop={isSuperSmall ? '4px' : '0'}>
+                {isAdjusting ? (
+                  <>
+                    <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
+                      <Trans>Cancel</Trans>
+                    </TextButton>
+                    <Button
+                      disabled={
+                        borrowedAmount.isLessThanOrEqualTo(0)
+                          ? currentValue >= 0 && currentValue < 10
+                          : currentValue < 0
+                      }
+                      onClick={toggleOpen}
+                      fontSize={14}
+                    >
+                      <Trans>Confirm</Trans>
+                    </Button>
+                  </>
+                ) : (
+                  <Button onClick={handleEnableAdjusting} fontSize={14}>
+                    {buttonText}
                   </Button>
-                </>
-              ) : (
-                <Button onClick={handleEnableAdjusting} fontSize={14}>
-                  {buttonText}
-                </Button>
-              )}
-            </Flex>
+                )}
+              </Flex>
+            )}
           </Flex>
 
           {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Repayable`} />}

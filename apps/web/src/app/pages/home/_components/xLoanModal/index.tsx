@@ -31,7 +31,7 @@ import ModalContent from 'app/components/ModalContent';
 import XTransactionState from 'app/pages/trade/bridge/_components/XTransactionState';
 import { Button, TextButton } from 'app/components/Button';
 import { StyledButton } from 'app/pages/trade/xswap/_components/shared';
-import { useDerivedLoanInfo, useLoanRecipientNetwork } from 'store/loan/hooks';
+import { useDerivedLoanInfo, useLoanActionHandlers, useLoanRecipientNetwork } from 'store/loan/hooks';
 import { useCollateralType } from 'store/collateral/hooks';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 
@@ -63,6 +63,7 @@ const XLoanModal = ({ account, bnUSDAmount, sourceChain, action, originationFee,
   const receiverNetwork = useLoanRecipientNetwork();
   const { borrowedAmount, parsedAmount, direction } = useDerivedLoanInfo();
   const collateralType = useCollateralType();
+  const { onAdjust: adjust } = useLoanActionHandlers();
 
   useCreateWalletXService(sourceChain);
 
@@ -72,6 +73,10 @@ const XLoanModal = ({ account, bnUSDAmount, sourceChain, action, originationFee,
   const _inputAmount = useMemo(() => {
     return bnUSDAmount ? bnUSDAmount : undefined;
   }, [bnUSDAmount]);
+
+  const cancelAdjusting = React.useCallback(() => {
+    adjust(false);
+  }, [adjust]);
 
   const handleDismiss = () => {
     modalActions.closeModal(MODAL_ID.XLOAN_CONFIRM_MODAL);
@@ -93,6 +98,7 @@ const XLoanModal = ({ account, bnUSDAmount, sourceChain, action, originationFee,
       inputAmount: _inputAmount,
       usedCollateral: collateralType,
       xCallFee,
+      callback: cancelAdjusting,
     };
 
     await xTransactionActions.executeTransfer(xTransactionInput);

@@ -45,6 +45,7 @@ export type XTransactionInput = {
   inputAmount: CurrencyAmount<Currency>;
   account: string;
   xCallFee: IXCallFee;
+  callback?: () => void;
   // xswap
   recipient?: string;
   executionTrade?: Trade<Currency, Currency, TradeType>;

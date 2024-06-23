@@ -25,10 +25,7 @@ type XTransactionStore = {
   currentId: string | null;
   get: (id: string | null) => XTransaction | undefined;
   // add: (transaction: XTransaction) => void;
-  executeTransfer: (
-    xTransactionInput: XTransactionInput & { cleanupSwap?: () => void },
-    onSuccess?: () => void,
-  ) => void;
+  executeTransfer: (xTransactionInput: XTransactionInput, onSuccess?: () => void) => void;
   createSecondaryMessage: (xTransaction: XTransaction, primaryMessage: XMessage) => void;
   reset: () => void;
   success: (id) => void;
@@ -76,10 +73,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
       //   });
       // },
 
-      executeTransfer: async (
-        xTransactionInput: XTransactionInput & { cleanupSwap?: () => void },
-        onSuccess = () => {},
-      ) => {
+      executeTransfer: async (xTransactionInput: XTransactionInput, onSuccess = () => {}) => {
         const { direction } = xTransactionInput;
         const sourceChainId = direction.from;
         const finalDestinationChainId = direction.to;
@@ -196,7 +190,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
           descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
         }
 
-        xTransactionInput?.cleanupSwap?.();
+        xTransactionInput?.callback?.();
 
         const sourceTransaction = transactionActions.add(sourceChainId, {
           hash: sourceTransactionHash,
@@ -409,7 +403,7 @@ export const xTransactionActions = {
   //   useXTransactionStore.getState().add(transaction);
   // },
 
-  executeTransfer: (xTransactionInput: XTransactionInput & { cleanupSwap?: () => void }, onSuccess = () => {}) => {
+  executeTransfer: (xTransactionInput: XTransactionInput, onSuccess = () => {}) => {
     useXTransactionStore.getState().executeTransfer(xTransactionInput, onSuccess);
   },
 

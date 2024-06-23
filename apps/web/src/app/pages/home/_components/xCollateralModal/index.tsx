@@ -30,7 +30,7 @@ import ModalContent from 'app/components/ModalContent';
 import XTransactionState from 'app/pages/trade/bridge/_components/XTransactionState';
 import { Button, TextButton } from 'app/components/Button';
 import { StyledButton } from 'app/pages/trade/xswap/_components/shared';
-import { useDerivedCollateralInfo } from 'store/collateral/hooks';
+import { useCollateralActionHandlers, useDerivedCollateralInfo } from 'store/collateral/hooks';
 import { Field } from 'store/collateral/reducer';
 
 export enum XCollateralAction {
@@ -57,6 +57,7 @@ const XCollateralModal = ({ account, currencyAmount, sourceChain, action }: XCol
   const { currentId } = useXTransactionStore();
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
+  const { onAdjust: adjust } = useCollateralActionHandlers();
 
   useCreateWalletXService(sourceChain);
 
@@ -67,6 +68,10 @@ const XCollateralModal = ({ account, currencyAmount, sourceChain, action }: XCol
     return currencyAmount ? currencyAmount : undefined;
   }, [currencyAmount]);
   const { approvalState, approveCallback } = useApproveCallback(_inputAmount, xChain.contracts.assetManager);
+
+  const cancelAdjusting = React.useCallback(() => {
+    adjust(false);
+  }, [adjust]);
 
   const handleDismiss = () => {
     modalActions.closeModal(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL);
@@ -95,6 +100,7 @@ const XCollateralModal = ({ account, currencyAmount, sourceChain, action }: XCol
       inputAmount: _inputAmount,
       xCallFee,
       usedCollateral: collateralType,
+      callback: cancelAdjusting,
     };
 
     await xTransactionActions.executeTransfer(xTransactionInput);

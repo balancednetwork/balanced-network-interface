@@ -97,6 +97,7 @@ export const useXMessageStore = create<XMessageStore>()(
         if (id) return get().messages[id];
       },
       add: (xMessage: XMessage) => {
+        if (get().messages[xMessage.id]) return;
         set(state => {
           state.messages[xMessage.id] = xMessage;
         });
@@ -165,6 +166,7 @@ export const useXMessageStore = create<XMessageStore>()(
         });
 
         if (newStatus !== oldStatus) {
+          console.log('XMessage status changed:', id, oldStatus, '->', newStatus);
           if (newStatus === XMessageStatus.CALL_EXECUTED || newStatus === XMessageStatus.FAILED) {
             xCallEventActions.disableScanner(newXMessage.id);
             const xTransaction = xTransactionActions.getByMessageId(newXMessage.id);
@@ -200,6 +202,10 @@ export const useXMessageStore = create<XMessageStore>()(
     {
       name: 'xMessage-store',
       storage: createJSONStorage(() => localStorage, jsonStorageOptions),
+      version: 1,
+      migrate: (state, version) => {
+        return { messages: {} };
+      },
     },
   ),
   //   { name: 'XMessageStore' },
@@ -233,7 +239,7 @@ export const xMessageActions = {
   getXMessageStatusDescription: (xMessageId: string) => {
     const xMessage = useXMessageStore.getState().get(xMessageId);
     if (!xMessage) {
-      return 'Unknown state.';
+      return 'xMessage not found.';
     }
     switch (xMessage.status) {
       case XMessageStatus.REQUESTED:
@@ -267,7 +273,7 @@ export const useFetchXMessageEvents = (xMessage?: XMessage) => {
       let events: XCallEventMap = {};
       if (xMessage.status === XMessageStatus.AWAITING_CALL_MESSAGE_SENT) {
         const srcChainXService = xServiceActions.getPublicXService(sourceChainId);
-        const callMessageSentEvent = await srcChainXService.getCallMessageSentEvent(sourceTransaction);
+        const callMessageSentEvent = srcChainXService.getCallMessageSentEvent(sourceTransaction);
         if (callMessageSentEvent) {
           return {
             [XCallEventType.CallMessageSent]: callMessageSentEvent,

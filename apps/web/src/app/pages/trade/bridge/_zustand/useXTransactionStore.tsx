@@ -85,9 +85,6 @@ export const useXTransactionStore = create<XTransactionStore>()(
           throw new Error('WalletXService for source chain is not found');
         }
 
-        const finalDstChainXService = xServiceActions.getPublicXService(finalDestinationChainId);
-        const primaryDstChainXService = xServiceActions.getPublicXService(primaryDestinationChainId);
-
         console.log('xTransactionInput', xTransactionInput);
 
         let sourceTransactionHash;
@@ -106,6 +103,10 @@ export const useXTransactionStore = create<XTransactionStore>()(
         } else {
           throw new Error('Unsupported XTransactionType');
         }
+
+        const primaryDestinationChainInitialBlockHeight =
+          xServiceActions.getXChainHeight(primaryDestinationChainId) - 5n;
+        const finalDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(finalDestinationChainId);
 
         if (!sourceTransactionHash) {
           xTransactionActions.reset();
@@ -200,8 +201,6 @@ export const useXTransactionStore = create<XTransactionStore>()(
         });
 
         if (sourceTransaction && sourceTransaction.hash) {
-          const destinationChainInitialBlockHeight = (await primaryDstChainXService.getBlockHeight()) - 1n;
-
           const xMessage: XMessage = {
             id: `${sourceChainId}/${sourceTransaction.hash}`,
             sourceChainId: sourceChainId,
@@ -209,14 +208,10 @@ export const useXTransactionStore = create<XTransactionStore>()(
             sourceTransaction,
             status: XMessageStatus.REQUESTED,
             events: {},
-            destinationChainInitialBlockHeight,
+            destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
           };
-          xMessageActions.add(xMessage);
 
-          let finalDestinationChainInitialBlockHeight = destinationChainInitialBlockHeight;
-          if (primaryDestinationChainId !== finalDestinationChainId) {
-            finalDestinationChainInitialBlockHeight = (await finalDstChainXService.getBlockHeight()) - 1n;
-          }
+          xMessageActions.add(xMessage);
 
           const xTransaction: XTransaction = {
             id: xMessage.id,
@@ -240,7 +235,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
         }
       },
 
-      createSecondaryMessage: async (xTransaction: XTransaction, primaryMessage: XMessage) => {
+      createSecondaryMessage: (xTransaction: XTransaction, primaryMessage: XMessage) => {
         if (!primaryMessage.destinationTransaction) {
           throw new Error('destinationTransaction is not found'); // it should not happen
         }
@@ -332,6 +327,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
       },
 
       onMessageUpdate: (id: string, xMessage: XMessage) => {
+        console.log('onMessageUpdate', { id, xMessage });
         const xTransaction = get().transactions[id];
         if (!xTransaction) return;
 
@@ -389,6 +385,10 @@ export const useXTransactionStore = create<XTransactionStore>()(
     {
       name: 'xTransaction-store',
       storage: createJSONStorage(() => localStorage, jsonStorageOptions),
+      version: 1,
+      migrate: (state, version) => {
+        return { transactions: {}, currentId: null };
+      },
     },
   ),
 );

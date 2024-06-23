@@ -29,6 +29,7 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { BalnPreviewInput as SavingsPreviewInput } from '../BBaln/styledComponents';
 import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
 
 const Savings = () => {
   const lockedAmount = useLockedAmount();
@@ -172,6 +173,18 @@ const Savings = () => {
             <Typography pt={isSmallScreen ? '5px' : '9px'} color="text1">
               {savingsRate?.APR && `${savingsRate.APR.toFormat(2)}% APR`}
             </Typography>
+            <QuestionWrapper style={{ marginLeft: '5px', marginTop: '5px', transform: 'translateY(1px)' }}>
+              <QuestionHelper
+                width={150}
+                text={
+                  <Trans>
+                    {savingsRate?.percentAPRbnUSD && `bnUSD: ${savingsRate.percentAPRbnUSD.toFormat(2)}%`}
+                    <br />
+                    {savingsRate?.percentAPRsICX && `sICX: ${savingsRate.percentAPRsICX.toFormat(2)}%`}
+                  </Trans>
+                }
+              />
+            </QuestionWrapper>
           </Flex>
           {account && bnUSDCombinedTotal > 0 && (
             <Flex>

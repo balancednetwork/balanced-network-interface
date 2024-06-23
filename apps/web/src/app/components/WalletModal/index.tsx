@@ -123,6 +123,7 @@ export default function WalletModal() {
             'arb',
             'arbitrum',
             'binance',
+            'base',
           ],
           address: wallets[XWalletType.EVM].account,
           xChains: Object.values(xChainMap)

@@ -40,6 +40,7 @@ import { useAvailableWallets, useSignedInWallets } from 'app/pages/trade/bridge/
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { setRecipientNetwork } from 'store/loan/reducer';
+import { usePendingTxCount } from 'app/pages/trade/bridge/_zustand/useTransactionStore';
 
 export const DEFAULT_COLLATERAL_TOKEN = 'sICX';
 
@@ -141,6 +142,7 @@ export function useCollateralFetchInfo(account?: string | null) {
   //todo: probably do the same for loans (with all network addresses)
   const changeDepositedAmount = useCollateralChangeDepositedAmount();
   const transactions = useAllTransactions();
+  const pendingTxCount = usePendingTxCount();
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
 
   const allWallets = useSignedInWallets();
@@ -187,7 +189,7 @@ export function useCollateralFetchInfo(account?: string | null) {
       }
     };
     fetchData();
-  }, [fetchCollateralInfo, transactions, allWallets]);
+  }, [fetchCollateralInfo, transactions, allWallets, pendingTxCount]);
 }
 
 export function useCollateralState() {

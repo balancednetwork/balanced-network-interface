@@ -190,7 +190,15 @@ export class Pair {
       if (inputAmount.currency.symbol === 'bnUSD') {
         // bnUSD -> USDC
         // apply fee 0.1%
-        return [CurrencyAmount.fromCurrencyAmount(inputAmount, this.token0).multiply(new Fraction(999, 1000)), this];
+        const outputAmount = CurrencyAmount.fromCurrencyAmount(inputAmount, this.token0).multiply(
+          new Fraction(999, 1000),
+        );
+
+        if (outputAmount.quotient > this.reserve0.quotient) {
+          throw new InsufficientInputAmountError();
+        }
+
+        return [outputAmount, this];
       } else {
         // USDC -> bnUSD
         return [CurrencyAmount.fromCurrencyAmount(inputAmount, this.token1), this];
@@ -243,6 +251,11 @@ export class Pair {
         return [CurrencyAmount.fromCurrencyAmount(outputAmount, isToken0 ? this.token1 : this.token0), this];
       } else {
         // bnUSD -> USDC
+
+        if (outputAmount.quotient > this.reserve0.quotient) {
+          throw new InsufficientInputAmountError();
+        }
+
         // apply fee 0.1%
         return [
           CurrencyAmount.fromCurrencyAmount(outputAmount, isToken0 ? this.token1 : this.token0).divide(

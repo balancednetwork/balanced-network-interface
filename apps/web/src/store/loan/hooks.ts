@@ -162,7 +162,6 @@ export function useLoanFetchInfo(account?: string | null) {
               : new BigNumber(0);
             const bnUSDTotalSupply = BalancedJs.utils.toIcx(resultTotalSupply);
 
-            console.log('resultDebt', resultDebt);
             resultDebt.holdings &&
               Object.keys(resultDebt.holdings).forEach(token => {
                 const depositedAmount = new BigNumber(formatUnits(resultDebt.holdings[token]['bnUSD'] || 0, 18, 18));

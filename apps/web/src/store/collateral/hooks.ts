@@ -158,7 +158,6 @@ export function useCollateralFetchInfo(account?: string | null) {
           : `${wallet.xChainId}/${wallet.address}`;
       bnJs.Loans.getAccountPositions(address)
         .then(res => {
-          console.log(`Fetched collateral info for ${address}:`, res);
           supportedCollateralTokens &&
             res.holdings &&
             Object.keys(res.holdings).forEach(async symbol => {

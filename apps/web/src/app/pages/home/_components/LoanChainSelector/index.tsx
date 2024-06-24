@@ -18,7 +18,7 @@ import {
   useCollateralXChain,
   useDerivedCollateralInfo,
 } from 'store/collateral/hooks';
-import { useLoanRecipientNetwork, useSetLoanRecipientNetwork } from 'store/loan/hooks';
+import { useLoanActionHandlers, useLoanRecipientNetwork, useSetLoanRecipientNetwork } from 'store/loan/hooks';
 import styled from 'styled-components';
 import ChainSelectorLogo from '../CollateralChainSelector/ChainSelectorLogo';
 
@@ -29,6 +29,7 @@ const LoanChainSelector = () => {
   const collateralXChain = useCollateralXChain();
   const loanRecipientNetwork = useLoanRecipientNetwork();
   const setRecipientNetwork = useSetLoanRecipientNetwork();
+  const { onAdjust: adjust } = useLoanActionHandlers();
 
   const xChains = getAvailableXChains(bnUSD[NETWORK_ID]);
 
@@ -63,10 +64,11 @@ const LoanChainSelector = () => {
 
   const setChainWrap = React.useCallback(
     (chainId: XChainId) => {
+      adjust(false);
       setRecipientNetwork(chainId);
       setOpen(false);
     },
-    [setRecipientNetwork],
+    [setRecipientNetwork, adjust],
   );
 
   return (

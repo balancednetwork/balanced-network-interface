@@ -31,6 +31,7 @@ import EVMWallet from '../EVMWallet';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import useWallets, { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { Placement } from '@popperjs/core';
+import { UnderlineTextWithArrow } from '../DropdownText';
 
 const StyledLogo = styled(Logo)`
   margin-right: 15px;
@@ -200,11 +201,23 @@ export default function Header(props: { title?: string; className?: string }) {
   }, [wallets]);
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
+  const [moreWalletsAnchor, setMoreWalletsAnchor] = React.useState<HTMLElement | null>(null);
+
   const walletButtonRef = React.useRef<HTMLElement>(null);
+  const moreWalletsRef = React.useRef(null);
   const toggleWalletMenu = () => {
     setAnchor(anchor ? null : walletButtonRef.current);
   };
   const closeWalletMenu = () => setAnchor(null);
+
+  const toggleMoreWallets = () => {
+    setMoreWalletsAnchor(moreWalletsAnchor ? null : moreWalletsRef.current);
+  };
+  const closeMoreWallets = () => setMoreWalletsAnchor(null);
+
+  const handleMoreWalletsClose = () => {
+    setMoreWalletsAnchor(null);
+  };
 
   const toggleWalletModal = useWalletModalToggle();
 
@@ -238,6 +251,7 @@ export default function Header(props: { title?: string; className?: string }) {
 
   const handleChainTabClick = (_chainId: XChainId) => {
     setActiveTab(_chainId);
+    setMoreWalletsAnchor(null);
   };
 
   const WalletUI = activeTab ? WalletUIs[activeTab] : undefined;
@@ -277,12 +291,16 @@ export default function Header(props: { title?: string; className?: string }) {
                         <Trans>Multi-chain wallet</Trans>
                       </Typography>
                       <ConnectionStatus>
-                        {wallets.map((wallet, index) => (
-                          <span key={index}>
-                            {xChainMap[wallet.xChainId].name}
-                            {index + 1 < wallets.length ? ', ' : ''}
-                          </span>
-                        ))}
+                        {wallets.map(
+                          (wallet, index) =>
+                            index < 3 && (
+                              <span key={index}>
+                                {xChainMap[wallet.xChainId].name}
+                                {index + 1 < wallets.length ? ', ' : ' '}
+                              </span>
+                            ),
+                        )}
+                        {wallets.length > 3 && <span key={4}>& {wallets.length - 3} more</span>}
                       </ConnectionStatus>
                     </>
                   ) : (
@@ -333,14 +351,52 @@ export default function Header(props: { title?: string; className?: string }) {
                       )}
                       {wallets.length > 1 && (
                         <ChainTabs>
-                          {wallets.map(wallet => (
-                            <ChainTabButton
-                              onClick={() => handleChainTabClick(wallet.xChainId)}
-                              $active={wallet.xChainId === activeTab}
-                            >
-                              {xChainMap[wallet.xChainId].name}
-                            </ChainTabButton>
-                          ))}
+                          {wallets.map(
+                            (wallet, index) =>
+                              index < 3 && (
+                                <ChainTabButton
+                                  onClick={() => handleChainTabClick(wallet.xChainId)}
+                                  $active={wallet.xChainId === activeTab}
+                                >
+                                  {xChainMap[wallet.xChainId].name}
+                                </ChainTabButton>
+                              ),
+                          )}
+                          {wallets.length > 3 && (
+                            <ClickAwayListener onClickAway={handleMoreWalletsClose}>
+                              <div>
+                                <UnderlineTextWithArrow
+                                  onClick={toggleMoreWallets}
+                                  text={<Trans>+ {wallets.length - 3} more</Trans>}
+                                  arrowRef={moreWalletsRef}
+                                ></UnderlineTextWithArrow>
+                                <DropdownPopper
+                                  show={Boolean(moreWalletsAnchor)}
+                                  anchorEl={moreWalletsAnchor}
+                                  placement="bottom-end"
+                                  zIndex={5150}
+                                >
+                                  <Box p={'5px 5px 5px 15px'}>
+                                    {wallets.map(
+                                      (wallet, index) =>
+                                        index >= 3 && (
+                                          <>
+                                            <ChainTabButton
+                                              onClick={() => handleChainTabClick(wallet.xChainId)}
+                                              $active={wallet.xChainId === activeTab}
+                                              m={'8px 0'}
+                                            >
+                                              {xChainMap[wallet.xChainId].name}
+                                            </ChainTabButton>
+                                            <br />
+                                          </>
+                                        ),
+                                    )}
+                                  </Box>
+                                </DropdownPopper>
+                              </div>
+                            </ClickAwayListener>
+                          )}
                         </ChainTabs>
                       )}
 

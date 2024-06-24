@@ -5,6 +5,9 @@ export enum XWalletType {
   ICON,
   COSMOS,
   EVM,
+  EVM_ARBITRUM,
+  EVM_AVALANCHE,
+  EVM_BSC,
 }
 
 export type XChainId =

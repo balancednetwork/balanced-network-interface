@@ -1,4 +1,4 @@
-import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { RefObject, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Token } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
@@ -17,7 +17,7 @@ import useKeyPress from 'hooks/useKeyPress';
 import { useRatesWithOracle } from 'queries/reward';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { useWalletBalances } from 'store/wallet/hooks';
-import { isDPZeroCA, toFraction } from 'utils';
+import { toFraction } from 'utils';
 
 import Divider from '../Divider';
 import { UnderlineText } from '../DropdownText';

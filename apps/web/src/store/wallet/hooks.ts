@@ -123,10 +123,9 @@ export function useArchwayBalances(
   });
 }
 
-import { coreConfig, viemClients } from 'config/wagmi';
+import { viemClients } from 'config/wagmi';
 import { erc20Abi } from 'viem';
 import { useAccount, useBalance, usePublicClient } from 'wagmi';
-import { multicall } from '@wagmi/core';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 

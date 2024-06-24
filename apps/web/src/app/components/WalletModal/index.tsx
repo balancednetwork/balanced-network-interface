@@ -57,7 +57,7 @@ export default function WalletModal() {
   const { switchChain } = useSwitchChain();
 
   const wallets = useWallets();
-  //
+
   const activeLocale = useActiveLocale();
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 

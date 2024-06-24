@@ -197,7 +197,7 @@ export function useLoanFetchInfo(account?: string | null) {
 
   React.useEffect(() => {
     (async () => {
-      if (account && supportedSymbols) {
+      if (supportedSymbols) {
         const cds: CallData[] = supportedSymbols.map(symbol => {
           return {
             target: addresses[NETWORK_ID].loans,
@@ -219,7 +219,7 @@ export function useLoanFetchInfo(account?: string | null) {
         });
       }
     })();
-  }, [supportedSymbols, dispatch, account]);
+  }, [supportedSymbols, dispatch]);
 }
 
 export function useLoanState() {

@@ -151,10 +151,6 @@ export function useCollateralFetchInfo(account?: string | null) {
 
   const allDerivedWallets = useAllDerivedWallets();
 
-  console.log('derived wallets, ', allDerivedWallets);
-
-  // const combinedWallets = signedInWallets
-
   const fetchCollateralInfo = React.useCallback(
     async (wallet: {
       address: string;

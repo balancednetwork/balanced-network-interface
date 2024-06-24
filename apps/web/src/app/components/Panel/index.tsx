@@ -21,7 +21,7 @@ export const BoxPanel = styled(Box)<{
   border?: string;
   borderRadius?: string;
 }>`
-  border-radius: 10px;
+  border-radius: 15px;
   padding: 15px;
   padding: ${({ padding }) => padding};
   border-radius: ${({ borderRadius }) => borderRadius};

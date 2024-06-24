@@ -50,7 +50,7 @@ const initialState: LoanState = {
     inputType: 'text',
   },
 
-  recipientNetwork: ICON_XCALL_NETWORK_ID,
+  recipientNetwork: '0xa4b1.arbitrum',
 };
 
 const loanSlice = createSlice({

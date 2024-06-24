@@ -96,10 +96,10 @@ export const PanelInfoItem = styled(Box)`
 
 export const UnderPanel = styled(Flex)`
   position: static;
-  padding: 35px 25px 15px;
-  margin-top: -20px;
+  padding: 32px 25px 12px;
+  margin-top: -21px;
   background-color: ${({ theme }) => theme.colors.bg2};
-  border-radius: 0 0 10px 10px;
+  border-radius: 0 0 15px 15px;
   color: ${({ theme }) => theme.colors.text};
 
   svg {
@@ -107,7 +107,7 @@ export const UnderPanel = styled(Flex)`
   }
 
   ${({ theme }) => theme.mediaWidth.upExtraSmall`
-    padding: 32px 35px 12px;
+    padding: 30px 35px 10px;
   `}
 `;
 
@@ -160,6 +160,8 @@ const CollateralPanel = () => {
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
+
+  console.log('collateralTotal', collateralTotal.toFixed());
 
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);

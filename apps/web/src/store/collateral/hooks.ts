@@ -36,7 +36,11 @@ import {
 import { XChainId, XToken } from 'app/pages/trade/bridge/types';
 import { isXToken } from 'app/pages/trade/bridge/utils';
 import { DEFAULT_TOKEN_CHAIN, xTokenMap } from 'app/pages/trade/bridge/_config/xTokens';
-import { useAvailableWallets, useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import {
+  useAllDerivedWallets,
+  useAvailableWallets,
+  useSignedInWallets,
+} from 'app/pages/trade/bridge/_hooks/useWallets';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { setRecipientNetwork } from 'store/loan/reducer';
@@ -145,7 +149,11 @@ export function useCollateralFetchInfo(account?: string | null) {
   const pendingXCalls = useDestinationEvents(ICON_XCALL_NETWORK_ID);
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
 
-  const allWallets = useSignedInWallets();
+  const allDerivedWallets = useAllDerivedWallets();
+
+  console.log('derived wallets, ', allDerivedWallets);
+
+  // const combinedWallets = signedInWallets
 
   const fetchCollateralInfo = React.useCallback(
     async (wallet: {
@@ -182,13 +190,13 @@ export function useCollateralFetchInfo(account?: string | null) {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        await Promise.all(allWallets.map(fetchCollateralInfo));
+        await Promise.all(allDerivedWallets.map(fetchCollateralInfo));
       } catch (e) {
         console.error(e);
       }
     };
     fetchData();
-  }, [fetchCollateralInfo, transactions, allWallets, pendingXCalls.length]);
+  }, [fetchCollateralInfo, transactions, allDerivedWallets, pendingXCalls.length]);
 }
 
 export function useCollateralState() {

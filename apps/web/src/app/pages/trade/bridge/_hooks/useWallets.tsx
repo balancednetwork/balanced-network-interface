@@ -3,6 +3,8 @@ import { useArchwayContext } from '../../../../_xcall/archway/ArchwayProvider';
 import { useIconReact } from 'packages/icon-react';
 import { useMemo } from 'react';
 import useEVMReact from './useEVMReact';
+import { XWallet } from '../_xcall/types';
+import { addAllEvmChains } from 'utils';
 
 const useWallets = (): {
   [key in XWalletType]: { account: string | undefined | null; xChainId: XChainId | undefined; disconnect: () => void };
@@ -50,8 +52,9 @@ const useWallets = (): {
 
 export default useWallets;
 
-export function useSignedInWallets(): { address: string; xChainId: XChainId | undefined }[] {
+export function useSignedInWallets(): XWallet[] {
   const wallets = useWallets();
+
   return useMemo(
     () =>
       Object.entries(wallets)
@@ -63,6 +66,12 @@ export function useSignedInWallets(): { address: string; xChainId: XChainId | un
         .map(([, w]) => ({ xChainId: w.xChainId, address: w.account! })),
     [wallets],
   );
+}
+
+export function useAllDerivedWallets(): XWallet[] {
+  const signedInWallets = useSignedInWallets();
+
+  return useMemo(() => addAllEvmChains(signedInWallets), [signedInWallets]);
 }
 
 export function useAvailableWallets(): { address: string; xChainId: XChainId }[] {

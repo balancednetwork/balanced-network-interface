@@ -17,6 +17,7 @@ import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { bech32 } from 'bech32';
 import { ethers } from 'ethers';
 import { RLP } from '@ethereumjs/rlp';
+import { XWallet } from 'app/pages/trade/bridge/_xcall/types';
 
 const { isEoaAddress, isScoreAddress } = Validator;
 
@@ -375,4 +376,30 @@ export function uintToBytes(x: bigint): Uint8Array {
     data[0] = 0;
     return data;
   }
+}
+
+export const isEVMChain = (chainId: XChainId): boolean => {
+  return xChainMap[chainId].xChainType === 'EVM';
+};
+
+export const getAllEVMChainIds = (testnets = false): XChainId[] => {
+  return Object.entries(xChainMap)
+    .filter(([, xChain]) => xChain.xChainType === 'EVM' && xChain.testnet === testnets)
+    .map(([chainId]) => chainId as XChainId);
+};
+
+export function addAllEvmChains(wallets: XWallet[]): XWallet[] {
+  const hasEvmChain = wallets.some(wallet => wallet.xChainId && isEVMChain(wallet.xChainId));
+
+  if (!hasEvmChain) {
+    return wallets;
+  }
+
+  const evmAddress = wallets.find(wallet => wallet.xChainId && isEVMChain(wallet.xChainId))?.address as string;
+
+  // Create a new wallet for each EVM type chain
+  const newWallets: XWallet[] = getAllEVMChainIds().map(xChainId => ({ address: evmAddress, xChainId }));
+
+  // Return the original list combined with the new wallets
+  return [...wallets, ...newWallets];
 }

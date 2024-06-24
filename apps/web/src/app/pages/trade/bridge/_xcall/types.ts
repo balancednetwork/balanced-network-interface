@@ -90,3 +90,8 @@ export interface IWalletXService extends IPublicXService {
   executeBorrow(xTransactionInput: XTransactionInput): Promise<string | undefined>;
   executeRepay(xTransactionInput: XTransactionInput): Promise<string | undefined>;
 }
+
+export type XWallet = {
+  address: string;
+  xChainId: XChainId | undefined;
+};

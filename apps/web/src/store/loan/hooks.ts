@@ -45,6 +45,7 @@ import { XChainId } from 'app/pages/trade/bridge/types';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { bnUSD } from 'constants/tokens';
 import { getCrossChainTokenAddress } from 'app/pages/trade/bridge/utils';
+import { useDestinationEvents } from 'app/pages/trade/bridge/_zustand/useXCallEventStore';
 
 export function useLoanBorrowedAmount(address?: string): BigNumber {
   const borrowedAmounts = useBorrowedAmounts();
@@ -137,6 +138,7 @@ export function useLoanFetchInfo(account?: string | null) {
   const changeTotalSupply = useLoanChangeTotalSupply();
   const { data: collateralTokens } = useSupportedCollateralTokens();
   const supportedSymbols = React.useMemo(() => collateralTokens && Object.keys(collateralTokens), [collateralTokens]);
+  const pendingXCalls = useDestinationEvents(ICON_XCALL_NETWORK_ID);
 
   const transactions = useAllTransactions();
   const allWallets = useSignedInWallets();
@@ -191,7 +193,7 @@ export function useLoanFetchInfo(account?: string | null) {
       }
     };
     fetchData();
-  }, [fetchLoanInfo, allWallets, transactions]);
+  }, [fetchLoanInfo, allWallets, transactions, pendingXCalls.length]);
 
   React.useEffect(() => {
     (async () => {

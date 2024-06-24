@@ -21,11 +21,6 @@ export const useTransactionStore = create<TransactionStore>()(set => ({
   transactions: [],
 }));
 
-export const usePendingTxCount = (): number => {
-  const { transactions } = useTransactionStore();
-  return transactions.filter(tx => tx.status === TransactionStatus.pending).length;
-};
-
 const getTrackerLink = (xChainId: XChainId, hash: string, type) => {
   // TODO: handle different chain types
   return `https://tracker.icon.foundation/transaction/${hash}?network=${xChainId}`;

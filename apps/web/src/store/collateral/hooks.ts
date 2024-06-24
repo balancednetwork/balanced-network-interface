@@ -6,7 +6,7 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
-import { NETWORK_ID } from 'constants/config';
+import { ICON_XCALL_NETWORK_ID, NETWORK_ID } from 'constants/config';
 import { MINIMUM_ICX_FOR_ACTION } from 'constants/index';
 import {
   HIGH_PRICE_ASSET_DP,
@@ -40,7 +40,7 @@ import { useAvailableWallets, useSignedInWallets } from 'app/pages/trade/bridge/
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { setRecipientNetwork } from 'store/loan/reducer';
-import { usePendingTxCount } from 'app/pages/trade/bridge/_zustand/useTransactionStore';
+import { useDestinationEvents } from 'app/pages/trade/bridge/_zustand/useXCallEventStore';
 
 export const DEFAULT_COLLATERAL_TOKEN = 'sICX';
 
@@ -142,7 +142,7 @@ export function useCollateralFetchInfo(account?: string | null) {
   //todo: probably do the same for loans (with all network addresses)
   const changeDepositedAmount = useCollateralChangeDepositedAmount();
   const transactions = useAllTransactions();
-  const pendingTxCount = usePendingTxCount();
+  const pendingXCalls = useDestinationEvents(ICON_XCALL_NETWORK_ID);
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
 
   const allWallets = useSignedInWallets();
@@ -188,7 +188,7 @@ export function useCollateralFetchInfo(account?: string | null) {
       }
     };
     fetchData();
-  }, [fetchCollateralInfo, transactions, allWallets, pendingTxCount]);
+  }, [fetchCollateralInfo, transactions, allWallets, pendingXCalls.length]);
 }
 
 export function useCollateralState() {

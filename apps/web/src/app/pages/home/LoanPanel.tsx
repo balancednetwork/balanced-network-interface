@@ -9,7 +9,7 @@ import { Button, TextButton } from 'app/components/Button';
 import { CurrencyField } from 'app/components/Form';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
-import { BoxPanel, FlexPanel, BoxPanelWrap } from 'app/components/Panel';
+import { BoxPanel, BoxPanelWrap } from 'app/components/Panel';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
@@ -203,21 +203,26 @@ const LoanPanel = () => {
 
   const hasEnoughICX = useHasEnoughICX();
 
-  if (totalBorrowableAmount.isZero() || totalBorrowableAmount.isNegative()) {
+  if (totalBorrowableAmount.isZero() || totalBorrowableAmount.isNegative() || !account) {
     return (
-      <FlexPanel bg="bg3" flexDirection="column" minHeight={195}>
-        <Flex justifyContent="space-between" alignItems="center">
-          <Typography variant="h2">
-            <Trans>Loan</Trans>
-          </Typography>
-        </Flex>
+      <BoxPanelWrap>
+        <BoxPanel bg="bg3" minHeight={195} sx={{ position: 'relative' }} className="drop-shadow">
+          <Flex justifyContent="space-between" alignItems="center">
+            <Typography variant="h2">
+              <Trans>Loan</Trans>
+            </Typography>
+          </Flex>
 
-        <Flex flex={1} justifyContent="center" alignItems="center">
-          <Typography>
-            <Trans>To borrow bnUSD, deposit collateral.</Trans>
-          </Typography>
-        </Flex>
-      </FlexPanel>
+          <Flex minHeight={125} flex={1} justifyContent="center" alignItems="center">
+            <Typography>
+              <Trans>To borrow bnUSD, deposit collateral.</Trans>
+            </Typography>
+          </Flex>
+        </BoxPanel>
+        <UnderPanel justifyContent="space-between">
+          <LoanChainSelector />
+        </UnderPanel>
+      </BoxPanelWrap>
     );
   }
 

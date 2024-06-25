@@ -197,8 +197,7 @@ const pulseAnimation = keyframes`
 
 export const StyledSearchInput = styled(SearchInput)`
   background-color: ${({ theme }) => theme.colors.bg6};
-  /* border-color: ${({ theme }) => theme.colors.bg6}; */
-  border-color: red !important;
+  border-color: ${({ theme }) => theme.colors.bg6};
   box-shadow: 0px 10px 15px 0px rgba(1, 0, 42, 0.25) inset;
 `;
 

@@ -45,6 +45,11 @@ const useWallets = (): {
         xChainId: '0x38.bsc',
         disconnect: evm.disconnect,
       },
+      [XWalletType.EVM_BASE]: {
+        account: evm.xChainId === '0x2105.base' ? undefined : evm.account,
+        xChainId: '0x2105.base',
+        disconnect: evm.disconnect,
+      },
     }),
     [arch, icon, evm],
   );

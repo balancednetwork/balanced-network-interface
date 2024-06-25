@@ -8,6 +8,7 @@ export enum XWalletType {
   EVM_ARBITRUM,
   EVM_AVALANCHE,
   EVM_BSC,
+  EVM_BASE,
 }
 
 export type XChainId =

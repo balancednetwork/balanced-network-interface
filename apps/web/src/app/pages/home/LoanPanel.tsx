@@ -238,7 +238,12 @@ const LoanPanel = () => {
               <Flex flexDirection={isSuperSmall ? 'column' : 'row'} paddingTop={isSuperSmall ? '4px' : '0'}>
                 {isAdjusting ? (
                   <>
-                    <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
+                    <TextButton
+                      onClick={handleCancelAdjusting}
+                      marginBottom={isSuperSmall ? '10px' : '0'}
+                      paddingLeft={isSuperSmall ? '25px' : '0 !important'}
+                      paddingRight="17px !important"
+                    >
                       <Trans>Cancel</Trans>
                     </TextButton>
                     <Button

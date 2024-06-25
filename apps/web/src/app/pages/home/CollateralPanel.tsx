@@ -48,8 +48,6 @@ import ModalContent from 'app/components/ModalContent';
 import ICXDisplayTypeSwitcher from 'app/components/ICXDisplayTypeSwitcher';
 import XCollateralModal, { XCollateralAction } from './_components/xCollateralModal';
 import { MODAL_ID, modalActions } from '../trade/bridge/_zustand/useModalStore';
-import { toHex } from 'viem';
-import { RLP } from '@ethereumjs/rlp';
 import { UnderlineText } from 'app/components/DropdownText';
 import { xChainMap } from '../trade/bridge/_config/xChains';
 import CollateralChainSelector from './_components/CollateralChainSelector';
@@ -381,7 +379,12 @@ const CollateralPanel = () => {
               <Flex flexDirection={isSuperSmall ? 'column' : 'row'} ml="auto" paddingTop={isSuperSmall ? '4px' : '0'}>
                 {isAdjusting ? (
                   <>
-                    <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
+                    <TextButton
+                      onClick={handleCancelAdjusting}
+                      marginBottom={isSuperSmall ? '10px' : '0'}
+                      paddingLeft={isSuperSmall ? '25px' : '0 !important'}
+                      paddingRight="17px !important"
+                    >
                       <Trans>Cancel</Trans>
                     </TextButton>
                     <Button onClick={toggleOpen} fontSize={14}>

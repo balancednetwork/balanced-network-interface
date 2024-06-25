@@ -369,9 +369,6 @@ export function useLoanDebtHoldingShare() {
 export function useLoanUsedAmount(address?: string): BigNumber {
   const loanNetwork = useLoanRecipientNetwork();
   const borrowedAmount = useLoanBorrowedAmount(address);
-
-  //todo: refactor for all evm balances
-  //! in wallet there is only active chain balances, so selecting non active EVM chain in loan panel leads to an error
   const xBalances = useCrossChainWalletBalances();
   const balances = xBalances[loanNetwork];
 
@@ -611,7 +608,9 @@ export function useDerivedLoanInfo(): {
 
   const direction = {
     from: sourceChain,
-    to: recipientNetwork,
+    //todo: switch to this after Loan contract update
+    // to: recipientNetwork,
+    to: sourceChain,
   };
 
   return {

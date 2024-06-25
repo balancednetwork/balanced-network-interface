@@ -401,7 +401,7 @@ const CollateralPanel = () => {
           </Flex>
 
           {!account && (
-            <Flex minHeight={125} alignItems="center" justifyContent="center">
+            <Flex minHeight={140} alignItems="center" justifyContent="center">
               <Typography mr={1}>{t`To deposit ${collateralType} from ${xChainMap[sourceChain].name},`}</Typography>
               <Typography color="primaryBright">
                 <UnderlineText onClick={toggleWalletModal}>
@@ -416,7 +416,7 @@ const CollateralPanel = () => {
             <>
               {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Locked`} />}
 
-              <Box pt={6} pb={isAdjusting ? 5 : 6} style={{ transition: 'all ease 0.3s' }}>
+              <Box pt={7} pb={isAdjusting ? 5 : 6} style={{ transition: 'all ease 0.3s' }}>
                 <Nouislider
                   id="slider-collateral"
                   disabled={!isAdjusting}

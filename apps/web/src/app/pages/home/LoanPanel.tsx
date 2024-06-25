@@ -213,7 +213,7 @@ const LoanPanel = () => {
             </Typography>
           </Flex>
 
-          <Flex minHeight={125} flex={1} justifyContent="center" alignItems="center">
+          <Flex minHeight={140} flex={1} justifyContent="center" alignItems="center">
             <Typography>
               <Trans>To borrow bnUSD, deposit collateral.</Trans>
             </Typography>
@@ -269,7 +269,7 @@ const LoanPanel = () => {
 
           {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Repayable`} />}
 
-          <Box pt={6} pb={isAdjusting ? 5 : 6} style={{ transition: 'all ease 0.3s' }}>
+          <Box pt={7} pb={isAdjusting ? 5 : 6} style={{ transition: 'all ease 0.3s' }}>
             <Nouislider
               disabled={!isAdjusting}
               id="slider-loan"

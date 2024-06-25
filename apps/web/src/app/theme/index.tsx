@@ -640,20 +640,20 @@ export const ThemedGlobalStyle = createGlobalStyle`
   #indicator-used {
     position: absolute;
     width: 1px;
-    height: 20px;
-    margin-top: 25px;
+    height: 23px;
+    margin-top: 27px;
     background-color: #ffffff;
     z-index: 2;
     opacity: 1;
-    transition: height 0.2s ease, opacity 0.2s ease;
+    transition: height 0.3s ease, opacity 0.2s ease;
   }
   #indicator-used {
     margin-top: -5px;
   }
   #indicator-locked.disabled,
   #indicator-used.disabled {
-    height: 10px;
-    transition: height 0.2s ease;
+    height: 13px;
+    transition: height 0.3s ease;
   }
   #indicator-locked .label,
   #indicator-used .label {

@@ -31,7 +31,7 @@ export const BoxPanel = styled(Box)<{
   `};
 
   ${({ theme }) => theme.mediaWidth.upExtraSmall`
-    padding: 35px;
+    padding: 35px 35px 30px 35px;
   `}
 `;
 

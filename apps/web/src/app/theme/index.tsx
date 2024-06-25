@@ -394,6 +394,7 @@ export const ThemedGlobalStyle = createGlobalStyle`
 
   .noUi-horizontal {
     height: 5px;
+    transition: height 0.3s ease;
   }
   .noUi-horizontal .noUi-handle {
     width: 20px;
@@ -475,10 +476,18 @@ export const ThemedGlobalStyle = createGlobalStyle`
   }
   [disabled].noUi-horizontal {
     height: 15px;
-    transition: height 0.3s ease;
   }
+
   [disabled] .noUi-handle {
-    transition: opacity 0.3s ease;
+    background: #2ca9b7;
+    transform: translate3d(-10px, 4px, 0) scale(0.6);
+    transition: all 0.3s ease;
+  }
+
+  .noUi-handle {
+    transition: all 0.3s ease;
+    background: #03334f;
+    transform: translate3d(0, 0, 0) scale(1);
   }
 
   /* [disabled] .noUi-connect {

@@ -413,7 +413,7 @@ const CollateralPanel = () => {
             <>
               {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Locked`} />}
 
-              <Box marginY={6}>
+              <Box pt={6} pb={isAdjusting ? 5 : 6} style={{ transition: 'all ease 0.3s' }}>
                 <Nouislider
                   id="slider-collateral"
                   disabled={!isAdjusting}

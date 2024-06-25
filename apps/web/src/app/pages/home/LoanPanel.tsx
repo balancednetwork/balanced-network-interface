@@ -264,7 +264,7 @@ const LoanPanel = () => {
 
           {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Repayable`} />}
 
-          <Box marginY={6}>
+          <Box pt={6} pb={isAdjusting ? 5 : 6} style={{ transition: 'all ease 0.3s' }}>
             <Nouislider
               disabled={!isAdjusting}
               id="slider-loan"

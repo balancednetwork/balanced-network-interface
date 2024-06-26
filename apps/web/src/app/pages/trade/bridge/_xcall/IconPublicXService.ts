@@ -84,25 +84,36 @@ export class IconPublicXService extends AbstractPublicXService {
     }
     return TransactionStatus.pending;
   }
+  // didn't find rpc method to get event logs for a block, used getBlock and getTxReceipt instead
+  async getBlockEventLogs(blockHeight: bigint) {
+    const events: any = [];
+    const block = await this.getBlock(blockHeight);
+    if (block && block.confirmedTransactionList && block.confirmedTransactionList.length > 0) {
+      for (const tx of block.confirmedTransactionList) {
+        const txResult = await this.getTxReceipt(tx.txHash);
+
+        if (txResult && txResult.txHash) {
+          const eventLogs = txResult.eventLogs.map(e => ({ ...e, transactionHash: txResult.txHash }));
+          events.push(...eventLogs);
+        } else {
+          throw new Error('Failed to get tx result');
+        }
+      }
+    }
+    return events;
+  }
+
+  getScanBlockCount() {
+    return 1n;
+  }
 
   async getEventLogs({ startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
-    // https://tracker.icon.community/api/v1/logs?block_start=83073062&address=cxa07f426062a1384bdd762afa6a87d123fbc81c75
-    const url = `https://tracker.icon.community/api/v1/logs?block_start=${startBlockHeight}&block_end=${endBlockHeight}&address=${'cxa07f426062a1384bdd762afa6a87d123fbc81c75'}`;
-    const res = await axios.get(url);
-
-    if (res.status === 204) {
-      return [];
+    const events: any[] = [];
+    for (let i = startBlockHeight; i <= endBlockHeight; i++) {
+      const eventLogs: any[] = await this.getBlockEventLogs(i);
+      events.push(...eventLogs);
     }
-
-    const events = res.data;
-    return events.map(({ data, indexed, transaction_hash, method, address, block_number }) => ({
-      data: JSON.parse(data),
-      indexed: JSON.parse(indexed),
-      transactionHash: transaction_hash,
-      method: method,
-      scoreAddress: address,
-      blockHeight: BigInt(block_number),
-    }));
+    return events;
   }
 
   parseEventLogs(eventLogs: any[]): XCallEvent[] {

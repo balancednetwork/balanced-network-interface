@@ -101,7 +101,7 @@ const XCollateralModal = ({
 
     const direction = {
       from: sourceChain,
-      to: '0x1.icon' as XChainId,
+      to: action === XCollateralAction.DEPOSIT ? ('0x1.icon' as XChainId) : sourceChain,
     };
 
     const xTransactionInput: XTransactionInput = {

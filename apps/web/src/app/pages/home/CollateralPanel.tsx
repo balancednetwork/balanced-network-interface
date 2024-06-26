@@ -35,7 +35,6 @@ import {
   useSupportedCollateralTokens,
   useIsHandlingICX,
   useDerivedCollateralInfo,
-  useCollateralXChain,
 } from 'store/collateral/hooks';
 import { useLoanActionHandlers, useLockedCollateralAmount } from 'store/loan/hooks';
 import { useRatio } from 'store/ratio/hooks';

@@ -104,16 +104,16 @@ export class IconPublicXService extends AbstractPublicXService {
   }
 
   getScanBlockCount() {
-    return 10n;
+    return 1n;
   }
 
   async getEventLogs({ startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
-    const promises: any = [];
+    const events: any[] = [];
     for (let i = startBlockHeight; i <= endBlockHeight; i++) {
-      promises.push(this.getBlockEventLogs(i));
+      const eventLogs: any[] = await this.getBlockEventLogs(i);
+      events.push(...eventLogs);
     }
-    const events = await Promise.all(promises);
-    return events.flat();
+    return events;
   }
 
   parseEventLogs(eventLogs: any[]): XCallEvent[] {

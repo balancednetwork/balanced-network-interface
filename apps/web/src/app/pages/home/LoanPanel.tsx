@@ -70,6 +70,13 @@ const LoanPanel = () => {
   const { onFieldAInput, onFieldBInput, onSlide, onAdjust: adjust } = useLoanActionHandlers();
   const { onAdjust: adjustCollateral } = useCollateralActionHandlers();
 
+  const [action, setAction] = React.useState<XLoanAction>(XLoanAction.BORROW);
+  const [storedModalValues, setStoredModalValues] = React.useState<{ amount: string; before: string; after: string }>({
+    amount: '',
+    before: '',
+    after: '',
+  });
+
   const handleEnableAdjusting = () => {
     adjust(true);
     adjustCollateral(false);
@@ -99,6 +106,12 @@ const LoanPanel = () => {
 
   const toggleOpen = () => {
     if (isCrossChain) {
+      setAction(shouldBorrow ? XLoanAction.BORROW : XLoanAction.REPAY);
+      setStoredModalValues({
+        amount: roundedDisplayDiffAmount.dp(2).toFormat(),
+        before: borrowedAmount.dp(2).toFormat(),
+        after: parsedAmount[Field.LEFT].dp(2).toFormat(),
+      });
       modalActions.openModal(MODAL_ID.XLOAN_CONFIRM_MODAL);
     } else {
       if (shouldLedgerSign) return;
@@ -346,9 +359,10 @@ const LoanPanel = () => {
         account={account}
         bnUSDAmount={bnUSDAmount}
         sourceChain={sourceChain}
-        action={shouldBorrow ? XLoanAction.BORROW : XLoanAction.REPAY}
+        action={action}
         originationFee={fee}
         interestRate={interestRate}
+        storedModalValues={storedModalValues}
       />
 
       <Modal isOpen={open} onDismiss={toggleOpen}>

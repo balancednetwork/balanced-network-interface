@@ -42,6 +42,11 @@ type XCollateralModalProps = {
   account: string | undefined;
   sourceChain: XChainId;
   action: XCollateralAction;
+  storedModalValues: {
+    amount: string;
+    before: string;
+    after: string;
+  };
   currencyAmount?: CurrencyAmount<XToken>;
 };
 
@@ -51,7 +56,13 @@ export const presenceVariants = {
   exit: { opacity: 0, height: 0 },
 };
 
-const XCollateralModal = ({ account, currencyAmount, sourceChain, action }: XCollateralModalProps) => {
+const XCollateralModal = ({
+  account,
+  currencyAmount,
+  sourceChain,
+  action,
+  storedModalValues,
+}: XCollateralModalProps) => {
   useModalStore();
   const { collateralDecimalPlaces, collateralDeposit, parsedAmount, collateralType } = useDerivedCollateralInfo();
   const { currentId } = useXTransactionStore();
@@ -129,9 +140,7 @@ const XCollateralModal = ({ account, currencyAmount, sourceChain, action }: XCol
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {`${_inputAmount?.toFixed(collateralDecimalPlaces, { groupSeparator: ',' })} ${
-              _inputAmount?.currency.symbol
-            }`}
+            {storedModalValues.amount}
           </Typography>
 
           <Flex my={4}>
@@ -140,7 +149,7 @@ const XCollateralModal = ({ account, currencyAmount, sourceChain, action }: XCol
                 <Trans>Before</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {`${collateralDeposit.dp(collateralDecimalPlaces).toFormat()} ${_inputAmount?.currency.symbol}`}
+                {storedModalValues.before}
               </Typography>
             </Box>
 
@@ -149,7 +158,7 @@ const XCollateralModal = ({ account, currencyAmount, sourceChain, action }: XCol
                 <Trans>After</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {`${parsedAmount[Field.LEFT].dp(collateralDecimalPlaces).toFormat()} ${_inputAmount?.currency.symbol}`}
+                {storedModalValues.after}
               </Typography>
             </Box>
           </Flex>

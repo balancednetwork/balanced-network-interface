@@ -45,6 +45,11 @@ type XLoanModalProps = {
   sourceChain: XChainId;
   action: XLoanAction;
   originationFee: BigNumber;
+  storedModalValues: {
+    amount: string;
+    before: string;
+    after: string;
+  };
   bnUSDAmount?: CurrencyAmount<Token>;
   interestRate?: BigNumber;
 };
@@ -55,7 +60,15 @@ export const presenceVariants = {
   exit: { opacity: 0, height: 0 },
 };
 
-const XLoanModal = ({ account, bnUSDAmount, sourceChain, action, originationFee, interestRate }: XLoanModalProps) => {
+const XLoanModal = ({
+  account,
+  bnUSDAmount,
+  sourceChain,
+  action,
+  originationFee,
+  interestRate,
+  storedModalValues,
+}: XLoanModalProps) => {
   useModalStore();
   const { currentId } = useXTransactionStore();
   const currentXTransaction = xTransactionActions.get(currentId);
@@ -125,7 +138,7 @@ const XLoanModal = ({ account, bnUSDAmount, sourceChain, action, originationFee,
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {`${_inputAmount?.toFixed(2, { groupSeparator: ',' })} ${_inputAmount?.currency.symbol}`}
+            {`${storedModalValues.amount} ${_inputAmount?.currency.symbol}`}
           </Typography>
 
           <Flex my={4}>
@@ -134,7 +147,7 @@ const XLoanModal = ({ account, bnUSDAmount, sourceChain, action, originationFee,
                 <Trans>Before</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {borrowedAmount.dp(2).toFormat()} bnUSD
+                {storedModalValues.before} bnUSD
               </Typography>
             </Box>
 
@@ -143,7 +156,7 @@ const XLoanModal = ({ account, bnUSDAmount, sourceChain, action, originationFee,
                 <Trans>After</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {parsedAmount[Field.LEFT].dp(2).toFormat()} bnUSD
+                {storedModalValues.after} bnUSD
               </Typography>
             </Box>
           </Flex>

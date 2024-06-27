@@ -81,4 +81,12 @@ export class Price<TBase extends Currency, TQuote extends Currency> extends Frac
   public toFixed(decimalPlaces: number = 4, format?: object, rounding?: Rounding): string {
     return this.adjustedForDecimals.toFixed(decimalPlaces, format, rounding);
   }
+
+  public toDebugString(): string {
+    return `Price(baseCurrency=${this.baseCurrency.symbol}, quoteCurrency=${
+      this.quoteCurrency.symbol
+    }, price=${this.toSignificant(6)}, scalar=${this.scalar.toSignificant(6)}, numerator=${
+      this.numerator
+    }, denominator=${this.denominator})`;
+  }
 }

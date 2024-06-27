@@ -28,3 +28,4 @@ template
 .eslintcache
 
 .idea
+tsconfig.tsbuildinfo

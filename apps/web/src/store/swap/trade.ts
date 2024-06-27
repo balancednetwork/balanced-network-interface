@@ -4,7 +4,7 @@ import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
 import { Pair, Trade } from '@balancednetwork/v1-sdk';
 
 import { useAllCurrencyCombinations } from 'hooks/useAllCurrencyCombinations';
-import { PairState, useV2Pairs } from 'hooks/useV2Pairs';
+import { PairState, useV2Pairs, useStabilityFundPairs } from 'hooks/useV2Pairs';
 import { isTradeBetter } from 'utils/isTradeBetter';
 
 import { BETTER_TRADE_LESS_HOPS_THRESHOLD } from '../../constants/misc';
@@ -16,6 +16,7 @@ function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
   // Note: allCurrencyCombinations can be an empty array
 
   const allPairs = useV2Pairs(allCurrencyCombinations);
+  const stabilityFundPairs = useStabilityFundPairs();
 
   return useMemo(
     () =>
@@ -23,9 +24,10 @@ function useAllCommonPairs(currencyA?: Currency, currencyB?: Currency): Pair[] {
         allPairs
           // filter out invalid pairs
           .filter((result): result is [PairState.EXISTS, Pair] => Boolean(result[0] === PairState.EXISTS && result[1]))
-          .map(([, pair]) => pair),
+          .map(([, pair]) => pair)
+          .concat(stabilityFundPairs),
       ),
-    [allPairs],
+    [allPairs, stabilityFundPairs],
   );
 }
 

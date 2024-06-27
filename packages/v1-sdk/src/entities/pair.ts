@@ -2,7 +2,7 @@ import { getCreate2Address } from '@ethersproject/address';
 import { pack, keccak256 } from '@ethersproject/solidity';
 import invariant from 'tiny-invariant';
 
-import { BigintIsh, Price, sqrt, Token, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { BigintIsh, Price, sqrt, Token, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
 
 import {
   FACTORY_ADDRESS,
@@ -39,6 +39,8 @@ export class Pair {
   public readonly liquidityToken: Token;
   private readonly tokenAmounts: [CurrencyAmount<Token>, CurrencyAmount<Token>];
 
+  public readonly isStabilityFund: boolean;
+
   public readonly poolId?: number;
   public readonly totalSupply?: CurrencyAmount<Token>;
   public readonly baseAddress?: string;
@@ -54,37 +56,61 @@ export class Pair {
       poolId?: number;
       totalSupply?: string;
       baseAddress?: string;
+      isStabilityFund?: boolean;
     },
   ) {
-    let tokenAmounts = [currencyAmountA, tokenAmountB];
-    // Also, as a rule, sICX is always on the right side (except for sICX/bnUSD). bnUSD is also always on the right side (Exception for sICX/BTCB)
-    if (
-      currencyAmountA.currency.symbol === 'bnUSD' ||
-      (tokenAmountB.currency.symbol === 'sICX' && currencyAmountA.currency.symbol === 'bnUSD') ||
-      (currencyAmountA.currency.symbol === 'sICX' &&
-        tokenAmountB.currency.symbol !== 'bnUSD' &&
-        tokenAmountB.currency.symbol !== 'BTCB')
-    ) {
-      tokenAmounts = [tokenAmountB, currencyAmountA];
-    }
+    if (additionalArgs?.isStabilityFund) {
+      // TODO implement stability fund pair constructor
+      this.isStabilityFund = true;
 
-    const tokenADecimals = tokenAmounts[0].currency.decimals;
-    const tokenBDecimals = tokenAmounts[1].currency.decimals;
-    const decimals = tokenADecimals !== tokenBDecimals ? (tokenADecimals + tokenBDecimals) / 2 : tokenADecimals;
-    this.liquidityToken = new Token(
-      tokenAmounts[0].currency.chainId,
-      // Pair.getAddress(tokenAmounts[0].currency, tokenAmounts[1].currency),
-      'cx0000000000000000000000000000000000000002',
-      decimals,
-      'BALN-V2',
-      'Balanced V2',
-    );
-    this.tokenAmounts = tokenAmounts as [CurrencyAmount<Token>, CurrencyAmount<Token>];
+      const tokenAmounts = [currencyAmountA, tokenAmountB];
+      const tokenADecimals = tokenAmounts[0].currency.decimals;
+      const tokenBDecimals = tokenAmounts[1].currency.decimals;
+      const decimals = tokenADecimals !== tokenBDecimals ? (tokenADecimals + tokenBDecimals) / 2 : tokenADecimals;
+      this.liquidityToken = new Token(
+        tokenAmounts[0].currency.chainId,
+        // Pair.getAddress(tokenAmounts[0].currency, tokenAmounts[1].currency),
+        'cx0000000000000000000000000000000000000002',
+        decimals,
+        'BALN-V2',
+        'Balanced V2',
+      );
+      this.tokenAmounts = tokenAmounts as [CurrencyAmount<Token>, CurrencyAmount<Token>];
 
-    if (additionalArgs) {
-      this.poolId = additionalArgs.poolId;
-      this.totalSupply = CurrencyAmount.fromRawAmount(this.liquidityToken, additionalArgs.totalSupply || '0');
-      this.baseAddress = additionalArgs.baseAddress;
+      // this.totalSupply = CurrencyAmount.fromRawAmount(this.liquidityToken, additionalArgs.totalSupply || '0');
+    } else {
+      this.isStabilityFund = false;
+
+      let tokenAmounts = [currencyAmountA, tokenAmountB];
+      // Also, as a rule, sICX is always on the right side (except for sICX/bnUSD). bnUSD is also always on the right side (Exception for sICX/BTCB)
+      if (
+        currencyAmountA.currency.symbol === 'bnUSD' ||
+        (tokenAmountB.currency.symbol === 'sICX' && currencyAmountA.currency.symbol === 'bnUSD') ||
+        (currencyAmountA.currency.symbol === 'sICX' &&
+          tokenAmountB.currency.symbol !== 'bnUSD' &&
+          tokenAmountB.currency.symbol !== 'BTCB')
+      ) {
+        tokenAmounts = [tokenAmountB, currencyAmountA];
+      }
+
+      const tokenADecimals = tokenAmounts[0].currency.decimals;
+      const tokenBDecimals = tokenAmounts[1].currency.decimals;
+      const decimals = tokenADecimals !== tokenBDecimals ? (tokenADecimals + tokenBDecimals) / 2 : tokenADecimals;
+      this.liquidityToken = new Token(
+        tokenAmounts[0].currency.chainId,
+        // Pair.getAddress(tokenAmounts[0].currency, tokenAmounts[1].currency),
+        'cx0000000000000000000000000000000000000002',
+        decimals,
+        'BALN-V2',
+        'Balanced V2',
+      );
+      this.tokenAmounts = tokenAmounts as [CurrencyAmount<Token>, CurrencyAmount<Token>];
+
+      if (additionalArgs) {
+        this.poolId = additionalArgs.poolId;
+        this.totalSupply = CurrencyAmount.fromRawAmount(this.liquidityToken, additionalArgs.totalSupply || '0');
+        this.baseAddress = additionalArgs.baseAddress;
+      }
     }
   }
 
@@ -158,76 +184,121 @@ export class Pair {
 
   public getOutputAmount(inputAmount: CurrencyAmount<Token>): [CurrencyAmount<Token>, Pair] {
     invariant(this.involvesToken(inputAmount.currency), 'TOKEN');
-    if (this.reserve0.quotient === ZERO || this.reserve1.quotient === ZERO) {
-      throw new InsufficientReservesError();
-    }
 
-    const inputReserve = this.reserveOf(inputAmount.currency);
-    const outputReserve = this.reserveOf(inputAmount.currency.equals(this.token0) ? this.token1 : this.token0);
+    if (this.isStabilityFund) {
+      // this.token1 is always bnUSD
+      if (inputAmount.currency.symbol === 'bnUSD') {
+        // bnUSD -> USDC
+        // apply fee 0.1%
+        const outputAmount = CurrencyAmount.fromCurrencyAmount(inputAmount, this.token0).multiply(
+          new Fraction(999, 1000),
+        );
 
-    if (this.isQueue) {
-      if (inputAmount.currency.address === NULL_CONTRACT_ADDRESS) {
-        // ICX -> sICX
-        const numerator = inputAmount.numerator * outputReserve.quotient;
-        const denominator = inputAmount.denominator * inputReserve.quotient;
-        const outputAmount = CurrencyAmount.fromRawAmount(outputReserve.currency, numerator / denominator);
-        return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+        if (outputAmount.quotient > this.reserve0.quotient) {
+          throw new InsufficientInputAmountError();
+        }
+
+        return [outputAmount, this];
       } else {
-        const numerator = inputAmount.numerator * _99 * outputReserve.quotient;
-        const denominator = inputAmount.denominator * _100 * inputReserve.quotient;
-        const outputAmount = CurrencyAmount.fromRawAmount(outputReserve.currency, numerator / denominator);
-        return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+        // USDC -> bnUSD
+        return [CurrencyAmount.fromCurrencyAmount(inputAmount, this.token1), this];
       }
-    }
+    } else {
+      if (this.reserve0.quotient === ZERO || this.reserve1.quotient === ZERO) {
+        throw new InsufficientReservesError();
+      }
 
-    const inputAmountWithFee = inputAmount.quotient * _997;
-    const numerator = inputAmountWithFee * outputReserve.quotient;
-    const denominator = inputReserve.quotient * _1000 + inputAmountWithFee;
-    const outputAmount = CurrencyAmount.fromRawAmount(
-      inputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
-      numerator / denominator,
-    );
-    if (outputAmount.quotient === ZERO) {
-      throw new InsufficientInputAmountError();
+      const inputReserve = this.reserveOf(inputAmount.currency);
+      const outputReserve = this.reserveOf(inputAmount.currency.equals(this.token0) ? this.token1 : this.token0);
+
+      if (this.isQueue) {
+        if (inputAmount.currency.address === NULL_CONTRACT_ADDRESS) {
+          // ICX -> sICX
+          const numerator = inputAmount.numerator * outputReserve.quotient;
+          const denominator = inputAmount.denominator * inputReserve.quotient;
+          const outputAmount = CurrencyAmount.fromRawAmount(outputReserve.currency, numerator / denominator);
+          return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+        } else {
+          const numerator = inputAmount.numerator * _99 * outputReserve.quotient;
+          const denominator = inputAmount.denominator * _100 * inputReserve.quotient;
+          const outputAmount = CurrencyAmount.fromRawAmount(outputReserve.currency, numerator / denominator);
+          return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+        }
+      }
+
+      const inputAmountWithFee = inputAmount.quotient * _997;
+      const numerator = inputAmountWithFee * outputReserve.quotient;
+      const denominator = inputReserve.quotient * _1000 + inputAmountWithFee;
+      const outputAmount = CurrencyAmount.fromRawAmount(
+        inputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
+        numerator / denominator,
+      );
+      if (outputAmount.quotient === ZERO) {
+        throw new InsufficientInputAmountError();
+      }
+      return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
     }
-    return [outputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
   }
 
   public getInputAmount(outputAmount: CurrencyAmount<Token>): [CurrencyAmount<Token>, Pair] {
     invariant(this.involvesToken(outputAmount.currency), 'TOKEN');
-    if (
-      this.reserve0.quotient === ZERO ||
-      this.reserve1.quotient === ZERO ||
-      outputAmount.quotient >= this.reserveOf(outputAmount.currency).quotient
-    ) {
-      throw new InsufficientReservesError();
-    }
+    if (this.isStabilityFund) {
+      const isBnUSD = outputAmount.currency.symbol === 'bnUSD';
+      const isToken0 = outputAmount.currency.equals(this.token0);
 
-    const outputReserve = this.reserveOf(outputAmount.currency);
-    const inputReserve = this.reserveOf(outputAmount.currency.equals(this.token0) ? this.token1 : this.token0);
-
-    if (this.isQueue) {
-      if (outputAmount.currency.address === NULL_CONTRACT_ADDRESS) {
-        // sICX -> ICX
-        const numerator = outputAmount.numerator * _100 * inputReserve.quotient;
-        const denominator = outputAmount.denominator * _99 * outputReserve.quotient;
-        const inputAmount = CurrencyAmount.fromRawAmount(inputReserve.currency, numerator / denominator);
-        return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+      if (isBnUSD) {
+        // USDC -> bnUSD
+        return [CurrencyAmount.fromCurrencyAmount(outputAmount, isToken0 ? this.token1 : this.token0), this];
       } else {
-        const numerator = outputAmount.numerator * inputReserve.quotient;
-        const denominator = outputAmount.denominator * outputReserve.quotient;
-        const inputAmount = CurrencyAmount.fromRawAmount(inputReserve.currency, numerator / denominator);
-        return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
-      }
-    }
+        // bnUSD -> USDC
 
-    const numerator = inputReserve.quotient * outputAmount.quotient * _1000;
-    const denominator = (outputReserve.quotient - outputAmount.quotient) * _997;
-    const inputAmount = CurrencyAmount.fromRawAmount(
-      outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
-      numerator / denominator + ONE,
-    );
-    return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+        if (outputAmount.quotient > this.reserve0.quotient) {
+          throw new InsufficientInputAmountError();
+        }
+
+        // apply fee 0.1%
+        return [
+          CurrencyAmount.fromCurrencyAmount(outputAmount, isToken0 ? this.token1 : this.token0).divide(
+            new Fraction(999, 1000),
+          ),
+          this,
+        ];
+      }
+    } else {
+      if (
+        this.reserve0.quotient === ZERO ||
+        this.reserve1.quotient === ZERO ||
+        outputAmount.quotient >= this.reserveOf(outputAmount.currency).quotient
+      ) {
+        throw new InsufficientReservesError();
+      }
+
+      const outputReserve = this.reserveOf(outputAmount.currency);
+      const inputReserve = this.reserveOf(outputAmount.currency.equals(this.token0) ? this.token1 : this.token0);
+
+      if (this.isQueue) {
+        if (outputAmount.currency.address === NULL_CONTRACT_ADDRESS) {
+          // sICX -> ICX
+          const numerator = outputAmount.numerator * _100 * inputReserve.quotient;
+          const denominator = outputAmount.denominator * _99 * outputReserve.quotient;
+          const inputAmount = CurrencyAmount.fromRawAmount(inputReserve.currency, numerator / denominator);
+          return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+        } else {
+          const numerator = outputAmount.numerator * inputReserve.quotient;
+          const denominator = outputAmount.denominator * outputReserve.quotient;
+          const inputAmount = CurrencyAmount.fromRawAmount(inputReserve.currency, numerator / denominator);
+          return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+        }
+      }
+
+      const numerator = inputReserve.quotient * outputAmount.quotient * _1000;
+      const denominator = (outputReserve.quotient - outputAmount.quotient) * _997;
+      const inputAmount = CurrencyAmount.fromRawAmount(
+        outputAmount.currency.equals(this.token0) ? this.token1 : this.token0,
+        numerator / denominator + ONE,
+      );
+      return [inputAmount, new Pair(inputReserve.add(inputAmount), outputReserve.subtract(outputAmount), {})];
+    }
   }
 
   public getLiquidityMinted(

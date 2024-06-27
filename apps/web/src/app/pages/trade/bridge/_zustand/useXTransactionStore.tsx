@@ -103,7 +103,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
         }
 
         const primaryDestinationChainInitialBlockHeight =
-          xServiceActions.getXChainHeight(primaryDestinationChainId) - 5n;
+          xServiceActions.getXChainHeight(primaryDestinationChainId) - 20n;
         const finalDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(finalDestinationChainId);
 
         if (!sourceTransactionHash) {

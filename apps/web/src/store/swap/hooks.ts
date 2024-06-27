@@ -27,10 +27,12 @@ import {
   selectChain,
 } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
-import { getCrossChainTokenBySymbol } from 'app/pages/trade/bridge/utils';
+import { getCrossChainTokenBySymbol, getXAddress } from 'app/pages/trade/bridge/utils';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from 'constants/misc';
+import { useAssetManagerTokens } from 'app/pages/trade/bridge/_hooks/useAssetManagerTokens';
+import BigNumber from 'bignumber.js';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);
@@ -144,6 +146,8 @@ export function useDerivedSwapInfo(): {
   formattedAmounts: {
     [field in Field]: string;
   };
+  canBridge: boolean;
+  maximumBridgeAmount: CurrencyAmount<XToken> | undefined;
 } {
   const {
     independentField,
@@ -270,6 +274,28 @@ export function useDerivedSwapInfo(): {
     } as { [field in Field]: string };
   }, [dependentField, independentField, parsedAmounts, typedValue]);
 
+  const { data: assetManager } = useAssetManagerTokens();
+
+  const maximumBridgeAmount = useMemo(() => {
+    if (currencies[Field.OUTPUT] instanceof XToken) {
+      return assetManager?.[getXAddress(currencies[Field.OUTPUT]) ?? '']?.depositedAmount;
+    }
+  }, [assetManager, currencies[Field.OUTPUT]]);
+
+  const outputCurrencyAmount = useMemo(() => {
+    if (outputCurrency && formattedAmounts[Field.OUTPUT] && !Number.isNaN(parseFloat(formattedAmounts[Field.OUTPUT]))) {
+      return CurrencyAmount.fromRawAmount(
+        outputCurrency,
+        new BigNumber(formattedAmounts[Field.OUTPUT]).times(10 ** outputCurrency.wrapped.decimals).toFixed(0),
+      );
+    }
+    return undefined;
+  }, [formattedAmounts[Field.OUTPUT], outputCurrency]);
+
+  const canBridge = useMemo(() => {
+    return maximumBridgeAmount && outputCurrencyAmount ? maximumBridgeAmount?.greaterThan(outputCurrencyAmount) : true;
+  }, [maximumBridgeAmount, outputCurrencyAmount]);
+
   return {
     account,
     trade,
@@ -285,6 +311,8 @@ export function useDerivedSwapInfo(): {
     dependentField,
     parsedAmounts,
     formattedAmounts,
+    canBridge,
+    maximumBridgeAmount,
   };
 }
 

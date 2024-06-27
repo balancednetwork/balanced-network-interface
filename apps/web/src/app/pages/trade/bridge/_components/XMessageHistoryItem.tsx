@@ -148,7 +148,7 @@ const XMessageHistoryItem = ({ xMessage, xTransaction }: { xMessage: XMessage; x
               </Flex>
 
               <Typography color="alert" onClick={handleRemove} style={{ cursor: 'pointer' }}>
-                REMOVE
+                Remove
               </Typography>
             </>
           )}

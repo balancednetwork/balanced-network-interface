@@ -123,10 +123,9 @@ export function useArchwayBalances(
   });
 }
 
-import { coreConfig, viemClients } from 'config/wagmi';
+import { viemClients } from 'config/wagmi';
 import { erc20Abi } from 'viem';
 import { useAccount, useBalance, usePublicClient } from 'wagmi';
-import { multicall } from '@wagmi/core';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 
@@ -222,6 +221,13 @@ export function useWalletFetchBalances(account?: string | null, accountArch?: st
   React.useEffect(() => {
     arbBalances && dispatch(changeBalances({ xChainId: '0xa4b1.arbitrum', balances: arbBalances }));
   }, [arbBalances, dispatch]);
+
+  // fetch balances on base
+  const baseTokens = useXTokens('0x2105.base');
+  const { data: baseBalances } = useEVMBalances(address, baseTokens, '0x2105.base');
+  React.useEffect(() => {
+    baseBalances && dispatch(changeBalances({ xChainId: '0x2105.base', balances: baseBalances }));
+  }, [baseBalances, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {

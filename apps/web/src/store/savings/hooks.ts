@@ -165,7 +165,14 @@ function useTricklerDistributionPeriod(): UseQueryResult<number | undefined> {
 }
 
 export function useSavingsRateInfo(): UseQueryResult<
-  { totalLocked: CurrencyAmount<Token>; dailyPayout: BigNumber; APR: BigNumber } | undefined
+  | {
+      totalLocked: CurrencyAmount<Token>;
+      dailyPayout: BigNumber;
+      APR: BigNumber;
+      percentAPRsICX: BigNumber;
+      percentAPRbnUSD: BigNumber;
+    }
+  | undefined
 > {
   const { data: tokenPrices } = useTokenPrices();
   const { data: totalLocked } = useTotalBnUSDLocked();
@@ -178,6 +185,8 @@ export function useSavingsRateInfo(): UseQueryResult<
     queryFn: async () => {
       if (!tokenPrices || !tokenList || !collateralTokens || !totalLocked || !periodInBlocks) return;
 
+      let sICXtricklerBalance: BigNumber | undefined = new BigNumber(0);
+
       async function getTricklerBalance(): Promise<BigNumber> {
         const amounts: BigNumber[] = await Promise.all(
           tokenList!.map(async tokenAddress => {
@@ -188,7 +197,9 @@ export function useSavingsRateInfo(): UseQueryResult<
               const symbol = await cx.symbol();
               const currencyAmount = CurrencyAmount.fromRawAmount(token, balanceRaw);
               const price = tokenPrices?.[symbol];
-              return price?.times(new BigNumber(currencyAmount.toFixed())) ?? new BigNumber(0);
+              const amount = price?.times(new BigNumber(currencyAmount.toFixed())) ?? new BigNumber(0);
+              if (symbol === 'sICX') sICXtricklerBalance = amount;
+              return amount;
             } catch (e) {
               console.error('Error while fetching bnUSD payout stats: ', e);
               return new BigNumber(0);
@@ -219,11 +230,18 @@ export function useSavingsRateInfo(): UseQueryResult<
         .plus(interestPayoutPerYear)
         .div(new BigNumber(totalLocked.toFixed()))
         .times(100);
+      const percentAPRsICX = sICXtricklerBalance
+        .times(yearlyRatio)
+        .div(new BigNumber(totalLocked.toFixed()))
+        .times(100);
+      const percentAPRbnUSD = APR.minus(percentAPRsICX);
 
       return {
         totalLocked,
         dailyPayout,
         APR,
+        percentAPRsICX,
+        percentAPRbnUSD,
       };
     },
     placeholderData: keepPreviousData,

@@ -66,12 +66,18 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
   ],
   '0x38.bsc': [
     new XToken('0x38.bsc', 56, NATIVE_ADDRESS, 18, 'BNB', 'BNB'),
-    new XToken('0x38.bsc', 56, '0x2170ed0880ac9a755fd29b2688956bd959f933f8', 18, 'ETH', 'Ethereum'),
+    new XToken('0x38.bsc', 56, '0x2170Ed0880ac9A755fd29B2688956BD959F933F8', 18, 'ETH', 'Ethereum'),
     new XToken('0x38.bsc', 56, '0xc65132325bD4FcF2Ec5F3a9375487163B6999206', 18, 'bnUSD', 'Balanced Dollar'),
   ],
   '0xa4b1.arbitrum': [
     new XToken('0xa4b1.arbitrum', 42161, NATIVE_ADDRESS, 18, 'ETH', 'ETH'),
     new XToken('0xa4b1.arbitrum', 42161, '0xA67f4b09Eed22f8201Ee0637CbE9d654E63F946e', 18, 'bnUSD', 'Balanced Dollar'),
+    new XToken('0xa4b1.arbitrum', 42161, '0xaf88d065e77c8cC2239327C5EDb3A432268e5831', 6, 'USDC', 'USD Coin'),
+  ],
+  '0x2105.base': [
+    new XToken('0x2105.base', 8453, NATIVE_ADDRESS, 18, 'ETH', 'ETH'),
+    new XToken('0x2105.base', 8453, '0x78b7CD9308287DEb724527d8703c889e2d6C3708', 18, 'bnUSD', 'Balanced Dollar'),
+    new XToken('0x2105.base', 8453, '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', 6, 'USDC', 'USD Coin'),
   ],
   '0x2.icon': [],
   '0xa869.fuji': [],

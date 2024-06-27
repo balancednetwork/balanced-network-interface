@@ -1,3 +1,4 @@
+import axios from 'axios';
 import bnJs from 'bnJs';
 import IconService, { Converter, BigNumber } from 'icon-sdk-js';
 
@@ -63,25 +64,6 @@ export class IconPublicXService extends AbstractPublicXService {
     return block;
   }
 
-  // didn't find rpc method to get event logs for a block, used getBlock and getTxReceipt instead
-  async getBlockEventLogs(blockHeight: bigint) {
-    const events: any = [];
-    const block = await this.getBlock(blockHeight);
-    if (block && block.confirmedTransactionList && block.confirmedTransactionList.length > 0) {
-      for (const tx of block.confirmedTransactionList) {
-        const txResult = await this.getTxReceipt(tx.txHash);
-
-        if (txResult && txResult.txHash) {
-          const eventLogs = txResult.eventLogs.map(e => ({ ...e, transactionHash: txResult.txHash }));
-          events.push(...eventLogs);
-        } else {
-          throw new Error('Failed to get tx result');
-        }
-      }
-    }
-    return events;
-  }
-
   async getTxReceipt(txHash: string) {
     //TODO: update to use this.publicClient
     return await fetchTxResult(txHash);
@@ -101,6 +83,24 @@ export class IconPublicXService extends AbstractPublicXService {
       }
     }
     return TransactionStatus.pending;
+  }
+  // didn't find rpc method to get event logs for a block, used getBlock and getTxReceipt instead
+  async getBlockEventLogs(blockHeight: bigint) {
+    const events: any = [];
+    const block = await this.getBlock(blockHeight);
+    if (block && block.confirmedTransactionList && block.confirmedTransactionList.length > 0) {
+      for (const tx of block.confirmedTransactionList) {
+        const txResult = await this.getTxReceipt(tx.txHash);
+
+        if (txResult && txResult.txHash) {
+          const eventLogs = txResult.eventLogs.map(e => ({ ...e, transactionHash: txResult.txHash }));
+          events.push(...eventLogs);
+        } else {
+          throw new Error('Failed to get tx result');
+        }
+      }
+    }
+    return events;
   }
 
   getScanBlockCount() {

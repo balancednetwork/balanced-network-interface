@@ -159,16 +159,19 @@ export default function BridgeTransferForm({ openModal }) {
               <Typography textAlign="center">
                 {maximumBridgeAmount?.greaterThan(0) && (
                   <>
-                    <Typography>
-                      <Trans>Only</Trans>
-                    </Typography>{' '}
+                    <Trans>Only</Trans>{' '}
+                    <UnderlineText onClick={handleMaximumBridgeAmountClick}>
+                      <Typography color="primaryBright" as="a">
+                        {maximumBridgeAmount?.toFixed(0)} {maximumBridgeAmount?.currency?.symbol}
+                      </Typography>
+                    </UnderlineText>{' '}
                   </>
                 )}
-                <UnderlineText onClick={handleMaximumBridgeAmountClick}>
-                  <Typography color="primaryBright" as="a">
-                    {maximumBridgeAmount?.toFixed(0)} {maximumBridgeAmount?.currency?.symbol}
-                  </Typography>
-                </UnderlineText>{' '}
+                {maximumBridgeAmount?.equalTo(0) && (
+                  <>
+                    <Trans>0 {maximumBridgeAmount?.currency?.symbol}</Trans>{' '}
+                  </>
+                )}
                 <Trans>is available on {xChainMap[bridgeDirection?.to].name}.</Trans>
               </Typography>
             </Flex>

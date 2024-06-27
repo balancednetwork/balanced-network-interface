@@ -229,7 +229,7 @@ export const base: XChain = {
     bnUSD: '0x78b7CD9308287DEb724527d8703c889e2d6C3708',
   },
   autoExecution: true,
-  gasThreshold: 0,
+  gasThreshold: 0.0001,
   testnet: false,
 };
 

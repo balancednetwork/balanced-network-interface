@@ -157,7 +157,13 @@ export default function BridgeTransferForm({ openModal }) {
           {!canBridge && (
             <Flex alignItems="center" justifyContent="center" mt={2}>
               <Typography textAlign="center">
-                <Trans>Only</Trans>{' '}
+                {maximumBridgeAmount?.greaterThan(0) && (
+                  <>
+                    <Typography>
+                      <Trans>Only</Trans>
+                    </Typography>{' '}
+                  </>
+                )}
                 <UnderlineText onClick={handleMaximumBridgeAmountClick}>
                   <Typography color="primaryBright" as="a">
                     {maximumBridgeAmount?.toFixed(0)} {maximumBridgeAmount?.currency?.symbol}

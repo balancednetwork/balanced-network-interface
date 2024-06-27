@@ -23,6 +23,7 @@ import useXCallFee from '../_hooks/useXCallFee';
 import { xChainMap } from '../_config/xChains';
 import { validateAddress } from 'utils';
 import { useAvailableWallets } from '../_hooks/useWallets';
+import { UnderlineText } from 'app/components/DropdownText';
 
 export default function BridgeTransferForm({ openModal }) {
   const crossChainWallet = useCrossChainWalletBalances();
@@ -56,7 +57,7 @@ export default function BridgeTransferForm({ openModal }) {
     }
   }, [bridgeDirection.to, onChangeRecipient, signedInWallets]);
 
-  const { errorMessage, selectedTokenWalletBalance, account } = useDerivedBridgeInfo();
+  const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount } = useDerivedBridgeInfo();
 
   const handleSubmit = async () => {
     if (account) {
@@ -71,6 +72,12 @@ export default function BridgeTransferForm({ openModal }) {
   React.useEffect(() => {
     setValid(validateAddress(recipient || '', bridgeDirection.to));
   }, [recipient, bridgeDirection.to]);
+
+  const handleMaximumBridgeAmountClick = () => {
+    if (maximumBridgeAmount) {
+      onUserInput(maximumBridgeAmount?.toFixed(0));
+    }
+  };
 
   return (
     <>
@@ -139,13 +146,27 @@ export default function BridgeTransferForm({ openModal }) {
 
           <Flex alignItems="center" justifyContent="center" mt={4}>
             {account ? (
-              <Button onClick={handleSubmit} disabled={!!errorMessage || !isValid}>
+              <Button onClick={handleSubmit} disabled={!!errorMessage || !isValid || !canBridge}>
                 {errorMessage ? errorMessage : <Trans>Transfer</Trans>}
               </Button>
             ) : (
               <Button onClick={handleSubmit}>{<Trans>Transfer</Trans>}</Button>
             )}
           </Flex>
+
+          {!canBridge && (
+            <Flex alignItems="center" justifyContent="center" mt={2}>
+              <Typography textAlign="center">
+                <Trans>Only</Trans>{' '}
+                <UnderlineText onClick={handleMaximumBridgeAmountClick}>
+                  <Typography color="primaryBright" as="a">
+                    {maximumBridgeAmount?.toFixed(0)} {maximumBridgeAmount?.currency?.symbol}
+                  </Typography>
+                </UnderlineText>{' '}
+                <Trans>is available on {xChainMap[bridgeDirection?.to].name}.</Trans>
+              </Typography>
+            </Flex>
+          )}
         </AutoColumn>
       </BrightPanel>
     </>

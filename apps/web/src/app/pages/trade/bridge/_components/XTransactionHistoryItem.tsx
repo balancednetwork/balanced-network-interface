@@ -138,7 +138,7 @@ const XTransactionHistoryItem = ({ xTransaction }: { xTransaction: XTransaction 
               </Flex>
 
               <Typography color="alert" onClick={handleRemove} style={{ cursor: 'pointer' }}>
-                REMOVE
+                Remove
               </Typography>
             </>
           )}

@@ -37,4 +37,34 @@ export default class AssetManager extends Contract {
 
     return this.callICONPlugins(payload);
   }
+
+  getAssets() {
+    const callParams = this.paramsBuilder({
+      method: 'getAssets',
+    });
+
+    return this.call(callParams);
+  }
+
+  getAssetDeposit(networkAddress: string) {
+    const callParams = this.paramsBuilder({
+      method: 'getAssetDeposit',
+      params: {
+        tokenNetworkAddress: networkAddress,
+      },
+    });
+
+    return this.call(callParams);
+  }
+
+  getAssetChainDepositLimit(networkAddress: string) {
+    const callParams = this.paramsBuilder({
+      method: 'getAssetChainDepositLimit',
+      params: {
+        tokenNetworkAddress: networkAddress,
+      },
+    });
+
+    return this.call(callParams);
+  }
 }

@@ -66,7 +66,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
   ],
   '0x38.bsc': [
     new XToken('0x38.bsc', 56, NATIVE_ADDRESS, 18, 'BNB', 'BNB'),
-    new XToken('0x38.bsc', 56, '0x2170ed0880ac9a755fd29b2688956bd959f933f8', 18, 'ETH', 'Ethereum'),
+    new XToken('0x38.bsc', 56, '0x2170Ed0880ac9A755fd29B2688956BD959F933F8', 18, 'ETH', 'Ethereum'),
     new XToken('0x38.bsc', 56, '0xc65132325bD4FcF2Ec5F3a9375487163B6999206', 18, 'bnUSD', 'Balanced Dollar'),
   ],
   '0xa4b1.arbitrum': [

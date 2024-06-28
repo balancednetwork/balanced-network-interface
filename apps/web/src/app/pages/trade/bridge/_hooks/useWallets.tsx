@@ -28,6 +28,21 @@ const useWallets = (): {
         xChainId: evm.xChainId,
         disconnect: evm.disconnect,
       },
+      [XWalletType.EVM_ARBITRUM]: {
+        account: evm.xChainId === '0xa4b1.arbitrum' ? undefined : evm.account,
+        xChainId: '0xa4b1.arbitrum',
+        disconnect: evm.disconnect,
+      },
+      [XWalletType.EVM_AVALANCHE]: {
+        account: evm.xChainId === '0xa86a.avax' ? undefined : evm.account,
+        xChainId: '0xa86a.avax',
+        disconnect: evm.disconnect,
+      },
+      [XWalletType.EVM_BSC]: {
+        account: evm.xChainId === '0x38.bsc' ? undefined : evm.account,
+        xChainId: '0x38.bsc',
+        disconnect: evm.disconnect,
+      },
     }),
     [arch, icon, evm],
   );
@@ -39,9 +54,13 @@ export function useSignedInWallets(): { address: string; xChainId: XChainId | un
   const wallets = useWallets();
   return useMemo(
     () =>
-      Object.values(wallets)
-        .filter(w => !!w.account)
-        .map(w => ({ xChainId: w.xChainId, address: w.account! })),
+      Object.entries(wallets)
+        .filter(
+          ([key, w]) =>
+            !!w.account &&
+            (Number(key) === XWalletType.ICON || Number(key) === XWalletType.COSMOS || Number(key) === XWalletType.EVM),
+        )
+        .map(([, w]) => ({ xChainId: w.xChainId, address: w.account! })),
     [wallets],
   );
 }

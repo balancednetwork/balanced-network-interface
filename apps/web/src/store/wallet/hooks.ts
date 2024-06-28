@@ -14,7 +14,7 @@ import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useARCH } from 'app/pages/trade/bridge/_config/tokens';
 import { isDenomAsset } from 'app/_xcall/archway/utils';
-import { XChainId } from 'app/pages/trade/bridge/types';
+import { XChainId, XWalletAssetRecord } from 'app/pages/trade/bridge/types';
 import { getCrossChainTokenAddress, isXToken } from 'app/pages/trade/bridge/utils';
 import bnJs from 'bnJs';
 import { MINIMUM_ICX_FOR_TX, NATIVE_ADDRESS } from 'constants/index';
@@ -128,6 +128,7 @@ import { erc20Abi } from 'viem';
 import { useAccount, useBalance, usePublicClient } from 'wagmi';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { useRatesWithOracle } from 'queries/reward';
 
 export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined, xChainId: XChainId) {
   const chainId = xChainMap[xChainId].id;
@@ -479,4 +480,61 @@ export function useLiquidityTokenBalance(account: string | undefined | null, pai
   const query = useBnJsContractQuery<string>('Dex', 'balanceOf', [account, pair?.poolId]);
   const { data } = query;
   return pair && data ? CurrencyAmount.fromRawAmount<Token>(pair.liquidityToken, data) : undefined;
+}
+
+export function useXBalancesByToken(): XWalletAssetRecord[] {
+  const balances = useCrossChainWalletBalances();
+  const tokenListConfig = useTokenListConfig();
+  const prices = useRatesWithOracle();
+
+  return React.useMemo(() => {
+    return Object.entries(
+      Object.entries(balances).reduce(
+        (acc, [chainId, chainBalances]) => {
+          if (chainBalances) {
+            forEach(chainBalances, (balance, tokenAddress) => {
+              if (balance.currency) {
+                acc[balance.currency.symbol] = {
+                  ...acc[balance.currency.symbol],
+                  [chainId]: balance,
+                };
+              }
+            });
+          }
+          return acc;
+        },
+        {} as { [AssetSymbol in string]: { [key in XChainId]: CurrencyAmount<Currency> | undefined } },
+      ),
+    )
+      .map(([symbol, balances]) => {
+        const baseToken = (tokenListConfig.community ? COMBINED_TOKENS_LIST : SUPPORTED_TOKENS_LIST).find(
+          token => token.symbol === symbol,
+        );
+
+        if (baseToken === undefined) return;
+
+        const total = Object.values(balances).reduce((sum, balance) => {
+          if (balance) sum = sum.plus(new BigNumber(balance.toFixed()));
+          return sum;
+        }, new BigNumber(0));
+        return {
+          baseToken,
+          balances,
+          isBalanceSingleChain: Object.keys(balances).length === 1,
+          total,
+          value: prices && prices[symbol] ? total.times(prices[symbol]) : undefined,
+        };
+      })
+      .filter(
+        (
+          item,
+        ): item is {
+          baseToken: Token;
+          balances: { [key in XChainId]: CurrencyAmount<Currency> | undefined };
+          isBalanceSingleChain: boolean;
+          total: BigNumber;
+          value: BigNumber | undefined;
+        } => Boolean(item),
+      );
+  }, [balances, tokenListConfig, prices]);
 }

@@ -3,11 +3,11 @@ import React from 'react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
-import { notificationCSS } from 'app/components/ICONWallet/wallets/utils';
 import { FlexPanel } from 'app/components/Panel';
 import { HeaderText } from 'app/pages/trade/supply/_components/LiquidityDetails';
 import { Typography } from 'app/theme';
 import QuestionIcon from 'assets/icons/question.svg';
+import { notificationCSS } from 'app/components/Wallet/ICONWallets/utils';
 
 export const Grid = styled(Box)`
   display: grid;

@@ -10,7 +10,7 @@ import TradeIcon from 'assets/icons/trade.svg';
 import VoteIcon from 'assets/icons/vote.svg';
 import { useActiveProposals } from 'queries/vote';
 import { useBBalnAmount } from 'store/bbaln/hooks';
-import { notificationCSS } from '../ICONWallet/wallets/utils';
+import { notificationCSS } from '../Wallet/ICONWallets/utils';
 
 const Navigation = styled.nav`
   display: inline-block;

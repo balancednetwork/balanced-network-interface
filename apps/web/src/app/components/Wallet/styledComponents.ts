@@ -2,8 +2,8 @@ import styled from 'styled-components';
 import { Link } from 'app/components/Link';
 import { Box, Flex } from 'rebass';
 import { Typography } from 'app/theme';
-import { notificationCSS } from '../ICONWallet/wallets/utils';
 import { BoxPanel } from '../Panel';
+import { notificationCSS } from './ICONWallets/utils';
 
 export const walletBreakpoint = '385px';
 const modalWalletBreakpoint = '400px';

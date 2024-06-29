@@ -30,7 +30,7 @@ const MultiChainBalanceItem = ({ baseToken, balances, total, value }: MultiChain
 
   return (
     <>
-      <ListItem $border={false}>
+      <ListItem $border={false} style={{ cursor: 'default' }}>
         <AssetSymbol>
           {/* <AssetSymbol $hasNotification={symbol.toLowerCase() === 'icx' && claimableICX.isGreaterThan(0)}> */}
           <CurrencyLogo currency={baseToken} />

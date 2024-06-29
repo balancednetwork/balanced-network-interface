@@ -77,7 +77,7 @@ export const icon: XChain = {
     liquidSwap: '',
   },
   autoExecution: true,
-  gasThreshold: 5,
+  gasThreshold: 2.5,
   testnet: false,
 };
 

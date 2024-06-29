@@ -60,7 +60,7 @@ const MultiChainBalanceItem = ({ baseToken, balances, total, value }: MultiChain
             key={xChainId}
             baseToken={baseToken}
             networkBalance={{ [xChainId]: balance }}
-            value={value?.times(new BigNumber(balance?.toFixed() || 0).div(total || 1))}
+            value={value?.times(new BigNumber(balance?.toFixed() || 0).div(total?.isGreaterThan(0) ? total : 1))}
             isNested={true}
           />
         ))}

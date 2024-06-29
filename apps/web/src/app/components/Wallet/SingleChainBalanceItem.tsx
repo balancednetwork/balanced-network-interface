@@ -29,7 +29,7 @@ const SingleChainBalanceItem = ({
   baseToken,
   networkBalance,
   value,
-  isLast = true,
+  isLast = false,
   isNested = false,
 }: SingleChainBalanceItemProps) => {
   const { account: iconAccount } = useIconReact();
@@ -54,7 +54,11 @@ const SingleChainBalanceItem = ({
 
   return (
     <>
-      <ListItem $border={!isLast} onClick={handleModalOpen} style={{ cursor: isICONAsset ? 'pointer' : 'default' }}>
+      <ListItem
+        $border={!isNested && !isLast}
+        onClick={handleModalOpen}
+        style={{ cursor: isICONAsset ? 'pointer' : 'default' }}
+      >
         <AssetSymbol $hasNotification={hasNotification}>
           <CurrencyLogoWithNetwork
             currency={baseToken}

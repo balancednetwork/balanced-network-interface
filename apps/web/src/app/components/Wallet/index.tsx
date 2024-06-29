@@ -39,8 +39,6 @@ const Wallet = ({ close }: WalletProps) => {
   const handleEscape = useKeyPress('Escape');
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
 
-  // const { activeIndex, setActiveIndex } = useArrowControl(anchor !== null, filteredSortedTokens.length);
-
   const handleChangeWallet = () => {
     close();
     toggleWalletModal();
@@ -69,15 +67,24 @@ const Wallet = ({ close }: WalletProps) => {
     }
   }, [handleEscape, close]);
 
-  const sortedBalances = React.useMemo(() => {
+  const filteredBalances = React.useMemo(() => {
     if (!balances) return [];
+    if (searchQuery === '') return balances;
 
-    return balances.sort((a, b) => {
+    return balances.filter(
+      balance =>
+        balance.baseToken.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        balance.baseToken.name?.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  }, [balances, searchQuery]);
+
+  const sortedFilteredBalances = React.useMemo(() => {
+    return filteredBalances.sort((a, b) => {
       if (b.value && a.value?.isLessThan(b.value)) return 1;
       if (a.value && b.value?.isLessThan(a.value)) return -1;
       return 0;
     });
-  }, [balances]);
+  }, [filteredBalances]);
 
   return (
     <WalletWrap>
@@ -106,7 +113,6 @@ const Wallet = ({ close }: WalletProps) => {
           tabIndex={isMobile ? -1 : 1}
           onChange={e => {
             setSearchQuery(e.target.value);
-            // activeIndex === undefined && setActiveIndex(0);
           }}
         />
         <DashGrid marginTop={'15px'}>
@@ -125,14 +131,14 @@ const Wallet = ({ close }: WalletProps) => {
           </BalanceAndValueWrap>
         </DashGrid>
         <List>
-          {sortedBalances.map((record, index) =>
+          {sortedFilteredBalances.map((record, index) =>
             record.isBalanceSingleChain ? (
               <SingleChainBalanceItem
                 key={index}
                 baseToken={record.baseToken}
                 networkBalance={record.balances}
                 value={record.value}
-                isLast={index === balances.length - 1}
+                isLast={index === sortedFilteredBalances.length - 1}
               />
             ) : (
               <MultiChainBalanceItem
@@ -143,6 +149,11 @@ const Wallet = ({ close }: WalletProps) => {
                 total={record.total}
               />
             ),
+          )}
+          {sortedFilteredBalances.length === 0 && searchQuery !== '' && (
+            <Typography padding={'30px 0 15px 0'} textAlign={'center'}>
+              No assets found
+            </Typography>
           )}
         </List>
       </WalletContent>

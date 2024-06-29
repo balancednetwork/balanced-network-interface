@@ -190,12 +190,14 @@ export const BalanceBreakdown = styled.div<{ $arrowPosition: string }>`
     content: '';
     position: absolute;
     top: -12px;
+    left: 30px;
     left: ${({ $arrowPosition }) => $arrowPosition};
     width: 0;
     height: 0;
     border-left: 12px solid transparent;
     border-right: 12px solid transparent;
     border-bottom: 12px solid ${({ theme }) => theme.colors.bg3};
+    transition: all 0.3s ease-in-out;
   }
 
   ${DashGrid} {

@@ -84,7 +84,7 @@ export const BalanceAndValueWrap = styled.div`
 `;
 
 export const List = styled(Box)`
-  max-height: 259px;
+  max-height: 400px;
   overflow-y: auto;
 `;
 

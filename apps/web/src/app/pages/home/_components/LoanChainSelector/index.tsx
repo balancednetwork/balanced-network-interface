@@ -1,9 +1,7 @@
 import { StyledArrowDownIcon, UnderlineText } from 'app/components/DropdownText';
 import { DropdownPopper } from 'app/components/Popover';
 import { SelectorWrap } from 'app/components/trade/CrossChainOptions';
-import ChainList from 'app/pages/trade/bridge/_components/ChainList';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import { xTokenMap } from 'app/pages/trade/bridge/_config/xTokens';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import { getAvailableXChains } from 'app/pages/trade/bridge/utils';
 import { Typography } from 'app/theme';
@@ -12,21 +10,12 @@ import { bnUSD } from 'constants/tokens';
 import React, { useEffect, useMemo } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
-import {
-  useChangeCollateralXChain,
-  useCollateralType,
-  useCollateralXChain,
-  useDerivedCollateralInfo,
-} from 'store/collateral/hooks';
 import { useLoanActionHandlers, useLoanRecipientNetwork, useSetLoanRecipientNetwork } from 'store/loan/hooks';
-import styled from 'styled-components';
 import ChainSelectorLogo from '../CollateralChainSelector/ChainSelectorLogo';
+import ChainList from './ChainList';
 
 const LoanChainSelector = () => {
   const [isOpen, setOpen] = React.useState(false);
-  const { account } = useDerivedCollateralInfo();
-  const collateralType = useCollateralType();
-  const collateralXChain = useCollateralXChain();
   const loanRecipientNetwork = useLoanRecipientNetwork();
   const setRecipientNetwork = useSetLoanRecipientNetwork();
   const { onAdjust: adjust } = useLoanActionHandlers();

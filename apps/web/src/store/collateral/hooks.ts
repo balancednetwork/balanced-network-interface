@@ -136,10 +136,9 @@ export function useCollateralAvailableAmountinSICX() {
   return sICXAmount;
 }
 
-export function useCollateralAmounts(): { [key in string]: BigNumber } {
-  //TODO: double check if this is correct
+export function useCollateralAmounts(chainId?: XChainId): { [key in string]: BigNumber } {
   const collateralXChain = useCollateralXChain();
-  return useSelector((state: AppState) => state.collateral.depositedAmounts[collateralXChain] || {});
+  return useSelector((state: AppState) => state.collateral.depositedAmounts[chainId || collateralXChain] || {});
 }
 
 export function useCollateralFetchInfo(account?: string | null) {

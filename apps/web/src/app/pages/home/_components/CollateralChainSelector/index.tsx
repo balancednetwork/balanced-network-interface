@@ -1,9 +1,6 @@
 import { StyledArrowDownIcon, UnderlineText } from 'app/components/DropdownText';
 import { DropdownPopper } from 'app/components/Popover';
-import ChainList from 'app/pages/trade/bridge/_components/ChainList';
-import { ChainLogo } from 'app/pages/trade/bridge/_components/ChainLogo';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import { xTokenMap } from 'app/pages/trade/bridge/_config/xTokens';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import { getAvailableXChains } from 'app/pages/trade/bridge/utils';
 import { Typography } from 'app/theme';
@@ -20,6 +17,7 @@ import {
 import { useSetLoanRecipientNetwork } from 'store/loan/hooks';
 import styled from 'styled-components';
 import ChainSelectorLogo from './ChainSelectorLogo';
+import ChainList from './ChainList';
 
 export const SelectorWrap = styled.div`
   min-width: 110px;

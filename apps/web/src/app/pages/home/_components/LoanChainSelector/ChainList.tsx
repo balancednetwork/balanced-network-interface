@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Box, Flex } from 'rebass';
 
@@ -15,6 +15,7 @@ import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useWalletModal } from 'store/application/hooks';
 import { useAllDerivedWallets, useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { useCrossChainWalletBalances } from 'store/wallet/hooks';
+import { isMobile } from 'react-device-detect';
 
 type ChainListProps = {
   chainId: XChainId;
@@ -82,11 +83,38 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
 
 const ChainList = ({ chainId, setChainId, chains }: ChainListProps) => {
   const relevantChains = chains || xChains;
-  const sortedChains = relevantChains.sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1));
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const filteredChains = React.useMemo(() => {
+    if (searchQuery === '') return relevantChains;
+
+    return relevantChains.filter(
+      chain =>
+        chain.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        chain.xChainId.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
+  }, [relevantChains, searchQuery]);
+
+  const sortedFilteredChains = React.useMemo(() => {
+    return filteredChains.sort((a, b) => {
+      if (a.name < b.name) return -1;
+      if (a.name > b.name) return 1;
+      return 0;
+    });
+  }, [filteredChains]);
 
   return (
     <SelectorWrap>
-      <SearchInput type="text" placeholder={t`Search blockchains...`} />
+      <SearchInput
+        type="text"
+        placeholder={t`Search blockchains...`}
+        autoComplete="off"
+        value={searchQuery}
+        tabIndex={isMobile ? -1 : 1}
+        onChange={e => {
+          setSearchQuery(e.target.value);
+        }}
+      />
       <Grid mt="15px" mb="-10px" style={{ pointerEvents: 'none' }}>
         <HeaderText>
           <Trans>Blockchain</Trans>
@@ -95,16 +123,21 @@ const ChainList = ({ chainId, setChainId, chains }: ChainListProps) => {
           <Trans>Wallet</Trans>
         </HeaderText>
       </Grid>
-      {sortedChains.map((chainItem, index) => (
+      {sortedFilteredChains.map((chainItem, index) => (
         <Box key={index}>
           <ChainItem
             chain={chainItem}
             isActive={chainId === chainItem.xChainId}
-            isLast={relevantChains.length === index + 1}
+            isLast={sortedFilteredChains.length === index + 1}
             setChainId={setChainId}
           />
         </Box>
       ))}
+      {sortedFilteredChains.length === 0 && searchQuery !== '' && (
+        <Typography textAlign="center" mt="20px" pb="22px">
+          No blockchains found
+        </Typography>
+      )}
     </SelectorWrap>
   );
 };

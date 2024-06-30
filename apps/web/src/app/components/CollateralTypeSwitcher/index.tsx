@@ -9,6 +9,7 @@ import { useCollateralType } from 'store/collateral/hooks';
 import { DropdownPopper } from '../Popover';
 import CollateralTypeList from './CollateralTypeList';
 import CollateralIcon from './CollateralIcon';
+import CollateralTypeListWrap from './CollateralTypeListWrap';
 
 const Wrap = styled.span`
   cursor: pointer;
@@ -69,7 +70,7 @@ const CollateralTypeSwitcher = ({ width, containerRef }) => {
             placement="bottom"
             offset={[0, 8]}
           >
-            <CollateralTypeList width={width} anchor={anchor} setAnchor={setAnchor} />
+            <CollateralTypeListWrap width={width} anchor={anchor} setAnchor={setAnchor} />
           </DropdownPopper>
         </div>
       </ClickAwayListener>

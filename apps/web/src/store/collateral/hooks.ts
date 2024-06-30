@@ -18,7 +18,7 @@ import { useBorrowedAmounts, useLoanParameters, useLockingRatios } from 'store/l
 import { useOraclePrice, useOraclePrices } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
-import { useCrossChainWalletBalances, useICONWalletBalances } from 'store/wallet/hooks';
+import { useCrossChainWalletBalances, useICONWalletBalances, useXBalancesByToken } from 'store/wallet/hooks';
 import { CurrencyKey, IcxDisplayType } from 'types';
 import { formatUnits, toBigNumber } from 'utils';
 
@@ -33,7 +33,7 @@ import {
   type,
   Field,
 } from './reducer';
-import { XChainId, XToken } from 'app/pages/trade/bridge/types';
+import { Position, XChainId, XPositionsRecord, XToken } from 'app/pages/trade/bridge/types';
 import { isXToken } from 'app/pages/trade/bridge/utils';
 import { DEFAULT_TOKEN_CHAIN, xTokenMap } from 'app/pages/trade/bridge/_config/xTokens';
 import {
@@ -41,10 +41,12 @@ import {
   useAvailableWallets,
   useSignedInWallets,
 } from 'app/pages/trade/bridge/_hooks/useWallets';
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { setRecipientNetwork } from 'store/loan/reducer';
 import { useDestinationEvents } from 'app/pages/trade/bridge/_zustand/useXCallEventStore';
+import { useRatesWithOracle } from 'queries/reward';
+import { forEach } from 'lodash-es';
 
 export const DEFAULT_COLLATERAL_TOKEN = 'sICX';
 
@@ -102,6 +104,9 @@ export function useCollateralChangeIcxDisplayType(): (icxDisplayType: IcxDisplay
     },
     [dispatch],
   );
+}
+export function useAllDepositedAmounts() {
+  return useSelector((state: AppState) => state.collateral.depositedAmounts);
 }
 
 export function useCollateralType() {
@@ -599,4 +604,85 @@ export function useDerivedCollateralInfo(): {
     differenceAmount,
     xTokenAmount,
   };
+}
+
+export function useXCollateralDataByToken(userRelative = false): XPositionsRecord[] {
+  const balances = useXBalancesByToken();
+  const depositedAmounts = useAllDepositedAmounts();
+  const borrowedAmounts = useBorrowedAmounts();
+  const allWallets = useAllDerivedWallets();
+
+  return React.useMemo(() => {
+    return Object.entries(
+      Object.entries(depositedAmounts).reduce(
+        (acc, [chainId, chainDeposits]) => {
+          if (chainDeposits) {
+            forEach(chainDeposits, (deposit, symbol) => {
+              const xToken = xTokenMap[chainId].find(token => token.symbol === symbol);
+              const account = allWallets.find(wallet => wallet.xChainId === chainId)?.address;
+              if (userRelative && !account) return;
+
+              //cross-chain compatible positions
+              if (xToken) {
+                const depositAmount = CurrencyAmount.fromRawAmount(
+                  xToken,
+                  deposit.times(10 ** xToken.decimals).toFixed(0),
+                );
+                const loanAmount =
+                  userRelative &&
+                  account &&
+                  borrowedAmounts[symbol]?.[chainId === ICON_XCALL_NETWORK_ID ? account : `${chainId}/${account}`];
+
+                if (depositAmount && (depositAmount.greaterThan(0) || !userRelative)) {
+                  acc[symbol] = {
+                    ...acc[symbol],
+                    [chainId]: { collateral: depositAmount, loan: loanAmount },
+                  };
+                }
+              } else {
+                //icon only positions
+                const token = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
+                if (chainId === ICON_XCALL_NETWORK_ID && token) {
+                  const depositAmount = CurrencyAmount.fromRawAmount(
+                    token,
+                    deposit.times(10 ** token.decimals).toFixed(0),
+                  );
+                  const loanAmount = account && borrowedAmounts[symbol]?.[account];
+
+                  if (depositAmount && (depositAmount.greaterThan(0) || !userRelative)) {
+                    acc[symbol] = {
+                      ...acc[symbol],
+                      [chainId]: { collateral: depositAmount, loan: loanAmount },
+                    };
+                  }
+                }
+              }
+            });
+          }
+          return acc;
+        },
+        {} as { [AssetSymbol in string]: Partial<{ [key in XChainId]: Position }> },
+      ),
+    )
+      .map(([symbol, positions]) => {
+        const baseToken = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
+
+        if (baseToken === undefined) return;
+
+        return {
+          baseToken,
+          positions,
+          isPositionSingleChain: Object.keys(positions).length === 1,
+        };
+      })
+      .filter(
+        (
+          item,
+        ): item is {
+          baseToken: Token;
+          positions: Partial<{ [key in XChainId]: Position }>;
+          isPositionSingleChain: boolean;
+        } => Boolean(item),
+      );
+  }, [depositedAmounts, borrowedAmounts, allWallets.find, userRelative]);
 }

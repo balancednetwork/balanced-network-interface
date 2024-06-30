@@ -492,7 +492,7 @@ export function useXBalancesByToken(): XWalletAssetRecord[] {
       Object.entries(balances).reduce(
         (acc, [chainId, chainBalances]) => {
           if (chainBalances) {
-            forEach(chainBalances, (balance, tokenAddress) => {
+            forEach(chainBalances, balance => {
               if (balance.currency && balance?.greaterThan(0)) {
                 acc[balance.currency.symbol] = {
                   ...acc[balance.currency.symbol],

@@ -198,3 +198,14 @@ export type XWalletAssetRecord = {
   total: BigNumber;
   value?: BigNumber;
 };
+
+export type Position = {
+  collateral: CurrencyAmount<Currency> | undefined;
+  loan: BigNumber;
+};
+
+export type XPositionsRecord = {
+  baseToken: Token;
+  positions: Partial<{ [key in XChainId]: Position }>;
+  isPositionSingleChain: boolean;
+};

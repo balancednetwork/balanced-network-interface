@@ -16,7 +16,7 @@ const CollateralTypeListWrap = ({ width, setAnchor, anchor, ...rest }) => {
   const inputRef = useRef<HTMLInputElement>();
   const handleEscape = useKeyPress('Escape');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [collateralTab, setCollateralTab] = useState(CollateralTab.ALL);
+  const [collateralTab, setCollateralTab] = useState(CollateralTab.YOUR);
 
   useEffect(() => {
     if (anchor && handleEscape) {

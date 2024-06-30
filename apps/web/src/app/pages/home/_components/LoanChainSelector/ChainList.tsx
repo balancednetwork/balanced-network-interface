@@ -60,9 +60,15 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
       </ChainItemWrap>
       {isSignedIn ? (
         <Typography color="inherit" style={{ transition: 'all ease 0.3s' }}>
-          {`${crossChainBalances[chain.xChainId]?.[xChainMap[chain.xChainId].contracts.bnUSD || '']?.toFixed(2, {
-            groupSeparator: ',',
-          })}` || '0'}
+          {`${
+            crossChainBalances[chain.xChainId]?.[xChainMap[chain.xChainId].contracts.bnUSD || '']
+              ? crossChainBalances[chain.xChainId]?.[xChainMap[chain.xChainId].contracts.bnUSD || '']
+                  ?.toFixed(2, {
+                    groupSeparator: ',',
+                  })
+                  .replace('.00', '')
+              : 0
+          }`}
           {' bnUSD'}
         </Typography>
       ) : (

@@ -1,23 +1,17 @@
 import React, { useMemo } from 'react';
 
-import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
-import { Trade } from '@balancednetwork/v1-sdk';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 
 import { XChainId, XToken } from 'app/pages/trade/bridge/types';
-import { getNetworkDisplayName } from 'app/pages/trade/bridge/utils';
 import { Typography } from 'app/theme';
-import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from 'store/application/hooks';
-import { formatBigNumber, shortenAddress } from 'utils';
 import { MODAL_ID, modalActions, useModalStore } from 'app/pages/trade/bridge/_zustand/useModalStore';
 import {
   XTransactionUpdater,
   useXTransactionStore,
   xTransactionActions,
 } from 'app/pages/trade/bridge/_zustand/useXTransactionStore';
-import { useCreateWalletXService } from 'app/pages/trade/bridge/_zustand/useXServiceStore';
 import useXCallFee from 'app/pages/trade/bridge/_hooks/useXCallFee';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks/useApproveCallback';
@@ -31,7 +25,7 @@ import XTransactionState from 'app/pages/trade/bridge/_components/XTransactionSt
 import { Button, TextButton } from 'app/components/Button';
 import { StyledButton } from 'app/pages/trade/xswap/_components/shared';
 import { useCollateralActionHandlers, useDerivedCollateralInfo } from 'store/collateral/hooks';
-import { Field } from 'store/collateral/reducer';
+import useLoanWalletServiceHandler from '../../useLoanWalletServiceHandler';
 
 export enum XCollateralAction {
   DEPOSIT = 'DEPOSIT',
@@ -69,8 +63,6 @@ const XCollateralModal = ({
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
   const { onAdjust: adjust } = useCollateralActionHandlers();
-
-  useCreateWalletXService(sourceChain);
 
   const { xCallFee, formattedXCallFee } = useXCallFee(sourceChain, '0x1.icon');
 
@@ -120,6 +112,7 @@ const XCollateralModal = ({
   const gasChecker = useXCallGasChecker(sourceChain);
 
   // switch chain between evm chains
+  useLoanWalletServiceHandler();
   const wallets = useWallets();
   const walletType = xChainMap[sourceChain].xWalletType;
   const isWrongChain = wallets[walletType].xChainId !== sourceChain;

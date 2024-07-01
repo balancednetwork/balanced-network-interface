@@ -249,8 +249,7 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
   }
 
   async executeBorrow(xTransactionInput: XTransactionInput) {
-    //todo: implement receiver address to receive on different chain than the caller chain/address
-    const { direction, inputAmount, account, xCallFee, usedCollateral } = xTransactionInput;
+    const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
 
     if (!inputAmount || !usedCollateral) {
       return;
@@ -259,7 +258,13 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
     if (this.walletClient) {
       const amount = BigInt(inputAmount.quotient.toString());
       const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-      const data = toHex(RLP.encode(['xBorrow', usedCollateral, uintToBytes(amount)]));
+      const data = toHex(
+        RLP.encode(
+          recipient
+            ? ['xBorrow', usedCollateral, uintToBytes(amount), Buffer.from(recipient)]
+            : ['xBorrow', usedCollateral, uintToBytes(amount)],
+        ),
+      );
       const envelope = toHex(
         RLP.encode([
           Buffer.from([0]),
@@ -268,9 +273,6 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
           TO_SOURCES[this.xChainId]?.map(Buffer.from),
         ]),
       );
-
-      console.log('envelope amount', inputAmount.toFixed(2));
-      console.log('envelope', envelope);
 
       const res = await this.publicClient.simulateContract({
         account: account as Address,
@@ -293,7 +295,7 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
   }
 
   async executeRepay(xTransactionInput: XTransactionInput) {
-    const { inputAmount, account, xCallFee, usedCollateral } = xTransactionInput;
+    const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
 
     if (!inputAmount || !usedCollateral) {
       return;
@@ -302,7 +304,11 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
     if (this.walletClient) {
       const amount = BigInt(inputAmount.multiply(-1).quotient.toString());
       const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-      const data = toHex(JSON.stringify({ _collateral: usedCollateral }));
+      const data = toHex(
+        JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
+      );
+
+      console.log('xRepayyy', data);
 
       const res = await this.publicClient.simulateContract({
         account: account as Address,

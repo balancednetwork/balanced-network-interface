@@ -1,27 +1,20 @@
 import React, { useMemo } from 'react';
 
-import { Currency, CurrencyAmount, Token, TradeType } from '@balancednetwork/sdk-core';
-import { Trade } from '@balancednetwork/v1-sdk';
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 
-import { XChainId, XToken } from 'app/pages/trade/bridge/types';
-import { getNetworkDisplayName } from 'app/pages/trade/bridge/utils';
+import { XChainId } from 'app/pages/trade/bridge/types';
 import { Typography } from 'app/theme';
-import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from 'store/application/hooks';
-import { Field } from 'store/loan/reducer';
-import { formatBigNumber, shortenAddress } from 'utils';
 import { MODAL_ID, modalActions, useModalStore } from 'app/pages/trade/bridge/_zustand/useModalStore';
 import {
   XTransactionUpdater,
   useXTransactionStore,
   xTransactionActions,
 } from 'app/pages/trade/bridge/_zustand/useXTransactionStore';
-import { useCreateWalletXService } from 'app/pages/trade/bridge/_zustand/useXServiceStore';
 import useXCallFee from 'app/pages/trade/bridge/_hooks/useXCallFee';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks/useApproveCallback';
 import { XTransactionInput, XTransactionType } from 'app/pages/trade/bridge/_zustand/types';
 import useXCallGasChecker from 'app/pages/trade/bridge/_hooks/useXCallGasChecker';
 import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
@@ -29,11 +22,12 @@ import { useSwitchChain } from 'wagmi';
 import Modal from 'app/components/Modal';
 import ModalContent from 'app/components/ModalContent';
 import XTransactionState from 'app/pages/trade/bridge/_components/XTransactionState';
-import { Button, TextButton } from 'app/components/Button';
+import { TextButton } from 'app/components/Button';
 import { StyledButton } from 'app/pages/trade/xswap/_components/shared';
 import { useDerivedLoanInfo, useLoanActionHandlers, useLoanRecipientNetwork } from 'store/loan/hooks';
 import { useCollateralType } from 'store/collateral/hooks';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
+import useLoanWalletServiceHandler from '../../useLoanWalletServiceHandler';
 
 export enum XLoanAction {
   BORROW = 'BORROW',
@@ -41,7 +35,7 @@ export enum XLoanAction {
 }
 
 type XLoanModalProps = {
-  account: string | undefined;
+  collateralAccount: string | undefined;
   sourceChain: XChainId;
   action: XLoanAction;
   originationFee: BigNumber;
@@ -49,6 +43,7 @@ type XLoanModalProps = {
     amount: string;
     before: string;
     after: string;
+    action: XLoanAction;
   };
   bnUSDAmount?: CurrencyAmount<Token>;
   interestRate?: BigNumber;
@@ -61,7 +56,7 @@ export const presenceVariants = {
 };
 
 const XLoanModal = ({
-  account,
+  collateralAccount,
   bnUSDAmount,
   sourceChain,
   action,
@@ -73,16 +68,25 @@ const XLoanModal = ({
   const { currentId } = useXTransactionStore();
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
-  const receiverNetwork = useLoanRecipientNetwork();
-  const { borrowedAmount, parsedAmount, direction } = useDerivedLoanInfo();
+  const loanNetwork = useLoanRecipientNetwork();
+  const { direction, receiver } = useDerivedLoanInfo();
   const collateralType = useCollateralType();
   const { onAdjust: adjust } = useLoanActionHandlers();
+  const activeChain = useLoanWalletServiceHandler();
 
-  useCreateWalletXService(sourceChain);
+  const collateralNetworkAddress = `${sourceChain}/${collateralAccount}`;
+  const loanNetworkAddress = receiver;
 
-  const { xCallFee, formattedXCallFee } = useXCallFee(sourceChain, receiverNetwork);
+  // console.log(
+  //   'actionnnnn direction',
+  //   action === XLoanAction.BORROW ? direction : { from: loanNetwork, to: ICON_XCALL_NETWORK_ID },
+  // );
 
-  const xChain = xChainMap[sourceChain];
+  const { xCallFee, formattedXCallFee } = useXCallFee(
+    action === XLoanAction.BORROW ? sourceChain : loanNetwork,
+    action === XLoanAction.BORROW ? loanNetwork : sourceChain,
+  );
+
   const _inputAmount = useMemo(() => {
     return bnUSDAmount ? bnUSDAmount : undefined;
   }, [bnUSDAmount]);
@@ -98,18 +102,20 @@ const XLoanModal = ({
     }, 500);
   };
 
-  const handleXCollateralAction = async () => {
-    if (!account) return;
+  const handleXLoanAction = async () => {
+    if (!collateralAccount) return;
+    if (!loanNetworkAddress) return;
     if (!xCallFee) return;
     if (!_inputAmount) return;
     if (!collateralType) return;
 
     const xTransactionInput: XTransactionInput = {
       type: action === XLoanAction.BORROW ? XTransactionType.BORROW : XTransactionType.REPAY,
-      direction: action === XLoanAction.BORROW ? direction : { from: receiverNetwork, to: ICON_XCALL_NETWORK_ID },
-      account,
+      direction: action === XLoanAction.BORROW ? direction : { from: loanNetwork, to: ICON_XCALL_NETWORK_ID },
+      account: action === XLoanAction.BORROW ? collateralAccount : receiver.split('/')[1],
       inputAmount: _inputAmount,
       usedCollateral: collateralType,
+      recipient: action === XLoanAction.BORROW ? receiver : collateralNetworkAddress,
       xCallFee,
       callback: cancelAdjusting,
     };
@@ -122,10 +128,10 @@ const XLoanModal = ({
   // switch chain between evm chains
   const wallets = useWallets();
   const walletType = xChainMap[sourceChain].xWalletType;
-  const isWrongChain = wallets[walletType].xChainId !== sourceChain;
+  const isWrongChain = wallets[walletType].xChainId !== activeChain;
   const { switchChain } = useSwitchChain();
   const handleSwitchChain = () => {
-    switchChain({ chainId: xChainMap[sourceChain].id as number });
+    switchChain({ chainId: xChainMap[activeChain].id as number });
   };
 
   return (
@@ -134,7 +140,7 @@ const XLoanModal = ({
       <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XLOAN_CONFIRM_MODAL)} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px">
-            {action === XLoanAction.BORROW ? t`Borrow Balanced Dollars?` : t`Repay Balanced Dollars?`}
+            {storedModalValues.action === XLoanAction.BORROW ? t`Borrow Balanced Dollars?` : t`Repay Balanced Dollars?`}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
@@ -188,9 +194,9 @@ const XLoanModal = ({
                 <Trans>Cancel</Trans>
               </TextButton>
 
-              {isWrongChain ? (
+              {isWrongChain && !isProcessing ? (
                 <StyledButton onClick={handleSwitchChain}>
-                  <Trans>Switch Network</Trans>
+                  <Trans>Switch to {xChainMap[activeChain].name}</Trans>
                 </StyledButton>
               ) : isProcessing ? (
                 <>
@@ -203,7 +209,7 @@ const XLoanModal = ({
                   </StyledButton>
                 </>
               ) : (
-                <StyledButton onClick={handleXCollateralAction} disabled={!gasChecker.hasEnoughGas}>
+                <StyledButton onClick={handleXLoanAction} disabled={!gasChecker.hasEnoughGas}>
                   {action === XLoanAction.BORROW ? <Trans>Borrow</Trans> : <Trans>Repay</Trans>}
                 </StyledButton>
               )}

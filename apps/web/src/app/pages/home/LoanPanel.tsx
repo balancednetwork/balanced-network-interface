@@ -25,7 +25,6 @@ import {
   useLoanParameters,
   useInterestRate,
   useDerivedLoanInfo,
-  useLoanRecipientNetwork,
   useLoanActionHandlers,
   useActiveLoanAddress,
 } from 'store/loan/hooks';
@@ -52,8 +51,6 @@ const LoanPanel = () => {
     bnUSDAmount,
   } = useDerivedLoanInfo();
 
-  const loanRecipientNetwork = useLoanRecipientNetwork();
-
   const { isAdjusting, inputType } = useLoanState();
 
   const locale = useActiveLocale();
@@ -69,12 +66,20 @@ const LoanPanel = () => {
 
   const { onFieldAInput, onFieldBInput, onSlide, onAdjust: adjust } = useLoanActionHandlers();
   const { onAdjust: adjustCollateral } = useCollateralActionHandlers();
+  //whether if repay or borrow
+  const shouldBorrow = differenceAmount.isPositive();
 
-  const [action, setAction] = React.useState<XLoanAction>(XLoanAction.BORROW);
-  const [storedModalValues, setStoredModalValues] = React.useState<{ amount: string; before: string; after: string }>({
+  const action = shouldBorrow ? XLoanAction.BORROW : XLoanAction.REPAY;
+  const [storedModalValues, setStoredModalValues] = React.useState<{
+    amount: string;
+    before: string;
+    after: string;
+    action: XLoanAction;
+  }>({
     amount: '',
     before: '',
     after: '',
+    action: shouldBorrow ? XLoanAction.BORROW : XLoanAction.REPAY,
   });
 
   const handleEnableAdjusting = () => {
@@ -106,11 +111,11 @@ const LoanPanel = () => {
 
   const toggleOpen = () => {
     if (isCrossChain) {
-      setAction(shouldBorrow ? XLoanAction.BORROW : XLoanAction.REPAY);
       setStoredModalValues({
         amount: roundedDisplayDiffAmount.dp(2).toFormat(),
         before: borrowedAmount.dp(2).toFormat(),
         after: parsedAmount[Field.LEFT].dp(2).toFormat(),
+        action: shouldBorrow ? XLoanAction.BORROW : XLoanAction.REPAY,
       });
       modalActions.openModal(MODAL_ID.XLOAN_CONFIRM_MODAL);
     } else {
@@ -121,8 +126,6 @@ const LoanPanel = () => {
   };
 
   const { originationFee = 0 } = useLoanParameters() || {};
-  //whether if repay or borrow
-  const shouldBorrow = differenceAmount.isPositive();
   //borrow fee
   const fee = differenceAmount.times(originationFee);
   const addTransaction = useTransactionAdder();
@@ -356,7 +359,7 @@ const LoanPanel = () => {
       </BoxPanelWrap>
 
       <XLoanModal
-        account={account}
+        collateralAccount={account}
         bnUSDAmount={bnUSDAmount}
         sourceChain={sourceChain}
         action={action}

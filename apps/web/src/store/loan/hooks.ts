@@ -567,22 +567,16 @@ export function useDerivedLoanInfo(): {
   };
 } {
   const sourceChain = useCollateralXChain();
-  const signedInWallets = useAvailableWallets();
-  const collateralType = useCollateralType();
-  const crossChainWallet = useCrossChainWalletBalances();
   const activeLoanAddress = useActiveLoanAddress();
+  const allWallets = useAllDerivedWallets();
 
   const { independentField, typedValue, isAdjusting, inputType } = useLoanState();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
   const recipientNetwork = useLoanRecipientNetwork();
 
-  const receiver = undefined;
-
-  //todo: xRefactor refactor
   const borrowedAmount = useLoanBorrowedAmount(activeLoanAddress);
   const totalBorrowableAmount = useLoanTotalBorrowableAmount();
   const borrowableAmountWithReserve = useBorrowableAmountWithReserve(activeLoanAddress);
-  //end of xRefactor
 
   const parsedAmount = {
     [independentField]: new BigNumber(typedValue || '0'),
@@ -608,10 +602,13 @@ export function useDerivedLoanInfo(): {
 
   const direction = {
     from: sourceChain,
-    //todo: switch to this after Loan contract update
-    // to: recipientNetwork,
-    to: sourceChain,
+    to: recipientNetwork,
   };
+
+  const address = allWallets.find(w => w.xChainId === recipientNetwork)?.address;
+  const receiver = address
+    ? `${recipientNetwork}/${allWallets.find(w => w.xChainId === recipientNetwork)?.address}`
+    : undefined;
 
   return {
     account: activeLoanAddress,

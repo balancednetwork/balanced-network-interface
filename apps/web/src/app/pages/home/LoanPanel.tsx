@@ -27,6 +27,7 @@ import {
   useDerivedLoanInfo,
   useLoanActionHandlers,
   useActiveLoanAddress,
+  useLoanRecipientNetwork,
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
@@ -38,9 +39,12 @@ import ModalContent from 'app/components/ModalContent';
 import LoanChainSelector from './_components/LoanChainSelector';
 import XLoanModal, { XLoanAction } from './_components/xLoanModal';
 import { MODAL_ID, modalActions } from '../trade/bridge/_zustand/useModalStore';
+import { ICON_XCALL_NETWORK_ID } from 'constants/config';
+import { useIconReact } from 'packages/icon-react';
 
 const LoanPanel = () => {
   const { account, sourceChain, collateralType } = useDerivedCollateralInfo();
+  const { account: iconAccount } = useIconReact();
   const {
     borrowedAmount,
     borrowableAmountWithReserve,
@@ -49,6 +53,7 @@ const LoanPanel = () => {
     parsedAmount,
     totalBorrowableAmount,
     bnUSDAmount,
+    receiver,
   } = useDerivedLoanInfo();
 
   const { isAdjusting, inputType } = useLoanState();
@@ -107,7 +112,9 @@ const LoanPanel = () => {
   // loan confirm modal logic & value
   const [open, setOpen] = React.useState(false);
 
-  const isCrossChain = !(sourceChain === '0x1.icon' || sourceChain === '0x2.icon');
+  const loanNetwork = useLoanRecipientNetwork();
+  const isCrossChain =
+    !(action === XLoanAction.REPAY && loanNetwork === ICON_XCALL_NETWORK_ID) && sourceChain !== ICON_XCALL_NETWORK_ID;
 
   const toggleOpen = () => {
     if (isCrossChain) {
@@ -131,7 +138,7 @@ const LoanPanel = () => {
   const addTransaction = useTransactionAdder();
 
   const handleLoanConfirm = () => {
-    if (!account) return;
+    if (!iconAccount) return;
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
@@ -140,7 +147,7 @@ const LoanPanel = () => {
 
     if (shouldBorrow) {
       bnJs
-        .inject({ account })
+        .inject({ account: iconAccount })
         .Loans.borrow(parseUnits(differenceAmount.toFixed()), collateralType)
         .then((res: any) => {
           addTransaction(
@@ -166,8 +173,8 @@ const LoanPanel = () => {
       const repayAmount = parsedAmount[Field.LEFT].isEqualTo(0) ? borrowedAmount : differenceAmount.abs();
 
       bnJs
-        .inject({ account })
-        .Loans.returnAsset('bnUSD', parseUnits(repayAmount.toFixed()), collateralType)
+        .inject({ account: iconAccount })
+        .Loans.returnAsset('bnUSD', parseUnits(repayAmount.toFixed()), collateralType, `${sourceChain}/${account}`)
         .then(res => {
           addTransaction(
             { hash: res.result },

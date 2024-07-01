@@ -61,13 +61,14 @@ export default class Loans extends Contract {
     return this.callICONPlugins(payload);
   }
 
-  returnAsset(symbol: string, value: string, collateralType?: string) {
+  returnAsset(symbol: string, value: string, collateralType?: string, receiver?: string) {
     const payload = this.transactionParamsBuilder({
       method: 'returnAsset',
       params: {
         _symbol: symbol,
         _value: IconConverter.toHexNumber(value),
         _collateralSymbol: collateralType || 'sICX',
+        ...(receiver && { to: receiver }),
       },
     });
 

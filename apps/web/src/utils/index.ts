@@ -16,6 +16,8 @@ import { XChainId } from 'app/pages/trade/bridge/types';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { bech32 } from 'bech32';
 import { ethers } from 'ethers';
+import { RLP } from '@ethereumjs/rlp';
+import { XWallet } from 'app/pages/trade/bridge/_xcall/types';
 
 const { isEoaAddress, isScoreAddress } = Validator;
 
@@ -338,4 +340,66 @@ export function validateAddress(address: string, chainId: XChainId): boolean {
     case 'ARCHWAY':
       return isArchEoaAddress(address);
   }
+}
+
+//RLP encoding
+export function bufferToHex(buffer): string {
+  return [...new Uint8Array(buffer)].map(x => x.toString(16).padStart(2, '0')).join('');
+}
+
+// Function to get the last i bytes of an integer
+function lastBytesOf(x: bigint, i: number): Uint8Array {
+  const buffer = new ArrayBuffer(i);
+  const view = new DataView(buffer);
+  for (let j = 0; j < i; j++) {
+    view.setUint8(j, Number((x >> BigInt(8 * (i - j - 1))) & BigInt(0xff)));
+  }
+  return new Uint8Array(buffer);
+}
+
+// Function to convert an unsigned integer to bytes
+export function uintToBytes(x: bigint): Uint8Array {
+  if (x === BigInt(0)) {
+    return new Uint8Array([0]);
+  }
+  let right = BigInt(0x80);
+  for (let i = 1; i < 32; i++) {
+    if (x < right) {
+      return lastBytesOf(x, i);
+    }
+    right <<= BigInt(8);
+  }
+  if (x < right) {
+    return RLP.encode(x);
+  } else {
+    const data = RLP.encode(x);
+    data[0] = 0;
+    return data;
+  }
+}
+
+export const isEVMChain = (chainId: XChainId): boolean => {
+  return xChainMap[chainId].xChainType === 'EVM';
+};
+
+export const getAllEVMChainIds = (testnets = false): XChainId[] => {
+  return Object.entries(xChainMap)
+    .filter(([, xChain]) => xChain.xChainType === 'EVM' && xChain.testnet === testnets)
+    .map(([chainId]) => chainId as XChainId);
+};
+
+export function addAllEvmChains(wallets: XWallet[]): XWallet[] {
+  const hasEvmChain = wallets.some(wallet => wallet.xChainId && isEVMChain(wallet.xChainId));
+
+  if (!hasEvmChain) {
+    return wallets;
+  }
+
+  const evmAddress = wallets.find(wallet => wallet.xChainId && isEVMChain(wallet.xChainId))?.address as string;
+
+  // Create a new wallet for each EVM type chain
+  const newWallets: XWallet[] = getAllEVMChainIds().map(xChainId => ({ address: evmAddress, xChainId }));
+
+  // Return the original list combined with the new wallets
+  return [...wallets, ...newWallets];
 }

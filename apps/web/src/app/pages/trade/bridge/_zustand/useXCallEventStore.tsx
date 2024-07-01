@@ -265,3 +265,8 @@ export const useXCallEventScanner = (id: string | undefined) => {
     refetchInterval: 1000,
   });
 };
+
+export const useDestinationEvents = (xChainId: XChainId) => {
+  const { destinationXCallEvents } = useXCallEventStore();
+  return destinationXCallEvents[xChainId] ?? [];
+};

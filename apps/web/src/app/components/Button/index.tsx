@@ -14,6 +14,7 @@ export const Button = styled(RebassButton)<{ warning?: boolean }>`
   transition: background-color 0.3s ease;
   user-select: none;
   line-height: 1.4;
+  box-shadow: 0px 10px 15px 0px rgba(1, 0, 42, 0.15);
 
   &:hover {
     background-color: #087083;

@@ -22,7 +22,7 @@ import { tryParseAmount } from 'store/swap/hooks';
 import { useLiquidityTokenBalance } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
 
-import { MAX_BOOST } from 'app/components/home/BBaln/utils';
+import { MAX_BOOST } from 'app/pages/home/BBaln/utils';
 import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
 
 export default function LPDescription() {

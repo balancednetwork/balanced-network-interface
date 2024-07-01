@@ -101,7 +101,7 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
     if (!xCallFee) return;
     if (!_inputAmount) return;
 
-    const xTransactionInput: XTransactionInput & { cleanupSwap: () => void } = {
+    const xTransactionInput: XTransactionInput = {
       type: XTransactionType.SWAP,
       direction,
       executionTrade,
@@ -110,7 +110,7 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
       inputAmount: _inputAmount,
       slippageTolerance,
       xCallFee,
-      cleanupSwap,
+      callback: cleanupSwap,
     };
 
     await xTransactionActions.executeTransfer(xTransactionInput);

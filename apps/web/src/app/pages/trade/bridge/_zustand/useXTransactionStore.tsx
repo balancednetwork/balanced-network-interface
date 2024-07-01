@@ -25,10 +25,7 @@ type XTransactionStore = {
   currentId: string | null;
   get: (id: string | null) => XTransaction | undefined;
   // add: (transaction: XTransaction) => void;
-  executeTransfer: (
-    xTransactionInput: XTransactionInput & { cleanupSwap?: () => void },
-    onSuccess?: () => void,
-  ) => void;
+  executeTransfer: (xTransactionInput: XTransactionInput, onSuccess?: () => void) => void;
   createSecondaryMessage: (xTransaction: XTransaction, primaryMessage: XMessage) => void;
   reset: () => void;
   success: (id) => void;
@@ -76,10 +73,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
       //   });
       // },
 
-      executeTransfer: async (
-        xTransactionInput: XTransactionInput & { cleanupSwap?: () => void },
-        onSuccess = () => {},
-      ) => {
+      executeTransfer: async (xTransactionInput: XTransactionInput, onSuccess = () => {}) => {
         const { direction } = xTransactionInput;
         const sourceChainId = direction.from;
         const finalDestinationChainId = direction.to;
@@ -98,6 +92,14 @@ export const useXTransactionStore = create<XTransactionStore>()(
           sourceTransactionHash = await srcChainXService.executeTransfer(xTransactionInput);
         } else if (xTransactionInput.type === XTransactionType.SWAP) {
           sourceTransactionHash = await srcChainXService.executeSwap(xTransactionInput);
+        } else if (xTransactionInput.type === XTransactionType.DEPOSIT_COLLATERAL) {
+          sourceTransactionHash = await srcChainXService.executeDepositCollateral(xTransactionInput);
+        } else if (xTransactionInput.type === XTransactionType.WITHDRAW_COLLATERAL) {
+          sourceTransactionHash = await srcChainXService.executeWithdrawCollateral(xTransactionInput);
+        } else if (xTransactionInput.type === XTransactionType.BORROW) {
+          sourceTransactionHash = await srcChainXService.executeBorrow(xTransactionInput);
+        } else if (xTransactionInput.type === XTransactionType.REPAY) {
+          sourceTransactionHash = await srcChainXService.executeRepay(xTransactionInput);
         } else {
           throw new Error('Unsupported XTransactionType');
         }
@@ -149,9 +151,47 @@ export const useXTransactionStore = create<XTransactionStore>()(
             descriptionAction = `Swap ${_inputTokenSymbol} for ${_outputTokenSymbol}`;
             descriptionAmount = `${_inputAmount} ${_inputTokenSymbol} for ${_outputAmount} ${_outputTokenSymbol}`;
           }
+        } else if (xTransactionInput.type === XTransactionType.DEPOSIT_COLLATERAL) {
+          pendingMessage = 'Requesting collateral deposit...';
+          successMessage = 'Collateral deposited.';
+          errorMessage = 'Collateral deposit failed.';
+
+          const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
+          const _formattedAmount = xTransactionInput.inputAmount.toFixed(2);
+          descriptionAction = `Deposit ${_tokenSymbol} as collateral`;
+          descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+        } else if (xTransactionInput.type === XTransactionType.WITHDRAW_COLLATERAL) {
+          //todo handle description for xCalls without input amount
+          pendingMessage = 'Requesting collateral withdrawal...';
+          successMessage = 'Collateral withdrawn.';
+          errorMessage = 'Collateral withdrawal failed.';
+
+          const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
+          const _formattedAmount = xTransactionInput.inputAmount.toFixed(2);
+          descriptionAction = `Withdraw ${_tokenSymbol} collateral`;
+          descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+        } else if (xTransactionInput.type === XTransactionType.BORROW) {
+          //todo handle description for xCalls without input amount
+          pendingMessage = 'Requesting borrow...';
+          successMessage = 'Borrowed successfully.';
+          errorMessage = 'Borrow failed.';
+
+          const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
+          const _formattedAmount = xTransactionInput.inputAmount.toFixed(2);
+          descriptionAction = `Borrow ${_tokenSymbol}`;
+          descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+        } else if (xTransactionInput.type === XTransactionType.REPAY) {
+          pendingMessage = 'Requesting repay...';
+          successMessage = 'Repaid successfully.';
+          errorMessage = 'Repay failed.';
+
+          const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
+          const _formattedAmount = xTransactionInput.inputAmount.toFixed(2);
+          descriptionAction = `Repay ${_tokenSymbol}`;
+          descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
         }
 
-        xTransactionInput?.cleanupSwap?.();
+        xTransactionInput?.callback?.();
 
         const sourceTransaction = transactionActions.add(sourceChainId, {
           hash: sourceTransactionHash,
@@ -238,6 +278,18 @@ export const useXTransactionStore = create<XTransactionStore>()(
           if (currentXTransaction.type === XTransactionType.BRIDGE) {
             modalActions.closeModal(MODAL_ID.XTRANSFER_CONFIRM_MODAL);
           }
+          if (
+            currentXTransaction.type === XTransactionType.DEPOSIT_COLLATERAL ||
+            currentXTransaction.type === XTransactionType.WITHDRAW_COLLATERAL
+          ) {
+            modalActions.closeModal(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL);
+          }
+          if (
+            currentXTransaction.type === XTransactionType.BORROW ||
+            currentXTransaction.type === XTransactionType.REPAY
+          ) {
+            modalActions.closeModal(MODAL_ID.XLOAN_CONFIRM_MODAL);
+          }
         }
 
         set(state => {
@@ -253,6 +305,18 @@ export const useXTransactionStore = create<XTransactionStore>()(
           }
           if (currentXTransaction.type === XTransactionType.BRIDGE) {
             modalActions.closeModal(MODAL_ID.XTRANSFER_CONFIRM_MODAL);
+          }
+          if (
+            currentXTransaction.type === XTransactionType.DEPOSIT_COLLATERAL ||
+            currentXTransaction.type === XTransactionType.WITHDRAW_COLLATERAL
+          ) {
+            modalActions.closeModal(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL);
+          }
+          if (
+            currentXTransaction.type === XTransactionType.BORROW ||
+            currentXTransaction.type === XTransactionType.REPAY
+          ) {
+            modalActions.closeModal(MODAL_ID.XLOAN_CONFIRM_MODAL);
           }
         }
 
@@ -339,7 +403,7 @@ export const xTransactionActions = {
   //   useXTransactionStore.getState().add(transaction);
   // },
 
-  executeTransfer: (xTransactionInput: XTransactionInput & { cleanupSwap?: () => void }, onSuccess = () => {}) => {
+  executeTransfer: (xTransactionInput: XTransactionInput, onSuccess = () => {}) => {
     useXTransactionStore.getState().executeTransfer(xTransactionInput, onSuccess);
   },
 

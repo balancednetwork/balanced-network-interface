@@ -12,6 +12,8 @@ const PopoverContainer = styled.div<{ $show: boolean; $zIndex?: number }>`
   visibility: ${({ $show }) => ($show ? 'visible' : 'hidden')};
   opacity: ${({ $show }) => ($show ? 1 : 0)};
   transition: visibility 150ms linear, opacity 150ms linear;
+
+  box-shadow: 0px 10px 15px 0px rgba(1, 0, 42, 0.15);
 `;
 
 const SelectorPopoverWrapper = styled.div`

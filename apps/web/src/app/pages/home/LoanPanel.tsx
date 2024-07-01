@@ -1,18 +1,15 @@
 import React from 'react';
 
 import { t, Trans } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
 import Nouislider from 'packages/nouislider-react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import { CurrencyField } from 'app/components/Form';
 import LockBar from 'app/components/LockBar';
 import Modal from 'app/components/Modal';
-import { BoxPanel, FlexPanel, BoxPanelWrap } from 'app/components/Panel';
+import { BoxPanel, BoxPanelWrap } from 'app/components/Panel';
 import Spinner from 'app/components/Spinner';
 import { Typography } from 'app/theme';
 import bnJs from 'bnJs';
@@ -20,47 +17,75 @@ import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import useInterval from 'hooks/useInterval';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useCollateralActionHandlers, useCollateralType } from 'store/collateral/hooks';
+import { useCollateralActionHandlers, useCollateralType, useDerivedCollateralInfo } from 'store/collateral/hooks';
 import { Field } from 'store/loan/reducer';
 import {
-  useLoanBorrowedAmount,
   useLoanState,
-  useLoanTotalBorrowableAmount,
-  useLoanActionHandlers,
   useLoanUsedAmount,
   useLoanParameters,
-  useBorrowableAmountWithReserve,
   useInterestRate,
+  useDerivedLoanInfo,
+  useLoanActionHandlers,
+  useActiveLoanAddress,
+  useLoanRecipientNetwork,
 } from 'store/loan/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
-import ModalContent from '../ModalContent';
-import { PanelInfoWrap, PanelInfoItem } from './CollateralPanel';
+import { PanelInfoWrap, PanelInfoItem, UnderPanel } from './CollateralPanel';
+import ModalContent from 'app/components/ModalContent';
+import LoanChainSelector from './_components/LoanChainSelector';
+import XLoanModal, { XLoanAction } from './_components/xLoanModal';
+import { MODAL_ID, modalActions } from '../trade/bridge/_zustand/useModalStore';
+import { ICON_XCALL_NETWORK_ID } from 'constants/config';
+import { useIconReact } from 'packages/icon-react';
 
 const LoanPanel = () => {
-  const { account } = useIconReact();
-  const collateralType = useCollateralType();
+  const { account, sourceChain, collateralType } = useDerivedCollateralInfo();
+  const { account: iconAccount } = useIconReact();
+  const {
+    borrowedAmount,
+    borrowableAmountWithReserve,
+    differenceAmount,
+    formattedAmounts,
+    parsedAmount,
+    totalBorrowableAmount,
+    bnUSDAmount,
+    receiver,
+  } = useDerivedLoanInfo();
+
+  const { isAdjusting, inputType } = useLoanState();
+
   const locale = useActiveLocale();
   const { data: interestRate } = useInterestRate(collateralType);
 
   const isSuperSmall = useMedia(`(max-width: ${'es-ES,nl-NL,de-DE,pl-PL'.indexOf(locale) >= 0 ? '450px' : '300px'})`);
 
   const shouldLedgerSign = useShouldLedgerSign();
-
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
 
-  // user interaction logic
-  const { independentField, typedValue, isAdjusting, inputType } = useLoanState();
-  const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
-
   const { onFieldAInput, onFieldBInput, onSlide, onAdjust: adjust } = useLoanActionHandlers();
   const { onAdjust: adjustCollateral } = useCollateralActionHandlers();
+  //whether if repay or borrow
+  const shouldBorrow = differenceAmount.isPositive();
+
+  const action = shouldBorrow ? XLoanAction.BORROW : XLoanAction.REPAY;
+  const [storedModalValues, setStoredModalValues] = React.useState<{
+    amount: string;
+    before: string;
+    after: string;
+    action: XLoanAction;
+  }>({
+    amount: '',
+    before: '',
+    after: '',
+    action: shouldBorrow ? XLoanAction.BORROW : XLoanAction.REPAY,
+  });
 
   const handleEnableAdjusting = () => {
     adjust(true);
@@ -70,25 +95,6 @@ const LoanPanel = () => {
   const handleCancelAdjusting = () => {
     adjust(false);
     changeShouldLedgerSign(false);
-  };
-
-  //
-  const borrowedAmount = useLoanBorrowedAmount();
-  const totalBorrowableAmount = useLoanTotalBorrowableAmount();
-  const borrowableAmountWithReserve = useBorrowableAmountWithReserve();
-
-  //  calculate dependentField value
-  const parsedAmount = {
-    [independentField]: new BigNumber(typedValue || '0'),
-    [dependentField]: borrowableAmountWithReserve.minus(new BigNumber(typedValue || '0')),
-  };
-
-  const formattedAmounts = {
-    [independentField]: typedValue,
-    [dependentField]:
-      parsedAmount[dependentField].isZero() || parsedAmount[dependentField].isNegative()
-        ? '0'
-        : parsedAmount[dependentField].toFixed(2),
   };
 
   //BTCB tmp fix
@@ -106,28 +112,33 @@ const LoanPanel = () => {
   // loan confirm modal logic & value
   const [open, setOpen] = React.useState(false);
 
+  const loanNetwork = useLoanRecipientNetwork();
+  const isCrossChain =
+    !(action === XLoanAction.REPAY && loanNetwork === ICON_XCALL_NETWORK_ID) && sourceChain !== ICON_XCALL_NETWORK_ID;
+
   const toggleOpen = () => {
-    if (shouldLedgerSign) return;
-    setOpen(!open);
+    if (isCrossChain) {
+      setStoredModalValues({
+        amount: roundedDisplayDiffAmount.dp(2).toFormat(),
+        before: borrowedAmount.dp(2).toFormat(),
+        after: parsedAmount[Field.LEFT].dp(2).toFormat(),
+        action: shouldBorrow ? XLoanAction.BORROW : XLoanAction.REPAY,
+      });
+      modalActions.openModal(MODAL_ID.XLOAN_CONFIRM_MODAL);
+    } else {
+      if (shouldLedgerSign) return;
+      setOpen(!open);
+      changeShouldLedgerSign(false);
+    }
   };
 
-  //before
-  const beforeAmount = borrowedAmount;
-  //after
-  const afterAmount = parsedAmount[Field.LEFT];
-  //difference = after-before
-  const differenceAmount = afterAmount.minus(beforeAmount);
-  const roundedDisplayDiffAmount = afterAmount.minus(beforeAmount.dp(2));
-
   const { originationFee = 0 } = useLoanParameters() || {};
-  //whether if repay or borrow
-  const shouldBorrow = differenceAmount.isPositive();
   //borrow fee
   const fee = differenceAmount.times(originationFee);
   const addTransaction = useTransactionAdder();
 
   const handleLoanConfirm = () => {
-    if (!account) return;
+    if (!iconAccount) return;
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     if (bnJs.contractSettings.ledgerSettings.actived) {
@@ -136,7 +147,7 @@ const LoanPanel = () => {
 
     if (shouldBorrow) {
       bnJs
-        .inject({ account })
+        .inject({ account: iconAccount })
         .Loans.borrow(parseUnits(differenceAmount.toFixed()), collateralType)
         .then((res: any) => {
           addTransaction(
@@ -162,8 +173,8 @@ const LoanPanel = () => {
       const repayAmount = parsedAmount[Field.LEFT].isEqualTo(0) ? borrowedAmount : differenceAmount.abs();
 
       bnJs
-        .inject({ account })
-        .Loans.returnAsset('bnUSD', parseUnits(repayAmount.toFixed()), collateralType)
+        .inject({ account: iconAccount })
+        .Loans.returnAsset('bnUSD', parseUnits(repayAmount.toFixed()), collateralType, `${sourceChain}/${account}`)
         .then(res => {
           addTransaction(
             { hash: res.result },
@@ -199,11 +210,14 @@ const LoanPanel = () => {
   // change slider value if only a user types
   React.useEffect(() => {
     if (inputType === 'text') {
-      sliderInstance.current?.noUiSlider.set(afterAmount.toNumber());
+      sliderInstance.current?.noUiSlider.set(parsedAmount[Field.LEFT].toNumber());
     }
-  }, [afterAmount, inputType]);
+  }, [parsedAmount[Field.LEFT], inputType]);
 
-  const usedAmount = useLoanUsedAmount();
+  const roundedDisplayDiffAmount = parsedAmount[Field.LEFT].minus(borrowedAmount.dp(2));
+
+  const activeLoanAccount = useActiveLoanAddress();
+  const usedAmount = useLoanUsedAmount(activeLoanAccount);
   const percent = borrowableAmountWithReserve.isZero()
     ? 0
     : usedAmount.div(borrowableAmountWithReserve).times(100).toNumber();
@@ -212,59 +226,73 @@ const LoanPanel = () => {
 
   const hasEnoughICX = useHasEnoughICX();
 
-  if (totalBorrowableAmount.isZero() || totalBorrowableAmount.isNegative()) {
+  if (totalBorrowableAmount.isZero() || totalBorrowableAmount.isNegative() || !account) {
     return (
-      <FlexPanel bg="bg3" flexDirection="column" minHeight={195}>
-        <Flex justifyContent="space-between" alignItems="center">
-          <Typography variant="h2">
-            <Trans>Loan</Trans>
-          </Typography>
-        </Flex>
+      <BoxPanelWrap>
+        <BoxPanel bg="bg3" minHeight={195} sx={{ position: 'relative' }} className="drop-shadow">
+          <Flex justifyContent="space-between" alignItems="center">
+            <Typography variant="h2">
+              <Trans>Loan</Trans>
+            </Typography>
+          </Flex>
 
-        <Flex flex={1} justifyContent="center" alignItems="center">
-          <Typography>
-            <Trans>To borrow bnUSD, deposit collateral.</Trans>
-          </Typography>
-        </Flex>
-      </FlexPanel>
+          <Flex minHeight={140} flex={1} justifyContent="center" alignItems="center">
+            <Typography>
+              <Trans>To borrow bnUSD, deposit collateral.</Trans>
+            </Typography>
+          </Flex>
+        </BoxPanel>
+        <UnderPanel justifyContent="space-between">
+          <LoanChainSelector />
+        </UnderPanel>
+      </BoxPanelWrap>
     );
   }
 
   return (
     <>
       <BoxPanelWrap>
-        <BoxPanel bg="bg3">
+        <BoxPanel bg="bg3" sx={{ position: 'relative' }} className="drop-shadow">
           <Flex justifyContent="space-between" alignItems="center">
             <Typography variant="h2">
               <Trans>Loan</Trans>
             </Typography>
-            <Flex flexDirection={isSuperSmall ? 'column' : 'row'} paddingTop={isSuperSmall ? '4px' : '0'}>
-              {isAdjusting ? (
-                <>
-                  <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
-                    <Trans>Cancel</Trans>
-                  </TextButton>
-                  <Button
-                    disabled={
-                      borrowedAmount.isLessThanOrEqualTo(0) ? currentValue >= 0 && currentValue < 10 : currentValue < 0
-                    }
-                    onClick={toggleOpen}
-                    fontSize={14}
-                  >
-                    <Trans>Confirm</Trans>
+            {account && (
+              <Flex flexDirection={isSuperSmall ? 'column' : 'row'} paddingTop={isSuperSmall ? '4px' : '0'}>
+                {isAdjusting ? (
+                  <>
+                    <TextButton
+                      onClick={handleCancelAdjusting}
+                      marginBottom={isSuperSmall ? '10px' : '0'}
+                      paddingLeft={isSuperSmall ? '25px' : '0 !important'}
+                      paddingRight="17px !important"
+                    >
+                      <Trans>Cancel</Trans>
+                    </TextButton>
+                    <Button
+                      disabled={
+                        borrowedAmount.isLessThanOrEqualTo(0)
+                          ? currentValue >= 0 && currentValue < 10
+                          : currentValue < 0
+                      }
+                      onClick={toggleOpen}
+                      fontSize={14}
+                    >
+                      <Trans>Confirm</Trans>
+                    </Button>
+                  </>
+                ) : (
+                  <Button onClick={handleEnableAdjusting} fontSize={14}>
+                    {buttonText}
                   </Button>
-                </>
-              ) : (
-                <Button onClick={handleEnableAdjusting} fontSize={14}>
-                  {buttonText}
-                </Button>
-              )}
-            </Flex>
+                )}
+              </Flex>
+            )}
           </Flex>
 
-          {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Used`} />}
+          {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Repayable`} />}
 
-          <Box marginY={6}>
+          <Box pt={7} pb={isAdjusting ? 5 : 6} style={{ transition: 'all ease 0.3s' }}>
             <Nouislider
               disabled={!isAdjusting}
               id="slider-loan"
@@ -332,7 +360,20 @@ const LoanPanel = () => {
             </PanelInfoItem>
           </PanelInfoWrap>
         </BoxPanel>
+        <UnderPanel justifyContent="space-between">
+          <LoanChainSelector />
+        </UnderPanel>
       </BoxPanelWrap>
+
+      <XLoanModal
+        collateralAccount={account}
+        bnUSDAmount={bnUSDAmount}
+        sourceChain={sourceChain}
+        action={action}
+        originationFee={fee}
+        interestRate={interestRate}
+        storedModalValues={storedModalValues}
+      />
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
@@ -350,7 +391,7 @@ const LoanPanel = () => {
                 <Trans>Before</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {beforeAmount.dp(2).toFormat()} bnUSD
+                {borrowedAmount.dp(2).toFormat()} bnUSD
               </Typography>
             </Box>
 
@@ -359,7 +400,7 @@ const LoanPanel = () => {
                 <Trans>After</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {afterAmount.dp(2).toFormat()} bnUSD
+                {parsedAmount[Field.LEFT].dp(2).toFormat()} bnUSD
               </Typography>
             </Box>
           </Flex>

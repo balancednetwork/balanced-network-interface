@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import Divider from 'app/components/Divider';
-import { getClosestUnixWeekStart } from 'app/components/home/BBaln/utils';
+import { getClosestUnixWeekStart } from 'app/pages/home/BBaln/utils';
 import Modal from 'app/components/Modal';
 import ModalContent from 'app/components/ModalContent';
 import Spinner from 'app/components/Spinner';

@@ -5,7 +5,7 @@ import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { useIconReact } from 'packages/icon-react';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 
-import { WEEK_IN_MS, getClosestUnixWeekStart } from 'app/components/home/BBaln/utils';
+import { WEEK_IN_MS, getClosestUnixWeekStart } from 'app/pages/home/BBaln/utils';
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { useCombinedVoteData } from 'store/liveVoting/hooks';

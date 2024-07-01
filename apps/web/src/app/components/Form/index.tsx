@@ -34,7 +34,7 @@ const CurrencyInput = styled(Box)`
   display: inline-flex;
   align-items: center;
   text-align: right;
-  border: 2px solid #0c2a4d;
+  border: 2px solid ${({ theme }) => theme.colors.bg3};
   background-color: #0c2a4d;
   color: #ffffff;
   padding: 3px 7px;
@@ -60,9 +60,12 @@ const NumberInput = styled.input`
   color: white;
   outline: none;
   padding-right: 4px;
+  font-size: 14px;
 `;
 
-const CurrencyUnit = styled.span``;
+const CurrencyUnit = styled.span`
+  font-size: 14px;
+`;
 
 export const inputRegex = /^\d+(?:\\[.])?\d*$/; //test for number or [digits].[digits]
 
@@ -121,7 +124,7 @@ export const CurrencyField: React.FC<{
   return (
     <Flex flexDirection="column">
       <Flex alignItems="center">
-        <Flex alignItems="center" sx={{ position: 'relative' }}>
+        <Flex alignItems="center" sx={{ position: 'relative', transition: 'all ease 0.3s' }} pb={editable ? '15px' : 0}>
           <CheckBox $isActive={isActive} mr={2} />
           <Typography as="label" htmlFor={label} unselectable="on" sx={{ userSelect: 'none' }}>
             {label}{' '}
@@ -139,19 +142,21 @@ export const CurrencyField: React.FC<{
       </Flex>
 
       {!editable && (
-        <Typography variant="p" ml={isSmall ? 0 : 6} mt={1} fontSize={[16, 16, 16, 18]}>
-          {value !== 'NaN' ? (
-            `${BigNumber.max(new BigNumber(value), ZERO).dp(decimalPlaces).toFormat()} ${currency}`
-          ) : (
-            <Skeleton width={80} animation="wave" />
-          )}
-        </Typography>
+        <Flex alignItems="center" ml={isSmall ? 0 : 6} minHeight={'40px'}>
+          <Typography variant="p" fontSize={[16, 16, 16, 18]}>
+            {value !== 'NaN' ? (
+              `${BigNumber.max(new BigNumber(value), ZERO).dp(decimalPlaces).toFormat()} ${currency}`
+            ) : (
+              <Skeleton width={80} animation="wave" />
+            )}
+          </Typography>
+        </Flex>
       )}
 
       {editable &&
         (noticeShow ? (
           <Tooltip containerStyle={{ width: 'auto' }} placement="bottom" text={noticeText} show={true}>
-            <CurrencyInput mt={1}>
+            <CurrencyInput className="drop-shadow-inset">
               <NumberInput
                 id={label}
                 value={value}
@@ -172,7 +177,7 @@ export const CurrencyField: React.FC<{
             </CurrencyInput>
           </Tooltip>
         ) : (
-          <CurrencyInput mt={1}>
+          <CurrencyInput className="drop-shadow-inset">
             <NumberInput
               id={label}
               value={value}

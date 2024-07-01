@@ -37,9 +37,8 @@ import { useRatio } from 'store/ratio/hooks';
 import { useCurrentCollateralRatio } from 'store/reward/hooks';
 import { InterestPeriod } from 'types';
 import { formatBigNumber, getAccumulatedInterest } from 'utils';
-
-import { DropdownPopper } from '../Popover';
-import Skeleton from '../Skeleton';
+import { DropdownPopper } from 'app/components/Popover';
+import Skeleton from 'app/components/Skeleton';
 
 const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
 
@@ -181,7 +180,13 @@ const PositionDetailPanel = () => {
           animate={{ y: 0, opacity: 1, height: 'auto' }}
           exit={{ x: -400, opacity: 0 }}
         >
-          <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 'initial', 350]}>
+          <BoxPanel
+            bg="bg3"
+            flex={1}
+            maxWidth={['initial', 'initial', 'initial', 350]}
+            className="drop-shadow-right"
+            style={{ zIndex: 2 }}
+          >
             <Typography variant="h2" mb={5}>
               <Trans>Position details</Trans>
             </Typography>

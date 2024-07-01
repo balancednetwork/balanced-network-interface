@@ -115,4 +115,24 @@ export class IconWalletXService extends IconPublicXService implements IWalletXSe
       return hash;
     }
   }
+
+  async executeDepositCollateral(xTransactionInput: XTransactionInput) {
+    console.error('executeDepositCollateral ICON not implemented');
+    return Promise.resolve('');
+  }
+
+  async executeWithdrawCollateral(xTransactionInput: XTransactionInput) {
+    console.error('executeWithdrawCollateral ICON not implemented');
+    return Promise.resolve('');
+  }
+
+  async executeBorrow(xTransactionInput: XTransactionInput) {
+    console.error('executeBorrow ICON not implemented');
+    return Promise.resolve('');
+  }
+
+  async executeRepay(xTransactionInput: XTransactionInput) {
+    console.error('executeRepay ICON not implemented');
+    return Promise.resolve('');
+  }
 }

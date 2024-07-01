@@ -147,7 +147,6 @@ export function useCollateralAmounts(chainId?: XChainId): { [key in string]: Big
 }
 
 export function useCollateralFetchInfo(account?: string | null) {
-  //todo: probably do the same for loans (with all network addresses)
   const changeDepositedAmount = useCollateralChangeDepositedAmount();
   const transactions = useAllTransactions();
   const pendingXCalls = useDestinationEvents(ICON_XCALL_NETWORK_ID);
@@ -348,20 +347,13 @@ type CollateralInfo = {
   displayName?: string;
   collateralDeposit: BigNumber;
   collateralAvailable: BigNumber;
-  // loanTaken: BigNumber;
-  // loanAvailable: BigNumber;
 };
 
 export function useAllCollateralData(): CollateralInfo[] | undefined {
   const { data: collateralTokens } = useSupportedCollateralTokens();
-  //todo: double check if collateral amounts for specific chain is intended
   const depositedAmounts = useCollateralAmounts();
-  //todo: refactor borrowed amounts to be per chain
-  const borrowedAmounts = useBorrowedAmounts();
-  const lockingRatios = useLockingRatios();
   const oraclePrices = useOraclePrices();
   const balances = useICONWalletBalances();
-  const { originationFee = 0 } = useLoanParameters() || {};
 
   return useMemo(() => {
     const allCollateralInfo: CollateralInfo[] | undefined =
@@ -562,7 +554,6 @@ export function useDerivedCollateralInfo(): {
     return availableCollateral.plus(collateralDeposit);
   }, [availableCollateral, collateralDeposit]);
 
-  //todo: check if needs refactor
   const { independentField, typedValue } = useCollateralState();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
 

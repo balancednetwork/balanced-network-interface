@@ -6,15 +6,12 @@ import { XChainId } from 'app/pages/trade/bridge/types';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { NATIVE_ADDRESS } from 'constants/index';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
-
-import { getBytesFromAddress, getBytesFromNumber, getRlpEncodedMsg } from 'app/pages/trade/bridge/utils';
-
+import { getRlpEncodedSwapData } from 'app/pages/trade/bridge/utils';
 import { XTransactionInput, XTransactionType } from '../_zustand/types';
 import { IWalletXService } from './types';
 import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
 import { bnUSDContractAbi } from './abis/bnUSDContractAbi';
 import { EvmPublicXService } from './EvmPublicXService';
-import { uintToBytes } from 'utils';
 
 export class EvmWalletXService extends EvmPublicXService implements IWalletXService {
   walletClient: WalletClient;
@@ -45,17 +42,7 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
         return;
       }
       const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-      const rlpEncodedData = Buffer.from(
-        getRlpEncodedMsg([
-          Buffer.from('_swap', 'utf-8'),
-          Buffer.from(receiver, 'utf-8'),
-          uintToBytes(minReceived.quotient),
-          ...executionTrade.route.routeActionPath.map(action => [
-            getBytesFromNumber(action.type),
-            getBytesFromAddress(action.address),
-          ]),
-        ]),
-      ).toString('hex');
+      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived).toString('hex');
       data = `0x${rlpEncodedData}`;
     } else if (type === XTransactionType.BRIDGE) {
       data = toHex(

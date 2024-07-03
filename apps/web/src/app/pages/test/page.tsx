@@ -23,7 +23,7 @@ import { isTradeBetter } from 'utils/isTradeBetter';
 import { BETTER_TRADE_LESS_HOPS_THRESHOLD } from 'constants/misc';
 import { formatBigNumber, toDec } from 'utils';
 import { DEFAULT_SLIPPAGE } from 'constants/index';
-import { getBytesFromAddress, getBytesFromNumber, getRlpEncodedMsg } from 'app/pages/trade/bridge/utils';
+import { getRlpEncodedSwapData } from 'app/pages/trade/bridge/utils';
 import { AllPublicXServicesCreator, xServiceActions } from '../trade/bridge/_zustand/useXServiceStore';
 import { xChains } from '../trade/bridge/_config/xChains';
 
@@ -149,14 +149,7 @@ export function TestPage() {
     const recipient = account;
     try {
       if (executionTrade.inputAmount.currency.symbol === 'ICX') {
-        const rlpEncodedPath = Buffer.from(
-          getRlpEncodedMsg([
-            ...executionTrade.route.routeActionPath.map(action => [
-              getBytesFromNumber(action.type),
-              getBytesFromAddress(action.address),
-            ]),
-          ]),
-        ).toString('hex');
+        const rlpEncodedPath = getRlpEncodedSwapData(executionTrade).toString('hex');
 
         const res = await bnJs
           .inject({ account })
@@ -168,18 +161,7 @@ export function TestPage() {
         const token = executionTrade.inputAmount.currency as Token;
         const outputToken = executionTrade.outputAmount.currency as Token;
 
-        const rlpEncodedData = Buffer.from(
-          getRlpEncodedMsg([
-            Buffer.from('_swap', 'utf-8'),
-            Buffer.from(recipient, 'utf-8'),
-            getBytesFromNumber(BigInt(toDec(minReceived))),
-            ...executionTrade.route.routeActionPath.map(action => [
-              getBytesFromNumber(action.type),
-              getBytesFromAddress(action.address),
-            ]),
-          ]),
-        ).toString('hex');
-
+        const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', recipient, minReceived).toString('hex');
         console.log('rlpEncodedSwapData', rlpEncodedData);
 
         const res = await bnJs

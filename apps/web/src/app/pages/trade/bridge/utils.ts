@@ -3,8 +3,10 @@ import rlp from 'rlp';
 import { XChainId, XCallEventType, XChain, XToken } from './types';
 import { xChainMap, xChains } from './_config/xChains';
 import { xTokenMap } from './_config/xTokens';
-import { Currency } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
 import { NATIVE_ADDRESS } from 'constants/index';
+import { uintToBytes } from 'utils';
+import { Trade } from '@balancednetwork/v1-sdk';
 
 export function getBytesFromNumber(value) {
   const hexString = value.toString(16).padStart(2, '0');
@@ -12,11 +14,37 @@ export function getBytesFromNumber(value) {
 }
 
 export function getBytesFromAddress(address) {
-  return Buffer.from(address.replace('cx', '01'), 'hex');
+  return Buffer.from(address?.replace('cx', '01') ?? '', 'hex');
 }
 
 export function getRlpEncodedMsg(msg: string | any[]) {
   return Array.from(rlp.encode(msg));
+}
+
+export function getRlpEncodedSwapData(
+  executionTrade: Trade<Currency, Currency, TradeType>,
+  method?: string,
+  receiver?: string,
+  minReceived?: CurrencyAmount<Currency>,
+): Buffer {
+  const encodedComponents: any = [];
+  if (method) {
+    encodedComponents.push(Buffer.from(method, 'utf-8'));
+  }
+  if (receiver) {
+    encodedComponents.push(Buffer.from(receiver, 'utf-8'));
+  }
+  if (minReceived) {
+    encodedComponents.push(uintToBytes(minReceived.quotient));
+  }
+
+  const routeActionPathEncoding = executionTrade.route.routeActionPath.map(action => [
+    getBytesFromNumber(action.type),
+    getBytesFromAddress(action.address),
+  ]);
+
+  const rlpEncodedData = Buffer.from(getRlpEncodedMsg([...encodedComponents, ...routeActionPathEncoding]));
+  return rlpEncodedData;
 }
 
 export function getBytesFromString(str: string) {

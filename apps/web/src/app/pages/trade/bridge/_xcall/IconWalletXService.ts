@@ -5,9 +5,7 @@ import { Percent } from '@balancednetwork/sdk-core';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 import { toDec } from 'utils';
 import { NETWORK_ID } from 'constants/config';
-
-import { getBytesFromAddress, getBytesFromNumber, getRlpEncodedMsg } from 'app/pages/trade/bridge/utils';
-
+import { getRlpEncodedSwapData } from 'app/pages/trade/bridge/utils';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import { XTransactionInput, XTransactionType } from '../_zustand/types';
 import { IWalletXService } from './types';
@@ -89,20 +87,13 @@ export class IconWalletXService extends IconPublicXService implements IWalletXSe
 
     let txResult;
     if (executionTrade.inputAmount.currency.symbol === 'ICX') {
-      const rlpEncodedPath = Buffer.from(
-        getRlpEncodedMsg([
-          ...executionTrade.route.routeActionPath.map(action => [
-            getBytesFromNumber(action.type),
-            getBytesFromAddress(action.address),
-          ]),
-        ]),
-      ).toString('hex');
+      const rlpEncodedData = getRlpEncodedSwapData(executionTrade).toString('hex');
 
       txResult = await bnJs
         .inject({ account })
         .Router.swapICXV2(
           toDec(executionTrade.inputAmount),
-          rlpEncodedPath,
+          rlpEncodedData,
           NETWORK_ID === 1 ? toDec(minReceived) : '0x0',
           receiver,
         );
@@ -112,18 +103,7 @@ export class IconWalletXService extends IconPublicXService implements IWalletXSe
 
       const cx = bnJs.inject({ account }).getContract(inputToken.address);
 
-      const rlpEncodedData = Buffer.from(
-        getRlpEncodedMsg([
-          Buffer.from('_swap', 'utf-8'),
-          // @ts-ignore
-          Buffer.from(receiver, 'utf-8'),
-          getBytesFromNumber(BigInt(toDec(minReceived))),
-          ...executionTrade.route.routeActionPath.map(action => [
-            getBytesFromNumber(action.type),
-            getBytesFromAddress(action.address),
-          ]),
-        ]),
-      ).toString('hex');
+      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived).toString('hex');
 
       txResult = await cx.swapUsingRouteV2(toDec(executionTrade.inputAmount), rlpEncodedData);
     }

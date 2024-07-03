@@ -11,7 +11,7 @@ import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import { UnderlineTextWithArrow } from 'app/components/DropdownText';
+import { UnderlineText, UnderlineTextWithArrow } from 'app/components/DropdownText';
 import Popover, { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import FlipIcon from 'assets/icons/flip.svg';
@@ -38,8 +38,18 @@ const MemoizedStabilityFund = React.memo(StabilityFund);
 export default function SwapPanel() {
   useInitialSwapLoad();
 
-  const { trade, currencyBalances, currencies, inputError, percents, account, direction, formattedAmounts } =
-    useDerivedSwapInfo();
+  const {
+    trade,
+    currencyBalances,
+    currencies,
+    inputError,
+    percents,
+    account,
+    direction,
+    formattedAmounts,
+    maximumBridgeAmount,
+    canBridge,
+  } = useDerivedSwapInfo();
   const memoizedInputAmount = useCAMemo(trade?.inputAmount);
   const memoizedOutputAmount = useCAMemo(trade?.outputAmount);
   const isSwapEligibleForStabilityFund = useIsSwapEligible(
@@ -168,6 +178,12 @@ export default function SwapPanel() {
 
   const closeDropdown = () => {
     setAnchor(null);
+  };
+
+  const handleMaximumBridgeAmountClick = () => {
+    if (maximumBridgeAmount) {
+      onUserInput(Field.OUTPUT, maximumBridgeAmount?.toFixed(0));
+    }
   };
 
   const swapButton = isValid ? (
@@ -301,6 +317,26 @@ export default function SwapPanel() {
           <Flex justifyContent="center" mt={4}>
             {swapButton}
           </Flex>
+
+          {!canBridge && (
+            <Flex alignItems="center" justifyContent="center" mt={2}>
+              <Typography textAlign="center">
+                {maximumBridgeAmount?.greaterThan(0) && (
+                  <>
+                    <Typography>
+                      <Trans>Only</Trans>
+                    </Typography>{' '}
+                  </>
+                )}
+                <UnderlineText onClick={handleMaximumBridgeAmountClick}>
+                  <Typography color="primaryBright" as="a">
+                    {maximumBridgeAmount?.toFixed(0)} {maximumBridgeAmount?.currency?.symbol}
+                  </Typography>
+                </UnderlineText>{' '}
+                <Trans>is available on {xChainMap[direction?.to].name}.</Trans>
+              </Typography>
+            </Flex>
+          )}
         </AutoColumn>
       </BrightPanel>
 

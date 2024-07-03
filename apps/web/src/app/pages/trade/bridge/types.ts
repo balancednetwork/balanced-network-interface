@@ -15,7 +15,8 @@ export type XChainId =
   | '0xa86a.avax'
   | '0xa869.fuji'
   | '0x38.bsc'
-  | '0xa4b1.arbitrum';
+  | '0xa4b1.arbitrum'
+  | '0x2105.base';
 
 export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY';
 

@@ -1,9 +1,10 @@
 import rlp from 'rlp';
 
-import { XChainId, XCallEventType, XChain } from './types';
+import { XChainId, XCallEventType, XChain, XToken } from './types';
 import { xChainMap, xChains } from './_config/xChains';
 import { xTokenMap } from './_config/xTokens';
 import { Currency } from '@balancednetwork/sdk-core';
+import { NATIVE_ADDRESS } from 'constants/index';
 
 export function getBytesFromNumber(value) {
   const hexString = value.toString(16).padStart(2, '0');
@@ -69,4 +70,14 @@ export const getAvailableXChains = (currency?: Currency | null): XChain[] | unde
   const xChainIds = allXTokens.filter(t => t.symbol === currency.symbol).map(t => t.xChainId);
 
   return xChains.filter(x => xChainIds.includes(x.xChainId));
+};
+
+export const getXAddress = (xToken: XToken | undefined) => {
+  if (!xToken) return undefined;
+
+  return (
+    xToken.xChainId +
+    '/' +
+    (xToken.address === NATIVE_ADDRESS ? '0x0000000000000000000000000000000000000000' : xToken.address)
+  );
 };

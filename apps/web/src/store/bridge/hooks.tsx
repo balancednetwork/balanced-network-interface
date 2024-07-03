@@ -22,6 +22,8 @@ import { isDenomAsset } from 'app/_xcall/archway/utils';
 import { sARCH } from 'app/pages/trade/bridge/_config/tokens';
 import useWallets, { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { getCrossChainTokenBySymbol, getXAddress } from 'app/pages/trade/bridge/utils';
+import { useAssetManagerTokens } from 'app/pages/trade/bridge/_hooks/useAssetManagerTokens';
 
 export function useBridgeState(): AppState['bridge'] {
   return useSelector((state: AppState) => state.bridge);
@@ -165,6 +167,34 @@ export function useDerivedBridgeInfo() {
 
   const isLiquidsARCH = Object.values(sARCH).some(token => token.address === currencyToBridge?.wrapped.address);
 
+  // get output currency
+  const outputCurrency = useMemo(() => {
+    if (currencyToBridge) {
+      return getCrossChainTokenBySymbol(bridgeDirection.to, currencyToBridge.symbol);
+    }
+  }, [bridgeDirection.to, currencyToBridge]);
+
+  // get output currencyAmount
+  const outputCurrencyAmount = useMemo(() => {
+    if (outputCurrency && typedValue && !Number.isNaN(parseFloat(typedValue))) {
+      return CurrencyAmount.fromRawAmount(
+        outputCurrency,
+        new BigNumber(typedValue).times(10 ** outputCurrency.wrapped.decimals).toFixed(0),
+      );
+    }
+    return undefined;
+  }, [typedValue, outputCurrency]);
+
+  const { data: assetManager } = useAssetManagerTokens();
+
+  const maximumBridgeAmount = useMemo(() => {
+    return assetManager?.[getXAddress(outputCurrency) ?? '']?.depositedAmount;
+  }, [assetManager, outputCurrency]);
+
+  const canBridge = useMemo(() => {
+    return maximumBridgeAmount && outputCurrencyAmount ? maximumBridgeAmount?.greaterThan(outputCurrencyAmount) : true;
+  }, [maximumBridgeAmount, outputCurrencyAmount]);
+
   return {
     errorMessage,
     currencyAmountToBridge,
@@ -172,5 +202,7 @@ export function useDerivedBridgeInfo() {
     isDenom,
     account,
     isLiquidsARCH,
+    canBridge,
+    maximumBridgeAmount,
   };
 }

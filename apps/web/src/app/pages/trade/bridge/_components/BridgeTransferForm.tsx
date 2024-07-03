@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
-import { Fraction } from '@balancednetwork/sdk-core';
+import { Percent } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -21,8 +21,9 @@ import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/bridge/reducer';
 import useXCallFee from '../_hooks/useXCallFee';
 import { xChainMap } from '../_config/xChains';
-import { validateAddress } from 'utils';
+import { maxAmountSpend, validateAddress } from 'utils';
 import { useAvailableWallets } from '../_hooks/useWallets';
+import { UnderlineText } from 'app/components/DropdownText';
 
 export default function BridgeTransferForm({ openModal }) {
   const crossChainWallet = useCrossChainWalletBalances();
@@ -37,13 +38,22 @@ export default function BridgeTransferForm({ openModal }) {
   const signedInWallets = useAvailableWallets();
   const toggleWalletModal = useWalletModalToggle();
 
-  const handleInputPercentSelect = (percent: number) => {
-    const currencyAmount =
-      currencyToBridge && crossChainWallet[bridgeDirection.from]?.[currencyToBridge.wrapped.address];
-    if (currencyAmount) {
-      onPercentSelection(Field.FROM, percent, currencyAmount.multiply(new Fraction(percent, 100)).toFixed());
-    }
-  };
+  const maxInputAmount = React.useMemo(
+    () =>
+      maxAmountSpend(
+        currencyToBridge ? crossChainWallet[bridgeDirection.from]?.[currencyToBridge.wrapped.address] : undefined,
+        bridgeDirection.from,
+      ),
+    [currencyToBridge, bridgeDirection.from, crossChainWallet],
+  );
+
+  const handleInputPercentSelect = useCallback(
+    (percent: number) => {
+      maxInputAmount &&
+        onPercentSelection(Field.FROM, percent, maxInputAmount.multiply(new Percent(percent, 100)).toFixed());
+    },
+    [onPercentSelection, maxInputAmount],
+  );
 
   React.useEffect(() => {
     const destinationWallet = signedInWallets.find(
@@ -56,7 +66,7 @@ export default function BridgeTransferForm({ openModal }) {
     }
   }, [bridgeDirection.to, onChangeRecipient, signedInWallets]);
 
-  const { errorMessage, selectedTokenWalletBalance, account } = useDerivedBridgeInfo();
+  const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount } = useDerivedBridgeInfo();
 
   const handleSubmit = async () => {
     if (account) {
@@ -71,6 +81,12 @@ export default function BridgeTransferForm({ openModal }) {
   React.useEffect(() => {
     setValid(validateAddress(recipient || '', bridgeDirection.to));
   }, [recipient, bridgeDirection.to]);
+
+  const handleMaximumBridgeAmountClick = () => {
+    if (maximumBridgeAmount) {
+      onUserInput(maximumBridgeAmount?.toFixed(0));
+    }
+  };
 
   return (
     <>
@@ -139,13 +155,36 @@ export default function BridgeTransferForm({ openModal }) {
 
           <Flex alignItems="center" justifyContent="center" mt={4}>
             {account ? (
-              <Button onClick={handleSubmit} disabled={!!errorMessage || !isValid}>
+              <Button onClick={handleSubmit} disabled={!!errorMessage || !isValid || !canBridge}>
                 {errorMessage ? errorMessage : <Trans>Transfer</Trans>}
               </Button>
             ) : (
               <Button onClick={handleSubmit}>{<Trans>Transfer</Trans>}</Button>
             )}
           </Flex>
+
+          {!canBridge && (
+            <Flex alignItems="center" justifyContent="center" mt={2}>
+              <Typography textAlign="center">
+                {maximumBridgeAmount?.greaterThan(0) && (
+                  <>
+                    <Trans>Only</Trans>{' '}
+                    <UnderlineText onClick={handleMaximumBridgeAmountClick}>
+                      <Typography color="primaryBright" as="a">
+                        {maximumBridgeAmount?.toFixed(0)} {maximumBridgeAmount?.currency?.symbol}
+                      </Typography>
+                    </UnderlineText>{' '}
+                  </>
+                )}
+                {maximumBridgeAmount?.equalTo(0) && (
+                  <>
+                    <Trans>0 {maximumBridgeAmount?.currency?.symbol}</Trans>{' '}
+                  </>
+                )}
+                <Trans>is available on {xChainMap[bridgeDirection?.to].name}.</Trans>
+              </Typography>
+            </Flex>
+          )}
         </AutoColumn>
       </BrightPanel>
     </>

@@ -84,6 +84,24 @@ export class IconPublicXService extends AbstractPublicXService {
     }
     return TransactionStatus.pending;
   }
+  // didn't find rpc method to get event logs for a block, used getBlock and getTxReceipt instead
+  async getBlockEventLogs(blockHeight: bigint) {
+    const events: any = [];
+    const block = await this.getBlock(blockHeight);
+    if (block && block.confirmedTransactionList && block.confirmedTransactionList.length > 0) {
+      for (const tx of block.confirmedTransactionList) {
+        const txResult = await this.getTxReceipt(tx.txHash);
+
+        if (txResult && txResult.txHash) {
+          const eventLogs = txResult.eventLogs.map(e => ({ ...e, transactionHash: txResult.txHash }));
+          events.push(...eventLogs);
+        } else {
+          throw new Error('Failed to get tx result');
+        }
+      }
+    }
+    return events;
+  }
 
   async getEventLogs({ startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
     // https://tracker.icon.community/api/v1/logs?block_start=83073062&address=cxa07f426062a1384bdd762afa6a87d123fbc81c75

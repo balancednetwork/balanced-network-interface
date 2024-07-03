@@ -413,16 +413,14 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
         if (inputCurrencySymbol === 'bnUSD') {
           result = result.multiply(new Fraction(999, 1000));
         }
+      } else if (inputCurrencySymbol === 'sICX' && outputCurrencySymbol === 'ICX') {
+        result = result.multiply(new Fraction(99, 100));
+      } else if (inputCurrencySymbol === 'ICX' && outputCurrencySymbol === 'sICX') {
+        // result = result.multiply(new Fraction(ONE));
+      } else if (outputCurrencySymbol === 'ARCH') {
+        result = result.multiply(new Fraction(99, 100));
       } else {
-        if (inputCurrencySymbol === 'sICX' && outputCurrencySymbol === 'ICX') {
-          result = result.multiply(new Fraction(99, 100));
-        } else if (inputCurrencySymbol === 'ICX' && outputCurrencySymbol === 'sICX') {
-          // result = result.multiply(new Fraction(ONE));
-        } else if (outputCurrencySymbol === 'ARCH') {
-          result = result.multiply(new Fraction(99, 100));
-        } else {
-          result = result.multiply(new Fraction(997, 1000));
-        }
+        result = result.multiply(new Fraction(997, 1000));
       }
     }
 

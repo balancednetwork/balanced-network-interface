@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
 import { Flex, Box } from 'rebass/styled-components';
+import ExternalIcon from 'assets/icons/external.svg';
 import styled from 'styled-components';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
@@ -17,43 +18,31 @@ import ArchWalletIcon from 'assets/icons/chains/archway.svg';
 import IconWalletIcon from 'assets/icons/wallets/iconex.svg';
 import AvalancheWalletIcon from 'assets/icons/chains/avalanche.svg';
 import HavahWalletIcon from 'assets/icons/chains/havah.svg';
+import ETHIcon from 'assets/icons/chains/eth.svg';
 import { LOCALE_LABEL, SupportedLocale, SUPPORTED_LOCALES } from 'constants/locales';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useWalletModalToggle, useModalOpen, useWalletModal } from 'store/application/hooks';
 import { ApplicationModal } from 'store/application/reducer';
-import { useSignedInWallets } from 'store/wallet/hooks';
 
 import { DropdownPopper } from '../Popover';
-import SearchInput from '../SearchModal/SearchInput';
 import WalletItem from './WalletItem';
 import { IconWalletModal } from './IconWalletModal';
-import { AvalancheWalletModal } from './AvalancheWalletModal';
+import { EVMWalletModal } from './EVMWalletModal';
 import { XWalletType } from 'app/pages/trade/bridge/types';
-import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
 import { useHavahContext } from 'app/_xcall/havah/HavahProvider';
+import useWallets, { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { useSwitchChain } from 'wagmi';
+import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
+import useDebounce from 'hooks/useDebounce';
+import Divider from '../Divider';
+import { TextButton } from '../Button';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {
-    width: 320px;
-
-    @media (min-width: 600px) {
-      width: 100%;
-      max-width: 495px;
-    }
+    width: 100%;
+    max-width: 530px;
   }
-`;
-
-const Wrapper = styled.div`
-  width: 100%;
-  padding: 25px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-`;
-
-const ScrollHelper = styled.div`
-  min-height: 120px;
-  overflow-y: auto;
 `;
 
 const presenceVariants = {
@@ -72,13 +61,7 @@ export default function WalletModal() {
 
   const wallets = useWallets();
 
-  const handleOpenWalletArchway = React.useCallback(() => {
-    connectToKeplr();
-  }, [connectToKeplr]);
-
-  const handleOpenWalletHavah = React.useCallback(() => {
-    connectToHavah();
-  }, [connectToHavah]);
+  const { switchChain } = useSwitchChain();
 
   //
   const activeLocale = useActiveLocale();
@@ -103,6 +86,7 @@ export default function WalletModal() {
   const numberOfConnectedWallets = Object.values(wallets).filter(w => !!w.account).length;
   const isLoggedInSome = numberOfConnectedWallets > 0;
   const [chainQuery, setChainQuery] = useState('');
+  const debouncedQuery = useDebounce(chainQuery, 200);
 
   const handleChainQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
     setChainQuery(e.target.value);
@@ -113,57 +97,86 @@ export default function WalletModal() {
   };
 
   const walletConfig = useMemo(() => {
+    const iconConfig = {
+      name: 'ICON',
+      logo: <IconWalletIcon width="32" />,
+      connect: () => setWalletModal(XWalletType.ICON),
+      disconnect: wallets[XWalletType.ICON].disconnect,
+      description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer crypto cross-chain.`,
+      keyWords: ['iconex', 'hana'],
+      address: wallets[XWalletType.ICON].account,
+      xChains: undefined,
+      switchChain: undefined,
+    };
     return [
-      {
-        name: 'ICON',
-        logo: <IconWalletIcon width="40" height="40" />,
-        connect: () => setWalletModal(XWalletType.ICON),
-        disconnect: wallets[XWalletType.ICON].disconnect,
-        description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain`,
-        address: wallets[XWalletType.ICON].account,
-      },
-      {
-        name: 'Archway',
-        logo: <ArchWalletIcon width="40" height="40" />,
-        connect: handleOpenWalletArchway,
-        disconnect: wallets[XWalletType.COSMOS].disconnect,
-        description: t`Swap & transfer assets cross-chain.`,
-        address: wallets[XWalletType.COSMOS].account,
-      },
-      {
-        name: 'Avalanche',
-        logo: <AvalancheWalletIcon width="40" height="40" />,
-        connect: () => setWalletModal(XWalletType.EVM),
-        disconnect: wallets[XWalletType.EVM].disconnect,
-        description: t`Swap & transfer assets cross-chain.`,
-        address: wallets[XWalletType.EVM].account,
-      },
-      {
-        name: 'Havah',
-        logo: <HavahWalletIcon width="40" height="40" />,
-        connect: handleOpenWalletHavah,
-        disconnect: wallets[XWalletType.HAVAH].disconnect,
-        description: t`Swap & transfer assets cross-chain.`,
-        address: wallets[XWalletType.HAVAH].account,
-      },
+      iconConfig,
+      ...[
+        {
+          name: 'Ethereum & EVM ecosystem',
+          logo: <ETHIcon width="32" />,
+          connect: () => setWalletModal(XWalletType.EVM),
+          disconnect: wallets[XWalletType.EVM].disconnect,
+          description: t`Swap & transfer crypto cross-chain.`,
+          keyWords: [
+            'evm',
+            'ethereum',
+            'metamask',
+            'rabby',
+            'avalanche',
+            'avax',
+            'bnb',
+            'bsc',
+            'arb',
+            'arbitrum',
+            'binance',
+            'base',
+          ],
+          address: wallets[XWalletType.EVM].account,
+          xChains: Object.values(xChainMap)
+            .filter(xChain => xChain.xWalletType === XWalletType.EVM && !xChain.testnet)
+            .sort((a, b) => a.name.localeCompare(b.name)),
+          switchChain: switchChain,
+        },
+        {
+          name: 'Havah',
+          logo: <HavahWalletIcon width="40" height="40" />,
+          connect: connectToHavah,
+          disconnect: wallets[XWalletType.HAVAH].disconnect,
+          description: t`Swap & transfer assets cross-chain.`,
+          keyWords: ['iconex', 'hana'],
+          address: wallets[XWalletType.HAVAH].account,
+        },
+        {
+          name: 'Archway',
+          logo: <ArchWalletIcon width="32" />,
+          connect: connectToKeplr,
+          disconnect: wallets[XWalletType.COSMOS].disconnect,
+          description: t`Swap & transfer crypto cross-chain.`,
+          keyWords: ['archway', 'cosmos', 'keplr', 'leap'],
+          address: wallets[XWalletType.COSMOS].account,
+          xChains: undefined,
+          switchChain: undefined,
+        },
+      ].sort((a, b) => a.name.localeCompare(b.name)),
     ];
-  }, [setWalletModal, handleOpenWalletArchway, handleOpenWalletHavah, wallets]);
+  }, [setWalletModal, connectToKeplr, wallets, switchChain, connectToHavah]);
 
   const filteredWallets = React.useMemo(() => {
     return [...walletConfig].filter(wallet => {
       return (
-        wallet.name.toLowerCase().includes(chainQuery.toLowerCase()) ||
-        wallet.description.toLowerCase().includes(chainQuery.toLowerCase())
+        wallet.name.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
+        wallet.keyWords.some(kw => kw.toLowerCase().includes(debouncedQuery.toLowerCase())) ||
+        wallet.description.toLowerCase().includes(debouncedQuery.toLowerCase())
       );
     });
-  }, [walletConfig, chainQuery]);
+  }, [walletConfig, debouncedQuery]);
 
   return (
     <>
       <StyledModal isOpen={walletModalOpen} onDismiss={toggleWalletModal} mobile={isMobile}>
         <Wrapper>
           {isLoggedInSome ? (
-            <Flex mb={1} justifyContent="space-between" flexWrap={['wrap', 'nowrap']}>
+            <Flex mb={1} justifyContent="space-between" flexDirection={['column', 'row']} flexWrap="nowrap">
               <Typography variant="h2">Manage wallets</Typography>
               <Flex flexDirection="column" alignItems={['flex-start', 'flex-end']} justifyContent="center" mt={1}>
                 <Typography>
@@ -177,20 +190,50 @@ export default function WalletModal() {
               </Flex>
             </Flex>
           ) : (
-            <Typography textAlign="center" variant={'h2'} mb={1}>
-              <Trans>Sign in to Balanced</Trans>
-            </Typography>
+            <Box>
+              <Typography textAlign="center" variant={'h2'} mb={1}>
+                <Trans>Sign in to Balanced</Trans>
+              </Typography>
+
+              <Flex justifyContent="center" alignItems="center" mt="12px" mb={1}>
+                <Typography mr={1}>
+                  <Trans>Use Balanced in</Trans>:
+                </Typography>
+                <ClickAwayListener onClickAway={closeMenu}>
+                  <div>
+                    <UnderlineTextWithArrow
+                      onClick={toggleMenu}
+                      text={LOCALE_LABEL[activeLocale]}
+                      arrowRef={arrowRef}
+                    />
+                    <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end" zIndex={6001}>
+                      <MenuList>
+                        {SUPPORTED_LOCALES.map((locale: SupportedLocale) => (
+                          <LanguageMenuItem
+                            locale={locale}
+                            active={activeLocale === locale}
+                            onClick={closeMenu}
+                            key={locale}
+                          />
+                        ))}
+                      </MenuList>
+                    </DropdownPopper>
+                  </div>
+                </ClickAwayListener>
+              </Flex>
+            </Box>
           )}
 
-          <SearchInput
+          <StyledSearchInput
             type="text"
             value={chainQuery}
             onChange={handleChainQuery}
             placeholder="Search for blockchains..."
             style={{ minHeight: '40px' }}
+            tabIndex={isMobile ? -1 : 1}
           />
 
-          <ScrollHelper>
+          <SignInOptionsWrap>
             <AnimatePresence>
               {filteredWallets.map((wallet, index) => (
                 <motion.div key={wallet.name} {...presenceVariants} style={{ overflow: 'hidden' }}>
@@ -199,53 +242,42 @@ export default function WalletModal() {
               ))}
               {filteredWallets.length === 0 && (
                 <motion.div key="no-result" {...presenceVariants}>
-                  <Typography textAlign="center">
+                  <Typography textAlign="center" paddingTop="20px">
                     No matches for <strong>{chainQuery}</strong>
                   </Typography>
                 </motion.div>
               )}
             </AnimatePresence>
-          </ScrollHelper>
-
-          <Flex justifyContent="center" alignItems="center" sx={{ borderRadius: 10 }} padding={2} bg="bg3">
-            <Typography mr={1}>
-              <Trans>Use Balanced in</Trans>:
-            </Typography>
-            <ClickAwayListener onClickAway={closeMenu}>
-              <div>
-                <UnderlineTextWithArrow onClick={toggleMenu} text={LOCALE_LABEL[activeLocale]} arrowRef={arrowRef} />
-                <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end" zIndex={6001}>
-                  <MenuList>
-                    {SUPPORTED_LOCALES.map((locale: SupportedLocale) => (
-                      <LanguageMenuItem
-                        locale={locale}
-                        active={activeLocale === locale}
-                        onClick={closeMenu}
-                        key={locale}
-                      />
-                    ))}
-                  </MenuList>
-                </DropdownPopper>
-              </div>
-            </ClickAwayListener>
-          </Flex>
+          </SignInOptionsWrap>
 
           {!signedInWallets.length && (
             <Typography textAlign="center" as="div" maxWidth={300} mx="auto" mt={2}>
               <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
-              <Box>
+              <Box pt={'5px'}>
                 <Link href="https://balanced.network/disclaimer/" target="_blank">
-                  <Trans>View disclaimer</Trans>
+                  <Trans>View disclaimer.</Trans>
+                  <ExternalIcon width="11" height="11" style={{ marginLeft: '7px', marginTop: '-3px' }} />
                 </Link>
               </Box>
             </Typography>
+          )}
+
+          {isMobile && (
+            <>
+              <Divider />
+              <Flex justifyContent="center">
+                <Typography onClick={toggleWalletModal}>
+                  <Trans>Close</Trans>
+                </Typography>
+              </Flex>
+            </>
           )}
         </Wrapper>
       </StyledModal>
 
       <IconWalletModal />
 
-      <AvalancheWalletModal />
+      <EVMWalletModal />
     </>
   );
 }

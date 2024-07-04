@@ -19,7 +19,7 @@ import useDebounce from 'hooks/useDebounce';
 import useKeyPress from 'hooks/useKeyPress';
 import { useRatesWithOracle } from 'queries/reward';
 import { useWalletModalToggle } from 'store/application/hooks';
-import { useHavahWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
+import { useHavahWalletBalances } from 'store/wallet/hooks';
 import { isDPZeroCA, toFraction } from 'utils';
 
 import Divider from '../Divider';
@@ -42,6 +42,7 @@ import { filterTokens, useSortedTokensByQuery } from '../SearchModal/filtering';
 import SearchInput from '../SearchModal/SearchInput';
 import { useTokenComparator } from '../SearchModal/sorting';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
+import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 
 const walletBreakpoint = '499px';
 
@@ -254,7 +255,7 @@ const HavahWallet = ({ setAnchor, anchor }) => {
                   <StandardCursorListItem
                     className={index === activeIndex ? 'active' : ''}
                     key={symbol}
-                    border={index !== arr.length - 1}
+                    $border={index !== arr.length - 1}
                     // onMouseEnter={() => setActiveIndex(index)}
                     // onClick={() => handleAssetClick(symbol)}
                   >
@@ -290,7 +291,7 @@ const HavahWallet = ({ setAnchor, anchor }) => {
                     )}
                   </BalanceAndValueWrap>
                 </DashGrid>
-                <StandardCursorListItem border={false}>
+                <StandardCursorListItem $border={false}>
                   <TokenInfo
                     currency={
                       filteredSortedTokens.find(currency => currency.wrapped.symbol === modalAsset) ||

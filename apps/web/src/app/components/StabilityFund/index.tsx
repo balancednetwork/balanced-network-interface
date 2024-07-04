@@ -17,7 +17,7 @@ import { useChangeShouldLedgerSign, useShouldLedgerSign, useWalletModalToggle } 
 import { useFeeAmount, useMaxSwapSize } from 'store/stabilityFund/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
-import { toDec } from 'utils';
+import { formatBigNumber, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { Button, TextButton } from '../Button';
@@ -104,9 +104,9 @@ const StabilityFund = ({ clearSwapInputOutput, setInput, inputAmount, outputAmou
 
     if (sendAmount && sendSymbol && receivedCurrency && feeAmount) {
       const message = swapMessage(
-        new BigNumber(sendAmount?.toFixed()).toFormat(2),
+        formatBigNumber(new BigNumber(sendAmount?.toFixed() || 0), 'currency'),
         sendSymbol,
-        new BigNumber(sendAmount.subtract(feeAmount).toFixed()).toFormat(2),
+        formatBigNumber(new BigNumber(sendAmount.subtract(feeAmount).toFixed() || 0), 'currency'),
         receivedCurrency.symbol || 'OUT',
       );
 
@@ -151,7 +151,7 @@ const StabilityFund = ({ clearSwapInputOutput, setInput, inputAmount, outputAmou
       <Wrapper>
         {hasFundEnoughBalance === 'loading' ? (
           <Box paddingTop={4}>
-            <Spinner centered />
+            <Spinner $centered />
           </Box>
         ) : hasFundEnoughBalance && sendAmount && feeAmount ? (
           <>

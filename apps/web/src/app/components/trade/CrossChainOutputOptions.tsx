@@ -48,13 +48,13 @@ const CrossChainOutputOptions = ({ currency, destinationChain, setDestinationCha
               </Typography>
               <ChainTabs p={'0 !important'}>
                 <ChainTabButton
-                  active={destinationChain === '0x1.icon'}
+                  $active={destinationChain === '0x1.icon'}
                   onClick={() => setDestinationChain('0x1.icon')}
                 >
                   ICON
                 </ChainTabButton>
                 <ChainTabButton
-                  active={destinationChain === 'archway-1'}
+                  $active={destinationChain === 'archway-1'}
                   onClick={() => setDestinationChain('archway-1')}
                 >
                   Archway

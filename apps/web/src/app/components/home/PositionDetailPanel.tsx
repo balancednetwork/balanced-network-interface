@@ -254,7 +254,7 @@ const PositionDetailPanel = () => {
               />
 
               <Box flex={1} style={{ position: 'relative' }} className={`slider-warning-${isPassAllCollateralLocked}`}>
-                <Locked warned={isLockWarning} pos={pos} heightened={heightenBars}>
+                <Locked $warned={isLockWarning} $pos={pos} $heightened={heightenBars}>
                   <MetaData as="dl" style={{ textAlign: 'right' }}>
                     <Tooltip
                       text={t`You can't withdraw any collateral if you go beyond this threshold.`}
@@ -269,7 +269,7 @@ const PositionDetailPanel = () => {
                     <dd>${lockThresholdPrice.dp(collateralType === 'sICX' ? 3 : 0).toFormat()}</dd>
                   </MetaData>
                 </Locked>
-                <Liquidated heightened={heightenBars}>
+                <Liquidated $heightened={heightenBars}>
                   <MetaData as="dl">
                     <dt>
                       <Trans>Liquidated</Trans>
@@ -294,7 +294,7 @@ const PositionDetailPanel = () => {
                       sliderInstance.current = instance;
                     }
                   }}
-                  style={{ height: 16 }}
+                  style={{ height: '16px' }}
                 />
               </Box>
 
@@ -332,9 +332,9 @@ const PositionDetailPanel = () => {
                       </QuestionWrapper>
                     )}
                     <RebalancingTooltip
-                      show={showRebalancing}
-                      bottom={false}
-                      isActive={shouldShowRebalancingTooltipAnchor}
+                      $show={showRebalancing}
+                      $bottom={false}
+                      $isActive={shouldShowRebalancingTooltipAnchor}
                     >
                       <TooltipContainer width={340} className="rebalancing-modal">
                         <RebalancingInfo />
@@ -385,16 +385,16 @@ const PositionDetailPanel = () => {
                     <Typography mt={1} sx={{ position: 'relative' }}>
                       <Trans>Collateral</Trans>
                       <RebalancingTooltipArrow
-                        left={25}
-                        show={shouldShowSeparateTooltip && shouldShowRebalancingAveragePrice && showRebalancing}
+                        $left={25}
+                        $show={shouldShowSeparateTooltip && shouldShowRebalancingAveragePrice && showRebalancing}
                       />
                     </Typography>
                   </Box>
 
                   <RebalancingTooltip
-                    show={shouldShowSeparateTooltip && shouldShowRebalancingAveragePrice && showRebalancing}
-                    bottom={true}
-                    isActive={shouldShowRebalancingTooltipAnchor}
+                    $show={shouldShowSeparateTooltip && shouldShowRebalancingAveragePrice && showRebalancing}
+                    $bottom={true}
+                    $isActive={shouldShowRebalancingTooltipAnchor}
                   >
                     <TooltipContainer width={321}>{averageRebalancingPriceText}</TooltipContainer>
                   </RebalancingTooltip>
@@ -406,8 +406,8 @@ const PositionDetailPanel = () => {
                     <Typography mt={1} sx={{ position: 'relative' }}>
                       <Trans>Loan</Trans>
                       <RebalancingTooltipArrow
-                        left={7}
-                        show={shouldShowSeparateTooltip && shouldShowRebalancingAveragePrice && showRebalancing}
+                        $left={7}
+                        $show={shouldShowSeparateTooltip && shouldShowRebalancingAveragePrice && showRebalancing}
                       />
                     </Typography>
                   </Box>
@@ -552,14 +552,14 @@ const RightChip = styled(Chip)`
   border-left: 1px solid #0d2a4d;
 `;
 
-const Threshold = styled(Box)<{ warned?: boolean; heightened?: boolean }>`
-  color: ${({ warned }) => (warned ? '#fb6a6a' : '#ffffff')};
+const Threshold = styled(Box)<{ $warned?: boolean; $heightened?: boolean }>`
+  color: ${({ $warned }) => ($warned ? '#fb6a6a' : '#ffffff')};
   position: absolute;
   bottom: 0;
   width: 1px;
-  height: ${({ heightened }) => (heightened ? '70px' : '50px')};
+  height: ${({ $heightened }) => ($heightened ? '70px' : '50px')};
   margin-top: -34px;
-  background-color: ${({ warned }) => (warned ? '#fb6a6a' : '#ffffff')};
+  background-color: ${({ $warned }) => ($warned ? '#fb6a6a' : '#ffffff')};
   z-index: 2;
   transition: color 0.3s ease;
 
@@ -570,7 +570,7 @@ const Threshold = styled(Box)<{ warned?: boolean; heightened?: boolean }>`
     width: 10px;
     height: 1px;
     margin-left: -10px;
-    background-color: ${({ warned }) => (warned ? '#fb6a6a' : '#ffffff')};
+    background-color: ${({ $warned }) => ($warned ? '#fb6a6a' : '#ffffff')};
     z-index: 2;
     transition: height 0.3s ease;
   }
@@ -591,8 +591,8 @@ export const MetaData = styled(Box)`
   }
 `;
 
-const Locked = styled(Threshold)<{ pos: number }>`
-  left: ${({ pos }) => (1 - pos) * 100}%;
+const Locked = styled(Threshold)<{ $pos: number }>`
+  left: ${({ $pos }) => (1 - $pos) * 100}%;
   transition: left ease 0.5s;
 
   ${MetaData} {
@@ -626,18 +626,18 @@ const VerticalDivider = styled(Box)`
   background-color: ${({ theme }) => theme.colors.divider};
 `;
 
-const RebalancingTooltipArrow = styled.span<{ left: number; show: boolean }>`
+const RebalancingTooltipArrow = styled.span<{ $left: number; $show: boolean }>`
   position: absolute;
   display: inline-block;
   transition: all ease 0.25s;
   transform: translateY(3px);
   left: 0;
   bottom: 0;
-  opacity: ${({ show }) => (show ? 1 : 0)};
+  opacity: ${({ $show }) => ($show ? 1 : 0)};
 
   &:before {
     content: '';
-    left: ${({ left }) => `${left}px`};
+    left: ${({ $left }) => `${$left}px`};
     position: absolute;
     width: 0;
     height: 0;
@@ -648,23 +648,23 @@ const RebalancingTooltipArrow = styled.span<{ left: number; show: boolean }>`
   }
 `;
 
-const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean; isActive: boolean }>`
+const RebalancingTooltip = styled.div<{ $show: boolean; $bottom?: boolean; $isActive: boolean }>`
   background: ${({ theme }) => theme.colors.bg4};
   border: 2px solid ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.text1};
   border-radius: 8px;
   position: absolute;
-  ${({ bottom }) => (bottom ? `top: calc(100% + 12px)` : `bottom: calc(100% + 5px)`)};
-  left: ${({ bottom }) => (bottom ? `50%` : `100%`)};
-  margin-left: ${({ bottom }) => (bottom ? `-160px` : `-225px`)};
+  ${({ $bottom }) => ($bottom ? `top: calc(100% + 12px)` : `bottom: calc(100% + 5px)`)};
+  left: ${({ $bottom }) => ($bottom ? `50%` : `100%`)};
+  margin-left: ${({ $bottom }) => ($bottom ? `-160px` : `-225px`)};
   z-index: 10;
   transition: all ease 0.25s;
-  opacity: ${({ show }) => (show ? 1 : 0)};
-  pointer-events: ${({ show }) => (show ? 'all' : 'none')};
-  display: ${({ isActive }) => (isActive ? 'block' : 'none')};
+  opacity: ${({ $show }) => ($show ? 1 : 0)};
+  pointer-events: ${({ $show }) => ($show ? 'all' : 'none')};
+  display: ${({ $isActive }) => ($isActive ? 'block' : 'none')};
 
   &:before {
-    ${({ bottom }) => (bottom ? null : `content: ''`)};
+    ${({ $bottom }) => ($bottom ? null : `content: ''`)};
     left: 50%;
     top: calc(100% + 1px);
     margin-left: -10px;
@@ -702,9 +702,9 @@ const RebalancingTooltip = styled.div<{ show: boolean; bottom?: boolean; isActiv
   `};
 
   ${({ theme }) => theme.mediaWidth.upLarge`
-    ${({ bottom }) => (bottom ? `top: calc(100% + 12px)` : `bottom: calc(100% + 5px)`)};
-    left: ${({ bottom }) => (bottom ? `50%` : `100%`)};
-    margin-left: ${({ bottom }) => (bottom ? `-160px` : `-178px`)};
+    ${({ $bottom }) => ($bottom ? `top: calc(100% + 12px)` : `bottom: calc(100% + 5px)`)};
+    left: ${({ $bottom }) => ($bottom ? `50%` : `100%`)};
+    margin-left: ${({ $bottom }) => ($bottom ? `-160px` : `-178px`)};
 
     &:before {
       margin-left: -9px;

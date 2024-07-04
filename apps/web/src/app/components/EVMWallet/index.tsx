@@ -16,7 +16,7 @@ import useDebounce from 'hooks/useDebounce';
 import useKeyPress from 'hooks/useKeyPress';
 import { useRatesWithOracle } from 'queries/reward';
 import { useWalletModalToggle } from 'store/application/hooks';
-import { useSignedInWallets, useWalletBalances } from 'store/wallet/hooks';
+import { useWalletBalances } from 'store/wallet/hooks';
 import { isDPZeroCA, toFraction } from 'utils';
 
 import Divider from '../Divider';
@@ -40,12 +40,20 @@ import { useTokenComparator } from '../SearchModal/sorting';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 import useXWallet from 'app/pages/trade/bridge/_hooks/useXWallet';
+import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 
 const walletBreakpoint = '499px';
 
-const EVMWallet = ({ setAnchor, anchor }) => {
+const EVMWallet = ({
+  setAnchor,
+  anchor,
+  xChainId,
+}: {
+  anchor: HTMLElement | null;
+  setAnchor: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
+  xChainId: XChainId;
+}) => {
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
-  const xChainId: XChainId = '0xa86a.avax';
   const balances = useWalletBalances(xChainId);
   const xWallet = useXWallet(xChainId);
   const account = xWallet?.account;
@@ -64,10 +72,7 @@ const EVMWallet = ({ setAnchor, anchor }) => {
   const xTokens = useXTokens(xChainId);
 
   const addressesWithAmount = useMemo(
-    () =>
-      xTokens
-        ?.map(t => t.address)
-        .filter(address => !isDPZeroCA(balances?.[address], HIGH_PRICE_ASSET_DP[address] || 2)),
+    () => xTokens?.map(t => t.address).filter(address => balances?.[address]?.greaterThan(0)),
     [balances, xTokens],
   );
 
@@ -161,7 +166,7 @@ const EVMWallet = ({ setAnchor, anchor }) => {
         </AssetSymbol>
         <BalanceAndValueWrap>
           <DataText as="div">
-            {!account ? '-' : balances?.[address]?.toFixed(HIGH_PRICE_ASSET_DP[address] || 2, { groupSeparator: ',' })}
+            {!account ? '-' : balances?.[address]?.toFixed(HIGH_PRICE_ASSET_DP[address] || 5, { groupSeparator: ',' })}
           </DataText>
 
           <DataText as="div">
@@ -206,6 +211,7 @@ const EVMWallet = ({ setAnchor, anchor }) => {
           autoComplete="off"
           value={searchQuery}
           ref={inputRef as RefObject<HTMLInputElement>}
+          tabIndex={isMobile ? -1 : 1}
           onChange={e => {
             setSearchQuery(e.target.value);
             activeIndex === undefined && setActiveIndex(0);
@@ -237,7 +243,7 @@ const EVMWallet = ({ setAnchor, anchor }) => {
                   <StandardCursorListItem
                     className={index === activeIndex ? 'active' : ''}
                     key={symbol}
-                    border={index !== arr.length - 1}
+                    $border={index !== arr.length - 1}
                     // onMouseEnter={() => setActiveIndex(index)}
                     // onClick={() => handleAssetClick(symbol)}
                   >

@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { Button } from 'app/components/Button';
 import { HEIGHT } from 'app/components/TradingViewChart';
 import { ZERO } from 'constants/misc';
+import { formatBigNumber } from 'utils';
 
 export const Panel = styled(Flex)`
   overflow: hidden;
@@ -94,12 +95,12 @@ export const ChartControlGroup = styled(Box)`
   }
 `;
 
-export const ChartControlButton = styled(Button)<{ active?: boolean }>`
+export const ChartControlButton = styled(Button)<{ $active?: boolean }>`
   padding: 1px 12px;
   border-radius: 100px;
   color: #ffffff;
   font-size: 14px;
-  background-color: ${({ theme, active }) => (active ? theme.colors.primary : theme.colors.bg3)};
+  background-color: ${({ theme, $active }) => ($active ? theme.colors.primary : theme.colors.bg3)};
   transition: background-color 0.3s ease;
 
   &:hover {
@@ -120,5 +121,5 @@ export const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue
   !!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue;
 
 export const getFormattedRewards = (reward: BigNumber): string => {
-  return reward?.isEqualTo(ZERO) ? 'N/A' : `~ ${reward.toFormat(2)} BALN`;
+  return reward?.isEqualTo(ZERO) ? 'N/A' : `~ ${formatBigNumber(reward, 'currency')} BALN`;
 };

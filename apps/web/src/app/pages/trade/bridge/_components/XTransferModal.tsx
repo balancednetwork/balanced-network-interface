@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { Typography } from 'app/theme';
 import Modal from 'app/components/Modal';
 import { ModalContentWrapper } from 'app/components/ModalContent';
-import { StyledButton as XCallButton } from 'app/pages/trade/xswap/_components/XCallSwapModal';
+import { StyledButton as XCallButton } from 'app/pages/trade/xswap/_components/shared';
 import { Button, TextButton } from 'app/components/Button';
 import Spinner from 'app/components/Spinner';
 
@@ -16,16 +16,21 @@ import { useShouldLedgerSign } from 'store/application/hooks';
 
 import { useModalStore, modalActions, MODAL_ID } from '../_zustand/useModalStore';
 
-import XCallTransactionState from './XCallTransactionState';
+import XTransactionState from './XTransactionState';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
 import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks/useApproveCallback';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import useXCallFee from '../_hooks/useXCallFee';
-import { XCallTransactionType, XSwapInfo } from '../_zustand/types';
-import { useXCallMessageStore } from '../_zustand/useXCallMessageStore';
+import { XTransactionType, XTransactionInput } from '../_zustand/types';
+import { useXMessageStore } from '../_zustand/useXMessageStore';
 import useXCallGasChecker from '../_hooks/useXCallGasChecker';
-import { useXCallTransactionStore, xCallTransactionActions } from '../_zustand/useXCallTransactionStore';
+import { useXTransactionStore, xTransactionActions } from '../_zustand/useXTransactionStore';
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from 'store/bridge/hooks';
+import { useCreateWalletXService } from '../_zustand/useXServiceStore';
+import useWallets from '../_hooks/useWallets';
+import { useSwitchChain } from 'wagmi';
+import BigNumber from 'bignumber.js';
+import { formatBigNumber } from 'utils';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;
@@ -37,43 +42,45 @@ const StyledXCallButton = styled(XCallButton)`
   }
 `;
 
-export function BridgeTransferConfirmModal() {
+function XTransferModal() {
   useModalStore();
-  useXCallMessageStore();
-  const { currentId } = useXCallTransactionStore();
-  const currentXCallTransaction = xCallTransactionActions.get(currentId);
+  useXMessageStore();
+  const { currentId } = useXTransactionStore();
+  const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing = currentId !== null; // TODO: can be swap is processing
 
   const { recipient, isLiquidFinanceEnabled } = useBridgeState();
   const { currencyAmountToBridge, account } = useDerivedBridgeInfo();
-  const bridgeDirection = useBridgeDirection();
+  const direction = useBridgeDirection();
 
-  const { xCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
+  useCreateWalletXService(direction.from);
 
-  const xChain = xChainMap[bridgeDirection.from];
+  const { xCallFee } = useXCallFee(direction.from, direction.to);
+
+  const xChain = xChainMap[direction.from];
   const { approvalState, approveCallback } = useApproveCallback(currencyAmountToBridge, xChain.contracts.assetManager);
 
   const shouldLedgerSign = useShouldLedgerSign();
 
   const handleDismiss = () => {
-    modalActions.closeModal(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL);
+    modalActions.closeModal(MODAL_ID.XTRANSFER_CONFIRM_MODAL);
     setTimeout(() => {
-      xCallTransactionActions.reset();
+      xTransactionActions.reset();
     }, 500);
   };
 
   const handleTransfer = async () => {
     if (currencyAmountToBridge && recipient && account && xCallFee) {
-      const bridgeInfo: XSwapInfo = {
-        type: XCallTransactionType.BRIDGE,
-        direction: bridgeDirection,
+      const bridgeInfo: XTransactionInput = {
+        type: XTransactionType.BRIDGE,
+        direction: direction,
         inputAmount: currencyAmountToBridge,
         recipient,
         account,
         xCallFee,
         isLiquidFinanceEnabled,
       };
-      await xCallTransactionActions.executeTransfer(bridgeInfo);
+      await xTransactionActions.executeTransfer(bridgeInfo);
     }
   };
 
@@ -81,18 +88,29 @@ export function BridgeTransferConfirmModal() {
     approveCallback();
   };
 
-  const gasChecker = useXCallGasChecker(bridgeDirection.from);
+  const gasChecker = useXCallGasChecker(direction.from);
+
+  // switch chain between evm chains
+  const wallets = useWallets();
+  const walletType = xChainMap[direction.from].xWalletType;
+  const isWrongChain = wallets[walletType].xChainId !== direction.from;
+  const { switchChain } = useSwitchChain();
+  const handleSwitchChain = () => {
+    switchChain({ chainId: xChainMap[direction.from].id as number });
+  };
 
   return (
     <>
-      <Modal isOpen={modalActions.isModalOpen(MODAL_ID.BRIDGE_TRANSFER_CONFIRM_MODAL)} onDismiss={handleDismiss}>
+      <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XTRANSFER_CONFIRM_MODAL)} onDismiss={handleDismiss}>
         <ModalContentWrapper>
           <Typography textAlign="center" mb="5px">
             {t`Transfer asset cross-chain?`}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {`${currencyAmountToBridge?.toFixed(2)} ${currencyAmountToBridge?.currency.symbol}`}
+            {`${formatBigNumber(new BigNumber(currencyAmountToBridge?.toFixed() || 0), 'currency')} ${
+              currencyAmountToBridge?.currency.symbol
+            }`}
           </Typography>
 
           <Flex my={5}>
@@ -101,7 +119,7 @@ export function BridgeTransferConfirmModal() {
                 <Trans>From</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {getNetworkDisplayName(bridgeDirection.from)}
+                {getNetworkDisplayName(direction.from)}
               </Typography>
             </Box>
 
@@ -110,13 +128,13 @@ export function BridgeTransferConfirmModal() {
                 <Trans>To</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {getNetworkDisplayName(bridgeDirection.to)}
+                {getNetworkDisplayName(direction.to)}
               </Typography>
             </Box>
           </Flex>
 
           <Typography textAlign="center" mb="2px">
-            {`${getNetworkDisplayName(bridgeDirection.to)} `}
+            {`${getNetworkDisplayName(direction.to)} `}
             <Trans>address</Trans>
           </Typography>
 
@@ -126,16 +144,21 @@ export function BridgeTransferConfirmModal() {
 
           <LiquidFinanceIntegration />
 
-          {currentXCallTransaction && <XCallTransactionState xCallTransaction={currentXCallTransaction} />}
+          {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             {shouldLedgerSign && <Spinner></Spinner>}
             {!shouldLedgerSign && (
               <>
                 <TextButton onClick={handleDismiss}>
-                  <Trans>Cancel</Trans>
+                  <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
                 </TextButton>
-                {isProcessing ? (
+
+                {isWrongChain ? (
+                  <StyledXCallButton onClick={handleSwitchChain}>
+                    <Trans>Switch to {xChainMap[direction.from].name}</Trans>
+                  </StyledXCallButton>
+                ) : isProcessing ? (
                   <>
                     <StyledXCallButton disabled $loading>
                       <Trans>Transfer in progress</Trans>
@@ -170,3 +193,5 @@ export function BridgeTransferConfirmModal() {
     </>
   );
 }
+
+export default XTransferModal;

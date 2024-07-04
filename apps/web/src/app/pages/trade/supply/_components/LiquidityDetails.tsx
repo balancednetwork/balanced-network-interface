@@ -39,6 +39,7 @@ import QuestionIcon from 'assets/icons/question.svg';
 import Skeleton from 'app/components/Skeleton';
 import { MouseoverTooltip } from 'app/components/Tooltip';
 import { QuestionWrapper } from 'app/components/QuestionHelper';
+import { formatBigNumber } from 'utils';
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
@@ -101,7 +102,7 @@ export default function LiquidityDetails() {
             animate={{ opacity: 1 }}
             style={{ height: '100px', position: 'relative' }}
           >
-            <Spinner size={75} centered></Spinner>
+            <Spinner size={75} $centered></Spinner>
           </motion.div>
         )}
       </AnimatePresence>
@@ -150,7 +151,7 @@ export default function LiquidityDetails() {
 
           <Accordion collapsible>
             {shouldShowQueue && (
-              <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} border={userPools.length !== 0}>
+              <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} $border={userPools.length !== 0}>
                 <StyledAccordionButton onClick={() => setIsHided(false)}>
                   <PoolRecordQ
                     balance={queueBalance}
@@ -175,7 +176,7 @@ export default function LiquidityDetails() {
             )}
             {balancesWithoutQ &&
               userPools.map((poolId, index, arr) => (
-                <StyledAccordionItem key={poolId} border={index !== arr.length - 1}>
+                <StyledAccordionItem key={poolId} $border={index !== arr.length - 1}>
                   <StyledAccordionButton onClick={() => setIsHided(false)}>
                     <PoolRecord
                       poolId={parseInt(poolId)}
@@ -336,17 +337,17 @@ const PoolRecord = ({
         </StyledDataText>
         <DataText>
           {baseCurrencyTotalSupply ? (
-            <Typography fontSize={16}>{`${baseCurrencyTotalSupply.toFixed(
-              HIGH_PRICE_ASSET_DP[aBalance.currency.address] || 2,
-              { groupSeparator: ',' },
+            <Typography fontSize={16}>{`${formatBigNumber(
+              new BigNumber(baseCurrencyTotalSupply?.toFixed() || 0),
+              'currency',
             )} ${aBalance.currency.symbol}`}</Typography>
           ) : (
             <Skeleton width={100}></Skeleton>
           )}
           {quoteCurrencyTotalSupply ? (
-            <Typography fontSize={16}>{`${quoteCurrencyTotalSupply?.toFixed(
-              HIGH_PRICE_ASSET_DP[bBalance.currency.address] || 2,
-              { groupSeparator: ',' },
+            <Typography fontSize={16}>{`${formatBigNumber(
+              new BigNumber(quoteCurrencyTotalSupply?.toFixed() || 0),
+              'currency',
             )} ${bBalance.currency.symbol}`}</Typography>
           ) : (
             <Skeleton width={100}></Skeleton>

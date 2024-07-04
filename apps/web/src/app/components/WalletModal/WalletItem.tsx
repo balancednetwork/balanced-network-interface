@@ -3,9 +3,23 @@ import React from 'react';
 import { Box, Flex } from 'rebass';
 
 import { Typography } from 'app/theme';
-import { shortenAddress } from 'utils';
 
 import { UnderlineText } from '../DropdownText';
+import { XChain } from 'app/pages/trade/bridge/types';
+import { ChainLogo } from 'app/pages/trade/bridge/_components/ChainLogo';
+import { CopyableAddress } from '../Header';
+import { t } from '@lingui/macro';
+import {
+  ActionDivider,
+  ActiveIndicator,
+  ChainInfo,
+  ChainName,
+  MainLogo,
+  WalletActions,
+  WalletItemGrid,
+  XChainsWrap,
+} from './styled';
+import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 
 type WalletItemProps = {
   address: string | null | undefined;
@@ -15,40 +29,71 @@ type WalletItemProps = {
   disconnect: () => void;
   description: string;
   border: boolean;
+  xChains?: XChain[];
+  switchChain?: (any) => void;
 };
 
-const WalletItem = ({ address, name, logo, connect, disconnect, description, border }: WalletItemProps) => {
+const WalletItem = ({
+  address,
+  name,
+  logo,
+  connect,
+  disconnect,
+  description,
+  border,
+  xChains,
+  switchChain,
+}: WalletItemProps) => {
+  const signedInWallets = useSignedInWallets();
+
+  const handleSwitchChain = (chain: XChain): void => {
+    switchChain && switchChain({ chainId: chain.id });
+  };
+
   return (
-    <Flex className={border ? 'border-bottom' : ''} py={3} alignItems="center" flexWrap={['wrap', 'nowrap']}>
-      <Box>{logo}</Box>
-      <Box ml={3}>
-        <Typography fontWeight="bold" color="text" fontSize={16}>
+    <WalletItemGrid className={border ? 'border-bottom' : ''}>
+      <MainLogo>{logo}</MainLogo>
+      <ChainInfo>
+        <ChainName fontWeight="bold" color="text" fontSize={15} mb="5px">
           {name}
-        </Typography>
-        <Typography maxWidth={[200, 250]} color="text1" opacity={0.75}>
-          {address ? shortenAddress(address) : description}
-        </Typography>
-      </Box>
-      <Box ml={['55px', 'auto']} pt={['5px', 0]}>
+        </ChainName>
+        <Flex>
+          <Typography color="text1">
+            {address ? <CopyableAddress account={address} copyIcon placement="right" /> : description}
+          </Typography>
+        </Flex>
+        {xChains && (
+          <XChainsWrap signedIn={!!address}>
+            {xChains.map(chain => (
+              <ActiveIndicator
+                key={chain.xChainId}
+                active={signedInWallets.some(wallet => wallet.xChainId === chain.xChainId)}
+                onClick={() => handleSwitchChain(chain)}
+              >
+                <ChainLogo chain={chain} size="24px" key={chain.xChainId} />
+              </ActiveIndicator>
+            ))}
+          </XChainsWrap>
+        )}
+      </ChainInfo>
+      <WalletActions>
         {address ? (
-          <Flex>
+          <Flex className="wallet-options">
             <UnderlineText onClick={connect}>
-              <Typography color="primaryBright">Change</Typography>
+              <Typography color="primaryBright">Change wallet</Typography>
             </UnderlineText>
-            <Typography fontSize="18px" lineHeight={1} mx="1px">
-              |
+            <ActionDivider text={t`or`} />
+            <Typography color="alert" onClick={disconnect} style={{ cursor: 'pointer' }}>
+              Disconnect
             </Typography>
-            <UnderlineText onClick={disconnect}>
-              <Typography color="primaryBright">Disconnect</Typography>
-            </UnderlineText>
           </Flex>
         ) : (
           <UnderlineText onClick={connect}>
             <Typography color="primaryBright">Connect wallet</Typography>
           </UnderlineText>
         )}
-      </Box>
-    </Flex>
+      </WalletActions>
+    </WalletItemGrid>
   );
 };
 

@@ -11,7 +11,7 @@ import { canBeQueue } from 'constants/currency';
 import { useAllTokens } from 'hooks/Tokens';
 import { PairState, useV2Pair } from 'hooks/useV2Pairs';
 import { useSwapSlippageTolerance } from 'store/application/hooks';
-import { useCrossChainWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
+import { useCrossChainWalletBalances } from 'store/wallet/hooks';
 import { parseUnits } from 'utils';
 
 import { AppDispatch, AppState } from '../index';
@@ -27,8 +27,12 @@ import {
   selectChain,
 } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
-import { getCrossChainTokenBySymbol } from 'app/pages/trade/bridge/utils';
+import { getCrossChainTokenBySymbol, getXAddress } from 'app/pages/trade/bridge/utils';
+import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from 'constants/misc';
+import { useAssetManagerTokens } from 'app/pages/trade/bridge/_hooks/useAssetManagerTokens';
+import BigNumber from 'bignumber.js';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);
@@ -142,6 +146,8 @@ export function useDerivedSwapInfo(): {
   formattedAmounts: {
     [field in Field]: string;
   };
+  canBridge: boolean;
+  maximumBridgeAmount: CurrencyAmount<XToken> | undefined;
 } {
   const {
     independentField,
@@ -151,9 +157,10 @@ export function useDerivedSwapInfo(): {
     [Field.OUTPUT]: { currency: outputCurrency, xChainId: outputXChainId },
   } = useSwapState();
 
-  const signedInWallets = useSignedInWallets();
-  const account = signedInWallets.find(w => w.chainId === inputXChainId)?.address;
-
+  const signedInWallets = useAvailableWallets();
+  const account = signedInWallets.find(
+    w => xChainMap[w.xChainId].xWalletType === xChainMap[inputXChainId].xWalletType,
+  )?.address;
   const crossChainWallet = useCrossChainWalletBalances();
 
   const isExactIn: boolean = independentField === Field.INPUT;
@@ -267,6 +274,28 @@ export function useDerivedSwapInfo(): {
     } as { [field in Field]: string };
   }, [dependentField, independentField, parsedAmounts, typedValue]);
 
+  const { data: assetManager } = useAssetManagerTokens();
+
+  const maximumBridgeAmount = useMemo(() => {
+    if (currencies[Field.OUTPUT] instanceof XToken) {
+      return assetManager?.[getXAddress(currencies[Field.OUTPUT]) ?? '']?.depositedAmount;
+    }
+  }, [assetManager, currencies[Field.OUTPUT]]);
+
+  const outputCurrencyAmount = useMemo(() => {
+    if (outputCurrency && formattedAmounts[Field.OUTPUT] && !Number.isNaN(parseFloat(formattedAmounts[Field.OUTPUT]))) {
+      return CurrencyAmount.fromRawAmount(
+        outputCurrency,
+        new BigNumber(formattedAmounts[Field.OUTPUT]).times(10 ** outputCurrency.wrapped.decimals).toFixed(0),
+      );
+    }
+    return undefined;
+  }, [formattedAmounts[Field.OUTPUT], outputCurrency]);
+
+  const canBridge = useMemo(() => {
+    return maximumBridgeAmount && outputCurrencyAmount ? maximumBridgeAmount?.greaterThan(outputCurrencyAmount) : true;
+  }, [maximumBridgeAmount, outputCurrencyAmount]);
+
   return {
     account,
     trade,
@@ -282,6 +311,8 @@ export function useDerivedSwapInfo(): {
     dependentField,
     parsedAmounts,
     formattedAmounts,
+    canBridge,
+    maximumBridgeAmount,
   };
 }
 

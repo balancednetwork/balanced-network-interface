@@ -6,7 +6,7 @@ import styled, { css } from 'styled-components';
 
 import CurrencyLogo from '../CurrencyLogo';
 
-export const IconWrapper = styled(Box)<{ respoVersion?: boolean }>`
+const IconWrapper = styled(Box)<{ $respoVersion?: boolean }>`
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -16,8 +16,8 @@ export const IconWrapper = styled(Box)<{ respoVersion?: boolean }>`
   justify-content: center;
   align-items: center;
 
-  ${({ respoVersion, theme }) =>
-    respoVersion &&
+  ${({ $respoVersion, theme }) =>
+    $respoVersion &&
     css`
       width: 30px;
       height: 30px;
@@ -55,10 +55,10 @@ function PoolLogo({
 }) {
   return (
     <PoolLogoWrapper>
-      <IconWrapper respoVersion={respoVersion}>
+      <IconWrapper $respoVersion={respoVersion}>
         <CurrencyLogo currency={baseCurrency} />
       </IconWrapper>
-      <IconWrapper ml={-2} respoVersion={respoVersion}>
+      <IconWrapper ml={-2} $respoVersion={respoVersion}>
         <CurrencyLogo currency={quoteCurrency} />
       </IconWrapper>
     </PoolLogoWrapper>

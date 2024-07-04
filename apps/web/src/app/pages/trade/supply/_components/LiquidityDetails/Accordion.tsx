@@ -1,8 +1,8 @@
 import { AccordionItem, AccordionButton, AccordionPanel } from '@reach/accordion';
 import styled from 'styled-components';
 
-export const StyledAccordionItem = styled(AccordionItem)<{ border?: boolean }>`
-  border-bottom: ${({ border = true }) => (border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
+export const StyledAccordionItem = styled(AccordionItem)<{ $border?: boolean }>`
+  border-bottom: ${({ $border = true }) => ($border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
   transition: border-bottom ease-in-out 50ms 480ms;
 `;
 

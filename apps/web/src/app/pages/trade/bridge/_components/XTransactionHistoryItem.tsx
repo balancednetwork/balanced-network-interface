@@ -6,9 +6,11 @@ import styled from 'styled-components';
 import { getNetworkDisplayName } from 'app/pages/trade/bridge/utils';
 import { Typography } from 'app/theme';
 import ArrowIcon from 'assets/icons/arrow-white.svg';
-
 import Spinner from 'app/components/Spinner';
-import { XCallMessage, XCallMessageStatus, XCallTransaction } from '../_zustand/types';
+
+import { XTransaction, XTransactionStatus } from '../_zustand/types';
+import { useXMessageStore, xMessageActions } from '../_zustand/useXMessageStore';
+import { xTransactionActions } from '../_zustand/useXTransactionStore';
 
 const Wrap = styled(Box)`
   display: grid;
@@ -67,39 +69,16 @@ const FailedX = styled(Box)`
   }
 `;
 
-const XCallMessageHistoryItem = ({
-  xCallMessage,
-  xCallTransaction,
-}: { xCallMessage: XCallMessage; xCallTransaction: XCallTransaction }) => {
-  const { sourceChainId, destinationChainId } = xCallMessage;
-
-  const isPending = useMemo(() => {
-    return (
-      xCallMessage.status !== XCallMessageStatus.FAILED && xCallMessage.status !== XCallMessageStatus.CALL_EXECUTED
-    );
-  }, [xCallMessage]);
-
-  const statusMessage = useMemo(() => {
-    switch (xCallMessage.status) {
-      case XCallMessageStatus.FAILED:
-        return `Failed`;
-      case XCallMessageStatus.REQUESTED:
-      case XCallMessageStatus.AWAITING_CALL_MESSAGE_SENT:
-      case XCallMessageStatus.CALL_MESSAGE_SENT:
-      case XCallMessageStatus.CALL_MESSAGE:
-        return `Pending`;
-      case XCallMessageStatus.CALL_EXECUTED:
-        return `Complete`;
-      default:
-        return `Unknown`;
-    }
-  }, [xCallMessage]);
+const XTransactionHistoryItem = ({ xTransaction }: { xTransaction: XTransaction }) => {
+  useXMessageStore();
+  const { primaryMessageId, secondaryMessageId, sourceChainId, finalDestinationChainId } = xTransaction;
+  const primaryMessage = xMessageActions.get(primaryMessageId);
 
   const [elapsedTime, setElapsedTime] = useState(0);
-  const timestamp = xCallMessage.sourceTransaction.timestamp;
+  const timestamp = primaryMessage?.sourceTransaction.timestamp;
 
   useEffect(() => {
-    if (isPending) {
+    if (timestamp && xTransaction.status === XTransactionStatus.pending) {
       const interval = setInterval(() => {
         const now = Date.now();
         const elapsed = Math.floor((now - timestamp) / 1000);
@@ -108,10 +87,14 @@ const XCallMessageHistoryItem = ({
 
       return () => clearInterval(interval);
     }
-  }, [timestamp, isPending]);
+  }, [timestamp, xTransaction]);
 
   const minutes = Math.floor(elapsedTime / 60);
   const seconds = elapsedTime % 60;
+
+  const handleRemove = () => {
+    xTransactionActions.remove(xTransaction.id);
+  };
 
   return (
     <>
@@ -119,31 +102,45 @@ const XCallMessageHistoryItem = ({
         <Flex alignItems="center">
           {getNetworkDisplayName(sourceChainId)}
           <ArrowIcon width="13px" style={{ margin: '0 7px' }} />
-          {getNetworkDisplayName(destinationChainId)}
+          {getNetworkDisplayName(finalDestinationChainId)}
         </Flex>
         <Flex justifyContent="center" flexDirection="column">
           <Typography fontWeight={700} color="text">
-            {xCallTransaction.attributes?.descriptionAction}
+            {xTransaction.attributes?.descriptionAction}
           </Typography>
           <Typography opacity={0.75} fontSize={14}>
-            {xCallTransaction.attributes?.descriptionAmount}
+            {xTransaction.attributes?.descriptionAmount}
           </Typography>
         </Flex>
         <Flex justifyContent="center" flexDirection="column" alignItems="flex-end" className="status-check">
-          {isPending ? (
+          {xTransaction.status === XTransactionStatus.pending && (
             <>
               <Flex alignItems="center">
                 <Spinner size={15} />
-                <Status style={{ transform: 'translateY(1px)' }}>{statusMessage}</Status>
+                <Status style={{ transform: 'translateY(1px)' }}>Pending</Status>
               </Flex>
               <Typography opacity={0.75} fontSize={14}>
                 {elapsedTime ? `${minutes ? minutes + 'm' : ''} ${seconds}s` : '...'}
               </Typography>
             </>
-          ) : (
-            <Flex alignItems="center">
-              <Status style={{ transform: 'translateY(1px)' }}>{statusMessage}</Status>
-            </Flex>
+          )}
+          {xTransaction.status === XTransactionStatus.success && (
+            <>
+              <Flex alignItems="center">
+                <Status style={{ transform: 'translateY(1px)' }}>Complete</Status>
+              </Flex>
+            </>
+          )}
+          {xTransaction.status === XTransactionStatus.failure && (
+            <>
+              <Flex alignItems="center">
+                <Status style={{ transform: 'translateY(1px)' }}>Reverted</Status>
+              </Flex>
+
+              <Typography color="alert" onClick={handleRemove} style={{ cursor: 'pointer' }}>
+                Remove
+              </Typography>
+            </>
           )}
         </Flex>
       </Wrap>
@@ -151,4 +148,4 @@ const XCallMessageHistoryItem = ({
   );
 };
 
-export default XCallMessageHistoryItem;
+export default XTransactionHistoryItem;

@@ -11,7 +11,7 @@ import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import { UnderlineTextWithArrow } from 'app/components/DropdownText';
+import { UnderlineText, UnderlineTextWithArrow } from 'app/components/DropdownText';
 import Popover, { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import FlipIcon from 'assets/icons/flip.svg';
@@ -20,27 +20,36 @@ import { useSwapSlippageTolerance, useWalletModalToggle } from 'store/applicatio
 import { useCAMemo, useIsSwapEligible, useMaxSwapSize } from 'store/stabilityFund/hooks';
 import { Field } from 'store/swap/reducer';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
-import { useSignedInWallets } from 'store/wallet/hooks';
 import { formatPercent, maxAmountSpend } from 'utils';
 
 import StabilityFund from 'app/components/StabilityFund';
 import { BrightPanel } from 'app/pages/trade/supply/_components/utils';
 import { isXToken } from 'app/pages/trade/bridge/utils';
 
-import XCallSwapModal from './XCallSwapModal';
-import { ICON_XCALL_NETWORK_ID } from 'constants/config';
+import XSwapModal from './XSwapModal';
 import SwapModal from './SwapModal';
-import { useCreateXCallService } from '../../bridge/_zustand/useXCallServiceStore';
 import { MODAL_ID, modalActions } from '../../bridge/_zustand/useModalStore';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
+import { useAvailableWallets } from '../../bridge/_hooks/useWallets';
+import { xChainMap } from '../../bridge/_config/xChains';
 
 const MemoizedStabilityFund = React.memo(StabilityFund);
 
 export default function SwapPanel() {
   useInitialSwapLoad();
 
-  const { trade, currencyBalances, currencies, inputError, percents, account, direction, formattedAmounts } =
-    useDerivedSwapInfo();
+  const {
+    trade,
+    currencyBalances,
+    currencies,
+    inputError,
+    percents,
+    account,
+    direction,
+    formattedAmounts,
+    maximumBridgeAmount,
+    canBridge,
+  } = useDerivedSwapInfo();
   const memoizedInputAmount = useCAMemo(trade?.inputAmount);
   const memoizedOutputAmount = useCAMemo(trade?.outputAmount);
   const isSwapEligibleForStabilityFund = useIsSwapEligible(
@@ -55,21 +64,19 @@ export default function SwapPanel() {
     direction.from === '0x1.icon' &&
     direction.to === '0x1.icon';
 
-  const signedInWallets = useSignedInWallets();
+  const signedInWallets = useAvailableWallets();
   const { recipient } = useSwapState();
   const isRecipientCustom = recipient !== null && !signedInWallets.some(wallet => wallet.address === recipient);
   const isOutputCrosschainCompatible = isXToken(currencies?.OUTPUT);
   const isInputCrosschainCompatible = isXToken(currencies?.INPUT);
 
-  useCreateXCallService(direction.from);
-  useCreateXCallService(direction.to);
-  useCreateXCallService(ICON_XCALL_NETWORK_ID);
-
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
     useSwapActionHandlers();
 
   React.useEffect(() => {
-    const destinationWallet = signedInWallets.find(wallet => wallet.chainId === direction.to);
+    const destinationWallet = signedInWallets.find(
+      wallet => xChainMap[wallet.xChainId].xWalletType === xChainMap[direction.to].xWalletType,
+    );
     if (destinationWallet) {
       onChangeRecipient(destinationWallet.address);
     } else {
@@ -96,7 +103,10 @@ export default function SwapPanel() {
     handleTypeOutput('');
   }, [handleTypeInput, handleTypeOutput]);
 
-  const maxInputAmount = React.useMemo(() => maxAmountSpend(currencyBalances[Field.INPUT]), [currencyBalances]);
+  const maxInputAmount = React.useMemo(
+    () => maxAmountSpend(currencyBalances[Field.INPUT], direction.from),
+    [currencyBalances, direction.from],
+  );
 
   const handleInputSelect = useCallback(
     (inputCurrency: Currency) => {
@@ -143,7 +153,7 @@ export default function SwapPanel() {
         toggleWalletModal();
       } else {
         setExecutionTrade(trade);
-        modalActions.openModal(MODAL_ID.XCALL_SWAP_MODAL);
+        modalActions.openModal(MODAL_ID.XSWAP_CONFIRM_MODAL);
       }
     } else {
       if (!account) {
@@ -168,6 +178,12 @@ export default function SwapPanel() {
 
   const closeDropdown = () => {
     setAnchor(null);
+  };
+
+  const handleMaximumBridgeAmountClick = () => {
+    if (maximumBridgeAmount) {
+      onUserInput(Field.OUTPUT, maximumBridgeAmount?.toFixed(0));
+    }
   };
 
   const swapButton = isValid ? (
@@ -224,7 +240,7 @@ export default function SwapPanel() {
             <Typography variant="h2">
               <Trans>For</Trans>
             </Typography>
-            <Typography as="div" hidden={!account}>
+            <Typography as="div" hidden={!recipient}>
               {recipient && (
                 <>
                   <Trans>Wallet:</Trans>{' '}
@@ -321,6 +337,26 @@ export default function SwapPanel() {
               swapButton
             )}
           </Flex>
+
+          {!canBridge && (
+            <Flex alignItems="center" justifyContent="center" mt={2}>
+              <Typography textAlign="center">
+                {maximumBridgeAmount?.greaterThan(0) && (
+                  <>
+                    <Typography>
+                      <Trans>Only</Trans>
+                    </Typography>{' '}
+                  </>
+                )}
+                <UnderlineText onClick={handleMaximumBridgeAmountClick}>
+                  <Typography color="primaryBright" as="a">
+                    {maximumBridgeAmount?.toFixed(0)} {maximumBridgeAmount?.currency?.symbol}
+                  </Typography>
+                </UnderlineText>{' '}
+                <Trans>is available on {xChainMap[direction?.to].name}.</Trans>
+              </Typography>
+            </Flex>
+          )}
         </AutoColumn>
       </BrightPanel>
 
@@ -333,7 +369,7 @@ export default function SwapPanel() {
         recipient={recipient || undefined}
       />
 
-      <XCallSwapModal
+      <XSwapModal
         account={account}
         currencies={currencies}
         executionTrade={executionTrade}

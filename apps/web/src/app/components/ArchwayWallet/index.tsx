@@ -23,7 +23,7 @@ import useKeyPress from 'hooks/useKeyPress';
 import { useRatesWithOracle } from 'queries/reward';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
-import { useArchwayWalletBalances, useSignedInWallets } from 'store/wallet/hooks';
+import { useArchwayWalletBalances } from 'store/wallet/hooks';
 import { isDPZeroCA, toFraction } from 'utils';
 
 import Divider from '../Divider';
@@ -50,6 +50,7 @@ import ICXWallet from './wallets/ICXWallet';
 import SendPanel from './wallets/SendPanel';
 import SICXWallet from './wallets/SICXWallet';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
+import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 
 const WalletUIs = {
   ICX: ICXWallet,
@@ -101,10 +102,7 @@ const ArchwayWallet = ({ setAnchor, anchor }) => {
 
   const xTokens = useXTokens('archway-1');
   const addressesWithAmount = useMemo(
-    () =>
-      xTokens
-        ?.map(t => t.address)
-        .filter(address => !isDPZeroCA(balances?.[address], HIGH_PRICE_ASSET_DP[address] || 2)),
+    () => xTokens?.map(t => t.address).filter(address => balances?.[address]?.greaterThan(0)),
     [balances, xTokens],
   );
 
@@ -219,7 +217,7 @@ const ArchwayWallet = ({ setAnchor, anchor }) => {
           <DataText as="div">
             {!accountArch
               ? '-'
-              : balances?.[address]?.toFixed(HIGH_PRICE_ASSET_DP[address] || 2, { groupSeparator: ',' })}
+              : balances?.[address]?.toFixed(HIGH_PRICE_ASSET_DP[address] || 5, { groupSeparator: ',' })}
           </DataText>
 
           <DataText as="div">
@@ -263,6 +261,7 @@ const ArchwayWallet = ({ setAnchor, anchor }) => {
           placeholder={t`Search assets`}
           autoComplete="off"
           value={searchQuery}
+          tabIndex={isMobile ? -1 : 1}
           ref={inputRef as RefObject<HTMLInputElement>}
           onChange={e => {
             setSearchQuery(e.target.value);
@@ -295,7 +294,7 @@ const ArchwayWallet = ({ setAnchor, anchor }) => {
                   <StandardCursorListItem
                     className={index === activeIndex ? 'active' : ''}
                     key={symbol}
-                    border={index !== arr.length - 1}
+                    $border={index !== arr.length - 1}
                     // onMouseEnter={() => setActiveIndex(index)}
                     // onClick={() => handleAssetClick(symbol)}
                   >
@@ -331,7 +330,7 @@ const ArchwayWallet = ({ setAnchor, anchor }) => {
                     )}
                   </BalanceAndValueWrap>
                 </DashGrid>
-                <StandardCursorListItem border={false}>
+                <StandardCursorListItem $border={false}>
                   <TokenInfo
                     currency={
                       filteredSortedTokens.find(currency => currency.wrapped.symbol === modalAsset) ||

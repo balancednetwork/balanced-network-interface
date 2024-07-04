@@ -61,7 +61,7 @@ export default function LiveVotingPanel() {
     return (
       <>
         <VoteItemWrap>
-          <VotingGrid auth={auth}>
+          <VotingGrid $auth={auth}>
             <Flex alignItems="center" mb={isRespoLayout ? 4 : 0}>
               <Flex
                 sx={{ minWidth: '95px' }}
@@ -183,7 +183,7 @@ export default function LiveVotingPanel() {
         </Typography>
       )}
       {!isRespoLayout && (
-        <VotingGrid auth={!!account && bBalnAmount.isGreaterThan(0) && !!userVoteData}>
+        <VotingGrid $auth={!!account && bBalnAmount.isGreaterThan(0) && !!userVoteData}>
           <GirdHeaderItem>Pool</GirdHeaderItem>
           {!!account && bBalnAmount.isGreaterThan(0) && !!userVoteData && (
             <GirdHeaderItem>

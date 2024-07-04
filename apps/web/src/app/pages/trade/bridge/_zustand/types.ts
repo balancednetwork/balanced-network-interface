@@ -8,19 +8,19 @@ export enum TransactionStatus {
   failure = 'failure',
 }
 
-export enum XCallTransactionStatus {
+export enum XTransactionStatus {
   pending = 'pending',
   success = 'success',
   failure = 'failure',
 }
 
-export enum XCallTransactionType {
+export enum XTransactionType {
   SWAP = 'swap',
   BRIDGE = 'bridge',
   SUPPLY = 'supply',
 }
 
-export enum XCallMessageStatus {
+export enum XMessageStatus {
   REQUESTED = 'REQUESTED',
   FAILED = 'FAILED',
   // COMPLETED = 'COMPLETED',
@@ -31,12 +31,12 @@ export enum XCallMessageStatus {
   CALL_EXECUTED = 'CALL_EXECUTED',
 }
 
-export type XSwapInfo = {
+export type XTransactionInput = {
   direction: {
     from: XChainId;
     to: XChainId;
   };
-  type: XCallTransactionType;
+  type: XTransactionType;
   inputAmount: CurrencyAmount<Currency>;
   account: string;
   recipient: string;
@@ -63,57 +63,68 @@ export type Transaction = {
   rawEventLogs?: any[];
 };
 
-export type XCallSourceEvent = {
+export type XCallMessageEvent = {
   eventType: XCallEventType;
-  sn: bigint;
   xChainId: XChainId;
-  rawEventData: any;
   txHash: string;
-};
-
-export type XCallDestinationEvent = {
-  eventType: XCallEventType;
   sn: bigint;
   reqId: bigint;
+  from: string;
+  to: string;
+  data: any;
+};
+export type XCallExecutedEvent = {
+  eventType: XCallEventType;
   xChainId: XChainId;
-  rawEventData: any;
   txHash: string;
-  isSuccess: boolean;
+  reqId: bigint;
+  code: number;
+  msg: string;
+};
+export type XCallMessageSentEvent = {
+  eventType: XCallEventType;
+  xChainId: XChainId;
+  txHash: string;
+  sn: bigint;
+  from: string;
+  to: string;
 };
 
-export type XCallEvent = XCallSourceEvent | XCallDestinationEvent;
+export type XCallDestinationEvent = XCallMessageEvent | XCallExecutedEvent;
+export type XCallEvent = XCallDestinationEvent | XCallMessageSentEvent;
 
 export type XCallEventMap = Partial<{
-  [XCallEventType.CallMessageSent]: XCallSourceEvent;
-  [XCallEventType.CallMessage]: XCallDestinationEvent;
-  [XCallEventType.CallExecuted]: XCallDestinationEvent;
+  [XCallEventType.CallMessageSent]: XCallMessageSentEvent;
+  [XCallEventType.CallMessage]: XCallMessageEvent;
+  [XCallEventType.CallExecuted]: XCallExecutedEvent;
 }>;
 
-export type XCallMessage = {
+export type XMessage = {
   id: string;
   sourceChainId: XChainId;
   destinationChainId: XChainId;
   sourceTransaction: Transaction;
   destinationTransaction?: Transaction;
   events: XCallEventMap;
-  status: XCallMessageStatus;
+  status: XMessageStatus;
   destinationChainInitialBlockHeight: bigint;
-  // onSuccess: (xCallMessage: XCallMessage) => Promise<void>;
-  // onFail: (xCallMessage: XCallMessage) => Promise<void>;
+  // onSuccess: (xMessage: XMessage) => Promise<void>;
+  // onFail: (xMessage: XMessage) => Promise<void>;
 };
 
-export type XCallTransaction = {
+export type XTransaction = {
   id: string;
-  type: XCallTransactionType;
-  status: XCallTransactionStatus;
+  type: XTransactionType;
+  status: XTransactionStatus;
 
   primaryMessageId: string;
   secondaryMessageId?: string;
   secondaryMessageRequired: boolean;
 
   sourceChainId: XChainId;
-  desctinationChainId: XChainId;
-  destinationChainInitialBlockHeight?: bigint;
+  // primaryDestinationChainId: XChainId;
+  finalDestinationChainId: XChainId;
+  finalDestinationChainInitialBlockHeight: bigint;
 
   attributes: Record<string, any>;
 };

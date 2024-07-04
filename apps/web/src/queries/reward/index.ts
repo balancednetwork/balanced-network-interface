@@ -8,7 +8,11 @@ import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-quer
 
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
-import { COMBINED_TOKENS_MAP_BY_ADDRESS, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import {
+  COMBINED_TOKENS_MAP_BY_ADDRESS,
+  ORACLE_PRICED_TOKENS,
+  SUPPORTED_TOKENS_MAP_BY_ADDRESS,
+} from 'constants/tokens';
 import { useAllTokens } from 'queries/backendv2';
 import QUERY_KEYS from 'queries/queryKeys';
 import { useBlockNumber } from 'store/application/hooks';
@@ -103,7 +107,9 @@ export const useRatesWithOracle = () => {
     const updatedRates = { ...rates };
     oraclePrices &&
       Object.keys(oraclePrices).forEach(token => {
-        if (!updatedRates[token]) updatedRates[token] = oraclePrices[token];
+        if (!updatedRates[token] || ORACLE_PRICED_TOKENS.includes(token)) {
+          updatedRates[token] = oraclePrices[token];
+        }
       });
     if (oraclePrices) return updatedRates;
   }, [rates, oraclePrices]);

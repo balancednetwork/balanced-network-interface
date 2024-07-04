@@ -18,7 +18,7 @@ import { PairState } from 'hooks/useV2Pairs';
 import { useWalletModalToggle } from 'store/application/hooks';
 import { Field } from 'store/mint/reducer';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers, useInitialSupplyLoad } from 'store/mint/hooks';
-import { maxAmountSpend } from 'utils';
+import { formatBigNumber, maxAmountSpend } from 'utils';
 
 import { CurrencySelectionType } from 'app/components/SearchModal/CurrencySearch';
 import LPDescription from './LPDescription';
@@ -57,17 +57,11 @@ function WalletSection({ AChain, BChain }: { AChain?: XChainId; BChain?: XChainI
   const formattedRemains: { [field in Field]?: string } = React.useMemo(
     () => ({
       [Field.CURRENCY_A]: remains[Field.CURRENCY_A]?.lessThan(BIGINT_ZERO)
-        ? '0.00'
-        : remains[Field.CURRENCY_A]?.toFixed(
-            HIGH_PRICE_ASSET_DP[remains[Field.CURRENCY_A]?.currency.wrapped.address || ''] || 2,
-            { groupSeparator: ',' },
-          ) ?? '-',
+        ? '0'
+        : formatBigNumber(new BigNumber(remains[Field.CURRENCY_A]?.toFixed() || 0), 'currency'),
       [Field.CURRENCY_B]: remains[Field.CURRENCY_B]?.lessThan(BIGINT_ZERO)
-        ? '0.00'
-        : remains[Field.CURRENCY_B]?.toFixed(
-            HIGH_PRICE_ASSET_DP[remains[Field.CURRENCY_B]?.currency.wrapped.address || ''] || 2,
-            { groupSeparator: ',' },
-          ) ?? '-',
+        ? '0'
+        : formatBigNumber(new BigNumber(remains[Field.CURRENCY_B]?.toFixed() || 0), 'currency'),
     }),
     [remains],
   );

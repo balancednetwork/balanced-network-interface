@@ -190,9 +190,10 @@ export class Pair {
       if (inputAmount.currency.symbol === 'bnUSD') {
         // bnUSD -> USDC
         // apply fee 0.1%
-        const outputAmount = CurrencyAmount.fromCurrencyAmount(inputAmount, this.token0).multiply(
-          new Fraction(999, 1000),
-        );
+        const outputAmount = CurrencyAmount.fromRawAmount(
+          this.token0,
+          (inputAmount.quotient * 10n ** BigInt(this.token0.decimals)) / inputAmount.decimalScale,
+        ).multiply(new Fraction(999, 1000));
 
         if (outputAmount.quotient > this.reserve0.quotient) {
           throw new InsufficientInputAmountError();
@@ -201,7 +202,13 @@ export class Pair {
         return [outputAmount, this];
       } else {
         // USDC -> bnUSD
-        return [CurrencyAmount.fromCurrencyAmount(inputAmount, this.token1), this];
+        return [
+          CurrencyAmount.fromRawAmount(
+            this.token1,
+            (inputAmount.quotient * 10n ** BigInt(this.token1.decimals)) / inputAmount.decimalScale,
+          ),
+          this,
+        ];
       }
     }
 
@@ -243,24 +250,28 @@ export class Pair {
   public getInputAmount(outputAmount: CurrencyAmount<Token>): [CurrencyAmount<Token>, Pair] {
     invariant(this.involvesToken(outputAmount.currency), 'TOKEN');
     if (this.isStabilityFund) {
-      const isBnUSD = outputAmount.currency.symbol === 'bnUSD';
-      const isToken0 = outputAmount.currency.equals(this.token0);
-
-      if (isBnUSD) {
+      // this.token1 is always bnUSD
+      if (outputAmount.currency.symbol === 'bnUSD') {
         // USDC -> bnUSD
-        return [CurrencyAmount.fromCurrencyAmount(outputAmount, isToken0 ? this.token1 : this.token0), this];
+        return [
+          CurrencyAmount.fromRawAmount(
+            this.token0,
+            (outputAmount.quotient * 10n ** BigInt(this.token0.decimals)) / outputAmount.decimalScale,
+          ),
+          this,
+        ];
       } else {
         // bnUSD -> USDC
-
+        // apply fee 0.1%
         if (outputAmount.quotient > this.reserve0.quotient) {
           throw new InsufficientInputAmountError();
         }
 
-        // apply fee 0.1%
         return [
-          CurrencyAmount.fromCurrencyAmount(outputAmount, isToken0 ? this.token1 : this.token0).divide(
-            new Fraction(999, 1000),
-          ),
+          CurrencyAmount.fromRawAmount(
+            this.token1,
+            (outputAmount.quotient * 10n ** BigInt(this.token1.decimals)) / outputAmount.decimalScale,
+          ).divide(new Fraction(999, 1000)),
           this,
         ];
       }

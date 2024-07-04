@@ -14,7 +14,10 @@ export function getBytesFromNumber(value) {
 }
 
 export function getBytesFromAddress(address) {
-  return Buffer.from(address?.replace('cx', '01') ?? '', 'hex');
+  // f8 is hardcoded, it will be replaced after rlp encoded, because rlp package doesn't support encoding null.
+  //  rlpEncodedDataStr = rlpEncodedDataStr.replaceAll('c30181f8', 'c301f800');
+
+  return Buffer.from(address?.replace('cx', '01') ?? 'f8', 'hex');
 }
 
 export function getRlpEncodedMsg(msg: string | any[]) {
@@ -44,7 +47,13 @@ export function getRlpEncodedSwapData(
   ]);
 
   const rlpEncodedData = Buffer.from(getRlpEncodedMsg([...encodedComponents, ...routeActionPathEncoding]));
-  return rlpEncodedData;
+
+  let rlpEncodedDataStr = rlpEncodedData.toString('hex');
+  rlpEncodedDataStr = rlpEncodedDataStr.replaceAll('c30181f8', 'c301f800');
+
+  const rlpEncodedDataBuffer = Buffer.from(rlpEncodedDataStr, 'hex');
+
+  return rlpEncodedDataBuffer;
 }
 
 export function getBytesFromString(str: string) {

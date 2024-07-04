@@ -78,6 +78,7 @@ const calculateTrade = async (
       console.log('slippageTolerance', slippageTolerance.toSignificant(4));
       console.log('minReceived', minReceived.toSignificant(4));
       console.log('trade route path', trade.route.path);
+      console.log('rlp encoded route path', getRlpEncodedSwapData(trade).toString('hex'));
       console.log(
         'trade route pairs',
         trade.route.pairs.map((pair, index) =>
@@ -244,6 +245,18 @@ export function TestPage() {
     await swap(BALN, USDC, '1');
   };
 
+  const handleShowTradeBALNForICX = async () => {
+    const trade = await calculateTrade(BALN, ICX, '1');
+    if (!trade) {
+      console.log('No trade found');
+    }
+  };
+
+  const handleSwapBALNForICX = async () => {
+    console.log('handleSwapBLANForICX');
+    await swap(BALN, ICX, '1');
+  };
+
   const handleFetchIconEventLogs = async () => {
     const startBlockHeight = 83073062n;
     const endBlockHeight = 83073112n;
@@ -285,6 +298,14 @@ export function TestPage() {
         </Button>
         <Button onClick={handleSwapBALNForUSDC} disabled={isProcessing}>
           Swap BALN:ICON for USDC:ICON
+        </Button>
+      </Flex>
+      <Flex flexDirection={'row'} style={{ gap: 2 }}>
+        <Button onClick={handleShowTradeBALNForICX} disabled={isProcessing}>
+          Show Trade for swapping BALN:ICON for ICX:ICON
+        </Button>
+        <Button onClick={handleSwapBALNForICX} disabled={isProcessing}>
+          Swap BALN:ICON for ICX:ICON
         </Button>
       </Flex>
       <Flex>

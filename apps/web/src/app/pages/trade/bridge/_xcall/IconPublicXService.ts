@@ -10,8 +10,9 @@ import {
   XCallMessageEvent,
   XCallMessageSentEvent,
 } from '../_zustand/types';
-import { fetchTxResult } from 'app/_xcall/_icon/utils';
 import { AbstractPublicXService } from './types';
+import { ICONTxResultType } from 'app/_xcall/_icon/types';
+import { sleep } from 'utils';
 
 export const getICONEventSignature = (eventName: XCallEventType) => {
   switch (eventName) {
@@ -65,8 +66,15 @@ export class IconPublicXService extends AbstractPublicXService {
   }
 
   async getTxReceipt(txHash: string) {
-    //TODO: update to use this.publicClient
-    return await fetchTxResult(txHash);
+    for (let i = 0; i < 10; i++) {
+      try {
+        const txResult = await this.publicClient.getTransactionResult(txHash).execute();
+        return txResult as ICONTxResultType;
+      } catch (e) {
+        console.log(`xCall debug - icon tx result (pass ${i}):`, e);
+      }
+      await sleep(1000);
+    }
   }
 
   getTxEventLogs(rawTx) {

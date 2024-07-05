@@ -226,8 +226,6 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
         ]),
       );
 
-      console.log('envelope data', envelope);
-
       const res = await this.publicClient.simulateContract({
         account: account as Address,
         address: xChainMap[this.xChainId].contracts.xCall as Address,
@@ -307,8 +305,6 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
       const data = toHex(
         JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
       );
-
-      console.log('xRepayyy', data);
 
       const res = await this.publicClient.simulateContract({
         account: account as Address,

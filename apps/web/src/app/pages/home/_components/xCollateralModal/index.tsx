@@ -58,7 +58,7 @@ const XCollateralModal = ({
   storedModalValues,
 }: XCollateralModalProps) => {
   useModalStore();
-  const { collateralDecimalPlaces, collateralDeposit, parsedAmount, collateralType } = useDerivedCollateralInfo();
+  const { collateralType } = useDerivedCollateralInfo();
   const { currentId } = useXTransactionStore();
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;

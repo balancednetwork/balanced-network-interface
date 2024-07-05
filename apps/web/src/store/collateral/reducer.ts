@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import BigNumber from 'bignumber.js';
-import { NETWORK_ID } from 'constants/config';
 
 import { CurrencyKey, IcxDisplayType } from 'types';
 

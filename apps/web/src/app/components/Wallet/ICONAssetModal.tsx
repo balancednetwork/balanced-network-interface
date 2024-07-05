@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Modal from '../Modal';
 import {
   AssetSymbol,
@@ -13,13 +13,8 @@ import {
 } from './styledComponents';
 import { Trans } from '@lingui/macro';
 import { useMedia } from 'react-use';
-import SingleChainBalanceItem from './SingleChainBalanceItem';
 import { Currency } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
-import { useAllTransactions } from 'store/transactions/hooks';
-import bnJs from 'bnJs';
-import { BalancedJs } from '@balancednetwork/balanced-js';
 import useClaimableICX from './useClaimableICX';
 
 import SendPanel from './ICONWallets/SendPanel';

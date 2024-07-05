@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import BigNumber from 'bignumber.js';
-import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 
 export enum Field {
   LEFT = 'LEFT',

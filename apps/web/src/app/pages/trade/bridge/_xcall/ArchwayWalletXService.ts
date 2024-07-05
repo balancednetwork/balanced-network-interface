@@ -1,4 +1,4 @@
-import { ArchwayClient, StdFee } from '@archwayhq/arch3.js';
+import { ArchwayClient } from '@archwayhq/arch3.js';
 import bnJs from 'bnJs';
 import { Percent } from '@balancednetwork/sdk-core';
 
@@ -220,19 +220,16 @@ export class ArchwayWalletXService extends ArchwayPublicXService implements IWal
   }
 
   async executeDepositCollateral(xTransactionInput: XTransactionInput) {
-    //todo: executeDepositCollateral cosmos
     console.error('executeDepositCollateral cosmos not implemented');
     return Promise.resolve('todo');
   }
 
   async executeWithdrawCollateral(xTransactionInput: XTransactionInput) {
-    //todo: executeWithdraw cosmos
     console.error('executeWithdrawCollateral cosmos not implemented');
     return Promise.resolve('todo');
   }
 
   async executeBorrow(xTransactionInput: XTransactionInput) {
-    //todo: executeBorrow cosmos
     console.error('executeBorrow cosmos not implemented');
     return Promise.resolve('todo');
   }

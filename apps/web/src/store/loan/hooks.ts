@@ -11,12 +11,9 @@ import { ZERO } from 'constants/index';
 import { useBnJsContractQuery } from 'queries/utils';
 import {
   DEFAULT_COLLATERAL_TOKEN,
-  useCollateralDecimalPlaces,
   useCollateralInputAmountAbsolute,
-  useCollateralState,
   useCollateralType,
   useCollateralXChain,
-  useDepositedCollateral,
   useIsHandlingICX,
   useSupportedCollateralTokens,
 } from 'store/collateral/hooks';
@@ -24,7 +21,7 @@ import { useOraclePrice } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useRewards } from 'store/reward/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
-import { useCrossChainWalletBalances, useICONWalletBalances } from 'store/wallet/hooks';
+import { useCrossChainWalletBalances } from 'store/wallet/hooks';
 import { formatUnits, toBigNumber } from 'utils';
 
 import { AppState } from '..';
@@ -39,11 +36,7 @@ import {
   setLockingRatio,
   setRecipientNetwork,
 } from './reducer';
-import {
-  useAllDerivedWallets,
-  useAvailableWallets,
-  useSignedInWallets,
-} from 'app/pages/trade/bridge/_hooks/useWallets';
+import { useAllDerivedWallets, useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';

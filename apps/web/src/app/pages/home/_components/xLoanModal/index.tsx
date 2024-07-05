@@ -77,11 +77,6 @@ const XLoanModal = ({
   const collateralNetworkAddress = `${sourceChain}/${collateralAccount}`;
   const loanNetworkAddress = receiver;
 
-  // console.log(
-  //   'actionnnnn direction',
-  //   action === XLoanAction.BORROW ? direction : { from: loanNetwork, to: ICON_XCALL_NETWORK_ID },
-  // );
-
   const { xCallFee, formattedXCallFee } = useXCallFee(
     action === XLoanAction.BORROW ? sourceChain : loanNetwork,
     action === XLoanAction.BORROW ? loanNetwork : sourceChain,

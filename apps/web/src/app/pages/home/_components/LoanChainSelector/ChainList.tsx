@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Box, Flex } from 'rebass';
+import { Box } from 'rebass';
 
 import { ChainLogo } from 'app/pages/trade/bridge/_components/ChainLogo';
 import { XChainId, XChain, XWalletType } from 'app/pages/trade/bridge/types';

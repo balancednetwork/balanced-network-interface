@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { addresses } from '@balancednetwork/balanced-js';
 import { t, Trans } from '@lingui/macro';
@@ -40,7 +40,7 @@ import { useLoanActionHandlers, useLockedCollateralAmount } from 'store/loan/hoo
 import { useRatio } from 'store/ratio/hooks';
 import { useTransactionAdder } from 'store/transactions/hooks';
 import { useHasEnoughICX } from 'store/wallet/hooks';
-import { bufferToHex, parseUnits, uintToBytes } from 'utils';
+import { parseUnits } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 import CollateralTypeSwitcher, { CollateralTypeSwitcherWrap } from 'app/components/CollateralTypeSwitcher';
 import ModalContent from 'app/components/ModalContent';
@@ -135,7 +135,6 @@ const CollateralPanel = () => {
     account,
     sourceChain,
     collateralType,
-    availableCollateralAmount,
     collateralDeposit,
     collateralTotal,
     parsedAmount,
@@ -160,10 +159,6 @@ const CollateralPanel = () => {
 
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
-
-  // user interaction logic
-  // const { independentField, typedValue, isAdjusting, inputType } = useCollateralState();
-  // const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
 
   const { onFieldAInput, onFieldBInput, onSlide, onAdjust: adjust } = useCollateralActionHandlers();
   const { onAdjust: adjustLoan } = useLoanActionHandlers();

@@ -7,7 +7,6 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Flex, Box } from 'rebass/styled-components';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { UnderlineText } from 'app/components/DropdownText';
 import { Tab, Tabs } from 'app/components/Tab';
 import { useFetchBBalnInfo, useFetchBBalnSources } from 'store/bbaln/hooks';
 import { useFetchOraclePrices } from 'store/oracle/hooks';
@@ -48,26 +47,24 @@ export function TradePageLayout() {
   };
 
   return (
-    <>
-      <Box flex={1}>
-        <Flex mb={10} flexDirection="column">
-          <Flex alignItems="center" justifyContent="space-between">
-            <Tabs value={value} onChange={handleTabClick}>
-              <Tab>
-                <Trans>Swap</Trans>
-              </Tab>
-              <Tab>
-                <Trans>Supply</Trans>
-              </Tab>
-              <Tab>
-                <Trans>Bridge</Trans>
-              </Tab>
-            </Tabs>
-          </Flex>
-
-          <Outlet />
+    <Box flex={1}>
+      <Flex mb={10} flexDirection="column">
+        <Flex alignItems="center" justifyContent="space-between">
+          <Tabs value={value} onChange={handleTabClick}>
+            <Tab>
+              <Trans>Swap</Trans>
+            </Tab>
+            <Tab>
+              <Trans>Supply</Trans>
+            </Tab>
+            <Tab>
+              <Trans>Bridge</Trans>
+            </Tab>
+          </Tabs>
         </Flex>
-      </Box>
-    </>
+
+        <Outlet />
+      </Flex>
+    </Box>
   );
 }

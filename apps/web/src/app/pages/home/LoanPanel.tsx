@@ -17,7 +17,7 @@ import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import useInterval from 'hooks/useInterval';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useCollateralActionHandlers, useCollateralType, useDerivedCollateralInfo } from 'store/collateral/hooks';
+import { useCollateralActionHandlers, useDerivedCollateralInfo } from 'store/collateral/hooks';
 import { Field } from 'store/loan/reducer';
 import {
   useLoanState,
@@ -53,7 +53,6 @@ const LoanPanel = () => {
     parsedAmount,
     totalBorrowableAmount,
     bnUSDAmount,
-    receiver,
   } = useDerivedLoanInfo();
 
   const { isAdjusting, inputType } = useLoanState();

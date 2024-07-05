@@ -342,11 +342,6 @@ export function validateAddress(address: string, chainId: XChainId): boolean {
   }
 }
 
-//RLP encoding
-export function bufferToHex(buffer): string {
-  return [...new Uint8Array(buffer)].map(x => x.toString(16).padStart(2, '0')).join('');
-}
-
 // Function to get the last i bytes of an integer
 function lastBytesOf(x: bigint, i: number): Uint8Array {
   const buffer = new ArrayBuffer(i);

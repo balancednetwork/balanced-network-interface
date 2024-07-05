@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import styled from 'styled-components';
 
@@ -9,8 +8,6 @@ import CollateralPanel from 'app/pages/home/CollateralPanel';
 import LoanPanel from 'app/pages/home/LoanPanel';
 import PositionDetailPanel from 'app/pages/home/PositionDetailPanel';
 import RewardsPanel from 'app/pages/home/RewardsPanel';
-import { BoxPanel } from 'app/components/Panel';
-import { Typography } from 'app/theme';
 import { useFetchBBalnInfo, useFetchBBalnSources } from 'store/bbaln/hooks';
 import { useCollateralFetchInfo } from 'store/collateral/hooks';
 import { useFetchUserVoteData } from 'store/liveVoting/hooks';

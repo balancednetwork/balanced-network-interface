@@ -1,5 +1,5 @@
 import React from 'react';
-import { AssetSymbol, BalanceAndValueWrap, DataText, ListItem, walletBreakpoint } from './styledComponents';
+import { AssetSymbol, BalanceAndValueWrap, DataText, ListItem } from './styledComponents';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { Typography } from 'app/theme';
@@ -9,11 +9,6 @@ import CurrencyLogoWithNetwork from './CurrencyLogoWithNetwork';
 import { useTheme } from 'styled-components';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
-import { useIconReact } from 'packages/icon-react';
-import bnJs from 'bnJs';
-import { BalancedJs } from '@balancednetwork/balanced-js';
-import { useAllTransactions } from 'store/transactions/hooks';
-import { useMedia } from 'react-use';
 import ICONAssetModal from './ICONAssetModal';
 import useClaimableICX from './useClaimableICX';
 
@@ -32,7 +27,6 @@ const SingleChainBalanceItem = ({
   isLast = false,
   isNested = false,
 }: SingleChainBalanceItemProps) => {
-  const { account: iconAccount } = useIconReact();
   const [xChainId, balance] = Object.entries(networkBalance)[0];
   const { currency } = balance || {};
   const { symbol } = currency || {};

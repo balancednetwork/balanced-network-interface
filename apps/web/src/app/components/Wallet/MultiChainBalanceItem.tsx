@@ -1,7 +1,7 @@
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import BigNumber from 'bignumber.js';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, DataText, ListItem } from './styledComponents';
 import CurrencyLogo from '../CurrencyLogo';
 import { Typography } from 'app/theme';
@@ -32,7 +32,6 @@ const MultiChainBalanceItem = ({ baseToken, balances, total, value }: MultiChain
     <>
       <ListItem $border={false} style={{ cursor: 'default' }}>
         <AssetSymbol>
-          {/* <AssetSymbol $hasNotification={symbol.toLowerCase() === 'icx' && claimableICX.isGreaterThan(0)}> */}
           <CurrencyLogo currency={baseToken} />
           <Typography fontSize={16} fontWeight="bold">
             <span ref={arrowRef} style={{ display: 'inline-block' }}>

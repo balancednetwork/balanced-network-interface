@@ -1,6 +1,5 @@
 import React from 'react';
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import BigNumber from 'bignumber.js';
+import { Token } from '@balancednetwork/sdk-core';
 import { Typography } from 'app/theme';
 import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import { Position, XChainId } from 'app/pages/trade/bridge/types';

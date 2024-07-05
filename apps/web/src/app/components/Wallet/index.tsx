@@ -19,10 +19,9 @@ import { XWalletType } from 'app/pages/trade/bridge/types';
 import SearchInput from '../SearchModal/SearchInput';
 import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
 import { isMobile } from 'react-device-detect';
-import useArrowControl from 'hooks/useArrowControl';
 import useKeyPress from 'hooks/useKeyPress';
 import { useMedia } from 'react-use';
-import { useCrossChainWalletBalances, useXBalancesByToken } from 'store/wallet/hooks';
+import { useXBalancesByToken } from 'store/wallet/hooks';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
 import MultiChainBalanceItem from './MultiChainBalanceItem';
 

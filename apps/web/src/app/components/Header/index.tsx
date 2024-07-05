@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 
 import { BalancedJs, CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
 import { t, Trans } from '@lingui/macro';
@@ -9,7 +9,6 @@ import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { XChainId } from 'app/pages/trade/bridge/types';
 import { IconButton, Button } from 'app/components/Button';
 import Logo from 'app/components/Logo';
 import { DropdownPopper } from 'app/components/Popover';
@@ -134,7 +133,6 @@ function useClaimableICX(): UseQueryResult<BigNumber> {
 export default function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
   const upSmall = useMedia('(min-width: 600px)');
-  const [activeTab, setActiveTab] = useState<XChainId | null | undefined>(null);
   const wallets = useAvailableWallets();
   const { data: claimableICX } = useClaimableICX();
 

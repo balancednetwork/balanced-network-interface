@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from 'react';
 
-import { Box, Flex } from 'rebass';
+import { Box } from 'rebass';
 
 import { ChainLogo } from 'app/pages/trade/bridge/_components/ChainLogo';
 import { XChainId, XChain, XWalletType, XToken } from 'app/pages/trade/bridge/types';
-import { xChainMap, xChains } from 'app/pages/trade/bridge/_config/xChains';
+import { xChains } from 'app/pages/trade/bridge/_config/xChains';
 import SearchInput from 'app/components/SearchModal/SearchInput';
 import { Trans, t } from '@lingui/macro';
 import { HeaderText } from 'app/components/Wallet/styledComponents';
@@ -16,15 +16,8 @@ import { useAllDerivedWallets, useSignedInWallets } from 'app/pages/trade/bridge
 import { useCrossChainWalletBalances } from 'store/wallet/hooks';
 import { isMobile } from 'react-device-detect';
 import { ChainItemWrap, Grid, SelectorWrap } from '../LoanChainSelector/styledComponents';
-import {
-  useCollateralAmounts,
-  useCollateralDepositedAmount,
-  useCollateralDepositedAmountInICX,
-  useCollateralType,
-} from 'store/collateral/hooks';
-import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
+import { useCollateralAmounts, useCollateralType } from 'store/collateral/hooks';
 import { xTokenMap } from 'app/pages/trade/bridge/_config/xTokens';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { useOraclePrices } from 'store/oracle/hooks';
 import BigNumber from 'bignumber.js';
 

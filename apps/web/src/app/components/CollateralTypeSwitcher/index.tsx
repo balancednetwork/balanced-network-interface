@@ -7,7 +7,6 @@ import { StyledArrowDownIcon, UnderlineText } from 'app/components/DropdownText'
 import { useCollateralType } from 'store/collateral/hooks';
 
 import { DropdownPopper } from '../Popover';
-import CollateralTypeList from './CollateralTypeList';
 import CollateralIcon from './CollateralIcon';
 import CollateralTypeListWrap from './CollateralTypeListWrap';
 

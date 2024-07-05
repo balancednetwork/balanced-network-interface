@@ -1,5 +1,5 @@
 import { Box, Flex } from 'rebass';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 export const SelectorWrap = styled(Box)`
   padding: 25px 25px 10px 25px;

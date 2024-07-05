@@ -4,7 +4,6 @@ import { useMedia } from 'react-use';
 import { Box } from 'rebass';
 import styled from 'styled-components';
 
-import useKeyPress from 'hooks/useKeyPress';
 import {
   useCollateralChangeCollateralType,
   useAllCollateralData,
@@ -13,12 +12,9 @@ import {
 } from 'store/collateral/hooks';
 import { useLoanActionHandlers } from 'store/loan/hooks';
 import Skeleton from '../Skeleton';
-import SearchInput from '../SearchModal/SearchInput';
-import { Trans, t } from '@lingui/macro';
-import { isMobile } from 'react-device-detect';
+import { Trans } from '@lingui/macro';
 import { BalanceAndValueWrap, DashGrid, HeaderText, List, walletBreakpoint } from '../Wallet/styledComponents';
 import SingleChainItem from './SingleChainItem';
-import MultiChainBalanceItem from '../Wallet/MultiChainBalanceItem';
 import { Typography } from 'app/theme';
 import MultiChainItem from './MultiChainItem';
 import { CollateralTab } from './CollateralTypeListWrap';
@@ -121,14 +117,12 @@ const CollateralTypeList = ({
 }) => {
   const changeCollateralType = useCollateralChangeCollateralType();
   const hideCollateralInfoColumn = useMedia('(max-width: 500px)');
-  const [searchQuery, setSearchQuery] = useState<string>('');
   const { onAdjust: adjust } = useCollateralActionHandlers();
   const { onAdjust: adjustLoan } = useLoanActionHandlers();
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
   const allCollateralData = useAllCollateralData();
 
   const allPositionsData = useXCollateralDataByToken(true);
-  const allCollateralOptions = useXCollateralDataByToken();
 
   const handleCollateralTypeChange = useCallback(
     symbol => {

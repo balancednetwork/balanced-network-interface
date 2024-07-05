@@ -38,9 +38,9 @@ import { PanelInfoWrap, PanelInfoItem, UnderPanel } from './CollateralPanel';
 import ModalContent from 'app/components/ModalContent';
 import LoanChainSelector from './_components/LoanChainSelector';
 import XLoanModal, { XLoanAction } from './_components/xLoanModal';
-import { MODAL_ID, modalActions } from '../trade/bridge/_zustand/useModalStore';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import { useIconReact } from 'packages/icon-react';
+import { MODAL_ID, modalActions } from 'app/pages/trade/bridge/_zustand/useModalStore';
 
 const LoanPanel = () => {
   const { account, sourceChain, collateralType } = useDerivedCollateralInfo();

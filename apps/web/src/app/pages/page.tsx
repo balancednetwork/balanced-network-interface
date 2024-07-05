@@ -4,10 +4,6 @@ import { useIconReact } from 'packages/icon-react';
 import styled from 'styled-components';
 
 import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import CollateralPanel from 'app/pages/home/CollateralPanel';
-import LoanPanel from 'app/pages/home/LoanPanel';
-import PositionDetailPanel from 'app/pages/home/PositionDetailPanel';
-import RewardsPanel from 'app/pages/home/RewardsPanel';
 import { useFetchBBalnInfo, useFetchBBalnSources } from 'store/bbaln/hooks';
 import { useCollateralFetchInfo } from 'store/collateral/hooks';
 import { useFetchUserVoteData } from 'store/liveVoting/hooks';
@@ -17,6 +13,10 @@ import { useFetchPrice } from 'store/ratio/hooks';
 import { useFetchRewardsInfo } from 'store/reward/hooks';
 import { useFetchSavingsInfo } from 'store/savings/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
+import CollateralPanel from 'app/components/home/CollateralPanel';
+import LoanPanel from 'app/components/home/LoanPanel';
+import PositionDetailPanel from 'app/components/home/PositionDetailPanel';
+import RewardsPanel from 'app/components/home/RewardsPanel';
 
 const Grid = styled.div`
   flex: 1;

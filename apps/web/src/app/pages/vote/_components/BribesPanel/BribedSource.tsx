@@ -9,7 +9,6 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from 'app/components/Button';
 import Divider from 'app/components/Divider';
-import { getClosestUnixWeekStart } from 'app/pages/home/BBaln/utils';
 import Modal from 'app/components/Modal';
 import ModalContent from 'app/components/ModalContent';
 import Spinner from 'app/components/Spinner';
@@ -27,6 +26,7 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import { formatTimeLeft } from '../utils';
 import { Bribe } from './types';
 import Skeleton from 'app/components/Skeleton';
+import { getClosestUnixWeekStart } from 'app/components/home/BBaln/utils';
 
 const BribedSourceWrap = styled.div`
   padding: 25px;

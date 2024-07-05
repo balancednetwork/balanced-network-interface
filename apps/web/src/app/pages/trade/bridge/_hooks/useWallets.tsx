@@ -32,7 +32,7 @@ const useWallets = (): {
       },
       [XWalletType.HAVAH]: {
         account: havah.address,
-        xChainId: '0x100.havah',
+        xChainId: '0x100.icon',
         disconnect: havah.disconnect,
       },
     }),

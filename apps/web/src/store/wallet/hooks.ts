@@ -48,8 +48,8 @@ export function useArchwayWalletBalances(): AppState['wallet']['archway-1'] {
   return useSelector((state: AppState) => state.wallet['archway-1']);
 }
 
-export function useHavahWalletBalances(): AppState['wallet']['0x100.havah'] {
-  return useSelector((state: AppState) => state.wallet['0x100.havah']);
+export function useHavahWalletBalances(): AppState['wallet']['0x100.icon'] {
+  return useSelector((state: AppState) => state.wallet['0x100.icon']);
 }
 
 export function useWalletBalances(xChainId: XChainId): { [address: string]: CurrencyAmount<Currency> } | undefined {

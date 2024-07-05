@@ -332,12 +332,11 @@ export function getAccumulatedInterest(principal: BigNumber, rate: BigNumber, da
 export function validateAddress(address: string, chainId: XChainId): boolean {
   switch (xChainMap[chainId].xChainType) {
     case 'ICON':
+    case 'HAVAH':
       return isScoreAddress(address) || isEoaAddress(address);
     case 'EVM':
       return ethers.utils.isAddress(address);
     case 'ARCHWAY':
       return isArchEoaAddress(address);
-    case 'HAVAH':
-      return ethers.utils.isAddress(address);
   }
 }

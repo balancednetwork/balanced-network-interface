@@ -161,9 +161,9 @@ export const fuji: XChain = {
 export const havah: XChain = {
   id: 'havah',
   name: 'Havah',
-  xChainId: '0x100.havah',
-  xChainType: 'EVM',
-  xWalletType: XWalletType.EVM,
+  xChainId: '0x100.icon',
+  xChainType: 'HAVAH',
+  xWalletType: XWalletType.HAVAH,
   tracker: 'https://scan.havah.io',
   nativeCurrency: {
     decimals: 18,
@@ -265,7 +265,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   '0xa86a.avax': avalanche,
   archway: archwayTestnet,
   'archway-1': archway,
-  '0x100.havah': havah,
+  '0x100.icon': havah,
   '0x38.bsc': bsc,
   '0xa4b1.arbitrum': arbitrum,
   '0x2105.base': base,
@@ -289,6 +289,7 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   '0xa4b1.arbitrum': ['0x4c6C68E8F5206EE4a1690C808cfF5c3fD35b512F', '0x1F8B1e9d3633229d38BDFc93dCa50B6453Ad8E97'],
   '0x38.bsc': ['0x24415977c566f9300Ea6F0aC75AEA0c09C500e46'],
   '0xa86a.avax': ['0xC1a39C4e7AA98DEC394eF54559960873Bd619cA3', '0x7F3665eF19258cD5cE15eA39d014F47Fc942AE0C'],
+  '0x100.icon': ['cxcf2c8d58fd7bbd25866de0660b155f057ea489eb'],
 };
 
 /** to other chain from icon sources */
@@ -297,4 +298,5 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   '0xa4b1.arbitrum': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
   '0x38.bsc': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
   '0xa86a.avax': ['cx59d899fce52cadd1feb5128ff5e6672f03943eec', 'cx917f88460d4ebec1fd656d4dbe51131a37d16837'],
+  '0x100.icon': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
 };

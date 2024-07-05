@@ -170,12 +170,47 @@ const LISBON_ADDRESSES = {
   icxBurner: '',
 };
 
+const HAVAH_ADDRESSES = {
+  loans: '',
+  staking: '',
+  dividends: '',
+  reserve: '',
+  daofund: '',
+  rewards: '',
+  dex: '',
+  rebalancing: '',
+  governance: '',
+  band: '',
+  router: '',
+  airdrip: '',
+  sicx: '',
+  bnusd: 'cx4b40466250f9ccf04cc92da1b6633968ba3ec7cc',
+  baln: '',
+  bwt: '',
+  multicall: '',
+  disbursement: '',
+  stabilityfund: '',
+  stakedLp: '',
+  balancedOracle: '',
+  bbaln: '',
+  feeHandler: '',
+  bribe: '',
+  assetManager: 'cx9d6114d4187ee7ff7061a3faaf4dbc76b0c2c440',
+  xCall: 'cx15a339fa60bd86225050b22ea8cd4a9d7cd8bb83',
+  xCallManager: 'cx49afee1a85186bacb921c5a8ee1df329e006e340',
+  savings: '',
+  trickler: '',
+  nol: '',
+  icxBurner: '',
+};
+
 const addresses = {
   [NetworkId.MAINNET]: MAINNET_ADDRESSES,
   [NetworkId.YEOUIDO]: YEOUIDO_ADDRESSES,
   [NetworkId.SEJONG]: SEJONG_ADDRESSES,
   [NetworkId.BERLIN]: BERLIN_ADDRESSES,
   [NetworkId.LISBON]: LISBON_ADDRESSES,
+  [NetworkId.HAVAH]: HAVAH_ADDRESSES,
 };
 
 export default addresses;

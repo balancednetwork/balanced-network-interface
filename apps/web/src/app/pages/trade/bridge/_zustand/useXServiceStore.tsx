@@ -18,6 +18,7 @@ import { EvmPublicXService } from '../_xcall/EvmPublicXService';
 import { IconWalletXService } from '../_xcall/IconWalletXService';
 import { ArchwayWalletXService } from '../_xcall/ArchwayWalletXService';
 import { EvmWalletXService } from '../_xcall/EvmWalletXService';
+import { havahJs } from 'bnJs';
 
 type XServiceStore = {
   publicXServices: Partial<Record<XChainId, IPublicXService>>;
@@ -121,6 +122,9 @@ export const useCreatePublicXService = (xChainId: XChainId) => {
         case 'EVM':
           createPublicXService(EvmPublicXService, xChainId, evmPublicClient);
           break;
+        case 'HAVAH':
+          createPublicXService(IconPublicXService, xChainId, havahJs.provider);
+          break;
         default:
           break;
       }
@@ -217,9 +221,11 @@ export const XChainHeightUpdater = ({ xChainId }: { xChainId: XChainId }) => {
         if (blockHeight) {
           xServiceActions.setXChainHeight(xChainId, blockHeight);
         }
+        // console.log('Fetched block height', xChainId, blockHeight);
         return blockHeight;
       } catch (e) {
-        console.log(e);
+        console.log('Failed to fetch block height', xChainId);
+        // console.log(e);
         return 0n;
       }
     },

@@ -4,6 +4,7 @@ export enum SupportedChainId {
   SEJONG = 83,
   BERLIN = 7,
   LISBON = 2,
+  HAVAH = 0x100,
 }
 
 export const ALL_SUPPORTED_CHAIN_IDS: SupportedChainId[] = [
@@ -64,5 +65,13 @@ export const CHAIN_INFO: { readonly [chainId: number]: ChainInfo } = {
     debugAPIEndpoint: 'https://lisbon.net.solidwallet.io/api/v3d',
     chainId: 2,
     tracker: 'https://tracker.lisbon.icon.community',
+  },
+  [SupportedChainId.HAVAH]: {
+    name: 'HAVAH',
+    node: 'https://ctz.havah.io',
+    APIEndpoint: 'https://ctz.havah.io/api/v3',
+    debugAPIEndpoint: 'https://ctz.havah.io/api/v3d',
+    chainId: 0x100,
+    tracker: 'https://scan.havah.io',
   },
 };

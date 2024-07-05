@@ -15,7 +15,7 @@ export type XChainId =
   | '0x2.icon'
   | '0xa86a.avax'
   | '0xa869.fuji'
-  | '0x100.havah'
+  | '0x100.icon'
   | '0x38.bsc'
   | '0xa4b1.arbitrum'
   | '0x2105.base';

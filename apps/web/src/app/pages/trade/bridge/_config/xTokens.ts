@@ -31,6 +31,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     ),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx2d552c485ec8bcaa75aac02424e2aca6ffdb2f1b', 18, 'BNB', 'BNB'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx288d13e1b63563459a2ac6179f237711f6851cb5', 18, 'ETH', 'ETH'),
+    new XToken('0x1.icon', ChainId.MAINNET, 'cxe2da9f10bc6e2754347bde2ef73379bd398fd9f3', 18, 'HVH', 'HVH'),
   ],
   'archway-1': [
     new XToken(
@@ -79,7 +80,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('0x2105.base', 8453, '0x78b7CD9308287DEb724527d8703c889e2d6C3708', 18, 'bnUSD', 'Balanced Dollar'),
     new XToken('0x2105.base', 8453, '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', 6, 'USDC', 'USD Coin'),
   ],
-  '0x100.havah': [],
+  '0x100.icon': [new XToken('0x100.icon', 0x100, NATIVE_ADDRESS, 18, 'HVH', 'HVH')],
   '0x2.icon': [],
   '0xa869.fuji': [],
   archway: [],

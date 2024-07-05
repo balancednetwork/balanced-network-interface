@@ -167,7 +167,7 @@ const WalletUIs: Partial<Record<XChainId, any>> = {
   '0x1.icon': ICONWallet,
   'archway-1': ArchwayWallet,
   '0xa86a.avax': EVMWallet,
-  '0x100.havah': HavahWallet,
+  '0x100.icon': HavahWallet,
   '0x38.bsc': EVMWallet,
   '0xa4b1.arbitrum': EVMWallet,
   '0x2105.base': EVMWallet,

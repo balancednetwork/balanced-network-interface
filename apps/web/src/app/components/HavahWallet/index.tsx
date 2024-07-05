@@ -64,7 +64,7 @@ const HavahWallet = ({ setAnchor, anchor }) => {
 
   const tokenComparator = useTokenComparator(accountHavah, false);
 
-  const xTokens = useXTokens('0x100.havah');
+  const xTokens = useXTokens('0x100.icon');
   const addressesWithAmount = useMemo(
     () =>
       xTokens

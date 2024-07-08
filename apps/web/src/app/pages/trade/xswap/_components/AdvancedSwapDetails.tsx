@@ -47,7 +47,9 @@ export default function AdvancedSwapDetails() {
           <Trans>Route</Trans>
         </Typography>
 
-        <Typography textAlign="right">{trade ? <TradeRoute route={trade.route} /> : '-'}</Typography>
+        <Typography textAlign="right" maxWidth="200px">
+          {trade ? <TradeRoute route={trade.route} /> : '-'}
+        </Typography>
       </Flex>
 
       <Flex alignItems="center" justifyContent="space-between" mb={2}>

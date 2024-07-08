@@ -323,9 +323,7 @@ export default function SwapPanel() {
               <Typography textAlign="center">
                 {maximumBridgeAmount?.greaterThan(0) && (
                   <>
-                    <Typography>
-                      <Trans>Only</Trans>
-                    </Typography>{' '}
+                    <Trans>Only</Trans>{' '}
                   </>
                 )}
                 <UnderlineText onClick={handleMaximumBridgeAmountClick}>

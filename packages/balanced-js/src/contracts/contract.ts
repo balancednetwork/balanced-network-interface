@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash-es';
 import { ICONEX_RELAY_RESPONSE } from '../iconex';
 
 import { AccountType, ResponseJsonRPCPayload, SettingInjection } from '..';
-import { SupportedChainId as NetworkId } from '../chain';
+import { SupportedChainId as NetworkId, SupportedChainId } from '../chain';
 import ContractSettings from '../contractSettings';
 import { Ledger } from '../ledger';
 
@@ -136,24 +136,29 @@ export class Contract {
   }
 
   private callIconex(payload: any): Promise<ResponseJsonRPCPayload> {
-    window.dispatchEvent(
-      new CustomEvent('ICONEX_RELAY_REQUEST', {
-        detail: {
-          type: 'REQUEST_JSON-RPC',
-          payload,
-        },
-      }),
-    );
-    return new Promise(resolve => {
-      const handler = ({ detail: { type, payload } }: any) => {
-        if (type === 'RESPONSE_JSON-RPC') {
-          window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);
-          resolve(payload);
-        }
-      };
+    if (this.nid === SupportedChainId.HAVAH) {
+      // @ts-ignore
+      return window.havah.sendTransaction(payload);
+    } else {
+      window.dispatchEvent(
+        new CustomEvent('ICONEX_RELAY_REQUEST', {
+          detail: {
+            type: 'REQUEST_JSON-RPC',
+            payload,
+          },
+        }),
+      );
+      return new Promise(resolve => {
+        const handler = ({ detail: { type, payload } }: any) => {
+          if (type === 'RESPONSE_JSON-RPC') {
+            window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);
+            resolve(payload);
+          }
+        };
 
-      window.addEventListener(ICONEX_RELAY_RESPONSE, handler);
-    });
+        window.addEventListener(ICONEX_RELAY_RESPONSE, handler);
+      });
+    }
   }
 
   private async callLedger(payload: any): Promise<any> {

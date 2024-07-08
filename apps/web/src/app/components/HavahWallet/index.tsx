@@ -49,7 +49,6 @@ const walletBreakpoint = '499px';
 const HavahWallet = ({ setAnchor, anchor }) => {
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
   const balances = useHavahWalletBalances();
-  const arch = useARCH();
   const { address: accountHavah } = useHavahContext();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>();
@@ -80,12 +79,8 @@ const HavahWallet = ({ setAnchor, anchor }) => {
   }, [debouncedQuery, addressesWithAmount, xTokens]);
 
   const sortedTokens: Token[] = useMemo(() => {
-    if (balances?.[arch.address]?.greaterThan(0)) {
-      return [arch, ...filteredTokens].sort(tokenComparator);
-    } else {
-      return filteredTokens.sort(tokenComparator);
-    }
-  }, [arch, balances, filteredTokens, tokenComparator]);
+    return filteredTokens.sort(tokenComparator);
+  }, [filteredTokens, tokenComparator]);
 
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery);
 

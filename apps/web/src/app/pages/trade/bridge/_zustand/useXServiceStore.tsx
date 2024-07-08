@@ -19,6 +19,8 @@ import { IconWalletXService } from '../_xcall/IconWalletXService';
 import { ArchwayWalletXService } from '../_xcall/ArchwayWalletXService';
 import { EvmWalletXService } from '../_xcall/EvmWalletXService';
 import { havahJs } from 'bnJs';
+import { HavahPublicXService } from '../_xcall/HavahPublicXService';
+import { HavahWalletXService } from '../_xcall/HavahWalletXService';
 
 type XServiceStore = {
   publicXServices: Partial<Record<XChainId, IPublicXService>>;
@@ -123,7 +125,7 @@ export const useCreatePublicXService = (xChainId: XChainId) => {
           createPublicXService(EvmPublicXService, xChainId, evmPublicClient);
           break;
         case 'HAVAH':
-          createPublicXService(IconPublicXService, xChainId, havahJs.provider);
+          createPublicXService(HavahPublicXService, xChainId, havahJs.provider);
           break;
         default:
           break;
@@ -171,6 +173,9 @@ export const useCreateWalletXService = (xChainId: XChainId) => {
           break;
         case 'EVM':
           createWalletXService(EvmWalletXService, xChainId, publicClient, evmWalletClient);
+          break;
+        case 'HAVAH':
+          createWalletXService(HavahWalletXService, xChainId, publicClient, havahJs.provider);
           break;
         default:
           break;

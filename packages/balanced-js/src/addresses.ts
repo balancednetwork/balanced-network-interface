@@ -196,7 +196,7 @@ const HAVAH_ADDRESSES = {
   feeHandler: '',
   bribe: '',
   assetManager: 'cx9d6114d4187ee7ff7061a3faaf4dbc76b0c2c440',
-  xCall: 'cx15a339fa60bd86225050b22ea8cd4a9d7cd8bb83',
+  xCall: 'cx00104193d0a593c4b57fda544d1b7c88b8ed4fae',
   xCallManager: 'cx49afee1a85186bacb921c5a8ee1df329e006e340',
   savings: '',
   trickler: '',

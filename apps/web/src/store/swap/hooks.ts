@@ -27,7 +27,7 @@ import {
   selectChain,
 } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
-import { getCrossChainTokenBySymbol, getXAddress } from 'app/pages/trade/bridge/utils';
+import { getXTokenBySymbol, getXAddress } from 'app/pages/trade/bridge/utils';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from 'constants/misc';
@@ -187,9 +187,9 @@ export function useDerivedSwapInfo(): {
   );
 
   const _inputCurrency =
-    inputXChainId === '0x1.icon' ? inputCurrency : getCrossChainTokenBySymbol('0x1.icon', inputCurrency?.symbol);
+    inputXChainId === '0x1.icon' ? inputCurrency : getXTokenBySymbol('0x1.icon', inputCurrency?.symbol);
   const _outputCurrency =
-    outputXChainId === '0x1.icon' ? outputCurrency : getCrossChainTokenBySymbol('0x1.icon', outputCurrency?.symbol);
+    outputXChainId === '0x1.icon' ? outputCurrency : getXTokenBySymbol('0x1.icon', outputCurrency?.symbol);
   const _currencies: { [field in Field]?: Currency } = useMemo(() => {
     return {
       [Field.INPUT]: _inputCurrency ?? undefined,

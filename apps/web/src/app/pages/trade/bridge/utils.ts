@@ -39,7 +39,7 @@ export const getCrossChainTokenAddress = (chain: XChainId, tokenSymbol?: string)
   return xTokenMap[chain].find(t => t.symbol === tokenSymbol)?.address;
 };
 
-export const getCrossChainTokenBySymbol = (chain: XChainId, symbol?: string) => {
+export const getXTokenBySymbol = (chain: XChainId, symbol?: string) => {
   if (!symbol) return;
 
   return Object.values(xTokenMap[chain]).find(t => t.symbol === symbol);

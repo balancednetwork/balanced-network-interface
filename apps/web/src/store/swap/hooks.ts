@@ -27,7 +27,7 @@ import {
   selectChain,
 } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
-import { getXTokenBySymbol, getXAddress } from 'app/pages/trade/bridge/utils';
+import { getXAddress, getXTokenByToken } from 'app/pages/trade/bridge/utils';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from 'constants/misc';
@@ -186,10 +186,8 @@ export function useDerivedSwapInfo(): {
     [inputPercent],
   );
 
-  const _inputCurrency =
-    inputXChainId === '0x1.icon' ? inputCurrency : getXTokenBySymbol('0x1.icon', inputCurrency?.symbol);
-  const _outputCurrency =
-    outputXChainId === '0x1.icon' ? outputCurrency : getXTokenBySymbol('0x1.icon', outputCurrency?.symbol);
+  const _inputCurrency = inputXChainId === '0x1.icon' ? inputCurrency : getXTokenByToken('0x1.icon', inputCurrency);
+  const _outputCurrency = outputXChainId === '0x1.icon' ? outputCurrency : getXTokenByToken('0x1.icon', outputCurrency);
   const _currencies: { [field in Field]?: Currency } = useMemo(() => {
     return {
       [Field.INPUT]: _inputCurrency ?? undefined,
@@ -230,7 +228,8 @@ export function useDerivedSwapInfo(): {
 
   const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], trade?.inputAmount];
 
-  if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
+  // decimal scales are different for different chains for the same token
+  if (balanceIn && amountIn && new BigNumber(balanceIn.toFixed()).isLessThan(amountIn.toFixed())) {
     inputError = t`Insufficient ${currencies[Field.INPUT]?.symbol}`;
   }
 

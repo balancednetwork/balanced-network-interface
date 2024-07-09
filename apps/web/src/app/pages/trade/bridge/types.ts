@@ -168,7 +168,6 @@ export class XToken extends Token {
     super(chainId, address, decimals, symbol, name);
     this.xChainId = xChainId;
     this.identifier = identifier || symbol;
-    // this.address = validateAndParseAddress(address);
   }
 
   static getXToken(xChainId: XChainId, token: Token) {

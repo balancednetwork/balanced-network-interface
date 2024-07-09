@@ -360,6 +360,9 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
         if (error.isInsufficientReservesError) {
           continue;
         }
+        if (error.isInsufficientInputAmountError) {
+          continue;
+        }
         throw error;
       }
       // we have arrived at the input token, so this is the first trade of one of the paths

@@ -31,7 +31,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     ),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx2d552c485ec8bcaa75aac02424e2aca6ffdb2f1b', 18, 'BNB', 'BNB'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx288d13e1b63563459a2ac6179f237711f6851cb5', 18, 'ETH', 'ETH'),
-    new XToken('0x1.icon', ChainId.MAINNET, 'cx07b184a37f03c6ab681fcbd0b45aec6dc3eafbeb', 18, 'BTC', 'Bitcoin', 'BTC'),
+    new XToken('0x1.icon', ChainId.MAINNET, 'cx07b184a37f03c6ab681fcbd0b45aec6dc3eafbeb', 18, 'BTC', 'Bitcoin', 'BTC1'),
   ],
   'archway-1': [
     new XToken(
@@ -76,7 +76,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       18,
       'BTCB',
       'Binance-Peg BTCB Token',
-      'BTC',
+      'BTC1',
     ),
   ],
   '0xa4b1.arbitrum': [
@@ -87,10 +87,10 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       '0xa4b1.arbitrum',
       42161,
       '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f',
-      18,
+      8,
       'WBTC',
       'Wrapped BTC',
-      'BTC',
+      'BTC1',
     ),
   ],
   '0x2105.base': [

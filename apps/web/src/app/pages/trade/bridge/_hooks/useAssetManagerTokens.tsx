@@ -36,7 +36,7 @@ export function useAssetManagerTokens(): UseQueryResult<ResultMap> {
           return [amount, limit];
         }),
       );
-      console.log('res', res, Object.keys(tokensMap));
+
       const result: ResultMap = {};
 
       Object.keys(tokensMap).forEach((xAddress: XAddress, index) => {
@@ -44,7 +44,6 @@ export function useAssetManagerTokens(): UseQueryResult<ResultMap> {
         const xChainId = xAddress.split(/\/(.*)/s)[0] as XChainId;
         const address = xAddress.split(/\/(.*)/s)[1];
 
-        // console.log('token123', xChainId, address);
         const token = xTokenMap[xChainId]?.find(
           t =>
             t.address.toLowerCase() ===

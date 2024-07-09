@@ -39,7 +39,7 @@ export default class AssetManager extends Contract {
     return this.callICONPlugins(payload);
   }
 
-  deposit(amount: number, to: string, data: any, fee: string) {
+  deposit(amount: number, to: string, data: any, _fee: string) {
     let payload;
     if (this.nid === SupportedChainId.HAVAH) {
       payload = {

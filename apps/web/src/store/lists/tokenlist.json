@@ -155,10 +155,18 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/omm.png"
     },
     {
+      "address": "cx5b5a03cb525a1845d0af3a872d525b18a810acb0",
+      "chainId": 1,
+      "name": "btp-0x38.bsc-BTCB",
+      "symbol": "BTCB",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/btcb.png"
+    },
+    {
       "address": "cx07b184a37f03c6ab681fcbd0b45aec6dc3eafbeb",
       "chainId": 1,
-      "name": "Binance BTC",
-      "symbol": "BTCB",
+      "name": "Bitcoin",
+      "symbol": "BTC",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/btcb.png"
     },

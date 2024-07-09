@@ -31,15 +31,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     ),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx2d552c485ec8bcaa75aac02424e2aca6ffdb2f1b', 18, 'BNB', 'BNB'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx288d13e1b63563459a2ac6179f237711f6851cb5', 18, 'ETH', 'ETH'),
-    new XToken(
-      '0x1.icon',
-      ChainId.MAINNET,
-      'cx07b184a37f03c6ab681fcbd0b45aec6dc3eafbeb',
-      18,
-      'BTC',
-      'Binance BTC',
-      'BTC',
-    ),
+    new XToken('0x1.icon', ChainId.MAINNET, 'cx07b184a37f03c6ab681fcbd0b45aec6dc3eafbeb', 18, 'BTC', 'Bitcoin', 'BTC'),
   ],
   'archway-1': [
     new XToken(

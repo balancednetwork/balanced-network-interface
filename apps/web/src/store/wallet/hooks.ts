@@ -15,7 +15,7 @@ import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useARCH } from 'app/pages/trade/bridge/_config/tokens';
 import { isDenomAsset } from 'app/_xcall/archway/utils';
 import { XChainId } from 'app/pages/trade/bridge/types';
-import { getCrossChainTokenAddress, isXToken } from 'app/pages/trade/bridge/utils';
+import { getXTokenAddress, isXToken } from 'app/pages/trade/bridge/utils';
 import bnJs from 'bnJs';
 import { MINIMUM_ICX_FOR_TX, NATIVE_ADDRESS } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
@@ -343,7 +343,7 @@ export function useCrossChainCurrencyBalances(
         return SUPPORTED_XCALL_CHAINS.reduce(
           (balances, chain) => {
             if (crossChainBalances[chain] && currency) {
-              const tokenAddress = getCrossChainTokenAddress(chain, currency.wrapped.symbol);
+              const tokenAddress = getXTokenAddress(chain, currency.wrapped.symbol);
               const balance: CurrencyAmount<Currency> | undefined = tokenAddress
                 ? crossChainBalances[chain]?.[tokenAddress]
                 : undefined;
@@ -375,7 +375,7 @@ export const useXCurrencyBalance = (
       if (isXToken(currency)) {
         return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
           if (xBalances[xChainId]) {
-            const tokenAddress = getCrossChainTokenAddress(xChainId, currency.wrapped.symbol);
+            const tokenAddress = getXTokenAddress(xChainId, currency.wrapped.symbol);
             const balance = new BigNumber(xBalances[xChainId]?.[tokenAddress ?? -1]?.toFixed() || 0);
             sum = sum.plus(balance);
           }

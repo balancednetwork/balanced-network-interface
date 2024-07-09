@@ -33,7 +33,7 @@ export const getNetworkDisplayName = (chain: XChainId) => {
   return xChainMap[chain].name;
 };
 
-export const getCrossChainTokenAddress = (chain: XChainId, tokenSymbol?: string): string | undefined => {
+export const getXTokenAddress = (chain: XChainId, tokenSymbol?: string): string | undefined => {
   if (!tokenSymbol) return;
 
   return xTokenMap[chain].find(t => t.symbol === tokenSymbol)?.address;

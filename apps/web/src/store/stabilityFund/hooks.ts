@@ -1,5 +1,3 @@
-import React, { useMemo } from 'react';
-
 import { CallData } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
@@ -14,35 +12,10 @@ import { formatUnits } from 'utils';
 
 import { setBalances } from './reducer';
 
-const bnUSDAddress = bnJs.bnUSD.address;
 const stabilityFundAddress = bnJs.StabilityFund.address;
-const SWAP_DOLLAR_LIMIT_CUSHION = 5n;
-const TEN = 10n;
-
-export function useStabilityFundInfo(): AppState['stabilityFund'] {
-  return useSelector((state: AppState) => state.stabilityFund);
-}
 
 export function useStabilityFundBalances(): { [key: string]: CurrencyAmount<Token> } {
   return useSelector((state: AppState) => state.stabilityFund.balances);
-}
-
-export function useCAMemo(CA: CurrencyAmount<Currency> | undefined) {
-  const ref = React.useRef<CurrencyAmount<Currency>>();
-
-  const areCAsConsideredTheSame =
-    CA &&
-    ref.current &&
-    CA.equalTo(ref.current) &&
-    CA.currency.wrapped.address === ref.current.currency.wrapped.address;
-
-  React.useEffect(() => {
-    if (!areCAsConsideredTheSame) {
-      ref.current = CA;
-    }
-  }, [areCAsConsideredTheSame, CA]);
-
-  return areCAsConsideredTheSame ? ref.current : CA;
 }
 
 export async function getAcceptedTokens(): Promise<string[]> {
@@ -110,74 +83,6 @@ export function useFetchStabilityFundBalances(): void {
   useInterval(fetch, 3000);
 }
 
-export function useIsSwapEligible(addressIN: string | undefined, addressOUT: string | undefined): boolean {
-  const whitelistedTokenAddresses = useWhitelistedTokenAddresses();
-
-  return useMemo(() => {
-    if (addressIN && addressOUT) {
-      return (
-        (whitelistedTokenAddresses.indexOf(addressIN!) >= 0 && addressOUT === bnUSDAddress) ||
-        (whitelistedTokenAddresses.indexOf(addressOUT!) >= 0 && addressIN === bnUSDAddress)
-      );
-    } else {
-      return false;
-    }
-  }, [whitelistedTokenAddresses, addressIN, addressOUT]);
-}
-
-export function useMaxSwapSize(
-  inputAmount: CurrencyAmount<Currency> | undefined,
-  outputAmount: CurrencyAmount<Currency> | undefined,
-): CurrencyAmount<Token> | undefined {
-  const balances = useStabilityFundBalances();
-  const { data: limits } = useFundLimits();
-  const isSwapEligible = useIsSwapEligible(
-    inputAmount?.currency.wrapped.address,
-    outputAmount?.currency.wrapped.address,
-  );
-  const isBnUSDGoingIn = inputAmount?.currency.symbol === 'bnUSD';
-
-  return useMemo(() => {
-    if (isSwapEligible && inputAmount && outputAmount && limits) {
-      if (isBnUSDGoingIn && balances) {
-        return CurrencyAmount.fromRawAmount(
-          inputAmount.currency.wrapped,
-          balances[outputAmount.currency.wrapped.address].numerator *
-            TEN ** BigInt(inputAmount.currency.decimals - outputAmount.currency.decimals),
-        );
-      } else {
-        const tokenAddress = inputAmount.currency.wrapped.address;
-        return (
-          limits[tokenAddress] &&
-          balances &&
-          balances[tokenAddress] &&
-          limits[tokenAddress]
-            .subtract(balances[tokenAddress])
-            .subtract(
-              CurrencyAmount.fromRawAmount(
-                inputAmount.currency.wrapped,
-                SWAP_DOLLAR_LIMIT_CUSHION * TEN ** BigInt(inputAmount.currency.decimals),
-              ),
-            )
-        );
-      }
-    }
-  }, [balances, inputAmount, outputAmount, isBnUSDGoingIn, isSwapEligible, limits]);
-}
-
-export function useFeeAmount(inputAmount: CurrencyAmount<Currency> | undefined): CurrencyAmount<Token> | undefined {
-  const feeOut = useFeeOut();
-  const feeIn = useFeeIn();
-  const isBnUSDGoingIn = inputAmount?.currency.symbol === 'bnUSD';
-  const fee = isBnUSDGoingIn ? feeOut : feeIn;
-
-  return useMemo(() => {
-    if (!!inputAmount && !!fee) {
-      return inputAmount.multiply(new Fraction(fee, 1000)).divide(100) as CurrencyAmount<Token>;
-    }
-  }, [fee, inputAmount]);
-}
-
 export function useFundLimits(): UseQueryResult<{ [key: string]: CurrencyAmount<Token> }> {
   const whitelistedTokenAddresses = useWhitelistedTokenAddresses() || [];
 
@@ -206,14 +111,4 @@ export function useFundLimits(): UseQueryResult<{ [key: string]: CurrencyAmount<
       return limits;
     },
   });
-}
-
-function useFeeIn(): string | undefined {
-  const { data } = useBnJsContractQuery<string>('StabilityFund', 'getFeeIn', [], false);
-  return data && formatUnits(data, 15);
-}
-
-function useFeeOut(): string | undefined {
-  const { data } = useBnJsContractQuery<string>('StabilityFund', 'getFeeOut', [], false);
-  return data && formatUnits(data, 15);
 }

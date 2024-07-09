@@ -52,6 +52,10 @@ const HavahProvider: React.FC<HavahProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const { havah } = window as any;
+    if (!havah) {
+      return;
+    }
+
     havah.on('accountsChanged', ({ address }: { address: string }) => {
       setAddress(address);
       setAddressStored(address);

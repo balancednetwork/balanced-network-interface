@@ -83,22 +83,6 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/cft.png"
     },
     {
-      "address": "cx3a36ea1f6b9aa3d2dd9cb68e8987bcc3aabaaa88",
-      "chainId": 1,
-      "name": "ICON Tether",
-      "symbol": "IUSDT",
-      "decimals": 6,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdt.png"
-    },
-    {
-      "address": "cx785d504f44b5d2c8dac04c5a1ecd75f18ee57d16",
-      "chainId": 1,
-      "name": "Fin Token",
-      "symbol": "FIN",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/fin.png"
-    },
-    {
       "address": "cxb7d63658e3375f701af9d420ea351d0736760634",
       "chainId": 7,
       "name": "Staked ICX",
@@ -121,22 +105,6 @@
       "symbol": "BALN",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/baln.png"
-    },
-    {
-      "address": "cx538a925f49427d4f1078aed638c8cb525071fc68",
-      "chainId": 7,
-      "name": "ICON USD Coin",
-      "symbol": "IUSDC",
-      "decimals": 6,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdc.png"
-    },
-    {
-      "address": "cx91a9327ca44e78983e143b1cfb18e8024a1f31d9",
-      "chainId": 7,
-      "name": "Stably USD",
-      "symbol": "USDS",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/usds.png"
     },
     {
       "address": "cx0fa7815de5b2be6e51dc52caa0dc556012ae0f98",

@@ -13,15 +13,12 @@ export class WrappedTokenInfo implements Token {
   public readonly isNative: false = false;
   public readonly isToken: true = true;
   public readonly list?: TokenList;
-  public readonly searchableTerms: string;
 
   public readonly tokenInfo: TokenInfo;
 
   constructor(tokenInfo: TokenInfo, list?: TokenList) {
     this.tokenInfo = tokenInfo;
     this.list = list;
-    // !todo
-    this.searchableTerms = '';
   }
 
   private _checksummedAddress: string | null = null;

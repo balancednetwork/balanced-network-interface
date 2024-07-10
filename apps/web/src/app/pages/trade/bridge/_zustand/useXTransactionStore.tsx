@@ -93,14 +93,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
 
         console.log('xTransactionInput', xTransactionInput);
 
-        let sourceTransactionHash;
-        if (xTransactionInput.type === XTransactionType.BRIDGE) {
-          sourceTransactionHash = await srcChainXService.executeTransfer(xTransactionInput);
-        } else if (xTransactionInput.type === XTransactionType.SWAP) {
-          sourceTransactionHash = await srcChainXService.executeSwap(xTransactionInput);
-        } else {
-          throw new Error('Unsupported XTransactionType');
-        }
+        const sourceTransactionHash = await srcChainXService.executeTransaction(xTransactionInput);
 
         const primaryDestinationChainInitialBlockHeight =
           xServiceActions.getXChainHeight(primaryDestinationChainId) - 20n;

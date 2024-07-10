@@ -11,7 +11,6 @@ export default defineConfig(options => ({
   treeshake: true,
   splitting: true,
   onSuccess: async () => {
-    console.log('hello world');
     exec('tsc --emitDeclarationOnly --declaration', (err, stdout) => {
       if (err) {
         console.error(stdout);

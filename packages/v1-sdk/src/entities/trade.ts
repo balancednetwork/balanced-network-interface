@@ -360,6 +360,9 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
         if (error.isInsufficientReservesError) {
           continue;
         }
+        if (error.isInsufficientInputAmountError) {
+          continue;
+        }
         throw error;
       }
       // we have arrived at the input token, so this is the first trade of one of the paths
@@ -405,10 +408,15 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
 
     let result = new Fraction(ONE);
     for (let i = 0; i < this.route.path.length - 1; i++) {
+      const pair = this.route.pairs[i];
       const inputCurrencySymbol = this.route.path[i].symbol;
       const outputCurrencySymbol = this.route.path[i + 1].symbol;
 
-      if (inputCurrencySymbol === 'sICX' && outputCurrencySymbol === 'ICX') {
+      if (pair.isStabilityFund) {
+        if (inputCurrencySymbol === 'bnUSD') {
+          result = result.multiply(new Fraction(999, 1000));
+        }
+      } else if (inputCurrencySymbol === 'sICX' && outputCurrencySymbol === 'ICX') {
         result = result.multiply(new Fraction(99, 100));
       } else if (inputCurrencySymbol === 'ICX' && outputCurrencySymbol === 'sICX') {
         // result = result.multiply(new Fraction(ONE));

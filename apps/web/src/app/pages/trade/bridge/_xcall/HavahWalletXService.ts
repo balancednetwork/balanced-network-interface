@@ -55,7 +55,7 @@ export class HavahWalletXService extends HavahPublicXService implements IWalletX
     }
   }
 
-  async executeSwap(xTransactionInput: XTransactionInput) {
+  async executeTransaction(xTransactionInput: XTransactionInput) {
     const { executionTrade, account, direction, recipient, slippageTolerance, xCallFee } = xTransactionInput;
 
     if (!executionTrade || !slippageTolerance) {

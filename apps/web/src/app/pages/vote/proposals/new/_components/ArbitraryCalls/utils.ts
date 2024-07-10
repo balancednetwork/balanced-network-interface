@@ -107,9 +107,7 @@ export async function tryExecuteWithTransactionsString(
       transactions: txsString,
     };
     params.params.from = account;
-    console.log('test params:', params);
     const response = await axios.post(RPC_DEBUG_ENDPOINT, params);
-    console.log(response);
 
     return { query: params, response };
   } else {

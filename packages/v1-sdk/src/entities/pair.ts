@@ -2,7 +2,7 @@ import { getCreate2Address } from '@ethersproject/address';
 import { pack, keccak256 } from '@ethersproject/solidity';
 import invariant from 'tiny-invariant';
 
-import { BigintIsh, Price, sqrt, Token, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { BigintIsh, Price, sqrt, Token, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
 
 import {
   FACTORY_ADDRESS,
@@ -39,6 +39,8 @@ export class Pair {
   public readonly liquidityToken: Token;
   private readonly tokenAmounts: [CurrencyAmount<Token>, CurrencyAmount<Token>];
 
+  public readonly isStabilityFund: boolean;
+
   public readonly poolId?: number;
   public readonly totalSupply?: CurrencyAmount<Token>;
   public readonly baseAddress?: string;
@@ -54,37 +56,61 @@ export class Pair {
       poolId?: number;
       totalSupply?: string;
       baseAddress?: string;
+      isStabilityFund?: boolean;
     },
   ) {
-    let tokenAmounts = [currencyAmountA, tokenAmountB];
-    // Also, as a rule, sICX is always on the right side (except for sICX/bnUSD). bnUSD is also always on the right side (Exception for sICX/BTCB)
-    if (
-      currencyAmountA.currency.symbol === 'bnUSD' ||
-      (tokenAmountB.currency.symbol === 'sICX' && currencyAmountA.currency.symbol === 'bnUSD') ||
-      (currencyAmountA.currency.symbol === 'sICX' &&
-        tokenAmountB.currency.symbol !== 'bnUSD' &&
-        tokenAmountB.currency.symbol !== 'BTCB')
-    ) {
-      tokenAmounts = [tokenAmountB, currencyAmountA];
-    }
+    if (additionalArgs?.isStabilityFund) {
+      // TODO implement stability fund pair constructor
+      this.isStabilityFund = true;
 
-    const tokenADecimals = tokenAmounts[0].currency.decimals;
-    const tokenBDecimals = tokenAmounts[1].currency.decimals;
-    const decimals = tokenADecimals !== tokenBDecimals ? (tokenADecimals + tokenBDecimals) / 2 : tokenADecimals;
-    this.liquidityToken = new Token(
-      tokenAmounts[0].currency.chainId,
-      // Pair.getAddress(tokenAmounts[0].currency, tokenAmounts[1].currency),
-      'cx0000000000000000000000000000000000000002',
-      decimals,
-      'BALN-V2',
-      'Balanced V2',
-    );
-    this.tokenAmounts = tokenAmounts as [CurrencyAmount<Token>, CurrencyAmount<Token>];
+      const tokenAmounts = [currencyAmountA, tokenAmountB];
+      const tokenADecimals = tokenAmounts[0].currency.decimals;
+      const tokenBDecimals = tokenAmounts[1].currency.decimals;
+      const decimals = tokenADecimals !== tokenBDecimals ? (tokenADecimals + tokenBDecimals) / 2 : tokenADecimals;
+      this.liquidityToken = new Token(
+        tokenAmounts[0].currency.chainId,
+        // Pair.getAddress(tokenAmounts[0].currency, tokenAmounts[1].currency),
+        'cx0000000000000000000000000000000000000002',
+        decimals,
+        'BALN-V2',
+        'Balanced V2',
+      );
+      this.tokenAmounts = tokenAmounts as [CurrencyAmount<Token>, CurrencyAmount<Token>];
 
-    if (additionalArgs) {
-      this.poolId = additionalArgs.poolId;
-      this.totalSupply = CurrencyAmount.fromRawAmount(this.liquidityToken, additionalArgs.totalSupply || '0');
-      this.baseAddress = additionalArgs.baseAddress;
+      // this.totalSupply = CurrencyAmount.fromRawAmount(this.liquidityToken, additionalArgs.totalSupply || '0');
+    } else {
+      this.isStabilityFund = false;
+
+      let tokenAmounts = [currencyAmountA, tokenAmountB];
+      // Also, as a rule, sICX is always on the right side (except for sICX/bnUSD). bnUSD is also always on the right side (Exception for sICX/BTCB)
+      if (
+        currencyAmountA.currency.symbol === 'bnUSD' ||
+        (tokenAmountB.currency.symbol === 'sICX' && currencyAmountA.currency.symbol === 'bnUSD') ||
+        (currencyAmountA.currency.symbol === 'sICX' &&
+          tokenAmountB.currency.symbol !== 'bnUSD' &&
+          tokenAmountB.currency.symbol !== 'BTCB')
+      ) {
+        tokenAmounts = [tokenAmountB, currencyAmountA];
+      }
+
+      const tokenADecimals = tokenAmounts[0].currency.decimals;
+      const tokenBDecimals = tokenAmounts[1].currency.decimals;
+      const decimals = tokenADecimals !== tokenBDecimals ? (tokenADecimals + tokenBDecimals) / 2 : tokenADecimals;
+      this.liquidityToken = new Token(
+        tokenAmounts[0].currency.chainId,
+        // Pair.getAddress(tokenAmounts[0].currency, tokenAmounts[1].currency),
+        'cx0000000000000000000000000000000000000002',
+        decimals,
+        'BALN-V2',
+        'Balanced V2',
+      );
+      this.tokenAmounts = tokenAmounts as [CurrencyAmount<Token>, CurrencyAmount<Token>];
+
+      if (additionalArgs) {
+        this.poolId = additionalArgs.poolId;
+        this.totalSupply = CurrencyAmount.fromRawAmount(this.liquidityToken, additionalArgs.totalSupply || '0');
+        this.baseAddress = additionalArgs.baseAddress;
+      }
     }
   }
 
@@ -158,6 +184,34 @@ export class Pair {
 
   public getOutputAmount(inputAmount: CurrencyAmount<Token>): [CurrencyAmount<Token>, Pair] {
     invariant(this.involvesToken(inputAmount.currency), 'TOKEN');
+
+    if (this.isStabilityFund) {
+      // this.token1 is always bnUSD
+      if (inputAmount.currency.symbol === 'bnUSD') {
+        // bnUSD -> USDC
+        // apply fee 0.1%
+        const outputAmount = CurrencyAmount.fromRawAmount(
+          this.token0,
+          (inputAmount.quotient * 10n ** BigInt(this.token0.decimals)) / inputAmount.decimalScale,
+        ).multiply(new Fraction(999, 1000));
+
+        if (outputAmount.quotient > this.reserve0.quotient) {
+          throw new InsufficientInputAmountError();
+        }
+
+        return [outputAmount, this];
+      } else {
+        // USDC -> bnUSD
+        return [
+          CurrencyAmount.fromRawAmount(
+            this.token1,
+            (inputAmount.quotient * 10n ** BigInt(this.token1.decimals)) / inputAmount.decimalScale,
+          ),
+          this,
+        ];
+      }
+    }
+
     if (this.reserve0.quotient === ZERO || this.reserve1.quotient === ZERO) {
       throw new InsufficientReservesError();
     }
@@ -195,6 +249,34 @@ export class Pair {
 
   public getInputAmount(outputAmount: CurrencyAmount<Token>): [CurrencyAmount<Token>, Pair] {
     invariant(this.involvesToken(outputAmount.currency), 'TOKEN');
+    if (this.isStabilityFund) {
+      // this.token1 is always bnUSD
+      if (outputAmount.currency.symbol === 'bnUSD') {
+        // USDC -> bnUSD
+        return [
+          CurrencyAmount.fromRawAmount(
+            this.token0,
+            (outputAmount.quotient * 10n ** BigInt(this.token0.decimals)) / outputAmount.decimalScale,
+          ),
+          this,
+        ];
+      } else {
+        // bnUSD -> USDC
+        // apply fee 0.1%
+        if (outputAmount.quotient > this.reserve0.quotient) {
+          throw new InsufficientInputAmountError();
+        }
+
+        return [
+          CurrencyAmount.fromRawAmount(
+            this.token1,
+            (outputAmount.quotient * 10n ** BigInt(this.token1.decimals)) / outputAmount.decimalScale,
+          ).divide(new Fraction(999, 1000)),
+          this,
+        ];
+      }
+    }
+
     if (
       this.reserve0.quotient === ZERO ||
       this.reserve1.quotient === ZERO ||

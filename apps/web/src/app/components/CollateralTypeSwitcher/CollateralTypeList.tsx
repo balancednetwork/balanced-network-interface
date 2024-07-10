@@ -175,7 +175,7 @@ const CollateralTypeList = ({
       )}
 
       {collateralTab === CollateralTab.ALL && (
-        <>
+        <List>
           {allCollateralData
             //BTCB tmp filter fix
             ?.filter(xCollateral => xCollateral.baseToken.symbol !== 'BTCB')
@@ -198,7 +198,7 @@ const CollateralTypeList = ({
                 />
               );
             })}
-        </>
+        </List>
       )}
     </>
   );

@@ -10,7 +10,7 @@ import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import { XChainId, XChain, XChainType } from 'app/pages/trade/bridge/types';
+import { XChainId, XChain } from 'app/pages/trade/bridge/types';
 import { IPublicXService, IWalletXService } from '../_xcall/types';
 import { IconPublicXService } from '../_xcall/IconPublicXService';
 import { ArchwayPublicXService } from '../_xcall/ArchwayPublicXService';
@@ -226,11 +226,9 @@ export const XChainHeightUpdater = ({ xChainId }: { xChainId: XChainId }) => {
         if (blockHeight) {
           xServiceActions.setXChainHeight(xChainId, blockHeight);
         }
-        // console.log('Fetched block height', xChainId, blockHeight);
         return blockHeight;
       } catch (e) {
-        console.log('Failed to fetch block height', xChainId);
-        // console.log(e);
+        console.log(e);
         return 0n;
       }
     },

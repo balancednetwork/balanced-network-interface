@@ -16,7 +16,6 @@ import Modal, { ModalProps } from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import ArchWalletIcon from 'assets/icons/chains/archway.svg';
 import IconWalletIcon from 'assets/icons/wallets/iconex.svg';
-import AvalancheWalletIcon from 'assets/icons/chains/avalanche.svg';
 import HavahWalletIcon from 'assets/icons/chains/havah.svg';
 import ETHIcon from 'assets/icons/chains/eth.svg';
 import { LOCALE_LABEL, SupportedLocale, SUPPORTED_LOCALES } from 'constants/locales';

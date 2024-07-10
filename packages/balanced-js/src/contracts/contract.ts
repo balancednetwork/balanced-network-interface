@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash-es';
 import { ICONEX_RELAY_RESPONSE } from '../iconex';
 
 import { AccountType, ResponseJsonRPCPayload, SettingInjection } from '..';
-import { SupportedChainId as NetworkId, SupportedChainId } from '../chain';
+import { SupportedChainId as NetworkId } from '../chain';
 import ContractSettings from '../contractSettings';
 import { Ledger } from '../ledger';
 
@@ -136,7 +136,7 @@ export class Contract {
   }
 
   private callIconex(payload: any): Promise<ResponseJsonRPCPayload> {
-    if (this.nid === SupportedChainId.HAVAH) {
+    if (this.nid === NetworkId.HAVAH) {
       // @ts-ignore
       return window.havah.sendTransaction(payload);
     } else {

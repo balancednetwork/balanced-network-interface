@@ -7,19 +7,6 @@ interface AccountResultType {
   nid: string;
   error?: string;
 }
-interface ConnectResultType {
-  address: string;
-  nid: string;
-  error?: string;
-}
-
-interface SignResultType {
-  signature: string;
-}
-interface SendTransactionResultType {
-  txHash: string;
-  type: string; // success, close, cancel, fail
-}
 
 interface HavahContextType {
   address: string;
@@ -60,6 +47,7 @@ const HavahProvider: React.FC<HavahProviderProps> = ({ children }) => {
       setAddress(address);
       setAddressStored(address);
     });
+
     havah.on('networkChanged', ({ nid }: { nid: string }) => {
       setChainId(nid);
     });

@@ -148,6 +148,15 @@ export function useCollateralFetchInfo(account?: string | null) {
 
   const allDerivedWallets = useAllDerivedWallets();
 
+  function isSupported(symbol: string) {
+    return (
+      symbol === 'sICX' ||
+      (supportedCollateralTokens &&
+        Object.keys(supportedCollateralTokens).includes(symbol) &&
+        supportedCollateralTokens[symbol])
+    );
+  }
+
   const fetchCollateralInfo = React.useCallback(
     async (wallet: {
       address: string;
@@ -162,17 +171,23 @@ export function useCollateralFetchInfo(account?: string | null) {
           supportedCollateralTokens &&
             res.holdings &&
             Object.keys(res.holdings).forEach(async symbol => {
-              const decimals: string = await bnJs.getContract(supportedCollateralTokens[symbol]).decimals();
-              const depositedAmount = new BigNumber(
-                formatUnits(res.holdings[symbol][symbol] || 0, Number(decimals), 18),
-              );
-              changeDepositedAmount(depositedAmount, symbol, wallet.xChainId);
+              if (isSupported(symbol)) {
+                const decimals: string = await bnJs.getContract(supportedCollateralTokens[symbol]).decimals();
+                const depositedAmount = new BigNumber(
+                  formatUnits(res.holdings[symbol][symbol] || 0, Number(decimals), 18),
+                );
+                changeDepositedAmount(depositedAmount, symbol, wallet.xChainId);
+              }
             });
         })
         .catch(e => {
           if (e.toString().indexOf('does not have a position')) {
             supportedCollateralTokens &&
-              Object.keys(supportedCollateralTokens).forEach(symbol => changeDepositedAmount(new BigNumber(0), symbol));
+              Object.keys(supportedCollateralTokens).forEach(symbol => {
+                if (isSupported(symbol)) {
+                  changeDepositedAmount(new BigNumber(0), symbol, wallet.xChainId);
+                }
+              });
           }
         });
     },

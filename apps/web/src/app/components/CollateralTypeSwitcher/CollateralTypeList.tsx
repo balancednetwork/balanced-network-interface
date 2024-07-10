@@ -6,7 +6,6 @@ import styled from 'styled-components';
 
 import {
   useCollateralChangeCollateralType,
-  useAllCollateralData,
   useCollateralActionHandlers,
   useXCollateralDataByToken,
 } from 'store/collateral/hooks';
@@ -120,9 +119,9 @@ const CollateralTypeList = ({
   const { onAdjust: adjust } = useCollateralActionHandlers();
   const { onAdjust: adjustLoan } = useLoanActionHandlers();
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
-  const allCollateralData = useAllCollateralData();
 
   const allPositionsData = useXCollateralDataByToken(true);
+  const allCollateralData = useXCollateralDataByToken(false);
 
   const handleCollateralTypeChange = useCallback(
     symbol => {
@@ -179,36 +178,24 @@ const CollateralTypeList = ({
         <>
           {allCollateralData
             //BTCB tmp filter fix
-            ?.filter(collateralType => collateralType.symbol !== 'BTCB' || collateralType.collateralDeposit.gt(0))
-            ?.sort((a, b) => b.collateralDeposit.toNumber() - a.collateralDeposit.toNumber())
-            .map((collateralType, i, { length }) => {
-              const isLast = length - 1 === i;
-              const isFirst = 0 === i;
-
-              return (
-                <CollateralTypesGrid
-                  key={i}
-                  $border={!isLast}
-                  $negativeMargin={isFirst}
-                  $hideCollateralInfoColumn={hideCollateralInfoColumn}
-                  onClick={() => handleCollateralTypeChange(collateralType.symbol)}
-                >
-                  <CollateralTypesGridItem>
-                    <AssetInfo>
-                      <CurrencyLogo
-                        size={'24px'}
-                        currency={SUPPORTED_TOKENS_LIST.find(token => token.symbol === collateralType.symbol)}
-                      />
-                      <Box>
-                        <Typography className="white" fontWeight={700}>
-                          {collateralType.displayName ? collateralType.displayName : collateralType.symbol}
-                        </Typography>
-                      </Box>
-                    </AssetInfo>
-                  </CollateralTypesGridItem>
-
-                  <CollateralTypesGridItem></CollateralTypesGridItem>
-                </CollateralTypesGrid>
+            ?.filter(xCollateral => xCollateral.baseToken.symbol !== 'BTCB')
+            ?.sort((a, b) => a.baseToken.symbol.localeCompare(b.baseToken.symbol))
+            .map((xCollateral, index, { length }) => {
+              return xCollateral.isPositionSingleChain ? (
+                <SingleChainItem
+                  baseToken={xCollateral.baseToken}
+                  key={index}
+                  networkPosition={xCollateral.positions}
+                  isLast={index === allPositionsData.length - 1}
+                  onSelect={handleCollateralTypeChange}
+                />
+              ) : (
+                <MultiChainItem
+                  key={index}
+                  baseToken={xCollateral.baseToken}
+                  positions={xCollateral.positions}
+                  onSelect={handleCollateralTypeChange}
+                />
               );
             })}
         </>

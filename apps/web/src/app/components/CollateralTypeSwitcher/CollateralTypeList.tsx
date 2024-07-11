@@ -8,8 +8,10 @@ import {
   useCollateralChangeCollateralType,
   useCollateralActionHandlers,
   useXCollateralDataByToken,
+  useAllCollateralSelectorData,
+  useChangeCollateralXChain,
 } from 'store/collateral/hooks';
-import { useLoanActionHandlers } from 'store/loan/hooks';
+import { useLoanActionHandlers, useSetLoanRecipientNetwork } from 'store/loan/hooks';
 import Skeleton from '../Skeleton';
 import { Trans } from '@lingui/macro';
 import { BalanceAndValueWrap, DashGrid, HeaderText, List, walletBreakpoint } from '../Wallet/styledComponents';
@@ -19,6 +21,7 @@ import MultiChainItem from './MultiChainItem';
 import { CollateralTab } from './CollateralTypeListWrap';
 import CurrencyLogo from '../CurrencyLogo';
 import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { changeCollateralXChain } from 'store/collateral/reducer';
 
 const CollateralTypesGrid = styled.div<{
   $border?: boolean;
@@ -115,22 +118,28 @@ const CollateralTypeList = ({
   collateralTab: CollateralTab;
 }) => {
   const changeCollateralType = useCollateralChangeCollateralType();
+  const setLoanNetwork = useSetLoanRecipientNetwork();
+  const changeCollateralXChain = useChangeCollateralXChain();
   const hideCollateralInfoColumn = useMedia('(max-width: 500px)');
   const { onAdjust: adjust } = useCollateralActionHandlers();
   const { onAdjust: adjustLoan } = useLoanActionHandlers();
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
 
   const allPositionsData = useXCollateralDataByToken(true);
-  const allCollateralData = useXCollateralDataByToken(false);
+  const { data: allCollateralData } = useAllCollateralSelectorData();
 
   const handleCollateralTypeChange = useCallback(
-    symbol => {
+    (symbol, chainId) => {
       setAnchor(null);
       changeCollateralType(symbol);
       adjust(false);
       adjustLoan(false);
+      if (chainId) {
+        changeCollateralXChain(chainId);
+        setLoanNetwork(chainId);
+      }
     },
-    [changeCollateralType, setAnchor, adjust, adjustLoan],
+    [changeCollateralType, setAnchor, adjust, adjustLoan, changeCollateralXChain, setLoanNetwork],
   );
 
   return (
@@ -186,7 +195,7 @@ const CollateralTypeList = ({
                   baseToken={xCollateral.baseToken}
                   key={index}
                   networkPosition={xCollateral.positions}
-                  isLast={index === allPositionsData.length - 1}
+                  isLast={index === length - 1}
                   onSelect={handleCollateralTypeChange}
                 />
               ) : (

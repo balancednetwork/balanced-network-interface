@@ -5,12 +5,21 @@ import CurrencyLogo from '../CurrencyLogo';
 import { Typography } from 'app/theme';
 import SingleChainItem from './SingleChainItem';
 import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, ListItem } from '../Wallet/styledComponents';
+import styled from 'styled-components';
 
 type MultiChainItemProps = {
   baseToken: Token;
   positions: Partial<{ [key in XChainId]: Position }>;
-  onSelect: (symbol) => void;
+  onSelect: (symbol, chainId?) => void;
 };
+
+export const StyledListItem = styled(ListItem)`
+  transition: color ease 0.3s;
+  
+  &:hover {
+    color: ${({ theme }) => theme.colors.primaryBright};
+  }
+`;
 
 const MultiChainItem = ({ baseToken, positions, onSelect }: MultiChainItemProps) => {
   const { symbol } = baseToken;
@@ -27,7 +36,7 @@ const MultiChainItem = ({ baseToken, positions, onSelect }: MultiChainItemProps)
 
   return (
     <>
-      <ListItem $border={false} onClick={() => onSelect(baseToken.symbol)}>
+      <StyledListItem $border={false} onClick={() => onSelect(baseToken.symbol)}>
         <AssetSymbol>
           <CurrencyLogo currency={baseToken} />
           <Typography fontSize={16} fontWeight="bold">
@@ -37,7 +46,7 @@ const MultiChainItem = ({ baseToken, positions, onSelect }: MultiChainItemProps)
           </Typography>
         </AssetSymbol>
         <BalanceAndValueWrap />
-      </ListItem>
+      </StyledListItem>
       <BalanceBreakdown
         $arrowPosition={arrowRef.current ? `${Math.floor(arrowRef.current.clientWidth / 2 + 23)}px` : '40px'}
       >

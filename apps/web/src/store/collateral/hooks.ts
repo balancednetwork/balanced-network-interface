@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { addresses, CallData } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from 'bnJs';
@@ -37,7 +37,7 @@ import { Position, XChainId, XPositionsRecord, XToken } from 'app/pages/trade/br
 import { DEFAULT_TOKEN_CHAIN, xTokenMap } from 'app/pages/trade/bridge/_config/xTokens';
 import { useAllDerivedWallets, useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { setRecipientNetwork } from 'store/loan/reducer';
 import { useDestinationEvents } from 'app/pages/trade/bridge/_zustand/useXCallEventStore';
 import { forEach } from 'lodash-es';
@@ -138,6 +138,48 @@ export function useCollateralAvailableAmountinSICX() {
 export function useCollateralAmounts(chainId?: XChainId): { [key in string]: BigNumber } {
   const collateralXChain = useCollateralXChain();
   return useSelector((state: AppState) => state.collateral.depositedAmounts[chainId || collateralXChain] || {});
+}
+
+export function useAllCollateralSelectorData(): UseQueryResult<XPositionsRecord[]> {
+  const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
+  const depositedAmounts = useAllDepositedAmounts();
+  const borrowedAmounts = useBorrowedAmounts();
+
+  return useQuery({
+    queryKey: ['getCollateralSelectorData', supportedCollateralTokens, depositedAmounts],
+    queryFn: () => {
+      return supportedCollateralTokens
+        ? Object.keys(supportedCollateralTokens).map(symbol => {
+            const baseToken = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
+            const positions = SUPPORTED_XCALL_CHAINS.reduce(
+              (acc, chainId) => {
+                const xToken = xTokenMap[chainId].find(t => t.symbol === symbol);
+                if (xToken) {
+                  acc[chainId] = {
+                    collateral: CurrencyAmount.fromRawAmount(xToken, 0),
+                    loan: new BigNumber(0),
+                  };
+                } else if (chainId === ICON_XCALL_NETWORK_ID && baseToken) {
+                  acc[chainId] = {
+                    collateral: CurrencyAmount.fromRawAmount(baseToken, 0),
+                    loan: new BigNumber(0),
+                  };
+                }
+                return acc;
+              },
+              {} as Partial<{ [key in XChainId]: Position }>,
+            );
+            return {
+              baseToken,
+              positions,
+              isPositionSingleChain: Object.keys(positions).length === 1,
+            };
+          })
+        : undefined;
+    },
+    enabled: !!supportedCollateralTokens,
+    placeholderData: keepPreviousData,
+  });
 }
 
 export function useCollateralFetchInfo(account?: string | null) {
@@ -357,48 +399,6 @@ type CollateralInfo = {
   collateralDeposit: BigNumber;
   collateralAvailable: BigNumber;
 };
-
-export function useAllCollateralData(): CollateralInfo[] | undefined {
-  const { data: collateralTokens } = useSupportedCollateralTokens();
-  const depositedAmounts = useCollateralAmounts();
-  const oraclePrices = useOraclePrices();
-  const balances = useICONWalletBalances();
-
-  return useMemo(() => {
-    const allCollateralInfo: CollateralInfo[] | undefined =
-      collateralTokens &&
-      Object.values(collateralTokens)
-        .filter(address => SUPPORTED_TOKENS_MAP_BY_ADDRESS[address])
-        .map(address => {
-          const token = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address];
-
-          const collateralDepositUSDValue =
-            depositedAmounts && oraclePrices && depositedAmounts[token.symbol!]
-              ? depositedAmounts[token.symbol!].times(oraclePrices[token.symbol!])
-              : new BigNumber(0);
-
-          const availableCollateral =
-            token.symbol === 'sICX'
-              ? toBigNumber(balances[address])
-                  .plus(toBigNumber(balances[NULL_CONTRACT_ADDRESS]))
-                  .multipliedBy(oraclePrices[token.symbol!])
-              : toBigNumber(balances[address]).multipliedBy(oraclePrices[token.symbol!] || 1);
-
-          // const loanTaken =
-          //   borrowedAmounts && borrowedAmounts[token.symbol!] ? borrowedAmounts[token.symbol!] : new BigNumber(0);
-
-          return {
-            symbol: token.symbol!,
-            name: token.name!,
-            displayName: token.symbol === 'sICX' ? 'ICX / sICX' : '',
-            collateralDeposit: collateralDepositUSDValue,
-            collateralAvailable: availableCollateral,
-            // loanTaken: loanTaken,
-          };
-        });
-    return allCollateralInfo;
-  }, [collateralTokens, depositedAmounts, oraclePrices, balances]);
-}
 
 export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]: string }> {
   return useQuery({

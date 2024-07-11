@@ -6,12 +6,13 @@ import { Position, XChainId } from 'app/pages/trade/bridge/types';
 import { useTheme } from 'styled-components';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import CurrencyLogoWithNetwork from '../Wallet/CurrencyLogoWithNetwork';
-import { AssetSymbol, BalanceAndValueWrap, DataText, ListItem } from '../Wallet/styledComponents';
+import { AssetSymbol, BalanceAndValueWrap, DataText } from '../Wallet/styledComponents';
+import { StyledListItem } from './MultiChainItem';
 
 type SingleChainItemProps = {
   baseToken: Token;
   networkPosition: Partial<{ [key in XChainId]: Position }>;
-  onSelect: (symbol) => void;
+  onSelect: (symbol, chainId) => void;
   isLast?: boolean;
   isNested?: boolean;
 };
@@ -31,7 +32,7 @@ const SingleChainItem = ({
 
   return (
     <>
-      <ListItem $border={!isNested && !isLast} onClick={() => onSelect(baseToken.symbol)}>
+      <StyledListItem $border={!isNested && !isLast} onClick={() => onSelect(baseToken.symbol, xChainId)}>
         <AssetSymbol>
           <CurrencyLogoWithNetwork
             currency={baseToken}
@@ -49,7 +50,7 @@ const SingleChainItem = ({
           </DataText>
           <DataText as="div">{!loan ? '-' : `$${loan.toFormat(2)}`}</DataText>
         </BalanceAndValueWrap>
-      </ListItem>
+      </StyledListItem>
     </>
   );
 };

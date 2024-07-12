@@ -5,9 +5,8 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   sARCH: 'archway-1',
   AVAX: '0xa86a.avax',
   BNB: '0x38.bsc',
-  BTCB: '0x38.bsc',
   ETH: '0xa4b1.arbitrum',
-  WBTC: '0xa4b1.arbitrum',
+  BTC: '0xa4b1.arbitrum',
 };
 
 import { bnUSD } from 'constants/tokens';
@@ -75,7 +74,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       56,
       '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c',
       18,
-      'BTCB',
+      'BTC',
       'Binance-Peg BTCB Token',
       'BTC1',
     ),
@@ -84,15 +83,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('0xa4b1.arbitrum', 42161, NATIVE_ADDRESS, 18, 'ETH', 'ETH'),
     new XToken('0xa4b1.arbitrum', 42161, '0xA67f4b09Eed22f8201Ee0637CbE9d654E63F946e', 18, 'bnUSD', 'Balanced Dollar'),
     new XToken('0xa4b1.arbitrum', 42161, '0xaf88d065e77c8cC2239327C5EDb3A432268e5831', 6, 'USDC', 'USD Coin'),
-    new XToken(
-      '0xa4b1.arbitrum',
-      42161,
-      '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f',
-      8,
-      'WBTC',
-      'Wrapped BTC',
-      'BTC1',
-    ),
+    new XToken('0xa4b1.arbitrum', 42161, '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f', 8, 'BTC', 'Wrapped BTC', 'BTC1'),
   ],
   '0x2105.base': [
     new XToken('0x2105.base', 8453, NATIVE_ADDRESS, 18, 'ETH', 'ETH'),

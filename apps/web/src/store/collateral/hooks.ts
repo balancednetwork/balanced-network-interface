@@ -146,7 +146,7 @@ export function useAllCollateralSelectorData(): UseQueryResult<XPositionsRecord[
   const borrowedAmounts = useBorrowedAmounts();
 
   return useQuery({
-    queryKey: ['getCollateralSelectorData', supportedCollateralTokens, depositedAmounts],
+    queryKey: ['getCollateralSelectorData', supportedCollateralTokens, depositedAmounts, borrowedAmounts],
     queryFn: () => {
       return supportedCollateralTokens
         ? Object.keys(supportedCollateralTokens).map(symbol => {
@@ -154,15 +154,29 @@ export function useAllCollateralSelectorData(): UseQueryResult<XPositionsRecord[
             const positions = SUPPORTED_XCALL_CHAINS.reduce(
               (acc, chainId) => {
                 const xToken = xTokenMap[chainId].find(t => t.symbol === symbol);
+                const loan =
+                  Object.entries(borrowedAmounts[symbol])?.find(([key, loan]) => key.includes(chainId))?.[1] ||
+                  new BigNumber(0);
+
                 if (xToken) {
+                  const depositedAmount = depositedAmounts[chainId]?.[symbol] || new BigNumber(0);
+                  const collateral = CurrencyAmount.fromRawAmount(
+                    xToken,
+                    depositedAmount.times(10 ** xToken.decimals).toFixed(0),
+                  );
                   acc[chainId] = {
-                    collateral: CurrencyAmount.fromRawAmount(xToken, 0),
-                    loan: new BigNumber(0),
+                    collateral,
+                    loan,
                   };
                 } else if (chainId === ICON_XCALL_NETWORK_ID && baseToken) {
+                  const depositedAmount = depositedAmounts[chainId]?.[symbol] || new BigNumber(0);
+                  const collateral = CurrencyAmount.fromRawAmount(
+                    baseToken,
+                    depositedAmount.times(10 ** baseToken.decimals).toFixed(0),
+                  );
                   acc[chainId] = {
-                    collateral: CurrencyAmount.fromRawAmount(baseToken, 0),
-                    loan: new BigNumber(0),
+                    collateral,
+                    loan,
                   };
                 }
                 return acc;

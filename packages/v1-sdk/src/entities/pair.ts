@@ -189,11 +189,11 @@ export class Pair {
       // this.token1 is always bnUSD
       if (inputAmount.currency.symbol === 'bnUSD') {
         // bnUSD -> USDC
-        // apply fee 0.1%
+        // apply fee 0.3%
         const outputAmount = CurrencyAmount.fromRawAmount(
           this.token0,
           (inputAmount.quotient * 10n ** BigInt(this.token0.decimals)) / inputAmount.decimalScale,
-        ).multiply(new Fraction(999, 1000));
+        ).multiply(new Fraction(997, 1000));
 
         if (outputAmount.quotient > this.reserve0.quotient) {
           throw new InsufficientInputAmountError();
@@ -262,7 +262,7 @@ export class Pair {
         ];
       } else {
         // bnUSD -> USDC
-        // apply fee 0.1%
+        // apply fee 0.3%
         if (outputAmount.quotient > this.reserve0.quotient) {
           throw new InsufficientInputAmountError();
         }
@@ -271,7 +271,7 @@ export class Pair {
           CurrencyAmount.fromRawAmount(
             this.token1,
             (outputAmount.quotient * 10n ** BigInt(this.token1.decimals)) / outputAmount.decimalScale,
-          ).divide(new Fraction(999, 1000)),
+          ).divide(new Fraction(997, 1000)),
           this,
         ];
       }

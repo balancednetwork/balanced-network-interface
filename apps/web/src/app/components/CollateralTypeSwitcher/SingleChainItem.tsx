@@ -1,5 +1,5 @@
 import React from 'react';
-import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Typography } from 'app/theme';
 import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import { Position, XChainId, XToken } from 'app/pages/trade/bridge/types';
@@ -8,9 +8,9 @@ import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import CurrencyLogoWithNetwork from '../Wallet/CurrencyLogoWithNetwork';
 import { AssetSymbol, BalanceAndValueWrap, DataText } from '../Wallet/styledComponents';
 import { StyledListItem } from './MultiChainItem';
-import { useRatesWithOracle } from 'queries/reward';
 import { toFraction } from 'utils';
 import { useCrossChainWalletBalances } from 'store/wallet/hooks';
+import { useOraclePrices } from 'store/oracle/hooks';
 
 type SingleChainItemProps = {
   baseToken: Token;
@@ -27,7 +27,7 @@ const SingleChainItem = ({
   isLast = false,
   isNested = false,
 }: SingleChainItemProps) => {
-  const prices = useRatesWithOracle();
+  const prices = useOraclePrices();
   const xWallet = useCrossChainWalletBalances();
   const [xChainId, position] = Object.entries(networkPosition)[0];
   const { collateral, loan } = position;

@@ -174,6 +174,7 @@ export const havah: XChain = {
     http: 'https://ctz.havah.io/api/v3',
   },
   contracts: {
+    // TODO: are contracts correct?
     xCall: '0xfC83a3F252090B26f92F91DFB9dC3Eb710AdAf1b',
     assetManager: '0xdf851B4f0D9b2323e03B3980b1C4Cf56273c0bd9',
     bnUSD: '0xdBDd50997361522495EcFE57EBb6850dA0E4C699',

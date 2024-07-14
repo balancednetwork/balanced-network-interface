@@ -80,7 +80,10 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('0x2105.base', 8453, '0x78b7CD9308287DEb724527d8703c889e2d6C3708', 18, 'bnUSD', 'Balanced Dollar'),
     new XToken('0x2105.base', 8453, '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', 6, 'USDC', 'USD Coin'),
   ],
-  '0x100.icon': [new XToken('0x100.icon', 0x100, NATIVE_ADDRESS, 18, 'HVH', 'HVH')],
+  '0x100.icon': [
+    new XToken('0x100.icon', 0x100, NATIVE_ADDRESS, 18, 'HVH', 'HVH'),
+    new XToken('0x100.icon', 0x100, 'cx4b40466250f9ccf04cc92da1b6633968ba3ec7cc', 18, 'bnUSD', 'Balanced Dollar'),
+  ],
   '0x2.icon': [],
   '0xa869.fuji': [],
   archway: [],

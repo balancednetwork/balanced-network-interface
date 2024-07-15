@@ -511,12 +511,27 @@ export function useHavahBalances(
       const HVH = tokens.find(token => token.symbol === 'HVH');
       if (!HVH) return {};
 
-      const nativeBalanceRawAmount = await havahJs.ICX.balanceOf(address).then(res => res.toFixed());
-      const nativeBalance = CurrencyAmount.fromRawAmount(HVH, nativeBalanceRawAmount);
+      const promises = tokens.map(token => {
+        if (token.symbol === 'HVH')
+          return havahJs.ICX.balanceOf(address).then(res => CurrencyAmount.fromRawAmount(HVH, res.toFixed()));
 
-      return {
-        [HVH.address]: nativeBalance,
-      };
+        return havahJs[token.symbol]
+          .balanceOf(address)
+          .then(res => CurrencyAmount.fromRawAmount(token, res.toString()));
+      });
+
+      const rawAmountBalances = await Promise.all(promises);
+
+      const balances = rawAmountBalances.reduce((acc, balance) => {
+        if (!balance) return acc;
+        if (!(balance.quotient > BIGINT_ZERO)) {
+          return acc;
+        }
+        acc[balance.currency.wrapped.address] = balance;
+        return acc;
+      }, {});
+
+      return balances;
     },
     placeholderData: keepPreviousData,
     refetchInterval: 5_000,

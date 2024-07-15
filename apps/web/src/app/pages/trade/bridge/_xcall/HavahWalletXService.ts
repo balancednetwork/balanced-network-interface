@@ -12,6 +12,7 @@ import { HavahPublicXService } from './HavahPublicXService';
 import { toHex } from 'viem';
 import { NATIVE_ADDRESS } from 'constants/index';
 import { toDec } from 'utils';
+import { getRlpEncodedSwapData } from '../utils';
 
 export class HavahWalletXService extends HavahPublicXService implements IWalletXService {
   walletClient: IconService; // reserved for future use
@@ -44,16 +45,19 @@ export class HavahWalletXService extends HavahPublicXService implements IWalletX
 
       const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
 
-      data = toHex(
-        JSON.stringify({
-          method: '_swap',
-          params: {
-            path: executionTrade.route.pathForSwap,
-            receiver: receiver,
-            minimumReceive: minReceived.quotient.toString(),
-          },
-        }),
-      );
+      // data = toHex(
+      //   JSON.stringify({
+      //     method: '_swap',
+      //     params: {
+      //       path: executionTrade.route.pathForSwap,
+      //       receiver: receiver,
+      //       minimumReceive: minReceived.quotient.toString(),
+      //     },
+      //   }),
+      // );
+
+      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived).toString('hex');
+      data = `0x${rlpEncodedData}`;
     } else if (type === XTransactionType.BRIDGE) {
       data = toHex(
         JSON.stringify({

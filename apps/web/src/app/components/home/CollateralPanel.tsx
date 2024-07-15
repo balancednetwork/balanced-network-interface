@@ -336,6 +336,7 @@ const CollateralPanel = () => {
     }
   }, [parsedAmount[Field.LEFT], inputType]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     sliderInstance.current?.noUiSlider.updateOptions(
       {
@@ -346,7 +347,7 @@ const CollateralPanel = () => {
       },
       false,
     );
-  }, [collateralDecimalPlaces]);
+  }, [collateralDecimalPlaces, sliderInstance.current]);
 
   const lockedCollateral = useLockedCollateralAmount();
   const shouldShowLock = !lockedCollateral.isZero();

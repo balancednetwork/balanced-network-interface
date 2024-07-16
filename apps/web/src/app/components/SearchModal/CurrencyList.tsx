@@ -143,6 +143,7 @@ function CurrencyRow({
           <DataText variant="p" fontWeight="bold">
             {currency?.symbol}
           </DataText>
+          {currency?.symbol === 'BTCB' && <DataText style={{ marginLeft: '4px' }}>{`(old)`}</DataText>}
         </Flex>
         <Flex justifyContent="flex-end" alignItems="center">
           <DataText variant="p" textAlign="right">

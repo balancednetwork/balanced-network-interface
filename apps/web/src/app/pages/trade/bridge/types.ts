@@ -209,3 +209,10 @@ export type XPositionsRecord = {
   positions: Partial<{ [key in XChainId]: Position }>;
   isPositionSingleChain: boolean;
 };
+
+export type XCollaterals = {
+  baseToken: Token;
+  chains: Partial<{ [key in XChainId]: {} }>;
+  isCollateralSingleChain: boolean;
+  total: Position;
+};

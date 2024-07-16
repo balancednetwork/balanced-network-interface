@@ -33,7 +33,7 @@ import {
   type,
   Field,
 } from './reducer';
-import { Position, XChainId, XPositionsRecord, XToken } from 'app/pages/trade/bridge/types';
+import { Position, XChainId, XCollaterals, XPositionsRecord, XToken } from 'app/pages/trade/bridge/types';
 import { DEFAULT_TOKEN_CHAIN, xTokenMap } from 'app/pages/trade/bridge/_config/xTokens';
 import { useAllDerivedWallets, useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
@@ -140,58 +140,87 @@ export function useCollateralAmounts(chainId?: XChainId): { [key in string]: Big
   return useSelector((state: AppState) => state.collateral.depositedAmounts[chainId || collateralXChain] || {});
 }
 
-export function useAllCollateralSelectorData(): UseQueryResult<XPositionsRecord[]> {
-  const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
-  const depositedAmounts = useAllDepositedAmounts();
-  const borrowedAmounts = useBorrowedAmounts();
+export function useAllCollateralTemplate(): UseQueryResult<XCollaterals[]> {
+  const { data: totalCollateralData } = useTotalCollateralData();
 
   return useQuery({
-    queryKey: ['getCollateralSelectorData', supportedCollateralTokens, depositedAmounts, borrowedAmounts],
+    queryKey: ['getCollateralSelectorData', totalCollateralData],
     queryFn: () => {
-      return supportedCollateralTokens
-        ? Object.keys(supportedCollateralTokens).map(symbol => {
-            const baseToken = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
-            const positions = SUPPORTED_XCALL_CHAINS.reduce(
-              (acc, chainId) => {
-                const xToken = xTokenMap[chainId].find(t => t.symbol === symbol);
-                const loan =
-                  Object.entries(borrowedAmounts[symbol])?.find(([key, loan]) => key.includes(chainId))?.[1] ||
-                  new BigNumber(0);
-
-                if (xToken) {
-                  const depositedAmount = depositedAmounts[chainId]?.[symbol] || new BigNumber(0);
-                  const collateral = CurrencyAmount.fromRawAmount(
-                    xToken,
-                    depositedAmount.times(10 ** xToken.decimals).toFixed(0),
-                  );
-                  acc[chainId] = {
-                    collateral,
-                    loan,
-                  };
-                } else if (chainId === ICON_XCALL_NETWORK_ID && baseToken) {
-                  const depositedAmount = depositedAmounts[chainId]?.[symbol] || new BigNumber(0);
-                  const collateral = CurrencyAmount.fromRawAmount(
-                    baseToken,
-                    depositedAmount.times(10 ** baseToken.decimals).toFixed(0),
-                  );
-                  acc[chainId] = {
-                    collateral,
-                    loan,
-                  };
-                }
-                return acc;
-              },
-              {} as Partial<{ [key in XChainId]: Position }>,
-            );
-            return {
-              baseToken,
-              positions,
-              isPositionSingleChain: Object.keys(positions).length === 1,
-            };
-          })
-        : undefined;
+      if (!totalCollateralData) return;
+      return Object.keys(totalCollateralData).map(symbol => {
+        const baseToken = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
+        const chains = SUPPORTED_XCALL_CHAINS.reduce(
+          (acc, chainId) => {
+            const xToken = xTokenMap[chainId].find(t => t.symbol === symbol);
+            if (xToken || chainId === ICON_XCALL_NETWORK_ID) {
+              acc[chainId] = {};
+            }
+            return acc;
+          },
+          {} as Partial<{ [key in XChainId]: {} }>,
+        );
+        return {
+          baseToken,
+          chains,
+          isCollateralSingleChain: Object.keys(chains).length === 1,
+          total: totalCollateralData[symbol],
+        };
+      });
     },
-    enabled: !!supportedCollateralTokens,
+    enabled: !!totalCollateralData,
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function useTotalCollateralData(): UseQueryResult<{ [key in string]: Position }> {
+  const { data: supportedTokens } = useSupportedCollateralTokens();
+
+  return useQuery({
+    queryKey: ['totalCollateralData', supportedTokens],
+    queryFn: async () => {
+      if (!supportedTokens) return;
+      try {
+        const totalData = await Promise.all(
+          Object.entries(supportedTokens).map(async ([symbol, address]) => {
+            const baseToken = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
+            if (!baseToken) return;
+
+            const cds: CallData[] = [
+              {
+                target: address,
+                method: 'balanceOf',
+                params: [addresses[NETWORK_ID].loans],
+              },
+              {
+                target: addresses[NETWORK_ID].loans,
+                method: 'getTotalCollateralDebt',
+                params: [symbol, 'bnUSD'],
+              },
+            ];
+
+            const data = await bnJs.Multicall.getAggregateData(cds);
+
+            return {
+              collateral: CurrencyAmount.fromRawAmount(baseToken, data[0]),
+              loan: new BigNumber(data[1]).div(10 ** 18),
+            } as Position;
+          }),
+        );
+        return totalData
+          .filter((item: any): item is Position => {
+            return typeof item === 'object' && 'collateral' in item && 'loan' in item;
+          })
+          .reduce((acc, { collateral, loan }) => {
+            if (!collateral || !loan) return acc;
+            acc[collateral.currency.symbol] = { collateral, loan };
+            return acc;
+          }, {});
+      } catch (e) {
+        console.error(e);
+        return;
+      }
+    },
+    enabled: !!useSupportedCollateralTokens,
     placeholderData: keepPreviousData,
   });
 }

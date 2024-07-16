@@ -140,7 +140,7 @@ export function useCollateralAmounts(chainId?: XChainId): { [key in string]: Big
   return useSelector((state: AppState) => state.collateral.depositedAmounts[chainId || collateralXChain] || {});
 }
 
-export function useAllCollateralTemplate(): UseQueryResult<XCollaterals[]> {
+export function useAllCollateralData(): UseQueryResult<XCollaterals[]> {
   const { data: totalCollateralData } = useTotalCollateralData();
 
   return useQuery({

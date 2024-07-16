@@ -6,7 +6,7 @@ import {
   useCollateralChangeCollateralType,
   useCollateralActionHandlers,
   useXCollateralDataByToken,
-  useAllCollateralTemplate,
+  useAllCollateralData,
   useChangeCollateralXChain,
 } from 'store/collateral/hooks';
 import { useLoanActionHandlers, useSetLoanRecipientNetwork } from 'store/loan/hooks';
@@ -34,7 +34,7 @@ const CollateralTypeList = ({
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
 
   const allPositionsData = useXCollateralDataByToken(true);
-  const { data: allCollateralData } = useAllCollateralTemplate();
+  const { data: allCollateralData } = useAllCollateralData();
 
   const handleCollateralTypeChange = useCallback(
     (symbol, chainId) => {

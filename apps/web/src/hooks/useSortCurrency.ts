@@ -2,7 +2,7 @@ import { Currency } from '@balancednetwork/sdk-core';
 import { SUPPORTED_XCALL_CHAINS } from 'app/pages/trade/bridge/_config/xChains';
 import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { XChainId } from 'app/pages/trade/bridge/types';
-import { isXToken, getCrossChainTokenAddress } from 'app/pages/trade/bridge/utils';
+import { isXToken, getXTokenAddress } from 'app/pages/trade/bridge/utils';
 import BigNumber from 'bignumber.js';
 import { useEffect, useState } from 'react';
 import { useCrossChainWalletBalances } from 'store/wallet/hooks';
@@ -26,7 +26,7 @@ const getXCurrencyBalance = (
     if (isXToken(currency)) {
       return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
         if (xBalances[xChainId]) {
-          const tokenAddress = getCrossChainTokenAddress(xChainId, currency.wrapped.symbol);
+          const tokenAddress = getXTokenAddress(xChainId, currency.wrapped.symbol);
           const balance = new BigNumber(xBalances[xChainId]?.[tokenAddress ?? -1]?.toFixed() || 0);
           sum = sum.plus(balance);
         }

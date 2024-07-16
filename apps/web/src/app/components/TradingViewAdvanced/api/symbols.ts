@@ -70,8 +70,7 @@ export const getFilteredSupportedPairNames = (query: string = ''): SearchSymbolR
   const isQueried = (query: string, token: Token): boolean => {
     return (
       token.name!.toLowerCase().indexOf(query.toLowerCase()) >= 0 ||
-      token.symbol!.toLowerCase().indexOf(query.toLowerCase()) >= 0 ||
-      token.searchableTerms.toLowerCase().indexOf(query.toLowerCase()) >= 0
+      token.symbol!.toLowerCase().indexOf(query.toLowerCase()) >= 0
     );
   };
 

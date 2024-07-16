@@ -101,8 +101,16 @@
     {
       "address": "cx5b5a03cb525a1845d0af3a872d525b18a810acb0",
       "chainId": 1,
-      "name": "Binance BTC",
+      "name": "btp-0x38.bsc-BTCB",
       "symbol": "BTCB",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/btcb.png"
+    },
+    {
+      "address": "cx07b184a37f03c6ab681fcbd0b45aec6dc3eafbeb",
+      "chainId": 1,
+      "name": "Bitcoin",
+      "symbol": "BTC",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/btcb.png"
     },
@@ -201,6 +209,14 @@
       "symbol": "INJ",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/inj.png"
+    },
+    {
+      "address": "cxf0a30d09ade391d7b570908b9b46cfa5b3cbc8f8",
+      "chainId": 1,
+      "name": "HiYield Treasury Bill",
+      "symbol": "hyTB",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/hyTB.png"
     }
   ]
 }

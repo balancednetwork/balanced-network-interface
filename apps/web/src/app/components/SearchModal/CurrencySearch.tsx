@@ -25,6 +25,7 @@ import { useTokenComparator } from './sorting';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import { useBridgeDirection } from 'store/bridge/hooks';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
+import { xTokenMap } from 'app/pages/trade/bridge/_config/xTokens';
 
 export enum CurrencySelectionType {
   NORMAL,
@@ -64,6 +65,16 @@ interface CurrencySearchProps {
   xChainId: XChainId;
 }
 
+const useFilteredXTokens = () => {
+  const tokens = useAllTokens();
+
+  return useMemo(() => {
+    const allTokens = Object.values(tokens);
+    const allXTokens = Object.values(xTokenMap).flat();
+    return allXTokens.filter(x => !allTokens.some(t => t.symbol === x.symbol));
+  }, [tokens]);
+};
+
 export function CurrencySearch({
   account,
   selectedCurrency,
@@ -90,6 +101,7 @@ export function CurrencySearch({
   const [invertSearchOrder] = useState<boolean>(false);
 
   const tokens = useAllTokens();
+  const filteredXTokens = useFilteredXTokens();
   const bases = useCommonBases();
 
   const bridgeDirection = useBridgeDirection();
@@ -98,7 +110,7 @@ export function CurrencySearch({
   const allTokens: { [address: string]: Token } = useMemo(() => {
     switch (currencySelectionType) {
       case CurrencySelectionType.NORMAL:
-        return tokens;
+        return { ...tokens, ...filteredXTokens };
       case CurrencySelectionType.TRADE_MINT_BASE:
         return removebnUSD(tokens);
       case CurrencySelectionType.TRADE_MINT_QUOTE:
@@ -109,7 +121,7 @@ export function CurrencySearch({
         return xTokens || [];
       }
     }
-  }, [currencySelectionType, tokens, bases, xTokens]);
+  }, [currencySelectionType, tokens, bases, xTokens, filteredXTokens]);
 
   //select first currency from list if there is none selected for bridging
   useEffect(() => {

@@ -22,7 +22,7 @@ import { isDenomAsset } from 'app/_xcall/archway/utils';
 import { sARCH } from 'app/pages/trade/bridge/_config/tokens';
 import useWallets, { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import { getCrossChainTokenBySymbol, getXAddress } from 'app/pages/trade/bridge/utils';
+import { getXTokenBySymbol, getXAddress } from 'app/pages/trade/bridge/utils';
 import { useAssetManagerTokens } from 'app/pages/trade/bridge/_hooks/useAssetManagerTokens';
 
 export function useBridgeState(): AppState['bridge'] {
@@ -170,7 +170,7 @@ export function useDerivedBridgeInfo() {
   // get output currency
   const outputCurrency = useMemo(() => {
     if (currencyToBridge) {
-      return getCrossChainTokenBySymbol(bridgeDirection.to, currencyToBridge.symbol);
+      return getXTokenBySymbol(bridgeDirection.to, currencyToBridge.symbol);
     }
   }, [bridgeDirection.to, currencyToBridge]);
 

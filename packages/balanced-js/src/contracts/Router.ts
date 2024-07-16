@@ -23,4 +23,17 @@ export default class Router extends Contract {
 
     return this.callICONPlugins(payload);
   }
+
+  swapICXV2(value: string, rlpEncodedPath: string, minimumReceive: string, receiver?: string) {
+    const payload = this.transactionParamsBuilder({
+      method: 'routeV2',
+      value: IconConverter.toHexNumber(value),
+      params: {
+        _path: rlpEncodedPath,
+        _minReceive: IconConverter.toHexNumber(minimumReceive),
+        ...(receiver && { _receiver: receiver }),
+      },
+    });
+    return this.callICONPlugins(payload);
+  }
 }

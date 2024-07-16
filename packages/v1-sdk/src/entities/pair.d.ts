@@ -22,6 +22,7 @@ export declare class Pair {
       poolId?: number;
       totalSupply?: string;
       baseAddress?: string;
+      isStabilityFund?: boolean;
     },
   );
   /**

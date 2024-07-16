@@ -26,7 +26,6 @@ export function useAssetManagerTokens(): UseQueryResult<ResultMap> {
       // 0x38.bsc/0x2170Ed0880ac9A755fd29B2688956BD959F933F8 -> cx288d13e1b63563459a2ac6179f237711f6851cb5
       // xToken Address -> icon Token Address
       // xAddress = xChainId + '/' + address
-
       const tokensMap: { [xAddress: XAddress]: Address } = await bnJs.AssetManager.getAssets();
 
       const res = await Promise.all(

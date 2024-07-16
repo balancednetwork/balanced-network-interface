@@ -360,7 +360,6 @@ export function useInitialSwapLoad(): void {
       const newPair = `${inputCurrency}_${outputCurrency}`;
 
       if (pair !== newPair) {
-        console.log('navigating to new pair', newPair);
         navigate(`/trade/${newPair}`, { replace: true });
       }
     }

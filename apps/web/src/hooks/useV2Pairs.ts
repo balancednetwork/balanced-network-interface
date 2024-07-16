@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
@@ -10,8 +11,11 @@ import bnJs from 'bnJs';
 import { canBeQueue } from 'constants/currency';
 import { BIGINT_ZERO, FRACTION_ZERO } from 'constants/misc';
 import { getPair } from 'utils';
+import { fetchStabilityFundBalances, getAcceptedTokens } from 'store/stabilityFund/hooks';
+import { bnUSD } from 'constants/tokens';
 
 import useLastCount from './useLastCount';
+import { NETWORK_ID } from 'constants/config';
 
 const NON_EXISTENT_POOL_ID = 0;
 const MULTI_CALL_BATCH_SIZE = 25;
@@ -25,84 +29,98 @@ export enum PairState {
 
 export type PairData = [PairState, Pair | null, BigNumber | null] | [PairState, Pair | null];
 
+export const fetchStabilityFundPairs = async () => {
+  const acceptedTokens = await getAcceptedTokens();
+  const stabilityFundBalances = await fetchStabilityFundBalances(
+    acceptedTokens.filter(x => x === 'cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f'), // only USDC address
+  );
+  const stabilityFundPairs = Object.values(stabilityFundBalances).map(balance => {
+    return new Pair(balance, CurrencyAmount.fromRawAmount(bnUSD[NETWORK_ID], '1'), { isStabilityFund: true });
+  });
+  return stabilityFundPairs;
+};
+
+export const useStabilityFundPairs = () => {
+  const { data: stabilityFundPairs } = useQuery({
+    queryKey: ['stabilityFundPairs'],
+    queryFn: fetchStabilityFundPairs,
+    refetchInterval: 10_000,
+  });
+
+  return stabilityFundPairs || [];
+};
+
+const chunkArray = <T>(array: T[], chunkSize: number): T[][] => {
+  return array.reduce((resultArray: T[][], item, index) => {
+    const chunkIndex = Math.floor(index / chunkSize);
+    if (!resultArray[chunkIndex]) {
+      resultArray[chunkIndex] = [];
+    }
+    resultArray[chunkIndex].push(item);
+    return resultArray;
+  }, []);
+};
+
+export async function fetchV2Pairs(currencies: [Currency | undefined, Currency | undefined][]): Promise<PairData[]> {
+  const tokens = currencies.map(([currencyA, currencyB]) => [currencyA?.wrapped, currencyB?.wrapped]);
+
+  try {
+    const callData: CallData[] = tokens.map(([tokenA, tokenB]) => {
+      if (tokenA && tokenB && tokenA.chainId === tokenB.chainId && !tokenA.equals(tokenB)) {
+        if (canBeQueue(tokenA, tokenB)) {
+          return {
+            target: bnJs.Dex.address,
+            method: 'getPoolStats',
+            params: [`0x${BalancedJs.utils.POOL_IDS.sICXICX.toString(16)}`],
+          };
+        } else {
+          return {
+            target: bnJs.Dex.address,
+            method: 'getPoolStatsForPair',
+            params: [tokenA.address, tokenB.address],
+          };
+        }
+      } else {
+        // Useless, just a placeholder
+        return {
+          target: bnJs.Multicall.address,
+          method: 'getBlockNumber',
+          params: [],
+        };
+      }
+    });
+
+    const chunks = chunkArray(callData, MULTI_CALL_BATCH_SIZE);
+    const chunkedData = await Promise.all(chunks.map(async chunk => await bnJs.Multicall.getAggregateData(chunk)));
+    const data: any[] = chunkedData.flat();
+
+    const pairs = data.map((stats, idx): PairData => {
+      const [tokenA, tokenB] = tokens[idx];
+      if (!tokenA || !tokenB || !stats) {
+        return [PairState.NOT_EXISTS, null, null];
+      }
+      return getPair(stats, tokenA, tokenB);
+    });
+
+    return pairs;
+  } catch (err) {
+    return Array(tokens.length).fill([PairState.INVALID, null]);
+  }
+}
+
 export function useV2Pairs(currencies: [Currency | undefined, Currency | undefined][]): PairData[] {
   const tokens = useMemo(() => {
     return currencies.map(([currencyA, currencyB]) => [currencyA?.wrapped, currencyB?.wrapped]);
   }, [currencies]);
 
-  const [pairs, setPairs] = useState<PairData[]>(Array(tokens.length).fill([PairState.LOADING, null]));
+  const { data: pairs } = useQuery({
+    queryKey: ['v2Pairs', tokens],
+    queryFn: () => fetchV2Pairs(currencies),
+    enabled: tokens.length > 0,
+    refetchInterval: 10_000,
+  });
 
-  const last = useLastCount(10000);
-
-  useEffect(() => {
-    setPairs(Array(tokens.length).fill([PairState.LOADING, null]));
-  }, [tokens]);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    const fetchReserves = async () => {
-      try {
-        const cds: CallData[] = tokens.map(([tokenA, tokenB]) => {
-          if (tokenA && tokenB && tokenA.chainId === tokenB.chainId && !tokenA.equals(tokenB)) {
-            if (canBeQueue(tokenA, tokenB)) {
-              return {
-                target: bnJs.Dex.address,
-                method: 'getPoolStats',
-                params: [`0x${BalancedJs.utils.POOL_IDS.sICXICX.toString(16)}`],
-              };
-            } else {
-              return {
-                target: bnJs.Dex.address,
-                method: 'getPoolStatsForPair',
-                params: [tokenA.address, tokenB.address],
-              };
-            }
-          } else {
-            // useless, just a placeholder
-            return {
-              target: bnJs.Multicall.address,
-              method: 'getBlockNumber',
-              params: [],
-            };
-          }
-        });
-
-        const chunks = cds.reduce((resultArray, item, index) => {
-          const chunkIndex = Math.floor(index / MULTI_CALL_BATCH_SIZE);
-          if (!resultArray[chunkIndex]) {
-            //@ts-ignore
-            resultArray[chunkIndex] = [];
-          }
-          //@ts-ignore
-          resultArray[chunkIndex].push(item);
-          return resultArray;
-        }, []);
-
-        const chunkedData = await Promise.all(chunks.map(async chunk => await bnJs.Multicall.getAggregateData(chunk)));
-        const data: any[] = chunkedData.flat();
-
-        const ps = data.map((stats, idx): PairData => {
-          const [tokenA, tokenB] = tokens[idx];
-
-          if (!tokenA || !tokenB || !stats) {
-            return [PairState.NOT_EXISTS, null, null];
-          }
-
-          return getPair(stats, tokenA, tokenB);
-        });
-
-        setPairs(ps);
-      } catch (err) {
-        setPairs(Array(tokens.length).fill([PairState.INVALID, null]));
-      }
-    };
-
-    if (tokens.length > 0) {
-      fetchReserves();
-    }
-  }, [tokens, last]);
-
-  return pairs;
+  return pairs || Array(tokens.length).fill([PairState.LOADING, null]);
 }
 
 export function useV2Pair(tokenA?: Currency, tokenB?: Currency): PairData {

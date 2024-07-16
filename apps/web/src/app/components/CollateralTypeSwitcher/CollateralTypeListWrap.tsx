@@ -6,6 +6,8 @@ import useKeyPress from 'hooks/useKeyPress';
 import { isMobile } from 'react-device-detect';
 import { Trans, t } from '@lingui/macro';
 import { ChartControlButton as CollateralTabButton } from 'app/pages/trade/supply/_components/utils';
+import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { Typography } from 'app/theme';
 
 export enum CollateralTab {
   ALL = 'all',
@@ -17,6 +19,7 @@ const CollateralTypeListWrap = ({ width, setAnchor, anchor, ...rest }) => {
   const handleEscape = useKeyPress('Escape');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [collateralTab, setCollateralTab] = useState(CollateralTab.YOUR);
+  const signedInWallets = useSignedInWallets();
 
   useEffect(() => {
     if (anchor && handleEscape) {
@@ -25,7 +28,7 @@ const CollateralTypeListWrap = ({ width, setAnchor, anchor, ...rest }) => {
   }, [anchor, handleEscape, setAnchor]);
 
   return (
-    <Box p={'25px 25px 5px'} width={width}>
+    <Box p={'25px 25px 25px'} width={width}>
       <SearchInput
         type="text"
         id="collateral-search-input"
@@ -38,22 +41,29 @@ const CollateralTypeListWrap = ({ width, setAnchor, anchor, ...rest }) => {
           setSearchQuery(e.target.value);
         }}
       />
-      <Flex justifyContent="center" mt={3}>
-        <CollateralTabButton
-          $active={collateralTab === CollateralTab.YOUR}
-          mr={2}
-          onClick={() => setCollateralTab(CollateralTab.YOUR)}
-        >
-          <Trans>Your collateral</Trans>
-        </CollateralTabButton>
-        <CollateralTabButton
-          $active={collateralTab === CollateralTab.ALL}
-          onClick={() => setCollateralTab(CollateralTab.ALL)}
-        >
-          <Trans>All collateral</Trans>
-        </CollateralTabButton>
-      </Flex>
-      <CollateralTypeList setAnchor={setAnchor} collateralTab={collateralTab} />
+      {signedInWallets.length ? (
+        <Flex justifyContent="center" mt={3}>
+          <CollateralTabButton
+            $active={collateralTab === CollateralTab.YOUR}
+            mr={2}
+            onClick={() => setCollateralTab(CollateralTab.YOUR)}
+          >
+            <Trans>Your collateral</Trans>
+          </CollateralTabButton>
+          <CollateralTabButton
+            $active={collateralTab === CollateralTab.ALL}
+            onClick={() => setCollateralTab(CollateralTab.ALL)}
+          >
+            <Trans>All collateral</Trans>
+          </CollateralTabButton>
+        </Flex>
+      ) : null}
+
+      <CollateralTypeList
+        setAnchor={setAnchor}
+        query={searchQuery}
+        collateralTab={signedInWallets.length ? collateralTab : CollateralTab.ALL}
+      />
     </Box>
   );
 };

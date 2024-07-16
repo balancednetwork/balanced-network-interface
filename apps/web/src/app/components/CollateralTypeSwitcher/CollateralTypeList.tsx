@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { useMedia } from 'react-use';
 
@@ -18,13 +18,17 @@ import { CollateralTab } from './CollateralTypeListWrap';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import SingleChainItemOverview from './SingleChainItemOverview';
 import MultiChainItemOverview from './MultiChainItemOverview';
+import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { Typography } from 'app/theme';
 
 const CollateralTypeList = ({
   setAnchor,
   collateralTab,
+  query,
 }: {
   setAnchor: (anchor: HTMLElement | null) => void;
   collateralTab: CollateralTab;
+  query: string;
 }) => {
   const changeCollateralType = useCollateralChangeCollateralType();
   const setLoanNetwork = useSetLoanRecipientNetwork();
@@ -50,6 +54,24 @@ const CollateralTypeList = ({
     [changeCollateralType, setAnchor, adjust, adjustLoan, changeCollateralXChain, setLoanNetwork],
   );
 
+  const filteredPositions = useMemo(() => {
+    return allPositionsData.filter(
+      xPosition =>
+        xPosition.baseToken.symbol.toLowerCase().includes(query.toLowerCase()) ||
+        xPosition.baseToken.name?.toLowerCase().includes(query.toLowerCase()) ||
+        Object.keys(xPosition.positions).some(x => xChainMap[x].name.toLowerCase().includes(query.toLowerCase())),
+    );
+  }, [query, allPositionsData]);
+
+  const filteredCollaterals = useMemo(() => {
+    return allCollateralData?.filter(
+      xCollateral =>
+        xCollateral.baseToken.symbol.toLowerCase().includes(query.toLowerCase()) ||
+        xCollateral.baseToken.name?.toLowerCase().includes(query.toLowerCase()) ||
+        Object.keys(xCollateral.chains).some(x => xChainMap[x].name.toLowerCase().includes(query.toLowerCase())),
+    );
+  }, [query, allCollateralData]);
+
   return (
     <>
       <DashGrid marginTop={'15px'}>
@@ -69,33 +91,38 @@ const CollateralTypeList = ({
       </DashGrid>
 
       {collateralTab === CollateralTab.YOUR && (
-        <List>
-          {allPositionsData.map((xPosition, index) =>
-            xPosition.isPositionSingleChain ? (
-              <SingleChainItem
-                baseToken={xPosition.baseToken}
-                key={index}
-                networkPosition={xPosition.positions}
-                isLast={index === allPositionsData.length - 1}
-                onSelect={handleCollateralTypeChange}
-              />
-            ) : (
-              <MultiChainItem
-                key={index}
-                baseToken={xPosition.baseToken}
-                positions={xPosition.positions}
-                onSelect={handleCollateralTypeChange}
-              />
-            ),
+        <>
+          <List>
+            {filteredPositions.map((xPosition, index) =>
+              xPosition.isPositionSingleChain ? (
+                <SingleChainItem
+                  baseToken={xPosition.baseToken}
+                  key={index}
+                  networkPosition={xPosition.positions}
+                  isLast={index === filteredPositions.length - 1}
+                  onSelect={handleCollateralTypeChange}
+                />
+              ) : (
+                <MultiChainItem
+                  key={index}
+                  baseToken={xPosition.baseToken}
+                  positions={xPosition.positions}
+                  onSelect={handleCollateralTypeChange}
+                />
+              ),
+            )}
+          </List>
+          {filteredPositions.length === 0 && (
+            <Typography p="30px 0 0" textAlign="center">
+              <Trans>No positions found</Trans>
+            </Typography>
           )}
-        </List>
+        </>
       )}
 
       {collateralTab === CollateralTab.ALL && (
         <List>
-          {allCollateralData
-            //BTCB tmp filter fix
-            ?.filter(xCollateral => xCollateral.baseToken.symbol !== 'BTCB')
+          {filteredCollaterals
             ?.sort((a, b) => a.baseToken.symbol.localeCompare(b.baseToken.symbol))
             .map((xCollateral, index, { length }) => {
               return xCollateral.isCollateralSingleChain ? (

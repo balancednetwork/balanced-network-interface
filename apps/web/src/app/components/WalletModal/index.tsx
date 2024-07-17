@@ -141,7 +141,7 @@ export default function WalletModal() {
           logo: <HavahWalletIcon width="40" height="40" />,
           connect: connectToHavah,
           disconnect: wallets[XWalletType.HAVAH].disconnect,
-          description: t`Swap & transfer assets cross-chain.`,
+          description: t`Swap & transfer crypto cross-chain.`,
           keyWords: ['iconex', 'hana'],
           address: wallets[XWalletType.HAVAH].account,
         },

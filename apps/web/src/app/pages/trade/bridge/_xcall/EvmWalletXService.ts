@@ -57,6 +57,14 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
           },
         }),
       );
+    } else if (type === XTransactionType.DEPOSIT_COLLATERAL) {
+      return await this.executeDepositCollateral(xTransactionInput);
+    } else if (type === XTransactionType.WITHDRAW_COLLATERAL) {
+      return await this.executeWithdrawCollateral(xTransactionInput);
+    } else if (type === XTransactionType.BORROW) {
+      return await this.executeBorrow(xTransactionInput);
+    } else if (type === XTransactionType.REPAY) {
+      return await this.executeRepay(xTransactionInput);
     } else {
       throw new Error('Invalid XTransactionType');
     }

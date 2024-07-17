@@ -627,82 +627,106 @@ export function useDerivedCollateralInfo(): {
   };
 }
 
-export function useXCollateralDataByToken(userRelative = false): XPositionsRecord[] {
+export function useXCollateralDataByToken(): UseQueryResult<XPositionsRecord[]> {
   const depositedAmounts = useAllDepositedAmounts();
   const borrowedAmounts = useBorrowedAmounts();
   const allWallets = useAllDerivedWallets();
+  const xWallet = useCrossChainWalletBalances();
 
-  return React.useMemo(() => {
-    return Object.entries(
-      Object.entries(depositedAmounts).reduce(
-        (acc, [chainId, chainDeposits]) => {
-          if (chainDeposits) {
-            forEach(chainDeposits, (deposit, symbol) => {
-              const xToken = xTokenMap[chainId].find(token => token.symbol === symbol);
-              const account = allWallets.find(wallet => wallet.xChainId === chainId)?.address;
-              if (userRelative && !account) return;
+  return useQuery({
+    queryKey: ['xPositionsData', allWallets],
+    queryFn: async () => {
+      return Object.entries(
+        Object.entries(depositedAmounts).reduce(
+          (acc, [chainId, chainDeposits]) => {
+            if (chainDeposits) {
+              forEach(chainDeposits, (deposit, symbol) => {
+                const xToken = xTokenMap[chainId].find(token => token.symbol === symbol);
+                const account = allWallets.find(wallet => wallet.xChainId === chainId)?.address;
+                if (!account) return;
 
-              //cross-chain compatible positions
-              if (xToken) {
-                const depositAmount = CurrencyAmount.fromRawAmount(
-                  xToken,
-                  deposit.times(10 ** xToken.decimals).toFixed(0),
-                );
-                const loanAmount =
-                  userRelative &&
-                  account &&
-                  borrowedAmounts[symbol]?.[chainId === ICON_XCALL_NETWORK_ID ? account : `${chainId}/${account}`];
-
-                if (depositAmount && (depositAmount.greaterThan(0) || !userRelative)) {
-                  acc[symbol] = {
-                    ...acc[symbol],
-                    [chainId]: { collateral: depositAmount, loan: loanAmount },
-                  };
-                }
-              } else {
-                //icon only positions
-                const token = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
-                if (chainId === ICON_XCALL_NETWORK_ID && token) {
+                //cross-chain compatible positions
+                if (xToken) {
                   const depositAmount = CurrencyAmount.fromRawAmount(
-                    token,
-                    deposit.times(10 ** token.decimals).toFixed(0),
+                    xToken,
+                    deposit.times(10 ** xToken.decimals).toFixed(0),
                   );
-                  const loanAmount = account && borrowedAmounts[symbol]?.[account];
+                  const loanAmount =
+                    account &&
+                    borrowedAmounts[symbol]?.[chainId === ICON_XCALL_NETWORK_ID ? account : `${chainId}/${account}`];
 
-                  if (depositAmount && (depositAmount.greaterThan(0) || !userRelative)) {
+                  if (depositAmount && depositAmount.greaterThan(0)) {
                     acc[symbol] = {
                       ...acc[symbol],
                       [chainId]: { collateral: depositAmount, loan: loanAmount },
                     };
+                  } else {
+                    //show available collateral balance
+                    const availableAmount = xWallet[chainId]?.[xToken.address];
+                    if (availableAmount?.greaterThan(0)) {
+                      acc[symbol] = {
+                        ...acc[symbol],
+                        [chainId]: { collateral: availableAmount, loan: new BigNumber(0), isPotential: true },
+                      };
+                    }
+                  }
+                } else {
+                  //icon only positions
+                  const token = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
+                  if (chainId === ICON_XCALL_NETWORK_ID && token) {
+                    const depositAmount = CurrencyAmount.fromRawAmount(
+                      token,
+                      deposit.times(10 ** token.decimals).toFixed(0),
+                    );
+                    const loanAmount = account && borrowedAmounts[symbol]?.[account];
+
+                    if (depositAmount && depositAmount.greaterThan(0)) {
+                      acc[symbol] = {
+                        ...acc[symbol],
+                        [chainId]: { collateral: depositAmount, loan: loanAmount },
+                      };
+                    } else {
+                      //show available collateral balance
+                      const availableAmount = xWallet[chainId]?.[token.address];
+                      if (availableAmount?.greaterThan(0)) {
+                        acc[symbol] = {
+                          ...acc[symbol],
+                          [chainId]: { collateral: availableAmount, loan: new BigNumber(0), isPotential: true },
+                        };
+                      }
+                    }
                   }
                 }
-              }
-            });
-          }
-          return acc;
-        },
-        {} as { [AssetSymbol in string]: Partial<{ [key in XChainId]: Position }> },
-      ),
-    )
-      .map(([symbol, positions]) => {
-        const baseToken = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
+              });
+            }
+            return acc;
+          },
+          {} as { [AssetSymbol in string]: Partial<{ [key in XChainId]: Position }> },
+        ),
+      )
+        .map(([symbol, positions]) => {
+          const baseToken = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
 
-        if (baseToken === undefined) return;
+          if (baseToken === undefined) return;
 
-        return {
-          baseToken,
-          positions,
-          isPositionSingleChain: Object.keys(positions).length === 1,
-        };
-      })
-      .filter(
-        (
-          item,
-        ): item is {
-          baseToken: Token;
-          positions: Partial<{ [key in XChainId]: Position }>;
-          isPositionSingleChain: boolean;
-        } => Boolean(item),
-      );
-  }, [depositedAmounts, borrowedAmounts, allWallets.find, userRelative]);
+          return {
+            baseToken,
+            positions,
+            isPositionSingleChain: Object.keys(positions).length === 1,
+          };
+        })
+        .filter(
+          (
+            item,
+          ): item is {
+            baseToken: Token;
+            positions: Partial<{ [key in XChainId]: Position }>;
+            isPositionSingleChain: boolean;
+          } => Boolean(item),
+        );
+    },
+    enabled: allWallets?.length > 0,
+    placeholderData: keepPreviousData,
+    refetchInterval: 4000,
+  });
 }

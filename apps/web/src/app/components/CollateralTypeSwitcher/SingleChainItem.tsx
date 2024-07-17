@@ -1,5 +1,5 @@
 import React from 'react';
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { Token } from '@balancednetwork/sdk-core';
 import { Typography } from 'app/theme';
 import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import { Position, XChainId, XToken } from 'app/pages/trade/bridge/types';
@@ -9,8 +9,8 @@ import CurrencyLogoWithNetwork from '../Wallet/CurrencyLogoWithNetwork';
 import { AssetSymbol, BalanceAndValueWrap, DataText } from '../Wallet/styledComponents';
 import { StyledListItem } from './MultiChainItem';
 import { toFraction } from 'utils';
-import { useCrossChainWalletBalances } from 'store/wallet/hooks';
 import { useOraclePrices } from 'store/oracle/hooks';
+import { t } from '@lingui/macro';
 
 type SingleChainItemProps = {
   baseToken: Token;
@@ -28,9 +28,8 @@ const SingleChainItem = ({
   isNested = false,
 }: SingleChainItemProps) => {
   const prices = useOraclePrices();
-  const xWallet = useCrossChainWalletBalances();
   const [xChainId, position] = Object.entries(networkPosition)[0];
-  const { collateral, loan } = position;
+  const { collateral, loan, isPotential } = position;
   const { currency } = collateral || {};
   const { symbol } = currency || {};
   const theme = useTheme();
@@ -39,13 +38,6 @@ const SingleChainItem = ({
     if (!prices || (symbol && !prices[symbol])) return;
     return toFraction(prices[symbol!]);
   }, [prices, symbol]);
-
-  const availableAmount: CurrencyAmount<Currency> | undefined = React.useMemo(() => {
-    if (!price || !collateral || !currency) return;
-    if (collateral.greaterThan(0)) return;
-    if (!xWallet[xChainId] || !xWallet[xChainId][currency.wrapped.address]) return;
-    return xWallet[xChainId][currency.wrapped.address].multiply(price);
-  }, [price, collateral, xWallet, xChainId, currency]);
 
   return (
     <>
@@ -63,22 +55,16 @@ const SingleChainItem = ({
         </AssetSymbol>
         <BalanceAndValueWrap>
           {collateral && collateral.greaterThan(0) && (
-            <DataText as="div">
+            <DataText as="div" $fSize={isPotential ? '12px' : '14px'} style={{ opacity: isPotential ? 0.75 : 1 }}>
               {price && '$'}
               {collateral
                 ?.multiply(price || 1)
                 .toFixed(price ? 2 : HIGH_PRICE_ASSET_DP[baseToken.address] || 2, { groupSeparator: ',' })}
-            </DataText>
-          )}
-          {availableAmount && (
-            <DataText as="div">
-              <Typography variant="span" fontSize={12} color="text2" display="block">
-                {`$${availableAmount.toFixed(2, { groupSeparator: ',' })} available`}
-              </Typography>
+              {isPotential && ' ' + t`available`}
             </DataText>
           )}
 
-          {!collateral?.greaterThan(0) && !availableAmount && <DataText as="div">-</DataText>}
+          {!collateral?.greaterThan(0) && <DataText as="div">-</DataText>}
 
           <DataText as="div">{!loan || loan.isEqualTo(0) ? '-' : `$${loan.toFormat(2)}`}</DataText>
         </BalanceAndValueWrap>

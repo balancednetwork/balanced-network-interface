@@ -15,6 +15,7 @@ type MultiChainItemProps = {
 
 export const StyledListItem = styled(ListItem)`
   transition: color ease 0.3s;
+  align-items: baseline;
   
   &:hover {
     color: ${({ theme }) => theme.colors.primaryBright};

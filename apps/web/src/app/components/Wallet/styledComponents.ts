@@ -64,8 +64,8 @@ export const DashGrid = styled(Box)`
   }
 `;
 
-export const DataText = styled(Typography)`
-  font-size: 14px;
+export const DataText = styled(Typography)<{ $fSize?: string }>`
+  font-size: ${({ $fSize }) => $fSize || '14px'};
 `;
 
 export const BalanceAndValueWrap = styled.div`

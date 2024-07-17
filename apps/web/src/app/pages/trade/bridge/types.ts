@@ -193,6 +193,7 @@ export type XWalletAssetRecord = {
 export type Position = {
   collateral: CurrencyAmount<Currency> | undefined;
   loan: BigNumber;
+  isPotential?: boolean;
 };
 
 export type XPositionsRecord = {

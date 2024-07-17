@@ -37,7 +37,7 @@ const CollateralTypeList = ({
   const { onAdjust: adjustLoan } = useLoanActionHandlers();
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
 
-  const allPositionsData = useXCollateralDataByToken(true);
+  const { data: allPositionsData } = useXCollateralDataByToken();
   const { data: allCollateralData } = useAllCollateralData();
 
   const handleCollateralTypeChange = useCallback(
@@ -55,11 +55,13 @@ const CollateralTypeList = ({
   );
 
   const filteredPositions = useMemo(() => {
-    return allPositionsData.filter(
-      xPosition =>
-        xPosition.baseToken.symbol.toLowerCase().includes(query.toLowerCase()) ||
-        xPosition.baseToken.name?.toLowerCase().includes(query.toLowerCase()) ||
-        Object.keys(xPosition.positions).some(x => xChainMap[x].name.toLowerCase().includes(query.toLowerCase())),
+    return (
+      allPositionsData?.filter(
+        xPosition =>
+          xPosition.baseToken.symbol.toLowerCase().includes(query.toLowerCase()) ||
+          xPosition.baseToken.name?.toLowerCase().includes(query.toLowerCase()) ||
+          Object.keys(xPosition.positions).some(x => xChainMap[x].name.toLowerCase().includes(query.toLowerCase())),
+      ) || []
     );
   }, [query, allPositionsData]);
 

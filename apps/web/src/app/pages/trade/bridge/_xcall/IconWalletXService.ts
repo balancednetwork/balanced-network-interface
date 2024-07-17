@@ -5,9 +5,9 @@ import { Percent } from '@balancednetwork/sdk-core';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 import { toDec } from 'utils';
 import { NETWORK_ID } from 'constants/config';
-
+import { getRlpEncodedSwapData } from 'app/pages/trade/bridge/utils';
 import { XChainId } from 'app/pages/trade/bridge/types';
-import { XTransactionInput } from '../_zustand/types';
+import { XTransactionInput, XTransactionType } from '../_zustand/types';
 import { IWalletXService } from './types';
 import { IconPublicXService } from './IconPublicXService';
 
@@ -25,7 +25,7 @@ export class IconWalletXService extends IconPublicXService implements IWalletXSe
 
   async approve(token, owner, spender, currencyAmountToApprove) {}
 
-  async executeTransfer(xTransactionInput: XTransactionInput) {
+  async _executeBridge(xTransactionInput: XTransactionInput) {
     const {
       direction,
       inputAmount,
@@ -70,7 +70,7 @@ export class IconWalletXService extends IconPublicXService implements IWalletXSe
     }
   }
 
-  async executeSwap(xTransactionInput: XTransactionInput) {
+  async _executeSwap(xTransactionInput: XTransactionInput) {
     const { executionTrade, account, direction, recipient, slippageTolerance } = xTransactionInput;
 
     if (!executionTrade || !slippageTolerance) {
@@ -87,11 +87,13 @@ export class IconWalletXService extends IconPublicXService implements IWalletXSe
 
     let txResult;
     if (executionTrade.inputAmount.currency.symbol === 'ICX') {
+      const rlpEncodedData = getRlpEncodedSwapData(executionTrade).toString('hex');
+
       txResult = await bnJs
         .inject({ account })
-        .Router.swapICX(
+        .Router.swapICXV2(
           toDec(executionTrade.inputAmount),
-          executionTrade.route.pathForSwap,
+          rlpEncodedData,
           NETWORK_ID === 1 ? toDec(minReceived) : '0x0',
           receiver,
         );
@@ -101,13 +103,9 @@ export class IconWalletXService extends IconPublicXService implements IWalletXSe
 
       const cx = bnJs.inject({ account }).getContract(inputToken.address);
 
-      txResult = await cx.swapUsingRoute(
-        toDec(executionTrade.inputAmount),
-        outputToken.address,
-        toDec(minReceived),
-        executionTrade.route.pathForSwap,
-        receiver,
-      );
+      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived).toString('hex');
+
+      txResult = await cx.swapUsingRouteV2(toDec(executionTrade.inputAmount), rlpEncodedData);
     }
 
     const { result: hash } = txResult || {};
@@ -116,23 +114,19 @@ export class IconWalletXService extends IconPublicXService implements IWalletXSe
     }
   }
 
-  async executeDepositCollateral(xTransactionInput: XTransactionInput) {
-    console.error('executeDepositCollateral ICON not implemented');
-    return Promise.resolve('');
-  }
+  async executeTransaction(xTransactionInput: XTransactionInput) {
+    const { type } = xTransactionInput;
 
-  async executeWithdrawCollateral(xTransactionInput: XTransactionInput) {
-    console.error('executeWithdrawCollateral ICON not implemented');
-    return Promise.resolve('');
-  }
+    if (!this.walletClient) {
+      throw new Error('Wallet client not found');
+    }
 
-  async executeBorrow(xTransactionInput: XTransactionInput) {
-    console.error('executeBorrow ICON not implemented');
-    return Promise.resolve('');
-  }
-
-  async executeRepay(xTransactionInput: XTransactionInput) {
-    console.error('executeRepay ICON not implemented');
-    return Promise.resolve('');
+    if (type === XTransactionType.SWAP) {
+      return this._executeSwap(xTransactionInput);
+    } else if (type === XTransactionType.BRIDGE) {
+      return this._executeBridge(xTransactionInput);
+    } else {
+      throw new Error('Invalid XTransactionType');
+    }
   }
 }

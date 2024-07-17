@@ -49,13 +49,15 @@ export const useContractMethodsDataQuery = (
   });
 };
 
-export function useAllTokens() {
-  const MIN_MARKETCAP_TO_INCLUDE = 5000;
+const MIN_MARKETCAP_TO_INCLUDE = 5000;
 
+export function useAllTokens() {
   return useQuery({
     queryKey: [`allTokens`],
     queryFn: async () => {
-      const response = await axios.get(`${API_ENDPOINT}/tokens`);
+      const response = await axios.get<{ chain_id: number; total_supply: number; price: number; market_cap: number }[]>(
+        `${API_ENDPOINT}/tokens`,
+      );
 
       if (response.status === 200) {
         return response.data
@@ -76,7 +78,7 @@ export function useAllTokensByAddress() {
   return useQuery({
     queryKey: [`allTokensByAddress`],
     queryFn: () => {
-      return allTokens.reduce((tokens, item) => {
+      return allTokens?.reduce((tokens, item) => {
         tokens[item['address']] = item;
         return tokens;
       }, {});
@@ -249,10 +251,12 @@ export function useTokenPrices() {
   return useQuery<{ [key in string]: BigNumber }>({
     queryKey: [`tokenPrices`, allTokens],
     queryFn: () => {
-      return allTokens.reduce((tokens, item) => {
-        tokens[item['symbol']] = new BigNumber(item.price);
-        return tokens;
-      }, {});
+      return (
+        allTokens?.reduce((tokens, item) => {
+          tokens[item['symbol']] = new BigNumber(item.price);
+          return tokens;
+        }, {}) || {}
+      );
     },
     placeholderData: keepPreviousData,
     enabled: allTokensSuccess,

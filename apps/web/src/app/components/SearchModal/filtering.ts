@@ -35,12 +35,7 @@ export function createTokenFilterFunction<T extends Token | TokenInfo>(search: s
     return lowerSearchParts.every(p => p.length === 0 || sParts.some(sp => sp.indexOf(p) >= 0));
   };
 
-  // consider whether the searchableTerms is useful
-  return ({ name, symbol /*searchableTerms*/ }: T): boolean =>
-    Boolean(
-      (symbol && matchesSearch(symbol)) || (name && matchesSearch(name)),
-      // (searchableTerms && matchesSearch(searchableTerms)),
-    );
+  return ({ name, symbol }: T): boolean => Boolean((symbol && matchesSearch(symbol)) || (name && matchesSearch(name)));
 }
 
 export function filterTokens<T extends Token | TokenInfo>(tokens: T[], search: string): T[] {

@@ -159,6 +159,7 @@ export interface MessagingProtocol {
 
 export class XToken extends Token {
   xChainId: XChainId;
+  identifier: string;
 
   public constructor(
     xChainId: XChainId,
@@ -167,25 +168,15 @@ export class XToken extends Token {
     decimals: number,
     symbol: string,
     name?: string,
-    searchableTerms?: string,
+    identifier?: string,
   ) {
-    super(chainId, address, decimals, symbol, name, searchableTerms);
+    super(chainId, address, decimals, symbol, name);
     this.xChainId = xChainId;
-    // super(chainId, decimals, symbol, name);
-    // this.address = validateAndParseAddress(address);
-    // this.searchableTerms = searchableTerms || '';
+    this.identifier = identifier || symbol;
   }
 
   static getXToken(xChainId: XChainId, token: Token) {
-    return new XToken(
-      xChainId,
-      token.chainId,
-      token.address,
-      token.decimals,
-      token.symbol,
-      token.name,
-      token.searchableTerms,
-    );
+    return new XToken(xChainId, token.chainId, token.address, token.decimals, token.symbol, token.name);
   }
 }
 

@@ -83,12 +83,7 @@ export abstract class AbstractPublicXService implements IPublicXService {
 export interface IWalletXService extends IPublicXService {
   // getAllowance(token: XToken, owner: string | null, spender: string): Promise<string>;
   approve(token, owner, spender, currencyAmountToApprove);
-  executeTransfer(xTransactionInput: XTransactionInput): Promise<string | undefined>;
-  executeSwap(xTransactionInput: XTransactionInput): Promise<string | undefined>;
-  executeDepositCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined>;
-  executeWithdrawCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined>;
-  executeBorrow(xTransactionInput: XTransactionInput): Promise<string | undefined>;
-  executeRepay(xTransactionInput: XTransactionInput): Promise<string | undefined>;
+  executeTransaction(xTransactionInput: XTransactionInput): Promise<string | undefined>;
 }
 
 export type XWallet = {

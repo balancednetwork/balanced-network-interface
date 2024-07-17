@@ -5,24 +5,21 @@ import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
-import { isMobile } from 'react-device-detect';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import { UnderlineText, UnderlineTextWithArrow } from 'app/components/DropdownText';
-import Popover, { DropdownPopper } from 'app/components/Popover';
+import { DropdownPopper } from 'app/components/Popover';
 import { Typography } from 'app/theme';
 import FlipIcon from 'assets/icons/flip.svg';
 import { SLIPPAGE_WARNING_THRESHOLD } from 'constants/misc';
 import { useSwapSlippageTolerance, useWalletModalToggle } from 'store/application/hooks';
-import { useCAMemo, useIsSwapEligible, useMaxSwapSize } from 'store/stabilityFund/hooks';
 import { Field } from 'store/swap/reducer';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
 import { formatPercent, maxAmountSpend } from 'utils';
 
-import StabilityFund from 'app/components/StabilityFund';
 import { BrightPanel } from 'app/pages/trade/supply/_components/utils';
 import { isXToken } from 'app/pages/trade/bridge/utils';
 
@@ -32,8 +29,6 @@ import { MODAL_ID, modalActions } from '../../bridge/_zustand/useModalStore';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import { useAvailableWallets } from '../../bridge/_hooks/useWallets';
 import { xChainMap } from '../../bridge/_config/xChains';
-
-const MemoizedStabilityFund = React.memo(StabilityFund);
 
 export default function SwapPanel() {
   useInitialSwapLoad();
@@ -50,19 +45,7 @@ export default function SwapPanel() {
     maximumBridgeAmount,
     canBridge,
   } = useDerivedSwapInfo();
-  const memoizedInputAmount = useCAMemo(trade?.inputAmount);
-  const memoizedOutputAmount = useCAMemo(trade?.outputAmount);
-  const isSwapEligibleForStabilityFund = useIsSwapEligible(
-    currencies.INPUT?.wrapped.address,
-    currencies.OUTPUT?.wrapped.address,
-  );
-  const fundMaxSwap = useMaxSwapSize(memoizedInputAmount, memoizedOutputAmount);
   const showSlippageWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
-  const showFundOption =
-    isSwapEligibleForStabilityFund &&
-    fundMaxSwap?.greaterThan(0) &&
-    direction.from === '0x1.icon' &&
-    direction.to === '0x1.icon';
 
   const signedInWallets = useAvailableWallets();
   const { recipient } = useSwapState();
@@ -315,27 +298,7 @@ export default function SwapPanel() {
           </Flex>
 
           <Flex justifyContent="center" mt={4}>
-            {showFundOption ? (
-              <Popover
-                content={
-                  <MemoizedStabilityFund
-                    clearSwapInputOutput={clearSwapInputOutput}
-                    setInput={handleTypeInput}
-                    inputAmount={memoizedInputAmount}
-                    outputAmount={memoizedOutputAmount}
-                  />
-                }
-                show={true}
-                placement="bottom"
-                fallbackPlacements={isMobile ? [] : ['right-start', 'top']}
-                zIndex={10}
-                strategy="absolute"
-              >
-                {swapButton}
-              </Popover>
-            ) : (
-              swapButton
-            )}
+            {swapButton}
           </Flex>
 
           {!canBridge && (
@@ -343,9 +306,7 @@ export default function SwapPanel() {
               <Typography textAlign="center">
                 {maximumBridgeAmount?.greaterThan(0) && (
                   <>
-                    <Typography>
-                      <Trans>Only</Trans>
-                    </Typography>{' '}
+                    <Trans>Only</Trans>{' '}
                   </>
                 )}
                 <UnderlineText onClick={handleMaximumBridgeAmountClick}>

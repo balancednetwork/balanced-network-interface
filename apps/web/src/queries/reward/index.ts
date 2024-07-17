@@ -13,7 +13,7 @@ import {
   ORACLE_PRICED_TOKENS,
   SUPPORTED_TOKENS_MAP_BY_ADDRESS,
 } from 'constants/tokens';
-import { useAllTokens } from 'queries/backendv2';
+import { useTokenPrices } from 'queries/backendv2';
 import QUERY_KEYS from 'queries/queryKeys';
 import { useBlockNumber } from 'store/application/hooks';
 import { useOraclePrices } from 'store/oracle/hooks';
@@ -83,35 +83,26 @@ export const useLPReward = () => {
   });
 };
 
-export const useRatesQuery = () => {
-  const { data: allTokens, isSuccess: allTokensSuccess } = useAllTokens();
-
-  return useQuery<{ [key in string]: BigNumber }>({
-    queryKey: [`tokenPrices`, allTokens],
-    queryFn: () => {
-      return allTokens.reduce((tokens, item) => {
-        tokens[item['symbol']] = new BigNumber(item.price);
-        return tokens;
-      }, {});
-    },
-    placeholderData: keepPreviousData,
-    enabled: allTokensSuccess,
-  });
-};
-
+// combine rates api data & oracle data
 export const useRatesWithOracle = () => {
-  const { data: rates } = useRatesQuery();
+  const { data: rates } = useTokenPrices();
   const oraclePrices = useOraclePrices();
 
   return useMemo(() => {
-    const updatedRates = { ...rates };
-    oraclePrices &&
-      Object.keys(oraclePrices).forEach(token => {
-        if (!updatedRates[token] || ORACLE_PRICED_TOKENS.includes(token)) {
-          updatedRates[token] = oraclePrices[token];
-        }
-      });
-    if (oraclePrices) return updatedRates;
+    if (!rates || !oraclePrices) return;
+
+    const combinedRates = { ...rates };
+
+    Object.keys(oraclePrices).forEach(token => {
+      if (!combinedRates[token] || ORACLE_PRICED_TOKENS.includes(token)) {
+        combinedRates[token] = oraclePrices[token];
+      }
+    });
+
+    // add WBTC price
+    combinedRates['WBTC'] = combinedRates['BTC'];
+
+    return combinedRates;
   }, [rates, oraclePrices]);
 };
 

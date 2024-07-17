@@ -4,6 +4,11 @@ import { Currency, Price, Token } from '@balancednetwork/sdk-core';
 
 import { Pair } from './pair';
 
+export type RouteAction = {
+  type: number;
+  address: string | null;
+};
+
 export class Route<TInput extends Currency, TOutput extends Currency> {
   public readonly pairs: Pair[];
   public readonly path: Token[];
@@ -45,12 +50,36 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
     const prices: Price<Currency, Currency>[] = [];
     /* @ts-ignore */
     for (const [i, pair] of this.pairs.entries()) {
-      prices.push(
-        this.path[i].equals(pair.token0)
-          ? new Price(pair.reserve0.currency, pair.reserve1.currency, pair.reserve0.quotient, pair.reserve1.quotient)
-          : new Price(pair.reserve1.currency, pair.reserve0.currency, pair.reserve1.quotient, pair.reserve0.quotient),
-      );
+      if (pair.isStabilityFund) {
+        let price;
+        // pair.token1 is always bnUSD
+        if (this.path[i].symbol === 'bnUSD') {
+          // bnUSD -> USDC
+          price = new Price(
+            pair.token1,
+            pair.token0,
+            10n ** BigInt(pair.token1.decimals),
+            10n ** BigInt(pair.token0.decimals),
+          );
+        } else {
+          // USDC -> bnUSD
+          price = new Price(
+            pair.token0,
+            pair.token1,
+            10n ** BigInt(pair.token0.decimals),
+            10n ** BigInt(pair.token1.decimals),
+          );
+        }
+        prices.push(price);
+      } else {
+        prices.push(
+          this.path[i].equals(pair.token0)
+            ? new Price(pair.reserve0.currency, pair.reserve1.currency, pair.reserve0.quotient, pair.reserve1.quotient)
+            : new Price(pair.reserve1.currency, pair.reserve0.currency, pair.reserve1.quotient, pair.reserve0.quotient),
+        );
+      }
     }
+
     const reduced = prices
       .slice(1)
       .reduce((accumulator, currentValue) => accumulator.multiply(currentValue), prices[0]);
@@ -74,5 +103,14 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
       })
       .slice(1)
       .flat();
+  }
+
+  public get routeActionPath(): RouteAction[] {
+    const path: RouteAction[] = [];
+    for (let i = 0; i < this.pairs.length; i++) {
+      const pair: Pair = this.pairs[i];
+      path.push({ type: pair.isStabilityFund ? 2 : 1, address: this.pathForSwap[i] });
+    }
+    return path;
   }
 }

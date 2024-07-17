@@ -70,12 +70,15 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
   const { xCallFee, formattedXCallFee } = useXCallFee(direction.from, direction.to);
 
   const xChain = xChainMap[direction.from];
+
+  // convert executionTrade.inputAmount in currencies[Field.INPUT]
   const _inputAmount = useMemo(() => {
     return executionTrade?.inputAmount && currencies[Field.INPUT]
-      ? CurrencyAmount.fromFractionalAmount(
+      ? CurrencyAmount.fromRawAmount(
           XToken.getXToken(direction.from, currencies[Field.INPUT].wrapped),
-          executionTrade.inputAmount.numerator,
-          executionTrade.inputAmount.denominator,
+          new BigNumber(executionTrade.inputAmount.toFixed())
+            .times((10n ** BigInt(currencies[Field.INPUT].decimals)).toString())
+            .toFixed(0),
         )
       : undefined;
   }, [executionTrade, direction.from, currencies]);

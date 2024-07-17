@@ -11,7 +11,6 @@ import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import useInterval from 'hooks/useInterval';
 import { BalanceData } from 'hooks/useV2Pairs';
 import { PairData, useTokenPrices } from 'queries/backendv2';
-import { useRatesQuery } from 'queries/reward';
 import { useBlockDetails } from 'store/application/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { formatUnits } from 'utils';
@@ -356,7 +355,7 @@ export const usePastMonthFeesDistributed = () => {
   const fiveMinPeriod = 1000 * 300;
   const now = Math.floor(new Date().getTime() / fiveMinPeriod) * fiveMinPeriod;
   const { data: blockThen } = useBlockDetails(new Date(now).setDate(new Date().getDate() - 30));
-  const { data: rates } = useRatesQuery();
+  const { data: rates } = useTokenPrices();
 
   return useQuery({
     queryKey: [`PastMonthFeesDistributed`, blockThen && blockThen.number, rates && Object.keys(rates).length],

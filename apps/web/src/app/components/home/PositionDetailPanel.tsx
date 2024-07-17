@@ -21,7 +21,6 @@ import { Typography } from 'app/theme';
 import QuestionIcon from 'assets/icons/question.svg';
 import { useActiveLocale } from 'hooks/useActiveLocale';
 import { useRebalancingDataQuery_DEPRECATED, Period } from 'queries/rebalancing';
-import { useRatesQuery } from 'queries/reward';
 import { useCollateralInputAmountInUSD, useCollateralType, useIsHandlingICX } from 'store/collateral/hooks';
 import {
   useLoanInputAmount,
@@ -39,6 +38,7 @@ import { InterestPeriod } from 'types';
 import { formatBigNumber, getAccumulatedInterest } from 'utils';
 import { DropdownPopper } from 'app/components/Popover';
 import Skeleton from 'app/components/Skeleton';
+import { useTokenPrices } from 'queries/backendv2';
 
 const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
 
@@ -58,7 +58,7 @@ const INTEREST_PERIODS: { [key: string]: InterestPeriod } = {
 
 const PositionDetailPanel = () => {
   const oraclePrice = useOraclePrice();
-  const { data: rates } = useRatesQuery();
+  const { data: rates } = useTokenPrices();
   const collateralType = useCollateralType();
   const locale = useActiveLocale();
   const { data: interestRate } = useInterestRate(collateralType);

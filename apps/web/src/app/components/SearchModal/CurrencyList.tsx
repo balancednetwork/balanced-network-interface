@@ -98,8 +98,14 @@ function CurrencyRow({
       <>
         <Flex alignItems={'center'}>
           <CurrencyLogo currency={currency} style={{ marginRight: '15px' }} />
-          <DataText variant="p" fontWeight="bold">
-            {currency?.symbol}
+          <Flex flexDirection="column">
+            <Flex flexDirection="row">
+              <DataText variant="p" fontWeight="bold">
+                {currency?.symbol}
+              </DataText>
+              {currency?.symbol === 'BTCB' && <DataText style={{ marginLeft: '4px' }}>{`(old)`}</DataText>}
+            </Flex>
+
             <Typography variant="span" fontSize={14} fontWeight={400} color="text2" display="block">
               {rateFracs &&
                 rateFracs[currency.symbol!] &&
@@ -107,7 +113,7 @@ function CurrencyRow({
                   groupSeparator: ',',
                 })}`}
             </Typography>
-          </DataText>
+          </Flex>
         </Flex>
         <Flex justifyContent="flex-end" alignItems="center">
           <DataText variant="p" textAlign="right">
@@ -143,6 +149,7 @@ function CurrencyRow({
           <DataText variant="p" fontWeight="bold">
             {currency?.symbol}
           </DataText>
+          {currency?.symbol === 'BTCB' && <DataText style={{ marginLeft: '4px' }}>{`(old)`}</DataText>}
         </Flex>
         <Flex justifyContent="flex-end" alignItems="center">
           <DataText variant="p" textAlign="right">

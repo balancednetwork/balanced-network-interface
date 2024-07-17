@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 import useAllowanceHandler from 'app/pages/trade/bridge/_hooks/useApproveCallback';
 import { XChainId } from 'app/pages/trade/bridge/types';
-import { getCrossChainTokenBySymbol } from 'app/pages/trade/bridge/utils';
+import { getXTokenBySymbol } from 'app/pages/trade/bridge/utils';
 import { Button, TextButton } from 'app/components/Button';
 import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
@@ -66,7 +66,7 @@ export default function SupplyLiquidityModal({
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const { isTxPending } = useArchwayTransactionsState();
   const { increaseAllowance: increaseAllowanceA, isIncreaseNeeded: allowanceIncreaseNeededA } = useAllowanceHandler(
-    AChain === 'archway-1' ? getCrossChainTokenBySymbol('archway-1', currencies[Field.CURRENCY_A]?.symbol) : undefined,
+    AChain === 'archway-1' ? getXTokenBySymbol('archway-1', currencies[Field.CURRENCY_A]?.symbol) : undefined,
     parsedAmounts[Field.CURRENCY_A]?.quotient.toString() || '0',
   );
 

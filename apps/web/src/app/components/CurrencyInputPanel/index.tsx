@@ -195,6 +195,7 @@ export default function CurrencyInputPanel({
                 <>
                   <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
                   <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName>
+                  {currency.symbol === 'BTCB' && <div style={{ marginLeft: 5, marginRight: 5 }}>(old)</div>}
                 </>
               ) : (
                 <StyledTokenName>Choose a token</StyledTokenName>

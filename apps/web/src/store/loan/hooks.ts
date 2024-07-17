@@ -41,8 +41,8 @@ import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { bnUSD } from 'constants/tokens';
-import { getCrossChainTokenAddress } from 'app/pages/trade/bridge/utils';
 import { useDestinationEvents } from 'app/pages/trade/bridge/_zustand/useXCallEventStore';
+import { getXTokenAddress } from 'app/pages/trade/bridge/utils';
 
 export function useLoanBorrowedAmount(address?: string): BigNumber {
   const borrowedAmounts = useBorrowedAmounts();
@@ -366,7 +366,7 @@ export function useLoanUsedAmount(address?: string): BigNumber {
   const balances = xBalances[loanNetwork];
 
   return React.useMemo(() => {
-    const xBnUSDAddress = getCrossChainTokenAddress(loanNetwork, 'bnUSD');
+    const xBnUSDAddress = getXTokenAddress(loanNetwork, 'bnUSD');
 
     if (!balances || !address || !xBnUSDAddress) return ZERO;
 

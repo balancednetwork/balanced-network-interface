@@ -4,7 +4,6 @@ import React from 'react';
 import CurrencyLogo from '../CurrencyLogo';
 import { Typography } from 'app/theme';
 import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, DataText, ListItem } from '../Wallet/styledComponents';
-import styled from 'styled-components';
 import SingleChainItemOverview from './SingleChainItemOverview';
 import { StyledListItem } from './MultiChainItem';
 import { toFraction } from 'utils';

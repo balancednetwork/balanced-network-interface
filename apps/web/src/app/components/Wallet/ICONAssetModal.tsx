@@ -26,14 +26,6 @@ import { useTheme } from 'styled-components';
 import { Typography } from 'app/theme';
 import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 
-type ICONAssetModalProps = {
-  isOpen: boolean;
-  close: () => void;
-  token: Currency;
-  balance: BigNumber;
-  value?: BigNumber;
-};
-
 const WalletUIs = {
   ICX: ICXWallet,
   sICX: SICXWallet,

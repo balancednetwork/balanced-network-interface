@@ -695,14 +695,6 @@ export function useXCollateralDataByToken(userRelative = false): XPositionsRecor
           isPositionSingleChain: Object.keys(positions).length === 1,
         };
       })
-      .filter(
-        (
-          item,
-        ): item is {
-          baseToken: Token;
-          positions: Partial<{ [key in XChainId]: Position }>;
-          isPositionSingleChain: boolean;
-        } => Boolean(item),
-      );
+      .filter((item): item is XPositionsRecord => Boolean(item));
   }, [depositedAmounts, borrowedAmounts, allWallets.find, userRelative]);
 }

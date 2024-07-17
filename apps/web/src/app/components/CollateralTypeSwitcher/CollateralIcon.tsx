@@ -2,10 +2,9 @@ import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import CurrencyLogo from '../CurrencyLogo';
 import React from 'react';
 import styled from 'styled-components';
-import { Box } from 'rebass';
 
 const Wrap = styled.span`
-display: inline-block;
+  display: inline-block;
   position: relative;
   margin-right: 5px;
   transform: translateY(-2px);

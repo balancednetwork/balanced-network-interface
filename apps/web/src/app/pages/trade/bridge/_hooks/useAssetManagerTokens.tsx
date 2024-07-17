@@ -27,6 +27,7 @@ export function useAssetManagerTokens(): UseQueryResult<ResultMap> {
       // xToken Address -> icon Token Address
       // xAddress = xChainId + '/' + address
       const tokensMap: { [xAddress: XAddress]: Address } = await bnJs.AssetManager.getAssets();
+
       const res = await Promise.all(
         Object.keys(tokensMap).map(async xAddress => {
           const amount: string = await bnJs.AssetManager.getAssetDeposit(xAddress);
@@ -34,6 +35,7 @@ export function useAssetManagerTokens(): UseQueryResult<ResultMap> {
           return [amount, limit];
         }),
       );
+
       const result: ResultMap = {};
 
       Object.keys(tokensMap).forEach((xAddress: XAddress, index) => {

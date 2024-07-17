@@ -3,7 +3,7 @@ import rlp from 'rlp';
 import { XChainId, XCallEventType, XChain, XToken } from './types';
 import { xChainMap, xChains } from './_config/xChains';
 import { xTokenMap } from './_config/xTokens';
-import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, TradeType, Token } from '@balancednetwork/sdk-core';
 import { NATIVE_ADDRESS } from 'constants/index';
 import { uintToBytes } from 'utils';
 import { Trade } from '@balancednetwork/v1-sdk';
@@ -79,16 +79,24 @@ export const getNetworkDisplayName = (chain: XChainId) => {
   return xChainMap[chain].name;
 };
 
-export const getCrossChainTokenAddress = (chain: XChainId, tokenSymbol?: string): string | undefined => {
+export const getXTokenAddress = (chain: XChainId, tokenSymbol?: string): string | undefined => {
   if (!tokenSymbol) return;
 
   return xTokenMap[chain].find(t => t.symbol === tokenSymbol)?.address;
 };
 
-export const getCrossChainTokenBySymbol = (chain: XChainId, symbol?: string) => {
+export const getXTokenBySymbol = (xChainId: XChainId, symbol?: string) => {
   if (!symbol) return;
 
-  return Object.values(xTokenMap[chain]).find(t => t.symbol === symbol);
+  return Object.values(xTokenMap[xChainId]).find(t => t.symbol === symbol);
+};
+
+export const getXTokenByToken = (xChainId: XChainId, token: Currency | Token | XToken | undefined) => {
+  if (!token) return;
+
+  return Object.values(xTokenMap[xChainId]).find(t =>
+    token instanceof XToken ? t.identifier === token.identifier : t.symbol === token.symbol,
+  );
 };
 
 export const isXToken = (token?: Currency) => {
@@ -99,7 +107,7 @@ export const isXToken = (token?: Currency) => {
     .some(t => t.address === token.wrapped.address);
 };
 
-export const getAvailableXChains = (currency?: Currency | null): XChain[] | undefined => {
+export const getAvailableXChains = (currency?: Currency | XToken | null): XChain[] | undefined => {
   if (!currency) return;
 
   const allXTokens = Object.values(xTokenMap).flat();

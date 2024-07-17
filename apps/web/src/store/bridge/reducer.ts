@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { XChainId } from 'app/pages/trade/bridge/types';
 
 import { Currency } from '@balancednetwork/sdk-core';
-import { getCrossChainTokenBySymbol } from 'app/pages/trade/bridge/utils';
+import { getXTokenBySymbol } from 'app/pages/trade/bridge/utils';
 
 export enum Field {
   FROM = 'FROM',
@@ -66,7 +66,7 @@ const bridgeSlice = createSlice({
       state[Field.FROM].chainId = state[Field.TO].chainId;
       state[Field.TO].chainId = fromChain;
 
-      state.currency = getCrossChainTokenBySymbol(state[Field.FROM].chainId, state.currency?.symbol);
+      state.currency = getXTokenBySymbol(state[Field.FROM].chainId, state.currency?.symbol);
       // const fromCurrency = state[Field.FROM].currency;
       // state[Field.FROM].currency = state[Field.TO].currency;
       // state[Field.TO].currency = fromCurrency;

@@ -2,7 +2,7 @@ import { Currency } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
 import { DEFAULT_TOKEN_CHAIN } from 'app/pages/trade/bridge/_config/xTokens';
 import { XChainId } from 'app/pages/trade/bridge/types';
-import { getCrossChainTokenBySymbol, isXToken } from 'app/pages/trade/bridge/utils';
+import { getXTokenBySymbol, isXToken } from 'app/pages/trade/bridge/utils';
 
 import { NETWORK_ID } from 'constants/config';
 import { bnUSD, BALN } from 'constants/tokens';
@@ -70,8 +70,7 @@ const swapSlice = createSlice({
           // the normal case
           const xChainId: XChainId =
             currency && isXToken(currency) ? DEFAULT_TOKEN_CHAIN[currency.symbol] ?? '0x1.icon' : '0x1.icon';
-          const _currency =
-            currency && isXToken(currency) ? getCrossChainTokenBySymbol(xChainId, currency.symbol) : currency;
+          const _currency = currency && isXToken(currency) ? getXTokenBySymbol(xChainId, currency.symbol) : currency;
           return {
             ...state,
             [field]: { ...state[field], currency: _currency, percent: 0, xChainId },
@@ -98,7 +97,7 @@ const swapSlice = createSlice({
       };
     }),
     selectChain: create.reducer<{ field: Field; xChainId: XChainId }>((state, { payload: { field, xChainId } }) => {
-      const updatedCurrency = getCrossChainTokenBySymbol(xChainId, state[field].currency?.symbol);
+      const updatedCurrency = getXTokenBySymbol(xChainId, state[field].currency?.symbol);
       if (updatedCurrency) {
         state[field].xChainId = xChainId;
         state[field].currency = updatedCurrency;

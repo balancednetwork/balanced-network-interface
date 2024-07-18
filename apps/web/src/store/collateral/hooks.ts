@@ -715,15 +715,7 @@ export function useXCollateralDataByToken(): UseQueryResult<XPositionsRecord[]> 
             isPositionSingleChain: Object.keys(positions).length === 1,
           };
         })
-        .filter(
-          (
-            item,
-          ): item is {
-            baseToken: Token;
-            positions: Partial<{ [key in XChainId]: Position }>;
-            isPositionSingleChain: boolean;
-          } => Boolean(item),
-        );
+        .filter((item): item is XPositionsRecord => Boolean(item));
     },
     enabled: allWallets?.length > 0,
     placeholderData: keepPreviousData,

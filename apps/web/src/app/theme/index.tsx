@@ -279,7 +279,7 @@ export const FixedGlobalStyle = createGlobalStyle`
   [hidden] {
     display: none !important;
   }
-
+/* 
   .drop-shadow {
     box-shadow: 0px 10px 25px 0px rgba(1, 0, 42, 0.35);
   }
@@ -290,7 +290,7 @@ export const FixedGlobalStyle = createGlobalStyle`
 
   .drop-shadow-inset {
     box-shadow: 0px 10px 15px 0px rgba(1, 0, 42, 0.25) inset;
-  }
+  } */
 `;
 
 export const ThemedGlobalStyle = createGlobalStyle`

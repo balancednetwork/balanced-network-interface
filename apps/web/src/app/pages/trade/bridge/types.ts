@@ -184,10 +184,10 @@ export type XTokenMap = { [key: string | number]: XToken };
 
 export type XWalletAssetRecord = {
   baseToken: Token;
-  balances: { [key in XChainId]: CurrencyAmount<Currency> | undefined };
+  xTokenAmounts: { [key in XChainId]: CurrencyAmount<Currency> | undefined };
   isBalanceSingleChain: boolean;
   total: BigNumber;
-  value?: BigNumber;
+  value: BigNumber | undefined;
 };
 
 export type Position = {

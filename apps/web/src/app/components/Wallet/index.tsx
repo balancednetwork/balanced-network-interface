@@ -135,7 +135,7 @@ const Wallet = ({ close }: WalletProps) => {
               <SingleChainBalanceItem
                 key={index}
                 baseToken={record.baseToken}
-                networkBalance={record.balances}
+                networkBalance={record.xTokenAmounts}
                 value={record.value}
                 isLast={index === sortedFilteredBalances.length - 1}
               />
@@ -143,7 +143,7 @@ const Wallet = ({ close }: WalletProps) => {
               <MultiChainBalanceItem
                 key={index}
                 baseToken={record.baseToken}
-                balances={record.balances}
+                balances={record.xTokenAmounts}
                 value={record.value}
                 total={record.total}
               />

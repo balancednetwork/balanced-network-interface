@@ -135,9 +135,9 @@ export function useCollateralAvailableAmountinSICX() {
   return sICXAmount;
 }
 
-export function useCollateralAmounts(chainId?: XChainId): { [key in string]: BigNumber } {
+export function useCollateralAmounts(xChainId?: XChainId): { [key in string]: BigNumber } {
   const collateralXChain = useCollateralXChain();
-  return useSelector((state: AppState) => state.collateral.depositedAmounts[chainId || collateralXChain] || {});
+  return useSelector((state: AppState) => state.collateral.depositedAmounts[xChainId || collateralXChain] || {});
 }
 
 export function useAllCollateralData(): UseQueryResult<XCollaterals[]> {
@@ -150,10 +150,10 @@ export function useAllCollateralData(): UseQueryResult<XCollaterals[]> {
       return Object.keys(totalCollateralData).map(symbol => {
         const baseToken = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
         const chains = SUPPORTED_XCALL_CHAINS.reduce(
-          (acc, chainId) => {
-            const xToken = xTokenMap[chainId].find(t => t.symbol === symbol);
-            if (xToken || chainId === ICON_XCALL_NETWORK_ID) {
-              acc[chainId] = {};
+          (acc, xChainId) => {
+            const xToken = xTokenMap[xChainId].find(t => t.symbol === symbol);
+            if (xToken || xChainId === ICON_XCALL_NETWORK_ID) {
+              acc[xChainId] = {};
             }
             return acc;
           },
@@ -628,7 +628,7 @@ export function useDerivedCollateralInfo(): {
 }
 
 export function useXCollateralDataByToken(): UseQueryResult<XPositionsRecord[]> {
-  const depositedAmounts = useAllDepositedAmounts();
+  const xDepositedAmounts = useAllDepositedAmounts();
   const borrowedAmounts = useBorrowedAmounts();
   const allWallets = useAllDerivedWallets();
   const xWallet = useCrossChainWalletBalances();
@@ -637,12 +637,13 @@ export function useXCollateralDataByToken(): UseQueryResult<XPositionsRecord[]> 
     queryKey: ['xPositionsData', allWallets],
     queryFn: async () => {
       return Object.entries(
-        Object.entries(depositedAmounts).reduce(
-          (acc, [chainId, chainDeposits]) => {
-            if (chainDeposits) {
-              forEach(chainDeposits, (deposit, symbol) => {
-                const xToken = xTokenMap[chainId].find(token => token.symbol === symbol);
-                const account = allWallets.find(wallet => wallet.xChainId === chainId)?.address;
+        Object.entries(xDepositedAmounts).reduce(
+          (acc, xDepositedAmount) => {
+            const [xChainId, xChainDeposits] = xDepositedAmount as [XChainId, { [tokenSymbol in string]: BigNumber }];
+            if (xChainDeposits) {
+              forEach(xChainDeposits, (deposit, symbol) => {
+                const xToken = xTokenMap[xChainId].find(token => token.symbol === symbol);
+                const account = allWallets.find(wallet => wallet.xChainId === xChainId)?.address;
                 if (!account) return;
 
                 //cross-chain compatible positions
@@ -653,27 +654,27 @@ export function useXCollateralDataByToken(): UseQueryResult<XPositionsRecord[]> 
                   );
                   const loanAmount =
                     account &&
-                    borrowedAmounts[symbol]?.[chainId === ICON_XCALL_NETWORK_ID ? account : `${chainId}/${account}`];
+                    borrowedAmounts[symbol]?.[xChainId === ICON_XCALL_NETWORK_ID ? account : `${xChainId}/${account}`];
 
                   if (depositAmount && depositAmount.greaterThan(0)) {
                     acc[symbol] = {
                       ...acc[symbol],
-                      [chainId]: { collateral: depositAmount, loan: loanAmount },
+                      [xChainId]: { collateral: depositAmount, loan: loanAmount },
                     };
                   } else {
                     //show available collateral balance
-                    const availableAmount = xWallet[chainId]?.[xToken.address];
+                    const availableAmount = xWallet[xChainId]?.[xToken.address];
                     if (availableAmount?.greaterThan(0)) {
                       acc[symbol] = {
                         ...acc[symbol],
-                        [chainId]: { collateral: availableAmount, loan: new BigNumber(0), isPotential: true },
+                        [xChainId]: { collateral: availableAmount, loan: new BigNumber(0), isPotential: true },
                       };
                     }
                   }
                 } else {
                   //icon only positions
                   const token = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
-                  if (chainId === ICON_XCALL_NETWORK_ID && token) {
+                  if (xChainId === ICON_XCALL_NETWORK_ID && token) {
                     const depositAmount = CurrencyAmount.fromRawAmount(
                       token,
                       deposit.times(10 ** token.decimals).toFixed(0),
@@ -683,15 +684,15 @@ export function useXCollateralDataByToken(): UseQueryResult<XPositionsRecord[]> 
                     if (depositAmount && depositAmount.greaterThan(0)) {
                       acc[symbol] = {
                         ...acc[symbol],
-                        [chainId]: { collateral: depositAmount, loan: loanAmount },
+                        [xChainId]: { collateral: depositAmount, loan: loanAmount },
                       };
                     } else {
                       //show available collateral balance
-                      const availableAmount = xWallet[chainId]?.[token.address];
+                      const availableAmount = xWallet[xChainId]?.[token.address];
                       if (availableAmount?.greaterThan(0)) {
                         acc[symbol] = {
                           ...acc[symbol],
-                          [chainId]: { collateral: availableAmount, loan: new BigNumber(0), isPotential: true },
+                          [xChainId]: { collateral: availableAmount, loan: new BigNumber(0), isPotential: true },
                         };
                       }
                     }

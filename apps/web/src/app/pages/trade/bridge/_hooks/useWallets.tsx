@@ -57,7 +57,7 @@ const useWallets = (): {
 
 export default useWallets;
 
-export function useSignedInWallets(): XWallet[] {
+export function useSignedInWallets(): { address: string; xChainId: XChainId | undefined }[] {
   const wallets = useWallets();
 
   return useMemo(

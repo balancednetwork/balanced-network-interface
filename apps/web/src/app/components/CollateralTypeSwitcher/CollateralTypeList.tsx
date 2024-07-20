@@ -20,6 +20,7 @@ import SingleChainItemOverview from './SingleChainItemOverview';
 import MultiChainItemOverview from './MultiChainItemOverview';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { Typography } from 'app/theme';
+import { XChainId } from 'app/pages/trade/bridge/types';
 
 const CollateralTypeList = ({
   setAnchor,
@@ -41,14 +42,14 @@ const CollateralTypeList = ({
   const { data: allCollateralData } = useAllCollateralData();
 
   const handleCollateralTypeChange = useCallback(
-    (symbol, chainId) => {
+    (symbol: string, xChainId: XChainId) => {
       setAnchor(null);
       changeCollateralType(symbol);
       adjust(false);
       adjustLoan(false);
-      if (chainId) {
-        changeCollateralXChain(chainId);
-        setLoanNetwork(chainId);
+      if (xChainId) {
+        changeCollateralXChain(xChainId);
+        setLoanNetwork(xChainId);
       }
     },
     [changeCollateralType, setAnchor, adjust, adjustLoan, changeCollateralXChain, setLoanNetwork],

@@ -139,25 +139,4 @@ export class ArchwayWalletXService extends ArchwayPublicXService implements IWal
       }
     }
   }
-
-  async executeDepositCollateral(xTransactionInput: XTransactionInput) {
-    console.error('executeDepositCollateral cosmos not implemented');
-    return Promise.resolve('todo');
-  }
-
-  async executeWithdrawCollateral(xTransactionInput: XTransactionInput) {
-    console.error('executeWithdrawCollateral cosmos not implemented');
-    return Promise.resolve('todo');
-  }
-
-  async executeBorrow(xTransactionInput: XTransactionInput) {
-    console.error('executeBorrow cosmos not implemented');
-    return Promise.resolve('todo');
-  }
-
-  async executeRepay(xTransactionInput: XTransactionInput) {
-    //todo: executeRepay cosmos
-    console.error('executeRepay cosmos not implemented');
-    return Promise.resolve('todo');
-  }
 }

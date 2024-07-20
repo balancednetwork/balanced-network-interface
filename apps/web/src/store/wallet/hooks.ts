@@ -502,35 +502,25 @@ export function useXBalancesByToken(): XWalletAssetRecord[] {
         {} as { [AssetSymbol in string]: { [key in XChainId]: CurrencyAmount<Currency> | undefined } },
       ),
     )
-      .map(([symbol, balances]) => {
+      .map(([symbol, xTokenAmounts]) => {
         const baseToken = (tokenListConfig.community ? COMBINED_TOKENS_LIST : SUPPORTED_TOKENS_LIST).find(
           token => token.symbol === symbol,
         );
 
         if (baseToken === undefined) return;
 
-        const total = Object.values(balances).reduce((sum, balance) => {
-          if (balance) sum = sum.plus(new BigNumber(balance.toFixed()));
+        const total = Object.values(xTokenAmounts).reduce((sum, xTokenAmount) => {
+          if (xTokenAmount) sum = sum.plus(new BigNumber(xTokenAmount.toFixed()));
           return sum;
         }, new BigNumber(0));
         return {
           baseToken,
-          balances,
-          isBalanceSingleChain: Object.keys(balances).length === 1,
+          xTokenAmounts,
+          isBalanceSingleChain: Object.keys(xTokenAmounts).length === 1,
           total,
           value: prices && prices[symbol] ? total.times(prices[symbol]) : undefined,
         };
       })
-      .filter(
-        (
-          item,
-        ): item is {
-          baseToken: Token;
-          balances: { [key in XChainId]: CurrencyAmount<Currency> | undefined };
-          isBalanceSingleChain: boolean;
-          total: BigNumber;
-          value: BigNumber | undefined;
-        } => Boolean(item),
-      );
+      .filter((item): item is XWalletAssetRecord => Boolean(item));
   }, [balances, tokenListConfig, prices]);
 }

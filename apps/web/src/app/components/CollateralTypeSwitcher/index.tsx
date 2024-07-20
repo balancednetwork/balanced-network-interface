@@ -4,11 +4,12 @@ import ClickAwayListener from 'react-click-away-listener';
 import styled from 'styled-components';
 
 import { StyledArrowDownIcon, UnderlineText } from 'app/components/DropdownText';
-import { useCollateralType } from 'store/collateral/hooks';
+import { useCollateralType, useIcxDisplayType } from 'store/collateral/hooks';
 
 import { DropdownPopper } from '../Popover';
-import CollateralIcon from './CollateralIcon';
 import CollateralTypeListWrap from './CollateralTypeListWrap';
+import CurrencyLogo from '../CurrencyLogo';
+import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 
 const Wrap = styled.span`
   cursor: pointer;
@@ -16,6 +17,13 @@ const Wrap = styled.span`
   position: relative;
   top: 3px;
   color: ${({ theme }) => theme.colors.primaryBright};
+`;
+
+const IconWrap = styled.span`
+  display: inline-block;
+  position: relative;
+  margin-right: 5px;
+  transform: translateY(-2px);
 `;
 
 export const CollateralTypeSwitcherWrap = styled.div`
@@ -30,6 +38,7 @@ export const CollateralTypeSwitcherWrap = styled.div`
 
 const CollateralTypeSwitcher = ({ width, containerRef }) => {
   const collateralType = useCollateralType();
+  const icxDisplayType = useIcxDisplayType();
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
@@ -52,8 +61,15 @@ const CollateralTypeSwitcher = ({ width, containerRef }) => {
           <Wrap onClick={handleToggle}>
             <UnderlineText>
               <>
-                <CollateralIcon icon={collateralType === 'sICX' ? 'ICX' : collateralType} />
-                {collateralType === 'sICX' ? 'ICX' : collateralType}
+                <IconWrap>
+                  <CurrencyLogo
+                    currency={SUPPORTED_TOKENS_LIST.find(
+                      token => token.symbol === (collateralType === 'sICX' ? icxDisplayType : collateralType),
+                    )}
+                    size={'18px'}
+                  />
+                </IconWrap>
+                {collateralType === 'sICX' ? icxDisplayType : collateralType}
               </>
             </UnderlineText>
             <div ref={arrowRef} style={{ display: 'inline-block' }}>

@@ -147,25 +147,27 @@ export function useAllCollateralData(): UseQueryResult<XCollaterals[]> {
     queryKey: ['getCollateralSelectorData', totalCollateralData],
     queryFn: () => {
       if (!totalCollateralData) return;
-      return Object.keys(totalCollateralData).map(symbol => {
-        const baseToken = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
-        const chains = SUPPORTED_XCALL_CHAINS.reduce(
-          (acc, xChainId) => {
-            const xToken = xTokenMap[xChainId].find(t => t.symbol === symbol);
-            if (xToken || xChainId === ICON_XCALL_NETWORK_ID) {
-              acc[xChainId] = {};
-            }
-            return acc;
-          },
-          {} as Partial<{ [key in XChainId]: {} }>,
-        );
-        return {
-          baseToken,
-          chains,
-          isCollateralSingleChain: Object.keys(chains).length === 1,
-          total: totalCollateralData[symbol],
-        };
-      });
+      return Object.keys(totalCollateralData)
+        .filter(symbol => symbol !== 'BTCB')
+        .map(symbol => {
+          const baseToken = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
+          const chains = SUPPORTED_XCALL_CHAINS.reduce(
+            (acc, xChainId) => {
+              const xToken = xTokenMap[xChainId].find(t => t.symbol === symbol);
+              if (xToken || xChainId === ICON_XCALL_NETWORK_ID) {
+                acc[xChainId] = {};
+              }
+              return acc;
+            },
+            {} as Partial<{ [key in XChainId]: {} }>,
+          );
+          return {
+            baseToken,
+            chains,
+            isCollateralSingleChain: Object.keys(chains).length === 1,
+            total: totalCollateralData[symbol],
+          };
+        });
     },
     enabled: !!totalCollateralData,
     placeholderData: keepPreviousData,

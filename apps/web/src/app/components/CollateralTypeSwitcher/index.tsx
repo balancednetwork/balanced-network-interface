@@ -19,7 +19,7 @@ const Wrap = styled.span`
   color: ${({ theme }) => theme.colors.primaryBright};
 `;
 
-const IconWrap = styled.span`
+const LogoWrap = styled.span`
   display: inline-block;
   position: relative;
   margin-right: 5px;
@@ -61,14 +61,14 @@ const CollateralTypeSwitcher = ({ width, containerRef }) => {
           <Wrap onClick={handleToggle}>
             <UnderlineText>
               <>
-                <IconWrap>
+                <LogoWrap>
                   <CurrencyLogo
                     currency={SUPPORTED_TOKENS_LIST.find(
                       token => token.symbol === (collateralType === 'sICX' ? icxDisplayType : collateralType),
                     )}
                     size={'18px'}
                   />
-                </IconWrap>
+                </LogoWrap>
                 {collateralType === 'sICX' ? icxDisplayType : collateralType}
               </>
             </UnderlineText>

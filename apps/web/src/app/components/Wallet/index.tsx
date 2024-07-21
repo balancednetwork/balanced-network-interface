@@ -24,6 +24,7 @@ import { useMedia } from 'react-use';
 import { useXBalancesByToken } from 'store/wallet/hooks';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
 import MultiChainBalanceItem from './MultiChainBalanceItem';
+import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 
 interface WalletProps {
   close: () => void;
@@ -73,7 +74,10 @@ const Wallet = ({ close }: WalletProps) => {
     return balances.filter(
       balance =>
         balance.baseToken.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        balance.baseToken.name?.toLowerCase().includes(searchQuery.toLowerCase()),
+        balance.baseToken.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        Object.keys(balance.xTokenAmounts).some(x =>
+          xChainMap[x].name.toLowerCase().includes(searchQuery.toLowerCase()),
+        ),
     );
   }, [balances, searchQuery]);
 

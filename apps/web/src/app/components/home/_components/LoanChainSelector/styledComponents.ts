@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 export const SelectorWrap = styled(Box)`
   padding: 25px 25px 10px 25px;
-  width: 100vw;
+  width: 99vw;
   max-width: 415px;
 `;
 

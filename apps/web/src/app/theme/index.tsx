@@ -645,7 +645,7 @@ export const ThemedGlobalStyle = createGlobalStyle`
     background-color: #ffffff;
     z-index: 2;
     opacity: 1;
-    transition: height 0.3s ease, opacity 0.2s ease;
+    transition: all 0.3s ease, opacity 0.2s ease;
   }
   #indicator-used {
     margin-top: -5px;

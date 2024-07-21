@@ -408,10 +408,11 @@ const CollateralPanel = () => {
 
           {!account && (
             <Flex minHeight={140} alignItems="center" justifyContent="center">
-              <Typography mr={1}>{t`To deposit ${collateralType} from ${xChainMap[sourceChain].name},`}</Typography>
+              <Typography mr={1}>{t`To deposit ${collateralType}`},</Typography>
               <Typography color="primaryBright">
                 <UnderlineText onClick={toggleWalletModal}>
-                  <Trans>sign in</Trans>
+                  <Trans>sign in with</Trans>
+                  {` ${xChainMap[sourceChain].name}`}
                 </UnderlineText>
               </Typography>
               <Typography>.</Typography>

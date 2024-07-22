@@ -37,7 +37,20 @@ import { useAllTokens } from '../../hooks/Tokens';
 import { changeBalances, changeICONBalances } from './reducer';
 
 export function useCrossChainWalletBalances(): AppState['wallet'] {
-  return useSelector((state: AppState) => state.wallet);
+  const signedInWallets = useAllDerivedWallets();
+  const balances = useSelector((state: AppState) => state.wallet);
+
+  return useMemo(() => {
+    return Object.keys(balances).reduce(
+      (acc, xChainId) => {
+        if (signedInWallets.some(wallet => wallet.xChainId === xChainId)) {
+          acc[xChainId] = balances[xChainId];
+        }
+        return acc;
+      },
+      {} as AppState['wallet'],
+    );
+  }, [balances, signedInWallets]);
 }
 
 export function useICONWalletBalances(): { [address: string]: CurrencyAmount<Currency> } {
@@ -129,6 +142,7 @@ import { useAccount, useBalance, usePublicClient } from 'wagmi';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { useRatesWithOracle } from 'queries/reward';
+import { useAllDerivedWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 
 export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined, xChainId: XChainId) {
   const chainId = xChainMap[xChainId].id;

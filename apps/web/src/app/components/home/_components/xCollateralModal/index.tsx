@@ -170,7 +170,8 @@ const XCollateralModal = ({
 
               {isWrongChain ? (
                 <StyledButton onClick={handleSwitchChain}>
-                  <Trans>Switch Network</Trans>
+                  <Trans>Switch to</Trans>
+                  {` ${xChainMap[sourceChain].name}`}
                 </StyledButton>
               ) : isProcessing ? (
                 <>

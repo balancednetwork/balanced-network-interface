@@ -128,23 +128,34 @@ const CollateralTypeList = ({
           {filteredCollaterals
             ?.sort((a, b) => a.baseToken.symbol.localeCompare(b.baseToken.symbol))
             .map((xCollateral, index, { length }) => {
-              return xCollateral.isCollateralSingleChain ? (
+              //temporarily show single chain view only (backend support needed first)
+              return (
                 <SingleChainItemOverview
                   baseToken={xCollateral.baseToken}
                   key={index}
                   networkPosition={{ [ICON_XCALL_NETWORK_ID]: xCollateral.total }}
+                  hideNetworkIcon={true}
                   isLast={index === length - 1}
                   onSelect={handleCollateralTypeChange}
                 />
-              ) : (
-                <MultiChainItemOverview
-                  key={index}
-                  baseToken={xCollateral.baseToken}
-                  chains={xCollateral.chains}
-                  onSelect={handleCollateralTypeChange}
-                  total={xCollateral.total}
-                />
               );
+              // return xCollateral.isCollateralSingleChain ? (
+              //   <SingleChainItemOverview
+              //     baseToken={xCollateral.baseToken}
+              //     key={index}
+              //     networkPosition={{ [ICON_XCALL_NETWORK_ID]: xCollateral.total }}
+              //     isLast={index === length - 1}
+              //     onSelect={handleCollateralTypeChange}
+              //   />
+              // ) : (
+              //   <MultiChainItemOverview
+              //     key={index}
+              //     baseToken={xCollateral.baseToken}
+              //     chains={xCollateral.chains}
+              //     onSelect={handleCollateralTypeChange}
+              //     total={xCollateral.total}
+              //   />
+              // );
             })}
         </List>
       )}

@@ -10,11 +10,13 @@ import { AssetSymbol, BalanceAndValueWrap, DataText } from '../Wallet/styledComp
 import { StyledListItem } from './MultiChainItem';
 import { toFraction } from 'utils';
 import { useOraclePrices } from 'store/oracle/hooks';
+import CurrencyLogo from '../CurrencyLogo';
 
 type SingleChainItemOverviewProps = {
   baseToken: Token;
   networkPosition: Partial<{ [key in XChainId]: Position }>;
   onSelect: (symbol, chainId) => void;
+  hideNetworkIcon?: boolean;
   isLast?: boolean;
   isNested?: boolean;
 };
@@ -25,6 +27,7 @@ const SingleChainItemOverview = ({
   onSelect,
   isLast = false,
   isNested = false,
+  hideNetworkIcon = false,
 }: SingleChainItemOverviewProps) => {
   const prices = useOraclePrices();
   const [xChainId, position] = Object.entries(networkPosition)[0];
@@ -40,14 +43,22 @@ const SingleChainItemOverview = ({
 
   return (
     <>
-      <StyledListItem $border={!isNested && !isLast} onClick={() => onSelect(baseToken.symbol, xChainId)}>
+      <StyledListItem
+        $border={!isNested && !isLast}
+        onClick={() => onSelect(baseToken.symbol, !hideNetworkIcon ?? xChainId)}
+      >
         <AssetSymbol>
-          <CurrencyLogoWithNetwork
-            currency={baseToken}
-            chainId={xChainId as XChainId}
-            bgColor={isNested ? theme.colors.bg3 : theme.colors.bg4}
-            size={isNested ? '20px' : '24px'}
-          />
+          {hideNetworkIcon ? (
+            <CurrencyLogo size="24px" currency={baseToken} />
+          ) : (
+            <CurrencyLogoWithNetwork
+              currency={baseToken}
+              chainId={xChainId as XChainId}
+              bgColor={isNested ? theme.colors.bg3 : theme.colors.bg4}
+              size={isNested ? '20px' : '24px'}
+            />
+          )}
+
           <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>
             {isNested ? xChainMap[xChainId].name : symbol}
           </Typography>

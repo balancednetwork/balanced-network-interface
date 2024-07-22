@@ -17,7 +17,6 @@ import MultiChainItem from './MultiChainItem';
 import { CollateralTab } from './CollateralTypeListWrap';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import SingleChainItemOverview from './SingleChainItemOverview';
-import MultiChainItemOverview from './MultiChainItemOverview';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { Typography } from 'app/theme';
 import { XChainId } from 'app/pages/trade/bridge/types';

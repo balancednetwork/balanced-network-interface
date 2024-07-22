@@ -15,6 +15,7 @@ const initialState: WalletState = {
     return p;
   }, {}),
   'archway-1': {},
+  '0x100.icon': {},
 };
 
 const walletSlice = createSlice({

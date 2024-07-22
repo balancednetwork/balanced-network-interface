@@ -28,6 +28,7 @@ import { notificationCSS } from '../ICONWallet/wallets/utils';
 import { MouseoverTooltip } from '../Tooltip';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import EVMWallet from '../EVMWallet';
+import HavahWallet from '../HavahWallet';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import useWallets, { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { Placement } from '@popperjs/core';
@@ -166,6 +167,7 @@ const WalletUIs: Partial<Record<XChainId, any>> = {
   '0x1.icon': ICONWallet,
   'archway-1': ArchwayWallet,
   '0xa86a.avax': EVMWallet,
+  '0x100.icon': HavahWallet,
   '0x38.bsc': EVMWallet,
   '0xa4b1.arbitrum': EVMWallet,
   '0x2105.base': EVMWallet,

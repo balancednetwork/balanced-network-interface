@@ -16,6 +16,7 @@ import Modal, { ModalProps } from 'app/components/Modal';
 import { Typography } from 'app/theme';
 import ArchWalletIcon from 'assets/icons/chains/archway.svg';
 import IconWalletIcon from 'assets/icons/wallets/iconex.svg';
+import HavahWalletIcon from 'assets/icons/chains/havah.svg';
 import ETHIcon from 'assets/icons/chains/eth.svg';
 import { LOCALE_LABEL, SupportedLocale, SUPPORTED_LOCALES } from 'constants/locales';
 import { useActiveLocale } from 'hooks/useActiveLocale';
@@ -27,6 +28,7 @@ import WalletItem from './WalletItem';
 import { IconWalletModal } from './IconWalletModal';
 import { EVMWalletModal } from './EVMWalletModal';
 import { XWalletType } from 'app/pages/trade/bridge/types';
+import { useHavahContext } from 'app/_xcall/havah/HavahProvider';
 import useWallets, { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { useSwitchChain } from 'wagmi';
@@ -54,9 +56,12 @@ export default function WalletModal() {
   const [, setWalletModal] = useWalletModal();
   const signedInWallets = useSignedInWallets();
   const { connectToWallet: connectToKeplr } = useArchwayContext();
-  const { switchChain } = useSwitchChain();
+  const { connectToWallet: connectToHavah } = useHavahContext();
 
   const wallets = useWallets();
+
+  const { switchChain } = useSwitchChain();
+
   //
   const activeLocale = useActiveLocale();
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
@@ -132,6 +137,15 @@ export default function WalletModal() {
           switchChain: switchChain,
         },
         {
+          name: 'Havah',
+          logo: <HavahWalletIcon width="40" height="40" />,
+          connect: connectToHavah,
+          disconnect: wallets[XWalletType.HAVAH].disconnect,
+          description: t`Swap & transfer crypto cross-chain.`,
+          keyWords: ['iconex', 'hana'],
+          address: wallets[XWalletType.HAVAH].account,
+        },
+        {
           name: 'Archway',
           logo: <ArchWalletIcon width="32" />,
           connect: connectToKeplr,
@@ -144,7 +158,7 @@ export default function WalletModal() {
         },
       ].sort((a, b) => a.name.localeCompare(b.name)),
     ];
-  }, [setWalletModal, connectToKeplr, wallets, switchChain]);
+  }, [setWalletModal, connectToKeplr, wallets, switchChain, connectToHavah]);
 
   const filteredWallets = React.useMemo(() => {
     return [...walletConfig].filter(wallet => {

@@ -5,6 +5,7 @@ export enum XWalletType {
   ICON,
   COSMOS,
   EVM,
+  HAVAH,
 }
 
 export type XChainId =
@@ -14,11 +15,12 @@ export type XChainId =
   | '0x2.icon'
   | '0xa86a.avax'
   | '0xa869.fuji'
+  | '0x100.icon'
   | '0x38.bsc'
   | '0xa4b1.arbitrum'
   | '0x2105.base';
 
-export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY';
+export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH';
 
 export enum XCallEventType {
   CallMessageSent = 'CallMessageSent',

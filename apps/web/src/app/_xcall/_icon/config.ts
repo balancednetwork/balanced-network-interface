@@ -8,6 +8,7 @@ const ARCHWAY_FEE_TOKEN_SYMBOLS: { [key in SupportedChainId]: string } = {
   [SupportedChainId.LISBON]: 'aconst',
   [SupportedChainId.SEJONG]: 'aconst',
   [SupportedChainId.YEOUIDO]: 'aconst',
+  [SupportedChainId.HAVAH]: 'aconst',
 };
 
 export const ARCHWAY_FEE_TOKEN_SYMBOL = ARCHWAY_FEE_TOKEN_SYMBOLS[NETWORK_ID];

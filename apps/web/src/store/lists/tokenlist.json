@@ -211,6 +211,14 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/inj.png"
     },
     {
+      "address": "cxe2da9f10bc6e2754347bde2ef73379bd398fd9f3",
+      "chainId": 1,
+      "name": "HVH",
+      "symbol": "HVH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/hvh.png"
+    },
+    {
       "address": "cxf0a30d09ade391d7b570908b9b46cfa5b3cbc8f8",
       "chainId": 1,
       "name": "HiYield Treasury Bill",

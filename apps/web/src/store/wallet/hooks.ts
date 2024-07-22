@@ -16,7 +16,7 @@ import { useARCH } from 'app/pages/trade/bridge/_config/tokens';
 import { isDenomAsset } from 'app/_xcall/archway/utils';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import { getXTokenAddress, isXToken } from 'app/pages/trade/bridge/utils';
-import bnJs from 'bnJs';
+import bnJs, { havahJs } from 'bnJs';
 import { MINIMUM_ICX_FOR_TX, NATIVE_ADDRESS } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
 import {
@@ -46,6 +46,10 @@ export function useICONWalletBalances(): { [address: string]: CurrencyAmount<Cur
 
 export function useArchwayWalletBalances(): AppState['wallet']['archway-1'] {
   return useSelector((state: AppState) => state.wallet['archway-1']);
+}
+
+export function useHavahWalletBalances(): AppState['wallet']['0x100.icon'] {
+  return useSelector((state: AppState) => state.wallet['0x100.icon']);
 }
 
 export function useWalletBalances(xChainId: XChainId): { [address: string]: CurrencyAmount<Currency> } | undefined {
@@ -128,6 +132,7 @@ import { erc20Abi } from 'viem';
 import { useAccount, useBalance, usePublicClient } from 'wagmi';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { useHavahContext } from 'app/_xcall/havah/HavahProvider';
 
 export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined, xChainId: XChainId) {
   const chainId = xChainMap[xChainId].id;
@@ -192,6 +197,14 @@ export function useWalletFetchBalances(account?: string | null, accountArch?: st
   React.useEffect(() => {
     dispatch(changeICONBalances(balances));
   }, [balances, dispatch]);
+
+  // fetch balances on havah
+  const { address: accountHavah } = useHavahContext();
+  const havahTokens = useXTokens('0x100.icon') || [];
+  const { data: balancesHavah } = useHavahBalances(accountHavah || undefined, havahTokens);
+  React.useEffect(() => {
+    balancesHavah && dispatch(changeBalances({ xChainId: '0x100.icon', balances: balancesHavah }));
+  }, [balancesHavah, dispatch]);
 
   // fetch balances on archway
   const tokensArch = useXTokens('archway-1') || [];
@@ -475,4 +488,48 @@ export function useLiquidityTokenBalance(account: string | undefined | null, pai
   const query = useBnJsContractQuery<string>('Dex', 'balanceOf', [account, pair?.poolId]);
   const { data } = query;
   return pair && data ? CurrencyAmount.fromRawAmount<Token>(pair.liquidityToken, data) : undefined;
+}
+
+export function useHavahBalances(
+  address: string | undefined,
+  tokens: Token[],
+): UseQueryResult<{
+  [key: string]: CurrencyAmount<Currency>;
+}> {
+  return useQuery({
+    queryKey: [`havahBalances`, address, tokens],
+    queryFn: async () => {
+      if (!address) return {};
+
+      const hasNative = tokens.some(token => token.symbol === 'HVH');
+      if (!hasNative) return {};
+
+      const HVH = tokens.find(token => token.symbol === 'HVH');
+      if (!HVH) return {};
+
+      const promises = tokens.map(token => {
+        if (token.symbol === 'HVH')
+          return havahJs.ICX.balanceOf(address).then(res => CurrencyAmount.fromRawAmount(HVH, res.toFixed()));
+
+        return havahJs[token.symbol]
+          .balanceOf(address)
+          .then(res => CurrencyAmount.fromRawAmount(token, res.toString()));
+      });
+
+      const rawAmountBalances = await Promise.all(promises);
+
+      const balances = rawAmountBalances.reduce((acc, balance) => {
+        if (!balance) return acc;
+        if (!(balance.quotient > BIGINT_ZERO)) {
+          return acc;
+        }
+        acc[balance.currency.wrapped.address] = balance;
+        return acc;
+      }, {});
+
+      return balances;
+    },
+    placeholderData: keepPreviousData,
+    refetchInterval: 5_000,
+  });
 }

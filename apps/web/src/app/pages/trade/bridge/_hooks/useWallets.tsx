@@ -3,12 +3,14 @@ import { useArchwayContext } from '../../../../_xcall/archway/ArchwayProvider';
 import { useIconReact } from 'packages/icon-react';
 import { useMemo } from 'react';
 import useEVMReact from './useEVMReact';
+import { useHavahContext } from 'app/_xcall/havah/HavahProvider';
 
 const useWallets = (): {
   [key in XWalletType]: { account: string | undefined | null; xChainId: XChainId | undefined; disconnect: () => void };
 } => {
   const arch = useArchwayContext();
   const icon = useIconReact();
+  const havah = useHavahContext();
   const evm = useEVMReact();
 
   return useMemo(
@@ -28,8 +30,13 @@ const useWallets = (): {
         xChainId: evm.xChainId,
         disconnect: evm.disconnect,
       },
+      [XWalletType.HAVAH]: {
+        account: havah.address,
+        xChainId: '0x100.icon',
+        disconnect: havah.disconnect,
+      },
     }),
-    [arch, icon, evm],
+    [arch, icon, evm, havah],
   );
 };
 

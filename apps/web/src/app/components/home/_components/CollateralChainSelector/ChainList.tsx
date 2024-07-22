@@ -3,15 +3,13 @@ import React, { useMemo, useState } from 'react';
 import { Box } from 'rebass';
 
 import { ChainLogo } from 'app/pages/trade/bridge/_components/ChainLogo';
-import { XChainId, XChain, XWalletType, XToken } from 'app/pages/trade/bridge/types';
+import { XChainId, XChain } from 'app/pages/trade/bridge/types';
 import { xChains } from 'app/pages/trade/bridge/_config/xChains';
 import SearchInput from 'app/components/SearchModal/SearchInput';
 import { Trans, t } from '@lingui/macro';
 import { HeaderText } from 'app/components/Wallet/styledComponents';
 import { Typography } from 'app/theme';
 import { UnderlineText } from 'app/components/DropdownText';
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { useWalletModal } from 'store/application/hooks';
 import { useAllDerivedWallets, useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { useCrossChainWalletBalances } from 'store/wallet/hooks';
 import { isMobile } from 'react-device-detect';
@@ -37,8 +35,6 @@ type ChainItemProps = {
 const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const signedInWallets = useAllDerivedWallets();
   const isSignedIn = signedInWallets.some(wallet => wallet.xChainId === chain.xChainId);
-  const { connectToWallet: connectKeplr } = useArchwayContext();
-  const [, setWalletModal] = useWalletModal();
   const crossChainBalances = useCrossChainWalletBalances();
   const collateralType = useCollateralType();
   const xToken = xTokenMap[chain.xChainId].find(xToken => xToken.symbol === collateralType);
@@ -46,14 +42,6 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const existingPosition = depositedAmounts[collateralType];
   const prices = useOraclePrices();
   const xTokenPrice = prices?.[xToken?.symbol || ''];
-
-  const handleConnect = (xChain: XChain) => {
-    if (xChain.xWalletType === XWalletType.COSMOS) {
-      connectKeplr();
-    } else {
-      setWalletModal(xChain.xWalletType);
-    }
-  };
 
   const formattedWalletBalance = useMemo(() => {
     if (existingPosition?.isGreaterThan(0) || !xToken) return;
@@ -69,11 +57,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   }, [existingPosition, xTokenPrice]);
 
   return (
-    <Grid
-      $isSignedIn={isSignedIn}
-      className={isLast ? '' : 'border-bottom'}
-      onClick={e => (isSignedIn ? setChainId(chain.xChainId) : handleConnect(chain))}
-    >
+    <Grid $isSignedIn={isSignedIn} className={isLast ? '' : 'border-bottom'} onClick={e => setChainId(chain.xChainId)}>
       <ChainItemWrap>
         <Box pr="10px">
           <ChainLogo chain={chain} />
@@ -91,9 +75,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
           {existingPosition?.isGreaterThan(0) ? formattedDeposit : formattedWalletBalance}
         </Typography>
       ) : (
-        <Typography color="primaryBright">
-          <UnderlineText>Connect</UnderlineText>
-        </Typography>
+        <Typography>-</Typography>
       )}
     </Grid>
   );

@@ -29,7 +29,7 @@ export const WalletButtons = styled(Flex)`
 `;
 
 export const WalletContent = styled(Box)`
-  padding: 0 25px 25px;
+  padding: 0 0 25px;
 `;
 
 export const WalletAssets = styled(Box)`
@@ -86,6 +86,7 @@ export const BalanceAndValueWrap = styled.div`
 export const List = styled(Box)`
   max-height: 400px;
   overflow-y: auto;
+  padding: 0 25px;
 `;
 
 export const ListItem = styled(DashGrid)<{ $border?: boolean }>`

@@ -25,6 +25,7 @@ import { useXBalancesByToken } from 'store/wallet/hooks';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
 import MultiChainBalanceItem from './MultiChainBalanceItem';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { Box } from 'rebass';
 
 interface WalletProps {
   close: () => void;
@@ -106,19 +107,21 @@ const Wallet = ({ close }: WalletProps) => {
         </WalletButtons>
       </WalletMenu>
       <WalletContent>
-        <SearchInput
-          type="text"
-          id="token-search-input"
-          placeholder={t`Search assets`}
-          autoComplete="off"
-          value={searchQuery}
-          ref={inputRef as RefObject<HTMLInputElement>}
-          tabIndex={isMobile ? -1 : 1}
-          onChange={e => {
-            setSearchQuery(e.target.value);
-          }}
-        />
-        <DashGrid marginTop={'15px'}>
+        <Box px="25px">
+          <SearchInput
+            type="text"
+            id="token-search-input"
+            placeholder={t`Search assets`}
+            autoComplete="off"
+            value={searchQuery}
+            ref={inputRef as RefObject<HTMLInputElement>}
+            tabIndex={isMobile ? -1 : 1}
+            onChange={e => {
+              setSearchQuery(e.target.value);
+            }}
+          />
+        </Box>
+        <DashGrid marginTop={'15px'} px="25px">
           <HeaderText>
             <Trans>Asset</Trans>
           </HeaderText>

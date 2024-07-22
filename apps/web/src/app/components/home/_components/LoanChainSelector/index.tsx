@@ -64,7 +64,7 @@ const LoanChainSelector = () => {
   return (
     <Flex>
       <Typography mr={1} lineHeight="1.7">
-        <Trans>Receive / repay on</Trans>
+        <Trans>Receive / repay on:</Trans>
       </Typography>
       {isCrossChain ? (
         <ClickAwayListener onClickAway={closeDropdown}>

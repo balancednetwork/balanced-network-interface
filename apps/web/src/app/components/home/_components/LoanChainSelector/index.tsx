@@ -13,6 +13,7 @@ import { Flex } from 'rebass';
 import { useLoanActionHandlers, useLoanRecipientNetwork, useSetLoanRecipientNetwork } from 'store/loan/hooks';
 import ChainSelectorLogo from '../CollateralChainSelector/ChainSelectorLogo';
 import ChainList from './ChainList';
+import { Trans } from '@lingui/macro';
 
 const LoanChainSelector = () => {
   const [isOpen, setOpen] = React.useState(false);
@@ -63,7 +64,7 @@ const LoanChainSelector = () => {
   return (
     <Flex>
       <Typography mr={1} lineHeight="1.7">
-        Borrow / repay on:
+        <Trans>Receive / repay on</Trans>
       </Typography>
       {isCrossChain ? (
         <ClickAwayListener onClickAway={closeDropdown}>

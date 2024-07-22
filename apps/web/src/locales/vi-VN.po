@@ -56,6 +56,11 @@ msgstr ""
 msgid "then create the pool."
 msgstr "sau đó tạo hồ thanh khoản."
 
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "Only"
+msgstr ""
+
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX is staked (sICX). Choose what to do with it:"
 msgstr ""
@@ -113,6 +118,12 @@ msgstr ""
 msgid "15m"
 msgstr "15 phút"
 
+#: src/app/components/UnsupportedNetworkModal/index.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+msgid "Switch to {0}"
+msgstr ""
+
 #: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claim ICX?"
@@ -142,9 +153,17 @@ msgstr ""
 msgid "Loan"
 msgstr "Khoản vay"
 
-#: src/app/components/WalletModal/index.tsx
-msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain"
+#: src/app/components/HavahWallet/index.tsx
+msgid "Havah wallet"
 msgstr ""
+
+#: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
+msgid "You have no pending cross-chain transactions."
+msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+#~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain"
+#~ msgstr ""
 
 #: src/app/components/ArchwayWallet/wallets/ICXWallet/index.tsx
 #: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
@@ -240,7 +259,6 @@ msgstr ""
 #~ msgid "Rewards"
 #~ msgstr "Phần thưởng"
 
-#: src/app/components/StabilityFund/index.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Pay"
@@ -354,17 +372,25 @@ msgstr "Các đề xuất"
 
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
-msgid "Switch Network"
-msgstr ""
+#~ msgid "Switch Network"
+#~ msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Search assets"
 msgstr ""
 
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPPanel.tsx
+msgid "APR"
+msgstr ""
+
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Total"
 msgstr ""
@@ -381,6 +407,10 @@ msgstr ""
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Send max"
 msgstr "Gửi hết"
+
+#: src/app/components/WalletModal/index.tsx
+msgid "View disclaimer."
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -432,8 +462,8 @@ msgid "All proposals"
 msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
-msgid "Use the Stability Fund to swap {0} for {1}"
-msgstr ""
+#~ msgid "Use the Stability Fund to swap {0} for {1}"
+#~ msgstr ""
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Transfer {0} to Archway."
@@ -472,8 +502,8 @@ msgid "Submitting a proposal..."
 msgstr "Đang gửi đề xuất..."
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
-msgid "BALN APY"
-msgstr ""
+#~ msgid "BALN APY"
+#~ msgstr ""
 
 #: src/app/components/Header/index.tsx
 #~ msgid "Change wallet"
@@ -539,6 +569,11 @@ msgstr ""
 msgid "Transaction failed!"
 msgstr ""
 
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "is available on {0}."
+msgstr ""
+
 #: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Add your sICX to the collateral pool."
@@ -590,6 +625,7 @@ msgid "Cancel any pending transactions on your Ledger, or give Chrome permission
 msgstr "Hủy mọi giao dịch đang chờ xử lý trên Ledger hoặc cấp cho trình duyệt Chrome quyền sử dụng."
 
 #: src/app/components/WalletModal/IconWalletModal.tsx
+#: src/app/components/WalletModal/WalletItem.tsx
 msgid "or"
 msgstr "hoặc"
 
@@ -661,8 +697,8 @@ msgid "Address"
 msgstr "Địa chỉ"
 
 #: src/app/components/Header/index.tsx
-msgid "Copy address"
-msgstr "Sao chép địa chỉ"
+#~ msgid "Copy address"
+#~ msgstr "Sao chép địa chỉ"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Earn or buy BALN, then lock it up here to boost your rewards."
@@ -754,8 +790,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
-msgid "Use the Stability Fund to swap a maximum of"
-msgstr ""
+#~ msgid "Use the Stability Fund to swap a maximum of"
+#~ msgstr ""
 
 #: src/app/components/home/Savings/index.tsx
 msgid "Withdrew {0} bnUSD."
@@ -805,8 +841,8 @@ msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/components/StabilityFund/index.tsx
-msgid "The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee."
-msgstr ""
+#~ msgid "The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee."
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Supply liquidity?"
@@ -837,9 +873,11 @@ msgstr ""
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/pages/trade/bridge/_components/XTransactionState.tsx
 #: src/app/pages/trade/bridge/_components/XTransactionState.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
@@ -944,6 +982,10 @@ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "to transfer cross-chain."
+msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer crypto cross-chain."
 msgstr ""
 
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
@@ -1115,6 +1157,7 @@ msgstr "Không phải bây giờ"
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "No assets available."
 msgstr "Ko có tài sản sẵn có."
@@ -1146,6 +1189,12 @@ msgstr ""
 msgid "Each redemption is spread across a group of borrowers to minimise the impact. The smaller your loan, the less it will affect you."
 msgstr ""
 
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+msgid "Swap & transfer crypto cross-chain."
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "Your loan will increase at a rate of {0} per year."
 msgstr ""
@@ -1159,8 +1208,8 @@ msgid "for maximum rewards."
 msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
-msgid "You have no pending or failed cross-chain transactions."
-msgstr ""
+#~ msgid "You have no pending or failed cross-chain transactions."
+#~ msgstr ""
 
 #: src/store/mint/hooks.tsx
 msgid "Invalid pair"
@@ -1190,6 +1239,11 @@ msgstr ""
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
 msgid "Wallet: {0} {1}"
 msgstr "Ví: {0}{1}"
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+msgid "The fee APR is calculated from the swap fees earned by a pool in the last 30 days."
+msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Forum link"
@@ -1235,7 +1289,6 @@ msgstr ""
 msgid "Borrow"
 msgstr "Vay"
 
-#: src/app/components/StabilityFund/index.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 msgid "Includes a fee of {0} {1}."
 msgstr "Bao gồm tiền phí {0} {1}."
@@ -1451,6 +1504,10 @@ msgstr ""
 msgid "You'll"
 msgstr ""
 
+#: src/app/components/UnsupportedNetworkModal/index.tsx
+#~ msgid "Unsupported Network"
+#~ msgstr ""
+
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
@@ -1467,8 +1524,8 @@ msgstr "Đang xử lý giao dịch..."
 
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/components/StabilityFund/index.tsx
-msgid "Or"
-msgstr ""
+#~ msgid "Or"
+#~ msgstr ""
 
 #: src/app/components/trade/XCallEventManager.tsx
 #~ msgid "Awaiting confirmation on {0}."
@@ -1530,14 +1587,20 @@ msgstr "Gửi tài sản?"
 msgid "{0} wallet"
 msgstr ""
 
-#: src/app/components/WalletModal/index.tsx
-#: src/app/components/WalletModal/index.tsx
-msgid "Swap & transfer assets cross-chain."
+#: src/app/components/home/Savings/index.tsx
+msgid "{0}<0/>{1}"
 msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+#~ msgid "Swap & transfer assets cross-chain."
+#~ msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/SearchModal/CurrencyList.tsx
@@ -1565,8 +1628,8 @@ msgid "Unstake sICX?"
 msgstr "Gỡ khóa sICX?"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
-msgid "The BALN APY is calculated from the USD value of BALN rewards allocated to a pool. Your rate will vary based on the amount of bBALN you hold."
-msgstr ""
+#~ msgid "The BALN APY is calculated from the USD value of BALN rewards allocated to a pool. Your rate will vary based on the amount of bBALN you hold."
+#~ msgstr ""
 
 #: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
@@ -1583,7 +1646,13 @@ msgstr "Nhận ICX"
 #~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 msgid "Fees:"
+msgstr ""
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+msgid "The BALN APR is calculated from the USD value of BALN rewards allocated to a pool. Your rate will vary based on the amount of bBALN you hold."
 msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
@@ -1630,13 +1699,10 @@ msgstr ""
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/ProposalModal/index.tsx
-#: src/app/components/StabilityFund/index.tsx
-#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Cancel"
 msgstr "Hủy bỏ"
@@ -1658,12 +1724,20 @@ msgstr "Bỏ phiếu đã kết thúc"
 msgid "Insufficient liquidity"
 msgstr "Không đủ thanh khoản (liquidity)"
 
+#: src/store/swap/hooks.ts
+msgid "Reduce price impact"
+msgstr ""
+
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "Smart contract details"
 msgstr ""
 
 #: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "Claiming bribe..."
+msgstr ""
+
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+msgid "0 {0}"
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
@@ -1673,6 +1747,10 @@ msgstr ""
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "If the price slips by more than this amount, your swap will fail."
 msgstr "Nếu giá cả bị vượt quá mức này, vụ trao đổi này sẽ thất bại."
+
+#: src/app/components/UnsupportedNetworkModal/index.tsx
+msgid "You Are In Unsupported Network"
+msgstr ""
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Voting weight"
@@ -1717,6 +1795,8 @@ msgstr ""
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Balance"
@@ -1766,6 +1846,10 @@ msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "You must have at least {0} bBALN to propose a change."
+msgstr ""
+
+#: src/app/components/Header/index.tsx
+msgid "Copy"
 msgstr ""
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
@@ -1886,7 +1970,6 @@ msgstr "Lấy lại thanh khoản?"
 msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
 msgstr ""
 
-#: src/app/components/StabilityFund/index.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Receive"
@@ -1910,8 +1993,8 @@ msgid "Your transaction has successed."
 msgstr ""
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
-msgid "The fee APY is calculated from the swap fees earned by a pool in the last 30 days."
-msgstr ""
+#~ msgid "The fee APY is calculated from the swap fees earned by a pool in the last 30 days."
+#~ msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Duration"
@@ -1949,6 +2032,10 @@ msgstr "Đang tạo ao thanh khoản"
 msgid "The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset."
 msgstr ""
 
+#: src/app/components/Header/index.tsx
+#~ msgid "Wrong Wallet"
+#~ msgstr ""
+
 #: src/btp/src/connectors/helper.ts
 msgid "Sent {0} to the bridge contract."
 msgstr ""
@@ -1958,8 +2045,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
-msgid "Impermanent loss is not factored in."
-msgstr ""
+#~ msgid "Impermanent loss is not factored in."
+#~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Connected to {numberOfConnectedWallets} blockchain"
@@ -2005,8 +2092,8 @@ msgid "Total daily rewards"
 msgstr "Tổng phần thường mỗi ngày"
 
 #: src/app/components/StabilityFund/index.tsx
-msgid "Swap {sendSymbol} for {0}?"
-msgstr ""
+#~ msgid "Swap {sendSymbol} for {0}?"
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 msgid "Pool"
@@ -2021,8 +2108,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
-msgid "1 {sendSymbol} per {0}"
-msgstr ""
+#~ msgid "1 {sendSymbol} per {0}"
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
@@ -2068,8 +2155,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "View disclaimer"
-msgstr "Xem tuyên bố từ chối trách nhiệm"
+#~ msgid "View disclaimer"
+#~ msgstr "Xem tuyên bố từ chối trách nhiệm"
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 msgid "Your positions require"
@@ -2143,8 +2230,10 @@ msgstr "Biểu đồ giá cả hiện chưa có."
 msgid "Transferred {0} {1} to {2}."
 msgstr ""
 
-#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
-#: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPPanel.tsx
+#: src/app/components/UnsupportedNetworkModal/index.tsx
+msgid "Switch network to continue"
+msgstr ""
+
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "APY"
 msgstr ""
@@ -2171,6 +2260,7 @@ msgstr "Bạn đã phê duyệt"
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Sign in with"
 msgstr "Đăng nhập bằng"
@@ -2200,8 +2290,8 @@ msgid "You rejected"
 msgstr "Bạn đã phản đối"
 
 #: src/app/components/StabilityFund/index.tsx
-msgid "for"
-msgstr ""
+#~ msgid "for"
+#~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Exchange rate"
@@ -2283,7 +2373,6 @@ msgstr ""
 msgid "Learn how to resolve common transaction errors."
 msgstr ""
 
-#: src/app/components/StabilityFund/index.tsx
 #: src/app/pages/trade/layout.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
@@ -2341,6 +2430,8 @@ msgstr ""
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Value"
@@ -2441,6 +2532,10 @@ msgstr "Bỏ phiếu."
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 msgid "Network fees"
 msgstr "Phí mạng lưới"
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Close"
+msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "The current {0} price is"

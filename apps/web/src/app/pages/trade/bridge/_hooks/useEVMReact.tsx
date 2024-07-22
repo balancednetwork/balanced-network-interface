@@ -3,9 +3,8 @@ import { useMemo } from 'react';
 import { xChains } from '../_config/xChains';
 
 const useEVMReact = () => {
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
   const { disconnectAsync } = useDisconnect();
-  const chainId = useChainId();
   const xChainId = xChains.find(xChain => xChain.id === chainId)?.xChainId;
 
   return useMemo(

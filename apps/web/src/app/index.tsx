@@ -10,6 +10,7 @@ import ApplicationUpdater from 'store/application/updater';
 import TransactionUpdater from 'store/transactions/updater';
 
 import RootRoutes from './Routes';
+import UnsupportedNetworkModal from './components/UnsupportedNetworkModal';
 
 function Updaters() {
   return (
@@ -32,6 +33,7 @@ export function App() {
         <ThemedGlobalStyle />
         <NotificationContainer />
         <WalletModal />
+        <UnsupportedNetworkModal />
         {/* Add message for community */}
 
         <Helmet titleTemplate="%s | Balanced" defaultTitle="Balanced" htmlAttributes={{ lang: i18n.language }} />

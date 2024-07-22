@@ -56,6 +56,11 @@ msgstr ""
 msgid "then create the pool."
 msgstr "maak dan de pool aan."
 
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "Only"
+msgstr ""
+
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX is staked (sICX). Choose what to do with it:"
 msgstr ""
@@ -113,6 +118,12 @@ msgstr ""
 msgid "15m"
 msgstr "15m"
 
+#: src/app/components/UnsupportedNetworkModal/index.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+msgid "Switch to {0}"
+msgstr ""
+
 #: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claim ICX?"
@@ -142,9 +153,17 @@ msgstr ""
 msgid "Loan"
 msgstr "Lening"
 
-#: src/app/components/WalletModal/index.tsx
-msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain"
+#: src/app/components/HavahWallet/index.tsx
+msgid "Havah wallet"
 msgstr ""
+
+#: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
+msgid "You have no pending cross-chain transactions."
+msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+#~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain"
+#~ msgstr ""
 
 #: src/app/components/ArchwayWallet/wallets/ICXWallet/index.tsx
 #: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
@@ -240,7 +259,6 @@ msgstr ""
 #~ msgid "Rewards"
 #~ msgstr "Beloningen"
 
-#: src/app/components/StabilityFund/index.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Pay"
@@ -354,17 +372,25 @@ msgstr "Voorstellen"
 
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
-msgid "Switch Network"
-msgstr ""
+#~ msgid "Switch Network"
+#~ msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Search assets"
 msgstr ""
 
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPPanel.tsx
+msgid "APR"
+msgstr ""
+
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Total"
 msgstr ""
@@ -381,6 +407,10 @@ msgstr ""
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Send max"
 msgstr "Verstuur max"
+
+#: src/app/components/WalletModal/index.tsx
+msgid "View disclaimer."
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -432,8 +462,8 @@ msgid "All proposals"
 msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
-msgid "Use the Stability Fund to swap {0} for {1}"
-msgstr ""
+#~ msgid "Use the Stability Fund to swap {0} for {1}"
+#~ msgstr ""
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Transfer {0} to Archway."
@@ -472,8 +502,8 @@ msgid "Submitting a proposal..."
 msgstr "Voorstel indienen..."
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
-msgid "BALN APY"
-msgstr "BALN APY"
+#~ msgid "BALN APY"
+#~ msgstr "BALN APY"
 
 #: src/app/components/Header/index.tsx
 #~ msgid "Change wallet"
@@ -539,6 +569,11 @@ msgstr ""
 msgid "Transaction failed!"
 msgstr ""
 
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "is available on {0}."
+msgstr ""
+
 #: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Add your sICX to the collateral pool."
@@ -590,6 +625,7 @@ msgid "Cancel any pending transactions on your Ledger, or give Chrome permission
 msgstr "Annuleer alle lopende transacties op je Ledger, of geef Chrome toestemming om deze te gebruiken."
 
 #: src/app/components/WalletModal/IconWalletModal.tsx
+#: src/app/components/WalletModal/WalletItem.tsx
 msgid "or"
 msgstr "of"
 
@@ -661,8 +697,8 @@ msgid "Address"
 msgstr "Adres"
 
 #: src/app/components/Header/index.tsx
-msgid "Copy address"
-msgstr "Kopieer adres"
+#~ msgid "Copy address"
+#~ msgstr "Kopieer adres"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Earn or buy BALN, then lock it up here to boost your rewards."
@@ -754,8 +790,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
-msgid "Use the Stability Fund to swap a maximum of"
-msgstr ""
+#~ msgid "Use the Stability Fund to swap a maximum of"
+#~ msgstr ""
 
 #: src/app/components/home/Savings/index.tsx
 msgid "Withdrew {0} bnUSD."
@@ -805,8 +841,8 @@ msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/components/StabilityFund/index.tsx
-msgid "The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee."
-msgstr ""
+#~ msgid "The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee."
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Supply liquidity?"
@@ -837,9 +873,11 @@ msgstr "Balance Tokens vergrendelen?"
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/pages/trade/bridge/_components/XTransactionState.tsx
 #: src/app/pages/trade/bridge/_components/XTransactionState.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
@@ -944,6 +982,10 @@ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "to transfer cross-chain."
+msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer crypto cross-chain."
 msgstr ""
 
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
@@ -1115,6 +1157,7 @@ msgstr "Niet nu"
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "No assets available."
 msgstr "Geen activa beschikbaar."
@@ -1146,6 +1189,12 @@ msgstr ""
 msgid "Each redemption is spread across a group of borrowers to minimise the impact. The smaller your loan, the less it will affect you."
 msgstr ""
 
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+msgid "Swap & transfer crypto cross-chain."
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "Your loan will increase at a rate of {0} per year."
 msgstr ""
@@ -1159,8 +1208,8 @@ msgid "for maximum rewards."
 msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
-msgid "You have no pending or failed cross-chain transactions."
-msgstr ""
+#~ msgid "You have no pending or failed cross-chain transactions."
+#~ msgstr ""
 
 #: src/store/mint/hooks.tsx
 msgid "Invalid pair"
@@ -1190,6 +1239,11 @@ msgstr ""
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
 msgid "Wallet: {0} {1}"
 msgstr "Wallet:{0} {1}"
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+msgid "The fee APR is calculated from the swap fees earned by a pool in the last 30 days."
+msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Forum link"
@@ -1235,7 +1289,6 @@ msgstr ""
 msgid "Borrow"
 msgstr "Lenen"
 
-#: src/app/components/StabilityFund/index.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 msgid "Includes a fee of {0} {1}."
 msgstr "Bevat een vergoeding van {0} {1}."
@@ -1451,6 +1504,10 @@ msgstr ""
 msgid "You'll"
 msgstr ""
 
+#: src/app/components/UnsupportedNetworkModal/index.tsx
+#~ msgid "Unsupported Network"
+#~ msgstr ""
+
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
@@ -1467,8 +1524,8 @@ msgstr "Transactie verwerken..."
 
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/components/StabilityFund/index.tsx
-msgid "Or"
-msgstr "Of"
+#~ msgid "Or"
+#~ msgstr "Of"
 
 #: src/app/components/trade/XCallEventManager.tsx
 #~ msgid "Awaiting confirmation on {0}."
@@ -1530,14 +1587,20 @@ msgstr "Activa versturen?"
 msgid "{0} wallet"
 msgstr ""
 
-#: src/app/components/WalletModal/index.tsx
-#: src/app/components/WalletModal/index.tsx
-msgid "Swap & transfer assets cross-chain."
+#: src/app/components/home/Savings/index.tsx
+msgid "{0}<0/>{1}"
 msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+#~ msgid "Swap & transfer assets cross-chain."
+#~ msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/SearchModal/CurrencyList.tsx
@@ -1565,8 +1628,8 @@ msgid "Unstake sICX?"
 msgstr "Unstake sICX?"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
-msgid "The BALN APY is calculated from the USD value of BALN rewards allocated to a pool. Your rate will vary based on the amount of bBALN you hold."
-msgstr ""
+#~ msgid "The BALN APY is calculated from the USD value of BALN rewards allocated to a pool. Your rate will vary based on the amount of bBALN you hold."
+#~ msgstr ""
 
 #: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
@@ -1583,8 +1646,14 @@ msgstr "Claim ICX"
 #~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 msgid "Fees:"
 msgstr "Fees:"
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+msgid "The BALN APR is calculated from the USD value of BALN rewards allocated to a pool. Your rate will vary based on the amount of bBALN you hold."
+msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 msgid "47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
@@ -1630,13 +1699,10 @@ msgstr "BALN staking is geüpgraded naar een lock-up model genaamd Boosted BALN.
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/ProposalModal/index.tsx
-#: src/app/components/StabilityFund/index.tsx
-#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Cancel"
 msgstr "Annuleren"
@@ -1658,12 +1724,20 @@ msgstr "De stemming is afgelopen"
 msgid "Insufficient liquidity"
 msgstr "Onvoldoende liquiditeit"
 
+#: src/store/swap/hooks.ts
+msgid "Reduce price impact"
+msgstr ""
+
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "Smart contract details"
 msgstr ""
 
 #: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "Claiming bribe..."
+msgstr ""
+
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+msgid "0 {0}"
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
@@ -1673,6 +1747,10 @@ msgstr ""
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "If the price slips by more than this amount, your swap will fail."
 msgstr "Als de prijs meer dan dit bedrag daalt, zal de wissel niet doorgaan."
+
+#: src/app/components/UnsupportedNetworkModal/index.tsx
+msgid "You Are In Unsupported Network"
+msgstr ""
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Voting weight"
@@ -1717,6 +1795,8 @@ msgstr ""
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Balance"
@@ -1766,6 +1846,10 @@ msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "You must have at least {0} bBALN to propose a change."
+msgstr ""
+
+#: src/app/components/Header/index.tsx
+msgid "Copy"
 msgstr ""
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
@@ -1887,7 +1971,6 @@ msgstr "Liquiditeit opnemen?"
 msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
 msgstr ""
 
-#: src/app/components/StabilityFund/index.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Receive"
@@ -1911,8 +1994,8 @@ msgid "Your transaction has successed."
 msgstr ""
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
-msgid "The fee APY is calculated from the swap fees earned by a pool in the last 30 days."
-msgstr ""
+#~ msgid "The fee APY is calculated from the swap fees earned by a pool in the last 30 days."
+#~ msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Duration"
@@ -1950,6 +2033,10 @@ msgstr "Pool aan het aanmaken"
 msgid "The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset."
 msgstr ""
 
+#: src/app/components/Header/index.tsx
+#~ msgid "Wrong Wallet"
+#~ msgstr ""
+
 #: src/btp/src/connectors/helper.ts
 msgid "Sent {0} to the bridge contract."
 msgstr ""
@@ -1959,8 +2046,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
-msgid "Impermanent loss is not factored in."
-msgstr "Impermanent loss is niet meegenomen."
+#~ msgid "Impermanent loss is not factored in."
+#~ msgstr "Impermanent loss is niet meegenomen."
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Connected to {numberOfConnectedWallets} blockchain"
@@ -2006,8 +2093,8 @@ msgid "Total daily rewards"
 msgstr "Totale dagelijkse beloningen"
 
 #: src/app/components/StabilityFund/index.tsx
-msgid "Swap {sendSymbol} for {0}?"
-msgstr ""
+#~ msgid "Swap {sendSymbol} for {0}?"
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 msgid "Pool"
@@ -2022,8 +2109,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
-msgid "1 {sendSymbol} per {0}"
-msgstr "1 {sendSymbol} per {0}"
+#~ msgid "1 {sendSymbol} per {0}"
+#~ msgstr "1 {sendSymbol} per {0}"
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
@@ -2069,8 +2156,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "View disclaimer"
-msgstr "Bekijk disclaimer"
+#~ msgid "View disclaimer"
+#~ msgstr "Bekijk disclaimer"
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 msgid "Your positions require"
@@ -2144,8 +2231,10 @@ msgstr "Geen prijsgrafiek beschikbaar voor dit paar."
 msgid "Transferred {0} {1} to {2}."
 msgstr ""
 
-#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
-#: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPPanel.tsx
+#: src/app/components/UnsupportedNetworkModal/index.tsx
+msgid "Switch network to continue"
+msgstr ""
+
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "APY"
 msgstr "APY"
@@ -2172,6 +2261,7 @@ msgstr "Je hebt goedgekeurd"
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Sign in with"
 msgstr "Inloggen met"
@@ -2201,8 +2291,8 @@ msgid "You rejected"
 msgstr "Je hebt geweigerd"
 
 #: src/app/components/StabilityFund/index.tsx
-msgid "for"
-msgstr ""
+#~ msgid "for"
+#~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Exchange rate"
@@ -2284,7 +2374,6 @@ msgstr ""
 msgid "Learn how to resolve common transaction errors."
 msgstr ""
 
-#: src/app/components/StabilityFund/index.tsx
 #: src/app/pages/trade/layout.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
@@ -2342,6 +2431,8 @@ msgstr ""
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Value"
@@ -2442,6 +2533,10 @@ msgstr "Stem uitgebracht."
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 msgid "Network fees"
 msgstr "Netwerk vergoedingen"
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Close"
+msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "The current {0} price is"

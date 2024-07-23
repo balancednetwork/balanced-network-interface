@@ -9,7 +9,7 @@ import ClickAwayListener from 'react-click-away-listener';
 import { isIOS } from 'react-device-detect';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import Divider from 'app/components/Divider';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
@@ -65,6 +65,7 @@ const PositionDetailPanel = () => {
   const upLarge = useMedia('(min-width: 1200px)');
   const upMedium = useMedia('(min-width: 1000px)');
   const smallSp = useMedia('(max-width: 360px)');
+  const theme = useTheme();
   const shouldShowRebalancingTooltipAnchor = useMedia(
     `(min-width: ${'pl-PL,fr-FR'.indexOf(locale) >= 0 ? '400px' : '360px'})`,
   );
@@ -219,7 +220,7 @@ const PositionDetailPanel = () => {
             <Divider my={4} />
             <Typography mb={2}>
               {t`The current ${collateralType === 'sICX' ? 'ICX' : collateralType} price is`}{' '}
-              <span className="white">
+              <span style={{ color: isLockWarning ? theme.colors.alert : '#ffffff' }}>
                 $
                 {collateralType === 'sICX' && ratio.ICXUSDratio
                   ? ratio.ICXUSDratio.dp(4).toFormat()

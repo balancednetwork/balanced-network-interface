@@ -48,13 +48,14 @@ export default class Loans extends Contract {
     return this.callICONPlugins(payload);
   }
 
-  borrow(amount: string, collateralType?: string, asset?: string) {
+  borrow(amount: string, collateralType?: string, asset?: string, receiver?: string) {
     const payload = this.transactionParamsBuilder({
       method: 'borrow',
       params: {
         _collateralToBorrowAgainst: collateralType || 'sICX',
         _assetToBorrow: asset || 'bnUSD',
         _amountToBorrow: IconConverter.toHexNumber(amount),
+        ...(receiver && { _to: receiver }),
       },
     });
 

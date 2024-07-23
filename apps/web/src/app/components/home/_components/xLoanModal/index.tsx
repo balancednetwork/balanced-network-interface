@@ -118,11 +118,11 @@ const XLoanModal = ({
     await xTransactionActions.executeTransfer(xTransactionInput);
   };
 
-  const gasChecker = useXCallGasChecker(sourceChain);
+  const gasChecker = useXCallGasChecker(activeChain);
 
   // switch chain between evm chains
   const wallets = useWallets();
-  const walletType = xChainMap[sourceChain].xWalletType;
+  const walletType = xChainMap[activeChain].xWalletType;
   const isWrongChain = wallets[walletType].xChainId !== activeChain;
   const { switchChain } = useSwitchChain();
   const handleSwitchChain = () => {

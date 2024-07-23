@@ -123,7 +123,7 @@ const CollateralTypeList = ({
       )}
 
       {collateralTab === CollateralTab.ALL && (
-        <List>
+        <List mx="-25px">
           {filteredCollaterals
             ?.sort((a, b) => a.baseToken.symbol.localeCompare(b.baseToken.symbol))
             .map((xCollateral, index, { length }) => {

@@ -94,7 +94,7 @@ const CollateralTypeList = ({
 
       {collateralTab === CollateralTab.YOUR && (
         <>
-          <List>
+          <List mx="-25px">
             {filteredPositions.map((xPosition, index) =>
               xPosition.isPositionSingleChain ? (
                 <SingleChainItem

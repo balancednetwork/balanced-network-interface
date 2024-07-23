@@ -164,22 +164,36 @@ const XLoanModal = ({
 
           {action === XLoanAction.BORROW && (
             <Typography textAlign="center">
-              <Trans>Includes a fee of {originationFee.dp(2).toFormat()} bnUSD.</Trans>
-            </Typography>
-          )}
-
-          {interestRate && interestRate.isGreaterThan(0) && action === XLoanAction.BORROW && (
-            <Typography textAlign="center">
-              <Trans>
-                Your loan will increase at a rate of {`${interestRate.times(100).toFixed(2)}%`.replace('.00%', '%')} per
-                year.
-              </Trans>
+              <Trans>Borrow fee:</Trans>
+              <strong> {originationFee.dp(2).toFormat()} bnUSD</strong>
             </Typography>
           )}
 
           <Typography textAlign="center">
-            <Trans>You'll also pay</Trans> <strong>{formattedXCallFee}</strong> <Trans>to transfer cross-chain.</Trans>
+            <Trans>
+              Transfer fee: <strong>{formattedXCallFee}</strong>
+            </Trans>
           </Typography>
+
+          {interestRate && interestRate.isGreaterThan(0) && action === XLoanAction.BORROW && (
+            <Typography textAlign="center" mt={4}>
+              <Trans>
+                Your loan will increase at a rate of{' '}
+                <strong>{`${interestRate.times(100).toFixed(2)}%`.replace('.00%', '%')}</strong> per year.
+              </Trans>
+            </Typography>
+          )}
+
+          {receiver && action === XLoanAction.BORROW && (
+            <Box className="border-top" mt={3} pt={3}>
+              <Typography color="text1" textAlign="center">
+                {xChainMap[loanNetwork].name} address
+              </Typography>
+              <Typography maxWidth={200} textAlign="center" color="text" mx="auto">
+                {receiver.split('/')[1]}
+              </Typography>
+            </Box>
+          )}
 
           {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
 

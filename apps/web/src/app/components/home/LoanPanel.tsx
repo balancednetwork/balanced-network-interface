@@ -406,15 +406,16 @@ const LoanPanel = () => {
 
           {shouldBorrow && (
             <Typography textAlign="center">
-              <Trans>Includes a fee of {fee.dp(2).toFormat()} bnUSD.</Trans>
+              <Trans>Borrow fee:</Trans>
+              <strong> {fee.dp(2).toFormat()} bnUSD</strong>
             </Typography>
           )}
 
           {interestRate && interestRate.isGreaterThan(0) && shouldBorrow && (
-            <Typography textAlign="center">
+            <Typography textAlign="center" mt={4}>
               <Trans>
-                Your loan will increase at a rate of {`${interestRate.times(100).toFixed(2)}%`.replace('.00%', '%')} per
-                year.
+                Your loan will increase at a rate of{' '}
+                <strong>{`${interestRate.times(100).toFixed(2)}%`.replace('.00%', '%')}</strong> per year.
               </Trans>
             </Typography>
           )}

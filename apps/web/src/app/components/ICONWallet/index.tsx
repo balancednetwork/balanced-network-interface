@@ -39,6 +39,7 @@ import SendPanel from './wallets/SendPanel';
 import SICXWallet from './wallets/SICXWallet';
 import { notificationCSS } from './wallets/utils';
 import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { formatBalance, formatCurrency } from 'utils/formatter';
 
 const WalletUIs = {
   ICX: ICXWallet,
@@ -384,13 +385,13 @@ const ICONWallet = ({ setAnchor, anchor }) => {
         </AssetSymbol>
         <BalanceAndValueWrap>
           <DataText as="div">
-            {!account ? '-' : balances[address]?.toFixed(HIGH_PRICE_ASSET_DP[address] || 5, { groupSeparator: ',' })}
+            {!account ? '-' : formatBalance(balances[address].toFixed(), rateFracs?.[symbol]?.toFixed(18))}
           </DataText>
 
           <DataText as="div">
             {!account || !rates || !symbol || !rates[symbol] || !rateFracs
               ? '-'
-              : `$${balances[address]?.multiply(rateFracs[symbol]).toFixed(2, { groupSeparator: ',' })}`}
+              : formatCurrency(balances?.[address]?.multiply(rateFracs[symbol]).toFixed())}
           </DataText>
         </BalanceAndValueWrap>
       </>

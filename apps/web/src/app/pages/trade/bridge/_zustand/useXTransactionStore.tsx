@@ -137,43 +137,51 @@ export const useXTransactionStore = create<XTransactionStore>()(
             descriptionAmount = `${_inputAmount} ${_inputTokenSymbol} for ${_outputAmount} ${_outputTokenSymbol}`;
           }
         } else if (xTransactionInput.type === XTransactionType.DEPOSIT_COLLATERAL) {
-          pendingMessage = 'Requesting collateral deposit...';
-          successMessage = 'Collateral deposited.';
+          const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
+          const _formattedAmount = formatBigNumber(
+            new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
+            'currency',
+          );
+          pendingMessage = `Depositing ${_tokenSymbol} collateral...`;
+          successMessage = `Deposited ${_formattedAmount} ${_tokenSymbol}.`;
           errorMessage = 'Collateral deposit failed.';
 
-          const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
-          const _formattedAmount = xTransactionInput.inputAmount.toFixed(2);
           descriptionAction = `Deposit ${_tokenSymbol} as collateral`;
           descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
         } else if (xTransactionInput.type === XTransactionType.WITHDRAW_COLLATERAL) {
-          //todo handle description for xCalls without input amount
-          pendingMessage = 'Requesting collateral withdrawal...';
-          successMessage = 'Collateral withdrawn.';
+          const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
+          const _formattedAmount = formatBigNumber(
+            new BigNumber(xTransactionInput?.inputAmount.multiply(-1).toFixed() || 0),
+            'currency',
+          );
+          pendingMessage = `Withdrawing ${_tokenSymbol} collateral...`;
+          successMessage = `Withdrew ${_formattedAmount} ${_tokenSymbol}.`;
           errorMessage = 'Collateral withdrawal failed.';
 
-          const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
-          const _formattedAmount = xTransactionInput.inputAmount.toFixed(2);
           descriptionAction = `Withdraw ${_tokenSymbol} collateral`;
           descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
         } else if (xTransactionInput.type === XTransactionType.BORROW) {
-          //todo handle description for xCalls without input amount
-          pendingMessage = 'Requesting borrow...';
-          successMessage = 'Borrowed successfully.';
+          const _formattedAmount = formatBigNumber(
+            new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
+            'currency',
+          );
+          pendingMessage = 'Borrowing bnUSD...';
+          successMessage = `Borrowed ${_formattedAmount} bnUSD.`;
           errorMessage = 'Borrow failed.';
 
-          const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
-          const _formattedAmount = xTransactionInput.inputAmount.toFixed(2);
-          descriptionAction = `Borrow ${_tokenSymbol}`;
-          descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+          descriptionAction = `Borrow bnUSD`;
+          descriptionAmount = `${_formattedAmount} bnUSD`;
         } else if (xTransactionInput.type === XTransactionType.REPAY) {
-          pendingMessage = 'Requesting repay...';
-          successMessage = 'Repaid successfully.';
+          const _formattedAmount = formatBigNumber(
+            new BigNumber(xTransactionInput?.inputAmount.multiply(-1).toFixed() || 0),
+            'currency',
+          );
+          pendingMessage = 'Repaying bnUSD...';
+          successMessage = `Repaid ${_formattedAmount} bnUSD.`;
           errorMessage = 'Repay failed.';
 
-          const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
-          const _formattedAmount = xTransactionInput.inputAmount.toFixed(2);
-          descriptionAction = `Repay ${_tokenSymbol}`;
-          descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+          descriptionAction = `Repay bnUSD`;
+          descriptionAmount = `${_formattedAmount} bnUSD`;
         }
 
         xTransactionInput?.callback?.();

@@ -43,6 +43,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
     } else {
       setWalletModal(xChain.xWalletType);
     }
+    setChainId(xChain.xChainId);
   };
 
   return (

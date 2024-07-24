@@ -26,7 +26,7 @@ import {
   useChangeShouldLedgerSign,
   useICXUnstakingTime,
   useShouldLedgerSign,
-  useWalletModalToggle,
+  useWalletModal,
 } from 'store/application/hooks';
 import { Field } from 'store/collateral/reducer';
 import {
@@ -50,6 +50,7 @@ import { UnderlineText } from 'app/components/DropdownText';
 import CollateralChainSelector from './_components/CollateralChainSelector';
 import { MODAL_ID, modalActions } from 'app/pages/trade/bridge/_zustand/useModalStore';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { XWalletType } from 'app/pages/trade/bridge/types';
 
 export const PanelInfoWrap = styled(Flex)`
   justify-content: space-between;
@@ -150,8 +151,6 @@ const CollateralPanel = () => {
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
   const [ICXWithdrawOption, setICXWithdrawOption] = useState<ICXWithdrawOptions>(ICXWithdrawOptions.EMPTY);
   const { data: icxUnstakingTime } = useICXUnstakingTime();
-
-  const toggleWalletModal = useWalletModalToggle();
   const isSuperSmall = useMedia(`(max-width: 450px)`);
 
   const shouldLedgerSign = useShouldLedgerSign();
@@ -364,6 +363,14 @@ const CollateralPanel = () => {
 
   const [ref, width] = useWidth();
 
+  const [, setWalletModal] = useWalletModal();
+  const handleConnect = () => {
+    const chain = xChainMap[sourceChain];
+    if (chain.xWalletType !== XWalletType.COSMOS) {
+      setWalletModal(chain.xWalletType);
+    }
+  };
+
   return (
     <>
       <BoxPanelWrap>
@@ -410,7 +417,7 @@ const CollateralPanel = () => {
             <Flex minHeight={140} alignItems="center" justifyContent="center">
               <Typography mr={1}>{t`To deposit ${collateralType}`},</Typography>
               <Typography color="primaryBright">
-                <UnderlineText onClick={toggleWalletModal}>
+                <UnderlineText onClick={handleConnect}>
                   <Trans>sign in with</Trans>
                   {` ${xChainMap[sourceChain].name}`}
                 </UnderlineText>

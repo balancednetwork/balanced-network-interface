@@ -52,14 +52,3 @@ export function useSignedInWallets(): { address: string; xChainId: XChainId | un
     [wallets],
   );
 }
-
-export function useAvailableWallets(): { address: string; xChainId: XChainId }[] {
-  const wallets = useWallets();
-  return useMemo(
-    () =>
-      Object.values(wallets)
-        .filter(w => !!w.account && !!w.xChainId)
-        .map(w => ({ xChainId: w.xChainId!, address: w.account! })),
-    [wallets],
-  );
-}

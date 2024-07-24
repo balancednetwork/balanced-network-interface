@@ -29,7 +29,7 @@ import {
 import { useTradeExactIn, useTradeExactOut } from './trade';
 import { getXAddress, getXTokenByToken } from 'app/pages/trade/bridge/utils';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
 import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from 'constants/misc';
 import { useAssetManagerTokens } from 'app/pages/trade/bridge/_hooks/useAssetManagerTokens';
 import BigNumber from 'bignumber.js';
@@ -157,10 +157,9 @@ export function useDerivedSwapInfo(): {
     [Field.OUTPUT]: { currency: outputCurrency, xChainId: outputXChainId },
   } = useSwapState();
 
-  const signedInWallets = useAvailableWallets();
-  const account = signedInWallets.find(
-    w => xChainMap[w.xChainId].xWalletType === xChainMap[inputXChainId].xWalletType,
-  )?.address;
+  const wallets = useWallets();
+  const account = wallets[xChainMap[inputXChainId].xWalletType].account ?? undefined;
+
   const crossChainWallet = useCrossChainWalletBalances();
 
   const isExactIn: boolean = independentField === Field.INPUT;

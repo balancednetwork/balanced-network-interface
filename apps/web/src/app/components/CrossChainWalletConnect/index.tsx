@@ -13,26 +13,19 @@ import { ModalContentWrapper } from '../ModalContent';
 import AddressInput from './AddressInput';
 import { useSwapState } from 'store/swap/hooks';
 import { Trans } from '@lingui/macro';
-import { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
 
-const CrossChainWalletConnect = ({ chainId, editable }: { chainId: XChainId; editable?: boolean }) => {
-  const signedInWallets = useAvailableWallets();
+const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; editable?: boolean }) => {
   const [editableAddressModalOpen, setEditableAddressModalOpen] = React.useState(false);
   const { connectToWallet: connectKeplr } = useArchwayContext();
   const [, setWalletModal] = useWalletModal();
   const { recipient } = useSwapState();
 
-  const getChainAddress = (_chainId: XChainId): string | undefined => {
-    const wallet = signedInWallets.find(
-      wallet => xChainMap[wallet.xChainId].xWalletType === xChainMap[_chainId].xWalletType,
-    );
-    if (wallet) {
-      return wallet.address;
-    }
-  };
+  const wallets = useWallets();
+  const account = wallets[xChainMap[xChainId].xWalletType].account;
 
   const handleConnect = () => {
-    const chain = xChainMap[chainId];
+    const chain = xChainMap[xChainId];
     if (chain.xWalletType === XWalletType.COSMOS) {
       connectKeplr();
     } else {
@@ -51,8 +44,8 @@ const CrossChainWalletConnect = ({ chainId, editable }: { chainId: XChainId; edi
 
   return !editable ? (
     <Typography onClick={handleConnect} color="primaryBright">
-      {getChainAddress(chainId) ? (
-        <UnderlineText>{shortenAddress(getChainAddress(chainId) || '', 5)}</UnderlineText>
+      {account ? (
+        <UnderlineText>{shortenAddress(account || '', 5)}</UnderlineText>
       ) : (
         <UnderlineText>Connect wallet</UnderlineText>
       )}
@@ -71,12 +64,12 @@ const CrossChainWalletConnect = ({ chainId, editable }: { chainId: XChainId; edi
           <Typography textAlign="center" mb={3}>
             <Trans>Enter a recipient address:</Trans>
           </Typography>
-          <AddressInput onSave={closeModal} chainId={chainId} />
+          <AddressInput onSave={closeModal} chainId={xChainId} />
           <Typography textAlign="center" mt={3}>
             <Trans>Or connect your</Trans>{' '}
             <UnderlineText color={'red'} onClick={handleConnect}>
               <Typography color={'primaryBright'}>
-                {`${xChainMap[chainId].name}`} <Trans>wallet</Trans>
+                {`${xChainMap[xChainId].name}`} <Trans>wallet</Trans>
               </Typography>
             </UnderlineText>
             .

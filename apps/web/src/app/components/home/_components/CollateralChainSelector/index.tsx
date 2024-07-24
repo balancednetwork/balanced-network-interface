@@ -85,10 +85,10 @@ const CollateralChainSelector = () => {
         <ClickAwayListener onClickAway={closeDropdown}>
           <div>
             <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }}>
-              <UnderlineText style={{ paddingRight: '1px', fontSize: '14px' }}>
+              <Typography fontSize={14} pr="1px" variant="span">
                 <ChainSelectorLogo chain={xChainMap[collateralXChain]} />
                 {xChainMap[collateralXChain].name}
-              </UnderlineText>
+              </Typography>
               <div ref={arrowRef} style={{ display: 'inline-block' }}>
                 <StyledArrowDownIcon style={{ transform: 'translate3d(-2px, -4px, 0)' }} />
               </div>

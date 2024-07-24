@@ -239,7 +239,7 @@ export default function WalletModal() {
             <Typography textAlign="center" as="div" maxWidth={300} mx="auto" mt={2}>
               <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
               <Box pt={'5px'}>
-                <Link href="https://balanced.network/disclaimer/" target="_blank">
+                <Link href="https://balanced.network/disclaimer/" target="_blank" tabIndex={-1}>
                   <Trans>View disclaimer.</Trans>
                   <ExternalIcon width="11" height="11" style={{ marginLeft: '7px', marginTop: '-3px' }} />
                 </Link>

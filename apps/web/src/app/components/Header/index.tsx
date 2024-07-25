@@ -30,7 +30,7 @@ import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import EVMWallet from '../EVMWallet';
 import HavahWallet from '../HavahWallet';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import useWallets, { useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import useWallets, { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { Placement } from '@popperjs/core';
 
 const StyledLogo = styled(Logo)`
@@ -193,7 +193,7 @@ export default function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
   const upSmall = useMedia('(min-width: 600px)');
   const [activeTab, setActiveTab] = useState<XChainId | null | undefined>(null);
-  const wallets = useAvailableWallets();
+  const wallets = useSignedInWallets();
   const allWallets = useWallets();
   const { data: claimableICX } = useClaimableICX();
 
@@ -282,7 +282,7 @@ export default function Header(props: { title?: string; className?: string }) {
                       <ConnectionStatus>
                         {wallets.map((wallet, index) => (
                           <span key={index}>
-                            {xChainMap[wallet.xChainId].name}
+                            {wallet.xChainId ? xChainMap[wallet.xChainId].name : t`Unsupported network`}
                             {index + 1 < wallets.length ? ', ' : ''}
                           </span>
                         ))}
@@ -291,7 +291,9 @@ export default function Header(props: { title?: string; className?: string }) {
                   ) : (
                     <>
                       <Typography variant="p" textAlign="right">
-                        {t`${xChainMap[wallets[0].xChainId].name} wallet`}
+                        {wallets[0].xChainId
+                          ? t`${xChainMap[wallets[0].xChainId].name} wallet`
+                          : t`Unsupported network`}
                       </Typography>
                       <CopyableAddress account={wallets[0].address} />
                     </>
@@ -336,14 +338,16 @@ export default function Header(props: { title?: string; className?: string }) {
                       )}
                       {wallets.length > 1 && (
                         <ChainTabs>
-                          {wallets.map(wallet => (
-                            <ChainTabButton
-                              onClick={() => handleChainTabClick(wallet.xChainId)}
-                              $active={wallet.xChainId === activeTab}
-                            >
-                              {xChainMap[wallet.xChainId].name}
-                            </ChainTabButton>
-                          ))}
+                          {wallets
+                            .filter(w => !!w.xChainId)
+                            .map(wallet => (
+                              <ChainTabButton
+                                onClick={() => handleChainTabClick(wallet.xChainId!)}
+                                $active={wallet.xChainId === activeTab}
+                              >
+                                {xChainMap[wallet.xChainId!].name}
+                              </ChainTabButton>
+                            ))}
                         </ChainTabs>
                       )}
 

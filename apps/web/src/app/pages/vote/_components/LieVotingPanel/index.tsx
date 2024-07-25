@@ -210,7 +210,7 @@ export default function LiveVotingPanel() {
               }
             />
           </Flex>
-          <GirdHeaderItem>
+          <GirdHeaderItem style={{ justifyContent: 'end' }}>
             <Trans>Current incentives</Trans>
           </GirdHeaderItem>
         </VotingGrid>

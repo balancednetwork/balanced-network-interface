@@ -136,24 +136,29 @@ export class Contract {
   }
 
   private callIconex(payload: any): Promise<ResponseJsonRPCPayload> {
-    window.dispatchEvent(
-      new CustomEvent('ICONEX_RELAY_REQUEST', {
-        detail: {
-          type: 'REQUEST_JSON-RPC',
-          payload,
-        },
-      }),
-    );
-    return new Promise(resolve => {
-      const handler = ({ detail: { type, payload } }: any) => {
-        if (type === 'RESPONSE_JSON-RPC') {
-          window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);
-          resolve(payload);
-        }
-      };
+    if (this.nid === NetworkId.HAVAH) {
+      // @ts-ignore
+      return window.havah.sendTransaction(payload);
+    } else {
+      window.dispatchEvent(
+        new CustomEvent('ICONEX_RELAY_REQUEST', {
+          detail: {
+            type: 'REQUEST_JSON-RPC',
+            payload,
+          },
+        }),
+      );
+      return new Promise(resolve => {
+        const handler = ({ detail: { type, payload } }: any) => {
+          if (type === 'RESPONSE_JSON-RPC') {
+            window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);
+            resolve(payload);
+          }
+        };
 
-      window.addEventListener(ICONEX_RELAY_RESPONSE, handler);
-    });
+        window.addEventListener(ICONEX_RELAY_RESPONSE, handler);
+      });
+    }
   }
 
   private async callLedger(payload: any): Promise<any> {

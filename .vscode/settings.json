@@ -18,5 +18,21 @@
   },
   "editor.defaultFormatter": "biomejs.biome",
   "editor.formatOnSave": true,
-  "cSpell.words": ["BALN", "BNUSD", "Centralised", "Finalising", "Multichain", "XSWAP", "XTRANSFER", "zustand"]
+  "cSpell.words": [
+    "arbitrum",
+    "avax",
+    "balancednetwork",
+    "BALN",
+    "BNUSD",
+    "Centralised",
+    "cosmjs",
+    "cosmwasm",
+    "Finalising",
+    "HAVAH",
+    "Multichain",
+    "stargate",
+    "XSWAP",
+    "XTRANSFER",
+    "zustand"
+  ]
 }

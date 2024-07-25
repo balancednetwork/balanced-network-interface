@@ -120,13 +120,13 @@ msgstr ""
 msgid "15m"
 msgstr "15분"
 
-#: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Switch to {0}"
 msgstr ""
 
-#: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claim ICX?"
 msgstr "ICX 요구하기?"
 
@@ -154,6 +154,10 @@ msgstr ""
 msgid "Loan"
 msgstr "대출"
 
+#: src/app/components/HavahWallet/index.tsx
+msgid "Havah wallet"
+msgstr ""
+
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "You have no pending cross-chain transactions."
 msgstr ""
@@ -162,8 +166,10 @@ msgstr ""
 #~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain"
 #~ msgstr ""
 
-#: src/app/components/Wallet/ICONWallets/ICXWallet/index.tsx
-#: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/ArchwayWallet/wallets/ICXWallet/index.tsx
+#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/ICONWallet/wallets/ICXWallet/index.tsx
+#: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Unstaking"
 msgstr "스테이킹 해제"
 
@@ -367,12 +373,15 @@ msgstr ""
 msgid "Proposals"
 msgstr "제안"
 
-#: src/app/components/home/_components/xCollateralModal/index.tsx
-msgid "Switch Network"
-msgstr ""
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+#~ msgid "Switch Network"
+#~ msgstr ""
 
-#: src/app/components/CollateralTypeSwitcher/CollateralTypeListWrap.tsx
-#: src/app/components/Wallet/index.tsx
+#: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/ICONWallet/index.tsx
 msgid "Search assets"
 msgstr ""
 
@@ -384,6 +393,7 @@ msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #~ msgid "Total"
 #~ msgstr ""
@@ -576,7 +586,8 @@ msgstr ""
 msgid "is available on {0}."
 msgstr ""
 
-#: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
+#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
+#: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Add your sICX to the collateral pool."
 msgstr "당신의 sICX를 담보에 추가합니다."
 
@@ -1162,6 +1173,7 @@ msgstr "지금은 안됩니다"
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #~ msgid "No assets available."
 #~ msgstr "사용 가능한 자산이 없습니다."
@@ -1195,15 +1207,10 @@ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
 msgid "Swap & transfer crypto cross-chain."
 msgstr ""
 
-#: src/app/components/home/_components/CollateralChainSelector/ChainList.tsx
-#: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
-msgid "Search blockchains..."
-msgstr ""
-
-#: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "Your loan will increase at a rate of {0} per year."
 msgstr ""
@@ -1605,7 +1612,13 @@ msgstr ""
 #~ msgid "Swap & transfer assets cross-chain."
 #~ msgstr ""
 
-#: src/app/components/CollateralTypeSwitcher/CollateralTypeList.tsx
+#: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/ICONWallet/index.tsx
+#: src/app/components/ICONWallet/index.tsx
 #: src/app/components/SearchModal/CurrencyList.tsx
 #: src/app/components/Wallet/ICONAssetModal.tsx
 #: src/app/components/Wallet/index.tsx
@@ -1696,9 +1709,6 @@ msgstr ""
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/Savings/index.tsx
 #: src/app/components/ProposalModal/index.tsx
-#: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-#: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
-#: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
@@ -1796,8 +1806,13 @@ msgstr ""
 #~ msgid "N/A"
 #~ msgstr ""
 
-#: src/app/components/Wallet/ICONAssetModal.tsx
-#: src/app/components/Wallet/index.tsx
+#: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/ICONWallet/index.tsx
+#: src/app/components/ICONWallet/index.tsx
 msgid "Balance"
 msgstr "잔액"
 
@@ -2257,6 +2272,7 @@ msgstr "승인했습니다"
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #~ msgid "Sign in with"
 #~ msgstr "연결과 함께"
@@ -2423,8 +2439,13 @@ msgstr ""
 msgid "Test your contract calls before you submit the proposal."
 msgstr ""
 
-#: src/app/components/Wallet/ICONAssetModal.tsx
-#: src/app/components/Wallet/index.tsx
+#: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/ICONWallet/index.tsx
+#: src/app/components/ICONWallet/index.tsx
 msgid "Value"
 msgstr "가치"
 

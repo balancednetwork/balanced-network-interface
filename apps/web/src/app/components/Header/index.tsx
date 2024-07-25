@@ -203,7 +203,9 @@ export default function Header(props: { title?: string; className?: string }) {
                   ) : (
                     <>
                       <Typography variant="p" textAlign="right">
-                        {t`${xChainMap[wallets[0].xChainId].name} wallet`}
+                        {wallets[0].xChainId
+                          ? t`${xChainMap[wallets[0].xChainId].name} wallet`
+                          : t`Unsupported network`}
                       </Typography>
                       <CopyableAddress account={wallets[0].address} />
                     </>

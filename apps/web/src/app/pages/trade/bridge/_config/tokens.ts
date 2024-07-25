@@ -59,3 +59,14 @@ export const ArchwayToken: TokenMap = {
 export const useARCH = () => {
   return ArchwayToken[NETWORK_ID];
 };
+
+const ARCHWAY_FEE_TOKEN_SYMBOLS: { [key in ChainId]: string } = {
+  [ChainId.MAINNET]: 'aarch',
+  [ChainId.BERLIN]: 'aconst',
+  [ChainId.LISBON]: 'aconst',
+  [ChainId.SEJONG]: 'aconst',
+  [ChainId.YEOUIDO]: 'aconst',
+  [ChainId.HAVAH]: 'aconst',
+};
+
+export const ARCHWAY_FEE_TOKEN_SYMBOL = ARCHWAY_FEE_TOKEN_SYMBOLS[NETWORK_ID];

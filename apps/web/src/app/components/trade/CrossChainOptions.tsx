@@ -114,7 +114,7 @@ const CrossChainOptions = ({ xChainId, setXChainId, isOpen, setOpen, xChains, ed
         </Flex>
       )}
 
-      <CrossChainWalletConnect chainId={xChainId} editable={editable} />
+      <CrossChainWalletConnect xChainId={xChainId} editable={editable} />
     </Wrap>
   );
 };

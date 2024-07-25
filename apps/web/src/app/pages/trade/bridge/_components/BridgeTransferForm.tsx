@@ -22,7 +22,7 @@ import { Field } from 'store/bridge/reducer';
 import useXCallFee from '../_hooks/useXCallFee';
 import { xChainMap } from '../_config/xChains';
 import { maxAmountSpend, validateAddress } from 'utils';
-import { useAvailableWallets } from '../_hooks/useWallets';
+import useWallets from '../_hooks/useWallets';
 import { UnderlineText } from 'app/components/DropdownText';
 
 export default function BridgeTransferForm({ openModal }) {
@@ -35,7 +35,6 @@ export default function BridgeTransferForm({ openModal }) {
   const bridgeDirection = useBridgeDirection();
   const percentAmount = bridgeState[Field.FROM].percent;
 
-  const signedInWallets = useAvailableWallets();
   const toggleWalletModal = useWalletModalToggle();
 
   const maxInputAmount = React.useMemo(
@@ -55,16 +54,15 @@ export default function BridgeTransferForm({ openModal }) {
     [onPercentSelection, maxInputAmount],
   );
 
+  const wallets = useWallets();
   React.useEffect(() => {
-    const destinationWallet = signedInWallets.find(
-      wallet => xChainMap[wallet.xChainId].xWalletType === xChainMap[bridgeDirection.to].xWalletType,
-    );
+    const destinationWallet = wallets[xChainMap[bridgeDirection.to].xWalletType];
     if (destinationWallet) {
-      onChangeRecipient(destinationWallet.address);
+      onChangeRecipient(destinationWallet.account ?? null);
     } else {
       onChangeRecipient(null);
     }
-  }, [bridgeDirection.to, onChangeRecipient, signedInWallets]);
+  }, [bridgeDirection.to, onChangeRecipient, wallets]);
 
   const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount } = useDerivedBridgeInfo();
 

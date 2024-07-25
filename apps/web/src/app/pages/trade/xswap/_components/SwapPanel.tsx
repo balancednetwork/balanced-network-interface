@@ -27,7 +27,7 @@ import XSwapModal from './XSwapModal';
 import SwapModal from './SwapModal';
 import { MODAL_ID, modalActions } from '../../bridge/_zustand/useModalStore';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
-import { useAvailableWallets } from '../../bridge/_hooks/useWallets';
+import useWallets, { useSignedInWallets } from '../../bridge/_hooks/useWallets';
 import { xChainMap } from '../../bridge/_config/xChains';
 
 export default function SwapPanel() {
@@ -47,7 +47,7 @@ export default function SwapPanel() {
   } = useDerivedSwapInfo();
   const showSlippageWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
 
-  const signedInWallets = useAvailableWallets();
+  const signedInWallets = useSignedInWallets();
   const { recipient } = useSwapState();
   const isRecipientCustom = recipient !== null && !signedInWallets.some(wallet => wallet.address === recipient);
   const isOutputCrosschainCompatible = isXToken(currencies?.OUTPUT);
@@ -56,16 +56,15 @@ export default function SwapPanel() {
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
     useSwapActionHandlers();
 
+  const wallets = useWallets();
   React.useEffect(() => {
-    const destinationWallet = signedInWallets.find(
-      wallet => xChainMap[wallet.xChainId].xWalletType === xChainMap[direction.to].xWalletType,
-    );
+    const destinationWallet = wallets[xChainMap[direction.to].xWalletType];
     if (destinationWallet) {
-      onChangeRecipient(destinationWallet.address);
+      onChangeRecipient(destinationWallet.account ?? null);
     } else {
       onChangeRecipient(null);
     }
-  }, [direction, onChangeRecipient, signedInWallets]);
+  }, [direction, onChangeRecipient, wallets]);
 
   const handleTypeInput = useCallback(
     (value: string) => {

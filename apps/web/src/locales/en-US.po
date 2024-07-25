@@ -119,13 +119,13 @@ msgstr "Withdraw Balance Tokens"
 msgid "15m"
 msgstr "15m"
 
-#: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Switch to {0}"
 msgstr "Switch to {0}"
 
-#: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claim ICX?"
 msgstr "Claim ICX?"
 
@@ -152,6 +152,10 @@ msgstr "Claim Savings Rate rewards?"
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Loan"
 msgstr "Loan"
+
+#: src/app/components/HavahWallet/index.tsx
+msgid "Havah wallet"
+msgstr "Havah wallet"
 
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "You have no pending cross-chain transactions."
@@ -358,12 +362,15 @@ msgstr "wallet"
 msgid "Proposals"
 msgstr "Proposals"
 
-#: src/app/components/home/_components/xCollateralModal/index.tsx
-msgid "Switch Network"
-msgstr "Switch Network"
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+#~ msgid "Switch Network"
+#~ msgstr "Switch Network"
 
-#: src/app/components/CollateralTypeSwitcher/CollateralTypeListWrap.tsx
-#: src/app/components/Wallet/index.tsx
+#: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/ICONWallet/index.tsx
 msgid "Search assets"
 msgstr "Search assets"
 
@@ -375,6 +382,7 @@ msgstr "APR"
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #~ msgid "Total"
 #~ msgstr "Total"
@@ -551,7 +559,8 @@ msgstr "Transaction failed!"
 msgid "is available on {0}."
 msgstr "is available on {0}."
 
-#: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
+#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
+#: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Add your sICX to the collateral pool."
 msgstr "Add your sICX to the collateral pool."
 
@@ -1119,6 +1128,7 @@ msgstr "Not now"
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #~ msgid "No assets available."
 #~ msgstr "No assets available."
@@ -1152,15 +1162,10 @@ msgstr "Each redemption is spread across a group of borrowers to minimise the im
 
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
 msgid "Swap & transfer crypto cross-chain."
 msgstr "Swap & transfer crypto cross-chain."
 
-#: src/app/components/home/_components/CollateralChainSelector/ChainList.tsx
-#: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
-msgid "Search blockchains..."
-msgstr "Search blockchains..."
-
-#: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/home/LoanPanel.tsx
 msgid "Your loan will increase at a rate of {0} per year."
 msgstr "Your loan will increase at a rate of {0} per year."
@@ -1547,7 +1552,13 @@ msgstr "{0}<0/>{1}"
 #~ msgid "Swap & transfer assets cross-chain."
 #~ msgstr "Swap & transfer assets cross-chain."
 
-#: src/app/components/CollateralTypeSwitcher/CollateralTypeList.tsx
+#: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/ICONWallet/index.tsx
+#: src/app/components/ICONWallet/index.tsx
 #: src/app/components/SearchModal/CurrencyList.tsx
 #: src/app/components/Wallet/ICONAssetModal.tsx
 #: src/app/components/Wallet/index.tsx
@@ -1634,9 +1645,6 @@ msgstr "BALN staking has been upgraded to a lock-up model called Boosted BALN."
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/Savings/index.tsx
 #: src/app/components/ProposalModal/index.tsx
-#: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-#: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
-#: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
@@ -1734,8 +1742,13 @@ msgstr "Method"
 #~ msgid "N/A"
 #~ msgstr "N/A"
 
-#: src/app/components/Wallet/ICONAssetModal.tsx
-#: src/app/components/Wallet/index.tsx
+#: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/ICONWallet/index.tsx
+#: src/app/components/ICONWallet/index.tsx
 msgid "Balance"
 msgstr "Balance"
 
@@ -2191,6 +2204,7 @@ msgstr "You approved"
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #~ msgid "Sign in with"
 #~ msgstr "Sign in with"
@@ -2357,8 +2371,13 @@ msgstr "On Ledger:"
 msgid "Test your contract calls before you submit the proposal."
 msgstr "Test your contract calls before you submit the proposal."
 
-#: src/app/components/Wallet/ICONAssetModal.tsx
-#: src/app/components/Wallet/index.tsx
+#: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/HavahWallet/index.tsx
+#: src/app/components/ICONWallet/index.tsx
+#: src/app/components/ICONWallet/index.tsx
 msgid "Value"
 msgstr "Value"
 

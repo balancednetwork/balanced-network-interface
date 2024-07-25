@@ -3,7 +3,6 @@ import React from 'react';
 import { useIconReact } from 'packages/icon-react';
 import styled from 'styled-components';
 
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useFetchBBalnInfo, useFetchBBalnSources } from 'store/bbaln/hooks';
 import { useCollateralFetchInfo } from 'store/collateral/hooks';
 import { useFetchUserVoteData } from 'store/liveVoting/hooks';
@@ -34,14 +33,13 @@ const Grid = styled.div`
 
 export function HomePage() {
   const { account } = useIconReact();
-  const { address: accountArch } = useArchwayContext();
 
   useFetchPrice();
   useFetchOraclePrices();
   useFetchBBalnSources();
   useFetchBBalnInfo(account);
   useFetchSavingsInfo(account);
-  useWalletFetchBalances(account, accountArch);
+  useWalletFetchBalances();
   useCollateralFetchInfo(account);
   useLoanFetchInfo(account);
   useFetchRewardsInfo();

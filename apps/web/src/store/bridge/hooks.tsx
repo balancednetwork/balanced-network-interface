@@ -18,7 +18,7 @@ import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { Trans, t } from '@lingui/macro';
 import { useCrossChainWalletBalances } from 'store/wallet/hooks';
-import { isDenomAsset } from 'app/_xcall/archway/utils';
+import { isDenomAsset } from 'packages/archway/utils';
 import { sARCH } from 'app/pages/trade/bridge/_config/tokens';
 import useWallets, { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';

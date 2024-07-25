@@ -59,14 +59,14 @@ const SingleChainItem = ({
               {price && '$'}
               {collateral
                 ?.multiply(price || 1)
-                .toFixed(price ? 2 : HIGH_PRICE_ASSET_DP[baseToken.address] || 2, { groupSeparator: ',' })}
+                .toFixed(price ? 0 : HIGH_PRICE_ASSET_DP[baseToken.address] || 2, { groupSeparator: ',' })}
               {isPotential && ' ' + t`available`}
             </DataText>
           )}
 
           {!collateral?.greaterThan(0) && <DataText as="div">-</DataText>}
 
-          <DataText as="div">{!loan || loan.isEqualTo(0) ? '-' : `$${loan.toFormat(2)}`}</DataText>
+          <DataText as="div">{!loan || loan.isEqualTo(0) ? '-' : `$${loan.toFormat(0)}`}</DataText>
         </BalanceAndValueWrap>
       </StyledListItem>
     </>

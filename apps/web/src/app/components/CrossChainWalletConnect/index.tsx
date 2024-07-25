@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
+import { useArchwayContext } from 'packages/archway/ArchwayProvider';
 import { XChainId, XWalletType } from 'app/pages/trade/bridge/types';
 import { Typography } from 'app/theme';
 import { useWalletModal } from 'store/application/hooks';

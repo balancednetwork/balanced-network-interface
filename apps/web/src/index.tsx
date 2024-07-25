@@ -18,7 +18,7 @@ import 'sanitize.css/sanitize.css';
 
 // Import root app
 import { App } from 'app';
-import { ArchwayProvider } from 'app/_xcall/archway/ArchwayProvider';
+import { ArchwayProvider } from 'packages/archway/ArchwayProvider';
 import store from 'store';
 
 // Initialize languages
@@ -26,7 +26,7 @@ import { LanguageProvider } from './i18n';
 
 import { WagmiProvider } from 'wagmi';
 import { wagmiConfig } from './config/wagmi';
-import { HavahProvider } from 'app/_xcall/havah/HavahProvider';
+import { HavahProvider } from 'packages/havah/HavahProvider';
 
 BigInt.prototype['toJSON'] = function () {
   return 'BIGINT::' + this.toString();

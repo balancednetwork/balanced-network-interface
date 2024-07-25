@@ -10,10 +10,9 @@ import { useIconReact } from 'packages/icon-react';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { useARCH } from 'app/pages/trade/bridge/_config/tokens';
-import { isDenomAsset } from 'app/_xcall/archway/utils';
+import { useArchwayContext } from 'packages/archway/ArchwayProvider';
+import { ARCHWAY_FEE_TOKEN_SYMBOL, useARCH } from 'app/pages/trade/bridge/_config/tokens';
+import { isDenomAsset } from 'packages/archway/utils';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import { getXTokenAddress, isXToken } from 'app/pages/trade/bridge/utils';
 import bnJs, { havahJs } from 'bnJs';
@@ -42,14 +41,6 @@ export function useCrossChainWalletBalances(): AppState['wallet'] {
 
 export function useICONWalletBalances(): { [address: string]: CurrencyAmount<Currency> } {
   return useSelector((state: AppState) => state.wallet['0x1.icon']!);
-}
-
-export function useArchwayWalletBalances(): AppState['wallet']['archway-1'] {
-  return useSelector((state: AppState) => state.wallet['archway-1']);
-}
-
-export function useHavahWalletBalances(): AppState['wallet']['0x100.icon'] {
-  return useSelector((state: AppState) => state.wallet['0x100.icon']);
 }
 
 export function useWalletBalances(xChainId: XChainId): { [address: string]: CurrencyAmount<Currency> } | undefined {
@@ -83,11 +74,11 @@ export function useArchwayBalances(
 ): UseQueryResult<{
   [key: string]: CurrencyAmount<Currency>;
 }> {
-  const { signingClient, chain_id } = useArchwayContext();
+  const { signingClient, chainId } = useArchwayContext();
   const arch = useARCH();
 
   return useQuery({
-    queryKey: [`archwayBalances`, chain_id, address, tokens],
+    queryKey: [`archwayBalances`, chainId, address, tokens],
     queryFn: async () => {
       if (!signingClient || !address) return;
 
@@ -132,7 +123,7 @@ import { erc20Abi } from 'viem';
 import { useAccount, useBalance, usePublicClient } from 'wagmi';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import { useHavahContext } from 'app/_xcall/havah/HavahProvider';
+import { useHavahContext } from 'packages/havah/HavahProvider';
 
 export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined, xChainId: XChainId) {
   const chainId = xChainMap[xChainId].id;
@@ -181,7 +172,7 @@ export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token
   });
 }
 
-export function useWalletFetchBalances(account?: string | null, accountArch?: string | null) {
+export function useWalletFetchBalances() {
   const dispatch = useDispatch();
   const tokenListConfig = useTokenListConfig();
   const userAddedTokens = useUserAddedTokens();
@@ -193,6 +184,7 @@ export function useWalletFetchBalances(account?: string | null, accountArch?: st
   }, [userAddedTokens, tokenListConfig]);
 
   // fetch balances on icon
+  const { account } = useIconReact();
   const balances = useAvailableBalances(account || undefined, tokens);
   React.useEffect(() => {
     dispatch(changeICONBalances(balances));
@@ -207,6 +199,7 @@ export function useWalletFetchBalances(account?: string | null, accountArch?: st
   }, [balancesHavah, dispatch]);
 
   // fetch balances on archway
+  const { address: accountArch } = useArchwayContext();
   const tokensArch = useXTokens('archway-1') || [];
   const { data: balancesArch } = useArchwayBalances(accountArch || undefined, tokensArch);
   React.useEffect(() => {

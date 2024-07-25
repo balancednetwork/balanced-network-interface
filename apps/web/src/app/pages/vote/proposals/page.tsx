@@ -19,7 +19,7 @@ export function ProposalListPage() {
   const { data: proposals } = useTotalProposalQuery();
   const { account } = useIconReact();
   useFetchBBalnInfo(account);
-  useWalletFetchBalances(account);
+  useWalletFetchBalances();
   const useActiveProposalsQuery = useActiveProposals();
   const { data: activeProposals } = useActiveProposalsQuery;
   const bBalnAmount = useBBalnAmount();

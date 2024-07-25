@@ -22,16 +22,15 @@ import { useWalletModalToggle } from 'store/application/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { shortenAddress } from 'utils';
 
-import ArchwayWallet from '../ArchwayWallet';
 import ICONWallet from '../ICONWallet';
 import { notificationCSS } from '../ICONWallet/wallets/utils';
 import { MouseoverTooltip } from '../Tooltip';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import EVMWallet from '../EVMWallet';
-import HavahWallet from '../HavahWallet';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import useWallets, { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { Placement } from '@popperjs/core';
+import ArchwayWallet from '../ArchwayWallet';
 
 const StyledLogo = styled(Logo)`
   margin-right: 15px;
@@ -167,7 +166,7 @@ const WalletUIs: Partial<Record<XChainId, any>> = {
   '0x1.icon': ICONWallet,
   'archway-1': ArchwayWallet,
   '0xa86a.avax': EVMWallet,
-  '0x100.icon': HavahWallet,
+  '0x100.icon': EVMWallet,
   '0x38.bsc': EVMWallet,
   '0xa4b1.arbitrum': EVMWallet,
   '0x2105.base': EVMWallet,
@@ -231,6 +230,7 @@ export default function Header(props: { title?: string; className?: string }) {
     allWallets[XWalletType.ICON]?.disconnect();
     allWallets[XWalletType.COSMOS]?.disconnect();
     allWallets[XWalletType.EVM]?.disconnect();
+    allWallets[XWalletType.HAVAH]?.disconnect();
   };
 
   const handleWalletClose = e => {

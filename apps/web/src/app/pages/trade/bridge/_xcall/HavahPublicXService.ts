@@ -9,8 +9,7 @@ import {
   XCallMessageEvent,
   XCallMessageSentEvent,
 } from '../_zustand/types';
-import { AbstractPublicXService } from './types';
-import { ICONTxResultType } from 'app/_xcall/_icon/types';
+import { AbstractPublicXService, ICONTxResultType } from './types';
 import { sleep } from 'utils';
 
 export const getICONEventSignature = (eventName: XCallEventType) => {

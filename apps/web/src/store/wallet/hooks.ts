@@ -10,9 +10,8 @@ import { useIconReact } from 'packages/icon-react';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { useArchwayContext } from 'packages/archway/ArchwayProvider';
-import { useARCH } from 'app/pages/trade/bridge/_config/tokens';
+import { ARCHWAY_FEE_TOKEN_SYMBOL, useARCH } from 'app/pages/trade/bridge/_config/tokens';
 import { isDenomAsset } from 'packages/archway/utils';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import { getXTokenAddress, isXToken } from 'app/pages/trade/bridge/utils';

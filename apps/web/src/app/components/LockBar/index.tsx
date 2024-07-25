@@ -7,8 +7,9 @@ interface LockBarProps {
 }
 
 export default function LockBar({ disabled, percent, text = 'Locked' }: LockBarProps) {
+  const className = percent < 9 ? 'left-aligned' : percent > 91 ? 'right-aligned' : '';
   return (
-    <div id="indicator-locked-container">
+    <div id="indicator-locked-container" className={className}>
       <div
         id="indicator-locked"
         className={disabled ? `text-${text.toLowerCase()}` : `text-${text.toLowerCase()} disabled`}

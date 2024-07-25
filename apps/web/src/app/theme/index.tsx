@@ -676,6 +676,16 @@ export const ThemedGlobalStyle = createGlobalStyle`
     transition: opacity 0.3s ease;
   }
 
+  #indicator-locked-container.left-aligned .label {
+    margin-left: 0;
+  }
+
+  #indicator-locked-container.right-aligned .label {
+    margin-left: 0;
+    transform: translateX(-100%);
+    width: max-content;
+  }
+
 /* Slider Warning */
   .withdraw-warning .noUi-connect {
     background: #fb6a6a;

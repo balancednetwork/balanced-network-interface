@@ -3,7 +3,7 @@ import { useArchwayContext } from '../../../../_xcall/archway/ArchwayProvider';
 import { useIconReact } from 'packages/icon-react';
 import { useMemo } from 'react';
 import useEVMReact from './useEVMReact';
-import { useHavahContext } from 'app/_xcall/havah/HavahProvider';
+import { useHavahContext } from 'packages/havah/HavahProvider';
 
 const useWallets = (): {
   [key in XWalletType]: { account: string | undefined | null; xChainId: XChainId | undefined; disconnect: () => void };

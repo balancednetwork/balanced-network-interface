@@ -19,7 +19,7 @@ import { openToast } from 'btp/src/connectors/transactionToast';
 import { NULL_CONTRACT_ADDRESS } from 'constants/tokens';
 import { AllPublicXServicesCreator, xServiceActions } from '../trade/bridge/_zustand/useXServiceStore';
 import { xChains } from '../trade/bridge/_config/xChains';
-import { useHavahContext } from 'app/_xcall/havah/HavahProvider';
+import { useHavahContext } from 'packages/havah/HavahProvider';
 import { tryParseAmount } from 'store/swap/hooks';
 
 const ICX = new Token(ChainId.MAINNET, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');

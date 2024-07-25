@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { havahJs } from 'bnJs';
 import IconService, { Converter, BigNumber } from 'icon-sdk-js';
 

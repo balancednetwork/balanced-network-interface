@@ -24,12 +24,6 @@ export const LOCAL_STORAGE_ADDRESS_EXPIRY = 3600000;
 
 const iconService = new IconService(new IconService.HttpProvider(CHAIN_INFO[NETWORK_ID].APIEndpoint));
 
-export const getDefaultStepCost = async () => {
-  const getStepCostsCall = new IconBuilder.CallBuilder().to(GOVERNANCE_BASE_ADDRESS).method('getStepCosts').build();
-  const { default: defaultStepCost } = await iconService.call(getStepCostsCall).execute();
-  return defaultStepCost;
-};
-
 interface ICONReactContextInterface {
   account?: string | null;
   ledgerAddressPoint: number;

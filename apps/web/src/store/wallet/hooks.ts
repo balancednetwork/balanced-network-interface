@@ -124,7 +124,7 @@ import { erc20Abi } from 'viem';
 import { useAccount, useBalance, usePublicClient } from 'wagmi';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import { useHavahContext } from 'app/_xcall/havah/HavahProvider';
+import { useHavahContext } from 'packages/havah/HavahProvider';
 
 export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined, xChainId: XChainId) {
   const chainId = xChainMap[xChainId].id;

@@ -28,7 +28,7 @@ import WalletItem from './WalletItem';
 import { IconWalletModal } from './IconWalletModal';
 import { EVMWalletModal } from './EVMWalletModal';
 import { XWalletType } from 'app/pages/trade/bridge/types';
-import { useHavahContext } from 'app/_xcall/havah/HavahProvider';
+import { useHavahContext } from 'packages/havah/HavahProvider';
 import useWallets, { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { useSwitchChain } from 'wagmi';

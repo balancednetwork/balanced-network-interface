@@ -10,7 +10,7 @@ interface AccountResultType {
 
 interface HavahContextType {
   address: string;
-  chain_id: string;
+  chainId: string;
   connectToWallet: () => void;
   disconnect: () => void;
 }
@@ -21,7 +21,7 @@ interface HavahProviderProps {
 
 const initialContext: HavahContextType = {
   address: '',
-  chain_id: '',
+  chainId: '',
   connectToWallet: () => {},
   disconnect: () => {},
 };
@@ -30,7 +30,7 @@ const HavahContext = createContext<HavahContextType>(initialContext);
 
 const HavahProvider: React.FC<HavahProviderProps> = ({ children }) => {
   const [address, setAddress] = useState<string>('');
-  const [chain_id, setChainId] = useState<string>('');
+  const [chainId, setChainId] = useState<string>('');
   const [addressStored, setAddressStored] = useLocalStorageWithExpiry<string | null>(
     'havahAccountWithExpiry',
     null,
@@ -88,7 +88,7 @@ const HavahProvider: React.FC<HavahProviderProps> = ({ children }) => {
 
   const contextValue = {
     address,
-    chain_id,
+    chainId,
     connectToWallet,
     disconnect,
   };

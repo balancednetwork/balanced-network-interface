@@ -44,14 +44,6 @@ export function useICONWalletBalances(): { [address: string]: CurrencyAmount<Cur
   return useSelector((state: AppState) => state.wallet['0x1.icon']!);
 }
 
-export function useArchwayWalletBalances(): AppState['wallet']['archway-1'] {
-  return useSelector((state: AppState) => state.wallet['archway-1']);
-}
-
-export function useHavahWalletBalances(): AppState['wallet']['0x100.icon'] {
-  return useSelector((state: AppState) => state.wallet['0x100.icon']);
-}
-
 export function useWalletBalances(xChainId: XChainId): { [address: string]: CurrencyAmount<Currency> } | undefined {
   return useSelector((state: AppState) => state.wallet[xChainId]);
 }
@@ -83,11 +75,11 @@ export function useArchwayBalances(
 ): UseQueryResult<{
   [key: string]: CurrencyAmount<Currency>;
 }> {
-  const { signingClient, chain_id } = useArchwayContext();
+  const { signingClient, chainId } = useArchwayContext();
   const arch = useARCH();
 
   return useQuery({
-    queryKey: [`archwayBalances`, chain_id, address, tokens],
+    queryKey: [`archwayBalances`, chainId, address, tokens],
     queryFn: async () => {
       if (!signingClient || !address) return;
 

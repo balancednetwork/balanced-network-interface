@@ -11,7 +11,3 @@ export type ICONTxResultType = {
   txHash: string;
   eventLogs: ICONTxEvent[];
 };
-
-export type ICONBlockType = {
-  confirmedTransactionList: { txHash: string; timestamp: number }[];
-};

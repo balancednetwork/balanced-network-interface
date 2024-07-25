@@ -112,7 +112,9 @@ const LoanPanel = () => {
   const [open, setOpen] = React.useState(false);
 
   const loanNetwork = useLoanRecipientNetwork();
-  const isCrossChain = loanNetwork !== ICON_XCALL_NETWORK_ID || sourceChain !== ICON_XCALL_NETWORK_ID;
+  const isCrossChain =
+    !(action === XLoanAction.REPAY && loanNetwork === ICON_XCALL_NETWORK_ID) &&
+    (loanNetwork !== ICON_XCALL_NETWORK_ID || sourceChain !== ICON_XCALL_NETWORK_ID);
 
   const toggleOpen = () => {
     if (isCrossChain) {

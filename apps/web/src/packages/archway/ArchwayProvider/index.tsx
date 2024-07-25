@@ -8,12 +8,11 @@ import { LOCAL_STORAGE_ADDRESS_EXPIRY } from 'packages/icon-react';
 import { NETWORK_ID } from 'constants/config';
 import { useLocalStorageWithExpiry } from 'hooks/useLocalStorage';
 
-import { archway } from '../../../pages/trade/bridge/_config/xChains';
 import { XSigningArchwayClient } from 'lib/archway/XSigningArchwayClient';
 
 interface ArchwayContextType {
   address: string;
-  chain_id: string;
+  chainId: string;
   connectToWallet: () => void;
   disconnect: () => void;
   client?: ArchwayClient;
@@ -22,16 +21,18 @@ interface ArchwayContextType {
 
 const initialContext: ArchwayContextType = {
   address: '',
-  chain_id: '',
+  chainId: '',
   connectToWallet: () => {},
   disconnect: () => {},
 };
 
 const ArchwayContext = createContext<ArchwayContextType>(initialContext);
 
+const rpcURL = 'https://rpc.mainnet.archway.io';
+
 const ArchwayProvider = ({ children }) => {
   const [address, setAddress] = useState<string>('');
-  const [chain_id, setChainId] = useState<string>('');
+  const [chainId, setChainId] = useState<string>('');
   const [client, setClient] = useState<ArchwayClient>();
   const [signingClient, setSigningClient] = useState<XSigningArchwayClient>();
   const [addressStored, setAddressStored] = useLocalStorageWithExpiry<string | null>(
@@ -42,7 +43,7 @@ const ArchwayProvider = ({ children }) => {
 
   useEffect(() => {
     async function connectToRPC() {
-      const client = await ArchwayClient.connect(archway.rpc.http);
+      const client = await ArchwayClient.connect(rpcURL);
       const chainId = await client.getChainId();
       setClient(client);
       setChainId(chainId);
@@ -68,21 +69,21 @@ const ArchwayProvider = ({ children }) => {
 
     if (NETWORK_ID === SupportedChainId.MAINNET) {
       if (leap) {
-        await leap.enable(chain_id);
+        await leap.enable(chainId);
       } else {
-        await keplr.enable(chain_id);
+        await keplr.enable(chainId);
       }
     }
 
     // @ts-ignore
-    const offlineSigner = leap ? leap.getOfflineSignerOnlyAmino(chain_id) : keplr.getOfflineSignerOnlyAmino(chain_id);
-    const signingClientObj = await XSigningArchwayClient.connectWithSigner(archway.rpc.http, offlineSigner);
+    const offlineSigner = leap ? leap.getOfflineSignerOnlyAmino(chainId) : keplr.getOfflineSignerOnlyAmino(chainId);
+    const signingClientObj = await XSigningArchwayClient.connectWithSigner(rpcURL, offlineSigner);
     setSigningClient(signingClientObj);
 
     const account: AccountData = (await offlineSigner.getAccounts())[0];
     account.address && setAddress(account.address);
     account.address && setAddressStored(account.address);
-  }, [chain_id, setAddressStored]);
+  }, [chainId, setAddressStored]);
 
   const disconnect = (): void => {
     signingClient?.disconnect();
@@ -95,7 +96,7 @@ const ArchwayProvider = ({ children }) => {
 
   const context = {
     address,
-    chain_id,
+    chainId,
     connectToWallet,
     client,
     signingClient,
@@ -103,10 +104,10 @@ const ArchwayProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (addressStored && !signingClient && chain_id) {
+    if (addressStored && !signingClient && chainId) {
       connectToWallet();
     }
-  }, [signingClient, addressStored, connectToWallet, chain_id]);
+  }, [signingClient, addressStored, connectToWallet, chainId]);
 
   return <ArchwayContext.Provider value={context}>{children}</ArchwayContext.Provider>;
 };

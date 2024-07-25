@@ -1,20 +1,14 @@
 import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { BalancedJs } from '@balancednetwork/balanced-js';
-import { Currency, Token } from '@balancednetwork/sdk-core';
+import { Token } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
 import { Flex } from 'rebass/styled-components';
 
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { useARCH } from 'app/pages/trade/bridge/_config/tokens';
 import CurrencyLogo from 'app/components/CurrencyLogo';
-import Modal from 'app/components/Modal';
 import { Typography } from 'app/theme';
-import bnJs from 'bnJs';
 import '@reach/tabs/styles.css';
 import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import useArrowControl from 'hooks/useArrowControl';
@@ -22,9 +16,8 @@ import useDebounce from 'hooks/useDebounce';
 import useKeyPress from 'hooks/useKeyPress';
 import { useRatesWithOracle } from 'queries/reward';
 import { useWalletModalToggle } from 'store/application/hooks';
-import { useAllTransactions } from 'store/transactions/hooks';
-import { useArchwayWalletBalances } from 'store/wallet/hooks';
-import { isDPZeroCA, toFraction } from 'utils';
+import { useWalletBalances } from 'store/wallet/hooks';
+import { toFraction } from 'utils';
 
 import Divider from '../Divider';
 import { UnderlineText } from '../DropdownText';
@@ -32,12 +25,10 @@ import { CopyableAddress } from '../Header';
 import {
   AssetSymbol,
   BalanceAndValueWrap,
-  BoxPanelWithArrow,
   DashGrid,
   DataText,
   HeaderText,
   List,
-  ModalContent,
   StandardCursorListItem,
   WalletAssets,
   WalletTotal,
@@ -46,59 +37,39 @@ import {
 import { filterTokens, useSortedTokensByQuery } from '../SearchModal/filtering';
 import SearchInput from '../SearchModal/SearchInput';
 import { useTokenComparator } from '../SearchModal/sorting';
-import ICXWallet from './wallets/ICXWallet';
-import SendPanel from './wallets/SendPanel';
-import SICXWallet from './wallets/SICXWallet';
+import { XChainId } from 'app/pages/trade/bridge/types';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
+import useXWallet from 'app/pages/trade/bridge/_hooks/useXWallet';
 import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
-
-const WalletUIs = {
-  ICX: ICXWallet,
-  sICX: SICXWallet,
-};
+import { useARCH } from 'app/pages/trade/bridge/_config/tokens';
 
 const walletBreakpoint = '499px';
 
-const WalletUI = ({ currency }: { currency: Currency }) => {
-  const [claimableICX, setClaimableICX] = useState(new BigNumber(0));
-  const { account } = useIconReact();
-  const transactions = useAllTransactions();
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    (async () => {
-      if (account) {
-        const result = await bnJs.Staking.getClaimableICX(account);
-        setClaimableICX(BalancedJs.utils.toIcx(result));
-      }
-    })();
-  }, [account, transactions]);
-
-  const UI = currency.symbol ? WalletUIs[currency.symbol] ?? SendPanel : SendPanel;
-  if (currency.symbol === 'ICX') {
-    return <UI currency={currency} claimableICX={claimableICX} />;
-  } else {
-    return <UI currency={currency} />;
-  }
-};
-
-const ArchwayWallet = ({ setAnchor, anchor }) => {
+const ArchwayWallet = ({
+  setAnchor,
+  anchor,
+  xChainId,
+}: {
+  anchor: HTMLElement | null;
+  setAnchor: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
+  xChainId: XChainId;
+}) => {
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
-  const balances = useArchwayWalletBalances();
+  const balances = useWalletBalances(xChainId);
   const arch = useARCH();
-  const { address: accountArch } = useArchwayContext();
+  const xWallet = useXWallet(xChainId);
+  const account = xWallet?.account;
+
   const [searchQuery, setSearchQuery] = useState<string>('');
   const inputRef = useRef<HTMLInputElement>();
-  const [modalAsset] = useState<string | undefined>();
 
   const debouncedQuery = useDebounce(searchQuery, 200);
   const enter = useKeyPress('Enter');
   const handleEscape = useKeyPress('Escape');
-  const [isOpen, setOpen] = useState(false);
   const toggleWalletModal = useWalletModalToggle();
   const signedInWallets = useSignedInWallets();
 
-  const tokenComparator = useTokenComparator(accountArch, false);
+  const tokenComparator = useTokenComparator(account, false);
 
   const xTokens = useXTokens('archway-1');
   const addressesWithAmount = useMemo(
@@ -164,26 +135,11 @@ const ArchwayWallet = ({ setAnchor, anchor }) => {
     [filteredSortedTokens, balances, rateFracs],
   );
 
-  // const handleAssetClick = (asset: string) => {
-  //   setModalAsset(asset);
-  //   showModal();
-  // };
-
-  const showModal = useCallback(() => {
-    setOpen(true);
-  }, []);
-
   useEffect(() => {
     if (handleEscape) {
       setAnchor(null);
     }
   }, [handleEscape, setAnchor]);
-
-  useEffect(() => {
-    if (enter && anchor) {
-      showModal();
-    }
-  }, [enter, anchor, showModal]);
 
   useEffect(() => {
     if (anchor) {
@@ -215,13 +171,11 @@ const ArchwayWallet = ({ setAnchor, anchor }) => {
         </AssetSymbol>
         <BalanceAndValueWrap>
           <DataText as="div">
-            {!accountArch
-              ? '-'
-              : balances?.[address]?.toFixed(HIGH_PRICE_ASSET_DP[address] || 5, { groupSeparator: ',' })}
+            {!account ? '-' : balances?.[address]?.toFixed(HIGH_PRICE_ASSET_DP[address] || 5, { groupSeparator: ',' })}
           </DataText>
 
           <DataText as="div">
-            {!accountArch || !rates || !symbol || !rates[symbol] || !rateFracs
+            {!account || !rates || !symbol || !rates[symbol] || !rateFracs
               ? '-'
               : `$${balances?.[address]?.multiply(rateFracs[symbol]).toFixed(2, { groupSeparator: ',' })}`}
           </DataText>
@@ -230,7 +184,7 @@ const ArchwayWallet = ({ setAnchor, anchor }) => {
     );
   };
 
-  if (!accountArch) {
+  if (!account) {
     return (
       <WalletAssets>
         <Flex pb="25px">
@@ -252,7 +206,7 @@ const ArchwayWallet = ({ setAnchor, anchor }) => {
       <WalletAssets>
         {signedInWallets.length > 1 && (
           <Flex padding="0 0 20px">
-            <CopyableAddress account={accountArch} closeAfterDelay={1000} copyIcon />
+            <CopyableAddress account={account} closeAfterDelay={1000} copyIcon />
           </Flex>
         )}
         <SearchInput
@@ -312,42 +266,6 @@ const ArchwayWallet = ({ setAnchor, anchor }) => {
                 ${totalBalance.toFormat(2)}
               </Typography>
             </WalletTotal>
-
-            <Modal isOpen={isOpen} onDismiss={() => setOpen(false)}>
-              <ModalContent>
-                <DashGrid>
-                  <HeaderText>
-                    <Trans>Asset</Trans>
-                  </HeaderText>
-                  <BalanceAndValueWrap>
-                    <HeaderText>
-                      <Trans>Balance</Trans>
-                    </HeaderText>
-                    {isSmallScreen ? null : (
-                      <HeaderText>
-                        <Trans>Value</Trans>
-                      </HeaderText>
-                    )}
-                  </BalanceAndValueWrap>
-                </DashGrid>
-                <StandardCursorListItem $border={false}>
-                  <TokenInfo
-                    currency={
-                      filteredSortedTokens.find(currency => currency.wrapped.symbol === modalAsset) ||
-                      filteredSortedTokens[0]
-                    }
-                  />
-                </StandardCursorListItem>
-                <BoxPanelWithArrow bg="bg3">
-                  <WalletUI
-                    currency={
-                      filteredSortedTokens.find(currency => currency.wrapped.symbol === modalAsset) ||
-                      filteredSortedTokens[0]
-                    }
-                  />
-                </BoxPanelWithArrow>
-              </ModalContent>
-            </Modal>
           </>
         ) : (
           <Wrapper>

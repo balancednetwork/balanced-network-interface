@@ -10,8 +10,8 @@ import {
   useInitTransaction,
 } from 'store/transactionsCrosschain/hooks';
 
-import { useArchwayContext } from '../../../../_xcall/archway/ArchwayProvider';
-import { getFeeParam, isDenomAsset } from '../../../../_xcall/archway/utils';
+import { useArchwayContext } from 'packages/archway/ArchwayProvider';
+import { getFeeParam, isDenomAsset } from 'packages/archway/utils';
 
 import { Token, CurrencyAmount } from '@balancednetwork/sdk-core';
 

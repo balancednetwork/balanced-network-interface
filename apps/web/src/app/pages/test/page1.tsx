@@ -1,25 +1,18 @@
 import React from 'react';
-import { Flex, Box } from 'rebass/styled-components';
+import { Flex } from 'rebass/styled-components';
 
 import { Currency, CurrencyAmount, Percent, Token, TradeType } from '@balancednetwork/sdk-core';
 import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balanced-js';
-import { Pair, Trade } from '@balancednetwork/v1-sdk';
-import bnJs from 'bnJs';
-import BigNumber from 'bignumber.js';
 import { havahJs } from 'bnJs';
 
 import { Button } from 'app/components/Button';
 import { useIconReact } from 'packages/icon-react';
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { useFetchBBalnInfo } from 'store/bbaln/hooks';
-import { useWalletFetchBalances } from 'store/wallet/hooks';
-import { useFetchRewardsInfo } from 'store/reward/hooks';
 import { TransactionStatus } from '../trade/bridge/_zustand/types';
 import { openToast } from 'btp/src/connectors/transactionToast';
 import { NULL_CONTRACT_ADDRESS } from 'constants/tokens';
 import { AllPublicXServicesCreator, xServiceActions } from '../trade/bridge/_zustand/useXServiceStore';
 import { xChains } from '../trade/bridge/_config/xChains';
-import { useHavahContext } from 'app/_xcall/havah/HavahProvider';
+import { useHavahContext } from 'packages/havah/HavahProvider';
 import { tryParseAmount } from 'store/swap/hooks';
 
 const ICX = new Token(ChainId.MAINNET, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');

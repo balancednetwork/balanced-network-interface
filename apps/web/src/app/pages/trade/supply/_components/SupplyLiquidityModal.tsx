@@ -27,12 +27,7 @@ import { showMessageOnBeforeUnload } from 'utils/messages';
 import ModalContent, { ModalContentWrapper } from 'app/components/ModalContent';
 import Spinner from 'app/components/Spinner';
 import { depositMessage, supplyMessage } from './utils';
-import { XTransactionType, XTransactionInput } from '../../bridge/_zustand/types';
-import { ICON_XCALL_NETWORK_ID } from 'constants/config';
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import useXCallFee from '../../bridge/_hooks/useXCallFee';
 import { DEFAULT_SLIPPAGE_LP } from 'constants/index';
-import { xTransactionActions } from '../../bridge/_zustand/useXTransactionStore';
 
 interface ModalProps {
   isOpen: boolean;
@@ -57,7 +52,6 @@ export default function SupplyLiquidityModal({
   BChain,
 }: ModalProps) {
   const { account } = useIconReact();
-  const { address: accountArch } = useArchwayContext();
 
   const { currencyDeposits, pair } = useDerivedMintInfo();
   const addTransaction = useTransactionAdder();
@@ -256,29 +250,7 @@ export default function SupplyLiquidityModal({
 
   const hasEnoughICX = useHasEnoughICX();
 
-  const executeCallback = React.useCallback((success: boolean) => {
-    setAddingTxs(state => ({ ...state, CURRENCY_A: success ? 'success' : '' }));
-  }, []);
-
-  const { xCallFee } = useXCallFee(AChain, ICON_XCALL_NETWORK_ID);
-
-  const handleAddArchway = async (field: Field) => {
-    const inputAmount = parsedAmounts[field];
-    if (inputAmount && accountArch && xCallFee) {
-      const xTransactionInput: XTransactionInput = {
-        type: XTransactionType.SUPPLY,
-        direction: {
-          from: AChain,
-          to: ICON_XCALL_NETWORK_ID,
-        },
-        inputAmount: inputAmount,
-        recipient: bnJs.Dex.address,
-        account: accountArch,
-        xCallFee,
-      };
-      // await xTransactionActions.sendXToken(xTransactionInput, () => executeCallback(true));
-    }
-  };
+  const handleAddArchway = async (field: Field) => {};
 
   const handleAddICON = async (field: Field) => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);

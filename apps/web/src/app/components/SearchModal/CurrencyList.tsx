@@ -11,7 +11,6 @@ import styled, { useTheme } from 'styled-components';
 import CurrencyLogo from 'app/components/CurrencyLogo';
 import { ListItem, DataText, List1 } from 'app/components/List';
 import { Typography } from 'app/theme';
-import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import useArrowControl from 'hooks/useArrowControl';
 import useKeyPress from 'hooks/useKeyPress';
 import { useRatesWithOracle } from 'queries/reward';
@@ -22,6 +21,7 @@ import useSortCurrency from 'hooks/useSortCurrency';
 import { HeaderText } from 'app/pages/trade/supply/_components/AllPoolsPanel';
 import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { XChainId } from 'app/pages/trade/bridge/types';
+import { formatPrice } from 'utils/formatter';
 
 const DashGrid = styled(Box)`
   display: grid;
@@ -40,14 +40,6 @@ const DashGrid = styled(Box)`
 
 function currencyKey(currency: Currency): string {
   return currency.isToken ? currency.address : 'ICX';
-}
-
-export function getCurrencyDecimalDisplay(price: Fraction): number {
-  const defaultDP = 2;
-  if (price.greaterThan(1000)) return 0;
-  if (price.lessThan(new Fraction(1, 100))) return 6;
-  if (price.lessThan(new Fraction(3, 2))) return 4;
-  return defaultDP;
 }
 
 function CurrencyRow({
@@ -107,11 +99,7 @@ function CurrencyRow({
             </Flex>
 
             <Typography variant="span" fontSize={14} fontWeight={400} color="text2" display="block">
-              {rateFracs &&
-                rateFracs[currency.symbol!] &&
-                `$${rateFracs[currency.symbol!].toFixed(getCurrencyDecimalDisplay(rateFracs[currency.symbol!]), {
-                  groupSeparator: ',',
-                })}`}
+              {rateFracs && rateFracs[currency.symbol!] && formatPrice(rateFracs[currency.symbol!].toFixed(18))}
             </Typography>
           </Flex>
         </Flex>
@@ -153,11 +141,7 @@ function CurrencyRow({
         </Flex>
         <Flex justifyContent="flex-end" alignItems="center">
           <DataText variant="p" textAlign="right">
-            {rateFracs &&
-              rateFracs[currency.symbol!] &&
-              `$${rateFracs[currency.symbol!].toFixed(getCurrencyDecimalDisplay(rateFracs[currency.symbol!]), {
-                groupSeparator: ',',
-              })}`}
+            {rateFracs && rateFracs[currency.symbol!] && formatPrice(rateFracs[currency.symbol!].toFixed(18))}
           </DataText>
           {isUserAddedToken && (isMobile || show) && (
             <MinusCircle

@@ -4,7 +4,7 @@ import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import styled from 'styled-components';
 
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
+import { useArchwayContext } from 'packages/archway/ArchwayProvider';
 import CollateralPanel from 'app/components/home/CollateralPanel';
 import LoanPanel from 'app/components/home/LoanPanel';
 import PositionDetailPanel from 'app/components/home/PositionDetailPanel';

@@ -12,7 +12,7 @@ import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { css, useTheme } from 'styled-components';
 
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
+import { useArchwayContext } from 'packages/archway/ArchwayProvider';
 import { Breadcrumb } from 'app/components/Breadcrumb';
 import { Button, AlertButton } from 'app/components/Button';
 import Column from 'app/components/Column';

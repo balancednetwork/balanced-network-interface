@@ -1,5 +1,5 @@
 import { XChainId, XWalletType } from '../types';
-import { useArchwayContext } from '../../../../_xcall/archway/ArchwayProvider';
+import { useArchwayContext } from 'packages/archway/ArchwayProvider';
 import { useIconReact } from 'packages/icon-react';
 import { useMemo } from 'react';
 import useEVMReact from './useEVMReact';

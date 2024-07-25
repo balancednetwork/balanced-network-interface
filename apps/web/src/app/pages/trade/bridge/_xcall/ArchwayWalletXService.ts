@@ -5,7 +5,7 @@ import { Percent } from '@balancednetwork/sdk-core';
 import { XSigningArchwayClient } from 'lib/archway/XSigningArchwayClient';
 import { getBytesFromString, getRlpEncodedSwapData } from 'app/pages/trade/bridge/utils';
 import { archway } from 'app/pages/trade/bridge/_config/xChains';
-import { getFeeParam, isDenomAsset } from 'app/_xcall/archway/utils';
+import { getFeeParam, isDenomAsset } from 'packages/archway/utils';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
 import { XChainId, XToken } from 'app/pages/trade/bridge/types';
 import { IWalletXService } from './types';

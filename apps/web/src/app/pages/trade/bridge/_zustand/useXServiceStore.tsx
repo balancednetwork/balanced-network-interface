@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { usePublicClient, useWalletClient } from 'wagmi';
 
 import { useIconReact } from 'packages/icon-react';
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
+import { useArchwayContext } from 'packages/archway/ArchwayProvider';
 import { useChangeShouldLedgerSign } from 'store/application/hooks';
 
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';

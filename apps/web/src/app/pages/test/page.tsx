@@ -9,7 +9,7 @@ import BigNumber from 'bignumber.js';
 
 import { Button } from 'app/components/Button';
 import { useIconReact } from 'packages/icon-react';
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
+import { useArchwayContext } from 'packages/archway/ArchwayProvider';
 import { useFetchBBalnInfo } from 'store/bbaln/hooks';
 import { useWalletFetchBalances } from 'store/wallet/hooks';
 import { useFetchRewardsInfo } from 'store/reward/hooks';

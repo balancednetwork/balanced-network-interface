@@ -6,7 +6,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { Flex, Box } from 'rebass/styled-components';
 
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
+import { useArchwayContext } from 'packages/archway/ArchwayProvider';
 import { UnderlineText } from 'app/components/DropdownText';
 import { Tab, Tabs } from 'app/components/Tab';
 import { useFetchBBalnInfo, useFetchBBalnSources } from 'store/bbaln/hooks';

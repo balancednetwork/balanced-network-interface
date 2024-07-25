@@ -29,10 +29,9 @@ import Spinner from 'app/components/Spinner';
 import { depositMessage, supplyMessage } from './utils';
 import { XTransactionType, XTransactionInput } from '../../bridge/_zustand/types';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
+import { useArchwayContext } from 'packages/archway/ArchwayProvider';
 import useXCallFee from '../../bridge/_hooks/useXCallFee';
 import { DEFAULT_SLIPPAGE_LP } from 'constants/index';
-import { xTransactionActions } from '../../bridge/_zustand/useXTransactionStore';
 
 interface ModalProps {
   isOpen: boolean;

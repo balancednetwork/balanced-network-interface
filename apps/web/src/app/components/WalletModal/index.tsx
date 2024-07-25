@@ -8,7 +8,7 @@ import { Flex, Box } from 'rebass/styled-components';
 import ExternalIcon from 'assets/icons/external.svg';
 import styled from 'styled-components';
 
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
+import { useArchwayContext } from 'packages/archway/ArchwayProvider';
 import { UnderlineTextWithArrow } from 'app/components/DropdownText';
 import { Link } from 'app/components/Link';
 import { MenuList, LanguageMenuItem } from 'app/components/Menu';

@@ -19,7 +19,10 @@ export type NumberStyle =
 
 export const toBigNumber = (value: number | string): BigNumber => new BigNumber(value);
 
-export const formatCurrency = (value: string | number, decimals: number = DEFAULT_CURRENCY_DECIMALS): string => {
+export const formatCurrency = (
+  value: string | number | undefined,
+  decimals: number = DEFAULT_CURRENCY_DECIMALS,
+): string => {
   if (value !== 0 && !value) {
     return '$-.--';
   }
@@ -44,22 +47,44 @@ export const formatPercentage = (value: string | number, decimals: number = DEFA
 export const formatNumber = (num: number, mantissa: number = 0, trim = false) =>
   numbro(num).format({ thousandSeparated: true, mantissa, trimMantissa: trim });
 
+export const formatBalance = (balance: number | string | undefined, price: string | number | undefined) => {
+  if (balance !== 0 && !balance) {
+    return '-';
+  }
+
+  let decimals = 0;
+  if (!price) {
+    decimals = 4;
+  } else if (toBigNumber(price).isLessThan(0.01)) {
+    decimals = 0;
+  } else if (toBigNumber(price).isLessThan(1)) {
+    decimals = 2;
+  } else if (toBigNumber(price).isLessThan(100)) {
+    decimals = 4;
+  } else {
+    decimals = 6;
+  }
+
+  return numbro(balance).format({
+    thousandSeparated: true,
+    mantissa: decimals,
+  });
+};
+
 export const formatPrice = (value: string | number) => {
   if (value !== 0 && !value) {
     return '$-.--';
   }
 
   let decimals = 0;
-
-  // @ts-ignore
-  if (value < 0.01) {
+  if (toBigNumber(value).isLessThan(0.01)) {
     decimals = 6;
-
-    // @ts-ignore
-  } else if (value < 10) {
+  } else if (toBigNumber(value).isLessThan(10)) {
     decimals = 4;
-  } else {
+  } else if (toBigNumber(value).isLessThan(1000)) {
     decimals = 2;
+  } else {
+    decimals = 0;
   }
 
   // always use dollars for now

@@ -165,7 +165,7 @@ const XCollateralModal = ({
           <Flex justifyContent="center" mt="20px" pt="20px" className="border-top">
             <>
               <TextButton onClick={handleDismiss}>
-                <Trans>Cancel</Trans>
+                {isProcessing ? <Trans>Close</Trans> : <Trans>Cancel</Trans>}
               </TextButton>
 
               {isWrongChain ? (

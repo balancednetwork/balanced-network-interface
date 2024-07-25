@@ -282,7 +282,7 @@ export default function Header(props: { title?: string; className?: string }) {
                       <ConnectionStatus>
                         {wallets.map((wallet, index) => (
                           <span key={index}>
-                            {wallet.xChainId ? xChainMap[wallet.xChainId].name : t`Unsupported Network`}
+                            {wallet.xChainId ? xChainMap[wallet.xChainId].name : t`Unsupported network`}
                             {index + 1 < wallets.length ? ', ' : ''}
                           </span>
                         ))}
@@ -293,7 +293,7 @@ export default function Header(props: { title?: string; className?: string }) {
                       <Typography variant="p" textAlign="right">
                         {wallets[0].xChainId
                           ? t`${xChainMap[wallets[0].xChainId].name} wallet`
-                          : t`Unsupported Network`}
+                          : t`Unsupported network`}
                       </Typography>
                       <CopyableAddress account={wallets[0].address} />
                     </>

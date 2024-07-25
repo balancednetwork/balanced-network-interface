@@ -173,7 +173,7 @@ export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token
   });
 }
 
-export function useWalletFetchBalances(account?: string | null, accountArch?: string | null) {
+export function useWalletFetchBalances() {
   const dispatch = useDispatch();
   const tokenListConfig = useTokenListConfig();
   const userAddedTokens = useUserAddedTokens();
@@ -185,6 +185,7 @@ export function useWalletFetchBalances(account?: string | null, accountArch?: st
   }, [userAddedTokens, tokenListConfig]);
 
   // fetch balances on icon
+  const { account } = useIconReact();
   const balances = useAvailableBalances(account || undefined, tokens);
   React.useEffect(() => {
     dispatch(changeICONBalances(balances));
@@ -199,6 +200,7 @@ export function useWalletFetchBalances(account?: string | null, accountArch?: st
   }, [balancesHavah, dispatch]);
 
   // fetch balances on archway
+  const { address: accountArch } = useArchwayContext();
   const tokensArch = useXTokens('archway-1') || [];
   const { data: balancesArch } = useArchwayBalances(accountArch || undefined, tokensArch);
   React.useEffect(() => {

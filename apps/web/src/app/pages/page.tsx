@@ -4,7 +4,6 @@ import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 import styled from 'styled-components';
 
-import { useArchwayContext } from 'packages/archway/ArchwayProvider';
 import CollateralPanel from 'app/components/home/CollateralPanel';
 import LoanPanel from 'app/components/home/LoanPanel';
 import PositionDetailPanel from 'app/components/home/PositionDetailPanel';
@@ -37,14 +36,13 @@ const Grid = styled.div`
 
 export function HomePage() {
   const { account } = useIconReact();
-  const { address: accountArch } = useArchwayContext();
 
   useFetchPrice();
   useFetchOraclePrices();
   useFetchBBalnSources();
   useFetchBBalnInfo(account);
   useFetchSavingsInfo(account);
-  useWalletFetchBalances(account, accountArch);
+  useWalletFetchBalances();
   useCollateralFetchInfo(account);
   useLoanFetchInfo(account);
   useFetchRewardsInfo();

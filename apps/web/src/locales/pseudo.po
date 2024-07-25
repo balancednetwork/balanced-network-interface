@@ -75,7 +75,6 @@ msgstr ""
 msgid "Removing"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid ""
 "The ICX unstaking period is {0} days, but yours may be ready to claim sooner based on the volume of ICX\n"
@@ -102,7 +101,6 @@ msgstr ""
 msgid "Supplying {pair} liquidity..."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX"
 msgstr ""
@@ -120,7 +118,6 @@ msgstr ""
 msgid "Switch to {0}"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claim ICX?"
 msgstr ""
@@ -150,8 +147,8 @@ msgid "Loan"
 msgstr ""
 
 #: src/app/components/HavahWallet/index.tsx
-msgid "Havah wallet"
-msgstr ""
+#~ msgid "Havah wallet"
+#~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "You have no pending cross-chain transactions."
@@ -161,8 +158,6 @@ msgstr ""
 #~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain"
 #~ msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/index.tsx
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/index.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Unstaking"
@@ -365,7 +360,6 @@ msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Search assets"
 msgstr ""
@@ -378,7 +372,6 @@ msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Total"
 msgstr ""
@@ -391,7 +384,6 @@ msgstr ""
 msgid "Bribe available in"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Send max"
 msgstr ""
@@ -546,7 +538,6 @@ msgstr ""
 msgid "is available on {0}."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Add your sICX to the collateral pool."
 msgstr ""
@@ -559,7 +550,6 @@ msgstr ""
 msgid "1D"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit sICX"
 msgstr ""
@@ -593,7 +583,6 @@ msgstr ""
 msgid "or"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit sICX collateral?"
 msgstr ""
@@ -655,7 +644,6 @@ msgstr ""
 msgid "Vote for this pool to receive bribes."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Address"
 msgstr ""
@@ -698,10 +686,6 @@ msgstr ""
 msgid "Lock up BALN"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -868,10 +852,6 @@ msgstr ""
 msgid "Incentives are recalculated every week. You can adjust your allocation once every 10 days."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/index.tsx
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/index.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/index.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
@@ -901,7 +881,6 @@ msgstr ""
 msgid "Transfer time"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Sent {0} {1} to {address}."
 msgstr ""
@@ -910,7 +889,6 @@ msgstr ""
 msgid "Claimed network fees."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposited {0} sICX as collateral."
 msgstr ""
@@ -944,7 +922,6 @@ msgstr ""
 msgid "Casting your vote..."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Do not send sICX to an exchange."
 msgstr ""
@@ -1006,10 +983,6 @@ msgstr ""
 msgid "Voting will begin at 5pm UTC,"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -1053,8 +1026,6 @@ msgstr ""
 msgid "interest"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/index.tsx
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/index.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstake"
@@ -1098,7 +1069,6 @@ msgstr ""
 msgid "Check that your contract calls are set up correctly before you submit the proposal."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #: src/app/components/home/RewardsPanel/SavingsRewards.tsx
@@ -1107,9 +1077,13 @@ msgstr ""
 msgid "Not now"
 msgstr ""
 
+#: src/app/components/Header/index.tsx
+#: src/app/components/Header/index.tsx
+msgid "Unsupported network"
+msgstr ""
+
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "No assets available."
 msgstr ""
@@ -1167,7 +1141,6 @@ msgstr ""
 msgid "Invalid pair"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Send {0}"
 msgstr ""
@@ -1219,7 +1192,6 @@ msgstr ""
 msgid "({0}% required)"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claimed {0} ICX."
 msgstr ""
@@ -1257,8 +1229,6 @@ msgstr ""
 msgid "Removed {0} from the bridge contract."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstake sICX"
@@ -1272,7 +1242,6 @@ msgstr ""
 msgid "Daily"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "There's no ICX unstaking."
 msgstr ""
@@ -1340,7 +1309,6 @@ msgstr ""
 msgid "No fees to claim"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstaking {0} sICX. Check the ICX entry in your wallet for details."
 msgstr ""
@@ -1509,7 +1477,6 @@ msgid ""
 "liquidity pool{2}"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Send asset?"
 msgstr ""
@@ -1528,10 +1495,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
-#: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/SearchModal/CurrencyList.tsx
@@ -1553,7 +1517,6 @@ msgstr ""
 msgid "Supply"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstake sICX?"
 msgstr ""
@@ -1562,8 +1525,6 @@ msgstr ""
 #~ msgid "The BALN APY is calculated from the USD value of BALN rewards allocated to a pool. Your rate will vary based on the amount of bBALN you hold."
 #~ msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claim ICX"
@@ -1594,7 +1555,6 @@ msgstr ""
 #~ msgid "Transferred {0} {1} to Archway."
 #~ msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Sending {0}..."
 msgstr ""
@@ -1612,9 +1572,6 @@ msgstr ""
 #~ msgid "Send {0} to {1}."
 #~ msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/CommunityListToggle/index.tsx
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -1716,10 +1673,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
-#: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Balance"
@@ -1754,7 +1708,6 @@ msgstr ""
 msgid "View and manage your collateral as ICX or sICX (Staked ICX)."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "unstakes within {0}"
 msgstr ""
@@ -1871,7 +1824,6 @@ msgstr ""
 msgid "Bribes are released every Thursday at 12am UTC, and must be claimed within 7 days."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
@@ -1921,7 +1873,6 @@ msgstr ""
 msgid "On Hana:"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
@@ -1974,7 +1925,6 @@ msgstr ""
 msgid "Verifying contract calls..."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
@@ -2169,7 +2119,6 @@ msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Sign in with"
 msgstr ""
@@ -2307,7 +2256,6 @@ msgstr ""
 msgid "Quorum not reached"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claiming ICX..."
 msgstr ""
@@ -2337,10 +2285,7 @@ msgid "Test your contract calls before you submit the proposal."
 msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
-#: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Value"
@@ -2376,7 +2321,6 @@ msgstr ""
 msgid "In"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit as collateral"
 msgstr ""
@@ -2395,7 +2339,6 @@ msgstr ""
 msgid "To borrow bnUSD, deposit collateral."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX is ready to claim"
 msgstr ""
@@ -2408,7 +2351,6 @@ msgstr ""
 msgid "Sending {currency} to the {pair} pool..."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Preparing to unstake sICX..."
 msgstr ""

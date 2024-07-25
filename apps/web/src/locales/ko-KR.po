@@ -78,7 +78,6 @@ msgstr ""
 msgid "Removing"
 msgstr "제거 중"
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid ""
 "The ICX unstaking period is {0} days, but yours may be ready to claim sooner based on the volume of ICX\n"
@@ -105,7 +104,6 @@ msgstr "4시간"
 msgid "Supplying {pair} liquidity..."
 msgstr "{pair} 유동성을 제공하는 중..."
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX"
 msgstr "{0} ICX"
@@ -123,7 +121,6 @@ msgstr "15분"
 msgid "Switch to {0}"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claim ICX?"
 msgstr "ICX 요구하기?"
@@ -153,8 +150,8 @@ msgid "Loan"
 msgstr "대출"
 
 #: src/app/components/HavahWallet/index.tsx
-msgid "Havah wallet"
-msgstr ""
+#~ msgid "Havah wallet"
+#~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "You have no pending cross-chain transactions."
@@ -164,8 +161,6 @@ msgstr ""
 #~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain"
 #~ msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/index.tsx
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/index.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Unstaking"
@@ -376,7 +371,6 @@ msgstr "제안"
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Search assets"
 msgstr ""
@@ -389,7 +383,6 @@ msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Total"
 msgstr ""
@@ -402,7 +395,6 @@ msgstr ""
 msgid "Bribe available in"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Send max"
 msgstr "최대"
@@ -573,7 +565,6 @@ msgstr ""
 msgid "is available on {0}."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Add your sICX to the collateral pool."
 msgstr "당신의 sICX를 담보에 추가합니다."
@@ -586,7 +577,6 @@ msgstr ""
 msgid "1D"
 msgstr "1일"
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit sICX"
 msgstr "sICX 담보"
@@ -628,7 +618,6 @@ msgstr "Ledger에서 보류 중인 트랜잭션을 취소하거나, Chrome에서
 msgid "or"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit sICX collateral?"
 msgstr "sICX를 담보로 예치하시겠습니까?"
@@ -690,7 +679,6 @@ msgstr ""
 msgid "Vote for this pool to receive bribes."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Address"
 msgstr "주소"
@@ -733,10 +721,6 @@ msgstr ""
 msgid "Lock up BALN"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -915,10 +899,6 @@ msgstr "당신의 렛저 지갑의 트랜잭션을 확인하세요."
 msgid "Incentives are recalculated every week. You can adjust your allocation once every 10 days."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/index.tsx
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/index.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/index.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
@@ -948,7 +928,6 @@ msgstr ""
 msgid "Transfer time"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Sent {0} {1} to {address}."
 msgstr "{0} {1} 을 {address} 로 보냈습니다."
@@ -957,7 +936,6 @@ msgstr "{0} {1} 을 {address} 로 보냈습니다."
 msgid "Claimed network fees."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposited {0} sICX as collateral."
 msgstr "{0} sICX를 담보로 예치했습니다."
@@ -991,7 +969,6 @@ msgstr ""
 msgid "Casting your vote..."
 msgstr "투표하는 중..."
 
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Do not send sICX to an exchange."
 msgstr "sICX를 거래소에 보내지 마십시오."
@@ -1053,10 +1030,6 @@ msgstr "위험율"
 msgid "Voting will begin at 5pm UTC,"
 msgstr "투표는 오전 2시부터 시작됩니다."
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -1100,8 +1073,6 @@ msgstr "{outputCurrency} 를 {inputCurrency} 와 스왑할 수 없습니다. 다
 msgid "interest"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/index.tsx
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/index.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstake"
@@ -1145,7 +1116,6 @@ msgstr ""
 msgid "Check that your contract calls are set up correctly before you submit the proposal."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #: src/app/components/home/RewardsPanel/SavingsRewards.tsx
@@ -1154,9 +1124,13 @@ msgstr ""
 msgid "Not now"
 msgstr "지금은 안됩니다"
 
+#: src/app/components/Header/index.tsx
+#: src/app/components/Header/index.tsx
+msgid "Unsupported network"
+msgstr ""
+
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "No assets available."
 msgstr "사용 가능한 자산이 없습니다."
@@ -1214,7 +1188,6 @@ msgstr ""
 msgid "Invalid pair"
 msgstr "유효하지 않은 페어"
 
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Send {0}"
 msgstr "송금 {0}"
@@ -1266,7 +1239,6 @@ msgstr ""
 msgid "({0}% required)"
 msgstr "({0}% 필요)"
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claimed {0} ICX."
 msgstr "승인된 {0} ICX."
@@ -1304,8 +1276,6 @@ msgstr "{0} ICX를 담보로 예치했습니다."
 msgid "Removed {0} from the bridge contract."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstake sICX"
@@ -1319,7 +1289,6 @@ msgstr "{0} 유권자"
 msgid "Daily"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "There's no ICX unstaking."
 msgstr "스테이킹 해제 중인 ICX는 없습니다."
@@ -1392,7 +1361,6 @@ msgstr "담보를 회수 중"
 msgid "No fees to claim"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstaking {0} sICX. Check the ICX entry in your wallet for details."
 msgstr "{0} sICX를 스테이킹 해제하고 있습니다. 자세한 내용은 '지갑' 메뉴 > 'ICX' 항목을 확인하십시오."
@@ -1573,7 +1541,6 @@ msgid ""
 "liquidity pool{2}"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Send asset?"
 msgstr "자산을 송금하시겠습니까?"
@@ -1592,10 +1559,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
-#: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/SearchModal/CurrencyList.tsx
@@ -1617,7 +1581,6 @@ msgstr "{0} sICX가 지갑에 추가되었습니다."
 msgid "Supply"
 msgstr "공급"
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Unstake sICX?"
 msgstr "sICX 스테이킹을 해제하시겠습니까?"
@@ -1626,8 +1589,6 @@ msgstr "sICX 스테이킹을 해제하시겠습니까?"
 #~ msgid "The BALN APY is calculated from the USD value of BALN rewards allocated to a pool. Your rate will vary based on the amount of bBALN you hold."
 #~ msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claim ICX"
@@ -1662,7 +1623,6 @@ msgstr "일일 BALN 인플레이션의 47%는 유동성을 장려하기 위해 �
 #~ msgid "Balance Tokens"
 #~ msgstr "Balance 토큰"
 
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
 #: src/app/components/ICONWallet/wallets/SendPanel.tsx
 msgid "Sending {0}..."
 msgstr "보내는 중 {0}..."
@@ -1680,9 +1640,6 @@ msgstr ""
 #~ msgid "Send {0} to {1}."
 #~ msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SendPanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/CommunityListToggle/index.tsx
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -1784,10 +1741,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
-#: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Balance"
@@ -1822,7 +1776,6 @@ msgstr "자신의 책임하에 사용하십시오. 프로젝트 기여자는 분
 msgid "View and manage your collateral as ICX or sICX (Staked ICX)."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "unstakes within {0}"
 msgstr ""
@@ -1945,7 +1898,6 @@ msgstr ""
 msgid "Bribes are released every Thursday at 12am UTC, and must be claimed within 7 days."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
@@ -1995,7 +1947,6 @@ msgstr ""
 msgid "On Hana:"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
@@ -2048,7 +1999,6 @@ msgstr ""
 msgid "Verifying contract calls..."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
@@ -2243,7 +2193,6 @@ msgstr "승인했습니다"
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Sign in with"
 msgstr "연결과 함께"
@@ -2381,7 +2330,6 @@ msgstr ""
 msgid "Quorum not reached"
 msgstr "정족수에 도달하지 못했습니다"
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "Claiming ICX..."
 msgstr "ICX 승인중..."
@@ -2411,10 +2359,7 @@ msgid "Test your contract calls before you submit the proposal."
 msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
-#: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
-#: src/app/components/HavahWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
 msgid "Value"
@@ -2450,7 +2395,6 @@ msgstr ""
 msgid "In"
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit as collateral"
 msgstr "담보로 예치"
@@ -2469,7 +2413,6 @@ msgstr "풀 생성하기"
 msgid "To borrow bnUSD, deposit collateral."
 msgstr ""
 
-#: src/app/components/ArchwayWallet/wallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX is ready to claim"
 msgstr "{0} ICX를 청구할 수 있습니다."
@@ -2482,7 +2425,6 @@ msgstr ""
 msgid "Sending {currency} to the {pair} pool..."
 msgstr "{pair} 풀로 {currency} 를 보내는 중..."
 
-#: src/app/components/ArchwayWallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/ICONWallet/wallets/SICXWallet/UnstakePanel.tsx
 msgid "Preparing to unstake sICX..."
 msgstr "sICX 스테이킹 해제 준비 중..."

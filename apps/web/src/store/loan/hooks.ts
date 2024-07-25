@@ -341,7 +341,7 @@ export function useLockedCollateralAmount() {
 
   return useMemo(() => {
     if (lockingRatio && oraclePrice && bnUSDLoanAmount && ratio?.sICXICXratio) {
-      const lockedAmount = bnUSDLoanAmount.multipliedBy(lockingRatio).div(oraclePrice);
+      const lockedAmount = bnUSDLoanAmount.multipliedBy(lockingRatio).div(oraclePrice).times(1.005); // 0.5% buffer for preventing tx errors
       return isHandlingICX ? lockedAmount.multipliedBy(ratio.sICXICXratio) : lockedAmount;
     } else {
       return new BigNumber(0);

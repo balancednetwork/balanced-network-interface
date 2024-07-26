@@ -181,10 +181,18 @@
     {
       "address": "cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f",
       "chainId": 1,
-      "name": "Archway USDC",
+      "name": "USDC",
       "symbol": "USDC",
       "decimals": 6,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdc.png"
+    },
+    {
+      "address": "cx16f3cb9f09f5cdd902cf07aa752c8b3bd1bc9609",
+      "chainId": 1,
+      "name": "Tether USD",
+      "symbol": "USDT",
+      "decimals": 6,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/usdt.png"
     },
     {
       "address": "cx2d552c485ec8bcaa75aac02424e2aca6ffdb2f1b",
@@ -209,6 +217,14 @@
       "symbol": "INJ",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/inj.png"
+    },
+    {
+      "address": "cxe2da9f10bc6e2754347bde2ef73379bd398fd9f3",
+      "chainId": 1,
+      "name": "HVH",
+      "symbol": "HVH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/hvh.png"
     },
     {
       "address": "cxf0a30d09ade391d7b570908b9b46cfa5b3cbc8f8",

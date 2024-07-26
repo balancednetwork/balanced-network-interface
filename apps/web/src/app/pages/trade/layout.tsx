@@ -6,7 +6,6 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { Flex, Box } from 'rebass/styled-components';
 
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { Tab, Tabs } from 'app/components/Tab';
 import { useFetchBBalnInfo, useFetchBBalnSources } from 'store/bbaln/hooks';
 import { useFetchOraclePrices } from 'store/oracle/hooks';
@@ -17,14 +16,13 @@ import { useWalletFetchBalances } from 'store/wallet/hooks';
 
 export function TradePageLayout() {
   const { account } = useIconReact();
-  const { address: accountArch } = useArchwayContext();
   const location = useLocation();
   const navigate = useNavigate();
 
   useFetchPrice();
   useFetchOraclePrices();
   useFetchBBalnSources(5000, true);
-  useWalletFetchBalances(account, accountArch);
+  useWalletFetchBalances();
   useFetchBBalnInfo(account);
   useFetchRewardsInfo();
   useFetchStabilityFundBalances();

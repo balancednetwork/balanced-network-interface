@@ -10,13 +10,11 @@ import { useIconReact } from 'packages/icon-react';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ARCHWAY_FEE_TOKEN_SYMBOL } from 'app/_xcall/_icon/config';
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
-import { useARCH } from 'app/pages/trade/bridge/_config/tokens';
-import { isDenomAsset } from 'app/_xcall/archway/utils';
+import { ARCHWAY_FEE_TOKEN_SYMBOL, useARCH } from 'app/pages/trade/bridge/_config/tokens';
+import { isDenomAsset } from 'packages/archway/utils';
 import { XChainId, XWalletAssetRecord } from 'app/pages/trade/bridge/types';
 import { getXTokenAddress, isXToken } from 'app/pages/trade/bridge/utils';
-import bnJs from 'bnJs';
+import bnJs, { havahJs } from 'bnJs';
 import { MINIMUM_ICX_FOR_TX, NATIVE_ADDRESS } from 'constants/index';
 import { BIGINT_ZERO } from 'constants/misc';
 import {
@@ -57,10 +55,6 @@ export function useICONWalletBalances(): { [address: string]: CurrencyAmount<Cur
   return useSelector((state: AppState) => state.wallet['0x1.icon']!);
 }
 
-export function useArchwayWalletBalances(): AppState['wallet']['archway-1'] {
-  return useSelector((state: AppState) => state.wallet['archway-1']);
-}
-
 export function useWalletBalances(xChainId: XChainId): { [address: string]: CurrencyAmount<Currency> } | undefined {
   return useSelector((state: AppState) => state.wallet[xChainId]);
 }
@@ -92,11 +86,11 @@ export function useArchwayBalances(
 ): UseQueryResult<{
   [key: string]: CurrencyAmount<Currency>;
 }> {
-  const { signingClient, chain_id } = useArchwayContext();
+  const { signingClient, chainId } = useArchwayContext();
   const arch = useARCH();
 
   return useQuery({
-    queryKey: [`archwayBalances`, chain_id, address, tokens],
+    queryKey: [`archwayBalances`, chainId, address, tokens],
     queryFn: async () => {
       if (!signingClient || !address) return;
 
@@ -143,6 +137,8 @@ import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { useRatesWithOracle } from 'queries/reward';
 import { useAllDerivedWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { useHavahContext } from 'packages/havah/HavahProvider';
+import { useArchwayContext } from 'packages/archway/ArchwayProvider';
 
 export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined, xChainId: XChainId) {
   const chainId = xChainMap[xChainId].id;
@@ -191,7 +187,7 @@ export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token
   });
 }
 
-export function useWalletFetchBalances(account?: string | null, accountArch?: string | null) {
+export function useWalletFetchBalances() {
   const dispatch = useDispatch();
   const tokenListConfig = useTokenListConfig();
   const userAddedTokens = useUserAddedTokens();
@@ -203,12 +199,22 @@ export function useWalletFetchBalances(account?: string | null, accountArch?: st
   }, [userAddedTokens, tokenListConfig]);
 
   // fetch balances on icon
+  const { account } = useIconReact();
   const balances = useAvailableBalances(account || undefined, tokens);
   React.useEffect(() => {
     dispatch(changeICONBalances(balances));
   }, [balances, dispatch]);
 
+  // fetch balances on havah
+  const { address: accountHavah } = useHavahContext();
+  const havahTokens = useXTokens('0x100.icon') || [];
+  const { data: balancesHavah } = useHavahBalances(accountHavah || undefined, havahTokens);
+  React.useEffect(() => {
+    balancesHavah && dispatch(changeBalances({ xChainId: '0x100.icon', balances: balancesHavah }));
+  }, [balancesHavah, dispatch]);
+
   // fetch balances on archway
+  const { address: accountArch } = useArchwayContext();
   const tokensArch = useXTokens('archway-1') || [];
   const { data: balancesArch } = useArchwayBalances(accountArch || undefined, tokensArch);
   React.useEffect(() => {
@@ -537,4 +543,48 @@ export function useXBalancesByToken(): XWalletAssetRecord[] {
       })
       .filter((item): item is XWalletAssetRecord => Boolean(item));
   }, [balances, tokenListConfig, prices]);
+}
+
+export function useHavahBalances(
+  address: string | undefined,
+  tokens: Token[],
+): UseQueryResult<{
+  [key: string]: CurrencyAmount<Currency>;
+}> {
+  return useQuery({
+    queryKey: [`havahBalances`, address, tokens],
+    queryFn: async () => {
+      if (!address) return {};
+
+      const hasNative = tokens.some(token => token.symbol === 'HVH');
+      if (!hasNative) return {};
+
+      const HVH = tokens.find(token => token.symbol === 'HVH');
+      if (!HVH) return {};
+
+      const promises = tokens.map(token => {
+        if (token.symbol === 'HVH')
+          return havahJs.ICX.balanceOf(address).then(res => CurrencyAmount.fromRawAmount(HVH, res.toFixed()));
+
+        return havahJs[token.symbol]
+          .balanceOf(address)
+          .then(res => CurrencyAmount.fromRawAmount(token, res.toString()));
+      });
+
+      const rawAmountBalances = await Promise.all(promises);
+
+      const balances = rawAmountBalances.reduce((acc, balance) => {
+        if (!balance) return acc;
+        if (!(balance.quotient > BIGINT_ZERO)) {
+          return acc;
+        }
+        acc[balance.currency.wrapped.address] = balance;
+        return acc;
+      }, {});
+
+      return balances;
+    },
+    placeholderData: keepPreviousData,
+    refetchInterval: 5_000,
+  });
 }

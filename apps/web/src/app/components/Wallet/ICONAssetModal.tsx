@@ -14,7 +14,6 @@ import {
 import { Trans } from '@lingui/macro';
 import { useMedia } from 'react-use';
 import { Currency } from '@balancednetwork/sdk-core';
-import BigNumber from 'bignumber.js';
 import useClaimableICX from './useClaimableICX';
 
 import SendPanel from './ICONWallets/SendPanel';

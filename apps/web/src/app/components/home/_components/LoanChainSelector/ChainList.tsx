@@ -11,11 +11,11 @@ import { ChainItemWrap, Grid, SelectorWrap } from './styledComponents';
 import { HeaderText } from 'app/components/Wallet/styledComponents';
 import { Typography } from 'app/theme';
 import { UnderlineText } from 'app/components/DropdownText';
-import { useArchwayContext } from 'app/_xcall/archway/ArchwayProvider';
 import { useWalletModal } from 'store/application/hooks';
 import { useAllDerivedWallets, useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { useCrossChainWalletBalances } from 'store/wallet/hooks';
 import { isMobile } from 'react-device-detect';
+import { useArchwayContext } from 'packages/archway/ArchwayProvider';
 
 type ChainListProps = {
   chainId: XChainId;

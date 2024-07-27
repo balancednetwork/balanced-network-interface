@@ -73,7 +73,10 @@ export function useSignedInWallets(): { address: string; xChainId: XChainId | un
         .filter(
           ([key, w]) =>
             !!w.account &&
-            (Number(key) === XWalletType.ICON || Number(key) === XWalletType.COSMOS || Number(key) === XWalletType.EVM),
+            (Number(key) === XWalletType.ICON ||
+              Number(key) === XWalletType.COSMOS ||
+              Number(key) === XWalletType.EVM ||
+              Number(key) === XWalletType.HAVAH),
         )
         .map(([, w]) => ({ xChainId: w.xChainId, address: w.account! })),
     [wallets],

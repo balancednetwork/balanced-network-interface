@@ -60,6 +60,7 @@ const Wallet = ({ close }: WalletProps) => {
     allWallets[XWalletType.ICON]?.disconnect();
     allWallets[XWalletType.COSMOS]?.disconnect();
     allWallets[XWalletType.EVM]?.disconnect();
+    allWallets[XWalletType.HAVAH]?.disconnect();
   };
 
   useEffect(() => {

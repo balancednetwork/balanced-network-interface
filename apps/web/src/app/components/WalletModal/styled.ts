@@ -122,6 +122,7 @@ export const WalletItemGrid = styled.div`
     align-items: center;
   }
 `;
+
 export const ActiveIndicator = styled.div<{ active: boolean }>`
   position: relative;
   

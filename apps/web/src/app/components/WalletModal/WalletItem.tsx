@@ -9,16 +9,7 @@ import { XChain } from 'app/pages/trade/bridge/types';
 import { ChainLogo } from 'app/pages/trade/bridge/_components/ChainLogo';
 import { CopyableAddress } from '../Header';
 import { t } from '@lingui/macro';
-import {
-  ActionDivider,
-  ActiveIndicator,
-  ChainInfo,
-  ChainName,
-  MainLogo,
-  WalletActions,
-  WalletItemGrid,
-  XChainsWrap,
-} from './styled';
+import { ActionDivider, ChainInfo, ChainName, MainLogo, WalletActions, WalletItemGrid, XChainsWrap } from './styled';
 import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 
 type WalletItemProps = {
@@ -65,13 +56,9 @@ const WalletItem = ({
         {xChains && (
           <XChainsWrap signedIn={!!address}>
             {xChains.map(chain => (
-              <ActiveIndicator
-                key={chain.xChainId}
-                active={signedInWallets.some(wallet => wallet.xChainId === chain.xChainId)}
-                onClick={() => handleSwitchChain(chain)}
-              >
+              <Box key={chain.xChainId} onClick={() => handleSwitchChain(chain)} style={{ cursor: 'pointer' }}>
                 <ChainLogo chain={chain} size="24px" key={chain.xChainId} />
-              </ActiveIndicator>
+              </Box>
             ))}
           </XChainsWrap>
         )}

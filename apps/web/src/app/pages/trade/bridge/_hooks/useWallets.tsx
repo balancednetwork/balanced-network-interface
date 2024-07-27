@@ -70,14 +70,7 @@ export function useSignedInWallets(): { address: string; xChainId: XChainId | un
   return useMemo(
     () =>
       Object.entries(wallets)
-        .filter(
-          ([key, w]) =>
-            !!w.account &&
-            (Number(key) === XWalletType.ICON ||
-              Number(key) === XWalletType.COSMOS ||
-              Number(key) === XWalletType.EVM ||
-              Number(key) === XWalletType.HAVAH),
-        )
+        .filter(([key, w]) => !!w.account)
         .map(([, w]) => ({ xChainId: w.xChainId, address: w.account! })),
     [wallets],
   );

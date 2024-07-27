@@ -180,7 +180,7 @@ export const havah: XChain = {
     bnUSD: '0xdBDd50997361522495EcFE57EBb6850dA0E4C699',
   },
   autoExecution: true,
-  gasThreshold: 0.01,
+  gasThreshold: 0.2,
   testnet: false,
 };
 

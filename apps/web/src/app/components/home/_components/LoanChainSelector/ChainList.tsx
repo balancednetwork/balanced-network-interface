@@ -17,6 +17,7 @@ import { useCrossChainWalletBalances } from 'store/wallet/hooks';
 import { isMobile } from 'react-device-detect';
 import { useArchwayContext } from 'packages/archway/ArchwayProvider';
 import { useHavahContext } from 'packages/havah/HavahProvider';
+import { useDerivedCollateralInfo } from 'store/collateral/hooks';
 
 type ChainListProps = {
   chainId: XChainId;
@@ -38,6 +39,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const { connectToWallet: connectToHavah } = useHavahContext();
   const [, setWalletModal] = useWalletModal();
   const crossChainBalances = useCrossChainWalletBalances();
+  const { sourceChain: collateralChain } = useDerivedCollateralInfo();
 
   const [waitingSignIn, setWaitingSignIn] = useState<XChainId | null>(null);
 
@@ -57,12 +59,15 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
       setChainId(waitingSignIn);
       setWaitingSignIn(null);
     }
+    if (!isSignedIn && !waitingSignIn) {
+      setChainId(collateralChain);
+    }
     return () => {
       if (waitingSignIn) {
         setWaitingSignIn(null);
       }
     };
-  }, [waitingSignIn, setChainId, signedInWallets]);
+  }, [waitingSignIn, setChainId, signedInWallets, isSignedIn, collateralChain]);
 
   return (
     <Grid

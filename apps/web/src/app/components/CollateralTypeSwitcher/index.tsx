@@ -3,7 +3,7 @@ import React from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import styled from 'styled-components';
 
-import { StyledArrowDownIcon, UnderlineText } from 'app/components/DropdownText';
+import { StyledArrowDownIcon } from 'app/components/DropdownText';
 import { useCollateralType, useIcxDisplayType } from 'store/collateral/hooks';
 
 import { DropdownPopper } from '../Popover';
@@ -59,19 +59,17 @@ const CollateralTypeSwitcher = ({ width, containerRef }) => {
       <ClickAwayListener onClickAway={e => closeDropdown(e)}>
         <div>
           <Wrap onClick={handleToggle}>
-            <UnderlineText>
-              <>
-                <LogoWrap>
-                  <CurrencyLogo
-                    currency={SUPPORTED_TOKENS_LIST.find(
-                      token => token.symbol === (collateralType === 'sICX' ? icxDisplayType : collateralType),
-                    )}
-                    size={'18px'}
-                  />
-                </LogoWrap>
-                {collateralType === 'sICX' ? icxDisplayType : collateralType}
-              </>
-            </UnderlineText>
+            <>
+              <LogoWrap>
+                <CurrencyLogo
+                  currency={SUPPORTED_TOKENS_LIST.find(
+                    token => token.symbol === (collateralType === 'sICX' ? icxDisplayType : collateralType),
+                  )}
+                  size={'18px'}
+                />
+              </LogoWrap>
+              {collateralType === 'sICX' ? icxDisplayType : collateralType}
+            </>
             <div ref={arrowRef} style={{ display: 'inline-block' }}>
               <StyledArrowDownIcon />
             </div>

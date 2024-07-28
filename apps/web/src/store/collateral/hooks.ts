@@ -20,7 +20,7 @@ import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useCrossChainWalletBalances, useICONWalletBalances } from 'store/wallet/hooks';
 import { CurrencyKey, IcxDisplayType } from 'types';
-import { formatUnits, toBigNumber } from 'utils';
+import { formatUnits, maxAmountSpend, toBigNumber } from 'utils';
 
 import { AppState } from '../index';
 import {
@@ -514,17 +514,17 @@ export function useAvailableCollateral() {
     collateralType === 'sICX' && icxDisplayType === 'ICX' && (sourceChain === '0x1.icon' || sourceChain === '0x2.icon');
   const icxAddress = bnJs.ICX.address;
 
-  const amount: BigNumber = React.useMemo(() => {
-    return toBigNumber(
-      shouldGetIcx
-        ? crossChainWallet[sourceChain]?.[icxAddress]
-        : collateralCurrency && crossChainWallet[sourceChain]?.[collateralCurrency?.wrapped.address],
-    );
+  const currencyAmount: CurrencyAmount<Currency> | undefined = React.useMemo(() => {
+    return shouldGetIcx
+      ? crossChainWallet[sourceChain]?.[icxAddress]
+      : collateralCurrency && crossChainWallet[sourceChain]?.[collateralCurrency?.wrapped.address];
   }, [collateralCurrency, crossChainWallet, sourceChain, icxAddress, shouldGetIcx]);
 
+  const maxSpent = maxAmountSpend(currencyAmount, sourceChain);
+
   return useMemo(() => {
-    return shouldGetIcx ? BigNumber.max(amount.minus(MINIMUM_ICX_FOR_ACTION), new BigNumber(0)) : amount;
-  }, [shouldGetIcx, amount]);
+    return new BigNumber(maxSpent?.toFixed() || 0);
+  }, [maxSpent]);
 }
 
 export function useIsHandlingICX() {

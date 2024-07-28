@@ -126,15 +126,6 @@ export function useCollateralAvailableAmount() {
   }, [ICXAmount]);
 }
 
-export function useCollateralAvailableAmountinSICX() {
-  const sicxAddress = bnJs.sICX.address;
-  const balances = useICONWalletBalances();
-  const sICXAmountCA = balances[sicxAddress];
-  const sICXAmount = toBigNumber(sICXAmountCA);
-
-  return sICXAmount;
-}
-
 export function useCollateralAmounts(xChainId?: XChainId): { [key in string]: BigNumber } {
   const collateralXChain = useCollateralXChain();
   return useSelector((state: AppState) => state.collateral.depositedAmounts[xChainId || collateralXChain] || {});
@@ -369,17 +360,6 @@ export function useCollateralTotalICXAmount() {
   }, [stakedICXAmount, ICXAmount]);
 }
 
-export function useCollateralTotalAmount() {
-  const sICXAmount = useCollateralAvailableAmountinSICX();
-
-  const collateralSICXAmount = useCollateralDepositedAmount();
-
-  return React.useMemo(() => {
-    const totalSICXAmount = sICXAmount.plus(collateralSICXAmount);
-    return totalSICXAmount;
-  }, [sICXAmount, collateralSICXAmount]);
-}
-
 export function useCollateralInputAmount() {
   const { independentField, typedValue } = useCollateralState();
   const { collateralTotal } = useDerivedCollateralInfo();
@@ -411,21 +391,6 @@ export function useCollateralInputAmountAbsolute() {
       return isHandlingICX ? collateralInputAmount.div(ratio.sICXICXratio) : collateralInputAmount;
     }
   }, [ratio, isHandlingICX, collateralInputAmount]);
-}
-
-export function useCollateralInputAmountInSICX() {
-  const { independentField, typedValue } = useCollateralState();
-  const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
-
-  const totalSICXAmount = useCollateralTotalAmount();
-
-  //  calculate dependentField value
-  const parsedAmount = {
-    [independentField]: new BigNumber(typedValue || '0'),
-    [dependentField]: totalSICXAmount.minus(new BigNumber(typedValue || '0')),
-  };
-
-  return parsedAmount[Field.LEFT];
 }
 
 export function useCollateralInputAmountInUSD() {

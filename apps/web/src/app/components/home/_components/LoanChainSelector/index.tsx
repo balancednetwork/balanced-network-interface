@@ -21,7 +21,9 @@ const LoanChainSelector = () => {
   const setRecipientNetwork = useSetLoanRecipientNetwork();
   const { onAdjust: adjust } = useLoanActionHandlers();
 
-  const xChains = getAvailableXChains(bnUSD[NETWORK_ID])?.filter(chain => chain.xChainId !== 'archway-1');
+  const xChains = getAvailableXChains(bnUSD[NETWORK_ID])?.filter(
+    chain => chain.xChainId !== 'archway-1' && chain.xChainId !== '0x100.icon',
+  );
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 

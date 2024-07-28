@@ -81,8 +81,6 @@ export default function WalletModal() {
     }
   }, [walletModalOpen, closeMenu]);
 
-  console.log('dwall', derivedWallets);
-
   const numberOfConnectedWallets = derivedWallets.filter(wallet => !!wallet.address).length;
   const isLoggedInSome = numberOfConnectedWallets > 0;
   const [chainQuery, setChainQuery] = useState('');

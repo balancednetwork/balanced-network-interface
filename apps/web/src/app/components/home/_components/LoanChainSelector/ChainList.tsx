@@ -7,7 +7,7 @@ import { XChainId, XChain, XWalletType } from 'app/pages/trade/bridge/types';
 import { xChainMap, xChains } from 'app/pages/trade/bridge/_config/xChains';
 import SearchInput from 'app/components/SearchModal/SearchInput';
 import { Trans, t } from '@lingui/macro';
-import { ChainItemWrap, Grid, SelectorWrap } from './styledComponents';
+import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from './styledComponents';
 import { HeaderText } from 'app/components/Wallet/styledComponents';
 import { Typography } from 'app/theme';
 import { UnderlineText } from 'app/components/DropdownText';
@@ -150,21 +150,23 @@ const ChainList = ({ chainId, setChainId, chains }: ChainListProps) => {
           <Trans>Wallet</Trans>
         </HeaderText>
       </Grid>
-      {sortedFilteredChains.map((chainItem, index) => (
-        <Box key={index}>
-          <ChainItem
-            chain={chainItem}
-            isActive={chainId === chainItem.xChainId}
-            isLast={sortedFilteredChains.length === index + 1}
-            setChainId={setChainId}
-          />
-        </Box>
-      ))}
-      {sortedFilteredChains.length === 0 && searchQuery !== '' && (
-        <Typography textAlign="center" mt="20px" pb="22px">
-          No blockchains found
-        </Typography>
-      )}
+      <ScrollHelper>
+        {sortedFilteredChains.map((chainItem, index) => (
+          <Box key={index}>
+            <ChainItem
+              chain={chainItem}
+              isActive={chainId === chainItem.xChainId}
+              isLast={sortedFilteredChains.length === index + 1}
+              setChainId={setChainId}
+            />
+          </Box>
+        ))}
+        {sortedFilteredChains.length === 0 && searchQuery !== '' && (
+          <Typography textAlign="center" mt="20px" pb="22px">
+            No blockchains found.
+          </Typography>
+        )}
+      </ScrollHelper>
     </SelectorWrap>
   );
 };

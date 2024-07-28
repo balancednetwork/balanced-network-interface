@@ -12,7 +12,7 @@ import { Typography } from 'app/theme';
 import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { useCrossChainWalletBalances } from 'store/wallet/hooks';
 import { isMobile } from 'react-device-detect';
-import { ChainItemWrap, Grid, SelectorWrap } from '../LoanChainSelector/styledComponents';
+import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from '../LoanChainSelector/styledComponents';
 import { useCollateralAmounts, useCollateralType } from 'store/collateral/hooks';
 import { xTokenMap } from 'app/pages/trade/bridge/_config/xTokens';
 import { useOraclePrices } from 'store/oracle/hooks';
@@ -122,21 +122,23 @@ const ChainList = ({ chainId, setChainId, chains }: ChainListProps) => {
           <Trans>Collateral</Trans>
         </HeaderText>
       </Grid>
-      {sortedFilteredChains.map((chainItem, index) => (
-        <Box key={index}>
-          <ChainItem
-            chain={chainItem}
-            isActive={chainId === chainItem.xChainId}
-            isLast={sortedFilteredChains.length === index + 1}
-            setChainId={setChainId}
-          />
-        </Box>
-      ))}
-      {sortedFilteredChains.length === 0 && searchQuery !== '' && (
-        <Typography textAlign="center" mt="20px" pb="22px">
-          No blockchains found
-        </Typography>
-      )}
+      <ScrollHelper>
+        {sortedFilteredChains.map((chainItem, index) => (
+          <Box key={index}>
+            <ChainItem
+              chain={chainItem}
+              isActive={chainId === chainItem.xChainId}
+              isLast={sortedFilteredChains.length === index + 1}
+              setChainId={setChainId}
+            />
+          </Box>
+        ))}
+        {sortedFilteredChains.length === 0 && searchQuery !== '' && (
+          <Typography textAlign="center" mt="20px" pb="22px">
+            No blockchains found
+          </Typography>
+        )}
+      </ScrollHelper>
     </SelectorWrap>
   );
 };

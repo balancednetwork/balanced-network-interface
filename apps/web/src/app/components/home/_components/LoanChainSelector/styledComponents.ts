@@ -30,3 +30,10 @@ export const Grid = styled(Box)<{ $isSignedIn?: boolean }>`
     text-align: right;
   }
 `;
+
+export const ScrollHelper = styled(Box)`
+  max-height: 250px; 
+  overflow: auto; 
+  padding: 0 20px;
+  margin: 0 -20px !important;
+`;

@@ -116,7 +116,7 @@ const CollateralTypeList = ({
           </List>
           {filteredPositions.length === 0 && (
             <Typography p="30px 0 0" textAlign="center">
-              <Trans>No positions found</Trans>
+              <Trans>No positions found.</Trans>
             </Typography>
           )}
         </>

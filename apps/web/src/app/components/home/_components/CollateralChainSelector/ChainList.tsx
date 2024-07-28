@@ -135,7 +135,7 @@ const ChainList = ({ chainId, setChainId, chains }: ChainListProps) => {
         ))}
         {sortedFilteredChains.length === 0 && searchQuery !== '' && (
           <Typography textAlign="center" mt="20px" pb="22px">
-            No blockchains found
+            No blockchains found.
           </Typography>
         )}
       </ScrollHelper>

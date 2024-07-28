@@ -59,15 +59,18 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
       setChainId(waitingSignIn);
       setWaitingSignIn(null);
     }
-    if (!isSignedIn && !waitingSignIn) {
-      setChainId(collateralChain);
-    }
     return () => {
       if (waitingSignIn) {
         setWaitingSignIn(null);
       }
     };
-  }, [waitingSignIn, setChainId, signedInWallets, isSignedIn, collateralChain]);
+  }, [signedInWallets, waitingSignIn, setChainId]);
+
+  React.useEffect(() => {
+    if (!isSignedIn && !waitingSignIn) {
+      setChainId(collateralChain);
+    }
+  }, [isSignedIn, waitingSignIn, setChainId, collateralChain]);
 
   return (
     <Grid

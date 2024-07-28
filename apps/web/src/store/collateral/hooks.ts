@@ -8,14 +8,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from 'bnJs';
 import { ICON_XCALL_NETWORK_ID, NETWORK_ID } from 'constants/config';
 import { MINIMUM_ICX_FOR_ACTION } from 'constants/index';
-import {
-  HIGH_PRICE_ASSET_DP,
-  NULL_CONTRACT_ADDRESS,
-  SUPPORTED_TOKENS_LIST,
-  SUPPORTED_TOKENS_MAP_BY_ADDRESS,
-} from 'constants/tokens';
+import { HIGH_PRICE_ASSET_DP, SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useBorrowedAmounts } from 'store/loan/hooks';
-import { useOraclePrice, useOraclePrices } from 'store/oracle/hooks';
+import { useOraclePrice } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
 import { useAllTransactions } from 'store/transactions/hooks';
 import { useCrossChainWalletBalances, useICONWalletBalances } from 'store/wallet/hooks';
@@ -36,7 +31,7 @@ import {
 import { Position, XChainId, XCollaterals, XPositionsRecord, XToken } from 'app/pages/trade/bridge/types';
 import { DEFAULT_TOKEN_CHAIN, xTokenMap } from 'app/pages/trade/bridge/_config/xTokens';
 import { useAllDerivedWallets, useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { setRecipientNetwork } from 'store/loan/reducer';
 import { useDestinationEvents } from 'app/pages/trade/bridge/_zustand/useXCallEventStore';

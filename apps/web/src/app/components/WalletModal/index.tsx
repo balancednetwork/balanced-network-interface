@@ -53,10 +53,10 @@ export default function WalletModal() {
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
   const toggleWalletModal = useWalletModalToggle();
   const [, setWalletModal] = useWalletModal();
-  const signedInWallets = useSignedInWallets();
   const { connectToWallet: connectToKeplr } = useArchwayContext();
   const { connectToWallet: connectToHavah } = useHavahContext();
 
+  const derivedWallets = useSignedInWallets();
   const wallets = useWallets();
 
   const { switchChain } = useSwitchChain();
@@ -81,7 +81,9 @@ export default function WalletModal() {
     }
   }, [walletModalOpen, closeMenu]);
 
-  const numberOfConnectedWallets = Object.values(wallets).filter(w => !!w.account).length;
+  console.log('dwall', derivedWallets);
+
+  const numberOfConnectedWallets = derivedWallets.filter(wallet => !!wallet.address).length;
   const isLoggedInSome = numberOfConnectedWallets > 0;
   const [chainQuery, setChainQuery] = useState('');
   const debouncedQuery = useDebounce(chainQuery, 200);
@@ -248,7 +250,7 @@ export default function WalletModal() {
             </AnimatePresence>
           </SignInOptionsWrap>
 
-          {!signedInWallets.length && (
+          {!derivedWallets.length && (
             <Typography textAlign="center" as="div" maxWidth={300} mx="auto" mt={2}>
               <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
               <Box pt={'5px'}>

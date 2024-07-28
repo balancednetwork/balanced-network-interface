@@ -30,7 +30,7 @@ import {
 } from './reducer';
 import { Position, XChainId, XCollaterals, XPositionsRecord, XToken } from 'app/pages/trade/bridge/types';
 import { DEFAULT_TOKEN_CHAIN, xTokenMap } from 'app/pages/trade/bridge/_config/xTokens';
-import { useAllDerivedWallets, useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { useSignedInWallets, useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { setRecipientNetwork } from 'store/loan/reducer';
@@ -219,7 +219,7 @@ export function useCollateralFetchInfo(account?: string | null) {
   const pendingXCalls = useDestinationEvents(ICON_XCALL_NETWORK_ID);
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
 
-  const allDerivedWallets = useAllDerivedWallets();
+  const allDerivedWallets = useSignedInWallets();
 
   function isSupported(symbol: string) {
     return (
@@ -592,7 +592,7 @@ export function useDerivedCollateralInfo(): {
 export function useXCollateralDataByToken(): UseQueryResult<XPositionsRecord[]> {
   const xDepositedAmounts = useAllDepositedAmounts();
   const borrowedAmounts = useBorrowedAmounts();
-  const allWallets = useAllDerivedWallets();
+  const allWallets = useSignedInWallets();
   const xWallet = useCrossChainWalletBalances();
 
   return useQuery({

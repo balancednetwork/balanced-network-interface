@@ -76,12 +76,6 @@ export function useSignedInWallets(): { address: string; xChainId: XChainId | un
   );
 }
 
-export function useAllDerivedWallets(): XWallet[] {
-  const signedInWallets = useSignedInWallets();
-
-  return useMemo(() => addAllEvmChains(signedInWallets), [signedInWallets]);
-}
-
 export function useAvailableWallets(): { address: string; xChainId: XChainId }[] {
   const wallets = useWallets();
   return useMemo(

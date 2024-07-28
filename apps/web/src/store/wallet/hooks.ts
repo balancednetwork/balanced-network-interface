@@ -35,7 +35,7 @@ import { useAllTokens } from '../../hooks/Tokens';
 import { changeBalances, changeICONBalances } from './reducer';
 
 export function useCrossChainWalletBalances(): AppState['wallet'] {
-  const signedInWallets = useAllDerivedWallets();
+  const signedInWallets = useSignedInWallets();
   const balances = useSelector((state: AppState) => state.wallet);
 
   return useMemo(() => {
@@ -136,7 +136,7 @@ import { useAccount, useBalance, usePublicClient } from 'wagmi';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { useRatesWithOracle } from 'queries/reward';
-import { useAllDerivedWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { useHavahContext } from 'packages/havah/HavahProvider';
 import { useArchwayContext } from 'packages/archway/ArchwayProvider';
 

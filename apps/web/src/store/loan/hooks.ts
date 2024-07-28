@@ -36,7 +36,7 @@ import {
   setLockingRatio,
   setRecipientNetwork,
 } from './reducer';
-import { useAllDerivedWallets, useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { XChainId } from 'app/pages/trade/bridge/types';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
@@ -138,7 +138,7 @@ export function useLoanFetchInfo(account?: string | null) {
   const pendingXCalls = useDestinationEvents(ICON_XCALL_NETWORK_ID);
 
   const transactions = useAllTransactions();
-  const allWallets = useAllDerivedWallets();
+  const allWallets = useSignedInWallets();
 
   const fetchLoanInfo = React.useCallback(
     (wallet: {
@@ -561,7 +561,7 @@ export function useDerivedLoanInfo(): {
 } {
   const sourceChain = useCollateralXChain();
   const activeLoanAddress = useActiveLoanAddress();
-  const allWallets = useAllDerivedWallets();
+  const allWallets = useSignedInWallets();
 
   const { independentField, typedValue, isAdjusting, inputType } = useLoanState();
   const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;

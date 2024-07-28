@@ -9,8 +9,7 @@ import SearchInput from 'app/components/SearchModal/SearchInput';
 import { Trans, t } from '@lingui/macro';
 import { HeaderText } from 'app/components/Wallet/styledComponents';
 import { Typography } from 'app/theme';
-import { UnderlineText } from 'app/components/DropdownText';
-import { useAllDerivedWallets, useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { useCrossChainWalletBalances } from 'store/wallet/hooks';
 import { isMobile } from 'react-device-detect';
 import { ChainItemWrap, Grid, SelectorWrap } from '../LoanChainSelector/styledComponents';
@@ -33,7 +32,7 @@ type ChainItemProps = {
 };
 
 const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
-  const signedInWallets = useAllDerivedWallets();
+  const signedInWallets = useSignedInWallets();
   const isSignedIn = signedInWallets.some(wallet => wallet.xChainId === chain.xChainId);
   const crossChainBalances = useCrossChainWalletBalances();
   const collateralType = useCollateralType();

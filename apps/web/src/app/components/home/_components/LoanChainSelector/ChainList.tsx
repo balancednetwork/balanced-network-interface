@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Box } from 'rebass';
 
@@ -16,6 +16,7 @@ import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { useCrossChainWalletBalances } from 'store/wallet/hooks';
 import { isMobile } from 'react-device-detect';
 import { useArchwayContext } from 'packages/archway/ArchwayProvider';
+import { useHavahContext } from 'packages/havah/HavahProvider';
 
 type ChainListProps = {
   chainId: XChainId;
@@ -34,17 +35,34 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const signedInWallets = useSignedInWallets();
   const isSignedIn = signedInWallets.some(wallet => wallet.xChainId === chain.xChainId);
   const { connectToWallet: connectKeplr } = useArchwayContext();
+  const { connectToWallet: connectToHavah } = useHavahContext();
   const [, setWalletModal] = useWalletModal();
   const crossChainBalances = useCrossChainWalletBalances();
 
+  const [waitingSignIn, setWaitingSignIn] = useState<XChainId | null>(null);
+
   const handleConnect = (xChain: XChain) => {
+    setWaitingSignIn(xChain.xChainId);
     if (xChain.xWalletType === XWalletType.COSMOS) {
       connectKeplr();
+    } else if (xChain.xWalletType === XWalletType.HAVAH) {
+      connectToHavah();
     } else {
       setWalletModal(xChain.xWalletType);
     }
-    setChainId(xChain.xChainId);
   };
+
+  React.useEffect(() => {
+    if (waitingSignIn && signedInWallets.some(wallet => wallet.xChainId === waitingSignIn)) {
+      setChainId(waitingSignIn);
+      setWaitingSignIn(null);
+    }
+    return () => {
+      if (waitingSignIn) {
+        setWaitingSignIn(null);
+      }
+    };
+  }, [waitingSignIn, setChainId, signedInWallets]);
 
   return (
     <Grid

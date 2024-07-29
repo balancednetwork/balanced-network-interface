@@ -47,11 +47,7 @@ export const formatPercentage = (value: string | number, decimals: number = DEFA
 export const formatNumber = (num: number, mantissa: number = 0, trim = false) =>
   numbro(num).format({ thousandSeparated: true, mantissa, trimMantissa: trim });
 
-export const formatBalance = (balance: number | string | undefined, price: string | number | undefined) => {
-  if (balance !== 0 && !balance) {
-    return '-';
-  }
-
+export const getBalanceDecimals = (price: string | number | undefined) => {
   let decimals = 0;
   if (!price) {
     decimals = 4;
@@ -64,6 +60,15 @@ export const formatBalance = (balance: number | string | undefined, price: strin
   } else {
     decimals = 6;
   }
+  return decimals;
+};
+
+export const formatBalance = (balance: number | string | undefined, price: string | number | undefined) => {
+  if (balance !== 0 && !balance) {
+    return '-';
+  }
+
+  const decimals = getBalanceDecimals(price);
 
   return numbro(balance).format({
     thousandSeparated: true,

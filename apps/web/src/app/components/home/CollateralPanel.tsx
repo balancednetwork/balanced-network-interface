@@ -94,7 +94,7 @@ export const PanelInfoItem = styled(Box)`
 
 export const UnderPanel = styled(Flex)`
   position: static;
-  padding: 32px 25px 12px;
+  padding: 32px 15px 12px;
   margin-top: -21px;
   background-color: ${({ theme }) => theme.colors.bg2};
   border-radius: 0 0 15px 15px;
@@ -103,6 +103,10 @@ export const UnderPanel = styled(Flex)`
   svg {
     margin-top: 10px;
   }
+
+  ${({ theme }) => theme.mediaWidth.up500`
+    padding: 32px 25px 12px;
+  `}
 
   ${({ theme }) => theme.mediaWidth.upExtraSmall`
     padding: 30px 35px 10px;
@@ -151,7 +155,7 @@ const CollateralPanel = () => {
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
   const [ICXWithdrawOption, setICXWithdrawOption] = useState<ICXWithdrawOptions>(ICXWithdrawOptions.EMPTY);
   const { data: icxUnstakingTime } = useICXUnstakingTime();
-  const isSuperSmall = useMedia(`(max-width: 450px)`);
+  const isSuperSmall = useMedia(`(max-width: 359px)`);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();

@@ -30,7 +30,7 @@ export const CollateralTypeSwitcherWrap = styled.div`
   display: flex;
   align-items: center;
 
-  @media screen and (max-width: 385px) {
+  @media screen and (max-width: 450px) {
     flex-flow: column;
     align-items: flex-start;
   }

@@ -55,16 +55,11 @@ export default function WalletModal() {
   const [, setWalletModal] = useWalletModal();
   const { connectToWallet: connectToKeplr } = useArchwayContext();
   const { connectToWallet: connectToHavah } = useHavahContext();
-
-  const derivedWallets = useSignedInWallets();
+  const signedInWallets = useSignedInWallets();
   const wallets = useWallets();
-
   const { switchChain } = useSwitchChain();
-
-  //
   const activeLocale = useActiveLocale();
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
-
   const arrowRef = React.useRef(null);
 
   const toggleMenu = (e: React.MouseEvent<HTMLElement>) => {
@@ -81,7 +76,7 @@ export default function WalletModal() {
     }
   }, [walletModalOpen, closeMenu]);
 
-  const numberOfConnectedWallets = derivedWallets.filter(wallet => !!wallet.address).length;
+  const numberOfConnectedWallets = signedInWallets.filter(wallet => !!wallet.address && !!wallet.xChainId).length;
   const isLoggedInSome = numberOfConnectedWallets > 0;
   const [chainQuery, setChainQuery] = useState('');
   const debouncedQuery = useDebounce(chainQuery, 200);
@@ -248,7 +243,7 @@ export default function WalletModal() {
             </AnimatePresence>
           </SignInOptionsWrap>
 
-          {!derivedWallets.length && (
+          {!signedInWallets.length && (
             <Typography textAlign="center" as="div" maxWidth={300} mx="auto" mt={2}>
               <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
               <Box pt={'5px'}>

@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from 'bnJs';
 import { ICON_XCALL_NETWORK_ID, NETWORK_ID } from 'constants/config';
 import { MINIMUM_ICX_FOR_ACTION } from 'constants/index';
-import { HIGH_PRICE_ASSET_DP, SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import { useBorrowedAmounts } from 'store/loan/hooks';
 import { useOraclePrice } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
@@ -36,6 +36,8 @@ import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_confi
 import { setRecipientNetwork } from 'store/loan/reducer';
 import { useDestinationEvents } from 'app/pages/trade/bridge/_zustand/useXCallEventStore';
 import { forEach } from 'lodash-es';
+import { useRatesWithOracle } from 'queries/reward';
+import { getBalanceDecimals } from 'utils/formatter';
 
 export const DEFAULT_COLLATERAL_TOKEN = 'sICX';
 
@@ -495,12 +497,9 @@ export function useIsHandlingICX() {
 }
 
 export function useCollateralDecimalPlaces() {
-  const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
   const collateralType = useCollateralType();
-
-  return supportedCollateralTokens && HIGH_PRICE_ASSET_DP[supportedCollateralTokens[collateralType]]
-    ? HIGH_PRICE_ASSET_DP[supportedCollateralTokens[collateralType]]
-    : 2;
+  const rates = useRatesWithOracle();
+  return getBalanceDecimals(rates?.[collateralType].toFixed());
 }
 
 export function useDerivedCollateralInfo(): {

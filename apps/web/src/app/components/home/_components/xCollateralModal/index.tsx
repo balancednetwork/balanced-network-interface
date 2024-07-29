@@ -176,11 +176,7 @@ const XCollateralModal = ({
               ) : isProcessing ? (
                 <>
                   <StyledButton disabled $loading>
-                    {action === XCollateralAction.DEPOSIT ? (
-                      <Trans>Depositing...</Trans>
-                    ) : (
-                      <Trans>Withdrawing...</Trans>
-                    )}
+                    {action === XCollateralAction.DEPOSIT ? <Trans>Depositing</Trans> : <Trans>Withdrawing</Trans>}
                   </StyledButton>
                 </>
               ) : (

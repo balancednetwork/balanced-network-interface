@@ -161,7 +161,7 @@ function XTransferModal() {
                 ) : isProcessing ? (
                   <>
                     <StyledXCallButton disabled $loading>
-                      <Trans>Transferring...</Trans>
+                      <Trans>Transferring</Trans>
                     </StyledXCallButton>
                   </>
                 ) : (

@@ -217,7 +217,7 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
                 ) : isProcessing ? (
                   <>
                     <StyledButton disabled $loading>
-                      <Trans>Swapping...</Trans>
+                      <Trans>Swapping</Trans>
                     </StyledButton>
                   </>
                 ) : (

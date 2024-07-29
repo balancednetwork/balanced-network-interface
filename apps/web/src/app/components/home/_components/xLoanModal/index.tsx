@@ -211,9 +211,9 @@ const XLoanModal = ({
                 <>
                   <StyledButton disabled $loading>
                     {storedModalValues.action === XLoanAction.BORROW ? (
-                      <Trans>Borrowing...</Trans>
+                      <Trans>Borrowing</Trans>
                     ) : (
-                      <Trans>Repaying...</Trans>
+                      <Trans>Repaying</Trans>
                     )}
                   </StyledButton>
                 </>

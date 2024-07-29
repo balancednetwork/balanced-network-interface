@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from 'bnJs';
 import { NETWORK_ID } from 'constants/config';
 import { MINIMUM_ICX_FOR_ACTION } from 'constants/index';
-import { HIGH_PRICE_ASSET_DP, NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
+import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
 import { useBorrowedAmounts, useLoanParameters, useLockingRatios } from 'store/loan/hooks';
 import { useOraclePrice, useOraclePrices } from 'store/oracle/hooks';
 import { useRatio } from 'store/ratio/hooks';
@@ -27,6 +27,8 @@ import {
   type,
   Field,
 } from './reducer';
+import { useRatesWithOracle } from 'queries/reward';
+import { getBalanceDecimals } from 'utils/formatter';
 
 export const DEFAULT_COLLATERAL_TOKEN = 'sICX';
 
@@ -428,10 +430,7 @@ export function useIsHandlingICX() {
 }
 
 export function useCollateralDecimalPlaces() {
-  const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
   const collateralType = useCollateralType();
-
-  return supportedCollateralTokens && HIGH_PRICE_ASSET_DP[supportedCollateralTokens[collateralType]]
-    ? HIGH_PRICE_ASSET_DP[supportedCollateralTokens[collateralType]]
-    : 2;
+  const rates = useRatesWithOracle();
+  return getBalanceDecimals(rates?.[collateralType].toFixed());
 }

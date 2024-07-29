@@ -405,7 +405,7 @@ const CollateralPanel = () => {
                     </Button>
                   </>
                 ) : (
-                  <Button onClick={handleEnableAdjusting} fontSize={14}>
+                  <Button onClick={handleEnableAdjusting} fontSize={14} disabled={collateralTotal?.isEqualTo(0)}>
                     {buttonText}
                   </Button>
                 )}

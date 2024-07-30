@@ -17,6 +17,7 @@ import { useCollateralAmounts, useCollateralType } from 'store/collateral/hooks'
 import { xTokenMap } from 'app/pages/trade/bridge/_config/xTokens';
 import { useOraclePrices } from 'store/oracle/hooks';
 import BigNumber from 'bignumber.js';
+import { formatValue } from 'utils/formatter';
 
 type ChainListProps = {
   chainId: XChainId;
@@ -47,12 +48,14 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
     const balance = crossChainBalances[chain.xChainId]?.[xToken.address];
     if (!balance || !balance.greaterThan(0)) return `-`;
 
-    return xTokenPrice ? `$${new BigNumber(balance.toFixed()).times(xTokenPrice).toFixed(0)} available` : '-';
+    return xTokenPrice
+      ? `${formatValue(new BigNumber(balance.toFixed()).times(xTokenPrice).toFixed())} available`
+      : '-';
   }, [existingPosition, xToken, crossChainBalances, chain.xChainId, xTokenPrice]);
 
   const formattedDeposit = useMemo(() => {
     if (!existingPosition || existingPosition?.isLessThanOrEqualTo(0)) return;
-    return xTokenPrice ? `$${existingPosition.times(xTokenPrice).toFixed(0)}` : '-';
+    return xTokenPrice ? formatValue(existingPosition.times(xTokenPrice).toFixed()) : '-';
   }, [existingPosition, xTokenPrice]);
 
   return (

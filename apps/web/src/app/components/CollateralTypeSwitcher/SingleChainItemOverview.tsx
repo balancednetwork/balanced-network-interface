@@ -11,6 +11,7 @@ import { StyledListItem } from './MultiChainItem';
 import { toFraction } from 'utils';
 import { useOraclePrices } from 'store/oracle/hooks';
 import CurrencyLogo from '../CurrencyLogo';
+import { formatValue } from 'utils/formatter';
 
 type SingleChainItemOverviewProps = {
   baseToken: Token;
@@ -65,18 +66,13 @@ const SingleChainItemOverview = ({
         </AssetSymbol>
         <BalanceAndValueWrap>
           {collateral && collateral.greaterThan(0) && (
-            <DataText as="div">
-              {price && '$'}
-              {collateral
-                ?.multiply(price || 1)
-                .toFixed(price ? 0 : HIGH_PRICE_ASSET_DP[baseToken.address] || 2, { groupSeparator: ',' })}
-            </DataText>
+            <DataText as="div">{price && formatValue(collateral?.multiply(price || 1).toFixed())}</DataText>
           )}
 
           {isNested ? (
             <DataText></DataText>
           ) : (
-            <DataText>{!loan || loan.isEqualTo(0) ? '-' : `$${loan.toFormat(0)}`}</DataText>
+            <DataText>{!loan || loan.isEqualTo(0) ? '-' : formatValue(loan.toFixed())}</DataText>
           )}
         </BalanceAndValueWrap>
       </StyledListItem>

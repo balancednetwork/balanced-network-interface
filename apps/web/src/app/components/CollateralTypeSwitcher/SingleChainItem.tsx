@@ -1,7 +1,6 @@
 import React from 'react';
 import { Token } from '@balancednetwork/sdk-core';
 import { Typography } from 'app/theme';
-import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import { Position, XChainId, XToken } from 'app/pages/trade/bridge/types';
 import { useTheme } from 'styled-components';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
@@ -11,6 +10,7 @@ import { toFraction } from 'utils';
 import { useOraclePrices } from 'store/oracle/hooks';
 import { t } from '@lingui/macro';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
+import { formatValue } from 'utils/formatter';
 
 type SingleChainItemProps = {
   baseToken: Token;
@@ -55,18 +55,19 @@ const SingleChainItem = ({
         </AssetSymbol>
         <BalanceAndValueWrap>
           {collateral && collateral.greaterThan(0) && (
-            <DataText as="div" $fSize={isPotential ? '12px' : '14px'} style={{ opacity: isPotential ? 0.75 : 1 }}>
-              {price && '$'}
-              {collateral
-                ?.multiply(price || 1)
-                .toFixed(price ? 0 : HIGH_PRICE_ASSET_DP[baseToken.address] || 2, { groupSeparator: ',' })}
+            <DataText
+              as="div"
+              $fSize={isPotential ? '12px' : '14px'}
+              style={{ opacity: isPotential ? 0.75 : 1, whiteSpace: 'nowrap' }}
+            >
+              {price && formatValue(collateral?.multiply(price || 1).toFixed())}
               {isPotential && ' ' + t`available`}
             </DataText>
           )}
 
           {!collateral?.greaterThan(0) && <DataText as="div">-</DataText>}
 
-          <DataText as="div">{!loan || loan.isEqualTo(0) ? '-' : `$${loan.toFormat(0)}`}</DataText>
+          <DataText as="div">{!loan || loan.isEqualTo(0) ? '-' : formatValue(loan.toFixed())}</DataText>
         </BalanceAndValueWrap>
       </StyledListItem>
     </>

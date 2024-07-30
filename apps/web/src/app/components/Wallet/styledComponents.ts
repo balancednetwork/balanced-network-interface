@@ -87,6 +87,10 @@ export const List = styled(Box)`
   max-height: 400px;
   overflow-y: auto;
   padding: 0 25px;
+
+  @media all and (max-width: 500px) {
+    max-height: 200px;
+  }
 `;
 
 export const ListItem = styled(DashGrid)<{ $border?: boolean }>`

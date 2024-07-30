@@ -5,8 +5,9 @@ import React from 'react';
 import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, DataText, ListItem } from './styledComponents';
 import CurrencyLogo from '../CurrencyLogo';
 import { Typography } from 'app/theme';
-import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
+import { formatBalance, formatValue } from 'utils/formatter';
+import { useRatesWithOracle } from 'queries/reward';
 
 type MultiChainBalanceItemProps = {
   baseToken: Token;
@@ -18,6 +19,7 @@ type MultiChainBalanceItemProps = {
 const MultiChainBalanceItem = ({ baseToken, balances, total, value }: MultiChainBalanceItemProps) => {
   const { symbol } = baseToken;
   const arrowRef = React.useRef<HTMLElement>(null);
+  const rates = useRatesWithOracle();
 
   const sortedEntries = React.useMemo(() => {
     return Object.entries(balances).sort(([, balanceA], [, balanceB]) => {
@@ -41,13 +43,10 @@ const MultiChainBalanceItem = ({ baseToken, balances, total, value }: MultiChain
         </AssetSymbol>
         <BalanceAndValueWrap>
           <DataText as="div" style={{ opacity: 0.75, fontSize: 12 }}>
-            {total?.toFormat(HIGH_PRICE_ASSET_DP[baseToken.address] || 2, {
-              groupSeparator: ',',
-              decimalSeparator: '.',
-            })}
+            {formatBalance(total?.toFixed(), rates?.[baseToken.symbol]?.toFixed())}
           </DataText>
           <DataText as="div" style={{ opacity: 0.75, fontSize: 12 }}>
-            {!value ? '-' : `$${value.toFormat(2)}`}
+            {!value ? '-' : formatValue(value.toFixed())}
           </DataText>
         </BalanceAndValueWrap>
       </ListItem>

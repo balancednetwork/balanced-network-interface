@@ -3,14 +3,15 @@ import { AssetSymbol, BalanceAndValueWrap, DataText, ListItem } from './styledCo
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { Typography } from 'app/theme';
-import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import { XChainId } from 'app/pages/trade/bridge/types';
-import CurrencyLogoWithNetwork from './CurrencyLogoWithNetwork';
+import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { useTheme } from 'styled-components';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import ICONAssetModal from './ICONAssetModal';
 import useClaimableICX from './useClaimableICX';
+import { useRatesWithOracle } from 'queries/reward';
+import { formatBalance, formatValue } from 'utils/formatter';
 
 type SingleChainBalanceItemProps = {
   baseToken: Token;
@@ -35,6 +36,7 @@ const SingleChainBalanceItem = ({
   const hasNotification = baseToken.symbol === 'ICX' && claimableICX.isGreaterThan(0);
   const isICONAsset = xChainId === ICON_XCALL_NETWORK_ID;
   const [isOpen, setOpen] = React.useState(false);
+  const rates = useRatesWithOracle();
 
   const closeModal = React.useCallback(() => {
     setOpen(false);
@@ -65,10 +67,8 @@ const SingleChainBalanceItem = ({
           </Typography>
         </AssetSymbol>
         <BalanceAndValueWrap>
-          <DataText as="div">
-            {balance?.toFixed(HIGH_PRICE_ASSET_DP[baseToken.address] || 2, { groupSeparator: ',' })}
-          </DataText>
-          <DataText as="div">{!value ? '-' : `$${value.toFormat(2)}`}</DataText>
+          <DataText as="div">{formatBalance(balance?.toFixed(), rates?.[baseToken.symbol]?.toFixed())}</DataText>
+          <DataText as="div">{!value ? '-' : formatValue(value.toFixed())}</DataText>
         </BalanceAndValueWrap>
       </ListItem>
       {isICONAsset && (

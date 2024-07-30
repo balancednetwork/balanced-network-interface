@@ -5,7 +5,7 @@ import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
 import { Position, XChainId } from 'app/pages/trade/bridge/types';
 import { useTheme } from 'styled-components';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import CurrencyLogoWithNetwork from '../Wallet/CurrencyLogoWithNetwork';
+import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { AssetSymbol, BalanceAndValueWrap, DataText } from '../Wallet/styledComponents';
 import { StyledListItem } from './MultiChainItem';
 import { toFraction } from 'utils';

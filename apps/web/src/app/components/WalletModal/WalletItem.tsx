@@ -6,7 +6,7 @@ import { Typography } from 'app/theme';
 
 import { UnderlineText } from '../DropdownText';
 import { XChain } from 'app/pages/trade/bridge/types';
-import { ChainLogo } from 'app/pages/trade/bridge/_components/ChainLogo';
+import { ChainLogo } from 'app/components/ChainLogo';
 import { CopyableAddress } from '../Header';
 import { t } from '@lingui/macro';
 import { ActionDivider, ChainInfo, ChainName, MainLogo, WalletActions, WalletItemGrid, XChainsWrap } from './styled';

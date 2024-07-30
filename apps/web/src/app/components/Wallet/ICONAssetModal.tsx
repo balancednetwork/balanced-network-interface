@@ -19,7 +19,7 @@ import useClaimableICX from './useClaimableICX';
 import SendPanel from './ICONWallets/SendPanel';
 import ICXWallet from './ICONWallets/ICXWallet';
 import SICXWallet from './ICONWallets/SICXWallet';
-import CurrencyLogoWithNetwork from './CurrencyLogoWithNetwork';
+import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import { useTheme } from 'styled-components';
 import { Typography } from 'app/theme';

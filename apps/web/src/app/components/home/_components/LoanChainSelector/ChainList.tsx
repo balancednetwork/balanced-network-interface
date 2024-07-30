@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { Box } from 'rebass';
 
-import { ChainLogo } from 'app/pages/trade/bridge/_components/ChainLogo';
+import { ChainLogo } from 'app/components/ChainLogo';
 import { XChainId, XChain, XWalletType } from 'app/pages/trade/bridge/types';
 import { xChainMap, xChains } from 'app/pages/trade/bridge/_config/xChains';
 import SearchInput from 'app/components/SearchModal/SearchInput';

@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import CurrencyLogo from '../CurrencyLogo';
 import { Currency } from '@balancednetwork/sdk-core';
-import { ChainLogo } from 'app/pages/trade/bridge/_components/ChainLogo';
+import { ChainLogo } from 'app/components/ChainLogo';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 
 const NetworkWrap = styled.div<{ $bgColor: string; $right: string; $bottom: string }>`

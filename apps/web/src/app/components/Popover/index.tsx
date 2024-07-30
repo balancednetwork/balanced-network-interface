@@ -163,6 +163,7 @@ export interface PopperProps {
   children: React.ReactNode;
   placement?: Placement;
   offset?: OffsetModifier;
+  strategy?: 'fixed' | 'absolute';
 }
 
 export function PopperWithoutArrow({ show, children, placement = 'auto', anchorEl, offset }: PopperProps) {
@@ -198,6 +199,7 @@ export function DropdownPopper({
   containerOffset,
   offset,
   zIndex,
+  strategy,
 }: PopperProps) {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
@@ -217,7 +219,7 @@ export function DropdownPopper({
 
   const { styles, update, attributes } = usePopper(anchorEl, popperElement, {
     placement,
-    strategy: 'fixed',
+    strategy: strategy ?? 'fixed',
     modifiers: customModifier,
   });
 

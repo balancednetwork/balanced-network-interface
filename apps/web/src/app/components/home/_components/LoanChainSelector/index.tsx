@@ -87,6 +87,7 @@ const LoanChainSelector = () => {
               arrowEl={arrowRef.current}
               placement="bottom"
               offset={[0, 10]}
+              strategy="absolute"
             >
               <ChainList setChainId={setChainWrap} chainId={loanRecipientNetwork} chains={xChains} />
             </DropdownPopper>

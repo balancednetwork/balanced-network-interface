@@ -100,6 +100,7 @@ const CollateralChainSelector = () => {
               arrowEl={arrowRef.current}
               placement="bottom"
               offset={[0, 10]}
+              strategy="absolute"
             >
               <ChainList setChainId={setChainWrap} chainId={collateralXChain} chains={xChains} />
             </DropdownPopper>

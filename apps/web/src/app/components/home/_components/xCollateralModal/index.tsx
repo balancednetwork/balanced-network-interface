@@ -157,7 +157,9 @@ const XCollateralModal = ({
           </Flex>
 
           <Typography textAlign="center">
-            <Trans>You'll also pay</Trans> <strong>{formattedXCallFee}</strong> <Trans>to transfer cross-chain.</Trans>
+            <Trans>
+              Cross-chain fee: <strong>{formattedXCallFee}</strong>
+            </Trans>
           </Typography>
 
           {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { Box } from 'rebass';
 
@@ -18,6 +18,7 @@ import { isMobile } from 'react-device-detect';
 import { useArchwayContext } from 'packages/archway/ArchwayProvider';
 import { useHavahContext } from 'packages/havah/HavahProvider';
 import { useDerivedCollateralInfo } from 'store/collateral/hooks';
+import { formatBalance } from 'utils/formatter';
 
 type ChainListProps = {
   chainId: XChainId;
@@ -90,11 +91,10 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
         <Typography color="inherit" style={{ transition: 'all ease 0.3s' }}>
           {`${
             crossChainBalances[chain.xChainId]?.[xChainMap[chain.xChainId].contracts.bnUSD || '']
-              ? crossChainBalances[chain.xChainId]?.[xChainMap[chain.xChainId].contracts.bnUSD || '']
-                  ?.toFixed(2, {
-                    groupSeparator: ',',
-                  })
-                  .replace('.00', '')
+              ? formatBalance(
+                  crossChainBalances[chain.xChainId]?.[xChainMap[chain.xChainId].contracts.bnUSD || '']?.toFixed(),
+                  1,
+                ).replace('.00', '')
               : 0
           }`}
           {' bnUSD'}

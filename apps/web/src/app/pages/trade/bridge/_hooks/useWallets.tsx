@@ -3,8 +3,6 @@ import { useArchwayContext } from 'packages/archway/ArchwayProvider';
 import { useIconReact } from 'packages/icon-react';
 import { useMemo } from 'react';
 import useEVMReact from './useEVMReact';
-import { XWallet } from '../_xcall/types';
-import { addAllEvmChains } from 'utils';
 import { useHavahContext } from 'packages/havah/HavahProvider';
 
 const useWallets = (): {

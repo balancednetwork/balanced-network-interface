@@ -86,11 +86,6 @@ export interface IWalletXService extends IPublicXService {
   executeTransaction(xTransactionInput: XTransactionInput): Promise<string | undefined>;
 }
 
-export type XWallet = {
-  address: string;
-  xChainId: XChainId | undefined;
-};
-
 export type ICONTxEvent = {
   indexed: string[];
   data: string[];

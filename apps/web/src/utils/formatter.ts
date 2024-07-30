@@ -53,7 +53,7 @@ export const getBalanceDecimals = (price: string | number | undefined) => {
     decimals = 4;
   } else if (toBigNumber(price).isLessThan(0.01)) {
     decimals = 0;
-  } else if (toBigNumber(price).isLessThan(1)) {
+  } else if (toBigNumber(price).isLessThan(10)) {
     decimals = 2;
   } else if (toBigNumber(price).isLessThan(100)) {
     decimals = 4;
@@ -85,6 +85,30 @@ export const formatPrice = (value: string | number) => {
   if (toBigNumber(value).isLessThan(0.01)) {
     decimals = 6;
   } else if (toBigNumber(value).isLessThan(10)) {
+    decimals = 4;
+  } else if (toBigNumber(value).isLessThan(1000)) {
+    decimals = 2;
+  } else {
+    decimals = 0;
+  }
+
+  // always use dollars for now
+  return (
+    '$' +
+    numbro(value).format({
+      thousandSeparated: true,
+      mantissa: Number.isInteger(value) ? 0 : decimals,
+    })
+  );
+};
+
+export const formatValue = (value: string | number) => {
+  if (value !== 0 && !value) {
+    return '$-.--';
+  }
+
+  let decimals = 0;
+  if (toBigNumber(value).isLessThan(0.01)) {
     decimals = 4;
   } else if (toBigNumber(value).isLessThan(1000)) {
     decimals = 2;

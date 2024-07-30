@@ -17,6 +17,8 @@ import { Typography } from 'app/theme';
 import ArchWalletIcon from 'assets/icons/chains/archway.svg';
 import IconWalletIcon from 'assets/icons/wallets/iconex.svg';
 import HavahWalletIcon from 'assets/icons/chains/havah.svg';
+import InjectiveWalletIcon from 'assets/icons/chains/injective.svg';
+
 import ETHIcon from 'assets/icons/chains/eth.svg';
 import { LOCALE_LABEL, SupportedLocale, SUPPORTED_LOCALES } from 'constants/locales';
 import { useActiveLocale } from 'hooks/useActiveLocale';
@@ -36,6 +38,8 @@ import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
 import useDebounce from 'hooks/useDebounce';
 import Divider from '../Divider';
 import { TextButton } from '../Button';
+import { MODAL_ID, modalActions } from 'app/pages/trade/bridge/_zustand/useModalStore';
+import { InjectiveWalletOptionsModal } from 'packages/injective/InjectiveWalletOptionsModal';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {
@@ -156,6 +160,15 @@ export default function WalletModal() {
           xChains: undefined,
           switchChain: undefined,
         },
+        {
+          name: 'Injective',
+          logo: <InjectiveWalletIcon width="40" height="40" />,
+          connect: () => modalActions.openModal(MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL),
+          disconnect: wallets[XWalletType.INJECTIVE].disconnect,
+          description: t`Swap & transfer crypto cross-chain.`,
+          keyWords: ['injective', 'cosmos', 'keplr', 'leap'],
+          address: wallets[XWalletType.INJECTIVE].account,
+        },
       ].sort((a, b) => a.name.localeCompare(b.name)),
     ];
   }, [setWalletModal, connectToKeplr, wallets, switchChain, connectToHavah]);
@@ -275,8 +288,8 @@ export default function WalletModal() {
       </StyledModal>
 
       <IconWalletModal />
-
       <EVMWalletModal />
+      <InjectiveWalletOptionsModal />
     </>
   );
 }

@@ -33,6 +33,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('0x1.icon', ChainId.MAINNET, 'cx288d13e1b63563459a2ac6179f237711f6851cb5', 18, 'ETH', 'ETH'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cxe2da9f10bc6e2754347bde2ef73379bd398fd9f3', 18, 'HVH', 'HVH'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx07b184a37f03c6ab681fcbd0b45aec6dc3eafbeb', 18, 'BTC', 'Bitcoin', 'BTC1'),
+    new XToken('0x1.icon', ChainId.MAINNET, 'cx4297f4b63262507623b6ad575d0d8dd2db980e4e', 18, 'INJ', 'INJ'),
   ],
   'archway-1': [
     new XToken(
@@ -98,4 +99,8 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
   '0x2.icon': [],
   '0xa869.fuji': [],
   archway: [],
+  'injective-1': [
+    new XToken('injective-1', 'injective-1', NATIVE_ADDRESS, 18, 'INJ', 'INJ'),
+    // new XToken('injective-1', 'injective-1', NATIVE_ADDRESS, 18, 'bnUSD', 'Balanced Dollar'),
+  ],
 };

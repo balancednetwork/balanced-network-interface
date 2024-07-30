@@ -4,6 +4,7 @@ import { useIconReact } from 'packages/icon-react';
 import { useMemo } from 'react';
 import useEVMReact from './useEVMReact';
 import { useHavahContext } from 'packages/havah/HavahProvider';
+import { useInjectiveWalletStore } from 'packages/injective';
 
 const useWallets = (): {
   [key in XWalletType]: { account: string | undefined | null; xChainId: XChainId | undefined; disconnect: () => void };
@@ -12,6 +13,7 @@ const useWallets = (): {
   const icon = useIconReact();
   const havah = useHavahContext();
   const evm = useEVMReact();
+  const injective = useInjectiveWalletStore();
 
   return useMemo(
     () => ({
@@ -35,8 +37,13 @@ const useWallets = (): {
         xChainId: '0x100.icon',
         disconnect: havah.disconnect,
       },
+      [XWalletType.INJECTIVE]: {
+        account: injective.account,
+        xChainId: 'injective-1',
+        disconnect: injective.disconnect,
+      },
     }),
-    [arch, icon, evm, havah],
+    [arch, icon, evm, havah, injective],
   );
 };
 

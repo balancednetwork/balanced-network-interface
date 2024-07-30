@@ -29,12 +29,20 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
         include: ['buffer'],
         globals: {
           Buffer: true,
-          global: false,
+          // global: false,
           process: false,
         },
+        protocolImports: true,
       }),
       lingui(),
     ],
+    resolve: {
+      alias: {
+        // Polyfill for Node.js core modules
+        stream: 'stream-browserify',
+      },
+    },
+
     server: {
       // this ensures that the browser opens upon server start
       open: true,
@@ -43,6 +51,7 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
     },
     define: {
       'process.env': env,
+      'process.version': JSON.stringify(''),
     },
   };
 });

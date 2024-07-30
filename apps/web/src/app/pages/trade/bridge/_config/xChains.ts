@@ -259,6 +259,31 @@ export const base: XChain = {
   testnet: false,
 };
 
+export const injective: XChain = {
+  id: 'injective-1',
+  name: 'Injective',
+  xChainId: 'injective-1',
+  xChainType: 'INJECTIVE',
+  xWalletType: XWalletType.INJECTIVE,
+  tracker: 'https://explorer.injective.network/',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'INJ',
+    symbol: 'INJ',
+  },
+  rpc: {
+    http: 'https://mainnet.base.org',
+  },
+  contracts: {
+    xCall: 'inj1dsq24kt9l7pw6qd29y8e4p4m3az8e8zd6ugmux',
+    assetManager: 'inj1hayj9xnlh44sn29sgggn3jwl3ktl6djwcven25',
+    bnUSD: 'inj1qspaxnztkkzahvp6scq6xfpgafejmj2td83r9j',
+  },
+  autoExecution: true,
+  gasThreshold: 0.0001, // TODO: is it correct value?
+  testnet: false,
+};
+
 export const xChainMap: { [key in XChainId]: XChain } = {
   '0x1.icon': icon,
   '0x2.icon': lisbon,
@@ -270,6 +295,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   '0x38.bsc': bsc,
   '0xa4b1.arbitrum': arbitrum,
   '0x2105.base': base,
+  'injective-1': injective,
 };
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);

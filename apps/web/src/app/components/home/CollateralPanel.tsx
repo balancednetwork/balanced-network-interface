@@ -366,6 +366,7 @@ const CollateralPanel = () => {
   const hasEnoughICX = useHasEnoughICX();
 
   const [ref, width] = useWidth();
+  const [underPanelRef, underPanelWidth] = useWidth();
 
   const [, setWalletModal] = useWalletModal();
   const handleConnect = () => {
@@ -492,9 +493,11 @@ const CollateralPanel = () => {
             </>
           )}
         </BoxPanel>
-        <UnderPanel justifyContent="space-between">
-          <CollateralChainSelector />
-          <ICXDisplayTypeSwitcher handleCancelAdjusting={handleCancelAdjusting} />
+        <UnderPanel>
+          <Flex width="100%" justifyContent="space-between" ref={underPanelRef}>
+            <CollateralChainSelector width={underPanelWidth} containerRef={underPanelRef.current} />
+            <ICXDisplayTypeSwitcher handleCancelAdjusting={handleCancelAdjusting} />
+          </Flex>
         </UnderPanel>
       </BoxPanelWrap>
 

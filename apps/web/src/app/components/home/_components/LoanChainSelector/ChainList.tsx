@@ -24,6 +24,7 @@ type ChainListProps = {
   chainId: XChainId;
   setChainId: (chain: XChainId) => void;
   chains?: XChain[];
+  width: number | undefined;
 };
 
 type ChainItemProps = {
@@ -108,7 +109,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   );
 };
 
-const ChainList = ({ chainId, setChainId, chains }: ChainListProps) => {
+const ChainList = ({ chainId, setChainId, chains, width }: ChainListProps) => {
   const relevantChains = chains || xChains;
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -131,7 +132,7 @@ const ChainList = ({ chainId, setChainId, chains }: ChainListProps) => {
   }, [filteredChains]);
 
   return (
-    <SelectorWrap>
+    <SelectorWrap $width={width}>
       <SearchInput
         type="text"
         placeholder={t`Search blockchains...`}

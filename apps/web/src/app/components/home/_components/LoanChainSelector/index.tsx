@@ -15,7 +15,10 @@ import ChainSelectorLogo from '../CollateralChainSelector/ChainSelectorLogo';
 import ChainList from './ChainList';
 import { Trans } from '@lingui/macro';
 
-const LoanChainSelector = () => {
+const LoanChainSelector = ({
+  width,
+  containerRef,
+}: { width: number | undefined; containerRef: HTMLDivElement | null }) => {
   const [isOpen, setOpen] = React.useState(false);
   const loanRecipientNetwork = useLoanRecipientNetwork();
   const setRecipientNetwork = useSetLoanRecipientNetwork();
@@ -49,10 +52,10 @@ const LoanChainSelector = () => {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (arrowRef.current) {
-      setAnchor(arrowRef.current);
+    if (containerRef) {
+      setAnchor(containerRef);
     }
-  }, [isCrossChain]);
+  }, [isCrossChain, containerRef]);
 
   const setChainWrap = React.useCallback(
     (chainId: XChainId) => {
@@ -86,10 +89,11 @@ const LoanChainSelector = () => {
               anchorEl={anchor}
               arrowEl={arrowRef.current}
               placement="bottom"
-              offset={[0, 10]}
+              offset={[0, 9]}
               strategy="absolute"
+              containerOffset={containerRef ? containerRef.getBoundingClientRect().x + 2 : 0}
             >
-              <ChainList setChainId={setChainWrap} chainId={loanRecipientNetwork} chains={xChains} />
+              <ChainList setChainId={setChainWrap} chainId={loanRecipientNetwork} chains={xChains} width={width} />
             </DropdownPopper>
           </div>
         </ClickAwayListener>

@@ -41,6 +41,7 @@ import XLoanModal, { XLoanAction } from './_components/xLoanModal';
 import { ICON_XCALL_NETWORK_ID } from 'constants/config';
 import { useIconReact } from 'packages/icon-react';
 import { MODAL_ID, modalActions } from 'app/pages/trade/bridge/_zustand/useModalStore';
+import useWidth from 'hooks/useWidth';
 
 const LoanPanel = () => {
   const { account, sourceChain, collateralType } = useDerivedCollateralInfo();
@@ -64,6 +65,8 @@ const LoanPanel = () => {
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
+
+  const [underPanelRef, underPanelWidth] = useWidth();
 
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
@@ -243,7 +246,9 @@ const LoanPanel = () => {
           </Flex>
         </BoxPanel>
         <UnderPanel justifyContent="space-between">
-          <LoanChainSelector />
+          <Flex width="100%" justifyContent="space-between" ref={underPanelRef}>
+            <LoanChainSelector width={underPanelWidth} containerRef={underPanelRef.current} />
+          </Flex>
         </UnderPanel>
       </BoxPanelWrap>
     );
@@ -361,7 +366,9 @@ const LoanPanel = () => {
           </PanelInfoWrap>
         </BoxPanel>
         <UnderPanel justifyContent="space-between">
-          <LoanChainSelector />
+          <Flex width="100%" justifyContent="space-between" ref={underPanelRef}>
+            <LoanChainSelector width={underPanelWidth} containerRef={underPanelRef.current} />
+          </Flex>
         </UnderPanel>
       </BoxPanelWrap>
 

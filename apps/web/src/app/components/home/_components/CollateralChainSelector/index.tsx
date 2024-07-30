@@ -26,7 +26,10 @@ export const SelectorWrap = styled.div`
   color: ${({ theme }) => theme.colors.primaryBright};
 `;
 
-const CollateralChainSelector = () => {
+const CollateralChainSelector = ({
+  width,
+  containerRef,
+}: { width: number | undefined; containerRef: HTMLDivElement | null }) => {
   const [isOpen, setOpen] = React.useState(false);
   const collateralType = useCollateralType();
   const collateralXChain = useCollateralXChain();
@@ -61,10 +64,10 @@ const CollateralChainSelector = () => {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (arrowRef.current) {
-      setAnchor(arrowRef.current);
+    if (containerRef) {
+      setAnchor(containerRef);
     }
-  }, [isCrossChain]);
+  }, [isCrossChain, containerRef]);
 
   const setChainWrap = React.useCallback(
     (chainId: XChainId) => {
@@ -99,10 +102,11 @@ const CollateralChainSelector = () => {
               anchorEl={anchor}
               arrowEl={arrowRef.current}
               placement="bottom"
-              offset={[0, 10]}
+              offset={[0, 9]}
+              containerOffset={containerRef ? containerRef.getBoundingClientRect().x + 2 : 0}
               strategy="absolute"
             >
-              <ChainList setChainId={setChainWrap} chainId={collateralXChain} chains={xChains} />
+              <ChainList setChainId={setChainWrap} chainId={collateralXChain} chains={xChains} width={width} />
             </DropdownPopper>
           </div>
         </ClickAwayListener>

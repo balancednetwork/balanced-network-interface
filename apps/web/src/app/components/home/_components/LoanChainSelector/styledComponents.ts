@@ -1,10 +1,9 @@
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
-export const SelectorWrap = styled(Box)`
+export const SelectorWrap = styled(Box)<{ $width: number | undefined }>`
   padding: 25px 25px 10px 25px;
-  width: 99vw;
-  max-width: 415px;
+  ${({ $width }) => $width && `width: ${$width}px;`}
 `;
 
 export const ChainItemWrap = styled(Flex)`

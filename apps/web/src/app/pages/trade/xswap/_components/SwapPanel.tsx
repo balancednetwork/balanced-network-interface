@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import { TradeType, Currency, Percent, Fraction } from '@balancednetwork/sdk-core';
+import { TradeType, Currency, Percent } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -300,10 +300,10 @@ export default function SwapPanel() {
             {swapButton}
           </Flex>
 
-          {!canBridge && (
+          {!canBridge && maximumBridgeAmount && (
             <Flex alignItems="center" justifyContent="center" mt={2}>
               <Typography textAlign="center">
-                {maximumBridgeAmount?.greaterThan(new Fraction(1, 10000)) ? (
+                {new BigNumber(maximumBridgeAmount.toFixed()).isGreaterThanOrEqualTo(0.0001) ? (
                   <>
                     <Trans>Only</Trans>{' '}
                     <UnderlineText onClick={handleMaximumBridgeAmountClick}>

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import { Fraction, Percent } from '@balancednetwork/sdk-core';
+import { Percent } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -24,6 +24,7 @@ import { xChainMap } from '../_config/xChains';
 import { maxAmountSpend, validateAddress } from 'utils';
 import useWallets from '../_hooks/useWallets';
 import { UnderlineText } from 'app/components/DropdownText';
+import BigNumber from 'bignumber.js';
 
 export default function BridgeTransferForm({ openModal }) {
   const crossChainWallet = useCrossChainWalletBalances();
@@ -161,10 +162,10 @@ export default function BridgeTransferForm({ openModal }) {
             )}
           </Flex>
 
-          {!canBridge && (
+          {!canBridge && maximumBridgeAmount && (
             <Flex alignItems="center" justifyContent="center" mt={2}>
               <Typography textAlign="center">
-                {maximumBridgeAmount?.greaterThan(new Fraction(1, 10000)) ? (
+                {new BigNumber(maximumBridgeAmount.toFixed()).isGreaterThanOrEqualTo(0.0001) ? (
                   <>
                     <Trans>Only</Trans>{' '}
                     <UnderlineText onClick={handleMaximumBridgeAmountClick}>

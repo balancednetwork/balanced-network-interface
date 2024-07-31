@@ -197,9 +197,7 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
           </Typography>
 
           <Typography textAlign="center">
-            <Trans>
-              Cross-chain fee: <strong>{formattedXCallFee}</strong>
-            </Trans>
+            <Trans>You'll also pay</Trans> <strong>{formattedXCallFee}</strong> <Trans>to transfer cross-chain.</Trans>
           </Typography>
 
           {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}

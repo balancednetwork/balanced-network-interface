@@ -118,10 +118,13 @@ export default function SwapPanel() {
   // handle swap modal
   const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
 
-  const handleSwapConfirmDismiss = () => {
-    setShowSwapConfirm(false);
-    clearSwapInputOutput();
-  };
+  const handleSwapConfirmDismiss = React.useCallback(
+    (clearInputs = true) => {
+      setShowSwapConfirm(false);
+      clearInputs && clearSwapInputOutput();
+    },
+    [clearSwapInputOutput],
+  );
 
   const toggleWalletModal = useWalletModalToggle();
 

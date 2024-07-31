@@ -306,13 +306,18 @@ export default function SwapPanel() {
                 {maximumBridgeAmount?.greaterThan(0) && (
                   <>
                     <Trans>Only</Trans>{' '}
+                    <UnderlineText onClick={handleMaximumBridgeAmountClick}>
+                      <Typography color="primaryBright" as="a">
+                        {maximumBridgeAmount?.toFixed(0)} {maximumBridgeAmount?.currency?.symbol}
+                      </Typography>
+                    </UnderlineText>{' '}
                   </>
                 )}
-                <UnderlineText onClick={handleMaximumBridgeAmountClick}>
-                  <Typography color="primaryBright" as="a">
-                    {maximumBridgeAmount?.toFixed(0)} {maximumBridgeAmount?.currency?.symbol}
-                  </Typography>
-                </UnderlineText>{' '}
+                {maximumBridgeAmount?.equalTo(0) && (
+                  <>
+                    <Trans>0 {maximumBridgeAmount?.currency?.symbol}</Trans>{' '}
+                  </>
+                )}
                 <Trans>is available on {xChainMap[direction?.to].name}.</Trans>
               </Typography>
             </Flex>

@@ -74,7 +74,8 @@ const XLoanModal = ({
   const { onAdjust: adjust } = useLoanActionHandlers();
   const activeChain = useLoanWalletServiceHandler();
 
-  const collateralNetworkAddress = `${sourceChain}/${collateralAccount}`;
+  const collateralNetworkAddress =
+    sourceChain === ICON_XCALL_NETWORK_ID ? collateralAccount : `${sourceChain}/${collateralAccount}`;
   const loanNetworkAddress = receiver;
 
   const { xCallFee, formattedXCallFee } = useXCallFee(

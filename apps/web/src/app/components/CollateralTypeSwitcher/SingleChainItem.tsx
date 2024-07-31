@@ -11,6 +11,8 @@ import { useOraclePrices } from 'store/oracle/hooks';
 import { t } from '@lingui/macro';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { formatValue } from 'utils/formatter';
+import { useICX } from 'constants/tokens';
+import { useIcxDisplayType } from 'store/collateral/hooks';
 
 type SingleChainItemProps = {
   baseToken: Token;
@@ -33,6 +35,8 @@ const SingleChainItem = ({
   const { currency } = collateral || {};
   const { symbol } = currency || {};
   const theme = useTheme();
+  const ICX = useICX();
+  const icxDisplayType = useIcxDisplayType();
 
   const price = React.useMemo(() => {
     if (!prices || (symbol && !prices[symbol])) return;
@@ -44,13 +48,13 @@ const SingleChainItem = ({
       <StyledListItem $border={!isNested && !isLast} onClick={() => onSelect(baseToken.symbol, xChainId)}>
         <AssetSymbol>
           <CurrencyLogoWithNetwork
-            currency={baseToken}
+            currency={baseToken.symbol === 'sICX' && icxDisplayType === 'ICX' ? ICX : baseToken}
             chainId={xChainId as XChainId}
             bgColor={isNested ? theme.colors.bg3 : theme.colors.bg4}
             size={isNested ? '20px' : '24px'}
           />
           <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>
-            {isNested ? xChainMap[xChainId].name : symbol}
+            {isNested ? xChainMap[xChainId].name : symbol === 'sICX' ? icxDisplayType : symbol}
           </Typography>
         </AssetSymbol>
         <BalanceAndValueWrap>

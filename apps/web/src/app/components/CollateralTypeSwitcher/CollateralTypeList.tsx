@@ -76,7 +76,7 @@ const CollateralTypeList = ({
 
   return (
     <>
-      <DashGrid marginTop={'15px'}>
+      <DashGrid marginTop={'15px'} p="0 25px">
         <HeaderText>
           <Trans>Asset</Trans>
         </HeaderText>
@@ -94,7 +94,7 @@ const CollateralTypeList = ({
 
       {collateralTab === CollateralTab.YOUR && (
         <>
-          <List mx="-25px">
+          <List>
             {filteredPositions.map((xPosition, index) =>
               xPosition.isPositionSingleChain ? (
                 <SingleChainItem
@@ -123,7 +123,7 @@ const CollateralTypeList = ({
       )}
 
       {collateralTab === CollateralTab.ALL && (
-        <List mx="-25px">
+        <List>
           {filteredCollaterals
             ?.sort((a, b) => a.baseToken.symbol.localeCompare(b.baseToken.symbol))
             .map((xCollateral, index, { length }) => {

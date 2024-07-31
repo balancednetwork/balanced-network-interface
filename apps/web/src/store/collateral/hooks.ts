@@ -210,7 +210,7 @@ export function useTotalCollateralData(): UseQueryResult<{ [key in string]: Posi
         return;
       }
     },
-    enabled: !!useSupportedCollateralTokens,
+    enabled: !!supportedTokens,
     placeholderData: keepPreviousData,
   });
 }
@@ -459,11 +459,8 @@ export function useDepositedCollateral() {
 
 export function useAvailableCollateral() {
   const sourceChain = useCollateralXChain();
-  const signedInWallets = useAvailableWallets();
   const crossChainWallet = useCrossChainWalletBalances();
-  const account = signedInWallets.find(
-    w => xChainMap[w.xChainId].xWalletType === xChainMap[sourceChain].xWalletType,
-  )?.address;
+
   const collateralType = useCollateralType();
 
   const collateralCurrency = React.useMemo(() => {
@@ -596,7 +593,7 @@ export function useXCollateralDataByToken(): UseQueryResult<XPositionsRecord[]> 
 
   return useQuery({
     queryKey: ['xPositionsData', allWallets],
-    queryFn: async () => {
+    queryFn: () => {
       return Object.entries(
         Object.entries(xDepositedAmounts).reduce(
           (acc, xDepositedAmount) => {

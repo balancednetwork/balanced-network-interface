@@ -7,7 +7,6 @@ import { isMobile } from 'react-device-detect';
 import { Trans, t } from '@lingui/macro';
 import { ChartControlButton as CollateralTabButton } from 'app/pages/trade/supply/_components/utils';
 import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
-import { Typography } from 'app/theme';
 
 export enum CollateralTab {
   ALL = 'all',

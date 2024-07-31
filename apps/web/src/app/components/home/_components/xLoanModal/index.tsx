@@ -37,7 +37,6 @@ export enum XLoanAction {
 type XLoanModalProps = {
   collateralAccount: string | undefined;
   sourceChain: XChainId;
-  action: XLoanAction;
   originationFee: BigNumber;
   storedModalValues: {
     amount: string;
@@ -59,7 +58,6 @@ const XLoanModal = ({
   collateralAccount,
   bnUSDAmount,
   sourceChain,
-  action,
   originationFee,
   interestRate,
   storedModalValues,
@@ -79,8 +77,8 @@ const XLoanModal = ({
   const loanNetworkAddress = receiver;
 
   const { xCallFee, formattedXCallFee } = useXCallFee(
-    action === XLoanAction.BORROW ? sourceChain : loanNetwork,
-    action === XLoanAction.BORROW ? loanNetwork : sourceChain,
+    storedModalValues.action === XLoanAction.BORROW ? sourceChain : loanNetwork,
+    storedModalValues.action === XLoanAction.BORROW ? loanNetwork : sourceChain,
   );
 
   const _inputAmount = useMemo(() => {
@@ -106,12 +104,13 @@ const XLoanModal = ({
     if (!collateralType) return;
 
     const xTransactionInput: XTransactionInput = {
-      type: action === XLoanAction.BORROW ? XTransactionType.BORROW : XTransactionType.REPAY,
-      direction: action === XLoanAction.BORROW ? direction : { from: loanNetwork, to: ICON_XCALL_NETWORK_ID },
-      account: action === XLoanAction.BORROW ? collateralAccount : receiver.split('/')[1],
+      type: storedModalValues.action === XLoanAction.BORROW ? XTransactionType.BORROW : XTransactionType.REPAY,
+      direction:
+        storedModalValues.action === XLoanAction.BORROW ? direction : { from: loanNetwork, to: ICON_XCALL_NETWORK_ID },
+      account: storedModalValues.action === XLoanAction.BORROW ? collateralAccount : receiver.split('/')[1],
       inputAmount: _inputAmount,
       usedCollateral: collateralType,
-      recipient: action === XLoanAction.BORROW ? receiver : collateralNetworkAddress,
+      recipient: storedModalValues.action === XLoanAction.BORROW ? receiver : collateralNetworkAddress,
       xCallFee,
       callback: cancelAdjusting,
     };
@@ -163,7 +162,7 @@ const XLoanModal = ({
             </Box>
           </Flex>
 
-          {action === XLoanAction.BORROW && (
+          {storedModalValues.action === XLoanAction.BORROW && (
             <Typography textAlign="center">
               <Trans>Borrow fee:</Trans>
               <strong> {originationFee.dp(2).toFormat()} bnUSD</strong>
@@ -176,7 +175,7 @@ const XLoanModal = ({
             </Trans>
           </Typography>
 
-          {interestRate && interestRate.isGreaterThan(0) && action === XLoanAction.BORROW && (
+          {interestRate && interestRate.isGreaterThan(0) && storedModalValues.action === XLoanAction.BORROW && (
             <Typography textAlign="center" mt={4}>
               <Trans>
                 Your loan will increase at a rate of{' '}
@@ -185,7 +184,7 @@ const XLoanModal = ({
             </Typography>
           )}
 
-          {receiver && action === XLoanAction.BORROW && (
+          {receiver && storedModalValues.action === XLoanAction.BORROW && (
             <Box className="border-top" mt={3} pt={3}>
               <Typography color="text1" textAlign="center">
                 {xChainMap[loanNetwork].name} address
@@ -220,7 +219,7 @@ const XLoanModal = ({
                 </>
               ) : (
                 <StyledButton onClick={handleXLoanAction} disabled={!gasChecker.hasEnoughGas}>
-                  {action === XLoanAction.BORROW ? <Trans>Borrow</Trans> : <Trans>Repay</Trans>}
+                  {storedModalValues.action === XLoanAction.BORROW ? <Trans>Borrow</Trans> : <Trans>Repay</Trans>}
                 </StyledButton>
               )}
             </>

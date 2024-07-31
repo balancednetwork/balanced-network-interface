@@ -35,11 +35,11 @@ export enum XCollateralAction {
 type XCollateralModalProps = {
   account: string | undefined;
   sourceChain: XChainId;
-  action: XCollateralAction;
   storedModalValues: {
     amount: string;
     before: string;
     after: string;
+    action: XCollateralAction;
   };
   currencyAmount?: CurrencyAmount<XToken>;
 };
@@ -50,13 +50,7 @@ export const presenceVariants = {
   exit: { opacity: 0, height: 0 },
 };
 
-const XCollateralModal = ({
-  account,
-  currencyAmount,
-  sourceChain,
-  action,
-  storedModalValues,
-}: XCollateralModalProps) => {
+const XCollateralModal = ({ account, currencyAmount, sourceChain, storedModalValues }: XCollateralModalProps) => {
   useModalStore();
   const { collateralType } = useDerivedCollateralInfo();
   const { currentId } = useXTransactionStore();
@@ -88,11 +82,12 @@ const XCollateralModal = ({
     if (!xCallFee) return;
     if (!_inputAmount) return;
 
-    const type = action === XCollateralAction.DEPOSIT ? XTransactionType.DEPOSIT : XTransactionType.WITHDRAW;
+    const type =
+      storedModalValues.action === XCollateralAction.DEPOSIT ? XTransactionType.DEPOSIT : XTransactionType.WITHDRAW;
 
     const direction = {
       from: sourceChain,
-      to: action === XCollateralAction.DEPOSIT ? ('0x1.icon' as XChainId) : sourceChain,
+      to: storedModalValues.action === XCollateralAction.DEPOSIT ? ('0x1.icon' as XChainId) : sourceChain,
     };
 
     const xTransactionInput: XTransactionInput = {
@@ -126,7 +121,7 @@ const XCollateralModal = ({
       <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL)} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px">
-            {action === XCollateralAction.DEPOSIT
+            {storedModalValues.action === XCollateralAction.DEPOSIT
               ? t`Deposit ${_inputAmount?.currency.symbol} collateral?`
               : t`Withdraw ${_inputAmount?.currency.symbol} collateral?`}
           </Typography>
@@ -177,7 +172,11 @@ const XCollateralModal = ({
               ) : isProcessing ? (
                 <>
                   <StyledButton disabled $loading>
-                    {action === XCollateralAction.DEPOSIT ? <Trans>Depositing</Trans> : <Trans>Withdrawing</Trans>}
+                    {storedModalValues.action === XCollateralAction.DEPOSIT ? (
+                      <Trans>Depositing</Trans>
+                    ) : (
+                      <Trans>Withdrawing</Trans>
+                    )}
                   </StyledButton>
                 </>
               ) : (
@@ -188,7 +187,11 @@ const XCollateralModal = ({
                     </Button>
                   ) : (
                     <StyledButton onClick={handleXCollateralAction} disabled={!gasChecker.hasEnoughGas}>
-                      {action === XCollateralAction.DEPOSIT ? <Trans>Deposit</Trans> : <Trans>Withdraw</Trans>}
+                      {storedModalValues.action === XCollateralAction.DEPOSIT ? (
+                        <Trans>Deposit</Trans>
+                      ) : (
+                        <Trans>Withdraw</Trans>
+                      )}
                     </StyledButton>
                   )}
                 </>

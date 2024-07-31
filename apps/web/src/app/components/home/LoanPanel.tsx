@@ -378,7 +378,6 @@ const LoanPanel = () => {
         collateralAccount={account}
         bnUSDAmount={bnUSDAmount}
         sourceChain={sourceChain}
-        action={action}
         originationFee={fee}
         interestRate={interestRate}
         storedModalValues={storedModalValues}

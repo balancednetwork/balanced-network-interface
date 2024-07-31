@@ -166,11 +166,19 @@ const CollateralPanel = () => {
   const { onFieldAInput, onFieldBInput, onSlide, onAdjust: adjust } = useCollateralActionHandlers();
   const { onAdjust: adjustLoan } = useLoanActionHandlers();
 
-  const [action, setAction] = useState<XCollateralAction>(XCollateralAction.DEPOSIT);
-  const [storedModalValues, setStoredModalValues] = useState<{ amount: string; before: string; after: string }>({
+  const collateralDifference = differenceAmount.abs();
+  const shouldDeposit = differenceAmount.isPositive();
+
+  const [storedModalValues, setStoredModalValues] = useState<{
+    amount: string;
+    before: string;
+    after: string;
+    action: XCollateralAction;
+  }>({
     amount: '',
     before: '',
     after: '',
+    action: shouldDeposit ? XCollateralAction.DEPOSIT : XCollateralAction.WITHDRAW,
   });
 
   const handleEnableAdjusting = () => {
@@ -191,11 +199,11 @@ const CollateralPanel = () => {
 
   const toggleOpen = () => {
     if (isCrossChain) {
-      setAction(shouldDeposit ? XCollateralAction.DEPOSIT : XCollateralAction.WITHDRAW);
       setStoredModalValues({
         amount: `${differenceAmount.dp(collateralDecimalPlaces).toFormat()} ${collateralType}`,
         before: `${collateralDeposit.dp(collateralDecimalPlaces).toFormat()} ${collateralType}`,
         after: `${parsedAmount[Field.LEFT].dp(collateralDecimalPlaces).toFormat()} ${collateralType}`,
+        action: shouldDeposit ? XCollateralAction.DEPOSIT : XCollateralAction.WITHDRAW,
       });
       modalActions.openModal(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL);
     } else {
@@ -204,9 +212,6 @@ const CollateralPanel = () => {
       changeShouldLedgerSign(false);
     }
   };
-
-  const collateralDifference = differenceAmount.abs();
-  const shouldDeposit = differenceAmount.isPositive();
 
   const addTransaction = useTransactionAdder();
 
@@ -505,7 +510,6 @@ const CollateralPanel = () => {
         account={account}
         currencyAmount={xTokenAmount}
         sourceChain={sourceChain}
-        action={action}
         storedModalValues={storedModalValues}
       />
 

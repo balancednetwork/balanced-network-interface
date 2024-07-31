@@ -39,9 +39,10 @@ const CollateralTypeListWrap = ({ width, setAnchor, anchor, ...rest }) => {
         onChange={e => {
           setSearchQuery(e.target.value);
         }}
+        style={{ marginBottom: '15px' }}
       />
       {signedInWallets.length ? (
-        <Flex justifyContent="center" my={3}>
+        <Flex justifyContent="center" mb={3}>
           <CollateralTabButton
             $active={collateralTab === CollateralTab.YOUR}
             mr={2}

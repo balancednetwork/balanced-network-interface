@@ -41,7 +41,7 @@ const CollateralTypeListWrap = ({ width, setAnchor, anchor, ...rest }) => {
         }}
       />
       {signedInWallets.length ? (
-        <Flex justifyContent="center" mt={3}>
+        <Flex justifyContent="center" my={3}>
           <CollateralTabButton
             $active={collateralTab === CollateralTab.YOUR}
             mr={2}

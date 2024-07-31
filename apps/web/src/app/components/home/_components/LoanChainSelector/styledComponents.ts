@@ -31,8 +31,8 @@ export const Grid = styled(Box)<{ $isSignedIn?: boolean }>`
 `;
 
 export const ScrollHelper = styled(Box)`
-  max-height: 250px; 
+  max-height: 280px; 
   overflow: auto; 
   padding: 0 20px;
-  margin: 0 -20px !important;
+  margin: 15px -20px 0 !important;
 `;

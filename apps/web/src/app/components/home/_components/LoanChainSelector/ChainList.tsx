@@ -143,15 +143,15 @@ const ChainList = ({ chainId, setChainId, chains, width }: ChainListProps) => {
           setSearchQuery(e.target.value);
         }}
       />
-      <Grid mt="15px" mb="-10px" style={{ pointerEvents: 'none' }}>
-        <HeaderText>
-          <Trans>Blockchain</Trans>
-        </HeaderText>
-        <HeaderText>
-          <Trans>Wallet</Trans>
-        </HeaderText>
-      </Grid>
       <ScrollHelper>
+        <Grid mb="-10px" style={{ pointerEvents: 'none' }}>
+          <HeaderText>
+            <Trans>Blockchain</Trans>
+          </HeaderText>
+          <HeaderText>
+            <Trans>Wallet</Trans>
+          </HeaderText>
+        </Grid>
         {sortedFilteredChains.map((chainItem, index) => (
           <Box key={index}>
             <ChainItem

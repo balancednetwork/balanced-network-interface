@@ -108,7 +108,7 @@ const Wallet = ({ close }: WalletProps) => {
         </WalletButtons>
       </WalletMenu>
       <WalletContent>
-        <Box px="25px">
+        <Box px="25px" marginBottom={'15px'}>
           <SearchInput
             type="text"
             id="token-search-input"
@@ -122,22 +122,22 @@ const Wallet = ({ close }: WalletProps) => {
             }}
           />
         </Box>
-        <DashGrid marginTop={'15px'} px="25px">
-          <HeaderText>
-            <Trans>Asset</Trans>
-          </HeaderText>
-          <BalanceAndValueWrap>
-            <HeaderText>
-              <Trans>Balance</Trans>
-            </HeaderText>
-            {isSmallScreen ? null : (
-              <HeaderText>
-                <Trans>Value</Trans>
-              </HeaderText>
-            )}
-          </BalanceAndValueWrap>
-        </DashGrid>
         <List>
+          <DashGrid>
+            <HeaderText>
+              <Trans>Asset</Trans>
+            </HeaderText>
+            <BalanceAndValueWrap>
+              <HeaderText>
+                <Trans>Balance</Trans>
+              </HeaderText>
+              {isSmallScreen ? null : (
+                <HeaderText>
+                  <Trans>Value</Trans>
+                </HeaderText>
+              )}
+            </BalanceAndValueWrap>
+          </DashGrid>
           {sortedFilteredBalances.map((record, index) =>
             record.isBalanceSingleChain ? (
               <SingleChainBalanceItem

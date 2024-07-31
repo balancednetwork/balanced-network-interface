@@ -27,21 +27,19 @@ const CollateralTypeListWrap = ({ width, setAnchor, anchor, ...rest }) => {
   }, [anchor, handleEscape, setAnchor]);
 
   return (
-    <Box p={'25px 0'} width={width}>
-      <Box px="25px">
-        <SearchInput
-          type="text"
-          id="collateral-search-input"
-          placeholder={t`Search assets`}
-          autoComplete="off"
-          value={searchQuery}
-          ref={inputRef as RefObject<HTMLInputElement>}
-          tabIndex={isMobile ? -1 : 1}
-          onChange={e => {
-            setSearchQuery(e.target.value);
-          }}
-        />
-      </Box>
+    <Box p={'25px 25px 25px'} width={width}>
+      <SearchInput
+        type="text"
+        id="collateral-search-input"
+        placeholder={t`Search assets`}
+        autoComplete="off"
+        value={searchQuery}
+        ref={inputRef as RefObject<HTMLInputElement>}
+        tabIndex={isMobile ? -1 : 1}
+        onChange={e => {
+          setSearchQuery(e.target.value);
+        }}
+      />
       {signedInWallets.length ? (
         <Flex justifyContent="center" mt={3}>
           <CollateralTabButton

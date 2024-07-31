@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import { Percent } from '@balancednetwork/sdk-core';
+import { Fraction, Percent } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -82,7 +82,7 @@ export default function BridgeTransferForm({ openModal }) {
 
   const handleMaximumBridgeAmountClick = () => {
     if (maximumBridgeAmount) {
-      onUserInput(maximumBridgeAmount?.toFixed(0));
+      onUserInput(maximumBridgeAmount?.toFixed(4));
     }
   };
 
@@ -164,21 +164,21 @@ export default function BridgeTransferForm({ openModal }) {
           {!canBridge && (
             <Flex alignItems="center" justifyContent="center" mt={2}>
               <Typography textAlign="center">
-                {maximumBridgeAmount?.greaterThan(0) && (
+                {maximumBridgeAmount?.greaterThan(new Fraction(1, 10000)) ? (
                   <>
                     <Trans>Only</Trans>{' '}
                     <UnderlineText onClick={handleMaximumBridgeAmountClick}>
                       <Typography color="primaryBright" as="a">
-                        {maximumBridgeAmount?.toFixed(0)} {maximumBridgeAmount?.currency?.symbol}
+                        {maximumBridgeAmount?.toFixed(4)} {maximumBridgeAmount?.currency?.symbol}
                       </Typography>
                     </UnderlineText>{' '}
                   </>
-                )}
-                {maximumBridgeAmount?.equalTo(0) && (
+                ) : (
                   <>
                     <Trans>0 {maximumBridgeAmount?.currency?.symbol}</Trans>{' '}
                   </>
                 )}
+
                 <Trans>is available on {xChainMap[bridgeDirection?.to].name}.</Trans>
               </Typography>
             </Flex>

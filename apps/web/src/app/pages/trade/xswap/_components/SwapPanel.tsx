@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import { TradeType, Currency, Percent } from '@balancednetwork/sdk-core';
+import { TradeType, Currency, Percent, Fraction } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -164,7 +164,7 @@ export default function SwapPanel() {
 
   const handleMaximumBridgeAmountClick = () => {
     if (maximumBridgeAmount) {
-      onUserInput(Field.OUTPUT, maximumBridgeAmount?.toFixed(0));
+      onUserInput(Field.OUTPUT, maximumBridgeAmount?.toFixed(4));
     }
   };
 
@@ -303,21 +303,21 @@ export default function SwapPanel() {
           {!canBridge && (
             <Flex alignItems="center" justifyContent="center" mt={2}>
               <Typography textAlign="center">
-                {maximumBridgeAmount?.greaterThan(0) && (
+                {maximumBridgeAmount?.greaterThan(new Fraction(1, 10000)) ? (
                   <>
                     <Trans>Only</Trans>{' '}
                     <UnderlineText onClick={handleMaximumBridgeAmountClick}>
                       <Typography color="primaryBright" as="a">
-                        {maximumBridgeAmount?.toFixed(0)} {maximumBridgeAmount?.currency?.symbol}
+                        {maximumBridgeAmount?.toFixed(4)} {maximumBridgeAmount?.currency?.symbol}
                       </Typography>
                     </UnderlineText>{' '}
                   </>
-                )}
-                {maximumBridgeAmount?.equalTo(0) && (
+                ) : (
                   <>
                     <Trans>0 {maximumBridgeAmount?.currency?.symbol}</Trans>{' '}
                   </>
                 )}
+
                 <Trans>is available on {xChainMap[direction?.to].name}.</Trans>
               </Typography>
             </Flex>

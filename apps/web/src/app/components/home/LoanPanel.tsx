@@ -175,9 +175,11 @@ const LoanPanel = () => {
     } else {
       const repayAmount = parsedAmount[Field.LEFT].isEqualTo(0) ? borrowedAmount : differenceAmount.abs();
 
+      const collateralAddress = sourceChain === ICON_XCALL_NETWORK_ID ? account : `${sourceChain}/${account}`;
+
       bnJs
         .inject({ account: iconAccount })
-        .Loans.returnAsset('bnUSD', parseUnits(repayAmount.toFixed()), collateralType, `${sourceChain}/${account}`)
+        .Loans.returnAsset('bnUSD', parseUnits(repayAmount.toFixed()), collateralType, collateralAddress)
         .then(res => {
           addTransaction(
             { hash: res.result },

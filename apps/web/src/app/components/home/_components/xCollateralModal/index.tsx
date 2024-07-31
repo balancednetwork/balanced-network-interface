@@ -88,8 +88,7 @@ const XCollateralModal = ({
     if (!xCallFee) return;
     if (!_inputAmount) return;
 
-    const type =
-      action === XCollateralAction.DEPOSIT ? XTransactionType.DEPOSIT_COLLATERAL : XTransactionType.WITHDRAW_COLLATERAL;
+    const type = action === XCollateralAction.DEPOSIT ? XTransactionType.DEPOSIT : XTransactionType.WITHDRAW;
 
     const direction = {
       from: sourceChain,

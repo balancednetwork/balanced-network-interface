@@ -136,7 +136,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
             descriptionAction = `Swap ${_inputTokenSymbol} for ${_outputTokenSymbol}`;
             descriptionAmount = `${_inputAmount} ${_inputTokenSymbol} for ${_outputAmount} ${_outputTokenSymbol}`;
           }
-        } else if (xTransactionInput.type === XTransactionType.DEPOSIT_COLLATERAL) {
+        } else if (xTransactionInput.type === XTransactionType.DEPOSIT) {
           const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
           const _formattedAmount = formatBigNumber(
             new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
@@ -148,7 +148,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
 
           descriptionAction = `Deposit ${_tokenSymbol} as collateral`;
           descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
-        } else if (xTransactionInput.type === XTransactionType.WITHDRAW_COLLATERAL) {
+        } else if (xTransactionInput.type === XTransactionType.WITHDRAW) {
           const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
           const _formattedAmount = formatBigNumber(
             new BigNumber(xTransactionInput?.inputAmount.multiply(-1).toFixed() || 0),
@@ -272,8 +272,8 @@ export const useXTransactionStore = create<XTransactionStore>()(
             modalActions.closeModal(MODAL_ID.XTRANSFER_CONFIRM_MODAL);
           }
           if (
-            currentXTransaction.type === XTransactionType.DEPOSIT_COLLATERAL ||
-            currentXTransaction.type === XTransactionType.WITHDRAW_COLLATERAL
+            currentXTransaction.type === XTransactionType.DEPOSIT ||
+            currentXTransaction.type === XTransactionType.WITHDRAW
           ) {
             modalActions.closeModal(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL);
           }
@@ -300,8 +300,8 @@ export const useXTransactionStore = create<XTransactionStore>()(
             modalActions.closeModal(MODAL_ID.XTRANSFER_CONFIRM_MODAL);
           }
           if (
-            currentXTransaction.type === XTransactionType.DEPOSIT_COLLATERAL ||
-            currentXTransaction.type === XTransactionType.WITHDRAW_COLLATERAL
+            currentXTransaction.type === XTransactionType.DEPOSIT ||
+            currentXTransaction.type === XTransactionType.WITHDRAW
           ) {
             modalActions.closeModal(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL);
           }

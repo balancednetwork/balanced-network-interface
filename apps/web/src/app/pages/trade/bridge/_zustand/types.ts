@@ -19,8 +19,8 @@ export enum XTransactionType {
   SWAP = 'swap',
   BRIDGE = 'bridge',
   SUPPLY = 'supply',
-  DEPOSIT_COLLATERAL = 'deposit_collateral',
-  WITHDRAW_COLLATERAL = 'withdraw_collateral',
+  DEPOSIT = 'deposit',
+  WITHDRAW = 'withdraw',
   BORROW = 'borrow',
   REPAY = 'repay',
 }

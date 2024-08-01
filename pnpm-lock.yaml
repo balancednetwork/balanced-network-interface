@@ -74,6 +74,9 @@ importers:
       '@ethersproject/solidity':
         specifier: 5.4.0
         version: 5.4.0
+      '@injectivelabs/networks':
+        specifier: 1.14.13
+        version: 1.14.13(google-protobuf@3.21.4)
       '@injectivelabs/sdk-ts':
         specifier: 1.14.13
         version: 1.14.13(@types/react@18.2.67)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(utf-8-validate@5.0.10)

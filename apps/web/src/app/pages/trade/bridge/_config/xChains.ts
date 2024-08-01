@@ -275,7 +275,7 @@ export const injective: XChain = {
     http: 'https://mainnet.base.org',
   },
   contracts: {
-    xCall: 'inj1dsq24kt9l7pw6qd29y8e4p4m3az8e8zd6ugmux',
+    xCall: 'inj177fx40l0g3jqmtmmuyl2zhrjvhr3knvthlr0ul',
     assetManager: 'inj1hayj9xnlh44sn29sgggn3jwl3ktl6djwcven25',
     bnUSD: 'inj1qspaxnztkkzahvp6scq6xfpgafejmj2td83r9j',
   },

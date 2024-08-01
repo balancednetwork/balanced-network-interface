@@ -73,7 +73,7 @@ const RewardsPanel = () => {
           />
         </SliderWrap>
       </Flex>
-      <BoxPanel bg="bg2" mt="35px" style={{ padding: '17px 20px' }}>
+      <BoxPanel bg="bg2" mt="35px" style={{ padding: '17px 20px' }} className="drop-shadow-inset">
         {account && hasAnyKindOfRewards ? (
           <Flex flexWrap={isSmall ? 'wrap' : 'nowrap'}>
             <SavingsRewards />

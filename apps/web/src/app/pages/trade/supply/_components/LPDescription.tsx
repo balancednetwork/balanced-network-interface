@@ -22,8 +22,8 @@ import { tryParseAmount } from 'store/swap/hooks';
 import { useLiquidityTokenBalance } from 'store/wallet/hooks';
 import { formatBigNumber } from 'utils';
 
-import { MAX_BOOST } from 'app/components/home/BBaln/utils';
 import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
+import { MAX_BOOST } from 'app/components/home/BBaln/utils';
 
 export default function LPDescription() {
   const { currencies, pair, pairState, dependentField, noLiquidity, parsedAmounts } = useDerivedMintInfo();

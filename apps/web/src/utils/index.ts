@@ -3,7 +3,6 @@ import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
-import { RLP } from '@ethereumjs/rlp';
 
 import { NETWORK_ID } from 'constants/config';
 import { canBeQueue } from 'constants/currency';
@@ -17,6 +16,7 @@ import { XChainId } from 'app/pages/trade/bridge/types';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { bech32 } from 'bech32';
 import { ethers } from 'ethers';
+import { RLP } from '@ethereumjs/rlp';
 
 const { isEoaAddress, isScoreAddress } = Validator;
 

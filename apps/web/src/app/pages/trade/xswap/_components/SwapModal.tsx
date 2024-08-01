@@ -26,7 +26,7 @@ import { getRlpEncodedSwapData } from 'app/pages/trade/bridge/utils';
 
 type SwapModalProps = {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (clearInputs?: boolean) => void;
   account: string | undefined;
   recipient: string | undefined;
   currencies: { [field in Field]?: Currency };
@@ -40,11 +40,11 @@ const SwapModal = (props: SwapModalProps) => {
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
-  const handleDismiss = () => {
+  const handleDismiss = (clearInputs = true) => {
     if (shouldLedgerSign) return;
 
     changeShouldLedgerSign(false);
-    onClose?.();
+    onClose?.(clearInputs);
   };
 
   const addTransaction = useTransactionAdder();
@@ -124,7 +124,7 @@ const SwapModal = (props: SwapModalProps) => {
   const hasEnoughICX = useHasEnoughICX();
 
   return (
-    <Modal isOpen={isOpen} onDismiss={handleDismiss}>
+    <Modal isOpen={isOpen} onDismiss={() => handleDismiss(false)}>
       <ModalContent>
         <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
           <Trans>
@@ -197,7 +197,7 @@ const SwapModal = (props: SwapModalProps) => {
           {shouldLedgerSign && <Spinner></Spinner>}
           {!shouldLedgerSign && (
             <>
-              <TextButton onClick={handleDismiss}>
+              <TextButton onClick={() => handleDismiss(false)}>
                 <Trans>Cancel</Trans>
               </TextButton>
               <Button onClick={handleSwapConfirm} disabled={!hasEnoughICX}>

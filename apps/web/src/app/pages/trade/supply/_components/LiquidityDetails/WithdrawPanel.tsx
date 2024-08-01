@@ -13,7 +13,6 @@ import styled from 'styled-components';
 import { Button, TextButton } from 'app/components/Button';
 import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
 import CurrencyLogo from 'app/components/CurrencyLogo';
-import { EXA, WEIGHT } from 'app/components/home/BBaln/utils';
 import Modal from 'app/components/Modal';
 import ModalContent from 'app/components/ModalContent';
 import Spinner from 'app/components/Spinner';
@@ -32,6 +31,7 @@ import { formatBigNumber, multiplyCABN, toDec } from 'utils';
 import { showMessageOnBeforeUnload } from 'utils/messages';
 
 import { withdrawMessage } from '../utils';
+import { EXA, WEIGHT } from 'app/components/home/BBaln/utils';
 
 const Wrapper = styled(Flex)`
   padding-left: 0;

@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { XChainId } from 'app/pages/trade/bridge/types';
 import BigNumber from 'bignumber.js';
 
 export enum Field {
@@ -12,7 +13,9 @@ export interface LoanState {
   totalRepaid: BigNumber;
   totalCollateralSold: BigNumber;
   borrowedAmounts: {
-    [key in string]: BigNumber;
+    [CollateralType in string]: {
+      [Address in string]: BigNumber;
+    };
   };
   lockingRatios: {
     [key in string]: number;
@@ -25,6 +28,9 @@ export interface LoanState {
     independentField: Field;
     inputType: 'slider' | 'text';
   };
+
+  // loan cross-chain recipient network
+  recipientNetwork: XChainId;
 }
 
 const initialState: LoanState = {
@@ -42,6 +48,8 @@ const initialState: LoanState = {
     independentField: Field.LEFT,
     inputType: 'text',
   },
+
+  recipientNetwork: '0xa4b1.arbitrum',
 };
 
 const loanSlice = createSlice({
@@ -62,9 +70,12 @@ const loanSlice = createSlice({
         state.state.inputType = inputType || state.state.inputType;
       },
     ),
-    changeBorrowedAmount: create.reducer<{ borrowedAmount: BigNumber; collateralType: string }>(
-      (state, { payload: { borrowedAmount, collateralType } }) => {
-        state.borrowedAmounts[collateralType] = borrowedAmount;
+    changeBorrowedAmount: create.reducer<{ borrowedAmount: BigNumber; address: string; collateralType: string }>(
+      (state, { payload: { borrowedAmount, address, collateralType } }) => {
+        if (!state.borrowedAmounts[collateralType]) {
+          state.borrowedAmounts[collateralType] = {};
+        }
+        state.borrowedAmounts[collateralType][address] = borrowedAmount;
       },
     ),
     changeBadDebt: create.reducer<{ badDebt: BigNumber }>((state, { payload: { badDebt } }) => {
@@ -78,10 +89,21 @@ const loanSlice = createSlice({
         state.lockingRatios[collateralType] = lockingRatio;
       },
     ),
+    setRecipientNetwork: create.reducer<{ recipientNetwork: XChainId }>((state, { payload: { recipientNetwork } }) => {
+      state.recipientNetwork = recipientNetwork;
+    }),
   }),
 });
 
-export const { changeBorrowedAmount, changeBadDebt, changeTotalSupply, adjust, cancel, type, setLockingRatio } =
-  loanSlice.actions;
+export const {
+  changeBorrowedAmount,
+  changeBadDebt,
+  changeTotalSupply,
+  adjust,
+  cancel,
+  type,
+  setLockingRatio,
+  setRecipientNetwork,
+} = loanSlice.actions;
 
 export default loanSlice.reducer;

@@ -114,6 +114,32 @@ export class IconWalletXService extends IconPublicXService implements IWalletXSe
     }
   }
 
+  async _executeBorrow(xTransactionInput: XTransactionInput) {
+    const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
+
+    if (!inputAmount || !usedCollateral) {
+      return;
+    }
+
+    if (account && xCallFee) {
+      window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
+      if (bnJs.contractSettings.ledgerSettings.actived && this.changeShouldLedgerSign) {
+        this.changeShouldLedgerSign(true);
+      }
+
+      const txResult = await bnJs
+        .inject({ account: account })
+        .Loans.borrow(inputAmount.quotient.toString(), usedCollateral, 'bnUSD', recipient);
+
+      const { result: hash } = txResult || {};
+
+      if (hash) {
+        return hash;
+      }
+    }
+  }
+
   async executeTransaction(xTransactionInput: XTransactionInput) {
     const { type } = xTransactionInput;
 
@@ -125,6 +151,8 @@ export class IconWalletXService extends IconPublicXService implements IWalletXSe
       return this._executeSwap(xTransactionInput);
     } else if (type === XTransactionType.BRIDGE) {
       return this._executeBridge(xTransactionInput);
+    } else if (type === XTransactionType.BORROW) {
+      return this._executeBorrow(xTransactionInput);
     } else {
       throw new Error('Invalid XTransactionType');
     }

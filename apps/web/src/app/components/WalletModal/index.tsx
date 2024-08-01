@@ -35,7 +35,6 @@ import { useSwitchChain } from 'wagmi';
 import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
 import useDebounce from 'hooks/useDebounce';
 import Divider from '../Divider';
-import { TextButton } from '../Button';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {
@@ -54,18 +53,13 @@ export default function WalletModal() {
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
   const toggleWalletModal = useWalletModalToggle();
   const [, setWalletModal] = useWalletModal();
-  const signedInWallets = useSignedInWallets();
   const { connectToWallet: connectToKeplr } = useArchwayContext();
   const { connectToWallet: connectToHavah } = useHavahContext();
-
+  const signedInWallets = useSignedInWallets();
   const wallets = useWallets();
-
   const { switchChain } = useSwitchChain();
-
-  //
   const activeLocale = useActiveLocale();
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
-
   const arrowRef = React.useRef(null);
 
   const toggleMenu = (e: React.MouseEvent<HTMLElement>) => {
@@ -82,7 +76,7 @@ export default function WalletModal() {
     }
   }, [walletModalOpen, closeMenu]);
 
-  const numberOfConnectedWallets = Object.values(wallets).filter(w => !!w.account).length;
+  const numberOfConnectedWallets = signedInWallets.filter(wallet => !!wallet.address && !!wallet.xChainId).length;
   const isLoggedInSome = numberOfConnectedWallets > 0;
   const [chainQuery, setChainQuery] = useState('');
   const debouncedQuery = useDebounce(chainQuery, 200);
@@ -101,7 +95,7 @@ export default function WalletModal() {
       logo: <IconWalletIcon width="32" />,
       connect: () => setWalletModal(XWalletType.ICON),
       disconnect: wallets[XWalletType.ICON].disconnect,
-      description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer crypto cross-chain.`,
+      description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer cross-chain.`,
       keyWords: ['iconex', 'hana'],
       address: wallets[XWalletType.ICON].account,
       xChains: undefined,
@@ -115,7 +109,7 @@ export default function WalletModal() {
           logo: <ETHIcon width="32" />,
           connect: () => setWalletModal(XWalletType.EVM),
           disconnect: wallets[XWalletType.EVM].disconnect,
-          description: t`Swap & transfer crypto cross-chain.`,
+          description: t`Borrow bnUSD. Swap & transfer cross-chain.`,
           keyWords: [
             'evm',
             'ethereum',
@@ -150,7 +144,7 @@ export default function WalletModal() {
           logo: <ArchWalletIcon width="32" />,
           connect: connectToKeplr,
           disconnect: wallets[XWalletType.COSMOS].disconnect,
-          description: t`Swap & transfer crypto cross-chain.`,
+          description: t`Swap & transfer cross-chain.`,
           keyWords: ['archway', 'cosmos', 'keplr', 'leap'],
           address: wallets[XWalletType.COSMOS].account,
           xChains: undefined,
@@ -253,7 +247,7 @@ export default function WalletModal() {
             <Typography textAlign="center" as="div" maxWidth={300} mx="auto" mt={2}>
               <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
               <Box pt={'5px'}>
-                <Link href="https://balanced.network/disclaimer/" target="_blank">
+                <Link href="https://balanced.network/disclaimer/" target="_blank" tabIndex={-1}>
                   <Trans>View disclaimer.</Trans>
                   <ExternalIcon width="11" height="11" style={{ marginLeft: '7px', marginTop: '-3px' }} />
                 </Link>

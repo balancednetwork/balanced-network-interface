@@ -1,6 +1,7 @@
 import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { IXCallFee, XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
+import { CurrencyKey } from 'types';
 
 export enum TransactionStatus {
   pending = 'pending',
@@ -18,6 +19,10 @@ export enum XTransactionType {
   SWAP = 'swap',
   BRIDGE = 'bridge',
   SUPPLY = 'supply',
+  DEPOSIT = 'deposit',
+  WITHDRAW = 'withdraw',
+  BORROW = 'borrow',
+  REPAY = 'repay',
 }
 
 export enum XMessageStatus {
@@ -39,10 +44,12 @@ export type XTransactionInput = {
   type: XTransactionType;
   inputAmount: CurrencyAmount<Currency>;
   account: string;
-  recipient: string;
   xCallFee: IXCallFee;
+  callback?: () => void;
   // xswap
+  recipient?: string;
   executionTrade?: Trade<Currency, Currency, TradeType>;
+  usedCollateral?: CurrencyKey;
   slippageTolerance?: number;
   isLiquidFinanceEnabled?: boolean;
 };

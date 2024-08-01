@@ -10,10 +10,9 @@ import { useIconReact } from 'packages/icon-react';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { useArchwayContext } from 'packages/archway/ArchwayProvider';
 import { ARCHWAY_FEE_TOKEN_SYMBOL, useARCH } from 'app/pages/trade/bridge/_config/tokens';
 import { isDenomAsset } from 'packages/archway/utils';
-import { XChainId } from 'app/pages/trade/bridge/types';
+import { XChainId, XWalletAssetRecord } from 'app/pages/trade/bridge/types';
 import { getXTokenAddress, isXToken } from 'app/pages/trade/bridge/utils';
 import bnJs, { havahJs } from 'bnJs';
 import { MINIMUM_ICX_FOR_TX, NATIVE_ADDRESS } from 'constants/index';
@@ -36,7 +35,20 @@ import { useAllTokens } from '../../hooks/Tokens';
 import { changeBalances, changeICONBalances } from './reducer';
 
 export function useCrossChainWalletBalances(): AppState['wallet'] {
-  return useSelector((state: AppState) => state.wallet);
+  const signedInWallets = useSignedInWallets();
+  const balances = useSelector((state: AppState) => state.wallet);
+
+  return useMemo(() => {
+    return Object.keys(balances).reduce(
+      (acc, xChainId) => {
+        if (signedInWallets.some(wallet => wallet.xChainId === xChainId)) {
+          acc[xChainId] = balances[xChainId];
+        }
+        return acc;
+      },
+      {} as AppState['wallet'],
+    );
+  }, [balances, signedInWallets]);
 }
 
 export function useICONWalletBalances(): { [address: string]: CurrencyAmount<Currency> } {
@@ -123,7 +135,10 @@ import { erc20Abi } from 'viem';
 import { useAccount, useBalance, usePublicClient } from 'wagmi';
 import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { useRatesWithOracle } from 'queries/reward';
+import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { useHavahContext } from 'packages/havah/HavahProvider';
+import { useArchwayContext } from 'packages/archway/ArchwayProvider';
 
 export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined, xChainId: XChainId) {
   const chainId = xChainMap[xChainId].id;
@@ -481,6 +496,53 @@ export function useLiquidityTokenBalance(account: string | undefined | null, pai
   const query = useBnJsContractQuery<string>('Dex', 'balanceOf', [account, pair?.poolId]);
   const { data } = query;
   return pair && data ? CurrencyAmount.fromRawAmount<Token>(pair.liquidityToken, data) : undefined;
+}
+
+export function useXBalancesByToken(): XWalletAssetRecord[] {
+  const balances = useCrossChainWalletBalances();
+  const tokenListConfig = useTokenListConfig();
+  const prices = useRatesWithOracle();
+
+  return React.useMemo(() => {
+    return Object.entries(
+      Object.entries(balances).reduce(
+        (acc, [chainId, chainBalances]) => {
+          if (chainBalances) {
+            forEach(chainBalances, balance => {
+              if (balance.currency && balance?.greaterThan(0)) {
+                acc[balance.currency.symbol] = {
+                  ...acc[balance.currency.symbol],
+                  [chainId]: balance,
+                };
+              }
+            });
+          }
+          return acc;
+        },
+        {} as { [AssetSymbol in string]: { [key in XChainId]: CurrencyAmount<Currency> | undefined } },
+      ),
+    )
+      .map(([symbol, xTokenAmounts]) => {
+        const baseToken = (tokenListConfig.community ? COMBINED_TOKENS_LIST : SUPPORTED_TOKENS_LIST).find(
+          token => token.symbol === symbol,
+        );
+
+        if (baseToken === undefined) return;
+
+        const total = Object.values(xTokenAmounts).reduce((sum, xTokenAmount) => {
+          if (xTokenAmount) sum = sum.plus(new BigNumber(xTokenAmount.toFixed()));
+          return sum;
+        }, new BigNumber(0));
+        return {
+          baseToken,
+          xTokenAmounts,
+          isBalanceSingleChain: Object.keys(xTokenAmounts).length === 1,
+          total,
+          value: prices && prices[symbol] ? total.times(prices[symbol]) : undefined,
+        };
+      })
+      .filter((item): item is XWalletAssetRecord => Boolean(item));
+  }, [balances, tokenListConfig, prices]);
 }
 
 export function useHavahBalances(

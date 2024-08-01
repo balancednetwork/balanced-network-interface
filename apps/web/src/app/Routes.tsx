@@ -29,6 +29,10 @@ const VotePage = lazyLoad(
   module => module.VotePage,
 );
 import { ProposalListPage } from './pages/vote/proposals/page';
+import { useLoanActionHandlers } from 'store/loan/hooks';
+import { useCollateralActionHandlers } from 'store/collateral/hooks';
+import { useBBalnSliderActionHandlers } from 'store/bbaln/hooks';
+import { useSavingsSliderActionHandlers } from 'store/savings/hooks';
 const ProposalDetailsPage = lazyLoad(
   () => import('./pages/vote/proposals/[proposalId]/page'),
   module => module.ProposalDetailsPage,
@@ -65,6 +69,19 @@ const Redirect = ({ to }) => {
 export default function RootRoutes() {
   const location = useLocation();
   const title = routeTexts.find(item => location.pathname.startsWith(item[0]))?.[1];
+  const { onAdjust: loanAdjust } = useLoanActionHandlers();
+  const { onAdjust: collateralAdjust } = useCollateralActionHandlers();
+  const { onAdjust: bbalnAdjust } = useBBalnSliderActionHandlers();
+  const { onAdjust: savingsAdjust } = useSavingsSliderActionHandlers();
+
+  useEffect(() => {
+    if (location) {
+      loanAdjust(false);
+      collateralAdjust(false);
+      bbalnAdjust(false);
+      savingsAdjust(false);
+    }
+  }, [location, loanAdjust, collateralAdjust, bbalnAdjust, savingsAdjust]);
 
   return (
     <Routes>

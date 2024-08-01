@@ -3,14 +3,14 @@ import React from 'react';
 import { Trans } from '@lingui/macro';
 import { useIconReact } from 'packages/icon-react';
 
-import BBalnSlider from 'app/components/home/BBaln/BBalnSlider';
-import { BoostedBox, BoostedInfo } from 'app/components/home/BBaln/styledComponents';
 import { BoxPanel } from 'app/components/Panel';
 import { Typography } from 'app/theme';
 import { useTotalBalnLocked, useTotalSupply } from 'store/bbaln/hooks';
 
 import { LoaderComponent } from '../styledComponents';
 import { maxYearsLocked } from '../utils';
+import BBalnSlider from 'app/components/home/BBaln/BBalnSlider';
+import { BoostedBox, BoostedInfo } from 'app/components/home/BBaln/styledComponents';
 
 export default function VotingPowerPanel() {
   const { account } = useIconReact();

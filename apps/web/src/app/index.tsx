@@ -10,12 +10,20 @@ import ApplicationUpdater from 'store/application/updater';
 import TransactionUpdater from 'store/transactions/updater';
 
 import RootRoutes from './Routes';
+import { AllTransactionsUpdater } from './pages/trade/bridge/_zustand/useTransactionStore';
+import { AllXMessagesUpdater } from './pages/trade/bridge/_zustand/useXMessageStore';
+import { AllPublicXServicesCreator, AllXChainHeightsUpdater } from './pages/trade/bridge/_zustand/useXServiceStore';
+import { xChains } from './pages/trade/bridge/_config/xChains';
 
 function Updaters() {
   return (
     <>
       <TransactionUpdater />
       <ApplicationUpdater />
+      <AllTransactionsUpdater />
+      <AllXMessagesUpdater />
+      <AllPublicXServicesCreator xChains={xChains} />
+      <AllXChainHeightsUpdater xChains={xChains} />
     </>
   );
 }

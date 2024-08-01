@@ -10,7 +10,7 @@ import TradeIcon from 'assets/icons/trade.svg';
 import VoteIcon from 'assets/icons/vote.svg';
 import { useActiveProposals } from 'queries/vote';
 import { useBBalnAmount } from 'store/bbaln/hooks';
-import { notificationCSS } from '../ICONWallet/wallets/utils';
+import { notificationCSS } from '../Wallet/ICONWallets/utils';
 
 const Navigation = styled.nav`
   display: inline-block;
@@ -71,6 +71,8 @@ const StyledNavLink = styled(NavLink)`
   text-align: center;
   transition: background-color 0.3s ease, color 0.3s ease;
   font-size: 14px;
+  position: relative;
+  box-shadow: 0px 0px 0px 0px rgba(1, 0, 42, 0.35);
 
   svg {
     display: none;
@@ -86,7 +88,8 @@ const StyledNavLink = styled(NavLink)`
   &.active {
     color: ${({ theme }) => theme.colors.bg1};
     background-color: ${({ theme }) => theme.colors.primary};
-    opacity: 1;
+
+    box-shadow: 0px 10px 25px 0px rgba(1, 0, 42, 0.35);
   }
 
   &:hover,
@@ -124,6 +127,7 @@ const StyledNavLinkWithNotification = styled(
       background-color: ${theme.colors.primary};
       right: 25px;
       top: 10px;
+      left: initial;
     }
 
     &:hover, &.active {

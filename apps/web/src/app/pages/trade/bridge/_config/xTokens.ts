@@ -101,6 +101,13 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
   archway: [],
   'injective-1': [
     new XToken('injective-1', 'injective-1', NATIVE_ADDRESS, 18, 'INJ', 'INJ'),
-    // new XToken('injective-1', 'injective-1', NATIVE_ADDRESS, 18, 'bnUSD', 'Balanced Dollar'),
+    new XToken(
+      'injective-1',
+      'injective-1',
+      'inj1qspaxnztkkzahvp6scq6xfpgafejmj2td83r9j',
+      18,
+      'bnUSD',
+      'Balanced Dollar',
+    ),
   ],
 };

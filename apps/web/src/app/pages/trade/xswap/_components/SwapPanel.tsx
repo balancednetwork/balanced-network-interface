@@ -164,7 +164,7 @@ export default function SwapPanel() {
 
   const handleMaximumBridgeAmountClick = () => {
     if (maximumBridgeAmount) {
-      onUserInput(Field.OUTPUT, maximumBridgeAmount?.toFixed(0));
+      onUserInput(Field.OUTPUT, maximumBridgeAmount?.toFixed(4));
     }
   };
 
@@ -300,19 +300,24 @@ export default function SwapPanel() {
             {swapButton}
           </Flex>
 
-          {!canBridge && (
+          {!canBridge && maximumBridgeAmount && (
             <Flex alignItems="center" justifyContent="center" mt={2}>
               <Typography textAlign="center">
-                {maximumBridgeAmount?.greaterThan(0) && (
+                {new BigNumber(maximumBridgeAmount.toFixed()).isGreaterThanOrEqualTo(0.0001) ? (
                   <>
                     <Trans>Only</Trans>{' '}
+                    <UnderlineText onClick={handleMaximumBridgeAmountClick}>
+                      <Typography color="primaryBright" as="a">
+                        {maximumBridgeAmount?.toFixed(4)} {maximumBridgeAmount?.currency?.symbol}
+                      </Typography>
+                    </UnderlineText>{' '}
+                  </>
+                ) : (
+                  <>
+                    <Trans>0 {maximumBridgeAmount?.currency?.symbol}</Trans>{' '}
                   </>
                 )}
-                <UnderlineText onClick={handleMaximumBridgeAmountClick}>
-                  <Typography color="primaryBright" as="a">
-                    {maximumBridgeAmount?.toFixed(0)} {maximumBridgeAmount?.currency?.symbol}
-                  </Typography>
-                </UnderlineText>{' '}
+
                 <Trans>is available on {xChainMap[direction?.to].name}.</Trans>
               </Typography>
             </Flex>

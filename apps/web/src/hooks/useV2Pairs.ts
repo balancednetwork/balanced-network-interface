@@ -32,7 +32,9 @@ export type PairData = [PairState, Pair | null, BigNumber | null] | [PairState, 
 export const fetchStabilityFundPairs = async () => {
   const acceptedTokens = await getAcceptedTokens();
   const stabilityFundBalances = await fetchStabilityFundBalances(
-    acceptedTokens.filter(x => x === 'cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f'), // only USDC address
+    acceptedTokens.filter(
+      x => x === 'cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f' || x === 'cx16f3cb9f09f5cdd902cf07aa752c8b3bd1bc9609',
+    ), // only USDC and USDT
   );
   const stabilityFundPairs = Object.values(stabilityFundBalances).map(balance => {
     return new Pair(balance, CurrencyAmount.fromRawAmount(bnUSD[NETWORK_ID], '1'), { isStabilityFund: true });

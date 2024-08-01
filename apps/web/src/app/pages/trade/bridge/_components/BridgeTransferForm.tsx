@@ -24,6 +24,7 @@ import { xChainMap } from '../_config/xChains';
 import { maxAmountSpend, validateAddress } from 'utils';
 import useWallets from '../_hooks/useWallets';
 import { UnderlineText } from 'app/components/DropdownText';
+import BigNumber from 'bignumber.js';
 
 export default function BridgeTransferForm({ openModal }) {
   const crossChainWallet = useCrossChainWalletBalances();
@@ -82,7 +83,7 @@ export default function BridgeTransferForm({ openModal }) {
 
   const handleMaximumBridgeAmountClick = () => {
     if (maximumBridgeAmount) {
-      onUserInput(maximumBridgeAmount?.toFixed(0));
+      onUserInput(maximumBridgeAmount?.toFixed(4));
     }
   };
 
@@ -161,24 +162,24 @@ export default function BridgeTransferForm({ openModal }) {
             )}
           </Flex>
 
-          {!canBridge && (
+          {!canBridge && maximumBridgeAmount && (
             <Flex alignItems="center" justifyContent="center" mt={2}>
               <Typography textAlign="center">
-                {maximumBridgeAmount?.greaterThan(0) && (
+                {new BigNumber(maximumBridgeAmount.toFixed()).isGreaterThanOrEqualTo(0.0001) ? (
                   <>
                     <Trans>Only</Trans>{' '}
                     <UnderlineText onClick={handleMaximumBridgeAmountClick}>
                       <Typography color="primaryBright" as="a">
-                        {maximumBridgeAmount?.toFixed(0)} {maximumBridgeAmount?.currency?.symbol}
+                        {maximumBridgeAmount?.toFixed(4)} {maximumBridgeAmount?.currency?.symbol}
                       </Typography>
                     </UnderlineText>{' '}
                   </>
-                )}
-                {maximumBridgeAmount?.equalTo(0) && (
+                ) : (
                   <>
                     <Trans>0 {maximumBridgeAmount?.currency?.symbol}</Trans>{' '}
                   </>
                 )}
+
                 <Trans>is available on {xChainMap[bridgeDirection?.to].name}.</Trans>
               </Typography>
             </Flex>

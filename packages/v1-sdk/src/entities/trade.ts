@@ -252,7 +252,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
       const pair = pairs[i];
       // pair irrelevant
       if (!pair.token0.equals(amountIn.currency) && !pair.token1.equals(amountIn.currency)) continue;
-      if (pair.reserve0.equalTo(ZERO) || pair.reserve1.equalTo(ZERO)) continue;
+      if (!pair.isStabilityFund && (pair.reserve0.equalTo(ZERO) || pair.reserve1.equalTo(ZERO))) continue;
 
       let amountOut: CurrencyAmount<Token>;
       try {

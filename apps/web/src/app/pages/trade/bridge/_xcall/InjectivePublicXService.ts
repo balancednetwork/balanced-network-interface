@@ -34,7 +34,8 @@ export class InjectivePublicXService extends AbstractPublicXService {
     this.publicClient = publicClient;
 
     // this.indexerGrpcAccountPortfolioApi = new IndexerGrpcAccountPortfolioApi(endpoints.indexer);
-    this.indexerGrpcExplorerApi = new IndexerGrpcExplorerApi(endpoints.explorer);
+
+    this.indexerGrpcExplorerApi = new IndexerGrpcExplorerApi(`${endpoints.explorer}`);
     this.indexerRestExplorerApi = new IndexerRestExplorerApi(`${endpoints.explorer}/api/explorer/v1`);
   }
 

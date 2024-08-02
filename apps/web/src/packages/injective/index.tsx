@@ -13,7 +13,7 @@ type InjectiveWalletStore = {
   disconnect: () => Promise<void>;
 };
 
-const walletStrategy = new WalletStrategy({
+export const walletStrategy = new WalletStrategy({
   chainId: ChainId.Mainnet,
   ethereumOptions: {
     ethereumChainId: EthereumChainId.Mainnet,

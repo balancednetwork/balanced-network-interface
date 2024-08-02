@@ -572,7 +572,7 @@ export function useDerivedCollateralInfo(): {
   };
 }
 
-export function useXCollateralDataByToken(): UseQueryResult<XPositionsRecord[]> {
+export function useUserPositionsData(): UseQueryResult<XPositionsRecord[]> {
   const xDepositedAmounts = useAllDepositedAmounts();
   const borrowedAmounts = useBorrowedAmounts();
   const allWallets = useSignedInWallets();

@@ -3,12 +3,12 @@ import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
-import bnJs from 'bnJs';
-import { PairInfo } from 'constants/pairs';
-import { NULL_CONTRACT_ADDRESS } from 'constants/tokens';
-import { API_ENDPOINT } from 'queries/constants';
-import { useIncentivisedPairs } from 'queries/reward';
-import { useEmissions } from 'store/reward/hooks';
+import bnJs from '@/bnJs';
+import { PairInfo } from '@/constants/pairs';
+import { NULL_CONTRACT_ADDRESS } from '@/constants/tokens';
+import { API_ENDPOINT } from '@/queries/constants';
+import { useIncentivisedPairs } from '@/queries/reward';
+import { useEmissions } from '@/store/reward/hooks';
 
 export type ContractMethodsDataType = {
   address: string;

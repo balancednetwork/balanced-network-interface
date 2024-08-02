@@ -1,18 +1,18 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { Flex, Box } from 'rebass/styled-components';
 
-import { Tab, Tabs } from 'app/components/Tab';
-import { useFetchBBalnInfo, useFetchBBalnSources } from 'store/bbaln/hooks';
-import { useFetchOraclePrices } from 'store/oracle/hooks';
-import { useFetchPrice } from 'store/ratio/hooks';
-import { useFetchRewardsInfo } from 'store/reward/hooks';
-import { useFetchStabilityFundBalances } from 'store/stabilityFund/hooks';
-import { useWalletFetchBalances } from 'store/wallet/hooks';
+import { Tab, Tabs } from '@/app/components/Tab';
+import { useFetchBBalnInfo, useFetchBBalnSources } from '@/store/bbaln/hooks';
+import { useFetchOraclePrices } from '@/store/oracle/hooks';
+import { useFetchPrice } from '@/store/ratio/hooks';
+import { useFetchRewardsInfo } from '@/store/reward/hooks';
+import { useFetchStabilityFundBalances } from '@/store/stabilityFund/hooks';
+import { useWalletFetchBalances } from '@/store/wallet/hooks';
 
 export function TradePageLayout() {
   const { account } = useIconReact();

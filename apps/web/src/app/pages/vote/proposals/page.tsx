@@ -2,18 +2,18 @@ import React from 'react';
 
 import { t, Trans } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { Link } from 'react-router-dom';
 import { Flex } from 'rebass/styled-components';
 
-import { Breadcrumb } from 'app/components/Breadcrumb';
-import { ButtonLink } from 'app/components/Button';
-import { BoxPanel } from 'app/components/Panel';
-import ProposalInfo from 'app/components/ProposalInfo';
-import { Typography } from 'app/theme';
-import { useTotalProposalQuery, useActiveProposals } from 'queries/vote';
-import { useBBalnAmount, useFetchBBalnInfo } from 'store/bbaln/hooks';
-import { useWalletFetchBalances } from 'store/wallet/hooks';
+import { Breadcrumb } from '@/app/components/Breadcrumb';
+import { ButtonLink } from '@/app/components/Button';
+import { BoxPanel } from '@/app/components/Panel';
+import ProposalInfo from '@/app/components/ProposalInfo';
+import { Typography } from '@/app/theme';
+import { useTotalProposalQuery, useActiveProposals } from '@/queries/vote';
+import { useBBalnAmount, useFetchBBalnInfo } from '@/store/bbaln/hooks';
+import { useWalletFetchBalances } from '@/store/wallet/hooks';
 
 export function ProposalListPage() {
   const { data: proposals } = useTotalProposalQuery();

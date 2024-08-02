@@ -3,9 +3,9 @@ import { useMemo } from 'react';
 import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
 import { Pair, Trade } from '@balancednetwork/v1-sdk';
 
-import { useAllCurrencyCombinations } from 'hooks/useAllCurrencyCombinations';
-import { PairState, useV2Pairs, useStabilityFundPairs } from 'hooks/useV2Pairs';
-import { isTradeBetter } from 'utils/isTradeBetter';
+import { useAllCurrencyCombinations } from '@/hooks/useAllCurrencyCombinations';
+import { PairState, useV2Pairs, useStabilityFundPairs } from '@/hooks/useV2Pairs';
+import { isTradeBetter } from '@/utils/isTradeBetter';
 
 import { BETTER_TRADE_LESS_HOPS_THRESHOLD } from '../../constants/misc';
 import { MAX_HOPS } from '../../constants/routing';

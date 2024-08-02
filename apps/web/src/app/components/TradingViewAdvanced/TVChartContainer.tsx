@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import { widget, ChartingLibraryWidgetOptions, IChartingLibraryWidget, ResolutionString } from 'charting_library';
+import { widget, ChartingLibraryWidgetOptions, IChartingLibraryWidget, ResolutionString } from '@/charting_library';
 
-import { theme } from 'app/theme';
+import { theme } from '@/app/theme';
 
 import DataFeed from './api';
 

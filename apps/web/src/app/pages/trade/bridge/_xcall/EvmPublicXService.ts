@@ -1,6 +1,6 @@
 import { Address, PublicClient, getContract, parseEventLogs } from 'viem';
 
-import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
+import { XCallEventType, XChainId } from '@/app/pages/trade/bridge/types';
 import { AbstractPublicXService } from './types';
 import {
   TransactionStatus,

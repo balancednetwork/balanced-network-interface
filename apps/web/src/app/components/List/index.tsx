@@ -1,7 +1,7 @@
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Typography } from 'app/theme';
+import { Typography } from '@/app/theme';
 
 export const DashGrid = styled(Box)`
   display: grid;

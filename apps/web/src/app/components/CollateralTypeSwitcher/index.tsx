@@ -3,13 +3,13 @@ import React from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import styled from 'styled-components';
 
-import { StyledArrowDownIcon } from 'app/components/DropdownText';
-import { useCollateralType, useIcxDisplayType } from 'store/collateral/hooks';
+import { StyledArrowDownIcon } from '@/app/components/DropdownText';
+import { useCollateralType, useIcxDisplayType } from '@/store/collateral/hooks';
 
 import { DropdownPopper } from '../Popover';
 import CollateralTypeListWrap from './CollateralTypeListWrap';
 import CurrencyLogo from '../CurrencyLogo';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
 
 const Wrap = styled.span`
   cursor: pointer;

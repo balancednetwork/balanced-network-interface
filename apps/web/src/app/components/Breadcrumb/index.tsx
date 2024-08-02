@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Typography } from 'app/theme';
+import { Typography } from '@/app/theme';
 
 interface BreadcrumbProps {
   title: string;

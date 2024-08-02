@@ -1,21 +1,21 @@
 import React from 'react';
 
 import { Trans, t } from '@lingui/macro';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { Box, Flex } from 'rebass';
 
-import { Button, TextButton } from 'app/components/Button';
-import { UnderlineText } from 'app/components/DropdownText';
-import Modal from 'app/components/Modal';
-import ModalContent from 'app/components/ModalContent';
-import Spinner from 'app/components/Spinner';
-import { Typography } from 'app/theme';
-import bnJs from 'bnJs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useLockedAmount, useUnclaimedRewards } from 'store/savings/hooks';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX } from 'store/wallet/hooks';
-import { showMessageOnBeforeUnload } from 'utils/messages';
+import { Button, TextButton } from '@/app/components/Button';
+import { UnderlineText } from '@/app/components/DropdownText';
+import Modal from '@/app/components/Modal';
+import ModalContent from '@/app/components/ModalContent';
+import Spinner from '@/app/components/Spinner';
+import { Typography } from '@/app/theme';
+import bnJs from '@/bnJs';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
+import { useLockedAmount, useUnclaimedRewards } from '@/store/savings/hooks';
+import { useTransactionAdder } from '@/store/transactions/hooks';
+import { useHasEnoughICX } from '@/store/wallet/hooks';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
 
 import RewardsGrid from './RewardsGrid';
 

@@ -1,27 +1,27 @@
 import React, { useCallback, useState } from 'react';
 
 import { t, Trans } from '@lingui/macro';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
 
-import { Breadcrumb } from 'app/components/Breadcrumb';
-import { Button, TextButton } from 'app/components/Button';
-import Modal from 'app/components/Modal';
-import ModalContent from 'app/components/ModalContent';
-import QuestionHelper from 'app/components/QuestionHelper';
-import Spinner from 'app/components/Spinner';
-import Tooltip from 'app/components/Tooltip';
-import { Typography } from 'app/theme';
-import bnJs from 'bnJs';
-import { usePlatformDayQuery } from 'queries/reward';
-import { useMinBBalnPercentageToSubmit } from 'queries/vote';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useEditableContractCalls, useResetArbitraryCalls } from 'store/arbitraryCalls/hooks';
-import { useBBalnAmount, useFetchBBalnInfo, useTotalSupply } from 'store/bbaln/hooks';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX, useWalletFetchBalances } from 'store/wallet/hooks';
-import { showMessageOnBeforeUnload } from 'utils/messages';
+import { Breadcrumb } from '@/app/components/Breadcrumb';
+import { Button, TextButton } from '@/app/components/Button';
+import Modal from '@/app/components/Modal';
+import ModalContent from '@/app/components/ModalContent';
+import QuestionHelper from '@/app/components/QuestionHelper';
+import Spinner from '@/app/components/Spinner';
+import Tooltip from '@/app/components/Tooltip';
+import { Typography } from '@/app/theme';
+import bnJs from '@/bnJs';
+import { usePlatformDayQuery } from '@/queries/reward';
+import { useMinBBalnPercentageToSubmit } from '@/queries/vote';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
+import { useEditableContractCalls, useResetArbitraryCalls } from '@/store/arbitraryCalls/hooks';
+import { useBBalnAmount, useFetchBBalnInfo, useTotalSupply } from '@/store/bbaln/hooks';
+import { useTransactionAdder } from '@/store/transactions/hooks';
+import { useHasEnoughICX, useWalletFetchBalances } from '@/store/wallet/hooks';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
 
 import ArbitraryCallsForm from './_components/ArbitraryCalls/ArbitraryCallsForm';
 import { getTransactionsString } from './_components/ArbitraryCalls/utils';

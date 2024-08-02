@@ -4,8 +4,8 @@ import { Placement } from '@popperjs/core';
 import { useMedia } from 'react-use';
 import styled from 'styled-components';
 
-import Tooltip from 'app/components/Tooltip';
-import QuestionIcon from 'assets/icons/question.svg';
+import Tooltip from '@/app/components/Tooltip';
+import QuestionIcon from '@/assets/icons/question.svg';
 
 export const QuestionWrapper = styled.div`
   display: inline-flex;

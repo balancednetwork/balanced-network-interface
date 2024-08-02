@@ -1,8 +1,10 @@
+import path from 'path';
 import { lingui } from '@lingui/vite-plugin';
 import react from '@vitejs/plugin-react';
 import { ConfigEnv } from 'vite';
 import { defineConfig, loadEnv } from 'vite';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import nodePolyfills from 'vite-plugin-node-stdlib-browser';
+
 import svgr from 'vite-plugin-svgr';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 
@@ -25,16 +27,17 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
           plugins: ['macros'],
         },
       }),
-      nodePolyfills({
-        include: ['buffer'],
-        globals: {
-          Buffer: true,
-          global: false,
-          process: false,
-        },
-      }),
+      nodePolyfills(),
       lingui(),
     ],
+    resolve: {
+      alias: {
+        // Polyfill for Node.js core modules
+        stream: 'stream-browserify',
+        '@': path.resolve(__dirname, './src'),
+      },
+    },
+
     server: {
       // this ensures that the browser opens upon server start
       open: true,

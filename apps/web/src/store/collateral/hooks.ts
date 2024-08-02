@@ -5,17 +5,17 @@ import BigNumber from 'bignumber.js';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-import bnJs from 'bnJs';
-import { ICON_XCALL_NETWORK_ID, NETWORK_ID } from 'constants/config';
-import { MINIMUM_ICX_FOR_ACTION } from 'constants/index';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
-import { useBorrowedAmounts } from 'store/loan/hooks';
-import { useOraclePrice } from 'store/oracle/hooks';
-import { useRatio } from 'store/ratio/hooks';
-import { useAllTransactions } from 'store/transactions/hooks';
-import { useCrossChainWalletBalances, useICONWalletBalances } from 'store/wallet/hooks';
-import { CurrencyKey, IcxDisplayType } from 'types';
-import { formatUnits, maxAmountSpend, toBigNumber } from 'utils';
+import bnJs from '@/bnJs';
+import { ICON_XCALL_NETWORK_ID, NETWORK_ID } from '@/constants/config';
+import { MINIMUM_ICX_FOR_ACTION } from '@/constants/index';
+import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
+import { useBorrowedAmounts } from '@/store/loan/hooks';
+import { useOraclePrice } from '@/store/oracle/hooks';
+import { useRatio } from '@/store/ratio/hooks';
+import { useAllTransactions } from '@/store/transactions/hooks';
+import { useCrossChainWalletBalances, useICONWalletBalances } from '@/store/wallet/hooks';
+import { CurrencyKey, IcxDisplayType } from '@/types';
+import { formatUnits, maxAmountSpend, toBigNumber } from '@/utils';
 
 import { AppState } from '../index';
 import {
@@ -28,16 +28,16 @@ import {
   type,
   Field,
 } from './reducer';
-import { Position, XChainId, XCollaterals, XPositionsRecord, XToken } from 'app/pages/trade/bridge/types';
-import { DEFAULT_TOKEN_CHAIN, xTokenMap } from 'app/pages/trade/bridge/_config/xTokens';
-import { useSignedInWallets, useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { Position, XChainId, XCollaterals, XPositionsRecord, XToken } from '@/app/pages/trade/bridge/types';
+import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/app/pages/trade/bridge/_config/xTokens';
+import { useSignedInWallets, useAvailableWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
-import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import { setRecipientNetwork } from 'store/loan/reducer';
-import { useDestinationEvents } from 'app/pages/trade/bridge/_zustand/useXCallEventStore';
+import { SUPPORTED_XCALL_CHAINS, xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { setRecipientNetwork } from '@/store/loan/reducer';
+import { useDestinationEvents } from '@/app/pages/trade/bridge/_zustand/useXCallEventStore';
 import { forEach } from 'lodash-es';
-import { useRatesWithOracle } from 'queries/reward';
-import { getBalanceDecimals } from 'utils/formatter';
+import { useRatesWithOracle } from '@/queries/reward';
+import { getBalanceDecimals } from '@/utils/formatter';
 
 export const DEFAULT_COLLATERAL_TOKEN = 'sICX';
 

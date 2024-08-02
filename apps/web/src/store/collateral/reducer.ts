@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { XChainId } from 'app/pages/trade/bridge/types';
+import { XChainId } from '@/app/pages/trade/bridge/types';
 import BigNumber from 'bignumber.js';
 
-import { CurrencyKey, IcxDisplayType } from 'types';
+import { CurrencyKey, IcxDisplayType } from '@/types';
 
 export enum Field {
   LEFT = 'LEFT',

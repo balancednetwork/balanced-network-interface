@@ -5,10 +5,10 @@ import BigNumber from 'bignumber.js';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-import bnJs from 'bnJs';
-import { ICON_XCALL_NETWORK_ID, NETWORK_ID } from 'constants/config';
-import { ZERO } from 'constants/index';
-import { useBnJsContractQuery } from 'queries/utils';
+import bnJs from '@/bnJs';
+import { ICON_XCALL_NETWORK_ID, NETWORK_ID } from '@/constants/config';
+import { ZERO } from '@/constants/index';
+import { useBnJsContractQuery } from '@/queries/utils';
 import {
   DEFAULT_COLLATERAL_TOKEN,
   useCollateralInputAmountAbsolute,
@@ -16,13 +16,13 @@ import {
   useCollateralXChain,
   useIsHandlingICX,
   useSupportedCollateralTokens,
-} from 'store/collateral/hooks';
-import { useOraclePrice } from 'store/oracle/hooks';
-import { useRatio } from 'store/ratio/hooks';
-import { useRewards } from 'store/reward/hooks';
-import { useAllTransactions } from 'store/transactions/hooks';
-import { useCrossChainWalletBalances } from 'store/wallet/hooks';
-import { formatUnits, toBigNumber } from 'utils';
+} from '@/store/collateral/hooks';
+import { useOraclePrice } from '@/store/oracle/hooks';
+import { useRatio } from '@/store/ratio/hooks';
+import { useRewards } from '@/store/reward/hooks';
+import { useAllTransactions } from '@/store/transactions/hooks';
+import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { formatUnits, toBigNumber } from '@/utils';
 
 import { AppState } from '..';
 import {
@@ -36,13 +36,13 @@ import {
   setLockingRatio,
   setRecipientNetwork,
 } from './reducer';
-import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
-import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import { XChainId } from 'app/pages/trade/bridge/types';
+import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
+import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { XChainId } from '@/app/pages/trade/bridge/types';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { bnUSD } from 'constants/tokens';
-import { useDestinationEvents } from 'app/pages/trade/bridge/_zustand/useXCallEventStore';
-import { getXTokenAddress } from 'app/pages/trade/bridge/utils';
+import { bnUSD } from '@/constants/tokens';
+import { useDestinationEvents } from '@/app/pages/trade/bridge/_zustand/useXCallEventStore';
+import { getXTokenAddress } from '@/app/pages/trade/bridge/utils';
 
 export function useLoanBorrowedAmount(address?: string): BigNumber {
   const borrowedAmounts = useBorrowedAmounts();

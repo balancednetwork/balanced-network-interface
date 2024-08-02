@@ -6,10 +6,10 @@ import { Flex } from 'rebass';
 import { useTheme } from 'styled-components';
 import styled from 'styled-components';
 
-import { Button } from 'app/components/Button';
-import { RowFixed } from 'app/components/Row';
-import { Typography } from 'app/theme';
-import { useIsTokenActive, useIsUserAddedToken } from 'hooks/Tokens';
+import { Button } from '@/app/components/Button';
+import { RowFixed } from '@/app/components/Row';
+import { Typography } from '@/app/theme';
+import { useIsTokenActive, useIsUserAddedToken } from '@/hooks/Tokens';
 
 const TokenSection = styled.div<{ dim?: boolean }>`
   padding: 4px 20px;

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Typography } from 'app/theme';
+import { Typography } from '@/app/theme';
 
 import CommunityListToggle from './components/CommunityListToggle';
 

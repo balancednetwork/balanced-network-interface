@@ -1,8 +1,8 @@
 import { t } from '@lingui/macro';
-import { checkIRC2Token } from 'btp/src/connectors/chainConfigs';
-import { CHAIN_NAME } from 'btp/src/connectors/chainCustomization';
+import { checkIRC2Token } from '@/btp/src/connectors/chainConfigs';
+import { CHAIN_NAME } from '@/btp/src/connectors/chainCustomization';
 
-import { TransactionStatus } from 'store/transactions/hooks';
+import { TransactionStatus } from '@/store/transactions/hooks';
 
 import { EVENTS, trigger } from '../../../utils/customEvent';
 import { AccountState, setAccountInfo } from '../store/models/account';

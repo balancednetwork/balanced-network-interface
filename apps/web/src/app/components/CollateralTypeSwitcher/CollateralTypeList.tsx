@@ -8,18 +8,18 @@ import {
   useXCollateralDataByToken,
   useAllCollateralData,
   useChangeCollateralXChain,
-} from 'store/collateral/hooks';
-import { useLoanActionHandlers, useSetLoanRecipientNetwork } from 'store/loan/hooks';
+} from '@/store/collateral/hooks';
+import { useLoanActionHandlers, useSetLoanRecipientNetwork } from '@/store/loan/hooks';
 import { Trans } from '@lingui/macro';
 import { BalanceAndValueWrap, DashGrid, HeaderText, List, walletBreakpoint } from '../Wallet/styledComponents';
 import SingleChainItem from './SingleChainItem';
 import MultiChainItem from './MultiChainItem';
 import { CollateralTab } from './CollateralTypeListWrap';
-import { ICON_XCALL_NETWORK_ID } from 'constants/config';
+import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import SingleChainItemOverview from './SingleChainItemOverview';
-import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import { Typography } from 'app/theme';
-import { XChainId } from 'app/pages/trade/bridge/types';
+import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { Typography } from '@/app/theme';
+import { XChainId } from '@/app/pages/trade/bridge/types';
 
 const CollateralTypeList = ({
   setAnchor,

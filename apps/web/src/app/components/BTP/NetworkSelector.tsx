@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 
-import { useFromNetwork, useSelectNetworkDst, useSelectNextNetworkSrc, useToNetwork } from 'btp/src/store/bridge/hooks';
+import {
+  useFromNetwork,
+  useSelectNetworkDst,
+  useSelectNextNetworkSrc,
+  useToNetwork,
+} from '@/btp/src/store/bridge/hooks';
 import { motion, AnimatePresence } from 'framer-motion';
 import ClickAwayListener from 'react-click-away-listener';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
-import { Typography } from 'app/theme';
-import ArrowDown from 'assets/icons/arrow-down.svg';
+import { Typography } from '@/app/theme';
+import ArrowDown from '@/assets/icons/arrow-down.svg';
 
 interface NetworkSelectorProps {
   label?: string;

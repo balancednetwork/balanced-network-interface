@@ -1,5 +1,5 @@
-import { ChainLogo } from 'app/components/ChainLogo';
-import { XChain } from 'app/pages/trade/bridge/types';
+import { ChainLogo } from '@/app/components/ChainLogo';
+import { XChain } from '@/app/pages/trade/bridge/types';
 import React from 'react';
 import styled from 'styled-components';
 

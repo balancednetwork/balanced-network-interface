@@ -4,11 +4,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { getNetworkDisplayName } from 'app/pages/trade/bridge/utils';
-import { Typography } from 'app/theme';
-import ArrowIcon from 'assets/icons/arrow-white.svg';
+import { getNetworkDisplayName } from '@/app/pages/trade/bridge/utils';
+import { Typography } from '@/app/theme';
+import ArrowIcon from '@/assets/icons/arrow-white.svg';
 
-import Spinner from 'app/components/Spinner';
+import Spinner from '@/app/components/Spinner';
 import { XMessage, XMessageStatus, XTransaction } from '../_zustand/types';
 import { xMessageActions } from '../_zustand/useXMessageStore';
 

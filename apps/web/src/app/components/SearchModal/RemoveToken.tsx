@@ -1,13 +1,13 @@
 import React from 'react';
 
 import { Token } from '@balancednetwork/sdk-core';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { Flex } from 'rebass/styled-components';
 
-import { AlertButton, TextButton } from 'app/components/Button';
-import { AutoColumn } from 'app/components/Column';
-import { Typography } from 'app/theme';
-import { useRemoveUserAddedToken } from 'store/user/hooks';
+import { AlertButton, TextButton } from '@/app/components/Button';
+import { AutoColumn } from '@/app/components/Column';
+import { Typography } from '@/app/theme';
+import { useRemoveUserAddedToken } from '@/store/user/hooks';
 
 import TokenImportCard from './TokenImportCard';
 

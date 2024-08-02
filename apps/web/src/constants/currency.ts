@@ -1,6 +1,6 @@
 import { Currency } from '@balancednetwork/sdk-core';
 
-import { Pool } from 'types';
+import { Pool } from '@/types';
 
 import { PairInfo } from './pairs';
 

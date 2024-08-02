@@ -5,7 +5,7 @@ import { Trans } from 'react-i18next';
 import { Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
-import { DashGrid, DataText, HeaderText, List1, ListItem } from 'app/components/List';
+import { DashGrid, DataText, HeaderText, List1, ListItem } from '@/app/components/List';
 
 import { Icon } from '../Icon';
 

@@ -8,7 +8,7 @@ import { useGesture } from 'react-use-gesture';
 import styled, { css } from 'styled-components';
 
 import '@reach/dialog/styles.css';
-import { MODAL_FADE_DURATION } from 'constants/index';
+import { MODAL_FADE_DURATION } from '@/constants/index';
 
 const AnimatedDialogOverlay = animated(DialogOverlay);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

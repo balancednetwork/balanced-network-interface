@@ -3,7 +3,7 @@ import React from 'react';
 import { FlexProps, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { useHasEnoughICX } from 'store/wallet/hooks';
+import { useHasEnoughICX } from '@/store/wallet/hooks';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
 import LedgerConfirmMessage from '../LedgerConfirmMessage';

@@ -1,13 +1,13 @@
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { XChainId } from 'app/pages/trade/bridge/types';
+import { XChainId } from '@/app/pages/trade/bridge/types';
 import BigNumber from 'bignumber.js';
 import React from 'react';
 import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, DataText, ListItem } from './styledComponents';
 import CurrencyLogo from '../CurrencyLogo';
-import { Typography } from 'app/theme';
+import { Typography } from '@/app/theme';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
-import { formatBalance, formatValue } from 'utils/formatter';
-import { useRatesWithOracle } from 'queries/reward';
+import { formatBalance, formatValue } from '@/utils/formatter';
+import { useRatesWithOracle } from '@/queries/reward';
 
 type MultiChainBalanceItemProps = {
   baseToken: Token;

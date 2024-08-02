@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { XChainId } from 'app/pages/trade/bridge/types';
+import { XChainId } from '@/app/pages/trade/bridge/types';
 import BigNumber from 'bignumber.js';
 
 export enum Field {

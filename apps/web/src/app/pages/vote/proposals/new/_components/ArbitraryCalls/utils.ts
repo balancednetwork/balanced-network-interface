@@ -1,15 +1,15 @@
 import axios from 'axios';
 import { Converter } from 'icon-sdk-js';
 
-import bnJs from 'bnJs';
-import { NETWORK_ID } from 'constants/config';
-import { RPC_DEBUG_ENDPOINT } from 'hooks/useCxApi';
+import bnJs from '@/bnJs';
+import { NETWORK_ID } from '@/constants/config';
+import { RPC_DEBUG_ENDPOINT } from '@/hooks/useCxApi';
 import {
   ArbitraryCall,
   ArbitraryCallParameter,
   ArbitraryCallParameterType,
   EditableArbitraryCall,
-} from 'store/arbitraryCalls/reducer';
+} from '@/store/arbitraryCalls/reducer';
 
 export function getTransactionsString(transactions: EditableArbitraryCall[]): string {
   const formatted = transactions.map(transaction => {

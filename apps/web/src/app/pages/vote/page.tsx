@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { Flex } from 'rebass/styled-components';
 
-import { useFetchBBalnInfo } from 'store/bbaln/hooks';
-import { useFetchUserVoteData } from 'store/liveVoting/hooks';
-import { useFetchRewardsInfo } from 'store/reward/hooks';
-import { useWalletFetchBalances } from 'store/wallet/hooks';
+import { useFetchBBalnInfo } from '@/store/bbaln/hooks';
+import { useFetchUserVoteData } from '@/store/liveVoting/hooks';
+import { useFetchRewardsInfo } from '@/store/reward/hooks';
+import { useWalletFetchBalances } from '@/store/wallet/hooks';
 
 import BribesPanel from './_components/BribesPanel';
 import LiveVotingPanel from './_components/LieVotingPanel';

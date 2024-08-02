@@ -2,14 +2,14 @@ import * as React from 'react';
 
 import { BalancedJs } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 
-import bnJs from 'bnJs';
-import QUERY_KEYS from 'queries/queryKeys';
-import { usePlatformDayQuery } from 'queries/reward';
-import { useAllTransactions } from 'store/transactions/hooks';
-import { ProposalInterface } from 'types';
+import bnJs from '@/bnJs';
+import QUERY_KEYS from '@/queries/queryKeys';
+import { usePlatformDayQuery } from '@/queries/reward';
+import { useAllTransactions } from '@/store/transactions/hooks';
+import { ProposalInterface } from '@/types';
 
 export const useProposalInfoQuery = (pId: number) => {
   return useQuery<ProposalInterface | undefined>({

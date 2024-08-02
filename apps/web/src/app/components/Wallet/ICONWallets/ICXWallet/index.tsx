@@ -5,7 +5,7 @@ import { Trans } from '@lingui/macro';
 import { Tabs, TabPanels, TabPanel } from '@reach/tabs';
 import BigNumber from 'bignumber.js';
 
-import Divider from 'app/components/Divider';
+import Divider from '@/app/components/Divider';
 
 import SendPanel from '../SendPanel';
 import { StyledTabList, StyledTab } from '../utils';

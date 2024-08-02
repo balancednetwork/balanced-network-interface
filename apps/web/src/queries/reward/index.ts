@@ -3,21 +3,21 @@ import { useMemo } from 'react';
 import { addresses, BalancedJs, CallData } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 
-import bnJs from 'bnJs';
-import { NETWORK_ID } from 'constants/config';
+import bnJs from '@/bnJs';
+import { NETWORK_ID } from '@/constants/config';
 import {
   COMBINED_TOKENS_MAP_BY_ADDRESS,
   ORACLE_PRICED_TOKENS,
   SUPPORTED_TOKENS_MAP_BY_ADDRESS,
-} from 'constants/tokens';
-import { useTokenPrices } from 'queries/backendv2';
-import QUERY_KEYS from 'queries/queryKeys';
-import { useBlockNumber } from 'store/application/hooks';
-import { useOraclePrices } from 'store/oracle/hooks';
-import { useFlattenedRewardsDistribution } from 'store/reward/hooks';
+} from '@/constants/tokens';
+import { useTokenPrices } from '@/queries/backendv2';
+import QUERY_KEYS from '@/queries/queryKeys';
+import { useBlockNumber } from '@/store/application/hooks';
+import { useOraclePrices } from '@/store/oracle/hooks';
+import { useFlattenedRewardsDistribution } from '@/store/reward/hooks';
 
 export const BATCH_SIZE = 10;
 

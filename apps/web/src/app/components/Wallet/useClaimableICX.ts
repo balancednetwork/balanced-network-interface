@@ -1,9 +1,9 @@
 import { BalancedJs } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
-import bnJs from 'bnJs';
-import { useIconReact } from 'packages/icon-react';
+import bnJs from '@/bnJs';
+import { useIconReact } from '@/packages/icon-react';
 import { useEffect, useState } from 'react';
-import { useAllTransactions } from 'store/transactions/hooks';
+import { useAllTransactions } from '@/store/transactions/hooks';
 
 function useClaimableICX() {
   const [claimableICX, setClaimableICX] = useState(new BigNumber(0));

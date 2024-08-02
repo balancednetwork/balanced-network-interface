@@ -1,4 +1,4 @@
-import { TransferTransactionRequest } from 'btp/src/type/transaction';
+import { TransferTransactionRequest } from '@/btp/src/type/transaction';
 
 import { checkIRC2Token } from '../chainConfigs';
 import { SIGNING_ACTIONS } from '../constants';

@@ -2,19 +2,19 @@ import React from 'react';
 
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
-import { Button, TextButton } from 'app/components/Button';
-import Modal from 'app/components/Modal';
-import ModalContent from 'app/components/ModalContent';
-import Spinner from 'app/components/Spinner';
-import { Typography } from 'app/theme';
-import bnJs from 'bnJs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX } from 'store/wallet/hooks';
-import { showMessageOnBeforeUnload } from 'utils/messages';
+import { Button, TextButton } from '@/app/components/Button';
+import Modal from '@/app/components/Modal';
+import ModalContent from '@/app/components/ModalContent';
+import Spinner from '@/app/components/Spinner';
+import { Typography } from '@/app/theme';
+import bnJs from '@/bnJs';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
+import { useTransactionAdder } from '@/store/transactions/hooks';
+import { useHasEnoughICX } from '@/store/wallet/hooks';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
 
 const UnstakePrompt = ({
   stakedBalance,

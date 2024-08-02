@@ -70,7 +70,7 @@ const CollateralTypeList = ({
       xCollateral =>
         xCollateral.baseToken.symbol.toLowerCase().includes(query.toLowerCase()) ||
         xCollateral.baseToken.name?.toLowerCase().includes(query.toLowerCase()) ||
-        Object.keys(xCollateral.chains).some(x => xChainMap[x].name.toLowerCase().includes(query.toLowerCase())),
+        Object.keys(xCollateral.positions).some(x => xChainMap[x].name.toLowerCase().includes(query.toLowerCase())),
     );
   }, [query, allCollateralData]);
 
@@ -95,7 +95,7 @@ const CollateralTypeList = ({
       {collateralTab === CollateralTab.YOUR && (
         <>
           {filteredPositions.map((xPosition, index) =>
-            xPosition.isPositionSingleChain ? (
+            xPosition.isSingleChain ? (
               <SingleChainItem
                 baseToken={xPosition.baseToken}
                 key={index}

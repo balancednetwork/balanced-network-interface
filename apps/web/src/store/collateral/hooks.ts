@@ -28,7 +28,7 @@ import {
   type,
   Field,
 } from './reducer';
-import { Position, XChainId, XCollaterals, XPositionsRecord, XToken } from 'app/pages/trade/bridge/types';
+import { Position, XChainId, XPositionsRecord, XToken } from 'app/pages/trade/bridge/types';
 import { DEFAULT_TOKEN_CHAIN, xTokenMap } from 'app/pages/trade/bridge/_config/xTokens';
 import { useSignedInWallets, useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
@@ -128,7 +128,7 @@ export function useCollateralAmounts(xChainId?: XChainId): { [key in string]: Bi
   return useSelector((state: AppState) => state.collateral.depositedAmounts[xChainId || collateralXChain] || {});
 }
 
-export function useAllCollateralData(): UseQueryResult<XCollaterals[]> {
+export function useAllCollateralData(): UseQueryResult<XPositionsRecord[]> {
   const { data: totalCollateralData } = useTotalCollateralData();
 
   return useQuery({
@@ -139,11 +139,11 @@ export function useAllCollateralData(): UseQueryResult<XCollaterals[]> {
         .filter(symbol => symbol !== 'BTCB')
         .map(symbol => {
           const baseToken = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
-          const chains = SUPPORTED_XCALL_CHAINS.reduce(
+          const positions = SUPPORTED_XCALL_CHAINS.reduce(
             (acc, xChainId) => {
               const xToken = xTokenMap[xChainId].find(t => t.symbol === symbol);
               if (xToken || xChainId === ICON_XCALL_NETWORK_ID) {
-                acc[xChainId] = {};
+                acc[xChainId] = undefined;
               }
               return acc;
             },
@@ -151,8 +151,8 @@ export function useAllCollateralData(): UseQueryResult<XCollaterals[]> {
           );
           return {
             baseToken,
-            chains,
-            isCollateralSingleChain: Object.keys(chains).length === 1,
+            positions,
+            isSingleChain: Object.keys(positions).length === 1,
             total: totalCollateralData[symbol],
           };
         });
@@ -671,7 +671,7 @@ export function useXCollateralDataByToken(): UseQueryResult<XPositionsRecord[]> 
           return {
             baseToken,
             positions,
-            isPositionSingleChain: Object.keys(positions).length === 1,
+            isSingleChain: Object.keys(positions).length === 1,
           };
         })
         .filter((item): item is XPositionsRecord => Boolean(item));

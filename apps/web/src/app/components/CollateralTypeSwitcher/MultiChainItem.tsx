@@ -10,7 +10,7 @@ import styled from 'styled-components';
 type MultiChainItemProps = {
   baseToken: Token;
   positions: Partial<{ [key in XChainId]: Position }>;
-  onSelect: (symbol, chainId?) => void;
+  onSelect: (symbol: string, chainId?: XChainId) => void;
 };
 
 export const StyledListItem = styled(ListItem)`

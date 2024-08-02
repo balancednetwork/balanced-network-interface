@@ -41,7 +41,7 @@ const CollateralTypeList = ({
   const { data: allPositionsData } = useAllCollateralData();
 
   const handleCollateralTypeChange = useCallback(
-    (symbol: string, xChainId: XChainId) => {
+    (symbol: string, xChainId?: XChainId) => {
       setAnchor(null);
       changeCollateralType(symbol);
       adjust(false);

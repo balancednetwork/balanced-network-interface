@@ -17,7 +17,7 @@ import { useIcxDisplayType } from 'store/collateral/hooks';
 type SingleChainItemProps = {
   baseToken: Token;
   networkPosition: Partial<{ [key in XChainId]: Position }>;
-  onSelect: (symbol, chainId) => void;
+  onSelect: (symbol: string, chainId?: XChainId) => void;
   isLast?: boolean;
   isNested?: boolean;
 };
@@ -45,7 +45,7 @@ const SingleChainItem = ({
 
   return (
     <>
-      <StyledListItem $border={!isNested && !isLast} onClick={() => onSelect(baseToken.symbol, xChainId)}>
+      <StyledListItem $border={!isNested && !isLast} onClick={() => onSelect(baseToken.symbol, xChainId as XChainId)}>
         <AssetSymbol>
           <CurrencyLogoWithNetwork
             currency={baseToken.symbol === 'sICX' && icxDisplayType === 'ICX' ? ICX : baseToken}

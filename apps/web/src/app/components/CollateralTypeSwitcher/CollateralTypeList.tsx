@@ -2,12 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import { useMedia } from 'react-use';
 
-import {
-  useCollateralActionHandlers,
-  useXCollateralDataByToken,
-  useAllCollateralData,
-  useChangeCollateralXChain,
-} from 'store/collateral/hooks';
+import { useCollateralActionHandlers, useXCollateralDataByToken, useAllCollateralData } from 'store/collateral/hooks';
 import { useLoanActionHandlers, useSetLoanRecipientNetwork } from 'store/loan/hooks';
 import { Trans } from '@lingui/macro';
 import { BalanceAndValueWrap, DashGrid, HeaderText, List, walletBreakpoint } from '../Wallet/styledComponents';
@@ -30,8 +25,7 @@ const CollateralTypeList = ({
   query: string;
 }) => {
   const setLoanNetwork = useSetLoanRecipientNetwork();
-  const changeCollateralXChain = useChangeCollateralXChain();
-  const { onAdjust: adjust, changeCollateralType } = useCollateralActionHandlers();
+  const { onAdjust: adjust, changeCollateralType, changeCollateralXChain } = useCollateralActionHandlers();
   const { onAdjust: adjustLoan } = useLoanActionHandlers();
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
 

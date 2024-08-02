@@ -23,7 +23,7 @@ import {
   cancel,
   changeDepositedAmount as changeDepositedAmountAction,
   changeCollateralType as changeCollateralTypeAction,
-  changeCollateralXChain,
+  changeCollateralXChain as changeCollateralXChainAction,
   changeIcxDisplayType,
   type,
   Field,
@@ -40,17 +40,6 @@ import { useRatesWithOracle } from 'queries/reward';
 import { getBalanceDecimals } from 'utils/formatter';
 
 export const DEFAULT_COLLATERAL_TOKEN = 'sICX';
-
-export function useChangeCollateralXChain(): (collateralXChain: XChainId) => void {
-  const dispatch = useDispatch();
-
-  return React.useCallback(
-    (collateralXChain: XChainId) => {
-      dispatch(changeCollateralXChain({ collateralXChain }));
-    },
-    [dispatch],
-  );
-}
 
 export function useCollateralChangeIcxDisplayType(): (icxDisplayType: IcxDisplayType) => void {
   const dispatch = useDispatch();
@@ -293,12 +282,19 @@ export function useCollateralActionHandlers() {
       dispatch(changeCollateralTypeAction({ collateralType }));
       const defaultXChainId = DEFAULT_TOKEN_CHAIN[collateralType];
       if (defaultXChainId) {
-        dispatch(changeCollateralXChain({ collateralXChain: defaultXChainId }));
+        dispatch(changeCollateralXChainAction({ collateralXChain: defaultXChainId }));
         dispatch(setRecipientNetwork({ recipientNetwork: defaultXChainId }));
       } else {
-        dispatch(changeCollateralXChain({ collateralXChain: NETWORK_ID === 1 ? '0x1.icon' : '0x2.icon' }));
+        dispatch(changeCollateralXChainAction({ collateralXChain: NETWORK_ID === 1 ? '0x1.icon' : '0x2.icon' }));
         dispatch(setRecipientNetwork({ recipientNetwork: NETWORK_ID === 1 ? '0x1.icon' : '0x2.icon' }));
       }
+    },
+    [dispatch],
+  );
+
+  const changeCollateralXChain = React.useCallback(
+    (collateralXChain: XChainId) => {
+      dispatch(changeCollateralXChainAction({ collateralXChain }));
     },
     [dispatch],
   );
@@ -316,6 +312,7 @@ export function useCollateralActionHandlers() {
     onSlide,
     onAdjust,
     changeCollateralType,
+    changeCollateralXChain,
     changeDepositedAmount,
   };
 }

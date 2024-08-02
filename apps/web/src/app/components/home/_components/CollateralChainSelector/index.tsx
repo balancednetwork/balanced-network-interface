@@ -8,12 +8,7 @@ import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
 import React, { useEffect, useMemo } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
-import {
-  useChangeCollateralXChain,
-  useCollateralActionHandlers,
-  useCollateralType,
-  useCollateralXChain,
-} from 'store/collateral/hooks';
+import { useCollateralActionHandlers, useCollateralType, useCollateralXChain } from 'store/collateral/hooks';
 import { useSetLoanRecipientNetwork } from 'store/loan/hooks';
 import styled from 'styled-components';
 import ChainSelectorLogo from './ChainSelectorLogo';
@@ -33,10 +28,9 @@ const CollateralChainSelector = ({
   const [isOpen, setOpen] = React.useState(false);
   const collateralType = useCollateralType();
   const collateralXChain = useCollateralXChain();
-  const changeCollateralXChain = useChangeCollateralXChain();
   const setLoanRecipientNetwork = useSetLoanRecipientNetwork();
   const currency = SUPPORTED_TOKENS_LIST.find(token => token.symbol === collateralType);
-  const { onAdjust: adjust } = useCollateralActionHandlers();
+  const { onAdjust: adjust, changeCollateralXChain } = useCollateralActionHandlers();
 
   const xChains = useMemo(() => getAvailableXChains(currency), [currency]);
 

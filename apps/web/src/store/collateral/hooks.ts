@@ -22,7 +22,7 @@ import {
   adjust,
   cancel,
   changeDepositedAmount,
-  changeCollateralType,
+  changeCollateralType as changeCollateralTypeAction,
   changeCollateralXChain,
   changeIcxDisplayType,
   type,
@@ -51,25 +51,6 @@ export function useCollateralChangeDepositedAmount(): (
   return React.useCallback(
     (depositedAmount: BigNumber, token: string = DEFAULT_COLLATERAL_TOKEN, xChain = '0x1.icon') => {
       dispatch(changeDepositedAmount({ depositedAmount, token, xChain }));
-    },
-    [dispatch],
-  );
-}
-
-export function useCollateralChangeCollateralType(): (collateralType: CurrencyKey) => void {
-  const dispatch = useDispatch();
-
-  return React.useCallback(
-    (collateralType: CurrencyKey) => {
-      dispatch(changeCollateralType({ collateralType }));
-      const defaultXChainId = DEFAULT_TOKEN_CHAIN[collateralType];
-      if (defaultXChainId) {
-        dispatch(changeCollateralXChain({ collateralXChain: defaultXChainId }));
-        dispatch(setRecipientNetwork({ recipientNetwork: defaultXChainId }));
-      } else {
-        dispatch(changeCollateralXChain({ collateralXChain: NETWORK_ID === 1 ? '0x1.icon' : '0x2.icon' }));
-        dispatch(setRecipientNetwork({ recipientNetwork: NETWORK_ID === 1 ? '0x1.icon' : '0x2.icon' }));
-      }
     },
     [dispatch],
   );
@@ -322,11 +303,27 @@ export function useCollateralActionHandlers() {
     [dispatch],
   );
 
+  const changeCollateralType = React.useCallback(
+    (collateralType: CurrencyKey) => {
+      dispatch(changeCollateralTypeAction({ collateralType }));
+      const defaultXChainId = DEFAULT_TOKEN_CHAIN[collateralType];
+      if (defaultXChainId) {
+        dispatch(changeCollateralXChain({ collateralXChain: defaultXChainId }));
+        dispatch(setRecipientNetwork({ recipientNetwork: defaultXChainId }));
+      } else {
+        dispatch(changeCollateralXChain({ collateralXChain: NETWORK_ID === 1 ? '0x1.icon' : '0x2.icon' }));
+        dispatch(setRecipientNetwork({ recipientNetwork: NETWORK_ID === 1 ? '0x1.icon' : '0x2.icon' }));
+      }
+    },
+    [dispatch],
+  );
+
   return {
     onFieldAInput,
     onFieldBInput,
     onSlide,
     onAdjust,
+    changeCollateralType,
   };
 }
 

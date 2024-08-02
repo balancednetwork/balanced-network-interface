@@ -3,7 +3,6 @@ import React, { useCallback, useMemo } from 'react';
 import { useMedia } from 'react-use';
 
 import {
-  useCollateralChangeCollateralType,
   useCollateralActionHandlers,
   useXCollateralDataByToken,
   useAllCollateralData,
@@ -30,10 +29,9 @@ const CollateralTypeList = ({
   collateralTab: CollateralTab;
   query: string;
 }) => {
-  const changeCollateralType = useCollateralChangeCollateralType();
   const setLoanNetwork = useSetLoanRecipientNetwork();
   const changeCollateralXChain = useChangeCollateralXChain();
-  const { onAdjust: adjust } = useCollateralActionHandlers();
+  const { onAdjust: adjust, changeCollateralType } = useCollateralActionHandlers();
   const { onAdjust: adjustLoan } = useLoanActionHandlers();
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
 

@@ -21,7 +21,7 @@ import { AppState } from '../index';
 import {
   adjust,
   cancel,
-  changeDepositedAmount,
+  changeDepositedAmount as changeDepositedAmountAction,
   changeCollateralType as changeCollateralTypeAction,
   changeCollateralXChain,
   changeIcxDisplayType,
@@ -40,21 +40,6 @@ import { useRatesWithOracle } from 'queries/reward';
 import { getBalanceDecimals } from 'utils/formatter';
 
 export const DEFAULT_COLLATERAL_TOKEN = 'sICX';
-
-export function useCollateralChangeDepositedAmount(): (
-  depositedAmount: BigNumber,
-  token?: string,
-  xChain?: XChainId,
-) => void {
-  const dispatch = useDispatch();
-
-  return React.useCallback(
-    (depositedAmount: BigNumber, token: string = DEFAULT_COLLATERAL_TOKEN, xChain = '0x1.icon') => {
-      dispatch(changeDepositedAmount({ depositedAmount, token, xChain }));
-    },
-    [dispatch],
-  );
-}
 
 export function useChangeCollateralXChain(): (collateralXChain: XChainId) => void {
   const dispatch = useDispatch();
@@ -197,7 +182,7 @@ export function useTotalCollateralData(): UseQueryResult<{ [key in string]: Posi
 }
 
 export function useCollateralFetchInfo(account?: string | null) {
-  const changeDepositedAmount = useCollateralChangeDepositedAmount();
+  const { changeDepositedAmount } = useCollateralActionHandlers();
   const transactions = useAllTransactions();
   const pendingXCalls = useDestinationEvents(ICON_XCALL_NETWORK_ID);
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
@@ -318,12 +303,20 @@ export function useCollateralActionHandlers() {
     [dispatch],
   );
 
+  const changeDepositedAmount = React.useCallback(
+    (depositedAmount: BigNumber, token: string = DEFAULT_COLLATERAL_TOKEN, xChain: XChainId = '0x1.icon') => {
+      dispatch(changeDepositedAmountAction({ depositedAmount, token, xChain }));
+    },
+    [dispatch],
+  );
+
   return {
     onFieldAInput,
     onFieldBInput,
     onSlide,
     onAdjust,
     changeCollateralType,
+    changeDepositedAmount,
   };
 }
 

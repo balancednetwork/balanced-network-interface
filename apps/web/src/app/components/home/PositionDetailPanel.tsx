@@ -4,24 +4,24 @@ import { MessageDescriptor } from '@lingui/core';
 import { t, Trans, msg } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { AnimatePresence, motion } from 'framer-motion';
-import Nouislider from 'packages/nouislider-react';
+import Nouislider from '@/packages/nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { isIOS } from 'react-device-detect';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
-import Divider from 'app/components/Divider';
-import { UnderlineTextWithArrow } from 'app/components/DropdownText';
-import { MenuList, MenuItem } from 'app/components/Menu';
-import { BoxPanel, FlexPanel } from 'app/components/Panel';
-import { QuestionWrapper } from 'app/components/QuestionHelper';
-import Tooltip, { TooltipContainer } from 'app/components/Tooltip';
-import { Typography } from 'app/theme';
-import QuestionIcon from 'assets/icons/question.svg';
-import { useActiveLocale } from 'hooks/useActiveLocale';
-import { useRebalancingDataQuery_DEPRECATED, Period } from 'queries/rebalancing';
-import { useCollateralInputAmountInUSD, useCollateralType, useIsHandlingICX } from 'store/collateral/hooks';
+import Divider from '@/app/components/Divider';
+import { UnderlineTextWithArrow } from '@/app/components/DropdownText';
+import { MenuList, MenuItem } from '@/app/components/Menu';
+import { BoxPanel, FlexPanel } from '@/app/components/Panel';
+import { QuestionWrapper } from '@/app/components/QuestionHelper';
+import Tooltip, { TooltipContainer } from '@/app/components/Tooltip';
+import { Typography } from '@/app/theme';
+import QuestionIcon from '@/assets/icons/question.svg';
+import { useActiveLocale } from '@/hooks/useActiveLocale';
+import { useRebalancingDataQuery_DEPRECATED, Period } from '@/queries/rebalancing';
+import { useCollateralInputAmountInUSD, useCollateralType, useIsHandlingICX } from '@/store/collateral/hooks';
 import {
   useLoanInputAmount,
   useThresholdPrices,
@@ -30,16 +30,15 @@ import {
   useInterestRate,
   useRedemptionFee,
   useRedemptionDaoFee,
-} from 'store/loan/hooks';
-import { useOraclePrice } from 'store/oracle/hooks';
-import { useRatio } from 'store/ratio/hooks';
-import { useCurrentCollateralRatio } from 'store/reward/hooks';
-import { InterestPeriod } from 'types';
-import { formatBigNumber, getAccumulatedInterest } from 'utils';
-
-import { DropdownPopper } from '../Popover';
-import Skeleton from '../Skeleton';
-import { useTokenPrices } from 'queries/backendv2';
+} from '@/store/loan/hooks';
+import { useOraclePrice } from '@/store/oracle/hooks';
+import { useRatio } from '@/store/ratio/hooks';
+import { useCurrentCollateralRatio } from '@/store/reward/hooks';
+import { InterestPeriod } from '@/types';
+import { formatBigNumber, getAccumulatedInterest } from '@/utils';
+import { DropdownPopper } from '@/app/components/Popover';
+import Skeleton from '@/app/components/Skeleton';
+import { useTokenPrices } from '@/queries/backendv2';
 
 const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
 
@@ -66,6 +65,7 @@ const PositionDetailPanel = () => {
   const upLarge = useMedia('(min-width: 1200px)');
   const upMedium = useMedia('(min-width: 1000px)');
   const smallSp = useMedia('(max-width: 360px)');
+  const theme = useTheme();
   const shouldShowRebalancingTooltipAnchor = useMedia(
     `(min-width: ${'pl-PL,fr-FR'.indexOf(locale) >= 0 ? '400px' : '360px'})`,
   );
@@ -181,7 +181,13 @@ const PositionDetailPanel = () => {
           animate={{ y: 0, opacity: 1, height: 'auto' }}
           exit={{ x: -400, opacity: 0 }}
         >
-          <BoxPanel bg="bg3" flex={1} maxWidth={['initial', 'initial', 'initial', 350]}>
+          <BoxPanel
+            bg="bg3"
+            flex={1}
+            maxWidth={['initial', 'initial', 'initial', 350]}
+            className="drop-shadow-right"
+            style={{ zIndex: 2 }}
+          >
             <Typography variant="h2" mb={5}>
               <Trans>Position details</Trans>
             </Typography>
@@ -214,7 +220,7 @@ const PositionDetailPanel = () => {
             <Divider my={4} />
             <Typography mb={2}>
               {t`The current ${collateralType === 'sICX' ? 'ICX' : collateralType} price is`}{' '}
-              <span className="white">
+              <span style={{ color: isLockWarning ? theme.colors.alert : '#ffffff' }}>
                 $
                 {collateralType === 'sICX' && ratio.ICXUSDratio
                   ? ratio.ICXUSDratio.dp(4).toFormat()

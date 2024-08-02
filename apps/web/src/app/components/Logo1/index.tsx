@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { ImageProps } from 'rebass';
 import { useTheme } from 'styled-components';
 
-import DefaultImg from 'assets/images/default.png';
+import DefaultImg from '@/assets/images/default.png';
 
 const BAD_SRCS: { [tokenAddress: string]: true } = {};
 

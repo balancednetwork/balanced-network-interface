@@ -1,7 +1,7 @@
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
-import { Typography } from 'app/theme';
+import { Typography } from '@/app/theme';
 
 import { MetaData } from '../PositionDetailPanel';
 

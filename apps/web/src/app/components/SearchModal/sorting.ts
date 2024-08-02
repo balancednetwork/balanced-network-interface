@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 
-import { useAllTokenBalances } from 'store/wallet/hooks';
+import { useAllTokenBalances } from '@/store/wallet/hooks';
 
 // compare two token amounts with highest one coming first
 function balanceComparator(balanceA?: CurrencyAmount<Currency>, balanceB?: CurrencyAmount<Currency>) {

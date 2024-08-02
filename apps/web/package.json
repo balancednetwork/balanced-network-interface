@@ -123,11 +123,7 @@
     "prepare": "pnpm run i18n:compile"
   },
   "proxy": "https://balanced.sudoblock.io",
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not op_mini all"
-  ],
+  "browserslist": [">0.2%", "not dead", "not op_mini all"],
   "engines": {
     "node": ">=18.0.0"
   },
@@ -146,7 +142,8 @@
     "stylelint": "16.2.1",
     "stylelint-config-standard": "36.0.0",
     "typescript": "^5.3.3",
-    "vite-plugin-node-polyfills": "0.22.0",
+    "vite-plugin-node-polyfills": "0.21.0",
+    "vite-plugin-node-stdlib-browser": "0.2.1",
     "vite-plugin-svgr": "4.2.0"
   }
 }

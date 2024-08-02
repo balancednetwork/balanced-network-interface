@@ -1,50 +1,56 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { addresses } from '@balancednetwork/balanced-js';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
-import Nouislider from 'packages/nouislider-react';
+import Nouislider from '@/packages/nouislider-react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Button, TextButton } from 'app/components/Button';
-import { LineBreak } from 'app/components/Divider';
-import { CurrencyField } from 'app/components/Form';
-import LockBar from 'app/components/LockBar';
-import Modal from 'app/components/Modal';
-import { BoxPanel, BoxPanelWrap } from 'app/components/Panel';
-import Spinner from 'app/components/Spinner';
-import { Typography } from 'app/theme';
-import IconUnstakeSICX from 'assets/icons/timer-color.svg';
-import IconKeepSICX from 'assets/icons/wallet-tick-color.svg';
-import bnJs from 'bnJs';
-import { NETWORK_ID } from 'constants/config';
-import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
-import useWidth from 'hooks/useWidth';
-import { useChangeShouldLedgerSign, useICXUnstakingTime, useShouldLedgerSign } from 'store/application/hooks';
-import { Field } from 'store/collateral/reducer';
+import { Button, TextButton } from '@/app/components/Button';
+import { LineBreak } from '@/app/components/Divider';
+import { CurrencyField } from '@/app/components/Form';
+import LockBar from '@/app/components/LockBar';
+import Modal from '@/app/components/Modal';
+import { BoxPanel, BoxPanelWrap } from '@/app/components/Panel';
+import Spinner from '@/app/components/Spinner';
+import { Typography } from '@/app/theme';
+import IconUnstakeSICX from '@/assets/icons/timer-color.svg';
+import IconKeepSICX from '@/assets/icons/wallet-tick-color.svg';
+import bnJs from '@/bnJs';
+import { NETWORK_ID } from '@/constants/config';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
+import useWidth from '@/hooks/useWidth';
+import {
+  useChangeShouldLedgerSign,
+  useICXUnstakingTime,
+  useShouldLedgerSign,
+  useWalletModal,
+} from '@/store/application/hooks';
+import { Field } from '@/store/collateral/reducer';
 import {
   useCollateralState,
   useCollateralActionHandlers,
-  useCollateralType,
-  useDepositedCollateral,
-  useTotalCollateral,
   useSupportedCollateralTokens,
   useIsHandlingICX,
-  useCollateralDecimalPlaces,
-} from 'store/collateral/hooks';
-import { useLoanActionHandlers, useLockedCollateralAmount } from 'store/loan/hooks';
-import { useRatio } from 'store/ratio/hooks';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX } from 'store/wallet/hooks';
-import { parseUnits } from 'utils';
-import { showMessageOnBeforeUnload } from 'utils/messages';
-
-import CollateralTypeSwitcher, { CollateralTypeSwitcherWrap } from '../CollateralTypeSwitcher';
-import ICXDisplayTypeSwitcher from '../ICXDisplayTypeSwitcher';
-import ModalContent from '../ModalContent';
+  useDerivedCollateralInfo,
+} from '@/store/collateral/hooks';
+import { useLoanActionHandlers, useLockedCollateralAmount } from '@/store/loan/hooks';
+import { useRatio } from '@/store/ratio/hooks';
+import { useTransactionAdder } from '@/store/transactions/hooks';
+import { useHasEnoughICX } from '@/store/wallet/hooks';
+import { parseUnits } from '@/utils';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
+import CollateralTypeSwitcher, { CollateralTypeSwitcherWrap } from '@/app/components/CollateralTypeSwitcher';
+import ModalContent from '@/app/components/ModalContent';
+import ICXDisplayTypeSwitcher from '@/app/components/ICXDisplayTypeSwitcher';
+import XCollateralModal, { XCollateralAction } from './_components/xCollateralModal';
+import { UnderlineText } from '@/app/components/DropdownText';
+import CollateralChainSelector from './_components/CollateralChainSelector';
+import { MODAL_ID, modalActions } from '@/app/pages/trade/bridge/_zustand/useModalStore';
+import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { XWalletType } from '@/app/pages/trade/bridge/types';
 
 export const PanelInfoWrap = styled(Flex)`
   justify-content: space-between;
@@ -86,6 +92,27 @@ export const PanelInfoItem = styled(Box)`
   }
 `;
 
+export const UnderPanel = styled(Flex)`
+  position: static;
+  padding: 32px 15px 12px;
+  margin-top: -21px;
+  background-color: ${({ theme }) => theme.colors.bg2};
+  border-radius: 0 0 15px 15px;
+  color: ${({ theme }) => theme.colors.text};
+
+  svg {
+    margin-top: 10px;
+  }
+
+  ${({ theme }) => theme.mediaWidth.up500`
+    padding: 32px 25px 12px;
+  `}
+
+  ${({ theme }) => theme.mediaWidth.upExtraSmall`
+    padding: 30px 35px 10px;
+  `}
+`;
+
 const UnstakingOption = styled(Flex)<{ isActive: boolean }>`
   padding: 10px 20px;
   margin: 15px;
@@ -109,16 +136,26 @@ enum ICXWithdrawOptions {
 }
 
 const CollateralPanel = () => {
-  const { account } = useIconReact();
+  const {
+    account,
+    sourceChain,
+    collateralType,
+    collateralDeposit,
+    collateralTotal,
+    parsedAmount,
+    collateralDecimalPlaces,
+    formattedAmounts,
+    differenceAmount,
+    xTokenAmount,
+  } = useDerivedCollateralInfo();
+
+  const { isAdjusting, inputType } = useCollateralState();
   const ratio = useRatio();
-  const collateralType = useCollateralType();
   const isHandlingICX = useIsHandlingICX();
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
   const [ICXWithdrawOption, setICXWithdrawOption] = useState<ICXWithdrawOptions>(ICXWithdrawOptions.EMPTY);
-  const collateralDecimalPlaces = useCollateralDecimalPlaces();
   const { data: icxUnstakingTime } = useICXUnstakingTime();
-
-  const isSuperSmall = useMedia(`(max-width: 450px)`);
+  const isSuperSmall = useMedia(`(max-width: 359px)`);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
@@ -126,12 +163,23 @@ const CollateralPanel = () => {
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
 
-  // user interaction logic
-  const { independentField, typedValue, isAdjusting, inputType } = useCollateralState();
-  const dependentField: Field = independentField === Field.LEFT ? Field.RIGHT : Field.LEFT;
-
   const { onFieldAInput, onFieldBInput, onSlide, onAdjust: adjust } = useCollateralActionHandlers();
   const { onAdjust: adjustLoan } = useLoanActionHandlers();
+
+  const collateralDifference = differenceAmount.abs();
+  const shouldDeposit = differenceAmount.isPositive();
+
+  const [storedModalValues, setStoredModalValues] = useState<{
+    amount: string;
+    before: string;
+    after: string;
+    action: XCollateralAction;
+  }>({
+    amount: '',
+    before: '',
+    after: '',
+    action: shouldDeposit ? XCollateralAction.DEPOSIT : XCollateralAction.WITHDRAW,
+  });
 
   const handleEnableAdjusting = () => {
     adjust(true);
@@ -142,42 +190,28 @@ const CollateralPanel = () => {
     adjust(false);
   }, [adjust]);
 
-  const collateralDeposit = useDepositedCollateral();
-  const collateralTotal = useTotalCollateral();
-
-  //  calculate dependentField value
-  const parsedAmount = useMemo(() => {
-    return {
-      [independentField]: new BigNumber(typedValue || '0'),
-      [dependentField]: collateralTotal.minus(new BigNumber(typedValue || '0')),
-    };
-  }, [independentField, dependentField, typedValue, collateralTotal]);
-
-  const formattedAmounts = useMemo(() => {
-    return {
-      [independentField]: typedValue,
-      [dependentField]: parsedAmount[dependentField].isZero()
-        ? '0'
-        : parsedAmount[dependentField].toFixed(collateralDecimalPlaces),
-    };
-  }, [independentField, dependentField, typedValue, parsedAmount, collateralDecimalPlaces]);
-
   const buttonText = collateralDeposit.isZero() ? t`Deposit` : t`Adjust`;
 
   // collateral confirm modal logic & value
   const [open, setOpen] = React.useState(false);
 
-  const toggleOpen = () => {
-    if (shouldLedgerSign) return;
-    setOpen(!open);
-    changeShouldLedgerSign(false);
-  };
+  const isCrossChain = !(sourceChain === '0x1.icon' || sourceChain === '0x2.icon');
 
-  const beforeAmount = collateralDeposit;
-  const afterAmount = parsedAmount[Field.LEFT];
-  const differenceAmount = afterAmount.minus(beforeAmount);
-  const collateralDifference = differenceAmount.abs();
-  const shouldDeposit = differenceAmount.isPositive();
+  const toggleOpen = () => {
+    if (isCrossChain) {
+      setStoredModalValues({
+        amount: `${differenceAmount.dp(collateralDecimalPlaces).toFormat()} ${collateralType}`,
+        before: `${collateralDeposit.dp(collateralDecimalPlaces).toFormat()} ${collateralType}`,
+        after: `${parsedAmount[Field.LEFT].dp(collateralDecimalPlaces).toFormat()} ${collateralType}`,
+        action: shouldDeposit ? XCollateralAction.DEPOSIT : XCollateralAction.WITHDRAW,
+      });
+      modalActions.openModal(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL);
+    } else {
+      if (shouldLedgerSign) return;
+      setOpen(!open);
+      changeShouldLedgerSign(false);
+    }
+  };
 
   const addTransaction = useTransactionAdder();
 
@@ -306,12 +340,13 @@ const CollateralPanel = () => {
   // change slider value if only a user types
   React.useEffect(() => {
     if (inputType === 'text') {
-      sliderInstance.current.noUiSlider.set(afterAmount.toNumber());
+      sliderInstance.current?.noUiSlider.set(parsedAmount[Field.LEFT].toNumber());
     }
-  }, [afterAmount, inputType]);
+  }, [parsedAmount[Field.LEFT], inputType]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
-    sliderInstance.current.noUiSlider.updateOptions(
+    sliderInstance.current?.noUiSlider.updateOptions(
       {
         format: {
           to: (value: number) => value.toFixed(collateralDecimalPlaces),
@@ -320,7 +355,7 @@ const CollateralPanel = () => {
       },
       false,
     );
-  }, [collateralDecimalPlaces]);
+  }, [collateralDecimalPlaces, sliderInstance.current]);
 
   const lockedCollateral = useLockedCollateralAmount();
   const shouldShowLock = !lockedCollateral.isZero();
@@ -336,11 +371,20 @@ const CollateralPanel = () => {
   const hasEnoughICX = useHasEnoughICX();
 
   const [ref, width] = useWidth();
+  const [underPanelRef, underPanelWidth] = useWidth();
+
+  const [, setWalletModal] = useWalletModal();
+  const handleConnect = () => {
+    const chain = xChainMap[sourceChain];
+    if (chain.xWalletType !== XWalletType.COSMOS) {
+      setWalletModal(chain.xWalletType);
+    }
+  };
 
   return (
     <>
       <BoxPanelWrap>
-        <BoxPanel bg="bg3" sx={{ position: 'relative' }}>
+        <BoxPanel bg="bg3" sx={{ position: 'relative' }} className="drop-shadow">
           <Flex
             flexWrap="wrap"
             alignItems={isSuperSmall ? 'flex-start' : 'center'}
@@ -354,82 +398,120 @@ const CollateralPanel = () => {
               <CollateralTypeSwitcher width={width} containerRef={ref.current} />
             </CollateralTypeSwitcherWrap>
 
-            <Flex flexDirection={isSuperSmall ? 'column' : 'row'} ml="auto" paddingTop={isSuperSmall ? '4px' : '0'}>
-              {isAdjusting ? (
-                <>
-                  <TextButton onClick={handleCancelAdjusting} marginBottom={isSuperSmall ? '10px' : '0'}>
-                    <Trans>Cancel</Trans>
-                  </TextButton>
-                  <Button onClick={toggleOpen} fontSize={14}>
-                    <Trans>Confirm</Trans>
+            {account && (
+              <Flex flexDirection={isSuperSmall ? 'column' : 'row'} ml="auto" paddingTop={isSuperSmall ? '4px' : '0'}>
+                {isAdjusting ? (
+                  <>
+                    <TextButton
+                      onClick={handleCancelAdjusting}
+                      marginBottom={isSuperSmall ? '10px' : '0'}
+                      paddingLeft={isSuperSmall ? '25px' : '0 !important'}
+                      paddingRight="17px !important"
+                    >
+                      <Trans>Cancel</Trans>
+                    </TextButton>
+                    <Button onClick={toggleOpen} fontSize={14}>
+                      <Trans>Confirm</Trans>
+                    </Button>
+                  </>
+                ) : (
+                  <Button onClick={handleEnableAdjusting} fontSize={14} disabled={collateralTotal?.isEqualTo(0)}>
+                    {buttonText}
                   </Button>
-                </>
-              ) : (
-                <Button onClick={handleEnableAdjusting} fontSize={14}>
-                  {buttonText}
-                </Button>
-              )}
-            </Flex>
+                )}
+              </Flex>
+            )}
           </Flex>
 
-          {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Locked`} />}
+          {!account && (
+            <Flex minHeight={140} alignItems="center" justifyContent="center">
+              <Typography mr={1}>{t`To deposit ${collateralType}`},</Typography>
+              <Typography color="primaryBright">
+                <UnderlineText onClick={handleConnect}>
+                  <Trans>sign in with</Trans>
+                  {` ${xChainMap[sourceChain].name}`}
+                </UnderlineText>
+              </Typography>
+              <Typography>.</Typography>
+            </Flex>
+          )}
 
-          <Box marginY={6}>
-            <Nouislider
-              id="slider-collateral"
-              disabled={!isAdjusting}
-              start={collateralDeposit.toNumber()}
-              padding={[Math.max(tLockedAmount.dp(collateralDecimalPlaces).toNumber(), 0), 0]}
-              connect={[true, false]}
-              range={{
-                min: [0],
-                max: [
-                  collateralTotal.isZero()
-                    ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
-                    : collateralTotal.dp(collateralDecimalPlaces).toNumber(),
-                ],
-              }}
-              instanceRef={instance => {
-                if (instance) {
-                  sliderInstance.current = instance;
-                }
-              }}
-              onSlide={onSlide}
-            />
-          </Box>
+          {account && (
+            <>
+              {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Locked`} />}
 
-          <PanelInfoWrap>
-            <PanelInfoItem>
-              <CurrencyField
-                editable={isAdjusting}
-                isActive
-                label="Deposited"
-                tooltip={false}
-                value={formattedAmounts[Field.LEFT]}
-                decimalPlaces={collateralDecimalPlaces}
-                currency={isHandlingICX ? 'ICX' : collateralType}
-                maxValue={collateralTotal}
-                onUserInput={onFieldAInput}
-              />
-            </PanelInfoItem>
+              <Box pt={7} pb={isAdjusting ? 5 : 6} style={{ transition: 'all ease 0.3s' }}>
+                <Nouislider
+                  id="slider-collateral"
+                  disabled={!isAdjusting}
+                  start={collateralDeposit.toNumber()}
+                  padding={[Math.max(tLockedAmount.dp(collateralDecimalPlaces).toNumber(), 0), 0]}
+                  connect={[true, false]}
+                  range={{
+                    min: [0],
+                    max: [
+                      collateralTotal.isZero()
+                        ? SLIDER_RANGE_MAX_BOTTOM_THRESHOLD
+                        : collateralTotal.dp(collateralDecimalPlaces).toNumber(),
+                    ],
+                  }}
+                  instanceRef={instance => {
+                    if (instance) {
+                      sliderInstance.current = instance;
+                    }
+                  }}
+                  onSlide={onSlide}
+                />
+              </Box>
 
-            <PanelInfoItem>
-              <CurrencyField
-                editable={isAdjusting}
-                isActive={false}
-                label="Wallet"
-                tooltipText={collateralType === 'sICX' && 'The amount of ICX available to deposit from your wallet.'}
-                value={formattedAmounts[Field.RIGHT]}
-                decimalPlaces={collateralDecimalPlaces}
-                currency={isHandlingICX ? 'ICX' : collateralType}
-                maxValue={collateralTotal}
-                onUserInput={onFieldBInput}
-              />
-            </PanelInfoItem>
-          </PanelInfoWrap>
+              <PanelInfoWrap>
+                <PanelInfoItem>
+                  <CurrencyField
+                    editable={isAdjusting}
+                    isActive
+                    label="Deposited"
+                    tooltip={false}
+                    value={formattedAmounts[Field.LEFT]}
+                    decimalPlaces={collateralDecimalPlaces}
+                    currency={isHandlingICX ? 'ICX' : collateralType}
+                    maxValue={collateralTotal}
+                    onUserInput={onFieldAInput}
+                  />
+                </PanelInfoItem>
+
+                <PanelInfoItem>
+                  <CurrencyField
+                    editable={isAdjusting}
+                    isActive={false}
+                    label="Wallet"
+                    tooltipText={
+                      collateralType === 'sICX' && 'The amount of ICX available to deposit from your wallet.'
+                    }
+                    value={formattedAmounts[Field.RIGHT]}
+                    decimalPlaces={collateralDecimalPlaces}
+                    currency={isHandlingICX ? 'ICX' : collateralType}
+                    maxValue={collateralTotal}
+                    onUserInput={onFieldBInput}
+                  />
+                </PanelInfoItem>
+              </PanelInfoWrap>
+            </>
+          )}
         </BoxPanel>
-        <ICXDisplayTypeSwitcher handleCancelAdjusting={handleCancelAdjusting} />
+        <UnderPanel>
+          <Flex width="100%" justifyContent="space-between" ref={underPanelRef}>
+            <CollateralChainSelector width={underPanelWidth} containerRef={underPanelRef.current} />
+            <ICXDisplayTypeSwitcher handleCancelAdjusting={handleCancelAdjusting} />
+          </Flex>
+        </UnderPanel>
       </BoxPanelWrap>
+
+      <XCollateralModal
+        account={account}
+        currencyAmount={xTokenAmount}
+        sourceChain={sourceChain}
+        storedModalValues={storedModalValues}
+      />
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
         <ModalContent>
@@ -455,7 +537,8 @@ const CollateralPanel = () => {
                 <Trans>Before</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {beforeAmount.dp(collateralDecimalPlaces).toFormat() + (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
+                {collateralDeposit.dp(collateralDecimalPlaces).toFormat() +
+                  (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
               </Typography>
             </Box>
 
@@ -464,7 +547,8 @@ const CollateralPanel = () => {
                 <Trans>After</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {afterAmount.dp(collateralDecimalPlaces).toFormat() + (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
+                {parsedAmount[Field.LEFT].dp(collateralDecimalPlaces).toFormat() +
+                  (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
               </Typography>
             </Box>
           </Flex>

@@ -4,13 +4,13 @@ import ClickAwayListener from 'react-click-away-listener';
 import { Box } from 'rebass';
 import styled from 'styled-components';
 
-import { XChainId } from 'app/pages/trade/bridge/types';
-import { Typography } from 'app/theme';
+import { XChainId } from '@/app/pages/trade/bridge/types';
+import { Typography } from '@/app/theme';
 
 import { StyledArrowDownIcon, UnderlineText } from '../../../../components/DropdownText';
 import { DropdownPopper } from '../../../../components/Popover';
 import ChainList from './ChainList';
-import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
 
 type ChainSelectorProps = {
   chainId: XChainId;

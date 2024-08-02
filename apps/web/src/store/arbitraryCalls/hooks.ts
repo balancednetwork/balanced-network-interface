@@ -2,8 +2,8 @@ import * as React from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { CxMethodInput } from 'hooks/useCxApi';
-import { AppState } from 'store';
+import { CxMethodInput } from '@/hooks/useCxApi';
+import { AppState } from '@/store';
 
 import {
   addCall,

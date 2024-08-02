@@ -1,7 +1,7 @@
 import React from 'react';
 
-import Transfer from 'btp/src/containers/Transfer';
-import store from 'btp/src/store';
+import Transfer from '@/btp/src/containers/Transfer';
+import store from '@/btp/src/store';
 import { Provider } from 'react-redux';
 import { Flex } from 'rebass/styled-components';
 

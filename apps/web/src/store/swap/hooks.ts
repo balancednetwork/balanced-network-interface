@@ -6,13 +6,13 @@ import { t } from '@lingui/macro';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { XChainId, XToken } from 'app/pages/trade/bridge/types';
-import { canBeQueue } from 'constants/currency';
-import { useAllTokens } from 'hooks/Tokens';
-import { PairState, useV2Pair } from 'hooks/useV2Pairs';
-import { useSwapSlippageTolerance } from 'store/application/hooks';
-import { useCrossChainWalletBalances } from 'store/wallet/hooks';
-import { parseUnits } from 'utils';
+import { XChainId, XToken } from '@/app/pages/trade/bridge/types';
+import { canBeQueue } from '@/constants/currency';
+import { useAllTokens } from '@/hooks/Tokens';
+import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
+import { useSwapSlippageTolerance } from '@/store/application/hooks';
+import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { parseUnits } from '@/utils';
 
 import { AppDispatch, AppState } from '../index';
 import {
@@ -27,11 +27,11 @@ import {
   selectChain,
 } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
-import { getXAddress, getXTokenByToken } from 'app/pages/trade/bridge/utils';
-import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
-import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from 'constants/misc';
-import { useAssetManagerTokens } from 'app/pages/trade/bridge/_hooks/useAssetManagerTokens';
+import { getXAddress, getXTokenByToken } from '@/app/pages/trade/bridge/utils';
+import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import useWallets from '@/app/pages/trade/bridge/_hooks/useWallets';
+import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
+import { useAssetManagerTokens } from '@/app/pages/trade/bridge/_hooks/useAssetManagerTokens';
 import BigNumber from 'bignumber.js';
 
 export function useSwapState(): AppState['swap'] {

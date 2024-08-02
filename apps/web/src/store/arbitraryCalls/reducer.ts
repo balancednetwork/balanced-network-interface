@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { CxMethodInput } from 'hooks/useCxApi';
+import { CxMethodInput } from '@/hooks/useCxApi';
 
 export type ArbitraryCallParameterType =
   | 'Address'

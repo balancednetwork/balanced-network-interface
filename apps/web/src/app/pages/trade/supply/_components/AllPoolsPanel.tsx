@@ -4,20 +4,20 @@ import { Trans } from '@lingui/macro';
 import { Flex, Box, Text } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
-import Divider from 'app/components/Divider';
-import PoolLogo from 'app/components/PoolLogo';
-import { MouseoverTooltip } from 'app/components/Tooltip';
-import { Typography } from 'app/theme';
-import QuestionIcon from 'assets/icons/question.svg';
-import { PairInfo } from 'constants/pairs';
-import useSort from 'hooks/useSort';
-import { MIN_LIQUIDITY_TO_INCLUDE, PairData, useAllPairsById } from 'queries/backendv2';
-import { Field } from 'store/mint/reducer';
-import { useDerivedMintInfo, useMintActionHandlers } from 'store/mint/hooks';
-import { getFormattedNumber } from 'utils/formatter';
+import Divider from '@/app/components/Divider';
+import PoolLogo from '@/app/components/PoolLogo';
+import { MouseoverTooltip } from '@/app/components/Tooltip';
+import { Typography } from '@/app/theme';
+import QuestionIcon from '@/assets/icons/question.svg';
+import { PairInfo } from '@/constants/pairs';
+import useSort from '@/hooks/useSort';
+import { MIN_LIQUIDITY_TO_INCLUDE, PairData, useAllPairsById } from '@/queries/backendv2';
+import { Field } from '@/store/mint/reducer';
+import { useDerivedMintInfo, useMintActionHandlers } from '@/store/mint/hooks';
+import { getFormattedNumber } from '@/utils/formatter';
 
-import { MAX_BOOST } from 'app/components/home/BBaln/utils';
-import Skeleton from 'app/components/Skeleton';
+import Skeleton from '@/app/components/Skeleton';
+import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
 
 const List = styled(Box)`
   -webkit-overflow-scrolling: touch;

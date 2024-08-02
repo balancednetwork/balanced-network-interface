@@ -2,9 +2,9 @@ import { BalancedJs } from '@balancednetwork/balanced-js';
 import { omit } from 'lodash-es';
 import styled from 'styled-components';
 
-import { BoxPanel } from 'app/components/Panel';
-import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from 'constants/index';
-import { BIGINT_ZERO } from 'constants/misc';
+import { BoxPanel } from '@/app/components/Panel';
+import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from '@/constants/index';
+import { BIGINT_ZERO } from '@/constants/misc';
 
 import { usePoolPanelContext } from '../PoolPanelContext';
 

@@ -1,10 +1,10 @@
-import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import { XChainId } from 'app/pages/trade/bridge/types';
+import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { XChainId } from '@/app/pages/trade/bridge/types';
 import React from 'react';
 import { Flex } from 'rebass';
-import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
+import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import styled from 'styled-components';
-import { validateAddress } from 'utils';
+import { validateAddress } from '@/utils';
 import Warning from '../Warning';
 
 const InputWrap = styled(Flex)`

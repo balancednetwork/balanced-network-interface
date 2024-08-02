@@ -1,7 +1,7 @@
-import { TransactionResponse } from 'btp/src/type/transaction';
+import { TransactionResponse } from '@/btp/src/type/transaction';
 import { ToastOptions, UpdateOptions } from 'react-toastify';
 
-import { TransactionStatus } from 'store/transactions/hooks';
+import { TransactionStatus } from '@/store/transactions/hooks';
 
 import { chainConfigs, customzeChain } from '../chainConfigs';
 import {

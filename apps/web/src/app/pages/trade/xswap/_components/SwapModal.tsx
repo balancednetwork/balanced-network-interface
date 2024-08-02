@@ -6,27 +6,27 @@ import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Flex, Box } from 'rebass/styled-components';
 
-import { Button, TextButton } from 'app/components/Button';
-import Modal from 'app/components/Modal';
-import { Typography } from 'app/theme';
-import bnJs from 'bnJs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from 'store/application/hooks';
-import { Field } from 'store/swap/reducer';
-import { useHasEnoughICX } from 'store/wallet/hooks';
-import { formatBigNumber, shortenAddress, toDec } from 'utils';
-import { showMessageOnBeforeUnload } from 'utils/messages';
+import { Button, TextButton } from '@/app/components/Button';
+import Modal from '@/app/components/Modal';
+import { Typography } from '@/app/theme';
+import bnJs from '@/bnJs';
+import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from '@/store/application/hooks';
+import { Field } from '@/store/swap/reducer';
+import { useHasEnoughICX } from '@/store/wallet/hooks';
+import { formatBigNumber, shortenAddress, toDec } from '@/utils';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
 
-import ModalContent from 'app/components/ModalContent';
-import Spinner from 'app/components/Spinner';
-import { swapMessage } from 'app/pages/trade/supply/_components/utils';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useSwapState } from 'store/swap/hooks';
-import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from 'constants/misc';
-import { getRlpEncodedSwapData } from 'app/pages/trade/bridge/utils';
+import ModalContent from '@/app/components/ModalContent';
+import Spinner from '@/app/components/Spinner';
+import { swapMessage } from '@/app/pages/trade/supply/_components/utils';
+import { useTransactionAdder } from '@/store/transactions/hooks';
+import { useSwapState } from '@/store/swap/hooks';
+import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
+import { getRlpEncodedSwapData } from '@/app/pages/trade/bridge/utils';
 
 type SwapModalProps = {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (clearInputs?: boolean) => void;
   account: string | undefined;
   recipient: string | undefined;
   currencies: { [field in Field]?: Currency };
@@ -40,11 +40,11 @@ const SwapModal = (props: SwapModalProps) => {
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
-  const handleDismiss = () => {
+  const handleDismiss = (clearInputs = true) => {
     if (shouldLedgerSign) return;
 
     changeShouldLedgerSign(false);
-    onClose?.();
+    onClose?.(clearInputs);
   };
 
   const addTransaction = useTransactionAdder();
@@ -124,7 +124,7 @@ const SwapModal = (props: SwapModalProps) => {
   const hasEnoughICX = useHasEnoughICX();
 
   return (
-    <Modal isOpen={isOpen} onDismiss={handleDismiss}>
+    <Modal isOpen={isOpen} onDismiss={() => handleDismiss(false)}>
       <ModalContent>
         <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
           <Trans>
@@ -197,7 +197,7 @@ const SwapModal = (props: SwapModalProps) => {
           {shouldLedgerSign && <Spinner></Spinner>}
           {!shouldLedgerSign && (
             <>
-              <TextButton onClick={handleDismiss}>
+              <TextButton onClick={() => handleDismiss(false)}>
                 <Trans>Cancel</Trans>
               </TextButton>
               <Button onClick={handleSwapConfirm} disabled={!hasEnoughICX}>

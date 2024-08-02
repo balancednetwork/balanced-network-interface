@@ -3,8 +3,8 @@ import React from 'react';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 
-import { Typography } from 'app/theme';
-import { useTokenPrices } from 'queries/backendv2';
+import { Typography } from '@/app/theme';
+import { useTokenPrices } from '@/queries/backendv2';
 
 const RewardTokenItem = ({ reward }: { reward: CurrencyAmount<Token> }) => {
   const { data: prices } = useTokenPrices();

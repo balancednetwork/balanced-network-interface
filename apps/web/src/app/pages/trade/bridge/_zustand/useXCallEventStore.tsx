@@ -3,7 +3,7 @@ import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { useQuery } from '@tanstack/react-query';
 
-import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
+import { XCallEventType, XChainId } from '@/app/pages/trade/bridge/types';
 import { XCallExecutedEvent, XCallMessageEvent, XCallDestinationEvent } from './types';
 import { xServiceActions } from './useXServiceStore';
 
@@ -264,4 +264,9 @@ export const useXCallEventScanner = (id: string | undefined) => {
     enabled: !!scanner && scanner?.enabled,
     refetchInterval: 1000,
   });
+};
+
+export const useDestinationEvents = (xChainId: XChainId) => {
+  const { destinationXCallEvents } = useXCallEventStore();
+  return destinationXCallEvents[xChainId] ?? [];
 };

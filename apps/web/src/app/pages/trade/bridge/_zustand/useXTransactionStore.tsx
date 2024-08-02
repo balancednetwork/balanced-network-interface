@@ -1,6 +1,6 @@
 import React from 'react';
 import { create } from 'zustand';
-import { devtools, persist, createJSONStorage } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import {
@@ -17,7 +17,7 @@ import { XMessageUpdater, useXMessageStore, xMessageActions } from './useXMessag
 import { swapMessage } from '../../supply/_components/utils';
 import { XChain, XChainId } from '../types';
 import { MODAL_ID, modalActions } from './useModalStore';
-import { formatBigNumber } from 'utils';
+import { formatBigNumber } from '@/utils';
 import BigNumber from 'bignumber.js';
 
 type XTransactionStore = {
@@ -25,10 +25,7 @@ type XTransactionStore = {
   currentId: string | null;
   get: (id: string | null) => XTransaction | undefined;
   // add: (transaction: XTransaction) => void;
-  executeTransfer: (
-    xTransactionInput: XTransactionInput & { cleanupSwap?: () => void },
-    onSuccess?: () => void,
-  ) => void;
+  executeTransfer: (xTransactionInput: XTransactionInput, onSuccess?: () => void) => void;
   createSecondaryMessage: (xTransaction: XTransaction, primaryMessage: XMessage) => void;
   reset: () => void;
   success: (id) => void;
@@ -76,10 +73,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
       //   });
       // },
 
-      executeTransfer: async (
-        xTransactionInput: XTransactionInput & { cleanupSwap?: () => void },
-        onSuccess = () => {},
-      ) => {
+      executeTransfer: async (xTransactionInput: XTransactionInput, onSuccess = () => {}) => {
         const { direction } = xTransactionInput;
         const sourceChainId = direction.from;
         const finalDestinationChainId = direction.to;
@@ -142,9 +136,55 @@ export const useXTransactionStore = create<XTransactionStore>()(
             descriptionAction = `Swap ${_inputTokenSymbol} for ${_outputTokenSymbol}`;
             descriptionAmount = `${_inputAmount} ${_inputTokenSymbol} for ${_outputAmount} ${_outputTokenSymbol}`;
           }
+        } else if (xTransactionInput.type === XTransactionType.DEPOSIT) {
+          const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
+          const _formattedAmount = formatBigNumber(
+            new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
+            'currency',
+          );
+          pendingMessage = `Depositing ${_tokenSymbol} collateral...`;
+          successMessage = `Deposited ${_formattedAmount} ${_tokenSymbol}.`;
+          errorMessage = 'Collateral deposit failed.';
+
+          descriptionAction = `Deposit ${_tokenSymbol} as collateral`;
+          descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+        } else if (xTransactionInput.type === XTransactionType.WITHDRAW) {
+          const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
+          const _formattedAmount = formatBigNumber(
+            new BigNumber(xTransactionInput?.inputAmount.multiply(-1).toFixed() || 0),
+            'currency',
+          );
+          pendingMessage = `Withdrawing ${_tokenSymbol} collateral...`;
+          successMessage = `Withdrew ${_formattedAmount} ${_tokenSymbol}.`;
+          errorMessage = 'Collateral withdrawal failed.';
+
+          descriptionAction = `Withdraw ${_tokenSymbol} collateral`;
+          descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+        } else if (xTransactionInput.type === XTransactionType.BORROW) {
+          const _formattedAmount = formatBigNumber(
+            new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
+            'currency',
+          );
+          pendingMessage = 'Borrowing bnUSD...';
+          successMessage = `Borrowed ${_formattedAmount} bnUSD.`;
+          errorMessage = 'Borrow failed.';
+
+          descriptionAction = `Borrow bnUSD`;
+          descriptionAmount = `${_formattedAmount} bnUSD`;
+        } else if (xTransactionInput.type === XTransactionType.REPAY) {
+          const _formattedAmount = formatBigNumber(
+            new BigNumber(xTransactionInput?.inputAmount.multiply(-1).toFixed() || 0),
+            'currency',
+          );
+          pendingMessage = 'Repaying bnUSD...';
+          successMessage = `Repaid ${_formattedAmount} bnUSD.`;
+          errorMessage = 'Repay failed.';
+
+          descriptionAction = `Repay bnUSD`;
+          descriptionAmount = `${_formattedAmount} bnUSD`;
         }
 
-        xTransactionInput?.cleanupSwap?.();
+        xTransactionInput?.callback?.();
 
         const sourceTransaction = transactionActions.add(sourceChainId, {
           hash: sourceTransactionHash,
@@ -231,6 +271,18 @@ export const useXTransactionStore = create<XTransactionStore>()(
           if (currentXTransaction.type === XTransactionType.BRIDGE) {
             modalActions.closeModal(MODAL_ID.XTRANSFER_CONFIRM_MODAL);
           }
+          if (
+            currentXTransaction.type === XTransactionType.DEPOSIT ||
+            currentXTransaction.type === XTransactionType.WITHDRAW
+          ) {
+            modalActions.closeModal(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL);
+          }
+          if (
+            currentXTransaction.type === XTransactionType.BORROW ||
+            currentXTransaction.type === XTransactionType.REPAY
+          ) {
+            modalActions.closeModal(MODAL_ID.XLOAN_CONFIRM_MODAL);
+          }
         }
 
         set(state => {
@@ -246,6 +298,18 @@ export const useXTransactionStore = create<XTransactionStore>()(
           }
           if (currentXTransaction.type === XTransactionType.BRIDGE) {
             modalActions.closeModal(MODAL_ID.XTRANSFER_CONFIRM_MODAL);
+          }
+          if (
+            currentXTransaction.type === XTransactionType.DEPOSIT ||
+            currentXTransaction.type === XTransactionType.WITHDRAW
+          ) {
+            modalActions.closeModal(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL);
+          }
+          if (
+            currentXTransaction.type === XTransactionType.BORROW ||
+            currentXTransaction.type === XTransactionType.REPAY
+          ) {
+            modalActions.closeModal(MODAL_ID.XLOAN_CONFIRM_MODAL);
           }
         }
 
@@ -332,7 +396,7 @@ export const xTransactionActions = {
   //   useXTransactionStore.getState().add(transaction);
   // },
 
-  executeTransfer: (xTransactionInput: XTransactionInput & { cleanupSwap?: () => void }, onSuccess = () => {}) => {
+  executeTransfer: (xTransactionInput: XTransactionInput, onSuccess = () => {}) => {
     useXTransactionStore.getState().executeTransfer(xTransactionInput, onSuccess);
   },
 

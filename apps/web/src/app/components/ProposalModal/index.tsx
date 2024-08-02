@@ -6,13 +6,13 @@ import { usePrevious } from 'react-use';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Button } from 'app/components/Button';
-import Divider from 'app/components/Divider';
-import Modal from 'app/components/Modal';
-import { Typography } from 'app/theme';
-import CrossIcon from 'assets/icons/failure.svg';
-import TickIcon from 'assets/icons/tick.svg';
-import { useShouldLedgerSign } from 'store/application/hooks';
+import { Button } from '@/app/components/Button';
+import Divider from '@/app/components/Divider';
+import Modal from '@/app/components/Modal';
+import { Typography } from '@/app/theme';
+import CrossIcon from '@/assets/icons/failure.svg';
+import TickIcon from '@/assets/icons/tick.svg';
+import { useShouldLedgerSign } from '@/store/application/hooks';
 
 import ModalContent from '../ModalContent';
 import Spinner from '../Spinner';

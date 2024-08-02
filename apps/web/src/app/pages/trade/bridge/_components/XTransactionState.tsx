@@ -4,9 +4,9 @@ import { Trans } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Box, Flex } from 'rebass';
 
-import { Typography } from 'app/theme';
+import { Typography } from '@/app/theme';
 
-import Spinner from 'app/components/Spinner';
+import Spinner from '@/app/components/Spinner';
 import { XTransaction } from '../_zustand/types';
 import { xMessageActions } from '../_zustand/useXMessageStore';
 

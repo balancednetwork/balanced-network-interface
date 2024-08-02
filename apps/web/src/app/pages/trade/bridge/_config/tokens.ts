@@ -1,8 +1,8 @@
 import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
 import { Token } from '@balancednetwork/sdk-core';
 
-import { NETWORK_ID } from 'constants/config';
-import { TokenMap } from 'constants/tokens';
+import { NETWORK_ID } from '@/constants/config';
+import { TokenMap } from '@/constants/tokens';
 import { XToken, XTokenMap } from '../types';
 
 // disable prettier printWidth rule

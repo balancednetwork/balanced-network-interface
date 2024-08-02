@@ -5,41 +5,41 @@ import { AnimatePresence, motion } from 'framer-motion';
 import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
 import { Flex, Box } from 'rebass/styled-components';
-import ExternalIcon from 'assets/icons/external.svg';
+import ExternalIcon from '@/assets/icons/external.svg';
 import styled from 'styled-components';
 
-import { useArchwayContext } from 'packages/archway/ArchwayProvider';
-import { UnderlineTextWithArrow } from 'app/components/DropdownText';
-import { Link } from 'app/components/Link';
-import { MenuList, LanguageMenuItem } from 'app/components/Menu';
-import Modal, { ModalProps } from 'app/components/Modal';
-import { Typography } from 'app/theme';
-import ArchWalletIcon from 'assets/icons/chains/archway.svg';
-import IconWalletIcon from 'assets/icons/wallets/iconex.svg';
-import HavahWalletIcon from 'assets/icons/chains/havah.svg';
-import InjectiveWalletIcon from 'assets/icons/chains/injective.svg';
+import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
+import { UnderlineTextWithArrow } from '@/app/components/DropdownText';
+import { Link } from '@/app/components/Link';
+import { MenuList, LanguageMenuItem } from '@/app/components/Menu';
+import Modal, { ModalProps } from '@/app/components/Modal';
+import { Typography } from '@/app/theme';
+import ArchWalletIcon from '@/assets/icons/chains/archway.svg';
+import IconWalletIcon from '@/assets/icons/wallets/iconex.svg';
+import HavahWalletIcon from '@/assets/icons/chains/havah.svg';
+import InjectiveWalletIcon from '@/assets/icons/chains/injective.svg';
+import ETHIcon from '@/assets/icons/chains/eth.svg';
 
-import ETHIcon from 'assets/icons/chains/eth.svg';
-import { LOCALE_LABEL, SupportedLocale, SUPPORTED_LOCALES } from 'constants/locales';
-import { useActiveLocale } from 'hooks/useActiveLocale';
-import { useWalletModalToggle, useModalOpen, useWalletModal } from 'store/application/hooks';
-import { ApplicationModal } from 'store/application/reducer';
+import { LOCALE_LABEL, SupportedLocale, SUPPORTED_LOCALES } from '@/constants/locales';
+import { useActiveLocale } from '@/hooks/useActiveLocale';
+import { useWalletModalToggle, useModalOpen, useWalletModal } from '@/store/application/hooks';
+import { ApplicationModal } from '@/store/application/reducer';
 
 import { DropdownPopper } from '../Popover';
 import WalletItem from './WalletItem';
 import { IconWalletModal } from './IconWalletModal';
 import { EVMWalletModal } from './EVMWalletModal';
-import { XWalletType } from 'app/pages/trade/bridge/types';
-import { useHavahContext } from 'packages/havah/HavahProvider';
-import useWallets, { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
-import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { XWalletType } from '@/app/pages/trade/bridge/types';
+import { useHavahContext } from '@/packages/havah/HavahProvider';
+import useWallets, { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
+import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
 import { useSwitchChain } from 'wagmi';
 import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
-import useDebounce from 'hooks/useDebounce';
+import useDebounce from '@/hooks/useDebounce';
 import Divider from '../Divider';
 import { TextButton } from '../Button';
-import { MODAL_ID, modalActions } from 'app/pages/trade/bridge/_zustand/useModalStore';
-import { InjectiveWalletOptionsModal } from 'packages/injective/InjectiveWalletOptionsModal';
+import { MODAL_ID, modalActions } from '@/app/pages/trade/bridge/_zustand/useModalStore';
+import { InjectiveWalletOptionsModal } from '@/packages/injective/InjectiveWalletOptionsModal';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {
@@ -58,18 +58,13 @@ export default function WalletModal() {
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
   const toggleWalletModal = useWalletModalToggle();
   const [, setWalletModal] = useWalletModal();
-  const signedInWallets = useSignedInWallets();
   const { connectToWallet: connectToKeplr } = useArchwayContext();
   const { connectToWallet: connectToHavah } = useHavahContext();
-
+  const signedInWallets = useSignedInWallets();
   const wallets = useWallets();
-
   const { switchChain } = useSwitchChain();
-
-  //
   const activeLocale = useActiveLocale();
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
-
   const arrowRef = React.useRef(null);
 
   const toggleMenu = (e: React.MouseEvent<HTMLElement>) => {
@@ -86,7 +81,7 @@ export default function WalletModal() {
     }
   }, [walletModalOpen, closeMenu]);
 
-  const numberOfConnectedWallets = Object.values(wallets).filter(w => !!w.account).length;
+  const numberOfConnectedWallets = signedInWallets.filter(wallet => !!wallet.address && !!wallet.xChainId).length;
   const isLoggedInSome = numberOfConnectedWallets > 0;
   const [chainQuery, setChainQuery] = useState('');
   const debouncedQuery = useDebounce(chainQuery, 200);
@@ -105,7 +100,7 @@ export default function WalletModal() {
       logo: <IconWalletIcon width="32" />,
       connect: () => setWalletModal(XWalletType.ICON),
       disconnect: wallets[XWalletType.ICON].disconnect,
-      description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer crypto cross-chain.`,
+      description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer cross-chain.`,
       keyWords: ['iconex', 'hana'],
       address: wallets[XWalletType.ICON].account,
       xChains: undefined,
@@ -119,7 +114,7 @@ export default function WalletModal() {
           logo: <ETHIcon width="32" />,
           connect: () => setWalletModal(XWalletType.EVM),
           disconnect: wallets[XWalletType.EVM].disconnect,
-          description: t`Swap & transfer crypto cross-chain.`,
+          description: t`Borrow bnUSD. Swap & transfer cross-chain.`,
           keyWords: [
             'evm',
             'ethereum',
@@ -154,7 +149,7 @@ export default function WalletModal() {
           logo: <ArchWalletIcon width="32" />,
           connect: connectToKeplr,
           disconnect: wallets[XWalletType.COSMOS].disconnect,
-          description: t`Swap & transfer crypto cross-chain.`,
+          description: t`Swap & transfer cross-chain.`,
           keyWords: ['archway', 'cosmos', 'keplr', 'leap'],
           address: wallets[XWalletType.COSMOS].account,
           xChains: undefined,
@@ -266,7 +261,7 @@ export default function WalletModal() {
             <Typography textAlign="center" as="div" maxWidth={300} mx="auto" mt={2}>
               <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
               <Box pt={'5px'}>
-                <Link href="https://balanced.network/disclaimer/" target="_blank">
+                <Link href="https://balanced.network/disclaimer/" target="_blank" tabIndex={-1}>
                   <Trans>View disclaimer.</Trans>
                   <ExternalIcon width="11" height="11" style={{ marginLeft: '7px', marginTop: '-3px' }} />
                 </Link>

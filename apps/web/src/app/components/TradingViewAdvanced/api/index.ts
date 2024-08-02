@@ -8,11 +8,11 @@ import {
   ResolveCallback,
   SubscribeBarsCallback,
   PeriodParams,
-} from 'charting_library/charting_library';
-import { DatafeedConfiguration } from 'charting_library/datafeed-api';
+} from '@/charting_library/charting_library';
+import { DatafeedConfiguration } from '@/charting_library/datafeed-api';
 
-import { SUPPORTED_PAIRS } from 'constants/pairs';
-import { formatBarItem } from 'queries/swap';
+import { SUPPORTED_PAIRS } from '@/constants/pairs';
+import { formatBarItem } from '@/queries/swap';
 
 import { getHistoryBars } from './history';
 import { BalancedLibrarySymbolInfo, getFilteredSupportedPairNames, getSymbolInfo } from './symbols';

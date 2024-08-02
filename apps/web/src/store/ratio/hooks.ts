@@ -3,8 +3,8 @@ import { useCallback } from 'react';
 import { BalancedJs } from '@balancednetwork/balanced-js';
 import { useDispatch, useSelector } from 'react-redux';
 
-import bnJs from 'bnJs';
-import useInterval from 'hooks/useInterval';
+import bnJs from '@/bnJs';
+import useInterval from '@/hooks/useInterval';
 
 import { AppState } from '..';
 import { changeRatioValue } from './reducer';

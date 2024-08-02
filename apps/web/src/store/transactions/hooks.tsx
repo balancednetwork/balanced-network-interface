@@ -1,12 +1,12 @@
 import React, { useCallback, useMemo } from 'react';
 
 import { t } from '@lingui/macro';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
-import { NotificationPending, NotificationError } from 'app/components/Notification/TransactionNotification';
-import { getTrackerLink } from 'utils';
+import { NotificationPending, NotificationError } from '@/app/components/Notification/TransactionNotification';
+import { getTrackerLink } from '@/utils';
 
 import { AppDispatch, AppState } from '../index';
 import { addTransaction, ICONTxEventLog } from './actions';

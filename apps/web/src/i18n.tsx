@@ -1,8 +1,8 @@
 import React, { ReactNode, useCallback } from 'react';
 
-import { SupportedLocale } from 'constants/locales';
-import { initialLocale, useActiveLocale } from 'hooks/useActiveLocale';
-import { useUserLocaleManager } from 'store/user/hooks';
+import { SupportedLocale } from '@/constants/locales';
+import { initialLocale, useActiveLocale } from '@/hooks/useActiveLocale';
+import { useUserLocaleManager } from '@/store/user/hooks';
 
 import { dynamicActivate, Provider } from './lib/i18n';
 

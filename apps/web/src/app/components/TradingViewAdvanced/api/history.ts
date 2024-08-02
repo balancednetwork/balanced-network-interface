@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 
-import { API_ENDPOINT } from 'queries/constants';
+import { API_ENDPOINT } from '@/queries/constants';
 
 export const getHistoryBars = (
   pair: number,

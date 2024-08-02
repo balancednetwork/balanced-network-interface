@@ -4,8 +4,8 @@ import { t, Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import { useTheme } from 'styled-components';
 
-import { Typography } from 'app/theme';
-import { useChangeCommunityConfig, useTokenListConfig } from 'store/lists/hooks';
+import { Typography } from '@/app/theme';
+import { useChangeCommunityConfig, useTokenListConfig } from '@/store/lists/hooks';
 
 import { Button, TextButton } from '../Button';
 import Divider from '../Divider';

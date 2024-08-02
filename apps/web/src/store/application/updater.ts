@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import Block from 'icon-sdk-js/build/data/Formatter/Block';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 
-import useDebounce from 'hooks/useDebounce';
-import useInterval from 'hooks/useInterval';
-import useIsWindowVisible from 'hooks/useIsWindowVisible';
-import { useAppDispatch } from 'store/hooks';
+import useDebounce from '@/hooks/useDebounce';
+import useInterval from '@/hooks/useInterval';
+import useIsWindowVisible from '@/hooks/useIsWindowVisible';
+import { useAppDispatch } from '@/store/hooks';
 
 import { updateBlockNumber, updateChainId } from './reducer';
 

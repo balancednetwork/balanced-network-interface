@@ -5,11 +5,10 @@ import duration from 'dayjs/plugin/duration';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Typography } from 'app/theme';
-import { ProposalInterface } from 'types';
-import { normalizeContent } from 'utils';
+import { Typography } from '@/app/theme';
+import { ProposalInterface } from '@/types';
+import { normalizeContent } from '@/utils';
 
-import { notificationCSS } from '../ICONWallet/wallets/utils';
 import {
   ApprovalLabel,
   RejectionLabel,
@@ -19,6 +18,7 @@ import {
   VoteStatusLabel,
 } from './components';
 import Skeleton from '../Skeleton';
+import { notificationCSS } from '../Wallet/ICONWallets/utils';
 
 dayjs.extend(duration);
 

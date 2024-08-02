@@ -1,7 +1,7 @@
 import { TabList, Tab } from '@reach/tabs';
 import styled, { css } from 'styled-components';
 
-import { Link } from 'app/components/Link';
+import { Link } from '@/app/components/Link';
 
 export const StyledTabList = styled(TabList)`
   &[data-reach-tab-list] {

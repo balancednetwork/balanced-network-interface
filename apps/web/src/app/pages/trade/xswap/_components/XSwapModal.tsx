@@ -6,20 +6,20 @@ import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 
-import { XChainId, XToken } from 'app/pages/trade/bridge/types';
-import { getNetworkDisplayName } from 'app/pages/trade/bridge/utils';
-import { Typography } from 'app/theme';
-import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from 'store/application/hooks';
-import { Field } from 'store/swap/reducer';
-import { formatBigNumber, shortenAddress } from 'utils';
+import { XChainId, XToken } from '@/app/pages/trade/bridge/types';
+import { getNetworkDisplayName } from '@/app/pages/trade/bridge/utils';
+import { Typography } from '@/app/theme';
+import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from '@/store/application/hooks';
+import { Field } from '@/store/swap/reducer';
+import { formatBigNumber, shortenAddress } from '@/utils';
 
-import { Button, TextButton } from 'app/components/Button';
-import Modal from 'app/components/Modal';
-import Spinner from 'app/components/Spinner';
-import ModalContent from 'app/components/ModalContent';
-import useXCallFee from 'app/pages/trade/bridge/_hooks/useXCallFee';
-import { showMessageOnBeforeUnload } from 'utils/messages';
-import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks/useApproveCallback';
+import { Button, TextButton } from '@/app/components/Button';
+import Modal from '@/app/components/Modal';
+import Spinner from '@/app/components/Spinner';
+import ModalContent from '@/app/components/ModalContent';
+import useXCallFee from '@/app/pages/trade/bridge/_hooks/useXCallFee';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
+import { ApprovalState, useApproveCallback } from '@/app/pages/trade/bridge/_hooks/useApproveCallback';
 import { xChainMap } from '../../bridge/_config/xChains';
 import { useModalStore, modalActions, MODAL_ID } from '../../bridge/_zustand/useModalStore';
 import { XTransactionType, XTransactionInput } from '../../bridge/_zustand/types';
@@ -34,7 +34,7 @@ import { useCreateWalletXService } from '../../bridge/_zustand/useXServiceStore'
 import useWallets from '../../bridge/_hooks/useWallets';
 import { useSwitchChain } from 'wagmi';
 import { StyledButton } from './shared';
-import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from 'constants/misc';
+import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
 
 type XSwapModalProps = {
   account: string | undefined;
@@ -104,7 +104,7 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
     if (!xCallFee) return;
     if (!_inputAmount) return;
 
-    const xTransactionInput: XTransactionInput & { cleanupSwap: () => void } = {
+    const xTransactionInput: XTransactionInput = {
       type: XTransactionType.SWAP,
       direction,
       executionTrade,
@@ -113,7 +113,7 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
       inputAmount: _inputAmount,
       slippageTolerance,
       xCallFee,
-      cleanupSwap,
+      callback: cleanupSwap,
     };
 
     await xTransactionActions.executeTransfer(xTransactionInput);
@@ -217,7 +217,7 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
                 ) : isProcessing ? (
                   <>
                     <StyledButton disabled $loading>
-                      <Trans>Swap in progress</Trans>
+                      <Trans>Swapping</Trans>
                     </StyledButton>
                   </>
                 ) : (

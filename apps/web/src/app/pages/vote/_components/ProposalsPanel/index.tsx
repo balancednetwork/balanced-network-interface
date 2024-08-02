@@ -1,23 +1,23 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { Link } from 'react-router-dom';
 import { Flex } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
 
-import { ButtonLink } from 'app/components/Button';
-import Divider from 'app/components/Divider';
-import { UnderlineText } from 'app/components/DropdownText';
-import { BoxPanel } from 'app/components/Panel';
-import { VoteDateEndLabel, VoteStatusLabel } from 'app/components/ProposalInfo/components';
-import { Typography } from 'app/theme';
-import { useTotalProposalQuery, useActiveProposals } from 'queries/vote';
-import { useBBalnAmount } from 'store/bbaln/hooks';
-import { normalizeContent } from 'utils';
+import { ButtonLink } from '@/app/components/Button';
+import Divider from '@/app/components/Divider';
+import { UnderlineText } from '@/app/components/DropdownText';
+import { BoxPanel } from '@/app/components/Panel';
+import { VoteDateEndLabel, VoteStatusLabel } from '@/app/components/ProposalInfo/components';
+import { Typography } from '@/app/theme';
+import { useTotalProposalQuery, useActiveProposals } from '@/queries/vote';
+import { useBBalnAmount } from '@/store/bbaln/hooks';
+import { normalizeContent } from '@/utils';
 
 import { Grid, ProposalPreview, StyledTypography } from '../styledComponents';
-import Skeleton from 'app/components/Skeleton';
+import Skeleton from '@/app/components/Skeleton';
 
 const MetaWrap = styled.div`
   display: flex;

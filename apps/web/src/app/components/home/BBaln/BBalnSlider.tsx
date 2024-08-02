@@ -4,27 +4,27 @@ import { addresses } from '@balancednetwork/balanced-js';
 import { Fraction } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
-import Nouislider from 'packages/nouislider-react';
+import { useIconReact } from '@/packages/icon-react';
+import Nouislider from '@/packages/nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Button, TextButton } from 'app/components/Button';
-import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
-import Divider from 'app/components/Divider';
-import { UnderlineTextWithArrow } from 'app/components/DropdownText';
-import { MenuItem, MenuList } from 'app/components/Menu';
-import Modal from 'app/components/Modal';
-import ModalContent from 'app/components/ModalContent';
-import Spinner from 'app/components/Spinner';
-import Tooltip from 'app/components/Tooltip';
-import { Typography } from 'app/theme';
-import QuestionIcon from 'assets/icons/question.svg';
-import bnJs from 'bnJs';
-import { NETWORK_ID } from 'constants/config';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { Button, TextButton } from '@/app/components/Button';
+import CurrencyBalanceErrorMessage from '@/app/components/CurrencyBalanceErrorMessage';
+import Divider from '@/app/components/Divider';
+import { UnderlineTextWithArrow } from '@/app/components/DropdownText';
+import { MenuItem, MenuList } from '@/app/components/Menu';
+import Modal from '@/app/components/Modal';
+import ModalContent from '@/app/components/ModalContent';
+import Spinner from '@/app/components/Spinner';
+import Tooltip from '@/app/components/Tooltip';
+import { Typography } from '@/app/theme';
+import QuestionIcon from '@/assets/icons/question.svg';
+import bnJs from '@/bnJs';
+import { NETWORK_ID } from '@/constants/config';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import {
   useBBalnAmount,
   useLockedBaln,
@@ -39,17 +39,15 @@ import {
   useSources,
   useTimeRemaining,
   usePastMonthFeesDistributed,
-} from 'store/bbaln/hooks';
-import { usePowerLeft } from 'store/liveVoting/hooks';
-import { useHasAnyKindOfRewards } from 'store/reward/hooks';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useBALNDetails, useHasEnoughICX } from 'store/wallet/hooks';
-import { parseUnits } from 'utils';
-import { getFormattedNumber } from 'utils/formatter';
-import { showMessageOnBeforeUnload } from 'utils/messages';
+} from '@/store/bbaln/hooks';
+import { usePowerLeft } from '@/store/liveVoting/hooks';
+import { useHasAnyKindOfRewards } from '@/store/reward/hooks';
+import { useTransactionAdder } from '@/store/transactions/hooks';
+import { useBALNDetails, useHasEnoughICX } from '@/store/wallet/hooks';
+import { parseUnits } from '@/utils';
+import { getFormattedNumber } from '@/utils/formatter';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
 
-import { DropdownPopper } from '../../Popover';
-import QuestionHelper, { QuestionWrapper } from '../../QuestionHelper';
 import { MetaData } from '../PositionDetailPanel';
 import { BalnPreviewInput, ButtonsWrap, SliderWrap, Threshold } from './styledComponents';
 import { LockedPeriod } from './types';
@@ -62,7 +60,9 @@ import {
   getWeekOffsetTimestamp,
   comparePeriods,
 } from './utils';
-import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
+import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
+import { DropdownPopper } from '@/app/components/Popover';
 
 const StyledThreshold = styled(Threshold)`
   height: 20px;

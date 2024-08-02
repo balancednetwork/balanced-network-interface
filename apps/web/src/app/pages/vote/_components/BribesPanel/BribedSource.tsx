@@ -3,30 +3,30 @@ import React from 'react';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { Button, TextButton } from 'app/components/Button';
-import Divider from 'app/components/Divider';
-import { getClosestUnixWeekStart } from 'app/components/home/BBaln/utils';
-import Modal from 'app/components/Modal';
-import ModalContent from 'app/components/ModalContent';
-import Spinner from 'app/components/Spinner';
-import { Typography } from 'app/theme';
-import bnJs from 'bnJs';
-import { useAllTokensByAddress } from 'queries/backendv2';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { useBBalnAmount } from 'store/bbaln/hooks';
-import { useNextUpdateDate, useSourceVoteData, useUserVoteData } from 'store/liveVoting/hooks';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX } from 'store/wallet/hooks';
-import { getFormattedNumber } from 'utils/formatter';
-import { showMessageOnBeforeUnload } from 'utils/messages';
+import { Button, TextButton } from '@/app/components/Button';
+import Divider from '@/app/components/Divider';
+import Modal from '@/app/components/Modal';
+import ModalContent from '@/app/components/ModalContent';
+import Spinner from '@/app/components/Spinner';
+import { Typography } from '@/app/theme';
+import bnJs from '@/bnJs';
+import { useAllTokensByAddress } from '@/queries/backendv2';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
+import { useBBalnAmount } from '@/store/bbaln/hooks';
+import { useNextUpdateDate, useSourceVoteData, useUserVoteData } from '@/store/liveVoting/hooks';
+import { useTransactionAdder } from '@/store/transactions/hooks';
+import { useHasEnoughICX } from '@/store/wallet/hooks';
+import { getFormattedNumber } from '@/utils/formatter';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
 
 import { formatTimeLeft } from '../utils';
 import { Bribe } from './types';
-import Skeleton from 'app/components/Skeleton';
+import Skeleton from '@/app/components/Skeleton';
+import { getClosestUnixWeekStart } from '@/app/components/home/BBaln/utils';
 
 const BribedSourceWrap = styled.div`
   padding: 25px;

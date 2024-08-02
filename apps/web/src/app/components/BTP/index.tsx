@@ -8,31 +8,31 @@ import {
   checkIRC2Token,
   getCustomizedChainList,
   getTokenList,
-} from 'btp/src/connectors/chainConfigs';
-import { CHAIN_NAME } from 'btp/src/connectors/chainCustomization';
-import { ADDRESS_LOCAL_STORAGE } from 'btp/src/connectors/constants';
-import { addICONexListener, setBalance } from 'btp/src/connectors/ICONex';
-import { getBalance, getBTPfee } from 'btp/src/connectors/ICONex/ICONServices';
-import { toCheckAddress } from 'btp/src/connectors/MetaMask/utils';
-import { useGetBTPService } from 'btp/src/hooks/useService';
-import { useTokenBalance } from 'btp/src/hooks/useTokenBalance';
-import store, { BTPAppDispatch, BTPContext, useBTPDispatch, useBTPSelector } from 'btp/src/store';
-import { useFromNetwork, useSelectNetworkDst, useSelectNetworkSrc, useToNetwork } from 'btp/src/store/bridge/hooks';
-import { accountSelector, setAccountInfo } from 'btp/src/store/models/account';
+} from '@/btp/src/connectors/chainConfigs';
+import { CHAIN_NAME } from '@/btp/src/connectors/chainCustomization';
+import { ADDRESS_LOCAL_STORAGE } from '@/btp/src/connectors/constants';
+import { addICONexListener, setBalance } from '@/btp/src/connectors/ICONex';
+import { getBalance, getBTPfee } from '@/btp/src/connectors/ICONex/ICONServices';
+import { toCheckAddress } from '@/btp/src/connectors/MetaMask/utils';
+import { useGetBTPService } from '@/btp/src/hooks/useService';
+import { useTokenBalance } from '@/btp/src/hooks/useTokenBalance';
+import store, { BTPAppDispatch, BTPContext, useBTPDispatch, useBTPSelector } from '@/btp/src/store';
+import { useFromNetwork, useSelectNetworkDst, useSelectNetworkSrc, useToNetwork } from '@/btp/src/store/bridge/hooks';
+import { accountSelector, setAccountInfo } from '@/btp/src/store/models/account';
 import { Trans } from 'react-i18next';
 import { Provider } from 'react-redux';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Button, TextButton } from 'app/components/Button';
-import Divider from 'app/components/Divider';
-import Modal, { ModalProps } from 'app/components/Modal';
-import { Typography } from 'app/theme';
-import ArrowIcon from 'assets/icons/arrow.svg';
-import { useModalOpen, useTransferAssetsModalToggle } from 'store/application/hooks';
-import { ApplicationModal } from 'store/application/reducer';
-import { TransactionStatus } from 'store/transactions/hooks';
-import { EVENTS, on, off } from 'utils/customEvent';
+import { Button, TextButton } from '@/app/components/Button';
+import Divider from '@/app/components/Divider';
+import Modal, { ModalProps } from '@/app/components/Modal';
+import { Typography } from '@/app/theme';
+import ArrowIcon from '@/assets/icons/arrow.svg';
+import { useModalOpen, useTransferAssetsModalToggle } from '@/store/application/hooks';
+import { ApplicationModal } from '@/store/application/reducer';
+import { TransactionStatus } from '@/store/transactions/hooks';
+import { EVENTS, on, off } from '@/utils/customEvent';
 
 import { ExternalLink } from '../SearchModal/components';
 import Address from './Address';

@@ -379,8 +379,11 @@ importers:
         specifier: ^5.3.3
         version: 5.4.2
       vite-plugin-node-polyfills:
-        specifier: 0.22.0
-        version: 0.22.0(rollup@4.13.0)(vite@5.1.4(@types/node@20.11.29)(terser@5.30.3))
+        specifier: 0.21.0
+        version: 0.21.0(rollup@4.13.0)(vite@5.1.4(@types/node@20.11.29)(terser@5.30.3))
+      vite-plugin-node-stdlib-browser:
+        specifier: 0.2.1
+        version: 0.2.1(node-stdlib-browser@1.2.0)(rollup@4.13.0)(vite@5.1.4(@types/node@20.11.29)(terser@5.30.3))
       vite-plugin-svgr:
         specifier: 4.2.0
         version: 4.2.0(rollup@4.13.0)(typescript@5.4.2)(vite@5.1.4(@types/node@20.11.29)(terser@5.30.3))
@@ -10679,10 +10682,16 @@ packages:
     resolution: {integrity: sha512-LII3bXRFBZLlezoG5FfZVcXflZgWP/4dCwKtxd5ky9+LOtM4CS3bIRQsmR1KMnMW07jpE8fqR2lcxPZ+8sJIcw==}
     engines: {node: '>= 0.10'}
 
-  vite-plugin-node-polyfills@0.22.0:
-    resolution: {integrity: sha512-F+G3LjiGbG8QpbH9bZ//GSBr9i1InSTkaulfUHFa9jkLqVGORFBoqc2A/Yu5Mmh1kNAbiAeKeK+6aaQUf3x0JA==}
+  vite-plugin-node-polyfills@0.21.0:
+    resolution: {integrity: sha512-Sk4DiKnmxN8E0vhgEhzLudfJQfaT8k4/gJ25xvUPG54KjLJ6HAmDKbr4rzDD/QWEY+Lwg80KE85fGYBQihEPQA==}
     peerDependencies:
       vite: ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0
+
+  vite-plugin-node-stdlib-browser@0.2.1:
+    resolution: {integrity: sha512-6u2i613Dkqj5KaTNIrnZvE6y3/awWAp0S5TjucTvGxdhetftB1Mgvblc+nwYzlw6sntPlac8UOC7ttXNh+LZKA==}
+    peerDependencies:
+      node-stdlib-browser: ^1.2.0
+      vite: ^2.0.0 || ^3.0.0 || ^4.0.0
 
   vite-plugin-svgr@4.2.0:
     resolution: {integrity: sha512-SC7+FfVtNQk7So0XMjrrtLAbEC8qjFPifyD7+fs/E6aaNdVde6umlVVh0QuwDLdOMu7vp5RiGFsB70nj5yo0XA==}
@@ -24801,7 +24810,15 @@ snapshots:
       remove-trailing-separator: 1.1.0
       replace-ext: 1.0.1
 
-  vite-plugin-node-polyfills@0.22.0(rollup@4.13.0)(vite@5.1.4(@types/node@20.11.29)(terser@5.30.3)):
+  vite-plugin-node-polyfills@0.21.0(rollup@4.13.0)(vite@5.1.4(@types/node@20.11.29)(terser@5.30.3)):
+    dependencies:
+      '@rollup/plugin-inject': 5.0.5(rollup@4.13.0)
+      node-stdlib-browser: 1.2.0
+      vite: 5.1.4(@types/node@20.11.29)(terser@5.30.3)
+    transitivePeerDependencies:
+      - rollup
+
+  vite-plugin-node-stdlib-browser@0.2.1(node-stdlib-browser@1.2.0)(rollup@4.13.0)(vite@5.1.4(@types/node@20.11.29)(terser@5.30.3)):
     dependencies:
       '@rollup/plugin-inject': 5.0.5(rollup@4.13.0)
       node-stdlib-browser: 1.2.0

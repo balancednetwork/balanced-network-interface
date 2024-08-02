@@ -2,9 +2,9 @@ import { IndexerGrpcAccountPortfolioApi, IndexerRestExplorerApi } from '@injecti
 import { getNetworkEndpoints, Network } from '@injectivelabs/networks';
 import { IndexerGrpcExplorerApi } from '@injectivelabs/sdk-ts';
 
-import { injective } from 'app/pages/trade/bridge/_config/xChains';
+import { injective } from '@/app/pages/trade/bridge/_config/xChains';
 
-import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
+import { XCallEventType, XChainId } from '@/app/pages/trade/bridge/types';
 import { AbstractPublicXService } from './types';
 import {
   TransactionStatus,

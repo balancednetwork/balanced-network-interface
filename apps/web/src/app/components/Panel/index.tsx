@@ -21,7 +21,7 @@ export const BoxPanel = styled(Box)<{
   border?: string;
   borderRadius?: string;
 }>`
-  border-radius: 10px;
+  border-radius: 15px;
   padding: 15px;
   padding: ${({ padding }) => padding};
   border-radius: ${({ borderRadius }) => borderRadius};
@@ -31,7 +31,7 @@ export const BoxPanel = styled(Box)<{
   `};
 
   ${({ theme }) => theme.mediaWidth.upExtraSmall`
-    padding: 35px;
+    padding: 35px 35px 30px 35px;
   `}
 `;
 

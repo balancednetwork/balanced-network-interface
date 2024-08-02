@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { Token } from '@balancednetwork/sdk-core';
 import { TokenInfo } from '@uniswap/token-lists';
 
-import { isAddress } from 'utils';
+import { isAddress } from '@/utils';
 
 const alwaysTrue = () => true;
 

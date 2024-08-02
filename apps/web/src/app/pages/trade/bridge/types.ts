@@ -1,10 +1,15 @@
-import { Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Event } from '@cosmjs/cosmwasm-stargate';
+import BigNumber from 'bignumber.js';
 
 export enum XWalletType {
   ICON,
   COSMOS,
   EVM,
+  EVM_ARBITRUM,
+  EVM_AVALANCHE,
+  EVM_BSC,
+  EVM_BASE,
   HAVAH,
   INJECTIVE,
 }
@@ -179,3 +184,30 @@ export class XToken extends Token {
 }
 
 export type XTokenMap = { [key: string | number]: XToken };
+
+export type XWalletAssetRecord = {
+  baseToken: Token;
+  xTokenAmounts: { [key in XChainId]: CurrencyAmount<Currency> | undefined };
+  isBalanceSingleChain: boolean;
+  total: BigNumber;
+  value: BigNumber | undefined;
+};
+
+export type Position = {
+  collateral: CurrencyAmount<Currency> | undefined;
+  loan: BigNumber;
+  isPotential?: boolean;
+};
+
+export type XPositionsRecord = {
+  baseToken: Token;
+  positions: Partial<{ [key in XChainId]: Position }>;
+  isPositionSingleChain: boolean;
+};
+
+export type XCollaterals = {
+  baseToken: Token;
+  chains: Partial<{ [key in XChainId]: {} }>;
+  isCollateralSingleChain: boolean;
+  total: Position;
+};

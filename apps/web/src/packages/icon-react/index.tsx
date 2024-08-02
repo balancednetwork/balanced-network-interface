@@ -9,10 +9,10 @@ import {
   ICONexRequestEvent,
   ICONexRequestEventType,
   ICONexResponseEventType,
-} from 'packages/iconex';
+} from '@/packages/iconex';
 
-import bnJs from 'bnJs';
-import { useLocalStorageWithExpiry } from 'hooks/useLocalStorage';
+import bnJs from '@/bnJs';
+import { useLocalStorageWithExpiry } from '@/hooks/useLocalStorage';
 
 export const GOVERNANCE_BASE_ADDRESS = 'cx0000000000000000000000000000000000000001';
 

@@ -1,9 +1,9 @@
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
 
-import { XChainId } from 'app/pages/trade/bridge/types';
-import { ZERO } from 'constants/index';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { XChainId } from '@/app/pages/trade/bridge/types';
+import { ZERO } from '@/constants/index';
+import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
 
 export type WalletState = {
   [key in XChainId]?: { [address: string]: CurrencyAmount<Currency> };

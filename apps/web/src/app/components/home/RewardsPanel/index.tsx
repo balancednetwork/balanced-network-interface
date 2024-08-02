@@ -1,15 +1,15 @@
 import React from 'react';
 
 import { Trans, t } from '@lingui/macro';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { useMedia } from 'react-use';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
 
-import Divider, { VerticalDivider } from 'app/components/Divider';
-import { BoxPanel } from 'app/components/Panel';
-import { Typography } from 'app/theme';
-import { useHasAnyKindOfRewards } from 'store/reward/hooks';
+import Divider, { VerticalDivider } from '@/app/components/Divider';
+import { BoxPanel } from '@/app/components/Panel';
+import { Typography } from '@/app/theme';
+import { useHasAnyKindOfRewards } from '@/store/reward/hooks';
 
 import BBalnSlider from '../BBaln/BBalnSlider';
 import Savings from '../Savings';
@@ -73,7 +73,7 @@ const RewardsPanel = () => {
           />
         </SliderWrap>
       </Flex>
-      <BoxPanel bg="bg2" mt="35px" style={{ padding: '17px 20px' }}>
+      <BoxPanel bg="bg2" mt="35px" style={{ padding: '17px 20px' }} className="drop-shadow-inset">
         {account && hasAnyKindOfRewards ? (
           <Flex flexWrap={isSmall ? 'wrap' : 'nowrap'}>
             <SavingsRewards />

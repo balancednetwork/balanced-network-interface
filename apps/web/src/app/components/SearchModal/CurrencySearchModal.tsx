@@ -2,14 +2,14 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { Currency, Token } from '@balancednetwork/sdk-core';
 
-import useLast from 'hooks/useLast';
+import useLast from '@/hooks/useLast';
 
 import Modal from '../Modal';
 import { PopperWithoutArrow } from '../Popover';
 import { CurrencySearch, CurrencySelectionType } from './CurrencySearch';
 import { ImportToken } from './ImportToken';
 import { RemoveToken } from './RemoveToken';
-import { XChainId } from 'app/pages/trade/bridge/types';
+import { XChainId } from '@/app/pages/trade/bridge/types';
 
 interface CurrencySearchModalProps {
   account?: string | null;

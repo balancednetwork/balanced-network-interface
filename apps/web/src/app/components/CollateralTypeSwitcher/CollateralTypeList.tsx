@@ -1,207 +1,159 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { useMedia } from 'react-use';
-import { Box } from 'rebass';
-import styled from 'styled-components';
 
-import CurrencyLogo from 'app/components/CurrencyLogo';
-import { Typography } from 'app/theme';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
-import useKeyPress from 'hooks/useKeyPress';
 import {
   useCollateralChangeCollateralType,
-  useAllCollateralData,
   useCollateralActionHandlers,
-} from 'store/collateral/hooks';
-import { useLoanActionHandlers } from 'store/loan/hooks';
-import Skeleton from '../Skeleton';
+  useXCollateralDataByToken,
+  useAllCollateralData,
+  useChangeCollateralXChain,
+} from '@/store/collateral/hooks';
+import { useLoanActionHandlers, useSetLoanRecipientNetwork } from '@/store/loan/hooks';
+import { Trans } from '@lingui/macro';
+import { BalanceAndValueWrap, DashGrid, HeaderText, List, walletBreakpoint } from '../Wallet/styledComponents';
+import SingleChainItem from './SingleChainItem';
+import MultiChainItem from './MultiChainItem';
+import { CollateralTab } from './CollateralTypeListWrap';
+import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
+import SingleChainItemOverview from './SingleChainItemOverview';
+import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { Typography } from '@/app/theme';
+import { XChainId } from '@/app/pages/trade/bridge/types';
 
-const CollateralTypesGrid = styled.div<{
-  $border?: boolean;
-  $negativeMargin?: boolean;
-  $hideCollateralInfoColumn?: boolean;
-}>`
-  display: grid;
-  grid-template-columns: ${({ $hideCollateralInfoColumn }) => ($hideCollateralInfoColumn ? '1fr 1fr' : '5fr 5fr 4fr')};
-  width: 100%;
-  ${({ $border }) => ($border ? 'border-bottom: 1px solid #304a68;' : '')}
-  ${({ $negativeMargin }) => ($negativeMargin ? 'margin-top: -10px;' : '')}
-  transition: transform ease .3s;
-
-  .white,
-  .grey {
-    transition: all ease-out 0.2s;
-  }
-
-  .white {
-    color: #ffffff;
-  }
-
-  .grey {
-    color: #d5d7db;
-  }
-
-  &:hover {
-    .white,
-    .grey {
-      color: ${({ theme }) => theme.colors.primaryBright};
-    }
-  }
-`;
-
-const StyledSkeleton = styled(Skeleton)`
-  margin-left: auto;
-`;
-
-const CollateralTypesGridHeader = styled.div`
-  text-transform: uppercase;
-  text-align: right;
-  font-size: 14px;
-  letter-spacing: 3px;
-  padding-bottom: 10px;
-  color: ${({ theme }) => theme.colors.text1};
-
-  &:first-of-type {
-    text-align: left;
-  }
-`;
-
-const CollateralTypesGridItem = styled.div`
-  text-align: right;
-  font-size: 14px;
-  padding: 20px 0 20px 10px;
-  cursor: pointer;
-
-  &:first-of-type {
-    text-align: left;
-    padding: 20px 0;
-  }
-`;
-
-const AssetInfo = styled.div`
-  display: flex;
-  position: relative;
-  align-items: center;
-  padding-left: 40px;
-
-  img {
-    position: absolute;
-    left: 0;
-  }
-
-  @media screen and (max-width: 350px) {
-    padding-left: 0;
-    img {
-      display: none;
-    }
-  }
-`;
-
-const GridWrap = styled.div`
-  max-height: 305px;
-  overflow-y: auto;
-  padding: 0 25px;
-`;
-
-const CollateralTypeList = ({ width, setAnchor, anchor, ...rest }) => {
+const CollateralTypeList = ({
+  setAnchor,
+  collateralTab,
+  query,
+}: {
+  setAnchor: (anchor: HTMLElement | null) => void;
+  collateralTab: CollateralTab;
+  query: string;
+}) => {
   const changeCollateralType = useCollateralChangeCollateralType();
-  const allCollateralData = useAllCollateralData();
-  const hideCollateralInfoColumn = useMedia('(max-width: 500px)');
-  const handleEscape = useKeyPress('Escape');
+  const setLoanNetwork = useSetLoanRecipientNetwork();
+  const changeCollateralXChain = useChangeCollateralXChain();
   const { onAdjust: adjust } = useCollateralActionHandlers();
   const { onAdjust: adjustLoan } = useLoanActionHandlers();
+  const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
+
+  const { data: allPositionsData } = useXCollateralDataByToken();
+  const { data: allCollateralData } = useAllCollateralData();
 
   const handleCollateralTypeChange = useCallback(
-    symbol => {
+    (symbol: string, xChainId: XChainId) => {
       setAnchor(null);
       changeCollateralType(symbol);
       adjust(false);
       adjustLoan(false);
+      if (xChainId) {
+        changeCollateralXChain(xChainId);
+        setLoanNetwork(xChainId);
+      }
     },
-    [changeCollateralType, setAnchor, adjust, adjustLoan],
+    [changeCollateralType, setAnchor, adjust, adjustLoan, changeCollateralXChain, setLoanNetwork],
   );
 
-  useEffect(() => {
-    if (anchor && handleEscape) {
-      setAnchor(null);
-    }
-  }, [anchor, handleEscape, setAnchor]);
+  const filteredPositions = useMemo(() => {
+    return (
+      allPositionsData?.filter(
+        xPosition =>
+          xPosition.baseToken.symbol.toLowerCase().includes(query.toLowerCase()) ||
+          xPosition.baseToken.name?.toLowerCase().includes(query.toLowerCase()) ||
+          Object.keys(xPosition.positions).some(x => xChainMap[x].name.toLowerCase().includes(query.toLowerCase())),
+      ) || []
+    );
+  }, [query, allPositionsData]);
+
+  const filteredCollaterals = useMemo(() => {
+    return allCollateralData?.filter(
+      xCollateral =>
+        xCollateral.baseToken.symbol.toLowerCase().includes(query.toLowerCase()) ||
+        xCollateral.baseToken.name?.toLowerCase().includes(query.toLowerCase()) ||
+        Object.keys(xCollateral.chains).some(x => xChainMap[x].name.toLowerCase().includes(query.toLowerCase())),
+    );
+  }, [query, allCollateralData]);
 
   return (
-    <Box p={'25px 0 5px'} width={width}>
-      {allCollateralData?.length ? (
-        <GridWrap>
-          <CollateralTypesGrid $hideCollateralInfoColumn={hideCollateralInfoColumn}>
-            <CollateralTypesGridHeader>Asset</CollateralTypesGridHeader>
-            {!hideCollateralInfoColumn && <CollateralTypesGridHeader>Collateral</CollateralTypesGridHeader>}
-            <CollateralTypesGridHeader>Loan</CollateralTypesGridHeader>
-          </CollateralTypesGrid>
-        </GridWrap>
-      ) : null}
+    <List mx="-25px">
+      <DashGrid>
+        <HeaderText>
+          <Trans>Asset</Trans>
+        </HeaderText>
+        <BalanceAndValueWrap>
+          <HeaderText>
+            <Trans>Collateral</Trans>
+          </HeaderText>
+          {isSmallScreen ? null : (
+            <HeaderText>
+              <Trans>Loan</Trans>
+            </HeaderText>
+          )}
+        </BalanceAndValueWrap>
+      </DashGrid>
 
-      <GridWrap>
-        {allCollateralData
-          //BTCB tmp filter fix
-          ?.filter(collateralType => collateralType.symbol !== 'BTCB' || collateralType.collateralDeposit.gt(0))
-          ?.sort((a, b) => b.collateralDeposit.toNumber() - a.collateralDeposit.toNumber())
-          .map((collateralType, i, { length }) => {
-            const isLast = length - 1 === i;
-            const isFirst = 0 === i;
+      {collateralTab === CollateralTab.YOUR && (
+        <>
+          {filteredPositions.map((xPosition, index) =>
+            xPosition.isPositionSingleChain ? (
+              <SingleChainItem
+                baseToken={xPosition.baseToken}
+                key={index}
+                networkPosition={xPosition.positions}
+                isLast={index === filteredPositions.length - 1}
+                onSelect={handleCollateralTypeChange}
+              />
+            ) : (
+              <MultiChainItem
+                key={index}
+                baseToken={xPosition.baseToken}
+                positions={xPosition.positions}
+                onSelect={handleCollateralTypeChange}
+              />
+            ),
+          )}
+          {filteredPositions.length === 0 && (
+            <Typography p="30px 0 0" textAlign="center">
+              <Trans>No positions found.</Trans>
+            </Typography>
+          )}
+        </>
+      )}
 
+      {collateralTab === CollateralTab.ALL &&
+        filteredCollaterals
+          ?.sort((a, b) => a.baseToken.symbol.localeCompare(b.baseToken.symbol))
+          .map((xCollateral, index, { length }) => {
+            //temporarily show single chain view only (backend support needed first)
             return (
-              <CollateralTypesGrid
-                key={i}
-                $border={!isLast}
-                $negativeMargin={isFirst}
-                $hideCollateralInfoColumn={hideCollateralInfoColumn}
-                onClick={() => handleCollateralTypeChange(collateralType.symbol)}
-              >
-                <CollateralTypesGridItem>
-                  <AssetInfo>
-                    <CurrencyLogo
-                      size={'26px'}
-                      currency={SUPPORTED_TOKENS_LIST.find(token => token.symbol === collateralType.symbol)}
-                    />
-                    <Box>
-                      <Typography className="white" fontWeight={700}>
-                        {collateralType.displayName ? collateralType.displayName : collateralType.symbol}
-                      </Typography>
-                      <Typography className="grey">{'Available:'}</Typography>
-                    </Box>
-                  </AssetInfo>
-                </CollateralTypesGridItem>
-
-                {!hideCollateralInfoColumn && (
-                  <CollateralTypesGridItem>
-                    <Typography className="white">
-                      {collateralType.collateralDeposit.isNaN() ? (
-                        <StyledSkeleton width={50} animation="wave" />
-                      ) : (
-                        `$${collateralType.collateralDeposit.toFormat(0)}`
-                      )}
-                    </Typography>
-                    <Typography className="grey">
-                      {collateralType.collateralAvailable.isNaN() ? (
-                        <StyledSkeleton width={50} animation="wave" />
-                      ) : (
-                        `$${collateralType.collateralAvailable.toFormat(0)}`
-                      )}
-                    </Typography>
-                  </CollateralTypesGridItem>
-                )}
-
-                <CollateralTypesGridItem>
-                  <Typography className="white">{`$${collateralType.loanTaken.toFormat(0)}`}</Typography>
-                  <Typography className="grey">
-                    {/* BTCB tmp fix */}
-                    {collateralType.symbol === 'BTCB' ? '$0' : `$${collateralType.loanAvailable.toFormat(0)}`}
-                  </Typography>
-                </CollateralTypesGridItem>
-              </CollateralTypesGrid>
+              <SingleChainItemOverview
+                baseToken={xCollateral.baseToken}
+                key={index}
+                networkPosition={{ [ICON_XCALL_NETWORK_ID]: xCollateral.total }}
+                hideNetworkIcon={true}
+                isLast={index === length - 1}
+                onSelect={handleCollateralTypeChange}
+              />
             );
+            // return xCollateral.isCollateralSingleChain ? (
+            //   <SingleChainItemOverview
+            //     baseToken={xCollateral.baseToken}
+            //     key={index}
+            //     networkPosition={{ [ICON_XCALL_NETWORK_ID]: xCollateral.total }}
+            //     isLast={index === length - 1}
+            //     onSelect={handleCollateralTypeChange}
+            //   />
+            // ) : (
+            //   <MultiChainItemOverview
+            //     key={index}
+            //     baseToken={xCollateral.baseToken}
+            //     chains={xCollateral.chains}
+            //     onSelect={handleCollateralTypeChange}
+            //     total={xCollateral.total}
+            //   />
+            // );
           })}
-      </GridWrap>
-    </Box>
+    </List>
   );
 };
 

@@ -1,15 +1,15 @@
-import bnJs from 'bnJs';
+import bnJs from '@/bnJs';
 import { Percent } from '@balancednetwork/sdk-core';
 
-import { getBytesFromString, getRlpEncodedSwapData } from 'app/pages/trade/bridge/utils';
-import { archway } from 'app/pages/trade/bridge/_config/xChains';
-import { getFeeParam, isDenomAsset } from 'packages/archway/utils';
+import { getBytesFromString, getRlpEncodedSwapData } from '@/app/pages/trade/bridge/utils';
+import { archway } from '@/app/pages/trade/bridge/_config/xChains';
+import { getFeeParam, isDenomAsset } from '@/packages/archway/utils';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from '../_config/tokens';
-import { XChainId, XToken } from 'app/pages/trade/bridge/types';
+import { XChainId, XToken } from '@/app/pages/trade/bridge/types';
 import { IWalletXService } from './types';
 import { XTransactionInput, XTransactionType } from '../_zustand/types';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
-import { ICON_XCALL_NETWORK_ID } from 'constants/config';
+import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { InjectivePublicXService } from './InjectivePublicXService';
 
 export class InjectiveWalletXService extends InjectivePublicXService implements IWalletXService {

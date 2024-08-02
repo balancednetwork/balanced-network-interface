@@ -10,10 +10,10 @@ import {
   css,
 } from 'styled-components';
 
-import texGyeAdventorBoldWoff from 'assets/font/tex-gyre-adventor-bold/tex-gyre-adventor-bold.woff';
-import texGyeAdventorBoldWoff2 from 'assets/font/tex-gyre-adventor-bold/tex-gyre-adventor-bold.woff2';
-import texGyeAdventorRegularWoff from 'assets/font/tex-gyre-adventor-regular/tex-gyre-adventor-regular.woff';
-import texGyeAdventorRegularWoff2 from 'assets/font/tex-gyre-adventor-regular/tex-gyre-adventor-regular.woff2';
+import texGyeAdventorBoldWoff from '@/assets/font/tex-gyre-adventor-bold/tex-gyre-adventor-bold.woff';
+import texGyeAdventorBoldWoff2 from '@/assets/font/tex-gyre-adventor-bold/tex-gyre-adventor-bold.woff2';
+import texGyeAdventorRegularWoff from '@/assets/font/tex-gyre-adventor-regular/tex-gyre-adventor-regular.woff';
+import texGyeAdventorRegularWoff2 from '@/assets/font/tex-gyre-adventor-regular/tex-gyre-adventor-regular.woff2';
 
 // Update your breakpoints if you want
 export const sizes = {
@@ -279,7 +279,18 @@ export const FixedGlobalStyle = createGlobalStyle`
   [hidden] {
     display: none !important;
   }
+/* 
+  .drop-shadow {
+    box-shadow: 0px 10px 25px 0px rgba(1, 0, 42, 0.35);
+  }
 
+  .drop-shadow-right {
+    box-shadow: 10px 0px 25px 0px rgba(1, 0, 42, 0.35);
+  }
+
+  .drop-shadow-inset {
+    box-shadow: 0px 10px 15px 0px rgba(1, 0, 42, 0.25) inset;
+  } */
 `;
 
 export const ThemedGlobalStyle = createGlobalStyle`
@@ -383,6 +394,7 @@ export const ThemedGlobalStyle = createGlobalStyle`
 
   .noUi-horizontal {
     height: 5px;
+    transition: height 0.3s ease;
   }
   .noUi-horizontal .noUi-handle {
     width: 20px;
@@ -464,10 +476,18 @@ export const ThemedGlobalStyle = createGlobalStyle`
   }
   [disabled].noUi-horizontal {
     height: 15px;
-    transition: height 0.3s ease;
   }
+
   [disabled] .noUi-handle {
-    transition: opacity 0.3s ease;
+    background: #2ca9b7;
+    transform: translate3d(-10px, 4px, 0) scale(0.6);
+    transition: all 0.3s ease;
+  }
+
+  .noUi-handle {
+    transition: all 0.3s ease;
+    background: #03334f;
+    transform: translate3d(0, 0, 0) scale(1);
   }
 
   /* [disabled] .noUi-connect {
@@ -620,20 +640,20 @@ export const ThemedGlobalStyle = createGlobalStyle`
   #indicator-used {
     position: absolute;
     width: 1px;
-    height: 20px;
-    margin-top: 25px;
+    height: 23px;
+    margin-top: 27px;
     background-color: #ffffff;
     z-index: 2;
     opacity: 1;
-    transition: height 0.2s ease, opacity 0.2s ease;
+    transition: all 0.3s ease, opacity 0.2s ease;
   }
   #indicator-used {
     margin-top: -5px;
   }
   #indicator-locked.disabled,
   #indicator-used.disabled {
-    height: 10px;
-    transition: height 0.2s ease;
+    height: 13px;
+    transition: height 0.3s ease;
   }
   #indicator-locked .label,
   #indicator-used .label {
@@ -645,10 +665,25 @@ export const ThemedGlobalStyle = createGlobalStyle`
   #indicator-used .label {
     margin-left: -17px;
   }
+
+  #indicator-locked.text-repayable .label {
+    margin-left: -41px;
+  }
+
   #indicator-locked.active,
   #indicator-used.active {
     opacity: 1;
     transition: opacity 0.3s ease;
+  }
+
+  #indicator-locked-container.left-aligned .label {
+    margin-left: 0;
+  }
+
+  #indicator-locked-container.right-aligned .label {
+    margin-left: 0;
+    transform: translateX(-100%);
+    width: max-content;
   }
 
 /* Slider Warning */

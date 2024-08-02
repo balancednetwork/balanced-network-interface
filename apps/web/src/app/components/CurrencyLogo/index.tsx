@@ -3,8 +3,8 @@ import React, { useMemo } from 'react';
 import { Currency } from '@balancednetwork/sdk-core';
 import styled from 'styled-components';
 
-import ICONLogo from 'assets/images/icon-logo.png';
-import { WrappedTokenInfo } from 'store/lists/wrappedTokenInfo';
+import ICONLogo from '@/assets/images/icon-logo.png';
+import { WrappedTokenInfo } from '@/store/lists/wrappedTokenInfo';
 
 import Logo from '../Logo1';
 

@@ -1,4 +1,4 @@
-import { XChainId, XCallEventType } from 'app/pages/trade/bridge/types';
+import { XChainId, XCallEventType } from '@/app/pages/trade/bridge/types';
 import {
   XTransactionInput,
   Transaction,

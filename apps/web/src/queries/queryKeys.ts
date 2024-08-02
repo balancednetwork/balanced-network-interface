@@ -1,4 +1,4 @@
-import { CHART_PERIODS } from 'app/components/TradingViewChart';
+import { CHART_PERIODS } from '@/app/components/TradingViewChart';
 
 export const QUERY_KEYS = {
   Vote: {

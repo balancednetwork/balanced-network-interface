@@ -1,12 +1,12 @@
 import { useMemo, useCallback } from 'react';
 
 import { Token } from '@balancednetwork/sdk-core';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 
-import { SupportedLocale } from 'constants/locales';
-import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS } from 'constants/routing';
-import { useAllTokens } from 'hooks/Tokens';
-import { useAppDispatch, useAppSelector } from 'store/hooks';
+import { SupportedLocale } from '@/constants/locales';
+import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS } from '@/constants/routing';
+import { useAllTokens } from '@/hooks/Tokens';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
 import { addSerializedToken, SerializedToken, removeSerializedToken, updateUserLocale } from './reducer';
 

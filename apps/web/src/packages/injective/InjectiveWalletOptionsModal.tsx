@@ -2,15 +2,15 @@ import React from 'react';
 
 import { Flex } from 'rebass/styled-components';
 
-import Modal from 'app/components/Modal';
-import { Typography } from 'app/theme';
-import MetamaskIcon from 'assets/icons/wallets/metamask.svg?inline';
-import KeplrIcon from 'assets/icons/wallets/keplr.svg?inline';
+import Modal from '@/app/components/Modal';
+import { Typography } from '@/app/theme';
+import MetamaskIcon from '@/assets/icons/wallets/metamask.svg?inline';
+import KeplrIcon from '@/assets/icons/wallets/keplr.svg?inline';
 
-import { ModalContentWrapper } from 'app/components/ModalContent';
-import { UnbreakableText, WalletOption } from 'app/components/WalletModal/shared';
-import { UnderlineText } from 'app/components/DropdownText';
-import { MODAL_ID, modalActions, useModalStore } from 'app/pages/trade/bridge/_zustand/useModalStore';
+import { ModalContentWrapper } from '@/app/components/ModalContent';
+import { UnbreakableText, WalletOption } from '@/app/components/WalletModal/shared';
+import { UnderlineText } from '@/app/components/DropdownText';
+import { MODAL_ID, modalActions, useModalStore } from '@/app/pages/trade/bridge/_zustand/useModalStore';
 
 import { Wallet } from '@injectivelabs/wallet-ts';
 import { useInjectiveWalletStore } from '.';

@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 
 import { BalancedJs } from '@balancednetwork/balanced-js';
 
-import bnJs from 'bnJs';
-import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
-import { getQueuePair } from 'utils';
+import bnJs from '@/bnJs';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
+import { getQueuePair } from '@/utils';
 
 import useLastCount from './useLastCount';
 import { PairData, PairState } from './useV2Pairs';

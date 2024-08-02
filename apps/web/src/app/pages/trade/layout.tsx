@@ -1,22 +1,18 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { Flex, Box } from 'rebass/styled-components';
 
-import { Tab, Tabs } from 'app/components/Tab';
-import { useFetchBBalnInfo, useFetchBBalnSources } from 'store/bbaln/hooks';
-import { useFetchOraclePrices } from 'store/oracle/hooks';
-import { useFetchPrice } from 'store/ratio/hooks';
-import { useFetchRewardsInfo } from 'store/reward/hooks';
-import { useFetchStabilityFundBalances } from 'store/stabilityFund/hooks';
-import { useWalletFetchBalances } from 'store/wallet/hooks';
-import { AllTransactionsUpdater } from './bridge/_zustand/useTransactionStore';
-import { AllXMessagesUpdater } from './bridge/_zustand/useXMessageStore';
-import { AllPublicXServicesCreator, AllXChainHeightsUpdater } from './bridge/_zustand/useXServiceStore';
-import { xChains } from './bridge/_config/xChains';
+import { Tab, Tabs } from '@/app/components/Tab';
+import { useFetchBBalnInfo, useFetchBBalnSources } from '@/store/bbaln/hooks';
+import { useFetchOraclePrices } from '@/store/oracle/hooks';
+import { useFetchPrice } from '@/store/ratio/hooks';
+import { useFetchRewardsInfo } from '@/store/reward/hooks';
+import { useFetchStabilityFundBalances } from '@/store/stabilityFund/hooks';
+import { useWalletFetchBalances } from '@/store/wallet/hooks';
 
 export function TradePageLayout() {
   const { account } = useIconReact();
@@ -49,31 +45,24 @@ export function TradePageLayout() {
   };
 
   return (
-    <>
-      <AllTransactionsUpdater />
-      <AllXMessagesUpdater />
-      <AllPublicXServicesCreator xChains={xChains} />
-      <AllXChainHeightsUpdater xChains={xChains} />
-
-      <Box flex={1}>
-        <Flex mb={10} flexDirection="column">
-          <Flex alignItems="center" justifyContent="space-between">
-            <Tabs value={value} onChange={handleTabClick}>
-              <Tab>
-                <Trans>Swap</Trans>
-              </Tab>
-              <Tab>
-                <Trans>Supply</Trans>
-              </Tab>
-              <Tab>
-                <Trans>Bridge</Trans>
-              </Tab>
-            </Tabs>
-          </Flex>
-
-          <Outlet />
+    <Box flex={1}>
+      <Flex mb={10} flexDirection="column">
+        <Flex alignItems="center" justifyContent="space-between">
+          <Tabs value={value} onChange={handleTabClick}>
+            <Tab>
+              <Trans>Swap</Trans>
+            </Tab>
+            <Tab>
+              <Trans>Supply</Trans>
+            </Tab>
+            <Tab>
+              <Trans>Bridge</Trans>
+            </Tab>
+          </Tabs>
         </Flex>
-      </Box>
-    </>
+
+        <Outlet />
+      </Flex>
+    </Box>
   );
 }

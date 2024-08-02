@@ -8,20 +8,20 @@ import ClickAwayListener from 'react-click-away-listener';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Button } from 'app/components/Button';
-import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import { UnderlineText, UnderlineTextWithArrow } from 'app/components/DropdownText';
-import { DropdownPopper } from 'app/components/Popover';
-import { Typography } from 'app/theme';
-import FlipIcon from 'assets/icons/flip.svg';
-import { SLIPPAGE_WARNING_THRESHOLD } from 'constants/misc';
-import { useSwapSlippageTolerance, useWalletModalToggle } from 'store/application/hooks';
-import { Field } from 'store/swap/reducer';
-import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
-import { formatPercent, maxAmountSpend } from 'utils';
+import { Button } from '@/app/components/Button';
+import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
+import { UnderlineText, UnderlineTextWithArrow } from '@/app/components/DropdownText';
+import { DropdownPopper } from '@/app/components/Popover';
+import { Typography } from '@/app/theme';
+import FlipIcon from '@/assets/icons/flip.svg';
+import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
+import { useSwapSlippageTolerance, useWalletModalToggle } from '@/store/application/hooks';
+import { Field } from '@/store/swap/reducer';
+import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
+import { formatPercent, maxAmountSpend } from '@/utils';
 
-import { BrightPanel } from 'app/pages/trade/supply/_components/utils';
-import { isXToken } from 'app/pages/trade/bridge/utils';
+import { BrightPanel } from '@/app/pages/trade/supply/_components/utils';
+import { isXToken } from '@/app/pages/trade/bridge/utils';
 
 import XSwapModal from './XSwapModal';
 import SwapModal from './SwapModal';
@@ -113,15 +113,18 @@ export default function SwapPanel() {
   );
 
   const slippageTolerance = useSwapSlippageTolerance();
-  const isValid = !inputError;
+  const isValid = !inputError && canBridge;
 
   // handle swap modal
   const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
 
-  const handleSwapConfirmDismiss = () => {
-    setShowSwapConfirm(false);
-    clearSwapInputOutput();
-  };
+  const handleSwapConfirmDismiss = React.useCallback(
+    (clearInputs = true) => {
+      setShowSwapConfirm(false);
+      clearInputs && clearSwapInputOutput();
+    },
+    [clearSwapInputOutput],
+  );
 
   const toggleWalletModal = useWalletModalToggle();
 
@@ -164,7 +167,7 @@ export default function SwapPanel() {
 
   const handleMaximumBridgeAmountClick = () => {
     if (maximumBridgeAmount) {
-      onUserInput(Field.OUTPUT, maximumBridgeAmount?.toFixed(0));
+      onUserInput(Field.OUTPUT, maximumBridgeAmount?.toFixed(4));
     }
   };
 
@@ -173,7 +176,7 @@ export default function SwapPanel() {
       <Trans>Swap</Trans>
     </Button>
   ) : (
-    <Button disabled={!account || !!inputError} color="primary" onClick={handleSwap}>
+    <Button disabled={!account || !!inputError || !canBridge} color="primary" onClick={handleSwap}>
       {inputError || t`Swap`}
     </Button>
   );
@@ -300,19 +303,24 @@ export default function SwapPanel() {
             {swapButton}
           </Flex>
 
-          {!canBridge && (
+          {!canBridge && maximumBridgeAmount && (
             <Flex alignItems="center" justifyContent="center" mt={2}>
               <Typography textAlign="center">
-                {maximumBridgeAmount?.greaterThan(0) && (
+                {new BigNumber(maximumBridgeAmount.toFixed()).isGreaterThanOrEqualTo(0.0001) ? (
                   <>
                     <Trans>Only</Trans>{' '}
+                    <UnderlineText onClick={handleMaximumBridgeAmountClick}>
+                      <Typography color="primaryBright" as="a">
+                        {maximumBridgeAmount?.toFixed(4)} {maximumBridgeAmount?.currency?.symbol}
+                      </Typography>
+                    </UnderlineText>{' '}
+                  </>
+                ) : (
+                  <>
+                    <Trans>0 {maximumBridgeAmount?.currency?.symbol}</Trans>{' '}
                   </>
                 )}
-                <UnderlineText onClick={handleMaximumBridgeAmountClick}>
-                  <Typography color="primaryBright" as="a">
-                    {maximumBridgeAmount?.toFixed(0)} {maximumBridgeAmount?.currency?.symbol}
-                  </Typography>
-                </UnderlineText>{' '}
+
                 <Trans>is available on {xChainMap[direction?.to].name}.</Trans>
               </Typography>
             </Flex>

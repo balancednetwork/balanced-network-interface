@@ -1,39 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Trans } from '@lingui/macro';
 import { useMedia } from 'react-use';
-import { Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Typography } from 'app/theme';
-import QuestionIcon from 'assets/icons/question.svg';
-import {
-  useCollateralChangeIcxDisplayType,
-  useCollateralDepositedAmountInICX,
-  useCollateralType,
-  useIcxDisplayType,
-} from 'store/collateral/hooks';
-import { IcxDisplayType } from 'types';
+import { Typography } from '@/app/theme';
+import QuestionIcon from '@/assets/icons/question.svg';
+import { useCollateralChangeIcxDisplayType, useCollateralType, useIcxDisplayType } from '@/store/collateral/hooks';
+import { IcxDisplayType } from '@/types';
 
 import { LineBreak } from '../Divider';
 import { MouseoverTooltip } from '../Tooltip';
-
-const TypeSwitcher = styled.div`
-  position: static;
-  display: flex;
-  padding: 35px 25px 15px;
-  margin-top: -20px;
-  background-color: ${({ theme }) => theme.colors.bg2};
-  border-radius: 0 0 10px 10px;
-
-  svg {
-    margin-top: 10px;
-  }
-
-  ${({ theme }) => theme.mediaWidth.upExtraSmall`
-    padding: 35px 35px 15px;
-  `}
-`;
 
 const CollateralTypeButton = styled.div`
   border-radius: 100px;
@@ -59,29 +37,15 @@ const ICXDisplayTypeSwitcher = ({ handleCancelAdjusting }: { handleCancelAdjusti
   const icxDisplayType = useIcxDisplayType();
   const collateralType = useCollateralType();
   const collateralChangeIcxDisplayType = useCollateralChangeIcxDisplayType();
-  const [userChoseIcxDisplayType, setUserChoseIcxDisplayType] = useState<boolean>(false);
   const smallSp = useMedia('(max-width: 360px)');
-  const stakedICXAmount = useCollateralDepositedAmountInICX();
 
   const handleChangeIcxDisplayType = (type: IcxDisplayType) => {
     collateralChangeIcxDisplayType(type);
     handleCancelAdjusting();
-    setUserChoseIcxDisplayType(true);
   };
 
-  // default icx display to 'ICX' instead of 'sICX' if deposited collateral equals zero
-  React.useEffect(() => {
-    if (!userChoseIcxDisplayType) {
-      if (stakedICXAmount.isZero()) {
-        collateralChangeIcxDisplayType('ICX');
-      } else {
-        collateralChangeIcxDisplayType('sICX');
-      }
-    }
-  }, [stakedICXAmount, collateralChangeIcxDisplayType, userChoseIcxDisplayType]);
-
   return collateralType === 'sICX' ? (
-    <TypeSwitcher>
+    <Flex>
       <CollateralTypeButton
         className={icxDisplayType === 'ICX' ? `active` : ''}
         onClick={() => handleChangeIcxDisplayType('ICX')}
@@ -110,7 +74,7 @@ const ICXDisplayTypeSwitcher = ({ handleCancelAdjusting }: { handleCancelAdjusti
       >
         {!smallSp && <QuestionIcon width={14} color="text1" style={{ marginTop: 4, color: '#D5D7DB' }} />}
       </MouseoverTooltip>
-    </TypeSwitcher>
+    </Flex>
   ) : null;
 };
 

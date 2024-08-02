@@ -3,9 +3,9 @@ import React from 'react';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { ChainLogo } from 'app/pages/trade/bridge/_components/ChainLogo';
-import { XChainId, XChain } from 'app/pages/trade/bridge/types';
-import { xChains } from 'app/pages/trade/bridge/_config/xChains';
+import { ChainLogo } from '@/app/components/ChainLogo';
+import { XChainId, XChain } from '@/app/pages/trade/bridge/types';
+import { xChains } from '@/app/pages/trade/bridge/_config/xChains';
 
 type ChainListProps = {
   chainId: XChainId;

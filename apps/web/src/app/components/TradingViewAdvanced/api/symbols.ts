@@ -1,9 +1,9 @@
 import { Token } from '@balancednetwork/sdk-core';
-import { LibrarySymbolInfo, ResolutionString, SearchSymbolResultItem } from 'charting_library/charting_library';
+import { LibrarySymbolInfo, ResolutionString, SearchSymbolResultItem } from '@/charting_library/charting_library';
 
-import bnJs from 'bnJs';
-import { SUPPORTED_PAIRS } from 'constants/pairs';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import bnJs from '@/bnJs';
+import { SUPPORTED_PAIRS } from '@/constants/pairs';
+import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
 
 import { defaultConfig } from '.';
 

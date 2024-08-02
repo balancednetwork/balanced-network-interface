@@ -16,11 +16,11 @@ msgstr ""
 "X-Crowdin-File: en-US.po\n"
 "X-Crowdin-File-ID: 12\n"
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/pages/home/BBaln/BBalnPanel.tsx
 msgid "${0} was distributed over the last 30 days"
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/pages/home/BBaln/BBalnPanel.tsx
 msgid "${0}."
 msgstr ""
 
@@ -29,7 +29,7 @@ msgstr ""
 msgid "({0}% required)"
 msgstr "({0}% benötigt)"
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/pages/home/BBaln/BBalnPanel.tsx
 msgid ", so you would have received"
 msgstr ""
 
@@ -116,9 +116,9 @@ msgstr "Fügen Sie Ihre sICX zum Sicherheitenpool hinzu."
 msgid "Address"
 msgstr "Adresse"
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
-#: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/CollateralPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
 msgid "Adjust"
 msgstr "Anpassen"
 
@@ -134,14 +134,14 @@ msgstr ""
 #: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/Wallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/wallets/SendPanel.tsx
-#: src/app/components/home/BBaln/UnstakePrompt.tsx
-#: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/home/LoanPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/pages/home/BBaln/UnstakePrompt.tsx
+#: src/app/pages/home/CollateralPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
 msgid "After"
 msgstr "Nachher"
 
-#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
 msgid "All collateral locked"
 msgstr "Alle Sicherheiten gesperrt"
 
@@ -153,7 +153,7 @@ msgstr ""
 msgid "All proposals"
 msgstr ""
 
-#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
 msgid "All time"
 msgstr "Allzeit"
 
@@ -191,7 +191,7 @@ msgstr "Währungen"
 msgid "Assets to send"
 msgstr "Zu sendende Währungen"
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Available since {0}"
 msgstr ""
 
@@ -203,7 +203,7 @@ msgstr ""
 msgid "BALN APY"
 msgstr ""
 
-#: src/app/components/home/BBaln/UnstakePrompt.tsx
+#: src/app/pages/home/BBaln/UnstakePrompt.tsx
 msgid "BALN staking has been upgraded to a lock-up model called Boosted BALN."
 msgstr ""
 
@@ -216,7 +216,7 @@ msgstr "Zurück zur Balanced Webseite"
 msgid "Balance"
 msgstr "Guthaben"
 
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
 msgid "Balance Tokens"
 msgstr "Balance Tokens"
 
@@ -224,31 +224,31 @@ msgstr "Balance Tokens"
 #: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/Wallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/wallets/SendPanel.tsx
-#: src/app/components/home/BBaln/UnstakePrompt.tsx
-#: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/home/LoanPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/pages/home/BBaln/UnstakePrompt.tsx
+#: src/app/pages/home/CollateralPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
 msgid "Before"
 msgstr "Aktuell"
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/pages/home/BBaln/BBalnPanel.tsx
 msgid "Boost rewards"
 msgstr ""
 
-#: src/app/components/home/LoanPanel.tsx
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
 msgid "Borrow"
 msgstr "Ausleihen"
 
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
 msgid "Borrow Balanced Dollars?"
 msgstr "Ausleihen von Balanced Dollars?"
 
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
 msgid "Borrowed {0} bnUSD."
 msgstr "Ausgeliehene {0} bnUSD."
 
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
 msgid "Borrowing bnUSD..."
 msgstr "Ausleihen von bnUSD..."
 
@@ -266,11 +266,11 @@ msgstr ""
 #: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/Wallet/wallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/wallets/SendPanel.tsx
-#: src/app/components/home/BBaln/UnstakePrompt.tsx
-#: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/home/LoanPanel.tsx
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/pages/home/BBaln/UnstakePrompt.tsx
+#: src/app/pages/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/SupplyLiquidityModal.tsx
@@ -317,10 +317,10 @@ msgstr ""
 msgid "Choose a wallet from your Ledger:"
 msgstr "Wählen Sie eine Wallet von Ihrem Ledger:"
 
-#: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
 #: src/app/containers/Claim/LegacyFees/index.tsx
 #: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
 #: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
@@ -331,7 +331,7 @@ msgstr "Beanspruchen"
 msgid "Claim (1 of {count})"
 msgstr "Beanspruchen (1 von {count})"
 
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
 msgid "Claim Balance Tokens?"
 msgstr "Balance Tokens beanspruchen?"
 
@@ -348,16 +348,16 @@ msgstr "ICX beanspruchen?"
 msgid "Claim bribe?"
 msgstr ""
 
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
 msgid "Claim network fees?"
 msgstr "Netzwerkgebühren beanspruchen?"
 
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
 #: src/app/containers/Claim/LegacyFees/index.tsx
 msgid "Claimed fees."
 msgstr "Beanspruchte Gebühren."
 
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
 msgid "Claimed {0} BALN."
 msgstr ""
 
@@ -377,23 +377,23 @@ msgstr ""
 msgid "Claiming bribe..."
 msgstr ""
 
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
 #: src/app/containers/Claim/LegacyFees/index.tsx
 msgid "Claiming fees..."
 msgstr ""
 
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
 msgid "Claiming rewards..."
 msgstr ""
 
-#: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/home/PositionDetailPanel.tsx
-#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
 msgid "Collateral"
 msgstr ""
 
-#: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
 #: src/app/containers/VotePage/LieVotingPanel/VotingComponent.tsx
 msgid "Confirm"
 msgstr ""
@@ -483,11 +483,11 @@ msgstr ""
 msgid "Current incentives"
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Current unlock date"
 msgstr ""
 
-#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
 #: src/app/components/trade/LiquidityDetails/StakeLPPanel.tsx
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/LiquidityDetails.tsx
@@ -495,8 +495,8 @@ msgid "Daily rewards"
 msgstr ""
 
 #: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
-#: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
 msgid "Deposit"
 msgstr ""
 
@@ -512,11 +512,11 @@ msgstr ""
 msgid "Deposit sICX collateral?"
 msgstr ""
 
-#: src/app/components/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
 msgid "Deposit {0} collateral?"
 msgstr ""
 
-#: src/app/components/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
 msgid "Deposited {0} ICX as collateral."
 msgstr ""
 
@@ -524,13 +524,13 @@ msgstr ""
 msgid "Deposited {0} sICX as collateral."
 msgstr ""
 
-#: src/app/components/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
 msgid "Deposited {0} {collateralType} as collateral."
 msgstr ""
 
 #: src/app/components/Wallet/wallets/SICXWallet/DepositPanel.tsx
-#: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
 msgid "Depositing collateral..."
 msgstr ""
 
@@ -547,11 +547,11 @@ msgstr ""
 msgid "Duration"
 msgstr ""
 
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
 msgid "Each redemption is spread across a group of borrowers to minimise the impact. The smaller your loan, the less it will affect you."
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Earn or buy BALN, then lock it up here to boost your earning potential and voting power."
 msgstr ""
 
@@ -596,7 +596,7 @@ msgstr ""
 msgid "For"
 msgstr ""
 
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
 msgid "For every bnUSD they redeem, they'll receive $0.90 of collateral. The bnUSD is burned, and 0.995 bnUSD of borrower debt repaid."
 msgstr ""
 
@@ -627,7 +627,7 @@ msgstr ""
 msgid "ICON wallet"
 msgstr ""
 
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
 msgid "If bnUSD ever falls below $0.90, traders can use the smart contracts to redeem it for borrower collateral."
 msgstr ""
 
@@ -635,7 +635,7 @@ msgstr ""
 msgid "If the price slips by more than this amount, your swap will fail."
 msgstr "Wenn der Preis um mehr als diesen Betrag sich verringert, wird Ihr Tausch fehlschlagen."
 
-#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
 msgid "If the {0} price reaches ${1}, all your collateral will be\n"
 "liquidated."
 msgstr ""
@@ -664,7 +664,7 @@ msgstr ""
 msgid "Incentivised pools"
 msgstr ""
 
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
 msgid "Includes a fee of {0} bnUSD."
 msgstr "Beinhaltet eine Gebühr von {0} bnUSD."
 
@@ -673,12 +673,12 @@ msgstr "Beinhaltet eine Gebühr von {0} bnUSD."
 msgid "Includes a fee of {0} {1}."
 msgstr "Beinhaltet eine Gebühr von {0} {1}."
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Increasing lock duration..."
 msgstr ""
 
-#: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
 msgid "Ineligible"
 msgstr "Keine Berechtigung"
 
@@ -720,7 +720,7 @@ msgstr ""
 msgid "Line"
 msgstr "Linie"
 
-#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
 msgid "Liquidated"
 msgstr "Liquidiert"
 
@@ -736,23 +736,23 @@ msgstr ""
 msgid "Liquidity pools"
 msgstr ""
 
-#: src/app/components/home/LoanPanel.tsx
-#: src/app/components/home/LoanPanel.tsx
-#: src/app/components/home/PositionDetailPanel.tsx
-#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
 msgid "Loan"
 msgstr "Kredit"
 
-#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
 msgid "Loan rewards"
 msgstr "Kredit Belohnungen"
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Lock duration increased  until {0}."
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Lock up BALN"
 msgstr ""
 
@@ -760,28 +760,28 @@ msgstr ""
 msgid "Lock up BALN and vote for this pool to receive bribes."
 msgstr ""
 
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
 msgid "Lock up BALN to earn network fees."
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x."
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Lock up Balance Tokens?"
 msgstr ""
 
-#: src/app/components/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
 msgid "Locked"
 msgstr "Gesperrt"
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Locked until"
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Locking BALN..."
 msgstr ""
 
@@ -793,11 +793,11 @@ msgstr ""
 msgid "Minimum to receive"
 msgstr "Mindestens zu erhalten"
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Minus unlock fee of {0} BALN"
 msgstr ""
 
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
 msgid "Network fees"
 msgstr "Netzwerk-Gebühren"
 
@@ -824,8 +824,8 @@ msgid "No results found."
 msgstr ""
 
 #: src/app/components/Wallet/wallets/ICXWallet/UnstakePanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
 #: src/app/containers/VotePage/BribesPanel/BribedSource.tsx
 msgid "Not now"
 msgstr ""
@@ -847,15 +847,15 @@ msgstr ""
 msgid "POOL"
 msgstr ""
 
-#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
 msgid "Past day"
 msgstr ""
 
-#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
 msgid "Past month"
 msgstr ""
 
-#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
 msgid "Past week"
 msgstr ""
 
@@ -864,7 +864,7 @@ msgstr ""
 msgid "Pay"
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Pay a {0} BALN fee to unlock early."
 msgstr ""
 
@@ -876,7 +876,7 @@ msgstr ""
 msgid "Pool"
 msgstr ""
 
-#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
 msgid "Position details"
 msgstr ""
 
@@ -923,11 +923,11 @@ msgstr ""
 msgid "Receive"
 msgstr ""
 
-#: src/app/components/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
 msgid "Recieve sICX, which you can trade or unstake from the wallet section later."
 msgstr ""
 
-#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
 msgid "Redemptions"
 msgstr ""
 
@@ -967,19 +967,19 @@ msgstr ""
 msgid "Removing"
 msgstr ""
 
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
 msgid "Repaid {0} bnUSD."
 msgstr ""
 
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
 msgid "Repay"
 msgstr ""
 
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
 msgid "Repay Balanced Dollars?"
 msgstr ""
 
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
 msgid "Repaying bnUSD..."
 msgstr ""
 
@@ -987,11 +987,11 @@ msgstr ""
 msgid "Review the community token list on GitHub."
 msgstr ""
 
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
 msgid "Rewards"
 msgstr ""
 
-#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
 msgid "Risk ratio"
 msgstr ""
 
@@ -1164,7 +1164,7 @@ msgid "Swapping {inputCurrency} for {outputCurrency}..."
 msgstr "Tausche {inputCurrency} für {outputCurrency}..."
 
 #: src/app/components/Wallet/wallets/SICXWallet/UnstakePanel.tsx
-#: src/app/components/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
 msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
 msgstr ""
 
@@ -1194,11 +1194,11 @@ msgstr ""
 msgid "The community list contains all popular assets that aren't listed in the app by default."
 msgstr ""
 
-#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
 msgid "The current bnUSD price is"
 msgstr "Der aktuelle Preis von bnUSD ist"
 
-#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
 msgid "The current {0} price is"
 msgstr ""
 
@@ -1206,7 +1206,7 @@ msgstr ""
 msgid "The fee APY is calculated from the swap fees earned by a pool in the last 30 days."
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will decrease over time."
 msgstr ""
 
@@ -1230,19 +1230,19 @@ msgstr ""
 msgid "Title"
 msgstr "Titel"
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "To apply your increased voting power to liquidity incentives, update your allocation for each pool."
 msgstr ""
 
-#: src/app/components/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
 msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
 msgstr "Um BALN als Belohnungg zu erahlten müssen Sie einen Kredit aufnehmen oder Liquidität in einen Tauschpool auf der Handelseite bereitstellen."
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/pages/home/BBaln/BBalnPanel.tsx
 msgid "To earn liquidity rewards, supply liquidity to a BALN-incentivised pool."
 msgstr ""
 
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
 msgid "To take out a loan, deposit collateral."
 msgstr "Um einen Kredit aufnehmen zu können, müssen Sie Sicherheiten hinterlegen."
 
@@ -1292,19 +1292,19 @@ msgstr ""
 msgid "Transferring {0} from {1} to {2}..."
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Unlock Balance Tokens?"
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Unlock {0} BALN"
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Unlocked {0} BALN."
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Unlocking BALN early..."
 msgstr ""
 
@@ -1313,12 +1313,12 @@ msgstr ""
 msgid "Unstake"
 msgstr "Entsperren"
 
-#: src/app/components/home/BBaln/UnstakePrompt.tsx
-#: src/app/components/home/BBaln/UnstakePrompt.tsx
+#: src/app/pages/home/BBaln/UnstakePrompt.tsx
+#: src/app/pages/home/BBaln/UnstakePrompt.tsx
 msgid "Unstake BALN"
 msgstr ""
 
-#: src/app/components/home/BBaln/UnstakePrompt.tsx
+#: src/app/pages/home/BBaln/UnstakePrompt.tsx
 msgid "Unstake BALN?"
 msgstr ""
 
@@ -1331,7 +1331,7 @@ msgstr "sICX entsperren"
 msgid "Unstake sICX?"
 msgstr "sICX entsperren?"
 
-#: src/app/components/home/BBaln/UnstakePrompt.tsx
+#: src/app/pages/home/BBaln/UnstakePrompt.tsx
 msgid "Unstake your BALN, then lock it up for 1 week – 4 years. You'll receive bBALN, which determines your voting power, network fee earnings, and BALN rewards."
 msgstr ""
 
@@ -1340,7 +1340,7 @@ msgstr ""
 msgid "Unstaking"
 msgstr ""
 
-#: src/app/components/home/BBaln/UnstakePrompt.tsx
+#: src/app/pages/home/BBaln/UnstakePrompt.tsx
 msgid "Unstaking BALN..."
 msgstr ""
 
@@ -1364,7 +1364,7 @@ msgstr ""
 msgid "Use the Stability Fund to swap {0} for {1}"
 msgstr ""
 
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
 msgid "Used"
 msgstr ""
 
@@ -1478,19 +1478,19 @@ msgstr ""
 msgid "Where bBALN holders have allocated their voting power, updated live."
 msgstr ""
 
-#: src/app/components/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/components/trade/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw"
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Withdraw BALN"
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Withdraw Balance Tokens"
 msgstr ""
 
@@ -1507,7 +1507,7 @@ msgstr ""
 msgid "Withdraw sICX?"
 msgstr ""
 
-#: src/app/components/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
 msgid "Withdraw {0} collateral?"
 msgstr ""
 
@@ -1516,7 +1516,7 @@ msgstr ""
 msgid "Withdraw:"
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Withdrawing BALN..."
 msgstr ""
 
@@ -1524,9 +1524,9 @@ msgstr ""
 msgid "Withdrawing ICX..."
 msgstr ""
 
-#: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
 msgid "Withdrawing collateral..."
 msgstr ""
 
@@ -1546,7 +1546,7 @@ msgstr ""
 msgid "You approved"
 msgstr ""
 
-#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/pages/home/PositionDetailPanel.tsx
 msgid "You can't withdraw any collateral if you go beyond this threshold."
 msgstr ""
 
@@ -1566,7 +1566,7 @@ msgstr ""
 msgid "You'll be able to readjust your allocation for this pool on"
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "You'll need to relock BALN to hold voting power and boost your earning potential."
 msgstr ""
 
@@ -1574,7 +1574,7 @@ msgstr ""
 msgid "You'll only be able to interact with the default assets listed on Balanced."
 msgstr ""
 
-#: src/app/components/home/BBaln/UnstakePrompt.tsx
+#: src/app/pages/home/BBaln/UnstakePrompt.tsx
 msgid "You'll receive BALN in your wallet immediately"
 msgstr ""
 
@@ -1582,15 +1582,15 @@ msgstr ""
 msgid "You'll see an error message before you sign the transaction. If it ends with Reverted(20), the contract calls have been verified."
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "Your BALN will be locked until"
 msgstr ""
 
-#: src/app/components/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
 msgid "Your ICX is staked (sICX). Choose what to do with it:"
 msgstr ""
 
-#: src/app/components/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
 msgid "Your ICX will be converted to sICX (Staked ICX)."
 msgstr ""
 
@@ -1603,7 +1603,7 @@ msgstr ""
 msgid "Your pools"
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnPanel.tsx
+#: src/app/pages/home/BBaln/BBalnPanel.tsx
 msgid "Your share of the fees distributed to bBALN holders, calculated with Your bBALN ÷ Total bBALN."
 msgstr ""
 
@@ -1622,7 +1622,7 @@ msgstr ""
 msgid "Your transaction has successed."
 msgstr ""
 
-#: src/app/components/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
 msgid "You’ll receive sICX when you withdraw, which you can unstake or swap for ICX on the Trade page."
 msgstr ""
 
@@ -1678,7 +1678,7 @@ msgstr ""
 msgid "unstakes within {0}"
 msgstr ""
 
-#: src/app/components/home/LoanPanel.tsx
+#: src/app/pages/home/LoanPanel.tsx
 #: src/app/components/trade/LPDescription.tsx
 msgid "{0}"
 msgstr ""
@@ -1692,16 +1692,16 @@ msgstr ""
 msgid "{0} / {1} liquidity pool"
 msgstr ""
 
-#: src/app/components/home/BBaln/UnstakePrompt.tsx
+#: src/app/pages/home/BBaln/UnstakePrompt.tsx
 msgid "{0} BALN added to your wallet."
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "{0} BALN locked until {1}."
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "{0} BALN withdrawn."
 msgstr ""
 
@@ -1717,7 +1717,7 @@ msgstr ""
 msgid "{0} ICX is ready to claim"
 msgstr ""
 
-#: src/app/components/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
 msgid "{0} ICX is unstaking."
 msgstr ""
 
@@ -1751,8 +1751,8 @@ msgstr ""
 msgid "{0} {1} per {2}"
 msgstr ""
 
-#: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
+#: src/app/pages/home/CollateralPanel.tsx
 msgid "{0} {collateralType} added to your wallet."
 msgstr ""
 
@@ -1772,7 +1772,7 @@ msgstr ""
 msgid "{outputAmount} {outputCurrency} added to your wallet."
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/pages/home/BBaln/BBalnSlider.tsx
 msgid "{title}"
 msgstr ""
 

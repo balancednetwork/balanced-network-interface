@@ -28,10 +28,10 @@ import {
   type,
   Field,
 } from './reducer';
-import { Position, XChainId, XPositionsRecord, XToken } from 'app/pages/trade/bridge/types';
+import { Position, XChainId, XPositions, XPositionsRecord, XToken } from 'app/pages/trade/bridge/types';
 import { DEFAULT_TOKEN_CHAIN, xTokenMap } from 'app/pages/trade/bridge/_config/xTokens';
 import { useSignedInWallets, useAvailableWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
 import { setRecipientNetwork } from 'store/loan/reducer';
 import { useDestinationEvents } from 'app/pages/trade/bridge/_zustand/useXCallEventStore';
@@ -578,13 +578,20 @@ export function useUserPositionsData(): UseQueryResult<XPositionsRecord[]> {
   const allWallets = useSignedInWallets();
   const xWallet = useCrossChainWalletBalances();
 
-  const createDepositAmount = (token, amount) =>
+  const createDepositAmount = (token: Token, amount: BigNumber) =>
     CurrencyAmount.fromRawAmount(token, amount.times(10 ** token.decimals).toFixed(0));
 
-  const getLoanAmount = (symbol, xChainId, account) =>
+  const getLoanAmount = (symbol: CurrencyKey, xChainId: XChainId, account: string) =>
     borrowedAmounts[symbol]?.[xChainId === ICON_XCALL_NETWORK_ID ? account : `${xChainId}/${account}`];
 
-  const updateAccumulator = (acc, symbol, xChainId, collateral, loan, isPotential = false) => {
+  const updateAccumulator = (
+    acc: XPositions,
+    symbol: CurrencyKey,
+    xChainId: XChainId,
+    collateral: CurrencyAmount<Currency>,
+    loan: BigNumber,
+    isPotential = false,
+  ) => {
     acc[symbol] = {
       ...acc[symbol],
       [xChainId]: { collateral, loan, isPotential },
@@ -595,48 +602,45 @@ export function useUserPositionsData(): UseQueryResult<XPositionsRecord[]> {
     queryKey: ['xPositionsData', allWallets],
     queryFn: () => {
       return Object.entries(
-        Object.entries(xDepositedAmounts).reduce(
-          (acc, [xChainId, xChainDeposits]) => {
-            if (xChainDeposits) {
-              forEach(xChainDeposits, (deposit, symbol) => {
-                const xToken = xTokenMap[xChainId]?.find(token => token.symbol === symbol);
-                const account = allWallets.find(wallet => wallet.xChainId === xChainId)?.address;
-                if (!account) return;
+        Object.entries(xDepositedAmounts).reduce((acc, [xChainId, xChainDeposits]) => {
+          if (xChainDeposits) {
+            forEach(xChainDeposits, (deposit, symbol) => {
+              const xToken = xTokenMap[xChainId]?.find(token => token.symbol === symbol);
+              const account = allWallets.find(wallet => wallet.xChainId === xChainId)?.address;
+              if (!account) return;
 
-                if (xToken) {
-                  const depositAmount = createDepositAmount(xToken, deposit);
-                  const loanAmount = getLoanAmount(symbol, xChainId, account);
+              if (xToken) {
+                const depositAmount = createDepositAmount(xToken, deposit);
+                const loanAmount = getLoanAmount(symbol, xChainId as XChainId, account);
+
+                if (depositAmount.greaterThan(0)) {
+                  updateAccumulator(acc, symbol, xChainId as XChainId, depositAmount, loanAmount);
+                } else {
+                  const availableAmount = xWallet[xChainId]?.[xToken.address];
+                  if (availableAmount?.greaterThan(0)) {
+                    updateAccumulator(acc, symbol, xChainId as XChainId, availableAmount, new BigNumber(0), true);
+                  }
+                }
+              } else {
+                const token = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
+                if (xChainId === ICON_XCALL_NETWORK_ID && token) {
+                  const depositAmount = createDepositAmount(token, deposit);
+                  const loanAmount = borrowedAmounts[symbol]?.[account];
 
                   if (depositAmount.greaterThan(0)) {
                     updateAccumulator(acc, symbol, xChainId, depositAmount, loanAmount);
                   } else {
-                    const availableAmount = xWallet[xChainId]?.[xToken.address];
+                    const availableAmount = xWallet[xChainId]?.[token.address];
                     if (availableAmount?.greaterThan(0)) {
                       updateAccumulator(acc, symbol, xChainId, availableAmount, new BigNumber(0), true);
                     }
                   }
-                } else {
-                  const token = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
-                  if (xChainId === ICON_XCALL_NETWORK_ID && token) {
-                    const depositAmount = createDepositAmount(token, deposit);
-                    const loanAmount = borrowedAmounts[symbol]?.[account];
-
-                    if (depositAmount.greaterThan(0)) {
-                      updateAccumulator(acc, symbol, xChainId, depositAmount, loanAmount);
-                    } else {
-                      const availableAmount = xWallet[xChainId]?.[token.address];
-                      if (availableAmount?.greaterThan(0)) {
-                        updateAccumulator(acc, symbol, xChainId, availableAmount, new BigNumber(0), true);
-                      }
-                    }
-                  }
                 }
-              });
-            }
-            return acc;
-          },
-          {} as { [AssetSymbol in string]: Partial<{ [key in XChainId]: Position }> },
-        ),
+              }
+            });
+          }
+          return acc;
+        }, {} as XPositions),
       )
         .map(([symbol, positions]) => {
           const baseToken = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);

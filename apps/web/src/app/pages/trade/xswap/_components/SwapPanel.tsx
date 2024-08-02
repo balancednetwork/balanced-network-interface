@@ -113,7 +113,7 @@ export default function SwapPanel() {
   );
 
   const slippageTolerance = useSwapSlippageTolerance();
-  const isValid = !inputError;
+  const isValid = !inputError && canBridge;
 
   // handle swap modal
   const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
@@ -176,7 +176,7 @@ export default function SwapPanel() {
       <Trans>Swap</Trans>
     </Button>
   ) : (
-    <Button disabled={!account || !!inputError} color="primary" onClick={handleSwap}>
+    <Button disabled={!account || !!inputError || !canBridge} color="primary" onClick={handleSwap}>
       {inputError || t`Swap`}
     </Button>
   );

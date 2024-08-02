@@ -39,6 +39,7 @@ import { formatBigNumber, getAccumulatedInterest } from 'utils';
 import { DropdownPopper } from 'app/components/Popover';
 import Skeleton from 'app/components/Skeleton';
 import { useTokenPrices } from 'queries/backendv2';
+import { formatPrice } from 'utils/formatter';
 
 const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
 
@@ -221,10 +222,11 @@ const PositionDetailPanel = () => {
             <Typography mb={2}>
               {t`The current ${collateralType === 'sICX' ? 'ICX' : collateralType} price is`}{' '}
               <span style={{ color: isLockWarning ? theme.colors.alert : '#ffffff' }}>
-                $
-                {collateralType === 'sICX' && ratio.ICXUSDratio
-                  ? ratio.ICXUSDratio.dp(4).toFormat()
-                  : oraclePrice?.dp(0).toFormat()}
+                {ratio.ICXUSDratio && oraclePrice
+                  ? formatPrice(
+                      collateralType === 'sICX' ? ratio.ICXUSDratio.dp(8).toFormat() : oraclePrice.dp(8).toFormat(),
+                    )
+                  : '-'}
               </span>
               .
             </Typography>
@@ -272,7 +274,7 @@ const PositionDetailPanel = () => {
                         <Trans>All collateral locked</Trans>
                       </dt>
                     </Tooltip>
-                    <dd>${lockThresholdPrice.dp(collateralType === 'sICX' ? 3 : 0).toFormat()}</dd>
+                    <dd>{formatPrice(lockThresholdPrice.toFixed())}</dd>
                   </MetaData>
                 </Locked>
                 <Liquidated $heightened={heightenBars}>
@@ -280,7 +282,7 @@ const PositionDetailPanel = () => {
                     <dt>
                       <Trans>Liquidated</Trans>
                     </dt>
-                    <dd>${liquidationThresholdPrice.dp(collateralType === 'sICX' ? 3 : 0).toFormat()}</dd>
+                    <dd>{formatPrice(liquidationThresholdPrice.toFixed())}</dd>
                   </MetaData>
                 </Liquidated>
 

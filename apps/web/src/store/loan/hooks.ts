@@ -26,15 +26,15 @@ import { formatUnits, toBigNumber } from 'utils';
 
 import { AppState } from '..';
 import {
-  changeBorrowedAmount,
-  changeBadDebt,
-  changeTotalSupply,
+  changeBorrowedAmount as changeBorrowedAmountAction,
+  changeBadDebt as changeBadDebtAction,
+  changeTotalSupply as changeTotalSupplyAction,
+  setRecipientNetwork as setRecipientNetworkAction,
   Field,
   adjust,
   cancel,
   type,
   setLockingRatio,
-  setRecipientNetwork,
 } from './reducer';
 import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
 import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
@@ -83,56 +83,9 @@ export function useActiveLoanAddress(): string | undefined {
   return collateralXChain === ICON_XCALL_NETWORK_ID ? account : `${collateralXChain}/${account}`;
 }
 
-export function useLoanChangeBorrowedAmount(): (
-  borrowedAmount: BigNumber,
-  address: string,
-  collateralType?: string,
-) => void {
-  const dispatch = useDispatch();
-  return React.useCallback(
-    (borrowedAmount: BigNumber, address: string, collateralType: string = DEFAULT_COLLATERAL_TOKEN) => {
-      dispatch(changeBorrowedAmount({ borrowedAmount, address, collateralType }));
-    },
-    [dispatch],
-  );
-}
-
-export function useLoanChangeBadDebt(): (badDebt: BigNumber) => void {
-  const dispatch = useDispatch();
-  return React.useCallback(
-    (badDebt: BigNumber) => {
-      dispatch(changeBadDebt({ badDebt }));
-    },
-    [dispatch],
-  );
-}
-
-export function useLoanChangeTotalSupply(): (totalSupply: BigNumber) => void {
-  const dispatch = useDispatch();
-  return React.useCallback(
-    (totalSupply: BigNumber) => {
-      dispatch(changeTotalSupply({ totalSupply }));
-    },
-    [dispatch],
-  );
-}
-
-export function useSetLoanRecipientNetwork(): (recipientNetwork: XChainId) => void {
-  const dispatch = useDispatch();
-
-  return React.useCallback(
-    (recipientNetwork: XChainId) => {
-      dispatch(setRecipientNetwork({ recipientNetwork }));
-    },
-    [dispatch],
-  );
-}
-
 export function useLoanFetchInfo(account?: string | null) {
   const dispatch = useDispatch();
-  const changeBorrowedAmount = useLoanChangeBorrowedAmount();
-  const changeBadDebt = useLoanChangeBadDebt();
-  const changeTotalSupply = useLoanChangeTotalSupply();
+  const { changeBorrowedAmount, changeBadDebt, changeTotalSupply } = useLoanActionHandlers();
   const { data: collateralTokens } = useSupportedCollateralTokens();
   const supportedSymbols = React.useMemo(() => collateralTokens && Object.keys(collateralTokens), [collateralTokens]);
   const pendingXCalls = useDestinationEvents(ICON_XCALL_NETWORK_ID);
@@ -259,11 +212,43 @@ export function useLoanActionHandlers() {
     [dispatch],
   );
 
+  const changeBorrowedAmount = React.useCallback(
+    (borrowedAmount: BigNumber, address: string, collateralType: string = DEFAULT_COLLATERAL_TOKEN) => {
+      dispatch(changeBorrowedAmountAction({ borrowedAmount, address, collateralType }));
+    },
+    [dispatch],
+  );
+
+  const changeBadDebt = React.useCallback(
+    (badDebt: BigNumber) => {
+      dispatch(changeBadDebtAction({ badDebt }));
+    },
+    [dispatch],
+  );
+
+  const changeTotalSupply = React.useCallback(
+    (totalSupply: BigNumber) => {
+      dispatch(changeTotalSupplyAction({ totalSupply }));
+    },
+    [dispatch],
+  );
+
+  const setRecipientNetwork = React.useCallback(
+    (recipientNetwork: XChainId) => {
+      dispatch(setRecipientNetworkAction({ recipientNetwork }));
+    },
+    [dispatch],
+  );
+
   return {
     onFieldAInput,
     onFieldBInput,
     onSlide,
     onAdjust,
+    changeBorrowedAmount,
+    changeBadDebt,
+    changeTotalSupply,
+    setRecipientNetwork,
   };
 }
 

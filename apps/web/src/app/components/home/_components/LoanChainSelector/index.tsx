@@ -10,7 +10,7 @@ import { bnUSD } from 'constants/tokens';
 import React, { useEffect, useMemo } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
-import { useLoanActionHandlers, useLoanRecipientNetwork, useSetLoanRecipientNetwork } from 'store/loan/hooks';
+import { useLoanActionHandlers, useLoanRecipientNetwork } from 'store/loan/hooks';
 import ChainSelectorLogo from '../CollateralChainSelector/ChainSelectorLogo';
 import ChainList from './ChainList';
 import { Trans } from '@lingui/macro';
@@ -21,8 +21,7 @@ const LoanChainSelector = ({
 }: { width: number | undefined; containerRef: HTMLDivElement | null }) => {
   const [isOpen, setOpen] = React.useState(false);
   const loanRecipientNetwork = useLoanRecipientNetwork();
-  const setRecipientNetwork = useSetLoanRecipientNetwork();
-  const { onAdjust: adjust } = useLoanActionHandlers();
+  const { onAdjust: adjust, setRecipientNetwork } = useLoanActionHandlers();
 
   const xChains = getAvailableXChains(bnUSD[NETWORK_ID])?.filter(
     chain => chain.xChainId !== 'archway-1' && chain.xChainId !== '0x100.icon',

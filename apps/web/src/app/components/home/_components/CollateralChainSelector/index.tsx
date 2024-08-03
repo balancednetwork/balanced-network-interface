@@ -9,10 +9,10 @@ import React, { useEffect, useMemo } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
 import { useCollateralActionHandlers, useCollateralType, useCollateralXChain } from 'store/collateral/hooks';
-import { useSetLoanRecipientNetwork } from 'store/loan/hooks';
 import styled from 'styled-components';
 import ChainSelectorLogo from './ChainSelectorLogo';
 import ChainList from './ChainList';
+import { useLoanActionHandlers } from 'store/loan/hooks';
 
 export const SelectorWrap = styled.div`
   min-width: 110px;
@@ -28,7 +28,7 @@ const CollateralChainSelector = ({
   const [isOpen, setOpen] = React.useState(false);
   const collateralType = useCollateralType();
   const collateralXChain = useCollateralXChain();
-  const setLoanRecipientNetwork = useSetLoanRecipientNetwork();
+  const { setRecipientNetwork: setLoanRecipientNetwork } = useLoanActionHandlers();
   const currency = SUPPORTED_TOKENS_LIST.find(token => token.symbol === collateralType);
   const { onAdjust: adjust, changeCollateralXChain } = useCollateralActionHandlers();
 

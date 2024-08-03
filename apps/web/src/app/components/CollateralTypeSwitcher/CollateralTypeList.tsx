@@ -3,7 +3,7 @@ import React, { useCallback, useMemo } from 'react';
 import { useMedia } from 'react-use';
 
 import { useCollateralActionHandlers, useUserPositionsData, useAllCollateralData } from 'store/collateral/hooks';
-import { useLoanActionHandlers, useSetLoanRecipientNetwork } from 'store/loan/hooks';
+import { useLoanActionHandlers } from 'store/loan/hooks';
 import { Trans } from '@lingui/macro';
 import { BalanceAndValueWrap, DashGrid, HeaderText, List, walletBreakpoint } from '../Wallet/styledComponents';
 import SingleChainItem from './SingleChainItem';
@@ -24,9 +24,8 @@ const CollateralTypeList = ({
   collateralTab: CollateralTab;
   query: string;
 }) => {
-  const setLoanNetwork = useSetLoanRecipientNetwork();
   const { onAdjust: adjust, changeCollateralType, changeCollateralXChain } = useCollateralActionHandlers();
-  const { onAdjust: adjustLoan } = useLoanActionHandlers();
+  const { onAdjust: adjustLoan, setRecipientNetwork: setLoanNetwork } = useLoanActionHandlers();
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
 
   const { data: userPositionsData } = useUserPositionsData();

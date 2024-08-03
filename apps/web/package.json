@@ -22,6 +22,7 @@
     "@injectivelabs/networks": "1.14.13",
     "@injectivelabs/sdk-ts": "1.14.13",
     "@injectivelabs/ts-types": "1.14.13",
+    "@injectivelabs/utils": "1.14.13",
     "@injectivelabs/wallet-ts": "1.14.13",
     "@keplr-wallet/types": "0.12.18",
     "@ledgerhq/hw-transport": "6.30.4",

@@ -16,28 +16,33 @@ import { tryParseAmount } from '@/store/swap/hooks';
 import { useInjectiveWalletStore, walletStrategy } from '@/packages/injective';
 
 import {
+  IndexerGrpcAccountPortfolioApi,
   MsgExecuteContractCompat,
+  MsgSend,
   fromBase64,
   getEthereumSignerAddress,
   getInjectiveAddress,
   getInjectiveSignerAddress,
   toBase64,
 } from '@injectivelabs/sdk-ts';
+import { BigNumberInBase } from '@injectivelabs/utils';
 
 import { ChainGrpcWasmApi } from '@injectivelabs/sdk-ts';
 import { Network, getNetworkEndpoints } from '@injectivelabs/networks';
 import { isCosmosWallet, MsgBroadcaster } from '@injectivelabs/wallet-ts';
 
-export const NETWORK = Network.Mainnet;
+export const NETWORK = Network.Testnet;
 export const ENDPOINTS = getNetworkEndpoints(NETWORK);
 
 // export const chainGrpcWasmApi = new ChainGrpcWasmApi(ENDPOINTS.grpc);
+const indexerGrpcAccountPortfolioApi = new IndexerGrpcAccountPortfolioApi(ENDPOINTS.indexer);
 
 const INJ = new Token(ChainId.MAINNET, 'cx4297f4b63262507623b6ad575d0d8dd2db980e4e', 18, 'HVH', 'Havah Token');
 
 const msgBroadcastClient = new MsgBroadcaster({
   walletStrategy,
   network: NETWORK,
+  endpoints: ENDPOINTS,
 });
 
 export function TestPage() {
@@ -84,12 +89,13 @@ export function TestPage() {
         rollback: BigInt(100_000_000),
       };
 
-      const msg = MsgExecuteContractCompat.fromJSON({
-        contractAddress: injective.contracts.assetManager,
-        sender: accountInjective,
-        msg: {
-          increment: {},
+      const msg = MsgSend.fromJSON({
+        amount: {
+          denom: 'inj',
+          amount: new BigNumberInBase(0.01).toWei().toFixed(),
         },
+        srcInjectiveAddress: accountInjective,
+        dstInjectiveAddress: accountInjective,
       });
 
       console.log('accountInjective', accountInjective);
@@ -99,11 +105,14 @@ export function TestPage() {
 
       console.log('isCosmosWallet', isCosmosWallet(walletStrategy.wallet));
 
+      const portfolio = await indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(accountInjective);
+      console.log(portfolio);
+
       const txResult = await msgBroadcastClient.broadcast({
         msgs: msg,
         injectiveAddress: accountInjective,
       });
-      // console.log('txResult', txResult);
+      console.log('txResult', txResult);
     } catch (e) {
       console.error('error', e);
     }

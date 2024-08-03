@@ -83,6 +83,9 @@ importers:
       '@injectivelabs/ts-types':
         specifier: 1.14.13
         version: 1.14.13
+      '@injectivelabs/utils':
+        specifier: 1.14.13
+        version: 1.14.13(google-protobuf@3.21.4)
       '@injectivelabs/wallet-ts':
         specifier: 1.14.13
         version: 1.14.13(@babel/runtime@7.24.0)(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(@solana/web3.js@1.95.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@types/react@18.2.67)(bs58@5.0.0)(bufferutil@4.0.8)(expo@51.0.22(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(utf-8-validate@5.0.10))(google-protobuf@3.21.4)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(tslib@2.6.2)(utf-8-validate@5.0.10)

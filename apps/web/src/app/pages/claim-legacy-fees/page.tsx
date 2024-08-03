@@ -17,7 +17,7 @@ import { useHasNetworkFees } from '@/store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from '@/store/transactions/hooks';
 import { shortenAddress } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import 'styles/airdrip.css';
+import '@/styles/airdrip.css';
 
 const Container = styled(Box)`
   /* disable margin collapse */

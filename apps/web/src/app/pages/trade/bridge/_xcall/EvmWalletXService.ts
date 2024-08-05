@@ -7,7 +7,7 @@ import { XChainId } from '@/app/pages/trade/bridge/types';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
 import { NATIVE_ADDRESS } from '@/constants/index';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
-import { getRlpEncodedSwapData } from '@/app/pages/trade/bridge/utils';
+import { getRlpEncodedSwapData, toICONDecimals } from '@/app/pages/trade/bridge/utils';
 import { XTransactionInput, XTransactionType } from '../_zustand/types';
 import { IWalletXService } from './types';
 import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
@@ -168,7 +168,7 @@ export class EvmWalletXService extends EvmPublicXService implements IWalletXServ
     }
 
     if (this.walletClient) {
-      const amount = BigInt(inputAmount.multiply(-1).quotient.toString());
+      const amount = toICONDecimals(inputAmount.multiply(-1));
       const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
       const data = toHex(RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]));
       const envelope = toHex(

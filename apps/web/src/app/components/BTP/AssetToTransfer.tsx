@@ -1,18 +1,18 @@
 import React, { useEffect } from 'react';
 
 import BigNumber from 'bignumber.js';
-import { useFromNetwork } from 'btp/src/store/bridge/hooks';
+import { useFromNetwork } from '@/btp/src/store/bridge/hooks';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
-import { inputRegex } from 'app/components/CurrencyInputPanel';
-import { UnderlineText } from 'app/components/DropdownText';
-import { SelectorPopover } from 'app/components/Popover';
-import useWidth from 'hooks/useWidth';
-import { COMMON_PERCENTS } from 'store/swap/reducer';
-// import { Currency } from 'types/balanced-sdk-core';
-import { escapeRegExp } from 'utils';
+import { inputRegex } from '@/app/components/CurrencyInputPanel';
+import { UnderlineText } from '@/app/components/DropdownText';
+import { SelectorPopover } from '@/app/components/Popover';
+import useWidth from '@/hooks/useWidth';
+import { COMMON_PERCENTS } from '@/store/swap/reducer';
+// import { Currency } from '@/types/balanced-sdk-core';
+import { escapeRegExp } from '@/utils';
 
 import { HorizontalList, Option } from '../List';
 import AssetSelector from './AssetSelector';

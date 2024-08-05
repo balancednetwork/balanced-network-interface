@@ -3,12 +3,12 @@ import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-import bnJs from 'bnJs';
-import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
-import useInterval from 'hooks/useInterval';
-import { useBnJsContractQuery } from 'queries/utils';
-import { AppState } from 'store';
-import { formatUnits } from 'utils';
+import bnJs from '@/bnJs';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
+import useInterval from '@/hooks/useInterval';
+import { useBnJsContractQuery } from '@/queries/utils';
+import { AppState } from '@/store';
+import { formatUnits } from '@/utils';
 
 import { setBalances } from './reducer';
 

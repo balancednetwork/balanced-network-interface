@@ -2,16 +2,16 @@ import React from 'react';
 import { AssetSymbol, BalanceAndValueWrap, DataText, ListItem } from './styledComponents';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
-import { Typography } from 'app/theme';
-import { XChainId } from 'app/pages/trade/bridge/types';
+import { Typography } from '@/app/theme';
+import { XChainId } from '@/app/pages/trade/bridge/types';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { useTheme } from 'styled-components';
-import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import { ICON_XCALL_NETWORK_ID } from 'constants/config';
+import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import ICONAssetModal from './ICONAssetModal';
 import useClaimableICX from './useClaimableICX';
-import { useRatesWithOracle } from 'queries/reward';
-import { formatBalance, formatValue } from 'utils/formatter';
+import { useRatesWithOracle } from '@/queries/reward';
+import { formatBalance, formatValue } from '@/utils/formatter';
 
 type SingleChainBalanceItemProps = {
   baseToken: Token;

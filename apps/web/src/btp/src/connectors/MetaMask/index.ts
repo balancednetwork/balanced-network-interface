@@ -1,6 +1,6 @@
 import { SupportedChainId } from '@balancednetwork/balanced-js';
 import { t } from '@lingui/macro';
-import { TransactionResponse } from 'btp/src/type/transaction';
+import { TransactionResponse } from '@/btp/src/type/transaction';
 import { ethers, utils } from 'ethers';
 import { ToastOptions, UpdateOptions } from 'react-toastify';
 

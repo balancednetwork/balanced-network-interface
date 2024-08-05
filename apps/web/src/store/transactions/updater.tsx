@@ -1,13 +1,13 @@
 import React from 'react';
 
 import { Converter } from 'icon-sdk-js';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 
-import { NotificationError, NotificationSuccess } from 'app/components/Notification/TransactionNotification';
-import { useBlockNumber } from 'store/application/hooks';
-import { getTrackerLink } from 'utils';
+import { NotificationError, NotificationSuccess } from '@/app/components/Notification/TransactionNotification';
+import { useBlockNumber } from '@/store/application/hooks';
+import { getTrackerLink } from '@/utils';
 
 import { AppDispatch } from '../index';
 import { finalizeTransaction, ICONTxEventLog } from './actions';

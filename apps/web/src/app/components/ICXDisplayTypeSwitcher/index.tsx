@@ -5,10 +5,10 @@ import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Typography } from 'app/theme';
-import QuestionIcon from 'assets/icons/question.svg';
-import { useCollateralChangeIcxDisplayType, useCollateralType, useIcxDisplayType } from 'store/collateral/hooks';
-import { IcxDisplayType } from 'types';
+import { Typography } from '@/app/theme';
+import QuestionIcon from '@/assets/icons/question.svg';
+import { useCollateralChangeIcxDisplayType, useCollateralType, useIcxDisplayType } from '@/store/collateral/hooks';
+import { IcxDisplayType } from '@/types';
 
 import { LineBreak } from '../Divider';
 import { MouseoverTooltip } from '../Tooltip';

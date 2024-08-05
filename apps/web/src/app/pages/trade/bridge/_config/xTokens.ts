@@ -9,11 +9,11 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   BTC: '0xa4b1.arbitrum',
 };
 
-import { bnUSD } from 'constants/tokens';
+import { bnUSD } from '@/constants/tokens';
 
 import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
 import { sARCH } from './tokens';
-import { NATIVE_ADDRESS } from 'constants/index';
+import { NATIVE_ADDRESS } from '@/constants/index';
 
 export const xTokenMap: { [key in XChainId]: XToken[] } = {
   '0x1.icon': [

@@ -4,34 +4,34 @@ import { Currency, CurrencyAmount, Fraction, Percent } from '@balancednetwork/sd
 import { Pair } from '@balancednetwork/v1-sdk';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
-import Nouislider from 'packages/nouislider-react';
+import { useIconReact } from '@/packages/icon-react';
+import Nouislider from '@/packages/nouislider-react';
 import { useMedia } from 'react-use';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Button, TextButton } from 'app/components/Button';
-import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import CurrencyLogo from 'app/components/CurrencyLogo';
-import Modal from 'app/components/Modal';
-import ModalContent from 'app/components/ModalContent';
-import Spinner from 'app/components/Spinner';
-import { Typography } from 'app/theme';
-import bnJs from 'bnJs';
-import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from 'constants/misc';
-import { BalanceData } from 'hooks/useV2Pairs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
-import { Source } from 'store/bbaln/hooks';
-import { Field } from 'store/mint/reducer';
-import { useChangeWithdrawnValue, useStakedLPPercent } from 'store/stakedLP/hooks';
-import { tryParseAmount } from 'store/swap/hooks';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useCurrencyBalances, useHasEnoughICX } from 'store/wallet/hooks';
-import { formatBigNumber, multiplyCABN, toDec } from 'utils';
-import { showMessageOnBeforeUnload } from 'utils/messages';
+import { Button, TextButton } from '@/app/components/Button';
+import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
+import CurrencyLogo from '@/app/components/CurrencyLogo';
+import Modal from '@/app/components/Modal';
+import ModalContent from '@/app/components/ModalContent';
+import Spinner from '@/app/components/Spinner';
+import { Typography } from '@/app/theme';
+import bnJs from '@/bnJs';
+import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from '@/constants/misc';
+import { BalanceData } from '@/hooks/useV2Pairs';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
+import { Source } from '@/store/bbaln/hooks';
+import { Field } from '@/store/mint/reducer';
+import { useChangeWithdrawnValue, useStakedLPPercent } from '@/store/stakedLP/hooks';
+import { tryParseAmount } from '@/store/swap/hooks';
+import { useTransactionAdder } from '@/store/transactions/hooks';
+import { useCurrencyBalances, useHasEnoughICX } from '@/store/wallet/hooks';
+import { formatBigNumber, multiplyCABN, toDec } from '@/utils';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
 
 import { withdrawMessage } from '../utils';
-import { EXA, WEIGHT } from 'app/components/home/BBaln/utils';
+import { EXA, WEIGHT } from '@/app/components/home/BBaln/utils';
 
 const Wrapper = styled(Flex)`
   padding-left: 0;

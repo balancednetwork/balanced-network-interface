@@ -8,20 +8,20 @@ import ClickAwayListener from 'react-click-away-listener';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Button } from 'app/components/Button';
-import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import { UnderlineText, UnderlineTextWithArrow } from 'app/components/DropdownText';
-import { DropdownPopper } from 'app/components/Popover';
-import { Typography } from 'app/theme';
-import FlipIcon from 'assets/icons/flip.svg';
-import { SLIPPAGE_WARNING_THRESHOLD } from 'constants/misc';
-import { useSwapSlippageTolerance, useWalletModalToggle } from 'store/application/hooks';
-import { Field } from 'store/swap/reducer';
-import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from 'store/swap/hooks';
-import { formatPercent, maxAmountSpend } from 'utils';
+import { Button } from '@/app/components/Button';
+import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
+import { UnderlineText, UnderlineTextWithArrow } from '@/app/components/DropdownText';
+import { DropdownPopper } from '@/app/components/Popover';
+import { Typography } from '@/app/theme';
+import FlipIcon from '@/assets/icons/flip.svg';
+import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
+import { useSwapSlippageTolerance, useWalletModalToggle } from '@/store/application/hooks';
+import { Field } from '@/store/swap/reducer';
+import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
+import { formatPercent, maxAmountSpend } from '@/utils';
 
-import { BrightPanel } from 'app/pages/trade/supply/_components/utils';
-import { isXToken } from 'app/pages/trade/bridge/utils';
+import { BrightPanel } from '@/app/pages/trade/supply/_components/utils';
+import { isXToken } from '@/app/pages/trade/bridge/utils';
 
 import XSwapModal from './XSwapModal';
 import SwapModal from './SwapModal';
@@ -113,7 +113,7 @@ export default function SwapPanel() {
   );
 
   const slippageTolerance = useSwapSlippageTolerance();
-  const isValid = !inputError;
+  const isValid = !inputError && canBridge;
 
   // handle swap modal
   const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
@@ -176,7 +176,7 @@ export default function SwapPanel() {
       <Trans>Swap</Trans>
     </Button>
   ) : (
-    <Button disabled={!account || !!inputError} color="primary" onClick={handleSwap}>
+    <Button disabled={!account || !!inputError || !canBridge} color="primary" onClick={handleSwap}>
       {inputError || t`Swap`}
     </Button>
   );

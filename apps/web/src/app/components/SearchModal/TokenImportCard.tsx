@@ -1,13 +1,13 @@
 import React from 'react';
 
 import { Token } from '@balancednetwork/sdk-core';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { Card } from 'rebass';
 import styled from 'styled-components';
 
-import { AutoColumn } from 'app/components/Column';
-import { Typography } from 'app/theme';
-import { getTrackerLink } from 'utils';
+import { AutoColumn } from '@/app/components/Column';
+import { Typography } from '@/app/theme';
+import { getTrackerLink } from '@/utils';
 
 import { ExternalLink } from './components';
 

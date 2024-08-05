@@ -1,11 +1,11 @@
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import bnJs from 'bnJs';
-import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from 'constants/tokens';
-import useInterval from 'hooks/useInterval';
-import { AppState } from 'store';
+import bnJs from '@/bnJs';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
+import useInterval from '@/hooks/useInterval';
+import { AppState } from '@/store';
 
 import { setFees } from './reducer';
 

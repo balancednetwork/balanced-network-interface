@@ -3,7 +3,7 @@ import React from 'react';
 import { Token } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 
-import { BalanceData } from 'hooks/useV2Pairs';
+import { BalanceData } from '@/hooks/useV2Pairs';
 
 export const PoolPanelContext = React.createContext<{
   trackedTokenPairs: [Token, Token][];

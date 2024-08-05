@@ -2,8 +2,8 @@ import {
   TransactionSendingRequest,
   TransactionSendingRequestOptions,
   TransferTransactionRequest,
-} from 'btp/src/type/transaction';
-import { ICX_METHOD } from 'btp/src/utils/constants';
+} from '@/btp/src/type/transaction';
+import { ICX_METHOD } from '@/btp/src/utils/constants';
 import { ethers } from 'ethers';
 import IconService from 'icon-sdk-js';
 

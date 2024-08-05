@@ -5,13 +5,13 @@ import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { QuestionWrapper } from 'app/components/QuestionHelper';
-import Tooltip, { MouseoverTooltip } from 'app/components/Tooltip';
-import { Typography } from 'app/theme';
-import QuestionIcon from 'assets/icons/question.svg';
-import { MINUS_INFINITY, PLUS_INFINITY, ZERO } from 'constants/index';
-import { CurrencyKey } from 'types';
-import { escapeRegExp } from 'utils'; // match escaped "." characters via in a non-capturing group
+import { QuestionWrapper } from '@/app/components/QuestionHelper';
+import Tooltip, { MouseoverTooltip } from '@/app/components/Tooltip';
+import { Typography } from '@/app/theme';
+import QuestionIcon from '@/assets/icons/question.svg';
+import { MINUS_INFINITY, PLUS_INFINITY, ZERO } from '@/constants/index';
+import { CurrencyKey } from '@/types';
+import { escapeRegExp } from '@/utils'; // match escaped "." characters via in a non-capturing group
 import Skeleton from '../Skeleton';
 
 export const CheckBox = styled(Box)<{ $isActive: boolean }>`

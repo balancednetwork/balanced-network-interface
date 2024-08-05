@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 
 import { t, Trans } from '@lingui/macro';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
-import { Button, TextButton } from 'app/components/Button';
-import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
-import { inputRegex } from 'app/components/CurrencyInputPanel';
-import { UnderlineText } from 'app/components/DropdownText';
-import Modal from 'app/components/Modal';
-import ModalContent from 'app/components/ModalContent';
-import Spinner from 'app/components/Spinner';
-import Tooltip from 'app/components/Tooltip';
-import { Typography } from 'app/theme';
-import EditIcon from 'assets/icons/edit.svg';
-import bnJs from 'bnJs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { Button, TextButton } from '@/app/components/Button';
+import CurrencyBalanceErrorMessage from '@/app/components/CurrencyBalanceErrorMessage';
+import { inputRegex } from '@/app/components/CurrencyInputPanel';
+import { UnderlineText } from '@/app/components/DropdownText';
+import Modal from '@/app/components/Modal';
+import ModalContent from '@/app/components/ModalContent';
+import Spinner from '@/app/components/Spinner';
+import Tooltip from '@/app/components/Tooltip';
+import { Typography } from '@/app/theme';
+import EditIcon from '@/assets/icons/edit.svg';
+import bnJs from '@/bnJs';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import {
   useChangeEditing,
   useChangeInputValue,
@@ -24,11 +24,11 @@ import {
   useEditValidation,
   useUnlockDateToBeSet,
   useUserVoteData,
-} from 'store/liveVoting/hooks';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX } from 'store/wallet/hooks';
-import { escapeRegExp, ONE_DAY_DURATION } from 'utils';
-import { showMessageOnBeforeUnload } from 'utils/messages';
+} from '@/store/liveVoting/hooks';
+import { useTransactionAdder } from '@/store/transactions/hooks';
+import { useHasEnoughICX } from '@/store/wallet/hooks';
+import { escapeRegExp, ONE_DAY_DURATION } from '@/utils';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
 
 import { AllocationInput, RespoLabel, StyledQuestionIcon, VotingButtons } from '../styledComponents';
 import { formatFraction, formatTimeLeft, formatVoteWeight, getUserCurrentAllocationFormatted } from '../utils';

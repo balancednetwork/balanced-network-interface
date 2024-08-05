@@ -6,11 +6,11 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import { Flex } from 'rebass/styled-components';
 
-import { Typography } from 'app/theme';
-import CalendarIcon from 'assets/icons/calendar.svg';
-import FailureIcon from 'assets/icons/failure.svg';
-import TickIcon from 'assets/icons/tick.svg';
-import { formatTimeStr } from 'utils/timeformat';
+import { Typography } from '@/app/theme';
+import CalendarIcon from '@/assets/icons/calendar.svg';
+import FailureIcon from '@/assets/icons/failure.svg';
+import TickIcon from '@/assets/icons/tick.svg';
+import { formatTimeStr } from '@/utils/timeformat';
 
 dayjs.extend(utc);
 dayjs.extend(relativeTime);

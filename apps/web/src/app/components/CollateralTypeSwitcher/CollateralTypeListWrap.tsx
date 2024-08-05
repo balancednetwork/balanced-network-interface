@@ -2,11 +2,11 @@ import React, { RefObject, useEffect, useRef, useState } from 'react';
 import CollateralTypeList from './CollateralTypeList';
 import { Box, Flex } from 'rebass';
 import SearchInput from '../SearchModal/SearchInput';
-import useKeyPress from 'hooks/useKeyPress';
+import useKeyPress from '@/hooks/useKeyPress';
 import { isMobile } from 'react-device-detect';
 import { Trans, t } from '@lingui/macro';
-import { ChartControlButton as CollateralTabButton } from 'app/pages/trade/supply/_components/utils';
-import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { ChartControlButton as CollateralTabButton } from '@/app/pages/trade/supply/_components/utils';
+import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
 
 export enum CollateralTab {
   ALL = 'all',

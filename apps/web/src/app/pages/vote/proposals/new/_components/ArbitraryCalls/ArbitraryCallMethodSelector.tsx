@@ -4,15 +4,15 @@ import { Trans } from '@lingui/macro';
 import { isMobile } from 'react-device-detect';
 import styled from 'styled-components';
 
-import Divider from 'app/components/Divider';
-import { DropdownPopper } from 'app/components/Popover';
-import SearchInput from 'app/components/SearchModal/SearchInput';
-import { Typography } from 'app/theme';
-import useArrowControl from 'hooks/useArrowControl';
-import { CxMethod } from 'hooks/useCxApi';
-import useKeyPress from 'hooks/useKeyPress';
-import { useUpdateCallMethod } from 'store/arbitraryCalls/hooks';
-import { EditableArbitraryCall } from 'store/arbitraryCalls/reducer';
+import Divider from '@/app/components/Divider';
+import { DropdownPopper } from '@/app/components/Popover';
+import SearchInput from '@/app/components/SearchModal/SearchInput';
+import { Typography } from '@/app/theme';
+import useArrowControl from '@/hooks/useArrowControl';
+import { CxMethod } from '@/hooks/useCxApi';
+import useKeyPress from '@/hooks/useKeyPress';
+import { useUpdateCallMethod } from '@/store/arbitraryCalls/hooks';
+import { EditableArbitraryCall } from '@/store/arbitraryCalls/reducer';
 
 const MethodSelectorWrap = styled.div`
   width: 100%;

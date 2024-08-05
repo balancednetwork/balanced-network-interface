@@ -3,17 +3,17 @@ import { Flex } from 'rebass/styled-components';
 
 import { Currency, CurrencyAmount, Percent, Token, TradeType } from '@balancednetwork/sdk-core';
 import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balanced-js';
-import { havahJs } from 'bnJs';
+import { havahJs } from '@/bnJs';
 
-import { Button } from 'app/components/Button';
-import { useIconReact } from 'packages/icon-react';
+import { Button } from '@/app/components/Button';
+import { useIconReact } from '@/packages/icon-react';
 import { TransactionStatus } from '../trade/bridge/_zustand/types';
-import { openToast } from 'btp/src/connectors/transactionToast';
-import { NULL_CONTRACT_ADDRESS } from 'constants/tokens';
+import { openToast } from '@/btp/src/connectors/transactionToast';
+import { NULL_CONTRACT_ADDRESS } from '@/constants/tokens';
 import { AllPublicXServicesCreator, xServiceActions } from '../trade/bridge/_zustand/useXServiceStore';
 import { xChains } from '../trade/bridge/_config/xChains';
-import { useHavahContext } from 'packages/havah/HavahProvider';
-import { tryParseAmount } from 'store/swap/hooks';
+import { useHavahContext } from '@/packages/havah/HavahProvider';
+import { tryParseAmount } from '@/store/swap/hooks';
 
 const ICX = new Token(ChainId.MAINNET, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
 const bnUSD = new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD', 'Balanced Dollar');

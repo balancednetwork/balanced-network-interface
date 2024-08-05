@@ -2,23 +2,23 @@ import React, { useState } from 'react';
 
 import { Box } from 'rebass';
 
-import { ChainLogo } from 'app/components/ChainLogo';
-import { XChainId, XChain, XWalletType } from 'app/pages/trade/bridge/types';
-import { xChainMap, xChains } from 'app/pages/trade/bridge/_config/xChains';
-import SearchInput from 'app/components/SearchModal/SearchInput';
+import { ChainLogo } from '@/app/components/ChainLogo';
+import { XChainId, XChain, XWalletType } from '@/app/pages/trade/bridge/types';
+import { xChainMap, xChains } from '@/app/pages/trade/bridge/_config/xChains';
+import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { Trans, t } from '@lingui/macro';
 import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from './styledComponents';
-import { HeaderText } from 'app/components/Wallet/styledComponents';
-import { Typography } from 'app/theme';
-import { UnderlineText } from 'app/components/DropdownText';
-import { useWalletModal } from 'store/application/hooks';
-import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
-import { useCrossChainWalletBalances } from 'store/wallet/hooks';
+import { HeaderText } from '@/app/components/Wallet/styledComponents';
+import { Typography } from '@/app/theme';
+import { UnderlineText } from '@/app/components/DropdownText';
+import { useWalletModal } from '@/store/application/hooks';
+import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
+import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { isMobile } from 'react-device-detect';
-import { useArchwayContext } from 'packages/archway/ArchwayProvider';
-import { useHavahContext } from 'packages/havah/HavahProvider';
-import { useDerivedCollateralInfo } from 'store/collateral/hooks';
-import { formatBalance } from 'utils/formatter';
+import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
+import { useHavahContext } from '@/packages/havah/HavahProvider';
+import { useDerivedCollateralInfo } from '@/store/collateral/hooks';
+import { formatBalance } from '@/utils/formatter';
 
 type ChainListProps = {
   chainId: XChainId;

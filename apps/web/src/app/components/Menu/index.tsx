@@ -3,8 +3,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 
-import { LOCALE_LABEL, SupportedLocale } from 'constants/locales';
-import { useLocationLinkProps } from 'hooks/useLocationLinkProps';
+import { LOCALE_LABEL, SupportedLocale } from '@/constants/locales';
+import { useLocationLinkProps } from '@/hooks/useLocationLinkProps';
 import { Check } from 'react-feather';
 
 export const MenuList = styled.ul`

@@ -1,7 +1,7 @@
 import styled, { css, keyframes } from 'styled-components';
 import SearchInput from '../SearchModal/SearchInput';
 import { Box } from 'rebass';
-import { Typography } from 'app/theme';
+import { Typography } from '@/app/theme';
 
 const mobileWalletBreakpoint = '530px';
 

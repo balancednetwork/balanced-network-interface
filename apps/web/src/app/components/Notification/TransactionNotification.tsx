@@ -6,11 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Typography } from 'app/theme';
-import ExternalIcon from 'assets/icons/external.svg';
-import FailureIcon from 'assets/icons/failure.svg';
-import PendingIcon from 'assets/icons/pending.svg';
-import SuccessIcon from 'assets/icons/success.svg';
+import { Typography } from '@/app/theme';
+import ExternalIcon from '@/assets/icons/external.svg';
+import FailureIcon from '@/assets/icons/failure.svg';
+import PendingIcon from '@/assets/icons/pending.svg';
+import SuccessIcon from '@/assets/icons/success.svg';
 
 type NotificationProps = {
   closeToast?: Function;

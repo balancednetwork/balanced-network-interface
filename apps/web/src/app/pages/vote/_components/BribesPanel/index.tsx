@@ -4,9 +4,9 @@ import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { BoxPanel } from 'app/components/Panel';
-import QuestionHelper from 'app/components/QuestionHelper';
-import { Typography } from 'app/theme';
+import { BoxPanel } from '@/app/components/Panel';
+import QuestionHelper from '@/app/components/QuestionHelper';
+import { Typography } from '@/app/theme';
 
 import BribedSource, { BribeSkeleton } from './BribedSource';
 import { useBribes } from './queries';

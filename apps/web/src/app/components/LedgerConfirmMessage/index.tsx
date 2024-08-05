@@ -4,7 +4,7 @@ import { Trans } from '@lingui/macro';
 import { Box, BoxProps } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { useShouldLedgerSign } from 'store/application/hooks';
+import { useShouldLedgerSign } from '@/store/application/hooks';
 
 const MessageBox = styled(Box)`
   padding-top: 5px;

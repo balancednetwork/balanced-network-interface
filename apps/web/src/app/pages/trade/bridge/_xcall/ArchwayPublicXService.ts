@@ -1,8 +1,8 @@
 import { ArchwayClient } from '@archwayhq/arch3.js';
 
-import { archway } from 'app/pages/trade/bridge/_config/xChains';
+import { archway } from '@/app/pages/trade/bridge/_config/xChains';
 
-import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
+import { XCallEventType, XChainId } from '@/app/pages/trade/bridge/types';
 import { AbstractPublicXService } from './types';
 import {
   TransactionStatus,

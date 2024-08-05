@@ -4,7 +4,7 @@ import { Trans } from '@lingui/macro';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
-import { Typography } from 'app/theme';
+import { Typography } from '@/app/theme';
 import { useXCallStats } from '../_hooks/useXCallStats';
 
 import Spinner from '../../../../components/Spinner';

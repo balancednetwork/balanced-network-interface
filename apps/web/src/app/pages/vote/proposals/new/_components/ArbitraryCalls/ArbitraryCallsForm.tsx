@@ -5,11 +5,11 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { UnderlineText } from 'app/components/DropdownText';
-import QuestionHelper from 'app/components/QuestionHelper';
-import { Typography } from 'app/theme';
-import CopyIcon from 'assets/icons/copy.svg';
-import { useAddCall, useEditableContractCalls } from 'store/arbitraryCalls/hooks';
+import { UnderlineText } from '@/app/components/DropdownText';
+import QuestionHelper from '@/app/components/QuestionHelper';
+import { Typography } from '@/app/theme';
+import CopyIcon from '@/assets/icons/copy.svg';
+import { useAddCall, useEditableContractCalls } from '@/store/arbitraryCalls/hooks';
 
 import ArbitraryCall from './ArbitraryCall';
 import { getTransactionsString } from './utils';

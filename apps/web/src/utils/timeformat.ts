@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import dayjs from 'dayjs';
 
-import { LAUNCH_DAY, ONE_DAY_DURATION } from 'utils';
+import { LAUNCH_DAY, ONE_DAY_DURATION } from '@/utils';
 
 const beginFrom = dayjs(LAUNCH_DAY - ONE_DAY_DURATION);
 

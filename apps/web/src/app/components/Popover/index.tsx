@@ -5,7 +5,7 @@ import { Portal } from '@reach/portal';
 import { usePopper } from 'react-popper';
 import styled from 'styled-components';
 
-import useInterval from 'hooks/useInterval';
+import useInterval from '@/hooks/useInterval';
 
 const PopoverContainer = styled.div<{ $show: boolean; $zIndex?: number }>`
   z-index: ${({ $zIndex, theme }) => $zIndex || theme.zIndices.tooltip};

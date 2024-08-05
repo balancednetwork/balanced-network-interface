@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { SectionPanel } from 'app/pages/trade/supply/_components/utils';
-import TransferAssetsModal from 'app/components/BTP/index';
+import { SectionPanel } from '@/app/pages/trade/supply/_components/utils';
+import TransferAssetsModal from '@/app/components/BTP/index';
 import styled, { css } from 'styled-components';
-import { UnderlineText } from 'app/components/DropdownText';
-import { useTransferAssetsModalToggle } from 'store/application/hooks';
+import { UnderlineText } from '@/app/components/DropdownText';
+import { useTransferAssetsModalToggle } from '@/store/application/hooks';
 
 const BTPButton = styled(UnderlineText)`
   padding-right: 0 !important;

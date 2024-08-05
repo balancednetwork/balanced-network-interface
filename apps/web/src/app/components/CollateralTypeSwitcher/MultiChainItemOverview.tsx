@@ -1,14 +1,14 @@
 import { Token } from '@balancednetwork/sdk-core';
-import { Position, XChainId } from 'app/pages/trade/bridge/types';
+import { Position, XChainId } from '@/app/pages/trade/bridge/types';
 import React from 'react';
 import CurrencyLogo from '../CurrencyLogo';
-import { Typography } from 'app/theme';
+import { Typography } from '@/app/theme';
 import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, DataText, ListItem } from '../Wallet/styledComponents';
 import SingleChainItemOverview from './SingleChainItemOverview';
 import { StyledListItem } from './MultiChainItem';
-import { toFraction } from 'utils';
-import { useOraclePrices } from 'store/oracle/hooks';
-import { HIGH_PRICE_ASSET_DP } from 'constants/tokens';
+import { toFraction } from '@/utils';
+import { useOraclePrices } from '@/store/oracle/hooks';
+import { HIGH_PRICE_ASSET_DP } from '@/constants/tokens';
 
 type MultiChainItemOverviewProps = {
   baseToken: Token;

@@ -4,32 +4,32 @@ import { BalancedJs, getLedgerAddressPath, LEDGER_BASE_PATH } from '@balancednet
 import * as HwUtils from '@balancednetwork/hw-app-icx/lib/utils';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
 import { t, Trans } from '@lingui/macro';
-import Skeleton from 'app/components/Skeleton';
-import { useIconReact, LOCAL_STORAGE_ADDRESS_EXPIRY } from 'packages/icon-react';
+import Skeleton from '@/app/components/Skeleton';
+import { useIconReact, LOCAL_STORAGE_ADDRESS_EXPIRY } from '@/packages/icon-react';
 import { isMobile } from 'react-device-detect';
 import { toast } from 'react-toastify';
 import { useMedia } from 'react-use';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import Modal from 'app/components/Modal';
-import { NotificationError } from 'app/components/Notification/TransactionNotification';
-import { Typography } from 'app/theme';
-import IconWalletIcon from 'assets/icons/wallets/iconex.svg';
-import LedgerIcon from 'assets/icons/wallets/ledger.svg';
-import bnJs from 'bnJs';
-import { useLocalStorageWithExpiry } from 'hooks/useLocalStorage';
+import Modal from '@/app/components/Modal';
+import { NotificationError } from '@/app/components/Notification/TransactionNotification';
+import { Typography } from '@/app/theme';
+import IconWalletIcon from '@/assets/icons/wallets/iconex.svg';
+import LedgerIcon from '@/assets/icons/wallets/ledger.svg';
+import bnJs from '@/bnJs';
+import { useLocalStorageWithExpiry } from '@/hooks/useLocalStorage';
 import {
   useWalletModalToggle,
   useCurrentLedgerAddressPage,
   useChangeCurrentLedgerAddressPage,
   useWalletModal,
-} from 'store/application/hooks';
+} from '@/store/application/hooks';
 
 import { VerticalDivider } from '../Divider';
 import { ModalContentWrapper } from '../ModalContent';
 import { WalletOption, UnbreakableText } from './shared';
-import { XWalletType } from 'app/pages/trade/bridge/types';
+import { XWalletType } from '@/app/pages/trade/bridge/types';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 

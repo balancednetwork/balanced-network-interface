@@ -1,4 +1,4 @@
-import { ICXCallPayload } from 'btp/src/type/transaction';
+import { ICXCallPayload } from '@/btp/src/type/transaction';
 import IconService from 'icon-sdk-js';
 
 import { ICX_METHOD, JSON_RPC, SUCCESS_TRANSACTION } from '../../utils/constants';

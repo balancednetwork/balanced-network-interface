@@ -1,5 +1,5 @@
-import { EventPayload, TransactionResponse } from 'btp/src/type/transaction';
-import { ICX_METHOD } from 'btp/src/utils/constants';
+import { EventPayload, TransactionResponse } from '@/btp/src/type/transaction';
+import { ICX_METHOD } from '@/btp/src/utils/constants';
 
 import { signingEventHandler } from '.';
 import { TYPES, CONNECTED_WALLET_LOCAL_STORAGE } from '../constants';

@@ -2,23 +2,23 @@ import React from 'react';
 
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import Nouislider from 'packages/nouislider-react';
-import { useIconReact } from 'packages/icon-react';
+import Nouislider from '@/packages/nouislider-react';
+import { useIconReact } from '@/packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
-import { Button, TextButton } from 'app/components/Button';
-import Modal from 'app/components/Modal';
-import ModalContent from 'app/components/ModalContent';
-import Spinner from 'app/components/Spinner';
-import { Typography } from 'app/theme';
-import bnJs from 'bnJs';
-import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
-import { useChangeShouldLedgerSign, useICXUnstakingTime, useShouldLedgerSign } from 'store/application/hooks';
-import { useRatio } from 'store/ratio/hooks';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX, useICONWalletBalances } from 'store/wallet/hooks';
-import { isZeroCA, multiplyCABN, toDec } from 'utils';
-import { showMessageOnBeforeUnload } from 'utils/messages';
+import { Button, TextButton } from '@/app/components/Button';
+import Modal from '@/app/components/Modal';
+import ModalContent from '@/app/components/ModalContent';
+import Spinner from '@/app/components/Spinner';
+import { Typography } from '@/app/theme';
+import bnJs from '@/bnJs';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
+import { useChangeShouldLedgerSign, useICXUnstakingTime, useShouldLedgerSign } from '@/store/application/hooks';
+import { useRatio } from '@/store/ratio/hooks';
+import { useTransactionAdder } from '@/store/transactions/hooks';
+import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
+import { isZeroCA, multiplyCABN, toDec } from '@/utils';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
 
 export default function UnstakePanel() {
   const [portion, setPortion] = React.useState<number>(0);

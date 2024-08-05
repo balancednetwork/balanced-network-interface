@@ -3,7 +3,7 @@ import React, { ReactNode, useEffect } from 'react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 
-import { DEFAULT_CATALOG, DEFAULT_LOCALE, SupportedLocale } from 'constants/locales';
+import { DEFAULT_CATALOG, DEFAULT_LOCALE, SupportedLocale } from '@/constants/locales';
 
 export async function dynamicActivate(locale: SupportedLocale) {
   // There are no default messages in production; instead, bundle the default to save a network request:

@@ -3,12 +3,12 @@ import React, { createContext, useEffect, useState } from 'react';
 import { ArchwayClient } from '@archwayhq/arch3.js';
 import { SupportedChainId } from '@balancednetwork/balanced-js';
 import { AccountData } from '@keplr-wallet/types';
-import { LOCAL_STORAGE_ADDRESS_EXPIRY } from 'packages/icon-react';
+import { LOCAL_STORAGE_ADDRESS_EXPIRY } from '@/packages/icon-react';
 
-import { NETWORK_ID } from 'constants/config';
-import { useLocalStorageWithExpiry } from 'hooks/useLocalStorage';
+import { NETWORK_ID } from '@/constants/config';
+import { useLocalStorageWithExpiry } from '@/hooks/useLocalStorage';
 
-import { XSigningArchwayClient } from 'lib/archway/XSigningArchwayClient';
+import { XSigningArchwayClient } from '@/lib/archway/XSigningArchwayClient';
 
 interface ArchwayContextType {
   address: string;

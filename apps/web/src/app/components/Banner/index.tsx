@@ -6,9 +6,9 @@ import { useLocation } from 'react-router-dom';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
-import CrossIcon from 'assets/icons/cross.svg';
-import useLocalStorage from 'hooks/useLocalStorage';
-import { PageLocation } from 'utils';
+import CrossIcon from '@/assets/icons/cross.svg';
+import useLocalStorage from '@/hooks/useLocalStorage';
+import { PageLocation } from '@/utils';
 
 const BannerContainer = styled(motion(Box))<{ embedded?: boolean }>`
   margin: 0 0 25px;

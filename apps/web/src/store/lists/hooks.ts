@@ -3,7 +3,7 @@ import { useMemo, useCallback } from 'react';
 import { TokenList } from '@uniswap/token-lists';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { AppState } from 'store';
+import { AppState } from '@/store';
 
 import { changeConfig } from './reducer';
 import COMMUNITY_TOKEN_LIST from './communitylist.json';

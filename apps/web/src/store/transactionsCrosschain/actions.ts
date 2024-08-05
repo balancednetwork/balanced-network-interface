@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { CrossChainTxType, XChainId } from 'app/pages/trade/bridge/types';
+import { CrossChainTxType, XChainId } from '@/app/pages/trade/bridge/types';
 
 export const addTransactionResult = createAction<{
   chain: XChainId;

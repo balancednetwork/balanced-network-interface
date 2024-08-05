@@ -4,8 +4,8 @@ import { XChainId, XCallEventType, XChain, XToken } from './types';
 import { xChainMap, xChains } from './_config/xChains';
 import { xTokenMap } from './_config/xTokens';
 import { Currency, CurrencyAmount, TradeType, Token } from '@balancednetwork/sdk-core';
-import { NATIVE_ADDRESS } from 'constants/index';
-import { uintToBytes } from 'utils';
+import { NATIVE_ADDRESS } from '@/constants/index';
+import { uintToBytes } from '@/utils';
 import { Trade } from '@balancednetwork/v1-sdk';
 
 export function getBytesFromNumber(value) {

@@ -2,16 +2,16 @@ import React from 'react';
 
 import { Flex } from 'rebass/styled-components';
 
-import Modal from 'app/components/Modal';
-import { Typography } from 'app/theme';
-import WalletConnectIcon from 'assets/icons/wallets/walletconnect.svg?inline';
-import { useWalletModal } from 'store/application/hooks';
+import Modal from '@/app/components/Modal';
+import { Typography } from '@/app/theme';
+import WalletConnectIcon from '@/assets/icons/wallets/walletconnect.svg?inline';
+import { useWalletModal } from '@/store/application/hooks';
 
 import { ModalContentWrapper } from '../ModalContent';
 
 import { Connector, useConnect, useConnectors } from 'wagmi';
 import { WalletOption, UnbreakableText } from './shared';
-import { XWalletType } from 'app/pages/trade/bridge/types';
+import { XWalletType } from '@/app/pages/trade/bridge/types';
 import { UnderlineText } from '../DropdownText';
 
 const icons = {

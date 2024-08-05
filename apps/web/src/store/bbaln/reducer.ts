@@ -4,8 +4,8 @@ import BigNumber from 'bignumber.js';
 
 import { Field } from '../loan/reducer';
 import { Source } from './hooks';
-import { LockedPeriod } from 'app/components/home/BBaln/types';
-import { lockingPeriods } from 'app/components/home/BBaln/utils';
+import { LockedPeriod } from '@/app/components/home/BBaln/types';
+import { lockingPeriods } from '@/app/components/home/BBaln/utils';
 
 export interface BBalnState {
   bbalnAmount: BigNumber;

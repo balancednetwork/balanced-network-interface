@@ -3,11 +3,11 @@ import React from 'react';
 import BigNumber from 'bignumber.js';
 import styled from 'styled-components';
 
-import { Typography } from 'app/theme';
-import { useAllPairs } from 'queries/backendv2';
-import { useIncentivisedPairs } from 'queries/reward';
-import { Source, useSources, useWorkingBalance } from 'store/bbaln/hooks';
-import { useLoanAPY } from 'store/loan/hooks';
+import { Typography } from '@/app/theme';
+import { useAllPairs } from '@/queries/backendv2';
+import { useIncentivisedPairs } from '@/queries/reward';
+import { Source, useSources, useWorkingBalance } from '@/store/bbaln/hooks';
+import { useLoanAPY } from '@/store/loan/hooks';
 
 import SourceInfo from './SourceInfo';
 

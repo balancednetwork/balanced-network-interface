@@ -1,6 +1,6 @@
 import { Token } from '@balancednetwork/sdk-core';
 
-import { NETWORK_ID } from 'constants/config';
+import { NETWORK_ID } from '@/constants/config';
 
 import { StdFee } from '@archwayhq/arch3.js';
 

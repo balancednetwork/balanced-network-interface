@@ -2,15 +2,15 @@ import React from 'react';
 
 import { Box, Flex } from 'rebass';
 
-import { Typography } from 'app/theme';
+import { Typography } from '@/app/theme';
 
 import { UnderlineText } from '../DropdownText';
-import { XChain } from 'app/pages/trade/bridge/types';
-import { ChainLogo } from 'app/components/ChainLogo';
+import { XChain } from '@/app/pages/trade/bridge/types';
+import { ChainLogo } from '@/app/components/ChainLogo';
 import { CopyableAddress } from '../Header';
 import { t } from '@lingui/macro';
 import { ActionDivider, ChainInfo, ChainName, MainLogo, WalletActions, WalletItemGrid, XChainsWrap } from './styled';
-import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
+import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
 
 type WalletItemProps = {
   address: string | null | undefined;

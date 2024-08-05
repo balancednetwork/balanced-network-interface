@@ -5,12 +5,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
 
-import Spinner from 'app/components/Spinner';
-import { Typography } from 'app/theme';
-import RemoveIcon from 'assets/icons/remove.svg';
-import { useCxApi } from 'hooks/useCxApi';
-import { useRemoveCall, useUpdateCallContract } from 'store/arbitraryCalls/hooks';
-import { EditableArbitraryCall } from 'store/arbitraryCalls/reducer';
+import Spinner from '@/app/components/Spinner';
+import { Typography } from '@/app/theme';
+import RemoveIcon from '@/assets/icons/remove.svg';
+import { useCxApi } from '@/hooks/useCxApi';
+import { useRemoveCall, useUpdateCallContract } from '@/store/arbitraryCalls/hooks';
+import { EditableArbitraryCall } from '@/store/arbitraryCalls/reducer';
 
 import { FieldInput } from '../../page';
 import ArbitraryCallMethodParameter from './ArbitraryCallMethodParameter';

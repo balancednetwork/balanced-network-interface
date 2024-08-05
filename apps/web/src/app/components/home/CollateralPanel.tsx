@@ -3,54 +3,54 @@ import React, { useCallback, useState } from 'react';
 import { addresses } from '@balancednetwork/balanced-js';
 import { t, Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import Nouislider from 'packages/nouislider-react';
+import Nouislider from '@/packages/nouislider-react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Button, TextButton } from 'app/components/Button';
-import { LineBreak } from 'app/components/Divider';
-import { CurrencyField } from 'app/components/Form';
-import LockBar from 'app/components/LockBar';
-import Modal from 'app/components/Modal';
-import { BoxPanel, BoxPanelWrap } from 'app/components/Panel';
-import Spinner from 'app/components/Spinner';
-import { Typography } from 'app/theme';
-import IconUnstakeSICX from 'assets/icons/timer-color.svg';
-import IconKeepSICX from 'assets/icons/wallet-tick-color.svg';
-import bnJs from 'bnJs';
-import { NETWORK_ID } from 'constants/config';
-import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from 'constants/index';
-import useWidth from 'hooks/useWidth';
+import { Button, TextButton } from '@/app/components/Button';
+import { LineBreak } from '@/app/components/Divider';
+import { CurrencyField } from '@/app/components/Form';
+import LockBar from '@/app/components/LockBar';
+import Modal from '@/app/components/Modal';
+import { BoxPanel, BoxPanelWrap } from '@/app/components/Panel';
+import Spinner from '@/app/components/Spinner';
+import { Typography } from '@/app/theme';
+import IconUnstakeSICX from '@/assets/icons/timer-color.svg';
+import IconKeepSICX from '@/assets/icons/wallet-tick-color.svg';
+import bnJs from '@/bnJs';
+import { NETWORK_ID } from '@/constants/config';
+import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
+import useWidth from '@/hooks/useWidth';
 import {
   useChangeShouldLedgerSign,
   useICXUnstakingTime,
   useShouldLedgerSign,
   useWalletModal,
-} from 'store/application/hooks';
-import { Field } from 'store/collateral/reducer';
+} from '@/store/application/hooks';
+import { Field } from '@/store/collateral/reducer';
 import {
   useCollateralState,
   useCollateralActionHandlers,
   useSupportedCollateralTokens,
   useIsHandlingICX,
   useDerivedCollateralInfo,
-} from 'store/collateral/hooks';
-import { useLoanActionHandlers, useLockedCollateralAmount } from 'store/loan/hooks';
-import { useRatio } from 'store/ratio/hooks';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX } from 'store/wallet/hooks';
-import { parseUnits } from 'utils';
-import { showMessageOnBeforeUnload } from 'utils/messages';
-import CollateralTypeSwitcher, { CollateralTypeSwitcherWrap } from 'app/components/CollateralTypeSwitcher';
-import ModalContent from 'app/components/ModalContent';
-import ICXDisplayTypeSwitcher from 'app/components/ICXDisplayTypeSwitcher';
+} from '@/store/collateral/hooks';
+import { useLoanActionHandlers, useLockedCollateralAmount } from '@/store/loan/hooks';
+import { useRatio } from '@/store/ratio/hooks';
+import { useTransactionAdder } from '@/store/transactions/hooks';
+import { useHasEnoughICX } from '@/store/wallet/hooks';
+import { parseUnits } from '@/utils';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
+import CollateralTypeSwitcher, { CollateralTypeSwitcherWrap } from '@/app/components/CollateralTypeSwitcher';
+import ModalContent from '@/app/components/ModalContent';
+import ICXDisplayTypeSwitcher from '@/app/components/ICXDisplayTypeSwitcher';
 import XCollateralModal, { XCollateralAction } from './_components/xCollateralModal';
-import { UnderlineText } from 'app/components/DropdownText';
+import { UnderlineText } from '@/app/components/DropdownText';
 import CollateralChainSelector from './_components/CollateralChainSelector';
-import { MODAL_ID, modalActions } from 'app/pages/trade/bridge/_zustand/useModalStore';
-import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import { XWalletType } from 'app/pages/trade/bridge/types';
+import { MODAL_ID, modalActions } from '@/app/pages/trade/bridge/_zustand/useModalStore';
+import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { XWalletType } from '@/app/pages/trade/bridge/types';
 
 export const PanelInfoWrap = styled(Flex)`
   justify-content: space-between;

@@ -8,10 +8,10 @@ import {
   useAddTransactionResult,
   useArchwayTransactionsState,
   useInitTransaction,
-} from 'store/transactionsCrosschain/hooks';
+} from '@/store/transactionsCrosschain/hooks';
 
-import { useArchwayContext } from 'packages/archway/ArchwayProvider';
-import { getFeeParam, isDenomAsset } from 'packages/archway/utils';
+import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
+import { getFeeParam, isDenomAsset } from '@/packages/archway/utils';
 
 import { Token, CurrencyAmount } from '@balancednetwork/sdk-core';
 
@@ -19,13 +19,13 @@ import { useQuery } from '@tanstack/react-query';
 import { usePublicClient, useWaitForTransactionReceipt, useWalletClient } from 'wagmi';
 import { erc20Abi, Address, getContract, Abi, WriteContractReturnType } from 'viem';
 
-import { XToken } from 'app/pages/trade/bridge/types';
+import { XToken } from '@/app/pages/trade/bridge/types';
 import { archway, xChainMap } from '../_config/xChains';
 
-import { NATIVE_ADDRESS } from 'constants/index';
+import { NATIVE_ADDRESS } from '@/constants/index';
 import useXWallet from './useXWallet';
-import { openToast } from 'btp/src/connectors/transactionToast';
-import { TransactionStatus } from 'store/transactions/hooks';
+import { openToast } from '@/btp/src/connectors/transactionToast';
+import { TransactionStatus } from '@/store/transactions/hooks';
 import { xServiceActions } from '../_zustand/useXServiceStore';
 import { transactionActions } from '../_zustand/useTransactionStore';
 

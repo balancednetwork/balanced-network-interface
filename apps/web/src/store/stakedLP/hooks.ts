@@ -4,9 +4,9 @@ import { CurrencyAmount, Currency } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ZERO } from 'constants/index';
-import { useBalance } from 'hooks/useV2Pairs';
-import { AppState } from 'store';
+import { ZERO } from '@/constants/index';
+import { useBalance } from '@/hooks/useV2Pairs';
+import { AppState } from '@/store';
 
 import { setStakedLPPercent, setWithdrawnValue } from './reducer';
 

@@ -2,20 +2,20 @@ import React, { useMemo } from 'react';
 
 import { Fraction } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 
-import Divider from 'app/components/Divider';
-import { BoxPanel } from 'app/components/Panel';
-import PoolLogo from 'app/components/PoolLogo';
-import QuestionHelper from 'app/components/QuestionHelper';
-import { Typography } from 'app/theme';
-import { COMBINED_TOKENS_LIST } from 'constants/tokens';
-import { useBBalnAmount } from 'store/bbaln/hooks';
-import { useCombinedVoteData, useNextUpdateDate, useUserVoteData } from 'store/liveVoting/hooks';
-import { VoteSource } from 'store/liveVoting/types';
-import { useRewards, useTotalLPRewards } from 'store/reward/hooks';
+import Divider from '@/app/components/Divider';
+import { BoxPanel } from '@/app/components/Panel';
+import PoolLogo from '@/app/components/PoolLogo';
+import QuestionHelper from '@/app/components/QuestionHelper';
+import { Typography } from '@/app/theme';
+import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
+import { useBBalnAmount } from '@/store/bbaln/hooks';
+import { useCombinedVoteData, useNextUpdateDate, useUserVoteData } from '@/store/liveVoting/hooks';
+import { VoteSource } from '@/store/liveVoting/types';
+import { useRewards, useTotalLPRewards } from '@/store/reward/hooks';
 
 import { GirdHeaderItem, RespoLabel, VoteItemWrap, VotingGrid } from '../styledComponents';
 import { formatFraction, formatTimeLeft, getSourceCurrentAllocationFormatted } from '../utils';

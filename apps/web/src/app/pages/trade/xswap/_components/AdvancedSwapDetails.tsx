@@ -7,15 +7,15 @@ import { ChevronRight } from 'react-feather';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import QuestionHelper from 'app/components/QuestionHelper';
-import SlippageSetting from 'app/components/SlippageSetting';
-import { Typography } from 'app/theme';
-import { useSwapSlippageTolerance, useSetSlippageTolerance } from 'store/application/hooks';
-import { Field } from 'store/swap/reducer';
-import { useDerivedSwapInfo } from 'store/swap/hooks';
+import QuestionHelper from '@/app/components/QuestionHelper';
+import SlippageSetting from '@/app/components/SlippageSetting';
+import { Typography } from '@/app/theme';
+import { useSwapSlippageTolerance, useSetSlippageTolerance } from '@/store/application/hooks';
+import { Field } from '@/store/swap/reducer';
+import { useDerivedSwapInfo } from '@/store/swap/hooks';
 
-import Divider from 'app/components/Divider';
-import useXCallFee from 'app/pages/trade/bridge/_hooks/useXCallFee';
+import Divider from '@/app/components/Divider';
+import useXCallFee from '@/app/pages/trade/bridge/_hooks/useXCallFee';
 import { XChainId } from '../../bridge/types';
 import { xChainMap } from '../../bridge/_config/xChains';
 

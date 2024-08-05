@@ -6,13 +6,13 @@ import duration from 'dayjs/plugin/duration';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { ProposalStatusIcon } from 'app/components/ProposalStatusIcon';
-import { Typography } from 'app/theme';
-import CalendarIcon from 'assets/icons/calendar.svg';
-import PieChartIcon from 'assets/icons/pie-chart.svg';
-import UserIcon from 'assets/icons/users.svg';
-import { ProposalInterface } from 'types';
-import { getDateFromDay } from 'utils/timeformat';
+import { ProposalStatusIcon } from '@/app/components/ProposalStatusIcon';
+import { Typography } from '@/app/theme';
+import CalendarIcon from '@/assets/icons/calendar.svg';
+import PieChartIcon from '@/assets/icons/pie-chart.svg';
+import UserIcon from '@/assets/icons/users.svg';
+import { ProposalInterface } from '@/types';
+import { getDateFromDay } from '@/utils/timeformat';
 import Skeleton from '../Skeleton';
 
 dayjs.extend(duration);

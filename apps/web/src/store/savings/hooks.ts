@@ -2,15 +2,15 @@ import React, { useCallback, useEffect } from 'react';
 
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { BigNumber } from 'bignumber.js';
-import { NETWORK_ID, useIconReact } from 'packages/icon-react';
+import { NETWORK_ID, useIconReact } from '@/packages/icon-react';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-import bnJs from 'bnJs';
-import { SUPPORTED_TOKENS_MAP_BY_ADDRESS, bnUSD } from 'constants/tokens';
-import { useTokenPrices } from 'queries/backendv2';
-import { useSupportedCollateralTokens } from 'store/collateral/hooks';
-import { useAllTransactions } from 'store/transactions/hooks';
+import bnJs from '@/bnJs';
+import { SUPPORTED_TOKENS_MAP_BY_ADDRESS, bnUSD } from '@/constants/tokens';
+import { useTokenPrices } from '@/queries/backendv2';
+import { useSupportedCollateralTokens } from '@/store/collateral/hooks';
+import { useAllTransactions } from '@/store/transactions/hooks';
 
 import { AppState } from '..';
 import { Field } from '../loan/reducer';

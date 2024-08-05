@@ -7,6 +7,7 @@ import { Currency, CurrencyAmount, TradeType, Token } from '@balancednetwork/sdk
 import { NATIVE_ADDRESS } from '@/constants/index';
 import { uintToBytes } from '@/utils';
 import { Trade } from '@balancednetwork/v1-sdk';
+import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 
 export function getBytesFromNumber(value) {
   const hexString = value.toString(16).padStart(2, '0');
@@ -125,4 +126,16 @@ export const getXAddress = (xToken: XToken | undefined) => {
     '/' +
     (xToken.address === NATIVE_ADDRESS ? '0x0000000000000000000000000000000000000000' : xToken.address)
   );
+};
+
+export const toICONDecimals = (currencyAmount: CurrencyAmount<Currency>): bigint => {
+  const xAmount = BigInt(currencyAmount.quotient.toString());
+  const iconToken = xTokenMap[ICON_XCALL_NETWORK_ID].find(
+    token => token.symbol === currencyAmount.currency.symbol,
+  ) as XToken;
+
+  if (iconToken.decimals === currencyAmount.currency.decimals) return xAmount;
+
+  const diff = BigInt(iconToken.decimals - currencyAmount.currency.decimals);
+  return xAmount * BigInt(10) ** diff;
 };

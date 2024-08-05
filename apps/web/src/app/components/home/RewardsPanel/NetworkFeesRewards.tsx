@@ -1,33 +1,33 @@
 import React from 'react';
 
 import { Trans, t } from '@lingui/macro';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
-import { Button, TextButton } from 'app/components/Button';
-import { UnderlineText } from 'app/components/DropdownText';
-import Modal from 'app/components/Modal';
-import ModalContent from 'app/components/ModalContent';
-import { QuestionWrapper } from 'app/components/QuestionHelper';
-import Spinner from 'app/components/Spinner';
-import Tooltip from 'app/components/Tooltip';
-import { Typography } from 'app/theme';
-import QuestionIcon from 'assets/icons/question.svg';
-import bnJs from 'bnJs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { Button, TextButton } from '@/app/components/Button';
+import { UnderlineText } from '@/app/components/DropdownText';
+import Modal from '@/app/components/Modal';
+import ModalContent from '@/app/components/ModalContent';
+import { QuestionWrapper } from '@/app/components/QuestionHelper';
+import Spinner from '@/app/components/Spinner';
+import Tooltip from '@/app/components/Tooltip';
+import { Typography } from '@/app/theme';
+import QuestionIcon from '@/assets/icons/question.svg';
+import bnJs from '@/bnJs';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import {
   useBBalnSliderState,
   useDBBalnAmountDiff,
   useDynamicBBalnAmount,
   usePastMonthFeesDistributed,
   useTotalSupply,
-} from 'store/bbaln/hooks';
-import { useFetchUnclaimedDividends, useUnclaimedFees } from 'store/fees/hooks';
-import { useHasNetworkFees } from 'store/reward/hooks';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX } from 'store/wallet/hooks';
-import { showMessageOnBeforeUnload } from 'utils/messages';
+} from '@/store/bbaln/hooks';
+import { useFetchUnclaimedDividends, useUnclaimedFees } from '@/store/fees/hooks';
+import { useHasNetworkFees } from '@/store/reward/hooks';
+import { useTransactionAdder } from '@/store/transactions/hooks';
+import { useHasEnoughICX } from '@/store/wallet/hooks';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
 
 import RewardsGrid from './RewardsGrid';
 

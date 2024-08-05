@@ -10,10 +10,10 @@ import {
   css,
 } from 'styled-components';
 
-import texGyeAdventorBoldWoff from 'assets/font/tex-gyre-adventor-bold/tex-gyre-adventor-bold.woff';
-import texGyeAdventorBoldWoff2 from 'assets/font/tex-gyre-adventor-bold/tex-gyre-adventor-bold.woff2';
-import texGyeAdventorRegularWoff from 'assets/font/tex-gyre-adventor-regular/tex-gyre-adventor-regular.woff';
-import texGyeAdventorRegularWoff2 from 'assets/font/tex-gyre-adventor-regular/tex-gyre-adventor-regular.woff2';
+import texGyeAdventorBoldWoff from '@/assets/font/tex-gyre-adventor-bold/tex-gyre-adventor-bold.woff';
+import texGyeAdventorBoldWoff2 from '@/assets/font/tex-gyre-adventor-bold/tex-gyre-adventor-bold.woff2';
+import texGyeAdventorRegularWoff from '@/assets/font/tex-gyre-adventor-regular/tex-gyre-adventor-regular.woff';
+import texGyeAdventorRegularWoff2 from '@/assets/font/tex-gyre-adventor-regular/tex-gyre-adventor-regular.woff2';
 
 // Update your breakpoints if you want
 export const sizes = {

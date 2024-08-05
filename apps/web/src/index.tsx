@@ -5,28 +5,28 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 import BigNumber from 'bignumber.js';
-import { IconReactProvider } from 'packages/icon-react';
+import { IconReactProvider } from '@/packages/icon-react';
 import { HelmetProvider } from 'react-helmet-async';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
-import * as serviceWorker from 'serviceWorker';
+// import * as serviceWorker from 'serviceWorker';
 
 // Use consistent styling
 import 'sanitize.css/sanitize.css';
 
 // Import root app
-import { App } from 'app';
-import { ArchwayProvider } from 'packages/archway/ArchwayProvider';
-import store from 'store';
+import { App } from '@/app';
+import { ArchwayProvider } from '@/packages/archway/ArchwayProvider';
+import store from '@/store';
 
 // Initialize languages
 import { LanguageProvider } from './i18n';
 
 import { WagmiProvider } from 'wagmi';
 import { wagmiConfig } from './config/wagmi';
-import { HavahProvider } from 'packages/havah/HavahProvider';
+import { HavahProvider } from '@/packages/havah/HavahProvider';
 
 BigInt.prototype['toJSON'] = function () {
   return 'BIGINT::' + this.toString();
@@ -75,4 +75,4 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+// serviceWorker.unregister();

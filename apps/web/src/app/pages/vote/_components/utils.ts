@@ -1,10 +1,10 @@
 import { CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import { t } from '@lingui/macro';
-import { getClosestUnixWeekStart } from 'app/components/home/BBaln/utils';
+import { getClosestUnixWeekStart } from '@/app/components/home/BBaln/utils';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 
-import { VoteItemInfo, VoteSource } from 'store/liveVoting/types';
+import { VoteItemInfo, VoteSource } from '@/store/liveVoting/types';
 
 export const maxYearsLocked = new BigNumber(4);
 

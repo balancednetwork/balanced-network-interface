@@ -1,9 +1,9 @@
 import { XChainId, XWalletType } from '../types';
-import { useArchwayContext } from 'packages/archway/ArchwayProvider';
-import { useIconReact } from 'packages/icon-react';
+import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
+import { useIconReact } from '@/packages/icon-react';
 import { useMemo } from 'react';
 import useEVMReact from './useEVMReact';
-import { useHavahContext } from 'packages/havah/HavahProvider';
+import { useHavahContext } from '@/packages/havah/HavahProvider';
 
 const useWallets = (): {
   [key in XWalletType]: { account: string | undefined | null; xChainId: XChainId | undefined; disconnect: () => void };

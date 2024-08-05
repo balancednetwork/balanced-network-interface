@@ -1,23 +1,23 @@
 import React from 'react';
 
 import { t, Trans } from '@lingui/macro';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { Helmet } from 'react-helmet-async';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Button } from 'app/components/Button';
-import Logo from 'app/components/Logo';
-import Spinner from 'app/components/Spinner';
-import { Typography } from 'app/theme';
-import bnJs from 'bnJs';
-import { BATCH_SIZE, useUserCollectedFeesQuery } from 'queries/reward';
-import { useChangeShouldLedgerSign, useShouldLedgerSign, useWalletModalToggle } from 'store/application/hooks';
-import { useHasNetworkFees } from 'store/reward/hooks';
-import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
-import { shortenAddress } from 'utils';
-import { showMessageOnBeforeUnload } from 'utils/messages';
-import 'styles/airdrip.css';
+import { Button } from '@/app/components/Button';
+import Logo from '@/app/components/Logo';
+import Spinner from '@/app/components/Spinner';
+import { Typography } from '@/app/theme';
+import bnJs from '@/bnJs';
+import { BATCH_SIZE, useUserCollectedFeesQuery } from '@/queries/reward';
+import { useChangeShouldLedgerSign, useShouldLedgerSign, useWalletModalToggle } from '@/store/application/hooks';
+import { useHasNetworkFees } from '@/store/reward/hooks';
+import { TransactionStatus, useTransactionAdder, useTransactionStatus } from '@/store/transactions/hooks';
+import { shortenAddress } from '@/utils';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
+import '@/styles/airdrip.css';
 
 const Container = styled(Box)`
   /* disable margin collapse */

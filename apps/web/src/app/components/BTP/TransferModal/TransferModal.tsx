@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
 
 import BigNumber from 'bignumber.js';
-// import { transactionInfo } from 'btp/src/connectors/constants';
-import { transactionInfo } from 'btp/src/connectors/constants';
-import { toChecksumAddress } from 'btp/src/connectors/MetaMask/utils';
-import { useGetBTPService } from 'btp/src/hooks/useService';
-import { useFromNetwork, useToNetwork } from 'btp/src/store/bridge/hooks';
+// import { transactionInfo } from '@/btp/src/connectors/constants';
+import { transactionInfo } from '@/btp/src/connectors/constants';
+import { toChecksumAddress } from '@/btp/src/connectors/MetaMask/utils';
+import { useGetBTPService } from '@/btp/src/hooks/useService';
+import { useFromNetwork, useToNetwork } from '@/btp/src/store/bridge/hooks';
 import { Converter as IconConverter } from 'icon-sdk-js';
 import { Trans } from 'react-i18next';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Button, TextButton } from 'app/components/Button';
-import Modal from 'app/components/Modal';
-import { Typography } from 'app/theme';
-import CheckIcon from 'assets/icons/tick.svg';
-import { MODAL_FADE_DURATION } from 'constants/index';
-import { TransactionStatus } from 'store/transactions/hooks';
+import { Button, TextButton } from '@/app/components/Button';
+import Modal from '@/app/components/Modal';
+import { Typography } from '@/app/theme';
+import CheckIcon from '@/assets/icons/tick.svg';
+import { MODAL_FADE_DURATION } from '@/constants/index';
+import { TransactionStatus } from '@/store/transactions/hooks';
 
 const CheckIconWrapper = styled.div`
   display: block;

@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 
 import { Trans } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { BoxPanel } from 'app/components/Panel';
-import { Typography } from 'app/theme';
+import { BoxPanel } from '@/app/components/Panel';
+import { Typography } from '@/app/theme';
 
 import AllPoolsPanel from './AllPoolsPanel';
 import LiquidityDetails from './LiquidityDetails';

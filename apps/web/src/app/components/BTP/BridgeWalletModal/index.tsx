@@ -1,24 +1,24 @@
 import React from 'react';
 
-import { CONNECTED_WALLET_LOCAL_STORAGE } from 'btp/src/connectors/constants';
-import { requestAddress } from 'btp/src/connectors/ICONex/events';
-import { EthereumInstance } from 'btp/src/connectors/MetaMask';
-import { useNextFromNetwork, useSelectNetworkDst, useSelectNetworkSrc } from 'btp/src/store/bridge/hooks';
-import { wallets } from 'btp/src/utils/constants';
-// import { BalancedJs } from 'packages/BalancedJs';
-// import { LEDGER_BASE_PATH } from 'packages/BalancedJs/contractSettings';
+import { CONNECTED_WALLET_LOCAL_STORAGE } from '@/btp/src/connectors/constants';
+import { requestAddress } from '@/btp/src/connectors/ICONex/events';
+import { EthereumInstance } from '@/btp/src/connectors/MetaMask';
+import { useNextFromNetwork, useSelectNetworkDst, useSelectNetworkSrc } from '@/btp/src/store/bridge/hooks';
+import { wallets } from '@/btp/src/utils/constants';
+// import { BalancedJs } from '@/packages/BalancedJs';
+// import { LEDGER_BASE_PATH } from '@/packages/BalancedJs/contractSettings';
 import { Trans } from 'react-i18next';
 import { Box, Flex, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-// import { VerticalDivider } from 'app/components/Divider';
-import Modal, { ModalProps } from 'app/components/Modal';
-// import Spinner from 'app/components/Spinner';
-import { Typography } from 'app/theme';
-import IconWalletIcon from 'assets/icons/wallets/iconex.svg';
-// import LedgerIcon  from 'assets/icons/ledger.svg';
-import MetamaskIcon from 'assets/icons/wallets/metamask.svg';
-// import { useChangeCurrentLedgerAddressPage, useCurrentLedgerAddressPage } from 'store/application/hooks';
+// import { VerticalDivider } from '@/app/components/Divider';
+import Modal, { ModalProps } from '@/app/components/Modal';
+// import Spinner from '@/app/components/Spinner';
+import { Typography } from '@/app/theme';
+import IconWalletIcon from '@/assets/icons/wallets/iconex.svg';
+// import LedgerIcon  from '@/assets/icons/ledger.svg';
+import MetamaskIcon from '@/assets/icons/wallets/metamask.svg';
+// import { useChangeCurrentLedgerAddressPage, useCurrentLedgerAddressPage } from '@/store/application/hooks';
 
 // const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 

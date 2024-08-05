@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Trans, t } from '@lingui/macro';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import babelParser from 'prettier/parser-babel';
 import prettier from 'prettier/standalone';
 import { useParams } from 'react-router-dom';
@@ -12,30 +12,30 @@ import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { css, useTheme } from 'styled-components';
 
-import { Breadcrumb } from 'app/components/Breadcrumb';
-import { Button, AlertButton } from 'app/components/Button';
-import Column from 'app/components/Column';
-import { UnderlineText } from 'app/components/DropdownText';
-import { BoxPanel } from 'app/components/Panel';
+import { Breadcrumb } from '@/app/components/Breadcrumb';
+import { Button, AlertButton } from '@/app/components/Button';
+import Column from '@/app/components/Column';
+import { UnderlineText } from '@/app/components/DropdownText';
+import { BoxPanel } from '@/app/components/Panel';
 import {
   VoteDateEndLabel,
   VoterNumberLabel,
   VoterPercentLabel,
   VoteStatusLabel,
-} from 'app/components/ProposalInfo/components';
-import { ProposalModal, ModalStatus } from 'app/components/ProposalModal';
-import { Typography } from 'app/theme';
-import CancelIcon from 'assets/icons/cancel.svg';
-import CheckCircleIcon from 'assets/icons/check_circle.svg';
-import ExternalIcon from 'assets/icons/external.svg';
-import bnJs from 'bnJs';
-import { useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from 'queries/vote';
-import { useChangeShouldLedgerSign } from 'store/application/hooks';
-import { useFetchBBalnInfo } from 'store/bbaln/hooks';
-import { TransactionStatus, useTransactionAdder, useTransactionStatus } from 'store/transactions/hooks';
-import { useWalletFetchBalances } from 'store/wallet/hooks';
-import { formatTimeStr } from 'utils/timeformat';
-import Skeleton from 'app/components/Skeleton';
+} from '@/app/components/ProposalInfo/components';
+import { ProposalModal, ModalStatus } from '@/app/components/ProposalModal';
+import { Typography } from '@/app/theme';
+import CancelIcon from '@/assets/icons/cancel.svg';
+import CheckCircleIcon from '@/assets/icons/check_circle.svg';
+import ExternalIcon from '@/assets/icons/external.svg';
+import bnJs from '@/bnJs';
+import { useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from '@/queries/vote';
+import { useChangeShouldLedgerSign } from '@/store/application/hooks';
+import { useFetchBBalnInfo } from '@/store/bbaln/hooks';
+import { TransactionStatus, useTransactionAdder, useTransactionStatus } from '@/store/transactions/hooks';
+import { useWalletFetchBalances } from '@/store/wallet/hooks';
+import { formatTimeStr } from '@/utils/timeformat';
+import Skeleton from '@/app/components/Skeleton';
 
 dayjs.extend(duration);
 

@@ -4,8 +4,8 @@ import { stringify } from 'qs';
 // import ReactGA from 'react-ga';
 import { useLocation } from 'react-router-dom';
 
-import { SupportedLocale } from 'constants/locales';
-import useParsedQueryString from 'hooks/useParsedQueryString';
+import { SupportedLocale } from '@/constants/locales';
+import useParsedQueryString from '@/hooks/useParsedQueryString';
 
 // import { useActiveLocale } from './useActiveLocale';
 

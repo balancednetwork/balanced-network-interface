@@ -3,8 +3,8 @@ import React from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import styled from 'styled-components';
 
-import { DropdownPopper } from 'app/components/Popover';
-import ArrowDownIcon from 'assets/icons/arrow-down.svg';
+import { DropdownPopper } from '@/app/components/Popover';
+import ArrowDownIcon from '@/assets/icons/arrow-down.svg';
 
 export const StyledArrowDownIcon = styled(ArrowDownIcon)`
   margin-left: 5px;

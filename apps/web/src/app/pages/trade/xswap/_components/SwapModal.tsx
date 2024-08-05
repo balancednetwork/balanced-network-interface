@@ -6,23 +6,23 @@ import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Flex, Box } from 'rebass/styled-components';
 
-import { Button, TextButton } from 'app/components/Button';
-import Modal from 'app/components/Modal';
-import { Typography } from 'app/theme';
-import bnJs from 'bnJs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from 'store/application/hooks';
-import { Field } from 'store/swap/reducer';
-import { useHasEnoughICX } from 'store/wallet/hooks';
-import { formatBigNumber, shortenAddress, toDec } from 'utils';
-import { showMessageOnBeforeUnload } from 'utils/messages';
+import { Button, TextButton } from '@/app/components/Button';
+import Modal from '@/app/components/Modal';
+import { Typography } from '@/app/theme';
+import bnJs from '@/bnJs';
+import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from '@/store/application/hooks';
+import { Field } from '@/store/swap/reducer';
+import { useHasEnoughICX } from '@/store/wallet/hooks';
+import { formatBigNumber, shortenAddress, toDec } from '@/utils';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
 
-import ModalContent from 'app/components/ModalContent';
-import Spinner from 'app/components/Spinner';
-import { swapMessage } from 'app/pages/trade/supply/_components/utils';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useSwapState } from 'store/swap/hooks';
-import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from 'constants/misc';
-import { getRlpEncodedSwapData } from 'app/pages/trade/bridge/utils';
+import ModalContent from '@/app/components/ModalContent';
+import Spinner from '@/app/components/Spinner';
+import { swapMessage } from '@/app/pages/trade/supply/_components/utils';
+import { useTransactionAdder } from '@/store/transactions/hooks';
+import { useSwapState } from '@/store/swap/hooks';
+import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
+import { getRlpEncodedSwapData } from '@/app/pages/trade/bridge/utils';
 
 type SwapModalProps = {
   isOpen: boolean;

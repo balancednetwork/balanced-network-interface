@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { XChainId } from 'app/pages/trade/bridge/types';
+import { XChainId } from '@/app/pages/trade/bridge/types';
 
 import { Currency } from '@balancednetwork/sdk-core';
-import { getXTokenBySymbol } from 'app/pages/trade/bridge/utils';
+import { getXTokenBySymbol } from '@/app/pages/trade/bridge/utils';
 
 export enum Field {
   FROM = 'FROM',

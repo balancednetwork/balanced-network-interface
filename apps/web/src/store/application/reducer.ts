@@ -1,8 +1,8 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit';
-import { XWalletType } from 'app/pages/trade/bridge/types';
+import { XWalletType } from '@/app/pages/trade/bridge/types';
 
-import { DEFAULT_SLIPPAGE } from 'constants/index';
-import { DEFAULT_TXN_DISMISS_MS } from 'constants/misc';
+import { DEFAULT_SLIPPAGE } from '@/constants/index';
+import { DEFAULT_TXN_DISMISS_MS } from '@/constants/misc';
 
 export type PopupContent = {
   txn: {

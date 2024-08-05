@@ -1,4 +1,4 @@
-import { Typography } from 'app/theme';
+import { Typography } from '@/app/theme';
 import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 

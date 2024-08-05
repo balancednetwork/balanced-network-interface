@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState, useCallback, ReactNode } from 'react';
-import { LOCAL_STORAGE_ADDRESS_EXPIRY } from 'packages/icon-react';
-import { useLocalStorageWithExpiry } from 'hooks/useLocalStorage';
+import { LOCAL_STORAGE_ADDRESS_EXPIRY } from '@/packages/icon-react';
+import { useLocalStorageWithExpiry } from '@/hooks/useLocalStorage';
 
 interface AccountResultType {
   address: string;

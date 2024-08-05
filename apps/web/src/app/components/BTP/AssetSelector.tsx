@@ -3,7 +3,7 @@ import React from 'react';
 import { Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
-import ArrowDown from 'assets/icons/arrow-down.svg';
+import ArrowDown from '@/assets/icons/arrow-down.svg';
 
 const Select = styled(Flex)`
   z-index: 3;

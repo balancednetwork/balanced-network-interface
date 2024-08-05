@@ -5,9 +5,9 @@ import duration from 'dayjs/plugin/duration';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Typography } from 'app/theme';
-import { ProposalInterface } from 'types';
-import { normalizeContent } from 'utils';
+import { Typography } from '@/app/theme';
+import { ProposalInterface } from '@/types';
+import { normalizeContent } from '@/utils';
 
 import {
   ApprovalLabel,

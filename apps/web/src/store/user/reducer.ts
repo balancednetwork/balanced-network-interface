@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { SupportedLocale } from 'constants/locales';
-import { DEFAULT_DEADLINE_FROM_NOW } from 'constants/misc';
+import { SupportedLocale } from '@/constants/locales';
+import { DEFAULT_DEADLINE_FROM_NOW } from '@/constants/misc';
 
 const currentTimestamp = () => new Date().getTime();
 

@@ -4,33 +4,33 @@ import { Trans, t } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Typography } from 'app/theme';
-import Modal from 'app/components/Modal';
-import { ModalContentWrapper } from 'app/components/ModalContent';
-import { StyledButton as XCallButton } from 'app/pages/trade/xswap/_components/shared';
-import { Button, TextButton } from 'app/components/Button';
-import Spinner from 'app/components/Spinner';
+import { Typography } from '@/app/theme';
+import Modal from '@/app/components/Modal';
+import { ModalContentWrapper } from '@/app/components/ModalContent';
+import { StyledButton as XCallButton } from '@/app/pages/trade/xswap/_components/shared';
+import { Button, TextButton } from '@/app/components/Button';
+import Spinner from '@/app/components/Spinner';
 
-import { getNetworkDisplayName } from 'app/pages/trade/bridge/utils';
-import { useShouldLedgerSign } from 'store/application/hooks';
+import { getNetworkDisplayName } from '@/app/pages/trade/bridge/utils';
+import { useShouldLedgerSign } from '@/store/application/hooks';
 
 import { useModalStore, modalActions, MODAL_ID } from '../_zustand/useModalStore';
 
 import XTransactionState from './XTransactionState';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
-import { ApprovalState, useApproveCallback } from 'app/pages/trade/bridge/_hooks/useApproveCallback';
-import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { ApprovalState, useApproveCallback } from '@/app/pages/trade/bridge/_hooks/useApproveCallback';
+import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
 import useXCallFee from '../_hooks/useXCallFee';
 import { XTransactionType, XTransactionInput } from '../_zustand/types';
 import { useXMessageStore } from '../_zustand/useXMessageStore';
 import useXCallGasChecker from '../_hooks/useXCallGasChecker';
 import { useXTransactionStore, xTransactionActions } from '../_zustand/useXTransactionStore';
-import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from 'store/bridge/hooks';
+import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from '@/store/bridge/hooks';
 import { useCreateWalletXService } from '../_zustand/useXServiceStore';
 import useWallets from '../_hooks/useWallets';
 import { useSwitchChain } from 'wagmi';
 import BigNumber from 'bignumber.js';
-import { formatBigNumber } from 'utils';
+import { formatBigNumber } from '@/utils';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;

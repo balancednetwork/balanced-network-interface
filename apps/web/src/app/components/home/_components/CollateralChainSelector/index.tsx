@@ -1,10 +1,10 @@
-import { StyledArrowDownIcon, UnderlineText } from 'app/components/DropdownText';
-import { DropdownPopper } from 'app/components/Popover';
-import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import { XChainId } from 'app/pages/trade/bridge/types';
-import { getAvailableXChains } from 'app/pages/trade/bridge/utils';
-import { Typography } from 'app/theme';
-import { SUPPORTED_TOKENS_LIST } from 'constants/tokens';
+import { StyledArrowDownIcon, UnderlineText } from '@/app/components/DropdownText';
+import { DropdownPopper } from '@/app/components/Popover';
+import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { XChainId } from '@/app/pages/trade/bridge/types';
+import { getAvailableXChains } from '@/app/pages/trade/bridge/utils';
+import { Typography } from '@/app/theme';
+import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
 import React, { useEffect, useMemo } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
@@ -13,8 +13,8 @@ import {
   useCollateralActionHandlers,
   useCollateralType,
   useCollateralXChain,
-} from 'store/collateral/hooks';
-import { useSetLoanRecipientNetwork } from 'store/loan/hooks';
+} from '@/store/collateral/hooks';
+import { useSetLoanRecipientNetwork } from '@/store/loan/hooks';
 import styled from 'styled-components';
 import ChainSelectorLogo from './ChainSelectorLogo';
 import ChainList from './ChainList';

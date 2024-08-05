@@ -4,19 +4,19 @@ import { Currency, CurrencyAmount, Token, Percent, Price } from '@balancednetwor
 import { Pair } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { XChainId } from 'app/pages/trade/bridge/types';
-import bnJs from 'bnJs';
-import { isNativeCurrency, useICX } from 'constants/tokens';
-import { useAllTokens, useCommonBases } from 'hooks/Tokens';
-import { useQueuePair } from 'hooks/useQueuePair';
-import { PairState, useV2Pair } from 'hooks/useV2Pairs';
-import { tryParseAmount } from 'store/swap/hooks';
-import { useAllTransactions } from 'store/transactions/hooks';
-import { useCrossChainCurrencyBalances, useCurrencyBalances } from 'store/wallet/hooks';
+import { XChainId } from '@/app/pages/trade/bridge/types';
+import bnJs from '@/bnJs';
+import { isNativeCurrency, useICX } from '@/constants/tokens';
+import { useAllTokens, useCommonBases } from '@/hooks/Tokens';
+import { useQueuePair } from '@/hooks/useQueuePair';
+import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
+import { tryParseAmount } from '@/store/swap/hooks';
+import { useAllTransactions } from '@/store/transactions/hooks';
+import { useCrossChainCurrencyBalances, useCurrencyBalances } from '@/store/wallet/hooks';
 
 import { AppDispatch, AppState } from '../index';
 import { Field, INITIAL_MINT, typeInput, selectCurrency } from './reducer';

@@ -206,8 +206,12 @@ msgid ", the current incentives will be adjusted to reflect this allocation."
 msgstr ""
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
-msgid "Repaying..."
+msgid "Borrowing"
 msgstr ""
+
+#: src/app/components/home/_components/xLoanModal/index.tsx
+#~ msgid "Repaying..."
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Assets to send"
@@ -589,8 +593,8 @@ msgid "is available on {0}."
 msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
-msgid "Add your sICX to the collateral pool."
-msgstr "Thêm sICX của bạn vào tài sản thế chấp."
+#~ msgid "Add your sICX to the collateral pool."
+#~ msgstr "Thêm sICX của bạn vào tài sản thế chấp."
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Withdrawing BALN..."
@@ -601,8 +605,8 @@ msgid "1D"
 msgstr "1 ngày"
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
-msgid "Deposit sICX"
-msgstr "Nạp sICX"
+#~ msgid "Deposit sICX"
+#~ msgstr "Nạp sICX"
 
 #: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "Lock up BALN and vote for this pool to receive bribes."
@@ -642,8 +646,8 @@ msgid "or"
 msgstr "hoặc"
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
-msgid "Deposit sICX collateral?"
-msgstr "Nạp sICX thành tài khoản thế chấp?"
+#~ msgid "Deposit sICX collateral?"
+#~ msgstr "Nạp sICX thành tài khoản thế chấp?"
 
 #: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "Claimed {0} {1}."
@@ -755,7 +759,6 @@ msgstr ""
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-#: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 msgid "Before"
 msgstr "Trước"
@@ -785,8 +788,8 @@ msgstr "Đã khóa"
 #~ msgstr ""
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
-msgid "Transfer fee: <0>{formattedXCallFee}</0>"
-msgstr ""
+#~ msgid "Transfer fee: <0>{formattedXCallFee}</0>"
+#~ msgstr ""
 
 #: src/app/pages/vote/_components/BribesPanel/index.tsx
 msgid "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
@@ -847,7 +850,6 @@ msgstr ""
 #~ msgid "Claimed {0} BALN."
 #~ msgstr "Đã nhận {0} BALN."
 
-#: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "You'll also pay"
 msgstr ""
@@ -941,6 +943,10 @@ msgstr "Giao dịch"
 msgid "Confirm the transaction on your Ledger."
 msgstr "Xác nhận giao dịch trên thiết bị Ledger."
 
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+msgid "Swapping"
+msgstr ""
+
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 msgid "Incentives are recalculated every week. You can adjust your allocation once every 10 days."
 msgstr ""
@@ -983,16 +989,16 @@ msgid "Claimed network fees."
 msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
-msgid "Deposited {0} sICX as collateral."
-msgstr "Đã nạp {0} sICX vào tài khoản thế chấp."
+#~ msgid "Deposited {0} sICX as collateral."
+#~ msgstr "Đã nạp {0} sICX vào tài khoản thế chấp."
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Remove your assets to cancel this transaction."
 msgstr "Rút lại tài sản để hủy giao dịch này."
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
-msgid "Withdrawing..."
-msgstr ""
+#~ msgid "Withdrawing..."
+#~ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "{0} BALN withdrawn."
@@ -1007,7 +1013,6 @@ msgstr "Rút:"
 msgid "Unlock {0} BALN"
 msgstr ""
 
-#: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "to transfer cross-chain."
 msgstr ""
@@ -1075,8 +1080,8 @@ msgid "Failed to enact"
 msgstr "Kích hoạt thất bại"
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
-msgid "Borrowing..."
-msgstr ""
+#~ msgid "Borrowing..."
+#~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Sign in to Balanced"
@@ -1097,7 +1102,6 @@ msgstr "Bỏ phiếu bắt đầu vào lúc 5:00PM giờ UTC"
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-#: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 msgid "After"
 msgstr "Sau"
@@ -1179,6 +1183,10 @@ msgstr "rồi ấn vào Supply."
 msgid "Withdraw BALN"
 msgstr ""
 
+#: src/app/components/CollateralTypeSwitcher/CollateralTypeList.tsx
+msgid "No positions found."
+msgstr ""
+
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Check that your contract calls are set up correctly before you submit the proposal."
 msgstr ""
@@ -1191,6 +1199,10 @@ msgstr ""
 msgid "Not now"
 msgstr "Không phải bây giờ"
 
+#: src/app/components/Header/index.tsx
+msgid "Unsupported network"
+msgstr ""
+
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx
 #: src/app/components/ICONWallet/index.tsx
@@ -1201,6 +1213,11 @@ msgstr "Không phải bây giờ"
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Fee"
 msgstr "Mức phí"
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+#: src/app/components/home/_components/xLoanModal/index.tsx
+msgid "Cross-chain fee: <0>{formattedXCallFee}</0>"
+msgstr ""
 
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
@@ -1225,9 +1242,12 @@ msgid "Each redemption is spread across a group of borrowers to minimise the imp
 msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-#: src/app/components/WalletModal/index.tsx
-#~ msgid "Swap & transfer crypto cross-chain."
-#~ msgstr ""
+msgid "Swap & transfer crypto cross-chain."
+msgstr ""
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+msgid "Withdrawing"
+msgstr ""
 
 #: src/app/components/home/_components/CollateralChainSelector/ChainList.tsx
 #: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
@@ -1397,6 +1417,10 @@ msgstr ""
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Pending"
 msgstr "Đang chờ xử lý"
+
+#: src/app/components/home/_components/xLoanModal/index.tsx
+msgid "Repaying"
+msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Transfer {inputCurrency} to {network}..."
@@ -1607,6 +1631,10 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+msgid "Transferring"
+msgstr ""
+
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #~ msgid "Transfer in progress"
 #~ msgstr ""
 
@@ -1733,7 +1761,6 @@ msgstr ""
 #: src/app/components/home/Savings/index.tsx
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-#: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
@@ -1773,6 +1800,7 @@ msgid "Claiming bribe..."
 msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "0 {0}"
 msgstr ""
 
@@ -1797,8 +1825,8 @@ msgid "Your position requires"
 msgstr ""
 
 #: src/app/components/CollateralTypeSwitcher/CollateralTypeList.tsx
-msgid "No positions found"
-msgstr ""
+#~ msgid "No positions found"
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "Total supply"
@@ -1813,8 +1841,8 @@ msgid "Rejected"
 msgstr "Đã từ chối"
 
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
-msgid "Transferring..."
-msgstr ""
+#~ msgid "Transferring..."
+#~ msgstr ""
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #~ msgid "Repay in progress"
@@ -2011,7 +2039,6 @@ msgstr ""
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
 msgid "Deposit"
 msgstr "Nạp"
 
@@ -2064,7 +2091,6 @@ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
-#: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
 msgid "Depositing collateral..."
 msgstr "Đang nạp tài sản..."
 
@@ -2101,6 +2127,10 @@ msgstr ""
 #~ msgid "Impermanent loss is not factored in."
 #~ msgstr ""
 
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+msgid "Depositing"
+msgstr ""
+
 #: src/app/components/WalletModal/index.tsx
 msgid "Connected to {numberOfConnectedWallets} blockchain"
 msgstr ""
@@ -2111,8 +2141,8 @@ msgid "from network fees in the last 30 days."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
-msgid "Swapping..."
-msgstr ""
+#~ msgid "Swapping..."
+#~ msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Verifying contract calls..."
@@ -2389,8 +2419,8 @@ msgid "1W"
 msgstr "1 tuần"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
-msgid "Depositing..."
-msgstr ""
+#~ msgid "Depositing..."
+#~ msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Position details"
@@ -2527,8 +2557,8 @@ msgid "In"
 msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
-msgid "Deposit as collateral"
-msgstr "Nạp thành tài khoản thế chấp"
+#~ msgid "Deposit as collateral"
+#~ msgstr "Nạp thành tài khoản thế chấp"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/CollateralPanel.tsx

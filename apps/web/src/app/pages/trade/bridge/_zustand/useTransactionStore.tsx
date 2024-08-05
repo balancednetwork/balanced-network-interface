@@ -8,7 +8,7 @@ import {
   NotificationPending,
   NotificationSuccess,
   NotificationError,
-} from 'app/components/Notification/TransactionNotification';
+} from '@/app/components/Notification/TransactionNotification';
 import { Transaction, TransactionStatus } from './types';
 import { xServiceActions } from './useXServiceStore';
 import { XChainId } from '../types';

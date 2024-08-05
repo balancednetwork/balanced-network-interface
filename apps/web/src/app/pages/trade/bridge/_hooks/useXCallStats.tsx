@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
-import { ONE_DAY_DURATION } from 'utils';
+import { ONE_DAY_DURATION } from '@/utils';
 
 export type XCallActivityDataType = {
   hour: string;

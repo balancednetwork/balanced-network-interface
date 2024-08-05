@@ -3,11 +3,11 @@ import { useCallback, useMemo } from 'react';
 import { CHAIN_INFO } from '@balancednetwork/balanced-js';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { NETWORK_ID } from 'constants/config';
+import { NETWORK_ID } from '@/constants/config';
 
 import { AppDispatch, AppState } from '../index';
 import {
@@ -18,7 +18,7 @@ import {
   updateSlippageTolerance,
   setOpenWalletModal,
 } from './reducer';
-import { XWalletType } from 'app/pages/trade/bridge/types';
+import { XWalletType } from '@/app/pages/trade/bridge/types';
 
 type BlockDetails = {
   timestamp: number;

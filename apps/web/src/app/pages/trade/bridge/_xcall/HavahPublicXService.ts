@@ -1,7 +1,7 @@
-import { havahJs } from 'bnJs';
+import { havahJs } from '@/bnJs';
 import IconService, { Converter, BigNumber } from 'icon-sdk-js';
 
-import { XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
+import { XCallEventType, XChainId } from '@/app/pages/trade/bridge/types';
 import {
   TransactionStatus,
   XCallEvent,
@@ -10,7 +10,7 @@ import {
   XCallMessageSentEvent,
 } from '../_zustand/types';
 import { AbstractPublicXService, ICONTxResultType } from './types';
-import { sleep } from 'utils';
+import { sleep } from '@/utils';
 
 export const getICONEventSignature = (eventName: XCallEventType) => {
   switch (eventName) {

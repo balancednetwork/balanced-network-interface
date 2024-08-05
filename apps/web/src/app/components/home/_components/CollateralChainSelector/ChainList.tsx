@@ -2,22 +2,22 @@ import React, { useMemo, useState } from 'react';
 
 import { Box } from 'rebass';
 
-import { ChainLogo } from 'app/components/ChainLogo';
-import { XChainId, XChain } from 'app/pages/trade/bridge/types';
-import { xChains } from 'app/pages/trade/bridge/_config/xChains';
-import SearchInput from 'app/components/SearchModal/SearchInput';
+import { ChainLogo } from '@/app/components/ChainLogo';
+import { XChainId, XChain } from '@/app/pages/trade/bridge/types';
+import { xChains } from '@/app/pages/trade/bridge/_config/xChains';
+import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { Trans, t } from '@lingui/macro';
-import { HeaderText } from 'app/components/Wallet/styledComponents';
-import { Typography } from 'app/theme';
-import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
-import { useCrossChainWalletBalances } from 'store/wallet/hooks';
+import { HeaderText } from '@/app/components/Wallet/styledComponents';
+import { Typography } from '@/app/theme';
+import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
+import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { isMobile } from 'react-device-detect';
 import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from '../LoanChainSelector/styledComponents';
-import { useCollateralAmounts, useCollateralType } from 'store/collateral/hooks';
-import { xTokenMap } from 'app/pages/trade/bridge/_config/xTokens';
-import { useOraclePrices } from 'store/oracle/hooks';
+import { useCollateralAmounts, useCollateralType } from '@/store/collateral/hooks';
+import { xTokenMap } from '@/app/pages/trade/bridge/_config/xTokens';
+import { useOraclePrices } from '@/store/oracle/hooks';
 import BigNumber from 'bignumber.js';
-import { formatValue } from 'utils/formatter';
+import { formatValue } from '@/utils/formatter';
 
 type ChainListProps = {
   chainId: XChainId;

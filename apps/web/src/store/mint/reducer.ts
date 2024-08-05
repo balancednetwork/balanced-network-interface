@@ -1,8 +1,8 @@
 import { Currency } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
 
-import { NETWORK_ID } from 'constants/config';
-import { bnUSD, sICX } from 'constants/tokens';
+import { NETWORK_ID } from '@/constants/config';
+import { bnUSD, sICX } from '@/constants/tokens';
 
 export enum Field {
   CURRENCY_A = 'CURRENCY_A',

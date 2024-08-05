@@ -1,8 +1,8 @@
 import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balanced-js';
 import { Token, Currency } from '@balancednetwork/sdk-core';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 
-import { TRANSFORMED_DEFAULT_TOKEN_LIST, TRANSFORMED_COMBINED_TOKEN_LIST } from 'store/lists/hooks';
+import { TRANSFORMED_DEFAULT_TOKEN_LIST, TRANSFORMED_COMBINED_TOKEN_LIST } from '@/store/lists/hooks';
 
 import { NETWORK_ID } from './config';
 

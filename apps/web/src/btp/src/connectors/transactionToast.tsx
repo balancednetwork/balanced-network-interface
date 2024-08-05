@@ -7,8 +7,8 @@ import {
   NotificationPending,
   NotificationError,
   NotificationSuccess,
-} from 'app/components/Notification/TransactionNotification';
-import { TransactionStatus } from 'store/transactions/hooks';
+} from '@/app/components/Notification/TransactionNotification';
+import { TransactionStatus } from '@/store/transactions/hooks';
 
 export interface ToastTransactionParams {
   title?: string;

@@ -4,15 +4,15 @@ import { addresses, CallData } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
-import bnJs from 'bnJs';
-import { NETWORK_ID } from 'constants/config';
-import useInterval from 'hooks/useInterval';
-import { useCollateralType, useSupportedCollateralTokens } from 'store/collateral/hooks';
-import { formatUnits } from 'utils';
+import bnJs from '@/bnJs';
+import { NETWORK_ID } from '@/constants/config';
+import useInterval from '@/hooks/useInterval';
+import { useCollateralType, useSupportedCollateralTokens } from '@/store/collateral/hooks';
+import { formatUnits } from '@/utils';
 
 import { AppState } from '..';
 import { changeOraclePrice } from './reducer';
-import { ORACLE_PRICED_TOKENS } from 'constants/tokens';
+import { ORACLE_PRICED_TOKENS } from '@/constants/tokens';
 
 export function useOraclePrices(): AppState['oracle']['prices'] {
   return useSelector((state: AppState) => state.oracle.prices);

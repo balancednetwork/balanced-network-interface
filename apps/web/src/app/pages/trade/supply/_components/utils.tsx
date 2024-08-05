@@ -4,10 +4,10 @@ import BigNumber from 'bignumber.js';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Button } from 'app/components/Button';
-import { HEIGHT } from 'app/components/TradingViewChart';
-import { ZERO } from 'constants/misc';
-import { formatBigNumber } from 'utils';
+import { Button } from '@/app/components/Button';
+import { HEIGHT } from '@/app/components/TradingViewChart';
+import { ZERO } from '@/constants/misc';
+import { formatBigNumber } from '@/utils';
 
 export const Panel = styled(Flex)`
   overflow: hidden;

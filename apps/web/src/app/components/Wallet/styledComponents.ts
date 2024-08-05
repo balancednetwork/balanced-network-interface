@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { Link } from 'app/components/Link';
+import { Link } from '@/app/components/Link';
 import { Box, Flex } from 'rebass';
-import { Typography } from 'app/theme';
+import { Typography } from '@/app/theme';
 import { BoxPanel } from '../Panel';
 import { notificationCSS } from './ICONWallets/utils';
 

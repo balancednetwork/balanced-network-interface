@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { Button } from 'app/components/Button';
+import { Button } from '@/app/components/Button';
 
 export const StyledButton = styled(Button)<{ $loading?: boolean }>`
   position: relative;

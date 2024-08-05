@@ -1,7 +1,7 @@
 import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
-import { IXCallFee, XCallEventType, XChainId } from 'app/pages/trade/bridge/types';
-import { CurrencyKey } from 'types';
+import { IXCallFee, XCallEventType, XChainId } from '@/app/pages/trade/bridge/types';
+import { CurrencyKey } from '@/types';
 
 export enum TransactionStatus {
   pending = 'pending',

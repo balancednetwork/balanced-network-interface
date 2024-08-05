@@ -7,13 +7,13 @@ import { isMobile } from 'react-device-detect';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Typography } from 'app/theme';
-import { FUNDING_TOKENS_LIST, useICX } from 'constants/tokens';
-import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from 'hooks/Tokens';
-import useDebounce from 'hooks/useDebounce';
-import { useOnClickOutside } from 'hooks/useOnClickOutside';
-import useToggle from 'hooks/useToggle';
-import { isAddress } from 'utils';
+import { Typography } from '@/app/theme';
+import { FUNDING_TOKENS_LIST, useICX } from '@/constants/tokens';
+import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from '@/hooks/Tokens';
+import useDebounce from '@/hooks/useDebounce';
+import { useOnClickOutside } from '@/hooks/useOnClickOutside';
+import useToggle from '@/hooks/useToggle';
+import { isAddress } from '@/utils';
 
 import Column from '../Column';
 import CommunityListToggle from '../CommunityListToggle';
@@ -22,10 +22,10 @@ import { filterTokens, useSortedTokensByQuery } from './filtering';
 import ImportRow from './ImportRow';
 import SearchInput from './SearchInput';
 import { useTokenComparator } from './sorting';
-import { XChainId } from 'app/pages/trade/bridge/types';
-import { useBridgeDirection } from 'store/bridge/hooks';
-import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
-import { xTokenMap } from 'app/pages/trade/bridge/_config/xTokens';
+import { XChainId } from '@/app/pages/trade/bridge/types';
+import { useBridgeDirection } from '@/store/bridge/hooks';
+import useXTokens from '@/app/pages/trade/bridge/_hooks/useXTokens';
+import { xTokenMap } from '@/app/pages/trade/bridge/_config/xTokens';
 
 export enum CurrencySelectionType {
   NORMAL,

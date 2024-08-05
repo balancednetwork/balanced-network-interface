@@ -1,7 +1,7 @@
 import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
 import { Token } from '@balancednetwork/sdk-core';
 
-import { sICX, ICX, bnUSD, BALN, IUSDC, USDS, OMM, IUSDT, FIN, CFT, METX, GBET, ETH, BTCB } from 'constants/tokens';
+import { sICX, ICX, bnUSD, BALN, IUSDC, USDS, OMM, IUSDT, FIN, CFT, METX, GBET, ETH, BTCB } from '@/constants/tokens';
 
 import { NETWORK_ID } from './config';
 

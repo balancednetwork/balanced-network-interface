@@ -2,23 +2,23 @@ import React, { useEffect } from 'react';
 
 import { Fraction } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-import bnJs from 'bnJs';
-import { PLUS_INFINITY } from 'constants/index';
-import { useTokenPrices } from 'queries/backendv2';
-import { useLPReward } from 'queries/reward';
-import { useBBalnAmount, useDynamicBBalnAmount, useSources } from 'store/bbaln/hooks';
-import { useCollateralInputAmountAbsolute } from 'store/collateral/hooks';
-import { useHasUnclaimedFees } from 'store/fees/hooks';
-import { WEIGHT_CONST } from 'store/liveVoting/hooks';
-import { RewardDistribution, RewardDistributionRaw } from 'store/liveVoting/types';
-import { useLoanInputAmount } from 'store/loan/hooks';
-import { useOraclePrice } from 'store/oracle/hooks';
-import { useLockedAmount, useUnclaimedRewards } from 'store/savings/hooks';
-import { useAllTransactions } from 'store/transactions/hooks';
+import bnJs from '@/bnJs';
+import { PLUS_INFINITY } from '@/constants/index';
+import { useTokenPrices } from '@/queries/backendv2';
+import { useLPReward } from '@/queries/reward';
+import { useBBalnAmount, useDynamicBBalnAmount, useSources } from '@/store/bbaln/hooks';
+import { useCollateralInputAmountAbsolute } from '@/store/collateral/hooks';
+import { useHasUnclaimedFees } from '@/store/fees/hooks';
+import { WEIGHT_CONST } from '@/store/liveVoting/hooks';
+import { RewardDistribution, RewardDistributionRaw } from '@/store/liveVoting/types';
+import { useLoanInputAmount } from '@/store/loan/hooks';
+import { useOraclePrice } from '@/store/oracle/hooks';
+import { useLockedAmount, useUnclaimedRewards } from '@/store/savings/hooks';
+import { useAllTransactions } from '@/store/transactions/hooks';
 
 import { AppState } from '..';
 import { setReward } from './reducer';

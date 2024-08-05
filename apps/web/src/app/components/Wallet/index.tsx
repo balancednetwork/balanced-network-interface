@@ -11,20 +11,20 @@ import {
   WalletWrap,
   walletBreakpoint,
 } from './styledComponents';
-import { Typography } from 'app/theme';
+import { Typography } from '@/app/theme';
 import { Trans, t } from '@lingui/macro';
-import bnJs from 'bnJs';
-import { useWalletModalToggle } from 'store/application/hooks';
-import { XWalletType } from 'app/pages/trade/bridge/types';
+import bnJs from '@/bnJs';
+import { useWalletModalToggle } from '@/store/application/hooks';
+import { XWalletType } from '@/app/pages/trade/bridge/types';
 import SearchInput from '../SearchModal/SearchInput';
-import useWallets from 'app/pages/trade/bridge/_hooks/useWallets';
+import useWallets from '@/app/pages/trade/bridge/_hooks/useWallets';
 import { isMobile } from 'react-device-detect';
-import useKeyPress from 'hooks/useKeyPress';
+import useKeyPress from '@/hooks/useKeyPress';
 import { useMedia } from 'react-use';
-import { useXBalancesByToken } from 'store/wallet/hooks';
+import { useXBalancesByToken } from '@/store/wallet/hooks';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
 import MultiChainBalanceItem from './MultiChainBalanceItem';
-import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
+import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
 import { Box } from 'rebass';
 
 interface WalletProps {

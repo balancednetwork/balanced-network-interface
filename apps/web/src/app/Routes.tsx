@@ -5,9 +5,9 @@ import { defineMessage } from '@lingui/macro';
 import { Helmet } from 'react-helmet-async';
 import { Routes, Route, useLocation, Outlet } from 'react-router-dom';
 
-import { DefaultLayout } from 'app/components/Layout';
+import { DefaultLayout } from '@/app/components/Layout';
 
-import { lazyLoad } from 'utils/loadable';
+import { lazyLoad } from '@/utils/loadable';
 
 const HomePage = lazyLoad(
   () => import('./pages/page'),
@@ -29,10 +29,10 @@ const VotePage = lazyLoad(
   module => module.VotePage,
 );
 import { ProposalListPage } from './pages/vote/proposals/page';
-import { useLoanActionHandlers } from 'store/loan/hooks';
-import { useCollateralActionHandlers } from 'store/collateral/hooks';
-import { useBBalnSliderActionHandlers } from 'store/bbaln/hooks';
-import { useSavingsSliderActionHandlers } from 'store/savings/hooks';
+import { useLoanActionHandlers } from '@/store/loan/hooks';
+import { useCollateralActionHandlers } from '@/store/collateral/hooks';
+import { useBBalnSliderActionHandlers } from '@/store/bbaln/hooks';
+import { useSavingsSliderActionHandlers } from '@/store/savings/hooks';
 const ProposalDetailsPage = lazyLoad(
   () => import('./pages/vote/proposals/[proposalId]/page'),
   module => module.ProposalDetailsPage,

@@ -6,17 +6,17 @@ import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
 import { forEach } from 'lodash-es';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ARCHWAY_FEE_TOKEN_SYMBOL, useARCH } from 'app/pages/trade/bridge/_config/tokens';
-import { isDenomAsset } from 'packages/archway/utils';
-import { XChainId, XWalletAssetRecord } from 'app/pages/trade/bridge/types';
-import { getXTokenAddress, isXToken } from 'app/pages/trade/bridge/utils';
-import bnJs, { havahJs } from 'bnJs';
-import { MINIMUM_ICX_FOR_TX, NATIVE_ADDRESS } from 'constants/index';
-import { BIGINT_ZERO } from 'constants/misc';
+import { ARCHWAY_FEE_TOKEN_SYMBOL, useARCH } from '@/app/pages/trade/bridge/_config/tokens';
+import { isDenomAsset } from '@/packages/archway/utils';
+import { XChainId, XWalletAssetRecord } from '@/app/pages/trade/bridge/types';
+import { getXTokenAddress, isXToken } from '@/app/pages/trade/bridge/utils';
+import bnJs, { havahJs } from '@/bnJs';
+import { MINIMUM_ICX_FOR_TX, NATIVE_ADDRESS } from '@/constants/index';
+import { BIGINT_ZERO } from '@/constants/misc';
 import {
   SUPPORTED_TOKENS_LIST,
   isNativeCurrency,
@@ -24,11 +24,11 @@ import {
   isBALN,
   isFIN,
   COMBINED_TOKENS_LIST,
-} from 'constants/tokens';
-import { useBnJsContractQuery } from 'queries/utils';
-import { useTokenListConfig } from 'store/lists/hooks';
-import { useAllTransactions } from 'store/transactions/hooks';
-import { useUserAddedTokens } from 'store/user/hooks';
+} from '@/constants/tokens';
+import { useBnJsContractQuery } from '@/queries/utils';
+import { useTokenListConfig } from '@/store/lists/hooks';
+import { useAllTransactions } from '@/store/transactions/hooks';
+import { useUserAddedTokens } from '@/store/user/hooks';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
@@ -130,15 +130,15 @@ export function useArchwayBalances(
   });
 }
 
-import { viemClients } from 'config/wagmi';
+import { viemClients } from '@/config/wagmi';
 import { erc20Abi } from 'viem';
 import { useAccount, useBalance, usePublicClient } from 'wagmi';
-import useXTokens from 'app/pages/trade/bridge/_hooks/useXTokens';
-import { SUPPORTED_XCALL_CHAINS, xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import { useRatesWithOracle } from 'queries/reward';
-import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
-import { useHavahContext } from 'packages/havah/HavahProvider';
-import { useArchwayContext } from 'packages/archway/ArchwayProvider';
+import useXTokens from '@/app/pages/trade/bridge/_hooks/useXTokens';
+import { SUPPORTED_XCALL_CHAINS, xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { useRatesWithOracle } from '@/queries/reward';
+import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
+import { useHavahContext } from '@/packages/havah/HavahProvider';
+import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 
 export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined, xChainId: XChainId) {
   const chainId = xChainMap[xChainId].id;

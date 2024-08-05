@@ -2,16 +2,16 @@ import React from 'react';
 
 import { Trans } from '@lingui/macro';
 
-import { UnderlineText } from 'app/components/DropdownText';
-import { Typography } from 'app/theme';
-import { useBBalnAmount } from 'store/bbaln/hooks';
+import { UnderlineText } from '@/app/components/DropdownText';
+import { Typography } from '@/app/theme';
+import { useBBalnAmount } from '@/store/bbaln/hooks';
 import {
   useChangeInputValue,
   useEditState,
   useEditValidation,
   usePowerLeft,
   useUserVoteData,
-} from 'store/liveVoting/hooks';
+} from '@/store/liveVoting/hooks';
 
 import { formatFraction } from '../utils';
 

@@ -1,17 +1,17 @@
-import bnJs, { havahJs } from 'bnJs';
+import bnJs, { havahJs } from '@/bnJs';
 import IconService from 'icon-sdk-js';
 import { Percent } from '@balancednetwork/sdk-core';
 
-import { showMessageOnBeforeUnload } from 'utils/messages';
-import { ICON_XCALL_NETWORK_ID } from 'constants/config';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
+import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 
-import { XChainId } from 'app/pages/trade/bridge/types';
+import { XChainId } from '@/app/pages/trade/bridge/types';
 import { XTransactionInput, XTransactionType } from '../_zustand/types';
 import { IWalletXService } from './types';
 import { HavahPublicXService } from './HavahPublicXService';
 import { toHex } from 'viem';
-import { NATIVE_ADDRESS } from 'constants/index';
-import { toDec } from 'utils';
+import { NATIVE_ADDRESS } from '@/constants/index';
+import { toDec } from '@/utils';
 import { getRlpEncodedSwapData } from '../utils';
 
 export class HavahWalletXService extends HavahPublicXService implements IWalletXService {

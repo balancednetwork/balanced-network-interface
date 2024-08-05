@@ -1,4 +1,4 @@
-import bnJs from 'bnJs';
+import bnJs from '@/bnJs';
 
 /**
  * This function has two roles:

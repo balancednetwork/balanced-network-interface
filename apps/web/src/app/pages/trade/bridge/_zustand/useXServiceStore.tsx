@@ -5,12 +5,12 @@ import { useQuery } from '@tanstack/react-query';
 
 import { usePublicClient, useWalletClient } from 'wagmi';
 
-import { useIconReact } from 'packages/icon-react';
-import { useArchwayContext } from 'packages/archway/ArchwayProvider';
-import { useChangeShouldLedgerSign } from 'store/application/hooks';
+import { useIconReact } from '@/packages/icon-react';
+import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
+import { useChangeShouldLedgerSign } from '@/store/application/hooks';
 
-import { xChainMap } from 'app/pages/trade/bridge/_config/xChains';
-import { XChainId, XChain } from 'app/pages/trade/bridge/types';
+import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { XChainId, XChain } from '@/app/pages/trade/bridge/types';
 import { IPublicXService, IWalletXService } from '../_xcall/types';
 import { IconPublicXService } from '../_xcall/IconPublicXService';
 import { ArchwayPublicXService } from '../_xcall/ArchwayPublicXService';
@@ -18,7 +18,7 @@ import { EvmPublicXService } from '../_xcall/EvmPublicXService';
 import { IconWalletXService } from '../_xcall/IconWalletXService';
 import { ArchwayWalletXService } from '../_xcall/ArchwayWalletXService';
 import { EvmWalletXService } from '../_xcall/EvmWalletXService';
-import { havahJs } from 'bnJs';
+import { havahJs } from '@/bnJs';
 import { HavahPublicXService } from '../_xcall/HavahPublicXService';
 import { HavahWalletXService } from '../_xcall/HavahWalletXService';
 

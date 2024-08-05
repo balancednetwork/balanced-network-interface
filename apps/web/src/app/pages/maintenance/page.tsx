@@ -3,8 +3,8 @@ import React from 'react';
 import { Flex, Button as RebassButton } from 'rebass/styled-components';
 import styled, { keyframes } from 'styled-components';
 
-import { Container } from 'app/components/Layout';
-import { Typography } from 'app/theme/';
+import { Container } from '@/app/components/Layout';
+import { Typography } from '@/app/theme/';
 
 const imageRotation = keyframes`
   from {

@@ -2,34 +2,34 @@ import React from 'react';
 
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from 'packages/icon-react';
-import Nouislider from 'packages/nouislider-react';
+import { useIconReact } from '@/packages/icon-react';
+import Nouislider from '@/packages/nouislider-react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
-import { Button, TextButton } from 'app/components/Button';
-import CurrencyBalanceErrorMessage from 'app/components/CurrencyBalanceErrorMessage';
-import { inputRegex } from 'app/components/CurrencyInputPanel';
-import ModalContent from 'app/components/ModalContent';
-import Modal from 'app/components/Modal';
-import Spinner from 'app/components/Spinner';
-import { Typography } from 'app/theme';
-import bnJs from 'bnJs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from 'store/application/hooks';
+import { Button, TextButton } from '@/app/components/Button';
+import CurrencyBalanceErrorMessage from '@/app/components/CurrencyBalanceErrorMessage';
+import { inputRegex } from '@/app/components/CurrencyInputPanel';
+import ModalContent from '@/app/components/ModalContent';
+import Modal from '@/app/components/Modal';
+import Spinner from '@/app/components/Spinner';
+import { Typography } from '@/app/theme';
+import bnJs from '@/bnJs';
+import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import {
   useLockedAmount,
   useSavingsRateInfo,
   useSavingsSliderActionHandlers,
   useSavingsSliderState,
-} from 'store/savings/hooks';
-import { useTransactionAdder } from 'store/transactions/hooks';
-import { useHasEnoughICX, useICONWalletBalances } from 'store/wallet/hooks';
-import { escapeRegExp, parseUnits } from 'utils';
-import { showMessageOnBeforeUnload } from 'utils/messages';
+} from '@/store/savings/hooks';
+import { useTransactionAdder } from '@/store/transactions/hooks';
+import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
+import { escapeRegExp, parseUnits } from '@/utils';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
 
 import { BalnPreviewInput as SavingsPreviewInput } from '../BBaln/styledComponents';
-import { useSignedInWallets } from 'app/pages/trade/bridge/_hooks/useWallets';
-import QuestionHelper, { QuestionWrapper } from 'app/components/QuestionHelper';
+import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
+import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
 
 const Savings = () => {
   const lockedAmount = useLockedAmount();

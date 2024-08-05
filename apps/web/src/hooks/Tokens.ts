@@ -1,13 +1,13 @@
 import { useMemo, useEffect, useState } from 'react';
 
 import { Token, Currency } from '@balancednetwork/sdk-core';
-import { useIconReact } from 'packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 
-import bnJs from 'bnJs';
-import { BASES_TO_CHECK_TRADES_AGAINST } from 'constants/routing';
-import { useCombinedActiveList, TokenAddressMap } from 'store/lists/hooks';
-import { useUserAddedTokens } from 'store/user/hooks';
-import { isAddress } from 'utils';
+import bnJs from '@/bnJs';
+import { BASES_TO_CHECK_TRADES_AGAINST } from '@/constants/routing';
+import { useCombinedActiveList, TokenAddressMap } from '@/store/lists/hooks';
+import { useUserAddedTokens } from '@/store/user/hooks';
+import { isAddress } from '@/utils';
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
 function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {

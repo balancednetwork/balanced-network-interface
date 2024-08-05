@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useToNetwork } from 'btp/src/store/bridge/hooks';
+import { useToNetwork } from '@/btp/src/store/bridge/hooks';
 
 import { AssetName as AddressLabel, AssetInput as AddressInput, AssetInfo as AddressInfo } from './AssetToTransfer';
 

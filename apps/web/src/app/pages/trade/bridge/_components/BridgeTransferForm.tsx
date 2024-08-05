@@ -4,26 +4,31 @@ import { Percent } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 
-import CurrencyInputPanel from 'app/components/CurrencyInputPanel';
-import { Typography } from 'app/theme';
-import FlipIcon from 'assets/icons/horizontal-flip.svg';
-import { useBridgeActionHandlers, useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from 'store/bridge/hooks';
-import { useCrossChainWalletBalances } from 'store/wallet/hooks';
+import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
+import { Typography } from '@/app/theme';
+import FlipIcon from '@/assets/icons/horizontal-flip.svg';
+import {
+  useBridgeActionHandlers,
+  useBridgeDirection,
+  useBridgeState,
+  useDerivedBridgeInfo,
+} from '@/store/bridge/hooks';
+import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 
-import AddressInputPanel from 'app/components/AddressInputPanel';
-import { Button } from 'app/components/Button';
-import { CurrencySelectionType } from 'app/components/SearchModal/CurrencySearch';
-import { AutoColumn } from 'app/pages/trade/xswap/_components/SwapPanel';
-import { BrightPanel } from 'app/pages/trade/supply/_components/utils';
+import AddressInputPanel from '@/app/components/AddressInputPanel';
+import { Button } from '@/app/components/Button';
+import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
+import { AutoColumn } from '@/app/pages/trade/xswap/_components/SwapPanel';
+import { BrightPanel } from '@/app/pages/trade/supply/_components/utils';
 
 import ChainSelector from './ChainSelector';
-import { useWalletModalToggle } from 'store/application/hooks';
-import { Field } from 'store/bridge/reducer';
+import { useWalletModalToggle } from '@/store/application/hooks';
+import { Field } from '@/store/bridge/reducer';
 import useXCallFee from '../_hooks/useXCallFee';
 import { xChainMap } from '../_config/xChains';
-import { maxAmountSpend, validateAddress } from 'utils';
+import { maxAmountSpend, validateAddress } from '@/utils';
 import useWallets from '../_hooks/useWallets';
-import { UnderlineText } from 'app/components/DropdownText';
+import { UnderlineText } from '@/app/components/DropdownText';
 import BigNumber from 'bignumber.js';
 
 export default function BridgeTransferForm({ openModal }) {

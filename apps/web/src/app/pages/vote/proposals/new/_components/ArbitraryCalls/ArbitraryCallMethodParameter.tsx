@@ -5,10 +5,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { UnderlineText } from 'app/components/DropdownText';
-import { Typography } from 'app/theme';
-import RemoveIcon from 'assets/icons/remove.svg';
-import { CxMethodInput } from 'hooks/useCxApi';
+import { UnderlineText } from '@/app/components/DropdownText';
+import { Typography } from '@/app/theme';
+import RemoveIcon from '@/assets/icons/remove.svg';
+import { CxMethodInput } from '@/hooks/useCxApi';
 import {
   useAddCallStruct,
   useAddCallListItem,
@@ -16,13 +16,13 @@ import {
   useUpdateCallMethodParam,
   useUpdateCallMethodStructParam,
   useUpdateCallMethodPrimitiveListParam,
-} from 'store/arbitraryCalls/hooks';
+} from '@/store/arbitraryCalls/hooks';
 import {
   ArbitraryCallParameter,
   ArbitraryCallParameterType,
   EditableArbitraryCall,
   EditableArbitraryCallParameter,
-} from 'store/arbitraryCalls/reducer';
+} from '@/store/arbitraryCalls/reducer';
 
 import { FieldInput } from '../../page';
 import { RemoveButton } from './ArbitraryCall';

@@ -3,8 +3,8 @@ import React from 'react';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Typography } from 'app/theme';
-import { escapeRegExp } from 'utils';
+import { Typography } from '@/app/theme';
+import { escapeRegExp } from '@/utils';
 
 // enum SlippageError {
 //   InvalidInput = 'InvalidInput',

@@ -86,20 +86,17 @@ export class InjectivePublicXService extends AbstractPublicXService {
     return TransactionStatus.failure;
   }
 
+  getScanBlockCount() {
+    return 2n;
+  }
+
   // TODO: implement pagination
   async getEventLogs({ startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
-    // const txs = await this.indexerGrpcExplorerApi.fetchTxs({
-    //   after: Number(startBlockHeight),
-    //   before: Number(endBlockHeight),
-    //   limit: 100,
-    // });
     const txs = await this.indexerRestExplorerApi.fetchTransactions({
       after: Number(startBlockHeight),
       before: Number(endBlockHeight),
       limit: 100,
     });
-
-    console.log('txs', txs);
 
     // txs is an array of tx, each tx has events, which is an array of event, return all events merged
     const events = txs.transactions

@@ -249,6 +249,14 @@ export function useWalletFetchBalances() {
   React.useEffect(() => {
     baseBalances && dispatch(changeBalances({ xChainId: '0x2105.base', balances: baseBalances }));
   }, [baseBalances, dispatch]);
+
+  // fetch balances on injective
+  const { account: accountInjective } = useInjectiveWalletStore();
+  const injectiveTokens = useXTokens('injective-1');
+  const { data: injectiveBalances } = useInjectiveBalances(accountInjective, injectiveTokens);
+  React.useEffect(() => {
+    injectiveBalances && dispatch(changeBalances({ xChainId: 'injective-1', balances: injectiveBalances }));
+  }, [injectiveBalances, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {
@@ -579,6 +587,55 @@ export function useHavahBalances(
           return acc;
         }
         acc[balance.currency.wrapped.address] = balance;
+        return acc;
+      }, {});
+
+      return balances;
+    },
+    placeholderData: keepPreviousData,
+    refetchInterval: 5_000,
+  });
+}
+
+import { IndexerGrpcAccountPortfolioApi } from '@injectivelabs/sdk-ts';
+import { Network, getNetworkEndpoints } from '@injectivelabs/networks';
+import { useInjectiveWalletStore } from '@/packages/injective';
+
+export const NETWORK = Network.Mainnet;
+export const ENDPOINTS = getNetworkEndpoints(NETWORK);
+const indexerGrpcAccountPortfolioApi = new IndexerGrpcAccountPortfolioApi(ENDPOINTS.indexer);
+
+export function useInjectiveBalances(
+  address: string | undefined,
+  tokens: Token[],
+): UseQueryResult<{
+  [key: string]: CurrencyAmount<Currency>;
+}> {
+  return useQuery({
+    queryKey: [`injectiveBalances`, address, tokens],
+    queryFn: async () => {
+      if (!address) return {};
+
+      const portfolio = await indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(address);
+
+      const tokenMap = {};
+      tokens.forEach(xToken => {
+        tokenMap[xToken.symbol] = xToken;
+      });
+
+      const balances = portfolio.bankBalancesList.reduce((acc, balance) => {
+        if (!balance) return acc;
+
+        if (!(BigInt(balance.amount) > BIGINT_ZERO)) {
+          return acc;
+        }
+
+        if (balance.denom === 'inj') {
+          acc[tokenMap['INJ'].address] = CurrencyAmount.fromRawAmount(tokenMap['INJ'], BigInt(balance.amount));
+        } else {
+          // TODO: fetch balances for other tokens
+        }
+
         return acc;
       }, {});
 

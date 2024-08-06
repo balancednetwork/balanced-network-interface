@@ -134,7 +134,7 @@ import { viemClients } from '@/config/wagmi';
 import { erc20Abi } from 'viem';
 import { useAccount, useBalance, usePublicClient } from 'wagmi';
 import useXTokens from '@/app/pages/trade/bridge/_hooks/useXTokens';
-import { SUPPORTED_XCALL_CHAINS, xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { injective, SUPPORTED_XCALL_CHAINS, xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
@@ -251,7 +251,7 @@ export function useWalletFetchBalances() {
   }, [baseBalances, dispatch]);
 
   // fetch balances on injective
-  const { account: accountInjective } = useInjectiveWalletStore();
+  const { account: accountInjective } = useInjectiveWallet();
   const injectiveTokens = useXTokens('injective-1');
   const { data: injectiveBalances } = useInjectiveBalances(accountInjective, injectiveTokens);
   React.useEffect(() => {
@@ -597,13 +597,29 @@ export function useHavahBalances(
   });
 }
 
-import { IndexerGrpcAccountPortfolioApi } from '@injectivelabs/sdk-ts';
+import { ChainGrpcWasmApi, fromBase64, IndexerGrpcAccountPortfolioApi, toBase64 } from '@injectivelabs/sdk-ts';
 import { Network, getNetworkEndpoints } from '@injectivelabs/networks';
-import { useInjectiveWalletStore } from '@/packages/injective';
+import { useInjectiveWallet } from '@/packages/injective';
 
 export const NETWORK = Network.Mainnet;
 export const ENDPOINTS = getNetworkEndpoints(NETWORK);
 const indexerGrpcAccountPortfolioApi = new IndexerGrpcAccountPortfolioApi(ENDPOINTS.indexer);
+const chainGrpcWasmApi = new ChainGrpcWasmApi(ENDPOINTS.grpc);
+
+async function fetchBnUSDBalance(address) {
+  try {
+    const response: any = await chainGrpcWasmApi.fetchSmartContractState(
+      injective.contracts.bnUSD!,
+      toBase64({ balance: { address } }),
+    );
+
+    const result = fromBase64(response.data);
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+  return { balance: '0' };
+}
 
 export function useInjectiveBalances(
   address: string | undefined,
@@ -617,6 +633,7 @@ export function useInjectiveBalances(
       if (!address) return {};
 
       const portfolio = await indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(address);
+      const bnUSDBalance = await fetchBnUSDBalance(address);
 
       const tokenMap = {};
       tokens.forEach(xToken => {
@@ -633,11 +650,15 @@ export function useInjectiveBalances(
         if (balance.denom === 'inj') {
           acc[tokenMap['INJ'].address] = CurrencyAmount.fromRawAmount(tokenMap['INJ'], BigInt(balance.amount));
         } else {
-          // TODO: fetch balances for other tokens
         }
 
         return acc;
       }, {});
+
+      balances[tokenMap['bnUSD'].address] = CurrencyAmount.fromRawAmount(
+        tokenMap['bnUSD'],
+        BigInt(bnUSDBalance.balance),
+      );
 
       return balances;
     },

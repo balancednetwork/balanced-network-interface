@@ -3,7 +3,7 @@ import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 import { useIconReact } from '@/packages/icon-react';
 import { useMemo } from 'react';
 import useEVMReact from './useEVMReact';
-import { useInjectiveWalletStore } from '@/packages/injective';
+import { useInjectiveWallet } from '@/packages/injective';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
 
 const useWallets = (): {
@@ -13,7 +13,7 @@ const useWallets = (): {
   const icon = useIconReact();
   const havah = useHavahContext();
   const evm = useEVMReact();
-  const injective = useInjectiveWalletStore();
+  const injective = useInjectiveWallet();
 
   return useMemo(
     () => ({

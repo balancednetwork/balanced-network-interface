@@ -16,7 +16,9 @@ import { tryParseAmount } from '@/store/swap/hooks';
 import { useInjectiveWalletStore, walletStrategy } from '@/packages/injective';
 
 import {
+  ChainGrpcBankApi,
   IndexerGrpcAccountPortfolioApi,
+  IndexerRestExplorerApi,
   MsgExecuteContract,
   MsgExecuteContractCompat,
   MsgSend,
@@ -40,8 +42,10 @@ import { XToken } from '../trade/bridge/types';
 export const NETWORK = Network.Mainnet;
 export const ENDPOINTS = getNetworkEndpoints(NETWORK);
 
-// export const chainGrpcWasmApi = new ChainGrpcWasmApi(ENDPOINTS.grpc);
+export const chainGrpcWasmApi = new ChainGrpcWasmApi(ENDPOINTS.grpc);
 const indexerGrpcAccountPortfolioApi = new IndexerGrpcAccountPortfolioApi(ENDPOINTS.indexer);
+const chainGrpcBankApi = new ChainGrpcBankApi(ENDPOINTS.grpc);
+const indexerRestExplorerApi = new IndexerRestExplorerApi(`${ENDPOINTS.explorer}/api/explorer/v1`);
 
 const INJ = new Token(ChainId.MAINNET, 'cx4297f4b63262507623b6ad575d0d8dd2db980e4e', 18, 'HVH', 'Havah Token');
 const xINJ = new XToken('injective-1', 'injective-1', NATIVE_ADDRESS, 18, 'INJ', 'INJ');
@@ -52,6 +56,20 @@ const msgBroadcastClient = new MsgBroadcaster({
   endpoints: ENDPOINTS,
   ethereumChainId: EthereumChainId.Sepolia,
 });
+
+async function fetchBnUSDBalance(address) {
+  try {
+    const response: any = await chainGrpcWasmApi.fetchSmartContractState(
+      injective.contracts.bnUSD!,
+      toBase64({ balance: { address } }),
+    );
+
+    const result = fromBase64(response.data);
+    console.log('result', result);
+  } catch (e) {
+    alert((e as any).message);
+  }
+}
 
 export function TestPage() {
   const { account } = useIconReact();
@@ -149,14 +167,19 @@ export function TestPage() {
       // const portfolio = await indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(accountInjective);
       // console.log(portfolio);
 
-      const txResult = await msgBroadcastClient.broadcast({
-        msgs: msg,
-        injectiveAddress: accountInjective,
-        gas: {
-          gas: 1200_000,
-        },
-      });
-      console.log('txResult', txResult);
+      // const balances = await chainGrpcBankApi.fetchBalances(accountInjective);
+      // console.log(balances);
+
+      // await fetchBnUSDBalance(accountInjective);
+
+      // const txResult = await msgBroadcastClient.broadcast({
+      //   msgs: msg,
+      //   injectiveAddress: accountInjective,
+      //   gas: {
+      //     gas: 1200_000,
+      //   },
+      // });
+      // console.log('txResult', txResult);
     } catch (e) {
       console.error('error', e);
     }

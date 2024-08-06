@@ -45,10 +45,7 @@ export class InjectivePublicXService extends AbstractPublicXService {
 
   // TODO: complete this
   async getXCallFee(nid: XChainId, rollback: boolean) {
-    const fee = await this.publicClient.queryContractSmart(injective.contracts.xCall, {
-      get_fee: { nid: nid, rollback },
-    });
-    return BigInt(fee);
+    return BigInt(1200_000);
   }
 
   async getBlockHeight() {
@@ -89,6 +86,7 @@ export class InjectivePublicXService extends AbstractPublicXService {
     return TransactionStatus.failure;
   }
 
+  // TODO: implement pagination
   async getEventLogs({ startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
     // const txs = await this.indexerGrpcExplorerApi.fetchTxs({
     //   after: Number(startBlockHeight),

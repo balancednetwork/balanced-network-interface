@@ -14,11 +14,11 @@ type InjectiveWalletStore = {
 };
 
 export const walletStrategy = new WalletStrategy({
-  chainId: ChainId.Testnet,
-  // ethereumOptions: {
-  //   ethereumChainId: EthereumChainId.Mainnet,
-  //   rpcUrl: mainnet.rpcUrls.default.http[0],
-  // },
+  chainId: ChainId.Mainnet,
+  ethereumOptions: {
+    ethereumChainId: EthereumChainId.Mainnet,
+    rpcUrl: mainnet.rpcUrls.default.http[0],
+  },
 });
 
 export const useInjectiveWalletStore = create<InjectiveWalletStore>()(

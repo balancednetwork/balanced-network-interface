@@ -3,7 +3,7 @@ import { Flex } from 'rebass/styled-components';
 
 import { Currency, CurrencyAmount, Percent, Token, TradeType } from '@balancednetwork/sdk-core';
 import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balanced-js';
-import { havahJs } from '@/bnJs';
+import bnJs, { havahJs } from '@/bnJs';
 
 import { Button } from '@/app/components/Button';
 import { useIconReact } from '@/packages/icon-react';
@@ -17,6 +17,7 @@ import { useInjectiveWalletStore, walletStrategy } from '@/packages/injective';
 
 import {
   IndexerGrpcAccountPortfolioApi,
+  MsgExecuteContract,
   MsgExecuteContractCompat,
   MsgSend,
   fromBase64,
@@ -30,19 +31,26 @@ import { BigNumberInBase } from '@injectivelabs/utils';
 import { ChainGrpcWasmApi } from '@injectivelabs/sdk-ts';
 import { Network, getNetworkEndpoints } from '@injectivelabs/networks';
 import { isCosmosWallet, MsgBroadcaster } from '@injectivelabs/wallet-ts';
+import { EthereumChainId } from '@injectivelabs/ts-types';
+import { getBytesFromString } from '../trade/bridge/utils';
+import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
+import { NATIVE_ADDRESS } from '@/constants';
+import { XToken } from '../trade/bridge/types';
 
-export const NETWORK = Network.Testnet;
+export const NETWORK = Network.Mainnet;
 export const ENDPOINTS = getNetworkEndpoints(NETWORK);
 
 // export const chainGrpcWasmApi = new ChainGrpcWasmApi(ENDPOINTS.grpc);
 const indexerGrpcAccountPortfolioApi = new IndexerGrpcAccountPortfolioApi(ENDPOINTS.indexer);
 
 const INJ = new Token(ChainId.MAINNET, 'cx4297f4b63262507623b6ad575d0d8dd2db980e4e', 18, 'HVH', 'Havah Token');
+const xINJ = new XToken('injective-1', 'injective-1', NATIVE_ADDRESS, 18, 'INJ', 'INJ');
 
 const msgBroadcastClient = new MsgBroadcaster({
   walletStrategy,
   network: NETWORK,
   endpoints: ENDPOINTS,
+  ethereumChainId: EthereumChainId.Sepolia,
 });
 
 export function TestPage() {
@@ -89,28 +97,64 @@ export function TestPage() {
         rollback: BigInt(100_000_000),
       };
 
-      const msg = MsgSend.fromJSON({
-        amount: {
-          denom: 'inj',
-          amount: new BigNumberInBase(0.01).toWei().toFixed(),
+      // const msg = MsgSend.fromJSON({
+      //   amount: {
+      //     denom: 'inj',
+      //     amount: new BigNumberInBase(0.01).toWei().toFixed(),
+      //   },
+      //   srcInjectiveAddress: accountInjective,
+      //   dstInjectiveAddress: 'inj1d30erltgm4an5xhdkrcfj3n9jfe02gaymh4056',
+      // });
+      const data = getBytesFromString(
+        JSON.stringify({
+          method: '_swap',
+          params: {
+            path: [],
+            receiver: destination,
+          },
+        }),
+      );
+      const msg = MsgExecuteContractCompat.fromJSON({
+        contractAddress: injective.contracts.assetManager,
+        sender: accountInjective,
+        msg: {
+          // deposit: {
+          //   token_address: xINJ.address,
+          //   amount: currencyAmount.quotient.toString(),
+          //   to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
+          //   data,
+          // },
+
+          deposit_denom: {
+            denom: 'inj',
+            to: '0x1.icon/hxe25ae17a21883803185291baddac0120493ff706',
+            data: [],
+          },
         },
-        srcInjectiveAddress: accountInjective,
-        dstInjectiveAddress: accountInjective,
+        funds: [
+          {
+            denom: 'inj',
+            amount: '4526360000000000',
+          },
+        ],
       });
 
-      console.log('accountInjective', accountInjective);
+      // console.log('accountInjective', accountInjective);
 
-      console.log('aaa', getEthereumSignerAddress(accountInjective));
-      console.log('bbb', getInjectiveSignerAddress(accountInjective));
+      // console.log('aaa', getEthereumSignerAddress(accountInjective));
+      // console.log('bbb', getInjectiveSignerAddress(accountInjective));
 
-      console.log('isCosmosWallet', isCosmosWallet(walletStrategy.wallet));
+      // console.log('isCosmosWallet', isCosmosWallet(walletStrategy.wallet));
 
-      const portfolio = await indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(accountInjective);
-      console.log(portfolio);
+      // const portfolio = await indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(accountInjective);
+      // console.log(portfolio);
 
       const txResult = await msgBroadcastClient.broadcast({
         msgs: msg,
         injectiveAddress: accountInjective,
+        gas: {
+          gas: 1200_000,
+        },
       });
       console.log('txResult', txResult);
     } catch (e) {

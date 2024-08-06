@@ -22,6 +22,7 @@ import { havahJs } from '@/bnJs';
 import { HavahPublicXService } from '../_xcall/HavahPublicXService';
 import { HavahWalletXService } from '../_xcall/HavahWalletXService';
 import { InjectivePublicXService } from '../_xcall/InjectivePublicXService';
+import { InjectiveWalletXService } from '../_xcall/InjectiveWalletXService';
 
 type XServiceStore = {
   publicXServices: Partial<Record<XChainId, IPublicXService>>;
@@ -182,7 +183,7 @@ export const useCreateWalletXService = (xChainId: XChainId) => {
           createWalletXService(HavahWalletXService, xChainId, publicClient, havahJs.provider);
           break;
         case 'INJECTIVE':
-          createWalletXService(InjectivePublicXService, xChainId, undefined, undefined);
+          createWalletXService(InjectiveWalletXService, xChainId, undefined, undefined);
           break;
         default:
           break;

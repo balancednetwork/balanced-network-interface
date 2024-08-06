@@ -57,10 +57,9 @@ const Wallet = ({ close }: WalletProps) => {
     }
 
     // disconnect function includes resetContractLedgerSettings, so put it below the transport.close()
-    allWallets[XWalletType.ICON]?.disconnect();
-    allWallets[XWalletType.COSMOS]?.disconnect();
-    allWallets[XWalletType.EVM]?.disconnect();
-    allWallets[XWalletType.HAVAH]?.disconnect();
+    [XWalletType.ICON, XWalletType.COSMOS, XWalletType.EVM, XWalletType.HAVAH, XWalletType.INJECTIVE].forEach(type =>
+      allWallets[type]?.disconnect(),
+    );
   };
 
   useEffect(() => {

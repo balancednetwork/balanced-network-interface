@@ -53,6 +53,7 @@ export const useInjectiveWalletStore = create<InjectiveWalletStore>()(
         set(state => {
           state.account = undefined;
           state.ethereumAddress = undefined;
+          state.wallet = undefined;
         });
         await walletStrategy.disconnect();
       },
@@ -60,33 +61,32 @@ export const useInjectiveWalletStore = create<InjectiveWalletStore>()(
     {
       name: 'injective-wallet-store',
       storage: createJSONStorage(() => localStorage),
-      // onRehydrateStorage: state => {
-      //   console.log('hydration starts');
-      //   console.log('state', state);
-      //   if (state.wallet) {
-      //     // walletStrategy.setWallet(state.wallet);
-      //     console.log('state.wallet', state.wallet);
-      //     useInjectiveWalletStore.getState().connect(state.wallet);
-      //   }
+      onRehydrateStorage: state => {
+        console.log('hydration starts');
 
-      //   // optional
-      //   return (state, error) => {
-      //     if (error) {
-      //       console.log('an error happened during hydration', error);
-      //     } else {
-      //       console.log('hydration finished');
-      //     }
-      //   };
-      // },
+        // optional
+        return (state, error) => {
+          if (state?.wallet) {
+            state.connect(state.wallet);
+            // walletStrategy.setWallet(state.wallet);
+          }
+          if (error) {
+            console.log('an error happened during hydration', error);
+          } else {
+            console.log('hydration finished');
+          }
+        };
+      },
     },
   ),
 );
 
 export const useInjectiveWallet = () => {
-  const { account, connect, disconnect } = useInjectiveWalletStore();
+  const { account, wallet, connect, disconnect } = useInjectiveWalletStore();
 
   return {
     account,
+    wallet,
     connect,
     disconnect,
   };

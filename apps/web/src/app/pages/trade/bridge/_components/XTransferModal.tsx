@@ -28,9 +28,13 @@ import { useXTransactionStore, xTransactionActions } from '../_zustand/useXTrans
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from '@/store/bridge/hooks';
 import { useCreateWalletXService } from '../_zustand/useXServiceStore';
 import useWallets from '../_hooks/useWallets';
-import { useSwitchChain } from 'wagmi';
+import { useChainId, useSwitchChain } from 'wagmi';
 import BigNumber from 'bignumber.js';
 import { formatBigNumber } from '@/utils';
+import { XWalletType } from '../types';
+import { walletStrategy } from '@/packages/injective';
+import { Wallet } from '@injectivelabs/wallet-ts';
+import { mainnet } from 'viem/chains';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;
@@ -90,13 +94,23 @@ function XTransferModal() {
 
   const gasChecker = useXCallGasChecker(direction.from);
 
+  const ethereumChainId = useChainId();
+
   // switch chain between evm chains
   const wallets = useWallets();
   const walletType = xChainMap[direction.from].xWalletType;
-  const isWrongChain = wallets[walletType].xChainId !== direction.from;
+  const isWrongChain =
+    wallets[walletType].xChainId !== direction.from ||
+    (walletType === XWalletType.INJECTIVE &&
+      walletStrategy.getWallet() === Wallet.Metamask &&
+      ethereumChainId !== mainnet.id);
   const { switchChain } = useSwitchChain();
   const handleSwitchChain = () => {
-    switchChain({ chainId: xChainMap[direction.from].id as number });
+    if (walletType === XWalletType.INJECTIVE) {
+      switchChain({ chainId: mainnet.id });
+    } else {
+      switchChain({ chainId: xChainMap[direction.from].id as number });
+    }
   };
 
   return (

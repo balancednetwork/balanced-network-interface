@@ -1,4 +1,10 @@
-import { IndexerGrpcAccountPortfolioApi, IndexerRestExplorerApi } from '@injectivelabs/sdk-ts';
+import {
+  ChainGrpcWasmApi,
+  fromBase64,
+  IndexerGrpcAccountPortfolioApi,
+  IndexerRestExplorerApi,
+  toBase64,
+} from '@injectivelabs/sdk-ts';
 import { getNetworkEndpoints, Network } from '@injectivelabs/networks';
 import { IndexerGrpcExplorerApi } from '@injectivelabs/sdk-ts';
 
@@ -27,6 +33,7 @@ export class InjectivePublicXService extends AbstractPublicXService {
   publicClient: any;
   indexerGrpcExplorerApi: IndexerGrpcExplorerApi;
   indexerRestExplorerApi: IndexerRestExplorerApi;
+  chainGrpcWasmApi: ChainGrpcWasmApi;
 
   constructor(xChainId: XChainId, publicClient: any) {
     super();
@@ -37,15 +44,21 @@ export class InjectivePublicXService extends AbstractPublicXService {
 
     this.indexerGrpcExplorerApi = new IndexerGrpcExplorerApi(`${endpoints.explorer}`);
     this.indexerRestExplorerApi = new IndexerRestExplorerApi(`${endpoints.explorer}/api/explorer/v1`);
+    this.chainGrpcWasmApi = new ChainGrpcWasmApi(endpoints.grpc);
   }
 
   getPublicClient() {
     return this.publicClient;
   }
 
-  // TODO: complete this
   async getXCallFee(nid: XChainId, rollback: boolean) {
-    return BigInt(1200_000);
+    const response: any = await this.chainGrpcWasmApi.fetchSmartContractState(
+      injective.contracts.xCall,
+      toBase64({ get_fee: { nid: nid, rollback } }),
+    );
+
+    const fee: any = fromBase64(response.data);
+    return BigInt(fee);
   }
 
   async getBlockHeight() {

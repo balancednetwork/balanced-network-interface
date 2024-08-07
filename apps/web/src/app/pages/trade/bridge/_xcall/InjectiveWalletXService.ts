@@ -54,7 +54,6 @@ export class InjectiveWalletXService extends InjectivePublicXService implements 
   }
 
   async executeTransaction(xTransactionInput: XTransactionInput) {
-    console.log('executeTransaction', xTransactionInput);
     const { type, direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } =
       xTransactionInput;
 
@@ -102,18 +101,22 @@ export class InjectiveWalletXService extends InjectivePublicXService implements 
             data,
           },
         },
+        funds: [
+          {
+            denom: 'inj',
+            amount: xCallFee.rollback.toString(),
+          },
+        ],
       });
 
-      const txResult = await msgBroadcastClient.broadcast({
+      const txResult = await msgBroadcastClient.broadcastWithFeeDelegation({
         msgs: msg,
         injectiveAddress: account,
-        gas: {
-          gas: 1200_000,
-        },
       });
 
       return txResult.txHash;
     } else {
+      // assume it's an only native asset - INJ
       const msg = MsgExecuteContractCompat.fromJSON({
         contractAddress: injective.contracts.assetManager,
         sender: account,
@@ -127,17 +130,14 @@ export class InjectiveWalletXService extends InjectivePublicXService implements 
         funds: [
           {
             denom: 'inj',
-            amount: inputAmount.quotient.toString(),
+            amount: BigInt(inputAmount.quotient + xCallFee.rollback).toString(),
           },
         ],
       });
 
-      const txResult = await msgBroadcastClient.broadcast({
+      const txResult = await msgBroadcastClient.broadcastWithFeeDelegation({
         msgs: msg,
         injectiveAddress: account,
-        gas: {
-          gas: 1200_000,
-        },
       });
 
       return txResult.txHash;

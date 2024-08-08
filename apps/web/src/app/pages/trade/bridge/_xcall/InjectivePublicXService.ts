@@ -100,19 +100,32 @@ export class InjectivePublicXService extends AbstractPublicXService {
   }
 
   getScanBlockCount() {
-    return 2n;
+    return 10n;
   }
 
-  // TODO: implement pagination
   async getEventLogs({ startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
-    const txs = await this.indexerRestExplorerApi.fetchTransactions({
-      after: Number(startBlockHeight),
-      before: Number(endBlockHeight),
-      limit: 100,
-    });
+    const allTransactions: any[] = [];
+
+    let skip = 0;
+    const limit = 100;
+    while (true) {
+      const txs = await this.indexerRestExplorerApi.fetchTransactions({
+        after: Number(startBlockHeight),
+        before: Number(endBlockHeight),
+        limit,
+        skip,
+      });
+      allTransactions.push(...txs.transactions);
+
+      if (txs.paging.total <= skip + limit) {
+        break;
+      }
+
+      skip = skip + limit;
+    }
 
     // txs is an array of tx, each tx has events, which is an array of event, return all events merged
-    const events = txs.transactions
+    const events = allTransactions
       .flatMap(tx => tx.logs?.[0]['events'].map(e => ({ ...e, transactionHash: tx.hash })))
       .filter(e => e);
 

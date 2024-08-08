@@ -6,7 +6,7 @@ import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 
-import { XChainId, XToken } from '@/app/pages/trade/bridge/types';
+import { XChainId, XToken, XWalletType } from '@/app/pages/trade/bridge/types';
 import { getNetworkDisplayName } from '@/app/pages/trade/bridge/utils';
 import { Typography } from '@/app/theme';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from '@/store/application/hooks';
@@ -32,9 +32,12 @@ import {
 import XTransactionState from '../../bridge/_components/XTransactionState';
 import { useCreateWalletXService } from '../../bridge/_zustand/useXServiceStore';
 import useWallets from '../../bridge/_hooks/useWallets';
-import { useSwitchChain } from 'wagmi';
+import { useChainId, useSwitchChain } from 'wagmi';
 import { StyledButton } from './shared';
 import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
+import { Wallet } from '@injectivelabs/wallet-ts';
+import { walletStrategy } from '@/packages/injective';
+import { mainnet } from 'wagmi/chains';
 
 type XSwapModalProps = {
   account: string | undefined;
@@ -121,13 +124,23 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
 
   const gasChecker = useXCallGasChecker(direction.from);
 
+  const ethereumChainId = useChainId();
+
   // switch chain between evm chains
   const wallets = useWallets();
   const walletType = xChainMap[direction.from].xWalletType;
-  const isWrongChain = wallets[walletType].xChainId !== direction.from;
+  const isWrongChain =
+    wallets[walletType].xChainId !== direction.from ||
+    (walletType === XWalletType.INJECTIVE &&
+      walletStrategy.getWallet() === Wallet.Metamask &&
+      ethereumChainId !== mainnet.id);
   const { switchChain } = useSwitchChain();
   const handleSwitchChain = () => {
-    switchChain({ chainId: xChainMap[direction.from].id as number });
+    if (walletType === XWalletType.INJECTIVE) {
+      switchChain({ chainId: mainnet.id });
+    } else {
+      switchChain({ chainId: xChainMap[direction.from].id as number });
+    }
   };
 
   return (

@@ -7,6 +7,8 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   BNB: '0x38.bsc',
   ETH: '0xa4b1.arbitrum',
   BTC: '0xa4b1.arbitrum',
+  INJ: 'injective-1',
+  HVH: '0x100.icon',
 };
 
 import { bnUSD } from '@/constants/tokens';

@@ -376,7 +376,9 @@ const CollateralPanel = () => {
   const [, setWalletModal] = useWalletModal();
   const handleConnect = () => {
     const chain = xChainMap[sourceChain];
-    if (chain.xWalletType !== XWalletType.COSMOS) {
+    if (chain.xWalletType === XWalletType.INJECTIVE) {
+      modalActions.openModal(MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL);
+    } else if (chain.xWalletType !== XWalletType.COSMOS) {
       setWalletModal(chain.xWalletType);
     }
   };

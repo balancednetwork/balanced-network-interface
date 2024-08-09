@@ -155,7 +155,8 @@ export function useAllCollateralData(): UseQueryResult<XCollaterals[]> {
             isCollateralSingleChain: Object.keys(chains).length === 1,
             total: totalCollateralData[symbol],
           };
-        });
+        })
+        .sort((a, b) => (a.baseToken && b.baseToken ? a.baseToken.symbol.localeCompare(b.baseToken?.symbol) : 0));
     },
     enabled: !!totalCollateralData,
     placeholderData: keepPreviousData,

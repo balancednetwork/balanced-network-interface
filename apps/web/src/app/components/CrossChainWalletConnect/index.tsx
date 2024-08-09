@@ -15,6 +15,7 @@ import { useSwapState } from '@/store/swap/hooks';
 import { Trans } from '@lingui/macro';
 import useWallets from '@/app/pages/trade/bridge/_hooks/useWallets';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
+import { MODAL_ID, modalActions } from '@/app/pages/trade/bridge/_zustand/useModalStore';
 
 const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; editable?: boolean }) => {
   const [editableAddressModalOpen, setEditableAddressModalOpen] = React.useState(false);
@@ -32,6 +33,8 @@ const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; e
       connectKeplr();
     } else if (chain.xWalletType === XWalletType.HAVAH) {
       connectToHavah();
+    } else if (chain.xWalletType === XWalletType.INJECTIVE) {
+      modalActions.openModal(MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL);
     } else {
       setWalletModal(chain.xWalletType);
     }

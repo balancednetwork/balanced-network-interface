@@ -64,6 +64,7 @@ interface CurrencySearchProps {
   balanceList?: { [key: string]: BigNumber };
   showCommunityListControl?: boolean;
   xChainId: XChainId;
+  showCrossChainBreakdown: boolean;
 }
 
 const useFilteredXTokens = () => {
@@ -81,6 +82,7 @@ export function CurrencySearch({
   selectedCurrency,
   onCurrencySelect,
   onChainSelect,
+  showCrossChainBreakdown,
   otherSelectedCurrency,
   currencySelectionType,
   showCurrencyAmount,
@@ -252,7 +254,7 @@ export function CurrencySearch({
           isOpen={isOpen}
           onDismiss={onDismiss}
           selectedChainId={selectedChainId}
-          showCrossChainBreakdown={true}
+          showCrossChainBreakdown={showCrossChainBreakdown}
         />
       ) : (
         <Column style={{ padding: '20px', height: '100%' }}>

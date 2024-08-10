@@ -108,6 +108,7 @@ interface CurrencyInputPanelProps {
   xChainId?: XChainId;
   onChainSelect?: (_chainId: XChainId) => void;
   showCrossChainOptions?: boolean;
+  showCrossChainBreakdown?: boolean;
   addressEditable?: boolean;
 }
 
@@ -131,6 +132,7 @@ export default function CurrencyInputPanel({
   xChainId = '0x1.icon',
   onChainSelect,
   showCrossChainOptions = false,
+  showCrossChainBreakdown = true,
   addressEditable = false,
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
@@ -217,6 +219,7 @@ export default function CurrencyInputPanel({
                 selectedCurrency={currency}
                 showCommunityListControl={showCommunityListControl}
                 xChainId={xChainId}
+                showCrossChainBreakdown={showCrossChainBreakdown}
               />
             )}
           </div>

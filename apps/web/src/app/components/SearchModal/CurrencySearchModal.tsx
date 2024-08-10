@@ -18,6 +18,7 @@ interface CurrencySearchModalProps {
   selectedCurrency?: Currency | null;
   onCurrencySelect: (currency: Currency, setDefaultChain?: boolean) => void;
   onChainSelect?: (chainId: XChainId) => void;
+  showCrossChainBreakdown: boolean;
   otherSelectedCurrency?: Currency | null;
   showCurrencyAmount?: boolean;
   currencySelectionType?: CurrencySelectionType;
@@ -50,6 +51,7 @@ export default function CurrencySearchModal({
   width,
   anchorEl,
   showCommunityListControl,
+  showCrossChainBreakdown,
   xChainId,
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage);
@@ -122,6 +124,7 @@ export default function CurrencySearchModal({
           width={width}
           showCommunityListControl={showCommunityListControl}
           xChainId={xChainId}
+          showCrossChainBreakdown={showCrossChainBreakdown}
         />
       </PopperWithoutArrow>
 

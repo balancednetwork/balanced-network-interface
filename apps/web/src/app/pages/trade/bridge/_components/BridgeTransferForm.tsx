@@ -127,6 +127,7 @@ export default function BridgeTransferForm({ openModal }) {
               currencySelectionType={CurrencySelectionType.BRIDGE}
               showCommunityListControl={false}
               xChainId={bridgeDirection.from}
+              showCrossChainBreakdown={false}
             />
           </Flex>
 

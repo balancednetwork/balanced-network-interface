@@ -166,10 +166,10 @@ export default function CurrencyInputPanel({
   );
 
   const onCurrencySelectWithXChain = useCallback(
-    (currency: Currency) => {
+    (currency: Currency, setDefaultChain = true) => {
       onCurrencySelect && onCurrencySelect(currency);
 
-      if (currency?.symbol) {
+      if (setDefaultChain && currency?.symbol) {
         const xChains =
           currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
           currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE
@@ -209,6 +209,7 @@ export default function CurrencyInputPanel({
                 isOpen={open}
                 onDismiss={handleDismiss}
                 onCurrencySelect={onCurrencySelectWithXChain}
+                onChainSelect={onChainSelect}
                 currencySelectionType={currencySelectionType}
                 showCurrencyAmount={false}
                 anchorEl={ref.current}

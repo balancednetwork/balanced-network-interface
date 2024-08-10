@@ -14,9 +14,9 @@ import {
   selectPercent,
   selectLiquidFinance,
 } from './reducer';
-import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/macro';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { isDenomAsset } from '@/packages/archway/utils';
 import { sARCH } from '@/app/pages/trade/bridge/_config/tokens';
@@ -24,6 +24,7 @@ import useWallets, { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/
 import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
 import { getXTokenBySymbol, getXAddress } from '@/app/pages/trade/bridge/utils';
 import { useAssetManagerTokens } from '@/app/pages/trade/bridge/_hooks/useAssetManagerTokens';
+import { xTokenMap } from '@/app/pages/trade/bridge/_config/xTokens';
 
 export function useBridgeState(): AppState['bridge'] {
   return useSelector((state: AppState) => state.bridge);
@@ -205,4 +206,16 @@ export function useDerivedBridgeInfo() {
     canBridge,
     maximumBridgeAmount,
   };
+}
+
+export function useCurrencyXChains(currency: Currency): XChainId[] {
+  return useMemo(() => {
+    return Object.entries(xTokenMap).reduce((acc, [chainId, xTokens]) => {
+      const xToken = xTokens.find(token => token.symbol === currency.symbol);
+      if (xToken) {
+        acc.push(chainId as XChainId);
+      }
+      return acc;
+    }, [] as XChainId[]);
+  }, [currency.symbol]);
 }

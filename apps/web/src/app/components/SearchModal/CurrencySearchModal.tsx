@@ -16,7 +16,8 @@ interface CurrencySearchModalProps {
   isOpen: boolean;
   onDismiss: () => void;
   selectedCurrency?: Currency | null;
-  onCurrencySelect: (currency: Currency) => void;
+  onCurrencySelect: (currency: Currency, setDefaultChain?: boolean) => void;
+  onChainSelect?: (chainId: XChainId) => void;
   otherSelectedCurrency?: Currency | null;
   showCurrencyAmount?: boolean;
   currencySelectionType?: CurrencySelectionType;
@@ -40,6 +41,7 @@ export default function CurrencySearchModal({
   isOpen,
   onDismiss,
   onCurrencySelect,
+  onChainSelect,
   selectedCurrency,
   otherSelectedCurrency,
   currencySelectionType = CurrencySelectionType.NORMAL,
@@ -82,8 +84,8 @@ export default function CurrencySearchModal({
   const showManageView = useCallback(() => setModalView(CurrencyModalView.manage), []);
 
   const handleCurrencySelect = useCallback(
-    (currency: Currency) => {
-      onCurrencySelect(currency);
+    (currency: Currency, setDefaultChain = true) => {
+      onCurrencySelect(currency, setDefaultChain);
       onDismiss();
       closeImportView();
     },
@@ -106,6 +108,7 @@ export default function CurrencySearchModal({
           isOpen={isOpen}
           onDismiss={onDismiss}
           onCurrencySelect={handleCurrencySelect}
+          onChainSelect={onChainSelect}
           selectedCurrency={selectedCurrency}
           otherSelectedCurrency={otherSelectedCurrency}
           currencySelectionType={currencySelectionType}

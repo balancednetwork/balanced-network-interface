@@ -1,4 +1,4 @@
-import React, { /*KeyboardEvent,*/ RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Currency, Token } from '@balancednetwork/sdk-core';
 import { t, Trans } from '@lingui/macro';
@@ -49,7 +49,8 @@ interface CurrencySearchProps {
   isOpen: boolean;
   onDismiss: () => void;
   selectedCurrency?: Currency | null;
-  onCurrencySelect: (currency: Currency) => void;
+  onCurrencySelect: (currency: Currency, setDefaultChain?: boolean) => void;
+  onChainSelect?: (chainId: XChainId) => void;
   otherSelectedCurrency?: Currency | null;
   currencySelectionType: CurrencySelectionType;
   showCurrencyAmount?: boolean;
@@ -79,6 +80,7 @@ export function CurrencySearch({
   account,
   selectedCurrency,
   onCurrencySelect,
+  onChainSelect,
   otherSelectedCurrency,
   currencySelectionType,
   showCurrencyAmount,
@@ -160,8 +162,8 @@ export function CurrencySearch({
   }, [debouncedQuery, icx, filteredSortedTokens]);
 
   const handleCurrencySelect = useCallback(
-    (currency: Currency) => {
-      onCurrencySelect(currency);
+    (currency: Currency, setDefaultChain = true) => {
+      onCurrencySelect(currency, setDefaultChain);
       onDismiss();
     },
     [onDismiss, onCurrencySelect],
@@ -241,6 +243,7 @@ export function CurrencySearch({
           account={account}
           currencies={filterCurrencies}
           onCurrencySelect={handleCurrencySelect}
+          onChainSelect={onChainSelect}
           showImportView={showImportView}
           setImportToken={setImportToken}
           showRemoveView={showRemoveView}
@@ -249,6 +252,7 @@ export function CurrencySearch({
           isOpen={isOpen}
           onDismiss={onDismiss}
           selectedChainId={selectedChainId}
+          showCrossChainBreakdown={true}
         />
       ) : (
         <Column style={{ padding: '20px', height: '100%' }}>

@@ -1,4 +1,4 @@
-import React, { useEffect, CSSProperties, useState, useCallback } from 'react';
+import React, { useEffect, CSSProperties, useState, useCallback, useMemo } from 'react';
 
 import { Currency, Fraction, Token } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
@@ -11,7 +11,6 @@ import styled, { useTheme } from 'styled-components';
 import CurrencyLogo from '@/app/components/CurrencyLogo';
 import { ListItem, DataText, List1 } from '@/app/components/List';
 import { Typography } from '@/app/theme';
-import useArrowControl from '@/hooks/useArrowControl';
 import useKeyPress from '@/hooks/useKeyPress';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useIsUserAddedToken } from '@/store/user/hooks';
@@ -22,6 +21,10 @@ import { HeaderText } from '@/app/pages/trade/supply/_components/AllPoolsPanel';
 import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
 import { XChainId } from '@/app/pages/trade/bridge/types';
 import { formatPrice } from '@/utils/formatter';
+import { useCurrencyXChains } from '@/store/bridge/hooks';
+import { BalanceBreakdown } from '../Wallet/styledComponents';
+import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import CurrencyXChainItem from './CurrencyXChainItem';
 
 const DashGrid = styled(Box)`
   display: grid;
@@ -38,39 +41,56 @@ const DashGrid = styled(Box)`
   }
 `;
 
+const StyledBalanceBreakdown = styled(BalanceBreakdown)`
+  margin-top: 18px;
+  grid-column: span 2;
+  color: ${({ theme }) => theme.colors.text2};
+`;
+
 function currencyKey(currency: Currency): string {
   return currency.isToken ? currency.address : 'ICX';
 }
 
+const MemoizedCurrencyXChainItem = React.memo(CurrencyXChainItem);
+
 function CurrencyRow({
   currency,
   onSelect,
+  onChainSelect,
   isSelected,
   otherSelected,
   style,
   showCurrencyAmount,
   onRemove,
   account,
-  isFocused,
-  onFocus,
   rateFracs,
   selectedChainId,
+  showCrossChainBreakdown,
 }: {
   currency: Currency;
-  onSelect: () => void;
+  showCrossChainBreakdown: boolean;
+  onSelect: (currency: Currency, setDefaultChain?: boolean) => void;
+  onChainSelect?: (chainId: XChainId) => void;
   isSelected?: boolean;
   otherSelected?: boolean;
   style?: CSSProperties;
   showCurrencyAmount?: boolean;
   onRemove: () => void;
   account?: string | null;
-  isFocused: boolean;
-  onFocus: () => void;
   rateFracs: { [key in string]: Fraction } | undefined;
   selectedChainId: XChainId | undefined;
 }) {
+  const currencyXChains = useCurrencyXChains(currency);
+  const isSingleChain = currencyXChains.length === 1 || currencyXChains.length === 0;
+  const showBreakdown = showCrossChainBreakdown && currencyXChains.length && !isSingleChain;
   const balance = useXCurrencyBalance(currency, selectedChainId);
   const signedInWallets = useSignedInWallets();
+
+  const sortedXChains = useMemo(() => {
+    return [...currencyXChains].sort((a, b) => {
+      return xChainMap[a].name.localeCompare(xChainMap[b].name);
+    });
+  }, [currencyXChains]);
 
   const isUserAddedToken = useIsUserAddedToken(currency as Token);
   const theme = useTheme();
@@ -81,7 +101,6 @@ function CurrencyRow({
   const close = useCallback(() => setShow(false), []);
 
   const focusCombined = () => {
-    onFocus();
     open();
   };
 
@@ -105,13 +124,15 @@ function CurrencyRow({
         </Flex>
         <Flex justifyContent="flex-end" alignItems="center">
           <DataText variant="p" textAlign="right">
-            {balance?.isGreaterThan(0) ? formatBigNumber(balance, 'currency') : 0}
+            <Typography variant="span" fontSize={16} color="text" display="block">
+              {balance?.isGreaterThan(0) ? formatBigNumber(balance, 'currency') : 0}
+            </Typography>
 
-            {balance?.isGreaterThan(0) && rateFracs && rateFracs[currency.symbol!] && (
+            {balance && balance.isGreaterThan(0) && rateFracs && rateFracs[currency.symbol!] ? (
               <Typography variant="span" fontSize={14} color="text2" display="block">
                 {`$${balance.times(new BigNumber(rateFracs[currency.symbol!].toFixed(8))).toFormat(2)}`}
               </Typography>
-            )}
+            ) : null}
           </DataText>
           {isUserAddedToken && (isMobile || show) && (
             <MinusCircle
@@ -133,7 +154,7 @@ function CurrencyRow({
     return (
       <>
         <Flex>
-          <CurrencyLogo currency={currency} style={{ marginRight: '8px' }} />
+          <CurrencyLogo currency={currency} style={{ marginRight: '15px' }} />
           <DataText variant="p" fontWeight="bold">
             {currency?.symbol}
           </DataText>
@@ -159,21 +180,47 @@ function CurrencyRow({
     );
   };
 
+  const handleXChainCurrencySelect = useCallback(
+    (currency: Currency, xChainId: XChainId) => {
+      onSelect(currency, false);
+      onChainSelect && onChainSelect(xChainId);
+    },
+    [onChainSelect, onSelect],
+  );
+
   return (
-    <ListItem
-      onClick={onSelect}
-      {...(!isMobile ? { onMouseEnter: focusCombined } : null)}
-      onMouseLeave={close}
-      className={isFocused ? 'focused' : ''}
-    >
-      {signedInWallets.length > 0 ? <RowContentSignedIn /> : <RowContentNotSignedIn />}
-    </ListItem>
+    <>
+      <ListItem
+        onClick={() => onSelect(currency)}
+        {...(!isMobile ? { onMouseEnter: open } : null)}
+        onMouseLeave={close}
+        $hideBorder={!!showBreakdown}
+      >
+        {signedInWallets.length > 0 ? <RowContentSignedIn /> : <RowContentNotSignedIn />}
+      </ListItem>
+
+      {showBreakdown ? (
+        <StyledBalanceBreakdown $arrowPosition={currency.symbol ? `${currency.symbol.length * 5 + 26}px` : '40px'}>
+          {sortedXChains.map(xChainId => (
+            <MemoizedCurrencyXChainItem
+              key={`${currency.symbol}-${xChainId}`}
+              xChainId={xChainId}
+              currency={currency}
+              price={rateFracs && rateFracs[currency.symbol!] ? rateFracs[currency.symbol!].toFixed(18) : '0'}
+              onSelect={handleXChainCurrencySelect}
+            />
+          ))}
+        </StyledBalanceBreakdown>
+      ) : null}
+    </>
   );
 }
 
 export default function CurrencyList({
   currencies,
+  showCrossChainBreakdown = true,
   onCurrencySelect,
+  onChainSelect,
   otherCurrency,
   showImportView,
   setImportToken,
@@ -186,7 +233,9 @@ export default function CurrencyList({
   selectedChainId,
 }: {
   currencies: Currency[];
-  onCurrencySelect: (currency: Currency) => void;
+  showCrossChainBreakdown: boolean;
+  onCurrencySelect: (currency: Currency, setDefaultChain?: boolean) => void;
+  onChainSelect?: (chainId: XChainId) => void;
   otherCurrency?: Currency | null;
   showImportView: () => void;
   setImportToken: (token: Token) => void;
@@ -198,9 +247,7 @@ export default function CurrencyList({
   onDismiss: () => void;
   selectedChainId: XChainId | undefined;
 }) {
-  const enter = useKeyPress('Enter');
   const handleEscape = useKeyPress('Escape');
-  const { activeIndex, setActiveIndex } = useArrowControl(isOpen, currencies?.length || 0);
   const signedInWallets = useSignedInWallets();
 
   const rates = useRatesWithOracle();
@@ -219,18 +266,6 @@ export default function CurrencyList({
       return sortData(currencies, rateFracs);
     }
   }, [currencies, rateFracs, sortData]);
-
-  useEffect(() => {
-    if (isOpen) {
-      setActiveIndex(undefined);
-    }
-  }, [isOpen, setActiveIndex]);
-
-  useEffect(() => {
-    if (isOpen && enter && currencies?.length && activeIndex !== undefined) {
-      onCurrencySelect(currencies[activeIndex]);
-    }
-  }, [isOpen, activeIndex, enter, currencies, currencies.length, onCurrencySelect]);
 
   useEffect(() => {
     if (isOpen && handleEscape) {
@@ -286,15 +321,15 @@ export default function CurrencyList({
           account={account}
           key={currencyKey(currency)}
           currency={currency}
-          onSelect={() => onCurrencySelect(currency)}
+          onSelect={onCurrencySelect}
+          onChainSelect={onChainSelect}
           onRemove={() => {
             setRemoveToken(currency as Token);
             showRemoveView();
           }}
-          isFocused={index === activeIndex}
-          onFocus={() => setActiveIndex(index)}
           rateFracs={rateFracs}
           selectedChainId={selectedChainId}
+          showCrossChainBreakdown={showCrossChainBreakdown}
         />
       ))}
     </List1>

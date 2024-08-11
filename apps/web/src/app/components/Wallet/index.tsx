@@ -43,10 +43,6 @@ const Wallet = ({ close }: WalletProps) => {
   const handleChangeWallet = () => {
     close();
     toggleWalletModal();
-
-    if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
-      bnJs.contractSettings.ledgerSettings.transport.close();
-    }
   };
 
   const handleDisconnectWallet = async () => {

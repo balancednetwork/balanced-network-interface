@@ -182,7 +182,7 @@ export class InjectiveWalletXService extends InjectivePublicXService implements 
         ],
       });
 
-      const txResult = await msgBroadcastClient.broadcast({
+      const txResult = await msgBroadcastClient.broadcastWithFeeDelegation({
         msgs: msg,
         injectiveAddress: account,
       });
@@ -200,38 +200,73 @@ export class InjectiveWalletXService extends InjectivePublicXService implements 
       return;
     }
 
-    if (this.walletClient) {
-      const amount = toICONDecimals(inputAmount.multiply(-1));
-      const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-      const data = toHex(RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]));
-      const envelope = toHex(
-        RLP.encode([
-          Buffer.from([0]),
-          data,
-          FROM_SOURCES[this.xChainId]?.map(Buffer.from),
-          TO_SOURCES[this.xChainId]?.map(Buffer.from),
-        ]),
-      );
+    const amount = toICONDecimals(inputAmount.multiply(-1));
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
+    const data = toHex(RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]));
+    // const envelope = toHex(
+    //   RLP.encode([
+    //     Buffer.from([0]),
+    //     data,
+    //     FROM_SOURCES[this.xChainId]?.map(Buffer.from),
+    //     TO_SOURCES[this.xChainId]?.map(Buffer.from),
+    //   ]),
+    // );
 
-      // const res = await this.publicClient.simulateContract({
-      //   account: account as Address,
-      //   address: xChainMap[this.xChainId].contracts.xCall as Address,
-      //   abi: xCallContractAbi,
-      //   functionName: 'sendCall',
-      //   args: [destination, envelope],
-      //   //todo
-      //   //? rollback or not
-      //   value: xCallFee.noRollback,
-      // });
+    const envelope = {
+      message: {
+        call_message: {
+          data: RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]),
+        },
+      },
+      sources: ['inj15jcde723hrm5f4fx3r2stnq59jykt2askud8ht'],
+      destinations: ['cx6f86ed848f9f0d03ba1220811d95d864c72da88c'],
+    };
 
-      // const request = res.request;
-      // const hash = await this.walletClient.writeContract(request);
+    console.log('envelopeeee', envelope);
 
-      // if (hash) {
-      //   return hash;
-      // }
-      return '';
-    }
+    const msg = MsgExecuteContractCompat.fromJSON({
+      contractAddress: injective.contracts.xCall,
+      sender: account,
+      msg: {
+        send_call: {
+          to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`,
+          envelope,
+        },
+      },
+      funds: [
+        {
+          denom: 'inj',
+          amount: BigInt(xCallFee.rollback).toString(),
+        },
+      ],
+    });
+
+    console.log('msggg', msg);
+
+    const txResult = await msgBroadcastClient.broadcastWithFeeDelegation({
+      msgs: msg,
+      injectiveAddress: account,
+    });
+
+    return txResult.txHash;
+
+    // const res = await this.publicClient.simulateContract({
+    //   account: account as Address,
+    //   address: xChainMap[this.xChainId].contracts.xCall as Address,
+    //   abi: xCallContractAbi,
+    //   functionName: 'sendCall',
+    //   args: [destination, envelope],
+    //   //todo
+    //   //? rollback or not
+    //   value: xCallFee.noRollback,
+    // });
+
+    // const request = res.request;
+    // const hash = await this.walletClient.writeContract(request);
+
+    // if (hash) {
+    //   return hash;
+    // }
   }
 
   async executeBorrow(xTransactionInput: XTransactionInput) {
@@ -288,29 +323,34 @@ export class InjectiveWalletXService extends InjectivePublicXService implements 
       return;
     }
 
-    if (this.walletClient) {
-      const amount = BigInt(inputAmount.multiply(-1).quotient.toString());
-      const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-      const data = toHex(
-        JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
-      );
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
+    const data = getBytesFromString(
+      JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
+    );
 
-      // const res = await this.publicClient.simulateContract({
-      //   account: account as Address,
-      //   address: xChainMap[this.xChainId].contracts.bnUSD as Address,
-      //   abi: bnUSDContractAbi,
-      //   functionName: 'crossTransfer',
-      //   args: [destination, amount, data],
-      //   value: xCallFee.rollback,
-      // });
+    const msg = MsgExecuteContractCompat.fromJSON({
+      contractAddress: injective.contracts.bnUSD!,
+      sender: account,
+      msg: {
+        cross_transfer: {
+          amount: inputAmount.multiply(-1).quotient.toString(),
+          to: destination,
+          data,
+        },
+      },
+      funds: [
+        {
+          denom: 'inj',
+          amount: xCallFee.rollback.toString(),
+        },
+      ],
+    });
 
-      // const request: WriteContractParameters = res.request;
-      // const hash = await this.walletClient.writeContract(request);
+    const txResult = await msgBroadcastClient.broadcastWithFeeDelegation({
+      msgs: msg,
+      injectiveAddress: account,
+    });
 
-      // if (hash) {
-      //   return hash;
-      // }
-      return '';
-    }
+    return txResult.txHash;
   }
 }

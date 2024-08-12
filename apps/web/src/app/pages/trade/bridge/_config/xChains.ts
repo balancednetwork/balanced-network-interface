@@ -317,6 +317,7 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   '0x38.bsc': ['0x24415977c566f9300Ea6F0aC75AEA0c09C500e46'],
   '0xa86a.avax': ['0xC1a39C4e7AA98DEC394eF54559960873Bd619cA3', '0x7F3665eF19258cD5cE15eA39d014F47Fc942AE0C'],
   '0x100.icon': ['cxcf2c8d58fd7bbd25866de0660b155f057ea489eb'],
+  'injective-1': ['inj15jcde723hrm5f4fx3r2stnq59jykt2askud8ht'],
 };
 
 /** to other chain from icon sources */
@@ -326,4 +327,5 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   '0x38.bsc': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
   '0xa86a.avax': ['cx59d899fce52cadd1feb5128ff5e6672f03943eec', 'cx917f88460d4ebec1fd656d4dbe51131a37d16837'],
   '0x100.icon': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
+  'injective-1': ['cx6f86ed848f9f0d03ba1220811d95d864c72da88c'],
 };

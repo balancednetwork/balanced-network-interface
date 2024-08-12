@@ -121,7 +121,9 @@ export const useCreatePublicXService = (xChainId: XChainId) => {
           createPublicXService(IconPublicXService, xChainId, iconPublicClient);
           break;
         case 'ARCHWAY':
-          createPublicXService(ArchwayPublicXService, xChainId, archwayPublicClient);
+          if (archwayPublicClient) {
+            createPublicXService(ArchwayPublicXService, xChainId, archwayPublicClient);
+          }
           break;
         case 'EVM':
           createPublicXService(EvmPublicXService, xChainId, evmPublicClient);

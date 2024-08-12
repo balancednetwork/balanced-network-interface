@@ -100,7 +100,7 @@ export default function WalletModal() {
       logo: <IconWalletIcon width="32" />,
       connect: () => setWalletModal(XWalletType.ICON),
       disconnect: wallets[XWalletType.ICON].disconnect,
-      description: t`Supply liquidity. Vote. Borrow, swap, & transfer cross-chain.`,
+      description: t`Borrow, swap, & transfer cross-chain. Supply liquidity. Vote.`,
       keyWords: ['iconex', 'hana'],
       address: wallets[XWalletType.ICON].account,
       xChains: undefined,

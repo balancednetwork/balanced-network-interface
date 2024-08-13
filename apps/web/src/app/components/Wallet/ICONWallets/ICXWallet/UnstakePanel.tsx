@@ -102,7 +102,7 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
                   converted to sICX.`}
               </Typography>
             )}
-            <Flex alignItems="end" marginBottom="5px">
+            <Flex alignItems="end" marginBottom="5px" key={index}>
               <Typography variant="p" marginRight="5px">
                 {unstake.amount.dp(2).toFormat()} ICX
               </Typography>

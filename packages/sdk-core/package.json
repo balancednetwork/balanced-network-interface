@@ -14,7 +14,8 @@
     "test": "tsup test",
     "prepublishOnly": "tsup build",
     "clean": "rm -rf dist && rm -rf node_modules",
-    "pretty": "biome format . --write"
+    "pretty": "biome format . --write",
+    "checkTs": "tsc --noEmit"
   },
   "dependencies": {
     "@ethersproject/address": "^5.0.2",

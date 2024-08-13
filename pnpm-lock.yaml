@@ -450,9 +450,6 @@ importers:
       serve:
         specifier: 11.3.2
         version: 11.3.2
-      stream-browserify:
-        specifier: 3.0.0
-        version: 3.0.0
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -507,7 +504,10 @@ importers:
         version: 7.0.2
       postcss-styled-syntax:
         specifier: 0.6.4
-        version: 0.6.4(postcss@8.4.36)
+        version: 0.6.4(postcss@8.4.41)
+      stream-browserify:
+        specifier: 3.0.0
+        version: 3.0.0
       stylelint:
         specifier: 16.2.1
         version: 16.2.1(typescript@5.5.4)
@@ -23075,9 +23075,9 @@ snapshots:
       cssesc: 3.0.0
       util-deprecate: 1.0.2
 
-  postcss-styled-syntax@0.6.4(postcss@8.4.36):
+  postcss-styled-syntax@0.6.4(postcss@8.4.41):
     dependencies:
-      postcss: 8.4.36
+      postcss: 8.4.41
       typescript: 5.5.4
 
   postcss-value-parser@4.2.0: {}

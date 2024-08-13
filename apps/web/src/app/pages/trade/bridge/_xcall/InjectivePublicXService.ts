@@ -1,10 +1,4 @@
-import {
-  ChainGrpcWasmApi,
-  fromBase64,
-  IndexerGrpcAccountPortfolioApi,
-  IndexerRestExplorerApi,
-  toBase64,
-} from '@injectivelabs/sdk-ts';
+import { ChainGrpcWasmApi, fromBase64, IndexerRestExplorerApi, toBase64 } from '@injectivelabs/sdk-ts';
 import { getNetworkEndpoints, Network } from '@injectivelabs/networks';
 import { IndexerGrpcExplorerApi } from '@injectivelabs/sdk-ts';
 
@@ -39,8 +33,6 @@ export class InjectivePublicXService extends AbstractPublicXService {
     super();
     this.xChainId = xChainId;
     this.publicClient = publicClient;
-
-    // this.indexerGrpcAccountPortfolioApi = new IndexerGrpcAccountPortfolioApi(endpoints.indexer);
 
     this.indexerGrpcExplorerApi = new IndexerGrpcExplorerApi(`${endpoints.explorer}`);
     this.indexerRestExplorerApi = new IndexerRestExplorerApi(`${endpoints.explorer}/api/explorer/v1`);

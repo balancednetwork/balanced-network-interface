@@ -10,7 +10,6 @@ import { XTransactionInput, XTransactionType } from '../_zustand/types';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { InjectivePublicXService } from './InjectivePublicXService';
-import { NATIVE_ADDRESS } from '@/constants';
 
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { Network, getNetworkEndpoints } from '@injectivelabs/networks';
@@ -18,14 +17,12 @@ import { Network, getNetworkEndpoints } from '@injectivelabs/networks';
 export const NETWORK = Network.Mainnet;
 export const ENDPOINTS = getNetworkEndpoints(NETWORK);
 import { MsgBroadcaster } from '@injectivelabs/wallet-ts';
-import { EthereumChainId } from '@injectivelabs/ts-types';
 import { walletStrategy } from '@/packages/injective';
 
 const msgBroadcastClient = new MsgBroadcaster({
   walletStrategy,
   network: NETWORK,
   endpoints: ENDPOINTS,
-  // ethereumChainId: EthereumChainId.Mainnet,
 });
 
 export class InjectiveWalletXService extends InjectivePublicXService implements IWalletXService {

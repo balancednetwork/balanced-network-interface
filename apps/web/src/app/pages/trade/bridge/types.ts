@@ -199,15 +199,11 @@ export type Position = {
   isPotential?: boolean;
 };
 
+export type XPositions = { [CurrencyKey in string]: Partial<{ [key in XChainId]: Position }> };
+
 export type XPositionsRecord = {
   baseToken: Token;
-  positions: Partial<{ [key in XChainId]: Position }>;
-  isPositionSingleChain: boolean;
-};
-
-export type XCollaterals = {
-  baseToken: Token;
-  chains: Partial<{ [key in XChainId]: {} }>;
-  isCollateralSingleChain: boolean;
-  total: Position;
+  positions: XPositions;
+  isSingleChain: boolean;
+  total?: Position;
 };

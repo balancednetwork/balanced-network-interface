@@ -1,7 +1,10 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.6.1/schema.json",
+  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
   "organizeImports": {
     "enabled": false
+  },
+  "files": {
+    "ignore": ["**/node_modules/**", "**/dist/**", "**/public/**"]
   },
   "formatter": {
     "enabled": true,
@@ -16,7 +19,7 @@
     "formatter": {
       "jsxQuoteStyle": "double",
       "quoteProperties": "asNeeded",
-      "trailingComma": "all",
+      "trailingCommas": "all",
       "semicolons": "always",
       "arrowParentheses": "asNeeded",
       "quoteStyle": "single"
@@ -25,14 +28,6 @@
   "linter": {
     "enabled": true,
     "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.json"],
-    "ignore": [
-      "**/node_modules/**",
-      "**/dist/**",
-      "**/public/**",
-      "./src/charting_library/**",
-      "./src/locales/**",
-      "./src/packages/nouislider-react/**"
-    ],
     "rules": {
       "style": {
         "noNonNullAssertion": "off",

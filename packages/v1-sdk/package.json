@@ -8,13 +8,14 @@
   "files": ["dist", "src"],
   "repository": "https://github.com/balancednetwork/v1-sdk.git",
   "scripts": {
-    "lint": "tsup lint src test",
+    "lint": "tsup lint src",
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "tsup test",
     "prepublishOnly": "tsup",
     "clean": "rm -rf dist && rm -rf node_modules",
-    "pretty": "biome format . --write"
+    "pretty": "biome format . --write",
+    "checkTs": "tsc --noEmit"
   },
   "dependencies": {
     "@balancednetwork/sdk-core": "workspace:*",

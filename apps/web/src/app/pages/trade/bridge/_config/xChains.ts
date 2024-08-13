@@ -272,7 +272,7 @@ export const injective: XChain = {
     symbol: 'INJ',
   },
   rpc: {
-    http: 'https://mainnet.base.org',
+    http: 'https://sentry.tm.injective.network',
   },
   contracts: {
     xCall: 'inj177fx40l0g3jqmtmmuyl2zhrjvhr3knvthlr0ul',

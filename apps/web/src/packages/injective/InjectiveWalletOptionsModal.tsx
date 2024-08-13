@@ -19,34 +19,30 @@ type InjectiveWalletOptionsModalProps = {
   id?: MODAL_ID;
 };
 
+const connectors = [
+  {
+    id: 'metamask',
+    name: 'MetaMask',
+    wallet: Wallet.Metamask,
+    icon: MetamaskIcon,
+  },
+  {
+    id: 'keplr',
+    name: 'Keplr',
+    wallet: Wallet.Keplr,
+    icon: KeplrIcon,
+  },
+];
+
 export const InjectiveWalletOptionsModal = ({
   id = MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL,
 }: InjectiveWalletOptionsModalProps) => {
   const open = useModalStore(state => state.modals?.[id]);
   const { connect } = useInjectiveWalletStore();
 
-  const connectors = [
-    {
-      id: 'metamask',
-      name: 'MetaMask',
-      wallet: Wallet.Metamask,
-      icon: MetamaskIcon,
-    },
-    {
-      id: 'keplr',
-      name: 'Keplr',
-      wallet: Wallet.Keplr,
-      icon: KeplrIcon,
-    },
-  ];
-
   const handleConnect = async (wallet: Wallet) => {
     await connect(wallet);
 
-    // walletStrategy.setWallet(wallet);
-    // await walletStrategy.disconnect();
-    // const addresses = await walletStrategy.getAddresses();
-    // console.log('addresses', addresses, await walletStrategy.getWalletDeviceType());
     modalActions.closeModal(id);
   };
 

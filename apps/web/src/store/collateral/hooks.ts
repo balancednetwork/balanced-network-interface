@@ -21,17 +21,17 @@ import { AppState } from '../index';
 import {
   adjust,
   cancel,
-  changeDepositedAmount,
-  changeCollateralType,
-  changeCollateralXChain,
+  changeDepositedAmount as changeDepositedAmountAction,
+  changeCollateralType as changeCollateralTypeAction,
+  changeCollateralXChain as changeCollateralXChainAction,
   changeIcxDisplayType,
   type,
   Field,
 } from './reducer';
-import { Position, XChainId, XCollaterals, XPositionsRecord, XToken } from '@/app/pages/trade/bridge/types';
+import { Position, XChainId, XPositions, XPositionsRecord, XToken } from '@/app/pages/trade/bridge/types';
 import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/app/pages/trade/bridge/_config/xTokens';
 import { useSignedInWallets, useAvailableWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
 import { setRecipientNetwork } from '@/store/loan/reducer';
 import { useDestinationEvents } from '@/app/pages/trade/bridge/_zustand/useXCallEventStore';
@@ -40,51 +40,6 @@ import { useRatesWithOracle } from '@/queries/reward';
 import { getBalanceDecimals } from '@/utils/formatter';
 
 export const DEFAULT_COLLATERAL_TOKEN = 'sICX';
-
-export function useCollateralChangeDepositedAmount(): (
-  depositedAmount: BigNumber,
-  token?: string,
-  xChain?: XChainId,
-) => void {
-  const dispatch = useDispatch();
-
-  return React.useCallback(
-    (depositedAmount: BigNumber, token: string = DEFAULT_COLLATERAL_TOKEN, xChain = '0x1.icon') => {
-      dispatch(changeDepositedAmount({ depositedAmount, token, xChain }));
-    },
-    [dispatch],
-  );
-}
-
-export function useCollateralChangeCollateralType(): (collateralType: CurrencyKey) => void {
-  const dispatch = useDispatch();
-
-  return React.useCallback(
-    (collateralType: CurrencyKey) => {
-      dispatch(changeCollateralType({ collateralType }));
-      const defaultXChainId = DEFAULT_TOKEN_CHAIN[collateralType];
-      if (defaultXChainId) {
-        dispatch(changeCollateralXChain({ collateralXChain: defaultXChainId }));
-        dispatch(setRecipientNetwork({ recipientNetwork: defaultXChainId }));
-      } else {
-        dispatch(changeCollateralXChain({ collateralXChain: NETWORK_ID === 1 ? '0x1.icon' : '0x2.icon' }));
-        dispatch(setRecipientNetwork({ recipientNetwork: NETWORK_ID === 1 ? '0x1.icon' : '0x2.icon' }));
-      }
-    },
-    [dispatch],
-  );
-}
-
-export function useChangeCollateralXChain(): (collateralXChain: XChainId) => void {
-  const dispatch = useDispatch();
-
-  return React.useCallback(
-    (collateralXChain: XChainId) => {
-      dispatch(changeCollateralXChain({ collateralXChain }));
-    },
-    [dispatch],
-  );
-}
 
 export function useCollateralChangeIcxDisplayType(): (icxDisplayType: IcxDisplayType) => void {
   const dispatch = useDispatch();
@@ -128,7 +83,7 @@ export function useCollateralAmounts(xChainId?: XChainId): { [key in string]: Bi
   return useSelector((state: AppState) => state.collateral.depositedAmounts[xChainId || collateralXChain] || {});
 }
 
-export function useAllCollateralData(): UseQueryResult<XCollaterals[]> {
+export function useAllCollateralData(): UseQueryResult<XPositionsRecord[]> {
   const { data: totalCollateralData } = useTotalCollateralData();
 
   return useQuery({
@@ -139,11 +94,11 @@ export function useAllCollateralData(): UseQueryResult<XCollaterals[]> {
         .filter(symbol => symbol !== 'BTCB')
         .map(symbol => {
           const baseToken = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
-          const chains = SUPPORTED_XCALL_CHAINS.reduce(
+          const positions = SUPPORTED_XCALL_CHAINS.reduce(
             (acc, xChainId) => {
               const xToken = xTokenMap[xChainId].find(t => t.symbol === symbol);
               if (xToken || xChainId === ICON_XCALL_NETWORK_ID) {
-                acc[xChainId] = {};
+                acc[xChainId] = undefined;
               }
               return acc;
             },
@@ -151,8 +106,8 @@ export function useAllCollateralData(): UseQueryResult<XCollaterals[]> {
           );
           return {
             baseToken,
-            chains,
-            isCollateralSingleChain: Object.keys(chains).length === 1,
+            positions,
+            isSingleChain: Object.keys(positions).length === 1,
             total: totalCollateralData[symbol],
           };
         })
@@ -217,21 +172,24 @@ export function useTotalCollateralData(): UseQueryResult<{ [key in string]: Posi
 }
 
 export function useCollateralFetchInfo(account?: string | null) {
-  const changeDepositedAmount = useCollateralChangeDepositedAmount();
+  const { changeDepositedAmount } = useCollateralActionHandlers();
   const transactions = useAllTransactions();
   const pendingXCalls = useDestinationEvents(ICON_XCALL_NETWORK_ID);
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
 
   const allDerivedWallets = useSignedInWallets();
 
-  function isSupported(symbol: string) {
-    return (
-      symbol === 'sICX' ||
-      (supportedCollateralTokens &&
-        Object.keys(supportedCollateralTokens).includes(symbol) &&
-        supportedCollateralTokens[symbol])
-    );
-  }
+  const isSupported = React.useCallback(
+    (symbol: string) => {
+      return (
+        symbol === 'sICX' ||
+        (supportedCollateralTokens &&
+          Object.keys(supportedCollateralTokens).includes(symbol) &&
+          supportedCollateralTokens[symbol])
+      );
+    },
+    [supportedCollateralTokens],
+  );
 
   const fetchCollateralInfo = React.useCallback(
     async (wallet: {
@@ -267,7 +225,7 @@ export function useCollateralFetchInfo(account?: string | null) {
           }
         });
     },
-    [changeDepositedAmount, supportedCollateralTokens],
+    [changeDepositedAmount, supportedCollateralTokens, isSupported],
   );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -323,11 +281,43 @@ export function useCollateralActionHandlers() {
     [dispatch],
   );
 
+  const changeCollateralType = React.useCallback(
+    (collateralType: CurrencyKey) => {
+      dispatch(changeCollateralTypeAction({ collateralType }));
+      const defaultXChainId = DEFAULT_TOKEN_CHAIN[collateralType];
+      if (defaultXChainId) {
+        dispatch(changeCollateralXChainAction({ collateralXChain: defaultXChainId }));
+        dispatch(setRecipientNetwork({ recipientNetwork: defaultXChainId }));
+      } else {
+        dispatch(changeCollateralXChainAction({ collateralXChain: NETWORK_ID === 1 ? '0x1.icon' : '0x2.icon' }));
+        dispatch(setRecipientNetwork({ recipientNetwork: NETWORK_ID === 1 ? '0x1.icon' : '0x2.icon' }));
+      }
+    },
+    [dispatch],
+  );
+
+  const changeCollateralXChain = React.useCallback(
+    (collateralXChain: XChainId) => {
+      dispatch(changeCollateralXChainAction({ collateralXChain }));
+    },
+    [dispatch],
+  );
+
+  const changeDepositedAmount = React.useCallback(
+    (depositedAmount: BigNumber, token: string = DEFAULT_COLLATERAL_TOKEN, xChain: XChainId = '0x1.icon') => {
+      dispatch(changeDepositedAmountAction({ depositedAmount, token, xChain }));
+    },
+    [dispatch],
+  );
+
   return {
     onFieldAInput,
     onFieldBInput,
     onSlide,
     onAdjust,
+    changeCollateralType,
+    changeCollateralXChain,
+    changeDepositedAmount,
   };
 }
 
@@ -586,93 +576,83 @@ export function useDerivedCollateralInfo(): {
   };
 }
 
-export function useXCollateralDataByToken(): UseQueryResult<XPositionsRecord[]> {
+export function useUserPositionsData(): UseQueryResult<XPositionsRecord[]> {
   const xDepositedAmounts = useAllDepositedAmounts();
   const borrowedAmounts = useBorrowedAmounts();
   const allWallets = useSignedInWallets();
   const xWallet = useCrossChainWalletBalances();
 
+  const createDepositAmount = (token: Token, amount: BigNumber) =>
+    CurrencyAmount.fromRawAmount(token, amount.times(10 ** token.decimals).toFixed(0));
+
+  const getLoanAmount = (symbol: CurrencyKey, xChainId: XChainId, account: string) =>
+    borrowedAmounts[symbol]?.[xChainId === ICON_XCALL_NETWORK_ID ? account : `${xChainId}/${account}`];
+
+  const updateAccumulator = (
+    acc: XPositions,
+    symbol: CurrencyKey,
+    xChainId: XChainId,
+    collateral: CurrencyAmount<Currency>,
+    loan: BigNumber,
+    isPotential = false,
+  ) => {
+    acc[symbol] = {
+      ...acc[symbol],
+      [xChainId]: { collateral, loan, isPotential },
+    };
+  };
+
   return useQuery({
     queryKey: ['xPositionsData', allWallets],
     queryFn: () => {
       return Object.entries(
-        Object.entries(xDepositedAmounts).reduce(
-          (acc, xDepositedAmount) => {
-            const [xChainId, xChainDeposits] = xDepositedAmount as [XChainId, { [tokenSymbol in string]: BigNumber }];
-            if (xChainDeposits) {
-              forEach(xChainDeposits, (deposit, symbol) => {
-                const xToken = xTokenMap[xChainId].find(token => token.symbol === symbol);
-                const account = allWallets.find(wallet => wallet.xChainId === xChainId)?.address;
-                if (!account) return;
+        Object.entries(xDepositedAmounts).reduce((acc, [xChainId, xChainDeposits]) => {
+          if (xChainDeposits) {
+            forEach(xChainDeposits, (deposit, symbol) => {
+              const xToken = xTokenMap[xChainId]?.find(token => token.symbol === symbol);
+              const account = allWallets.find(wallet => wallet.xChainId === xChainId)?.address;
+              if (!account) return;
 
-                //cross-chain compatible positions
-                if (xToken) {
-                  const depositAmount = CurrencyAmount.fromRawAmount(
-                    xToken,
-                    deposit.times(10 ** xToken.decimals).toFixed(0),
-                  );
-                  const loanAmount =
-                    account &&
-                    borrowedAmounts[symbol]?.[xChainId === ICON_XCALL_NETWORK_ID ? account : `${xChainId}/${account}`];
+              if (xToken) {
+                const depositAmount = createDepositAmount(xToken, deposit);
+                const loanAmount = getLoanAmount(symbol, xChainId as XChainId, account);
 
-                  if (depositAmount && depositAmount.greaterThan(0)) {
-                    acc[symbol] = {
-                      ...acc[symbol],
-                      [xChainId]: { collateral: depositAmount, loan: loanAmount },
-                    };
-                  } else {
-                    //show available collateral balance
-                    const availableAmount = xWallet[xChainId]?.[xToken.address];
-                    if (availableAmount?.greaterThan(0)) {
-                      acc[symbol] = {
-                        ...acc[symbol],
-                        [xChainId]: { collateral: availableAmount, loan: new BigNumber(0), isPotential: true },
-                      };
-                    }
-                  }
+                if (depositAmount.greaterThan(0)) {
+                  updateAccumulator(acc, symbol, xChainId as XChainId, depositAmount, loanAmount);
                 } else {
-                  //icon only positions
-                  const token = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
-                  if (xChainId === ICON_XCALL_NETWORK_ID && token) {
-                    const depositAmount = CurrencyAmount.fromRawAmount(
-                      token,
-                      deposit.times(10 ** token.decimals).toFixed(0),
-                    );
-                    const loanAmount = account && borrowedAmounts[symbol]?.[account];
+                  const availableAmount = xWallet[xChainId]?.[xToken.address];
+                  if (availableAmount?.greaterThan(0)) {
+                    updateAccumulator(acc, symbol, xChainId as XChainId, availableAmount, new BigNumber(0), true);
+                  }
+                }
+              } else {
+                const token = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
+                if (xChainId === ICON_XCALL_NETWORK_ID && token) {
+                  const depositAmount = createDepositAmount(token, deposit);
+                  const loanAmount = borrowedAmounts[symbol]?.[account];
 
-                    if (depositAmount && depositAmount.greaterThan(0)) {
-                      acc[symbol] = {
-                        ...acc[symbol],
-                        [xChainId]: { collateral: depositAmount, loan: loanAmount },
-                      };
-                    } else {
-                      //show available collateral balance
-                      const availableAmount = xWallet[xChainId]?.[token.address];
-                      if (availableAmount?.greaterThan(0)) {
-                        acc[symbol] = {
-                          ...acc[symbol],
-                          [xChainId]: { collateral: availableAmount, loan: new BigNumber(0), isPotential: true },
-                        };
-                      }
+                  if (depositAmount.greaterThan(0)) {
+                    updateAccumulator(acc, symbol, xChainId, depositAmount, loanAmount);
+                  } else {
+                    const availableAmount = xWallet[xChainId]?.[token.address];
+                    if (availableAmount?.greaterThan(0)) {
+                      updateAccumulator(acc, symbol, xChainId, availableAmount, new BigNumber(0), true);
                     }
                   }
                 }
-              });
-            }
-            return acc;
-          },
-          {} as { [AssetSymbol in string]: Partial<{ [key in XChainId]: Position }> },
-        ),
+              }
+            });
+          }
+          return acc;
+        }, {} as XPositions),
       )
         .map(([symbol, positions]) => {
           const baseToken = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
-
-          if (baseToken === undefined) return;
-
+          if (!baseToken) return;
           return {
             baseToken,
             positions,
-            isPositionSingleChain: Object.keys(positions).length === 1,
+            isSingleChain: Object.keys(positions).length === 1,
           };
         })
         .filter((item): item is XPositionsRecord => Boolean(item));

@@ -14,7 +14,7 @@ type MultiChainItemOverviewProps = {
   baseToken: Token;
   chains: Partial<{ [key in XChainId]: Position | {} }>;
   total: Position;
-  onSelect: (symbol, chainId?) => void;
+  onSelect: (symbol: string, chainId?: XChainId) => void;
 };
 
 const MultiChainItemOverview = ({ baseToken, chains, onSelect, total }: MultiChainItemOverviewProps) => {

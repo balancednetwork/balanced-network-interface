@@ -2,14 +2,8 @@ import React, { useCallback, useMemo } from 'react';
 
 import { useMedia } from 'react-use';
 
-import {
-  useCollateralChangeCollateralType,
-  useCollateralActionHandlers,
-  useXCollateralDataByToken,
-  useAllCollateralData,
-  useChangeCollateralXChain,
-} from '@/store/collateral/hooks';
-import { useLoanActionHandlers, useSetLoanRecipientNetwork } from '@/store/loan/hooks';
+import { useCollateralActionHandlers, useUserPositionsData, useAllCollateralData } from '@/store/collateral/hooks';
+import { useLoanActionHandlers } from '@/store/loan/hooks';
 import { Trans } from '@lingui/macro';
 import { BalanceAndValueWrap, DashGrid, HeaderText, List, walletBreakpoint } from '../Wallet/styledComponents';
 import SingleChainItem from './SingleChainItem';
@@ -30,18 +24,15 @@ const CollateralTypeList = ({
   collateralTab: CollateralTab;
   query: string;
 }) => {
-  const changeCollateralType = useCollateralChangeCollateralType();
-  const setLoanNetwork = useSetLoanRecipientNetwork();
-  const changeCollateralXChain = useChangeCollateralXChain();
-  const { onAdjust: adjust } = useCollateralActionHandlers();
-  const { onAdjust: adjustLoan } = useLoanActionHandlers();
+  const { onAdjust: adjust, changeCollateralType, changeCollateralXChain } = useCollateralActionHandlers();
+  const { onAdjust: adjustLoan, setRecipientNetwork: setLoanNetwork } = useLoanActionHandlers();
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
 
-  const { data: allPositionsData } = useXCollateralDataByToken();
-  const { data: allCollateralData } = useAllCollateralData();
+  const { data: userPositionsData } = useUserPositionsData();
+  const { data: allPositionsData } = useAllCollateralData();
 
   const handleCollateralTypeChange = useCallback(
-    (symbol: string, xChainId: XChainId) => {
+    (symbol: string, xChainId?: XChainId) => {
       setAnchor(null);
       changeCollateralType(symbol);
       adjust(false);
@@ -54,25 +45,18 @@ const CollateralTypeList = ({
     [changeCollateralType, setAnchor, adjust, adjustLoan, changeCollateralXChain, setLoanNetwork],
   );
 
-  const filteredPositions = useMemo(() => {
-    return (
-      allPositionsData?.filter(
-        xPosition =>
-          xPosition.baseToken.symbol.toLowerCase().includes(query.toLowerCase()) ||
-          xPosition.baseToken.name?.toLowerCase().includes(query.toLowerCase()) ||
-          Object.keys(xPosition.positions).some(x => xChainMap[x].name.toLowerCase().includes(query.toLowerCase())),
-      ) || []
-    );
-  }, [query, allPositionsData]);
+  const positions = useMemo(() => {
+    return collateralTab === CollateralTab.YOUR ? userPositionsData : allPositionsData;
+  }, [collateralTab, userPositionsData, allPositionsData]);
 
-  const filteredCollaterals = useMemo(() => {
-    return allCollateralData?.filter(
-      xCollateral =>
-        xCollateral.baseToken.symbol.toLowerCase().includes(query.toLowerCase()) ||
-        xCollateral.baseToken.name?.toLowerCase().includes(query.toLowerCase()) ||
-        Object.keys(xCollateral.chains).some(x => xChainMap[x].name.toLowerCase().includes(query.toLowerCase())),
+  const filteredPositions = useMemo(() => {
+    return positions?.filter(
+      xPosition =>
+        xPosition.baseToken.symbol.toLowerCase().includes(query.toLowerCase()) ||
+        xPosition.baseToken.name?.toLowerCase().includes(query.toLowerCase()) ||
+        Object.keys(xPosition.positions).some(x => xChainMap[x].name.toLowerCase().includes(query.toLowerCase())),
     );
-  }, [query, allCollateralData]);
+  }, [positions, query]);
 
   return (
     <List mx="-25px">
@@ -94,8 +78,8 @@ const CollateralTypeList = ({
 
       {collateralTab === CollateralTab.YOUR && (
         <>
-          {filteredPositions.map((xPosition, index) =>
-            xPosition.isPositionSingleChain ? (
+          {filteredPositions?.map((xPosition, index) =>
+            xPosition.isSingleChain ? (
               <SingleChainItem
                 baseToken={xPosition.baseToken}
                 key={index}
@@ -112,7 +96,7 @@ const CollateralTypeList = ({
               />
             ),
           )}
-          {filteredPositions.length === 0 && (
+          {filteredPositions?.length === 0 && (
             <Typography p="30px 0 0" textAlign="center">
               <Trans>No positions found.</Trans>
             </Typography>
@@ -121,7 +105,7 @@ const CollateralTypeList = ({
       )}
 
       {collateralTab === CollateralTab.ALL &&
-        filteredCollaterals
+        filteredPositions
           ?.sort((a, b) => a.baseToken.symbol.localeCompare(b.baseToken.symbol))
           .map((xCollateral, index, { length }) => {
             //temporarily show single chain view only (backend support needed first)

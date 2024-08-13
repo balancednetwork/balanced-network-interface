@@ -1,0 +1,70 @@
+
+<svg width="100%" height="100%" viewBox="0 0 44 47" version="1.1" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-5,-1)">
+        <clipPath id="_activeproposalsclip1">
+            <path d="M28,47L8,47C6.346,47 5,45.654 5,44L5,4C5,2.346 6.346,1 8,1L30,1C30.265,1 30.52,1.105 30.707,1.293L42.707,13.293C42.895,13.48 43,13.735 43,14L43,27L41,27L41,14.414L29.586,3L8,3C7.449,3 7,3.449 7,4L7,44C7,44.551 7.449,45 8,45L28,45L28,47Z" clip-rule="nonzero"/>
+        </clipPath>
+        <g clip-path="url(#_activeproposalsclip1)">
+            <g transform="matrix(1,-0,-0,1,5,1)">
+                <use xlink:href="#_activeproposalsimage2" x="0" y="0" width="38px" height="46px"/>
+            </g>
+        </g>
+        <clipPath id="_activeproposalsclip3">
+            <path d="M24,18L12,18C11.448,18 11,17.552 11,17C11,16.448 11.448,16 12,16L24,16C24.552,16 25,16.448 25,17C25,17.552 24.552,18 24,18Z" clip-rule="nonzero"/>
+        </clipPath>
+        <g clip-path="url(#_activeproposalsclip3)">
+            <g transform="matrix(1,-0,-0,1,5,1)">
+                <use xlink:href="#_activeproposalsimage4" x="6" y="15" width="14px" height="2px"/>
+            </g>
+        </g>
+        <clipPath id="_activeproposalsclip5">
+            <path d="M36,24L12,24C11.448,24 11,23.552 11,23C11,22.448 11.448,22 12,22L36,22C36.552,22 37,22.448 37,23C37,23.552 36.552,24 36,24Z" clip-rule="nonzero"/>
+        </clipPath>
+        <g clip-path="url(#_activeproposalsclip5)">
+            <g transform="matrix(1,-0,-0,1,5,1)">
+                <use xlink:href="#_activeproposalsimage6" x="6" y="21" width="26px" height="2px"/>
+            </g>
+        </g>
+        <clipPath id="_activeproposalsclip7">
+            <path d="M26,30L12,30C11.448,30 11,29.552 11,29C11,28.448 11.448,28 12,28L26,28C26.552,28 27,28.448 27,29C27,29.552 26.552,30 26,30Z" clip-rule="nonzero"/>
+        </clipPath>
+        <g clip-path="url(#_activeproposalsclip7)">
+            <g transform="matrix(1,-0,-0,1,5,1)">
+                <use xlink:href="#_activeproposalsimage8" x="6" y="27" width="16px" height="2px"/>
+            </g>
+        </g>
+        <clipPath id="_activeproposalsclip9">
+            <path d="M26,36L12,36C11.448,36 11,35.552 11,35C11,34.448 11.448,34 12,34L26,34C26.552,34 27,34.448 27,35C27,35.552 26.552,36 26,36Z" clip-rule="nonzero"/>
+        </clipPath>
+        <g clip-path="url(#_activeproposalsclip9)">
+            <g transform="matrix(1,-0,-0,1,5,1)">
+                <use xlink:href="#_activeproposalsimage10" x="6" y="33" width="16px" height="2px"/>
+            </g>
+        </g>
+        <clipPath id="_activeproposalsclip11">
+            <path d="M43.819,47.023C43.612,47.023 43.406,46.959 43.231,46.832L38,43.025L32.77,46.822C32.419,47.077 31.945,47.077 31.594,46.822C31.243,46.567 31.097,46.115 31.232,45.703L33.228,39.584L28,35.811C27.648,35.557 27.5,35.105 27.634,34.692C27.767,34.28 28.151,34 28.585,34L35.051,34L37.049,27.851C37.183,27.439 37.567,27.16 38,27.16C38.433,27.16 38.817,27.439 38.951,27.851L40.949,34L47.415,34C47.849,34 48.233,34.28 48.367,34.692C48.5,35.105 48.352,35.557 48,35.811L42.773,39.582L44.77,45.713C44.904,46.125 44.758,46.577 44.407,46.832C44.231,46.96 44.025,47.023 43.819,47.023ZM38,40.789C38.207,40.789 38.413,40.853 38.588,40.98L41.912,43.399L40.645,39.507C40.51,39.094 40.658,38.641 41.011,38.386L44.32,36L40.223,36C39.79,36 39.406,35.721 39.272,35.309L38,31.396L36.729,35.31C36.595,35.721 36.21,36 35.777,36L31.679,36L34.989,38.389C35.342,38.644 35.489,39.097 35.354,39.51L34.087,43.393L37.412,40.979C37.588,40.852 37.794,40.789 38,40.789Z" clip-rule="nonzero"/>
+        </clipPath>
+        <g clip-path="url(#_activeproposalsclip11)">
+            <g transform="matrix(1,-0,-0,1,5,1)">
+                <use xlink:href="#_activeproposalsimage12" x="22.585" y="26.16" width="21px" height="20px"/>
+            </g>
+        </g>
+        <clipPath id="_activeproposalsclip13">
+            <path d="M42,15L30,15C29.448,15 29,14.552 29,14L29,3L31,3L31,13L42,13L42,15Z" clip-rule="nonzero"/>
+        </clipPath>
+        <g clip-path="url(#_activeproposalsclip13)">
+            <g transform="matrix(1,-0,-0,1,5,1)">
+                <use xlink:href="#_activeproposalsimage14" x="24" y="2" width="13px" height="12px"/>
+            </g>
+        </g>
+    </g>
+    <defs>
+        <image id="_activeproposalsimage2" width="38px" height="46px" xlink:href="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAuACYDAREAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABAMG/8QAGBABAQEBAQAAAAAAAAAAAAAAAgADIQH/xAAaAQEBAAMBAQAAAAAAAAAAAAADAQACBQYH/8QAFREBAQAAAAAAAAAAAAAAAAAAAAH/2gAMAwEAAhEDEQA/AM7mr2T5bYRmqDsIzVGlhGaoOwgLlB2M1mpHSsIzVg7CM1QdhGaoOxcLlB2M3mpHSsXzVB2E5qjSxfNUHYQFyg7GazUrpWEZqg7CM1QdhAVB2Lhco0sZvNSOjYRmqNLCM1YOwjNUHYuFyg7GbzUjpWL5+0HYTmqDsXzVB2EBco0sf//Z"/>
+        <image id="_activeproposalsimage4" width="14px" height="2px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAACCAYAAABoiu2qAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAANklEQVQImUXLsQ3AMAwDwWOQSTypN8mochEZYvN8EMzaX0kIaRKenwl3l/HXTVHmN9K9S4ngAKFVCFu3qTD5AAAAAElFTkSuQmCC"/>
+        <image id="_activeproposalsimage6" width="26px" height="2px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAACCAYAAABGz8w4AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAQElEQVQImX2LsQ2AQBDDHDZhUEZhVn/BSZeKNJGcOPfzSkICEAiQrzPdPLWPtL8f70JAUDa6rDkuk5LsC47f/AAoDxpNdlBNKwAAAABJRU5ErkJggg=="/>
+        <image id="_activeproposalsimage8" width="16px" height="2px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAACCAYAAABR7VzxAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAANUlEQVQImU2LwREAIAzCEidxTWdxWPy0aj4c5HCuHRQFFCoV4HUE23/7oAmQ3Ex41J723+kAJNQSP9PeZg0AAAAASUVORK5CYII="/>
+        <image id="_activeproposalsimage10" width="16px" height="2px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAACCAYAAABR7VzxAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAN0lEQVQImU2KwQ2AMBDD7C7CluzCtOZxFTQfJ1a87icVABQc6rER15DDqyyCYucrU2urjs/vK17+FxM515SKogAAAABJRU5ErkJggg=="/>
+        <image id="_activeproposalsimage12" width="21px" height="20px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAUCAYAAABiS3YzAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAA4UlEQVQ4ja2T6w3DMAiED2bpsB2ke15/2OZlu4oqIkVO0AHHRyKv94cQACKQeQLzFEDmGeOmC6fA3xUExk1wPa+LAEmgxImh91y4gIRWtRfxOBmLsDRm0IyQpgQsgXdNLoIbxsarMIZe00xJ+D8Gta6NGDQvqQeDj2/CiuHBBAnDHH8VOmPAXiQy3DCYU+9yxXCIH/Ngn1ToBO5OIp6KIcQXBkVdBnEp8hyD2niNGGxRnRjCH9WHQaOgC0N2msapGOpHz0seoVsRG7FiKIa2HXhMzf5xGQUD3M0vDGrjNWL4AjajqfztEx0YAAAAAElFTkSuQmCC"/>
+        <image id="_activeproposalsimage14" width="13px" height="12px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAMCAYAAAC5tzfZAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAdElEQVQokY2QwREDIQwD16omHaeK1Kh7MATBMAd8ZGONWFyf788UUEXXYulzTiFjMOBQoDVNnXOMepGnmdIYDoP2Jo+sDYV6ccT0wNRIO2BGhDLtFlMrzg2mTBoWTG8I2iKmX8ym/9WMqdzKLaamN94wPQgekBKa/JLJO84AAAAASUVORK5CYII="/>
+    </defs>
+</svg>

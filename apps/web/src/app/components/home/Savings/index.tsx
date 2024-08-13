@@ -12,10 +12,8 @@ import CurrencyBalanceErrorMessage from '@/app/components/CurrencyBalanceErrorMe
 import { inputRegex } from '@/app/components/CurrencyInputPanel';
 import ModalContent from '@/app/components/ModalContent';
 import Modal from '@/app/components/Modal';
-import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
 import bnJs from '@/bnJs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import {
   useLockedAmount,
   useSavingsRateInfo,
@@ -34,8 +32,6 @@ import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper
 const Savings = () => {
   const lockedAmount = useLockedAmount();
   const { account } = useIconReact();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
-  const shouldLedgerSign = useShouldLedgerSign();
   const { typedValue, isAdjusting, inputType } = useSavingsSliderState();
   const { onFieldAInput, onSlide, onAdjust: adjust } = useSavingsSliderActionHandlers();
   const balances = useICONWalletBalances();
@@ -122,9 +118,6 @@ const Savings = () => {
 
   const handleConfirm = async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
     if (account) {
       try {
         bnJs.inject({ account });
@@ -151,7 +144,6 @@ const Savings = () => {
       } catch (error) {
         console.error('staking/unlocking bnUSD error: ', error);
       } finally {
-        changeShouldLedgerSign(false);
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       }
     }
@@ -293,17 +285,12 @@ const Savings = () => {
           )}
 
           <Flex justifyContent="center" pt={4} className="border-top" flexWrap={'wrap'}>
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleOpen} fontSize={14}>
-                  Cancel
-                </TextButton>
-                <Button disabled={!hasEnoughICX} onClick={handleConfirm} fontSize={14}>
-                  {bnUSDDiff.isGreaterThan(0) ? 'Deposit bnUSD' : t`Withdraw bnUSD`}
-                </Button>
-              </>
-            )}
+            <TextButton onClick={toggleOpen} fontSize={14}>
+              Cancel
+            </TextButton>
+            <Button disabled={!hasEnoughICX} onClick={handleConfirm} fontSize={14}>
+              {bnUSDDiff.isGreaterThan(0) ? 'Deposit bnUSD' : t`Withdraw bnUSD`}
+            </Button>
           </Flex>
 
           {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}

@@ -15,7 +15,6 @@ import Modal from '@/app/components/Modal';
 import { Typography } from '@/app/theme';
 import CheckIcon from '@/assets/icons/tick.svg';
 import bnJs from '@/bnJs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import { Field } from '@/store/mint/reducer';
 import { useDerivedMintInfo } from '@/store/mint/hooks';
 import { useTransactionAdder, TransactionStatus, useTransactionStatus } from '@/store/transactions/hooks';
@@ -56,8 +55,6 @@ export default function SupplyLiquidityModal({
   const { currencyDeposits, pair } = useDerivedMintInfo();
   const addTransaction = useTransactionAdder();
 
-  const shouldLedgerSign = useShouldLedgerSign();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const { isTxPending } = useArchwayTransactionsState();
   const { increaseAllowance: increaseAllowanceA, isIncreaseNeeded: allowanceIncreaseNeededA } = useAllowanceHandler(
     AChain === 'archway-1' ? getXTokenBySymbol('archway-1', currencies[Field.CURRENCY_A]?.symbol) : undefined,
@@ -110,10 +107,6 @@ export default function SupplyLiquidityModal({
   const handleSupplyConfirm = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
-
     if (isQueue) {
       const t = parsedAmounts[Field.CURRENCY_A];
 
@@ -138,7 +131,6 @@ export default function SupplyLiquidityModal({
           console.error('errors', e);
         })
         .finally(() => {
-          changeShouldLedgerSign(false);
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
     } else {
@@ -169,7 +161,6 @@ export default function SupplyLiquidityModal({
         })
         .finally(() => {
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-          changeShouldLedgerSign(false);
         });
     }
   };
@@ -245,7 +236,6 @@ export default function SupplyLiquidityModal({
     } else {
       setHasErrorMessage(true);
     }
-    changeShouldLedgerSign(false);
   };
 
   const hasEnoughICX = useHasEnoughICX();
@@ -425,23 +415,18 @@ export default function SupplyLiquidityModal({
             </Typography>
           )}
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={handleCancelSupply}>
-                  <Trans>Cancel</Trans>
-                </TextButton>
+            <TextButton onClick={handleCancelSupply}>
+              <Trans>Cancel</Trans>
+            </TextButton>
 
-                {pair ? (
-                  <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
-                    {confirmTx ? t`Supplying` : t`Supply`}
-                  </Button>
-                ) : (
-                  <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
-                    {confirmTx ? t`Creating pool` : t`Create pool`}
-                  </Button>
-                )}
-              </>
+            {pair ? (
+              <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
+                {confirmTx ? t`Supplying` : t`Supply`}
+              </Button>
+            ) : (
+              <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
+                {confirmTx ? t`Creating pool` : t`Create pool`}
+              </Button>
             )}
           </Flex>
         </ModalContent>

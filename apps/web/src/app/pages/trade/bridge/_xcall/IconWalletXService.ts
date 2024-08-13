@@ -13,14 +13,10 @@ import { IconPublicXService } from './IconPublicXService';
 
 export class IconWalletXService extends IconPublicXService implements IWalletXService {
   walletClient: IconService; // reserved for future use
-  changeShouldLedgerSign: any;
 
   constructor(xChainId: XChainId, publicClient: IconService, walletClient: IconService, options?: any) {
     super(xChainId, publicClient);
     this.walletClient = walletClient;
-
-    const { changeShouldLedgerSign } = options || {};
-    this.changeShouldLedgerSign = changeShouldLedgerSign;
   }
 
   async approve(token, owner, spender, currencyAmountToApprove) {}
@@ -37,10 +33,6 @@ export class IconWalletXService extends IconPublicXService implements IWalletXSe
 
     if (account && xCallFee) {
       window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-      if (bnJs.contractSettings.ledgerSettings.actived && this.changeShouldLedgerSign) {
-        this.changeShouldLedgerSign(true);
-      }
 
       const tokenAddress = inputAmount.wrapped.currency.address;
       const destination = `${direction.to}/${destinationAddress}`;
@@ -81,9 +73,6 @@ export class IconWalletXService extends IconPublicXService implements IWalletXSe
     const receiver = `${direction.to}/${recipient}`;
 
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-    if (bnJs.contractSettings.ledgerSettings.actived && this.changeShouldLedgerSign) {
-      this.changeShouldLedgerSign(true);
-    }
 
     let txResult;
     if (executionTrade.inputAmount.currency.symbol === 'ICX') {
@@ -123,10 +112,6 @@ export class IconWalletXService extends IconPublicXService implements IWalletXSe
 
     if (account && xCallFee) {
       window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-      if (bnJs.contractSettings.ledgerSettings.actived && this.changeShouldLedgerSign) {
-        this.changeShouldLedgerSign(true);
-      }
 
       const txResult = await bnJs
         .inject({ account: account })

@@ -7,7 +7,6 @@ import { usePublicClient, useWalletClient } from 'wagmi';
 
 import { useIconReact } from '@/packages/icon-react';
 import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
-import { useChangeShouldLedgerSign } from '@/store/application/hooks';
 
 import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
 import { XChainId, XChain } from '@/app/pages/trade/bridge/types';
@@ -150,7 +149,6 @@ const createWalletXService = (
 };
 
 export const useCreateWalletXService = (xChainId: XChainId) => {
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const publicXService = useXServiceStore(state => state.publicXServices?.[xChainId]);
 
   const { iconService: iconWalletClient } = useIconReact();
@@ -164,9 +162,7 @@ export const useCreateWalletXService = (xChainId: XChainId) => {
       const xChainType = xChainId ? xChainMap[xChainId].xChainType : undefined;
       switch (xChainType) {
         case 'ICON':
-          createWalletXService(IconWalletXService, xChainId, publicClient, iconWalletClient, {
-            changeShouldLedgerSign,
-          });
+          createWalletXService(IconWalletXService, xChainId, publicClient, iconWalletClient);
           break;
         case 'ARCHWAY':
           createWalletXService(ArchwayWalletXService, xChainId, publicClient, archwayWalletClient);
@@ -185,7 +181,7 @@ export const useCreateWalletXService = (xChainId: XChainId) => {
     if (publicXService) {
       setupWalletXService(xChainId);
     }
-  }, [xChainId, iconWalletClient, archwayWalletClient, evmWalletClient, publicXService, changeShouldLedgerSign]);
+  }, [xChainId, iconWalletClient, archwayWalletClient, evmWalletClient, publicXService]);
 
   return true;
 };

@@ -15,12 +15,10 @@ import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import CurrencyLogo from '@/app/components/CurrencyLogo';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
-import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
 import bnJs from '@/bnJs';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from '@/constants/misc';
 import { BalanceData } from '@/hooks/useV2Pairs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import { Source } from '@/store/bbaln/hooks';
 import { Field } from '@/store/mint/reducer';
 import { useChangeWithdrawnValue, useStakedLPPercent } from '@/store/stakedLP/hooks';
@@ -113,8 +111,6 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
     account ?? undefined,
     useMemo(() => [pair.token0, pair.token1], [pair]),
   );
-  const shouldLedgerSign = useShouldLedgerSign();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const onChangeWithdrawnValue = useChangeWithdrawnValue();
 
   const [{ typedValue, independentField, inputType, portion }, setState] = React.useState<{
@@ -226,7 +222,6 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
   const [open, setOpen] = React.useState(false);
 
   const toggleOpen = () => {
-    if (shouldLedgerSign) return;
     setOpen(!open);
   };
 
@@ -240,10 +235,6 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
   const handleWithdraw = () => {
     if (!account) return;
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
 
     const numPortion = new BigNumber(portion / 100);
 
@@ -280,7 +271,6 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
       })
       .finally(() => {
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-        changeShouldLedgerSign(false);
         resetValue();
       });
   };
@@ -390,17 +380,12 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleOpen}>
-                  <Trans>Cancel</Trans>
-                </TextButton>
-                <Button onClick={handleWithdraw} disabled={!hasEnoughICX}>
-                  <Trans>Withdraw</Trans>
-                </Button>
-              </>
-            )}
+            <TextButton onClick={toggleOpen}>
+              <Trans>Cancel</Trans>
+            </TextButton>
+            <Button onClick={handleWithdraw} disabled={!hasEnoughICX}>
+              <Trans>Withdraw</Trans>
+            </Button>
           </Flex>
         </ModalContent>
       </Modal>
@@ -425,16 +410,8 @@ export const WithdrawPanelQ = ({
   const addTransaction = useTransactionAdder();
   const upSmall = useMedia('(min-width: 800px)');
 
-  const shouldLedgerSign = useShouldLedgerSign();
-
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
-
   const handleCancelOrder = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
 
     bnJs
       .inject({ account })
@@ -454,17 +431,12 @@ export const WithdrawPanelQ = ({
       })
       .finally(() => {
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-
-        changeShouldLedgerSign(false);
       });
   };
 
   const handleWithdrawEarnings = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
     bnJs
       .inject({ account })
       .Dex.withdrawSicxEarnings()
@@ -482,15 +454,12 @@ export const WithdrawPanelQ = ({
         console.error('error', e);
       })
       .finally(() => {
-        changeShouldLedgerSign(false);
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
 
   const [open1, setOpen1] = React.useState(false);
   const toggleOpen1 = () => {
-    if (shouldLedgerSign) return;
-
     setOpen1(!open1);
   };
   const handleOption1 = () => {
@@ -499,8 +468,6 @@ export const WithdrawPanelQ = ({
 
   const [open2, setOpen2] = React.useState(false);
   const toggleOpen2 = () => {
-    if (shouldLedgerSign) return;
-
     setOpen2(!open2);
   };
   const handleOption2 = () => {
@@ -595,15 +562,10 @@ export const WithdrawPanelQ = ({
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleOpen1}>Cancel</TextButton>
-                <Button onClick={handleCancelOrder} disabled={!hasEnoughICX}>
-                  <Trans>Withdraw</Trans>
-                </Button>
-              </>
-            )}
+            <TextButton onClick={toggleOpen1}>Cancel</TextButton>
+            <Button onClick={handleCancelOrder} disabled={!hasEnoughICX}>
+              <Trans>Withdraw</Trans>
+            </Button>
           </Flex>
         </ModalContent>
       </Modal>
@@ -620,17 +582,12 @@ export const WithdrawPanelQ = ({
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleOpen2}>
-                  <Trans>Cancel</Trans>
-                </TextButton>
-                <Button onClick={handleWithdrawEarnings} disabled={!hasEnoughICX}>
-                  <Trans>Withdraw</Trans>
-                </Button>
-              </>
-            )}
+            <TextButton onClick={toggleOpen2}>
+              <Trans>Cancel</Trans>
+            </TextButton>
+            <Button onClick={handleWithdrawEarnings} disabled={!hasEnoughICX}>
+              <Trans>Withdraw</Trans>
+            </Button>
           </Flex>
         </ModalContent>
       </Modal>

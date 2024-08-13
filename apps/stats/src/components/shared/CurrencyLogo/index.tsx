@@ -8,7 +8,7 @@ import ICONLogo from '@/assets/images/icon-logo.png';
 
 import Logo from '../Logo1';
 
-export const getTokenLogoURL = (address: string): string | void => {
+export const getTokenLogoURL = (address: string): string => {
   return `https://raw.githubusercontent.com/balancednetwork/assets/master/blockchains/icon/assets/${address}/logo.png`;
 };
 

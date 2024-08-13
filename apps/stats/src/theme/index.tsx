@@ -20,15 +20,18 @@ export const sizes = {
 };
 
 // Iterate through the sizes and create a media template
-export const media = (Object.keys(sizes) as Array<keyof typeof sizes>).reduce((acc, label) => {
-  acc[label] = (first: any, ...interpolations: any[]) => css`
+export const media = (Object.keys(sizes) as Array<keyof typeof sizes>).reduce(
+  (acc, label) => {
+    acc[label] = (first: any, ...interpolations: any[]) => css`
     @media (max-width: ${sizes[label]}px) {
       ${css(first, ...interpolations)}
     }
   `;
 
-  return acc;
-}, {} as { [key in keyof typeof sizes]: MediaFunction });
+    return acc;
+  },
+  {} as { [key in keyof typeof sizes]: MediaFunction },
+);
 
 export function theme(): DefaultTheme {
   return {

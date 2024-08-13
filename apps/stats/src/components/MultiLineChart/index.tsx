@@ -187,6 +187,7 @@ const Chart = ({
             cursor={{ stroke: theme.colors.text1 }}
             // contentStyle={{ display: 'none' }}
             content={<CustomTooltip active={!!label} payload={value} label={label} />}
+            // @ts-ignore
             formatter={(
               value: number,
               name: string,

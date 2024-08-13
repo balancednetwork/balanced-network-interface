@@ -249,7 +249,7 @@ export const DatePickerWrap = styled.div`
 `;
 
 export const formatPercentage = percentage => {
-  if (typeof percentage === 'number' && !isNaN(percentage) && percentage !== 0) {
+  if (typeof percentage === 'number' && !Number.isNaN(percentage) && percentage !== 0) {
     const plusMinus = percentage > 0 ? '+' : '';
     return (
       <>

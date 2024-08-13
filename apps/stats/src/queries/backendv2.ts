@@ -8,6 +8,7 @@ import bnJs from '@/bnJs';
 import { predefinedCollateralTypes } from '@/components/CollateralSelector/CollateralTypeList';
 import { formatUnits } from '@/utils';
 import { TOKEN_BLACKLIST } from '@/constants/tokens';
+import { useMemo } from 'react';
 
 export const API_ENDPOINT = 'https://balanced.icon.community/api/v1/';
 
@@ -198,45 +199,35 @@ export function useAllPairsIncentivised() {
   const balnPrice: number = allTokens ? allTokens[bnJs.BALN.address].price : 0;
   const dailyDistribution = dailyDistributionRaw && new BigNumber(formatUnits(dailyDistributionRaw, 18, 4));
 
-  return useQuery<Pair[] | undefined>({
-    queryKey: [
-      `allPairsIncentivised`,
-      allPairs ? allPairs.length : 0,
-      incentivisedPairs ? incentivisedPairs.length : 0,
-      dailyDistribution ? dailyDistribution.toFixed(2) : 0,
-      balnPrice,
-    ],
-    queryFn: () => {
-      if (allPairs) {
-        return allPairs.map(item => {
-          const incentivisedPair =
-            incentivisedPairs && incentivisedPairs.find(incentivisedPair => incentivisedPair.id === parseInt(item.id));
+  return useMemo(() => {
+    if (allPairs) {
+      return allPairs.map(item => {
+        const incentivisedPair =
+          incentivisedPairs && incentivisedPairs.find(incentivisedPair => incentivisedPair.id === parseInt(item.id));
 
-          if (incentivisedPair && dailyDistribution) {
-            const stakedRatio =
-              incentivisedPair.id !== 1
-                ? new Fraction(incentivisedPair.totalStaked, item['totalSupply'])
-                : new Fraction(1);
-            item['balnApy'] = dailyDistribution
-              .times(new BigNumber(incentivisedPair.rewards.toFixed(4)))
-              .times(365)
-              .times(balnPrice)
-              .div(new BigNumber(stakedRatio.toFixed(18)).times(item.liquidity))
-              .toNumber();
-            item['stakedRatio'] = stakedRatio;
+        if (incentivisedPair && dailyDistribution) {
+          const stakedRatio =
+            incentivisedPair.id !== 1
+              ? new Fraction(incentivisedPair.totalStaked, item['totalSupply'])
+              : new Fraction(1);
+          item['balnApy'] = dailyDistribution
+            .times(new BigNumber(incentivisedPair.rewards.toFixed(4)))
+            .times(365)
+            .times(balnPrice)
+            .div(new BigNumber(stakedRatio.toFixed(18)).times(item.liquidity))
+            .toNumber();
+          item['stakedRatio'] = stakedRatio;
 
-            return item;
-          }
           return item;
-        });
-      }
-    },
-    placeholderData: keepPreviousData,
-  });
+        }
+        return item;
+      });
+    }
+  }, [allPairs, incentivisedPairs, dailyDistribution, balnPrice]);
 }
 
 export function useAllPairsIncentivisedById() {
-  const { data: allPairs } = useAllPairsIncentivised();
+  const allPairs = useAllPairsIncentivised();
 
   return useQuery<{ [key in string]: Pair } | undefined>({
     queryKey: [`allPairsIncentivisedById`, allPairs ? allPairs.length : 0],
@@ -253,7 +244,7 @@ export function useAllPairsIncentivisedById() {
 }
 
 export function useAllPairsIncentivisedByName() {
-  const { data: allPairs } = useAllPairsIncentivised();
+  const allPairs = useAllPairsIncentivised();
 
   return useQuery<{ [key in string]: Pair } | undefined>({
     queryKey: [`allPairsIncentivisedByName`, allPairs ? allPairs.length : 0],

@@ -1,5 +1,7 @@
 import BigNumber from 'bignumber.js';
-import { isEoaAddress } from 'icon-sdk-js/lib/data/Validator.js';
+import { Validator } from 'icon-sdk-js';
+
+const { isEoaAddress } = Validator;
 
 export enum NetworkId {
   MAINNET = 1,
@@ -42,7 +44,6 @@ export function getTrackerLink(
     case 'block': {
       return `${prefix}/block/${data}`;
     }
-    case 'address':
     default: {
       return `${prefix}/address/${data}`;
     }

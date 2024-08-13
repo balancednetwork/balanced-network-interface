@@ -39,7 +39,7 @@ export default function useHistoryFor(params: HistoryForParams | undefined): Use
         const now = Math.floor(new Date().getTime() / fiveMinPeriod) * fiveMinPeriod;
         const endTimestamp = endTime || now;
 
-        let timestamps: number[] = [];
+        const timestamps: number[] = [];
         let currentTimestamp = endTimestamp;
 
         while (currentTimestamp > startTime) {

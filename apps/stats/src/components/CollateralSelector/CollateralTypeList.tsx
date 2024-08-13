@@ -110,23 +110,27 @@ const CollateralTypeList = ({ width, setAnchor, anchor, setCollateral }) => {
   const isSmall = useMedia('(max-width: 460px)');
   const collateralTokens = useMemo(() => {
     if (collateralData) {
-      return Object.keys(collateralData.current).reduce((tokens, key) => {
-        if (key !== 'fundTotal' && key !== 'total') {
-          const token = {
-            symbol: key,
-            tvl: collateralData.current[key].value,
-            amount: collateralData.current[key].amount,
-          };
-          tokens.push(token);
-        }
-        return tokens;
-      }, [] as { symbol: string; tvl: number; amount: number }[]);
+      return Object.keys(collateralData.current).reduce(
+        (tokens, key) => {
+          if (key !== 'fundTotal' && key !== 'total') {
+            const token = {
+              symbol: key,
+              tvl: collateralData.current[key].value,
+              amount: collateralData.current[key].amount,
+            };
+            tokens.push(token);
+          }
+          return tokens;
+        },
+        [] as { symbol: string; tvl: number; amount: number }[],
+      );
     }
   }, [collateralData]);
 
-  const ICONCollateral = useMemo(() => collateralTokens && collateralTokens.find(token => token.symbol === 'sICX'), [
-    collateralTokens,
-  ]);
+  const ICONCollateral = useMemo(
+    () => collateralTokens && collateralTokens.find(token => token.symbol === 'sICX'),
+    [collateralTokens],
+  );
 
   const sortedTokensCollateralWithoutICON = useMemo(
     () => collateralTokens && collateralTokens.filter(token => token.symbol !== 'sICX').sort((a, b) => b.tvl - a.tvl),

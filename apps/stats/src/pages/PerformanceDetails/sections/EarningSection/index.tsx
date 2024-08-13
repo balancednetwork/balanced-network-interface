@@ -115,13 +115,13 @@ const EarningsSection = () => {
     closeDropdown();
   };
 
-  let swapFeesTotalCurrent =
+  const swapFeesTotalCurrent =
     earningsCurrentPeriod &&
     Object.values(earningsCurrentPeriod.income.swaps).reduce(
       (total, feeItem) => total.plus(feeItem.value),
       new BigNumber(0),
     );
-  let swapFeesTotalPast =
+  const swapFeesTotalPast =
     earningsPastPeriod &&
     Object.values(earningsPastPeriod.income.swaps).reduce(
       (total, feeItem) => total.plus(feeItem.value),
@@ -141,11 +141,11 @@ const EarningsSection = () => {
   //     new BigNumber(0),
   //   );
 
-  let expensesTotalCurrent = earningsCurrentPeriod ? earningsCurrentPeriod.feesDistributed : new BigNumber(0);
-  let expensesTotalPast = earningsPastPeriod ? earningsPastPeriod.feesDistributed : new BigNumber(0);
+  const expensesTotalCurrent = earningsCurrentPeriod ? earningsCurrentPeriod.feesDistributed : new BigNumber(0);
+  const expensesTotalPast = earningsPastPeriod ? earningsPastPeriod.feesDistributed : new BigNumber(0);
 
-  let icxBurntTotalCurrent = earningsCurrentPeriod ? earningsCurrentPeriod.icxBurned : new BigNumber(0);
-  let icxBurntTotalPast = earningsPastPeriod ? earningsPastPeriod.icxBurned : new BigNumber(0);
+  const icxBurntTotalCurrent = earningsCurrentPeriod ? earningsCurrentPeriod.icxBurned : new BigNumber(0);
+  const icxBurntTotalPast = earningsPastPeriod ? earningsPastPeriod.icxBurned : new BigNumber(0);
 
   return (
     <BoxPanel bg="bg2" mt={10} mb={10}>

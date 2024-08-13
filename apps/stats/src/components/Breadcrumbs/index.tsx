@@ -73,7 +73,7 @@ const Breadcrumbs = ({ items }: BreadcrumbsProps) => {
             <BreadcrumbsLink key={idx} to={item.link ? item.link : '/'}>
               {item.displayName}
             </BreadcrumbsLink>
-            <BreadcrumbsSeparator>{'>'}</BreadcrumbsSeparator>
+            <BreadcrumbsSeparator key={'separator' + idx}>{'>'}</BreadcrumbsSeparator>
           </>
         );
       })}

@@ -118,6 +118,7 @@ const Chart = ({
           <Tooltip
             cursor={{ stroke: theme.colors.text1 }}
             contentStyle={{ display: 'none' }}
+            // @ts-ignore
             formatter={(value: number, name: string, props: { payload: { timestamp: number; value: number } }) => {
               if (setValue && parsedValue !== props.payload.value) {
                 setValue(props.payload.value);

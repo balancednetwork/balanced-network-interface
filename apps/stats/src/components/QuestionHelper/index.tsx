@@ -28,8 +28,8 @@ export default function QuestionHelper({
 }) {
   const [show, setShow] = useState<boolean>(false);
 
-  const open = useCallback(() => setShow(true), [setShow]);
-  const close = useCallback(() => setShow(false), [setShow]);
+  const open = useCallback(() => setShow(true), []);
+  const close = useCallback(() => setShow(false), []);
 
   return (
     <span style={{ marginLeft: 4, verticalAlign: 'middle' }}>

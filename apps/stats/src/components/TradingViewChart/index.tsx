@@ -91,11 +91,12 @@ const TradingViewChart = ({ type = CHART_TYPES.AREA, data, width }) => {
   const topScale = type === CHART_TYPES.AREA ? 0.32 : 0.2;
 
   // if no chart created yet, create one with options and add to DOM manually
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!chartCreated && data && ref.current) {
-      let chart = createChart(ref.current, { width: width, ...AreaOption });
+      const chart = createChart(ref.current, { width: width, ...AreaOption });
 
-      let series = chart.addAreaSeries({
+      const series = chart.addAreaSeries({
         topColor: 'rgba(44, 169, 183, 0.56)',
         bottomColor: 'rgba(44, 169, 183, 0.04)',
         lineColor: 'rgba(44, 169, 183, 1)',

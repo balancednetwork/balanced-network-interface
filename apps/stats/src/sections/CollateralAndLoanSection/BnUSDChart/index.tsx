@@ -52,6 +52,7 @@ export default function BnUSDChart({
     setTotalBnUSD(value);
   }, []);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     if (!userHovering) {
       setBnUSDHover(totalBnUSD);

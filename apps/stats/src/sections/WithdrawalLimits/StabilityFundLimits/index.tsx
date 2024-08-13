@@ -79,7 +79,7 @@ const StabilityFundLimits = () => {
                       <Flex alignItems="center">
                         <Box sx={{ minWidth: '50px' }}>
                           <CurrencyLogo
-                            currency={new Token(1, asset.token.address, asset.token.decimals)}
+                            currency={new Token(1, asset.token.address, asset.token.decimals, asset.token.symbol)}
                             size="40px"
                           />
                         </Box>

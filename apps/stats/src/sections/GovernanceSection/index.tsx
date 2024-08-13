@@ -53,15 +53,17 @@ const ProposalPreview = styled(FlexPanel)<{ noHover?: boolean }>`
       opacity: 0;
     }
 
-    ${!noHover &&
-    css`
+    ${
+      !noHover &&
+      css`
       &:hover {
         &:before {
           transform: scale(1);
           opacity: 1;
         }
       }
-    `}
+    `
+    }
   `};
 `;
 
@@ -79,8 +81,8 @@ const MetaWrap = styled.div`
 const IconLabel = ({ icon, content }: { icon: React.ReactNode; content: React.ReactNode }) => {
   return (
     <Flex alignItems="center" sx={{ columnGap: '10px', lineHeight: '35px' }}>
-      <>{icon}</>
-      <>{content}</>
+      {icon}
+      {content}
     </Flex>
   );
 };

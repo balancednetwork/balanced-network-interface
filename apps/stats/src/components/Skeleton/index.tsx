@@ -50,8 +50,8 @@ const SkeletonElement = styled.div<{
         
   ${({ mr }) => mr && `margin-right: ${mr};`}
   ${({ ml }) => ml && `margin-left: ${ml};`}
-  ${({ mt }) => mt ?  `margin-top: ${mt};` : 'margin-top: 5px;'}
-  ${({ mb }) => mb ? `margin-bottom: ${mb};` : 'margin-bottom: 5px;'}
+  ${({ mt }) => (mt ? `margin-top: ${mt};` : 'margin-top: 5px;')}
+  ${({ mb }) => (mb ? `margin-bottom: ${mb};` : 'margin-bottom: 5px;')}
 `;
 
 const Skeleton: React.FC<SkeletonProps> = ({

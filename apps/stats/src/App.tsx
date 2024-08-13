@@ -14,10 +14,9 @@ const queryClient = new QueryClient();
 const NotFound = () => {
   window.location.href = 'https://balanced.network/404';
   return null;
-}
+};
 
 export function App() {
-
   return (
     <>
       <FixedGlobalStyle />
@@ -26,17 +25,14 @@ export function App() {
 
         <QueryClientProvider client={queryClient}>
           <BrowserRouter>
-            <Helmet htmlAttributes={{ lang: "en"  }}>
+            <Helmet htmlAttributes={{ lang: 'en' }}>
               <meta name="description" content="A Balanced Network interface" />
             </Helmet>
 
             <Routes>
-              <Route  path="/" element={<StatsPage />} />
-              <Route  path="/performance-details" element={<PerformanceDetailsPage />} />
-              <Route
-              path='*'
-                element={<NotFound />}
-              />
+              <Route path="/" element={<StatsPage />} />
+              <Route path="/performance-details" element={<PerformanceDetailsPage />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </QueryClientProvider>

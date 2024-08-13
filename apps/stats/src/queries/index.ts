@@ -880,7 +880,7 @@ export function useDaoBBALNData(): UseQueryResult<DaoBBALNData, Error> {
   return useQuery({
     queryKey: [`daoBBALNData${now}`],
     queryFn: async () => {
-      let daoBBALNData = {};
+      const daoBBALNData = {};
 
       //total bBALN supply
       const BBALNTotalSupplyRaw = await bnJs.BBALN.totalSupply();
@@ -971,12 +971,15 @@ export function useBorrowersInfo() {
         const data = await bnJs.Multicall.getAggregateData(cds);
 
         let total = 0;
-        const result = data.reduce((borrowersInfo, item, index) => {
-          const borrowers = parseInt(item, 16);
-          borrowersInfo[collateralSymbols[index]] = borrowers;
-          total += borrowers;
-          return borrowersInfo;
-        }, {} as { [key in string]: number });
+        const result = data.reduce(
+          (borrowersInfo, item, index) => {
+            const borrowers = parseInt(item, 16);
+            borrowersInfo[collateralSymbols[index]] = borrowers;
+            total += borrowers;
+            return borrowersInfo;
+          },
+          {} as { [key in string]: number },
+        );
 
         result['total'] = total;
 

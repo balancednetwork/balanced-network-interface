@@ -11,7 +11,6 @@ import 'sanitize.css/sanitize.css';
 
 import { App } from './App';
 
-
 const MOUNT_NODE = document.getElementById('root') as HTMLElement;
 
 // Set the global formatting options
@@ -29,12 +28,14 @@ const fmt = {
 BigNumber.config({ FORMAT: fmt, ROUNDING_MODE: BigNumber.ROUND_DOWN });
 BigNumber.set({ ROUNDING_MODE: BigNumber.ROUND_DOWN }); // equivalent
 
+BigInt.prototype['toJSON'] = function () {
+  return 'BIGINT::' + this.toString();
+};
+
 ReactDOM.createRoot(MOUNT_NODE).render(
-    <HelmetProvider>
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
-    </HelmetProvider>
+  <HelmetProvider>
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  </HelmetProvider>,
 );
-
-

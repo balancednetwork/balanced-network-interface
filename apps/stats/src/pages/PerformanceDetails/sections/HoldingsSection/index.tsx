@@ -152,8 +152,8 @@ const HoldingsSection = () => {
               prevAmount && curAmount.isGreaterThan(prevAmount)
                 ? curAmount.div(prevAmount).minus(1).times(100).toNumber()
                 : prevAmount && prevAmount.isGreaterThan(0)
-                ? curAmount.div(prevAmount).minus(1).times(100).toNumber()
-                : 0;
+                  ? curAmount.div(prevAmount).minus(1).times(100).toNumber()
+                  : 0;
 
             const shouldAccount =
               curAmount.times(tokenPrices[token.symbol!]).isGreaterThan(1000) ||
@@ -268,8 +268,8 @@ const HoldingsSection = () => {
                   poolPast && currentPool.liquidity.isGreaterThan(poolPast.liquidity)
                     ? currentPool.liquidity.div(poolPast.liquidity).minus(1).times(100).toNumber()
                     : poolPast && poolPast.liquidity.isGreaterThan(0)
-                    ? currentPool.liquidity.div(poolPast.liquidity).minus(1).times(100).toNumber()
-                    : 0;
+                      ? currentPool.liquidity.div(poolPast.liquidity).minus(1).times(100).toNumber()
+                      : 0;
 
                 const shouldAccount =
                   currentPool.liquidity.isGreaterThan(1000) || poolPast?.liquidity.isGreaterThan(1000);
@@ -372,8 +372,8 @@ const HoldingsSection = () => {
               prevAmount && curAmount.isGreaterThan(prevAmount)
                 ? curAmount.div(prevAmount).minus(1).times(100).toNumber()
                 : prevAmount && prevAmount.isGreaterThan(0)
-                ? curAmount.div(prevAmount).minus(1).times(100).toNumber()
-                : 0;
+                  ? curAmount.div(prevAmount).minus(1).times(100).toNumber()
+                  : 0;
 
             totalCurrentReserve += curAmount.times(tokenPrices[token.symbol!]).toNumber();
             totalPastReserve += prevAmount.times(tokenPrices[token.symbol!]).toNumber();

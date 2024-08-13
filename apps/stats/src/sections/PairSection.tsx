@@ -201,13 +201,10 @@ export default function PairSection() {
   const noPairsFound = searched && pairs.length === 0;
   const isSmallScreen = useMedia('(max-width: 800px)');
 
-  const handleSearch = useCallback(
-    e => {
-      setShowingExpanded(!!e.target.value);
-      setSearched(e.target.value);
-    },
-    [setSearched, setShowingExpanded],
-  );
+  const handleSearch = useCallback(e => {
+    setShowingExpanded(!!e.target.value);
+    setSearched(e.target.value);
+  }, []);
 
   const dynamicTotals = useMemo(() => {
     if (pairs) {

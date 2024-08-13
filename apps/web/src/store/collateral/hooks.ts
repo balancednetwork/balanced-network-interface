@@ -178,14 +178,17 @@ export function useCollateralFetchInfo(account?: string | null) {
 
   const allDerivedWallets = useSignedInWallets();
 
-  function isSupported(symbol: string) {
-    return (
-      symbol === 'sICX' ||
-      (supportedCollateralTokens &&
-        Object.keys(supportedCollateralTokens).includes(symbol) &&
-        supportedCollateralTokens[symbol])
-    );
-  }
+  const isSupported = React.useCallback(
+    (symbol: string) => {
+      return (
+        symbol === 'sICX' ||
+        (supportedCollateralTokens &&
+          Object.keys(supportedCollateralTokens).includes(symbol) &&
+          supportedCollateralTokens[symbol])
+      );
+    },
+    [supportedCollateralTokens],
+  );
 
   const fetchCollateralInfo = React.useCallback(
     async (wallet: {
@@ -221,7 +224,7 @@ export function useCollateralFetchInfo(account?: string | null) {
           }
         });
     },
-    [changeDepositedAmount, supportedCollateralTokens],
+    [changeDepositedAmount, supportedCollateralTokens, isSupported],
   );
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>

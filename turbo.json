@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "tasks": {
     "dev": {
       "cache": false,
       "persistent": true
@@ -16,8 +16,11 @@
       "dependsOn": ["^pretty"],
       "cache": false
     },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
     "checkTs": {
-      "cache": false
+      "dependsOn": ["^checkTs"]
     }
   }
 }

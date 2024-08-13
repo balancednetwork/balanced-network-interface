@@ -92,6 +92,11 @@ export const xServiceActions = {
   },
 };
 
+const createPublicXService = (PublicXServiceClass, xChainId: XChainId, publicClient: any) => {
+  const publicXService = new PublicXServiceClass(xChainId, publicClient);
+  xServiceActions.setPublicXService(xChainId, publicXService);
+};
+
 export const useCreatePublicXService = (xChainId: XChainId) => {
   const { iconService: iconPublicClient } = useIconReact();
   const { client: archwayPublicClient } = useArchwayContext();
@@ -105,11 +110,6 @@ export const useCreatePublicXService = (xChainId: XChainId) => {
 
   // @ts-ignore, xChain.id is always number for EVM
   const evmPublicClient = usePublicClient({ chainId });
-
-  const createPublicXService = (PublicXServiceClass, xChainId: XChainId, publicClient: any) => {
-    const publicXService = new PublicXServiceClass(xChainId, publicClient);
-    xServiceActions.setPublicXService(xChainId, publicXService);
-  };
 
   useEffect(() => {
     const setupPublicXService = (xChainId: XChainId) => {
@@ -133,9 +133,20 @@ export const useCreatePublicXService = (xChainId: XChainId) => {
     };
 
     setupPublicXService(xChainId);
-  }, [xChainId, iconPublicClient, archwayPublicClient, evmPublicClient, createPublicXService]);
+  }, [xChainId, iconPublicClient, archwayPublicClient, evmPublicClient]);
 
   return true;
+};
+
+const createWalletXService = (
+  WalletXServiceClass,
+  xChainId: XChainId,
+  publicClient: any,
+  walletClient: any,
+  options?: any,
+) => {
+  const walletXService = new WalletXServiceClass(xChainId, publicClient, walletClient, options);
+  xServiceActions.setWalletXService(xChainId, walletXService);
 };
 
 export const useCreateWalletXService = (xChainId: XChainId) => {
@@ -145,17 +156,6 @@ export const useCreateWalletXService = (xChainId: XChainId) => {
   const { iconService: iconWalletClient } = useIconReact();
   const { signingClient: archwayWalletClient } = useArchwayContext();
   const { data: evmWalletClient } = useWalletClient();
-
-  const createWalletXService = (
-    WalletXServiceClass,
-    xChainId: XChainId,
-    publicClient: any,
-    walletClient: any,
-    options?: any,
-  ) => {
-    const walletXService = new WalletXServiceClass(xChainId, publicClient, walletClient, options);
-    xServiceActions.setWalletXService(xChainId, walletXService);
-  };
 
   useEffect(() => {
     const setupWalletXService = (xChainId: XChainId) => {
@@ -185,15 +185,7 @@ export const useCreateWalletXService = (xChainId: XChainId) => {
     if (publicXService) {
       setupWalletXService(xChainId);
     }
-  }, [
-    xChainId,
-    iconWalletClient,
-    archwayWalletClient,
-    evmWalletClient,
-    publicXService,
-    createWalletXService,
-    changeShouldLedgerSign,
-  ]);
+  }, [xChainId, iconWalletClient, archwayWalletClient, evmWalletClient, publicXService, changeShouldLedgerSign]);
 
   return true;
 };

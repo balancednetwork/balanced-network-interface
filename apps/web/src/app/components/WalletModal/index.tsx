@@ -25,7 +25,6 @@ import { ApplicationModal } from '@/store/application/reducer';
 
 import { DropdownPopper } from '../Popover';
 import WalletItem from './WalletItem';
-import { IconWalletModal } from './IconWalletModal';
 import { EVMWalletModal } from './EVMWalletModal';
 import { XWalletType } from '@/app/pages/trade/bridge/types';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
@@ -35,6 +34,7 @@ import { useSwitchChain } from 'wagmi';
 import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
 import useDebounce from '@/hooks/useDebounce';
 import Divider from '../Divider';
+import { useIconReact } from '@/packages/icon-react';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {
@@ -61,6 +61,19 @@ export default function WalletModal() {
   const activeLocale = useActiveLocale();
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
   const arrowRef = React.useRef(null);
+
+  const { requestAddress, hasExtension } = useIconReact();
+  const connectToIcon = React.useCallback(() => {
+    if (isMobile) {
+      requestAddress();
+    } else {
+      if (hasExtension) {
+        requestAddress();
+      } else {
+        window.open('https://chrome.google.com/webstore/detail/hana/jfdlamikmbghhapbgfoogdffldioobgl?hl=en', '_blank');
+      }
+    }
+  }, [hasExtension, requestAddress]);
 
   const toggleMenu = (e: React.MouseEvent<HTMLElement>) => {
     setAnchor(anchor ? null : arrowRef.current);
@@ -93,7 +106,7 @@ export default function WalletModal() {
     const iconConfig = {
       name: 'ICON',
       logo: <IconWalletIcon width="32" />,
-      connect: () => setWalletModal(XWalletType.ICON),
+      connect: () => connectToIcon(),
       disconnect: wallets[XWalletType.ICON].disconnect,
       description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer cross-chain.`,
       keyWords: ['iconex', 'hana'],
@@ -152,7 +165,7 @@ export default function WalletModal() {
         },
       ].sort((a, b) => a.name.localeCompare(b.name)),
     ];
-  }, [setWalletModal, connectToKeplr, wallets, switchChain, connectToHavah]);
+  }, [setWalletModal, connectToKeplr, wallets, switchChain, connectToHavah, connectToIcon]);
 
   const filteredWallets = React.useMemo(() => {
     return [...walletConfig].filter(wallet => {
@@ -267,8 +280,6 @@ export default function WalletModal() {
           )}
         </Wrapper>
       </StyledModal>
-
-      <IconWalletModal />
 
       <EVMWalletModal />
     </>

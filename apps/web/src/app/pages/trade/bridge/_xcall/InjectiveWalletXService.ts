@@ -15,7 +15,6 @@ import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { Network, getNetworkEndpoints } from '@injectivelabs/networks';
 import { MsgBroadcaster } from '@injectivelabs/wallet-ts';
 import { walletStrategy } from '@/packages/injective';
-import { toHex } from 'viem';
 import { NATIVE_ADDRESS } from '@/constants';
 import { RLP } from '@ethereumjs/rlp';
 import { uintToBytes } from '@/utils';

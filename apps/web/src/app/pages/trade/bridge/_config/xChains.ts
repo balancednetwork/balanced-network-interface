@@ -280,7 +280,7 @@ export const injective: XChain = {
     bnUSD: 'inj1qspaxnztkkzahvp6scq6xfpgafejmj2td83r9j',
   },
   autoExecution: true,
-  gasThreshold: 0.02,
+  gasThreshold: 0.01,
   testnet: false,
 };
 

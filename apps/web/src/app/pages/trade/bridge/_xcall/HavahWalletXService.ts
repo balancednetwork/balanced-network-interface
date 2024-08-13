@@ -16,14 +16,10 @@ import { getRlpEncodedSwapData } from '../utils';
 
 export class HavahWalletXService extends HavahPublicXService implements IWalletXService {
   walletClient: IconService; // reserved for future use
-  changeShouldLedgerSign: any;
 
   constructor(xChainId: XChainId, publicClient: IconService, walletClient: IconService, options?: any) {
     super(xChainId, publicClient);
     this.walletClient = walletClient;
-
-    const { changeShouldLedgerSign } = options || {};
-    this.changeShouldLedgerSign = changeShouldLedgerSign;
   }
 
   async approve(token, owner, spender, currencyAmountToApprove) {}

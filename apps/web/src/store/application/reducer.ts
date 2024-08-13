@@ -33,8 +33,6 @@ export interface ApplicationState {
   popupList: PopupList;
   openModal: ApplicationModal | null;
   openWalletModal: XWalletType | null;
-  shouldLedgerSign: boolean;
-  currentLedgerAddressPage: number;
   slippageTolerance: number;
 }
 
@@ -44,8 +42,6 @@ const initialState: ApplicationState = {
   openModal: null,
   openWalletModal: null,
   popupList: [],
-  shouldLedgerSign: false,
-  currentLedgerAddressPage: 1,
   slippageTolerance: DEFAULT_SLIPPAGE,
 };
 
@@ -88,12 +84,6 @@ const applicationSlice = createSlice({
         }
       });
     },
-    changeShouldLedgedSignMessage(state, action) {
-      state.shouldLedgerSign = action.payload.shouldLedgerSign;
-    },
-    changeCurrentLedgerAddressPage(state, action) {
-      state.currentLedgerAddressPage = action.payload.currentLedgerAddressPage;
-    },
     updateSlippageTolerance(state, action) {
       state.slippageTolerance = action.payload.slippageTolerance;
     },
@@ -106,8 +96,6 @@ export const {
   setOpenModal,
   addPopup,
   removePopup,
-  changeShouldLedgedSignMessage,
-  changeCurrentLedgerAddressPage,
   updateSlippageTolerance,
   setOpenWalletModal,
 } = applicationSlice.actions;

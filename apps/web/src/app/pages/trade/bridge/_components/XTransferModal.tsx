@@ -12,7 +12,6 @@ import { Button, TextButton } from '@/app/components/Button';
 import Spinner from '@/app/components/Spinner';
 
 import { getNetworkDisplayName } from '@/app/pages/trade/bridge/utils';
-import { useShouldLedgerSign } from '@/store/application/hooks';
 
 import { useModalStore, modalActions, MODAL_ID } from '../_zustand/useModalStore';
 
@@ -59,8 +58,6 @@ function XTransferModal() {
 
   const xChain = xChainMap[direction.from];
   const { approvalState, approveCallback } = useApproveCallback(currencyAmountToBridge, xChain.contracts.assetManager);
-
-  const shouldLedgerSign = useShouldLedgerSign();
 
   const handleDismiss = () => {
     modalActions.closeModal(MODAL_ID.XTRANSFER_CONFIRM_MODAL);
@@ -147,35 +144,30 @@ function XTransferModal() {
           {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={handleDismiss}>
-                  <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
-                </TextButton>
+            <TextButton onClick={handleDismiss}>
+              <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
+            </TextButton>
 
-                {isWrongChain ? (
-                  <StyledXCallButton onClick={handleSwitchChain}>
-                    <Trans>Switch to {xChainMap[direction.from].name}</Trans>
-                  </StyledXCallButton>
-                ) : isProcessing ? (
-                  <>
-                    <StyledXCallButton disabled $loading>
-                      <Trans>Transferring</Trans>
-                    </StyledXCallButton>
-                  </>
+            {isWrongChain ? (
+              <StyledXCallButton onClick={handleSwitchChain}>
+                <Trans>Switch to {xChainMap[direction.from].name}</Trans>
+              </StyledXCallButton>
+            ) : isProcessing ? (
+              <>
+                <StyledXCallButton disabled $loading>
+                  <Trans>Transferring</Trans>
+                </StyledXCallButton>
+              </>
+            ) : (
+              <>
+                {approvalState !== ApprovalState.APPROVED ? (
+                  <Button onClick={handleApprove} disabled={approvalState === ApprovalState.PENDING}>
+                    {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
+                  </Button>
                 ) : (
-                  <>
-                    {approvalState !== ApprovalState.APPROVED ? (
-                      <Button onClick={handleApprove} disabled={approvalState === ApprovalState.PENDING}>
-                        {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
-                      </Button>
-                    ) : (
-                      <StyledXCallButton onClick={handleTransfer} disabled={!gasChecker.hasEnoughGas}>
-                        <Trans>Transfer</Trans>
-                      </StyledXCallButton>
-                    )}
-                  </>
+                  <StyledXCallButton onClick={handleTransfer} disabled={!gasChecker.hasEnoughGas}>
+                    <Trans>Transfer</Trans>
+                  </StyledXCallButton>
                 )}
               </>
             )}

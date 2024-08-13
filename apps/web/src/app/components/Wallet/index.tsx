@@ -43,18 +43,10 @@ const Wallet = ({ close }: WalletProps) => {
   const handleChangeWallet = () => {
     close();
     toggleWalletModal();
-
-    if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
-      bnJs.contractSettings.ledgerSettings.transport.close();
-    }
   };
 
   const handleDisconnectWallet = async () => {
     close();
-
-    if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
-      bnJs.contractSettings.ledgerSettings.transport.close();
-    }
 
     // disconnect function includes resetContractLedgerSettings, so put it below the transport.close()
     allWallets[XWalletType.ICON]?.disconnect();

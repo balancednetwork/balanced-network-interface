@@ -79,10 +79,6 @@ export default function SupplyLiquidityModal({
     const token = currencies[field] as Token;
 
     try {
-      if (bnJs.contractSettings.ledgerSettings.actived) {
-        setShouldRemoveAssets({ ...shouldRemoveAssets, [field]: true });
-      }
-
       const res: any = await bnJs.inject({ account }).Dex.withdraw(token.address, toDec(amountWithdraw));
       addTransaction(
         { hash: res.result },
@@ -248,10 +244,6 @@ export default function SupplyLiquidityModal({
     const token = currencies[field] as Token;
 
     try {
-      if (bnJs.contractSettings.ledgerSettings.actived) {
-        setShouldAddAssets({ ...shouldAddAssets, [field]: true });
-      }
-
       const res: any = await bnJs.inject({ account }).getContract(token.address).deposit(toDec(parsedAmounts[field]));
 
       addTransaction(
@@ -314,33 +306,24 @@ export default function SupplyLiquidityModal({
                         <Typography variant="p" fontWeight="bold" textAlign="center">
                           {parsedAmounts[field]?.toSignificant(6)} {currencies[field]?.symbol}
                         </Typography>
-                        {shouldAddAssets[field] && (
-                          <>
-                            <Spinner></Spinner>
-                            <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                              <Trans>Confirm the transaction on your Ledger.</Trans>
-                            </Typography>
-                          </>
-                        )}
+
                         {UIStatus[field].isAllowanceIncreaseNeeded ? (
                           <SupplyButton disabled={isTxPending} mt={2} onClick={increaseAllowanceA}>
                             {isTxPending ? `Approving...` : `Approve`}
                           </SupplyButton>
                         ) : (
-                          !shouldAddAssets[field] && (
-                            <>
-                              <SupplyButton
-                                disabled={
-                                  UIStatus[field].isAddPending ||
-                                  shouldAddAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
-                                }
-                                mt={2}
-                                onClick={handleAdd(field)}
-                              >
-                                {!UIStatus[field].isAddPending ? t`Send` : t`Sending`}
-                              </SupplyButton>
-                            </>
-                          )
+                          <>
+                            <SupplyButton
+                              disabled={
+                                UIStatus[field].isAddPending ||
+                                shouldAddAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
+                              }
+                              mt={2}
+                              onClick={handleAdd(field)}
+                            >
+                              {!UIStatus[field].isAddPending ? t`Send` : t`Sending`}
+                            </SupplyButton>
+                          </>
                         )}
                       </>
                     ) : (
@@ -369,26 +352,17 @@ export default function SupplyLiquidityModal({
                         <Typography variant="p" fontWeight="bold" textAlign="center">
                           {currencyDeposits[field]?.toSignificant(6)} {currencies[field]?.symbol}
                         </Typography>
-                        {shouldRemoveAssets[field] && (
-                          <>
-                            <Spinner></Spinner>
-                            <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                              <Trans>Confirm the transaction on your Ledger.</Trans>
-                            </Typography>
-                          </>
-                        )}
-                        {!shouldRemoveAssets[field] && (
-                          <RemoveButton
-                            disabled={
-                              UIStatus[field].isRemovePending ||
-                              shouldRemoveAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
-                            }
-                            mt={2}
-                            onClick={handleRemove(field, currencyDeposits[field])}
-                          >
-                            {!UIStatus[field].isRemovePending ? t`Remove` : t`Removing`}
-                          </RemoveButton>
-                        )}
+
+                        <RemoveButton
+                          disabled={
+                            UIStatus[field].isRemovePending ||
+                            shouldRemoveAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
+                          }
+                          mt={2}
+                          onClick={handleRemove(field, currencyDeposits[field])}
+                        >
+                          {!UIStatus[field].isRemovePending ? t`Remove` : t`Removing`}
+                        </RemoveButton>
                       </>
                     )}
                   </Box>

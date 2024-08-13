@@ -201,28 +201,16 @@ export class InjectiveWalletXService extends InjectivePublicXService implements 
     }
 
     const amount = toICONDecimals(inputAmount.multiply(-1));
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const data = toHex(RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]));
-    // const envelope = toHex(
-    //   RLP.encode([
-    //     Buffer.from([0]),
-    //     data,
-    //     FROM_SOURCES[this.xChainId]?.map(Buffer.from),
-    //     TO_SOURCES[this.xChainId]?.map(Buffer.from),
-    //   ]),
-    // );
 
     const envelope = {
       message: {
         call_message: {
-          data: RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]),
+          data: Array.from(RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral])),
         },
       },
-      sources: ['inj15jcde723hrm5f4fx3r2stnq59jykt2askud8ht'],
-      destinations: ['cx6f86ed848f9f0d03ba1220811d95d864c72da88c'],
+      sources: FROM_SOURCES[this.xChainId],
+      destinations: TO_SOURCES[this.xChainId],
     };
-
-    console.log('envelopeeee', envelope);
 
     const msg = MsgExecuteContractCompat.fromJSON({
       contractAddress: injective.contracts.xCall,
@@ -236,12 +224,10 @@ export class InjectiveWalletXService extends InjectivePublicXService implements 
       funds: [
         {
           denom: 'inj',
-          amount: BigInt(xCallFee.rollback).toString(),
+          amount: xCallFee.rollback.toString(),
         },
       ],
     });
-
-    console.log('msggg', msg);
 
     const txResult = await msgBroadcastClient.broadcastWithFeeDelegation({
       msgs: msg,
@@ -249,24 +235,6 @@ export class InjectiveWalletXService extends InjectivePublicXService implements 
     });
 
     return txResult.txHash;
-
-    // const res = await this.publicClient.simulateContract({
-    //   account: account as Address,
-    //   address: xChainMap[this.xChainId].contracts.xCall as Address,
-    //   abi: xCallContractAbi,
-    //   functionName: 'sendCall',
-    //   args: [destination, envelope],
-    //   //todo
-    //   //? rollback or not
-    //   value: xCallFee.noRollback,
-    // });
-
-    // const request = res.request;
-    // const hash = await this.walletClient.writeContract(request);
-
-    // if (hash) {
-    //   return hash;
-    // }
   }
 
   async executeBorrow(xTransactionInput: XTransactionInput) {

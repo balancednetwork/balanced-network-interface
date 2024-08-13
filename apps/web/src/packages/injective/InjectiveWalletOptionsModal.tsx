@@ -43,10 +43,6 @@ export const InjectiveWalletOptionsModal = ({
   const handleConnect = async (wallet: Wallet) => {
     await connect(wallet);
 
-    // walletStrategy.setWallet(wallet);
-    // await walletStrategy.disconnect();
-    // const addresses = await walletStrategy.getAddresses();
-    // console.log('addresses', addresses, await walletStrategy.getWalletDeviceType());
     modalActions.closeModal(id);
   };
 

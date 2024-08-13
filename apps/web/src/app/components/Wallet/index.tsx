@@ -48,7 +48,6 @@ const Wallet = ({ close }: WalletProps) => {
   const handleDisconnectWallet = async () => {
     close();
 
-    // disconnect function includes resetContractLedgerSettings, so put it below the transport.close()
     allWallets[XWalletType.ICON]?.disconnect();
     allWallets[XWalletType.COSMOS]?.disconnect();
     allWallets[XWalletType.EVM]?.disconnect();

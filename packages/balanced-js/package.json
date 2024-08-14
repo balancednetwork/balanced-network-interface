@@ -20,12 +20,9 @@
   },
   "dependencies": {
     "bignumber.js": "9.0.1",
-    "icon-sdk-js": "^1.2.1",
-    "lodash-es": "4.17.21"
+    "icon-sdk-js": "^1.2.1"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.25",
-    "@types/lodash-es": "4.17.12",
     "tsup": "^8.0.2"
   },
   "engines": {

@@ -1,5 +1,4 @@
 import IconService, { Builder as IconBuilder, Converter as IconConverter } from 'icon-sdk-js';
-import { isEmpty } from 'lodash-es';
 import { ICONEX_RELAY_RESPONSE } from '../iconex';
 
 import { AccountType, ResponseJsonRPCPayload, SettingInjection } from '..';
@@ -34,14 +33,6 @@ export class Contract {
   public inject({ account }: SettingInjection) {
     this.contractSettings.account = account || this.contractSettings.account;
     return this;
-  }
-
-  protected cleanParams(params: any) {
-    return JSON.parse(
-      JSON.stringify(params, (_key, value) => {
-        return isEmpty(value) && value !== 0 ? undefined : value;
-      }),
-    );
   }
 
   public paramsBuilder({

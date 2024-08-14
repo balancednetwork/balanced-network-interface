@@ -180,7 +180,7 @@ export function CurrencySearch({
     return [...filteredTokens].sort(tokenComparator);
   }, [filteredTokens, tokenComparator]);
 
-  const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery);
+  const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery, assetsTab === AssetsTab.YOUR);
 
   const icx = useICX();
 
@@ -232,18 +232,14 @@ export function CurrencySearch({
   useOnClickOutside(node, open ? toggle : undefined);
 
   const filterCurrencies = useMemo(() => {
-    let currencies;
-    if (assetsTab === AssetsTab.YOUR) {
-      currencies = [];
-    } else {
-      currencies =
-        currencySelectionType === CurrencySelectionType.NORMAL ||
-        currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
-          ? filteredSortedTokensWithICX
-          : filteredSortedTokens;
-    }
+    const currencies =
+      currencySelectionType === CurrencySelectionType.NORMAL ||
+      currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
+        ? filteredSortedTokensWithICX
+        : filteredSortedTokens;
+
     return currencies;
-  }, [currencySelectionType, filteredSortedTokens, filteredSortedTokensWithICX, assetsTab]);
+  }, [currencySelectionType, filteredSortedTokens, filteredSortedTokensWithICX]);
 
   const selectedChainId = useMemo(() => {
     return currencySelectionType === CurrencySelectionType.NORMAL ? undefined : xChainId;

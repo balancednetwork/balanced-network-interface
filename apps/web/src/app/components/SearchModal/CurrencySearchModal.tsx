@@ -6,7 +6,7 @@ import useLast from '@/hooks/useLast';
 
 import Modal from '../Modal';
 import { PopperWithoutArrow } from '../Popover';
-import { CurrencySearch, CurrencySelectionType } from './CurrencySearch';
+import { CurrencySearch, CurrencySelectionType, SelectorType } from './CurrencySearch';
 import { ImportToken } from './ImportToken';
 import { RemoveToken } from './RemoveToken';
 import { XChainId } from '@/app/pages/trade/bridge/types';
@@ -27,6 +27,7 @@ interface CurrencySearchModalProps {
   anchorEl?: any;
   showCommunityListControl: boolean;
   xChainId: XChainId;
+  selectorType?: SelectorType;
 }
 
 export enum CurrencyModalView {
@@ -53,6 +54,7 @@ export default function CurrencySearchModal({
   showCommunityListControl,
   showCrossChainBreakdown,
   xChainId,
+  selectorType,
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage);
   const lastOpen = useLast(isOpen);
@@ -125,6 +127,7 @@ export default function CurrencySearchModal({
           showCommunityListControl={showCommunityListControl}
           xChainId={xChainId}
           showCrossChainBreakdown={showCrossChainBreakdown}
+          selectorType={selectorType}
         />
       </PopperWithoutArrow>
 

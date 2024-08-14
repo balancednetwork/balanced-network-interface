@@ -12,7 +12,7 @@ import { COMMON_PERCENTS } from '@/store/swap/reducer';
 import { escapeRegExp } from '@/utils';
 
 import { HorizontalList, Option } from '../List';
-import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
+import { CurrencySelectionType, SelectorType } from '../SearchModal/CurrencySearch';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 import CrossChainOptions from '../trade/CrossChainOptions';
 import { XChainId } from '@/app/pages/trade/bridge/types';
@@ -103,6 +103,7 @@ interface CurrencyInputPanelProps {
   className?: string;
   account?: string | null;
   showCommunityListControl?: boolean;
+  selectorType?: SelectorType;
 
   // cross chain stuff
   xChainId?: XChainId;
@@ -127,6 +128,7 @@ export default function CurrencyInputPanel({
   className,
   account,
   showCommunityListControl = true,
+  selectorType,
 
   // cross chain stuff
   xChainId = '0x1.icon',
@@ -220,6 +222,7 @@ export default function CurrencyInputPanel({
                 showCommunityListControl={showCommunityListControl}
                 xChainId={xChainId}
                 showCrossChainBreakdown={showCrossChainBreakdown}
+                selectorType={selectorType}
               />
             )}
           </div>

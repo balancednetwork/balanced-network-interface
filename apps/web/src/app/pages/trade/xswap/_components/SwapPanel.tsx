@@ -29,6 +29,7 @@ import { MODAL_ID, modalActions } from '../../bridge/_zustand/useModalStore';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import useWallets, { useSignedInWallets } from '../../bridge/_hooks/useWallets';
 import { xChainMap } from '../../bridge/_config/xChains';
+import { SelectorType } from '@/app/components/SearchModal/CurrencySearch';
 
 export default function SwapPanel() {
   useInitialSwapLoad();
@@ -212,6 +213,7 @@ export default function SwapPanel() {
                 isInputCrosschainCompatible ? xChainId => onChainSelection(Field.INPUT, xChainId) : undefined
               }
               showCrossChainOptions={true}
+              selectorType={SelectorType.SWAP_IN}
             />
           </Flex>
 
@@ -257,6 +259,7 @@ export default function SwapPanel() {
               }
               showCrossChainOptions={true}
               addressEditable
+              selectorType={SelectorType.SWAP_OUT}
             />
           </Flex>
         </AutoColumn>

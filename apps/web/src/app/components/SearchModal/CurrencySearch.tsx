@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
+import { ChartControlButton as AssetsTabButton } from '@/app/pages/trade/supply/_components/utils';
 
 import { Typography } from '@/app/theme';
 import { FUNDING_TOKENS_LIST, useICX } from '@/constants/tokens';
@@ -26,6 +27,7 @@ import { XChainId } from '@/app/pages/trade/bridge/types';
 import { useBridgeDirection } from '@/store/bridge/hooks';
 import useXTokens from '@/app/pages/trade/bridge/_hooks/useXTokens';
 import { xTokenMap } from '@/app/pages/trade/bridge/_config/xTokens';
+import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
 
 export enum CurrencySelectionType {
   NORMAL,
@@ -33,6 +35,16 @@ export enum CurrencySelectionType {
   TRADE_MINT_QUOTE,
   VOTE_FUNDING,
   BRIDGE,
+}
+
+export enum AssetsTab {
+  ALL = 'all',
+  YOUR = 'your',
+}
+export enum SelectorType {
+  SWAP_IN,
+  SWAP_OUT,
+  OTHER,
 }
 
 const removebnUSD = (tokens: { [address: string]: Token }) => {
@@ -65,6 +77,7 @@ interface CurrencySearchProps {
   showCommunityListControl?: boolean;
   xChainId: XChainId;
   showCrossChainBreakdown: boolean;
+  selectorType?: SelectorType;
 }
 
 const useFilteredXTokens = () => {
@@ -98,15 +111,31 @@ export function CurrencySearch({
   balanceList,
   showCommunityListControl,
   xChainId,
+  selectorType = SelectorType.OTHER,
 }: CurrencySearchProps) {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const debouncedQuery = useDebounce(searchQuery, 200);
+  const signedInWallets = useSignedInWallets();
 
   const [invertSearchOrder] = useState<boolean>(false);
 
   const tokens = useAllTokens();
   const filteredXTokens = useFilteredXTokens();
   const bases = useCommonBases();
+
+  const [assetsTab, setAssetsTab] = useState(AssetsTab.ALL);
+
+  useEffect(() => {
+    if (assetsTab === AssetsTab.YOUR && !signedInWallets.length) {
+      setAssetsTab(AssetsTab.ALL);
+    }
+  }, [signedInWallets, assetsTab]);
+
+  useEffect(() => {
+    if (signedInWallets.length && selectorType === SelectorType.SWAP_IN) {
+      setAssetsTab(AssetsTab.YOUR);
+    }
+  }, [signedInWallets, selectorType]);
 
   const bridgeDirection = useBridgeDirection();
   const xTokens = useXTokens(bridgeDirection.from, bridgeDirection.to);
@@ -203,13 +232,18 @@ export function CurrencySearch({
   useOnClickOutside(node, open ? toggle : undefined);
 
   const filterCurrencies = useMemo(() => {
-    const currencies =
-      currencySelectionType === CurrencySelectionType.NORMAL ||
-      currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
-        ? filteredSortedTokensWithICX
-        : filteredSortedTokens;
+    let currencies;
+    if (assetsTab === AssetsTab.YOUR) {
+      currencies = [];
+    } else {
+      currencies =
+        currencySelectionType === CurrencySelectionType.NORMAL ||
+        currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
+          ? filteredSortedTokensWithICX
+          : filteredSortedTokens;
+    }
     return currencies;
-  }, [currencySelectionType, filteredSortedTokens, filteredSortedTokensWithICX]);
+  }, [currencySelectionType, filteredSortedTokens, filteredSortedTokensWithICX, assetsTab]);
 
   const selectedChainId = useMemo(() => {
     return currencySelectionType === CurrencySelectionType.NORMAL ? undefined : xChainId;
@@ -229,13 +263,16 @@ export function CurrencySearch({
           onChange={handleInput}
         />
       </Flex>
-
-      {showCommunityListControl && (
-        <Flex justifyContent="center" paddingTop="10px">
-          <CommunityListToggle></CommunityListToggle>
+      {signedInWallets.length ? (
+        <Flex justifyContent="center" mt={3}>
+          <AssetsTabButton $active={assetsTab === AssetsTab.YOUR} mr={2} onClick={() => setAssetsTab(AssetsTab.YOUR)}>
+            <Trans>Your assets</Trans>
+          </AssetsTabButton>
+          <AssetsTabButton $active={assetsTab === AssetsTab.ALL} onClick={() => setAssetsTab(AssetsTab.ALL)}>
+            <Trans>All assets</Trans>
+          </AssetsTabButton>
         </Flex>
-      )}
-
+      ) : null}
       {searchToken && !searchTokenIsAdded ? (
         <Column style={{ padding: '20px 0', height: '100%' }}>
           <ImportRow token={searchToken} showImportView={showImportView} setImportToken={setImportToken} />
@@ -263,6 +300,12 @@ export function CurrencySearch({
           </Typography>
         </Column>
       )}
+      {/* //TODO: move community list control to token list below main swap section */}
+      {/* {showCommunityListControl && (
+        <Flex justifyContent="center" paddingTop="20px">
+          <CommunityListToggle></CommunityListToggle>
+        </Flex>
+      )} */}
     </Wrapper>
   );
 }

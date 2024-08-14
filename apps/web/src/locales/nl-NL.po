@@ -637,10 +637,9 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/WalletModal/IconWalletModal.tsx
-msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
-msgstr "Annuleer alle lopende transacties op je Ledger, of geef Chrome toestemming om deze te gebruiken."
+#~ msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
+#~ msgstr "Annuleer alle lopende transacties op je Ledger, of geef Chrome toestemming om deze te gebruiken."
 
-#: src/app/components/WalletModal/IconWalletModal.tsx
 #: src/app/components/WalletModal/WalletItem.tsx
 msgid "or"
 msgstr "of"
@@ -940,8 +939,8 @@ msgstr "Handel"
 #: src/app/components/LedgerConfirmMessage/index.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
-msgid "Confirm the transaction on your Ledger."
-msgstr "Bevestig de transactie op je ledger."
+#~ msgid "Confirm the transaction on your Ledger."
+#~ msgstr "Bevestig de transactie op je ledger."
 
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swapping"
@@ -1986,8 +1985,8 @@ msgid "Unlocked {0} BALN."
 msgstr ""
 
 #: src/app/components/WalletModal/IconWalletModal.tsx
-msgid "Choose a wallet from your Ledger:"
-msgstr "Kies een portemonnee uit je Ledger:"
+#~ msgid "Choose a wallet from your Ledger:"
+#~ msgstr "Kies een portemonnee uit je Ledger:"
 
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
 #~ msgid "Revert"
@@ -2187,8 +2186,8 @@ msgid "Pool"
 msgstr "Pool"
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
-msgid "Sign the transaction, then check the banner notification message for the result."
-msgstr ""
+#~ msgid "Sign the transaction, then check the banner notification message for the result."
+#~ msgstr ""
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Swap {0} for {1}."
@@ -2432,8 +2431,8 @@ msgid "Adjust allocation"
 msgstr ""
 
 #: src/app/components/WalletModal/IconWalletModal.tsx
-msgid "Make sure it's connected and try again."
-msgstr ""
+#~ msgid "Make sure it's connected and try again."
+#~ msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Verify"
@@ -2515,8 +2514,8 @@ msgid "Withdraw liquidity"
 msgstr "Liquiditeit opnemen"
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
-msgid "On Ledger:"
-msgstr ""
+#~ msgid "On Ledger:"
+#~ msgstr ""
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "Test your contract calls before you submit the proposal."

@@ -221,4 +221,4 @@ export const HIGH_PRICE_ASSET_DP: { [key in string]: number } = {
   native: 5,
 };
 
-export const ORACLE_PRICED_TOKENS = ['USDC'];
+export const ORACLE_PRICED_TOKENS = ['USDC', 'USDT'];

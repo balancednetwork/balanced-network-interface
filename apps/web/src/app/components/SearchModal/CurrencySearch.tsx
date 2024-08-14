@@ -288,6 +288,7 @@ export function CurrencySearch({
           onDismiss={onDismiss}
           selectedChainId={selectedChainId}
           showCrossChainBreakdown={showCrossChainBreakdown}
+          basedOnWallet={assetsTab === AssetsTab.YOUR}
         />
       ) : (
         <Column style={{ padding: '20px', height: '100%' }}>

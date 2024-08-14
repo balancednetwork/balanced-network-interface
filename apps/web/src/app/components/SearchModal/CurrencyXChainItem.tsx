@@ -29,10 +29,12 @@ const CurrencyXChainItem = ({
   onSelect,
   price,
   currency,
+  basedOnWallet,
 }: {
   xChainId: XChainId;
   currency: Currency;
   price: string;
+  basedOnWallet: boolean;
   onSelect: (currency: Currency, xChainId: XChainId) => void;
 }) => {
   const xWallet = useCrossChainWalletBalances();
@@ -51,7 +53,7 @@ const CurrencyXChainItem = ({
       </Flex>
       {signedInWallets.length > 0 && (
         <Typography variant="span" fontSize={14} display="block">
-          {currencyBalance ? formatBalance(currencyBalance?.toFixed(), price).replace(/\.0+$/, '') : '0'}
+          {currencyBalance ? formatBalance(currencyBalance?.toFixed(), price).replace(/^0(\.0+)?$/, '-') : '-'}
         </Typography>
       )}
     </CurrencyXChainItemWrap>

@@ -61,19 +61,7 @@ export default function WalletModal() {
   const activeLocale = useActiveLocale();
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
   const arrowRef = React.useRef(null);
-
-  const { requestAddress, hasExtension } = useIconReact();
-  const connectToIcon = React.useCallback(() => {
-    if (isMobile) {
-      requestAddress();
-    } else {
-      if (hasExtension) {
-        requestAddress();
-      } else {
-        window.open('https://chrome.google.com/webstore/detail/hana/jfdlamikmbghhapbgfoogdffldioobgl?hl=en', '_blank');
-      }
-    }
-  }, [hasExtension, requestAddress]);
+  const { connectToWallet: connectToIcon } = useIconReact();
 
   const toggleMenu = (e: React.MouseEvent<HTMLElement>) => {
     setAnchor(anchor ? null : arrowRef.current);

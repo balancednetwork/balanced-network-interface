@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { isMobile } from 'react-device-detect';
 
 import { SupportedChainId as NetworkId, CHAIN_INFO } from '@balancednetwork/balanced-js';
 import IconService, { Builder as IconBuilder, Converter as IconConverter } from 'icon-sdk-js';
@@ -29,6 +30,7 @@ interface ICONReactContextInterface {
   requestAddress: () => void;
   iconService: IconService;
   hasExtension: boolean;
+  connectToWallet: () => void;
   disconnect: () => void;
   networkId: NetworkId;
 }
@@ -39,6 +41,7 @@ const IconReactContext = React.createContext<ICONReactContextInterface>({
   requestAddress: () => null,
   iconService: iconService,
   hasExtension: false,
+  connectToWallet: () => null,
   disconnect: () => null,
   networkId: NetworkId.MAINNET,
 });
@@ -69,6 +72,18 @@ export function IconReactProvider({ children }) {
     }
   }, [setAccount]);
 
+  const connectToWallet = React.useCallback(() => {
+    if (isMobile) {
+      requestAddress();
+    } else {
+      if (hasExtension) {
+        requestAddress();
+      } else {
+        window.open('https://chrome.google.com/webstore/detail/hana/jfdlamikmbghhapbgfoogdffldioobgl?hl=en', '_blank');
+      }
+    }
+  }, [hasExtension, requestAddress]);
+
   const disconnect = React.useCallback(() => {
     setAccount(null);
   }, [setAccount]);
@@ -94,6 +109,7 @@ export function IconReactProvider({ children }) {
     request,
     iconService,
     hasExtension,
+    connectToWallet,
     disconnect,
     networkId: NETWORK_ID,
   };

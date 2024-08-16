@@ -1,40 +1,16 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { CallData, addresses } from '@balancednetwork/balanced-js';
-import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
-import BigNumber from 'bignumber.js';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from '@/bnJs';
-import { ICON_XCALL_NETWORK_ID, NETWORK_ID } from '@/constants/config';
-import { MINIMUM_ICX_FOR_ACTION } from '@/constants/index';
-import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
-import { useOraclePrice } from '@/store/oracle/hooks';
-import { useRatio } from '@/store/ratio/hooks';
-import { useAllTransactions } from '@/store/transactions/hooks';
-import { useCrossChainWalletBalances, useICONWalletBalances } from '@/store/wallet/hooks';
-import { CurrencyKey, IcxDisplayType } from '@/types';
-import { formatUnits, maxAmountSpend, toBigNumber } from '@/utils';
+import { NETWORK_ID } from '@/constants/config';
+import { IcxDisplayType } from '@/types';
+import { formatUnits } from '@/utils';
 
-import { useDestinationEvents } from '@/app/pages/trade/bridge/_zustand/useXCallEventStore';
-import { SUPPORTED_XCALL_CHAINS, xChainMap } from '@/constants/xChains';
-import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/constants/xTokens';
-import { useAvailableWallets, useSignedInWallets } from '@/hooks/useWallets';
-import { useRatesWithOracle } from '@/queries/reward';
-import { Position, XChainId, XPositionsRecord, XToken } from '@/types';
-import { getBalanceDecimals } from '@/utils/formatter';
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { AppState } from '../index';
-import {
-  Field,
-  adjust,
-  cancel,
-  changeCollateralType as changeCollateralTypeAction,
-  changeCollateralXChain as changeCollateralXChainAction,
-  changeDepositedAmount as changeDepositedAmountAction,
-  changeIcxDisplayType,
-  type,
-} from './reducer';
+import { changeIcxDisplayType } from './reducer';
 
 export const DEFAULT_COLLATERAL_TOKEN = 'sICX';
 
@@ -54,14 +30,6 @@ export function useAllDepositedAmounts() {
 
 export function useCollateralType() {
   return useSelector((state: AppState) => state.collateral.collateralType);
-}
-
-export function useCollateralXChain() {
-  return useSelector((state: AppState) => state.collateral.collateralXChain);
-}
-
-export function useIcxDisplayType() {
-  return useSelector((state: AppState) => state.collateral.icxDisplayType);
 }
 
 export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]: string }> {

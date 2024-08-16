@@ -29,15 +29,6 @@ import { useCollateralActionHandlers } from '@/store/collateral/hooks';
 import { useLoanActionHandlers } from '@/store/loan/hooks';
 import { useSavingsSliderActionHandlers } from '@/store/savings/hooks';
 
-const ClaimLegacyFeesPage = lazyLoad(
-  () => import('./pages/claim-legacy-fees/page'),
-  module => module.ClaimLegacyFeesPage,
-);
-const ClaimGoodwillPage = lazyLoad(
-  () => import('./pages/claim-goodwill/page'),
-  module => module.ClaimGoodwillPage,
-);
-
 const routeTexts: [string, MessageDescriptor][] = [
   ['/vote', defineMessage({ message: 'Vote' })],
   ['/trade', defineMessage({ message: 'Trade' })],
@@ -99,9 +90,6 @@ export default function RootRoutes() {
         <Route path="airdrip" element={<Redirect to="https://balanced.network/" />} />
         <Route path="*" element={<Redirect to="https://balanced.network/404" />} />
       </Route>
-
-      <Route path="/claim-legacy-fees" element={<ClaimLegacyFeesPage />} />
-      <Route path="/claim-goodwill" element={<ClaimGoodwillPage />} />
     </Routes>
   );
 }

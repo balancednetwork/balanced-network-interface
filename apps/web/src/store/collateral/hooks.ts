@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { CallData, addresses } from '@balancednetwork/balanced-js';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 

@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { t, Trans } from '@lingui/macro';
+import { useIconReact } from '@/packages/icon-react';
+import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
-import { useIconReact } from '@/packages/icon-react';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from '@/app/components/Button';
@@ -106,7 +106,6 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
               <Typography variant="p" marginRight="5px">
                 {unstake.amount.dp(2).toFormat()} ICX
               </Typography>
-              <Typography>{t`unstakes within ${dayjs().to(unstake.unstakesOn, true)}`}</Typography>
             </Flex>
           </>
         );

@@ -6,7 +6,6 @@ import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from '@/app/components/Button';
-import { CurrencyField } from '@/app/components/Form';
 import LockBar from '@/app/components/LockBar';
 import Modal from '@/app/components/Modal';
 import { BoxPanel, BoxPanelWrap } from '@/app/components/Panel';

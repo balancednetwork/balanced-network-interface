@@ -325,27 +325,6 @@ export function useCollateralDepositedAmount() {
   return depositedAmounts[collateralType] || new BigNumber(0);
 }
 
-export function useCollateralDepositedAmountInICX() {
-  const sICXAmount = useCollateralDepositedAmount();
-
-  const ratio = useRatio();
-
-  return React.useMemo(() => {
-    return sICXAmount.multipliedBy(ratio.sICXICXratio);
-  }, [sICXAmount, ratio.sICXICXratio]);
-}
-
-export function useCollateralTotalICXAmount() {
-  const ICXAmount = useCollateralAvailableAmount();
-
-  const stakedICXAmount = useCollateralDepositedAmountInICX();
-
-  return React.useMemo(() => {
-    const totalICXAmount = stakedICXAmount.plus(ICXAmount);
-    return totalICXAmount;
-  }, [stakedICXAmount, ICXAmount]);
-}
-
 export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]: string }> {
   return useQuery({
     queryKey: ['getCollateralTokens'],

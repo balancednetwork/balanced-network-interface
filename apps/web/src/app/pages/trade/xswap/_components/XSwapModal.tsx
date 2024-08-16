@@ -6,35 +6,35 @@ import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 
-import { XChainId, XToken } from '@/types';
 import { getNetworkDisplayName } from '@/app/pages/trade/bridge/utils';
 import { Typography } from '@/app/theme';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from '@/store/application/hooks';
 import { Field } from '@/store/swap/reducer';
+import { XChainId, XToken } from '@/types';
 import { formatBigNumber, shortenAddress } from '@/utils';
 
 import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
-import Spinner from '@/app/components/Spinner';
 import ModalContent from '@/app/components/ModalContent';
-import useXCallFee from '@/app/pages/trade/bridge/_hooks/useXCallFee';
-import { showMessageOnBeforeUnload } from '@/utils/messages';
+import Spinner from '@/app/components/Spinner';
 import { ApprovalState, useApproveCallback } from '@/app/pages/trade/bridge/_hooks/useApproveCallback';
+import useXCallFee from '@/app/pages/trade/bridge/_hooks/useXCallFee';
+import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
 import { xChainMap } from '@/constants/xChains';
-import { useModalStore, modalActions, MODAL_ID } from '../../bridge/_zustand/useModalStore';
-import { XTransactionType, XTransactionInput } from '../../bridge/_zustand/types';
+import useWallets from '@/hooks/useWallets';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
+import { useSwitchChain } from 'wagmi';
+import XTransactionState from '../../bridge/_components/XTransactionState';
 import useXCallGasChecker from '../../bridge/_hooks/useXCallGasChecker';
+import { XTransactionInput, XTransactionType } from '../../bridge/_zustand/types';
+import { MODAL_ID, modalActions, useModalStore } from '../../bridge/_zustand/useModalStore';
+import { useCreateWalletXService } from '../../bridge/_zustand/useXServiceStore';
 import {
+  XTransactionUpdater,
   useXTransactionStore,
   xTransactionActions,
-  XTransactionUpdater,
 } from '../../bridge/_zustand/useXTransactionStore';
-import XTransactionState from '../../bridge/_components/XTransactionState';
-import { useCreateWalletXService } from '../../bridge/_zustand/useXServiceStore';
-import useWallets from '../../bridge/_hooks/useWallets';
-import { useSwitchChain } from 'wagmi';
 import { StyledButton } from './shared';
-import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
 
 type XSwapModalProps = {
   account: string | undefined;

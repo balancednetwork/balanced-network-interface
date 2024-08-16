@@ -1,37 +1,37 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { TradeType, Currency, CurrencyAmount, Token, Price } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Price, Token, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { t } from '@lingui/macro';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { XChainId, XToken } from '@/types';
 import { canBeQueue } from '@/constants/currency';
 import { useAllTokens } from '@/hooks/Tokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { XChainId, XToken } from '@/types';
 import { parseUnits } from '@/utils';
 
+import { useAssetManagerTokens } from '@/app/pages/trade/bridge/_hooks/useAssetManagerTokens';
+import { getXAddress, getXTokenByToken } from '@/app/pages/trade/bridge/utils';
+import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
+import { xChainMap } from '@/constants/xChains';
+import useWallets from '@/hooks/useWallets';
+import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
 import {
   Field,
+  selectChain,
   selectCurrency,
   selectPercent,
   setRecipient,
+  switchChain,
   switchCurrencies,
   typeInput,
-  switchChain,
-  selectChain,
 } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
-import { getXAddress, getXTokenByToken } from '@/app/pages/trade/bridge/utils';
-import { xChainMap } from '@/constants/xChains';
-import useWallets from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
-import { useAssetManagerTokens } from '@/app/pages/trade/bridge/_hooks/useAssetManagerTokens';
-import BigNumber from 'bignumber.js';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);

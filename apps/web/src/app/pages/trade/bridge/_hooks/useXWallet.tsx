@@ -1,6 +1,6 @@
-import { XChainId } from '@/types';
 import { xChainMap } from '@/constants/xChains';
-import useWallets from './useWallets';
+import useWallets from '@/hooks/useWallets';
+import { XChainId } from '@/types';
 
 const useXWallet = (xChainId: XChainId | undefined) => {
   const chain = xChainId ? xChainMap[xChainId] : undefined;

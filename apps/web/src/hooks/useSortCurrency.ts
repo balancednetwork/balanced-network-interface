@@ -1,12 +1,12 @@
-import { Currency } from '@balancednetwork/sdk-core';
+import { getXTokenAddress, isXToken } from '@/app/pages/trade/bridge/utils';
 import { SUPPORTED_XCALL_CHAINS } from '@/constants/xChains';
-import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { XChainId } from '@/types';
-import { isXToken, getXTokenAddress } from '@/app/pages/trade/bridge/utils';
-import BigNumber from 'bignumber.js';
-import { useEffect, useState } from 'react';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { WalletState } from '@/store/wallet/reducer';
+import { XChainId } from '@/types';
+import { Currency } from '@balancednetwork/sdk-core';
+import BigNumber from 'bignumber.js';
+import { useEffect, useState } from 'react';
 
 type SortingType = {
   key: string;

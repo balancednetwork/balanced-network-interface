@@ -9,18 +9,18 @@ import { Box, Flex } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
 
 import CurrencyLogo from '@/app/components/CurrencyLogo';
-import { ListItem, DataText, List1 } from '@/app/components/List';
+import { DataText, List1, ListItem } from '@/app/components/List';
+import { HeaderText } from '@/app/pages/trade/supply/_components/AllPoolsPanel';
 import { Typography } from '@/app/theme';
 import useArrowControl from '@/hooks/useArrowControl';
 import useKeyPress from '@/hooks/useKeyPress';
+import useSortCurrency from '@/hooks/useSortCurrency';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useIsUserAddedToken } from '@/store/user/hooks';
 import { useXCurrencyBalance } from '@/store/wallet/hooks';
-import { formatBigNumber, toFraction } from '@/utils';
-import useSortCurrency from '@/hooks/useSortCurrency';
-import { HeaderText } from '@/app/pages/trade/supply/_components/AllPoolsPanel';
-import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
 import { XChainId } from '@/types';
+import { formatBigNumber, toFraction } from '@/utils';
 import { formatPrice } from '@/utils/formatter';
 
 const DashGrid = styled(Box)`

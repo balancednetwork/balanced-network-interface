@@ -15,6 +15,7 @@ import { AutoColumn } from '@/app/pages/trade/xswap/_components/SwapPanel';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
 import { xChainMap } from '@/constants/xChains';
+import useWallets from '@/hooks/useWallets';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import {
   useBridgeActionHandlers,
@@ -25,7 +26,6 @@ import {
 import { Field } from '@/store/bridge/reducer';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend, validateAddress } from '@/utils';
-import useWallets from '../_hooks/useWallets';
 import useXCallFee from '../_hooks/useXCallFee';
 import ChainSelector from './ChainSelector';
 

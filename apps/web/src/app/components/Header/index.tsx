@@ -1,15 +1,15 @@
 import React, { useCallback } from 'react';
 
-import { BalancedJs, CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
-import { t, Trans } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import { useIconReact } from '@/packages/icon-react';
+import { BalancedJs, CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
+import { Trans, t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
-import { Flex, Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { IconButton, Button } from '@/app/components/Button';
+import { Button, IconButton } from '@/app/components/Button';
 import Logo from '@/app/components/Logo';
 import { DropdownPopper } from '@/app/components/Popover';
 import { Typography } from '@/app/theme';
@@ -20,11 +20,11 @@ import { useWalletModalToggle } from '@/store/application/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { shortenAddress } from '@/utils';
 
-import { MouseoverTooltip } from '../Tooltip';
-import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { xChainMap } from '@/constants/xChains';
-import { useAvailableWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
+import { useAvailableWallets } from '@/hooks/useWallets';
 import { Placement } from '@popperjs/core';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
+import { MouseoverTooltip } from '../Tooltip';
 import Wallet from '../Wallet';
 import { notificationCSS } from '../Wallet/ICONWallets/utils';
 

@@ -2,28 +2,28 @@ import React, { useCallback, useMemo } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { XChainId, XToken } from '@/types';
-import { AppState } from '@/store';
-import {
-  setRecipient,
-  selectCurrency,
-  typeInput,
-  selectChain,
-  Field,
-  switchChain,
-  selectPercent,
-  selectLiquidFinance,
-} from './reducer';
-import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
-import BigNumber from 'bignumber.js';
-import { Trans, t } from '@lingui/macro';
-import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { isDenomAsset } from '@/packages/archway/utils';
-import { sARCH } from '@/constants/tokens1';
-import useWallets, { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { xChainMap } from '@/constants/xChains';
-import { getXTokenBySymbol, getXAddress } from '@/app/pages/trade/bridge/utils';
 import { useAssetManagerTokens } from '@/app/pages/trade/bridge/_hooks/useAssetManagerTokens';
+import { getXAddress, getXTokenBySymbol } from '@/app/pages/trade/bridge/utils';
+import { sARCH } from '@/constants/tokens1';
+import { xChainMap } from '@/constants/xChains';
+import useWallets, { useSignedInWallets } from '@/hooks/useWallets';
+import { isDenomAsset } from '@/packages/archway/utils';
+import { AppState } from '@/store';
+import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { XChainId, XToken } from '@/types';
+import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
+import { Trans, t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
+import {
+  Field,
+  selectChain,
+  selectCurrency,
+  selectLiquidFinance,
+  selectPercent,
+  setRecipient,
+  switchChain,
+  typeInput,
+} from './reducer';
 
 export function useBridgeState(): AppState['bridge'] {
   return useSelector((state: AppState) => state.bridge);

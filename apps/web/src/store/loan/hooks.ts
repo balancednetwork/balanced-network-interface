@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 
-import { addresses, BalancedJs, CallData } from '@balancednetwork/balanced-js';
+import { BalancedJs, CallData, addresses } from '@balancednetwork/balanced-js';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from '@/bnJs';
@@ -24,25 +24,25 @@ import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatUnits, toBigNumber } from '@/utils';
 
+import { useDestinationEvents } from '@/app/pages/trade/bridge/_zustand/useXCallEventStore';
+import { getXTokenAddress } from '@/app/pages/trade/bridge/utils';
+import { bnUSD } from '@/constants/tokens';
+import { xChainMap } from '@/constants/xChains';
+import { useSignedInWallets } from '@/hooks/useWallets';
+import { XChainId } from '@/types';
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { AppState } from '..';
 import {
-  changeBorrowedAmount as changeBorrowedAmountAction,
-  changeBadDebt as changeBadDebtAction,
-  changeTotalSupply as changeTotalSupplyAction,
-  setRecipientNetwork as setRecipientNetworkAction,
   Field,
   adjust,
   cancel,
-  type,
+  changeBadDebt as changeBadDebtAction,
+  changeBorrowedAmount as changeBorrowedAmountAction,
+  changeTotalSupply as changeTotalSupplyAction,
   setLockingRatio,
+  setRecipientNetwork as setRecipientNetworkAction,
+  type,
 } from './reducer';
-import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { xChainMap } from '@/constants/xChains';
-import { XChainId } from '@/types';
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { bnUSD } from '@/constants/tokens';
-import { useDestinationEvents } from '@/app/pages/trade/bridge/_zustand/useXCallEventStore';
-import { getXTokenAddress } from '@/app/pages/trade/bridge/utils';
 
 export function useLoanBorrowedAmount(address?: string): BigNumber {
   const borrowedAmounts = useBorrowedAmounts();

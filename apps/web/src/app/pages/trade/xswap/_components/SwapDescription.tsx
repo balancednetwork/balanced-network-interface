@@ -6,6 +6,7 @@ import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
+import { ChartContainer, ChartControlButton, ChartControlGroup } from '@/app/components/ChartControl';
 import Modal from '@/app/components/Modal';
 import Spinner from '@/app/components/Spinner';
 import { TVChartContainer } from '@/app/components/TradingViewAdvanced/TVChartContainer';
@@ -23,8 +24,6 @@ import { useRatio } from '@/store/ratio/hooks';
 import { useDerivedSwapInfo, useSwapActionHandlers } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { generateChartData, toFraction } from '@/utils';
-
-import { ChartContainer, ChartControlButton, ChartControlGroup } from '../../supply/_components/utils';
 
 const CHART_TYPES_LABELS = {
   [CHART_TYPES.AREA]: defineMessage({ message: 'Line' }),

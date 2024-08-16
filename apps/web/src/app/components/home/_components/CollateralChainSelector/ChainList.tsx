@@ -3,21 +3,21 @@ import React, { useMemo, useState } from 'react';
 import { Box } from 'rebass';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
-import { xChains } from '@/constants/xChains';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
-import { Trans, t } from '@lingui/macro';
 import { HeaderText } from '@/app/components/Wallet/styledComponents';
 import { Typography } from '@/app/theme';
-import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
+import { xChains } from '@/constants/xChains';
+import { xTokenMap } from '@/constants/xTokens';
+import { useSignedInWallets } from '@/hooks/useWallets';
+import { useCollateralAmounts, useCollateralType } from '@/store/collateral/hooks';
+import { useOraclePrices } from '@/store/oracle/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { XChain, XChainId } from '@/types';
+import { formatValue } from '@/utils/formatter';
+import { Trans, t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
 import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from '../LoanChainSelector/styledComponents';
-import { useCollateralAmounts, useCollateralType } from '@/store/collateral/hooks';
-import { xTokenMap } from '@/constants/xTokens';
-import { useOraclePrices } from '@/store/oracle/hooks';
-import BigNumber from 'bignumber.js';
-import { formatValue } from '@/utils/formatter';
-import { XChain, XChainId } from '@/types';
 
 type ChainListProps = {
   chainId: XChainId;

@@ -4,27 +4,27 @@ import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import { Box, Flex } from 'rebass';
 
-import { XChainId, XToken } from '@/types';
-import { Typography } from '@/app/theme';
+import { Button, TextButton } from '@/app/components/Button';
+import Modal from '@/app/components/Modal';
+import ModalContent from '@/app/components/ModalContent';
+import XTransactionState from '@/app/pages/trade/bridge/_components/XTransactionState';
+import { ApprovalState, useApproveCallback } from '@/app/pages/trade/bridge/_hooks/useApproveCallback';
+import useXCallFee from '@/app/pages/trade/bridge/_hooks/useXCallFee';
+import useXCallGasChecker from '@/app/pages/trade/bridge/_hooks/useXCallGasChecker';
+import { XTransactionInput, XTransactionType } from '@/app/pages/trade/bridge/_zustand/types';
 import { MODAL_ID, modalActions, useModalStore } from '@/app/pages/trade/bridge/_zustand/useModalStore';
 import {
   XTransactionUpdater,
   useXTransactionStore,
   xTransactionActions,
 } from '@/app/pages/trade/bridge/_zustand/useXTransactionStore';
-import useXCallFee from '@/app/pages/trade/bridge/_hooks/useXCallFee';
-import { xChainMap } from '@/constants/xChains';
-import { ApprovalState, useApproveCallback } from '@/app/pages/trade/bridge/_hooks/useApproveCallback';
-import { XTransactionInput, XTransactionType } from '@/app/pages/trade/bridge/_zustand/types';
-import useXCallGasChecker from '@/app/pages/trade/bridge/_hooks/useXCallGasChecker';
-import useWallets from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { useSwitchChain } from 'wagmi';
-import Modal from '@/app/components/Modal';
-import ModalContent from '@/app/components/ModalContent';
-import XTransactionState from '@/app/pages/trade/bridge/_components/XTransactionState';
-import { Button, TextButton } from '@/app/components/Button';
 import { StyledButton } from '@/app/pages/trade/xswap/_components/shared';
+import { Typography } from '@/app/theme';
+import { xChainMap } from '@/constants/xChains';
+import useWallets from '@/hooks/useWallets';
 import { useCollateralActionHandlers, useDerivedCollateralInfo } from '@/store/collateral/hooks';
+import { XChainId, XToken } from '@/types';
+import { useSwitchChain } from 'wagmi';
 import useLoanWalletServiceHandler from '../../useLoanWalletServiceHandler';
 
 export enum XCollateralAction {

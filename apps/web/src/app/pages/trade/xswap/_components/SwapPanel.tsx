@@ -23,7 +23,7 @@ import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapS
 import { Field } from '@/store/swap/reducer';
 import { formatPercent, maxAmountSpend } from '@/utils';
 
-import useWallets, { useSignedInWallets } from '../../bridge/_hooks/useWallets';
+import useWallets, { useSignedInWallets } from '@/hooks/useWallets';
 import { MODAL_ID, modalActions } from '../../bridge/_zustand/useModalStore';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import SwapModal from './SwapModal';

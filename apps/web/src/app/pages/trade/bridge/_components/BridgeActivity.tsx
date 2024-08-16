@@ -5,8 +5,8 @@ import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
 import { Typography } from '@/app/theme';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import Spinner from '../../../../components/Spinner';
-import { useSignedInWallets } from '../_hooks/useWallets';
 import { useXCallStats } from '../_hooks/useXCallStats';
 import { useXMessageStore } from '../_zustand/useXMessageStore';
 import { useXTransactionStore } from '../_zustand/useXTransactionStore';

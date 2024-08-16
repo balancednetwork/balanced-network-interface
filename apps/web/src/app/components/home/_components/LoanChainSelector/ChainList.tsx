@@ -3,22 +3,22 @@ import React, { useState } from 'react';
 import { Box } from 'rebass';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
-import { xChainMap, xChains } from '@/constants/xChains';
+import { UnderlineText } from '@/app/components/DropdownText';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
-import { Trans, t } from '@lingui/macro';
-import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from './styledComponents';
 import { HeaderText } from '@/app/components/Wallet/styledComponents';
 import { Typography } from '@/app/theme';
-import { UnderlineText } from '@/app/components/DropdownText';
-import { useWalletModal } from '@/store/application/hooks';
-import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { isMobile } from 'react-device-detect';
+import { xChainMap, xChains } from '@/constants/xChains';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
+import { useWalletModal } from '@/store/application/hooks';
 import { useDerivedCollateralInfo } from '@/store/collateral/hooks';
-import { formatBalance } from '@/utils/formatter';
+import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { XChain, XChainId, XWalletType } from '@/types';
+import { formatBalance } from '@/utils/formatter';
+import { Trans, t } from '@lingui/macro';
+import { isMobile } from 'react-device-detect';
+import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from './styledComponents';
 
 type ChainListProps = {
   chainId: XChainId;

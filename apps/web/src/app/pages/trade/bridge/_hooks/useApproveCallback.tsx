@@ -1,33 +1,28 @@
 import React, { useMemo, useState, useCallback } from 'react';
 
 import { Currency, Fraction } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { t } from '@lingui/macro';
+import { useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
+import { Abi, Address, WriteContractReturnType, erc20Abi, getContract } from 'viem';
+import { usePublicClient, useWalletClient } from 'wagmi';
 
+import { openToast } from '@/btp/src/connectors/transactionToast';
+import { NATIVE_ADDRESS } from '@/constants/index';
+import { archway, xChainMap } from '@/constants/xChains';
+import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
+import { getFeeParam, isDenomAsset } from '@/packages/archway/utils';
+import { TransactionStatus } from '@/store/transactions/hooks';
 import {
   useAddTransactionResult,
   useArchwayTransactionsState,
   useInitTransaction,
 } from '@/store/transactionsCrosschain/hooks';
-
-import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
-import { getFeeParam, isDenomAsset } from '@/packages/archway/utils';
-
-import { Token, CurrencyAmount } from '@balancednetwork/sdk-core';
-
-import { useQuery } from '@tanstack/react-query';
-import { usePublicClient, useWalletClient } from 'wagmi';
-import { erc20Abi, Address, getContract, Abi, WriteContractReturnType } from 'viem';
-
 import { XToken } from '@/types';
-import { archway, xChainMap } from '@/constants/xChains';
-
-import { NATIVE_ADDRESS } from '@/constants/index';
-import useXWallet from './useXWallet';
-import { openToast } from '@/btp/src/connectors/transactionToast';
-import { TransactionStatus } from '@/store/transactions/hooks';
-import { xServiceActions } from '../_zustand/useXServiceStore';
 import { transactionActions } from '../_zustand/useTransactionStore';
+import { xServiceActions } from '../_zustand/useXServiceStore';
+import useXWallet from './useXWallet';
 
 export const FAST_INTERVAL = 10000;
 

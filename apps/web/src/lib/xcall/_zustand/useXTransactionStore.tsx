@@ -5,9 +5,10 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
+import { swapMessage } from '@/app/pages/trade/supply/_components/utils';
 import { XChainId } from '@/types';
 import { formatBigNumber } from '@/utils';
-import { swapMessage } from '../../supply/_components/utils';
+import { MODAL_ID, modalActions } from '../../../hooks/useModalStore';
 import {
   XMessage,
   XMessageStatus,
@@ -16,7 +17,6 @@ import {
   XTransactionStatus,
   XTransactionType,
 } from './types';
-import { MODAL_ID, modalActions } from './useModalStore';
 import { transactionActions } from './useTransactionStore';
 import { XMessageUpdater, useXMessageStore, xMessageActions } from './useXMessageStore';
 import { xServiceActions } from './useXServiceStore';

@@ -3,13 +3,13 @@ import { Percent } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
 import { Address, PublicClient, WalletClient, WriteContractParameters, bytesToHex, toHex } from 'viem';
 
-import { getRlpEncodedSwapData, toICONDecimals } from '@/app/pages/trade/bridge/utils';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { NATIVE_ADDRESS } from '@/constants/index';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/constants/xChains';
 import { XChainId } from '@/types';
 import { uintToBytes } from '@/utils';
 import { XTransactionInput, XTransactionType } from '../_zustand/types';
+import { getRlpEncodedSwapData, toICONDecimals } from '../utils';
 import { EvmPublicXService } from './EvmPublicXService';
 import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
 import { bnUSDContractAbi } from './abis/bnUSDContractAbi';

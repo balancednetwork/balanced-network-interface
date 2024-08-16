@@ -1,9 +1,9 @@
+import useEVMReact from '@/lib/xcall/_hooks/useEVMReact';
 import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
 import { useIconReact } from '@/packages/icon-react';
 import { XChainId, XWalletType } from '@/types';
 import { useMemo } from 'react';
-import useEVMReact from '../app/pages/trade/bridge/_hooks/useEVMReact';
 
 const useWallets = (): {
   [key in XWalletType]: { account: string | undefined | null; xChainId: XChainId | undefined; disconnect: () => void };

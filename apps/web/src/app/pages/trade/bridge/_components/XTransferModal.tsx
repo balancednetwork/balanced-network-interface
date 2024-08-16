@@ -7,29 +7,29 @@ import styled from 'styled-components';
 import { useSwitchChain } from 'wagmi';
 
 import { Button, TextButton } from '@/app/components/Button';
+import { StyledButton } from '@/app/components/Button/StyledButton';
 import Modal from '@/app/components/Modal';
 import { ModalContentWrapper } from '@/app/components/ModalContent';
 import Spinner from '@/app/components/Spinner';
-import { ApprovalState, useApproveCallback } from '@/app/pages/trade/bridge/_hooks/useApproveCallback';
-import { StyledButton as XCallButton } from '@/app/pages/trade/xswap/_components/shared';
+import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
 import { xChainMap } from '@/constants/xChains';
+import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
 import useWallets from '@/hooks/useWallets';
+import { ApprovalState, useApproveCallback } from '@/lib/xcall/_hooks/useApproveCallback';
+import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
+import useXCallGasChecker from '@/lib/xcall/_hooks/useXCallGasChecker';
+import { XTransactionInput, XTransactionType } from '@/lib/xcall/_zustand/types';
+import { useXMessageStore } from '@/lib/xcall/_zustand/useXMessageStore';
+import { useCreateWalletXService } from '@/lib/xcall/_zustand/useXServiceStore';
+import { useXTransactionStore, xTransactionActions } from '@/lib/xcall/_zustand/useXTransactionStore';
 import { useShouldLedgerSign } from '@/store/application/hooks';
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from '@/store/bridge/hooks';
 import { formatBigNumber } from '@/utils';
 import { getNetworkDisplayName } from '@/utils/xTokens';
-import useXCallFee from '../_hooks/useXCallFee';
-import useXCallGasChecker from '../_hooks/useXCallGasChecker';
-import { XTransactionInput, XTransactionType } from '../_zustand/types';
-import { MODAL_ID, modalActions, useModalStore } from '../_zustand/useModalStore';
-import { useXMessageStore } from '../_zustand/useXMessageStore';
-import { useCreateWalletXService } from '../_zustand/useXServiceStore';
-import { useXTransactionStore, xTransactionActions } from '../_zustand/useXTransactionStore';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
-import XTransactionState from './XTransactionState';
 
-const StyledXCallButton = styled(XCallButton)`
+const StyledXCallButton = styled(StyledButton)`
   transition: all 0.2s ease;
 
   &.disabled {

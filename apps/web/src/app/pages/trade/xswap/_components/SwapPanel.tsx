@@ -24,7 +24,8 @@ import { Field } from '@/store/swap/reducer';
 import { formatPercent, maxAmountSpend } from '@/utils';
 import { isXToken } from '@/utils/xTokens';
 
-import { MODAL_ID, modalActions } from '../../bridge/_zustand/useModalStore';
+import { AutoColumn } from '@/app/components/Column';
+import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import SwapModal from './SwapModal';
 import XSwapModal from './XSwapModal';
@@ -350,14 +351,4 @@ export default function SwapPanel() {
 
 const FlipButton = styled(Box)`
   cursor: pointer;
-`;
-
-export const AutoColumn = styled(Box)<{
-  gap?: 'sm' | 'md' | 'lg' | string;
-  justify?: 'stretch' | 'center' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'space-between';
-}>`
-  display: grid;
-  grid-auto-rows: auto;
-  grid-row-gap: ${({ gap }) => (gap === 'sm' && '10px') || (gap === 'md' && '15px') || (gap === 'lg' && '25px') || gap};
-  justify-items: ${({ justify }) => justify && justify};
 `;

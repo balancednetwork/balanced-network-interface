@@ -2,7 +2,6 @@ import bnJs from '@/bnJs';
 import { ArchwayClient } from '@archwayhq/arch3.js';
 import { Percent } from '@balancednetwork/sdk-core';
 
-import { getBytesFromString, getRlpEncodedSwapData } from '@/app/pages/trade/bridge/utils';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from '@/constants/tokens1';
 import { archway } from '@/constants/xChains';
@@ -11,6 +10,7 @@ import { getFeeParam, isDenomAsset } from '@/packages/archway/utils';
 import { XChainId, XToken } from '@/types';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
 import { XTransactionInput, XTransactionType } from '../_zustand/types';
+import { getBytesFromString, getRlpEncodedSwapData } from '../utils';
 import { ArchwayPublicXService } from './ArchwayPublicXService';
 import { IWalletXService } from './types';
 

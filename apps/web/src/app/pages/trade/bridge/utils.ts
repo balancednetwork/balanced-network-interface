@@ -9,7 +9,6 @@ import { xChainMap, xChains } from '@/constants/xChains';
 import { xTokenMap } from '@/constants/xTokens';
 import { XChain, XChainId, XToken } from '@/types';
 import { uintToBytes } from '@/utils';
-import { XCallEventType } from './types';
 
 export function getBytesFromNumber(value) {
   const hexString = value.toString(16).padStart(2, '0');
@@ -62,21 +61,6 @@ export function getRlpEncodedSwapData(
 export function getBytesFromString(str: string) {
   return Array.from(Buffer.from(str, 'utf8'));
 }
-
-export function getStringFromBytes(bytes: number[]) {
-  const buffer = Buffer.from(bytes);
-  return buffer.toString('utf8');
-}
-
-//TODO: improve this nonsense
-export const getFollowingEvent = (event: XCallEventType): XCallEventType => {
-  switch (event) {
-    case XCallEventType.CallMessageSent:
-      return XCallEventType.CallMessage;
-    default:
-      return XCallEventType.CallMessage;
-  }
-};
 
 export const getNetworkDisplayName = (chain: XChainId) => {
   return xChainMap[chain].name;

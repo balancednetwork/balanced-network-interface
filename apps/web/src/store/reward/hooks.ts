@@ -12,7 +12,6 @@ import { useTokenPrices } from '@/queries/backendv2';
 import { useBBalnAmount } from '@/store/bbaln/hooks';
 import { useCollateralInputAmountAbsolute } from '@/store/collateral/hooks';
 import { useHasUnclaimedFees } from '@/store/fees/hooks';
-import { WEIGHT_CONST } from '@/store/liveVoting/hooks';
 import { RewardDistribution, RewardDistributionRaw } from '@/store/liveVoting/types';
 import { useLoanInputAmount } from '@/store/loan/hooks';
 import { useOraclePrice } from '@/store/oracle/hooks';
@@ -20,6 +19,8 @@ import { useAllTransactions } from '@/store/transactions/hooks';
 
 import { AppState } from '..';
 import { setReward } from './reducer';
+
+const WEIGHT_CONST = 10 ** 18;
 
 export function useRewards(): AppState['reward'] {
   return useSelector((state: AppState) => state.reward);

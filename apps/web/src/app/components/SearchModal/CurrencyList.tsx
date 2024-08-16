@@ -10,7 +10,6 @@ import styled, { useTheme } from 'styled-components';
 
 import CurrencyLogo from '@/app/components/CurrencyLogo';
 import { DataText, List1, ListItem } from '@/app/components/List';
-import { HeaderText } from '@/app/pages/trade/supply/_components/AllPoolsPanel';
 import { Typography } from '@/app/theme';
 import useArrowControl from '@/hooks/useArrowControl';
 import useKeyPress from '@/hooks/useKeyPress';
@@ -22,6 +21,7 @@ import { useXCurrencyBalance } from '@/store/wallet/hooks';
 import { XChainId } from '@/types';
 import { formatBigNumber, toFraction } from '@/utils';
 import { formatPrice } from '@/utils/formatter';
+import { HeaderText } from '../HeaderText';
 
 const DashGrid = styled(Box)`
   display: grid;

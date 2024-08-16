@@ -3,10 +3,9 @@
  */
 
 import { configureStore } from '@reduxjs/toolkit';
-import { save, load } from 'redux-localstorage-simple';
+import { load, save } from 'redux-localstorage-simple';
 
 import application from './application/reducer';
-import arbitraryCalls from './arbitraryCalls/reducer';
 import bbaln from './bbaln/reducer';
 import bridge from './bridge/reducer';
 import collateral from './collateral/reducer';
@@ -49,7 +48,6 @@ export function configureAppStore() {
       oracle,
       lists,
       liveVoting,
-      arbitraryCalls,
       transactionsCrosschain,
       bridge,
       savings,

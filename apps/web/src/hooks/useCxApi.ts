@@ -1,12 +1,24 @@
 import { CHAIN_INFO } from '@balancednetwork/balanced-js';
-import axios, { AxiosResponse } from 'axios';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import axios, { AxiosResponse } from 'axios';
 
 import { NETWORK_ID } from '@/constants/config';
-import { ArbitraryCallParameterType } from '@/store/arbitraryCalls/reducer';
 
 const RPC_ENDPOINT = CHAIN_INFO[NETWORK_ID].APIEndpoint;
 export const RPC_DEBUG_ENDPOINT = CHAIN_INFO[NETWORK_ID].debugAPIEndpoint;
+
+type ArbitraryCallParameterType =
+  | 'Address'
+  | 'bytes'
+  | 'str'
+  | 'int'
+  | 'bool'
+  | 'struct'
+  | '[]Address'
+  | '[]str'
+  | '[]int'
+  | '[]bool'
+  | '[]struct';
 
 const API_PARAMS = {
   id: new Date().getTime(),

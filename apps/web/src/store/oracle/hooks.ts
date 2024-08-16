@@ -1,30 +1,21 @@
 import { useMemo } from 'react';
 
-import { addresses, CallData } from '@balancednetwork/balanced-js';
+import { CallData, addresses } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from '@/bnJs';
 import { NETWORK_ID } from '@/constants/config';
 import useInterval from '@/hooks/useInterval';
-import { useCollateralType, useSupportedCollateralTokens } from '@/store/collateral/hooks';
+import { useSupportedCollateralTokens } from '@/store/collateral/hooks';
 import { formatUnits } from '@/utils';
 
+import { ORACLE_PRICED_TOKENS } from '@/constants/tokens';
 import { AppState } from '..';
 import { changeOraclePrice } from './reducer';
-import { ORACLE_PRICED_TOKENS } from '@/constants/tokens';
 
 export function useOraclePrices(): AppState['oracle']['prices'] {
   return useSelector((state: AppState) => state.oracle.prices);
-}
-
-export function useOraclePrice(): BigNumber | undefined {
-  const oraclePrices = useOraclePrices();
-  const collateralType = useCollateralType();
-
-  return useMemo(() => {
-    if (oraclePrices) return oraclePrices[collateralType];
-  }, [oraclePrices, collateralType]);
 }
 
 // fetch price data every 5 secs

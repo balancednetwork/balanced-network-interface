@@ -2,17 +2,10 @@ import React from 'react';
 
 import { CallData, addresses } from '@balancednetwork/balanced-js';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
-import { useSelector } from 'react-redux';
 
 import bnJs from '@/bnJs';
 import { NETWORK_ID } from '@/constants/config';
 import { formatUnits } from '@/utils';
-
-import { AppState } from '../index';
-
-export function useCollateralType() {
-  return useSelector((state: AppState) => state.collateral.collateralType);
-}
 
 export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]: string }> {
   return useQuery({

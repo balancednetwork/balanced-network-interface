@@ -130,10 +130,10 @@ export function useArchwayBalances(
   });
 }
 
-import useXTokens from '@/app/pages/trade/bridge/_hooks/useXTokens';
 import { viemClients } from '@/config/wagmi';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from '@/constants/xChains';
 import { useSignedInWallets } from '@/hooks/useWallets';
+import useXTokens from '@/hooks/useXTokens';
 import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
 import { useRatesWithOracle } from '@/queries/reward';

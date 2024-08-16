@@ -14,9 +14,9 @@ import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { XChainId, XToken } from '@/types';
 import { parseUnits } from '@/utils';
 
-import { useAssetManagerTokens } from '@/app/pages/trade/bridge/_hooks/useAssetManagerTokens';
 import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
 import { xChainMap } from '@/constants/xChains';
+import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import useWallets from '@/hooks/useWallets';
 import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
 import BigNumber from 'bignumber.js';

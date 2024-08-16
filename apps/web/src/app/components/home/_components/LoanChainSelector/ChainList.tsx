@@ -4,14 +4,13 @@ import { Box } from 'rebass';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
 import { XChainId, XChain, XWalletType } from '@/app/pages/trade/bridge/types';
-import { xChainMap, xChains } from '@/app/pages/trade/bridge/_config/xChains';
+import { xChainMap, xChains, xWalletTypeModalIdMap } from '@/app/pages/trade/bridge/_config/xChains';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { Trans, t } from '@lingui/macro';
 import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from './styledComponents';
 import { HeaderText } from '@/app/components/Wallet/styledComponents';
 import { Typography } from '@/app/theme';
 import { UnderlineText } from '@/app/components/DropdownText';
-import { useWalletModal } from '@/store/application/hooks';
 import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { isMobile } from 'react-device-detect';
@@ -19,7 +18,7 @@ import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
 import { useDerivedCollateralInfo } from '@/store/collateral/hooks';
 import { formatBalance } from '@/utils/formatter';
-import { MODAL_ID, modalActions } from '@/app/pages/trade/bridge/_zustand/useModalStore';
+import { modalActions } from '@/app/pages/trade/bridge/_zustand/useModalStore';
 
 type ChainListProps = {
   chainId: XChainId;
@@ -40,7 +39,6 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const isSignedIn = signedInWallets.some(wallet => wallet.xChainId === chain.xChainId);
   const { connectToWallet: connectKeplr } = useArchwayContext();
   const { connectToWallet: connectToHavah } = useHavahContext();
-  const [, setWalletModal] = useWalletModal();
   const crossChainBalances = useCrossChainWalletBalances();
   const { sourceChain: collateralChain } = useDerivedCollateralInfo();
 
@@ -52,10 +50,8 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
       connectKeplr();
     } else if (xChain.xWalletType === XWalletType.HAVAH) {
       connectToHavah();
-    } else if (chain.xWalletType === XWalletType.INJECTIVE) {
-      modalActions.openModal(MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL);
     } else {
-      setWalletModal(xChain.xWalletType);
+      modalActions.openModal(xWalletTypeModalIdMap[xChain.xWalletType]);
     }
   };
 

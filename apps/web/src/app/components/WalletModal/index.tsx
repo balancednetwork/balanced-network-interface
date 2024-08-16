@@ -22,7 +22,7 @@ import ETHIcon from '@/assets/icons/chains/eth.svg';
 
 import { LOCALE_LABEL, SupportedLocale, SUPPORTED_LOCALES } from '@/constants/locales';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
-import { useWalletModalToggle, useModalOpen, useWalletModal } from '@/store/application/hooks';
+import { useWalletModalToggle, useModalOpen } from '@/store/application/hooks';
 import { ApplicationModal } from '@/store/application/reducer';
 
 import { DropdownPopper } from '../Popover';
@@ -57,7 +57,6 @@ const presenceVariants = {
 export default function WalletModal() {
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
   const toggleWalletModal = useWalletModalToggle();
-  const [, setWalletModal] = useWalletModal();
   const { connectToWallet: connectToKeplr } = useArchwayContext();
   const { connectToWallet: connectToHavah } = useHavahContext();
   const signedInWallets = useSignedInWallets();
@@ -98,7 +97,7 @@ export default function WalletModal() {
     const iconConfig = {
       name: 'ICON',
       logo: <IconWalletIcon width="32" />,
-      connect: () => setWalletModal(XWalletType.ICON),
+      connect: () => modalActions.openModal(MODAL_ID.ICON_WALLET_OPTIONS_MODAL),
       disconnect: wallets[XWalletType.ICON].disconnect,
       description: t`Borrow, swap, & transfer cross-chain. Supply liquidity. Vote.`,
       keyWords: ['iconex', 'hana'],
@@ -112,7 +111,7 @@ export default function WalletModal() {
         {
           name: 'Ethereum & EVM ecosystem',
           logo: <ETHIcon width="32" />,
-          connect: () => setWalletModal(XWalletType.EVM),
+          connect: () => modalActions.openModal(MODAL_ID.EVM_WALLET_OPTIONS_MODAL),
           disconnect: wallets[XWalletType.EVM].disconnect,
           description: t`Borrow, swap, & transfer cross-chain.`,
           keyWords: [
@@ -166,7 +165,7 @@ export default function WalletModal() {
         },
       ].sort((a, b) => a.name.localeCompare(b.name)),
     ];
-  }, [setWalletModal, connectToKeplr, wallets, switchChain, connectToHavah]);
+  }, [connectToKeplr, wallets, switchChain, connectToHavah]);
 
   const filteredWallets = React.useMemo(() => {
     return [...walletConfig].filter(wallet => {

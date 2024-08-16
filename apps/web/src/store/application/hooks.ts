@@ -47,26 +47,6 @@ export function useWalletModalToggle(): () => void {
 }
 
 //////////////////chain wallet ///////////////////////////////////
-
-export function useWalletModal(): [XWalletType | null, (w: XWalletType | null) => void, () => void] {
-  const dispatch = useDispatch<AppDispatch>();
-
-  const setOpen = useCallback(
-    (walletType: XWalletType | null) => {
-      dispatch(setOpenWalletModal(walletType));
-    },
-    [dispatch],
-  );
-
-  const open = useSelector((state: AppState) => state.application.openWalletModal);
-
-  const onDismiss = useCallback(() => {
-    setOpen(null);
-  }, [setOpen]);
-
-  return useMemo(() => [open, setOpen, onDismiss], [open, setOpen, onDismiss]);
-}
-
 export function useTransferAssetsModalToggle(): () => void {
   return useToggleModal(ApplicationModal.TRANSFER_ASSETS);
 }

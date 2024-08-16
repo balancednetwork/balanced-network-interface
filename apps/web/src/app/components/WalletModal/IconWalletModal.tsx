@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { BalancedJs, getLedgerAddressPath, LEDGER_BASE_PATH } from '@balancednetwork/balanced-js';
 import * as HwUtils from '@balancednetwork/hw-app-icx/lib/utils';
@@ -23,13 +23,12 @@ import {
   useWalletModalToggle,
   useCurrentLedgerAddressPage,
   useChangeCurrentLedgerAddressPage,
-  useWalletModal,
 } from '@/store/application/hooks';
 
 import { VerticalDivider } from '../Divider';
 import { ModalContentWrapper } from '../ModalContent';
 import { WalletOption, UnbreakableText } from './shared';
-import { XWalletType } from '@/app/pages/trade/bridge/types';
+import { MODAL_ID, modalActions, useModalStore } from '@/app/pages/trade/bridge/_zustand/useModalStore';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 
@@ -78,11 +77,15 @@ const LedgerAddressList = styled(Modal)`
   width: 500px;
 `;
 
-export const IconWalletModal = () => {
+export const IconWalletModal = ({ id = MODAL_ID.ICON_WALLET_OPTIONS_MODAL }) => {
+  const open = useModalStore(state => state.modals?.[id]);
+  const onDismiss = useCallback(() => {
+    modalActions.closeModal(id);
+  }, [id]);
+
   const upExtraSmall = useMedia('(min-width: 420px)');
   const upSuperExtraSmall = useMedia('(min-width: 364px)');
   const toggleWalletModal = useWalletModalToggle();
-  const [walletModal, , onDismiss] = useWalletModal();
   const [showLedgerAddress, updateShowLedgerAddress] = useState(false);
   const [addressList, updateAddressList] = useState<any>([]);
   const [isLedgerLoading, setLedgerLoading] = useState(false);
@@ -298,7 +301,7 @@ export const IconWalletModal = () => {
 
   return (
     <>
-      <Modal isOpen={walletModal === XWalletType.ICON} onDismiss={onDismiss} maxWidth={360}>
+      <Modal isOpen={!!open} onDismiss={onDismiss} maxWidth={360}>
         <ModalContentWrapper>
           <Typography textAlign="center" margin={'0 0 25px'}>
             Connect with:

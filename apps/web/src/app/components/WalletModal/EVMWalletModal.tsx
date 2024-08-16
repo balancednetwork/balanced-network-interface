@@ -1,25 +1,27 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { Flex } from 'rebass/styled-components';
 
 import Modal from '@/app/components/Modal';
 import { Typography } from '@/app/theme';
 import WalletConnectIcon from '@/assets/icons/wallets/walletconnect.svg?inline';
-import { useWalletModal } from '@/store/application/hooks';
 
 import { ModalContentWrapper } from '../ModalContent';
 
 import { Connector, useConnect, useConnectors } from 'wagmi';
 import { WalletOption, UnbreakableText } from './shared';
-import { XWalletType } from '@/app/pages/trade/bridge/types';
 import { UnderlineText } from '../DropdownText';
+import { MODAL_ID, modalActions, useModalStore } from '@/app/pages/trade/bridge/_zustand/useModalStore';
 
 const icons = {
   walletConnect: WalletConnectIcon,
 };
 
-export const EVMWalletModal = () => {
-  const [walletModal, , onDismiss] = useWalletModal();
+export const EVMWalletModal = ({ id = MODAL_ID.EVM_WALLET_OPTIONS_MODAL }) => {
+  const open = useModalStore(state => state.modals?.[id]);
+  const onDismiss = useCallback(() => {
+    modalActions.closeModal(id);
+  }, [id]);
 
   const connectors = useConnectors();
 
@@ -32,7 +34,7 @@ export const EVMWalletModal = () => {
 
   return (
     <>
-      <Modal isOpen={walletModal === XWalletType.EVM} onDismiss={onDismiss} maxWidth={360}>
+      <Modal isOpen={!!open} onDismiss={onDismiss} maxWidth={360}>
         <ModalContentWrapper>
           {connectors.length > 0 ? (
             <>

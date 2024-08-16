@@ -22,12 +22,7 @@ import bnJs from '@/bnJs';
 import { NETWORK_ID } from '@/constants/config';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
 import useWidth from '@/hooks/useWidth';
-import {
-  useChangeShouldLedgerSign,
-  useICXUnstakingTime,
-  useShouldLedgerSign,
-  useWalletModal,
-} from '@/store/application/hooks';
+import { useChangeShouldLedgerSign, useICXUnstakingTime, useShouldLedgerSign } from '@/store/application/hooks';
 import { Field } from '@/store/collateral/reducer';
 import {
   useCollateralState,
@@ -49,7 +44,7 @@ import XCollateralModal, { XCollateralAction } from './_components/xCollateralMo
 import { UnderlineText } from '@/app/components/DropdownText';
 import CollateralChainSelector from './_components/CollateralChainSelector';
 import { MODAL_ID, modalActions } from '@/app/pages/trade/bridge/_zustand/useModalStore';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { xChainMap, xWalletTypeModalIdMap } from '@/app/pages/trade/bridge/_config/xChains';
 import { XWalletType } from '@/app/pages/trade/bridge/types';
 
 export const PanelInfoWrap = styled(Flex)`
@@ -373,13 +368,10 @@ const CollateralPanel = () => {
   const [ref, width] = useWidth();
   const [underPanelRef, underPanelWidth] = useWidth();
 
-  const [, setWalletModal] = useWalletModal();
   const handleConnect = () => {
     const chain = xChainMap[sourceChain];
-    if (chain.xWalletType === XWalletType.INJECTIVE) {
-      modalActions.openModal(MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL);
-    } else if (chain.xWalletType !== XWalletType.COSMOS) {
-      setWalletModal(chain.xWalletType);
+    if (chain.xWalletType !== XWalletType.COSMOS) {
+      modalActions.openModal(xWalletTypeModalIdMap[chain.xWalletType]);
     }
   };
 

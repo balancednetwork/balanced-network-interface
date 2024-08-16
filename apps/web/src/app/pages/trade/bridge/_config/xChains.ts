@@ -1,3 +1,4 @@
+import { MODAL_ID } from '../_zustand/useModalStore';
 import { XChainId, XChain, XWalletType, BridgePair, MessagingProtocolId } from '../types';
 
 export const archway: XChain = {
@@ -328,4 +329,16 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   '0xa86a.avax': ['cx59d899fce52cadd1feb5128ff5e6672f03943eec', 'cx917f88460d4ebec1fd656d4dbe51131a37d16837'],
   '0x100.icon': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
   'injective-1': ['cx6f86ed848f9f0d03ba1220811d95d864c72da88c'],
+};
+
+export const xWalletTypeModalIdMap: { [key in XWalletType]: MODAL_ID } = {
+  [XWalletType.ICON]: MODAL_ID.ICON_WALLET_OPTIONS_MODAL,
+  [XWalletType.COSMOS]: MODAL_ID.COSMOS_WALLET_OPTIONS_MODAL,
+  [XWalletType.EVM]: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,
+  [XWalletType.EVM_ARBITRUM]: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,
+  [XWalletType.EVM_AVALANCHE]: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,
+  [XWalletType.EVM_BSC]: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,
+  [XWalletType.EVM_BASE]: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,
+  [XWalletType.HAVAH]: MODAL_ID.HAVAH_WALLET_OPTIONS_MODAL,
+  [XWalletType.INJECTIVE]: MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL,
 };

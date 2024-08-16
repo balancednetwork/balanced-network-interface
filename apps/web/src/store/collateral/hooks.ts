@@ -374,16 +374,3 @@ export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]
     },
   });
 }
-
-export function useIsHandlingICX() {
-  const collateralType = useCollateralType();
-  const icxDisplayType = useIcxDisplayType();
-
-  return collateralType === 'sICX' && icxDisplayType === 'ICX';
-}
-
-export function useCollateralDecimalPlaces() {
-  const collateralType = useCollateralType();
-  const rates = useRatesWithOracle();
-  return getBalanceDecimals(rates?.[collateralType].toFixed());
-}

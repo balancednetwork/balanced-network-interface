@@ -375,56 +375,6 @@ export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]
   });
 }
 
-export function useDepositedCollateral() {
-  const collateralType = useCollateralType();
-  const icxDisplayType = useIcxDisplayType();
-  const collateralAmounts = useCollateralAmounts();
-  const ratio = useRatio();
-
-  return useMemo(() => {
-    if (collateralAmounts[collateralType]) {
-      if (collateralType !== 'sICX') {
-        return collateralAmounts[collateralType];
-      } else {
-        return icxDisplayType === 'sICX'
-          ? collateralAmounts[collateralType]
-          : collateralAmounts[collateralType] && ratio && collateralAmounts[collateralType].times(ratio.sICXICXratio);
-      }
-    } else {
-      return new BigNumber(0);
-    }
-  }, [collateralType, collateralAmounts, ratio, icxDisplayType]);
-}
-
-export function useAvailableCollateral() {
-  const sourceChain = useCollateralXChain();
-  const crossChainWallet = useCrossChainWalletBalances();
-
-  const collateralType = useCollateralType();
-
-  const collateralCurrency = React.useMemo(() => {
-    const xToken = xTokenMap[sourceChain].find(t => t.symbol === collateralType);
-    return xToken || SUPPORTED_TOKENS_LIST.find(t => t.symbol === collateralType);
-  }, [collateralType, sourceChain]);
-
-  const icxDisplayType = useIcxDisplayType();
-  const shouldGetIcx =
-    collateralType === 'sICX' && icxDisplayType === 'ICX' && (sourceChain === '0x1.icon' || sourceChain === '0x2.icon');
-  const icxAddress = bnJs.ICX.address;
-
-  const currencyAmount: CurrencyAmount<Currency> | undefined = React.useMemo(() => {
-    return shouldGetIcx
-      ? crossChainWallet[sourceChain]?.[icxAddress]
-      : collateralCurrency && crossChainWallet[sourceChain]?.[collateralCurrency?.wrapped.address];
-  }, [collateralCurrency, crossChainWallet, sourceChain, icxAddress, shouldGetIcx]);
-
-  const maxSpent = maxAmountSpend(currencyAmount, sourceChain);
-
-  return useMemo(() => {
-    return new BigNumber(maxSpent?.toFixed() || 0);
-  }, [maxSpent]);
-}
-
 export function useIsHandlingICX() {
   const collateralType = useCollateralType();
   const icxDisplayType = useIcxDisplayType();

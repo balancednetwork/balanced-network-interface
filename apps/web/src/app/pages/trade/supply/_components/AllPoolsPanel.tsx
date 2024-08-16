@@ -9,7 +9,6 @@ import PoolLogo from '@/app/components/PoolLogo';
 import { MouseoverTooltip } from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import QuestionIcon from '@/assets/icons/question.svg';
-import { PairInfo } from '@/constants/pairs';
 import useSort from '@/hooks/useSort';
 import { MIN_LIQUIDITY_TO_INCLUDE, PairData, useAllPairsById } from '@/queries/backendv2';
 import { Field } from '@/store/mint/reducer';
@@ -18,6 +17,7 @@ import { getFormattedNumber } from '@/utils/formatter';
 
 import Skeleton from '@/app/components/Skeleton';
 import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
+import { PairInfo } from '@/types';
 
 const List = styled(Box)`
   -webkit-overflow-scrolling: touch;

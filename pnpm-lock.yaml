@@ -170,9 +170,6 @@ importers:
       immer:
         specifier: 10.1.1
         version: 10.1.1
-      jotai:
-        specifier: 2.8.0
-        version: 2.8.0(@types/react@18.2.67)(react@18.2.0)
       lightweight-charts:
         specifier: 3.2.0
         version: 3.2.0
@@ -182,9 +179,6 @@ importers:
       nouislider:
         specifier: 14.6.4
         version: 14.6.4
-      nouislider-react:
-        specifier: 3.3.9
-        version: 3.3.9(nouislider@14.6.4)(react@18.2.0)
       numbro:
         specifier: ^2.5.0
         version: 2.5.0
@@ -5768,18 +5762,6 @@ packages:
   joi@17.12.3:
     resolution: {integrity: sha512-2RRziagf555owrm9IRVtdKynOBeITiDpuZqIpgwqXShPncPKNiRQoiGsl/T8SQdq+8ugRzH2LqY67irr2y/d+g==}
 
-  jotai@2.8.0:
-    resolution: {integrity: sha512-yZNMC36FdLOksOr8qga0yLf14miCJlEThlp5DeFJNnqzm2+ZG7wLcJzoOyij5K6U6Xlc5ljQqPDlJRgqW0Y18g==}
-    engines: {node: '>=12.20.0'}
-    peerDependencies:
-      '@types/react': '>=17.0.0'
-      react: '>=17.0.0'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      react:
-        optional: true
-
   joycon@3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
     engines: {node: '>=10'}
@@ -6433,12 +6415,6 @@ packages:
   normalize-url@6.1.0:
     resolution: {integrity: sha512-DlL+XwOy3NxAQ8xuC0okPgK46iuVNAK01YN7RueYBqqFeGsBjV9XmCAzAdgt+667bCl5kPh9EqKKDwnaPG1I7A==}
     engines: {node: '>=10'}
-
-  nouislider-react@3.3.9:
-    resolution: {integrity: sha512-KAguGDqUtsUFhIPAwva3+Mt8EVYKOtDgqM5Ghiy9bmavA962a6nPV6wzmUbMFQ+0j8lO653eyKzF/7970YuqBA==}
-    peerDependencies:
-      nouislider: '>= 11.x'
-      react: '>= 16.8.x'
 
   nouislider@14.6.4:
     resolution: {integrity: sha512-PVCGYl+aC7/nVEbW61ypJWfuW3UCpvctz/luxpt4byxxli1FFyjBX9NIiy4Yak9AaO6a5BkPGfFYMCW4eg3eeQ==}
@@ -15597,11 +15573,6 @@ snapshots:
       '@sideway/formula': 3.0.1
       '@sideway/pinpoint': 2.0.0
 
-  jotai@2.8.0(@types/react@18.2.67)(react@18.2.0):
-    optionalDependencies:
-      '@types/react': 18.2.67
-      react: 18.2.0
-
   joycon@3.1.1: {}
 
   js-cookie@2.2.1: {}
@@ -16421,11 +16392,6 @@ snapshots:
   normalize-path@3.0.0: {}
 
   normalize-url@6.1.0: {}
-
-  nouislider-react@3.3.9(nouislider@14.6.4)(react@18.2.0):
-    dependencies:
-      nouislider: 14.6.4
-      react: 18.2.0
 
   nouislider@14.6.4: {}
 

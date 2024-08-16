@@ -18,7 +18,6 @@ const TradePageLayout = lazyLoad(
   () => import('./pages/trade/layout'),
   module => module.TradePageLayout,
 );
-import { LegacyBridge } from './pages/legacy-bridge/page';
 import { BridgePage } from './pages/trade/bridge/page';
 import { SupplyPage } from './pages/trade/supply/page';
 import { TradePage } from './pages/trade/xswap/page';
@@ -85,8 +84,6 @@ export default function RootRoutes() {
           <Route path="bridge/" element={<BridgePage />} />
         </Route>
 
-        <Route path="legacy-bridge" element={<LegacyBridge />} />
-        <Route path="airdrip" element={<Redirect to="https://balanced.network/" />} />
         <Route path="*" element={<Redirect to="https://balanced.network/404" />} />
       </Route>
     </Routes>

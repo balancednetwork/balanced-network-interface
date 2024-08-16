@@ -95,9 +95,6 @@ importers:
       '@popperjs/core':
         specifier: 2.8.4
         version: 2.8.4
-      '@reach/accordion':
-        specifier: 0.18.0
-        version: 0.18.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@reach/dialog':
         specifier: 0.18.0
         version: 0.18.0(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -113,12 +110,6 @@ importers:
       '@rematch/core':
         specifier: 2.2.0
         version: 2.2.0(redux@5.0.1)
-      '@rematch/loading':
-        specifier: 2.1.2
-        version: 2.1.2(@rematch/core@2.2.0(redux@5.0.1))
-      '@rematch/select':
-        specifier: 3.1.2
-        version: 3.1.2(@rematch/core@2.2.0(redux@5.0.1))(redux@5.0.1)
       '@tanstack/react-query':
         specifier: 5.29.2
         version: 5.29.2(react@18.2.0)
@@ -2416,12 +2407,6 @@ packages:
   '@protobufjs/utf8@1.1.0':
     resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
 
-  '@reach/accordion@0.18.0':
-    resolution: {integrity: sha512-jOQ1jj0Oc4yYu58R7WzSCkDSNO8kpy8ovQTjKk0Bo3pbmmkX7QQq292TTl8dMz0RXGe0pmLViubRsD0GkrBFIA==}
-    peerDependencies:
-      react: ^16.8.0 || 17.x
-      react-dom: ^16.8.0 || 17.x
-
   '@reach/auto-id@0.18.0':
     resolution: {integrity: sha512-XwY1IwhM7mkHZFghhjiqjQ6dstbOdpbFLdggeke75u8/8icT8uEHLbovFUgzKjy9qPvYwZIB87rLiR8WdtOXCg==}
     peerDependencies:
@@ -2576,17 +2561,6 @@ packages:
     resolution: {integrity: sha512-Sj3nC/2X+bOBZeOf4jdJ00nhCcx9wLbVK9SOs6eFR4Y1qKXqRY0hGigbQgfTpCdjRFlwTHHfN3m41MlNvMhDgw==}
     engines: {node: '>=10'}
     peerDependencies:
-      redux: '>=4'
-
-  '@rematch/loading@2.1.2':
-    resolution: {integrity: sha512-3fWUvWkIxP+BEi2LCKYKaUkMFCT0MDcN1xQD19tPNufMry7skqybahqm9/ugs9wIji1n3ObF7yHkrb01E+N3Tw==}
-    peerDependencies:
-      '@rematch/core': '>=2'
-
-  '@rematch/select@3.1.2':
-    resolution: {integrity: sha512-ie1+P/xalAzVge68k4bfBIj5v1bQA2wuylx58vBPGnc+GLis8aUDmZfotndMRMVAGNnpg+noo/D0TvZaQmA2wQ==}
-    peerDependencies:
-      '@rematch/core': '>=2'
       redux: '>=4'
 
   '@remix-run/router@1.15.3':
@@ -7478,9 +7452,6 @@ packages:
   require-main-filename@2.0.0:
     resolution: {integrity: sha512-NKN5kMDylKuldxYLSUfrbo5Tuzh4hd+2E8NPPX02mZtn1VuREQToYe/ZdlJy+J3uCpfaiGF05e7B8W0iXbQHmg==}
 
-  reselect@4.1.8:
-    resolution: {integrity: sha512-ab9EmR80F/zQTMNeneUr4cv+jSwPJgIlvEmVwLerwrWVbpLlBuls9XHzIeTFy4cegU2NHBp3va0LKOzU5qFEYQ==}
-
   reselect@5.1.0:
     resolution: {integrity: sha512-aw7jcGLDpSgNDyWBQLv2cedml85qd95/iszJjN988zX1t7AVRJi19d9kto5+W7oCfQ94gyo40dVbT6g2k4/kXg==}
 
@@ -11403,15 +11374,6 @@ snapshots:
 
   '@protobufjs/utf8@1.1.0': {}
 
-  '@reach/accordion@0.18.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@reach/auto-id': 0.18.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@reach/descendants': 0.18.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@reach/polymorphic': 0.18.0(react@18.2.0)
-      '@reach/utils': 0.18.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-
   '@reach/auto-id@0.18.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       '@reach/utils': 0.18.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -11753,16 +11715,6 @@ snapshots:
   '@rematch/core@2.2.0(redux@5.0.1)':
     dependencies:
       redux: 5.0.1
-
-  '@rematch/loading@2.1.2(@rematch/core@2.2.0(redux@5.0.1))':
-    dependencies:
-      '@rematch/core': 2.2.0(redux@5.0.1)
-
-  '@rematch/select@3.1.2(@rematch/core@2.2.0(redux@5.0.1))(redux@5.0.1)':
-    dependencies:
-      '@rematch/core': 2.2.0(redux@5.0.1)
-      redux: 5.0.1
-      reselect: 4.1.8
 
   '@remix-run/router@1.15.3': {}
 
@@ -17617,8 +17569,6 @@ snapshots:
   require-from-string@2.0.2: {}
 
   require-main-filename@2.0.0: {}
-
-  reselect@4.1.8: {}
 
   reselect@5.1.0: {}
 

@@ -61,7 +61,6 @@ export const MaxUint256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffff
 
 export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spender?: string) => {
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined;
-  // const pendingApproval = useHasPendingApproval(token?.address, spender);
   const [isPendingError, setIsPendingError] = useState<boolean>(false);
 
   const [pending, setPending] = useState<boolean>(false);
@@ -84,7 +83,6 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
 
   // !TODO: temporary solution. revisit it later
   // const [hash, setHash] = useState<string>();
-  // const { data } = useWaitForTransactionReceipt({ hash: hash as `0x${string}` | undefined });
   // const pendingApproval = hash ? !data : false;
   // const pendingApproval = hash ? !data : false;
 

@@ -60,6 +60,7 @@ export const formatDate = (date: Date | undefined, fullMonth?: boolean) =>
     : '';
 
 export const getClosestUnixWeekStart = (timestamp: number): Date => {
+  // @ts-ignore
   const utcTime = dayjs(timestamp).utc();
   const isTimestampPastUnixWeekStart = utcTime.day() > 3;
 

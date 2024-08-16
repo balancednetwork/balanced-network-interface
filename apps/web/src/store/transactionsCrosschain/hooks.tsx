@@ -8,19 +8,10 @@ import { CrossChainTxType } from '@/lib/xcall/types';
 import { AppState } from '../index';
 import { addTransactionResult, initTransaction } from './actions';
 
-export const useTransactionsCrosschainState = (): AppState['transactionsCrosschain'] => {
-  return useSelector<AppState, AppState['transactionsCrosschain']>(state => state.transactionsCrosschain);
-};
-
 export const useArchwayTransactionsState = (): AppState['transactionsCrosschain']['archway-1'] => {
   return useSelector<AppState, AppState['transactionsCrosschain']['archway-1']>(
     state => state.transactionsCrosschain['archway-1'],
   );
-};
-
-export const useIsArchwayTxPending = (): boolean => {
-  const { isTxPending } = useArchwayTransactionsState();
-  return isTxPending;
 };
 
 export const useAddTransactionResult = (): ((chain: XChainId, tx: CrossChainTxType | null, msg: string) => void) => {

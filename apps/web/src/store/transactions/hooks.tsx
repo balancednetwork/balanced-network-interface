@@ -1,15 +1,15 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { t } from '@lingui/macro';
 import { useIconReact } from '@/packages/icon-react';
+import { t } from '@lingui/macro';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 
-import { NotificationPending, NotificationError } from '@/app/components/Notification/TransactionNotification';
+import { NotificationError, NotificationPending } from '@/app/components/Notification/TransactionNotification';
 import { getTrackerLink } from '@/utils';
 
 import { AppDispatch, AppState } from '../index';
-import { addTransaction, ICONTxEventLog } from './actions';
+import { ICONTxEventLog, addTransaction } from './actions';
 import { TransactionDetails } from './reducer';
 
 interface TransactionResponse {
@@ -88,28 +88,3 @@ export enum TransactionStatus {
   success = 'success',
   failure = 'failure',
 }
-
-export function useTransactionStatus(transactionHash?: string): TransactionStatus | undefined {
-  const transactions = useAllTransactions();
-
-  if (transactions && transactionHash && transactions[transactionHash]) {
-    if (transactions[transactionHash].receipt) {
-      if (transactions[transactionHash].receipt?.status === 1) return TransactionStatus.success;
-      else return TransactionStatus.failure;
-    } else {
-      return TransactionStatus.pending;
-    }
-  } else {
-    return undefined;
-  }
-}
-
-export const useIsICONTxPending = (): boolean => {
-  const transactions = useAllTransactions();
-  return useMemo(() => {
-    if (!transactions) {
-      return false;
-    }
-    return Object.values(transactions).some(tx => !tx.confirmedTime);
-  }, [transactions]);
-};

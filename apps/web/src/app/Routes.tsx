@@ -19,12 +19,7 @@ const TradePageLayout = lazyLoad(
   module => module.TradePageLayout,
 );
 import { BridgePage } from './pages/trade/bridge/page';
-import { SupplyPage } from './pages/trade/supply/page';
 import { TradePage } from './pages/trade/xswap/page';
-
-import { useBBalnSliderActionHandlers } from '@/store/bbaln/hooks';
-import { useCollateralActionHandlers } from '@/store/collateral/hooks';
-import { useLoanActionHandlers } from '@/store/loan/hooks';
 
 const routeTexts: [string, MessageDescriptor][] = [
   ['/vote', defineMessage({ message: 'Vote' })],
@@ -44,17 +39,6 @@ const Redirect = ({ to }) => {
 export default function RootRoutes() {
   const location = useLocation();
   const title = routeTexts.find(item => location.pathname.startsWith(item[0]))?.[1];
-  const { onAdjust: loanAdjust } = useLoanActionHandlers();
-  const { onAdjust: collateralAdjust } = useCollateralActionHandlers();
-  const { onAdjust: bbalnAdjust } = useBBalnSliderActionHandlers();
-
-  useEffect(() => {
-    if (location) {
-      loanAdjust(false);
-      collateralAdjust(false);
-      bbalnAdjust(false);
-    }
-  }, [location, loanAdjust, collateralAdjust, bbalnAdjust]);
 
   return (
     <Routes>
@@ -76,8 +60,6 @@ export default function RootRoutes() {
         <Route path="trade" element={<TradePageLayout />}>
           <Route index element={<TradePage />} />
           <Route path=":pair" element={<TradePage />} />
-          <Route path="supply" element={<SupplyPage />} />
-          <Route path="supply/:pair" element={<SupplyPage />} />
           <Route path="bridge/" element={<BridgePage />} />
         </Route>
 

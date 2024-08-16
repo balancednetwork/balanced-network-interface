@@ -5,12 +5,12 @@ import IconService from 'icon-sdk-js';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 
-import { getRlpEncodedSwapData } from '@/app/pages/trade/bridge/utils';
 import { NATIVE_ADDRESS } from '@/constants/index';
 import { XChainId } from '@/types';
 import { toDec } from '@/utils';
 import { toHex } from 'viem';
 import { XTransactionInput, XTransactionType } from '../_zustand/types';
+import { getRlpEncodedSwapData } from '../utils';
 import { HavahPublicXService } from './HavahPublicXService';
 import { IWalletXService } from './types';
 

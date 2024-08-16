@@ -24,7 +24,7 @@ import { tryParseAmount } from '@/store/swap/hooks';
 import { useWalletFetchBalances } from '@/store/wallet/hooks';
 import { formatBigNumber, toDec } from '@/utils';
 import { isTradeBetter } from '@/utils/isTradeBetter';
-import { getRlpEncodedSwapData } from '../trade/bridge/utils';
+import { getRlpEncodedSwapData } from '../../../lib/xcall/utils';
 
 const ICX = new Token(ChainId.MAINNET, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
 const bnUSD = new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD', 'Balanced Dollar');

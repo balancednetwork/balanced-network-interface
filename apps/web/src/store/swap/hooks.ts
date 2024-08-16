@@ -16,7 +16,6 @@ import { parseUnits } from '@/utils';
 
 import { AppDispatch, AppState } from '../index';
 import {
-  INITIAL_SWAP,
   Field,
   selectCurrency,
   selectPercent,

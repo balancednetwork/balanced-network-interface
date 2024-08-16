@@ -1,10 +1,6 @@
 import { Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 
-import { RootState } from './RootState';
-
-export type { RootState };
-
 export type CurrencyKey = string;
 
 export interface Pool {

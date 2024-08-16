@@ -5,10 +5,10 @@ import { Trans, t } from '@lingui/macro';
 import { Box, Flex } from 'rebass';
 
 import { Button, TextButton } from '@/app/components/Button';
+import { StyledButton } from '@/app/components/Button/StyledButton';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import XTransactionState from '@/app/components/XTransactionState';
-import { StyledButton } from '@/app/pages/trade/xswap/_components/shared';
 import { Typography } from '@/app/theme';
 import { xChainMap } from '@/constants/xChains';
 import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';

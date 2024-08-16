@@ -7,11 +7,11 @@ import styled from 'styled-components';
 import { useSwitchChain } from 'wagmi';
 
 import { Button, TextButton } from '@/app/components/Button';
+import { StyledButton } from '@/app/components/Button/StyledButton';
 import Modal from '@/app/components/Modal';
 import { ModalContentWrapper } from '@/app/components/ModalContent';
 import Spinner from '@/app/components/Spinner';
 import XTransactionState from '@/app/components/XTransactionState';
-import { StyledButton as XCallButton } from '@/app/pages/trade/xswap/_components/shared';
 import { Typography } from '@/app/theme';
 import { xChainMap } from '@/constants/xChains';
 import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
@@ -29,7 +29,7 @@ import { formatBigNumber } from '@/utils';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
 
-const StyledXCallButton = styled(XCallButton)`
+const StyledXCallButton = styled(StyledButton)`
   transition: all 0.2s ease;
 
   &.disabled {

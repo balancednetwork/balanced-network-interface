@@ -6,10 +6,10 @@ import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 
 import { TextButton } from '@/app/components/Button';
+import { StyledButton } from '@/app/components/Button/StyledButton';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import XTransactionState from '@/app/components/XTransactionState';
-import { StyledButton } from '@/app/pages/trade/xswap/_components/shared';
 import { Typography } from '@/app/theme';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { xChainMap } from '@/constants/xChains';

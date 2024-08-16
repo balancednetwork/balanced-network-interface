@@ -14,6 +14,7 @@ import { formatBigNumber, shortenAddress } from '@/utils';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 
 import { Button, TextButton } from '@/app/components/Button';
+import { StyledButton } from '@/app/components/Button/StyledButton';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import Spinner from '@/app/components/Spinner';
@@ -34,7 +35,6 @@ import {
 } from '@/lib/xcall/_zustand/useXTransactionStore';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { useSwitchChain } from 'wagmi';
-import { StyledButton } from './shared';
 
 type XSwapModalProps = {
   account: string | undefined;

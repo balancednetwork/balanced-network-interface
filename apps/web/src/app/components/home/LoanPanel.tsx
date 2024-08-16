@@ -38,7 +38,6 @@ import { MODAL_ID, modalActions } from '@/app/pages/trade/bridge/_zustand/useMod
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import useWidth from '@/hooks/useWidth';
 import { useIconReact } from '@/packages/icon-react';
-import LoanChainSelector from './_components/LoanChainSelector';
 import XLoanModal, { XLoanAction } from './_components/xLoanModal';
 
 const LoanPanel = () => {

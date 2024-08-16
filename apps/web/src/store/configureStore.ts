@@ -11,7 +11,6 @@ import bridge from './bridge/reducer';
 import collateral from './collateral/reducer';
 import fees from './fees/reducer';
 import lists from './lists/reducer';
-import liveVoting from './liveVoting/reducer';
 import loan from './loan/reducer';
 import oracle from './oracle/reducer';
 import ratio from './ratio/reducer';
@@ -42,7 +41,6 @@ export function configureAppStore() {
       fees,
       oracle,
       lists,
-      liveVoting,
       transactionsCrosschain,
       bridge,
     },

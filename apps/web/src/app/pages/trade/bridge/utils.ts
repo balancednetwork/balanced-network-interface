@@ -1,13 +1,11 @@
 import rlp from 'rlp';
 
-import { Currency, CurrencyAmount, Token, TradeType } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
-import { NATIVE_ADDRESS } from '@/constants/index';
-import { xChainMap, xChains } from '@/constants/xChains';
 import { xTokenMap } from '@/constants/xTokens';
-import { XChain, XChainId, XToken } from '@/types';
+import { XToken } from '@/types';
 import { uintToBytes } from '@/utils';
 
 export function getBytesFromNumber(value) {
@@ -61,58 +59,6 @@ export function getRlpEncodedSwapData(
 export function getBytesFromString(str: string) {
   return Array.from(Buffer.from(str, 'utf8'));
 }
-
-export const getNetworkDisplayName = (chain: XChainId) => {
-  return xChainMap[chain].name;
-};
-
-export const getXTokenAddress = (chain: XChainId, tokenSymbol?: string): string | undefined => {
-  if (!tokenSymbol) return;
-
-  return xTokenMap[chain].find(t => t.symbol === tokenSymbol)?.address;
-};
-
-export const getXTokenBySymbol = (xChainId: XChainId, symbol?: string) => {
-  if (!symbol) return;
-
-  return Object.values(xTokenMap[xChainId]).find(t => t.symbol === symbol);
-};
-
-export const getXTokenByToken = (xChainId: XChainId, token: Currency | Token | XToken | undefined) => {
-  if (!token) return;
-
-  return Object.values(xTokenMap[xChainId]).find(t =>
-    token instanceof XToken ? t.identifier === token.identifier : t.symbol === token.symbol,
-  );
-};
-
-export const isXToken = (token?: Currency) => {
-  if (!token) return false;
-
-  return Object.values(xTokenMap)
-    .flat()
-    .some(t => t.address === token.wrapped.address);
-};
-
-export const getAvailableXChains = (currency?: Currency | XToken | null): XChain[] | undefined => {
-  if (!currency) return;
-
-  const allXTokens = Object.values(xTokenMap).flat();
-
-  const xChainIds = allXTokens.filter(t => t.symbol === currency.symbol).map(t => t.xChainId);
-
-  return xChains.filter(x => xChainIds.includes(x.xChainId));
-};
-
-export const getXAddress = (xToken: XToken | undefined) => {
-  if (!xToken) return undefined;
-
-  return (
-    xToken.xChainId +
-    '/' +
-    (xToken.address === NATIVE_ADDRESS ? '0x0000000000000000000000000000000000000000' : xToken.address)
-  );
-};
 
 export const toICONDecimals = (currencyAmount: CurrencyAmount<Currency>): bigint => {
   const xAmount = BigInt(currencyAmount.quotient.toString());

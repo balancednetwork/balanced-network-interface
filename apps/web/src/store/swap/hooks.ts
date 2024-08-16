@@ -15,10 +15,10 @@ import { XChainId, XToken } from '@/types';
 import { parseUnits } from '@/utils';
 
 import { useAssetManagerTokens } from '@/app/pages/trade/bridge/_hooks/useAssetManagerTokens';
-import { getXAddress, getXTokenByToken } from '@/app/pages/trade/bridge/utils';
 import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
 import { xChainMap } from '@/constants/xChains';
 import useWallets from '@/hooks/useWallets';
+import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
 import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
 import {
@@ -184,8 +184,10 @@ export function useDerivedSwapInfo(): {
     [inputPercent],
   );
 
-  const _inputCurrency = inputXChainId === '0x1.icon' ? inputCurrency : getXTokenByToken('0x1.icon', inputCurrency);
-  const _outputCurrency = outputXChainId === '0x1.icon' ? outputCurrency : getXTokenByToken('0x1.icon', outputCurrency);
+  const _inputCurrency =
+    inputXChainId === '0x1.icon' ? inputCurrency : getXTokenBySymbol('0x1.icon', inputCurrency?.symbol);
+  const _outputCurrency =
+    outputXChainId === '0x1.icon' ? outputCurrency : getXTokenBySymbol('0x1.icon', outputCurrency?.symbol);
   const _currencies: { [field in Field]?: Currency } = useMemo(() => {
     return {
       [Field.INPUT]: _inputCurrency ?? undefined,

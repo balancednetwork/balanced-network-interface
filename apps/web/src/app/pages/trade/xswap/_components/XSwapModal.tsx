@@ -6,12 +6,12 @@ import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 
-import { getNetworkDisplayName } from '@/app/pages/trade/bridge/utils';
 import { Typography } from '@/app/theme';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from '@/store/application/hooks';
 import { Field } from '@/store/swap/reducer';
 import { XChainId, XToken } from '@/types';
 import { formatBigNumber, shortenAddress } from '@/utils';
+import { getNetworkDisplayName } from '@/utils/xTokens';
 
 import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';

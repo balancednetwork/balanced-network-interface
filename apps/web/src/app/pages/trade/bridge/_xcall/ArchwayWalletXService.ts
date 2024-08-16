@@ -1,18 +1,18 @@
-import { ArchwayClient } from '@archwayhq/arch3.js';
 import bnJs from '@/bnJs';
+import { ArchwayClient } from '@archwayhq/arch3.js';
 import { Percent } from '@balancednetwork/sdk-core';
 
-import { XSigningArchwayClient } from '@/lib/archway/XSigningArchwayClient';
 import { getBytesFromString, getRlpEncodedSwapData } from '@/app/pages/trade/bridge/utils';
-import { archway } from '@/constants/xChains';
-import { getFeeParam, isDenomAsset } from '@/packages/archway/utils';
-import { ARCHWAY_FEE_TOKEN_SYMBOL } from '@/constants/tokens1';
-import { XChainId, XToken } from '@/types';
-import { IWalletXService } from './types';
-import { XTransactionInput, XTransactionType } from '../_zustand/types';
-import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
+import { ARCHWAY_FEE_TOKEN_SYMBOL } from '@/constants/tokens1';
+import { archway } from '@/constants/xChains';
+import { XSigningArchwayClient } from '@/lib/archway/XSigningArchwayClient';
+import { getFeeParam, isDenomAsset } from '@/packages/archway/utils';
+import { XChainId, XToken } from '@/types';
+import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
+import { XTransactionInput, XTransactionType } from '../_zustand/types';
 import { ArchwayPublicXService } from './ArchwayPublicXService';
+import { IWalletXService } from './types';
 
 export class ArchwayWalletXService extends ArchwayPublicXService implements IWalletXService {
   walletClient: XSigningArchwayClient;

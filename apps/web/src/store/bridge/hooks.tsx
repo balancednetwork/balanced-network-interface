@@ -1,9 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
 
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useAssetManagerTokens } from '@/app/pages/trade/bridge/_hooks/useAssetManagerTokens';
-import { getXAddress, getXTokenBySymbol } from '@/app/pages/trade/bridge/utils';
 import { sARCH } from '@/constants/tokens1';
 import { xChainMap } from '@/constants/xChains';
 import useWallets, { useSignedInWallets } from '@/hooks/useWallets';
@@ -11,9 +13,7 @@ import { isDenomAsset } from '@/packages/archway/utils';
 import { AppState } from '@/store';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { XChainId, XToken } from '@/types';
-import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
-import { Trans, t } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
+import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
 import {
   Field,
   selectChain,

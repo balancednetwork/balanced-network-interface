@@ -3,10 +3,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
+import Spinner from '@/app/components/Spinner';
 import { getNetworkDisplayName } from '@/app/pages/trade/bridge/utils';
 import { Typography } from '@/app/theme';
 import ArrowIcon from '@/assets/icons/arrow-white.svg';
-import Spinner from '@/app/components/Spinner';
 
 import { XTransaction, XTransactionStatus } from '../_zustand/types';
 import { useXMessageStore, xMessageActions } from '../_zustand/useXMessageStore';

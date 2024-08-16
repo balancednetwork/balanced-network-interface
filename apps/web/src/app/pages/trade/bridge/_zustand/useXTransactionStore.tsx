@@ -1,24 +1,25 @@
 import React from 'react';
+
+import BigNumber from 'bignumber.js';
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
+import { XChainId } from '@/types';
+import { formatBigNumber } from '@/utils';
+import { swapMessage } from '../../supply/_components/utils';
 import {
-  XMessageStatus,
   XMessage,
+  XMessageStatus,
   XTransaction,
-  XTransactionStatus,
   XTransactionInput,
+  XTransactionStatus,
   XTransactionType,
 } from './types';
-import { xServiceActions } from './useXServiceStore';
+import { MODAL_ID, modalActions } from './useModalStore';
 import { transactionActions } from './useTransactionStore';
 import { XMessageUpdater, useXMessageStore, xMessageActions } from './useXMessageStore';
-import { swapMessage } from '../../supply/_components/utils';
-import { XChainId } from '@/types';
-import { MODAL_ID, modalActions } from './useModalStore';
-import { formatBigNumber } from '@/utils';
-import BigNumber from 'bignumber.js';
+import { xServiceActions } from './useXServiceStore';
 
 type XTransactionStore = {
   transactions: Record<string, XTransaction>;

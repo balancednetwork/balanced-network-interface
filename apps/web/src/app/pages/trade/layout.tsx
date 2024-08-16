@@ -1,12 +1,11 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
-import { useIconReact } from '@/packages/icon-react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-
-import { Flex, Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 
 import { Tab, Tabs } from '@/app/components/Tab';
+import { useIconReact } from '@/packages/icon-react';
 import { useFetchBBalnInfo, useFetchBBalnSources } from '@/store/bbaln/hooks';
 import { useFetchOraclePrices } from '@/store/oracle/hooks';
 import { useFetchPrice } from '@/store/ratio/hooks';

@@ -1,17 +1,16 @@
-import React from 'react';
-import { create } from 'zustand';
-import { createJSONStorage, devtools, persist } from 'zustand/middleware';
-import { immer } from 'zustand/middleware/immer';
+import React, { useEffect } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { immer } from 'zustand/middleware/immer';
 
 import { XCallEventType } from '../types';
-import { XMessage, XMessageStatus, Transaction, TransactionStatus, XCallEventMap } from './types';
-import { xServiceActions } from './useXServiceStore';
-import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
-import { useFetchTransaction } from './useTransactionStore';
-import { useEffect } from 'react';
 import { getNetworkDisplayName } from '../utils';
+import { Transaction, TransactionStatus, XCallEventMap, XMessage, XMessageStatus } from './types';
+import { useFetchTransaction } from './useTransactionStore';
+import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
+import { xServiceActions } from './useXServiceStore';
 import { xTransactionActions } from './useXTransactionStore';
 
 const jsonStorageOptions = {

@@ -4,8 +4,8 @@ import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
-import { XChainId, XChain } from '@/types';
 import { xChains } from '@/constants/xChains';
+import { XChain, XChainId } from '@/types';
 
 type ChainListProps = {
   chainId: XChainId;

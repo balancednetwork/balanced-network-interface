@@ -1,26 +1,25 @@
 import React, { useEffect, useMemo } from 'react';
+
+import { useQuery } from '@tanstack/react-query';
+import { usePublicClient, useWalletClient } from 'wagmi';
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import { useQuery } from '@tanstack/react-query';
 
-import { usePublicClient, useWalletClient } from 'wagmi';
-
-import { useIconReact } from '@/packages/icon-react';
-import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
-import { useChangeShouldLedgerSign } from '@/store/application/hooks';
-
-import { xChainMap } from '@/constants/xChains';
-import { XChainId, XChain } from '@/types';
-import { IPublicXService, IWalletXService } from '../_xcall/types';
-import { IconPublicXService } from '../_xcall/IconPublicXService';
-import { ArchwayPublicXService } from '../_xcall/ArchwayPublicXService';
-import { EvmPublicXService } from '../_xcall/EvmPublicXService';
-import { IconWalletXService } from '../_xcall/IconWalletXService';
-import { ArchwayWalletXService } from '../_xcall/ArchwayWalletXService';
-import { EvmWalletXService } from '../_xcall/EvmWalletXService';
 import { havahJs } from '@/bnJs';
+import { xChainMap } from '@/constants/xChains';
+import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
+import { useIconReact } from '@/packages/icon-react';
+import { useChangeShouldLedgerSign } from '@/store/application/hooks';
+import { XChain, XChainId } from '@/types';
+import { ArchwayPublicXService } from '../_xcall/ArchwayPublicXService';
+import { ArchwayWalletXService } from '../_xcall/ArchwayWalletXService';
+import { EvmPublicXService } from '../_xcall/EvmPublicXService';
+import { EvmWalletXService } from '../_xcall/EvmWalletXService';
 import { HavahPublicXService } from '../_xcall/HavahPublicXService';
 import { HavahWalletXService } from '../_xcall/HavahWalletXService';
+import { IconPublicXService } from '../_xcall/IconPublicXService';
+import { IconWalletXService } from '../_xcall/IconWalletXService';
+import { IPublicXService, IWalletXService } from '../_xcall/types';
 
 type XServiceStore = {
   publicXServices: Partial<Record<XChainId, IPublicXService>>;

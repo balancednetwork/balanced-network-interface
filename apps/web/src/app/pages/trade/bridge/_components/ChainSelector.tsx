@@ -4,13 +4,12 @@ import ClickAwayListener from 'react-click-away-listener';
 import { Box } from 'rebass';
 import styled from 'styled-components';
 
-import { XChainId } from '@/types';
 import { Typography } from '@/app/theme';
-
+import { xChainMap } from '@/constants/xChains';
+import { XChainId } from '@/types';
 import { StyledArrowDownIcon, UnderlineText } from '../../../../components/DropdownText';
 import { DropdownPopper } from '../../../../components/Popover';
 import ChainList from './ChainList';
-import { xChainMap } from '@/constants/xChains';
 
 type ChainSelectorProps = {
   chainId: XChainId;

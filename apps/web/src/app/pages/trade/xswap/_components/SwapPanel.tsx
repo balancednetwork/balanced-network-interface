@@ -1,34 +1,33 @@
 import React, { useCallback } from 'react';
 
-import { TradeType, Currency, Percent } from '@balancednetwork/sdk-core';
+import { Currency, Percent, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
-import { Flex, Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button } from '@/app/components/Button';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { UnderlineText, UnderlineTextWithArrow } from '@/app/components/DropdownText';
+import { BrightPanel } from '@/app/components/Panel';
 import { DropdownPopper } from '@/app/components/Popover';
+import { isXToken } from '@/app/pages/trade/bridge/utils';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
+import { xChainMap } from '@/constants/xChains';
 import { useSwapSlippageTolerance, useWalletModalToggle } from '@/store/application/hooks';
-import { Field } from '@/store/swap/reducer';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
+import { Field } from '@/store/swap/reducer';
 import { formatPercent, maxAmountSpend } from '@/utils';
 
-import { isXToken } from '@/app/pages/trade/bridge/utils';
-
-import XSwapModal from './XSwapModal';
-import SwapModal from './SwapModal';
+import useWallets, { useSignedInWallets } from '../../bridge/_hooks/useWallets';
 import { MODAL_ID, modalActions } from '../../bridge/_zustand/useModalStore';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
-import useWallets, { useSignedInWallets } from '../../bridge/_hooks/useWallets';
-import { xChainMap } from '@/constants/xChains';
-import { BrightPanel } from '@/app/components/Panel';
+import SwapModal from './SwapModal';
+import XSwapModal from './XSwapModal';
 
 export default function SwapPanel() {
   useInitialSwapLoad();

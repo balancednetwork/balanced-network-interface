@@ -1,12 +1,12 @@
+import { useQuery } from '@tanstack/react-query';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import { useQuery } from '@tanstack/react-query';
 
 import { XChainId } from '@/types';
-import { XCallExecutedEvent, XCallMessageEvent, XCallDestinationEvent } from './types';
-import { xServiceActions } from './useXServiceStore';
 import { XCallEventType } from '../types';
+import { XCallDestinationEvent, XCallExecutedEvent, XCallMessageEvent } from './types';
+import { xServiceActions } from './useXServiceStore';
 
 type XCallScanner = {
   id: string;

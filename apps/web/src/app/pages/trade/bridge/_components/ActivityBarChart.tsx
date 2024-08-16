@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { BarChart, Bar, Tooltip, ResponsiveContainer } from 'recharts';
+import { Bar, BarChart, ResponsiveContainer, Tooltip } from 'recharts';
 import styled, { useTheme } from 'styled-components';
 
 import { XCallActivityDataType } from '../_hooks/useXCallStats';

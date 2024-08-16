@@ -2,34 +2,32 @@ import React, { useCallback } from 'react';
 
 import { Percent } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass/styled-components';
 
+import AddressInputPanel from '@/app/components/AddressInputPanel';
+import { Button } from '@/app/components/Button';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
+import { UnderlineText } from '@/app/components/DropdownText';
+import { BrightPanel } from '@/app/components/Panel';
+import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
+import { AutoColumn } from '@/app/pages/trade/xswap/_components/SwapPanel';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
+import { xChainMap } from '@/constants/xChains';
+import { useWalletModalToggle } from '@/store/application/hooks';
 import {
   useBridgeActionHandlers,
   useBridgeDirection,
   useBridgeState,
   useDerivedBridgeInfo,
 } from '@/store/bridge/hooks';
-import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-
-import AddressInputPanel from '@/app/components/AddressInputPanel';
-import { Button } from '@/app/components/Button';
-import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
-import { AutoColumn } from '@/app/pages/trade/xswap/_components/SwapPanel';
-
-import ChainSelector from './ChainSelector';
-import { useWalletModalToggle } from '@/store/application/hooks';
 import { Field } from '@/store/bridge/reducer';
-import useXCallFee from '../_hooks/useXCallFee';
-import { xChainMap } from '@/constants/xChains';
+import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend, validateAddress } from '@/utils';
 import useWallets from '../_hooks/useWallets';
-import { UnderlineText } from '@/app/components/DropdownText';
-import BigNumber from 'bignumber.js';
-import { BrightPanel } from '@/app/components/Panel';
+import useXCallFee from '../_hooks/useXCallFee';
+import ChainSelector from './ChainSelector';
 
 export default function BridgeTransferForm({ openModal }) {
   const crossChainWallet = useCrossChainWalletBalances();

@@ -1,17 +1,18 @@
 import React, { useEffect } from 'react';
-import { create } from 'zustand';
+
 import { t } from '@lingui/macro';
-import { toast } from 'react-toastify';
 import { useQuery } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
+import { create } from 'zustand';
 
 import {
+  NotificationError,
   NotificationPending,
   NotificationSuccess,
-  NotificationError,
 } from '@/app/components/Notification/TransactionNotification';
+import { XChainId } from '@/types';
 import { Transaction, TransactionStatus } from './types';
 import { xServiceActions } from './useXServiceStore';
-import { XChainId } from '@/types';
 
 type TransactionStore = {
   transactions: Transaction[];

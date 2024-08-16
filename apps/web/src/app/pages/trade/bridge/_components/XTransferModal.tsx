@@ -1,36 +1,33 @@
 import React from 'react';
 
 import { Trans, t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
+import { useSwitchChain } from 'wagmi';
 
-import { Typography } from '@/app/theme';
+import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
 import { ModalContentWrapper } from '@/app/components/ModalContent';
-import { StyledButton as XCallButton } from '@/app/pages/trade/xswap/_components/shared';
-import { Button, TextButton } from '@/app/components/Button';
 import Spinner from '@/app/components/Spinner';
-
-import { getNetworkDisplayName } from '@/app/pages/trade/bridge/utils';
-import { useShouldLedgerSign } from '@/store/application/hooks';
-
-import { useModalStore, modalActions, MODAL_ID } from '../_zustand/useModalStore';
-
-import XTransactionState from './XTransactionState';
-import LiquidFinanceIntegration from './LiquidFinanceIntegration';
 import { ApprovalState, useApproveCallback } from '@/app/pages/trade/bridge/_hooks/useApproveCallback';
+import { getNetworkDisplayName } from '@/app/pages/trade/bridge/utils';
+import { StyledButton as XCallButton } from '@/app/pages/trade/xswap/_components/shared';
+import { Typography } from '@/app/theme';
 import { xChainMap } from '@/constants/xChains';
-import useXCallFee from '../_hooks/useXCallFee';
-import { XTransactionType, XTransactionInput } from '../_zustand/types';
-import { useXMessageStore } from '../_zustand/useXMessageStore';
-import useXCallGasChecker from '../_hooks/useXCallGasChecker';
-import { useXTransactionStore, xTransactionActions } from '../_zustand/useXTransactionStore';
+import { useShouldLedgerSign } from '@/store/application/hooks';
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from '@/store/bridge/hooks';
-import { useCreateWalletXService } from '../_zustand/useXServiceStore';
-import useWallets from '../_hooks/useWallets';
-import { useSwitchChain } from 'wagmi';
-import BigNumber from 'bignumber.js';
 import { formatBigNumber } from '@/utils';
+import useWallets from '../_hooks/useWallets';
+import useXCallFee from '../_hooks/useXCallFee';
+import useXCallGasChecker from '../_hooks/useXCallGasChecker';
+import { XTransactionInput, XTransactionType } from '../_zustand/types';
+import { MODAL_ID, modalActions, useModalStore } from '../_zustand/useModalStore';
+import { useXMessageStore } from '../_zustand/useXMessageStore';
+import { useCreateWalletXService } from '../_zustand/useXServiceStore';
+import { useXTransactionStore, xTransactionActions } from '../_zustand/useXTransactionStore';
+import LiquidFinanceIntegration from './LiquidFinanceIntegration';
+import XTransactionState from './XTransactionState';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;

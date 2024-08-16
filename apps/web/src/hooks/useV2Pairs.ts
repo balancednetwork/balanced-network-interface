@@ -1,21 +1,19 @@
-import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect, useMemo, useState } from 'react';
 
 import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
-import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 
-import { usePoolPanelContext } from '@/app/pages/trade/supply/_components/PoolPanelContext';
 import bnJs from '@/bnJs';
 import { canBeQueue } from '@/constants/currency';
-import { BIGINT_ZERO, FRACTION_ZERO } from '@/constants/misc';
-import { getPair } from '@/utils';
-import { fetchStabilityFundBalances, getAcceptedTokens } from '@/store/stabilityFund/hooks';
 import { bnUSD } from '@/constants/tokens';
+import { fetchStabilityFundBalances, getAcceptedTokens } from '@/store/stabilityFund/hooks';
+import { getPair } from '@/utils';
 
-import useLastCount from './useLastCount';
 import { NETWORK_ID } from '@/constants/config';
+import useLastCount from './useLastCount';
 
 const NON_EXISTENT_POOL_ID = 0;
 const MULTI_CALL_BATCH_SIZE = 25;
@@ -128,22 +126,6 @@ export function useV2Pairs(currencies: [Currency | undefined, Currency | undefin
 export function useV2Pair(tokenA?: Currency, tokenB?: Currency): PairData {
   const inputs: [[Currency | undefined, Currency | undefined]] = useMemo(() => [[tokenA, tokenB]], [tokenA, tokenB]);
   return useV2Pairs(inputs)[0];
-}
-
-export function usePoolShare(poolId: number, tokenA?: Currency, tokenB?: Currency): Fraction {
-  const balance: BalanceData | undefined = useBalance(poolId);
-  const pair = useV2Pair(tokenA, tokenB)[1];
-
-  return useMemo(() => {
-    if (balance && pair && (pair.totalSupply?.quotient || BIGINT_ZERO) > BIGINT_ZERO) {
-      const res = balance.stakedLPBalance
-        ? balance.balance.add(balance.stakedLPBalance).divide(pair.totalSupply || BIGINT_ZERO)
-        : balance.balance.divide(pair.totalSupply || BIGINT_ZERO);
-      return new Fraction(res.numerator, res.denominator);
-    }
-
-    return FRACTION_ZERO;
-  }, [balance, pair]);
 }
 
 export function useAvailablePairs(currencies: [Currency | undefined, Currency | undefined][]): {
@@ -296,35 +278,4 @@ export function useBalances(
       return acc;
     }, {});
   }, [balances]);
-}
-
-export function useSuppliedTokens(poolId: number, tokenA?: Currency, tokenB?: Currency) {
-  const balance: BalanceData | undefined = useBalance(poolId);
-  const share = usePoolShare(poolId, tokenA, tokenB);
-  const pair = useV2Pair(tokenA, tokenB)[1];
-
-  return useMemo(() => {
-    if (pair && balance) {
-      let suppliedBaseTokens: CurrencyAmount<Currency>;
-      let suppliedQuoteTokens: CurrencyAmount<Currency>;
-
-      if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-        suppliedBaseTokens = balance.balance;
-        suppliedQuoteTokens = balance.balance;
-      } else {
-        suppliedBaseTokens = pair.reserve0.multiply(share || 0);
-        suppliedQuoteTokens = pair.reserve1.multiply(share || 0);
-      }
-
-      return {
-        base: suppliedBaseTokens,
-        quote: suppliedQuoteTokens,
-      };
-    } else return;
-  }, [pair, balance, poolId, share]);
-}
-
-export function useBalance(poolId: number) {
-  const { balances } = usePoolPanelContext();
-  return balances[poolId];
 }

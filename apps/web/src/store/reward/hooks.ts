@@ -9,15 +9,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from '@/bnJs';
 import { PLUS_INFINITY } from '@/constants/index';
 import { useTokenPrices } from '@/queries/backendv2';
-import { useLPReward } from '@/queries/reward';
-import { useBBalnAmount, useDynamicBBalnAmount, useSources } from '@/store/bbaln/hooks';
+import { useBBalnAmount } from '@/store/bbaln/hooks';
 import { useCollateralInputAmountAbsolute } from '@/store/collateral/hooks';
 import { useHasUnclaimedFees } from '@/store/fees/hooks';
 import { WEIGHT_CONST } from '@/store/liveVoting/hooks';
 import { RewardDistribution, RewardDistributionRaw } from '@/store/liveVoting/types';
 import { useLoanInputAmount } from '@/store/loan/hooks';
 import { useOraclePrice } from '@/store/oracle/hooks';
-import { useLockedAmount, useUnclaimedRewards } from '@/store/savings/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 
 import { AppState } from '..';
@@ -183,27 +181,4 @@ export function useEarnedPastMonth(): UseQueryResult<BigNumber | undefined> {
     enabled: !!account,
     placeholderData: keepPreviousData,
   });
-}
-
-export function useHasAnyKindOfRewards() {
-  const dynamicBBalnAmount = useDynamicBBalnAmount();
-  const bnUSDDeposit = useLockedAmount();
-  const sources = useSources();
-  const hasUnclaimedFees = useHasUnclaimedFees();
-  const { data: reward } = useLPReward();
-  const { data: savingsRewards } = useUnclaimedRewards();
-
-  const numberOfPositions = React.useMemo(
-    () => (sources ? Object.values(sources).filter(source => source.balance.isGreaterThan(100)).length : 0),
-    [sources],
-  );
-
-  return (
-    hasUnclaimedFees ||
-    reward?.greaterThan(0) ||
-    savingsRewards?.some(reward => reward.greaterThan(0)) ||
-    dynamicBBalnAmount.isGreaterThan(0) ||
-    bnUSDDeposit?.greaterThan(0) ||
-    numberOfPositions > 0
-  );
 }

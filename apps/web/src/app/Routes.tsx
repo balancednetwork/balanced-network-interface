@@ -25,7 +25,6 @@ import { TradePage } from './pages/trade/xswap/page';
 import { useBBalnSliderActionHandlers } from '@/store/bbaln/hooks';
 import { useCollateralActionHandlers } from '@/store/collateral/hooks';
 import { useLoanActionHandlers } from '@/store/loan/hooks';
-import { useSavingsSliderActionHandlers } from '@/store/savings/hooks';
 
 const routeTexts: [string, MessageDescriptor][] = [
   ['/vote', defineMessage({ message: 'Vote' })],
@@ -48,16 +47,14 @@ export default function RootRoutes() {
   const { onAdjust: loanAdjust } = useLoanActionHandlers();
   const { onAdjust: collateralAdjust } = useCollateralActionHandlers();
   const { onAdjust: bbalnAdjust } = useBBalnSliderActionHandlers();
-  const { onAdjust: savingsAdjust } = useSavingsSliderActionHandlers();
 
   useEffect(() => {
     if (location) {
       loanAdjust(false);
       collateralAdjust(false);
       bbalnAdjust(false);
-      savingsAdjust(false);
     }
-  }, [location, loanAdjust, collateralAdjust, bbalnAdjust, savingsAdjust]);
+  }, [location, loanAdjust, collateralAdjust, bbalnAdjust]);
 
   return (
     <Routes>

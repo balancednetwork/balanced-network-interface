@@ -10,7 +10,7 @@ import {
   XCallMessageSentEvent,
 } from '../_zustand/types';
 import { xCallContractAbi } from './abis/xCallContractAbi';
-import { xChainMap } from '../_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 import { XCallEventType } from '../types';
 
 const XCallEventSignatureMap = {

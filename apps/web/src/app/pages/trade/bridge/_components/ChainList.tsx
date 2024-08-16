@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
 import { XChainId, XChain } from '@/types';
-import { xChains } from '@/app/pages/trade/bridge/_config/xChains';
+import { xChains } from '@/constants/xChains';
 
 type ChainListProps = {
   chainId: XChainId;

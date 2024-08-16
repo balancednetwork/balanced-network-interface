@@ -11,7 +11,7 @@ import ChainList from '../../pages/trade/bridge/_components/ChainList';
 import CrossChainWalletConnect from '../CrossChainWalletConnect';
 import { StyledArrowDownIcon, UnderlineText } from '../DropdownText';
 import { DropdownPopper } from '../Popover';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 
 type CrossChainOptionsProps = {
   xChains?: XChain[];

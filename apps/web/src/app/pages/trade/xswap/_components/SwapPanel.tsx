@@ -28,7 +28,7 @@ import SwapModal from './SwapModal';
 import { MODAL_ID, modalActions } from '../../bridge/_zustand/useModalStore';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import useWallets, { useSignedInWallets } from '../../bridge/_hooks/useWallets';
-import { xChainMap } from '../../bridge/_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 
 export default function SwapPanel() {
   useInitialSwapLoad();

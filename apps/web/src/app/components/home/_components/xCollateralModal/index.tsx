@@ -13,7 +13,7 @@ import {
   xTransactionActions,
 } from '@/app/pages/trade/bridge/_zustand/useXTransactionStore';
 import useXCallFee from '@/app/pages/trade/bridge/_hooks/useXCallFee';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 import { ApprovalState, useApproveCallback } from '@/app/pages/trade/bridge/_hooks/useApproveCallback';
 import { XTransactionInput, XTransactionType } from '@/app/pages/trade/bridge/_zustand/types';
 import useXCallGasChecker from '@/app/pages/trade/bridge/_hooks/useXCallGasChecker';

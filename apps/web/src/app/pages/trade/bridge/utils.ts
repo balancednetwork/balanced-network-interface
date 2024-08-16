@@ -1,7 +1,7 @@
 import rlp from 'rlp';
 
 import { XChainId, XChain, XToken } from '@/types';
-import { xChainMap, xChains } from './_config/xChains';
+import { xChainMap, xChains } from '../../../../constants/xChains';
 import { xTokenMap } from './_config/xTokens';
 import { Currency, CurrencyAmount, TradeType, Token } from '@balancednetwork/sdk-core';
 import { NATIVE_ADDRESS } from '@/constants/index';

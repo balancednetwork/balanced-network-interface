@@ -16,7 +16,7 @@ import { useDerivedSwapInfo } from '@/store/swap/hooks';
 
 import Divider from '@/app/components/Divider';
 import useXCallFee from '@/app/pages/trade/bridge/_hooks/useXCallFee';
-import { xChainMap } from '../../bridge/_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 import { XChainId } from '@/types';
 
 export default function AdvancedSwapDetails() {

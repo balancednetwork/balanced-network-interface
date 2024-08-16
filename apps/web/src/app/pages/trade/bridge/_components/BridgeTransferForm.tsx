@@ -25,7 +25,7 @@ import ChainSelector from './ChainSelector';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { Field } from '@/store/bridge/reducer';
 import useXCallFee from '../_hooks/useXCallFee';
-import { xChainMap } from '../_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 import { maxAmountSpend, validateAddress } from '@/utils';
 import useWallets from '../_hooks/useWallets';
 import { UnderlineText } from '@/app/components/DropdownText';

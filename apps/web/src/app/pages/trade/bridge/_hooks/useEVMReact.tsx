@@ -1,6 +1,6 @@
 import { useAccount, useDisconnect } from 'wagmi';
 import { useMemo } from 'react';
-import { xChains } from '../_config/xChains';
+import { xChains } from '@/constants/xChains';
 import { XWalletType } from '@/types';
 
 const useEVMReact = () => {

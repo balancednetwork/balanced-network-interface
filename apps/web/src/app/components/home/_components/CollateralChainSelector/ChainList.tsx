@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { Box } from 'rebass';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
-import { xChains } from '@/app/pages/trade/bridge/_config/xChains';
+import { xChains } from '@/constants/xChains';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { Trans, t } from '@lingui/macro';
 import { HeaderText } from '@/app/components/Wallet/styledComponents';

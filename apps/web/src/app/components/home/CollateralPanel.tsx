@@ -49,8 +49,8 @@ import XCollateralModal, { XCollateralAction } from './_components/xCollateralMo
 import { UnderlineText } from '@/app/components/DropdownText';
 import CollateralChainSelector from './_components/CollateralChainSelector';
 import { MODAL_ID, modalActions } from '@/app/pages/trade/bridge/_zustand/useModalStore';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
 import { XWalletType } from '@/types';
+import { xChainMap } from '@/constants/xChains';
 
 export const PanelInfoWrap = styled(Flex)`
   justify-content: space-between;

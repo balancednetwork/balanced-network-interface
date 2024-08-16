@@ -1,4 +1,4 @@
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 import { XChainId } from '@/types';
 import React from 'react';
 import { Flex } from 'rebass';

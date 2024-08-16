@@ -20,7 +20,7 @@ import ModalContent from '@/app/components/ModalContent';
 import useXCallFee from '@/app/pages/trade/bridge/_hooks/useXCallFee';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { ApprovalState, useApproveCallback } from '@/app/pages/trade/bridge/_hooks/useApproveCallback';
-import { xChainMap } from '../../bridge/_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 import { useModalStore, modalActions, MODAL_ID } from '../../bridge/_zustand/useModalStore';
 import { XTransactionType, XTransactionInput } from '../../bridge/_zustand/types';
 import useXCallGasChecker from '../../bridge/_hooks/useXCallGasChecker';

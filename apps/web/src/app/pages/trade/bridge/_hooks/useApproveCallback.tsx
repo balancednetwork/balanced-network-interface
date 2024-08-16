@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 
 import { Currency, Fraction } from '@balancednetwork/sdk-core';
 import { t } from '@lingui/macro';
@@ -16,11 +16,11 @@ import { getFeeParam, isDenomAsset } from '@/packages/archway/utils';
 import { Token, CurrencyAmount } from '@balancednetwork/sdk-core';
 
 import { useQuery } from '@tanstack/react-query';
-import { usePublicClient, useWaitForTransactionReceipt, useWalletClient } from 'wagmi';
+import { usePublicClient, useWalletClient } from 'wagmi';
 import { erc20Abi, Address, getContract, Abi, WriteContractReturnType } from 'viem';
 
 import { XToken } from '@/types';
-import { archway, xChainMap } from '../_config/xChains';
+import { archway, xChainMap } from '@/constants/xChains';
 
 import { NATIVE_ADDRESS } from '@/constants/index';
 import useXWallet from './useXWallet';

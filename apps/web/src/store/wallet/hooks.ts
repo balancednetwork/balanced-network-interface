@@ -134,7 +134,7 @@ import { viemClients } from '@/config/wagmi';
 import { erc20Abi } from 'viem';
 import { useAccount, useBalance, usePublicClient } from 'wagmi';
 import useXTokens from '@/app/pages/trade/bridge/_hooks/useXTokens';
-import { SUPPORTED_XCALL_CHAINS, xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { SUPPORTED_XCALL_CHAINS, xChainMap } from '@/constants/xChains';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
 import { useHavahContext } from '@/packages/havah/HavahProvider';

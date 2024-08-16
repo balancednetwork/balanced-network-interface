@@ -27,7 +27,7 @@ import {
 } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
 import { getXAddress, getXTokenByToken } from '@/app/pages/trade/bridge/utils';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 import useWallets from '@/app/pages/trade/bridge/_hooks/useWallets';
 import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
 import { useAssetManagerTokens } from '@/app/pages/trade/bridge/_hooks/useAssetManagerTokens';

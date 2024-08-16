@@ -19,7 +19,7 @@ import { useModalStore, modalActions, MODAL_ID } from '../_zustand/useModalStore
 import XTransactionState from './XTransactionState';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
 import { ApprovalState, useApproveCallback } from '@/app/pages/trade/bridge/_hooks/useApproveCallback';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 import useXCallFee from '../_hooks/useXCallFee';
 import { XTransactionType, XTransactionInput } from '../_zustand/types';
 import { useXMessageStore } from '../_zustand/useXMessageStore';

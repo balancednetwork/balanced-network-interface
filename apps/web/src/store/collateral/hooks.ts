@@ -32,7 +32,7 @@ import { Position, XChainId, XPositions, XPositionsRecord, XToken } from '@/type
 import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/app/pages/trade/bridge/_config/xTokens';
 import { useSignedInWallets, useAvailableWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { SUPPORTED_XCALL_CHAINS, xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { SUPPORTED_XCALL_CHAINS, xChainMap } from '@/constants/xChains';
 import { setRecipientNetwork } from '@/store/loan/reducer';
 import { useDestinationEvents } from '@/app/pages/trade/bridge/_zustand/useXCallEventStore';
 import { forEach } from 'lodash-es';

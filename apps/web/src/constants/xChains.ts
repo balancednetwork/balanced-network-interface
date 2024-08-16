@@ -1,4 +1,3 @@
-import { BridgePair, MessagingProtocolId } from '../types';
 import { XChainId, XChain, XWalletType } from '@/types';
 
 export const archway: XChain = {
@@ -275,15 +274,6 @@ export const xChainMap: { [key in XChainId]: XChain } = {
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);
 export const SUPPORTED_XCALL_CHAINS = xChains.map(({ xChainId }) => xChainId);
-
-export const sortChains = (a: XChainId, b: XChainId): [XChainId, XChainId] => {
-  return a.localeCompare(b) > 0 ? [a, b] : [b, a];
-};
-
-export const BRIDGE_PAIRS: BridgePair[] = [
-  { chains: sortChains('0x1.icon', 'archway-1'), protocol: MessagingProtocolId.IBC },
-  { chains: sortChains('0x1.icon', '0xa86a.avax'), protocol: MessagingProtocolId.C_RELAY },
-];
 
 /** from other chain to icon sources */
 export const FROM_SOURCES: { [key in XChainId]?: string[] } = {

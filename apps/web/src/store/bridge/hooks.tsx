@@ -21,7 +21,7 @@ import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { isDenomAsset } from '@/packages/archway/utils';
 import { sARCH } from '@/app/pages/trade/bridge/_config/tokens';
 import useWallets, { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 import { getXTokenBySymbol, getXAddress } from '@/app/pages/trade/bridge/utils';
 import { useAssetManagerTokens } from '@/app/pages/trade/bridge/_hooks/useAssetManagerTokens';
 

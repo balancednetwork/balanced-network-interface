@@ -11,7 +11,7 @@ import { TransactionStatus } from '../trade/bridge/_zustand/types';
 import { openToast } from '@/btp/src/connectors/transactionToast';
 import { NULL_CONTRACT_ADDRESS } from '@/constants/tokens';
 import { AllPublicXServicesCreator, xServiceActions } from '../trade/bridge/_zustand/useXServiceStore';
-import { xChains } from '../trade/bridge/_config/xChains';
+import { xChains } from '../../../constants/xChains';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
 import { tryParseAmount } from '@/store/swap/hooks';
 

@@ -12,7 +12,7 @@ import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
 import { PairData, PairState } from '@/hooks/useV2Pairs';
 import { Field } from '@/store/swap/reducer';
 import { PairInfo, XChainId } from '@/types';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 import { bech32 } from 'bech32';
 import { ethers } from 'ethers';
 import { RLP } from '@ethereumjs/rlp';

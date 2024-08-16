@@ -24,7 +24,7 @@ import { formatBigNumber, toDec } from '@/utils';
 import { DEFAULT_SLIPPAGE } from '@/constants/index';
 import { getRlpEncodedSwapData } from '@/app/pages/trade/bridge/utils';
 import { AllPublicXServicesCreator, xServiceActions } from '../trade/bridge/_zustand/useXServiceStore';
-import { xChains } from '../trade/bridge/_config/xChains';
+import { xChains } from '@/constants/xChains';
 
 const ICX = new Token(ChainId.MAINNET, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
 const bnUSD = new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD', 'Balanced Dollar');

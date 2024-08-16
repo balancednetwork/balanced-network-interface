@@ -7,7 +7,7 @@ import { useWalletModal } from '@/store/application/hooks';
 import { shortenAddress } from '@/utils';
 
 import { UnderlineText } from '../DropdownText';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 import Modal from '../Modal';
 import { ModalContentWrapper } from '../ModalContent';
 import AddressInput from './AddressInput';

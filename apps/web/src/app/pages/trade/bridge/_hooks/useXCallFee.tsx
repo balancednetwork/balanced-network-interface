@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { IXCallFee } from '../types';
 import { XChainId } from '@/types';
-import { FROM_SOURCES, TO_SOURCES, xChainMap } from '../_config/xChains';
+import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/constants/xChains';
 import { formatEther } from 'viem';
 import { useXServiceStore } from '../_zustand/useXServiceStore';
 

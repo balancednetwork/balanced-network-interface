@@ -10,7 +10,7 @@ import { Typography } from '@/app/theme';
 import { StyledArrowDownIcon, UnderlineText } from '../../../../components/DropdownText';
 import { DropdownPopper } from '../../../../components/Popover';
 import ChainList from './ChainList';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 
 type ChainSelectorProps = {
   chainId: XChainId;

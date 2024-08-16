@@ -71,21 +71,3 @@ export interface IXCallFee {
   noRollback: bigint;
   rollback: bigint;
 }
-
-export enum MessagingProtocolId {
-  BTP = 'BTP',
-  IBC = 'IBC',
-  // centralized relay
-  C_RELAY = 'C_RELAY',
-}
-
-export type BridgePair = {
-  chains: [XChainId, XChainId];
-  protocol: MessagingProtocolId;
-};
-
-export interface MessagingProtocol {
-  id: MessagingProtocolId;
-  name: string;
-  description: string;
-}

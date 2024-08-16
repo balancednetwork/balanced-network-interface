@@ -30,7 +30,7 @@ import { EVMWalletModal } from './EVMWalletModal';
 import { XWalletType } from '@/types';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
 import useWallets, { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 import { useSwitchChain } from 'wagmi';
 import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
 import useDebounce from '@/hooks/useDebounce';

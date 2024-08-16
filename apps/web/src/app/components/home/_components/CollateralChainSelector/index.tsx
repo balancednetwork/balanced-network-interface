@@ -1,6 +1,6 @@
 import { StyledArrowDownIcon } from '@/app/components/DropdownText';
 import { DropdownPopper } from '@/app/components/Popover';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 import { XChainId } from '@/types';
 import { getAvailableXChains } from '@/app/pages/trade/bridge/utils';
 import { Typography } from '@/app/theme';

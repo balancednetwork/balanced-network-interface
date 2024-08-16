@@ -22,7 +22,7 @@ import { shortenAddress } from '@/utils';
 
 import { MouseoverTooltip } from '../Tooltip';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 import { useAvailableWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
 import { Placement } from '@popperjs/core';
 import Wallet from '../Wallet';

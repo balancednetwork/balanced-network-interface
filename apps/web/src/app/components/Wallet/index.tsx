@@ -24,7 +24,7 @@ import { useMedia } from 'react-use';
 import { useXBalancesByToken } from '@/store/wallet/hooks';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
 import MultiChainBalanceItem from './MultiChainBalanceItem';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 import { Box } from 'rebass';
 
 interface WalletProps {

@@ -24,7 +24,7 @@ import { Field } from '@/store/swap/reducer';
 import { formatPercent, maxAmountSpend } from '@/utils';
 import { isXToken } from '@/utils/xTokens';
 
-import { MODAL_ID, modalActions } from '@/lib/xcall/_zustand/useModalStore';
+import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import SwapModal from './SwapModal';
 import XSwapModal from './XSwapModal';

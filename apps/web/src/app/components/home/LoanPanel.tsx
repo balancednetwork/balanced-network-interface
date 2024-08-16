@@ -36,8 +36,8 @@ import { showMessageOnBeforeUnload } from '@/utils/messages';
 
 import ModalContent from '@/app/components/ModalContent';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
+import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import useWidth from '@/hooks/useWidth';
-import { MODAL_ID, modalActions } from '@/lib/xcall/_zustand/useModalStore';
 import { useIconReact } from '@/packages/icon-react';
 import { PanelInfoItem, PanelInfoWrap, UnderPanel } from './CollateralPanel';
 import LoanChainSelector from './_components/LoanChainSelector';

@@ -19,12 +19,12 @@ import ModalContent from '@/app/components/ModalContent';
 import Spinner from '@/app/components/Spinner';
 import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
 import { xChainMap } from '@/constants/xChains';
+import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
 import useWallets from '@/hooks/useWallets';
 import { ApprovalState, useApproveCallback } from '@/lib/xcall/_hooks/useApproveCallback';
 import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
 import useXCallGasChecker from '@/lib/xcall/_hooks/useXCallGasChecker';
 import { XTransactionInput, XTransactionType } from '@/lib/xcall/_zustand/types';
-import { MODAL_ID, modalActions, useModalStore } from '@/lib/xcall/_zustand/useModalStore';
 import { useCreateWalletXService } from '@/lib/xcall/_zustand/useXServiceStore';
 import {
   XTransactionUpdater,

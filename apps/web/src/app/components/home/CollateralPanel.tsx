@@ -26,8 +26,8 @@ import bnJs from '@/bnJs';
 import { NETWORK_ID } from '@/constants/config';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
 import { xChainMap } from '@/constants/xChains';
+import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import useWidth from '@/hooks/useWidth';
-import { MODAL_ID, modalActions } from '@/lib/xcall/_zustand/useModalStore';
 import {
   useChangeShouldLedgerSign,
   useICXUnstakingTime,

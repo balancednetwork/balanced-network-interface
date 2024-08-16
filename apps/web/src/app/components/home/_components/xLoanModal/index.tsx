@@ -13,11 +13,11 @@ import { StyledButton } from '@/app/pages/trade/xswap/_components/shared';
 import { Typography } from '@/app/theme';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { xChainMap } from '@/constants/xChains';
+import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
 import useWallets from '@/hooks/useWallets';
 import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
 import useXCallGasChecker from '@/lib/xcall/_hooks/useXCallGasChecker';
 import { XTransactionInput, XTransactionType } from '@/lib/xcall/_zustand/types';
-import { MODAL_ID, modalActions, useModalStore } from '@/lib/xcall/_zustand/useModalStore';
 import {
   XTransactionUpdater,
   useXTransactionStore,

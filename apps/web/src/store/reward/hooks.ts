@@ -12,10 +12,10 @@ import { useTokenPrices } from '@/queries/backendv2';
 import { useBBalnAmount } from '@/store/bbaln/hooks';
 import { useCollateralInputAmountAbsolute } from '@/store/collateral/hooks';
 import { useHasUnclaimedFees } from '@/store/fees/hooks';
-import { RewardDistribution, RewardDistributionRaw } from '@/store/liveVoting/types';
 import { useLoanInputAmount } from '@/store/loan/hooks';
 import { useOraclePrice } from '@/store/oracle/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
+import { RewardDistribution, RewardDistributionRaw } from './types';
 
 import { AppState } from '..';
 import { setReward } from './reducer';

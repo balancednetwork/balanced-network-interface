@@ -16,6 +16,7 @@ import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
 import { xChainMap } from '@/constants/xChains';
 import useWallets from '@/hooks/useWallets';
+import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import {
   useBridgeActionHandlers,
@@ -26,7 +27,6 @@ import {
 import { Field } from '@/store/bridge/reducer';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend, validateAddress } from '@/utils';
-import useXCallFee from '../_hooks/useXCallFee';
 import ChainSelector from './ChainSelector';
 
 export default function BridgeTransferForm({ openModal }) {

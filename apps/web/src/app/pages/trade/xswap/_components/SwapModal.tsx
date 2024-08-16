@@ -11,7 +11,6 @@ import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import Spinner from '@/app/components/Spinner';
-import { getRlpEncodedSwapData } from '@/app/pages/trade/bridge/utils';
 import { swapMessage } from '@/app/pages/trade/supply/_components/utils';
 import { Typography } from '@/app/theme';
 import bnJs from '@/bnJs';
@@ -21,6 +20,7 @@ import { Field } from '@/store/swap/reducer';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { formatBigNumber, shortenAddress, toDec } from '@/utils';
+import { getRlpEncodedSwapData } from '../../bridge/utils';
 
 type SwapModalProps = {
   isOpen: boolean;

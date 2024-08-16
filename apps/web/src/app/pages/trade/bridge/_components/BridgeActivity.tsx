@@ -6,10 +6,10 @@ import { Box, Flex } from 'rebass';
 
 import { Typography } from '@/app/theme';
 import { useSignedInWallets } from '@/hooks/useWallets';
+import { useXCallStats } from '@/lib/xcall/_hooks/useXCallStats';
+import { useXMessageStore } from '@/lib/xcall/_zustand/useXMessageStore';
+import { useXTransactionStore } from '@/lib/xcall/_zustand/useXTransactionStore';
 import Spinner from '../../../../components/Spinner';
-import { useXCallStats } from '../_hooks/useXCallStats';
-import { useXMessageStore } from '../_zustand/useXMessageStore';
-import { useXTransactionStore } from '../_zustand/useXTransactionStore';
 import ActivityBarChart from './ActivityBarChart';
 import XTransactionHistoryItem from './XTransactionHistoryItem';
 

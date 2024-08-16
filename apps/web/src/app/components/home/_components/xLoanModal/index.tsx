@@ -9,20 +9,20 @@ import { TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import XTransactionState from '@/app/pages/trade/bridge/_components/XTransactionState';
-import useXCallFee from '@/app/pages/trade/bridge/_hooks/useXCallFee';
-import useXCallGasChecker from '@/app/pages/trade/bridge/_hooks/useXCallGasChecker';
-import { XTransactionInput, XTransactionType } from '@/app/pages/trade/bridge/_zustand/types';
-import { MODAL_ID, modalActions, useModalStore } from '@/app/pages/trade/bridge/_zustand/useModalStore';
-import {
-  XTransactionUpdater,
-  useXTransactionStore,
-  xTransactionActions,
-} from '@/app/pages/trade/bridge/_zustand/useXTransactionStore';
 import { StyledButton } from '@/app/pages/trade/xswap/_components/shared';
 import { Typography } from '@/app/theme';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { xChainMap } from '@/constants/xChains';
 import useWallets from '@/hooks/useWallets';
+import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
+import useXCallGasChecker from '@/lib/xcall/_hooks/useXCallGasChecker';
+import { XTransactionInput, XTransactionType } from '@/lib/xcall/_zustand/types';
+import { MODAL_ID, modalActions, useModalStore } from '@/lib/xcall/_zustand/useModalStore';
+import {
+  XTransactionUpdater,
+  useXTransactionStore,
+  xTransactionActions,
+} from '@/lib/xcall/_zustand/useXTransactionStore';
 import { useCollateralType } from '@/store/collateral/hooks';
 import { useDerivedLoanInfo, useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
 import { XChainId } from '@/types';

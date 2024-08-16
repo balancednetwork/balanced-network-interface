@@ -17,10 +17,10 @@ import { useCrossChainWalletBalances, useICONWalletBalances } from '@/store/wall
 import { CurrencyKey, IcxDisplayType } from '@/types';
 import { formatUnits, maxAmountSpend, toBigNumber } from '@/utils';
 
-import { useDestinationEvents } from '@/app/pages/trade/bridge/_zustand/useXCallEventStore';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from '@/constants/xChains';
 import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/constants/xTokens';
 import { useAvailableWallets, useSignedInWallets } from '@/hooks/useWallets';
+import { useDestinationEvents } from '@/lib/xcall/_zustand/useXCallEventStore';
 import { useRatesWithOracle } from '@/queries/reward';
 import { setRecipientNetwork } from '@/store/loan/reducer';
 import { Position, XChainId, XPositions, XPositionsRecord, XToken } from '@/types';

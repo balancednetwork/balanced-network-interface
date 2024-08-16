@@ -5,9 +5,9 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
+import { swapMessage } from '@/app/pages/trade/supply/_components/utils';
 import { XChainId } from '@/types';
 import { formatBigNumber } from '@/utils';
-import { swapMessage } from '../../supply/_components/utils';
 import {
   XMessage,
   XMessageStatus,

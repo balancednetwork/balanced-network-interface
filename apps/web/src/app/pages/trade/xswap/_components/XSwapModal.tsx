@@ -17,23 +17,23 @@ import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import Spinner from '@/app/components/Spinner';
-import { ApprovalState, useApproveCallback } from '@/app/pages/trade/bridge/_hooks/useApproveCallback';
-import useXCallFee from '@/app/pages/trade/bridge/_hooks/useXCallFee';
 import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
 import { xChainMap } from '@/constants/xChains';
 import useWallets from '@/hooks/useWallets';
-import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { useSwitchChain } from 'wagmi';
-import XTransactionState from '../../bridge/_components/XTransactionState';
-import useXCallGasChecker from '../../bridge/_hooks/useXCallGasChecker';
-import { XTransactionInput, XTransactionType } from '../../bridge/_zustand/types';
-import { MODAL_ID, modalActions, useModalStore } from '../../bridge/_zustand/useModalStore';
-import { useCreateWalletXService } from '../../bridge/_zustand/useXServiceStore';
+import { ApprovalState, useApproveCallback } from '@/lib/xcall/_hooks/useApproveCallback';
+import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
+import useXCallGasChecker from '@/lib/xcall/_hooks/useXCallGasChecker';
+import { XTransactionInput, XTransactionType } from '@/lib/xcall/_zustand/types';
+import { MODAL_ID, modalActions, useModalStore } from '@/lib/xcall/_zustand/useModalStore';
+import { useCreateWalletXService } from '@/lib/xcall/_zustand/useXServiceStore';
 import {
   XTransactionUpdater,
   useXTransactionStore,
   xTransactionActions,
-} from '../../bridge/_zustand/useXTransactionStore';
+} from '@/lib/xcall/_zustand/useXTransactionStore';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
+import { useSwitchChain } from 'wagmi';
+import XTransactionState from '../../bridge/_components/XTransactionState';
 import { StyledButton } from './shared';
 
 type XSwapModalProps = {

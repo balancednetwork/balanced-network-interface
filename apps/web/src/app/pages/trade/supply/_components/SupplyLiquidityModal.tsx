@@ -9,10 +9,10 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
-import useAllowanceHandler from '@/app/pages/trade/bridge/_hooks/useApproveCallback';
 import { Typography } from '@/app/theme';
 import CheckIcon from '@/assets/icons/tick.svg';
 import bnJs from '@/bnJs';
+import useAllowanceHandler from '@/lib/xcall/_hooks/useApproveCallback';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import { useDerivedMintInfo } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';

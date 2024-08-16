@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { XChainId } from '@/types';
 
+import { CrossChainTxType } from '@/lib/xcall/types';
 import { AppState } from '../index';
 import { addTransactionResult, initTransaction } from './actions';
-import { CrossChainTxType } from '@/app/pages/trade/bridge/types';
 
 export const useTransactionsCrosschainState = (): AppState['transactionsCrosschain'] => {
   return useSelector<AppState, AppState['transactionsCrosschain']>(state => state.transactionsCrosschain);

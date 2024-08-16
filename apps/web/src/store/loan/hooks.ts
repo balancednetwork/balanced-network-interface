@@ -24,10 +24,10 @@ import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatUnits, toBigNumber } from '@/utils';
 
-import { useDestinationEvents } from '@/app/pages/trade/bridge/_zustand/useXCallEventStore';
 import { bnUSD } from '@/constants/tokens';
 import { xChainMap } from '@/constants/xChains';
 import { useSignedInWallets } from '@/hooks/useWallets';
+import { useDestinationEvents } from '@/lib/xcall/_zustand/useXCallEventStore';
 import { XChainId } from '@/types';
 import { getXTokenAddress } from '@/utils/xTokens';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';

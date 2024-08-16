@@ -8,20 +8,20 @@ import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import XTransactionState from '@/app/pages/trade/bridge/_components/XTransactionState';
-import { ApprovalState, useApproveCallback } from '@/app/pages/trade/bridge/_hooks/useApproveCallback';
-import useXCallFee from '@/app/pages/trade/bridge/_hooks/useXCallFee';
-import useXCallGasChecker from '@/app/pages/trade/bridge/_hooks/useXCallGasChecker';
-import { XTransactionInput, XTransactionType } from '@/app/pages/trade/bridge/_zustand/types';
-import { MODAL_ID, modalActions, useModalStore } from '@/app/pages/trade/bridge/_zustand/useModalStore';
-import {
-  XTransactionUpdater,
-  useXTransactionStore,
-  xTransactionActions,
-} from '@/app/pages/trade/bridge/_zustand/useXTransactionStore';
 import { StyledButton } from '@/app/pages/trade/xswap/_components/shared';
 import { Typography } from '@/app/theme';
 import { xChainMap } from '@/constants/xChains';
 import useWallets from '@/hooks/useWallets';
+import { ApprovalState, useApproveCallback } from '@/lib/xcall/_hooks/useApproveCallback';
+import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
+import useXCallGasChecker from '@/lib/xcall/_hooks/useXCallGasChecker';
+import { XTransactionInput, XTransactionType } from '@/lib/xcall/_zustand/types';
+import { MODAL_ID, modalActions, useModalStore } from '@/lib/xcall/_zustand/useModalStore';
+import {
+  XTransactionUpdater,
+  useXTransactionStore,
+  xTransactionActions,
+} from '@/lib/xcall/_zustand/useXTransactionStore';
 import { useCollateralActionHandlers, useDerivedCollateralInfo } from '@/store/collateral/hooks';
 import { XChainId, XToken } from '@/types';
 import { useSwitchChain } from 'wagmi';

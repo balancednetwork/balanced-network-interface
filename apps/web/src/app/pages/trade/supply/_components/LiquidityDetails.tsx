@@ -20,25 +20,25 @@ import { BalanceData, useBalance, useSuppliedTokens } from '@/hooks/useV2Pairs';
 import { PairData, useAllPairsById } from '@/queries/backendv2';
 import { Source, useBBalnAmount, useSources, useTotalSupply } from '@/store/bbaln/hooks';
 import { useTokenListConfig } from '@/store/lists/hooks';
-import { Field } from '@/store/mint/reducer';
 import { useMintActionHandlers } from '@/store/mint/hooks';
+import { Field } from '@/store/mint/reducer';
 import { useRewards } from '@/store/reward/hooks';
 import { useStakedLPPercent, useWithdrawnPercent } from '@/store/stakedLP/hooks';
 
-import { Banner } from '../../../../components/Banner';
-import Spinner from '../../../../components/Spinner';
-import { StyledAccordionButton, StyledAccordionPanel, StyledAccordionItem } from './LiquidityDetails/Accordion';
-import { StyledBoxPanel } from './LiquidityDetails/shared';
-import StakeLPPanel from './LiquidityDetails/StakeLPPanel';
-import { WithdrawPanel, WithdrawPanelQ, getABBalance, getShareReward } from './LiquidityDetails/WithdrawPanel';
-import { usePoolPanelContext } from './PoolPanelContext';
-import { getFormattedRewards, totalSupply, stakedFraction } from './utils';
-import { getFormattedNumber } from '@/utils/formatter';
-import QuestionIcon from '@/assets/icons/question.svg';
+import { QuestionWrapper } from '@/app/components/QuestionHelper';
 import Skeleton from '@/app/components/Skeleton';
 import { MouseoverTooltip } from '@/app/components/Tooltip';
-import { QuestionWrapper } from '@/app/components/QuestionHelper';
+import QuestionIcon from '@/assets/icons/question.svg';
 import { formatBigNumber } from '@/utils';
+import { getFormattedNumber } from '@/utils/formatter';
+import { Banner } from '../../../../components/Banner';
+import Spinner from '../../../../components/Spinner';
+import { StyledAccordionButton, StyledAccordionItem, StyledAccordionPanel } from './LiquidityDetails/Accordion';
+import StakeLPPanel from './LiquidityDetails/StakeLPPanel';
+import { WithdrawPanel, WithdrawPanelQ, getABBalance, getShareReward } from './LiquidityDetails/WithdrawPanel';
+import { StyledBoxPanel } from './LiquidityDetails/shared';
+import { usePoolPanelContext } from './PoolPanelContext';
+import { getFormattedRewards, stakedFraction, totalSupply } from './utils';
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');

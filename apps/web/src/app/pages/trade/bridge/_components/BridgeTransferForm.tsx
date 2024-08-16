@@ -7,11 +7,11 @@ import { Box, Flex } from 'rebass/styled-components';
 
 import AddressInputPanel from '@/app/components/AddressInputPanel';
 import { Button } from '@/app/components/Button';
+import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { UnderlineText } from '@/app/components/DropdownText';
 import { BrightPanel } from '@/app/components/Panel';
 import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
-import { AutoColumn } from '@/app/pages/trade/xswap/_components/SwapPanel';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
 import { xChainMap } from '@/constants/xChains';

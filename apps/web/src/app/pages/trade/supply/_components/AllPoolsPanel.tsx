@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 
 import { Trans } from '@lingui/macro';
-import { Flex, Box, Text } from 'rebass/styled-components';
-import styled, { css } from 'styled-components';
+import { Box, Flex, Text } from 'rebass/styled-components';
+import styled from 'styled-components';
 
 import Divider from '@/app/components/Divider';
 import PoolLogo from '@/app/components/PoolLogo';
@@ -11,10 +11,11 @@ import { Typography } from '@/app/theme';
 import QuestionIcon from '@/assets/icons/question.svg';
 import useSort from '@/hooks/useSort';
 import { MIN_LIQUIDITY_TO_INCLUDE, PairData, useAllPairsById } from '@/queries/backendv2';
-import { Field } from '@/store/mint/reducer';
 import { useDerivedMintInfo, useMintActionHandlers } from '@/store/mint/hooks';
+import { Field } from '@/store/mint/reducer';
 import { getFormattedNumber } from '@/utils/formatter';
 
+import { HeaderText } from '@/app/components/SearchModal/styleds';
 import Skeleton from '@/app/components/Skeleton';
 import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
 import { PairInfo } from '@/types';
@@ -80,102 +81,6 @@ const StyledSkeleton = styled(Skeleton)`
 
     &:last-of-type {
       left: 38px;
-    }
-  }
-`;
-
-export const HeaderText = styled(Flex)<{ className?: string }>`
-  display: flex;
-  font-size: 14px;
-  color: #d5d7db;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  align-items: center;
-  cursor: pointer;
-  position: relative;
-  transition: all ease 200ms;
-  padding-left: 15px;
-  white-space: nowrap;
-
-  &:before,
-  &:after,
-  span:after,
-  span:before {
-    content: '';
-    position: absolute;
-    width: 8px;
-    height: 2px;
-    border-radius: 2px;
-    background: ${({ theme }) => theme.colors.primary};
-    display: inline-block;
-    top: 50%;
-    transition: all ease 200ms;
-    right: 0;
-    transform-origin: center;
-    opacity: 0;
-    transform: rotate(0) translate3d(0, 0, 0);
-  }
-
-  ${props =>
-    props.className === 'ASC' &&
-    css`
-      padding-right: 15px;
-      padding-left: 0;
-      &:before,
-      &:after,
-      span:after,
-      span:before {
-        opacity: 1;
-      }
-
-      &:before,
-      span:before {
-        transform: rotate(-45deg) translate3d(-2px, -3px, 0);
-      }
-
-      &:after,
-      span:after {
-        transform: rotate(45deg) translate3d(0px, -1px, 0);
-      }
-    `};
-
-  ${props =>
-    props.className === 'DESC' &&
-    css`
-      padding-right: 15px;
-      padding-left: 15px;
-      &:before,
-      &:after,
-      span:after,
-      span:before {
-        opacity: 1;
-      }
-
-      &:before,
-      span:before {
-        transform: rotate(45deg) translate3d(-3px, 2px, 0);
-      }
-
-      &:after,
-      span:after {
-        transform: rotate(-45deg) translate3d(1px, 0, 0);
-      }
-    `};
-
-  &:first-of-type {
-    padding-left: 0;
-    &::before,
-    &::after {
-      display: none;
-    }
-
-    span {
-      position: relative;
-
-      &::before,
-      &:after {
-        margin-right: -15px;
-      }
     }
   }
 `;

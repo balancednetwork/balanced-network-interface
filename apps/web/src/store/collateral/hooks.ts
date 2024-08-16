@@ -9,7 +9,6 @@ import bnJs from '@/bnJs';
 import { ICON_XCALL_NETWORK_ID, NETWORK_ID } from '@/constants/config';
 import { MINIMUM_ICX_FOR_ACTION } from '@/constants/index';
 import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
-import { useBorrowedAmounts } from '@/store/loan/hooks';
 import { useOraclePrice } from '@/store/oracle/hooks';
 import { useRatio } from '@/store/ratio/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
@@ -573,91 +572,4 @@ export function useDerivedCollateralInfo(): {
     differenceAmount,
     xTokenAmount,
   };
-}
-
-export function useUserPositionsData(): UseQueryResult<XPositionsRecord[]> {
-  const xDepositedAmounts = useAllDepositedAmounts();
-  const borrowedAmounts = useBorrowedAmounts();
-  const allWallets = useSignedInWallets();
-  const xWallet = useCrossChainWalletBalances();
-
-  const createDepositAmount = (token: Token, amount: BigNumber) =>
-    CurrencyAmount.fromRawAmount(token, amount.times(10 ** token.decimals).toFixed(0));
-
-  const getLoanAmount = (symbol: CurrencyKey, xChainId: XChainId, account: string) =>
-    borrowedAmounts[symbol]?.[xChainId === ICON_XCALL_NETWORK_ID ? account : `${xChainId}/${account}`];
-
-  const updateAccumulator = (
-    acc: XPositions,
-    symbol: CurrencyKey,
-    xChainId: XChainId,
-    collateral: CurrencyAmount<Currency>,
-    loan: BigNumber,
-    isPotential = false,
-  ) => {
-    acc[symbol] = {
-      ...acc[symbol],
-      [xChainId]: { collateral, loan, isPotential },
-    };
-  };
-
-  return useQuery({
-    queryKey: ['xPositionsData', allWallets],
-    queryFn: () => {
-      return Object.entries(
-        Object.entries(xDepositedAmounts).reduce((acc, [xChainId, xChainDeposits]) => {
-          if (xChainDeposits) {
-            forEach(xChainDeposits, (deposit, symbol) => {
-              const xToken = xTokenMap[xChainId]?.find(token => token.symbol === symbol);
-              const account = allWallets.find(wallet => wallet.xChainId === xChainId)?.address;
-              if (!account) return;
-
-              if (xToken) {
-                const depositAmount = createDepositAmount(xToken, deposit);
-                const loanAmount = getLoanAmount(symbol, xChainId as XChainId, account);
-
-                if (depositAmount.greaterThan(0)) {
-                  updateAccumulator(acc, symbol, xChainId as XChainId, depositAmount, loanAmount);
-                } else {
-                  const availableAmount = xWallet[xChainId]?.[xToken.address];
-                  if (availableAmount?.greaterThan(0)) {
-                    updateAccumulator(acc, symbol, xChainId as XChainId, availableAmount, new BigNumber(0), true);
-                  }
-                }
-              } else {
-                const token = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
-                if (xChainId === ICON_XCALL_NETWORK_ID && token) {
-                  const depositAmount = createDepositAmount(token, deposit);
-                  const loanAmount = borrowedAmounts[symbol]?.[account];
-
-                  if (depositAmount.greaterThan(0)) {
-                    updateAccumulator(acc, symbol, xChainId, depositAmount, loanAmount);
-                  } else {
-                    const availableAmount = xWallet[xChainId]?.[token.address];
-                    if (availableAmount?.greaterThan(0)) {
-                      updateAccumulator(acc, symbol, xChainId, availableAmount, new BigNumber(0), true);
-                    }
-                  }
-                }
-              }
-            });
-          }
-          return acc;
-        }, {} as XPositions),
-      )
-        .map(([symbol, positions]) => {
-          const baseToken = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
-          if (!baseToken) return;
-          return {
-            baseToken,
-            positions,
-            isSingleChain: Object.keys(positions).length === 1,
-          };
-        })
-        .filter((item): item is XPositionsRecord => Boolean(item));
-    },
-    enabled: allWallets?.length > 0,
-    placeholderData: keepPreviousData,
-    refetchInterval: 4000,
-  });
 }

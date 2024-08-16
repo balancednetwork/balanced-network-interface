@@ -7,13 +7,9 @@ import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from '@/bnJs';
-import { PLUS_INFINITY } from '@/constants/index';
 import { useTokenPrices } from '@/queries/backendv2';
 import { useBBalnAmount } from '@/store/bbaln/hooks';
-import { useCollateralInputAmountAbsolute } from '@/store/collateral/hooks';
 import { useHasUnclaimedFees } from '@/store/fees/hooks';
-import { useLoanInputAmount } from '@/store/loan/hooks';
-import { useOraclePrice } from '@/store/oracle/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { RewardDistribution, RewardDistributionRaw } from './types';
 
@@ -71,18 +67,6 @@ export function useEmissions() {
     refetchInterval: undefined,
   });
 }
-
-export const useCurrentCollateralRatio = (): BigNumber => {
-  const collateralInputAmount = useCollateralInputAmountAbsolute();
-  const loanInputAmount = useLoanInputAmount();
-  const oraclePrice = useOraclePrice();
-
-  return React.useMemo(() => {
-    if (loanInputAmount.isZero() || !collateralInputAmount || !oraclePrice) return PLUS_INFINITY;
-
-    return collateralInputAmount.times(oraclePrice).dividedBy(loanInputAmount).multipliedBy(100);
-  }, [collateralInputAmount, loanInputAmount, oraclePrice]);
-};
 
 export const useHasNetworkFees = () => {
   const { account } = useIconReact();

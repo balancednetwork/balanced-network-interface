@@ -13,7 +13,6 @@ import fees from './fees/reducer';
 import lists from './lists/reducer';
 import liveVoting from './liveVoting/reducer';
 import loan from './loan/reducer';
-import mint from './mint/reducer';
 import oracle from './oracle/reducer';
 import ratio from './ratio/reducer';
 import reward from './reward/reducer';
@@ -39,7 +38,6 @@ export function configureAppStore() {
       ratio,
       wallet,
       transactions,
-      mint,
       swap,
       stabilityFund,
       stakedLP,

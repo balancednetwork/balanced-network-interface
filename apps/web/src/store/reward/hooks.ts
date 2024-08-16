@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 
-import { Fraction } from '@balancednetwork/sdk-core';
-import BigNumber from 'bignumber.js';
 import { useIconReact } from '@/packages/icon-react';
-import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
+import { Fraction } from '@balancednetwork/sdk-core';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
+import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from '@/bnJs';
@@ -71,24 +71,6 @@ export function useEmissions() {
     refetchOnReconnect: false,
     refetchInterval: undefined,
   });
-}
-
-export function useFetchRewardsInfo() {
-  const { data: emission } = useEmissions();
-  const { data: distribution } = useFlattenedRewardsDistribution();
-  const changeReward = useChangeReward();
-
-  useEffect(() => {
-    if (distribution && emission) {
-      Object.keys(distribution).forEach(rewardName => {
-        try {
-          changeReward(rewardName, emission.times(new BigNumber(distribution[rewardName].toFixed(18))));
-        } catch (e) {
-          console.error(e);
-        }
-      });
-    }
-  }, [distribution, emission, changeReward]);
 }
 
 export const useCurrentCollateralRatio = (): BigNumber => {

@@ -9,7 +9,6 @@ import { useIconReact } from '@/packages/icon-react';
 import { useFetchBBalnInfo, useFetchBBalnSources } from '@/store/bbaln/hooks';
 import { useFetchOraclePrices } from '@/store/oracle/hooks';
 import { useFetchPrice } from '@/store/ratio/hooks';
-import { useFetchRewardsInfo } from '@/store/reward/hooks';
 import { useFetchStabilityFundBalances } from '@/store/stabilityFund/hooks';
 import { useWalletFetchBalances } from '@/store/wallet/hooks';
 
@@ -23,7 +22,6 @@ export function TradePageLayout() {
   useFetchBBalnSources(5000, true);
   useWalletFetchBalances();
   useFetchBBalnInfo(account);
-  useFetchRewardsInfo();
   useFetchStabilityFundBalances();
 
   const [value, setValue] = React.useState<number>(

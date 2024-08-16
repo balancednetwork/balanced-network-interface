@@ -247,34 +247,6 @@ export function useWalletFetchBalances() {
   }, [baseBalances, dispatch]);
 }
 
-export const useBALNDetails = (): { [key in string]?: BigNumber } => {
-  const { account } = useIconReact();
-  const transactions = useAllTransactions();
-  const [details, setDetails] = React.useState({});
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  React.useEffect(() => {
-    const fetchDetails = async () => {
-      if (account) {
-        const result = await bnJs.BALN.detailsBalanceOf(account);
-
-        const temp = {};
-
-        forEach(result, (value, key) => {
-          if (key === 'Unstaking time (in microseconds)') temp[key] = new BigNumber(value);
-          else temp[key] = BalancedJs.utils.toIcx(value);
-        });
-
-        setDetails(temp);
-      }
-    };
-
-    fetchDetails();
-  }, [account, transactions]);
-
-  return details;
-};
-
 export const useHasEnoughICX = () => {
   const balances = useICONWalletBalances();
   const icxAddress = bnJs.ICX.address;

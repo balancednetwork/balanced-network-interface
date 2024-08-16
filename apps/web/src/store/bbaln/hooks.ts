@@ -39,20 +39,8 @@ export function useBBalnAmount(): AppState['bbaln']['bbalnAmount'] {
   return useSelector((state: AppState) => state.bbaln.bbalnAmount);
 }
 
-export function useLockedUntil(): AppState['bbaln']['lockedUntil'] {
-  return useSelector((state: AppState) => state.bbaln.lockedUntil);
-}
-
-export function useLockedBaln(): AppState['bbaln']['lockedBaln'] {
-  return useSelector((state: AppState) => state.bbaln.lockedBaln);
-}
-
 export function useBBalnSliderState(): AppState['bbaln']['state'] {
   return useSelector((state: AppState) => state.bbaln.state);
-}
-
-export function useTotalSupply(): AppState['bbaln']['totalSupply'] {
-  return useSelector((state: AppState) => state.bbaln.totalSupply);
 }
 
 export function useSelectedPeriod(): AppState['bbaln']['state']['selectedPeriod'] {
@@ -164,91 +152,3 @@ export function useFetchBBalnSources(interval?: number, omitImmediateCall?: bool
   useInterval(fetchSources, interval || 3000);
   !omitImmediateCall && fetchSources();
 }
-
-export function useDynamicBBalnAmount() {
-  const { typedValue } = useBBalnSliderState();
-  const selectedPeriod = useSelectedPeriod();
-  const balnSliderAmount = useMemo(() => new BigNumber(typedValue), [typedValue]);
-
-  return useMemo(() => getBbalnAmount(balnSliderAmount, selectedPeriod), [balnSliderAmount, selectedPeriod]);
-}
-
-export function useDBBalnAmountDiff() {
-  const { isAdjusting } = useBBalnSliderState();
-  const selectedPeriod = useSelectedPeriod();
-  const { typedValue } = useBBalnSliderState();
-  const bBalnAmount = useBBalnAmount();
-  const balnSliderAmount = useMemo(() => new BigNumber(typedValue), [typedValue]);
-
-  return useMemo(() => {
-    if (isAdjusting) {
-      return getBbalnAmount(balnSliderAmount, selectedPeriod).minus(bBalnAmount).abs();
-    } else {
-      return new BigNumber(0);
-    }
-  }, [isAdjusting, selectedPeriod, bBalnAmount, balnSliderAmount]);
-}
-
-export const usePastMonthFeesDistributed = () => {
-  const fiveMinPeriod = 1000 * 300;
-  const now = Math.floor(new Date().getTime() / fiveMinPeriod) * fiveMinPeriod;
-  const { data: blockThen } = useBlockDetails(new Date(now).setDate(new Date().getDate() - 30));
-  const { data: rates } = useTokenPrices();
-
-  return useQuery({
-    queryKey: [`PastMonthFeesDistributed`, blockThen && blockThen.number, rates && Object.keys(rates).length],
-    queryFn: async () => {
-      if (!blockThen || !rates) return;
-
-      const loanFeesNow = await bnJs.FeeHandler.getLoanFeesAccrued();
-      const loanFeesThen = await bnJs.FeeHandler.getLoanFeesAccrued(blockThen.number);
-
-      const fundFeesNow = await bnJs.FeeHandler.getStabilityFundFeesAccrued();
-      const fundFeesThen = await bnJs.FeeHandler.getStabilityFundFeesAccrued(blockThen.number);
-
-      //swap fees
-      const bnUSDFeesNow = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.bnUSD.address);
-      const bnUSDFeesThen = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.bnUSD.address, blockThen.number);
-
-      const sICXFeesNow = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.sICX.address);
-      const sICXFeesThen = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.sICX.address, blockThen.number);
-
-      const balnFeesNow = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.BALN.address);
-      const balnFeesThen = await bnJs.FeeHandler.getSwapFeesAccruedByToken(bnJs.BALN.address, blockThen.number);
-
-      const bnUSDFees = new BigNumber(formatUnits(bnUSDFeesNow))
-        .minus(new BigNumber(formatUnits(bnUSDFeesThen)))
-        .times(ENSHRINEMENT_RATIO)
-        .times(PERCENTAGE_DISTRIBUTED);
-      const sICXFees = new BigNumber(formatUnits(sICXFeesNow))
-        .minus(new BigNumber(formatUnits(sICXFeesThen)))
-        .times(rates['sICX'])
-        .times(ENSHRINEMENT_RATIO)
-        .times(PERCENTAGE_DISTRIBUTED);
-      const balnFees = new BigNumber(formatUnits(balnFeesNow))
-        .minus(new BigNumber(formatUnits(balnFeesThen)))
-        .times(rates['BALN'])
-        .times(ENSHRINEMENT_RATIO)
-        .times(PERCENTAGE_DISTRIBUTED);
-      const loansFees = new BigNumber(formatUnits(loanFeesNow))
-        .minus(new BigNumber(formatUnits(loanFeesThen)))
-        .times(ENSHRINEMENT_RATIO)
-        .times(PERCENTAGE_DISTRIBUTED);
-      const fundFees = new BigNumber(formatUnits(fundFeesNow))
-        .minus(new BigNumber(formatUnits(fundFeesThen)))
-        .times(ENSHRINEMENT_RATIO)
-        .times(PERCENTAGE_DISTRIBUTED);
-
-      return {
-        loans: loansFees,
-        fund: fundFees,
-        swapsBALN: balnFees,
-        swapsSICX: sICXFees,
-        swapsBnUSD: bnUSDFees,
-        total: loansFees.plus(fundFees).plus(balnFees).plus(sICXFees).plus(bnUSDFees),
-      };
-    },
-    enabled: !!blockThen && !!rates,
-    placeholderData: keepPreviousData,
-  });
-};

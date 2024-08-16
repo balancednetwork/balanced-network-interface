@@ -3,7 +3,18 @@ import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-quer
 import BigNumber from 'bignumber.js';
 
 import bnJs from '@/bnJs';
-import { RewardDistribution, RewardDistributionRaw } from './types';
+
+export type RewardDistributionRaw = {
+  Base: Map<string, Fraction>;
+  Fixed: Map<string, Fraction>;
+  Voting: Map<string, Fraction>;
+};
+
+export type RewardDistribution = {
+  Base: Map<string, Fraction>;
+  Fixed: Map<string, Fraction>;
+  Voting: Map<string, Fraction>;
+};
 
 const WEIGHT_CONST = 10 ** 18;
 

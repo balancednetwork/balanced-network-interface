@@ -8,7 +8,7 @@ import BigNumber from 'bignumber.js';
 import { Abi, Address, WriteContractReturnType, erc20Abi, getContract } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
 
-import { openToast } from '@/btp/src/connectors/transactionToast';
+import { openToast } from '@/app/components/Toast/transactionToast';
 import { NATIVE_ADDRESS } from '@/constants/index';
 import { archway, xChainMap } from '@/constants/xChains';
 import { useArchwayContext } from '@/packages/archway/ArchwayProvider';

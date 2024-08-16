@@ -1,10 +1,10 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { openToast } from '@/btp/src/connectors/transactionToast';
 
 import { TransactionStatus } from '@/store/transactions/hooks';
 
-import { initTransaction, addTransactionResult } from './actions';
+import { openToast } from '@/app/components/Toast/transactionToast';
 import { archway } from '@/constants/xChains';
+import { addTransactionResult, initTransaction } from './actions';
 
 export interface TransactionDetails {
   hash: string;

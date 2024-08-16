@@ -3,7 +3,7 @@ import { DropdownPopper } from '@/app/components/Popover';
 import { SelectorWrap } from '@/app/components/trade/CrossChainOptions';
 import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
 import { XChainId } from '@/app/pages/trade/bridge/types';
-import { getAvailableXChains } from '@/app/pages/trade/bridge/utils';
+import { getSupportedXChainForToken } from '@/app/pages/trade/bridge/utils';
 import { Typography } from '@/app/theme';
 import { NETWORK_ID } from '@/constants/config';
 import { bnUSD } from '@/constants/tokens';
@@ -23,7 +23,7 @@ const LoanChainSelector = ({
   const loanRecipientNetwork = useLoanRecipientNetwork();
   const { onAdjust: adjust, setRecipientNetwork } = useLoanActionHandlers();
 
-  const xChains = getAvailableXChains(bnUSD[NETWORK_ID])?.filter(
+  const xChains = getSupportedXChainForToken(bnUSD[NETWORK_ID])?.filter(
     chain => chain.xChainId !== 'archway-1' && chain.xChainId !== '0x100.icon',
   );
 

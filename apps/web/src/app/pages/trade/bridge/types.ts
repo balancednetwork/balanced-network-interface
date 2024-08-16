@@ -182,8 +182,6 @@ export class XToken extends Token {
   }
 }
 
-export type XTokenMap = { [key: string | number]: XToken };
-
 export type XWalletAssetRecord = {
   baseToken: Token;
   xTokenAmounts: { [key in XChainId]: CurrencyAmount<Currency> | undefined };

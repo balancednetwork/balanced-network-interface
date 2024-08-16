@@ -2,7 +2,7 @@ import { StyledArrowDownIcon } from '@/app/components/DropdownText';
 import { DropdownPopper } from '@/app/components/Popover';
 import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
 import { XChainId } from '@/app/pages/trade/bridge/types';
-import { getAvailableXChains } from '@/app/pages/trade/bridge/utils';
+import { getSupportedXChainForToken } from '@/app/pages/trade/bridge/utils';
 import { Typography } from '@/app/theme';
 import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
 import React, { useEffect, useMemo } from 'react';
@@ -32,7 +32,7 @@ const CollateralChainSelector = ({
   const currency = SUPPORTED_TOKENS_LIST.find(token => token.symbol === collateralType);
   const { onAdjust: adjust, changeCollateralXChain } = useCollateralActionHandlers();
 
-  const xChains = useMemo(() => getAvailableXChains(currency), [currency]);
+  const xChains = useMemo(() => getSupportedXChainForToken(currency), [currency]);
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 

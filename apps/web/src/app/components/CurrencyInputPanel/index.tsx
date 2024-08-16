@@ -17,7 +17,7 @@ import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 import CrossChainOptions from '../trade/CrossChainOptions';
 import { XChainId } from '@/app/pages/trade/bridge/types';
 import { Box } from 'rebass/styled-components';
-import { getAvailableXChains } from '@/app/pages/trade/bridge/utils';
+import { getSupportedXChainForToken } from '@/app/pages/trade/bridge/utils';
 import { DEFAULT_TOKEN_CHAIN } from '@/app/pages/trade/bridge/_config/xTokens';
 
 const InputContainer = styled.div`
@@ -165,7 +165,7 @@ export default function CurrencyInputPanel({
       currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
       currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE
         ? []
-        : getAvailableXChains(currency),
+        : getSupportedXChainForToken(currency),
     [currency, currencySelectionType],
   );
 
@@ -178,7 +178,7 @@ export default function CurrencyInputPanel({
           currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
           currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE
             ? []
-            : getAvailableXChains(currency);
+            : getSupportedXChainForToken(currency);
         const defaultXChainId = DEFAULT_TOKEN_CHAIN[currency.symbol];
         if (defaultXChainId && (xChains?.length ?? 0) > 1) {
           onChainSelect && onChainSelect(defaultXChainId);

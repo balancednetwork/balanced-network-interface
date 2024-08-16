@@ -21,11 +21,11 @@ import { HeaderText } from '@/app/pages/trade/supply/_components/AllPoolsPanel';
 import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
 import { XChainId } from '@/app/pages/trade/bridge/types';
 import { formatPrice } from '@/utils/formatter';
-import { useCurrencyXChains } from '@/store/bridge/hooks';
 import { BalanceBreakdown } from '../Wallet/styledComponents';
 import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
 import CurrencyXChainItem from './CurrencyXChainItem';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
+import { getSupportedXChainIdsForToken } from '@/app/pages/trade/bridge/utils';
 
 const DashGrid = styled(Box)`
   display: grid;
@@ -58,12 +58,7 @@ function CurrencyRow({
   currency,
   onSelect,
   onChainSelect,
-  isSelected,
-  otherSelected,
-  style,
-  showCurrencyAmount,
   onRemove,
-  account,
   rateFracs,
   selectedChainId,
   showCrossChainBreakdown,
@@ -73,24 +68,19 @@ function CurrencyRow({
   showCrossChainBreakdown: boolean;
   onSelect: (currency: Currency, setDefaultChain?: boolean) => void;
   onChainSelect?: (chainId: XChainId) => void;
-  isSelected?: boolean;
-  otherSelected?: boolean;
-  style?: CSSProperties;
-  showCurrencyAmount?: boolean;
   onRemove: () => void;
-  account?: string | null;
   rateFracs: { [key in string]: Fraction } | undefined;
   selectedChainId: XChainId | undefined;
   basedOnWallet: boolean;
 }) {
-  const currencyXChains = useCurrencyXChains(currency);
+  const currencyXChainIds = useMemo(() => getSupportedXChainIdsForToken(currency), [currency]);
   const balance = useXCurrencyBalance(currency, selectedChainId);
   const signedInWallets = useSignedInWallets();
   const xWallet = useCrossChainWalletBalances();
 
   const sortedXChains = useMemo(() => {
     return basedOnWallet
-      ? [...currencyXChains]
+      ? [...currencyXChainIds]
           .filter(xChainId => {
             const xCurrencyAmount = Object.values(xWallet[xChainId] || {}).find(
               currencyAmount => currencyAmount.currency.symbol === currency.symbol,
@@ -113,13 +103,13 @@ function CurrencyRow({
 
             return 0;
           })
-      : [...currencyXChains].sort((a, b) => {
+      : [...currencyXChainIds].sort((a, b) => {
           return xChainMap[a].name.localeCompare(xChainMap[b].name);
         });
-  }, [currencyXChains, basedOnWallet, currency, xWallet]);
+  }, [currencyXChainIds, basedOnWallet, currency, xWallet]);
 
   const isSingleChain = sortedXChains.length === 1 || sortedXChains.length === 0;
-  const showBreakdown = showCrossChainBreakdown && currencyXChains.length && !isSingleChain;
+  const showBreakdown = showCrossChainBreakdown && currencyXChainIds.length && !isSingleChain;
 
   const isUserAddedToken = useIsUserAddedToken(currency as Token);
   const theme = useTheme();
@@ -369,7 +359,6 @@ export default function CurrencyList({
 
       {sortedCurrencies?.map((currency, index) => (
         <CurrencyRow
-          account={account}
           key={currencyKey(currency)}
           currency={currency}
           onSelect={onCurrencySelect}

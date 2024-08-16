@@ -1582,6 +1582,10 @@ msgstr "Transferring"
 msgid "Choose address"
 msgstr "Choose address"
 
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "Your assets"
+msgstr "Your assets"
+
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "You'll need to relock BALN to hold voting power and boost your earning potential."
 msgstr "You'll need to relock BALN to hold voting power and boost your earning potential."
@@ -2330,6 +2334,10 @@ msgstr "Transferring {0} from {1} to {2}..."
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Remove"
 msgstr "Remove"
+
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "All assets"
+msgstr "All assets"
 
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx

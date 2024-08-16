@@ -108,12 +108,17 @@ export const isXToken = (token?: Currency) => {
     .some(t => t.address === token.wrapped.address);
 };
 
-export const getAvailableXChains = (currency?: Currency | XToken | null): XChain[] | undefined => {
+export const getSupportedXChainIdsForToken = (currency: Currency | XToken): XChainId[] => {
+  return Object.values(xTokenMap)
+    .flat()
+    .filter(t => t.symbol === currency.symbol)
+    .map(t => t.xChainId);
+};
+
+export const getSupportedXChainForToken = (currency?: Currency | XToken | null): XChain[] | undefined => {
   if (!currency) return;
 
-  const allXTokens = Object.values(xTokenMap).flat();
-
-  const xChainIds = allXTokens.filter(t => t.symbol === currency.symbol).map(t => t.xChainId);
+  const xChainIds = getSupportedXChainIdsForToken(currency) || [];
 
   return xChains.filter(x => xChainIds.includes(x.xChainId));
 };

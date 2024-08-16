@@ -1578,6 +1578,10 @@ msgstr ""
 msgid "Choose address"
 msgstr ""
 
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "Your assets"
+msgstr ""
+
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "You'll need to relock BALN to hold voting power and boost your earning potential."
 msgstr ""
@@ -2321,6 +2325,10 @@ msgstr ""
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Remove"
+msgstr ""
+
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "All assets"
 msgstr ""
 
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx

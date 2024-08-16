@@ -17,7 +17,6 @@ import useToggle from '@/hooks/useToggle';
 import { isAddress } from '@/utils';
 
 import Column from '../Column';
-import CommunityListToggle from '../CommunityListToggle';
 import CurrencyList from './CurrencyList';
 import { filterTokens, useSortedTokensByQuery } from './filtering';
 import ImportRow from './ImportRow';

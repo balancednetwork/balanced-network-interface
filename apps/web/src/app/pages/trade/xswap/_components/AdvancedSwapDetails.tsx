@@ -16,8 +16,6 @@ import { useDerivedSwapInfo } from '@/store/swap/hooks';
 
 import Divider from '@/app/components/Divider';
 import useXCallFee from '@/app/pages/trade/bridge/_hooks/useXCallFee';
-import { XChainId } from '../../bridge/types';
-import { xChainMap } from '../../bridge/_config/xChains';
 
 export default function AdvancedSwapDetails() {
   const { trade, currencies, direction } = useDerivedSwapInfo();
@@ -140,18 +138,6 @@ function TradeRoute({ route }: { route: Route<Currency, Currency> }) {
       {route.path.map((token: Token, index: number) => (
         <span key={token.address}>
           {index > 0 && <ChevronRight size={14} />} {token.symbol}
-        </span>
-      ))}
-    </>
-  );
-}
-
-function BridgeRoute({ route }: { route: XChainId[] }) {
-  return (
-    <>
-      {route.map((xChainId: XChainId, index: number) => (
-        <span key={xChainId}>
-          {index > 0 && <ChevronRight size={14} />} {xChainMap[xChainId].name}
         </span>
       ))}
     </>

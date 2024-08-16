@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo } from 'react';
 
-import { Currency, CurrencyAmount, Fraction, Percent } from '@balancednetwork/sdk-core';
-import { Pair } from '@balancednetwork/v1-sdk';
-import { t, Trans } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import { useIconReact } from '@/packages/icon-react';
 import Nouislider from '@/packages/nouislider-react';
+import { Currency, CurrencyAmount, Fraction, Percent } from '@balancednetwork/sdk-core';
+import { Pair } from '@balancednetwork/v1-sdk';
+import { Trans, t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { useMedia } from 'react-use';
-import { Flex, Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button, TextButton } from '@/app/components/Button';
@@ -23,15 +23,14 @@ import { BalanceData } from '@/hooks/useV2Pairs';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import { Source } from '@/store/bbaln/hooks';
 import { Field } from '@/store/mint/reducer';
-import { useChangeWithdrawnValue, useStakedLPPercent } from '@/store/stakedLP/hooks';
 import { tryParseAmount } from '@/store/swap/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useCurrencyBalances, useHasEnoughICX } from '@/store/wallet/hooks';
 import { formatBigNumber, multiplyCABN, toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 
-import { withdrawMessage } from '../utils';
 import { EXA, WEIGHT } from '@/app/components/home/BBaln/utils';
+import { withdrawMessage } from '../utils';
 
 const Wrapper = styled(Flex)`
   padding-left: 0;
@@ -108,304 +107,7 @@ export function getShareReward(
 }
 
 export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: BalanceData; poolId: number }) => {
-  const { account } = useIconReact();
-  const balances = useCurrencyBalances(
-    account ?? undefined,
-    useMemo(() => [pair.token0, pair.token1], [pair]),
-  );
-  const shouldLedgerSign = useShouldLedgerSign();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
-  const onChangeWithdrawnValue = useChangeWithdrawnValue();
-
-  const [{ typedValue, independentField, inputType, portion }, setState] = React.useState<{
-    typedValue: string;
-    independentField: Field;
-    inputType: 'slider' | 'text';
-    portion: number;
-  }>({
-    typedValue: '',
-    independentField: Field.CURRENCY_A,
-    inputType: 'text',
-    portion: 0,
-  });
-
-  const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
-  const price =
-    independentField === Field.CURRENCY_A ? pair.token0Price || FRACTION_ONE : pair.token1Price || FRACTION_ONE;
-
-  let parsedAmount: { [field in Field]?: CurrencyAmount<Currency> }, formattedAmounts;
-
-  const percent = useMemo(() => new Percent(Math.floor(portion * 100), 10_000), [portion]);
-  const stakedLPPercent = useStakedLPPercent(poolId);
-  const [aBalance, bBalance] = getABBalance(pair, balance);
-  const availablePercent = new BigNumber(100).minus(stakedLPPercent).abs();
-  const availableBase = aBalance.multiply(availablePercent.toFixed(0)).divide(100);
-  const availableQuote = bBalance.multiply(availablePercent.toFixed(0)).divide(100);
-
-  if (inputType === 'slider') {
-    parsedAmount = {
-      [Field.CURRENCY_A]: availableBase?.multiply(percent),
-      [Field.CURRENCY_B]: availableQuote?.multiply(percent),
-    };
-
-    formattedAmounts = {
-      [Field.CURRENCY_A]: parsedAmount[Field.CURRENCY_A]?.toSignificant(6) ?? '',
-      [Field.CURRENCY_B]: parsedAmount[Field.CURRENCY_B]?.toSignificant(6) ?? '',
-    };
-  } else {
-    const [independentToken, dependentToken] =
-      independentField === Field.CURRENCY_A ? [pair.token0, pair.token1] : [pair.token1, pair.token0];
-
-    const independentAmount = tryParseAmount(typedValue, independentToken);
-    const dependentAmountFrac = independentAmount?.multiply(price);
-
-    parsedAmount = {
-      [independentField]: independentAmount,
-      [dependentField]:
-        dependentAmountFrac &&
-        CurrencyAmount.fromFractionalAmount(
-          dependentToken,
-          dependentAmountFrac.numerator,
-          dependentAmountFrac.denominator,
-        ),
-    };
-
-    formattedAmounts = {
-      [independentField]: typedValue,
-      [dependentField]: parsedAmount[dependentField]?.toFixed(6) ?? '',
-    };
-  }
-
-  const handleFieldAInput = (value: string) => {
-    if (availableBase && availableBase.greaterThan(0)) {
-      const valueBN = new BigNumber(value || '0');
-      const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(availableBase.toFixed()).multipliedBy(100).toNumber(), 100);
-      setState({ independentField: Field.CURRENCY_A, typedValue: value, inputType: 'text', portion: p });
-    }
-  };
-
-  const handleFieldBInput = (value: string) => {
-    if (availableQuote && availableQuote.greaterThan(0)) {
-      const valueBN = new BigNumber(value || '0');
-      const p = valueBN.isNaN() ? 0 : Math.min(valueBN.div(availableQuote.toFixed()).multipliedBy(100).toNumber(), 100);
-      setState({ independentField: Field.CURRENCY_B, typedValue: value, inputType: 'text', portion: p });
-    }
-  };
-
-  const handleSlide = (values: string[], handle: number) => {
-    setState({
-      typedValue,
-      independentField,
-      inputType: 'slider',
-      portion: parseFloat(values[handle]),
-    });
-  };
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    availableBase &&
-      availableQuote &&
-      availableBase.greaterThan(0) &&
-      availableQuote.greaterThan(0) &&
-      onChangeWithdrawnValue(
-        poolId,
-        new BigNumber(portion),
-        availableBase.multiply(percent),
-        availableQuote.multiply(percent),
-      );
-  }, [onChangeWithdrawnValue, percent, portion, availableBase?.toFixed(), availableQuote?.toFixed(), poolId]);
-
-  const sliderInstance = React.useRef<any>(null);
-
-  React.useEffect(() => {
-    if (inputType === 'text') {
-      sliderInstance.current?.noUiSlider.set(portion);
-    }
-  }, [inputType, portion]);
-
-  const [open, setOpen] = React.useState(false);
-
-  const toggleOpen = () => {
-    if (shouldLedgerSign) return;
-    setOpen(!open);
-  };
-
-  const addTransaction = useTransactionAdder();
-
-  const resetValue = () => {
-    sliderInstance.current?.noUiSlider.set(0);
-    setState({ typedValue, independentField, inputType: 'slider', portion: 0 });
-  };
-
-  const handleWithdraw = () => {
-    if (!account) return;
-    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
-
-    const numPortion = new BigNumber(portion / 100);
-
-    const t = multiplyCABN(balance.balance, numPortion);
-
-    const aT = multiplyCABN(availableBase, numPortion);
-    const bT = multiplyCABN(availableQuote, numPortion);
-
-    bnJs
-      .inject({ account })
-      .Dex.remove(poolId, toDec(t))
-      .then(result => {
-        addTransaction(
-          { hash: result.result },
-          {
-            pending: withdrawMessage(
-              aT.toFixed(2, { groupSeparator: ',' }),
-              aT.currency.symbol ?? '',
-              bT.toFixed(2, { groupSeparator: ',' }),
-              bT.currency.symbol ?? '',
-            ).pendingMessage,
-            summary: withdrawMessage(
-              aT.toFixed(2, { groupSeparator: ',' }),
-              aT.currency.symbol ?? '',
-              bT.toFixed(2, { groupSeparator: ',' }),
-              bT.currency.symbol ?? '',
-            ).successMessage,
-          },
-        );
-        toggleOpen();
-      })
-      .catch(e => {
-        console.error('error', e);
-      })
-      .finally(() => {
-        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-        changeShouldLedgerSign(false);
-        resetValue();
-      });
-  };
-
-  const handleShowConfirm = () => {
-    toggleOpen();
-  };
-
-  const hasEnoughICX = useHasEnoughICX();
-
-  const availableCurrency = (stakedValue, suppliedValue) =>
-    (!!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue)?.toFixed(2, { groupSeparator: ',' }) ||
-    '...';
-
-  const isValid =
-    formattedAmounts[Field.CURRENCY_A] &&
-    formattedAmounts[Field.CURRENCY_B] &&
-    formattedAmounts[Field.CURRENCY_A] !== '0' &&
-    formattedAmounts[Field.CURRENCY_B] !== '0';
-
-  const hasUnstakedLP = availableBase?.greaterThan(0) && availableQuote?.greaterThan(0);
-
-  return (
-    <>
-      <Wrapper>
-        <Typography variant="h3" mb={3}>
-          <Trans>Withdraw:</Trans>&nbsp;
-          <Typography as="span" fontSize="16px" fontWeight="normal">{`${aBalance.currency.symbol || '...'} / ${
-            bBalance.currency.symbol || '...'
-          }`}</Typography>
-        </Typography>
-        <Box mb={3}>
-          <CurrencyInputPanel
-            value={formattedAmounts[Field.CURRENCY_A]}
-            currency={aBalance.currency}
-            onUserInput={handleFieldAInput}
-            bg="bg2"
-          />
-        </Box>
-        <Box mb={3}>
-          <CurrencyInputPanel
-            value={formattedAmounts[Field.CURRENCY_B]}
-            currency={bBalance.currency}
-            onUserInput={handleFieldBInput}
-            bg="bg2"
-          />
-        </Box>
-        <Typography mb={5} textAlign="right">
-          {`Available:
-          ${formatBigNumber(
-            new BigNumber(
-              parsedAmount[Field.CURRENCY_A]
-                ? (availableBase as CurrencyAmount<Currency>)?.subtract(parsedAmount[Field.CURRENCY_A]).toFixed()
-                : availableBase?.toFixed() || 0,
-            ),
-            'currency',
-          )} ${balances[0]?.currency.symbol || '...'} /
-          ${formatBigNumber(
-            new BigNumber(
-              parsedAmount[Field.CURRENCY_B]
-                ? (availableQuote as CurrencyAmount<Currency>)?.subtract(parsedAmount[Field.CURRENCY_B]).toFixed()
-                : availableQuote?.toFixed() || 0,
-            ),
-            'currency',
-          )} ${balances[1]?.currency.symbol || '...'}`}
-        </Typography>
-        <Box mb={5}>
-          {hasUnstakedLP && (
-            <Nouislider
-              start={[0]}
-              connect={[true, false]}
-              range={{
-                min: [0],
-                max: [100],
-              }}
-              step={0.01}
-              onSlide={handleSlide}
-              instanceRef={instance => {
-                if (instance && !sliderInstance.current) {
-                  sliderInstance.current = instance;
-                }
-              }}
-            />
-          )}
-        </Box>
-        <Flex alignItems="center" justifyContent="center">
-          <Button onClick={handleShowConfirm} disabled={!isValid || !hasUnstakedLP}>
-            <Trans>Withdraw liquidity</Trans>
-          </Button>
-        </Flex>
-      </Wrapper>
-
-      <Modal isOpen={open} onDismiss={toggleOpen}>
-        <ModalContent>
-          <Typography textAlign="center" mb={3} as="h3" fontWeight="normal">
-            <Trans>Withdraw liquidity?</Trans>
-          </Typography>
-
-          <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(new BigNumber(parsedAmount[Field.CURRENCY_A]?.toFixed() || 0), 'currency')}{' '}
-            {parsedAmount[Field.CURRENCY_A]?.currency.symbol || '...'}
-          </Typography>
-
-          <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(new BigNumber(parsedAmount[Field.CURRENCY_B]?.toFixed() || 0), 'currency')}{' '}
-            {parsedAmount[Field.CURRENCY_B]?.currency.symbol || '...'}
-          </Typography>
-
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleOpen}>
-                  <Trans>Cancel</Trans>
-                </TextButton>
-                <Button onClick={handleWithdraw} disabled={!hasEnoughICX}>
-                  <Trans>Withdraw</Trans>
-                </Button>
-              </>
-            )}
-          </Flex>
-        </ModalContent>
-      </Modal>
-    </>
-  );
+  return <></>;
 };
 
 export const WithdrawPanelQ = ({

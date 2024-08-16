@@ -45,6 +45,7 @@ import CollateralChainSelector from './_components/CollateralChainSelector';
 import { MODAL_ID, modalActions } from '@/app/pages/trade/bridge/_zustand/useModalStore';
 import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
 import { XWalletType } from '@/app/pages/trade/bridge/types';
+import { useIconReact } from '@/packages/icon-react';
 
 export const PanelInfoWrap = styled(Flex)`
   justify-content: space-between;
@@ -356,10 +357,13 @@ const CollateralPanel = () => {
   const [ref, width] = useWidth();
   const [underPanelRef, underPanelWidth] = useWidth();
 
+  const { connectToWallet: connectToIcon } = useIconReact();
   const [, setWalletModal] = useWalletModal();
   const handleConnect = () => {
     const chain = xChainMap[sourceChain];
-    if (chain.xWalletType !== XWalletType.COSMOS) {
+    if (chain.xWalletType === XWalletType.ICON) {
+      connectToIcon();
+    } else if (chain.xWalletType !== XWalletType.COSMOS) {
       setWalletModal(chain.xWalletType);
     }
   };

@@ -1,59 +1,11 @@
-import React, { useEffect } from 'react';
-
-import { useIconReact } from '@/packages/icon-react';
 import { Fraction } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
-import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from '@/bnJs';
-import { useTokenPrices } from '@/queries/backendv2';
-import { useBBalnAmount } from '@/store/bbaln/hooks';
-import { useHasUnclaimedFees } from '@/store/fees/hooks';
-import { useAllTransactions } from '@/store/transactions/hooks';
 import { RewardDistribution, RewardDistributionRaw } from './types';
 
-import { AppState } from '..';
-import { setReward } from './reducer';
-
 const WEIGHT_CONST = 10 ** 18;
-
-export function useRewards(): AppState['reward'] {
-  return useSelector((state: AppState) => state.reward);
-}
-
-export function useTotalLPRewards(): BigNumber {
-  const rewards = useRewards();
-  return Object.keys(rewards).reduce((total, rewardId) => {
-    try {
-      if (rewardId.indexOf('/') > 0) {
-        total = total.plus(rewards[rewardId]);
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      return total;
-    }
-  }, new BigNumber(0));
-}
-
-export function useReward(rewardName: string): BigNumber | undefined {
-  const rewards = useRewards();
-  if (rewardName && rewards[rewardName] && rewards[rewardName].isGreaterThan(0)) {
-    return rewards[rewardName];
-  }
-}
-
-export function useChangeReward(): (poolId: string, reward: BigNumber) => void {
-  const dispatch = useDispatch();
-
-  return React.useCallback(
-    (poolId, reward) => {
-      dispatch(setReward({ poolId, reward }));
-    },
-    [dispatch],
-  );
-}
 
 export function useEmissions() {
   return useQuery({
@@ -67,28 +19,6 @@ export function useEmissions() {
     refetchInterval: undefined,
   });
 }
-
-export const useHasNetworkFees = () => {
-  const { account } = useIconReact();
-  const hasUnclaimedFees = useHasUnclaimedFees();
-  const bbalnAmount = useBBalnAmount();
-  const transactions = useAllTransactions();
-  const [hasNetworkFees, setHasNetworkFees] = React.useState(false);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  React.useEffect(() => {
-    const checkIfHasNetworkFees = async () => {
-      if (account && bbalnAmount) {
-        if (bbalnAmount.isGreaterThan(0) || hasUnclaimedFees) setHasNetworkFees(true);
-        else setHasNetworkFees(false);
-      }
-    };
-
-    checkIfHasNetworkFees();
-  }, [account, transactions, hasUnclaimedFees, bbalnAmount]);
-
-  return hasNetworkFees;
-};
 
 export function useRewardsPercentDistribution(): UseQueryResult<RewardDistribution, Error> {
   return useQuery({
@@ -149,21 +79,6 @@ export function useFlattenedRewardsDistribution(): UseQueryResult<Map<string, Fr
       }, {});
     },
     enabled: !!distribution,
-    placeholderData: keepPreviousData,
-  });
-}
-
-export function useEarnedPastMonth(): UseQueryResult<BigNumber | undefined> {
-  const { account } = useIconReact();
-  const { data: prices } = useTokenPrices();
-
-  return useQuery({
-    queryKey: [`earnedPastMonth`, account, prices ? Object.keys(prices).length : '0'],
-    queryFn: async () => {
-      //todo: after endpoint is ready, fetch the data from there
-      return new BigNumber(23.9);
-    },
-    enabled: !!account,
     placeholderData: keepPreviousData,
   });
 }

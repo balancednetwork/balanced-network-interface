@@ -9,28 +9,6 @@ import { HEIGHT } from '@/app/components/TradingViewChart';
 import { ZERO } from '@/constants/misc';
 import { formatBigNumber } from '@/utils';
 
-export const Panel = styled(Flex)`
-  overflow: hidden;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-  border-bottom-left-radius: 10px;
-`;
-
-export const SectionPanel = styled(Panel)`
-  flex-direction: column;
-  ${({ theme }) => theme.mediaWidth.upSmall`
-    flex-direction: row;
-  `}
-`;
-
-export const BrightPanel = styled(Panel)`
-  max-width: initial;
-
-  ${({ theme }) => theme.mediaWidth.upSmall`
-    max-width: 360px;
-  `}
-`;
-
 export function swapMessage(inputAmount: string, inputCurrency: string, outputAmount: string, outputCurrency: string) {
   const pendingMessage = t`Swapping ${inputCurrency} for ${outputCurrency}...`;
   const successMessage = t`Swapped ${inputAmount} ${inputCurrency} for ${outputAmount} ${outputCurrency}.`;

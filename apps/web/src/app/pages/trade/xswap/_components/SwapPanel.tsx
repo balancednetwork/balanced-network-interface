@@ -20,7 +20,6 @@ import { Field } from '@/store/swap/reducer';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { formatPercent, maxAmountSpend } from '@/utils';
 
-import { BrightPanel } from '@/app/pages/trade/supply/_components/utils';
 import { isXToken } from '@/app/pages/trade/bridge/utils';
 
 import XSwapModal from './XSwapModal';
@@ -29,6 +28,7 @@ import { MODAL_ID, modalActions } from '../../bridge/_zustand/useModalStore';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import useWallets, { useSignedInWallets } from '../../bridge/_hooks/useWallets';
 import { xChainMap } from '@/constants/xChains';
+import { BrightPanel } from '@/app/components/Panel';
 
 export default function SwapPanel() {
   useInitialSwapLoad();

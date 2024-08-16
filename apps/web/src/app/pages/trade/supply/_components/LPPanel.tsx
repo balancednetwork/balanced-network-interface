@@ -23,7 +23,7 @@ import { formatBigNumber, maxAmountSpend } from '@/utils';
 import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
-import { SectionPanel, BrightPanel } from './utils';
+import { BrightPanel, SectionPanel } from '@/app/components/Panel';
 
 const Slider = styled(Box)`
   margin-top: 40px;

@@ -19,7 +19,6 @@ import AddressInputPanel from '@/app/components/AddressInputPanel';
 import { Button } from '@/app/components/Button';
 import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import { AutoColumn } from '@/app/pages/trade/xswap/_components/SwapPanel';
-import { BrightPanel } from '@/app/pages/trade/supply/_components/utils';
 
 import ChainSelector from './ChainSelector';
 import { useWalletModalToggle } from '@/store/application/hooks';
@@ -30,6 +29,7 @@ import { maxAmountSpend, validateAddress } from '@/utils';
 import useWallets from '../_hooks/useWallets';
 import { UnderlineText } from '@/app/components/DropdownText';
 import BigNumber from 'bignumber.js';
+import { BrightPanel } from '@/app/components/Panel';
 
 export default function BridgeTransferForm({ openModal }) {
   const crossChainWallet = useCrossChainWalletBalances();

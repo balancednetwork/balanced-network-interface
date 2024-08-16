@@ -16,7 +16,6 @@ import { Typography } from '@/app/theme';
 import ArrowDownIcon from '@/assets/icons/arrow-line.svg';
 import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
-import { HIGH_PRICE_ASSET_DP } from '@/constants/tokens';
 import { BalanceData, useBalance, useSuppliedTokens } from '@/hooks/useV2Pairs';
 import { PairData, useAllPairsById } from '@/queries/backendv2';
 import { Source, useBBalnAmount, useSources, useTotalSupply } from '@/store/bbaln/hooks';

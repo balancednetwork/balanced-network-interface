@@ -6,7 +6,7 @@ import { XSigningArchwayClient } from '@/lib/archway/XSigningArchwayClient';
 import { getBytesFromString, getRlpEncodedSwapData } from '@/app/pages/trade/bridge/utils';
 import { archway } from '@/constants/xChains';
 import { getFeeParam, isDenomAsset } from '@/packages/archway/utils';
-import { ARCHWAY_FEE_TOKEN_SYMBOL } from '../_config/tokens';
+import { ARCHWAY_FEE_TOKEN_SYMBOL } from '@/constants/tokens1';
 import { XChainId, XToken } from '@/types';
 import { IWalletXService } from './types';
 import { XTransactionInput, XTransactionType } from '../_zustand/types';

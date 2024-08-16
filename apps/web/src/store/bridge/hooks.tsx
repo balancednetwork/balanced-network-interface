@@ -19,7 +19,7 @@ import BigNumber from 'bignumber.js';
 import { Trans, t } from '@lingui/macro';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { isDenomAsset } from '@/packages/archway/utils';
-import { sARCH } from '@/app/pages/trade/bridge/_config/tokens';
+import { sARCH } from '@/constants/tokens1';
 import useWallets, { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
 import { xChainMap } from '@/constants/xChains';
 import { getXTokenBySymbol, getXAddress } from '@/app/pages/trade/bridge/utils';

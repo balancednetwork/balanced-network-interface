@@ -9,7 +9,7 @@ import {
   useBridgeState,
   useDerivedBridgeInfo,
 } from '@/store/bridge/hooks';
-import { sARCHOnArchway, useARCH } from '@/app/pages/trade/bridge/_config/tokens';
+import { useARCH } from '@/constants/tokens1';
 import { XChainId } from '@/types';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
@@ -17,6 +17,7 @@ import { archway } from '@/constants/xChains';
 
 import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
+import { sARCHOnArchway } from '@/constants/xTokens';
 
 const WithdrawOption = styled.button<{ active: boolean }>`
   text-align: center;

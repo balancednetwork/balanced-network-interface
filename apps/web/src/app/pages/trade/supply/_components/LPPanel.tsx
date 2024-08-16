@@ -13,7 +13,7 @@ import { Button } from '@/app/components/Button';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { Typography } from '@/app/theme';
 import { BIGINT_ZERO } from '@/constants/misc';
-import { HIGH_PRICE_ASSET_DP, isNativeCurrency } from '@/constants/tokens';
+import { isNativeCurrency } from '@/constants/tokens';
 import { PairState } from '@/hooks/useV2Pairs';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { Field } from '@/store/mint/reducer';

@@ -31,25 +31,6 @@ export const sARCH: TokenMap = {
   ),
 };
 
-export const sARCHOnArchway = {
-  ['archway-1']: new XToken(
-    'archway-1',
-    'archway-1',
-    'archway1t2llqsvwwunf98v692nqd5juudcmmlu3zk55utx7xtfvznel030saclvq6',
-    18,
-    'sARCH',
-    'Staked Archway',
-  ),
-  ['archway']: new XToken(
-    'archway',
-    'archway',
-    'archway1erqguqc3hmfajgu7e2dvgaccx6feu5ru3gyatdxu94p66j9hp7msn2kcqp',
-    18,
-    'sARCH',
-    'Staked Archway',
-  ),
-};
-
 export const ArchwayToken: TokenMap = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'native', 18, 'ARCH', 'Archway'),
   [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'native', 18, 'ARCH', 'Archway'),

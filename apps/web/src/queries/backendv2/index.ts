@@ -44,22 +44,6 @@ export function useAllTokens() {
   });
 }
 
-export function useAllTokensByAddress() {
-  const { data: allTokens, isSuccess: allTokensSuccess } = useAllTokens();
-
-  return useQuery({
-    queryKey: [`allTokensByAddress`],
-    queryFn: () => {
-      return allTokens?.reduce((tokens, item) => {
-        tokens[item['address']] = item;
-        return tokens;
-      }, {});
-    },
-    placeholderData: keepPreviousData,
-    enabled: allTokensSuccess,
-  });
-}
-
 export type PairData = {
   info: PairInfo;
   name: string;

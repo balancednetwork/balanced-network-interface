@@ -111,17 +111,6 @@ export function useSetSlippageTolerance() {
   );
 }
 
-export const useBlockDetails = (timestamp: number) => {
-  const getBlock = async (): Promise<BlockDetails> => {
-    const { data } = await axios.get(`${CHAIN_INFO[NETWORK_ID].tracker}/api/v1/blocks/timestamp/${timestamp * 1000}`);
-    return data;
-  };
-  return useQuery<BlockDetails>({
-    queryKey: [`getBlock`, timestamp],
-    queryFn: getBlock,
-  });
-};
-
 export function useICXUnstakingTime() {
   return useQuery({
     queryKey: ['icxUnstakingTime'],

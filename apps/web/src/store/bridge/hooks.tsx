@@ -5,9 +5,9 @@ import { t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { useAssetManagerTokens } from '@/app/pages/trade/bridge/_hooks/useAssetManagerTokens';
 import { sARCH } from '@/constants/tokens1';
 import { xChainMap } from '@/constants/xChains';
+import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import useWallets, { useSignedInWallets } from '@/hooks/useWallets';
 import { isDenomAsset } from '@/packages/archway/utils';
 import { AppState } from '@/store';

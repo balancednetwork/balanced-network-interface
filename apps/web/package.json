@@ -30,7 +30,6 @@
     "@reach/portal": "0.18.0",
     "@reach/tabs": "0.18.0",
     "@reduxjs/toolkit": "2.2.0",
-    "@rematch/core": "2.2.0",
     "@tanstack/react-query": "5.29.2",
     "@uniswap/token-lists": "1.0.0-beta.30",
     "@vitejs/plugin-react": "4.2.1",
@@ -90,8 +89,6 @@
     "serve": "11.3.2",
     "styled-components": "6.1.8",
     "tiny-invariant": "1.1.0",
-    "toformat": "2.0.0",
-    "uuid": "9.0.0",
     "viem": "2.x",
     "wagmi": "2.5.20",
     "zustand": "4.5.2"

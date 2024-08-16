@@ -107,9 +107,6 @@ importers:
       '@reduxjs/toolkit':
         specifier: 2.2.0
         version: 2.2.0(react-redux@9.1.0(@types/react@18.2.67)(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0)(redux@5.0.1))(react@18.2.0)
-      '@rematch/core':
-        specifier: 2.2.0
-        version: 2.2.0(redux@5.0.1)
       '@tanstack/react-query':
         specifier: 5.29.2
         version: 5.29.2(react@18.2.0)
@@ -287,12 +284,6 @@ importers:
       tiny-invariant:
         specifier: 1.1.0
         version: 1.1.0
-      toformat:
-        specifier: 2.0.0
-        version: 2.0.0
-      uuid:
-        specifier: 9.0.0
-        version: 9.0.0
       viem:
         specifier: 2.x
         version: 2.9.23(bufferutil@4.0.8)(typescript@5.5.4)
@@ -2556,12 +2547,6 @@ packages:
         optional: true
       react-redux:
         optional: true
-
-  '@rematch/core@2.2.0':
-    resolution: {integrity: sha512-Sj3nC/2X+bOBZeOf4jdJ00nhCcx9wLbVK9SOs6eFR4Y1qKXqRY0hGigbQgfTpCdjRFlwTHHfN3m41MlNvMhDgw==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      redux: '>=4'
 
   '@remix-run/router@1.15.3':
     resolution: {integrity: sha512-Oy8rmScVrVxWZVOpEF57ovlnhpZ8CCPlnIIumVcV9nFdiSIrus99+Lw78ekXyGvVDlIsFJbSfmSovJUhCWYV3w==}
@@ -11711,10 +11696,6 @@ snapshots:
     optionalDependencies:
       react: 18.2.0
       react-redux: 9.1.0(@types/react@18.2.67)(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0))(react@18.2.0)(redux@5.0.1)
-
-  '@rematch/core@2.2.0(redux@5.0.1)':
-    dependencies:
-      redux: 5.0.1
 
   '@remix-run/router@1.15.3': {}
 

@@ -11,12 +11,10 @@ import Divider from '@/app/components/Divider';
 import QuestionHelper from '@/app/components/QuestionHelper';
 import SlippageSetting from '@/app/components/SlippageSetting';
 import { Typography } from '@/app/theme';
-import { xChainMap } from '@/constants/xChains';
 import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
 import { useSetSlippageTolerance, useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
-import { XChainId } from '@/types';
 
 export default function AdvancedSwapDetails() {
   const { trade, currencies, direction } = useDerivedSwapInfo();
@@ -139,18 +137,6 @@ function TradeRoute({ route }: { route: Route<Currency, Currency> }) {
       {route.path.map((token: Token, index: number) => (
         <span key={token.address}>
           {index > 0 && <ChevronRight size={14} />} {token.symbol}
-        </span>
-      ))}
-    </>
-  );
-}
-
-function BridgeRoute({ route }: { route: XChainId[] }) {
-  return (
-    <>
-      {route.map((xChainId: XChainId, index: number) => (
-        <span key={xChainId}>
-          {index > 0 && <ChevronRight size={14} />} {xChainMap[xChainId].name}
         </span>
       ))}
     </>

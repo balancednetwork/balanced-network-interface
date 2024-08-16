@@ -16,7 +16,6 @@ import loan from './loan/reducer';
 import oracle from './oracle/reducer';
 import ratio from './ratio/reducer';
 import reward from './reward/reducer';
-import savings from './savings/reducer';
 import stabilityFund from './stabilityFund/reducer';
 import swap from './swap/reducer';
 import transactions from './transactions/reducer';
@@ -46,7 +45,6 @@ export function configureAppStore() {
       liveVoting,
       transactionsCrosschain,
       bridge,
-      savings,
     },
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({

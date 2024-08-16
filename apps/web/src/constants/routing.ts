@@ -9,13 +9,7 @@ export const MAX_HOPS = 4;
 
 // used to construct intermediary pairs for trading
 export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Token[] } = {
-  [ChainId.MAINNET]: [
-    sICX[ChainId.MAINNET],
-    bnUSD[ChainId.MAINNET],
-    IUSDC[ChainId.MAINNET],
-    USDS[ChainId.MAINNET],
-    BTCB[ChainId.MAINNET],
-  ],
+  [ChainId.MAINNET]: [sICX[ChainId.MAINNET], bnUSD[ChainId.MAINNET]],
   [ChainId.YEOUIDO]: [sICX[ChainId.YEOUIDO], bnUSD[ChainId.YEOUIDO], IUSDC[ChainId.YEOUIDO], USDS[ChainId.YEOUIDO]],
   [ChainId.SEJONG]: [sICX[ChainId.SEJONG], bnUSD[ChainId.SEJONG]],
   [ChainId.BERLIN]: [
@@ -29,8 +23,7 @@ export const BASES_TO_CHECK_TRADES_AGAINST: { [chainId: number]: Token[] } = {
 };
 export const ADDITIONAL_BASES: { [chainId: number]: { [tokenAddress: string]: Token[] } } = {
   [ChainId.MAINNET]: {
-    [IUSDC[ChainId.MAINNET].address]: [OMM[ChainId.MAINNET], IUSDT[ChainId.MAINNET]],
-    [sICX[ChainId.MAINNET].address]: [OMM[ChainId.MAINNET], IUSDT[ChainId.MAINNET], sARCH[ChainId.MAINNET]],
+    [sICX[ChainId.MAINNET].address]: [OMM[ChainId.MAINNET], sARCH[ChainId.MAINNET]],
   },
   [ChainId.BERLIN]: {
     [sICX[ChainId.MAINNET].address]: [sARCH[ChainId.BERLIN]],

@@ -1,3 +1,6 @@
 packages:
   - 'packages/*'
   - 'apps/*'
+
+catalog:
+  react-helmet-async: 2.0.4

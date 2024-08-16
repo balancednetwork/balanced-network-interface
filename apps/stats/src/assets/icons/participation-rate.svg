@@ -1,0 +1,93 @@
+
+<svg width="100%" height="100%" viewBox="0 0 46 46" version="1.1" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-1,-1)">
+        <clipPath id="_participationrateclip1">
+            <path d="M42,24L40,24L40,14.414L28.586,3L9,3C8.449,3 8,3.448 8,4L8,24L6,24L6,4C6,2.346 7.346,1 9,1L29,1C29.265,1 29.52,1.105 29.707,1.293L41.707,13.293C41.895,13.48 42,13.734 42,14L42,24Z"/>
+        </clipPath>
+        <g clip-path="url(#_participationrateclip1)">
+            <g transform="matrix(1,-0,-0,1,1,1)">
+                <use xlink:href="#_participationrateimage2" x="5" y="0" width="36px" height="23px"/>
+            </g>
+        </g>
+    </g>
+    <g transform="matrix(1,0,0,1,-1,-1)">
+        <clipPath id="_participationrateclip3">
+            <path d="M41,15L29,15C28.448,15 28,14.553 28,14L28,3L30,3L30,13L41,13L41,15Z"/>
+        </clipPath>
+        <g clip-path="url(#_participationrateclip3)">
+            <g transform="matrix(1,-0,-0,1,1,1)">
+                <use xlink:href="#_participationrateimage4" x="27" y="2" width="13px" height="12px"/>
+            </g>
+        </g>
+    </g>
+    <g transform="matrix(1,0,0,1,-1,-1)">
+        <clipPath id="_participationrateclip5">
+            <path d="M6.293,18.292L7.708,19.707L2.708,24.706L1.293,23.292L6.293,18.292Z"/>
+        </clipPath>
+        <g clip-path="url(#_participationrateclip5)">
+            <g transform="matrix(1,-0,-0,1,1,1)">
+                <use xlink:href="#_participationrateimage6" x="0.293" y="17.292" width="7px" height="7px"/>
+            </g>
+        </g>
+    </g>
+    <g transform="matrix(1,0,0,1,-1,-1)">
+        <clipPath id="_participationrateclip7">
+            <path d="M41.707,18.292L46.707,23.292L45.292,24.706L40.292,19.706L41.707,18.292Z"/>
+        </clipPath>
+        <g clip-path="url(#_participationrateclip7)">
+            <g transform="matrix(1,-0,-0,1,1,1)">
+                <use xlink:href="#_participationrateimage8" x="39.292" y="17.292" width="7px" height="7px"/>
+            </g>
+        </g>
+    </g>
+    <g transform="matrix(1,0,0,1,-1,-1)">
+        <clipPath id="_participationrateclip9">
+            <path d="M22,39L6,39C5.448,39 5,38.553 5,38L5,34C5,33.447 5.448,33 6,33L22,33C22.552,33 23,33.447 23,34L23,38C23,38.553 22.552,39 22,39ZM7,37L21,37L21,35L7,35L7,37Z"/>
+        </clipPath>
+        <g clip-path="url(#_participationrateclip9)">
+            <g transform="matrix(1,-0,-0,1,1,1)">
+                <use xlink:href="#_participationrateimage10" x="4" y="32" width="18px" height="6px"/>
+            </g>
+        </g>
+    </g>
+    <g transform="matrix(1,0,0,1,-1,-1)">
+        <clipPath id="_participationrateclip11">
+            <rect x="12" y="13" width="9" height="2"/>
+        </clipPath>
+        <g clip-path="url(#_participationrateclip11)">
+            <g transform="matrix(1,-0,-0,1,1,1)">
+                <use xlink:href="#_participationrateimage12" x="11" y="12" width="9px" height="2px"/>
+            </g>
+        </g>
+    </g>
+    <g transform="matrix(1,0,0,1,-1,-1)">
+        <clipPath id="_participationrateclip13">
+            <rect x="12" y="18" width="24" height="2"/>
+        </clipPath>
+        <g clip-path="url(#_participationrateclip13)">
+            <g transform="matrix(1,-0,-0,1,1,1)">
+                <use xlink:href="#_participationrateimage14" x="11" y="17" width="24px" height="2px"/>
+            </g>
+        </g>
+    </g>
+    <g transform="matrix(1,0,0,1,-1,-1)">
+        <clipPath id="_participationrateclip15">
+            <path d="M43,47L5,47C2.794,47 1,45.206 1,43L1,24C1,23.447 1.448,23 2,23L13,23C13.409,23 13.777,23.249 13.929,23.629L15.175,26.743C15.479,27.507 16.208,28 17.031,28L30.969,28C31.792,28 32.521,27.507 32.826,26.743L34.071,23.629C34.223,23.249 34.591,23 35,23L46,23C46.552,23 47,23.447 47,24L47,43C47,45.206 45.206,47 43,47ZM3,25L3,43C3,44.103 3.897,45 5,45L43,45C44.103,45 45,44.103 45,43L45,25L35.677,25L34.683,27.485C34.072,29.013 32.614,30 30.969,30L17.031,30C15.386,30 13.928,29.013 13.317,27.485L12.323,25L3,25Z"/>
+        </clipPath>
+        <g clip-path="url(#_participationrateclip15)">
+            <g transform="matrix(1,-0,-0,1,1,1)">
+                <use xlink:href="#_participationrateimage16" x="0" y="22" width="46px" height="24px"/>
+            </g>
+        </g>
+    </g>
+    <defs>
+        <image id="_participationrateimage2" width="36px" height="23px" xlink:href="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAXACQDAREAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAgUBA//EABgQAAMBAQAAAAAAAAAAAAAAAAABAxNh/8QAGQEBAQEBAQEAAAAAAAAAAAAAAAECBAYH/8QAFhEBAQEAAAAAAAAAAAAAAAAAABIR/9oADAMBAAIRAxEAPwDgqdPXvkEkqETCVAYSoEktOjElLVDTpwlQJhKgSSVCYkloElLVDTqk1QMySoEklQYmN0YJf//Z"/>
+        <image id="_participationrateimage4" width="13px" height="12px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAMCAYAAAC5tzfZAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAj0lEQVQokW2RwREDIQwDVzOuJmWnhfQX5YEBccEvRtgrC/R6f8wsEUf9abOKr/eFu0tgvLU1rx5yqLPrIoGwBqhsGINJnA53WK2BWMVzOmCKnjMTgAUK0DTRXqXsVhat14h1237BajQ4aE9XUL4kt0zkA9xgotyZFCJ+5kyY28kK2vmpynANOzLdwlsB6voB9CpNlxyjKTgAAAAASUVORK5CYII="/>
+        <image id="_participationrateimage6" width="7px" height="7px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAHCAYAAADEUlfTAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAASElEQVQImV3MwQ3AMAgEwT2JUlKsC3GduTwwBJkfCxo9axtxjUAQ2OA/5GQL23k4QUMJXkDu0L9osCeUCi4WsNAQku3d1F8BHx/aHl034raPAAAAAElFTkSuQmCC"/>
+        <image id="_participationrateimage8" width="7px" height="7px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAHCAYAAADEUlfTAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAARklEQVQImV2NwRGAMAzD5LvMwr6MwZIVj1JC8UuXxEqO85KVhGYodBKAvohQDki6/E2hWxmnM619hukL/f9k15cDiNtuCW5+eRxu3jNxngAAAABJRU5ErkJggg=="/>
+        <image id="_participationrateimage10" width="18px" height="6px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAGCAYAAADOic7aAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAaUlEQVQYlW1QyQ3AMAgzUgbplB2mw9Z9QMCQ8kDh8hG77ocwnGGZpNZ5byySAOeiwQh4imCOPJHtZoGsxWSh3zUC86cSCHgAxfYGVXVJQIi+Q/3iOyzsUv9oEvyod0XDf9kqgrIV1QD/AH9jLkCcFuneAAAAAElFTkSuQmCC"/>
+        <image id="_participationrateimage12" width="9px" height="2px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAACCAYAAACKVvbTAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAKUlEQVQImVXLsQkAIADEwHtwFvd1DKd8K0FTHiRz7Up8hVeGov21FHc+JQcHZ8toJEcAAAAASUVORK5CYII="/>
+        <image id="_participationrateimage14" width="24px" height="2px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAACCAYAAABCOhwFAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAO0lEQVQImW2NsQ0AMAjDEqmv9Nr+0TfdAQYQZQpW5HifiyTJmucPdH9GxT0sCL+ozmzBZ7gCBAPlcAgfM4oNYizEaUMAAAAASUVORK5CYII="/>
+        <image id="_participationrateimage16" width="46px" height="24px" xlink:href="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAYAC4DAREAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAgUG/8QAFxAAAwEAAAAAAAAAAAAAAAAAAAEDYf/EABkBAQEBAQEBAAAAAAAAAAAAAAABAgQGB//EABYRAQEBAAAAAAAAAAAAAAAAAAASEf/aAAwDAQACEQMRAD8Ayypp7N8wklQmGEqBmSVASaoEklQiSkKhvHVhKgxJJUCSSoRJNUCSSpoSUhUNOuTVAkkqBmSVNBJKgTCVNJiY/9k="/>
+    </defs>
+</svg>

@@ -47,10 +47,6 @@ export function useLockedBaln(): AppState['bbaln']['lockedBaln'] {
   return useSelector((state: AppState) => state.bbaln.lockedBaln);
 }
 
-export function useLockedPeriod(): AppState['bbaln']['lockedPeriod'] {
-  return useSelector((state: AppState) => state.bbaln.lockedPeriod);
-}
-
 export function useBBalnSliderState(): AppState['bbaln']['state'] {
   return useSelector((state: AppState) => state.bbaln.state);
 }
@@ -61,15 +57,6 @@ export function useTotalSupply(): AppState['bbaln']['totalSupply'] {
 
 export function useSelectedPeriod(): AppState['bbaln']['state']['selectedPeriod'] {
   return useSelector((state: AppState) => state.bbaln.state.selectedPeriod);
-}
-
-export function useBBalnChangeSelectedPeriod(): (period: LockedPeriod) => void {
-  const dispatch = useDispatch();
-  return useCallback((period: LockedPeriod) => dispatch(changePeriod({ period })), [dispatch]);
-}
-
-export function useSources(): AppState['bbaln']['sources'] {
-  return useSelector((state: AppState) => state.bbaln.sources);
 }
 
 export function useBBalnChangeSources(): (sources: { [key in string]: Source }) => void {
@@ -152,67 +139,6 @@ export function useFetchBBalnInfo(account?: string | null) {
   }, [transactions, account, fetchBBalnInfo, fetchBBalnTotalSupply]);
 }
 
-export function useBBalnSliderActionHandlers() {
-  const dispatch = useDispatch();
-  const lockedBaln = useLockedBaln();
-  const lockedAmount = useMemo(() => {
-    return new BigNumber(lockedBaln ? lockedBaln.toFixed() : 0);
-  }, [lockedBaln]);
-
-  const onFieldAInput = React.useCallback(
-    (value: string) => {
-      dispatch(type({ independentField: Field.LEFT, typedValue: value, inputType: 'text' }));
-    },
-    [dispatch],
-  );
-
-  const onSlide = React.useCallback(
-    (values: string[], handle: number) => {
-      const value = new BigNumber(values[handle]);
-      dispatch(
-        type({
-          independentField: Field.LEFT,
-          typedValue: value.isLessThan(lockedAmount) ? '0' : value.toFixed(),
-          inputType: 'slider',
-        }),
-      );
-    },
-    [dispatch, lockedAmount],
-  );
-
-  const onAdjust = React.useCallback(
-    isAdjust => {
-      if (isAdjust) {
-        dispatch(adjust());
-      } else {
-        dispatch(cancel());
-      }
-    },
-    [dispatch],
-  );
-
-  return {
-    onFieldAInput,
-    onSlide,
-    onAdjust,
-  };
-}
-
-export function useHasLockExpired() {
-  const lockedUntil = useLockedUntil();
-  const now = new Date();
-
-  return useQuery<boolean | undefined>({
-    queryKey: [`hasLockExpired`, lockedUntil?.getTime()],
-    queryFn: () => {
-      if (!lockedUntil) return;
-
-      return now.getTime() > lockedUntil.getTime();
-    },
-    enabled: !!lockedUntil,
-  });
-}
-
 export function useFetchBBalnSources(interval?: number, omitImmediateCall?: boolean) {
   const { account } = useIconReact();
   const changeSources = useBBalnChangeSources();
@@ -261,98 +187,6 @@ export function useDBBalnAmountDiff() {
       return new BigNumber(0);
     }
   }, [isAdjusting, selectedPeriod, bBalnAmount, balnSliderAmount]);
-}
-
-export function useWorkingBalance() {
-  const totalSupplyBBaln = useTotalSupply();
-  const bbalnAmountDiff = useDBBalnAmountDiff();
-  const dynamicBBalnAmount = useDynamicBBalnAmount();
-
-  return useCallback(
-    (balance: BigNumber, supply: BigNumber): BigNumber => {
-      if (totalSupplyBBaln) {
-        const limit = balance.times(EXA).dividedBy(WEIGHT);
-        const workingBalance = balance.plus(
-          supply
-            .times(dynamicBBalnAmount)
-            .times(EXA.minus(WEIGHT))
-            .dividedBy(totalSupplyBBaln.plus(bbalnAmountDiff))
-            .dividedBy(WEIGHT),
-        );
-        return BigNumber.min(limit, workingBalance);
-      }
-
-      return new BigNumber(0);
-    },
-    [totalSupplyBBaln, dynamicBBalnAmount, bbalnAmountDiff],
-  );
-}
-
-export function useResponsivePoolRewardShare() {
-  const totalSupplyBBaln = useTotalSupply();
-  const bBalnAmount = useBBalnAmount();
-
-  return useCallback(
-    (
-      source?: Source,
-      currencyA?: CurrencyAmount<Currency>,
-      currencyB?: CurrencyAmount<Currency>,
-      pool?: PairData,
-      balances?: BalanceData,
-    ): BigNumber => {
-      if (totalSupplyBBaln && bBalnAmount && source && pool && balances) {
-        if (pool.name === 'sICX/ICX') {
-          let boost = new BigNumber(1);
-          if (bBalnAmount.isGreaterThan(0) && source.balance.isGreaterThan(0)) {
-            boost = source.workingBalance.div(source.balance);
-          }
-          const addedBase = currencyA
-            ? new BigNumber(currencyA.toExact()).times(10 ** currencyA.currency.decimals)
-            : new BigNumber(0);
-
-          const newLPBalance = source.balance.plus(addedBase).times(boost);
-
-          const newWorkingBalance = newLPBalance;
-
-          const newWorkingSupply = source.workingSupply.minus(source.workingBalance).plus(newWorkingBalance);
-
-          return newWorkingBalance.div(newWorkingSupply);
-        } else {
-          const max = source.balance.times(EXA).div(WEIGHT);
-          let boost = new BigNumber(0);
-          if (bBalnAmount.isGreaterThan(0) && source.balance.isGreaterThan(0)) {
-            boost = source.supply.times(bBalnAmount).times(EXA.minus(WEIGHT)).div(totalSupplyBBaln).div(WEIGHT);
-          }
-          const addedBase = currencyA
-            ? new BigNumber(currencyA.toExact()).times(10 ** currencyA.currency.decimals)
-            : new BigNumber(0);
-
-          const unStakedLPBalance = new BigNumber(balances.balance.toExact()).times(
-            10 ** balances.balance.currency.decimals,
-          );
-          let newLPBalance = source.balance.plus(unStakedLPBalance);
-
-          if (currencyA && pool.totalBase.greaterThan(0)) {
-            newLPBalance = newLPBalance.plus(
-              pool.totalSupply.times(addedBase).div(new BigNumber(pool.totalBase.numerator.toString())),
-            );
-          }
-
-          let newWorkingBalance = newLPBalance.plus(boost);
-          newWorkingBalance = source.balance.isGreaterThan(0)
-            ? BigNumber.min(newWorkingBalance, max)
-            : newWorkingBalance;
-
-          const newWorkingSupply = source.workingSupply.minus(source.workingBalance).plus(newWorkingBalance);
-
-          return newWorkingBalance.div(newWorkingSupply);
-        }
-      }
-
-      return new BigNumber(0);
-    },
-    [totalSupplyBBaln, bBalnAmount],
-  );
 }
 
 export const usePastMonthFeesDistributed = () => {
@@ -418,44 +252,3 @@ export const usePastMonthFeesDistributed = () => {
     placeholderData: keepPreviousData,
   });
 };
-
-export const useTimeRemaining = () => {
-  const lockedUntil = useLockedUntil();
-  const fiveMinPeriod = 1000 * 300;
-  const now = Math.floor(new Date().getTime() / fiveMinPeriod) * fiveMinPeriod;
-
-  return lockedUntil && lockedUntil.getTime() - now;
-};
-
-export const useTotalBalnLocked = () => {
-  return useQuery({
-    queryKey: ['totalBalnLocked'],
-    queryFn: async () => {
-      const data = await bnJs.BBALN.getTotalLocked();
-      return new BigNumber(formatUnits(data));
-    },
-  });
-};
-
-export function useBBalnApr(): UseQueryResult<BigNumber | undefined> {
-  const { data: pastMonthDistributed } = usePastMonthFeesDistributed();
-  const { data: prices } = useTokenPrices();
-  const bBALNSupply = useTotalSupply();
-
-  return useQuery({
-    queryKey: [
-      `bbalnApr`,
-      pastMonthDistributed ? 'fees' : 'nofees',
-      bBALNSupply ? bBALNSupply.toFixed(0) : '',
-      prices ? Object.keys(prices).length : '',
-    ],
-    queryFn: async () => {
-      if (!pastMonthDistributed || !prices || !bBALNSupply) return;
-
-      const assumedYearlyDistribution = pastMonthDistributed.total.times(12);
-      return assumedYearlyDistribution.div(bBALNSupply.times(prices['BALN'])).times(100);
-    },
-    enabled: !!pastMonthDistributed && !!prices && !!bBALNSupply,
-    placeholderData: keepPreviousData,
-  });
-}

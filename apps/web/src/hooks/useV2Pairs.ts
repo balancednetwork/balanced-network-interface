@@ -13,9 +13,7 @@ import { fetchStabilityFundBalances, getAcceptedTokens } from '@/store/stability
 import { getPair } from '@/utils';
 
 import { NETWORK_ID } from '@/constants/config';
-import useLastCount from './useLastCount';
 
-const NON_EXISTENT_POOL_ID = 0;
 const MULTI_CALL_BATCH_SIZE = 25;
 
 export enum PairState {
@@ -128,26 +126,6 @@ export function useV2Pair(tokenA?: Currency, tokenB?: Currency): PairData {
   return useV2Pairs(inputs)[0];
 }
 
-export function useAvailablePairs(currencies: [Currency | undefined, Currency | undefined][]): {
-  [poolId: number]: Pair;
-} {
-  const reserves = useV2Pairs(currencies);
-
-  return useMemo<{ [poolId: number]: Pair }>(() => {
-    return reserves.reduce((acc, ps) => {
-      const pairState = ps[0];
-      const pair = ps[1];
-      const poolId = pair?.poolId;
-
-      if (pairState === PairState.EXISTS && pair && poolId && poolId > NON_EXISTENT_POOL_ID) {
-        acc[poolId] = pair;
-      }
-
-      return acc;
-    }, {});
-  }, [reserves]);
-}
-
 export interface BalanceData {
   poolId: number;
 
@@ -160,122 +138,4 @@ export interface BalanceData {
   suppliedLP?: CurrencyAmount<Token>;
 
   stakedLPBalance?: CurrencyAmount<Token>;
-}
-
-export function useBalances(
-  account: string | null | undefined,
-  pools: { [poolId: number]: Pair },
-): { [poolId: number]: BalanceData } {
-  const [balances, setBalances] = useState<(BalanceData | undefined)[]>([]);
-
-  const last = useLastCount(10000);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    async function fetchBalances() {
-      if (!account) return;
-
-      const poolKeys = Object.keys(pools);
-
-      const cds = poolKeys
-        .map(poolId => {
-          if (+poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-            return {
-              target: bnJs.Dex.address,
-              method: 'getICXBalance',
-              params: [account],
-            };
-          } else {
-            return [
-              {
-                target: bnJs.Dex.address,
-                method: 'balanceOf',
-                params: [account, `0x${(+poolId).toString(16)}`],
-              },
-              {
-                target: bnJs.Dex.address,
-                method: 'totalSupply',
-                params: [`0x${(+poolId).toString(16)}`],
-              },
-              {
-                target: bnJs.StakedLP.address,
-                method: 'balanceOf',
-                params: [account, `0x${(+poolId).toString(16)}`],
-              },
-            ];
-          }
-        })
-        .concat({
-          target: bnJs.Dex.address,
-          method: 'getSicxEarnings',
-          params: [account],
-        });
-
-      const cdsFlatted: CallData[] = cds.flat();
-      const data: any[] = await bnJs.Multicall.getAggregateData(cdsFlatted);
-      const sicxBalance = data[data.length - 1];
-      const icxBalance = !Array.isArray(data[0]) ? data[0] : 0;
-
-      // Remapping the result was returned by multicall based on the order of the cds
-      let trackedIdx = 0;
-      const reMappingData = cds.map((cdsItem, idx) => {
-        if (Array.isArray(cdsItem)) {
-          const tmp = data.slice(trackedIdx, trackedIdx + cdsItem.length);
-          trackedIdx += cdsItem.length;
-          return tmp;
-        }
-        trackedIdx += 1;
-        return data[idx];
-      });
-
-      const balances = poolKeys.map((poolId, idx) => {
-        const pool = pools[+poolId];
-        let balance = reMappingData[idx][0];
-        let totalSupply;
-        let stakedLPBalance;
-
-        if (Array.isArray(cds[idx])) {
-          balance = reMappingData[idx][0];
-          totalSupply = reMappingData[idx][1];
-          stakedLPBalance = reMappingData[idx][2];
-        }
-
-        if (!pool) return undefined;
-
-        if (+poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-          return {
-            poolId: +poolId,
-            balance: CurrencyAmount.fromRawAmount(pool.token0, new BigNumber(icxBalance, 16).toFixed()),
-            balance1: CurrencyAmount.fromRawAmount(pool.token1, new BigNumber(sicxBalance || 0, 16).toFixed()),
-          };
-        } else {
-          return {
-            poolId: +poolId,
-            balance: CurrencyAmount.fromRawAmount(pool.liquidityToken, new BigNumber(balance || 0, 16).toFixed()),
-            suppliedLP: CurrencyAmount.fromRawAmount(
-              pool.liquidityToken,
-              new BigNumber(totalSupply || 0, 16).toFixed(),
-            ),
-            stakedLPBalance: CurrencyAmount.fromRawAmount(
-              pool.liquidityToken,
-              new BigNumber(stakedLPBalance || 0, 16).toFixed(),
-            ),
-          };
-        }
-      });
-
-      if (balances.length > 0) {
-        setBalances(balances);
-      }
-    }
-
-    fetchBalances();
-  }, [account, pools, last]);
-
-  return useMemo(() => {
-    return balances.reduce((acc, curr) => {
-      if (curr && curr.poolId > 0) acc[curr.poolId] = curr;
-      return acc;
-    }, {});
-  }, [balances]);
 }

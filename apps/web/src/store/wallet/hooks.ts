@@ -55,10 +55,6 @@ export function useICONWalletBalances(): { [address: string]: CurrencyAmount<Cur
   return useSelector((state: AppState) => state.wallet['0x1.icon']!);
 }
 
-export function useWalletBalances(xChainId: XChainId): { [address: string]: CurrencyAmount<Currency> } | undefined {
-  return useSelector((state: AppState) => state.wallet[xChainId]);
-}
-
 export function useAvailableBalances(
   account: string | undefined,
   tokens: Token[],
@@ -343,44 +339,6 @@ export function useAllTokenBalances(account: string | undefined | null): {
   return balances ?? {};
 }
 
-export function useCrossChainCurrencyBalances(
-  currencies: (Currency | undefined)[],
-):
-  | ({ [key in XChainId]: CurrencyAmount<Currency> | undefined } | { icon: CurrencyAmount<Currency> | undefined })[]
-  | undefined {
-  const crossChainBalances = useCrossChainWalletBalances();
-  const containsICX: boolean = useMemo(
-    () => currencies?.some(currency => isNativeCurrency(currency)) ?? false,
-    [currencies],
-  );
-  const { account } = useIconReact();
-  const accounts = useMemo(() => (containsICX ? [account || undefined] : []), [containsICX, account]);
-  const icxBalance = useICXBalances(accounts);
-
-  return React.useMemo(() => {
-    if (crossChainBalances) {
-      return currencies.map(currency => {
-        if (account && isNativeCurrency(currency)) return { icon: icxBalance[account] };
-        return SUPPORTED_XCALL_CHAINS.reduce(
-          (balances, chain) => {
-            if (crossChainBalances[chain] && currency) {
-              const tokenAddress = getXTokenAddress(chain, currency.wrapped.symbol);
-              const balance: CurrencyAmount<Currency> | undefined = tokenAddress
-                ? crossChainBalances[chain]?.[tokenAddress]
-                : undefined;
-              balances[chain] = balance;
-              return balances;
-            }
-            balances[chain] = undefined;
-            return balances;
-          },
-          {} as { [key in XChainId]: CurrencyAmount<Currency> | undefined },
-        );
-      });
-    }
-  }, [crossChainBalances, account, currencies, icxBalance]);
-}
-
 export const useXCurrencyBalance = (
   currency: Currency,
   selectedChainId: XChainId | undefined,
@@ -442,13 +400,6 @@ export function useCurrencyBalances(
   );
 }
 
-export function useCurrencyBalance(account?: string, currency?: Currency): CurrencyAmount<Currency> | undefined {
-  return useCurrencyBalances(
-    account,
-    useMemo(() => [currency], [currency]),
-  )[0];
-}
-
 export function useICXBalances(uncheckedAddresses: (string | undefined)[]): {
   [address: string]: CurrencyAmount<Currency>;
 } {
@@ -490,12 +441,6 @@ export function useICXBalances(uncheckedAddresses: (string | undefined)[]): {
   });
 
   return useMemo(() => data || {}, [data]);
-}
-
-export function useLiquidityTokenBalance(account: string | undefined | null, pair: Pair | undefined | null) {
-  const query = useBnJsContractQuery<string>('Dex', 'balanceOf', [account, pair?.poolId]);
-  const { data } = query;
-  return pair && data ? CurrencyAmount.fromRawAmount<Token>(pair.liquidityToken, data) : undefined;
 }
 
 export function useXBalancesByToken(): XWalletAssetRecord[] {

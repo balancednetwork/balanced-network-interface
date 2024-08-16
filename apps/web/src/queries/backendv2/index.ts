@@ -1,7 +1,7 @@
 import { CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import bnJs from '@/bnJs';
 import { NULL_CONTRACT_ADDRESS } from '@/constants/tokens';
@@ -19,34 +19,6 @@ export type ContractMethodsDataType = {
   date: string;
   contract_name: string;
   value: number;
-};
-
-export const useContractMethodsDataQuery = (
-  contract: string,
-  method: string,
-  skip: number = 0,
-  limit: number = 1000,
-  days_ago?: number,
-  start_timestamp?: number,
-  end_timestamp?: number,
-) => {
-  return useQuery<ContractMethodsDataType[]>({
-    queryKey: [`historicalQuery`, skip, limit, contract, method, days_ago, start_timestamp, end_timestamp],
-    queryFn: async () => {
-      const { data } = await axios.get(
-        `${API_ENDPOINT}/contract-methods?skip=${skip}&limit=${limit}&address=${contract}&method=${method}${
-          days_ago ? `&days_ago=${days_ago}` : ''
-        }${start_timestamp ? `&start_timestamp=${start_timestamp}` : ''}${
-          end_timestamp ? `&end_timestamp=${end_timestamp}` : ''
-        }`,
-      );
-
-      return data.map(item => {
-        item.timestamp *= 1_000;
-        return item;
-      });
-    },
-  });
 };
 
 const MIN_MARKETCAP_TO_INCLUDE = 5000;
@@ -206,42 +178,6 @@ export function useAllPairs() {
     },
     placeholderData: keepPreviousData,
     enabled: incentivisedPairsSuccess && dailyDistributionSuccess && allTokensSuccess,
-  });
-}
-
-export function useAllPairsById() {
-  const { data: allPairs, isSuccess: allPairsSuccess } = useAllPairs();
-
-  return useQuery<{ [key in string]: PairData } | undefined>({
-    queryKey: ['allPairsById'],
-    queryFn: () => {
-      if (!allPairs) return;
-
-      return allPairs.reduce((allPairs, item) => {
-        allPairs[item.info['id']] = item;
-        return allPairs;
-      }, {});
-    },
-    placeholderData: keepPreviousData,
-    enabled: allPairsSuccess && !!allPairs,
-  });
-}
-
-export function useAllPairsByName() {
-  const { data: allPairs, isSuccess: allPairsSuccess } = useAllPairs();
-
-  return useQuery<{ [key in string]: PairData } | undefined>({
-    queryKey: ['allPairsByName'],
-    queryFn: () => {
-      if (!allPairs) return;
-
-      return allPairs.reduce((allPairs, item) => {
-        allPairs[item['name']] = item;
-        return allPairs;
-      }, {});
-    },
-    placeholderData: keepPreviousData,
-    enabled: allPairsSuccess && !!allPairs,
   });
 }
 

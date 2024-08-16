@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 
-import { addresses, BalancedJs, CallData } from '@balancednetwork/balanced-js';
-import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
-import BigNumber from 'bignumber.js';
 import { useIconReact } from '@/packages/icon-react';
-import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
+import { BalancedJs, CallData, addresses } from '@balancednetwork/balanced-js';
+import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
+import BigNumber from 'bignumber.js';
 
 import bnJs from '@/bnJs';
 import { NETWORK_ID } from '@/constants/config';
@@ -21,41 +21,6 @@ import { useFlattenedRewardsDistribution } from '@/store/reward/hooks';
 
 export const BATCH_SIZE = 10;
 
-export const useUserCollectedFeesQuery = (start: number = 0, end: number = 0) => {
-  const { account } = useIconReact();
-
-  return useQuery<({ [address in string]: CurrencyAmount<Currency> } | null)[] | undefined>({
-    queryKey: QUERY_KEYS.Reward.UserCollectedFees(account ?? '', start, end),
-    queryFn: async () => {
-      if (!account) return;
-
-      const promises: Promise<any>[] = [];
-      for (let i = end; i > 1; i -= BATCH_SIZE) {
-        const startValue = i - BATCH_SIZE;
-        promises.push(bnJs.Dividends.getUserDividends(account, startValue > 0 ? startValue : 0, i));
-      }
-
-      let feesArr = await Promise.all(promises);
-
-      feesArr = feesArr.map(fees => {
-        if (!fees) return null;
-        if (!Object.values(fees).find(value => !BalancedJs.utils.toIcx(value as string).isZero())) return null;
-
-        const t = Object.keys(fees).reduce((prev, address) => {
-          const currency = COMBINED_TOKENS_MAP_BY_ADDRESS[address];
-          prev[address] = CurrencyAmount.fromFractionalAmount(currency, fees[address], 1);
-          return prev;
-        }, {});
-
-        return t;
-      });
-
-      return feesArr;
-    },
-    enabled: !!account,
-  });
-};
-
 export const usePlatformDayQuery = () => {
   return useQuery<number>({
     queryKey: QUERY_KEYS.Reward.PlatformDay,
@@ -63,23 +28,6 @@ export const usePlatformDayQuery = () => {
       const res = await bnJs.Governance.getDay();
       return parseInt(res, 16);
     },
-  });
-};
-
-export const useLPReward = () => {
-  const { account } = useIconReact();
-  const blockNumber = useBlockNumber();
-
-  return useQuery<CurrencyAmount<Token> | undefined>({
-    queryKey: [QUERY_KEYS.Reward.UserReward(account ?? ''), blockNumber],
-    queryFn: async () => {
-      if (!account) return;
-
-      const res = await bnJs.Rewards.getBalnHolding(account);
-      return CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.BALN.address], res);
-    },
-    placeholderData: keepPreviousData,
-    enabled: !!account,
   });
 };
 
@@ -141,16 +89,5 @@ export const useIncentivisedPairs = (): UseQueryResult<
     },
     enabled: !!rewards,
     placeholderData: keepPreviousData,
-  });
-};
-
-export const useICXConversionFee = () => {
-  return useQuery({
-    queryKey: ['icxConversionFee'],
-    queryFn: async () => {
-      const feesRaw = await bnJs.Dex.getFees();
-      const fee = new Fraction(feesRaw['icx_conversion_fee'], 100);
-      return fee;
-    },
   });
 };

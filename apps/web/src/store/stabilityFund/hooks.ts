@@ -1,6 +1,6 @@
 import { CallData } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from '@/bnJs';
@@ -13,10 +13,6 @@ import { formatUnits } from '@/utils';
 import { setBalances } from './reducer';
 
 const stabilityFundAddress = bnJs.StabilityFund.address;
-
-export function useStabilityFundBalances(): { [key: string]: CurrencyAmount<Token> } {
-  return useSelector((state: AppState) => state.stabilityFund.balances);
-}
 
 export async function getAcceptedTokens(): Promise<string[]> {
   const acceptedTokens = await bnJs.StabilityFund.getAcceptedTokens();
@@ -81,34 +77,4 @@ export function useFetchStabilityFundBalances(): void {
   };
 
   useInterval(fetch, 3000);
-}
-
-export function useFundLimits(): UseQueryResult<{ [key: string]: CurrencyAmount<Token> }> {
-  const whitelistedTokenAddresses = useWhitelistedTokenAddresses() || [];
-
-  return useQuery<{ [key: string]: CurrencyAmount<Token> }>({
-    queryKey: [`useFundLimitsQuery`, whitelistedTokenAddresses.length],
-    queryFn: async () => {
-      const cds: CallData[] = whitelistedTokenAddresses.map(address => {
-        return {
-          target: stabilityFundAddress,
-          method: 'getLimit',
-          params: [address],
-        };
-      });
-
-      const data: string[] = await bnJs.Multicall.getAggregateData(cds);
-
-      const limits = {};
-      data.forEach((limit, index) => {
-        const address = whitelistedTokenAddresses[index];
-        const token = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address] as Token;
-        if (token) {
-          limits[address] = CurrencyAmount.fromRawAmount(token, limit);
-        }
-      });
-
-      return limits;
-    },
-  });
 }

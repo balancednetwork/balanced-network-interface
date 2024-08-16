@@ -11,7 +11,6 @@ import bridge from './bridge/reducer';
 import collateral from './collateral/reducer';
 import fees from './fees/reducer';
 import lists from './lists/reducer';
-import loan from './loan/reducer';
 import oracle from './oracle/reducer';
 import ratio from './ratio/reducer';
 import reward from './reward/reducer';
@@ -31,7 +30,6 @@ export function configureAppStore() {
       bbaln,
       reward,
       collateral,
-      loan,
       ratio,
       wallet,
       transactions,

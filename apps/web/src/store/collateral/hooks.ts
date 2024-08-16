@@ -21,11 +21,9 @@ import { SUPPORTED_XCALL_CHAINS, xChainMap } from '@/constants/xChains';
 import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/constants/xTokens';
 import { useAvailableWallets, useSignedInWallets } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
-import { setRecipientNetwork } from '@/store/loan/reducer';
-import { Position, XChainId, XPositions, XPositionsRecord, XToken } from '@/types';
+import { Position, XChainId, XPositionsRecord, XToken } from '@/types';
 import { getBalanceDecimals } from '@/utils/formatter';
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { forEach } from 'lodash-es';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { AppState } from '../index';
 import {
   Field,
@@ -285,10 +283,12 @@ export function useCollateralActionHandlers() {
       const defaultXChainId = DEFAULT_TOKEN_CHAIN[collateralType];
       if (defaultXChainId) {
         dispatch(changeCollateralXChainAction({ collateralXChain: defaultXChainId }));
-        dispatch(setRecipientNetwork({ recipientNetwork: defaultXChainId }));
+        // TODO: is it correct to comment?
+        // dispatch(setRecipientNetwork({ recipientNetwork: defaultXChainId }));
       } else {
         dispatch(changeCollateralXChainAction({ collateralXChain: NETWORK_ID === 1 ? '0x1.icon' : '0x2.icon' }));
-        dispatch(setRecipientNetwork({ recipientNetwork: NETWORK_ID === 1 ? '0x1.icon' : '0x2.icon' }));
+        // TODO: is it correct to comment?
+        // dispatch(setRecipientNetwork({ recipientNetwork: NETWORK_ID === 1 ? '0x1.icon' : '0x2.icon' }));
       }
     },
     [dispatch],

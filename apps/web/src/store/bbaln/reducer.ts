@@ -2,10 +2,9 @@ import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
-import { Field } from '../loan/reducer';
-import { Source } from './hooks';
 import { LockedPeriod } from '@/app/components/home/BBaln/types';
 import { lockingPeriods } from '@/app/components/home/BBaln/utils';
+import { Field, Source } from './hooks';
 
 export interface BBalnState {
   bbalnAmount: BigNumber;

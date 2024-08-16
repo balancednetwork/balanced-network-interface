@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { BigNumber } from 'bignumber.js';
 import { useIconReact } from '@/packages/icon-react';
-import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
+import { BigNumber } from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from '@/bnJs';
@@ -15,14 +15,18 @@ import { useBlockDetails } from '@/store/application/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { formatUnits } from '@/utils';
 
-import { AppState } from '..';
-import { Field } from '../loan/reducer';
-import { adjust, cancel, type, changeData, changePeriod, changeSources, changeTotalSupply } from './reducer';
 import { LockedPeriod } from '@/app/components/home/BBaln/types';
 import { EXA, WEIGHT, getBbalnAmount } from '@/app/components/home/BBaln/utils';
+import { AppState } from '..';
+import { adjust, cancel, changeData, changePeriod, changeSources, changeTotalSupply, type } from './reducer';
 
 const PERCENTAGE_DISTRIBUTED = new BigNumber(0.3);
 const ENSHRINEMENT_RATIO = new BigNumber(0.5);
+
+export enum Field {
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT',
+}
 
 export type Source = {
   balance: BigNumber;

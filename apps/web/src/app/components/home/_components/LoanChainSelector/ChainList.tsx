@@ -19,6 +19,7 @@ import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
 import { useDerivedCollateralInfo } from '@/store/collateral/hooks';
 import { formatBalance } from '@/utils/formatter';
+import { useIconReact } from '@/packages/icon-react';
 
 type ChainListProps = {
   chainId: XChainId;
@@ -39,6 +40,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const isSignedIn = signedInWallets.some(wallet => wallet.xChainId === chain.xChainId);
   const { connectToWallet: connectKeplr } = useArchwayContext();
   const { connectToWallet: connectToHavah } = useHavahContext();
+  const { connectToWallet: connectToIcon } = useIconReact();
   const [, setWalletModal] = useWalletModal();
   const crossChainBalances = useCrossChainWalletBalances();
   const { sourceChain: collateralChain } = useDerivedCollateralInfo();
@@ -47,7 +49,9 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
 
   const handleConnect = (xChain: XChain) => {
     setWaitingSignIn(xChain.xChainId);
-    if (xChain.xWalletType === XWalletType.COSMOS) {
+    if (xChain.xWalletType === XWalletType.ICON) {
+      connectToIcon();
+    } else if (xChain.xWalletType === XWalletType.COSMOS) {
       connectKeplr();
     } else if (xChain.xWalletType === XWalletType.HAVAH) {
       connectToHavah();

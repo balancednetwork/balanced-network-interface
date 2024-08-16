@@ -1,6 +1,6 @@
 import { Currency } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
-import { DEFAULT_TOKEN_CHAIN } from '@/app/pages/trade/bridge/_config/xTokens';
+import { DEFAULT_TOKEN_CHAIN } from '@/constants/xTokens';
 import { XChainId } from '@/types';
 import { getXTokenBySymbol, isXToken } from '@/app/pages/trade/bridge/utils';
 

@@ -18,7 +18,7 @@ import CrossChainOptions from '../trade/CrossChainOptions';
 import { XChainId } from '@/types';
 import { Box } from 'rebass/styled-components';
 import { getAvailableXChains } from '@/app/pages/trade/bridge/utils';
-import { DEFAULT_TOKEN_CHAIN } from '@/app/pages/trade/bridge/_config/xTokens';
+import { DEFAULT_TOKEN_CHAIN } from '@/constants/xTokens';
 
 const InputContainer = styled.div`
   display: inline-flex;

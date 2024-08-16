@@ -29,7 +29,7 @@ import {
   Field,
 } from './reducer';
 import { Position, XChainId, XPositions, XPositionsRecord, XToken } from '@/types';
-import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/app/pages/trade/bridge/_config/xTokens';
+import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/constants/xTokens';
 import { useSignedInWallets, useAvailableWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from '@/constants/xChains';

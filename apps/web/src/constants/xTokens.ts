@@ -12,7 +12,7 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
 import { bnUSD } from '@/constants/tokens';
 
 import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
-import { sARCH } from './tokens';
+import { sARCH } from '../app/pages/trade/bridge/_config/tokens';
 import { NATIVE_ADDRESS } from '@/constants/index';
 
 export const xTokenMap: { [key in XChainId]: XToken[] } = {

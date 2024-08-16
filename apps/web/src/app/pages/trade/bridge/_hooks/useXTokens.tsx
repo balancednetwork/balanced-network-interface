@@ -1,5 +1,5 @@
 import { XChainId } from '@/types';
-import { xTokenMap } from '../_config/xTokens';
+import { xTokenMap } from '@/constants/xTokens';
 
 const useXTokens = (from: XChainId, to?: XChainId) => {
   if (to) {

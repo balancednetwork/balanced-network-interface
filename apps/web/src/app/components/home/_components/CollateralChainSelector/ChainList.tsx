@@ -13,7 +13,7 @@ import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { isMobile } from 'react-device-detect';
 import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from '../LoanChainSelector/styledComponents';
 import { useCollateralAmounts, useCollateralType } from '@/store/collateral/hooks';
-import { xTokenMap } from '@/app/pages/trade/bridge/_config/xTokens';
+import { xTokenMap } from '@/constants/xTokens';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import BigNumber from 'bignumber.js';
 import { formatValue } from '@/utils/formatter';

@@ -1,11 +1,11 @@
-import { Currency } from '@balancednetwork/sdk-core';
-import { createSlice } from '@reduxjs/toolkit';
 import { DEFAULT_TOKEN_CHAIN } from '@/constants/xTokens';
 import { XChainId } from '@/types';
-import { getXTokenBySymbol, isXToken } from '@/app/pages/trade/bridge/utils';
+import { getXTokenBySymbol, isXToken } from '@/utils/xTokens';
+import { Currency } from '@balancednetwork/sdk-core';
+import { createSlice } from '@reduxjs/toolkit';
 
 import { NETWORK_ID } from '@/constants/config';
-import { bnUSD, BALN } from '@/constants/tokens';
+import { BALN, bnUSD } from '@/constants/tokens';
 
 // !TODO: use one Field for swap and bridge panel
 export enum Field {

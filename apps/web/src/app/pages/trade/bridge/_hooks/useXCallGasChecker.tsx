@@ -1,11 +1,11 @@
+import { useICX } from '@/constants/tokens';
+import { xChainMap } from '@/constants/xChains';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { XChain, XChainId } from '@/types';
-import { xChainMap } from '@/constants/xChains';
-import { useMemo } from 'react';
-import { getNetworkDisplayName } from '../utils';
-import { useICX } from '@/constants/tokens';
 import { formatBigNumber } from '@/utils';
+import { getNetworkDisplayName } from '@/utils/xTokens';
 import BigNumber from 'bignumber.js';
+import { useMemo } from 'react';
 
 function useXCallGasChecker(xChainId: XChainId): { hasEnoughGas: boolean; errorMessage: string } {
   const balances = useCrossChainWalletBalances();

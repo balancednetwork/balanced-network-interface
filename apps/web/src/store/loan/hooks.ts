@@ -25,11 +25,11 @@ import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatUnits, toBigNumber } from '@/utils';
 
 import { useDestinationEvents } from '@/app/pages/trade/bridge/_zustand/useXCallEventStore';
-import { getXTokenAddress } from '@/app/pages/trade/bridge/utils';
 import { bnUSD } from '@/constants/tokens';
 import { xChainMap } from '@/constants/xChains';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { XChainId } from '@/types';
+import { getXTokenAddress } from '@/utils/xTokens';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { AppState } from '..';
 import {

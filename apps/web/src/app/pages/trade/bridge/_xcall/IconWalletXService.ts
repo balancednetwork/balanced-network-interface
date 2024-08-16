@@ -1,15 +1,15 @@
 import bnJs from '@/bnJs';
-import IconService from 'icon-sdk-js';
 import { Percent } from '@balancednetwork/sdk-core';
+import IconService from 'icon-sdk-js';
 
-import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { toDec } from '@/utils';
-import { NETWORK_ID } from '@/constants/config';
 import { getRlpEncodedSwapData } from '@/app/pages/trade/bridge/utils';
+import { NETWORK_ID } from '@/constants/config';
 import { XChainId } from '@/types';
+import { toDec } from '@/utils';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { XTransactionInput, XTransactionType } from '../_zustand/types';
-import { IWalletXService } from './types';
 import { IconPublicXService } from './IconPublicXService';
+import { IWalletXService } from './types';
 
 export class IconWalletXService extends IconPublicXService implements IWalletXService {
   walletClient: IconService; // reserved for future use

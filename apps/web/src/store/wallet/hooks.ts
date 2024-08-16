@@ -10,7 +10,6 @@ import { Validator } from 'icon-sdk-js';
 import { forEach } from 'lodash-es';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getXTokenAddress, isXToken } from '@/app/pages/trade/bridge/utils';
 import bnJs, { havahJs } from '@/bnJs';
 import { MINIMUM_ICX_FOR_TX, NATIVE_ADDRESS } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
@@ -29,6 +28,7 @@ import { useTokenListConfig } from '@/store/lists/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useUserAddedTokens } from '@/store/user/hooks';
 import { XChainId, XWalletAssetRecord } from '@/types';
+import { getXTokenAddress, isXToken } from '@/utils/xTokens';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';

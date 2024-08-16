@@ -5,8 +5,8 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
+import { getNetworkDisplayName } from '@/utils/xTokens';
 import { XCallEventType } from '../types';
-import { getNetworkDisplayName } from '../utils';
 import { Transaction, TransactionStatus, XCallEventMap, XMessage, XMessageStatus } from './types';
 import { useFetchTransaction } from './useTransactionStore';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';

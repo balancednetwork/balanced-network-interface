@@ -1,9 +1,9 @@
-import { getXTokenAddress, isXToken } from '@/app/pages/trade/bridge/utils';
 import { SUPPORTED_XCALL_CHAINS } from '@/constants/xChains';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { WalletState } from '@/store/wallet/reducer';
 import { XChainId } from '@/types';
+import { getXTokenAddress, isXToken } from '@/utils/xTokens';
 import { Currency } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { useEffect, useState } from 'react';

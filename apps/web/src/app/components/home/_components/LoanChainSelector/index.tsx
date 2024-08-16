@@ -1,19 +1,19 @@
 import { StyledArrowDownIcon, UnderlineText } from '@/app/components/DropdownText';
 import { DropdownPopper } from '@/app/components/Popover';
 import { SelectorWrap } from '@/app/components/trade/CrossChainOptions';
-import { xChainMap } from '@/constants/xChains';
-import { XChainId } from '@/types';
-import { getAvailableXChains } from '@/app/pages/trade/bridge/utils';
 import { Typography } from '@/app/theme';
 import { NETWORK_ID } from '@/constants/config';
 import { bnUSD } from '@/constants/tokens';
+import { xChainMap } from '@/constants/xChains';
+import { useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
+import { XChainId } from '@/types';
+import { getAvailableXChains } from '@/utils/xTokens';
+import { Trans } from '@lingui/macro';
 import React, { useEffect, useMemo } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
-import { useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
 import ChainSelectorLogo from '../CollateralChainSelector/ChainSelectorLogo';
 import ChainList from './ChainList';
-import { Trans } from '@lingui/macro';
 
 const LoanChainSelector = ({
   width,

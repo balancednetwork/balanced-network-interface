@@ -34,9 +34,6 @@ export function TradePageLayout() {
       navigate('/trade', { replace: true });
     }
     if (value === 1) {
-      navigate('/trade/supply', { replace: true });
-    }
-    if (value === 2) {
       navigate('/trade/bridge', { replace: true });
     }
   };
@@ -48,9 +45,6 @@ export function TradePageLayout() {
           <Tabs value={value} onChange={handleTabClick}>
             <Tab>
               <Trans>Swap</Trans>
-            </Tab>
-            <Tab>
-              <Trans>Supply</Trans>
             </Tab>
             <Tab>
               <Trans>Bridge</Trans>

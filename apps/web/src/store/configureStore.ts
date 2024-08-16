@@ -18,7 +18,6 @@ import ratio from './ratio/reducer';
 import reward from './reward/reducer';
 import savings from './savings/reducer';
 import stabilityFund from './stabilityFund/reducer';
-import stakedLP from './stakedLP/reducer';
 import swap from './swap/reducer';
 import transactions from './transactions/reducer';
 import transactionsCrosschain from './transactionsCrosschain/reducer';
@@ -40,7 +39,6 @@ export function configureAppStore() {
       transactions,
       swap,
       stabilityFund,
-      stakedLP,
       user,
       fees,
       oracle,

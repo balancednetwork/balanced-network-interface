@@ -4,16 +4,12 @@ import { Currency, Price } from '@balancednetwork/sdk-core';
 import { Trans, defineMessage } from '@lingui/macro';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
 
 import { ChartContainer, ChartControlButton, ChartControlGroup } from '@/app/components/ChartControl';
-import Modal from '@/app/components/Modal';
 import Spinner from '@/app/components/Spinner';
-import { TVChartContainer } from '@/app/components/TradingViewAdvanced/TVChartContainer';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS } from '@/app/components/TradingViewChart';
 import { Typography } from '@/app/theme';
 import bnJs from '@/bnJs';
-import { LanguageCode, ResolutionString } from '@/charting_library/charting_library';
 import { SUPPORTED_TOKENS_LIST, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
 import { useV2Pair } from '@/hooks/useV2Pairs';
@@ -225,36 +221,6 @@ export default function SwapDescription() {
           )}
         </ChartContainer>
       </div>
-
-      <Modal isOpen={tradingViewActive} onDismiss={handleTVDismiss} fullscreen>
-        {tradingViewActive && (
-          <TVChartContainerWrap>
-            <TVChartContainer
-              interval={chartOption.period as ResolutionString}
-              symbol={symbolName.replaceAll(' ', '')}
-              setActiveSymbol={setActiveSymbol}
-              userId={account || 'not_signed_in'}
-              locale={locale.split('-')[0] as LanguageCode | undefined}
-            />
-          </TVChartContainerWrap>
-        )}
-      </Modal>
     </Flex>
   );
 }
-
-const TVChartContainerWrap = styled(Flex)`
-  left: 0;
-  top: 0;
-  z-index: 99999;
-  width: 100%;
-
-  .TVChartContainer {
-    width: 100%;
-  }
-
-  iframe {
-    width: 100%;
-    height: 100%;
-  }
-`;

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
-import { useLocation, NavLink, NavLinkProps } from 'react-router-dom';
+import { NavLink, NavLinkProps, useLocation } from 'react-router-dom';
 import { Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -173,17 +173,6 @@ export default React.memo(function AppBar() {
               <Trans>Trade</Trans>
             </Text>
           </StyledNavLink>
-        </ListItem>
-        <ListItem>
-          <StyledNavLinkWithNotification
-            to="/vote"
-            hasNotification={!!(activeProposals && activeProposals.length && bBalnAmount.isGreaterThan(0))}
-          >
-            <VoteIcon width="35" height="33" />
-            <Text>
-              <Trans>Vote</Trans>
-            </Text>
-          </StyledNavLinkWithNotification>
         </ListItem>
       </List>
     </Navigation>

@@ -4,7 +4,7 @@ import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import { Box, Flex } from 'rebass';
 
-import { XChainId, XToken } from '@/app/pages/trade/bridge/types';
+import { XChainId, XToken } from '@/types';
 import { Typography } from '@/app/theme';
 import { MODAL_ID, modalActions, useModalStore } from '@/app/pages/trade/bridge/_zustand/useModalStore';
 import {

@@ -2,7 +2,7 @@ import axios from 'axios';
 import bnJs from '@/bnJs';
 import IconService, { Converter, BigNumber } from 'icon-sdk-js';
 
-import { XCallEventType, XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import {
   TransactionStatus,
   XCallEvent,
@@ -12,6 +12,7 @@ import {
 } from '../_zustand/types';
 import { AbstractPublicXService, ICONTxResultType } from './types';
 import { sleep } from '@/utils';
+import { XCallEventType } from '../types';
 
 export const getICONEventSignature = (eventName: XCallEventType) => {
   switch (eventName) {

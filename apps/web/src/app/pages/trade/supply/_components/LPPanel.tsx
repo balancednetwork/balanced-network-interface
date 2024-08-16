@@ -8,7 +8,7 @@ import Nouislider from '@/packages/nouislider-react';
 import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import { Button } from '@/app/components/Button';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { Typography } from '@/app/theme';

@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Box } from 'rebass';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
-import { XChainId, XChain, XWalletType } from '@/app/pages/trade/bridge/types';
 import { xChainMap, xChains } from '@/app/pages/trade/bridge/_config/xChains';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { Trans, t } from '@lingui/macro';
@@ -19,6 +18,7 @@ import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
 import { useDerivedCollateralInfo } from '@/store/collateral/hooks';
 import { formatBalance } from '@/utils/formatter';
+import { XChain, XChainId, XWalletType } from '@/types';
 
 type ChainListProps = {
   chainId: XChainId;

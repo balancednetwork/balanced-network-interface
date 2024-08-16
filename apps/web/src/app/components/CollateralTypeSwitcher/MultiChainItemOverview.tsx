@@ -1,5 +1,5 @@
 import { Token } from '@balancednetwork/sdk-core';
-import { Position, XChainId } from '@/app/pages/trade/bridge/types';
+import { Position, XChainId } from '@/types';
 import React from 'react';
 import CurrencyLogo from '../CurrencyLogo';
 import { Typography } from '@/app/theme';

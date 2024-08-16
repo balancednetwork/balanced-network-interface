@@ -5,7 +5,7 @@ import { Box, Flex } from 'rebass';
 import { Typography } from '@/app/theme';
 
 import { UnderlineText } from '../DropdownText';
-import { XChain } from '@/app/pages/trade/bridge/types';
+import { XChain } from '@/types';
 import { ChainLogo } from '@/app/components/ChainLogo';
 import { CopyableAddress } from '../Header';
 import { t } from '@lingui/macro';

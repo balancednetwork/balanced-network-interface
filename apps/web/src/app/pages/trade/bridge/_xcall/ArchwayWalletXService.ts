@@ -7,7 +7,7 @@ import { getBytesFromString, getRlpEncodedSwapData } from '@/app/pages/trade/bri
 import { archway } from '@/app/pages/trade/bridge/_config/xChains';
 import { getFeeParam, isDenomAsset } from '@/packages/archway/utils';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from '../_config/tokens';
-import { XChainId, XToken } from '@/app/pages/trade/bridge/types';
+import { XChainId, XToken } from '@/types';
 import { IWalletXService } from './types';
 import { XTransactionInput, XTransactionType } from '../_zustand/types';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';

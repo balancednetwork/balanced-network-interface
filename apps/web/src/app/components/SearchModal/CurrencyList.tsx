@@ -20,7 +20,7 @@ import { formatBigNumber, toFraction } from '@/utils';
 import useSortCurrency from '@/hooks/useSortCurrency';
 import { HeaderText } from '@/app/pages/trade/supply/_components/AllPoolsPanel';
 import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import { formatPrice } from '@/utils/formatter';
 
 const DashGrid = styled(Box)`

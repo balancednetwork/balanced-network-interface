@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { XChainId } from '../types';
+import { XChainId } from '@/types';
 
 /**
  * This hook returns the xcall message path from x chain to y chain.

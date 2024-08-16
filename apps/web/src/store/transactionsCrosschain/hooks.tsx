@@ -2,10 +2,11 @@ import { useCallback } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { CrossChainTxType, XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 
 import { AppState } from '../index';
 import { addTransactionResult, initTransaction } from './actions';
+import { CrossChainTxType } from '@/app/pages/trade/bridge/types';
 
 export const useTransactionsCrosschainState = (): AppState['transactionsCrosschain'] => {
   return useSelector<AppState, AppState['transactionsCrosschain']>(state => state.transactionsCrosschain);

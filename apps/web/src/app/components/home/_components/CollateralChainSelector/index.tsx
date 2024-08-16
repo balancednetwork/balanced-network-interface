@@ -1,7 +1,7 @@
 import { StyledArrowDownIcon } from '@/app/components/DropdownText';
 import { DropdownPopper } from '@/app/components/Popover';
 import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
-import { XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import { getAvailableXChains } from '@/app/pages/trade/bridge/utils';
 import { Typography } from '@/app/theme';
 import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';

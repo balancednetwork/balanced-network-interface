@@ -22,7 +22,7 @@ import { filterTokens, useSortedTokensByQuery } from './filtering';
 import ImportRow from './ImportRow';
 import SearchInput from './SearchInput';
 import { useTokenComparator } from './sorting';
-import { XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import { useBridgeDirection } from '@/store/bridge/hooks';
 import useXTokens from '@/app/pages/trade/bridge/_hooks/useXTokens';
 import { xTokenMap } from '@/app/pages/trade/bridge/_config/xTokens';

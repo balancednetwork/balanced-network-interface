@@ -11,7 +11,7 @@ import {
 } from '@/app/components/Notification/TransactionNotification';
 import { Transaction, TransactionStatus } from './types';
 import { xServiceActions } from './useXServiceStore';
-import { XChainId } from '../types';
+import { XChainId } from '@/types';
 
 type TransactionStore = {
   transactions: Transaction[];

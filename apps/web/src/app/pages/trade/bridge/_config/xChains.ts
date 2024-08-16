@@ -1,4 +1,5 @@
-import { XChainId, XChain, XWalletType, BridgePair, MessagingProtocolId } from '../types';
+import { BridgePair, MessagingProtocolId } from '../types';
+import { XChainId, XChain, XWalletType } from '@/types';
 
 export const archway: XChain = {
   id: 'archway-1',

@@ -2,7 +2,7 @@ import { StyledArrowDownIcon, UnderlineText } from '@/app/components/DropdownTex
 import { DropdownPopper } from '@/app/components/Popover';
 import { SelectorWrap } from '@/app/components/trade/CrossChainOptions';
 import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
-import { XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import { getAvailableXChains } from '@/app/pages/trade/bridge/utils';
 import { Typography } from '@/app/theme';
 import { NETWORK_ID } from '@/constants/config';

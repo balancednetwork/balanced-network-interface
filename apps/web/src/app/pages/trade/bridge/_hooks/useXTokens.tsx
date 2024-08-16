@@ -1,4 +1,4 @@
-import { XChainId, XToken } from '../types';
+import { XChainId } from '@/types';
 import { xTokenMap } from '../_config/xTokens';
 
 const useXTokens = (from: XChainId, to?: XChainId) => {

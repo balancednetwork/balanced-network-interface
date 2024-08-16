@@ -5,7 +5,7 @@ import { Percent } from '@balancednetwork/sdk-core';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 
-import { XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import { XTransactionInput, XTransactionType } from '../_zustand/types';
 import { IWalletXService } from './types';
 import { HavahPublicXService } from './HavahPublicXService';

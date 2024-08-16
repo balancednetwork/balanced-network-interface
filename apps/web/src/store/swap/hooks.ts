@@ -6,7 +6,7 @@ import { t } from '@lingui/macro';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { XChainId, XToken } from '@/app/pages/trade/bridge/types';
+import { XChainId, XToken } from '@/types';
 import { canBeQueue } from '@/constants/currency';
 import { useAllTokens } from '@/hooks/Tokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';

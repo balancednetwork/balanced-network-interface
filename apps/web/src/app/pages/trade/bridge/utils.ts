@@ -1,6 +1,6 @@
 import rlp from 'rlp';
 
-import { XChainId, XCallEventType, XChain, XToken } from './types';
+import { XChainId, XChain, XToken } from '@/types';
 import { xChainMap, xChains } from './_config/xChains';
 import { xTokenMap } from './_config/xTokens';
 import { Currency, CurrencyAmount, TradeType, Token } from '@balancednetwork/sdk-core';
@@ -8,6 +8,7 @@ import { NATIVE_ADDRESS } from '@/constants/index';
 import { uintToBytes } from '@/utils';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
+import { XCallEventType } from './types';
 
 export function getBytesFromNumber(value) {
   const hexString = value.toString(16).padStart(2, '0');

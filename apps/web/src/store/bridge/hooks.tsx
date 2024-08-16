@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { XChainId, XToken } from '@/app/pages/trade/bridge/types';
+import { XChainId, XToken } from '@/types';
 import { AppState } from '@/store';
 import {
   setRecipient,

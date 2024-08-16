@@ -1,4 +1,4 @@
-import { XChainId, XCallEventType } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import {
   XTransactionInput,
   Transaction,
@@ -6,6 +6,7 @@ import {
   XCallEvent,
   XCallMessageSentEvent,
 } from '../_zustand/types';
+import { XCallEventType } from '../types';
 
 export interface IPublicXService {
   // getBlock(blockHeight);

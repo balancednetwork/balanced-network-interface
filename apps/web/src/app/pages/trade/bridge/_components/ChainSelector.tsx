@@ -4,7 +4,7 @@ import ClickAwayListener from 'react-click-away-listener';
 import { Box } from 'rebass';
 import styled from 'styled-components';
 
-import { XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import { Typography } from '@/app/theme';
 
 import { StyledArrowDownIcon, UnderlineText } from '../../../../components/DropdownText';

@@ -2,7 +2,7 @@ import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import bnJs from '@/bnJs';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { xTokenMap } from '../_config/xTokens';
-import { XChainId, XToken } from '../types';
+import { XChainId, XToken } from '@/types';
 import { NATIVE_ADDRESS } from '@/constants/index';
 
 type XAddress = string;

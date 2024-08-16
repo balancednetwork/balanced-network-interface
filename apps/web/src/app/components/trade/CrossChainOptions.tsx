@@ -1,11 +1,10 @@
 import React, { useEffect, useMemo } from 'react';
 
-import { Currency } from '@balancednetwork/sdk-core';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 
-import { XChain, XChainId } from '@/app/pages/trade/bridge/types';
+import { XChain, XChainId } from '@/types';
 import { Typography } from '@/app/theme';
 
 import ChainList from '../../pages/trade/bridge/_components/ChainList';

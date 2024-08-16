@@ -1,4 +1,5 @@
-import { MessagingProtocol, MessagingProtocolId, XChainId } from '../types';
+import { XChainId } from '@/types';
+import { MessagingProtocol, MessagingProtocolId } from '../types';
 import useXCallPair from './useXCallPair';
 
 const MESSAGING_PROTOCOLS: { [key in MessagingProtocolId]: MessagingProtocol } = {

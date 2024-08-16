@@ -1,6 +1,6 @@
 import { Address, PublicClient, getContract, parseEventLogs } from 'viem';
 
-import { XCallEventType, XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import { AbstractPublicXService } from './types';
 import {
   TransactionStatus,
@@ -11,6 +11,7 @@ import {
 } from '../_zustand/types';
 import { xCallContractAbi } from './abis/xCallContractAbi';
 import { xChainMap } from '../_config/xChains';
+import { XCallEventType } from '../types';
 
 const XCallEventSignatureMap = {
   [XCallEventType.CallMessageSent]: 'CallMessageSent',

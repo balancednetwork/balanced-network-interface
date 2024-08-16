@@ -1,4 +1,6 @@
-import { BridgePair, XChainId } from '../types';
+import { BridgePair } from '../types';
+import { XChainId } from '@/types';
+
 import { BRIDGE_PAIRS, sortChains } from '../_config/xChains';
 
 const useXCallPair = (from: XChainId, to: XChainId): BridgePair | undefined => {

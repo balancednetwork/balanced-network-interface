@@ -8,7 +8,7 @@ import { Flex, Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import useAllowanceHandler from '@/app/pages/trade/bridge/_hooks/useApproveCallback';
-import { XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import { getXTokenBySymbol } from '@/app/pages/trade/bridge/utils';
 import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';

@@ -3,7 +3,7 @@ import { RLP } from '@ethereumjs/rlp';
 import { Address, PublicClient, WalletClient, WriteContractParameters, bytesToHex, toHex } from 'viem';
 import { Percent } from '@balancednetwork/sdk-core';
 
-import { XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
 import { NATIVE_ADDRESS } from '@/constants/index';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';

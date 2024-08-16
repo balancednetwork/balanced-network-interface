@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { ARCHWAY_FEE_TOKEN_SYMBOL, useARCH } from '@/app/pages/trade/bridge/_config/tokens';
 import { isDenomAsset } from '@/packages/archway/utils';
-import { XChainId, XWalletAssetRecord } from '@/app/pages/trade/bridge/types';
+import { XChainId, XWalletAssetRecord } from '@/types';
 import { getXTokenAddress, isXToken } from '@/app/pages/trade/bridge/utils';
 import bnJs, { havahJs } from '@/bnJs';
 import { MINIMUM_ICX_FOR_TX, NATIVE_ADDRESS } from '@/constants/index';

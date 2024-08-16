@@ -1,5 +1,5 @@
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { XChain, XChainId } from '../types';
+import { XChain, XChainId } from '@/types';
 import { xChainMap } from '../_config/xChains';
 import { useMemo } from 'react';
 import { getNetworkDisplayName } from '../utils';

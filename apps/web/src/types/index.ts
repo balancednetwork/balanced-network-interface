@@ -49,3 +49,7 @@ export interface ProposalInterface {
 export type IcxDisplayType = 'ICX' | 'sICX';
 
 export type InterestPeriod = { display: string; days: number };
+
+export * from './xChain';
+
+export * from './xToken';

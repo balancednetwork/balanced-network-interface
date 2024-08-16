@@ -3,7 +3,6 @@ import React, { useMemo, useState } from 'react';
 import { Box } from 'rebass';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
-import { XChainId, XChain } from '@/app/pages/trade/bridge/types';
 import { xChains } from '@/app/pages/trade/bridge/_config/xChains';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { Trans, t } from '@lingui/macro';
@@ -18,6 +17,7 @@ import { xTokenMap } from '@/app/pages/trade/bridge/_config/xTokens';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import BigNumber from 'bignumber.js';
 import { formatValue } from '@/utils/formatter';
+import { XChain, XChainId } from '@/types';
 
 type ChainListProps = {
   chainId: XChainId;

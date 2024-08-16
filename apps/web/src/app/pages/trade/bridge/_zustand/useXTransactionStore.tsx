@@ -15,7 +15,7 @@ import { xServiceActions } from './useXServiceStore';
 import { transactionActions } from './useTransactionStore';
 import { XMessageUpdater, useXMessageStore, xMessageActions } from './useXMessageStore';
 import { swapMessage } from '../../supply/_components/utils';
-import { XChain, XChainId } from '../types';
+import { XChainId } from '@/types';
 import { MODAL_ID, modalActions } from './useModalStore';
 import { formatBigNumber } from '@/utils';
 import BigNumber from 'bignumber.js';

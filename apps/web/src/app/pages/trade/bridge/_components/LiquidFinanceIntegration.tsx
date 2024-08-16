@@ -10,7 +10,7 @@ import {
   useDerivedBridgeInfo,
 } from '@/store/bridge/hooks';
 import { sARCHOnArchway, useARCH } from '@/app/pages/trade/bridge/_config/tokens';
-import { XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 import { archway } from '@/app/pages/trade/bridge/_config/xChains';

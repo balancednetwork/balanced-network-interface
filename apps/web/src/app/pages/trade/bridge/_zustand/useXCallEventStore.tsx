@@ -3,9 +3,10 @@ import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { useQuery } from '@tanstack/react-query';
 
-import { XCallEventType, XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import { XCallExecutedEvent, XCallMessageEvent, XCallDestinationEvent } from './types';
 import { xServiceActions } from './useXServiceStore';
+import { XCallEventType } from '../types';
 
 type XCallScanner = {
   id: string;

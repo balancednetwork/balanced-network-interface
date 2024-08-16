@@ -10,7 +10,7 @@ import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 import { useChangeShouldLedgerSign } from '@/store/application/hooks';
 
 import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
-import { XChainId, XChain } from '@/app/pages/trade/bridge/types';
+import { XChainId, XChain } from '@/types';
 import { IPublicXService, IWalletXService } from '../_xcall/types';
 import { IconPublicXService } from '../_xcall/IconPublicXService';
 import { ArchwayPublicXService } from '../_xcall/ArchwayPublicXService';

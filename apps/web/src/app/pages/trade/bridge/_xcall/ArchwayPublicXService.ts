@@ -2,7 +2,7 @@ import { ArchwayClient } from '@archwayhq/arch3.js';
 
 import { archway } from '@/app/pages/trade/bridge/_config/xChains';
 
-import { XCallEventType, XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import { AbstractPublicXService } from './types';
 import {
   TransactionStatus,
@@ -11,6 +11,7 @@ import {
   XCallMessageEvent,
   XCallMessageSentEvent,
 } from '../_zustand/types';
+import { XCallEventType } from '../types';
 
 const XCallEventSignatureMap = {
   [XCallEventType.CallMessageSent]: 'wasm-CallMessageSent',

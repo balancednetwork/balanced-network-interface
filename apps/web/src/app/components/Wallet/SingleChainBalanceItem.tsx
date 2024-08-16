@@ -3,7 +3,7 @@ import { AssetSymbol, BalanceAndValueWrap, DataText, ListItem } from './styledCo
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { Typography } from '@/app/theme';
-import { XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { useTheme } from 'styled-components';
 import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';

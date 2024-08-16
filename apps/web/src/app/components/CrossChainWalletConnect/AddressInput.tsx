@@ -1,5 +1,5 @@
 import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
-import { XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import React from 'react';
 import { Flex } from 'rebass';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';

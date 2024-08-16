@@ -38,7 +38,7 @@ import {
 } from './reducer';
 import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
 import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
-import { XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { bnUSD } from '@/constants/tokens';
 import { useDestinationEvents } from '@/app/pages/trade/bridge/_zustand/useXCallEventStore';

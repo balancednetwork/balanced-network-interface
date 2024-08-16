@@ -1,4 +1,4 @@
-import { XChainId } from '../types';
+import { XChainId } from '@/types';
 import { xChainMap } from '../_config/xChains';
 import useWallets from './useWallets';
 

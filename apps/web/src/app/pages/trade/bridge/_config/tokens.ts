@@ -3,7 +3,7 @@ import { Token } from '@balancednetwork/sdk-core';
 
 import { NETWORK_ID } from '@/constants/config';
 import { TokenMap } from '@/constants/tokens';
-import { XToken, XTokenMap } from '../types';
+import { XToken } from '@/types';
 
 // disable prettier printWidth rule
 // prettier-ignore
@@ -31,7 +31,7 @@ export const sARCH: TokenMap = {
   ),
 };
 
-export const sARCHOnArchway: XTokenMap = {
+export const sARCHOnArchway = {
   ['archway-1']: new XToken(
     'archway-1',
     'archway-1',

@@ -15,7 +15,7 @@ import { Typography } from '@/app/theme';
 import { Trans, t } from '@lingui/macro';
 import bnJs from '@/bnJs';
 import { useWalletModalToggle } from '@/store/application/hooks';
-import { XWalletType } from '@/app/pages/trade/bridge/types';
+import { XWalletType } from '@/types';
 import SearchInput from '../SearchModal/SearchInput';
 import useWallets from '@/app/pages/trade/bridge/_hooks/useWallets';
 import { isMobile } from 'react-device-detect';

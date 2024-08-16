@@ -17,6 +17,7 @@ import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import Spinner from '@/app/components/Spinner';
+import XTransactionState from '@/app/components/XTransactionState';
 import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
 import { xChainMap } from '@/constants/xChains';
 import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
@@ -33,7 +34,6 @@ import {
 } from '@/lib/xcall/_zustand/useXTransactionStore';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { useSwitchChain } from 'wagmi';
-import XTransactionState from '../../bridge/_components/XTransactionState';
 import { StyledButton } from './shared';
 
 type XSwapModalProps = {

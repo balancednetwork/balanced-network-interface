@@ -10,6 +10,7 @@ import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
 import { ModalContentWrapper } from '@/app/components/ModalContent';
 import Spinner from '@/app/components/Spinner';
+import XTransactionState from '@/app/components/XTransactionState';
 import { StyledButton as XCallButton } from '@/app/pages/trade/xswap/_components/shared';
 import { Typography } from '@/app/theme';
 import { xChainMap } from '@/constants/xChains';
@@ -27,7 +28,6 @@ import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from '@/stor
 import { formatBigNumber } from '@/utils';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
-import XTransactionState from './XTransactionState';
 
 const StyledXCallButton = styled(XCallButton)`
   transition: all 0.2s ease;

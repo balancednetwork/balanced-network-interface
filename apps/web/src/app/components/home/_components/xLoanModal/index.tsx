@@ -8,7 +8,7 @@ import { Box, Flex } from 'rebass';
 import { TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
-import XTransactionState from '@/app/pages/trade/bridge/_components/XTransactionState';
+import XTransactionState from '@/app/components/XTransactionState';
 import { StyledButton } from '@/app/pages/trade/xswap/_components/shared';
 import { Typography } from '@/app/theme';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';

@@ -19,7 +19,6 @@ const TradePageLayout = lazyLoad(
   module => module.TradePageLayout,
 );
 import { LegacyBridge } from './pages/legacy-bridge/page';
-import { TestPage } from './pages/test/page';
 import { BridgePage } from './pages/trade/bridge/page';
 import { SupplyPage } from './pages/trade/supply/page';
 import { TradePage } from './pages/trade/xswap/page';

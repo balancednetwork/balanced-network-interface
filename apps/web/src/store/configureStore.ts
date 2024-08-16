@@ -8,7 +8,6 @@ import { load, save } from 'redux-localstorage-simple';
 import application from './application/reducer';
 import bbaln from './bbaln/reducer';
 import bridge from './bridge/reducer';
-import fees from './fees/reducer';
 import lists from './lists/reducer';
 import oracle from './oracle/reducer';
 import ratio from './ratio/reducer';
@@ -32,7 +31,6 @@ export function configureAppStore() {
       swap,
       stabilityFund,
       user,
-      fees,
       oracle,
       lists,
       transactionsCrosschain,

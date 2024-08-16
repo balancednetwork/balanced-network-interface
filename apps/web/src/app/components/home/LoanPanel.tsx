@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { t, Trans } from '@lingui/macro';
 import Nouislider from '@/packages/nouislider-react';
+import { Trans, t } from '@lingui/macro';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -18,30 +18,29 @@ import { useActiveLocale } from '@/hooks/useActiveLocale';
 import useInterval from '@/hooks/useInterval';
 import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import { useCollateralActionHandlers, useDerivedCollateralInfo } from '@/store/collateral/hooks';
-import { Field } from '@/store/loan/reducer';
 import {
+  useActiveLoanAddress,
+  useDerivedLoanInfo,
+  useInterestRate,
+  useLoanActionHandlers,
+  useLoanParameters,
+  useLoanRecipientNetwork,
   useLoanState,
   useLoanUsedAmount,
-  useLoanParameters,
-  useInterestRate,
-  useDerivedLoanInfo,
-  useLoanActionHandlers,
-  useActiveLoanAddress,
-  useLoanRecipientNetwork,
 } from '@/store/loan/hooks';
+import { Field } from '@/store/loan/reducer';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 
-import { PanelInfoWrap, PanelInfoItem, UnderPanel } from './CollateralPanel';
 import ModalContent from '@/app/components/ModalContent';
+import { MODAL_ID, modalActions } from '@/app/pages/trade/bridge/_zustand/useModalStore';
+import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
+import useWidth from '@/hooks/useWidth';
+import { useIconReact } from '@/packages/icon-react';
 import LoanChainSelector from './_components/LoanChainSelector';
 import XLoanModal, { XLoanAction } from './_components/xLoanModal';
-import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
-import { useIconReact } from '@/packages/icon-react';
-import { MODAL_ID, modalActions } from '@/app/pages/trade/bridge/_zustand/useModalStore';
-import useWidth from '@/hooks/useWidth';
 
 const LoanPanel = () => {
   const { account, sourceChain, collateralType } = useDerivedCollateralInfo();
@@ -247,11 +246,6 @@ const LoanPanel = () => {
             </Typography>
           </Flex>
         </BoxPanel>
-        <UnderPanel justifyContent="space-between">
-          <Flex width="100%" justifyContent="space-between" ref={underPanelRef}>
-            <LoanChainSelector width={underPanelWidth} containerRef={underPanelRef.current} />
-          </Flex>
-        </UnderPanel>
       </BoxPanelWrap>
     );
   }
@@ -327,51 +321,7 @@ const LoanPanel = () => {
               onSlide={onSlide}
             />
           </Box>
-          <PanelInfoWrap>
-            <PanelInfoItem>
-              {isAdjusting && borrowedAmount.isLessThanOrEqualTo(0) ? (
-                <CurrencyField
-                  editable={isAdjusting}
-                  isActive
-                  label="Borrowed"
-                  tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
-                  noticeShow={isLessThanMinimum}
-                  noticeText={'10 bnUSD minimum'}
-                  value={formattedAmounts[Field.LEFT]}
-                  currency={'bnUSD'}
-                  onUserInput={onFieldAInput}
-                />
-              ) : (
-                <CurrencyField
-                  editable={isAdjusting}
-                  isActive
-                  label="Borrowed"
-                  tooltipText="Your collateral balance. It earns interest from staking, but is also sold over time to repay your loan."
-                  value={formattedAmounts[Field.LEFT]}
-                  currency={'bnUSD'}
-                  onUserInput={onFieldAInput}
-                />
-              )}
-            </PanelInfoItem>
-
-            <PanelInfoItem>
-              <CurrencyField
-                editable={isAdjusting}
-                isActive={false}
-                label="Available"
-                tooltipText="The amount of ICX available to deposit from your wallet."
-                value={formattedAmounts[Field.RIGHT]}
-                currency={'bnUSD'}
-                onUserInput={onFieldBInput}
-              />
-            </PanelInfoItem>
-          </PanelInfoWrap>
         </BoxPanel>
-        <UnderPanel justifyContent="space-between">
-          <Flex width="100%" justifyContent="space-between" ref={underPanelRef}>
-            <LoanChainSelector width={underPanelWidth} containerRef={underPanelRef.current} />
-          </Flex>
-        </UnderPanel>
       </BoxPanelWrap>
 
       <XLoanModal

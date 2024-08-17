@@ -13,9 +13,6 @@ import { BrowserRouter } from 'react-router-dom';
 
 // import * as serviceWorker from 'serviceWorker';
 
-// Use consistent styling
-import 'sanitize.css/sanitize.css';
-
 // Import root app
 import { App } from '@/app';
 import { ArchwayProvider } from '@/packages/archway/ArchwayProvider';

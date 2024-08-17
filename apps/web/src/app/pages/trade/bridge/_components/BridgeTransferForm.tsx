@@ -21,7 +21,7 @@ import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySear
 import { AutoColumn } from '@/app/pages/trade/xswap/_components/SwapPanel';
 import { BrightPanel } from '@/app/pages/trade/supply/_components/utils';
 
-import ChainSelector from './ChainSelector';
+import XChainSelector from './XChainSelector';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { Field } from '@/store/bridge/reducer';
 import useXCallFee from '../_hooks/useXCallFee';
@@ -30,6 +30,7 @@ import { maxAmountSpend, validateAddress } from '@/utils';
 import useWallets from '../_hooks/useWallets';
 import { UnderlineText } from '@/app/components/DropdownText';
 import BigNumber from 'bignumber.js';
+import useWidth from '@/hooks/useWidth';
 
 export default function BridgeTransferForm({ openModal }) {
   const crossChainWallet = useCrossChainWalletBalances();
@@ -40,7 +41,7 @@ export default function BridgeTransferForm({ openModal }) {
     useBridgeActionHandlers();
   const bridgeDirection = useBridgeDirection();
   const percentAmount = bridgeState[Field.FROM].percent;
-
+  const [ref, width] = useWidth();
   const toggleWalletModal = useWalletModalToggle();
 
   const maxInputAmount = React.useMemo(
@@ -99,16 +100,26 @@ export default function BridgeTransferForm({ openModal }) {
           <Typography variant="h2">
             <Trans>Transfer</Trans>
           </Typography>
-          <Flex width="100%" alignItems="center" justifyContent="space-between">
-            <ChainSelector
+          <Flex width="100%" alignItems="center" justifyContent="space-between" ref={ref}>
+            <XChainSelector
               label="from"
               chainId={bridgeDirection.from}
               setChainId={c => onChainSelection(Field.FROM, c)}
+              currency={currencyToBridge}
+              width={width}
+              containerRef={ref.current}
             />
             <Box sx={{ cursor: 'pointer', marginLeft: '-25px' }} onClick={onSwitchChain}>
               <FlipIcon width={25} height={17} />
             </Box>
-            <ChainSelector label="to" chainId={bridgeDirection.to} setChainId={c => onChainSelection(Field.TO, c)} />
+            <XChainSelector
+              label="to"
+              chainId={bridgeDirection.to}
+              setChainId={c => onChainSelection(Field.TO, c)}
+              currency={currencyToBridge}
+              width={width}
+              containerRef={ref.current}
+            />
           </Flex>
 
           <Typography as="div" mb={-1} textAlign="right" hidden={!account}>

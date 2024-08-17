@@ -51,7 +51,7 @@ export const List1 = styled(Box)`
   max-height: 260px;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 0px 10px 0px 10px;
+  padding: 0px 25px;
 
   & > ${ListItem}:last-child {
     padding-bottom: 0;

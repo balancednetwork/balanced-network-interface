@@ -43,6 +43,7 @@ export enum AssetsTab {
 export enum SelectorType {
   SWAP_IN,
   SWAP_OUT,
+  SUPPLY_QUOTE,
   OTHER,
 }
 
@@ -246,7 +247,7 @@ export function CurrencySearch({
 
   return (
     <Wrapper width={width}>
-      <Flex>
+      <Flex px="25px">
         <SearchInput
           type="text"
           id="token-search-input"
@@ -308,5 +309,5 @@ export function CurrencySearch({
 
 const Wrapper = styled(Flex)`
   flex-direction: column;
-  padding: 25px;
+  padding: 25px 0;
 `;

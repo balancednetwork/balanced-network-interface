@@ -30,8 +30,8 @@ export const Grid = styled(Box)<{ $isSignedIn?: boolean }>`
   }
 `;
 
-export const ScrollHelper = styled(Box)`
-  max-height: 280px; 
+export const ScrollHelper = styled(Box)<{ $height?: string }>`
+  max-height: ${({ $height }) => ($height ? $height : '280px')}; 
   overflow: auto; 
   padding: 0 20px;
   margin: 15px -20px 0 !important;

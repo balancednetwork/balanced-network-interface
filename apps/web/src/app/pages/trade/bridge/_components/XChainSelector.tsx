@@ -9,13 +9,18 @@ import { Typography } from '@/app/theme';
 
 import { StyledArrowDownIcon, UnderlineText } from '../../../../components/DropdownText';
 import { DropdownPopper } from '../../../../components/Popover';
-import ChainList from './ChainList';
+import XChainList from './XChainList';
 import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { Currency } from '@balancednetwork/sdk-core';
+import useWidth from '@/hooks/useWidth';
 
 type ChainSelectorProps = {
   chainId: XChainId;
   setChainId: (chain: XChainId) => void;
+  currency?: Currency;
   label: 'from' | 'to';
+  width?: number;
+  containerRef?: HTMLDivElement | null;
 };
 
 const Wrap = styled.div`
@@ -25,13 +30,12 @@ const Wrap = styled.div`
   color: ${({ theme }) => theme.colors.primaryBright};
 `;
 
-const ChainSelector = ({ chainId, setChainId, label }: ChainSelectorProps) => {
+const XChainSelector = ({ chainId, setChainId, label, currency, width, containerRef }: ChainSelectorProps) => {
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
-
-  const arrowRef = React.useRef(null);
+  const [arrowRef] = useWidth();
 
   const handleToggle = (e: React.MouseEvent<HTMLElement>) => {
-    setAnchor(anchor ? null : arrowRef.current);
+    setAnchor(containerRef ?? null);
   };
 
   const closeDropdown = e => {
@@ -65,10 +69,19 @@ const ChainSelector = ({ chainId, setChainId, label }: ChainSelectorProps) => {
             show={Boolean(anchor)}
             anchorEl={anchor}
             arrowEl={arrowRef.current}
+            customArrowStyle={{
+              transform: `translateX(${arrowRef.current && containerRef ? Math.floor(arrowRef.current?.getBoundingClientRect().x - containerRef.getBoundingClientRect().x) + 25 + 'px' : '0'})`,
+            }}
             placement="bottom"
             offset={[0, 8]}
+            containerOffset={containerRef ? containerRef.getBoundingClientRect().x + 2 : 0}
           >
-            <ChainList setChainId={handleSelect} chainId={chainId} />
+            <XChainList
+              setChainId={handleSelect}
+              xChainId={chainId}
+              currency={currency}
+              width={width ? width + 40 : undefined}
+            />
           </DropdownPopper>
         </div>
       </ClickAwayListener>
@@ -76,4 +89,4 @@ const ChainSelector = ({ chainId, setChainId, label }: ChainSelectorProps) => {
   );
 };
 
-export default ChainSelector;
+export default XChainSelector;

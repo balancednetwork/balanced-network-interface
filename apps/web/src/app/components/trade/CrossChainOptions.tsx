@@ -8,19 +8,23 @@ import styled, { useTheme } from 'styled-components';
 import { XChain, XChainId } from '@/app/pages/trade/bridge/types';
 import { Typography } from '@/app/theme';
 
-import ChainList from '../../pages/trade/bridge/_components/ChainList';
+import XChainList from '../../pages/trade/bridge/_components/XChainList';
 import CrossChainWalletConnect from '../CrossChainWalletConnect';
 import { StyledArrowDownIcon, UnderlineText } from '../DropdownText';
 import { DropdownPopper } from '../Popover';
 import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import useWidth from '@/hooks/useWidth';
 
 type CrossChainOptionsProps = {
   xChains?: XChain[];
   xChainId: XChainId;
   setXChainId: (chain: XChainId) => void;
+  currency?: Currency | null;
   isOpen: boolean;
   setOpen: (isOpen: boolean) => void;
   editable?: boolean;
+  width?: number;
+  containerRef: HTMLDivElement | null;
 };
 
 export const Wrap = styled(Flex)`
@@ -38,10 +42,19 @@ export const SelectorWrap = styled.div`
   color: ${({ theme }) => theme.colors.primaryBright};
 `;
 
-const CrossChainOptions = ({ xChainId, setXChainId, isOpen, setOpen, xChains, editable }: CrossChainOptionsProps) => {
+const CrossChainOptions = ({
+  xChainId,
+  setXChainId,
+  isOpen,
+  setOpen,
+  xChains,
+  editable,
+  currency,
+  width,
+  containerRef,
+}: CrossChainOptionsProps) => {
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
-
-  const arrowRef = React.useRef(null);
+  const [arrowRef] = useWidth();
 
   const handleToggle = (e: React.MouseEvent<HTMLElement>) => {
     if (isOpen) {
@@ -71,10 +84,10 @@ const CrossChainOptions = ({ xChainId, setXChainId, isOpen, setOpen, xChains, ed
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (arrowRef.current) {
-      setAnchor(arrowRef.current);
+    if (containerRef) {
+      setAnchor(containerRef);
     }
-  }, [isCrossChain]);
+  }, [isCrossChain, isOpen]);
 
   return (
     <Wrap>
@@ -98,10 +111,21 @@ const CrossChainOptions = ({ xChainId, setXChainId, isOpen, setOpen, xChains, ed
                 show={isOpen}
                 anchorEl={anchor}
                 arrowEl={arrowRef.current}
+                customArrowStyle={{
+                  transform: `translateX(${arrowRef.current && containerRef ? Math.floor(arrowRef.current?.getBoundingClientRect().x - containerRef.getBoundingClientRect().x) + 25 + 'px' : '0'})`,
+                }}
                 placement="bottom"
-                offset={[0, 8]}
+                offset={[0, 35]}
+                containerOffset={containerRef ? containerRef.getBoundingClientRect().x + 2 : 0}
+                strategy="absolute"
               >
-                <ChainList setChainId={setChainWrap} chainId={xChainId} chains={xChains} />
+                <XChainList
+                  setChainId={setChainWrap}
+                  xChainId={xChainId}
+                  chains={xChains}
+                  currency={currency ?? undefined}
+                  width={width}
+                />
               </DropdownPopper>
             </div>
           </ClickAwayListener>

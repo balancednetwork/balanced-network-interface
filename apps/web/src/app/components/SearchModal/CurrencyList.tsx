@@ -48,6 +48,10 @@ const StyledBalanceBreakdown = styled(BalanceBreakdown)`
   color: ${({ theme }) => theme.colors.text2};
 `;
 
+const StyledHeaderText = styled(HeaderText)`
+  font-size: 12px;
+`;
+
 function currencyKey(currency: Currency): string {
   return currency.isToken ? currency.address : 'ICX';
 }
@@ -315,9 +319,9 @@ export default function CurrencyList({
   }, [isOpen, handleEscape, onDismiss]);
 
   return (
-    <List1 mt={4}>
+    <List1 mt={3}>
       <DashGrid>
-        <HeaderText
+        <StyledHeaderText
           role="button"
           className={sortBy.key === 'symbol' ? sortBy.order : ''}
           onClick={() =>
@@ -329,9 +333,9 @@ export default function CurrencyList({
           <span>
             <Trans>Asset</Trans>
           </span>
-        </HeaderText>
+        </StyledHeaderText>
         {signedInWallets.length > 0 ? (
-          <HeaderText
+          <StyledHeaderText
             role="button"
             className={sortBy.key === 'value' ? sortBy.order : ''}
             onClick={() =>
@@ -341,9 +345,9 @@ export default function CurrencyList({
             }
           >
             <Trans>Wallet</Trans>
-          </HeaderText>
+          </StyledHeaderText>
         ) : (
-          <HeaderText
+          <StyledHeaderText
             role="button"
             className={sortBy.key === 'price' ? sortBy.order : ''}
             onClick={() =>
@@ -353,7 +357,7 @@ export default function CurrencyList({
             }
           >
             <Trans>Price</Trans>
-          </HeaderText>
+          </StyledHeaderText>
         )}
       </DashGrid>
 

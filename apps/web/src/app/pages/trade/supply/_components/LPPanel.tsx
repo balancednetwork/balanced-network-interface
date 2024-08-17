@@ -20,7 +20,7 @@ import { Field } from '@/store/mint/reducer';
 import { useMintState, useDerivedMintInfo, useMintActionHandlers, useInitialSupplyLoad } from '@/store/mint/hooks';
 import { formatBigNumber, maxAmountSpend } from '@/utils';
 
-import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
+import { CurrencySelectionType, SelectorType } from '@/app/components/SearchModal/CurrencySearch';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 import { SectionPanel, BrightPanel } from './utils';
@@ -291,6 +291,7 @@ export default function LPPanel() {
                   xChainId={'0x1.icon'}
                   showCrossChainOptions={true}
                   showCrossChainBreakdown={false}
+                  selectorType={SelectorType.SUPPLY_QUOTE}
                 />
               </Flex>
             </AutoColumn>

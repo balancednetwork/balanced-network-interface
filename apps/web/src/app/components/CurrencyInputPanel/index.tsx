@@ -275,6 +275,9 @@ export default function CurrencyInputPanel({
           setOpen={setXChainOptionsOpen}
           xChains={xChains}
           editable={addressEditable}
+          currency={currency}
+          width={width ? width + 40 : undefined}
+          containerRef={ref.current}
         />
       )}
     </Box>

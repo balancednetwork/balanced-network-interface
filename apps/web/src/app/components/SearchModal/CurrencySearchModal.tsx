@@ -105,7 +105,13 @@ export default function CurrencySearchModal({
         // onDismiss={onDismiss}
         // maxHeight={80}
         // minHeight={minHeight}
-        offset={[0, 10]}
+        offset={
+          selectorType === SelectorType.SWAP_IN ||
+          selectorType === SelectorType.SWAP_OUT ||
+          selectorType === SelectorType.SUPPLY_QUOTE
+            ? [0, 35]
+            : [0, 10]
+        }
       >
         <CurrencySearch
           account={account}

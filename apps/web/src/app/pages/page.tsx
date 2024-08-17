@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { XChainType } from '@/types';
 import { XConnector } from '@/xwagmi/core/XConnector';
+import { useXAccount } from '@/xwagmi/hooks/useXAccount';
 import { useXAccounts } from '@/xwagmi/hooks/useXAccounts';
 import { useXConnect } from '@/xwagmi/hooks/useXConnect';
 import { useXDisconnect } from '@/xwagmi/hooks/useXDisconnect';
@@ -24,6 +25,9 @@ export function HomePage() {
 
   const xAccounts = useXAccounts();
   console.log(xAccounts);
+
+  // const iconXAccount = useXAccount('ICON');
+  // console.log(iconXAccount);
 
   return (
     <div className="flex flex-col gap-4">

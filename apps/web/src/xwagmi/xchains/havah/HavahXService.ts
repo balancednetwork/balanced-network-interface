@@ -1,12 +1,8 @@
+import { XConnector } from '@/xwagmi/core/XConnector';
 import { XService } from '@/xwagmi/core/XService';
-import { HavahXConnector } from './HavahXConnector';
 
 export class HavahXService extends XService {
-  constructor() {
-    super('HAVAH');
-  }
-
-  getXConnectors() {
-    return [new HavahXConnector()];
+  constructor({ xConnectors }: { xConnectors: XConnector[] }) {
+    super('HAVAH', xConnectors);
   }
 }

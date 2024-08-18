@@ -1,10 +1,11 @@
 import { XChainType } from '@/types';
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import { XConnector } from './core/XConnector';
 import { XConnection } from './core/types';
 import { EvmXService } from './xchains/evm/EvmXService';
+import { HavahXConnector } from './xchains/havah/HavahXConnector';
 import { HavahXService } from './xchains/havah/HavahXService';
+import { IconHanaXConnector } from './xchains/icon/IconHanaXConnector';
 import { IconXService } from './xchains/icon/IconXService';
 
 type XWagmiStore = {
@@ -39,9 +40,15 @@ export const useXWagmiStore = create<XWagmiStore>()(
 export const initXWagmiStore = () => {
   useXWagmiStore.setState({
     xServices: {
-      ICON: new IconXService(),
-      EVM: new EvmXService(),
-      HAVAH: new HavahXService(),
+      ICON: new IconXService({
+        xConnectors: [new IconHanaXConnector()],
+      }),
+      EVM: new EvmXService({
+        xConnectors: [],
+      }),
+      HAVAH: new HavahXService({
+        xConnectors: [new HavahXConnector()],
+      }),
     },
   });
 };

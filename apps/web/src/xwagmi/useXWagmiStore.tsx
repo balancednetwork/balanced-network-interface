@@ -4,6 +4,7 @@ import { immer } from 'zustand/middleware/immer';
 import { XConnector } from './core/XConnector';
 import { XConnection } from './core/types';
 import { EvmXService } from './xchains/evm/EvmXService';
+import { HavahXService } from './xchains/havah/HavahXService';
 import { IconXService } from './xchains/icon/IconXService';
 
 type XWagmiStore = {
@@ -40,6 +41,7 @@ export const initXWagmiStore = () => {
     xServices: {
       ICON: new IconXService(),
       EVM: new EvmXService(),
+      HAVAH: new HavahXService(),
     },
   });
 };

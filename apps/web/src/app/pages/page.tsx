@@ -3,6 +3,7 @@ import { XChainType } from '@/types';
 import { XConnector } from '@/xwagmi/core/XConnector';
 import { useXAccount } from '@/xwagmi/hooks/useXAccount';
 import { useXAccounts } from '@/xwagmi/hooks/useXAccounts';
+import { useXChainTypes } from '@/xwagmi/hooks/useXChainTypes';
 import { useXConnect } from '@/xwagmi/hooks/useXConnect';
 import { useXDisconnect } from '@/xwagmi/hooks/useXDisconnect';
 import { initXWagmiStore, useXWagmiStore } from '@/xwagmi/useXWagmiStore';
@@ -28,6 +29,9 @@ export function HomePage() {
 
   // const iconXAccount = useXAccount('ICON');
   // console.log(iconXAccount);
+
+  // const xChainTypes = useXChainTypes();
+  // console.log(xChainTypes);
 
   return (
     <div className="flex flex-col gap-4">

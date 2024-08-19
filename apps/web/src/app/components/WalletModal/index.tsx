@@ -1,40 +1,40 @@
 import React, { useCallback, useEffect, useState, useMemo } from 'react';
 
-import { t, Trans } from '@lingui/macro';
+import ExternalIcon from '@/assets/icons/external.svg';
+import { Trans, t } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
-import { Flex, Box } from 'rebass/styled-components';
-import ExternalIcon from '@/assets/icons/external.svg';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 import { UnderlineTextWithArrow } from '@/app/components/DropdownText';
 import { Link } from '@/app/components/Link';
-import { MenuList, LanguageMenuItem } from '@/app/components/Menu';
+import { LanguageMenuItem, MenuList } from '@/app/components/Menu';
 import Modal, { ModalProps } from '@/app/components/Modal';
 import { Typography } from '@/app/theme';
 import ArchWalletIcon from '@/assets/icons/chains/archway.svg';
-import IconWalletIcon from '@/assets/icons/wallets/iconex.svg';
-import HavahWalletIcon from '@/assets/icons/chains/havah.svg';
 import ETHIcon from '@/assets/icons/chains/eth.svg';
-import { LOCALE_LABEL, SupportedLocale, SUPPORTED_LOCALES } from '@/constants/locales';
+import HavahWalletIcon from '@/assets/icons/chains/havah.svg';
+import IconWalletIcon from '@/assets/icons/wallets/iconex.svg';
+import { LOCALE_LABEL, SUPPORTED_LOCALES, SupportedLocale } from '@/constants/locales';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
-import { useWalletModalToggle, useModalOpen, useWalletModal } from '@/store/application/hooks';
+import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
+import { useModalOpen, useWalletModal, useWalletModalToggle } from '@/store/application/hooks';
 import { ApplicationModal } from '@/store/application/reducer';
 
-import { DropdownPopper } from '../Popover';
-import WalletItem from './WalletItem';
-import { EVMWalletModal } from './EVMWalletModal';
-import { XWalletType } from '@/app/pages/trade/bridge/types';
-import { useHavahContext } from '@/packages/havah/HavahProvider';
-import useWallets, { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
-import { useSwitchChain } from 'wagmi';
-import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
+import { xChainMap } from '@/constants/xChains';
 import useDebounce from '@/hooks/useDebounce';
-import Divider from '../Divider';
+import useWallets, { useSignedInWallets } from '@/hooks/useWallets';
+import { useHavahContext } from '@/packages/havah/HavahProvider';
 import { useIconReact } from '@/packages/icon-react';
+import { XWalletType } from '@/types';
+import { useSwitchChain } from 'wagmi';
+import Divider from '../Divider';
+import { DropdownPopper } from '../Popover';
+import { EVMWalletModal } from './EVMWalletModal';
+import WalletItem from './WalletItem';
+import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {

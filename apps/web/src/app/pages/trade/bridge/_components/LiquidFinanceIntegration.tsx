@@ -1,22 +1,24 @@
 import React from 'react';
+
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
+import BigNumber from 'bignumber.js';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
-import { Typography } from '@/app/theme';
+
 import CurrencyLogo from '@/app/components/CurrencyLogo';
+import { Typography } from '@/app/theme';
+import { useARCH } from '@/constants/tokens1';
+import { archway } from '@/constants/xChains';
+import { sARCHOnArchway } from '@/constants/xTokens';
+import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 import {
   useBridgeActionHandlers,
   useBridgeDirection,
   useBridgeState,
   useDerivedBridgeInfo,
 } from '@/store/bridge/hooks';
-import { sARCHOnArchway, useARCH } from '@/app/pages/trade/bridge/_config/tokens';
-import { XChainId } from '@/app/pages/trade/bridge/types';
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
-import { archway } from '@/app/pages/trade/bridge/_config/xChains';
-
-import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
-import BigNumber from 'bignumber.js';
+import { XChainId } from '@/types';
 
 const WithdrawOption = styled.button<{ active: boolean }>`
   text-align: center;

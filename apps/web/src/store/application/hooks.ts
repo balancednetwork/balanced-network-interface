@@ -1,17 +1,17 @@
 import { useCallback, useMemo } from 'react';
 
+import { useIconReact } from '@/packages/icon-react';
 import { CHAIN_INFO } from '@balancednetwork/balanced-js';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from '@/packages/icon-react';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { NETWORK_ID } from '@/constants/config';
 
+import { XWalletType } from '@/types';
 import { AppDispatch, AppState } from '../index';
-import { ApplicationModal, setOpenModal, updateSlippageTolerance, setOpenWalletModal } from './reducer';
-import { XWalletType } from '@/app/pages/trade/bridge/types';
+import { ApplicationModal, setOpenModal, setOpenWalletModal, updateSlippageTolerance } from './reducer';
 
 type BlockDetails = {
   timestamp: number;

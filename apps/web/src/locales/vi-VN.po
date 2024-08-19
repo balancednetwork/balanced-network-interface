@@ -93,10 +93,10 @@ msgstr ""
 msgid "Your transaction has failed. Please go back and try again."
 msgstr ""
 
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
 msgid "{0} transfer approval failed."
 msgstr ""
 
@@ -443,9 +443,9 @@ msgstr "Đã phê duyệt"
 msgid "Review the community token list on GitHub."
 msgstr ""
 
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
 msgid "Approving {0} for cross-chain transfer..."
 msgstr ""
 
@@ -766,9 +766,9 @@ msgstr "Trước"
 msgid "Active"
 msgstr "Kích hoạt"
 
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
 msgstr ""
 
@@ -897,8 +897,8 @@ msgid "Lock up Balance Tokens?"
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/pages/trade/bridge/_components/XTransactionState.tsx
-#: src/app/pages/trade/bridge/_components/XTransactionState.tsx
+#: src/app/components/XTransactionState/index.tsx
+#: src/app/components/XTransactionState/index.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
@@ -1170,8 +1170,8 @@ msgid "Withdraw"
 msgstr "Rút"
 
 #: src/app/components/XCallDescription/index.tsx
-msgid "<0>GMP</0> (general message passing) is a cross-chain messenger that interacts with smart contracts on supported chains."
-msgstr ""
+#~ msgid "<0>GMP</0> (general message passing) is a cross-chain messenger that interacts with smart contracts on supported chains."
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "then click Supply."
@@ -1585,8 +1585,8 @@ msgstr ""
 msgid "Approve"
 msgstr "Phê duyệt"
 
-#: src/app/pages/trade/bridge/_zustand/useTransactionStore.tsx
 #: src/btp/src/connectors/helper.ts
+#: src/lib/xcall/_zustand/useTransactionStore.tsx
 #: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
 msgstr "Đang xử lý giao dịch..."
@@ -2454,8 +2454,8 @@ msgid "All collateral locked"
 msgstr "Tất cả tài sản thế chấp sẽ bị khóa"
 
 #: src/app/components/XCallDescription/index.tsx
-msgid "<0>{0}</0> {1}."
-msgstr ""
+#~ msgid "<0>{0}</0> {1}."
+#~ msgstr ""
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx

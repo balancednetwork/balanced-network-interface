@@ -204,9 +204,6 @@ importers:
       '@ethersproject/address':
         specifier: 5.4.0
         version: 5.4.0
-      '@ethersproject/rlp':
-        specifier: 5.7.0
-        version: 5.7.0
       '@ethersproject/solidity':
         specifier: 5.4.0
         version: 5.4.0

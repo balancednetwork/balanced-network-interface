@@ -1,11 +1,11 @@
 import React, { useMemo, useRef, useState } from 'react';
 
-import { addresses } from '@balancednetwork/balanced-js';
-import { Fraction } from '@balancednetwork/sdk-core';
-import { t, Trans } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import { useIconReact } from '@/packages/icon-react';
 import Nouislider from '@/packages/nouislider-react';
+import { addresses } from '@balancednetwork/balanced-js';
+import { Fraction } from '@balancednetwork/sdk-core';
+import { Trans, t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
@@ -25,18 +25,18 @@ import bnJs from '@/bnJs';
 import { NETWORK_ID } from '@/constants/config';
 import {
   useBBalnAmount,
-  useLockedBaln,
-  useBBalnSliderState,
-  useBBalnSliderActionHandlers,
-  useLockedUntil,
-  useHasLockExpired,
-  useTotalSupply,
   useBBalnChangeSelectedPeriod,
-  useSelectedPeriod,
+  useBBalnSliderActionHandlers,
+  useBBalnSliderState,
   useDynamicBBalnAmount,
+  useHasLockExpired,
+  useLockedBaln,
+  useLockedUntil,
+  usePastMonthFeesDistributed,
+  useSelectedPeriod,
   useSources,
   useTimeRemaining,
-  usePastMonthFeesDistributed,
+  useTotalSupply,
 } from '@/store/bbaln/hooks';
 import { usePowerLeft } from '@/store/liveVoting/hooks';
 import { useHasAnyKindOfRewards } from '@/store/reward/hooks';
@@ -46,21 +46,21 @@ import { parseUnits } from '@/utils';
 import { getFormattedNumber } from '@/utils/formatter';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 
+import { DropdownPopper } from '@/app/components/Popover';
+import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { MetaData } from '../PositionDetailPanel';
+import UnstakePrompt from './UnstakePrompt';
 import { BalnPreviewInput, ButtonsWrap, SliderWrap, Threshold } from './styledComponents';
 import { LockedPeriod } from './types';
-import UnstakePrompt from './UnstakePrompt';
 import {
   WEEK_IN_MS,
-  lockingPeriods,
+  comparePeriods,
   formatDate,
   getClosestUnixWeekStart,
   getWeekOffsetTimestamp,
-  comparePeriods,
+  lockingPeriods,
 } from './utils';
-import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
-import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
-import { DropdownPopper } from '@/app/components/Popover';
 
 const StyledThreshold = styled(Threshold)`
   height: 20px;

@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { SectionPanel } from '@/app/pages/trade/supply/_components/utils';
 import SwapPanel from './_components/SwapPanel';
 import SwapDescription from './_components/SwapDescription';
+import { SectionPanel } from '@/app/components/Panel';
 
 export function TradePage() {
   return (

@@ -1,27 +1,25 @@
 import React from 'react';
 
-import { TradeType, Currency, Percent, Token } from '@balancednetwork/sdk-core';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
+import { Currency, Percent, Token, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { Flex, Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
-import { Typography } from '@/app/theme';
-import bnJs from '@/bnJs';
-import { useSwapSlippageTolerance } from '@/store/application/hooks';
-import { Field } from '@/store/swap/reducer';
-import { useHasEnoughICX } from '@/store/wallet/hooks';
-import { formatBigNumber, shortenAddress, toDec } from '@/utils';
-import { showMessageOnBeforeUnload } from '@/utils/messages';
-
 import ModalContent from '@/app/components/ModalContent';
 import { swapMessage } from '@/app/pages/trade/supply/_components/utils';
-import { useTransactionAdder } from '@/store/transactions/hooks';
-import { useSwapState } from '@/store/swap/hooks';
+import { Typography } from '@/app/theme';
+import bnJs from '@/bnJs';
 import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
-import { getRlpEncodedSwapData } from '@/app/pages/trade/bridge/utils';
+import { useSwapSlippageTolerance } from '@/store/application/hooks';
+import { Field } from '@/store/swap/reducer';
+import { useTransactionAdder } from '@/store/transactions/hooks';
+import { useHasEnoughICX } from '@/store/wallet/hooks';
+import { formatBigNumber, shortenAddress, toDec } from '@/utils';
+import { getRlpEncodedSwapData } from '../../../../../lib/xcall/utils';
 
 type SwapModalProps = {
   isOpen: boolean;

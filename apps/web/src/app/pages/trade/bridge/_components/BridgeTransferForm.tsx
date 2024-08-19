@@ -2,34 +2,32 @@ import React, { useCallback } from 'react';
 
 import { Percent } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass/styled-components';
 
+import AddressInputPanel from '@/app/components/AddressInputPanel';
+import { Button } from '@/app/components/Button';
+import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
+import { UnderlineText } from '@/app/components/DropdownText';
+import { BrightPanel } from '@/app/components/Panel';
+import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
+import { xChainMap } from '@/constants/xChains';
+import useWallets from '@/hooks/useWallets';
+import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
+import { useWalletModalToggle } from '@/store/application/hooks';
 import {
   useBridgeActionHandlers,
   useBridgeDirection,
   useBridgeState,
   useDerivedBridgeInfo,
 } from '@/store/bridge/hooks';
-import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-
-import AddressInputPanel from '@/app/components/AddressInputPanel';
-import { Button } from '@/app/components/Button';
-import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
-import { AutoColumn } from '@/app/pages/trade/xswap/_components/SwapPanel';
-import { BrightPanel } from '@/app/pages/trade/supply/_components/utils';
-
-import ChainSelector from './ChainSelector';
-import { useWalletModalToggle } from '@/store/application/hooks';
 import { Field } from '@/store/bridge/reducer';
-import useXCallFee from '../_hooks/useXCallFee';
-import { xChainMap } from '../_config/xChains';
+import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend, validateAddress } from '@/utils';
-import useWallets from '../_hooks/useWallets';
-import { UnderlineText } from '@/app/components/DropdownText';
-import BigNumber from 'bignumber.js';
+import ChainSelector from './ChainSelector';
 
 export default function BridgeTransferForm({ openModal }) {
   const crossChainWallet = useCrossChainWalletBalances();

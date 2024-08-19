@@ -36,3 +36,25 @@ export const BoxPanel = styled(Box)<{
 `;
 
 export const BoxPanelWrap = styled.div``;
+
+export const Panel = styled(Flex)`
+  overflow: hidden;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+`;
+
+export const SectionPanel = styled(Panel)`
+  flex-direction: column;
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    flex-direction: row;
+  `}
+`;
+
+export const BrightPanel = styled(Panel)`
+  max-width: initial;
+
+  ${({ theme }) => theme.mediaWidth.upSmall`
+    max-width: 360px;
+  `}
+`;

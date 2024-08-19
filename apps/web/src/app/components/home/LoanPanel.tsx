@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { t, Trans } from '@lingui/macro';
 import Nouislider from '@/packages/nouislider-react';
+import { Trans, t } from '@lingui/macro';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -16,30 +16,30 @@ import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
 import useInterval from '@/hooks/useInterval';
 import { useCollateralActionHandlers, useDerivedCollateralInfo } from '@/store/collateral/hooks';
-import { Field } from '@/store/loan/reducer';
 import {
+  useActiveLoanAddress,
+  useDerivedLoanInfo,
+  useInterestRate,
+  useLoanActionHandlers,
+  useLoanParameters,
+  useLoanRecipientNetwork,
   useLoanState,
   useLoanUsedAmount,
-  useLoanParameters,
-  useInterestRate,
-  useDerivedLoanInfo,
-  useLoanActionHandlers,
-  useActiveLoanAddress,
-  useLoanRecipientNetwork,
 } from '@/store/loan/hooks';
+import { Field } from '@/store/loan/reducer';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 
-import { PanelInfoWrap, PanelInfoItem, UnderPanel } from './CollateralPanel';
 import ModalContent from '@/app/components/ModalContent';
+import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
+import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
+import useWidth from '@/hooks/useWidth';
+import { useIconReact } from '@/packages/icon-react';
+import { PanelInfoItem, PanelInfoWrap, UnderPanel } from './CollateralPanel';
 import LoanChainSelector from './_components/LoanChainSelector';
 import XLoanModal, { XLoanAction } from './_components/xLoanModal';
-import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
-import { useIconReact } from '@/packages/icon-react';
-import { MODAL_ID, modalActions } from '@/app/pages/trade/bridge/_zustand/useModalStore';
-import useWidth from '@/hooks/useWidth';
 
 const LoanPanel = () => {
   const { account, sourceChain, collateralType } = useDerivedCollateralInfo();

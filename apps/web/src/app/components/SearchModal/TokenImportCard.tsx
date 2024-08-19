@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Token } from '@balancednetwork/sdk-core';
 import { useIconReact } from '@/packages/icon-react';
+import { Token } from '@balancednetwork/sdk-core';
 import { Card } from 'rebass';
 import styled from 'styled-components';
 

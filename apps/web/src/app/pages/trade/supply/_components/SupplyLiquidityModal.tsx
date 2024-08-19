@@ -1,32 +1,31 @@
 import React from 'react';
 
-import { BalancedJs } from '@balancednetwork/balanced-js';
-import { CurrencyAmount, Currency, Token } from '@balancednetwork/sdk-core';
-import { t, Trans } from '@lingui/macro';
 import { useIconReact } from '@/packages/icon-react';
-import { Flex, Box } from 'rebass/styled-components';
+import { BalancedJs } from '@balancednetwork/balanced-js';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { Trans, t } from '@lingui/macro';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import useAllowanceHandler from '@/app/pages/trade/bridge/_hooks/useApproveCallback';
-import { XChainId } from '@/app/pages/trade/bridge/types';
-import { getXTokenBySymbol } from '@/app/pages/trade/bridge/utils';
 import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
 import { Typography } from '@/app/theme';
 import CheckIcon from '@/assets/icons/tick.svg';
 import bnJs from '@/bnJs';
-import { Field } from '@/store/mint/reducer';
+import useAllowanceHandler from '@/lib/xcall/_hooks/useApproveCallback';
 import { useDerivedMintInfo } from '@/store/mint/hooks';
-import { useTransactionAdder, TransactionStatus, useTransactionStatus } from '@/store/transactions/hooks';
+import { Field } from '@/store/mint/reducer';
+import { TransactionStatus, useTransactionAdder, useTransactionStatus } from '@/store/transactions/hooks';
 import { useArchwayTransactionsState } from '@/store/transactionsCrosschain/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
+import { XChainId } from '@/types';
 import { toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import { getXTokenBySymbol } from '@/utils/xTokens';
 
 import ModalContent, { ModalContentWrapper } from '@/app/components/ModalContent';
-import Spinner from '@/app/components/Spinner';
-import { depositMessage, supplyMessage } from './utils';
 import { DEFAULT_SLIPPAGE_LP } from '@/constants/index';
+import { depositMessage, supplyMessage } from './utils';
 
 interface ModalProps {
   isOpen: boolean;

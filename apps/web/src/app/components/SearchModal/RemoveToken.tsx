@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Token } from '@balancednetwork/sdk-core';
 import { useIconReact } from '@/packages/icon-react';
+import { Token } from '@balancednetwork/sdk-core';
 import { Flex } from 'rebass/styled-components';
 
 import { AlertButton, TextButton } from '@/app/components/Button';

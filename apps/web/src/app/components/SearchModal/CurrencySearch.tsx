@@ -1,7 +1,7 @@
 import React, { /*KeyboardEvent,*/ RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Currency, Token } from '@balancednetwork/sdk-core';
-import { t, Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
 import { Flex } from 'rebass/styled-components';
@@ -15,17 +15,17 @@ import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 import useToggle from '@/hooks/useToggle';
 import { isAddress } from '@/utils';
 
+import { xTokenMap } from '@/constants/xTokens';
+import useXTokens from '@/hooks/useXTokens';
+import { useBridgeDirection } from '@/store/bridge/hooks';
+import { XChainId } from '@/types';
 import Column from '../Column';
 import CommunityListToggle from '../CommunityListToggle';
 import CurrencyList from './CurrencyList';
-import { filterTokens, useSortedTokensByQuery } from './filtering';
 import ImportRow from './ImportRow';
 import SearchInput from './SearchInput';
+import { filterTokens, useSortedTokensByQuery } from './filtering';
 import { useTokenComparator } from './sorting';
-import { XChainId } from '@/app/pages/trade/bridge/types';
-import { useBridgeDirection } from '@/store/bridge/hooks';
-import useXTokens from '@/app/pages/trade/bridge/_hooks/useXTokens';
-import { xTokenMap } from '@/app/pages/trade/bridge/_config/xTokens';
 
 export enum CurrencySelectionType {
   NORMAL,

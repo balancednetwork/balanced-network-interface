@@ -1,30 +1,30 @@
 import React from 'react';
-import { Flex, Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 
-import { Currency, CurrencyAmount, Percent, Token, TradeType } from '@balancednetwork/sdk-core';
-import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balanced-js';
-import { Pair, Trade } from '@balancednetwork/v1-sdk';
 import bnJs from '@/bnJs';
+import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balanced-js';
+import { Currency, CurrencyAmount, Percent, Token, TradeType } from '@balancednetwork/sdk-core';
+import { Pair, Trade } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 
 import { Button } from '@/app/components/Button';
-import { useIconReact } from '@/packages/icon-react';
-import { useFetchBBalnInfo } from '@/store/bbaln/hooks';
-import { useWalletFetchBalances } from '@/store/wallet/hooks';
-import { useFetchRewardsInfo } from '@/store/reward/hooks';
-import { TransactionStatus } from '../trade/bridge/_zustand/types';
 import { openToast } from '@/btp/src/connectors/transactionToast';
+import { DEFAULT_SLIPPAGE } from '@/constants/index';
+import { BETTER_TRADE_LESS_HOPS_THRESHOLD } from '@/constants/misc';
 import { NULL_CONTRACT_ADDRESS } from '@/constants/tokens';
+import { xChains } from '@/constants/xChains';
 import { getAllCurrencyCombinations } from '@/hooks/useAllCurrencyCombinations';
 import { PairState, fetchStabilityFundPairs, fetchV2Pairs } from '@/hooks/useV2Pairs';
+import { TransactionStatus } from '@/lib/xcall/_zustand/types';
+import { AllPublicXServicesCreator, xServiceActions } from '@/lib/xcall/_zustand/useXServiceStore';
+import { useIconReact } from '@/packages/icon-react';
+import { useFetchBBalnInfo } from '@/store/bbaln/hooks';
+import { useFetchRewardsInfo } from '@/store/reward/hooks';
 import { tryParseAmount } from '@/store/swap/hooks';
-import { isTradeBetter } from '@/utils/isTradeBetter';
-import { BETTER_TRADE_LESS_HOPS_THRESHOLD } from '@/constants/misc';
+import { useWalletFetchBalances } from '@/store/wallet/hooks';
 import { formatBigNumber, toDec } from '@/utils';
-import { DEFAULT_SLIPPAGE } from '@/constants/index';
-import { getRlpEncodedSwapData } from '@/app/pages/trade/bridge/utils';
-import { AllPublicXServicesCreator, xServiceActions } from '../trade/bridge/_zustand/useXServiceStore';
-import { xChains } from '../trade/bridge/_config/xChains';
+import { isTradeBetter } from '@/utils/isTradeBetter';
+import { getRlpEncodedSwapData } from '../../../lib/xcall/utils';
 
 const ICX = new Token(ChainId.MAINNET, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
 const bnUSD = new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD', 'Balanced Dollar');

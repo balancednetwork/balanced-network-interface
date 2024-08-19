@@ -1,4 +1,5 @@
 import { XChainType } from '@/types';
+import { useEffect } from 'react';
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { XConnection } from './core/types';
@@ -60,4 +61,20 @@ export const initXWagmiStore = () => {
       HAVAH: havahXService,
     },
   });
+
+  archwayXService.init();
 };
+
+// export const useInitXWagmiStore = () => {
+//   const setXConnection = useXWagmiStore(state => state.setXConnection);
+//   const unsetXConnection = useXWagmiStore(state => state.unsetXConnection);
+
+//   useEffect(() => {
+//     initXWagmiStore();
+//   }, []);
+
+//   return {
+//     setXConnection,
+//     unsetXConnection,
+//   };
+// };

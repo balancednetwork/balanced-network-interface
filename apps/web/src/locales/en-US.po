@@ -357,6 +357,10 @@ msgstr "Claiming network fees..."
 #~ msgid "Transfer fee"
 #~ msgstr "Transfer fee"
 
+#: src/app/pages/trade/xswap/_components/TokenList/index.tsx
+msgid "Tokens"
+msgstr "Tokens"
+
 #: src/app/components/Header/index.tsx
 msgid "Copied"
 msgstr "Copied"
@@ -1513,6 +1517,10 @@ msgstr "For"
 #: src/app/pages/vote/_components/LieVotingPanel/PowerLeftComponent.tsx
 msgid "Voting power available: {0}"
 msgstr "Voting power available: {0}"
+
+#: src/app/pages/trade/bridge/_components/XChainList.tsx
+msgid "Search for blockchains..."
+msgstr "Search for blockchains..."
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "You'll only be able to interact with the default assets listed on Balanced."

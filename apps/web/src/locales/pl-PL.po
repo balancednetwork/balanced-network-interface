@@ -366,6 +366,10 @@ msgstr ""
 #~ msgid "Transfer fee"
 #~ msgstr ""
 
+#: src/app/pages/trade/xswap/_components/TokenList/index.tsx
+msgid "Tokens"
+msgstr ""
+
 #: src/app/components/Header/index.tsx
 msgid "Copied"
 msgstr "Skopiowano"
@@ -1568,6 +1572,10 @@ msgstr "Na"
 
 #: src/app/pages/vote/_components/LieVotingPanel/PowerLeftComponent.tsx
 msgid "Voting power available: {0}"
+msgstr ""
+
+#: src/app/pages/trade/bridge/_components/XChainList.tsx
+msgid "Search for blockchains..."
 msgstr ""
 
 #: src/app/components/CommunityListToggle/index.tsx

@@ -49,23 +49,42 @@ export const useContractMethodsDataQuery = (
   });
 };
 
-const MIN_MARKETCAP_TO_INCLUDE = 5000;
+const MIN_TOKEN_LIQUIDITY_TO_INCLUDE = 500;
+export const TOKEN_BLACKLIST = ['IUSDC', 'USDS', 'BUSD', 'BTCB', 'FIN', 'METX'];
+export const TOKEN_WHITELIST = ['USDC'];
 
 export function useAllTokens() {
   return useQuery({
     queryKey: [`allTokens`],
     queryFn: async () => {
-      const response = await axios.get<{ chain_id: number; total_supply: number; price: number; market_cap: number }[]>(
-        `${API_ENDPOINT}/tokens`,
-      );
+      const response = await axios.get<
+        {
+          symbol: string;
+          name: string;
+          address: string;
+          chain_id: number;
+          total_supply: number;
+          price: number;
+          price_24h: number;
+          price_24h_change: number;
+          liquidity: number;
+          market_cap: number;
+        }[]
+      >(`${API_ENDPOINT}/tokens`);
 
       if (response.status === 200) {
         return response.data
           .map(item => {
-            item['market_cap'] = item.total_supply * item.price;
+            item.market_cap = item.total_supply * item.price;
+            item.price_24h_change = ((item.price - item.price_24h) / item.price_24h) * 100;
             return item;
           })
-          .filter(item => item['market_cap'] > MIN_MARKETCAP_TO_INCLUDE);
+          .filter(item => {
+            return (
+              TOKEN_WHITELIST.includes(item.symbol) ||
+              (!TOKEN_BLACKLIST.includes(item.symbol) && item.liquidity > MIN_TOKEN_LIQUIDITY_TO_INCLUDE)
+            );
+          });
       }
     },
     placeholderData: keepPreviousData,
@@ -78,15 +97,31 @@ export function useAllTokensByAddress() {
   return useQuery({
     queryKey: [`allTokensByAddress`],
     queryFn: () => {
-      return allTokens?.reduce((tokens, item) => {
-        tokens[item['address']] = item;
-        return tokens;
-      }, {});
+      return allTokens?.reduce(
+        (tokens, item) => {
+          tokens[item.address] = item;
+          return tokens;
+        },
+        {} as { [TokenAddress in string]: TokenStats },
+      );
     },
     placeholderData: keepPreviousData,
     enabled: allTokensSuccess,
   });
 }
+
+export type TokenStats = {
+  symbol: string;
+  name: string;
+  address: string;
+  chain_id: number;
+  total_supply: number;
+  price: number;
+  price_24h: number;
+  price_24h_change: number;
+  liquidity: number;
+  market_cap: number;
+};
 
 export type PairData = {
   info: PairInfo;
@@ -260,5 +295,16 @@ export function useTokenPrices() {
     },
     placeholderData: keepPreviousData,
     enabled: allTokensSuccess,
+  });
+}
+
+export function useTokenTrendData(tokenSymbol, start, end) {
+  return useQuery({
+    queryKey: [`trend`, tokenSymbol, start, end],
+    queryFn: async () => {
+      const { data } = await axios.get(`${API_ENDPOINT}/tokens/series/1h/${start}/${end}?symbol=${tokenSymbol}`);
+      return data;
+    },
+    placeholderData: keepPreviousData,
   });
 }

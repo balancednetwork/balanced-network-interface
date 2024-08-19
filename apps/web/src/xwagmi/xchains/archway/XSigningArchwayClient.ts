@@ -1,4 +1,4 @@
-import { SigningArchwayClient, StdFee, Coin, SigningArchwayClientOptions } from '@archwayhq/arch3.js';
+import { Coin, SigningArchwayClient, SigningArchwayClientOptions, StdFee } from '@archwayhq/arch3.js';
 import {
   ExecuteInstruction,
   HttpEndpoint,
@@ -6,9 +6,9 @@ import {
   MsgExecuteContractEncodeObject,
 } from '@cosmjs/cosmwasm-stargate';
 import { toUtf8 } from '@cosmjs/encoding';
-import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx';
-import { CometClient, connectComet } from '@cosmjs/tendermint-rpc';
 import { EncodeObject, OfflineSigner, Registry } from '@cosmjs/proto-signing';
+import { CometClient, connectComet } from '@cosmjs/tendermint-rpc';
+import { MsgExecuteContract } from 'cosmjs-types/cosmwasm/wasm/v1/tx';
 
 export class XSigningArchwayClient extends SigningArchwayClient {
   protected constructor(

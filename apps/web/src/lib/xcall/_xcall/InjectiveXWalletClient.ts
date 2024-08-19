@@ -6,8 +6,8 @@ import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/lib
 import { getFeeParam, isDenomAsset } from '@/packages/archway/utils';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
 import { XTransactionInput, XTransactionType } from '../_zustand/types';
-import { InjectivePublicXService } from './InjectivePublicXService';
-import { IWalletXService } from './types';
+import { InjectiveXPublicClient } from './InjectiveXPublicClient';
+import { XWalletClient } from './types';
 
 import { NATIVE_ADDRESS } from '@/constants';
 import { FROM_SOURCES, TO_SOURCES, injective } from '@/constants/xChains';
@@ -28,7 +28,7 @@ const msgBroadcastClient = new MsgBroadcaster({
   endpoints: ENDPOINTS,
 });
 
-export class InjectiveWalletXService extends InjectivePublicXService implements IWalletXService {
+export class InjectiveXWalletClient extends InjectiveXPublicClient implements XWalletClient {
   walletClient: any;
 
   constructor(xChainId: XChainId, publicClient: any, walletClient: any, options?: any) {

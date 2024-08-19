@@ -80,7 +80,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
         const finalDestinationChainId = direction.to;
         const primaryDestinationChainId = sourceChainId === iconChainId ? finalDestinationChainId : iconChainId;
 
-        const srcChainXService = xServiceActions.getWalletXService(sourceChainId);
+        const srcChainXService = xServiceActions.getXWalletClient(sourceChainId);
 
         if (!srcChainXService) {
           throw new Error('WalletXService for source chain is not found');

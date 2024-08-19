@@ -105,7 +105,7 @@ export const useXMessageStore = create<XMessageStore>()(
         const xMessage = get().messages[id];
         if (!xMessage) return;
 
-        const xService = xServiceActions.getPublicXService(xMessage.sourceChainId);
+        const xService = xServiceActions.getXPublicClient(xMessage.sourceChainId);
         const newSourceTransactionStatus = xService.deriveTxStatus(rawTx);
 
         const newSourceTransaction = {
@@ -137,7 +137,7 @@ export const useXMessageStore = create<XMessageStore>()(
         };
 
         if (newEvents[XCallEventType.CallExecuted]) {
-          const dstXService = xServiceActions.getPublicXService(xMessage.destinationChainId);
+          const dstXService = xServiceActions.getXPublicClient(xMessage.destinationChainId);
           const destinationTransactionHash = newEvents[XCallEventType.CallExecuted].txHash;
           const rawTx = await dstXService.getTxReceipt(destinationTransactionHash);
 
@@ -271,7 +271,7 @@ export const useFetchXMessageEvents = (xMessage?: XMessage) => {
 
       let events: XCallEventMap = {};
       if (xMessage.status === XMessageStatus.AWAITING_CALL_MESSAGE_SENT) {
-        const srcChainXService = xServiceActions.getPublicXService(sourceChainId);
+        const srcChainXService = xServiceActions.getXPublicClient(sourceChainId);
         const callMessageSentEvent = srcChainXService.getCallMessageSentEvent(sourceTransaction);
         if (callMessageSentEvent) {
           return {

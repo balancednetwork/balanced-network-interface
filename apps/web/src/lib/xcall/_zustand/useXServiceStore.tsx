@@ -11,34 +11,34 @@ import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 import { useIconReact } from '@/packages/icon-react';
 import { useChangeShouldLedgerSign } from '@/store/application/hooks';
 import { XChain, XChainId } from '@/types';
-import { ArchwayPublicXService } from '../_xcall/ArchwayPublicXService';
-import { ArchwayWalletXService } from '../_xcall/ArchwayWalletXService';
-import { EvmPublicXService } from '../_xcall/EvmPublicXService';
-import { EvmWalletXService } from '../_xcall/EvmWalletXService';
-import { HavahPublicXService } from '../_xcall/HavahPublicXService';
-import { HavahWalletXService } from '../_xcall/HavahWalletXService';
-import { IconPublicXService } from '../_xcall/IconPublicXService';
-import { IconWalletXService } from '../_xcall/IconWalletXService';
-import { InjectivePublicXService } from '../_xcall/InjectivePublicXService';
-import { InjectiveWalletXService } from '../_xcall/InjectiveWalletXService';
-import { IPublicXService, IWalletXService } from '../_xcall/types';
+import { ArchwayXPublicClient } from '../_xcall/ArchwayXPublicClient';
+import { ArchwayXWalletClient } from '../_xcall/ArchwayXWalletClient';
+import { EvmXPublicClient } from '../_xcall/EvmXPublicClient';
+import { EvmXWalletClient } from '../_xcall/EvmXWalletClient';
+import { HavahXPublicClient } from '../_xcall/HavahXPublicClient';
+import { HavahXWalletClient } from '../_xcall/HavahXWalletClient';
+import { IconXPublicClient } from '../_xcall/IconXPublicClient';
+import { IconXWalletClient } from '../_xcall/IconXWalletClient';
+import { InjectiveXPublicClient } from '../_xcall/InjectiveXPublicClient';
+import { InjectiveXWalletClient } from '../_xcall/InjectiveXWalletClient';
+import { XPublicClient, XWalletClient } from '../_xcall/types';
 
 type XServiceStore = {
-  publicXServices: Partial<Record<XChainId, IPublicXService>>;
-  walletXServices: Partial<Record<XChainId, IWalletXService>>;
+  xPublicClients: Partial<Record<XChainId, XPublicClient>>;
+  xWalletClients: Partial<Record<XChainId, XWalletClient>>;
   xChainHeights: Partial<Record<XChainId, bigint>>;
-  getPublicXService: (xChainId: XChainId) => IPublicXService;
-  setPublicXService: (xChainId: XChainId, publicXService: IPublicXService) => void;
-  getWalletXService: (xChainId: XChainId) => IWalletXService | undefined;
-  setWalletXService: (xChainId: XChainId, walletXService: IWalletXService) => void;
+  getXPublicClient: (xChainId: XChainId) => XPublicClient;
+  setXPublicClient: (xChainId: XChainId, xPublicClient: XPublicClient) => void;
+  getXWalletClient: (xChainId: XChainId) => XWalletClient | undefined;
+  setXWalletClient: (xChainId: XChainId, xWalletClient: XWalletClient) => void;
   getXChainHeight: (xChainId: XChainId) => bigint;
   setXChainHeight: (xChainId: XChainId, height: bigint) => void;
 };
 
 export const useXServiceStore = create<XServiceStore>()(
   immer((set, get) => ({
-    publicXServices: {},
-    walletXServices: {},
+    xPublicClients: {},
+    xWalletClients: {},
     xChainHeights: {},
 
     getXChainHeight: (xChainId: XChainId) => {
@@ -52,38 +52,38 @@ export const useXServiceStore = create<XServiceStore>()(
     },
 
     // @ts-ignore
-    getPublicXService: (xChainId: XChainId) => {
-      return get().publicXServices[xChainId];
+    getXPublicClient: (xChainId: XChainId) => {
+      return get().xPublicClients[xChainId];
     },
-    setPublicXService: (xChainId: XChainId, publicXService: IPublicXService) => {
+    setXPublicClient: (xChainId: XChainId, xPublicClient: XPublicClient) => {
       set(state => {
-        state.publicXServices[xChainId] = publicXService;
+        state.xPublicClients[xChainId] = xPublicClient;
       });
     },
 
-    getWalletXService: (xChainId: XChainId) => {
-      return get().walletXServices[xChainId];
+    getXWalletClient: (xChainId: XChainId) => {
+      return get().xWalletClients[xChainId];
     },
-    setWalletXService: (xChainId: XChainId, walletXService: IWalletXService) => {
+    setXWalletClient: (xChainId: XChainId, xWalletClient: XWalletClient) => {
       set(state => {
-        state.walletXServices[xChainId] = walletXService;
+        state.xWalletClients[xChainId] = xWalletClient;
       });
     },
   })),
 );
 
 export const xServiceActions = {
-  getPublicXService: (xChainId: XChainId) => {
-    return useXServiceStore.getState().getPublicXService(xChainId);
+  getXPublicClient: (xChainId: XChainId) => {
+    return useXServiceStore.getState().getXPublicClient(xChainId);
   },
-  setPublicXService: (xChainId: XChainId, publicXService: IPublicXService) => {
-    return useXServiceStore.getState().setPublicXService(xChainId, publicXService);
+  setXPublicClient: (xChainId: XChainId, xPublicClient: XPublicClient) => {
+    return useXServiceStore.getState().setXPublicClient(xChainId, xPublicClient);
   },
-  getWalletXService: (xChainId: XChainId) => {
-    return useXServiceStore.getState().getWalletXService(xChainId);
+  getXWalletClient: (xChainId: XChainId) => {
+    return useXServiceStore.getState().getXWalletClient(xChainId);
   },
-  setWalletXService: (xChainId: XChainId, walletXService: IWalletXService) => {
-    return useXServiceStore.getState().setWalletXService(xChainId, walletXService);
+  setXWalletClient: (xChainId: XChainId, xWalletClient: XWalletClient) => {
+    return useXServiceStore.getState().setXWalletClient(xChainId, xWalletClient);
   },
   getXChainHeight: (xChainId: XChainId) => {
     return useXServiceStore.getState().getXChainHeight(xChainId);
@@ -94,8 +94,8 @@ export const xServiceActions = {
 };
 
 const createPublicXService = (PublicXServiceClass, xChainId: XChainId, publicClient: any) => {
-  const publicXService = new PublicXServiceClass(xChainId, publicClient);
-  xServiceActions.setPublicXService(xChainId, publicXService);
+  const xPublicClient = new PublicXServiceClass(xChainId, publicClient);
+  xServiceActions.setXPublicClient(xChainId, xPublicClient);
 };
 
 export const useCreatePublicXService = (xChainId: XChainId) => {
@@ -117,21 +117,21 @@ export const useCreatePublicXService = (xChainId: XChainId) => {
       const xChainType = xChainId ? xChainMap[xChainId].xChainType : undefined;
       switch (xChainType) {
         case 'ICON':
-          createPublicXService(IconPublicXService, xChainId, iconPublicClient);
+          createPublicXService(IconXPublicClient, xChainId, iconPublicClient);
           break;
         case 'ARCHWAY':
           if (archwayPublicClient) {
-            createPublicXService(ArchwayPublicXService, xChainId, archwayPublicClient);
+            createPublicXService(ArchwayXPublicClient, xChainId, archwayPublicClient);
           }
           break;
         case 'EVM':
-          createPublicXService(EvmPublicXService, xChainId, evmPublicClient);
+          createPublicXService(EvmXPublicClient, xChainId, evmPublicClient);
           break;
         case 'HAVAH':
-          createPublicXService(HavahPublicXService, xChainId, havahJs.provider);
+          createPublicXService(HavahXPublicClient, xChainId, havahJs.provider);
           break;
         case 'INJECTIVE':
-          createPublicXService(InjectivePublicXService, xChainId, undefined);
+          createPublicXService(InjectiveXPublicClient, xChainId, undefined);
           break;
         default:
           break;
@@ -151,13 +151,13 @@ const createWalletXService = (
   walletClient: any,
   options?: any,
 ) => {
-  const walletXService = new WalletXServiceClass(xChainId, publicClient, walletClient, options);
-  xServiceActions.setWalletXService(xChainId, walletXService);
+  const xWalletClient = new WalletXServiceClass(xChainId, publicClient, walletClient, options);
+  xServiceActions.setXWalletClient(xChainId, xWalletClient);
 };
 
 export const useCreateWalletXService = (xChainId: XChainId) => {
   const changeShouldLedgerSign = useChangeShouldLedgerSign();
-  const publicXService = useXServiceStore(state => state.publicXServices?.[xChainId]);
+  const xPublicClient = useXServiceStore(state => state.xPublicClients?.[xChainId]);
 
   const { iconService: iconWalletClient } = useIconReact();
   const { signingClient: archwayWalletClient } = useArchwayContext();
@@ -165,36 +165,36 @@ export const useCreateWalletXService = (xChainId: XChainId) => {
 
   useEffect(() => {
     const setupWalletXService = (xChainId: XChainId) => {
-      const publicClient = publicXService?.getPublicClient();
+      const publicClient = xPublicClient?.getPublicClient();
 
       const xChainType = xChainId ? xChainMap[xChainId].xChainType : undefined;
       switch (xChainType) {
         case 'ICON':
-          createWalletXService(IconWalletXService, xChainId, publicClient, iconWalletClient, {
+          createWalletXService(IconXWalletClient, xChainId, publicClient, iconWalletClient, {
             changeShouldLedgerSign,
           });
           break;
         case 'ARCHWAY':
-          createWalletXService(ArchwayWalletXService, xChainId, publicClient, archwayWalletClient);
+          createWalletXService(ArchwayXWalletClient, xChainId, publicClient, archwayWalletClient);
           break;
         case 'EVM':
-          createWalletXService(EvmWalletXService, xChainId, publicClient, evmWalletClient);
+          createWalletXService(EvmXWalletClient, xChainId, publicClient, evmWalletClient);
           break;
         case 'HAVAH':
-          createWalletXService(HavahWalletXService, xChainId, publicClient, havahJs.provider);
+          createWalletXService(HavahXWalletClient, xChainId, publicClient, havahJs.provider);
           break;
         case 'INJECTIVE':
-          createWalletXService(InjectiveWalletXService, xChainId, undefined, undefined);
+          createWalletXService(InjectiveXWalletClient, xChainId, undefined, undefined);
           break;
         default:
           break;
       }
     };
 
-    if (publicXService) {
+    if (xPublicClient) {
       setupWalletXService(xChainId);
     }
-  }, [xChainId, iconWalletClient, archwayWalletClient, evmWalletClient, publicXService, changeShouldLedgerSign]);
+  }, [xChainId, iconWalletClient, archwayWalletClient, evmWalletClient, xPublicClient, changeShouldLedgerSign]);
 
   return true;
 };
@@ -215,15 +215,15 @@ export const AllPublicXServicesCreator = ({ xChains }: { xChains: XChain[] }) =>
 };
 
 export const XChainHeightUpdater = ({ xChainId }: { xChainId: XChainId }) => {
-  const publicXService = useXServiceStore(state => state.publicXServices?.[xChainId]);
+  const xPublicClient = useXServiceStore(state => state.xPublicClients?.[xChainId]);
 
   useQuery({
-    queryKey: ['xChainHeight', xChainId, publicXService],
+    queryKey: ['xChainHeight', xChainId, xPublicClient],
     queryFn: async () => {
-      if (!publicXService) return 0n;
+      if (!xPublicClient) return 0n;
 
       try {
-        const blockHeight = await publicXService.getBlockHeight();
+        const blockHeight = await xPublicClient.getBlockHeight();
         if (blockHeight) {
           xServiceActions.setXChainHeight(xChainId, blockHeight);
         }
@@ -234,7 +234,7 @@ export const XChainHeightUpdater = ({ xChainId }: { xChainId: XChainId }) => {
       }
     },
     refetchInterval: 1000,
-    enabled: Boolean(publicXService),
+    enabled: Boolean(xPublicClient),
     placeholderData: prev => prev,
   });
 

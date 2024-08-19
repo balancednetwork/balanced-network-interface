@@ -117,7 +117,7 @@ export const useXCallEventStore = create<XCallEventStore>()(
           }
         }
 
-        const xService = xServiceActions.getPublicXService(xChainId);
+        const xService = xServiceActions.getXPublicClient(xChainId);
 
         let scanBlockCount = xService.getScanBlockCount();
         if (currentHeight + scanBlockCount > chainHeight) {

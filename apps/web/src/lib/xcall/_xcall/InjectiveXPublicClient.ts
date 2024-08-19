@@ -1,9 +1,9 @@
-import { ArchwayClient } from '@archwayhq/arch3.js';
+import { Network, getNetworkEndpoints } from '@injectivelabs/networks';
+import { ChainGrpcWasmApi, IndexerRestExplorerApi, fromBase64, toBase64 } from '@injectivelabs/sdk-ts';
+import { IndexerGrpcExplorerApi } from '@injectivelabs/sdk-ts';
 
-import { archway } from '@/constants/xChains';
-
+import { injective } from '@/constants/xChains';
 import { XChainId } from '@/types';
-import { AbstractPublicXService } from './types';
 import {
   TransactionStatus,
   XCallEvent,
@@ -12,6 +12,7 @@ import {
   XCallMessageSentEvent,
 } from '../_zustand/types';
 import { XCallEventType } from '../types';
+import { AbstractXPublicClient } from './types';
 
 const XCallEventSignatureMap = {
   [XCallEventType.CallMessageSent]: 'wasm-CallMessageSent',
@@ -19,14 +20,23 @@ const XCallEventSignatureMap = {
   [XCallEventType.CallExecuted]: 'wasm-CallExecuted',
 };
 
-export class ArchwayPublicXService extends AbstractPublicXService {
-  xChainId: XChainId;
-  publicClient: ArchwayClient;
+const endpoints = getNetworkEndpoints(Network.Mainnet);
 
-  constructor(xChainId: XChainId, publicClient: ArchwayClient) {
+export class InjectiveXPublicClient extends AbstractXPublicClient {
+  xChainId: XChainId;
+  publicClient: any;
+  indexerGrpcExplorerApi: IndexerGrpcExplorerApi;
+  indexerRestExplorerApi: IndexerRestExplorerApi;
+  chainGrpcWasmApi: ChainGrpcWasmApi;
+
+  constructor(xChainId: XChainId, publicClient: any) {
     super();
     this.xChainId = xChainId;
     this.publicClient = publicClient;
+
+    this.indexerGrpcExplorerApi = new IndexerGrpcExplorerApi(`${endpoints.explorer}`);
+    this.indexerRestExplorerApi = new IndexerRestExplorerApi(`${endpoints.explorer}/api/explorer/v1`);
+    this.chainGrpcWasmApi = new ChainGrpcWasmApi(endpoints.grpc);
   }
 
   getPublicClient() {
@@ -34,29 +44,38 @@ export class ArchwayPublicXService extends AbstractPublicXService {
   }
 
   async getXCallFee(nid: XChainId, rollback: boolean) {
-    const fee = await this.publicClient.queryContractSmart(archway.contracts.xCall, {
-      get_fee: { nid: nid, rollback },
-    });
+    const response: any = await this.chainGrpcWasmApi.fetchSmartContractState(
+      injective.contracts.xCall,
+      toBase64({ get_fee: { nid: nid, rollback } }),
+    );
+
+    const fee: any = fromBase64(response.data);
     return BigInt(fee);
   }
 
   async getBlockHeight() {
-    const height = await this.publicClient.getHeight();
-    return BigInt(height);
+    const blocks = await this.indexerGrpcExplorerApi.fetchBlocks({
+      limit: 1,
+    });
+    const lastBlock = blocks.data[0];
+
+    return BigInt(lastBlock.height);
   }
 
   async getBlock(blockHeight: bigint) {
-    const block = await this.publicClient.getBlock(Number(blockHeight));
+    const block = await this.indexerGrpcExplorerApi.fetchBlock(blockHeight.toString());
     return block;
   }
 
   async getTxReceipt(txHash) {
-    const tx = await this.publicClient.getTx(txHash);
+    // const tx = await this.indexerGrpcExplorerApi.fetchTxByHash(txHash);
+    const tx = await this.indexerRestExplorerApi.fetchTransaction(txHash);
+
     return tx;
   }
 
   getTxEventLogs(rawTx) {
-    return rawTx?.events;
+    return rawTx?.logs?.[0]['events'];
   }
 
   // TODO: review again
@@ -72,20 +91,35 @@ export class ArchwayPublicXService extends AbstractPublicXService {
     return TransactionStatus.failure;
   }
 
+  getScanBlockCount() {
+    return 10n;
+  }
+
   async getEventLogs({ startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
-    let txs;
+    const allTransactions: any[] = [];
 
-    // TODO: is 10 iterations enough?
-    for (let i = 0; i < 10; i++) {
-      txs = await this.publicClient.searchTx(`tx.height>=${startBlockHeight} AND tx.height<=${endBlockHeight}`);
+    let skip = 0;
+    const limit = 100;
+    while (true) {
+      const txs = await this.indexerRestExplorerApi.fetchTransactions({
+        after: Number(startBlockHeight),
+        before: Number(endBlockHeight),
+        limit,
+        skip,
+      });
+      allTransactions.push(...txs.transactions);
 
-      if (txs) {
+      if (txs.paging.total <= skip + limit) {
         break;
       }
+
+      skip = skip + limit;
     }
 
     // txs is an array of tx, each tx has events, which is an array of event, return all events merged
-    const events = txs.flatMap(tx => tx.events.map(e => ({ ...e, transactionHash: tx.hash })));
+    const events = allTransactions
+      .flatMap(tx => tx.logs?.[0]['events'].map(e => ({ ...e, transactionHash: tx.hash })))
+      .filter(e => e);
 
     return events;
   }

@@ -1,17 +1,17 @@
 import React from 'react';
 
-import { Trans, t } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import { useIconReact } from '@/packages/icon-react';
 import Nouislider from '@/packages/nouislider-react';
+import { Trans, t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
 import { Button, TextButton } from '@/app/components/Button';
 import CurrencyBalanceErrorMessage from '@/app/components/CurrencyBalanceErrorMessage';
 import { inputRegex } from '@/app/components/CurrencyInputPanel';
-import ModalContent from '@/app/components/ModalContent';
 import Modal from '@/app/components/Modal';
+import ModalContent from '@/app/components/ModalContent';
 import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
 import bnJs from '@/bnJs';
@@ -27,9 +27,9 @@ import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
 import { escapeRegExp, parseUnits } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 
-import { BalnPreviewInput as SavingsPreviewInput } from '../BBaln/styledComponents';
-import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
+import { useSignedInWallets } from '@/hooks/useWallets';
+import { BalnPreviewInput as SavingsPreviewInput } from '../BBaln/styledComponents';
 
 const Savings = () => {
   const lockedAmount = useLockedAmount();

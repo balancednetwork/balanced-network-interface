@@ -2,23 +2,22 @@ import React, { useCallback, useMemo } from 'react';
 
 import { Currency } from '@balancednetwork/sdk-core';
 import ClickAwayListener from 'react-click-away-listener';
+import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import CurrencyLogo from '@/app/components/CurrencyLogo';
 import { SelectorPopover } from '@/app/components/Popover';
 import DropDown from '@/assets/icons/arrow-down.svg';
+import { DEFAULT_TOKEN_CHAIN } from '@/constants/xTokens';
 import useWidth from '@/hooks/useWidth';
 import { COMMON_PERCENTS } from '@/store/swap/reducer';
+import { XChainId } from '@/types';
 import { escapeRegExp } from '@/utils';
-
+import { getAvailableXChains } from '@/utils/xTokens';
 import { HorizontalList, Option } from '../List';
 import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 import CrossChainOptions from '../trade/CrossChainOptions';
-import { XChainId } from '@/app/pages/trade/bridge/types';
-import { Box } from 'rebass/styled-components';
-import { getAvailableXChains } from '@/app/pages/trade/bridge/utils';
-import { DEFAULT_TOKEN_CHAIN } from '@/app/pages/trade/bridge/_config/xTokens';
 
 const InputContainer = styled.div`
   display: inline-flex;

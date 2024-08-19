@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { BarChart, Bar, Tooltip, ResponsiveContainer } from 'recharts';
+import { Bar, BarChart, ResponsiveContainer, Tooltip } from 'recharts';
 import styled, { useTheme } from 'styled-components';
 
-import { XCallActivityDataType } from '../_hooks/useXCallStats';
+import { XCallActivityDataType } from '@/lib/xcall/_hooks/useXCallStats';
 
 const TooltipWrapper = styled.div`
   background: ${({ theme }) => theme.colors.bg4};

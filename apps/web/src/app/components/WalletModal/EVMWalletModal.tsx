@@ -11,7 +11,7 @@ import { ModalContentWrapper } from '../ModalContent';
 
 import { Connector, useConnect, useConnectors } from 'wagmi';
 import { WalletOption, UnbreakableText } from './shared';
-import { XWalletType } from '@/app/pages/trade/bridge/types';
+import { XWalletType } from '@/types';
 import { UnderlineText } from '../DropdownText';
 
 const icons = {

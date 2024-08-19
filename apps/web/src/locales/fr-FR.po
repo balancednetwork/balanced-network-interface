@@ -1171,8 +1171,8 @@ msgid "Withdraw"
 msgstr "Retrait"
 
 #: src/app/components/XCallDescription/index.tsx
-msgid "<0>GMP</0> (general message passing) is a cross-chain messenger that interacts with smart contracts on supported chains."
-msgstr ""
+#~ msgid "<0>GMP</0> (general message passing) is a cross-chain messenger that interacts with smart contracts on supported chains."
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "then click Supply."
@@ -2453,8 +2453,8 @@ msgid "All collateral locked"
 msgstr "Tout le collatéral verrouillé"
 
 #: src/app/components/XCallDescription/index.tsx
-msgid "<0>{0}</0> {1}."
-msgstr ""
+#~ msgid "<0>{0}</0> {1}."
+#~ msgstr ""
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx

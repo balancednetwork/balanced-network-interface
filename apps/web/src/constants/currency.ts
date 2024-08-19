@@ -1,10 +1,7 @@
+import { PairInfo } from '@/types';
 import { Currency } from '@balancednetwork/sdk-core';
 
-import { Pool } from '@/types';
-
-import { PairInfo } from './pairs';
-
-export const isQueue = (t: Pool | PairInfo) => {
+export const isQueue = (t: PairInfo) => {
   if (
     (t.baseCurrencyKey === 'sICX' && t.quoteCurrencyKey === 'ICX') ||
     (t.baseCurrencyKey === 'ICX' && t.quoteCurrencyKey === 'sICX')

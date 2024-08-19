@@ -1,7 +1,7 @@
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
 
-import { XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 import { ZERO } from '@/constants/index';
 import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
 

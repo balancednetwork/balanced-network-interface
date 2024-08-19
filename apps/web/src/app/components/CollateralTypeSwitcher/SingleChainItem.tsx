@@ -1,9 +1,9 @@
 import React from 'react';
 import { Token } from '@balancednetwork/sdk-core';
 import { Typography } from '@/app/theme';
-import { Position, XChainId } from '@/app/pages/trade/bridge/types';
+import { Position, XChainId } from '@/types';
 import { useTheme } from 'styled-components';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { xChainMap } from '@/constants/xChains';
 import { AssetSymbol, BalanceAndValueWrap, DataText } from '../Wallet/styledComponents';
 import { StyledListItem } from './MultiChainItem';
 import { toFraction } from '@/utils';

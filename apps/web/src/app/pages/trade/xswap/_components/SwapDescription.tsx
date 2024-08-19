@@ -1,30 +1,29 @@
 import React, { useState } from 'react';
 
-import { Price, Currency } from '@balancednetwork/sdk-core';
-import { defineMessage, Trans } from '@lingui/macro';
-import { LanguageCode, ResolutionString } from '@/charting_library/charting_library';
-import { useIconReact } from '@/packages/icon-react';
+import { Currency, Price } from '@balancednetwork/sdk-core';
+import { Trans, defineMessage } from '@lingui/macro';
 import { useMedia } from 'react-use';
-import { Flex, Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
+import { ChartContainer, ChartControlButton, ChartControlGroup } from '@/app/components/ChartControl';
 import Modal from '@/app/components/Modal';
 import Spinner from '@/app/components/Spinner';
 import { TVChartContainer } from '@/app/components/TradingViewAdvanced/TVChartContainer';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS } from '@/app/components/TradingViewChart';
 import { Typography } from '@/app/theme';
 import bnJs from '@/bnJs';
-import { SUPPORTED_TOKENS_MAP_BY_ADDRESS, SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
+import { LanguageCode, ResolutionString } from '@/charting_library/charting_library';
+import { SUPPORTED_TOKENS_LIST, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
 import { useV2Pair } from '@/hooks/useV2Pairs';
 import useWidth from '@/hooks/useWidth';
+import { useIconReact } from '@/packages/icon-react';
 import { usePriceChartDataQuery } from '@/queries/swap';
 import { useRatio } from '@/store/ratio/hooks';
-import { Field } from '@/store/swap/reducer';
 import { useDerivedSwapInfo, useSwapActionHandlers } from '@/store/swap/hooks';
+import { Field } from '@/store/swap/reducer';
 import { generateChartData, toFraction } from '@/utils';
-
-import { ChartContainer, ChartControlGroup, ChartControlButton } from '../../supply/_components/utils';
 
 const CHART_TYPES_LABELS = {
   [CHART_TYPES.AREA]: defineMessage({ message: 'Line' }),

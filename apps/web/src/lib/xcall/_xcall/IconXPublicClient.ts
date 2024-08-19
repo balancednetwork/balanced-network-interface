@@ -1,7 +1,9 @@
-import { havahJs } from '@/bnJs';
+import bnJs from '@/bnJs';
+import axios from 'axios';
 import IconService, { Converter, BigNumber } from 'icon-sdk-js';
 
 import { XChainId } from '@/types';
+import { sleep } from '@/utils';
 import {
   TransactionStatus,
   XCallEvent,
@@ -9,9 +11,8 @@ import {
   XCallMessageEvent,
   XCallMessageSentEvent,
 } from '../_zustand/types';
-import { AbstractPublicXService, ICONTxResultType } from './types';
-import { sleep } from '@/utils';
 import { XCallEventType } from '../types';
+import { AbstractXPublicClient, ICONTxResultType } from './types';
 
 export const getICONEventSignature = (eventName: XCallEventType) => {
   switch (eventName) {
@@ -35,7 +36,7 @@ export const getICONEventSignature = (eventName: XCallEventType) => {
   }
 };
 
-export class HavahPublicXService extends AbstractPublicXService {
+export class IconXPublicClient extends AbstractXPublicClient {
   xChainId: XChainId;
   publicClient: IconService;
 
@@ -50,7 +51,7 @@ export class HavahPublicXService extends AbstractPublicXService {
   }
 
   async getXCallFee(nid: XChainId, rollback: boolean, sources?: string[]) {
-    const res = await havahJs.XCall.getFee(nid, rollback, sources);
+    const res = await bnJs.XCall.getFee(nid, rollback, sources);
     return BigInt(res);
   }
 
@@ -110,17 +111,24 @@ export class HavahPublicXService extends AbstractPublicXService {
     return events;
   }
 
-  getScanBlockCount() {
-    return 1n;
-  }
-
   async getEventLogs({ startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
-    const events: any[] = [];
-    for (let i = startBlockHeight; i <= endBlockHeight; i++) {
-      const eventLogs: any[] = await this.getBlockEventLogs(i);
-      events.push(...eventLogs);
+    // https://tracker.icon.community/api/v1/logs?block_start=83073062&address=cxa07f426062a1384bdd762afa6a87d123fbc81c75
+    const url = `https://tracker.icon.community/api/v1/logs?block_start=${startBlockHeight}&block_end=${endBlockHeight}&address=${'cxa07f426062a1384bdd762afa6a87d123fbc81c75'}`;
+    const res = await axios.get(url);
+
+    if (res.status === 204) {
+      return [];
     }
-    return events;
+
+    const events = res.data;
+    return events.map(({ data, indexed, transaction_hash, method, address, block_number }) => ({
+      data: JSON.parse(data),
+      indexed: JSON.parse(indexed),
+      transactionHash: transaction_hash,
+      method: method,
+      scoreAddress: address,
+      blockHeight: BigInt(block_number),
+    }));
   }
 
   parseEventLogs(eventLogs: any[]): XCallEvent[] {

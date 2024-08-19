@@ -258,7 +258,7 @@ export function TestPage() {
   const handleFetchIconEventLogs = async () => {
     const startBlockHeight = 83073062n;
     const endBlockHeight = 83073112n;
-    const iconPublicXService = xServiceActions.getPublicXService('0x1.icon');
+    const iconPublicXService = xServiceActions.getXPublicClient('0x1.icon');
     const events = await iconPublicXService.getEventLogs({ startBlockHeight, endBlockHeight });
     console.log(events);
   };

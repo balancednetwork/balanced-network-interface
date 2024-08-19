@@ -3,7 +3,6 @@ import { ArchwayClient } from '@archwayhq/arch3.js';
 import { archway } from '@/constants/xChains';
 
 import { XChainId } from '@/types';
-import { AbstractPublicXService } from './types';
 import {
   TransactionStatus,
   XCallEvent,
@@ -12,6 +11,7 @@ import {
   XCallMessageSentEvent,
 } from '../_zustand/types';
 import { XCallEventType } from '../types';
+import { AbstractXPublicClient } from './types';
 
 const XCallEventSignatureMap = {
   [XCallEventType.CallMessageSent]: 'wasm-CallMessageSent',
@@ -19,7 +19,7 @@ const XCallEventSignatureMap = {
   [XCallEventType.CallExecuted]: 'wasm-CallExecuted',
 };
 
-export class ArchwayPublicXService extends AbstractPublicXService {
+export class ArchwayXPublicClient extends AbstractXPublicClient {
   xChainId: XChainId;
   publicClient: ArchwayClient;
 

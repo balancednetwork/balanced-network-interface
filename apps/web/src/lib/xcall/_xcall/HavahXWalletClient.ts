@@ -11,10 +11,10 @@ import { toDec } from '@/utils';
 import { toHex } from 'viem';
 import { XTransactionInput, XTransactionType } from '../_zustand/types';
 import { getRlpEncodedSwapData } from '../utils';
-import { HavahPublicXService } from './HavahPublicXService';
-import { IWalletXService } from './types';
+import { HavahXPublicClient } from './HavahXPublicClient';
+import { XWalletClient } from './types';
 
-export class HavahWalletXService extends HavahPublicXService implements IWalletXService {
+export class HavahXWalletClient extends HavahXPublicClient implements XWalletClient {
   walletClient: IconService; // reserved for future use
   changeShouldLedgerSign: any;
 

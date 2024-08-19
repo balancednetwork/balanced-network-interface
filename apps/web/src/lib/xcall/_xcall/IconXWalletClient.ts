@@ -8,10 +8,10 @@ import { toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { XTransactionInput, XTransactionType } from '../_zustand/types';
 import { getRlpEncodedSwapData } from '../utils';
-import { IconPublicXService } from './IconPublicXService';
-import { IWalletXService } from './types';
+import { IconXPublicClient } from './IconXPublicClient';
+import { XWalletClient } from './types';
 
-export class IconWalletXService extends IconPublicXService implements IWalletXService {
+export class IconXWalletClient extends IconXPublicClient implements XWalletClient {
   walletClient: IconService; // reserved for future use
   changeShouldLedgerSign: any;
 

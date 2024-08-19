@@ -1,7 +1,7 @@
 import { Address, PublicClient, getContract, parseEventLogs } from 'viem';
 
+import { xChainMap } from '@/constants/xChains';
 import { XChainId } from '@/types';
-import { AbstractPublicXService } from './types';
 import {
   TransactionStatus,
   XCallEvent,
@@ -9,9 +9,9 @@ import {
   XCallMessageEvent,
   XCallMessageSentEvent,
 } from '../_zustand/types';
-import { xCallContractAbi } from './abis/xCallContractAbi';
-import { xChainMap } from '@/constants/xChains';
 import { XCallEventType } from '../types';
+import { xCallContractAbi } from './abis/xCallContractAbi';
+import { AbstractXPublicClient } from './types';
 
 const XCallEventSignatureMap = {
   [XCallEventType.CallMessageSent]: 'CallMessageSent',
@@ -19,7 +19,7 @@ const XCallEventSignatureMap = {
   [XCallEventType.CallExecuted]: 'CallExecuted',
 };
 
-export class EvmPublicXService extends AbstractPublicXService {
+export class EvmXPublicClient extends AbstractXPublicClient {
   xChainId: XChainId;
   publicClient: PublicClient;
 

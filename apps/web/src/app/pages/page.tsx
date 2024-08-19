@@ -27,12 +27,6 @@ export function HomePage() {
   const xAccounts = useXAccounts();
   console.log(xAccounts);
 
-  // const iconXAccount = useXAccount('ICON');
-  // console.log(iconXAccount);
-
-  // const xChainTypes = useXChainTypes();
-  // console.log(xChainTypes);
-
   return (
     <div className="flex flex-col gap-4">
       {Object.keys(xServices).map(xChainType => {

@@ -2,6 +2,8 @@ import { XChainType } from '@/types';
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { XConnection } from './core/types';
+import { ArchwayXConnector } from './xchains/archway/ArchwayXConnector';
+import { ArchwayXService } from './xchains/archway/ArchwayXService';
 import { EvmXService } from './xchains/evm/EvmXService';
 import { HavahXConnector } from './xchains/havah/HavahXConnector';
 import { HavahXService } from './xchains/havah/HavahXService';
@@ -42,6 +44,9 @@ export const initXWagmiStore = () => {
     xServices: {
       ICON: new IconXService({
         xConnectors: [new IconHanaXConnector()],
+      }),
+      ARCHWAY: new ArchwayXService({
+        xConnectors: [new ArchwayXConnector()],
       }),
       EVM: new EvmXService({
         xConnectors: [],

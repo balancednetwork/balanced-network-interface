@@ -1,8 +1,16 @@
-import { XConnector } from '@/xwagmi/core/XConnector';
 import { XService } from '@/xwagmi/core/XService';
 
 export class ArchwayXService extends XService {
-  constructor({ xConnectors }: { xConnectors: XConnector[] }) {
-    super('ARCHWAY', xConnectors);
+  private static instance: ArchwayXService;
+
+  private constructor() {
+    super('ARCHWAY');
+  }
+
+  public static getInstance(): ArchwayXService {
+    if (!ArchwayXService.instance) {
+      ArchwayXService.instance = new ArchwayXService();
+    }
+    return ArchwayXService.instance;
   }
 }

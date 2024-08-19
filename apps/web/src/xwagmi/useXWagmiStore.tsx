@@ -39,21 +39,25 @@ export const useXWagmiStore = create<XWagmiStore>()(
   })),
 );
 
+const iconXService = IconXService.getInstance();
+iconXService.setXConnectors([new IconHanaXConnector(iconXService)]);
+
+const archwayXService = ArchwayXService.getInstance();
+archwayXService.setXConnectors([new ArchwayXConnector(archwayXService)]);
+
+const evmXService = EvmXService.getInstance();
+evmXService.setXConnectors([]);
+
+const havahXService = HavahXService.getInstance();
+havahXService.setXConnectors([new HavahXConnector(havahXService)]);
+
 export const initXWagmiStore = () => {
   useXWagmiStore.setState({
     xServices: {
-      ICON: new IconXService({
-        xConnectors: [new IconHanaXConnector()],
-      }),
-      ARCHWAY: new ArchwayXService({
-        xConnectors: [new ArchwayXConnector()],
-      }),
-      EVM: new EvmXService({
-        xConnectors: [],
-      }),
-      HAVAH: new HavahXService({
-        xConnectors: [new HavahXConnector()],
-      }),
+      ICON: iconXService,
+      ARCHWAY: archwayXService,
+      EVM: evmXService,
+      HAVAH: havahXService,
     },
   });
 };

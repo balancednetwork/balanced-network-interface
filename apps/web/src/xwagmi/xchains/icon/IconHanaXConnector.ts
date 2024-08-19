@@ -1,10 +1,11 @@
 import { ICONexRequestEventType, ICONexResponseEventType, request } from '@/packages/iconex';
 
 import { XConnector } from '@/xwagmi/core/XConnector';
+import { XService } from '@/xwagmi/core/XService';
 
 export class IconHanaXConnector extends XConnector {
-  constructor() {
-    super('ICON', 'Hana Wallet');
+  constructor(xService: XService) {
+    super(xService, 'Hana Wallet');
   }
 
   async connect(): Promise<string | undefined> {

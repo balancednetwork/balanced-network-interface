@@ -5,12 +5,16 @@ export abstract class XService {
   xChainType: XChainType;
   xConnectors: XConnector[];
 
-  constructor(xChainType: XChainType, xConnectors: XConnector[]) {
+  constructor(xChainType: XChainType) {
     this.xChainType = xChainType;
-    this.xConnectors = xConnectors;
+    this.xConnectors = [];
   }
 
   getXConnectors(): XConnector[] {
     return this.xConnectors;
+  }
+
+  setXConnectors(xConnectors: XConnector[]): void {
+    this.xConnectors = xConnectors;
   }
 }

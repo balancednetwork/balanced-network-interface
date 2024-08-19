@@ -1,10 +1,11 @@
 import { NETWORK_ID } from '@/constants/config';
 import { XConnector } from '@/xwagmi/core/XConnector';
+import { XService } from '@/xwagmi/core/XService';
 import { SupportedChainId } from '@balancednetwork/balanced-js';
 
 export class ArchwayXConnector extends XConnector {
-  constructor() {
-    super('ARCHWAY', 'Keplr');
+  constructor(xService: XService) {
+    super(xService, 'Keplr');
   }
 
   async connect(): Promise<string | undefined> {

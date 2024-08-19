@@ -1,8 +1,16 @@
-import { XConnector } from '@/xwagmi/core/XConnector';
 import { XService } from '@/xwagmi/core/XService';
 
 export class HavahXService extends XService {
-  constructor({ xConnectors }: { xConnectors: XConnector[] }) {
-    super('HAVAH', xConnectors);
+  private static instance: HavahXService;
+
+  private constructor() {
+    super('HAVAH');
+  }
+
+  public static getInstance(): HavahXService {
+    if (!HavahXService.instance) {
+      HavahXService.instance = new HavahXService();
+    }
+    return HavahXService.instance;
   }
 }

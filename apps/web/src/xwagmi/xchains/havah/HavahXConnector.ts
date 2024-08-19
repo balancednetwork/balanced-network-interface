@@ -1,4 +1,5 @@
 import { XConnector } from '@/xwagmi/core/XConnector';
+import { XService } from '@/xwagmi/core/XService';
 
 interface AccountResultType {
   address: string;
@@ -7,8 +8,8 @@ interface AccountResultType {
 }
 
 export class HavahXConnector extends XConnector {
-  constructor() {
-    super('HAVAH', 'Havah Wallet');
+  constructor(xService: XService) {
+    super(xService, 'Havah Wallet');
   }
 
   async connect(): Promise<string | undefined> {

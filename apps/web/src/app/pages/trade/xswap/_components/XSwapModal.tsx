@@ -27,7 +27,6 @@ import { ApprovalState, useApproveCallback } from '@/lib/xcall/_hooks/useApprove
 import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
 import useXCallGasChecker from '@/lib/xcall/_hooks/useXCallGasChecker';
 import { XTransactionInput, XTransactionType } from '@/lib/xcall/_zustand/types';
-import { useCreateWalletXService } from '@/lib/xcall/_zustand/useXServiceStore';
 import {
   XTransactionUpdater,
   useXTransactionStore,
@@ -59,8 +58,6 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
   const { currentId } = useXTransactionStore();
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
-
-  useCreateWalletXService(direction.from);
 
   const shouldLedgerSign = useShouldLedgerSign();
   const changeShouldLedgerSign = useChangeShouldLedgerSign();

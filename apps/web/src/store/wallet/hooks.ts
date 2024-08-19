@@ -10,7 +10,7 @@ import { Validator } from 'icon-sdk-js';
 import { forEach } from 'lodash-es';
 import { useDispatch, useSelector } from 'react-redux';
 
-import bnJs, { havahJs } from '@/bnJs';
+import bnJs from '@/bnJs';
 import { MINIMUM_ICX_FOR_TX, NATIVE_ADDRESS } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
 import {
@@ -133,6 +133,7 @@ import useXTokens from '@/hooks/useXTokens';
 import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
 import { useRatesWithOracle } from '@/queries/reward';
+import { havahJs } from '@/xwagmi/xchains/havah/havahJs';
 import { erc20Abi } from 'viem';
 import { useAccount, useBalance, usePublicClient } from 'wagmi';
 

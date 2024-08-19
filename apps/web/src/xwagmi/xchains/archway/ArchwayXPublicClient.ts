@@ -3,7 +3,7 @@ import { ArchwayClient } from '@archwayhq/arch3.js';
 import { archway } from '@/constants/xChains';
 
 import { XChainId } from '@/types';
-import { AbstractXPublicClient } from '@/xwagmi/core/XPublicClient';
+import { XPublicClient } from '@/xwagmi/core/XPublicClient';
 import {
   TransactionStatus,
   XCallEvent,
@@ -12,6 +12,7 @@ import {
   XCallMessageSentEvent,
 } from '../../../lib/xcall/_zustand/types';
 import { XCallEventType } from '../../../lib/xcall/types';
+import { ArchwayXService } from './ArchwayXService';
 
 const XCallEventSignatureMap = {
   [XCallEventType.CallMessageSent]: 'wasm-CallMessageSent',
@@ -19,39 +20,38 @@ const XCallEventSignatureMap = {
   [XCallEventType.CallExecuted]: 'wasm-CallExecuted',
 };
 
-export class ArchwayXPublicClient extends AbstractXPublicClient {
-  xChainId: XChainId;
-  publicClient: ArchwayClient;
-
-  constructor(xChainId: XChainId, publicClient: ArchwayClient) {
-    super();
-    this.xChainId = xChainId;
-    this.publicClient = publicClient;
+export class ArchwayXPublicClient extends XPublicClient {
+  getXService(): ArchwayXService {
+    return ArchwayXService.getInstance();
   }
 
-  getPublicClient() {
-    return this.publicClient;
+  getPublicClient(): ArchwayClient {
+    const publicClient = this.getXService().publicClient;
+    if (!publicClient) {
+      throw new Error('ArchwayXPublicClient: publicClient is not initialized yet');
+    }
+    return publicClient;
   }
 
-  async getXCallFee(nid: XChainId, rollback: boolean) {
-    const fee = await this.publicClient.queryContractSmart(archway.contracts.xCall, {
+  async getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean) {
+    const fee = await this.getPublicClient().queryContractSmart(archway.contracts.xCall, {
       get_fee: { nid: nid, rollback },
     });
     return BigInt(fee);
   }
 
   async getBlockHeight() {
-    const height = await this.publicClient.getHeight();
+    const height = await this.getPublicClient().getHeight();
     return BigInt(height);
   }
 
   async getBlock(blockHeight: bigint) {
-    const block = await this.publicClient.getBlock(Number(blockHeight));
+    const block = await this.getPublicClient().getBlock(Number(blockHeight));
     return block;
   }
 
   async getTxReceipt(txHash) {
-    const tx = await this.publicClient.getTx(txHash);
+    const tx = await this.getPublicClient().getTx(txHash);
     return tx;
   }
 
@@ -72,12 +72,15 @@ export class ArchwayXPublicClient extends AbstractXPublicClient {
     return TransactionStatus.failure;
   }
 
-  async getEventLogs({ startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
+  async getEventLogs(
+    xChainId: XChainId,
+    { startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint },
+  ) {
     let txs;
 
     // TODO: is 10 iterations enough?
     for (let i = 0; i < 10; i++) {
-      txs = await this.publicClient.searchTx(`tx.height>=${startBlockHeight} AND tx.height<=${endBlockHeight}`);
+      txs = await this.getPublicClient().searchTx(`tx.height>=${startBlockHeight} AND tx.height<=${endBlockHeight}`);
 
       if (txs) {
         break;
@@ -122,7 +125,7 @@ export class ArchwayXPublicClient extends AbstractXPublicClient {
   _parseCallMessageSentEventLog(eventLog, txHash: string): XCallMessageSentEvent {
     return {
       eventType: XCallEventType.CallMessageSent,
-      xChainId: this.xChainId,
+      // xChainId: this.xChainId,
       txHash,
       // rawEventData: eventLog,
       from: eventLog.attributes.find(attr => attr.key === 'from')?.value,
@@ -133,7 +136,7 @@ export class ArchwayXPublicClient extends AbstractXPublicClient {
   _parseCallMessageEventLog(eventLog, txHash: string): XCallMessageEvent {
     return {
       eventType: XCallEventType.CallMessage,
-      xChainId: this.xChainId,
+      // xChainId: this.xChainId,
       txHash,
       // rawEventData: eventLog,
       from: eventLog.attributes.find(attr => attr.key === 'from')?.value,
@@ -148,7 +151,7 @@ export class ArchwayXPublicClient extends AbstractXPublicClient {
 
     return {
       eventType: XCallEventType.CallExecuted,
-      xChainId: this.xChainId,
+      // xChainId: this.xChainId,
       txHash,
       // rawEventData: eventLog,
       reqId: BigInt(eventLog.attributes.find(attr => attr.key === 'reqId')?.value),

@@ -3,11 +3,10 @@ import { XConnector } from './XConnector';
 
 export abstract class XService {
   xChainType: XChainType;
-  xConnectors: XConnector[];
+  xConnectors: XConnector[] = [];
 
   constructor(xChainType: XChainType) {
     this.xChainType = xChainType;
-    this.xConnectors = [];
   }
 
   getXConnectors(): XConnector[] {

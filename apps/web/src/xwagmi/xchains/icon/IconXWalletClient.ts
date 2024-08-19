@@ -1,26 +1,23 @@
 import bnJs from '@/bnJs';
 import { Percent } from '@balancednetwork/sdk-core';
-import IconService from 'icon-sdk-js';
 
 import { NETWORK_ID } from '@/constants/config';
-import { XChainId } from '@/types';
 import { toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { XTransactionInput, XTransactionType } from '../../../lib/xcall/_zustand/types';
 import { getRlpEncodedSwapData } from '../../../lib/xcall/utils';
-import { IconXPublicClient } from './IconXPublicClient';
+import { IconXService } from './IconXService';
 
-export class IconXWalletClient extends IconXPublicClient implements XWalletClient {
-  walletClient: IconService; // reserved for future use
-  changeShouldLedgerSign: any;
+export class IconXWalletClient extends XWalletClient {
+  changeShouldLedgerSign: any; // TODO: remove
 
-  constructor(xChainId: XChainId, publicClient: IconService, walletClient: IconService, options?: any) {
-    super(xChainId, publicClient);
-    this.walletClient = walletClient;
+  getXService(): IconXService {
+    return IconXService.getInstance();
+  }
 
-    const { changeShouldLedgerSign } = options || {};
-    this.changeShouldLedgerSign = changeShouldLedgerSign;
+  getWalletClient() {
+    return this.getXService().iconService;
   }
 
   async approve(token, owner, spender, currencyAmountToApprove) {}
@@ -142,10 +139,6 @@ export class IconXWalletClient extends IconXPublicClient implements XWalletClien
 
   async executeTransaction(xTransactionInput: XTransactionInput) {
     const { type } = xTransactionInput;
-
-    if (!this.walletClient) {
-      throw new Error('Wallet client not found');
-    }
 
     if (type === XTransactionType.SWAP) {
       return this._executeSwap(xTransactionInput);

@@ -21,7 +21,6 @@ import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
 import useXCallGasChecker from '@/lib/xcall/_hooks/useXCallGasChecker';
 import { XTransactionInput, XTransactionType } from '@/lib/xcall/_zustand/types';
 import { useXMessageStore } from '@/lib/xcall/_zustand/useXMessageStore';
-import { useCreateWalletXService } from '@/lib/xcall/_zustand/useXServiceStore';
 import { useXTransactionStore, xTransactionActions } from '@/lib/xcall/_zustand/useXTransactionStore';
 import { useShouldLedgerSign } from '@/store/application/hooks';
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from '@/store/bridge/hooks';
@@ -49,8 +48,6 @@ function XTransferModal() {
   const { recipient, isLiquidFinanceEnabled } = useBridgeState();
   const { currencyAmountToBridge, account } = useDerivedBridgeInfo();
   const direction = useBridgeDirection();
-
-  useCreateWalletXService(direction.from);
 
   const { xCallFee } = useXCallFee(direction.from, direction.to);
 

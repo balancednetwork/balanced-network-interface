@@ -1,16 +1,15 @@
 import { XConnector } from '@/xwagmi/core/XConnector';
-import { XService } from '@/xwagmi/core/XService';
 import { AccountData } from '@keplr-wallet/types';
 import { ArchwayXService } from './ArchwayXService';
 import { XSigningArchwayClient } from './XSigningArchwayClient';
 
 export class ArchwayXConnector extends XConnector {
-  constructor(xService: XService) {
-    super(xService, 'Keplr');
+  constructor() {
+    super('ARCHWAY', 'Keplr');
   }
 
   getXService(): ArchwayXService {
-    return this.xService as ArchwayXService;
+    return ArchwayXService.getInstance();
   }
 
   async connect(): Promise<string | undefined> {

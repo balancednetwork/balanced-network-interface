@@ -1,21 +1,21 @@
-import { XChainType } from '@/types';
+import { xChains } from '@/constants/xChains';
+import { XChainId, XChainType } from '@/types';
 import { useEffect } from 'react';
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
+import { getXChainType } from './actions';
+import { XPublicClient, XService, XWalletClient } from './core';
 import { XConnection } from './core/types';
-import { ArchwayXConnector } from './xchains/archway/ArchwayXConnector';
-import { ArchwayXService } from './xchains/archway/ArchwayXService';
-import { EvmXService } from './xchains/evm/EvmXService';
-import { HavahXConnector } from './xchains/havah/HavahXConnector';
-import { HavahXService } from './xchains/havah/HavahXService';
-import { IconHanaXConnector } from './xchains/icon/IconHanaXConnector';
-import { IconXService } from './xchains/icon/IconXService';
+import { ArchwayXConnector, ArchwayXPublicClient, ArchwayXService, ArchwayXWalletClient } from './xchains/archway';
+import { EvmXPublicClient, EvmXService, EvmXWalletClient } from './xchains/evm';
+import { HavahXConnector, HavahXPublicClient, HavahXService, HavahXWalletClient } from './xchains/havah';
+import { IconHanaXConnector, IconXPublicClient, IconXService, IconXWalletClient } from './xchains/icon';
 
 type XWagmiStore = {
-  xServices: Partial<Record<XChainType, any>>;
+  xServices: Partial<Record<XChainType, XService>>;
   xConnections: any;
-  //   xPublicClients: any;
-  //   xWalletClients: any;
+  xPublicClients: any;
+  xWalletClients: any;
 
   setXConnection: (xChainType: XChainType, xConnection: XConnection) => void;
   unsetXConnection: (xChainType: XChainType) => void;
@@ -25,8 +25,8 @@ export const useXWagmiStore = create<XWagmiStore>()(
   immer((set, get) => ({
     xServices: {},
     xConnections: {},
-    //     xPublicClients: {},
-    //     xWalletClients: {},
+    xPublicClients: {},
+    xWalletClients: {},
     setXConnection: (xChainType: XChainType, xConnection: XConnection) => {
       set(state => {
         state.xConnections[xChainType] = xConnection;
@@ -41,25 +41,74 @@ export const useXWagmiStore = create<XWagmiStore>()(
 );
 
 const iconXService = IconXService.getInstance();
-iconXService.setXConnectors([new IconHanaXConnector(iconXService)]);
+iconXService.setXConnectors([new IconHanaXConnector()]);
 
 const archwayXService = ArchwayXService.getInstance();
-archwayXService.setXConnectors([new ArchwayXConnector(archwayXService)]);
+archwayXService.setXConnectors([new ArchwayXConnector()]);
 
 const evmXService = EvmXService.getInstance();
 evmXService.setXConnectors([]);
 
 const havahXService = HavahXService.getInstance();
-havahXService.setXConnectors([new HavahXConnector(havahXService)]);
+havahXService.setXConnectors([new HavahXConnector()]);
+
+export const xServices = {
+  ICON: iconXService,
+  ARCHWAY: archwayXService,
+  EVM: evmXService,
+  HAVAH: havahXService,
+};
+
+export const xPublicClients: Partial<Record<XChainId, XPublicClient>> = {};
+export const xWalletClients: Partial<Record<XChainId, XWalletClient>> = {};
+
+function createXPublicClient(xChainId) {
+  const xChainType = getXChainType(xChainId);
+  switch (xChainType) {
+    case 'ICON':
+      return new IconXPublicClient(xChainId);
+    case 'ARCHWAY':
+      return new ArchwayXPublicClient(xChainId);
+    case 'EVM':
+      return new EvmXPublicClient(xChainId);
+    case 'HAVAH':
+      return new HavahXPublicClient(xChainId);
+    default:
+      throw new Error(`Unsupported xChainType: ${xChainType}`);
+  }
+}
+
+function createXWalletClient(xChainId) {
+  const xChainType = getXChainType(xChainId);
+  switch (xChainType) {
+    case 'ICON':
+      return new IconXWalletClient(xChainId);
+    case 'ARCHWAY':
+      return new ArchwayXWalletClient(xChainId);
+    case 'EVM':
+      return new EvmXWalletClient(xChainId);
+    case 'HAVAH':
+      return new HavahXWalletClient(xChainId);
+    default:
+      throw new Error(`Unsupported xChainType: ${xChainType}`);
+  }
+}
 
 export const initXWagmiStore = () => {
+  xChains.forEach(xChain => {
+    const xChainId = xChain.xChainId;
+    if (!xPublicClients[xChainId]) {
+      xPublicClients[xChainId] = createXPublicClient(xChainId);
+    }
+    if (!xWalletClients[xChainId]) {
+      xWalletClients[xChainId] = createXWalletClient(xChainId);
+    }
+  });
+
   useXWagmiStore.setState({
-    xServices: {
-      ICON: iconXService,
-      ARCHWAY: archwayXService,
-      EVM: evmXService,
-      HAVAH: havahXService,
-    },
+    xServices,
+    xPublicClients,
+    xWalletClients,
   });
 
   archwayXService.init();

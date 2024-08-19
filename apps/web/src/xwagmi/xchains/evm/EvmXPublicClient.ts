@@ -2,7 +2,7 @@ import { Address, PublicClient, getContract, parseEventLogs } from 'viem';
 
 import { xChainMap } from '@/constants/xChains';
 import { XChainId } from '@/types';
-import { AbstractXPublicClient } from '@/xwagmi/core/XPublicClient';
+import { XPublicClient } from '@/xwagmi/core/XPublicClient';
 import {
   TransactionStatus,
   XCallEvent,
@@ -11,6 +11,7 @@ import {
   XCallMessageSentEvent,
 } from '../../../lib/xcall/_zustand/types';
 import { XCallEventType } from '../../../lib/xcall/types';
+import { EvmXService } from './EvmXService';
 import { xCallContractAbi } from './abis/xCallContractAbi';
 
 const XCallEventSignatureMap = {
@@ -19,45 +20,52 @@ const XCallEventSignatureMap = {
   [XCallEventType.CallExecuted]: 'CallExecuted',
 };
 
-export class EvmXPublicClient extends AbstractXPublicClient {
-  xChainId: XChainId;
-  publicClient: PublicClient;
-
-  constructor(xChainId: XChainId, publicClient: PublicClient) {
-    super();
-    this.xChainId = xChainId;
-    this.publicClient = publicClient;
+export class EvmXPublicClient extends XPublicClient {
+  getXService(): EvmXService {
+    return EvmXService.getInstance();
   }
 
-  getPublicClient() {
-    return this.publicClient;
+  getChainId() {
+    const xChain = xChainMap[this.xChainId];
+    return xChain.id;
   }
 
-  async getXCallFee(nid: XChainId, rollback: boolean, sources: string[] = []) {
+  getPublicClient(): PublicClient {
+    const publicClient = this.getXService().getPublicClient(this.getChainId());
+    if (!publicClient) {
+      throw new Error('EvmXPublicClient: publicClient is not initialized yet');
+    }
+    return publicClient;
+  }
+
+  async getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean, sources: string[] = []) {
     const contract = getContract({
       abi: xCallContractAbi,
-      address: xChainMap[this.xChainId].contracts.xCall as Address,
-      client: this.publicClient,
+      address: xChainMap[xChainId].contracts.xCall as Address,
+      client: this.getPublicClient(),
     });
     const fee = await contract.read.getFee([nid, rollback, sources]);
     return BigInt(fee);
   }
 
   async getBlockHeight() {
-    const blockNumber = await this.publicClient.getBlockNumber();
+    const blockNumber = await this.getPublicClient().getBlockNumber();
     return blockNumber;
   }
 
   async getBlock(blockHeight: bigint) {
-    const block = await this.publicClient.getBlock({ blockNumber: blockHeight });
+    const block = await this.getPublicClient().getBlock({ blockNumber: blockHeight });
     return block;
   }
 
-  async getEventLogs({ startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
-    const eventLogs = await this.publicClient.getLogs({
+  async getEventLogs(
+    xChainId: XChainId,
+    { startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint },
+  ) {
+    const eventLogs = await this.getPublicClient().getLogs({
       fromBlock: startBlockHeight,
       toBlock: endBlockHeight,
-      address: xChainMap[this.xChainId].contracts.xCall as Address,
+      address: xChainMap[xChainId].contracts.xCall as Address,
     });
 
     const parsedLogs = parseEventLogs({
@@ -69,7 +77,7 @@ export class EvmXPublicClient extends AbstractXPublicClient {
   }
 
   async getTxReceipt(txHash: string) {
-    const tx = await this.publicClient.getTransactionReceipt({ hash: txHash as Address });
+    const tx = await this.getPublicClient().getTransactionReceipt({ hash: txHash as Address });
     return tx;
   }
 
@@ -126,7 +134,7 @@ export class EvmXPublicClient extends AbstractXPublicClient {
   _parseCallMessageSentEventLog(eventLog, txHash: string): XCallMessageSentEvent {
     return {
       eventType: XCallEventType.CallMessageSent,
-      xChainId: this.xChainId,
+      // xChainId: this.xChainId,
       txHash,
       // rawEventData: eventLog,
       sn: eventLog.args._sn,
@@ -138,7 +146,7 @@ export class EvmXPublicClient extends AbstractXPublicClient {
     return {
       eventType: XCallEventType.CallMessage,
       txHash,
-      xChainId: this.xChainId,
+      // xChainId: this.xChainId,
       // rawEventData: eventLog,
       sn: eventLog.args._sn,
       reqId: eventLog.args._reqId,
@@ -150,7 +158,7 @@ export class EvmXPublicClient extends AbstractXPublicClient {
   _parseCallExecutedEventLog(eventLog, txHash: string): XCallExecutedEvent {
     return {
       eventType: XCallEventType.CallExecuted,
-      xChainId: this.xChainId,
+      // xChainId: this.xChainId,
       txHash,
       // rawEventData: eventLog,
       reqId: eventLog.args._reqId,

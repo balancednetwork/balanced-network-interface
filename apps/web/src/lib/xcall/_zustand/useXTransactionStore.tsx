@@ -8,6 +8,7 @@ import { immer } from 'zustand/middleware/immer';
 import { swapMessage } from '@/app/pages/trade/supply/_components/utils';
 import { XChainId } from '@/types';
 import { formatBigNumber } from '@/utils';
+import { getXWalletClient } from '@/xwagmi/actions';
 import { MODAL_ID, modalActions } from '../../../hooks/useModalStore';
 import {
   XMessage,
@@ -80,15 +81,15 @@ export const useXTransactionStore = create<XTransactionStore>()(
         const finalDestinationChainId = direction.to;
         const primaryDestinationChainId = sourceChainId === iconChainId ? finalDestinationChainId : iconChainId;
 
-        const srcChainXService = xServiceActions.getXWalletClient(sourceChainId);
+        const srcXWalletClient = getXWalletClient(sourceChainId);
 
-        if (!srcChainXService) {
+        if (!srcXWalletClient) {
           throw new Error('WalletXService for source chain is not found');
         }
 
         console.log('xTransactionInput', xTransactionInput);
 
-        const sourceTransactionHash = await srcChainXService.executeTransaction(xTransactionInput);
+        const sourceTransactionHash = await srcXWalletClient.executeTransaction(xTransactionInput);
 
         const primaryDestinationChainInitialBlockHeight =
           xServiceActions.getXChainHeight(primaryDestinationChainId) - 20n;

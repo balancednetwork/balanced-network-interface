@@ -8,8 +8,8 @@ interface AccountResultType {
 }
 
 export class HavahXConnector extends XConnector {
-  constructor(xService: XService) {
-    super(xService, 'Havah Wallet');
+  constructor() {
+    super('HAVAH', 'Havah Wallet');
   }
 
   async connect(): Promise<string | undefined> {

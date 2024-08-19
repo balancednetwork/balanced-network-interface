@@ -7,8 +7,8 @@ import { Connector } from 'wagmi';
 export class EvmXConnector extends XConnector {
   connector: Connector;
 
-  constructor(xService: XService, connector: Connector) {
-    super(xService, connector.name);
+  constructor(connector: Connector) {
+    super('EVM', connector.name);
 
     this.connector = connector;
   }

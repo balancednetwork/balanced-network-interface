@@ -20,8 +20,9 @@ import {
   useInitTransaction,
 } from '@/store/transactionsCrosschain/hooks';
 import { XToken } from '@/types';
+import { getXChainType } from '@/xwagmi/actions/getXChainType';
+import { getXWalletClient } from '@/xwagmi/actions/getXWalletClient';
 import { transactionActions } from '../_zustand/useTransactionStore';
-import { xServiceActions } from '../_zustand/useXServiceStore';
 import useXWallet from './useXWallet';
 
 export const FAST_INTERVAL = 10000;
@@ -240,16 +241,16 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
     // }
 
     const xChainId = token.xChainId;
-    const xService = xServiceActions.getXWalletClient(xChainId);
+    const xWalletClient = getXWalletClient(xChainId);
 
-    if (!xService) {
+    if (!xWalletClient) {
       // toastError(t('Error'), t('No xService'));
       console.error('no archway WalletXService');
       return undefined;
     }
 
     try {
-      const hash = await xService.approve(token, account as `0x${string}`, spender, amountToApprove);
+      const hash = await xWalletClient.approve(token, account as `0x${string}`, spender, amountToApprove);
 
       setPending(true);
 

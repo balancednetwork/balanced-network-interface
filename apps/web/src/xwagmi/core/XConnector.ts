@@ -2,13 +2,11 @@ import { XChainType } from '@/types';
 import { XService } from './XService';
 
 export abstract class XConnector {
-  xService: XService;
   xChainType: XChainType;
   name: string;
 
-  constructor(xService: XService, name: string) {
-    this.xService = xService;
-    this.xChainType = xService.xChainType;
+  constructor(xChainType: XChainType, name: string) {
+    this.xChainType = xChainType;
     this.name = name;
   }
 

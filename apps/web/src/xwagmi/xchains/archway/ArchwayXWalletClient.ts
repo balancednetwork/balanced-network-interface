@@ -1,25 +1,29 @@
 import bnJs from '@/bnJs';
-import { ArchwayClient } from '@archwayhq/arch3.js';
 import { Percent } from '@balancednetwork/sdk-core';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from '@/constants/tokens1';
 import { archway } from '@/constants/xChains';
 import { getFeeParam, isDenomAsset } from '@/packages/archway/utils';
-import { XChainId, XToken } from '@/types';
+import { XToken } from '@/types';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { XSigningArchwayClient } from '@/xwagmi/xchains/archway/XSigningArchwayClient';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
 import { XTransactionInput, XTransactionType } from '../../../lib/xcall/_zustand/types';
 import { getBytesFromString, getRlpEncodedSwapData } from '../../../lib/xcall/utils';
-import { ArchwayXPublicClient } from './ArchwayXPublicClient';
+import { ArchwayXService } from './ArchwayXService';
 
-export class ArchwayXWalletClient extends ArchwayXPublicClient implements XWalletClient {
-  walletClient: XSigningArchwayClient;
+export class ArchwayXWalletClient extends XWalletClient {
+  getXService(): ArchwayXService {
+    return ArchwayXService.getInstance();
+  }
 
-  constructor(xChainId: XChainId, publicClient: ArchwayClient, walletClient: XSigningArchwayClient, options?: any) {
-    super(xChainId, publicClient);
-    this.walletClient = walletClient;
+  getWalletClient(): XSigningArchwayClient {
+    const walletClient = this.getXService().walletClient;
+    if (!walletClient) {
+      throw new Error('ArchwayXWalletClient: walletClient is not initialized yet');
+    }
+    return walletClient;
   }
 
   async approve(token: XToken, owner: string, spender: string, currencyAmountToApprove: CurrencyAmount<XToken>) {
@@ -32,7 +36,7 @@ export class ArchwayXWalletClient extends ArchwayXPublicClient implements XWalle
       },
     };
 
-    const hash = await this.walletClient.executeSync(owner, token.address, msg, getFeeParam(400000));
+    const hash = await this.getWalletClient().executeSync(owner, token.address, msg, getFeeParam(400000));
 
     if (hash) {
       return hash;
@@ -42,10 +46,6 @@ export class ArchwayXWalletClient extends ArchwayXPublicClient implements XWalle
   async executeTransaction(xTransactionInput: XTransactionInput) {
     const { type, direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } =
       xTransactionInput;
-
-    if (!this.walletClient) {
-      throw new Error('Wallet client not found');
-    }
 
     const token = inputAmount.currency.wrapped;
     const receiver = `${direction.to}/${recipient}`;
@@ -86,7 +86,7 @@ export class ArchwayXWalletClient extends ArchwayXPublicClient implements XWalle
         },
       };
 
-      const hash = await this.walletClient.executeSync(
+      const hash = await this.getWalletClient().executeSync(
         account, //
         archway.contracts.bnUSD!,
         msg,
@@ -105,7 +105,7 @@ export class ArchwayXWalletClient extends ArchwayXPublicClient implements XWalle
           },
         };
 
-        const hash = await this.walletClient.executeSync(
+        const hash = await this.getWalletClient().executeSync(
           account,
           archway.contracts.assetManager,
           msg,
@@ -127,7 +127,7 @@ export class ArchwayXWalletClient extends ArchwayXPublicClient implements XWalle
           },
         };
 
-        const hash = await this.walletClient.executeSync(
+        const hash = await this.getWalletClient().executeSync(
           account,
           archway.contracts.assetManager,
           msg,

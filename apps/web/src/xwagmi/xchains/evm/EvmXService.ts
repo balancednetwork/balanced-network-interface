@@ -1,6 +1,6 @@
 import { wagmiConfig } from '@/config/wagmi';
 import { XService } from '@/xwagmi/core/XService';
-import { getConnectors } from '@wagmi/core';
+import { getConnectors, getPublicClient } from '@wagmi/core';
 import { EvmXConnector } from './EvmXConnector';
 
 export class EvmXService extends XService {
@@ -14,7 +14,17 @@ export class EvmXService extends XService {
     //@ts-ignore
     const connectors = getConnectors(wagmiConfig);
 
-    return connectors.map((connector: any) => new EvmXConnector(this, connector));
+    return connectors.map((connector: any) => new EvmXConnector(connector));
+  }
+
+  public getPublicClient(chainId) {
+    //@ts-ignore
+    return getPublicClient(wagmiConfig, { chainId });
+  }
+
+  public async getWalletClient(chainId) {
+    //@ts-ignore
+    return await getWalletClient(wagmiConfig, { chainId });
   }
 
   public static getInstance(): EvmXService {

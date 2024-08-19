@@ -4,7 +4,7 @@ import IconService, { Converter, BigNumber } from 'icon-sdk-js';
 
 import { XChainId } from '@/types';
 import { sleep } from '@/utils';
-import { AbstractXPublicClient } from '@/xwagmi/core/XPublicClient';
+import { XPublicClient } from '@/xwagmi/core/XPublicClient';
 import {
   TransactionStatus,
   XCallEvent,
@@ -13,6 +13,7 @@ import {
   XCallMessageSentEvent,
 } from '../../../lib/xcall/_zustand/types';
 import { XCallEventType } from '../../../lib/xcall/types';
+import { IconXService } from './IconXService';
 import { ICONTxResultType } from './types';
 
 export const getICONEventSignature = (eventName: XCallEventType) => {
@@ -37,39 +38,34 @@ export const getICONEventSignature = (eventName: XCallEventType) => {
   }
 };
 
-export class IconXPublicClient extends AbstractXPublicClient {
-  xChainId: XChainId;
-  publicClient: IconService;
-
-  constructor(xChainId: XChainId, publicClient: IconService) {
-    super();
-    this.xChainId = xChainId;
-    this.publicClient = publicClient;
+export class IconXPublicClient extends XPublicClient {
+  getXService(): IconXService {
+    return IconXService.getInstance();
   }
 
   getPublicClient() {
-    return this.publicClient;
+    return this.getXService().iconService;
   }
 
-  async getXCallFee(nid: XChainId, rollback: boolean, sources?: string[]) {
+  async getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean, sources?: string[]) {
     const res = await bnJs.XCall.getFee(nid, rollback, sources);
     return BigInt(res);
   }
 
   async getBlockHeight() {
-    const lastBlock = await this.publicClient.getLastBlock().execute();
+    const lastBlock = await this.getPublicClient().getLastBlock().execute();
     return BigInt(lastBlock.height);
   }
 
   async getBlock(blockHeight: bigint) {
-    const block = await this.publicClient.getBlockByHeight(new BigNumber(blockHeight.toString())).execute();
+    const block = await this.getPublicClient().getBlockByHeight(new BigNumber(blockHeight.toString())).execute();
     return block;
   }
 
   async getTxReceipt(txHash: string) {
     for (let i = 0; i < 10; i++) {
       try {
-        const txResult = await this.publicClient.getTransactionResult(txHash).execute();
+        const txResult = await this.getPublicClient().getTransactionResult(txHash).execute();
         return txResult as ICONTxResultType;
       } catch (e) {
         console.log(`xCall debug - icon tx result (pass ${i}):`, e);
@@ -112,7 +108,10 @@ export class IconXPublicClient extends AbstractXPublicClient {
     return events;
   }
 
-  async getEventLogs({ startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint }) {
+  async getEventLogs(
+    xChainId: XChainId,
+    { startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint },
+  ) {
     // https://tracker.icon.community/api/v1/logs?block_start=83073062&address=cxa07f426062a1384bdd762afa6a87d123fbc81c75
     const url = `https://tracker.icon.community/api/v1/logs?block_start=${startBlockHeight}&block_end=${endBlockHeight}&address=${'cxa07f426062a1384bdd762afa6a87d123fbc81c75'}`;
     const res = await axios.get(url);
@@ -179,7 +178,7 @@ export class IconXPublicClient extends AbstractXPublicClient {
 
     return {
       eventType: XCallEventType.CallMessageSent,
-      xChainId: this.xChainId,
+      // xChainId: this.xChainId,
       txHash,
       // rawEventData: eventLog,
       from: indexed[1],
@@ -193,7 +192,7 @@ export class IconXPublicClient extends AbstractXPublicClient {
 
     return {
       eventType: XCallEventType.CallMessage,
-      xChainId: this.xChainId,
+      // xChainId: this.xChainId,
       txHash,
       // rawEventData: eventLog,
       sn: BigInt(parseInt(indexed[3], 16)),
@@ -209,7 +208,7 @@ export class IconXPublicClient extends AbstractXPublicClient {
 
     return {
       eventType: XCallEventType.CallExecuted,
-      xChainId: this.xChainId,
+      // xChainId: this.xChainId,
       txHash,
       // rawEventData: eventLog,
       reqId: BigInt(parseInt(indexed[1], 16)),

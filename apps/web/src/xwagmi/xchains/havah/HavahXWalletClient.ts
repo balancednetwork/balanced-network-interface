@@ -1,29 +1,21 @@
-import bnJs, { havahJs } from '@/bnJs';
+import bnJs from '@/bnJs';
 import { Percent } from '@balancednetwork/sdk-core';
-import IconService from 'icon-sdk-js';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 
 import { NATIVE_ADDRESS } from '@/constants/index';
-import { XChainId } from '@/types';
 import { toDec } from '@/utils';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { toHex } from 'viem';
 import { XTransactionInput, XTransactionType } from '../../../lib/xcall/_zustand/types';
 import { getRlpEncodedSwapData } from '../../../lib/xcall/utils';
-import { HavahXPublicClient } from './HavahXPublicClient';
+import { HavahXService } from './HavahXService';
+import { havahJs } from './havahJs';
 
-export class HavahXWalletClient extends HavahXPublicClient implements XWalletClient {
-  walletClient: IconService; // reserved for future use
-  changeShouldLedgerSign: any;
-
-  constructor(xChainId: XChainId, publicClient: IconService, walletClient: IconService, options?: any) {
-    super(xChainId, publicClient);
-    this.walletClient = walletClient;
-
-    const { changeShouldLedgerSign } = options || {};
-    this.changeShouldLedgerSign = changeShouldLedgerSign;
+export class HavahXWalletClient extends XWalletClient {
+  getXService(): HavahXService {
+    return HavahXService.getInstance();
   }
 
   async approve(token, owner, spender, currencyAmountToApprove) {}

@@ -1,34 +1,34 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
+import { useIconReact } from '@/packages/icon-react';
 import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
-import { Token, CurrencyAmount, Currency } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
 import { forEach } from 'lodash-es';
-import { useIconReact } from '@/packages/icon-react';
-import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ARCHWAY_FEE_TOKEN_SYMBOL, useARCH } from '@/app/pages/trade/bridge/_config/tokens';
-import { isDenomAsset } from '@/packages/archway/utils';
-import { XChainId, XWalletAssetRecord } from '@/app/pages/trade/bridge/types';
-import { getXTokenAddress, isXToken } from '@/app/pages/trade/bridge/utils';
 import bnJs, { havahJs } from '@/bnJs';
 import { MINIMUM_ICX_FOR_TX, NATIVE_ADDRESS } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
 import {
+  COMBINED_TOKENS_LIST,
   SUPPORTED_TOKENS_LIST,
-  isNativeCurrency,
   SUPPORTED_TOKENS_MAP_BY_ADDRESS,
   isBALN,
   isFIN,
-  COMBINED_TOKENS_LIST,
+  isNativeCurrency,
 } from '@/constants/tokens';
+import { ARCHWAY_FEE_TOKEN_SYMBOL, useARCH } from '@/constants/tokens1';
+import { isDenomAsset } from '@/packages/archway/utils';
 import { useBnJsContractQuery } from '@/queries/utils';
 import { useTokenListConfig } from '@/store/lists/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useUserAddedTokens } from '@/store/user/hooks';
+import { XChainId, XWalletAssetRecord } from '@/types';
+import { getXTokenAddress, isXToken } from '@/utils/xTokens';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
@@ -131,14 +131,14 @@ export function useArchwayBalances(
 }
 
 import { viemClients } from '@/config/wagmi';
+import { SUPPORTED_XCALL_CHAINS, injective, xChainMap } from '@/constants/xChains';
+import { useSignedInWallets } from '@/hooks/useWallets';
+import useXTokens from '@/hooks/useXTokens';
+import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
+import { useHavahContext } from '@/packages/havah/HavahProvider';
+import { useRatesWithOracle } from '@/queries/reward';
 import { erc20Abi } from 'viem';
 import { useAccount, useBalance, usePublicClient } from 'wagmi';
-import useXTokens from '@/app/pages/trade/bridge/_hooks/useXTokens';
-import { injective, SUPPORTED_XCALL_CHAINS, xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
-import { useRatesWithOracle } from '@/queries/reward';
-import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { useHavahContext } from '@/packages/havah/HavahProvider';
-import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 
 export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined, xChainId: XChainId) {
   const chainId = xChainMap[xChainId].id;
@@ -597,9 +597,9 @@ export function useHavahBalances(
   });
 }
 
-import { ChainGrpcWasmApi, fromBase64, IndexerGrpcAccountPortfolioApi, toBase64 } from '@injectivelabs/sdk-ts';
-import { Network, getNetworkEndpoints } from '@injectivelabs/networks';
 import { useInjectiveWallet } from '@/packages/injective';
+import { Network, getNetworkEndpoints } from '@injectivelabs/networks';
+import { ChainGrpcWasmApi, IndexerGrpcAccountPortfolioApi, fromBase64, toBase64 } from '@injectivelabs/sdk-ts';
 
 export const NETWORK = Network.Mainnet;
 export const ENDPOINTS = getNetworkEndpoints(NETWORK);

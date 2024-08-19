@@ -18,7 +18,7 @@ import {
   updateSlippageTolerance,
   setOpenWalletModal,
 } from './reducer';
-import { XWalletType } from '@/app/pages/trade/bridge/types';
+import { XWalletType } from '@/types';
 
 type BlockDetails = {
   timestamp: number;

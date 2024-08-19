@@ -1,20 +1,20 @@
 import React from 'react';
 
-import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
-import { XChainId, XWalletType } from '@/app/pages/trade/bridge/types';
 import { Typography } from '@/app/theme';
+import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
+import { XChainId, XWalletType } from '@/types';
 import { shortenAddress } from '@/utils';
 
+import { xChainMap, xWalletTypeModalIdMap } from '@/constants/xChains';
+import { modalActions } from '@/hooks/useModalStore';
+import useWallets from '@/hooks/useWallets';
+import { useHavahContext } from '@/packages/havah/HavahProvider';
+import { useSwapState } from '@/store/swap/hooks';
+import { Trans } from '@lingui/macro';
 import { UnderlineText } from '../DropdownText';
-import { xChainMap, xWalletTypeModalIdMap } from '@/app/pages/trade/bridge/_config/xChains';
 import Modal from '../Modal';
 import { ModalContentWrapper } from '../ModalContent';
 import AddressInput from './AddressInput';
-import { useSwapState } from '@/store/swap/hooks';
-import { Trans } from '@lingui/macro';
-import useWallets from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { useHavahContext } from '@/packages/havah/HavahProvider';
-import { modalActions } from '@/app/pages/trade/bridge/_zustand/useModalStore';
 
 const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; editable?: boolean }) => {
   const [editableAddressModalOpen, setEditableAddressModalOpen] = React.useState(false);

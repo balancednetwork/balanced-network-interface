@@ -1,20 +1,9 @@
 import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
-import { Token } from '@balancednetwork/sdk-core';
 
 import { sICX, ICX, bnUSD, BALN, IUSDC, USDS, OMM, IUSDT, FIN, CFT, METX, GBET, ETH, BTCB } from '@/constants/tokens';
 
 import { NETWORK_ID } from './config';
-
-export interface PairInfo {
-  readonly chainId: number;
-  readonly id: number;
-  readonly name: string;
-  readonly baseCurrencyKey: string;
-  readonly quoteCurrencyKey: string;
-  readonly rewards?: number;
-  readonly baseToken: Token;
-  readonly quoteToken: Token;
-}
+import { PairInfo } from '@/types';
 
 // this information contains the pairs the balanced supports
 // eventually this information will saved in json file.

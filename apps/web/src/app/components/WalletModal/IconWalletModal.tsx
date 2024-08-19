@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { BalancedJs, getLedgerAddressPath, LEDGER_BASE_PATH } from '@balancednetwork/balanced-js';
+import Skeleton from '@/app/components/Skeleton';
+import { LOCAL_STORAGE_ADDRESS_EXPIRY, useIconReact } from '@/packages/icon-react';
+import { BalancedJs, LEDGER_BASE_PATH, getLedgerAddressPath } from '@balancednetwork/balanced-js';
 import * as HwUtils from '@balancednetwork/hw-app-icx/lib/utils';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
-import { t, Trans } from '@lingui/macro';
-import Skeleton from '@/app/components/Skeleton';
-import { useIconReact, LOCAL_STORAGE_ADDRESS_EXPIRY } from '@/packages/icon-react';
+import { Trans, t } from '@lingui/macro';
 import { isMobile } from 'react-device-detect';
 import { toast } from 'react-toastify';
 import { useMedia } from 'react-use';
@@ -20,15 +20,15 @@ import LedgerIcon from '@/assets/icons/wallets/ledger.svg';
 import bnJs from '@/bnJs';
 import { useLocalStorageWithExpiry } from '@/hooks/useLocalStorage';
 import {
-  useWalletModalToggle,
-  useCurrentLedgerAddressPage,
   useChangeCurrentLedgerAddressPage,
+  useCurrentLedgerAddressPage,
+  useWalletModalToggle,
 } from '@/store/application/hooks';
 
+import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
 import { VerticalDivider } from '../Divider';
 import { ModalContentWrapper } from '../ModalContent';
-import { WalletOption, UnbreakableText } from './shared';
-import { MODAL_ID, modalActions, useModalStore } from '@/app/pages/trade/bridge/_zustand/useModalStore';
+import { UnbreakableText, WalletOption } from './shared';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 

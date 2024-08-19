@@ -9,11 +9,11 @@ import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from '@/app/theme'
 import ApplicationUpdater from '@/store/application/updater';
 import TransactionUpdater from '@/store/transactions/updater';
 
+import { AllTransactionsUpdater } from '@/lib/xcall/_zustand/useTransactionStore';
+import { AllXMessagesUpdater } from '@/lib/xcall/_zustand/useXMessageStore';
+import { AllPublicXServicesCreator, AllXChainHeightsUpdater } from '@/lib/xcall/_zustand/useXServiceStore';
+import { xChains } from '../constants/xChains';
 import RootRoutes from './Routes';
-import { AllTransactionsUpdater } from './pages/trade/bridge/_zustand/useTransactionStore';
-import { AllXMessagesUpdater } from './pages/trade/bridge/_zustand/useXMessageStore';
-import { AllPublicXServicesCreator, AllXChainHeightsUpdater } from './pages/trade/bridge/_zustand/useXServiceStore';
-import { xChains } from './pages/trade/bridge/_config/xChains';
 
 function Updaters() {
   return (

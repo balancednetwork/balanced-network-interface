@@ -1,43 +1,35 @@
 import React from 'react';
 import { Flex } from 'rebass/styled-components';
 
-import { Currency, CurrencyAmount, Percent, Token, TradeType } from '@balancednetwork/sdk-core';
-import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balanced-js';
-import bnJs, { havahJs } from '@/bnJs';
+import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 
 import { Button } from '@/app/components/Button';
 import { useIconReact } from '@/packages/icon-react';
-import { TransactionStatus } from '../trade/bridge/_zustand/types';
+
 import { openToast } from '@/btp/src/connectors/transactionToast';
-import { NULL_CONTRACT_ADDRESS } from '@/constants/tokens';
-import { AllPublicXServicesCreator, xServiceActions } from '../trade/bridge/_zustand/useXServiceStore';
-import { injective, xChains } from '../trade/bridge/_config/xChains';
-import { tryParseAmount } from '@/store/swap/hooks';
+import { injective, xChains } from '@/constants/xChains';
+import { TransactionStatus } from '@/lib/xcall/_zustand/types';
+import { AllPublicXServicesCreator } from '@/lib/xcall/_zustand/useXServiceStore';
 import { useInjectiveWalletStore, walletStrategy } from '@/packages/injective';
+import { tryParseAmount } from '@/store/swap/hooks';
 
 import {
   ChainGrpcBankApi,
   IndexerGrpcAccountPortfolioApi,
   IndexerRestExplorerApi,
-  MsgExecuteContract,
   MsgExecuteContractCompat,
-  MsgSend,
   fromBase64,
-  getEthereumSignerAddress,
-  getInjectiveAddress,
-  getInjectiveSignerAddress,
   toBase64,
 } from '@injectivelabs/sdk-ts';
-import { BigNumberInBase } from '@injectivelabs/utils';
 
-import { ChainGrpcWasmApi } from '@injectivelabs/sdk-ts';
-import { Network, getNetworkEndpoints } from '@injectivelabs/networks';
-import { isCosmosWallet, MsgBroadcaster } from '@injectivelabs/wallet-ts';
-import { EthereumChainId } from '@injectivelabs/ts-types';
-import { getBytesFromString } from '../trade/bridge/utils';
-import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { NATIVE_ADDRESS } from '@/constants';
-import { XToken } from '../trade/bridge/types';
+import { getBytesFromString } from '@/lib/xcall/utils';
+import { XToken } from '@/types';
+import { Network, getNetworkEndpoints } from '@injectivelabs/networks';
+import { ChainGrpcWasmApi } from '@injectivelabs/sdk-ts';
+import { EthereumChainId } from '@injectivelabs/ts-types';
+import { MsgBroadcaster } from '@injectivelabs/wallet-ts';
 
 export const NETWORK = Network.Mainnet;
 export const ENDPOINTS = getNetworkEndpoints(NETWORK);

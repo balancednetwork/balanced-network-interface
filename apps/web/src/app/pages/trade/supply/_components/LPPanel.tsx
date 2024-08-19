@@ -1,29 +1,30 @@
 import React from 'react';
 
-import { CurrencyAmount, Currency, Percent, Fraction } from '@balancednetwork/sdk-core';
-import { Trans, t } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import { useIconReact } from '@/packages/icon-react';
 import Nouislider from '@/packages/nouislider-react';
-import { Flex, Box } from 'rebass/styled-components';
+import { Currency, CurrencyAmount, Fraction, Percent } from '@balancednetwork/sdk-core';
+import { Trans, t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { XChainId } from '@/app/pages/trade/bridge/types';
 import { Button } from '@/app/components/Button';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { Typography } from '@/app/theme';
 import { BIGINT_ZERO } from '@/constants/misc';
-import { HIGH_PRICE_ASSET_DP, isNativeCurrency } from '@/constants/tokens';
+import { isNativeCurrency } from '@/constants/tokens';
 import { PairState } from '@/hooks/useV2Pairs';
 import { useWalletModalToggle } from '@/store/application/hooks';
+import { useDerivedMintInfo, useInitialSupplyLoad, useMintActionHandlers, useMintState } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
-import { useMintState, useDerivedMintInfo, useMintActionHandlers, useInitialSupplyLoad } from '@/store/mint/hooks';
+import { XChainId } from '@/types';
 import { formatBigNumber, maxAmountSpend } from '@/utils';
 
+import { AutoColumn } from '@/app/components/Column';
+import { BrightPanel, SectionPanel } from '@/app/components/Panel';
 import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
-import { SectionPanel, BrightPanel } from './utils';
 
 const Slider = styled(Box)`
   margin-top: 40px;
@@ -377,16 +378,6 @@ export default function LPPanel() {
     </>
   );
 }
-
-const AutoColumn = styled(Box)<{
-  gap?: 'sm' | 'md' | 'lg' | string;
-  justify?: 'stretch' | 'center' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'space-between';
-}>`
-  display: grid;
-  grid-auto-rows: auto;
-  grid-row-gap: ${({ gap }) => (gap === 'sm' && '10px') || (gap === 'md' && '15px') || (gap === 'lg' && '25px') || gap};
-  justify-items: ${({ justify }) => justify && justify};
-`;
 
 const PoolPriceBar = styled(Flex)`
   background-color: #32627d;

@@ -8,10 +8,10 @@ import WalletConnectIcon from '@/assets/icons/wallets/walletconnect.svg?inline';
 
 import { ModalContentWrapper } from '../ModalContent';
 
+import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
 import { Connector, useConnect, useConnectors } from 'wagmi';
-import { WalletOption, UnbreakableText } from './shared';
 import { UnderlineText } from '../DropdownText';
-import { MODAL_ID, modalActions, useModalStore } from '@/app/pages/trade/bridge/_zustand/useModalStore';
+import { UnbreakableText, WalletOption } from './shared';
 
 const icons = {
   walletConnect: WalletConnectIcon,

@@ -240,7 +240,7 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
     // }
 
     const xChainId = token.xChainId;
-    const xService = xServiceActions.getWalletXService(xChainId);
+    const xService = xServiceActions.getXWalletClient(xChainId);
 
     if (!xService) {
       // toastError(t('Error'), t('No xService'));

@@ -1,14 +1,14 @@
-import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
-import { IXCallFee } from '../types';
-import { XChainId } from '@/types';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/constants/xChains';
+import { XChainId } from '@/types';
 import { formatEther } from 'viem';
 import { useXServiceStore } from '../_zustand/useXServiceStore';
+import { IXCallFee } from '../types';
 
 const useXCallFee = (from: XChainId, to: XChainId): { xCallFee: IXCallFee | undefined; formattedXCallFee: string } => {
-  const sourcePublicXService = useXServiceStore(state => state.getPublicXService(from));
+  const sourcePublicXService = useXServiceStore(state => state.getXPublicClient(from));
 
   const { data: xCallFee } = useQuery({
     queryKey: [`xcall-fees`, from, to],

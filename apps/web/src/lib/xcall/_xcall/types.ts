@@ -1,14 +1,14 @@
 import { XChainId } from '@/types';
 import {
-  XTransactionInput,
   Transaction,
   TransactionStatus,
   XCallEvent,
   XCallMessageSentEvent,
+  XTransactionInput,
 } from '../_zustand/types';
 import { XCallEventType } from '../types';
 
-export interface IPublicXService {
+export interface XPublicClient {
   // getBlock(blockHeight);
   getXCallFee(nid: XChainId, rollback: boolean, sources?: string[]): Promise<bigint>;
   getBlockHeight(): Promise<bigint>;
@@ -29,7 +29,7 @@ export interface IPublicXService {
   getDestinationEvents({ startBlockHeight, endBlockHeight }): Promise<XCallEvent[] | null>;
 }
 
-export abstract class AbstractPublicXService implements IPublicXService {
+export abstract class AbstractXPublicClient implements XPublicClient {
   abstract getXCallFee(nid: XChainId, rollback: boolean): Promise<bigint>;
   abstract getBlockHeight(): Promise<bigint>;
   abstract getTxReceipt(txHash): Promise<any>;
@@ -81,7 +81,7 @@ export abstract class AbstractPublicXService implements IPublicXService {
   }
 }
 
-export interface IWalletXService extends IPublicXService {
+export interface XWalletClient extends XPublicClient {
   // getAllowance(token: XToken, owner: string | null, spender: string): Promise<string>;
   approve(token, owner, spender, currencyAmountToApprove);
   executeTransaction(xTransactionInput: XTransactionInput): Promise<string | undefined>;

@@ -11,15 +11,16 @@ import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 import { useIconReact } from '@/packages/icon-react';
 import { useChangeShouldLedgerSign } from '@/store/application/hooks';
 import { XChain, XChainId } from '@/types';
-import { ArchwayXPublicClient } from '../_xcall/ArchwayXPublicClient';
-import { ArchwayXWalletClient } from '../_xcall/ArchwayXWalletClient';
-import { EvmXPublicClient } from '../_xcall/EvmXPublicClient';
-import { EvmXWalletClient } from '../_xcall/EvmXWalletClient';
-import { HavahXPublicClient } from '../_xcall/HavahXPublicClient';
-import { HavahXWalletClient } from '../_xcall/HavahXWalletClient';
-import { IconXPublicClient } from '../_xcall/IconXPublicClient';
-import { IconXWalletClient } from '../_xcall/IconXWalletClient';
-import { XPublicClient, XWalletClient } from '../_xcall/types';
+import { XPublicClient } from '@/xwagmi/core/XPublicClient';
+import { XWalletClient } from '@/xwagmi/core/XWalletClient';
+import { ArchwayXPublicClient } from '@/xwagmi/xchains/archway/ArchwayXPublicClient';
+import { ArchwayXWalletClient } from '@/xwagmi/xchains/archway/ArchwayXWalletClient';
+import { EvmXPublicClient } from '@/xwagmi/xchains/evm/EvmXPublicClient';
+import { EvmXWalletClient } from '@/xwagmi/xchains/evm/EvmXWalletClient';
+import { HavahXPublicClient } from '@/xwagmi/xchains/havah/HavahXPublicClient';
+import { HavahXWalletClient } from '@/xwagmi/xchains/havah/HavahXWalletClient';
+import { IconXPublicClient } from '@/xwagmi/xchains/icon/IconXPublicClient';
+import { IconXWalletClient } from '@/xwagmi/xchains/icon/IconXWalletClient';
 
 type XServiceStore = {
   xPublicClients: Partial<Record<XChainId, XPublicClient>>;

@@ -1,12 +1,6 @@
+import { Transaction, TransactionStatus, XCallEvent, XCallMessageSentEvent } from '@/lib/xcall/_zustand/types';
+import { XCallEventType } from '@/lib/xcall/types';
 import { XChainId } from '@/types';
-import {
-  Transaction,
-  TransactionStatus,
-  XCallEvent,
-  XCallMessageSentEvent,
-  XTransactionInput,
-} from '../_zustand/types';
-import { XCallEventType } from '../types';
 
 export interface XPublicClient {
   // getBlock(blockHeight);
@@ -80,23 +74,3 @@ export abstract class AbstractXPublicClient implements XPublicClient {
     return null;
   }
 }
-
-export interface XWalletClient extends XPublicClient {
-  // getAllowance(token: XToken, owner: string | null, spender: string): Promise<string>;
-  approve(token, owner, spender, currencyAmountToApprove);
-  executeTransaction(xTransactionInput: XTransactionInput): Promise<string | undefined>;
-}
-
-export type ICONTxEvent = {
-  indexed: string[];
-  data: string[];
-  scoreAddress: string;
-};
-
-export type ICONTxResultType = {
-  status: number; // 1 = success, 0 = failure
-  blockHash: string;
-  blockHeight: number;
-  txHash: string;
-  eventLogs: ICONTxEvent[];
-};

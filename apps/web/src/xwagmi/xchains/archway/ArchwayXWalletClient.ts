@@ -7,12 +7,12 @@ import { ARCHWAY_FEE_TOKEN_SYMBOL } from '@/constants/tokens1';
 import { archway } from '@/constants/xChains';
 import { getFeeParam, isDenomAsset } from '@/packages/archway/utils';
 import { XChainId, XToken } from '@/types';
+import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { XSigningArchwayClient } from '@/xwagmi/xchains/archway/XSigningArchwayClient';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
-import { XTransactionInput, XTransactionType } from '../_zustand/types';
-import { getBytesFromString, getRlpEncodedSwapData } from '../utils';
+import { XTransactionInput, XTransactionType } from '../../../lib/xcall/_zustand/types';
+import { getBytesFromString, getRlpEncodedSwapData } from '../../../lib/xcall/utils';
 import { ArchwayXPublicClient } from './ArchwayXPublicClient';
-import { XWalletClient } from './types';
 
 export class ArchwayXWalletClient extends ArchwayXPublicClient implements XWalletClient {
   walletClient: XSigningArchwayClient;

@@ -8,11 +8,11 @@ import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { NATIVE_ADDRESS } from '@/constants/index';
 import { XChainId } from '@/types';
 import { toDec } from '@/utils';
+import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { toHex } from 'viem';
-import { XTransactionInput, XTransactionType } from '../_zustand/types';
-import { getRlpEncodedSwapData } from '../utils';
+import { XTransactionInput, XTransactionType } from '../../../lib/xcall/_zustand/types';
+import { getRlpEncodedSwapData } from '../../../lib/xcall/utils';
 import { HavahXPublicClient } from './HavahXPublicClient';
-import { XWalletClient } from './types';
 
 export class HavahXWalletClient extends HavahXPublicClient implements XWalletClient {
   walletClient: IconService; // reserved for future use

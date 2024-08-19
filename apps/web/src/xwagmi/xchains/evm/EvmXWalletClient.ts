@@ -8,13 +8,13 @@ import { NATIVE_ADDRESS } from '@/constants/index';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/constants/xChains';
 import { XChainId } from '@/types';
 import { uintToBytes } from '@/utils';
-import { XTransactionInput, XTransactionType } from '../_zustand/types';
-import { getRlpEncodedSwapData, toICONDecimals } from '../utils';
+import { XWalletClient } from '@/xwagmi/core/XWalletClient';
+import { XTransactionInput, XTransactionType } from '../../../lib/xcall/_zustand/types';
+import { getRlpEncodedSwapData, toICONDecimals } from '../../../lib/xcall/utils';
 import { EvmXPublicClient } from './EvmXPublicClient';
 import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
 import { bnUSDContractAbi } from './abis/bnUSDContractAbi';
 import { xCallContractAbi } from './abis/xCallContractAbi';
-import { XWalletClient } from './types';
 
 export class EvmXWalletClient extends EvmXPublicClient implements XWalletClient {
   walletClient: WalletClient;

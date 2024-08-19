@@ -3,15 +3,15 @@ import { ArchwayClient } from '@archwayhq/arch3.js';
 import { archway } from '@/constants/xChains';
 
 import { XChainId } from '@/types';
+import { AbstractXPublicClient } from '@/xwagmi/core/XPublicClient';
 import {
   TransactionStatus,
   XCallEvent,
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
-} from '../_zustand/types';
-import { XCallEventType } from '../types';
-import { AbstractXPublicClient } from './types';
+} from '../../../lib/xcall/_zustand/types';
+import { XCallEventType } from '../../../lib/xcall/types';
 
 const XCallEventSignatureMap = {
   [XCallEventType.CallMessageSent]: 'wasm-CallMessageSent',

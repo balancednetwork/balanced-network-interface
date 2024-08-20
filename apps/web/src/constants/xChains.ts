@@ -1,4 +1,4 @@
-import { XChainId, XChain, XWalletType } from '@/types';
+import { XChain, XChainId, XWalletType } from '@/types';
 
 export const archway: XChain = {
   id: 'archway-1',

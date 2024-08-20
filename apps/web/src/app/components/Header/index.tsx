@@ -21,7 +21,7 @@ import { useAllTransactions } from '@/store/transactions/hooks';
 import { shortenAddress } from '@/utils';
 
 import { xChainMap } from '@/constants/xChains';
-import { useAvailableWallets } from '@/hooks/useWallets';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { Placement } from '@popperjs/core';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { MouseoverTooltip } from '../Tooltip';
@@ -133,7 +133,7 @@ function useClaimableICX(): UseQueryResult<BigNumber> {
 export default function Header(props: { title?: string; className?: string }) {
   const { className, title } = props;
   const upSmall = useMedia('(min-width: 600px)');
-  const wallets = useAvailableWallets();
+  const wallets = useSignedInWallets();
   const { data: claimableICX } = useClaimableICX();
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);

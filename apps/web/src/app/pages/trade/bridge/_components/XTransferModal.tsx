@@ -4,6 +4,7 @@ import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
+import { useSwitchChain } from 'wagmi';
 
 import { Button, TextButton } from '@/app/components/Button';
 import { StyledButton } from '@/app/components/Button/StyledButton';
@@ -22,15 +23,10 @@ import { XTransactionInput, XTransactionType } from '@/lib/xcall/_zustand/types'
 import { useXMessageStore } from '@/lib/xcall/_zustand/useXMessageStore';
 import { useCreateWalletXService } from '@/lib/xcall/_zustand/useXServiceStore';
 import { useXTransactionStore, xTransactionActions } from '@/lib/xcall/_zustand/useXTransactionStore';
-import { walletStrategy } from '@/packages/injective';
 import { useShouldLedgerSign } from '@/store/application/hooks';
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from '@/store/bridge/hooks';
-import { XWalletType } from '@/types';
 import { formatBigNumber } from '@/utils';
 import { getNetworkDisplayName } from '@/utils/xTokens';
-import { Wallet } from '@injectivelabs/wallet-ts';
-import { mainnet } from 'viem/chains';
-import { useChainId, useSwitchChain } from 'wagmi';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
 
 const StyledXCallButton = styled(StyledButton)`
@@ -91,23 +87,13 @@ function XTransferModal() {
 
   const gasChecker = useXCallGasChecker(direction.from);
 
-  const ethereumChainId = useChainId();
-
   // switch chain between evm chains
   const wallets = useWallets();
   const walletType = xChainMap[direction.from].xWalletType;
-  const isWrongChain =
-    wallets[walletType].xChainId !== direction.from ||
-    (walletType === XWalletType.INJECTIVE &&
-      walletStrategy.getWallet() === Wallet.Metamask &&
-      ethereumChainId !== mainnet.id);
+  const isWrongChain = wallets[walletType].xChainId !== direction.from;
   const { switchChain } = useSwitchChain();
   const handleSwitchChain = () => {
-    if (walletType === XWalletType.INJECTIVE) {
-      switchChain({ chainId: mainnet.id });
-    } else {
-      switchChain({ chainId: xChainMap[direction.from].id as number });
-    }
+    switchChain({ chainId: xChainMap[direction.from].id as number });
   };
 
   return (

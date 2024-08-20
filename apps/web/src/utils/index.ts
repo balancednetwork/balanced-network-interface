@@ -32,10 +32,6 @@ const isArchEoaAddress = (address: string) => {
   return isBech32(address) && address.startsWith('archway');
 };
 
-const isInjectiveAddress = (address: string) => {
-  return isBech32(address) && address.startsWith('inj');
-};
-
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
 export function shortenAddress(address: string, chars = 7): string {
   // !TODO: fix it later
@@ -342,8 +338,6 @@ export function validateAddress(address: string, chainId: XChainId): boolean {
       return ethers.utils.isAddress(address);
     case 'ARCHWAY':
       return isArchEoaAddress(address);
-    case 'INJECTIVE':
-      return isInjectiveAddress(address);
   }
 }
 

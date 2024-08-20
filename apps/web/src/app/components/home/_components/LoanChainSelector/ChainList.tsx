@@ -7,11 +7,11 @@ import { UnderlineText } from '@/app/components/DropdownText';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { HeaderText } from '@/app/components/Wallet/styledComponents';
 import { Typography } from '@/app/theme';
-import { xChainMap, xChains, xWalletTypeModalIdMap } from '@/constants/xChains';
-import { modalActions } from '@/hooks/useModalStore';
+import { xChainMap, xChains } from '@/constants/xChains';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
+import { useWalletModal } from '@/store/application/hooks';
 import { useDerivedCollateralInfo } from '@/store/collateral/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { XChain, XChainId, XWalletType } from '@/types';
@@ -39,6 +39,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const isSignedIn = signedInWallets.some(wallet => wallet.xChainId === chain.xChainId);
   const { connectToWallet: connectKeplr } = useArchwayContext();
   const { connectToWallet: connectToHavah } = useHavahContext();
+  const [, setWalletModal] = useWalletModal();
   const crossChainBalances = useCrossChainWalletBalances();
   const { sourceChain: collateralChain } = useDerivedCollateralInfo();
 
@@ -51,7 +52,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
     } else if (xChain.xWalletType === XWalletType.HAVAH) {
       connectToHavah();
     } else {
-      modalActions.openModal(xWalletTypeModalIdMap[xChain.xWalletType]);
+      setWalletModal(xChain.xWalletType);
     }
   };
 

@@ -2,11 +2,11 @@ import React from 'react';
 
 import { Typography } from '@/app/theme';
 import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
+import { useWalletModal } from '@/store/application/hooks';
 import { XChainId, XWalletType } from '@/types';
 import { shortenAddress } from '@/utils';
 
-import { xChainMap, xWalletTypeModalIdMap } from '@/constants/xChains';
-import { modalActions } from '@/hooks/useModalStore';
+import { xChainMap } from '@/constants/xChains';
 import useWallets from '@/hooks/useWallets';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
 import { useSwapState } from '@/store/swap/hooks';
@@ -20,6 +20,7 @@ const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; e
   const [editableAddressModalOpen, setEditableAddressModalOpen] = React.useState(false);
   const { connectToWallet: connectKeplr } = useArchwayContext();
   const { connectToWallet: connectToHavah } = useHavahContext();
+  const [, setWalletModal] = useWalletModal();
   const { recipient } = useSwapState();
 
   const wallets = useWallets();
@@ -32,7 +33,7 @@ const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; e
     } else if (chain.xWalletType === XWalletType.HAVAH) {
       connectToHavah();
     } else {
-      modalActions.openModal(xWalletTypeModalIdMap[chain.xWalletType]);
+      setWalletModal(chain.xWalletType);
     }
     closeModal();
   };

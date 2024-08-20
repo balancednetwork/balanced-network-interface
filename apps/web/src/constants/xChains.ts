@@ -1,5 +1,4 @@
-import { MODAL_ID } from '@/hooks/useModalStore';
-import { XChain, XChainId, XWalletType } from '@/types';
+import { XChainId, XChain, XWalletType } from '@/types';
 
 export const archway: XChain = {
   id: 'archway-1',
@@ -260,31 +259,6 @@ export const base: XChain = {
   testnet: false,
 };
 
-export const injective: XChain = {
-  id: 'injective-1',
-  name: 'Injective',
-  xChainId: 'injective-1',
-  xChainType: 'INJECTIVE',
-  xWalletType: XWalletType.INJECTIVE,
-  tracker: 'https://explorer.injective.network/',
-  nativeCurrency: {
-    decimals: 18,
-    name: 'INJ',
-    symbol: 'INJ',
-  },
-  rpc: {
-    http: 'https://sentry.tm.injective.network',
-  },
-  contracts: {
-    xCall: 'inj177fx40l0g3jqmtmmuyl2zhrjvhr3knvthlr0ul',
-    assetManager: 'inj1hayj9xnlh44sn29sgggn3jwl3ktl6djwcven25',
-    bnUSD: 'inj1qspaxnztkkzahvp6scq6xfpgafejmj2td83r9j',
-  },
-  autoExecution: true,
-  gasThreshold: 0.01,
-  testnet: false,
-};
-
 export const xChainMap: { [key in XChainId]: XChain } = {
   '0x1.icon': icon,
   '0x2.icon': lisbon,
@@ -296,7 +270,6 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   '0x38.bsc': bsc,
   '0xa4b1.arbitrum': arbitrum,
   '0x2105.base': base,
-  'injective-1': injective,
 };
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);
@@ -309,7 +282,6 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   '0x38.bsc': ['0x24415977c566f9300Ea6F0aC75AEA0c09C500e46'],
   '0xa86a.avax': ['0xC1a39C4e7AA98DEC394eF54559960873Bd619cA3', '0x7F3665eF19258cD5cE15eA39d014F47Fc942AE0C'],
   '0x100.icon': ['cxcf2c8d58fd7bbd25866de0660b155f057ea489eb'],
-  'injective-1': ['inj15jcde723hrm5f4fx3r2stnq59jykt2askud8ht'],
 };
 
 /** to other chain from icon sources */
@@ -319,17 +291,4 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   '0x38.bsc': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
   '0xa86a.avax': ['cx59d899fce52cadd1feb5128ff5e6672f03943eec', 'cx917f88460d4ebec1fd656d4dbe51131a37d16837'],
   '0x100.icon': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
-  'injective-1': ['cx6f86ed848f9f0d03ba1220811d95d864c72da88c'],
-};
-
-export const xWalletTypeModalIdMap: { [key in XWalletType]: MODAL_ID } = {
-  [XWalletType.ICON]: MODAL_ID.ICON_WALLET_OPTIONS_MODAL,
-  [XWalletType.COSMOS]: MODAL_ID.COSMOS_WALLET_OPTIONS_MODAL,
-  [XWalletType.EVM]: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,
-  [XWalletType.EVM_ARBITRUM]: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,
-  [XWalletType.EVM_AVALANCHE]: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,
-  [XWalletType.EVM_BSC]: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,
-  [XWalletType.EVM_BASE]: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,
-  [XWalletType.HAVAH]: MODAL_ID.HAVAH_WALLET_OPTIONS_MODAL,
-  [XWalletType.INJECTIVE]: MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL,
 };

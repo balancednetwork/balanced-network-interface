@@ -131,7 +131,7 @@ export function useArchwayBalances(
 }
 
 import { viemClients } from '@/config/wagmi';
-import { SUPPORTED_XCALL_CHAINS, injective, xChainMap } from '@/constants/xChains';
+import { SUPPORTED_XCALL_CHAINS, xChainMap } from '@/constants/xChains';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
 import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
@@ -249,14 +249,6 @@ export function useWalletFetchBalances() {
   React.useEffect(() => {
     baseBalances && dispatch(changeBalances({ xChainId: '0x2105.base', balances: baseBalances }));
   }, [baseBalances, dispatch]);
-
-  // fetch balances on injective
-  const { account: accountInjective } = useInjectiveWallet();
-  const injectiveTokens = useXTokens('injective-1');
-  const { data: injectiveBalances } = useInjectiveBalances(accountInjective, injectiveTokens);
-  React.useEffect(() => {
-    injectiveBalances && dispatch(changeBalances({ xChainId: 'injective-1', balances: injectiveBalances }));
-  }, [injectiveBalances, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {
@@ -589,76 +581,6 @@ export function useHavahBalances(
         acc[balance.currency.wrapped.address] = balance;
         return acc;
       }, {});
-
-      return balances;
-    },
-    placeholderData: keepPreviousData,
-    refetchInterval: 5_000,
-  });
-}
-
-import { useInjectiveWallet } from '@/packages/injective';
-import { Network, getNetworkEndpoints } from '@injectivelabs/networks';
-import { ChainGrpcWasmApi, IndexerGrpcAccountPortfolioApi, fromBase64, toBase64 } from '@injectivelabs/sdk-ts';
-
-export const NETWORK = Network.Mainnet;
-export const ENDPOINTS = getNetworkEndpoints(NETWORK);
-const indexerGrpcAccountPortfolioApi = new IndexerGrpcAccountPortfolioApi(ENDPOINTS.indexer);
-const chainGrpcWasmApi = new ChainGrpcWasmApi(ENDPOINTS.grpc);
-
-async function fetchBnUSDBalance(address) {
-  try {
-    const response: any = await chainGrpcWasmApi.fetchSmartContractState(
-      injective.contracts.bnUSD!,
-      toBase64({ balance: { address } }),
-    );
-
-    const result = fromBase64(response.data);
-    return result;
-  } catch (e) {
-    console.log(e);
-  }
-  return { balance: '0' };
-}
-
-export function useInjectiveBalances(
-  address: string | undefined,
-  tokens: Token[],
-): UseQueryResult<{
-  [key: string]: CurrencyAmount<Currency>;
-}> {
-  return useQuery({
-    queryKey: [`injectiveBalances`, address, tokens],
-    queryFn: async () => {
-      if (!address) return {};
-
-      const portfolio = await indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(address);
-      const bnUSDBalance = await fetchBnUSDBalance(address);
-
-      const tokenMap = {};
-      tokens.forEach(xToken => {
-        tokenMap[xToken.symbol] = xToken;
-      });
-
-      const balances = portfolio.bankBalancesList.reduce((acc, balance) => {
-        if (!balance) return acc;
-
-        if (!(BigInt(balance.amount) > BIGINT_ZERO)) {
-          return acc;
-        }
-
-        if (balance.denom === 'inj') {
-          acc[tokenMap['INJ'].address] = CurrencyAmount.fromRawAmount(tokenMap['INJ'], BigInt(balance.amount));
-        } else {
-        }
-
-        return acc;
-      }, {});
-
-      balances[tokenMap['bnUSD'].address] = CurrencyAmount.fromRawAmount(
-        tokenMap['bnUSD'],
-        BigInt(bnUSDBalance.balance),
-      );
 
       return balances;
     },

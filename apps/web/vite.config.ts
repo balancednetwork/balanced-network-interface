@@ -46,6 +46,7 @@ export default defineConfig(({ command, mode }: ConfigEnv) => {
     },
     define: {
       'process.env': env,
+      'process.version': JSON.stringify(''),
     },
   };
 });

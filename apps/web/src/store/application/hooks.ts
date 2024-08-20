@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
 import { CHAIN_INFO } from '@balancednetwork/balanced-js';
@@ -7,23 +7,14 @@ import axios from 'axios';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { NETWORK_ID } from '@/constants/config';
-
-import { XWalletType } from '@/types';
 import { AppDispatch, AppState } from '../index';
 import {
   ApplicationModal,
   changeCurrentLedgerAddressPage,
   changeShouldLedgedSignMessage,
   setOpenModal,
-  setOpenWalletModal,
   updateSlippageTolerance,
 } from './reducer';
-
-type BlockDetails = {
-  timestamp: number;
-  number: number;
-};
 
 export function useBlockNumber(): number | undefined {
   const { networkId: chainId } = useIconReact();
@@ -47,24 +38,8 @@ export function useWalletModalToggle(): () => void {
 }
 
 //////////////////chain wallet ///////////////////////////////////
-
-export function useWalletModal(): [XWalletType | null, (w: XWalletType | null) => void, () => void] {
-  const dispatch = useDispatch<AppDispatch>();
-
-  const setOpen = useCallback(
-    (walletType: XWalletType | null) => {
-      dispatch(setOpenWalletModal(walletType));
-    },
-    [dispatch],
-  );
-
-  const open = useSelector((state: AppState) => state.application.openWalletModal);
-
-  const onDismiss = useCallback(() => {
-    setOpen(null);
-  }, [setOpen]);
-
-  return useMemo(() => [open, setOpen, onDismiss], [open, setOpen, onDismiss]);
+export function useTransferAssetsModalToggle(): () => void {
+  return useToggleModal(ApplicationModal.TRANSFER_ASSETS);
 }
 
 export function useShouldLedgerSign(): AppState['application']['shouldLedgerSign'] {

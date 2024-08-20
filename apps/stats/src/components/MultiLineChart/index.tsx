@@ -1,10 +1,10 @@
 import React, { Dispatch, SetStateAction, ReactNode } from 'react';
 
+import { ContractMethodsDataType } from '@/queries/backendv2';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import { ContractMethodsDataType } from '@/queries/backendv2';
 import { Box, Flex } from 'rebass';
-import { ResponsiveContainer, XAxis, YAxis, Tooltip, AreaChart, Area } from 'recharts';
+import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import styled, { css, useTheme } from 'styled-components';
 
 import Card from '@/components/Card';
@@ -78,7 +78,6 @@ const Chart = ({
   ...rest
 }: LineChartProps | any) => {
   const theme = useTheme();
-  // const parsedValue = value;
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload) {

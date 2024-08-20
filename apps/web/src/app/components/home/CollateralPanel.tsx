@@ -25,10 +25,15 @@ import IconKeepSICX from '@/assets/icons/wallet-tick-color.svg';
 import bnJs from '@/bnJs';
 import { NETWORK_ID } from '@/constants/config';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
-import { xChainMap, xWalletTypeModalIdMap } from '@/constants/xChains';
+import { xChainMap } from '@/constants/xChains';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import useWidth from '@/hooks/useWidth';
-import { useChangeShouldLedgerSign, useICXUnstakingTime, useShouldLedgerSign } from '@/store/application/hooks';
+import {
+  useChangeShouldLedgerSign,
+  useICXUnstakingTime,
+  useShouldLedgerSign,
+  useWalletModal,
+} from '@/store/application/hooks';
 import {
   useCollateralActionHandlers,
   useCollateralState,
@@ -368,10 +373,11 @@ const CollateralPanel = () => {
   const [ref, width] = useWidth();
   const [underPanelRef, underPanelWidth] = useWidth();
 
+  const [, setWalletModal] = useWalletModal();
   const handleConnect = () => {
     const chain = xChainMap[sourceChain];
     if (chain.xWalletType !== XWalletType.COSMOS) {
-      modalActions.openModal(xWalletTypeModalIdMap[chain.xWalletType]);
+      setWalletModal(chain.xWalletType);
     }
   };
 

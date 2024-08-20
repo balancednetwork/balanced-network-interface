@@ -2,7 +2,6 @@ import useEVMReact from '@/lib/xcall/_hooks/useEVMReact';
 import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
 import { useIconReact } from '@/packages/icon-react';
-import { useInjectiveWallet } from '@/packages/injective';
 import { XChainId, XWalletType } from '@/types';
 import { useMemo } from 'react';
 
@@ -13,7 +12,6 @@ const useWallets = (): {
   const icon = useIconReact();
   const havah = useHavahContext();
   const evm = useEVMReact();
-  const injective = useInjectiveWallet();
 
   return useMemo(
     () => ({
@@ -57,13 +55,8 @@ const useWallets = (): {
         xChainId: '0x100.icon',
         disconnect: havah.disconnect,
       },
-      [XWalletType.INJECTIVE]: {
-        account: injective.account,
-        xChainId: 'injective-1',
-        disconnect: injective.disconnect,
-      },
     }),
-    [arch, icon, evm, havah, injective],
+    [arch, icon, evm, havah],
   );
 };
 

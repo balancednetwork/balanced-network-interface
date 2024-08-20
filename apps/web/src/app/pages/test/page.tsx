@@ -1,80 +1,119 @@
 import React from 'react';
-import { Flex } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 
-import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import bnJs from '@/bnJs';
+import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balanced-js';
+import { Currency, CurrencyAmount, Percent, Token, TradeType } from '@balancednetwork/sdk-core';
+import { Pair, Trade } from '@balancednetwork/v1-sdk';
+import BigNumber from 'bignumber.js';
 
 import { Button } from '@/app/components/Button';
-import { useIconReact } from '@/packages/icon-react';
-
 import { openToast } from '@/btp/src/connectors/transactionToast';
-import { injective, xChains } from '@/constants/xChains';
+import { DEFAULT_SLIPPAGE } from '@/constants/index';
+import { BETTER_TRADE_LESS_HOPS_THRESHOLD } from '@/constants/misc';
+import { NULL_CONTRACT_ADDRESS } from '@/constants/tokens';
+import { xChains } from '@/constants/xChains';
+import { getAllCurrencyCombinations } from '@/hooks/useAllCurrencyCombinations';
+import { PairState, fetchStabilityFundPairs, fetchV2Pairs } from '@/hooks/useV2Pairs';
 import { TransactionStatus } from '@/lib/xcall/_zustand/types';
-import { AllPublicXServicesCreator } from '@/lib/xcall/_zustand/useXServiceStore';
-import { useInjectiveWalletStore, walletStrategy } from '@/packages/injective';
+import { AllPublicXServicesCreator, xServiceActions } from '@/lib/xcall/_zustand/useXServiceStore';
+import { useIconReact } from '@/packages/icon-react';
+import { useFetchBBalnInfo } from '@/store/bbaln/hooks';
+import { useFetchRewardsInfo } from '@/store/reward/hooks';
 import { tryParseAmount } from '@/store/swap/hooks';
+import { useWalletFetchBalances } from '@/store/wallet/hooks';
+import { formatBigNumber, toDec } from '@/utils';
+import { isTradeBetter } from '@/utils/isTradeBetter';
+import { getRlpEncodedSwapData } from '../../../lib/xcall/utils';
 
-import {
-  ChainGrpcBankApi,
-  IndexerGrpcAccountPortfolioApi,
-  IndexerRestExplorerApi,
-  MsgExecuteContractCompat,
-  fromBase64,
-  toBase64,
-} from '@injectivelabs/sdk-ts';
+const ICX = new Token(ChainId.MAINNET, NULL_CONTRACT_ADDRESS, 18, 'ICX', 'ICX');
+const bnUSD = new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD', 'Balanced Dollar');
+const BALN = new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].baln, 18, 'BALN', 'Balance Token');
+const USDC = new Token(ChainId.MAINNET, 'cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f', 6, 'USDC', 'Archway USDC');
 
-import { NATIVE_ADDRESS } from '@/constants';
-import { getBytesFromString } from '@/lib/xcall/utils';
-import { XToken } from '@/types';
-import { Network, getNetworkEndpoints } from '@injectivelabs/networks';
-import { ChainGrpcWasmApi } from '@injectivelabs/sdk-ts';
-import { EthereumChainId } from '@injectivelabs/ts-types';
-import { MsgBroadcaster } from '@injectivelabs/wallet-ts';
+const calculateTrade = async (
+  currencyIn: Currency,
+  currencyOut: Currency,
+  currencyInValue: string,
+  maxHops = 3,
+): Promise<Trade<Currency, Currency, TradeType.EXACT_INPUT> | undefined> => {
+  const currencyAmountIn: CurrencyAmount<Currency> | undefined = tryParseAmount(currencyInValue, currencyIn);
 
-export const NETWORK = Network.Mainnet;
-export const ENDPOINTS = getNetworkEndpoints(NETWORK);
+  const allCurrencyCombinations = getAllCurrencyCombinations(currencyIn, currencyOut);
+  const allPairs = await fetchV2Pairs(allCurrencyCombinations);
+  const stabilityFundPairs = await fetchStabilityFundPairs();
 
-export const chainGrpcWasmApi = new ChainGrpcWasmApi(ENDPOINTS.grpc);
-const indexerGrpcAccountPortfolioApi = new IndexerGrpcAccountPortfolioApi(ENDPOINTS.indexer);
-const chainGrpcBankApi = new ChainGrpcBankApi(ENDPOINTS.grpc);
-const indexerRestExplorerApi = new IndexerRestExplorerApi(`${ENDPOINTS.explorer}/api/explorer/v1`);
+  const pairs = allPairs
+    .filter((result): result is [PairState.EXISTS, Pair] => Boolean(result[0] === PairState.EXISTS && result[1]))
+    .map(([, pair]) => pair)
+    .concat(stabilityFundPairs);
 
-const INJ = new Token(ChainId.MAINNET, 'cx4297f4b63262507623b6ad575d0d8dd2db980e4e', 18, 'HVH', 'Havah Token');
-const xINJ = new XToken('injective-1', 'injective-1', NATIVE_ADDRESS, 18, 'INJ', 'INJ');
+  console.log('pairs', pairs);
 
-const msgBroadcastClient = new MsgBroadcaster({
-  walletStrategy,
-  network: NETWORK,
-  endpoints: ENDPOINTS,
-  ethereumChainId: EthereumChainId.Sepolia,
-});
+  if (currencyAmountIn && currencyOut && pairs.length > 0) {
+    if (maxHops === 1) {
+      return (
+        Trade.bestTradeExactIn(pairs, currencyAmountIn, currencyOut, { maxHops: 1, maxNumResults: 1 })[1]?.[0] ??
+        undefined
+      );
+    }
+    // search through trades with varying hops, find best trade out of them
+    let bestTradeSoFar: Trade<Currency, Currency, TradeType.EXACT_INPUT> | undefined = undefined;
+    const trades = Trade.bestTradeExactIn(pairs, currencyAmountIn, currencyOut, {
+      maxHops: maxHops,
+      maxNumResults: 1,
+    });
+    for (let i = 1; i <= maxHops; i++) {
+      const currentTrade: Trade<Currency, Currency, TradeType.EXACT_INPUT> | undefined = trades[i]?.[0] ?? undefined;
+      // if current trade is best yet, save it
+      if (isTradeBetter(bestTradeSoFar, currentTrade, BETTER_TRADE_LESS_HOPS_THRESHOLD)) {
+        bestTradeSoFar = currentTrade;
+      }
+    }
+    if (bestTradeSoFar) {
+      const trade = bestTradeSoFar;
+      const slippageTolerance = new Percent(DEFAULT_SLIPPAGE, 10_000);
+      const minReceived = trade.minimumAmountOut(slippageTolerance);
+      console.log('slippageTolerance', slippageTolerance.toSignificant(4));
+      console.log('minReceived', minReceived.toSignificant(4));
+      console.log('trade route path', trade.route.path);
+      console.log('rlp encoded route path', getRlpEncodedSwapData(trade).toString('hex'));
+      console.log(
+        'trade route pairs',
+        trade.route.pairs.map((pair, index) =>
+          trade.route.path[index].equals(pair.token1)
+            ? pair.token1.symbol + (pair.isStabilityFund ? ' **> ' : '-->') + pair.token0.symbol
+            : pair.token0.symbol + (pair.isStabilityFund ? ' **> ' : '-->') + pair.token1.symbol,
+        ),
+      );
+      console.log('trade priceImpact', trade.priceImpact.toSignificant(4));
 
-async function fetchBnUSDBalance(address) {
-  try {
-    const response: any = await chainGrpcWasmApi.fetchSmartContractState(
-      injective.contracts.bnUSD!,
-      toBase64({ balance: { address } }),
-    );
-
-    const result = fromBase64(response.data);
-    console.log('result', result);
-  } catch (e) {
-    alert((e as any).message);
+      console.log('trade mid price', trade.route.midPrice.toDebugString());
+      console.log('trade execution price', trade.executionPrice.toDebugString());
+      console.log('trade input amount', trade.inputAmount.toExact());
+      console.log('trade output amount', trade.outputAmount.toExact());
+      console.log('trade fee', trade.fee.toExact());
+    }
+    return bestTradeSoFar;
   }
-}
+
+  return undefined;
+};
 
 export function TestPage() {
   const { account } = useIconReact();
-  const { account: accountInjective } = useInjectiveWalletStore();
+  useFetchBBalnInfo(account);
+  useWalletFetchBalances();
+  useFetchRewardsInfo();
 
   const [isProcessing, setIsProcessing] = React.useState(false);
 
-  const bridge = async (currency: Currency, currencyInValue: string) => {
+  const swap = async (currencyIn: Currency, currencyOut: Currency, currencyInValue: string) => {
     if (isProcessing) {
       return;
     }
 
-    if (!accountInjective) {
+    if (!account) {
       openToast({
         message: `Please connect wallet!`,
         transactionStatus: TransactionStatus.failure,
@@ -84,114 +123,191 @@ export function TestPage() {
 
     setIsProcessing(true);
 
-    // openToast({
-    //   id: `swap-${currencyIn.symbol}-${currencyOut.symbol}`,
-    //   message: `Swapping ${currencyIn.symbol} for ${currencyOut.symbol}...`,
-    //   transactionStatus: TransactionStatus.pending,
-    // });
+    openToast({
+      id: `swap-${currencyIn.symbol}-${currencyOut.symbol}`,
+      message: `Swapping ${currencyIn.symbol} for ${currencyOut.symbol}...`,
+      transactionStatus: TransactionStatus.pending,
+    });
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+    const executionTrade = await calculateTrade(currencyIn, currencyOut, currencyInValue);
+
+    if (!executionTrade) {
+      openToast({
+        id: `swap-${currencyIn.symbol}-${currencyOut.symbol}`,
+        message: `No trade found.`,
+        transactionStatus: TransactionStatus.failure,
+      });
+      setIsProcessing(false);
+      return;
+    }
+
+    const slippageTolerance = new Percent(DEFAULT_SLIPPAGE, 10_000);
+    const minReceived = executionTrade.minimumAmountOut(slippageTolerance);
+
+    const recipient = account;
     try {
-      // const xcallfee = await havahJs.XCall.getFee('0x1.icon', true);
+      if (executionTrade.inputAmount.currency.symbol === 'ICX') {
+        const rlpEncodedPath = getRlpEncodedSwapData(executionTrade).toString('hex');
 
-      // console.log('xcallfee', xcallfee);
+        const res = await bnJs
+          .inject({ account })
+          .Router.swapICXV2(toDec(executionTrade.inputAmount), rlpEncodedPath, toDec(minReceived), recipient);
 
-      const currencyAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(currencyInValue, currency);
+        console.log('res', res);
+        console.log('hash', res.result);
+      } else {
+        const token = executionTrade.inputAmount.currency as Token;
+        const outputToken = executionTrade.outputAmount.currency as Token;
 
-      if (!currencyAmount) {
-        throw new Error('Invalid amount');
+        const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', recipient, minReceived).toString('hex');
+        console.log('rlpEncodedSwapData', rlpEncodedData);
+
+        const res = await bnJs
+          .inject({ account })
+          .getContract(token.address)
+          .swapUsingRouteV2(toDec(executionTrade.inputAmount), rlpEncodedData);
+
+        console.log('res', res);
+        console.log('hash', res.result);
       }
 
-      const destination = `0x1.icon/${account}`;
-      const xCallFee = {
-        rollback: BigInt(100_000_000),
-      };
-
-      // const msg = MsgSend.fromJSON({
-      //   amount: {
-      //     denom: 'inj',
-      //     amount: new BigNumberInBase(0.01).toWei().toFixed(),
-      //   },
-      //   srcInjectiveAddress: accountInjective,
-      //   dstInjectiveAddress: 'inj1d30erltgm4an5xhdkrcfj3n9jfe02gaymh4056',
-      // });
-      const data = getBytesFromString(
-        JSON.stringify({
-          method: '_swap',
-          params: {
-            path: [],
-            receiver: destination,
-          },
-        }),
-      );
-      const msg = MsgExecuteContractCompat.fromJSON({
-        contractAddress: injective.contracts.assetManager,
-        sender: accountInjective,
-        msg: {
-          // deposit: {
-          //   token_address: xINJ.address,
-          //   amount: currencyAmount.quotient.toString(),
-          //   to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
-          //   data,
-          // },
-
-          deposit_denom: {
-            denom: 'inj',
-            to: '0x1.icon/hxe25ae17a21883803185291baddac0120493ff706',
-            data: [],
-          },
-        },
-        funds: [
-          {
-            denom: 'inj',
-            amount: '4526360000000000',
-          },
-        ],
+      const _inputAmount = formatBigNumber(new BigNumber(executionTrade?.inputAmount.toFixed() || 0), 'currency');
+      const _outputAmount = formatBigNumber(new BigNumber(executionTrade?.outputAmount.toFixed() || 0), 'currency');
+      openToast({
+        id: `swap-${currencyIn.symbol}-${currencyOut.symbol}`,
+        message: `Swapped ${_inputAmount} ${currencyIn.symbol} for ${_outputAmount} ${currencyOut.symbol}.`,
+        transactionStatus: TransactionStatus.success,
       });
-
-      // console.log('accountInjective', accountInjective);
-
-      // console.log('aaa', getEthereumSignerAddress(accountInjective));
-      // console.log('bbb', getInjectiveSignerAddress(accountInjective));
-
-      // console.log('isCosmosWallet', isCosmosWallet(walletStrategy.wallet));
-
-      // const portfolio = await indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(accountInjective);
-      // console.log(portfolio);
-
-      // const balances = await chainGrpcBankApi.fetchBalances(accountInjective);
-      // console.log(balances);
-
-      // await fetchBnUSDBalance(accountInjective);
-
-      // const txResult = await msgBroadcastClient.broadcast({
-      //   msgs: msg,
-      //   injectiveAddress: accountInjective,
-      //   gas: {
-      //     gas: 1200_000,
-      //   },
-      // });
-      // console.log('txResult', txResult);
     } catch (e) {
       console.error('error', e);
+
+      openToast({
+        id: `swap-${currencyIn.symbol}-${currencyOut.symbol}`,
+        message: `Error swapping ${currencyIn.symbol} for ${currencyOut.symbol}.`,
+        transactionStatus: TransactionStatus.failure,
+      });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     setIsProcessing(false);
   };
 
-  const handleBridgeINJFromInjectiveToIcon = async () => {
-    console.log('handleBridgeINJFromInjectiveToIcon');
-    await bridge(INJ, '1');
+  const handleShowTradeICXForbnUSD = async () => {
+    const trade = await calculateTrade(ICX, bnUSD, '1');
+
+    if (!trade) {
+      console.log('No trade found');
+    }
+  };
+
+  const handleSwapICXForbnUSD = async () => {
+    console.log('handleSwapICXForbnUSD');
+    await swap(ICX, bnUSD, '1');
+  };
+
+  const handleShowTradeICXForUSDC = async () => {
+    const trade = await calculateTrade(ICX, USDC, '1');
+
+    if (!trade) {
+      console.log('No trade found');
+    }
+  };
+
+  const handleSwapICXForUSDC = async () => {
+    console.log('handleSwapICXForUSDC');
+    await swap(ICX, USDC, '1');
+  };
+
+  const handleShowTradeBALNForbnUSD = async () => {
+    const trade = await calculateTrade(BALN, bnUSD, '1');
+
+    if (!trade) {
+      console.log('No trade found');
+    }
+  };
+  const handleSwapBALNForbnUSD = async () => {
+    console.log('handleSwapBLANForbnUSD');
+    await swap(BALN, bnUSD, '1');
+  };
+
+  const handleShowTradeBALNForUSDC = async () => {
+    const trade = await calculateTrade(BALN, USDC, '1');
+
+    if (!trade) {
+      console.log('No trade found');
+    }
+  };
+  const handleSwapBALNForUSDC = async () => {
+    console.log('handleSwapBLANForUSDC');
+    await swap(BALN, USDC, '1');
+  };
+
+  const handleShowTradeBALNForICX = async () => {
+    const trade = await calculateTrade(BALN, ICX, '1');
+    if (!trade) {
+      console.log('No trade found');
+    }
+  };
+
+  const handleSwapBALNForICX = async () => {
+    console.log('handleSwapBLANForICX');
+    await swap(BALN, ICX, '1');
+  };
+
+  const handleFetchIconEventLogs = async () => {
+    const startBlockHeight = 83073062n;
+    const endBlockHeight = 83073112n;
+    const iconPublicXService = xServiceActions.getXPublicClient('0x1.icon');
+    const events = await iconPublicXService.getEventLogs({ startBlockHeight, endBlockHeight });
+    console.log(events);
   };
 
   return (
     <Flex bg="bg3" flex={1} p={2} style={{ gap: 2 }} flexDirection={'column'}>
       <AllPublicXServicesCreator xChains={xChains} />
       <Flex flexDirection={'row'} style={{ gap: 2 }}>
-        <Button onClick={handleBridgeINJFromInjectiveToIcon} disabled={isProcessing}>
-          Bridge INJ from Injective to ICON
+        <Button onClick={handleShowTradeICXForbnUSD} disabled={isProcessing}>
+          Show Trade for swapping ICX:ICON for bnUSD:ICON
         </Button>
+        <Button onClick={handleSwapICXForbnUSD} disabled={isProcessing}>
+          Swap ICX:ICON for bnUSD:ICON
+        </Button>
+      </Flex>
+      <Flex flexDirection={'row'} style={{ gap: 2 }}>
+        <Button onClick={handleShowTradeICXForUSDC} disabled={isProcessing}>
+          Show Trade for swapping ICX:ICON for USDC:ICON
+        </Button>
+        <Button onClick={handleSwapICXForUSDC} disabled={isProcessing}>
+          Swap ICX:ICON for USDC:ICON
+        </Button>
+      </Flex>
+      <Flex flexDirection={'row'} style={{ gap: 2 }}>
+        <Button onClick={handleShowTradeBALNForbnUSD} disabled={isProcessing}>
+          Show Trade for swapping BALN:ICON for bnUSD:ICON
+        </Button>
+        <Button onClick={handleSwapBALNForbnUSD} disabled={isProcessing}>
+          Swap BALN:ICON for bnUSD:ICON
+        </Button>
+      </Flex>
+      <Flex flexDirection={'row'} style={{ gap: 2 }}>
+        <Button onClick={handleShowTradeBALNForUSDC} disabled={isProcessing}>
+          Show Trade for swapping BALN:ICON for USDC:ICON
+        </Button>
+        <Button onClick={handleSwapBALNForUSDC} disabled={isProcessing}>
+          Swap BALN:ICON for USDC:ICON
+        </Button>
+      </Flex>
+      <Flex flexDirection={'row'} style={{ gap: 2 }}>
+        <Button onClick={handleShowTradeBALNForICX} disabled={isProcessing}>
+          Show Trade for swapping BALN:ICON for ICX:ICON
+        </Button>
+        <Button onClick={handleSwapBALNForICX} disabled={isProcessing}>
+          Swap BALN:ICON for ICX:ICON
+        </Button>
+      </Flex>
+      <Flex>
+        <Button onClick={handleFetchIconEventLogs}>get icon event logs from 83073062 to 83073072</Button>
       </Flex>
       <Flex>{/* Result here */}</Flex>
     </Flex>

@@ -16,21 +16,17 @@ import { Typography } from '@/app/theme';
 import ArchWalletIcon from '@/assets/icons/chains/archway.svg';
 import ETHIcon from '@/assets/icons/chains/eth.svg';
 import HavahWalletIcon from '@/assets/icons/chains/havah.svg';
-import InjectiveWalletIcon from '@/assets/icons/chains/injective.svg';
 import IconWalletIcon from '@/assets/icons/wallets/iconex.svg';
-
 import { LOCALE_LABEL, SUPPORTED_LOCALES, SupportedLocale } from '@/constants/locales';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
 import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
-import { useModalOpen, useWalletModalToggle } from '@/store/application/hooks';
+import { useModalOpen, useWalletModal, useWalletModalToggle } from '@/store/application/hooks';
 import { ApplicationModal } from '@/store/application/reducer';
 
 import { xChainMap } from '@/constants/xChains';
 import useDebounce from '@/hooks/useDebounce';
-import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import useWallets, { useSignedInWallets } from '@/hooks/useWallets';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
-import { InjectiveWalletOptionsModal } from '@/packages/injective/InjectiveWalletOptionsModal';
 import { XWalletType } from '@/types';
 import { useSwitchChain } from 'wagmi';
 import Divider from '../Divider';
@@ -56,6 +52,7 @@ const presenceVariants = {
 export default function WalletModal() {
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
   const toggleWalletModal = useWalletModalToggle();
+  const [, setWalletModal] = useWalletModal();
   const { connectToWallet: connectToKeplr } = useArchwayContext();
   const { connectToWallet: connectToHavah } = useHavahContext();
   const signedInWallets = useSignedInWallets();
@@ -96,9 +93,9 @@ export default function WalletModal() {
     const iconConfig = {
       name: 'ICON',
       logo: <IconWalletIcon width="32" />,
-      connect: () => modalActions.openModal(MODAL_ID.ICON_WALLET_OPTIONS_MODAL),
+      connect: () => setWalletModal(XWalletType.ICON),
       disconnect: wallets[XWalletType.ICON].disconnect,
-      description: t`Borrow, swap, & transfer cross-chain. Supply liquidity. Vote.`,
+      description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer cross-chain.`,
       keyWords: ['iconex', 'hana'],
       address: wallets[XWalletType.ICON].account,
       xChains: undefined,
@@ -110,9 +107,9 @@ export default function WalletModal() {
         {
           name: 'Ethereum & EVM ecosystem',
           logo: <ETHIcon width="32" />,
-          connect: () => modalActions.openModal(MODAL_ID.EVM_WALLET_OPTIONS_MODAL),
+          connect: () => setWalletModal(XWalletType.EVM),
           disconnect: wallets[XWalletType.EVM].disconnect,
-          description: t`Borrow, swap, & transfer cross-chain.`,
+          description: t`Borrow bnUSD. Swap & transfer cross-chain.`,
           keyWords: [
             'evm',
             'ethereum',
@@ -138,7 +135,7 @@ export default function WalletModal() {
           logo: <HavahWalletIcon width="40" height="40" />,
           connect: connectToHavah,
           disconnect: wallets[XWalletType.HAVAH].disconnect,
-          description: t`Swap & transfer cross-chain.`,
+          description: t`Swap & transfer crypto cross-chain.`,
           keyWords: ['iconex', 'hana'],
           address: wallets[XWalletType.HAVAH].account,
         },
@@ -153,18 +150,9 @@ export default function WalletModal() {
           xChains: undefined,
           switchChain: undefined,
         },
-        {
-          name: 'Injective',
-          logo: <InjectiveWalletIcon width="40" height="40" />,
-          connect: () => modalActions.openModal(MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL),
-          disconnect: wallets[XWalletType.INJECTIVE].disconnect,
-          description: t`Borrow, swap, & transfer cross-chain.`,
-          keyWords: ['injective', 'cosmos', 'keplr', 'leap'],
-          address: wallets[XWalletType.INJECTIVE].account,
-        },
       ].sort((a, b) => a.name.localeCompare(b.name)),
     ];
-  }, [connectToKeplr, wallets, switchChain, connectToHavah]);
+  }, [setWalletModal, connectToKeplr, wallets, switchChain, connectToHavah]);
 
   const filteredWallets = React.useMemo(() => {
     return [...walletConfig].filter(wallet => {
@@ -281,8 +269,8 @@ export default function WalletModal() {
       </StyledModal>
 
       <IconWalletModal />
+
       <EVMWalletModal />
-      <InjectiveWalletOptionsModal />
     </>
   );
 }

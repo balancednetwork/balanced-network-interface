@@ -9,7 +9,7 @@ import { Box, Flex } from 'rebass';
 import { Typography } from '@/app/theme';
 import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from '@/store/application/hooks';
 import { Field } from '@/store/swap/reducer';
-import { XChainId, XToken, XWalletType } from '@/types';
+import { XChainId, XToken } from '@/types';
 import { formatBigNumber, shortenAddress } from '@/utils';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 
@@ -33,11 +33,8 @@ import {
   useXTransactionStore,
   xTransactionActions,
 } from '@/lib/xcall/_zustand/useXTransactionStore';
-import { walletStrategy } from '@/packages/injective';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { Wallet } from '@injectivelabs/wallet-ts';
-import { useChainId, useSwitchChain } from 'wagmi';
-import { mainnet } from 'wagmi/chains';
+import { useSwitchChain } from 'wagmi';
 
 type XSwapModalProps = {
   account: string | undefined;
@@ -124,23 +121,13 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
 
   const gasChecker = useXCallGasChecker(direction.from);
 
-  const ethereumChainId = useChainId();
-
   // switch chain between evm chains
   const wallets = useWallets();
   const walletType = xChainMap[direction.from].xWalletType;
-  const isWrongChain =
-    wallets[walletType].xChainId !== direction.from ||
-    (walletType === XWalletType.INJECTIVE &&
-      walletStrategy.getWallet() === Wallet.Metamask &&
-      ethereumChainId !== mainnet.id);
+  const isWrongChain = wallets[walletType].xChainId !== direction.from;
   const { switchChain } = useSwitchChain();
   const handleSwitchChain = () => {
-    if (walletType === XWalletType.INJECTIVE) {
-      switchChain({ chainId: mainnet.id });
-    } else {
-      switchChain({ chainId: xChainMap[direction.from].id as number });
-    }
+    switchChain({ chainId: xChainMap[direction.from].id as number });
   };
 
   return (

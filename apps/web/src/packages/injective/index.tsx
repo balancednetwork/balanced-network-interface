@@ -1,11 +1,10 @@
-import React, { useEffect, useMemo } from 'react';
-import { create } from 'zustand';
-import { createJSONStorage, devtools, persist } from 'zustand/middleware';
-import { immer } from 'zustand/middleware/immer';
-import { Wallet, WalletStrategy } from '@injectivelabs/wallet-ts';
-import { ChainId, EthereumChainId } from '@injectivelabs/ts-types';
-import { mainnet } from 'wagmi/chains';
 import { getInjectiveAddress } from '@injectivelabs/sdk-ts';
+import { ChainId, EthereumChainId } from '@injectivelabs/ts-types';
+import { Wallet, WalletStrategy } from '@injectivelabs/wallet-ts';
+import { mainnet } from 'wagmi/chains';
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { immer } from 'zustand/middleware/immer';
 
 type InjectiveWalletStore = {
   account: string | undefined;
@@ -90,4 +89,22 @@ export const useInjectiveWallet = () => {
     connect,
     disconnect,
   };
+};
+
+export const switchEthereumChain = async chainId => {
+  const metamaskProvider = (window as any).ethereum as any;
+
+  await Promise.race([
+    metamaskProvider.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: `0x${chainId}` }],
+    }),
+    new Promise<void>(resolve =>
+      metamaskProvider.on('change', ({ chain }: any) => {
+        if (chain?.id === chainId) {
+          resolve();
+        }
+      }),
+    ),
+  ]);
 };

@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { BalancedJs, getLedgerAddressPath, LEDGER_BASE_PATH } from '@balancednetwork/balanced-js';
+import Skeleton from '@/app/components/Skeleton';
+import { LOCAL_STORAGE_ADDRESS_EXPIRY, useIconReact } from '@/packages/icon-react';
+import { BalancedJs, LEDGER_BASE_PATH, getLedgerAddressPath } from '@balancednetwork/balanced-js';
 import * as HwUtils from '@balancednetwork/hw-app-icx/lib/utils';
 import TransportWebHID from '@ledgerhq/hw-transport-webhid';
-import { t, Trans } from '@lingui/macro';
-import Skeleton from '@/app/components/Skeleton';
-import { useIconReact, LOCAL_STORAGE_ADDRESS_EXPIRY } from '@/packages/icon-react';
+import { Trans, t } from '@lingui/macro';
 import { isMobile } from 'react-device-detect';
 import { toast } from 'react-toastify';
 import { useMedia } from 'react-use';
@@ -20,16 +20,15 @@ import LedgerIcon from '@/assets/icons/wallets/ledger.svg';
 import bnJs from '@/bnJs';
 import { useLocalStorageWithExpiry } from '@/hooks/useLocalStorage';
 import {
-  useWalletModalToggle,
-  useCurrentLedgerAddressPage,
   useChangeCurrentLedgerAddressPage,
-  useWalletModal,
+  useCurrentLedgerAddressPage,
+  useWalletModalToggle,
 } from '@/store/application/hooks';
 
+import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
 import { VerticalDivider } from '../Divider';
 import { ModalContentWrapper } from '../ModalContent';
-import { WalletOption, UnbreakableText } from './shared';
-import { XWalletType } from '@/types';
+import { UnbreakableText, WalletOption } from './shared';
 
 const displayAddress = (address: string) => `${address.slice(0, 9)}...${address.slice(-7)}`;
 
@@ -78,11 +77,15 @@ const LedgerAddressList = styled(Modal)`
   width: 500px;
 `;
 
-export const IconWalletModal = () => {
+export const IconWalletModal = ({ id = MODAL_ID.ICON_WALLET_OPTIONS_MODAL }) => {
+  const open = useModalStore(state => state.modals?.[id]);
+  const onDismiss = useCallback(() => {
+    modalActions.closeModal(id);
+  }, [id]);
+
   const upExtraSmall = useMedia('(min-width: 420px)');
   const upSuperExtraSmall = useMedia('(min-width: 364px)');
   const toggleWalletModal = useWalletModalToggle();
-  const [walletModal, , onDismiss] = useWalletModal();
   const [showLedgerAddress, updateShowLedgerAddress] = useState(false);
   const [addressList, updateAddressList] = useState<any>([]);
   const [isLedgerLoading, setLedgerLoading] = useState(false);
@@ -298,7 +301,7 @@ export const IconWalletModal = () => {
 
   return (
     <>
-      <Modal isOpen={walletModal === XWalletType.ICON} onDismiss={onDismiss} maxWidth={360}>
+      <Modal isOpen={!!open} onDismiss={onDismiss} maxWidth={360}>
         <ModalContentWrapper>
           <Typography textAlign="center" margin={'0 0 25px'}>
             Connect with:

@@ -1,11 +1,10 @@
-import { XChain, XChainId, XWalletType } from '@/types';
+import { XChain, XChainId } from '@/types';
 
 export const archway: XChain = {
   id: 'archway-1',
   name: 'Archway',
   xChainId: 'archway-1',
   xChainType: 'ARCHWAY',
-  xWalletType: XWalletType.COSMOS,
   nativeCurrency: {
     decimals: 18,
     name: 'Archway',
@@ -32,7 +31,6 @@ export const archwayTestnet: XChain = {
   name: 'archway testnet',
   xChainId: 'archway-1',
   xChainType: 'ARCHWAY',
-  xWalletType: XWalletType.COSMOS,
   nativeCurrency: {
     decimals: 18,
     name: 'Archway',
@@ -59,7 +57,6 @@ export const icon: XChain = {
   name: 'ICON',
   xChainId: '0x1.icon',
   xChainType: 'ICON',
-  xWalletType: XWalletType.ICON,
   tracker: '',
   nativeCurrency: {
     decimals: 18,
@@ -86,7 +83,6 @@ export const lisbon: XChain = {
   name: 'Lisbon Testnet',
   xChainId: '0x2.icon',
   xChainType: 'ICON',
-  xWalletType: XWalletType.ICON,
   tracker: '',
   nativeCurrency: {
     decimals: 18,
@@ -113,7 +109,6 @@ export const avalanche: XChain = {
   name: 'Avalanche',
   xChainId: '0xa86a.avax',
   xChainType: 'EVM',
-  xWalletType: XWalletType.EVM,
   tracker: 'https://snowscan.xyz',
   nativeCurrency: {
     decimals: 18,
@@ -138,7 +133,6 @@ export const fuji: XChain = {
   name: 'Fuji Testnet',
   xChainId: '0xa869.fuji',
   xChainType: 'EVM',
-  xWalletType: XWalletType.EVM,
   tracker: 'https://snowscan.xyz',
   nativeCurrency: {
     decimals: 18,
@@ -163,7 +157,6 @@ export const havah: XChain = {
   name: 'Havah',
   xChainId: '0x100.icon',
   xChainType: 'HAVAH',
-  xWalletType: XWalletType.HAVAH,
   tracker: 'https://scan.havah.io',
   nativeCurrency: {
     decimals: 18,
@@ -189,7 +182,6 @@ export const bsc: XChain = {
   name: 'BNB Chain',
   xChainId: '0x38.bsc',
   xChainType: 'EVM',
-  xWalletType: XWalletType.EVM,
   tracker: 'https://bscscan.com/',
   nativeCurrency: {
     decimals: 18,
@@ -214,7 +206,6 @@ export const arbitrum: XChain = {
   name: 'Arbitrum',
   xChainId: '0xa4b1.arbitrum',
   xChainType: 'EVM',
-  xWalletType: XWalletType.EVM,
   tracker: 'https://arbiscan.io/',
   nativeCurrency: {
     decimals: 18,
@@ -239,7 +230,6 @@ export const base: XChain = {
   name: 'Base',
   xChainId: '0x2105.base',
   xChainType: 'EVM',
-  xWalletType: XWalletType.EVM,
   tracker: 'https://basescan.org/',
   nativeCurrency: {
     decimals: 18,

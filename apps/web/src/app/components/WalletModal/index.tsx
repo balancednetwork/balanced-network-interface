@@ -26,7 +26,7 @@ import { xChainMap } from '@/constants/xChains';
 import useDebounce from '@/hooks/useDebounce';
 import { MODAL_ID } from '@/hooks/useModalStore';
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { XWalletType } from '@/types';
+import { getXChainType } from '@/xwagmi/actions';
 import { useXDisconnectAll } from '@/xwagmi/hooks';
 import { useSwitchChain } from 'wagmi';
 import Divider from '../Divider';
@@ -117,7 +117,7 @@ export default function WalletModal() {
             'base',
           ],
           xChains: Object.values(xChainMap)
-            .filter(xChain => xChain.xWalletType === XWalletType.EVM && !xChain.testnet)
+            .filter(xChain => getXChainType(xChain.xChainId) === 'EVM' && !xChain.testnet)
             .sort((a, b) => a.name.localeCompare(b.name)),
           switchChain: switchChain,
           walletOptionsModalId: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,

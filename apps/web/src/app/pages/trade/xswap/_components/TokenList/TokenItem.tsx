@@ -6,7 +6,7 @@ import { formatPrice, formatPriceChange, getFormattedNumber } from '@/utils/form
 import React from 'react';
 import { Box, Flex } from 'rebass';
 import { Grid } from '.';
-import { COMBINED_TOKENS_MAP_BY_ADDRESS, useICX } from '@/constants/tokens';
+import { COMBINED_TOKENS_MAP_BY_ADDRESS, SUPPORTED_TOKENS_MAP_BY_ADDRESS, useICX } from '@/constants/tokens';
 import CurrencyLogo from '@/app/components/CurrencyLogo';
 import useTimestampRounded from '@/hooks/useTimestampRounded';
 import Sparkline from './Sparkline';
@@ -15,21 +15,46 @@ import { useAssetManagerTokens } from '../../../bridge/_hooks/useAssetManagerTok
 import { XToken } from '../../../bridge/types';
 import AssetManagerTokenBreakdown from '@/app/components/AssetManagerTokenBreakdown';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { getSupportedXChainIdsForToken } from '../../../bridge/utils';
+import { xTokenMap } from '../../../bridge/_config/xTokens';
+import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
+import { ChainLogo } from '@/app/components/ChainLogo';
+import { xChainMap } from '../../../bridge/_config/xChains';
+import styled from 'styled-components';
 
 type TokenItemProps = {
   token: TokenStats;
   isLast: boolean;
 };
 
+const ChainsWrapper = styled.div`
+  margin-top: 3px;
+
+  img {
+    margin-right: 8px;
+  }
+`;
+
 const TokenItem = ({ token, isLast }: TokenItemProps) => {
   const ICX = useICX();
-  const currency = token.symbol === 'ICX' ? ICX : COMBINED_TOKENS_MAP_BY_ADDRESS[token.address];
   const tsStart = useTimestampRounded(1000 * 60, 7);
   const tsEnd = useTimestampRounded(1000 * 60);
   const start = Math.floor(tsStart / 1000);
   const end = Math.floor(tsEnd / 1000);
   const { data: trendData } = useTokenTrendData(token.symbol, start, end);
   const { data: assetManagerTokensBreakdown } = useAssetManagerTokens();
+
+  const currency = React.useMemo(
+    () => (token.symbol === 'ICX' ? ICX : COMBINED_TOKENS_MAP_BY_ADDRESS[token.address]),
+    [token, ICX],
+  );
+
+  const xChainIds = React.useMemo(() => {
+    const currencyXChainIds = getSupportedXChainIdsForToken(currency);
+    return currencyXChainIds.length
+      ? currencyXChainIds.sort((a, b) => xChainMap[a].name.localeCompare(xChainMap[b].name))
+      : [ICON_XCALL_NETWORK_ID];
+  }, [currency]);
 
   const amounts = React.useMemo(() => {
     if (!assetManagerTokensBreakdown) return [];
@@ -54,13 +79,18 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
                 <Typography color="text" fontSize={16}>
                   {token.name.replace(' TOKEN', ' Token')}
                 </Typography>
+                <Typography color="text2" fontSize={14} marginLeft="7px" paddingTop="2px">
+                  {token.symbol}
+                </Typography>
                 {amounts && amounts.length > 1 && (
                   <AssetManagerTokenBreakdown amounts={amounts} spacing={{ x: 5, y: 0 }} />
                 )}
               </Flex>
-              <Typography color="text1" fontSize={16}>
-                {token.symbol}
-              </Typography>
+              <ChainsWrapper>
+                {xChainIds.map(xChainId => (
+                  <ChainLogo key={xChainId} chain={xChainMap[xChainId]} size="18px" />
+                ))}
+              </ChainsWrapper>
             </Box>
           </Flex>
         </DataText>

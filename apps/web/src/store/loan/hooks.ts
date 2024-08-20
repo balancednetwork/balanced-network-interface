@@ -25,11 +25,12 @@ import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatUnits, toBigNumber } from '@/utils';
 
 import { bnUSD } from '@/constants/tokens';
-import { xChainMap } from '@/constants/xChains';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useDestinationEvents } from '@/lib/xcall/_zustand/useXCallEventStore';
 import { XChainId } from '@/types';
 import { getXTokenAddress } from '@/utils/xTokens';
+import { getXChainType } from '@/xwagmi/actions';
+import { useXAccount } from '@/xwagmi/hooks';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { AppState } from '..';
 import {
@@ -75,10 +76,7 @@ export function useLoanTotalSupply(): AppState['loan']['totalSupply'] {
 
 export function useActiveLoanAddress(): string | undefined {
   const collateralXChain = useCollateralXChain();
-  const signedInWallets = useSignedInWallets();
-  const account = signedInWallets.find(
-    w => xChainMap[w.xChainId || ICON_XCALL_NETWORK_ID].xWalletType === xChainMap[collateralXChain].xWalletType,
-  )?.address;
+  const { address: account } = useXAccount(getXChainType(collateralXChain));
 
   return collateralXChain === ICON_XCALL_NETWORK_ID ? account : `${collateralXChain}/${account}`;
 }

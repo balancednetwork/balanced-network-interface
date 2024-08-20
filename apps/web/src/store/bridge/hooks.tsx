@@ -6,14 +6,15 @@ import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { sARCH } from '@/constants/tokens1';
-import { xChainMap } from '@/constants/xChains';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
-import useWallets, { useSignedInWallets } from '@/hooks/useWallets';
-import { isDenomAsset } from '@/packages/archway/utils';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { AppState } from '@/store';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { XChainId, XToken } from '@/types';
 import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
+import { getXChainType } from '@/xwagmi/actions';
+import { useXAccount } from '@/xwagmi/hooks';
+import { isDenomAsset } from '@/xwagmi/xchains/archway/utils';
 import {
   Field,
   selectChain,
@@ -124,11 +125,10 @@ export function useDerivedBridgeInfo() {
   }, [typedValue, currencyToBridge, bridgeDirection]);
 
   const signedInWallets = useSignedInWallets();
-  const wallets = useWallets();
-  const xChain = xChainMap[bridgeDirection.from];
   const crossChainWallet = useCrossChainWalletBalances();
 
-  const account = wallets[xChain.xWalletType].account;
+  const xAccount = useXAccount(getXChainType(bridgeDirection.from));
+  const account = xAccount.address;
 
   const errorMessage = useMemo(() => {
     if (!account) return t`Connect wallet`;

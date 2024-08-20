@@ -9,9 +9,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { NETWORK_ID } from '@/constants/config';
 
-import { XWalletType } from '@/types';
 import { AppDispatch, AppState } from '../index';
-import { ApplicationModal, setOpenModal, setOpenWalletModal, updateSlippageTolerance } from './reducer';
+import { ApplicationModal, setOpenModal, updateSlippageTolerance } from './reducer';
 
 type BlockDetails = {
   timestamp: number;

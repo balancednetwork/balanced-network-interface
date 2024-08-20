@@ -11,8 +11,6 @@ import { usePublicClient, useWalletClient } from 'wagmi';
 import { openToast } from '@/btp/src/connectors/transactionToast';
 import { NATIVE_ADDRESS } from '@/constants/index';
 import { archway, xChainMap } from '@/constants/xChains';
-import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
-import { getFeeParam, isDenomAsset } from '@/packages/archway/utils';
 import { TransactionStatus } from '@/store/transactions/hooks';
 import {
   useAddTransactionResult,
@@ -20,9 +18,12 @@ import {
   useInitTransaction,
 } from '@/store/transactionsCrosschain/hooks';
 import { XToken } from '@/types';
+import { getXChainType } from '@/xwagmi/actions/getXChainType';
+import { getXWalletClient } from '@/xwagmi/actions/getXWalletClient';
+import { useXAccount, useXService } from '@/xwagmi/hooks';
+import { ArchwayXService } from '@/xwagmi/xchains/archway';
+import { getFeeParam, isDenomAsset } from '@/xwagmi/xchains/archway/utils';
 import { transactionActions } from '../_zustand/useTransactionStore';
-import { xServiceActions } from '../_zustand/useXServiceStore';
-import useXWallet from './useXWallet';
 
 export const FAST_INTERVAL = 10000;
 
@@ -66,15 +67,10 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
 
   const [pending, setPending] = useState<boolean>(false);
 
-  const xWallet = useXWallet(amountToApprove?.currency.xChainId);
-
-  const account = xWallet?.account;
+  const { address: account } = useXAccount(getXChainType(amountToApprove?.currency.xChainId));
 
   const xChainId = amountToApprove?.currency.xChainId;
   const xChainType = xChainId ? xChainMap[xChainId].xChainType : undefined;
-
-  // archway stuff
-  // const { signingClient } = useArchwayContext();
 
   // evm stuff
   const { data: walletClient } = useWalletClient();
@@ -242,16 +238,16 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
     // }
 
     const xChainId = token.xChainId;
-    const xService = xServiceActions.getXWalletClient(xChainId);
+    const xWalletClient = getXWalletClient(xChainId);
 
-    if (!xService) {
+    if (!xWalletClient) {
       // toastError(t('Error'), t('No xService'));
       console.error('no archway WalletXService');
       return undefined;
     }
 
     try {
-      const hash = await xService.approve(token, account as `0x${string}`, spender, amountToApprove);
+      const hash = await xWalletClient.approve(token, account as `0x${string}`, spender, amountToApprove);
 
       setPending(true);
 
@@ -302,7 +298,8 @@ export function useTokenAllowance(
 } {
   const inputs = useMemo(() => [owner, spender] as [`0x${string}`, `0x${string}`], [owner, spender]);
   const evmPublicClient = usePublicClient();
-  const { client: archwayPublicClient } = useArchwayContext();
+  const archwayXService: ArchwayXService = useXService('ARCHWAY') as ArchwayXService;
+  const archwayPublicClient = archwayXService.publicClient;
 
   const { data: allowance, refetch } = useQuery({
     queryKey: [token?.xChainId, token?.address, owner, spender],
@@ -366,7 +363,10 @@ const useAllowanceHandler = (
   spenderAddress: string = archway.contracts.assetManager,
   callback?: (success: boolean) => void,
 ) => {
-  const { address, signingClient } = useArchwayContext();
+  const { address } = useXAccount('ARCHWAY');
+  const archwayXService: ArchwayXService = useXService('ARCHWAY') as ArchwayXService;
+  const signingClient = archwayXService.walletClient;
+
   const addTransactionResult = useAddTransactionResult();
   const initTransaction = useInitTransaction();
   const { transactions } = useArchwayTransactionsState();

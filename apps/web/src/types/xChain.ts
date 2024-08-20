@@ -13,18 +13,6 @@ export type XChainId =
 
 export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH' | 'INJECTIVE';
 
-export enum XWalletType {
-  ICON,
-  COSMOS,
-  EVM,
-  EVM_ARBITRUM,
-  EVM_AVALANCHE,
-  EVM_BSC,
-  EVM_BASE,
-  HAVAH,
-  INJECTIVE,
-}
-
 export type Chain = {
   id: string | number;
   name: string;
@@ -44,7 +32,6 @@ export type Chain = {
 export type XChain = Chain & {
   xChainId: XChainId;
   xChainType: XChainType;
-  xWalletType: XWalletType;
   contracts: {
     xCall: string;
     assetManager: string;

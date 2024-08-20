@@ -11,8 +11,8 @@ import {
   NotificationSuccess,
 } from '@/app/components/Notification/TransactionNotification';
 import { XChainId } from '@/types';
+import { getXPublicClient } from '@/xwagmi/actions';
 import { Transaction, TransactionStatus } from './types';
-import { xServiceActions } from './useXServiceStore';
 
 type TransactionStore = {
   transactions: Transaction[];
@@ -62,8 +62,8 @@ export const transactionActions = {
 
   updateTx: async (xChainId: XChainId, id: string, transaction: { rawTx: any }) => {
     const { rawTx } = transaction;
-    const xService = xServiceActions.getXPublicClient(xChainId);
-    const status = xService.deriveTxStatus(rawTx);
+    const xPublicClient = getXPublicClient(xChainId);
+    const status = xPublicClient.deriveTxStatus(rawTx);
 
     useTransactionStore.setState(state => {
       return {
@@ -71,7 +71,7 @@ export const transactionActions = {
           if (transaction.id === id) {
             const newTransaction: Transaction = {
               ...transaction,
-              rawEventLogs: xService.getTxEventLogs(rawTx),
+              rawEventLogs: xPublicClient.getTxEventLogs(rawTx),
               status,
             };
             return newTransaction;
@@ -124,9 +124,9 @@ export const useFetchTransaction = (transaction: Transaction | undefined) => {
     queryFn: async () => {
       if (!xChainId) return;
 
-      const xService = xServiceActions.getXPublicClient(xChainId);
+      const xPublicClient = getXPublicClient(xChainId);
       try {
-        const rawTx = await xService.getTxReceipt(hash);
+        const rawTx = await xPublicClient.getTxReceipt(hash);
         return rawTx;
       } catch (err: any) {
         console.error(`failed to check transaction hash: ${hash}`, err);

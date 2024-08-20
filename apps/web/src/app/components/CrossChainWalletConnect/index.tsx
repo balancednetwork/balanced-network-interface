@@ -1,16 +1,14 @@
 import React from 'react';
 
 import { Typography } from '@/app/theme';
-import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
-import { XChainId, XWalletType } from '@/types';
+import { XChainId } from '@/types';
 import { shortenAddress } from '@/utils';
 
-import { xChainMap, xWalletTypeModalIdMap } from '@/constants/xChains';
-import { modalActions } from '@/hooks/useModalStore';
-import useWallets from '@/hooks/useWallets';
-import { useHavahContext } from '@/packages/havah/HavahProvider';
-import { useIconReact } from '@/packages/icon-react';
+import { xChainMap } from '@/constants/xChains';
+import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSwapState } from '@/store/swap/hooks';
+import { getXChainType } from '@/xwagmi/actions';
+import { useXAccount, useXConnect, useXService } from '@/xwagmi/hooks';
 import { Trans } from '@lingui/macro';
 import { UnderlineText } from '../DropdownText';
 import Modal from '../Modal';
@@ -19,26 +17,26 @@ import AddressInput from './AddressInput';
 
 const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; editable?: boolean }) => {
   const [editableAddressModalOpen, setEditableAddressModalOpen] = React.useState(false);
-
-  const { connectToWallet: connectToIcon } = useIconReact();
-  const { connectToWallet: connectKeplr } = useArchwayContext();
-  const { connectToWallet: connectToHavah } = useHavahContext();
   const { recipient } = useSwapState();
 
-  const wallets = useWallets();
-  const account = wallets[xChainMap[xChainId].xWalletType].account;
+  const xChainType = getXChainType(xChainId);
+  const xService = useXService(xChainType);
+  const { address } = useXAccount(xChainType);
 
+  const xConnect = useXConnect();
   const handleConnect = () => {
-    const chain = xChainMap[xChainId];
-    if (chain.xWalletType === XWalletType.ICON) {
-      connectToIcon();
-    } else if (chain.xWalletType === XWalletType.COSMOS) {
-      connectKeplr();
-    } else if (chain.xWalletType === XWalletType.HAVAH) {
-      connectToHavah();
+    if (!xService) return;
+
+    const xConnectors = xService.getXConnectors();
+
+    if (xChainType === 'EVM') {
+      modalActions.openModal(MODAL_ID.EVM_WALLET_OPTIONS_MODAL);
+    } else if (xChainType === 'INJECTIVE') {
+      modalActions.openModal(MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL);
     } else {
-      modalActions.openModal(xWalletTypeModalIdMap[chain.xWalletType]);
+      xConnect(xConnectors[0]);
     }
+
     closeModal();
   };
 
@@ -52,8 +50,8 @@ const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; e
 
   return !editable ? (
     <Typography onClick={handleConnect} color="primaryBright">
-      {account ? (
-        <UnderlineText>{shortenAddress(account || '', 5)}</UnderlineText>
+      {address ? (
+        <UnderlineText>{shortenAddress(address || '', 5)}</UnderlineText>
       ) : (
         <UnderlineText>Connect wallet</UnderlineText>
       )}

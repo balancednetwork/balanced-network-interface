@@ -8,9 +8,10 @@ export type XChainId =
   | '0x100.icon'
   | '0x38.bsc'
   | '0xa4b1.arbitrum'
-  | '0x2105.base';
+  | '0x2105.base'
+  | 'injective-1';
 
-export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH';
+export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH' | 'INJECTIVE';
 
 export enum XWalletType {
   ICON,
@@ -21,6 +22,7 @@ export enum XWalletType {
   EVM_BSC,
   EVM_BASE,
   HAVAH,
+  INJECTIVE,
 }
 
 export type Chain = {

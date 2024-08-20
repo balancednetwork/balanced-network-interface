@@ -7,6 +7,8 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   BNB: '0x38.bsc',
   ETH: '0xa4b1.arbitrum',
   BTC: '0xa4b1.arbitrum',
+  INJ: 'injective-1',
+  HVH: '0x100.icon',
 };
 
 import { bnUSD } from '@/constants/tokens';
@@ -33,6 +35,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('0x1.icon', ChainId.MAINNET, 'cx288d13e1b63563459a2ac6179f237711f6851cb5', 18, 'ETH', 'ETH'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cxe2da9f10bc6e2754347bde2ef73379bd398fd9f3', 18, 'HVH', 'HVH'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx07b184a37f03c6ab681fcbd0b45aec6dc3eafbeb', 18, 'BTC', 'Bitcoin', 'BTC1'),
+    new XToken('0x1.icon', ChainId.MAINNET, 'cx4297f4b63262507623b6ad575d0d8dd2db980e4e', 18, 'INJ', 'INJ'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx16f3cb9f09f5cdd902cf07aa752c8b3bd1bc9609', 6, 'USDT', 'Tether USD'),
   ],
   'archway-1': [
@@ -101,6 +104,17 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
   '0x2.icon': [],
   '0xa869.fuji': [],
   archway: [],
+  'injective-1': [
+    new XToken('injective-1', 'injective-1', NATIVE_ADDRESS, 18, 'INJ', 'INJ'),
+    new XToken(
+      'injective-1',
+      'injective-1',
+      'inj1qspaxnztkkzahvp6scq6xfpgafejmj2td83r9j',
+      18,
+      'bnUSD',
+      'Balanced Dollar',
+    ),
+  ],
 };
 
 export const sARCHOnArchway = {

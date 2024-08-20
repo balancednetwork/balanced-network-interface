@@ -57,20 +57,7 @@ export function useAllTokens() {
   return useQuery({
     queryKey: [`allTokens`],
     queryFn: async () => {
-      const response = await axios.get<
-        {
-          symbol: string;
-          name: string;
-          address: string;
-          chain_id: number;
-          total_supply: number;
-          price: number;
-          price_24h: number;
-          price_24h_change: number;
-          liquidity: number;
-          market_cap: number;
-        }[]
-      >(`${API_ENDPOINT}/tokens`);
+      const response = await axios.get<TokenStats[]>(`${API_ENDPOINT}/tokens`);
 
       if (response.status === 200) {
         return response.data
@@ -121,6 +108,7 @@ export type TokenStats = {
   price_24h_change: number;
   liquidity: number;
   market_cap: number;
+  type: 'balanced' | 'community';
 };
 
 export type PairData = {

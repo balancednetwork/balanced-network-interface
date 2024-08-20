@@ -297,12 +297,6 @@ export function CurrencySearch({
           </Typography>
         </Column>
       )}
-      {/* //TODO: move community list control to token list below main swap section */}
-      {/* {showCommunityListControl && (
-        <Flex justifyContent="center" paddingTop="20px">
-          <CommunityListToggle></CommunityListToggle>
-        </Flex>
-      )} */}
     </Wrapper>
   );
 }

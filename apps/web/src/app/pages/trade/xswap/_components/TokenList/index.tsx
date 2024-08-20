@@ -13,6 +13,8 @@ import TokenItem from './TokenItem';
 import Divider from '@/app/components/Divider';
 import SkeletonTokenPlaceholder from './SkeletonTokenPlaceholder';
 import DropdownLink from '@/app/components/DropdownLink';
+import CommunityListToggle from '@/app/components/CommunityListToggle';
+import { useTokenListConfig } from '@/store/lists/hooks';
 
 const COMPACT_ITEM_COUNT = 8;
 
@@ -54,17 +56,19 @@ const TokenList = () => {
   const theme = useTheme();
   const isSmallScreen = useMedia(`(minWidth: ${theme.mediaWidth.upSmall})`);
   const [query, setQuery] = React.useState('');
+  const { community: isCommunityListEnabled } = useTokenListConfig();
 
   const tokens = React.useMemo(() => {
     if (!allTokens) return [];
     const filteredTokens = Object.values(allTokens).filter((token: TokenStats) => {
+      const shouldShow = isCommunityListEnabled || token.type === 'balanced';
       const tokenName = token.name.toLowerCase();
       const tokenSymbol = token.symbol.toLowerCase();
       const search = query.toLowerCase();
-      return tokenName.includes(search) || tokenSymbol.includes(search);
+      return shouldShow && (tokenName.includes(search) || tokenSymbol.includes(search));
     });
     return sortData(filteredTokens);
-  }, [allTokens, query, sortData]);
+  }, [allTokens, query, sortData, isCommunityListEnabled]);
 
   const noTokensFound = query && tokens.length === 0;
 
@@ -168,6 +172,10 @@ const TokenList = () => {
           <DropdownLink expanded={showingExpanded} setExpanded={setShowingExpanded} />
         </Box>
       )}
+
+      <Flex paddingTop="13px" width="100%" justifyContent="center">
+        <CommunityListToggle />
+      </Flex>
     </BoxPanel>
   );
 };

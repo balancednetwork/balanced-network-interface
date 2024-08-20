@@ -3,12 +3,12 @@ import { Typography } from '@/app/theme';
 import React from 'react';
 import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass';
-import styled, { useTheme } from 'styled-components';
+import styled, { css, useTheme } from 'styled-components';
 import { useMedia } from 'react-use';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { TokenStats, useAllTokensByAddress } from '@/queries/backendv2';
+import { HeaderText } from '@/app/pages/trade/supply/_components/AllPoolsPanel';
 import useSort from '@/hooks/useSort';
-import { HeaderText } from '@/app/components/List';
 import TokenItem from './TokenItem';
 import Divider from '@/app/components/Divider';
 import SkeletonTokenPlaceholder from './SkeletonTokenPlaceholder';
@@ -32,15 +32,15 @@ export const Grid = styled.div`
     grid-template-columns: 23fr 16fr 15fr 11fr 15fr;
   `}
 
-> *, ${HeaderText} {
-    text-align: right;
-    align-items: flex-end;
+  > *, ${HeaderText} {
+      justify-content: flex-end;
+      text-align: right;
 
-    &:first-child {
-      justify-content: flex-start;
-      text-align: left;
+      &:first-child {
+        justify-content: flex-start;
+        text-align: left;
+      }
     }
-  }
 
   .recharts-wrapper {
     margin-left: auto;
@@ -49,7 +49,7 @@ export const Grid = styled.div`
 
 const TokenList = () => {
   const { data: allTokens } = useAllTokensByAddress();
-  const { sortBy, handleSortSelect, sortData } = useSort({ key: 'market_cap', order: 'DESC' });
+  const { sortBy, handleSortSelect, sortData } = useSort({ key: 'price_24h_change', order: 'DESC' });
   const [showingExpanded, setShowingExpanded] = React.useState(false);
   const theme = useTheme();
   const isSmallScreen = useMedia(`(minWidth: ${theme.mediaWidth.upSmall})`);

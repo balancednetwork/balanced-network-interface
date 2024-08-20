@@ -4,7 +4,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import { IconReactProvider } from '@/packages/icon-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { HelmetProvider } from 'react-helmet-async';
@@ -15,13 +14,11 @@ import { BrowserRouter } from 'react-router-dom';
 
 // Import root app
 import { App } from '@/app';
-import { ArchwayProvider } from '@/packages/archway/ArchwayProvider';
 import store from '@/store';
 
 // Initialize languages
 import { LanguageProvider } from './i18n';
 
-import { HavahProvider } from '@/packages/havah/HavahProvider';
 import { WagmiProvider } from 'wagmi';
 import { wagmiConfig } from './config/wagmi';
 
@@ -54,15 +51,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <HelmetProvider>
           <WagmiProvider config={wagmiConfig}>
             <QueryClientProvider client={queryClient}>
-              <IconReactProvider>
-                <ArchwayProvider>
-                  <HavahProvider>
-                    <LanguageProvider>
-                      <App />
-                    </LanguageProvider>
-                  </HavahProvider>
-                </ArchwayProvider>
-              </IconReactProvider>
+              <LanguageProvider>
+                <App />
+              </LanguageProvider>
             </QueryClientProvider>
           </WagmiProvider>
         </HelmetProvider>

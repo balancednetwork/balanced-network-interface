@@ -1,12 +1,10 @@
-import { MODAL_ID } from '@/hooks/useModalStore';
-import { XChain, XChainId, XWalletType } from '@/types';
+import { XChain, XChainId } from '@/types';
 
 export const archway: XChain = {
   id: 'archway-1',
   name: 'Archway',
   xChainId: 'archway-1',
   xChainType: 'ARCHWAY',
-  xWalletType: XWalletType.COSMOS,
   nativeCurrency: {
     decimals: 18,
     name: 'Archway',
@@ -33,7 +31,6 @@ export const archwayTestnet: XChain = {
   name: 'archway testnet',
   xChainId: 'archway-1',
   xChainType: 'ARCHWAY',
-  xWalletType: XWalletType.COSMOS,
   nativeCurrency: {
     decimals: 18,
     name: 'Archway',
@@ -60,7 +57,6 @@ export const icon: XChain = {
   name: 'ICON',
   xChainId: '0x1.icon',
   xChainType: 'ICON',
-  xWalletType: XWalletType.ICON,
   tracker: '',
   nativeCurrency: {
     decimals: 18,
@@ -87,7 +83,6 @@ export const lisbon: XChain = {
   name: 'Lisbon Testnet',
   xChainId: '0x2.icon',
   xChainType: 'ICON',
-  xWalletType: XWalletType.ICON,
   tracker: '',
   nativeCurrency: {
     decimals: 18,
@@ -114,7 +109,6 @@ export const avalanche: XChain = {
   name: 'Avalanche',
   xChainId: '0xa86a.avax',
   xChainType: 'EVM',
-  xWalletType: XWalletType.EVM,
   tracker: 'https://snowscan.xyz',
   nativeCurrency: {
     decimals: 18,
@@ -139,7 +133,6 @@ export const fuji: XChain = {
   name: 'Fuji Testnet',
   xChainId: '0xa869.fuji',
   xChainType: 'EVM',
-  xWalletType: XWalletType.EVM,
   tracker: 'https://snowscan.xyz',
   nativeCurrency: {
     decimals: 18,
@@ -164,7 +157,6 @@ export const havah: XChain = {
   name: 'Havah',
   xChainId: '0x100.icon',
   xChainType: 'HAVAH',
-  xWalletType: XWalletType.HAVAH,
   tracker: 'https://scan.havah.io',
   nativeCurrency: {
     decimals: 18,
@@ -190,7 +182,6 @@ export const bsc: XChain = {
   name: 'BNB Chain',
   xChainId: '0x38.bsc',
   xChainType: 'EVM',
-  xWalletType: XWalletType.EVM,
   tracker: 'https://bscscan.com/',
   nativeCurrency: {
     decimals: 18,
@@ -215,7 +206,6 @@ export const arbitrum: XChain = {
   name: 'Arbitrum',
   xChainId: '0xa4b1.arbitrum',
   xChainType: 'EVM',
-  xWalletType: XWalletType.EVM,
   tracker: 'https://arbiscan.io/',
   nativeCurrency: {
     decimals: 18,
@@ -240,7 +230,6 @@ export const base: XChain = {
   name: 'Base',
   xChainId: '0x2105.base',
   xChainType: 'EVM',
-  xWalletType: XWalletType.EVM,
   tracker: 'https://basescan.org/',
   nativeCurrency: {
     decimals: 18,
@@ -265,7 +254,6 @@ export const injective: XChain = {
   name: 'Injective',
   xChainId: 'injective-1',
   xChainType: 'INJECTIVE',
-  xWalletType: XWalletType.INJECTIVE,
   tracker: 'https://explorer.injective.network/',
   nativeCurrency: {
     decimals: 18,
@@ -320,16 +308,4 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   '0xa86a.avax': ['cx59d899fce52cadd1feb5128ff5e6672f03943eec', 'cx917f88460d4ebec1fd656d4dbe51131a37d16837'],
   '0x100.icon': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
   'injective-1': ['cx6f86ed848f9f0d03ba1220811d95d864c72da88c'],
-};
-
-export const xWalletTypeModalIdMap: { [key in XWalletType]: MODAL_ID } = {
-  [XWalletType.ICON]: MODAL_ID.ICON_WALLET_OPTIONS_MODAL,
-  [XWalletType.COSMOS]: MODAL_ID.COSMOS_WALLET_OPTIONS_MODAL,
-  [XWalletType.EVM]: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,
-  [XWalletType.EVM_ARBITRUM]: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,
-  [XWalletType.EVM_AVALANCHE]: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,
-  [XWalletType.EVM_BSC]: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,
-  [XWalletType.EVM_BASE]: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,
-  [XWalletType.HAVAH]: MODAL_ID.HAVAH_WALLET_OPTIONS_MODAL,
-  [XWalletType.INJECTIVE]: MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL,
 };

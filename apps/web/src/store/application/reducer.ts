@@ -1,5 +1,4 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit';
-import { XWalletType } from '@/types';
 
 import { DEFAULT_SLIPPAGE } from '@/constants/index';
 import { DEFAULT_TXN_DISMISS_MS } from '@/constants/misc';
@@ -32,7 +31,6 @@ export interface ApplicationState {
   chainId: number | null;
   popupList: PopupList;
   openModal: ApplicationModal | null;
-  openWalletModal: XWalletType | null;
   shouldLedgerSign: boolean;
   currentLedgerAddressPage: number;
   slippageTolerance: number;
@@ -42,7 +40,6 @@ const initialState: ApplicationState = {
   blockNumber: {},
   chainId: null,
   openModal: null,
-  openWalletModal: null,
   popupList: [],
   shouldLedgerSign: false,
   currentLedgerAddressPage: 1,
@@ -67,9 +64,6 @@ const applicationSlice = createSlice({
     },
     setOpenModal(state, action) {
       state.openModal = action.payload;
-    },
-    setOpenWalletModal(state, action) {
-      state.openWalletModal = action.payload;
     },
     addPopup(state, { payload: { content, key, removeAfterMs = DEFAULT_TXN_DISMISS_MS } }) {
       state.popupList = (key ? state.popupList.filter(popup => popup.key !== key) : state.popupList).concat([
@@ -109,6 +103,5 @@ export const {
   changeShouldLedgedSignMessage,
   changeCurrentLedgerAddressPage,
   updateSlippageTolerance,
-  setOpenWalletModal,
 } = applicationSlice.actions;
 export default applicationSlice.reducer;

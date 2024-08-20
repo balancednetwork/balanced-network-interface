@@ -6,11 +6,11 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { getNetworkDisplayName } from '@/utils/xTokens';
+import { getXPublicClient } from '@/xwagmi/actions';
 import { XCallEventType } from '../types';
 import { Transaction, TransactionStatus, XCallEventMap, XMessage, XMessageStatus } from './types';
 import { useFetchTransaction } from './useTransactionStore';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
-import { xServiceActions } from './useXServiceStore';
 import { xTransactionActions } from './useXTransactionStore';
 
 const jsonStorageOptions = {
@@ -105,12 +105,13 @@ export const useXMessageStore = create<XMessageStore>()(
         const xMessage = get().messages[id];
         if (!xMessage) return;
 
-        const xService = xServiceActions.getXPublicClient(xMessage.sourceChainId);
-        const newSourceTransactionStatus = xService.deriveTxStatus(rawTx);
+        const xPublicClient = getXPublicClient(xMessage.sourceChainId);
+
+        const newSourceTransactionStatus = xPublicClient.deriveTxStatus(rawTx);
 
         const newSourceTransaction = {
           ...xMessage.sourceTransaction,
-          rawEventLogs: xService.getTxEventLogs(rawTx),
+          rawEventLogs: xPublicClient.getTxEventLogs(rawTx),
           status: newSourceTransactionStatus,
         };
         const newStatus = deriveStatus(newSourceTransaction, xMessage.events, xMessage.destinationTransaction);
@@ -137,16 +138,17 @@ export const useXMessageStore = create<XMessageStore>()(
         };
 
         if (newEvents[XCallEventType.CallExecuted]) {
-          const dstXService = xServiceActions.getXPublicClient(xMessage.destinationChainId);
+          const dstXPublicClient = getXPublicClient(xMessage.destinationChainId);
+
           const destinationTransactionHash = newEvents[XCallEventType.CallExecuted].txHash;
-          const rawTx = await dstXService.getTxReceipt(destinationTransactionHash);
+          const rawTx = await dstXPublicClient.getTxReceipt(destinationTransactionHash);
 
           destinationTransaction = {
             id: destinationTransactionHash,
             hash: destinationTransactionHash,
             xChainId: xMessage.destinationChainId,
-            status: dstXService.deriveTxStatus(rawTx),
-            rawEventLogs: dstXService.getTxEventLogs(rawTx),
+            status: dstXPublicClient.deriveTxStatus(rawTx),
+            rawEventLogs: dstXPublicClient.getTxEventLogs(rawTx),
             timestamp: Date.now(),
             // timestamp: newEvents[XCallEventType.CallExecuted].timestamp,
           };
@@ -271,8 +273,8 @@ export const useFetchXMessageEvents = (xMessage?: XMessage) => {
 
       let events: XCallEventMap = {};
       if (xMessage.status === XMessageStatus.AWAITING_CALL_MESSAGE_SENT) {
-        const srcChainXService = xServiceActions.getXPublicClient(sourceChainId);
-        const callMessageSentEvent = srcChainXService.getCallMessageSentEvent(sourceTransaction);
+        const srcXPublicClient = getXPublicClient(sourceChainId);
+        const callMessageSentEvent = srcXPublicClient.getCallMessageSentEvent(sourceTransaction);
         if (callMessageSentEvent) {
           return {
             [XCallEventType.CallMessageSent]: callMessageSentEvent,

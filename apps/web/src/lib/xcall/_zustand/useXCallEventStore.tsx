@@ -4,6 +4,7 @@ import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { XChainId } from '@/types';
+import { getXPublicClient } from '@/xwagmi/actions';
 import { XCallEventType } from '../types';
 import { XCallDestinationEvent, XCallExecutedEvent, XCallMessageEvent } from './types';
 import { xServiceActions } from './useXServiceStore';
@@ -117,9 +118,9 @@ export const useXCallEventStore = create<XCallEventStore>()(
           }
         }
 
-        const xService = xServiceActions.getXPublicClient(xChainId);
+        const xPublicClient = getXPublicClient(xChainId);
 
-        let scanBlockCount = xService.getScanBlockCount();
+        let scanBlockCount = xPublicClient.getScanBlockCount();
         if (currentHeight + scanBlockCount > chainHeight) {
           scanBlockCount = chainHeight - currentHeight + 1n;
         }
@@ -136,7 +137,7 @@ export const useXCallEventStore = create<XCallEventStore>()(
           return;
         }
 
-        const events = await xService.getDestinationEvents({ startBlockHeight, endBlockHeight });
+        const events = await xPublicClient.getDestinationEvents(xChainId, { startBlockHeight, endBlockHeight });
         // console.log('events', events);
 
         if (events) {

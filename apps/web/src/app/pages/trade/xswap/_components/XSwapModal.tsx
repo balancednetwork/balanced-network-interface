@@ -21,8 +21,8 @@ import Spinner from '@/app/components/Spinner';
 import XTransactionState from '@/app/components/XTransactionState';
 import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
 import { xChainMap } from '@/constants/xChains';
+import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
-import useWallets from '@/hooks/useWallets';
 import { ApprovalState, useApproveCallback } from '@/lib/xcall/_hooks/useApproveCallback';
 import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
 import useXCallGasChecker from '@/lib/xcall/_hooks/useXCallGasChecker';
@@ -118,14 +118,7 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
 
   const gasChecker = useXCallGasChecker(direction.from);
 
-  // switch chain between evm chains
-  const wallets = useWallets();
-  const walletType = xChainMap[direction.from].xWalletType;
-  const isWrongChain = wallets[walletType].xChainId !== direction.from;
-  const { switchChain } = useSwitchChain();
-  const handleSwitchChain = () => {
-    switchChain({ chainId: xChainMap[direction.from].id as number });
-  };
+  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(direction.from);
 
   return (
     <>

@@ -1,6 +1,7 @@
 import { wagmiConfig } from '@/config/wagmi';
 import { XConnector } from '@/xwagmi/core/XConnector';
 import { XService } from '@/xwagmi/core/XService';
+import { XAccount } from '@/xwagmi/core/types';
 import { connect, disconnect } from '@wagmi/core';
 import { Connector } from 'wagmi';
 
@@ -13,11 +14,11 @@ export class EvmXConnector extends XConnector {
     this.connector = connector;
   }
 
-  async connect(): Promise<string | undefined> {
+  async connect(): Promise<XAccount | undefined> {
     // @ts-ignore
     await connect(wagmiConfig, { connector: this.connector });
 
-    return '0x123'; // it's dummy address in purpose
+    return;
   }
 
   async disconnect(): Promise<void> {

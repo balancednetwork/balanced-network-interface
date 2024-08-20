@@ -1,14 +1,14 @@
 import { ICONexRequestEventType, ICONexResponseEventType, request } from '@/packages/iconex';
+import { XAccount } from '@/xwagmi/core/types';
 
 import { XConnector } from '@/xwagmi/core/XConnector';
-import { XService } from '@/xwagmi/core/XService';
 
 export class IconHanaXConnector extends XConnector {
   constructor() {
     super('ICON', 'Hana Wallet');
   }
 
-  async connect(): Promise<string | undefined> {
+  async connect(): Promise<XAccount | undefined> {
     console.log('HanaIconXConnector connected');
 
     const detail = await request({
@@ -16,7 +16,10 @@ export class IconHanaXConnector extends XConnector {
     });
 
     if (detail?.type === ICONexResponseEventType.RESPONSE_ADDRESS) {
-      return detail?.payload;
+      return {
+        address: detail?.payload,
+        xChainType: this.xChainType,
+      };
     }
   }
 

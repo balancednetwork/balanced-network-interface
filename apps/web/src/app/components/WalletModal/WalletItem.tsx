@@ -38,7 +38,7 @@ const WalletItem = ({
 }: WalletItemProps) => {
   const xService = useXWagmiStore(state => state.xServices[xChainType]!);
 
-  const xAccount = useXAccount(xChainType);
+  const { address } = useXAccount(xChainType);
 
   const handleSwitchChain = (chain: XChain): void => {
     switchChain && switchChain({ chainId: chain.id });
@@ -69,11 +69,11 @@ const WalletItem = ({
         </ChainName>
         <Flex>
           <Typography color="text1">
-            {xAccount ? <CopyableAddress account={xAccount} copyIcon placement="right" /> : description}
+            {address ? <CopyableAddress account={address} copyIcon placement="right" /> : description}
           </Typography>
         </Flex>
         {xChains && (
-          <XChainsWrap signedIn={!!xAccount}>
+          <XChainsWrap signedIn={!!address}>
             {xChains.map(chain => (
               <Box key={chain.xChainId} onClick={() => handleSwitchChain(chain)} style={{ cursor: 'pointer' }}>
                 <ChainLogo chain={chain} size="24px" key={chain.xChainId} />
@@ -83,7 +83,7 @@ const WalletItem = ({
         )}
       </ChainInfo>
       <WalletActions>
-        {xAccount ? (
+        {address ? (
           <Flex className="wallet-options">
             <UnderlineText onClick={handleConnect}>
               <Typography color="primaryBright">Change wallet</Typography>

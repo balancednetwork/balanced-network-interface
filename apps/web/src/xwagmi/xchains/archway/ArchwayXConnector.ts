@@ -1,4 +1,5 @@
 import { XConnector } from '@/xwagmi/core/XConnector';
+import { XAccount } from '@/xwagmi/core/types';
 import { AccountData } from '@keplr-wallet/types';
 import { ArchwayXService } from './ArchwayXService';
 import { XSigningArchwayClient } from './XSigningArchwayClient';
@@ -12,7 +13,7 @@ export class ArchwayXConnector extends XConnector {
     return ArchwayXService.getInstance();
   }
 
-  async connect(): Promise<string | undefined> {
+  async connect(): Promise<XAccount | undefined> {
     const { keplr } = window as any;
     const { leap } = window as any;
     if (!keplr && !leap) {
@@ -40,7 +41,10 @@ export class ArchwayXConnector extends XConnector {
     this.getXService().setWalletClient(signingClientObj);
 
     const account: AccountData = (await offlineSigner.getAccounts())[0];
-    return account?.address;
+    return {
+      address: account?.address,
+      xChainType: this.xChainType,
+    };
   }
 
   async disconnect(): Promise<void> {

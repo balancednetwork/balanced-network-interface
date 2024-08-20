@@ -37,10 +37,10 @@ export function HomePage() {
           <div key={xChainType} className="flex flex-col gap-2">
             <h2 className="text-xl">{xChainType}</h2>
 
-            {xAccounts[xChainType] ? (
+            {xAccounts[xChainType]?.address ? (
               <div>
                 <h3>Connected Account</h3>
-                <p>{xAccounts[xChainType]}</p>
+                <p>{xAccounts[xChainType]?.address}</p>
                 <Button onClick={() => handleDisconnect(xService.xChainType)}>Disconnect</Button>
               </div>
             ) : (

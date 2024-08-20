@@ -1,5 +1,5 @@
 import { XChainType } from '@/types';
-import { XService } from './XService';
+import { XAccount } from './types';
 
 export abstract class XConnector {
   xChainType: XChainType;
@@ -14,7 +14,7 @@ export abstract class XConnector {
     this._icon = name;
   }
 
-  abstract connect(): Promise<string | undefined>;
+  abstract connect(): Promise<XAccount | undefined>;
   abstract disconnect(): Promise<void>;
 
   public get id() {

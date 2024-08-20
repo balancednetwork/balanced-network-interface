@@ -7,10 +7,10 @@ export function useXConnect() {
 
   const connect = useCallback(
     async (xConnector: XConnector) => {
-      const account = await xConnector.connect();
-      if (account) {
+      const xAccount = await xConnector.connect();
+      if (xAccount) {
         setXConnection(xConnector.xChainType, {
-          account,
+          xAccount,
           xConnector,
         });
       }

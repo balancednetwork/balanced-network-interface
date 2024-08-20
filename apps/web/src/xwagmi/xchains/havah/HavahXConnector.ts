@@ -1,5 +1,5 @@
 import { XConnector } from '@/xwagmi/core/XConnector';
-import { XService } from '@/xwagmi/core/XService';
+import { XAccount } from '@/xwagmi/core/types';
 
 interface AccountResultType {
   address: string;
@@ -12,7 +12,7 @@ export class HavahXConnector extends XConnector {
     super('HAVAH', 'Havah Wallet');
   }
 
-  async connect(): Promise<string | undefined> {
+  async connect(): Promise<XAccount | undefined> {
     const { havah } = window as any;
     if (!havah) {
       window.open(
@@ -24,9 +24,10 @@ export class HavahXConnector extends XConnector {
 
     await havah.connect();
     const account: AccountResultType = await havah.accounts();
-    if (account.address) {
-      return account.address;
-    }
+    return {
+      address: account.address,
+      xChainType: this.xChainType,
+    };
   }
 
   async disconnect(): Promise<void> {

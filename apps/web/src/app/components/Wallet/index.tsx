@@ -2,10 +2,9 @@ import { Typography } from '@/app/theme';
 import bnJs from '@/bnJs';
 import { xChainMap } from '@/constants/xChains';
 import useKeyPress from '@/hooks/useKeyPress';
-import useWallets from '@/hooks/useWallets';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useXBalancesByToken } from '@/store/wallet/hooks';
-import { XWalletType } from '@/types';
+import { useXDisconnectAll } from '@/xwagmi/hooks';
 import { Trans, t } from '@lingui/macro';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { isMobile } from 'react-device-detect';
@@ -32,7 +31,6 @@ interface WalletProps {
 }
 
 const Wallet = ({ close }: WalletProps) => {
-  const allWallets = useWallets();
   const balances = useXBalancesByToken();
   const toggleWalletModal = useWalletModalToggle();
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -49,18 +47,11 @@ const Wallet = ({ close }: WalletProps) => {
     }
   };
 
+  const xDisconnectAll = useXDisconnectAll();
+
   const handleDisconnectWallet = async () => {
     close();
-
-    if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
-      bnJs.contractSettings.ledgerSettings.transport.close();
-    }
-
-    // disconnect function includes resetContractLedgerSettings, so put it below the transport.close()
-    allWallets[XWalletType.ICON]?.disconnect();
-    allWallets[XWalletType.COSMOS]?.disconnect();
-    allWallets[XWalletType.EVM]?.disconnect();
-    allWallets[XWalletType.HAVAH]?.disconnect();
+    await xDisconnectAll();
   };
 
   useEffect(() => {

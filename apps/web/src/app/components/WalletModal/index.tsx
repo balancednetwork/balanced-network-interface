@@ -25,8 +25,9 @@ import { ApplicationModal } from '@/store/application/reducer';
 import { xChainMap } from '@/constants/xChains';
 import useDebounce from '@/hooks/useDebounce';
 import { MODAL_ID } from '@/hooks/useModalStore';
-import useWallets, { useSignedInWallets } from '@/hooks/useWallets';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { XWalletType } from '@/types';
+import { useXDisconnectAll } from '@/xwagmi/hooks';
 import { useSwitchChain } from 'wagmi';
 import Divider from '../Divider';
 import { DropdownPopper } from '../Popover';
@@ -52,7 +53,8 @@ export default function WalletModal() {
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
   const toggleWalletModal = useWalletModalToggle();
   const signedInWallets = useSignedInWallets();
-  const wallets = useWallets();
+
+  const xDisconnectAll = useXDisconnectAll();
 
   const { switchChain } = useSwitchChain();
   const activeLocale = useActiveLocale();
@@ -80,10 +82,6 @@ export default function WalletModal() {
 
   const handleChainQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
     setChainQuery(e.target.value);
-  };
-
-  const disconnectAll = () => {
-    Object.values(wallets).forEach(wallet => wallet.account && wallet.disconnect());
   };
 
   const walletConfig = useMemo(() => {
@@ -166,7 +164,7 @@ export default function WalletModal() {
                     ? t`Connected to ${numberOfConnectedWallets} blockchains`
                     : t`Connected to ${numberOfConnectedWallets} blockchain`}
                 </Typography>
-                <Typography onClick={disconnectAll} color="alert" style={{ cursor: 'pointer' }}>
+                <Typography onClick={xDisconnectAll} color="alert" style={{ cursor: 'pointer' }}>
                   Disconnect all
                 </Typography>
               </Flex>

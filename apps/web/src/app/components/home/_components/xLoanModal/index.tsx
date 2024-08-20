@@ -13,6 +13,7 @@ import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { xChainMap } from '@/constants/xChains';
+import useEthereumChainId from '@/hooks/useEthereumChainId';
 import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
 import useWallets from '@/hooks/useWallets';
 import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
@@ -23,9 +24,12 @@ import {
   useXTransactionStore,
   xTransactionActions,
 } from '@/lib/xcall/_zustand/useXTransactionStore';
+import { switchEthereumChain, walletStrategy } from '@/packages/injective';
 import { useCollateralType } from '@/store/collateral/hooks';
 import { useDerivedLoanInfo, useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
-import { XChainId } from '@/types';
+import { XChainId, XWalletType } from '@/types';
+import { Wallet } from '@injectivelabs/wallet-ts';
+import { mainnet } from 'viem/chains';
 import { useSwitchChain } from 'wagmi';
 import useLoanWalletServiceHandler from '../../useLoanWalletServiceHandler';
 
@@ -120,13 +124,23 @@ const XLoanModal = ({
 
   const gasChecker = useXCallGasChecker(activeChain);
 
+  const ethereumChainId = useEthereumChainId();
+
   // switch chain between evm chains
   const wallets = useWallets();
   const walletType = xChainMap[activeChain].xWalletType;
-  const isWrongChain = wallets[walletType].xChainId !== activeChain;
+  const isWrongChain =
+    wallets[walletType].xChainId !== activeChain ||
+    (walletType === XWalletType.INJECTIVE &&
+      walletStrategy.getWallet() === Wallet.Metamask &&
+      ethereumChainId !== mainnet.id);
   const { switchChain } = useSwitchChain();
-  const handleSwitchChain = () => {
-    switchChain({ chainId: xChainMap[activeChain].id as number });
+  const handleSwitchChain = async () => {
+    if (walletType === XWalletType.INJECTIVE) {
+      switchEthereumChain(mainnet.id);
+    } else {
+      switchChain({ chainId: xChainMap[activeChain].id as number });
+    }
   };
 
   return (

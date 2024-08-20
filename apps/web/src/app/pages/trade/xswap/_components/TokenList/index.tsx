@@ -146,7 +146,14 @@ const TokenList = () => {
                 ) : null,
               )}
               {noTokensFound && (
-                <Typography width="100%" paddingTop="30px" fontSize={16} color="text">
+                <Typography
+                  width="100%"
+                  paddingTop="30px"
+                  paddingBottom="15px"
+                  fontSize={16}
+                  color="text"
+                  textAlign="center"
+                >
                   Couldn't find any listings for <strong>{query}</strong>.
                 </Typography>
               )}

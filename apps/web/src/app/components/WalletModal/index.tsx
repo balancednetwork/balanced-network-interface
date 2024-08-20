@@ -19,21 +19,20 @@ import HavahWalletIcon from '@/assets/icons/chains/havah.svg';
 import IconWalletIcon from '@/assets/icons/wallets/iconex.svg';
 import { LOCALE_LABEL, SUPPORTED_LOCALES, SupportedLocale } from '@/constants/locales';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
-import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
-import { useModalOpen, useWalletModal, useWalletModalToggle } from '@/store/application/hooks';
+import { useModalOpen, useWalletModalToggle } from '@/store/application/hooks';
 import { ApplicationModal } from '@/store/application/reducer';
 
 import { xChainMap } from '@/constants/xChains';
 import useDebounce from '@/hooks/useDebounce';
+import { MODAL_ID } from '@/hooks/useModalStore';
 import useWallets, { useSignedInWallets } from '@/hooks/useWallets';
-import { useHavahContext } from '@/packages/havah/HavahProvider';
 import { XWalletType } from '@/types';
 import { useSwitchChain } from 'wagmi';
 import Divider from '../Divider';
 import { DropdownPopper } from '../Popover';
 import { EVMWalletModal } from './EVMWalletModal';
 import { IconWalletModal } from './IconWalletModal';
-import WalletItem from './WalletItem';
+import WalletItem, { WalletItemProps } from './WalletItem';
 import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
@@ -52,11 +51,11 @@ const presenceVariants = {
 export default function WalletModal() {
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
   const toggleWalletModal = useWalletModalToggle();
-  const [, setWalletModal] = useWalletModal();
-  const { connectToWallet: connectToKeplr } = useArchwayContext();
-  const { connectToWallet: connectToHavah } = useHavahContext();
   const signedInWallets = useSignedInWallets();
   const wallets = useWallets();
+
+  console.log(wallets);
+
   const { switchChain } = useSwitchChain();
   const activeLocale = useActiveLocale();
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
@@ -92,23 +91,21 @@ export default function WalletModal() {
   const walletConfig = useMemo(() => {
     const iconConfig = {
       name: 'ICON',
+      xChainType: 'ICON',
       logo: <IconWalletIcon width="32" />,
-      connect: () => setWalletModal(XWalletType.ICON),
-      disconnect: wallets[XWalletType.ICON].disconnect,
       description: t`Borrow bnUSD. Vote. Supply liquidity. Swap & transfer cross-chain.`,
       keyWords: ['iconex', 'hana'],
-      address: wallets[XWalletType.ICON].account,
       xChains: undefined,
       switchChain: undefined,
     };
+
     return [
       iconConfig,
       ...[
         {
           name: 'Ethereum & EVM ecosystem',
+          xChainType: 'EVM',
           logo: <ETHIcon width="32" />,
-          connect: () => setWalletModal(XWalletType.EVM),
-          disconnect: wallets[XWalletType.EVM].disconnect,
           description: t`Borrow bnUSD. Swap & transfer cross-chain.`,
           keyWords: [
             'evm',
@@ -124,35 +121,29 @@ export default function WalletModal() {
             'binance',
             'base',
           ],
-          address: wallets[XWalletType.EVM].account,
           xChains: Object.values(xChainMap)
             .filter(xChain => xChain.xWalletType === XWalletType.EVM && !xChain.testnet)
             .sort((a, b) => a.name.localeCompare(b.name)),
           switchChain: switchChain,
+          walletOptionsModalId: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,
         },
         {
           name: 'Havah',
+          xChainType: 'HAVAH',
           logo: <HavahWalletIcon width="40" height="40" />,
-          connect: connectToHavah,
-          disconnect: wallets[XWalletType.HAVAH].disconnect,
           description: t`Swap & transfer crypto cross-chain.`,
           keyWords: ['iconex', 'hana'],
-          address: wallets[XWalletType.HAVAH].account,
         },
         {
           name: 'Archway',
+          xChainType: 'ARCHWAY',
           logo: <ArchWalletIcon width="32" />,
-          connect: connectToKeplr,
-          disconnect: wallets[XWalletType.COSMOS].disconnect,
           description: t`Swap & transfer cross-chain.`,
           keyWords: ['archway', 'cosmos', 'keplr', 'leap'],
-          address: wallets[XWalletType.COSMOS].account,
-          xChains: undefined,
-          switchChain: undefined,
         },
       ].sort((a, b) => a.name.localeCompare(b.name)),
-    ];
-  }, [setWalletModal, connectToKeplr, wallets, switchChain, connectToHavah]);
+    ] as WalletItemProps[];
+  }, [switchChain]);
 
   const filteredWallets = React.useMemo(() => {
     return [...walletConfig].filter(wallet => {

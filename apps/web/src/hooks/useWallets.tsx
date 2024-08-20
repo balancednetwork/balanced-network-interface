@@ -13,6 +13,8 @@ const useWallets = (): {
   const havah = useHavahContext();
   const evm = useEVMReact();
 
+  console.log(evm, evm.xChainId === '0x38.bsc' ? undefined : evm.account);
+
   return useMemo(
     () => ({
       [XWalletType.ICON]: {

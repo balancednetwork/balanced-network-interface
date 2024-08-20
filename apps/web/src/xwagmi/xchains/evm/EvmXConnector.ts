@@ -24,4 +24,11 @@ export class EvmXConnector extends XConnector {
     // @ts-ignore
     await disconnect(wagmiConfig);
   }
+
+  public get id() {
+    return this.connector.id;
+  }
+  public get icon() {
+    return this.connector.icon;
+  }
 }

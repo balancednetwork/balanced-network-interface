@@ -8,8 +8,7 @@ import { xChainMap } from '@/constants/xChains';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSwapState } from '@/store/swap/hooks';
 import { getXChainType } from '@/xwagmi/actions';
-import { useXAccount, useXConnect } from '@/xwagmi/hooks';
-import { useXWagmiStore } from '@/xwagmi/useXWagmiStore';
+import { useXAccount, useXConnect, useXService } from '@/xwagmi/hooks';
 import { Trans } from '@lingui/macro';
 import { UnderlineText } from '../DropdownText';
 import Modal from '../Modal';
@@ -21,11 +20,13 @@ const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; e
   const { recipient } = useSwapState();
 
   const xChainType = getXChainType(xChainId);
-  const xService = useXWagmiStore(state => state.xServices[xChainType]!);
+  const xService = useXService(xChainType);
   const { address } = useXAccount(xChainType);
 
   const xConnect = useXConnect();
   const handleConnect = () => {
+    if (!xService) return;
+
     const xConnectors = xService.getXConnectors();
 
     if (xChainType === 'EVM') {

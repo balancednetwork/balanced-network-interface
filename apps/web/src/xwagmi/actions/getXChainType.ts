@@ -13,6 +13,9 @@ const xChainIdTypeMap: Record<XChainId, XChainType> = {
   '0x2105.base': 'EVM',
 };
 
-export function getXChainType(xChainId: XChainId): XChainType {
+export function getXChainType(xChainId: XChainId | undefined): XChainType | undefined {
+  if (!xChainId) {
+    return undefined;
+  }
   return xChainIdTypeMap[xChainId];
 }

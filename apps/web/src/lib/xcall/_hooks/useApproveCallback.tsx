@@ -24,7 +24,6 @@ import { useXAccount, useXService } from '@/xwagmi/hooks';
 import { ArchwayXService } from '@/xwagmi/xchains/archway';
 import { getFeeParam, isDenomAsset } from '@/xwagmi/xchains/archway/utils';
 import { transactionActions } from '../_zustand/useTransactionStore';
-import useXWallet from './useXWallet';
 
 export const FAST_INTERVAL = 10000;
 
@@ -67,9 +66,7 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
 
   const [pending, setPending] = useState<boolean>(false);
 
-  const xWallet = useXWallet(amountToApprove?.currency.xChainId);
-
-  const account = xWallet?.account;
+  const { address: account } = useXAccount(getXChainType(amountToApprove?.currency.xChainId));
 
   const xChainId = amountToApprove?.currency.xChainId;
   const xChainType = xChainId ? xChainMap[xChainId].xChainType : undefined;

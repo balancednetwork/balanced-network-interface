@@ -1,14 +1,21 @@
 import { XChainType } from '@/types';
 import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
-import { XAccount, XConnection } from '../core/types';
-import { useXWagmiStore } from '../useXWagmiStore';
+import { XAccount } from '../core/types';
+import { useXConnection } from './useXConnection';
 
-export function useXAccount(xChainType: XChainType) {
-  const xConnection: XConnection = useXWagmiStore(state => state.xConnections?.[xChainType]);
+export function useXAccount(xChainType: XChainType | undefined): XAccount {
+  const xConnection = useXConnection(xChainType);
   const { address: evmAddress } = useAccount();
 
-  const xAccount: XAccount = useMemo((): XAccount => {
+  const xAccount = useMemo((): XAccount => {
+    if (!xChainType) {
+      return {
+        address: undefined,
+        xChainType: undefined,
+      };
+    }
+
     if (xChainType === 'EVM') {
       return {
         address: evmAddress as string,

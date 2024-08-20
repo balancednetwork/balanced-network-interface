@@ -7,3 +7,4 @@ export { useXPublicClient } from './useXPublicClient';
 export { useXWalletClient } from './useXWalletClient';
 export { useXService } from './useXService';
 export { useXDisconnectAll } from './useXDisconnectAll';
+export { useXConnection } from './useXConnection';

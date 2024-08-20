@@ -7,8 +7,7 @@ import { Typography } from '@/app/theme';
 import { ChainLogo } from '@/app/components/ChainLogo';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { XChain, XChainType } from '@/types';
-import { useXAccount, useXConnect, useXDisconnect } from '@/xwagmi/hooks';
-import { useXWagmiStore } from '@/xwagmi/useXWagmiStore';
+import { useXAccount, useXConnect, useXDisconnect, useXService } from '@/xwagmi/hooks';
 import { t } from '@lingui/macro';
 import { UnderlineText } from '../DropdownText';
 import { CopyableAddress } from '../Header';
@@ -36,7 +35,7 @@ const WalletItem = ({
   switchChain,
   walletOptionsModalId,
 }: WalletItemProps) => {
-  const xService = useXWagmiStore(state => state.xServices[xChainType]!);
+  const xService = useXService(xChainType);
 
   const { address } = useXAccount(xChainType);
 
@@ -48,6 +47,8 @@ const WalletItem = ({
   const xDisconnect = useXDisconnect();
 
   const handleConnect = () => {
+    if (!xService) return;
+
     const xConnectors = xService.getXConnectors();
 
     if (xConnectors.length === 1) {

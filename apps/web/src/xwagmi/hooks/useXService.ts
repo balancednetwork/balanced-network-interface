@@ -2,7 +2,7 @@ import { XChainType } from '@/types';
 import { XService } from '../core';
 import { useXWagmiStore } from '../useXWagmiStore';
 
-export function useXService(xChainType: XChainType): XService {
-  const xService = useXWagmiStore(state => state.xServices[xChainType]!);
+export function useXService(xChainType: XChainType | undefined): XService | undefined {
+  const xService = useXWagmiStore(state => (xChainType ? state.xServices[xChainType] : undefined));
   return xService;
 }

@@ -3,7 +3,7 @@ import { XConnector } from './XConnector';
 
 export type XAccount = {
   address: string | undefined;
-  xChainType: XChainType;
+  xChainType: XChainType | undefined;
 };
 
 export type XConnection = {

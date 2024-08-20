@@ -21,6 +21,7 @@ import Spinner from '@/app/components/Spinner';
 import XTransactionState from '@/app/components/XTransactionState';
 import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
 import { xChainMap } from '@/constants/xChains';
+import useEthereumChainId from '@/hooks/useEthereumChainId';
 import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
 import useWallets from '@/hooks/useWallets';
 import { ApprovalState, useApproveCallback } from '@/lib/xcall/_hooks/useApproveCallback';
@@ -33,10 +34,10 @@ import {
   useXTransactionStore,
   xTransactionActions,
 } from '@/lib/xcall/_zustand/useXTransactionStore';
-import { walletStrategy } from '@/packages/injective';
+import { switchEthereumChain, walletStrategy } from '@/packages/injective';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { Wallet } from '@injectivelabs/wallet-ts';
-import { useChainId, useSwitchChain } from 'wagmi';
+import { useSwitchChain } from 'wagmi';
 import { mainnet } from 'wagmi/chains';
 
 type XSwapModalProps = {
@@ -124,7 +125,7 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
 
   const gasChecker = useXCallGasChecker(direction.from);
 
-  const ethereumChainId = useChainId();
+  const ethereumChainId = useEthereumChainId();
 
   // switch chain between evm chains
   const wallets = useWallets();
@@ -135,9 +136,9 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
       walletStrategy.getWallet() === Wallet.Metamask &&
       ethereumChainId !== mainnet.id);
   const { switchChain } = useSwitchChain();
-  const handleSwitchChain = () => {
+  const handleSwitchChain = async () => {
     if (walletType === XWalletType.INJECTIVE) {
-      switchChain({ chainId: mainnet.id });
+      switchEthereumChain(mainnet.id);
     } else {
       switchChain({ chainId: xChainMap[direction.from].id as number });
     }

@@ -22,13 +22,13 @@ import {
   isNativeCurrency,
 } from '@/constants/tokens';
 import { ARCHWAY_FEE_TOKEN_SYMBOL, useARCH } from '@/constants/tokens1';
-import { isDenomAsset } from '@/packages/archway/utils';
 import { useBnJsContractQuery } from '@/queries/utils';
 import { useTokenListConfig } from '@/store/lists/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useUserAddedTokens } from '@/store/user/hooks';
 import { XChainId, XWalletAssetRecord } from '@/types';
 import { getXTokenAddress, isXToken } from '@/utils/xTokens';
+import { isDenomAsset } from '@/xwagmi/xchains/archway/utils';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
@@ -82,7 +82,10 @@ export function useArchwayBalances(
 ): UseQueryResult<{
   [key: string]: CurrencyAmount<Currency>;
 }> {
-  const { signingClient, chainId } = useArchwayContext();
+  const archwayXService: ArchwayXService = useXService('ARCHWAY') as ArchwayXService;
+  const signingClient = archwayXService.walletClient;
+  const chainId = archwayXService.chainId;
+
   const arch = useARCH();
 
   return useQuery({
@@ -130,9 +133,9 @@ import { viemClients } from '@/config/wagmi';
 import { SUPPORTED_XCALL_CHAINS, xChainMap } from '@/constants/xChains';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
-import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
-import { useHavahContext } from '@/packages/havah/HavahProvider';
 import { useRatesWithOracle } from '@/queries/reward';
+import { useXAccount, useXService } from '@/xwagmi/hooks';
+import { ArchwayXService } from '@/xwagmi/xchains/archway';
 import { havahJs } from '@/xwagmi/xchains/havah/havahJs';
 import { erc20Abi } from 'viem';
 import { useAccount, useBalance, usePublicClient } from 'wagmi';
@@ -203,7 +206,7 @@ export function useWalletFetchBalances() {
   }, [balances, dispatch]);
 
   // fetch balances on havah
-  const { address: accountHavah } = useHavahContext();
+  const { address: accountHavah } = useXAccount('HAVAH');
   const havahTokens = useXTokens('0x100.icon') || [];
   const { data: balancesHavah } = useHavahBalances(accountHavah || undefined, havahTokens);
   React.useEffect(() => {
@@ -211,7 +214,7 @@ export function useWalletFetchBalances() {
   }, [balancesHavah, dispatch]);
 
   // fetch balances on archway
-  const { address: accountArch } = useArchwayContext();
+  const { address: accountArch } = useXAccount('ARCHWAY');
   const tokensArch = useXTokens('archway-1') || [];
   const { data: balancesArch } = useArchwayBalances(accountArch || undefined, tokensArch);
   React.useEffect(() => {

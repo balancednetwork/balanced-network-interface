@@ -11,8 +11,6 @@ import { usePublicClient, useWalletClient } from 'wagmi';
 import { openToast } from '@/app/components/Toast/transactionToast';
 import { NATIVE_ADDRESS } from '@/constants/index';
 import { archway, xChainMap } from '@/constants/xChains';
-import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
-import { getFeeParam, isDenomAsset } from '@/packages/archway/utils';
 import { TransactionStatus } from '@/store/transactions/hooks';
 import {
   useAddTransactionResult,
@@ -22,6 +20,9 @@ import {
 import { XToken } from '@/types';
 import { getXChainType } from '@/xwagmi/actions/getXChainType';
 import { getXWalletClient } from '@/xwagmi/actions/getXWalletClient';
+import { useXAccount, useXService } from '@/xwagmi/hooks';
+import { ArchwayXService } from '@/xwagmi/xchains/archway';
+import { getFeeParam, isDenomAsset } from '@/xwagmi/xchains/archway/utils';
 import { transactionActions } from '../_zustand/useTransactionStore';
 import useXWallet from './useXWallet';
 
@@ -72,9 +73,6 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
 
   const xChainId = amountToApprove?.currency.xChainId;
   const xChainType = xChainId ? xChainMap[xChainId].xChainType : undefined;
-
-  // archway stuff
-  // const { signingClient } = useArchwayContext();
 
   // evm stuff
   const { data: walletClient } = useWalletClient();
@@ -301,7 +299,8 @@ export function useTokenAllowance(
 } {
   const inputs = useMemo(() => [owner, spender] as [`0x${string}`, `0x${string}`], [owner, spender]);
   const evmPublicClient = usePublicClient();
-  const { client: archwayPublicClient } = useArchwayContext();
+  const archwayXService: ArchwayXService = useXService('ARCHWAY') as ArchwayXService;
+  const archwayPublicClient = archwayXService.publicClient;
 
   const { data: allowance, refetch } = useQuery({
     queryKey: [token?.xChainId, token?.address, owner, spender],
@@ -365,7 +364,10 @@ const useAllowanceHandler = (
   spenderAddress: string = archway.contracts.assetManager,
   callback?: (success: boolean) => void,
 ) => {
-  const { address, signingClient } = useArchwayContext();
+  const { address } = useXAccount('ARCHWAY');
+  const archwayXService: ArchwayXService = useXService('ARCHWAY') as ArchwayXService;
+  const signingClient = archwayXService.walletClient;
+
   const addTransactionResult = useAddTransactionResult();
   const initTransaction = useInitTransaction();
   const { transactions } = useArchwayTransactionsState();

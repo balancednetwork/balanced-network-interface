@@ -15,13 +15,11 @@ import { BrowserRouter } from 'react-router-dom';
 
 // Import root app
 import { App } from '@/app';
-import { ArchwayProvider } from '@/packages/archway/ArchwayProvider';
 import store from '@/store';
 
 // Initialize languages
 import { LanguageProvider } from './i18n';
 
-import { HavahProvider } from '@/packages/havah/HavahProvider';
 import { WagmiProvider } from 'wagmi';
 import { wagmiConfig } from './config/wagmi';
 
@@ -55,13 +53,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <WagmiProvider config={wagmiConfig}>
             <QueryClientProvider client={queryClient}>
               <IconReactProvider>
-                <ArchwayProvider>
-                  <HavahProvider>
-                    <LanguageProvider>
-                      <App />
-                    </LanguageProvider>
-                  </HavahProvider>
-                </ArchwayProvider>
+                <LanguageProvider>
+                  <App />
+                </LanguageProvider>
               </IconReactProvider>
             </QueryClientProvider>
           </WagmiProvider>

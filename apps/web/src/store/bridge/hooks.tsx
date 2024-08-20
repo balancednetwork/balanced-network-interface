@@ -9,11 +9,11 @@ import { sARCH } from '@/constants/tokens1';
 import { xChainMap } from '@/constants/xChains';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import useWallets, { useSignedInWallets } from '@/hooks/useWallets';
-import { isDenomAsset } from '@/packages/archway/utils';
 import { AppState } from '@/store';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { XChainId, XToken } from '@/types';
 import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
+import { isDenomAsset } from '@/xwagmi/xchains/archway/utils';
 import {
   Field,
   selectChain,

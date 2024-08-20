@@ -1,15 +1,15 @@
 import React from 'react';
 
 import { Typography } from '@/app/theme';
-import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
-import { useWalletModal } from '@/store/application/hooks';
-import { XChainId, XWalletType } from '@/types';
+import { XChainId } from '@/types';
 import { shortenAddress } from '@/utils';
 
 import { xChainMap } from '@/constants/xChains';
-import useWallets from '@/hooks/useWallets';
-import { useHavahContext } from '@/packages/havah/HavahProvider';
+import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSwapState } from '@/store/swap/hooks';
+import { getXChainType } from '@/xwagmi/actions';
+import { useXAccount, useXConnect } from '@/xwagmi/hooks';
+import { useXWagmiStore } from '@/xwagmi/useXWagmiStore';
 import { Trans } from '@lingui/macro';
 import { UnderlineText } from '../DropdownText';
 import Modal from '../Modal';
@@ -18,23 +18,22 @@ import AddressInput from './AddressInput';
 
 const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; editable?: boolean }) => {
   const [editableAddressModalOpen, setEditableAddressModalOpen] = React.useState(false);
-  const { connectToWallet: connectKeplr } = useArchwayContext();
-  const { connectToWallet: connectToHavah } = useHavahContext();
-  const [, setWalletModal] = useWalletModal();
   const { recipient } = useSwapState();
 
-  const wallets = useWallets();
-  const account = wallets[xChainMap[xChainId].xWalletType].account;
+  const xChainType = getXChainType(xChainId);
+  const xService = useXWagmiStore(state => state.xServices[xChainType]!);
+  const { address } = useXAccount(xChainType);
 
+  const xConnect = useXConnect();
   const handleConnect = () => {
-    const chain = xChainMap[xChainId];
-    if (chain.xWalletType === XWalletType.COSMOS) {
-      connectKeplr();
-    } else if (chain.xWalletType === XWalletType.HAVAH) {
-      connectToHavah();
+    const xConnectors = xService.getXConnectors();
+
+    if (xChainType === 'EVM') {
+      modalActions.openModal(MODAL_ID.EVM_WALLET_OPTIONS_MODAL);
     } else {
-      setWalletModal(chain.xWalletType);
+      xConnect(xConnectors[0]);
     }
+
     closeModal();
   };
 
@@ -48,8 +47,8 @@ const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; e
 
   return !editable ? (
     <Typography onClick={handleConnect} color="primaryBright">
-      {account ? (
-        <UnderlineText>{shortenAddress(account || '', 5)}</UnderlineText>
+      {address ? (
+        <UnderlineText>{shortenAddress(address || '', 5)}</UnderlineText>
       ) : (
         <UnderlineText>Connect wallet</UnderlineText>
       )}

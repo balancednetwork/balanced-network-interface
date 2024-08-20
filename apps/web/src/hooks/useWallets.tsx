@@ -1,16 +1,15 @@
 import useEVMReact from '@/lib/xcall/_hooks/useEVMReact';
-import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
-import { useHavahContext } from '@/packages/havah/HavahProvider';
 import { useIconReact } from '@/packages/icon-react';
 import { XChainId, XWalletType } from '@/types';
+import { useXAccount } from '@/xwagmi/hooks';
 import { useMemo } from 'react';
 
 const useWallets = (): {
   [key in XWalletType]: { account: string | undefined | null; xChainId: XChainId | undefined; disconnect: () => void };
 } => {
-  const arch = useArchwayContext();
+  const arch = useXAccount('ARCHWAY');
   const icon = useIconReact();
-  const havah = useHavahContext();
+  const havah = useXAccount('HAVAH');
   const evm = useEVMReact();
 
   return useMemo(
@@ -23,7 +22,7 @@ const useWallets = (): {
       [XWalletType.COSMOS]: {
         account: arch.address,
         xChainId: 'archway-1',
-        disconnect: arch.disconnect,
+        disconnect: () => {},
       },
       [XWalletType.EVM]: {
         account: evm.account,
@@ -53,7 +52,7 @@ const useWallets = (): {
       [XWalletType.HAVAH]: {
         account: havah.address,
         xChainId: '0x100.icon',
-        disconnect: havah.disconnect,
+        disconnect: () => {},
       },
     }),
     [arch, icon, evm, havah],

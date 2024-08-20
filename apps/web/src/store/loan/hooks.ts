@@ -137,13 +137,13 @@ export function useLoanFetchInfo(account?: string | null) {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        await Promise.all(allWallets.map(fetchLoanInfo));
+        await Promise.all(allWallets.filter(wallet => !!wallet.xChainId).map(fetchLoanInfo));
       } catch (e) {
         console.error(e);
       }
     };
     fetchData();
-  }, [fetchLoanInfo, allWallets, transactions, pendingXCalls.length]);
+  }, [fetchLoanInfo, allWallets.length, pendingXCalls.length, transactions]);
 
   React.useEffect(() => {
     (async () => {

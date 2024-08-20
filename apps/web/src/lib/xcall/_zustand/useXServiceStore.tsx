@@ -19,6 +19,8 @@ import { HavahXPublicClient } from '../_xcall/HavahXPublicClient';
 import { HavahXWalletClient } from '../_xcall/HavahXWalletClient';
 import { IconXPublicClient } from '../_xcall/IconXPublicClient';
 import { IconXWalletClient } from '../_xcall/IconXWalletClient';
+import { InjectiveXPublicClient } from '../_xcall/InjectiveXPublicClient';
+import { InjectiveXWalletClient } from '../_xcall/InjectiveXWalletClient';
 import { XPublicClient, XWalletClient } from '../_xcall/types';
 
 type XServiceStore = {
@@ -118,13 +120,18 @@ export const useCreatePublicXService = (xChainId: XChainId) => {
           createPublicXService(IconXPublicClient, xChainId, iconPublicClient);
           break;
         case 'ARCHWAY':
-          createPublicXService(ArchwayXPublicClient, xChainId, archwayPublicClient);
+          if (archwayPublicClient) {
+            createPublicXService(ArchwayXPublicClient, xChainId, archwayPublicClient);
+          }
           break;
         case 'EVM':
           createPublicXService(EvmXPublicClient, xChainId, evmPublicClient);
           break;
         case 'HAVAH':
           createPublicXService(HavahXPublicClient, xChainId, havahJs.provider);
+          break;
+        case 'INJECTIVE':
+          createPublicXService(InjectiveXPublicClient, xChainId, undefined);
           break;
         default:
           break;
@@ -175,6 +182,9 @@ export const useCreateWalletXService = (xChainId: XChainId) => {
           break;
         case 'HAVAH':
           createWalletXService(HavahXWalletClient, xChainId, publicClient, havahJs.provider);
+          break;
+        case 'INJECTIVE':
+          createWalletXService(InjectiveXWalletClient, xChainId, undefined, undefined);
           break;
         default:
           break;

@@ -75,8 +75,8 @@ msgid "To"
 msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Borrow bnUSD. Swap & transfer cross-chain."
-msgstr ""
+#~ msgid "Borrow bnUSD. Swap & transfer cross-chain."
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Removing"
@@ -93,10 +93,10 @@ msgstr ""
 msgid "Your transaction has failed. Please go back and try again."
 msgstr ""
 
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
 msgid "{0} transfer approval failed."
 msgstr ""
 
@@ -424,8 +424,8 @@ msgid "Confirm"
 msgstr "Bevestigen"
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer cross-chain."
-msgstr ""
+#~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer cross-chain."
+#~ msgstr ""
 
 #: src/app/containers/HomePage/index.tsx
 #~ msgid "Sign in to use the Home page."
@@ -443,9 +443,9 @@ msgstr "Goedgekeurd"
 msgid "Review the community token list on GitHub."
 msgstr ""
 
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
 msgid "Approving {0} for cross-chain transfer..."
 msgstr ""
 
@@ -767,9 +767,9 @@ msgstr "Voor"
 msgid "Active"
 msgstr "Actief"
 
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
 msgstr ""
 
@@ -898,8 +898,8 @@ msgid "Lock up Balance Tokens?"
 msgstr "Balance Tokens vergrendelen?"
 
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/pages/trade/bridge/_components/XTransactionState.tsx
-#: src/app/pages/trade/bridge/_components/XTransactionState.tsx
+#: src/app/components/XTransactionState/index.tsx
+#: src/app/components/XTransactionState/index.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
@@ -1242,8 +1242,9 @@ msgid "Each redemption is spread across a group of borrowers to minimise the imp
 msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Swap & transfer crypto cross-chain."
-msgstr ""
+#: src/app/components/WalletModal/index.tsx
+#~ msgid "Swap & transfer crypto cross-chain."
+#~ msgstr ""
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 msgid "Withdrawing"
@@ -1586,8 +1587,8 @@ msgstr ""
 msgid "Approve"
 msgstr "Goedkeuren"
 
-#: src/app/pages/trade/bridge/_zustand/useTransactionStore.tsx
 #: src/btp/src/connectors/helper.ts
+#: src/lib/xcall/_zustand/useTransactionStore.tsx
 #: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
 msgstr "Transactie verwerken..."
@@ -2044,6 +2045,7 @@ msgid "Deposit"
 msgstr "Storten"
 
 #: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
 msgid "Swap & transfer cross-chain."
 msgstr ""
 
@@ -2338,6 +2340,11 @@ msgstr "{0} storten als onderpand?"
 msgid "Allocating bBALN..."
 msgstr ""
 
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+msgid "Borrow, swap, & transfer cross-chain."
+msgstr ""
+
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "You approved"
 msgstr "Je hebt goedgekeurd"
@@ -2615,6 +2622,10 @@ msgstr ""
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "Vote cast."
 msgstr "Stem uitgebracht."
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Borrow, swap, & transfer cross-chain. Supply liquidity. Vote."
+msgstr ""
 
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 msgid "Network fees"

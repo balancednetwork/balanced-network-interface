@@ -32,7 +32,6 @@ import { useSwitchChain } from 'wagmi';
 import Divider from '../Divider';
 import { DropdownPopper } from '../Popover';
 import { EVMWalletModal } from './EVMWalletModal';
-import { IconWalletModal } from './IconWalletModal';
 import WalletItem, { WalletItemProps } from './WalletItem';
 import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
 
@@ -254,8 +253,6 @@ export default function WalletModal() {
           )}
         </Wrapper>
       </StyledModal>
-
-      <IconWalletModal />
 
       <EVMWalletModal />
     </>

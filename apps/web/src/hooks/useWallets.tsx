@@ -17,7 +17,7 @@ const useWallets = (): {
       [XWalletType.ICON]: {
         account: icon.account,
         xChainId: '0x1.icon',
-        disconnect: icon.disconnect,
+        disconnect: () => {},
       },
       [XWalletType.COSMOS]: {
         account: arch.address,

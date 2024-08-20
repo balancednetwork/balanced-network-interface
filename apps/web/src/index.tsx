@@ -4,7 +4,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import { IconReactProvider } from '@/packages/icon-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { HelmetProvider } from 'react-helmet-async';
@@ -52,11 +51,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <HelmetProvider>
           <WagmiProvider config={wagmiConfig}>
             <QueryClientProvider client={queryClient}>
-              <IconReactProvider>
-                <LanguageProvider>
-                  <App />
-                </LanguageProvider>
-              </IconReactProvider>
+              <LanguageProvider>
+                <App />
+              </LanguageProvider>
             </QueryClientProvider>
           </WagmiProvider>
         </HelmetProvider>

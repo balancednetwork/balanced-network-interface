@@ -16,7 +16,7 @@ import { isNativeCurrency } from '@/constants/tokens';
 import { PairState } from '@/hooks/useV2Pairs';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedMintInfo, useInitialSupplyLoad, useMintActionHandlers, useMintState } from '@/store/mint/hooks';
-import { Field } from '@/store/mint/reducer';
+import { Field, InputType } from '@/store/mint/reducer';
 import { XChainId } from '@/types';
 import { formatBigNumber, maxAmountSpend } from '@/utils';
 
@@ -164,7 +164,7 @@ export default function LPPanel() {
       : 0;
 
   React.useEffect(() => {
-    if (inputType === 'text') {
+    if (inputType === InputType.text) {
       sliderInstance.current?.noUiSlider.set(sliderValue);
       setPercent({ percent: sliderValue, needUpdate: false });
     }

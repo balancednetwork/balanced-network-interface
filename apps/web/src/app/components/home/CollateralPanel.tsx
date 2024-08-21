@@ -360,8 +360,6 @@ const CollateralPanel = () => {
 
   const xChainType = getXChainType(sourceChain);
   const xService = useXService(xChainType);
-  // const { address } = useXAccount(xChainType);
-
   const xConnect = useXConnect();
   const handleConnect = () => {
     if (!xService) return;

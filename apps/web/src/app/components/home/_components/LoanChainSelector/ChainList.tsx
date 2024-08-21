@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { Trans, t } from '@lingui/macro';
+import { isMobile } from 'react-device-detect';
 import { Box } from 'rebass';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
@@ -16,8 +18,6 @@ import { XChain, XChainId } from '@/types';
 import { formatBalance } from '@/utils/formatter';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXConnect, useXService } from '@/xwagmi/hooks';
-import { Trans, t } from '@lingui/macro';
-import { isMobile } from 'react-device-detect';
 import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from './styledComponents';
 
 type ChainListProps = {
@@ -44,8 +44,6 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
 
   const xChainType = getXChainType(chain.xChainId);
   const xService = useXService(xChainType);
-  // const { address } = useXAccount(xChainType);
-
   const xConnect = useXConnect();
 
   const handleConnect = () => {

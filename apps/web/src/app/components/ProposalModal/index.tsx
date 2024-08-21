@@ -12,10 +12,8 @@ import Modal from '@/app/components/Modal';
 import { Typography } from '@/app/theme';
 import CrossIcon from '@/assets/icons/failure.svg';
 import TickIcon from '@/assets/icons/tick.svg';
-import { useShouldLedgerSign } from '@/store/application/hooks';
 
 import ModalContent from '../ModalContent';
-import Spinner from '../Spinner';
 
 const CancelButton = styled(Button)`
   flex-grow: 1;
@@ -56,8 +54,6 @@ interface ProposalProps {
 export function ProposalModal(props: ProposalProps) {
   const { status, onCancel, onSubmit, weight } = props;
   const isOpen = status !== ModalStatus.None;
-
-  const shouldLedgerSign = useShouldLedgerSign();
 
   // the code prevents flicking while this modal is closing.
   const prevStatus = usePrevious(status);
@@ -100,19 +96,14 @@ export function ProposalModal(props: ProposalProps) {
         </Typography>
         <Divider mb={5} />
         <Flex flexDirection="row" width="100%" justifyContent="center">
-          {shouldLedgerSign && <Spinner />}
-          {!shouldLedgerSign && (
-            <>
-              <CancelButton onClick={onCancel}>
-                <Trans>Cancel</Trans>
-              </CancelButton>
-              <SubmitButton onClick={onSubmit}>
-                {UIStatus === ModalStatus.ChangeToApprove || UIStatus === ModalStatus.ChangeToReject
-                  ? t`Change vote`
-                  : t`Submit vote`}
-              </SubmitButton>
-            </>
-          )}
+          <CancelButton onClick={onCancel}>
+            <Trans>Cancel</Trans>
+          </CancelButton>
+          <SubmitButton onClick={onSubmit}>
+            {UIStatus === ModalStatus.ChangeToApprove || UIStatus === ModalStatus.ChangeToReject
+              ? t`Change vote`
+              : t`Submit vote`}
+          </SubmitButton>
         </Flex>
       </ModalContent>
     </Modal>

@@ -8,10 +8,8 @@ import { Box, Flex } from 'rebass/styled-components';
 import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
-import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
 import bnJs from '@/bnJs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
@@ -23,24 +21,17 @@ const UnstakePrompt = ({
   stakedBalance: BigNumber;
   availableBalance: BigNumber;
 }) => {
-  const shouldLedgerSign = useShouldLedgerSign();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const addTransaction = useTransactionAdder();
   const hasEnoughICX = useHasEnoughICX();
   const { account } = useIconReact();
 
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {
-    if (shouldLedgerSign) return;
     setOpen(!open);
   };
 
   const handleConfirm = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
 
     bnJs
       .inject({ account })
@@ -60,7 +51,6 @@ const UnstakePrompt = ({
         }
       })
       .finally(() => {
-        changeShouldLedgerSign(false);
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
@@ -124,17 +114,12 @@ const UnstakePrompt = ({
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleOpen} fontSize={14}>
-                  <Trans>Cancel</Trans>
-                </TextButton>
-                <Button onClick={handleConfirm} fontSize={14} disabled={!hasEnoughICX}>
-                  {t`Unstake BALN`}
-                </Button>
-              </>
-            )}
+            <TextButton onClick={toggleOpen} fontSize={14}>
+              <Trans>Cancel</Trans>
+            </TextButton>
+            <Button onClick={handleConfirm} fontSize={14} disabled={!hasEnoughICX}>
+              {t`Unstake BALN`}
+            </Button>
           </Flex>
         </ModalContent>
       </Modal>

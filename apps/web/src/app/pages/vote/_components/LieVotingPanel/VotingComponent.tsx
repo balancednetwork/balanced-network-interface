@@ -10,12 +10,10 @@ import { inputRegex } from '@/app/components/CurrencyInputPanel';
 import { UnderlineText } from '@/app/components/DropdownText';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
-import Spinner from '@/app/components/Spinner';
 import Tooltip from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import EditIcon from '@/assets/icons/edit.svg';
 import bnJs from '@/bnJs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import {
   useChangeEditing,
   useChangeInputValue,
@@ -45,8 +43,6 @@ export default function VotingComponent({ name, respoLayout }: VotingComponentPr
   const changeInputValue = useChangeInputValue();
   const { account } = useIconReact();
   const { editing, inputValue, showConfirmation } = useEditState();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
-  const shouldLedgerSign = useShouldLedgerSign();
   const addTransaction = useTransactionAdder();
   const hasEnoughICX = useHasEnoughICX();
   const isInputValid = useEditValidation();
@@ -64,9 +60,6 @@ export default function VotingComponent({ name, respoLayout }: VotingComponentPr
   const handleConfirmVote = async () => {
     const allocation = formatVoteWeight(inputValue);
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
     try {
       const { result: hash } = await bnJs.inject({ account }).Rewards.voteForSource(editing, allocation);
       addTransaction(
@@ -79,7 +72,6 @@ export default function VotingComponent({ name, respoLayout }: VotingComponentPr
     } catch (e) {
       console.error(e);
     } finally {
-      changeShouldLedgerSign(false);
       window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
     }
     changeShowConfirmation(false);
@@ -225,17 +217,12 @@ export default function VotingComponent({ name, respoLayout }: VotingComponentPr
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top" flexWrap={'wrap'}>
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={() => changeShowConfirmation(false)} fontSize={14}>
-                  Cancel
-                </TextButton>
-                <Button disabled={!hasEnoughICX} onClick={handleConfirmVote} fontSize={14}>
-                  {t`Adjust allocation`}
-                </Button>
-              </>
-            )}
+            <TextButton onClick={() => changeShowConfirmation(false)} fontSize={14}>
+              Cancel
+            </TextButton>
+            <Button disabled={!hasEnoughICX} onClick={handleConfirmVote} fontSize={14}>
+              {t`Adjust allocation`}
+            </Button>
           </Flex>
 
           {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}

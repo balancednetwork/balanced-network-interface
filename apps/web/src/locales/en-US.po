@@ -604,10 +604,9 @@ msgstr "Verify contract call"
 #~ msgstr "Reverting failed."
 
 #: src/app/components/WalletModal/IconWalletModal.tsx
-msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
-msgstr "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
+#~ msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
+#~ msgstr "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
 
-#: src/app/components/WalletModal/IconWalletModal.tsx
 #: src/app/components/WalletModal/WalletItem.tsx
 msgid "or"
 msgstr "or"
@@ -897,8 +896,8 @@ msgstr "Trade"
 #: src/app/components/LedgerConfirmMessage/index.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
-msgid "Confirm the transaction on your Ledger."
-msgstr "Confirm the transaction on your Ledger."
+#~ msgid "Confirm the transaction on your Ledger."
+#~ msgstr "Confirm the transaction on your Ledger."
 
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swapping"
@@ -1924,8 +1923,8 @@ msgid "Unlocked {0} BALN."
 msgstr "Unlocked {0} BALN."
 
 #: src/app/components/WalletModal/IconWalletModal.tsx
-msgid "Choose a wallet from your Ledger:"
-msgstr "Choose a wallet from your Ledger:"
+#~ msgid "Choose a wallet from your Ledger:"
+#~ msgstr "Choose a wallet from your Ledger:"
 
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
 #~ msgid "Revert"
@@ -2122,8 +2121,8 @@ msgid "Pool"
 msgstr "Pool"
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
-msgid "Sign the transaction, then check the banner notification message for the result."
-msgstr "Sign the transaction, then check the banner notification message for the result."
+#~ msgid "Sign the transaction, then check the banner notification message for the result."
+#~ msgstr "Sign the transaction, then check the banner notification message for the result."
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Swap {0} for {1}."
@@ -2372,8 +2371,8 @@ msgid "Adjust allocation"
 msgstr "Adjust allocation"
 
 #: src/app/components/WalletModal/IconWalletModal.tsx
-msgid "Make sure it's connected and try again."
-msgstr "Make sure it's connected and try again."
+#~ msgid "Make sure it's connected and try again."
+#~ msgstr "Make sure it's connected and try again."
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Verify"
@@ -2455,8 +2454,8 @@ msgid "Withdraw liquidity"
 msgstr "Withdraw liquidity"
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
-msgid "On Ledger:"
-msgstr "On Ledger:"
+#~ msgid "On Ledger:"
+#~ msgstr "On Ledger:"
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "Test your contract calls before you submit the proposal."

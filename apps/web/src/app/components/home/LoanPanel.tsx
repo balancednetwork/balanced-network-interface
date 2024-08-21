@@ -10,13 +10,11 @@ import { CurrencyField } from '@/app/components/Form';
 import LockBar from '@/app/components/LockBar';
 import Modal from '@/app/components/Modal';
 import { BoxPanel, BoxPanelWrap } from '@/app/components/Panel';
-import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
 import bnJs from '@/bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
 import useInterval from '@/hooks/useInterval';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import { useCollateralActionHandlers, useDerivedCollateralInfo } from '@/store/collateral/hooks';
 import {
   useActiveLoanAddress,
@@ -63,9 +61,6 @@ const LoanPanel = () => {
 
   const isSuperSmall = useMedia(`(max-width: ${'es-ES,nl-NL,de-DE,pl-PL'.indexOf(locale) >= 0 ? '450px' : '300px'})`);
 
-  const shouldLedgerSign = useShouldLedgerSign();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
-
   const [underPanelRef, underPanelWidth] = useWidth();
 
   // collateral slider instance
@@ -96,7 +91,6 @@ const LoanPanel = () => {
 
   const handleCancelAdjusting = () => {
     adjust(false);
-    changeShouldLedgerSign(false);
   };
 
   //BTCB tmp fix
@@ -129,9 +123,7 @@ const LoanPanel = () => {
       });
       modalActions.openModal(MODAL_ID.XLOAN_CONFIRM_MODAL);
     } else {
-      if (shouldLedgerSign) return;
       setOpen(!open);
-      changeShouldLedgerSign(false);
     }
   };
 
@@ -143,10 +135,6 @@ const LoanPanel = () => {
   const handleLoanConfirm = () => {
     if (!iconAccount) return;
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
 
     if (shouldBorrow) {
       bnJs
@@ -169,7 +157,6 @@ const LoanPanel = () => {
           console.error('error', e);
         })
         .finally(() => {
-          changeShouldLedgerSign(false);
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
     } else {
@@ -197,7 +184,6 @@ const LoanPanel = () => {
           console.error('error', e);
         })
         .finally(() => {
-          changeShouldLedgerSign(false);
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
     }
@@ -430,17 +416,12 @@ const LoanPanel = () => {
           )}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleOpen} fontSize={14}>
-                  <Trans>Cancel</Trans>
-                </TextButton>
-                <Button disabled={!hasEnoughICX} onClick={handleLoanConfirm} fontSize={14}>
-                  <Trans>{shouldBorrow ? t`Borrow` : t`Repay`}</Trans>
-                </Button>
-              </>
-            )}
+            <TextButton onClick={toggleOpen} fontSize={14}>
+              <Trans>Cancel</Trans>
+            </TextButton>
+            <Button disabled={!hasEnoughICX} onClick={handleLoanConfirm} fontSize={14}>
+              <Trans>{shouldBorrow ? t`Borrow` : t`Repay`}</Trans>
+            </Button>
           </Flex>
         </ModalContent>
       </Modal>

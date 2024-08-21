@@ -12,14 +12,12 @@ import { Button, TextButton } from '@/app/components/Button';
 import CurrencyBalanceErrorMessage from '@/app/components/CurrencyBalanceErrorMessage';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
-import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
 import bnJs from '@/bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from '@/constants/index';
 import { useBalance } from '@/hooks/useV2Pairs';
 import { useAllPairsById } from '@/queries/backendv2';
 import { useIncentivisedPairs } from '@/queries/reward';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import { useBBalnAmount, useSources, useTotalSupply } from '@/store/bbaln/hooks';
 import { useRewards } from '@/store/reward/hooks';
 import { useChangeStakedLPPercent, useStakedLPPercent, useTotalStaked } from '@/store/stakedLP/hooks';
@@ -38,10 +36,6 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
   const sources = useSources();
   const { data: allPairs } = useAllPairsById();
   const { data: incentivisedPairs } = useIncentivisedPairs();
-
-  const shouldLedgerSign = useShouldLedgerSign();
-
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const balance = useBalance(poolId);
   const stakedBalance = useMemo(
@@ -90,7 +84,6 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
   // modal
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {
-    if (shouldLedgerSign) return;
     setOpen(!open);
   };
 
@@ -103,10 +96,6 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
 
   const handleConfirm = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
 
     const decimals = (pair.token0.decimals + pair.token1.decimals) / 2;
     if (shouldStake) {
@@ -130,7 +119,6 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
           }
         })
         .finally(() => {
-          changeShouldLedgerSign(false);
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
     } else {
@@ -154,7 +142,6 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
           }
         })
         .finally(() => {
-          changeShouldLedgerSign(false);
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
     }
@@ -301,17 +288,12 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
               <Typography textAlign="center">{description}</Typography>
 
               <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-                {shouldLedgerSign && <Spinner></Spinner>}
-                {!shouldLedgerSign && (
-                  <>
-                    <TextButton onClick={toggleOpen} fontSize={14}>
-                      Cancel
-                    </TextButton>
-                    <Button onClick={handleConfirm} fontSize={14} disabled={!hasEnoughICX}>
-                      {shouldStake ? 'Stake' : 'Unstake'}
-                    </Button>
-                  </>
-                )}
+                <TextButton onClick={toggleOpen} fontSize={14}>
+                  Cancel
+                </TextButton>
+                <Button onClick={handleConfirm} fontSize={14} disabled={!hasEnoughICX}>
+                  {shouldStake ? 'Stake' : 'Unstake'}
+                </Button>
               </Flex>
 
               {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}

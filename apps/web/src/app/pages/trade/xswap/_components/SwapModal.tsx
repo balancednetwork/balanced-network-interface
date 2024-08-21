@@ -10,12 +10,11 @@ import { Box, Flex } from 'rebass/styled-components';
 import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
-import Spinner from '@/app/components/Spinner';
 import { swapMessage } from '@/app/pages/trade/supply/_components/utils';
 import { Typography } from '@/app/theme';
 import bnJs from '@/bnJs';
 import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
-import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from '@/store/application/hooks';
+import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { Field } from '@/store/swap/reducer';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
@@ -35,13 +34,7 @@ const SwapModal = (props: SwapModalProps) => {
   const { isOpen, onClose, executionTrade, currencies, account, recipient } = props;
   const showWarning = executionTrade?.priceImpact.greaterThan(SLIPPAGE_MODAL_WARNING_THRESHOLD);
 
-  const shouldLedgerSign = useShouldLedgerSign();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
-
   const handleDismiss = (clearInputs = true) => {
-    if (shouldLedgerSign) return;
-
-    changeShouldLedgerSign(false);
     onClose?.(clearInputs);
   };
 
@@ -52,10 +45,6 @@ const SwapModal = (props: SwapModalProps) => {
   const handleSwapConfirm = async () => {
     if (!executionTrade || !account) return;
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
 
     const message = swapMessage(
       formatBigNumber(new BigNumber(executionTrade?.inputAmount?.toFixed() || 0), 'currency'),
@@ -87,7 +76,6 @@ const SwapModal = (props: SwapModalProps) => {
         })
         .finally(() => {
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-          changeShouldLedgerSign(false);
         });
     } else {
       const token = executionTrade.inputAmount.currency as Token;
@@ -114,7 +102,6 @@ const SwapModal = (props: SwapModalProps) => {
         })
         .finally(() => {
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-          changeShouldLedgerSign(false);
         });
     }
   };
@@ -192,17 +179,12 @@ const SwapModal = (props: SwapModalProps) => {
         </Typography>
 
         <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-          {shouldLedgerSign && <Spinner></Spinner>}
-          {!shouldLedgerSign && (
-            <>
-              <TextButton onClick={() => handleDismiss(false)}>
-                <Trans>Cancel</Trans>
-              </TextButton>
-              <Button onClick={handleSwapConfirm} disabled={!hasEnoughICX}>
-                <Trans>Swap</Trans>
-              </Button>
-            </>
-          )}
+          <TextButton onClick={() => handleDismiss(false)}>
+            <Trans>Cancel</Trans>
+          </TextButton>
+          <Button onClick={handleSwapConfirm} disabled={!hasEnoughICX}>
+            <Trans>Swap</Trans>
+          </Button>
         </Flex>
       </ModalContent>
     </Modal>

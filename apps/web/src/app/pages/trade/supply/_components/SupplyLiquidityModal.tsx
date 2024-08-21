@@ -9,9 +9,11 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
+import ModalContent, { ModalContentWrapper } from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import CheckIcon from '@/assets/icons/tick.svg';
 import bnJs from '@/bnJs';
+import { DEFAULT_SLIPPAGE_LP } from '@/constants/index';
 import { useDerivedMintInfo } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from '@/store/transactions/hooks';
@@ -20,10 +22,6 @@ import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { XChainId } from '@/types';
 import { toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-
-import ModalContent, { ModalContentWrapper } from '@/app/components/ModalContent';
-import Spinner from '@/app/components/Spinner';
-import { DEFAULT_SLIPPAGE_LP } from '@/constants/index';
 import { depositMessage, supplyMessage } from './utils';
 
 interface ModalProps {
@@ -297,28 +295,17 @@ export default function SupplyLiquidityModal({
                         <Typography variant="p" fontWeight="bold" textAlign="center">
                           {parsedAmounts[field]?.toSignificant(6)} {currencies[field]?.symbol}
                         </Typography>
-                        {shouldAddAssets[field] && (
-                          <>
-                            <Spinner></Spinner>
-                            <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                              <Trans>Confirm the transaction on your Ledger.</Trans>
-                            </Typography>
-                          </>
-                        )}
-                        {!shouldAddAssets[field] && (
-                          <>
-                            <SupplyButton
-                              disabled={
-                                UIStatus[field].isAddPending ||
-                                shouldAddAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
-                              }
-                              mt={2}
-                              onClick={handleAdd(field)}
-                            >
-                              {!UIStatus[field].isAddPending ? t`Send` : t`Sending`}
-                            </SupplyButton>
-                          </>
-                        )}
+
+                        <SupplyButton
+                          disabled={
+                            UIStatus[field].isAddPending ||
+                            shouldAddAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
+                          }
+                          mt={2}
+                          onClick={handleAdd(field)}
+                        >
+                          {!UIStatus[field].isAddPending ? t`Send` : t`Sending`}
+                        </SupplyButton>
                       </>
                     ) : (
                       <CheckIconWrapper>

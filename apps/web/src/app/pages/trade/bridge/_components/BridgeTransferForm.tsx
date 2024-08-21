@@ -15,7 +15,7 @@ import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySear
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
 import { xChainMap } from '@/constants/xChains';
-import useWallets, { useSignedInWallets } from '@/hooks/useWallets';
+import useWallets from '@/hooks/useWallets';
 import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import {
@@ -32,7 +32,6 @@ import ChainSelector from './ChainSelector';
 
 export default function BridgeTransferForm({ openModal }) {
   const crossChainWallet = useCrossChainWalletBalances();
-  const signedInWallets = useSignedInWallets();
   const [isValid, setValid] = React.useState(true);
   const bridgeState = useBridgeState();
   const { currency: currencyToBridge, recipient, typedValue } = bridgeState;

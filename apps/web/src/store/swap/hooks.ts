@@ -21,7 +21,6 @@ import useWallets from '@/hooks/useWallets';
 import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
 import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
-import { useClearManualAddresses } from '../user/hooks';
 import {
   Field,
   selectChain,
@@ -40,7 +39,6 @@ export function useSwapState(): AppState['swap'] {
 
 export function useSwapActionHandlers() {
   const dispatch = useDispatch<AppDispatch>();
-  const clearManualAddresses = useClearManualAddresses();
 
   const onCurrencySelection = useCallback(
     (field: Field, currency: Currency) => {
@@ -56,7 +54,6 @@ export function useSwapActionHandlers() {
 
   const onChainSelection = useCallback(
     (field: Field, xChainId: XChainId) => {
-      clearManualAddresses();
       dispatch(
         selectChain({
           field,
@@ -64,7 +61,7 @@ export function useSwapActionHandlers() {
         }),
       );
     },
-    [dispatch, clearManualAddresses],
+    [dispatch],
   );
 
   const onSwitchChain = useCallback(() => {
@@ -79,9 +76,8 @@ export function useSwapActionHandlers() {
   );
 
   const onSwitchTokens = useCallback(() => {
-    clearManualAddresses();
     dispatch(switchCurrencies());
-  }, [dispatch, clearManualAddresses]);
+  }, [dispatch]);
 
   const onUserInput = useCallback(
     (field: Field, typedValue: string) => {

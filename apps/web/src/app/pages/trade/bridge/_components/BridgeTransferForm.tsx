@@ -15,6 +15,7 @@ import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySear
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
 import { xChainMap } from '@/constants/xChains';
+import useManualAddresses from '@/hooks/useManualAddresses';
 import useWallets from '@/hooks/useWallets';
 import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
 import { useWalletModalToggle } from '@/store/application/hooks';
@@ -25,7 +26,6 @@ import {
   useDerivedBridgeInfo,
 } from '@/store/bridge/hooks';
 import { Field } from '@/store/bridge/reducer';
-import { useManualAddress, useSetManualAddress } from '@/store/user/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend, validateAddress } from '@/utils';
 import ChainSelector from './ChainSelector';
@@ -59,7 +59,7 @@ export default function BridgeTransferForm({ openModal }) {
     [onPercentSelection, maxInputAmount],
   );
 
-  const setManualAddress = useSetManualAddress();
+  const { manualAddresses, setManualAddress } = useManualAddresses();
   const onAddressInput = React.useCallback(
     (address: string) => {
       setManualAddress(bridgeDirection.to, address);
@@ -68,16 +68,22 @@ export default function BridgeTransferForm({ openModal }) {
     [onChangeRecipient, bridgeDirection.to, setManualAddress],
   );
 
-  const manualDestinationAddress = useManualAddress(bridgeDirection.to);
   const wallets = useWallets();
+  const destinationWallet = wallets[xChainMap[bridgeDirection.to].xWalletType];
+
   React.useEffect(() => {
-    const destinationWallet = wallets[xChainMap[bridgeDirection.to].xWalletType];
-    if (destinationWallet) {
-      !manualDestinationAddress && onChangeRecipient(destinationWallet.account ?? null);
+    if (manualAddresses[bridgeDirection.to]) {
+      onChangeRecipient(manualAddresses[bridgeDirection.to] ?? null);
+    }
+  }, [onChangeRecipient, manualAddresses[bridgeDirection.to], bridgeDirection.to]);
+
+  React.useEffect(() => {
+    if (destinationWallet.account) {
+      onChangeRecipient(destinationWallet.account ?? null);
     } else {
       onChangeRecipient(null);
     }
-  }, [bridgeDirection.to, onChangeRecipient, wallets, manualDestinationAddress]);
+  }, [onChangeRecipient, destinationWallet.account]);
 
   const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount } = useDerivedBridgeInfo();
 

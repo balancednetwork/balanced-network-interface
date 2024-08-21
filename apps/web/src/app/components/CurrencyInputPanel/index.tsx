@@ -108,6 +108,7 @@ interface CurrencyInputPanelProps {
   onChainSelect?: (_chainId: XChainId) => void;
   showCrossChainOptions?: boolean;
   addressEditable?: boolean;
+  setManualAddress?: (xChainId: XChainId, address?: string | undefined) => void;
 }
 
 export const inputRegex = /^\d*(?:\\[.])?\d*$/; // match escaped "." characters via in a non-capturing group
@@ -131,6 +132,7 @@ export default function CurrencyInputPanel({
   onChainSelect,
   showCrossChainOptions = false,
   addressEditable = false,
+  setManualAddress,
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
@@ -267,6 +269,7 @@ export default function CurrencyInputPanel({
           setOpen={setXChainOptionsOpen}
           xChains={xChains}
           editable={addressEditable}
+          setManualAddress={setManualAddress}
         />
       )}
     </Box>

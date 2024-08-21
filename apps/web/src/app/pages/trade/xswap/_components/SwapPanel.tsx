@@ -25,8 +25,8 @@ import { formatPercent, maxAmountSpend } from '@/utils';
 import { isXToken } from '@/utils/xTokens';
 
 import { AutoColumn } from '@/app/components/Column';
+import useManualAddresses from '@/hooks/useManualAddresses';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
-import { useManualAddress } from '@/store/user/hooks';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import SwapModal from './SwapModal';
 import XSwapModal from './XSwapModal';
@@ -53,20 +53,27 @@ export default function SwapPanel() {
   const isRecipientCustom = recipient !== null && !signedInWallets.some(wallet => wallet.address === recipient);
   const isOutputCrosschainCompatible = isXToken(currencies?.OUTPUT);
   const isInputCrosschainCompatible = isXToken(currencies?.INPUT);
-  const manualDestinationAddress = useManualAddress(direction.to);
 
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
     useSwapActionHandlers();
 
   const wallets = useWallets();
+  const destinationWallet = wallets[xChainMap[direction.to].xWalletType];
+  const { manualAddresses, setManualAddress } = useManualAddresses();
+
   React.useEffect(() => {
-    const destinationWallet = wallets[xChainMap[direction.to].xWalletType];
-    if (destinationWallet) {
-      !manualDestinationAddress && onChangeRecipient(destinationWallet.account ?? null);
+    if (manualAddresses[direction.to]) {
+      onChangeRecipient(manualAddresses[direction.to] ?? null);
+    }
+  }, [onChangeRecipient, manualAddresses[direction.to], direction.to]);
+
+  React.useEffect(() => {
+    if (destinationWallet.account) {
+      onChangeRecipient(destinationWallet.account ?? null);
     } else {
       onChangeRecipient(null);
     }
-  }, [direction, onChangeRecipient, wallets, manualDestinationAddress]);
+  }, [onChangeRecipient, destinationWallet.account]);
 
   const handleTypeInput = useCallback(
     (value: string) => {
@@ -259,6 +266,7 @@ export default function SwapPanel() {
               }
               showCrossChainOptions={true}
               addressEditable
+              setManualAddress={setManualAddress}
             />
           </Flex>
         </AutoColumn>

@@ -3,7 +3,6 @@ import { xChainMap } from '@/constants/xChains';
 import useKeyPress from '@/hooks/useKeyPress';
 import useWallets from '@/hooks/useWallets';
 import { useWalletModalToggle } from '@/store/application/hooks';
-import { useClearManualAddresses } from '@/store/user/hooks';
 import { useXBalancesByToken } from '@/store/wallet/hooks';
 import { XWalletType } from '@/types';
 import { Trans, t } from '@lingui/macro';
@@ -39,7 +38,6 @@ const Wallet = ({ close }: WalletProps) => {
   const inputRef = useRef<HTMLInputElement>();
   const handleEscape = useKeyPress('Escape');
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
-  const clearManualAddresses = useClearManualAddresses();
 
   const handleChangeWallet = () => {
     close();
@@ -48,7 +46,6 @@ const Wallet = ({ close }: WalletProps) => {
 
   const handleDisconnectWallet = async () => {
     close();
-    clearManualAddresses();
 
     [XWalletType.ICON, XWalletType.COSMOS, XWalletType.EVM, XWalletType.HAVAH, XWalletType.INJECTIVE].forEach(type =>
       allWallets[type]?.disconnect(),

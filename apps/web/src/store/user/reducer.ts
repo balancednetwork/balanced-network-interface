@@ -59,7 +59,6 @@ export interface UserState {
 
   timestamp: number;
   URLWarningVisible: boolean;
-  manualAddresses: { [xChainId: string]: string | undefined };
 }
 
 function pairKey(token0Address: string, token1Address: string) {
@@ -79,7 +78,6 @@ const initialState: UserState = {
   userSlippageToleranceHasBeenMigratedToAuto: true,
   userDeadline: DEFAULT_DEADLINE_FROM_NOW,
   tokens: {},
-  manualAddresses: {},
   pairs: {},
   timestamp: currentTimestamp(),
   URLWarningVisible: true,
@@ -209,19 +207,6 @@ const userSlice = createSlice({
         state.timestamp = currentTimestamp();
       },
     ),
-    setManualAddress: create.reducer<{ xChainId: XChainId; address: string | undefined }>(
-      (state, { payload: { xChainId, address } }) => {
-        if (!state.manualAddresses) {
-          state.manualAddresses = {};
-        }
-        state.manualAddresses[xChainId] = address;
-        state.timestamp = currentTimestamp();
-      },
-    ),
-    clearManualAddresses: create.reducer(state => {
-      state.manualAddresses = {};
-      state.timestamp = currentTimestamp();
-    }),
   }),
 });
 
@@ -240,8 +225,6 @@ export const {
   updateUserDeadline,
   updateUserExpertMode,
   updateUserSlippageTolerance,
-  setManualAddress,
-  clearManualAddresses,
 } = userSlice.actions;
 
 export default userSlice.reducer;

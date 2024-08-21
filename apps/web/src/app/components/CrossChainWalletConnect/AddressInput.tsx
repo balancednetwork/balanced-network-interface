@@ -1,6 +1,5 @@
 import { xChainMap } from '@/constants/xChains';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
-import { useSetManualAddress } from '@/store/user/hooks';
 import { XChainId } from '@/types';
 import { validateAddress } from '@/utils';
 import React from 'react';
@@ -78,13 +77,20 @@ const InputWrap = styled(Flex)`
   }
 `;
 
-const AddressInput = ({ onSave, xChainId }: { onSave?: () => void; xChainId: XChainId }) => {
+const AddressInput = ({
+  onSave,
+  xChainId,
+  setManualAddress,
+}: {
+  onSave?: () => void;
+  xChainId: XChainId;
+  setManualAddress?: (xChainId: XChainId, address?: string | undefined) => void;
+}) => {
   const { onChangeRecipient } = useSwapActionHandlers();
   const { direction } = useDerivedSwapInfo();
   const { recipient } = useSwapState();
   const [value, setValue] = React.useState(recipient || '');
   const [isValid, setValid] = React.useState(false);
-  const setManualAddress = useSetManualAddress();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
@@ -99,7 +105,7 @@ const AddressInput = ({ onSave, xChainId }: { onSave?: () => void; xChainId: XCh
   }, [recipient]);
 
   const handleClick = () => {
-    setManualAddress(xChainId, value);
+    setManualAddress && setManualAddress(xChainId, value);
     onChangeRecipient(value);
     onSave?.();
   };

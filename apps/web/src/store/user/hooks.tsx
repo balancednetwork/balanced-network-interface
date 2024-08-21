@@ -8,15 +8,7 @@ import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS } from '@/constants/routing'
 import { useAllTokens } from '@/hooks/Tokens';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
-import { XChainId } from '@/types';
-import {
-  SerializedToken,
-  addSerializedToken,
-  clearManualAddresses,
-  removeSerializedToken,
-  setManualAddress,
-  updateUserLocale,
-} from './reducer';
+import { SerializedToken, addSerializedToken, removeSerializedToken, updateUserLocale } from './reducer';
 
 function serializeToken(token: Token): SerializedToken {
   return {
@@ -144,25 +136,4 @@ export function useUserLocaleManager(): [SupportedLocale | null, (newLocale: Sup
   );
 
   return [locale, setLocale];
-}
-
-export function useManualAddress(xChainId: XChainId): string | undefined {
-  return useAppSelector(state => state.user.manualAddresses?.[xChainId]);
-}
-
-export function useSetManualAddress(): (xChainId: XChainId, address?: string | undefined) => void {
-  const dispatch = useAppDispatch();
-  return useCallback(
-    (xChainId: XChainId, address?: string | undefined) => {
-      dispatch(setManualAddress({ xChainId, address }));
-    },
-    [dispatch],
-  );
-}
-
-export function useClearManualAddresses(): () => void {
-  const dispatch = useAppDispatch();
-  return useCallback(() => {
-    dispatch(clearManualAddresses());
-  }, [dispatch]);
 }

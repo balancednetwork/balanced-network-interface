@@ -14,7 +14,6 @@ import { AppState } from '@/store';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { XChainId, XToken } from '@/types';
 import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
-import { useClearManualAddresses } from '../user/hooks';
 import {
   Field,
   selectChain,
@@ -42,7 +41,6 @@ export function useBridgeDirection() {
 
 export function useBridgeActionHandlers() {
   const dispatch = useDispatch();
-  const clearManualAddresses = useClearManualAddresses();
 
   const onChangeRecipient = useCallback(
     (recipient: string | null) => {
@@ -71,7 +69,6 @@ export function useBridgeActionHandlers() {
 
   const onChainSelection = useCallback(
     (field: Field, chainId: XChainId) => {
-      clearManualAddresses();
       dispatch(
         selectChain({
           field,
@@ -79,13 +76,12 @@ export function useBridgeActionHandlers() {
         }),
       );
     },
-    [dispatch, clearManualAddresses],
+    [dispatch],
   );
 
   const onSwitchChain = useCallback(() => {
-    clearManualAddresses();
     dispatch(switchChain());
-  }, [dispatch, clearManualAddresses]);
+  }, [dispatch]);
 
   const onPercentSelection = useCallback(
     (field: Field, percent: number, value: string) => {

@@ -12,7 +12,7 @@ import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import bnJs from '@/bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
-import { useBlockNumber, useChangeShouldLedgerSign, useICXUnstakingTime } from '@/store/application/hooks';
+import { useBlockNumber, useICXUnstakingTime } from '@/store/application/hooks';
 import { useAllTransactions, useTransactionAdder } from '@/store/transactions/hooks';
 import { useICONWalletBalances } from '@/store/wallet/hooks';
 import { toCurrencyAmount } from '@/utils';
@@ -22,7 +22,6 @@ interface UnstakePanelProps {
 }
 
 export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const balances = useICONWalletBalances();
 
   const icxContractAddress = bnJs.ICX.address;
@@ -46,10 +45,6 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
   const addTransaction = useTransactionAdder();
 
   const handleUnstake = async () => {
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
-
     try {
       const res = await bnJs.inject({ account }).Staking.claimICX();
       toggleOpen();
@@ -61,8 +56,6 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
         },
       );
     } catch (ex) {}
-
-    changeShouldLedgerSign(false);
   };
 
   const [unstakes, setUnstakes] = React.useState<{ amount: BigNumber; unstakesOn: Date }[]>([]);

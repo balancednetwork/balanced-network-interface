@@ -1,5 +1,4 @@
 import { XChainType } from '@/types';
-import { XConnector } from './XConnector';
 
 export type XAccount = {
   address: string | undefined;
@@ -8,5 +7,5 @@ export type XAccount = {
 
 export type XConnection = {
   xAccount: XAccount;
-  xConnector: XConnector;
+  xConnectorId: string;
 };

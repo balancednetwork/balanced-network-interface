@@ -5,13 +5,12 @@ export abstract class XConnector {
   xChainType: XChainType;
   name: string;
   _id: string;
-  _icon: string;
+  _icon: string | undefined;
 
-  constructor(xChainType: XChainType, name: string) {
+  constructor(xChainType: XChainType, name: string, id: string) {
     this.xChainType = xChainType;
     this.name = name;
-    this._id = name;
-    this._icon = name;
+    this._id = id;
   }
 
   abstract connect(): Promise<XAccount | undefined>;

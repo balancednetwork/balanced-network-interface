@@ -10,8 +10,6 @@ import { getRlpEncodedSwapData } from '../../../lib/xcall/utils';
 import { IconXService } from './IconXService';
 
 export class IconXWalletClient extends XWalletClient {
-  changeShouldLedgerSign: any; // TODO: remove
-
   getXService(): IconXService {
     return IconXService.getInstance();
   }
@@ -34,10 +32,6 @@ export class IconXWalletClient extends XWalletClient {
 
     if (account && xCallFee) {
       window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-      if (bnJs.contractSettings.ledgerSettings.actived && this.changeShouldLedgerSign) {
-        this.changeShouldLedgerSign(true);
-      }
 
       const tokenAddress = inputAmount.wrapped.currency.address;
       const destination = `${direction.to}/${destinationAddress}`;
@@ -78,9 +72,6 @@ export class IconXWalletClient extends XWalletClient {
     const receiver = `${direction.to}/${recipient}`;
 
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-    if (bnJs.contractSettings.ledgerSettings.actived && this.changeShouldLedgerSign) {
-      this.changeShouldLedgerSign(true);
-    }
 
     let txResult;
     if (executionTrade.inputAmount.currency.symbol === 'ICX') {
@@ -120,10 +111,6 @@ export class IconXWalletClient extends XWalletClient {
 
     if (account && xCallFee) {
       window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-      if (bnJs.contractSettings.ledgerSettings.actived && this.changeShouldLedgerSign) {
-        this.changeShouldLedgerSign(true);
-      }
 
       const txResult = await bnJs
         .inject({ account: account })

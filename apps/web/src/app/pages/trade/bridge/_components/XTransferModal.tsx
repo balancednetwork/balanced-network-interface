@@ -9,7 +9,6 @@ import { Button, TextButton } from '@/app/components/Button';
 import { StyledButton } from '@/app/components/Button/StyledButton';
 import Modal from '@/app/components/Modal';
 import { ModalContentWrapper } from '@/app/components/ModalContent';
-import Spinner from '@/app/components/Spinner';
 import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
 import { xChainMap } from '@/constants/xChains';
@@ -21,7 +20,6 @@ import useXCallGasChecker from '@/lib/xcall/_hooks/useXCallGasChecker';
 import { XTransactionInput, XTransactionType } from '@/lib/xcall/_zustand/types';
 import { useXMessageStore } from '@/lib/xcall/_zustand/useXMessageStore';
 import { useXTransactionStore, xTransactionActions } from '@/lib/xcall/_zustand/useXTransactionStore';
-import { useShouldLedgerSign } from '@/store/application/hooks';
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from '@/store/bridge/hooks';
 import { formatBigNumber } from '@/utils';
 import { getNetworkDisplayName } from '@/utils/xTokens';
@@ -52,8 +50,6 @@ function XTransferModal() {
 
   const xChain = xChainMap[direction.from];
   const { approvalState, approveCallback } = useApproveCallback(currencyAmountToBridge, xChain.contracts.assetManager);
-
-  const shouldLedgerSign = useShouldLedgerSign();
 
   const handleDismiss = () => {
     modalActions.closeModal(MODAL_ID.XTRANSFER_CONFIRM_MODAL);
@@ -133,35 +129,30 @@ function XTransferModal() {
           {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={handleDismiss}>
-                  <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
-                </TextButton>
+            <TextButton onClick={handleDismiss}>
+              <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
+            </TextButton>
 
-                {isWrongChain ? (
-                  <StyledXCallButton onClick={handleSwitchChain}>
-                    <Trans>Switch to {xChainMap[direction.from].name}</Trans>
-                  </StyledXCallButton>
-                ) : isProcessing ? (
-                  <>
-                    <StyledXCallButton disabled $loading>
-                      <Trans>Transferring</Trans>
-                    </StyledXCallButton>
-                  </>
+            {isWrongChain ? (
+              <StyledXCallButton onClick={handleSwitchChain}>
+                <Trans>Switch to {xChainMap[direction.from].name}</Trans>
+              </StyledXCallButton>
+            ) : isProcessing ? (
+              <>
+                <StyledXCallButton disabled $loading>
+                  <Trans>Transferring</Trans>
+                </StyledXCallButton>
+              </>
+            ) : (
+              <>
+                {approvalState !== ApprovalState.APPROVED ? (
+                  <Button onClick={handleApprove} disabled={approvalState === ApprovalState.PENDING}>
+                    {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
+                  </Button>
                 ) : (
-                  <>
-                    {approvalState !== ApprovalState.APPROVED ? (
-                      <Button onClick={handleApprove} disabled={approvalState === ApprovalState.PENDING}>
-                        {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
-                      </Button>
-                    ) : (
-                      <StyledXCallButton onClick={handleTransfer} disabled={!gasChecker.hasEnoughGas}>
-                        <Trans>Transfer</Trans>
-                      </StyledXCallButton>
-                    )}
-                  </>
+                  <StyledXCallButton onClick={handleTransfer} disabled={!gasChecker.hasEnoughGas}>
+                    <Trans>Transfer</Trans>
+                  </StyledXCallButton>
                 )}
               </>
             )}

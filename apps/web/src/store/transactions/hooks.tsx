@@ -1,6 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
 
+import { useIconNetworkId } from '@/hooks/useIconNetworkId';
 import { useIconReact } from '@/packages/icon-react';
+
 import { t } from '@lingui/macro';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -26,7 +28,9 @@ export function useTransactionAdder(): (
     isTxSuccessfulBasedOnEvents?: (eventLogs: ICONTxEventLog[]) => boolean;
   },
 ) => void {
-  const { networkId, account } = useIconReact();
+  const { account } = useIconReact();
+  const networkId = useIconNetworkId();
+
   const dispatch = useDispatch<AppDispatch>();
 
   return useCallback(
@@ -76,7 +80,7 @@ export function useTransactionAdder(): (
 
 // returns all the transactions for the current chain
 export function useAllTransactions(): { [txHash: string]: TransactionDetails } | undefined {
-  const { networkId } = useIconReact();
+  const networkId = useIconNetworkId();
 
   const state = useSelector<AppState, AppState['transactions']>(state => state.transactions);
 

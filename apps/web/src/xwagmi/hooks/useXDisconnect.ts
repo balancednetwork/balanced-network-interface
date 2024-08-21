@@ -1,6 +1,7 @@
 import { XChainType } from '@/types';
 import { useCallback } from 'react';
 import { useDisconnect } from 'wagmi';
+import { getXService } from '../actions';
 import { useXWagmiStore } from '../useXWagmiStore';
 
 export function useXDisconnect() {
@@ -14,8 +15,10 @@ export function useXDisconnect() {
       if (xChainType === 'EVM') {
         await disconnectAsync();
       } else {
-        const xConnector = xConnections[xChainType].xConnector;
-        await xConnector.disconnect();
+        const xService = getXService(xChainType);
+        const xConnectorId = xConnections[xChainType]?.xConnectorId;
+        const xConnector = xConnectorId ? xService.getXConnectorById(xConnectorId) : undefined;
+        await xConnector?.disconnect();
       }
       unsetXConnection(xChainType);
     },

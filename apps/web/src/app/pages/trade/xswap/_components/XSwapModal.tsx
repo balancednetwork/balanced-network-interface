@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 
 import { Typography } from '@/app/theme';
-import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from '@/store/application/hooks';
+import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { Field } from '@/store/swap/reducer';
 import { XChainId, XToken } from '@/types';
 import { formatBigNumber, shortenAddress } from '@/utils';
@@ -17,7 +17,6 @@ import { Button, TextButton } from '@/app/components/Button';
 import { StyledButton } from '@/app/components/Button/StyledButton';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
-import Spinner from '@/app/components/Spinner';
 import XTransactionState from '@/app/components/XTransactionState';
 import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
 import { xChainMap } from '@/constants/xChains';
@@ -58,8 +57,6 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
 
-  const shouldLedgerSign = useShouldLedgerSign();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const slippageTolerance = useSwapSlippageTolerance();
   const showWarning = executionTrade?.priceImpact.greaterThan(SLIPPAGE_MODAL_WARNING_THRESHOLD);
 
@@ -83,7 +80,6 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
   const cleanupSwap = () => {
     clearInputs();
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-    changeShouldLedgerSign(false);
   };
 
   const handleDismiss = () => {
@@ -192,35 +188,30 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
           {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={handleDismiss}>
-                  <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
-                </TextButton>
+            <TextButton onClick={handleDismiss}>
+              <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
+            </TextButton>
 
-                {isWrongChain ? (
-                  <StyledButton onClick={handleSwitchChain}>
-                    <Trans>Switch to {xChainMap[direction.from].name}</Trans>
-                  </StyledButton>
-                ) : isProcessing ? (
-                  <>
-                    <StyledButton disabled $loading>
-                      <Trans>Swapping</Trans>
-                    </StyledButton>
-                  </>
+            {isWrongChain ? (
+              <StyledButton onClick={handleSwitchChain}>
+                <Trans>Switch to {xChainMap[direction.from].name}</Trans>
+              </StyledButton>
+            ) : isProcessing ? (
+              <>
+                <StyledButton disabled $loading>
+                  <Trans>Swapping</Trans>
+                </StyledButton>
+              </>
+            ) : (
+              <>
+                {approvalState !== ApprovalState.APPROVED ? (
+                  <Button onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
+                    {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
+                  </Button>
                 ) : (
-                  <>
-                    {approvalState !== ApprovalState.APPROVED ? (
-                      <Button onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
-                        {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
-                      </Button>
-                    ) : (
-                      <StyledButton onClick={handleXCallSwap} disabled={!gasChecker.hasEnoughGas}>
-                        <Trans>Swap</Trans>
-                      </StyledButton>
-                    )}
-                  </>
+                  <StyledButton onClick={handleXCallSwap} disabled={!gasChecker.hasEnoughGas}>
+                    <Trans>Swap</Trans>
+                  </StyledButton>
                 )}
               </>
             )}

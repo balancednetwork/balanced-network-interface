@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import Block from 'icon-sdk-js/build/data/Formatter/Block';
+import { useIconNetworkId } from '@/hooks/useIconNetworkId';
 import { useIconReact } from '@/packages/icon-react';
+
+import Block from 'icon-sdk-js/build/data/Formatter/Block';
 
 import useDebounce from '@/hooks/useDebounce';
 import useInterval from '@/hooks/useInterval';
@@ -11,7 +13,8 @@ import { useAppDispatch } from '@/store/hooks';
 import { updateBlockNumber, updateChainId } from './reducer';
 
 export default function Updater(): null {
-  const { networkId: chainId, iconService } = useIconReact();
+  const { iconService } = useIconReact();
+  const chainId = useIconNetworkId();
   const dispatch = useAppDispatch();
   const windowVisible = useIsWindowVisible();
 

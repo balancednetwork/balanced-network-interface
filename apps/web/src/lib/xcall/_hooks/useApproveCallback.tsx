@@ -1,28 +1,21 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { Currency, Fraction } from '@balancednetwork/sdk-core';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { t } from '@lingui/macro';
 import { useQuery } from '@tanstack/react-query';
-import BigNumber from 'bignumber.js';
 import { Abi, Address, WriteContractReturnType, erc20Abi, getContract } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
 
 import { openToast } from '@/app/components/Toast/transactionToast';
 import { NATIVE_ADDRESS } from '@/constants/index';
-import { archway, xChainMap } from '@/constants/xChains';
+import { xChainMap } from '@/constants/xChains';
 import { TransactionStatus } from '@/store/transactions/hooks';
-import {
-  useAddTransactionResult,
-  useArchwayTransactionsState,
-  useInitTransaction,
-} from '@/store/transactionsCrosschain/hooks';
 import { XToken } from '@/types';
 import { getXChainType } from '@/xwagmi/actions/getXChainType';
 import { getXWalletClient } from '@/xwagmi/actions/getXWalletClient';
 import { useXAccount, useXService } from '@/xwagmi/hooks';
 import { ArchwayXService } from '@/xwagmi/xchains/archway';
-import { getFeeParam, isDenomAsset } from '@/xwagmi/xchains/archway/utils';
+import { isDenomAsset } from '@/xwagmi/xchains/archway/utils';
 import { transactionActions } from '../_zustand/useTransactionStore';
 
 export const FAST_INTERVAL = 10000;
@@ -354,88 +347,3 @@ export function useTokenAllowance(
     [token, refetch, allowance],
   );
 }
-
-const useAllowanceHandler = (
-  token: Currency | undefined,
-  amountNeeded: string,
-  spenderAddress: string = archway.contracts.assetManager,
-  callback?: (success: boolean) => void,
-) => {
-  const { address } = useXAccount('ARCHWAY');
-  const archwayXService: ArchwayXService = useXService('ARCHWAY') as ArchwayXService;
-  const signingClient = archwayXService.walletClient;
-
-  const addTransactionResult = useAddTransactionResult();
-  const initTransaction = useInitTransaction();
-  const { transactions } = useArchwayTransactionsState();
-  const [allowance, setAllowance] = React.useState<string>('0');
-  const [allowanceIncreased, setAllowanceIncreased] = React.useState<boolean>(false);
-  const tokenAddress = token?.wrapped.address;
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  React.useEffect(() => {
-    if (address && tokenAddress && tokenAddress.includes('archway-1') && signingClient) {
-      signingClient
-        .queryContractSmart(tokenAddress, {
-          allowance: { owner: address, spender: spenderAddress },
-        })
-        .then(res => {
-          setAllowance(res.allowance);
-        });
-    }
-  }, [address, signingClient, spenderAddress, tokenAddress, transactions.length]);
-
-  React.useEffect(() => {
-    if (Number(allowance) < Number(amountNeeded)) {
-      setAllowanceIncreased(false);
-    }
-  }, [allowance, amountNeeded]);
-
-  const actualIncreaseNeeded = React.useMemo(() => {
-    return `${new Fraction(amountNeeded).subtract(new Fraction(allowance)).quotient}`;
-  }, [allowance, amountNeeded]);
-
-  const isIncreaseNeeded = React.useMemo(() => {
-    return tokenAddress !== archway.contracts.bnUSD && new BigNumber(actualIncreaseNeeded).gt(0);
-  }, [tokenAddress, actualIncreaseNeeded]);
-
-  const increaseAllowance = async () => {
-    if (signingClient && address && tokenAddress) {
-      const msg = {
-        increase_allowance: {
-          spender: spenderAddress,
-          amount: actualIncreaseNeeded,
-        },
-      };
-      try {
-        initTransaction('archway-1', t`Approving ${token.symbol} for cross-chain transfer...`);
-
-        const res = await signingClient.execute(address, tokenAddress, msg, getFeeParam(400000));
-        setAllowanceIncreased(true);
-        addTransactionResult('archway-1', res, t`${token.symbol} approved for cross-chain transfer.`);
-
-        callback && callback(true);
-      } catch (e) {
-        console.error(e);
-        addTransactionResult('archway-1', null, t`${token.symbol} transfer approval failed.`);
-      }
-    }
-  };
-
-  if (!tokenAddress || amountNeeded === '0') {
-    return {
-      allowance: '0',
-      isIncreaseNeeded: false,
-      increaseAllowance: () => {},
-    };
-  }
-
-  return {
-    allowance,
-    allowanceIncreased,
-    isIncreaseNeeded,
-    increaseAllowance,
-  };
-};
-
-export default useAllowanceHandler;

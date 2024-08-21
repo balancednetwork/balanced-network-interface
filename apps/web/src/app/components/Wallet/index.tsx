@@ -1,5 +1,4 @@
 import { Typography } from '@/app/theme';
-import bnJs from '@/bnJs';
 import { xChainMap } from '@/constants/xChains';
 import useKeyPress from '@/hooks/useKeyPress';
 import { useWalletModalToggle } from '@/store/application/hooks';
@@ -41,10 +40,6 @@ const Wallet = ({ close }: WalletProps) => {
   const handleChangeWallet = () => {
     close();
     toggleWalletModal();
-
-    if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
-      bnJs.contractSettings.ledgerSettings.transport.close();
-    }
   };
 
   const xDisconnectAll = useXDisconnectAll();

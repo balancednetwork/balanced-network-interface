@@ -1,9 +1,9 @@
 import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balanced-js';
-import { Token, Currency } from '@balancednetwork/sdk-core';
-import { useIconReact } from '@/packages/icon-react';
+import { Currency, Token } from '@balancednetwork/sdk-core';
 
-import { TRANSFORMED_DEFAULT_TOKEN_LIST, TRANSFORMED_COMBINED_TOKEN_LIST } from '@/store/lists/hooks';
+import { TRANSFORMED_COMBINED_TOKEN_LIST, TRANSFORMED_DEFAULT_TOKEN_LIST } from '@/store/lists/hooks';
 
+import { useIconNetworkId } from '@/hooks/useIconNetworkId';
 import { NETWORK_ID } from './config';
 
 export const NULL_CONTRACT_ADDRESS = 'cx0000000000000000000000000000000000000000';
@@ -21,8 +21,8 @@ export const isFIN = (token?: Token): boolean => {
 };
 
 export const useICX = () => {
-  const { networkId: chainId } = useIconReact();
-  return ICX[chainId];
+  const networkId = useIconNetworkId();
+  return ICX[networkId];
 };
 
 export type TokenMap = { [key: number]: Token };

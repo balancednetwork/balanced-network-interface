@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
 import { Token } from '@balancednetwork/sdk-core';
 import { Flex } from 'rebass/styled-components';
 
@@ -9,6 +8,7 @@ import { AutoColumn } from '@/app/components/Column';
 import { Typography } from '@/app/theme';
 import { useRemoveUserAddedToken } from '@/store/user/hooks';
 
+import { useIconNetworkId } from '@/hooks/useIconNetworkId';
 import TokenImportCard from './TokenImportCard';
 
 interface RemoveProps {
@@ -20,7 +20,7 @@ interface RemoveProps {
 export function RemoveToken(props: RemoveProps) {
   const { tokens, onDismiss } = props;
 
-  const { networkId } = useIconReact();
+  const networkId = useIconNetworkId();
   const removeToken = useRemoveUserAddedToken();
 
   return (

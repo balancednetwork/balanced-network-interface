@@ -6,7 +6,7 @@ import { XSigningArchwayClient } from './XSigningArchwayClient';
 
 export class ArchwayXConnector extends XConnector {
   constructor() {
-    super('ARCHWAY', 'Keplr');
+    super('ARCHWAY', 'Keplr', 'keplr');
   }
 
   getXService(): ArchwayXService {

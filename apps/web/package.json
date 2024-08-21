@@ -5,7 +5,6 @@
   "dependencies": {
     "@archwayhq/arch3.js": "0.7.0",
     "@balancednetwork/balanced-js": "workspace:*",
-    "@balancednetwork/hw-app-icx": "1.0.6",
     "@balancednetwork/sdk-core": "workspace:*",
     "@balancednetwork/v1-sdk": "workspace:*",
     "@chain-registry/types": "0.16.0",
@@ -24,7 +23,6 @@
     "@injectivelabs/utils": "1.14.13",
     "@injectivelabs/wallet-ts": "1.14.13",
     "@keplr-wallet/types": "0.12.18",
-    "@ledgerhq/hw-transport-webhid": "6.28.4",
     "@lingui/conf": "4.7.1",
     "@lingui/core": "4.7.1",
     "@lingui/macro": "4.7.1",
@@ -40,7 +38,6 @@
     "@vitejs/plugin-react": "4.2.1",
     "@wagmi/core": "2.9.0",
     "axios": "0.21.3",
-    "babel-runtime": "6.26.0",
     "bech32": "2.0.0",
     "bignumber.js": "9.0.1",
     "chain-registry": "1.18.1",

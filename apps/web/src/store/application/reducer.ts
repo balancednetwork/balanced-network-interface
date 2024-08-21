@@ -31,8 +31,6 @@ export interface ApplicationState {
   chainId: number | null;
   popupList: PopupList;
   openModal: ApplicationModal | null;
-  shouldLedgerSign: boolean;
-  currentLedgerAddressPage: number;
   slippageTolerance: number;
 }
 
@@ -41,8 +39,6 @@ const initialState: ApplicationState = {
   chainId: null,
   openModal: null,
   popupList: [],
-  shouldLedgerSign: false,
-  currentLedgerAddressPage: 1,
   slippageTolerance: DEFAULT_SLIPPAGE,
 };
 
@@ -82,26 +78,12 @@ const applicationSlice = createSlice({
         }
       });
     },
-    changeShouldLedgedSignMessage(state, action) {
-      state.shouldLedgerSign = action.payload.shouldLedgerSign;
-    },
-    changeCurrentLedgerAddressPage(state, action) {
-      state.currentLedgerAddressPage = action.payload.currentLedgerAddressPage;
-    },
     updateSlippageTolerance(state, action) {
       state.slippageTolerance = action.payload.slippageTolerance;
     },
   },
 });
 
-export const {
-  updateChainId,
-  updateBlockNumber,
-  setOpenModal,
-  addPopup,
-  removePopup,
-  changeShouldLedgedSignMessage,
-  changeCurrentLedgerAddressPage,
-  updateSlippageTolerance,
-} = applicationSlice.actions;
+export const { updateChainId, updateBlockNumber, setOpenModal, addPopup, removePopup, updateSlippageTolerance } =
+  applicationSlice.actions;
 export default applicationSlice.reducer;

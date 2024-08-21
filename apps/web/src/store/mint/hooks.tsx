@@ -1,14 +1,13 @@
 import React, { useCallback, ReactNode } from 'react';
 
-import { Currency, CurrencyAmount, Token, Percent, Price } from '@balancednetwork/sdk-core';
+import { useIconReact } from '@/packages/icon-react';
+import { Currency, CurrencyAmount, Percent, Price, Token } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from '@/packages/icon-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { XChainId } from '@/types';
 import bnJs from '@/bnJs';
 import { isNativeCurrency, useICX } from '@/constants/tokens';
 import { useAllTokens, useCommonBases } from '@/hooks/Tokens';
@@ -16,10 +15,10 @@ import { useQueuePair } from '@/hooks/useQueuePair';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { tryParseAmount } from '@/store/swap/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
-import { useCrossChainCurrencyBalances, useCurrencyBalances } from '@/store/wallet/hooks';
-
+import { useCurrencyBalances } from '@/store/wallet/hooks';
+import { XChainId } from '@/types';
 import { AppDispatch, AppState } from '../index';
-import { Field, INITIAL_MINT, typeInput, selectCurrency } from './reducer';
+import { Field, INITIAL_MINT, InputType, selectCurrency, typeInput } from './reducer';
 
 export function useMintState(): AppState['mint'] {
   return useSelector<AppState, AppState['mint']>(state => state.mint);
@@ -66,7 +65,12 @@ export function useMintActionHandlers(noLiquidity: boolean | undefined): {
   const onFieldAInput = useCallback(
     (typedValue: string) => {
       dispatch(
-        typeInput({ field: Field.CURRENCY_A, typedValue, noLiquidity: noLiquidity === true, inputType: 'text' }),
+        typeInput({
+          field: Field.CURRENCY_A,
+          typedValue,
+          noLiquidity: noLiquidity === true,
+          inputType: InputType.text,
+        }),
       );
     },
     [dispatch, noLiquidity],
@@ -75,7 +79,12 @@ export function useMintActionHandlers(noLiquidity: boolean | undefined): {
   const onFieldBInput = useCallback(
     (typedValue: string) => {
       dispatch(
-        typeInput({ field: Field.CURRENCY_B, typedValue, noLiquidity: noLiquidity === true, inputType: 'text' }),
+        typeInput({
+          field: Field.CURRENCY_B,
+          typedValue,
+          noLiquidity: noLiquidity === true,
+          inputType: InputType.text,
+        }),
       );
     },
     [dispatch, noLiquidity],
@@ -83,7 +92,7 @@ export function useMintActionHandlers(noLiquidity: boolean | undefined): {
 
   const onSlide = useCallback(
     (field: Field, typedValue: string) => {
-      dispatch(typeInput({ field, typedValue, noLiquidity: noLiquidity === true, inputType: 'slider' }));
+      dispatch(typeInput({ field, typedValue, noLiquidity: noLiquidity === true, inputType: InputType.slider }));
     },
     [dispatch, noLiquidity],
   );
@@ -180,15 +189,14 @@ export function useDerivedMintInfo(
   // balances
   const currencyArr = React.useMemo(() => [currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]], [currencies]);
   const balances = useCurrencyBalances(account ?? undefined, currencyArr);
-  const balancesCrossChain = useCrossChainCurrencyBalances(currencyArr);
   const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(() => {
-    const currencyABalance = balancesCrossChain?.[0]?.[AChain] ?? balances[0];
-    const currencyBBalance = balancesCrossChain?.[1]?.[BChain] ?? balances[1];
+    const currencyABalance = balances[0];
+    const currencyBBalance = balances[1];
     return {
       [Field.CURRENCY_A]: currencyABalance, // base token
       [Field.CURRENCY_B]: currencyBBalance, // quote token
     };
-  }, [AChain, BChain, balances, balancesCrossChain]);
+  }, [balances]);
 
   // deposits
   const depositA = useCurrencyDeposit(account ?? undefined, currencyA);

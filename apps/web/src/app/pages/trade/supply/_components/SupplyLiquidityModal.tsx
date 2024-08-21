@@ -9,10 +9,11 @@ import styled from 'styled-components';
 
 import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
+import ModalContent, { ModalContentWrapper } from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import CheckIcon from '@/assets/icons/tick.svg';
 import bnJs from '@/bnJs';
-import useAllowanceHandler from '@/lib/xcall/_hooks/useApproveCallback';
+import { DEFAULT_SLIPPAGE_LP } from '@/constants/index';
 import { useDerivedMintInfo } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from '@/store/transactions/hooks';
@@ -21,10 +22,6 @@ import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { XChainId } from '@/types';
 import { toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { getXTokenBySymbol } from '@/utils/xTokens';
-
-import ModalContent, { ModalContentWrapper } from '@/app/components/ModalContent';
-import { DEFAULT_SLIPPAGE_LP } from '@/constants/index';
 import { depositMessage, supplyMessage } from './utils';
 
 interface ModalProps {
@@ -55,10 +52,6 @@ export default function SupplyLiquidityModal({
   const addTransaction = useTransactionAdder();
 
   const { isTxPending } = useArchwayTransactionsState();
-  const { increaseAllowance: increaseAllowanceA, isIncreaseNeeded: allowanceIncreaseNeededA } = useAllowanceHandler(
-    AChain === 'archway-1' ? getXTokenBySymbol('archway-1', currencies[Field.CURRENCY_A]?.symbol) : undefined,
-    parsedAmounts[Field.CURRENCY_A]?.quotient.toString() || '0',
-  );
 
   const [addingTxs, setAddingTxs] = React.useState({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
   const [shouldAddAssets, setShouldAddAssets] = React.useState({
@@ -198,7 +191,6 @@ export default function SupplyLiquidityModal({
         isAddPending: addingATxStatus === TransactionStatus.pending || isTxPending,
         // isRemovePending: !!removingTxs[Field.CURRENCY_A],
         isRemovePending: removingATxStatus === TransactionStatus.pending,
-        isAllowanceIncreaseNeeded: allowanceIncreaseNeededA,
         chain: AChain,
       },
       [Field.CURRENCY_B]: {
@@ -207,7 +199,6 @@ export default function SupplyLiquidityModal({
         isAddPending: addingBTxStatus === TransactionStatus.pending,
         // isRemovePending: !!removingTxs[Field.CURRENCY_B],
         isRemovePending: removingBTxStatus === TransactionStatus.pending,
-        isAllowanceIncreaseNeeded: false,
         chain: BChain,
       },
     }),
@@ -216,7 +207,6 @@ export default function SupplyLiquidityModal({
       BChain,
       addingATxStatus,
       addingBTxStatus,
-      allowanceIncreaseNeededA,
       currencyDeposits,
       isTxPending,
       removingATxStatus,
@@ -306,24 +296,16 @@ export default function SupplyLiquidityModal({
                           {parsedAmounts[field]?.toSignificant(6)} {currencies[field]?.symbol}
                         </Typography>
 
-                        {UIStatus[field].isAllowanceIncreaseNeeded ? (
-                          <SupplyButton disabled={isTxPending} mt={2} onClick={increaseAllowanceA}>
-                            {isTxPending ? `Approving...` : `Approve`}
-                          </SupplyButton>
-                        ) : (
-                          <>
-                            <SupplyButton
-                              disabled={
-                                UIStatus[field].isAddPending ||
-                                shouldAddAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
-                              }
-                              mt={2}
-                              onClick={handleAdd(field)}
-                            >
-                              {!UIStatus[field].isAddPending ? t`Send` : t`Sending`}
-                            </SupplyButton>
-                          </>
-                        )}
+                        <SupplyButton
+                          disabled={
+                            UIStatus[field].isAddPending ||
+                            shouldAddAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
+                          }
+                          mt={2}
+                          onClick={handleAdd(field)}
+                        >
+                          {!UIStatus[field].isAddPending ? t`Send` : t`Sending`}
+                        </SupplyButton>
                       </>
                     ) : (
                       <CheckIconWrapper>

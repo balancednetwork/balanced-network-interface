@@ -5,7 +5,7 @@ import { Box, Flex } from 'rebass';
 import { Typography } from '@/app/theme';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
-import { useSignedInWallets } from '@/hooks/useWallets';
+import { useClearManualAddresses } from '@/store/user/hooks';
 import { XChain } from '@/types';
 import { t } from '@lingui/macro';
 import { UnderlineText } from '../DropdownText';
@@ -35,10 +35,14 @@ const WalletItem = ({
   xChains,
   switchChain,
 }: WalletItemProps) => {
-  const signedInWallets = useSignedInWallets();
-
+  const clearManualAddresses = useClearManualAddresses();
   const handleSwitchChain = (chain: XChain): void => {
     switchChain && switchChain({ chainId: chain.id });
+  };
+
+  const handleDisconnect = () => {
+    disconnect();
+    clearManualAddresses();
   };
 
   return (
@@ -70,7 +74,7 @@ const WalletItem = ({
               <Typography color="primaryBright">Change wallet</Typography>
             </UnderlineText>
             <ActionDivider text={t`or`} />
-            <Typography color="alert" onClick={disconnect} style={{ cursor: 'pointer' }}>
+            <Typography color="alert" onClick={handleDisconnect} style={{ cursor: 'pointer' }}>
               Disconnect
             </Typography>
           </Flex>

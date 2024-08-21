@@ -17,7 +17,7 @@ import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
 import { xChainMap } from '@/constants/xChains';
-import { useSignedInWallets } from '@/hooks/useWallets';
+import useWallets, { useSignedInWallets } from '@/hooks/useWallets';
 import { useSwapSlippageTolerance, useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
@@ -26,6 +26,7 @@ import { isXToken } from '@/utils/xTokens';
 
 import { AutoColumn } from '@/app/components/Column';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
+import { useManualAddress } from '@/store/user/hooks';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import SwapModal from './SwapModal';
 import XSwapModal from './XSwapModal';
@@ -52,19 +53,20 @@ export default function SwapPanel() {
   const isRecipientCustom = recipient !== null && !signedInWallets.some(wallet => wallet.address === recipient);
   const isOutputCrosschainCompatible = isXToken(currencies?.OUTPUT);
   const isInputCrosschainCompatible = isXToken(currencies?.INPUT);
+  const manualDestinationAddress = useManualAddress(direction.to);
 
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
     useSwapActionHandlers();
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  const wallets = useWallets();
   React.useEffect(() => {
-    const destinationWallet = signedInWallets.find(wallet => wallet.xChainId === direction.to);
+    const destinationWallet = wallets[xChainMap[direction.to].xWalletType];
     if (destinationWallet) {
-      onChangeRecipient(destinationWallet.address ?? null);
+      !manualDestinationAddress && onChangeRecipient(destinationWallet.account ?? null);
     } else {
       onChangeRecipient(null);
     }
-  }, [direction.to, onChangeRecipient, signedInWallets.length]);
+  }, [direction, onChangeRecipient, wallets, manualDestinationAddress]);
 
   const handleTypeInput = useCallback(
     (value: string) => {

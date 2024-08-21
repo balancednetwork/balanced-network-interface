@@ -4,14 +4,15 @@ import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { XChain, XChainId } from '@/types';
 import { Typography } from '@/app/theme';
+import { XChain, XChainId } from '@/types';
 
+import { xChainMap } from '@/constants/xChains';
+import { useClearManualAddresses } from '@/store/user/hooks';
 import ChainList from '../../pages/trade/bridge/_components/ChainList';
 import CrossChainWalletConnect from '../CrossChainWalletConnect';
 import { StyledArrowDownIcon, UnderlineText } from '../DropdownText';
 import { DropdownPopper } from '../Popover';
-import { xChainMap } from '@/constants/xChains';
 
 type CrossChainOptionsProps = {
   xChains?: XChain[];
@@ -39,7 +40,7 @@ export const SelectorWrap = styled.div`
 
 const CrossChainOptions = ({ xChainId, setXChainId, isOpen, setOpen, xChains, editable }: CrossChainOptionsProps) => {
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
-
+  const clearManualAddresses = useClearManualAddresses();
   const arrowRef = React.useRef(null);
 
   const handleToggle = (e: React.MouseEvent<HTMLElement>) => {

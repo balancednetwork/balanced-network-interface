@@ -15,7 +15,7 @@ import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySear
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
 import { xChainMap } from '@/constants/xChains';
-import { useSignedInWallets } from '@/hooks/useWallets';
+import useWallets, { useSignedInWallets } from '@/hooks/useWallets';
 import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import {
@@ -25,6 +25,7 @@ import {
   useDerivedBridgeInfo,
 } from '@/store/bridge/hooks';
 import { Field } from '@/store/bridge/reducer';
+import { useManualAddress, useSetManualAddress } from '@/store/user/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend, validateAddress } from '@/utils';
 import ChainSelector from './ChainSelector';
@@ -59,15 +60,25 @@ export default function BridgeTransferForm({ openModal }) {
     [onPercentSelection, maxInputAmount],
   );
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  const setManualAddress = useSetManualAddress();
+  const onAddressInput = React.useCallback(
+    (address: string) => {
+      setManualAddress(bridgeDirection.to, address);
+      onChangeRecipient(address);
+    },
+    [onChangeRecipient, bridgeDirection.to, setManualAddress],
+  );
+
+  const manualDestinationAddress = useManualAddress(bridgeDirection.to);
+  const wallets = useWallets();
   React.useEffect(() => {
-    const destinationWallet = signedInWallets.find(wallet => wallet.xChainId === bridgeDirection.to);
+    const destinationWallet = wallets[xChainMap[bridgeDirection.to].xWalletType];
     if (destinationWallet) {
-      onChangeRecipient(destinationWallet.address ?? null);
+      !manualDestinationAddress && onChangeRecipient(destinationWallet.account ?? null);
     } else {
       onChangeRecipient(null);
     }
-  }, [bridgeDirection.to, onChangeRecipient, signedInWallets.length]);
+  }, [bridgeDirection.to, onChangeRecipient, wallets, manualDestinationAddress]);
 
   const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount } = useDerivedBridgeInfo();
 
@@ -132,7 +143,7 @@ export default function BridgeTransferForm({ openModal }) {
           <Flex style={{ position: 'relative' }}>
             <AddressInputPanel
               value={recipient || ''}
-              onUserInput={onChangeRecipient}
+              onUserInput={onAddressInput}
               placeholder={`${xChainMap[bridgeDirection.to].name} address`}
               isValid={isValid}
             />

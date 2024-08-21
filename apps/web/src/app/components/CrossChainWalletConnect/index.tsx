@@ -10,6 +10,7 @@ import { modalActions } from '@/hooks/useModalStore';
 import useWallets from '@/hooks/useWallets';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
 import { useSwapState } from '@/store/swap/hooks';
+import { useSetManualAddress } from '@/store/user/hooks';
 import { Trans } from '@lingui/macro';
 import { UnderlineText } from '../DropdownText';
 import Modal from '../Modal';
@@ -21,12 +22,13 @@ const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; e
   const { connectToWallet: connectKeplr } = useArchwayContext();
   const { connectToWallet: connectToHavah } = useHavahContext();
   const { recipient } = useSwapState();
-
+  const setManualAddress = useSetManualAddress();
   const wallets = useWallets();
   const account = wallets[xChainMap[xChainId].xWalletType].account;
 
   const handleConnect = () => {
     const chain = xChainMap[xChainId];
+    setManualAddress(xChainId, undefined);
     if (chain.xWalletType === XWalletType.COSMOS) {
       connectKeplr();
     } else if (chain.xWalletType === XWalletType.HAVAH) {
@@ -67,7 +69,7 @@ const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; e
           <Typography textAlign="center" mb={3}>
             <Trans>Enter a recipient address:</Trans>
           </Typography>
-          <AddressInput onSave={closeModal} chainId={xChainId} />
+          <AddressInput onSave={closeModal} xChainId={xChainId} />
           <Typography textAlign="center" mt={3}>
             <Trans>Or connect your</Trans>{' '}
             <UnderlineText color={'red'} onClick={handleConnect}>

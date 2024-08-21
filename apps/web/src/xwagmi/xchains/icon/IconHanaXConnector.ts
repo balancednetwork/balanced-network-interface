@@ -5,7 +5,7 @@ import { XConnector } from '@/xwagmi/core/XConnector';
 
 export class IconHanaXConnector extends XConnector {
   constructor() {
-    super('ICON', 'Hana Wallet');
+    super('ICON', 'Hana Wallet', 'hana');
   }
 
   async connect(): Promise<XAccount | undefined> {

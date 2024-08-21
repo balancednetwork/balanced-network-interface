@@ -8,7 +8,7 @@ import { InjectiveXService } from './InjectiveXService';
 
 export class InjectiveMetamaskXConnector extends XConnector {
   constructor() {
-    super('INJECTIVE', 'MetaMask');
+    super('INJECTIVE', 'MetaMask', 'metamask');
   }
 
   getXService(): InjectiveXService {

@@ -20,9 +20,9 @@ import {
 
 type XWagmiStore = {
   xServices: Partial<Record<XChainType, XService>>;
-  xConnections: any;
-  xPublicClients: any;
-  xWalletClients: any;
+  xConnections: Partial<Record<XChainType, XConnection>>;
+  xPublicClients: Partial<Record<XChainId, XPublicClient>>;
+  xWalletClients: Partial<Record<XChainId, XWalletClient>>;
 
   setXConnection: (xChainType: XChainType, xConnection: XConnection) => void;
   unsetXConnection: (xChainType: XChainType) => void;

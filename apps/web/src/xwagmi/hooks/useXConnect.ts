@@ -11,7 +11,7 @@ export function useXConnect() {
       if (xAccount) {
         setXConnection(xConnector.xChainType, {
           xAccount,
-          xConnector,
+          xConnectorId: xConnector.id,
         });
       }
     },

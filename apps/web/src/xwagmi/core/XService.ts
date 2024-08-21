@@ -16,4 +16,8 @@ export abstract class XService {
   setXConnectors(xConnectors: XConnector[]): void {
     this.xConnectors = xConnectors;
   }
+
+  getXConnectorById(xConnectorId: string): XConnector | undefined {
+    return this.getXConnectors().find(xConnector => xConnector.id === xConnectorId);
+  }
 }

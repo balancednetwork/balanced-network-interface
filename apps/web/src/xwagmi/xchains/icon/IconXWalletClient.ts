@@ -10,8 +10,6 @@ import { getRlpEncodedSwapData } from '../../../lib/xcall/utils';
 import { IconXService } from './IconXService';
 
 export class IconXWalletClient extends XWalletClient {
-  changeShouldLedgerSign: any; // TODO: remove
-
   getXService(): IconXService {
     return IconXService.getInstance();
   }

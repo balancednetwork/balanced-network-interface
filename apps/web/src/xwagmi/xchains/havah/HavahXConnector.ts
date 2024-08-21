@@ -9,7 +9,7 @@ interface AccountResultType {
 
 export class HavahXConnector extends XConnector {
   constructor() {
-    super('HAVAH', 'Havah Wallet');
+    super('HAVAH', 'Havah Wallet', 'havah');
   }
 
   async connect(): Promise<XAccount | undefined> {

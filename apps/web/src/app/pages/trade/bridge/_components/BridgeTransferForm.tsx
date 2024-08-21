@@ -15,7 +15,7 @@ import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySear
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
 import { xChainMap } from '@/constants/xChains';
-import useWallets from '@/hooks/useWallets';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import {
@@ -31,6 +31,7 @@ import ChainSelector from './ChainSelector';
 
 export default function BridgeTransferForm({ openModal }) {
   const crossChainWallet = useCrossChainWalletBalances();
+  const signedInWallets = useSignedInWallets();
   const [isValid, setValid] = React.useState(true);
   const bridgeState = useBridgeState();
   const { currency: currencyToBridge, recipient, typedValue } = bridgeState;
@@ -58,15 +59,15 @@ export default function BridgeTransferForm({ openModal }) {
     [onPercentSelection, maxInputAmount],
   );
 
-  const wallets = useWallets();
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
-    const destinationWallet = wallets[xChainMap[bridgeDirection.to].xWalletType];
+    const destinationWallet = signedInWallets.find(wallet => wallet.xChainId === bridgeDirection.to);
     if (destinationWallet) {
-      onChangeRecipient(destinationWallet.account ?? null);
+      onChangeRecipient(destinationWallet.address ?? null);
     } else {
       onChangeRecipient(null);
     }
-  }, [bridgeDirection.to, onChangeRecipient, wallets]);
+  }, [bridgeDirection.to, onChangeRecipient, signedInWallets.length]);
 
   const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount } = useDerivedBridgeInfo();
 

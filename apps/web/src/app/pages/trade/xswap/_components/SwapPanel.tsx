@@ -17,7 +17,7 @@ import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
 import { xChainMap } from '@/constants/xChains';
-import useWallets, { useSignedInWallets } from '@/hooks/useWallets';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { useSwapSlippageTolerance, useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
@@ -56,15 +56,15 @@ export default function SwapPanel() {
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
     useSwapActionHandlers();
 
-  const wallets = useWallets();
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
-    const destinationWallet = wallets[xChainMap[direction.to].xWalletType];
+    const destinationWallet = signedInWallets.find(wallet => wallet.xChainId === direction.to);
     if (destinationWallet) {
-      onChangeRecipient(destinationWallet.account ?? null);
+      onChangeRecipient(destinationWallet.address ?? null);
     } else {
       onChangeRecipient(null);
     }
-  }, [direction, onChangeRecipient, wallets]);
+  }, [direction.to, onChangeRecipient, signedInWallets.length]);
 
   const handleTypeInput = useCallback(
     (value: string) => {

@@ -53,7 +53,7 @@ const XChainHeightUpdater = ({ xChainId }: { xChainId: XChainId }) => {
         }
         return blockHeight;
       } catch (e) {
-        console.log(e);
+        // console.log(e);
         return 0n;
       }
     },

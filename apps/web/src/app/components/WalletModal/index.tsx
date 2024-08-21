@@ -30,13 +30,13 @@ import useDebounce from '@/hooks/useDebounce';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import useWallets, { useSignedInWallets } from '@/hooks/useWallets';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
+import { useIconReact } from '@/packages/icon-react';
 import { InjectiveWalletOptionsModal } from '@/packages/injective/InjectiveWalletOptionsModal';
 import { XWalletType } from '@/types';
 import { useSwitchChain } from 'wagmi';
 import Divider from '../Divider';
 import { DropdownPopper } from '../Popover';
 import { EVMWalletModal } from './EVMWalletModal';
-import { IconWalletModal } from './IconWalletModal';
 import WalletItem from './WalletItem';
 import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
 
@@ -64,6 +64,7 @@ export default function WalletModal() {
   const activeLocale = useActiveLocale();
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
   const arrowRef = React.useRef(null);
+  const { connectToWallet: connectToIcon } = useIconReact();
 
   const toggleMenu = (e: React.MouseEvent<HTMLElement>) => {
     setAnchor(anchor ? null : arrowRef.current);
@@ -96,7 +97,7 @@ export default function WalletModal() {
     const iconConfig = {
       name: 'ICON',
       logo: <IconWalletIcon width="32" />,
-      connect: () => modalActions.openModal(MODAL_ID.ICON_WALLET_OPTIONS_MODAL),
+      connect: () => connectToIcon(),
       disconnect: wallets[XWalletType.ICON].disconnect,
       description: t`Borrow, swap, & transfer cross-chain. Supply liquidity. Vote.`,
       keyWords: ['iconex', 'hana'],
@@ -164,7 +165,7 @@ export default function WalletModal() {
         },
       ].sort((a, b) => a.name.localeCompare(b.name)),
     ];
-  }, [connectToKeplr, wallets, switchChain, connectToHavah]);
+  }, [connectToKeplr, wallets, switchChain, connectToHavah, connectToIcon]);
 
   const filteredWallets = React.useMemo(() => {
     return [...walletConfig].filter(wallet => {
@@ -280,7 +281,6 @@ export default function WalletModal() {
         </Wrapper>
       </StyledModal>
 
-      <IconWalletModal />
       <EVMWalletModal />
       <InjectiveWalletOptionsModal />
     </>

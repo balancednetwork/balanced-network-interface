@@ -96,7 +96,6 @@ msgstr ""
 #: src/lib/xcall/_hooks/useApproveCallback.tsx
 #: src/lib/xcall/_hooks/useApproveCallback.tsx
 #: src/lib/xcall/_hooks/useApproveCallback.tsx
-#: src/lib/xcall/_hooks/useApproveCallback.tsx
 msgid "{0} transfer approval failed."
 msgstr ""
 
@@ -445,7 +444,6 @@ msgstr ""
 
 #: src/lib/xcall/_hooks/useApproveCallback.tsx
 #: src/lib/xcall/_hooks/useApproveCallback.tsx
-#: src/lib/xcall/_hooks/useApproveCallback.tsx
 msgid "Approving {0} for cross-chain transfer..."
 msgstr ""
 
@@ -637,10 +635,9 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/WalletModal/IconWalletModal.tsx
-msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
-msgstr "Ledger에서 보류 중인 트랜잭션을 취소하거나, Chrome에서 사용 권한을 부여하세요."
+#~ msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
+#~ msgstr "Ledger에서 보류 중인 트랜잭션을 취소하거나, Chrome에서 사용 권한을 부여하세요."
 
-#: src/app/components/WalletModal/IconWalletModal.tsx
 #: src/app/components/WalletModal/WalletItem.tsx
 msgid "or"
 msgstr ""
@@ -767,7 +764,6 @@ msgstr "적용 전"
 msgid "Active"
 msgstr "활성화"
 
-#: src/lib/xcall/_hooks/useApproveCallback.tsx
 #: src/lib/xcall/_hooks/useApproveCallback.tsx
 #: src/lib/xcall/_hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
@@ -940,8 +936,8 @@ msgstr "거래"
 #: src/app/components/LedgerConfirmMessage/index.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
-msgid "Confirm the transaction on your Ledger."
-msgstr "당신의 렛저 지갑의 트랜잭션을 확인하세요."
+#~ msgid "Confirm the transaction on your Ledger."
+#~ msgstr "당신의 렛저 지갑의 트랜잭션을 확인하세요."
 
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swapping"
@@ -1986,8 +1982,8 @@ msgid "Unlocked {0} BALN."
 msgstr ""
 
 #: src/app/components/WalletModal/IconWalletModal.tsx
-msgid "Choose a wallet from your Ledger:"
-msgstr "Ledger에서 지갑 선택:"
+#~ msgid "Choose a wallet from your Ledger:"
+#~ msgstr "Ledger에서 지갑 선택:"
 
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
 #~ msgid "Revert"
@@ -2188,8 +2184,8 @@ msgid "Pool"
 msgstr "풀"
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
-msgid "Sign the transaction, then check the banner notification message for the result."
-msgstr ""
+#~ msgid "Sign the transaction, then check the banner notification message for the result."
+#~ msgstr ""
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Swap {0} for {1}."
@@ -2438,8 +2434,8 @@ msgid "Adjust allocation"
 msgstr ""
 
 #: src/app/components/WalletModal/IconWalletModal.tsx
-msgid "Make sure it's connected and try again."
-msgstr ""
+#~ msgid "Make sure it's connected and try again."
+#~ msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Verify"
@@ -2521,8 +2517,8 @@ msgid "Withdraw liquidity"
 msgstr "유동성 물량 인출"
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
-msgid "On Ledger:"
-msgstr ""
+#~ msgid "On Ledger:"
+#~ msgstr ""
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "Test your contract calls before you submit the proposal."

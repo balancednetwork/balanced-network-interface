@@ -9,11 +9,16 @@ export enum Field {
   CURRENCY_B = 'CURRENCY_B',
 }
 
+export enum InputType {
+  text,
+  slider,
+}
+
 export interface MintState {
   readonly independentField: Field;
   readonly typedValue: string;
-  readonly otherTypedValue: string; // for the case when there's no liquidity
-  readonly inputType: string; // for the case when there's no liquidity
+  readonly otherTypedValue: string;
+  readonly inputType: InputType;
   readonly [Field.CURRENCY_A]: {
     readonly currency: Currency | undefined;
     readonly percent: number;
@@ -32,7 +37,7 @@ const initialState: MintState = {
   independentField: Field.CURRENCY_A,
   typedValue: '',
   otherTypedValue: '',
-  inputType: 'text',
+  inputType: InputType.text,
   [Field.CURRENCY_A]: {
     currency: INITIAL_MINT.currencyA,
     percent: 0,
@@ -47,7 +52,7 @@ const mintSlice = createSlice({
   initialState,
   reducers: create => ({
     resetMintState: create.reducer<void>(() => initialState),
-    typeInput: create.reducer<{ field: Field; typedValue: string; noLiquidity: boolean; inputType: string }>(
+    typeInput: create.reducer<{ field: Field; typedValue: string; noLiquidity: boolean; inputType: InputType }>(
       (state, { payload: { field, typedValue, noLiquidity, inputType } }) => {
         if (noLiquidity) {
           // they're typing into the field they've last typed in

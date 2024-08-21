@@ -30,7 +30,6 @@ import CheckCircleIcon from '@/assets/icons/check_circle.svg';
 import ExternalIcon from '@/assets/icons/external.svg';
 import bnJs from '@/bnJs';
 import { useProposalInfoQuery, useUserVoteStatusQuery, useUserWeightQuery } from '@/queries/vote';
-import { useChangeShouldLedgerSign } from '@/store/application/hooks';
 import { useFetchBBalnInfo } from '@/store/bbaln/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from '@/store/transactions/hooks';
 import { useWalletFetchBalances } from '@/store/wallet/hooks';
@@ -123,14 +122,9 @@ export function ProposalDetailsPage() {
 
   const hasUserVoted = userStatus?.hasVoted;
 
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const addTransaction = useTransactionAdder();
   const [txHash, setTxHash] = useState('');
   const handleSubmit = () => {
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
-
     const hasApproved = modalStatus === ModalStatus.Approve || modalStatus === ModalStatus.ChangeToApprove;
 
     bnJs
@@ -151,9 +145,7 @@ export function ProposalDetailsPage() {
       .catch(e => {
         console.error('error', e);
       })
-      .finally(() => {
-        changeShouldLedgerSign(false);
-      });
+      .finally(() => {});
   };
 
   const txStatus = useTransactionStatus(txHash);

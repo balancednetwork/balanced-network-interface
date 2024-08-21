@@ -1,11 +1,9 @@
 import IconService, { Builder as IconBuilder, Converter as IconConverter } from 'icon-sdk-js';
-import { isEmpty } from 'lodash-es';
 import { ICONEX_RELAY_RESPONSE } from '../iconex';
 
 import { AccountType, ResponseJsonRPCPayload, SettingInjection } from '..';
 import { SupportedChainId as NetworkId } from '../chain';
 import ContractSettings from '../contractSettings';
-import { Ledger } from '../ledger';
 
 export interface TransactionParams {
   jsonrpc: string;
@@ -18,7 +16,6 @@ export class Contract {
   protected provider: IconService;
   protected nid: NetworkId;
   public address: string = '';
-  public ledger: Ledger;
 
   constructor(
     protected contractSettings: ContractSettings,
@@ -26,8 +23,6 @@ export class Contract {
   ) {
     this.provider = contractSettings.provider;
     this.nid = contractSettings.networkId;
-    this.ledger = new Ledger(contractSettings);
-    this.contractSettings.ledgerSettings.actived = !isEmpty(this.ledger.viewSetting().transport);
     this.address = address || '';
   }
 
@@ -35,21 +30,9 @@ export class Contract {
     return this.contractSettings.account;
   }
 
-  public inject({ account, legerSettings }: SettingInjection) {
+  public inject({ account }: SettingInjection) {
     this.contractSettings.account = account || this.contractSettings.account;
-    this.contractSettings.ledgerSettings.transport =
-      legerSettings?.transport || this.contractSettings.ledgerSettings.transport;
-    this.contractSettings.ledgerSettings.actived = !isEmpty(this.contractSettings.ledgerSettings.transport);
-    this.contractSettings.ledgerSettings.path = legerSettings?.path || this.contractSettings.ledgerSettings.path;
     return this;
-  }
-
-  protected cleanParams(params: any) {
-    return JSON.parse(
-      JSON.stringify(params, (_key, value) => {
-        return isEmpty(value) && value !== 0 ? undefined : value;
-      }),
-    );
   }
 
   public paramsBuilder({
@@ -129,9 +112,6 @@ export class Contract {
   }
 
   public async callICONPlugins(payload: any): Promise<ResponseJsonRPCPayload> {
-    if (this.contractSettings.ledgerSettings.actived) {
-      return this.callLedger(payload.params);
-    }
     return this.callIconex(payload);
   }
 
@@ -158,17 +138,6 @@ export class Contract {
 
         window.addEventListener(ICONEX_RELAY_RESPONSE, handler);
       });
-    }
-  }
-
-  private async callLedger(payload: any): Promise<any> {
-    payload = this.cleanParams(payload);
-
-    if (this.contractSettings.ledgerSettings.actived) {
-      const signedTransaction = await this.ledger.signTransaction(payload);
-      return {
-        result: await this.provider.sendTransaction(signedTransaction).execute(),
-      };
     }
   }
 }

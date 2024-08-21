@@ -12,7 +12,7 @@ import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
 import bnJs from '@/bnJs';
 import { BATCH_SIZE, useUserCollectedFeesQuery } from '@/queries/reward';
-import { useChangeShouldLedgerSign, useShouldLedgerSign, useWalletModalToggle } from '@/store/application/hooks';
+import { useWalletModalToggle } from '@/store/application/hooks';
 import { useHasNetworkFees } from '@/store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from '@/store/transactions/hooks';
 import { shortenAddress } from '@/utils';
@@ -86,16 +86,11 @@ export function ClaimLegacyFeesPage() {
   const toggleWalletModal = useWalletModalToggle();
   const { account } = useIconReact();
   const [feeTx, setFeeTx] = React.useState('');
-  const shouldLedgerSign = useShouldLedgerSign();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const addTransaction = useTransactionAdder();
 
   const handleFeeClaim = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
     const end = platformDay - feesIndex * BATCH_SIZE;
     const start = end - BATCH_SIZE > 0 ? end - BATCH_SIZE : 0;
 
@@ -117,15 +112,12 @@ export function ClaimLegacyFeesPage() {
         console.error('error', e);
       })
       .finally(() => {
-        changeShouldLedgerSign(false);
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
 
   const [open, setOpen] = React.useState(false);
   const toggleOpen = () => {
-    if (shouldLedgerSign) return;
-
     setOpen(!open);
   };
 
@@ -172,18 +164,9 @@ export function ClaimLegacyFeesPage() {
                   </Typography>
                 </Typography>
               ))}
-          {shouldLedgerSign && (
-            <Box mt={2}>
-              <Spinner></Spinner>
-            </Box>
-          )}
-          {!shouldLedgerSign && (
-            <>
-              <Button mt={2} onClick={handleFeeClaim} fontSize={14}>
-                {count && count > 1 ? t`Claim (1 of ${count})` : t`Claim`}
-              </Button>
-            </>
-          )}
+          <Button mt={2} onClick={handleFeeClaim} fontSize={14}>
+            {count && count > 1 ? t`Claim (1 of ${count})` : t`Claim`}
+          </Button>
         </>
       );
     } else {

@@ -10,12 +10,10 @@ import { UnderlineText } from '@/app/components/DropdownText';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { QuestionWrapper } from '@/app/components/QuestionHelper';
-import Spinner from '@/app/components/Spinner';
 import Tooltip from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import QuestionIcon from '@/assets/icons/question.svg';
 import bnJs from '@/bnJs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import {
   useBBalnSliderState,
   useDBBalnAmountDiff,
@@ -35,8 +33,6 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
   useFetchUnclaimedDividends();
   const rewards = useUnclaimedFees();
   const { account } = useIconReact();
-  const shouldLedgerSign = useShouldLedgerSign();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const addTransaction = useTransactionAdder();
   const hasEnoughICX = useHasEnoughICX();
   const [isOpen, setOpen] = React.useState(false);
@@ -56,10 +52,6 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
   const handleClaim = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
-
     bnJs
       .inject({ account })
       .Dividends.claimDividends()
@@ -77,7 +69,6 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
         console.error('error', e);
       })
       .finally(() => {
-        changeShouldLedgerSign(false);
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
@@ -183,17 +174,12 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
           </Flex>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleOpen} fontSize={14}>
-                  <Trans>Not now</Trans>
-                </TextButton>
-                <Button onClick={handleClaim} fontSize={14} disabled={!hasEnoughICX}>
-                  <Trans>Claim</Trans>
-                </Button>
-              </>
-            )}
+            <TextButton onClick={toggleOpen} fontSize={14}>
+              <Trans>Not now</Trans>
+            </TextButton>
+            <Button onClick={handleClaim} fontSize={14} disabled={!hasEnoughICX}>
+              <Trans>Claim</Trans>
+            </Button>
           </Flex>
         </ModalContent>
       </Modal>

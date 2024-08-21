@@ -1,5 +1,4 @@
 import { Typography } from '@/app/theme';
-import bnJs from '@/bnJs';
 import { xChainMap } from '@/constants/xChains';
 import useKeyPress from '@/hooks/useKeyPress';
 import useWallets from '@/hooks/useWallets';
@@ -45,21 +44,12 @@ const Wallet = ({ close }: WalletProps) => {
   const handleChangeWallet = () => {
     close();
     toggleWalletModal();
-
-    if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
-      bnJs.contractSettings.ledgerSettings.transport.close();
-    }
   };
 
   const handleDisconnectWallet = async () => {
     close();
     clearManualAddresses();
 
-    if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
-      bnJs.contractSettings.ledgerSettings.transport.close();
-    }
-
-    // disconnect function includes resetContractLedgerSettings, so put it below the transport.close()
     [XWalletType.ICON, XWalletType.COSMOS, XWalletType.EVM, XWalletType.HAVAH, XWalletType.INJECTIVE].forEach(type =>
       allWallets[type]?.disconnect(),
     );

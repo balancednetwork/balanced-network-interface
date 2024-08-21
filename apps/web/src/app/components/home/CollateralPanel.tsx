@@ -18,7 +18,6 @@ import LockBar from '@/app/components/LockBar';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { BoxPanel, BoxPanelWrap } from '@/app/components/Panel';
-import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
 import IconUnstakeSICX from '@/assets/icons/timer-color.svg';
 import IconKeepSICX from '@/assets/icons/wallet-tick-color.svg';
@@ -28,7 +27,8 @@ import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
 import { xChainMap, xWalletTypeModalIdMap } from '@/constants/xChains';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import useWidth from '@/hooks/useWidth';
-import { useChangeShouldLedgerSign, useICXUnstakingTime, useShouldLedgerSign } from '@/store/application/hooks';
+import { useIconReact } from '@/packages/icon-react';
+import { useICXUnstakingTime } from '@/store/application/hooks';
 import {
   useCollateralActionHandlers,
   useCollateralState,
@@ -152,9 +152,6 @@ const CollateralPanel = () => {
   const { data: icxUnstakingTime } = useICXUnstakingTime();
   const isSuperSmall = useMedia(`(max-width: 359px)`);
 
-  const shouldLedgerSign = useShouldLedgerSign();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
-
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
 
@@ -202,9 +199,7 @@ const CollateralPanel = () => {
       });
       modalActions.openModal(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL);
     } else {
-      if (shouldLedgerSign) return;
       setOpen(!open);
-      changeShouldLedgerSign(false);
     }
   };
 
@@ -215,10 +210,6 @@ const CollateralPanel = () => {
     const collateralTokenAddress = supportedCollateralTokens && supportedCollateralTokens[collateralType];
     const cx = bnJs.inject({ account }).getContract(collateralTokenAddress!);
     const decimals: string = await cx.decimals();
-
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
 
     if (shouldDeposit) {
       try {
@@ -261,7 +252,6 @@ const CollateralPanel = () => {
       } catch (error) {
         console.log('handleCollateralConfirm.shouldDeposit = ' + shouldDeposit, error);
       } finally {
-        changeShouldLedgerSign(false);
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       }
     } else {
@@ -317,7 +307,6 @@ const CollateralPanel = () => {
       } catch (error) {
         console.log('handleCollateralConfirm.shouldDeposit = ' + shouldDeposit, error);
       } finally {
-        changeShouldLedgerSign(false);
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       }
     }
@@ -368,9 +357,12 @@ const CollateralPanel = () => {
   const [ref, width] = useWidth();
   const [underPanelRef, underPanelWidth] = useWidth();
 
+  const { connectToWallet: connectToIcon } = useIconReact();
   const handleConnect = () => {
     const chain = xChainMap[sourceChain];
-    if (chain.xWalletType !== XWalletType.COSMOS) {
+    if (chain.xWalletType === XWalletType.ICON) {
+      connectToIcon();
+    } else if (chain.xWalletType !== XWalletType.COSMOS) {
       modalActions.openModal(xWalletTypeModalIdMap[chain.xWalletType]);
     }
   };
@@ -603,23 +595,18 @@ const CollateralPanel = () => {
           )}
 
           <Flex justifyContent="center" mt={isHandlingICX ? 4 : 0} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleOpen} fontSize={14}>
-                  <Trans>Cancel</Trans>
-                </TextButton>
-                <Button
-                  onClick={handleCollateralConfirm}
-                  fontSize={14}
-                  disabled={
-                    !hasEnoughICX || (isHandlingICX && !shouldDeposit && ICXWithdrawOption === ICXWithdrawOptions.EMPTY)
-                  }
-                >
-                  {shouldDeposit ? t`Deposit` : t`Withdraw`}
-                </Button>
-              </>
-            )}
+            <TextButton onClick={toggleOpen} fontSize={14}>
+              <Trans>Cancel</Trans>
+            </TextButton>
+            <Button
+              onClick={handleCollateralConfirm}
+              fontSize={14}
+              disabled={
+                !hasEnoughICX || (isHandlingICX && !shouldDeposit && ICXWithdrawOption === ICXWithdrawOptions.EMPTY)
+              }
+            >
+              {shouldDeposit ? t`Deposit` : t`Withdraw`}
+            </Button>
           </Flex>
         </ModalContent>
       </Modal>

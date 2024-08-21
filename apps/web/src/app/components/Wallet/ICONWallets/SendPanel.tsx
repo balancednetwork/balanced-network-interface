@@ -14,12 +14,10 @@ import { Button, TextButton } from '@/app/components/Button';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
-import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
 import bnJs from '@/bnJs';
 import { BIGINT_ZERO } from '@/constants/misc';
 import { HIGH_PRICE_ASSET_DP } from '@/constants/tokens';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend, toCurrencyAmount, toDec } from '@/utils';
@@ -29,10 +27,6 @@ import { Grid, MaxButton } from './utils';
 
 export default function SendPanel({ currency }: { currency: Currency }) {
   const [value, setValue] = React.useState('');
-
-  const shouldLedgerSign = useShouldLedgerSign();
-
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const handleCurrencyInput = (value: string) => {
     setValue(value);
@@ -60,8 +54,6 @@ export default function SendPanel({ currency }: { currency: Currency }) {
   const [open, setOpen] = React.useState(false);
 
   const toggleOpen = () => {
-    if (shouldLedgerSign) return;
-
     setOpen(!open);
   };
 
@@ -78,10 +70,6 @@ export default function SendPanel({ currency }: { currency: Currency }) {
 
   const handleSend = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
 
     const contract =
       currency.wrapped.address === bnJs.ICX.address
@@ -109,7 +97,6 @@ export default function SendPanel({ currency }: { currency: Currency }) {
         }
       })
       .finally(() => {
-        changeShouldLedgerSign(false);
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
@@ -200,17 +187,12 @@ export default function SendPanel({ currency }: { currency: Currency }) {
             </Typography>
           )}
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleOpen} fontSize={14}>
-                  <Trans>Cancel</Trans>
-                </TextButton>
-                <Button onClick={handleSend} fontSize={14} disabled={!hasEnoughICX}>
-                  <Trans>Send</Trans>
-                </Button>
-              </>
-            )}
+            <TextButton onClick={toggleOpen} fontSize={14}>
+              <Trans>Cancel</Trans>
+            </TextButton>
+            <Button onClick={handleSend} fontSize={14} disabled={!hasEnoughICX}>
+              <Trans>Send</Trans>
+            </Button>
           </Flex>
         </ModalContent>
       </Modal>

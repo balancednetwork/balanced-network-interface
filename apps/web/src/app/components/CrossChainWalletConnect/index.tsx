@@ -9,6 +9,7 @@ import { xChainMap, xWalletTypeModalIdMap } from '@/constants/xChains';
 import { modalActions } from '@/hooks/useModalStore';
 import useWallets from '@/hooks/useWallets';
 import { useHavahContext } from '@/packages/havah/HavahProvider';
+import { useIconReact } from '@/packages/icon-react';
 import { useSwapState } from '@/store/swap/hooks';
 import { useSetManualAddress } from '@/store/user/hooks';
 import { Trans } from '@lingui/macro';
@@ -19,6 +20,8 @@ import AddressInput from './AddressInput';
 
 const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; editable?: boolean }) => {
   const [editableAddressModalOpen, setEditableAddressModalOpen] = React.useState(false);
+
+  const { connectToWallet: connectToIcon } = useIconReact();
   const { connectToWallet: connectKeplr } = useArchwayContext();
   const { connectToWallet: connectToHavah } = useHavahContext();
   const { recipient } = useSwapState();
@@ -29,7 +32,9 @@ const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; e
   const handleConnect = () => {
     const chain = xChainMap[xChainId];
     setManualAddress(xChainId, undefined);
-    if (chain.xWalletType === XWalletType.COSMOS) {
+    if (chain.xWalletType === XWalletType.ICON) {
+      connectToIcon();
+    } else if (chain.xWalletType === XWalletType.COSMOS) {
       connectKeplr();
     } else if (chain.xWalletType === XWalletType.HAVAH) {
       connectToHavah();

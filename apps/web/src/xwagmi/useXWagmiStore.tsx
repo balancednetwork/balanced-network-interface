@@ -2,6 +2,7 @@ import { xChains } from '@/constants/xChains';
 import { XChainId, XChainType } from '@/types';
 import { useEffect } from 'react';
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { getXChainType } from './actions';
 import { XPublicClient, XService, XWalletClient } from './core';
@@ -17,35 +18,6 @@ import {
   InjectiveXService,
   InjectiveXWalletClient,
 } from './xchains/injective';
-
-type XWagmiStore = {
-  xServices: Partial<Record<XChainType, XService>>;
-  xConnections: Partial<Record<XChainType, XConnection>>;
-  xPublicClients: Partial<Record<XChainId, XPublicClient>>;
-  xWalletClients: Partial<Record<XChainId, XWalletClient>>;
-
-  setXConnection: (xChainType: XChainType, xConnection: XConnection) => void;
-  unsetXConnection: (xChainType: XChainType) => void;
-};
-
-export const useXWagmiStore = create<XWagmiStore>()(
-  immer((set, get) => ({
-    xServices: {},
-    xConnections: {},
-    xPublicClients: {},
-    xWalletClients: {},
-    setXConnection: (xChainType: XChainType, xConnection: XConnection) => {
-      set(state => {
-        state.xConnections[xChainType] = xConnection;
-      });
-    },
-    unsetXConnection: (xChainType: XChainType) => {
-      set(state => {
-        delete state.xConnections[xChainType];
-      });
-    },
-  })),
-);
 
 const iconXService = IconXService.getInstance();
 iconXService.setXConnectors([new IconHanaXConnector()]);
@@ -72,6 +44,81 @@ export const xServices: Record<XChainType, XService> = {
 
 export const xPublicClients: Partial<Record<XChainId, XPublicClient>> = {};
 export const xWalletClients: Partial<Record<XChainId, XWalletClient>> = {};
+
+type XWagmiStore = {
+  xServices: Partial<Record<XChainType, XService>>;
+  xConnections: Partial<Record<XChainType, XConnection>>;
+  xPublicClients: Partial<Record<XChainId, XPublicClient>>;
+  xWalletClients: Partial<Record<XChainId, XWalletClient>>;
+
+  setXConnection: (xChainType: XChainType, xConnection: XConnection) => void;
+  unsetXConnection: (xChainType: XChainType) => void;
+};
+
+const jsonStorageOptions = {
+  reviver: (key, value: any) => {
+    if (!value) return value;
+
+    if (typeof value === 'string' && value.startsWith('BIGINT::')) {
+      return BigInt(value.substring(8));
+    }
+
+    return value;
+  },
+  replacer: (key, value) => {
+    if (typeof value === 'bigint') {
+      return `BIGINT::${value}`;
+    } else {
+      return value;
+    }
+  },
+};
+
+export const useXWagmiStore = create<XWagmiStore>()(
+  persist(
+    immer((set, get) => ({
+      xServices: {},
+      xConnections: {},
+      xPublicClients: {},
+      xWalletClients: {},
+      setXConnection: (xChainType: XChainType, xConnection: XConnection) => {
+        set(state => {
+          state.xConnections[xChainType] = xConnection;
+        });
+      },
+      unsetXConnection: (xChainType: XChainType) => {
+        set(state => {
+          delete state.xConnections[xChainType];
+        });
+      },
+    })),
+    {
+      name: 'xwagmi-store',
+      storage: createJSONStorage(() => localStorage, jsonStorageOptions),
+      partialize: state => ({ xConnections: state.xConnections }),
+
+      // TODO: better way to handle rehydration of xConnections?
+      onRehydrateStorage: state => {
+        console.log('hydration starts');
+
+        return (state, error) => {
+          if (state?.xConnections) {
+            console.log('rehydrating xConnections', state.xConnections);
+            Object.entries(state.xConnections).forEach(([xChainType, xConnection]) => {
+              const xConnector = xServices[xChainType as XChainType].getXConnectorById(xConnection.xConnectorId);
+              xConnector?.connect();
+            });
+          }
+          if (error) {
+            console.log('an error happened during hydration', error);
+          } else {
+            console.log('hydration finished');
+          }
+        };
+      },
+    },
+  ),
+);
 
 function createXPublicClient(xChainId: XChainId) {
   const xChainType = getXChainType(xChainId);
@@ -130,15 +177,7 @@ export const initXWagmiStore = () => {
 };
 
 // export const useInitXWagmiStore = () => {
-//   const setXConnection = useXWagmiStore(state => state.setXConnection);
-//   const unsetXConnection = useXWagmiStore(state => state.unsetXConnection);
-
 //   useEffect(() => {
 //     initXWagmiStore();
 //   }, []);
-
-//   return {
-//     setXConnection,
-//     unsetXConnection,
-//   };
 // };

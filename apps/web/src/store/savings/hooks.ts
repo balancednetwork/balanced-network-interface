@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect } from 'react';
 
+import { useIconReact } from '@/packages/icon-react';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { BigNumber } from 'bignumber.js';
-import { NETWORK_ID, useIconReact } from '@/packages/icon-react';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
+import { BigNumber } from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from '@/bnJs';
@@ -12,9 +12,10 @@ import { useTokenPrices } from '@/queries/backendv2';
 import { useSupportedCollateralTokens } from '@/store/collateral/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 
+import { NETWORK_ID } from '@/constants/config';
 import { AppState } from '..';
 import { Field } from '../loan/reducer';
-import { adjust, cancel, type, changeLockedAmount } from './reducer';
+import { adjust, cancel, changeLockedAmount, type } from './reducer';
 
 export function useLockedAmount(): AppState['savings']['lockedAmount'] {
   return useSelector((state: AppState) => state.savings.lockedAmount);

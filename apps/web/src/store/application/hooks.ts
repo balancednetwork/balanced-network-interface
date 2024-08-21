@@ -1,6 +1,5 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
 import { CHAIN_INFO } from '@balancednetwork/balanced-js';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -9,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { NETWORK_ID } from '@/constants/config';
 
+import { useIconNetworkId } from '@/hooks/useIconNetworkId';
 import { AppDispatch, AppState } from '../index';
 import { ApplicationModal, setOpenModal, updateSlippageTolerance } from './reducer';
 
@@ -18,7 +18,7 @@ type BlockDetails = {
 };
 
 export function useBlockNumber(): number | undefined {
-  const { networkId: chainId } = useIconReact();
+  const chainId = useIconNetworkId();
 
   return useSelector((state: AppState) => state.application.blockNumber[chainId ?? -1]);
 }

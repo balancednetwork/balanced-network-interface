@@ -7,8 +7,6 @@ export const GOVERNANCE_BASE_ADDRESS = 'cx00000000000000000000000000000000000000
 
 export const API_VERSION = IconConverter.toBigNumber(3);
 
-export const NETWORK_ID: number = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
-
 export function useIconReact() {
   const iconXService: IconXService = useXService('ICON') as IconXService;
   const iconXAccount = useXAccount('ICON');
@@ -16,6 +14,5 @@ export function useIconReact() {
   return {
     account: iconXAccount.address,
     iconService: iconXService.iconService,
-    networkId: NETWORK_ID,
   };
 }

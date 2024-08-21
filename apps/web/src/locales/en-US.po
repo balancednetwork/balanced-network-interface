@@ -72,8 +72,8 @@ msgid "To"
 msgstr "To"
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Borrow bnUSD. Swap & transfer cross-chain."
-msgstr "Borrow bnUSD. Swap & transfer cross-chain."
+#~ msgid "Borrow bnUSD. Swap & transfer cross-chain."
+#~ msgstr "Borrow bnUSD. Swap & transfer cross-chain."
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Removing"
@@ -415,8 +415,8 @@ msgid "Confirm"
 msgstr "Confirm"
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer cross-chain."
-msgstr "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer cross-chain."
+#~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer cross-chain."
+#~ msgstr "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer cross-chain."
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 msgid "Claiming Balanced incentives..."
@@ -1198,8 +1198,9 @@ msgid "Each redemption is spread across a group of borrowers to minimise the imp
 msgstr "Each redemption is spread across a group of borrowers to minimise the impact. The smaller your loan, the less it will affect you."
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Swap & transfer crypto cross-chain."
-msgstr "Swap & transfer crypto cross-chain."
+#: src/app/components/WalletModal/index.tsx
+#~ msgid "Swap & transfer crypto cross-chain."
+#~ msgstr "Swap & transfer crypto cross-chain."
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 msgid "Withdrawing"
@@ -1976,6 +1977,7 @@ msgid "Deposit"
 msgstr "Deposit"
 
 #: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
 msgid "Swap & transfer cross-chain."
 msgstr "Swap & transfer cross-chain."
 
@@ -2270,6 +2272,11 @@ msgstr "Deposit {0} collateral?"
 msgid "Allocating bBALN..."
 msgstr "Allocating bBALN..."
 
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+msgid "Borrow, swap, & transfer cross-chain."
+msgstr "Borrow, swap, & transfer cross-chain."
+
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "You approved"
 msgstr "You approved"
@@ -2543,6 +2550,10 @@ msgstr "Sign in on ICON, then deposit bnUSD to earn rewards."
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "Vote cast."
 msgstr "Vote cast."
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Borrow, swap, & transfer cross-chain. Supply liquidity. Vote."
+msgstr "Borrow, swap, & transfer cross-chain. Supply liquidity. Vote."
 
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 msgid "Network fees"

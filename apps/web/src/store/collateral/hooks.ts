@@ -110,7 +110,8 @@ export function useAllCollateralData(): UseQueryResult<XPositionsRecord[]> {
             isSingleChain: Object.keys(positions).length === 1,
             total: totalCollateralData[symbol],
           };
-        });
+        })
+        .sort((a, b) => (a.baseToken && b.baseToken ? a.baseToken.symbol.localeCompare(b.baseToken?.symbol) : 0));
     },
     enabled: !!totalCollateralData,
     placeholderData: keepPreviousData,
@@ -176,7 +177,7 @@ export function useCollateralFetchInfo(account?: string | null) {
   const pendingXCalls = useDestinationEvents(ICON_XCALL_NETWORK_ID);
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
 
-  const allDerivedWallets = useSignedInWallets();
+  const allWallets = useSignedInWallets();
 
   const isSupported = React.useCallback(
     (symbol: string) => {
@@ -231,13 +232,13 @@ export function useCollateralFetchInfo(account?: string | null) {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        await Promise.all(allDerivedWallets.map(fetchCollateralInfo));
+        await Promise.all(allWallets.filter(wallet => !!wallet.xChainId).map(fetchCollateralInfo));
       } catch (e) {
         console.error(e);
       }
     };
     fetchData();
-  }, [fetchCollateralInfo, transactions, allDerivedWallets, pendingXCalls.length]);
+  }, [fetchCollateralInfo, allWallets.length, pendingXCalls.length, transactions]);
 }
 
 export function useCollateralState() {

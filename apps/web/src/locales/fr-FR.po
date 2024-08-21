@@ -75,8 +75,8 @@ msgid "To"
 msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Borrow bnUSD. Swap & transfer cross-chain."
-msgstr ""
+#~ msgid "Borrow bnUSD. Swap & transfer cross-chain."
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Removing"
@@ -424,8 +424,8 @@ msgid "Confirm"
 msgstr "Valider"
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer cross-chain."
-msgstr ""
+#~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer cross-chain."
+#~ msgstr ""
 
 #: src/app/containers/HomePage/index.tsx
 #~ msgid "Sign in to use the Home page."
@@ -1241,8 +1241,9 @@ msgid "Each redemption is spread across a group of borrowers to minimise the imp
 msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Swap & transfer crypto cross-chain."
-msgstr ""
+#: src/app/components/WalletModal/index.tsx
+#~ msgid "Swap & transfer crypto cross-chain."
+#~ msgstr ""
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 msgid "Withdrawing"
@@ -2040,6 +2041,7 @@ msgid "Deposit"
 msgstr "Déposer"
 
 #: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
 msgid "Swap & transfer cross-chain."
 msgstr ""
 
@@ -2334,6 +2336,11 @@ msgstr ""
 msgid "Allocating bBALN..."
 msgstr ""
 
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+msgid "Borrow, swap, & transfer cross-chain."
+msgstr ""
+
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "You approved"
 msgstr "Vous avez approuvé"
@@ -2611,6 +2618,10 @@ msgstr ""
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "Vote cast."
 msgstr "Vote exprimé."
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Borrow, swap, & transfer cross-chain. Supply liquidity. Vote."
+msgstr ""
 
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 msgid "Network fees"

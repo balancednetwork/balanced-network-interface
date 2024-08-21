@@ -1,5 +1,4 @@
 import { Typography } from '@/app/theme';
-import bnJs from '@/bnJs';
 import { xChainMap } from '@/constants/xChains';
 import useKeyPress from '@/hooks/useKeyPress';
 import useWallets from '@/hooks/useWallets';
@@ -48,10 +47,9 @@ const Wallet = ({ close }: WalletProps) => {
   const handleDisconnectWallet = async () => {
     close();
 
-    allWallets[XWalletType.ICON]?.disconnect();
-    allWallets[XWalletType.COSMOS]?.disconnect();
-    allWallets[XWalletType.EVM]?.disconnect();
-    allWallets[XWalletType.HAVAH]?.disconnect();
+    [XWalletType.ICON, XWalletType.COSMOS, XWalletType.EVM, XWalletType.HAVAH, XWalletType.INJECTIVE].forEach(type =>
+      allWallets[type]?.disconnect(),
+    );
   };
 
   useEffect(() => {

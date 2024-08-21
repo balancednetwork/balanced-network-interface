@@ -11,10 +11,10 @@ import { XChainId, XToken } from '@/types';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
 import { XTransactionInput, XTransactionType } from '../_zustand/types';
 import { getBytesFromString, getRlpEncodedSwapData } from '../utils';
-import { ArchwayPublicXService } from './ArchwayPublicXService';
-import { IWalletXService } from './types';
+import { ArchwayXPublicClient } from './ArchwayXPublicClient';
+import { XWalletClient } from './types';
 
-export class ArchwayWalletXService extends ArchwayPublicXService implements IWalletXService {
+export class ArchwayXWalletClient extends ArchwayXPublicClient implements XWalletClient {
   walletClient: XSigningArchwayClient;
 
   constructor(xChainId: XChainId, publicClient: ArchwayClient, walletClient: XSigningArchwayClient, options?: any) {

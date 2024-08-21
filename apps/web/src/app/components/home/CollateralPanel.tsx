@@ -24,11 +24,11 @@ import IconKeepSICX from '@/assets/icons/wallet-tick-color.svg';
 import bnJs from '@/bnJs';
 import { NETWORK_ID } from '@/constants/config';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
-import { xChainMap } from '@/constants/xChains';
+import { xChainMap, xWalletTypeModalIdMap } from '@/constants/xChains';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import useWidth from '@/hooks/useWidth';
 import { useIconReact } from '@/packages/icon-react';
-import { useICXUnstakingTime, useWalletModal } from '@/store/application/hooks';
+import { useICXUnstakingTime } from '@/store/application/hooks';
 import {
   useCollateralActionHandlers,
   useCollateralState,
@@ -358,13 +358,12 @@ const CollateralPanel = () => {
   const [underPanelRef, underPanelWidth] = useWidth();
 
   const { connectToWallet: connectToIcon } = useIconReact();
-  const [, setWalletModal] = useWalletModal();
   const handleConnect = () => {
     const chain = xChainMap[sourceChain];
     if (chain.xWalletType === XWalletType.ICON) {
       connectToIcon();
     } else if (chain.xWalletType !== XWalletType.COSMOS) {
-      setWalletModal(chain.xWalletType);
+      modalActions.openModal(xWalletTypeModalIdMap[chain.xWalletType]);
     }
   };
 

@@ -9,7 +9,7 @@ import { Box, Flex } from 'rebass';
 import { Typography } from '@/app/theme';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { Field } from '@/store/swap/reducer';
-import { XChainId, XToken } from '@/types';
+import { XChainId, XToken, XWalletType } from '@/types';
 import { formatBigNumber, shortenAddress } from '@/utils';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 
@@ -21,6 +21,7 @@ import Spinner from '@/app/components/Spinner';
 import XTransactionState from '@/app/components/XTransactionState';
 import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
 import { xChainMap } from '@/constants/xChains';
+import useEthereumChainId from '@/hooks/useEthereumChainId';
 import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
 import useWallets from '@/hooks/useWallets';
 import { ApprovalState, useApproveCallback } from '@/lib/xcall/_hooks/useApproveCallback';
@@ -33,8 +34,11 @@ import {
   useXTransactionStore,
   xTransactionActions,
 } from '@/lib/xcall/_zustand/useXTransactionStore';
+import { switchEthereumChain, walletStrategy } from '@/packages/injective';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import { Wallet } from '@injectivelabs/wallet-ts';
 import { useSwitchChain } from 'wagmi';
+import { mainnet } from 'wagmi/chains';
 
 type XSwapModalProps = {
   account: string | undefined;
@@ -118,13 +122,23 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
 
   const gasChecker = useXCallGasChecker(direction.from);
 
+  const ethereumChainId = useEthereumChainId();
+
   // switch chain between evm chains
   const wallets = useWallets();
   const walletType = xChainMap[direction.from].xWalletType;
-  const isWrongChain = wallets[walletType].xChainId !== direction.from;
+  const isWrongChain =
+    wallets[walletType].xChainId !== direction.from ||
+    (walletType === XWalletType.INJECTIVE &&
+      walletStrategy.getWallet() === Wallet.Metamask &&
+      ethereumChainId !== mainnet.id);
   const { switchChain } = useSwitchChain();
-  const handleSwitchChain = () => {
-    switchChain({ chainId: xChainMap[direction.from].id as number });
+  const handleSwitchChain = async () => {
+    if (walletType === XWalletType.INJECTIVE) {
+      switchEthereumChain(mainnet.id);
+    } else {
+      switchChain({ chainId: xChainMap[direction.from].id as number });
+    }
   };
 
   return (

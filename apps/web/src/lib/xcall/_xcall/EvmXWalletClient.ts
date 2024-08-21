@@ -10,13 +10,13 @@ import { XChainId } from '@/types';
 import { uintToBytes } from '@/utils';
 import { XTransactionInput, XTransactionType } from '../_zustand/types';
 import { getRlpEncodedSwapData, toICONDecimals } from '../utils';
-import { EvmPublicXService } from './EvmPublicXService';
+import { EvmXPublicClient } from './EvmXPublicClient';
 import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
 import { bnUSDContractAbi } from './abis/bnUSDContractAbi';
 import { xCallContractAbi } from './abis/xCallContractAbi';
-import { IWalletXService } from './types';
+import { XWalletClient } from './types';
 
-export class EvmWalletXService extends EvmPublicXService implements IWalletXService {
+export class EvmXWalletClient extends EvmXPublicClient implements XWalletClient {
   walletClient: WalletClient;
 
   constructor(xChainId: XChainId, publicClient: PublicClient, walletClient: WalletClient, options?: any) {

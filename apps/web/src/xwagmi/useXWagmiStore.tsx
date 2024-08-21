@@ -62,7 +62,7 @@ havahXService.setXConnectors([new HavahXConnector()]);
 const injectiveXService = InjectiveXService.getInstance();
 injectiveXService.setXConnectors([new InjectiveMetamaskXConnector(), new InjectiveKelprXConnector()]);
 
-export const xServices = {
+export const xServices: Record<XChainType, XService> = {
   ICON: iconXService,
   ARCHWAY: archwayXService,
   EVM: evmXService,
@@ -73,7 +73,7 @@ export const xServices = {
 export const xPublicClients: Partial<Record<XChainId, XPublicClient>> = {};
 export const xWalletClients: Partial<Record<XChainId, XWalletClient>> = {};
 
-function createXPublicClient(xChainId) {
+function createXPublicClient(xChainId: XChainId) {
   const xChainType = getXChainType(xChainId);
   switch (xChainType) {
     case 'ICON':
@@ -91,7 +91,7 @@ function createXPublicClient(xChainId) {
   }
 }
 
-function createXWalletClient(xChainId) {
+function createXWalletClient(xChainId: XChainId) {
   const xChainType = getXChainType(xChainId);
   switch (xChainType) {
     case 'ICON':

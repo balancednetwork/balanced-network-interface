@@ -147,7 +147,7 @@ export function useUserLocaleManager(): [SupportedLocale | null, (newLocale: Sup
 }
 
 export function useManualAddress(xChainId: XChainId): string | undefined {
-  return useAppSelector(state => state.user.manualAddresses[xChainId]);
+  return useAppSelector(state => state.user.manualAddresses?.[xChainId]);
 }
 
 export function useSetManualAddress(): (xChainId: XChainId, address?: string | undefined) => void {

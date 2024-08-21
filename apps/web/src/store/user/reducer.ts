@@ -211,6 +211,9 @@ const userSlice = createSlice({
     ),
     setManualAddress: create.reducer<{ xChainId: XChainId; address: string | undefined }>(
       (state, { payload: { xChainId, address } }) => {
+        if (!state.manualAddresses) {
+          state.manualAddresses = {};
+        }
         state.manualAddresses[xChainId] = address;
         state.timestamp = currentTimestamp();
       },

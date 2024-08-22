@@ -11,7 +11,9 @@ import { getTimestampFrom } from '@/pages/PerformanceDetails/utils';
 import { useSupportedCollateralTokens } from '@/store/collateral/hooks';
 import { formatUnits } from '@/utils';
 
+import { useEmissions } from '@/sections/BALNSection/queries';
 import axios from 'axios';
+import { useMemo } from 'react';
 import {
   API_ENDPOINT,
   TokenStats,
@@ -739,19 +741,14 @@ export const useCollateralInfo = () => {
 export const useLoanInfo = () => {
   const totalBnUSDQuery = useBnJsContractQuery<string>(bnJs, 'bnUSD', 'totalSupply', []);
   const totalBnUSD = totalBnUSDQuery.isSuccess ? BalancedJs.utils.toIcx(totalBnUSDQuery.data) : null;
-  const { data: balnAllocation } = useBnJsContractQuery<{ [key: string]: string }>(
-    bnJs,
-    'Rewards',
-    'getRecipientsSplit',
-    [],
-  );
-  const loansBalnAllocation = BalancedJs.utils.toIcx(balnAllocation?.Loans || 0);
+  const { data: balnDistribution } = useFlattenedRewardsDistribution();
+  const loansBalnAllocation = balnDistribution?.['Loans'] || new Fraction(0);
+  const { data: dailyEmissions } = useEmissions();
 
-  const dailyDistributionQuery = useBnJsContractQuery<string>(bnJs, 'Rewards', 'getEmission', []);
-  const dailyRewards =
-    dailyDistributionQuery.isSuccess && loansBalnAllocation.isGreaterThan(0)
-      ? BalancedJs.utils.toIcx(dailyDistributionQuery.data).times(loansBalnAllocation)
-      : null;
+  const dailyRewards = useMemo(() => {
+    if (!dailyEmissions || !loansBalnAllocation) return null;
+    return dailyEmissions.times(new BigNumber(loansBalnAllocation.toFixed(18)));
+  }, [dailyEmissions, loansBalnAllocation]);
 
   const { data: tokenPrices } = useTokenPrices();
 

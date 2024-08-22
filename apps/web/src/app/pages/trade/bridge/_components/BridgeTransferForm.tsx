@@ -72,18 +72,16 @@ export default function BridgeTransferForm({ openModal }) {
   const destinationWallet = wallets[xChainMap[bridgeDirection.to].xWalletType];
 
   React.useEffect(() => {
+    if (destinationWallet.account) {
+      onChangeRecipient(destinationWallet.account);
+    }
     if (manualAddresses[bridgeDirection.to]) {
       onChangeRecipient(manualAddresses[bridgeDirection.to] ?? null);
     }
-  }, [onChangeRecipient, manualAddresses[bridgeDirection.to], bridgeDirection.to]);
-
-  React.useEffect(() => {
-    if (destinationWallet.account) {
-      onChangeRecipient(destinationWallet.account ?? null);
-    } else {
+    if (!destinationWallet.account && !manualAddresses[bridgeDirection.to]) {
       onChangeRecipient(null);
     }
-  }, [onChangeRecipient, destinationWallet.account]);
+  }, [onChangeRecipient, manualAddresses[bridgeDirection.to], bridgeDirection.to, destinationWallet.account]);
 
   const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount } = useDerivedBridgeInfo();
 

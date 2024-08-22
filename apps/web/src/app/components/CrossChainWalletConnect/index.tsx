@@ -37,6 +37,7 @@ const CrossChainWalletConnect = ({
 
   const handleConnect = () => {
     const chain = xChainMap[xChainId];
+    setManualAddress && setManualAddress(xChainId, undefined);
     if (chain.xWalletType === XWalletType.ICON) {
       connectToIcon();
     } else if (chain.xWalletType === XWalletType.COSMOS) {

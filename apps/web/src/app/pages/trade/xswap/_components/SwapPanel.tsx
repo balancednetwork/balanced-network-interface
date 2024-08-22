@@ -62,18 +62,16 @@ export default function SwapPanel() {
   const { manualAddresses, setManualAddress } = useManualAddresses();
 
   React.useEffect(() => {
+    if (destinationWallet.account) {
+      onChangeRecipient(destinationWallet.account);
+    }
     if (manualAddresses[direction.to]) {
       onChangeRecipient(manualAddresses[direction.to] ?? null);
     }
-  }, [onChangeRecipient, manualAddresses[direction.to], direction.to]);
-
-  React.useEffect(() => {
-    if (destinationWallet.account) {
-      onChangeRecipient(destinationWallet.account ?? null);
-    } else {
+    if (!destinationWallet.account && !manualAddresses[direction.to]) {
       onChangeRecipient(null);
     }
-  }, [onChangeRecipient, destinationWallet.account]);
+  }, [onChangeRecipient, manualAddresses[direction.to], direction.to, destinationWallet.account]);
 
   const handleTypeInput = useCallback(
     (value: string) => {

@@ -1,7 +1,7 @@
-import { Fraction } from '@balancednetwork/sdk-core';
-import BigNumber from 'bignumber.js';
 import { useFlattenedRewardsDistribution } from '@/queries';
+import { Fraction } from '@balancednetwork/sdk-core';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import BigNumber from 'bignumber.js';
 
 import bnJs from '@/bnJs';
 
@@ -22,32 +22,34 @@ export function useBALNDistributionQuery() {
         return acc;
       }, new Fraction(0));
 
-      return [
+      const data = [
         {
           name: 'Liquidity',
-          value: parseFloat(liquidityTotal.toFixed(4)),
+          value: parseFloat(liquidityTotal?.toFixed(4) ?? 0),
           fill: CHART_COLORS[0],
         },
         {
           name: 'Reserve Fund',
-          value: parseFloat(distribution['Reserve Fund'].toFixed(4)),
-        },
-        {
-          name: 'DAO Fund',
-          value: parseFloat(distribution['DAOfund'].toFixed(4)),
-          fill: CHART_COLORS[3],
+          value: parseFloat(distribution['Balanced Reserve Fund']?.toFixed(4) ?? 0),
         },
         {
           name: 'Workers',
-          value: parseFloat(distribution['Worker Tokens'].toFixed(4)),
+          value: parseFloat(distribution['Balanced Worker Token']?.toFixed(4) ?? 0),
           fill: CHART_COLORS[2],
         },
         {
+          name: 'DAO Fund',
+          value: parseFloat(distribution['Balanced DAOfund']?.toFixed(4) ?? 0),
+          fill: CHART_COLORS[3],
+        },
+        {
           name: 'Borrowers',
-          value: parseFloat(distribution['Loans'].toFixed(4)),
+          value: parseFloat(distribution['Loans']?.toFixed(4) ?? 0),
           fill: CHART_COLORS[1],
         },
       ];
+
+      return data;
     },
     placeholderData: keepPreviousData,
     enabled: distributionQuerySuccess,

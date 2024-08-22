@@ -1,7 +1,7 @@
-import { addresses, BalancedJs, CallData } from '@balancednetwork/balanced-js';
-import { CurrencyAmount, Token, Fraction } from '@balancednetwork/sdk-core';
+import { BalancedJs, CallData, addresses } from '@balancednetwork/balanced-js';
+import { CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
-import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 
 import bnJs from '@/bnJs';
 import { SUPPORTED_PAIRS } from '@/constants/pairs';
@@ -11,6 +11,7 @@ import { getTimestampFrom } from '@/pages/PerformanceDetails/utils';
 import { useSupportedCollateralTokens } from '@/store/collateral/hooks';
 import { formatUnits } from '@/utils';
 
+import axios from 'axios';
 import {
   API_ENDPOINT,
   TokenStats,
@@ -21,7 +22,6 @@ import {
   useTokenPrices,
 } from './backendv2';
 import { useBlockDetails } from './blockDetails';
-import axios from 'axios';
 
 const WEIGHT_CONST = 10 ** 18;
 
@@ -645,18 +645,18 @@ export function useFlattenedRewardsDistribution(): UseQueryResult<Map<string, Fr
   return useQuery({
     queryKey: ['flattenedDistribution', distribution],
     queryFn: () => {
-      if (distribution) {
-        return Object.values(distribution).reduce((flattened, dist) => {
-          return Object.keys(dist).reduce((flattened, item) => {
-            if (Object.keys(flattened).indexOf(item) >= 0) {
-              flattened[item] = flattened[item].add(dist[item]);
-            } else {
-              flattened[item] = dist[item];
-            }
-            return flattened;
-          }, flattened);
-        }, {});
-      }
+      if (!distribution) return new Map();
+
+      return Object.values(distribution).reduce((flattened, dist) => {
+        return Object.keys(dist).reduce((flattened, item) => {
+          if (Object.keys(flattened).indexOf(item) >= 0) {
+            flattened[item] = flattened[item].add(dist[item]);
+          } else {
+            flattened[item] = dist[item];
+          }
+          return flattened;
+        }, flattened);
+      }, {});
     },
     placeholderData: keepPreviousData,
   });

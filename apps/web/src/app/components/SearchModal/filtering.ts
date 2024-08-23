@@ -5,6 +5,8 @@ import { TokenInfo } from '@uniswap/token-lists';
 
 import { isAddress } from '@/utils';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { getSupportedXChainForToken } from '@/app/pages/trade/bridge/utils';
+import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
 
 const alwaysTrue = () => true;
 
@@ -36,7 +38,16 @@ export function createTokenFilterFunction<T extends Token | TokenInfo>(search: s
     return lowerSearchParts.every(p => p.length === 0 || sParts.some(sp => sp.indexOf(p) >= 0));
   };
 
-  return ({ name, symbol }: T): boolean => Boolean((symbol && matchesSearch(symbol)) || (name && matchesSearch(name)));
+  return ({ name, symbol }: T): boolean => {
+    const tokenXChainNames = getSupportedXChainForToken(
+      COMBINED_TOKENS_LIST.find(token => token.symbol === symbol) || null,
+    )?.map(xChain => xChain.name);
+    return Boolean(
+      (symbol && matchesSearch(symbol)) ||
+        (name && matchesSearch(name)) ||
+        (tokenXChainNames && tokenXChainNames.some(xChainName => matchesSearch(xChainName))),
+    );
+  };
 }
 
 export function filterTokens<T extends Token | TokenInfo>(tokens: T[], search: string): T[] {

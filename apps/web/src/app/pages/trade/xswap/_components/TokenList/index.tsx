@@ -15,6 +15,8 @@ import SkeletonTokenPlaceholder from './SkeletonTokenPlaceholder';
 import DropdownLink from '@/app/components/DropdownLink';
 import CommunityListToggle from '@/app/components/CommunityListToggle';
 import { useTokenListConfig } from '@/store/lists/hooks';
+import { getSupportedXChainForToken } from '../../../bridge/utils';
+import { COMBINED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
 
 const COMPACT_ITEM_COUNT = 8;
 
@@ -64,8 +66,16 @@ const TokenList = () => {
       const shouldShow = isCommunityListEnabled || token.type === 'balanced';
       const tokenName = token.name.toLowerCase();
       const tokenSymbol = token.symbol.toLowerCase();
+      const tokenXChains = getSupportedXChainForToken(COMBINED_TOKENS_MAP_BY_ADDRESS[token.address])?.map(
+        xChain => xChain.name,
+      );
       const search = query.toLowerCase();
-      return shouldShow && (tokenName.includes(search) || tokenSymbol.includes(search));
+      return (
+        shouldShow &&
+        (tokenName.includes(search) ||
+          tokenSymbol.includes(search) ||
+          tokenXChains?.some(xChain => xChain.toLowerCase().includes(search)))
+      );
     });
     return sortData(filteredTokens);
   }, [allTokens, query, sortData, isCommunityListEnabled]);

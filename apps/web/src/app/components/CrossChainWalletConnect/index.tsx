@@ -17,19 +17,27 @@ import Modal from '../Modal';
 import { ModalContentWrapper } from '../ModalContent';
 import AddressInput from './AddressInput';
 
-const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; editable?: boolean }) => {
+const CrossChainWalletConnect = ({
+  xChainId,
+  editable,
+  setManualAddress,
+}: {
+  xChainId: XChainId;
+  editable?: boolean;
+  setManualAddress?: (xChainId: XChainId, address?: string | undefined) => void;
+}) => {
   const [editableAddressModalOpen, setEditableAddressModalOpen] = React.useState(false);
 
   const { connectToWallet: connectToIcon } = useIconReact();
   const { connectToWallet: connectKeplr } = useArchwayContext();
   const { connectToWallet: connectToHavah } = useHavahContext();
   const { recipient } = useSwapState();
-
   const wallets = useWallets();
   const account = wallets[xChainMap[xChainId].xWalletType].account;
 
   const handleConnect = () => {
     const chain = xChainMap[xChainId];
+    setManualAddress && setManualAddress(xChainId, undefined);
     if (chain.xWalletType === XWalletType.ICON) {
       connectToIcon();
     } else if (chain.xWalletType === XWalletType.COSMOS) {
@@ -72,7 +80,7 @@ const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; e
           <Typography textAlign="center" mb={3}>
             <Trans>Enter a recipient address:</Trans>
           </Typography>
-          <AddressInput onSave={closeModal} chainId={xChainId} />
+          <AddressInput onSave={closeModal} xChainId={xChainId} setManualAddress={setManualAddress} />
           <Typography textAlign="center" mt={3}>
             <Trans>Or connect your</Trans>{' '}
             <UnderlineText color={'red'} onClick={handleConnect}>

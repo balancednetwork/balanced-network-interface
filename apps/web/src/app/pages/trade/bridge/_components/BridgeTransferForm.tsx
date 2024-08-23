@@ -15,6 +15,7 @@ import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySear
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
 import { xChainMap } from '@/constants/xChains';
+import useManualAddresses from '@/hooks/useManualAddresses';
 import useWallets from '@/hooks/useWallets';
 import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
 import { useWalletModalToggle } from '@/store/application/hooks';
@@ -58,15 +59,29 @@ export default function BridgeTransferForm({ openModal }) {
     [onPercentSelection, maxInputAmount],
   );
 
+  const { manualAddresses, setManualAddress } = useManualAddresses();
+  const onAddressInput = React.useCallback(
+    (address: string) => {
+      setManualAddress(bridgeDirection.to, address);
+      onChangeRecipient(address);
+    },
+    [onChangeRecipient, bridgeDirection.to, setManualAddress],
+  );
+
   const wallets = useWallets();
+  const destinationWallet = wallets[xChainMap[bridgeDirection.to].xWalletType];
+
   React.useEffect(() => {
-    const destinationWallet = wallets[xChainMap[bridgeDirection.to].xWalletType];
-    if (destinationWallet) {
-      onChangeRecipient(destinationWallet.account ?? null);
-    } else {
+    if (destinationWallet.account) {
+      onChangeRecipient(destinationWallet.account);
+    }
+    if (manualAddresses[bridgeDirection.to]) {
+      onChangeRecipient(manualAddresses[bridgeDirection.to] ?? null);
+    }
+    if (!destinationWallet.account && !manualAddresses[bridgeDirection.to]) {
       onChangeRecipient(null);
     }
-  }, [bridgeDirection.to, onChangeRecipient, wallets]);
+  }, [onChangeRecipient, manualAddresses[bridgeDirection.to], bridgeDirection.to, destinationWallet.account]);
 
   const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount } = useDerivedBridgeInfo();
 
@@ -131,7 +146,7 @@ export default function BridgeTransferForm({ openModal }) {
           <Flex style={{ position: 'relative' }}>
             <AddressInputPanel
               value={recipient || ''}
-              onUserInput={onChangeRecipient}
+              onUserInput={onAddressInput}
               placeholder={`${xChainMap[bridgeDirection.to].name} address`}
               isValid={isValid}
             />

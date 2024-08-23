@@ -5,7 +5,6 @@ import { Box, Flex } from 'rebass';
 import { Typography } from '@/app/theme';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
-import { useSignedInWallets } from '@/hooks/useWallets';
 import { XChain } from '@/types';
 import { t } from '@lingui/macro';
 import { UnderlineText } from '../DropdownText';
@@ -35,8 +34,6 @@ const WalletItem = ({
   xChains,
   switchChain,
 }: WalletItemProps) => {
-  const signedInWallets = useSignedInWallets();
-
   const handleSwitchChain = (chain: XChain): void => {
     switchChain && switchChain({ chainId: chain.id });
   };

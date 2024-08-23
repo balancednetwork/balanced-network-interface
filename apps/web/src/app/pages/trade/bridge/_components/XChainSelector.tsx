@@ -81,6 +81,7 @@ const XChainSelector = ({ chainId, setChainId, label, currency, width, container
               xChainId={chainId}
               currency={currency}
               width={width ? width + 40 : undefined}
+              isOpen={Boolean(anchor)}
             />
           </DropdownPopper>
         </div>

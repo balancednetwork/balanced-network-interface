@@ -125,6 +125,7 @@ const CrossChainOptions = ({
                   chains={xChains}
                   currency={currency ?? undefined}
                   width={width}
+                  isOpen={isOpen}
                 />
               </DropdownPopper>
             </div>

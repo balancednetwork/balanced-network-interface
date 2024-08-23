@@ -19,6 +19,7 @@ import { HeaderText } from '../../supply/_components/AllPoolsPanel';
 import useSortCurrency from '@/hooks/useSortCurrency';
 import useSortXChains from '@/hooks/useSortXChains';
 import { useSignedInWallets } from '../_hooks/useWallets';
+import { isMobile } from 'react-device-detect';
 
 type XChainListProps = {
   xChainId: XChainId;
@@ -26,6 +27,7 @@ type XChainListProps = {
   currency?: Currency;
   chains?: XChain[];
   width?: number;
+  isOpen: boolean;
 };
 
 type XChainItemProps = {
@@ -89,22 +91,56 @@ const XChainItem = ({ xChain, isActive, isLast, currency }: XChainItemProps) => 
   );
 };
 
-const XChainList = ({ xChainId, setChainId, chains, currency, width }: XChainListProps) => {
+const XChainList = ({ xChainId, setChainId, chains, currency, width, isOpen }: XChainListProps) => {
   const relevantChains = chains || xChains;
   const signedInWallets = useSignedInWallets();
+  const [searchQuery, setSearchQuery] = React.useState<string>('');
+  const inputRef = React.useRef<HTMLInputElement>();
   const { sortBy, handleSortSelect, sortData } = useSortXChains(
     signedInWallets ? { key: 'value', order: 'DESC' } : { key: 'symbol', order: 'ASC' },
     currency,
   );
+
+  const handleInputChange = React.useCallback(event => {
+    const input = event.target.value;
+    setSearchQuery(input);
+  }, []);
 
   const sortedChains = React.useMemo(
     () => (currency ? sortData(relevantChains, currency) : []),
     [relevantChains, currency, sortData],
   );
 
+  const filteredSortedChains = React.useMemo(() => {
+    if (!searchQuery) return sortedChains;
+    return sortedChains.filter(chain => chain.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [searchQuery, sortedChains]);
+
+  React.useEffect(() => {
+    let focusTimeout: number | undefined;
+    if (isOpen && !isMobile) {
+      focusTimeout = window.setTimeout(() => {
+        inputRef.current?.focus();
+      }, 50);
+    }
+    return () => {
+      clearTimeout(focusTimeout);
+    };
+  }, [isOpen]);
+
   return (
     <Box p={'25px 25px 5px'} width={width}>
-      <SearchInput style={{ marginBottom: '15px' }} placeholder={t`Search for blockchains...`} />
+      <SearchInput
+        type="text"
+        id="blockchain-search-input"
+        style={{ marginBottom: '15px' }}
+        placeholder={t`Search for blockchains...`}
+        tabIndex={isMobile ? -1 : 1}
+        autoComplete="off"
+        value={searchQuery}
+        onChange={handleInputChange}
+        ref={inputRef as React.RefObject<HTMLInputElement>}
+      />
       <ScrollHelper $height="285px">
         <Flex width="100%" justifyContent="space-between">
           <StyledHeaderText
@@ -138,7 +174,7 @@ const XChainList = ({ xChainId, setChainId, chains, currency, width }: XChainLis
             </span>
           </StyledHeaderText>
         </Flex>
-        {sortedChains.map((chainItem, index) => (
+        {filteredSortedChains.map((chainItem, index) => (
           <Box key={index} onClick={e => setChainId(chainItem.xChainId)}>
             <XChainItem
               xChain={chainItem}
@@ -148,6 +184,11 @@ const XChainList = ({ xChainId, setChainId, chains, currency, width }: XChainLis
             />
           </Box>
         ))}
+        {filteredSortedChains.length === 0 && searchQuery !== '' ? (
+          <Typography textAlign="center" mt="23px" mb="24px">
+            No results found.
+          </Typography>
+        ) : null}
       </ScrollHelper>
     </Box>
   );

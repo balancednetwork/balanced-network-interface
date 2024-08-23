@@ -1,4 +1,5 @@
 import { xChainMap } from '@/constants/xChains';
+import useKeyPress from '@/hooks/useKeyPress';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { XChainId } from '@/types';
 import { validateAddress } from '@/utils';
@@ -91,6 +92,7 @@ const AddressInput = ({
   const { recipient } = useSwapState();
   const [value, setValue] = React.useState(recipient || '');
   const [isValid, setValid] = React.useState(false);
+  const enter = useKeyPress('Enter');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
@@ -104,11 +106,17 @@ const AddressInput = ({
     setValue(recipient || '');
   }, [recipient]);
 
-  const handleClick = () => {
+  const handleClick = React.useCallback(() => {
     setManualAddress && setManualAddress(xChainId, value);
     onChangeRecipient(value);
     onSave?.();
-  };
+  }, [setManualAddress, xChainId, value, onChangeRecipient, onSave]);
+
+  React.useEffect(() => {
+    if (enter && isValid) {
+      handleClick();
+    }
+  }, [isValid, enter, handleClick]);
 
   return (
     <>

@@ -459,6 +459,7 @@ msgstr ""
 
 #: src/app/components/home/_components/CollateralChainSelector/ChainList.tsx
 #: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
+#: src/app/pages/trade/bridge/_components/XChainList.tsx
 msgid "Blockchain"
 msgstr ""
 
@@ -2395,6 +2396,7 @@ msgstr "Wisselkoers"
 #: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
 #: src/app/components/SearchModal/CurrencyList.tsx
 #: src/app/components/Wallet/index.tsx
+#: src/app/pages/trade/bridge/_components/XChainList.tsx
 msgid "Wallet"
 msgstr "Wallet"
 

@@ -233,6 +233,14 @@
       "symbol": "hyTB",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/hyTB.png"
+    },
+    {
+        "address": "cx508002ec116fbf3ab406329c0df28e70d7e75fb3",
+        "chainId": 1,
+        "name": "Sui",
+        "symbol": "SUI",
+        "decimals": 9,
+        "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/hvh.png"
     }
   ]
 }

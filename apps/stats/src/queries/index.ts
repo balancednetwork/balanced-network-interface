@@ -1,7 +1,7 @@
-import { addresses, BalancedJs, CallData } from '@balancednetwork/balanced-js';
-import { CurrencyAmount, Token, Fraction } from '@balancednetwork/sdk-core';
+import { BalancedJs, CallData, addresses } from '@balancednetwork/balanced-js';
+import { CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
-import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 
 import bnJs from '@/bnJs';
 import { SUPPORTED_PAIRS } from '@/constants/pairs';
@@ -11,6 +11,9 @@ import { getTimestampFrom } from '@/pages/PerformanceDetails/utils';
 import { useSupportedCollateralTokens } from '@/store/collateral/hooks';
 import { formatUnits } from '@/utils';
 
+import { useEmissions } from '@/sections/BALNSection/queries';
+import axios from 'axios';
+import { useMemo } from 'react';
 import {
   API_ENDPOINT,
   TokenStats,
@@ -21,7 +24,6 @@ import {
   useTokenPrices,
 } from './backendv2';
 import { useBlockDetails } from './blockDetails';
-import axios from 'axios';
 
 const WEIGHT_CONST = 10 ** 18;
 
@@ -645,18 +647,18 @@ export function useFlattenedRewardsDistribution(): UseQueryResult<Map<string, Fr
   return useQuery({
     queryKey: ['flattenedDistribution', distribution],
     queryFn: () => {
-      if (distribution) {
-        return Object.values(distribution).reduce((flattened, dist) => {
-          return Object.keys(dist).reduce((flattened, item) => {
-            if (Object.keys(flattened).indexOf(item) >= 0) {
-              flattened[item] = flattened[item].add(dist[item]);
-            } else {
-              flattened[item] = dist[item];
-            }
-            return flattened;
-          }, flattened);
-        }, {});
-      }
+      if (!distribution) return new Map();
+
+      return Object.values(distribution).reduce((flattened, dist) => {
+        return Object.keys(dist).reduce((flattened, item) => {
+          if (Object.keys(flattened).indexOf(item) >= 0) {
+            flattened[item] = flattened[item].add(dist[item]);
+          } else {
+            flattened[item] = dist[item];
+          }
+          return flattened;
+        }, flattened);
+      }, {});
     },
     placeholderData: keepPreviousData,
   });
@@ -739,19 +741,14 @@ export const useCollateralInfo = () => {
 export const useLoanInfo = () => {
   const totalBnUSDQuery = useBnJsContractQuery<string>(bnJs, 'bnUSD', 'totalSupply', []);
   const totalBnUSD = totalBnUSDQuery.isSuccess ? BalancedJs.utils.toIcx(totalBnUSDQuery.data) : null;
-  const { data: balnAllocation } = useBnJsContractQuery<{ [key: string]: string }>(
-    bnJs,
-    'Rewards',
-    'getRecipientsSplit',
-    [],
-  );
-  const loansBalnAllocation = BalancedJs.utils.toIcx(balnAllocation?.Loans || 0);
+  const { data: balnDistribution } = useFlattenedRewardsDistribution();
+  const loansBalnAllocation = balnDistribution?.['Loans'] || new Fraction(0);
+  const { data: dailyEmissions } = useEmissions();
 
-  const dailyDistributionQuery = useBnJsContractQuery<string>(bnJs, 'Rewards', 'getEmission', []);
-  const dailyRewards =
-    dailyDistributionQuery.isSuccess && loansBalnAllocation.isGreaterThan(0)
-      ? BalancedJs.utils.toIcx(dailyDistributionQuery.data).times(loansBalnAllocation)
-      : null;
+  const dailyRewards = useMemo(() => {
+    if (!dailyEmissions || !loansBalnAllocation) return null;
+    return dailyEmissions.times(new BigNumber(loansBalnAllocation.toFixed(18)));
+  }, [dailyEmissions, loansBalnAllocation]);
 
   const { data: tokenPrices } = useTokenPrices();
 

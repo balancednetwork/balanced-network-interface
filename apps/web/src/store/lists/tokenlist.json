@@ -239,7 +239,7 @@
       "chainId": 1,
       "name": "SUI",
       "symbol": "SUI",
-      "decimals": 18,
+      "decimals": 9,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sui.png"
     }
   ]

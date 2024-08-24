@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
+import { HeaderText } from '@/app/components/SearchModal/styleds';
 import { ScrollHelper } from '@/app/components/home/_components/LoanChainSelector/styledComponents';
 import { Typography } from '@/app/theme';
 import { xChains } from '@/constants/xChains';
@@ -18,7 +19,6 @@ import { Currency } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
-import { HeaderText } from '../../supply/_components/LiquidityDetails';
 
 type XChainListProps = {
   xChainId: XChainId;

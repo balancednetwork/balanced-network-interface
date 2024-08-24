@@ -3,6 +3,7 @@ import Divider from '@/app/components/Divider';
 import DropdownLink from '@/app/components/DropdownLink';
 import { BoxPanel } from '@/app/components/Panel';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
+import { HeaderText } from '@/app/components/SearchModal/styleds';
 import { Typography } from '@/app/theme';
 import { COMBINED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
 import useSort from '@/hooks/useSort';
@@ -14,7 +15,6 @@ import React from 'react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 import styled, { css, useTheme } from 'styled-components';
-import { HeaderText } from '../../../supply/_components/LiquidityDetails';
 import SkeletonTokenPlaceholder from './SkeletonTokenPlaceholder';
 import TokenItem from './TokenItem';
 

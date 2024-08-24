@@ -75,8 +75,8 @@ msgid "To"
 msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Borrow bnUSD. Swap & transfer cross-chain."
-msgstr ""
+#~ msgid "Borrow bnUSD. Swap & transfer cross-chain."
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Removing"
@@ -93,10 +93,9 @@ msgstr ""
 msgid "Your transaction has failed. Please go back and try again."
 msgstr ""
 
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
 msgid "{0} transfer approval failed."
 msgstr ""
 
@@ -428,8 +427,8 @@ msgid "Confirm"
 msgstr "Zatwierdź"
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer cross-chain."
-msgstr ""
+#~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer cross-chain."
+#~ msgstr ""
 
 #: src/app/containers/HomePage/index.tsx
 #~ msgid "Sign in to use the Home page."
@@ -447,9 +446,8 @@ msgstr "Zatwierdzona"
 msgid "Review the community token list on GitHub."
 msgstr ""
 
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
 msgid "Approving {0} for cross-chain transfer..."
 msgstr ""
 
@@ -642,10 +640,9 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/WalletModal/IconWalletModal.tsx
-msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
-msgstr "Anuluj wszystkie oczekujące transakcje na swoim Ledgerze albo przyznaj Chrome uprawnienie do korzystania z niego."
+#~ msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
+#~ msgstr "Anuluj wszystkie oczekujące transakcje na swoim Ledgerze albo przyznaj Chrome uprawnienie do korzystania z niego."
 
-#: src/app/components/WalletModal/IconWalletModal.tsx
 #: src/app/components/WalletModal/WalletItem.tsx
 msgid "or"
 msgstr "lub"
@@ -772,9 +769,8 @@ msgstr "Przed"
 msgid "Active"
 msgstr "Aktywna"
 
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
-#: src/app/pages/trade/bridge/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/lib/xcall/_hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
 msgstr ""
 
@@ -903,8 +899,8 @@ msgid "Lock up Balance Tokens?"
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/pages/trade/bridge/_components/XTransactionState.tsx
-#: src/app/pages/trade/bridge/_components/XTransactionState.tsx
+#: src/app/components/XTransactionState/index.tsx
+#: src/app/components/XTransactionState/index.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
@@ -945,8 +941,8 @@ msgstr "Handluj"
 #: src/app/components/LedgerConfirmMessage/index.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
-msgid "Confirm the transaction on your Ledger."
-msgstr "Zatwierdź transakcję na swoim Ledgerze."
+#~ msgid "Confirm the transaction on your Ledger."
+#~ msgstr "Zatwierdź transakcję na swoim Ledgerze."
 
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swapping"
@@ -1176,8 +1172,8 @@ msgid "Withdraw"
 msgstr "Wycofaj"
 
 #: src/app/components/XCallDescription/index.tsx
-msgid "<0>GMP</0> (general message passing) is a cross-chain messenger that interacts with smart contracts on supported chains."
-msgstr ""
+#~ msgid "<0>GMP</0> (general message passing) is a cross-chain messenger that interacts with smart contracts on supported chains."
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "then click Supply."
@@ -1247,8 +1243,9 @@ msgid "Each redemption is spread across a group of borrowers to minimise the imp
 msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Swap & transfer crypto cross-chain."
-msgstr ""
+#: src/app/components/WalletModal/index.tsx
+#~ msgid "Swap & transfer crypto cross-chain."
+#~ msgstr ""
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 msgid "Withdrawing"
@@ -1595,8 +1592,8 @@ msgstr ""
 msgid "Approve"
 msgstr "Za"
 
-#: src/app/pages/trade/bridge/_zustand/useTransactionStore.tsx
 #: src/btp/src/connectors/helper.ts
+#: src/lib/xcall/_zustand/useTransactionStore.tsx
 #: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
 msgstr "Przetwarzanie transakcji..."
@@ -1998,8 +1995,8 @@ msgid "Unlocked {0} BALN."
 msgstr ""
 
 #: src/app/components/WalletModal/IconWalletModal.tsx
-msgid "Choose a wallet from your Ledger:"
-msgstr "Wybierz portfel ze swojego Ledgera:"
+#~ msgid "Choose a wallet from your Ledger:"
+#~ msgstr "Wybierz portfel ze swojego Ledgera:"
 
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
 #~ msgid "Revert"
@@ -2055,6 +2052,7 @@ msgstr ""
 msgid "Deposit"
 msgstr "Zdeponuj"
 
+#: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 msgid "Swap & transfer cross-chain."
 msgstr ""
@@ -2199,8 +2197,8 @@ msgid "Pool"
 msgstr "Pula"
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
-msgid "Sign the transaction, then check the banner notification message for the result."
-msgstr ""
+#~ msgid "Sign the transaction, then check the banner notification message for the result."
+#~ msgstr ""
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Swap {0} for {1}."
@@ -2350,6 +2348,11 @@ msgstr ""
 msgid "Allocating bBALN..."
 msgstr ""
 
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+msgid "Borrow, swap, & transfer cross-chain."
+msgstr ""
+
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "You approved"
 msgstr "Zagłosowałeś za"
@@ -2449,8 +2452,8 @@ msgid "Adjust allocation"
 msgstr ""
 
 #: src/app/components/WalletModal/IconWalletModal.tsx
-msgid "Make sure it's connected and try again."
-msgstr ""
+#~ msgid "Make sure it's connected and try again."
+#~ msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Verify"
@@ -2473,8 +2476,8 @@ msgid "All collateral locked"
 msgstr "Całe zabezpieczenie zablokowane"
 
 #: src/app/components/XCallDescription/index.tsx
-msgid "<0>{0}</0> {1}."
-msgstr ""
+#~ msgid "<0>{0}</0> {1}."
+#~ msgstr ""
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
@@ -2532,8 +2535,8 @@ msgid "Withdraw liquidity"
 msgstr "Wycofaj płynność"
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
-msgid "On Ledger:"
-msgstr ""
+#~ msgid "On Ledger:"
+#~ msgstr ""
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "Test your contract calls before you submit the proposal."
@@ -2632,6 +2635,10 @@ msgstr ""
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "Vote cast."
 msgstr "Głos oddany."
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Borrow, swap, & transfer cross-chain. Supply liquidity. Vote."
+msgstr ""
 
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 msgid "Network fees"

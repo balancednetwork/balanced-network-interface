@@ -6,7 +6,6 @@ import styled from 'styled-components';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 
 import CurrencyBalanceErrorMessage from '../CurrencyBalanceErrorMessage';
-import LedgerConfirmMessage from '../LedgerConfirmMessage';
 
 interface Props extends FlexProps {
   noCurrencyBalanceErrorMessage?: boolean;
@@ -25,11 +24,8 @@ export default function ModalContent(props: Props) {
   return (
     <ModalContentWrapper {...props}>
       {props.children}
-      {!props.noMessages && (
-        <>
-          <LedgerConfirmMessage mt={2} />
-          {!hasEnoughICX && !props.noCurrencyBalanceErrorMessage && <CurrencyBalanceErrorMessage mt={3} />}
-        </>
+      {!props.noMessages && !hasEnoughICX && !props.noCurrencyBalanceErrorMessage && (
+        <CurrencyBalanceErrorMessage mt={3} />
       )}
     </ModalContentWrapper>
   );

@@ -1,21 +1,20 @@
 import React, { useCallback } from 'react';
 
-import { Price, Currency, Token } from '@balancednetwork/sdk-core';
+import { Currency, Price, Token } from '@balancednetwork/sdk-core';
 import { Route } from '@balancednetwork/v1-sdk';
 import { Trans, t } from '@lingui/macro';
 import { ChevronRight } from 'react-feather';
-import { Flex, Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
+import Divider from '@/app/components/Divider';
 import QuestionHelper from '@/app/components/QuestionHelper';
 import SlippageSetting from '@/app/components/SlippageSetting';
 import { Typography } from '@/app/theme';
-import { useSwapSlippageTolerance, useSetSlippageTolerance } from '@/store/application/hooks';
-import { Field } from '@/store/swap/reducer';
+import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
+import { useSetSlippageTolerance, useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useDerivedSwapInfo } from '@/store/swap/hooks';
-
-import Divider from '@/app/components/Divider';
-import useXCallFee from '@/app/pages/trade/bridge/_hooks/useXCallFee';
+import { Field } from '@/store/swap/reducer';
 
 export default function AdvancedSwapDetails() {
   const { trade, currencies, direction } = useDerivedSwapInfo();

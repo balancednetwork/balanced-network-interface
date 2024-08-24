@@ -2,35 +2,34 @@ import React, { useCallback } from 'react';
 
 import { Percent } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass/styled-components';
 
+import AddressInputPanel from '@/app/components/AddressInputPanel';
+import { Button } from '@/app/components/Button';
+import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
+import { UnderlineText } from '@/app/components/DropdownText';
+import { BrightPanel } from '@/app/components/Panel';
+import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
+import { xChainMap } from '@/constants/xChains';
+import useManualAddresses from '@/hooks/useManualAddresses';
+import useWallets from '@/hooks/useWallets';
+import useWidth from '@/hooks/useWidth';
+import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
+import { useWalletModalToggle } from '@/store/application/hooks';
 import {
   useBridgeActionHandlers,
   useBridgeDirection,
   useBridgeState,
   useDerivedBridgeInfo,
 } from '@/store/bridge/hooks';
-import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-
-import AddressInputPanel from '@/app/components/AddressInputPanel';
-import { Button } from '@/app/components/Button';
-import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
-import { AutoColumn } from '@/app/pages/trade/xswap/_components/SwapPanel';
-import { BrightPanel } from '@/app/pages/trade/supply/_components/utils';
-
-import XChainSelector from './XChainSelector';
-import { useWalletModalToggle } from '@/store/application/hooks';
 import { Field } from '@/store/bridge/reducer';
-import useXCallFee from '../_hooks/useXCallFee';
-import { xChainMap } from '../_config/xChains';
+import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend, validateAddress } from '@/utils';
-import useWallets from '../_hooks/useWallets';
-import { UnderlineText } from '@/app/components/DropdownText';
-import BigNumber from 'bignumber.js';
-import useWidth from '@/hooks/useWidth';
+import XChainSelector from './XChainSelector';
 
 export default function BridgeTransferForm({ openModal }) {
   const crossChainWallet = useCrossChainWalletBalances();
@@ -61,15 +60,29 @@ export default function BridgeTransferForm({ openModal }) {
     [onPercentSelection, maxInputAmount],
   );
 
+  const { manualAddresses, setManualAddress } = useManualAddresses();
+  const onAddressInput = React.useCallback(
+    (address: string) => {
+      setManualAddress(bridgeDirection.to, address);
+      onChangeRecipient(address);
+    },
+    [onChangeRecipient, bridgeDirection.to, setManualAddress],
+  );
+
   const wallets = useWallets();
+  const destinationWallet = wallets[xChainMap[bridgeDirection.to].xWalletType];
+
   React.useEffect(() => {
-    const destinationWallet = wallets[xChainMap[bridgeDirection.to].xWalletType];
-    if (destinationWallet) {
-      onChangeRecipient(destinationWallet.account ?? null);
-    } else {
+    if (destinationWallet.account) {
+      onChangeRecipient(destinationWallet.account);
+    }
+    if (manualAddresses[bridgeDirection.to]) {
+      onChangeRecipient(manualAddresses[bridgeDirection.to] ?? null);
+    }
+    if (!destinationWallet.account && !manualAddresses[bridgeDirection.to]) {
       onChangeRecipient(null);
     }
-  }, [bridgeDirection.to, onChangeRecipient, wallets]);
+  }, [onChangeRecipient, manualAddresses[bridgeDirection.to], bridgeDirection.to, destinationWallet.account]);
 
   const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount } = useDerivedBridgeInfo();
 
@@ -145,7 +158,7 @@ export default function BridgeTransferForm({ openModal }) {
           <Flex style={{ position: 'relative' }}>
             <AddressInputPanel
               value={recipient || ''}
-              onUserInput={onChangeRecipient}
+              onUserInput={onAddressInput}
               placeholder={`${xChainMap[bridgeDirection.to].name} address`}
               isValid={isValid}
             />

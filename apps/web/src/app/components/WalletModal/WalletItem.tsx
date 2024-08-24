@@ -4,13 +4,12 @@ import { Box, Flex } from 'rebass';
 
 import { Typography } from '@/app/theme';
 
-import { UnderlineText } from '../DropdownText';
-import { XChain } from '@/app/pages/trade/bridge/types';
 import { ChainLogo } from '@/app/components/ChainLogo';
-import { CopyableAddress } from '../Header';
+import { XChain } from '@/types';
 import { t } from '@lingui/macro';
+import { UnderlineText } from '../DropdownText';
+import { CopyableAddress } from '../Header';
 import { ActionDivider, ChainInfo, ChainName, MainLogo, WalletActions, WalletItemGrid, XChainsWrap } from './styled';
-import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
 
 type WalletItemProps = {
   address: string | null | undefined;
@@ -35,8 +34,6 @@ const WalletItem = ({
   xChains,
   switchChain,
 }: WalletItemProps) => {
-  const signedInWallets = useSignedInWallets();
-
   const handleSwitchChain = (chain: XChain): void => {
     switchChain && switchChain({ chainId: chain.id });
   };

@@ -11,11 +11,9 @@ import { Button, TextButton } from '@/app/components/Button';
 import Divider from '@/app/components/Divider';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
-import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
 import bnJs from '@/bnJs';
 import { useAllTokensByAddress } from '@/queries/backendv2';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import { useBBalnAmount } from '@/store/bbaln/hooks';
 import { useNextUpdateDate, useSourceVoteData, useUserVoteData } from '@/store/liveVoting/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
@@ -66,10 +64,8 @@ const UserBribeState = ({ bribe }: { bribe: Bribe }) => {
   const userVoteData = useUserVoteData();
   const nextUpdateDate = useNextUpdateDate();
   const hasUserVotedForSource = userVoteData && Object.keys(userVoteData).includes(bribe.sourceName);
-  const shouldLedgerSign = useShouldLedgerSign();
   const hasEnoughICX = useHasEnoughICX();
   const addTransaction = useTransactionAdder();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const [isOpen, setOpen] = React.useState(false);
 
@@ -78,10 +74,6 @@ const UserBribeState = ({ bribe }: { bribe: Bribe }) => {
 
   const handleBribeClaim = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
 
     bnJs
       .inject({ account })
@@ -102,7 +94,6 @@ const UserBribeState = ({ bribe }: { bribe: Bribe }) => {
         console.error('error', e);
       })
       .finally(() => {
-        changeShouldLedgerSign(false);
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
@@ -157,17 +148,12 @@ const UserBribeState = ({ bribe }: { bribe: Bribe }) => {
           </Flex>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={closeModal} fontSize={14}>
-                  <Trans>Not now</Trans>
-                </TextButton>
-                <Button onClick={handleBribeClaim} fontSize={14} disabled={!hasEnoughICX}>
-                  <Trans>Claim</Trans>
-                </Button>
-              </>
-            )}
+            <TextButton onClick={closeModal} fontSize={14}>
+              <Trans>Not now</Trans>
+            </TextButton>
+            <Button onClick={handleBribeClaim} fontSize={14} disabled={!hasEnoughICX}>
+              <Trans>Claim</Trans>
+            </Button>
           </Flex>
         </ModalContent>
       </Modal>

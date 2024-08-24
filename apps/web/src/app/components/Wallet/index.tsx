@@ -1,4 +1,18 @@
+import { Typography } from '@/app/theme';
+import { xChainMap } from '@/constants/xChains';
+import useKeyPress from '@/hooks/useKeyPress';
+import useWallets from '@/hooks/useWallets';
+import { useWalletModalToggle } from '@/store/application/hooks';
+import { useXBalancesByToken } from '@/store/wallet/hooks';
+import { XWalletType } from '@/types';
+import { Trans, t } from '@lingui/macro';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
+import { isMobile } from 'react-device-detect';
+import { useMedia } from 'react-use';
+import { Box } from 'rebass';
+import SearchInput from '../SearchModal/SearchInput';
+import MultiChainBalanceItem from './MultiChainBalanceItem';
+import SingleChainBalanceItem from './SingleChainBalanceItem';
 import {
   BalanceAndValueWrap,
   DashGrid,
@@ -11,21 +25,6 @@ import {
   WalletWrap,
   walletBreakpoint,
 } from './styledComponents';
-import { Typography } from '@/app/theme';
-import { Trans, t } from '@lingui/macro';
-import bnJs from '@/bnJs';
-import { useWalletModalToggle } from '@/store/application/hooks';
-import { XWalletType } from '@/app/pages/trade/bridge/types';
-import SearchInput from '../SearchModal/SearchInput';
-import useWallets from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { isMobile } from 'react-device-detect';
-import useKeyPress from '@/hooks/useKeyPress';
-import { useMedia } from 'react-use';
-import { useXBalancesByToken } from '@/store/wallet/hooks';
-import SingleChainBalanceItem from './SingleChainBalanceItem';
-import MultiChainBalanceItem from './MultiChainBalanceItem';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
-import { Box } from 'rebass';
 
 interface WalletProps {
   close: () => void;
@@ -43,24 +42,14 @@ const Wallet = ({ close }: WalletProps) => {
   const handleChangeWallet = () => {
     close();
     toggleWalletModal();
-
-    if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
-      bnJs.contractSettings.ledgerSettings.transport.close();
-    }
   };
 
   const handleDisconnectWallet = async () => {
     close();
 
-    if (bnJs.contractSettings.ledgerSettings.transport?.device?.opened) {
-      bnJs.contractSettings.ledgerSettings.transport.close();
-    }
-
-    // disconnect function includes resetContractLedgerSettings, so put it below the transport.close()
-    allWallets[XWalletType.ICON]?.disconnect();
-    allWallets[XWalletType.COSMOS]?.disconnect();
-    allWallets[XWalletType.EVM]?.disconnect();
-    allWallets[XWalletType.HAVAH]?.disconnect();
+    [XWalletType.ICON, XWalletType.COSMOS, XWalletType.EVM, XWalletType.HAVAH, XWalletType.INJECTIVE].forEach(type =>
+      allWallets[type]?.disconnect(),
+    );
   };
 
   useEffect(() => {

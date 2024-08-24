@@ -114,14 +114,6 @@ const ArbitraryCallsForm = ({ openVerificationModal }: { openVerificationModal: 
                             the contract calls have been verified.
                           </Trans>
                         </Typography>
-                        <Typography fontWeight="700">
-                          <Trans>On Ledger:</Trans>
-                        </Typography>
-                        <Typography>
-                          <Trans>
-                            Sign the transaction, then check the banner notification message for the result.
-                          </Trans>
-                        </Typography>
                       </>
                     }
                   />

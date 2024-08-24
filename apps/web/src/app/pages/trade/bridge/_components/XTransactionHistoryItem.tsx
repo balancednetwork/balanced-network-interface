@@ -3,14 +3,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { getNetworkDisplayName } from '@/app/pages/trade/bridge/utils';
+import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
 import ArrowIcon from '@/assets/icons/arrow-white.svg';
-import Spinner from '@/app/components/Spinner';
+import { getNetworkDisplayName } from '@/utils/xTokens';
 
-import { XTransaction, XTransactionStatus } from '../_zustand/types';
-import { useXMessageStore, xMessageActions } from '../_zustand/useXMessageStore';
-import { xTransactionActions } from '../_zustand/useXTransactionStore';
+import { XTransaction, XTransactionStatus } from '@/lib/xcall/_zustand/types';
+import { useXMessageStore, xMessageActions } from '@/lib/xcall/_zustand/useXMessageStore';
+import { xTransactionActions } from '@/lib/xcall/_zustand/useXTransactionStore';
 
 const Wrap = styled(Box)`
   display: grid;

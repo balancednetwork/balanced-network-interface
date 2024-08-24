@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 
-import { addresses, CallData } from '@balancednetwork/balanced-js';
+import { CallData, addresses } from '@balancednetwork/balanced-js';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
-import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from '@/bnJs';
@@ -17,27 +17,27 @@ import { useCrossChainWalletBalances, useICONWalletBalances } from '@/store/wall
 import { CurrencyKey, IcxDisplayType } from '@/types';
 import { formatUnits, maxAmountSpend, toBigNumber } from '@/utils';
 
+import { SUPPORTED_XCALL_CHAINS, xChainMap } from '@/constants/xChains';
+import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/constants/xTokens';
+import { useAvailableWallets, useSignedInWallets } from '@/hooks/useWallets';
+import { useDestinationEvents } from '@/lib/xcall/_zustand/useXCallEventStore';
+import { useRatesWithOracle } from '@/queries/reward';
+import { setRecipientNetwork } from '@/store/loan/reducer';
+import { Position, XChainId, XPositions, XPositionsRecord, XToken } from '@/types';
+import { getBalanceDecimals } from '@/utils/formatter';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { forEach } from 'lodash-es';
 import { AppState } from '../index';
 import {
+  Field,
   adjust,
   cancel,
-  changeDepositedAmount as changeDepositedAmountAction,
   changeCollateralType as changeCollateralTypeAction,
   changeCollateralXChain as changeCollateralXChainAction,
+  changeDepositedAmount as changeDepositedAmountAction,
   changeIcxDisplayType,
   type,
-  Field,
 } from './reducer';
-import { Position, XChainId, XPositions, XPositionsRecord, XToken } from '@/app/pages/trade/bridge/types';
-import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/app/pages/trade/bridge/_config/xTokens';
-import { useSignedInWallets, useAvailableWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { SUPPORTED_XCALL_CHAINS, xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
-import { setRecipientNetwork } from '@/store/loan/reducer';
-import { useDestinationEvents } from '@/app/pages/trade/bridge/_zustand/useXCallEventStore';
-import { forEach } from 'lodash-es';
-import { useRatesWithOracle } from '@/queries/reward';
-import { getBalanceDecimals } from '@/utils/formatter';
 
 export const DEFAULT_COLLATERAL_TOKEN = 'sICX';
 
@@ -110,7 +110,8 @@ export function useAllCollateralData(): UseQueryResult<XPositionsRecord[]> {
             isSingleChain: Object.keys(positions).length === 1,
             total: totalCollateralData[symbol],
           };
-        });
+        })
+        .sort((a, b) => (a.baseToken && b.baseToken ? a.baseToken.symbol.localeCompare(b.baseToken?.symbol) : 0));
     },
     enabled: !!totalCollateralData,
     placeholderData: keepPreviousData,
@@ -176,7 +177,7 @@ export function useCollateralFetchInfo(account?: string | null) {
   const pendingXCalls = useDestinationEvents(ICON_XCALL_NETWORK_ID);
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
 
-  const allDerivedWallets = useSignedInWallets();
+  const allWallets = useSignedInWallets();
 
   const isSupported = React.useCallback(
     (symbol: string) => {
@@ -231,13 +232,13 @@ export function useCollateralFetchInfo(account?: string | null) {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        await Promise.all(allDerivedWallets.map(fetchCollateralInfo));
+        await Promise.all(allWallets.filter(wallet => !!wallet.xChainId).map(fetchCollateralInfo));
       } catch (e) {
         console.error(e);
       }
     };
     fetchData();
-  }, [fetchCollateralInfo, transactions, allDerivedWallets, pendingXCalls.length]);
+  }, [fetchCollateralInfo, allWallets.length, pendingXCalls.length, transactions]);
 }
 
 export function useCollateralState() {

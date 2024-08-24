@@ -6,35 +6,39 @@ import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 
-import { XChainId, XToken } from '@/app/pages/trade/bridge/types';
-import { getNetworkDisplayName } from '@/app/pages/trade/bridge/utils';
 import { Typography } from '@/app/theme';
-import { useChangeShouldLedgerSign, useShouldLedgerSign, useSwapSlippageTolerance } from '@/store/application/hooks';
+import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { Field } from '@/store/swap/reducer';
+import { XChainId, XToken, XWalletType } from '@/types';
 import { formatBigNumber, shortenAddress } from '@/utils';
+import { getNetworkDisplayName } from '@/utils/xTokens';
 
 import { Button, TextButton } from '@/app/components/Button';
+import { StyledButton } from '@/app/components/Button/StyledButton';
 import Modal from '@/app/components/Modal';
-import Spinner from '@/app/components/Spinner';
 import ModalContent from '@/app/components/ModalContent';
-import useXCallFee from '@/app/pages/trade/bridge/_hooks/useXCallFee';
-import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { ApprovalState, useApproveCallback } from '@/app/pages/trade/bridge/_hooks/useApproveCallback';
-import { xChainMap } from '../../bridge/_config/xChains';
-import { useModalStore, modalActions, MODAL_ID } from '../../bridge/_zustand/useModalStore';
-import { XTransactionType, XTransactionInput } from '../../bridge/_zustand/types';
-import useXCallGasChecker from '../../bridge/_hooks/useXCallGasChecker';
+import Spinner from '@/app/components/Spinner';
+import XTransactionState from '@/app/components/XTransactionState';
+import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
+import { xChainMap } from '@/constants/xChains';
+import useEthereumChainId from '@/hooks/useEthereumChainId';
+import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
+import useWallets from '@/hooks/useWallets';
+import { ApprovalState, useApproveCallback } from '@/lib/xcall/_hooks/useApproveCallback';
+import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
+import useXCallGasChecker from '@/lib/xcall/_hooks/useXCallGasChecker';
+import { XTransactionInput, XTransactionType } from '@/lib/xcall/_zustand/types';
+import { useCreateWalletXService } from '@/lib/xcall/_zustand/useXServiceStore';
 import {
+  XTransactionUpdater,
   useXTransactionStore,
   xTransactionActions,
-  XTransactionUpdater,
-} from '../../bridge/_zustand/useXTransactionStore';
-import XTransactionState from '../../bridge/_components/XTransactionState';
-import { useCreateWalletXService } from '../../bridge/_zustand/useXServiceStore';
-import useWallets from '../../bridge/_hooks/useWallets';
+} from '@/lib/xcall/_zustand/useXTransactionStore';
+import { switchEthereumChain, walletStrategy } from '@/packages/injective';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
+import { Wallet } from '@injectivelabs/wallet-ts';
 import { useSwitchChain } from 'wagmi';
-import { StyledButton } from './shared';
-import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
+import { mainnet } from 'wagmi/chains';
 
 type XSwapModalProps = {
   account: string | undefined;
@@ -62,8 +66,6 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
 
   useCreateWalletXService(direction.from);
 
-  const shouldLedgerSign = useShouldLedgerSign();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const slippageTolerance = useSwapSlippageTolerance();
   const showWarning = executionTrade?.priceImpact.greaterThan(SLIPPAGE_MODAL_WARNING_THRESHOLD);
 
@@ -87,7 +89,6 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
   const cleanupSwap = () => {
     clearInputs();
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-    changeShouldLedgerSign(false);
   };
 
   const handleDismiss = () => {
@@ -121,13 +122,23 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
 
   const gasChecker = useXCallGasChecker(direction.from);
 
+  const ethereumChainId = useEthereumChainId();
+
   // switch chain between evm chains
   const wallets = useWallets();
   const walletType = xChainMap[direction.from].xWalletType;
-  const isWrongChain = wallets[walletType].xChainId !== direction.from;
+  const isWrongChain =
+    wallets[walletType].xChainId !== direction.from ||
+    (walletType === XWalletType.INJECTIVE &&
+      walletStrategy.getWallet() === Wallet.Metamask &&
+      ethereumChainId !== mainnet.id);
   const { switchChain } = useSwitchChain();
-  const handleSwitchChain = () => {
-    switchChain({ chainId: xChainMap[direction.from].id as number });
+  const handleSwitchChain = async () => {
+    if (walletType === XWalletType.INJECTIVE) {
+      switchEthereumChain(mainnet.id);
+    } else {
+      switchChain({ chainId: xChainMap[direction.from].id as number });
+    }
   };
 
   return (
@@ -203,35 +214,30 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
           {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={handleDismiss}>
-                  <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
-                </TextButton>
+            <TextButton onClick={handleDismiss}>
+              <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
+            </TextButton>
 
-                {isWrongChain ? (
-                  <StyledButton onClick={handleSwitchChain}>
-                    <Trans>Switch to {xChainMap[direction.from].name}</Trans>
-                  </StyledButton>
-                ) : isProcessing ? (
-                  <>
-                    <StyledButton disabled $loading>
-                      <Trans>Swapping</Trans>
-                    </StyledButton>
-                  </>
+            {isWrongChain ? (
+              <StyledButton onClick={handleSwitchChain}>
+                <Trans>Switch to {xChainMap[direction.from].name}</Trans>
+              </StyledButton>
+            ) : isProcessing ? (
+              <>
+                <StyledButton disabled $loading>
+                  <Trans>Swapping</Trans>
+                </StyledButton>
+              </>
+            ) : (
+              <>
+                {approvalState !== ApprovalState.APPROVED ? (
+                  <Button onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
+                    {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
+                  </Button>
                 ) : (
-                  <>
-                    {approvalState !== ApprovalState.APPROVED ? (
-                      <Button onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
-                        {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
-                      </Button>
-                    ) : (
-                      <StyledButton onClick={handleXCallSwap} disabled={!gasChecker.hasEnoughGas}>
-                        <Trans>Swap</Trans>
-                      </StyledButton>
-                    )}
-                  </>
+                  <StyledButton onClick={handleXCallSwap} disabled={!gasChecker.hasEnoughGas}>
+                    <Trans>Swap</Trans>
+                  </StyledButton>
                 )}
               </>
             )}

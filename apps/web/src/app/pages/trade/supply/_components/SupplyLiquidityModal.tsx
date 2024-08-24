@@ -1,33 +1,28 @@
 import React from 'react';
 
-import { BalancedJs } from '@balancednetwork/balanced-js';
-import { CurrencyAmount, Currency, Token } from '@balancednetwork/sdk-core';
-import { t, Trans } from '@lingui/macro';
 import { useIconReact } from '@/packages/icon-react';
-import { Flex, Box } from 'rebass/styled-components';
+import { BalancedJs } from '@balancednetwork/balanced-js';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { Trans, t } from '@lingui/macro';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import useAllowanceHandler from '@/app/pages/trade/bridge/_hooks/useApproveCallback';
-import { XChainId } from '@/app/pages/trade/bridge/types';
-import { getXTokenBySymbol } from '@/app/pages/trade/bridge/utils';
 import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
+import ModalContent, { ModalContentWrapper } from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import CheckIcon from '@/assets/icons/tick.svg';
 import bnJs from '@/bnJs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
-import { Field } from '@/store/mint/reducer';
+import { DEFAULT_SLIPPAGE_LP } from '@/constants/index';
 import { useDerivedMintInfo } from '@/store/mint/hooks';
-import { useTransactionAdder, TransactionStatus, useTransactionStatus } from '@/store/transactions/hooks';
+import { Field } from '@/store/mint/reducer';
+import { TransactionStatus, useTransactionAdder, useTransactionStatus } from '@/store/transactions/hooks';
 import { useArchwayTransactionsState } from '@/store/transactionsCrosschain/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
+import { XChainId } from '@/types';
 import { toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-
-import ModalContent, { ModalContentWrapper } from '@/app/components/ModalContent';
-import Spinner from '@/app/components/Spinner';
 import { depositMessage, supplyMessage } from './utils';
-import { DEFAULT_SLIPPAGE_LP } from '@/constants/index';
 
 interface ModalProps {
   isOpen: boolean;
@@ -56,13 +51,7 @@ export default function SupplyLiquidityModal({
   const { currencyDeposits, pair } = useDerivedMintInfo();
   const addTransaction = useTransactionAdder();
 
-  const shouldLedgerSign = useShouldLedgerSign();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const { isTxPending } = useArchwayTransactionsState();
-  const { increaseAllowance: increaseAllowanceA, isIncreaseNeeded: allowanceIncreaseNeededA } = useAllowanceHandler(
-    AChain === 'archway-1' ? getXTokenBySymbol('archway-1', currencies[Field.CURRENCY_A]?.symbol) : undefined,
-    parsedAmounts[Field.CURRENCY_A]?.quotient.toString() || '0',
-  );
 
   const [addingTxs, setAddingTxs] = React.useState({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
   const [shouldAddAssets, setShouldAddAssets] = React.useState({
@@ -82,10 +71,6 @@ export default function SupplyLiquidityModal({
     const token = currencies[field] as Token;
 
     try {
-      if (bnJs.contractSettings.ledgerSettings.actived) {
-        setShouldRemoveAssets({ ...shouldRemoveAssets, [field]: true });
-      }
-
       const res: any = await bnJs.inject({ account }).Dex.withdraw(token.address, toDec(amountWithdraw));
       addTransaction(
         { hash: res.result },
@@ -109,10 +94,6 @@ export default function SupplyLiquidityModal({
 
   const handleSupplyConfirm = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
 
     if (isQueue) {
       const t = parsedAmounts[Field.CURRENCY_A];
@@ -138,7 +119,6 @@ export default function SupplyLiquidityModal({
           console.error('errors', e);
         })
         .finally(() => {
-          changeShouldLedgerSign(false);
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
     } else {
@@ -169,7 +149,6 @@ export default function SupplyLiquidityModal({
         })
         .finally(() => {
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-          changeShouldLedgerSign(false);
         });
     }
   };
@@ -212,7 +191,6 @@ export default function SupplyLiquidityModal({
         isAddPending: addingATxStatus === TransactionStatus.pending || isTxPending,
         // isRemovePending: !!removingTxs[Field.CURRENCY_A],
         isRemovePending: removingATxStatus === TransactionStatus.pending,
-        isAllowanceIncreaseNeeded: allowanceIncreaseNeededA,
         chain: AChain,
       },
       [Field.CURRENCY_B]: {
@@ -221,7 +199,6 @@ export default function SupplyLiquidityModal({
         isAddPending: addingBTxStatus === TransactionStatus.pending,
         // isRemovePending: !!removingTxs[Field.CURRENCY_B],
         isRemovePending: removingBTxStatus === TransactionStatus.pending,
-        isAllowanceIncreaseNeeded: false,
         chain: BChain,
       },
     }),
@@ -230,7 +207,6 @@ export default function SupplyLiquidityModal({
       BChain,
       addingATxStatus,
       addingBTxStatus,
-      allowanceIncreaseNeededA,
       currencyDeposits,
       isTxPending,
       removingATxStatus,
@@ -245,7 +221,6 @@ export default function SupplyLiquidityModal({
     } else {
       setHasErrorMessage(true);
     }
-    changeShouldLedgerSign(false);
   };
 
   const hasEnoughICX = useHasEnoughICX();
@@ -258,10 +233,6 @@ export default function SupplyLiquidityModal({
     const token = currencies[field] as Token;
 
     try {
-      if (bnJs.contractSettings.ledgerSettings.actived) {
-        setShouldAddAssets({ ...shouldAddAssets, [field]: true });
-      }
-
       const res: any = await bnJs.inject({ account }).getContract(token.address).deposit(toDec(parsedAmounts[field]));
 
       addTransaction(
@@ -324,34 +295,17 @@ export default function SupplyLiquidityModal({
                         <Typography variant="p" fontWeight="bold" textAlign="center">
                           {parsedAmounts[field]?.toSignificant(6)} {currencies[field]?.symbol}
                         </Typography>
-                        {shouldAddAssets[field] && (
-                          <>
-                            <Spinner></Spinner>
-                            <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                              <Trans>Confirm the transaction on your Ledger.</Trans>
-                            </Typography>
-                          </>
-                        )}
-                        {UIStatus[field].isAllowanceIncreaseNeeded ? (
-                          <SupplyButton disabled={isTxPending} mt={2} onClick={increaseAllowanceA}>
-                            {isTxPending ? `Approving...` : `Approve`}
-                          </SupplyButton>
-                        ) : (
-                          !shouldAddAssets[field] && (
-                            <>
-                              <SupplyButton
-                                disabled={
-                                  UIStatus[field].isAddPending ||
-                                  shouldAddAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
-                                }
-                                mt={2}
-                                onClick={handleAdd(field)}
-                              >
-                                {!UIStatus[field].isAddPending ? t`Send` : t`Sending`}
-                              </SupplyButton>
-                            </>
-                          )
-                        )}
+
+                        <SupplyButton
+                          disabled={
+                            UIStatus[field].isAddPending ||
+                            shouldAddAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
+                          }
+                          mt={2}
+                          onClick={handleAdd(field)}
+                        >
+                          {!UIStatus[field].isAddPending ? t`Send` : t`Sending`}
+                        </SupplyButton>
                       </>
                     ) : (
                       <CheckIconWrapper>
@@ -379,26 +333,17 @@ export default function SupplyLiquidityModal({
                         <Typography variant="p" fontWeight="bold" textAlign="center">
                           {currencyDeposits[field]?.toSignificant(6)} {currencies[field]?.symbol}
                         </Typography>
-                        {shouldRemoveAssets[field] && (
-                          <>
-                            <Spinner></Spinner>
-                            <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                              <Trans>Confirm the transaction on your Ledger.</Trans>
-                            </Typography>
-                          </>
-                        )}
-                        {!shouldRemoveAssets[field] && (
-                          <RemoveButton
-                            disabled={
-                              UIStatus[field].isRemovePending ||
-                              shouldRemoveAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
-                            }
-                            mt={2}
-                            onClick={handleRemove(field, currencyDeposits[field])}
-                          >
-                            {!UIStatus[field].isRemovePending ? t`Remove` : t`Removing`}
-                          </RemoveButton>
-                        )}
+
+                        <RemoveButton
+                          disabled={
+                            UIStatus[field].isRemovePending ||
+                            shouldRemoveAssets[field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A]
+                          }
+                          mt={2}
+                          onClick={handleRemove(field, currencyDeposits[field])}
+                        >
+                          {!UIStatus[field].isRemovePending ? t`Remove` : t`Removing`}
+                        </RemoveButton>
                       </>
                     )}
                   </Box>
@@ -425,23 +370,18 @@ export default function SupplyLiquidityModal({
             </Typography>
           )}
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={handleCancelSupply}>
-                  <Trans>Cancel</Trans>
-                </TextButton>
+            <TextButton onClick={handleCancelSupply}>
+              <Trans>Cancel</Trans>
+            </TextButton>
 
-                {pair ? (
-                  <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
-                    {confirmTx ? t`Supplying` : t`Supply`}
-                  </Button>
-                ) : (
-                  <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
-                    {confirmTx ? t`Creating pool` : t`Create pool`}
-                  </Button>
-                )}
-              </>
+            {pair ? (
+              <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
+                {confirmTx ? t`Supplying` : t`Supply`}
+              </Button>
+            ) : (
+              <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
+                {confirmTx ? t`Creating pool` : t`Create pool`}
+              </Button>
             )}
           </Flex>
         </ModalContent>

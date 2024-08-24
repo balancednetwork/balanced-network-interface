@@ -8,10 +8,8 @@ import { Button, TextButton } from '@/app/components/Button';
 import { UnderlineText } from '@/app/components/DropdownText';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
-import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
 import bnJs from '@/bnJs';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import { useLockedAmount, useUnclaimedRewards } from '@/store/savings/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
@@ -22,8 +20,6 @@ import RewardsGrid from './RewardsGrid';
 const SavingsRewards = () => {
   const { data: rewards } = useUnclaimedRewards();
   const { account } = useIconReact();
-  const shouldLedgerSign = useShouldLedgerSign();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const addTransaction = useTransactionAdder();
   const hasEnoughICX = useHasEnoughICX();
   const [isOpen, setOpen] = React.useState(false);
@@ -38,9 +34,6 @@ const SavingsRewards = () => {
     if (!account) return;
 
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
 
     try {
       const { result: hash } = await bnJs.inject({ account }).Savings.claimRewards();
@@ -55,7 +48,6 @@ const SavingsRewards = () => {
     } catch (e) {
       console.error('claiming savings rewards error: ', e);
     } finally {
-      changeShouldLedgerSign(false);
       window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
     }
   };
@@ -104,17 +96,12 @@ const SavingsRewards = () => {
           </Flex>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleOpen} fontSize={14}>
-                  <Trans>Not now</Trans>
-                </TextButton>
-                <Button onClick={handleClaim} fontSize={14} disabled={!hasEnoughICX}>
-                  <Trans>Claim</Trans>
-                </Button>
-              </>
-            )}
+            <TextButton onClick={toggleOpen} fontSize={14}>
+              <Trans>Not now</Trans>
+            </TextButton>
+            <Button onClick={handleClaim} fontSize={14} disabled={!hasEnoughICX}>
+              <Trans>Claim</Trans>
+            </Button>
           </Flex>
         </ModalContent>
       </Modal>

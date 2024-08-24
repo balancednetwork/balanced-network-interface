@@ -1,4 +1,4 @@
-import React, { useEffect, CSSProperties, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 
 import { Currency, Fraction, Token } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
@@ -9,23 +9,23 @@ import { Box, Flex } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
 
 import CurrencyLogo from '@/app/components/CurrencyLogo';
-import { ListItem, DataText, List1 } from '@/app/components/List';
+import { DataText, List1, ListItem } from '@/app/components/List';
 import { Typography } from '@/app/theme';
+import { xChainMap } from '@/constants/xChains';
 import useKeyPress from '@/hooks/useKeyPress';
+import useSortCurrency from '@/hooks/useSortCurrency';
+import { useSignedInWallets } from '@/hooks/useWallets';
+import { getSupportedXChainIdsForToken } from '@/lib/xcall/utils';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useIsUserAddedToken } from '@/store/user/hooks';
 import { useCrossChainWalletBalances, useXCurrencyBalance } from '@/store/wallet/hooks';
+import { XChainId } from '@/types/xChain';
 import { formatBigNumber, toFraction } from '@/utils';
-import useSortCurrency from '@/hooks/useSortCurrency';
-import { HeaderText } from '@/app/pages/trade/supply/_components/AllPoolsPanel';
-import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { XChainId } from '@/app/pages/trade/bridge/types';
 import { formatPrice } from '@/utils/formatter';
-import { BalanceBreakdown } from '../Wallet/styledComponents';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
-import CurrencyXChainItem from './CurrencyXChainItem';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
-import { getSupportedXChainIdsForToken } from '@/app/pages/trade/bridge/utils';
+import { BalanceBreakdown } from '../Wallet/styledComponents';
+import CurrencyXChainItem from './CurrencyXChainItem';
+import { HeaderText } from './styleds';
 
 const DashGrid = styled(Box)`
   display: grid;

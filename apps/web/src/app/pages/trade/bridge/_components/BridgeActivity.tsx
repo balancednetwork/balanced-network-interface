@@ -5,14 +5,13 @@ import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
 import { Typography } from '@/app/theme';
-import { useXCallStats } from '../_hooks/useXCallStats';
-
+import { useSignedInWallets } from '@/hooks/useWallets';
+import { useXCallStats } from '@/lib/xcall/_hooks/useXCallStats';
+import { useXMessageStore } from '@/lib/xcall/_zustand/useXMessageStore';
+import { useXTransactionStore } from '@/lib/xcall/_zustand/useXTransactionStore';
 import Spinner from '../../../../components/Spinner';
 import ActivityBarChart from './ActivityBarChart';
 import XTransactionHistoryItem from './XTransactionHistoryItem';
-import { useXTransactionStore } from '../_zustand/useXTransactionStore';
-import { useSignedInWallets } from '../_hooks/useWallets';
-import { useXMessageStore } from '../_zustand/useXMessageStore';
 
 export default function BridgeActivity() {
   const { data: xCallStats } = useXCallStats();

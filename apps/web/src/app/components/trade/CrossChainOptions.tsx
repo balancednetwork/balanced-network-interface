@@ -1,19 +1,19 @@
 import React, { useEffect, useMemo } from 'react';
 
-import { Currency } from '@balancednetwork/sdk-core';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 
-import { XChain, XChainId } from '@/app/pages/trade/bridge/types';
 import { Typography } from '@/app/theme';
+import { XChain, XChainId } from '@/types';
 
-import XChainList from '../../pages/trade/bridge/_components/XChainList';
+import XChainList from '@/app/pages/trade/bridge/_components/XChainList';
+import { xChainMap } from '@/constants/xChains';
+import useWidth from '@/hooks/useWidth';
+import { Currency } from '@balancednetwork/sdk-core';
 import CrossChainWalletConnect from '../CrossChainWalletConnect';
 import { StyledArrowDownIcon, UnderlineText } from '../DropdownText';
 import { DropdownPopper } from '../Popover';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
-import useWidth from '@/hooks/useWidth';
 
 type CrossChainOptionsProps = {
   xChains?: XChain[];
@@ -25,6 +25,7 @@ type CrossChainOptionsProps = {
   editable?: boolean;
   width?: number;
   containerRef: HTMLDivElement | null;
+  setManualAddress?: (xChainId: XChainId, address?: string | undefined) => void;
 };
 
 export const Wrap = styled(Flex)`
@@ -52,6 +53,7 @@ const CrossChainOptions = ({
   currency,
   width,
   containerRef,
+  setManualAddress,
 }: CrossChainOptionsProps) => {
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
   const [arrowRef] = useWidth();
@@ -139,7 +141,7 @@ const CrossChainOptions = ({
         </Flex>
       )}
 
-      <CrossChainWalletConnect xChainId={xChainId} editable={editable} />
+      <CrossChainWalletConnect xChainId={xChainId} editable={editable} setManualAddress={setManualAddress} />
     </Wrap>
   );
 };

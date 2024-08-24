@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js';
 import { Converter as IconConverter } from 'icon-sdk-js';
-import { isEmpty } from 'lodash-es';
 
 import { SupportedChainId as NetworkId, SupportedChainId, ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO } from './chain';
 import Airdrip from './contracts/Airdrip';
@@ -24,7 +23,7 @@ import sICX from './contracts/sICX';
 import Staking from './contracts/Staking';
 import IISS from './contracts/IISS';
 import StabilityFund from './contracts/StabilityFund';
-import ContractSettings, { LedgerSettings, AccountType } from './contractSettings';
+import ContractSettings, { AccountType } from './contractSettings';
 import StakedLP from './contracts/StakedLP';
 import BalancedOracle from './contracts/BalancedOracle';
 import BBALN from './contracts/BBALN';
@@ -52,7 +51,6 @@ export type ResponseJsonRPCPayload = {
 
 export type SettingInjection = {
   account?: AccountType;
-  legerSettings?: LedgerSettings;
 };
 
 export const LOOP = new BigNumber('1000000000000000000');
@@ -169,12 +167,8 @@ export class BalancedJs {
     this.ICXBurner = new ICXBurner(this.contractSettings);
   }
 
-  inject({ account, legerSettings }: SettingInjection) {
+  inject({ account }: SettingInjection) {
     this.contractSettings.account = account || this.contractSettings.account;
-    this.contractSettings.ledgerSettings.transport =
-      legerSettings?.transport || this.contractSettings.ledgerSettings.transport;
-    this.contractSettings.ledgerSettings.actived = !isEmpty(this.contractSettings.ledgerSettings.transport);
-    this.contractSettings.ledgerSettings.path = legerSettings?.path || this.contractSettings.ledgerSettings.path;
     return this;
   }
 
@@ -190,9 +184,5 @@ export class BalancedJs {
 
   getContract(address: string): IRC2 {
     return new IRC2(this.contractSettings, address);
-  }
-
-  resetContractLedgerSettings() {
-    this.contractSettings.resetLedgerSettings();
   }
 }

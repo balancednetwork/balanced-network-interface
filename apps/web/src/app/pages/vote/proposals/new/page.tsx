@@ -10,13 +10,11 @@ import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import QuestionHelper from '@/app/components/QuestionHelper';
-import Spinner from '@/app/components/Spinner';
 import Tooltip from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import bnJs from '@/bnJs';
 import { usePlatformDayQuery } from '@/queries/reward';
 import { useMinBBalnPercentageToSubmit } from '@/queries/vote';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import { useEditableContractCalls, useResetArbitraryCalls } from '@/store/arbitraryCalls/hooks';
 import { useBBalnAmount, useFetchBBalnInfo, useTotalSupply } from '@/store/bbaln/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
@@ -126,12 +124,8 @@ export function ProposalNewPage() {
   const [open, setOpen] = React.useState(false);
   const hasEnoughICX = useHasEnoughICX();
 
-  const shouldLedgerSign = useShouldLedgerSign();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const toggleOpen = () => {
-    if (shouldLedgerSign) return;
     setOpen(!open);
-    changeShouldLedgerSign(false);
   };
 
   const addTransaction = useTransactionAdder();
@@ -209,10 +203,6 @@ export function ProposalNewPage() {
   const modalSubmit = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
-
     platformDay &&
       bnJs
         .inject({ account })
@@ -240,7 +230,6 @@ export function ProposalNewPage() {
           }
         })
         .finally(() => {
-          changeShouldLedgerSign(false);
           resetForm();
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
@@ -248,10 +237,6 @@ export function ProposalNewPage() {
 
   const tryExecute = useCallback(() => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
 
     platformDay &&
       bnJs
@@ -272,10 +257,9 @@ export function ProposalNewPage() {
           }
         })
         .finally(() => {
-          changeShouldLedgerSign(false);
           window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
         });
-  }, [account, addTransaction, arbitraryCalls, changeShouldLedgerSign, platformDay]);
+  }, [account, addTransaction, arbitraryCalls, platformDay]);
 
   return (
     <>
@@ -381,17 +365,12 @@ export function ProposalNewPage() {
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner />}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleOpen} fontSize={14}>
-                  <Trans>Go back</Trans>
-                </TextButton>
-                <Button onClick={modalSubmit} fontSize={14} disabled={!hasEnoughICX}>
-                  <Trans>Submit proposal</Trans>
-                </Button>
-              </>
-            )}
+            <TextButton onClick={toggleOpen} fontSize={14}>
+              <Trans>Go back</Trans>
+            </TextButton>
+            <Button onClick={modalSubmit} fontSize={14} disabled={!hasEnoughICX}>
+              <Trans>Submit proposal</Trans>
+            </Button>
           </Flex>
         </ModalContent>
       </Modal>
@@ -408,17 +387,12 @@ export function ProposalNewPage() {
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner />}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={() => setVerificationModalOpen(false)} fontSize={14}>
-                  <Trans>Go back</Trans>
-                </TextButton>
-                <Button onClick={tryExecute} fontSize={14} disabled={!hasEnoughICX}>
-                  <Trans>Verify</Trans>
-                </Button>
-              </>
-            )}
+            <TextButton onClick={() => setVerificationModalOpen(false)} fontSize={14}>
+              <Trans>Go back</Trans>
+            </TextButton>
+            <Button onClick={tryExecute} fontSize={14} disabled={!hasEnoughICX}>
+              <Trans>Verify</Trans>
+            </Button>
           </Flex>
         </ModalContent>
       </Modal>

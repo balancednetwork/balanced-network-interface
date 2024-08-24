@@ -2,23 +2,22 @@ import React, { useCallback, useMemo } from 'react';
 
 import { Currency } from '@balancednetwork/sdk-core';
 import ClickAwayListener from 'react-click-away-listener';
+import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import CurrencyLogo from '@/app/components/CurrencyLogo';
 import { SelectorPopover } from '@/app/components/Popover';
 import DropDown from '@/assets/icons/arrow-down.svg';
+import { DEFAULT_TOKEN_CHAIN } from '@/constants/xTokens';
 import useWidth from '@/hooks/useWidth';
+import { getSupportedXChainForToken } from '@/lib/xcall/utils';
 import { COMMON_PERCENTS } from '@/store/swap/reducer';
+import { XChainId } from '@/types/xChain';
 import { escapeRegExp } from '@/utils';
-
 import { HorizontalList, Option } from '../List';
 import { CurrencySelectionType, SelectorType } from '../SearchModal/CurrencySearch';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 import CrossChainOptions from '../trade/CrossChainOptions';
-import { XChainId } from '@/app/pages/trade/bridge/types';
-import { Box } from 'rebass/styled-components';
-import { getSupportedXChainForToken } from '@/app/pages/trade/bridge/utils';
-import { DEFAULT_TOKEN_CHAIN } from '@/app/pages/trade/bridge/_config/xTokens';
 
 const InputContainer = styled.div`
   display: inline-flex;
@@ -111,6 +110,7 @@ interface CurrencyInputPanelProps {
   showCrossChainOptions?: boolean;
   showCrossChainBreakdown?: boolean;
   addressEditable?: boolean;
+  setManualAddress?: (xChainId: XChainId, address?: string | undefined) => void;
 }
 
 export const inputRegex = /^\d*(?:\\[.])?\d*$/; // match escaped "." characters via in a non-capturing group
@@ -136,6 +136,7 @@ export default function CurrencyInputPanel({
   showCrossChainOptions = false,
   showCrossChainBreakdown = true,
   addressEditable = false,
+  setManualAddress,
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
@@ -278,6 +279,7 @@ export default function CurrencyInputPanel({
           currency={currency}
           width={width ? width + 40 : undefined}
           containerRef={ref.current}
+          setManualAddress={setManualAddress}
         />
       )}
     </Box>

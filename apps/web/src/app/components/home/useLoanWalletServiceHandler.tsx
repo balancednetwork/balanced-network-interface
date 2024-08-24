@@ -1,8 +1,8 @@
+import { useCreateWalletXService } from '@/lib/xcall/_zustand/useXServiceStore';
 import { useDerivedCollateralInfo } from '@/store/collateral/hooks';
 import { useDerivedLoanInfo, useLoanRecipientNetwork, useLoanState } from '@/store/loan/hooks';
+import { XChainId } from '@/types';
 import { useMemo } from 'react';
-import { XChainId } from '@/app/pages/trade/bridge/types';
-import { useCreateWalletXService } from '@/app/pages/trade/bridge/_zustand/useXServiceStore';
 
 const useLoanWalletServiceHandler = (): XChainId => {
   const { isAdjusting: isLoanAdjusting } = useLoanState();

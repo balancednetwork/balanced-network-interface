@@ -5,28 +5,32 @@ import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 
-import { XChainId } from '@/app/pages/trade/bridge/types';
+import { TextButton } from '@/app/components/Button';
+import { StyledButton } from '@/app/components/Button/StyledButton';
+import Modal from '@/app/components/Modal';
+import ModalContent from '@/app/components/ModalContent';
+import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
-import { MODAL_ID, modalActions, useModalStore } from '@/app/pages/trade/bridge/_zustand/useModalStore';
+import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
+import { xChainMap } from '@/constants/xChains';
+import useEthereumChainId from '@/hooks/useEthereumChainId';
+import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
+import useWallets from '@/hooks/useWallets';
+import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
+import useXCallGasChecker from '@/lib/xcall/_hooks/useXCallGasChecker';
+import { XTransactionInput, XTransactionType } from '@/lib/xcall/_zustand/types';
 import {
   XTransactionUpdater,
   useXTransactionStore,
   xTransactionActions,
-} from '@/app/pages/trade/bridge/_zustand/useXTransactionStore';
-import useXCallFee from '@/app/pages/trade/bridge/_hooks/useXCallFee';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
-import { XTransactionInput, XTransactionType } from '@/app/pages/trade/bridge/_zustand/types';
-import useXCallGasChecker from '@/app/pages/trade/bridge/_hooks/useXCallGasChecker';
-import useWallets from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { useSwitchChain } from 'wagmi';
-import Modal from '@/app/components/Modal';
-import ModalContent from '@/app/components/ModalContent';
-import XTransactionState from '@/app/pages/trade/bridge/_components/XTransactionState';
-import { TextButton } from '@/app/components/Button';
-import { StyledButton } from '@/app/pages/trade/xswap/_components/shared';
-import { useDerivedLoanInfo, useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
+} from '@/lib/xcall/_zustand/useXTransactionStore';
+import { switchEthereumChain, walletStrategy } from '@/packages/injective';
 import { useCollateralType } from '@/store/collateral/hooks';
-import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
+import { useDerivedLoanInfo, useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
+import { XChainId, XWalletType } from '@/types';
+import { Wallet } from '@injectivelabs/wallet-ts';
+import { mainnet } from 'viem/chains';
+import { useSwitchChain } from 'wagmi';
 import useLoanWalletServiceHandler from '../../useLoanWalletServiceHandler';
 
 export enum XLoanAction {
@@ -120,13 +124,23 @@ const XLoanModal = ({
 
   const gasChecker = useXCallGasChecker(activeChain);
 
+  const ethereumChainId = useEthereumChainId();
+
   // switch chain between evm chains
   const wallets = useWallets();
   const walletType = xChainMap[activeChain].xWalletType;
-  const isWrongChain = wallets[walletType].xChainId !== activeChain;
+  const isWrongChain =
+    wallets[walletType].xChainId !== activeChain ||
+    (walletType === XWalletType.INJECTIVE &&
+      walletStrategy.getWallet() === Wallet.Metamask &&
+      ethereumChainId !== mainnet.id);
   const { switchChain } = useSwitchChain();
-  const handleSwitchChain = () => {
-    switchChain({ chainId: xChainMap[activeChain].id as number });
+  const handleSwitchChain = async () => {
+    if (walletType === XWalletType.INJECTIVE) {
+      switchEthereumChain(mainnet.id);
+    } else {
+      switchChain({ chainId: xChainMap[activeChain].id as number });
+    }
   };
 
   return (

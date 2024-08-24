@@ -1,24 +1,17 @@
 import { useCallback, useMemo } from 'react';
 
+import { useIconReact } from '@/packages/icon-react';
 import { CHAIN_INFO } from '@balancednetwork/balanced-js';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from '@/packages/icon-react';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { NETWORK_ID } from '@/constants/config';
 
+import { XWalletType } from '@/types';
 import { AppDispatch, AppState } from '../index';
-import {
-  changeShouldLedgedSignMessage,
-  changeCurrentLedgerAddressPage,
-  ApplicationModal,
-  setOpenModal,
-  updateSlippageTolerance,
-  setOpenWalletModal,
-} from './reducer';
-import { XWalletType } from '@/app/pages/trade/bridge/types';
+import { ApplicationModal, setOpenModal, setOpenWalletModal, updateSlippageTolerance } from './reducer';
 
 type BlockDetails = {
   timestamp: number;
@@ -47,58 +40,8 @@ export function useWalletModalToggle(): () => void {
 }
 
 //////////////////chain wallet ///////////////////////////////////
-
-export function useWalletModal(): [XWalletType | null, (w: XWalletType | null) => void, () => void] {
-  const dispatch = useDispatch<AppDispatch>();
-
-  const setOpen = useCallback(
-    (walletType: XWalletType | null) => {
-      dispatch(setOpenWalletModal(walletType));
-    },
-    [dispatch],
-  );
-
-  const open = useSelector((state: AppState) => state.application.openWalletModal);
-
-  const onDismiss = useCallback(() => {
-    setOpen(null);
-  }, [setOpen]);
-
-  return useMemo(() => [open, setOpen, onDismiss], [open, setOpen, onDismiss]);
-}
-
 export function useTransferAssetsModalToggle(): () => void {
   return useToggleModal(ApplicationModal.TRANSFER_ASSETS);
-}
-
-export function useShouldLedgerSign(): AppState['application']['shouldLedgerSign'] {
-  const shouldSignLedger = useSelector((state: AppState) => state.application.shouldLedgerSign);
-  return shouldSignLedger;
-}
-
-export function useCurrentLedgerAddressPage(): AppState['application']['currentLedgerAddressPage'] {
-  const currentLedgerAddressPage = useSelector((state: AppState) => state.application.currentLedgerAddressPage);
-  return currentLedgerAddressPage;
-}
-
-export function useChangeShouldLedgerSign(): (shouldLedgerSign: boolean) => void {
-  const dispatch = useDispatch();
-  return useCallback(
-    (shouldLedgerSign: boolean) => {
-      dispatch(changeShouldLedgedSignMessage({ shouldLedgerSign }));
-    },
-    [dispatch],
-  );
-}
-
-export function useChangeCurrentLedgerAddressPage(): (currentLedgerAddressPage: number) => void {
-  const dispatch = useDispatch();
-  return useCallback(
-    (currentLedgerAddressPage: number) => {
-      dispatch(changeCurrentLedgerAddressPage({ currentLedgerAddressPage }));
-    },
-    [dispatch],
-  );
 }
 
 export function useSwapSlippageTolerance() {

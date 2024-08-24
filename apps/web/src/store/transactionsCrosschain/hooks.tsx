@@ -2,8 +2,9 @@ import { useCallback } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { CrossChainTxType, XChainId } from '@/app/pages/trade/bridge/types';
+import { XChainId } from '@/types';
 
+import { CrossChainTxType } from '@/lib/xcall/types';
 import { AppState } from '../index';
 import { addTransactionResult, initTransaction } from './actions';
 

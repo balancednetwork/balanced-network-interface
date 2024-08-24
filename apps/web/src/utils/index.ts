@@ -8,12 +8,11 @@ import { NETWORK_ID } from '@/constants/config';
 import { canBeQueue } from '@/constants/currency';
 import { ONE, NATIVE_ADDRESS } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
-import { PairInfo } from '@/constants/pairs';
 import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
 import { PairData, PairState } from '@/hooks/useV2Pairs';
 import { Field } from '@/store/swap/reducer';
-import { XChainId } from '@/app/pages/trade/bridge/types';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
+import { PairInfo, XChainId } from '@/types';
+import { xChainMap } from '@/constants/xChains';
 import { bech32 } from 'bech32';
 import { ethers } from 'ethers';
 import { RLP } from '@ethereumjs/rlp';
@@ -31,6 +30,10 @@ const isBech32 = (string: string) => {
 
 const isArchEoaAddress = (address: string) => {
   return isBech32(address) && address.startsWith('archway');
+};
+
+const isInjectiveAddress = (address: string) => {
+  return isBech32(address) && address.startsWith('inj');
 };
 
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
@@ -339,6 +342,8 @@ export function validateAddress(address: string, chainId: XChainId): boolean {
       return ethers.utils.isAddress(address);
     case 'ARCHWAY':
       return isArchEoaAddress(address);
+    case 'INJECTIVE':
+      return isInjectiveAddress(address);
   }
 }
 

@@ -1,12 +1,11 @@
 import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Currency, Token } from '@balancednetwork/sdk-core';
-import { t, Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
-import { ChartControlButton as AssetsTabButton } from '@/app/pages/trade/supply/_components/utils';
 
 import { Typography } from '@/app/theme';
 import { FUNDING_TOKENS_LIST, useICX } from '@/constants/tokens';
@@ -16,17 +15,18 @@ import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 import useToggle from '@/hooks/useToggle';
 import { isAddress } from '@/utils';
 
+import { xTokenMap } from '@/constants/xTokens';
+import { useSignedInWallets } from '@/hooks/useWallets';
+import useXTokens from '@/hooks/useXTokens';
+import { useBridgeDirection } from '@/store/bridge/hooks';
+import { XChainId } from '@/types';
+import { ChartControlButton as AssetsTabButton } from '../ChartControl';
 import Column from '../Column';
 import CurrencyList from './CurrencyList';
-import { filterTokens, useSortedTokensByQuery } from './filtering';
 import ImportRow from './ImportRow';
 import SearchInput from './SearchInput';
+import { filterTokens, useSortedTokensByQuery } from './filtering';
 import { useTokenComparator } from './sorting';
-import { XChainId } from '@/app/pages/trade/bridge/types';
-import { useBridgeDirection } from '@/store/bridge/hooks';
-import useXTokens from '@/app/pages/trade/bridge/_hooks/useXTokens';
-import { xTokenMap } from '@/app/pages/trade/bridge/_config/xTokens';
-import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
 
 export enum CurrencySelectionType {
   NORMAL,

@@ -1,39 +1,51 @@
 import React from 'react';
 
-import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
-import { XChainId, XWalletType } from '@/app/pages/trade/bridge/types';
 import { Typography } from '@/app/theme';
-import { useWalletModal } from '@/store/application/hooks';
+import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
+import { XChainId, XWalletType } from '@/types';
 import { shortenAddress } from '@/utils';
 
+import { xChainMap, xWalletTypeModalIdMap } from '@/constants/xChains';
+import { modalActions } from '@/hooks/useModalStore';
+import useWallets from '@/hooks/useWallets';
+import { useHavahContext } from '@/packages/havah/HavahProvider';
+import { useIconReact } from '@/packages/icon-react';
+import { useSwapState } from '@/store/swap/hooks';
+import { Trans } from '@lingui/macro';
 import { UnderlineText } from '../DropdownText';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
 import Modal from '../Modal';
 import { ModalContentWrapper } from '../ModalContent';
 import AddressInput from './AddressInput';
-import { useSwapState } from '@/store/swap/hooks';
-import { Trans } from '@lingui/macro';
-import useWallets from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { useHavahContext } from '@/packages/havah/HavahProvider';
 
-const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; editable?: boolean }) => {
+const CrossChainWalletConnect = ({
+  xChainId,
+  editable,
+  setManualAddress,
+}: {
+  xChainId: XChainId;
+  editable?: boolean;
+  setManualAddress?: (xChainId: XChainId, address?: string | undefined) => void;
+}) => {
   const [editableAddressModalOpen, setEditableAddressModalOpen] = React.useState(false);
+
+  const { connectToWallet: connectToIcon } = useIconReact();
   const { connectToWallet: connectKeplr } = useArchwayContext();
   const { connectToWallet: connectToHavah } = useHavahContext();
-  const [, setWalletModal] = useWalletModal();
   const { recipient } = useSwapState();
-
   const wallets = useWallets();
   const account = wallets[xChainMap[xChainId].xWalletType].account;
 
   const handleConnect = () => {
     const chain = xChainMap[xChainId];
-    if (chain.xWalletType === XWalletType.COSMOS) {
+    setManualAddress && setManualAddress(xChainId, undefined);
+    if (chain.xWalletType === XWalletType.ICON) {
+      connectToIcon();
+    } else if (chain.xWalletType === XWalletType.COSMOS) {
       connectKeplr();
     } else if (chain.xWalletType === XWalletType.HAVAH) {
       connectToHavah();
     } else {
-      setWalletModal(chain.xWalletType);
+      modalActions.openModal(xWalletTypeModalIdMap[chain.xWalletType]);
     }
     closeModal();
   };
@@ -68,7 +80,7 @@ const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; e
           <Typography textAlign="center" mb={3}>
             <Trans>Enter a recipient address:</Trans>
           </Typography>
-          <AddressInput onSave={closeModal} chainId={xChainId} />
+          <AddressInput onSave={closeModal} xChainId={xChainId} setManualAddress={setManualAddress} />
           <Typography textAlign="center" mt={3}>
             <Trans>Or connect your</Trans>{' '}
             <UnderlineText color={'red'} onClick={handleConnect}>

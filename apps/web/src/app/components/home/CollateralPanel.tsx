@@ -1,56 +1,51 @@
 import React, { useCallback, useState } from 'react';
 
-import { addresses } from '@balancednetwork/balanced-js';
-import { t, Trans } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import Nouislider from '@/packages/nouislider-react';
+import { addresses } from '@balancednetwork/balanced-js';
+import { Trans, t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button, TextButton } from '@/app/components/Button';
+import CollateralTypeSwitcher, { CollateralTypeSwitcherWrap } from '@/app/components/CollateralTypeSwitcher';
 import { LineBreak } from '@/app/components/Divider';
+import { UnderlineText } from '@/app/components/DropdownText';
 import { CurrencyField } from '@/app/components/Form';
+import ICXDisplayTypeSwitcher from '@/app/components/ICXDisplayTypeSwitcher';
 import LockBar from '@/app/components/LockBar';
 import Modal from '@/app/components/Modal';
+import ModalContent from '@/app/components/ModalContent';
 import { BoxPanel, BoxPanelWrap } from '@/app/components/Panel';
-import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
 import IconUnstakeSICX from '@/assets/icons/timer-color.svg';
 import IconKeepSICX from '@/assets/icons/wallet-tick-color.svg';
 import bnJs from '@/bnJs';
 import { NETWORK_ID } from '@/constants/config';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
+import { xChainMap, xWalletTypeModalIdMap } from '@/constants/xChains';
+import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import useWidth from '@/hooks/useWidth';
+import { useIconReact } from '@/packages/icon-react';
+import { useICXUnstakingTime } from '@/store/application/hooks';
 import {
-  useChangeShouldLedgerSign,
-  useICXUnstakingTime,
-  useShouldLedgerSign,
-  useWalletModal,
-} from '@/store/application/hooks';
-import { Field } from '@/store/collateral/reducer';
-import {
-  useCollateralState,
   useCollateralActionHandlers,
-  useSupportedCollateralTokens,
-  useIsHandlingICX,
+  useCollateralState,
   useDerivedCollateralInfo,
+  useIsHandlingICX,
+  useSupportedCollateralTokens,
 } from '@/store/collateral/hooks';
+import { Field } from '@/store/collateral/reducer';
 import { useLoanActionHandlers, useLockedCollateralAmount } from '@/store/loan/hooks';
 import { useRatio } from '@/store/ratio/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
+import { XWalletType } from '@/types';
 import { parseUnits } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import CollateralTypeSwitcher, { CollateralTypeSwitcherWrap } from '@/app/components/CollateralTypeSwitcher';
-import ModalContent from '@/app/components/ModalContent';
-import ICXDisplayTypeSwitcher from '@/app/components/ICXDisplayTypeSwitcher';
-import XCollateralModal, { XCollateralAction } from './_components/xCollateralModal';
-import { UnderlineText } from '@/app/components/DropdownText';
 import CollateralChainSelector from './_components/CollateralChainSelector';
-import { MODAL_ID, modalActions } from '@/app/pages/trade/bridge/_zustand/useModalStore';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
-import { XWalletType } from '@/app/pages/trade/bridge/types';
+import XCollateralModal, { XCollateralAction } from './_components/xCollateralModal';
 
 export const PanelInfoWrap = styled(Flex)`
   justify-content: space-between;
@@ -157,9 +152,6 @@ const CollateralPanel = () => {
   const { data: icxUnstakingTime } = useICXUnstakingTime();
   const isSuperSmall = useMedia(`(max-width: 359px)`);
 
-  const shouldLedgerSign = useShouldLedgerSign();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
-
   // collateral slider instance
   const sliderInstance = React.useRef<any>(null);
 
@@ -207,9 +199,7 @@ const CollateralPanel = () => {
       });
       modalActions.openModal(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL);
     } else {
-      if (shouldLedgerSign) return;
       setOpen(!open);
-      changeShouldLedgerSign(false);
     }
   };
 
@@ -220,10 +210,6 @@ const CollateralPanel = () => {
     const collateralTokenAddress = supportedCollateralTokens && supportedCollateralTokens[collateralType];
     const cx = bnJs.inject({ account }).getContract(collateralTokenAddress!);
     const decimals: string = await cx.decimals();
-
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
 
     if (shouldDeposit) {
       try {
@@ -266,7 +252,6 @@ const CollateralPanel = () => {
       } catch (error) {
         console.log('handleCollateralConfirm.shouldDeposit = ' + shouldDeposit, error);
       } finally {
-        changeShouldLedgerSign(false);
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       }
     } else {
@@ -322,7 +307,6 @@ const CollateralPanel = () => {
       } catch (error) {
         console.log('handleCollateralConfirm.shouldDeposit = ' + shouldDeposit, error);
       } finally {
-        changeShouldLedgerSign(false);
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       }
     }
@@ -373,11 +357,13 @@ const CollateralPanel = () => {
   const [ref, width] = useWidth();
   const [underPanelRef, underPanelWidth] = useWidth();
 
-  const [, setWalletModal] = useWalletModal();
+  const { connectToWallet: connectToIcon } = useIconReact();
   const handleConnect = () => {
     const chain = xChainMap[sourceChain];
-    if (chain.xWalletType !== XWalletType.COSMOS) {
-      setWalletModal(chain.xWalletType);
+    if (chain.xWalletType === XWalletType.ICON) {
+      connectToIcon();
+    } else if (chain.xWalletType !== XWalletType.COSMOS) {
+      modalActions.openModal(xWalletTypeModalIdMap[chain.xWalletType]);
     }
   };
 
@@ -609,23 +595,18 @@ const CollateralPanel = () => {
           )}
 
           <Flex justifyContent="center" mt={isHandlingICX ? 4 : 0} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleOpen} fontSize={14}>
-                  <Trans>Cancel</Trans>
-                </TextButton>
-                <Button
-                  onClick={handleCollateralConfirm}
-                  fontSize={14}
-                  disabled={
-                    !hasEnoughICX || (isHandlingICX && !shouldDeposit && ICXWithdrawOption === ICXWithdrawOptions.EMPTY)
-                  }
-                >
-                  {shouldDeposit ? t`Deposit` : t`Withdraw`}
-                </Button>
-              </>
-            )}
+            <TextButton onClick={toggleOpen} fontSize={14}>
+              <Trans>Cancel</Trans>
+            </TextButton>
+            <Button
+              onClick={handleCollateralConfirm}
+              fontSize={14}
+              disabled={
+                !hasEnoughICX || (isHandlingICX && !shouldDeposit && ICXWithdrawOption === ICXWithdrawOptions.EMPTY)
+              }
+            >
+              {shouldDeposit ? t`Deposit` : t`Withdraw`}
+            </Button>
           </Flex>
         </ModalContent>
       </Modal>

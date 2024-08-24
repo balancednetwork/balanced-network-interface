@@ -11,13 +11,11 @@ import { UnderlineText } from '@/app/components/DropdownText';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { QuestionWrapper } from '@/app/components/QuestionHelper';
-import Spinner from '@/app/components/Spinner';
 import Tooltip from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import QuestionIcon from '@/assets/icons/question.svg';
 import bnJs from '@/bnJs';
 import { useLPReward } from '@/queries/reward';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import { useBBalnAmount, useDynamicBBalnAmount, useSources, useTotalSupply } from '@/store/bbaln/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
@@ -30,8 +28,6 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   const { data: reward } = useLPReward();
   const [isOpen, setOpen] = React.useState(false);
   const { account } = useIconReact();
-  const shouldLedgerSign = useShouldLedgerSign();
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
   const addTransaction = useTransactionAdder();
   const sources = useSources();
   const totalSupplyBBaln = useTotalSupply();
@@ -85,10 +81,6 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   const handleClaim = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
-
     bnJs
       .inject({ account })
       .Rewards.claimRewards()
@@ -106,7 +98,6 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
         console.error('error', e);
       })
       .finally(() => {
-        changeShouldLedgerSign(false);
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
@@ -206,17 +197,12 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
           </Flex>
 
           <Flex justifyContent="center" pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleOpen} fontSize={14}>
-                  <Trans>Not now</Trans>
-                </TextButton>
-                <Button onClick={handleClaim} fontSize={14} disabled={!hasEnoughICX}>
-                  <Trans>Claim</Trans>
-                </Button>
-              </>
-            )}
+            <TextButton onClick={toggleOpen} fontSize={14}>
+              <Trans>Not now</Trans>
+            </TextButton>
+            <Button onClick={handleClaim} fontSize={14} disabled={!hasEnoughICX}>
+              <Trans>Claim</Trans>
+            </Button>
           </Flex>
         </ModalContent>
       </Modal>

@@ -9,11 +9,10 @@ import { Box, Flex } from 'rebass/styled-components';
 import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
-import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
 import bnJs from '@/bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
-import { useChangeShouldLedgerSign, useICXUnstakingTime, useShouldLedgerSign } from '@/store/application/hooks';
+import { useICXUnstakingTime } from '@/store/application/hooks';
 import { useRatio } from '@/store/ratio/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
@@ -22,10 +21,6 @@ import { showMessageOnBeforeUnload } from '@/utils/messages';
 
 export default function UnstakePanel() {
   const [portion, setPortion] = React.useState<number>(0);
-
-  const shouldLedgerSign = useShouldLedgerSign();
-
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
 
   const sliderInstance = React.useRef<any>(null);
 
@@ -49,8 +44,6 @@ export default function UnstakePanel() {
   const [open, setOpen] = React.useState(false);
 
   const toggleOpen = () => {
-    if (shouldLedgerSign) return;
-
     setOpen(!open);
   };
 
@@ -64,10 +57,6 @@ export default function UnstakePanel() {
 
   const handleUnstake = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
 
     bnJs
       .inject({ account })
@@ -91,7 +80,6 @@ export default function UnstakePanel() {
         }
       })
       .finally(() => {
-        changeShouldLedgerSign(false);
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
       });
   };
@@ -179,17 +167,12 @@ export default function UnstakePanel() {
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleOpen} fontSize={14}>
-                  <Trans>Cancel</Trans>
-                </TextButton>
-                <Button onClick={handleUnstake} fontSize={14} disabled={!hasEnoughICX}>
-                  <Trans>Unstake</Trans>
-                </Button>
-              </>
-            )}
+            <TextButton onClick={toggleOpen} fontSize={14}>
+              <Trans>Cancel</Trans>
+            </TextButton>
+            <Button onClick={handleUnstake} fontSize={14} disabled={!hasEnoughICX}>
+              <Trans>Unstake</Trans>
+            </Button>
           </Flex>
         </ModalContent>
       </Modal>

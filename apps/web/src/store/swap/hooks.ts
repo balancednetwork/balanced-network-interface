@@ -1,37 +1,37 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { TradeType, Currency, CurrencyAmount, Token, Price } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Price, Token, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { t } from '@lingui/macro';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { XChainId, XToken } from '@/app/pages/trade/bridge/types';
 import { canBeQueue } from '@/constants/currency';
 import { useAllTokens } from '@/hooks/Tokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { XChainId, XToken } from '@/types';
 import { parseUnits } from '@/utils';
 
+import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
+import { xChainMap } from '@/constants/xChains';
+import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
+import useWallets from '@/hooks/useWallets';
+import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
+import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
 import {
   Field,
+  selectChain,
   selectCurrency,
   selectPercent,
   setRecipient,
+  switchChain,
   switchCurrencies,
   typeInput,
-  switchChain,
-  selectChain,
 } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
-import { getXAddress, getXTokenByToken } from '@/app/pages/trade/bridge/utils';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
-import useWallets from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
-import { useAssetManagerTokens } from '@/app/pages/trade/bridge/_hooks/useAssetManagerTokens';
-import BigNumber from 'bignumber.js';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);
@@ -184,8 +184,10 @@ export function useDerivedSwapInfo(): {
     [inputPercent],
   );
 
-  const _inputCurrency = inputXChainId === '0x1.icon' ? inputCurrency : getXTokenByToken('0x1.icon', inputCurrency);
-  const _outputCurrency = outputXChainId === '0x1.icon' ? outputCurrency : getXTokenByToken('0x1.icon', outputCurrency);
+  const _inputCurrency =
+    inputXChainId === '0x1.icon' ? inputCurrency : getXTokenBySymbol('0x1.icon', inputCurrency?.symbol);
+  const _outputCurrency =
+    outputXChainId === '0x1.icon' ? outputCurrency : getXTokenBySymbol('0x1.icon', outputCurrency?.symbol);
   const _currencies: { [field in Field]?: Currency } = useMemo(() => {
     return {
       [Field.INPUT]: _inputCurrency ?? undefined,

@@ -1,11 +1,11 @@
 import React, { useMemo, useRef, useState } from 'react';
 
-import { addresses } from '@balancednetwork/balanced-js';
-import { Fraction } from '@balancednetwork/sdk-core';
-import { t, Trans } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import { useIconReact } from '@/packages/icon-react';
 import Nouislider from '@/packages/nouislider-react';
+import { addresses } from '@balancednetwork/balanced-js';
+import { Fraction } from '@balancednetwork/sdk-core';
+import { Trans, t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
@@ -18,27 +18,25 @@ import { UnderlineTextWithArrow } from '@/app/components/DropdownText';
 import { MenuItem, MenuList } from '@/app/components/Menu';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
-import Spinner from '@/app/components/Spinner';
 import Tooltip from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import QuestionIcon from '@/assets/icons/question.svg';
 import bnJs from '@/bnJs';
 import { NETWORK_ID } from '@/constants/config';
-import { useChangeShouldLedgerSign, useShouldLedgerSign } from '@/store/application/hooks';
 import {
   useBBalnAmount,
-  useLockedBaln,
-  useBBalnSliderState,
-  useBBalnSliderActionHandlers,
-  useLockedUntil,
-  useHasLockExpired,
-  useTotalSupply,
   useBBalnChangeSelectedPeriod,
-  useSelectedPeriod,
+  useBBalnSliderActionHandlers,
+  useBBalnSliderState,
   useDynamicBBalnAmount,
+  useHasLockExpired,
+  useLockedBaln,
+  useLockedUntil,
+  usePastMonthFeesDistributed,
+  useSelectedPeriod,
   useSources,
   useTimeRemaining,
-  usePastMonthFeesDistributed,
+  useTotalSupply,
 } from '@/store/bbaln/hooks';
 import { usePowerLeft } from '@/store/liveVoting/hooks';
 import { useHasAnyKindOfRewards } from '@/store/reward/hooks';
@@ -48,21 +46,21 @@ import { parseUnits } from '@/utils';
 import { getFormattedNumber } from '@/utils/formatter';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 
+import { DropdownPopper } from '@/app/components/Popover';
+import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { MetaData } from '../PositionDetailPanel';
+import UnstakePrompt from './UnstakePrompt';
 import { BalnPreviewInput, ButtonsWrap, SliderWrap, Threshold } from './styledComponents';
 import { LockedPeriod } from './types';
-import UnstakePrompt from './UnstakePrompt';
 import {
   WEEK_IN_MS,
-  lockingPeriods,
+  comparePeriods,
   formatDate,
   getClosestUnixWeekStart,
   getWeekOffsetTimestamp,
-  comparePeriods,
+  lockingPeriods,
 } from './utils';
-import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
-import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
-import { DropdownPopper } from '@/app/components/Popover';
 
 const StyledThreshold = styled(Threshold)`
   height: 20px;
@@ -109,8 +107,6 @@ export default function BBalnSlider({
   const changePeriod = useBBalnChangeSelectedPeriod();
   const selectedPeriod = useSelectedPeriod();
   const sliderInstance = React.useRef<any>(null);
-  const changeShouldLedgerSign = useChangeShouldLedgerSign();
-  const shouldLedgerSign = useShouldLedgerSign();
   const [periodDropdownAnchor, setPeriodDropdownAnchor] = useState<HTMLElement | null>(null);
   const periodArrowRef = useRef(null);
   const balnDetails = useBALNDetails();
@@ -144,9 +140,6 @@ export default function BBalnSlider({
 
   const handleWithdraw = async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
 
     try {
       const { result: hash } = await bnJs.inject({ account }).BBALN.withdraw();
@@ -161,7 +154,6 @@ export default function BBalnSlider({
     } catch (e) {
       console.error(e);
     } finally {
-      changeShouldLedgerSign(false);
       window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
     }
     handleCancelAdjusting();
@@ -171,15 +163,11 @@ export default function BBalnSlider({
   const handleCancelAdjusting = () => {
     adjust(false);
     setPeriodDropdownAnchor(null);
-    changeShouldLedgerSign(false);
     onDisabledSlider && onDisabledSlider();
   };
 
   const handleBoostUpdate = async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-    if (bnJs.contractSettings.ledgerSettings.actived) {
-      changeShouldLedgerSign(true);
-    }
 
     const lockTimestamp = selectedPeriod.weeks * WEEK_IN_MS + new Date().getTime();
 
@@ -250,7 +238,6 @@ export default function BBalnSlider({
     } catch (error) {
       console.error('creating lock: ', error);
     } finally {
-      changeShouldLedgerSign(false);
       window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
     }
     setConfirmationModalOpen(false);
@@ -260,12 +247,10 @@ export default function BBalnSlider({
   const [withdrawModalOpen, setWithdrawModalOpen] = React.useState(false);
 
   const toggleConfirmationModalOpen = () => {
-    if (shouldLedgerSign) return;
     setConfirmationModalOpen(!confirmationModalOpen);
   };
 
   const toggleWithdrawModalOpen = () => {
-    if (shouldLedgerSign) return;
     setWithdrawModalOpen(!withdrawModalOpen);
   };
 
@@ -826,19 +811,12 @@ export default function BBalnSlider({
           )}
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top" flexWrap={'wrap'}>
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleConfirmationModalOpen} fontSize={14}>
-                  Cancel
-                </TextButton>
-                <Button disabled={!hasEnoughICX} onClick={handleBoostUpdate} fontSize={14} warning={!shouldBoost}>
-                  {shouldBoost
-                    ? 'Lock up BALN'
-                    : t`Unlock ${getFormattedNumber(balnReturnedEarly ?? 0, 'number2')} BALN`}
-                </Button>
-              </>
-            )}
+            <TextButton onClick={toggleConfirmationModalOpen} fontSize={14}>
+              Cancel
+            </TextButton>
+            <Button disabled={!hasEnoughICX} onClick={handleBoostUpdate} fontSize={14} warning={!shouldBoost}>
+              {shouldBoost ? 'Lock up BALN' : t`Unlock ${getFormattedNumber(balnReturnedEarly ?? 0, 'number2')} BALN`}
+            </Button>
           </Flex>
 
           {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
@@ -860,17 +838,12 @@ export default function BBalnSlider({
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top" flexWrap={'wrap'}>
-            {shouldLedgerSign && <Spinner></Spinner>}
-            {!shouldLedgerSign && (
-              <>
-                <TextButton onClick={toggleWithdrawModalOpen} fontSize={14}>
-                  Cancel
-                </TextButton>
-                <Button disabled={!hasEnoughICX} onClick={handleWithdraw} fontSize={14}>
-                  {t`Withdraw BALN`}
-                </Button>
-              </>
-            )}
+            <TextButton onClick={toggleWithdrawModalOpen} fontSize={14}>
+              Cancel
+            </TextButton>
+            <Button disabled={!hasEnoughICX} onClick={handleWithdraw} fontSize={14}>
+              {t`Withdraw BALN`}
+            </Button>
           </Flex>
 
           {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}

@@ -129,13 +129,13 @@ export function CurrencySearch({
     if (assetsTab === AssetsTab.YOUR && !signedInWallets.length) {
       setAssetsTab(AssetsTab.ALL);
     }
-  }, [signedInWallets, assetsTab]);
+  }, [signedInWallets.length, assetsTab]);
 
   useEffect(() => {
     if (signedInWallets.length && selectorType === SelectorType.SWAP_IN) {
       setAssetsTab(AssetsTab.YOUR);
     }
-  }, [signedInWallets, selectorType]);
+  }, [signedInWallets.length, selectorType]);
 
   const bridgeDirection = useBridgeDirection();
   const xTokens = useXTokens(bridgeDirection.from, bridgeDirection.to);

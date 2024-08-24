@@ -4,12 +4,12 @@ import { Currency, Token } from '@balancednetwork/sdk-core';
 
 import useLast from '@/hooks/useLast';
 
+import { XChainId } from '@/types';
 import Modal from '../Modal';
 import { PopperWithoutArrow } from '../Popover';
 import { CurrencySearch, CurrencySelectionType, SelectorType } from './CurrencySearch';
 import { ImportToken } from './ImportToken';
 import { RemoveToken } from './RemoveToken';
-import { XChainId } from '@/types';
 
 interface CurrencySearchModalProps {
   account?: string | null;
@@ -102,9 +102,6 @@ export default function CurrencySearchModal({
         show={isOpen}
         anchorEl={anchorEl}
         placement="bottom"
-        // onDismiss={onDismiss}
-        // maxHeight={80}
-        // minHeight={minHeight}
         offset={
           selectorType === SelectorType.SWAP_IN ||
           selectorType === SelectorType.SWAP_OUT ||

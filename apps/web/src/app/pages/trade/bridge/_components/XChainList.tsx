@@ -4,22 +4,21 @@ import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
-import { XChainId, XChain } from '@/app/pages/trade/bridge/types';
-import { xChains } from '@/app/pages/trade/bridge/_config/xChains';
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
-import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { Typography } from '@/app/theme';
-import { useRatesWithOracle } from '@/queries/reward';
-import { formatValue } from '@/utils/formatter';
-import BigNumber from 'bignumber.js';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { ScrollHelper } from '@/app/components/home/_components/LoanChainSelector/styledComponents';
-import { t, Trans } from '@lingui/macro';
-import { HeaderText } from '../../supply/_components/AllPoolsPanel';
-import useSortCurrency from '@/hooks/useSortCurrency';
+import { Typography } from '@/app/theme';
+import { xChains } from '@/constants/xChains';
 import useSortXChains from '@/hooks/useSortXChains';
-import { useSignedInWallets } from '../_hooks/useWallets';
+import { useSignedInWallets } from '@/hooks/useWallets';
+import { useRatesWithOracle } from '@/queries/reward';
+import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { XChain, XChainId } from '@/types/xChain';
+import { formatValue } from '@/utils/formatter';
+import { Currency } from '@balancednetwork/sdk-core';
+import { Trans, t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
+import { HeaderText } from '../../supply/_components/LiquidityDetails';
 
 type XChainListProps = {
   xChainId: XChainId;

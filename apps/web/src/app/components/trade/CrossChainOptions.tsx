@@ -5,11 +5,11 @@ import { Flex } from 'rebass';
 import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
-import { XChain, XChainId } from '@/types';
 
 import XChainList from '@/app/pages/trade/bridge/_components/XChainList';
 import { xChainMap } from '@/constants/xChains';
 import useWidth from '@/hooks/useWidth';
+import { XChain, XChainId } from '@/types/xChain';
 import { Currency } from '@balancednetwork/sdk-core';
 import CrossChainWalletConnect from '../CrossChainWalletConnect';
 import { StyledArrowDownIcon, UnderlineText } from '../DropdownText';

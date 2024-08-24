@@ -1,22 +1,22 @@
+import CommunityListToggle from '@/app/components/CommunityListToggle';
+import Divider from '@/app/components/Divider';
+import DropdownLink from '@/app/components/DropdownLink';
 import { BoxPanel } from '@/app/components/Panel';
+import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { Typography } from '@/app/theme';
-import React from 'react';
+import { COMBINED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
+import useSort from '@/hooks/useSort';
+import { getSupportedXChainForToken } from '@/lib/xcall/utils';
+import { TokenStats, useAllTokensByAddress } from '@/queries/backendv2';
+import { useTokenListConfig } from '@/store/lists/hooks';
 import { Trans } from '@lingui/macro';
+import React from 'react';
+import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 import styled, { css, useTheme } from 'styled-components';
-import { useMedia } from 'react-use';
-import SearchInput from '@/app/components/SearchModal/SearchInput';
-import { TokenStats, useAllTokensByAddress } from '@/queries/backendv2';
-import { HeaderText } from '@/app/pages/trade/supply/_components/AllPoolsPanel';
-import useSort from '@/hooks/useSort';
-import TokenItem from './TokenItem';
-import Divider from '@/app/components/Divider';
+import { HeaderText } from '../../../supply/_components/LiquidityDetails';
 import SkeletonTokenPlaceholder from './SkeletonTokenPlaceholder';
-import DropdownLink from '@/app/components/DropdownLink';
-import CommunityListToggle from '@/app/components/CommunityListToggle';
-import { useTokenListConfig } from '@/store/lists/hooks';
-import { getSupportedXChainForToken } from '../../../bridge/utils';
-import { COMBINED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
+import TokenItem from './TokenItem';
 
 const COMPACT_ITEM_COUNT = 8;
 

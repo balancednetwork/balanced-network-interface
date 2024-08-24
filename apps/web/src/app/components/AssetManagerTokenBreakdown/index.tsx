@@ -1,13 +1,12 @@
-import { HIGH_PRICE_ASSET_DP } from '@/constants/tokens';
+import { xChainMap } from '@/constants/xChains';
+import { useRatesWithOracle } from '@/queries/reward';
+import { XToken } from '@/types/xToken';
+import { formatBalance } from '@/utils/formatter';
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import React, { Fragment } from 'react';
 import { Box } from 'rebass';
 import styled from 'styled-components';
 import QuestionHelper, { QuestionWrapper } from '../QuestionHelper';
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { XToken } from '@/app/pages/trade/bridge/types';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
-import { useRatesWithOracle } from '@/queries/reward';
-import { formatBalance } from '@/utils/formatter';
 
 const Grid = styled(Box)`
   display: grid;

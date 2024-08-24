@@ -1,15 +1,15 @@
-import { xTokenMap } from '@/app/pages/trade/bridge/_config/xTokens';
-import { XChainId, XToken } from '@/app/pages/trade/bridge/types';
+import { Typography } from '@/app/theme';
+import { xChainMap } from '@/constants/xChains';
+import { xTokenMap } from '@/constants/xTokens';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { XChainId } from '@/types/xChain';
+import { formatBalance } from '@/utils/formatter';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import React from 'react';
 import { Flex } from 'rebass';
 import styled, { useTheme } from 'styled-components';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
-import { Typography } from '@/app/theme';
-import { xChainMap } from '@/app/pages/trade/bridge/_config/xChains';
-import { useSignedInWallets } from '@/app/pages/trade/bridge/_hooks/useWallets';
-import { formatBalance } from '@/utils/formatter';
 
 const CurrencyXChainItemWrap = styled(Flex)`
   width: 100%;

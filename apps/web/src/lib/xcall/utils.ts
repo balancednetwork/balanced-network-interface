@@ -76,7 +76,7 @@ export const toICONDecimals = (currencyAmount: CurrencyAmount<Currency>): bigint
 export const getSupportedXChainIdsForToken = (currency: Currency | XToken): XChainId[] => {
   return Object.values(xTokenMap)
     .flat()
-    .filter(t => t.symbol === currency.symbol)
+    .filter(t => t.symbol === currency?.symbol)
     .map(t => t.xChainId);
 };
 

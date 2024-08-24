@@ -3,10 +3,10 @@ import { useMemo } from 'react';
 import { Token } from '@balancednetwork/sdk-core';
 import { TokenInfo } from '@uniswap/token-lists';
 
-import { isAddress } from '@/utils';
-import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { getSupportedXChainForToken } from '@/app/pages/trade/bridge/utils';
 import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
+import { getSupportedXChainForToken } from '@/lib/xcall/utils';
+import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { isAddress } from '@/utils';
 
 const alwaysTrue = () => true;
 

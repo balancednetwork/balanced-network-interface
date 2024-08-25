@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect } from 'react';
 
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { BigNumber } from 'bignumber.js';
 import { NETWORK_ID, useIconReact } from '@/packages/icon-react';
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
+import { BigNumber } from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from '@/bnJs';
@@ -13,8 +13,9 @@ import { useSupportedCollateralTokens } from '@/store/collateral/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 
 import { AppState } from '..';
+import { useBlockDetails } from '../application/hooks';
 import { Field } from '../loan/reducer';
-import { adjust, cancel, type, changeLockedAmount } from './reducer';
+import { adjust, cancel, changeLockedAmount, type } from './reducer';
 
 export function useLockedAmount(): AppState['savings']['lockedAmount'] {
   return useSelector((state: AppState) => state.savings.lockedAmount);
@@ -161,6 +162,46 @@ function useTricklerDistributionPeriod(): UseQueryResult<number | undefined> {
     queryKey: ['tricklerDistributionPeriod'],
     queryFn: () => bnJs.Trickler.getDistributionPeriod(),
     placeholderData: keepPreviousData,
+  });
+}
+
+export function useSavingsRatePastMonthPayout(): UseQueryResult<BigNumber | undefined> {
+  const fiveMinPeriod = 1000 * 300;
+  const now = Math.floor(new Date().getTime() / fiveMinPeriod) * fiveMinPeriod;
+  const { data: blockThen } = useBlockDetails(new Date(now).setDate(new Date().getDate() - 30));
+  const { data: tokenPrices } = useTokenPrices();
+  const { data: tokenList } = useTricklerAllowedTokens();
+
+  return useQuery({
+    queryKey: [`savingsRate`, blockThen?.number || '', Object.keys(tokenPrices ?? {}).length, tokenList?.length ?? ''],
+    queryFn: async () => {
+      if (tokenPrices === undefined || tokenList === undefined || blockThen === undefined) return;
+
+      async function getRewards(blockHeight?: number): Promise<BigNumber> {
+        const rewards = await Promise.all(
+          tokenList!.map(async address => {
+            const symbol = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address].symbol;
+            try {
+              const rewards = address && (await bnJs.Savings.getTotalPayout(address, blockHeight));
+              const price = tokenPrices?.[symbol!];
+              return new BigNumber(rewards).div(10 ** 18).times(price || 0);
+            } catch (e) {
+              console.error('Error while fetching bnUSD payout stats: ', e);
+              return new BigNumber(0);
+            }
+          }),
+        );
+        return rewards.reduce((acc, cur) => acc.plus(cur), new BigNumber(0));
+      }
+
+      const rewardsReceivedTotal = await getRewards();
+      const rewardsReceivedThen = await getRewards(blockThen.number);
+      const monthlyRewards = rewardsReceivedTotal.minus(rewardsReceivedThen);
+
+      return monthlyRewards;
+    },
+    placeholderData: keepPreviousData,
+    enabled: !!tokenPrices && !!tokenList && !!blockThen,
   });
 }
 

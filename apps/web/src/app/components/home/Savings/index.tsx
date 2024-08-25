@@ -17,6 +17,7 @@ import bnJs from '@/bnJs';
 import {
   useLockedAmount,
   useSavingsRateInfo,
+  useSavingsRatePastMonthPayout,
   useSavingsSliderActionHandlers,
   useSavingsSliderState,
 } from '@/store/savings/hooks';
@@ -27,6 +28,7 @@ import { showMessageOnBeforeUnload } from '@/utils/messages';
 
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
 import { useSignedInWallets } from '@/hooks/useWallets';
+import { formatValue } from '@/utils/formatter';
 import { BalnPreviewInput as SavingsPreviewInput } from '../BBaln/styledComponents';
 
 const Savings = () => {
@@ -42,6 +44,7 @@ const Savings = () => {
   const [isOpen, setOpen] = React.useState(false);
   const isSmallScreen = useMedia('(max-width: 540px)');
   const { data: savingsRate } = useSavingsRateInfo();
+  const { data: savingsPastMonthPayout } = useSavingsRatePastMonthPayout();
   const signedInWallet = useSignedInWallets();
 
   const toggleOpen = React.useCallback(() => {
@@ -168,13 +171,41 @@ const Savings = () => {
               </Typography>
               <QuestionWrapper style={{ marginTop: isSmallScreen ? '4px' : '8px' }}>
                 <QuestionHelper
-                  width={150}
+                  width={175}
                   text={
-                    <Trans>
-                      {savingsRate?.percentAPRbnUSD && `bnUSD: ${savingsRate.percentAPRbnUSD.toFormat(2)}%`}
-                      <br />
-                      {savingsRate?.percentAPRsICX && `sICX: ${savingsRate.percentAPRsICX.toFormat(2)}%`}
-                    </Trans>
+                    <>
+                      {savingsRate?.percentAPRbnUSD && (
+                        <Flex>
+                          <Typography mr={1}>bnUSD:</Typography>
+                          <Typography
+                            fontWeight="bold"
+                            mt="-1px"
+                          >{`${savingsRate.percentAPRbnUSD.toFormat(2)}%`}</Typography>
+                        </Flex>
+                      )}
+                      {savingsRate?.percentAPRsICX && (
+                        <Flex mt={1}>
+                          <Typography mr={1}>sICX:</Typography>
+                          <Typography
+                            fontWeight="bold"
+                            mt="-1px"
+                          >{`${savingsRate.percentAPRsICX.toFormat(2)}%`}</Typography>
+                        </Flex>
+                      )}
+
+                      {savingsPastMonthPayout && (
+                        <Flex>
+                          <Typography fontSize={14} mt={3}>
+                            <strong style={{ marginRight: '5px' }}>
+                              {formatValue(savingsPastMonthPayout.toString())}
+                            </strong>
+                            <span>
+                              <Trans>distributed over the past month.</Trans>
+                            </span>
+                          </Typography>
+                        </Flex>
+                      )}
+                    </>
                   }
                 />
               </QuestionWrapper>

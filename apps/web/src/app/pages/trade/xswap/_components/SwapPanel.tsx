@@ -22,12 +22,12 @@ import { useSwapSlippageTolerance, useWalletModalToggle } from '@/store/applicat
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatPercent, maxAmountSpend } from '@/utils';
-import { isXToken } from '@/utils/xTokens';
 
 import { AutoColumn } from '@/app/components/Column';
 import { SelectorType } from '@/app/components/SearchModal/CurrencySearch';
 import useManualAddresses from '@/hooks/useManualAddresses';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
+import { XChainId } from '@/types';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import SwapModal from './SwapModal';
 import XSwapModal from './XSwapModal';
@@ -52,11 +52,22 @@ export default function SwapPanel() {
   const signedInWallets = useSignedInWallets();
   const { recipient } = useSwapState();
   const isRecipientCustom = recipient !== null && !signedInWallets.some(wallet => wallet.address === recipient);
-  const isOutputCrosschainCompatible = isXToken(currencies?.OUTPUT);
-  const isInputCrosschainCompatible = isXToken(currencies?.INPUT);
 
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
     useSwapActionHandlers();
+
+  const handleSwapInputChainSelection = useCallback(
+    (xChainId: XChainId) => {
+      onChainSelection(Field.INPUT, xChainId);
+    },
+    [onChainSelection],
+  );
+  const handleSwapOutputChainSelection = useCallback(
+    (xChainId: XChainId) => {
+      onChainSelection(Field.OUTPUT, xChainId);
+    },
+    [onChainSelection],
+  );
 
   const wallets = useWallets();
   const destinationWallet = wallets[xChainMap[direction.to].xWalletType];
@@ -216,9 +227,7 @@ export default function SwapPanel() {
               onPercentSelect={signedInWallets.length > 0 ? handleInputPercentSelect : undefined}
               percent={percents[Field.INPUT]}
               xChainId={direction.from}
-              onChainSelect={
-                isInputCrosschainCompatible ? xChainId => onChainSelection(Field.INPUT, xChainId) : undefined
-              }
+              onChainSelect={handleSwapInputChainSelection}
               showCrossChainOptions={true}
               selectorType={SelectorType.SWAP_IN}
             />
@@ -261,9 +270,7 @@ export default function SwapPanel() {
               onUserInput={handleTypeOutput}
               onCurrencySelect={handleOutputSelect}
               xChainId={direction.to}
-              onChainSelect={
-                isOutputCrosschainCompatible ? xChainId => onChainSelection(Field.OUTPUT, xChainId) : undefined
-              }
+              onChainSelect={handleSwapOutputChainSelection}
               showCrossChainOptions={true}
               addressEditable
               selectorType={SelectorType.SWAP_OUT}

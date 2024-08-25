@@ -162,21 +162,23 @@ const Savings = () => {
             <Typography mr="10px" variant="h4">
               <Trans>Savings rate</Trans>
             </Typography>
-            <Typography pt={isSmallScreen ? '5px' : '9px'} color="text1">
-              {savingsRate?.APR && `${savingsRate.APR.toFormat(2)}% APR`}
-            </Typography>
-            <QuestionWrapper style={{ marginLeft: '5px', marginTop: '5px', transform: 'translateY(1px)' }}>
-              <QuestionHelper
-                width={150}
-                text={
-                  <Trans>
-                    {savingsRate?.percentAPRbnUSD && `bnUSD: ${savingsRate.percentAPRbnUSD.toFormat(2)}%`}
-                    <br />
-                    {savingsRate?.percentAPRsICX && `sICX: ${savingsRate.percentAPRsICX.toFormat(2)}%`}
-                  </Trans>
-                }
-              />
-            </QuestionWrapper>
+            <Flex>
+              <Typography pt={isSmallScreen ? '5px' : '9px'} mr="5px" color="text1">
+                {savingsRate?.APR && `${savingsRate.APR.toFormat(2)}% APR`}
+              </Typography>
+              <QuestionWrapper style={{ marginTop: isSmallScreen ? '4px' : '8px' }}>
+                <QuestionHelper
+                  width={150}
+                  text={
+                    <Trans>
+                      {savingsRate?.percentAPRbnUSD && `bnUSD: ${savingsRate.percentAPRbnUSD.toFormat(2)}%`}
+                      <br />
+                      {savingsRate?.percentAPRsICX && `sICX: ${savingsRate.percentAPRsICX.toFormat(2)}%`}
+                    </Trans>
+                  }
+                />
+              </QuestionWrapper>
+            </Flex>
           </Flex>
           {account && bnUSDCombinedTotal > 0 && (
             <Flex>

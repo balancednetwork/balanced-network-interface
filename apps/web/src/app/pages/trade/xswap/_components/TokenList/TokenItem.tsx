@@ -118,7 +118,7 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
             </Typography>
           </Flex>
         </DataText>
-        <DataText>{`$${getFormattedNumber(token.liquidity, 'number')}`}</DataText>
+        <DataText>{`$${getFormattedNumber(token.liquidity * 2, 'number')}`}</DataText>
         <DataText>{trendData ? <Sparkline data={trendData} /> : <LoaderComponent />}</DataText>
       </Grid>
       {!isLast && <Divider />}

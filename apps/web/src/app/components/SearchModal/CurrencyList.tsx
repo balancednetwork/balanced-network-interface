@@ -250,7 +250,6 @@ function CurrencyRow({
               currency={currency}
               price={rateFracs && rateFracs[currency.symbol!] ? rateFracs[currency.symbol!].toFixed(18) : '0'}
               onSelect={handleXChainCurrencySelect}
-              basedOnWallet={basedOnWallet}
             />
           ))}
         </StyledBalanceBreakdown>

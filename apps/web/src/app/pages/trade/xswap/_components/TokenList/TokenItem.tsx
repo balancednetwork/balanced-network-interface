@@ -4,7 +4,7 @@ import CurrencyLogo from '@/app/components/CurrencyLogo';
 import Divider from '@/app/components/Divider';
 import { DataText } from '@/app/components/List';
 import { LoaderComponent } from '@/app/pages/vote/_components/styledComponents';
-import { Typography } from '@/app/theme';
+import { Typography, sizes } from '@/app/theme';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { COMBINED_TOKENS_MAP_BY_ADDRESS, useICX } from '@/constants/tokens';
 import { xChainMap } from '@/constants/xChains';
@@ -16,6 +16,7 @@ import { XToken } from '@/types/xToken';
 import { formatPrice, formatPriceChange, getFormattedNumber } from '@/utils/formatter';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import React from 'react';
+import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 import { Grid } from '.';
@@ -42,6 +43,7 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
   const end = Math.floor(tsEnd / 1000);
   const { data: trendData } = useTokenTrendData(token.symbol, start, end);
   const { data: assetManagerTokensBreakdown } = useAssetManagerTokens();
+  const isSmall = !useMedia(`(min-width: ${sizes.upLarge}px)`);
 
   const currency = React.useMemo(
     () => (token.symbol === 'ICX' ? ICX : COMBINED_TOKENS_MAP_BY_ADDRESS[token.address]),
@@ -74,16 +76,23 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
               <CurrencyLogo currency={currency} size="40px" />
             </Box>
             <Box ml={2} sx={{ minWidth: '160px' }}>
-              <Flex>
-                <Typography color="text" fontSize={16}>
-                  {token.name.replace(' TOKEN', ' Token')}
-                </Typography>
-                <Typography color="text2" fontSize={14} marginLeft="7px" paddingTop="2px">
-                  {token.symbol}
-                </Typography>
-                {amounts && amounts.length > 1 && (
-                  <AssetManagerTokenBreakdown amounts={amounts} spacing={{ x: 5, y: 0 }} />
-                )}
+              <Flex flexDirection={isSmall ? 'column' : 'row'}>
+                <Flex>
+                  <Typography color="text" fontSize={16} marginRight="7px">
+                    {token.name.replace(' TOKEN', ' Token')}
+                  </Typography>
+                  {isSmall && amounts && amounts.length > 1 && (
+                    <AssetManagerTokenBreakdown amounts={amounts} spacing={{ x: -3, y: 1 }} />
+                  )}
+                </Flex>
+                <Flex>
+                  <Typography color="text2" fontSize={14} paddingTop="2px">
+                    {token.symbol}
+                  </Typography>
+                  {!isSmall && amounts && amounts.length > 1 && (
+                    <AssetManagerTokenBreakdown amounts={amounts} spacing={{ x: 5, y: 1 }} />
+                  )}
+                </Flex>
               </Flex>
               <ChainsWrapper>
                 {xChainIds.map(xChainId => (

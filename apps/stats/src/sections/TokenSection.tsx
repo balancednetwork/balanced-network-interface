@@ -3,23 +3,23 @@ import React, { useMemo, useState } from 'react';
 import { MetaToken } from '@/queries';
 import { useAllTokensByAddress, useTokenTrendData } from '@/queries/backendv2';
 import { useMedia } from 'react-use';
-import { Flex, Box, Text } from 'rebass/styled-components';
+import { Box, Flex, Text } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
+import AssetManagerTokenBreakdown from '@/components/AssetManagerTokenBreakdown';
 import Divider from '@/components/Divider';
 import DropdownLink from '@/components/DropdownLink';
 import { BoxPanel } from '@/components/Panel';
 import SearchInput from '@/components/SearchInput';
-import { CurrencyLogoFromURI } from '@/components/shared/CurrencyLogo';
+import Skeleton from '@/components/Skeleton';
 import Sparkline from '@/components/Sparkline';
+import { CurrencyLogoFromURI } from '@/components/shared/CurrencyLogo';
 import useSort from '@/hooks/useSort';
 import useTimestampRounded from '@/hooks/useTimestampRounded';
 import { LoaderComponent } from '@/pages/PerformanceDetails/utils';
+import { useAssetManagerTokens } from '@/queries/assetManager';
 import { Typography } from '@/theme';
 import { formatPriceChange, getFormattedNumber } from '@/utils/formatter';
-import { useAssetManagerTokens } from '@/queries/assetManager';
-import AssetManagerTokenBreakdown from '@/components/AssetManagerTokenBreakdown';
-import Skeleton from '@/components/Skeleton';
 
 export const COMPACT_ITEM_COUNT = 8;
 
@@ -33,9 +33,9 @@ const DashGrid = styled(Box)`
   display: grid;
   gap: 1em;
   align-items: center;
-  grid-template-columns: 24fr 16fr 15fr 11fr 14fr;
+  grid-template-columns: 24fr 16fr 15fr 14fr 14fr;
   ${({ theme }) => theme.mediaWidth.upToLarge`
-    grid-template-columns: 6fr 6fr 9fr 5fr 7fr;
+    grid-template-columns: 6fr 4fr 6fr 6fr 6fr;
   `}
 
   > * {
@@ -224,9 +224,6 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
             <Box ml={2} sx={{ minWidth: '160px' }}>
               <Flex>
                 <Text>{token.name.replace(' TOKEN', ' Token')}</Text>
-                {tokenBreakdown && tokenBreakdown.length > 1 && (
-                  <AssetManagerTokenBreakdown breakdown={tokenBreakdown} spacing={{ x: 5, y: 0 }} />
-                )}
               </Flex>
               <Text color="text1">{token.symbol}</Text>
             </Box>
@@ -243,12 +240,27 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
         <DataText>
           <Flex alignItems="flex-end" flexDirection="column" minWidth={200} pl={2}>
             <Typography variant="p">{getFormattedNumber(token.market_cap, 'currency0')}</Typography>
-            <Typography variant="p" color="text1">
-              {getFormattedNumber(token.total_supply, 'number')} {token.symbol}
-            </Typography>
+            <Flex>
+              {tokenBreakdown && tokenBreakdown.length > 1 && (
+                <Box mr={1}>
+                  <AssetManagerTokenBreakdown breakdown={tokenBreakdown} spacing={{ x: 0, y: 1 }} />
+                </Box>
+              )}
+              <Typography variant="p" color="text1">
+                {getFormattedNumber(token.total_supply, token.price > 1000 ? 'number2' : 'number')} {token.symbol}
+              </Typography>
+            </Flex>
           </Flex>
         </DataText>
-        <DataText>{`$${getFormattedNumber(token.liquidity, 'number')}`}</DataText>
+        <Flex alignItems="flex-end" flexDirection="column" pl={2}>
+          <Typography variant="p">{`$${getFormattedNumber(token.liquidity, 'number')}`}</Typography>
+          {token.price > 0 && (
+            <Typography variant="p" color="text1">
+              {getFormattedNumber(token.liquidity / token.price, token.price > 1000 ? 'number2' : 'number')}{' '}
+              {token.symbol}
+            </Typography>
+          )}
+        </Flex>
         <DataText>{trendData ? <Sparkline data={trendData} /> : <LoaderComponent />}</DataText>
       </DashGrid>
       {!isLast && <Divider />}

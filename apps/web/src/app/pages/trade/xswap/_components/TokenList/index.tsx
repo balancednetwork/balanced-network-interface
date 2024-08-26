@@ -14,7 +14,7 @@ import { Trans } from '@lingui/macro';
 import React from 'react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
-import styled, { css, useTheme } from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import SkeletonTokenPlaceholder from './SkeletonTokenPlaceholder';
 import TokenItem from './TokenItem';
 

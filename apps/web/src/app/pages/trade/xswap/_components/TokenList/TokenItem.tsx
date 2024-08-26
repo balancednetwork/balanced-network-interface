@@ -109,7 +109,7 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
                   <AssetManagerTokenBreakdown amounts={amounts} spacing={{ x: 0, y: 1 }} />
                 </Box>
               )}
-              <Typography variant="p" color="text1">
+              <Typography variant="p" color="text1" style={{ whiteSpace: isSmall ? 'initial' : 'nowrap' }}>
                 {getFormattedNumber(token.total_supply, token.price > 1000 ? 'number2' : 'number')} {token.symbol}
               </Typography>
             </Flex>

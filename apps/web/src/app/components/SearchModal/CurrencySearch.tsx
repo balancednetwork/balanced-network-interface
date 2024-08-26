@@ -260,7 +260,7 @@ export function CurrencySearch({
           onChange={handleInput}
         />
       </Flex>
-      {signedInWallets.length ? (
+      {signedInWallets.length && (selectorType === SelectorType.SWAP_IN || selectorType === SelectorType.SWAP_OUT) ? (
         <Flex justifyContent="center" mt={3}>
           <AssetsTabButton $active={assetsTab === AssetsTab.YOUR} mr={2} onClick={() => setAssetsTab(AssetsTab.YOUR)}>
             <Trans>Your assets</Trans>

@@ -166,7 +166,7 @@ function CurrencyRow({
         <Flex justifyContent="flex-end" alignItems="center">
           <DataText variant="p" textAlign="right">
             <Typography variant="span" fontSize={16} color="text" display="block">
-              {balance?.isGreaterThan(0) ? formatBigNumber(balance, 'currency') : 0}
+              {balance?.isGreaterThan(0) ? formatBigNumber(balance, 'currency') : '-'}
             </Typography>
 
             {balance && balance.isGreaterThan(0) && price && !price.isNaN() ? (

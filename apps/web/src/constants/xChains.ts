@@ -273,16 +273,17 @@ export const injective: XChain = {
   testnet: false,
 };
 
+// the order is important, using manual order to display in the UI
 export const xChainMap: { [key in XChainId]: XChain } = {
   '0x1.icon': icon,
   '0x2.icon': lisbon,
-  '0xa869.fuji': fuji,
-  '0xa86a.avax': avalanche,
   archway: archwayTestnet,
   'archway-1': archway,
-  '0x100.icon': havah,
-  '0x38.bsc': bsc,
   '0xa4b1.arbitrum': arbitrum,
+  '0xa86a.avax': avalanche,
+  '0x100.icon': havah,
+  '0xa869.fuji': fuji,
+  '0x38.bsc': bsc,
   '0x2105.base': base,
   'injective-1': injective,
 };

@@ -1,10 +1,11 @@
 import { xChainMap } from '@/constants/xChains';
+import useKeyPress from '@/hooks/useKeyPress';
+import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { XChainId } from '@/types';
+import { validateAddress } from '@/utils';
 import React from 'react';
 import { Flex } from 'rebass';
-import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import styled from 'styled-components';
-import { validateAddress } from '@/utils';
 import Warning from '../Warning';
 
 const InputWrap = styled(Flex)`
@@ -77,29 +78,45 @@ const InputWrap = styled(Flex)`
   }
 `;
 
-const AddressInput = ({ onSave, chainId }: { onSave?: () => void; chainId: XChainId }) => {
+const AddressInput = ({
+  onSave,
+  xChainId,
+  setManualAddress,
+}: {
+  onSave?: () => void;
+  xChainId: XChainId;
+  setManualAddress?: (xChainId: XChainId, address?: string | undefined) => void;
+}) => {
   const { onChangeRecipient } = useSwapActionHandlers();
   const { direction } = useDerivedSwapInfo();
   const { recipient } = useSwapState();
   const [value, setValue] = React.useState(recipient || '');
   const [isValid, setValid] = React.useState(false);
+  const enter = useKeyPress('Enter');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
   };
 
   React.useEffect(() => {
-    setValid(validateAddress(value, chainId));
-  }, [value, chainId]);
+    setValid(validateAddress(value, xChainId));
+  }, [value, xChainId]);
 
   React.useEffect(() => {
     setValue(recipient || '');
   }, [recipient]);
 
-  const handleClick = () => {
+  const handleClick = React.useCallback(() => {
+    setManualAddress && setManualAddress(xChainId, value);
     onChangeRecipient(value);
     onSave?.();
-  };
+  }, [setManualAddress, xChainId, value, onChangeRecipient, onSave]);
+
+  React.useEffect(() => {
+    if (enter && isValid) {
+      handleClick();
+    }
+  }, [isValid, enter, handleClick]);
 
   return (
     <>

@@ -15,6 +15,7 @@ import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySear
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
 import { xChainMap } from '@/constants/xChains';
+import useManualAddresses from '@/hooks/useManualAddresses';
 import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import {
@@ -59,10 +60,25 @@ export default function BridgeTransferForm({ openModal }) {
     [onPercentSelection, maxInputAmount],
   );
 
+  const { manualAddresses, setManualAddress } = useManualAddresses();
+  const onAddressInput = React.useCallback(
+    (address: string) => {
+      setManualAddress(bridgeDirection.to, address);
+      onChangeRecipient(address);
+    },
+    [onChangeRecipient, bridgeDirection.to, setManualAddress],
+  );
+
   const xAccount = useXAccount(getXChainType(bridgeDirection.to));
   React.useEffect(() => {
-    onChangeRecipient(xAccount.address ?? null);
-  }, [onChangeRecipient, xAccount]);
+    if (xAccount.address) {
+      onChangeRecipient(xAccount.address);
+    } else if (manualAddresses[bridgeDirection.to]) {
+      onChangeRecipient(manualAddresses[bridgeDirection.to] ?? null);
+    } else {
+      onChangeRecipient(null);
+    }
+  }, [onChangeRecipient, xAccount, manualAddresses[bridgeDirection.to], bridgeDirection.to]);
 
   const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount } = useDerivedBridgeInfo();
 
@@ -127,7 +143,7 @@ export default function BridgeTransferForm({ openModal }) {
           <Flex style={{ position: 'relative' }}>
             <AddressInputPanel
               value={recipient || ''}
-              onUserInput={onChangeRecipient}
+              onUserInput={onAddressInput}
               placeholder={`${xChainMap[bridgeDirection.to].name} address`}
               isValid={isValid}
             />

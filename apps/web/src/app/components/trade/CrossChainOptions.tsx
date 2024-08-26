@@ -4,14 +4,14 @@ import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { XChain, XChainId } from '@/types';
 import { Typography } from '@/app/theme';
+import { XChain, XChainId } from '@/types';
 
+import { xChainMap } from '@/constants/xChains';
 import ChainList from '../../pages/trade/bridge/_components/ChainList';
 import CrossChainWalletConnect from '../CrossChainWalletConnect';
 import { StyledArrowDownIcon, UnderlineText } from '../DropdownText';
 import { DropdownPopper } from '../Popover';
-import { xChainMap } from '@/constants/xChains';
 
 type CrossChainOptionsProps = {
   xChains?: XChain[];
@@ -20,6 +20,7 @@ type CrossChainOptionsProps = {
   isOpen: boolean;
   setOpen: (isOpen: boolean) => void;
   editable?: boolean;
+  setManualAddress?: (xChainId: XChainId, address?: string | undefined) => void;
 };
 
 export const Wrap = styled(Flex)`
@@ -37,9 +38,16 @@ export const SelectorWrap = styled.div`
   color: ${({ theme }) => theme.colors.primaryBright};
 `;
 
-const CrossChainOptions = ({ xChainId, setXChainId, isOpen, setOpen, xChains, editable }: CrossChainOptionsProps) => {
+const CrossChainOptions = ({
+  xChainId,
+  setXChainId,
+  isOpen,
+  setOpen,
+  xChains,
+  editable,
+  setManualAddress,
+}: CrossChainOptionsProps) => {
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
-
   const arrowRef = React.useRef(null);
 
   const handleToggle = (e: React.MouseEvent<HTMLElement>) => {
@@ -113,7 +121,7 @@ const CrossChainOptions = ({ xChainId, setXChainId, isOpen, setOpen, xChains, ed
         </Flex>
       )}
 
-      <CrossChainWalletConnect xChainId={xChainId} editable={editable} />
+      <CrossChainWalletConnect xChainId={xChainId} editable={editable} setManualAddress={setManualAddress} />
     </Wrap>
   );
 };

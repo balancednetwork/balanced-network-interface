@@ -29,14 +29,6 @@ export default class Rewards extends Contract {
     return this.call(payload);
   }
 
-  getRecipientsSplit() {
-    const payload = this.paramsBuilder({
-      method: 'getRecipientsSplit',
-    });
-
-    return this.call(payload);
-  }
-
   getEmission(day?: number) {
     const payload = this.paramsBuilder({
       method: 'getEmission',

@@ -1,7 +1,7 @@
 import bnJs from '@/bnJs';
 import { Percent } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
-import { Address, PublicClient, WalletClient, WriteContractParameters, bytesToHex, toHex } from 'viem';
+import { Address, PublicClient, WalletClient, WriteContractParameters, toHex } from 'viem';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { NATIVE_ADDRESS } from '@/constants/index';

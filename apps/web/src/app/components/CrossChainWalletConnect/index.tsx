@@ -15,7 +15,15 @@ import Modal from '../Modal';
 import { ModalContentWrapper } from '../ModalContent';
 import AddressInput from './AddressInput';
 
-const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; editable?: boolean }) => {
+const CrossChainWalletConnect = ({
+  xChainId,
+  editable,
+  setManualAddress,
+}: {
+  xChainId: XChainId;
+  editable?: boolean;
+  setManualAddress?: (xChainId: XChainId, address?: string | undefined) => void;
+}) => {
   const [editableAddressModalOpen, setEditableAddressModalOpen] = React.useState(false);
   const { recipient } = useSwapState();
 
@@ -27,6 +35,9 @@ const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; e
   const handleConnect = () => {
     if (!xService) return;
 
+    setManualAddress && setManualAddress(xChainId, undefined);
+
+    // TODO: make a hook and reuse the hook
     const xConnectors = xService.getXConnectors();
 
     if (xChainType === 'EVM') {
@@ -70,7 +81,7 @@ const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; e
           <Typography textAlign="center" mb={3}>
             <Trans>Enter a recipient address:</Trans>
           </Typography>
-          <AddressInput onSave={closeModal} chainId={xChainId} />
+          <AddressInput onSave={closeModal} xChainId={xChainId} setManualAddress={setManualAddress} />
           <Typography textAlign="center" mt={3}>
             <Trans>Or connect your</Trans>{' '}
             <UnderlineText color={'red'} onClick={handleConnect}>

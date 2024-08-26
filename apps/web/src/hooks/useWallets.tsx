@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 
 export function useSignedInWallets(): { address: string; xChainId: XChainId }[] {
   const xAccounts = useXAccounts();
-  return useMemo(
+  const signedIn = useMemo(
     () =>
       xChains
         .map(({ xChainId }) => {
@@ -20,4 +20,5 @@ export function useSignedInWallets(): { address: string; xChainId: XChainId }[] 
         .filter(w => !!w.address) as { address: string; xChainId: XChainId }[],
     [xAccounts],
   );
+  return signedIn;
 }

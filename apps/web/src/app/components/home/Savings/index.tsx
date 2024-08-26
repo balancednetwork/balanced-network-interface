@@ -171,25 +171,25 @@ const Savings = () => {
               </Typography>
               <QuestionWrapper style={{ marginTop: isSmallScreen ? '4px' : '8px' }}>
                 <QuestionHelper
-                  width={175}
+                  width={200}
                   text={
                     <>
                       {savingsRate?.percentAPRbnUSD && (
                         <Flex>
-                          <Typography mr={1}>bnUSD:</Typography>
+                          <Typography mr={1}>Paid in bnUSD</Typography>
                           <Typography
-                            fontWeight="bold"
+                            color="text1"
                             mt="-1px"
-                          >{`${savingsRate.percentAPRbnUSD.toFormat(2)}%`}</Typography>
+                          >{`(${savingsRate.percentAPRbnUSD.toFormat(2)}%)`}</Typography>
                         </Flex>
                       )}
                       {savingsRate?.percentAPRsICX && (
-                        <Flex mt={1}>
-                          <Typography mr={1}>sICX:</Typography>
+                        <Flex>
+                          <Typography mr={1}>and sICX</Typography>
                           <Typography
-                            fontWeight="bold"
                             mt="-1px"
-                          >{`${savingsRate.percentAPRsICX.toFormat(2)}%`}</Typography>
+                            color="text1"
+                          >{`(${savingsRate.percentAPRsICX.toFormat(2)}%)`}</Typography>
                         </Flex>
                       )}
 
@@ -200,7 +200,7 @@ const Savings = () => {
                               {formatValue(savingsPastMonthPayout.toString())}
                             </strong>
                             <span>
-                              <Trans>distributed over the past month.</Trans>
+                              <Trans>distributed over the last 30 days.</Trans>
                             </span>
                           </Typography>
                         </Flex>

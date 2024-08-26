@@ -126,7 +126,9 @@ export default function LiquidityDetails() {
                       </Trans>
                       <br />
                       <br />
-                      <Trans>The fee APR is calculated from the swap fees earned by a pool in the last 30 days.</Trans>
+                      <Trans>
+                        The fee APR is calculated from the swap fees earned by a pool over the last 30 days.
+                      </Trans>
                     </>
                   }
                   placement="top"

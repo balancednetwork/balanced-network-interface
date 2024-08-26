@@ -169,7 +169,7 @@ function CurrencyRow({
               {balance?.isGreaterThan(0) ? formatBigNumber(balance, 'currency') : 0}
             </Typography>
 
-            {balance && balance.isGreaterThan(0) && price ? (
+            {balance && balance.isGreaterThan(0) && price && !price.isNaN() ? (
               <Typography variant="span" fontSize={14} color="text2" display="block">
                 {`$${balance.times(price).toFormat(2)}`}
               </Typography>

@@ -34,7 +34,7 @@ const XChainSelector = ({ chainId, setChainId, label, currency, width, container
   const [arrowRef] = useWidth();
 
   const handleToggle = (e: React.MouseEvent<HTMLElement>) => {
-    setAnchor(containerRef ?? null);
+    setAnchor(anchor ? null : containerRef ?? null);
   };
 
   const closeDropdown = e => {

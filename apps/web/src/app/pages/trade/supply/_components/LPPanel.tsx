@@ -273,7 +273,7 @@ export default function LPPanel() {
                   onCurrencySelect={handleCurrencyASelect}
                   onPercentSelect={handlePercentSelect(Field.CURRENCY_A)}
                   xChainId={'0x1.icon'}
-                  showCrossChainOptions={false}
+                  showCrossChainOptions={true}
                   showCrossChainBreakdown={false}
                 />
               </Flex>

@@ -22,6 +22,7 @@ import { useBridgeDirection } from '@/store/bridge/hooks';
 import { XChainId } from '@/types';
 import { ChartControlButton as AssetsTabButton } from '../ChartControl';
 import Column from '../Column';
+import CommunityListToggle from '../CommunityListToggle';
 import CurrencyList from './CurrencyList';
 import ImportRow from './ImportRow';
 import SearchInput from './SearchInput';
@@ -291,12 +292,17 @@ export function CurrencySearch({
           basedOnWallet={assetsTab === AssetsTab.YOUR}
         />
       ) : (
-        <Column style={{ padding: '20px', height: '100%' }}>
+        <Column style={{ padding: '20px 20px 0 20px' }} mb={showCommunityListControl ? -4 : 0}>
           <Typography color="text3" textAlign="center" mb="20px">
             <Trans>No results found.</Trans>
           </Typography>
         </Column>
       )}
+      {showCommunityListControl && debouncedQuery.length ? (
+        <Flex paddingTop="15px" width="100%" justifyContent="center">
+          <CommunityListToggle />
+        </Flex>
+      ) : null}
     </Wrapper>
   );
 }

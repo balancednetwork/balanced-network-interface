@@ -185,14 +185,10 @@ const TokenList = () => {
       </Box>
 
       {tokens.length > COMPACT_ITEM_COUNT && (
-        <Box pb="3px">
+        <Box>
           <DropdownLink expanded={showingExpanded} setExpanded={setShowingExpanded} />
         </Box>
       )}
-
-      <Flex paddingTop="13px" width="100%" justifyContent="center">
-        <CommunityListToggle />
-      </Flex>
     </BoxPanel>
   );
 };

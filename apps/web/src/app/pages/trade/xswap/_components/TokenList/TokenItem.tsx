@@ -77,22 +77,12 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
             </Box>
             <Box ml={2} sx={{ minWidth: '160px' }}>
               <Flex flexDirection={isSmall ? 'column' : 'row'}>
-                <Flex>
-                  <Typography color="text" fontSize={16} marginRight="7px">
-                    {token.name.replace(' TOKEN', ' Token')}
-                  </Typography>
-                  {isSmall && amounts && amounts.length > 1 && (
-                    <AssetManagerTokenBreakdown amounts={amounts} spacing={{ x: -3, y: 1 }} />
-                  )}
-                </Flex>
-                <Flex>
-                  <Typography color="text2" fontSize={14} paddingTop="2px">
-                    {token.symbol}
-                  </Typography>
-                  {!isSmall && amounts && amounts.length > 1 && (
-                    <AssetManagerTokenBreakdown amounts={amounts} spacing={{ x: 5, y: 1 }} />
-                  )}
-                </Flex>
+                <Typography color="text" fontSize={16} marginRight="7px">
+                  {token.name.replace(' TOKEN', ' Token')}
+                </Typography>
+                <Typography color="text2" fontSize={14} paddingTop="2px">
+                  {token.symbol}
+                </Typography>
               </Flex>
               <ChainsWrapper>
                 {xChainIds.map(xChainId => (
@@ -113,9 +103,16 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
         <DataText>
           <Flex alignItems="flex-end" flexDirection="column" pl={2}>
             <Typography variant="p">{getFormattedNumber(token.market_cap, 'currency0')}</Typography>
-            <Typography variant="p" color="text1">
-              {getFormattedNumber(token.total_supply, 'number')} {token.symbol}
-            </Typography>
+            <Flex>
+              {amounts && amounts.length > 1 && (
+                <Box marginRight={1}>
+                  <AssetManagerTokenBreakdown amounts={amounts} spacing={{ x: 0, y: 1 }} />
+                </Box>
+              )}
+              <Typography variant="p" color="text1">
+                {getFormattedNumber(token.total_supply, token.price > 1000 ? 'number2' : 'number')} {token.symbol}
+              </Typography>
+            </Flex>
           </Flex>
         </DataText>
         <DataText>

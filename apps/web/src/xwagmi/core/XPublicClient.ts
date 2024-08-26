@@ -1,7 +1,6 @@
 import { Transaction, TransactionStatus, XCallEvent, XCallMessageSentEvent } from '@/lib/xcall/_zustand/types';
 import { XCallEventType } from '@/lib/xcall/types';
 import { XChainId } from '@/types';
-import { XService } from './XService';
 
 export interface IXPublicClient {
   // getBlock(blockHeight);

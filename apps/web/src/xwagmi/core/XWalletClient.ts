@@ -1,6 +1,5 @@
 import { XTransactionInput } from '@/lib/xcall/_zustand/types';
 import { XChainId } from '@/types';
-import { XService } from './XService';
 
 export abstract class XWalletClient {
   public xChainId: XChainId;

@@ -118,7 +118,17 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
             </Typography>
           </Flex>
         </DataText>
-        <DataText>{`$${getFormattedNumber(token.liquidity * 2, 'number')}`}</DataText>
+        <DataText>
+          <Flex alignItems="flex-end" flexDirection="column" pl={2}>
+            <Typography variant="p">{`$${getFormattedNumber(token.liquidity, 'number')}`}</Typography>
+            {token.price > 0 && (
+              <Typography variant="p" color="text1">
+                {getFormattedNumber(token.liquidity / token.price, token.price > 1000 ? 'number2' : 'number')}{' '}
+                {token.symbol}
+              </Typography>
+            )}
+          </Flex>
+        </DataText>
         <DataText>{trendData ? <Sparkline data={trendData} /> : <LoaderComponent />}</DataText>
       </Grid>
       {!isLast && <Divider />}

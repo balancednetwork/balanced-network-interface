@@ -31,9 +31,9 @@ export const Grid = styled.div`
   margin: 20px 0;
   gap: 1em;
   align-items: center;
-  grid-template-columns: 6fr 6fr 9fr 5fr 7fr;
+  grid-template-columns: 6fr 5fr 5fr 5fr 7fr;
   ${({ theme }) => theme.mediaWidth.upLarge`
-    grid-template-columns: 25fr 14fr 15fr 11fr 15fr;
+    grid-template-columns: 25fr 14fr 15fr 14fr 15fr;
   `}
 
   > *, ${HeaderText} {

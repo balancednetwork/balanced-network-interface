@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Trans, t } from '@lingui/macro';
 import { useIconReact } from '@/packages/icon-react';
+import { Trans, t } from '@lingui/macro';
 import { useMedia } from 'react-use';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
@@ -50,11 +50,6 @@ const RewardsPanel = () => {
         <Typography variant="h2" mr={6}>
           Rewards
         </Typography>
-        {/* {account && (
-          <Typography color="text1" fontSize={14} pt="9px">
-            <Trans>Earned</Trans> <strong>{`$${earnedPastMonth?.toFormat(2)}`}</strong> <Trans>in the past month</Trans>
-          </Typography>
-        )} */}
       </Flex>
       <Flex flexDirection={isMedium ? 'column' : 'row'}>
         <SliderWrap>

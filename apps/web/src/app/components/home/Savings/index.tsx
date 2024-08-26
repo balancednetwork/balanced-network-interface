@@ -17,6 +17,7 @@ import bnJs from '@/bnJs';
 import {
   useLockedAmount,
   useSavingsRateInfo,
+  useSavingsRatePastMonthPayout,
   useSavingsSliderActionHandlers,
   useSavingsSliderState,
 } from '@/store/savings/hooks';
@@ -27,6 +28,7 @@ import { showMessageOnBeforeUnload } from '@/utils/messages';
 
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
 import { useSignedInWallets } from '@/hooks/useWallets';
+import { formatValue } from '@/utils/formatter';
 import { BalnPreviewInput as SavingsPreviewInput } from '../BBaln/styledComponents';
 
 const Savings = () => {
@@ -42,6 +44,7 @@ const Savings = () => {
   const [isOpen, setOpen] = React.useState(false);
   const isSmallScreen = useMedia('(max-width: 540px)');
   const { data: savingsRate } = useSavingsRateInfo();
+  const { data: savingsPastMonthPayout } = useSavingsRatePastMonthPayout();
   const signedInWallet = useSignedInWallets();
 
   const toggleOpen = React.useCallback(() => {
@@ -162,21 +165,52 @@ const Savings = () => {
             <Typography mr="10px" variant="h4">
               <Trans>Savings rate</Trans>
             </Typography>
-            <Typography pt={isSmallScreen ? '5px' : '9px'} color="text1">
-              {savingsRate?.APR && `${savingsRate.APR.toFormat(2)}% APR`}
-            </Typography>
-            <QuestionWrapper style={{ marginLeft: '5px', marginTop: '5px', transform: 'translateY(1px)' }}>
-              <QuestionHelper
-                width={150}
-                text={
-                  <Trans>
-                    {savingsRate?.percentAPRbnUSD && `bnUSD: ${savingsRate.percentAPRbnUSD.toFormat(2)}%`}
-                    <br />
-                    {savingsRate?.percentAPRsICX && `sICX: ${savingsRate.percentAPRsICX.toFormat(2)}%`}
-                  </Trans>
-                }
-              />
-            </QuestionWrapper>
+            <Flex>
+              <Typography pt={isSmallScreen ? '5px' : '9px'} mr="5px" color="text1">
+                {savingsRate?.APR && `${savingsRate.APR.toFormat(2)}% APR`}
+              </Typography>
+              <QuestionWrapper style={{ marginTop: isSmallScreen ? '4px' : '8px' }}>
+                <QuestionHelper
+                  width={200}
+                  text={
+                    <>
+                      {savingsRate?.percentAPRbnUSD && (
+                        <Flex>
+                          <Typography mr={1}>Paid in bnUSD</Typography>
+                          <Typography
+                            color="text1"
+                            mt="-1px"
+                          >{`(${savingsRate.percentAPRbnUSD.toFormat(2)}%)`}</Typography>
+                        </Flex>
+                      )}
+                      {savingsRate?.percentAPRsICX && (
+                        <Flex>
+                          <Typography mr={1}>and sICX</Typography>
+                          <Typography
+                            mt="-1px"
+                            color="text1"
+                          >{`(${savingsRate.percentAPRsICX.toFormat(2)}%)`}</Typography>
+                          .
+                        </Flex>
+                      )}
+
+                      {savingsPastMonthPayout && (
+                        <Flex>
+                          <Typography fontSize={14} mt={3}>
+                            <strong style={{ marginRight: '5px' }}>
+                              {formatValue(savingsPastMonthPayout.toString())}
+                            </strong>
+                            <span>
+                              <Trans>distributed over the last 30 days.</Trans>
+                            </span>
+                          </Typography>
+                        </Flex>
+                      )}
+                    </>
+                  }
+                />
+              </QuestionWrapper>
+            </Flex>
           </Flex>
           {account && bnUSDCombinedTotal > 0 && (
             <Flex>

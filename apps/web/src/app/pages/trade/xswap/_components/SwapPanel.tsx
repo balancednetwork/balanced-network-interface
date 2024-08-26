@@ -25,6 +25,7 @@ import { formatPercent, maxAmountSpend } from '@/utils';
 import { isXToken } from '@/utils/xTokens';
 
 import { AutoColumn } from '@/app/components/Column';
+import useManualAddresses from '@/hooks/useManualAddresses';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
@@ -59,9 +60,18 @@ export default function SwapPanel() {
     useSwapActionHandlers();
 
   const xAccount = useXAccount(getXChainType(direction.to));
+
+  const { manualAddresses, setManualAddress } = useManualAddresses();
+
   React.useEffect(() => {
-    onChangeRecipient(xAccount.address ?? null);
-  }, [onChangeRecipient, xAccount]);
+    if (xAccount.address) {
+      onChangeRecipient(xAccount.address);
+    } else if (manualAddresses[direction.to]) {
+      onChangeRecipient(manualAddresses[direction.to] ?? null);
+    } else {
+      onChangeRecipient(null);
+    }
+  }, [onChangeRecipient, xAccount, manualAddresses[direction.to], direction.to]);
 
   const handleTypeInput = useCallback(
     (value: string) => {
@@ -254,6 +264,7 @@ export default function SwapPanel() {
               }
               showCrossChainOptions={true}
               addressEditable
+              setManualAddress={setManualAddress}
             />
           </Flex>
         </AutoColumn>

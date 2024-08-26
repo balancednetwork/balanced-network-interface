@@ -192,9 +192,7 @@ export class IconXPublicClient extends XPublicClient {
 
     return {
       eventType: XCallEventType.CallMessage,
-      // xChainId: this.xChainId,
       txHash,
-      // rawEventData: eventLog,
       sn: BigInt(parseInt(indexed[3], 16)),
       reqId: BigInt(parseInt(data[0], 16)),
       from: indexed[1],
@@ -208,9 +206,7 @@ export class IconXPublicClient extends XPublicClient {
 
     return {
       eventType: XCallEventType.CallExecuted,
-      // xChainId: this.xChainId,
       txHash,
-      // rawEventData: eventLog,
       reqId: BigInt(parseInt(indexed[1], 16)),
       code: parseInt(data[0], 16),
       msg: data[1],

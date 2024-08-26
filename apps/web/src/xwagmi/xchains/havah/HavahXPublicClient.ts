@@ -184,9 +184,7 @@ export class HavahXPublicClient extends XPublicClient {
 
     return {
       eventType: XCallEventType.CallMessage,
-      // xChainId: this.xChainId,
       txHash,
-      // rawEventData: eventLog,
       sn: BigInt(parseInt(indexed[3], 16)),
       reqId: BigInt(parseInt(data[0], 16)),
       from: indexed[1],

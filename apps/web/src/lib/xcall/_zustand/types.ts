@@ -74,7 +74,6 @@ export type Transaction = {
 
 export type XCallMessageEvent = {
   eventType: XCallEventType;
-  // xChainId: XChainId;
   txHash: string;
   sn: bigint;
   reqId: bigint;
@@ -84,7 +83,6 @@ export type XCallMessageEvent = {
 };
 export type XCallExecutedEvent = {
   eventType: XCallEventType;
-  // xChainId: XChainId;
   txHash: string;
   reqId: bigint;
   code: number;
@@ -92,7 +90,6 @@ export type XCallExecutedEvent = {
 };
 export type XCallMessageSentEvent = {
   eventType: XCallEventType;
-  // xChainId: XChainId;
   txHash: string;
   sn: bigint;
   from: string;

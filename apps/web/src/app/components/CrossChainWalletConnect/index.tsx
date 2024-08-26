@@ -27,6 +27,7 @@ const CrossChainWalletConnect = ({ xChainId, editable }: { xChainId: XChainId; e
   const handleConnect = () => {
     if (!xService) return;
 
+    // TODO: make a hook and reuse the hook
     const xConnectors = xService.getXConnectors();
 
     if (xChainType === 'EVM') {

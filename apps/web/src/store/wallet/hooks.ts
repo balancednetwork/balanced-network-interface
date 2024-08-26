@@ -87,6 +87,7 @@ export function useArchwayBalances(
   [key: string]: CurrencyAmount<Currency>;
 }> {
   const archwayXService: ArchwayXService = useXService('ARCHWAY') as ArchwayXService;
+  // TODO: why use walletClient, not publicClient?
   const signingClient = archwayXService.walletClient;
   const chainId = archwayXService.chainId;
 

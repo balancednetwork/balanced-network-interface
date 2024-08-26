@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 
-import { NETWORK_ID, useIconReact } from '@/packages/icon-react';
+import { useIconReact } from '@/packages/icon-react';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'bignumber.js';
@@ -12,6 +12,7 @@ import { useTokenPrices } from '@/queries/backendv2';
 import { useSupportedCollateralTokens } from '@/store/collateral/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 
+import { NETWORK_ID } from '@/constants/config';
 import { AppState } from '..';
 import { useBlockDetails } from '../application/hooks';
 import { Field } from '../loan/reducer';

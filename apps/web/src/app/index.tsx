@@ -11,7 +11,8 @@ import TransactionUpdater from '@/store/transactions/updater';
 
 import { AllTransactionsUpdater } from '@/lib/xcall/_zustand/useTransactionStore';
 import { AllXMessagesUpdater } from '@/lib/xcall/_zustand/useXMessageStore';
-import { AllPublicXServicesCreator, AllXChainHeightsUpdater } from '@/lib/xcall/_zustand/useXServiceStore';
+import { AllXChainHeightsUpdater } from '@/lib/xcall/_zustand/useXServiceStore';
+import { initXWagmiStore } from '@/xwagmi/useXWagmiStore';
 import { xChains } from '../constants/xChains';
 import RootRoutes from './Routes';
 
@@ -22,11 +23,12 @@ function Updaters() {
       <ApplicationUpdater />
       <AllTransactionsUpdater />
       <AllXMessagesUpdater />
-      <AllPublicXServicesCreator xChains={xChains} />
       <AllXChainHeightsUpdater xChains={xChains} />
     </>
   );
 }
+
+initXWagmiStore();
 
 export function App() {
   const { i18n } = useTranslation();

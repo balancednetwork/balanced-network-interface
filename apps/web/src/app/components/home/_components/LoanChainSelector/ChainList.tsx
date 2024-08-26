@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { Trans, t } from '@lingui/macro';
+import { isMobile } from 'react-device-detect';
 import { Box } from 'rebass';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
@@ -7,18 +9,15 @@ import { UnderlineText } from '@/app/components/DropdownText';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { HeaderText } from '@/app/components/Wallet/styledComponents';
 import { Typography } from '@/app/theme';
-import { xChainMap, xChains, xWalletTypeModalIdMap } from '@/constants/xChains';
-import { modalActions } from '@/hooks/useModalStore';
+import { xChainMap, xChains } from '@/constants/xChains';
+import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
-import { useHavahContext } from '@/packages/havah/HavahProvider';
-import { useIconReact } from '@/packages/icon-react';
 import { useDerivedCollateralInfo } from '@/store/collateral/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { XChain, XChainId, XWalletType } from '@/types';
+import { XChain, XChainId } from '@/types';
 import { formatBalance } from '@/utils/formatter';
-import { Trans, t } from '@lingui/macro';
-import { isMobile } from 'react-device-detect';
+import { getXChainType } from '@/xwagmi/actions';
+import { useXConnect, useXService } from '@/xwagmi/hooks';
 import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from './styledComponents';
 
 type ChainListProps = {
@@ -38,24 +37,25 @@ type ChainItemProps = {
 const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const signedInWallets = useSignedInWallets();
   const isSignedIn = signedInWallets.some(wallet => wallet.xChainId === chain.xChainId);
-  const { connectToWallet: connectKeplr } = useArchwayContext();
-  const { connectToWallet: connectToHavah } = useHavahContext();
-  const { connectToWallet: connectToIcon } = useIconReact();
   const crossChainBalances = useCrossChainWalletBalances();
   const { sourceChain: collateralChain } = useDerivedCollateralInfo();
 
   const [waitingSignIn, setWaitingSignIn] = useState<XChainId | null>(null);
 
-  const handleConnect = (xChain: XChain) => {
-    setWaitingSignIn(xChain.xChainId);
-    if (xChain.xWalletType === XWalletType.ICON) {
-      connectToIcon();
-    } else if (xChain.xWalletType === XWalletType.COSMOS) {
-      connectKeplr();
-    } else if (xChain.xWalletType === XWalletType.HAVAH) {
-      connectToHavah();
+  const xChainType = getXChainType(chain.xChainId);
+  const xService = useXService(xChainType);
+  const xConnect = useXConnect();
+
+  const handleConnect = () => {
+    if (!xService) return;
+
+    const xConnectors = xService.getXConnectors();
+    if (xChainType === 'EVM') {
+      modalActions.openModal(MODAL_ID.EVM_WALLET_OPTIONS_MODAL);
+    } else if (xChainType === 'INJECTIVE') {
+      modalActions.openModal(MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL);
     } else {
-      modalActions.openModal(xWalletTypeModalIdMap[xChain.xWalletType]);
+      xConnect(xConnectors[0]);
     }
   };
 
@@ -81,7 +81,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
     <Grid
       $isSignedIn={isSignedIn}
       className={isLast ? '' : 'border-bottom'}
-      onClick={e => (isSignedIn ? setChainId(chain.xChainId) : handleConnect(chain))}
+      onClick={e => (isSignedIn ? setChainId(chain.xChainId) : handleConnect())}
     >
       <ChainItemWrap>
         <Box pr="10px">

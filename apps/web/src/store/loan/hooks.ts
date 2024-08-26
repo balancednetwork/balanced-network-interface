@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { BalancedJs, CallData, addresses } from '@balancednetwork/balanced-js';
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,6 +9,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import bnJs from '@/bnJs';
 import { ICON_XCALL_NETWORK_ID, NETWORK_ID } from '@/constants/config';
 import { ZERO } from '@/constants/index';
+import { bnUSD } from '@/constants/tokens';
+import { useSignedInWallets } from '@/hooks/useWallets';
+import { useDestinationEvents } from '@/lib/xcall/_zustand/useXCallEventStore';
 import { useBnJsContractQuery } from '@/queries/utils';
 import {
   DEFAULT_COLLATERAL_TOKEN,
@@ -22,15 +26,11 @@ import { useRatio } from '@/store/ratio/hooks';
 import { useRewards } from '@/store/reward/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { formatUnits, toBigNumber } from '@/utils';
-
-import { bnUSD } from '@/constants/tokens';
-import { xChainMap } from '@/constants/xChains';
-import { useSignedInWallets } from '@/hooks/useWallets';
-import { useDestinationEvents } from '@/lib/xcall/_zustand/useXCallEventStore';
 import { XChainId } from '@/types';
+import { formatUnits, toBigNumber } from '@/utils';
 import { getXTokenAddress } from '@/utils/xTokens';
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { getXChainType } from '@/xwagmi/actions';
+import { useXAccount } from '@/xwagmi/hooks';
 import { AppState } from '..';
 import {
   Field,
@@ -75,10 +75,7 @@ export function useLoanTotalSupply(): AppState['loan']['totalSupply'] {
 
 export function useActiveLoanAddress(): string | undefined {
   const collateralXChain = useCollateralXChain();
-  const signedInWallets = useSignedInWallets();
-  const account = signedInWallets.find(
-    w => xChainMap[w.xChainId || ICON_XCALL_NETWORK_ID].xWalletType === xChainMap[collateralXChain].xWalletType,
-  )?.address;
+  const { address: account } = useXAccount(getXChainType(collateralXChain));
 
   return collateralXChain === ICON_XCALL_NETWORK_ID ? account : `${collateralXChain}/${account}`;
 }

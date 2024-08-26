@@ -9,7 +9,8 @@ import WalletConnectIcon from '@/assets/icons/wallets/walletconnect.svg?inline';
 import { ModalContentWrapper } from '../ModalContent';
 
 import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
-import { Connector, useConnect, useConnectors } from 'wagmi';
+import { XConnector, XService } from '@/xwagmi/core';
+import { useXConnect, useXService } from '@/xwagmi/hooks';
 import { UnderlineText } from '../DropdownText';
 import { UnbreakableText, WalletOption } from './shared';
 
@@ -18,34 +19,37 @@ const icons = {
 };
 
 export const EVMWalletModal = ({ id = MODAL_ID.EVM_WALLET_OPTIONS_MODAL }) => {
-  const open = useModalStore(state => state.modals?.[id]);
+  useModalStore(state => state.modals?.[id]);
+
+  const xService: XService = useXService('EVM') as XService;
+  const xConnectors = xService.getXConnectors();
+
+  const xConnect = useXConnect();
+
   const onDismiss = useCallback(() => {
     modalActions.closeModal(id);
   }, [id]);
 
-  const connectors = useConnectors();
+  const handleConnect = async (xConnector: XConnector) => {
+    await xConnect(xConnector);
 
-  const { connectAsync } = useConnect();
-
-  const handleConnect = async (connector: Connector) => {
-    await connectAsync({ connector: connector });
     onDismiss();
   };
 
   return (
     <>
-      <Modal isOpen={!!open} onDismiss={onDismiss} maxWidth={360}>
+      <Modal isOpen={modalActions.isModalOpen(id)} onDismiss={onDismiss} maxWidth={360}>
         <ModalContentWrapper>
-          {connectors.length > 0 ? (
+          {xConnectors.length > 0 ? (
             <>
               <Typography textAlign="center" margin={'0 0 25px'}>
                 Connect with:
               </Typography>
               <Flex alignItems="stretch" justifyContent="space-around" flexWrap="wrap">
-                {connectors?.toReversed?.()?.map(connector => (
-                  <WalletOption key={connector.id} onClick={() => handleConnect(connector)}>
-                    <img width={50} height={50} src={connector.icon ?? icons[connector.id]} />
-                    <UnbreakableText>{connector.name}</UnbreakableText>
+                {xConnectors?.toReversed?.()?.map(xConnector => (
+                  <WalletOption key={xConnector.id} onClick={() => handleConnect(xConnector)}>
+                    <img width={50} height={50} src={xConnector.icon ?? icons[xConnector.id]} />
+                    <UnbreakableText>{xConnector.name}</UnbreakableText>
                   </WalletOption>
                 ))}
               </Flex>

@@ -11,7 +11,6 @@ import { Typography } from '@/app/theme';
 import { useARCH } from '@/constants/tokens1';
 import { archway } from '@/constants/xChains';
 import { sARCHOnArchway } from '@/constants/xTokens';
-import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 import {
   useBridgeActionHandlers,
   useBridgeDirection,
@@ -19,6 +18,8 @@ import {
   useDerivedBridgeInfo,
 } from '@/store/bridge/hooks';
 import { XChainId } from '@/types';
+import { useXService } from '@/xwagmi/hooks';
+import { ArchwayXService } from '@/xwagmi/xchains/archway';
 
 const WithdrawOption = styled.button<{ active: boolean }>`
   text-align: center;
@@ -53,7 +54,9 @@ export function useWithdrawableNativeAmount(
     }
   | undefined
 > {
-  const { client } = useArchwayContext();
+  const archwayXService: ArchwayXService = useXService('ARCHWAY') as ArchwayXService;
+  const client = archwayXService.publicClient;
+
   const { isLiquidsARCH } = useDerivedBridgeInfo();
 
   return useQuery({

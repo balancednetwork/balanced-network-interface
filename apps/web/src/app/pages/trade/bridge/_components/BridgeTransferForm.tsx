@@ -16,7 +16,6 @@ import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
 import { xChainMap } from '@/constants/xChains';
 import useManualAddresses from '@/hooks/useManualAddresses';
-import useWallets from '@/hooks/useWallets';
 import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import {
@@ -28,6 +27,8 @@ import {
 import { Field } from '@/store/bridge/reducer';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend, validateAddress } from '@/utils';
+import { getXChainType } from '@/xwagmi/actions';
+import { useXAccount } from '@/xwagmi/hooks';
 import ChainSelector from './ChainSelector';
 
 export default function BridgeTransferForm({ openModal }) {
@@ -68,20 +69,16 @@ export default function BridgeTransferForm({ openModal }) {
     [onChangeRecipient, bridgeDirection.to, setManualAddress],
   );
 
-  const wallets = useWallets();
-  const destinationWallet = wallets[xChainMap[bridgeDirection.to].xWalletType];
-
+  const xAccount = useXAccount(getXChainType(bridgeDirection.to));
   React.useEffect(() => {
-    if (destinationWallet.account) {
-      onChangeRecipient(destinationWallet.account);
-    }
-    if (manualAddresses[bridgeDirection.to]) {
+    if (xAccount.address) {
+      onChangeRecipient(xAccount.address);
+    } else if (manualAddresses[bridgeDirection.to]) {
       onChangeRecipient(manualAddresses[bridgeDirection.to] ?? null);
-    }
-    if (!destinationWallet.account && !manualAddresses[bridgeDirection.to]) {
+    } else {
       onChangeRecipient(null);
     }
-  }, [onChangeRecipient, manualAddresses[bridgeDirection.to], bridgeDirection.to, destinationWallet.account]);
+  }, [onChangeRecipient, xAccount, manualAddresses[bridgeDirection.to], bridgeDirection.to]);
 
   const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount } = useDerivedBridgeInfo();
 

@@ -17,7 +17,7 @@ import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
 import { xChainMap } from '@/constants/xChains';
-import useWallets, { useSignedInWallets } from '@/hooks/useWallets';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { useSwapSlippageTolerance, useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
@@ -27,6 +27,8 @@ import { isXToken } from '@/utils/xTokens';
 import { AutoColumn } from '@/app/components/Column';
 import useManualAddresses from '@/hooks/useManualAddresses';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
+import { getXChainType } from '@/xwagmi/actions';
+import { useXAccount } from '@/xwagmi/hooks';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import SwapModal from './SwapModal';
 import XSwapModal from './XSwapModal';
@@ -57,21 +59,19 @@ export default function SwapPanel() {
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
     useSwapActionHandlers();
 
-  const wallets = useWallets();
-  const destinationWallet = wallets[xChainMap[direction.to].xWalletType];
+  const xAccount = useXAccount(getXChainType(direction.to));
+
   const { manualAddresses, setManualAddress } = useManualAddresses();
 
   React.useEffect(() => {
-    if (destinationWallet.account) {
-      onChangeRecipient(destinationWallet.account);
-    }
-    if (manualAddresses[direction.to]) {
+    if (xAccount.address) {
+      onChangeRecipient(xAccount.address);
+    } else if (manualAddresses[direction.to]) {
       onChangeRecipient(manualAddresses[direction.to] ?? null);
-    }
-    if (!destinationWallet.account && !manualAddresses[direction.to]) {
+    } else {
       onChangeRecipient(null);
     }
-  }, [onChangeRecipient, manualAddresses[direction.to], direction.to, destinationWallet.account]);
+  }, [onChangeRecipient, xAccount, manualAddresses[direction.to], direction.to]);
 
   const handleTypeInput = useCallback(
     (value: string) => {

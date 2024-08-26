@@ -411,7 +411,7 @@ export default function BBalnSlider({
         <Typography mt={3}>
           {t`bBALN holders received`}{' '}
           <strong style={{ color: '#FFFFFF' }}>${pastMonthFees?.total.toFormat(0) ?? '-'} </strong>
-          {t`from network fees in the last 30 days.`}
+          {t`from network fees over the last 30 days.`}
         </Typography>
       )}
     </>

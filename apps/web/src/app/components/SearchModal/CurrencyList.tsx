@@ -195,8 +195,18 @@ function CurrencyRow({
     return (
       <>
         <Flex>
-          <CurrencyLogo currency={currency} style={{ marginRight: '15px' }} />
-          <DataText variant="p" fontWeight="bold">
+          {sortedXChains.length === 0 && showCrossChainBreakdown ? (
+            <CurrencyLogoWithNetwork
+              currency={currency}
+              bgColor={theme.colors.bg4}
+              chainId={ICON_XCALL_NETWORK_ID}
+              size={'24px'}
+            />
+          ) : (
+            <CurrencyLogo currency={currency} />
+          )}
+
+          <DataText variant="p" fontWeight="bold" ml={'15px'}>
             {currency?.symbol}
           </DataText>
           {currency?.symbol === 'BTCB' && <DataText style={{ marginLeft: '4px' }}>{`(old)`}</DataText>}

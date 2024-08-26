@@ -190,6 +190,7 @@ const Savings = () => {
                             mt="-1px"
                             color="text1"
                           >{`(${savingsRate.percentAPRsICX.toFormat(2)}%)`}</Typography>
+                          .
                         </Flex>
                       )}
 

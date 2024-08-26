@@ -11,6 +11,7 @@ import styled, { useTheme } from 'styled-components';
 import CurrencyLogo from '@/app/components/CurrencyLogo';
 import { DataText, List1, ListItem } from '@/app/components/List';
 import { Typography } from '@/app/theme';
+import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { xChainMap } from '@/constants/xChains';
 import useKeyPress from '@/hooks/useKeyPress';
 import useSortCurrency from '@/hooks/useSortCurrency';
@@ -136,6 +137,13 @@ function CurrencyRow({
               currency={currency}
               bgColor={theme.colors.bg4}
               chainId={sortedXChains[0]}
+              size={'24px'}
+            />
+          ) : sortedXChains.length === 0 && showCrossChainBreakdown ? (
+            <CurrencyLogoWithNetwork
+              currency={currency}
+              bgColor={theme.colors.bg4}
+              chainId={ICON_XCALL_NETWORK_ID}
               size={'24px'}
             />
           ) : (

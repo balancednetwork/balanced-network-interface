@@ -54,6 +54,7 @@ const XChainItemWrap = styled(Flex)`
 const XChainItem = ({ xChain, isActive, isLast, currency }: XChainItemProps) => {
   const xWallet = useCrossChainWalletBalances();
   const prices = useRatesWithOracle();
+  const signedInWallets = useSignedInWallets();
 
   const currencyAmount = React.useMemo(() => {
     if (!xWallet || !xChain) return;
@@ -84,7 +85,9 @@ const XChainItem = ({ xChain, isActive, isLast, currency }: XChainItemProps) => 
         <Typography fontWeight="bold" marginRight={2}>
           {xChain.name}
         </Typography>
-        <Typography ml="auto">{value ? formatValue(value.toFixed()).replace('$0.0000', '-') : '-'}</Typography>
+        {signedInWallets.length > 0 ? (
+          <Typography ml="auto">{value ? formatValue(value.toFixed()).replace('$0.0000', '-') : '-'}</Typography>
+        ) : null}
       </Flex>
     </XChainItemWrap>
   );
@@ -132,7 +135,7 @@ const XChainList = ({ xChainId, setChainId, chains, currency, width, isOpen }: X
       <SearchInput
         type="text"
         id="blockchain-search-input"
-        style={{ marginBottom: '15px' }}
+        style={{ marginBottom: signedInWallets.length > 0 ? '15px' : '-10px' }}
         placeholder={t`Search for blockchains...`}
         tabIndex={isMobile ? -1 : 1}
         autoComplete="off"
@@ -141,38 +144,40 @@ const XChainList = ({ xChainId, setChainId, chains, currency, width, isOpen }: X
         ref={inputRef as React.RefObject<HTMLInputElement>}
       />
       <ScrollHelper $height="285px">
-        <Flex width="100%" justifyContent="space-between">
-          <StyledHeaderText
-            role="button"
-            className={sortBy.key === 'name' ? sortBy.order : ''}
-            onClick={() =>
-              handleSortSelect({
-                key: 'name',
-              })
-            }
-          >
-            <span>
-              <Trans>Blockchain</Trans>
-            </span>
-          </StyledHeaderText>
-          <StyledHeaderText
-            role="button"
-            className={sortBy.key === 'value' ? sortBy.order : ''}
-            onClick={
-              signedInWallets.length > 0
-                ? () =>
-                    handleSortSelect({
-                      key: 'value',
-                    })
-                : () => {}
-            }
-            style={signedInWallets.length > 0 ? { cursor: 'pointer' } : { cursor: 'not-allowed' }}
-          >
-            <span>
-              <Trans>Wallet</Trans>
-            </span>
-          </StyledHeaderText>
-        </Flex>
+        {signedInWallets.length > 0 ? (
+          <Flex width="100%" justifyContent="space-between">
+            <StyledHeaderText
+              role="button"
+              className={sortBy.key === 'name' ? sortBy.order : ''}
+              onClick={() =>
+                handleSortSelect({
+                  key: 'name',
+                })
+              }
+            >
+              <span>
+                <Trans>Blockchain</Trans>
+              </span>
+            </StyledHeaderText>
+            <StyledHeaderText
+              role="button"
+              className={sortBy.key === 'value' ? sortBy.order : ''}
+              onClick={
+                signedInWallets.length > 0
+                  ? () =>
+                      handleSortSelect({
+                        key: 'value',
+                      })
+                  : () => {}
+              }
+              style={signedInWallets.length > 0 ? { cursor: 'pointer' } : { cursor: 'not-allowed' }}
+            >
+              <span>
+                <Trans>Wallet</Trans>
+              </span>
+            </StyledHeaderText>
+          </Flex>
+        ) : null}
         {filteredSortedChains.map((chainItem, index) => (
           <Box key={index} onClick={e => setChainId(chainItem.xChainId)}>
             <XChainItem

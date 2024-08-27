@@ -64,10 +64,10 @@ export default function SwapPanel() {
   const { manualAddresses, setManualAddress } = useManualAddresses();
 
   React.useEffect(() => {
-    if (xAccount.address) {
-      onChangeRecipient(xAccount.address);
-    } else if (manualAddresses[direction.to]) {
+    if (manualAddresses[direction.to]) {
       onChangeRecipient(manualAddresses[direction.to] ?? null);
+    } else if (xAccount.address) {
+      onChangeRecipient(xAccount.address);
     } else {
       onChangeRecipient(null);
     }

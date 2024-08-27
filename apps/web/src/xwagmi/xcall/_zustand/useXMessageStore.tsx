@@ -8,7 +8,7 @@ import { immer } from 'zustand/middleware/immer';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 import { getXPublicClient } from '@/xwagmi/actions';
 import { XCallEventType } from '../types';
-import { Transaction, TransactionStatus, XCallEventMap, XMessage, XMessageStatus } from './types';
+import { Transaction, TransactionStatus, XCallEventMap, XMessage, XMessageStatus } from '../types';
 import { useFetchTransaction } from './useTransactionStore';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { xTransactionActions } from './useXTransactionStore';

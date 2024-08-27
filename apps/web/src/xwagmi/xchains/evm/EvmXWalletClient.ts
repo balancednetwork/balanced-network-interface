@@ -8,7 +8,7 @@ import { NATIVE_ADDRESS } from '@/constants/index';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/constants/xChains';
 import { uintToBytes } from '@/utils';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
-import { XTransactionInput, XTransactionType } from '../../xcall/_zustand/types';
+import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
 import { EvmXService } from './EvmXService';
 import { assetManagerContractAbi } from './abis/assetManagerContractAbi';

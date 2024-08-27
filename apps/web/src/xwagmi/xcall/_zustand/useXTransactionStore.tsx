@@ -17,7 +17,7 @@ import {
   XTransactionInput,
   XTransactionStatus,
   XTransactionType,
-} from './types';
+} from '../types';
 import { transactionActions } from './useTransactionStore';
 import { XMessageUpdater, useXMessageStore, xMessageActions } from './useXMessageStore';
 import { xServiceActions } from './useXServiceStore';

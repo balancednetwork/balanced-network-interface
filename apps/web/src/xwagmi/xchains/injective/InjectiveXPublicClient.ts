@@ -6,11 +6,11 @@ import { XPublicClient } from '@/xwagmi/core';
 import {
   TransactionStatus,
   XCallEvent,
+  XCallEventType,
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
-} from '@/xwagmi/xcall/_zustand/types';
-import { XCallEventType } from '@/xwagmi/xcall/types';
+} from '@/xwagmi/xcall/types';
 import { InjectiveXService } from './InjectiveXService';
 
 const XCallEventSignatureMap = {

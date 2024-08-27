@@ -6,7 +6,7 @@ import { immer } from 'zustand/middleware/immer';
 import { XChainId } from '@/types';
 import { getXPublicClient } from '@/xwagmi/actions';
 import { XCallEventType } from '../types';
-import { XCallDestinationEvent, XCallExecutedEvent, XCallMessageEvent } from './types';
+import { XCallDestinationEvent, XCallExecutedEvent, XCallMessageEvent } from '../types';
 import { xServiceActions } from './useXServiceStore';
 
 type XCallScanner = {

@@ -10,7 +10,7 @@ import { FROM_SOURCES, TO_SOURCES, injective } from '@/constants/xChains';
 import { XToken } from '@/types';
 import { uintToBytes } from '@/utils';
 import { XWalletClient } from '@/xwagmi/core';
-import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/_zustand/types';
+import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import { RLP } from '@ethereumjs/rlp';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { InjectiveXService } from './InjectiveXService';

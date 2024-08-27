@@ -8,9 +8,9 @@ import { Typography } from '@/app/theme';
 import ArrowIcon from '@/assets/icons/arrow-white.svg';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 
-import { XTransaction, XTransactionStatus } from '@/xwagmi/xcall/_zustand/types';
 import { useXMessageStore, xMessageActions } from '@/xwagmi/xcall/_zustand/useXMessageStore';
 import { xTransactionActions } from '@/xwagmi/xcall/_zustand/useXTransactionStore';
+import { XTransaction, XTransactionStatus } from '@/xwagmi/xcall/types';
 
 const Wrap = styled(Box)`
   display: grid;

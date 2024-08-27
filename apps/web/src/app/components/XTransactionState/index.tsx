@@ -6,8 +6,8 @@ import { Box, Flex } from 'rebass';
 
 import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
-import { XTransaction } from '@/xwagmi/xcall/_zustand/types';
 import { xMessageActions } from '@/xwagmi/xcall/_zustand/useXMessageStore';
+import { XTransaction } from '@/xwagmi/xcall/types';
 
 const XTransactionState = ({ xTransaction }: { xTransaction: XTransaction }) => {
   const { primaryMessageId, secondaryMessageId } = xTransaction;

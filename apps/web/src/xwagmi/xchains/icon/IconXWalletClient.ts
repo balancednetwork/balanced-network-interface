@@ -5,7 +5,7 @@ import { NETWORK_ID } from '@/constants/config';
 import { toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
-import { XTransactionInput, XTransactionType } from '../../xcall/_zustand/types';
+import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData } from '../../xcall/utils';
 import { IconXService } from './IconXService';
 

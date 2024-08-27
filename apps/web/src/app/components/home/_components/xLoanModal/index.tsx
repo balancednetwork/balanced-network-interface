@@ -20,12 +20,12 @@ import { useDerivedLoanInfo, useLoanActionHandlers, useLoanRecipientNetwork } fr
 import { XChainId } from '@/types';
 import useXCallFee from '@/xwagmi/xcall/_hooks/useXCallFee';
 import useXCallGasChecker from '@/xwagmi/xcall/_hooks/useXCallGasChecker';
-import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/_zustand/types';
 import {
   XTransactionUpdater,
   useXTransactionStore,
   xTransactionActions,
 } from '@/xwagmi/xcall/_zustand/useXTransactionStore';
+import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import useLoanWalletServiceHandler from '../../useLoanWalletServiceHandler';
 
 export enum XLoanAction {

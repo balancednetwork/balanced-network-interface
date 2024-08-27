@@ -8,11 +8,11 @@ import { XPublicClient } from '@/xwagmi/core/XPublicClient';
 import {
   TransactionStatus,
   XCallEvent,
+  XCallEventType,
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
-} from '../../xcall/_zustand/types';
-import { XCallEventType } from '../../xcall/types';
+} from '../../xcall/types';
 import { IconXService } from './IconXService';
 import { ICONTxResultType } from './types';
 

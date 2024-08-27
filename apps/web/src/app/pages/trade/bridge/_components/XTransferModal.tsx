@@ -20,9 +20,9 @@ import { getNetworkDisplayName } from '@/utils/xTokens';
 import { ApprovalState, useApproveCallback } from '@/xwagmi/xcall/_hooks/useApproveCallback';
 import useXCallFee from '@/xwagmi/xcall/_hooks/useXCallFee';
 import useXCallGasChecker from '@/xwagmi/xcall/_hooks/useXCallGasChecker';
-import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/_zustand/types';
 import { useXMessageStore } from '@/xwagmi/xcall/_zustand/useXMessageStore';
 import { useXTransactionStore, xTransactionActions } from '@/xwagmi/xcall/_zustand/useXTransactionStore';
+import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
 
 const StyledXCallButton = styled(StyledButton)`

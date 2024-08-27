@@ -7,19 +7,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { canBeQueue } from '@/constants/currency';
+import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
 import { useAllTokens } from '@/hooks/Tokens';
+import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { XToken } from '@/types';
 import { parseUnits } from '@/utils';
-
-import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
-import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId, XToken } from '@/xwagmi/types';
 import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
 import {

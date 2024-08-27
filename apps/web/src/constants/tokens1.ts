@@ -3,7 +3,7 @@ import { Token } from '@balancednetwork/sdk-core';
 
 import { NETWORK_ID } from '@/constants/config';
 import { TokenMap } from '@/constants/tokens';
-import { XToken } from '@/types';
+import { XToken } from '@/xwagmi/types';
 
 // disable prettier printWidth rule
 // prettier-ignore

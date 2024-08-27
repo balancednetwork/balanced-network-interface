@@ -1,9 +1,8 @@
 import { Typography } from '@/app/theme';
 import { HIGH_PRICE_ASSET_DP } from '@/constants/tokens';
 import { useOraclePrices } from '@/store/oracle/hooks';
-import { Position } from '@/types';
 import { toFraction } from '@/utils';
-import { XChainId } from '@/xwagmi/types';
+import { Position, XChainId } from '@/xwagmi/types';
 import { Token } from '@balancednetwork/sdk-core';
 import React from 'react';
 import CurrencyLogo from '../CurrencyLogo';

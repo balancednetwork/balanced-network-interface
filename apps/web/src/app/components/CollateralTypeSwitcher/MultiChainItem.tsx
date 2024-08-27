@@ -1,6 +1,5 @@
 import { Typography } from '@/app/theme';
-import { Position } from '@/types';
-import { XChainId } from '@/xwagmi/types';
+import { Position, XChainId } from '@/xwagmi/types';
 import { Token } from '@balancednetwork/sdk-core';
 import React from 'react';
 import styled from 'styled-components';

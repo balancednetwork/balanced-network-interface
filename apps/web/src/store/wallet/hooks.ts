@@ -26,8 +26,8 @@ import { useBnJsContractQuery } from '@/queries/utils';
 import { useTokenListConfig } from '@/store/lists/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useUserAddedTokens } from '@/store/user/hooks';
-import { XWalletAssetRecord } from '@/types';
 import { getXTokenAddress, isXToken } from '@/utils/xTokens';
+import { XWalletAssetRecord } from '@/xwagmi/types';
 import { isDenomAsset } from '@/xwagmi/xchains/archway/utils';
 
 import { AppState } from '..';

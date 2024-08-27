@@ -1,4 +1,4 @@
-import { XToken } from '@/types';
+import { XToken } from '@/xwagmi/types';
 
 export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   bnUSD: '0x1.icon',

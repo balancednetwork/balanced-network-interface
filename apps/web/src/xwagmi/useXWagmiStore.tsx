@@ -6,7 +6,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { getXChainType } from './actions';
 import { XPublicClient, XService, XWalletClient } from './core';
-import { XConnection } from './core/types';
+import { XConnection } from './types';
 import { ArchwayXConnector, ArchwayXPublicClient, ArchwayXService, ArchwayXWalletClient } from './xchains/archway';
 import { EvmXPublicClient, EvmXService, EvmXWalletClient } from './xchains/evm';
 import { HavahXConnector, HavahXPublicClient, HavahXService, HavahXWalletClient } from './xchains/havah';

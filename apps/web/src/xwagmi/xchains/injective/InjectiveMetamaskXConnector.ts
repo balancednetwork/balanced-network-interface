@@ -1,4 +1,4 @@
-import { XAccount } from '@/xwagmi/core/types';
+import { XAccount } from '@/xwagmi/types';
 
 import MetamaskIcon from '@/assets/icons/wallets/metamask.svg?inline';
 import { XConnector } from '@/xwagmi/core';

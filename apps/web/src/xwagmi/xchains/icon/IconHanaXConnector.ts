@@ -1,5 +1,5 @@
 import { ICONexRequestEventType, ICONexResponseEventType, request } from '@/packages/iconex';
-import { XAccount } from '@/xwagmi/core/types';
+import { XAccount } from '@/xwagmi/types';
 
 import { XConnector } from '@/xwagmi/core/XConnector';
 

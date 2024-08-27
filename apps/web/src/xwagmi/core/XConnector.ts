@@ -1,5 +1,5 @@
 import { XChainType } from '@/types';
-import { XAccount } from './types';
+import { XAccount } from '../types';
 
 export abstract class XConnector {
   xChainType: XChainType;

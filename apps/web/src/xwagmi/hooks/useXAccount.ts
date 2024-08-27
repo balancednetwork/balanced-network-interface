@@ -1,7 +1,7 @@
 import { XChainType } from '@/types';
 import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
-import { XAccount } from '../core/types';
+import { XAccount } from '../types';
 import { useXConnection } from './useXConnection';
 
 export function useXAccount(xChainType: XChainType | undefined): XAccount {

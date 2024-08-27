@@ -1,4 +1,4 @@
-import { XChainId } from '@/types';
+import { XChainId } from '@/xwagmi/types';
 import { useCallback, useState } from 'react';
 
 export default function useManualAddresses(): {

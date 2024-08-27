@@ -25,11 +25,11 @@ import { useRatio } from '@/store/ratio/hooks';
 import { useRewards } from '@/store/reward/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { XChainId } from '@/types';
 import { formatUnits, toBigNumber } from '@/utils';
 import { getXTokenAddress } from '@/utils/xTokens';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
+import { XChainId } from '@/xwagmi/types';
 import { useDestinationEvents } from '@/xwagmi/xcall/zustand/useXCallEventStore';
 import { AppState } from '..';
 import {

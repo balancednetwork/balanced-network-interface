@@ -24,7 +24,7 @@ export type IcxDisplayType = 'ICX' | 'sICX';
 
 export type InterestPeriod = { display: string; days: number };
 
-export * from '../xwagmi/types/xChain';
+// export * from '../xwagmi/types/xChain';
 
 export * from '../xwagmi/types/xToken';
 

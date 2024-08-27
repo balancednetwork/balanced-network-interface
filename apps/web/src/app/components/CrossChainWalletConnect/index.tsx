@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { Typography } from '@/app/theme';
-import { XChainId } from '@/types';
 import { shortenAddress } from '@/utils';
+import { XChainId } from '@/xwagmi/types';
 
 import { xChainMap } from '@/constants/xChains';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';

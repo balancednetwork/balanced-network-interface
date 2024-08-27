@@ -1,5 +1,5 @@
+import { XChainId } from '@/xwagmi/types';
 import { SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
-import { XChainId } from '@/types';
 
 export const NETWORK_ID: NetworkId = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 

@@ -1,4 +1,4 @@
-import { XChain, XChainId } from '@/types';
+import { XChain, XChainId } from '@/xwagmi/types';
 
 export const archway: XChain = {
   id: 'archway-1',

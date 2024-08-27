@@ -1,4 +1,4 @@
-import { BalancedJs, LOOP, CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
+import { BalancedJs, CHAIN_INFO, LOOP, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
@@ -6,16 +6,17 @@ import { Validator } from 'icon-sdk-js';
 
 import { NETWORK_ID } from '@/constants/config';
 import { canBeQueue } from '@/constants/currency';
-import { ONE, NATIVE_ADDRESS } from '@/constants/index';
+import { NATIVE_ADDRESS, ONE } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
 import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
+import { xChainMap } from '@/constants/xChains';
 import { PairData, PairState } from '@/hooks/useV2Pairs';
 import { Field } from '@/store/swap/reducer';
-import { PairInfo, XChainId } from '@/types';
-import { xChainMap } from '@/constants/xChains';
+import { PairInfo } from '@/types';
+import { XChainId } from '@/xwagmi/types';
+import { RLP } from '@ethereumjs/rlp';
 import { bech32 } from 'bech32';
 import { ethers } from 'ethers';
-import { RLP } from '@ethereumjs/rlp';
 
 const { isEoaAddress, isScoreAddress } = Validator;
 

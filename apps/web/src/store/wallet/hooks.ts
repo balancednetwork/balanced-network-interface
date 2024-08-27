@@ -26,7 +26,7 @@ import { useBnJsContractQuery } from '@/queries/utils';
 import { useTokenListConfig } from '@/store/lists/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useUserAddedTokens } from '@/store/user/hooks';
-import { XChainId, XWalletAssetRecord } from '@/types';
+import { XWalletAssetRecord } from '@/types';
 import { getXTokenAddress, isXToken } from '@/utils/xTokens';
 import { isDenomAsset } from '@/xwagmi/xchains/archway/utils';
 
@@ -564,6 +564,7 @@ export function useHavahBalances(
   });
 }
 
+import { XChainId } from '@/xwagmi/types';
 // TODO: use InjectiveXService
 import { Network, getNetworkEndpoints } from '@injectivelabs/networks';
 import { ChainGrpcWasmApi, IndexerGrpcAccountPortfolioApi, fromBase64, toBase64 } from '@injectivelabs/sdk-ts';

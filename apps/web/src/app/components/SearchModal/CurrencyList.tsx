@@ -18,9 +18,9 @@ import { useSignedInWallets } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useIsUserAddedToken } from '@/store/user/hooks';
 import { useXCurrencyBalance } from '@/store/wallet/hooks';
-import { XChainId } from '@/types';
 import { formatBigNumber, toFraction } from '@/utils';
 import { formatPrice } from '@/utils/formatter';
+import { XChainId } from '@/xwagmi/types';
 import { HeaderText } from './styleds';
 
 const DashGrid = styled(Box)`

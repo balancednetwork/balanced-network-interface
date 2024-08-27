@@ -11,7 +11,7 @@ import { useAllTokens } from '@/hooks/Tokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { XChainId, XToken } from '@/types';
+import { XToken } from '@/types';
 import { parseUnits } from '@/utils';
 
 import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
@@ -19,6 +19,7 @@ import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
+import { XChainId } from '@/xwagmi/types';
 import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
 import {

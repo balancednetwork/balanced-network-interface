@@ -1,5 +1,5 @@
+import { XChainId } from '@/xwagmi/types';
 import { createSlice } from '@reduxjs/toolkit';
-import { XChainId } from '@/types';
 import BigNumber from 'bignumber.js';
 
 export enum Field {

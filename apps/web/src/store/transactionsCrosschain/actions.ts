@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit';
 
-import { XChainId } from '@/types';
+import { XChainId } from '@/xwagmi/types';
 import { CrossChainTxType } from '@/xwagmi/xcall/types';
 
 export const addTransactionResult = createAction<{

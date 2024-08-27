@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { XChainId } from '@/types';
+import { XChainId } from '@/xwagmi/types';
 
 import { CrossChainTxType } from '@/xwagmi/xcall/types';
 import { AppState } from '../index';

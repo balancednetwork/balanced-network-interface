@@ -5,7 +5,7 @@ import { Flex } from 'rebass';
 import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
-import { XChain, XChainId } from '@/types';
+import { XChain, XChainId } from '@/xwagmi/types';
 
 import { xChainMap } from '@/constants/xChains';
 import ChainList from '../../pages/trade/bridge/_components/ChainList';

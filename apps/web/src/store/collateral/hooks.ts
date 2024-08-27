@@ -22,11 +22,12 @@ import { useRatio } from '@/store/ratio/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCrossChainWalletBalances, useICONWalletBalances } from '@/store/wallet/hooks';
 import { CurrencyKey, IcxDisplayType } from '@/types';
-import { Position, XChainId, XPositions, XPositionsRecord, XToken } from '@/types';
+import { Position, XPositions, XPositionsRecord, XToken } from '@/types';
 import { formatUnits, maxAmountSpend, toBigNumber } from '@/utils';
 import { getBalanceDecimals } from '@/utils/formatter';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
+import { XChainId } from '@/xwagmi/types';
 import { useDestinationEvents } from '@/xwagmi/xcall/zustand/useXCallEventStore';
 import { AppState } from '../index';
 import {

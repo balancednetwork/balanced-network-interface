@@ -1,13 +1,13 @@
+import { Typography } from '@/app/theme';
+import { useRatesWithOracle } from '@/queries/reward';
+import { formatBalance, formatValue } from '@/utils/formatter';
+import { XChainId } from '@/xwagmi/types';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { XChainId } from '@/types';
 import BigNumber from 'bignumber.js';
 import React from 'react';
-import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, DataText, ListItem } from './styledComponents';
 import CurrencyLogo from '../CurrencyLogo';
-import { Typography } from '@/app/theme';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
-import { formatBalance, formatValue } from '@/utils/formatter';
-import { useRatesWithOracle } from '@/queries/reward';
+import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, DataText, ListItem } from './styledComponents';
 
 type MultiChainBalanceItemProps = {
   baseToken: Token;

@@ -1,7 +1,7 @@
 import { xChains } from '@/constants/xChains';
-import { XChainId } from '@/types';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccounts } from '@/xwagmi/hooks';
+import { XChainId } from '@/xwagmi/types';
 import { useMemo } from 'react';
 
 export function useSignedInWallets(): { address: string; xChainId: XChainId }[] {

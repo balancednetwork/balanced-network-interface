@@ -1,4 +1,4 @@
-import { XChainId, XToken } from '@/types';
+import { XToken } from '@/types';
 
 export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   bnUSD: '0x1.icon',
@@ -13,9 +13,10 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
 
 import { bnUSD } from '@/constants/tokens';
 
+import { NATIVE_ADDRESS } from '@/constants/index';
+import { XChainId } from '@/xwagmi/types';
 import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
 import { sARCH } from './tokens1';
-import { NATIVE_ADDRESS } from '@/constants/index';
 
 export const xTokenMap: { [key in XChainId]: XToken[] } = {
   '0x1.icon': [

@@ -17,7 +17,7 @@ import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
 import { useCollateralType } from '@/store/collateral/hooks';
 import { useDerivedLoanInfo, useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
-import { XChainId } from '@/types';
+import { XChainId } from '@/xwagmi/types';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import useXCallGasChecker from '@/xwagmi/xcall/hooks/useXCallGasChecker';
 import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';

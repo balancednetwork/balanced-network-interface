@@ -9,7 +9,7 @@ import { Box, Flex } from 'rebass';
 import { Typography } from '@/app/theme';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { Field } from '@/store/swap/reducer';
-import { XChainId, XToken } from '@/types';
+import { XToken } from '@/types';
 import { formatBigNumber, shortenAddress } from '@/utils';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 
@@ -23,6 +23,7 @@ import { xChainMap } from '@/constants/xChains';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import { XChainId } from '@/xwagmi/types';
 import { ApprovalState, useApproveCallback } from '@/xwagmi/xcall/hooks/useApproveCallback';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import useXCallGasChecker from '@/xwagmi/xcall/hooks/useXCallGasChecker';

@@ -16,7 +16,7 @@ import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { tryParseAmount } from '@/store/swap/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCurrencyBalances } from '@/store/wallet/hooks';
-import { XChainId } from '@/types';
+import { XChainId } from '@/xwagmi/types';
 import { AppDispatch, AppState } from '../index';
 import { Field, INITIAL_MINT, InputType, selectCurrency, typeInput } from './reducer';
 

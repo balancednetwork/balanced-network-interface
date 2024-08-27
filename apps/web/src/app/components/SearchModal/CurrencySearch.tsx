@@ -18,7 +18,7 @@ import { isAddress } from '@/utils';
 import { xTokenMap } from '@/constants/xTokens';
 import useXTokens from '@/hooks/useXTokens';
 import { useBridgeDirection } from '@/store/bridge/hooks';
-import { XChainId } from '@/types';
+import { XChainId } from '@/xwagmi/types';
 import Column from '../Column';
 import CommunityListToggle from '../CommunityListToggle';
 import CurrencyList from './CurrencyList';

@@ -14,10 +14,10 @@ import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useDerivedCollateralInfo } from '@/store/collateral/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { XChain, XChainId } from '@/types';
 import { formatBalance } from '@/utils/formatter';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXConnect, useXService } from '@/xwagmi/hooks';
+import { XChain, XChainId } from '@/xwagmi/types';
 import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from './styledComponents';
 
 type ChainListProps = {

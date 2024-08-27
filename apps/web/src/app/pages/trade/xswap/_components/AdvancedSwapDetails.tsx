@@ -15,7 +15,7 @@ import { xChainMap } from '@/constants/xChains';
 import { useSetSlippageTolerance, useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
-import { XChainId } from '@/types';
+import { XChainId } from '@/xwagmi/types';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 
 export default function AdvancedSwapDetails() {

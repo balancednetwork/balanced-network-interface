@@ -1,14 +1,15 @@
+import { Typography } from '@/app/theme';
+import { HIGH_PRICE_ASSET_DP } from '@/constants/tokens';
+import { useOraclePrices } from '@/store/oracle/hooks';
+import { Position } from '@/types';
+import { toFraction } from '@/utils';
+import { XChainId } from '@/xwagmi/types';
 import { Token } from '@balancednetwork/sdk-core';
-import { Position, XChainId } from '@/types';
 import React from 'react';
 import CurrencyLogo from '../CurrencyLogo';
-import { Typography } from '@/app/theme';
 import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, DataText, ListItem } from '../Wallet/styledComponents';
-import SingleChainItemOverview from './SingleChainItemOverview';
 import { StyledListItem } from './MultiChainItem';
-import { toFraction } from '@/utils';
-import { useOraclePrices } from '@/store/oracle/hooks';
-import { HIGH_PRICE_ASSET_DP } from '@/constants/tokens';
+import SingleChainItemOverview from './SingleChainItemOverview';
 
 type MultiChainItemOverviewProps = {
   baseToken: Token;

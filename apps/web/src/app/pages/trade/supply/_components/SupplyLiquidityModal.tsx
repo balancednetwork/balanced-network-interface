@@ -19,9 +19,9 @@ import { Field } from '@/store/mint/reducer';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from '@/store/transactions/hooks';
 import { useArchwayTransactionsState } from '@/store/transactionsCrosschain/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
-import { XChainId } from '@/types';
 import { toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import { XChainId } from '@/xwagmi/types';
 import { depositMessage, supplyMessage } from './utils';
 
 interface ModalProps {

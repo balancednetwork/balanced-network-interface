@@ -1,17 +1,17 @@
-import React from 'react';
-import { AssetSymbol, BalanceAndValueWrap, DataText, ListItem } from './styledComponents';
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import BigNumber from 'bignumber.js';
 import { Typography } from '@/app/theme';
-import { XChainId } from '@/types';
-import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
-import { useTheme } from 'styled-components';
-import { xChainMap } from '@/constants/xChains';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
-import ICONAssetModal from './ICONAssetModal';
-import useClaimableICX from './useClaimableICX';
+import { xChainMap } from '@/constants/xChains';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
+import { XChainId } from '@/xwagmi/types';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import BigNumber from 'bignumber.js';
+import React from 'react';
+import { useTheme } from 'styled-components';
+import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
+import ICONAssetModal from './ICONAssetModal';
+import { AssetSymbol, BalanceAndValueWrap, DataText, ListItem } from './styledComponents';
+import useClaimableICX from './useClaimableICX';
 
 type SingleChainBalanceItemProps = {
   baseToken: Token;

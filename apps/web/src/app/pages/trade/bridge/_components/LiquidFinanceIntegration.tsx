@@ -17,8 +17,8 @@ import {
   useBridgeState,
   useDerivedBridgeInfo,
 } from '@/store/bridge/hooks';
-import { XChainId } from '@/types';
 import { useXService } from '@/xwagmi/hooks';
+import { XChainId } from '@/xwagmi/types';
 import { ArchwayXService } from '@/xwagmi/xchains/archway';
 
 const WithdrawOption = styled.button<{ active: boolean }>`

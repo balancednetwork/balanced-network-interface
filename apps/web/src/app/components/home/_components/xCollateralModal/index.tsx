@@ -11,9 +11,8 @@ import ModalContent from '@/app/components/ModalContent';
 import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
 import { xChainMap } from '@/constants/xChains';
-import useEthereumChainId from '@/hooks/useEthereumChainId';
+import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
-import useWallets from '@/hooks/useWallets';
 import { ApprovalState, useApproveCallback } from '@/lib/xcall/_hooks/useApproveCallback';
 import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
 import useXCallGasChecker from '@/lib/xcall/_hooks/useXCallGasChecker';
@@ -23,12 +22,8 @@ import {
   useXTransactionStore,
   xTransactionActions,
 } from '@/lib/xcall/_zustand/useXTransactionStore';
-import { switchEthereumChain, walletStrategy } from '@/packages/injective';
 import { useCollateralActionHandlers, useDerivedCollateralInfo } from '@/store/collateral/hooks';
-import { XChainId, XToken, XWalletType } from '@/types';
-import { Wallet } from '@injectivelabs/wallet-ts';
-import { mainnet } from 'viem/chains';
-import { useSwitchChain } from 'wagmi';
+import { XChainId, XToken } from '@/types';
 import useLoanWalletServiceHandler from '../../useLoanWalletServiceHandler';
 
 export enum XCollateralAction {
@@ -109,25 +104,9 @@ const XCollateralModal = ({ account, currencyAmount, sourceChain, storedModalVal
 
   const gasChecker = useXCallGasChecker(sourceChain);
 
-  const ethereumChainId = useEthereumChainId();
-
-  // switch chain between evm chains
   useLoanWalletServiceHandler();
-  const wallets = useWallets();
-  const walletType = xChainMap[sourceChain].xWalletType;
-  const isWrongChain =
-    wallets[walletType].xChainId !== sourceChain ||
-    (walletType === XWalletType.INJECTIVE &&
-      walletStrategy.getWallet() === Wallet.Metamask &&
-      ethereumChainId !== mainnet.id);
-  const { switchChain } = useSwitchChain();
-  const handleSwitchChain = async () => {
-    if (walletType === XWalletType.INJECTIVE) {
-      switchEthereumChain(mainnet.id);
-    } else {
-      switchChain({ chainId: xChainMap[sourceChain].id as number });
-    }
-  };
+  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(sourceChain);
+
   return (
     <>
       {currentXTransaction && <XTransactionUpdater xTransaction={currentXTransaction} />}

@@ -15,10 +15,10 @@ import { XChainId, XToken } from '@/types';
 import { parseUnits } from '@/utils';
 
 import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
-import { xChainMap } from '@/constants/xChains';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
-import useWallets from '@/hooks/useWallets';
 import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
+import { getXChainType } from '@/xwagmi/actions';
+import { useXAccount } from '@/xwagmi/hooks';
 import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
 import {
@@ -156,8 +156,8 @@ export function useDerivedSwapInfo(): {
     [Field.OUTPUT]: { currency: outputCurrency, xChainId: outputXChainId },
   } = useSwapState();
 
-  const wallets = useWallets();
-  const account = wallets[xChainMap[inputXChainId].xWalletType].account ?? undefined;
+  const xAccount = useXAccount(getXChainType(inputXChainId));
+  const account = xAccount.address;
 
   const crossChainWallet = useCrossChainWalletBalances();
 

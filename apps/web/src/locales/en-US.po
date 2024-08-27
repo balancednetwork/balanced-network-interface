@@ -1238,6 +1238,10 @@ msgstr "Invalid pair"
 msgid "Send {0}"
 msgstr "Send {0}"
 
+#: src/app/components/home/Savings/index.tsx
+msgid "distributed over the last 30 days."
+msgstr "distributed over the last 30 days."
+
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "{0} {1} for {2} {3}"
 #~ msgstr "{0} {1} for {2} {3}"
@@ -1260,8 +1264,8 @@ msgstr "Wallet: {0} {1}"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
-msgid "The fee APR is calculated from the swap fees earned by a pool in the last 30 days."
-msgstr "The fee APR is calculated from the swap fees earned by a pool in the last 30 days."
+#~ msgid "The fee APR is calculated from the swap fees earned by a pool in the last 30 days."
+#~ msgstr "The fee APR is calculated from the swap fees earned by a pool in the last 30 days."
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Forum link"
@@ -1528,6 +1532,10 @@ msgstr "You'll only be able to interact with the default assets listed on Balanc
 msgid "You'll"
 msgstr "You'll"
 
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+msgid "from network fees over the last 30 days."
+msgstr "from network fees over the last 30 days."
+
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
@@ -1613,8 +1621,8 @@ msgid "{0} wallet"
 msgstr "{0} wallet"
 
 #: src/app/components/home/Savings/index.tsx
-msgid "{0}<0/>{1}"
-msgstr "{0}<0/>{1}"
+#~ msgid "{0}<0/>{1}"
+#~ msgstr "{0}<0/>{1}"
 
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
@@ -2080,7 +2088,6 @@ msgstr "Depositing"
 msgid "Connected to {numberOfConnectedWallets} blockchain"
 msgstr "Connected to {numberOfConnectedWallets} blockchain"
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 msgid "from network fees in the last 30 days."
 msgstr "from network fees in the last 30 days."
@@ -2528,6 +2535,11 @@ msgstr "Create pool"
 #: src/app/components/home/LoanPanel.tsx
 msgid "To borrow bnUSD, deposit collateral."
 msgstr "To borrow bnUSD, deposit collateral."
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+msgid "The fee APR is calculated from the swap fees earned by a pool over the last 30 days."
+msgstr "The fee APR is calculated from the swap fees earned by a pool over the last 30 days."
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX is ready to claim"

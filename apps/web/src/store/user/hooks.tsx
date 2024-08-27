@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
 import { Token } from '@balancednetwork/sdk-core';
 
 import { SupportedLocale } from '@/constants/locales';
@@ -8,6 +7,7 @@ import { BASES_TO_TRACK_LIQUIDITY_FOR, PINNED_PAIRS } from '@/constants/routing'
 import { useAllTokens } from '@/hooks/Tokens';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
+import { useIconNetworkId } from '@/hooks/useIconNetworkId';
 import { SerializedToken, addSerializedToken, removeSerializedToken, updateUserLocale } from './reducer';
 
 function serializeToken(token: Token): SerializedToken {
@@ -31,7 +31,7 @@ function deserializeToken(serializedToken: SerializedToken): Token {
 }
 
 export function useUserAddedTokens(): Token[] {
-  const { networkId: chainId } = useIconReact();
+  const chainId = useIconNetworkId();
   const serializedTokensMap = useAppSelector(({ user: { tokens } }) => tokens);
 
   return useMemo(() => {
@@ -70,7 +70,7 @@ export function useIsUserAddedToken(token: Token): boolean {
  * Returns all the pairs of tokens that are tracked by the user for the current chain ID.
  */
 export function useTrackedTokenPairs(): [Token, Token][] {
-  const { networkId: chainId } = useIconReact();
+  const chainId = useIconNetworkId();
   const tokens = useAllTokens();
 
   // pinned pairs

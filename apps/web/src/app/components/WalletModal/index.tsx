@@ -21,23 +21,21 @@ import IconWalletIcon from '@/assets/icons/wallets/iconex.svg';
 
 import { LOCALE_LABEL, SUPPORTED_LOCALES, SupportedLocale } from '@/constants/locales';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
-import { useArchwayContext } from '@/packages/archway/ArchwayProvider';
 import { useModalOpen, useWalletModalToggle } from '@/store/application/hooks';
 import { ApplicationModal } from '@/store/application/reducer';
 
 import { xChainMap } from '@/constants/xChains';
 import useDebounce from '@/hooks/useDebounce';
-import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
-import useWallets, { useSignedInWallets } from '@/hooks/useWallets';
-import { useHavahContext } from '@/packages/havah/HavahProvider';
-import { useIconReact } from '@/packages/icon-react';
-import { InjectiveWalletOptionsModal } from '@/packages/injective/InjectiveWalletOptionsModal';
-import { XWalletType } from '@/types';
+import { MODAL_ID } from '@/hooks/useModalStore';
+import { useSignedInWallets } from '@/hooks/useWallets';
+import { getXChainType } from '@/xwagmi/actions';
+import { useXDisconnectAll } from '@/xwagmi/hooks';
 import { useSwitchChain } from 'wagmi';
 import Divider from '../Divider';
 import { DropdownPopper } from '../Popover';
 import { EVMWalletModal } from './EVMWalletModal';
-import WalletItem from './WalletItem';
+import { InjectiveWalletOptionsModal } from './InjectiveWalletOptionsModal';
+import WalletItem, { WalletItemProps } from './WalletItem';
 import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
@@ -56,15 +54,14 @@ const presenceVariants = {
 export default function WalletModal() {
   const walletModalOpen = useModalOpen(ApplicationModal.WALLET);
   const toggleWalletModal = useWalletModalToggle();
-  const { connectToWallet: connectToKeplr } = useArchwayContext();
-  const { connectToWallet: connectToHavah } = useHavahContext();
   const signedInWallets = useSignedInWallets();
-  const wallets = useWallets();
+
+  const xDisconnectAll = useXDisconnectAll();
+
   const { switchChain } = useSwitchChain();
   const activeLocale = useActiveLocale();
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
   const arrowRef = React.useRef(null);
-  const { connectToWallet: connectToIcon } = useIconReact();
 
   const toggleMenu = (e: React.MouseEvent<HTMLElement>) => {
     setAnchor(anchor ? null : arrowRef.current);
@@ -89,30 +86,24 @@ export default function WalletModal() {
     setChainQuery(e.target.value);
   };
 
-  const disconnectAll = () => {
-    Object.values(wallets).forEach(wallet => wallet.account && wallet.disconnect());
-  };
-
   const walletConfig = useMemo(() => {
     const iconConfig = {
       name: 'ICON',
+      xChainType: 'ICON',
       logo: <IconWalletIcon width="32" />,
-      connect: () => connectToIcon(),
-      disconnect: wallets[XWalletType.ICON].disconnect,
       description: t`Borrow, swap, & transfer cross-chain. Supply liquidity. Vote.`,
       keyWords: ['iconex', 'hana'],
-      address: wallets[XWalletType.ICON].account,
       xChains: undefined,
       switchChain: undefined,
     };
+
     return [
       iconConfig,
       ...[
         {
           name: 'Ethereum & EVM ecosystem',
+          xChainType: 'EVM',
           logo: <ETHIcon width="32" />,
-          connect: () => modalActions.openModal(MODAL_ID.EVM_WALLET_OPTIONS_MODAL),
-          disconnect: wallets[XWalletType.EVM].disconnect,
           description: t`Borrow, swap, & transfer cross-chain.`,
           keyWords: [
             'evm',
@@ -128,44 +119,37 @@ export default function WalletModal() {
             'binance',
             'base',
           ],
-          address: wallets[XWalletType.EVM].account,
           xChains: Object.values(xChainMap)
-            .filter(xChain => xChain.xWalletType === XWalletType.EVM && !xChain.testnet)
+            .filter(xChain => getXChainType(xChain.xChainId) === 'EVM' && !xChain.testnet)
             .sort((a, b) => a.name.localeCompare(b.name)),
           switchChain: switchChain,
+          walletOptionsModalId: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,
         },
         {
           name: 'Havah',
+          xChainType: 'HAVAH',
           logo: <HavahWalletIcon width="40" height="40" />,
-          connect: connectToHavah,
-          disconnect: wallets[XWalletType.HAVAH].disconnect,
           description: t`Swap & transfer cross-chain.`,
           keyWords: ['iconex', 'hana'],
-          address: wallets[XWalletType.HAVAH].account,
         },
         {
           name: 'Archway',
+          xChainType: 'ARCHWAY',
           logo: <ArchWalletIcon width="32" />,
-          connect: connectToKeplr,
-          disconnect: wallets[XWalletType.COSMOS].disconnect,
           description: t`Swap & transfer cross-chain.`,
           keyWords: ['archway', 'cosmos', 'keplr', 'leap'],
-          address: wallets[XWalletType.COSMOS].account,
-          xChains: undefined,
-          switchChain: undefined,
         },
         {
           name: 'Injective',
+          xChainType: 'INJECTIVE',
           logo: <InjectiveWalletIcon width="40" height="40" />,
-          connect: () => modalActions.openModal(MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL),
-          disconnect: wallets[XWalletType.INJECTIVE].disconnect,
           description: t`Borrow, swap, & transfer cross-chain.`,
           keyWords: ['injective', 'cosmos', 'keplr', 'leap'],
-          address: wallets[XWalletType.INJECTIVE].account,
+          walletOptionsModalId: MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL,
         },
       ].sort((a, b) => a.name.localeCompare(b.name)),
-    ];
-  }, [connectToKeplr, wallets, switchChain, connectToHavah, connectToIcon]);
+    ] as WalletItemProps[];
+  }, [switchChain]);
 
   const filteredWallets = React.useMemo(() => {
     return [...walletConfig].filter(wallet => {
@@ -190,7 +174,7 @@ export default function WalletModal() {
                     ? t`Connected to ${numberOfConnectedWallets} blockchains`
                     : t`Connected to ${numberOfConnectedWallets} blockchain`}
                 </Typography>
-                <Typography onClick={disconnectAll} color="alert" style={{ cursor: 'pointer' }}>
+                <Typography onClick={xDisconnectAll} color="alert" style={{ cursor: 'pointer' }}>
                   Disconnect all
                 </Typography>
               </Flex>

@@ -1,32 +1,33 @@
 import React, { useMemo } from 'react';
 
 import { CallData, addresses } from '@balancednetwork/balanced-js';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
+import { forEach } from 'lodash-es';
 import { useDispatch, useSelector } from 'react-redux';
 
 import bnJs from '@/bnJs';
 import { ICON_XCALL_NETWORK_ID, NETWORK_ID } from '@/constants/config';
 import { MINIMUM_ICX_FOR_ACTION } from '@/constants/index';
 import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
+import { SUPPORTED_XCALL_CHAINS } from '@/constants/xChains';
+import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/constants/xTokens';
+import { useSignedInWallets } from '@/hooks/useWallets';
+import { useDestinationEvents } from '@/lib/xcall/_zustand/useXCallEventStore';
+import { useRatesWithOracle } from '@/queries/reward';
 import { useBorrowedAmounts } from '@/store/loan/hooks';
+import { setRecipientNetwork } from '@/store/loan/reducer';
 import { useOraclePrice } from '@/store/oracle/hooks';
 import { useRatio } from '@/store/ratio/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCrossChainWalletBalances, useICONWalletBalances } from '@/store/wallet/hooks';
 import { CurrencyKey, IcxDisplayType } from '@/types';
-import { formatUnits, maxAmountSpend, toBigNumber } from '@/utils';
-
-import { SUPPORTED_XCALL_CHAINS, xChainMap } from '@/constants/xChains';
-import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/constants/xTokens';
-import { useAvailableWallets, useSignedInWallets } from '@/hooks/useWallets';
-import { useDestinationEvents } from '@/lib/xcall/_zustand/useXCallEventStore';
-import { useRatesWithOracle } from '@/queries/reward';
-import { setRecipientNetwork } from '@/store/loan/reducer';
 import { Position, XChainId, XPositions, XPositionsRecord, XToken } from '@/types';
+import { formatUnits, maxAmountSpend, toBigNumber } from '@/utils';
 import { getBalanceDecimals } from '@/utils/formatter';
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { forEach } from 'lodash-es';
+import { getXChainType } from '@/xwagmi/actions';
+import { useXAccount } from '@/xwagmi/hooks';
 import { AppState } from '../index';
 import {
   Field,
@@ -509,11 +510,8 @@ export function useDerivedCollateralInfo(): {
   };
 } {
   const sourceChain = useCollateralXChain();
-  const signedInWallets = useAvailableWallets();
   const crossChainWallet = useCrossChainWalletBalances();
-  const account = signedInWallets.find(
-    w => xChainMap[w.xChainId].xWalletType === xChainMap[sourceChain].xWalletType,
-  )?.address;
+  const { address: account } = useXAccount(getXChainType(sourceChain));
   const collateralType = useCollateralType();
 
   const collateralCurrency = React.useMemo(() => {

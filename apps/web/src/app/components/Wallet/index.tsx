@@ -1,10 +1,9 @@
 import { Typography } from '@/app/theme';
 import { xChainMap } from '@/constants/xChains';
 import useKeyPress from '@/hooks/useKeyPress';
-import useWallets from '@/hooks/useWallets';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useXBalancesByToken } from '@/store/wallet/hooks';
-import { XWalletType } from '@/types';
+import { useXDisconnectAll } from '@/xwagmi/hooks';
 import { Trans, t } from '@lingui/macro';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { isMobile } from 'react-device-detect';
@@ -31,7 +30,6 @@ interface WalletProps {
 }
 
 const Wallet = ({ close }: WalletProps) => {
-  const allWallets = useWallets();
   const balances = useXBalancesByToken();
   const toggleWalletModal = useWalletModalToggle();
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -44,12 +42,11 @@ const Wallet = ({ close }: WalletProps) => {
     toggleWalletModal();
   };
 
+  const xDisconnectAll = useXDisconnectAll();
+
   const handleDisconnectWallet = async () => {
     close();
-
-    [XWalletType.ICON, XWalletType.COSMOS, XWalletType.EVM, XWalletType.HAVAH, XWalletType.INJECTIVE].forEach(type =>
-      allWallets[type]?.disconnect(),
-    );
+    await xDisconnectAll();
   };
 
   useEffect(() => {

@@ -1,17 +1,17 @@
-import { useMemo, useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { Token, Currency } from '@balancednetwork/sdk-core';
-import { useIconReact } from '@/packages/icon-react';
+import { useIconNetworkId } from '@/hooks/useIconNetworkId';
+import { Currency, Token } from '@balancednetwork/sdk-core';
 
 import bnJs from '@/bnJs';
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@/constants/routing';
-import { useCombinedActiveList, TokenAddressMap } from '@/store/lists/hooks';
+import { TokenAddressMap, useCombinedActiveList } from '@/store/lists/hooks';
 import { useUserAddedTokens } from '@/store/user/hooks';
 import { isAddress } from '@/utils';
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
 function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {
-  const { networkId: chainId } = useIconReact();
+  const chainId = useIconNetworkId();
   const userAddedTokens = useUserAddedTokens();
 
   return useMemo(() => {
@@ -52,7 +52,7 @@ export function useAllTokens(): { [address: string]: Token } {
 }
 
 export function useCommonBases(): { [address: string]: Token } {
-  const { networkId } = useIconReact();
+  const networkId = useIconNetworkId();
 
   const bases = useMemo(() => {
     return typeof networkId !== 'undefined' ? BASES_TO_CHECK_TRADES_AGAINST[networkId] ?? [] : [];
@@ -69,7 +69,8 @@ export function useCommonBases(): { [address: string]: Token } {
 }
 
 export function useToken(tokenAddress?: string | null): Token | undefined | null {
-  const { networkId: chainId } = useIconReact();
+  const chainId = useIconNetworkId();
+
   const tokens = useAllTokens();
 
   const address = isAddress(tokenAddress);

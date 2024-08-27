@@ -24,7 +24,7 @@ import IconKeepSICX from '@/assets/icons/wallet-tick-color.svg';
 import bnJs from '@/bnJs';
 import { NETWORK_ID } from '@/constants/config';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
-import { xChainMap, xWalletTypeModalIdMap } from '@/constants/xChains';
+import { xChainMap } from '@/constants/xChains';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import useWidth from '@/hooks/useWidth';
 import { useIconReact } from '@/packages/icon-react';
@@ -41,9 +41,10 @@ import { useLoanActionHandlers, useLockedCollateralAmount } from '@/store/loan/h
 import { useRatio } from '@/store/ratio/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
-import { XWalletType } from '@/types';
 import { parseUnits } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import { getXChainType } from '@/xwagmi/actions';
+import { useXConnect, useXService } from '@/xwagmi/hooks';
 import CollateralChainSelector from './_components/CollateralChainSelector';
 import XCollateralModal, { XCollateralAction } from './_components/xCollateralModal';
 
@@ -357,13 +358,19 @@ const CollateralPanel = () => {
   const [ref, width] = useWidth();
   const [underPanelRef, underPanelWidth] = useWidth();
 
-  const { connectToWallet: connectToIcon } = useIconReact();
+  const xChainType = getXChainType(sourceChain);
+  const xService = useXService(xChainType);
+  const xConnect = useXConnect();
   const handleConnect = () => {
-    const chain = xChainMap[sourceChain];
-    if (chain.xWalletType === XWalletType.ICON) {
-      connectToIcon();
-    } else if (chain.xWalletType !== XWalletType.COSMOS) {
-      modalActions.openModal(xWalletTypeModalIdMap[chain.xWalletType]);
+    if (!xService) return;
+
+    const xConnectors = xService.getXConnectors();
+    if (xChainType === 'EVM') {
+      modalActions.openModal(MODAL_ID.EVM_WALLET_OPTIONS_MODAL);
+    } else if (xChainType === 'INJECTIVE') {
+      modalActions.openModal(MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL);
+    } else {
+      xConnect(xConnectors[0]);
     }
   };
 

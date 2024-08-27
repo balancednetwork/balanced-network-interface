@@ -1,7 +1,9 @@
 import React from 'react';
 
-import { Converter } from 'icon-sdk-js';
+import { useIconNetworkId } from '@/hooks/useIconNetworkId';
 import { useIconReact } from '@/packages/icon-react';
+
+import { Converter } from 'icon-sdk-js';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 
@@ -10,7 +12,7 @@ import { useBlockNumber } from '@/store/application/hooks';
 import { getTrackerLink } from '@/utils';
 
 import { AppDispatch } from '../index';
-import { finalizeTransaction, ICONTxEventLog } from './actions';
+import { ICONTxEventLog, finalizeTransaction } from './actions';
 import { useAllTransactions } from './hooks';
 
 export function shouldCheck(tx: { addedTime: number; receipt?: {}; lastCheckedBlockNumber?: number }): boolean {
@@ -19,7 +21,8 @@ export function shouldCheck(tx: { addedTime: number; receipt?: {}; lastCheckedBl
 }
 
 export default function Updater(): null {
-  const { networkId, iconService } = useIconReact();
+  const { iconService } = useIconReact();
+  const networkId = useIconNetworkId();
 
   const lastBlockNumber = useBlockNumber();
 

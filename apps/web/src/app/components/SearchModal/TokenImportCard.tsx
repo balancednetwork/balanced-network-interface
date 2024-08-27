@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
 import { Token } from '@balancednetwork/sdk-core';
 import { Card } from 'rebass';
 import styled from 'styled-components';
@@ -9,6 +8,7 @@ import { AutoColumn } from '@/app/components/Column';
 import { Typography } from '@/app/theme';
 import { getTrackerLink } from '@/utils';
 
+import { useIconNetworkId } from '@/hooks/useIconNetworkId';
 import { ExternalLink } from './components';
 
 const AddressText = styled(Typography)`
@@ -19,7 +19,7 @@ interface TokenImportCardProps {
 }
 
 const TokenImportCard = ({ token }: TokenImportCardProps) => {
-  const { networkId: chainId } = useIconReact();
+  const chainId = useIconNetworkId();
   return (
     // @ts-ignore
     <Card>

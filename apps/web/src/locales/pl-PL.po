@@ -1281,6 +1281,10 @@ msgstr "Nieprawidłowa para"
 msgid "Send {0}"
 msgstr "Wyślij {0}"
 
+#: src/app/components/home/Savings/index.tsx
+msgid "distributed over the last 30 days."
+msgstr ""
+
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "{0} {1} for {2} {3}"
 #~ msgstr ""
@@ -1303,8 +1307,8 @@ msgstr "Portfel: {0} {1}"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
-msgid "The fee APR is calculated from the swap fees earned by a pool in the last 30 days."
-msgstr ""
+#~ msgid "The fee APR is calculated from the swap fees earned by a pool in the last 30 days."
+#~ msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Forum link"
@@ -1584,6 +1588,10 @@ msgstr ""
 msgid "You'll"
 msgstr ""
 
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+msgid "from network fees over the last 30 days."
+msgstr ""
+
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
@@ -1671,8 +1679,8 @@ msgid "{0} wallet"
 msgstr ""
 
 #: src/app/components/home/Savings/index.tsx
-msgid "{0}<0/>{1}"
-msgstr ""
+#~ msgid "{0}<0/>{1}"
+#~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
@@ -2146,7 +2154,6 @@ msgstr ""
 msgid "Connected to {numberOfConnectedWallets} blockchain"
 msgstr ""
 
-#: src/app/components/home/BBaln/BBalnSlider.tsx
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 msgid "from network fees in the last 30 days."
 msgstr ""
@@ -2593,6 +2600,11 @@ msgstr "Utwórz pulę"
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "To borrow bnUSD, deposit collateral."
+msgstr ""
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+msgid "The fee APR is calculated from the swap fees earned by a pool over the last 30 days."
 msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx

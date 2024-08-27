@@ -1,4 +1,3 @@
-import { useCreateWalletXService } from '@/lib/xcall/_zustand/useXServiceStore';
 import { useDerivedCollateralInfo } from '@/store/collateral/hooks';
 import { useDerivedLoanInfo, useLoanRecipientNetwork, useLoanState } from '@/store/loan/hooks';
 import { XChainId } from '@/types';
@@ -18,8 +17,6 @@ const useLoanWalletServiceHandler = (): XChainId => {
     }
     return collateralChain;
   }, [collateralChain, loanChain, shouldBorrow, isLoanAdjusting]);
-
-  useCreateWalletXService(activeChain);
 
   return activeChain;
 };

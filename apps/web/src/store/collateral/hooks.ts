@@ -27,7 +27,7 @@ import { formatUnits, maxAmountSpend, toBigNumber } from '@/utils';
 import { getBalanceDecimals } from '@/utils/formatter';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
-import { useDestinationEvents } from '@/xwagmi/xcall/_zustand/useXCallEventStore';
+import { useDestinationEvents } from '@/xwagmi/xcall/zustand/useXCallEventStore';
 import { AppState } from '../index';
 import {
   Field,

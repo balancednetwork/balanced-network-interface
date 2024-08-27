@@ -16,7 +16,7 @@ import { getXWalletClient } from '@/xwagmi/actions/getXWalletClient';
 import { useXAccount, useXService } from '@/xwagmi/hooks';
 import { ArchwayXService } from '@/xwagmi/xchains/archway';
 import { isDenomAsset } from '@/xwagmi/xchains/archway/utils';
-import { transactionActions } from '../_zustand/useTransactionStore';
+import { transactionActions } from '../zustand/useTransactionStore';
 
 export const FAST_INTERVAL = 10000;
 

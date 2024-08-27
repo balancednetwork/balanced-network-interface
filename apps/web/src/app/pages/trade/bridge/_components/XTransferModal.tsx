@@ -17,12 +17,12 @@ import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from '@/store/bridge/hooks';
 import { formatBigNumber } from '@/utils';
 import { getNetworkDisplayName } from '@/utils/xTokens';
-import { ApprovalState, useApproveCallback } from '@/xwagmi/xcall/_hooks/useApproveCallback';
-import useXCallFee from '@/xwagmi/xcall/_hooks/useXCallFee';
-import useXCallGasChecker from '@/xwagmi/xcall/_hooks/useXCallGasChecker';
-import { useXMessageStore } from '@/xwagmi/xcall/_zustand/useXMessageStore';
-import { useXTransactionStore, xTransactionActions } from '@/xwagmi/xcall/_zustand/useXTransactionStore';
+import { ApprovalState, useApproveCallback } from '@/xwagmi/xcall/hooks/useApproveCallback';
+import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
+import useXCallGasChecker from '@/xwagmi/xcall/hooks/useXCallGasChecker';
 import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
+import { useXMessageStore } from '@/xwagmi/xcall/zustand/useXMessageStore';
+import { useXTransactionStore, xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
 
 const StyledXCallButton = styled(StyledButton)`

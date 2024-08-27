@@ -30,7 +30,7 @@ import { formatUnits, toBigNumber } from '@/utils';
 import { getXTokenAddress } from '@/utils/xTokens';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
-import { useDestinationEvents } from '@/xwagmi/xcall/_zustand/useXCallEventStore';
+import { useDestinationEvents } from '@/xwagmi/xcall/zustand/useXCallEventStore';
 import { AppState } from '..';
 import {
   Field,

@@ -28,7 +28,7 @@ import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend, validateAddress } from '@/utils';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
-import useXCallFee from '@/xwagmi/xcall/_hooks/useXCallFee';
+import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import ChainSelector from './ChainSelector';
 
 export default function BridgeTransferForm({ openModal }) {

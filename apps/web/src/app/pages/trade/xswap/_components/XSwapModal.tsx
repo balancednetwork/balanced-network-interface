@@ -23,15 +23,15 @@ import { xChainMap } from '@/constants/xChains';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { ApprovalState, useApproveCallback } from '@/xwagmi/xcall/_hooks/useApproveCallback';
-import useXCallFee from '@/xwagmi/xcall/_hooks/useXCallFee';
-import useXCallGasChecker from '@/xwagmi/xcall/_hooks/useXCallGasChecker';
+import { ApprovalState, useApproveCallback } from '@/xwagmi/xcall/hooks/useApproveCallback';
+import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
+import useXCallGasChecker from '@/xwagmi/xcall/hooks/useXCallGasChecker';
+import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import {
   XTransactionUpdater,
   useXTransactionStore,
   xTransactionActions,
-} from '@/xwagmi/xcall/_zustand/useXTransactionStore';
-import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
+} from '@/xwagmi/xcall/zustand/useXTransactionStore';
 
 type XSwapModalProps = {
   account: string | undefined;

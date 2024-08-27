@@ -18,14 +18,14 @@ import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
 import { useCollateralType } from '@/store/collateral/hooks';
 import { useDerivedLoanInfo, useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
 import { XChainId } from '@/types';
-import useXCallFee from '@/xwagmi/xcall/_hooks/useXCallFee';
-import useXCallGasChecker from '@/xwagmi/xcall/_hooks/useXCallGasChecker';
+import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
+import useXCallGasChecker from '@/xwagmi/xcall/hooks/useXCallGasChecker';
+import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import {
   XTransactionUpdater,
   useXTransactionStore,
   xTransactionActions,
-} from '@/xwagmi/xcall/_zustand/useXTransactionStore';
-import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
+} from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import useLoanWalletServiceHandler from '../../useLoanWalletServiceHandler';
 
 export enum XLoanAction {

@@ -10,9 +10,9 @@ import ApplicationUpdater from '@/store/application/updater';
 import TransactionUpdater from '@/store/transactions/updater';
 
 import { initXWagmiStore } from '@/xwagmi/useXWagmiStore';
-import { AllTransactionsUpdater } from '@/xwagmi/xcall/_zustand/useTransactionStore';
-import { AllXMessagesUpdater } from '@/xwagmi/xcall/_zustand/useXMessageStore';
-import { AllXChainHeightsUpdater } from '@/xwagmi/xcall/_zustand/useXServiceStore';
+import { AllTransactionsUpdater } from '@/xwagmi/xcall/zustand/useTransactionStore';
+import { AllXMessagesUpdater } from '@/xwagmi/xcall/zustand/useXMessageStore';
+import { AllXChainHeightsUpdater } from '@/xwagmi/xcall/zustand/useXServiceStore';
 import { xChains } from '../constants/xChains';
 import RootRoutes from './Routes';
 

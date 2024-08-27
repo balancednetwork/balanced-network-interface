@@ -1,4 +1,9 @@
+import { bnUSD } from '@/constants/tokens';
 import { XChainId, XToken } from '@/types';
+
+import { NATIVE_ADDRESS } from '@/constants/index';
+import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
+import { sARCH } from './tokens1';
 
 export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   bnUSD: '0x1.icon',
@@ -9,13 +14,10 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   BTC: '0xa4b1.arbitrum',
   INJ: 'injective-1',
   HVH: '0x100.icon',
+  USDT: '0xa4b1.arbitrum',
+  USDC: '0xa86a.avax',
+  hyTB: '0xa86a.avax',
 };
-
-import { bnUSD } from '@/constants/tokens';
-
-import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
-import { sARCH } from './tokens1';
-import { NATIVE_ADDRESS } from '@/constants/index';
 
 export const xTokenMap: { [key in XChainId]: XToken[] } = {
   '0x1.icon': [

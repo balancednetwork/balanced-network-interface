@@ -11,7 +11,6 @@ import { ICON_XCALL_NETWORK_ID, NETWORK_ID } from '@/constants/config';
 import { ZERO } from '@/constants/index';
 import { bnUSD } from '@/constants/tokens';
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { useDestinationEvents } from '@/lib/xcall/_zustand/useXCallEventStore';
 import { useBnJsContractQuery } from '@/queries/utils';
 import {
   DEFAULT_COLLATERAL_TOKEN,
@@ -31,6 +30,7 @@ import { formatUnits, toBigNumber } from '@/utils';
 import { getXTokenAddress } from '@/utils/xTokens';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
+import { useDestinationEvents } from '@/xwagmi/xcall/_zustand/useXCallEventStore';
 import { AppState } from '..';
 import {
   Field,

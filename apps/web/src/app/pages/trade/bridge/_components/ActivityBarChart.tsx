@@ -3,7 +3,7 @@ import React from 'react';
 import { Bar, BarChart, ResponsiveContainer, Tooltip } from 'recharts';
 import styled, { useTheme } from 'styled-components';
 
-import { XCallActivityDataType } from '@/lib/xcall/_hooks/useXCallStats';
+import { XCallActivityDataType } from '@/xwagmi/xcall/_hooks/useXCallStats';
 
 const TooltipWrapper = styled.div`
   background: ${({ theme }) => theme.colors.bg4};

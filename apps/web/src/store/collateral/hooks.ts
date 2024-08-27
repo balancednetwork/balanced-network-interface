@@ -14,7 +14,6 @@ import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
 import { SUPPORTED_XCALL_CHAINS } from '@/constants/xChains';
 import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/constants/xTokens';
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { useDestinationEvents } from '@/lib/xcall/_zustand/useXCallEventStore';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useBorrowedAmounts } from '@/store/loan/hooks';
 import { setRecipientNetwork } from '@/store/loan/reducer';
@@ -28,6 +27,7 @@ import { formatUnits, maxAmountSpend, toBigNumber } from '@/utils';
 import { getBalanceDecimals } from '@/utils/formatter';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
+import { useDestinationEvents } from '@/xwagmi/xcall/_zustand/useXCallEventStore';
 import { AppState } from '../index';
 import {
   Field,

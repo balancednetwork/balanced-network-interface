@@ -11,8 +11,8 @@ import {
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
-} from '../../../lib/xcall/_zustand/types';
-import { XCallEventType } from '../../../lib/xcall/types';
+} from '../../xcall/_zustand/types';
+import { XCallEventType } from '../../xcall/types';
 import { IconXService } from './IconXService';
 import { ICONTxResultType } from './types';
 

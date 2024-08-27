@@ -9,8 +9,8 @@ import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { XSigningArchwayClient } from '@/xwagmi/xchains/archway/XSigningArchwayClient';
 import { getFeeParam, isDenomAsset } from '@/xwagmi/xchains/archway/utils';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
-import { XTransactionInput, XTransactionType } from '../../../lib/xcall/_zustand/types';
-import { getBytesFromString, getRlpEncodedSwapData } from '../../../lib/xcall/utils';
+import { XTransactionInput, XTransactionType } from '../../xcall/_zustand/types';
+import { getBytesFromString, getRlpEncodedSwapData } from '../../xcall/utils';
 import { ArchwayXService } from './ArchwayXService';
 
 export class ArchwayXWalletClient extends XWalletClient {

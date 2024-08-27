@@ -10,8 +10,8 @@ import {
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
-} from '../../../lib/xcall/_zustand/types';
-import { XCallEventType } from '../../../lib/xcall/types';
+} from '../../xcall/_zustand/types';
+import { XCallEventType } from '../../xcall/types';
 import { ArchwayXService } from './ArchwayXService';
 
 const XCallEventSignatureMap = {

@@ -9,10 +9,10 @@ import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from '@/app/theme'
 import ApplicationUpdater from '@/store/application/updater';
 import TransactionUpdater from '@/store/transactions/updater';
 
-import { AllTransactionsUpdater } from '@/lib/xcall/_zustand/useTransactionStore';
-import { AllXMessagesUpdater } from '@/lib/xcall/_zustand/useXMessageStore';
-import { AllXChainHeightsUpdater } from '@/lib/xcall/_zustand/useXServiceStore';
 import { initXWagmiStore } from '@/xwagmi/useXWagmiStore';
+import { AllTransactionsUpdater } from '@/xwagmi/xcall/_zustand/useTransactionStore';
+import { AllXMessagesUpdater } from '@/xwagmi/xcall/_zustand/useXMessageStore';
+import { AllXChainHeightsUpdater } from '@/xwagmi/xcall/_zustand/useXServiceStore';
 import { xChains } from '../constants/xChains';
 import RootRoutes from './Routes';
 

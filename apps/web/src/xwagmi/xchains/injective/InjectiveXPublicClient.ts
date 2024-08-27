@@ -1,16 +1,16 @@
 import { fromBase64, toBase64 } from '@injectivelabs/sdk-ts';
 
 import { injective } from '@/constants/xChains';
+import { XChainId } from '@/types';
+import { XPublicClient } from '@/xwagmi/core';
 import {
   TransactionStatus,
   XCallEvent,
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
-} from '@/lib/xcall/_zustand/types';
-import { XCallEventType } from '@/lib/xcall/types';
-import { XChainId } from '@/types';
-import { XPublicClient } from '@/xwagmi/core';
+} from '@/xwagmi/xcall/_zustand/types';
+import { XCallEventType } from '@/xwagmi/xcall/types';
 import { InjectiveXService } from './InjectiveXService';
 
 const XCallEventSignatureMap = {

@@ -8,8 +8,8 @@ import { NATIVE_ADDRESS } from '@/constants/index';
 import { toDec } from '@/utils';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { toHex } from 'viem';
-import { XTransactionInput, XTransactionType } from '../../../lib/xcall/_zustand/types';
-import { getRlpEncodedSwapData } from '../../../lib/xcall/utils';
+import { XTransactionInput, XTransactionType } from '../../xcall/_zustand/types';
+import { getRlpEncodedSwapData } from '../../xcall/utils';
 import { HavahXService } from './HavahXService';
 import { havahJs } from './havahJs';
 

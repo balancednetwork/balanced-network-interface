@@ -19,7 +19,7 @@ import { Field } from '@/store/swap/reducer';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { formatBigNumber, shortenAddress, toDec } from '@/utils';
-import { getRlpEncodedSwapData } from '../../../../../lib/xcall/utils';
+import { getRlpEncodedSwapData } from '../../../../../xwagmi/xcall/utils';
 
 type SwapModalProps = {
   isOpen: boolean;

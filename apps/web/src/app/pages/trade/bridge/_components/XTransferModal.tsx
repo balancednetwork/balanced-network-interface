@@ -14,15 +14,15 @@ import { Typography } from '@/app/theme';
 import { xChainMap } from '@/constants/xChains';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
-import { ApprovalState, useApproveCallback } from '@/lib/xcall/_hooks/useApproveCallback';
-import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
-import useXCallGasChecker from '@/lib/xcall/_hooks/useXCallGasChecker';
-import { XTransactionInput, XTransactionType } from '@/lib/xcall/_zustand/types';
-import { useXMessageStore } from '@/lib/xcall/_zustand/useXMessageStore';
-import { useXTransactionStore, xTransactionActions } from '@/lib/xcall/_zustand/useXTransactionStore';
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from '@/store/bridge/hooks';
 import { formatBigNumber } from '@/utils';
 import { getNetworkDisplayName } from '@/utils/xTokens';
+import { ApprovalState, useApproveCallback } from '@/xwagmi/xcall/_hooks/useApproveCallback';
+import useXCallFee from '@/xwagmi/xcall/_hooks/useXCallFee';
+import useXCallGasChecker from '@/xwagmi/xcall/_hooks/useXCallGasChecker';
+import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/_zustand/types';
+import { useXMessageStore } from '@/xwagmi/xcall/_zustand/useXMessageStore';
+import { useXTransactionStore, xTransactionActions } from '@/xwagmi/xcall/_zustand/useXTransactionStore';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
 
 const StyledXCallButton = styled(StyledButton)`

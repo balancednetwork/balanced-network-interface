@@ -13,17 +13,17 @@ import { Typography } from '@/app/theme';
 import { xChainMap } from '@/constants/xChains';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
-import { ApprovalState, useApproveCallback } from '@/lib/xcall/_hooks/useApproveCallback';
-import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
-import useXCallGasChecker from '@/lib/xcall/_hooks/useXCallGasChecker';
-import { XTransactionInput, XTransactionType } from '@/lib/xcall/_zustand/types';
+import { useCollateralActionHandlers, useDerivedCollateralInfo } from '@/store/collateral/hooks';
+import { XChainId, XToken } from '@/types';
+import { ApprovalState, useApproveCallback } from '@/xwagmi/xcall/_hooks/useApproveCallback';
+import useXCallFee from '@/xwagmi/xcall/_hooks/useXCallFee';
+import useXCallGasChecker from '@/xwagmi/xcall/_hooks/useXCallGasChecker';
+import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/_zustand/types';
 import {
   XTransactionUpdater,
   useXTransactionStore,
   xTransactionActions,
-} from '@/lib/xcall/_zustand/useXTransactionStore';
-import { useCollateralActionHandlers, useDerivedCollateralInfo } from '@/store/collateral/hooks';
-import { XChainId, XToken } from '@/types';
+} from '@/xwagmi/xcall/_zustand/useXTransactionStore';
 import useLoanWalletServiceHandler from '../../useLoanWalletServiceHandler';
 
 export enum XCollateralAction {

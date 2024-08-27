@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { XChainId } from '@/types';
 
-import { CrossChainTxType } from '@/lib/xcall/types';
+import { CrossChainTxType } from '@/xwagmi/xcall/types';
 import { AppState } from '../index';
 import { addTransactionResult, initTransaction } from './actions';
 

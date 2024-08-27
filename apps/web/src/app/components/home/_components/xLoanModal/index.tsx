@@ -15,17 +15,17 @@ import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { xChainMap } from '@/constants/xChains';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
-import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
-import useXCallGasChecker from '@/lib/xcall/_hooks/useXCallGasChecker';
-import { XTransactionInput, XTransactionType } from '@/lib/xcall/_zustand/types';
+import { useCollateralType } from '@/store/collateral/hooks';
+import { useDerivedLoanInfo, useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
+import { XChainId } from '@/types';
+import useXCallFee from '@/xwagmi/xcall/_hooks/useXCallFee';
+import useXCallGasChecker from '@/xwagmi/xcall/_hooks/useXCallGasChecker';
+import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/_zustand/types';
 import {
   XTransactionUpdater,
   useXTransactionStore,
   xTransactionActions,
-} from '@/lib/xcall/_zustand/useXTransactionStore';
-import { useCollateralType } from '@/store/collateral/hooks';
-import { useDerivedLoanInfo, useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
-import { XChainId } from '@/types';
+} from '@/xwagmi/xcall/_zustand/useXTransactionStore';
 import useLoanWalletServiceHandler from '../../useLoanWalletServiceHandler';
 
 export enum XLoanAction {

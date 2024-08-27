@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
@@ -15,17 +15,14 @@ import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { xChainMap } from '@/constants/xChains';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
+import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import { useCollateralType } from '@/store/collateral/hooks';
 import { useDerivedLoanInfo, useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
 import { XChainId } from '@/xwagmi/types';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import useXCallGasChecker from '@/xwagmi/xcall/hooks/useXCallGasChecker';
-import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
-import {
-  XTransactionUpdater,
-  useXTransactionStore,
-  xTransactionActions,
-} from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
+import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import useLoanWalletServiceHandler from '../../useLoanWalletServiceHandler';
 
 export enum XLoanAction {
@@ -34,6 +31,7 @@ export enum XLoanAction {
 }
 
 type XLoanModalProps = {
+  modalId?: MODAL_ID;
   collateralAccount: string | undefined;
   sourceChain: XChainId;
   originationFee: BigNumber;
@@ -54,6 +52,7 @@ export const presenceVariants = {
 };
 
 const XLoanModal = ({
+  modalId = MODAL_ID.XLOAN_CONFIRM_MODAL,
   collateralAccount,
   bnUSDAmount,
   sourceChain,
@@ -62,7 +61,8 @@ const XLoanModal = ({
   storedModalValues,
 }: XLoanModalProps) => {
   useModalStore();
-  const { currentId } = useXTransactionStore();
+
+  const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
   const loanNetwork = useLoanRecipientNetwork();
@@ -88,13 +88,24 @@ const XLoanModal = ({
     adjust(false);
   }, [adjust]);
 
-  const handleDismiss = () => {
-    modalActions.closeModal(MODAL_ID.XLOAN_CONFIRM_MODAL);
+  const handleDismiss = useCallback(() => {
+    modalActions.closeModal(modalId);
     setTimeout(() => {
-      xTransactionActions.reset();
+      setCurrentId(null);
     }, 500);
-  };
+  }, [modalId]);
 
+  useEffect(() => {
+    if (
+      currentXTransaction &&
+      (currentXTransaction.status === XTransactionStatus.success ||
+        currentXTransaction.status === XTransactionStatus.failure)
+    ) {
+      handleDismiss();
+    }
+  }, [currentXTransaction, handleDismiss]);
+
+  const { sendXTransaction } = useSendXTransaction();
   const handleXLoanAction = async () => {
     if (!collateralAccount) return;
     if (!loanNetworkAddress) return;
@@ -114,7 +125,8 @@ const XLoanModal = ({
       callback: cancelAdjusting,
     };
 
-    await xTransactionActions.executeTransfer(xTransactionInput);
+    const xTransactionId = await sendXTransaction(xTransactionInput);
+    setCurrentId(xTransactionId || null);
   };
 
   const gasChecker = useXCallGasChecker(activeChain);
@@ -123,8 +135,8 @@ const XLoanModal = ({
 
   return (
     <>
-      {currentXTransaction && <XTransactionUpdater xTransaction={currentXTransaction} />}
-      <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XLOAN_CONFIRM_MODAL)} onDismiss={handleDismiss}>
+      {/* {currentXTransaction && <XTransactionUpdater xTransaction={currentXTransaction} />} */}
+      <Modal isOpen={modalActions.isModalOpen(modalId)} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px">
             {storedModalValues.action === XLoanAction.BORROW ? t`Borrow Balanced Dollars?` : t`Repay Balanced Dollars?`}

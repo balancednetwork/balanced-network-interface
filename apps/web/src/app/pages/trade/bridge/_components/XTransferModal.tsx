@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -14,15 +14,15 @@ import { Typography } from '@/app/theme';
 import { xChainMap } from '@/constants/xChains';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
+import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from '@/store/bridge/hooks';
 import { formatBigNumber } from '@/utils';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 import { ApprovalState, useApproveCallback } from '@/xwagmi/xcall/hooks/useApproveCallback';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import useXCallGasChecker from '@/xwagmi/xcall/hooks/useXCallGasChecker';
-import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
-import { useXMessageStore } from '@/xwagmi/xcall/zustand/useXMessageStore';
-import { useXTransactionStore, xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
+import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
 
 const StyledXCallButton = styled(StyledButton)`
@@ -35,10 +35,10 @@ const StyledXCallButton = styled(StyledButton)`
   }
 `;
 
-function XTransferModal() {
-  useModalStore();
-  useXMessageStore();
-  const { currentId } = useXTransactionStore();
+function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
+  useModalStore(state => state.modals?.[modalId]);
+
+  const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing = currentId !== null; // TODO: can be swap is processing
 
@@ -51,13 +51,24 @@ function XTransferModal() {
   const xChain = xChainMap[direction.from];
   const { approvalState, approveCallback } = useApproveCallback(currencyAmountToBridge, xChain.contracts.assetManager);
 
-  const handleDismiss = () => {
-    modalActions.closeModal(MODAL_ID.XTRANSFER_CONFIRM_MODAL);
+  const handleDismiss = useCallback(() => {
+    modalActions.closeModal(modalId);
     setTimeout(() => {
-      xTransactionActions.reset();
+      setCurrentId(null);
     }, 500);
-  };
+  }, [modalId]);
 
+  useEffect(() => {
+    if (
+      currentXTransaction &&
+      (currentXTransaction.status === XTransactionStatus.success ||
+        currentXTransaction.status === XTransactionStatus.failure)
+    ) {
+      handleDismiss();
+    }
+  }, [currentXTransaction, handleDismiss]);
+
+  const { sendXTransaction } = useSendXTransaction();
   const handleTransfer = async () => {
     if (currencyAmountToBridge && recipient && account && xCallFee) {
       const bridgeInfo: XTransactionInput = {
@@ -69,7 +80,8 @@ function XTransferModal() {
         xCallFee,
         isLiquidFinanceEnabled,
       };
-      await xTransactionActions.executeTransfer(bridgeInfo);
+      const xTransactionId = await sendXTransaction(bridgeInfo);
+      setCurrentId(xTransactionId || null);
     }
   };
 
@@ -83,7 +95,7 @@ function XTransferModal() {
 
   return (
     <>
-      <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XTRANSFER_CONFIRM_MODAL)} onDismiss={handleDismiss}>
+      <Modal isOpen={modalActions.isModalOpen(modalId)} onDismiss={handleDismiss}>
         <ModalContentWrapper>
           <Typography textAlign="center" mb="5px">
             {t`Transfer asset cross-chain?`}

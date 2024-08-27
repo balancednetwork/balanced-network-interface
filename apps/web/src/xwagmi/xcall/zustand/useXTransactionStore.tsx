@@ -6,9 +6,9 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { swapMessage } from '@/app/pages/trade/supply/_components/utils';
-import { XChainId } from '@/types';
 import { formatBigNumber } from '@/utils';
 import { getXWalletClient } from '@/xwagmi/actions';
+import { XChainId } from '@/xwagmi/types';
 import { MODAL_ID, modalActions } from '../../../hooks/useModalStore';
 import {
   XMessage,

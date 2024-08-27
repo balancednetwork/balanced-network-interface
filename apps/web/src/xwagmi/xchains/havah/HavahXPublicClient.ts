@@ -1,8 +1,8 @@
 import IconService, { BigNumber, Converter } from 'icon-sdk-js';
 
-import { XChainId } from '@/types';
 import { sleep } from '@/utils';
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
+import { XChainId } from '@/xwagmi/types';
 import {
   TransactionStatus,
   XCallEvent,

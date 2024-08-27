@@ -1,5 +1,4 @@
 export type CurrencyKey = string;
-
 export interface ProposalInterface {
   id: number;
   name: string;
@@ -25,8 +24,8 @@ export type IcxDisplayType = 'ICX' | 'sICX';
 
 export type InterestPeriod = { display: string; days: number };
 
-export * from './xChain';
+export * from '../xwagmi/types/xChain';
 
-export * from './xToken';
+export * from '../xwagmi/types/xToken';
 
 export * from './pair';

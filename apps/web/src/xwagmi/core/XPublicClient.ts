@@ -1,4 +1,3 @@
-import { XChainId } from '@/types';
 import {
   Transaction,
   TransactionStatus,
@@ -6,6 +5,7 @@ import {
   XCallEventType,
   XCallMessageSentEvent,
 } from '@/xwagmi/xcall/types';
+import { XChainId } from '../types';
 
 export interface IXPublicClient {
   // getBlock(blockHeight);

@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-import { XChain, XChainId } from '@/types';
 import { useXPublicClient } from '@/xwagmi/hooks';
+import { XChain, XChainId } from '@/xwagmi/types';
 
 type XServiceStore = {
   xChainHeights: Partial<Record<XChainId, bigint>>;

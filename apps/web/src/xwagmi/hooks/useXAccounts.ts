@@ -1,6 +1,6 @@
-import { XChainType } from '@/types';
 import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
+import { XChainType } from '../types';
 import { XAccount } from '../types';
 import { useXWagmiStore } from '../useXWagmiStore';
 

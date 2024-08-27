@@ -1,8 +1,8 @@
 import { Address, PublicClient, getContract, parseEventLogs } from 'viem';
 
 import { xChainMap } from '@/constants/xChains';
-import { XChainId } from '@/types';
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
+import { XChainId } from '@/xwagmi/types';
 import {
   TransactionStatus,
   XCallEvent,

@@ -10,8 +10,8 @@ import {
   NotificationPending,
   NotificationSuccess,
 } from '@/app/components/Notification/TransactionNotification';
-import { XChainId } from '@/types';
 import { getXPublicClient } from '@/xwagmi/actions';
+import { XChainId } from '@/xwagmi/types';
 import { Transaction, TransactionStatus } from '../types';
 
 type TransactionStore = {

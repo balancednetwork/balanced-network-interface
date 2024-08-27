@@ -1,8 +1,8 @@
 import { fromBase64, toBase64 } from '@injectivelabs/sdk-ts';
 
 import { injective } from '@/constants/xChains';
-import { XChainId } from '@/types';
 import { XPublicClient } from '@/xwagmi/core';
+import { XChainId } from '@/xwagmi/types';
 import {
   TransactionStatus,
   XCallEvent,

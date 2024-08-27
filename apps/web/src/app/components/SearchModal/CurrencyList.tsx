@@ -18,6 +18,7 @@ import useSortCurrency from '@/hooks/useSortCurrency';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { getSupportedXChainIdsForToken } from '@/lib/xcall/utils';
 import { useRatesWithOracle } from '@/queries/reward';
+import { useBridgeDirection, useDerivedBridgeInfo } from '@/store/bridge/hooks';
 import { useIsUserAddedToken } from '@/store/user/hooks';
 import { useCrossChainWalletBalances, useXCurrencyBalance } from '@/store/wallet/hooks';
 import { XChainId } from '@/types/xChain';
@@ -25,6 +26,7 @@ import { formatBigNumber, toFraction } from '@/utils';
 import { formatPrice } from '@/utils/formatter';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { BalanceBreakdown } from '../Wallet/styledComponents';
+import { SelectorType } from './CurrencySearch';
 import CurrencyXChainItem from './CurrencyXChainItem';
 import { HeaderText } from './styleds';
 
@@ -68,6 +70,7 @@ function CurrencyRow({
   selectedChainId,
   showCrossChainBreakdown,
   basedOnWallet,
+  selectorType,
 }: {
   currency: Currency;
   showCrossChainBreakdown: boolean;
@@ -77,6 +80,7 @@ function CurrencyRow({
   rateFracs: { [key in string]: Fraction } | undefined;
   selectedChainId: XChainId | undefined;
   basedOnWallet: boolean;
+  selectorType: SelectorType;
 }) {
   const currencyXChainIds = useMemo(() => getSupportedXChainIdsForToken(currency), [currency]);
   const balance = useXCurrencyBalance(currency, selectedChainId);
@@ -128,18 +132,37 @@ function CurrencyRow({
     basedOnWallet &&
     (price && !price.isNaN() ? basedOnWallet && balance?.times(price).isLessThan(0.01) : balance?.isLessThan(0.01));
 
+  const shouldForceNetworkIcon =
+    selectorType === SelectorType.SUPPLY_BASE || selectorType === SelectorType.SUPPLY_QUOTE || SelectorType.BRIDGE;
+
+  const bridgeDirection = useBridgeDirection();
+  const finalXChainIds = useMemo(() => {
+    if (
+      shouldForceNetworkIcon &&
+      (selectorType === SelectorType.SUPPLY_BASE || selectorType === SelectorType.SUPPLY_QUOTE)
+    ) {
+      return [ICON_XCALL_NETWORK_ID];
+    }
+
+    if (shouldForceNetworkIcon && selectorType === SelectorType.BRIDGE) {
+      return [bridgeDirection.from];
+    }
+
+    return sortedXChains;
+  }, [sortedXChains, shouldForceNetworkIcon, selectorType, bridgeDirection.from]);
+
   const RowContentSignedIn = () => {
     return (
       <>
         <Flex alignItems={'center'}>
-          {basedOnWallet && sortedXChains.length === 1 ? (
+          {(basedOnWallet || shouldForceNetworkIcon) && finalXChainIds.length === 1 ? (
             <CurrencyLogoWithNetwork
               currency={currency}
               bgColor={theme.colors.bg4}
-              chainId={sortedXChains[0]}
+              chainId={finalXChainIds[0]}
               size={'24px'}
             />
-          ) : sortedXChains.length === 0 && showCrossChainBreakdown ? (
+          ) : finalXChainIds.length === 0 && showCrossChainBreakdown ? (
             <CurrencyLogoWithNetwork
               currency={currency}
               bgColor={theme.colors.bg4}
@@ -202,6 +225,13 @@ function CurrencyRow({
               chainId={ICON_XCALL_NETWORK_ID}
               size={'24px'}
             />
+          ) : shouldForceNetworkIcon && finalXChainIds.length === 1 ? (
+            <CurrencyLogoWithNetwork
+              currency={currency}
+              bgColor={theme.colors.bg4}
+              chainId={finalXChainIds[0]}
+              size={'24px'}
+            />
           ) : (
             <CurrencyLogo currency={currency} />
           )}
@@ -239,9 +269,9 @@ function CurrencyRow({
     [onChainSelect, onSelect],
   );
 
-  const handleClick = (currency: Currency, sortedXChains: XChainId[]) => {
-    if (basedOnWallet && sortedXChains.length === 1) {
-      handleXChainCurrencySelect(currency, sortedXChains[0]);
+  const handleClick = (currency: Currency, XChainIds: XChainId[]) => {
+    if (basedOnWallet && XChainIds.length === 1) {
+      handleXChainCurrencySelect(currency, XChainIds[0]);
     } else {
       onSelect(currency);
     }
@@ -251,7 +281,7 @@ function CurrencyRow({
   return (
     <>
       <ListItem
-        onClick={() => handleClick(currency, sortedXChains)}
+        onClick={() => handleClick(currency, finalXChainIds)}
         {...(!isMobile ? { onMouseEnter: open } : null)}
         onMouseLeave={close}
         $hideBorder={!!showBreakdown}
@@ -261,7 +291,7 @@ function CurrencyRow({
 
       {showBreakdown ? (
         <StyledBalanceBreakdown $arrowPosition={currency.symbol ? `${currency.symbol.length * 5 + 26}px` : '40px'}>
-          {sortedXChains.map(xChainId => (
+          {finalXChainIds.map(xChainId => (
             <MemoizedCurrencyXChainItem
               key={`${currency.symbol}-${xChainId}`}
               xChainId={xChainId}
@@ -292,6 +322,7 @@ export default function CurrencyList({
   onDismiss,
   selectedChainId,
   basedOnWallet,
+  selectorType,
 }: {
   currencies: Currency[];
   showCrossChainBreakdown: boolean;
@@ -308,6 +339,7 @@ export default function CurrencyList({
   onDismiss: () => void;
   selectedChainId: XChainId | undefined;
   basedOnWallet: boolean;
+  selectorType: SelectorType;
 }) {
   const handleEscape = useKeyPress('Escape');
   const signedInWallets = useSignedInWallets();
@@ -392,6 +424,7 @@ export default function CurrencyList({
           selectedChainId={selectedChainId}
           showCrossChainBreakdown={showCrossChainBreakdown}
           basedOnWallet={basedOnWallet}
+          selectorType={selectorType}
         />
       ))}
     </List1>

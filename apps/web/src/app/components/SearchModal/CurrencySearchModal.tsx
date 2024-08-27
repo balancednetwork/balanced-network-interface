@@ -105,7 +105,8 @@ export default function CurrencySearchModal({
         offset={
           selectorType === SelectorType.SWAP_IN ||
           selectorType === SelectorType.SWAP_OUT ||
-          selectorType === SelectorType.SUPPLY_QUOTE
+          selectorType === SelectorType.SUPPLY_QUOTE ||
+          selectorType === SelectorType.SUPPLY_BASE
             ? [0, 35]
             : [0, 10]
         }

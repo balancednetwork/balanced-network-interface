@@ -275,6 +275,7 @@ export default function LPPanel() {
                   xChainId={'0x1.icon'}
                   showCrossChainOptions={true}
                   showCrossChainBreakdown={false}
+                  selectorType={SelectorType.SUPPLY_BASE}
                 />
               </Flex>
             </AutoColumn>

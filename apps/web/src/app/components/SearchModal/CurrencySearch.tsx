@@ -45,6 +45,8 @@ export enum SelectorType {
   SWAP_IN,
   SWAP_OUT,
   SUPPLY_QUOTE,
+  SUPPLY_BASE,
+  BRIDGE,
   OTHER,
 }
 
@@ -290,6 +292,7 @@ export function CurrencySearch({
           selectedChainId={selectedChainId}
           showCrossChainBreakdown={showCrossChainBreakdown}
           basedOnWallet={assetsTab === AssetsTab.YOUR}
+          selectorType={selectorType}
         />
       ) : (
         <Column style={{ padding: '20px 20px 0 20px' }} mb={showCommunityListControl ? -4 : 0}>

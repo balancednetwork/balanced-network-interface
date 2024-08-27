@@ -11,7 +11,7 @@ import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { UnderlineText } from '@/app/components/DropdownText';
 import { BrightPanel } from '@/app/components/Panel';
-import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
+import { CurrencySelectionType, SelectorType } from '@/app/components/SearchModal/CurrencySearch';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
 import { xChainMap } from '@/constants/xChains';
@@ -152,6 +152,7 @@ export default function BridgeTransferForm({ openModal }) {
               showCommunityListControl={false}
               xChainId={bridgeDirection.from}
               showCrossChainBreakdown={false}
+              selectorType={SelectorType.BRIDGE}
             />
           </Flex>
 

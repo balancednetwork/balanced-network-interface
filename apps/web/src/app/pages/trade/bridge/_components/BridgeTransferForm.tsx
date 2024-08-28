@@ -72,10 +72,10 @@ export default function BridgeTransferForm({ openModal }) {
 
   const xAccount = useXAccount(getXChainType(bridgeDirection.to));
   React.useEffect(() => {
-    if (xAccount.address) {
-      onChangeRecipient(xAccount.address);
-    } else if (manualAddresses[bridgeDirection.to]) {
+    if (manualAddresses[bridgeDirection.to]) {
       onChangeRecipient(manualAddresses[bridgeDirection.to] ?? null);
+    } else if (xAccount.address) {
+      onChangeRecipient(xAccount.address);
     } else {
       onChangeRecipient(null);
     }

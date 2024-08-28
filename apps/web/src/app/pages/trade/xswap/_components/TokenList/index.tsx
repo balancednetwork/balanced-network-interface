@@ -55,7 +55,7 @@ export const Grid = styled.div`
 
 const TokenList = () => {
   const { data: allTokens } = useAllTokensByAddress();
-  const { sortBy, handleSortSelect, sortData } = useSort({ key: 'name', order: 'ASC' });
+  const { sortBy, handleSortSelect, sortData } = useSort({ key: 'price_24h_change', order: 'DESC' });
   const [showingExpanded, setShowingExpanded] = React.useState(false);
   const theme = useTheme();
   const isSmallScreen = useMedia(`(minWidth: ${theme.mediaWidth.upSmall})`);

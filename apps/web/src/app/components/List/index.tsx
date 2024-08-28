@@ -48,7 +48,7 @@ export const List = styled(Box)`
 `;
 
 export const List1 = styled(Box)`
-  max-height: 270px;
+  max-height: 265px;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   padding: 0px 25px;

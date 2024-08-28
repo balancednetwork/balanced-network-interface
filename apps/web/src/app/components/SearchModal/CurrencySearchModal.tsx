@@ -102,6 +102,7 @@ export default function CurrencySearchModal({
         show={isOpen}
         anchorEl={anchorEl}
         placement="bottom"
+        forcePlacement={true}
         offset={
           selectorType === SelectorType.SWAP_IN ||
           selectorType === SelectorType.SWAP_OUT ||

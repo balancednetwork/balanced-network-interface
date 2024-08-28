@@ -3,8 +3,6 @@ import { useMemo } from 'react';
 import { Token } from '@balancednetwork/sdk-core';
 import { TokenInfo } from '@uniswap/token-lists';
 
-import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
-import { getSupportedXChainForToken } from '@/lib/xcall/utils';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { isAddress } from '@/utils';
 
@@ -38,16 +36,7 @@ export function createTokenFilterFunction<T extends Token | TokenInfo>(search: s
     return lowerSearchParts.every(p => p.length === 0 || sParts.some(sp => sp.indexOf(p) >= 0));
   };
 
-  return ({ name, symbol }: T): boolean => {
-    const tokenXChainNames = getSupportedXChainForToken(
-      COMBINED_TOKENS_LIST.find(token => token.symbol === symbol) || null,
-    )?.map(xChain => xChain.name);
-    return Boolean(
-      (symbol && matchesSearch(symbol)) ||
-        (name && matchesSearch(name)) ||
-        (tokenXChainNames && tokenXChainNames.some(xChainName => matchesSearch(xChainName))),
-    );
-  };
+  return ({ name, symbol }: T): boolean => Boolean((symbol && matchesSearch(symbol)) || (name && matchesSearch(name)));
 }
 
 export function filterTokens<T extends Token | TokenInfo>(tokens: T[], search: string): T[] {

@@ -117,6 +117,7 @@ const CrossChainOptions = ({
                   transform: `translateX(${arrowRef.current && containerRef ? Math.floor(arrowRef.current?.getBoundingClientRect().x - containerRef.getBoundingClientRect().x) + 25 + 'px' : '0'})`,
                 }}
                 placement="bottom"
+                forcePlacement={true}
                 offset={[0, 35]}
                 containerOffset={containerRef ? containerRef.getBoundingClientRect().x + 2 : 0}
                 strategy="absolute"

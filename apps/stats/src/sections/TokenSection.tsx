@@ -10,6 +10,7 @@ import AssetManagerTokenBreakdown from '@/components/AssetManagerTokenBreakdown'
 import Divider from '@/components/Divider';
 import DropdownLink from '@/components/DropdownLink';
 import { BoxPanel } from '@/components/Panel';
+import QuestionHelper, { QuestionWrapper } from '@/components/QuestionHelper';
 import SearchInput from '@/components/SearchInput';
 import Skeleton from '@/components/Skeleton';
 import Sparkline from '@/components/Sparkline';
@@ -65,7 +66,6 @@ export const HeaderText = styled(Flex)<{ className?: string }>`
   cursor: pointer;
   position: relative;
   transition: all ease 200ms;
-  padding-left: 15px;
   white-space: nowrap;
 
   &:before,
@@ -114,7 +114,6 @@ export const HeaderText = styled(Flex)<{ className?: string }>`
     props.className === 'DESC' &&
     css`
       padding-right: 15px;
-      padding-left: 15px;
       &:before,
       &:after,
       span:after,
@@ -324,17 +323,35 @@ export default React.memo(function TokenSection() {
               >
                 PRICE (24H)
               </HeaderText>
-              <HeaderText
-                role="button"
-                className={sortBy.key === 'market_cap' ? sortBy.order : ''}
-                onClick={() =>
-                  handleSortSelect({
-                    key: 'market_cap',
-                  })
-                }
-              >
-                MARKETCAP
-              </HeaderText>
+              <Flex>
+                <QuestionWrapper style={{ transform: 'translate3d(-5px, 1px, 0)' }}>
+                  <QuestionHelper
+                    width={280}
+                    text={
+                      <>
+                        <Typography color="text1">
+                          Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain.
+                        </Typography>
+                        <Typography color="text1" mt={2}>
+                          It does not reflect the total market cap for multi-chain assets.
+                        </Typography>
+                      </>
+                    }
+                  />
+                </QuestionWrapper>
+
+                <HeaderText
+                  role="button"
+                  className={sortBy.key === 'market_cap' ? sortBy.order : ''}
+                  onClick={() =>
+                    handleSortSelect({
+                      key: 'market_cap',
+                    })
+                  }
+                >
+                  MARKET CAP
+                </HeaderText>
+              </Flex>
               <HeaderText
                 role="button"
                 className={sortBy.key === 'liquidity' ? sortBy.order : ''}
@@ -344,7 +361,7 @@ export default React.memo(function TokenSection() {
                   })
                 }
               >
-                LIQUIDITY
+                Available
               </HeaderText>
               <HeaderText
                 style={{ cursor: 'default' }}

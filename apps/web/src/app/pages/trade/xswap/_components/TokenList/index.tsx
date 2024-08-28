@@ -2,6 +2,7 @@ import CommunityListToggle from '@/app/components/CommunityListToggle';
 import Divider from '@/app/components/Divider';
 import DropdownLink from '@/app/components/DropdownLink';
 import { BoxPanel } from '@/app/components/Panel';
+import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { HeaderText } from '@/app/components/SearchModal/styleds';
 import { Typography } from '@/app/theme';
@@ -39,6 +40,7 @@ export const Grid = styled.div`
   > *, ${HeaderText} {
       justify-content: flex-end;
       text-align: right;
+      padding-left: 0;
 
       &:first-child {
         justify-content: flex-start;
@@ -118,17 +120,36 @@ const TokenList = () => {
               >
                 PRICE (24H)
               </HeaderText>
-              <HeaderText
-                role="button"
-                className={sortBy.key === 'market_cap' ? sortBy.order : ''}
-                onClick={() =>
-                  handleSortSelect({
-                    key: 'market_cap',
-                  })
-                }
-              >
-                MARKETCAP
-              </HeaderText>
+              <Flex>
+                <QuestionWrapper style={{ transform: 'translate3d(-5px, 1px, 0)' }}>
+                  <QuestionHelper
+                    width={275}
+                    text={
+                      <>
+                        <Typography color="text1">
+                          <Trans>
+                            Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain.
+                          </Trans>
+                        </Typography>
+                        <Typography color="text1" mt={2}>
+                          <Trans>It does not reflect the total market cap for multi-chain assets.</Trans>
+                        </Typography>
+                      </>
+                    }
+                  />
+                </QuestionWrapper>
+                <HeaderText
+                  role="button"
+                  className={sortBy.key === 'market_cap' ? sortBy.order : ''}
+                  onClick={() =>
+                    handleSortSelect({
+                      key: 'market_cap',
+                    })
+                  }
+                >
+                  MARKET CAP
+                </HeaderText>
+              </Flex>
               <HeaderText
                 role="button"
                 className={sortBy.key === 'liquidity' ? sortBy.order : ''}
@@ -138,7 +159,7 @@ const TokenList = () => {
                   })
                 }
               >
-                LIQUIDITY
+                Available
               </HeaderText>
               <HeaderText style={{ cursor: 'default' }}>7d trend</HeaderText>
             </Grid>

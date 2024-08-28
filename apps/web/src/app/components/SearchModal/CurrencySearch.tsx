@@ -19,6 +19,7 @@ import { xTokenMap } from '@/constants/xTokens';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
 import { useBridgeDirection } from '@/store/bridge/hooks';
+import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { XChainId } from '@/types';
 import { ChartControlButton as AssetsTabButton } from '../ChartControl';
 import Column from '../Column';
@@ -122,6 +123,7 @@ export function CurrencySearch({
 
   const [invertSearchOrder] = useState<boolean>(false);
 
+  const xWallet = useCrossChainWalletBalances();
   const tokens = useAllTokens();
   const filteredXTokens = useFilteredXTokens();
   const bases = useCommonBases();
@@ -248,6 +250,21 @@ export function CurrencySearch({
     return currencySelectionType === CurrencySelectionType.NORMAL ? undefined : xChainId;
   }, [currencySelectionType, xChainId]);
 
+  const shouldShowCurrencyList = useMemo(() => {
+    if (assetsTab === AssetsTab.ALL) {
+      return true;
+    }
+    return filteredSortedTokensWithICX.some(
+      token =>
+        xWallet &&
+        Object.values(xWallet).filter(wallet =>
+          Object.values(wallet).find(
+            currencyAmount => currencyAmount.currency.symbol === token.symbol && currencyAmount.greaterThan(0),
+          ),
+        ).length > 0,
+    );
+  }, [assetsTab, filteredSortedTokensWithICX, xWallet]);
+
   return (
     <Wrapper width={width}>
       <Flex px="25px">
@@ -276,7 +293,7 @@ export function CurrencySearch({
         <Column style={{ padding: '20px 0', height: '100%' }}>
           <ImportRow token={searchToken} showImportView={showImportView} setImportToken={setImportToken} />
         </Column>
-      ) : filteredSortedTokensWithICX?.length > 0 ? (
+      ) : filteredSortedTokensWithICX?.length > 0 && shouldShowCurrencyList ? (
         <CurrencyList
           account={account}
           currencies={filterCurrencies}
@@ -297,7 +314,7 @@ export function CurrencySearch({
       ) : (
         <Column style={{ padding: '20px 20px 0 20px' }} mb={showCommunityListControl ? -4 : 0}>
           <Typography color="text3" textAlign="center" mb="20px">
-            <Trans>No results found.</Trans>
+            {debouncedQuery.length ? <Trans>No results found.</Trans> : <Trans>No assets found.</Trans>}
           </Typography>
         </Column>
       )}

@@ -32,7 +32,7 @@ export const Grid = styled.div`
   margin: 20px 0;
   gap: 1em;
   align-items: center;
-  grid-template-columns: 6fr 5fr 5fr 5fr 7fr;
+  grid-template-columns: 6fr 5fr 6fr 5fr 7fr;
   ${({ theme }) => theme.mediaWidth.upLarge`
     grid-template-columns: 25fr 14fr 15fr 14fr 15fr;
   `}
@@ -86,8 +86,8 @@ const TokenList = () => {
 
   return (
     <BoxPanel bg="bg2" mt="50px">
-      <Flex justifyContent="space-between" flexWrap="wrap" mb="25px">
-        <Typography variant="h2" mr={2}>
+      <Flex justifyContent="space-between" flexWrap="wrap" mb="5px">
+        <Typography variant="h2" mr={2} mb={4}>
           <Trans>Tokens</Trans>
         </Typography>
         <Box width={isSmallScreen ? '100%' : '295px'} mb={isSmallScreen ? '25px' : 0}>

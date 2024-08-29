@@ -210,6 +210,7 @@ export function DropdownPopper({
   offset,
   zIndex,
   strategy,
+  forcePlacement,
 }: PopperProps) {
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [arrowElement, setArrowElement] = useState<HTMLDivElement | null>(null);
@@ -223,8 +224,9 @@ export function DropdownPopper({
           element: arrowElement,
         },
       },
+      { name: 'flip', options: { fallbackPlacements: forcePlacement ? [] : [placement] } },
     ],
-    [arrowElement, offset],
+    [arrowElement, offset, forcePlacement, placement],
   );
 
   const { styles, update, attributes } = usePopper(anchorEl, popperElement, {

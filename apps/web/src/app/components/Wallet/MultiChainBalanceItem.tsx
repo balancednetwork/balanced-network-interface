@@ -1,34 +1,39 @@
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { Typography } from '@/app/theme';
+import { useRatesWithOracle } from '@/queries/reward';
 import { XChainId } from '@/types';
+import { formatBalance, formatValue } from '@/utils/formatter';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import React from 'react';
-import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, DataText, ListItem } from './styledComponents';
 import CurrencyLogo from '../CurrencyLogo';
-import { Typography } from '@/app/theme';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
-import { formatBalance, formatValue } from '@/utils/formatter';
-import { useRatesWithOracle } from '@/queries/reward';
+import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, DataText, ListItem } from './styledComponents';
 
 type MultiChainBalanceItemProps = {
   baseToken: Token;
   balances: { [key in XChainId]: CurrencyAmount<Currency> | undefined };
   total: BigNumber;
   value?: BigNumber;
+  searchedXChainId: XChainId | null;
 };
 
-const MultiChainBalanceItem = ({ baseToken, balances, total, value }: MultiChainBalanceItemProps) => {
+const MultiChainBalanceItem = ({ baseToken, balances, total, value, searchedXChainId }: MultiChainBalanceItemProps) => {
   const { symbol } = baseToken;
   const arrowRef = React.useRef<HTMLElement>(null);
   const rates = useRatesWithOracle();
 
+  const filteredBreakdown = Object.entries(balances).filter(([xChainId]) => {
+    return searchedXChainId ? searchedXChainId === xChainId : true;
+  });
+
   const sortedEntries = React.useMemo(() => {
-    return Object.entries(balances).sort(([, balanceA], [, balanceB]) => {
+    return filteredBreakdown.sort(([, balanceA], [, balanceB]) => {
       if (balanceA && balanceB) {
         return balanceB.lessThan(balanceA) ? -1 : 1;
       }
       return balanceA ? -1 : 1;
     });
-  }, [balances]);
+  }, [filteredBreakdown]);
 
   return (
     <>

@@ -3,6 +3,7 @@ import { xChainMap } from '@/constants/xChains';
 import useKeyPress from '@/hooks/useKeyPress';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useXBalancesByToken } from '@/store/wallet/hooks';
+import { XChainId } from '@/types/xChain';
 import { useXDisconnectAll } from '@/xwagmi/hooks';
 import { Trans, t } from '@lingui/macro';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
@@ -33,6 +34,7 @@ const Wallet = ({ close }: WalletProps) => {
   const balances = useXBalancesByToken();
   const toggleWalletModal = useWalletModalToggle();
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchedXChainId, setSearchedXChainId] = useState<XChainId | null>(null);
   const inputRef = useRef<HTMLInputElement>();
   const handleEscape = useKeyPress('Escape');
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
@@ -47,6 +49,15 @@ const Wallet = ({ close }: WalletProps) => {
   const handleDisconnectWallet = async () => {
     close();
     await xDisconnectAll();
+  };
+
+  const handleSearchQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    const searchedChain = Object.values(xChainMap).find(chain => chain.name.toLowerCase() === query.toLowerCase());
+
+    searchedChain ? setSearchedXChainId(searchedChain.xChainId) : setSearchedXChainId(null);
   };
 
   useEffect(() => {
@@ -103,9 +114,7 @@ const Wallet = ({ close }: WalletProps) => {
             value={searchQuery}
             ref={inputRef as RefObject<HTMLInputElement>}
             tabIndex={isMobile ? -1 : 1}
-            onChange={e => {
-              setSearchQuery(e.target.value);
-            }}
+            onChange={handleSearchQuery}
           />
         </Box>
         <List>
@@ -140,6 +149,7 @@ const Wallet = ({ close }: WalletProps) => {
                 balances={record.xTokenAmounts}
                 value={record.value}
                 total={record.total}
+                searchedXChainId={searchedXChainId}
               />
             ),
           )}

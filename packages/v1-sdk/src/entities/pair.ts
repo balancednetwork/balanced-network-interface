@@ -1,23 +1,23 @@
 import { getCreate2Address } from '@ethersproject/address';
-import { pack, keccak256 } from '@ethersproject/solidity';
+import { keccak256, pack } from '@ethersproject/solidity';
 import invariant from 'tiny-invariant';
 
-import { BigintIsh, Price, sqrt, Token, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
+import { BigintIsh, CurrencyAmount, Fraction, Price, Token, sqrt } from '@balancednetwork/sdk-core';
 
 import {
   FACTORY_ADDRESS,
+  FIVE,
   INIT_CODE_HASH,
   MINIMUM_LIQUIDITY,
-  FIVE,
-  _997,
-  _1000,
+  NULL_CONTRACT_ADDRESS,
   ONE,
   ZERO,
   _99,
   _100,
-  NULL_CONTRACT_ADDRESS,
+  _997,
+  _1000,
 } from '../constants';
-import { InsufficientReservesError, InsufficientInputAmountError } from '../errors';
+import { InsufficientInputAmountError, InsufficientReservesError } from '../errors';
 
 export const computePairAddress = ({
   factoryAddress,
@@ -67,11 +67,12 @@ export class Pair {
       const tokenADecimals = tokenAmounts[0].currency.decimals;
       const tokenBDecimals = tokenAmounts[1].currency.decimals;
       const decimals = tokenADecimals !== tokenBDecimals ? (tokenADecimals + tokenBDecimals) / 2 : tokenADecimals;
+
       this.liquidityToken = new Token(
         tokenAmounts[0].currency.chainId,
         // Pair.getAddress(tokenAmounts[0].currency, tokenAmounts[1].currency),
         'cx0000000000000000000000000000000000000002',
-        decimals,
+        Math.ceil(decimals),
         'BALN-V2',
         'Balanced V2',
       );
@@ -96,11 +97,12 @@ export class Pair {
       const tokenADecimals = tokenAmounts[0].currency.decimals;
       const tokenBDecimals = tokenAmounts[1].currency.decimals;
       const decimals = tokenADecimals !== tokenBDecimals ? (tokenADecimals + tokenBDecimals) / 2 : tokenADecimals;
+
       this.liquidityToken = new Token(
         tokenAmounts[0].currency.chainId,
         // Pair.getAddress(tokenAmounts[0].currency, tokenAmounts[1].currency),
         'cx0000000000000000000000000000000000000002',
-        decimals,
+        Math.ceil(decimals),
         'BALN-V2',
         'Balanced V2',
       );

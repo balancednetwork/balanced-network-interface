@@ -1,5 +1,5 @@
 import { ChainLogo } from '@/app/components/ChainLogo';
-import { xChainMap } from '@/constants/xChains';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
 import { Currency } from '@balancednetwork/sdk-core';
 import React from 'react';

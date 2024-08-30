@@ -11,10 +11,10 @@ import Divider from '@/app/components/Divider';
 import QuestionHelper from '@/app/components/QuestionHelper';
 import SlippageSetting from '@/app/components/SlippageSetting';
 import { Typography } from '@/app/theme';
-import { xChainMap } from '@/constants/xChains';
 import { useSetSlippageTolerance, useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 

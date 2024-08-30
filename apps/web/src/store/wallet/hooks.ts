@@ -35,10 +35,10 @@ import { changeBalances, changeICONBalances } from './reducer';
 import { useXBalances } from '@/xwagmi/hooks/useXBalances';
 import { XChainId } from '@/xwagmi/types';
 
-import { SUPPORTED_XCALL_CHAINS } from '@/constants/xChains';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
 import { useRatesWithOracle } from '@/queries/reward';
+import { SUPPORTED_XCALL_CHAINS } from '@/xwagmi/constants/xChains';
 import { useXAccount } from '@/xwagmi/hooks';
 
 export function useCrossChainWalletBalances(): AppState['wallet'] {

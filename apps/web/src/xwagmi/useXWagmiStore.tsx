@@ -1,4 +1,4 @@
-import { xChains } from '@/constants/xChains';
+import { xChains } from '@/xwagmi/constants/xChains';
 import { XChainId, XChainType } from '@/xwagmi/types';
 import { useEffect } from 'react';
 import { create } from 'zustand';

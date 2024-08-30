@@ -1,4 +1,4 @@
-import { xTokenMap } from '@/constants/xTokens';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XChainId } from '@/xwagmi/types';
 
 const useXTokens = (from: XChainId, to?: XChainId) => {

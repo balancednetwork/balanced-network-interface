@@ -5,7 +5,7 @@ import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { NATIVE_ADDRESS } from '@/constants/index';
-import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/constants/xChains';
+import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { uintToBytes } from '@/xwagmi/utils';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';

@@ -1,6 +1,6 @@
 import { fromBase64, toBase64 } from '@injectivelabs/sdk-ts';
 
-import { injective } from '@/constants/xChains';
+import { injective } from '@/xwagmi/constants/xChains';
 import { XPublicClient } from '@/xwagmi/core';
 import { XChainId, XToken } from '@/xwagmi/types';
 import {

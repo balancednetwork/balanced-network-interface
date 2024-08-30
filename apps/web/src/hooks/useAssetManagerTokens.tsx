@@ -1,5 +1,5 @@
 import { NATIVE_ADDRESS } from '@/constants/index';
-import { xTokenMap } from '@/constants/xTokens';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XChainId, XToken } from '@/xwagmi/types';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';

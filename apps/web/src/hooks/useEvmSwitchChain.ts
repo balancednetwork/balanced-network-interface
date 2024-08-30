@@ -1,5 +1,5 @@
-import { xChainMap } from '@/constants/xChains';
 import { getXChainType } from '@/xwagmi/actions';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXService } from '@/xwagmi/hooks';
 import { XChainId } from '@/xwagmi/types';
 import { InjectiveXService } from '@/xwagmi/xchains/injective';

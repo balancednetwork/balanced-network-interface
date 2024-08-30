@@ -1,4 +1,4 @@
-import { xChainMap } from '@/constants/xChains';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
 import { bech32 } from 'bech32';

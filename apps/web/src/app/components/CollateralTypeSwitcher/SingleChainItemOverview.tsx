@@ -1,10 +1,10 @@
 import { Typography } from '@/app/theme';
 import { useICX } from '@/constants/tokens';
-import { xChainMap } from '@/constants/xChains';
 import { useIcxDisplayType } from '@/store/collateral/hooks';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { toFraction } from '@/utils';
 import { formatValue } from '@/utils/formatter';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { Position, XChainId } from '@/xwagmi/types';
 import { Token } from '@balancednetwork/sdk-core';
 import React from 'react';

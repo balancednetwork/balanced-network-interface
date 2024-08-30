@@ -6,7 +6,7 @@ import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xwa
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 
 import { NATIVE_ADDRESS } from '@/constants';
-import { FROM_SOURCES, TO_SOURCES, injective } from '@/constants/xChains';
+import { FROM_SOURCES, TO_SOURCES, injective } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core';
 import { XToken } from '@/xwagmi/types';
 import { uintToBytes } from '@/xwagmi/utils';

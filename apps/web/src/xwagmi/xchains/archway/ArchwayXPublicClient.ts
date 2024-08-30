@@ -1,6 +1,6 @@
 import { ArchwayClient } from '@archwayhq/arch3.js';
 
-import { archway } from '@/constants/xChains';
+import { archway } from '@/xwagmi/constants/xChains';
 
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from '@/constants/tokens1';
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';

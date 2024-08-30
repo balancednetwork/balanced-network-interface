@@ -19,8 +19,8 @@ import { useWalletModalToggle } from '@/store/application/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { shortenAddress } from '@/utils';
 
-import { xChainMap } from '@/constants/xChains';
 import { useSignedInWallets } from '@/hooks/useWallets';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { Placement } from '@popperjs/core';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';

@@ -1,6 +1,6 @@
 import { Address, PublicClient, erc20Abi, getContract, parseEventLogs } from 'viem';
 
-import { xChainMap } from '@/constants/xChains';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
 import { XChainId, XToken } from '@/xwagmi/types';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';

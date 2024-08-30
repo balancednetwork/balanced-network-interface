@@ -8,10 +8,10 @@ import { canBeQueue } from '@/constants/currency';
 import { NATIVE_ADDRESS, ONE } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
 import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
-import { xChainMap } from '@/constants/xChains';
 import { PairData, PairState } from '@/hooks/useV2Pairs';
 import { Field } from '@/store/swap/reducer';
 import { PairInfo } from '@/types';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
 import { Validator } from 'icon-sdk-js';
 

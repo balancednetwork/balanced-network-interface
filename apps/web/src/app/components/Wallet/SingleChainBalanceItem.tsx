@@ -1,8 +1,8 @@
 import { Typography } from '@/app/theme';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
-import { xChainMap } from '@/constants/xChains';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';

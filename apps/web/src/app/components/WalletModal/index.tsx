@@ -24,11 +24,11 @@ import { useActiveLocale } from '@/hooks/useActiveLocale';
 import { useModalOpen, useWalletModalToggle } from '@/store/application/hooks';
 import { ApplicationModal } from '@/store/application/reducer';
 
-import { xChainMap } from '@/constants/xChains';
 import useDebounce from '@/hooks/useDebounce';
 import { MODAL_ID } from '@/hooks/useModalStore';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { getXChainType } from '@/xwagmi/actions';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXDisconnectAll } from '@/xwagmi/hooks';
 import { useSwitchChain } from 'wagmi';
 import Divider from '../Divider';

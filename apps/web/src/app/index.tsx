@@ -13,7 +13,7 @@ import { initXWagmiStore } from '@/xwagmi/useXWagmiStore';
 import { AllTransactionsUpdater } from '@/xwagmi/xcall/zustand/useTransactionStore';
 import { AllXMessagesUpdater } from '@/xwagmi/xcall/zustand/useXMessageStore';
 import { AllXChainHeightsUpdater } from '@/xwagmi/xcall/zustand/useXServiceStore';
-import { xChains } from '../constants/xChains';
+import { xChains } from '../xwagmi/constants/xChains';
 import RootRoutes from './Routes';
 
 function Updaters() {

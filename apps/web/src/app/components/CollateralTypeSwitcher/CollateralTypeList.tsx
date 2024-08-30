@@ -4,9 +4,9 @@ import { useMedia } from 'react-use';
 
 import { Typography } from '@/app/theme';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
-import { xChainMap } from '@/constants/xChains';
 import { useAllCollateralData, useCollateralActionHandlers, useUserPositionsData } from '@/store/collateral/hooks';
 import { useLoanActionHandlers } from '@/store/loan/hooks';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
 import { Trans } from '@lingui/macro';
 import { BalanceAndValueWrap, DashGrid, HeaderText, List, walletBreakpoint } from '../Wallet/styledComponents';

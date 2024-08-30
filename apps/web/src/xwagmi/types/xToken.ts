@@ -23,6 +23,10 @@ export class XToken extends Token {
   static getXToken(xChainId: XChainId, token: Token) {
     return new XToken(xChainId, token.chainId, token.address, token.decimals, token.symbol, token.name);
   }
+
+  isNativeXToken() {
+    return 'native' === this.address;
+  }
 }
 
 export type XWalletAssetRecord = {

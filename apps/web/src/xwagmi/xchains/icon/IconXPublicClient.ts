@@ -4,7 +4,7 @@ import IconService, { Converter, BigNumber } from 'icon-sdk-js';
 
 import { sleep } from '@/utils';
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId, XToken } from '@/xwagmi/types';
 import {
   TransactionStatus,
   XCallEvent,
@@ -45,6 +45,11 @@ export class IconXPublicClient extends XPublicClient {
 
   getPublicClient() {
     return this.getXService().iconService;
+  }
+
+  async getBalance(address: string | undefined, xToken: XToken) {
+    // not used
+    return Promise.resolve(undefined);
   }
 
   async getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean, sources?: string[]) {

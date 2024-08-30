@@ -2,8 +2,10 @@ import { ArchwayClient } from '@archwayhq/arch3.js';
 
 import { archway } from '@/constants/xChains';
 
+import { ARCHWAY_FEE_TOKEN_SYMBOL } from '@/constants/tokens1';
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId, XToken } from '@/xwagmi/types';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import {
   TransactionStatus,
   XCallEvent,
@@ -13,6 +15,7 @@ import {
   XCallMessageSentEvent,
 } from '../../xcall/types';
 import { ArchwayXService } from './ArchwayXService';
+import { isDenomAsset } from './utils';
 
 const XCallEventSignatureMap = {
   [XCallEventType.CallMessageSent]: 'wasm-CallMessageSent',
@@ -31,6 +34,23 @@ export class ArchwayXPublicClient extends XPublicClient {
       throw new Error('ArchwayXPublicClient: publicClient is not initialized yet');
     }
     return publicClient;
+  }
+
+  async getBalance(address: string | undefined, xToken: XToken) {
+    if (!address) return;
+
+    if (xToken.isNativeXToken()) {
+      const archTokenBalance = await this.getPublicClient().getBalance(address, ARCHWAY_FEE_TOKEN_SYMBOL);
+      return CurrencyAmount.fromRawAmount(xToken, archTokenBalance.amount || 0);
+    } else if (isDenomAsset(xToken)) {
+      const nativeBalance = await this.getPublicClient().getBalance(address, xToken.address);
+      return CurrencyAmount.fromRawAmount(xToken, nativeBalance.amount || 0);
+    } else if (!isDenomAsset(xToken)) {
+      const balance = await this.getPublicClient().queryContractSmart(xToken.address, { balance: { address } });
+      return CurrencyAmount.fromRawAmount(xToken, balance.balance);
+    } else {
+      throw new Error(`Unsupported token: ${xToken.symbol}`);
+    }
   }
 
   async getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean) {

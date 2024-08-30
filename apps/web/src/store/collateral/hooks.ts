@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 import { forEach } from 'lodash-es';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ICON_XCALL_NETWORK_ID, NETWORK_ID } from '@/constants/config';
+import { NETWORK_ID } from '@/constants/config';
 import { MINIMUM_ICX_FOR_ACTION } from '@/constants/index';
 import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
 import { useSignedInWallets } from '@/hooks/useWallets';
@@ -22,6 +22,7 @@ import { CurrencyKey, IcxDisplayType } from '@/types';
 import { formatUnits, maxAmountSpend, toBigNumber } from '@/utils';
 import { getBalanceDecimals } from '@/utils/formatter';
 import { getXChainType } from '@/xwagmi/actions';
+import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { SUPPORTED_XCALL_CHAINS } from '@/xwagmi/constants/xChains';
 import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/xwagmi/constants/xTokens';
 import { useXAccount } from '@/xwagmi/hooks';

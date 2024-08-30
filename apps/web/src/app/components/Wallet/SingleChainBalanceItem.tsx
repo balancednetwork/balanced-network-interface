@@ -1,7 +1,7 @@
 import { Typography } from '@/app/theme';
-import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
+import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';

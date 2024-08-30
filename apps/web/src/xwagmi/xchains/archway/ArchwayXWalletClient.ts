@@ -1,8 +1,8 @@
 import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
-import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from '@/constants/tokens1';
+import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { archway } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { XToken } from '@/xwagmi/types';

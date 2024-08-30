@@ -7,10 +7,10 @@ import { Abi, Address, WriteContractReturnType, erc20Abi, getContract } from 'vi
 import { usePublicClient, useWalletClient } from 'wagmi';
 
 import { openToast } from '@/btp/src/connectors/transactionToast';
-import { NATIVE_ADDRESS } from '@/constants/index';
 import { TransactionStatus } from '@/store/transactions/hooks';
 import { getXChainType } from '@/xwagmi/actions/getXChainType';
 import { getXWalletClient } from '@/xwagmi/actions/getXWalletClient';
+import { NATIVE_ADDRESS } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount, useXService } from '@/xwagmi/hooks';
 import { ArchwayXService } from '@/xwagmi/xchains/archway';

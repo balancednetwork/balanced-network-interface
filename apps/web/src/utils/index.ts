@@ -3,14 +3,15 @@ import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 
+import { ONE } from '@/constants';
 import { NETWORK_ID } from '@/constants/config';
 import { canBeQueue } from '@/constants/currency';
-import { NATIVE_ADDRESS, ONE } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
 import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
 import { PairData, PairState } from '@/hooks/useV2Pairs';
 import { Field } from '@/store/swap/reducer';
 import { PairInfo } from '@/types';
+import { NATIVE_ADDRESS } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
 import { Validator } from 'icon-sdk-js';

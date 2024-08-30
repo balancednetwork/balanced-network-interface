@@ -33,10 +33,10 @@ import { showMessageOnBeforeUnload } from '@/utils/messages';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import ModalContent from '@/app/components/ModalContent';
-import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import useWidth from '@/hooks/useWidth';
 import { useIconReact } from '@/packages/icon-react';
+import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { PanelInfoItem, PanelInfoWrap, UnderPanel } from './CollateralPanel';
 import LoanChainSelector from './_components/LoanChainSelector';
 import XLoanModal, { XLoanAction } from './_components/xLoanModal';

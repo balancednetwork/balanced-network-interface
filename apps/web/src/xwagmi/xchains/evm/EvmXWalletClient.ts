@@ -3,8 +3,7 @@ import { RLP } from '@ethereumjs/rlp';
 import { Address, PublicClient, WalletClient, WriteContractParameters, toHex } from 'viem';
 import bnJs from '../icon/bnJs';
 
-import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
-import { NATIVE_ADDRESS } from '@/constants/index';
+import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { uintToBytes } from '@/xwagmi/utils';

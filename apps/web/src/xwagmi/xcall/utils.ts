@@ -3,7 +3,7 @@ import rlp from 'rlp';
 import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 
-import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
+import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XToken } from '@/xwagmi/types';
 import { uintToBytes } from '@/xwagmi/utils';

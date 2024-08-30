@@ -1,4 +1,4 @@
-import { NATIVE_ADDRESS } from '@/constants/index';
+import { NATIVE_ADDRESS } from '@/xwagmi/constants';
 import { xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XChainId, XToken } from '@/xwagmi/types';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';

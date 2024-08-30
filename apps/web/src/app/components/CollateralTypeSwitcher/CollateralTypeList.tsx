@@ -3,9 +3,9 @@ import React, { useCallback, useMemo } from 'react';
 import { useMedia } from 'react-use';
 
 import { Typography } from '@/app/theme';
-import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { useAllCollateralData, useCollateralActionHandlers, useUserPositionsData } from '@/store/collateral/hooks';
 import { useLoanActionHandlers } from '@/store/loan/hooks';
+import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
 import { Trans } from '@lingui/macro';

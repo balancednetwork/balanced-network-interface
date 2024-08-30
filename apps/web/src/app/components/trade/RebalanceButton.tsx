@@ -1,18 +1,18 @@
 import React from 'react';
 
-import { t } from '@lingui/macro';
 import { useIconReact } from '@/packages/icon-react';
-import { Flex, Box } from 'rebass/styled-components';
+import { t } from '@lingui/macro';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { UnderlineText } from '@/app/components/DropdownText';
 import QuestionHelper from '@/app/components/QuestionHelper';
 import { Typography } from '@/app/theme';
-import bnJs from '@/bnJs';
 import { useRebalancingStatusQuery } from '@/queries/rebalancing';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 export default function RebalanceButton() {
   const { data: isAvailableToRebalance } = useRebalancingStatusQuery();

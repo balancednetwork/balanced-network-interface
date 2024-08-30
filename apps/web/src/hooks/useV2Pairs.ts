@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useEffect, useMemo, useState } from 'react';
 
 import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
@@ -7,15 +7,15 @@ import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 
 import { usePoolPanelContext } from '@/app/pages/trade/supply/_components/PoolPanelContext';
-import bnJs from '@/bnJs';
 import { canBeQueue } from '@/constants/currency';
 import { BIGINT_ZERO, FRACTION_ZERO } from '@/constants/misc';
-import { getPair } from '@/utils';
-import { fetchStabilityFundBalances, getAcceptedTokens } from '@/store/stabilityFund/hooks';
 import { bnUSD } from '@/constants/tokens';
+import { fetchStabilityFundBalances, getAcceptedTokens } from '@/store/stabilityFund/hooks';
+import { getPair } from '@/utils';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
-import useLastCount from './useLastCount';
 import { NETWORK_ID } from '@/constants/config';
+import useLastCount from './useLastCount';
 
 const NON_EXISTENT_POOL_ID = 0;
 const MULTI_CALL_BATCH_SIZE = 25;

@@ -11,7 +11,6 @@ import LockBar from '@/app/components/LockBar';
 import Modal from '@/app/components/Modal';
 import { BoxPanel, BoxPanelWrap } from '@/app/components/Panel';
 import { Typography } from '@/app/theme';
-import bnJs from '@/bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
 import useInterval from '@/hooks/useInterval';
@@ -31,6 +30,7 @@ import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import ModalContent from '@/app/components/ModalContent';
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';

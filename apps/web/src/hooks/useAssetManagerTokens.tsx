@@ -1,7 +1,7 @@
-import bnJs from '@/bnJs';
 import { NATIVE_ADDRESS } from '@/constants/index';
 import { xTokenMap } from '@/constants/xTokens';
 import { XChainId, XToken } from '@/xwagmi/types';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 

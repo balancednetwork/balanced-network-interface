@@ -1,5 +1,3 @@
-import bnJs from '@/bnJs';
-
 /**
  * This function has two roles:
  * 1) If the `id` is empty it assings something so does i18next doesn't throw error. Typescript should prevent this anyway

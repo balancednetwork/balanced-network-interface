@@ -1,5 +1,5 @@
-import bnJs from '@/bnJs';
 import { Percent } from '@balancednetwork/sdk-core';
+import bnJs from './bnJs';
 
 import { NETWORK_ID } from '@/constants/config';
 import { toDec } from '@/utils';

@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
 
-import { Fraction } from '@balancednetwork/sdk-core';
-import BigNumber from 'bignumber.js';
 import { useIconReact } from '@/packages/icon-react';
-import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
+import { Fraction } from '@balancednetwork/sdk-core';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
+import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
-import bnJs from '@/bnJs';
 import { PLUS_INFINITY } from '@/constants/index';
 import { useTokenPrices } from '@/queries/backendv2';
 import { useLPReward } from '@/queries/reward';
@@ -19,6 +18,7 @@ import { useLoanInputAmount } from '@/store/loan/hooks';
 import { useOraclePrice } from '@/store/oracle/hooks';
 import { useLockedAmount, useUnclaimedRewards } from '@/store/savings/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import { AppState } from '..';
 import { setReward } from './reducer';

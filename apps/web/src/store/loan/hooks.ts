@@ -6,7 +6,6 @@ import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
-import bnJs from '@/bnJs';
 import { ICON_XCALL_NETWORK_ID, NETWORK_ID } from '@/constants/config';
 import { ZERO } from '@/constants/index';
 import { bnUSD } from '@/constants/tokens';
@@ -31,6 +30,7 @@ import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
 import { XChainId } from '@/xwagmi/types';
 import { useDestinationEvents } from '@/xwagmi/xcall/zustand/useXCallEventStore';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { AppState } from '..';
 import {
   Field,

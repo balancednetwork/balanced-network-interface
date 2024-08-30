@@ -1,22 +1,22 @@
 import React from 'react';
 
-import { t, Trans } from '@lingui/macro';
 import { useIconReact } from '@/packages/icon-react';
+import { Trans, t } from '@lingui/macro';
 import { Helmet } from 'react-helmet-async';
-import { Flex, Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button } from '@/app/components/Button';
 import Logo from '@/app/components/Logo';
 import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
-import bnJs from '@/bnJs';
 import { BATCH_SIZE, useUserCollectedFeesQuery } from '@/queries/reward';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useHasNetworkFees } from '@/store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from '@/store/transactions/hooks';
 import { shortenAddress } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import '@/styles/airdrip.css';
 
 const Container = styled(Box)`

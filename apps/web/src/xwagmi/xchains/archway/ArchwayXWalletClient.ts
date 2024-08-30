@@ -1,5 +1,5 @@
-import bnJs from '@/bnJs';
 import { Percent } from '@balancednetwork/sdk-core';
+import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from '@/constants/tokens1';

@@ -1,12 +1,12 @@
 import { Currency, Token } from '@balancednetwork/sdk-core';
-import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 import { CHART_PERIODS } from '@/app/components/TradingViewChart';
-import bnJs from '@/bnJs';
 import { ONE } from '@/constants/index';
 import QUERY_KEYS from '@/queries/queryKeys';
 import { Field } from '@/store/swap/reducer';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import { API_ENDPOINT } from '../constants';
 

@@ -7,7 +7,6 @@ import BigNumber from 'bignumber.js';
 import { forEach } from 'lodash-es';
 import { useDispatch, useSelector } from 'react-redux';
 
-import bnJs from '@/bnJs';
 import { ICON_XCALL_NETWORK_ID, NETWORK_ID } from '@/constants/config';
 import { MINIMUM_ICX_FOR_ACTION } from '@/constants/index';
 import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
@@ -29,6 +28,7 @@ import { useXAccount } from '@/xwagmi/hooks';
 import { Position, XPositions, XPositionsRecord, XToken } from '@/xwagmi/types';
 import { XChainId } from '@/xwagmi/types';
 import { useDestinationEvents } from '@/xwagmi/xcall/zustand/useXCallEventStore';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { AppState } from '../index';
 import {
   Field,

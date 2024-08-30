@@ -1,12 +1,12 @@
 import React from 'react';
 
+import { useIconReact } from '@/packages/icon-react';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
-import { t, Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
 import { isEmpty } from 'lodash-es';
-import { useIconReact } from '@/packages/icon-react';
-import { Flex, Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import { useTheme } from 'styled-components';
 
 import AddressInputPanel from '@/app/components/AddressInputPanel';
@@ -15,13 +15,13 @@ import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
-import bnJs from '@/bnJs';
 import { BIGINT_ZERO } from '@/constants/misc';
 import { HIGH_PRICE_ASSET_DP } from '@/constants/tokens';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend, toCurrencyAmount, toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import { Grid, MaxButton } from './utils';
 

@@ -8,7 +8,6 @@ import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import bnJs from '@/bnJs';
 import { isNativeCurrency, useICX } from '@/constants/tokens';
 import { useAllTokens, useCommonBases } from '@/hooks/Tokens';
 import { useQueuePair } from '@/hooks/useQueuePair';
@@ -17,6 +16,7 @@ import { tryParseAmount } from '@/store/swap/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCurrencyBalances } from '@/store/wallet/hooks';
 import { XChainId } from '@/xwagmi/types';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { AppDispatch, AppState } from '../index';
 import { Field, INITIAL_MINT, InputType, selectCurrency, typeInput } from './reducer';
 

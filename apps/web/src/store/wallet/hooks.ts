@@ -10,7 +10,6 @@ import { Validator } from 'icon-sdk-js';
 import { forEach } from 'lodash-es';
 import { useDispatch, useSelector } from 'react-redux';
 
-import bnJs from '@/bnJs';
 import { MINIMUM_ICX_FOR_TX } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
 import {
@@ -27,6 +26,7 @@ import { useAllTransactions } from '@/store/transactions/hooks';
 import { useUserAddedTokens } from '@/store/user/hooks';
 import { getXTokenAddress, isXToken } from '@/utils/xTokens';
 import { XWalletAssetRecord } from '@/xwagmi/types';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';

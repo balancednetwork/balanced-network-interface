@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 
-import { t, Trans } from '@lingui/macro';
 import { useIconReact } from '@/packages/icon-react';
+import { Trans, t } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import styled, { useTheme } from 'styled-components';
 
@@ -12,7 +12,6 @@ import ModalContent from '@/app/components/ModalContent';
 import QuestionHelper from '@/app/components/QuestionHelper';
 import Tooltip from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
-import bnJs from '@/bnJs';
 import { usePlatformDayQuery } from '@/queries/reward';
 import { useMinBBalnPercentageToSubmit } from '@/queries/vote';
 import { useEditableContractCalls, useResetArbitraryCalls } from '@/store/arbitraryCalls/hooks';
@@ -20,6 +19,7 @@ import { useBBalnAmount, useFetchBBalnInfo, useTotalSupply } from '@/store/bbaln
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX, useWalletFetchBalances } from '@/store/wallet/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import ArbitraryCallsForm from './_components/ArbitraryCalls/ArbitraryCallsForm';
 import { getTransactionsString } from './_components/ArbitraryCalls/utils';

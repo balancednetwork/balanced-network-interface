@@ -15,13 +15,13 @@ import { DropdownPopper } from '@/app/components/Popover';
 import { Typography } from '@/app/theme';
 import CopyIcon from '@/assets/icons/copy.svg';
 import WalletIcon from '@/assets/icons/wallet.svg';
-import bnJs from '@/bnJs';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { shortenAddress } from '@/utils';
 
 import { xChainMap } from '@/constants/xChains';
 import { useSignedInWallets } from '@/hooks/useWallets';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { Placement } from '@popperjs/core';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { MouseoverTooltip } from '../Tooltip';

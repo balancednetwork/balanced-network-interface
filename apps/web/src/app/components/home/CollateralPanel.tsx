@@ -21,7 +21,6 @@ import { BoxPanel, BoxPanelWrap } from '@/app/components/Panel';
 import { Typography } from '@/app/theme';
 import IconUnstakeSICX from '@/assets/icons/timer-color.svg';
 import IconKeepSICX from '@/assets/icons/wallet-tick-color.svg';
-import bnJs from '@/bnJs';
 import { NETWORK_ID } from '@/constants/config';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
 import { xChainMap } from '@/constants/xChains';
@@ -45,6 +44,7 @@ import { parseUnits } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXConnect, useXService } from '@/xwagmi/hooks';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import CollateralChainSelector from './_components/CollateralChainSelector';
 import XCollateralModal, { XCollateralAction } from './_components/xCollateralModal';
 

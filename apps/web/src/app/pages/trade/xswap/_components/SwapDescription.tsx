@@ -12,7 +12,6 @@ import Spinner from '@/app/components/Spinner';
 import { TVChartContainer } from '@/app/components/TradingViewAdvanced/TVChartContainer';
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS } from '@/app/components/TradingViewChart';
 import { Typography } from '@/app/theme';
-import bnJs from '@/bnJs';
 import { LanguageCode, ResolutionString } from '@/charting_library/charting_library';
 import { SUPPORTED_TOKENS_LIST, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
@@ -24,6 +23,7 @@ import { useRatio } from '@/store/ratio/hooks';
 import { useDerivedSwapInfo, useSwapActionHandlers } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { generateChartData, toFraction } from '@/utils';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 const CHART_TYPES_LABELS = {
   [CHART_TYPES.AREA]: defineMessage({ message: 'Line' }),

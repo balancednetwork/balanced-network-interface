@@ -1,6 +1,6 @@
-import bnJs from '@/bnJs';
 import axios from 'axios';
-import IconService, { Converter, BigNumber } from 'icon-sdk-js';
+import { BigNumber, Converter } from 'icon-sdk-js';
+import bnJs from './bnJs';
 
 import { sleep } from '@/utils';
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';

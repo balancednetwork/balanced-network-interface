@@ -12,7 +12,6 @@ import Modal from '@/app/components/Modal';
 import ModalContent, { ModalContentWrapper } from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import CheckIcon from '@/assets/icons/tick.svg';
-import bnJs from '@/bnJs';
 import { DEFAULT_SLIPPAGE_LP } from '@/constants/index';
 import { useDerivedMintInfo } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
@@ -22,6 +21,7 @@ import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { XChainId } from '@/xwagmi/types';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { depositMessage, supplyMessage } from './utils';
 
 interface ModalProps {

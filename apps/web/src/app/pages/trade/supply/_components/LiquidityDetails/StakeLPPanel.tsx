@@ -1,10 +1,10 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
 
+import { useIconReact } from '@/packages/icon-react';
+import Nouislider from '@/packages/nouislider-react';
 import { Pair } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import Nouislider from '@/packages/nouislider-react';
-import { useIconReact } from '@/packages/icon-react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -13,7 +13,6 @@ import CurrencyBalanceErrorMessage from '@/app/components/CurrencyBalanceErrorMe
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
-import bnJs from '@/bnJs';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from '@/constants/index';
 import { useBalance } from '@/hooks/useV2Pairs';
 import { useAllPairsById } from '@/queries/backendv2';
@@ -25,10 +24,11 @@ import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { formatBigNumber, parseUnits } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
+import Skeleton from '@/app/components/Skeleton';
 import { getFormattedRewards, stakedFraction } from '../utils';
 import { getABBalance, getShareReward } from './WithdrawPanel';
-import Skeleton from '@/app/components/Skeleton';
 
 export default function StakeLPPanel({ pair }: { pair: Pair }) {
   const { account } = useIconReact();

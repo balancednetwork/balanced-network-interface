@@ -16,7 +16,7 @@ import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount, useXService } from '@/xwagmi/hooks';
 import { ArchwayXService } from '@/xwagmi/xchains/archway';
 import { isDenomAsset } from '@/xwagmi/xchains/archway/utils';
-import { XToken } from '../../types';
+import { XToken } from '../xwagmi/types';
 
 export const FAST_INTERVAL = 10000;
 

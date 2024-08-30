@@ -12,10 +12,10 @@ import {
   XTransactionStatus,
   XTransactionType,
 } from '@/xwagmi/xcall/types';
-import { transactionActions } from '@/xwagmi/xcall/zustand/useTransactionStore';
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
 import { xServiceActions } from '@/xwagmi/xcall/zustand/useXServiceStore';
 import { useXTransactionStore } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { transactionActions } from './useTransactionStore';
 
 const iconChainId: XChainId = '0x1.icon';
 

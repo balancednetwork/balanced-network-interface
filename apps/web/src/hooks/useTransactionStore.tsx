@@ -12,7 +12,7 @@ import {
 } from '@/app/components/Notification/TransactionNotification';
 import { getXPublicClient } from '@/xwagmi/actions';
 import { XChainId } from '@/xwagmi/types';
-import { Transaction, TransactionStatus } from '../types';
+import { Transaction, TransactionStatus } from '../xwagmi/xcall/types';
 
 type TransactionStore = {
   transactions: Transaction[];

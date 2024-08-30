@@ -7,6 +7,7 @@ import { Abi, Address, WriteContractReturnType, erc20Abi, getContract } from 'vi
 import { usePublicClient, useWalletClient } from 'wagmi';
 
 import { openToast } from '@/btp/src/connectors/transactionToast';
+import { transactionActions } from '@/hooks/useTransactionStore';
 import { TransactionStatus } from '@/store/transactions/hooks';
 import { getXChainType } from '@/xwagmi/actions/getXChainType';
 import { getXWalletClient } from '@/xwagmi/actions/getXWalletClient';
@@ -16,7 +17,6 @@ import { useXAccount, useXService } from '@/xwagmi/hooks';
 import { ArchwayXService } from '@/xwagmi/xchains/archway';
 import { isDenomAsset } from '@/xwagmi/xchains/archway/utils';
 import { XToken } from '../../types';
-import { transactionActions } from '../zustand/useTransactionStore';
 
 export const FAST_INTERVAL = 10000;
 

@@ -5,8 +5,8 @@ import { Trade } from '@balancednetwork/v1-sdk';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
 import { xTokenMap } from '@/constants/xTokens';
-import { uintToBytes } from '@/utils';
 import { XToken } from '@/xwagmi/types';
+import { uintToBytes } from '@/xwagmi/utils';
 
 export function getBytesFromNumber(value) {
   const hexString = value.toString(16).padStart(2, '0');

@@ -25,9 +25,10 @@ import {
 } from '@/store/bridge/hooks';
 import { Field } from '@/store/bridge/reducer';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { maxAmountSpend, validateAddress } from '@/utils';
+import { maxAmountSpend } from '@/utils';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
+import { validateAddress } from '@/xwagmi/utils';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import ChainSelector from './ChainSelector';
 

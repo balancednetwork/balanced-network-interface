@@ -2,9 +2,8 @@ import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from './bnJs';
 
 import { NETWORK_ID } from '@/constants/config';
-import { toDec } from '@/utils';
-import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
+import { showMessageOnBeforeUnload, toDec } from '@/xwagmi/utils';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData } from '../../xcall/utils';
 import { IconXService } from './IconXService';

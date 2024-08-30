@@ -7,9 +7,9 @@ import { CurrencyAmount } from '@balancednetwork/sdk-core';
 
 import { NATIVE_ADDRESS } from '@/constants';
 import { FROM_SOURCES, TO_SOURCES, injective } from '@/constants/xChains';
-import { uintToBytes } from '@/utils';
 import { XWalletClient } from '@/xwagmi/core';
 import { XToken } from '@/xwagmi/types';
+import { uintToBytes } from '@/xwagmi/utils';
 import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import { RLP } from '@ethereumjs/rlp';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';

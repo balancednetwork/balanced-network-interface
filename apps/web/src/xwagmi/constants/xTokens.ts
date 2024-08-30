@@ -11,17 +11,21 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   HVH: '0x100.icon',
 };
 
-import { bnUSD } from '@/constants/tokens';
-
 import { XChainId } from '@/xwagmi/types';
-import { SupportedChainId as ChainId } from '@balancednetwork/balanced-js';
+import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balanced-js';
 import { NATIVE_ADDRESS } from '.';
-import { sARCH } from '../../constants/tokens1';
 
 export const xTokenMap: { [key in XChainId]: XToken[] } = {
   '0x1.icon': [
-    XToken.getXToken('0x1.icon', bnUSD[ChainId.MAINNET]),
-    XToken.getXToken('0x1.icon', sARCH[ChainId.MAINNET]),
+    new XToken('0x1.icon', ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
+    new XToken(
+      '0x1.icon',
+      ChainId.MAINNET,
+      'cxfe94530ee0d159db3e5b7dcffbcd0dfb360075c0',
+      18,
+      'sARCH',
+      'Staked Archway',
+    ),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f', 6, 'USDC', 'Archway USDC'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx66a031cc3bd305c76371fb586e93801b948254f0', 18, 'AVAX', 'AVAX'),
     new XToken(

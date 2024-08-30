@@ -1,7 +1,6 @@
 import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
-import { ARCHWAY_FEE_TOKEN_SYMBOL } from '@/constants/tokens1';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { archway } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
@@ -12,6 +11,7 @@ import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getBytesFromString, getRlpEncodedSwapData } from '../../xcall/utils';
 import { ArchwayXService } from './ArchwayXService';
+import { ARCHWAY_FEE_TOKEN_SYMBOL } from './constants';
 
 export class ArchwayXWalletClient extends XWalletClient {
   getXService(): ArchwayXService {

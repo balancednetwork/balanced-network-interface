@@ -2,7 +2,6 @@ import { ArchwayClient } from '@archwayhq/arch3.js';
 
 import { archway } from '@/xwagmi/constants/xChains';
 
-import { ARCHWAY_FEE_TOKEN_SYMBOL } from '@/constants/tokens1';
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
 import { XChainId, XToken } from '@/xwagmi/types';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
@@ -15,6 +14,7 @@ import {
   XCallMessageSentEvent,
 } from '../../xcall/types';
 import { ArchwayXService } from './ArchwayXService';
+import { ARCHWAY_FEE_TOKEN_SYMBOL } from './constants';
 import { isDenomAsset } from './utils';
 
 const XCallEventSignatureMap = {

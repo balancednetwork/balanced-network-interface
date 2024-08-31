@@ -9,11 +9,6 @@ export enum XCallEventType {
   RollbackExecuted = 'RollbackExecuted',
 }
 
-export type CrossChainTxType = {
-  transactionHash: string;
-  events: readonly Event[];
-};
-
 export interface IXCallFee {
   noRollback: bigint;
   rollback: bigint;

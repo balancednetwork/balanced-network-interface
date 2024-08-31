@@ -3,7 +3,7 @@
  */
 
 import { configureStore } from '@reduxjs/toolkit';
-import { save, load } from 'redux-localstorage-simple';
+import { load, save } from 'redux-localstorage-simple';
 
 import application from './application/reducer';
 import arbitraryCalls from './arbitraryCalls/reducer';
@@ -23,7 +23,6 @@ import stabilityFund from './stabilityFund/reducer';
 import stakedLP from './stakedLP/reducer';
 import swap from './swap/reducer';
 import transactions from './transactions/reducer';
-import transactionsCrosschain from './transactionsCrosschain/reducer';
 import user from './user/reducer';
 import wallet from './wallet/reducer';
 
@@ -50,7 +49,6 @@ export function configureAppStore() {
       lists,
       liveVoting,
       arbitraryCalls,
-      transactionsCrosschain,
       bridge,
       savings,
     },

@@ -16,7 +16,6 @@ import { DEFAULT_SLIPPAGE_LP } from '@/constants/index';
 import { useDerivedMintInfo } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from '@/store/transactions/hooks';
-import { useArchwayTransactionsState } from '@/store/transactionsCrosschain/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
@@ -50,8 +49,6 @@ export default function SupplyLiquidityModal({
 
   const { currencyDeposits, pair } = useDerivedMintInfo();
   const addTransaction = useTransactionAdder();
-
-  const { isTxPending } = useArchwayTransactionsState();
 
   const [addingTxs, setAddingTxs] = React.useState({ [Field.CURRENCY_A]: '', [Field.CURRENCY_B]: '' });
   const [shouldAddAssets, setShouldAddAssets] = React.useState({
@@ -188,7 +185,7 @@ export default function SupplyLiquidityModal({
       [Field.CURRENCY_A]: {
         shouldSend: !!!currencyDeposits[Field.CURRENCY_A]?.greaterThan(0),
         // isAddPending: !!addingTxs[Field.CURRENCY_A],
-        isAddPending: addingATxStatus === TransactionStatus.pending || isTxPending,
+        isAddPending: addingATxStatus === TransactionStatus.pending,
         // isRemovePending: !!removingTxs[Field.CURRENCY_A],
         isRemovePending: removingATxStatus === TransactionStatus.pending,
         chain: AChain,
@@ -202,16 +199,7 @@ export default function SupplyLiquidityModal({
         chain: BChain,
       },
     }),
-    [
-      AChain,
-      BChain,
-      addingATxStatus,
-      addingBTxStatus,
-      currencyDeposits,
-      isTxPending,
-      removingATxStatus,
-      removingBTxStatus,
-    ],
+    [AChain, BChain, addingATxStatus, addingBTxStatus, currencyDeposits, removingATxStatus, removingBTxStatus],
   );
 
   const [hasErrorMessage, setHasErrorMessage] = React.useState(false);

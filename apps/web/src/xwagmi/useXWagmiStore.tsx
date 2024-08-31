@@ -1,6 +1,5 @@
 import { xChains } from '@/xwagmi/constants/xChains';
 import { XChainId, XChainType } from '@/xwagmi/types';
-import { useEffect } from 'react';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';

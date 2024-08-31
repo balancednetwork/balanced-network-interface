@@ -13,7 +13,7 @@ import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
-import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
+import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from '@/store/bridge/hooks';
@@ -36,7 +36,7 @@ const StyledXCallButton = styled(StyledButton)`
 `;
 
 function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
-  useModalStore(state => state.modals?.[modalId]);
+  const modalOpen = useModalOpen(modalId);
 
   const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
@@ -95,7 +95,7 @@ function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
 
   return (
     <>
-      <Modal isOpen={modalActions.isModalOpen(modalId)} onDismiss={handleDismiss}>
+      <Modal isOpen={modalOpen} onDismiss={handleDismiss}>
         <ModalContentWrapper>
           <Typography textAlign="center" mb="5px">
             {t`Transfer asset cross-chain?`}

@@ -8,7 +8,7 @@ import { Typography } from '@/app/theme';
 import { ModalContentWrapper } from '@/app/components/ModalContent';
 import { UnbreakableText, WalletOption } from '@/app/components/WalletModal/shared';
 
-import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
+import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { XConnector } from '@/xwagmi/core';
 import { useXConnect, useXService } from '@/xwagmi/hooks';
 
@@ -19,7 +19,7 @@ type InjectiveWalletOptionsModalProps = {
 export const InjectiveWalletOptionsModal = ({
   id = MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL,
 }: InjectiveWalletOptionsModalProps) => {
-  useModalStore(state => state.modals?.[id]);
+  const modalOpen = useModalOpen(id);
 
   const xService = useXService('INJECTIVE');
   const xConnectors = useMemo(() => xService?.getXConnectors() || [], [xService]);
@@ -37,7 +37,7 @@ export const InjectiveWalletOptionsModal = ({
 
   return (
     <>
-      <Modal isOpen={modalActions.isModalOpen(id)} onDismiss={onDismiss} maxWidth={360}>
+      <Modal isOpen={modalOpen} onDismiss={onDismiss} maxWidth={360}>
         <ModalContentWrapper>
           <Typography textAlign="center" margin={'0 0 25px'}>
             Connect with:

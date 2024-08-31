@@ -12,7 +12,7 @@ import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
-import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
+import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useCollateralActionHandlers, useDerivedCollateralInfo } from '@/store/collateral/hooks';
@@ -54,7 +54,7 @@ const XCollateralModal = ({
   sourceChain,
   storedModalValues,
 }: XCollateralModalProps) => {
-  useModalStore(state => state.modals?.[modalId]);
+  const modalOpen = useModalOpen(modalId);
 
   const { collateralType } = useDerivedCollateralInfo();
   const [currentId, setCurrentId] = useState<string | null>(null);
@@ -126,7 +126,7 @@ const XCollateralModal = ({
 
   return (
     <>
-      <Modal isOpen={modalActions.isModalOpen(modalId)} onDismiss={handleDismiss}>
+      <Modal isOpen={modalOpen} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px">
             {storedModalValues.action === XCollateralAction.DEPOSIT

@@ -15,7 +15,7 @@ import { Typography } from '@/app/theme';
 import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
-import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
+import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
@@ -57,7 +57,7 @@ const XSwapModal = ({
   recipient,
   clearInputs,
 }: XSwapModalProps) => {
-  useModalStore(state => state.modals?.[modalId]);
+  const modalOpen = useModalOpen(modalId);
 
   const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
@@ -136,7 +136,7 @@ const XSwapModal = ({
   return (
     <>
       {/* {currentXTransaction && <XTransactionUpdater xTransaction={currentXTransaction} />} */}
-      <Modal isOpen={modalActions.isModalOpen(modalId)} onDismiss={handleDismiss}>
+      <Modal isOpen={modalOpen} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
             <Trans>

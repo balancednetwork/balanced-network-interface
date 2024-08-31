@@ -12,7 +12,7 @@ import ModalContent from '@/app/components/ModalContent';
 import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
-import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
+import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useCollateralType } from '@/store/collateral/hooks';
@@ -60,7 +60,7 @@ const XLoanModal = ({
   interestRate,
   storedModalValues,
 }: XLoanModalProps) => {
-  useModalStore();
+  const modalOpen = useModalOpen(modalId);
 
   const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
@@ -135,7 +135,7 @@ const XLoanModal = ({
 
   return (
     <>
-      <Modal isOpen={modalActions.isModalOpen(modalId)} onDismiss={handleDismiss}>
+      <Modal isOpen={modalOpen} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px">
             {storedModalValues.action === XLoanAction.BORROW ? t`Borrow Balanced Dollars?` : t`Repay Balanced Dollars?`}

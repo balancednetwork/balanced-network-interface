@@ -135,7 +135,6 @@ const XLoanModal = ({
 
   return (
     <>
-      {/* {currentXTransaction && <XTransactionUpdater xTransaction={currentXTransaction} />} */}
       <Modal isOpen={modalActions.isModalOpen(modalId)} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px">

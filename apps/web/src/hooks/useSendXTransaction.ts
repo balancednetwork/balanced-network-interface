@@ -15,6 +15,7 @@ import {
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
 import { xServiceActions } from '@/xwagmi/xcall/zustand/useXServiceStore';
 import { useXTransactionStore } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { useMemo } from 'react';
 import { transactionActions } from './useTransactionStore';
 
 const iconChainId: XChainId = '0x1.icon';
@@ -161,8 +162,11 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess 
 };
 
 export const useSendXTransaction = () => {
-  return {
-    sendXTransaction: (xTransactionInput: XTransactionInput, onSuccess = () => {}) =>
-      sendXTransaction(xTransactionInput, onSuccess),
-  };
+  return useMemo(
+    () => ({
+      sendXTransaction: (xTransactionInput: XTransactionInput, onSuccess = () => {}) =>
+        sendXTransaction(xTransactionInput, onSuccess),
+    }),
+    [],
+  );
 };

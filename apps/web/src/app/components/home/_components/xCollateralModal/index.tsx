@@ -126,8 +126,7 @@ const XCollateralModal = ({
 
   return (
     <>
-      {/* {currentXTransaction && <XTransactionUpdater xTransaction={currentXTransaction} />} */}
-      <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL)} onDismiss={handleDismiss}>
+      <Modal isOpen={modalActions.isModalOpen(modalId)} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px">
             {storedModalValues.action === XCollateralAction.DEPOSIT

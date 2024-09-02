@@ -982,9 +982,22 @@ export function useBorrowersInfo() {
 }
 
 type WithdrawalsFloorDataType = {
+  assetFloorData: {
+    floor: BigNumber;
+    percentageFloor: BigNumber;
+    floorTimeDecayInHours: BigNumber;
+    current: BigNumber;
+    token: TokenStats;
+  }[];
+};
+type StabilityFundWithdrawalsFloorDataType = {
   percentageFloor: BigNumber;
   floorTimeDecayInHours: BigNumber;
-  assetFloorData: { floor: BigNumber; current: BigNumber; token: TokenStats }[];
+  assetFloorData: {
+    floor: BigNumber;
+    current: BigNumber;
+    token: TokenStats;
+  }[];
 };
 
 export function useWithdrawalsFloorCollateralData(): UseQueryResult<WithdrawalsFloorDataType> {
@@ -997,48 +1010,47 @@ export function useWithdrawalsFloorCollateralData(): UseQueryResult<WithdrawalsF
       if (collateralTokens && allTokens) {
         const collateralAddresses = Object.values(collateralTokens);
 
-        const percentageFloorCallData = {
-          target: bnJs.Loans.address,
-          method: 'getFloorPercentage',
-          params: [],
-        };
-
-        const floorTimeDelayCallData = {
-          target: bnJs.Loans.address,
-          method: 'getTimeDelayMicroSeconds',
-          params: [],
-        };
-
-        const cds: CallData[] = [
-          percentageFloorCallData,
-          floorTimeDelayCallData,
-          ...collateralAddresses.map(address => ({
-            target: bnJs.Loans.address,
-            method: 'getCurrentFloor',
-            params: [address],
-          })),
+        const cdsArray: CallData[][] = [
+          ...collateralAddresses.map(address => {
+            return [
+              {
+                target: bnJs.Loans.address,
+                method: 'getCurrentFloor',
+                params: [address],
+              },
+              {
+                target: bnJs.Loans.address,
+                method: 'getFloorPercentage',
+                params: [address],
+              },
+              {
+                target: bnJs.Loans.address,
+                method: 'getTimeDelayMicroSeconds',
+                params: [address],
+              },
+              {
+                target: address,
+                method: 'balanceOf',
+                params: [bnJs.Loans.address],
+              },
+            ];
+          }),
         ];
 
-        const data = await bnJs.Multicall.getAggregateData(cds);
-
-        const percentageFloor = new BigNumber(data[0]).div(10000);
-        const floorTimeDecayInHours = new BigNumber(data[1]).div(1000 * 1000 * 60 * 60);
-
-        const currentCollateralCds: CallData[] = collateralAddresses.map(address => ({
-          target: address,
-          method: 'balanceOf',
-          params: [bnJs.Loans.address],
-        }));
-
-        const currentData = await bnJs.Multicall.getAggregateData(currentCollateralCds);
+        const data = await Promise.all(
+          cdsArray.map(async (cds, index) => {
+            return await bnJs.Multicall.getAggregateData(cds);
+          }),
+        );
 
         const assetFloorData = data
-          .slice(2)
-          .map((item, index) => {
+          .map((assetDataSet, index) => {
             const token = allTokens[collateralAddresses[index]];
             return {
-              floor: new BigNumber(item).div(10 ** token?.decimals),
-              current: new BigNumber(currentData[index]).div(10 ** token?.decimals),
+              floor: new BigNumber(assetDataSet[0]).div(10 ** token?.decimals),
+              percentageFloor: new BigNumber(assetDataSet[1]).div(10000),
+              floorTimeDecayInHours: new BigNumber(assetDataSet[2]).div(1000 * 1000 * 60 * 60),
+              current: new BigNumber(assetDataSet[3]).div(10 ** token?.decimals),
               token,
             };
           })
@@ -1046,8 +1058,6 @@ export function useWithdrawalsFloorCollateralData(): UseQueryResult<WithdrawalsF
           .sort((a, b) => (a.floor.isGreaterThan(b.floor) ? -1 : 1));
 
         return {
-          percentageFloor,
-          floorTimeDecayInHours,
           assetFloorData,
         };
       }
@@ -1067,56 +1077,54 @@ export function useWithdrawalsFloorDEXData(): UseQueryResult<WithdrawalsFloorDat
       const tokens = [bnJs.BALN.address, bnJs.sICX.address, bnJs.bnUSD.address];
 
       if (allTokens) {
-        const percentageFloorCallData = {
-          target: bnJs.Dex.address,
-          method: 'getFloorPercentage',
-          params: [],
-        };
-
-        const floorTimeDelayCallData = {
-          target: bnJs.Dex.address,
-          method: 'getTimeDelayMicroSeconds',
-          params: [],
-        };
-
-        const cds: CallData[] = [
-          percentageFloorCallData,
-          floorTimeDelayCallData,
-          ...tokens.map(address => ({
-            target: bnJs.Dex.address,
-            method: 'getCurrentFloor',
-            params: [address],
-          })),
+        const cdsArray: CallData[][] = [
+          ...tokens.map(address => {
+            return [
+              {
+                target: bnJs.Dex.address,
+                method: 'getCurrentFloor',
+                params: [address],
+              },
+              {
+                target: bnJs.Dex.address,
+                method: 'getFloorPercentage',
+                params: [address],
+              },
+              {
+                target: bnJs.Dex.address,
+                method: 'getTimeDelayMicroSeconds',
+                params: [address],
+              },
+              {
+                target: address,
+                method: 'balanceOf',
+                params: [bnJs.Dex.address],
+              },
+            ];
+          }),
         ];
 
-        const data = await bnJs.Multicall.getAggregateData(cds);
-
-        const percentageFloor = new BigNumber(data[0]).div(10000);
-        const floorTimeDecayInHours = new BigNumber(data[1]).div(1000 * 1000 * 60 * 60);
-
-        const currentAssetCds: CallData[] = tokens.map(address => ({
-          target: address,
-          method: 'balanceOf',
-          params: [bnJs.Dex.address],
-        }));
-
-        const currentData = await bnJs.Multicall.getAggregateData(currentAssetCds);
+        const data = await Promise.all(
+          cdsArray.map(async (cds, index) => {
+            return await bnJs.Multicall.getAggregateData(cds);
+          }),
+        );
 
         const assetFloorData = data
-          .slice(2)
-          .map((item, index) => {
+          .map((assetDataSet, index) => {
             const token = allTokens[tokens[index]];
             return {
-              floor: new BigNumber(item).div(10 ** token?.decimals),
-              current: new BigNumber(currentData[index]).div(10 ** token?.decimals),
+              floor: new BigNumber(assetDataSet[0]).div(10 ** token?.decimals),
+              percentageFloor: new BigNumber(assetDataSet[1]).div(10000),
+              floorTimeDecayInHours: new BigNumber(assetDataSet[2]).div(1000 * 1000 * 60 * 60),
+              current: new BigNumber(assetDataSet[3]).div(10 ** token?.decimals),
               token,
             };
           })
+          .filter(item => item.floor.isGreaterThan(0))
           .sort((a, b) => (a.floor.isGreaterThan(b.floor) ? -1 : 1));
 
         return {
-          percentageFloor,
-          floorTimeDecayInHours,
           assetFloorData,
         };
       }
@@ -1127,7 +1135,7 @@ export function useWithdrawalsFloorDEXData(): UseQueryResult<WithdrawalsFloorDat
   });
 }
 
-export function useWithdrawalsFloorStabilityFundData(): UseQueryResult<WithdrawalsFloorDataType> {
+export function useWithdrawalsFloorStabilityFundData(): UseQueryResult<StabilityFundWithdrawalsFloorDataType> {
   const { data: supportedTokens, isSuccess: supportedTokensSuccess } = useWhitelistedTokensList();
 
   return useQuery({

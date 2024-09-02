@@ -1,38 +1,38 @@
 import React, { useState, useRef } from 'react';
 
-import BigNumber from 'bignumber.js';
 import { useEarningsDataQuery } from '@/queries';
+import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { UnderlineTextWithArrow } from '@/components/DropdownText';
-import { MenuList, MenuItem } from '@/components/Menu';
+import { MenuItem, MenuList } from '@/components/Menu';
 import { BoxPanel } from '@/components/Panel';
 import { DropdownPopper } from '@/components/Popover';
 import {
-  TimePeriod,
-  earningPeriods,
-  getTimestampFrom,
   DisplayValueOrLoader,
-  dateOptionShort,
-  dateOptionLong,
   FormattedPeriods,
   SkeletonPlaceholder,
+  TimePeriod,
+  dateOptionLong,
+  dateOptionShort,
+  earningPeriods,
+  getTimestampFrom,
 } from '@/pages/PerformanceDetails/utils';
 import { StyledSkeleton as Skeleton } from '@/sections/TokenSection';
 import { Typography } from '@/theme';
 
-import {
-  GridItemHeader,
-  ScrollHelper,
-  GridItemTotal,
-  GridItemStrong,
-  GridItemLight,
-  GridItemSubtotal,
-} from '../../index';
 import QuestionHelper, { QuestionWrapper } from '@/components/QuestionHelper';
 import { EnshrinementTooltipContent } from '@/sections/EnshrinmentSection';
+import {
+  GridItemHeader,
+  GridItemLight,
+  GridItemStrong,
+  GridItemSubtotal,
+  GridItemTotal,
+  ScrollHelper,
+} from '../../index';
 
 export const IncomeGrid = styled.div`
   display: grid;
@@ -561,6 +561,24 @@ const EarningsSection = () => {
         ) : (
           <SkeletonPlaceholder />
         )}
+
+        <IncomeGrid>
+          <GridItemSubtotal $borderBottom={false}>Subtotal</GridItemSubtotal>
+          <GridItemSubtotal $borderBottom={false}>
+            {expensesTotalCurrent && icxBurntTotalCurrent && !isCurrentPeriodLoading ? (
+              <DisplayValueOrLoader value={expensesTotalCurrent.plus(icxBurntTotalCurrent)} currencyRate={1} />
+            ) : (
+              <StyledSkeleton animation="wave" width={100} />
+            )}
+          </GridItemSubtotal>
+          <GridItemSubtotal $borderBottom={false}>
+            {expensesTotalPast && icxBurntTotalPast && !isPastPeriodLoading ? (
+              <DisplayValueOrLoader value={expensesTotalPast.plus(icxBurntTotalPast)} currencyRate={1} />
+            ) : (
+              <StyledSkeleton animation="wave" width={100} />
+            )}
+          </GridItemSubtotal>
+        </IncomeGrid>
 
         <IncomeGrid>
           <GridItemTotal>Total</GridItemTotal>

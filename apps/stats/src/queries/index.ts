@@ -24,6 +24,7 @@ import {
   useTokenPrices,
 } from './backendv2';
 import { useBlockDetails } from './blockDetails';
+import { API_ICON_ENDPOINT } from './historicalData';
 
 const WEIGHT_CONST = 10 ** 18;
 
@@ -714,22 +715,14 @@ export const useCollateralInfo = () => {
     queryKey: [`collateralInfoAt${now}`],
     queryFn: async () => {
       if (collateralData) {
-        const IISSInfo = await bnJs.IISS.getIISSInfo();
-        const PRepsInfo = await bnJs.IISS.getPReps();
+        const stakingData = await axios.get(`${API_ICON_ENDPOINT}governance/stats/apy/time`);
 
-        const totalDelegated = PRepsInfo ? new BigNumber(PRepsInfo?.totalDelegated) : undefined;
-        const stakingAPY =
-          IISSInfo && totalDelegated
-            ? new BigNumber(IISSInfo?.variable.Iglobal)
-                .times(new BigNumber(IISSInfo.variable.Ivoter).times(12))
-                .div(totalDelegated.times(100))
-                .toNumber()
-            : undefined;
+        const stakingAPY = stakingData ? new BigNumber(stakingData.data[stakingData.data.length - 1].value) : undefined;
 
         return {
           collateralData,
           rate: rate?.toNumber(),
-          stakingAPY: stakingAPY,
+          stakingAPY: stakingAPY?.toNumber(),
         };
       }
     },

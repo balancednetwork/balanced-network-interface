@@ -22,7 +22,9 @@ function useXCallGasChecker(xChainId: XChainId): { hasEnoughGas: boolean; errorM
               Math.round(xChain.gasThreshold * 10 ** nativeCurrency.decimals),
             )
           : balances[xChainId] &&
-            balances[xChainId]?.['native'].greaterThan(Math.round(xChain.gasThreshold * 10 ** nativeCurrency.decimals));
+            balances[xChainId]?.[nativeCurrency.symbol].greaterThan(
+              Math.round(xChain.gasThreshold * 10 ** nativeCurrency.decimals),
+            );
 
       const errorMessage = !hasEnoughGas
         ? `You need at least ${formatBigNumber(new BigNumber(xChain.gasThreshold), 'currency')} ${

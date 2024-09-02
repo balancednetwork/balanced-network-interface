@@ -57,12 +57,12 @@ export class EvmXPublicClient extends XPublicClient {
       .filter(xToken => xToken.isNativeXToken())
       .map(async xToken => {
         const balance = await this.getBalance(address, xToken);
-        return { symbol: xToken.symbol, balance };
+        return { symbol: xToken.symbol, address: xToken.address, balance };
       });
 
     const balances = await Promise.all(balancePromises);
-    const tokenMap = balances.reduce((map, { symbol, balance }) => {
-      if (balance) map[symbol] = balance;
+    const tokenMap = balances.reduce((map, { address, balance }) => {
+      if (balance) map[address] = balance;
       return map;
     }, {});
 

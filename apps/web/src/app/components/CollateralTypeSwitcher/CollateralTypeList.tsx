@@ -2,18 +2,18 @@ import React, { useCallback, useMemo } from 'react';
 
 import { useMedia } from 'react-use';
 
-import { useCollateralActionHandlers, useUserPositionsData, useAllCollateralData } from '@/store/collateral/hooks';
+import { Typography } from '@/app/theme';
+import { useAllCollateralData, useCollateralActionHandlers, useUserPositionsData } from '@/store/collateral/hooks';
 import { useLoanActionHandlers } from '@/store/loan/hooks';
+import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
+import { xChainMap } from '@/xwagmi/constants/xChains';
+import { XChainId } from '@/xwagmi/types';
 import { Trans } from '@lingui/macro';
 import { BalanceAndValueWrap, DashGrid, HeaderText, List, walletBreakpoint } from '../Wallet/styledComponents';
-import SingleChainItem from './SingleChainItem';
-import MultiChainItem from './MultiChainItem';
 import { CollateralTab } from './CollateralTypeListWrap';
-import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
+import MultiChainItem from './MultiChainItem';
+import SingleChainItem from './SingleChainItem';
 import SingleChainItemOverview from './SingleChainItemOverview';
-import { xChainMap } from '@/constants/xChains';
-import { Typography } from '@/app/theme';
-import { XChainId } from '@/types';
 
 const CollateralTypeList = ({
   setAnchor,

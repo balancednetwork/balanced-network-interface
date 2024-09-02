@@ -3,10 +3,10 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import { XChainId } from '@/types';
 import { getXPublicClient } from '@/xwagmi/actions';
+import { XChainId } from '@/xwagmi/types';
 import { XCallEventType } from '../types';
-import { XCallDestinationEvent, XCallExecutedEvent, XCallMessageEvent } from './types';
+import { XCallDestinationEvent, XCallExecutedEvent, XCallMessageEvent } from '../types';
 import { xServiceActions } from './useXServiceStore';
 
 type XCallScanner = {

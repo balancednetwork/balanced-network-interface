@@ -15,10 +15,10 @@ import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 import useToggle from '@/hooks/useToggle';
 import { isAddress } from '@/utils';
 
-import { xTokenMap } from '@/constants/xTokens';
 import useXTokens from '@/hooks/useXTokens';
 import { useBridgeDirection } from '@/store/bridge/hooks';
-import { XChainId } from '@/types';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
+import { XChainId } from '@/xwagmi/types';
 import Column from '../Column';
 import CommunityListToggle from '../CommunityListToggle';
 import CurrencyList from './CurrencyList';

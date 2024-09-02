@@ -1,40 +1,22 @@
-import { BalancedJs, LOOP, CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
+import { BalancedJs, CHAIN_INFO, LOOP, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
-import { Validator } from 'icon-sdk-js';
 
+import { ONE } from '@/constants';
 import { NETWORK_ID } from '@/constants/config';
 import { canBeQueue } from '@/constants/currency';
-import { ONE, NATIVE_ADDRESS } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
 import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
 import { PairData, PairState } from '@/hooks/useV2Pairs';
 import { Field } from '@/store/swap/reducer';
-import { PairInfo, XChainId } from '@/types';
-import { xChainMap } from '@/constants/xChains';
-import { bech32 } from 'bech32';
-import { ethers } from 'ethers';
-import { RLP } from '@ethereumjs/rlp';
+import { PairInfo } from '@/types';
+import { NATIVE_ADDRESS } from '@/xwagmi/constants';
+import { xChainMap } from '@/xwagmi/constants/xChains';
+import { XChainId } from '@/xwagmi/types';
+import { Validator } from 'icon-sdk-js';
 
-const { isEoaAddress, isScoreAddress } = Validator;
-
-const isBech32 = (string: string) => {
-  try {
-    bech32.decode(string);
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
-
-const isArchEoaAddress = (address: string) => {
-  return isBech32(address) && address.startsWith('archway');
-};
-
-const isInjectiveAddress = (address: string) => {
-  return isBech32(address) && address.startsWith('inj');
-};
+const { isScoreAddress } = Validator;
 
 // shorten the checksummed version of the input address to have 0x + 4 characters at start and end
 export function shortenAddress(address: string, chars = 7): string {
@@ -43,14 +25,6 @@ export function shortenAddress(address: string, chars = 7): string {
   //   throw Error(`Invalid 'address' parameter '${address}'.`);
   // }
   return `${address.substring(0, chars + 2)}...${address.substring(address.length - chars)}`;
-}
-
-export function shortenSCOREAddress(address: string, chars = 7): string {
-  if (!isScoreAddress(address)) {
-    console.error(`Invalid 'address' parameter '${address}'.`);
-    return '';
-  }
-  return `${address.substring(0, chars + 2)}...${address.substring(42 - chars)}`;
 }
 
 export function getTrackerLink(
@@ -331,49 +305,4 @@ export function getAccumulatedInterest(principal: BigNumber, rate: BigNumber, da
   const dailyRate = rate.div(365);
   const accumulatedInterest = principal.times(dailyRate.plus(1).pow(days)).minus(principal);
   return accumulatedInterest;
-}
-
-export function validateAddress(address: string, chainId: XChainId): boolean {
-  switch (xChainMap[chainId].xChainType) {
-    case 'ICON':
-    case 'HAVAH':
-      return isScoreAddress(address) || isEoaAddress(address);
-    case 'EVM':
-      return ethers.utils.isAddress(address);
-    case 'ARCHWAY':
-      return isArchEoaAddress(address);
-    case 'INJECTIVE':
-      return isInjectiveAddress(address);
-  }
-}
-
-// Function to get the last i bytes of an integer
-function lastBytesOf(x: bigint, i: number): Uint8Array {
-  const buffer = new ArrayBuffer(i);
-  const view = new DataView(buffer);
-  for (let j = 0; j < i; j++) {
-    view.setUint8(j, Number((x >> BigInt(8 * (i - j - 1))) & BigInt(0xff)));
-  }
-  return new Uint8Array(buffer);
-}
-
-// Function to convert an unsigned integer to bytes
-export function uintToBytes(x: bigint): Uint8Array {
-  if (x === BigInt(0)) {
-    return new Uint8Array([0]);
-  }
-  let right = BigInt(0x80);
-  for (let i = 1; i < 32; i++) {
-    if (x < right) {
-      return lastBytesOf(x, i);
-    }
-    right <<= BigInt(8);
-  }
-  if (x < right) {
-    return RLP.encode(x);
-  } else {
-    const data = RLP.encode(x);
-    data[0] = 0;
-    return data;
-  }
 }

@@ -1,9 +1,23 @@
+import { Event } from '@cosmjs/cosmwasm-stargate';
+
+export enum XCallEventType {
+  CallMessageSent = 'CallMessageSent',
+  CallMessage = 'CallMessage',
+  ResponseMessage = 'ResponseMessage',
+  RollbackMessage = 'RollbackMessage',
+  CallExecuted = 'CallExecuted',
+  RollbackExecuted = 'RollbackExecuted',
+}
+
+export interface IXCallFee {
+  noRollback: bigint;
+  rollback: bigint;
+}
+
 import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 
-import { XChainId } from '@/types';
-import { CurrencyKey } from '@/types';
-import { IXCallFee, XCallEventType } from '../types';
+import { CurrencyKey, XChainId } from '@/xwagmi/types';
 
 export enum TransactionStatus {
   pending = 'pending',

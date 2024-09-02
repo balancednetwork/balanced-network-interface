@@ -16,13 +16,13 @@ import { DropdownPopper } from '@/app/components/Popover';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
-import { xChainMap } from '@/constants/xChains';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useSwapSlippageTolerance, useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatPercent, maxAmountSpend } from '@/utils';
 import { isXToken } from '@/utils/xTokens';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 
 import { AutoColumn } from '@/app/components/Column';
 import useManualAddresses from '@/hooks/useManualAddresses';

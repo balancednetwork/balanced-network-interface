@@ -1,6 +1,6 @@
-import axios from 'axios';
+import { ONE_DAY_DURATION } from '@/xwagmi/utils';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
-import { ONE_DAY_DURATION } from '@/utils';
+import axios from 'axios';
 
 export type XCallActivityDataType = {
   hour: string;

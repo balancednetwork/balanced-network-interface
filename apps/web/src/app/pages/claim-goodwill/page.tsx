@@ -1,10 +1,10 @@
 import React from 'react';
 
-import BigNumber from 'bignumber.js';
 import { useIconReact } from '@/packages/icon-react';
-import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
-import { Flex, Box } from 'rebass/styled-components';
+import BigNumber from 'bignumber.js';
+import { Helmet } from 'react-helmet-async';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button } from '@/app/components/Button';
@@ -12,11 +12,11 @@ import { Link } from '@/app/components/Link';
 import Logo from '@/app/components/Logo';
 import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
-import bnJs from '@/bnJs';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useAllTransactions, useTransactionAdder } from '@/store/transactions/hooks';
 import { shortenAddress } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import '@/styles/airdrip.css';
 

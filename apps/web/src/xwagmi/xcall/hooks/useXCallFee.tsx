@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/constants/xChains';
-import { XChainId } from '@/types';
+import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/xwagmi/constants/xChains';
 import { useXPublicClient } from '@/xwagmi/hooks';
+import { XChainId } from '@/xwagmi/types';
 import { formatEther } from 'viem';
 import { IXCallFee } from '../types';
 

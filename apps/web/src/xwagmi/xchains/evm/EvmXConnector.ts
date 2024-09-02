@@ -1,8 +1,8 @@
-import { wagmiConfig } from '@/config/wagmi';
 import { XConnector } from '@/xwagmi/core/XConnector';
-import { XAccount } from '@/xwagmi/core/types';
+import { XAccount } from '@/xwagmi/types';
 import { connect, disconnect } from '@wagmi/core';
 import { Connector } from 'wagmi';
+import { wagmiConfig } from './wagmiConfig';
 
 export class EvmXConnector extends XConnector {
   connector: Connector;

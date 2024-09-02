@@ -4,12 +4,12 @@ import { Currency, Token } from '@balancednetwork/sdk-core';
 
 import useLast from '@/hooks/useLast';
 
+import { XChainId } from '@/xwagmi/types';
 import Modal from '../Modal';
 import { PopperWithoutArrow } from '../Popover';
 import { CurrencySearch, CurrencySelectionType } from './CurrencySearch';
 import { ImportToken } from './ImportToken';
 import { RemoveToken } from './RemoveToken';
-import { XChainId } from '@/types';
 
 interface CurrencySearchModalProps {
   account?: string | null;

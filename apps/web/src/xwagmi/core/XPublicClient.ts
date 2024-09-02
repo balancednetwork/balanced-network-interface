@@ -1,6 +1,12 @@
-import { Transaction, TransactionStatus, XCallEvent, XCallMessageSentEvent } from '@/lib/xcall/_zustand/types';
-import { XCallEventType } from '@/lib/xcall/types';
-import { XChainId } from '@/types';
+import {
+  Transaction,
+  TransactionStatus,
+  XCallEvent,
+  XCallEventType,
+  XCallMessageSentEvent,
+} from '@/xwagmi/xcall/types';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XChainId, XToken } from '../types';
 
 export interface IXPublicClient {
   // getBlock(blockHeight);
@@ -21,6 +27,9 @@ export interface IXPublicClient {
   filterEventLogs(eventLogs: XCallEvent[], xCallEventType: XCallEventType): XCallEvent[];
   getCallMessageSentEvent(transaction: Transaction): XCallMessageSentEvent | null;
   getDestinationEvents(xChainId: XChainId, { startBlockHeight, endBlockHeight }): Promise<XCallEvent[] | null>;
+
+  getBalance(address: string | undefined, xToken: XToken): Promise<CurrencyAmount<Currency> | undefined>;
+  getBalances(address: string | undefined, xTokens: XToken[]): Promise<Record<string, CurrencyAmount<Currency>>>;
 }
 
 export abstract class XPublicClient implements IXPublicClient {
@@ -36,6 +45,24 @@ export abstract class XPublicClient implements IXPublicClient {
   abstract getTxEventLogs(rawTx): any[];
   abstract deriveTxStatus(rawTx): TransactionStatus;
   abstract getPublicClient();
+
+  abstract getBalance(address: string | undefined, xToken: XToken): Promise<CurrencyAmount<Currency> | undefined>;
+  async getBalances(address: string | undefined, xTokens: XToken[]) {
+    if (!address) return {};
+
+    const balancePromises = xTokens.map(async xToken => {
+      const balance = await this.getBalance(address, xToken);
+      return { symbol: xToken.symbol, balance };
+    });
+
+    const balances = await Promise.all(balancePromises);
+    const tokenMap = balances.reduce((map, { symbol, balance }) => {
+      if (balance) map[symbol] = balance;
+      return map;
+    }, {});
+
+    return tokenMap;
+  }
 
   abstract getEventLogs(
     xChainId: XChainId,

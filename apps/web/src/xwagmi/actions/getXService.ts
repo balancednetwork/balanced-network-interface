@@ -1,4 +1,4 @@
-import { XChainType } from '@/types';
+import { XChainType } from '@/xwagmi/types';
 import { XService } from '../core';
 import { useXWagmiStore } from '../useXWagmiStore';
 

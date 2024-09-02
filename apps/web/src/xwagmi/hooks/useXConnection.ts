@@ -1,5 +1,5 @@
-import { XChainType } from '@/types';
-import { XConnection } from '../core/types';
+import { XChainType } from '../types';
+import { XConnection } from '../types';
 import { useXWagmiStore } from '../useXWagmiStore';
 
 export function useXConnection(xChainType: XChainType | undefined): XConnection | undefined {

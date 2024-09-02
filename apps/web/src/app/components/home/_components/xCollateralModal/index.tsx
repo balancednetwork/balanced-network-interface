@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
@@ -10,20 +10,17 @@ import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
-import { xChainMap } from '@/constants/xChains';
+import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
-import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
-import { ApprovalState, useApproveCallback } from '@/lib/xcall/_hooks/useApproveCallback';
-import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
-import useXCallGasChecker from '@/lib/xcall/_hooks/useXCallGasChecker';
-import { XTransactionInput, XTransactionType } from '@/lib/xcall/_zustand/types';
-import {
-  XTransactionUpdater,
-  useXTransactionStore,
-  xTransactionActions,
-} from '@/lib/xcall/_zustand/useXTransactionStore';
+import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
+import { useSendXTransaction } from '@/hooks/useSendXTransaction';
+import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useCollateralActionHandlers, useDerivedCollateralInfo } from '@/store/collateral/hooks';
-import { XChainId, XToken } from '@/types';
+import { xChainMap } from '@/xwagmi/constants/xChains';
+import { XChainId, XToken } from '@/xwagmi/types';
+import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
+import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
+import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import useLoanWalletServiceHandler from '../../useLoanWalletServiceHandler';
 
 export enum XCollateralAction {
@@ -32,6 +29,7 @@ export enum XCollateralAction {
 }
 
 type XCollateralModalProps = {
+  modalId?: MODAL_ID;
   account: string | undefined;
   sourceChain: XChainId;
   storedModalValues: {
@@ -49,10 +47,17 @@ export const presenceVariants = {
   exit: { opacity: 0, height: 0 },
 };
 
-const XCollateralModal = ({ account, currencyAmount, sourceChain, storedModalValues }: XCollateralModalProps) => {
-  useModalStore();
+const XCollateralModal = ({
+  modalId = MODAL_ID.XCOLLATERAL_CONFIRM_MODAL,
+  account,
+  currencyAmount,
+  sourceChain,
+  storedModalValues,
+}: XCollateralModalProps) => {
+  const modalOpen = useModalOpen(modalId);
+
   const { collateralType } = useDerivedCollateralInfo();
-  const { currentId } = useXTransactionStore();
+  const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
   const { onAdjust: adjust } = useCollateralActionHandlers();
@@ -69,13 +74,24 @@ const XCollateralModal = ({ account, currencyAmount, sourceChain, storedModalVal
     adjust(false);
   }, [adjust]);
 
-  const handleDismiss = () => {
-    modalActions.closeModal(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL);
+  const handleDismiss = useCallback(() => {
+    modalActions.closeModal(modalId);
     setTimeout(() => {
-      xTransactionActions.reset();
+      setCurrentId(null);
     }, 500);
-  };
+  }, [modalId]);
 
+  useEffect(() => {
+    if (
+      currentXTransaction &&
+      (currentXTransaction.status === XTransactionStatus.success ||
+        currentXTransaction.status === XTransactionStatus.failure)
+    ) {
+      handleDismiss();
+    }
+  }, [currentXTransaction, handleDismiss]);
+
+  const { sendXTransaction } = useSendXTransaction();
   const handleXCollateralAction = async () => {
     if (!account) return;
     if (!xCallFee) return;
@@ -99,7 +115,8 @@ const XCollateralModal = ({ account, currencyAmount, sourceChain, storedModalVal
       callback: cancelAdjusting,
     };
 
-    await xTransactionActions.executeTransfer(xTransactionInput);
+    const xTransactionId = await sendXTransaction(xTransactionInput);
+    setCurrentId(xTransactionId || null);
   };
 
   const gasChecker = useXCallGasChecker(sourceChain);
@@ -109,8 +126,7 @@ const XCollateralModal = ({ account, currencyAmount, sourceChain, storedModalVal
 
   return (
     <>
-      {currentXTransaction && <XTransactionUpdater xTransaction={currentXTransaction} />}
-      <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL)} onDismiss={handleDismiss}>
+      <Modal isOpen={modalOpen} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px">
             {storedModalValues.action === XCollateralAction.DEPOSIT

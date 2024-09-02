@@ -1,11 +1,11 @@
-import { Token } from '@balancednetwork/sdk-core';
-import { Position, XChainId } from '@/types';
-import React from 'react';
-import CurrencyLogo from '../CurrencyLogo';
 import { Typography } from '@/app/theme';
-import SingleChainItem from './SingleChainItem';
-import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, ListItem } from '../Wallet/styledComponents';
+import { Position, XChainId } from '@/xwagmi/types';
+import { Token } from '@balancednetwork/sdk-core';
+import React from 'react';
 import styled from 'styled-components';
+import CurrencyLogo from '../CurrencyLogo';
+import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, ListItem } from '../Wallet/styledComponents';
+import SingleChainItem from './SingleChainItem';
 
 type MultiChainItemProps = {
   baseToken: Token;

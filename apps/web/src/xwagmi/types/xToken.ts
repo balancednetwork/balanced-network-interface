@@ -1,6 +1,6 @@
-import { XChainId } from './xChain';
-import BigNumber from 'bignumber.js';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import BigNumber from 'bignumber.js';
+import { XChainId } from './xChain';
 
 export class XToken extends Token {
   xChainId: XChainId;
@@ -22,6 +22,10 @@ export class XToken extends Token {
 
   static getXToken(xChainId: XChainId, token: Token) {
     return new XToken(xChainId, token.chainId, token.address, token.decimals, token.symbol, token.name);
+  }
+
+  isNativeXToken() {
+    return 'native' === this.address;
   }
 }
 

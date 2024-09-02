@@ -5,11 +5,10 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import { getNetworkDisplayName } from '@/utils/xTokens';
 import { getXPublicClient } from '@/xwagmi/actions';
+import { getNetworkDisplayName } from '@/xwagmi/utils';
 import { XCallEventType } from '../types';
-import { Transaction, TransactionStatus, XCallEventMap, XMessage, XMessageStatus } from './types';
-import { useFetchTransaction } from './useTransactionStore';
+import { Transaction, TransactionStatus, XCallEventMap, XMessage, XMessageStatus } from '../types';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { xTransactionActions } from './useXTransactionStore';
 
@@ -302,6 +301,29 @@ export const useFetchXMessageEvents = (xMessage?: XMessage) => {
     events,
     isLoading,
   };
+};
+
+const useFetchTransaction = (transaction: Transaction | undefined) => {
+  const { xChainId, hash, status } = transaction || {};
+  const { data: rawTx, isLoading } = useQuery({
+    queryKey: ['transaction', xChainId, hash],
+    queryFn: async () => {
+      if (!xChainId) return;
+
+      const xPublicClient = getXPublicClient(xChainId);
+      try {
+        const rawTx = await xPublicClient.getTxReceipt(hash);
+        return rawTx;
+      } catch (err: any) {
+        console.error(`failed to check transaction hash: ${hash}`, err);
+        throw new Error(err?.message);
+      }
+    },
+    refetchInterval: 2000,
+    enabled: Boolean(status === TransactionStatus.pending && hash && xChainId),
+  });
+
+  return { rawTx, isLoading };
 };
 
 export const XMessageUpdater = ({ xMessage }: { xMessage: XMessage }) => {

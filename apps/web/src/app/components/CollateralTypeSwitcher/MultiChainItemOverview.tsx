@@ -1,14 +1,14 @@
+import { Typography } from '@/app/theme';
+import { useOraclePrices } from '@/store/oracle/hooks';
+import { toFraction } from '@/utils';
+import { formatPrice } from '@/utils/formatter';
+import { Position, XChainId } from '@/xwagmi/types';
 import { Token } from '@balancednetwork/sdk-core';
-import { Position, XChainId } from '@/types';
 import React from 'react';
 import CurrencyLogo from '../CurrencyLogo';
-import { Typography } from '@/app/theme';
 import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, DataText, ListItem } from '../Wallet/styledComponents';
-import SingleChainItemOverview from './SingleChainItemOverview';
 import { StyledListItem } from './MultiChainItem';
-import { toFraction } from '@/utils';
-import { useOraclePrices } from '@/store/oracle/hooks';
-import { HIGH_PRICE_ASSET_DP } from '@/constants/tokens';
+import SingleChainItemOverview from './SingleChainItemOverview';
 
 type MultiChainItemOverviewProps = {
   baseToken: Token;
@@ -52,9 +52,10 @@ const MultiChainItemOverview = ({ baseToken, chains, onSelect, total }: MultiCha
           {collateral && collateral.greaterThan(0) && (
             <DataText as="div">
               {price && '$'}
-              {collateral
+              {/* {collateral
                 ?.multiply(price || 1)
-                .toFixed(price ? 0 : HIGH_PRICE_ASSET_DP[baseToken.address] || 2, { groupSeparator: ',' })}
+                .toFixed(price ? 0 : HIGH_PRICE_ASSET_DP[baseToken.address] || 2, { groupSeparator: ',' })} */}
+              {formatPrice(collateral?.multiply(price || 1).toFixed())}
             </DataText>
           )}
 

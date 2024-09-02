@@ -14,9 +14,7 @@ import { BrightPanel } from '@/app/components/Panel';
 import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
-import { xChainMap } from '@/constants/xChains';
 import useManualAddresses from '@/hooks/useManualAddresses';
-import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import {
   useBridgeActionHandlers,
@@ -26,9 +24,12 @@ import {
 } from '@/store/bridge/hooks';
 import { Field } from '@/store/bridge/reducer';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { maxAmountSpend, validateAddress } from '@/utils';
+import { maxAmountSpend } from '@/utils';
 import { getXChainType } from '@/xwagmi/actions';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount } from '@/xwagmi/hooks';
+import { validateAddress } from '@/xwagmi/utils';
+import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import ChainSelector from './ChainSelector';
 
 export default function BridgeTransferForm({ openModal }) {

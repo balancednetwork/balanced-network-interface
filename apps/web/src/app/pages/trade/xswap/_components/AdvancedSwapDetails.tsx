@@ -11,12 +11,12 @@ import Divider from '@/app/components/Divider';
 import QuestionHelper from '@/app/components/QuestionHelper';
 import SlippageSetting from '@/app/components/SlippageSetting';
 import { Typography } from '@/app/theme';
-import { xChainMap } from '@/constants/xChains';
-import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
 import { useSetSlippageTolerance, useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
-import { XChainId } from '@/types';
+import { xChainMap } from '@/xwagmi/constants/xChains';
+import { XChainId } from '@/xwagmi/types';
+import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 
 export default function AdvancedSwapDetails() {
   const { trade, currencies, direction } = useDerivedSwapInfo();

@@ -1,16 +1,17 @@
-import { Address, PublicClient, getContract, parseEventLogs } from 'viem';
+import { Address, PublicClient, erc20Abi, getContract, parseEventLogs } from 'viem';
 
-import { xChainMap } from '@/constants/xChains';
-import { XChainId } from '@/types';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
+import { XChainId, XToken } from '@/xwagmi/types';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import {
   TransactionStatus,
   XCallEvent,
+  XCallEventType,
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
-} from '../../../lib/xcall/_zustand/types';
-import { XCallEventType } from '../../../lib/xcall/types';
+} from '../../xcall/types';
 import { EvmXService } from './EvmXService';
 import { xCallContractAbi } from './abis/xCallContractAbi';
 
@@ -36,6 +37,52 @@ export class EvmXPublicClient extends XPublicClient {
       throw new Error('EvmXPublicClient: publicClient is not initialized yet');
     }
     return publicClient;
+  }
+
+  async getBalance(address: string | undefined, xToken: XToken) {
+    if (!address) return;
+
+    if (xToken.isNativeXToken()) {
+      const balance = await this.getPublicClient().getBalance({ address: address as Address });
+      return CurrencyAmount.fromRawAmount(xToken, balance);
+    } else {
+      throw new Error(`Unsupported token: ${xToken.symbol}`);
+    }
+  }
+
+  async getBalances(address: string | undefined, xTokens: XToken[]) {
+    if (!address) return {};
+
+    const balancePromises = xTokens
+      .filter(xToken => xToken.isNativeXToken())
+      .map(async xToken => {
+        const balance = await this.getBalance(address, xToken);
+        return { symbol: xToken.symbol, balance };
+      });
+
+    const balances = await Promise.all(balancePromises);
+    const tokenMap = balances.reduce((map, { symbol, balance }) => {
+      if (balance) map[symbol] = balance;
+      return map;
+    }, {});
+
+    const nonNativeXTokens = xTokens.filter(xToken => !xToken.isNativeXToken());
+    const result = await this.getPublicClient().multicall({
+      contracts: nonNativeXTokens.map(token => ({
+        abi: erc20Abi,
+        address: token.address as `0x${string}`,
+        functionName: 'balanceOf',
+        args: [address],
+        chainId: this.getChainId(),
+      })),
+    });
+
+    return nonNativeXTokens
+      .map((token, index) => CurrencyAmount.fromRawAmount(token, result[index].result?.toString() || '0'))
+      .reduce((acc, balance) => {
+        acc[balance.currency.wrapped.address] = balance;
+        return acc;
+      }, tokenMap);
   }
 
   async getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean, sources: string[] = []) {

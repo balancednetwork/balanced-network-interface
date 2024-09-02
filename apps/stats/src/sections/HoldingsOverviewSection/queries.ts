@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 
-import { addresses } from '@balancednetwork/balanced-js';
-import BigNumber from 'bignumber.js';
 import { useTokenPrices } from '@/queries/backendv2';
 import { useHoldings, usePOLData } from '@/queries/blockDetails';
+import { addresses } from '@balancednetwork/balanced-js';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import BigNumber from 'bignumber.js';
 
 import { CHART_COLORS } from '@/sections/BALNSection/queries';
 
@@ -15,8 +15,8 @@ const CHART_TOKENS_COLORS = {
   sICX: '#2ca9b7',
   BALN: '#1694b8',
   bnUSD: '#217f94',
-  BTCB: '#E9983D',
-  ETH: '#3D3D3D',
+  ETH: '#217f94',
+  BTC: '#1694b8',
   default: '#334764',
 };
 

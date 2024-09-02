@@ -17,7 +17,8 @@ import {
 import useClaimableICX from './useClaimableICX';
 
 import { Typography } from '@/app/theme';
-import { HIGH_PRICE_ASSET_DP } from '@/constants/tokens';
+import { useRatesWithOracle } from '@/queries/reward';
+import { formatBalance } from '@/utils/formatter';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { useTheme } from 'styled-components';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
@@ -44,6 +45,7 @@ const WalletUI = ({ currency }: { currency: Currency }) => {
 const ICONAssetModal = ({ token, balance, value, isOpen, close }) => {
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
   const theme = useTheme();
+  const rates = useRatesWithOracle();
 
   return (
     <Modal isOpen={isOpen} onDismiss={close}>
@@ -76,9 +78,7 @@ const ICONAssetModal = ({ token, balance, value, isOpen, close }) => {
             </Typography>
           </AssetSymbol>
           <BalanceAndValueWrap>
-            <DataText as="div">
-              {balance?.toFixed(HIGH_PRICE_ASSET_DP[token.address] || 2, { groupSeparator: ',' })}
-            </DataText>
+            <DataText as="div">{formatBalance(balance?.toFixed(), rates?.[token.symbol]?.toFixed())}</DataText>
             <DataText as="div">{!value ? '-' : `$${value.toFormat(2)}`}</DataText>
           </BalanceAndValueWrap>
         </ListItem>

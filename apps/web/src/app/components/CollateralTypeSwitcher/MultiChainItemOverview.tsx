@@ -1,7 +1,7 @@
 import { Typography } from '@/app/theme';
-import { HIGH_PRICE_ASSET_DP } from '@/constants/tokens';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { toFraction } from '@/utils';
+import { formatPrice } from '@/utils/formatter';
 import { Position, XChainId } from '@/xwagmi/types';
 import { Token } from '@balancednetwork/sdk-core';
 import React from 'react';
@@ -52,9 +52,10 @@ const MultiChainItemOverview = ({ baseToken, chains, onSelect, total }: MultiCha
           {collateral && collateral.greaterThan(0) && (
             <DataText as="div">
               {price && '$'}
-              {collateral
+              {/* {collateral
                 ?.multiply(price || 1)
-                .toFixed(price ? 0 : HIGH_PRICE_ASSET_DP[baseToken.address] || 2, { groupSeparator: ',' })}
+                .toFixed(price ? 0 : HIGH_PRICE_ASSET_DP[baseToken.address] || 2, { groupSeparator: ',' })} */}
+              {formatPrice(collateral?.multiply(price || 1).toFixed())}
             </DataText>
           )}
 

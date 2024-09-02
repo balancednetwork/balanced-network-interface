@@ -1,21 +1,20 @@
 import React, { useCallback, useMemo } from 'react';
 
+import { useIconReact } from '@/packages/icon-react';
 import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
-import { t, Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { useIconReact } from '@/packages/icon-react';
 import { useMedia } from 'react-use';
-import { Flex, Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 
 import { Typography } from '@/app/theme';
-import { HIGH_PRICE_ASSET_DP } from '@/constants/tokens';
 import { PairState, useBalance, useSuppliedTokens } from '@/hooks/useV2Pairs';
 import { useAllPairsByName } from '@/queries/backendv2';
-import { useICXConversionFee } from '@/queries/reward';
+import { useICXConversionFee, useRatesWithOracle } from '@/queries/reward';
 import { useBBalnAmount, useResponsivePoolRewardShare, useSources } from '@/store/bbaln/hooks';
-import { Field } from '@/store/mint/reducer';
 import { useDerivedMintInfo, useMintState } from '@/store/mint/hooks';
+import { Field } from '@/store/mint/reducer';
 import { useReward } from '@/store/reward/hooks';
 import { useWithdrawnPercent } from '@/store/stakedLP/hooks';
 import { tryParseAmount } from '@/store/swap/hooks';
@@ -24,6 +23,7 @@ import { formatBigNumber } from '@/utils';
 
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
 import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
+import { formatBalance } from '@/utils/formatter';
 
 export default function LPDescription() {
   const { currencies, pair, pairState, dependentField, noLiquidity, parsedAmounts } = useDerivedMintInfo();
@@ -132,6 +132,8 @@ export default function LPDescription() {
       );
     }
   }, [formattedAmounts, userBbaln, userPoolBalances]);
+
+  const rates = useRatesWithOracle();
 
   return (
     <>
@@ -291,14 +293,10 @@ export default function LPDescription() {
                     <Typography textAlign="center" variant="p">
                       {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
                         <>
-                          {pair?.reserve0.toFixed(HIGH_PRICE_ASSET_DP[pair.reserve0.currency?.address || ''] || 0, {
-                            groupSeparator: ',',
-                          })}{' '}
+                          {formatBalance(pair?.reserve0.toFixed(), rates?.[pair.reserve0.currency?.symbol]?.toFixed())}{' '}
                           {pair?.reserve0.currency?.symbol}
                           <br />
-                          {pair?.reserve1.toFixed(HIGH_PRICE_ASSET_DP[pair.reserve1.currency?.address || ''] || 0, {
-                            groupSeparator: ',',
-                          })}{' '}
+                          {formatBalance(pair?.reserve1.toFixed(), rates?.[pair.reserve1.currency?.symbol]?.toFixed())}{' '}
                           {pair?.reserve1.currency?.symbol}
                         </>
                       ) : (

@@ -1,15 +1,15 @@
-import axios from 'axios';
-import BigNumber from 'bignumber.js';
 import bnJs from '@/bnJs';
 import { getTimestampFrom } from '@/pages/PerformanceDetails/utils';
 import { API_ENDPOINT, BlockDetails, useBlockDetails } from '@/queries/blockDetails';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import BigNumber from 'bignumber.js';
 
 const BURNER_CX_CREATED = 1708324683000;
 
-type BurnChartItem = { timestamp: number; value: number; pending: number; week: number };
+type BurnChartItem = { timestamp: number; value: number; pending: number; month: number };
 
-function generateWeeklyTimestamps(startTimestamp: number): [number, number][] {
+function generateMonthlyTimestamps(startTimestamp: number): [number, number][] {
   const start = new Date(startTimestamp);
   const now = new Date();
 
@@ -17,7 +17,7 @@ function generateWeeklyTimestamps(startTimestamp: number): [number, number][] {
 
   while (start < now) {
     const end = new Date(start);
-    end.setDate(end.getDate() + 7);
+    end.setDate(end.getDate() + 30);
 
     if (end > now) {
       end.setTime(now.getTime()); // If the end of the week is in the future, set it to now
@@ -25,7 +25,7 @@ function generateWeeklyTimestamps(startTimestamp: number): [number, number][] {
 
     timestamps.push([start.getTime(), end.getTime()]);
 
-    start.setDate(start.getDate() + 7); // Move to the next week
+    start.setDate(start.getDate() + 30); // Move to the next week
   }
 
   return timestamps;
@@ -35,10 +35,10 @@ function useBurnChartData(): UseQueryResult<BurnChartItem[] | undefined> {
   return useQuery({
     queryKey: ['burnChartData'],
     queryFn: async () => {
-      const weeklyTimestamps = generateWeeklyTimestamps(BURNER_CX_CREATED);
+      const monthlyTimestamps = generateMonthlyTimestamps(BURNER_CX_CREATED);
 
       return await Promise.all(
-        weeklyTimestamps.map(async ([start, end], index, arr) => {
+        monthlyTimestamps.map(async ([start, end], index, arr) => {
           const isLast = index === arr.length - 1;
 
           const { data: startBlock } = await axios.get<BlockDetails>(`${API_ENDPOINT}blocks/timestamp/${start * 1000}`);
@@ -67,7 +67,7 @@ function useBurnChartData(): UseQueryResult<BurnChartItem[] | undefined> {
             timestamp: start,
             value: burned,
             pending,
-            week: index + 1,
+            month: index + 1,
           };
         }),
       );

@@ -1,13 +1,13 @@
-import dayjs from 'dayjs';
 import { LoaderComponent } from '@/pages/PerformanceDetails/utils';
 import { useBurnData } from '@/queries/burn';
+import { ChartInfo, ChartInfoItem, ChartWrap, LegendItem } from '@/sections/BALNSection/DistributionChart';
+import { Typography } from '@/theme';
+import { formatYAxisNumber, getFormattedNumber } from '@/utils/formatter';
+import dayjs from 'dayjs';
 import React from 'react';
 import { Flex } from 'rebass';
 import { Bar, BarChart, Rectangle, ResponsiveContainer, Tooltip, YAxis } from 'recharts';
-import { ChartInfo, ChartInfoItem, ChartWrap, LegendItem } from '@/sections/BALNSection/DistributionChart';
 import styled, { useTheme } from 'styled-components';
-import { Typography } from '@/theme';
-import { formatYAxisNumber, getFormattedNumber } from '@/utils/formatter';
 
 export const TooltipWrapper = styled.div`
   background: ${({ theme }) => theme.colors.bg4};
@@ -37,7 +37,7 @@ const CustomTooltip = ({ active, payload }) => {
   const theme = useTheme();
 
   if (active && payload && payload.length) {
-    const { value, timestamp, pending, week } = payload[0].payload;
+    const { value, timestamp, pending, month } = payload[0].payload;
     return (
       <TooltipWrapper>
         {pending > 0 && (
@@ -55,7 +55,7 @@ const CustomTooltip = ({ active, payload }) => {
           </Typography>
         </Flex>
         <Flex mt={2} flexDirection="column">
-          <label>{`Week ${week}`}</label>
+          <label>{`Month ${month}`}</label>
           <label>{getLabel(timestamp, pending > 0)}</label>
         </Flex>
       </TooltipWrapper>
@@ -66,7 +66,7 @@ const CustomTooltip = ({ active, payload }) => {
 };
 
 function getLabel(label: number, isLast: boolean) {
-  return `${dayjs(label).format('DD MMM')} - ${isLast ? 'now' : dayjs(label).add(7, 'days').format('DD MMM YYYY')}`;
+  return `${dayjs(label).format('DD MMM')} - ${isLast ? 'now' : dayjs(label).add(30, 'days').format('DD MMM YYYY')}`;
 }
 
 const ICXBurn = () => {

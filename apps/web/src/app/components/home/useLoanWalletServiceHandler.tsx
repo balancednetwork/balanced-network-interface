@@ -1,6 +1,6 @@
 import { useDerivedCollateralInfo } from '@/store/collateral/hooks';
 import { useDerivedLoanInfo, useLoanRecipientNetwork, useLoanState } from '@/store/loan/hooks';
-import { XChainId } from '@/types';
+import { XChainId } from '@/xwagmi/types';
 import { useMemo } from 'react';
 
 const useLoanWalletServiceHandler = (): XChainId => {

@@ -1,18 +1,18 @@
-import React from 'react';
-import { Token } from '@balancednetwork/sdk-core';
 import { Typography } from '@/app/theme';
-import { Position, XChainId } from '@/types';
+import { useICX } from '@/constants/tokens';
+import { useIcxDisplayType } from '@/store/collateral/hooks';
+import { useOraclePrices } from '@/store/oracle/hooks';
+import { toFraction } from '@/utils';
+import { formatValue } from '@/utils/formatter';
+import { xChainMap } from '@/xwagmi/constants/xChains';
+import { Position, XChainId } from '@/xwagmi/types';
+import { Token } from '@balancednetwork/sdk-core';
+import React from 'react';
 import { useTheme } from 'styled-components';
-import { xChainMap } from '@/constants/xChains';
+import CurrencyLogo from '../CurrencyLogo';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { AssetSymbol, BalanceAndValueWrap, DataText } from '../Wallet/styledComponents';
 import { StyledListItem } from './MultiChainItem';
-import { toFraction } from '@/utils';
-import { useOraclePrices } from '@/store/oracle/hooks';
-import CurrencyLogo from '../CurrencyLogo';
-import { formatValue } from '@/utils/formatter';
-import { useICX } from '@/constants/tokens';
-import { useIcxDisplayType } from '@/store/collateral/hooks';
 
 type SingleChainItemOverviewProps = {
   baseToken: Token;

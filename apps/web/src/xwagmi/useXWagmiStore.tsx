@@ -1,12 +1,11 @@
-import { xChains } from '@/constants/xChains';
-import { XChainId, XChainType } from '@/types';
-import { useEffect } from 'react';
+import { xChains } from '@/xwagmi/constants/xChains';
+import { XChainId, XChainType } from '@/xwagmi/types';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { getXChainType } from './actions';
 import { XPublicClient, XService, XWalletClient } from './core';
-import { XConnection } from './core/types';
+import { XConnection } from './types';
 import { ArchwayXConnector, ArchwayXPublicClient, ArchwayXService, ArchwayXWalletClient } from './xchains/archway';
 import { EvmXPublicClient, EvmXService, EvmXWalletClient } from './xchains/evm';
 import { HavahXConnector, HavahXPublicClient, HavahXService, HavahXWalletClient } from './xchains/havah';

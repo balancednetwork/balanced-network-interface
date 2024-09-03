@@ -5,9 +5,9 @@ import { Box } from 'rebass';
 import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
-import { xChainMap } from '@/constants/xChains';
 import useWidth from '@/hooks/useWidth';
-import { XChainId } from '@/types';
+import { xChainMap } from '@/xwagmi/constants/xChains';
+import { XChainId } from '@/xwagmi/types';
 import { Currency } from '@balancednetwork/sdk-core';
 import { StyledArrowDownIcon, UnderlineText } from '../../../../components/DropdownText';
 import { DropdownPopper } from '../../../../components/Popover';

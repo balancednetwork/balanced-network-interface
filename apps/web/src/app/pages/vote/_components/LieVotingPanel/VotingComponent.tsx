@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-import { t, Trans } from '@lingui/macro';
 import { useIconReact } from '@/packages/icon-react';
+import { Trans, t } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from '@/app/components/Button';
@@ -13,7 +13,6 @@ import ModalContent from '@/app/components/ModalContent';
 import Tooltip from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import EditIcon from '@/assets/icons/edit.svg';
-import bnJs from '@/bnJs';
 import {
   useChangeEditing,
   useChangeInputValue,
@@ -25,8 +24,9 @@ import {
 } from '@/store/liveVoting/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
-import { escapeRegExp, ONE_DAY_DURATION } from '@/utils';
+import { ONE_DAY_DURATION, escapeRegExp } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import { AllocationInput, RespoLabel, StyledQuestionIcon, VotingButtons } from '../styledComponents';
 import { formatFraction, formatTimeLeft, formatVoteWeight, getUserCurrentAllocationFormatted } from '../utils';

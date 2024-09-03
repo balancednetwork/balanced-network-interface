@@ -1,15 +1,14 @@
-import bnJs from '@/bnJs';
 import { Percent } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
 import { Address, PublicClient, WalletClient, WriteContractParameters, toHex } from 'viem';
+import bnJs from '../icon/bnJs';
 
-import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
-import { NATIVE_ADDRESS } from '@/constants/index';
-import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/constants/xChains';
-import { uintToBytes } from '@/utils';
+import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
+import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
-import { XTransactionInput, XTransactionType } from '../../../lib/xcall/_zustand/types';
-import { getRlpEncodedSwapData, toICONDecimals } from '../../../lib/xcall/utils';
+import { uintToBytes } from '@/xwagmi/utils';
+import { XTransactionInput, XTransactionType } from '../../xcall/types';
+import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
 import { EvmXService } from './EvmXService';
 import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
 import { bnUSDContractAbi } from './abis/bnUSDContractAbi';

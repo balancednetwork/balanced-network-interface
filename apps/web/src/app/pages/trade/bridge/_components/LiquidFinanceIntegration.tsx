@@ -9,16 +9,16 @@ import styled from 'styled-components';
 import CurrencyLogo from '@/app/components/CurrencyLogo';
 import { Typography } from '@/app/theme';
 import { useARCH } from '@/constants/tokens1';
-import { archway } from '@/constants/xChains';
-import { sARCHOnArchway } from '@/constants/xTokens';
 import {
   useBridgeActionHandlers,
   useBridgeDirection,
   useBridgeState,
   useDerivedBridgeInfo,
 } from '@/store/bridge/hooks';
-import { XChainId } from '@/types';
+import { archway } from '@/xwagmi/constants/xChains';
+import { sARCHOnArchway } from '@/xwagmi/constants/xTokens';
 import { useXService } from '@/xwagmi/hooks';
+import { XChainId } from '@/xwagmi/types';
 import { ArchwayXService } from '@/xwagmi/xchains/archway';
 
 const WithdrawOption = styled.button<{ active: boolean }>`

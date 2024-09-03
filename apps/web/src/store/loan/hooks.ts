@@ -6,12 +6,10 @@ import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
-import bnJs from '@/bnJs';
-import { ICON_XCALL_NETWORK_ID, NETWORK_ID } from '@/constants/config';
+import { NETWORK_ID } from '@/constants/config';
 import { ZERO } from '@/constants/index';
 import { bnUSD } from '@/constants/tokens';
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { useDestinationEvents } from '@/lib/xcall/_zustand/useXCallEventStore';
 import { useBnJsContractQuery } from '@/queries/utils';
 import {
   DEFAULT_COLLATERAL_TOKEN,
@@ -26,11 +24,14 @@ import { useRatio } from '@/store/ratio/hooks';
 import { useRewards } from '@/store/reward/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { XChainId } from '@/types';
 import { formatUnits, toBigNumber } from '@/utils';
 import { getXTokenAddress } from '@/utils/xTokens';
 import { getXChainType } from '@/xwagmi/actions';
+import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { useXAccount } from '@/xwagmi/hooks';
+import { XChainId } from '@/xwagmi/types';
+import { useDestinationEvents } from '@/xwagmi/xcall/zustand/useXCallEventStore';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { AppState } from '..';
 import {
   Field,

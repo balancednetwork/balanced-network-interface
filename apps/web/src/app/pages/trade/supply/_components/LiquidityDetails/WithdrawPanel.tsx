@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo } from 'react';
 
-import { Currency, CurrencyAmount, Fraction, Percent } from '@balancednetwork/sdk-core';
-import { Pair } from '@balancednetwork/v1-sdk';
-import { t, Trans } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import { useIconReact } from '@/packages/icon-react';
 import Nouislider from '@/packages/nouislider-react';
+import { Currency, CurrencyAmount, Fraction, Percent } from '@balancednetwork/sdk-core';
+import { Pair } from '@balancednetwork/v1-sdk';
+import { Trans, t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { useMedia } from 'react-use';
-import { Flex, Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button, TextButton } from '@/app/components/Button';
@@ -16,7 +16,6 @@ import CurrencyLogo from '@/app/components/CurrencyLogo';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
-import bnJs from '@/bnJs';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from '@/constants/misc';
 import { BalanceData } from '@/hooks/useV2Pairs';
 import { Source } from '@/store/bbaln/hooks';
@@ -27,9 +26,10 @@ import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useCurrencyBalances, useHasEnoughICX } from '@/store/wallet/hooks';
 import { formatBigNumber, multiplyCABN, toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
-import { withdrawMessage } from '../utils';
 import { EXA, WEIGHT } from '@/app/components/home/BBaln/utils';
+import { withdrawMessage } from '../utils';
 
 const Wrapper = styled(Flex)`
   padding-left: 0;

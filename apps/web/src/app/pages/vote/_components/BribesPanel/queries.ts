@@ -1,17 +1,17 @@
 import { useMemo } from 'react';
 
+import { useIconReact } from '@/packages/icon-react';
 import { CallData } from '@balancednetwork/balanced-js';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { useIconReact } from '@/packages/icon-react';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 
-import bnJs from '@/bnJs';
 import { NETWORK_ID } from '@/constants/config';
 import { useCombinedVoteData } from '@/store/liveVoting/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
-import { Bribe, BribeToken, SourceName } from './types';
 import { WEEK_IN_MS, getClosestUnixWeekStart } from '@/app/components/home/BBaln/utils';
+import { Bribe, BribeToken, SourceName } from './types';
 
 const FUTURE_REWARDS_COUNT = 3;
 

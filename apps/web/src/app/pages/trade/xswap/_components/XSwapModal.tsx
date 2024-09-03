@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
@@ -6,34 +6,31 @@ import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 
-import { Typography } from '@/app/theme';
-import { useSwapSlippageTolerance } from '@/store/application/hooks';
-import { Field } from '@/store/swap/reducer';
-import { XChainId, XToken } from '@/types';
-import { formatBigNumber, shortenAddress } from '@/utils';
-import { getNetworkDisplayName } from '@/utils/xTokens';
-
 import { Button, TextButton } from '@/app/components/Button';
 import { StyledButton } from '@/app/components/Button/StyledButton';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import XTransactionState from '@/app/components/XTransactionState';
+import { Typography } from '@/app/theme';
 import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
-import { xChainMap } from '@/constants/xChains';
+import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
-import { MODAL_ID, modalActions, useModalStore } from '@/hooks/useModalStore';
-import { ApprovalState, useApproveCallback } from '@/lib/xcall/_hooks/useApproveCallback';
-import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
-import useXCallGasChecker from '@/lib/xcall/_hooks/useXCallGasChecker';
-import { XTransactionInput, XTransactionType } from '@/lib/xcall/_zustand/types';
-import {
-  XTransactionUpdater,
-  useXTransactionStore,
-  xTransactionActions,
-} from '@/lib/xcall/_zustand/useXTransactionStore';
+import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
+import { useSendXTransaction } from '@/hooks/useSendXTransaction';
+import useXCallGasChecker from '@/hooks/useXCallGasChecker';
+import { useSwapSlippageTolerance } from '@/store/application/hooks';
+import { Field } from '@/store/swap/reducer';
+import { formatBigNumber, shortenAddress } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import { getNetworkDisplayName } from '@/utils/xTokens';
+import { xChainMap } from '@/xwagmi/constants/xChains';
+import { XChainId, XToken } from '@/xwagmi/types';
+import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
+import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
+import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 
 type XSwapModalProps = {
+  modalId?: MODAL_ID;
   account: string | undefined;
   currencies: { [field in Field]?: Currency };
   executionTrade?: Trade<Currency, Currency, TradeType>;
@@ -51,9 +48,18 @@ export const presenceVariants = {
   exit: { opacity: 0, height: 0 },
 };
 
-const XSwapModal = ({ account, currencies, executionTrade, direction, recipient, clearInputs }: XSwapModalProps) => {
-  useModalStore();
-  const { currentId } = useXTransactionStore();
+const XSwapModal = ({
+  modalId = MODAL_ID.XSWAP_CONFIRM_MODAL,
+  account,
+  currencies,
+  executionTrade,
+  direction,
+  recipient,
+  clearInputs,
+}: XSwapModalProps) => {
+  const modalOpen = useModalOpen(modalId);
+
+  const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
 
@@ -82,13 +88,24 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
   };
 
-  const handleDismiss = () => {
-    modalActions.closeModal(MODAL_ID.XSWAP_CONFIRM_MODAL);
+  const handleDismiss = useCallback(() => {
+    modalActions.closeModal(modalId);
     setTimeout(() => {
-      xTransactionActions.reset();
+      setCurrentId(null);
     }, 500);
-  };
+  }, [modalId]);
 
+  useEffect(() => {
+    if (
+      currentXTransaction &&
+      (currentXTransaction.status === XTransactionStatus.success ||
+        currentXTransaction.status === XTransactionStatus.failure)
+    ) {
+      handleDismiss();
+    }
+  }, [currentXTransaction, handleDismiss]);
+
+  const { sendXTransaction } = useSendXTransaction();
   const handleXCallSwap = async () => {
     if (!executionTrade) return;
     if (!account) return;
@@ -108,7 +125,8 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
       callback: cleanupSwap,
     };
 
-    await xTransactionActions.executeTransfer(xTransactionInput);
+    const xTransactionId = await sendXTransaction(xTransactionInput);
+    setCurrentId(xTransactionId || null);
   };
 
   const gasChecker = useXCallGasChecker(direction.from);
@@ -117,8 +135,8 @@ const XSwapModal = ({ account, currencies, executionTrade, direction, recipient,
 
   return (
     <>
-      {currentXTransaction && <XTransactionUpdater xTransaction={currentXTransaction} />}
-      <Modal isOpen={modalActions.isModalOpen(MODAL_ID.XSWAP_CONFIRM_MODAL)} onDismiss={handleDismiss}>
+      {/* {currentXTransaction && <XTransactionUpdater xTransaction={currentXTransaction} />} */}
+      <Modal isOpen={modalOpen} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
             <Trans>

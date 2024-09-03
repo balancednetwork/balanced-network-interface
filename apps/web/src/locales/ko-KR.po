@@ -93,9 +93,9 @@ msgstr ""
 msgid "Your transaction has failed. Please go back and try again."
 msgstr ""
 
-#: src/lib/xcall/_hooks/useApproveCallback.tsx
-#: src/lib/xcall/_hooks/useApproveCallback.tsx
-#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/hooks/useApproveCallback.tsx
+#: src/hooks/useApproveCallback.tsx
+#: src/hooks/useApproveCallback.tsx
 msgid "{0} transfer approval failed."
 msgstr ""
 
@@ -446,8 +446,8 @@ msgstr "승인됨"
 msgid "Review the community token list on GitHub."
 msgstr ""
 
-#: src/lib/xcall/_hooks/useApproveCallback.tsx
-#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/hooks/useApproveCallback.tsx
+#: src/hooks/useApproveCallback.tsx
 msgid "Approving {0} for cross-chain transfer..."
 msgstr ""
 
@@ -769,8 +769,8 @@ msgstr "적용 전"
 msgid "Active"
 msgstr "활성화"
 
-#: src/lib/xcall/_hooks/useApproveCallback.tsx
-#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/hooks/useApproveCallback.tsx
+#: src/hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
 msgstr ""
 
@@ -1601,7 +1601,7 @@ msgid "Approve"
 msgstr "승인"
 
 #: src/btp/src/connectors/helper.ts
-#: src/lib/xcall/_zustand/useTransactionStore.tsx
+#: src/hooks/useTransactionStore.tsx
 #: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
 msgstr "트랜잭션 처리 중..."

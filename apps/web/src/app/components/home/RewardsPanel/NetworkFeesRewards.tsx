@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Trans, t } from '@lingui/macro';
 import { useIconReact } from '@/packages/icon-react';
+import { Trans, t } from '@lingui/macro';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
@@ -13,7 +13,6 @@ import { QuestionWrapper } from '@/app/components/QuestionHelper';
 import Tooltip from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import QuestionIcon from '@/assets/icons/question.svg';
-import bnJs from '@/bnJs';
 import {
   useBBalnSliderState,
   useDBBalnAmountDiff,
@@ -26,6 +25,7 @@ import { useHasNetworkFees } from '@/store/reward/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import RewardsGrid from './RewardsGrid';
 

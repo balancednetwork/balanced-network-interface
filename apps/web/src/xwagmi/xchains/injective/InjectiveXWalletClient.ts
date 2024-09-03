@@ -1,16 +1,15 @@
-import bnJs from '@/bnJs';
 import { Percent } from '@balancednetwork/sdk-core';
+import bnJs from '../icon/bnJs';
 
-import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
-import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/lib/xcall/utils';
+import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
+import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xwagmi/xcall/utils';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 
-import { NATIVE_ADDRESS } from '@/constants';
-import { FROM_SOURCES, TO_SOURCES, injective } from '@/constants/xChains';
-import { XTransactionInput, XTransactionType } from '@/lib/xcall/_zustand/types';
-import { XToken } from '@/types';
-import { uintToBytes } from '@/utils';
+import { FROM_SOURCES, TO_SOURCES, injective } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core';
+import { XToken } from '@/xwagmi/types';
+import { uintToBytes } from '@/xwagmi/utils';
+import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import { RLP } from '@ethereumjs/rlp';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { InjectiveXService } from './InjectiveXService';

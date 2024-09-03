@@ -53,9 +53,6 @@ export const useModalStore = create<ModalStore>()(() => ({
 }));
 
 export const modalActions = {
-  isModalOpen: (id: MODAL_ID) => {
-    return useModalStore.getState().isModalOpen(id);
-  },
   openModal: (id: MODAL_ID) => {
     useModalStore.getState().openModal(id);
   },
@@ -63,3 +60,7 @@ export const modalActions = {
     useModalStore.getState().closeModal(id);
   },
 };
+
+export function useModalOpen(id: MODAL_ID): boolean {
+  return useModalStore(state => state.modals?.[id]);
+}

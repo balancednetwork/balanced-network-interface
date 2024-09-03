@@ -3,11 +3,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { useIconNetworkId } from '@/hooks/useIconNetworkId';
 import { Currency, Token } from '@balancednetwork/sdk-core';
 
-import bnJs from '@/bnJs';
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@/constants/routing';
 import { TokenAddressMap, useCombinedActiveList } from '@/store/lists/hooks';
 import { useUserAddedTokens } from '@/store/user/hooks';
 import { isAddress } from '@/utils';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
 function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {

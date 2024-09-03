@@ -1,18 +1,18 @@
-import React from 'react';
-import { Token } from '@balancednetwork/sdk-core';
 import { Typography } from '@/app/theme';
-import { Position, XChainId } from '@/types';
-import { useTheme } from 'styled-components';
-import { xChainMap } from '@/constants/xChains';
-import { AssetSymbol, BalanceAndValueWrap, DataText } from '../Wallet/styledComponents';
-import { StyledListItem } from './MultiChainItem';
-import { toFraction } from '@/utils';
-import { useOraclePrices } from '@/store/oracle/hooks';
-import { t } from '@lingui/macro';
-import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
-import { formatValue } from '@/utils/formatter';
 import { useICX } from '@/constants/tokens';
 import { useIcxDisplayType } from '@/store/collateral/hooks';
+import { useOraclePrices } from '@/store/oracle/hooks';
+import { toFraction } from '@/utils';
+import { formatValue } from '@/utils/formatter';
+import { xChainMap } from '@/xwagmi/constants/xChains';
+import { Position, XChainId } from '@/xwagmi/types';
+import { Token } from '@balancednetwork/sdk-core';
+import { t } from '@lingui/macro';
+import React from 'react';
+import { useTheme } from 'styled-components';
+import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
+import { AssetSymbol, BalanceAndValueWrap, DataText } from '../Wallet/styledComponents';
+import { StyledListItem } from './MultiChainItem';
 
 type SingleChainItemProps = {
   baseToken: Token;

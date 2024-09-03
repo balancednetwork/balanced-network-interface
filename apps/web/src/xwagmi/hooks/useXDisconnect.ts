@@ -1,7 +1,7 @@
-import { XChainType } from '@/types';
 import { useCallback } from 'react';
 import { useDisconnect } from 'wagmi';
 import { getXService } from '../actions';
+import { XChainType } from '../types';
 import { useXWagmiStore } from '../useXWagmiStore';
 
 export function useXDisconnect() {

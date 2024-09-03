@@ -1,9 +1,9 @@
-import BigNumber from 'bignumber.js';
 import { useIconReact } from '@/packages/icon-react';
 import { useQuery } from '@tanstack/react-query';
+import BigNumber from 'bignumber.js';
 
-import bnJs from '@/bnJs';
 import QUERY_KEYS from '@/queries/queryKeys';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 export enum Period {
   day = 'day',

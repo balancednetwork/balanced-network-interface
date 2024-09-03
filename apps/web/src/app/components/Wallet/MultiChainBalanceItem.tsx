@@ -1,7 +1,7 @@
 import { Typography } from '@/app/theme';
 import { useRatesWithOracle } from '@/queries/reward';
-import { XChainId } from '@/types';
 import { formatBalance, formatValue } from '@/utils/formatter';
+import { XChainId } from '@/xwagmi/types';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import React from 'react';

@@ -1,5 +1,5 @@
 import { XConnector } from '@/xwagmi/core/XConnector';
-import { XAccount } from '@/xwagmi/core/types';
+import { XAccount } from '@/xwagmi/types';
 import { AccountData } from '@keplr-wallet/types';
 import { ArchwayXService } from './ArchwayXService';
 import { XSigningArchwayClient } from './XSigningArchwayClient';

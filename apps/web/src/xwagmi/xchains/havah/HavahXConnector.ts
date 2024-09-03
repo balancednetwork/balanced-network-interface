@@ -1,5 +1,5 @@
 import { XConnector } from '@/xwagmi/core/XConnector';
-import { XAccount } from '@/xwagmi/core/types';
+import { XAccount } from '@/xwagmi/types';
 
 interface AccountResultType {
   address: string;

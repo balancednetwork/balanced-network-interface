@@ -1,12 +1,11 @@
 import { useMemo } from 'react';
 
-import { addresses, BalancedJs, CallData } from '@balancednetwork/balanced-js';
-import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
-import BigNumber from 'bignumber.js';
 import { useIconReact } from '@/packages/icon-react';
-import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
+import { BalancedJs, CallData, addresses } from '@balancednetwork/balanced-js';
+import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
+import BigNumber from 'bignumber.js';
 
-import bnJs from '@/bnJs';
 import { NETWORK_ID } from '@/constants/config';
 import {
   COMBINED_TOKENS_MAP_BY_ADDRESS,
@@ -18,6 +17,7 @@ import QUERY_KEYS from '@/queries/queryKeys';
 import { useBlockNumber } from '@/store/application/hooks';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { useFlattenedRewardsDistribution } from '@/store/reward/hooks';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 export const BATCH_SIZE = 10;
 

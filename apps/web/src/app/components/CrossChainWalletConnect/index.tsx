@@ -1,13 +1,13 @@
 import React from 'react';
 
 import { Typography } from '@/app/theme';
-import { XChainId } from '@/types';
 import { shortenAddress } from '@/utils';
+import { XChainId } from '@/xwagmi/types';
 
-import { xChainMap } from '@/constants/xChains';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSwapState } from '@/store/swap/hooks';
 import { getXChainType } from '@/xwagmi/actions';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount, useXConnect, useXService } from '@/xwagmi/hooks';
 import { Trans } from '@lingui/macro';
 import { UnderlineText } from '../DropdownText';

@@ -21,7 +21,6 @@ import ModalContent from '@/app/components/ModalContent';
 import Tooltip from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import QuestionIcon from '@/assets/icons/question.svg';
-import bnJs from '@/bnJs';
 import { NETWORK_ID } from '@/constants/config';
 import {
   useBBalnAmount,
@@ -45,6 +44,7 @@ import { useBALNDetails, useHasEnoughICX } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { getFormattedNumber } from '@/utils/formatter';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import { DropdownPopper } from '@/app/components/Popover';
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';

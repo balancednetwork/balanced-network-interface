@@ -3,11 +3,11 @@ import rlp from 'rlp';
 import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 
-import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
-import { xChains } from '@/constants/xChains';
-import { xTokenMap } from '@/constants/xTokens';
-import { XChain, XChainId, XToken } from '@/types';
-import { uintToBytes } from '@/utils';
+import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
+import { XChain, XChainId, XToken } from '@/xwagmi/types';
+import { uintToBytes } from '@/xwagmi/utils';
+import { xChains } from '../constants/xChains';
 
 export function getBytesFromNumber(value) {
   const hexString = value.toString(16).padStart(2, '0');

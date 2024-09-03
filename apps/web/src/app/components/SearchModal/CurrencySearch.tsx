@@ -13,14 +13,13 @@ import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from '@/h
 import useDebounce from '@/hooks/useDebounce';
 import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 import useToggle from '@/hooks/useToggle';
-import { isAddress } from '@/utils';
-
-import { xTokenMap } from '@/constants/xTokens';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
 import { useBridgeDirection } from '@/store/bridge/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { XChainId } from '@/types';
+import { isAddress } from '@/utils';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
+import { XChainId } from '@/xwagmi/types';
 import { ChartControlButton as AssetsTabButton } from '../ChartControl';
 import Column from '../Column';
 import CommunityListToggle from '../CommunityListToggle';

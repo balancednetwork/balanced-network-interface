@@ -1,17 +1,16 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
 import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
-import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
 import { forEach } from 'lodash-es';
 import { useDispatch, useSelector } from 'react-redux';
 
-import bnJs from '@/bnJs';
-import { MINIMUM_ICX_FOR_TX, NATIVE_ADDRESS } from '@/constants/index';
+import { MINIMUM_ICX_FOR_TX } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
 import {
   COMBINED_TOKENS_LIST,
@@ -21,18 +20,27 @@ import {
   isFIN,
   isNativeCurrency,
 } from '@/constants/tokens';
-import { ARCHWAY_FEE_TOKEN_SYMBOL, useARCH } from '@/constants/tokens1';
 import { useBnJsContractQuery } from '@/queries/utils';
 import { useTokenListConfig } from '@/store/lists/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useUserAddedTokens } from '@/store/user/hooks';
-import { XChainId, XWalletAssetRecord } from '@/types';
 import { getXTokenAddress, isXToken } from '@/utils/xTokens';
-import { isDenomAsset } from '@/xwagmi/xchains/archway/utils';
+import { XToken, XWalletAssetRecord } from '@/xwagmi/types';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
 import { changeBalances, changeICONBalances } from './reducer';
+
+import { useXBalances } from '@/xwagmi/hooks/useXBalances';
+import { XChainId } from '@/xwagmi/types';
+
+import { useSignedInWallets } from '@/hooks/useWallets';
+import useXTokens from '@/hooks/useXTokens';
+import { useRatesWithOracle } from '@/queries/reward';
+import { NATIVE_ADDRESS } from '@/xwagmi/constants';
+import { SUPPORTED_XCALL_CHAINS } from '@/xwagmi/constants/xChains';
+import { useXAccount } from '@/xwagmi/hooks';
 
 export function useCrossChainWalletBalances(): AppState['wallet'] {
   const signedInWallets = useSignedInWallets();
@@ -80,118 +88,6 @@ export function useAvailableBalances(
   }, [balances]);
 }
 
-export function useArchwayBalances(
-  address: string | undefined,
-  tokens: Token[],
-): UseQueryResult<{
-  [key: string]: CurrencyAmount<Currency>;
-}> {
-  const archwayXService: ArchwayXService = useXService('ARCHWAY') as ArchwayXService;
-  // TODO: why use walletClient, not publicClient?
-  const signingClient = archwayXService.walletClient;
-  const chainId = archwayXService.chainId;
-
-  const arch = useARCH();
-
-  return useQuery({
-    queryKey: [`archwayBalances`, chainId, address, tokens],
-    queryFn: async () => {
-      if (!signingClient || !address) return;
-
-      const cw20Tokens = [...tokens].filter(token => !isDenomAsset(token));
-      const denoms = [...tokens].filter(token => isDenomAsset(token));
-
-      const cw20Balances = await Promise.all(
-        cw20Tokens.map(async token => {
-          const balance = await signingClient.queryContractSmart(token.address, { balance: { address } });
-          return CurrencyAmount.fromRawAmount(token, balance.balance);
-        }),
-      );
-
-      const nativeBalances = await Promise.all(
-        denoms.map(async token => {
-          const nativeBalance = await signingClient.getBalance(address, token.address);
-          return CurrencyAmount.fromRawAmount(token, nativeBalance.amount ?? 0);
-        }),
-      );
-
-      //arch token balance
-      const archTokenBalance = await signingClient.getBalance(address, ARCHWAY_FEE_TOKEN_SYMBOL);
-      const archBalance = CurrencyAmount.fromRawAmount(arch, archTokenBalance.amount || 0);
-
-      return [archBalance, ...nativeBalances, ...cw20Balances].reduce((acc, balance) => {
-        if (!balance) return acc;
-        if (!(balance.quotient > BIGINT_ZERO)) {
-          return acc;
-        }
-        acc[balance.currency.wrapped.address] = balance;
-        return acc;
-      }, {});
-    },
-    placeholderData: keepPreviousData,
-    enabled: Boolean(signingClient && address),
-    refetchInterval: 5_000,
-  });
-}
-
-import { viemClients } from '@/config/wagmi';
-import { SUPPORTED_XCALL_CHAINS, injective, xChainMap } from '@/constants/xChains';
-import { useSignedInWallets } from '@/hooks/useWallets';
-import useXTokens from '@/hooks/useXTokens';
-import { useRatesWithOracle } from '@/queries/reward';
-import { useXAccount, useXService } from '@/xwagmi/hooks';
-import { ArchwayXService } from '@/xwagmi/xchains/archway';
-import { havahJs } from '@/xwagmi/xchains/havah/havahJs';
-import { erc20Abi } from 'viem';
-import { useAccount, useBalance, usePublicClient } from 'wagmi';
-
-export function useEVMBalances(account: `0x${string}` | undefined, tokens: Token[] | undefined, xChainId: XChainId) {
-  const chainId = xChainMap[xChainId].id;
-  const { data } = useBalance({ address: account, chainId: chainId as number, query: { refetchInterval: 5_000 } });
-
-  const xChain = xChainMap[xChainId];
-  const nativeBalance = useMemo(
-    () =>
-      data?.value
-        ? CurrencyAmount.fromRawAmount(
-            new Token(xChain.id, NATIVE_ADDRESS, 18, xChain.nativeCurrency.symbol, xChain.nativeCurrency.name),
-            data?.value.toString(),
-          )
-        : undefined,
-    [data, xChain],
-  );
-
-  const _tokens = useMemo(() => tokens?.filter(token => token.address !== NATIVE_ADDRESS), [tokens]);
-  const client = usePublicClient();
-  client?.multicall;
-  return useQuery({
-    queryKey: [account, _tokens, nativeBalance, chainId],
-    queryFn: async () => {
-      if (!account || !_tokens || !nativeBalance || !chainId) return;
-
-      const result = await viemClients[chainId].multicall({
-        contracts: _tokens.map(token => ({
-          abi: erc20Abi,
-          address: token.address as `0x${string}`,
-          functionName: 'balanceOf',
-          args: [account],
-          chainId: chainId,
-        })),
-      });
-
-      return [
-        nativeBalance,
-        ..._tokens.map((token, index) => CurrencyAmount.fromRawAmount(token, result[index].result?.toString() || '0')),
-      ].reduce((acc, balance) => {
-        acc[balance.currency.wrapped.address] = balance;
-        return acc;
-      }, {});
-    },
-    enabled: Boolean(account && _tokens && nativeBalance),
-    refetchInterval: 5_000,
-  });
-}
-
 export function useWalletFetchBalances() {
   const dispatch = useDispatch();
   const tokenListConfig = useTokenListConfig();
@@ -213,7 +109,11 @@ export function useWalletFetchBalances() {
   // fetch balances on havah
   const { address: accountHavah } = useXAccount('HAVAH');
   const havahTokens = useXTokens('0x100.icon') || [];
-  const { data: balancesHavah } = useHavahBalances(accountHavah || undefined, havahTokens);
+  const { data: balancesHavah } = useXBalances({
+    xChainId: '0x100.icon',
+    xTokens: havahTokens,
+    address: accountHavah,
+  });
   React.useEffect(() => {
     balancesHavah && dispatch(changeBalances({ xChainId: '0x100.icon', balances: balancesHavah }));
   }, [balancesHavah, dispatch]);
@@ -221,36 +121,57 @@ export function useWalletFetchBalances() {
   // fetch balances on archway
   const { address: accountArch } = useXAccount('ARCHWAY');
   const tokensArch = useXTokens('archway-1') || [];
-  const { data: balancesArch } = useArchwayBalances(accountArch || undefined, tokensArch);
+  const { data: balancesArch } = useXBalances({
+    xChainId: 'archway-1',
+    xTokens: [...tokensArch, new XToken('archway-1', 'archway-1', NATIVE_ADDRESS, 18, 'aARCH', 'Arch')],
+    address: accountArch,
+  });
+
   React.useEffect(() => {
     balancesArch && dispatch(changeBalances({ xChainId: 'archway-1', balances: balancesArch }));
   }, [balancesArch, dispatch]);
 
-  const { address } = useAccount();
+  const { address } = useXAccount('EVM');
   // fetch balances on avax
   const avaxTokens = useXTokens('0xa86a.avax');
-  const { data: avaxBalances } = useEVMBalances(address, avaxTokens, '0xa86a.avax');
+  const { data: avaxBalances } = useXBalances({
+    xChainId: '0xa86a.avax',
+    xTokens: avaxTokens,
+    address,
+  });
   React.useEffect(() => {
     avaxBalances && dispatch(changeBalances({ xChainId: '0xa86a.avax', balances: avaxBalances }));
   }, [avaxBalances, dispatch]);
 
   // fetch balances on bsc
   const bscTokens = useXTokens('0x38.bsc');
-  const { data: bscBalances } = useEVMBalances(address, bscTokens, '0x38.bsc');
+  const { data: bscBalances } = useXBalances({
+    xChainId: '0x38.bsc',
+    xTokens: bscTokens,
+    address,
+  });
   React.useEffect(() => {
     bscBalances && dispatch(changeBalances({ xChainId: '0x38.bsc', balances: bscBalances }));
   }, [bscBalances, dispatch]);
 
   // fetch balances on arb
   const arbTokens = useXTokens('0xa4b1.arbitrum');
-  const { data: arbBalances } = useEVMBalances(address, arbTokens, '0xa4b1.arbitrum');
+  const { data: arbBalances } = useXBalances({
+    xChainId: '0xa4b1.arbitrum',
+    xTokens: arbTokens,
+    address,
+  });
   React.useEffect(() => {
     arbBalances && dispatch(changeBalances({ xChainId: '0xa4b1.arbitrum', balances: arbBalances }));
   }, [arbBalances, dispatch]);
 
   // fetch balances on base
   const baseTokens = useXTokens('0x2105.base');
-  const { data: baseBalances } = useEVMBalances(address, baseTokens, '0x2105.base');
+  const { data: baseBalances } = useXBalances({
+    xChainId: '0x2105.base',
+    xTokens: baseTokens,
+    address,
+  });
   React.useEffect(() => {
     baseBalances && dispatch(changeBalances({ xChainId: '0x2105.base', balances: baseBalances }));
   }, [baseBalances, dispatch]);
@@ -258,7 +179,11 @@ export function useWalletFetchBalances() {
   // fetch balances on injective
   const { address: accountInjective } = useXAccount('INJECTIVE');
   const injectiveTokens = useXTokens('injective-1');
-  const { data: injectiveBalances } = useInjectiveBalances(accountInjective, injectiveTokens);
+  const { data: injectiveBalances } = useXBalances({
+    xChainId: 'injective-1',
+    xTokens: injectiveTokens,
+    address: accountInjective,
+  });
   React.useEffect(() => {
     injectiveBalances && dispatch(changeBalances({ xChainId: 'injective-1', balances: injectiveBalances }));
   }, [injectiveBalances, dispatch]);
@@ -518,118 +443,4 @@ export function useXBalancesByToken(): XWalletAssetRecord[] {
       })
       .filter((item): item is XWalletAssetRecord => Boolean(item));
   }, [balances, tokenListConfig, prices]);
-}
-
-export function useHavahBalances(
-  address: string | undefined,
-  tokens: Token[],
-): UseQueryResult<{
-  [key: string]: CurrencyAmount<Currency>;
-}> {
-  return useQuery({
-    queryKey: [`havahBalances`, address, tokens],
-    queryFn: async () => {
-      if (!address) return {};
-
-      const hasNative = tokens.some(token => token.symbol === 'HVH');
-      if (!hasNative) return {};
-
-      const HVH = tokens.find(token => token.symbol === 'HVH');
-      if (!HVH) return {};
-
-      const promises = tokens.map(token => {
-        if (token.symbol === 'HVH')
-          return havahJs.ICX.balanceOf(address).then(res => CurrencyAmount.fromRawAmount(HVH, res.toFixed()));
-
-        return havahJs[token.symbol]
-          .balanceOf(address)
-          .then(res => CurrencyAmount.fromRawAmount(token, res.toString()));
-      });
-
-      const rawAmountBalances = await Promise.all(promises);
-
-      const balances = rawAmountBalances.reduce((acc, balance) => {
-        if (!balance) return acc;
-        if (!(balance.quotient > BIGINT_ZERO)) {
-          return acc;
-        }
-        acc[balance.currency.wrapped.address] = balance;
-        return acc;
-      }, {});
-
-      return balances;
-    },
-    placeholderData: keepPreviousData,
-    refetchInterval: 5_000,
-  });
-}
-
-// TODO: use InjectiveXService
-import { Network, getNetworkEndpoints } from '@injectivelabs/networks';
-import { ChainGrpcWasmApi, IndexerGrpcAccountPortfolioApi, fromBase64, toBase64 } from '@injectivelabs/sdk-ts';
-
-export const NETWORK = Network.Mainnet;
-export const ENDPOINTS = getNetworkEndpoints(NETWORK);
-const indexerGrpcAccountPortfolioApi = new IndexerGrpcAccountPortfolioApi(ENDPOINTS.indexer);
-const chainGrpcWasmApi = new ChainGrpcWasmApi(ENDPOINTS.grpc);
-
-async function fetchBnUSDBalance(address) {
-  try {
-    const response: any = await chainGrpcWasmApi.fetchSmartContractState(
-      injective.contracts.bnUSD!,
-      toBase64({ balance: { address } }),
-    );
-
-    const result = fromBase64(response.data);
-    return result;
-  } catch (e) {
-    console.log(e);
-  }
-  return { balance: '0' };
-}
-
-export function useInjectiveBalances(
-  address: string | undefined,
-  tokens: Token[],
-): UseQueryResult<{
-  [key: string]: CurrencyAmount<Currency>;
-}> {
-  return useQuery({
-    queryKey: [`injectiveBalances`, address, tokens],
-    queryFn: async () => {
-      if (!address) return {};
-
-      const portfolio = await indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(address);
-      const bnUSDBalance = await fetchBnUSDBalance(address);
-
-      const tokenMap = {};
-      tokens.forEach(xToken => {
-        tokenMap[xToken.symbol] = xToken;
-      });
-
-      const balances = portfolio.bankBalancesList.reduce((acc, balance) => {
-        if (!balance) return acc;
-
-        if (!(BigInt(balance.amount) > BIGINT_ZERO)) {
-          return acc;
-        }
-
-        if (balance.denom === 'inj') {
-          acc[tokenMap['INJ'].address] = CurrencyAmount.fromRawAmount(tokenMap['INJ'], BigInt(balance.amount));
-        } else {
-        }
-
-        return acc;
-      }, {});
-
-      balances[tokenMap['bnUSD'].address] = CurrencyAmount.fromRawAmount(
-        tokenMap['bnUSD'],
-        BigInt(bnUSDBalance.balance),
-      );
-
-      return balances;
-    },
-    placeholderData: keepPreviousData,
-    refetchInterval: 5_000,
-  });
 }

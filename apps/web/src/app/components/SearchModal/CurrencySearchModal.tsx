@@ -19,10 +19,8 @@ interface CurrencySearchModalProps {
   onCurrencySelect: (currency: Currency, setDefaultChain?: boolean) => void;
   onChainSelect?: (chainId: XChainId) => void;
   showCrossChainBreakdown: boolean;
-  otherSelectedCurrency?: Currency | null;
   showCurrencyAmount?: boolean;
   currencySelectionType?: CurrencySelectionType;
-  disableNonToken?: boolean;
   width?: number;
   anchorEl?: any;
   showCommunityListControl: boolean;
@@ -45,10 +43,8 @@ export default function CurrencySearchModal({
   onCurrencySelect,
   onChainSelect,
   selectedCurrency,
-  otherSelectedCurrency,
   currencySelectionType = CurrencySelectionType.NORMAL,
   showCurrencyAmount = true,
-  disableNonToken = false,
   width,
   anchorEl,
   showCommunityListControl,
@@ -119,15 +115,12 @@ export default function CurrencySearchModal({
           onCurrencySelect={handleCurrencySelect}
           onChainSelect={onChainSelect}
           selectedCurrency={selectedCurrency}
-          otherSelectedCurrency={otherSelectedCurrency}
           currencySelectionType={currencySelectionType}
           showCurrencyAmount={showCurrencyAmount}
-          disableNonToken={disableNonToken}
           showImportView={showImportView}
           setImportToken={setImportToken}
           showRemoveView={showRemoveView}
           setRemoveToken={setRemoveToken}
-          showManageView={showManageView}
           width={width}
           showCommunityListControl={showCommunityListControl}
           xChainId={xChainId}

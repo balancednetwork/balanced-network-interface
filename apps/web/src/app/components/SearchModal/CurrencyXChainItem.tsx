@@ -1,5 +1,5 @@
 import { Typography } from '@/app/theme';
-import { useSignedInWallets } from '@/hooks/useWallets';
+import { useHasSignedIn } from '@/hooks/useWallets';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatBalance } from '@/utils/formatter';
 import { xChainMap } from '@/xwagmi/constants/xChains';
@@ -38,7 +38,7 @@ const CurrencyXChainItem = ({
   const xWallet = useCrossChainWalletBalances();
   const xToken = xTokenMap[xChainId].find(token => token.symbol === currency.symbol);
   const currencyBalance: CurrencyAmount<Currency> | undefined = xWallet[xChainId]?.[xToken?.wrapped.address ?? ''];
-  const signedInWallets = useSignedInWallets();
+  const hasSignedIn = useHasSignedIn();
   const theme = useTheme();
 
   return (
@@ -49,7 +49,7 @@ const CurrencyXChainItem = ({
           {xChainMap[xChainId].name}
         </Typography>
       </Flex>
-      {signedInWallets.length > 0 && (
+      {hasSignedIn && (
         <Typography variant="span" fontSize={14} display="block">
           {currencyBalance ? formatBalance(currencyBalance?.toFixed(), price).replace(/^0(\.0+)?$/, '-') : '-'}
         </Typography>

@@ -1,13 +1,13 @@
+import { useBnJsContractQuery, useIncentivisedPairs } from '@/queries';
 import { Fraction } from '@balancednetwork/sdk-core';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
-import { useBnJsContractQuery, useIncentivisedPairs } from '@/queries';
-import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import bnJs from '@/bnJs';
 import { predefinedCollateralTypes } from '@/components/CollateralSelector/CollateralTypeList';
-import { formatUnits } from '@/utils';
 import { TOKEN_BLACKLIST } from '@/constants/tokens';
+import { formatUnits } from '@/utils';
 import { useMemo } from 'react';
 
 export const API_ENDPOINT = 'https://balanced.icon.community/api/v1/';
@@ -620,7 +620,7 @@ export function useDebtDataFor(daysBack: number) {
   });
 }
 
-export function useTokenTrendData(tokenSymbol, start, end) {
+export function useTokenTrendData(tokenSymbol: string, start: number, end: number) {
   return useQuery({
     queryKey: [`trend`, tokenSymbol, start, end],
     queryFn: async () => {

@@ -13,7 +13,7 @@ import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from '@/h
 import useDebounce from '@/hooks/useDebounce';
 import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 import useToggle from '@/hooks/useToggle';
-import { useSignedInWallets } from '@/hooks/useWallets';
+import { useHasSignedIn } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
 import { useBridgeDirection } from '@/store/bridge/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
@@ -41,6 +41,7 @@ export enum AssetsTab {
   ALL = 'all',
   YOUR = 'your',
 }
+
 export enum SelectorType {
   SWAP_IN,
   SWAP_OUT,
@@ -66,17 +67,13 @@ interface CurrencySearchProps {
   selectedCurrency?: Currency | null;
   onCurrencySelect: (currency: Currency, setDefaultChain?: boolean) => void;
   onChainSelect?: (chainId: XChainId) => void;
-  otherSelectedCurrency?: Currency | null;
   currencySelectionType: CurrencySelectionType;
   showCurrencyAmount?: boolean;
-  disableNonToken?: boolean;
-  showManageView: () => void;
   showImportView: () => void;
   setImportToken: (token: Token) => void;
   showRemoveView: () => void;
   setRemoveToken: (token: Token) => void;
   width?: number;
-  balanceList?: { [key: string]: BigNumber };
   showCommunityListControl?: boolean;
   xChainId: XChainId;
   showCrossChainBreakdown: boolean;
@@ -99,26 +96,22 @@ export function CurrencySearch({
   onCurrencySelect,
   onChainSelect,
   showCrossChainBreakdown,
-  otherSelectedCurrency,
   currencySelectionType,
   showCurrencyAmount,
-  disableNonToken,
   onDismiss,
   isOpen,
-  showManageView,
   showImportView,
   setImportToken,
   showRemoveView,
   setRemoveToken,
   width,
-  balanceList,
   showCommunityListControl,
   xChainId,
   selectorType = SelectorType.OTHER,
 }: CurrencySearchProps) {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const debouncedQuery = useDebounce(searchQuery, 200);
-  const signedInWallets = useSignedInWallets();
+  const hasSignedIn = useHasSignedIn();
 
   const [invertSearchOrder] = useState<boolean>(false);
 
@@ -130,16 +123,16 @@ export function CurrencySearch({
   const [assetsTab, setAssetsTab] = useState(AssetsTab.ALL);
 
   useEffect(() => {
-    if (assetsTab === AssetsTab.YOUR && !signedInWallets.length) {
+    if (assetsTab === AssetsTab.YOUR && !hasSignedIn) {
       setAssetsTab(AssetsTab.ALL);
     }
-  }, [signedInWallets.length, assetsTab]);
+  }, [hasSignedIn, assetsTab]);
 
   useEffect(() => {
-    if (signedInWallets.length && selectorType === SelectorType.SWAP_IN) {
+    if (hasSignedIn && selectorType === SelectorType.SWAP_IN) {
       setAssetsTab(AssetsTab.YOUR);
     }
-  }, [signedInWallets.length, selectorType]);
+  }, [hasSignedIn, selectorType]);
 
   const bridgeDirection = useBridgeDirection();
   const xTokens = useXTokens(bridgeDirection.from, bridgeDirection.to);
@@ -278,7 +271,7 @@ export function CurrencySearch({
           onChange={handleInput}
         />
       </Flex>
-      {signedInWallets.length && (selectorType === SelectorType.SWAP_IN || selectorType === SelectorType.SWAP_OUT) ? (
+      {hasSignedIn && (selectorType === SelectorType.SWAP_IN || selectorType === SelectorType.SWAP_OUT) ? (
         <Flex justifyContent="center" mt={3}>
           <AssetsTabButton $active={assetsTab === AssetsTab.YOUR} mr={2} onClick={() => setAssetsTab(AssetsTab.YOUR)}>
             <Trans>Your assets</Trans>
@@ -294,15 +287,11 @@ export function CurrencySearch({
         </Column>
       ) : filteredSortedTokensWithICX?.length > 0 && shouldShowCurrencyList ? (
         <CurrencyList
-          account={account}
           currencies={filterCurrencies}
           onCurrencySelect={handleCurrencySelect}
           onChainSelect={onChainSelect}
-          showImportView={showImportView}
-          setImportToken={setImportToken}
           showRemoveView={showRemoveView}
           setRemoveToken={setRemoveToken}
-          showCurrencyAmount={showCurrencyAmount}
           isOpen={isOpen}
           onDismiss={onDismiss}
           selectedChainId={selectedChainId}

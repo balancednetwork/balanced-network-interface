@@ -9,7 +9,7 @@ import { HeaderText } from '@/app/components/SearchModal/styleds';
 import { ScrollHelper } from '@/app/components/home/_components/LoanChainSelector/styledComponents';
 import { Typography } from '@/app/theme';
 import useSortXChains from '@/hooks/useSortXChains';
-import { useSignedInWallets } from '@/hooks/useWallets';
+import { useHasSignedIn } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatValue } from '@/utils/formatter';
@@ -54,7 +54,7 @@ const XChainItemWrap = styled(Flex)`
 const XChainItem = ({ xChain, isActive, isLast, currency }: XChainItemProps) => {
   const xWallet = useCrossChainWalletBalances();
   const prices = useRatesWithOracle();
-  const signedInWallets = useSignedInWallets();
+  const hasSignedIn = useHasSignedIn();
 
   const currencyAmount = React.useMemo(() => {
     if (!xWallet || !xChain) return;
@@ -85,7 +85,7 @@ const XChainItem = ({ xChain, isActive, isLast, currency }: XChainItemProps) => 
         <Typography fontWeight="bold" marginRight={2}>
           {xChain.name}
         </Typography>
-        {signedInWallets.length > 0 ? (
+        {hasSignedIn ? (
           <Typography ml="auto">{value ? formatValue(value.toFixed()).replace('$0.0000', '-') : '-'}</Typography>
         ) : null}
       </Flex>
@@ -95,11 +95,11 @@ const XChainItem = ({ xChain, isActive, isLast, currency }: XChainItemProps) => 
 
 const XChainList = ({ xChainId, setChainId, chains, currency, width, isOpen }: XChainListProps) => {
   const relevantChains = chains || xChains;
-  const signedInWallets = useSignedInWallets();
+  const hasSignedIn = useHasSignedIn();
   const [searchQuery, setSearchQuery] = React.useState<string>('');
   const inputRef = React.useRef<HTMLInputElement>();
   const { sortBy, handleSortSelect, sortData } = useSortXChains(
-    signedInWallets ? { key: 'value', order: 'DESC' } : { key: 'symbol', order: 'ASC' },
+    hasSignedIn ? { key: 'value', order: 'DESC' } : { key: 'symbol', order: 'ASC' },
     currency,
   );
 
@@ -135,7 +135,7 @@ const XChainList = ({ xChainId, setChainId, chains, currency, width, isOpen }: X
       <SearchInput
         type="text"
         id="blockchain-search-input"
-        style={{ marginBottom: signedInWallets.length > 0 ? '15px' : '-10px' }}
+        style={{ marginBottom: hasSignedIn ? '15px' : '-10px' }}
         placeholder={t`Search for blockchains...`}
         tabIndex={isMobile ? -1 : 1}
         autoComplete="off"
@@ -144,7 +144,7 @@ const XChainList = ({ xChainId, setChainId, chains, currency, width, isOpen }: X
         ref={inputRef as React.RefObject<HTMLInputElement>}
       />
       <ScrollHelper $height="285px">
-        {signedInWallets.length > 0 ? (
+        {hasSignedIn ? (
           <Flex width="100%" justifyContent="space-between">
             <StyledHeaderText
               role="button"
@@ -162,15 +162,12 @@ const XChainList = ({ xChainId, setChainId, chains, currency, width, isOpen }: X
             <StyledHeaderText
               role="button"
               className={sortBy.key === 'value' ? sortBy.order : ''}
-              onClick={
-                signedInWallets.length > 0
-                  ? () =>
-                      handleSortSelect({
-                        key: 'value',
-                      })
-                  : () => {}
+              onClick={() =>
+                handleSortSelect({
+                  key: 'value',
+                })
               }
-              style={signedInWallets.length > 0 ? { cursor: 'pointer' } : { cursor: 'not-allowed' }}
+              style={{ cursor: 'pointer' }}
             >
               <span>
                 <Trans>Wallet</Trans>

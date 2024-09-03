@@ -13,7 +13,7 @@ import { DataText, List1, ListItem } from '@/app/components/List';
 import { Typography } from '@/app/theme';
 import useKeyPress from '@/hooks/useKeyPress';
 import useSortCurrency from '@/hooks/useSortCurrency';
-import { useSignedInWallets } from '@/hooks/useWallets';
+import { useHasSignedIn, useSignedInWallets } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useBridgeDirection } from '@/store/bridge/hooks';
 import { useIsUserAddedToken } from '@/store/user/hooks';
@@ -84,7 +84,7 @@ function CurrencyRow({
 }) {
   const currencyXChainIds = useMemo(() => getSupportedXChainIdsForToken(currency), [currency]);
   const balance = useXCurrencyBalance(currency, selectedChainId);
-  const signedInWallets = useSignedInWallets();
+  const hasSigned = useHasSignedIn();
   const xWallet = useCrossChainWalletBalances();
 
   const sortedXChains = useMemo(() => {
@@ -286,7 +286,7 @@ function CurrencyRow({
         onMouseLeave={close}
         $hideBorder={!!showBreakdown}
       >
-        {signedInWallets.length > 0 ? <RowContentSignedIn /> : <RowContentNotSignedIn />}
+        {hasSigned ? <RowContentSignedIn /> : <RowContentNotSignedIn />}
       </ListItem>
 
       {showBreakdown ? (
@@ -311,13 +311,8 @@ export default function CurrencyList({
   showCrossChainBreakdown = true,
   onCurrencySelect,
   onChainSelect,
-  otherCurrency,
-  showImportView,
-  setImportToken,
   showRemoveView,
   setRemoveToken,
-  showCurrencyAmount,
-  account,
   isOpen,
   onDismiss,
   selectedChainId,
@@ -328,13 +323,8 @@ export default function CurrencyList({
   showCrossChainBreakdown: boolean;
   onCurrencySelect: (currency: Currency, setDefaultChain?: boolean) => void;
   onChainSelect?: (chainId: XChainId) => void;
-  otherCurrency?: Currency | null;
-  showImportView: () => void;
-  setImportToken: (token: Token) => void;
   showRemoveView: () => void;
   setRemoveToken: (token: Token) => void;
-  showCurrencyAmount?: boolean;
-  account?: string | null;
   isOpen: boolean;
   onDismiss: () => void;
   selectedChainId: XChainId | undefined;
@@ -342,7 +332,7 @@ export default function CurrencyList({
   selectorType: SelectorType;
 }) {
   const handleEscape = useKeyPress('Escape');
-  const signedInWallets = useSignedInWallets();
+  const hasSignedIn = useHasSignedIn();
 
   const rates = useRatesWithOracle();
   const rateFracs = React.useMemo(() => {
@@ -383,7 +373,7 @@ export default function CurrencyList({
             <Trans>Asset</Trans>
           </span>
         </StyledHeaderText>
-        {signedInWallets.length > 0 ? (
+        {hasSignedIn ? (
           <StyledHeaderText
             role="button"
             className={sortBy.key === 'value' ? sortBy.order : ''}

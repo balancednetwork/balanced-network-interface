@@ -1,4 +1,10 @@
-import CommunityListToggle from '@/app/components/CommunityListToggle';
+import React from 'react';
+
+import { Trans } from '@lingui/macro';
+import { useMedia } from 'react-use';
+import { Box, Flex } from 'rebass';
+import styled, { useTheme } from 'styled-components';
+
 import Divider from '@/app/components/Divider';
 import DropdownLink from '@/app/components/DropdownLink';
 import { BoxPanel } from '@/app/components/Panel';
@@ -11,11 +17,6 @@ import useSort from '@/hooks/useSort';
 import { TokenStats, useAllTokensByAddress } from '@/queries/backendv2';
 import { useTokenListConfig } from '@/store/lists/hooks';
 import { getSupportedXChainForToken } from '@/xwagmi/xcall/utils';
-import { Trans } from '@lingui/macro';
-import React from 'react';
-import { useMedia } from 'react-use';
-import { Box, Flex } from 'rebass';
-import styled, { useTheme } from 'styled-components';
 import SkeletonTokenPlaceholder from './SkeletonTokenPlaceholder';
 import TokenItem from './TokenItem';
 

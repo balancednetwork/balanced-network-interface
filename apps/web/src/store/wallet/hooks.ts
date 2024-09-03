@@ -25,7 +25,7 @@ import { useTokenListConfig } from '@/store/lists/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useUserAddedTokens } from '@/store/user/hooks';
 import { getXTokenAddress, isXToken } from '@/utils/xTokens';
-import { XWalletAssetRecord } from '@/xwagmi/types';
+import { XToken, XWalletAssetRecord } from '@/xwagmi/types';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import { AppState } from '..';
@@ -38,6 +38,7 @@ import { XChainId } from '@/xwagmi/types';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
 import { useRatesWithOracle } from '@/queries/reward';
+import { NATIVE_ADDRESS } from '@/xwagmi/constants';
 import { SUPPORTED_XCALL_CHAINS } from '@/xwagmi/constants/xChains';
 import { useXAccount } from '@/xwagmi/hooks';
 
@@ -122,7 +123,7 @@ export function useWalletFetchBalances() {
   const tokensArch = useXTokens('archway-1') || [];
   const { data: balancesArch } = useXBalances({
     xChainId: 'archway-1',
-    xTokens: tokensArch,
+    xTokens: [...tokensArch, new XToken('archway-1', 'archway-1', NATIVE_ADDRESS, 18, 'aARCH', 'Arch')],
     address: accountArch,
   });
 

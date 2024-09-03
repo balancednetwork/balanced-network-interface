@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
 
+import { useBorrowersInfo, useCollateralInfo, useLoanInfo } from '@/queries';
+import { useTokenPrices } from '@/queries/backendv2';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
-import { useCollateralInfo, useLoanInfo, useBorrowersInfo } from '@/queries';
-import { useTokenPrices } from '@/queries/backendv2';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';

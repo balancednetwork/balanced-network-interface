@@ -112,6 +112,7 @@ const ICXBurn = () => {
                 fill={theme.colors.primary}
                 stackId="a"
                 shape={props => <Rectangle {...props} radius={props.payload.isLast ? [0, 0, 0, 0] : [10, 10, 0, 0]} />}
+                activeBar={false}
               />
               <Bar dataKey="pending" stackId="a" fill="#144a68" radius={[10, 10, 0, 0]} />
               <Tooltip

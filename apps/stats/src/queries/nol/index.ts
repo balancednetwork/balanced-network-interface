@@ -1,16 +1,20 @@
-import BigNumber from 'bignumber.js';
 import bnJs from '@/bnJs';
 import { getTimestampFrom } from '@/pages/PerformanceDetails/utils';
 import { useAllPairs, useAllTokensByAddress } from '@/queries/backendv2';
 import { useBlockDetails } from '@/queries/blockDetails';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
-import { CHART_COLORS } from '@/sections/BALNSection/queries';
+import BigNumber from 'bignumber.js';
 
-// const NOL_LP_CHART_COLORS = {
-//   'sICX/bnUSD': '#2ca9b7',
-//   'AVAX/bnUSD': '#E84142',
-//   'BNB/bnUSD': '#F1B90A',
-// };
+export const EXTENDED_CHART_COLORS = {
+  sICX: '#2ca9b7',
+  AVAX: '#E84142',
+  BNB: '#F0B90B',
+  INJ: '#1694b8',
+  SUI: '#136aa1',
+  ETH: '#627EEA',
+  BTC: '#f7931a',
+  default: '#136aa1',
+};
 
 function useNOLPools(): UseQueryResult<string[] | undefined> {
   return useQuery({
@@ -76,10 +80,12 @@ export function useNetworkOwnedLiquidityData(): UseQueryResult<
       });
 
       return {
-        chartData: nolData.map((data, index) => ({
+        chartData: nolData.map(data => ({
           name: data.pair?.name || 'Unknown',
           value: data.liquidity.toNumber(),
-          fill: CHART_COLORS[index] || CHART_COLORS[CHART_COLORS.length - 1],
+          fill: data.pair?.baseSymbol
+            ? EXTENDED_CHART_COLORS[data.pair?.baseSymbol] || EXTENDED_CHART_COLORS['default']
+            : EXTENDED_CHART_COLORS['default'],
         })),
         tvl: nolData.reduce((acc, data) => acc.plus(data.liquidity), new BigNumber(0)),
       };

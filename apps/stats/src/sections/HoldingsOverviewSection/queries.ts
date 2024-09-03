@@ -6,6 +6,7 @@ import { addresses } from '@balancednetwork/balanced-js';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 
+import { EXTENDED_CHART_COLORS } from '@/queries/nol';
 import { CHART_COLORS } from '@/sections/BALNSection/queries';
 
 const daoFundAddress = addresses[1].daofund;
@@ -173,7 +174,7 @@ export function useReserveFundHoldingsPieData() {
                   return {
                     name: token.symbol,
                     value: curAmount.times(tokenPrices[token.symbol!]).toNumber(),
-                    fill: CHART_TOKENS_COLORS[token.symbol!] || CHART_TOKENS_COLORS.default,
+                    fill: EXTENDED_CHART_COLORS[token.symbol!] || EXTENDED_CHART_COLORS.default,
                     amount: curAmount.toNumber(),
                   };
                 } else {

@@ -708,9 +708,9 @@ export const useStakingAPR = (): UseQueryResult<BigNumber | undefined> => {
   return useQuery({
     queryKey: ['icxStakingAPR'],
     queryFn: async () => {
-      const stakingData = await axios.get(`${API_ICON_ENDPOINT}governance/stats/apy/time`);
+      const stakingData = await axios.get(`${API_ICON_ENDPOINT}governance/stats/apy/time?limit=100`);
 
-      const stakingAPY = stakingData ? new BigNumber(stakingData.data[stakingData.data.length - 1].value) : undefined;
+      const stakingAPY = stakingData ? new BigNumber(stakingData.data[0].staking_apy || 0).div(100) : undefined;
 
       return stakingAPY;
     },

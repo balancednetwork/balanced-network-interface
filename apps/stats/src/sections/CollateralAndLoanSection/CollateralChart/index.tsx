@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { useBorrowersInfo, useCollateralInfo, useLoanInfo } from '@/queries';
+import { useBorrowersInfo, useCollateralInfo, useLoanInfo, useStakingAPR } from '@/queries';
 import { useTokenPrices } from '@/queries/backendv2';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
@@ -45,6 +45,7 @@ export default function CollateralChart({
   setCollateral: (string) => void;
 }) {
   const { data: collateralInfo } = useCollateralInfo();
+  const { data: stakingAPR } = useStakingAPR();
   const loanInfo = useLoanInfo();
   const { data: borrowersInfo } = useBorrowersInfo();
   const { data: supportedCollaterals } = useSupportedCollateralTokens();
@@ -202,11 +203,7 @@ export default function CollateralChart({
           <>
             <ChartInfoItem smaller border>
               <Typography variant="p" fontSize="18px">
-                {collateralInfo?.stakingAPY ? (
-                  getFormattedNumber(collateralInfo?.stakingAPY, 'percent2')
-                ) : (
-                  <LoaderComponent />
-                )}
+                {stakingAPR ? getFormattedNumber(stakingAPR.toNumber(), 'percent2') : <LoaderComponent />}
               </Typography>
               <Typography color="text1">Staking APY</Typography>
             </ChartInfoItem>

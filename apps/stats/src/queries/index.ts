@@ -704,6 +704,20 @@ export const useIncentivisedPairs = (): UseQueryResult<
   });
 };
 
+export const useStakingAPR = (): UseQueryResult<BigNumber | undefined> => {
+  return useQuery({
+    queryKey: ['icxStakingAPR'],
+    queryFn: async () => {
+      const stakingData = await axios.get(`${API_ICON_ENDPOINT}governance/stats/apy/time`);
+
+      const stakingAPY = stakingData ? new BigNumber(stakingData.data[stakingData.data.length - 1].value) : undefined;
+
+      return stakingAPY;
+    },
+    placeholderData: keepPreviousData,
+  });
+};
+
 export const useCollateralInfo = () => {
   const oneMinPeriod = 1000 * 60;
   const now = Math.floor(new Date().getTime() / oneMinPeriod) * oneMinPeriod;
@@ -715,14 +729,9 @@ export const useCollateralInfo = () => {
     queryKey: [`collateralInfoAt${now}`],
     queryFn: async () => {
       if (collateralData) {
-        const stakingData = await axios.get(`${API_ICON_ENDPOINT}governance/stats/apy/time`);
-
-        const stakingAPY = stakingData ? new BigNumber(stakingData.data[stakingData.data.length - 1].value) : undefined;
-
         return {
           collateralData,
           rate: rate?.toNumber(),
-          stakingAPY: stakingAPY?.toNumber(),
         };
       }
     },

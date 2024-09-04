@@ -17,6 +17,7 @@ import {
   InjectiveXService,
   InjectiveXWalletClient,
 } from './xchains/injective';
+import { SuiXConnector, SuiXPublicClient, SuiXService, SuiXWalletClient } from './xchains/sui';
 
 const iconXService = IconXService.getInstance();
 iconXService.setXConnectors([new IconHanaXConnector()]);
@@ -33,12 +34,16 @@ havahXService.setXConnectors([new HavahXConnector()]);
 const injectiveXService = InjectiveXService.getInstance();
 injectiveXService.setXConnectors([new InjectiveMetamaskXConnector(), new InjectiveKelprXConnector()]);
 
+const suiXService = SuiXService.getInstance();
+suiXService.setXConnectors([new SuiXConnector()]);
+
 export const xServices: Record<XChainType, XService> = {
   ICON: iconXService,
   ARCHWAY: archwayXService,
   EVM: evmXService,
   HAVAH: havahXService,
   INJECTIVE: injectiveXService,
+  SUI: suiXService,
 };
 
 export const xPublicClients: Partial<Record<XChainId, XPublicClient>> = {};
@@ -132,6 +137,8 @@ function createXPublicClient(xChainId: XChainId) {
       return new HavahXPublicClient(xChainId);
     case 'INJECTIVE':
       return new InjectiveXPublicClient(xChainId);
+    case 'SUI':
+      return new SuiXPublicClient(xChainId);
     default:
       throw new Error(`Unsupported xChainType: ${xChainType}`);
   }
@@ -150,6 +157,8 @@ function createXWalletClient(xChainId: XChainId) {
       return new HavahXWalletClient(xChainId);
     case 'INJECTIVE':
       return new InjectiveXWalletClient(xChainId);
+    case 'SUI':
+      return new SuiXWalletClient(xChainId);
     default:
       throw new Error(`Unsupported xChainType: ${xChainType}`);
   }

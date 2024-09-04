@@ -273,6 +273,31 @@ export const injective: XChain = {
   testnet: false,
 };
 
+// TODO: complete SUI chain
+export const sui: XChain = {
+  id: 'sui',
+  name: 'Sui',
+  xChainId: 'sui',
+  xChainType: 'SUI',
+  tracker: 'https://suiscan.xyz/mainnet/',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'SUI',
+    symbol: 'SUI',
+  },
+  rpc: {
+    http: 'https://sentry.tm.injective.network',
+  },
+  contracts: {
+    xCall: 'inj177fx40l0g3jqmtmmuyl2zhrjvhr3knvthlr0ul',
+    assetManager: 'inj1hayj9xnlh44sn29sgggn3jwl3ktl6djwcven25',
+    bnUSD: 'inj1qspaxnztkkzahvp6scq6xfpgafejmj2td83r9j',
+  },
+  autoExecution: true,
+  gasThreshold: 0.01,
+  testnet: false,
+};
+
 // the order is important, using manual order to display in the UI
 export const xChainMap: { [key in XChainId]: XChain } = {
   '0x1.icon': icon,
@@ -286,6 +311,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   '0x38.bsc': bsc,
   '0x2105.base': base,
   'injective-1': injective,
+  sui: sui,
 };
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);

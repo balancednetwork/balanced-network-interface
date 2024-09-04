@@ -121,6 +121,18 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'Balanced Dollar',
     ),
   ],
+  // TODO: confirm SUI
+  sui: [
+    new XToken('sui', 'sui', NATIVE_ADDRESS, 18, 'SUI', 'SUI'),
+    new XToken(
+      'sui',
+      'sui',
+      '0x03917a812fe4a6d6bc779c5ab53f8a80ba741f8af04121193fc44e0f662e2ceb::balanced_dollar::BALANCED_DOLLAR',
+      18,
+      'bnUSD',
+      'Balanced Dollar',
+    ),
+  ],
 };
 
 export const sARCHOnArchway = {

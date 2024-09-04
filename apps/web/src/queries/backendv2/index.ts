@@ -60,7 +60,7 @@ export function useAllTokens() {
       const response = await axios.get<TokenStats[]>(`${API_ENDPOINT}/tokens`);
 
       if (response.status === 200) {
-        return response.data
+        const tokens = response.data
           .map(item => {
             item.market_cap = item.total_supply * item.price;
             item.price_24h_change = ((item.price - item.price_24h) / item.price_24h) * 100;
@@ -72,6 +72,24 @@ export function useAllTokens() {
               (!TOKEN_BLACKLIST.includes(item.symbol) && item.liquidity > MIN_TOKEN_LIQUIDITY_TO_INCLUDE)
             );
           });
+
+        const tokensWithStabilityFundLiquidity = await Promise.all(
+          tokens.map(async token => {
+            if (token['in_stability_fund']) {
+              const cx = bnJs.getContract(token.address);
+              const decimals = await cx.decimals();
+              const amount = await cx.balanceOf(bnJs.StabilityFund.address);
+              const balance = new BigNumber(amount).div(10 ** parseInt(decimals, 16)).toNumber();
+
+              if (balance > 0) {
+                token.liquidity = balance;
+              }
+            }
+            return token;
+          }),
+        );
+
+        return tokensWithStabilityFundLiquidity;
       }
     },
     placeholderData: keepPreviousData,

@@ -1,12 +1,10 @@
-import bnJs from '@/bnJs';
 import { Percent } from '@balancednetwork/sdk-core';
+import bnJs from './bnJs';
 
-import { NETWORK_ID } from '@/constants/config';
-import { toDec } from '@/utils';
-import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
-import { XTransactionInput, XTransactionType } from '../../../lib/xcall/_zustand/types';
-import { getRlpEncodedSwapData } from '../../../lib/xcall/utils';
+import { showMessageOnBeforeUnload, toDec } from '@/xwagmi/utils';
+import { XTransactionInput, XTransactionType } from '../../xcall/types';
+import { getRlpEncodedSwapData } from '../../xcall/utils';
 import { IconXService } from './IconXService';
 
 export class IconXWalletClient extends XWalletClient {
@@ -79,12 +77,7 @@ export class IconXWalletClient extends XWalletClient {
 
       txResult = await bnJs
         .inject({ account })
-        .Router.swapICXV2(
-          toDec(executionTrade.inputAmount),
-          rlpEncodedData,
-          NETWORK_ID === 1 ? toDec(minReceived) : '0x0',
-          receiver,
-        );
+        .Router.swapICXV2(toDec(executionTrade.inputAmount), rlpEncodedData, toDec(minReceived), receiver);
     } else {
       const inputToken = executionTrade.inputAmount.currency.wrapped;
       const outputToken = executionTrade.outputAmount.currency.wrapped;

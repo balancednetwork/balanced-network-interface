@@ -2,10 +2,10 @@ import { CallData } from '@balancednetwork/balanced-js';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { useDispatch } from 'react-redux';
 
-import bnJs from '@/bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
 import useInterval from '@/hooks/useInterval';
 import { useBnJsContractQuery } from '@/queries/utils';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import { setBalances } from './reducer';
 

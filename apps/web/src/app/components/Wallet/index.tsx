@@ -1,9 +1,10 @@
 import { Typography } from '@/app/theme';
-import { xChainMap } from '@/constants/xChains';
 import useKeyPress from '@/hooks/useKeyPress';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useXBalancesByToken } from '@/store/wallet/hooks';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXDisconnectAll } from '@/xwagmi/hooks';
+import { XChainId } from '@/xwagmi/types';
 import { Trans, t } from '@lingui/macro';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { isMobile } from 'react-device-detect';
@@ -48,6 +49,16 @@ const Wallet = ({ close }: WalletProps) => {
     close();
     await xDisconnectAll();
   };
+
+  const handleSearchQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+  };
+
+  const searchedXChainId = React.useMemo(
+    () => Object.values(xChainMap).find(chain => chain.name.toLowerCase() === searchQuery.toLowerCase())?.xChainId,
+    [searchQuery],
+  );
 
   useEffect(() => {
     if (handleEscape) {
@@ -103,9 +114,7 @@ const Wallet = ({ close }: WalletProps) => {
             value={searchQuery}
             ref={inputRef as RefObject<HTMLInputElement>}
             tabIndex={isMobile ? -1 : 1}
-            onChange={e => {
-              setSearchQuery(e.target.value);
-            }}
+            onChange={handleSearchQuery}
           />
         </Box>
         <List>
@@ -140,6 +149,7 @@ const Wallet = ({ close }: WalletProps) => {
                 balances={record.xTokenAmounts}
                 value={record.value}
                 total={record.total}
+                searchedXChainId={searchedXChainId}
               />
             ),
           )}

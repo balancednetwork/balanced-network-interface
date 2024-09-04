@@ -1,12 +1,12 @@
 import React from 'react';
 
+import { useIconReact } from '@/packages/icon-react';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
-import { t, Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
 import { isEmpty } from 'lodash-es';
-import { useIconReact } from '@/packages/icon-react';
-import { Flex, Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import { useTheme } from 'styled-components';
 
 import AddressInputPanel from '@/app/components/AddressInputPanel';
@@ -15,14 +15,15 @@ import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
-import bnJs from '@/bnJs';
 import { BIGINT_ZERO } from '@/constants/misc';
-import { HIGH_PRICE_ASSET_DP } from '@/constants/tokens';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend, toCurrencyAmount, toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
+import { useRatesWithOracle } from '@/queries/reward';
+import { formatBalance } from '@/utils/formatter';
 import { Grid, MaxButton } from './utils';
 
 export default function SendPanel({ currency }: { currency: Currency }) {
@@ -41,6 +42,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
   const { account } = useIconReact();
 
   const wallet = useICONWalletBalances();
+  const rates = useRatesWithOracle();
 
   const walletAmount = wallet[currency.wrapped.address];
 
@@ -84,9 +86,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
             { hash: res.result },
             {
               pending: t`Sending ${currency.symbol}...`,
-              summary: t`Sent ${differenceAmount.toFixed(HIGH_PRICE_ASSET_DP[currency?.wrapped.address] || 2, {
-                groupSeparator: ',',
-              })} ${currency.symbol} to ${address}.`,
+              summary: t`Sent ${formatBalance(differenceAmount.toFixed(), rates?.[currency.symbol]?.toFixed())} ${currency.symbol} to ${address}.`,
             },
           );
           toggleOpen();
@@ -145,9 +145,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {`${differenceAmount.toFixed(HIGH_PRICE_ASSET_DP[currency?.wrapped.address] || 2, {
-              groupSeparator: ',',
-            })} ${currency?.symbol}`}
+            {`${formatBalance(differenceAmount.toFixed(), rates?.[currency.symbol]?.toFixed())} ${currency?.symbol}`}
           </Typography>
 
           <Typography textAlign="center" mb="2px" mt="20px">
@@ -164,9 +162,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
                 <Trans>Before</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {`${beforeAmount.toFixed(HIGH_PRICE_ASSET_DP[currency?.wrapped.address] || 2, {
-                  groupSeparator: ',',
-                })} ${currency?.symbol}`}
+                {`${formatBalance(beforeAmount.toFixed(), rates?.[currency.symbol]?.toFixed())} ${currency?.symbol}`}
               </Typography>
             </Box>
 
@@ -175,9 +171,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
                 <Trans>After</Trans>
               </Typography>
               <Typography variant="p" textAlign="center">
-                {`${afterAmount.toFixed(HIGH_PRICE_ASSET_DP[currency?.wrapped.address] || 2, {
-                  groupSeparator: ',',
-                })} ${currency?.symbol}`}
+                {`${formatBalance(afterAmount.toFixed(), rates?.[currency.symbol]?.toFixed())} ${currency?.symbol}`}
               </Typography>
             </Box>
           </Flex>

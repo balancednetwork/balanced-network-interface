@@ -14,7 +14,6 @@ import ratio from './ratio/reducer';
 import stabilityFund from './stabilityFund/reducer';
 import swap from './swap/reducer';
 import transactions from './transactions/reducer';
-import transactionsCrosschain from './transactionsCrosschain/reducer';
 import user from './user/reducer';
 import wallet from './wallet/reducer';
 
@@ -33,7 +32,6 @@ export function configureAppStore() {
       user,
       oracle,
       lists,
-      transactionsCrosschain,
       bridge,
     },
     middleware: getDefaultMiddleware =>

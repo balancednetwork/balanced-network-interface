@@ -1,7 +1,7 @@
-import { wagmiConfig } from '@/config/wagmi';
 import { XService } from '@/xwagmi/core/XService';
 import { getConnectors, getPublicClient, getWalletClient } from '@wagmi/core';
 import { EvmXConnector } from './EvmXConnector';
+import { wagmiConfig } from './wagmiConfig';
 
 export class EvmXService extends XService {
   private static instance: EvmXService;

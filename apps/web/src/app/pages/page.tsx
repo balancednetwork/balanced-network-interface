@@ -1,12 +1,9 @@
 import { Button } from '@/components/ui/button';
-import { useXServiceStore } from '@/lib/xcall/_zustand/useXServiceStore';
-import { XChainType } from '@/types';
 import { XConnector } from '@/xwagmi/core/XConnector';
-import { useXAccount } from '@/xwagmi/hooks/useXAccount';
 import { useXAccounts } from '@/xwagmi/hooks/useXAccounts';
-import { useXChainTypes } from '@/xwagmi/hooks/useXChainTypes';
 import { useXConnect } from '@/xwagmi/hooks/useXConnect';
 import { useXDisconnect } from '@/xwagmi/hooks/useXDisconnect';
+import { XChainType } from '@/xwagmi/types';
 import { useXWagmiStore } from '@/xwagmi/useXWagmiStore';
 import React from 'react';
 
@@ -25,9 +22,6 @@ export function HomePage() {
 
   const xAccounts = useXAccounts();
   // console.log(xAccounts);
-
-  const xChainHeights = useXServiceStore(state => state.xChainHeights);
-  // console.log(xChainHeights);
 
   return (
     <div className="flex flex-col gap-4">

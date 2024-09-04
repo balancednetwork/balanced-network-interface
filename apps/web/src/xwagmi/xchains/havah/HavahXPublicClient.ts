@@ -1,16 +1,17 @@
 import IconService, { BigNumber, Converter } from 'icon-sdk-js';
 
-import { XChainId } from '@/types';
-import { sleep } from '@/utils';
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
+import { XChainId, XToken } from '@/xwagmi/types';
+import { sleep } from '@/xwagmi/utils';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import {
   TransactionStatus,
   XCallEvent,
+  XCallEventType,
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
-} from '../../../lib/xcall/_zustand/types';
-import { XCallEventType } from '../../../lib/xcall/types';
+} from '../../xcall/types';
 import { ICONTxResultType } from '../icon/types';
 import { HavahXService } from './HavahXService';
 import { havahJs } from './havahJs';
@@ -44,6 +45,18 @@ export class HavahXPublicClient extends XPublicClient {
 
   getPublicClient(): IconService {
     return havahJs.provider;
+  }
+
+  async getBalance(address: string | undefined, xToken: XToken) {
+    if (!address) return;
+
+    if (xToken.isNativeXToken()) {
+      return havahJs.ICX.balanceOf(address).then(res => CurrencyAmount.fromRawAmount(xToken, res.toFixed()));
+    } else {
+      return havahJs[xToken.symbol]
+        .balanceOf(address)
+        .then(res => CurrencyAmount.fromRawAmount(xToken, res.toString()));
+    }
   }
 
   async getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean, sources?: string[]) {

@@ -92,9 +92,9 @@ msgstr ""
 msgid "Your transaction has failed. Please go back and try again."
 msgstr "Your transaction has failed. Please go back and try again."
 
-#: src/lib/xcall/_hooks/useApproveCallback.tsx
-#: src/lib/xcall/_hooks/useApproveCallback.tsx
-#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/hooks/useApproveCallback.tsx
+#: src/hooks/useApproveCallback.tsx
+#: src/hooks/useApproveCallback.tsx
 msgid "{0} transfer approval failed."
 msgstr "{0} transfer approval failed."
 
@@ -348,6 +348,10 @@ msgstr "Past week"
 msgid "{0} {collateralType} added to your wallet."
 msgstr "{0} {collateralType} added to your wallet."
 
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "No assets found."
+msgstr "No assets found."
+
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 msgid "Claiming network fees..."
 msgstr "Claiming network fees..."
@@ -355,6 +359,10 @@ msgstr "Claiming network fees..."
 #: src/app/components/trade/SwapPanel.tsx
 #~ msgid "Transfer fee"
 #~ msgstr "Transfer fee"
+
+#: src/app/pages/trade/xswap/_components/TokenList/index.tsx
+msgid "Tokens"
+msgstr "Tokens"
 
 #: src/app/components/Header/index.tsx
 msgid "Copied"
@@ -429,8 +437,8 @@ msgstr "Approved"
 msgid "Review the community token list on GitHub."
 msgstr "Review the community token list on GitHub."
 
-#: src/lib/xcall/_hooks/useApproveCallback.tsx
-#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/hooks/useApproveCallback.tsx
+#: src/hooks/useApproveCallback.tsx
 msgid "Approving {0} for cross-chain transfer..."
 msgstr "Approving {0} for cross-chain transfer..."
 
@@ -440,6 +448,7 @@ msgstr "Approving {0} for cross-chain transfer..."
 
 #: src/app/components/home/_components/CollateralChainSelector/ChainList.tsx
 #: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
+#: src/app/pages/trade/bridge/_components/XChainList.tsx
 msgid "Blockchain"
 msgstr "Blockchain"
 
@@ -731,8 +740,8 @@ msgstr "Before"
 msgid "Active"
 msgstr "Active"
 
-#: src/lib/xcall/_hooks/useApproveCallback.tsx
-#: src/lib/xcall/_hooks/useApproveCallback.tsx
+#: src/hooks/useApproveCallback.tsx
+#: src/hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
 msgstr "{0} approved for cross-chain transfer."
 
@@ -1109,6 +1118,10 @@ msgstr "Add <0>{0}</0> item"
 #~ msgid "Revert transaction."
 #~ msgstr "Revert transaction."
 
+#: src/app/pages/trade/xswap/_components/TokenList/index.tsx
+msgid "It does not reflect the total market cap for multi-chain assets."
+msgstr "It does not reflect the total market cap for multi-chain assets."
+
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Cross-chain swap requested."
 #~ msgstr "Cross-chain swap requested."
@@ -1261,6 +1274,10 @@ msgstr "Wallet: {0} {1}"
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 #~ msgid "The fee APR is calculated from the swap fees earned by a pool in the last 30 days."
 #~ msgstr "The fee APR is calculated from the swap fees earned by a pool in the last 30 days."
+
+#: src/app/pages/trade/xswap/_components/TokenList/index.tsx
+msgid "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
+msgstr "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Forum link"
@@ -1515,6 +1532,10 @@ msgstr "For"
 msgid "Voting power available: {0}"
 msgstr "Voting power available: {0}"
 
+#: src/app/pages/trade/bridge/_components/XChainList.tsx
+msgid "Search for blockchains..."
+msgstr "Search for blockchains..."
+
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "You'll only be able to interact with the default assets listed on Balanced."
 msgstr "You'll only be able to interact with the default assets listed on Balanced."
@@ -1536,7 +1557,7 @@ msgid "Approve"
 msgstr "Approve"
 
 #: src/btp/src/connectors/helper.ts
-#: src/lib/xcall/_zustand/useTransactionStore.tsx
+#: src/hooks/useTransactionStore.tsx
 #: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
 msgstr "Processing transaction..."
@@ -1586,6 +1607,10 @@ msgstr "Transferring"
 #: src/store/swap/hooks.ts
 msgid "Choose address"
 msgstr "Choose address"
+
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "Your assets"
+msgstr "Your assets"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "You'll need to relock BALN to hold voting power and boost your earning potential."
@@ -2326,6 +2351,7 @@ msgstr "Exchange rate"
 #: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
 #: src/app/components/SearchModal/CurrencyList.tsx
 #: src/app/components/Wallet/index.tsx
+#: src/app/pages/trade/bridge/_components/XChainList.tsx
 msgid "Wallet"
 msgstr "Wallet"
 
@@ -2340,6 +2366,10 @@ msgstr "Transferring {0} from {1} to {2}..."
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Remove"
 msgstr "Remove"
+
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "All assets"
+msgstr "All assets"
 
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx

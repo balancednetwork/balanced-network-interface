@@ -10,12 +10,12 @@ import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
-import bnJs from '@/bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
 import { useBlockNumber, useICXUnstakingTime } from '@/store/application/hooks';
 import { useAllTransactions, useTransactionAdder } from '@/store/transactions/hooks';
 import { useICONWalletBalances } from '@/store/wallet/hooks';
 import { toCurrencyAmount } from '@/utils';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 interface UnstakePanelProps {
   claimableICX: BigNumber;

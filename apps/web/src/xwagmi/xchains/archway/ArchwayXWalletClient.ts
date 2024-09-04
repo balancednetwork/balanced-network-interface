@@ -1,17 +1,17 @@
-import bnJs from '@/bnJs';
 import { Percent } from '@balancednetwork/sdk-core';
+import bnJs from '../icon/bnJs';
 
-import { ICON_XCALL_NETWORK_ID } from '@/constants/config';
-import { ARCHWAY_FEE_TOKEN_SYMBOL } from '@/constants/tokens1';
-import { archway } from '@/constants/xChains';
-import { XToken } from '@/types';
+import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
+import { archway } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
+import { XToken } from '@/xwagmi/types';
 import { XSigningArchwayClient } from '@/xwagmi/xchains/archway/XSigningArchwayClient';
 import { getFeeParam, isDenomAsset } from '@/xwagmi/xchains/archway/utils';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
-import { XTransactionInput, XTransactionType } from '../../../lib/xcall/_zustand/types';
-import { getBytesFromString, getRlpEncodedSwapData } from '../../../lib/xcall/utils';
+import { XTransactionInput, XTransactionType } from '../../xcall/types';
+import { getBytesFromString, getRlpEncodedSwapData } from '../../xcall/utils';
 import { ArchwayXService } from './ArchwayXService';
+import { ARCHWAY_FEE_TOKEN_SYMBOL } from './constants';
 
 export class ArchwayXWalletClient extends XWalletClient {
   getXService(): ArchwayXService {

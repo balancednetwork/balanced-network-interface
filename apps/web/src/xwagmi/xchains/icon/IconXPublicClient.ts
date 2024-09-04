@@ -1,18 +1,18 @@
-import bnJs from '@/bnJs';
 import axios from 'axios';
-import IconService, { Converter, BigNumber } from 'icon-sdk-js';
+import { BigNumber, Converter } from 'icon-sdk-js';
+import bnJs from './bnJs';
 
-import { XChainId } from '@/types';
-import { sleep } from '@/utils';
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
+import { XChainId, XToken } from '@/xwagmi/types';
+import { sleep } from '@/xwagmi/utils';
 import {
   TransactionStatus,
   XCallEvent,
+  XCallEventType,
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
-} from '../../../lib/xcall/_zustand/types';
-import { XCallEventType } from '../../../lib/xcall/types';
+} from '../../xcall/types';
 import { IconXService } from './IconXService';
 import { ICONTxResultType } from './types';
 
@@ -45,6 +45,11 @@ export class IconXPublicClient extends XPublicClient {
 
   getPublicClient() {
     return this.getXService().iconService;
+  }
+
+  async getBalance(address: string | undefined, xToken: XToken) {
+    // not used
+    return Promise.resolve(undefined);
   }
 
   async getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean, sources?: string[]) {

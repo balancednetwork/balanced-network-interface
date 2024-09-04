@@ -1,16 +1,17 @@
 import { fromBase64, toBase64 } from '@injectivelabs/sdk-ts';
 
-import { injective } from '@/constants/xChains';
+import { injective } from '@/xwagmi/constants/xChains';
+import { XPublicClient } from '@/xwagmi/core';
+import { XChainId, XToken } from '@/xwagmi/types';
 import {
   TransactionStatus,
   XCallEvent,
+  XCallEventType,
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
-} from '@/lib/xcall/_zustand/types';
-import { XCallEventType } from '@/lib/xcall/types';
-import { XChainId } from '@/types';
-import { XPublicClient } from '@/xwagmi/core';
+} from '@/xwagmi/xcall/types';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { InjectiveXService } from './InjectiveXService';
 
 const XCallEventSignatureMap = {
@@ -26,6 +27,32 @@ export class InjectiveXPublicClient extends XPublicClient {
 
   getPublicClient() {
     // not used, just for XPublicClient abstract class
+  }
+
+  async getBalance(address: string | undefined, xToken: XToken) {
+    if (!address) return;
+
+    const xService = this.getXService();
+    if (xToken.isNativeXToken()) {
+      const portfolio = await xService.indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(address);
+
+      const injBalance = portfolio.bankBalancesList.find(balance => balance.denom === 'inj');
+      if (injBalance) {
+        return CurrencyAmount.fromRawAmount(xToken, BigInt(injBalance.amount));
+      }
+    } else if (xToken.symbol === 'bnUSD') {
+      try {
+        const response: any = await xService.chainGrpcWasmApi.fetchSmartContractState(
+          injective.contracts.bnUSD!,
+          toBase64({ balance: { address } }),
+        );
+
+        const result = fromBase64(response.data);
+        return CurrencyAmount.fromRawAmount(xToken, result.balance);
+      } catch (e) {}
+    } else {
+      throw new Error(`Unsupported token: ${xToken.symbol}`);
+    }
   }
 
   async getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean) {

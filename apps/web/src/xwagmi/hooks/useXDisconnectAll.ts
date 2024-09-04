@@ -1,5 +1,5 @@
-import { XChainType } from '@/types';
 import { useCallback } from 'react';
+import { XChainType } from '../types';
 import { xServices } from '../useXWagmiStore';
 import { useXDisconnect } from './useXDisconnect';
 

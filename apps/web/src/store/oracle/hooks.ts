@@ -4,11 +4,11 @@ import { CallData, addresses } from '@balancednetwork/balanced-js';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
-import bnJs from '@/bnJs';
 import { NETWORK_ID } from '@/constants/config';
 import useInterval from '@/hooks/useInterval';
 import { useSupportedCollateralTokens } from '@/store/collateral/hooks';
 import { formatUnits } from '@/utils';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import { ORACLE_PRICED_TOKENS } from '@/constants/tokens';
 import { AppState } from '..';

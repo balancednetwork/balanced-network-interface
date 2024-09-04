@@ -8,14 +8,14 @@ import styled from 'styled-components';
 import CurrencyLogo from '@/app/components/CurrencyLogo';
 import { SelectorPopover } from '@/app/components/Popover';
 import DropDown from '@/assets/icons/arrow-down.svg';
-import { DEFAULT_TOKEN_CHAIN } from '@/constants/xTokens';
 import useWidth from '@/hooks/useWidth';
 import { COMMON_PERCENTS } from '@/store/swap/reducer';
-import { XChainId } from '@/types';
 import { escapeRegExp } from '@/utils';
-import { getAvailableXChains } from '@/utils/xTokens';
+import { DEFAULT_TOKEN_CHAIN } from '@/xwagmi/constants/xTokens';
+import { XChainId } from '@/xwagmi/types';
+import { getSupportedXChainForToken } from '@/xwagmi/xcall/utils';
 import { HorizontalList, Option } from '../List';
-import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
+import { CurrencySelectionType, SelectorType } from '../SearchModal/CurrencySearch';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 import CrossChainOptions from '../trade/CrossChainOptions';
 
@@ -102,11 +102,13 @@ interface CurrencyInputPanelProps {
   className?: string;
   account?: string | null;
   showCommunityListControl?: boolean;
+  selectorType?: SelectorType;
 
   // cross chain stuff
   xChainId?: XChainId;
   onChainSelect?: (_chainId: XChainId) => void;
   showCrossChainOptions?: boolean;
+  showCrossChainBreakdown?: boolean;
   addressEditable?: boolean;
   setManualAddress?: (xChainId: XChainId, address?: string | undefined) => void;
 }
@@ -126,11 +128,13 @@ export default function CurrencyInputPanel({
   className,
   account,
   showCommunityListControl = true,
+  selectorType,
 
   // cross chain stuff
   xChainId = '0x1.icon',
   onChainSelect,
   showCrossChainOptions = false,
+  showCrossChainBreakdown = true,
   addressEditable = false,
   setManualAddress,
 }: CurrencyInputPanelProps) {
@@ -162,20 +166,20 @@ export default function CurrencyInputPanel({
       currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
       currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE
         ? []
-        : getAvailableXChains(currency),
+        : getSupportedXChainForToken(currency),
     [currency, currencySelectionType],
   );
 
   const onCurrencySelectWithXChain = useCallback(
-    (currency: Currency) => {
+    (currency: Currency, setDefaultChain = true) => {
       onCurrencySelect && onCurrencySelect(currency);
 
-      if (currency?.symbol) {
+      if (setDefaultChain && currency?.symbol) {
         const xChains =
           currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
           currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE
             ? []
-            : getAvailableXChains(currency);
+            : getSupportedXChainForToken(currency);
         const defaultXChainId = DEFAULT_TOKEN_CHAIN[currency.symbol];
         if (defaultXChainId && (xChains?.length ?? 0) > 1) {
           onChainSelect && onChainSelect(defaultXChainId);
@@ -210,6 +214,7 @@ export default function CurrencyInputPanel({
                 isOpen={open}
                 onDismiss={handleDismiss}
                 onCurrencySelect={onCurrencySelectWithXChain}
+                onChainSelect={onChainSelect}
                 currencySelectionType={currencySelectionType}
                 showCurrencyAmount={false}
                 anchorEl={ref.current}
@@ -217,6 +222,8 @@ export default function CurrencyInputPanel({
                 selectedCurrency={currency}
                 showCommunityListControl={showCommunityListControl}
                 xChainId={xChainId}
+                showCrossChainBreakdown={showCrossChainBreakdown}
+                selectorType={selectorType}
               />
             )}
           </div>
@@ -269,6 +276,9 @@ export default function CurrencyInputPanel({
           setOpen={setXChainOptionsOpen}
           xChains={xChains}
           editable={addressEditable}
+          currency={currency}
+          width={width ? width + 40 : undefined}
+          containerRef={ref.current}
           setManualAddress={setManualAddress}
         />
       )}

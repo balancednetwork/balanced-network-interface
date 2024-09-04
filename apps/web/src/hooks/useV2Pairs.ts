@@ -1,16 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 
-import bnJs from '@/bnJs';
 import { canBeQueue } from '@/constants/currency';
 import { bnUSD } from '@/constants/tokens';
 import { fetchStabilityFundBalances, getAcceptedTokens } from '@/store/stabilityFund/hooks';
 import { getPair } from '@/utils';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import { NETWORK_ID } from '@/constants/config';
 

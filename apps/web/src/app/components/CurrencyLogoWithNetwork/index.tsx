@@ -1,10 +1,13 @@
-import { XChainId } from '@/types';
 import React from 'react';
+
 import styled from 'styled-components';
-import CurrencyLogo from '../CurrencyLogo';
-import { Currency } from '@balancednetwork/sdk-core';
+
 import { ChainLogo } from '@/app/components/ChainLogo';
-import { xChainMap } from '@/constants/xChains';
+import { xChainMap } from '@/xwagmi/constants/xChains';
+import { XChainId } from '@/xwagmi/types';
+import { Currency } from '@balancednetwork/sdk-core';
+
+import CurrencyLogo from '../CurrencyLogo';
 
 const NetworkWrap = styled.div<{ $bgColor: string; $right: string; $bottom: string }>`
   position: absolute;

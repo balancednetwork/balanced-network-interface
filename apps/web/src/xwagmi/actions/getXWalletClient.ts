@@ -1,4 +1,4 @@
-import { XChainId } from '@/types';
+import { XChainId } from '@/xwagmi/types';
 import { XWalletClient } from '../core/XWalletClient';
 import { useXWagmiStore } from '../useXWagmiStore';
 

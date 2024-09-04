@@ -1,4 +1,4 @@
-import { XChainType } from '@/types';
+import { XChainType } from '../types';
 import { XConnector } from './XConnector';
 
 export abstract class XService {

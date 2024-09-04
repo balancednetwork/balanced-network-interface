@@ -5,11 +5,11 @@ import { BalancedJs } from '@balancednetwork/balanced-js';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 
-import bnJs from '@/bnJs';
 import QUERY_KEYS from '@/queries/queryKeys';
 import { usePlatformDayQuery } from '@/queries/reward';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { ProposalInterface } from '@/types';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 export const useProposalCount = (): UseQueryResult<number> => {
   return useQuery({

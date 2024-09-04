@@ -2,7 +2,7 @@ import { Fraction } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 
-import bnJs from '@/bnJs';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 export type RewardDistributionRaw = {
   Base: Map<string, Fraction>;

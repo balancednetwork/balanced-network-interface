@@ -6,8 +6,8 @@ import { Typography } from '@/app/theme';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
-import { XChain, XChainType } from '@/types';
 import { useXAccount, useXConnect, useXDisconnect, useXService } from '@/xwagmi/hooks';
+import { XChain, XChainType } from '@/xwagmi/types';
 import { t } from '@lingui/macro';
 import { UnderlineText } from '../DropdownText';
 import { CopyableAddress } from '../Header';

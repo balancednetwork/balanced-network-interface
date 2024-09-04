@@ -1,15 +1,15 @@
 import { useCallback, useEffect } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { BigNumber } from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
-import bnJs from '@/bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
 import useInterval from '@/hooks/useInterval';
 import { useAllTransactions } from '@/store/transactions/hooks';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { AppState } from '..';
 import { changeData, changeSources, changeTotalSupply } from './reducer';
 

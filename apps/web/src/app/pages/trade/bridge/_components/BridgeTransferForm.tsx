@@ -11,12 +11,11 @@ import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { UnderlineText } from '@/app/components/DropdownText';
 import { BrightPanel } from '@/app/components/Panel';
-import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
+import { CurrencySelectionType, SelectorType } from '@/app/components/SearchModal/CurrencySearch';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
-import { xChainMap } from '@/constants/xChains';
 import useManualAddresses from '@/hooks/useManualAddresses';
-import useXCallFee from '@/lib/xcall/_hooks/useXCallFee';
+import useWidth from '@/hooks/useWidth';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import {
   useBridgeActionHandlers,
@@ -26,10 +25,13 @@ import {
 } from '@/store/bridge/hooks';
 import { Field } from '@/store/bridge/reducer';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { maxAmountSpend, validateAddress } from '@/utils';
+import { maxAmountSpend } from '@/utils';
 import { getXChainType } from '@/xwagmi/actions';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount } from '@/xwagmi/hooks';
-import ChainSelector from './ChainSelector';
+import { validateAddress } from '@/xwagmi/utils';
+import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
+import XChainSelector from './XChainSelector';
 
 export default function BridgeTransferForm({ openModal }) {
   const crossChainWallet = useCrossChainWalletBalances();
@@ -40,7 +42,7 @@ export default function BridgeTransferForm({ openModal }) {
     useBridgeActionHandlers();
   const bridgeDirection = useBridgeDirection();
   const percentAmount = bridgeState[Field.FROM].percent;
-
+  const [ref, width] = useWidth();
   const toggleWalletModal = useWalletModalToggle();
 
   const maxInputAmount = React.useMemo(
@@ -71,10 +73,10 @@ export default function BridgeTransferForm({ openModal }) {
 
   const xAccount = useXAccount(getXChainType(bridgeDirection.to));
   React.useEffect(() => {
-    if (xAccount.address) {
-      onChangeRecipient(xAccount.address);
-    } else if (manualAddresses[bridgeDirection.to]) {
+    if (manualAddresses[bridgeDirection.to]) {
       onChangeRecipient(manualAddresses[bridgeDirection.to] ?? null);
+    } else if (xAccount.address) {
+      onChangeRecipient(xAccount.address);
     } else {
       onChangeRecipient(null);
     }
@@ -109,16 +111,26 @@ export default function BridgeTransferForm({ openModal }) {
           <Typography variant="h2">
             <Trans>Transfer</Trans>
           </Typography>
-          <Flex width="100%" alignItems="center" justifyContent="space-between">
-            <ChainSelector
+          <Flex width="100%" alignItems="center" justifyContent="space-between" ref={ref}>
+            <XChainSelector
               label="from"
               chainId={bridgeDirection.from}
               setChainId={c => onChainSelection(Field.FROM, c)}
+              currency={currencyToBridge}
+              width={width}
+              containerRef={ref.current}
             />
             <Box sx={{ cursor: 'pointer', marginLeft: '-25px' }} onClick={onSwitchChain}>
               <FlipIcon width={25} height={17} />
             </Box>
-            <ChainSelector label="to" chainId={bridgeDirection.to} setChainId={c => onChainSelection(Field.TO, c)} />
+            <XChainSelector
+              label="to"
+              chainId={bridgeDirection.to}
+              setChainId={c => onChainSelection(Field.TO, c)}
+              currency={currencyToBridge}
+              width={width}
+              containerRef={ref.current}
+            />
           </Flex>
 
           <Typography as="div" mb={-1} textAlign="right" hidden={!account}>
@@ -137,6 +149,8 @@ export default function BridgeTransferForm({ openModal }) {
               currencySelectionType={CurrencySelectionType.BRIDGE}
               showCommunityListControl={false}
               xChainId={bridgeDirection.from}
+              showCrossChainBreakdown={false}
+              selectorType={SelectorType.BRIDGE}
             />
           </Flex>
 

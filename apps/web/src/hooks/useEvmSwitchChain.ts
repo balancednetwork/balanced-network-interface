@@ -1,7 +1,7 @@
-import { xChainMap } from '@/constants/xChains';
-import { XChainId } from '@/types';
 import { getXChainType } from '@/xwagmi/actions';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXService } from '@/xwagmi/hooks';
+import { XChainId } from '@/xwagmi/types';
 import { InjectiveXService } from '@/xwagmi/xchains/injective';
 import { switchEthereumChain } from '@/xwagmi/xchains/injective/utils';
 import { Wallet } from '@injectivelabs/wallet-ts';
@@ -22,6 +22,7 @@ export const useEvmSwitchChain = (expectedXChainId: XChainId) => {
     return (
       (xChainType === 'EVM' && chainId !== expectedChainId) ||
       (xChainType === 'INJECTIVE' &&
+        !window?.['ethereum']?.isHanaWallet &&
         injectiveXService.walletStrategy.getWallet() === Wallet.Metamask &&
         ethereumChainId !== mainnet.id)
     );

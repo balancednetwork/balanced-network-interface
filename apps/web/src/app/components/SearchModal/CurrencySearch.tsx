@@ -1,4 +1,4 @@
-import React, { /*KeyboardEvent,*/ RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Currency, Token } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
@@ -13,12 +13,14 @@ import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from '@/h
 import useDebounce from '@/hooks/useDebounce';
 import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 import useToggle from '@/hooks/useToggle';
-import { isAddress } from '@/utils';
-
-import { xTokenMap } from '@/constants/xTokens';
+import { useHasSignedIn } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
 import { useBridgeDirection } from '@/store/bridge/hooks';
-import { XChainId } from '@/types';
+import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { isAddress } from '@/utils';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
+import { XChainId } from '@/xwagmi/types';
+import { ChartControlButton as AssetsTabButton } from '../ChartControl';
 import Column from '../Column';
 import CommunityListToggle from '../CommunityListToggle';
 import CurrencyList from './CurrencyList';
@@ -35,6 +37,20 @@ export enum CurrencySelectionType {
   BRIDGE,
 }
 
+export enum AssetsTab {
+  ALL = 'all',
+  YOUR = 'your',
+}
+
+export enum SelectorType {
+  SWAP_IN,
+  SWAP_OUT,
+  SUPPLY_QUOTE,
+  SUPPLY_BASE,
+  BRIDGE,
+  OTHER,
+}
+
 const removebnUSD = (tokens: { [address: string]: Token }) => {
   return Object.values(tokens)
     .filter(token => token.symbol !== 'bnUSD')
@@ -49,20 +65,19 @@ interface CurrencySearchProps {
   isOpen: boolean;
   onDismiss: () => void;
   selectedCurrency?: Currency | null;
-  onCurrencySelect: (currency: Currency) => void;
-  otherSelectedCurrency?: Currency | null;
+  onCurrencySelect: (currency: Currency, setDefaultChain?: boolean) => void;
+  onChainSelect?: (chainId: XChainId) => void;
   currencySelectionType: CurrencySelectionType;
   showCurrencyAmount?: boolean;
-  disableNonToken?: boolean;
-  showManageView: () => void;
   showImportView: () => void;
   setImportToken: (token: Token) => void;
   showRemoveView: () => void;
   setRemoveToken: (token: Token) => void;
   width?: number;
-  balanceList?: { [key: string]: BigNumber };
   showCommunityListControl?: boolean;
   xChainId: XChainId;
+  showCrossChainBreakdown: boolean;
+  selectorType?: SelectorType;
 }
 
 const useFilteredXTokens = () => {
@@ -79,30 +94,45 @@ export function CurrencySearch({
   account,
   selectedCurrency,
   onCurrencySelect,
-  otherSelectedCurrency,
+  onChainSelect,
+  showCrossChainBreakdown,
   currencySelectionType,
   showCurrencyAmount,
-  disableNonToken,
   onDismiss,
   isOpen,
-  showManageView,
   showImportView,
   setImportToken,
   showRemoveView,
   setRemoveToken,
   width,
-  balanceList,
   showCommunityListControl,
   xChainId,
+  selectorType = SelectorType.OTHER,
 }: CurrencySearchProps) {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const debouncedQuery = useDebounce(searchQuery, 200);
+  const hasSignedIn = useHasSignedIn();
 
   const [invertSearchOrder] = useState<boolean>(false);
 
+  const xWallet = useCrossChainWalletBalances();
   const tokens = useAllTokens();
   const filteredXTokens = useFilteredXTokens();
   const bases = useCommonBases();
+
+  const [assetsTab, setAssetsTab] = useState(AssetsTab.ALL);
+
+  useEffect(() => {
+    if (assetsTab === AssetsTab.YOUR && !hasSignedIn) {
+      setAssetsTab(AssetsTab.ALL);
+    }
+  }, [hasSignedIn, assetsTab]);
+
+  useEffect(() => {
+    if (hasSignedIn && selectorType === SelectorType.SWAP_IN) {
+      setAssetsTab(AssetsTab.YOUR);
+    }
+  }, [hasSignedIn, selectorType]);
 
   const bridgeDirection = useBridgeDirection();
   const xTokens = useXTokens(bridgeDirection.from, bridgeDirection.to);
@@ -147,7 +177,7 @@ export function CurrencySearch({
     return [...filteredTokens].sort(tokenComparator);
   }, [filteredTokens, tokenComparator]);
 
-  const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery);
+  const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery, assetsTab === AssetsTab.YOUR);
 
   const icx = useICX();
 
@@ -160,8 +190,8 @@ export function CurrencySearch({
   }, [debouncedQuery, icx, filteredSortedTokens]);
 
   const handleCurrencySelect = useCallback(
-    (currency: Currency) => {
-      onCurrencySelect(currency);
+    (currency: Currency, setDefaultChain = true) => {
+      onCurrencySelect(currency, setDefaultChain);
       onDismiss();
     },
     [onDismiss, onCurrencySelect],
@@ -204,6 +234,7 @@ export function CurrencySearch({
       currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
         ? filteredSortedTokensWithICX
         : filteredSortedTokens;
+
     return currencies;
   }, [currencySelectionType, filteredSortedTokens, filteredSortedTokensWithICX]);
 
@@ -211,9 +242,24 @@ export function CurrencySearch({
     return currencySelectionType === CurrencySelectionType.NORMAL ? undefined : xChainId;
   }, [currencySelectionType, xChainId]);
 
+  const shouldShowCurrencyList = useMemo(() => {
+    if (assetsTab === AssetsTab.ALL) {
+      return true;
+    }
+    return filteredSortedTokensWithICX.some(
+      token =>
+        xWallet &&
+        Object.values(xWallet).filter(wallet =>
+          Object.values(wallet).find(
+            currencyAmount => currencyAmount.currency.symbol === token.symbol && currencyAmount.greaterThan(0),
+          ),
+        ).length > 0,
+    );
+  }, [assetsTab, filteredSortedTokensWithICX, xWallet]);
+
   return (
     <Wrapper width={width}>
-      <Flex>
+      <Flex px="25px">
         <SearchInput
           type="text"
           id="token-search-input"
@@ -225,43 +271,51 @@ export function CurrencySearch({
           onChange={handleInput}
         />
       </Flex>
-
-      {showCommunityListControl && (
-        <Flex justifyContent="center" paddingTop="10px">
-          <CommunityListToggle></CommunityListToggle>
+      {hasSignedIn && (selectorType === SelectorType.SWAP_IN || selectorType === SelectorType.SWAP_OUT) ? (
+        <Flex justifyContent="center" mt={3}>
+          <AssetsTabButton $active={assetsTab === AssetsTab.YOUR} mr={2} onClick={() => setAssetsTab(AssetsTab.YOUR)}>
+            <Trans>Your assets</Trans>
+          </AssetsTabButton>
+          <AssetsTabButton $active={assetsTab === AssetsTab.ALL} onClick={() => setAssetsTab(AssetsTab.ALL)}>
+            <Trans>All assets</Trans>
+          </AssetsTabButton>
         </Flex>
-      )}
-
+      ) : null}
       {searchToken && !searchTokenIsAdded ? (
         <Column style={{ padding: '20px 0', height: '100%' }}>
           <ImportRow token={searchToken} showImportView={showImportView} setImportToken={setImportToken} />
         </Column>
-      ) : filteredSortedTokensWithICX?.length > 0 ? (
+      ) : filteredSortedTokensWithICX?.length > 0 && shouldShowCurrencyList ? (
         <CurrencyList
-          account={account}
           currencies={filterCurrencies}
           onCurrencySelect={handleCurrencySelect}
-          showImportView={showImportView}
-          setImportToken={setImportToken}
+          onChainSelect={onChainSelect}
           showRemoveView={showRemoveView}
           setRemoveToken={setRemoveToken}
-          showCurrencyAmount={showCurrencyAmount}
           isOpen={isOpen}
           onDismiss={onDismiss}
           selectedChainId={selectedChainId}
+          showCrossChainBreakdown={showCrossChainBreakdown}
+          basedOnWallet={assetsTab === AssetsTab.YOUR}
+          selectorType={selectorType}
         />
       ) : (
-        <Column style={{ padding: '20px', height: '100%' }}>
+        <Column style={{ padding: '20px 20px 0 20px' }} mb={showCommunityListControl ? -4 : 0}>
           <Typography color="text3" textAlign="center" mb="20px">
-            <Trans>No results found.</Trans>
+            {debouncedQuery.length ? <Trans>No results found.</Trans> : <Trans>No assets found.</Trans>}
           </Typography>
         </Column>
       )}
+      {showCommunityListControl && debouncedQuery.length ? (
+        <Flex paddingTop="15px" width="100%" justifyContent="center">
+          <CommunityListToggle />
+        </Flex>
+      ) : null}
     </Wrapper>
   );
 }
 
 const Wrapper = styled(Flex)`
   flex-direction: column;
-  padding: 25px;
+  padding: 25px 0;
 `;

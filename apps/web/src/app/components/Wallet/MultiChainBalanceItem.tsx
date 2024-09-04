@@ -1,34 +1,43 @@
+import { Typography } from '@/app/theme';
+import { useRatesWithOracle } from '@/queries/reward';
+import { formatBalance, formatValue } from '@/utils/formatter';
+import { XChainId } from '@/xwagmi/types';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { XChainId } from '@/types';
 import BigNumber from 'bignumber.js';
 import React from 'react';
-import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, DataText, ListItem } from './styledComponents';
 import CurrencyLogo from '../CurrencyLogo';
-import { Typography } from '@/app/theme';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
-import { formatBalance, formatValue } from '@/utils/formatter';
-import { useRatesWithOracle } from '@/queries/reward';
+import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, DataText, ListItem } from './styledComponents';
 
 type MultiChainBalanceItemProps = {
   baseToken: Token;
   balances: { [key in XChainId]: CurrencyAmount<Currency> | undefined };
   total: BigNumber;
   value?: BigNumber;
+  searchedXChainId?: XChainId;
 };
 
-const MultiChainBalanceItem = ({ baseToken, balances, total, value }: MultiChainBalanceItemProps) => {
+const MultiChainBalanceItem = ({ baseToken, balances, total, value, searchedXChainId }: MultiChainBalanceItemProps) => {
   const { symbol } = baseToken;
   const arrowRef = React.useRef<HTMLElement>(null);
   const rates = useRatesWithOracle();
 
+  const filteredBreakdown = React.useMemo(
+    () =>
+      Object.entries(balances).filter(([xChainId]) => {
+        return searchedXChainId ? searchedXChainId === xChainId : true;
+      }),
+    [balances, searchedXChainId],
+  );
+
   const sortedEntries = React.useMemo(() => {
-    return Object.entries(balances).sort(([, balanceA], [, balanceB]) => {
+    return filteredBreakdown.sort(([, balanceA], [, balanceB]) => {
       if (balanceA && balanceB) {
         return balanceB.lessThan(balanceA) ? -1 : 1;
       }
       return balanceA ? -1 : 1;
     });
-  }, [balances]);
+  }, [filteredBreakdown]);
 
   return (
     <>

@@ -19,8 +19,8 @@ import store from '@/store';
 // Initialize languages
 import { LanguageProvider } from './i18n';
 
+import { wagmiConfig } from '@/xwagmi/xchains/evm/wagmiConfig';
 import { WagmiProvider } from 'wagmi';
-import { wagmiConfig } from './config/wagmi';
 
 import './index.css';
 

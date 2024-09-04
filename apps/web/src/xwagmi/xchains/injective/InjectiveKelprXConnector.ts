@@ -1,9 +1,9 @@
-import { XAccount } from '@/xwagmi/core/types';
+import { XAccount } from '@/xwagmi/types';
 
-import KeplrIcon from '@/assets/icons/wallets/keplr.svg?inline';
 import { XConnector } from '@/xwagmi/core';
 import { Wallet } from '@injectivelabs/wallet-ts';
 import { InjectiveXService } from './InjectiveXService';
+import KeplrIcon from './assets/keplr.svg?inline';
 
 export class InjectiveKelprXConnector extends XConnector {
   constructor() {

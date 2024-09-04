@@ -1,9 +1,9 @@
 import { CallData, addresses } from '@balancednetwork/balanced-js';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
-import bnJs from '@/bnJs';
 import { NETWORK_ID } from '@/constants/config';
 import { formatUnits } from '@/utils';
+import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]: string }> {
   return useQuery({

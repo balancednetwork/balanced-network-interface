@@ -19,12 +19,13 @@ export const DataText = styled(Typography)<{ small?: boolean }>`
   font-size: ${props => (props.small ? '14px' : '16px')};
 `;
 
-export const ListItem = styled(DashGrid)<{ small?: boolean }>`
+export const ListItem = styled(DashGrid)<{ small?: boolean; $hideBorder?: boolean }>`
   ${props => props.small && 'grid-template-columns: 1fr;'}
-  padding: ${props => (props.small ? '10px' : '20px')} 0;
+  padding: ${props => (props.$hideBorder ? (props.small ? '10px 0' : '20px 0 0') : props.small ? '10px 0' : '20px 0')};
   cursor: pointer;
   color: #ffffff;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  ${({ $hideBorder }) => !$hideBorder && 'border-bottom: 1px solid rgba(255, 255, 255, 0.15)'};
+  
 
   &:hover,
   &.focused {
@@ -47,13 +48,13 @@ export const List = styled(Box)`
 `;
 
 export const List1 = styled(Box)`
-  max-height: 260px;
+  max-height: 265px;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 0px 10px 0px 10px;
+  padding: 0px 25px;
 
   & > ${ListItem}:last-child {
-    padding-bottom: 0;
+    padding-bottom: 5px;
     border-bottom: none;
   }
 `;

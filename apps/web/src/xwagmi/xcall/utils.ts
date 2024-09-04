@@ -5,8 +5,9 @@ import { Trade } from '@balancednetwork/v1-sdk';
 
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XToken } from '@/xwagmi/types';
+import { XChain, XChainId, XToken } from '@/xwagmi/types';
 import { uintToBytes } from '@/xwagmi/utils';
+import { xChains } from '../constants/xChains';
 
 export function getBytesFromNumber(value) {
   const hexString = value.toString(16).padStart(2, '0');
@@ -70,4 +71,19 @@ export const toICONDecimals = (currencyAmount: CurrencyAmount<Currency>): bigint
 
   const diff = BigInt(iconToken.decimals - currencyAmount.currency.decimals);
   return xAmount * BigInt(10) ** diff;
+};
+
+export const getSupportedXChainIdsForToken = (currency: Currency | XToken): XChainId[] => {
+  return Object.values(xTokenMap)
+    .flat()
+    .filter(t => t.symbol === currency?.symbol)
+    .map(t => t.xChainId);
+};
+
+export const getSupportedXChainForToken = (currency?: Currency | XToken | null): XChain[] | undefined => {
+  if (!currency) return;
+
+  const xChainIds = getSupportedXChainIdsForToken(currency) || [];
+
+  return xChains.filter(x => xChainIds.includes(x.xChainId));
 };

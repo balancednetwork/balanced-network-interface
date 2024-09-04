@@ -9,26 +9,26 @@ import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button } from '@/app/components/Button';
+import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { UnderlineText, UnderlineTextWithArrow } from '@/app/components/DropdownText';
 import { BrightPanel } from '@/app/components/Panel';
 import { DropdownPopper } from '@/app/components/Popover';
+import { SelectorType } from '@/app/components/SearchModal/CurrencySearch';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
+import useManualAddresses from '@/hooks/useManualAddresses';
+import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useSwapSlippageTolerance, useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatPercent, maxAmountSpend } from '@/utils';
-import { isXToken } from '@/utils/xTokens';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-
-import { AutoColumn } from '@/app/components/Column';
-import useManualAddresses from '@/hooks/useManualAddresses';
-import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { getXChainType } from '@/xwagmi/actions';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount } from '@/xwagmi/hooks';
+import { XChainId } from '@/xwagmi/types';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import SwapModal from './SwapModal';
 import XSwapModal from './XSwapModal';
@@ -53,11 +53,22 @@ export default function SwapPanel() {
   const signedInWallets = useSignedInWallets();
   const { recipient } = useSwapState();
   const isRecipientCustom = recipient !== null && !signedInWallets.some(wallet => wallet.address === recipient);
-  const isOutputCrosschainCompatible = isXToken(currencies?.OUTPUT);
-  const isInputCrosschainCompatible = isXToken(currencies?.INPUT);
 
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
     useSwapActionHandlers();
+
+  const handleSwapInputChainSelection = useCallback(
+    (xChainId: XChainId) => {
+      onChainSelection(Field.INPUT, xChainId);
+    },
+    [onChainSelection],
+  );
+  const handleSwapOutputChainSelection = useCallback(
+    (xChainId: XChainId) => {
+      onChainSelection(Field.OUTPUT, xChainId);
+    },
+    [onChainSelection],
+  );
 
   const xAccount = useXAccount(getXChainType(direction.to));
 
@@ -215,10 +226,9 @@ export default function SwapPanel() {
               onPercentSelect={signedInWallets.length > 0 ? handleInputPercentSelect : undefined}
               percent={percents[Field.INPUT]}
               xChainId={direction.from}
-              onChainSelect={
-                isInputCrosschainCompatible ? xChainId => onChainSelection(Field.INPUT, xChainId) : undefined
-              }
+              onChainSelect={handleSwapInputChainSelection}
               showCrossChainOptions={true}
+              selectorType={SelectorType.SWAP_IN}
             />
           </Flex>
 
@@ -259,11 +269,10 @@ export default function SwapPanel() {
               onUserInput={handleTypeOutput}
               onCurrencySelect={handleOutputSelect}
               xChainId={direction.to}
-              onChainSelect={
-                isOutputCrosschainCompatible ? xChainId => onChainSelection(Field.OUTPUT, xChainId) : undefined
-              }
+              onChainSelect={handleSwapOutputChainSelection}
               showCrossChainOptions={true}
               addressEditable
+              selectorType={SelectorType.SWAP_OUT}
               setManualAddress={setManualAddress}
             />
           </Flex>

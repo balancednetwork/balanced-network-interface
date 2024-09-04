@@ -22,7 +22,7 @@ import { XChainId } from '@/xwagmi/types';
 
 import { AutoColumn } from '@/app/components/Column';
 import { BrightPanel, SectionPanel } from '@/app/components/Panel';
-import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
+import { CurrencySelectionType, SelectorType } from '@/app/components/SearchModal/CurrencySearch';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 
@@ -274,6 +274,8 @@ export default function LPPanel() {
                   onPercentSelect={handlePercentSelect(Field.CURRENCY_A)}
                   xChainId={'0x1.icon'}
                   showCrossChainOptions={true}
+                  showCrossChainBreakdown={false}
+                  selectorType={SelectorType.SUPPLY_BASE}
                 />
               </Flex>
             </AutoColumn>
@@ -290,6 +292,8 @@ export default function LPPanel() {
                   onPercentSelect={handlePercentSelect(Field.CURRENCY_B)}
                   xChainId={'0x1.icon'}
                   showCrossChainOptions={true}
+                  showCrossChainBreakdown={false}
+                  selectorType={SelectorType.SUPPLY_QUOTE}
                 />
               </Flex>
             </AutoColumn>

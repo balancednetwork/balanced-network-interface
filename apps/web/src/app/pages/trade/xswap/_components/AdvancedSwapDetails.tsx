@@ -14,8 +14,6 @@ import { Typography } from '@/app/theme';
 import { useSetSlippageTolerance, useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@/xwagmi/types';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 
 export default function AdvancedSwapDetails() {
@@ -139,18 +137,6 @@ function TradeRoute({ route }: { route: Route<Currency, Currency> }) {
       {route.path.map((token: Token, index: number) => (
         <span key={token.address}>
           {index > 0 && <ChevronRight size={14} />} {token.symbol}
-        </span>
-      ))}
-    </>
-  );
-}
-
-function BridgeRoute({ route }: { route: XChainId[] }) {
-  return (
-    <>
-      {route.map((xChainId: XChainId, index: number) => (
-        <span key={xChainId}>
-          {index > 0 && <ChevronRight size={14} />} {xChainMap[xChainId].name}
         </span>
       ))}
     </>

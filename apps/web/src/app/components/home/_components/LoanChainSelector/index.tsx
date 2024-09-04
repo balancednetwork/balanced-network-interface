@@ -1,13 +1,13 @@
-import { StyledArrowDownIcon, UnderlineText } from '@/app/components/DropdownText';
+import { StyledArrowDownIcon } from '@/app/components/DropdownText';
 import { DropdownPopper } from '@/app/components/Popover';
 import { SelectorWrap } from '@/app/components/trade/CrossChainOptions';
 import { Typography } from '@/app/theme';
 import { NETWORK_ID } from '@/constants/config';
 import { bnUSD } from '@/constants/tokens';
 import { useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
-import { getAvailableXChains } from '@/utils/xTokens';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
+import { getSupportedXChainForToken } from '@/xwagmi/xcall/utils';
 import { Trans } from '@lingui/macro';
 import React, { useEffect, useMemo } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
@@ -23,7 +23,7 @@ const LoanChainSelector = ({
   const loanRecipientNetwork = useLoanRecipientNetwork();
   const { onAdjust: adjust, setRecipientNetwork } = useLoanActionHandlers();
 
-  const xChains = getAvailableXChains(bnUSD[NETWORK_ID])?.filter(
+  const xChains = getSupportedXChainForToken(bnUSD[NETWORK_ID])?.filter(
     chain => chain.xChainId !== 'archway-1' && chain.xChainId !== '0x100.icon',
   );
 

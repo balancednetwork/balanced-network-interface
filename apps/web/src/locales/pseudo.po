@@ -346,6 +346,10 @@ msgstr ""
 msgid "{0} {collateralType} added to your wallet."
 msgstr ""
 
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "No assets found."
+msgstr ""
+
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 msgid "Claiming network fees..."
 msgstr ""
@@ -353,6 +357,10 @@ msgstr ""
 #: src/app/components/trade/SwapPanel.tsx
 #~ msgid "Transfer fee"
 #~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/TokenList/index.tsx
+msgid "Tokens"
+msgstr ""
 
 #: src/app/components/Header/index.tsx
 msgid "Copied"
@@ -438,6 +446,7 @@ msgstr ""
 
 #: src/app/components/home/_components/CollateralChainSelector/ChainList.tsx
 #: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
+#: src/app/pages/trade/bridge/_components/XChainList.tsx
 msgid "Blockchain"
 msgstr ""
 
@@ -1105,6 +1114,10 @@ msgstr ""
 #~ msgid "Revert transaction."
 #~ msgstr ""
 
+#: src/app/pages/trade/xswap/_components/TokenList/index.tsx
+msgid "It does not reflect the total market cap for multi-chain assets."
+msgstr ""
+
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Cross-chain swap requested."
 #~ msgstr ""
@@ -1257,6 +1270,10 @@ msgstr ""
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 #~ msgid "The fee APR is calculated from the swap fees earned by a pool in the last 30 days."
 #~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/TokenList/index.tsx
+msgid "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
+msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Forum link"
@@ -1511,6 +1528,10 @@ msgstr ""
 msgid "Voting power available: {0}"
 msgstr ""
 
+#: src/app/pages/trade/bridge/_components/XChainList.tsx
+msgid "Search for blockchains..."
+msgstr ""
+
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "You'll only be able to interact with the default assets listed on Balanced."
 msgstr ""
@@ -1581,6 +1602,10 @@ msgstr ""
 
 #: src/store/swap/hooks.ts
 msgid "Choose address"
+msgstr ""
+
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "Your assets"
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
@@ -2318,6 +2343,7 @@ msgstr ""
 #: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
 #: src/app/components/SearchModal/CurrencyList.tsx
 #: src/app/components/Wallet/index.tsx
+#: src/app/pages/trade/bridge/_components/XChainList.tsx
 msgid "Wallet"
 msgstr ""
 
@@ -2331,6 +2357,10 @@ msgstr ""
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Remove"
+msgstr ""
+
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "All assets"
 msgstr ""
 
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx

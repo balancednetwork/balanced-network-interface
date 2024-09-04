@@ -1,4 +1,6 @@
-import { XToken } from '@/xwagmi/types';
+import { XChainId, XToken } from '@/xwagmi/types';
+import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balanced-js';
+import { NATIVE_ADDRESS } from '.';
 
 export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   bnUSD: '0x1.icon',
@@ -9,11 +11,10 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   BTC: '0xa4b1.arbitrum',
   INJ: 'injective-1',
   HVH: '0x100.icon',
+  USDT: '0xa4b1.arbitrum',
+  USDC: '0xa86a.avax',
+  hyTB: '0xa86a.avax',
 };
-
-import { XChainId } from '@/xwagmi/types';
-import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balanced-js';
-import { NATIVE_ADDRESS } from '.';
 
 export const xTokenMap: { [key in XChainId]: XToken[] } = {
   '0x1.icon': [

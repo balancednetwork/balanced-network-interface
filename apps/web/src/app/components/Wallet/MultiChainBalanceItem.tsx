@@ -14,7 +14,7 @@ type MultiChainBalanceItemProps = {
   balances: { [key in XChainId]: CurrencyAmount<Currency> | undefined };
   total: BigNumber;
   value?: BigNumber;
-  searchedXChainId: XChainId | null;
+  searchedXChainId?: XChainId;
 };
 
 const MultiChainBalanceItem = ({ baseToken, balances, total, value, searchedXChainId }: MultiChainBalanceItemProps) => {
@@ -22,9 +22,13 @@ const MultiChainBalanceItem = ({ baseToken, balances, total, value, searchedXCha
   const arrowRef = React.useRef<HTMLElement>(null);
   const rates = useRatesWithOracle();
 
-  const filteredBreakdown = Object.entries(balances).filter(([xChainId]) => {
-    return searchedXChainId ? searchedXChainId === xChainId : true;
-  });
+  const filteredBreakdown = React.useMemo(
+    () =>
+      Object.entries(balances).filter(([xChainId]) => {
+        return searchedXChainId ? searchedXChainId === xChainId : true;
+      }),
+    [balances, searchedXChainId],
+  );
 
   const sortedEntries = React.useMemo(() => {
     return filteredBreakdown.sort(([, balanceA], [, balanceB]) => {

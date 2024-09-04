@@ -34,7 +34,6 @@ const Wallet = ({ close }: WalletProps) => {
   const balances = useXBalancesByToken();
   const toggleWalletModal = useWalletModalToggle();
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [searchedXChainId, setSearchedXChainId] = useState<XChainId | null>(null);
   const inputRef = useRef<HTMLInputElement>();
   const handleEscape = useKeyPress('Escape');
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
@@ -54,11 +53,12 @@ const Wallet = ({ close }: WalletProps) => {
   const handleSearchQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
-
-    const searchedChain = Object.values(xChainMap).find(chain => chain.name.toLowerCase() === query.toLowerCase());
-
-    searchedChain ? setSearchedXChainId(searchedChain.xChainId) : setSearchedXChainId(null);
   };
+
+  const searchedXChainId = React.useMemo(
+    () => Object.values(xChainMap).find(chain => chain.name.toLowerCase() === searchQuery.toLowerCase())?.xChainId,
+    [searchQuery],
+  );
 
   useEffect(() => {
     if (handleEscape) {

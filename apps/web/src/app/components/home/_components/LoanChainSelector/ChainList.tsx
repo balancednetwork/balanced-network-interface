@@ -16,7 +16,7 @@ import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatBalance } from '@/utils/formatter';
 import { getXChainType } from '@/xwagmi/actions';
 import { xChainMap, xChains } from '@/xwagmi/constants/xChains';
-import { useXConnect, useXService } from '@/xwagmi/hooks';
+import { useXConnect, useXConnectors } from '@/xwagmi/hooks';
 import { XChain, XChainId } from '@/xwagmi/types';
 import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from './styledComponents';
 
@@ -43,13 +43,12 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const [waitingSignIn, setWaitingSignIn] = useState<XChainId | null>(null);
 
   const xChainType = getXChainType(chain.xChainId);
-  const xService = useXService(xChainType);
   const xConnect = useXConnect();
+  const xConnectors = useXConnectors(xChainType);
 
   const handleConnect = () => {
-    if (!xService) return;
+    if (!xConnectors || xConnectors.length === 0) return;
 
-    const xConnectors = xService.getXConnectors();
     if (xChainType === 'EVM') {
       modalActions.openModal(MODAL_ID.EVM_WALLET_OPTIONS_MODAL);
     } else if (xChainType === 'INJECTIVE') {

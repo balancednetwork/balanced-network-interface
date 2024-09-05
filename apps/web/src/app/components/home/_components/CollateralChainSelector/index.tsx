@@ -4,9 +4,9 @@ import { Typography } from '@/app/theme';
 import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
 import { useCollateralActionHandlers, useCollateralType, useCollateralXChain } from '@/store/collateral/hooks';
 import { useLoanActionHandlers } from '@/store/loan/hooks';
-import { getAvailableXChains } from '@/utils/xTokens';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
+import { getSupportedXChainForToken } from '@/xwagmi/xcall/utils';
 import React, { useEffect, useMemo } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
@@ -32,7 +32,7 @@ const CollateralChainSelector = ({
   const currency = SUPPORTED_TOKENS_LIST.find(token => token.symbol === collateralType);
   const { onAdjust: adjust, changeCollateralXChain } = useCollateralActionHandlers();
 
-  const xChains = useMemo(() => getAvailableXChains(currency), [currency]);
+  const xChains = useMemo(() => getSupportedXChainForToken(currency), [currency]);
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 

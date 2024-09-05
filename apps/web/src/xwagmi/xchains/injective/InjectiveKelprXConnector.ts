@@ -15,6 +15,12 @@ export class InjectiveKelprXConnector extends XConnector {
   }
 
   async connect(): Promise<XAccount | undefined> {
+    const { keplr } = window as any;
+    if (!keplr) {
+      window.open('https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en', '_blank');
+      return;
+    }
+
     this.getXService().walletStrategy.setWallet(Wallet.Keplr);
     const addresses = await this.getXService().walletStrategy.getAddresses();
 

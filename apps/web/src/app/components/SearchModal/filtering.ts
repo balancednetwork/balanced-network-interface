@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { Token } from '@balancednetwork/sdk-core';
 import { TokenInfo } from '@uniswap/token-lists';
 
+import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { isAddress } from '@/utils';
 
 const alwaysTrue = () => true;
@@ -42,10 +43,38 @@ export function filterTokens<T extends Token | TokenInfo>(tokens: T[], search: s
   return tokens.filter(createTokenFilterFunction(search));
 }
 
-export function useSortedTokensByQuery(tokens: Token[] | undefined, searchQuery: string): Token[] {
+export function useSortedTokensByQuery(
+  tokens: Token[] | undefined,
+  searchQuery: string,
+  basedOnWallet: boolean = false,
+): Token[] {
+  const xWallet = useCrossChainWalletBalances();
+
+  const relevantTokens = useMemo(() => {
+    if (!tokens) return [];
+
+    return basedOnWallet
+      ? Object.values(xWallet).reduce((heldTokens, xChainWallet) => {
+          //tokens held on specific chain
+          const tokensHeldOnXChain = Object.values(xChainWallet).map(currencyAmount =>
+            tokens.find(token => token.symbol === currencyAmount.currency.symbol),
+          );
+
+          //for each held token, add to list if not already there
+          tokensHeldOnXChain.forEach(token => {
+            if (token && !heldTokens.find(heldToken => heldToken.symbol === token.symbol)) {
+              heldTokens.push(token);
+            }
+          });
+
+          return heldTokens;
+        }, [] as Token[])
+      : [...tokens];
+  }, [tokens, xWallet, basedOnWallet]);
+
   return useMemo(() => {
-    if (!tokens) {
-      return [];
+    if (relevantTokens.length === 0) {
+      return relevantTokens;
     }
 
     const symbolMatch = searchQuery
@@ -54,24 +83,24 @@ export function useSortedTokensByQuery(tokens: Token[] | undefined, searchQuery:
       .filter(s => s.length > 0);
 
     if (symbolMatch.length > 1) {
-      return tokens;
+      return relevantTokens;
     }
 
     const exactMatches: Token[] = [];
-    const symbolSubtrings: Token[] = [];
+    const symbolSubstrings: Token[] = [];
     const rest: Token[] = [];
 
-    // sort tokens by exact match -> subtring on symbol match -> rest
-    tokens.map(token => {
+    // sort tokens by exact match -> substring on symbol match -> rest
+    relevantTokens.map(token => {
       if (token.symbol?.toLowerCase() === symbolMatch[0]) {
         return exactMatches.push(token);
       } else if (token.symbol?.toLowerCase().startsWith(searchQuery.toLowerCase().trim())) {
-        return symbolSubtrings.push(token);
+        return symbolSubstrings.push(token);
       } else {
         return rest.push(token);
       }
     });
 
-    return [...exactMatches, ...symbolSubtrings, ...rest];
-  }, [tokens, searchQuery]);
+    return [...exactMatches, ...symbolSubstrings, ...rest];
+  }, [relevantTokens, searchQuery]);
 }

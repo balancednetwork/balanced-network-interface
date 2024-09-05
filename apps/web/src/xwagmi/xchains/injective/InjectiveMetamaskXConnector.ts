@@ -16,6 +16,12 @@ export class InjectiveMetamaskXConnector extends XConnector {
   }
 
   async connect(): Promise<XAccount | undefined> {
+    const { ethereum } = window as any;
+    if (!ethereum) {
+      window.open('https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en', '_blank');
+      return;
+    }
+
     this.getXService().walletStrategy.setWallet(Wallet.Metamask);
     const addresses = await this.getXService().walletStrategy.getAddresses();
     const injectiveAddresses = addresses.map(getInjectiveAddress);

@@ -22,3 +22,8 @@ export function useSignedInWallets(): { address: string; xChainId: XChainId }[] 
   );
   return signedIn;
 }
+
+export function useHasSignedIn(): boolean {
+  const wallets = useSignedInWallets();
+  return wallets.length > 0;
+}

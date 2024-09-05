@@ -128,6 +128,7 @@ export type XMessage = {
   events: XCallEventMap;
   status: XMessageStatus;
   destinationChainInitialBlockHeight: bigint;
+  isSecondaryMessage?: boolean;
   // onSuccess: (xMessage: XMessage) => Promise<void>;
   // onFail: (xMessage: XMessage) => Promise<void>;
 };

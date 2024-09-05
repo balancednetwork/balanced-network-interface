@@ -70,6 +70,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
           id: secondaryMessageId,
           sourceChainId,
           destinationChainId,
+          isSecondaryMessage: true,
           sourceTransaction: sourceTransaction,
           status: XMessageStatus.REQUESTED,
           events: {},

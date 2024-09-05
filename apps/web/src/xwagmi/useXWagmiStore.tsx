@@ -17,7 +17,7 @@ import {
   InjectiveXService,
   InjectiveXWalletClient,
 } from './xchains/injective';
-import { SuiXConnector, SuiXPublicClient, SuiXService, SuiXWalletClient } from './xchains/sui';
+import { SuiXPublicClient, SuiXService, SuiXWalletClient } from './xchains/sui';
 
 const iconXService = IconXService.getInstance();
 iconXService.setXConnectors([new IconHanaXConnector()]);
@@ -35,7 +35,7 @@ const injectiveXService = InjectiveXService.getInstance();
 injectiveXService.setXConnectors([new InjectiveMetamaskXConnector(), new InjectiveKelprXConnector()]);
 
 const suiXService = SuiXService.getInstance();
-suiXService.setXConnectors([new SuiXConnector()]);
+suiXService.setXConnectors([]);
 
 export const xServices: Record<XChainType, XService> = {
   ICON: iconXService,

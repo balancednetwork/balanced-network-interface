@@ -58,8 +58,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <HelmetProvider>
           <QueryClientProvider client={queryClient}>
             <WagmiProvider config={wagmiConfig}>
-              <SuiClientProvider networks={networks} defaultNetwork="devnet">
-                <WalletProvider>
+              <SuiClientProvider networks={networks} defaultNetwork="mainnet">
+                <WalletProvider autoConnect={true}>
                   <LanguageProvider>
                     <App />
                   </LanguageProvider>

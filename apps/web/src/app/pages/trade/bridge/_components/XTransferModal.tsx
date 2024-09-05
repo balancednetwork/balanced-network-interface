@@ -23,6 +23,7 @@ import { xChainMap } from '@/xwagmi/constants/xChains';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { AnimatePresence, motion } from 'framer-motion';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
 
 const StyledXCallButton = styled(StyledButton)`
@@ -41,6 +42,9 @@ function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
   const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing = currentId !== null; // TODO: can be swap is processing
+  const isExecuted =
+    currentXTransaction?.status === XTransactionStatus.success ||
+    currentXTransaction?.status === XTransactionStatus.failure;
 
   const { recipient, isLiquidFinanceEnabled } = useBridgeState();
   const { currencyAmountToBridge, account } = useDerivedBridgeInfo();
@@ -58,15 +62,22 @@ function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
     }, 500);
   }, [modalId]);
 
+  //to show success or fail message in the modal
+  const slowDismiss = useCallback(() => {
+    setTimeout(() => {
+      handleDismiss();
+    }, 2000);
+  }, [handleDismiss]);
+
   useEffect(() => {
     if (
       currentXTransaction &&
       (currentXTransaction.status === XTransactionStatus.success ||
         currentXTransaction.status === XTransactionStatus.failure)
     ) {
-      handleDismiss();
+      slowDismiss();
     }
-  }, [currentXTransaction, handleDismiss]);
+  }, [currentXTransaction, slowDismiss]);
 
   const { sendXTransaction } = useSendXTransaction();
   const handleTransfer = async () => {
@@ -140,35 +151,47 @@ function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
 
           {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
 
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={handleDismiss}>
-              <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
-            </TextButton>
+          <AnimatePresence>
+            {((!isExecuted && isProcessing) || !isProcessing) && (
+              <motion.div
+                key={'tx-actions'}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                style={{ overflow: 'hidden' }}
+              >
+                <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+                  <TextButton onClick={handleDismiss}>
+                    <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
+                  </TextButton>
 
-            {isWrongChain ? (
-              <StyledXCallButton onClick={handleSwitchChain}>
-                <Trans>Switch to {xChainMap[direction.from].name}</Trans>
-              </StyledXCallButton>
-            ) : isProcessing ? (
-              <>
-                <StyledXCallButton disabled $loading>
-                  <Trans>Transferring</Trans>
-                </StyledXCallButton>
-              </>
-            ) : (
-              <>
-                {approvalState !== ApprovalState.APPROVED ? (
-                  <Button onClick={handleApprove} disabled={approvalState === ApprovalState.PENDING}>
-                    {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
-                  </Button>
-                ) : (
-                  <StyledXCallButton onClick={handleTransfer} disabled={!gasChecker.hasEnoughGas}>
-                    <Trans>Transfer</Trans>
-                  </StyledXCallButton>
-                )}
-              </>
+                  {isWrongChain ? (
+                    <StyledXCallButton onClick={handleSwitchChain}>
+                      <Trans>Switch to {xChainMap[direction.from].name}</Trans>
+                    </StyledXCallButton>
+                  ) : isProcessing ? (
+                    <>
+                      <StyledXCallButton disabled $loading>
+                        <Trans>Transferring</Trans>
+                      </StyledXCallButton>
+                    </>
+                  ) : (
+                    <>
+                      {approvalState !== ApprovalState.APPROVED ? (
+                        <Button onClick={handleApprove} disabled={approvalState === ApprovalState.PENDING}>
+                          {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
+                        </Button>
+                      ) : (
+                        <StyledXCallButton onClick={handleTransfer} disabled={!gasChecker.hasEnoughGas}>
+                          <Trans>Transfer</Trans>
+                        </StyledXCallButton>
+                      )}
+                    </>
+                  )}
+                </Flex>
+              </motion.div>
             )}
-          </Flex>
+          </AnimatePresence>
 
           {!isProcessing && !gasChecker.hasEnoughGas && (
             <Flex justifyContent="center" paddingY={2}>

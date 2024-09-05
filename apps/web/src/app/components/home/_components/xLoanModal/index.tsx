@@ -23,6 +23,7 @@ import { XChainId } from '@/xwagmi/types';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { AnimatePresence, motion } from 'framer-motion';
 import useLoanWalletServiceHandler from '../../useLoanWalletServiceHandler';
 
 export enum XLoanAction {
@@ -70,6 +71,9 @@ const XLoanModal = ({
   const collateralType = useCollateralType();
   const { onAdjust: adjust } = useLoanActionHandlers();
   const activeChain = useLoanWalletServiceHandler();
+  const isExecuted =
+    currentXTransaction?.status === XTransactionStatus.success ||
+    currentXTransaction?.status === XTransactionStatus.failure;
 
   const collateralNetworkAddress =
     sourceChain === ICON_XCALL_NETWORK_ID ? collateralAccount : `${sourceChain}/${collateralAccount}`;
@@ -95,15 +99,22 @@ const XLoanModal = ({
     }, 500);
   }, [modalId]);
 
+  //to show success or fail message in the modal
+  const slowDismiss = useCallback(() => {
+    setTimeout(() => {
+      handleDismiss();
+    }, 2000);
+  }, [handleDismiss]);
+
   useEffect(() => {
     if (
       currentXTransaction &&
       (currentXTransaction.status === XTransactionStatus.success ||
         currentXTransaction.status === XTransactionStatus.failure)
     ) {
-      handleDismiss();
+      slowDismiss();
     }
-  }, [currentXTransaction, handleDismiss]);
+  }, [currentXTransaction, slowDismiss]);
 
   const { sendXTransaction } = useSendXTransaction();
   const handleXLoanAction = async () => {
@@ -200,33 +211,45 @@ const XLoanModal = ({
 
           {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
 
-          <Flex justifyContent="center" mt="20px" pt="20px" className="border-top">
-            <>
-              <TextButton onClick={handleDismiss}>
-                {isProcessing ? <Trans>Close</Trans> : <Trans>Cancel</Trans>}
-              </TextButton>
+          <AnimatePresence>
+            {((!isExecuted && isProcessing) || !isProcessing) && (
+              <motion.div
+                key={'tx-actions'}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                style={{ overflow: 'hidden' }}
+              >
+                <Flex justifyContent="center" mt="20px" pt="20px" className="border-top">
+                  <>
+                    <TextButton onClick={handleDismiss}>
+                      {isProcessing ? <Trans>Close</Trans> : <Trans>Cancel</Trans>}
+                    </TextButton>
 
-              {isWrongChain && !isProcessing ? (
-                <StyledButton onClick={handleSwitchChain}>
-                  <Trans>Switch to {xChainMap[activeChain].name}</Trans>
-                </StyledButton>
-              ) : isProcessing ? (
-                <>
-                  <StyledButton disabled $loading>
-                    {storedModalValues.action === XLoanAction.BORROW ? (
-                      <Trans>Borrowing</Trans>
+                    {isWrongChain && !isProcessing ? (
+                      <StyledButton onClick={handleSwitchChain}>
+                        <Trans>Switch to {xChainMap[activeChain].name}</Trans>
+                      </StyledButton>
+                    ) : isProcessing ? (
+                      <>
+                        <StyledButton disabled $loading>
+                          {storedModalValues.action === XLoanAction.BORROW ? (
+                            <Trans>Borrowing</Trans>
+                          ) : (
+                            <Trans>Repaying</Trans>
+                          )}
+                        </StyledButton>
+                      </>
                     ) : (
-                      <Trans>Repaying</Trans>
+                      <StyledButton onClick={handleXLoanAction} disabled={!gasChecker.hasEnoughGas}>
+                        {storedModalValues.action === XLoanAction.BORROW ? <Trans>Borrow</Trans> : <Trans>Repay</Trans>}
+                      </StyledButton>
                     )}
-                  </StyledButton>
-                </>
-              ) : (
-                <StyledButton onClick={handleXLoanAction} disabled={!gasChecker.hasEnoughGas}>
-                  {storedModalValues.action === XLoanAction.BORROW ? <Trans>Borrow</Trans> : <Trans>Repay</Trans>}
-                </StyledButton>
-              )}
-            </>
-          </Flex>
+                  </>
+                </Flex>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {!isProcessing && !gasChecker.hasEnoughGas && (
             <Flex justifyContent="center" paddingY={2}>

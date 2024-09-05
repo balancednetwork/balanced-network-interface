@@ -9,8 +9,8 @@ import WalletConnectIcon from '@/assets/icons/wallets/walletconnect.svg?inline';
 import { ModalContentWrapper } from '../ModalContent';
 
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
-import { XConnector } from '@/xwagmi/core';
-import { useXConnect, useXConnectors } from '@/xwagmi/hooks';
+import { XConnector, XService } from '@/xwagmi/core';
+import { useXConnect, useXService } from '@/xwagmi/hooks';
 import { UnderlineText } from '../DropdownText';
 import { UnbreakableText, WalletOption } from './shared';
 
@@ -21,7 +21,9 @@ const icons = {
 export const EVMWalletModal = ({ id = MODAL_ID.EVM_WALLET_OPTIONS_MODAL }) => {
   const modalOpen = useModalOpen(id);
 
-  const xConnectors = useXConnectors('EVM');
+  const xService: XService = useXService('EVM') as XService;
+  const xConnectors = xService.getXConnectors();
+
   const xConnect = useXConnect();
 
   const onDismiss = useCallback(() => {

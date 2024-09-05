@@ -25,7 +25,6 @@ import { NETWORK_ID } from '@/constants/config';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD } from '@/constants/index';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import useWidth from '@/hooks/useWidth';
-import { useIconReact } from '@/packages/icon-react';
 import { useICXUnstakingTime } from '@/store/application/hooks';
 import {
   useCollateralActionHandlers,
@@ -43,7 +42,7 @@ import { parseUnits } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { getXChainType } from '@/xwagmi/actions';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { useXConnect, useXService } from '@/xwagmi/hooks';
+import { useXConnect, useXConnectors } from '@/xwagmi/hooks';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import CollateralChainSelector from './_components/CollateralChainSelector';
 import XCollateralModal, { XCollateralAction } from './_components/xCollateralModal';
@@ -359,12 +358,11 @@ const CollateralPanel = () => {
   const [underPanelRef, underPanelWidth] = useWidth();
 
   const xChainType = getXChainType(sourceChain);
-  const xService = useXService(xChainType);
+  const xConnectors = useXConnectors(xChainType);
   const xConnect = useXConnect();
   const handleConnect = () => {
-    if (!xService) return;
+    if (!xConnectors || xConnectors.length === 0) return;
 
-    const xConnectors = xService.getXConnectors();
     if (xChainType === 'EVM') {
       modalActions.openModal(MODAL_ID.EVM_WALLET_OPTIONS_MODAL);
     } else if (xChainType === 'INJECTIVE') {

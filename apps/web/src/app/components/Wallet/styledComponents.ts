@@ -1,7 +1,7 @@
-import styled from 'styled-components';
 import { Link } from '@/app/components/Link';
-import { Box, Flex } from 'rebass';
 import { Typography } from '@/app/theme';
+import { Box, Flex } from 'rebass';
+import styled from 'styled-components';
 import { BoxPanel } from '../Panel';
 import { notificationCSS } from './ICONWallets/utils';
 
@@ -93,6 +93,34 @@ export const List = styled(Box)`
   }
 `;
 
+export const Chevron = styled.span<{ $isNested: boolean }>`
+  position: relative;
+  height: 100%;
+  padding-left: 13px;
+  transition: all 0.2s ease;
+
+  &::before, &:after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: ${({ $isNested }) => ($isNested ? 6 : 7)}px;
+    border-radius: 3px;
+    background: #FFF;
+    top: calc(50% - ${({ $isNested }) => ($isNested ? 2 : 1)}px);
+  }
+
+  &:before {
+    right: 0;
+    transform: rotate(-135deg) translateY(-50%);
+    margin-top: -1px;
+  }
+
+  &:after {
+  right: 0;
+  transform: rotate(-45deg) translateY(-50%);
+  }
+`;
+
 export const ListItem = styled(DashGrid)<{ $border?: boolean }>`
   padding: 20px 0;
   cursor: pointer;
@@ -104,6 +132,13 @@ export const ListItem = styled(DashGrid)<{ $border?: boolean }>`
   }
   &.active {
     color: ${({ theme }) => theme.colors.primary};
+  }
+
+  &:hover {
+
+    ${Chevron} {
+      padding-left: 16px;
+    }
   }
 `;
 

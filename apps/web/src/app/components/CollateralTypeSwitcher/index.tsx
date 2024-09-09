@@ -6,10 +6,10 @@ import styled from 'styled-components';
 import { StyledArrowDownIcon } from '@/app/components/DropdownText';
 import { useCollateralType, useIcxDisplayType } from '@/store/collateral/hooks';
 
+import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
+import CurrencyLogo from '../CurrencyLogo';
 import { DropdownPopper } from '../Popover';
 import CollateralTypeListWrap from './CollateralTypeListWrap';
-import CurrencyLogo from '../CurrencyLogo';
-import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
 
 const Wrap = styled.span`
   cursor: pointer;
@@ -17,13 +17,24 @@ const Wrap = styled.span`
   position: relative;
   top: 3px;
   color: ${({ theme }) => theme.colors.primaryBright};
+  display: flex;
+  align-items: center;
+
+  .arrow-container {
+    svg {
+      height: 22px;
+    }
+  }
 `;
 
 const LogoWrap = styled.span`
   display: inline-block;
   position: relative;
   margin-right: 5px;
-  transform: translateY(-2px);
+
+  img {
+    float: left;
+  }
 `;
 
 export const CollateralTypeSwitcherWrap = styled.div`
@@ -59,18 +70,16 @@ const CollateralTypeSwitcher = ({ width, containerRef }) => {
       <ClickAwayListener onClickAway={e => closeDropdown(e)}>
         <div>
           <Wrap onClick={handleToggle}>
-            <>
-              <LogoWrap>
-                <CurrencyLogo
-                  currency={SUPPORTED_TOKENS_LIST.find(
-                    token => token.symbol === (collateralType === 'sICX' ? icxDisplayType : collateralType),
-                  )}
-                  size={'18px'}
-                />
-              </LogoWrap>
-              {collateralType === 'sICX' ? icxDisplayType : collateralType}
-            </>
-            <div ref={arrowRef} style={{ display: 'inline-block' }}>
+            <LogoWrap>
+              <CurrencyLogo
+                currency={SUPPORTED_TOKENS_LIST.find(
+                  token => token.symbol === (collateralType === 'sICX' ? icxDisplayType : collateralType),
+                )}
+                size={'18px'}
+              />
+            </LogoWrap>
+            {collateralType === 'sICX' ? icxDisplayType : collateralType}
+            <div ref={arrowRef} style={{ display: 'inline-block' }} className="arrow-container">
               <StyledArrowDownIcon />
             </div>
           </Wrap>

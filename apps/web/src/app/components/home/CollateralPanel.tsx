@@ -391,7 +391,7 @@ const CollateralPanel = () => {
               <CollateralTypeSwitcher width={width} containerRef={ref.current} />
             </CollateralTypeSwitcherWrap>
 
-            {account && (
+            {account && collateralTotal?.isGreaterThan(0) && (
               <Flex flexDirection={isSuperSmall ? 'column' : 'row'} ml="auto" paddingTop={isSuperSmall ? '4px' : '0'}>
                 {isAdjusting ? (
                   <>
@@ -408,7 +408,7 @@ const CollateralPanel = () => {
                     </Button>
                   </>
                 ) : (
-                  <Button onClick={handleEnableAdjusting} fontSize={14} disabled={collateralTotal?.isEqualTo(0)}>
+                  <Button onClick={handleEnableAdjusting} fontSize={14}>
                     {buttonText}
                   </Button>
                 )}
@@ -429,7 +429,13 @@ const CollateralPanel = () => {
             </Flex>
           )}
 
-          {account && (
+          {account && collateralTotal?.isEqualTo(0) && (
+            <Flex minHeight={140} alignItems="center" justifyContent="center">
+              <Typography mr={1}>{t`Add ${collateralType} to your ${xChainMap[sourceChain].name} wallet.`}</Typography>
+            </Flex>
+          )}
+
+          {account && collateralTotal?.isGreaterThan(0) && (
             <>
               {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Locked`} />}
 

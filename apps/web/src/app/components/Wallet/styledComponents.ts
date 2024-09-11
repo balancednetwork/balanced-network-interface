@@ -140,6 +140,10 @@ export const ListItem = styled(DashGrid)<{ $border?: boolean }>`
       padding-left: 16px;
     }
   }
+
+  &.has-modal {
+    cursor: pointer;
+  }
 `;
 
 export const StandardCursorListItem = styled(DashGrid)<{ $border?: boolean }>`

@@ -50,11 +50,7 @@ const SingleChainBalanceItem = ({
 
   return (
     <>
-      <ListItem
-        $border={!isNested && !isLast}
-        onClick={handleModalOpen}
-        style={{ cursor: isICONAsset ? 'pointer' : 'default' }}
-      >
+      <ListItem $border={!isNested && !isLast} onClick={handleModalOpen} className={isICONAsset ? 'has-modal' : ''}>
         <AssetSymbol $hasNotification={hasNotification}>
           <CurrencyLogoWithNetwork
             currency={baseToken}

@@ -3,10 +3,10 @@ import React from 'react';
 import { TextProps } from 'rebass';
 import { Text } from 'rebass/styled-components';
 import {
+  DefaultTheme,
+  MediaFunction,
   ThemeProvider as StyledComponentsThemeProvider,
   createGlobalStyle,
-  MediaFunction,
-  DefaultTheme,
   css,
 } from 'styled-components';
 
@@ -171,6 +171,7 @@ export const FixedGlobalStyle = createGlobalStyle`
     height: 100%;
     width: 100%;
     line-height: 1.4;
+    scrollbar-color: #01002A transparent;
   }
 
   body,button {

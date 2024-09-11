@@ -122,7 +122,7 @@ const Wallet = ({ close }: WalletProps) => {
           <SearchInput
             type="text"
             id="token-search-input"
-            placeholder={t`Search assets`}
+            placeholder={t`Search assets and blockchains...`}
             autoComplete="off"
             value={searchQuery}
             ref={inputRef as RefObject<HTMLInputElement>}

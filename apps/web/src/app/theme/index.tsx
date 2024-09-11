@@ -172,6 +172,26 @@ export const FixedGlobalStyle = createGlobalStyle`
     width: 100%;
     line-height: 1.4;
     scrollbar-color: #01002A transparent;
+
+    /* For Safari and WebKit browsers */
+    ::-webkit-scrollbar {
+        width: 9px; /* Set the width for vertical scrollbars */
+        height: 9px; /* Set the height for horizontal scrollbars */
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent; 
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #01002A; 
+        border-radius: 10px; 
+        border: 2px solid #01002A; 
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #01002A;
+    }
   }
 
   body,button {

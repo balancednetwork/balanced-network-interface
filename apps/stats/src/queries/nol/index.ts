@@ -82,13 +82,15 @@ export function useNetworkOwnedLiquidityData(): UseQueryResult<
       });
 
       return {
-        chartData: nolData.map(data => ({
-          name: data.pair?.name || 'Unknown',
-          value: data.liquidity.toNumber(),
-          fill: data.pair?.baseSymbol
-            ? EXTENDED_CHART_COLORS[data.pair?.baseSymbol] || EXTENDED_CHART_COLORS['default']
-            : EXTENDED_CHART_COLORS['default'],
-        })),
+        chartData: nolData
+          .map(data => ({
+            name: data.pair?.name || 'Unknown',
+            value: data.liquidity.toNumber(),
+            fill: data.pair?.baseSymbol
+              ? EXTENDED_CHART_COLORS[data.pair?.baseSymbol] || EXTENDED_CHART_COLORS['default']
+              : EXTENDED_CHART_COLORS['default'],
+          }))
+          .sort((a, b) => a.value - b.value),
         tvl: nolData.reduce((acc, data) => acc.plus(data.liquidity), new BigNumber(0)),
       };
     },

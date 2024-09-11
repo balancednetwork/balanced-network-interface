@@ -43,7 +43,7 @@ const NetworkOwnedLiquidity = () => {
                 label={!isSmallScreen && <CustomLabel />}
                 labelLine={false}
                 fill="#136aa1"
-                startAngle={-265}
+                startAngle={0}
               />
               {isSmallScreen && (
                 <>

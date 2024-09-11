@@ -43,13 +43,8 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess 
     return;
   }
 
-  let pendingMessage, successMessage, errorMessage;
   let descriptionAction, descriptionAmount;
   if (xTransactionInput.type === XTransactionType.BRIDGE) {
-    pendingMessage = 'Requesting cross-chain transfer...';
-    successMessage = 'Cross-chain transfer requested.';
-    errorMessage = 'Cross-chain transfer failed.';
-
     const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
     const _formattedAmount = formatBigNumber(new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0), 'currency');
     descriptionAction = `Transfer ${_tokenSymbol}`;
@@ -69,18 +64,12 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess 
         _outputTokenSymbol === '' ? 'OUT' : _outputTokenSymbol,
       );
 
-      pendingMessage = swapMessages.pendingMessage;
-      successMessage = swapMessages.successMessage;
-      errorMessage = 'Cross-chain swap failed.';
       descriptionAction = `Swap ${_inputTokenSymbol} for ${_outputTokenSymbol}`;
       descriptionAmount = `${_inputAmount} ${_inputTokenSymbol} for ${_outputAmount} ${_outputTokenSymbol}`;
     }
   } else if (xTransactionInput.type === XTransactionType.DEPOSIT) {
     const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
     const _formattedAmount = formatBigNumber(new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0), 'currency');
-    pendingMessage = `Depositing ${_tokenSymbol} collateral...`;
-    successMessage = `Deposited ${_formattedAmount} ${_tokenSymbol}.`;
-    errorMessage = 'Collateral deposit failed.';
 
     descriptionAction = `Deposit ${_tokenSymbol} as collateral`;
     descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
@@ -90,17 +79,11 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess 
       new BigNumber(xTransactionInput?.inputAmount.multiply(-1).toFixed() || 0),
       'currency',
     );
-    pendingMessage = `Withdrawing ${_tokenSymbol} collateral...`;
-    successMessage = `Withdrew ${_formattedAmount} ${_tokenSymbol}.`;
-    errorMessage = 'Collateral withdrawal failed.';
 
     descriptionAction = `Withdraw ${_tokenSymbol} collateral`;
     descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
   } else if (xTransactionInput.type === XTransactionType.BORROW) {
     const _formattedAmount = formatBigNumber(new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0), 'currency');
-    pendingMessage = 'Borrowing bnUSD...';
-    successMessage = `Borrowed ${_formattedAmount} bnUSD.`;
-    errorMessage = 'Borrow failed.';
 
     descriptionAction = `Borrow bnUSD`;
     descriptionAmount = `${_formattedAmount} bnUSD`;
@@ -109,9 +92,6 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess 
       new BigNumber(xTransactionInput?.inputAmount.multiply(-1).toFixed() || 0),
       'currency',
     );
-    pendingMessage = 'Repaying bnUSD...';
-    successMessage = `Repaid ${_formattedAmount} bnUSD.`;
-    errorMessage = 'Repay failed.';
 
     descriptionAction = `Repay bnUSD`;
     descriptionAmount = `${_formattedAmount} bnUSD`;
@@ -121,9 +101,6 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess 
 
   const sourceTransaction = transactionActions.add(sourceChainId, {
     hash: sourceTransactionHash,
-    pendingMessage,
-    successMessage,
-    errorMessage,
   });
 
   if (sourceTransaction && sourceTransaction.hash) {

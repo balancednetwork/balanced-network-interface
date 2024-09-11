@@ -35,9 +35,9 @@ export const transactionActions = {
     xChainId: XChainId,
     transaction: {
       hash: string;
-      pendingMessage: string;
-      successMessage: string;
-      errorMessage: string;
+      pendingMessage?: string;
+      successMessage?: string;
+      errorMessage?: string;
       onSuccess?: () => void;
     },
   ): Transaction => {
@@ -52,10 +52,11 @@ export const transactionActions = {
       onClick: () => window.open(link, '_blank'),
     };
 
-    toast(<NotificationPending summary={transaction.pendingMessage || t`Processing transaction...`} />, {
-      ...toastProps,
-      toastId: hash,
-    });
+    transaction.pendingMessage &&
+      toast(<NotificationPending summary={transaction.pendingMessage || t`Processing transaction...`} />, {
+        ...toastProps,
+        toastId: hash,
+      });
 
     return newItem;
   },
@@ -88,16 +89,17 @@ export const transactionActions = {
         const toastProps = {
           onClick: () => window.open(getTrackerLink(xChainId, _transaction.hash, 'transaction'), '_blank'),
         };
-        toast.update(_transaction.id, {
-          ...toastProps,
-          render: (
-            <NotificationSuccess
-              summary={_transaction?.successMessage}
-              redirectOnSuccess={_transaction?.redirectOnSuccess}
-            />
-          ),
-          autoClose: 5000,
-        });
+        _transaction?.successMessage &&
+          toast.update(_transaction.id, {
+            ...toastProps,
+            render: (
+              <NotificationSuccess
+                summary={_transaction?.successMessage}
+                redirectOnSuccess={_transaction?.redirectOnSuccess}
+              />
+            ),
+            autoClose: 5000,
+          });
 
         _transaction.onSuccess?.();
       }
@@ -106,11 +108,12 @@ export const transactionActions = {
         const toastProps = {
           onClick: () => window.open(getTrackerLink(xChainId, _transaction.hash, 'transaction'), '_blank'),
         };
-        toast.update(_transaction.id, {
-          ...toastProps,
-          render: <NotificationError failureReason={_transaction.errorMessage} />, // TODO: handle error message
-          autoClose: 5000,
-        });
+        _transaction.errorMessage &&
+          toast.update(_transaction.id, {
+            ...toastProps,
+            render: <NotificationError failureReason={_transaction.errorMessage} />, // TODO: handle error message
+            autoClose: 5000,
+          });
       }
     }
     return _transaction;

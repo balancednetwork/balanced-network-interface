@@ -21,6 +21,7 @@ import { XChainId, XToken } from '@/xwagmi/types';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { AnimatePresence, motion } from 'framer-motion';
 import useLoanWalletServiceHandler from '../../useLoanWalletServiceHandler';
 
 export enum XCollateralAction {
@@ -61,6 +62,9 @@ const XCollateralModal = ({
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
   const { onAdjust: adjust } = useCollateralActionHandlers();
+  const isExecuted =
+    currentXTransaction?.status === XTransactionStatus.success ||
+    currentXTransaction?.status === XTransactionStatus.failure;
 
   const { xCallFee, formattedXCallFee } = useXCallFee(sourceChain, '0x1.icon');
 
@@ -81,15 +85,22 @@ const XCollateralModal = ({
     }, 500);
   }, [modalId]);
 
+  //to show success or fail message in the modal
+  const slowDismiss = useCallback(() => {
+    setTimeout(() => {
+      handleDismiss();
+    }, 2000);
+  }, [handleDismiss]);
+
   useEffect(() => {
     if (
       currentXTransaction &&
       (currentXTransaction.status === XTransactionStatus.success ||
         currentXTransaction.status === XTransactionStatus.failure)
     ) {
-      handleDismiss();
+      slowDismiss();
     }
-  }, [currentXTransaction, handleDismiss]);
+  }, [currentXTransaction, slowDismiss]);
 
   const { sendXTransaction } = useSendXTransaction();
   const handleXCollateralAction = async () => {
@@ -166,46 +177,58 @@ const XCollateralModal = ({
 
           {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
 
-          <Flex justifyContent="center" mt="20px" pt="20px" className="border-top">
-            <>
-              <TextButton onClick={handleDismiss}>
-                {isProcessing ? <Trans>Close</Trans> : <Trans>Cancel</Trans>}
-              </TextButton>
+          <AnimatePresence>
+            {((!isExecuted && isProcessing) || !isProcessing) && (
+              <motion.div
+                key={'tx-actions'}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                style={{ overflow: 'hidden' }}
+              >
+                <Flex justifyContent="center" mt="20px" pt="20px" className="border-top">
+                  <>
+                    <TextButton onClick={handleDismiss}>
+                      {isProcessing ? <Trans>Close</Trans> : <Trans>Cancel</Trans>}
+                    </TextButton>
 
-              {isWrongChain ? (
-                <StyledButton onClick={handleSwitchChain}>
-                  <Trans>Switch to</Trans>
-                  {` ${xChainMap[sourceChain].name}`}
-                </StyledButton>
-              ) : isProcessing ? (
-                <>
-                  <StyledButton disabled $loading>
-                    {storedModalValues.action === XCollateralAction.DEPOSIT ? (
-                      <Trans>Depositing</Trans>
+                    {isWrongChain ? (
+                      <StyledButton onClick={handleSwitchChain}>
+                        <Trans>Switch to</Trans>
+                        {` ${xChainMap[sourceChain].name}`}
+                      </StyledButton>
+                    ) : isProcessing ? (
+                      <>
+                        <StyledButton disabled $loading>
+                          {storedModalValues.action === XCollateralAction.DEPOSIT ? (
+                            <Trans>Depositing</Trans>
+                          ) : (
+                            <Trans>Withdrawing</Trans>
+                          )}
+                        </StyledButton>
+                      </>
                     ) : (
-                      <Trans>Withdrawing</Trans>
+                      <>
+                        {approvalState !== ApprovalState.APPROVED ? (
+                          <Button onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
+                            {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
+                          </Button>
+                        ) : (
+                          <StyledButton onClick={handleXCollateralAction} disabled={!gasChecker.hasEnoughGas}>
+                            {storedModalValues.action === XCollateralAction.DEPOSIT ? (
+                              <Trans>Deposit</Trans>
+                            ) : (
+                              <Trans>Withdraw</Trans>
+                            )}
+                          </StyledButton>
+                        )}
+                      </>
                     )}
-                  </StyledButton>
-                </>
-              ) : (
-                <>
-                  {approvalState !== ApprovalState.APPROVED ? (
-                    <Button onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
-                      {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
-                    </Button>
-                  ) : (
-                    <StyledButton onClick={handleXCollateralAction} disabled={!gasChecker.hasEnoughGas}>
-                      {storedModalValues.action === XCollateralAction.DEPOSIT ? (
-                        <Trans>Deposit</Trans>
-                      ) : (
-                        <Trans>Withdraw</Trans>
-                      )}
-                    </StyledButton>
-                  )}
-                </>
-              )}
-            </>
-          </Flex>
+                  </>
+                </Flex>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {!isProcessing && !gasChecker.hasEnoughGas && (
             <Flex justifyContent="center" paddingY={2}>

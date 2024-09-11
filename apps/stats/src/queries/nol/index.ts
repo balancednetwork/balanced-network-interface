@@ -6,11 +6,11 @@ import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-quer
 import BigNumber from 'bignumber.js';
 
 export const EXTENDED_CHART_COLORS = {
-  sICX: '#2ca9b7',
-  AVAX: '#E84142',
+  sICX: '#9D4DF1',
+  AVAX: '#FF394A',
   BNB: '#F0B90B',
-  INJ: '#1694b8',
-  SUI: '#136aa1',
+  INJ: '#0082FA',
+  SUI: '#4DA2FF',
   ETH: '#627EEA',
   BTC: '#f7931a',
   default: '#136aa1',

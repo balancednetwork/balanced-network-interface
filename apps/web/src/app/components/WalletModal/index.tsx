@@ -218,7 +218,7 @@ export default function WalletModal() {
             type="text"
             value={chainQuery}
             onChange={handleChainQuery}
-            placeholder="Search for blockchains..."
+            placeholder="Search blockchains..."
             style={{ minHeight: '40px' }}
             tabIndex={isMobile ? -1 : 1}
           />

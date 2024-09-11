@@ -7,6 +7,8 @@ import BigNumber from 'bignumber.js';
 
 export const EXTENDED_CHART_COLORS = {
   sICX: '#9D4DF1',
+  bnUSD: '#32C9A4',
+  BALN: '#2CA9B7',
   AVAX: '#FF394A',
   BNB: '#F0B90B',
   INJ: '#0082FA',

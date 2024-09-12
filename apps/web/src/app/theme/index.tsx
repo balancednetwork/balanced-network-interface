@@ -171,7 +171,7 @@ export const FixedGlobalStyle = createGlobalStyle`
     height: 100%;
     width: 100%;
     line-height: 1.4;
-    scrollbar-color: #01002A transparent;
+    scrollbar-color: #144b68 transparent;
 
     /* For Safari and WebKit browsers */
     ::-webkit-scrollbar {
@@ -184,13 +184,13 @@ export const FixedGlobalStyle = createGlobalStyle`
     }
 
     ::-webkit-scrollbar-thumb {
-        background-color: #01002A; 
+        background-color: #144b68; 
         border-radius: 10px; 
-        border: 2px solid #01002A; 
+        border: 2px solid #144b68; 
     }
 
     ::-webkit-scrollbar-thumb:hover {
-        background: #01002A;
+        background: #144b68;
     }
   }
 

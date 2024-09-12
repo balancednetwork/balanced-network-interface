@@ -3,10 +3,10 @@ import React from 'react';
 import { TextProps } from 'rebass';
 import { Text } from 'rebass/styled-components';
 import {
+  DefaultTheme,
+  MediaFunction,
   ThemeProvider as StyledComponentsThemeProvider,
   createGlobalStyle,
-  MediaFunction,
-  DefaultTheme,
   css,
 } from 'styled-components';
 
@@ -171,6 +171,27 @@ export const FixedGlobalStyle = createGlobalStyle`
     height: 100%;
     width: 100%;
     line-height: 1.4;
+    scrollbar-color: #144b68 transparent;
+
+    /* For Safari and WebKit browsers */
+    ::-webkit-scrollbar {
+        width: 9px; /* Set the width for vertical scrollbars */
+        height: 9px; /* Set the height for horizontal scrollbars */
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent; 
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #144b68; 
+        border-radius: 10px; 
+        border: 2px solid #144b68; 
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #144b68;
+    }
   }
 
   body,button {

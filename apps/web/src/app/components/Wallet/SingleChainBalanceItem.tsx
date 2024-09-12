@@ -10,7 +10,7 @@ import React from 'react';
 import { useTheme } from 'styled-components';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import ICONAssetModal from './ICONAssetModal';
-import { AssetSymbol, BalanceAndValueWrap, DataText, ListItem } from './styledComponents';
+import { AssetSymbol, BalanceAndValueWrap, Chevron, DataText, ListItem } from './styledComponents';
 import useClaimableICX from './useClaimableICX';
 
 type SingleChainBalanceItemProps = {
@@ -50,11 +50,7 @@ const SingleChainBalanceItem = ({
 
   return (
     <>
-      <ListItem
-        $border={!isNested && !isLast}
-        onClick={handleModalOpen}
-        style={{ cursor: isICONAsset ? 'pointer' : 'default' }}
-      >
+      <ListItem $border={!isNested && !isLast} onClick={handleModalOpen} className={isICONAsset ? 'has-modal' : ''}>
         <AssetSymbol $hasNotification={hasNotification}>
           <CurrencyLogoWithNetwork
             currency={baseToken}
@@ -64,6 +60,7 @@ const SingleChainBalanceItem = ({
           />
           <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>
             {isNested ? xChainMap[xChainId].name : symbol}
+            {isICONAsset && <Chevron $isNested={isNested} />}
           </Typography>
         </AssetSymbol>
         <BalanceAndValueWrap>

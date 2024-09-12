@@ -1,8 +1,5 @@
 import { LoaderComponent } from '@/pages/PerformanceDetails/utils';
 import { useNetworkOwnedLiquidityData, usePastMonthSupply } from '@/queries/nol';
-import React from 'react';
-import { useMedia } from 'react-use';
-import { Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import {
   ChartInfo,
   ChartInfoItem,
@@ -15,6 +12,9 @@ import {
 } from '@/sections/BALNSection/DistributionChart';
 import { CustomLabel, CustomTooltip } from '@/sections/HoldingsOverviewSection/TokensChart';
 import { Typography } from '@/theme';
+import React from 'react';
+import { useMedia } from 'react-use';
+import { Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 
 const NetworkOwnedLiquidity = () => {
   const { data: nolData } = useNetworkOwnedLiquidityData();
@@ -43,7 +43,7 @@ const NetworkOwnedLiquidity = () => {
                 label={!isSmallScreen && <CustomLabel />}
                 labelLine={false}
                 fill="#136aa1"
-                startAngle={-270}
+                startAngle={0}
               />
               {isSmallScreen && (
                 <>

@@ -264,7 +264,7 @@ const LoanPanel = () => {
                     </TextButton>
                     <Button
                       disabled={
-                        borrowedAmount.isLessThanOrEqualTo(0)
+                        differenceAmount.isLessThan(0.001) || borrowedAmount.isLessThanOrEqualTo(0)
                           ? currentValue >= 0 && currentValue < 10
                           : currentValue < 0
                       }

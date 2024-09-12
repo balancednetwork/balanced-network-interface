@@ -403,7 +403,7 @@ const CollateralPanel = () => {
                     >
                       <Trans>Cancel</Trans>
                     </TextButton>
-                    <Button onClick={toggleOpen} fontSize={14}>
+                    <Button onClick={toggleOpen} fontSize={14} disabled={differenceAmount?.isEqualTo(0)}>
                       <Trans>Confirm</Trans>
                     </Button>
                   </>

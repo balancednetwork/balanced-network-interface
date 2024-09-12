@@ -149,7 +149,7 @@ const CollateralPanel = () => {
   const ratio = useRatio();
   const isHandlingICX = useIsHandlingICX();
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
-  const [ICXWithdrawOption, setICXWithdrawOption] = useState<ICXWithdrawOptions>(ICXWithdrawOptions.EMPTY);
+  const [ICXWithdrawOption, setICXWithdrawOption] = useState<ICXWithdrawOptions>(ICXWithdrawOptions.KEEPSICX);
   const { data: icxUnstakingTime } = useICXUnstakingTime();
   const isSuperSmall = useMedia(`(max-width: 359px)`);
 
@@ -592,7 +592,7 @@ const CollateralPanel = () => {
 
                   {ICXWithdrawOption === ICXWithdrawOptions.KEEPSICX && (
                     <Typography textAlign="center">
-                      <Trans>Recieve sICX, which you can trade or unstake from the wallet section later.</Trans>
+                      <Trans>Receive sICX, which you can trade or unstake from the wallet section later.</Trans>
                     </Typography>
                   )}
                   {ICXWithdrawOption === ICXWithdrawOptions.UNSTAKE && (

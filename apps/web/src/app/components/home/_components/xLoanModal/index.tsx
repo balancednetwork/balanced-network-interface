@@ -174,7 +174,7 @@ const XLoanModal = ({
 
           <Typography textAlign="center">
             <Trans>
-              Cross-chain fee: <strong>{formattedXCallFee}</strong>
+              Transfer fee: <strong>{formattedXCallFee}</strong>
             </Trans>
           </Typography>
 

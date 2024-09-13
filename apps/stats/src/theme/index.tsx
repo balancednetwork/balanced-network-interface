@@ -2,8 +2,8 @@ import React from 'react';
 
 import { TextProps } from 'rebass';
 import { Text } from 'rebass/styled-components';
-import { ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle, MediaFunction } from 'styled-components';
-import { css, DefaultTheme } from 'styled-components';
+import { MediaFunction, ThemeProvider as StyledComponentsThemeProvider, createGlobalStyle } from 'styled-components';
+import { DefaultTheme, css } from 'styled-components';
 
 import texGyeAdventorBoldWoff from '@/assets/font/tex-gyre-adventor-bold/tex-gyre-adventor-bold.woff';
 import texGyeAdventorBoldWoff2 from '@/assets/font/tex-gyre-adventor-bold/tex-gyre-adventor-bold.woff2';
@@ -149,7 +149,8 @@ export const FixedGlobalStyle = createGlobalStyle`
   html,
   body {
     height: 100%;
-    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
     line-height: 1.4;
   }
 

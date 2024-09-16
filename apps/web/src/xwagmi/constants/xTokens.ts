@@ -121,6 +121,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'Balanced Dollar',
     ),
   ],
+  stellar: [new XToken('stellar', 'stellar', NATIVE_ADDRESS, 7, 'XLM', 'XLM')],
 };
 
 export const sARCHOnArchway = {

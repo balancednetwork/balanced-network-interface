@@ -9,9 +9,10 @@ export type XChainId =
   | '0x38.bsc'
   | '0xa4b1.arbitrum'
   | '0x2105.base'
-  | 'injective-1';
+  | 'injective-1'
+  | 'stellar';
 
-export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH' | 'INJECTIVE';
+export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH' | 'INJECTIVE' | 'STELLAR';
 
 export type Chain = {
   id: string | number;

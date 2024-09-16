@@ -1,4 +1,4 @@
-import { xChains } from '@/xwagmi/constants/xChains';
+import { stellar, xChains } from '@/xwagmi/constants/xChains';
 import { XChainId, XChainType } from '@/xwagmi/types';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -17,6 +17,7 @@ import {
   InjectiveXService,
   InjectiveXWalletClient,
 } from './xchains/injective';
+import { StellarXPublicClient, StellarXService, StellarXWalletClient } from './xchains/stellar';
 
 const iconXService = IconXService.getInstance();
 iconXService.setXConnectors([new IconHanaXConnector()]);
@@ -33,12 +34,16 @@ havahXService.setXConnectors([new HavahXConnector()]);
 const injectiveXService = InjectiveXService.getInstance();
 injectiveXService.setXConnectors([new InjectiveMetamaskXConnector(), new InjectiveKelprXConnector()]);
 
+const stellarXService = StellarXService.getInstance();
+//todo xlm add connectors
+
 export const xServices: Record<XChainType, XService> = {
   ICON: iconXService,
   ARCHWAY: archwayXService,
   EVM: evmXService,
   HAVAH: havahXService,
   INJECTIVE: injectiveXService,
+  STELLAR: stellarXService,
 };
 
 export const xPublicClients: Partial<Record<XChainId, XPublicClient>> = {};
@@ -132,6 +137,8 @@ function createXPublicClient(xChainId: XChainId) {
       return new HavahXPublicClient(xChainId);
     case 'INJECTIVE':
       return new InjectiveXPublicClient(xChainId);
+    case 'STELLAR':
+      return new StellarXPublicClient(xChainId);
     default:
       throw new Error(`Unsupported xChainType: ${xChainType}`);
   }
@@ -150,6 +157,8 @@ function createXWalletClient(xChainId: XChainId) {
       return new HavahXWalletClient(xChainId);
     case 'INJECTIVE':
       return new InjectiveXWalletClient(xChainId);
+    case 'STELLAR':
+      return new StellarXWalletClient(xChainId);
     default:
       throw new Error(`Unsupported xChainType: ${xChainType}`);
   }

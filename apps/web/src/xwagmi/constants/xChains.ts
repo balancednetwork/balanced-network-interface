@@ -273,6 +273,30 @@ export const injective: XChain = {
   testnet: false,
 };
 
+export const stellar: XChain = {
+  id: 'stellar',
+  name: 'Stellar',
+  xChainId: 'stellar',
+  xChainType: 'STELLAR',
+  tracker: 'https://stellar.expert/explorer/public/',
+  nativeCurrency: {
+    decimals: 7,
+    name: 'XLM',
+    symbol: 'XLM',
+  },
+  rpc: {
+    http: 'https://horizon.stellar.org',
+  },
+  contracts: {
+    xCall: 'xlm..todo..',
+    assetManager: 'xlm..todo..',
+    bnUSD: 'xlm..todo..',
+  },
+  autoExecution: true,
+  gasThreshold: 0.5,
+  testnet: false,
+};
+
 // the order is important, using manual order to display in the UI
 export const xChainMap: { [key in XChainId]: XChain } = {
   '0x1.icon': icon,
@@ -286,6 +310,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   '0x38.bsc': bsc,
   '0x2105.base': base,
   'injective-1': injective,
+  stellar: stellar,
 };
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);

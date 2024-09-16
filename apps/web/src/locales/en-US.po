@@ -383,8 +383,8 @@ msgstr "Proposals"
 
 #: src/app/components/CollateralTypeSwitcher/CollateralTypeListWrap.tsx
 #: src/app/components/Wallet/index.tsx
-msgid "Search assets"
-msgstr "Search assets"
+#~ msgid "Search assets"
+#~ msgstr "Search assets"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
@@ -756,6 +756,10 @@ msgstr ""
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Locked"
 msgstr "Locked"
+
+#: src/app/components/Wallet/index.tsx
+msgid "Search assets and blockchains..."
+msgstr "Search assets and blockchains..."
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #~ msgid "Transfer fee: <0>{formattedXCallFee}</0>"
@@ -1218,6 +1222,7 @@ msgstr "Withdrawing"
 
 #: src/app/components/home/_components/CollateralChainSelector/ChainList.tsx
 #: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
+#: src/app/pages/trade/bridge/_components/XChainList.tsx
 msgid "Search blockchains..."
 msgstr "Search blockchains..."
 
@@ -1416,8 +1421,8 @@ msgid "Total locked"
 msgstr "Total locked"
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
-msgid "Search name or contract"
-msgstr "Search name or contract"
+#~ msgid "Search name or contract"
+#~ msgstr "Search name or contract"
 
 #: src/store/bridge/hooks.tsx
 msgid "Connect wallet"
@@ -1533,8 +1538,8 @@ msgid "Voting power available: {0}"
 msgstr "Voting power available: {0}"
 
 #: src/app/pages/trade/bridge/_components/XChainList.tsx
-msgid "Search for blockchains..."
-msgstr "Search for blockchains..."
+#~ msgid "Search for blockchains..."
+#~ msgstr "Search for blockchains..."
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "You'll only be able to interact with the default assets listed on Balanced."
@@ -2404,6 +2409,10 @@ msgstr "Position details"
 msgid "Adjust allocation"
 msgstr "Adjust allocation"
 
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "Search name or contract..."
+msgstr "Search name or contract..."
+
 #: src/app/components/WalletModal/IconWalletModal.tsx
 #~ msgid "Make sure it's connected and try again."
 #~ msgstr "Make sure it's connected and try again."
@@ -2543,6 +2552,10 @@ msgstr "Withdraw {0} collateral?"
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Create pool"
 msgstr "Create pool"
+
+#: src/app/components/CollateralTypeSwitcher/CollateralTypeListWrap.tsx
+msgid "Search assets..."
+msgstr "Search assets..."
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "To borrow bnUSD, deposit collateral."

@@ -14,6 +14,7 @@
     "@cosmjs/proto-signing": "0.32.3",
     "@cosmjs/stargate": "0.32.2",
     "@cosmjs/tendermint-rpc": "0.32.3",
+    "@creit.tech/stellar-wallets-kit": "1.2.1",
     "@ethereumjs/rlp": "5.0.0",
     "@ethersproject/address": "5.4.0",
     "@ethersproject/solidity": "5.4.0",
@@ -92,6 +93,7 @@
     "rlp": "3.0.0",
     "sanitize.css": "12.0.1",
     "serve": "11.3.2",
+    "stellar-sdk": "12.2.0",
     "styled-components": "6.1.8",
     "tiny-invariant": "1.1.0",
     "toformat": "2.0.0",
@@ -132,14 +134,14 @@
     "babel-plugin-macros": "3.1.0",
     "cross-env": "7.0.2",
     "postcss-styled-syntax": "0.6.4",
+    "stream-browserify": "3.0.0",
     "stylelint": "16.2.1",
     "stylelint-config-standard": "36.0.0",
-    "stream-browserify": "3.0.0",
     "typescript": "5.5.4",
+    "vite": "^5.3.5",
     "vite-plugin-node-polyfills": "0.21.0",
     "vite-plugin-node-stdlib-browser": "0.2.1",
     "vite-plugin-svgr": "4.2.0",
-    "vite": "^5.3.5",
     "vite-tsconfig-paths": "4.3.1"
   }
 }

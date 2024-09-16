@@ -414,7 +414,7 @@ export function useAllCollateralData() {
             }
 
             if (seriesStabilityCopy[index]) {
-              currentTotal = currentTotal.plus(seriesStabilityCopy[index]['sum_of_values']);
+              currentTotal = currentTotal.plus(seriesStabilityCopy[index]['balance']);
             }
 
             if (seriesINJCopy[index]) {
@@ -442,7 +442,7 @@ export function useAllCollateralData() {
           result.series['sICX'] = seriesSICX.slice().reverse();
           result.series['ETH'] = seriesETH.slice().reverse();
           result.series['fundTotal'] = seriesStabilityCopy
-            .map(item => ({ ...item, value: item.sum_of_values }))
+            .map(item => ({ ...item, value: item.balance }))
             .slice()
             .reverse();
           result.series['INJ'] = seriesINJ.slice().reverse();

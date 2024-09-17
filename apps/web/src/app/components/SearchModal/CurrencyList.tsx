@@ -24,11 +24,13 @@ import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
 import { getSupportedXChainIdsForToken } from '@/xwagmi/xcall/utils';
+import { ChainLogo } from '../ChainLogo';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
+import { MouseoverTooltip } from '../Tooltip';
 import { BalanceBreakdown } from '../Wallet/styledComponents';
 import { SelectorType } from './CurrencySearch';
 import CurrencyXChainItem from './CurrencyXChainItem';
-import { HeaderText } from './styleds';
+import { HeaderText, XChainLogoList } from './styleds';
 
 const DashGrid = styled(Box)`
   display: grid;
@@ -291,15 +293,25 @@ function CurrencyRow({
 
       {showBreakdown ? (
         <StyledBalanceBreakdown $arrowPosition={currency.symbol ? `${currency.symbol.length * 5 + 26}px` : '40px'}>
-          {finalXChainIds.map(xChainId => (
-            <MemoizedCurrencyXChainItem
-              key={`${currency.symbol}-${xChainId}`}
-              xChainId={xChainId}
-              currency={currency}
-              price={rateFracs && rateFracs[currency.symbol!] ? rateFracs[currency.symbol!].toFixed(18) : '0'}
-              onSelect={handleXChainCurrencySelect}
-            />
-          ))}
+          {hasSigned ? (
+            finalXChainIds.map(xChainId => (
+              <MemoizedCurrencyXChainItem
+                key={`${currency.symbol}-${xChainId}`}
+                xChainId={xChainId}
+                currency={currency}
+                price={rateFracs && rateFracs[currency.symbol!] ? rateFracs[currency.symbol!].toFixed(18) : '0'}
+                onSelect={handleXChainCurrencySelect}
+              />
+            ))
+          ) : (
+            <XChainLogoList>
+              {sortedXChains?.map(xChainId => (
+                <MouseoverTooltip key={xChainId} text={xChainMap[xChainId].name} autoWidth placement="bottom">
+                  <ChainLogo chain={xChainMap[xChainId]} size="18px" />
+                </MouseoverTooltip>
+              ))}
+            </XChainLogoList>
+          )}
         </StyledBalanceBreakdown>
       ) : null}
     </>

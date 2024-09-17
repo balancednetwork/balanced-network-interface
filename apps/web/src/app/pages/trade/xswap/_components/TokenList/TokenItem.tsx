@@ -3,6 +3,7 @@ import { ChainLogo } from '@/app/components/ChainLogo';
 import CurrencyLogo from '@/app/components/CurrencyLogo';
 import Divider from '@/app/components/Divider';
 import { DataText } from '@/app/components/List';
+import { MouseoverTooltip } from '@/app/components/Tooltip';
 import { LoaderComponent } from '@/app/pages/vote/_components/styledComponents';
 import { Typography, sizes } from '@/app/theme';
 import { COMBINED_TOKENS_MAP_BY_ADDRESS, useICX } from '@/constants/tokens';
@@ -30,7 +31,7 @@ type TokenItemProps = {
 const ChainsWrapper = styled.div`
   margin-top: 3px;
 
-  img {
+  >* {
     margin-right: 8px;
   }
 `;
@@ -86,7 +87,9 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
               </Flex>
               <ChainsWrapper>
                 {xChainIds.map(xChainId => (
-                  <ChainLogo key={xChainId} chain={xChainMap[xChainId]} size="18px" />
+                  <MouseoverTooltip key={xChainId} text={xChainMap[xChainId].name} autoWidth placement="bottom">
+                    <ChainLogo chain={xChainMap[xChainId]} size="18px" />
+                  </MouseoverTooltip>
                 ))}
               </ChainsWrapper>
             </Box>

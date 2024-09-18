@@ -17,7 +17,12 @@ import {
   InjectiveXService,
   InjectiveXWalletClient,
 } from './xchains/injective';
-import { StellarXPublicClient, StellarXService, StellarXWalletClient } from './xchains/stellar';
+import {
+  StellarWalletsKitXConnector,
+  StellarXPublicClient,
+  StellarXService,
+  StellarXWalletClient,
+} from './xchains/stellar';
 
 const iconXService = IconXService.getInstance();
 iconXService.setXConnectors([new IconHanaXConnector()]);
@@ -35,7 +40,7 @@ const injectiveXService = InjectiveXService.getInstance();
 injectiveXService.setXConnectors([new InjectiveMetamaskXConnector(), new InjectiveKelprXConnector()]);
 
 const stellarXService = StellarXService.getInstance();
-//todo xlm add connectors
+stellarXService.setXConnectors([new StellarWalletsKitXConnector()]);
 
 export const xServices: Record<XChainType, XService> = {
   ICON: iconXService,

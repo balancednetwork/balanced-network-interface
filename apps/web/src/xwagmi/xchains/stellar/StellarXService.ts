@@ -1,15 +1,19 @@
 import { XService } from '@/xwagmi/core/XService';
+import { FREIGHTER_ID, StellarWalletsKit, WalletNetwork, allowAllModules } from '@creit.tech/stellar-wallets-kit';
 
 export class StellarXService extends XService {
   private static instance: StellarXService;
 
-  public walletKit: any;
-  //probably add bunch of stuff here
+  public walletsKit: StellarWalletsKit;
 
   private constructor() {
     super('STELLAR');
 
-    this.walletKit = 'create the kit here';
+    this.walletsKit = new StellarWalletsKit({
+      network: WalletNetwork.PUBLIC,
+      selectedWalletId: FREIGHTER_ID,
+      modules: allowAllModules(),
+    });
   }
 
   public static getInstance(): StellarXService {

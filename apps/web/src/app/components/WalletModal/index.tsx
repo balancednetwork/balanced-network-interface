@@ -17,6 +17,7 @@ import ArchWalletIcon from '@/assets/icons/chains/archway.svg';
 import ETHIcon from '@/assets/icons/chains/eth.svg';
 import HavahWalletIcon from '@/assets/icons/chains/havah.svg';
 import InjectiveWalletIcon from '@/assets/icons/chains/injective.svg';
+import StellarWalletIcon from '@/assets/icons/chains/stellar.svg';
 import IconWalletIcon from '@/assets/icons/wallets/iconex.svg';
 
 import { LOCALE_LABEL, SUPPORTED_LOCALES, SupportedLocale } from '@/constants/locales';
@@ -146,6 +147,14 @@ export default function WalletModal() {
           description: t`Borrow, swap, & transfer cross-chain.`,
           keyWords: ['injective', 'cosmos', 'keplr', 'leap'],
           walletOptionsModalId: MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL,
+        },
+        {
+          name: 'Stellar',
+          xChainType: 'STELLAR',
+          logo: <StellarWalletIcon width="40" height="40" />,
+          description: t`Swap & transfer cross-chain.`,
+          keyWords: ['stellar', 'lumens', 'xlm'],
+          walletOptionsModalId: MODAL_ID.STELLAR_WALLET_OPTIONS_MODAL,
         },
       ].sort((a, b) => a.name.localeCompare(b.name)),
     ] as WalletItemProps[];

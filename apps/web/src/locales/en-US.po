@@ -2013,6 +2013,7 @@ msgstr "Deposit"
 
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
 msgid "Swap & transfer cross-chain."
 msgstr "Swap & transfer cross-chain."
 

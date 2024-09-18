@@ -267,6 +267,9 @@ importers:
       '@rematch/select':
         specifier: 3.1.2
         version: 3.1.2(@rematch/core@2.2.0(redux@5.0.1))(redux@5.0.1)
+      '@stellar/stellar-sdk':
+        specifier: 12.3.0
+        version: 12.3.0
       '@tanstack/react-query':
         specifier: 5.29.2
         version: 5.29.2(react@18.2.0)
@@ -435,9 +438,6 @@ importers:
       serve:
         specifier: 11.3.2
         version: 11.3.2
-      stellar-sdk:
-        specifier: 12.2.0
-        version: 12.2.0
       styled-components:
         specifier: 6.1.8
         version: 6.1.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -3808,6 +3808,9 @@ packages:
 
   '@stellar/stellar-base@12.1.1':
     resolution: {integrity: sha512-gOBSOFDepihslcInlqnxKZdIW9dMUO1tpOm3AtJR33K2OvpXG6SaVHCzAmCFArcCqI9zXTEiSoh70T48TmiHJA==}
+
+  '@stellar/stellar-sdk@12.3.0':
+    resolution: {integrity: sha512-F2DYFop/M5ffXF0lvV5Ezjk+VWNKg0QDX8gNhwehVU3y5LYA3WAY6VcCarMGPaG9Wdgoeh1IXXzOautpqpsltw==}
 
   '@styled-system/background@5.1.2':
     resolution: {integrity: sha512-jtwH2C/U6ssuGSvwTN3ri/IyjdHb8W9X/g8Y0JLcrH02G+BW3OS8kZdHphF1/YyRklnrKrBT2ngwGUK6aqqV3A==}
@@ -10247,10 +10250,6 @@ packages:
   std-env@3.7.0:
     resolution: {integrity: sha512-JPbdCEQLj1w5GilpiHAx3qJvFndqybBysA3qUOnznweH4QbNYUsW/ea8QzSrnh0vNsezMMw5bcVool8lM0gwzg==}
 
-  stellar-sdk@12.2.0:
-    resolution: {integrity: sha512-QnJzEKiwtgHozGT+cO2C5Gxur5cGNGavFUbDDMqL7pDMUEKf/EhWWy3VpnZk9oXpAoc8CV3K8JTakpHVMpc/sg==}
-    deprecated: ⚠️ This package has moved to @stellar/stellar-sdk! 🚚
-
   store2@2.14.3:
     resolution: {integrity: sha512-4QcZ+yx7nzEFiV4BMLnr/pRa5HYzNITX2ri0Zh6sT9EyQHbBHacC6YigllUPU9X3D0f/22QCgfokpKs52YRrUg==}
 
@@ -16627,6 +16626,18 @@ snapshots:
       tweetnacl: 1.0.3
     optionalDependencies:
       sodium-native: 4.2.0
+
+  '@stellar/stellar-sdk@12.3.0':
+    dependencies:
+      '@stellar/stellar-base': 12.1.1
+      axios: 1.7.7
+      bignumber.js: 9.1.2
+      eventsource: 2.0.2
+      randombytes: 2.1.0
+      toml: 3.0.0
+      urijs: 1.19.11
+    transitivePeerDependencies:
+      - debug
 
   '@styled-system/background@5.1.2':
     dependencies:
@@ -24786,18 +24797,6 @@ snapshots:
   statuses@2.0.1: {}
 
   std-env@3.7.0: {}
-
-  stellar-sdk@12.2.0:
-    dependencies:
-      '@stellar/stellar-base': 12.1.1
-      axios: 1.7.7
-      bignumber.js: 9.1.2
-      eventsource: 2.0.2
-      randombytes: 2.1.0
-      toml: 3.0.0
-      urijs: 1.19.11
-    transitivePeerDependencies:
-      - debug
 
   store2@2.14.3: {}
 

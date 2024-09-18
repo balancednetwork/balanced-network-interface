@@ -13,7 +13,7 @@ import { DataText, List1, ListItem } from '@/app/components/List';
 import { Typography } from '@/app/theme';
 import useKeyPress from '@/hooks/useKeyPress';
 import useSortCurrency from '@/hooks/useSortCurrency';
-import { useHasSignedIn, useSignedInWallets } from '@/hooks/useWallets';
+import { useHasSignedIn } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useBridgeDirection } from '@/store/bridge/hooks';
 import { useIsUserAddedToken } from '@/store/user/hooks';
@@ -293,7 +293,7 @@ function CurrencyRow({
 
       {showBreakdown ? (
         <StyledBalanceBreakdown $arrowPosition={currency.symbol ? `${currency.symbol.length * 5 + 26}px` : '40px'}>
-          {hasSigned ? (
+          {basedOnWallet ? (
             finalXChainIds.map(xChainId => (
               <MemoizedCurrencyXChainItem
                 key={`${currency.symbol}-${xChainId}`}
@@ -307,7 +307,9 @@ function CurrencyRow({
             <XChainLogoList>
               {sortedXChains?.map(xChainId => (
                 <MouseoverTooltip key={xChainId} text={xChainMap[xChainId].name} autoWidth placement="bottom">
-                  <ChainLogo chain={xChainMap[xChainId]} size="18px" />
+                  <Box style={{ cursor: 'pointer' }} onClick={() => handleXChainCurrencySelect(currency, xChainId)}>
+                    <ChainLogo chain={xChainMap[xChainId]} size="18px" />
+                  </Box>
                 </MouseoverTooltip>
               ))}
             </XChainLogoList>

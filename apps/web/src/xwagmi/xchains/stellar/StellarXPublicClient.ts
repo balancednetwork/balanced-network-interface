@@ -32,23 +32,20 @@ export class StellarXPublicClient extends XPublicClient {
     if (!address) return;
 
     const xService = this.getXService();
+    const stellarAccount = await xService.server.loadAccount(address);
+
+    //TODO: refactor for all the tokens, currently fetching only native balance
     if (xToken.isNativeXToken()) {
-      //todo fetch native balance
-      // if (injBalance) {
-      //   return CurrencyAmount.fromRawAmount(xToken, BigInt(injBalance.amount));
-      // }
+      const xlmBalance = stellarAccount.balances.find(balance => balance.asset_type === 'native');
+      if (xlmBalance) {
+        return CurrencyAmount.fromRawAmount(xToken, BigInt(xlmBalance.balance.replace('.', '')));
+      }
     } else if (xToken.symbol === 'bnUSD') {
       try {
-        // const response: any = await xService.chainGrpcWasmApi.fetchSmartContractState(
-        //   stellar.contracts.bnUSD!,
-        //   toBase64({ balance: { address } }),
-        // );
-
-        // const result = fromBase64(response.data);
         return CurrencyAmount.fromRawAmount(xToken, 0);
       } catch (e) {}
     } else {
-      throw new Error(`Unsupported token: ${xToken.symbol}`);
+      throw new Error(`Unsupported token Stellar: ${xToken.symbol}`);
     }
   }
 

@@ -241,6 +241,14 @@
       "symbol": "SUI",
       "decimals": 9,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sui.png"
+    },
+    {
+      "address": "todo",
+      "chainId": 1,
+      "name": "XLM",
+      "symbol": "XLM",
+      "decimals": 7,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/xlm.png"
     }
   ]
 }

@@ -126,6 +126,6 @@ export function validateAddress(address: string, chainId: XChainId): boolean {
       return isInjectiveAddress(address);
     case 'SUI':
       // TODO: Add SUI address validation
-      return false;
+      return true;
   }
 }

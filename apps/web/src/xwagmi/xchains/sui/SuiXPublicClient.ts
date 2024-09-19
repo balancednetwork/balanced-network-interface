@@ -16,48 +16,36 @@ import { havahJs } from '../havah';
 import { ICONTxResultType } from '../icon/types';
 import { SuiXService } from './SuiXService';
 
-export const getICONEventSignature = (eventName: XCallEventType) => {
-  switch (eventName) {
-    case XCallEventType.CallMessage: {
-      return 'CallMessage(str,str,int,int,bytes)';
-    }
-    case XCallEventType.CallExecuted: {
-      return 'CallExecuted(int,int,str)';
-    }
-    case XCallEventType.CallMessageSent: {
-      return 'CallMessageSent(Address,str,int)';
-    }
-    case XCallEventType.ResponseMessage: {
-      return 'ResponseMessage(int,int,str)';
-    }
-    case XCallEventType.RollbackMessage: {
-      return 'RollbackMessage(int)';
-    }
-    default:
-      return 'none';
-  }
-};
-
 export class SuiXPublicClient extends XPublicClient {
   getXService(): SuiXService {
     return SuiXService.getInstance();
   }
 
-  getPublicClient(): IconService {
-    return havahJs.provider;
+  getPublicClient(): any {
+    return this.getXService().suiClient;
   }
 
   async getBalance(address: string | undefined, xToken: XToken) {
     if (!address) return;
 
     if (xToken.isNativeXToken()) {
-      return havahJs.ICX.balanceOf(address).then(res => CurrencyAmount.fromRawAmount(xToken, res.toFixed()));
+      const balance = await this.getPublicClient().getBalance({
+        owner: address,
+        coinType: '0x2::sui::SUI',
+      });
+      return CurrencyAmount.fromRawAmount(xToken, balance.totalBalance);
     } else {
-      return havahJs[xToken.symbol]
-        .balanceOf(address)
-        .then(res => CurrencyAmount.fromRawAmount(xToken, res.toString()));
+      const balance = await this.getPublicClient().getBalance({
+        owner: address,
+        coinType: xToken.address,
+      });
+      return CurrencyAmount.fromRawAmount(xToken, balance.totalBalance);
     }
   }
+
+  // TODO: implement this using suiClient.getAllBalances
+  // async getBalances(address: string | undefined, xTokens: XToken[]) {
+  // }
 
   async getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean, sources?: string[]) {
     const res = await havahJs.XCall.getFee(nid, rollback, sources);
@@ -154,6 +142,7 @@ export class SuiXPublicClient extends XPublicClient {
   // }
 
   _filterEventLogs(eventLogs, eventType: XCallEventType) {
+    //@ts-ignore
     const signature = getICONEventSignature(eventType);
 
     if (eventType === XCallEventType.CallMessageSent) {

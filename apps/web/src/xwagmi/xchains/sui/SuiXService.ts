@@ -3,6 +3,8 @@ import { XService } from '@/xwagmi/core/XService';
 export class SuiXService extends XService {
   private static instance: SuiXService;
 
+  public suiClient: any;
+
   private constructor() {
     super('SUI');
   }

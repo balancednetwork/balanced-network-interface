@@ -1,5 +1,7 @@
 import { xChains } from '@/xwagmi/constants/xChains';
 import { XChainId, XChainType } from '@/xwagmi/types';
+import { useSuiClient } from '@mysten/dapp-kit';
+import { useEffect } from 'react';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -184,8 +186,15 @@ export const initXWagmiStore = () => {
   archwayXService.init();
 };
 
-// export const useInitXWagmiStore = () => {
-//   useEffect(() => {
-//     initXWagmiStore();
-//   }, []);
-// };
+export const useInitXWagmiStore = () => {
+  // useEffect(() => {
+  //   initXWagmiStore();
+  // }, []);
+
+  const suiClient = useSuiClient();
+  useEffect(() => {
+    if (suiClient) {
+      suiXService.suiClient = suiClient;
+    }
+  }, [suiClient]);
+};

@@ -7,7 +7,7 @@ import { immer } from 'zustand/middleware/immer';
 
 import { getXPublicClient } from '@/xwagmi/actions';
 import { getNetworkDisplayName } from '@/xwagmi/utils';
-import { XCallEventType } from '../types';
+import { XCallEventType, XTransaction } from '../types';
 import { Transaction, TransactionStatus, XCallEventMap, XMessage, XMessageStatus } from '../types';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { xTransactionActions } from './useXTransactionStore';
@@ -84,6 +84,8 @@ type XMessageStore = {
   updateXMessageEvents: (id: string, events: XCallEventMap) => Promise<void>;
   remove: (id: string) => void;
   refreshXMessage: (id: string) => void;
+  onMessageUpdate: (xMessage: XMessage) => void;
+  createSecondaryMessage: (xTransaction: XTransaction, primaryMessage: XMessage) => void;
 };
 
 export const useXMessageStore = create<XMessageStore>()(
@@ -169,10 +171,7 @@ export const useXMessageStore = create<XMessageStore>()(
           console.log('XMessage status changed:', id, oldStatus, '->', newStatus);
           if (newStatus === XMessageStatus.CALL_EXECUTED || newStatus === XMessageStatus.FAILED) {
             xCallEventActions.disableScanner(newXMessage.id);
-            const xTransaction = xTransactionActions.getByMessageId(newXMessage.id);
-            if (xTransaction) {
-              xTransactionActions.onMessageUpdate(xTransaction.id, newXMessage);
-            }
+            get().onMessageUpdate(newXMessage);
           }
         }
       },
@@ -193,10 +192,61 @@ export const useXMessageStore = create<XMessageStore>()(
           state.messages[id]['status'] = newStatus;
         });
 
-        const xTransaction = xTransactionActions.getByMessageId(xMessage.id);
-        if (xTransaction) {
-          xTransactionActions.onMessageUpdate(xTransaction.id, xMessage);
+        get().onMessageUpdate(xMessage);
+      },
+
+      onMessageUpdate: (xMessage: XMessage) => {
+        console.log('onMessageUpdate', { xMessage });
+        const xTransaction = xTransactionActions.get(xMessage.xTransactionId);
+        if (!xTransaction) return;
+
+        if (xMessage.isPrimary) {
+          if (xMessage.status === XMessageStatus.CALL_EXECUTED) {
+            if (xTransaction.secondaryMessageRequired) {
+              get().createSecondaryMessage(xTransaction, xMessage);
+            } else {
+              xTransactionActions.success(xTransaction.id);
+            }
+          }
+
+          if (xMessage.status === XMessageStatus.FAILED) {
+            xTransactionActions.fail(xTransaction.id);
+          }
+        } else {
+          if (xMessage.status === XMessageStatus.CALL_EXECUTED) {
+            xTransactionActions.success(xTransaction.id);
+          }
+
+          if (xMessage.status === XMessageStatus.FAILED) {
+            xTransactionActions.fail(xTransaction.id);
+          }
         }
+      },
+
+      createSecondaryMessage: (xTransaction: XTransaction, primaryMessage: XMessage) => {
+        if (!primaryMessage.destinationTransaction) {
+          throw new Error('destinationTransaction is not found'); // it should not happen
+        }
+
+        const sourceChainId = primaryMessage.destinationChainId;
+        const destinationChainId = xTransaction.finalDestinationChainId;
+
+        const sourceTransaction = primaryMessage.destinationTransaction;
+
+        const secondaryMessageId = `${sourceChainId}/${sourceTransaction?.hash}`;
+        const secondaryMessage: XMessage = {
+          id: secondaryMessageId,
+          xTransactionId: xTransaction.id,
+          sourceChainId,
+          destinationChainId,
+          sourceTransaction: sourceTransaction,
+          status: XMessageStatus.REQUESTED,
+          events: {},
+          destinationChainInitialBlockHeight: xTransaction.finalDestinationChainInitialBlockHeight,
+          isPrimary: false,
+        };
+
+        get().add(secondaryMessage);
       },
     })),
     {
@@ -215,6 +265,12 @@ export const useXMessageStore = create<XMessageStore>()(
 export const xMessageActions = {
   get: (id: string | null) => {
     return useXMessageStore.getState().get(id);
+  },
+
+  getOf: (xTransactionId: string, isPrimary: boolean): XMessage | undefined => {
+    return Object.values(useXMessageStore.getState().messages).find(
+      message => message.isPrimary === isPrimary && message.xTransactionId === xTransactionId,
+    );
   },
 
   add: (xMessage: XMessage) => {

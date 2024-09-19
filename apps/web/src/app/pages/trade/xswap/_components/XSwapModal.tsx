@@ -135,7 +135,6 @@ const XSwapModal = ({
 
   return (
     <>
-      {/* {currentXTransaction && <XTransactionUpdater xTransaction={currentXTransaction} />} */}
       <Modal isOpen={modalOpen} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">

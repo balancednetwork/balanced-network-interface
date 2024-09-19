@@ -14,7 +14,7 @@ import {
 } from '@/xwagmi/xcall/types';
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
 import { xServiceActions } from '@/xwagmi/xcall/zustand/useXServiceStore';
-import { useXTransactionStore } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import { useMemo } from 'react';
 import { transactionActions } from './useTransactionStore';
 
@@ -23,11 +23,8 @@ const iconChainId: XChainId = '0x1.icon';
 const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess = () => {}) => {
   const { direction } = xTransactionInput;
   const sourceChainId = direction.from;
-  const finalDestinationChainId = direction.to;
-  const primaryDestinationChainId = sourceChainId === iconChainId ? finalDestinationChainId : iconChainId;
 
   const srcXWalletClient = getXWalletClient(sourceChainId);
-
   if (!srcXWalletClient) {
     throw new Error('WalletXService for source chain is not found');
   }
@@ -35,13 +32,11 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess 
   console.log('xTransactionInput', xTransactionInput);
 
   const sourceTransactionHash = await srcXWalletClient.executeTransaction(xTransactionInput);
-
-  const primaryDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(primaryDestinationChainId) - 20n;
-  const finalDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(finalDestinationChainId);
-
   if (!sourceTransactionHash) {
     return;
   }
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   let pendingMessage, successMessage, errorMessage;
   let descriptionAction, descriptionAmount;
@@ -126,24 +121,19 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess 
     errorMessage,
   });
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  const finalDestinationChainId = direction.to;
+  const primaryDestinationChainId = sourceChainId === iconChainId ? finalDestinationChainId : iconChainId;
+
+  const primaryDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(primaryDestinationChainId) - 20n;
+  const finalDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(finalDestinationChainId);
+
   if (sourceTransaction && sourceTransaction.hash) {
-    const xMessage: XMessage = {
-      id: `${sourceChainId}/${sourceTransaction.hash}`,
-      sourceChainId: sourceChainId,
-      destinationChainId: primaryDestinationChainId,
-      sourceTransaction,
-      status: XMessageStatus.REQUESTED,
-      events: {},
-      destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
-    };
-
-    xMessageActions.add(xMessage);
-
     const xTransaction: XTransaction = {
-      id: xMessage.id,
+      id: `${sourceChainId}/${sourceTransaction.hash}`,
       type: xTransactionInput.type,
       status: XTransactionStatus.pending,
-      primaryMessageId: xMessage.id,
       secondaryMessageRequired: primaryDestinationChainId !== finalDestinationChainId,
       sourceChainId: sourceChainId,
       finalDestinationChainId: finalDestinationChainId,
@@ -154,9 +144,22 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess 
       },
     };
 
-    useXTransactionStore.setState(state => {
-      state.transactions[xTransaction.id] = xTransaction;
-    });
+    xTransactionActions.add(xTransaction);
+
+    const xMessage: XMessage = {
+      id: `${sourceChainId}/${sourceTransaction.hash}`,
+      xTransactionId: xTransaction.id,
+      sourceChainId: sourceChainId,
+      destinationChainId: primaryDestinationChainId,
+      sourceTransaction,
+      status: XMessageStatus.REQUESTED,
+      events: {},
+      destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
+      isPrimary: true,
+    };
+
+    xMessageActions.add(xMessage);
+
     return xTransaction.id;
   }
 };

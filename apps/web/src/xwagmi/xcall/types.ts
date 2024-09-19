@@ -121,6 +121,8 @@ export type XCallEventMap = Partial<{
 
 export type XMessage = {
   id: string;
+  xTransactionId: string;
+
   sourceChainId: XChainId;
   destinationChainId: XChainId;
   sourceTransaction: Transaction;
@@ -128,6 +130,8 @@ export type XMessage = {
   events: XCallEventMap;
   status: XMessageStatus;
   destinationChainInitialBlockHeight: bigint;
+
+  isPrimary: boolean;
   // onSuccess: (xMessage: XMessage) => Promise<void>;
   // onFail: (xMessage: XMessage) => Promise<void>;
 };
@@ -137,12 +141,9 @@ export type XTransaction = {
   type: XTransactionType;
   status: XTransactionStatus;
 
-  primaryMessageId: string;
-  secondaryMessageId?: string;
   secondaryMessageRequired: boolean;
 
   sourceChainId: XChainId;
-  // primaryDestinationChainId: XChainId;
   finalDestinationChainId: XChainId;
   finalDestinationChainInitialBlockHeight: bigint;
 

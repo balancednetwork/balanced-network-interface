@@ -23,7 +23,7 @@ function Updaters() {
       <ApplicationUpdater />
       <AllTransactionsUpdater />
       <AllXMessagesUpdater />
-      <AllXChainHeightsUpdater xChains={xChains} />
+      {/* <AllXChainHeightsUpdater xChains={xChains} /> */}
     </>
   );
 }

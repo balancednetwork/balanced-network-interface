@@ -47,9 +47,10 @@ export enum XMessageStatus {
   // COMPLETED = 'COMPLETED',
 
   AWAITING_CALL_MESSAGE_SENT = 'AWAITING_CALL_MESSAGE_SENT',
-  CALL_MESSAGE_SENT = 'CALL_MESSAGE_SENT',
-  CALL_MESSAGE = 'CALL_MESSAGE',
-  CALL_EXECUTED = 'CALL_EXECUTED',
+  CALL_MESSAGE_SENT = 'CALL_MESSAGE_SENT', // pending
+  CALL_MESSAGE = 'CALL_MESSAGE', // delivered
+  CALL_EXECUTED = 'CALL_EXECUTED', // executed
+  ROLLBACKED = 'ROLLBACKED', // rollbacked
 }
 
 export type XTransactionInput = {
@@ -130,10 +131,12 @@ export type XMessage = {
   events: XCallEventMap;
   status: XMessageStatus;
   destinationChainInitialBlockHeight: bigint;
-
   isPrimary: boolean;
-  // onSuccess: (xMessage: XMessage) => Promise<void>;
-  // onFail: (xMessage: XMessage) => Promise<void>;
+
+  useXCallScanner?: boolean;
+  xCallScannerData?: any;
+  sourceTransactionHash?: string;
+  destinationTransactionHash?: string;
 };
 
 export type XTransaction = {

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -82,6 +83,7 @@ type XMessageStore = {
   add: (xMessage: XMessage) => void;
   updateSourceTransaction: (id: string, { rawTx }: { rawTx: any }) => void;
   updateXMessageEvents: (id: string, events: XCallEventMap) => Promise<void>;
+  updateXMessageXCallScannerData: (id: string, data: any) => void;
   remove: (id: string) => void;
   refreshXMessage: (id: string) => void;
   onMessageUpdate: (xMessage: XMessage) => void;
@@ -180,6 +182,8 @@ export const useXMessageStore = create<XMessageStore>()(
           delete state.messages[id];
         });
       },
+
+      // TODO: is it necessary?
       refreshXMessage: (id: string) => {
         const xMessage = get().messages[id];
         if (!xMessage) return;
@@ -193,6 +197,51 @@ export const useXMessageStore = create<XMessageStore>()(
         });
 
         get().onMessageUpdate(xMessage);
+      },
+
+      updateXMessageXCallScannerData: (id: string, data: any) => {
+        const xMessage = get().messages[id];
+        const oldStatus = xMessage.status;
+
+        let newStatus;
+        switch (data.status) {
+          case 'pending':
+            newStatus = XMessageStatus.CALL_MESSAGE_SENT;
+            break;
+          case 'delivered':
+            newStatus = XMessageStatus.CALL_MESSAGE;
+            break;
+          case 'executed':
+            newStatus = XMessageStatus.CALL_EXECUTED;
+            break;
+          case 'rollbacked':
+            newStatus = XMessageStatus.ROLLBACKED;
+            break;
+          default:
+            break;
+        }
+
+        const newXMessage: XMessage = {
+          ...xMessage,
+          status: newStatus,
+          destinationTransactionHash: data.dest_tx_hash,
+          xCallScannerData: data,
+        };
+
+        set(state => {
+          state.messages[id] = newXMessage;
+        });
+
+        if (newStatus !== oldStatus) {
+          console.log('XMessage status changed:', id, oldStatus, '->', newStatus);
+          if (
+            newStatus === XMessageStatus.CALL_EXECUTED ||
+            newStatus === XMessageStatus.FAILED ||
+            newStatus === XMessageStatus.ROLLBACKED
+          ) {
+            get().onMessageUpdate(newXMessage);
+          }
+        }
       },
 
       onMessageUpdate: (xMessage: XMessage) => {
@@ -209,7 +258,7 @@ export const useXMessageStore = create<XMessageStore>()(
             }
           }
 
-          if (xMessage.status === XMessageStatus.FAILED) {
+          if (xMessage.status === XMessageStatus.FAILED || xMessage.status === XMessageStatus.ROLLBACKED) {
             xTransactionActions.fail(xTransaction.id);
           }
         } else {
@@ -217,36 +266,64 @@ export const useXMessageStore = create<XMessageStore>()(
             xTransactionActions.success(xTransaction.id);
           }
 
-          if (xMessage.status === XMessageStatus.FAILED) {
+          if (xMessage.status === XMessageStatus.FAILED || xMessage.status === XMessageStatus.ROLLBACKED) {
             xTransactionActions.fail(xTransaction.id);
           }
         }
       },
 
       createSecondaryMessage: (xTransaction: XTransaction, primaryMessage: XMessage) => {
-        if (!primaryMessage.destinationTransaction) {
-          throw new Error('destinationTransaction is not found'); // it should not happen
+        if (primaryMessage.useXCallScanner) {
+          if (!primaryMessage.destinationTransactionHash) {
+            throw new Error('destinationTransaction is not found'); // it should not happen
+          }
+
+          const sourceChainId = primaryMessage.destinationChainId;
+          const destinationChainId = xTransaction.finalDestinationChainId;
+          const sourceTransaction = primaryMessage.destinationTransaction;
+
+          const secondaryMessageId = `${sourceChainId}/${sourceTransaction?.hash}`;
+          const secondaryMessage: XMessage = {
+            id: secondaryMessageId,
+            xTransactionId: xTransaction.id,
+            sourceChainId,
+            destinationChainId,
+            sourceTransaction: primaryMessage.sourceTransaction,
+            status: XMessageStatus.REQUESTED,
+            events: {},
+            destinationChainInitialBlockHeight: xTransaction.finalDestinationChainInitialBlockHeight,
+            isPrimary: false,
+            useXCallScanner: true,
+            sourceTransactionHash: primaryMessage.destinationTransactionHash,
+          };
+
+          get().add(secondaryMessage);
+        } else {
+          if (!primaryMessage.destinationTransaction) {
+            throw new Error('destinationTransaction is not found'); // it should not happen
+          }
+
+          const sourceChainId = primaryMessage.destinationChainId;
+          const destinationChainId = xTransaction.finalDestinationChainId;
+
+          const sourceTransaction = primaryMessage.destinationTransaction;
+
+          const secondaryMessageId = `${sourceChainId}/${sourceTransaction?.hash}`;
+          const secondaryMessage: XMessage = {
+            id: secondaryMessageId,
+            xTransactionId: xTransaction.id,
+            sourceChainId,
+            destinationChainId,
+            sourceTransaction: sourceTransaction,
+            status: XMessageStatus.REQUESTED,
+            events: {},
+            destinationChainInitialBlockHeight: xTransaction.finalDestinationChainInitialBlockHeight,
+            isPrimary: false,
+            useXCallScanner: false,
+          };
+
+          get().add(secondaryMessage);
         }
-
-        const sourceChainId = primaryMessage.destinationChainId;
-        const destinationChainId = xTransaction.finalDestinationChainId;
-
-        const sourceTransaction = primaryMessage.destinationTransaction;
-
-        const secondaryMessageId = `${sourceChainId}/${sourceTransaction?.hash}`;
-        const secondaryMessage: XMessage = {
-          id: secondaryMessageId,
-          xTransactionId: xTransaction.id,
-          sourceChainId,
-          destinationChainId,
-          sourceTransaction: sourceTransaction,
-          status: XMessageStatus.REQUESTED,
-          events: {},
-          destinationChainInitialBlockHeight: xTransaction.finalDestinationChainInitialBlockHeight,
-          isPrimary: false,
-        };
-
-        get().add(secondaryMessage);
       },
     })),
     {
@@ -283,13 +360,12 @@ export const xMessageActions = {
   updateXMessageEvents: async (id: string, events: XCallEventMap) => {
     await useXMessageStore.getState().updateXMessageEvents(id, events);
   },
+  updateXMessageXCallScannerData: (id: string, data: any) => {
+    useXMessageStore.getState().updateXMessageXCallScannerData(id, data);
+  },
 
   remove: (id: string) => {
     useXMessageStore.getState().remove(id);
-  },
-
-  refreshXMessage: (id: string) => {
-    useXMessageStore.getState().refreshXMessage(id);
   },
 
   getXMessageStatusDescription: (xMessageId: string) => {
@@ -382,7 +458,7 @@ const useFetchTransaction = (transaction: Transaction | undefined) => {
   return { rawTx, isLoading };
 };
 
-export const XMessageUpdater = ({ xMessage }: { xMessage: XMessage }) => {
+const XMessageUpdater = ({ xMessage }: { xMessage: XMessage }) => {
   const { id, destinationChainId, destinationChainInitialBlockHeight, status } = xMessage || {};
 
   useXCallEventScanner(id);
@@ -417,15 +493,52 @@ export const XMessageUpdater = ({ xMessage }: { xMessage: XMessage }) => {
   return null;
 };
 
+const XMessageUpdater2 = ({ xMessage }: { xMessage: XMessage }) => {
+  const { sourceChainId, sourceTransactionHash } = xMessage;
+  const { data: message, isLoading } = useQuery({
+    queryKey: ['xcallscanner', sourceChainId, sourceTransactionHash],
+    queryFn: async () => {
+      const url = `https://xcallscan.xyz/api/search?value=${sourceTransactionHash}`;
+      const response = await axios.get(url);
+
+      console.log('xcallscanner response', response.data);
+
+      const messages = response.data?.data || [];
+      return messages.find((m: any) => m.src_tx_hash === sourceTransactionHash) || null;
+    },
+    refetchInterval: 2000,
+    enabled: Boolean(sourceTransactionHash),
+  });
+
+  useEffect(() => {
+    if (message && !isLoading) {
+      xMessageActions.updateXMessageXCallScannerData(xMessage.id, message);
+    }
+  }, [message, isLoading, xMessage.id]);
+
+  return null;
+};
+
 export const AllXMessagesUpdater = () => {
   const xMessages = useXMessageStore(state => Object.values(state.messages));
 
   return (
     <>
       {xMessages
-        .filter(x => x.status !== XMessageStatus.CALL_EXECUTED && x.status !== XMessageStatus.FAILED)
+        .filter(
+          x =>
+            x.status !== XMessageStatus.CALL_EXECUTED &&
+            x.status !== XMessageStatus.FAILED &&
+            x.status !== XMessageStatus.ROLLBACKED,
+        )
         .map(xMessage => (
-          <XMessageUpdater key={xMessage.id} xMessage={xMessage} />
+          <>
+            {xMessage.useXCallScanner ? (
+              <XMessageUpdater2 key={xMessage.id} xMessage={xMessage} />
+            ) : (
+              <XMessageUpdater key={xMessage.id} xMessage={xMessage} />
+            )}
+          </>
         ))}
     </>
   );

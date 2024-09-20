@@ -118,6 +118,45 @@ export class SuiXWalletClient extends XWalletClient {
       // @ts-ignore
       reportTransactionEffects(txResult.rawEffects!);
     } else if (isBnUSD) {
+      const coins = await this.getXService().suiClient.getCoins({
+        owner: account,
+        coinType: inputAmount.currency.wrapped.address,
+      });
+
+      const txb = new Transaction();
+
+      const [depositCoin] = txb.splitCoins(coins.data[0].coinObjectId, [100_000_000]);
+      const [feeCoin] = txb.splitCoins(txb.gas, [1_000_000_000]);
+
+      txb.moveCall({
+        target: `${addressesMainnet['Balanced Package Id']}::balanced_dollar_crosschain::cross_transfer`,
+        arguments: [
+          txb.object(addressesMainnet['bnUSD Storage']),
+          txb.object(addressesMainnet['xCall Storage']),
+          txb.object(addressesMainnet['xCall Manager Storage']),
+          feeCoin,
+          depositCoin,
+          txb.pure(bcs.string().serialize(destination)),
+          txb.pure(bcs.vector(bcs.string()).serialize([''])),
+        ],
+        // typeArguments: [],
+      });
+
+      const { bytes, signature, reportTransactionEffects } = await signTransaction({
+        transaction: txb,
+      });
+
+      txResult = await this.getXService().suiClient.executeTransactionBlock({
+        transactionBlock: bytes,
+        signature,
+        options: {
+          showRawEffects: true,
+        },
+      });
+
+      // Always report transaction effects to the wallet after execution
+      // @ts-ignore
+      reportTransactionEffects(txResult.rawEffects!);
     } else {
       throw new Error('Only native token and bnUSD are supported');
     }

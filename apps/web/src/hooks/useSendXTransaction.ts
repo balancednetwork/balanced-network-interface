@@ -15,12 +15,13 @@ import {
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
 import { xServiceActions } from '@/xwagmi/xcall/zustand/useXServiceStore';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { useSignTransaction } from '@mysten/dapp-kit';
 import { useMemo } from 'react';
 import { transactionActions } from './useTransactionStore';
 
 const iconChainId: XChainId = '0x1.icon';
 
-const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess = () => {}) => {
+const sendXTransaction = async (xTransactionInput: XTransactionInput, options: any) => {
   const { direction } = xTransactionInput;
   const sourceChainId = direction.from;
 
@@ -31,7 +32,7 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess 
 
   console.log('xTransactionInput', xTransactionInput);
 
-  const sourceTransactionHash = await srcXWalletClient.executeTransaction(xTransactionInput);
+  const sourceTransactionHash = await srcXWalletClient.executeTransaction(xTransactionInput, options);
   if (!sourceTransactionHash) {
     return;
   }
@@ -203,11 +204,13 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess 
 };
 
 export const useSendXTransaction = () => {
+  const { mutateAsync: signTransaction } = useSignTransaction();
+
   return useMemo(
     () => ({
-      sendXTransaction: (xTransactionInput: XTransactionInput, onSuccess = () => {}) =>
-        sendXTransaction(xTransactionInput, onSuccess),
+      sendXTransaction: (xTransactionInput: XTransactionInput) =>
+        sendXTransaction(xTransactionInput, { signTransaction }),
     }),
-    [],
+    [signTransaction],
   );
 };

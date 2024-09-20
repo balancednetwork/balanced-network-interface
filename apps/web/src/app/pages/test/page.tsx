@@ -14,8 +14,8 @@ import { Flex } from 'rebass/styled-components';
 const SUI = new XToken('sui', 'sui', NATIVE_ADDRESS, 9, 'SUI', 'SUI');
 
 const addressesMainnet = {
-  'Balanced Package Id': '0xd5aa24a346fd89468d13f00f57162df8a498ec11c197df2bc4257ad74fa977b1',
-  'xCall Package Id': '0x522db921ec57618419eff7c403d430ef886a45e9d9551009ac4babdb330e0e3b',
+  'Balanced Package Id': '0x52af654cd5f58aaf99638d71fd46896637abff823a9c6e152a297b9832a7ee72',
+  'xCall Package Id': '0x3638b141b349173a97261bbfa33ccd45334d41a80584db6f30429e18736206fe',
   'xCall Storage': '0xe9ae3e2d32cdf659ad5db4219b1086cc0b375da5c4f8859c872148895a2eace2',
   'xCall Manager Id': '0xa1fe210d98fb18114455e75f241ab985375dfa27720181268d92fe3499a1111e',
   'xCall Manager Storage': '0x1bbf52529d14124738fac0abc1386670b7927b6d68cab7f9bd998a0c0b274042',
@@ -37,11 +37,20 @@ export function TestPage() {
       //   owner: suiAccount.address,
       // });
       // console.log('allBalances', allBalances);
-      const res = await client.queryTransactionBlocks({
-        limit: 1,
+      // const res = await client.queryTransactionBlocks({
+      //   limit: 1,
+      //   options: {
+      //     showEvents: true,
+      //     showInput: true,
+      //   },
+      // });
+      // console.log('res', res);
+
+      const res = await client.getTransactionBlock({
+        digest: '4i4xps7uTEivVUuTyodGHaKwLRJ7UAFmUvEpP1cVY4NV',
         options: {
-          showEvents: true,
-          showInput: true,
+          showRawInput: true,
+          showEffects: true,
         },
       });
       console.log('res', res);
@@ -56,10 +65,6 @@ export function TestPage() {
     setIsProcessing(true);
 
     try {
-      // const xcallfee = await havahJs.XCall.getFee('0x1.icon', true);
-
-      // console.log('xcallfee', xcallfee);
-
       const currencyAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(currencyInValue, currency);
 
       if (!currencyAmount) {
@@ -70,10 +75,12 @@ export function TestPage() {
 
       const destination = `0x1.icon/${iconAccount.address}`;
       const xCallFee = {
-        rollback: BigInt(100_000_000),
+        rollback: BigInt(1_000_000_000),
       };
 
       const txb = new Transaction();
+
+      // txb.setGasBudget(100_000_000);
 
       const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [8_000_000, 1_000_000_000]);
 
@@ -102,10 +109,6 @@ export function TestPage() {
           showRawEffects: true,
         },
       });
-
-      // Always report transaction effects to the wallet after execution
-      // @ts-ignore
-      reportTransactionEffects(executeResult.rawEffects!);
     } catch (error) {
       console.error('error', error);
     }

@@ -281,7 +281,7 @@ export const sui: XChain = {
   xChainType: 'SUI',
   tracker: 'https://suiscan.xyz/mainnet/',
   nativeCurrency: {
-    decimals: 18,
+    decimals: 9,
     name: 'SUI',
     symbol: 'SUI',
   },

@@ -1083,7 +1083,7 @@ export function useWithdrawalsFloorDEXData(): UseQueryResult<WithdrawalsFloorDat
   return useQuery({
     queryKey: [`withdrawalsFloorDEXData-${tokensSuccess ? 'tokens' : ''}`],
     queryFn: async () => {
-      const tokens = [bnJs.BALN.address, bnJs.sICX.address, bnJs.bnUSD.address];
+      const tokens = SUPPORTED_TOKENS_LIST.map(token => token.address);
 
       if (allTokens) {
         const cdsArray: CallData[][] = [
@@ -1131,7 +1131,14 @@ export function useWithdrawalsFloorDEXData(): UseQueryResult<WithdrawalsFloorDat
             };
           })
           .filter(item => item.floor.isGreaterThan(0))
-          .sort((a, b) => (a.floor.isGreaterThan(b.floor) ? -1 : 1));
+          .sort((a, b) =>
+            a.current
+              .minus(a.floor)
+              .times(allTokens[a.token.address].price)
+              .isGreaterThan(b.current.minus(b.floor).times(allTokens[b.token.address].price))
+              ? -1
+              : 1,
+          );
 
         return {
           assetFloorData,

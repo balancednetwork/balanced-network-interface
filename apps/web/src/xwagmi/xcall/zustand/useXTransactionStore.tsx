@@ -5,7 +5,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { XChainId } from '@/xwagmi/types';
-import { XMessage, XTransaction, XTransactionStatus } from '../types';
+import { XTransaction, XTransactionStatus } from '../types';
 import { xMessageActions } from './useXMessageStore';
 
 type XTransactionStore = {
@@ -75,7 +75,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
             const aPrimaryMessage = xMessageActions.getOf(a.id, true);
             const bPrimaryMessage = xMessageActions.getOf(b.id, true);
             if (aPrimaryMessage && bPrimaryMessage) {
-              return bPrimaryMessage?.sourceTransaction.timestamp - aPrimaryMessage?.sourceTransaction.timestamp;
+              return bPrimaryMessage.createdAt - aPrimaryMessage.createdAt;
             }
             return 0;
           });

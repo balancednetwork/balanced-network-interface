@@ -1,5 +1,3 @@
-import { Event } from '@cosmjs/cosmwasm-stargate';
-
 export enum XCallEventType {
   CallMessageSent = 'CallMessageSent',
   CallMessage = 'CallMessage',
@@ -126,8 +124,9 @@ export type XMessage = {
 
   sourceChainId: XChainId;
   destinationChainId: XChainId;
-  sourceTransaction: Transaction;
-  destinationTransaction?: Transaction;
+  sourceTransactionHash: string;
+  destinationTransactionHash?: string;
+
   events: XCallEventMap;
   status: XMessageStatus;
   destinationChainInitialBlockHeight: bigint;
@@ -135,8 +134,7 @@ export type XMessage = {
 
   useXCallScanner?: boolean;
   xCallScannerData?: any;
-  sourceTransactionHash?: string;
-  destinationTransactionHash?: string;
+  createdAt: number; // timestamp in milliseconds
 };
 
 export type XTransaction = {

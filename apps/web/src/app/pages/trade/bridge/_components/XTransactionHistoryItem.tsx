@@ -75,13 +75,12 @@ const XTransactionHistoryItem = ({ xTransaction }: { xTransaction: XTransaction 
   const primaryMessage = xMessageActions.getOf(xTransaction.id, true);
 
   const [elapsedTime, setElapsedTime] = useState(0);
-  const timestamp = primaryMessage?.sourceTransaction.timestamp;
+  const timestamp = primaryMessage?.createdAt;
 
   useEffect(() => {
     if (timestamp && xTransaction.status === XTransactionStatus.pending) {
       const interval = setInterval(() => {
-        const now = Date.now();
-        const elapsed = Math.floor((now - timestamp) / 1000);
+        const elapsed = Math.floor((Date.now() - timestamp) / 1000);
         setElapsedTime(elapsed);
       }, 1000);
 

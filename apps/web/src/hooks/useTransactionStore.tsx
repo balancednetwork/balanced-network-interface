@@ -12,15 +12,23 @@ import {
 } from '@/app/components/Notification/TransactionNotification';
 import { getXPublicClient } from '@/xwagmi/actions';
 import { XChainId } from '@/xwagmi/types';
+import { persist } from 'zustand/middleware';
 import { Transaction, TransactionStatus } from '../xwagmi/xcall/types';
 
 type TransactionStore = {
   transactions: Transaction[];
 };
 
-export const useTransactionStore = create<TransactionStore>()(set => ({
-  transactions: [],
-}));
+export const useTransactionStore = create<TransactionStore>()(
+  persist(
+    set => ({
+      transactions: [],
+    }),
+    {
+      name: 'transaction-store',
+    },
+  ),
+);
 
 const getTrackerLink = (xChainId: XChainId, hash: string, type) => {
   // TODO: handle different chain types
@@ -31,6 +39,9 @@ const getTrackerLink = (xChainId: XChainId, hash: string, type) => {
 };
 
 export const transactionActions = {
+  get: (hash: string) => {
+    return useTransactionStore.getState().transactions.find(transaction => transaction.hash === hash);
+  },
   add: (
     xChainId: XChainId,
     transaction: {
@@ -117,8 +128,10 @@ export const transactionActions = {
   },
 };
 
-export const useFetchTransaction = (transaction: Transaction | undefined) => {
-  const { xChainId, hash, status } = transaction || {};
+export const useFetchTransaction = (hash: string) => {
+  const transaction = useTransactionStore(state => state.transactions.find(item => item.hash === hash));
+
+  const { xChainId, status } = transaction || {};
   const { data: rawTx, isLoading } = useQuery({
     queryKey: ['transaction', xChainId, hash],
     queryFn: async () => {
@@ -141,7 +154,7 @@ export const useFetchTransaction = (transaction: Transaction | undefined) => {
 };
 
 export const TransactionUpdater = ({ transaction }: { transaction: Transaction }) => {
-  const { rawTx } = useFetchTransaction(transaction);
+  const { rawTx } = useFetchTransaction(transaction.hash);
   const { xChainId, id } = transaction;
 
   useEffect(() => {

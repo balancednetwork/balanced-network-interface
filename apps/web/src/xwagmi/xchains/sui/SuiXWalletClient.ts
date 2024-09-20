@@ -4,7 +4,7 @@ import bnJs from '../icon/bnJs';
 import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
 
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
-import { showMessageOnBeforeUnload, toDec } from '@/xwagmi/utils';
+import { showMessageOnBeforeUnload } from '@/xwagmi/utils';
 import { bcs } from '@mysten/sui/bcs';
 import { Transaction } from '@mysten/sui/transactions';
 import { toHex } from 'viem';
@@ -118,14 +118,25 @@ export class SuiXWalletClient extends XWalletClient {
       // @ts-ignore
       reportTransactionEffects(txResult.rawEffects!);
     } else if (isBnUSD) {
-      const coins = await this.getXService().suiClient.getCoins({
-        owner: account,
-        coinType: inputAmount.currency.wrapped.address,
-      });
+      const coins = (
+        await this.getXService().suiClient.getCoins({
+          owner: account,
+          coinType: inputAmount.currency.wrapped.address,
+        })
+      )?.data;
 
       const txb = new Transaction();
 
-      const [depositCoin] = txb.splitCoins(coins.data[0].coinObjectId, [100_000_000]);
+      if (!coins || coins.length === 0) {
+        throw new Error('No coins found');
+      } else if (coins.length > 1) {
+        await txb.mergeCoins(
+          coins[0].coinObjectId,
+          coins.slice(1).map(coin => coin.coinObjectId),
+        );
+      }
+
+      const [depositCoin] = txb.splitCoins(coins[0].coinObjectId, [100_000_000]);
       const [feeCoin] = txb.splitCoins(txb.gas, [1_000_000_000]);
 
       txb.moveCall({

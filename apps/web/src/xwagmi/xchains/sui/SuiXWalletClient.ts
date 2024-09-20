@@ -4,10 +4,9 @@ import bnJs from '../icon/bnJs';
 import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
 
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
-import { showMessageOnBeforeUnload } from '@/xwagmi/utils';
 import { bcs } from '@mysten/sui/bcs';
 import { Transaction } from '@mysten/sui/transactions';
-import { toHex } from 'viem';
+import { toBytes } from 'viem';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData } from '../../xcall/utils';
 import { SuiXService } from './SuiXService';
@@ -43,8 +42,6 @@ export class SuiXWalletClient extends XWalletClient {
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
     const receiver = `${direction.to}/${recipient}`;
 
-    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
     let data;
     if (type === XTransactionType.SWAP) {
       if (!executionTrade || !slippageTolerance) {
@@ -53,21 +50,10 @@ export class SuiXWalletClient extends XWalletClient {
 
       const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
 
-      // data = toHex(
-      //   JSON.stringify({
-      //     method: '_swap',
-      //     params: {
-      //       path: executionTrade.route.pathForSwap,
-      //       receiver: receiver,
-      //       minimumReceive: minReceived.quotient.toString(),
-      //     },
-      //   }),
-      // );
-
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived).toString('hex');
-      data = `0x${rlpEncodedData}`;
+      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived);
+      data = rlpEncodedData;
     } else if (type === XTransactionType.BRIDGE) {
-      data = toHex(
+      data = toBytes(
         JSON.stringify({
           method: '_swap',
           params: {
@@ -82,12 +68,13 @@ export class SuiXWalletClient extends XWalletClient {
 
     const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
+    const amount = BigInt(inputAmount.quotient.toString());
 
     let txResult;
     if (isNative) {
       const txb = new Transaction();
 
-      const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [8_000_000, 1_000_000_000]);
+      const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, 200_000_000]);
       txb.moveCall({
         target: `${addressesMainnet['Balanced Package Id']}::asset_manager::deposit`,
         arguments: [
@@ -97,7 +84,7 @@ export class SuiXWalletClient extends XWalletClient {
           feeCoin,
           depositCoin,
           txb.pure(bcs.vector(bcs.string()).serialize([destination])),
-          txb.pure(bcs.vector(bcs.string()).serialize(['0x'])),
+          txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([data])),
         ],
         typeArguments: ['0x2::sui::SUI'],
       });
@@ -136,8 +123,8 @@ export class SuiXWalletClient extends XWalletClient {
         );
       }
 
-      const [depositCoin] = txb.splitCoins(coins[0].coinObjectId, [100_000_000]);
-      const [feeCoin] = txb.splitCoins(txb.gas, [1_000_000_000]);
+      const [depositCoin] = txb.splitCoins(coins[0].coinObjectId, [amount]);
+      const [feeCoin] = txb.splitCoins(txb.gas, [200_000_000]);
 
       txb.moveCall({
         target: `${addressesMainnet['Balanced Package Id']}::balanced_dollar_crosschain::cross_transfer`,
@@ -148,7 +135,7 @@ export class SuiXWalletClient extends XWalletClient {
           feeCoin,
           depositCoin,
           txb.pure(bcs.string().serialize(destination)),
-          txb.pure(bcs.vector(bcs.string()).serialize([''])),
+          txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([data])),
         ],
         // typeArguments: [],
       });

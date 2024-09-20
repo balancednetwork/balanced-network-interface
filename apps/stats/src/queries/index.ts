@@ -1131,7 +1131,14 @@ export function useWithdrawalsFloorDEXData(): UseQueryResult<WithdrawalsFloorDat
             };
           })
           .filter(item => item.floor.isGreaterThan(0))
-          .sort((a, b) => (a.floor.isGreaterThan(b.floor) ? -1 : 1));
+          .sort((a, b) =>
+            a.current
+              .minus(a.floor)
+              .times(allTokens[a.token.address].price)
+              .isGreaterThan(b.current.minus(b.floor).times(allTokens[b.token.address].price))
+              ? -1
+              : 1,
+          );
 
         return {
           assetFloorData,

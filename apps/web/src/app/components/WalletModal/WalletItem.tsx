@@ -48,10 +48,12 @@ const WalletItem = ({
   const handleConnect = () => {
     if (!xConnectors || xConnectors.length === 0) return;
 
-    if (xConnectors.length === 1) {
+    if (xChainType === 'EVM') {
+      modalActions.openModal(MODAL_ID.EVM_WALLET_OPTIONS_MODAL);
+    } else if (xChainType === 'INJECTIVE') {
+      modalActions.openModal(MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL);
+    } else {
       xConnect(xConnectors[0]);
-    } else if (xConnectors.length > 1 && walletOptionsModalId) {
-      modalActions.openModal(walletOptionsModalId);
     }
   };
   const handleDisconnect = () => {

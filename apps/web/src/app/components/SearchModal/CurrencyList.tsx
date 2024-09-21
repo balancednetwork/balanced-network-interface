@@ -358,7 +358,7 @@ export default function CurrencyList({
     }
   }, [rates]);
 
-  const { sortBy, handleSortSelect, sortData } = useSortCurrency({ key: 'symbol' }, selectedChainId);
+  const { sortBy, handleSortSelect, sortData } = useSortCurrency({ key: 'symbol', order: 'ASC' }, selectedChainId);
   const sortedCurrencies = React.useMemo(() => {
     if (currencies && rateFracs) {
       return sortData(currencies, rateFracs);
@@ -376,6 +376,7 @@ export default function CurrencyList({
     if (basedOnWallet) {
       handleSortSelect({
         key: 'value',
+        order: 'DESC',
       });
     } else {
       handleSortSelect({
@@ -394,7 +395,6 @@ export default function CurrencyList({
           onClick={() =>
             handleSortSelect({
               key: 'symbol',
-              order: 'ASC',
             })
           }
         >

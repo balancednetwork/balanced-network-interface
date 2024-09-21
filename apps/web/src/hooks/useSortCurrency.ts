@@ -54,9 +54,9 @@ export default function useSortCurrency(initialState: SortingType, selectedChain
 
   const handleSortSelect = useCallback(
     (clickedSortBy: SortingType) => {
-      if (clickedSortBy.key === sortBy.key) {
+      if (clickedSortBy.key === sortBy.key && !clickedSortBy.order) {
         if (!sortBy.order) {
-          clickedSortBy.order = clickedSortBy.order || 'DESC';
+          clickedSortBy.order = clickedSortBy.key === 'symbol' ? 'ASC' : 'DESC';
         } else {
           sortBy.order === 'DESC' ? (clickedSortBy.order = 'ASC') : (clickedSortBy.order = 'DESC');
         }

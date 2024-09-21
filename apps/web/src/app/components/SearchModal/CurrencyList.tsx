@@ -288,7 +288,7 @@ function CurrencyRow({
         onMouseLeave={close}
         $hideBorder={!!showBreakdown}
       >
-        {hasSigned ? <RowContentSignedIn /> : <RowContentNotSignedIn />}
+        {hasSigned && basedOnWallet ? <RowContentSignedIn /> : <RowContentNotSignedIn />}
       </ListItem>
 
       {showBreakdown ? (
@@ -358,7 +358,7 @@ export default function CurrencyList({
     }
   }, [rates]);
 
-  const { sortBy, handleSortSelect, sortData } = useSortCurrency({ key: 'symbol', order: 'ASC' }, selectedChainId);
+  const { sortBy, handleSortSelect, sortData } = useSortCurrency({ key: 'symbol' }, selectedChainId);
   const sortedCurrencies = React.useMemo(() => {
     if (currencies && rateFracs) {
       return sortData(currencies, rateFracs);
@@ -371,6 +371,20 @@ export default function CurrencyList({
     }
   }, [isOpen, handleEscape, onDismiss]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    if (basedOnWallet) {
+      handleSortSelect({
+        key: 'value',
+      });
+    } else {
+      handleSortSelect({
+        key: 'symbol',
+        order: 'ASC',
+      });
+    }
+  }, [basedOnWallet]);
+
   return (
     <List1 mt={3}>
       <DashGrid>
@@ -380,6 +394,7 @@ export default function CurrencyList({
           onClick={() =>
             handleSortSelect({
               key: 'symbol',
+              order: 'ASC',
             })
           }
         >
@@ -387,7 +402,7 @@ export default function CurrencyList({
             <Trans>Asset</Trans>
           </span>
         </StyledHeaderText>
-        {hasSignedIn ? (
+        {hasSignedIn && basedOnWallet ? (
           <StyledHeaderText
             role="button"
             className={sortBy.key === 'value' ? sortBy.order : ''}

@@ -5,18 +5,14 @@ import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
-import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
 
-import { Button } from '@/app/components/Button';
-import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { UnderlineText, UnderlineTextWithArrow } from '@/app/components/DropdownText';
-import { BrightPanel } from '@/app/components/Panel';
 import { DropdownPopper } from '@/app/components/Popover';
 import { SelectorType } from '@/app/components/SearchModal/CurrencySearch';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
+import { Button } from '@/components/ui/button';
 import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
 import useManualAddresses from '@/hooks/useManualAddresses';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
@@ -190,7 +186,7 @@ export default function SwapPanel() {
   };
 
   const swapButton = isValid ? (
-    <Button color="primary" onClick={handleSwap}>
+    <Button variant="default" onClick={handleSwap}>
       <Trans>Swap</Trans>
     </Button>
   ) : (
@@ -201,48 +197,47 @@ export default function SwapPanel() {
 
   return (
     <>
-      <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
-        <AutoColumn gap="md">
-          <Flex alignItems="center" justifyContent="space-between">
+      <div className="px-3 py-7 flex flex-col">
+        <div className="flex flex-col gap-4 items-stretch">
+          <div className="flex items-end justify-between">
             <Typography variant="h2">
-              <Trans>Swap</Trans>
+              <Trans>You pay</Trans>
             </Typography>
-            <Typography as="div" hidden={!account}>
+            <Typography className="text-foreground" as="div" hidden={!account}>
               <Trans>Wallet:</Trans>{' '}
               {`${
                 currencyBalances[Field.INPUT] ? currencyBalances[Field.INPUT]?.toFixed(4, { groupSeparator: ',' }) : 0
               } 
                 ${currencies[Field.INPUT]?.symbol}`}
             </Typography>
-          </Flex>
+          </div>
 
-          <Flex>
-            <CurrencyInputPanel
-              account={account}
-              value={formattedAmounts[Field.INPUT]}
-              currency={currencies[Field.INPUT]}
-              onUserInput={handleTypeInput}
-              onCurrencySelect={handleInputSelect}
-              onPercentSelect={signedInWallets.length > 0 ? handleInputPercentSelect : undefined}
-              percent={percents[Field.INPUT]}
-              xChainId={direction.from}
-              onChainSelect={handleSwapInputChainSelection}
-              showCrossChainOptions={true}
-              selectorType={SelectorType.SWAP_IN}
-            />
-          </Flex>
+          <CurrencyInputPanel
+            label="You pay"
+            account={account}
+            value={formattedAmounts[Field.INPUT]}
+            currency={currencies[Field.INPUT]}
+            onUserInput={handleTypeInput}
+            onCurrencySelect={handleInputSelect}
+            onPercentSelect={signedInWallets.length > 0 ? handleInputPercentSelect : undefined}
+            percent={percents[Field.INPUT]}
+            xChainId={direction.from}
+            onChainSelect={handleSwapInputChainSelection}
+            showCrossChainOptions={true}
+            selectorType={SelectorType.SWAP_IN}
+          />
 
-          <Flex alignItems="center" justifyContent="center" my={-1}>
-            <FlipButton onClick={onSwitchTokens}>
+          <div className="flex items-center justify-center">
+            <div className="cursor-pointer" onClick={onSwitchTokens}>
               <FlipIcon width={25} height={17} />
-            </FlipButton>
-          </Flex>
+            </div>
+          </div>
 
-          <Flex alignItems="center" justifyContent="space-between">
+          <div className="flex items-center justify-between">
             <Typography variant="h2">
-              <Trans>For</Trans>
+              <Trans>You receive</Trans>
             </Typography>
-            <Typography as="div" hidden={!recipient}>
+            <Typography className="text-foreground" as="div" hidden={!recipient}>
               {recipient && (
                 <>
                   <Trans>Wallet:</Trans>{' '}
@@ -259,28 +254,25 @@ export default function SwapPanel() {
                 </>
               )}
             </Typography>
-          </Flex>
+          </div>
 
-          <Flex>
-            <CurrencyInputPanel
-              account={account}
-              value={formattedAmounts[Field.OUTPUT]}
-              currency={currencies[Field.OUTPUT]}
-              onUserInput={handleTypeOutput}
-              onCurrencySelect={handleOutputSelect}
-              xChainId={direction.to}
-              onChainSelect={handleSwapOutputChainSelection}
-              showCrossChainOptions={true}
-              addressEditable
-              selectorType={SelectorType.SWAP_OUT}
-              setManualAddress={setManualAddress}
-            />
-          </Flex>
-        </AutoColumn>
+          <CurrencyInputPanel
+            label="You receive"
+            account={account}
+            value={formattedAmounts[Field.OUTPUT]}
+            currency={currencies[Field.OUTPUT]}
+            onUserInput={handleTypeOutput}
+            onCurrencySelect={handleOutputSelect}
+            xChainId={direction.to}
+            onChainSelect={handleSwapOutputChainSelection}
+            showCrossChainOptions={true}
+            addressEditable
+            selectorType={SelectorType.SWAP_OUT}
+            setManualAddress={setManualAddress}
+          />
 
-        <AutoColumn gap="5px" mt={5}>
-          <Flex alignItems="center" justifyContent="space-between">
-            <Typography>
+          <div className="flex items-center justify-between">
+            <Typography className="text-secondary">
               <Trans>Price impact</Trans>
             </Typography>
 
@@ -290,10 +282,10 @@ export default function SwapPanel() {
             >
               {priceImpact}
             </Typography>
-          </Flex>
+          </div>
 
-          <Flex alignItems="center" justifyContent="space-between">
-            <Typography>
+          <div className="flex items-center justify-between">
+            <Typography className="text-secondary">
               <Trans>Minimum to receive</Trans>
             </Typography>
 
@@ -314,14 +306,12 @@ export default function SwapPanel() {
                 </DropdownPopper>
               </div>
             </ClickAwayListener>
-          </Flex>
+          </div>
 
-          <Flex justifyContent="center" mt={4}>
-            {swapButton}
-          </Flex>
+          <div className="flex justify-center">{swapButton}</div>
 
           {!canBridge && maximumBridgeAmount && (
-            <Flex alignItems="center" justifyContent="center" mt={2}>
+            <div className="flex items-center justify-center mt-2">
               <Typography textAlign="center">
                 {new BigNumber(maximumBridgeAmount.toFixed()).isGreaterThanOrEqualTo(0.0001) ? (
                   <>
@@ -340,10 +330,10 @@ export default function SwapPanel() {
 
                 <Trans>is available on {xChainMap[direction?.to].name}.</Trans>
               </Typography>
-            </Flex>
+            </div>
           )}
-        </AutoColumn>
-      </BrightPanel>
+        </div>
+      </div>
 
       <SwapModal
         isOpen={showSwapConfirm}
@@ -365,7 +355,3 @@ export default function SwapPanel() {
     </>
   );
 }
-
-const FlipButton = styled(Box)`
-  cursor: pointer;
-`;

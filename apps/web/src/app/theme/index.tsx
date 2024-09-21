@@ -3,10 +3,10 @@ import React from 'react';
 import { TextProps } from 'rebass';
 import { Text } from 'rebass/styled-components';
 import {
+  DefaultTheme,
+  MediaFunction,
   ThemeProvider as StyledComponentsThemeProvider,
   createGlobalStyle,
-  MediaFunction,
-  DefaultTheme,
   css,
 } from 'styled-components';
 
@@ -294,11 +294,6 @@ export const FixedGlobalStyle = createGlobalStyle`
 `;
 
 export const ThemedGlobalStyle = createGlobalStyle`
-  html {
-    color: ${({ theme }) => theme.colors.text1};
-    background-color: ${({ theme }) => theme.colors.bg1};
-  }
-
   body {
     min-height: 100vh;
   }

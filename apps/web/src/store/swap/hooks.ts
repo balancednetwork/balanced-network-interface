@@ -359,7 +359,7 @@ export function useInitialSwapLoad(): void {
       const newPair = `${inputCurrency}_${outputCurrency}`;
 
       if (pair !== newPair) {
-        navigate(`/trade/${newPair}`, { replace: true });
+        navigate(`/swap/${newPair}`, { replace: true });
       }
     }
   }, [currencies, pair, navigate, firstLoad]);

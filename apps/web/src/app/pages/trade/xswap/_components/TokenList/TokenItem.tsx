@@ -71,14 +71,6 @@ export const LoaderComponent = () => (
   </Loader>
 );
 
-const ChainsWrapper = styled.div`
-  margin-top: 3px;
-
-  img {
-    margin-right: 8px;
-  }
-`;
-
 const TokenItem = ({ token, isLast }: TokenItemProps) => {
   const ICX = useICX();
   const tsStart = useTimestampRounded(1000 * 60, 7);
@@ -128,11 +120,11 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
                   {token.symbol}
                 </Typography>
               </Flex>
-              <ChainsWrapper>
+              <div className="flex gap-1">
                 {xChainIds.map(xChainId => (
                   <ChainLogo key={xChainId} chain={xChainMap[xChainId]} size="18px" />
                 ))}
-              </ChainsWrapper>
+              </div>
             </Box>
           </Flex>
         </DataText>

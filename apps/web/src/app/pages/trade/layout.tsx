@@ -2,9 +2,8 @@ import React from 'react';
 
 import { Trans } from '@lingui/macro';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Box, Flex } from 'rebass/styled-components';
 
-import { Tab, Tabs } from '@/app/components/Tab';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useIconReact } from '@/packages/icon-react';
 import { useFetchBBalnInfo, useFetchBBalnSources } from '@/store/bbaln/hooks';
 import { useFetchOraclePrices } from '@/store/oracle/hooks';
@@ -24,36 +23,30 @@ export function TradePageLayout() {
   useFetchBBalnInfo(account);
   useFetchStabilityFundBalances();
 
-  const [value, setValue] = React.useState<number>(
-    location.pathname.includes('/supply') ? 1 : location.pathname.includes('/bridge') ? 2 : 0,
-  );
-
-  const handleTabClick = (event: React.MouseEvent, value: number) => {
-    setValue(value);
-    if (value === 0) {
-      navigate('/trade', { replace: true });
-    }
-    if (value === 1) {
-      navigate('/trade/bridge', { replace: true });
-    }
+  const handleTabClick = (value: string) => {
+    navigate(`/${value}`);
   };
 
-  return (
-    <Box flex={1}>
-      <Flex mb={10} flexDirection="column">
-        <Flex alignItems="center" justifyContent="space-between">
-          <Tabs value={value} onChange={handleTabClick}>
-            <Tab>
-              <Trans>Swap</Trans>
-            </Tab>
-            <Tab>
-              <Trans>Bridge</Trans>
-            </Tab>
-          </Tabs>
-        </Flex>
+  const value = location.pathname.split('/')[1];
 
+  return (
+    <div className="flex-1">
+      <div className="flex flex-col mb-10 w-full max-w-md">
+        <Tabs value={value} onValueChange={handleTabClick}>
+          <TabsList>
+            <TabsTrigger value="swap">
+              <Trans>Swap</Trans>
+            </TabsTrigger>
+            <TabsTrigger value="limit">
+              <Trans>Limit</Trans>
+            </TabsTrigger>
+            <TabsTrigger value="dca">
+              <Trans>DCA</Trans>
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
         <Outlet />
-      </Flex>
-    </Box>
+      </div>
+    </div>
   );
 }

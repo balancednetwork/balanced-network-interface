@@ -36,12 +36,6 @@ const StyledLogo = styled(Logo)`
   `}
 `;
 
-const WalletInfo = styled(Box)`
-  text-align: right;
-  margin-right: 15px;
-  min-height: 42px;
-`;
-
 const WalletButtonWrapper = styled(Box)<{ $hasnotification?: boolean }>`
   position: relative;
   ${({ $hasnotification }) => ($hasnotification ? notificationCSS : '')}
@@ -130,8 +124,8 @@ function useClaimableICX(): UseQueryResult<BigNumber> {
   });
 }
 
-export default function Header(props: { title?: string; className?: string }) {
-  const { className, title } = props;
+export default function Header(props: { className?: string }) {
+  const { className } = props;
   const upSmall = useMedia('(min-width: 600px)');
   const wallets = useSignedInWallets();
   const { data: claimableICX } = useClaimableICX();
@@ -155,31 +149,28 @@ export default function Header(props: { title?: string; className?: string }) {
 
   return (
     <header className={className}>
-      <Flex justifyContent="space-between">
-        <Flex alignItems="center">
+      <div className="flex justify-between">
+        <div className="flex items-center">
           <StyledLogo />
-          <Typography variant="h1">
-            {/* @ts-ignore */}
-            <Trans id={title} />
-          </Typography>
+
           {NETWORK_ID !== NetworkId.MAINNET && (
             <Typography variant="h3" color="alert" fontSize={upSmall ? 20 : 9}>
               {CHAIN_INFO[NETWORK_ID].name}
             </Typography>
           )}
-        </Flex>
+        </div>
 
         {wallets.length === 0 && (
-          <Flex alignItems="center">
+          <div className="flex items-center">
             <Button onClick={toggleWalletModal}>
               <Trans>Sign in</Trans>
             </Button>
-          </Flex>
+          </div>
         )}
 
         {wallets.length > 0 && (
-          <Flex alignItems="center">
-            <WalletInfo>
+          <div className="flex items-center">
+            <div className="text-left mr-4 min-h-11">
               {upSmall && (
                 <>
                   {wallets.length > 1 ? (
@@ -212,7 +203,7 @@ export default function Header(props: { title?: string; className?: string }) {
                   )}
                 </>
               )}
-            </WalletInfo>
+            </div>
 
             <WalletButtonWrapper $hasnotification={claimableICX?.isGreaterThan(0)}>
               <ClickAwayListener onClickAway={e => handleWalletClose(e)}>
@@ -233,9 +224,9 @@ export default function Header(props: { title?: string; className?: string }) {
                 </div>
               </ClickAwayListener>
             </WalletButtonWrapper>
-          </Flex>
+          </div>
         )}
-      </Flex>
+      </div>
     </header>
   );
 }

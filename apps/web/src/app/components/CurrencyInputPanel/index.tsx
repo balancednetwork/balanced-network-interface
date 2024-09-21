@@ -2,11 +2,11 @@ import React, { useCallback, useMemo } from 'react';
 
 import { Currency } from '@balancednetwork/sdk-core';
 import ClickAwayListener from 'react-click-away-listener';
-import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import CurrencyLogo from '@/app/components/CurrencyLogo';
 import { SelectorPopover } from '@/app/components/Popover';
+import { Typography } from '@/app/theme';
 import DropDown from '@/assets/icons/arrow-down.svg';
 import useWidth from '@/hooks/useWidth';
 import { COMMON_PERCENTS } from '@/store/swap/reducer';
@@ -14,15 +14,11 @@ import { escapeRegExp } from '@/utils';
 import { DEFAULT_TOKEN_CHAIN } from '@/xwagmi/constants/xTokens';
 import { XChainId } from '@/xwagmi/types';
 import { getSupportedXChainForToken } from '@/xwagmi/xcall/utils';
+import { Trans } from 'react-i18next';
 import { HorizontalList, Option } from '../List';
 import { CurrencySelectionType, SelectorType } from '../SearchModal/CurrencySearch';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 import CrossChainOptions from '../trade/CrossChainOptions';
-
-const InputContainer = styled.div`
-  display: inline-flex;
-  width: 100%;
-`;
 
 const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean; $active: boolean }>`
   border: ${({ theme, bg = 'bg2' }) => `2px solid ${theme.colors[bg]}`};
@@ -90,6 +86,7 @@ const ItemList = styled(Option)<{ selected: boolean }>`
 `;
 
 interface CurrencyInputPanelProps {
+  label: string;
   value: string;
   onUserInput: (value: string) => void;
   onCurrencySelect?: (currency: Currency) => void;
@@ -116,6 +113,7 @@ interface CurrencyInputPanelProps {
 export const inputRegex = /^\d*(?:\\[.])?\d*$/; // match escaped "." characters via in a non-capturing group
 
 export default function CurrencyInputPanel({
+  label,
   value,
   onUserInput,
   onCurrencySelect,
@@ -191,8 +189,18 @@ export default function CurrencyInputPanel({
   );
 
   return (
-    <Box width={1}>
-      <InputContainer ref={ref} className={className}>
+    <div className="w-full bg-card p-4">
+      <div className="flex items-end justify-between mb-2">
+        <Typography variant="h4">
+          <Trans>{label}</Trans>
+        </Typography>
+        <Typography as="div" className="text-foreground" hidden={!account}>
+          <Trans>Wallet:</Trans>{' '}
+          {/* {`${currencyBalances[Field.INPUT] ? currencyBalances[Field.INPUT]?.toFixed(4, { groupSeparator: ',' }) : 0} 
+                ${currencies[Field.INPUT]?.symbol}`} */}
+        </Typography>
+      </div>
+      <div ref={ref} className="inline-flex w-full">
         <ClickAwayListener onClickAway={() => setOpen(false)}>
           <div>
             <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect} $active={!!showCrossChainOptions}>
@@ -266,7 +274,7 @@ export default function CurrencyInputPanel({
             </HorizontalList>
           </SelectorPopover>
         )}
-      </InputContainer>
+      </div>
 
       {showCrossChainOptions && (
         <CrossChainOptions
@@ -282,6 +290,6 @@ export default function CurrencyInputPanel({
           setManualAddress={setManualAddress}
         />
       )}
-    </Box>
+    </div>
   );
 }

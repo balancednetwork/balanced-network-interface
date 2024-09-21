@@ -384,7 +384,7 @@ export default function CurrencyList({
         order: 'ASC',
       });
     }
-  }, [basedOnWallet]);
+  }, [basedOnWallet, hasSignedIn]);
 
   return (
     <List1 mt={3}>

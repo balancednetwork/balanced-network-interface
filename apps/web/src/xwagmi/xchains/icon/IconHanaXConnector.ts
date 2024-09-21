@@ -9,11 +9,11 @@ export class IconHanaXConnector extends XConnector {
   }
 
   async connect(): Promise<XAccount | undefined> {
-    const { hanaWallet } = window as any;
-    if (!hanaWallet && !hanaWallet?.isAvailable) {
-      window.open('https://chromewebstore.google.com/detail/hana-wallet/jfdlamikmbghhapbgfoogdffldioobgl', '_blank');
-      return;
-    }
+    // const { hanaWallet } = window as any;
+    // if (!hanaWallet && !hanaWallet?.isAvailable) {
+    //   window.open('https://chromewebstore.google.com/detail/hana-wallet/jfdlamikmbghhapbgfoogdffldioobgl', '_blank');
+    //   return;
+    // }
 
     const detail = await request({
       type: ICONexRequestEventType.REQUEST_ADDRESS,

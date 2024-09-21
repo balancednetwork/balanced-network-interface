@@ -306,15 +306,16 @@ export const xMessageActions = {
     }
     switch (xMessage.status) {
       case XMessageStatus.REQUESTED:
-        return `Awaiting confirmation on ${getNetworkDisplayName(xMessage.sourceChainId)}...`;
+      case XMessageStatus.AWAITING_CALL_MESSAGE_SENT:
+      case XMessageStatus.CALL_MESSAGE_SENT:
+      case XMessageStatus.CALL_MESSAGE:
+        if (xMessage.isPrimary) {
+          return `Confirming transaction on ${getNetworkDisplayName(xMessage.sourceChainId)}...`;
+        } else {
+          return `Finalising transaction on ${getNetworkDisplayName(xMessage.destinationChainId)}...`;
+        }
       case XMessageStatus.FAILED:
         return `Transfer failed.`;
-      case XMessageStatus.AWAITING_CALL_MESSAGE_SENT:
-        return `Awaiting confirmation on ${getNetworkDisplayName(xMessage.sourceChainId)}...`;
-      case XMessageStatus.CALL_MESSAGE_SENT:
-        return `Finalising transaction on ${getNetworkDisplayName(xMessage.destinationChainId)}...`;
-      case XMessageStatus.CALL_MESSAGE:
-        return `Finalising transaction on ${getNetworkDisplayName(xMessage.destinationChainId)}...`;
       case XMessageStatus.CALL_EXECUTED:
         return `Complete.`;
       default:

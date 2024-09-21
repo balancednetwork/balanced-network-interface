@@ -1,6 +1,6 @@
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import bnJs from '@/bnJs';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
 const networkAddressToName = {
@@ -12,6 +12,7 @@ const networkAddressToName = {
   '0xa4b1.arbitrum': 'Arbitrum',
   '0x2105.base': 'Base',
   '0xa.optimism': 'Optimism',
+  '0x89.polygon': 'Polygon',
 };
 
 export const getNetworkName = (networkAddress: string) => {

@@ -148,7 +148,7 @@ export default function Header(props: { title?: string; className?: string }) {
   const toggleWalletModal = useWalletModalToggle();
 
   const handleWalletClose = e => {
-    if (!e.target.closest('[data-reach-dialog-overlay]')) {
+    if (!e.target.closest('[data-reach-dialog-overlay]') && !e.target.closest('.has-modal')) {
       setAnchor(null);
     }
   };

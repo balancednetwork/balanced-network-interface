@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 
-import { addresses } from '@balancednetwork/balanced-js';
-import BigNumber from 'bignumber.js';
 import { useTokenPrices } from '@/queries/backendv2';
 import { useHoldings, usePOLData } from '@/queries/blockDetails';
+import { addresses } from '@balancednetwork/balanced-js';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import BigNumber from 'bignumber.js';
 
+import { EXTENDED_CHART_COLORS } from '@/queries/nol';
 import { CHART_COLORS } from '@/sections/BALNSection/queries';
 
 const daoFundAddress = addresses[1].daofund;
@@ -15,8 +16,8 @@ const CHART_TOKENS_COLORS = {
   sICX: '#2ca9b7',
   BALN: '#1694b8',
   bnUSD: '#217f94',
-  BTCB: '#E9983D',
-  ETH: '#3D3D3D',
+  ETH: '#217f94',
+  BTC: '#1694b8',
   default: '#334764',
 };
 
@@ -110,7 +111,7 @@ export function useDAOFundHoldingsPieData() {
                   return {
                     name: token.symbol,
                     value: curAmount.times(tokenPrices[token.symbol!]).toNumber(),
-                    fill: CHART_TOKENS_COLORS[token.symbol!] || CHART_TOKENS_COLORS.default,
+                    fill: EXTENDED_CHART_COLORS[token.symbol!] || EXTENDED_CHART_COLORS.default,
                     amount: curAmount.toNumber(),
                   };
                 } else {
@@ -173,7 +174,7 @@ export function useReserveFundHoldingsPieData() {
                   return {
                     name: token.symbol,
                     value: curAmount.times(tokenPrices[token.symbol!]).toNumber(),
-                    fill: CHART_TOKENS_COLORS[token.symbol!] || CHART_TOKENS_COLORS.default,
+                    fill: EXTENDED_CHART_COLORS[token.symbol!] || EXTENDED_CHART_COLORS.default,
                     amount: curAmount.toNumber(),
                   };
                 } else {

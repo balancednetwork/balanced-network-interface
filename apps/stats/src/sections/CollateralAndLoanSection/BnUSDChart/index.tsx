@@ -1,7 +1,7 @@
 import React from 'react';
 
-import dayjs from 'dayjs';
 import { useBorrowersInfo, useFundInfo, useLoanInfo } from '@/queries';
+import dayjs from 'dayjs';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
@@ -12,10 +12,10 @@ import { MAX_BOOST } from '@/sections/PairSection';
 import { Typography } from '@/theme';
 import { getFormattedNumber } from '@/utils/formatter';
 
-import { TimeFrame } from '../TimeFrameSelector';
-import Chart from './Chart';
 import QuestionHelper, { QuestionWrapper } from '@/components/QuestionHelper';
 import { useDebtCeilings } from '@/queries/bnusd';
+import { TimeFrame } from '../TimeFrameSelector';
+import Chart from './Chart';
 
 export default function BnUSDChart({
   selectedCollateral,
@@ -101,9 +101,13 @@ export default function BnUSDChart({
                 <Typography variant="p" fontSize="18px">
                   {fundInfo ? `${fundInfo.feeIn}% - ${fundInfo.feeOut}%` : <LoaderComponent />}
                 </Typography>
-                <QuestionWrapper style={{ transform: 'translateY(-2px)', marginLeft: '5px' }}>
-                  <QuestionHelper text="Use the Stability Fund to swap approved assets 1:1 for bnUSD. If you trade the inverse, there's a 0.5% fee." />
-                </QuestionWrapper>
+                {fundInfo && (
+                  <QuestionWrapper style={{ transform: 'translateY(-2px)', marginLeft: '5px' }}>
+                    <QuestionHelper
+                      text={`Use the Stability Fund to swap approved assets 1:1 for bnUSD. If you trade the inverse, there's a ${fundInfo.feeOut}% fee.`}
+                    />
+                  </QuestionWrapper>
+                )}
               </Flex>
               <Typography color="text1">Stability Fund fee</Typography>
             </ChartInfoItem>

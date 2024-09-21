@@ -381,9 +381,9 @@ export function useAllCollateralData() {
         const responseAVAX = await axios.get(
           `${API_ENDPOINT}contract-methods?skip=0&limit=1000&contract_name=loans_AVAX_balance`,
         );
-        // const responseBTC = await axios.get(
-        //   `${API_ENDPOINT}contract-methods?skip=0&limit=1000&contract_name=loans_BTC_balance`,
-        // );
+        const responseBTC = await axios.get(
+          `${API_ENDPOINT}contract-methods?skip=0&limit=1000&contract_name=loans_BTC_balance`,
+        );
         const responseETH = await axios.get(
           `${API_ENDPOINT}contract-methods?skip=0&limit=1000&contract_name=loans_ETH_balance`,
         );
@@ -396,7 +396,7 @@ export function useAllCollateralData() {
           const seriesINJ = setTimeToMs(trimStartingZeroValues(responseINJ.data));
           const seriesBNB = setTimeToMs(trimStartingZeroValues(responseBNB.data));
           const seriesAVAX = setTimeToMs(trimStartingZeroValues(responseAVAX.data));
-          // const seriesBTC = setTimeToMs(trimStartingZeroValues(responseBTC.data
+          const seriesBTC = setTimeToMs(trimStartingZeroValues(responseBTC.data));
 
           const seriesSICXCopy = seriesSICX.slice();
           const seriesETHCopy = seriesETH.slice();
@@ -404,7 +404,7 @@ export function useAllCollateralData() {
           const seriesINJCopy = seriesINJ.slice();
           const seriesBNBCopy = seriesBNB.slice();
           const seriesAVAXCopy = seriesAVAX.slice();
-          // const seriesBTCCopy = seriesBTC.slice();
+          const seriesBTCCopy = seriesBTC.slice();
 
           const seriesTotal = seriesSICXCopy.map((item, index) => {
             let currentTotal = tokenPrices['sICX'].times(item.value);
@@ -414,7 +414,7 @@ export function useAllCollateralData() {
             }
 
             if (seriesStabilityCopy[index]) {
-              currentTotal = currentTotal.plus(seriesStabilityCopy[index]['sum_of_values']);
+              currentTotal = currentTotal.plus(seriesStabilityCopy[index]['balance']);
             }
 
             if (seriesINJCopy[index]) {
@@ -429,9 +429,9 @@ export function useAllCollateralData() {
               currentTotal = currentTotal.plus(tokenPrices['AVAX'].times(seriesAVAXCopy[index].value));
             }
 
-            // if (seriesBTCCopy[index]) {
-            //   currentTotal = currentTotal.plus(tokenPrices['BTC'].times(seriesBTCCopy[index].value));
-            // }
+            if (seriesBTCCopy[index]) {
+              currentTotal = currentTotal.plus(tokenPrices['BTC'].times(seriesBTCCopy[index].value));
+            }
 
             return {
               timestamp: item.timestamp,
@@ -442,13 +442,13 @@ export function useAllCollateralData() {
           result.series['sICX'] = seriesSICX.slice().reverse();
           result.series['ETH'] = seriesETH.slice().reverse();
           result.series['fundTotal'] = seriesStabilityCopy
-            .map(item => ({ ...item, value: item.sum_of_values }))
+            .map(item => ({ ...item, value: item.balance }))
             .slice()
             .reverse();
           result.series['INJ'] = seriesINJ.slice().reverse();
           result.series['BNB'] = seriesBNB.slice().reverse();
           result.series['AVAX'] = seriesAVAX.slice().reverse();
-          // result.series['BTC'] = seriesBTC.slice().reverse();
+          result.series['BTC'] = seriesBTC.slice().reverse();
           result.series['total'] = seriesTotal.slice().reverse();
 
           result.current['sICX'] = {
@@ -475,10 +475,10 @@ export function useAllCollateralData() {
             amount: seriesAVAX[0].value,
             value: tokenPrices['AVAX'].times(seriesAVAX[0].value).toNumber(),
           };
-          // result.current['BTC'] = {
-          //   amount: seriesBTC[0].value,
-          //   value: tokenPrices['BTC'].times(seriesBTC[0].value).toNumber(),
-          //
+          result.current['BTC'] = {
+            amount: seriesBTC[0].value,
+            value: tokenPrices['BTC'].times(seriesBTC[0].value).toNumber(),
+          };
           result.current['total'] = {
             amount: result.series['total'][result.series['total'].length - 1].value,
             value: result.series['total'][result.series['total'].length - 1].value,
@@ -552,9 +552,9 @@ export function useAllDebtData() {
       const responseAVAX = await axios.get(
         `${API_ENDPOINT}contract-methods?skip=0&limit=1000&contract_name=loans_collateral_debt_AVAX_bnusd`,
       );
-      // const responseBTC = await axios.get(
-      //   `${API_ENDPOINT}contract-methods?skip=0&limit=1000&contract_name=loans_collateral_debt_BTC_bnusd`,
-      // );
+      const responseBTC = await axios.get(
+        `${API_ENDPOINT}contract-methods?skip=0&limit=1000&contract_name=loans_collateral_debt_BTC_bnusd`,
+      );
       const responseTotal = await axios.get(
         `${API_ENDPOINT}contract-methods?skip=0&limit=1000&address=${bnJs.bnUSD.address}&method=totalSupply`,
       );
@@ -565,7 +565,7 @@ export function useAllDebtData() {
         const seriesINJ = responseINJ.data && setTimeToMs(trimStartingZeroValues(responseINJ.data));
         const seriesBNB = responseBNB.data && setTimeToMs(trimStartingZeroValues(responseBNB.data));
         const seriesAVAX = responseAVAX.data && setTimeToMs(trimStartingZeroValues(responseAVAX.data));
-        // const seriesBTC = responseBTC.data && setTimeToMs(trimStartingZeroValues(responseBTC.data));
+        const seriesBTC = responseBTC.data && setTimeToMs(trimStartingZeroValues(responseBTC.data));
         const seriesTotal = responseTotal.data && setTimeToMs(trimStartingZeroValues(responseTotal.data));
 
         const seriesFund = stabilityFundInfo?.series['fundTotal'];
@@ -576,7 +576,7 @@ export function useAllDebtData() {
           INJ: seriesINJ.reverse(),
           BNB: seriesBNB.reverse(),
           AVAX: seriesAVAX.reverse(),
-          // BTC: seriesBTC.reverse(),
+          BTC: seriesBTC.reverse(),
           [predefinedCollateralTypes.STABILITY_FUND]: seriesFund,
           [predefinedCollateralTypes.ALL]: seriesTotal.reverse(),
         };

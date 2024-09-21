@@ -6,7 +6,7 @@ import { Box, Flex } from 'rebass';
 
 import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
-import { XTransaction } from '@/xwagmi/xcall/types';
+import { XTransaction, XTransactionStatus } from '@/xwagmi/xcall/types';
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
 
 const XTransactionState = ({ xTransaction }: { xTransaction: XTransaction }) => {
@@ -32,7 +32,7 @@ const XTransactionState = ({ xTransaction }: { xTransaction: XTransaction }) => 
                 <Trans>{xMessageActions.getXMessageStatusDescription(secondaryMessage.id)}</Trans>
               </Typography>
             )}
-            <Spinner />
+            <Spinner success={status === XTransactionStatus.success} />
           </Flex>
         </Box>
       </motion.div>

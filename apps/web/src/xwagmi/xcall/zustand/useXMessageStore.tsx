@@ -426,7 +426,7 @@ const XMessageUpdater2 = ({ xMessage }: { xMessage: XMessage }) => {
   const { data: message, isLoading } = useQuery({
     queryKey: ['xcallscanner', sourceChainId, sourceTransactionHash],
     queryFn: async () => {
-      const url = `https://xcallscan.xyz/api/search?value=${sourceTransactionHash}`;
+      const url = `http://3.145.76.173:5002/proxy?url=https://xcallscan.xyz/api/search?value=${sourceTransactionHash}`;
       const response = await axios.get(url);
 
       console.log('xcallscanner response', response.data);

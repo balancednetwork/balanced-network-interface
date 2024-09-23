@@ -381,8 +381,8 @@ msgstr ""
 
 #: src/app/components/CollateralTypeSwitcher/CollateralTypeListWrap.tsx
 #: src/app/components/Wallet/index.tsx
-msgid "Search assets"
-msgstr ""
+#~ msgid "Search assets"
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
@@ -751,6 +751,10 @@ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Locked"
+msgstr ""
+
+#: src/app/components/Wallet/index.tsx
+msgid "Search assets and blockchains..."
 msgstr ""
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
@@ -1214,6 +1218,7 @@ msgstr ""
 
 #: src/app/components/home/_components/CollateralChainSelector/ChainList.tsx
 #: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
+#: src/app/pages/trade/bridge/_components/XChainList.tsx
 msgid "Search blockchains..."
 msgstr ""
 
@@ -1412,8 +1417,8 @@ msgid "Total locked"
 msgstr ""
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
-msgid "Search name or contract"
-msgstr ""
+#~ msgid "Search name or contract"
+#~ msgstr ""
 
 #: src/store/bridge/hooks.tsx
 msgid "Connect wallet"
@@ -1529,8 +1534,8 @@ msgid "Voting power available: {0}"
 msgstr ""
 
 #: src/app/pages/trade/bridge/_components/XChainList.tsx
-msgid "Search for blockchains..."
-msgstr ""
+#~ msgid "Search for blockchains..."
+#~ msgstr ""
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "You'll only be able to interact with the default assets listed on Balanced."
@@ -2396,6 +2401,10 @@ msgstr ""
 msgid "Adjust allocation"
 msgstr ""
 
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "Search name or contract..."
+msgstr ""
+
 #: src/app/components/WalletModal/IconWalletModal.tsx
 #~ msgid "Make sure it's connected and try again."
 #~ msgstr ""
@@ -2534,6 +2543,10 @@ msgstr ""
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Create pool"
+msgstr ""
+
+#: src/app/components/CollateralTypeSwitcher/CollateralTypeListWrap.tsx
+msgid "Search assets..."
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx

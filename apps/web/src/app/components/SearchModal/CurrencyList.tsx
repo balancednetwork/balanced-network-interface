@@ -73,6 +73,7 @@ function CurrencyRow({
   showCrossChainBreakdown,
   basedOnWallet,
   selectorType,
+  width,
 }: {
   currency: Currency;
   showCrossChainBreakdown: boolean;
@@ -83,6 +84,7 @@ function CurrencyRow({
   selectedChainId: XChainId | undefined;
   basedOnWallet: boolean;
   selectorType: SelectorType;
+  width?: number;
 }) {
   const currencyXChainIds = useMemo(() => getSupportedXChainIdsForToken(currency), [currency]);
   const balance = useXCurrencyBalance(currency, selectedChainId);
@@ -283,6 +285,7 @@ function CurrencyRow({
   return (
     <>
       <ListItem
+        style={{ display: 'flex', justifyContent: 'space-between', width: width ? `${width - 50}px` : 'auto' }}
         onClick={() => handleClick(currency, finalXChainIds)}
         {...(!isMobile ? { onMouseEnter: open } : null)}
         onMouseLeave={close}
@@ -292,29 +295,37 @@ function CurrencyRow({
       </ListItem>
 
       {showBreakdown ? (
-        <StyledBalanceBreakdown $arrowPosition={currency.symbol ? `${currency.symbol.length * 5 + 26}px` : '40px'}>
-          {basedOnWallet ? (
-            finalXChainIds.map(xChainId => (
-              <MemoizedCurrencyXChainItem
-                key={`${currency.symbol}-${xChainId}`}
-                xChainId={xChainId}
-                currency={currency}
-                price={rateFracs && rateFracs[currency.symbol!] ? rateFracs[currency.symbol!].toFixed(18) : '0'}
-                onSelect={handleXChainCurrencySelect}
-              />
-            ))
-          ) : (
-            <XChainLogoList>
-              {sortedXChains?.map(xChainId => (
-                <MouseoverTooltip key={xChainId} text={xChainMap[xChainId].name} autoWidth placement="bottom">
-                  <Box style={{ cursor: 'pointer' }} onClick={() => handleXChainCurrencySelect(currency, xChainId)}>
-                    <ChainLogo chain={xChainMap[xChainId]} size="18px" />
-                  </Box>
-                </MouseoverTooltip>
-              ))}
-            </XChainLogoList>
-          )}
-        </StyledBalanceBreakdown>
+        <Box style={{ width: width ? `${width - 50}px` : 'auto' }}>
+          <StyledBalanceBreakdown $arrowPosition={currency.symbol ? `${currency.symbol.length * 5 + 26}px` : '40px'}>
+            {basedOnWallet ? (
+              finalXChainIds.map(xChainId => (
+                <MemoizedCurrencyXChainItem
+                  key={`${currency.symbol}-${xChainId}`}
+                  xChainId={xChainId}
+                  currency={currency}
+                  price={rateFracs && rateFracs[currency.symbol!] ? rateFracs[currency.symbol!].toFixed(18) : '0'}
+                  onSelect={handleXChainCurrencySelect}
+                />
+              ))
+            ) : (
+              <XChainLogoList>
+                {sortedXChains?.map(xChainId =>
+                  isMobile ? (
+                    <Box key={xChainId} onClick={() => handleXChainCurrencySelect(currency, xChainId)}>
+                      <ChainLogo chain={xChainMap[xChainId]} size="18px" />
+                    </Box>
+                  ) : (
+                    <MouseoverTooltip key={xChainId} text={xChainMap[xChainId].name} autoWidth placement="bottom">
+                      <Box style={{ cursor: 'pointer' }} onClick={() => handleXChainCurrencySelect(currency, xChainId)}>
+                        <ChainLogo chain={xChainMap[xChainId]} size="18px" />
+                      </Box>
+                    </MouseoverTooltip>
+                  ),
+                )}
+              </XChainLogoList>
+            )}
+          </StyledBalanceBreakdown>
+        </Box>
       ) : null}
     </>
   );
@@ -332,6 +343,7 @@ export default function CurrencyList({
   selectedChainId,
   basedOnWallet,
   selectorType,
+  width,
 }: {
   currencies: Currency[];
   showCrossChainBreakdown: boolean;
@@ -344,6 +356,7 @@ export default function CurrencyList({
   selectedChainId: XChainId | undefined;
   basedOnWallet: boolean;
   selectorType: SelectorType;
+  width?: number;
 }) {
   const handleEscape = useKeyPress('Escape');
   const hasSignedIn = useHasSignedIn();
@@ -388,7 +401,7 @@ export default function CurrencyList({
 
   return (
     <List1 mt={3}>
-      <DashGrid>
+      <DashGrid style={{ width: width ? `${width - 50}px` : 'auto' }}>
         <StyledHeaderText
           role="button"
           className={sortBy.key === 'symbol' ? sortBy.order : ''}
@@ -444,6 +457,7 @@ export default function CurrencyList({
           showCrossChainBreakdown={showCrossChainBreakdown}
           basedOnWallet={basedOnWallet}
           selectorType={selectorType}
+          width={width}
         />
       ))}
     </List1>

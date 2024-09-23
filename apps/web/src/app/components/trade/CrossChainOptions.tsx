@@ -11,6 +11,7 @@ import useWidth from '@/hooks/useWidth';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChain, XChainId } from '@/xwagmi/types';
 import { Currency } from '@balancednetwork/sdk-core';
+import { isMobile } from 'react-device-detect';
 import CrossChainWalletConnect from '../CrossChainWalletConnect';
 import { StyledArrowDownIcon, UnderlineText } from '../DropdownText';
 import { DropdownPopper } from '../Popover';
@@ -114,7 +115,7 @@ const CrossChainOptions = ({
                 anchorEl={anchor}
                 arrowEl={arrowRef.current}
                 customArrowStyle={{
-                  transform: `translateX(${arrowRef.current && containerRef ? Math.floor(arrowRef.current?.getBoundingClientRect().x - containerRef.getBoundingClientRect().x) + 25 + 'px' : '0'})`,
+                  transform: `translateX(${arrowRef.current && containerRef ? Math.floor(arrowRef.current?.getBoundingClientRect().x - containerRef.getBoundingClientRect().x) + (isMobile ? 5 : 25) + 'px' : '0'})`,
                 }}
                 placement="bottom"
                 forcePlacement={true}

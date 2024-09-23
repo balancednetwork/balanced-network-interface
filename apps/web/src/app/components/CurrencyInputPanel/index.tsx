@@ -14,6 +14,7 @@ import { escapeRegExp } from '@/utils';
 import { DEFAULT_TOKEN_CHAIN } from '@/xwagmi/constants/xTokens';
 import { XChainId } from '@/xwagmi/types';
 import { getSupportedXChainForToken } from '@/xwagmi/xcall/utils';
+import { isMobile } from 'react-device-detect';
 import { HorizontalList, Option } from '../List';
 import { CurrencySelectionType, SelectorType } from '../SearchModal/CurrencySearch';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
@@ -218,7 +219,7 @@ export default function CurrencyInputPanel({
                 currencySelectionType={currencySelectionType}
                 showCurrencyAmount={false}
                 anchorEl={ref.current}
-                width={width ? width + 40 : undefined}
+                width={width ? width + (!isMobile ? 40 : 0) : undefined}
                 selectedCurrency={currency}
                 showCommunityListControl={showCommunityListControl}
                 xChainId={xChainId}
@@ -277,7 +278,7 @@ export default function CurrencyInputPanel({
           xChains={xChains}
           editable={addressEditable}
           currency={currency}
-          width={width ? width + 40 : undefined}
+          width={width ? width + (!isMobile ? 40 : 0) : undefined}
           containerRef={ref.current}
           setManualAddress={setManualAddress}
         />

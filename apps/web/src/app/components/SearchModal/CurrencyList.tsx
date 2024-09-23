@@ -73,6 +73,7 @@ function CurrencyRow({
   showCrossChainBreakdown,
   basedOnWallet,
   selectorType,
+  width,
 }: {
   currency: Currency;
   showCrossChainBreakdown: boolean;
@@ -83,6 +84,7 @@ function CurrencyRow({
   selectedChainId: XChainId | undefined;
   basedOnWallet: boolean;
   selectorType: SelectorType;
+  width?: number;
 }) {
   const currencyXChainIds = useMemo(() => getSupportedXChainIdsForToken(currency), [currency]);
   const balance = useXCurrencyBalance(currency, selectedChainId);
@@ -283,7 +285,7 @@ function CurrencyRow({
   return (
     <>
       <ListItem
-        style={{ display: 'flex', justifyContent: 'space-between' }}
+        style={{ display: 'flex', justifyContent: 'space-between', width: width ? `${width + 50}` : 'auto' }}
         onClick={() => handleClick(currency, finalXChainIds)}
         {...(!isMobile ? { onMouseEnter: open } : null)}
         onMouseLeave={close}
@@ -396,8 +398,8 @@ export default function CurrencyList({
   }, [basedOnWallet, hasSignedIn]);
 
   return (
-    <List1 mt={3} width={width ? width : 'auto'}>
-      <DashGrid>
+    <List1 mt={3}>
+      <DashGrid width={width ? `${width + 50}` : 'auto'}>
         <StyledHeaderText
           role="button"
           className={sortBy.key === 'symbol' ? sortBy.order : ''}
@@ -453,6 +455,7 @@ export default function CurrencyList({
           showCrossChainBreakdown={showCrossChainBreakdown}
           basedOnWallet={basedOnWallet}
           selectorType={selectorType}
+          width={width}
         />
       ))}
     </List1>

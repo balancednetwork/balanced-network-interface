@@ -285,7 +285,7 @@ function CurrencyRow({
   return (
     <>
       <ListItem
-        style={{ display: 'flex', justifyContent: 'space-between', width: width ? `${width - 50}` : 'auto' }}
+        style={{ display: 'flex', justifyContent: 'space-between', width: width ? `${width - 50}px` : 'auto' }}
         onClick={() => handleClick(currency, finalXChainIds)}
         {...(!isMobile ? { onMouseEnter: open } : null)}
         onMouseLeave={close}
@@ -399,7 +399,7 @@ export default function CurrencyList({
 
   return (
     <List1 mt={3}>
-      <DashGrid width={width ? `${width - 50}` : 'auto'}>
+      <DashGrid style={{ width: width ? `${width - 50}` : 'auto' }}>
         <StyledHeaderText
           role="button"
           className={sortBy.key === 'symbol' ? sortBy.order : ''}

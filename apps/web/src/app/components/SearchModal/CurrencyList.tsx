@@ -283,7 +283,7 @@ function CurrencyRow({
   return (
     <>
       <ListItem
-        style={{ display: 'flex', justifyContent: 'space-between' }}
+        style={{ display: 'flex', justifyContent: 'space-between', width: '280px' }}
         onClick={() => handleClick(currency, finalXChainIds)}
         {...(!isMobile ? { onMouseEnter: open } : null)}
         onMouseLeave={close}

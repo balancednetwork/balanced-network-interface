@@ -305,13 +305,19 @@ function CurrencyRow({
             ))
           ) : (
             <XChainLogoList>
-              {sortedXChains?.map(xChainId => (
-                <MouseoverTooltip key={xChainId} text={xChainMap[xChainId].name} autoWidth placement="bottom">
-                  <Box style={{ cursor: 'pointer' }} onClick={() => handleXChainCurrencySelect(currency, xChainId)}>
+              {sortedXChains?.map(xChainId =>
+                isMobile ? (
+                  <Box key={xChainId} onClick={() => handleXChainCurrencySelect(currency, xChainId)}>
                     <ChainLogo chain={xChainMap[xChainId]} size="18px" />
                   </Box>
-                </MouseoverTooltip>
-              ))}
+                ) : (
+                  <MouseoverTooltip key={xChainId} text={xChainMap[xChainId].name} autoWidth placement="bottom">
+                    <Box style={{ cursor: 'pointer' }} onClick={() => handleXChainCurrencySelect(currency, xChainId)}>
+                      <ChainLogo chain={xChainMap[xChainId]} size="18px" />
+                    </Box>
+                  </MouseoverTooltip>
+                ),
+              )}
             </XChainLogoList>
           )}
         </StyledBalanceBreakdown>

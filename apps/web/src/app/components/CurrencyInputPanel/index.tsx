@@ -278,7 +278,7 @@ export default function CurrencyInputPanel({
           xChains={xChains}
           editable={addressEditable}
           currency={currency}
-          width={width ? width + 40 : undefined}
+          width={width ? width + (isMobile ? 40 : 0) : undefined}
           containerRef={ref.current}
           setManualAddress={setManualAddress}
         />

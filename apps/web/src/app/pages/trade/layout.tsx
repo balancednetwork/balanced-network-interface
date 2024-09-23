@@ -30,7 +30,7 @@ export function TradePageLayout() {
   const value = location.pathname.split('/')[1];
 
   return (
-    <div className="flex-1">
+    <div className="flex-1 flex justify-center">
       <div className="flex flex-col mb-10 w-full max-w-md">
         <Tabs value={value} onValueChange={handleTabClick}>
           <TabsList>

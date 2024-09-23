@@ -13,7 +13,7 @@ import { DataText, List1, ListItem } from '@/app/components/List';
 import { Typography } from '@/app/theme';
 import useKeyPress from '@/hooks/useKeyPress';
 import useSortCurrency from '@/hooks/useSortCurrency';
-import { useHasSignedIn, useSignedInWallets } from '@/hooks/useWallets';
+import { useHasSignedIn } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useBridgeDirection } from '@/store/bridge/hooks';
 import { useIsUserAddedToken } from '@/store/user/hooks';
@@ -24,11 +24,13 @@ import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
 import { getSupportedXChainIdsForToken } from '@/xwagmi/xcall/utils';
+import { ChainLogo } from '../ChainLogo';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
+import { MouseoverTooltip } from '../Tooltip';
 import { BalanceBreakdown } from '../Wallet/styledComponents';
 import { SelectorType } from './CurrencySearch';
 import CurrencyXChainItem from './CurrencyXChainItem';
-import { HeaderText } from './styleds';
+import { HeaderText, XChainLogoList } from './styleds';
 
 const DashGrid = styled(Box)`
   display: grid;
@@ -286,20 +288,32 @@ function CurrencyRow({
         onMouseLeave={close}
         $hideBorder={!!showBreakdown}
       >
-        {hasSigned ? <RowContentSignedIn /> : <RowContentNotSignedIn />}
+        {hasSigned && basedOnWallet ? <RowContentSignedIn /> : <RowContentNotSignedIn />}
       </ListItem>
 
       {showBreakdown ? (
         <StyledBalanceBreakdown $arrowPosition={currency.symbol ? `${currency.symbol.length * 5 + 26}px` : '40px'}>
-          {finalXChainIds.map(xChainId => (
-            <MemoizedCurrencyXChainItem
-              key={`${currency.symbol}-${xChainId}`}
-              xChainId={xChainId}
-              currency={currency}
-              price={rateFracs && rateFracs[currency.symbol!] ? rateFracs[currency.symbol!].toFixed(18) : '0'}
-              onSelect={handleXChainCurrencySelect}
-            />
-          ))}
+          {basedOnWallet ? (
+            finalXChainIds.map(xChainId => (
+              <MemoizedCurrencyXChainItem
+                key={`${currency.symbol}-${xChainId}`}
+                xChainId={xChainId}
+                currency={currency}
+                price={rateFracs && rateFracs[currency.symbol!] ? rateFracs[currency.symbol!].toFixed(18) : '0'}
+                onSelect={handleXChainCurrencySelect}
+              />
+            ))
+          ) : (
+            <XChainLogoList>
+              {sortedXChains?.map(xChainId => (
+                <MouseoverTooltip key={xChainId} text={xChainMap[xChainId].name} autoWidth placement="bottom">
+                  <Box style={{ cursor: 'pointer' }} onClick={() => handleXChainCurrencySelect(currency, xChainId)}>
+                    <ChainLogo chain={xChainMap[xChainId]} size="18px" />
+                  </Box>
+                </MouseoverTooltip>
+              ))}
+            </XChainLogoList>
+          )}
         </StyledBalanceBreakdown>
       ) : null}
     </>
@@ -357,6 +371,21 @@ export default function CurrencyList({
     }
   }, [isOpen, handleEscape, onDismiss]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    if (basedOnWallet) {
+      handleSortSelect({
+        key: 'value',
+        order: 'DESC',
+      });
+    } else {
+      handleSortSelect({
+        key: 'symbol',
+        order: 'ASC',
+      });
+    }
+  }, [basedOnWallet, hasSignedIn]);
+
   return (
     <List1 mt={3}>
       <DashGrid>
@@ -373,7 +402,7 @@ export default function CurrencyList({
             <Trans>Asset</Trans>
           </span>
         </StyledHeaderText>
-        {hasSignedIn ? (
+        {hasSignedIn && basedOnWallet ? (
           <StyledHeaderText
             role="button"
             className={sortBy.key === 'value' ? sortBy.order : ''}

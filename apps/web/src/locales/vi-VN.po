@@ -390,8 +390,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/Wallet/index.tsx
-msgid "Search assets"
-msgstr ""
+#~ msgid "Search assets"
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
@@ -786,6 +786,10 @@ msgstr ""
 #: src/app/pages/home/BBaln/BBalnPanel.tsx
 #~ msgid "${0}."
 #~ msgstr ""
+
+#: src/app/components/Wallet/index.tsx
+msgid "Search assets and blockchains..."
+msgstr ""
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #~ msgid "Transfer fee: <0>{formattedXCallFee}</0>"
@@ -1239,10 +1243,9 @@ msgstr "Mức phí"
 #~ msgid "Withdrawing"
 #~ msgstr ""
 
-#: src/app/components/home/_components/CollateralChainSelector/ChainList.tsx
-#: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
-#~ msgid "Search blockchains..."
-#~ msgstr ""
+#: src/app/pages/trade/bridge/_components/XChainList.tsx
+msgid "Search blockchains..."
+msgstr ""
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -1448,8 +1451,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
-msgid "Search name or contract"
-msgstr "Tìm kiếm tên hợp đồng"
+#~ msgid "Search name or contract"
+#~ msgstr "Tìm kiếm tên hợp đồng"
 
 #: src/store/bridge/hooks.tsx
 msgid "Connect wallet"
@@ -1573,8 +1576,8 @@ msgstr "{currency} gửi tới ao {pair} thanh khoản."
 #~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/XChainList.tsx
-msgid "Search for blockchains..."
-msgstr ""
+#~ msgid "Search for blockchains..."
+#~ msgstr ""
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "You'll only be able to interact with the default assets listed on Balanced."
@@ -2331,6 +2334,7 @@ msgstr "Tuyến đường"
 
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
 msgid "Borrow, swap, & transfer cross-chain."
 msgstr ""
 
@@ -2430,6 +2434,10 @@ msgstr "1 tuần"
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 #~ msgid "Adjust allocation"
 #~ msgstr ""
+
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "Search name or contract..."
+msgstr ""
 
 #: src/app/components/WalletModal/IconWalletModal.tsx
 #~ msgid "Make sure it's connected and try again."

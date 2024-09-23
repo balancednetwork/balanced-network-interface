@@ -1,6 +1,6 @@
 import { XConnector } from '@/xwagmi/core/XConnector';
 import { XAccount } from '@/xwagmi/types';
-import { connect, disconnect } from '@wagmi/core';
+import { disconnect } from '@wagmi/core';
 import { Connector } from 'wagmi';
 import { wagmiConfig } from './wagmiConfig';
 
@@ -13,9 +13,6 @@ export class EvmXConnector extends XConnector {
   }
 
   async connect(): Promise<XAccount | undefined> {
-    // @ts-ignore
-    await connect(wagmiConfig, { connector: this.connector });
-
     return;
   }
 

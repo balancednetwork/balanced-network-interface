@@ -51,7 +51,7 @@ export const getBalanceDecimals = (price: string | number | undefined) => {
   let decimals = 0;
   if (!price) {
     decimals = 4;
-  } else if (toBigNumber(price).isLessThan(0.01)) {
+  } else if (toBigNumber(price).isLessThan(0.001)) {
     decimals = 0;
   } else if (toBigNumber(price).isLessThan(10)) {
     decimals = 2;

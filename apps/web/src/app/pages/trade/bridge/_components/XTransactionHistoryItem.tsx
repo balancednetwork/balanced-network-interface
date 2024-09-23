@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
@@ -71,17 +71,16 @@ const FailedX = styled(Box)`
 
 const XTransactionHistoryItem = ({ xTransaction }: { xTransaction: XTransaction }) => {
   useXMessageStore();
-  const { primaryMessageId, secondaryMessageId, sourceChainId, finalDestinationChainId } = xTransaction;
-  const primaryMessage = xMessageActions.get(primaryMessageId);
+  const { sourceChainId, finalDestinationChainId } = xTransaction;
+  const primaryMessage = xMessageActions.getOf(xTransaction.id, true);
 
   const [elapsedTime, setElapsedTime] = useState(0);
-  const timestamp = primaryMessage?.sourceTransaction.timestamp;
+  const timestamp = primaryMessage?.createdAt;
 
   useEffect(() => {
     if (timestamp && xTransaction.status === XTransactionStatus.pending) {
       const interval = setInterval(() => {
-        const now = Date.now();
-        const elapsed = Math.floor((now - timestamp) / 1000);
+        const elapsed = Math.floor((Date.now() - timestamp) / 1000);
         setElapsedTime(elapsed);
       }, 1000);
 

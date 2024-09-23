@@ -5,17 +5,15 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { XChainId } from '@/xwagmi/types';
-import { XMessage, XMessageStatus, XTransaction, XTransactionStatus } from '../types';
-import { XMessageUpdater, useXMessageStore, xMessageActions } from './useXMessageStore';
+import { XTransaction, XTransactionStatus } from '../types';
+import { xMessageActions } from './useXMessageStore';
 
 type XTransactionStore = {
   transactions: Record<string, XTransaction>;
   get: (id: string | null) => XTransaction | undefined;
-  // add: (transaction: XTransaction) => void;
-  createSecondaryMessage: (xTransaction: XTransaction, primaryMessage: XMessage) => void;
+  add: (transaction: XTransaction) => void;
   success: (id) => void;
   fail: (id) => void;
-  onMessageUpdate: (id: string, xMessage: XMessage) => void;
   getPendingTransactions: (signedWallets: { xChainId: XChainId | undefined; address: string }[]) => XTransaction[];
   remove: (id: string) => void;
 };
@@ -48,38 +46,9 @@ export const useXTransactionStore = create<XTransactionStore>()(
         if (id) return get().transactions[id];
       },
 
-      // reserved for future use
-      // add: (transaction: XTransaction) => {
-      //   set(state => {
-      //     state.transactions[transaction.id] = transaction;
-      //   });
-      // },
-
-      createSecondaryMessage: (xTransaction: XTransaction, primaryMessage: XMessage) => {
-        if (!primaryMessage.destinationTransaction) {
-          throw new Error('destinationTransaction is not found'); // it should not happen
-        }
-
-        const sourceChainId = primaryMessage.destinationChainId;
-        const destinationChainId = xTransaction.finalDestinationChainId;
-
-        const sourceTransaction = primaryMessage.destinationTransaction;
-
-        const secondaryMessageId = `${sourceChainId}/${sourceTransaction?.hash}`;
-        const secondaryMessage: XMessage = {
-          id: secondaryMessageId,
-          sourceChainId,
-          destinationChainId,
-          sourceTransaction: sourceTransaction,
-          status: XMessageStatus.REQUESTED,
-          events: {},
-          destinationChainInitialBlockHeight: xTransaction.finalDestinationChainInitialBlockHeight,
-        };
-
-        xMessageActions.add(secondaryMessage);
-
+      add: (transaction: XTransaction) => {
         set(state => {
-          state.transactions[xTransaction.id].secondaryMessageId = secondaryMessageId;
+          state.transactions[transaction.id] = transaction;
         });
       },
 
@@ -94,39 +63,6 @@ export const useXTransactionStore = create<XTransactionStore>()(
         });
       },
 
-      onMessageUpdate: (id: string, xMessage: XMessage) => {
-        console.log('onMessageUpdate', { id, xMessage });
-        const xTransaction = get().transactions[id];
-        if (!xTransaction) return;
-
-        const isPrimary = xTransaction.primaryMessageId === xMessage.id;
-        const isSecondary = xTransaction.secondaryMessageId === xMessage.id;
-
-        if (isPrimary) {
-          if (xMessage.status === XMessageStatus.CALL_EXECUTED) {
-            if (xTransaction.secondaryMessageRequired) {
-              get().createSecondaryMessage(xTransaction, xMessage);
-            } else {
-              get().success(id);
-            }
-          }
-
-          if (xMessage.status === XMessageStatus.FAILED) {
-            get().fail(id);
-          }
-        }
-
-        if (isSecondary) {
-          if (xMessage.status === XMessageStatus.CALL_EXECUTED) {
-            get().success(id);
-          }
-
-          if (xMessage.status === XMessageStatus.FAILED) {
-            get().fail(id);
-          }
-        }
-      },
-
       getPendingTransactions: (signedWallets: { xChainId: XChainId | undefined; address: string }[]) => {
         return Object.values(get().transactions)
           .filter((transaction: XTransaction) => {
@@ -135,11 +71,11 @@ export const useXTransactionStore = create<XTransactionStore>()(
               signedWallets.some(wallet => wallet.xChainId === transaction.sourceChainId)
             );
           })
-          .sort((a, b) => {
-            const aPrimaryMessage = xMessageActions.get(a.primaryMessageId);
-            const bPrimaryMessage = xMessageActions.get(b.primaryMessageId);
+          .sort((a: XTransaction, b: XTransaction) => {
+            const aPrimaryMessage = xMessageActions.getOf(a.id, true);
+            const bPrimaryMessage = xMessageActions.getOf(b.id, true);
             if (aPrimaryMessage && bPrimaryMessage) {
-              return bPrimaryMessage?.sourceTransaction.timestamp - aPrimaryMessage?.sourceTransaction.timestamp;
+              return bPrimaryMessage.createdAt - aPrimaryMessage.createdAt;
             }
             return 0;
           });
@@ -162,6 +98,10 @@ export const useXTransactionStore = create<XTransactionStore>()(
 );
 
 export const xTransactionActions = {
+  add: (transaction: XTransaction) => {
+    useXTransactionStore.getState().add(transaction);
+  },
+
   get: (id: string | null) => {
     return useXTransactionStore.getState().get(id);
   },
@@ -174,37 +114,7 @@ export const xTransactionActions = {
     useXTransactionStore.getState().fail(id);
   },
 
-  onMessageUpdate: (id: string, xMessage: XMessage) => {
-    useXTransactionStore.getState().onMessageUpdate(id, xMessage);
-  },
-
-  getPendingTransactions: (signedWallets: { xChainId: XChainId | undefined; address: string }[]) => {
-    return useXTransactionStore.getState().getPendingTransactions(signedWallets);
-  },
-
-  getByMessageId: (messageId: string) => {
-    const transactions = useXTransactionStore.getState().transactions;
-    return Object.values(transactions).find(
-      transaction => transaction.primaryMessageId === messageId || transaction.secondaryMessageId === messageId,
-    );
-  },
-
   remove: (id: string) => {
     useXTransactionStore.getState().remove(id);
   },
-};
-
-export const XTransactionUpdater = ({ xTransaction }: { xTransaction: XTransaction }) => {
-  useXMessageStore();
-  const { primaryMessageId, secondaryMessageId } = xTransaction;
-
-  const primaryMessage = xMessageActions.get(primaryMessageId);
-  const secondaryMessage = secondaryMessageId && xMessageActions.get(secondaryMessageId);
-
-  return (
-    <>
-      {primaryMessage && <XMessageUpdater xMessage={primaryMessage} />}
-      {secondaryMessage && <XMessageUpdater xMessage={secondaryMessage} />}
-    </>
-  );
 };

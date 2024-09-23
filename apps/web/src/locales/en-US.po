@@ -381,8 +381,8 @@ msgstr "wallet"
 #~ msgstr "Switch Network"
 
 #: src/app/components/Wallet/index.tsx
-msgid "Search assets"
-msgstr "Search assets"
+#~ msgid "Search assets"
+#~ msgstr "Search assets"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
@@ -751,6 +751,10 @@ msgstr "{0} approved for cross-chain transfer."
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "Locked"
 #~ msgstr "Locked"
+
+#: src/app/components/Wallet/index.tsx
+msgid "Search assets and blockchains..."
+msgstr "Search assets and blockchains..."
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #~ msgid "Transfer fee: <0>{formattedXCallFee}</0>"
@@ -1196,10 +1200,9 @@ msgstr "Fee"
 #~ msgid "Withdrawing"
 #~ msgstr "Withdrawing"
 
-#: src/app/components/home/_components/CollateralChainSelector/ChainList.tsx
-#: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
-#~ msgid "Search blockchains..."
-#~ msgstr "Search blockchains..."
+#: src/app/pages/trade/bridge/_components/XChainList.tsx
+msgid "Search blockchains..."
+msgstr "Search blockchains..."
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -1400,8 +1403,8 @@ msgstr "You pay"
 #~ msgstr "Total locked"
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
-msgid "Search name or contract"
-msgstr "Search name or contract"
+#~ msgid "Search name or contract"
+#~ msgstr "Search name or contract"
 
 #: src/store/bridge/hooks.tsx
 msgid "Connect wallet"
@@ -1517,8 +1520,8 @@ msgstr "{currency} sent to the {pair} pool."
 #~ msgstr "Voting power available: {0}"
 
 #: src/app/pages/trade/bridge/_components/XChainList.tsx
-msgid "Search for blockchains..."
-msgstr "Search for blockchains..."
+#~ msgid "Search for blockchains..."
+#~ msgstr "Search for blockchains..."
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "You'll only be able to interact with the default assets listed on Balanced."
@@ -2265,6 +2268,7 @@ msgstr "Route"
 
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
 msgid "Borrow, swap, & transfer cross-chain."
 msgstr "Borrow, swap, & transfer cross-chain."
 
@@ -2364,6 +2368,10 @@ msgstr "1W"
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 #~ msgid "Adjust allocation"
 #~ msgstr "Adjust allocation"
+
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "Search name or contract..."
+msgstr "Search name or contract..."
 
 #: src/app/components/WalletModal/IconWalletModal.tsx
 #~ msgid "Make sure it's connected and try again."

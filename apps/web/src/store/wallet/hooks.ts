@@ -183,6 +183,17 @@ export function useWalletFetchBalances() {
   React.useEffect(() => {
     injectiveBalances && dispatch(changeBalances({ xChainId: 'injective-1', balances: injectiveBalances }));
   }, [injectiveBalances, dispatch]);
+
+  const { address: accountSui } = useXAccount('SUI');
+  const suiTokens = useXTokens('sui');
+  const { data: suiBalances } = useXBalances({
+    xChainId: 'sui',
+    xTokens: suiTokens,
+    address: accountSui,
+  });
+  React.useEffect(() => {
+    suiBalances && dispatch(changeBalances({ xChainId: 'sui', balances: suiBalances }));
+  }, [suiBalances, dispatch]);
 }
 
 export const useHasEnoughICX = () => {

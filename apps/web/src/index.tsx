@@ -10,7 +10,8 @@ import { HelmetProvider } from 'react-helmet-async';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
-// import * as serviceWorker from 'serviceWorker';
+import { SuiClientProvider, WalletProvider } from '@mysten/dapp-kit';
+import { getFullnodeUrl } from '@mysten/sui/client';
 
 // Import root app
 import { App } from '@/app';
@@ -41,6 +42,11 @@ const fmt = {
   suffix: '',
 };
 
+const networks = {
+  devnet: { url: getFullnodeUrl('devnet') },
+  mainnet: { url: getFullnodeUrl('mainnet') },
+};
+
 BigNumber.config({ FORMAT: fmt, ROUNDING_MODE: BigNumber.ROUND_DOWN });
 BigNumber.set({ ROUNDING_MODE: BigNumber.ROUND_DOWN }); // equivalent
 
@@ -49,13 +55,17 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
       <BrowserRouter>
         <HelmetProvider>
-          <WagmiProvider config={wagmiConfig}>
-            <QueryClientProvider client={queryClient}>
-              <LanguageProvider>
-                <App />
-              </LanguageProvider>
-            </QueryClientProvider>
-          </WagmiProvider>
+          <QueryClientProvider client={queryClient}>
+            <WagmiProvider config={wagmiConfig}>
+              <SuiClientProvider networks={networks} defaultNetwork="mainnet">
+                <WalletProvider autoConnect={true}>
+                  <LanguageProvider>
+                    <App />
+                  </LanguageProvider>
+                </WalletProvider>
+              </SuiClientProvider>
+            </WagmiProvider>
+          </QueryClientProvider>
         </HelmetProvider>
       </BrowserRouter>
     </Provider>

@@ -1,3 +1,4 @@
+import { useDisconnectWallet } from '@mysten/dapp-kit';
 import { useCallback } from 'react';
 import { useDisconnect } from 'wagmi';
 import { getXService } from '../actions';
@@ -9,20 +10,29 @@ export function useXDisconnect() {
   const unsetXConnection = useXWagmiStore(state => state.unsetXConnection);
 
   const { disconnectAsync } = useDisconnect();
+  const { mutateAsync: suiDisconnectAsync } = useDisconnectWallet();
 
   const disconnect = useCallback(
     async (xChainType: XChainType) => {
-      if (xChainType === 'EVM') {
-        await disconnectAsync();
-      } else {
-        const xService = getXService(xChainType);
-        const xConnectorId = xConnections[xChainType]?.xConnectorId;
-        const xConnector = xConnectorId ? xService.getXConnectorById(xConnectorId) : undefined;
-        await xConnector?.disconnect();
+      switch (xChainType) {
+        case 'EVM':
+          await disconnectAsync();
+          break;
+        case 'SUI':
+          await suiDisconnectAsync();
+          break;
+        default: {
+          const xService = getXService(xChainType);
+          const xConnectorId = xConnections[xChainType]?.xConnectorId;
+          const xConnector = xConnectorId ? xService.getXConnectorById(xConnectorId) : undefined;
+          await xConnector?.disconnect();
+          break;
+        }
       }
+
       unsetXConnection(xChainType);
     },
-    [xConnections, unsetXConnection, disconnectAsync],
+    [xConnections, unsetXConnection, disconnectAsync, suiDisconnectAsync],
   );
   return disconnect;
 }

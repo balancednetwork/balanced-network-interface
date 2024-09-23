@@ -43,6 +43,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('0x1.icon', ChainId.MAINNET, 'cx07b184a37f03c6ab681fcbd0b45aec6dc3eafbeb', 18, 'BTC', 'Bitcoin', 'BTC1'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx4297f4b63262507623b6ad575d0d8dd2db980e4e', 18, 'INJ', 'INJ'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx16f3cb9f09f5cdd902cf07aa752c8b3bd1bc9609', 6, 'USDT', 'Tether USD'),
+    new XToken('0x1.icon', ChainId.MAINNET, 'cx508002ec116fbf3ab406329c0df28e70d7e75fb3', 9, 'SUI', 'SUI'),
   ],
   'archway-1': [
     new XToken(
@@ -117,6 +118,18 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'injective-1',
       'inj1qspaxnztkkzahvp6scq6xfpgafejmj2td83r9j',
       18,
+      'bnUSD',
+      'Balanced Dollar',
+    ),
+  ],
+  // TODO: confirm SUI
+  sui: [
+    new XToken('sui', 'sui', NATIVE_ADDRESS, 9, 'SUI', 'SUI'),
+    new XToken(
+      'sui',
+      'sui',
+      '0x03917a812fe4a6d6bc779c5ab53f8a80ba741f8af04121193fc44e0f662e2ceb::balanced_dollar::BALANCED_DOLLAR',
+      9,
       'bnUSD',
       'Balanced Dollar',
     ),

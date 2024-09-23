@@ -6,7 +6,7 @@ import { Typography } from '@/app/theme';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
-import { useXAccount, useXConnect, useXDisconnect, useXService } from '@/xwagmi/hooks';
+import { useXAccount, useXConnect, useXConnectors, useXDisconnect } from '@/xwagmi/hooks';
 import { XChain, XChainType } from '@/xwagmi/types';
 import { t } from '@lingui/macro';
 import { UnderlineText } from '../DropdownText';
@@ -35,26 +35,25 @@ const WalletItem = ({
   switchChain,
   walletOptionsModalId,
 }: WalletItemProps) => {
-  const xService = useXService(xChainType);
-
   const { address } = useXAccount(xChainType);
 
   const handleSwitchChain = (chain: XChain): void => {
     switchChain && switchChain({ chainId: chain.id });
   };
 
+  const xConnectors = useXConnectors(xChainType);
   const xConnect = useXConnect();
   const xDisconnect = useXDisconnect();
 
   const handleConnect = () => {
-    if (!xService) return;
+    if (!xConnectors || xConnectors.length === 0) return;
 
-    const xConnectors = xService.getXConnectors();
-
-    if (xConnectors.length === 1) {
+    if (xChainType === 'EVM') {
+      modalActions.openModal(MODAL_ID.EVM_WALLET_OPTIONS_MODAL);
+    } else if (xChainType === 'INJECTIVE') {
+      modalActions.openModal(MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL);
+    } else {
       xConnect(xConnectors[0]);
-    } else if (xConnectors.length > 1 && walletOptionsModalId) {
-      modalActions.openModal(walletOptionsModalId);
     }
   };
   const handleDisconnect = () => {

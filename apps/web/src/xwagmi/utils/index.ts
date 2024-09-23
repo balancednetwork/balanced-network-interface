@@ -124,5 +124,8 @@ export function validateAddress(address: string, chainId: XChainId): boolean {
       return isArchEoaAddress(address);
     case 'INJECTIVE':
       return isInjectiveAddress(address);
+    case 'SUI':
+      // TODO: Add SUI address validation
+      return true;
   }
 }

@@ -28,6 +28,7 @@ import { XChainId, XToken } from '@/xwagmi/types';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { AnimatePresence, motion } from 'framer-motion';
 
 type XSwapModalProps = {
   modalId?: MODAL_ID;
@@ -62,6 +63,9 @@ const XSwapModal = ({
   const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
+  const isExecuted =
+    currentXTransaction?.status === XTransactionStatus.success ||
+    currentXTransaction?.status === XTransactionStatus.failure;
 
   const slippageTolerance = useSwapSlippageTolerance();
   const showWarning = executionTrade?.priceImpact.greaterThan(SLIPPAGE_MODAL_WARNING_THRESHOLD);
@@ -95,15 +99,22 @@ const XSwapModal = ({
     }, 500);
   }, [modalId]);
 
+  //to show success or fail message in the modal
+  const slowDismiss = useCallback(() => {
+    setTimeout(() => {
+      handleDismiss();
+    }, 2000);
+  }, [handleDismiss]);
+
   useEffect(() => {
     if (
       currentXTransaction &&
       (currentXTransaction.status === XTransactionStatus.success ||
         currentXTransaction.status === XTransactionStatus.failure)
     ) {
-      handleDismiss();
+      slowDismiss();
     }
-  }, [currentXTransaction, handleDismiss]);
+  }, [currentXTransaction, slowDismiss]);
 
   const { sendXTransaction } = useSendXTransaction();
   const handleXCallSwap = async () => {
@@ -135,7 +146,6 @@ const XSwapModal = ({
 
   return (
     <>
-      {/* {currentXTransaction && <XTransactionUpdater xTransaction={currentXTransaction} />} */}
       <Modal isOpen={modalOpen} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
@@ -205,35 +215,47 @@ const XSwapModal = ({
 
           {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
 
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={handleDismiss}>
-              <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
-            </TextButton>
+          <AnimatePresence>
+            {((!isExecuted && isProcessing) || !isProcessing) && (
+              <motion.div
+                key={'tx-actions'}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                style={{ overflow: 'hidden' }}
+              >
+                <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+                  <TextButton onClick={handleDismiss}>
+                    <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
+                  </TextButton>
 
-            {isWrongChain ? (
-              <StyledButton onClick={handleSwitchChain}>
-                <Trans>Switch to {xChainMap[direction.from].name}</Trans>
-              </StyledButton>
-            ) : isProcessing ? (
-              <>
-                <StyledButton disabled $loading>
-                  <Trans>Swapping</Trans>
-                </StyledButton>
-              </>
-            ) : (
-              <>
-                {approvalState !== ApprovalState.APPROVED ? (
-                  <Button onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
-                    {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
-                  </Button>
-                ) : (
-                  <StyledButton onClick={handleXCallSwap} disabled={!gasChecker.hasEnoughGas}>
-                    <Trans>Swap</Trans>
-                  </StyledButton>
-                )}
-              </>
+                  {isWrongChain ? (
+                    <StyledButton onClick={handleSwitchChain}>
+                      <Trans>Switch to {xChainMap[direction.from].name}</Trans>
+                    </StyledButton>
+                  ) : isProcessing ? (
+                    <>
+                      <StyledButton disabled $loading>
+                        <Trans>Swapping</Trans>
+                      </StyledButton>
+                    </>
+                  ) : (
+                    <>
+                      {approvalState !== ApprovalState.APPROVED ? (
+                        <Button onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
+                          {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
+                        </Button>
+                      ) : (
+                        <StyledButton onClick={handleXCallSwap} disabled={!gasChecker.hasEnoughGas}>
+                          <Trans>Swap</Trans>
+                        </StyledButton>
+                      )}
+                    </>
+                  )}
+                </Flex>
+              </motion.div>
             )}
-          </Flex>
+          </AnimatePresence>
 
           {!isProcessing && !gasChecker.hasEnoughGas && (
             <Flex justifyContent="center" paddingY={2}>

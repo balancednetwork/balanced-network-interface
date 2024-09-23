@@ -273,6 +273,31 @@ export const injective: XChain = {
   testnet: false,
 };
 
+// TODO: complete SUI chain
+export const sui: XChain = {
+  id: 'sui',
+  name: 'Sui',
+  xChainId: 'sui',
+  xChainType: 'SUI',
+  tracker: 'https://suiscan.xyz/mainnet/',
+  nativeCurrency: {
+    decimals: 9,
+    name: 'SUI',
+    symbol: 'SUI',
+  },
+  rpc: {
+    http: 'https://sentry.tm.injective.network',
+  },
+  contracts: {
+    xCall: 'inj177fx40l0g3jqmtmmuyl2zhrjvhr3knvthlr0ul',
+    assetManager: 'inj1hayj9xnlh44sn29sgggn3jwl3ktl6djwcven25',
+    bnUSD: 'inj1qspaxnztkkzahvp6scq6xfpgafejmj2td83r9j',
+  },
+  autoExecution: true,
+  gasThreshold: 0.01,
+  testnet: false,
+};
+
 // the order is important, using manual order to display in the UI
 export const xChainMap: { [key in XChainId]: XChain } = {
   '0x1.icon': icon,
@@ -286,6 +311,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   '0x38.bsc': bsc,
   '0x2105.base': base,
   'injective-1': injective,
+  sui: sui,
 };
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);
@@ -299,6 +325,7 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   '0xa86a.avax': ['0xC1a39C4e7AA98DEC394eF54559960873Bd619cA3', '0x7F3665eF19258cD5cE15eA39d014F47Fc942AE0C'],
   '0x100.icon': ['cxcf2c8d58fd7bbd25866de0660b155f057ea489eb'],
   'injective-1': ['inj15jcde723hrm5f4fx3r2stnq59jykt2askud8ht'],
+  sui: ['centralized-1', 'centralized-2'],
 };
 
 /** to other chain from icon sources */
@@ -309,4 +336,5 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   '0xa86a.avax': ['cx59d899fce52cadd1feb5128ff5e6672f03943eec', 'cx917f88460d4ebec1fd656d4dbe51131a37d16837'],
   '0x100.icon': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
   'injective-1': ['cx6f86ed848f9f0d03ba1220811d95d864c72da88c'],
+  sui: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
 };

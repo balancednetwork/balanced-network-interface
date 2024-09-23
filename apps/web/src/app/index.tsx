@@ -10,7 +10,7 @@ import ApplicationUpdater from '@/store/application/updater';
 import TransactionUpdater from '@/store/transactions/updater';
 
 import { AllTransactionsUpdater } from '@/hooks/useTransactionStore';
-import { initXWagmiStore } from '@/xwagmi/useXWagmiStore';
+import { initXWagmiStore, useInitXWagmiStore } from '@/xwagmi/useXWagmiStore';
 import { AllXMessagesUpdater } from '@/xwagmi/xcall/zustand/useXMessageStore';
 import { AllXChainHeightsUpdater } from '@/xwagmi/xcall/zustand/useXServiceStore';
 import { xChains } from '../xwagmi/constants/xChains';
@@ -23,7 +23,7 @@ function Updaters() {
       <ApplicationUpdater />
       <AllTransactionsUpdater />
       <AllXMessagesUpdater />
-      <AllXChainHeightsUpdater xChains={xChains} />
+      {/* <AllXChainHeightsUpdater xChains={xChains} /> */}
     </>
   );
 }
@@ -32,6 +32,8 @@ initXWagmiStore();
 
 export function App() {
   const { i18n } = useTranslation();
+
+  useInitXWagmiStore();
 
   return (
     <>

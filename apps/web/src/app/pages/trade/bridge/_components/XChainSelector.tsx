@@ -70,7 +70,7 @@ const XChainSelector = ({ chainId, setChainId, label, currency, width, container
             anchorEl={anchor}
             arrowEl={arrowRef.current}
             customArrowStyle={{
-              transform: `translateX(${arrowRef.current && containerRef ? Math.floor(arrowRef.current?.getBoundingClientRect().x - containerRef.getBoundingClientRect().x) + (isMobile ? 0 : 25) + 'px' : '0'})`,
+              transform: `translateX(${arrowRef.current && containerRef ? Math.floor(arrowRef.current?.getBoundingClientRect().x - containerRef.getBoundingClientRect().x) + (isMobile ? 5 : 25) + 'px' : '0'})`,
             }}
             placement="bottom"
             offset={[0, 8]}

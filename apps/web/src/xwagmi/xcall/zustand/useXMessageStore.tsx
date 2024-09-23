@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -427,7 +427,7 @@ const XMessageUpdater2 = ({ xMessage }: { xMessage: XMessage }) => {
   const { data: message, isLoading } = useQuery({
     queryKey: ['xcallscanner', sourceChainId, sourceTransactionHash],
     queryFn: async () => {
-      const url = `https://cors-proxy-0mrj.onrender.com/proxy?url=https://xcallscan.xyz/api/search?value=${sourceTransactionHash}`;
+      const url = `https://xcallscan.xyz/api/search?value=${sourceTransactionHash}`;
       const response = await axios.get(url);
 
       console.log('xcallscanner response', response.data);
@@ -448,7 +448,29 @@ const XMessageUpdater2 = ({ xMessage }: { xMessage: XMessage }) => {
   return null;
 };
 
+const useReactQuerySubscription = () => {
+  const queryClient = useQueryClient();
+  React.useEffect(() => {
+    console.log('useReactQuerySubscription');
+    const websocket = new WebSocket('wss://xcallscan.xyz/ws');
+    websocket.onopen = () => {
+      console.log('connected');
+    };
+    websocket.onmessage = event => {
+      const data = JSON.parse(event.data);
+      console.log('websocket received:', data);
+      // const queryKey = [...data.entity, data.id].filter(Boolean);
+      // queryClient.invalidateQueries({ queryKey });
+    };
+
+    return () => {
+      websocket.close();
+    };
+  }, []);
+};
+
 export const AllXMessagesUpdater = () => {
+  useReactQuerySubscription();
   const xMessages = useXMessageStore(state => Object.values(state.messages));
 
   return (

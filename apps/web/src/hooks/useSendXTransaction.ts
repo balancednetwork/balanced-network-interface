@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js';
 
-import { swapMessage } from '@/app/pages/trade/supply/_components/utils';
 import { formatBigNumber } from '@/utils';
 import { getXWalletClient } from '@/xwagmi/actions';
 import { XChainId } from '@/xwagmi/types';
@@ -51,13 +50,6 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
       const _outputTokenSymbol = executionTrade?.outputAmount.currency.symbol || '';
       const _inputAmount = formatBigNumber(new BigNumber(executionTrade?.inputAmount.toFixed() || 0), 'currency');
       const _outputAmount = formatBigNumber(new BigNumber(executionTrade?.outputAmount.toFixed() || 0), 'currency');
-
-      const swapMessages = swapMessage(
-        _inputAmount,
-        _inputTokenSymbol === '' ? 'IN' : _inputTokenSymbol,
-        _outputAmount,
-        _outputTokenSymbol === '' ? 'OUT' : _outputTokenSymbol,
-      );
 
       descriptionAction = `Swap ${_inputTokenSymbol} for ${_outputTokenSymbol}`;
       descriptionAmount = `${_inputAmount} ${_inputTokenSymbol} for ${_outputAmount} ${_outputTokenSymbol}`;

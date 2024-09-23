@@ -55,7 +55,7 @@ export const MaxUint256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffff
 
 export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spender?: string) => {
   const token = amountToApprove?.currency?.isToken ? amountToApprove.currency : undefined;
-  // const pendingApproval = useHasPendingApproval(token?.address, spender);
+
   const [isPendingError, setIsPendingError] = useState<boolean>(false);
 
   const [pending, setPending] = useState<boolean>(false);
@@ -71,22 +71,6 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
   const tokenContract = useTokenContract(token?.address as `0x${string}`);
   const { allowance: currentAllowance, refetch } = useTokenAllowance(token, account, spender);
 
-  // !TODO: temporary solution. revisit it later
-  // const [hash, setHash] = useState<string>();
-  // const { data } = useWaitForTransactionReceipt({ hash: hash as `0x${string}` | undefined });
-  // const pendingApproval = hash ? !data : false;
-  // const pendingApproval = hash ? !data : false;
-
-  // useEffect(() => {
-  //   if (pendingApproval) {
-  //     setPending(true);
-  //   } else if (pending) {
-  //     refetch().then(() => {
-  //       setPending(false);
-  //     });
-  //   }
-  // }, [pendingApproval, pending, refetch]);
-
   // check the current approval status
   const approvalState: ApprovalState = useMemo(() => {
     if (!amountToApprove || !spender || !xChainType) return ApprovalState.UNKNOWN;
@@ -94,6 +78,10 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
     if (xChainType === 'ICON') return ApprovalState.APPROVED;
 
     const isBnUSD = amountToApprove.currency.symbol === 'bnUSD';
+    if (isBnUSD) return ApprovalState.APPROVED;
+
+    const isNative = amountToApprove.currency.wrapped.address === NATIVE_ADDRESS;
+    if (isNative) return ApprovalState.APPROVED;
 
     if (xChainType === 'ARCHWAY') {
       const isDenom = isDenomAsset(amountToApprove.currency);
@@ -102,8 +90,6 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
 
     if (xChainType === 'EVM' && isBnUSD) return ApprovalState.APPROVED;
 
-    const isNative = amountToApprove.currency.wrapped.address === NATIVE_ADDRESS;
-    if (isNative) return ApprovalState.APPROVED;
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN;
 
@@ -329,7 +315,7 @@ export function useTokenAllowance(
         return res.allowance;
       }
 
-      // ICON
+      // ICON & Injective & Havah
       return MaxUint256.toString();
     },
     refetchInterval: FAST_INTERVAL,

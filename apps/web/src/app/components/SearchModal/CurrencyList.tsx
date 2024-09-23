@@ -283,6 +283,7 @@ function CurrencyRow({
   return (
     <>
       <ListItem
+        style={{ maxWidth: '100%' }}
         onClick={() => handleClick(currency, finalXChainIds)}
         {...(!isMobile ? { onMouseEnter: open } : null)}
         onMouseLeave={close}

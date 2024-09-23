@@ -10,7 +10,6 @@ import { Box, Flex } from 'rebass/styled-components';
 import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
-import { swapMessage } from '@/app/pages/trade/supply/_components/utils';
 import { Typography } from '@/app/theme';
 import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
@@ -20,6 +19,7 @@ import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { formatBigNumber, shortenAddress, toDec } from '@/utils';
 import { getRlpEncodedSwapData } from '@/xwagmi/xcall/utils';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { swapMessage } from './utils';
 
 type SwapModalProps = {
   isOpen: boolean;

@@ -86,7 +86,7 @@ const ItemList = styled(Option)<{ selected: boolean }>`
 `;
 
 interface CurrencyInputPanelProps {
-  label: string;
+  label?: string;
   value: string;
   onUserInput: (value: string) => void;
   onCurrencySelect?: (currency: Currency) => void;

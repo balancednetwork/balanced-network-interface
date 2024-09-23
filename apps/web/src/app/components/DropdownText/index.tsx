@@ -17,7 +17,7 @@ export const StyledArrowDownIcon = styled(ArrowDownIcon)`
   width: 10px;
 `;
 
-export const UnderlineText = ({ children }) => {
+export const UnderlineText = ({ children }: any) => {
   return (
     <div
       className='text-inherit bg-transparent relative pb-1 -mb-2 select-none break-normal cursor-pointer 

@@ -81,7 +81,7 @@ const CrossChainWalletConnect = ({
           <AddressInput onSave={closeModal} xChainId={xChainId} setManualAddress={setManualAddress} />
           <Typography textAlign="center" mt={3}>
             <Trans>Or connect your</Trans>{' '}
-            <UnderlineText color={'red'} onClick={handleConnect}>
+            <UnderlineText onClick={handleConnect}>
               <Typography color={'primaryBright'}>
                 {`${xChainMap[xChainId].name}`} <Trans>wallet</Trans>
               </Typography>

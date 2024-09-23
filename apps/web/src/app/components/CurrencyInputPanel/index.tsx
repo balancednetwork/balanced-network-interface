@@ -219,7 +219,7 @@ export default function CurrencyInputPanel({
                 currencySelectionType={currencySelectionType}
                 showCurrencyAmount={false}
                 anchorEl={ref.current}
-                width={width ? width + (isMobile ? 40 : 0) : undefined}
+                width={width ? width + (!isMobile ? 40 : 0) : undefined}
                 selectedCurrency={currency}
                 showCommunityListControl={showCommunityListControl}
                 xChainId={xChainId}
@@ -278,7 +278,7 @@ export default function CurrencyInputPanel({
           xChains={xChains}
           editable={addressEditable}
           currency={currency}
-          width={width ? width + (isMobile ? 40 : 0) : undefined}
+          width={width ? width + (!isMobile ? 40 : 0) : undefined}
           containerRef={ref.current}
           setManualAddress={setManualAddress}
         />

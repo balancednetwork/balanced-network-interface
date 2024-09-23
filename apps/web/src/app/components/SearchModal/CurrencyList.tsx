@@ -295,35 +295,37 @@ function CurrencyRow({
       </ListItem>
 
       {showBreakdown ? (
-        <StyledBalanceBreakdown $arrowPosition={currency.symbol ? `${currency.symbol.length * 5 + 26}px` : '40px'}>
-          {basedOnWallet ? (
-            finalXChainIds.map(xChainId => (
-              <MemoizedCurrencyXChainItem
-                key={`${currency.symbol}-${xChainId}`}
-                xChainId={xChainId}
-                currency={currency}
-                price={rateFracs && rateFracs[currency.symbol!] ? rateFracs[currency.symbol!].toFixed(18) : '0'}
-                onSelect={handleXChainCurrencySelect}
-              />
-            ))
-          ) : (
-            <XChainLogoList>
-              {sortedXChains?.map(xChainId =>
-                isMobile ? (
-                  <Box key={xChainId} onClick={() => handleXChainCurrencySelect(currency, xChainId)}>
-                    <ChainLogo chain={xChainMap[xChainId]} size="18px" />
-                  </Box>
-                ) : (
-                  <MouseoverTooltip key={xChainId} text={xChainMap[xChainId].name} autoWidth placement="bottom">
-                    <Box style={{ cursor: 'pointer' }} onClick={() => handleXChainCurrencySelect(currency, xChainId)}>
+        <Box style={{ width: width ? `${width - 50}px` : 'auto' }}>
+          <StyledBalanceBreakdown $arrowPosition={currency.symbol ? `${currency.symbol.length * 5 + 26}px` : '40px'}>
+            {basedOnWallet ? (
+              finalXChainIds.map(xChainId => (
+                <MemoizedCurrencyXChainItem
+                  key={`${currency.symbol}-${xChainId}`}
+                  xChainId={xChainId}
+                  currency={currency}
+                  price={rateFracs && rateFracs[currency.symbol!] ? rateFracs[currency.symbol!].toFixed(18) : '0'}
+                  onSelect={handleXChainCurrencySelect}
+                />
+              ))
+            ) : (
+              <XChainLogoList>
+                {sortedXChains?.map(xChainId =>
+                  isMobile ? (
+                    <Box key={xChainId} onClick={() => handleXChainCurrencySelect(currency, xChainId)}>
                       <ChainLogo chain={xChainMap[xChainId]} size="18px" />
                     </Box>
-                  </MouseoverTooltip>
-                ),
-              )}
-            </XChainLogoList>
-          )}
-        </StyledBalanceBreakdown>
+                  ) : (
+                    <MouseoverTooltip key={xChainId} text={xChainMap[xChainId].name} autoWidth placement="bottom">
+                      <Box style={{ cursor: 'pointer' }} onClick={() => handleXChainCurrencySelect(currency, xChainId)}>
+                        <ChainLogo chain={xChainMap[xChainId]} size="18px" />
+                      </Box>
+                    </MouseoverTooltip>
+                  ),
+                )}
+              </XChainLogoList>
+            )}
+          </StyledBalanceBreakdown>
+        </Box>
       ) : null}
     </>
   );
@@ -399,7 +401,7 @@ export default function CurrencyList({
 
   return (
     <List1 mt={3}>
-      <DashGrid style={{ width: width ? `${width - 50}` : 'auto' }}>
+      <DashGrid style={{ width: width ? `${width - 50}px` : 'auto' }}>
         <StyledHeaderText
           role="button"
           className={sortBy.key === 'symbol' ? sortBy.order : ''}

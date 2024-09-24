@@ -8,7 +8,7 @@ export const Button = styled(RebassButton)<{ warning?: boolean }>`
   padding: 5px 15px;
   color: #ffffff;
   text-decoration: none;
-  background-color: ${({ theme }) => theme.colors.primary};
+  background-color: ${({ theme }) => theme.colors?.primary};
   white-space: nowrap;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -27,10 +27,6 @@ export const Button = styled(RebassButton)<{ warning?: boolean }>`
     pointer-events: none;
   }
 
-  ${({ theme }) => theme.mediaWidth.upExtraSmall`
-    padding: 7px 25px;
-  `}
-
   ${({ warning }) =>
     warning &&
     css`
@@ -47,7 +43,7 @@ export const ButtonLink = styled(Link)`
   padding: 7px 25px;
   color: #ffffff;
   text-decoration: none;
-  background-color: ${({ theme }) => theme.colors.primary};
+  background-color: ${({ theme }) => theme.colors?.primary};
   cursor: pointer;
   transition: background-color 0.3s ease;
   user-select: none;
@@ -82,10 +78,6 @@ export const TextButton = styled(RebassButton)`
     pointer-events: none;
     color: rgba(255, 255, 255, 0.15);
   }
-
-  ${({ theme }) => theme.mediaWidth.upExtraSmall`
-    padding: 7px 25px;
-  `}
 `;
 
 export const IconButton = styled(RebassButton)`
@@ -96,7 +88,7 @@ export const IconButton = styled(RebassButton)`
   height: 50px;
   background-color: #2395aa;
   border-radius: 100px;
-  color: ${({ theme }) => theme.colors.bg1};
+  color: ${({ theme }) => theme.colors?.bg1};
   cursor: pointer;
   padding: 4px;
   outline: none;
@@ -120,7 +112,7 @@ export const AlertButton = styled(RebassButton)`
   padding: 5px 15px;
   color: #ffffff;
   text-decoration: none;
-  background-color: ${({ theme }) => theme.colors.alert};
+  background-color: ${({ theme }) => theme.colors?.alert};
   cursor: pointer;
   transition: background-color 0.3s ease;
   user-select: none;
@@ -136,8 +128,4 @@ export const AlertButton = styled(RebassButton)`
     cursor: default;
     pointer-events: none;
   }
-
-  ${({ theme }) => theme.mediaWidth.upExtraSmall`
-    padding: 7px 25px;
-  `}
 `;

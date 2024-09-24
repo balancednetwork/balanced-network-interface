@@ -65,7 +65,7 @@ const FailedX = styled(Box)`
     display: block;
     font-size: 16px;
     line-height: 1.03;
-    color: ${({ theme }) => theme.colors.alert};
+    color: ${({ theme }) => theme.colors?.alert};
   }
 `;
 

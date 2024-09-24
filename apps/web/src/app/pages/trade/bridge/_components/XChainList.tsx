@@ -47,13 +47,13 @@ const StyledHeaderText = styled(HeaderText)`
 `;
 
 const XChainItemWrap = styled(Flex)`
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.colors?.text};
   cursor: pointer;
   transition: color 0.3s ease;
   align-items: center;
   padding: 20px 0;
   &:hover {
-    color: ${({ theme }) => theme.colors.primaryBright};
+    color: ${({ theme }) => theme.colors?.primaryBright};
   }
 `;
 

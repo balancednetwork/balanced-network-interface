@@ -15,7 +15,7 @@ export const QuestionWrapper = styled.div`
   background: none;
   outline: none;
   cursor: help;
-  color: ${({ theme }) => theme.colors.text1};
+  color: ${({ theme }) => theme.colors?.text1};
 `;
 
 export default function QuestionHelper({

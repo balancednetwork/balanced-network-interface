@@ -21,7 +21,7 @@ export const MenuItem = styled.li`
 
   &:hover {
     cursor: pointer;
-    background-color: ${({ theme }) => theme.colors.primary};
+    background-color: ${({ theme }) => theme.colors?.primary};
     transition: background-color 0.2s ease;
   }
 `;
@@ -29,12 +29,12 @@ export const MenuItem = styled.li`
 const InternalMenuItem = styled(Link)<{ $active?: boolean }>`
   padding: 10px 15px;
   transition: background-color 0.3s ease;
-  color: ${({ theme }) => theme.colors.white};
-  background-color: ${({ theme, $active }) => ($active ? theme.colors.primary : 'transparent')};
+  color: ${({ theme }) => theme.colors?.white};
+  background-color: ${({ theme, $active }) => ($active ? theme.colors?.primary : 'transparent')};
 
   &:hover {
     cursor: pointer;
-    background-color: ${({ theme }) => theme.colors.primary};
+    background-color: ${({ theme }) => theme.colors?.primary};
     transition: background-color 0.2s ease;
   }
 `;
@@ -46,7 +46,7 @@ const InternalLinkMenuItem = styled(InternalMenuItem)`
   justify-content: space-between;
   text-decoration: none;
   &:hover {
-    color: ${({ theme }) => theme.colors.white};
+    color: ${({ theme }) => theme.colors?.white};
     cursor: pointer;
     text-decoration: none;
   }
@@ -75,7 +75,7 @@ export function LanguageMenuItem({
       to={to}
     >
       <li>{LOCALE_LABEL[locale]}</li>
-      {active && <Check opacity={0.6} size={16} color={theme.colors.primary} />}
+      {active && <Check opacity={0.6} size={16} color={theme.colors?.primary} />}
     </InternalLinkMenuItem>
   );
 }

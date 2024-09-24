@@ -1,4 +1,4 @@
-import { TabList, Tab } from '@reach/tabs';
+import { Tab, TabList } from '@reach/tabs';
 import styled, { css } from 'styled-components';
 
 import { Link } from '@/app/components/Link';
@@ -21,14 +21,6 @@ export const StyledTab = styled(Tab)<{ hasNotification?: boolean }>`
     transition: border-bottom 0.3s ease, color 0.3s ease;
     position: relative;
 
-    ${({ theme }) => theme.mediaWidth.up360`
-      padding: 0 8px 10px;
-    `};
-
-    ${({ theme }) => theme.mediaWidth.up500`
-      padding: 0 15px 10px 15px;
-    `};
-
     &[data-selected] {
       border-bottom: 3px solid #2ca9b7;
       color: #ffffff;
@@ -40,10 +32,6 @@ export const StyledTab = styled(Tab)<{ hasNotification?: boolean }>`
       color: #ffffff;
       transition: border-bottom 0.2s ease, color 0.2s ease;
     }
-
-    ${({ theme }) => theme.mediaWidth.upExtraSmall`
-        margin-right: 15px;
-    `}
 
     ${({ hasNotification }) => hasNotification && notificationCSS}
     
@@ -90,7 +78,7 @@ export const notificationCSS = css`
   &:before {
     width: 10px;
     height: 10px;
-    background: ${({ theme }) => theme.colors.primary};
+    background: ${({ theme }) => theme.colors?.primary};
     border-radius: 50%;
     right: 1px;
   }
@@ -98,7 +86,7 @@ export const notificationCSS = css`
   &:after {
     width: 10px;
     height: 10px;
-    background: ${({ theme }) => theme.colors.primary};
+    background: ${({ theme }) => theme.colors?.primary};
     border-radius: 50%;
     right: 1px;
     animation: pulse 1s ease 1s infinite;

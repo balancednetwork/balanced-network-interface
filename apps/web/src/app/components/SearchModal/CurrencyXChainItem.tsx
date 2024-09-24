@@ -16,11 +16,11 @@ const CurrencyXChainItemWrap = styled(Flex)`
   justify-content: space-between;
   padding: 8px 0;
   transition: color 0.2s ease;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.colors?.text};
   cursor: pointer;
 
   &:hover {
-    color: ${({ theme }) => theme.colors.primaryBright};
+    color: ${({ theme }) => theme.colors?.primaryBright};
   }
 `;
 
@@ -39,12 +39,12 @@ const CurrencyXChainItem = ({
   const xToken = xTokenMap[xChainId].find(token => token.symbol === currency.symbol);
   const currencyBalance: CurrencyAmount<Currency> | undefined = xWallet[xChainId]?.[xToken?.wrapped.address ?? ''];
   const hasSignedIn = useHasSignedIn();
-  const theme = useTheme();
+  const theme: any = {};
 
   return (
     <CurrencyXChainItemWrap onClick={() => onSelect(currency, xChainId)}>
       <Flex alignItems="center">
-        <CurrencyLogoWithNetwork currency={currency} chainId={xChainId} bgColor={theme.colors.bg3} size="22px" />
+        <CurrencyLogoWithNetwork currency={currency} chainId={xChainId} bgColor={theme.colors?.bg3} size="22px" />
         <Typography variant="span" fontSize={14} display="block" ml="10px" pt="4px">
           {xChainMap[xChainId].name}
         </Typography>

@@ -17,7 +17,7 @@ interface LogoProps extends Pick<ImageProps, 'style' | 'alt' | 'className'> {
 export default function Logo({ srcs, alt, style, ...rest }: LogoProps) {
   const [, refresh] = useState<number>(0);
 
-  const theme = useTheme();
+  // const theme = useTheme();
 
   const src: string | undefined = srcs?.find(src => !BAD_SRCS[src]);
 
@@ -36,5 +36,5 @@ export default function Logo({ srcs, alt, style, ...rest }: LogoProps) {
     );
   }
 
-  return <img src={DefaultImg} alt="" {...rest} style={{ ...style, color: theme.colors.white }} />;
+  // return <img src={DefaultImg} alt="" {...rest} style={{ ...style, color: theme.colors?.white }} />;
 }

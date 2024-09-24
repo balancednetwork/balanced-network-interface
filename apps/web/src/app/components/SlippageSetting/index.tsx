@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Flex, Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
@@ -15,15 +15,12 @@ import { escapeRegExp } from '@/utils';
 const SlippageEmojiContainer = styled.span`
   color: #f3841e;
   display: none;
-  ${({ theme }) => theme.mediaWidth.upSmall`
-     display: inline;
-   `}
 `;
 
 const SlippageInput = styled(Flex)`
   width: 100px;
   height: 30px;
-  color: ${({ theme, color }) => (color === '#fb6a6a' ? '#fb6a6a' : theme.colors.text1)};
+  color: ${({ theme, color }) => (color === '#fb6a6a' ? '#fb6a6a' : theme.colors?.text1)};
   outline: none;
   border-radius: 8px;
   border: 2px solid rgb(44, 169, 183);
@@ -42,7 +39,7 @@ const SlippageInput = styled(Flex)`
 
 const Input = styled.input`
   width: 80px;
-  color: ${({ theme, color }) => (color === '#fb6a6a' ? '#fb6a6a' : theme.colors.text1)};
+  color: ${({ theme, color }) => (color === '#fb6a6a' ? '#fb6a6a' : theme.colors?.text1)};
   outline: none;
   border: none;
   background-color: #0c2a4d;

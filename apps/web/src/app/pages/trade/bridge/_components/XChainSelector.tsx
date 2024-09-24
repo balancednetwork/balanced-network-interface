@@ -26,7 +26,7 @@ const Wrap = styled.div`
   min-width: 110px;
   cursor: pointer;
   font-size: 16px;
-  color: ${({ theme }) => theme.colors.primaryBright};
+  color: ${({ theme }) => theme.colors?.primaryBright};
 `;
 
 const XChainSelector = ({ chainId, setChainId, label, currency, width, containerRef }: ChainSelectorProps) => {

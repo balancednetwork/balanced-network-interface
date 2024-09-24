@@ -55,7 +55,7 @@ const SingleChainBalanceItem = ({
           <CurrencyLogoWithNetwork
             currency={baseToken}
             chainId={xChainId as XChainId}
-            bgColor={isNested ? theme.colors.bg3 : theme.colors.bg4}
+            bgColor={isNested ? theme.colors?.bg3 : theme.colors?.bg4}
             size={isNested ? '20px' : '24px'}
           />
           <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>

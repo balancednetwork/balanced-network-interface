@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { DialogOverlay, DialogContent } from '@reach/dialog';
+import { DialogContent, DialogOverlay } from '@reach/dialog';
 import { transparentize } from 'polished';
 import { isMobile } from 'react-device-detect';
-import { animated, useTransition, useSpring } from 'react-spring';
+import { animated, useSpring, useTransition } from 'react-spring';
 import { useGesture } from 'react-use-gesture';
 import styled, { css } from 'styled-components';
 
@@ -22,7 +22,7 @@ const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
     align-items: center;
     justify-content: center;
 
-    background-color: ${({ theme }) => theme.colors.modalBG};
+    background-color: ${({ theme }) => theme.colors?.modalBG};
   }
 `;
 
@@ -38,7 +38,7 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, maxWidth, mobile, fu
 
   &[data-reach-dialog-content] {
     margin: 0 0 2rem 0;
-    background-color: ${({ theme }) => theme.colors.bg4};
+    background-color: ${({ theme }) => theme.colors?.bg4};
     box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
     padding: 0px;
     width: 85vw;
@@ -64,7 +64,7 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, maxWidth, mobile, fu
       `}
     display: flex;
     border-radius: 10px;
-    border: 2px solid ${({ theme }) => theme.colors.primary};
+    border: 2px solid ${({ theme }) => theme.colors?.primary};
     ${({ mobile }) =>
       mobile &&
       css`
@@ -73,34 +73,6 @@ const StyledDialogContent = styled(({ minHeight, maxHeight, maxWidth, mobile, fu
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
         margin: 0;
-      `}
-
-    ${({ theme, mobile }) => theme.mediaWidth.upSmall`
-      width: 65vw;
-      margin: 0;
-    `}
-
-    ${({ theme }) => theme.mediaWidth.upMedium`
-      width: 50vw;
-      margin: 0;
-    `}
-
-    ${({ theme, fullscreen }) =>
-      fullscreen &&
-      theme.mediaWidth.up360`
-        width: calc(100vw - 40px);
-        max-width: calc(100vw - 40px);
-        height: calc(100vh - 180px);
-        max-height: calc(100vh - 180px);
-      `}
-
-      ${({ theme, fullscreen }) =>
-        fullscreen &&
-        theme.mediaWidth.upMedium`
-        width: calc(100vw - 80px);
-        max-width: calc(100vw - 80px);
-        height: calc(100vh - 80px);
-        max-height: calc(100vh - 80px);
       `}
   }
 `;

@@ -1,7 +1,7 @@
+import { Typography } from '@/app/theme';
+import { Box } from 'rebass';
 import styled, { css, keyframes } from 'styled-components';
 import SearchInput from '../SearchModal/SearchInput';
-import { Box } from 'rebass';
-import { Typography } from '@/app/theme';
 
 const mobileWalletBreakpoint = '530px';
 
@@ -128,7 +128,7 @@ export const ActiveIndicator = styled.div<{ active: boolean }>`
   
   &:before {
     content: '';
-    background-color: ${({ theme }) => theme.colors.primary};
+    background-color: ${({ theme }) => theme.colors?.primary};
     border-radius: 50%;
     width: 10px;
     height: 10px;
@@ -154,7 +154,7 @@ export const XChainsWrap = styled.div<{ signedIn: boolean }>`
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  background: ${({ theme }) => theme.colors.bg4};
+  background: ${({ theme }) => theme.colors?.bg4};
   border-radius: 10px;
   padding: 2px 10px;
   margin-top: 10px;
@@ -197,8 +197,8 @@ const pulseAnimation = keyframes`
 `;
 
 export const StyledSearchInput = styled(SearchInput)`
-  background-color: ${({ theme }) => theme.colors.bg6};
-  border-color: ${({ theme }) => theme.colors.bg6};
+  background-color: ${({ theme }) => theme.colors?.bg6};
+  border-color: ${({ theme }) => theme.colors?.bg6};
   /* box-shadow: 0px 10px 15px 0px rgba(1, 0, 42, 0.25) inset; */
 `;
 
@@ -211,7 +211,7 @@ export const Wrapper = styled.div`
 `;
 
 export const SignInOptionsWrap = styled.div`
-  background: ${({ theme }) => theme.colors.bg6};
+  background: ${({ theme }) => theme.colors?.bg6};
   padding: 5px 25px;
   min-height: 60px;
   max-height: 350px;

@@ -23,7 +23,7 @@ const CheckIcon = styled(CheckCircle)`
   height: 16px;
   width: 16px;
   margin-right: 6px;
-  stroke: ${({ theme }) => theme.colors.primary};
+  stroke: ${({ theme }) => theme.colors?.primary};
 `;
 
 const NameOverflow = styled.div`
@@ -78,7 +78,7 @@ export default function ImportRow({
       ) : (
         <RowFixed style={{ minWidth: 'fit-content' }}>
           <CheckIcon />
-          <Typography color={theme.colors.primary}>Active</Typography>
+          <Typography color={theme.colors?.primary}>Active</Typography>
         </RowFixed>
       )}
     </TokenSection>

@@ -70,7 +70,7 @@ const ICONAssetModal = ({ token, balance, value, isOpen, close }) => {
             <CurrencyLogoWithNetwork
               currency={token}
               chainId={ICON_XCALL_NETWORK_ID}
-              bgColor={theme.colors.bg2}
+              bgColor={theme.colors?.bg2}
               size={'24px'}
             />
             <Typography fontSize={16} fontWeight={'bold'}>

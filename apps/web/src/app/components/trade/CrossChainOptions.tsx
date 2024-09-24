@@ -40,7 +40,6 @@ export const SelectorWrap = styled.div`
   min-width: 110px;
   cursor: pointer;
   font-size: 16px;
-  color: ${({ theme }) => theme.colors.primaryBright};
 `;
 
 const CrossChainOptions = ({

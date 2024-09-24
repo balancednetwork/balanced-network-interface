@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
 import { MinusCircle } from 'react-feather';
 import { Box, Flex } from 'rebass/styled-components';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 
 import CurrencyLogo from '@/app/components/CurrencyLogo';
 import { DataText, List1, ListItem } from '@/app/components/List';
@@ -48,7 +48,7 @@ const DashGrid = styled(Box)`
 const StyledBalanceBreakdown = styled(BalanceBreakdown)`
   margin-top: 18px;
   grid-column: span 2;
-  color: ${({ theme }) => theme.colors.text2};
+  color: ${({ theme }) => theme.colors?.text2};
 `;
 
 const StyledHeaderText = styled(HeaderText)`
@@ -121,7 +121,7 @@ function CurrencyRow({
   const showBreakdown = showCrossChainBreakdown && currencyXChainIds.length && !isSingleChain;
 
   const isUserAddedToken = useIsUserAddedToken(currency as Token);
-  const theme = useTheme();
+  const theme: any = {};
 
   // only show add or remove buttons if not on selected list
   const [show, setShow] = useState(false);
@@ -158,14 +158,14 @@ function CurrencyRow({
           {(basedOnWallet || shouldForceNetworkIcon) && finalXChainIds.length === 1 ? (
             <CurrencyLogoWithNetwork
               currency={currency}
-              bgColor={theme.colors.bg4}
+              bgColor={theme.colors?.bg4}
               chainId={finalXChainIds[0]}
               size={'24px'}
             />
           ) : finalXChainIds.length === 0 && showCrossChainBreakdown ? (
             <CurrencyLogoWithNetwork
               currency={currency}
-              bgColor={theme.colors.bg4}
+              bgColor={theme.colors?.bg4}
               chainId={ICON_XCALL_NETWORK_ID}
               size={'24px'}
             />
@@ -200,7 +200,7 @@ function CurrencyRow({
           </DataText>
           {isUserAddedToken && (isMobile || show) && (
             <MinusCircle
-              color={theme.colors.alert}
+              color={theme.colors?.alert}
               size={18}
               style={{ marginLeft: '12px' }}
               onClick={e => {
@@ -221,14 +221,14 @@ function CurrencyRow({
           {sortedXChains.length === 0 && showCrossChainBreakdown ? (
             <CurrencyLogoWithNetwork
               currency={currency}
-              bgColor={theme.colors.bg4}
+              bgColor={theme.colors?.bg4}
               chainId={ICON_XCALL_NETWORK_ID}
               size={'24px'}
             />
           ) : shouldForceNetworkIcon && finalXChainIds.length === 1 ? (
             <CurrencyLogoWithNetwork
               currency={currency}
-              bgColor={theme.colors.bg4}
+              bgColor={theme.colors?.bg4}
               chainId={finalXChainIds[0]}
               size={'24px'}
             />
@@ -247,7 +247,7 @@ function CurrencyRow({
           </DataText>
           {isUserAddedToken && (isMobile || show) && (
             <MinusCircle
-              color={theme.colors.alert}
+              color={theme.colors?.alert}
               size={18}
               style={{ marginLeft: '12px' }}
               onClick={e => {

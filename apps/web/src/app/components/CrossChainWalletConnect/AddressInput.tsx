@@ -19,8 +19,8 @@ const InputWrap = styled(Flex)`
     padding-right: 15px;
     object-fit: fill;
     border-radius: 10px 0 0 10px;
-    border: 2px solid ${({ theme }) => theme.colors.bg5};
-    background-color: ${({ theme }) => theme.colors.bg5};
+    border: 2px solid ${({ theme }) => theme.colors?.bg5};
+    background-color: ${({ theme }) => theme.colors?.bg5};
     height: 45px;
     border-right: 0;
     flex-grow: 1;
@@ -30,25 +30,25 @@ const InputWrap = styled(Flex)`
 
     &.invalid, &.empty {
       border-radius: 10px;
-      border-right: 2px solid ${({ theme }) => theme.colors.bg5};
+      border-right: 2px solid ${({ theme }) => theme.colors?.bg5};
     }
 
     &.valid {
-      border-color: ${({ theme }) => theme.colors.primary};
+      border-color: ${({ theme }) => theme.colors?.primary};
     }
 
     &.invalid {
-      border-color: ${({ theme }) => theme.colors.alert} !important;
+      border-color: ${({ theme }) => theme.colors?.alert} !important;
     }
   }
 
   input:focus, input:hover {
-    border-color: ${({ theme }) => theme.colors.primary};
+    border-color: ${({ theme }) => theme.colors?.primary};
   }
 
   button {
-    border: 2px solid ${({ theme }) => theme.colors.primary};
-    background-color: ${({ theme }) => theme.colors.primary};
+    border: 2px solid ${({ theme }) => theme.colors?.primary};
+    background-color: ${({ theme }) => theme.colors?.primary};
     border-left: 0;
     color: #FFF;
     font-size: 16px;
@@ -65,8 +65,8 @@ const InputWrap = styled(Flex)`
     opacity: 1;
 
     &:hover {
-      background-color: ${({ theme }) => theme.colors.primaryBright};
-      border-color: ${({ theme }) => theme.colors.primaryBright};
+      background-color: ${({ theme }) => theme.colors?.primaryBright};
+      border-color: ${({ theme }) => theme.colors?.primaryBright};
     }
     
     &[disabled] {

@@ -23,7 +23,7 @@ export const HeaderText = styled(Flex)<{ className?: string }>`
     width: 8px;
     height: 2px;
     border-radius: 2px;
-    background: ${({ theme }) => theme.colors.primary};
+    background: ${({ theme }) => theme.colors?.primary};
     display: inline-block;
     top: 50%;
     transition: all ease 200ms;

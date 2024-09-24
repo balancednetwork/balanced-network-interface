@@ -25,19 +25,19 @@ const StyledToastContainer = styled(ToastContainer)`
   &.Toastify__toast-container {
   }
   .Toastify__toast {
-    background-color: ${({ theme }) => theme.colors.bg2};
-    border: 1px solid ${({ theme }) => theme.colors.primary};
+    background-color: ${({ theme }) => theme.colors?.bg2};
+    border: 1px solid ${({ theme }) => theme.colors?.primary};
     border-radius: 10px;
     overflow: hidden;
 
-    color: ${props => props.theme.colors.white};
+    color: ${props => props.theme.colors?.white};
   }
   .Toastify__toast-body {
     font-family: 'tex-gyre-adventor';
     margin: 5px 10px;
   }
   .Toastify__progress-bar {
-    background: ${props => props.theme.colors.primary};
+    background: ${props => props.theme.colors?.primary};
   }
   .Toastify__close-button > svg {
     fill: white;

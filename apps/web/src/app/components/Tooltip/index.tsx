@@ -11,25 +11,14 @@ export const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean; wi
   line-height: 150%;
   font-weight: 400;
   font-size: 14px;
-  color: ${({ theme }) => theme.colors.white};
+  color: ${({ theme }) => theme.colors?.white};
   ${props => props.small && ' width: 170px; padding: 11px;'}
-
-  ${({ theme, small }) =>
-    small &&
-    theme.mediaWidth.upExtraSmall`
-    padding: 10px 0.9375rem;
-    width: 260px;
-  `};
 
   ${({ className }) =>
     className === 'rebalancing-modal' &&
     css`
       max-width: 335px;
     `};
-
-  ${({ theme }) => theme.mediaWidth.up500`
-      max-width: 435px !important;
-  `};
 `;
 
 export interface TooltipProps extends Omit<PopoverProps, 'content'> {

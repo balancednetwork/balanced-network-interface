@@ -1,5 +1,5 @@
+import { Box, Flex, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
-import { Flex, Box, Text } from 'rebass/styled-components';
 
 export const ChainIcons = styled.div``;
 export const WalletIcons = styled.div``;
@@ -37,16 +37,12 @@ export const WalletOption = styled(Box)`
     }
   }
 
-  ${({ theme }) => theme.mediaWidth.up420`
-    max-width: 130px;
-  `};
-
   > *:first-child {
     margin-bottom: 10px;
   }
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.bg3};
+    background-color: ${({ theme }) => theme.colors?.bg3};
     opacity: 1;
   }
 `;

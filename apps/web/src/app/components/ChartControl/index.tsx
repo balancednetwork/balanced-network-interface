@@ -12,10 +12,6 @@ export const ChartContainer = styled(Box)`
 export const ChartControlGroup = styled(Box)`
   text-align: left;
 
-  ${({ theme }) => theme.mediaWidth.upSmall`
-    text-align: right;
-  `}
-
   & button {
     margin-right: 5px;
   }
@@ -30,14 +26,10 @@ export const ChartControlButton = styled(Button)<{ $active?: boolean }>`
   border-radius: 100px;
   color: #ffffff;
   font-size: 14px;
-  background-color: ${({ theme, $active }) => ($active ? theme.colors.primary : theme.colors.bg3)};
+  background-color: ${({ theme, $active }) => ($active ? theme.colors?.primary : theme.colors?.bg3)};
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.primary};
+    background-color: ${({ theme }) => theme.colors?.primary};
   }
-
-  ${({ theme }) => theme.mediaWidth.upExtraSmall`
-    padding: 1px 12px;
-  `}
 `;

@@ -31,11 +31,11 @@ const WithdrawOption = styled.button<{ active: boolean }>`
   margin: 15px 15px 0;
   transition: all 0.2s ease;
 
-  ${({ theme }) => `color: ${theme.colors.text}`};
-  ${({ theme, active }) => `background-color: ${active ? theme.colors.bg3 : 'transparent'}`};
+  ${({ theme }) => `color: ${theme.colors?.text}`};
+  ${({ theme, active }) => `background-color: ${active ? theme.colors?.bg3 : 'transparent'}`};
 
   &:hover {
-    ${({ theme }) => `background-color: ${theme.colors.bg3}`};
+    ${({ theme }) => `background-color: ${theme.colors?.bg3}`};
   }
 
   img {

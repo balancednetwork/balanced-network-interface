@@ -176,7 +176,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
             </Box>
           </Flex>
           {currency?.wrapped.address === bnJs.sICX.address && (
-            <Typography variant="content" textAlign="center" color={theme.colors.alert}>
+            <Typography variant="content" textAlign="center" color={theme.colors?.alert}>
               <Trans>Do not send sICX to an exchange.</Trans>
             </Typography>
           )}

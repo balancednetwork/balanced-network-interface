@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { t, Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import { useTheme } from 'styled-components';
 
@@ -27,7 +27,7 @@ export default function CommunityListToggle({
   const tokenListConfig = useTokenListConfig();
   const changeTokenCommunityConfig = useChangeCommunityConfig();
   const [isOpen, setOpen] = useState(false);
-  const theme = useTheme();
+  const theme: any = {};
 
   const handleConfirm = () => {
     changeTokenCommunityConfig(true);
@@ -41,7 +41,7 @@ export default function CommunityListToggle({
 
   return (
     <>
-      <Typography variant={'span'} color={theme.colors.primary} onClick={() => setOpen(true)}>
+      <Typography variant={'span'} color={theme.colors?.primary} onClick={() => setOpen(true)}>
         <UnderlineText>{tokenListConfig.community ? offMessage : onMessage}</UnderlineText>
       </Typography>
 

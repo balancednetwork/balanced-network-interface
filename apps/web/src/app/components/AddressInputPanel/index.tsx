@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { Trans } from '@lingui/macro';
+import { Box } from 'rebass';
 import styled from 'styled-components';
 import Warning from '../Warning';
-import { Box } from 'rebass';
 
 const InputContainer = styled.div`
   display: inline-flex;
@@ -33,8 +33,8 @@ const AddressInput = styled.input<{ bg?: string }>`
   height: 43px;
   text-align: right;
   border-radius: 0 10px 10px 0;
-  border: 2px solid ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
-  background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
+  border: 2px solid ${({ theme, bg = 'bg2' }) => `${theme.colors?.[bg]}`};
+  background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors?.[bg]}`};
   color: #ffffff;
   padding: 7px 20px;
   outline: none;
@@ -49,7 +49,7 @@ const AddressInput = styled.input<{ bg?: string }>`
 
 
   &.invalid {
-      border-color: ${({ theme }) => theme.colors.alert} !important;
+      border-color: ${({ theme }) => theme.colors?.alert} !important;
     }
   
   &:hover, &:focus {

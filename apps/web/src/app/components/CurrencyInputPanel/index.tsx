@@ -8,6 +8,8 @@ import CurrencyLogo from '@/app/components/CurrencyLogo';
 import { SelectorPopover } from '@/app/components/Popover';
 import { Typography } from '@/app/theme';
 import DropDown from '@/assets/icons/arrow-down.svg';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import useWidth from '@/hooks/useWidth';
 import { COMMON_PERCENTS } from '@/store/swap/reducer';
 import { escapeRegExp } from '@/utils';
@@ -20,29 +22,29 @@ import { CurrencySelectionType, SelectorType } from '../SearchModal/CurrencySear
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 import CrossChainOptions from '../trade/CrossChainOptions';
 
-const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean; $active: boolean }>`
-  border: ${({ theme, bg = 'bg2' }) => `2px solid ${theme.colors[bg]}`};
-  background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
-  border-right: ${({ theme }) => `1px solid ${theme.colors.divider}`};
-  display: flex;
-  align-items: center;
-  min-width: 128px;
-  height: 43px;
-  padding: 4px 15px;
-  color: #ffffff;
-  border-radius: 10px 0 0 10px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
+// const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean; $active: boolean }>`
+//   border: ${({ theme, bg = 'bg2' }) => `2px solid ${theme.colors?.[bg]}`};
+//   background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors?.[bg]}`};
+//   border-right: ${({ theme }) => `1px solid ${theme.colors?.divider}`};
+//   display: flex;
+//   align-items: center;
+//   min-width: 128px;
+//   height: 43px;
+//   padding: 4px 15px;
+//   color: #ffffff;
+//   border-radius: 10px 0 0 10px;
+//   transition: all 0.3s ease;
+//   cursor: pointer;
+//   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 
-  &:hover,
-  &:focus {
-    border: ${({ theme }) => `2px solid ${theme.colors.primary}`};
-    border-right: ${({ theme }) => `1px solid ${theme.colors.primary}`};
-  }
+//   &:hover,
+//   &:focus {
+//     border: ${({ theme }) => `2px solid ${theme.colors?.primary}`};
+//     border-right: ${({ theme }) => `1px solid ${theme.colors?.primary}`};
+//   }
 
-  ${({ $active }) => $active && 'border-bottom-left-radius: 0;'}
-`;
+//   ${({ $active }) => $active && 'border-bottom-left-radius: 0;'}
+// `;
 
 const StyledTokenName = styled.span`
   line-height: 1.5;
@@ -51,31 +53,31 @@ const StyledTokenName = styled.span`
   font-weight: bold;
 `;
 
-const NumberInput = styled.input<{ bg?: string; $active?: boolean }>`
-  flex: 1;
-  width: 100%;
-  height: 43px;
-  text-align: right;
-  border-radius: 0 10px 10px 0;
-  border: ${({ theme, bg = 'bg2' }) => `2px solid ${theme.colors[bg]}`};
-  background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
-  color: #ffffff;
-  padding: 7px 15px;
-  outline: none;
-  transition: all 0.3s ease;
-  overflow: visible;
-  font-family: inherit;
-  font-size: 100%;
-  line-height: 1.15;
-  margin: 0;
+// const NumberInput = styled.input<{ bg?: string; $active?: boolean }>`
+//   flex: 1;
+//   width: 100%;
+//   height: 43px;
+//   text-align: right;
+//   border-radius: 0 10px 10px 0;
+//   border: ${({ theme, bg = 'bg2' }) => `2px solid ${theme.colors?.[bg]}`};
+//   background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors?.[bg]}`};
+//   color: #ffffff;
+//   padding: 7px 15px;
+//   outline: none;
+//   transition: all 0.3s ease;
+//   overflow: visible;
+//   font-family: inherit;
+//   font-size: 100%;
+//   line-height: 1.15;
+//   margin: 0;
 
-  &:hover,
-  &:focus {
-    border: 2px solid #2ca9b7;
-  }
+//   &:hover,
+//   &:focus {
+//     border: 2px solid #2ca9b7;
+//   }
 
-  ${({ $active }) => $active && 'border-bottom-right-radius: 0;'}
-`;
+//   ${({ $active }) => $active && 'border-bottom-right-radius: 0;'}
+// `;
 
 const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
   width: 10px;
@@ -203,7 +205,7 @@ export default function CurrencyInputPanel({
       <div ref={ref} className="inline-flex w-full">
         <ClickAwayListener onClickAway={() => setOpen(false)}>
           <div>
-            <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect} $active={!!showCrossChainOptions}>
+            <Button onClick={toggleOpen} disabled={!onCurrencySelect}>
               {currency ? (
                 <>
                   <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
@@ -214,7 +216,7 @@ export default function CurrencyInputPanel({
                 <StyledTokenName>Choose a token</StyledTokenName>
               )}
               {onCurrencySelect && <StyledDropDown selected={!!currency} />}
-            </CurrencySelect>
+            </Button>
 
             {onCurrencySelect && (
               <CurrencySearchModal
@@ -237,7 +239,7 @@ export default function CurrencyInputPanel({
           </div>
         </ClickAwayListener>
 
-        <NumberInput
+        <Input
           placeholder={placeholder}
           value={value}
           onClick={() => setIsActive(!isActive)}
@@ -256,9 +258,6 @@ export default function CurrencyInputPanel({
           minLength={1}
           maxLength={79}
           spellCheck="false"
-          //style
-          bg={bg}
-          $active={(onPercentSelect && isActive) || !!showCrossChainOptions}
         />
 
         {onPercentSelect && (

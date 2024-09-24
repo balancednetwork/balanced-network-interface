@@ -13,7 +13,7 @@ export const StyledButton = styled(Button)<{ $loading?: boolean }>`
     height: 2px;
     left: 0;
     border-radius: 5px;
-    background: ${({ theme }) => theme.colors.primaryBright};
+    background: ${({ theme }) => theme.colors?.primaryBright};
   }
 
   &:after {

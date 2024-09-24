@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import useInterval from '@/hooks/useInterval';
 
 const PopoverContainer = styled.div<{ $show: boolean; $zIndex?: number }>`
-  z-index: ${({ $zIndex, theme }) => $zIndex || theme.zIndices.tooltip};
+  z-index: ${({ $zIndex, theme }) => $zIndex || theme?.zIndices?.tooltip};
   visibility: ${({ $show }) => ($show ? 'visible' : 'hidden')};
   opacity: ${({ $show }) => ($show ? 1 : 0)};
   transition: visibility 150ms linear, opacity 150ms linear;
@@ -17,16 +17,16 @@ const PopoverContainer = styled.div<{ $show: boolean; $zIndex?: number }>`
 `;
 
 const SelectorPopoverWrapper = styled.div`
-  background: ${({ theme }) => theme.colors.bg4};
-  color: ${({ theme }) => theme.colors.text1};
+  background: ${({ theme }) => theme.colors?.bg4};
+  color: ${({ theme }) => theme.colors?.text1};
   border-radius: 0px 0px 10px 10px;
   overflow: hidden;
 `;
 
 const ContentWrapper = styled.div`
-  background: ${({ theme }) => theme.colors.bg4};
-  border: 2px solid ${({ theme }) => theme.colors.primary};
-  color: ${({ theme }) => theme.colors.text1};
+  background: ${({ theme }) => theme.colors?.bg4};
+  border: 2px solid ${({ theme }) => theme?.colors?.primary};
+  color: ${({ theme }) => theme.colors?.text1};
   border-radius: 8px;
   overflow: hidden;
 `;
@@ -50,7 +50,7 @@ const Arrow = styled.div`
 
     content: '';
     transform: rotate(45deg);
-    background: ${({ theme }) => theme.colors.primary};
+    background: ${({ theme }) => theme.colors?.primary};
   }
 
   &.arrow-top,

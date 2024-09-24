@@ -131,7 +131,7 @@ export const ListItem = styled(DashGrid)<{ $border?: boolean }>`
     padding: 15px 0;
   }
   &.active {
-    color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors?.primary};
   }
 
   &:hover {
@@ -156,7 +156,7 @@ export const StandardCursorListItem = styled(DashGrid)<{ $border?: boolean }>`
     padding: 15px 0;
   }
   &.active {
-    color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors?.primary};
   }
 `;
 
@@ -225,7 +225,7 @@ export const BoxPanelWithArrow = styled(BoxPanel)`
 export const Wrapper = styled.div``;
 
 export const BalanceBreakdown = styled.div<{ $arrowPosition: string }>`
-  background: ${({ theme }) => theme.colors.bg3};
+  background: ${({ theme }) => theme.colors?.bg3};
   border-radius: 10px;
   padding: 5px 15px 7px 10px;
   position: relative;
@@ -240,7 +240,7 @@ export const BalanceBreakdown = styled.div<{ $arrowPosition: string }>`
     height: 0;
     border-left: 12px solid transparent;
     border-right: 12px solid transparent;
-    border-bottom: 12px solid ${({ theme }) => theme.colors.bg3};
+    border-bottom: 12px solid ${({ theme }) => theme.colors?.bg3};
     transition: all 0.3s ease-in-out;
   }
 

@@ -249,6 +249,22 @@
       "symbol": "tBTC",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/tbtc.png"
+    },
+    {
+      "address": "cxb940dbfbc45c92f3a0cde464c4331102e7a84da8",
+      "chainId": 1,
+      "name": "Wrapped stETH",
+      "symbol": "wstETH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/wsteth.png"
+    },
+    {
+      "address": "cxce7b23917ddf57656010decd6017fe5016de681b",
+      "chainId": 1,
+      "name": "Wrapped eETH",
+      "symbol": "weETH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/weeth.png"
     }
   ]
 }

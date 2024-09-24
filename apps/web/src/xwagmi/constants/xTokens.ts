@@ -39,6 +39,15 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     ),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx2d552c485ec8bcaa75aac02424e2aca6ffdb2f1b', 18, 'BNB', 'BNB'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx288d13e1b63563459a2ac6179f237711f6851cb5', 18, 'ETH', 'ETH'),
+    new XToken('0x1.icon', ChainId.MAINNET, 'cxce7b23917ddf57656010decd6017fe5016de681b', 18, 'weETH', 'Wrapped eETH'),
+    new XToken(
+      '0x1.icon',
+      ChainId.MAINNET,
+      'cxb940dbfbc45c92f3a0cde464c4331102e7a84da8',
+      18,
+      'wstETH',
+      'Wrapped stETH',
+    ),
     new XToken('0x1.icon', ChainId.MAINNET, 'cxe2da9f10bc6e2754347bde2ef73379bd398fd9f3', 18, 'HVH', 'HVH'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx07b184a37f03c6ab681fcbd0b45aec6dc3eafbeb', 18, 'BTC', 'Bitcoin', 'BTC1'),
     new XToken(
@@ -102,6 +111,8 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
   '0xa4b1.arbitrum': [
     new XToken('0xa4b1.arbitrum', 42161, NATIVE_ADDRESS, 18, 'ETH', 'ETH'),
     new XToken('0xa4b1.arbitrum', 42161, '0xA67f4b09Eed22f8201Ee0637CbE9d654E63F946e', 18, 'bnUSD', 'Balanced Dollar'),
+    new XToken('0xa4b1.arbitrum', 42161, '0x35751007a407ca6feffe80b3cb397736d2cf4dbe', 18, 'weETH', 'Wrapped eETH'),
+    new XToken('0xa4b1.arbitrum', 42161, '0x5979D7b546E38E414F7E9822514be443A4800529', 18, 'wstETH', 'Wrapped stETH'),
     new XToken('0xa4b1.arbitrum', 42161, '0xaf88d065e77c8cC2239327C5EDb3A432268e5831', 6, 'USDC', 'USD Coin'),
     new XToken('0xa4b1.arbitrum', 42161, '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f', 8, 'BTC', 'Wrapped BTC', 'BTC1'),
     new XToken('0xa4b1.arbitrum', 42161, '0x6c84a8f1c29108F47a79964b5Fe888D4f4D0dE40', 18, 'tBTC', 'Threshold BTC'),
@@ -110,6 +121,8 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
   '0x2105.base': [
     new XToken('0x2105.base', 8453, NATIVE_ADDRESS, 18, 'ETH', 'ETH'),
     new XToken('0x2105.base', 8453, '0x78b7CD9308287DEb724527d8703c889e2d6C3708', 18, 'bnUSD', 'Balanced Dollar'),
+    new XToken('0x2105.base', 8453, '0x04C0599Ae5A44757c0af6F9eC3b93da8976c150A', 18, 'weETH', 'Wrapped eETH'),
+    new XToken('0x2105.base', 8453, '0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452', 18, 'wstETH', 'Wrapped stETH'),
     new XToken(
       '0x2105.base',
       8453,

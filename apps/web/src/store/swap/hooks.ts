@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { Currency, CurrencyAmount, Price, Token, TradeType } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Price, Token, TradeType, XChainId, XToken } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { t } from '@lingui/macro';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,7 +17,6 @@ import { parseUnits } from '@/utils';
 import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
-import { XChainId, XToken } from '@/xwagmi/types';
 import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
 import {

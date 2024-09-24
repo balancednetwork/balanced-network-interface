@@ -2,7 +2,6 @@ import BigNumber from 'bignumber.js';
 
 import { formatBigNumber } from '@/utils';
 import { getXWalletClient } from '@/xwagmi/actions';
-import { XChainId } from '@/xwagmi/types';
 import {
   XMessage,
   XMessageStatus,
@@ -14,6 +13,7 @@ import {
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
 import { xServiceActions } from '@/xwagmi/xcall/zustand/useXServiceStore';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { XChainId } from '@balancednetwork/sdk-core';
 import { useSignTransaction } from '@mysten/dapp-kit';
 import { useMemo } from 'react';
 import { transactionActions } from './useTransactionStore';

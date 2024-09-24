@@ -18,8 +18,8 @@ import {
 import { archway } from '@/xwagmi/constants/xChains';
 import { sARCHOnArchway } from '@/xwagmi/constants/xTokens';
 import { useXService } from '@/xwagmi/hooks';
-import { XChainId } from '@/xwagmi/types';
 import { ArchwayXService } from '@/xwagmi/xchains/archway';
+import { XChainId } from '@balancednetwork/sdk-core';
 
 const WithdrawOption = styled.button<{ active: boolean }>`
   text-align: center;

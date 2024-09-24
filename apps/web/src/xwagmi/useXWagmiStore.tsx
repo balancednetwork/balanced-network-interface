@@ -1,5 +1,6 @@
 import { xChains } from '@/xwagmi/constants/xChains';
-import { XChainId, XChainType } from '@/xwagmi/types';
+import { XChainType } from '@/xwagmi/types';
+import { XChainId } from '@balancednetwork/sdk-core';
 import { useSuiClient } from '@mysten/dapp-kit';
 import { useEffect } from 'react';
 import { create } from 'zustand';

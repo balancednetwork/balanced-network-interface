@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
-import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { Pair } from '@balancednetwork/v1-sdk';
+import { CallData } from '@balancednetwork/balanced-js';
+import { Currency, CurrencyAmount, Token, XToken } from '@balancednetwork/sdk-core';
 import { useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
@@ -20,12 +19,10 @@ import {
   isFIN,
   isNativeCurrency,
 } from '@/constants/tokens';
-import { useBnJsContractQuery } from '@/queries/utils';
 import { useTokenListConfig } from '@/store/lists/hooks';
-import { useAllTransactions } from '@/store/transactions/hooks';
 import { useUserAddedTokens } from '@/store/user/hooks';
 import { getXTokenAddress, isXToken } from '@/utils/xTokens';
-import { XToken, XWalletAssetRecord } from '@/xwagmi/types';
+import { XWalletAssetRecord } from '@/xwagmi/types';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import { AppState } from '..';
@@ -33,7 +30,7 @@ import { useAllTokens } from '../../hooks/Tokens';
 import { changeBalances, changeICONBalances } from './reducer';
 
 import { useXBalances } from '@/xwagmi/hooks/useXBalances';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId } from '@balancednetwork/sdk-core';
 
 import { useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';

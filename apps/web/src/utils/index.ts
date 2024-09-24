@@ -13,7 +13,7 @@ import { Field } from '@/store/swap/reducer';
 import { PairInfo } from '@/types';
 import { NATIVE_ADDRESS } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId } from '@balancednetwork/sdk-core';
 import { Validator } from 'icon-sdk-js';
 
 const { isScoreAddress } = Validator;

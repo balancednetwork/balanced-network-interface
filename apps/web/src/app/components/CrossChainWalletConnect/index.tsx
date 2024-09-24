@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Typography } from '@/app/theme';
 import { shortenAddress } from '@/utils';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId } from '@balancednetwork/sdk-core';
 
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSwapState } from '@/store/swap/hooks';

@@ -5,7 +5,8 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
 import { useXPublicClient } from '@/xwagmi/hooks';
-import { XChain, XChainId } from '@/xwagmi/types';
+import { XChain } from '@/xwagmi/types';
+import { XChainId } from '@balancednetwork/sdk-core';
 
 type XServiceStore = {
   xChainHeights: Partial<Record<XChainId, bigint>>;

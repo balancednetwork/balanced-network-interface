@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { Typography } from '@/app/theme';
 import useWidth from '@/hooks/useWidth';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId } from '@balancednetwork/sdk-core';
 import { Currency } from '@balancednetwork/sdk-core';
 import { StyledArrowDownIcon, UnderlineText } from '../../../../components/DropdownText';
 import { DropdownPopper } from '../../../../components/Popover';

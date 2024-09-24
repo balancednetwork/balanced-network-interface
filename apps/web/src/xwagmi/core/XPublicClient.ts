@@ -5,8 +5,7 @@ import {
   XCallEventType,
   XCallMessageSentEvent,
 } from '@/xwagmi/xcall/types';
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
-import { XChainId, XToken } from '../types';
+import { Currency, CurrencyAmount, XChainId, XToken } from '@balancednetwork/sdk-core';
 
 export interface IXPublicClient {
   // getBlock(blockHeight);

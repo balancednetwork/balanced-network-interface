@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId } from '@balancednetwork/sdk-core';
 import { Currency } from '@balancednetwork/sdk-core';
 
 import CurrencyLogo from '../CurrencyLogo';

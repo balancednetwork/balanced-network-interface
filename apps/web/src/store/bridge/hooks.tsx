@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, XChainId, XToken } from '@balancednetwork/sdk-core';
 import { t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,7 +13,6 @@ import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
-import { XChainId, XToken } from '@/xwagmi/types';
 import { isDenomAsset } from '@/xwagmi/xchains/archway/utils';
 import {
   Field,

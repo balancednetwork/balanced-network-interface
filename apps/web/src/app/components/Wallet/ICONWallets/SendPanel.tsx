@@ -11,9 +11,9 @@ import { useTheme } from 'styled-components';
 
 import AddressInputPanel from '@/app/components/AddressInputPanel';
 import { Button, TextButton } from '@/app/components/Button';
-import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
+import CurrencyInputPanel from '@/app/components2/CurrencyInputPanel';
 import { Typography } from '@/app/theme';
 import { BIGINT_ZERO } from '@/constants/misc';
 import { useTransactionAdder } from '@/store/transactions/hooks';

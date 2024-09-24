@@ -5,7 +5,7 @@ import { XChainId } from '@balancednetwork/sdk-core';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import React from 'react';
-import CurrencyLogo from '../CurrencyLogo';
+import CurrencyLogo from '../../components2/CurrencyLogo';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
 import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, DataText, ListItem } from './styledComponents';
 

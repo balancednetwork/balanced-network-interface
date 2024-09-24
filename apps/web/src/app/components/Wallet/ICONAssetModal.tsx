@@ -21,7 +21,7 @@ import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance } from '@/utils/formatter';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { useTheme } from 'styled-components';
-import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
+import CurrencyLogoWithNetwork from '../../components2/CurrencyLogoWithNetwork';
 import ICXWallet from './ICONWallets/ICXWallet';
 import SICXWallet from './ICONWallets/SICXWallet';
 import SendPanel from './ICONWallets/SendPanel';
@@ -67,12 +67,7 @@ const ICONAssetModal = ({ token, balance, value, isOpen, close }) => {
         </DashGrid>
         <ListItem $border={false}>
           <AssetSymbol>
-            <CurrencyLogoWithNetwork
-              currency={token}
-              chainId={ICON_XCALL_NETWORK_ID}
-              bgColor={theme.colors?.bg2}
-              size={'24px'}
-            />
+            <CurrencyLogoWithNetwork currency={token} chainId={ICON_XCALL_NETWORK_ID} size={'24px'} />
             <Typography fontSize={16} fontWeight={'bold'}>
               {token.symbol}
             </Typography>

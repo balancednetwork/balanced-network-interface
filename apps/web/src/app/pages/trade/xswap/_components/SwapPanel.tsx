@@ -6,10 +6,10 @@ import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
 
-import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { UnderlineText, UnderlineTextWithArrow } from '@/app/components/DropdownText';
 import { DropdownPopper } from '@/app/components/Popover';
 import { SelectorType } from '@/app/components/SearchModal/CurrencySearch';
+import CurrencyInputPanel from '@/app/components2/CurrencyInputPanel';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import { Button } from '@/components/ui/button';
@@ -68,7 +68,7 @@ export default function SwapPanel() {
 
   const xAccount = useXAccount(getXChainType(direction.to));
 
-  const { manualAddresses, setManualAddress } = useManualAddresses();
+  const { manualAddresses } = useManualAddresses();
 
   React.useEffect(() => {
     if (manualAddresses[direction.to]) {
@@ -186,11 +186,16 @@ export default function SwapPanel() {
   };
 
   const swapButton = isValid ? (
-    <Button variant="default" onClick={handleSwap}>
+    <Button variant="default" onClick={handleSwap} className="w-full rounded-xl">
       <Trans>Swap</Trans>
     </Button>
   ) : (
-    <Button disabled={!account || !!inputError || !canBridge} color="primary" onClick={handleSwap}>
+    <Button
+      disabled={!account || !!inputError || !canBridge}
+      color="primary"
+      onClick={handleSwap}
+      className="w-full rounded-3xl"
+    >
       {inputError || t`Swap`}
     </Button>
   );
@@ -199,7 +204,7 @@ export default function SwapPanel() {
     <>
       <div className="px-3 py-7 flex flex-col">
         <div className="flex flex-col gap-4 items-stretch">
-          <div className="flex items-end justify-between">
+          {/* <div className="flex items-end justify-between">
             <Typography variant="h2">
               <Trans>You pay</Trans>
             </Typography>
@@ -210,10 +215,9 @@ export default function SwapPanel() {
               } 
                 ${currencies[Field.INPUT]?.symbol}`}
             </Typography>
-          </div>
+          </div> */}
 
           <CurrencyInputPanel
-            label="You pay"
             account={account}
             value={formattedAmounts[Field.INPUT]}
             currency={currencies[Field.INPUT]}
@@ -233,7 +237,7 @@ export default function SwapPanel() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          {/* <div className="flex items-center justify-between">
             <Typography variant="h2">
               <Trans>You receive</Trans>
             </Typography>
@@ -254,10 +258,9 @@ export default function SwapPanel() {
                 </>
               )}
             </Typography>
-          </div>
+          </div> */}
 
           <CurrencyInputPanel
-            label="You receive"
             account={account}
             value={formattedAmounts[Field.OUTPUT]}
             currency={currencies[Field.OUTPUT]}
@@ -268,7 +271,6 @@ export default function SwapPanel() {
             showCrossChainOptions={true}
             addressEditable
             selectorType={SelectorType.SWAP_OUT}
-            setManualAddress={setManualAddress}
           />
 
           <div className="flex items-center justify-between">

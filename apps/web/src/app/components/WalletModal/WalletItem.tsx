@@ -4,7 +4,7 @@ import { Box, Flex } from 'rebass';
 
 import { Typography } from '@/app/theme';
 
-import { ChainLogo } from '@/app/components/ChainLogo';
+import { ChainLogo } from '@/app/components2/ChainLogo';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useXAccount, useXConnect, useXConnectors, useXDisconnect } from '@/xwagmi/hooks';
 import { XChain, XChainType } from '@/xwagmi/types';

@@ -8,8 +8,8 @@ import { MinusCircle } from 'react-feather';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import CurrencyLogo from '@/app/components/CurrencyLogo';
 import { DataText, List1, ListItem } from '@/app/components/List';
+import CurrencyLogo from '@/app/components2/CurrencyLogo';
 import { Typography } from '@/app/theme';
 import useKeyPress from '@/hooks/useKeyPress';
 import useSortCurrency from '@/hooks/useSortCurrency';
@@ -24,7 +24,7 @@ import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { getSupportedXChainIdsForToken } from '@/xwagmi/xcall/utils';
 import { XChainId } from '@balancednetwork/sdk-core';
-import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
+import CurrencyLogoWithNetwork from '../../components2/CurrencyLogoWithNetwork';
 import { HeaderText } from '../HeaderText';
 import { BalanceBreakdown } from '../Wallet/styledComponents';
 import { SelectorType } from './CurrencySearch';
@@ -156,19 +156,9 @@ function CurrencyRow({
       <>
         <Flex alignItems={'center'}>
           {(basedOnWallet || shouldForceNetworkIcon) && finalXChainIds.length === 1 ? (
-            <CurrencyLogoWithNetwork
-              currency={currency}
-              bgColor={theme.colors?.bg4}
-              chainId={finalXChainIds[0]}
-              size={'24px'}
-            />
+            <CurrencyLogoWithNetwork currency={currency} chainId={finalXChainIds[0]} size={'24px'} />
           ) : finalXChainIds.length === 0 && showCrossChainBreakdown ? (
-            <CurrencyLogoWithNetwork
-              currency={currency}
-              bgColor={theme.colors?.bg4}
-              chainId={ICON_XCALL_NETWORK_ID}
-              size={'24px'}
-            />
+            <CurrencyLogoWithNetwork currency={currency} chainId={ICON_XCALL_NETWORK_ID} size={'24px'} />
           ) : (
             <CurrencyLogo currency={currency} />
           )}
@@ -219,19 +209,9 @@ function CurrencyRow({
       <>
         <Flex>
           {sortedXChains.length === 0 && showCrossChainBreakdown ? (
-            <CurrencyLogoWithNetwork
-              currency={currency}
-              bgColor={theme.colors?.bg4}
-              chainId={ICON_XCALL_NETWORK_ID}
-              size={'24px'}
-            />
+            <CurrencyLogoWithNetwork currency={currency} chainId={ICON_XCALL_NETWORK_ID} size={'24px'} />
           ) : shouldForceNetworkIcon && finalXChainIds.length === 1 ? (
-            <CurrencyLogoWithNetwork
-              currency={currency}
-              bgColor={theme.colors?.bg4}
-              chainId={finalXChainIds[0]}
-              size={'24px'}
-            />
+            <CurrencyLogoWithNetwork currency={currency} chainId={finalXChainIds[0]} size={'24px'} />
           ) : (
             <CurrencyLogo currency={currency} />
           )}

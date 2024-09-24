@@ -3,9 +3,9 @@ import React from 'react';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
-import { ChainLogo } from '@/app/components/ChainLogo';
 import { HeaderText } from '@/app/components/HeaderText';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
+import { ChainLogo } from '@/app/components2/ChainLogo';
 import { Typography } from '@/app/theme';
 import useSortXChains from '@/hooks/useSortXChains';
 import { useHasSignedIn } from '@/hooks/useWallets';

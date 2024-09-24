@@ -8,7 +8,7 @@ import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import React from 'react';
 import { useTheme } from 'styled-components';
-import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
+import CurrencyLogoWithNetwork from '../../components2/CurrencyLogoWithNetwork';
 import ICONAssetModal from './ICONAssetModal';
 import { AssetSymbol, BalanceAndValueWrap, Chevron, DataText, ListItem } from './styledComponents';
 import useClaimableICX from './useClaimableICX';
@@ -55,7 +55,6 @@ const SingleChainBalanceItem = ({
           <CurrencyLogoWithNetwork
             currency={baseToken}
             chainId={xChainId as XChainId}
-            bgColor={isNested ? theme.colors?.bg3 : theme.colors?.bg4}
             size={isNested ? '20px' : '24px'}
           />
           <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>

@@ -9,7 +9,7 @@ import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import React from 'react';
 import { Flex } from 'rebass';
 import styled, { useTheme } from 'styled-components';
-import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
+import CurrencyLogoWithNetwork from '../../components2/CurrencyLogoWithNetwork';
 
 const CurrencyXChainItemWrap = styled(Flex)`
   width: 100%;
@@ -44,7 +44,7 @@ const CurrencyXChainItem = ({
   return (
     <CurrencyXChainItemWrap onClick={() => onSelect(currency, xChainId)}>
       <Flex alignItems="center">
-        <CurrencyLogoWithNetwork currency={currency} chainId={xChainId} bgColor={theme.colors?.bg3} size="22px" />
+        <CurrencyLogoWithNetwork currency={currency} chainId={xChainId} size="22px" />
         <Typography variant="span" fontSize={14} display="block" ml="10px" pt="4px">
           {xChainMap[xChainId].name}
         </Typography>

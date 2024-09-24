@@ -30,6 +30,8 @@
     "@mysten/dapp-kit": "0.14.18",
     "@mysten/sui": "1.8.0",
     "@popperjs/core": "2.8.4",
+    "@radix-ui/react-dialog": "1.1.1",
+    "@radix-ui/react-label": "2.1.0",
     "@radix-ui/react-slot": "1.1.0",
     "@radix-ui/react-tabs": "1.1.0",
     "@reach/dialog": "0.18.0",
@@ -88,6 +90,7 @@
     "styled-components": "6.1.8",
     "tailwind-merge": "2.5.2",
     "tailwindcss-animate": "1.0.7",
+    "vaul": "0.9.4",
     "viem": "2.x",
     "wagmi": "2.5.20",
     "zustand": "4.5.2"

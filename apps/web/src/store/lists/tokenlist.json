@@ -241,6 +241,14 @@
       "symbol": "SUI",
       "decimals": 9,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sui.png"
+    },
+    {
+      "address": "cx15ddac8c2663bd7e71ca1688dffa426070752fbd",
+      "chainId": 1,
+      "name": "Threshold BTC",
+      "symbol": "tBTC",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/tbtc.png"
     }
   ]
 }

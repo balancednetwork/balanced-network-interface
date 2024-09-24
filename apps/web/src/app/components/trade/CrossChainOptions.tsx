@@ -6,7 +6,7 @@ import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
 
-import XChainList from '@/app/pages/trade/bridge/_components/XChainList';
+import XChainList from '@/app/pages/trade/xswap/_components/XChainList';
 import useWidth from '@/hooks/useWidth';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChain, XChainId } from '@/xwagmi/types';

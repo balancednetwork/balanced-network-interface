@@ -490,7 +490,7 @@ export function useIsHandlingICX() {
 export function useCollateralDecimalPlaces() {
   const collateralType = useCollateralType();
   const rates = useRatesWithOracle();
-  return getBalanceDecimals(rates?.[collateralType].toFixed());
+  return getBalanceDecimals(rates?.[collateralType]?.toFixed());
 }
 
 export function useDerivedCollateralInfo(): {

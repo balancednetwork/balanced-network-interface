@@ -4,7 +4,7 @@ import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatBalance } from '@/utils/formatter';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId } from '@balancednetwork/sdk-core';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import React from 'react';
 import { Flex } from 'rebass';

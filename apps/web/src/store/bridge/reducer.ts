@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { XChainId } from '@/xwagmi/types';
+import { XChainId } from '@balancednetwork/sdk-core';
 
 import { getXTokenBySymbol } from '@/utils/xTokens';
 import { Currency } from '@balancednetwork/sdk-core';

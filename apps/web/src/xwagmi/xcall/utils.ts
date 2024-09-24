@@ -1,11 +1,11 @@
 import rlp from 'rlp';
 
-import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, TradeType, XChainId, XToken } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XChain, XChainId, XToken } from '@/xwagmi/types';
+import { XChain } from '@/xwagmi/types';
 import { uintToBytes } from '@/xwagmi/utils';
 import { xChains } from '../constants/xChains';
 

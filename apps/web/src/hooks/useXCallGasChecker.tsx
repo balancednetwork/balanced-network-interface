@@ -1,8 +1,9 @@
 import { useICX } from '@/constants/tokens';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChain, XChainId } from '@/xwagmi/types';
+import { XChain } from '@/xwagmi/types';
 import { formatBigNumber, getNetworkDisplayName } from '@/xwagmi/utils';
+import { XChainId } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { useMemo } from 'react';
 

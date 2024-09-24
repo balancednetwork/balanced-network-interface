@@ -4,7 +4,7 @@ import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { getXPublicClient } from '@/xwagmi/actions';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId } from '@balancednetwork/sdk-core';
 import { XCallEventType } from '../types';
 import { XCallDestinationEvent, XCallExecutedEvent, XCallMessageEvent } from '../types';
 import { xServiceActions } from './useXServiceStore';

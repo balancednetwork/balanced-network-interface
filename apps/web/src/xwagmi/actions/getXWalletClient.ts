@@ -1,4 +1,4 @@
-import { XChainId } from '@/xwagmi/types';
+import { XChainId } from '@balancednetwork/sdk-core';
 import { XWalletClient } from '../core/XWalletClient';
 import { useXWagmiStore } from '../useXWagmiStore';
 

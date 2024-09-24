@@ -1,5 +1,5 @@
 import { XTransactionInput } from '@/xwagmi/xcall/types';
-import { XChainId } from '../types';
+import { XChainId } from '@balancednetwork/sdk-core';
 
 export abstract class XWalletClient {
   public xChainId: XChainId;

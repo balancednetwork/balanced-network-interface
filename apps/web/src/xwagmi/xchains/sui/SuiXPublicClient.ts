@@ -1,6 +1,5 @@
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
-import { XChainId, XToken } from '@/xwagmi/types';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, XChainId, XToken } from '@balancednetwork/sdk-core';
 import { TransactionStatus, XCallEvent } from '../../xcall/types';
 import { SuiXService } from './SuiXService';
 

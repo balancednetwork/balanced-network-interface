@@ -1,5 +1,5 @@
-import { XChainId, XToken } from '@/xwagmi/types';
 import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balanced-js';
+import { XChainId, XToken } from '@balancednetwork/sdk-core';
 import { NATIVE_ADDRESS } from '.';
 
 export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {

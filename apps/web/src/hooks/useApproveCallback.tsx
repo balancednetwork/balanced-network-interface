@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, Token, XToken } from '@balancednetwork/sdk-core';
 import { t } from '@lingui/macro';
 import { useQuery } from '@tanstack/react-query';
 import { Abi, Address, WriteContractReturnType, erc20Abi, getContract } from 'viem';
@@ -16,7 +16,6 @@ import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount, useXService } from '@/xwagmi/hooks';
 import { ArchwayXService } from '@/xwagmi/xchains/archway';
 import { isDenomAsset } from '@/xwagmi/xchains/archway/utils';
-import { XToken } from '../xwagmi/types';
 
 export const FAST_INTERVAL = 10000;
 

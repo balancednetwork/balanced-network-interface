@@ -3,7 +3,7 @@ import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { WalletState } from '@/store/wallet/reducer';
 import { getXTokenAddress, isXToken } from '@/utils/xTokens';
 import { SUPPORTED_XCALL_CHAINS } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId } from '@balancednetwork/sdk-core';
 import { Currency } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { useEffect, useState } from 'react';

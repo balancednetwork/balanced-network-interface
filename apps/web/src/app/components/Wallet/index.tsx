@@ -6,7 +6,6 @@ import { useXBalancesByToken } from '@/store/wallet/hooks';
 import { formatValue } from '@/utils/formatter';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXDisconnectAll } from '@/xwagmi/hooks';
-import { XChainId } from '@/xwagmi/types';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import React, { RefObject, useEffect, useRef, useState } from 'react';

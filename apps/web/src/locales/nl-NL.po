@@ -100,10 +100,10 @@ msgid "{0} transfer approval failed."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "4H"
-msgstr "4U"
+#~ msgid "4H"
+#~ msgstr "4U"
 
-#: src/app/pages/trade/supply/_components/utils.tsx
+#: src/app/pages/trade/xswap/_components/utils.tsx
 msgid "Supplying {pair} liquidity..."
 msgstr "{pair} liquiditeit leveren..."
 
@@ -120,8 +120,8 @@ msgstr "{0} ICX"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "15m"
-msgstr "15m"
+#~ msgid "15m"
+#~ msgstr "15m"
 
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
@@ -309,7 +309,7 @@ msgstr "Betaal"
 #~ msgid "Awaiting execution on ICON."
 #~ msgstr ""
 
-#: src/app/pages/trade/supply/_components/utils.tsx
+#: src/app/pages/trade/xswap/_components/utils.tsx
 msgid "Couldn't transfer {inputCurrency} to {network}. Try again."
 msgstr ""
 
@@ -369,8 +369,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/TokenList/index.tsx
-msgid "Tokens"
-msgstr ""
+#~ msgid "Tokens"
+#~ msgstr ""
 
 #: src/app/components/Header/index.tsx
 msgid "Copied"
@@ -608,8 +608,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "1D"
-msgstr "1D"
+#~ msgid "1D"
+#~ msgstr "1D"
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
 #~ msgid "Deposit sICX"
@@ -627,7 +627,7 @@ msgstr "1D"
 msgid "Remove community token list"
 msgstr ""
 
-#: src/app/pages/trade/supply/_components/utils.tsx
+#: src/app/pages/trade/xswap/_components/utils.tsx
 msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
 msgstr "Kon {inputCurrency} / {outputCurrency} liquiditeit niet opnemen. Probeer het opnieuw."
 
@@ -692,7 +692,7 @@ msgstr "Je hebt minstens {MINIMUM_ICX_FOR_TX} ICX in je wallet nodig om deze tra
 #~ msgid "Liquidity pools"
 #~ msgstr "Liquiditeit pools"
 
-#: src/app/pages/trade/supply/_components/utils.tsx
+#: src/app/pages/trade/xswap/_components/utils.tsx
 msgid "Swapping {inputCurrency} for {outputCurrency}..."
 msgstr "Omwisselen van {inputCurrency} voor {outputCurrency}..."
 
@@ -824,7 +824,7 @@ msgstr "Slippage tolerantie"
 #~ msgid "sign in"
 #~ msgstr ""
 
-#: src/app/pages/trade/supply/_components/utils.tsx
+#: src/app/pages/trade/xswap/_components/utils.tsx
 msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
 msgstr "{inputAmount} {inputCurrency} en {outputAmount} {outputCurrency} zijn toegevoegd aan uw wallet."
 
@@ -859,8 +859,8 @@ msgid "You'll also pay"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "1H"
-msgstr "1U"
+#~ msgid "1H"
+#~ msgstr "1U"
 
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "Cross-chain transactions (24H)"
@@ -928,7 +928,7 @@ msgstr "Vul bedrag in"
 #~ msgid "sign in with"
 #~ msgstr ""
 
-#: src/app/pages/trade/supply/_components/utils.tsx
+#: src/app/pages/trade/xswap/_components/utils.tsx
 msgid "Supplied {pair} liquidity."
 msgstr "{pair} liquiditeit geleverd."
 
@@ -1108,7 +1108,7 @@ msgstr "Na"
 #~ msgid "Description"
 #~ msgstr "Omschrijving"
 
-#: src/app/pages/trade/supply/_components/utils.tsx
+#: src/app/pages/trade/xswap/_components/utils.tsx
 msgid "Couldn't supply {pair} liquidity. Try again."
 msgstr "Kan {pair} liquiditeit niet verstrekken. Probeer het opnieuw."
 
@@ -1124,7 +1124,7 @@ msgstr "Voeg community token lijst toe"
 #~ msgid "Deposited {0} bnUSD."
 #~ msgstr ""
 
-#: src/app/pages/trade/supply/_components/utils.tsx
+#: src/app/pages/trade/xswap/_components/utils.tsx
 msgid "Couldn't swap {inputCurrency} for {outputCurrency}. Try again."
 msgstr "Kon {inputCurrency} niet wisselen voor {outputCurrency}. Probeer het opnieuw."
 
@@ -1150,8 +1150,8 @@ msgstr "Unstake"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/TokenList/index.tsx
-msgid "It does not reflect the total market cap for multi-chain assets."
-msgstr ""
+#~ msgid "It does not reflect the total market cap for multi-chain assets."
+#~ msgstr ""
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Cross-chain swap requested."
@@ -1252,7 +1252,7 @@ msgstr ""
 #~ msgid "Your loan will increase at a rate of {0} per year."
 #~ msgstr ""
 
-#: src/app/pages/trade/supply/_components/utils.tsx
+#: src/app/pages/trade/xswap/_components/utils.tsx
 msgid "{outputAmount} {outputCurrency} added to your wallet."
 msgstr "{outputAmount} {outputCurrency} toegevoegd aan uw wallet."
 
@@ -1302,8 +1302,8 @@ msgstr "Verzend {0}"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/TokenList/index.tsx
-msgid "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
-msgstr ""
+#~ msgid "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
+#~ msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 #~ msgid "Forum link"
@@ -1386,8 +1386,6 @@ msgstr "Unstake sICX"
 msgid "There's no ICX unstaking."
 msgstr "Er is geen ICX aan het unstaken."
 
-#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "{0} {1} per {2}"
@@ -1423,7 +1421,7 @@ msgstr "{0} {1} per {2}"
 #~ msgid "Repaying"
 #~ msgstr ""
 
-#: src/app/pages/trade/supply/_components/utils.tsx
+#: src/app/pages/trade/xswap/_components/utils.tsx
 msgid "Transfer {inputCurrency} to {network}..."
 msgstr ""
 
@@ -1563,7 +1561,7 @@ msgstr ""
 #~ msgid "Withdrawing sICX..."
 #~ msgstr "sICX aan het opnemen..."
 
-#: src/app/pages/trade/supply/_components/utils.tsx
+#: src/app/pages/trade/xswap/_components/utils.tsx
 msgid "{currency} sent to the {pair} pool."
 msgstr "{currency} is naar de {pair} pool verzonden."
 
@@ -2158,7 +2156,7 @@ msgstr ""
 #~ msgid "Loan interest"
 #~ msgstr ""
 
-#: src/app/pages/trade/supply/_components/utils.tsx
+#: src/app/pages/trade/xswap/_components/utils.tsx
 msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
 msgstr "Opnemen van {inputCurrency} / {outputCurrency} liquiditeit..."
 
@@ -2166,7 +2164,7 @@ msgstr "Opnemen van {inputCurrency} / {outputCurrency} liquiditeit..."
 msgid "Connected to {numberOfConnectedWallets} blockchains"
 msgstr ""
 
-#: src/app/pages/trade/supply/_components/utils.tsx
+#: src/app/pages/trade/xswap/_components/utils.tsx
 msgid "Couldn't send {currency} to the {pair} pool. Try again."
 msgstr "Kon {currency} niet verzenden naar de {pair} pool. Probeer het opnieuw."
 
@@ -2273,7 +2271,7 @@ msgstr "Je transactie kon niet worden voltooid."
 #~ msgid "Claiming Savings Rate rewards..."
 #~ msgstr ""
 
-#: src/app/pages/trade/supply/_components/utils.tsx
+#: src/app/pages/trade/xswap/_components/utils.tsx
 msgid "Transfer {inputAmount} {inputCurrency} to {network} with {address}."
 msgstr ""
 
@@ -2305,8 +2303,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "No price chart available for this pair."
-msgstr "Geen prijsgrafiek beschikbaar voor dit paar."
+#~ msgid "No price chart available for this pair."
+#~ msgstr "Geen prijsgrafiek beschikbaar voor dit paar."
 
 #: src/btp/src/connectors/helper.ts
 #~ msgid "Transferred {0} {1} to {2}."
@@ -2350,16 +2348,16 @@ msgstr ""
 #~ msgstr "Inloggen met"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "Line"
-msgstr "Lijn"
+#~ msgid "Line"
+#~ msgstr "Lijn"
 
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #~ msgid "liquidity pool"
 #~ msgstr "liquiditeitspool"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "Candles"
-msgstr "Kaarsen"
+#~ msgid "Candles"
+#~ msgstr "Kaarsen"
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #~ msgid "Supplying liquidity..."
@@ -2421,8 +2419,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-msgid "1W"
-msgstr "1W"
+#~ msgid "1W"
+#~ msgstr "1W"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #~ msgid "Depositing..."
@@ -2600,7 +2598,7 @@ msgstr "{0} ICX is klaar om op te eisen"
 #~ msgid "Pay a {0} BALN fee to unlock early."
 #~ msgstr ""
 
-#: src/app/pages/trade/supply/_components/utils.tsx
+#: src/app/pages/trade/xswap/_components/utils.tsx
 msgid "Sending {currency} to the {pair} pool..."
 msgstr "{currency} naar de {pair} pool aan het verzenden..."
 
@@ -2653,7 +2651,7 @@ msgstr ""
 #~ msgid "The current {0} price is"
 #~ msgstr ""
 
-#: src/app/pages/trade/supply/_components/utils.tsx
+#: src/app/pages/trade/xswap/_components/utils.tsx
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
 msgstr "{inputAmount} {inputCurrency} omgewisseld voor {outputAmount} {outputCurrency}."
 

@@ -12,10 +12,10 @@ export interface IXCallFee {
   rollback: bigint;
 }
 
-import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, TradeType, XChainId } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 
-import { CurrencyKey, XChainId } from '@/xwagmi/types';
+import { CurrencyKey } from '@/xwagmi/types';
 
 export enum TransactionStatus {
   pending = 'pending',

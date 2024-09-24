@@ -1,11 +1,10 @@
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token, XChainId } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
 import { bech32 } from 'bech32';
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
 import { Validator } from 'icon-sdk-js';
-import { XChainId } from '../types';
 
 const { isEoaAddress, isScoreAddress } = Validator;
 

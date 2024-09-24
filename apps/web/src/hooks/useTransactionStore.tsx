@@ -11,7 +11,7 @@ import {
   NotificationSuccess,
 } from '@/app/components/Notification/TransactionNotification';
 import { getXPublicClient } from '@/xwagmi/actions';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId } from '@balancednetwork/sdk-core';
 import { persist } from 'zustand/middleware';
 import { Transaction, TransactionStatus } from '../xwagmi/xcall/types';
 

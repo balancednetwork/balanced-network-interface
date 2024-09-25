@@ -56,7 +56,6 @@ msgstr ""
 #~ msgid "then create the pool."
 #~ msgstr "następnie utwórz pulę."
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "Only"
 msgstr ""
@@ -70,7 +69,6 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/AddressInputPanel/index.tsx
-#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 msgid "To"
 msgstr ""
 
@@ -83,10 +81,10 @@ msgstr ""
 #~ msgstr "Usuwanie"
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid ""
-"The ICX unstaking period is {0} days, but yours may be ready to claim sooner based on the volume of ICX\n"
-"converted to sICX."
-msgstr ""
+#~ msgid ""
+#~ "The ICX unstaking period is {0} days, but yours may be ready to claim sooner based on the volume of ICX\n"
+#~ "converted to sICX."
+#~ msgstr ""
 
 #: src/btp/src/connectors/helper.ts
 #: src/btp/src/connectors/MetaMask/index.ts
@@ -112,8 +110,8 @@ msgstr "Dostarczanie płynności do pary {pair}..."
 #~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid "{0} ICX"
-msgstr "{0} ICX"
+#~ msgid "{0} ICX"
+#~ msgstr "{0} ICX"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #~ msgid "Withdraw Balance Tokens"
@@ -123,14 +121,13 @@ msgstr "{0} ICX"
 #~ msgid "15m"
 #~ msgstr "15m"
 
-#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Switch to {0}"
 msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid "Claim ICX?"
-msgstr "Odebrać ICX?"
+#~ msgid "Claim ICX?"
+#~ msgstr "Odebrać ICX?"
 
 #: src/app/components/home/LoanPanel.tsx
 #~ msgid "Borrowed {0} bnUSD."
@@ -157,8 +154,8 @@ msgstr "Odebrać ICX?"
 #~ msgstr "Pożyczka"
 
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
-msgid "You have no pending cross-chain transactions."
-msgstr ""
+#~ msgid "You have no pending cross-chain transactions."
+#~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
 #~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain"
@@ -166,8 +163,8 @@ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/index.tsx
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid "Unstaking"
-msgstr "Odstake'owanie"
+#~ msgid "Unstaking"
+#~ msgstr "Odstake'owanie"
 
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
@@ -191,8 +188,8 @@ msgstr "Odstake'owanie"
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-msgid "Wallet:"
-msgstr "Portfel:"
+#~ msgid "Wallet:"
+#~ msgstr "Portfel:"
 
 #: src/app/pages/vote/_components/utils.ts
 #: src/utils/timeformat.ts
@@ -414,8 +411,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-msgid "Send max"
-msgstr "Wyślij wszystko"
+#~ msgid "Send max"
+#~ msgstr "Wyślij wszystko"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "View disclaimer."
@@ -457,7 +454,7 @@ msgstr ""
 #~ msgid "Loan action"
 #~ msgstr ""
 
-#: src/app/pages/trade/bridge/_components/XChainList.tsx
+#: src/app/pages/trade/xswap/_components/XChainList.tsx
 msgid "Blockchain"
 msgstr ""
 
@@ -474,8 +471,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-msgid "You receive"
-msgstr ""
+#~ msgid "You receive"
+#~ msgstr ""
 
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #~ msgid "${0}"
@@ -494,8 +491,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-msgid "Custom"
-msgstr ""
+#~ msgid "Custom"
+#~ msgstr ""
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -594,7 +591,6 @@ msgstr ""
 #~ msgid "Transaction failed!"
 #~ msgstr ""
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "is available on {0}."
 msgstr ""
@@ -717,8 +713,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-msgid "Address"
-msgstr "Adres"
+#~ msgid "Address"
+#~ msgstr "Adres"
 
 #: src/app/components/Header/index.tsx
 #~ msgid "Copy address"
@@ -761,8 +757,8 @@ msgstr "Adres"
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
-msgid "Before"
-msgstr "Przed"
+#~ msgid "Before"
+#~ msgstr "Przed"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #~ msgid "Active"
@@ -863,8 +859,8 @@ msgstr ""
 #~ msgstr "1G"
 
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
-msgid "Cross-chain transactions (24H)"
-msgstr ""
+#~ msgid "Cross-chain transactions (24H)"
+#~ msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/components/StabilityFund/index.tsx
@@ -903,7 +899,6 @@ msgstr ""
 
 #: src/app/components/XTransactionState/index.tsx
 #: src/app/components/XTransactionState/index.tsx
-#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
@@ -954,8 +949,8 @@ msgstr ""
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/index.tsx
-msgid "Send"
-msgstr "Wyślij"
+#~ msgid "Send"
+#~ msgstr "Wyślij"
 
 #: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
 #~ msgid "Your pools"
@@ -973,14 +968,13 @@ msgstr ""
 #~ msgid "Liquidity incentives"
 #~ msgstr ""
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Transfer time"
 msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-msgid "Sent {0} {1} to {address}."
-msgstr "Wysłano {0} {1} do {address}."
+#~ msgid "Sent {0} {1} to {address}."
+#~ msgstr "Wysłano {0} {1} do {address}."
 
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #~ msgid "Claimed network fees."
@@ -1024,8 +1018,8 @@ msgstr ""
 #~ msgstr "Przesyłanie Twojego głosu..."
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-msgid "Do not send sICX to an exchange."
-msgstr "Nie wysyłaj sICX na giełdę."
+#~ msgid "Do not send sICX to an exchange."
+#~ msgstr "Nie wysyłaj sICX na giełdę."
 
 #: src/app/components/home/Savings/index.tsx
 #~ msgid "Withdrawing bnUSD..."
@@ -1096,8 +1090,8 @@ msgstr ""
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
-msgid "After"
-msgstr "Po"
+#~ msgid "After"
+#~ msgstr "Po"
 
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 #~ msgid "{0} BALN added to your wallet."
@@ -1134,8 +1128,8 @@ msgstr "Nie udało się wymienić {inputCurrency} na {outputCurrency}. Spróbuj 
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/index.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
-msgid "Unstake"
-msgstr "Odstake'uj"
+#~ msgid "Unstake"
+#~ msgstr "Odstake'uj"
 
 #: src/app/components/CollateralTypeSwitcher/CollateralTypeListWrap.tsx
 #~ msgid "All collateral"
@@ -1189,8 +1183,8 @@ msgstr "Odstake'uj"
 #~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid "Not now"
-msgstr "Nie teraz"
+#~ msgid "Not now"
+#~ msgstr "Nie teraz"
 
 #: src/app/components/Header/index.tsx
 msgid "Unsupported network"
@@ -1202,7 +1196,6 @@ msgstr ""
 #~ msgid "No assets available."
 #~ msgstr "Brak dostępnych aktywów."
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Fee"
 msgstr "Prowizja"
@@ -1243,7 +1236,7 @@ msgstr "Prowizja"
 #~ msgid "Withdrawing"
 #~ msgstr ""
 
-#: src/app/pages/trade/bridge/_components/XChainList.tsx
+#: src/app/pages/trade/xswap/_components/XChainList.tsx
 msgid "Search blockchains..."
 msgstr ""
 
@@ -1269,8 +1262,8 @@ msgstr "Dodano {outputAmount} {outputCurrency} do Twojego portfela."
 #~ msgstr "Nieprawidłowa para"
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-msgid "Send {0}"
-msgstr "Wyślij {0}"
+#~ msgid "Send {0}"
+#~ msgstr "Wyślij {0}"
 
 #: src/app/components/home/Savings/index.tsx
 #~ msgid "distributed over the last 30 days."
@@ -1328,8 +1321,8 @@ msgstr "Wyślij {0}"
 #~ msgstr "(wymagane {0}%)"
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid "Claimed {0} ICX."
-msgstr "Odebrano {0} ICX."
+#~ msgid "Claimed {0} ICX."
+#~ msgstr "Odebrano {0} ICX."
 
 #: src/app/components/home/Savings/index.tsx
 #~ msgid "Withdraw bnUSD?"
@@ -1371,8 +1364,8 @@ msgstr "Zawiera prowizję w wysokości {0} {1}."
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
-msgid "Unstake sICX"
-msgstr "Odstake'uj sICX"
+#~ msgid "Unstake sICX"
+#~ msgstr "Odstake'uj sICX"
 
 #: src/app/components/ProposalInfo/components.tsx
 #~ msgid "{0} voters"
@@ -1383,8 +1376,8 @@ msgstr "Odstake'uj sICX"
 #~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid "There's no ICX unstaking."
-msgstr "Obecnie żadne ICX nie są odstake'owywane."
+#~ msgid "There's no ICX unstaking."
+#~ msgstr "Obecnie żadne ICX nie są odstake'owywane."
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
@@ -1441,8 +1434,8 @@ msgstr ""
 #~ msgstr "Czy chcesz zwrócić dolary Balanced?"
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-msgid "You pay"
-msgstr ""
+#~ msgid "You pay"
+#~ msgstr ""
 
 #: src/app/pages/vote/_components/VotingPowerPanel/index.tsx
 #~ msgid "Total locked"
@@ -1467,8 +1460,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
-msgid "Unstaking {0} sICX. Check the ICX entry in your wallet for details."
-msgstr "Odstake'owywanie {0} sICX. Sprawdź pozycję ICX w swoim portfelu, aby uzyskać szczegółowe informacje."
+#~ msgid "Unstaking {0} sICX. Check the ICX entry in your wallet for details."
+#~ msgstr "Odstake'owywanie {0} sICX. Sprawdź pozycję ICX w swoim portfelu, aby uzyskać szczegółowe informacje."
 
 #: src/app/pages/vote/proposals/new/page.tsx
 #~ msgid "How long the vote should last (1 – 14 days)."
@@ -1537,8 +1530,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
-msgid "Activity"
-msgstr ""
+#~ msgid "Activity"
+#~ msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #~ msgid "All time"
@@ -1616,8 +1609,8 @@ msgstr "Przetwarzanie transakcji..."
 #~ msgstr ""
 
 #: src/app/components/Logo/index.tsx
-msgid "Back to the Balanced website"
-msgstr "Powrót do strony Balanced"
+#~ msgid "Back to the Balanced website"
+#~ msgstr "Powrót do strony Balanced"
 
 #: src/app/components/SearchModal/CurrencyList.tsx
 msgid "Price"
@@ -1641,8 +1634,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
-msgid "Transferring"
-msgstr ""
+#~ msgid "Transferring"
+#~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #~ msgid "Transfer in progress"
@@ -1667,8 +1660,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-msgid "Send asset?"
-msgstr "Wysłać aktywa?"
+#~ msgid "Send asset?"
+#~ msgstr "Wysłać aktywa?"
 
 #: src/app/components/Header/index.tsx
 msgid "{0} wallet"
@@ -1705,8 +1698,8 @@ msgstr "Aktywo"
 #~ msgstr "Dostarcz"
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
-msgid "Unstake sICX?"
-msgstr "Czy chcesz odstake'ować sICX?"
+#~ msgid "Unstake sICX?"
+#~ msgstr "Czy chcesz odstake'ować sICX?"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #~ msgid "The BALN APY is calculated from the USD value of BALN rewards allocated to a pool. Your rate will vary based on the amount of bBALN you hold."
@@ -1714,8 +1707,8 @@ msgstr "Czy chcesz odstake'ować sICX?"
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid "Claim ICX"
-msgstr "Odbierz ICX"
+#~ msgid "Claim ICX"
+#~ msgstr "Odbierz ICX"
 
 #: src/app/pages/trade/_components/XCallSwapModal.tsx
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
@@ -1747,8 +1740,8 @@ msgstr "Odbierz ICX"
 #~ msgstr "Tokeny Balance"
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-msgid "Sending {0}..."
-msgstr "Wysyłanie {0}..."
+#~ msgid "Sending {0}..."
+#~ msgstr "Wysyłanie {0}..."
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "Your ICX will be converted to sICX (Staked ICX)."
@@ -1764,8 +1757,6 @@ msgstr "Wysyłanie {0}..."
 #~ msgstr ""
 
 #: src/app/components/CommunityListToggle/index.tsx
-#: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-#: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 msgid "Cancel"
 msgstr "Anuluj"
@@ -1799,7 +1790,6 @@ msgstr ""
 #~ msgid "Claiming bribe..."
 #~ msgstr ""
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "0 {0}"
 msgstr ""
@@ -1833,8 +1823,8 @@ msgstr "Jeśli cena spadnie o więcej niż o tę kwotę, Twoja wymiana nie powie
 #~ msgstr "Całkowita podaż"
 
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
-msgid "From"
-msgstr ""
+#~ msgid "From"
+#~ msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #~ msgid "Rejected"
@@ -2144,8 +2134,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
-msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
-msgstr ""
+#~ msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
+#~ msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 #~ msgid "and ends after {duration} days."
@@ -2380,7 +2370,7 @@ msgstr "Kurs wymiany"
 
 #: src/app/components/SearchModal/CurrencyList.tsx
 #: src/app/components/Wallet/index.tsx
-#: src/app/pages/trade/bridge/_components/XChainList.tsx
+#: src/app/pages/trade/xswap/_components/XChainList.tsx
 msgid "Wallet"
 msgstr "Portfel"
 
@@ -2454,8 +2444,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
-msgid "There are no pending cross-chain transactions."
-msgstr ""
+#~ msgid "There are no pending cross-chain transactions."
+#~ msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #~ msgid "All collateral locked"
@@ -2504,8 +2494,8 @@ msgstr ""
 #~ msgstr "Kworum nie zostało osiągnięte"
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid "Claiming ICX..."
-msgstr "Odbieranie ICX..."
+#~ msgid "Claiming ICX..."
+#~ msgstr "Odbieranie ICX..."
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Remove community token list?"
@@ -2516,8 +2506,8 @@ msgstr ""
 #~ msgstr "Anulowana"
 
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
-msgid "address"
-msgstr ""
+#~ msgid "address"
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 #~ msgid "Withdraw liquidity"
@@ -2555,8 +2545,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
-msgid "Transfer asset cross-chain?"
-msgstr ""
+#~ msgid "Transfer asset cross-chain?"
+#~ msgstr ""
 
 #: src/app/pages/vote/_components/BribesPanel/index.tsx
 #~ msgid "There are no bribes this week."
@@ -2590,8 +2580,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid "{0} ICX is ready to claim"
-msgstr "{0} ICX czeka na odbiór"
+#~ msgid "{0} ICX is ready to claim"
+#~ msgstr "{0} ICX czeka na odbiór"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #~ msgid "Pay a {0} BALN fee to unlock early."
@@ -2602,8 +2592,8 @@ msgid "Sending {currency} to the {pair} pool..."
 msgstr "Wysyłanie {currency} do puli {pair}..."
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
-msgid "Preparing to unstake sICX..."
-msgstr "Przygotowywanie do odstake'owania sICX..."
+#~ msgid "Preparing to unstake sICX..."
+#~ msgstr "Przygotowywanie do odstake'owania sICX..."
 
 #: src/app/pages/home/BBaln/BBalnPanel.tsx
 #~ msgid ", so you would have received"
@@ -2658,8 +2648,8 @@ msgstr "Wymieniono {inputAmount} {inputCurrency} na {outputAmount} {outputCurren
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
-msgid "Transfer"
-msgstr ""
+#~ msgid "Transfer"
+#~ msgstr ""
 
 #: src/app/pages/claim-legacy-fees/page.tsx
 #~ msgid "Claim (1 of {count})"

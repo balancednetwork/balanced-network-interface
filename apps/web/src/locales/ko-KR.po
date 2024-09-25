@@ -56,7 +56,6 @@ msgstr ""
 #~ msgid "then create the pool."
 #~ msgstr "그런 다음 풀을 만듭니다."
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "Only"
 msgstr ""
@@ -70,7 +69,6 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/AddressInputPanel/index.tsx
-#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 msgid "To"
 msgstr ""
 
@@ -83,10 +81,10 @@ msgstr ""
 #~ msgstr "제거 중"
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid ""
-"The ICX unstaking period is {0} days, but yours may be ready to claim sooner based on the volume of ICX\n"
-"converted to sICX."
-msgstr ""
+#~ msgid ""
+#~ "The ICX unstaking period is {0} days, but yours may be ready to claim sooner based on the volume of ICX\n"
+#~ "converted to sICX."
+#~ msgstr ""
 
 #: src/btp/src/connectors/helper.ts
 #: src/btp/src/connectors/MetaMask/index.ts
@@ -112,8 +110,8 @@ msgstr "{pair} 유동성을 제공하는 중..."
 #~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid "{0} ICX"
-msgstr "{0} ICX"
+#~ msgid "{0} ICX"
+#~ msgstr "{0} ICX"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #~ msgid "Withdraw Balance Tokens"
@@ -123,14 +121,13 @@ msgstr "{0} ICX"
 #~ msgid "15m"
 #~ msgstr "15분"
 
-#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Switch to {0}"
 msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid "Claim ICX?"
-msgstr "ICX 요구하기?"
+#~ msgid "Claim ICX?"
+#~ msgstr "ICX 요구하기?"
 
 #: src/app/components/home/LoanPanel.tsx
 #~ msgid "Borrowed {0} bnUSD."
@@ -157,8 +154,8 @@ msgstr "ICX 요구하기?"
 #~ msgstr "대출"
 
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
-msgid "You have no pending cross-chain transactions."
-msgstr ""
+#~ msgid "You have no pending cross-chain transactions."
+#~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
 #~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain"
@@ -166,8 +163,8 @@ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/index.tsx
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid "Unstaking"
-msgstr "스테이킹 해제"
+#~ msgid "Unstaking"
+#~ msgstr "스테이킹 해제"
 
 #: src/app/components/ProposalModal/index.tsx
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
@@ -191,8 +188,8 @@ msgstr "스테이킹 해제"
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-msgid "Wallet:"
-msgstr "지갑:"
+#~ msgid "Wallet:"
+#~ msgstr "지갑:"
 
 #: src/app/pages/vote/_components/utils.ts
 #: src/utils/timeformat.ts
@@ -414,8 +411,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-msgid "Send max"
-msgstr "최대"
+#~ msgid "Send max"
+#~ msgstr "최대"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "View disclaimer."
@@ -457,7 +454,7 @@ msgstr ""
 #~ msgid "Loan action"
 #~ msgstr ""
 
-#: src/app/pages/trade/bridge/_components/XChainList.tsx
+#: src/app/pages/trade/xswap/_components/XChainList.tsx
 msgid "Blockchain"
 msgstr ""
 
@@ -474,8 +471,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-msgid "You receive"
-msgstr ""
+#~ msgid "You receive"
+#~ msgstr ""
 
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #~ msgid "${0}"
@@ -494,8 +491,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-msgid "Custom"
-msgstr ""
+#~ msgid "Custom"
+#~ msgstr ""
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -594,7 +591,6 @@ msgstr ""
 #~ msgid "Transaction failed!"
 #~ msgstr ""
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "is available on {0}."
 msgstr ""
@@ -717,8 +713,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-msgid "Address"
-msgstr "주소"
+#~ msgid "Address"
+#~ msgstr "주소"
 
 #: src/app/components/Header/index.tsx
 #~ msgid "Copy address"
@@ -761,8 +757,8 @@ msgstr "주소"
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
-msgid "Before"
-msgstr "적용 전"
+#~ msgid "Before"
+#~ msgstr "적용 전"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #~ msgid "Active"
@@ -863,8 +859,8 @@ msgstr ""
 #~ msgstr "1시간"
 
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
-msgid "Cross-chain transactions (24H)"
-msgstr ""
+#~ msgid "Cross-chain transactions (24H)"
+#~ msgstr ""
 
 #: src/app/components/StabilityFund/index.tsx
 #: src/app/components/StabilityFund/index.tsx
@@ -903,7 +899,6 @@ msgstr ""
 
 #: src/app/components/XTransactionState/index.tsx
 #: src/app/components/XTransactionState/index.tsx
-#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
@@ -954,8 +949,8 @@ msgstr ""
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/index.tsx
-msgid "Send"
-msgstr "송금하기"
+#~ msgid "Send"
+#~ msgstr "송금하기"
 
 #: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
 #~ msgid "Your pools"
@@ -973,14 +968,13 @@ msgstr ""
 #~ msgid "Liquidity incentives"
 #~ msgstr ""
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Transfer time"
 msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-msgid "Sent {0} {1} to {address}."
-msgstr "{0} {1} 을 {address} 로 보냈습니다."
+#~ msgid "Sent {0} {1} to {address}."
+#~ msgstr "{0} {1} 을 {address} 로 보냈습니다."
 
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #~ msgid "Claimed network fees."
@@ -1024,8 +1018,8 @@ msgstr ""
 #~ msgstr "투표하는 중..."
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-msgid "Do not send sICX to an exchange."
-msgstr "sICX를 거래소에 보내지 마십시오."
+#~ msgid "Do not send sICX to an exchange."
+#~ msgstr "sICX를 거래소에 보내지 마십시오."
 
 #: src/app/components/home/Savings/index.tsx
 #~ msgid "Withdrawing bnUSD..."
@@ -1096,8 +1090,8 @@ msgstr ""
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
-msgid "After"
-msgstr "적용 후"
+#~ msgid "After"
+#~ msgstr "적용 후"
 
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 #~ msgid "{0} BALN added to your wallet."
@@ -1134,8 +1128,8 @@ msgstr "{outputCurrency} 를 {inputCurrency} 와 스왑할 수 없습니다. 다
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/index.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
-msgid "Unstake"
-msgstr "스테이킹 해제"
+#~ msgid "Unstake"
+#~ msgstr "스테이킹 해제"
 
 #: src/app/components/CollateralTypeSwitcher/CollateralTypeListWrap.tsx
 #~ msgid "All collateral"
@@ -1189,8 +1183,8 @@ msgstr "스테이킹 해제"
 #~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid "Not now"
-msgstr "지금은 안됩니다"
+#~ msgid "Not now"
+#~ msgstr "지금은 안됩니다"
 
 #: src/app/components/Header/index.tsx
 msgid "Unsupported network"
@@ -1202,7 +1196,6 @@ msgstr ""
 #~ msgid "No assets available."
 #~ msgstr "사용 가능한 자산이 없습니다."
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Fee"
 msgstr "수수료"
@@ -1243,7 +1236,7 @@ msgstr "수수료"
 #~ msgid "Withdrawing"
 #~ msgstr ""
 
-#: src/app/pages/trade/bridge/_components/XChainList.tsx
+#: src/app/pages/trade/xswap/_components/XChainList.tsx
 msgid "Search blockchains..."
 msgstr ""
 
@@ -1269,8 +1262,8 @@ msgstr "{outputAmount} {outputCurrency} 가 지갑에 추가되었습니다."
 #~ msgstr "유효하지 않은 페어"
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-msgid "Send {0}"
-msgstr "송금 {0}"
+#~ msgid "Send {0}"
+#~ msgstr "송금 {0}"
 
 #: src/app/components/home/Savings/index.tsx
 #~ msgid "distributed over the last 30 days."
@@ -1328,8 +1321,8 @@ msgstr "송금 {0}"
 #~ msgstr "({0}% 필요)"
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid "Claimed {0} ICX."
-msgstr "승인된 {0} ICX."
+#~ msgid "Claimed {0} ICX."
+#~ msgstr "승인된 {0} ICX."
 
 #: src/app/components/home/Savings/index.tsx
 #~ msgid "Withdraw bnUSD?"
@@ -1371,8 +1364,8 @@ msgstr "{0} {1} 의 수수료가 포함됩니다."
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
-msgid "Unstake sICX"
-msgstr "sICX 스테이킹 해제"
+#~ msgid "Unstake sICX"
+#~ msgstr "sICX 스테이킹 해제"
 
 #: src/app/components/ProposalInfo/components.tsx
 #~ msgid "{0} voters"
@@ -1383,8 +1376,8 @@ msgstr "sICX 스테이킹 해제"
 #~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid "There's no ICX unstaking."
-msgstr "스테이킹 해제 중인 ICX는 없습니다."
+#~ msgid "There's no ICX unstaking."
+#~ msgstr "스테이킹 해제 중인 ICX는 없습니다."
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
@@ -1441,8 +1434,8 @@ msgstr ""
 #~ msgstr "Balanced 달러를 상환하겠습니까?"
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-msgid "You pay"
-msgstr ""
+#~ msgid "You pay"
+#~ msgstr ""
 
 #: src/app/pages/vote/_components/VotingPowerPanel/index.tsx
 #~ msgid "Total locked"
@@ -1467,8 +1460,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
-msgid "Unstaking {0} sICX. Check the ICX entry in your wallet for details."
-msgstr "{0} sICX를 스테이킹 해제하고 있습니다. 자세한 내용은 '지갑' 메뉴 > 'ICX' 항목을 확인하십시오."
+#~ msgid "Unstaking {0} sICX. Check the ICX entry in your wallet for details."
+#~ msgstr "{0} sICX를 스테이킹 해제하고 있습니다. 자세한 내용은 '지갑' 메뉴 > 'ICX' 항목을 확인하십시오."
 
 #: src/app/pages/vote/proposals/new/page.tsx
 #~ msgid "How long the vote should last (1 – 14 days)."
@@ -1537,8 +1530,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
-msgid "Activity"
-msgstr ""
+#~ msgid "Activity"
+#~ msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #~ msgid "All time"
@@ -1616,8 +1609,8 @@ msgstr "트랜잭션 처리 중..."
 #~ msgstr ""
 
 #: src/app/components/Logo/index.tsx
-msgid "Back to the Balanced website"
-msgstr "Balanced 웹사이트로 돌아가기"
+#~ msgid "Back to the Balanced website"
+#~ msgstr "Balanced 웹사이트로 돌아가기"
 
 #: src/app/components/SearchModal/CurrencyList.tsx
 msgid "Price"
@@ -1641,8 +1634,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
-msgid "Transferring"
-msgstr ""
+#~ msgid "Transferring"
+#~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #~ msgid "Transfer in progress"
@@ -1667,8 +1660,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-msgid "Send asset?"
-msgstr "자산을 송금하시겠습니까?"
+#~ msgid "Send asset?"
+#~ msgstr "자산을 송금하시겠습니까?"
 
 #: src/app/components/Header/index.tsx
 msgid "{0} wallet"
@@ -1705,8 +1698,8 @@ msgstr "자산"
 #~ msgstr "공급"
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
-msgid "Unstake sICX?"
-msgstr "sICX 스테이킹을 해제하시겠습니까?"
+#~ msgid "Unstake sICX?"
+#~ msgstr "sICX 스테이킹을 해제하시겠습니까?"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #~ msgid "The BALN APY is calculated from the USD value of BALN rewards allocated to a pool. Your rate will vary based on the amount of bBALN you hold."
@@ -1714,8 +1707,8 @@ msgstr "sICX 스테이킹을 해제하시겠습니까?"
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid "Claim ICX"
-msgstr "ICX 요구하기"
+#~ msgid "Claim ICX"
+#~ msgstr "ICX 요구하기"
 
 #: src/app/pages/trade/_components/XCallSwapModal.tsx
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
@@ -1747,8 +1740,8 @@ msgstr "ICX 요구하기"
 #~ msgstr "Balance 토큰"
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-msgid "Sending {0}..."
-msgstr "보내는 중 {0}..."
+#~ msgid "Sending {0}..."
+#~ msgstr "보내는 중 {0}..."
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "Your ICX will be converted to sICX (Staked ICX)."
@@ -1764,8 +1757,6 @@ msgstr "보내는 중 {0}..."
 #~ msgstr ""
 
 #: src/app/components/CommunityListToggle/index.tsx
-#: src/app/components/Wallet/ICONWallets/SendPanel.tsx
-#: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 msgid "Cancel"
 msgstr "취소"
@@ -1799,7 +1790,6 @@ msgstr ""
 #~ msgid "Claiming bribe..."
 #~ msgstr ""
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "0 {0}"
 msgstr ""
@@ -1833,8 +1823,8 @@ msgstr "이 금액보다 가격이 차이가 많이 나는 경우 스왑이 실�
 #~ msgstr "공급량 합계"
 
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
-msgid "From"
-msgstr ""
+#~ msgid "From"
+#~ msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #~ msgid "Rejected"
@@ -2144,8 +2134,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
-msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
-msgstr ""
+#~ msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
+#~ msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 #~ msgid "and ends after {duration} days."
@@ -2380,7 +2370,7 @@ msgstr "거래 비율"
 
 #: src/app/components/SearchModal/CurrencyList.tsx
 #: src/app/components/Wallet/index.tsx
-#: src/app/pages/trade/bridge/_components/XChainList.tsx
+#: src/app/pages/trade/xswap/_components/XChainList.tsx
 msgid "Wallet"
 msgstr "지갑"
 
@@ -2454,8 +2444,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
-msgid "There are no pending cross-chain transactions."
-msgstr ""
+#~ msgid "There are no pending cross-chain transactions."
+#~ msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #~ msgid "All collateral locked"
@@ -2504,8 +2494,8 @@ msgstr ""
 #~ msgstr "정족수에 도달하지 못했습니다"
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid "Claiming ICX..."
-msgstr "ICX 승인중..."
+#~ msgid "Claiming ICX..."
+#~ msgstr "ICX 승인중..."
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Remove community token list?"
@@ -2516,8 +2506,8 @@ msgstr ""
 #~ msgstr "취소됨"
 
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
-msgid "address"
-msgstr ""
+#~ msgid "address"
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 #~ msgid "Withdraw liquidity"
@@ -2555,8 +2545,8 @@ msgstr "커뮤니티 토큰 목록 추가?"
 #~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
-msgid "Transfer asset cross-chain?"
-msgstr ""
+#~ msgid "Transfer asset cross-chain?"
+#~ msgstr ""
 
 #: src/app/pages/vote/_components/BribesPanel/index.tsx
 #~ msgid "There are no bribes this week."
@@ -2590,8 +2580,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
-msgid "{0} ICX is ready to claim"
-msgstr "{0} ICX를 청구할 수 있습니다."
+#~ msgid "{0} ICX is ready to claim"
+#~ msgstr "{0} ICX를 청구할 수 있습니다."
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #~ msgid "Pay a {0} BALN fee to unlock early."
@@ -2602,8 +2592,8 @@ msgid "Sending {currency} to the {pair} pool..."
 msgstr "{pair} 풀로 {currency} 를 보내는 중..."
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
-msgid "Preparing to unstake sICX..."
-msgstr "sICX 스테이킹 해제 준비 중..."
+#~ msgid "Preparing to unstake sICX..."
+#~ msgstr "sICX 스테이킹 해제 준비 중..."
 
 #: src/app/pages/home/BBaln/BBalnPanel.tsx
 #~ msgid ", so you would have received"
@@ -2658,8 +2648,8 @@ msgstr "{inputAmount} {inputCurrency} 을 {outputAmount} {outputCurrency} 으로
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
-msgid "Transfer"
-msgstr ""
+#~ msgid "Transfer"
+#~ msgstr ""
 
 #: src/app/pages/claim-legacy-fees/page.tsx
 #~ msgid "Claim (1 of {count})"

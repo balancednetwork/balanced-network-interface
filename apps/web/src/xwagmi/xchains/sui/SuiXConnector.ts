@@ -8,7 +8,7 @@ export class SuiXConnector extends XConnector {
 
   constructor(wallet: any) {
     // super('SUI', wallet.name, wallet.id);
-    super('SUI', 'sui', 'sui');
+    super('SUI', wallet?.name, wallet?.name);
     this.wallet = wallet;
   }
 
@@ -21,4 +21,8 @@ export class SuiXConnector extends XConnector {
   }
 
   async disconnect(): Promise<void> {}
+
+  public get icon() {
+    return this.wallet?.icon;
+  }
 }

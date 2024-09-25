@@ -112,6 +112,29 @@ export const showMessageOnBeforeUnload = e => {
   return e.returnValue;
 };
 
+function isSuiAddress(address: string) {
+  // Check if the address starts with '0x'
+  if (typeof address !== 'string' || !address.startsWith('0x')) {
+    return false;
+  }
+
+  // Remove the '0x' prefix
+  const hexPart = address.slice(2);
+
+  // Check if the length is exactly 64 characters (32 bytes in hex)
+  if (hexPart.length !== 64) {
+    return false;
+  }
+
+  // Check if all characters are valid hexadecimal digits
+  const hexRegex = /^[0-9a-fA-F]+$/;
+  if (!hexRegex.test(hexPart)) {
+    return false;
+  }
+
+  return true;
+}
+
 export function validateAddress(address: string, chainId: XChainId): boolean {
   switch (xChainMap[chainId].xChainType) {
     case 'ICON':
@@ -124,7 +147,6 @@ export function validateAddress(address: string, chainId: XChainId): boolean {
     case 'INJECTIVE':
       return isInjectiveAddress(address);
     case 'SUI':
-      // TODO: Add SUI address validation
-      return true;
+      return isSuiAddress(address);
   }
 }

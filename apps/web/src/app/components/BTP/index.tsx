@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { Action } from '@reduxjs/toolkit';
-import BigNumber from 'bignumber.js';
+import { addICONexListener, setBalance } from '@/btp/src/connectors/ICONex';
+import { getBTPfee, getBalance } from '@/btp/src/connectors/ICONex/ICONServices';
+import { toCheckAddress } from '@/btp/src/connectors/MetaMask/utils';
 import {
   chainConfigs,
   chainList,
@@ -11,14 +12,13 @@ import {
 } from '@/btp/src/connectors/chainConfigs';
 import { CHAIN_NAME } from '@/btp/src/connectors/chainCustomization';
 import { ADDRESS_LOCAL_STORAGE } from '@/btp/src/connectors/constants';
-import { addICONexListener, setBalance } from '@/btp/src/connectors/ICONex';
-import { getBalance, getBTPfee } from '@/btp/src/connectors/ICONex/ICONServices';
-import { toCheckAddress } from '@/btp/src/connectors/MetaMask/utils';
 import { useGetBTPService } from '@/btp/src/hooks/useService';
 import { useTokenBalance } from '@/btp/src/hooks/useTokenBalance';
 import store, { BTPAppDispatch, BTPContext, useBTPDispatch, useBTPSelector } from '@/btp/src/store';
 import { useFromNetwork, useSelectNetworkDst, useSelectNetworkSrc, useToNetwork } from '@/btp/src/store/bridge/hooks';
 import { accountSelector, setAccountInfo } from '@/btp/src/store/models/account';
+import { Action } from '@reduxjs/toolkit';
+import BigNumber from 'bignumber.js';
 import { Trans } from 'react-i18next';
 import { Provider } from 'react-redux';
 import { Box, Flex } from 'rebass/styled-components';
@@ -32,7 +32,7 @@ import ArrowIcon from '@/assets/icons/arrow.svg';
 import { useModalOpen, useTransferAssetsModalToggle } from '@/store/application/hooks';
 import { ApplicationModal } from '@/store/application/reducer';
 import { TransactionStatus } from '@/store/transactions/hooks';
-import { EVENTS, on, off } from '@/utils/customEvent';
+import { EVENTS, off, on } from '@/utils/customEvent';
 
 import { ExternalLink } from '../SearchModal/components';
 import Address from './Address';
@@ -186,7 +186,9 @@ const BTPContent = () => {
 
     setApprovedBalance(result === '0' ? '' : result);
   };
-
+  console.log('accountInfo', accountInfo);
+  console.log('getCustomizedChainList()', getCustomizedChainList());
+  console.log('getCustomizedChainList()', getTokenList());
   const defaultOptions = useMemo(() => {
     const options = [...getCustomizedChainList(), ...getTokenList()].map(
       ({ CHAIN_NAME, COIN_SYMBOL, symbol, tokenOf, ...others }) => {
@@ -209,9 +211,9 @@ const BTPContent = () => {
       option => option.id === networkId || option.id === chainConfigs.ICON.id || networkId === option.chainId,
     );
   }, [nativeCoin, networkId]);
-
+  console.log('defaultOptions', defaultOptions);
   const userAssets = useTokenBalance(defaultOptions);
-
+  console.log('userAssets', userAssets);
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   const tokenList = useMemo(() => {
     // NOTE: it should update after userAssets update, userAssets should be updated after wallet was changed or completed transfer transaction
@@ -231,7 +233,7 @@ const BTPContent = () => {
     }
     return defaultOptions;
   }, [userAssets, fromNetwork]);
-
+  console.log('tokenList', tokenList);
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     checkApprovedBalance();

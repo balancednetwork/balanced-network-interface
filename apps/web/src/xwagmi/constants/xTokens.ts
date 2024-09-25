@@ -130,7 +130,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       '0x2105.base',
       8453,
       '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
-      18,
+      8,
       'BTC',
       'Coinbase Wrapped BTC',
       'BTC1',

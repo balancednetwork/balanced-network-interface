@@ -10,8 +10,8 @@ import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button, IconButton } from '@/app/components/Button';
-import Logo from '@/app/components/Logo';
 import { DropdownPopper } from '@/app/components/Popover';
+import Logo from '@/app/components2/Logo';
 import { Typography } from '@/app/theme';
 import CopyIcon from '@/assets/icons/copy.svg';
 import WalletIcon from '@/assets/icons/wallet.svg';

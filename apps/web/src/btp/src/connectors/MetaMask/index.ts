@@ -1,15 +1,15 @@
+import { TransactionResponse } from '@/btp/src/type/transaction';
 import { SupportedChainId } from '@balancednetwork/balanced-js';
 import { t } from '@lingui/macro';
-import { TransactionResponse } from '@/btp/src/type/transaction';
 import { ethers, utils } from 'ethers';
 import { ToastOptions, UpdateOptions } from 'react-toastify';
 
 import { TransactionStatus } from '../../../../store/transactions/hooks';
 import { wallets } from '../../utils/constants';
+import { resetTransferStep } from '../ICONex/utils';
 import { chainConfigs, chainList, customzeChain } from '../chainConfigs';
 import { ADDRESS_LOCAL_STORAGE, CONNECTED_WALLET_LOCAL_STORAGE, SIGNING_ACTIONS, transactionInfo } from '../constants';
 import { getTransactionMessages, triggerSetAccountInfo } from '../helper';
-import { resetTransferStep } from '../ICONex/utils';
 import { openToast } from '../transactionToast';
 import { ABI } from './ABI';
 import { findReplacementTx } from './findReplacementTx';
@@ -83,7 +83,7 @@ class Ethereum {
                 chainName:
                   CHAIN_NAME +
                   ' ' +
-                  (process.env.REACT_APP_NETWORK_ID === SupportedChainId.MAINNET.toString() ? 'Mainnet' : 'Testnet'),
+                  (import.meta.env.VITE_NETWORK_ID === SupportedChainId.MAINNET.toString() ? 'Mainnet' : 'Testnet'),
                 rpcUrls: [RPC_URL],
                 // iconUrls: [logoUrl],
                 blockExplorerUrls: [EXPLORE_URL],

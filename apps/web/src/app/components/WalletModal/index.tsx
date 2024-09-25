@@ -36,6 +36,7 @@ import Divider from '../Divider';
 import { DropdownPopper } from '../Popover';
 import { EVMWalletModal } from './EVMWalletModal';
 import { InjectiveWalletOptionsModal } from './InjectiveWalletOptionsModal';
+import { SuiWalletOptionsModal } from './SuiWalletOptionsModal';
 import WalletItem, { WalletItemProps } from './WalletItem';
 import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
 
@@ -275,6 +276,7 @@ export default function WalletModal() {
 
       <EVMWalletModal />
       <InjectiveWalletOptionsModal />
+      <SuiWalletOptionsModal />
     </>
   );
 }

@@ -8,8 +8,8 @@ import { ChainLogo } from '@/app/components/ChainLogo';
 import { UnderlineText } from '@/app/components/DropdownText';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { HeaderText } from '@/app/components/Wallet/styledComponents';
+import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
 import { Typography } from '@/app/theme';
-import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useDerivedCollateralInfo } from '@/store/collateral/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
@@ -47,15 +47,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const xConnectors = useXConnectors(xChainType);
 
   const handleConnect = () => {
-    if (!xConnectors || xConnectors.length === 0) return;
-
-    if (xChainType === 'EVM') {
-      modalActions.openModal(MODAL_ID.EVM_WALLET_OPTIONS_MODAL);
-    } else if (xChainType === 'INJECTIVE') {
-      modalActions.openModal(MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL);
-    } else {
-      xConnect(xConnectors[0]);
-    }
+    handleConnectWallet(xChainType, xConnectors, xConnect);
   };
 
   React.useEffect(() => {

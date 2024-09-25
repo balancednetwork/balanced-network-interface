@@ -1,4 +1,3 @@
-import { Currency } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
 import React from 'react';
 import { useMedia } from 'react-use';
@@ -6,7 +5,6 @@ import Modal from '../Modal';
 import {
   AssetSymbol,
   BalanceAndValueWrap,
-  BoxPanelWithArrow,
   DashGrid,
   DataText,
   HeaderText,
@@ -19,11 +17,9 @@ import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 import { Typography } from '@/app/theme';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance } from '@/utils/formatter';
-import { useTheme } from 'styled-components';
 
 const ICONAssetModal = ({ token, balance, value, isOpen, close }) => {
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
-  const theme = useTheme();
   const rates = useRatesWithOracle();
 
   return (

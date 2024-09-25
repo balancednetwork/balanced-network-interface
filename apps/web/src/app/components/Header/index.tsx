@@ -34,15 +34,15 @@ const StyledLogo = () => (
   </div>
 );
 
-// const WalletButtonWrapper = styled(Box)<{ $hasnotification?: boolean }>`
-//   position: relative;
-//   ${({ $hasnotification }) => ($hasnotification ? notificationCSS : '')}
-//   &::before, &::after {
-//     left: 7px;
-//     top: 13px;
-//     ${({ theme }) => `background-color: ${theme.colors?.bg5}`};
-//   }
-// `;
+const WalletButtonWrapper = styled(Box)<{ $hasnotification?: boolean }>`
+  position: relative;
+  ${({ $hasnotification }) => ($hasnotification ? notificationCSS : '')}
+  &::before, &::after {
+    left: 7px;
+    top: 13px;
+    ${({ theme }) => `background-color: ${theme.colors?.bg5}`};
+  }
+`;
 
 export const StyledAddress = styled(Typography)`
   &:hover {
@@ -51,20 +51,20 @@ export const StyledAddress = styled(Typography)`
   }
 `;
 
-// const ConnectionStatus = styled(Flex)`
-//   justify-content: flex-end;
-//   align-items: end;
+const ConnectionStatus = styled(Flex)`
+  justify-content: flex-end;
+  align-items: end;
 
-//   span {
-//     opacity: 0.75;
-//     ${({ theme }) => theme.colors?.text};
-//   }
+  span {
+    opacity: 0.75;
+    ${({ theme }) => theme.colors?.text};
+  }
 
-//   strong,
-//   span {
-//     margin-left: 7px;
-//   }
-// `;
+  strong,
+  span {
+    margin-left: 7px;
+  }
+`;
 
 const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
@@ -166,7 +166,7 @@ export default function Header(props: { className?: string }) {
           </div>
         )}
 
-        {/* {wallets.length > 0 && (
+        {wallets.length > 0 && (
           <div className="flex items-center">
             <div className="text-left mr-4 min-h-11">
               {upSmall && (
@@ -223,7 +223,7 @@ export default function Header(props: { className?: string }) {
               </ClickAwayListener>
             </WalletButtonWrapper>
           </div>
-        )} */}
+        )}
       </div>
     </header>
   );

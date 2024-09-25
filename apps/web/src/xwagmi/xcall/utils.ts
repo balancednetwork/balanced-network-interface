@@ -63,9 +63,7 @@ export function getBytesFromString(str: string) {
 
 export const toICONDecimals = (currencyAmount: CurrencyAmount<Currency>): bigint => {
   const xAmount = BigInt(currencyAmount.quotient.toString());
-  const iconToken = xTokenMap[ICON_XCALL_NETWORK_ID].find(
-    token => token.symbol === currencyAmount.currency.symbol,
-  ) as XToken;
+  const iconToken = xTokenMap[currencyAmount.currency.wrapped.address];
 
   if (iconToken.decimals === currencyAmount.currency.decimals) return xAmount;
 

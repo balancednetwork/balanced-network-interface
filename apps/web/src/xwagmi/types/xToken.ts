@@ -1,9 +1,9 @@
-import { Currency, CurrencyAmount, Token, XChainId } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, XChainId, XToken } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 
 export type XWalletAssetRecord = {
-  baseToken: Token;
-  xTokenAmounts: { [key in XChainId]: CurrencyAmount<Currency> | undefined };
+  baseToken: XToken;
+  xTokenAmounts: { [key in XChainId]: CurrencyAmount<XToken> | undefined };
   isBalanceSingleChain: boolean;
   total: BigNumber;
   value: BigNumber | undefined;
@@ -18,7 +18,7 @@ export type Position = {
 export type XPositions = { [CurrencyKey in string]: Partial<{ [key in XChainId]: Position }> };
 
 export type XPositionsRecord = {
-  baseToken: Token;
+  baseToken: XToken;
   positions: XPositions;
   isSingleChain: boolean;
   total?: Position;

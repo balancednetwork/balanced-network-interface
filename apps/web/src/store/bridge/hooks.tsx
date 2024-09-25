@@ -9,7 +9,7 @@ import { sARCH } from '@/constants/tokens1';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { AppState } from '@/store';
-import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { useWalletBalances } from '@/store/wallet/hooks';
 import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
@@ -124,7 +124,7 @@ export function useDerivedBridgeInfo() {
   }, [typedValue, currencyToBridge, bridgeDirection]);
 
   const signedInWallets = useSignedInWallets();
-  const crossChainWallet = useCrossChainWalletBalances();
+  const walletBalances = useWalletBalances();
 
   const xAccount = useXAccount(getXChainType(bridgeDirection.from));
   const account = xAccount.address;
@@ -143,8 +143,8 @@ export function useDerivedBridgeInfo() {
         signedInWallets.some(
           wallet =>
             wallet.xChainId === bridgeDirection.from &&
-            (!crossChainWallet[bridgeDirection.from]?.[currencyAmountToBridge.currency.address] ||
-              crossChainWallet[bridgeDirection.from]?.[currencyAmountToBridge.currency.address]?.lessThan(
+            (!walletBalances[bridgeDirection.from]?.[currencyAmountToBridge.currency.address] ||
+              walletBalances[bridgeDirection.from]?.[currencyAmountToBridge.currency.address]?.lessThan(
                 currencyAmountToBridge,
               )),
         )
@@ -154,13 +154,13 @@ export function useDerivedBridgeInfo() {
         return undefined;
       }
     }
-  }, [bridgeDirection.from, crossChainWallet, currencyAmountToBridge, signedInWallets, account, recipient]);
+  }, [bridgeDirection.from, walletBalances, currencyAmountToBridge, signedInWallets, account, recipient]);
 
   const selectedTokenWalletBalance = React.useMemo(() => {
     if (currencyToBridge) {
-      return crossChainWallet[bridgeDirection.from]?.[currencyToBridge.wrapped.address];
+      return walletBalances[bridgeDirection.from]?.[currencyToBridge.wrapped.address];
     }
-  }, [bridgeDirection.from, crossChainWallet, currencyToBridge]);
+  }, [bridgeDirection.from, walletBalances, currencyToBridge]);
 
   const isDenom = currencyAmountToBridge && isDenomAsset(currencyAmountToBridge.currency);
 

@@ -10,7 +10,7 @@ import { Typography } from '@/app/theme';
 import useSortXChains from '@/hooks/useSortXChains';
 import { useHasSignedIn } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
-import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { useWalletBalances } from '@/store/wallet/hooks';
 import { formatValue } from '@/utils/formatter';
 import { xChains } from '@/xwagmi/constants/xChains';
 import { XChain } from '@/xwagmi/types';
@@ -58,17 +58,17 @@ const XChainItemWrap = styled(Flex)`
 `;
 
 const XChainItem = ({ xChain, isActive, isLast, currency }: XChainItemProps) => {
-  const xWallet = useCrossChainWalletBalances();
+  const walletBalances = useWalletBalances();
   const prices = useRatesWithOracle();
   const hasSignedIn = useHasSignedIn();
 
   const currencyAmount = React.useMemo(() => {
-    if (!xWallet || !xChain) return;
+    if (!walletBalances || !xChain) return;
 
-    return Object.values(xWallet[xChain.xChainId] || {}).find(
+    return Object.values(walletBalances[xChain.xChainId] || {}).find(
       currencyAmount => currencyAmount.currency.symbol === currency?.symbol,
     );
-  }, [xWallet, currency, xChain]);
+  }, [walletBalances, currency, xChain]);
 
   const price = React.useMemo(() => {
     if (!prices || !currencyAmount) return;
@@ -106,7 +106,6 @@ const XChainList = ({ xChainId, setChainId, chains, currency, width, isOpen }: X
   const inputRef = React.useRef<HTMLInputElement>();
   const { sortBy, handleSortSelect, sortData } = useSortXChains(
     hasSignedIn ? { key: 'value', order: 'DESC' } : { key: 'symbol', order: 'ASC' },
-    currency,
   );
 
   const handleInputChange = React.useCallback(event => {
@@ -114,10 +113,7 @@ const XChainList = ({ xChainId, setChainId, chains, currency, width, isOpen }: X
     setSearchQuery(input);
   }, []);
 
-  const sortedChains = React.useMemo(
-    () => (currency ? sortData(relevantChains, currency) : []),
-    [relevantChains, currency, sortData],
-  );
+  const sortedChains = relevantChains;
 
   const filteredSortedChains = React.useMemo(() => {
     if (!searchQuery) return sortedChains;

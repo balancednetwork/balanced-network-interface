@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 
-import { Token } from '@balancednetwork/sdk-core';
+import { XToken } from '@balancednetwork/sdk-core';
 import { TokenInfo } from '@uniswap/token-lists';
 
-import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { useWalletBalances } from '@/store/wallet/hooks';
 import { isAddress } from '@/utils';
 
 const alwaysTrue = () => true;
@@ -12,7 +12,7 @@ const alwaysTrue = () => true;
  * Create a filter function to apply to a token for whether it matches a particular search query
  * @param search the search query to apply to the token
  */
-export function createTokenFilterFunction<T extends Token | TokenInfo>(search: string): (tokens: T) => boolean {
+export function createTokenFilterFunction<T extends XToken | TokenInfo>(search: string): (tokens: T) => boolean {
   const searchingAddress = isAddress(search);
 
   if (searchingAddress) {
@@ -39,38 +39,39 @@ export function createTokenFilterFunction<T extends Token | TokenInfo>(search: s
   return ({ name, symbol }: T): boolean => Boolean((symbol && matchesSearch(symbol)) || (name && matchesSearch(name)));
 }
 
-export function filterTokens<T extends Token | TokenInfo>(tokens: T[], search: string): T[] {
+export function filterTokens<T extends XToken | TokenInfo>(tokens: T[], search: string): T[] {
   return tokens.filter(createTokenFilterFunction(search));
 }
 
 export function useSortedTokensByQuery(
-  tokens: Token[] | undefined,
+  tokens: XToken[] | undefined,
   searchQuery: string,
   basedOnWallet: boolean = false,
-): Token[] {
-  const xWallet = useCrossChainWalletBalances();
+): XToken[] {
+  const walletBalances = useWalletBalances();
 
   const relevantTokens = useMemo(() => {
     if (!tokens) return [];
 
-    return basedOnWallet
-      ? Object.values(xWallet).reduce((heldTokens, xChainWallet) => {
-          //tokens held on specific chain
-          const tokensHeldOnXChain = Object.values(xChainWallet).map(currencyAmount =>
-            tokens.find(token => token.symbol === currencyAmount.currency.symbol),
-          );
+    // return basedOnWallet
+    //   ? Object.values(walletBalances).reduce((heldTokens, xChainWallet) => {
+    //       //tokens held on specific chain
+    //       const tokensHeldOnXChain = Object.values(xChainWallet).map(currencyAmount =>
+    //         tokens.find(token => token.symbol === currencyAmount.currency.symbol),
+    //       );
 
-          //for each held token, add to list if not already there
-          tokensHeldOnXChain.forEach(token => {
-            if (token && !heldTokens.find(heldToken => heldToken.symbol === token.symbol)) {
-              heldTokens.push(token);
-            }
-          });
+    //       //for each held token, add to list if not already there
+    //       tokensHeldOnXChain.forEach(token => {
+    //         if (token && !heldTokens.find(heldToken => heldToken.symbol === token.symbol)) {
+    //           heldTokens.push(token);
+    //         }
+    //       });
 
-          return heldTokens;
-        }, [] as Token[])
-      : [...tokens];
-  }, [tokens, xWallet, basedOnWallet]);
+    //       return heldTokens;
+    //     }, [] as Token[])
+    //   : [...tokens];
+    return [...tokens];
+  }, [tokens]);
 
   return useMemo(() => {
     if (relevantTokens.length === 0) {
@@ -86,9 +87,9 @@ export function useSortedTokensByQuery(
       return relevantTokens;
     }
 
-    const exactMatches: Token[] = [];
-    const symbolSubstrings: Token[] = [];
-    const rest: Token[] = [];
+    const exactMatches: XToken[] = [];
+    const symbolSubstrings: XToken[] = [];
+    const rest: XToken[] = [];
 
     // sort tokens by exact match -> substring on symbol match -> rest
     relevantTokens.map(token => {

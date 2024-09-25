@@ -3,8 +3,8 @@ import { XConnector } from '@/xwagmi/core/XConnector';
 import { useXAccounts } from '@/xwagmi/hooks/useXAccounts';
 import { useXConnect } from '@/xwagmi/hooks/useXConnect';
 import { useXDisconnect } from '@/xwagmi/hooks/useXDisconnect';
-import { XChainType } from '@/xwagmi/types';
 import { useXWagmiStore } from '@/xwagmi/useXWagmiStore';
+import { XChainType } from '@balancednetwork/sdk-core';
 import React from 'react';
 
 export function HomePage() {

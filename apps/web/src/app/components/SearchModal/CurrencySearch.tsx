@@ -1,23 +1,21 @@
 import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Currency, Token } from '@balancednetwork/sdk-core';
+import { Currency, Token, XToken } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import { isMobile } from 'react-device-detect';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
-import { FUNDING_TOKENS_LIST, useICX } from '@/constants/tokens';
-import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from '@/hooks/Tokens';
+import { useCommonBases, useIsUserAddedToken, useToken } from '@/hooks/Tokens';
 import useDebounce from '@/hooks/useDebounce';
 import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 import useToggle from '@/hooks/useToggle';
 import { useHasSignedIn } from '@/hooks/useWallets';
-import useXTokens from '@/hooks/useXTokens';
-import { useBridgeDirection } from '@/store/bridge/hooks';
-import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+
+import { useWalletBalances } from '@/store/wallet/hooks';
 import { isAddress } from '@/utils';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
+import { allXTokens } from '@/xwagmi/constants/xTokens';
 import { XChainId } from '@balancednetwork/sdk-core';
 import { ChartControlButton as AssetsTabButton } from '../ChartControl';
 import Column from '../Column';
@@ -50,21 +48,12 @@ export enum SelectorType {
   OTHER,
 }
 
-const removebnUSD = (tokens: { [address: string]: Token }) => {
-  return Object.values(tokens)
-    .filter(token => token.symbol !== 'bnUSD')
-    .reduce((tokenMap, token) => {
-      tokenMap[token.address] = token;
-      return tokenMap;
-    }, {});
-};
-
 interface CurrencySearchProps {
   account?: string | null;
   isOpen: boolean;
   onDismiss: () => void;
-  selectedCurrency?: Currency | null;
-  onCurrencySelect: (currency: Currency, setDefaultChain?: boolean) => void;
+  selectedCurrency?: XToken | null;
+  onCurrencySelect: (currency: XToken) => void;
   onChainSelect?: (chainId: XChainId) => void;
   currencySelectionType: CurrencySelectionType;
   showCurrencyAmount?: boolean;
@@ -78,16 +67,6 @@ interface CurrencySearchProps {
   showCrossChainBreakdown: boolean;
   selectorType?: SelectorType;
 }
-
-const useFilteredXTokens = () => {
-  const tokens = useAllTokens();
-
-  return useMemo(() => {
-    const allTokens = Object.values(tokens);
-    const allXTokens = Object.values(xTokenMap).flat();
-    return allXTokens.filter(x => !allTokens.some(t => t.symbol === x.symbol));
-  }, [tokens]);
-};
 
 export function CurrencySearch({
   account,
@@ -114,10 +93,7 @@ export function CurrencySearch({
 
   const [invertSearchOrder] = useState<boolean>(false);
 
-  const xWallet = useCrossChainWalletBalances();
-  const tokens = useAllTokens();
-  const filteredXTokens = useFilteredXTokens();
-  const bases = useCommonBases();
+  const walletBalances = useWalletBalances();
 
   const [assetsTab, setAssetsTab] = useState(AssetsTab.ALL);
 
@@ -133,32 +109,7 @@ export function CurrencySearch({
     }
   }, [hasSignedIn, selectorType]);
 
-  const bridgeDirection = useBridgeDirection();
-  const xTokens = useXTokens(bridgeDirection.from, bridgeDirection.to);
-
-  const allTokens: { [address: string]: Token } = useMemo(() => {
-    switch (currencySelectionType) {
-      case CurrencySelectionType.NORMAL:
-        return { ...tokens, ...filteredXTokens };
-      case CurrencySelectionType.TRADE_MINT_BASE:
-        return removebnUSD(tokens);
-      case CurrencySelectionType.TRADE_MINT_QUOTE:
-        return bases;
-      case CurrencySelectionType.VOTE_FUNDING:
-        return FUNDING_TOKENS_LIST;
-      case CurrencySelectionType.BRIDGE: {
-        return xTokens || [];
-      }
-    }
-  }, [currencySelectionType, tokens, bases, xTokens, filteredXTokens]);
-
-  //select first currency from list if there is none selected for bridging
-  useEffect(() => {
-    if (!selectedCurrency && currencySelectionType === CurrencySelectionType.BRIDGE) {
-      const firstCurrency = Object.values(allTokens)[0];
-      onCurrencySelect(firstCurrency);
-    }
-  }, [selectedCurrency, allTokens, onCurrencySelect, currencySelectionType]);
+  const allTokens = allXTokens;
 
   // if they input an address, use it
 
@@ -168,29 +119,19 @@ export function CurrencySearch({
 
   const tokenComparator = useTokenComparator(account, invertSearchOrder);
 
-  const filteredTokens: Token[] = useMemo(() => {
-    return filterTokens(Object.values(allTokens), debouncedQuery);
+  const filteredTokens = useMemo(() => {
+    return filterTokens(allTokens, debouncedQuery);
   }, [allTokens, debouncedQuery]);
 
-  const sortedTokens: Token[] = useMemo(() => {
+  const sortedTokens = useMemo(() => {
     return [...filteredTokens].sort(tokenComparator);
   }, [filteredTokens, tokenComparator]);
 
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery, assetsTab === AssetsTab.YOUR);
 
-  const icx = useICX();
-
-  const filteredSortedTokensWithICX: Currency[] = useMemo(() => {
-    const s = debouncedQuery.toLowerCase().trim();
-    if ('0x1.icon'.indexOf(s) >= 0 || 'icx'.indexOf(s) >= 0) {
-      return icx ? [icx, ...filteredSortedTokens] : filteredSortedTokens;
-    }
-    return filteredSortedTokens;
-  }, [debouncedQuery, icx, filteredSortedTokens]);
-
   const handleCurrencySelect = useCallback(
-    (currency: Currency, setDefaultChain = true) => {
-      onCurrencySelect(currency, setDefaultChain);
+    (currency: XToken) => {
+      onCurrencySelect(currency);
       onDismiss();
     },
     [onDismiss, onCurrencySelect],
@@ -227,16 +168,6 @@ export function CurrencySearch({
   const node = useRef<HTMLDivElement>();
   useOnClickOutside(node, open ? toggle : undefined);
 
-  const filterCurrencies = useMemo(() => {
-    const currencies =
-      currencySelectionType === CurrencySelectionType.NORMAL ||
-      currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
-        ? filteredSortedTokensWithICX
-        : filteredSortedTokens;
-
-    return currencies;
-  }, [currencySelectionType, filteredSortedTokens, filteredSortedTokensWithICX]);
-
   const selectedChainId = useMemo(() => {
     return currencySelectionType === CurrencySelectionType.NORMAL ? undefined : xChainId;
   }, [currencySelectionType, xChainId]);
@@ -245,16 +176,14 @@ export function CurrencySearch({
     if (assetsTab === AssetsTab.ALL) {
       return true;
     }
-    return filteredSortedTokensWithICX.some(
+    return filteredSortedTokens.some(
       token =>
-        xWallet &&
-        Object.values(xWallet).filter(wallet =>
-          Object.values(wallet).find(
-            currencyAmount => currencyAmount.currency.symbol === token.symbol && currencyAmount.greaterThan(0),
-          ),
+        walletBalances &&
+        Object.values(walletBalances).filter(
+          balance => balance.currency.symbol === token.symbol && balance.greaterThan(0),
         ).length > 0,
     );
-  }, [assetsTab, filteredSortedTokensWithICX, xWallet]);
+  }, [assetsTab, walletBalances, filteredSortedTokens]);
 
   return (
     <Wrapper width={width}>
@@ -284,9 +213,9 @@ export function CurrencySearch({
         <Column style={{ padding: '20px 0', height: '100%' }}>
           <ImportRow token={searchToken} showImportView={showImportView} setImportToken={setImportToken} />
         </Column>
-      ) : filteredSortedTokensWithICX?.length > 0 && shouldShowCurrencyList ? (
+      ) : filteredSortedTokens?.length > 0 && shouldShowCurrencyList ? (
         <CurrencyList
-          currencies={filterCurrencies}
+          currencies={filteredSortedTokens}
           onCurrencySelect={handleCurrencySelect}
           onChainSelect={onChainSelect}
           showRemoveView={showRemoveView}

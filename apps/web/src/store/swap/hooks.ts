@@ -12,7 +12,7 @@ import { useAllTokens } from '@/hooks/Tokens';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
-import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { useWalletBalances } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
 import { getXChainType } from '@/xwagmi/actions';
@@ -103,7 +103,7 @@ export function useSwapActionHandlers() {
 }
 
 // try to parse a user entered amount for a given token
-export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmount<Currency> | undefined {
+export function tryParseAmount(value?: string, currency?: XToken): CurrencyAmount<XToken> | undefined {
   if (!value || !currency) {
     return undefined;
   }
@@ -124,11 +124,11 @@ export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmo
 export function useDerivedSwapInfo(): {
   account: string | undefined;
   trade: Trade<Currency, Currency, TradeType> | undefined;
-  currencies: { [field in Field]?: Currency };
+  currencies: { [field in Field]?: XToken };
   _currencies: { [field in Field]?: Currency };
   percents: { [field in Field]?: number };
-  currencyBalances: { [field in Field]?: CurrencyAmount<Currency> | undefined };
-  parsedAmount: CurrencyAmount<Currency> | undefined;
+  currencyBalances: { [field in Field]?: CurrencyAmount<XToken> | undefined };
+  parsedAmount: CurrencyAmount<XToken> | undefined;
   inputError?: string;
   allowedSlippage: number;
   price: Price<Token, Token> | undefined;
@@ -137,9 +137,6 @@ export function useDerivedSwapInfo(): {
     to: XChainId;
   };
   dependentField: Field;
-  parsedAmounts: {
-    [field in Field]: CurrencyAmount<Currency> | undefined;
-  };
   formattedAmounts: {
     [field in Field]: string;
   };
@@ -150,25 +147,27 @@ export function useDerivedSwapInfo(): {
     independentField,
     typedValue,
     recipient,
-    [Field.INPUT]: { currency: inputCurrency, percent: inputPercent, xChainId: inputXChainId },
-    [Field.OUTPUT]: { currency: outputCurrency, xChainId: outputXChainId },
+    [Field.INPUT]: { currency: inputCurrency, percent: inputPercent },
+    [Field.OUTPUT]: { currency: outputCurrency },
   } = useSwapState();
+  const inputXChainId = inputCurrency?.xChainId;
+  const outputXChainId = outputCurrency?.xChainId;
 
   const xAccount = useXAccount(getXChainType(inputXChainId));
   const account = xAccount.address;
 
-  const crossChainWallet = useCrossChainWalletBalances();
+  const walletBalances = useWalletBalances();
 
   const isExactIn: boolean = independentField === Field.INPUT;
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
-  const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(() => {
+  const currencyBalances: { [field in Field]?: CurrencyAmount<XToken> } = React.useMemo(() => {
     return {
-      [Field.INPUT]: inputCurrency ? crossChainWallet[inputXChainId]?.[inputCurrency?.wrapped.address] : undefined,
-      [Field.OUTPUT]: outputCurrency ? crossChainWallet[outputXChainId]?.[outputCurrency?.wrapped.address] : undefined,
+      [Field.INPUT]: inputCurrency ? walletBalances?.[inputCurrency?.wrapped.address] : undefined,
+      [Field.OUTPUT]: outputCurrency ? walletBalances?.[outputCurrency?.wrapped.address] : undefined,
     };
-  }, [inputXChainId, outputXChainId, crossChainWallet, inputCurrency, outputCurrency]);
+  }, [walletBalances, inputCurrency, outputCurrency]);
 
-  const currencies: { [field in Field]?: Currency } = useMemo(() => {
+  const currencies: { [field in Field]?: XToken } = useMemo(() => {
     return {
       [Field.INPUT]: inputCurrency ?? undefined,
       [Field.OUTPUT]: outputCurrency ?? undefined,
@@ -248,8 +247,8 @@ export function useDerivedSwapInfo(): {
 
   const direction = useMemo(
     () => ({
-      from: inputXChainId,
-      to: outputXChainId,
+      from: inputXChainId || '0x1.icon',
+      to: outputXChainId || '0x1.icon',
     }),
     [inputXChainId, outputXChainId],
   );
@@ -306,7 +305,6 @@ export function useDerivedSwapInfo(): {
     price,
     direction,
     dependentField,
-    parsedAmounts,
     formattedAmounts,
     canBridge,
     maximumBridgeAmount,

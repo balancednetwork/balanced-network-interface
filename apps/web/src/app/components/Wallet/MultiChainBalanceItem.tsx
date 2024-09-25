@@ -1,8 +1,8 @@
 import { Typography } from '@/app/theme';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
-import { XChainId } from '@balancednetwork/sdk-core';
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { XChainId, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import React from 'react';
 import CurrencyLogo from '../../components2/CurrencyLogo';
@@ -10,7 +10,7 @@ import SingleChainBalanceItem from './SingleChainBalanceItem';
 import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, DataText, ListItem } from './styledComponents';
 
 type MultiChainBalanceItemProps = {
-  baseToken: Token;
+  baseToken: XToken;
   balances: { [key in XChainId]: CurrencyAmount<Currency> | undefined };
   total: BigNumber;
   value?: BigNumber;

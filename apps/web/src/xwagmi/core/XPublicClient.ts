@@ -45,8 +45,8 @@ export abstract class XPublicClient implements IXPublicClient {
   abstract deriveTxStatus(rawTx): TransactionStatus;
   abstract getPublicClient();
 
-  abstract getBalance(address: string | undefined, xToken: XToken): Promise<CurrencyAmount<Currency> | undefined>;
-  async getBalances(address: string | undefined, xTokens: XToken[]) {
+  abstract getBalance(address: string | undefined, xToken: XToken): Promise<CurrencyAmount<XToken> | undefined>;
+  async getBalances(address: string | undefined, xTokens: XToken[]): Promise<Record<string, CurrencyAmount<XToken>>> {
     if (!address) return {};
 
     const balancePromises = xTokens.map(async xToken => {

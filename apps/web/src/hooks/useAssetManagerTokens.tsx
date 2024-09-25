@@ -1,5 +1,5 @@
 import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
+import { allXTokens, xTokenMap } from '@/xwagmi/constants/xTokens';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { CurrencyAmount, XChainId, XToken } from '@balancednetwork/sdk-core';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
@@ -17,7 +17,7 @@ type ResultMap = {
 };
 
 const getXChainDecimalDifference = (xToken: XToken) => {
-  const iconToken = xTokenMap[ICON_XCALL_NETWORK_ID]?.find(t => t.symbol === xToken.symbol);
+  const iconToken = Object.values(xTokenMap)?.find(t => t.symbol === xToken.symbol && t.xChainId === '0x1.icon');
   if (iconToken) {
     return iconToken.decimals - xToken.decimals;
   }
@@ -57,10 +57,11 @@ export function useAssetManagerTokens(): UseQueryResult<ResultMap> {
         const xChainId = xAddress.split(/\/(.*)/s)[0] as XChainId;
         const address = xAddress.split(/\/(.*)/s)[1];
 
-        const token = xTokenMap[xChainId]?.find(
+        const token = allXTokens?.find(
           t =>
             t.address.toLowerCase() ===
-            (address === '0x0000000000000000000000000000000000000000' ? NATIVE_ADDRESS : address).toLowerCase(),
+              (address === '0x0000000000000000000000000000000000000000' ? NATIVE_ADDRESS : address).toLowerCase() &&
+            t.xChainId === xChainId,
         );
 
         if (!token) return;

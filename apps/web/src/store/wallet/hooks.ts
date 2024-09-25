@@ -6,7 +6,6 @@ import { Currency, CurrencyAmount, Token, XToken } from '@balancednetwork/sdk-co
 import { useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
-import { forEach } from 'lodash-es';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { MINIMUM_ICX_FOR_TX } from '@/constants/index';
@@ -27,7 +26,7 @@ import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
-import { changeBalances, changeICONBalances } from './reducer';
+import { TokenAmountMap, changeBalances } from './reducer';
 
 import { useXBalances } from '@/xwagmi/hooks/useXBalances';
 import { XChainId } from '@balancednetwork/sdk-core';
@@ -39,25 +38,13 @@ import { NATIVE_ADDRESS } from '@/xwagmi/constants';
 import { SUPPORTED_XCALL_CHAINS } from '@/xwagmi/constants/xChains';
 import { useXAccount } from '@/xwagmi/hooks';
 
-export function useCrossChainWalletBalances(): AppState['wallet'] {
-  const signedInWallets = useSignedInWallets();
-  const balances = useSelector((state: AppState) => state.wallet);
+export function useWalletBalances() {
+  const wallet = useSelector((state: AppState) => state.wallet);
+  const balances = wallet.balances;
 
   return useMemo(() => {
-    return Object.keys(balances).reduce(
-      (acc, xChainId) => {
-        if (signedInWallets.some(wallet => wallet.xChainId === xChainId)) {
-          acc[xChainId] = balances[xChainId];
-        }
-        return acc;
-      },
-      {} as AppState['wallet'],
-    );
-  }, [balances, signedInWallets]);
-}
-
-export function useICONWalletBalances(): { [address: string]: CurrencyAmount<Currency> } {
-  return useSelector((state: AppState) => state.wallet['0x1.icon']!);
+    return Object.values(balances).reduce((acc, balance) => ({ ...acc, ...balance }), {} as TokenAmountMap);
+  }, [balances]);
 }
 
 export function useAvailableBalances(
@@ -95,9 +82,30 @@ export function useWalletFetchBalances() {
   // fetch balances on icon
   const { account } = useIconReact();
   const balances = useAvailableBalances(account || undefined, tokens);
+  //convert balances to {[key: string]: CurrencyAmount<XToken>}
+  const xBalances = React.useMemo(() => {
+    return Object.entries(balances).reduce(
+      (acc, [address, balance]) => {
+        const currency = balance.currency as Token;
+        acc[address] = CurrencyAmount.fromRawAmount(
+          new XToken(
+            '0x1.icon',
+            currency.chainId,
+            currency.address,
+            balance.currency.decimals,
+            balance.currency.symbol,
+          ),
+          balance.quotient.toString(),
+        );
+        return acc;
+      },
+      {} as { [key: string]: CurrencyAmount<XToken> },
+    );
+  }, [balances]);
+
   React.useEffect(() => {
-    dispatch(changeICONBalances(balances));
-  }, [balances, dispatch]);
+    dispatch(changeBalances({ xChainType: 'ICON', account: account, balances: xBalances }));
+  }, [xBalances, dispatch, account]);
 
   // fetch balances on havah
   const { address: accountHavah } = useXAccount('HAVAH');
@@ -108,8 +116,8 @@ export function useWalletFetchBalances() {
     address: accountHavah,
   });
   React.useEffect(() => {
-    balancesHavah && dispatch(changeBalances({ xChainId: '0x100.icon', balances: balancesHavah }));
-  }, [balancesHavah, dispatch]);
+    balancesHavah && dispatch(changeBalances({ xChainType: 'HAVAH', account: accountHavah, balances: balancesHavah }));
+  }, [balancesHavah, dispatch, accountHavah]);
 
   // fetch balances on archway
   const { address: accountArch } = useXAccount('ARCHWAY');
@@ -121,8 +129,8 @@ export function useWalletFetchBalances() {
   });
 
   React.useEffect(() => {
-    balancesArch && dispatch(changeBalances({ xChainId: 'archway-1', balances: balancesArch }));
-  }, [balancesArch, dispatch]);
+    balancesArch && dispatch(changeBalances({ xChainType: 'ARCHWAY', account: accountArch, balances: balancesArch }));
+  }, [balancesArch, dispatch, accountArch]);
 
   const { address } = useXAccount('EVM');
   // fetch balances on avax
@@ -133,8 +141,8 @@ export function useWalletFetchBalances() {
     address,
   });
   React.useEffect(() => {
-    avaxBalances && dispatch(changeBalances({ xChainId: '0xa86a.avax', balances: avaxBalances }));
-  }, [avaxBalances, dispatch]);
+    avaxBalances && dispatch(changeBalances({ xChainType: 'EVM', account: address, balances: avaxBalances }));
+  }, [avaxBalances, dispatch, address]);
 
   // fetch balances on bsc
   const bscTokens = useXTokens('0x38.bsc');
@@ -144,8 +152,8 @@ export function useWalletFetchBalances() {
     address,
   });
   React.useEffect(() => {
-    bscBalances && dispatch(changeBalances({ xChainId: '0x38.bsc', balances: bscBalances }));
-  }, [bscBalances, dispatch]);
+    bscBalances && dispatch(changeBalances({ xChainType: 'EVM', account: address, balances: bscBalances }));
+  }, [bscBalances, dispatch, address]);
 
   // fetch balances on arb
   const arbTokens = useXTokens('0xa4b1.arbitrum');
@@ -155,8 +163,8 @@ export function useWalletFetchBalances() {
     address,
   });
   React.useEffect(() => {
-    arbBalances && dispatch(changeBalances({ xChainId: '0xa4b1.arbitrum', balances: arbBalances }));
-  }, [arbBalances, dispatch]);
+    arbBalances && dispatch(changeBalances({ xChainType: 'EVM', account: address, balances: arbBalances }));
+  }, [arbBalances, dispatch, address]);
 
   // fetch balances on base
   const baseTokens = useXTokens('0x2105.base');
@@ -166,8 +174,8 @@ export function useWalletFetchBalances() {
     address,
   });
   React.useEffect(() => {
-    baseBalances && dispatch(changeBalances({ xChainId: '0x2105.base', balances: baseBalances }));
-  }, [baseBalances, dispatch]);
+    baseBalances && dispatch(changeBalances({ xChainType: 'EVM', account: address, balances: baseBalances }));
+  }, [baseBalances, dispatch, address]);
 
   // fetch balances on injective
   const { address: accountInjective } = useXAccount('INJECTIVE');
@@ -178,8 +186,9 @@ export function useWalletFetchBalances() {
     address: accountInjective,
   });
   React.useEffect(() => {
-    injectiveBalances && dispatch(changeBalances({ xChainId: 'injective-1', balances: injectiveBalances }));
-  }, [injectiveBalances, dispatch]);
+    injectiveBalances &&
+      dispatch(changeBalances({ xChainType: 'INJECTIVE', account: address, balances: injectiveBalances }));
+  }, [injectiveBalances, dispatch, address]);
 
   const { address: accountSui } = useXAccount('SUI');
   const suiTokens = useXTokens('sui');
@@ -189,12 +198,12 @@ export function useWalletFetchBalances() {
     address: accountSui,
   });
   React.useEffect(() => {
-    suiBalances && dispatch(changeBalances({ xChainId: 'sui', balances: suiBalances }));
-  }, [suiBalances, dispatch]);
+    suiBalances && dispatch(changeBalances({ xChainType: 'SUI', account: accountSui, balances: suiBalances }));
+  }, [suiBalances, dispatch, accountSui]);
 }
 
 export const useHasEnoughICX = () => {
-  const balances = useICONWalletBalances();
+  const balances = useWalletBalances();
   const icxAddress = bnJs.ICX.address;
   return balances[icxAddress] && balances[icxAddress].greaterThan(MINIMUM_ICX_FOR_TX);
 };
@@ -261,7 +270,7 @@ export const useXCurrencyBalance = (
   currency: Currency,
   selectedChainId: XChainId | undefined,
 ): BigNumber | undefined => {
-  const xBalances = useCrossChainWalletBalances();
+  const xBalances = useWalletBalances();
 
   return React.useMemo(() => {
     if (!xBalances) return;
@@ -362,29 +371,18 @@ export function useICXBalances(uncheckedAddresses: (string | undefined)[]): {
 }
 
 export function useXBalancesByToken(): XWalletAssetRecord[] {
-  const balances = useCrossChainWalletBalances();
+  const balances = useWalletBalances();
   const tokenListConfig = useTokenListConfig();
   const prices = useRatesWithOracle();
 
   return React.useMemo(() => {
-    return Object.entries(
-      Object.entries(balances).reduce(
-        (acc, [chainId, chainBalances]) => {
-          if (chainBalances) {
-            forEach(chainBalances, balance => {
-              if (balance.currency && balance?.greaterThan(0)) {
-                acc[balance.currency.symbol] = {
-                  ...acc[balance.currency.symbol],
-                  [chainId]: balance,
-                };
-              }
-            });
-          }
-          return acc;
-        },
-        {} as { [AssetSymbol in string]: { [key in XChainId]: CurrencyAmount<Currency> | undefined } },
-      ),
-    )
+    const t: { [AssetSymbol in string]: { [key in XChainId]?: CurrencyAmount<Currency> } } = {};
+    for (const balance of Object.values(balances)) {
+      if (!t[balance.currency.symbol]) t[balance.currency.symbol] = {};
+      t[balance.currency.symbol][balance.currency.xChainId] = balance;
+    }
+
+    return Object.entries(t)
       .map(([symbol, xTokenAmounts]) => {
         const baseToken = (tokenListConfig.community ? COMBINED_TOKENS_LIST : SUPPORTED_TOKENS_LIST).find(
           token => token.symbol === symbol,
@@ -397,7 +395,7 @@ export function useXBalancesByToken(): XWalletAssetRecord[] {
           return sum;
         }, new BigNumber(0));
         return {
-          baseToken,
+          baseToken: XToken.getXToken('0x1.icon', baseToken),
           xTokenAmounts,
           isBalanceSingleChain: Object.keys(xTokenAmounts).length === 1,
           total,

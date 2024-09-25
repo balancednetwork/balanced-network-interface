@@ -4,9 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import useWidth from '@/hooks/useWidth';
 import { escapeRegExp } from '@/utils';
-import { DEFAULT_TOKEN_CHAIN } from '@/xwagmi/constants/xTokens';
-import { getSupportedXChainForToken } from '@/xwagmi/xcall/utils';
-import { Currency } from '@balancednetwork/sdk-core';
+import { XToken } from '@balancednetwork/sdk-core';
 import { XChainId } from '@balancednetwork/sdk-core';
 import { CurrencySelectionType, SelectorType } from '../../components/SearchModal/CurrencySearch';
 import { TokenSelectModal } from '../TokenSelectModal';
@@ -26,8 +24,8 @@ interface CurrencyInputPanelProps {
   label?: string;
   value: string;
   onUserInput: (value: string) => void;
-  onCurrencySelect?: (currency: Currency) => void;
-  currency?: Currency | null;
+  onCurrencySelect?: (currency: XToken) => void;
+  currency?: XToken | null;
   onPercentSelect?: (percent: number) => void;
   percent?: number;
   currencySelectionType?: CurrencySelectionType;
@@ -91,22 +89,10 @@ export default function CurrencyInputPanel({
   }, []);
 
   const onCurrencySelectWithXChain = useCallback(
-    (currency: Currency, setDefaultChain = true) => {
+    (currency: XToken) => {
       onCurrencySelect && onCurrencySelect(currency);
-
-      if (setDefaultChain && currency?.symbol) {
-        const xChains =
-          currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
-          currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE
-            ? []
-            : getSupportedXChainForToken(currency);
-        const defaultXChainId = DEFAULT_TOKEN_CHAIN[currency.symbol];
-        if (defaultXChainId && (xChains?.length ?? 0) > 1) {
-          onChainSelect && onChainSelect(defaultXChainId);
-        }
-      }
     },
-    [onCurrencySelect, onChainSelect, currencySelectionType],
+    [onCurrencySelect],
   );
 
   return (

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { useIconNetworkId } from '@/hooks/useIconNetworkId';
-import { Currency, Token } from '@balancednetwork/sdk-core';
+import { Currency, Token, XToken } from '@balancednetwork/sdk-core';
 
 import { BASES_TO_CHECK_TRADES_AGAINST } from '@/constants/routing';
 import { TokenAddressMap, useCombinedActiveList } from '@/store/lists/hooks';

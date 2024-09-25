@@ -1,7 +1,8 @@
+import { XChainType } from '@balancednetwork/sdk-core';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
-import { XAccount, XChainType } from '../types';
+import { XAccount } from '../types';
 import { useXConnection } from './useXConnection';
 
 export function useXAccount(xChainType: XChainType | undefined): XAccount {

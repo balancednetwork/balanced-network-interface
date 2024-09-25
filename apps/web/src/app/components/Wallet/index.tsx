@@ -68,7 +68,7 @@ const Wallet = ({ close }: WalletProps) => {
       close();
     }
   }, [handleEscape, close]);
-
+  console.log('balance', balances);
   const filteredBalances = React.useMemo(() => {
     if (!balances) return [];
     if (searchQuery === '') return balances;

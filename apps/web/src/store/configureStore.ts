@@ -6,7 +6,6 @@ import { configureStore } from '@reduxjs/toolkit';
 import { load, save } from 'redux-localstorage-simple';
 
 import application from './application/reducer';
-import bbaln from './bbaln/reducer';
 import bridge from './bridge/reducer';
 import lists from './lists/reducer';
 import oracle from './oracle/reducer';
@@ -23,7 +22,6 @@ export function configureAppStore() {
   const store = configureStore({
     reducer: {
       application,
-      bbaln,
       ratio,
       wallet,
       transactions,

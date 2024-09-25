@@ -3,18 +3,17 @@ import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@balancednetwork/sdk-core';
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { XChainId, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import React from 'react';
-import { useTheme } from 'styled-components';
 import CurrencyLogoWithNetwork from '../../components2/CurrencyLogoWithNetwork';
 import ICONAssetModal from './ICONAssetModal';
 import { AssetSymbol, BalanceAndValueWrap, Chevron, DataText, ListItem } from './styledComponents';
 import useClaimableICX from './useClaimableICX';
 
 type SingleChainBalanceItemProps = {
-  baseToken: Token;
+  baseToken: XToken;
   networkBalance: Partial<{ [key in XChainId]: CurrencyAmount<Currency> | undefined }>;
   isLast?: boolean;
   value?: BigNumber;
@@ -31,7 +30,6 @@ const SingleChainBalanceItem = ({
   const [xChainId, balance] = Object.entries(networkBalance)[0];
   const { currency } = balance || {};
   const { symbol } = currency || {};
-  const theme = useTheme();
   const claimableICX = useClaimableICX();
   const hasNotification = baseToken.symbol === 'ICX' && claimableICX.isGreaterThan(0);
   const isICONAsset = xChainId === ICON_XCALL_NETWORK_ID;
@@ -52,11 +50,7 @@ const SingleChainBalanceItem = ({
     <>
       <ListItem $border={!isNested && !isLast} onClick={handleModalOpen} className={isICONAsset ? 'has-modal' : ''}>
         <AssetSymbol $hasNotification={hasNotification}>
-          <CurrencyLogoWithNetwork
-            currency={baseToken}
-            chainId={xChainId as XChainId}
-            size={isNested ? '20px' : '24px'}
-          />
+          <CurrencyLogoWithNetwork currency={baseToken} size={isNested ? '20px' : '24px'} />
           <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>
             {isNested ? xChainMap[xChainId].name : symbol}
             {isICONAsset && <Chevron $isNested={isNested} />}

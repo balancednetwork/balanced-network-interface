@@ -1,4 +1,4 @@
-import { XChainType } from '../types';
+import { XChainType } from '@balancednetwork/sdk-core';
 import { XConnection } from '../types';
 import { useXWagmiStore } from '../useXWagmiStore';
 

@@ -14,33 +14,12 @@ import {
   ModalContent,
   walletBreakpoint,
 } from './styledComponents';
-import useClaimableICX from './useClaimableICX';
 
+import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 import { Typography } from '@/app/theme';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance } from '@/utils/formatter';
-import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { useTheme } from 'styled-components';
-import CurrencyLogoWithNetwork from '../../components2/CurrencyLogoWithNetwork';
-import ICXWallet from './ICONWallets/ICXWallet';
-import SICXWallet from './ICONWallets/SICXWallet';
-import SendPanel from './ICONWallets/SendPanel';
-
-const WalletUIs = {
-  ICX: ICXWallet,
-  sICX: SICXWallet,
-};
-
-const WalletUI = ({ currency }: { currency: Currency }) => {
-  const claimableICX = useClaimableICX();
-
-  const UI = currency.symbol ? WalletUIs[currency.symbol] ?? SendPanel : SendPanel;
-  if (currency.symbol === 'ICX') {
-    return <UI currency={currency} claimableICX={claimableICX} />;
-  } else {
-    return <UI currency={currency} />;
-  }
-};
 
 const ICONAssetModal = ({ token, balance, value, isOpen, close }) => {
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
@@ -67,7 +46,7 @@ const ICONAssetModal = ({ token, balance, value, isOpen, close }) => {
         </DashGrid>
         <ListItem $border={false}>
           <AssetSymbol>
-            <CurrencyLogoWithNetwork currency={token} chainId={ICON_XCALL_NETWORK_ID} size={'24px'} />
+            <CurrencyLogoWithNetwork currency={token} size={'24px'} />
             <Typography fontSize={16} fontWeight={'bold'}>
               {token.symbol}
             </Typography>
@@ -77,9 +56,6 @@ const ICONAssetModal = ({ token, balance, value, isOpen, close }) => {
             <DataText as="div">{!value ? '-' : `$${value.toFormat(2)}`}</DataText>
           </BalanceAndValueWrap>
         </ListItem>
-        <BoxPanelWithArrow bg="bg3">
-          <WalletUI currency={token} />
-        </BoxPanelWithArrow>
       </ModalContent>
     </Modal>
   );

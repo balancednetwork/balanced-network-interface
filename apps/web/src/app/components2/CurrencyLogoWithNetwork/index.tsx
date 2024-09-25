@@ -1,8 +1,7 @@
 import React from 'react';
 
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@balancednetwork/sdk-core';
-import { Currency } from '@balancednetwork/sdk-core';
+import { XToken } from '@balancednetwork/sdk-core';
 
 import { cn } from '@/lib/utils';
 import { ChainLogo } from '../ChainLogo';
@@ -10,12 +9,10 @@ import CurrencyLogo from '../CurrencyLogo';
 
 const CurrencyLogoWithNetwork = ({
   currency,
-  chainId,
   size,
   className,
 }: {
-  currency: Currency;
-  chainId: XChainId;
+  currency: XToken;
   size: string;
   className?: string;
 }) => {
@@ -35,7 +32,7 @@ const CurrencyLogoWithNetwork = ({
           bottom: bottom,
         }}
       >
-        <ChainLogo chain={xChainMap[chainId]} size="14px" className="absolute top-0 left-0" />
+        <ChainLogo chain={xChainMap[currency.xChainId]} size="14px" className="absolute top-0 left-0" />
       </div>
     </div>
   );

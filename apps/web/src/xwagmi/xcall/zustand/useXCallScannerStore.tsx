@@ -14,14 +14,10 @@ export const useXCallScannerStore = create<XCallScannerStore>()(
 
 export const useXCallScannerSubscription = () => {
   useEffect(() => {
-    console.log('useXCallScannerSubscription');
     const websocket = new WebSocket('wss://xcallscan.xyz/ws');
-    websocket.onopen = () => {
-      console.log('connected');
-    };
+    websocket.onopen = () => {};
     websocket.onmessage = event => {
       const data = JSON.parse(event.data);
-      console.log('websocket received:', data);
       if (data.src_tx_hash) {
         useXCallScannerStore.setState(state => {
           state.messages[data.src_tx_hash] = data;

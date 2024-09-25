@@ -122,7 +122,6 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'Balanced Dollar',
     ),
   ],
-  // TODO: confirm SUI
   sui: [
     new XToken('sui', 'sui', NATIVE_ADDRESS, 9, 'SUI', 'SUI'),
     new XToken(

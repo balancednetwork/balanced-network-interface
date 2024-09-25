@@ -5,7 +5,6 @@ import { Trans, t } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
-import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { UnderlineTextWithArrow } from '@/app/components/DropdownText';
@@ -38,7 +37,7 @@ import { EVMWalletModal } from './EVMWalletModal';
 import { InjectiveWalletOptionsModal } from './InjectiveWalletOptionsModal';
 import { SuiWalletOptionsModal } from './SuiWalletOptionsModal';
 import WalletItem, { WalletItemProps } from './WalletItem';
-import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
+import { StyledSearchInput } from './styled';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {
@@ -173,11 +172,11 @@ export default function WalletModal() {
   return (
     <>
       <StyledModal isOpen={walletModalOpen} onDismiss={toggleWalletModal} mobile={isMobile}>
-        <Wrapper>
+        <div className="w-full flex flex-col gap-4 p-6">
           {isLoggedInSome ? (
-            <Flex mb={1} justifyContent="space-between" flexDirection={['column', 'row']} flexWrap="nowrap">
+            <div className="flex justify-between flex-col sm:flex-row mb-1 flex-nowrap">
               <Typography variant="h2">Manage wallets</Typography>
-              <Flex flexDirection="column" alignItems={['flex-start', 'flex-end']} justifyContent="center" mt={1}>
+              <div className="flex flex-col items-start sm:items-end justify-center mt-1">
                 <Typography>
                   {numberOfConnectedWallets > 1
                     ? t`Connected to ${numberOfConnectedWallets} blockchains`
@@ -186,15 +185,15 @@ export default function WalletModal() {
                 <Typography onClick={xDisconnectAll} color="alert" style={{ cursor: 'pointer' }}>
                   Disconnect all
                 </Typography>
-              </Flex>
-            </Flex>
+              </div>
+            </div>
           ) : (
-            <Box>
+            <div>
               <Typography textAlign="center" variant={'h2'} mb={1}>
                 <Trans>Sign in to Balanced</Trans>
               </Typography>
 
-              <Flex justifyContent="center" alignItems="center" mt="12px" mb={1}>
+              <div className="mt-3 mb-1 flex justify-center items-center">
                 <Typography mr={1}>
                   <Trans>Use Balanced in</Trans>:
                 </Typography>
@@ -219,8 +218,8 @@ export default function WalletModal() {
                     </DropdownPopper>
                   </div>
                 </ClickAwayListener>
-              </Flex>
-            </Box>
+              </div>
+            </div>
           )}
 
           <StyledSearchInput
@@ -232,7 +231,7 @@ export default function WalletModal() {
             tabIndex={isMobile ? -1 : 1}
           />
 
-          <SignInOptionsWrap>
+          <div className="py-1 px-6 min-h-14 max-h-[350px] overflow-y-scroll rounded-md bg-[#05193b]">
             <AnimatePresence>
               {filteredWallets.map((wallet, index) => (
                 <motion.div key={wallet.name} {...presenceVariants} style={{ overflow: 'hidden' }}>
@@ -247,31 +246,31 @@ export default function WalletModal() {
                 </motion.div>
               )}
             </AnimatePresence>
-          </SignInOptionsWrap>
+          </div>
 
           {!signedInWallets.length && (
             <Typography textAlign="center" as="div" maxWidth={300} mx="auto" mt={2}>
               <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
-              <Box pt={'5px'}>
+              <div className="pt-1">
                 <Link href="https://balanced.network/disclaimer/" target="_blank" tabIndex={-1}>
                   <Trans>View disclaimer.</Trans>
                   <ExternalIcon width="11" height="11" style={{ marginLeft: '7px', marginTop: '-3px' }} />
                 </Link>
-              </Box>
+              </div>
             </Typography>
           )}
 
           {isMobile && (
             <>
               <Divider />
-              <Flex justifyContent="center">
+              <div className="flex justify-center">
                 <Typography onClick={toggleWalletModal}>
                   <Trans>Close</Trans>
                 </Typography>
-              </Flex>
+              </div>
             </>
           )}
-        </Wrapper>
+        </div>
       </StyledModal>
 
       <EVMWalletModal />

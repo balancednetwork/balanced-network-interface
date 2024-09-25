@@ -1,13 +1,9 @@
 import React, { useCallback } from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
-import { BalancedJs, CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
+import { CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
 import { Trans, t } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
-import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
 
 import { Button, IconButton } from '@/app/components/Button';
 import { DropdownPopper } from '@/app/components/Popover';
@@ -16,55 +12,13 @@ import { Typography } from '@/app/theme';
 import CopyIcon from '@/assets/icons/copy.svg';
 import WalletIcon from '@/assets/icons/wallet.svg';
 import { useWalletModalToggle } from '@/store/application/hooks';
-import { useAllTransactions } from '@/store/transactions/hooks';
 import { shortenAddress } from '@/utils';
 
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { Placement } from '@popperjs/core';
-import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { MouseoverTooltip } from '../Tooltip';
 import Wallet from '../Wallet';
-import { notificationCSS } from '../Wallet/ICONWallets/utils';
-
-const StyledLogo = () => (
-  <div className="mr-4 sm:mr-20">
-    <Logo />
-  </div>
-);
-
-const WalletButtonWrapper = styled(Box)<{ $hasnotification?: boolean }>`
-  position: relative;
-  ${({ $hasnotification }) => ($hasnotification ? notificationCSS : '')}
-  &::before, &::after {
-    left: 7px;
-    top: 13px;
-    ${({ theme }) => `background-color: ${theme.colors?.bg5}`};
-  }
-`;
-
-export const StyledAddress = styled(Typography)`
-  &:hover {
-    color: #2fccdc;
-    cursor: pointer;
-  }
-`;
-
-const ConnectionStatus = styled(Flex)`
-  justify-content: flex-end;
-  align-items: end;
-
-  span {
-    opacity: 0.75;
-    ${({ theme }) => theme.colors?.text};
-  }
-
-  strong,
-  span {
-    margin-left: 7px;
-  }
-`;
 
 const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
@@ -93,7 +47,8 @@ export const CopyableAddress = ({
       closeAfterDelay={closeAfterDelay}
       zIndex={9999}
     >
-      <StyledAddress
+      <Typography
+        className="hover:text-[#2fccdc] cursor-pointer flex"
         onMouseLeave={() => {
           setTimeout(() => updateCopyState(false), 250);
         }}
@@ -101,32 +56,15 @@ export const CopyableAddress = ({
       >
         {shortenAddress(account)}
         {copyIcon && <CopyIcon width="13" height="13" style={{ marginLeft: 7, marginRight: 0, marginTop: -4 }} />}
-      </StyledAddress>
+      </Typography>
     </MouseoverTooltip>
   ) : null;
 };
-
-function useClaimableICX(): UseQueryResult<BigNumber> {
-  const { account } = useIconReact();
-  const transactions = useAllTransactions();
-
-  return useQuery({
-    queryKey: ['claimableICX', account, transactions],
-    queryFn: async () => {
-      if (!account) return;
-
-      const result = await bnJs.Staking.getClaimableICX(account);
-      return BalancedJs.utils.toIcx(result);
-    },
-    enabled: !!account,
-  });
-}
 
 export default function Header(props: { className?: string }) {
   const { className } = props;
   const upSmall = useMedia('(min-width: 600px)');
   const wallets = useSignedInWallets();
-  const { data: claimableICX } = useClaimableICX();
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
@@ -149,7 +87,9 @@ export default function Header(props: { className?: string }) {
     <header className={className}>
       <div className="flex justify-between">
         <div className="flex items-center">
-          <StyledLogo />
+          <div className="mr-4 sm:mr-20">
+            <Logo />
+          </div>
 
           {NETWORK_ID !== NetworkId.MAINNET && (
             <Typography variant="h3" color="alert" fontSize={upSmall ? 20 : 9}>
@@ -176,18 +116,18 @@ export default function Header(props: { className?: string }) {
                       <Typography variant="p" textAlign="right">
                         <Trans>Multi-chain wallet</Trans>
                       </Typography>
-                      <ConnectionStatus>
+                      <div className="flex justify-end items-end">
                         {wallets.map(
                           (wallet, index) =>
                             index < 3 && (
-                              <span key={index}>
+                              <span className="opacity-75" key={index}>
                                 {xChainMap[wallet.xChainId].name}
                                 {index + 1 < wallets.length ? ', ' : ' '}
                               </span>
                             ),
                         )}
                         {wallets.length > 3 && <span key={4}>& {wallets.length - 3} more</span>}
-                      </ConnectionStatus>
+                      </div>
                     </>
                   ) : (
                     <>
@@ -203,7 +143,7 @@ export default function Header(props: { className?: string }) {
               )}
             </div>
 
-            <WalletButtonWrapper $hasnotification={claimableICX?.isGreaterThan(0)}>
+            <div className="relative before:left-2 before:top-3 before:bg-[#021338] after:left-2 after::top-3 after:bg-[#021338]">
               <ClickAwayListener onClickAway={e => handleWalletClose(e)}>
                 <div>
                   <IconButton ref={walletButtonRef} onClick={toggleWalletMenu}>
@@ -221,7 +161,7 @@ export default function Header(props: { className?: string }) {
                   </DropdownPopper>
                 </div>
               </ClickAwayListener>
-            </WalletButtonWrapper>
+            </div>
           </div>
         )}
       </div>

@@ -4,6 +4,7 @@ import ClickAwayListener from 'react-click-away-listener';
 
 import { DropdownPopper } from '@/app/components/Popover';
 import ArrowDownIcon from '@/assets/icons/arrow-down.svg';
+import { cn } from '@/lib/utils';
 import styled from 'styled-components';
 
 type UnderlineTextWithArrowProps = {
@@ -17,12 +18,18 @@ export const StyledArrowDownIcon = styled(ArrowDownIcon)`
   width: 10px;
 `;
 
-export const UnderlineText = ({ children }: any) => {
+type UnderlineTextProps = React.HtmlHTMLAttributes<HTMLDivElement>;
+
+export const UnderlineText = ({ children, className, ...rest }: UnderlineTextProps) => {
   return (
     <div
-      className='text-inherit bg-transparent relative pb-1 -mb-2 select-none break-normal cursor-pointer 
+      {...rest}
+      className={cn(
+        `text-inherit bg-transparent relative pb-1 -mb-2 select-none break-normal cursor-pointer 
         after:content-[" "] after:block after:w-0 after:h-[1px] after:mt-1 after:bg-transparent after:rounded-sm transition-["width 0.3s ease, background-color 0.3s ease"] 
-        :hover:after:w-full :hover:after:bg-[#2fccdc]'
+        :hover:after:w-full :hover:after:bg-[#2fccdc]`,
+        className,
+      )}
     >
       {children}
     </div>

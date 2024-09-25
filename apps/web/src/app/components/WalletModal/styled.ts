@@ -1,5 +1,3 @@
-import { Typography } from '@/app/theme';
-import { Box } from 'rebass';
 import styled, { css, keyframes } from 'styled-components';
 import SearchInput from '../SearchModal/SearchInput';
 
@@ -21,24 +19,6 @@ export const MainLogo = styled.div`
       max-height: 45px;
       transform: translateY(0);
     }
-  }
-`;
-
-export const ChainInfo = styled(Box)`
-  /* padding-left: 65px;
-
-
-  @media screen and (min-width: ${mobileWalletBreakpoint}) {
-    padding-left: 0;
-  } */
-`;
-
-export const ChainName = styled(Typography)`
-  padding-left: 30px;
-
-
-  @media screen and (min-width: ${mobileWalletBreakpoint}) {
-    padding-left: 0;
   }
 `;
 
@@ -199,23 +179,5 @@ const pulseAnimation = keyframes`
 export const StyledSearchInput = styled(SearchInput)`
   background-color: ${({ theme }) => theme.colors?.bg6};
   border-color: ${({ theme }) => theme.colors?.bg6};
-  /* box-shadow: 0px 10px 15px 0px rgba(1, 0, 42, 0.25) inset; */
-`;
-
-export const Wrapper = styled.div`
-  width: 100%;
-  padding: 25px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-`;
-
-export const SignInOptionsWrap = styled.div`
-  background: ${({ theme }) => theme.colors?.bg6};
-  padding: 5px 25px;
-  min-height: 60px;
-  max-height: 350px;
-  overflow-y: scroll;
-  border-radius: 10px;
   /* box-shadow: 0px 10px 15px 0px rgba(1, 0, 42, 0.25) inset; */
 `;

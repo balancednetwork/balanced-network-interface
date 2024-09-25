@@ -2,7 +2,7 @@ import { EventPayload, TransactionResponse } from '@/btp/src/type/transaction';
 import { ICX_METHOD } from '@/btp/src/utils/constants';
 
 import { signingEventHandler } from '.';
-import { TYPES, CONNECTED_WALLET_LOCAL_STORAGE } from '../constants';
+import { CONNECTED_WALLET_LOCAL_STORAGE, TYPES } from '../constants';
 import Request from './utils';
 
 const createICONexEvent = (type: keyof typeof TYPES, payload?: EventPayload) => {
@@ -30,7 +30,7 @@ export const checkICONexInstalled = callback => {
   });
 };
 
-export const isICONexInstalled = () => window['hasICONexAccount'];
+export const isICONexInstalled = () => window['hanaWallet'];
 
 // connect to the wallet
 export const requestAddress = async () => {

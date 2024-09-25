@@ -1,34 +1,45 @@
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, XChainType, XToken } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
 
-import { ZERO } from '@/constants/index';
-import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
-import { XChainId } from '@balancednetwork/sdk-core';
+/**
+ * A map where the key is a string representing the address and the value is a CurrencyAmount of XToken.
+ */
+export type TokenAmountMap = { [tokenAddress: string]: CurrencyAmount<XToken> };
+
+/**
+ * A map where the key is a string representing the account and the value is a CurrencyAmountMap.
+ */
+export type AccountTokenAmountMap = { [account: string]: TokenAmountMap };
+
+type XChainTypeToAccountMap = { [key in XChainType]?: string };
 
 export type WalletState = {
-  [key in XChainId]?: { [address: string]: CurrencyAmount<Currency> };
+  accounts: XChainTypeToAccountMap;
+  balances: AccountTokenAmountMap;
 };
 
 const initialState: WalletState = {
-  '0x1.icon': SUPPORTED_TOKENS_LIST.reduce((p, t) => {
-    p[t?.symbol!] = ZERO;
-    return p;
-  }, {}),
-  'archway-1': {},
-  '0x100.icon': {},
+  accounts: {},
+  balances: {},
 };
 
 const walletSlice = createSlice({
   name: 'wallet',
   initialState,
   reducers: create => ({
-    changeICONBalances: create.reducer<{ [key: string]: CurrencyAmount<Currency> }>((state, { payload }) => {
-      state['0x1.icon'] = payload;
-    }),
-
-    changeBalances: create.reducer<{ xChainId: XChainId; balances: { [key: string]: CurrencyAmount<Currency> } }>(
+    changeBalances: create.reducer<{ xChainType: XChainType; account: string | undefined; balances: TokenAmountMap }>(
       (state, { payload }) => {
-        state[payload.xChainId] = payload.balances;
+        const { xChainType, account, balances } = payload;
+
+        if (account) {
+          state.accounts[xChainType] = account;
+          state.balances[account] = balances;
+        } else {
+          const _account = state.accounts[xChainType];
+          if (!_account) return;
+          state.balances[_account] = {};
+          state.accounts[xChainType] = undefined;
+        }
       },
     ),
     resetBalances: create.reducer<void>(state => {
@@ -37,6 +48,6 @@ const walletSlice = createSlice({
   }),
 });
 
-export const { changeICONBalances, resetBalances, changeBalances } = walletSlice.actions;
+export const { resetBalances, changeBalances } = walletSlice.actions;
 
 export default walletSlice.reducer;

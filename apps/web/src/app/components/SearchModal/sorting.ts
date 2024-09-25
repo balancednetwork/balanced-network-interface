@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token, XToken } from '@balancednetwork/sdk-core';
 
 import { useAllTokenBalances } from '@/store/wallet/hooks';
 
@@ -42,7 +42,7 @@ function getTokenComparator(balances: {
 export function useTokenComparator(
   account: string | undefined | null,
   inverted: boolean,
-): (tokenA: Token, tokenB: Token) => number {
+): (tokenA: XToken, tokenB: XToken) => number {
   const balances = useAllTokenBalances(account);
   const comparator = useMemo(() => getTokenComparator(balances ?? {}), [balances]);
   return useMemo(() => {

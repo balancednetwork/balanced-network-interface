@@ -1,12 +1,12 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { Currency } from '@balancednetwork/sdk-core';
+import { Currency, XToken } from '@balancednetwork/sdk-core';
 import ClickAwayListener from 'react-click-away-listener';
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 
 import CurrencyLogo from '@/app/components/CurrencyLogo';
 import { SelectorPopover } from '@/app/components/Popover';
-import { Typography } from '@/app/theme';
+import { Typography, theme } from '@/app/theme';
 import DropDown from '@/assets/icons/arrow-down.svg';
 import useWidth from '@/hooks/useWidth';
 import { COMMON_PERCENTS } from '@/store/swap/reducer';
@@ -15,6 +15,7 @@ import { DEFAULT_TOKEN_CHAIN } from '@/xwagmi/constants/xTokens';
 import { getSupportedXChainForToken } from '@/xwagmi/xcall/utils';
 import { XChainId } from '@balancednetwork/sdk-core';
 import { Trans } from 'react-i18next';
+import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { HorizontalList, Option } from '../List';
 import { CurrencySelectionType, SelectorType } from '../SearchModal/CurrencySearch';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
@@ -89,8 +90,8 @@ interface CurrencyInputPanelProps {
   label?: string;
   value: string;
   onUserInput: (value: string) => void;
-  onCurrencySelect?: (currency: Currency) => void;
-  currency?: Currency | null;
+  onCurrencySelect?: (currency: XToken) => void;
+  currency?: XToken | null;
   onPercentSelect?: (percent: number) => void;
   percent?: number;
   currencySelectionType?: CurrencySelectionType;
@@ -123,7 +124,6 @@ export default function CurrencyInputPanel({
   currencySelectionType,
   bg = 'bg2',
   placeholder = '0',
-  className,
   account,
   showCommunityListControl = true,
   selectorType,
@@ -169,24 +169,13 @@ export default function CurrencyInputPanel({
   );
 
   const onCurrencySelectWithXChain = useCallback(
-    (currency: Currency, setDefaultChain = true) => {
+    (currency: XToken) => {
       onCurrencySelect && onCurrencySelect(currency);
-
-      if (setDefaultChain && currency?.symbol) {
-        const xChains =
-          currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
-          currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE
-            ? []
-            : getSupportedXChainForToken(currency);
-        const defaultXChainId = DEFAULT_TOKEN_CHAIN[currency.symbol];
-        if (defaultXChainId && (xChains?.length ?? 0) > 1) {
-          onChainSelect && onChainSelect(defaultXChainId);
-          setTimeout(() => setXChainOptionsOpen(true), 100);
-        }
-      }
     },
-    [onCurrencySelect, onChainSelect, currencySelectionType],
+    [onCurrencySelect],
   );
+
+  const theme = useTheme();
 
   return (
     <div className="w-full bg-card p-4">
@@ -206,7 +195,7 @@ export default function CurrencyInputPanel({
             <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect} $active={!!showCrossChainOptions}>
               {currency ? (
                 <>
-                  <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
+                  <CurrencyLogoWithNetwork currency={currency} bgColor={theme.colors.bg4} size="24px" />
                   <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName>
                   {currency.symbol === 'BTCB' && <div style={{ marginLeft: 5, marginRight: 5 }}>(old)</div>}
                 </>

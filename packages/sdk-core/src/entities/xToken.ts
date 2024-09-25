@@ -14,6 +14,8 @@ export type XChainId =
   | 'injective-1'
   | 'sui';
 
+export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH' | 'INJECTIVE' | 'SUI';
+
 export class XToken extends Token {
   xChainId: XChainId;
   identifier: string;

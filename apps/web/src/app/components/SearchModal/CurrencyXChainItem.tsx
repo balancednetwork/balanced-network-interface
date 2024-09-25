@@ -1,10 +1,10 @@
 import { Typography } from '@/app/theme';
 import { useHasSignedIn } from '@/hooks/useWallets';
-import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { useWalletBalances } from '@/store/wallet/hooks';
 import { formatBalance } from '@/utils/formatter';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XChainId } from '@balancednetwork/sdk-core';
+import { XChainId, XToken } from '@balancednetwork/sdk-core';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import React from 'react';
 import { Flex } from 'rebass';
@@ -31,20 +31,20 @@ const CurrencyXChainItem = ({
   currency,
 }: {
   xChainId: XChainId;
-  currency: Currency;
+  currency: XToken;
   price: string;
-  onSelect: (currency: Currency, xChainId: XChainId) => void;
+  onSelect: (currency: XToken, xChainId: XChainId) => void;
 }) => {
-  const xWallet = useCrossChainWalletBalances();
-  const xToken = xTokenMap[xChainId].find(token => token.symbol === currency.symbol);
-  const currencyBalance: CurrencyAmount<Currency> | undefined = xWallet[xChainId]?.[xToken?.wrapped.address ?? ''];
+  const walletBalances = useWalletBalances();
+  const xToken = xTokenMap[currency.wrapped.address];
+  const currencyBalance: CurrencyAmount<XToken> | undefined = walletBalances[xChainId]?.[xToken?.wrapped.address ?? ''];
   const hasSignedIn = useHasSignedIn();
   const theme = useTheme();
 
   return (
     <CurrencyXChainItemWrap onClick={() => onSelect(currency, xChainId)}>
       <Flex alignItems="center">
-        <CurrencyLogoWithNetwork currency={currency} chainId={xChainId} bgColor={theme.colors.bg3} size="22px" />
+        <CurrencyLogoWithNetwork currency={currency} bgColor={theme.colors.bg3} size="22px" />
         <Typography variant="span" fontSize={14} display="block" ml="10px" pt="4px">
           {xChainMap[xChainId].name}
         </Typography>

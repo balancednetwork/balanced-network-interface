@@ -1,4 +1,4 @@
-import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { useWalletBalances } from '@/store/wallet/hooks';
 import { WalletState } from '@/store/wallet/reducer';
 import { XChain } from '@/xwagmi/types';
 import { Currency, XChainId } from '@balancednetwork/sdk-core';
@@ -11,22 +11,8 @@ type SortingType = {
   order?: 'ASC' | 'DESC';
 };
 
-const getXCurrencyBalanceBySymbol = (
-  xBalances: WalletState,
-  symbol: string,
-  selectedChainId: XChainId | undefined,
-): BigNumber | undefined => {
-  if (!xBalances || !selectedChainId) return;
-
-  const currencyAmount = Object.values(xBalances[selectedChainId] || {}).find(
-    currencyAmount => currencyAmount.currency.symbol === symbol,
-  );
-
-  return new BigNumber(currencyAmount?.toFixed() || 0);
-};
-
-export default function useSortXChains(initialState: SortingType, selectedCurrency: Currency | undefined) {
-  const xBalances = useCrossChainWalletBalances();
+export default function useSortXChains(initialState: SortingType) {
+  const walletBalances = useWalletBalances();
   const signedInWallets = useSignedInWallets();
 
   const [sortBy, setSortBy] = useState<SortingType>(initialState);
@@ -61,9 +47,9 @@ export default function useSortXChains(initialState: SortingType, selectedCurren
     if (signedInWallets.length > 0 && sortBy.key === 'value') {
       dataToSort.sort((a, b) => {
         const aBalance =
-          getXCurrencyBalanceBySymbol(xBalances, selectedCurrency.symbol, a.xChainId) || new BigNumber(0);
+          new BigNumber(walletBalances[selectedCurrency.wrapped.address].toFixed() || 0) || new BigNumber(0);
         const bBalance =
-          getXCurrencyBalanceBySymbol(xBalances, selectedCurrency.symbol, b.xChainId) || new BigNumber(0);
+          new BigNumber(walletBalances[selectedCurrency.wrapped.address].toFixed() || 0) || new BigNumber(0);
         return aBalance.isGreaterThan(bBalance) ? -1 * direction : 1 * direction;
       });
     }

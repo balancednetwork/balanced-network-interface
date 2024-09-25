@@ -1,4 +1,4 @@
-import { XChainType } from '../types';
+import { XChainType } from '@balancednetwork/sdk-core';
 
 export type XAccount = {
   address: string | undefined;

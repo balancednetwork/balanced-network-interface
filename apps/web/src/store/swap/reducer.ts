@@ -1,11 +1,8 @@
 import { getXTokenBySymbol, isXToken } from '@/utils/xTokens';
-import { DEFAULT_TOKEN_CHAIN } from '@/xwagmi/constants/xTokens';
-import { XChainId } from '@balancednetwork/sdk-core';
+import { DEFAULT_TOKEN_CHAIN, allXTokens, xTokenMap } from '@/xwagmi/constants/xTokens';
+import { XChainId, XToken } from '@balancednetwork/sdk-core';
 import { Currency } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
-
-import { NETWORK_ID } from '@/constants/config';
-import { BALN, bnUSD } from '@/constants/tokens';
 
 // !TODO: use one Field for swap and bridge panel
 export enum Field {
@@ -19,33 +16,29 @@ export interface SwapState {
   readonly independentField: Field;
   readonly typedValue: string;
   readonly [Field.INPUT]: {
-    readonly xChainId: XChainId;
-    readonly currency: Currency | undefined;
+    readonly currency: XToken | undefined;
     readonly percent: number;
   };
   readonly [Field.OUTPUT]: {
-    readonly xChainId: XChainId;
-    readonly currency: Currency | undefined;
+    readonly currency: XToken | undefined;
   };
   // the typed recipient address or ENS name, or null if swap should go to sender
   readonly recipient: string | null;
 }
 
 export const INITIAL_SWAP = {
-  base: BALN[NETWORK_ID],
-  quote: bnUSD[NETWORK_ID],
+  base: allXTokens[0],
+  quote: allXTokens[11],
 };
 
 const initialState: SwapState = {
   independentField: Field.INPUT,
   typedValue: '',
   [Field.INPUT]: {
-    xChainId: '0x1.icon',
     currency: INITIAL_SWAP.base,
     percent: 0,
   },
   [Field.OUTPUT]: {
-    xChainId: '0x1.icon',
     currency: INITIAL_SWAP.quote,
   },
   recipient: null,
@@ -99,15 +92,10 @@ const swapSlice = createSlice({
     selectChain: create.reducer<{ field: Field; xChainId: XChainId }>((state, { payload: { field, xChainId } }) => {
       const updatedCurrency = getXTokenBySymbol(xChainId, state[field].currency?.symbol);
       if (updatedCurrency) {
-        state[field].xChainId = xChainId;
         state[field].currency = updatedCurrency;
       }
     }),
     switchChain: create.reducer<void>(state => {
-      const fromChain = state[Field.INPUT].xChainId;
-      state[Field.INPUT].xChainId = state[Field.OUTPUT].xChainId;
-      state[Field.OUTPUT].xChainId = fromChain;
-
       const fromCurrency = state[Field.INPUT].currency;
       state[Field.INPUT].currency = state[Field.OUTPUT].currency;
       state[Field.OUTPUT].currency = fromCurrency;

@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { CurrencyAmount, Token, XToken } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
 import { t } from '@lingui/macro';
 import { useQuery } from '@tanstack/react-query';
 import { Abi, Address, WriteContractReturnType, erc20Abi, getContract } from 'viem';
@@ -283,7 +283,7 @@ export function useTokenAllowance(
   owner?: string | null,
   spender?: string,
 ): {
-  allowance: CurrencyAmount<Token> | undefined;
+  allowance: CurrencyAmount<XToken> | undefined;
   refetch: () => Promise<any>;
 } {
   const inputs = useMemo(() => [owner, spender] as [`0x${string}`, `0x${string}`], [owner, spender]);

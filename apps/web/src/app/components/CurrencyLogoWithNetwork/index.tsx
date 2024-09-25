@@ -4,8 +4,7 @@ import styled from 'styled-components';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@balancednetwork/sdk-core';
-import { Currency } from '@balancednetwork/sdk-core';
+import { XToken } from '@balancednetwork/sdk-core';
 
 import CurrencyLogo from '../CurrencyLogo';
 
@@ -31,12 +30,7 @@ const Wrap = styled.div`
   position: relative;
 `;
 
-const CurrencyLogoWithNetwork = ({
-  currency,
-  chainId,
-  bgColor,
-  size,
-}: { currency: Currency; chainId: XChainId; bgColor: string; size: string }) => {
+const CurrencyLogoWithNetwork = ({ currency, bgColor, size }: { currency: XToken; bgColor: string; size: string }) => {
   return (
     <Wrap>
       <CurrencyLogo currency={currency} size={size} />
@@ -45,7 +39,7 @@ const CurrencyLogoWithNetwork = ({
         $right={size === '20px' ? '-5px' : '-4px'}
         $bottom={size === '20px' ? '-6px' : '-5px'}
       >
-        <ChainLogo chain={xChainMap[chainId]} size="14px" />
+        <ChainLogo chain={xChainMap[currency.xChainId]} size="14px" />
       </NetworkWrap>
     </Wrap>
   );

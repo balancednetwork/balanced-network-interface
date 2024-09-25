@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Currency, Token } from '@balancednetwork/sdk-core';
+import { Currency, Token, XToken } from '@balancednetwork/sdk-core';
 
 import useLast from '@/hooks/useLast';
 
@@ -15,8 +15,8 @@ interface CurrencySearchModalProps {
   account?: string | null;
   isOpen: boolean;
   onDismiss: () => void;
-  selectedCurrency?: Currency | null;
-  onCurrencySelect: (currency: Currency, setDefaultChain?: boolean) => void;
+  selectedCurrency?: XToken | null;
+  onCurrencySelect: (currency: XToken, setDefaultChain?: boolean) => void;
   onChainSelect?: (chainId: XChainId) => void;
   showCrossChainBreakdown: boolean;
   showCurrencyAmount?: boolean;
@@ -81,11 +81,10 @@ export default function CurrencySearchModal({
   const closeRemoveView = useCallback(() => {
     setModalView(CurrencyModalView.search);
   }, []);
-  const showManageView = useCallback(() => setModalView(CurrencyModalView.manage), []);
 
   const handleCurrencySelect = useCallback(
-    (currency: Currency, setDefaultChain = true) => {
-      onCurrencySelect(currency, setDefaultChain);
+    (currency: XToken) => {
+      onCurrencySelect(currency);
       onDismiss();
       closeImportView();
     },
@@ -129,13 +128,13 @@ export default function CurrencySearchModal({
         />
       </PopperWithoutArrow>
 
-      <Modal isOpen={modalView === CurrencyModalView.importToken} onDismiss={closeImportView}>
+      {/* <Modal isOpen={modalView === CurrencyModalView.importToken} onDismiss={closeImportView}>
         <ImportToken
           tokens={importToken ? [importToken] : []}
           onDismiss={closeImportView}
           handleCurrencySelect={handleCurrencySelect}
         />
-      </Modal>
+      </Modal> */}
 
       <Modal isOpen={modalView === CurrencyModalView.removeToken} onDismiss={closeRemoveView}>
         <RemoveToken tokens={removeToken ? [removeToken] : []} onDismiss={closeRemoveView} />

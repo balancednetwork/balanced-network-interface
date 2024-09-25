@@ -1,6 +1,4 @@
-import { XChainId } from '@balancednetwork/sdk-core';
-
-export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH' | 'INJECTIVE' | 'SUI';
+import { XChainId, XChainType } from '@balancednetwork/sdk-core';
 
 export type Chain = {
   id: string | number;

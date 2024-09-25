@@ -3,8 +3,8 @@ import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@balancednetwork/sdk-core';
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { XChainId, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import React from 'react';
 import { useTheme } from 'styled-components';
@@ -14,7 +14,7 @@ import { AssetSymbol, BalanceAndValueWrap, Chevron, DataText, ListItem } from '.
 import useClaimableICX from './useClaimableICX';
 
 type SingleChainBalanceItemProps = {
-  baseToken: Token;
+  baseToken: XToken;
   networkBalance: Partial<{ [key in XChainId]: CurrencyAmount<Currency> | undefined }>;
   isLast?: boolean;
   value?: BigNumber;
@@ -54,7 +54,6 @@ const SingleChainBalanceItem = ({
         <AssetSymbol $hasNotification={hasNotification}>
           <CurrencyLogoWithNetwork
             currency={baseToken}
-            chainId={xChainId as XChainId}
             bgColor={isNested ? theme.colors.bg3 : theme.colors.bg4}
             size={isNested ? '20px' : '24px'}
           />

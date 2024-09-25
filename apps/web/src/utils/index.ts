@@ -1,5 +1,5 @@
 import { BalancedJs, CHAIN_INFO, LOOP, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
-import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Fraction, Token, XToken } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 
@@ -246,7 +246,7 @@ export function toHex(value?: CurrencyAmount<Currency> | CurrencyAmount<Token>):
   return value ? `0x${value.quotient.toString(16)}` : '0x0';
 }
 
-export function toCurrencyAmount(token: Token, amount: BigNumber): CurrencyAmount<Token> {
+export function toCurrencyAmount(token: XToken, amount: BigNumber): CurrencyAmount<XToken> {
   const [amountNum, amountDeno] = amount.toFraction();
   return CurrencyAmount.fromFractionalAmount(
     token,
@@ -265,7 +265,7 @@ export function toFraction(amount: BigNumber | undefined): Fraction {
   return new Fraction(amountNum.toFixed(), amountDeno.toFixed());
 }
 
-export function multiplyCABN(ca: CurrencyAmount<Currency>, bn: BigNumber): CurrencyAmount<Currency> {
+export function multiplyCABN(ca: CurrencyAmount<XToken>, bn: BigNumber): CurrencyAmount<XToken> {
   const bnFrac = toFraction(bn);
   return CurrencyAmount.fromFractionalAmount(
     ca.currency,

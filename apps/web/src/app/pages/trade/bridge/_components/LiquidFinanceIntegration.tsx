@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { Flex } from 'rebass/styled-components';
@@ -45,7 +45,7 @@ const WithdrawOption = styled.button<{ active: boolean }>`
 
 export function useWithdrawableNativeAmount(
   chain: XChainId,
-  currencyAmount?: CurrencyAmount<Token>,
+  currencyAmount?: CurrencyAmount<XToken>,
 ): UseQueryResult<
   | {
       amount: BigNumber;

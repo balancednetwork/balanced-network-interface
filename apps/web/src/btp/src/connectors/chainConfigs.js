@@ -2,8 +2,8 @@ import { SupportedChainId } from '@balancednetwork/balanced-js';
 import { ethers } from 'ethers';
 
 import { tokenTypes } from '../utils/constants';
-import { custom } from './chainCustomization';
 import { ABI as currentABI } from './MetaMask/ABI';
+import { custom } from './chainCustomization';
 
 const config = {
   mainnet: {
@@ -88,6 +88,7 @@ const config = {
 export const chainConfigs = {};
 const networkConfig =
   config[process.env.REACT_APP_NETWORK_ID === SupportedChainId.MAINNET.toString() ? 'mainnet' : 'testnet'];
+console.log('networkConfig', process.env.REACT_APP_NETWORK_ID, networkConfig);
 Object.keys(networkConfig).forEach(e => {
   if (e.startsWith('REACT_APP_CHAIN')) {
     const chainName = e.split('_')[3];

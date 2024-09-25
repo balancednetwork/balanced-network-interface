@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -12,6 +12,7 @@ import { getNetworkDisplayName } from '@/xwagmi/utils';
 import { XCallEventType, XTransaction } from '../types';
 import { TransactionStatus, XCallEventMap, XMessage, XMessageStatus } from '../types';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
+import { useXCallScannerStore, useXCallScannerSubscription } from './useXCallScannerStore';
 import { xTransactionActions } from './useXTransactionStore';
 
 const jsonStorageOptions = {
@@ -424,6 +425,8 @@ const XMessageUpdater2 = ({ xMessage }: { xMessage: XMessage }) => {
     }
   }, [sourceTransaction, xMessage.id]);
 
+  const messageWS = useXCallScannerStore(state => state.messages[sourceTransactionHash]);
+
   const { data: message, isLoading } = useQuery({
     queryKey: ['xcallscanner', sourceChainId, sourceTransactionHash],
     queryFn: async () => {
@@ -440,37 +443,19 @@ const XMessageUpdater2 = ({ xMessage }: { xMessage: XMessage }) => {
   });
 
   useEffect(() => {
-    if (message && !isLoading) {
+    if (messageWS) {
+      xMessageActions.updateXMessageXCallScannerData(xMessage.id, messageWS);
+    } else if (message && !isLoading) {
       xMessageActions.updateXMessageXCallScannerData(xMessage.id, message);
     }
-  }, [message, isLoading, xMessage.id]);
+  }, [messageWS, message, isLoading, xMessage.id]);
 
   return null;
 };
 
-const useReactQuerySubscription = () => {
-  const queryClient = useQueryClient();
-  React.useEffect(() => {
-    console.log('useReactQuerySubscription');
-    const websocket = new WebSocket('wss://xcallscan.xyz/ws');
-    websocket.onopen = () => {
-      console.log('connected');
-    };
-    websocket.onmessage = event => {
-      const data = JSON.parse(event.data);
-      console.log('websocket received:', data);
-      // const queryKey = [...data.entity, data.id].filter(Boolean);
-      // queryClient.invalidateQueries({ queryKey });
-    };
-
-    return () => {
-      websocket.close();
-    };
-  }, []);
-};
-
 export const AllXMessagesUpdater = () => {
-  useReactQuerySubscription();
+  useXCallScannerSubscription();
+
   const xMessages = useXMessageStore(state => Object.values(state.messages));
 
   return (

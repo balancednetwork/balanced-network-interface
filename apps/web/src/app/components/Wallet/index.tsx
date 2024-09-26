@@ -58,7 +58,6 @@ const Wallet = ({ close }: WalletProps) => {
   }, [handleEscape, close]);
 
   const rates = useRatesWithOracle();
-  console.log('rates', rates, balances);
   const walletTotal = React.useMemo(() => {
     return balances.reduce((sum, balance) => {
       sum = sum.plus(new BigNumber(balance.toFixed()).times(rates?.[balance.currency.symbol] || 0));

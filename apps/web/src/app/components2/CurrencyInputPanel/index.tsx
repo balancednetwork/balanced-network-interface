@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { escapeRegExp } from '@/utils';
 import { XToken } from '@balancednetwork/sdk-core';
+import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { TokenSelectModal } from '../TokenSelectModal';
 
 interface CurrencyInputPanelProps {
@@ -72,18 +73,23 @@ export default function CurrencyInputPanel({
 
         <div>
           <Button onClick={toggleOpen} disabled={!onCurrencySelect} className="bg-background">
-            ETH
-            {/* <CurrencyLogo currency={currency} style={{ marginRight: 8 }} /> */}
-            {/* <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName> */}
-            {/* {currency.symbol === 'BTCB' && <div style={{ marginLeft: 5, marginRight: 5 }}>(old)</div>} */}
+            {currency ? (
+              <div className="flex gap-2">
+                <CurrencyLogoWithNetwork currency={currency} size="24px" />
+                <div className="token-symbol-container">{currency.symbol}</div>
+                {/* {currency.symbol === 'BTCB' && <div style={{ marginLeft: 5, marginRight: 5 }}>(old)</div>} */}
+              </div>
+            ) : (
+              <div>Choose a token</div>
+            )}
           </Button>
           {onCurrencySelect && (
             <TokenSelectModal
               open={open}
               setOpen={setOpen}
               account={account}
-              // onCurrencySelect={onCurrencySelectWithXChain}
-              // selectedCurrency={currency}
+              onCurrencySelect={onCurrencySelect}
+              selectedCurrency={currency}
             />
           )}
         </div>

@@ -16,6 +16,7 @@ import { useWalletBalances } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
 import { getXChainType } from '@/xwagmi/actions';
+import { allXTokens } from '@/xwagmi/constants/xTokens';
 import { useXAccount } from '@/xwagmi/hooks';
 import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
@@ -314,7 +315,7 @@ export function useDerivedSwapInfo(): {
 export function useInitialSwapLoad(): void {
   const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
   const navigate = useNavigate();
-  const tokens = useAllTokens();
+  const tokens = allXTokens;
   const { pair = '' } = useParams<{ pair: string }>();
   const { onCurrencySelection, onChainSelection } = useSwapActionHandlers();
   const { currencies } = useDerivedSwapInfo();

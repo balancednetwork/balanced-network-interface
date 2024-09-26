@@ -1619,7 +1619,6 @@ msgstr "{0} wallet"
 #~ msgstr "Swap & transfer assets cross-chain."
 
 #: src/app/components/SearchModal/CurrencyList.tsx
-#: src/app/components/Wallet/ICONAssetModal.tsx
 #: src/app/components/Wallet/index.tsx
 msgid "Asset"
 msgstr "Asset"
@@ -1800,7 +1799,6 @@ msgstr "Use Balanced in"
 #~ msgid "N/A"
 #~ msgstr "N/A"
 
-#: src/app/components/Wallet/ICONAssetModal.tsx
 #: src/app/components/Wallet/index.tsx
 msgid "Balance"
 msgstr "Balance"
@@ -2455,7 +2453,6 @@ msgstr "Remove community token list?"
 #~ msgid "Test your contract calls before you submit the proposal."
 #~ msgstr "Test your contract calls before you submit the proposal."
 
-#: src/app/components/Wallet/ICONAssetModal.tsx
 #: src/app/components/Wallet/index.tsx
 msgid "Value"
 msgstr "Value"

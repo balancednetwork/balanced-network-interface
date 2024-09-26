@@ -316,7 +316,6 @@ export const xChainMap: { [key in XChainId]: XChain } = {
 };
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);
-export const SUPPORTED_XCALL_CHAINS = xChains.map(({ xChainId }) => xChainId);
 
 /** from other chain to icon sources */
 export const FROM_SOURCES: { [key in XChainId]?: string[] } = {

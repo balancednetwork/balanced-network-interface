@@ -1677,7 +1677,6 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/SearchModal/CurrencyList.tsx
-#: src/app/components/Wallet/ICONAssetModal.tsx
 #: src/app/components/Wallet/index.tsx
 msgid "Asset"
 msgstr "Aktywo"
@@ -1862,7 +1861,6 @@ msgstr "Język Balanced"
 #~ msgid "N/A"
 #~ msgstr ""
 
-#: src/app/components/Wallet/ICONAssetModal.tsx
 #: src/app/components/Wallet/index.tsx
 msgid "Balance"
 msgstr "Saldo"
@@ -2521,7 +2519,6 @@ msgstr ""
 #~ msgid "Test your contract calls before you submit the proposal."
 #~ msgstr ""
 
-#: src/app/components/Wallet/ICONAssetModal.tsx
 #: src/app/components/Wallet/index.tsx
 msgid "Value"
 msgstr "Wartość"

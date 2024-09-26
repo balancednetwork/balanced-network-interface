@@ -1,8 +1,8 @@
 import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
-import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
-
+import { isNativeCurrency } from '@/constants/tokens';
+import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { bcs } from '@mysten/sui/bcs';
 import { Transaction } from '@mysten/sui/transactions';
@@ -66,12 +66,11 @@ export class SuiXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
-    const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
     const amount = BigInt(inputAmount.quotient.toString());
 
     let txResult;
-    if (isNative) {
+    if (isNativeCurrency(inputAmount.currency)) {
       const txb = new Transaction();
 
       const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, 200_000_000]);

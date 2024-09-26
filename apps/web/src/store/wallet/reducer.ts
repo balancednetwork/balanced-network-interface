@@ -33,7 +33,11 @@ const walletSlice = createSlice({
 
         if (account) {
           state.accounts[xChainType] = account;
-          state.balances[account] = balances;
+          for (const tokenAddress in balances) {
+            const balance = balances[tokenAddress];
+            if (!state.balances[account]) state.balances[account] = {};
+            state.balances[account][tokenAddress] = balance;
+          }
         } else {
           const _account = state.accounts[xChainType];
           if (!_account) return;

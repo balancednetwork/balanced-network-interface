@@ -4,15 +4,13 @@ import { Currency, Percent, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import ClickAwayListener from 'react-click-away-listener';
 
-import { UnderlineText, UnderlineTextWithArrow } from '@/app/components/DropdownText';
-import { DropdownPopper } from '@/app/components/Popover';
-import { SelectorType } from '@/app/components/SearchModal/CurrencySearch';
+import { UnderlineText } from '@/app/components/DropdownText';
 import CurrencyInputPanel from '@/app/components2/CurrencyInputPanel';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import { Button } from '@/components/ui/button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
 import useManualAddresses from '@/hooks/useManualAddresses';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
@@ -171,14 +169,6 @@ export default function SwapPanel() {
 
   const arrowRef = React.useRef(null);
 
-  const handleToggleDropdown = (e: React.MouseEvent<HTMLElement>) => {
-    setAnchor(anchor ? null : arrowRef.current);
-  };
-
-  const closeDropdown = () => {
-    setAnchor(null);
-  };
-
   const handleMaximumBridgeAmountClick = () => {
     if (maximumBridgeAmount) {
       onUserInput(Field.OUTPUT, maximumBridgeAmount?.toFixed(4));
@@ -264,42 +254,36 @@ export default function SwapPanel() {
             onCurrencySelect={handleOutputSelect}
           />
 
-          <div className="flex items-center justify-between">
-            <Typography className="text-secondary">
-              <Trans>Price impact</Trans>
-            </Typography>
+          <Collapsible>
+            <CollapsibleTrigger>1 ICX = 0.1315USDC</CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="flex items-center justify-between">
+                <Typography className="text-secondary">
+                  <Trans>Price impact</Trans>
+                </Typography>
 
-            <Typography
-              className={showSlippageWarning ? 'error-anim' : ''}
-              color={showSlippageWarning ? 'alert' : 'text'}
-            >
-              {priceImpact}
-            </Typography>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <Typography className="text-secondary">
-              <Trans>Minimum to receive</Trans>
-            </Typography>
-
-            <ClickAwayListener onClickAway={closeDropdown}>
-              <div>
-                <UnderlineTextWithArrow
-                  onClick={handleToggleDropdown}
-                  text={
-                    minimumToReceive
-                      ? `${minimumToReceive?.toFixed(4)} ${minimumToReceive?.currency.symbol}`
-                      : `0 ${currencies[Field.OUTPUT]?.symbol}`
-                  }
-                  arrowRef={arrowRef}
-                />
-
-                <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
-                  <AdvancedSwapDetails />
-                </DropdownPopper>
+                <Typography
+                  className={showSlippageWarning ? 'error-anim' : ''}
+                  color={showSlippageWarning ? 'alert' : 'text'}
+                >
+                  {priceImpact}
+                </Typography>
               </div>
-            </ClickAwayListener>
-          </div>
+              <div className="flex flex-col justify-between">
+                <div className="flex justify-between gap-2">
+                  <Typography className="text-secondary">
+                    <Trans>Minimum to receive</Trans>
+                  </Typography>
+                  <span>
+                    {minimumToReceive
+                      ? `${minimumToReceive?.toFixed(4)} ${minimumToReceive?.currency.symbol}`
+                      : `0 ${currencies[Field.OUTPUT]?.symbol}`}
+                  </span>
+                </div>
+                <AdvancedSwapDetails />
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
 
           <div className="flex justify-center">{swapButton}</div>
 

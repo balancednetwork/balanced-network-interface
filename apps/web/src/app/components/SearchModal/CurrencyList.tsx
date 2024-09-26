@@ -90,6 +90,7 @@ function CurrencyRow({
   const balance = useXCurrencyBalance(currency, selectedChainId);
   const hasSigned = useHasSignedIn();
   const xWallet = useCrossChainWalletBalances();
+  const isSwapSelector = selectorType === SelectorType.SWAP_IN || selectorType === SelectorType.SWAP_OUT;
 
   const sortedXChains = useMemo(() => {
     return basedOnWallet
@@ -281,6 +282,9 @@ function CurrencyRow({
     }
   };
 
+  const itemContent = hasSigned ? <RowContentSignedIn /> : <RowContentNotSignedIn />;
+  const itemSwapContent = hasSigned && basedOnWallet ? <RowContentSignedIn /> : <RowContentNotSignedIn />;
+
   if (hideBecauseOfLowValue) return null;
   return (
     <>
@@ -291,7 +295,7 @@ function CurrencyRow({
         onMouseLeave={close}
         $hideBorder={!!showBreakdown}
       >
-        {hasSigned && basedOnWallet ? <RowContentSignedIn /> : <RowContentNotSignedIn />}
+        {isSwapSelector ? itemSwapContent : itemContent}
       </ListItem>
 
       {showBreakdown ? (
@@ -360,6 +364,7 @@ export default function CurrencyList({
 }) {
   const handleEscape = useKeyPress('Escape');
   const hasSignedIn = useHasSignedIn();
+  const isSwapSelector = selectorType === SelectorType.SWAP_IN || selectorType === SelectorType.SWAP_OUT;
 
   const rates = useRatesWithOracle();
   const rateFracs = React.useMemo(() => {
@@ -386,7 +391,7 @@ export default function CurrencyList({
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if (basedOnWallet) {
+    if (basedOnWallet || (!isSwapSelector && hasSignedIn)) {
       handleSortSelect({
         key: 'value',
         order: 'DESC',
@@ -398,6 +403,10 @@ export default function CurrencyList({
       });
     }
   }, [basedOnWallet, hasSignedIn]);
+
+  const isWallet = isSwapSelector ? hasSignedIn && basedOnWallet : hasSignedIn;
+  const secondColumnSortKey = isWallet ? 'value' : 'price';
+  const content = isWallet ? <Trans>Wallet</Trans> : <Trans>Price</Trans>;
 
   return (
     <List1 mt={3}>
@@ -415,31 +424,13 @@ export default function CurrencyList({
             <Trans>Asset</Trans>
           </span>
         </StyledHeaderText>
-        {hasSignedIn && basedOnWallet ? (
-          <StyledHeaderText
-            role="button"
-            className={sortBy.key === 'value' ? sortBy.order : ''}
-            onClick={() =>
-              handleSortSelect({
-                key: 'value',
-              })
-            }
-          >
-            <Trans>Wallet</Trans>
-          </StyledHeaderText>
-        ) : (
-          <StyledHeaderText
-            role="button"
-            className={sortBy.key === 'price' ? sortBy.order : ''}
-            onClick={() =>
-              handleSortSelect({
-                key: 'price',
-              })
-            }
-          >
-            <Trans>Price</Trans>
-          </StyledHeaderText>
-        )}
+        <StyledHeaderText
+          role="button"
+          className={sortBy.key === secondColumnSortKey ? sortBy.order : ''}
+          onClick={() => handleSortSelect({ key: secondColumnSortKey })}
+        >
+          {content}
+        </StyledHeaderText>
       </DashGrid>
 
       {sortedCurrencies?.map((currency, index) => (

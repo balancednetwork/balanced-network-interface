@@ -225,10 +225,6 @@ export default function SwapPanel() {
             onCurrencySelect={handleInputSelect}
             onPercentSelect={signedInWallets.length > 0 ? handleInputPercentSelect : undefined}
             percent={percents[Field.INPUT]}
-            xChainId={direction.from}
-            onChainSelect={handleSwapInputChainSelection}
-            showCrossChainOptions={true}
-            selectorType={SelectorType.SWAP_IN}
           />
 
           <div className="flex items-center justify-center">
@@ -266,11 +262,6 @@ export default function SwapPanel() {
             currency={currencies[Field.OUTPUT]}
             onUserInput={handleTypeOutput}
             onCurrencySelect={handleOutputSelect}
-            xChainId={direction.to}
-            onChainSelect={handleSwapOutputChainSelection}
-            showCrossChainOptions={true}
-            addressEditable
-            selectorType={SelectorType.SWAP_OUT}
           />
 
           <div className="flex items-center justify-between">

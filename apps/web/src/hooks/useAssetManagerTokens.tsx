@@ -1,4 +1,4 @@
-import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
+import { isNativeCurrency } from '@/constants/tokens';
 import { allXTokens, xTokenMap } from '@/xwagmi/constants/xTokens';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { CurrencyAmount, XChainId, XToken } from '@balancednetwork/sdk-core';
@@ -59,9 +59,9 @@ export function useAssetManagerTokens(): UseQueryResult<ResultMap> {
 
         const token = allXTokens?.find(
           t =>
-            t.address.toLowerCase() ===
-              (address === '0x0000000000000000000000000000000000000000' ? NATIVE_ADDRESS : address).toLowerCase() &&
-            t.xChainId === xChainId,
+            (address === '0x0000000000000000000000000000000000000000'
+              ? isNativeCurrency(t)
+              : t.address.toLowerCase() === address.toLowerCase()) && t.xChainId === xChainId,
         );
 
         if (!token) return;

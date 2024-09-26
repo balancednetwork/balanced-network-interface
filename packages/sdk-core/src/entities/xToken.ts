@@ -39,6 +39,6 @@ export class XToken extends Token {
   }
 
   isNativeXToken() {
-    return 'native' === this.address;
+    return this.address.includes('native');
   }
 }

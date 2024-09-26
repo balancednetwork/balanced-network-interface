@@ -1,28 +1,12 @@
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { useWalletBalances } from '@/store/wallet/hooks';
-import { AccountTokenAmountMap, TokenAmountMap, WalletState } from '@/store/wallet/reducer';
-import { getXTokenAddress, isXToken } from '@/utils/xTokens';
-import { SUPPORTED_XCALL_CHAINS } from '@/xwagmi/constants/xChains';
-import { XChainId, XToken } from '@balancednetwork/sdk-core';
-import { Currency } from '@balancednetwork/sdk-core';
+import { calculateTotalBalance, useWalletBalances } from '@/store/wallet/hooks';
+import { XToken } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { useEffect, useState } from 'react';
 
 type SortingType = {
   key: string;
   order?: 'ASC' | 'DESC';
-};
-
-const getXCurrencyBalance = (walletBalances: TokenAmountMap, currency: XToken): BigNumber | undefined => {
-  if (!walletBalances) return;
-  // !TODO: refactor the code
-  return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
-    const tokenAddress = getXTokenAddress(xChainId, currency.wrapped.symbol);
-    const balance = new BigNumber(walletBalances?.[tokenAddress ?? -1]?.toFixed() || 0);
-    sum = sum.plus(balance);
-
-    return sum;
-  }, new BigNumber(0));
 };
 
 export default function useSortCurrency(initialState: SortingType) {
@@ -60,8 +44,8 @@ export default function useSortCurrency(initialState: SortingType) {
 
     if (signedInWallets.length > 0 && sortBy.key === 'value') {
       dataToSort.sort((a, b) => {
-        const aBalance = getXCurrencyBalance(walletBalances, a) || new BigNumber(0);
-        const bBalance = getXCurrencyBalance(walletBalances, b) || new BigNumber(0);
+        const aBalance = calculateTotalBalance(walletBalances, a) || new BigNumber(0);
+        const bBalance = calculateTotalBalance(walletBalances, b) || new BigNumber(0);
         const aValue = aBalance.times(new BigNumber(rateFracs[a.symbol]?.toFixed(8) || '0'));
         const bValue = bBalance.times(new BigNumber(rateFracs[b.symbol]?.toFixed(8) || '0'));
         return aValue.isGreaterThan(bValue) ? -1 * direction : 1 * direction;

@@ -1,8 +1,8 @@
 import { Typography } from '@/app/theme';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
-import { XChainId, XToken } from '@balancednetwork/sdk-core';
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XToken } from '@balancednetwork/sdk-core';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import React from 'react';
 import CurrencyLogo from '../../components2/CurrencyLogo';
@@ -10,49 +10,31 @@ import SingleChainBalanceItem from './SingleChainBalanceItem';
 import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, DataText, ListItem } from './styledComponents';
 
 type MultiChainBalanceItemProps = {
-  baseToken: XToken;
-  balances: { [key in XChainId]: CurrencyAmount<Currency> | undefined };
-  total: BigNumber;
-  value?: BigNumber;
-  searchedXChainId?: XChainId;
+  balances: CurrencyAmount<XToken>[];
 };
 
-const MultiChainBalanceItem = ({ baseToken, balances, total, value, searchedXChainId }: MultiChainBalanceItemProps) => {
-  const { symbol } = baseToken;
+const MultiChainBalanceItem = ({ balances }: MultiChainBalanceItemProps) => {
+  const currency = balances[0].currency;
   const arrowRef = React.useRef<HTMLElement>(null);
   const rates = useRatesWithOracle();
 
-  const filteredBreakdown = React.useMemo(
-    () =>
-      Object.entries(balances).filter(([xChainId]) => {
-        return searchedXChainId ? searchedXChainId === xChainId : true;
-      }),
-    [balances, searchedXChainId],
-  );
-
-  const sortedEntries = React.useMemo(() => {
-    return filteredBreakdown.sort(([, balanceA], [, balanceB]) => {
-      if (balanceA && balanceB) {
-        return balanceB.lessThan(balanceA) ? -1 : 1;
-      }
-      return balanceA ? -1 : 1;
-    });
-  }, [filteredBreakdown]);
+  const total = balances.reduce((acc, balance) => acc.plus(new BigNumber(balance.toFixed())), new BigNumber(0));
+  const value = total.times(rates?.[currency.symbol] || '0');
 
   return (
     <>
       <ListItem $border={false} style={{ cursor: 'default' }}>
         <AssetSymbol>
-          <CurrencyLogo currency={baseToken} />
+          <CurrencyLogo currency={currency} />
           <Typography fontSize={16} fontWeight="bold">
             <span ref={arrowRef} style={{ display: 'inline-block' }}>
-              {symbol}
+              {currency.symbol}
             </span>
           </Typography>
         </AssetSymbol>
         <BalanceAndValueWrap>
           <DataText as="div" style={{ opacity: 0.75, fontSize: 12 }}>
-            {formatBalance(total?.toFixed(), rates?.[baseToken.symbol]?.toFixed())}
+            {formatBalance(total?.toFixed(), rates?.[currency.symbol]?.toFixed())}
           </DataText>
           <DataText as="div" style={{ opacity: 0.75, fontSize: 12 }}>
             {!value ? '-' : formatValue(value.toFixed())}
@@ -62,14 +44,8 @@ const MultiChainBalanceItem = ({ baseToken, balances, total, value, searchedXCha
       <BalanceBreakdown
         $arrowPosition={arrowRef.current ? `${Math.floor(arrowRef.current.clientWidth / 2 + 23)}px` : '40px'}
       >
-        {sortedEntries.map(([xChainId, balance]) => (
-          <SingleChainBalanceItem
-            key={xChainId}
-            baseToken={baseToken}
-            networkBalance={{ [xChainId]: balance }}
-            value={value?.times(new BigNumber(balance?.toFixed() || 0).div(total?.isGreaterThan(0) ? total : 1))}
-            isNested={true}
-          />
+        {balances.map(balance => (
+          <SingleChainBalanceItem key={balance.currency.address} balance={balance} isNested={true} />
         ))}
       </BalanceBreakdown>
     </>

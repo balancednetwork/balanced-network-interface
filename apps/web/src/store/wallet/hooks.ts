@@ -12,6 +12,7 @@ import { MINIMUM_ICX_FOR_TX } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
 import {
   COMBINED_TOKENS_LIST,
+  NULL_CONTRACT_ADDRESS,
   SUPPORTED_TOKENS_LIST,
   SUPPORTED_TOKENS_MAP_BY_ADDRESS,
   isBALN,
@@ -20,8 +21,7 @@ import {
 } from '@/constants/tokens';
 import { useTokenListConfig } from '@/store/lists/hooks';
 import { useUserAddedTokens } from '@/store/user/hooks';
-import { getXTokenAddress, isXToken } from '@/utils/xTokens';
-import { XWalletAssetRecord } from '@/xwagmi/types';
+import { isXToken } from '@/utils/xTokens';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 import { AppState } from '..';
@@ -31,11 +31,7 @@ import { TokenAmountMap, changeBalances } from './reducer';
 import { useXBalances } from '@/xwagmi/hooks/useXBalances';
 import { XChainId } from '@balancednetwork/sdk-core';
 
-import { useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
-import { useRatesWithOracle } from '@/queries/reward';
-import { NATIVE_ADDRESS } from '@/xwagmi/constants';
-import { SUPPORTED_XCALL_CHAINS } from '@/xwagmi/constants/xChains';
 import { useXAccount } from '@/xwagmi/hooks';
 
 export function useWalletBalances() {
@@ -124,7 +120,7 @@ export function useWalletFetchBalances() {
   const tokensArch = useXTokens('archway-1') || [];
   const { data: balancesArch } = useXBalances({
     xChainId: 'archway-1',
-    xTokens: [...tokensArch, new XToken('archway-1', 'archway-1', NATIVE_ADDRESS, 18, 'aARCH', 'Arch')],
+    xTokens: tokensArch,
     address: accountArch,
   });
 
@@ -257,6 +253,14 @@ export function useTokenBalances(
   return useMemo(() => data || {}, [data]);
 }
 
+export const calculateTotalBalance = (balances: TokenAmountMap, currency: Currency): BigNumber | undefined => {
+  return Object.values(balances)
+    .filter(balance => balance.currency.symbol === currency.symbol)
+    .reduce((sum, balance) => {
+      return sum.plus(new BigNumber(balance.toFixed()));
+    }, new BigNumber(0));
+};
+
 export function useAllTokenBalances(account: string | undefined | null): {
   [tokenAddress: string]: CurrencyAmount<Token> | undefined;
 } {
@@ -279,14 +283,7 @@ export const useXCurrencyBalance = (
       return new BigNumber(xBalances[selectedChainId]?.[currency.wrapped.address]?.toFixed() || 0);
     } else {
       if (isXToken(currency)) {
-        return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
-          if (xBalances[xChainId]) {
-            const tokenAddress = getXTokenAddress(xChainId, currency.wrapped.symbol);
-            const balance = new BigNumber(xBalances[xChainId]?.[tokenAddress ?? -1]?.toFixed() || 0);
-            sum = sum.plus(balance);
-          }
-          return sum;
-        }, new BigNumber(0));
+        return calculateTotalBalance(xBalances, currency);
       } else {
         return new BigNumber(xBalances['0x1.icon']?.[currency.wrapped.address]?.toFixed() || 0);
       }
@@ -312,6 +309,7 @@ export function useCurrencyBalances(
     () => currencies?.some(currency => isNativeCurrency(currency)) ?? false,
     [currencies],
   );
+
   const accounts = useMemo(() => (containsICX ? [account] : []), [containsICX, account]);
   const icxBalance = useICXBalances(accounts);
 
@@ -341,7 +339,7 @@ export function useICXBalances(uncheckedAddresses: (string | undefined)[]): {
     [uncheckedAddresses],
   );
 
-  const ICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address];
+  const ICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[NULL_CONTRACT_ADDRESS];
 
   const { data } = useQuery({
     queryKey: ['ICXBalances', addresses],
@@ -368,40 +366,4 @@ export function useICXBalances(uncheckedAddresses: (string | undefined)[]): {
   });
 
   return useMemo(() => data || {}, [data]);
-}
-
-export function useXBalancesByToken(): XWalletAssetRecord[] {
-  const balances = useWalletBalances();
-  const tokenListConfig = useTokenListConfig();
-  const prices = useRatesWithOracle();
-
-  return React.useMemo(() => {
-    const t: { [AssetSymbol in string]: { [key in XChainId]?: CurrencyAmount<Currency> } } = {};
-    for (const balance of Object.values(balances)) {
-      if (!t[balance.currency.symbol]) t[balance.currency.symbol] = {};
-      t[balance.currency.symbol][balance.currency.xChainId] = balance;
-    }
-
-    return Object.entries(t)
-      .map(([symbol, xTokenAmounts]) => {
-        const baseToken = (tokenListConfig.community ? COMBINED_TOKENS_LIST : SUPPORTED_TOKENS_LIST).find(
-          token => token.symbol === symbol,
-        );
-
-        if (baseToken === undefined) return;
-
-        const total = Object.values(xTokenAmounts).reduce((sum, xTokenAmount) => {
-          if (xTokenAmount) sum = sum.plus(new BigNumber(xTokenAmount.toFixed()));
-          return sum;
-        }, new BigNumber(0));
-        return {
-          baseToken: XToken.getXToken('0x1.icon', baseToken),
-          xTokenAmounts,
-          isBalanceSingleChain: Object.keys(xTokenAmounts).length === 1,
-          total,
-          value: prices && prices[symbol] ? total.times(prices[symbol]) : undefined,
-        };
-      })
-      .filter((item): item is XWalletAssetRecord => Boolean(item));
-  }, [balances, tokenListConfig, prices]);
 }

@@ -1,14 +1,6 @@
 import { Currency, CurrencyAmount, XChainId, XToken } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 
-export type XWalletAssetRecord = {
-  baseToken: XToken;
-  xTokenAmounts: { [key in XChainId]: CurrencyAmount<XToken> | undefined };
-  isBalanceSingleChain: boolean;
-  total: BigNumber;
-  value: BigNumber | undefined;
-};
-
 export type Position = {
   collateral: CurrencyAmount<Currency> | undefined;
   loan: BigNumber;

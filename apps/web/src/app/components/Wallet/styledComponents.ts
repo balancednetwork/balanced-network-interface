@@ -8,37 +8,6 @@ import { notificationCSS } from './ICONWallets/utils';
 export const walletBreakpoint = '385px';
 const modalWalletBreakpoint = '400px';
 
-export const WalletButton = styled(Link)`
-  cursor: pointer;
-`;
-
-export const WalletWrap = styled(Box)`
-  width: 400px;
-  max-width: calc(100vw - 4px);
-`;
-export const WalletMenu = styled.div`
-  font-size: 14px;
-  padding: 25px 25px 15px 25px;
-  display: flex;
-  flex-wrap: wrap;
-`;
-
-export const WalletButtons = styled(Flex)`
-  display: flex;
-  align-items: center;
-`;
-
-export const WalletContent = styled(Box)`
-  padding: 0 0 25px;
-`;
-
-export const WalletAssets = styled(Box)`
-  padding: 0 25px;
-  input {
-    font-size: 14px;
-  }
-`;
-
 export const HeaderText = styled(Typography)`
   font-size: 12px;
   text-transform: uppercase;
@@ -93,34 +62,6 @@ export const List = styled(Box)`
   }
 `;
 
-export const Chevron = styled.span<{ $isNested: boolean }>`
-  position: relative;
-  height: 100%;
-  padding-left: 13px;
-  transition: all 0.2s ease;
-
-  &::before, &:after {
-    content: '';
-    position: absolute;
-    width: 2px;
-    height: ${({ $isNested }) => ($isNested ? 6 : 7)}px;
-    border-radius: 3px;
-    background: #FFF;
-    top: calc(50% - ${({ $isNested }) => ($isNested ? 2 : 1)}px);
-  }
-
-  &:before {
-    right: 0;
-    transform: rotate(-135deg) translateY(-50%);
-    margin-top: -1px;
-  }
-
-  &:after {
-  right: 0;
-  transform: rotate(-45deg) translateY(-50%);
-  }
-`;
-
 export const ListItem = styled(DashGrid)<{ $border?: boolean }>`
   padding: 20px 0;
   cursor: pointer;
@@ -134,29 +75,9 @@ export const ListItem = styled(DashGrid)<{ $border?: boolean }>`
     color: ${({ theme }) => theme.colors?.primary};
   }
 
-  &:hover {
-
-    ${Chevron} {
-      padding-left: 16px;
-    }
-  }
 
   &.has-modal {
     cursor: pointer;
-  }
-`;
-
-export const StandardCursorListItem = styled(DashGrid)<{ $border?: boolean }>`
-  padding: 20px 0;
-  cursor: default; // Standard cursor style
-  color: #ffffff;
-  transition: all 0.2s ease;
-  border-bottom: ${({ $border = true }) => ($border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
-  @media screen and (max-width: ${walletBreakpoint}) {
-    padding: 15px 0;
-  }
-  &.active {
-    color: ${({ theme }) => theme.colors?.primary};
   }
 `;
 

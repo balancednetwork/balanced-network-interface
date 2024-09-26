@@ -7,11 +7,11 @@ import { Abi, Address, WriteContractReturnType, erc20Abi, getContract } from 'vi
 import { usePublicClient, useWalletClient } from 'wagmi';
 
 import { openToast } from '@/app/components/Toast/transactionToast';
+import { isNativeCurrency } from '@/constants/tokens';
 import { transactionActions } from '@/hooks/useTransactionStore';
 import { TransactionStatus } from '@/store/transactions/hooks';
 import { getXChainType } from '@/xwagmi/actions/getXChainType';
 import { getXWalletClient } from '@/xwagmi/actions/getXWalletClient';
-import { NATIVE_ADDRESS } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount, useXService } from '@/xwagmi/hooks';
 import { ArchwayXService } from '@/xwagmi/xchains/archway';
@@ -99,8 +99,7 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
 
     if (xChainType === 'EVM' && isBnUSD) return ApprovalState.APPROVED;
 
-    const isNative = amountToApprove.currency.wrapped.address === NATIVE_ADDRESS;
-    if (isNative) return ApprovalState.APPROVED;
+    if (isNativeCurrency(amountToApprove.currency)) return ApprovalState.APPROVED;
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN;
 

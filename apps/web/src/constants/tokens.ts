@@ -1,15 +1,15 @@
 import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balanced-js';
-import { Currency, Token } from '@balancednetwork/sdk-core';
+import { Currency, Token, XToken } from '@balancednetwork/sdk-core';
 
 import { TRANSFORMED_COMBINED_TOKEN_LIST, TRANSFORMED_DEFAULT_TOKEN_LIST } from '@/store/lists/hooks';
 
 import { useIconNetworkId } from '@/hooks/useIconNetworkId';
 import { NETWORK_ID } from './config';
 
-export const NULL_CONTRACT_ADDRESS = 'cx0000000000000000000000000000000000000000';
+export const NULL_CONTRACT_ADDRESS = 'icx123-native';
 
-export const isNativeCurrency = (token?: Currency): boolean => {
-  return !!token && (token as any)?.address === NULL_CONTRACT_ADDRESS;
+export const isNativeCurrency = (token?: Currency | XToken): boolean => {
+  return !!token && token.wrapped?.address.includes('native');
 };
 
 export const isBALN = (token?: Token): boolean => {

@@ -21,6 +21,7 @@ type ChainSelectorProps = {
   label: 'from' | 'to';
   width?: number;
   containerRef?: HTMLDivElement | null;
+  showTotalXWalletValue?: boolean;
 };
 
 const Wrap = styled.div`
@@ -82,6 +83,7 @@ const XChainSelector = ({ chainId, setChainId, label, currency, width, container
               currency={currency}
               width={width ? width + (isMobile ? 0 : 40) : undefined}
               isOpen={Boolean(anchor)}
+              showTotalXWalletValue={true}
             />
           </DropdownPopper>
         </div>

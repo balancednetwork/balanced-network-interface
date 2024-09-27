@@ -2,10 +2,18 @@ import React, { useCallback, useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { escapeRegExp } from '@/utils';
-import { XToken } from '@balancednetwork/sdk-core';
+import { useRatesWithOracle } from '@/queries/reward';
+import { escapeRegExp, toFraction } from '@/utils';
+import { formatPrice } from '@/utils/formatter';
+import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
+import BigNumber from 'bignumber.js';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { TokenSelectModal } from '../TokenSelectModal';
+
+export enum CurrencyInputPanelType {
+  INPUT = 'INPUT',
+  OUTPUT = 'OUTPUT',
+}
 
 interface CurrencyInputPanelProps {
   label?: string;
@@ -18,6 +26,8 @@ interface CurrencyInputPanelProps {
   placeholder?: string;
   className?: string;
   account?: string | null;
+  balance?: CurrencyAmount<XToken> | undefined;
+  type: CurrencyInputPanelType;
 }
 
 export const inputRegex = /^\d*(?:\\[.])?\d*$/; // match escaped "." characters via in a non-capturing group
@@ -32,7 +42,11 @@ export default function CurrencyInputPanel({
   placeholder = '0',
   className,
   account,
+  balance,
+  type,
 }: CurrencyInputPanelProps) {
+  const prices = useRatesWithOracle();
+
   const [open, setOpen] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
   const toggleOpen = () => {
@@ -45,9 +59,30 @@ export default function CurrencyInputPanel({
     }
   };
 
+  // TODO: any better way to handle this?
+  const valueInUSD = useMemo(() => {
+    try {
+      if (currency && prices?.[currency.symbol]) {
+        const currencyAmount = CurrencyAmount.fromRawAmount(
+          currency,
+          new BigNumber(value).times((10n ** BigInt(currency.decimals)).toString()).toFixed(0),
+        );
+        const _price = toFraction(prices[currency.symbol]);
+        return formatPrice(currencyAmount?.multiply(_price).toFixed());
+      }
+    } catch (e) {
+      // TODO: handle error
+      // console.log(e);
+    }
+    return '';
+  }, [currency, prices, value]);
+
   return (
     <div className="rounded-xl w-full bg-card p-4 flex flex-col gap-2">
-      <span className="text-secondary-foreground text-subtitle">You pay</span>
+      <span className="text-secondary-foreground text-subtitle">
+        {type === CurrencyInputPanelType.INPUT && 'You pay'}
+        {type === CurrencyInputPanelType.OUTPUT && 'You receive'}
+      </span>
       <div className="inline-flex w-full">
         <Input
           placeholder={placeholder}
@@ -94,9 +129,18 @@ export default function CurrencyInputPanel({
           )}
         </div>
       </div>
-      <div className="flex justify-between">
-        <span className="text-secondary-foreground text-smallbody">$2,000</span>
-        <span className="text-secondary-foreground text-smallbody">2,000 USDC</span>
+      <div className="flex justify-between items-center">
+        <span className="text-secondary-foreground text-smallbody">{valueInUSD}</span>
+        <div className="flex gap-2 items-center">
+          {type === CurrencyInputPanelType.INPUT && (
+            <>
+              <span className="text-secondary-foreground text-smallbody">
+                {`${balance ? balance.toFixed(4, { groupSeparator: ',' }) : 0} ${currency?.symbol}`}
+              </span>
+              <span onClick={() => onPercentSelect?.(100)}>Max</span>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

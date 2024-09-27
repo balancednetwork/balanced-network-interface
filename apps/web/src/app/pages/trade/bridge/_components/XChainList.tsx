@@ -27,6 +27,7 @@ type XChainListProps = {
   chains?: XChain[];
   width?: number;
   isOpen: boolean;
+  showTotalXWalletValue?: boolean;
 };
 
 type XChainItemProps = {
@@ -34,6 +35,7 @@ type XChainItemProps = {
   currency?: Currency;
   isActive: boolean;
   isLast: boolean;
+  showTotalXWalletValue?: boolean;
 };
 
 const StyledHeaderText = styled(HeaderText)`
@@ -51,7 +53,7 @@ const XChainItemWrap = styled(Flex)`
   }
 `;
 
-const XChainItem = ({ xChain, isActive, isLast, currency }: XChainItemProps) => {
+const XChainItem = ({ xChain, isActive, isLast, currency, showTotalXWalletValue }: XChainItemProps) => {
   const xWallet = useCrossChainWalletBalances();
   const prices = useRatesWithOracle();
   const hasSignedIn = useHasSignedIn();
@@ -71,10 +73,20 @@ const XChainItem = ({ xChain, isActive, isLast, currency }: XChainItemProps) => 
   }, [prices, currencyAmount]);
 
   const value = React.useMemo(() => {
-    if (!price || !currencyAmount) return;
+    if (!showTotalXWalletValue) {
+      if (!price || !currencyAmount) return;
+      return price.times(new BigNumber(currencyAmount.toFixed()));
+    }
 
-    return price.times(new BigNumber(currencyAmount.toFixed()));
-  }, [price, currencyAmount]);
+    // Calculate the sum of values for all currencies in xWallet
+    return Object.values(xWallet[xChain.xChainId] || {}).reduce((total, currAmount) => {
+      const currPrice = prices?.[currAmount.currency.symbol];
+      if (currPrice) {
+        return total.plus(currPrice.times(new BigNumber(currAmount.toFixed())));
+      }
+      return total;
+    }, new BigNumber(0));
+  }, [price, currencyAmount, xWallet, prices, showTotalXWalletValue, xChain.xChainId]);
 
   return (
     <XChainItemWrap className={isLast ? '' : 'border-bottom'}>
@@ -93,7 +105,15 @@ const XChainItem = ({ xChain, isActive, isLast, currency }: XChainItemProps) => 
   );
 };
 
-const XChainList = ({ xChainId, setChainId, chains, currency, width, isOpen }: XChainListProps) => {
+const XChainList = ({
+  xChainId,
+  setChainId,
+  chains,
+  currency,
+  width,
+  isOpen,
+  showTotalXWalletValue,
+}: XChainListProps) => {
   const relevantChains = chains || xChains;
   const hasSignedIn = useHasSignedIn();
   const [searchQuery, setSearchQuery] = React.useState<string>('');
@@ -101,6 +121,7 @@ const XChainList = ({ xChainId, setChainId, chains, currency, width, isOpen }: X
   const { sortBy, handleSortSelect, sortData } = useSortXChains(
     hasSignedIn ? { key: 'value', order: 'DESC' } : { key: 'symbol', order: 'ASC' },
     currency,
+    showTotalXWalletValue,
   );
 
   const handleInputChange = React.useCallback(event => {
@@ -182,6 +203,7 @@ const XChainList = ({ xChainId, setChainId, chains, currency, width, isOpen }: X
               currency={currency}
               isActive={xChainId === chainItem.xChainId}
               isLast={relevantChains.length === index + 1}
+              showTotalXWalletValue={showTotalXWalletValue}
             />
           </Box>
         ))}

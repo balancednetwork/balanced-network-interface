@@ -14,6 +14,7 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   USDT: '0xa4b1.arbitrum',
   USDC: '0xa86a.avax',
   hyTB: '0xa86a.avax',
+  SUI: 'sui',
 };
 
 export const xTokenMap: { [key in XChainId]: XToken[] } = {

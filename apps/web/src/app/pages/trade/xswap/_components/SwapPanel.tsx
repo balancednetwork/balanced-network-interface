@@ -21,6 +21,7 @@ import { getXChainType } from '@/xwagmi/actions';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount } from '@/xwagmi/hooks';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
+import RecipientAddressPanel from './RecipientAddressPanel';
 import SwapModal from './SwapModal';
 import XSwapModal from './XSwapModal';
 
@@ -42,7 +43,6 @@ export default function SwapPanel() {
 
   const signedInWallets = useSignedInWallets();
   const { recipient } = useSwapState();
-  const isRecipientCustom = recipient !== null && !signedInWallets.some(wallet => wallet.address === recipient);
 
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
     useSwapActionHandlers();
@@ -197,6 +197,7 @@ export default function SwapPanel() {
           />
 
           <AdvancedSwapDetails />
+          <RecipientAddressPanel />
 
           <div className="flex justify-center">{swapButton}</div>
 

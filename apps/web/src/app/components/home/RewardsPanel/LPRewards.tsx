@@ -158,7 +158,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
           <RewardsGrid rewards={[reward]} />
         ) : (
           <Typography fontSize={14} opacity={0.75} mb={5}>
-            To earn BALN, borrow bnUSD or supply liquidity on the Trade page.
+            Supply liquidity on the Trade page to earn BALN incentives.
           </Typography>
         )}
       </Box>

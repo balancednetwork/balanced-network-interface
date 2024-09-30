@@ -73,7 +73,7 @@ const SavingsRewards = () => {
           <RewardsGrid rewards={rewards} />
         ) : (
           <Typography fontSize={14} opacity={0.75} mb={5}>
-            To earn interest and other incentives, deposit bnUSD into your savings.
+            Deposit bnUSD into the savings rate to earn interest.
           </Typography>
         )}
       </Box>

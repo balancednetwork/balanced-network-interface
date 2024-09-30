@@ -219,12 +219,15 @@ export function useFetchBBalnSources(interval?: number, omitImmediateCall?: bool
 
       changeSources(
         Object.keys(data).reduce((sources, sourceName) => {
-          sources[sourceName] = {
-            balance: new BigNumber(data[sourceName].balance),
-            supply: new BigNumber(data[sourceName].supply),
-            workingBalance: new BigNumber(data[sourceName].workingBalance),
-            workingSupply: new BigNumber(data[sourceName].workingSupply),
-          } as Source;
+          //Loans were voted for incentives removal
+          if (sourceName !== 'Loans') {
+            sources[sourceName] = {
+              balance: new BigNumber(data[sourceName].balance),
+              supply: new BigNumber(data[sourceName].supply),
+              workingBalance: new BigNumber(data[sourceName].workingBalance),
+              workingSupply: new BigNumber(data[sourceName].workingSupply),
+            } as Source;
+          }
           return sources;
         }, {}),
       );

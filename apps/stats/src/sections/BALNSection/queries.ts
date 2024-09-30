@@ -31,12 +31,12 @@ export function useBALNDistributionQuery() {
         {
           name: 'DAO Fund',
           value: parseFloat(distribution['Balanced DAOfund']?.toFixed(8) ?? 0),
-          fill: CHART_COLORS[3],
+          fill: CHART_COLORS[1],
         },
         {
           name: 'Savings rate',
           value: parseFloat(distribution['Balanced Trickler']?.toFixed(8) ?? 0),
-          fill: CHART_COLORS[1],
+          fill: CHART_COLORS[2],
         },
       ];
 

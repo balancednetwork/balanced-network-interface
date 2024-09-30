@@ -164,7 +164,11 @@ export default function BnUSDChart({
           <>
             <ChartInfoItem border smaller>
               <Typography variant="p" fontSize="18px">
-                {borrowersInfo ? getFormattedNumber(borrowersInfo[selectedCollateral], 'number') : <LoaderComponent />}
+                {borrowersInfo ? (
+                  getFormattedNumber(borrowersInfo[selectedCollateral] || 0, 'number')
+                ) : (
+                  <LoaderComponent />
+                )}
               </Typography>
               <Typography color="text1">Borrowers</Typography>
             </ChartInfoItem>

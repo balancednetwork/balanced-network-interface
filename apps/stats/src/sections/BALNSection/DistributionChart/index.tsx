@@ -113,9 +113,9 @@ export const ChartInfoItem = styled(Flex)<{ border?: boolean; smaller?: boolean 
       }
     `};
 
-  p:first-of-type {
+  /* p:first-of-type {
     margin-bottom: 5px;
-  }
+  } */
 `;
 
 export const LegendItem = styled.div<{ legendColor: string }>`

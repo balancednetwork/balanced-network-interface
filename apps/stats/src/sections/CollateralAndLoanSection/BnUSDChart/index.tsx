@@ -35,6 +35,7 @@ export default function BnUSDChart({
   const [bnUSDLabel, setBnUSDLabel] = React.useState<string | undefined>();
 
   const [totalBnUSD, setTotalBnUSD] = React.useState<undefined | number>();
+  const [bnUSDChange, setBnUSDChange] = React.useState<undefined | number>();
 
   const cbSetUserHovering = React.useCallback(bool => {
     setUserHovering(bool);
@@ -52,6 +53,10 @@ export default function BnUSDChart({
     setTotalBnUSD(value);
   }, []);
 
+  const cbSetBnUSDChange = React.useCallback((value: number | undefined) => {
+    setBnUSDChange(value);
+  }, []);
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     if (!userHovering) {
@@ -62,11 +67,22 @@ export default function BnUSDChart({
   const isSmall = useMedia('(max-width: 699px)');
   const isExtraSmall = useMedia('(max-width: 499px)');
 
+  const bnUSDChangeContent =
+    bnUSDChange === undefined ? (
+      <LoaderComponent></LoaderComponent>
+    ) : bnUSDChange >= 0 ? (
+      <Typography fontSize={18} color="text">{`+ $${getFormattedNumber(bnUSDChange, 'number')}`}</Typography>
+    ) : (
+      <Typography fontSize={18} color="text">
+        {getFormattedNumber(bnUSDChange, 'number').replace('-', '- $')}
+      </Typography>
+    );
+
   return (
     <ChartSection>
       <Flex flexDirection={['column', 'row']}>
-        <Flex mr="auto" mb={1} alignItems="center">
-          <Typography variant="h3" mr="auto" mb={1}>
+        <Flex mr="auto" mb="3px" alignItems="center">
+          <Typography variant="h3" mr="auto" mb="4px">
             Balanced Dollars
           </Typography>
         </Flex>
@@ -88,6 +104,7 @@ export default function BnUSDChart({
           setCollateralTVLHover={cbSetBnUSDHover}
           setCollateralLabel={cbSetBnUSDLabel}
           setTotalBnUSD={cbSetTotalBnUSD}
+          setBnUSDChange={cbSetBnUSDChange}
           setUserHovering={cbSetUserHovering}
         ></Chart>
       </Box>
@@ -102,7 +119,7 @@ export default function BnUSDChart({
                   {fundInfo ? `${fundInfo.feeIn}% - ${fundInfo.feeOut}%` : <LoaderComponent />}
                 </Typography>
                 {fundInfo && (
-                  <QuestionWrapper style={{ transform: 'translateY(-2px)', marginLeft: '5px' }}>
+                  <QuestionWrapper style={{ transform: 'translateY(1px)', marginLeft: '5px' }}>
                     <QuestionHelper
                       text={`Use the Stability Fund to swap approved assets 1:1 for bnUSD. If you trade the inverse, there's a ${fundInfo.feeOut}% fee.`}
                     />
@@ -122,50 +139,16 @@ export default function BnUSDChart({
           <>
             <ChartInfoItem smaller border>
               <Typography variant="p" fontSize="18px">
-                {loanInfo.dailyRewards ? getFormattedNumber(loanInfo.dailyRewards, 'number') : <LoaderComponent />} BALN
-              </Typography>
-              <Typography color="text1">Daily rewards</Typography>
-            </ChartInfoItem>
-            <ChartInfoItem smaller border={!isSmall || isExtraSmall}>
-              <Typography variant="p" fontSize="18px">
                 {borrowersInfo ? getFormattedNumber(borrowersInfo.total, 'number') : <LoaderComponent />}
               </Typography>
               <Typography color="text1">Borrowers</Typography>
             </ChartInfoItem>
-            <ChartInfoItem
-              smaller
-              flex={isSmall ? null : 1}
-              flexDirection="column"
-              alignItems="center"
-              width={isSmall ? '100%' : 'auto'}
-            >
+            <ChartInfoItem smaller border={!isSmall || isExtraSmall}>
               <Typography variant="p" fontSize="18px">
                 {ceilingsData ? `$${ceilingsData.total.toFormat(0)}` : <LoaderComponent />}
               </Typography>
               <Typography color="text1">Maximum limit</Typography>
             </ChartInfoItem>
-          </>
-        ) : (
-          <>
-            <ChartInfoItem smaller border>
-              <Typography variant="p" fontSize="18px">
-                {loanInfo.loansAPY ? (
-                  `${getFormattedNumber(loanInfo.loansAPY, 'percent2')} - ${getFormattedNumber(
-                    loanInfo.loansAPY * MAX_BOOST,
-                    'percent2',
-                  )}`
-                ) : (
-                  <LoaderComponent />
-                )}
-              </Typography>
-              <Typography color="text1">Borrow APR</Typography>
-            </ChartInfoItem>
-            <ChartInfoItem smaller border={!isSmall || isExtraSmall}>
-              <Typography variant="p" fontSize="18px">
-                {loanInfo.dailyRewards ? getFormattedNumber(loanInfo.dailyRewards, 'number') : <LoaderComponent />} BALN
-              </Typography>
-              <Typography color="text1">Daily rewards</Typography>
-            </ChartInfoItem>
             <ChartInfoItem
               smaller
               flex={isSmall ? null : 1}
@@ -173,6 +156,19 @@ export default function BnUSDChart({
               alignItems="center"
               width={isSmall ? '100%' : 'auto'}
             >
+              {bnUSDChangeContent}
+              <Typography color="text1">Past month</Typography>
+            </ChartInfoItem>
+          </>
+        ) : (
+          <>
+            <ChartInfoItem border smaller>
+              <Typography variant="p" fontSize="18px">
+                {borrowersInfo ? getFormattedNumber(borrowersInfo[selectedCollateral], 'number') : <LoaderComponent />}
+              </Typography>
+              <Typography color="text1">Borrowers</Typography>
+            </ChartInfoItem>
+            <ChartInfoItem smaller border={!isSmall || isExtraSmall}>
               <Typography variant="p" fontSize="18px">
                 {ceilingsData ? (
                   `$${
@@ -183,6 +179,18 @@ export default function BnUSDChart({
                 )}
               </Typography>
               <Typography color="text1">Maximum limit</Typography>
+            </ChartInfoItem>
+            <ChartInfoItem
+              smaller
+              flex={isSmall ? null : 1}
+              flexDirection="column"
+              alignItems="center"
+              width={isSmall ? '100%' : 'auto'}
+            >
+              <Typography variant="p" fontSize="18px">
+                {bnUSDChangeContent}
+              </Typography>
+              <Typography color="text1">Past month</Typography>
             </ChartInfoItem>
           </>
         )}

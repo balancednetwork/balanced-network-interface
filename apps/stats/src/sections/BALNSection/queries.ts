@@ -22,29 +22,22 @@ export function useBALNDistributionQuery() {
         return acc;
       }, new Fraction(0));
 
+      console.log('distributiondistribution', distribution);
+
       const data = [
         {
           name: 'Liquidity',
-          value: parseFloat(liquidityTotal?.toFixed(4) ?? 0),
+          value: parseFloat(liquidityTotal?.toFixed(8) ?? 0),
           fill: CHART_COLORS[0],
         },
         {
-          name: 'Reserve Fund',
-          value: parseFloat(distribution['Balanced Reserve Fund']?.toFixed(4) ?? 0),
-        },
-        {
-          name: 'Workers',
-          value: parseFloat(distribution['Balanced Worker Token']?.toFixed(4) ?? 0),
-          fill: CHART_COLORS[2],
-        },
-        {
           name: 'DAO Fund',
-          value: parseFloat(distribution['Balanced DAOfund']?.toFixed(4) ?? 0),
+          value: parseFloat(distribution['Balanced DAOfund']?.toFixed(8) ?? 0),
           fill: CHART_COLORS[3],
         },
         {
-          name: 'Borrowers',
-          value: parseFloat(distribution['Loans']?.toFixed(4) ?? 0),
+          name: 'Savings rate',
+          value: parseFloat(distribution['Balanced Trickler']?.toFixed(8) ?? 0),
           fill: CHART_COLORS[1],
         },
       ];

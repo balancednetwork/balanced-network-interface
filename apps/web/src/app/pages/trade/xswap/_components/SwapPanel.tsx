@@ -11,7 +11,6 @@ import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import { Button } from '@/components/ui/button';
 import useManualAddresses from '@/hooks/useManualAddresses';
-import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
@@ -26,6 +25,8 @@ import SwapModal from './SwapModal';
 import XSwapModal from './XSwapModal';
 
 export default function SwapPanel() {
+  const [xSwapModalOpen, setXSwapModalOpen] = React.useState(false);
+
   useInitialSwapLoad();
 
   const {
@@ -132,7 +133,7 @@ export default function SwapPanel() {
         toggleWalletModal();
       } else {
         setExecutionTrade(trade);
-        modalActions.openModal(MODAL_ID.XSWAP_CONFIRM_MODAL);
+        setXSwapModalOpen(true);
       }
     } else {
       if (!account) {
@@ -236,6 +237,8 @@ export default function SwapPanel() {
       />
 
       <XSwapModal
+        open={xSwapModalOpen}
+        setOpen={setXSwapModalOpen}
         account={account}
         currencies={currencies}
         executionTrade={executionTrade}

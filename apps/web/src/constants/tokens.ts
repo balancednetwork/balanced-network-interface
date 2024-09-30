@@ -3,10 +3,9 @@ import { Currency, Token, XToken } from '@balancednetwork/sdk-core';
 
 import { TRANSFORMED_COMBINED_TOKEN_LIST, TRANSFORMED_DEFAULT_TOKEN_LIST } from '@/store/lists/hooks';
 
-import { useIconNetworkId } from '@/hooks/useIconNetworkId';
 import { NETWORK_ID } from './config';
 
-export const NULL_CONTRACT_ADDRESS = 'icx123-native';
+export const NULL_CONTRACT_ADDRESS = '0x1.icon-native';
 
 export const isNativeCurrency = (token?: Currency | XToken): boolean => {
   return !!token && token.wrapped?.address.includes('native');
@@ -18,11 +17,6 @@ export const isBALN = (token?: Token): boolean => {
 
 export const isFIN = (token?: Token): boolean => {
   return !!token && FIN[token.chainId]?.address === token.address;
-};
-
-export const useICX = () => {
-  const networkId = useIconNetworkId();
-  return ICX[networkId];
 };
 
 export type TokenMap = { [key: number]: Token };

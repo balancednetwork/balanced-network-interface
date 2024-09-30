@@ -395,8 +395,8 @@ export default function BBalnSlider({
       {(!bBalnAmount.isGreaterThan(0) || !account) && (
         <Typography color="text1" mb={account ? 3 : 0}>
           <Trans>
-            Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity
-            pools.
+            Lock up BALN to hold bBALN, a non-transferable token that earns network fees and boosts your BALN liquidity
+            incentives.
           </Trans>
         </Typography>
       )}

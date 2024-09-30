@@ -38,7 +38,6 @@ const RewardsPanel = () => {
   const isSmall = useMedia('(max-width: 800px)');
   const { account } = useIconReact();
   const hasAnyKindOfRewards = useHasAnyKindOfRewards();
-  // // const { data: earnedPastMonth } = useEarnedPastMonth();
 
   const handleSetGlobalTooltip = React.useCallback((shouldShow: boolean) => {
     setGlobalTooltip(shouldShow);

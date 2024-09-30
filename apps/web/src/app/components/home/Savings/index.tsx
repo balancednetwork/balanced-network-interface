@@ -171,27 +171,16 @@ const Savings = () => {
               </Typography>
               <QuestionWrapper style={{ marginTop: isSmallScreen ? '4px' : '8px' }}>
                 <QuestionHelper
-                  width={200}
+                  width={220}
                   text={
                     <>
-                      {savingsRate?.percentAPRbnUSD && (
-                        <Flex>
-                          <Typography mr={1}>Paid in bnUSD</Typography>
-                          <Typography
-                            color="text1"
-                            mt="-1px"
-                          >{`(${savingsRate.percentAPRbnUSD.toFormat(2)}%)`}</Typography>
-                        </Flex>
-                      )}
-                      {savingsRate?.percentAPRsICX && (
-                        <Flex>
-                          <Typography mr={1}>and sICX</Typography>
-                          <Typography
-                            mt="-1px"
-                            color="text1"
-                          >{`(${savingsRate.percentAPRsICX.toFormat(2)}%)`}</Typography>
-                          .
-                        </Flex>
+                      {savingsRate && (
+                        <Typography mr={1}>
+                          Paid in bnUSD{' '}
+                          <span style={{ opacity: 0.75 }}>{`(${savingsRate.percentAPRbnUSD.toFormat(2)}%)`}</span>, sICX{' '}
+                          <span style={{ opacity: 0.75 }}>{`(${savingsRate.percentAPRsICX.toFormat(2)}%)`}</span> and
+                          BALN <span style={{ opacity: 0.75 }}>{`(${savingsRate.percentAPRBALN.toFormat(2)}%)`}</span>.
+                        </Typography>
                       )}
 
                       {savingsPastMonthPayout && (

@@ -179,7 +179,7 @@ const Savings = () => {
                           Paid in bnUSD{' '}
                           <span style={{ opacity: 0.75 }}>{`(${savingsRate.percentAPRbnUSD.toFormat(2)}%)`}</span>, sICX{' '}
                           <span style={{ opacity: 0.75 }}>{`(${savingsRate.percentAPRsICX.toFormat(2)}%)`}</span> and
-                          BALN <span style={{ opacity: 0.75 }}>{`(${savingsRate.percentAPRBALN.toFormat(2)}%)`}</span>
+                          BALN <span style={{ opacity: 0.75 }}>{`(${savingsRate.percentAPRBALN.toFormat(2)}%)`}</span>.
                         </Typography>
                       )}
 

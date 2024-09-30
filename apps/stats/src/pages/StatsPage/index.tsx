@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useOverviewInfo } from '@/queries/index';
 import { Helmet } from 'react-helmet-async';
-import { Flex, Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import styled, { css } from 'styled-components';
 
 import BalnStakingIcon from '@/assets/icons/balnstaking.svg';
@@ -16,16 +16,16 @@ import { BoxPanel } from '@/components/Panel';
 import { MouseoverTooltip } from '@/components/Tooltip';
 import { LoaderComponent } from '@/pages/PerformanceDetails/utils';
 import BALNSection from '@/sections/BALNSection';
+import BSRSection from '@/sections/BSRSection';
 import CollateralAndLoanSection from '@/sections/CollateralAndLoanSection';
+import EnshrinementSection from '@/sections/EnshrinmentSection';
 import GovernanceSection from '@/sections/GovernanceSection';
 import HoldingsOverviewSection from '@/sections/HoldingsOverviewSection';
 import PairSection from '@/sections/PairSection';
 import TokenSection from '@/sections/TokenSection';
+import WithdrawalLimits from '@/sections/WithdrawalLimits';
 import { Typography } from '@/theme';
 import { getFormattedNumber } from '@/utils/formatter';
-import WithdrawalLimits from '@/sections/WithdrawalLimits';
-import BSRSection from '@/sections/BSRSection';
-import EnshrinementSection from '@/sections/EnshrinmentSection';
 import { useLocation } from 'react-router-dom';
 
 export const Container = styled(Box)`
@@ -188,7 +188,7 @@ export function StatsPage() {
                     <LoaderComponent />
                   )}
                 </Typography>
-                <Typography>BALN marketcap</Typography>
+                <Typography>BALN market cap</Typography>
               </StatsItemData>
             </StatsItem>
             {/* fees */}

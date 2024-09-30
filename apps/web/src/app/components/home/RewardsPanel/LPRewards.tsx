@@ -88,8 +88,8 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
         addTransaction(
           { hash: res.result },
           {
-            summary: t`Claimed Balanced incentives.`,
-            pending: t`Claiming Balanced incentives...`,
+            summary: t`Claimed liquidity incentives.`,
+            pending: t`Claiming liquidity incentives...`,
           },
         );
         toggleOpen();
@@ -131,7 +131,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
                 width={330}
                 offset={[0, 19]}
               >
-                Balanced incentives
+                Liquidity incentives
                 {isExtraSmall && account && !!numberOfPositions && (
                   <QuestionWrapper
                     style={{ transform: 'translateY(1px)', marginLeft: '8px' }}
@@ -166,7 +166,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
       <Modal isOpen={isOpen} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb={1}>
-            <Trans>Claim Balanced incentives?</Trans>
+            <Trans>Claim liquidity incentives?</Trans>
           </Typography>
 
           <Flex flexDirection="column" alignItems="center" mt={2}>

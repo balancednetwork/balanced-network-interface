@@ -181,15 +181,25 @@ const Savings = () => {
                             color="text1"
                             mt="-1px"
                           >{`(${savingsRate.percentAPRbnUSD.toFormat(2)}%)`}</Typography>
+                          ,
                         </Flex>
                       )}
                       {savingsRate?.percentAPRsICX && (
                         <Flex>
-                          <Typography mr={1}>and sICX</Typography>
+                          <Typography mr={1}>sICX</Typography>
                           <Typography
                             mt="-1px"
                             color="text1"
                           >{`(${savingsRate.percentAPRsICX.toFormat(2)}%)`}</Typography>
+                        </Flex>
+                      )}
+                      {savingsRate?.percentAPRBALN && (
+                        <Flex>
+                          <Typography mr={1}>and BALN</Typography>
+                          <Typography
+                            mt="-1px"
+                            color="text1"
+                          >{`(${savingsRate.percentAPRBALN.toFormat(2)}%)`}</Typography>
                           .
                         </Flex>
                       )}

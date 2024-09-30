@@ -213,6 +213,7 @@ export function useSavingsRateInfo(): UseQueryResult<
       APR: BigNumber;
       percentAPRsICX: BigNumber;
       percentAPRbnUSD: BigNumber;
+      percentAPRBALN: BigNumber;
     }
   | undefined
 > {
@@ -228,6 +229,7 @@ export function useSavingsRateInfo(): UseQueryResult<
       if (!tokenPrices || !tokenList || !collateralTokens || !totalLocked || !periodInBlocks) return;
 
       let sICXtricklerBalance: BigNumber | undefined = new BigNumber(0);
+      let BALNtricklerBalance: BigNumber | undefined = new BigNumber(0);
 
       async function getTricklerBalance(): Promise<BigNumber> {
         const amounts: BigNumber[] = await Promise.all(
@@ -241,6 +243,7 @@ export function useSavingsRateInfo(): UseQueryResult<
               const price = tokenPrices?.[symbol];
               const amount = price?.times(new BigNumber(currencyAmount.toFixed())) ?? new BigNumber(0);
               if (symbol === 'sICX') sICXtricklerBalance = amount;
+              if (symbol === 'BALN') BALNtricklerBalance = amount;
               return amount;
             } catch (e) {
               console.error('Error while fetching bnUSD payout stats: ', e);
@@ -266,17 +269,19 @@ export function useSavingsRateInfo(): UseQueryResult<
         }),
       );
 
+      const totalBnUSDLocked = new BigNumber(totalLocked.toFixed());
+
       const interestPayoutPerYear = rewardsFromInterests.reduce((acc, cur) => acc.plus(cur), new BigNumber(0));
+
       const dailyPayout = tricklerPayoutPerYear.plus(interestPayoutPerYear).div(365);
-      const APR = tricklerPayoutPerYear
-        .plus(interestPayoutPerYear)
-        .div(new BigNumber(totalLocked.toFixed()))
-        .times(100);
-      const percentAPRsICX = sICXtricklerBalance
-        .times(yearlyRatio)
-        .div(new BigNumber(totalLocked.toFixed()))
-        .times(100);
-      const percentAPRbnUSD = APR.minus(percentAPRsICX);
+
+      const APR = tricklerPayoutPerYear.plus(interestPayoutPerYear).div(totalBnUSDLocked).times(100);
+
+      const percentAPRBALN = BALNtricklerBalance.times(yearlyRatio).div(totalBnUSDLocked).times(100);
+
+      const percentAPRsICX = sICXtricklerBalance.times(yearlyRatio).div(totalBnUSDLocked).times(100);
+
+      const percentAPRbnUSD = APR.minus(percentAPRsICX).minus(percentAPRBALN);
 
       return {
         totalLocked,
@@ -284,6 +289,7 @@ export function useSavingsRateInfo(): UseQueryResult<
         APR,
         percentAPRsICX,
         percentAPRbnUSD,
+        percentAPRBALN,
       };
     },
     placeholderData: keepPreviousData,

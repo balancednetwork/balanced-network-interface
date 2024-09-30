@@ -22,8 +22,6 @@ export function useBALNDistributionQuery() {
         return acc;
       }, new Fraction(0));
 
-      console.log('distributiondistribution', distribution);
-
       const data = [
         {
           name: 'Liquidity',

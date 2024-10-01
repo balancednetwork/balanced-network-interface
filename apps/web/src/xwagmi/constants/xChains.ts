@@ -288,9 +288,9 @@ export const stellar: XChain = {
     http: 'https://horizon.stellar.org',
   },
   contracts: {
-    xCall: 'xlm..todo..',
-    assetManager: 'xlm..todo..',
-    bnUSD: 'xlm..todo..',
+    xCall: 'CAA7AH3FAOKBNPKXERPPSYHROEGTGXV2YWJOLTGFJCPESOAU4AAOFC7K',
+    assetManager: 'CAGP34E2VHGO7Y3NEJHCMVFMTTTIYCGBWUH7FTCMHMVYAMQBIILX5GXH',
+    bnUSD: 'CAKU2J5T4TOMFATA56XRDZMQHNBFIOQW3JDZQNQBLNLV7LEWYTNYU6VX',
   },
   autoExecution: true,
   gasThreshold: 0.5,
@@ -324,6 +324,10 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   '0xa86a.avax': ['0xC1a39C4e7AA98DEC394eF54559960873Bd619cA3', '0x7F3665eF19258cD5cE15eA39d014F47Fc942AE0C'],
   '0x100.icon': ['cxcf2c8d58fd7bbd25866de0660b155f057ea489eb'],
   'injective-1': ['inj15jcde723hrm5f4fx3r2stnq59jykt2askud8ht'],
+  stellar: [
+    'CBPJSDR2QRMFUX25S5JXQMXDDMQVTN5M3TNYSCGFUJCCZ2LAJLKNJACQ',
+    'CBXK5AZWM7AE5HF7KKZYXU7NVMMXIA4K3D5H5LV7LW23ZBE7HBAH3RVC',
+  ],
 };
 
 /** to other chain from icon sources */
@@ -334,4 +338,5 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   '0xa86a.avax': ['cx59d899fce52cadd1feb5128ff5e6672f03943eec', 'cx917f88460d4ebec1fd656d4dbe51131a37d16837'],
   '0x100.icon': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
   'injective-1': ['cx6f86ed848f9f0d03ba1220811d95d864c72da88c'],
+  stellar: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
 };

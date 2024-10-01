@@ -122,8 +122,15 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     ),
   ],
   stellar: [
-    new XToken('stellar', 'stellar', NATIVE_ADDRESS, 7, 'XLM', 'XLM'),
-    new XToken('stellar', 'stellar', 'bnUSDAddressTodo', 7, 'bnUSD', 'Balanced Dollar'),
+    new XToken('stellar', 'stellar', 'CAS3J7GYLGXMF6TDJBBYYSE3HQ6BBSMLNUQ34T6TZMYMW2EVH34XOWMA', 7, 'XLM', 'XLM'),
+    new XToken(
+      'stellar',
+      'stellar',
+      'CAKU2J5T4TOMFATA56XRDZMQHNBFIOQW3JDZQNQBLNLV7LEWYTNYU6VX',
+      7,
+      'bnUSD',
+      'Balanced Dollar',
+    ),
   ],
 };
 

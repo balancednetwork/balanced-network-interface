@@ -216,8 +216,8 @@ msgid "Assets to send"
 msgstr "Assets to send"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
-msgid "Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity pools."
-msgstr "Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity pools."
+#~ msgid "Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity pools."
+#~ msgstr "Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity pools."
 
 #: src/app/pages/vote/_components/VotingPowerPanel/index.tsx
 msgid "Total voting power"
@@ -426,8 +426,8 @@ msgstr "Confirm"
 #~ msgstr "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer cross-chain."
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
-msgid "Claiming Balanced incentives..."
-msgstr "Claiming Balanced incentives..."
+#~ msgid "Claiming Balanced incentives..."
+#~ msgstr "Claiming Balanced incentives..."
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Approved"
@@ -753,6 +753,10 @@ msgstr ""
 "If the {0} price reaches ${1}, all your collateral will be\n"
 "liquidated."
 
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+msgid "Claimed liquidity incentives."
+msgstr "Claimed liquidity incentives."
+
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Locked"
 msgstr "Locked"
@@ -1022,8 +1026,8 @@ msgid "Swap {0} for {1}?"
 msgstr "Swap {0} for {1}?"
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
-msgid "Claimed Balanced incentives."
-msgstr "Claimed Balanced incentives."
+#~ msgid "Claimed Balanced incentives."
+#~ msgstr "Claimed Balanced incentives."
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x."
@@ -1040,6 +1044,10 @@ msgstr "No results found."
 #: src/app/components/home/RewardsPanel/index.tsx
 msgid "To earn rewards: supply liquidity, deposit bnUSD into the savings rate, or lock up BALN."
 msgstr "To earn rewards: supply liquidity, deposit bnUSD into the savings rate, or lock up BALN."
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+msgid "Lock up BALN to hold bBALN, a non-transferable token that earns network fees and boosts your BALN liquidity incentives."
+msgstr "Lock up BALN to hold bBALN, a non-transferable token that earns network fees and boosts your BALN liquidity incentives."
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Failed to enact"
@@ -1268,8 +1276,8 @@ msgid "If bnUSD ever falls below ${redeemLimit}, traders can use the smart contr
 msgstr "If bnUSD ever falls below ${redeemLimit}, traders can use the smart contracts to redeem it for borrower collateral."
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
-msgid "Claim Balanced incentives?"
-msgstr "Claim Balanced incentives?"
+#~ msgid "Claim Balanced incentives?"
+#~ msgstr "Claim Balanced incentives?"
 
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
 msgid "Wallet: {0} {1}"
@@ -1776,6 +1784,10 @@ msgstr "Claiming bribe..."
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "0 {0}"
 msgstr "0 {0}"
+
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+msgid "Claiming liquidity incentives..."
+msgstr "Claiming liquidity incentives..."
 
 #: src/app/components/CollateralTypeSwitcher/SingleChainItem.tsx
 msgid "available"
@@ -2503,6 +2515,10 @@ msgstr "Withdraw liquidity"
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "Test your contract calls before you submit the proposal."
 msgstr "Test your contract calls before you submit the proposal."
+
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+msgid "Claim liquidity incentives?"
+msgstr "Claim liquidity incentives?"
 
 #: src/app/components/Wallet/ICONAssetModal.tsx
 #: src/app/components/Wallet/index.tsx

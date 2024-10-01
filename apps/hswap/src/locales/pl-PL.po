@@ -1,0 +1,2649 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: balancednetwork\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2023-07-20 09:20\n"
+"Last-Translator: \n"
+"Language: pl_PL\n"
+"Language-Team: Polish\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"X-Crowdin-Project: balancednetwork\n"
+"X-Crowdin-Project-ID: 505260\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: en-US.po\n"
+"X-Crowdin-File-ID: 12\n"
+
+#: src/app/components/trade/XCallExecutionHandlerICON.tsx
+#~ msgid "Rollback failed."
+#~ msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "Monthly"
+#~ msgstr ""
+
+#: src/app/components/ProposalModal/index.tsx
+#~ msgid "Submit vote?"
+#~ msgstr "Czy chcesz zagłosować?"
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "The current bnUSD price is"
+#~ msgstr "Obecna cena bnUSD wynosi"
+
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
+#~ msgid "{0} / {1} liquidity pool"
+#~ msgstr "{0} / {1} pula płynności"
+
+#: src/app/components/CommunityListToggle/index.tsx
+#~ msgid "The community list contains all popular assets that aren't listed in the app by default."
+#~ msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "Interest rate"
+#~ msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "Redemptions"
+#~ msgstr ""
+
+#: src/app/Routes.tsx
+msgid "Legacy bridge"
+msgstr ""
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "then create the pool."
+#~ msgstr "następnie utwórz pulę."
+
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "Only"
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "Your ICX is staked (sICX). Choose what to do with it:"
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
+#~ msgid "{0} queue{1}"
+#~ msgstr ""
+
+#: src/app/components/AddressInputPanel/index.tsx
+#~ msgid "To"
+#~ msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+#~ msgid "Borrow bnUSD. Swap & transfer cross-chain."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "Removing"
+#~ msgstr "Usuwanie"
+
+#: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
+#~ msgid ""
+#~ "The ICX unstaking period is {0} days, but yours may be ready to claim sooner based on the volume of ICX\n"
+#~ "converted to sICX."
+#~ msgstr ""
+
+#: src/btp/src/connectors/helper.ts
+#: src/btp/src/connectors/MetaMask/index.ts
+#~ msgid "Your transaction has failed. Please go back and try again."
+#~ msgstr ""
+
+#: src/hooks/useApproveCallback.tsx
+#: src/hooks/useApproveCallback.tsx
+#: src/hooks/useApproveCallback.tsx
+msgid "{0} transfer approval failed."
+msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#~ msgid "4H"
+#~ msgstr "4G"
+
+#: src/app/pages/trade/xswap/_components/utils.tsx
+msgid "Supplying {pair} liquidity..."
+msgstr "Dostarczanie płynności do pary {pair}..."
+
+#: src/app/pages/home/_components/xCollateralModal/index.tsx
+#~ msgid "Collateral action"
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
+#~ msgid "{0} ICX"
+#~ msgstr "{0} ICX"
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Withdraw Balance Tokens"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#~ msgid "15m"
+#~ msgstr "15m"
+
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "Switch to {0}"
+msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
+#~ msgid "Claim ICX?"
+#~ msgstr "Odebrać ICX?"
+
+#: src/app/components/home/LoanPanel.tsx
+#~ msgid "Borrowed {0} bnUSD."
+#~ msgstr "Pożyczono {0} bnUSD."
+
+#: src/app/components/trade/RebalanceButton.tsx
+#~ msgid "Rebalancing complete."
+#~ msgstr "Rebalansowanie zakończone."
+
+#: src/app/components/trade/XCallExecutionHandlerICON.tsx
+#~ msgid "Reverting..."
+#~ msgstr ""
+
+#: src/app/components/home/RewardsPanel/SavingsRewards.tsx
+#~ msgid "Claim Savings Rate rewards?"
+#~ msgstr ""
+
+#: src/app/components/CollateralTypeSwitcher/CollateralTypeList.tsx
+#: src/app/components/home/LoanPanel.tsx
+#: src/app/components/home/LoanPanel.tsx
+#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "Loan"
+#~ msgstr "Pożyczka"
+
+#: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
+#~ msgid "You have no pending cross-chain transactions."
+#~ msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+#~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer assets cross-chain"
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/ICXWallet/index.tsx
+#: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
+#~ msgid "Unstaking"
+#~ msgstr "Odstake'owanie"
+
+#: src/app/components/ProposalModal/index.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#~ msgid "Change vote"
+#~ msgstr "Zmień głos"
+
+#: src/app/components/ProposalModal/index.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#~ msgid "Reject"
+#~ msgstr "Przeciw"
+
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
+#~ msgid "Your allocation"
+#~ msgstr ""
+
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#~ msgid "Wallet:"
+#~ msgstr "Portfel:"
+
+#: src/app/pages/vote/_components/utils.ts
+#: src/utils/timeformat.ts
+#~ msgid "h"
+#~ msgstr "godz."
+
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+#~ msgid ", the current incentives will be adjusted to reflect this allocation."
+#~ msgstr ""
+
+#: src/app/components/home/_components/xLoanModal/index.tsx
+#~ msgid "Borrowing"
+#~ msgstr ""
+
+#: src/app/components/home/_components/xLoanModal/index.tsx
+#~ msgid "Repaying..."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "Assets to send"
+#~ msgstr "Aktywa do wysłania"
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity pools."
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/VotingPowerPanel/index.tsx
+#~ msgid "Total voting power"
+#~ msgstr ""
+
+#: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/home/LoanPanel.tsx
+#: src/app/components/home/LoanPanel.tsx
+#~ msgid "Repay"
+#~ msgstr "Zwróć"
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Lock duration increased  until {0}."
+#~ msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Increasing lock duration..."
+#~ msgstr ""
+
+#: src/btp/src/connectors/helper.ts
+#~ msgid "Approved {0} for cross-chain transfers."
+#~ msgstr ""
+
+#: src/btp/src/connectors/helper.ts
+#~ msgid "Sending {0} to the bridge contract..."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "Supplying"
+#~ msgstr "Dostarczanie"
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "for 100% earning power."
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
+#~ msgid "Contract calls"
+#~ msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "Weekly"
+#~ msgstr ""
+
+#: src/app/pages/home/RewardsPanel.tsx
+#~ msgid "Rewards"
+#~ msgstr "Nagrody"
+
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+msgid "Pay"
+msgstr "Zapłać"
+
+#: src/app/pages/vote/_components/BribesPanel/index.tsx
+#~ msgid "Vote to incentivise specific liquidity pools and earn a kickback for it."
+#~ msgstr ""
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "Awaiting message from Archway network"
+#~ msgstr ""
+
+#: src/app/components/home/RewardsPanel/index.tsx
+#~ msgid "Earning potential"
+#~ msgstr ""
+
+#: src/app/pages/home/BBaln/BBalnPanel.tsx
+#~ msgid "Boost rewards"
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+#~ msgid "Incentives will be updated in"
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
+#~ msgid "{0} {1} available"
+#~ msgstr ""
+
+#: src/app/pages/page.tsx
+#~ msgid "To deposit collateral, sign in on ICON."
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/ProposalsPanel/index.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
+#: src/app/pages/vote/proposals/page.tsx
+#~ msgid "New proposal"
+#~ msgstr "Nowa propozycja"
+
+#: src/app/components/trade/XCallExecutionHandlerICON.tsx
+#~ msgid "Awaiting execution on ICON."
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/utils.tsx
+msgid "Couldn't transfer {inputCurrency} to {network}. Try again."
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Available since {0}"
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/BribesPanel/index.tsx
+#~ msgid "Liquidity bribes"
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
+#~ msgid "Add a contract call"
+#~ msgstr ""
+
+#: src/app/components/Header/index.tsx
+msgid "Sign in"
+msgstr "Zaloguj się"
+
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#~ msgid "Daily rewards"
+#~ msgstr "Dzienne nagrody"
+
+#: src/app/components/CollateralTypeSwitcher/CollateralTypeList.tsx
+#: src/app/components/home/_components/CollateralChainSelector/ChainList.tsx
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/PositionDetailPanel.tsx
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "Collateral"
+#~ msgstr "Zabezpieczenie"
+
+#: src/app/components/home/RewardsPanel/SavingsRewards.tsx
+#~ msgid "Claimed Savings Rate rewards."
+#~ msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "Past week"
+#~ msgstr "Ostatni tydzień"
+
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "{0} {collateralType} added to your wallet."
+#~ msgstr ""
+
+#: src/app/components/SearchModal/CurrencySearch.tsx
+#~ msgid "No assets found."
+#~ msgstr ""
+
+#: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
+#~ msgid "Claiming network fees..."
+#~ msgstr ""
+
+#: src/app/components/trade/SwapPanel.tsx
+#~ msgid "Transfer fee"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/TokenList/index.tsx
+#~ msgid "Tokens"
+#~ msgstr ""
+
+#: src/app/components/Header/index.tsx
+msgid "Copied"
+msgstr "Skopiowano"
+
+#: src/app/components/CrossChainWalletConnect/index.tsx
+#~ msgid "wallet"
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/ProposalsPanel/index.tsx
+#: src/app/pages/vote/proposals/page.tsx
+#~ msgid "Proposals"
+#~ msgstr "Propozycje"
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+#~ msgid "Switch Network"
+#~ msgstr ""
+
+#: src/app/components/Wallet/index.tsx
+#~ msgid "Search assets"
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPPanel.tsx
+#~ msgid "APR"
+#~ msgstr ""
+
+#: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
+#: src/app/components/ICONWallet/index.tsx
+#~ msgid "Total"
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "Transfer {0} to ICON."
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
+#~ msgid "Bribe available in"
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/SendPanel.tsx
+#~ msgid "Send max"
+#~ msgstr "Wyślij wszystko"
+
+#: src/app/components/WalletModal/index.tsx
+msgid "View disclaimer."
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/LoanPanel.tsx
+#: src/app/components/home/Savings/index.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
+#~ msgid "Confirm"
+#~ msgstr "Zatwierdź"
+
+#: src/app/components/WalletModal/index.tsx
+#~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer cross-chain."
+#~ msgstr ""
+
+#: src/app/containers/HomePage/index.tsx
+#~ msgid "Sign in to use the Home page."
+#~ msgstr "Zaloguj się, aby korzystać ze strony głównej."
+
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+#~ msgid "Claiming Balanced incentives..."
+#~ msgstr ""
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+#~ msgid "Approved"
+#~ msgstr "Zatwierdzona"
+
+#: src/app/components/CommunityListToggle/index.tsx
+#~ msgid "Review the community token list on GitHub."
+#~ msgstr ""
+
+#: src/hooks/useApproveCallback.tsx
+#: src/hooks/useApproveCallback.tsx
+msgid "Approving {0} for cross-chain transfer..."
+msgstr ""
+
+#: src/app/pages/home/_components/xLoanModal/index.tsx
+#~ msgid "Loan action"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/XChainList.tsx
+#~ msgid "Blockchain"
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "In contract"
+#~ msgstr "W kontrakcie"
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "Proposal submitted."
+#~ msgstr ""
+
+#: src/btp/src/connectors/helper.ts
+#~ msgid "Removing {0} from the bridge contract..."
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#~ msgid "You receive"
+#~ msgstr ""
+
+#: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
+#~ msgid "${0}"
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/page.tsx
+#~ msgid "All proposals"
+#~ msgstr ""
+
+#: src/app/components/StabilityFund/index.tsx
+#~ msgid "Use the Stability Fund to swap {0} for {1}"
+#~ msgstr ""
+
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "Transfer {0} to Archway."
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#~ msgid "Custom"
+#~ msgstr ""
+
+#: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/home/LoanPanel.tsx
+#~ msgid "Includes a fee of {0} bnUSD."
+#~ msgstr "Zawiera prowizję w wysokości {0} bnUSD."
+
+#: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
+#~ msgid "{0} receive {1}of the fees shared with bBALN holders"
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
+#~ msgid "You'll be able to readjust your allocation for this pool on"
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+#~ msgid "Where bBALN holders have allocated their voting power, updated live."
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "Verify contract calls?"
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
+#~ msgid "Verify contract calls"
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "Submitting a proposal..."
+#~ msgstr "Zgłaszanie propozycji..."
+
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+#~ msgid "BALN APY"
+#~ msgstr ""
+
+#: src/app/components/Header/index.tsx
+#~ msgid "Change wallet"
+#~ msgstr "Zmień portfel"
+
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "{0} ICX is unstaking."
+#~ msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "Past day"
+#~ msgstr "Ostatni dzień"
+
+#: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
+#~ msgid "Adjust liquidity allocation?"
+#~ msgstr ""
+
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "Transferring {0} to Archway..."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "Sending"
+#~ msgstr "Wysyłanie"
+
+#: src/app/pages/home/BBaln/BBalnPanel.tsx
+#~ msgid "To earn liquidity rewards, supply liquidity to a BALN-incentivised pool."
+#~ msgstr ""
+
+#: src/app/components/home/Savings/index.tsx
+#~ msgid "Deposit bnUSD?"
+#~ msgstr ""
+
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "Requesting cross-chain swap..."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "Send each asset to the contract"
+#~ msgstr "Wyślij każde aktywo do kontraktu"
+
+#: src/app/pages/home/RewardsPanel.tsx
+#~ msgid "Claiming rewards..."
+#~ msgstr "Odbieranie nagród..."
+
+#: src/app/components/ProposalModal/index.tsx
+#~ msgid "Submit vote"
+#~ msgstr "Zagłosuj"
+
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
+#~ msgid "You'll receive BALN in your wallet immediately"
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#~ msgid "Withdraw sICX?"
+#~ msgstr "Czy chcesz wycofać sICX?"
+
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
+#~ msgid "{0} queue"
+#~ msgstr ""
+
+#: src/btp/src/connectors/MetaMask/index.ts
+#~ msgid "Transaction failed!"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "is available on {0}."
+msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
+#~ msgid "Add your sICX to the collateral pool."
+#~ msgstr "Dodaj swoje sICX do puli zabezpieczeń."
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Withdrawing BALN..."
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#~ msgid "1D"
+#~ msgstr "1D"
+
+#: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
+#~ msgid "Deposit sICX"
+#~ msgstr "Zdeponuj sICX"
+
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
+#~ msgid "Lock up BALN and vote for this pool to receive bribes."
+#~ msgstr ""
+
+#: src/app/pages/home/RewardsPanel.tsx
+#~ msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
+#~ msgstr "Aby zarabiać nagrody Balanced, zaciągnij pożyczkę lub dostarcz płynność na stronie Handluj."
+
+#: src/app/components/CommunityListToggle/index.tsx
+#~ msgid "Remove community token list"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/utils.tsx
+msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
+msgstr "Nie udało się wypłacić płynności {inputCurrency} / {outputCurrency}. Spróbuj ponownie."
+
+#: src/app/pages/home/BBaln/BBalnPanel.tsx
+#~ msgid "${0} was distributed over the last 30 days"
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
+#~ msgid "Verify contract call"
+#~ msgstr ""
+
+#: src/app/pages/trade/bridge/_components/XCallItem.tsx
+#~ msgid "Reverting failed."
+#~ msgstr ""
+
+#: src/app/components/WalletModal/IconWalletModal.tsx
+#~ msgid "Cancel any pending transactions on your Ledger, or give Chrome permission to use it."
+#~ msgstr "Anuluj wszystkie oczekujące transakcje na swoim Ledgerze albo przyznaj Chrome uprawnienie do korzystania z niego."
+
+#: src/app/components/WalletModal/WalletItem.tsx
+msgid "or"
+msgstr "lub"
+
+#: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
+#~ msgid "Deposit sICX collateral?"
+#~ msgstr "Czy chcesz zdeponować sICX jako zabezpieczenie?"
+
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
+#~ msgid "Claimed {0} {1}."
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
+#~ msgid "left until you can adjust your allocation."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/LPPanel.tsx
+#~ msgid "Supply liquidity"
+#~ msgstr "Dostarczanie płynności"
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "Go back"
+#~ msgstr "Wróć"
+
+#: src/app/pages/vote/_components/VotingPowerPanel/index.tsx
+#~ msgid "Average lock-up time"
+#~ msgstr ""
+
+#: src/app/components/CurrencyBalanceErrorMessage/index.tsx
+msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."
+msgstr "Potrzebujesz co najmniej {MINIMUM_ICX_FOR_TX} ICX w swoim portfelu, aby przeprowadzić tę transakcję."
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+#~ msgid "Deposit in progress"
+#~ msgstr ""
+
+#: src/store/mint/hooks.tsx
+#~ msgid "Connect Wallet"
+#~ msgstr "Połącz portfel"
+
+#: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
+#~ msgid "Liquidity pools"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/utils.tsx
+msgid "Swapping {inputCurrency} for {outputCurrency}..."
+msgstr "Wymienianie {inputCurrency} na {outputCurrency}..."
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+#~ msgid "Liquidity supplied."
+#~ msgstr ""
+
+#: src/app/components/trade/XCallExecutionHandlerICON.tsx
+#~ msgid "Couldn't complete transaction. Revert requested."
+#~ msgstr ""
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+#~ msgid "Enacted"
+#~ msgstr "Wprowadzona w życie"
+
+#: src/app/components/CrossChainWalletConnect/index.tsx
+#~ msgid "Enter a recipient address:"
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
+#~ msgid "Vote for this pool to receive bribes."
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/SendPanel.tsx
+#~ msgid "Address"
+#~ msgstr "Adres"
+
+#: src/app/components/Header/index.tsx
+#~ msgid "Copy address"
+#~ msgstr "Kopiuj adres"
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Earn or buy BALN, then lock it up here to boost your rewards."
+#~ msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "Deposited {0} {collateralType} as collateral."
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "100 bnUSD"
+#~ msgstr "100 bnUSD"
+
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#~ msgid "Awaiting archway manager message"
+#~ msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
+#~ msgid "bBALN holders received"
+#~ msgstr ""
+
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
+#~ msgid "Unstaking BALN..."
+#~ msgstr "Odstake'owywanie BALN..."
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#~ msgid "LIQUIDITY"
+#~ msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Lock up BALN"
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/ICONWallets/SendPanel.tsx
+#: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
+#~ msgid "Before"
+#~ msgstr "Przed"
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+#~ msgid "Active"
+#~ msgstr "Aktywna"
+
+#: src/hooks/useApproveCallback.tsx
+#: src/hooks/useApproveCallback.tsx
+msgid "{0} approved for cross-chain transfer."
+msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid ""
+#~ "If the {0} price reaches ${1}, all your collateral will be\n"
+#~ "liquidated."
+#~ msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "Locked"
+#~ msgstr "Zablokowane"
+
+#: src/app/pages/home/BBaln/BBalnPanel.tsx
+#~ msgid "${0}."
+#~ msgstr ""
+
+#: src/app/components/Wallet/index.tsx
+msgid "Search assets and blockchains..."
+msgstr ""
+
+#: src/app/components/home/_components/xLoanModal/index.tsx
+#~ msgid "Transfer fee: <0>{formattedXCallFee}</0>"
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/BribesPanel/index.tsx
+#~ msgid "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Slippage tolerance"
+msgstr "Tolerancja poślizgu cenowego"
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "For every bnUSD they redeem, they'll receive ${redeemLimit} of collateral. The bnUSD is burned, and {redeemRepaidAmt} bnUSD of borrower debt repaid."
+#~ msgstr ""
+
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#~ msgid "Transferring {0} to {1}..."
+#~ msgstr ""
+
+#: src/app/components/StabilityFund/index.tsx
+#~ msgid "Use the Stability Fund to swap a maximum of"
+#~ msgstr ""
+
+#: src/app/components/home/Savings/index.tsx
+#~ msgid "Withdrew {0} bnUSD."
+#~ msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "sign in"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/utils.tsx
+msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
+msgstr "Dodano {inputAmount} {inputCurrency} i {outputAmount} {outputCurrency} do Twojego portfela."
+
+#: src/app/components/ProposalModal/index.tsx
+#~ msgid "Change vote?"
+#~ msgstr "Chcesz zmienić głos?"
+
+#: src/app/pages/vote/_components/utils.ts
+#: src/utils/timeformat.ts
+#~ msgid "d"
+#~ msgstr "d"
+
+#: src/app/components/home/LoanPanel.tsx
+#~ msgid "Repaying bnUSD..."
+#~ msgstr "Zwracanie bnUSD..."
+
+#: src/app/components/ICONWallet/index.tsx
+#~ msgid "ICON wallet"
+#~ msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Locking BALN..."
+#~ msgstr ""
+
+#: src/app/pages/home/RewardsPanel.tsx
+#~ msgid "Claimed {0} BALN."
+#~ msgstr "Odebrano {0} BALN."
+
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+#~ msgid "You'll also pay"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#~ msgid "1H"
+#~ msgstr "1G"
+
+#: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
+#~ msgid "Cross-chain transactions (24H)"
+#~ msgstr ""
+
+#: src/app/components/StabilityFund/index.tsx
+#: src/app/components/StabilityFund/index.tsx
+#~ msgid "The Stability Fund lets you mint or burn bnUSD 1:1 for approved stablecoins, minus a 0.5% fee."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "Supply liquidity?"
+#~ msgstr "Czy chcesz dostarczyć płynność?"
+
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
+#~ msgid "Claim bribe?"
+#~ msgstr ""
+
+#: src/app/components/home/_components/xLoanModal/index.tsx
+#~ msgid "Borrow in progress"
+#~ msgstr ""
+
+#: src/app/components/trade/XCallEventManager.tsx
+#: src/app/components/trade/XCallExecutionHandlerICON.tsx
+#: src/app/pages/trade/bridge/_components/XCallItem.tsx
+#~ msgid "Execution failed"
+#~ msgstr ""
+
+#: src/app/pages/home/RewardsPanel.tsx
+#~ msgid "Lock up BALN to earn network fees."
+#~ msgstr ""
+
+#: src/app/components/home/Savings/index.tsx
+#~ msgid "Withdraw bnUSD"
+#~ msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Lock up Balance Tokens?"
+#~ msgstr ""
+
+#: src/app/components/XTransactionState/index.tsx
+#: src/app/components/XTransactionState/index.tsx
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+msgid "{0}"
+msgstr "{0}"
+
+#: src/app/pages/trade/layout.tsx
+#~ msgid "Bridge"
+#~ msgstr ""
+
+#: src/store/swap/hooks.ts
+msgid "Enter amount"
+msgstr "Wprowadź kwotę"
+
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "sign in with"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/utils.tsx
+msgid "Supplied {pair} liquidity."
+msgstr "Dostarczono płynności do pary {pair}."
+
+#: src/app/Routes.tsx
+msgid "Trade"
+msgstr "Handluj"
+
+#: src/app/components/LedgerConfirmMessage/index.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "Confirm the transaction on your Ledger."
+#~ msgstr "Zatwierdź transakcję na swoim Ledgerze."
+
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+#~ msgid "Swapping"
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+#~ msgid "Incentives are recalculated every week. You can adjust your allocation once every 10 days."
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/ICXWallet/index.tsx
+#: src/app/components/Wallet/ICONWallets/SendPanel.tsx
+#: src/app/components/Wallet/ICONWallets/SendPanel.tsx
+#: src/app/components/Wallet/ICONWallets/SICXWallet/index.tsx
+#~ msgid "Send"
+#~ msgstr "Wyślij"
+
+#: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
+#~ msgid "Your pools"
+#~ msgstr ""
+
+#: src/app/components/Wallet/index.tsx
+msgid "Manage wallets"
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "Recieve sICX, which you can trade or unstake from the wallet section later."
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+#~ msgid "Liquidity incentives"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+#~ msgid "Transfer time"
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/SendPanel.tsx
+#~ msgid "Sent {0} {1} to {address}."
+#~ msgstr "Wysłano {0} {1} do {address}."
+
+#: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
+#~ msgid "Claimed network fees."
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
+#~ msgid "Deposited {0} sICX as collateral."
+#~ msgstr "Zdeponowano {0} sICX jako zabezpieczenie."
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "Remove your assets to cancel this transaction."
+#~ msgstr "Usuń swoje aktywa, aby anulować tę transakcję."
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+#~ msgid "Withdrawing..."
+#~ msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "{0} BALN withdrawn."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#~ msgid "Withdraw:"
+#~ msgstr "Wycofaj:"
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Unlock {0} BALN"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+#~ msgid "to transfer cross-chain."
+#~ msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+#~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer crypto cross-chain."
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#~ msgid "Casting your vote..."
+#~ msgstr "Przesyłanie Twojego głosu..."
+
+#: src/app/components/Wallet/ICONWallets/SendPanel.tsx
+#~ msgid "Do not send sICX to an exchange."
+#~ msgstr "Nie wysyłaj sICX na giełdę."
+
+#: src/app/components/home/Savings/index.tsx
+#~ msgid "Withdrawing bnUSD..."
+#~ msgstr ""
+
+#: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/home/LoanPanel.tsx
+#~ msgid "Your loan will increase at a rate of <0>{0}</0> per year."
+#~ msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "Liquidated"
+#~ msgstr "Likwidacja"
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "The longer you lock up BALN, the more bBALN (Boosted BALN) you'll receive; the amount will decrease over time."
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "Title"
+#~ msgstr "Tytuł"
+
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+msgid "Swap {0} for {1}?"
+msgstr "Wymienić {0} na {1}?"
+
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+#~ msgid "Claimed Balanced incentives."
+#~ msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x."
+#~ msgstr ""
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+#~ msgid "Supply {0} {1}"
+#~ msgstr ""
+
+#: src/app/components/SearchModal/CurrencySearch.tsx
+#~ msgid "No results found."
+#~ msgstr "Nie znaleziono żadnych wyników."
+
+#: src/app/components/home/RewardsPanel/index.tsx
+#~ msgid "To earn rewards: supply liquidity, deposit bnUSD into the savings rate, or lock up BALN."
+#~ msgstr ""
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+#~ msgid "Failed to enact"
+#~ msgstr "Nie udało się wprowadzić w życie"
+
+#: src/app/components/home/_components/xLoanModal/index.tsx
+#~ msgid "Borrowing..."
+#~ msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Sign in to Balanced"
+msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "Risk ratio"
+#~ msgstr "Wskaźnik ryzyka"
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "Voting will begin at 5pm UTC,"
+#~ msgstr "Głosowanie rozpocznie się o godz. 17.00 czasu UTC,"
+
+#: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/ICONWallets/SendPanel.tsx
+#: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
+#~ msgid "After"
+#~ msgstr "Po"
+
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
+#~ msgid "{0} BALN added to your wallet."
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "Description"
+#~ msgstr "Opis"
+
+#: src/app/pages/trade/xswap/_components/utils.tsx
+msgid "Couldn't supply {pair} liquidity. Try again."
+msgstr "Nie udało się dostarczyć płynności do pary {pair}. Spróbuj ponownie."
+
+#: src/app/components/CommunityListToggle/index.tsx
+#~ msgid "Add community token list"
+#~ msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "You can't withdraw any collateral if you go beyond this threshold."
+#~ msgstr "Nie możesz wycofać żadnego zabezpieczenia, jeśli przekroczysz ten próg."
+
+#: src/app/components/home/Savings/index.tsx
+#~ msgid "Deposited {0} bnUSD."
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/utils.tsx
+msgid "Couldn't swap {inputCurrency} for {outputCurrency}. Try again."
+msgstr "Nie udało się wymienić {inputCurrency} na {outputCurrency}. Spróbuj ponownie."
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "interest"
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/SICXWallet/index.tsx
+#: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
+#~ msgid "Unstake"
+#~ msgstr "Odstake'uj"
+
+#: src/app/components/CollateralTypeSwitcher/CollateralTypeListWrap.tsx
+#~ msgid "All collateral"
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallMethodParameter.tsx
+#~ msgid "Add <0>{0}</0> item"
+#~ msgstr ""
+
+#: src/app/components/trade/XCallExecutionHandlerICON.tsx
+#~ msgid "Revert transaction."
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/TokenList/index.tsx
+#~ msgid "It does not reflect the total market cap for multi-chain assets."
+#~ msgstr ""
+
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "Cross-chain swap requested."
+#~ msgstr ""
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/Savings/index.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#~ msgid "Withdraw"
+#~ msgstr "Wycofaj"
+
+#: src/app/components/XCallDescription/index.tsx
+#~ msgid "<0>GMP</0> (general message passing) is a cross-chain messenger that interacts with smart contracts on supported chains."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "then click Supply."
+#~ msgstr "następnie kliknij Dostarcz."
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Withdraw BALN"
+#~ msgstr ""
+
+#: src/app/components/CollateralTypeSwitcher/CollateralTypeList.tsx
+#~ msgid "No positions found."
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "Check that your contract calls are set up correctly before you submit the proposal."
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
+#~ msgid "Not now"
+#~ msgstr "Nie teraz"
+
+#: src/app/components/Header/index.tsx
+msgid "Unsupported network"
+msgstr ""
+
+#: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
+#: src/app/components/ICONWallet/index.tsx
+#~ msgid "No assets available."
+#~ msgstr "Brak dostępnych aktywów."
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Fee"
+msgstr "Prowizja"
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+#: src/app/components/home/_components/xLoanModal/index.tsx
+#~ msgid "Cross-chain fee: <0>{formattedXCallFee}</0>"
+#~ msgstr ""
+
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
+#~ msgid "Unstake BALN"
+#~ msgstr ""
+
+#: src/app/components/home/Savings/index.tsx
+#~ msgid "Depositing bnUSD..."
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/utils.ts
+#: src/utils/timeformat.ts
+#~ msgid "less then a minute"
+#~ msgstr "mniej niż minutę"
+
+#: src/btp/src/connectors/helper.ts
+#~ msgid "Couldn't transfer {0} to {1}. Try again."
+#~ msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "Each redemption is spread across a group of borrowers to minimise the impact. The smaller your loan, the less it will affect you."
+#~ msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+#~ msgid "Swap & transfer crypto cross-chain."
+#~ msgstr ""
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+#~ msgid "Withdrawing"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/XChainList.tsx
+#~ msgid "Search blockchains..."
+#~ msgstr ""
+
+#: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/home/LoanPanel.tsx
+#~ msgid "Your loan will increase at a rate of {0} per year."
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/utils.tsx
+msgid "{outputAmount} {outputCurrency} added to your wallet."
+msgstr "Dodano {outputAmount} {outputCurrency} do Twojego portfela."
+
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+#~ msgid "for maximum rewards."
+#~ msgstr ""
+
+#: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
+#~ msgid "You have no pending or failed cross-chain transactions."
+#~ msgstr ""
+
+#: src/store/mint/hooks.tsx
+#~ msgid "Invalid pair"
+#~ msgstr "Nieprawidłowa para"
+
+#: src/app/components/Wallet/ICONWallets/SendPanel.tsx
+#~ msgid "Send {0}"
+#~ msgstr "Wyślij {0}"
+
+#: src/app/components/home/Savings/index.tsx
+#~ msgid "distributed over the last 30 days."
+#~ msgstr ""
+
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "{0} {1} for {2} {3}"
+#~ msgstr ""
+
+#: src/app/components/XCallDescription/index.tsx
+#~ msgid "<0>IBC</0> is the Cosmos interoperability protocol."
+#~ msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "If bnUSD ever falls below ${redeemLimit}, traders can use the smart contracts to redeem it for borrower collateral."
+#~ msgstr ""
+
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+#~ msgid "Claim Balanced incentives?"
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/LPPanel.tsx
+#~ msgid "Wallet: {0} {1}"
+#~ msgstr "Portfel: {0} {1}"
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+#~ msgid "The fee APR is calculated from the swap fees earned by a pool in the last 30 days."
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/TokenList/index.tsx
+#~ msgid "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "Forum link"
+#~ msgstr "Link do forum"
+
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
+#~ msgid "Not enough gas to complete the swap."
+#~ msgstr ""
+
+#: src/app/components/XCallDescription/index.tsx
+#~ msgid "<0>xCall</0> is a cross-chain messaging service that can interact with smart contracts on other blockchains."
+#~ msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "You’ll receive sICX when you withdraw, which you can unstake or swap for ICX on the Trade page."
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#~ msgid "({0}% required)"
+#~ msgstr "(wymagane {0}%)"
+
+#: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
+#~ msgid "Claimed {0} ICX."
+#~ msgstr "Odebrano {0} ICX."
+
+#: src/app/components/home/Savings/index.tsx
+#~ msgid "Withdraw bnUSD?"
+#~ msgstr ""
+
+#: src/store/swap/hooks.ts
+msgid "Select a token"
+msgstr "Wybierz token"
+
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+#~ msgid "Swap in progress"
+#~ msgstr ""
+
+#: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/home/LoanPanel.tsx
+#: src/app/components/home/LoanPanel.tsx
+#~ msgid "Borrow"
+#~ msgstr "Zaciągnij pożyczkę"
+
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+msgid "Includes a fee of {0} {1}."
+msgstr "Zawiera prowizję w wysokości {0} {1}."
+
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
+#~ msgid "Contract address"
+#~ msgstr ""
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+#~ msgid "Withdraw in progress"
+#~ msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "Deposited {0} ICX as collateral."
+#~ msgstr "Zdeponowano {0} ICX jako zabezpieczenie."
+
+#: src/btp/src/connectors/helper.ts
+#~ msgid "Removed {0} from the bridge contract."
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
+#~ msgid "Unstake sICX"
+#~ msgstr "Odstake'uj sICX"
+
+#: src/app/components/ProposalInfo/components.tsx
+#~ msgid "{0} voters"
+#~ msgstr "{0} głosujących"
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "Daily"
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
+#~ msgid "There's no ICX unstaking."
+#~ msgstr "Obecnie żadne ICX nie są odstake'owywane."
+
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+msgid "{0} {1} per {2}"
+msgstr "{0} {1} za {2}"
+
+#: src/btp/src/connectors/helper.ts
+#~ msgid "Couldn't remove {0} from {1}. Try again."
+#~ msgstr ""
+
+#: src/app/components/ProposalInfo/components.tsx
+#~ msgid "{value}% voted"
+#~ msgstr "{value}% zagłosowało"
+
+#: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/home/LoanPanel.tsx
+#~ msgid "Borrow fee:"
+#~ msgstr ""
+
+#: src/app/components/home/Savings/index.tsx
+#~ msgid "Savings rate"
+#~ msgstr ""
+
+#: src/app/pages/home/RewardsPanel.tsx
+#: src/app/pages/home/RewardsPanel.tsx
+#~ msgid "Ineligible"
+#~ msgstr "Niespełnione warunki"
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+#~ msgid "Pending"
+#~ msgstr "W oczekiwaniu"
+
+#: src/app/components/home/_components/xLoanModal/index.tsx
+#~ msgid "Repaying"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/utils.tsx
+msgid "Transfer {inputCurrency} to {network}..."
+msgstr ""
+
+#: src/store/swap/hooks.ts
+msgid "Insufficient {0}"
+msgstr "Niewystarczająca ilość {0}"
+
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+msgid "ICON"
+msgstr ""
+
+#: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/home/LoanPanel.tsx
+#~ msgid "Repay Balanced Dollars?"
+#~ msgstr "Czy chcesz zwrócić dolary Balanced?"
+
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#~ msgid "You pay"
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/VotingPowerPanel/index.tsx
+#~ msgid "Total locked"
+#~ msgstr ""
+
+#: src/app/components/SearchModal/CurrencySearch.tsx
+#~ msgid "Search name or contract"
+#~ msgstr "Szukaj nazwy lub kontraktu"
+
+#: src/store/bridge/hooks.tsx
+#~ msgid "Connect wallet"
+#~ msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "Withdrawing collateral..."
+#~ msgstr "Wycofywanie zabezpieczenia..."
+
+#: src/app/pages/claim-legacy-fees/page.tsx
+#~ msgid "No fees to claim"
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
+#~ msgid "Unstaking {0} sICX. Check the ICX entry in your wallet for details."
+#~ msgstr "Odstake'owywanie {0} sICX. Sprawdź pozycję ICX w swoim portfelu, aby uzyskać szczegółowe informacje."
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "How long the vote should last (1 – 14 days)."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#~ msgid "POOL"
+#~ msgstr ""
+
+#: src/app/pages/claim-legacy-fees/page.tsx
+#~ msgid "Claimed fees."
+#~ msgstr "Odebrano prowizje."
+
+#: src/app/components/Header/index.tsx
+msgid "Multi-chain wallet"
+msgstr ""
+
+#: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/home/LoanPanel.tsx
+#~ msgid "Borrow Balanced Dollars?"
+#~ msgstr "Czy chcesz pożyczyć dolary Balanced?"
+
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
+#~ msgid "Contract doesn't exist on this network."
+#~ msgstr ""
+
+#: src/btp/src/connectors/helper.ts
+#~ msgid "Approving {0} for cross-chain transfers..."
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+#~ msgid "Future incentives"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Minimum to receive"
+msgstr "Minimum do otrzymania"
+
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
+#~ msgid "Supply liquidity for these assets in any quantity to create a new pool."
+#~ msgstr "Dostarcz płynność dla tych aktywów w dowolnej ilości, aby utworzyć nową pulę."
+
+#: src/app/components/CrossChainWalletConnect/index.tsx
+#~ msgid "Or connect your"
+#~ msgstr ""
+
+#: src/app/pages/home/BBaln/BBalnPanel.tsx
+#~ msgid "Your share of the fees distributed to bBALN holders, calculated with Your bBALN ÷ Total bBALN."
+#~ msgstr ""
+
+#: src/app/pages/home/LoanPanel.tsx
+#~ msgid "To take out a loan, deposit collateral."
+#~ msgstr "Aby zaciągnąć pożyczkę, zdeponuj zabezpieczenie."
+
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#~ msgid "{0} ICX added to your wallet."
+#~ msgstr "Dodano {0} ICX do Twojego portfela."
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "Create liquidity pool?"
+#~ msgstr "Utworzyć pulę płynności?"
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Locked until"
+#~ msgstr ""
+
+#: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
+#~ msgid "Activity"
+#~ msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "All time"
+#~ msgstr "Od początku"
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+#: src/app/components/ProposalStatusIcon/index.tsx
+#~ msgid "Voting starts in {startTimeStr}"
+#~ msgstr "Głosowanie rozpocznie się za {startTimeStr}"
+
+#: src/app/components/CollateralTypeSwitcher/CollateralTypeListWrap.tsx
+#~ msgid "Your collateral"
+#~ msgstr ""
+
+#: src/btp/src/connectors/helper.ts
+#~ msgid "Couldn't SEND {0} for cross-chain transfers."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#~ msgid "Withdrawing sICX..."
+#~ msgstr "Wycofywanie sICX..."
+
+#: src/app/pages/trade/xswap/_components/utils.tsx
+msgid "{currency} sent to the {pair} pool."
+msgstr "{currency} wysłano do puli {pair}."
+
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#~ msgid "For"
+#~ msgstr "Na"
+
+#: src/app/pages/vote/_components/LieVotingPanel/PowerLeftComponent.tsx
+#~ msgid "Voting power available: {0}"
+#~ msgstr ""
+
+#: src/app/pages/trade/bridge/_components/XChainList.tsx
+#~ msgid "Search for blockchains..."
+#~ msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+#~ msgid "You'll only be able to interact with the default assets listed on Balanced."
+#~ msgstr ""
+
+#: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
+#~ msgid "You'll"
+#~ msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "from network fees over the last 30 days."
+#~ msgstr ""
+
+#: src/app/components/ProposalModal/index.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#~ msgid "Approve"
+#~ msgstr "Za"
+
+#: src/hooks/useTransactionStore.tsx
+#: src/store/transactions/hooks.tsx
+msgid "Processing transaction..."
+msgstr "Przetwarzanie transakcji..."
+
+#: src/app/components/StabilityFund/index.tsx
+#: src/app/components/StabilityFund/index.tsx
+#~ msgid "Or"
+#~ msgstr ""
+
+#: src/app/components/trade/XCallEventManager.tsx
+#~ msgid "Awaiting confirmation on {0}."
+#~ msgstr ""
+
+#: src/app/pages/home/LoanPanel.tsx
+#~ msgid "For every bnUSD they redeem, they'll receive $0.90 of collateral. The bnUSD is burned, and 0.995 bnUSD of borrower debt repaid."
+#~ msgstr ""
+
+#: src/app/components/Logo/index.tsx
+#~ msgid "Back to the Balanced website"
+#~ msgstr "Powrót do strony Balanced"
+
+#: src/app/components/SearchModal/CurrencyList.tsx
+#~ msgid "Price"
+#~ msgstr ""
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "Awaiting message from ICON network"
+#~ msgstr ""
+
+#: src/app/pages/home/PositionDetailPanel.tsx
+#~ msgid "Loan rewards"
+#~ msgstr "Nagrody za zaciągniętą pożyczkę"
+
+#: src/app/pages/home/LoanPanel.tsx
+#~ msgid "Used"
+#~ msgstr "Wykorzystane"
+
+#: src/app/components/trade/XCallEventManager.tsx
+#~ msgid "Awaiting execution on Archway."
+#~ msgstr ""
+
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#~ msgid "Transferring"
+#~ msgstr ""
+
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#~ msgid "Transfer in progress"
+#~ msgstr ""
+
+#: src/store/swap/hooks.ts
+msgid "Choose address"
+msgstr ""
+
+#: src/app/components/SearchModal/CurrencySearch.tsx
+#~ msgid "Your assets"
+#~ msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "You'll need to relock BALN to hold voting power and boost your earning potential."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
+#~ msgid ""
+#~ "{0} / {1}\n"
+#~ "liquidity pool{2}"
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/SendPanel.tsx
+#~ msgid "Send asset?"
+#~ msgstr "Wysłać aktywa?"
+
+#: src/app/components/Header/index.tsx
+msgid "{0} wallet"
+msgstr ""
+
+#: src/app/components/home/Savings/index.tsx
+#~ msgid "{0}<0/>{1}"
+#~ msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+#~ msgid "Swap & transfer assets cross-chain."
+#~ msgstr ""
+
+#: src/app/components/Wallet/index.tsx
+msgid "Asset"
+msgstr "Aktywo"
+
+#: src/app/components/home/LoanPanel.tsx
+#~ msgid "Borrowing bnUSD..."
+#~ msgstr "Pożyczanie bnUSD..."
+
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#~ msgid "{0} sICX added to your wallet."
+#~ msgstr "Dodano {0} sICX do Twojego portfela."
+
+#: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/supply/_components/LPPanel.tsx
+#: src/app/pages/trade/supply/_components/LPPanel.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "Supply"
+#~ msgstr "Dostarcz"
+
+#: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
+#~ msgid "Unstake sICX?"
+#~ msgstr "Czy chcesz odstake'ować sICX?"
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#~ msgid "The BALN APY is calculated from the USD value of BALN rewards allocated to a pool. Your rate will vary based on the amount of bBALN you hold."
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
+#: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
+#~ msgid "Claim ICX"
+#~ msgstr "Odbierz ICX"
+
+#: src/app/pages/trade/_components/XCallSwapModal.tsx
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#: src/app/pages/trade/bridge-v2/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#~ msgid "xCall in progress"
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+#~ msgid "Fees:"
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+#~ msgid "The BALN APR is calculated from the USD value of BALN rewards allocated to a pool. Your rate will vary based on the amount of bBALN you hold."
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+#~ msgid "47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
+#~ msgstr ""
+
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "Transferred {0} {1} to Archway."
+#~ msgstr ""
+
+#: src/app/pages/home/RewardsPanel.tsx
+#~ msgid "Balance Tokens"
+#~ msgstr "Tokeny Balance"
+
+#: src/app/components/Wallet/ICONWallets/SendPanel.tsx
+#~ msgid "Sending {0}..."
+#~ msgstr "Wysyłanie {0}..."
+
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "Your ICX will be converted to sICX (Staked ICX)."
+#~ msgstr ""
+
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
+#~ msgid "BALN staking has been upgraded to a lock-up model called Boosted BALN."
+#~ msgstr ""
+
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#~ msgid "Send {0} to {1}."
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+msgid "Cancel"
+msgstr "Anuluj"
+
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+#~ msgid "Current incentives"
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "It costs 100 bnUSD to submit a proposal."
+#~ msgstr "Zgłoszenie propozycji kosztuje 100 bnUSD."
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+#~ msgid "Voting has ended"
+#~ msgstr "Głosowanie zakończone"
+
+#: src/store/swap/hooks.ts
+msgid "Insufficient liquidity"
+msgstr "Niewystarczająca płynność"
+
+#: src/store/swap/hooks.ts
+msgid "Reduce price impact"
+msgstr ""
+
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#~ msgid "Smart contract details"
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
+#~ msgid "Claiming bribe..."
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "0 {0}"
+msgstr ""
+
+#: src/app/components/CollateralTypeSwitcher/SingleChainItem.tsx
+#~ msgid "available"
+#~ msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Unlock Balance Tokens?"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "If the price slips by more than this amount, your swap will fail."
+msgstr "Jeśli cena spadnie o więcej niż o tę kwotę, Twoja wymiana nie powiedzie się."
+
+#: src/app/components/ProposalModal/index.tsx
+#~ msgid "Voting weight"
+#~ msgstr "Waga głosu"
+
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+#~ msgid "Your position requires"
+#~ msgstr ""
+
+#: src/app/components/CollateralTypeSwitcher/CollateralTypeList.tsx
+#~ msgid "No positions found"
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
+#~ msgid "Total supply"
+#~ msgstr "Całkowita podaż"
+
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#~ msgid "From"
+#~ msgstr ""
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+#~ msgid "Rejected"
+#~ msgstr "Odrzucona"
+
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#~ msgid "Transferring..."
+#~ msgstr ""
+
+#: src/app/components/home/_components/xLoanModal/index.tsx
+#~ msgid "Repay in progress"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+#~ msgid "Includes a fee of"
+#~ msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "To deposit {collateralType}"
+#~ msgstr ""
+
+#: src/app/components/Wallet/index.tsx
+msgid "Sign out"
+msgstr "Wyloguj się"
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Use Balanced in"
+msgstr "Język Balanced"
+
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallMethodSelector.tsx
+#~ msgid "Method"
+#~ msgstr ""
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+#~ msgid "N/A"
+#~ msgstr ""
+
+#: src/app/components/Wallet/index.tsx
+msgid "Balance"
+msgstr "Saldo"
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Earn or buy BALN, then lock it up here to boost your earning potential and voting power."
+#~ msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+#~ msgid "Remove token list"
+#~ msgstr ""
+
+#: src/app/components/home/LoanPanel.tsx
+#~ msgid "Repayable"
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "Withdrawing {0}"
+#~ msgstr "Wycofywanie {0}"
+
+#: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
+#~ msgid "Incentivised pools"
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/utils.ts
+#: src/utils/timeformat.ts
+#~ msgid "m"
+#~ msgstr "min"
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Use at your own risk. Project contributors are not liable for any lost or stolen funds."
+msgstr "Używasz na własne ryzyko. Współtwórcy projektu nie ponoszą odpowiedzialności za utracone lub skradzione środki."
+
+#: src/app/components/ICXDisplayTypeSwitcher/index.tsx
+#~ msgid "View and manage your collateral as ICX or sICX (Staked ICX)."
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
+#~ msgid "unstakes within {0}"
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "Submit"
+#~ msgstr "Zgłoś"
+
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
+#~ msgid "Invalid contract address"
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "You must have at least {0} bBALN to propose a change."
+#~ msgstr ""
+
+#: src/app/components/Header/index.tsx
+msgid "Copy"
+msgstr ""
+
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+#: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
+#: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
+#: src/app/components/home/RewardsPanel/SavingsRewards.tsx
+#: src/app/components/home/RewardsPanel/SavingsRewards.tsx
+#: src/app/pages/claim-legacy-fees/page.tsx
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
+#: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
+#~ msgid "Claim"
+#~ msgstr "Odbierz"
+
+#: src/app/Routes.tsx
+msgid "Home"
+msgstr "Strona główna"
+
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "To deposit {collateralType} from {0},"
+#~ msgstr ""
+
+#: src/store/mint/hooks.tsx
+#: src/store/mint/hooks.tsx
+#~ msgid "Enter an amount"
+#~ msgstr "Wprowadź kwotę"
+
+#: src/app/pages/trade/bridge/_components/XCallItem.tsx
+#~ msgid "Execution failed."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/LPPanel.tsx
+#~ msgid ""
+#~ "Wallet: {0} {1} /\n"
+#~ "{2} {3}"
+#~ msgstr ""
+#~ "Portfel: {0} {1} /\n"
+#~ "{2} {3}"
+
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#~ msgid "Awaiting icon manager message"
+#~ msgstr ""
+
+#: src/app/pages/home/LoanPanel.tsx
+#~ msgid "If bnUSD ever falls below $0.90, traders can use the smart contracts to redeem it for borrower collateral."
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "Executed."
+#~ msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Unlocked {0} BALN."
+#~ msgstr ""
+
+#: src/app/components/WalletModal/IconWalletModal.tsx
+#~ msgid "Choose a wallet from your Ledger:"
+#~ msgstr "Wybierz portfel ze swojego Ledgera:"
+
+#: src/app/components/trade/XCallExecutionHandlerICON.tsx
+#~ msgid "Revert"
+#~ msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "To apply your increased voting power to liquidity incentives, update your allocation for each pool."
+#~ msgstr ""
+
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
+#~ msgid "Unstake your BALN, then lock it up for 1 week – 4 years. You'll receive bBALN, which determines your voting power, network fee earnings, and BALN rewards."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
+#~ msgid "Sign in to view your liquidity details."
+#~ msgstr "Zaloguj się, aby zobaczyć szczegóły dotyczące swojej płynności."
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Current unlock date"
+#~ msgstr ""
+
+#: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
+#~ msgid "Claim network fees?"
+#~ msgstr "Odebrać prowizje sieciowe?"
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Price impact"
+msgstr "Wpływ na cenę"
+
+#: src/app/pages/home/RewardsPanel.tsx
+#~ msgid "Claim Balance Tokens?"
+#~ msgstr "Odebrać tokeny Balance?"
+
+#: src/store/bridge/hooks.tsx
+#~ msgid "Enter recipient"
+#~ msgstr ""
+
+#: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
+#~ msgid "You"
+#~ msgstr ""
+
+#: src/app/components/home/Savings/index.tsx
+#~ msgid "You can withdraw at any time."
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/BribesPanel/index.tsx
+#~ msgid "Bribes are released every Thursday at 12am UTC, and must be claimed within 7 days."
+#~ msgstr ""
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "Deposit"
+#~ msgstr "Zdeponuj"
+
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+msgid "Swap & transfer cross-chain."
+msgstr ""
+
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#~ msgid "Withdraw liquidity?"
+#~ msgstr "Czy chcesz wycofać płynność?"
+
+#: src/app/components/home/Savings/index.tsx
+#~ msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+msgid "Receive"
+msgstr "Otrzymaj"
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+#~ msgid "You receive maximum rewards for your position."
+#~ msgstr ""
+
+#: src/app/Routes.tsx
+msgid "Vote"
+msgstr "Głosuj"
+
+#: src/btp/src/connectors/helper.ts
+#~ msgid "Your transaction has successed."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#~ msgid "The fee APY is calculated from the swap fees earned by a pool in the last 30 days."
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "Duration"
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
+#~ msgid "On Hana:"
+#~ msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "Depositing collateral..."
+#~ msgstr "Deponowanie zabezpieczenia..."
+
+#: src/store/mint/hooks.tsx
+#: src/store/mint/hooks.tsx
+#~ msgid "Insufficient {0} balance"
+#~ msgstr "Niewystarczające saldo {0}"
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "5 days is standard. Use less for an emergency vote, more for maximum participation."
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
+#~ msgid "{inputValue}% of bBALN allocated to {editing}."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "Creating pool"
+#~ msgstr "Tworzenie puli"
+
+#: src/app/components/ICXDisplayTypeSwitcher/index.tsx
+#~ msgid "The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset."
+#~ msgstr ""
+
+#: src/btp/src/connectors/helper.ts
+#~ msgid "Sent {0} to the bridge contract."
+#~ msgstr ""
+
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "Swap {0} for {1}"
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#~ msgid "Impermanent loss is not factored in."
+#~ msgstr ""
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+#~ msgid "Depositing"
+#~ msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Connected to {numberOfConnectedWallets} blockchain"
+msgstr ""
+
+#: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
+#~ msgid "from network fees in the last 30 days."
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+#~ msgid "Swapping..."
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "Verifying contract calls..."
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
+#~ msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "and ends after {duration} days."
+#~ msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "Loan interest"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/utils.tsx
+msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
+msgstr "Wycofywanie płynności {inputCurrency} / {outputCurrency}..."
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Connected to {numberOfConnectedWallets} blockchains"
+msgstr ""
+
+#: src/app/pages/trade/xswap/_components/utils.tsx
+msgid "Couldn't send {currency} to the {pair} pool. Try again."
+msgstr "Nie udało się wysłać {currency} do puli {pair}. Spróbuj ponownie."
+
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
+#~ msgid "Total daily rewards"
+#~ msgstr "Całkowite dzienne nagrody"
+
+#: src/app/components/StabilityFund/index.tsx
+#~ msgid "Swap {sendSymbol} for {0}?"
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+#~ msgid "Pool"
+#~ msgstr "Pula"
+
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
+#~ msgid "Sign the transaction, then check the banner notification message for the result."
+#~ msgstr ""
+
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#~ msgid "Swap {0} for {1}."
+#~ msgstr ""
+
+#: src/app/components/StabilityFund/index.tsx
+#~ msgid "1 {sendSymbol} per {0}"
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
+#~ msgid "Your supply"
+#~ msgstr "Twoja podaż"
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Minus unlock fee of {0} BALN"
+#~ msgstr ""
+
+#: src/app/components/Notification/TransactionNotification.tsx
+msgid "{title}"
+msgstr ""
+
+#: src/store/bridge/hooks.tsx
+#~ msgid "Enter address"
+#~ msgstr ""
+
+#: src/app/components/CommunityListToggle/index.tsx
+#~ msgid "Add token list"
+#~ msgstr ""
+
+#: src/app/components/Notification/TransactionNotification.tsx
+msgid "Couldn't complete your transaction."
+msgstr "Nie można sfinalizować transakcji."
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "Submit proposal?"
+#~ msgstr "Czy chcesz zgłosić propozycję?"
+
+#: src/app/components/home/BBaln/UnstakePrompt.tsx
+#~ msgid "Unstake BALN?"
+#~ msgstr ""
+
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#~ msgid "Cross-chain transfer requested."
+#~ msgstr ""
+
+#: src/app/components/trade/XCallEventManager.tsx
+#: src/app/components/trade/XCallExecutionHandlerICON.tsx
+#~ msgid "Confirming..."
+#~ msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+#~ msgid "View disclaimer"
+#~ msgstr "Wyświetl wyłączenie odpowiedzialności"
+
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+#~ msgid "Your positions require"
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#~ msgid "Withdrawing ICX..."
+#~ msgstr "Wycofywanie ICX..."
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Your BALN will be locked until"
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this happens."
+#~ msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "{0} BALN locked until {1}."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "{0} {1} added to your wallet"
+#~ msgstr "Dodano {0} {1} do Twojego portfela"
+
+#: src/app/components/home/LoanPanel.tsx
+#~ msgid "Repaid {0} bnUSD."
+#~ msgstr "Zwrócono {0} bnUSD."
+
+#: src/app/components/home/RewardsPanel/SavingsRewards.tsx
+#~ msgid "Claiming Savings Rate rewards..."
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/utils.tsx
+msgid "Transfer {inputAmount} {inputCurrency} to {network} with {address}."
+msgstr ""
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+#~ msgid "Voting ends in {endTimeStr}"
+#~ msgstr "Głosowanie zakończy się za {endTimeStr}"
+
+#: src/app/components/Notification/TransactionNotification.tsx
+msgid "Contract calls verified."
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/LoanPanel.tsx
+#~ msgid "Adjust"
+#~ msgstr "Dostosuj"
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+#~ msgid "none"
+#~ msgstr ""
+
+#: src/app/pages/claim-legacy-fees/page.tsx
+#~ msgid "Claiming fees..."
+#~ msgstr "Odbieranie prowizji..."
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "You need"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#~ msgid "No price chart available for this pair."
+#~ msgstr "Wykres cenowy nie jest dostępny dla tej pary."
+
+#: src/btp/src/connectors/helper.ts
+#~ msgid "Transferred {0} {1} to {2}."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#~ msgid "APY"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Route"
+msgstr "Ścieżka"
+
+#: src/app/pages/claim-legacy-fees/page.tsx
+#~ msgid "All fees claimed"
+#~ msgstr ""
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "Deposit {0} collateral?"
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
+#~ msgid "Allocating bBALN..."
+#~ msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+msgid "Borrow, swap, & transfer cross-chain."
+msgstr ""
+
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#~ msgid "You approved"
+#~ msgstr "Zagłosowałeś za"
+
+#: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
+#: src/app/components/ICONWallet/index.tsx
+#~ msgid "Sign in with"
+#~ msgstr "Zaloguj się poprzez"
+
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#~ msgid "Line"
+#~ msgstr "Linia"
+
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
+#~ msgid "liquidity pool"
+#~ msgstr "pula płynności"
+
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#~ msgid "Candles"
+#~ msgstr "Świece"
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+#~ msgid "Supplying liquidity..."
+#~ msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "Past month"
+#~ msgstr "Ostatni miesiąc"
+
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#~ msgid "You rejected"
+#~ msgstr "Zagłosowałeś przeciw"
+
+#: src/app/components/StabilityFund/index.tsx
+#~ msgid "for"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+#~ msgid "Exchange rate"
+#~ msgstr "Kurs wymiany"
+
+#: src/app/components/Wallet/index.tsx
+msgid "Wallet"
+msgstr "Portfel"
+
+#: src/app/components/trade/SupplyLiquidityModal.tsx
+#~ msgid "Requesting cross-chain supply..."
+#~ msgstr ""
+
+#: src/btp/src/connectors/helper.ts
+#~ msgid "Transferring {0} from {1} to {2}..."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "Remove"
+#~ msgstr "Usuń"
+
+#: src/app/components/SearchModal/CurrencySearch.tsx
+#~ msgid "All assets"
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#~ msgid "Voting weight: {0} bBALN"
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "Submit proposal"
+#~ msgstr "Zgłoś propozycję"
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#~ msgid "FEES (24H)"
+#~ msgstr ""
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+#~ msgid "Switch to"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#~ msgid "1W"
+#~ msgstr "1T"
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+#~ msgid "Depositing..."
+#~ msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "Position details"
+#~ msgstr "Szczegóły pozycji"
+
+#: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
+#~ msgid "Adjust allocation"
+#~ msgstr ""
+
+#: src/app/components/SearchModal/CurrencySearch.tsx
+#~ msgid "Search name or contract..."
+#~ msgstr ""
+
+#: src/app/components/WalletModal/IconWalletModal.tsx
+#~ msgid "Make sure it's connected and try again."
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/page.tsx
+#~ msgid "Verify"
+#~ msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Your earning potential depends on your bBALN holdings and position size compared to everyone else's."
+#~ msgstr ""
+
+#: src/app/components/home/_components/LoanChainSelector/index.tsx
+#~ msgid "Receive / repay on:"
+#~ msgstr ""
+
+#: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
+#~ msgid "There are no pending cross-chain transactions."
+#~ msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "All collateral locked"
+#~ msgstr "Całe zabezpieczenie zablokowane"
+
+#: src/app/components/XCallDescription/index.tsx
+#~ msgid "<0>{0}</0> {1}."
+#~ msgstr ""
+
+#: src/app/pages/trade/layout.tsx
+msgid "DCA"
+msgstr ""
+
+#: src/app/pages/trade/_components/XCallSwapModalOld.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
+#~ msgid "Approve {0} for cross-chain transfer."
+#~ msgstr ""
+
+#: src/app/components/Toast/transactionToast.tsx
+#: src/store/transactions/hooks.tsx
+msgid "Learn how to resolve common transaction errors."
+msgstr ""
+
+#: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "Swap"
+msgstr "Wymiana"
+
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
+#~ msgid "There's no liquidity pool for this pair yet."
+#~ msgstr "Dla tej pary nie ma jeszcze puli płynności."
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Unlocking BALN early..."
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+#~ msgid "Bridge fee"
+#~ msgstr ""
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+#~ msgid "Quorum not reached"
+#~ msgstr "Kworum nie zostało osiągnięte"
+
+#: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
+#~ msgid "Claiming ICX..."
+#~ msgstr "Odbieranie ICX..."
+
+#: src/app/components/CommunityListToggle/index.tsx
+#~ msgid "Remove community token list?"
+#~ msgstr ""
+
+#: src/app/components/ProposalStatusIcon/index.tsx
+#~ msgid "Cancelled"
+#~ msgstr "Anulowana"
+
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#~ msgid "address"
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#~ msgid "Withdraw liquidity"
+#~ msgstr "Wycofaj płynność"
+
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
+#~ msgid "On Ledger:"
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
+#~ msgid "Test your contract calls before you submit the proposal."
+#~ msgstr ""
+
+#: src/app/components/Wallet/index.tsx
+msgid "Value"
+msgstr "Wartość"
+
+#: src/app/components/CommunityListToggle/index.tsx
+#~ msgid "Add community token list?"
+#~ msgstr ""
+
+#: src/app/components/trade/RebalanceButton.tsx
+#~ msgid "Rebalancing the bnUSD price..."
+#~ msgstr "Rebalansowanie ceny bnUSD..."
+
+#: src/app/components/trade/XCallEventManager.tsx
+#: src/app/pages/trade/bridge/_components/XCallItem.tsx
+#~ msgid "Transfer failed."
+#~ msgstr ""
+
+#: src/app/pages/trade/_components/XCallSwapState.tsx
+#: src/app/pages/trade/bridge-v2/_components/BridgeTransferState.tsx
+#~ msgid "{message}"
+#~ msgstr ""
+
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#~ msgid "Transfer asset cross-chain?"
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/BribesPanel/index.tsx
+#~ msgid "There are no bribes this week."
+#~ msgstr ""
+
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+#~ msgid "In"
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
+#~ msgid "Deposit as collateral"
+#~ msgstr "Zdeponuj jako zabezpieczenie"
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "Withdraw {0} collateral?"
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/LPPanel.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+#~ msgid "Create pool"
+#~ msgstr "Utwórz pulę"
+
+#: src/app/components/home/LoanPanel.tsx
+#~ msgid "To borrow bnUSD, deposit collateral."
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+#~ msgid "The fee APR is calculated from the swap fees earned by a pool over the last 30 days."
+#~ msgstr ""
+
+#: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
+#~ msgid "{0} ICX is ready to claim"
+#~ msgstr "{0} ICX czeka na odbiór"
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Pay a {0} BALN fee to unlock early."
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/utils.tsx
+msgid "Sending {currency} to the {pair} pool..."
+msgstr "Wysyłanie {currency} do puli {pair}..."
+
+#: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
+#~ msgid "Preparing to unstake sICX..."
+#~ msgstr "Przygotowywanie do odstake'owania sICX..."
+
+#: src/app/pages/home/BBaln/BBalnPanel.tsx
+#~ msgid ", so you would have received"
+#~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#~ msgid "VOLUME (24H)"
+#~ msgstr ""
+
+#: src/app/pages/trade/layout.tsx
+msgid "Limit"
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#~ msgid "Sign in on ICON, then lock up BALN to boost your rewards."
+#~ msgstr ""
+
+#: src/app/components/home/Savings/index.tsx
+#~ msgid "Sign in on ICON, then deposit bnUSD to earn rewards."
+#~ msgstr ""
+
+#: src/app/components/ArchwayWallet/index.tsx
+#: src/app/components/EVMWallet/index.tsx
+#~ msgid "Archway wallet"
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/[proposalId]/page.tsx
+#~ msgid "Vote cast."
+#~ msgstr "Głos oddany."
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Borrow, swap, & transfer cross-chain. Supply liquidity. Vote."
+msgstr ""
+
+#: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
+#~ msgid "Network fees"
+#~ msgstr "Prowizje sieciowe"
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Close"
+msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "The current {0} price is"
+#~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/utils.tsx
+msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
+msgstr "Wymieniono {inputAmount} {inputCurrency} na {outputAmount} {outputCurrency}."
+
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#~ msgid "Transfer"
+#~ msgstr ""
+
+#: src/app/pages/claim-legacy-fees/page.tsx
+#~ msgid "Claim (1 of {count})"
+#~ msgstr "Odbierz (1 z {count})"
+
+#: src/app/components/home/PositionDetailPanel.tsx
+#~ msgid "Yearly"
+#~ msgstr ""
+
+#: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
+#~ msgid "You'll see an error message before you sign the transaction. If it ends with Reverted(20), the contract calls have been verified."
+#~ msgstr ""
+
+#: src/btp/src/connectors/helper.ts
+#~ msgid "Couldn't APPROVE {0} for cross-chain transfers."
+#~ msgstr ""

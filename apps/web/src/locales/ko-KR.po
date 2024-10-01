@@ -217,8 +217,8 @@ msgid "Assets to send"
 msgstr "송금할 자산"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
-msgid "Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity pools."
-msgstr ""
+#~ msgid "Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity pools."
+#~ msgstr ""
 
 #: src/app/pages/vote/_components/VotingPowerPanel/index.tsx
 msgid "Total voting power"
@@ -439,8 +439,8 @@ msgstr "확인"
 #~ msgstr "사용을 위해 지갑을 연결하세요."
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
-msgid "Claiming Balanced incentives..."
-msgstr ""
+#~ msgid "Claiming Balanced incentives..."
+#~ msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Approved"
@@ -784,6 +784,10 @@ msgid ""
 "liquidated."
 msgstr ""
 
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+msgid "Claimed liquidity incentives."
+msgstr ""
+
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Locked"
 msgstr "잠김"
@@ -1065,8 +1069,8 @@ msgid "Swap {0} for {1}?"
 msgstr "{0} 을 {1} 로 스왑하시겠습니까?"
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
-msgid "Claimed Balanced incentives."
-msgstr ""
+#~ msgid "Claimed Balanced incentives."
+#~ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x."
@@ -1082,6 +1086,10 @@ msgstr "결과를 찾을 수 없습니다."
 
 #: src/app/components/home/RewardsPanel/index.tsx
 msgid "To earn rewards: supply liquidity, deposit bnUSD into the savings rate, or lock up BALN."
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+msgid "Lock up BALN to hold bBALN, a non-transferable token that earns network fees and boosts your BALN liquidity incentives."
 msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
@@ -1311,8 +1319,8 @@ msgid "If bnUSD ever falls below ${redeemLimit}, traders can use the smart contr
 msgstr ""
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
-msgid "Claim Balanced incentives?"
-msgstr ""
+#~ msgid "Claim Balanced incentives?"
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
 msgid "Wallet: {0} {1}"
@@ -1837,6 +1845,10 @@ msgstr ""
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "0 {0}"
+msgstr ""
+
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+msgid "Claiming liquidity incentives..."
 msgstr ""
 
 #: src/app/components/CollateralTypeSwitcher/SingleChainItem.tsx
@@ -2568,6 +2580,10 @@ msgstr "유동성 물량 인출"
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "Test your contract calls before you submit the proposal."
+msgstr ""
+
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+msgid "Claim liquidity incentives?"
 msgstr ""
 
 #: src/app/components/Wallet/ICONAssetModal.tsx

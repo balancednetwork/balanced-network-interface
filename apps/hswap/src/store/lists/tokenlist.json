@@ -1,0 +1,246 @@
+{
+  "name": "Balanced Tokens",
+  "timestamp": "2022-07-01T08:37:27.276Z",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "tags": {},
+  "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/baln.png",
+  "keywords": ["balanced", "default"],
+  "tokens": [
+    {
+      "address": "cx2609b924e33ef00b648a409245c7ea394c467824",
+      "chainId": 1,
+      "name": "Staked ICX",
+      "symbol": "sICX",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sicx.png"
+    },
+    {
+      "address": "cx88fd7df7ddff82f7cc735c871dc519838cb235bb",
+      "chainId": 1,
+      "name": "Balanced Dollar",
+      "symbol": "bnUSD",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
+    },
+    {
+      "address": "cxf61cd5a45dc9f91c15aa65831a30a90d59a09619",
+      "chainId": 1,
+      "name": "Balance Token",
+      "symbol": "BALN",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/baln.png"
+    },
+    {
+      "address": "cx1a29259a59f463a67bb2ef84398b30ca56b5830a",
+      "chainId": 1,
+      "name": "Omm Token",
+      "symbol": "OMM",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/omm.png"
+    },
+    {
+      "address": "cx2e6d0fc0eca04965d06038c8406093337f085fcf",
+      "chainId": 1,
+      "name": "Craft",
+      "symbol": "CFT",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/cft.png"
+    },
+    {
+      "address": "cx997a8aecff2ba3259fe0ac958846653c243bcb88",
+      "chainId": 2,
+      "name": "Craft",
+      "symbol": "CFT",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/cft.png"
+    },
+    {
+      "address": "cxb7d63658e3375f701af9d420ea351d0736760634",
+      "chainId": 7,
+      "name": "Staked ICX",
+      "symbol": "sICX",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sicx.png"
+    },
+    {
+      "address": "cxd06f80e28e989a67e297799ab1fb501cdddc2b4d",
+      "chainId": 7,
+      "name": "Balanced Dollar",
+      "symbol": "bnUSD",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
+    },
+    {
+      "address": "cx026a11686efc8f52243415adb217ec9a1bc50433",
+      "chainId": 7,
+      "name": "Balance Token",
+      "symbol": "BALN",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/baln.png"
+    },
+    {
+      "address": "cx0fa7815de5b2be6e51dc52caa0dc556012ae0f98",
+      "chainId": 7,
+      "name": "Omm Token",
+      "symbol": "OMM",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/omm.png"
+    },
+    {
+      "address": "cx60d6cd6f54514eef43f5160dd60fc25c8a00f430",
+      "chainId": 2,
+      "name": "Omm Token",
+      "symbol": "OMM",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/omm.png"
+    },
+    {
+      "address": "cx5b5a03cb525a1845d0af3a872d525b18a810acb0",
+      "chainId": 1,
+      "name": "btp-0x38.bsc-BTCB",
+      "symbol": "BTCB",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/btcb.png"
+    },
+    {
+      "address": "cx07b184a37f03c6ab681fcbd0b45aec6dc3eafbeb",
+      "chainId": 1,
+      "name": "Bitcoin",
+      "symbol": "BTC",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/btcb.png"
+    },
+    {
+      "address": "cx288d13e1b63563459a2ac6179f237711f6851cb5",
+      "chainId": 1,
+      "name": "Ethereum",
+      "symbol": "ETH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/eth.png"
+    },
+    {
+      "address": "cxc3c552054ba6823107b56086134c2afc26ab1dfa",
+      "chainId": 2,
+      "name": "Balance Token",
+      "symbol": "BALN",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/baln.png"
+    },
+    {
+      "address": "cx87f7f8ceaa054d46ba7343a2ecd21208e12913c6",
+      "chainId": 2,
+      "name": "Balanced Dollar",
+      "symbol": "bnUSD",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnusd.png"
+    },
+    {
+      "address": "cx2d013cb55781fb54b81d629aa4b611be2daec564",
+      "chainId": 2,
+      "name": "Staked ICX",
+      "symbol": "sICX",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sicx.png"
+    },
+    {
+      "address": "cx99c79fd6dee53335f686c7f2cb513745622634f2",
+      "chainId": 2,
+      "name": "Ethereum",
+      "symbol": "TETH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/eth.png"
+    },
+    {
+      "address": "cx4761756e11195947dd27d765ac01e931b836065c",
+      "chainId": 7,
+      "name": "Staked Archway",
+      "symbol": "sARCH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sarch.png"
+    },
+    {
+      "address": "cx1f94585b61e47db9d5e036307f96a3251a0486a1",
+      "chainId": 2,
+      "name": "Staked Archway",
+      "symbol": "sARCH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sarch.png"
+    },
+    {
+      "address": "cxfe94530ee0d159db3e5b7dcffbcd0dfb360075c0",
+      "chainId": 1,
+      "name": "Staked Archway",
+      "symbol": "sARCH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sarch.png"
+    },
+    {
+      "address": "cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f",
+      "chainId": 1,
+      "name": "USDC",
+      "symbol": "USDC",
+      "decimals": 6,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/iusdc.png"
+    },
+    {
+      "address": "cx16f3cb9f09f5cdd902cf07aa752c8b3bd1bc9609",
+      "chainId": 1,
+      "name": "Tether USD",
+      "symbol": "USDT",
+      "decimals": 6,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/usdt.png"
+    },
+    {
+      "address": "cx2d552c485ec8bcaa75aac02424e2aca6ffdb2f1b",
+      "chainId": 1,
+      "name": "BNB",
+      "symbol": "BNB",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnb.png"
+    },
+    {
+      "address": "cx66a031cc3bd305c76371fb586e93801b948254f0",
+      "chainId": 1,
+      "name": "AVAX",
+      "symbol": "AVAX",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/avax.png"
+    },
+    {
+      "address": "cx4297f4b63262507623b6ad575d0d8dd2db980e4e",
+      "chainId": 1,
+      "name": "Injective",
+      "symbol": "INJ",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/inj.png"
+    },
+    {
+      "address": "cxe2da9f10bc6e2754347bde2ef73379bd398fd9f3",
+      "chainId": 1,
+      "name": "HVH",
+      "symbol": "HVH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/hvh.png"
+    },
+    {
+      "address": "cxf0a30d09ade391d7b570908b9b46cfa5b3cbc8f8",
+      "chainId": 1,
+      "name": "HiYield Treasury Bill",
+      "symbol": "hyTB",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/hyTB.png"
+    },
+    {
+      "address": "cx508002ec116fbf3ab406329c0df28e70d7e75fb3",
+      "chainId": 1,
+      "name": "SUI",
+      "symbol": "SUI",
+      "decimals": 9,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sui.png"
+    }
+  ]
+}

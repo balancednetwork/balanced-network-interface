@@ -1,0 +1,133 @@
+import { Percent } from '@balancednetwork/sdk-core';
+import bnJs from './bnJs';
+
+import { XWalletClient } from '@/xwagmi/core/XWalletClient';
+import { showMessageOnBeforeUnload, toDec } from '@/xwagmi/utils';
+import { XTransactionInput, XTransactionType } from '../../xcall/types';
+import { getRlpEncodedSwapData } from '../../xcall/utils';
+import { IconXService } from './IconXService';
+
+export class IconXWalletClient extends XWalletClient {
+  getXService(): IconXService {
+    return IconXService.getInstance();
+  }
+
+  getWalletClient() {
+    return this.getXService().iconService;
+  }
+
+  async approve(token, owner, spender, currencyAmountToApprove) {}
+
+  async _executeBridge(xTransactionInput: XTransactionInput) {
+    const {
+      direction,
+      inputAmount,
+      recipient: destinationAddress,
+      account,
+      xCallFee,
+      isLiquidFinanceEnabled,
+    } = xTransactionInput;
+
+    if (account && xCallFee) {
+      window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
+      const tokenAddress = inputAmount.wrapped.currency.address;
+      const destination = `${direction.to}/${destinationAddress}`;
+
+      let txResult;
+      const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
+
+      if (isBnUSD) {
+        const cx = bnJs.inject({ account }).getContract(tokenAddress);
+        txResult = await cx.crossTransfer(destination, `${inputAmount.quotient}`, xCallFee.rollback.toString());
+      } else {
+        txResult = await bnJs
+          .inject({ account })
+          .AssetManager[isLiquidFinanceEnabled ? 'withdrawNativeTo' : 'withdrawTo'](
+            `${inputAmount.quotient}`,
+            tokenAddress,
+            destination,
+            xCallFee.rollback.toString(),
+          );
+      }
+
+      const { result: hash } = txResult || {};
+
+      if (hash) {
+        return hash;
+      }
+    }
+  }
+
+  async _executeSwap(xTransactionInput: XTransactionInput) {
+    const { executionTrade, account, direction, recipient, slippageTolerance } = xTransactionInput;
+
+    if (!executionTrade || !slippageTolerance) {
+      return;
+    }
+
+    const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
+    const receiver = `${direction.to}/${recipient}`;
+
+    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
+    let txResult;
+    if (executionTrade.inputAmount.currency.symbol === 'ICX') {
+      const rlpEncodedData = getRlpEncodedSwapData(executionTrade).toString('hex');
+
+      txResult = await bnJs
+        .inject({ account })
+        .Router.swapICXV2(toDec(executionTrade.inputAmount), rlpEncodedData, toDec(minReceived), receiver);
+    } else {
+      const inputToken = executionTrade.inputAmount.currency.wrapped;
+      const outputToken = executionTrade.outputAmount.currency.wrapped;
+
+      const cx = bnJs.inject({ account }).getContract(inputToken.address);
+
+      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived).toString('hex');
+
+      txResult = await cx.swapUsingRouteV2(toDec(executionTrade.inputAmount), rlpEncodedData);
+    }
+
+    const { result: hash } = txResult || {};
+    if (hash) {
+      return hash;
+    }
+  }
+
+  async _executeBorrow(xTransactionInput: XTransactionInput) {
+    const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
+
+    if (!inputAmount || !usedCollateral) {
+      return;
+    }
+
+    if (account && xCallFee) {
+      window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
+      const txResult = await bnJs
+        .inject({ account: account })
+        .Loans.borrow(inputAmount.quotient.toString(), usedCollateral, 'bnUSD', recipient);
+
+      const { result: hash } = txResult || {};
+
+      if (hash) {
+        return hash;
+      }
+    }
+  }
+
+  async executeTransaction(xTransactionInput: XTransactionInput) {
+    const { type } = xTransactionInput;
+
+    if (type === XTransactionType.SWAP) {
+      return this._executeSwap(xTransactionInput);
+    } else if (type === XTransactionType.BRIDGE) {
+      return this._executeBridge(xTransactionInput);
+    } else if (type === XTransactionType.BORROW) {
+      return this._executeBorrow(xTransactionInput);
+    } else {
+      throw new Error('Invalid XTransactionType');
+    }
+  }
+}

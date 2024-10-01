@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-22,-22)">
+        <g id="Composite_Path" transform="matrix(1,0,0,1,-909.5,-1018)">
+            <path d="M943.5,1064C936.917,1064 931.5,1058.58 931.5,1052C931.5,1045.42 936.917,1040 943.5,1040C950.083,1040 955.5,1045.42 955.5,1052C955.494,1058.58 950.081,1063.99 943.5,1064ZM943.5,1042C938.014,1042 933.5,1046.51 933.5,1052C933.5,1057.49 938.014,1062 943.5,1062C948.986,1062 953.5,1057.49 953.5,1052C953.492,1046.52 948.983,1042.01 943.5,1042Z" style="fill:rgb(44,169,183);fill-rule:nonzero;"/>
+        </g>
+        <g id="Path-3" transform="matrix(1,0,0,1,-909.5,-1018)">
+            <path d="M941.454,1057.37L937.793,1053.71C937.604,1053.52 937.498,1053.27 937.498,1053C937.498,1052.45 937.95,1052 938.5,1052C938.765,1052 939.019,1052.1 939.207,1052.29L941.546,1054.63L948.846,1048.25C949.034,1048.06 949.289,1047.96 949.555,1047.96C950.103,1047.96 950.555,1048.41 950.555,1048.96C950.555,1049.27 950.409,1049.56 950.162,1049.75L941.454,1057.37Z" style="fill:rgb(44,169,183);fill-rule:nonzero;"/>
+        </g>
+    </g>
+</svg>

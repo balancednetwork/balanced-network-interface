@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { Currency, Percent, TradeType, XToken } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
@@ -10,6 +10,7 @@ import CurrencyInputPanel, { CurrencyInputPanelType } from '@/app/components2/Cu
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import { Button } from '@/components/ui/button';
+import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useManualAddresses from '@/hooks/useManualAddresses';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useWalletModalToggle } from '@/store/application/hooks';
@@ -22,10 +23,18 @@ import { useXAccount } from '@/xwagmi/hooks';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import RecipientAddressPanel from './RecipientAddressPanel';
 import SwapModal from './SwapModal';
-import XSwapModal from './XSwapModal';
+import XSwapModal, { ConfirmModalState } from './XSwapModal';
+
+const DEFAULT_XSWAP_MODAL_STATE = {
+  confirmModalState: ConfirmModalState.REVIEWING,
+  xSwapErrorMessage: '',
+  attemptingTxn: false,
+  txnHash: '',
+  xTransactionId: '',
+};
 
 export default function SwapPanel() {
-  const [xSwapModalOpen, setXSwapModalOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
 
   useInitialSwapLoad();
 
@@ -48,19 +57,17 @@ export default function SwapPanel() {
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
     useSwapActionHandlers();
 
+  const [xSwapModalState, setXSwapModalOpen] = React.useState(DEFAULT_XSWAP_MODAL_STATE);
+
   const xAccount = useXAccount(getXChainType(direction.to));
 
-  const { manualAddresses } = useManualAddresses();
-
   React.useEffect(() => {
-    if (manualAddresses[direction.to]) {
-      onChangeRecipient(manualAddresses[direction.to] ?? null);
-    } else if (xAccount.address) {
+    if (xAccount.address) {
       onChangeRecipient(xAccount.address);
     } else {
       onChangeRecipient(null);
     }
-  }, [onChangeRecipient, xAccount, manualAddresses[direction.to], direction.to]);
+  }, [onChangeRecipient, xAccount]);
 
   const handleTypeInput = useCallback(
     (value: string) => {
@@ -133,7 +140,7 @@ export default function SwapPanel() {
         toggleWalletModal();
       } else {
         setExecutionTrade(trade);
-        setXSwapModalOpen(true);
+        setOpen(true);
       }
     } else {
       if (!account) {
@@ -151,20 +158,41 @@ export default function SwapPanel() {
     }
   };
 
-  const swapButton = isValid ? (
-    <Button variant="default" onClick={handleSwap} className="w-full rounded-xl">
-      <Trans>Swap</Trans>
-    </Button>
-  ) : (
-    <Button
-      disabled={!account || !!inputError || !canBridge}
-      color="primary"
-      onClick={handleSwap}
-      className="w-full rounded-3xl"
-    >
-      {inputError || t`Swap`}
-    </Button>
-  );
+  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(direction.from);
+
+  const swapButton = useMemo(() => {
+    if (isValid && isWrongChain) {
+      return (
+        <Button color="primary" onClick={handleSwitchChain} className="w-full rounded-3xl">
+          <Trans>Switch to {xChainMap[direction.from].name}</Trans>
+        </Button>
+      );
+    }
+
+    return isValid ? (
+      <Button variant="default" onClick={handleSwap} className="w-full rounded-xl">
+        <Trans>Swap</Trans>
+      </Button>
+    ) : (
+      <Button
+        disabled={!account || !!inputError || !canBridge}
+        color="primary"
+        onClick={handleSwap}
+        className="w-full rounded-3xl"
+      >
+        {inputError || t`Swap`}
+      </Button>
+    );
+  }, [isValid, account, inputError, canBridge, handleSwap, isWrongChain, handleSwitchChain, direction.from]);
+
+  const handleDismiss = useCallback(() => {
+    setOpen(false);
+  }, []);
+
+  const handleConfirm = useCallback(async () => {
+    // setShowSwapConfirm(false);
+    // setOpen(true);
+  }, []);
 
   return (
     <>
@@ -197,10 +225,10 @@ export default function SwapPanel() {
             type={CurrencyInputPanelType.OUTPUT}
           />
 
-          <AdvancedSwapDetails />
           <RecipientAddressPanel />
 
           <div className="flex justify-center">{swapButton}</div>
+          <AdvancedSwapDetails />
 
           {!canBridge && maximumBridgeAmount && (
             <div className="flex items-center justify-center mt-2">
@@ -237,14 +265,22 @@ export default function SwapPanel() {
       />
 
       <XSwapModal
-        open={xSwapModalOpen}
-        setOpen={setXSwapModalOpen}
+        open={open}
         account={account}
         currencies={currencies}
         executionTrade={executionTrade}
         direction={direction}
         recipient={recipient}
         clearInputs={clearSwapInputOutput}
+        //
+        confirmModalState={xSwapModalState.confirmModalState}
+        xSwapErrorMessage={xSwapModalState.xSwapErrorMessage}
+        attemptingTxn={xSwapModalState.attemptingTxn}
+        txnHash={xSwapModalState.txnHash}
+        xTransactionId={xSwapModalState.xTransactionId}
+        //
+        onConfirm={handleConfirm}
+        onDismiss={handleDismiss}
       />
     </>
   );

@@ -111,7 +111,9 @@ export default function CurrencyInputPanel({
           {onCurrencySelect && (
             <TokenSelectModal
               open={open}
-              setOpen={setOpen}
+              onDismiss={() => {
+                setOpen(false);
+              }}
               account={account}
               onCurrencySelect={onCurrencySelect}
               selectedCurrency={currency}

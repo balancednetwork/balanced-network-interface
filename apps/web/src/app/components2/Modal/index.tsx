@@ -13,10 +13,10 @@ import {
 } from '@/components/ui/drawer';
 import { isMobile } from 'react-device-detect';
 
-export function Modal({ open, setOpen, children, title }) {
+export function Modal({ open, onDismiss, children, title }) {
   if (!isMobile) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={_ => onDismiss()}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             {title && <DialogTitle>{title}</DialogTitle>}
@@ -29,7 +29,7 @@ export function Modal({ open, setOpen, children, title }) {
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer open={open} onOpenChange={_ => onDismiss()}>
       <DrawerContent>
         <DrawerHeader className="text-left">
           {title && <DrawerTitle>{title}</DrawerTitle>}

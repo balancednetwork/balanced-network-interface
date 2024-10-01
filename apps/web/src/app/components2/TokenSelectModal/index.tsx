@@ -10,7 +10,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { allXTokens } from '@/xwagmi/constants/xTokens';
 import { useMemo, useState } from 'react';
 
-export function TokenSelectModal({ open, setOpen, account, onCurrencySelect, selectedCurrency }) {
+export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, selectedCurrency }) {
   // const [searchQuery, setSearchQuery] = React.useState<string>('');
   // const debouncedQuery = useDebounce(searchQuery, 200);
 
@@ -31,7 +31,7 @@ export function TokenSelectModal({ open, setOpen, account, onCurrencySelect, sel
   // const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery, false);
 
   return (
-    <Modal open={open} setOpen={setOpen} title="">
+    <Modal open={open} onDismiss={onDismiss} title="">
       {/* <ScrollArea className="h-[350px] rounded-md border p-4"> */}
       <div className="flex flex-col gap-4">
         <Command className="">
@@ -49,7 +49,7 @@ export function TokenSelectModal({ open, setOpen, account, onCurrencySelect, sel
                     if (selectedToken) {
                       console.log('selectedToken', selectedToken);
                       onCurrencySelect(selectedToken);
-                      setOpen(false);
+                      onDismiss();
                     }
                   }}
                   className="cursor-pointer"

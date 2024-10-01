@@ -9,16 +9,11 @@ import { Box, Flex } from 'rebass';
 // import { Button, TextButton } from '@/app/components/Button';
 // import { StyledButton } from '@/app/components/Button/StyledButton';
 import XTransactionState from '@/app/components/XTransactionState';
-import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 import { Modal } from '@/app/components2/Modal';
 import TooltipContainer from '@/app/components2/TooltipContainer';
-import { Typography } from '@/app/theme';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
-import useAmountInUSD from '@/hooks/useAmountInUSD';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
-import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
@@ -31,10 +26,11 @@ import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, CheckIcon } from 'lucide-react';
+import { ArrowRight, CheckIcon, XIcon } from 'lucide-react';
 import { TradeRoute } from './AdvancedSwapDetails';
+import CurrencyCard from './CurrencyCard';
 
-export enum XSwapModalState {
+export enum ConfirmModalState {
   REVIEWING,
   APPROVING_TOKEN,
   PENDING_CONFIRMATION,
@@ -43,7 +39,6 @@ export enum XSwapModalState {
 
 type XSwapModalProps = {
   open: boolean;
-  setOpen: (open: boolean) => void;
   account: string | undefined;
   currencies: { [field in Field]?: XToken };
   executionTrade?: Trade<Currency, Currency, TradeType>;
@@ -53,6 +48,16 @@ type XSwapModalProps = {
     to: XChainId;
   };
   recipient?: string | null;
+
+  //
+  confirmModalState: ConfirmModalState;
+  xSwapErrorMessage: string | null;
+  attemptingTxn: boolean;
+  txnHash: string | null;
+  xTransactionId: string | null;
+  //
+  onConfirm: () => Promise<void>;
+  onDismiss: () => void;
 };
 
 export const presenceVariants = {
@@ -63,16 +68,22 @@ export const presenceVariants = {
 
 const XSwapModal = ({
   open,
-  setOpen,
   account,
   currencies,
   executionTrade,
   direction,
   recipient,
   clearInputs,
+  //
+  confirmModalState,
+  xSwapErrorMessage,
+  attemptingTxn,
+  txnHash,
+  xTransactionId,
+  //
+  onConfirm,
+  onDismiss,
 }: XSwapModalProps) => {
-  const [xSwapModalState, setXSwapModalState] = useState<XSwapModalState>(XSwapModalState.REVIEWING);
-
   const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
@@ -105,37 +116,46 @@ const XSwapModal = ({
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
   };
 
-  const handleDismiss = useCallback(() => {
-    setOpen(false);
-    setTimeout(() => {
-      setCurrentId(null);
-    }, 500);
-  }, [setOpen]);
+  // const handleDismiss = useCallback(() => {
+  //   setOpen(false);
+  //   setTimeout(() => {
+  //     setCurrentId(null);
+  //     setXSwapModalState(XSwapModalState.REVIEWING);
+  //   }, 500);
+  // }, [setOpen]);
 
   //to show success or fail message in the modal
-  const slowDismiss = useCallback(() => {
-    setTimeout(() => {
-      handleDismiss();
-    }, 2000);
-  }, [handleDismiss]);
+  // const slowDismiss = useCallback(() => {
+  //   setTimeout(() => {
+  //     handleDismiss();
+  //   }, 2000);
+  // }, [handleDismiss]);
 
-  useEffect(() => {
-    if (
-      currentXTransaction &&
-      (currentXTransaction.status === XTransactionStatus.success ||
-        currentXTransaction.status === XTransactionStatus.failure)
-    ) {
-      slowDismiss();
-    }
-  }, [currentXTransaction, slowDismiss]);
+  // useEffect(() => {
+  //   if (
+  //     currentXTransaction &&
+  //     (currentXTransaction.status === XTransactionStatus.success ||
+  //       currentXTransaction.status === XTransactionStatus.failure)
+  //   ) {
+  //     slowDismiss();
+  //   }
+  // }, [currentXTransaction, slowDismiss]);
 
   const { sendXTransaction } = useSendXTransaction();
+
   const handleXCallSwap = async () => {
     if (!executionTrade) return;
     if (!account) return;
     if (!recipient) return;
     if (!xCallFee) return;
     if (!_inputAmount) return;
+
+    if (approvalState !== ApprovalState.APPROVED) {
+      // setXSwapModalState(XSwapModalState.APPROVING_TOKEN);
+      await approveCallback();
+    }
+
+    // setXSwapModalState(XSwapModalState.PENDING_CONFIRMATION);
 
     const xTransactionInput: XTransactionInput = {
       type: XTransactionType.SWAP,
@@ -149,40 +169,46 @@ const XSwapModal = ({
       callback: cleanupSwap,
     };
 
-    const xTransactionId = await sendXTransaction(xTransactionInput);
-    setCurrentId(xTransactionId || null);
+    try {
+      const xTransactionId = await sendXTransaction(xTransactionInput);
+      console.log('xTransactionId', xTransactionId);
+      setCurrentId(xTransactionId || null);
+    } catch (e) {
+      console.log(e);
+      // setXSwapModalState(XSwapModalState.REVIEWING);
+    }
   };
 
   const gasChecker = useXCallGasChecker(direction.from);
 
-  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(direction.from);
-  const inputAmountInUSD = useAmountInUSD(executionTrade?.inputAmount);
-  const outputAmountInUSD = useAmountInUSD(executionTrade?.outputAmount);
+  const modalContent = useMemo(() => {
+    if (xSwapErrorMessage) {
+      return (
+        <div>
+          <div className="relative flex justify-between gap-2">
+            <CurrencyCard currency={currencies[Field.INPUT]} currencyAmount={executionTrade?.inputAmount} />
+            <CurrencyCard currency={currencies[Field.OUTPUT]} currencyAmount={executionTrade?.outputAmount} />
+
+            <span className="absolute top-[50%] left-[50%] mx-[-15px] my-[-15px] w-[30px] h-[30px] flex justify-center items-center border-2 rounded-full">
+              <XIcon />
+            </span>
+          </div>
+          <span className="text-red-500">{xSwapErrorMessage}</span>
+        </div>
+      );
+    }
+
+    return <></>;
+  }, [xSwapErrorMessage, currencies, executionTrade]);
 
   return (
-    <Modal open={open} setOpen={setOpen} title="Review Swap">
+    <Modal open={open} onDismiss={onDismiss} title="Review Swap">
+      {modalContent}
       <div className="relative flex justify-between gap-2">
-        <Card className="flex flex-col items-center gap-4 p-8 border-none w-1/2">
-          <div>
-            {currencies[Field.INPUT] && <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} size="24px" />}
-          </div>
-          <div className="text-primary-foreground">
-            {formatBigNumber(new BigNumber(executionTrade?.inputAmount.toFixed() || 0), 'currency')}{' '}
-            {currencies[Field.INPUT]?.symbol}
-          </div>
-          <div className="text-secondary-foreground">{inputAmountInUSD}</div>
-        </Card>
-        <Card className="flex flex-col items-center gap-4 p-8 border-none w-1/2">
-          <div>
-            {currencies[Field.OUTPUT] && <CurrencyLogoWithNetwork currency={currencies[Field.OUTPUT]} size="24px" />}
-          </div>
-          <div className="text-primary-foreground">
-            {formatBigNumber(new BigNumber(executionTrade?.outputAmount.toFixed() || 0), 'currency')}{' '}
-            {currencies[Field.OUTPUT]?.symbol}
-          </div>
-          <div className="text-secondary-foreground">{outputAmountInUSD}</div>
-        </Card>
-        {xSwapModalState === XSwapModalState.COMPLETED ? (
+        <CurrencyCard currency={currencies[Field.INPUT]} currencyAmount={executionTrade?.inputAmount} />
+        <CurrencyCard currency={currencies[Field.OUTPUT]} currencyAmount={executionTrade?.outputAmount} />
+
+        {confirmModalState === ConfirmModalState.COMPLETED ? (
           <span className="absolute top-[50%] left-[50%] mx-[-15px] my-[-15px] w-[30px] h-[30px] flex justify-center items-center border-2 rounded-full">
             <CheckIcon />
           </span>
@@ -193,8 +219,12 @@ const XSwapModal = ({
         )}
       </div>
 
-      {xSwapModalState === XSwapModalState.REVIEWING && (
+      {confirmModalState === ConfirmModalState.REVIEWING && (
         <>
+          <Button onClick={() => onConfirm()}>
+            <Trans>{approvalState !== ApprovalState.APPROVED ? 'Approve and Swap' : 'Swap'}</Trans>
+          </Button>
+
           <div className="flex flex-col gap-2">
             <TooltipContainer tooltipText="The impact your trade has on the market price of this pool.">
               <div className="flex justify-between">
@@ -227,15 +257,16 @@ const XSwapModal = ({
               <div>{executionTrade ? <TradeRoute route={executionTrade.route} currencies={currencies} /> : '-'}</div>
             </div>
           </div>
-
-          <Button onClick={handleXCallSwap}>
-            <Trans>{approvalState !== ApprovalState.APPROVED ? 'Approve and Swap' : 'Swap'}</Trans>
-          </Button>
         </>
       )}
 
-      {xSwapModalState === XSwapModalState.APPROVING_TOKEN && <div>Approve USDC spending</div>}
-      {xSwapModalState === XSwapModalState.PENDING_CONFIRMATION && <div>Confirm swap in wallet</div>}
+      {confirmModalState === ConfirmModalState.APPROVING_TOKEN && (
+        <div>
+          <div>Approve USDC spending</div>
+          <div>Confirm swap in wallet</div>
+        </div>
+      )}
+      {confirmModalState === ConfirmModalState.PENDING_CONFIRMATION && <div>Confirm swap in wallet</div>}
 
       {/* {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />} */}
 
@@ -253,11 +284,7 @@ const XSwapModal = ({
                 <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
               </TextButton>
 
-              {isWrongChain ? (
-                <StyledButton onClick={handleSwitchChain}>
-                  <Trans>Switch to {xChainMap[direction.from].name}</Trans>
-                </StyledButton>
-              ) : isProcessing ? (
+              {isProcessing ? (
                 <>
                   <StyledButton disabled $loading>
                     <Trans>Swapping</Trans>

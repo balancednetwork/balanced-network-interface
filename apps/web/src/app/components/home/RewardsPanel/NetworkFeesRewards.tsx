@@ -152,7 +152,7 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
         <RewardsGrid rewards={Object.values(rewards)} />
       ) : (
         <Typography fontSize={14} opacity={0.75} mb={5}>
-          To earn fees from Balanced transactions, lock up BALN.
+          Lock up BALN to earn fees from Balanced transactions.
         </Typography>
       )}
 

@@ -9,6 +9,7 @@ import useWidth from '@/hooks/useWidth';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
 import { Currency } from '@balancednetwork/sdk-core';
+import { isMobile } from 'react-device-detect';
 import { StyledArrowDownIcon, UnderlineText } from '../../../../components/DropdownText';
 import { DropdownPopper } from '../../../../components/Popover';
 import XChainList from './XChainList';
@@ -20,6 +21,7 @@ type ChainSelectorProps = {
   label: 'from' | 'to';
   width?: number;
   containerRef?: HTMLDivElement | null;
+  showTotalXWalletValue?: boolean;
 };
 
 const Wrap = styled.div`
@@ -69,7 +71,7 @@ const XChainSelector = ({ chainId, setChainId, label, currency, width, container
             anchorEl={anchor}
             arrowEl={arrowRef.current}
             customArrowStyle={{
-              transform: `translateX(${arrowRef.current && containerRef ? Math.floor(arrowRef.current?.getBoundingClientRect().x - containerRef.getBoundingClientRect().x) + 25 + 'px' : '0'})`,
+              transform: `translateX(${arrowRef.current && containerRef ? Math.floor(arrowRef.current?.getBoundingClientRect().x - containerRef.getBoundingClientRect().x) + (isMobile ? 5 : 25) + 'px' : '0'})`,
             }}
             placement="bottom"
             offset={[0, 8]}
@@ -79,8 +81,9 @@ const XChainSelector = ({ chainId, setChainId, label, currency, width, container
               setChainId={handleSelect}
               xChainId={chainId}
               currency={currency}
-              width={width ? width + 40 : undefined}
+              width={width ? width + (isMobile ? 0 : 40) : undefined}
               isOpen={Boolean(anchor)}
+              showTotalXWalletValue={true}
             />
           </DropdownPopper>
         </div>

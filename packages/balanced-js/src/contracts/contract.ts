@@ -128,11 +128,15 @@ export class Contract {
           },
         }),
       );
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         const handler = ({ detail: { type, payload } }: any) => {
           if (type === 'RESPONSE_JSON-RPC') {
             window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);
             resolve(payload);
+          }
+          if (type === 'CANCEL_JSON-RPC') {
+            window.removeEventListener(ICONEX_RELAY_RESPONSE, handler);
+            reject({ error: 'CANCEL_JSON-RPC' });
           }
         };
 

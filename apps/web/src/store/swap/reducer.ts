@@ -48,10 +48,10 @@ const swapSlice = createSlice({
   name: 'swap',
   initialState,
   reducers: create => ({
-    selectCurrency: create.reducer<{ currency: Currency | undefined; field: Field }>(
+    selectCurrency: create.reducer<{ currency: XToken | undefined; field: Field }>(
       (state, { payload: { currency, field } }) => {
         const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
-        if (currency?.symbol === state[otherField].currency?.symbol) {
+        if (currency?.address === state[otherField].currency?.address) {
           // the case where we have to swap the order
           return {
             ...state,
@@ -61,12 +61,9 @@ const swapSlice = createSlice({
           };
         } else {
           // the normal case
-          const xChainId: XChainId =
-            currency && isXToken(currency) ? DEFAULT_TOKEN_CHAIN[currency.symbol] ?? '0x1.icon' : '0x1.icon';
-          const _currency = currency && isXToken(currency) ? getXTokenBySymbol(xChainId, currency.symbol) : currency;
           return {
             ...state,
-            [field]: { ...state[field], currency: _currency, percent: 0, xChainId },
+            [field]: { ...state[field], currency, percent: 0 },
           };
         }
       },

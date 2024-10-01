@@ -40,7 +40,7 @@ export function useSwapActionHandlers() {
   const dispatch = useDispatch<AppDispatch>();
 
   const onCurrencySelection = useCallback(
-    (field: Field, currency: Currency) => {
+    (field: Field, currency: XToken) => {
       dispatch(
         selectCurrency({
           field,

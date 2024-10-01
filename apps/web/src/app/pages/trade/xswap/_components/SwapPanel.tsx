@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-import { Currency, Percent, TradeType } from '@balancednetwork/sdk-core';
+import { Currency, Percent, TradeType, XToken } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -87,14 +87,14 @@ export default function SwapPanel() {
   );
 
   const handleInputSelect = useCallback(
-    (inputCurrency: Currency) => {
+    (inputCurrency: XToken) => {
       onCurrencySelection(Field.INPUT, inputCurrency);
     },
     [onCurrencySelection],
   );
 
   const handleOutputSelect = useCallback(
-    (outputCurrency: Currency) => {
+    (outputCurrency: XToken) => {
       onCurrencySelection(Field.OUTPUT, outputCurrency);
     },
     [onCurrencySelection],

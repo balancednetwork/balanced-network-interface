@@ -17,6 +17,7 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
 
 export const allXTokens: XToken[] = [
   // 0x1.icon
+  new XToken('0x1.icon', ChainId.MAINNET, '0x1.icon-native', 18, 'ICX', 'ICX'),
   new XToken('0x1.icon', ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
   new XToken('0x1.icon', ChainId.MAINNET, 'cxfe94530ee0d159db3e5b7dcffbcd0dfb360075c0', 18, 'sARCH', 'Staked Archway'),
   new XToken('0x1.icon', ChainId.MAINNET, 'cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f', 6, 'USDC', 'Archway USDC'),

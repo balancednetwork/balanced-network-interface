@@ -17,6 +17,7 @@ import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import BigNumber from 'bignumber.js';
 
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
+import TooltipContainer from '@/app/components2/TooltipContainer';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 
 export default function AdvancedSwapDetails() {
@@ -49,18 +50,20 @@ export default function AdvancedSwapDetails() {
           )}
         </div>
         <CollapsibleContent className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <Typography className="text-secondary">
-              <Trans>Price impact</Trans>
-            </Typography>
+          <TooltipContainer tooltipText="The impact your trade has on the market price of this pool.">
+            <div className="flex items-center justify-between">
+              <Typography className="text-secondary">
+                <Trans>Price impact</Trans>
+              </Typography>
 
-            <Typography
-              className={showSlippageWarning ? 'error-anim' : ''}
-              color={showSlippageWarning ? 'alert' : 'text'}
-            >
-              {priceImpact}
-            </Typography>
-          </div>
+              <Typography
+                className={showSlippageWarning ? 'error-anim' : ''}
+                color={showSlippageWarning ? 'alert' : 'text'}
+              >
+                {priceImpact}
+              </Typography>
+            </div>
+          </TooltipContainer>
           <div className="flex items-center justify-between gap-2">
             <Typography as="span">
               <Trans>Slippage tolerance</Trans>
@@ -154,7 +157,7 @@ function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
   );
 }
 
-function TradeRoute({
+export function TradeRoute({
   route,
   currencies,
 }: { route: Route<Currency, Currency>; currencies: { [field in Field]?: XToken } }) {

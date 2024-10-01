@@ -2,9 +2,8 @@ import React, { useCallback, useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useRatesWithOracle } from '@/queries/reward';
+import useAmountInUSD from '@/hooks/useAmountInUSD';
 import { escapeRegExp, toFraction } from '@/utils';
-import { formatPrice } from '@/utils/formatter';
 import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
@@ -45,8 +44,6 @@ export default function CurrencyInputPanel({
   balance,
   type,
 }: CurrencyInputPanelProps) {
-  const prices = useRatesWithOracle();
-
   const [open, setOpen] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
   const toggleOpen = () => {
@@ -58,24 +55,17 @@ export default function CurrencyInputPanel({
       onUserInput(nextUserInput);
     }
   };
-
-  // TODO: any better way to handle this?
-  const valueInUSD = useMemo(() => {
-    try {
-      if (currency && prices?.[currency.symbol]) {
-        const currencyAmount = CurrencyAmount.fromRawAmount(
-          currency,
-          new BigNumber(value).times((10n ** BigInt(currency.decimals)).toString()).toFixed(0),
-        );
-        const _price = toFraction(prices[currency.symbol]);
-        return formatPrice(currencyAmount?.multiply(_price).toFixed());
-      }
-    } catch (e) {
-      // TODO: handle error
-      // console.log(e);
+  const currencyAmount = useMemo(() => {
+    if (!currency || !value) {
+      return undefined;
     }
-    return '';
-  }, [currency, prices, value]);
+
+    return CurrencyAmount.fromRawAmount(
+      currency,
+      new BigNumber(value).times((10n ** BigInt(currency.decimals)).toString()).toFixed(0),
+    );
+  }, [currency, value]);
+  const valueInUSD = useAmountInUSD(currencyAmount);
 
   return (
     <div className="rounded-xl w-full bg-card p-4 flex flex-col gap-2">

@@ -6,19 +6,24 @@ import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 
-import { Button, TextButton } from '@/app/components/Button';
-import { StyledButton } from '@/app/components/Button/StyledButton';
+// import { Button, TextButton } from '@/app/components/Button';
+// import { StyledButton } from '@/app/components/Button/StyledButton';
 import XTransactionState from '@/app/components/XTransactionState';
+import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 import { Modal } from '@/app/components2/Modal';
+import TooltipContainer from '@/app/components2/TooltipContainer';
 import { Typography } from '@/app/theme';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
+import useAmountInUSD from '@/hooks/useAmountInUSD';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { Field } from '@/store/swap/reducer';
-import { formatBigNumber, shortenAddress } from '@/utils';
+import { formatBigNumber } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 import { xChainMap } from '@/xwagmi/constants/xChains';
@@ -26,12 +31,21 @@ import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowRight, CheckIcon } from 'lucide-react';
+import { TradeRoute } from './AdvancedSwapDetails';
+
+export enum XSwapModalState {
+  REVIEWING,
+  APPROVING_TOKEN,
+  PENDING_CONFIRMATION,
+  COMPLETED,
+}
 
 type XSwapModalProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
   account: string | undefined;
-  currencies: { [field in Field]?: Currency };
+  currencies: { [field in Field]?: XToken };
   executionTrade?: Trade<Currency, Currency, TradeType>;
   clearInputs: () => void;
   direction: {
@@ -57,6 +71,8 @@ const XSwapModal = ({
   recipient,
   clearInputs,
 }: XSwapModalProps) => {
+  const [xSwapModalState, setXSwapModalState] = useState<XSwapModalState>(XSwapModalState.REVIEWING);
+
   const [currentId, setCurrentId] = useState<string | null>(null);
   const currentXTransaction = xTransactionActions.get(currentId);
   const isProcessing: boolean = currentId !== null;
@@ -140,78 +156,90 @@ const XSwapModal = ({
   const gasChecker = useXCallGasChecker(direction.from);
 
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(direction.from);
+  const inputAmountInUSD = useAmountInUSD(executionTrade?.inputAmount);
+  const outputAmountInUSD = useAmountInUSD(executionTrade?.outputAmount);
 
   return (
-    <Modal open={open} setOpen={setOpen} title="">
-      {/* <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage> */}
-      <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
-        <Trans>
-          Swap {currencies[Field.INPUT]?.symbol} for {currencies[Field.OUTPUT]?.symbol}?
-        </Trans>
-      </Typography>
-
-      <Typography variant="p" fontWeight="bold" textAlign="center" color={showWarning ? 'alert' : 'text'}>
-        <Trans>
-          {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
-            executionTrade?.executionPrice.quoteCurrency.symbol
-          } 
-              per ${executionTrade?.executionPrice.baseCurrency.symbol}`}
-        </Trans>
-      </Typography>
-
-      <Flex my={4}>
-        <Box width={1 / 2} className="border-right">
-          <Typography textAlign="center">
-            <Trans>Pay</Trans>
-          </Typography>
-          <Typography variant="p" textAlign="center" py="5px">
+    <Modal open={open} setOpen={setOpen} title="Review Swap">
+      <div className="relative flex justify-between gap-2">
+        <Card className="flex flex-col items-center gap-4 p-8 border-none w-1/2">
+          <div>
+            {currencies[Field.INPUT] && <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} size="24px" />}
+          </div>
+          <div className="text-primary-foreground">
             {formatBigNumber(new BigNumber(executionTrade?.inputAmount.toFixed() || 0), 'currency')}{' '}
             {currencies[Field.INPUT]?.symbol}
-          </Typography>
-          <Typography textAlign="center">
-            <Trans>{getNetworkDisplayName(direction.from)}</Trans>
-          </Typography>
-          <Typography textAlign="center">
-            <Trans>{recipient && account && shortenAddress(account, 5)}</Trans>
-          </Typography>
-        </Box>
-
-        <Box width={1 / 2}>
-          <Typography textAlign="center">
-            <Trans>Receive</Trans>
-          </Typography>
-          <Typography variant="p" textAlign="center" py="5px">
+          </div>
+          <div className="text-secondary-foreground">{inputAmountInUSD}</div>
+        </Card>
+        <Card className="flex flex-col items-center gap-4 p-8 border-none w-1/2">
+          <div>
+            {currencies[Field.OUTPUT] && <CurrencyLogoWithNetwork currency={currencies[Field.OUTPUT]} size="24px" />}
+          </div>
+          <div className="text-primary-foreground">
             {formatBigNumber(new BigNumber(executionTrade?.outputAmount.toFixed() || 0), 'currency')}{' '}
             {currencies[Field.OUTPUT]?.symbol}
-          </Typography>
-          <Typography textAlign="center">
-            <Trans>{getNetworkDisplayName(direction.to)}</Trans>
-          </Typography>
-          <Typography textAlign="center">
-            <Trans>{recipient && shortenAddress(recipient, 5)}</Trans>
-          </Typography>
-        </Box>
-      </Flex>
+          </div>
+          <div className="text-secondary-foreground">{outputAmountInUSD}</div>
+        </Card>
+        {xSwapModalState === XSwapModalState.COMPLETED ? (
+          <span className="absolute top-[50%] left-[50%] mx-[-15px] my-[-15px] w-[30px] h-[30px] flex justify-center items-center border-2 rounded-full">
+            <CheckIcon />
+          </span>
+        ) : (
+          <span className="absolute top-[50%] left-[50%] mx-[-15px] my-[-15px] w-[30px] h-[30px] flex justify-center items-center border-2 rounded-full">
+            <ArrowRight />
+          </span>
+        )}
+      </div>
 
-      <Typography
-        textAlign="center"
-        hidden={currencies[Field.INPUT]?.symbol === 'ICX' && currencies[Field.OUTPUT]?.symbol === 'sICX'}
-      >
-        <Trans>Includes a fee of</Trans>{' '}
-        <strong>
-          {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
-          {currencies[Field.INPUT]?.symbol}
-        </strong>
-        .
-      </Typography>
+      {xSwapModalState === XSwapModalState.REVIEWING && (
+        <>
+          <div className="flex flex-col gap-2">
+            <TooltipContainer tooltipText="The impact your trade has on the market price of this pool.">
+              <div className="flex justify-between">
+                <span className="text-secondary-foreground">Rate</span>
+                <span>
+                  1 {executionTrade?.executionPrice.baseCurrency.symbol} ={' '}
+                  {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
+                    executionTrade?.executionPrice.quoteCurrency.symbol
+                  }`}
+                </span>
+              </div>
+            </TooltipContainer>
+            <div className="flex justify-between">
+              <span className="text-secondary-foreground">Swap Fee</span>
+              <span>
+                {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
+                {currencies[Field.INPUT]?.symbol}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-secondary-foreground">Bridge Fee</span>
+              <span>{formattedXCallFee}</span>
+            </div>
+            {/* <div className="flex justify-between">
+          <span className="text-secondary-foreground">Network Cost</span>
+          <span>0.0001 ICX</span>
+        </div> */}
+            <div className="flex justify-between">
+              <span className="text-secondary-foreground">Route</span>
+              <div>{executionTrade ? <TradeRoute route={executionTrade.route} currencies={currencies} /> : '-'}</div>
+            </div>
+          </div>
 
-      <Typography textAlign="center">
-        <Trans>You'll also pay</Trans> <strong>{formattedXCallFee}</strong> <Trans>to transfer cross-chain.</Trans>
-      </Typography>
+          <Button onClick={handleXCallSwap}>
+            <Trans>{approvalState !== ApprovalState.APPROVED ? 'Approve and Swap' : 'Swap'}</Trans>
+          </Button>
+        </>
+      )}
 
-      {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
+      {xSwapModalState === XSwapModalState.APPROVING_TOKEN && <div>Approve USDC spending</div>}
+      {xSwapModalState === XSwapModalState.PENDING_CONFIRMATION && <div>Confirm swap in wallet</div>}
 
-      <AnimatePresence>
+      {/* {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />} */}
+
+      {/* <AnimatePresence>
         {((!isExecuted && isProcessing) || !isProcessing) && (
           <motion.div
             key={'tx-actions'}
@@ -251,16 +279,15 @@ const XSwapModal = ({
             </Flex>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
 
-      {!isProcessing && !gasChecker.hasEnoughGas && (
+      {/* {!isProcessing && !gasChecker.hasEnoughGas && (
         <Flex justifyContent="center" paddingY={2}>
           <Typography maxWidth="320px" color="alert" textAlign="center">
             {gasChecker.errorMessage}
           </Typography>
         </Flex>
-      )}
-      {/* </ModalContent> */}
+      )} */}
     </Modal>
   );
 };

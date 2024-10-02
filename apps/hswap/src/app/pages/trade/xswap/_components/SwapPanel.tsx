@@ -361,7 +361,7 @@ export default function SwapPanel() {
               balance={currencyBalances[Field.INPUT]}
             />
 
-            <div className="relative flex items-center justify-center h-0 z-[100]">
+            <div className="relative flex items-center justify-center h-0 z-1">
               <div
                 className="cursor-pointer w-[40px] h-[40px] bg-[#695682] rounded-full flex items-center justify-center"
                 onClick={onSwitchTokens}

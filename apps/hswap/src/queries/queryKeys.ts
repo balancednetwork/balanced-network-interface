@@ -1,4 +1,10 @@
-import { CHART_PERIODS } from '@/app/components/TradingViewChart';
+export enum CHART_PERIODS {
+  '15m' = '15m',
+  '1H' = '1H',
+  '4H' = '4H',
+  '1D' = '1D',
+  '1W' = '1W',
+}
 
 export const QUERY_KEYS = {
   Vote: {

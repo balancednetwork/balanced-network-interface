@@ -5,7 +5,6 @@ import { Trans, t } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
-import styled from 'styled-components';
 
 import { UnderlineTextWithArrow } from '@/app/components/DropdownText';
 import { Link } from '@/app/components/Link';

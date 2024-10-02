@@ -14,6 +14,7 @@ import { getXPublicClient } from '@/xwagmi/actions';
 import { XChainId } from '@balancednetwork/sdk-core';
 import { persist } from 'zustand/middleware';
 import { Transaction, TransactionStatus } from '../xwagmi/xcall/types';
+import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 
 type TransactionStore = {
   transactions: Transaction[];
@@ -97,6 +98,8 @@ export const transactionActions = {
     const _transaction = transactions.find(item => item.id === id && item.xChainId === xChainId);
     if (_transaction) {
       if (status === TransactionStatus.success) {
+        xTransactionActions.success(`${xChainId}/${_transaction.hash}`);
+
         const toastProps = {
           onClick: () => window.open(getTrackerLink(xChainId, _transaction.hash, 'transaction'), '_blank'),
         };
@@ -116,6 +119,8 @@ export const transactionActions = {
       }
 
       if (status === TransactionStatus.failure) {
+        xTransactionActions.fail(`${xChainId}/${_transaction.hash}`);
+
         const toastProps = {
           onClick: () => window.open(getTrackerLink(xChainId, _transaction.hash, 'transaction'), '_blank'),
         };

@@ -82,6 +82,14 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
 
     descriptionAction = `Repay bnUSD`;
     descriptionAmount = `${_formattedAmount} bnUSD`;
+  } else if (xTransactionInput.type === XTransactionType.SWAP_ON_ICON) {
+    // TODO: Implement this
+    //     const message = swapMessage(
+    //   formatBigNumber(new BigNumber(executionTrade?.inputAmount?.toFixed() || 0), 'currency'),
+    //   executionTrade.inputAmount.currency.symbol || 'IN',
+    //   formatBigNumber(new BigNumber(executionTrade?.outputAmount?.toFixed() || 0), 'currency'),
+    //   executionTrade.outputAmount.currency.symbol || 'OUT',
+    // );
   }
 
   xTransactionInput?.callback?.();
@@ -112,23 +120,24 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
 
     xTransactionActions.add(xTransaction);
 
-    const xMessage: XMessage = {
-      id: `${sourceChainId}/${sourceTransactionHash}`,
-      xTransactionId: xTransaction.id,
-      sourceChainId: sourceChainId,
-      destinationChainId: primaryDestinationChainId,
-      sourceTransactionHash,
+    if (xTransactionInput.type !== XTransactionType.SWAP_ON_ICON) {
+      const xMessage: XMessage = {
+        id: `${sourceChainId}/${sourceTransactionHash}`,
+        xTransactionId: xTransaction.id,
+        sourceChainId: sourceChainId,
+        destinationChainId: primaryDestinationChainId,
+        sourceTransactionHash,
 
-      status: XMessageStatus.REQUESTED,
-      events: {},
-      destinationChainInitialBlockHeight: 0n,
-      isPrimary: true,
-      useXCallScanner: true,
-      createdAt: Date.now(),
-    };
+        status: XMessageStatus.REQUESTED,
+        events: {},
+        destinationChainInitialBlockHeight: 0n,
+        isPrimary: true,
+        useXCallScanner: true,
+        createdAt: Date.now(),
+      };
 
-    xMessageActions.add(xMessage);
-
+      xMessageActions.add(xMessage);
+    }
     return xTransaction.id;
   } else {
     const primaryDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(primaryDestinationChainId) - 20n;
@@ -150,23 +159,24 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
 
     xTransactionActions.add(xTransaction);
 
-    const xMessage: XMessage = {
-      id: `${sourceChainId}/${sourceTransaction.hash}`,
-      xTransactionId: xTransaction.id,
-      sourceChainId: sourceChainId,
-      destinationChainId: primaryDestinationChainId,
-      // @ts-ignore
-      sourceTransactionHash,
+    if (xTransactionInput.type !== XTransactionType.SWAP_ON_ICON) {
+      const xMessage: XMessage = {
+        id: `${sourceChainId}/${sourceTransaction.hash}`,
+        xTransactionId: xTransaction.id,
+        sourceChainId: sourceChainId,
+        destinationChainId: primaryDestinationChainId,
+        // @ts-ignore
+        sourceTransactionHash,
 
-      status: XMessageStatus.REQUESTED,
-      events: {},
-      destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
-      isPrimary: true,
-      createdAt: Date.now(),
-    };
+        status: XMessageStatus.REQUESTED,
+        events: {},
+        destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
+        isPrimary: true,
+        createdAt: Date.now(),
+      };
 
-    xMessageActions.add(xMessage);
-
+      xMessageActions.add(xMessage);
+    }
     return xTransaction.id;
   }
 };

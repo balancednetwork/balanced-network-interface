@@ -155,18 +155,21 @@ function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
 export function TradeRoute({
   route,
   currencies,
-}: { route: Route<Currency, Currency>; currencies: { [field in Field]?: XToken } }) {
+}: {
+  route: Route<Currency, Currency>;
+  currencies: { [field in Field]?: XToken };
+}) {
   return (
     <div className="flex gap-2">
       {currencies[Field.INPUT] && currencies[Field.INPUT].xChainId !== '0x1.icon' && (
-        <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} size="24px" />
+        <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} size="32px" />
       )}
       {route.path.map((token: Token, index: number) => {
         const xtoken = XToken.getXToken('0x1.icon', token);
-        return <CurrencyLogoWithNetwork key={xtoken.address} currency={xtoken} size="24px" />;
+        return <CurrencyLogoWithNetwork key={xtoken.address} currency={xtoken} size="32px" />;
       })}
       {currencies[Field.OUTPUT] && currencies[Field.OUTPUT].xChainId !== '0x1.icon' && (
-        <CurrencyLogoWithNetwork currency={currencies[Field.OUTPUT]} size="24px" />
+        <CurrencyLogoWithNetwork currency={currencies[Field.OUTPUT]} size="32px" />
       )}
     </div>
   );

@@ -112,7 +112,7 @@
     "pretty": "biome format .",
     "i18n:extract": "lingui extract",
     "i18n:compile": "pnpm run i18n:extract && lingui compile",
-    "clean": "rm -rf node_modules && rm -rf dist",
+    "clean": "rm -rf node_modules && rm -rf dist && rm -rf .turbo",
     "prepare": "pnpm run i18n:compile",
     "knip": "knip"
   },

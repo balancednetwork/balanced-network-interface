@@ -40,14 +40,9 @@ export function Modal({ open, onDismiss, children, title, hideCloseIcon = false 
 
   return (
     <Drawer open={open} onOpenChange={_ => onDismiss()}>
-      <DrawerContent className="border-[rgba(255,255,255,0.25)]">
-        <DrawerHeader className="text-left">{title && <DrawerTitle>{title}</DrawerTitle>}</DrawerHeader>
+      <DrawerContent className="p-4 border-[rgba(255,255,255,0.25)]">
+        <DrawerHeader className="text-left px-0">{title && <DrawerTitle>{title}</DrawerTitle>}</DrawerHeader>
         {children}
-        <DrawerFooter className="pt-2">
-          <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DrawerClose>
-        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );

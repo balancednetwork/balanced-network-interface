@@ -125,142 +125,144 @@ const XSwapModal = ({
 
   return (
     <Modal open={open} onDismiss={handleDismiss} title={showDetails ? 'Review Swap' : ''} hideCloseIcon={false}>
-      <div className="relative flex justify-between gap-2">
-        <CurrencyCard currency={currencies[Field.INPUT]} currencyAmount={executionTrade?.inputAmount} />
-        <CurrencyCard currency={currencies[Field.OUTPUT]} currencyAmount={executionTrade?.outputAmount} />
-        {showDetails && (
-          <span className="bg-[#221542] border-2 border-background absolute top-[50%] left-[50%] mx-[-24px] my-[-24px] w-[48px] h-[48px] flex justify-center items-center rounded-full">
-            <ChevronRight />
-          </span>
-        )}
-        {confirmModalState !== ConfirmModalState.REVIEWING && showProgressIndicator && (
-          <span className="bg-[#221542] border-2 border-background absolute top-[50%] left-[50%] mx-[-24px] my-[-24px] w-[48px] h-[48px] flex justify-center items-center rounded-full">
-            <ChevronRight />
-          </span>
-        )}
-        {showSuccess && (
-          <span className="bg-green-500 border-2 border-background absolute top-[50%] left-[50%] mx-[-24px] my-[-24px] w-[48px] h-[48px] flex justify-center items-center rounded-full">
-            <CheckIcon className="text-background" />
-          </span>
-        )}
-        {showError && (
-          <span className="bg-red-500 border-2 border-background absolute top-[50%] left-[50%] mx-[-24px] my-[-24px] w-[48px] h-[48px] flex justify-center items-center rounded-full">
-            <XIcon className="text-background" />
-          </span>
-        )}
-      </div>
+      <div className="flex flex-col gap-4">
+        <div className="relative flex justify-between gap-2">
+          <CurrencyCard currency={currencies[Field.INPUT]} currencyAmount={executionTrade?.inputAmount} />
+          <CurrencyCard currency={currencies[Field.OUTPUT]} currencyAmount={executionTrade?.outputAmount} />
+          {showDetails && (
+            <span className="bg-[#221542] border-2 border-background absolute top-[50%] left-[50%] mx-[-24px] my-[-24px] w-[48px] h-[48px] flex justify-center items-center rounded-full">
+              <ChevronRight />
+            </span>
+          )}
+          {confirmModalState !== ConfirmModalState.REVIEWING && showProgressIndicator && (
+            <span className="bg-[#221542] border-2 border-background absolute top-[50%] left-[50%] mx-[-24px] my-[-24px] w-[48px] h-[48px] flex justify-center items-center rounded-full">
+              <ChevronRight />
+            </span>
+          )}
+          {showSuccess && (
+            <span className="bg-green-500 border-2 border-background absolute top-[50%] left-[50%] mx-[-24px] my-[-24px] w-[48px] h-[48px] flex justify-center items-center rounded-full">
+              <CheckIcon className="text-background" />
+            </span>
+          )}
+          {showError && (
+            <span className="bg-red-500 border-2 border-background absolute top-[50%] left-[50%] mx-[-24px] my-[-24px] w-[48px] h-[48px] flex justify-center items-center rounded-full">
+              <XIcon className="text-background" />
+            </span>
+          )}
+        </div>
 
-      {/* Details section displays rate, fees, network cost, etc. w/ additional details in drop-down menu .*/}
-      {showDetails && (
-        <>
-          <div className="flex flex-col gap-2">
-            <TooltipContainer tooltipText="The impact your trade has on the market price of this pool.">
+        {/* Details section displays rate, fees, network cost, etc. w/ additional details in drop-down menu .*/}
+        {showDetails && (
+          <>
+            <div className="flex flex-col gap-2">
+              <TooltipContainer tooltipText="The impact your trade has on the market price of this pool.">
+                <div className="flex justify-between">
+                  <span className="text-secondary-foreground text-body">Rate</span>
+                  <span className="text-body">
+                    1 {executionTrade?.executionPrice.baseCurrency.symbol} ={' '}
+                    {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
+                      executionTrade?.executionPrice.quoteCurrency.symbol
+                    }`}
+                  </span>
+                </div>
+              </TooltipContainer>
               <div className="flex justify-between">
-                <span className="text-secondary-foreground text-body">Rate</span>
+                <span className="text-secondary-foreground text-body">Swap Fee</span>
                 <span className="text-body">
-                  1 {executionTrade?.executionPrice.baseCurrency.symbol} ={' '}
-                  {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
-                    executionTrade?.executionPrice.quoteCurrency.symbol
-                  }`}
+                  {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
+                  {currencies[Field.INPUT]?.symbol}
                 </span>
               </div>
-            </TooltipContainer>
-            <div className="flex justify-between">
-              <span className="text-secondary-foreground text-body">Swap Fee</span>
-              <span className="text-body">
-                {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
-                {currencies[Field.INPUT]?.symbol}
-              </span>
+              <div className="flex justify-between">
+                <span className="text-secondary-foreground text-body">Bridge Fee</span>
+                <span className="text-body">{formattedXCallFee}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-secondary-foreground text-body">Network Cost</span>
+                <span className="text-body">0.0001 ICX</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-secondary-foreground text-body">Order routing</span>
+                <div>{executionTrade ? <TradeRoute route={executionTrade.route} currencies={currencies} /> : '-'}</div>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span className="text-secondary-foreground text-body">Bridge Fee</span>
-              <span className="text-body">{formattedXCallFee}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-secondary-foreground text-body">Network Cost</span>
-              <span className="text-body">0.0001 ICX</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-secondary-foreground text-body">Order routing</span>
-              <div>{executionTrade ? <TradeRoute route={executionTrade.route} currencies={currencies} /> : '-'}</div>
-            </div>
+            {isWrongChain ? (
+              <Button color="primary" onClick={handleSwitchChain} className="h-[56px] text-base rounded-full">
+                <Trans>Switch to {xChainMap[direction.from].name}</Trans>
+              </Button>
+            ) : (
+              <Button onClick={async () => await onConfirm()} className="h-[56px] text-base rounded-full">
+                <Trans>{approvalState !== ApprovalState.APPROVED ? 'Approve and Swap' : 'Swap'}</Trans>
+              </Button>
+            )}
+          </>
+        )}
+        {/* Progress indicator displays all the steps of the swap flow and their current status  */}
+        {confirmModalState !== ConfirmModalState.REVIEWING && showProgressIndicator && (
+          <div className="flex flex-col gap-2">
+            {pendingModalSteps.map(step => (
+              <div key={step} className="flex gap-2 items-center justify-between">
+                {step === ConfirmModalState.APPROVING_TOKEN && (
+                  <>
+                    <div className="flex gap-2 items-center">
+                      {approvalState === ApprovalState.NOT_APPROVED && !approved && (
+                        <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
+                          {currencies[Field.INPUT] && (
+                            <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} size="40px" />
+                          )}
+                        </div>
+                      )}
+                      {approvalState === ApprovalState.PENDING && (
+                        <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
+                          <Loader2 className="animate-spin" />
+                        </div>
+                      )}
+
+                      {approved && (
+                        <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
+                          {currencies[Field.INPUT] && (
+                            <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} size="40px" />
+                          )}
+                        </div>
+                      )}
+                      <div>Approve {currencies[Field.INPUT]?.symbol} spending</div>
+                    </div>
+                    {approved && <CheckIcon />}
+                  </>
+                )}
+                {step === ConfirmModalState.PENDING_CONFIRMATION && (
+                  <>
+                    <div className="flex gap-2 items-center">
+                      {!xTransactionId && (
+                        <div className="bg-[#4C82FB] w-[40px] h-[40px] rounded-full flex items-center justify-center">
+                          <FlipIcon width={24} height={24} />
+                        </div>
+                      )}
+                      {xTransactionId && !swapConfirmed && (
+                        <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
+                          <Loader2 className="animate-spin" />
+                        </div>
+                      )}
+                      <div>Confirm swap in wallet</div>
+                    </div>
+                  </>
+                )}
+              </div>
+            ))}
           </div>
-          {isWrongChain ? (
-            <Button color="primary" onClick={handleSwitchChain} className="h-[56px] text-base rounded-full">
-              <Trans>Switch to {xChainMap[direction.from].name}</Trans>
-            </Button>
-          ) : (
-            <Button onClick={async () => await onConfirm()} className="h-[56px] text-base rounded-full">
-              <Trans>{approvalState !== ApprovalState.APPROVED ? 'Approve and Swap' : 'Swap'}</Trans>
-            </Button>
-          )}
-        </>
-      )}
-      {/* Progress indicator displays all the steps of the swap flow and their current status  */}
-      {confirmModalState !== ConfirmModalState.REVIEWING && showProgressIndicator && (
-        <div className="flex flex-col gap-2">
-          {pendingModalSteps.map(step => (
-            <div key={step} className="flex gap-2 items-center justify-between">
-              {step === ConfirmModalState.APPROVING_TOKEN && (
-                <>
-                  <div className="flex gap-2 items-center">
-                    {approvalState === ApprovalState.NOT_APPROVED && !approved && (
-                      <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
-                        {currencies[Field.INPUT] && (
-                          <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} size="40px" />
-                        )}
-                      </div>
-                    )}
-                    {approvalState === ApprovalState.PENDING && (
-                      <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
-                        <Loader2 className="animate-spin" />
-                      </div>
-                    )}
+        )}
 
-                    {approved && (
-                      <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
-                        {currencies[Field.INPUT] && (
-                          <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} size="40px" />
-                        )}
-                      </div>
-                    )}
-                    <div>Approve {currencies[Field.INPUT]?.symbol} spending</div>
-                  </div>
-                  {approved && <CheckIcon />}
-                </>
-              )}
-              {step === ConfirmModalState.PENDING_CONFIRMATION && (
-                <>
-                  <div className="flex gap-2 items-center">
-                    {!xTransactionId && (
-                      <div className="bg-[#4C82FB] w-[40px] h-[40px] rounded-full flex items-center justify-center">
-                        <FlipIcon width={24} height={24} />
-                      </div>
-                    )}
-                    {xTransactionId && !swapConfirmed && (
-                      <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
-                        <Loader2 className="animate-spin" />
-                      </div>
-                    )}
-                    <div>Confirm swap in wallet</div>
-                  </div>
-                </>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+        {/* Error message displays if there is an error in the swap flow */}
+        {showError && <div className="text-red-500 text-center">{xSwapErrorMessage}</div>}
 
-      {/* Error message displays if there is an error in the swap flow */}
-      {showError && <div className="text-red-500 text-center">{xSwapErrorMessage}</div>}
-
-      {/* {!isProcessing && !gasChecker.hasEnoughGas && (
+        {/* {!isProcessing && !gasChecker.hasEnoughGas && (
         <Flex justifyContent="center" paddingY={2}>
           <Typography maxWidth="320px" color="alert" textAlign="center">
             {gasChecker.errorMessage}
           </Typography>
         </Flex>
       )} */}
+      </div>
     </Modal>
   );
 };

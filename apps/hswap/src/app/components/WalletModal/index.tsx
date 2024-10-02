@@ -6,7 +6,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
 
-import { UnderlineTextWithArrow } from '@/app/components/DropdownText';
 import { Link } from '@/app/components/Link';
 import { LanguageMenuItem, MenuList } from '@/app/components/Menu';
 import { Typography } from '@/app/theme';
@@ -37,6 +36,7 @@ import WalletItem, { WalletItemProps } from './WalletItem';
 import { StyledSearchInput } from './styled';
 import { Modal } from '@/app/components2/Modal';
 import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 
 const presenceVariants = {
   initial: { opacity: 0, height: 0 },
@@ -191,11 +191,7 @@ export default function WalletModal() {
                 </Typography>
                 <ClickAwayListener onClickAway={closeMenu}>
                   <div>
-                    <UnderlineTextWithArrow
-                      onClick={toggleMenu}
-                      text={LOCALE_LABEL[activeLocale]}
-                      arrowRef={arrowRef}
-                    />
+                    <Button onClick={toggleMenu}>{LOCALE_LABEL[activeLocale]}</Button>
                     <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end" zIndex={6001}>
                       <MenuList>
                         {SUPPORTED_LOCALES.map((locale: SupportedLocale) => (

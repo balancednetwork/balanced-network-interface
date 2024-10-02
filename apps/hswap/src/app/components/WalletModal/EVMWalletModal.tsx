@@ -8,7 +8,6 @@ import WalletConnectIcon from '@/assets/icons/wallets/walletconnect.svg?inline';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { XConnector } from '@/xwagmi/core';
 import { useXConnect, useXConnectors } from '@/xwagmi/hooks';
-import { UnderlineText } from '../DropdownText';
 import { UnbreakableText, WalletOption } from './shared';
 import { Modal } from '@/app/components2/Modal';
 
@@ -63,7 +62,7 @@ export const EVMWalletModal = ({ id = MODAL_ID.EVM_WALLET_OPTIONS_MODAL }) => {
                   window.open('https://chromewebstore.google.com/detail/hana-wallet/jfdlamikmbghhapbgfoogdffldioobgl')
                 }
               >
-                <UnderlineText>Hana</UnderlineText>
+                <span>Hana</span>
               </Typography>
               ,{' '}
               <Typography
@@ -73,7 +72,7 @@ export const EVMWalletModal = ({ id = MODAL_ID.EVM_WALLET_OPTIONS_MODAL }) => {
                   window.open('https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn')
                 }
               >
-                <UnderlineText>MetaMask</UnderlineText>
+                <span>MetaMask</span>
               </Typography>
               , or{' '}
               <Typography
@@ -83,7 +82,7 @@ export const EVMWalletModal = ({ id = MODAL_ID.EVM_WALLET_OPTIONS_MODAL }) => {
                   window.open('https://chromewebstore.google.com/detail/rabby-wallet/acmacodkjbdgmoleebolmdjonilkdbch')
                 }
               >
-                <UnderlineText>Rabby</UnderlineText>
+                <span>Rabby</span>
               </Typography>{' '}
               to your browser, then try again.
             </Typography>

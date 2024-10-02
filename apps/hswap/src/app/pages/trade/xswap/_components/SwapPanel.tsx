@@ -5,7 +5,6 @@ import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
-import { UnderlineText } from '@/app/components/DropdownText';
 import CurrencyInputPanel, { CurrencyInputPanelType } from '@/app/components2/CurrencyInputPanel';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
@@ -379,11 +378,11 @@ export default function SwapPanel() {
                 {new BigNumber(maximumBridgeAmount.toFixed()).isGreaterThanOrEqualTo(0.0001) ? (
                   <>
                     <Trans>Only</Trans>{' '}
-                    <UnderlineText onClick={handleMaximumBridgeAmountClick}>
+                    <div onClick={handleMaximumBridgeAmountClick}>
                       <Typography color="primaryBright" as="a">
                         {maximumBridgeAmount?.toFixed(4)} {maximumBridgeAmount?.currency?.symbol}
                       </Typography>
-                    </UnderlineText>{' '}
+                    </div>{' '}
                   </>
                 ) : (
                   <>

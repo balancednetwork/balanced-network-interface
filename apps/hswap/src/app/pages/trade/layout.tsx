@@ -28,15 +28,30 @@ export function TradePageLayout() {
     <div className="flex-1 flex justify-center">
       <div className="flex flex-col mb-10 w-full max-w-md">
         <Tabs value={value} onValueChange={handleTabClick}>
-          <TabsList>
-            <TabsTrigger value="swap">
-              <Trans>Swap</Trans>
+          <TabsList className="gap-2">
+            <TabsTrigger
+              value="swap"
+              className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex"
+            >
+              <div className="text-base font-bold font-['Montserrat']">
+                <Trans>Swap</Trans>
+              </div>
             </TabsTrigger>
-            <TabsTrigger value="limit">
-              <Trans>Limit</Trans>
+            <TabsTrigger
+              value="limit"
+              className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex"
+            >
+              <div className="text-base font-bold font-['Montserrat']">
+                <Trans>Limit</Trans>
+              </div>
             </TabsTrigger>
-            <TabsTrigger value="dca">
-              <Trans>DCA</Trans>
+            <TabsTrigger
+              value="dca"
+              className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex"
+            >
+              <div className="text-base font-bold font-['Montserrat']">
+                <Trans>DCA</Trans>
+              </div>
             </TabsTrigger>
           </TabsList>
         </Tabs>

@@ -342,35 +342,39 @@ export default function SwapPanel() {
 
   return (
     <>
-      <div className="px-3 py-7 flex flex-col">
+      <div className="py-4 flex flex-col">
         <div className="flex flex-col gap-4 items-stretch">
-          <CurrencyInputPanel
-            account={account}
-            value={formattedAmounts[Field.INPUT]}
-            currency={currencies[Field.INPUT]}
-            onUserInput={handleTypeInput}
-            onCurrencySelect={handleInputSelect}
-            onPercentSelect={signedInWallets.length > 0 ? handleInputPercentSelect : undefined}
-            // percent={percents[Field.INPUT]}
-            type={CurrencyInputPanelType.INPUT}
-            balance={currencyBalances[Field.INPUT]}
-          />
+          <div className="flex flex-col gap-2">
+            <CurrencyInputPanel
+              account={account}
+              value={formattedAmounts[Field.INPUT]}
+              currency={currencies[Field.INPUT]}
+              onUserInput={handleTypeInput}
+              onCurrencySelect={handleInputSelect}
+              onPercentSelect={signedInWallets.length > 0 ? handleInputPercentSelect : undefined}
+              // percent={percents[Field.INPUT]}
+              type={CurrencyInputPanelType.INPUT}
+              balance={currencyBalances[Field.INPUT]}
+            />
 
-          <div className="flex items-center justify-center">
-            <div className="cursor-pointer" onClick={onSwitchTokens}>
-              <FlipIcon width={25} height={17} />
+            <div className="relative flex items-center justify-center h-0 z-[100]">
+              <div
+                className="cursor-pointer w-[40px] h-[40px] bg-[#695682] rounded-full flex items-center justify-center"
+                onClick={onSwitchTokens}
+              >
+                <FlipIcon width={24} height={24} />
+              </div>
             </div>
+
+            <CurrencyInputPanel
+              account={account}
+              value={formattedAmounts[Field.OUTPUT]}
+              currency={currencies[Field.OUTPUT]}
+              onUserInput={handleTypeOutput}
+              onCurrencySelect={handleOutputSelect}
+              type={CurrencyInputPanelType.OUTPUT}
+            />
           </div>
-
-          <CurrencyInputPanel
-            account={account}
-            value={formattedAmounts[Field.OUTPUT]}
-            currency={currencies[Field.OUTPUT]}
-            onUserInput={handleTypeOutput}
-            onCurrencySelect={handleOutputSelect}
-            type={CurrencyInputPanelType.OUTPUT}
-          />
-
           <RecipientAddressPanel />
 
           <div className="flex justify-center">{swapButton}</div>

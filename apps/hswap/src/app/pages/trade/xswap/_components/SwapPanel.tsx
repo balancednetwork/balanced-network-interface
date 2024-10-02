@@ -157,7 +157,11 @@ export default function SwapPanel() {
     }
 
     return isValid ? (
-      <Button variant="default" onClick={handleOpenXSwapModal} className="w-full rounded-xl">
+      <Button
+        variant="default"
+        onClick={handleOpenXSwapModal}
+        className="w-full rounded-full h-[56px] font-bold text-[16px]"
+      >
         <Trans>Swap</Trans>
       </Button>
     ) : (
@@ -165,7 +169,7 @@ export default function SwapPanel() {
         disabled={!account || !!inputError || !canBridge}
         color="primary"
         onClick={handleOpenXSwapModal}
-        className="w-full rounded-3xl"
+        className="w-full rounded-full h-[56px] font-bold text-[16px]"
       >
         {inputError || t`Swap`}
       </Button>

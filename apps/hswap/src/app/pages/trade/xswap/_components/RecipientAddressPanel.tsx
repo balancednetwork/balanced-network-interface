@@ -34,8 +34,9 @@ export default function RecipientAddressPanel() {
         onChange={e => {
           onChangeRecipient(e.target.value);
         }}
+        className="h-[52px] border-none bg-card rounded-full text-base font-bold px-4"
       />
-      <Button className="rounded-full" onClick={handleFillAddress}>
+      <Button className="rounded-full w-[52px] h-[52px] font-bold bg-card" onClick={handleFillAddress}>
         A
       </Button>
     </div>

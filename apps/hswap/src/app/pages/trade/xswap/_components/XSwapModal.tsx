@@ -1,60 +1,52 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Currency, CurrencyAmount, TradeType, XChainId, XToken } from '@balancednetwork/sdk-core';
+import { Currency, TradeType, XChainId, XToken } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { Box, Flex } from 'rebass';
 
-// import { Button, TextButton } from '@/app/components/Button';
-// import { StyledButton } from '@/app/components/Button/StyledButton';
-import XTransactionState from '@/app/components/XTransactionState';
 import { Modal } from '@/app/components2/Modal';
 import TooltipContainer from '@/app/components2/TooltipContainer';
 import { Button } from '@/components/ui/button';
-import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
-import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
-import { useSendXTransaction } from '@/hooks/useSendXTransaction';
-import useXCallGasChecker from '@/hooks/useXCallGasChecker';
-import { useSwapSlippageTolerance } from '@/store/application/hooks';
+import { ApprovalState } from '@/hooks/useApproveCallback';
 import { Field } from '@/store/swap/reducer';
 import { formatBigNumber } from '@/utils';
-import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { getNetworkDisplayName } from '@/utils/xTokens';
-import { xChainMap } from '@/xwagmi/constants/xChains';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
-import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
-import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, CheckIcon, XIcon } from 'lucide-react';
+import { CheckIcon, Loader2, XIcon } from 'lucide-react';
 import { TradeRoute } from './AdvancedSwapDetails';
 import CurrencyCard from './CurrencyCard';
+import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { XTransactionStatus } from '@/xwagmi/xcall/types';
+import { ChevronRight } from 'react-feather';
+import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
+import { xChainMap } from '@/xwagmi/constants/xChains';
+import FlipIcon from '@/assets/icons/flip.svg';
+import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 
 export enum ConfirmModalState {
   REVIEWING,
   APPROVING_TOKEN,
   PENDING_CONFIRMATION,
-  COMPLETED,
 }
+
+export type PendingConfirmModalState = ConfirmModalState.APPROVING_TOKEN | ConfirmModalState.PENDING_CONFIRMATION;
 
 type XSwapModalProps = {
   open: boolean;
-  account: string | undefined;
   currencies: { [field in Field]?: XToken };
   executionTrade?: Trade<Currency, Currency, TradeType>;
-  clearInputs: () => void;
   direction: {
     from: XChainId;
     to: XChainId;
   };
-  recipient?: string | null;
 
   //
   confirmModalState: ConfirmModalState;
-  xSwapErrorMessage: string | null;
+  xSwapErrorMessage: string | undefined;
   attemptingTxn: boolean;
-  txnHash: string | null;
-  xTransactionId: string | null;
+  xTransactionId: string | undefined;
+  approvalState: ApprovalState;
+  pendingModalSteps: PendingConfirmModalState[];
   //
   onConfirm: () => Promise<void>;
   onDismiss: () => void;
@@ -68,253 +60,213 @@ export const presenceVariants = {
 
 const XSwapModal = ({
   open,
-  account,
   currencies,
   executionTrade,
   direction,
-  recipient,
-  clearInputs,
   //
   confirmModalState,
   xSwapErrorMessage,
-  attemptingTxn,
-  txnHash,
+  attemptingTxn, // TODO: remove this?
   xTransactionId,
+  approvalState,
+  pendingModalSteps,
   //
   onConfirm,
   onDismiss,
 }: XSwapModalProps) => {
-  const [currentId, setCurrentId] = useState<string | null>(null);
-  const currentXTransaction = xTransactionActions.get(currentId);
-  const isProcessing: boolean = currentId !== null;
-  const isExecuted =
-    currentXTransaction?.status === XTransactionStatus.success ||
-    currentXTransaction?.status === XTransactionStatus.failure;
+  const { formattedXCallFee } = useXCallFee(direction.from, direction.to);
 
-  const slippageTolerance = useSwapSlippageTolerance();
-  const showWarning = executionTrade?.priceImpact.greaterThan(SLIPPAGE_MODAL_WARNING_THRESHOLD);
+  const [approved, setApproved] = useState(false);
+  const [swapConfirmed, setSwapConfirmed] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>();
+  const currentXTransaction = xTransactionActions.get(xTransactionId || null);
 
-  const { xCallFee, formattedXCallFee } = useXCallFee(direction.from, direction.to);
-
-  const xChain = xChainMap[direction.from];
-
-  // convert executionTrade.inputAmount in currencies[Field.INPUT]
-  const _inputAmount = useMemo(() => {
-    return executionTrade?.inputAmount && currencies[Field.INPUT]
-      ? CurrencyAmount.fromRawAmount(
-          XToken.getXToken(direction.from, currencies[Field.INPUT].wrapped),
-          new BigNumber(executionTrade.inputAmount.toFixed())
-            .times((10n ** BigInt(currencies[Field.INPUT].decimals)).toString())
-            .toFixed(0),
-        )
-      : undefined;
-  }, [executionTrade, direction.from, currencies]);
-  const { approvalState, approveCallback } = useApproveCallback(_inputAmount, xChain.contracts.assetManager);
-
-  const cleanupSwap = () => {
-    clearInputs();
-    window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-  };
-
-  // const handleDismiss = useCallback(() => {
-  //   setOpen(false);
-  //   setTimeout(() => {
-  //     setCurrentId(null);
-  //     setXSwapModalState(XSwapModalState.REVIEWING);
-  //   }, 500);
-  // }, [setOpen]);
-
-  //to show success or fail message in the modal
-  // const slowDismiss = useCallback(() => {
-  //   setTimeout(() => {
-  //     handleDismiss();
-  //   }, 2000);
-  // }, [handleDismiss]);
-
-  // useEffect(() => {
-  //   if (
-  //     currentXTransaction &&
-  //     (currentXTransaction.status === XTransactionStatus.success ||
-  //       currentXTransaction.status === XTransactionStatus.failure)
-  //   ) {
-  //     slowDismiss();
-  //   }
-  // }, [currentXTransaction, slowDismiss]);
-
-  const { sendXTransaction } = useSendXTransaction();
-
-  const handleXCallSwap = async () => {
-    if (!executionTrade) return;
-    if (!account) return;
-    if (!recipient) return;
-    if (!xCallFee) return;
-    if (!_inputAmount) return;
-
-    if (approvalState !== ApprovalState.APPROVED) {
-      // setXSwapModalState(XSwapModalState.APPROVING_TOKEN);
-      await approveCallback();
+  useEffect(() => {
+    if (approvalState === ApprovalState.APPROVED) {
+      setApproved(true);
     }
+  }, [approvalState]);
+  useEffect(() => {
+    if (currentXTransaction) {
+      // const swapConfirmed = !!txnHash || !!xTransactionId;
+      if (currentXTransaction.status === XTransactionStatus.success) {
+        setSwapConfirmed(true);
+      }
+      if (currentXTransaction.status === XTransactionStatus.failure) {
+        setSwapConfirmed(true);
+        setErrorMessage('Swap failed');
+      }
+    }
+  }, [currentXTransaction]);
 
-    // setXSwapModalState(XSwapModalState.PENDING_CONFIRMATION);
-
-    const xTransactionInput: XTransactionInput = {
-      type: XTransactionType.SWAP,
-      direction,
-      executionTrade,
-      account,
-      recipient,
-      inputAmount: _inputAmount,
-      slippageTolerance,
-      xCallFee,
-      callback: cleanupSwap,
+  const { showDetails, showProgressIndicator, showSuccess, showError } = useMemo(() => {
+    let showDetails, showProgressIndicator, showSuccess, showError;
+    if (xSwapErrorMessage || errorMessage) {
+      showError = true;
+    } else if (swapConfirmed) {
+      showSuccess = true;
+    } else if (confirmModalState === ConfirmModalState.REVIEWING) {
+      showDetails = true;
+    } else {
+      showProgressIndicator = true;
+    }
+    return {
+      showDetails,
+      showProgressIndicator,
+      showSuccess,
+      showError,
     };
+  }, [xSwapErrorMessage, swapConfirmed, confirmModalState, errorMessage]);
 
-    try {
-      const xTransactionId = await sendXTransaction(xTransactionInput);
-      console.log('xTransactionId', xTransactionId);
-      setCurrentId(xTransactionId || null);
-    } catch (e) {
-      console.log(e);
-      // setXSwapModalState(XSwapModalState.REVIEWING);
-    }
-  };
+  const handleDismiss = useCallback(() => {
+    onDismiss();
+    setSwapConfirmed(false);
+    setApproved(false);
+    setErrorMessage(undefined);
+  }, [onDismiss]);
 
-  const gasChecker = useXCallGasChecker(direction.from);
-
-  const modalContent = useMemo(() => {
-    if (xSwapErrorMessage) {
-      return (
-        <div>
-          <div className="relative flex justify-between gap-2">
-            <CurrencyCard currency={currencies[Field.INPUT]} currencyAmount={executionTrade?.inputAmount} />
-            <CurrencyCard currency={currencies[Field.OUTPUT]} currencyAmount={executionTrade?.outputAmount} />
-
-            <span className="absolute top-[50%] left-[50%] mx-[-15px] my-[-15px] w-[30px] h-[30px] flex justify-center items-center border-2 rounded-full">
-              <XIcon />
-            </span>
-          </div>
-          <span className="text-red-500">{xSwapErrorMessage}</span>
-        </div>
-      );
-    }
-
-    return <></>;
-  }, [xSwapErrorMessage, currencies, executionTrade]);
+  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(direction.from);
 
   return (
-    <Modal open={open} onDismiss={onDismiss} title="Review Swap">
-      {modalContent}
-      <div className="relative flex justify-between gap-2">
-        <CurrencyCard currency={currencies[Field.INPUT]} currencyAmount={executionTrade?.inputAmount} />
-        <CurrencyCard currency={currencies[Field.OUTPUT]} currencyAmount={executionTrade?.outputAmount} />
+    <Modal open={open} onDismiss={handleDismiss} title={showDetails ? 'Review Swap' : ''} hideCloseIcon={false}>
+      <div className="flex flex-col gap-4">
+        <div className="relative flex justify-between gap-2">
+          <CurrencyCard currency={currencies[Field.INPUT]} currencyAmount={executionTrade?.inputAmount} />
+          <CurrencyCard currency={currencies[Field.OUTPUT]} currencyAmount={executionTrade?.outputAmount} />
+          {showDetails && (
+            <span className="bg-[#221542] border-2 border-background absolute top-[50%] left-[50%] mx-[-24px] my-[-24px] w-[48px] h-[48px] flex justify-center items-center rounded-full">
+              <ChevronRight />
+            </span>
+          )}
+          {confirmModalState !== ConfirmModalState.REVIEWING && showProgressIndicator && (
+            <span className="bg-[#221542] border-2 border-background absolute top-[50%] left-[50%] mx-[-24px] my-[-24px] w-[48px] h-[48px] flex justify-center items-center rounded-full">
+              <ChevronRight />
+            </span>
+          )}
+          {showSuccess && (
+            <span className="bg-green-500 border-2 border-background absolute top-[50%] left-[50%] mx-[-24px] my-[-24px] w-[48px] h-[48px] flex justify-center items-center rounded-full">
+              <CheckIcon className="text-background" />
+            </span>
+          )}
+          {showError && (
+            <span className="bg-red-500 border-2 border-background absolute top-[50%] left-[50%] mx-[-24px] my-[-24px] w-[48px] h-[48px] flex justify-center items-center rounded-full">
+              <XIcon className="text-background" />
+            </span>
+          )}
+        </div>
 
-        {confirmModalState === ConfirmModalState.COMPLETED ? (
-          <span className="absolute top-[50%] left-[50%] mx-[-15px] my-[-15px] w-[30px] h-[30px] flex justify-center items-center border-2 rounded-full">
-            <CheckIcon />
-          </span>
-        ) : (
-          <span className="absolute top-[50%] left-[50%] mx-[-15px] my-[-15px] w-[30px] h-[30px] flex justify-center items-center border-2 rounded-full">
-            <ArrowRight />
-          </span>
-        )}
-      </div>
-
-      {confirmModalState === ConfirmModalState.REVIEWING && (
-        <>
-          <Button onClick={() => onConfirm()}>
-            <Trans>{approvalState !== ApprovalState.APPROVED ? 'Approve and Swap' : 'Swap'}</Trans>
-          </Button>
-
-          <div className="flex flex-col gap-2">
-            <TooltipContainer tooltipText="The impact your trade has on the market price of this pool.">
+        {/* Details section displays rate, fees, network cost, etc. w/ additional details in drop-down menu .*/}
+        {showDetails && (
+          <>
+            <div className="flex flex-col gap-2">
+              <TooltipContainer tooltipText="The impact your trade has on the market price of this pool.">
+                <div className="flex justify-between">
+                  <span className="text-secondary-foreground text-body">Rate</span>
+                  <span className="text-body">
+                    1 {executionTrade?.executionPrice.baseCurrency.symbol} ={' '}
+                    {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
+                      executionTrade?.executionPrice.quoteCurrency.symbol
+                    }`}
+                  </span>
+                </div>
+              </TooltipContainer>
               <div className="flex justify-between">
-                <span className="text-secondary-foreground">Rate</span>
-                <span>
-                  1 {executionTrade?.executionPrice.baseCurrency.symbol} ={' '}
-                  {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
-                    executionTrade?.executionPrice.quoteCurrency.symbol
-                  }`}
+                <span className="text-secondary-foreground text-body">Swap Fee</span>
+                <span className="text-body">
+                  {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
+                  {currencies[Field.INPUT]?.symbol}
                 </span>
               </div>
-            </TooltipContainer>
-            <div className="flex justify-between">
-              <span className="text-secondary-foreground">Swap Fee</span>
-              <span>
-                {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
-                {currencies[Field.INPUT]?.symbol}
-              </span>
+              <div className="flex justify-between">
+                <span className="text-secondary-foreground text-body">Bridge Fee</span>
+                <span className="text-body">{formattedXCallFee}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-secondary-foreground text-body">Network Cost</span>
+                <span className="text-body">0.0001 ICX</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-secondary-foreground text-body">Order routing</span>
+                <div>{executionTrade ? <TradeRoute route={executionTrade.route} currencies={currencies} /> : '-'}</div>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span className="text-secondary-foreground">Bridge Fee</span>
-              <span>{formattedXCallFee}</span>
-            </div>
-            {/* <div className="flex justify-between">
-          <span className="text-secondary-foreground">Network Cost</span>
-          <span>0.0001 ICX</span>
-        </div> */}
-            <div className="flex justify-between">
-              <span className="text-secondary-foreground">Route</span>
-              <div>{executionTrade ? <TradeRoute route={executionTrade.route} currencies={currencies} /> : '-'}</div>
-            </div>
-          </div>
-        </>
-      )}
-
-      {confirmModalState === ConfirmModalState.APPROVING_TOKEN && (
-        <div>
-          <div>Approve USDC spending</div>
-          <div>Confirm swap in wallet</div>
-        </div>
-      )}
-      {confirmModalState === ConfirmModalState.PENDING_CONFIRMATION && <div>Confirm swap in wallet</div>}
-
-      {/* {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />} */}
-
-      {/* <AnimatePresence>
-        {((!isExecuted && isProcessing) || !isProcessing) && (
-          <motion.div
-            key={'tx-actions'}
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            style={{ overflow: 'hidden' }}
-          >
-            <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-              <TextButton onClick={handleDismiss}>
-                <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
-              </TextButton>
-
-              {isProcessing ? (
-                <>
-                  <StyledButton disabled $loading>
-                    <Trans>Swapping</Trans>
-                  </StyledButton>
-                </>
-              ) : (
-                <>
-                  {approvalState !== ApprovalState.APPROVED ? (
-                    <Button onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
-                      {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
-                    </Button>
-                  ) : (
-                    <StyledButton onClick={handleXCallSwap} disabled={!gasChecker.hasEnoughGas}>
-                      <Trans>Swap</Trans>
-                    </StyledButton>
-                  )}
-                </>
-              )}
-            </Flex>
-          </motion.div>
+            {isWrongChain ? (
+              <Button color="primary" onClick={handleSwitchChain} className="h-[56px] text-base rounded-full">
+                <Trans>Switch to {xChainMap[direction.from].name}</Trans>
+              </Button>
+            ) : (
+              <Button onClick={async () => await onConfirm()} className="h-[56px] text-base rounded-full">
+                <Trans>{approvalState !== ApprovalState.APPROVED ? 'Approve and Swap' : 'Swap'}</Trans>
+              </Button>
+            )}
+          </>
         )}
-      </AnimatePresence> */}
+        {/* Progress indicator displays all the steps of the swap flow and their current status  */}
+        {confirmModalState !== ConfirmModalState.REVIEWING && showProgressIndicator && (
+          <div className="flex flex-col gap-2">
+            {pendingModalSteps.map(step => (
+              <div key={step} className="flex gap-2 items-center justify-between">
+                {step === ConfirmModalState.APPROVING_TOKEN && (
+                  <>
+                    <div className="flex gap-2 items-center">
+                      {approvalState === ApprovalState.NOT_APPROVED && !approved && (
+                        <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
+                          {currencies[Field.INPUT] && (
+                            <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} size="40px" />
+                          )}
+                        </div>
+                      )}
+                      {approvalState === ApprovalState.PENDING && (
+                        <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
+                          <Loader2 className="animate-spin" />
+                        </div>
+                      )}
 
-      {/* {!isProcessing && !gasChecker.hasEnoughGas && (
+                      {approved && (
+                        <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
+                          {currencies[Field.INPUT] && (
+                            <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} size="40px" />
+                          )}
+                        </div>
+                      )}
+                      <div>Approve {currencies[Field.INPUT]?.symbol} spending</div>
+                    </div>
+                    {approved && <CheckIcon />}
+                  </>
+                )}
+                {step === ConfirmModalState.PENDING_CONFIRMATION && (
+                  <>
+                    <div className="flex gap-2 items-center">
+                      {!xTransactionId && (
+                        <div className="bg-[#4C82FB] w-[40px] h-[40px] rounded-full flex items-center justify-center">
+                          <FlipIcon width={24} height={24} />
+                        </div>
+                      )}
+                      {xTransactionId && !swapConfirmed && (
+                        <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
+                          <Loader2 className="animate-spin" />
+                        </div>
+                      )}
+                      <div>Confirm swap in wallet</div>
+                    </div>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Error message displays if there is an error in the swap flow */}
+        {showError && <div className="text-red-500 text-center">{xSwapErrorMessage || errorMessage}</div>}
+
+        {/* {!isProcessing && !gasChecker.hasEnoughGas && (
         <Flex justifyContent="center" paddingY={2}>
           <Typography maxWidth="320px" color="alert" textAlign="center">
             {gasChecker.errorMessage}
           </Typography>
         </Flex>
       )} */}
+      </div>
     </Modal>
   );
 };

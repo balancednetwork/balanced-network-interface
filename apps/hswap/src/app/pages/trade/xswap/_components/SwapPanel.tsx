@@ -1,6 +1,6 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
-import { Currency, Percent, TradeType, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Percent, TradeType, XToken } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -10,10 +10,8 @@ import CurrencyInputPanel, { CurrencyInputPanelType } from '@/app/components2/Cu
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import { Button } from '@/components/ui/button';
-import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
-import useManualAddresses from '@/hooks/useManualAddresses';
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { useWalletModalToggle } from '@/store/application/hooks';
+import { useSwapSlippageTolerance, useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
@@ -22,14 +20,24 @@ import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount } from '@/xwagmi/hooks';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import RecipientAddressPanel from './RecipientAddressPanel';
-import SwapModal from './SwapModal';
-import XSwapModal, { ConfirmModalState } from './XSwapModal';
+import XSwapModal, { ConfirmModalState, PendingConfirmModalState } from './XSwapModal';
+import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
+import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
+import { useSendXTransaction } from '@/hooks/useSendXTransaction';
+import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
 
-const DEFAULT_XSWAP_MODAL_STATE = {
+interface XSwapModalState {
+  confirmModalState: ConfirmModalState;
+  xSwapErrorMessage: string | undefined;
+  attemptingTxn: boolean;
+  xTransactionId: string | undefined;
+}
+
+const DEFAULT_XSWAP_MODAL_STATE: XSwapModalState = {
   confirmModalState: ConfirmModalState.REVIEWING,
   xSwapErrorMessage: '',
   attemptingTxn: false,
-  txnHash: '',
   xTransactionId: '',
 };
 
@@ -57,7 +65,7 @@ export default function SwapPanel() {
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
     useSwapActionHandlers();
 
-  const [xSwapModalState, setXSwapModalOpen] = React.useState(DEFAULT_XSWAP_MODAL_STATE);
+  const [xSwapModalState, setXSwapModalState] = React.useState<XSwapModalState>(DEFAULT_XSWAP_MODAL_STATE);
 
   const xAccount = useXAccount(getXChainType(direction.to));
 
@@ -117,40 +125,18 @@ export default function SwapPanel() {
 
   const isValid = !inputError && canBridge;
 
-  // handle swap modal
-  const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
-
-  const handleSwapConfirmDismiss = React.useCallback(
-    (clearInputs = true) => {
-      setShowSwapConfirm(false);
-      clearInputs && clearSwapInputOutput();
-    },
-    [clearSwapInputOutput],
-  );
-
   const toggleWalletModal = useWalletModalToggle();
 
   const [executionTrade, setExecutionTrade] = React.useState<Trade<Currency, Currency, TradeType>>();
 
-  const isXSwap = !(direction.from === '0x1.icon' && direction.to === '0x1.icon');
-
-  const handleSwap = useCallback(() => {
-    if (isXSwap) {
-      if (!account || !recipient) {
-        toggleWalletModal();
-      } else {
-        setExecutionTrade(trade);
-        setOpen(true);
-      }
+  const handleOpenXSwapModal = useCallback(() => {
+    if (!account || !recipient) {
+      toggleWalletModal();
     } else {
-      if (!account) {
-        toggleWalletModal();
-      } else {
-        setShowSwapConfirm(true);
-        setExecutionTrade(trade);
-      }
+      setExecutionTrade(trade);
+      setOpen(true);
     }
-  }, [account, toggleWalletModal, trade, isXSwap, recipient]);
+  }, [account, toggleWalletModal, trade, recipient]);
 
   const handleMaximumBridgeAmountClick = () => {
     if (maximumBridgeAmount) {
@@ -158,73 +144,230 @@ export default function SwapPanel() {
     }
   };
 
-  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(direction.from);
-
   const swapButton = useMemo(() => {
-    if (isValid && isWrongChain) {
-      return (
-        <Button color="primary" onClick={handleSwitchChain} className="w-full rounded-3xl">
-          <Trans>Switch to {xChainMap[direction.from].name}</Trans>
-        </Button>
-      );
-    }
-
     return isValid ? (
-      <Button variant="default" onClick={handleSwap} className="w-full rounded-xl">
+      <Button
+        variant="default"
+        onClick={handleOpenXSwapModal}
+        className="w-full rounded-full h-[56px] font-bold text-base"
+      >
         <Trans>Swap</Trans>
       </Button>
     ) : (
       <Button
         disabled={!account || !!inputError || !canBridge}
         color="primary"
-        onClick={handleSwap}
-        className="w-full rounded-3xl"
+        onClick={handleOpenXSwapModal}
+        className="w-full rounded-full h-[56px] font-bold text-base"
       >
         {inputError || t`Swap`}
       </Button>
     );
-  }, [isValid, account, inputError, canBridge, handleSwap, isWrongChain, handleSwitchChain, direction.from]);
+  }, [isValid, account, inputError, canBridge, handleOpenXSwapModal]);
+
+  // -------------------------------XSWAP--------------------------------
+  const [pendingModalSteps, setPendingModalSteps] = useState<PendingConfirmModalState[]>([]);
 
   const handleDismiss = useCallback(() => {
     setOpen(false);
+    setTimeout(() => {
+      setXSwapModalState(DEFAULT_XSWAP_MODAL_STATE);
+    }, 500);
   }, []);
 
-  const handleConfirm = useCallback(async () => {
-    // setShowSwapConfirm(false);
-    // setOpen(true);
-  }, []);
+  const xChain = xChainMap[direction.from];
+  const _inputAmount = useMemo(() => {
+    return executionTrade?.inputAmount && currencies[Field.INPUT]
+      ? CurrencyAmount.fromRawAmount(
+          XToken.getXToken(direction.from, currencies[Field.INPUT].wrapped),
+          new BigNumber(executionTrade.inputAmount.toFixed())
+            .times((10n ** BigInt(currencies[Field.INPUT].decimals)).toString())
+            .toFixed(0),
+        )
+      : undefined;
+  }, [executionTrade, direction.from, currencies]);
+  const { approvalState, approveCallback } = useApproveCallback(_inputAmount, xChain.contracts.assetManager);
+
+  const { xCallFee, formattedXCallFee } = useXCallFee(direction.from, direction.to);
+  const slippageTolerance = useSwapSlippageTolerance();
+  const { sendXTransaction } = useSendXTransaction();
+
+  const cleanupSwap = useCallback(() => {
+    clearSwapInputOutput();
+    window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+  }, [clearSwapInputOutput]);
+
+  const handleConfirmXSwap = useCallback(async () => {
+    const isXSwap = !(direction.from === '0x1.icon' && direction.to === '0x1.icon');
+    if (!isXSwap) {
+      await handleConfirmSwap();
+      return;
+    }
+
+    if (!executionTrade) return;
+    if (!account) return;
+    if (!recipient) return;
+    if (!xCallFee) return;
+    if (!_inputAmount) return;
+
+    const pendingModalSteps: PendingConfirmModalState[] = [];
+    if (approvalState !== ApprovalState.APPROVED) {
+      pendingModalSteps.push(ConfirmModalState.APPROVING_TOKEN);
+    }
+    pendingModalSteps.push(ConfirmModalState.PENDING_CONFIRMATION);
+    setPendingModalSteps(pendingModalSteps);
+
+    if (approvalState !== ApprovalState.APPROVED) {
+      setXSwapModalState({
+        confirmModalState: ConfirmModalState.APPROVING_TOKEN,
+        xSwapErrorMessage: '',
+        attemptingTxn: true,
+        xTransactionId: '',
+      });
+
+      await approveCallback();
+
+      // setXSwapModalState({
+      //   confirmModalState: ConfirmModalState.APPROVING_TOKEN,
+      //   xSwapErrorMessage: '',
+      //   attemptingTxn: false,
+      //   xTransactionId: '',
+      // });
+    }
+
+    setXSwapModalState({
+      confirmModalState: ConfirmModalState.PENDING_CONFIRMATION,
+      xSwapErrorMessage: '',
+      attemptingTxn: true,
+      xTransactionId: '',
+    });
+
+    const xTransactionInput: XTransactionInput = {
+      type: XTransactionType.SWAP,
+      direction,
+      executionTrade,
+      account,
+      recipient,
+      inputAmount: _inputAmount,
+      xCallFee,
+      callback: cleanupSwap,
+      slippageTolerance,
+    };
+
+    try {
+      const xTransactionId = await sendXTransaction(xTransactionInput);
+      console.log('xTransactionId', xTransactionId);
+
+      if (!xTransactionId) {
+        throw new Error('xTransactionId is undefined');
+      }
+
+      setXSwapModalState({
+        confirmModalState: ConfirmModalState.PENDING_CONFIRMATION,
+        xSwapErrorMessage: '',
+        attemptingTxn: false,
+        xTransactionId,
+      });
+    } catch (e) {
+      console.log(e);
+      setXSwapModalState(DEFAULT_XSWAP_MODAL_STATE);
+    }
+  }, [
+    sendXTransaction,
+    executionTrade,
+    account,
+    recipient,
+    _inputAmount,
+    direction,
+    xCallFee,
+    approvalState,
+    approveCallback,
+    cleanupSwap,
+    slippageTolerance,
+  ]);
+
+  const handleConfirmSwap = useCallback(async () => {
+    if (!executionTrade) return;
+    if (!account) return;
+    if (!recipient) return;
+    if (!_inputAmount) return;
+
+    setPendingModalSteps([ConfirmModalState.PENDING_CONFIRMATION]);
+
+    setXSwapModalState({
+      confirmModalState: ConfirmModalState.PENDING_CONFIRMATION,
+      xSwapErrorMessage: '',
+      attemptingTxn: true,
+      xTransactionId: '',
+    });
+
+    const xTransactionInput: XTransactionInput = {
+      type: XTransactionType.SWAP_ON_ICON,
+      direction,
+      executionTrade,
+      account,
+      recipient,
+      xCallFee: { rollback: 0n, noRollback: 0n }, // not used, just for type checking
+      inputAmount: _inputAmount,
+      callback: cleanupSwap,
+      slippageTolerance,
+    };
+
+    try {
+      const xTransactionId = await sendXTransaction(xTransactionInput);
+      console.log('xTransactionId', xTransactionId);
+
+      if (!xTransactionId) {
+        throw new Error('xTransactionId is undefined');
+      }
+
+      setXSwapModalState({
+        confirmModalState: ConfirmModalState.PENDING_CONFIRMATION,
+        xSwapErrorMessage: '',
+        attemptingTxn: false,
+        xTransactionId,
+      });
+    } catch (e) {
+      console.log(e);
+      setXSwapModalState(DEFAULT_XSWAP_MODAL_STATE);
+    }
+  }, [sendXTransaction, executionTrade, account, recipient, _inputAmount, direction, cleanupSwap, slippageTolerance]);
 
   return (
     <>
-      <div className="px-3 py-7 flex flex-col">
+      <div className="py-4 flex flex-col">
         <div className="flex flex-col gap-4 items-stretch">
-          <CurrencyInputPanel
-            account={account}
-            value={formattedAmounts[Field.INPUT]}
-            currency={currencies[Field.INPUT]}
-            onUserInput={handleTypeInput}
-            onCurrencySelect={handleInputSelect}
-            onPercentSelect={signedInWallets.length > 0 ? handleInputPercentSelect : undefined}
-            // percent={percents[Field.INPUT]}
-            type={CurrencyInputPanelType.INPUT}
-            balance={currencyBalances[Field.INPUT]}
-          />
+          <div className="flex flex-col gap-2">
+            <CurrencyInputPanel
+              account={account}
+              value={formattedAmounts[Field.INPUT]}
+              currency={currencies[Field.INPUT]}
+              onUserInput={handleTypeInput}
+              onCurrencySelect={handleInputSelect}
+              onPercentSelect={signedInWallets.length > 0 ? handleInputPercentSelect : undefined}
+              // percent={percents[Field.INPUT]}
+              type={CurrencyInputPanelType.INPUT}
+              balance={currencyBalances[Field.INPUT]}
+            />
 
-          <div className="flex items-center justify-center">
-            <div className="cursor-pointer" onClick={onSwitchTokens}>
-              <FlipIcon width={25} height={17} />
+            <div className="relative flex items-center justify-center h-0 z-1">
+              <div
+                className="cursor-pointer w-[40px] h-[40px] bg-[#695682] rounded-full flex items-center justify-center"
+                onClick={onSwitchTokens}
+              >
+                <FlipIcon width={24} height={24} />
+              </div>
             </div>
+
+            <CurrencyInputPanel
+              account={account}
+              value={formattedAmounts[Field.OUTPUT]}
+              currency={currencies[Field.OUTPUT]}
+              onUserInput={handleTypeOutput}
+              onCurrencySelect={handleOutputSelect}
+              type={CurrencyInputPanelType.OUTPUT}
+            />
           </div>
-
-          <CurrencyInputPanel
-            account={account}
-            value={formattedAmounts[Field.OUTPUT]}
-            currency={currencies[Field.OUTPUT]}
-            onUserInput={handleTypeOutput}
-            onCurrencySelect={handleOutputSelect}
-            type={CurrencyInputPanelType.OUTPUT}
-          />
-
           <RecipientAddressPanel />
 
           <div className="flex justify-center">{swapButton}</div>
@@ -254,7 +397,7 @@ export default function SwapPanel() {
           )}
         </div>
       </div>
-
+      {/* 
       <SwapModal
         isOpen={showSwapConfirm}
         onClose={handleSwapConfirmDismiss}
@@ -262,24 +405,23 @@ export default function SwapPanel() {
         currencies={currencies}
         executionTrade={executionTrade}
         recipient={recipient || undefined}
-      />
+      /> */}
 
       <XSwapModal
         open={open}
-        account={account}
         currencies={currencies}
         executionTrade={executionTrade}
         direction={direction}
-        recipient={recipient}
-        clearInputs={clearSwapInputOutput}
         //
-        confirmModalState={xSwapModalState.confirmModalState}
-        xSwapErrorMessage={xSwapModalState.xSwapErrorMessage}
-        attemptingTxn={xSwapModalState.attemptingTxn}
-        txnHash={xSwapModalState.txnHash}
-        xTransactionId={xSwapModalState.xTransactionId}
+        // confirmModalState={xSwapModalState.confirmModalState}
+        // xSwapErrorMessage={xSwapModalState.xSwapErrorMessage}
+        // attemptingTxn={xSwapModalState.attemptingTxn}
+        // xTransactionId={xSwapModalState.xTransactionId}
+        {...xSwapModalState}
+        pendingModalSteps={pendingModalSteps}
+        approvalState={approvalState}
         //
-        onConfirm={handleConfirm}
+        onConfirm={handleConfirmXSwap}
         onDismiss={handleDismiss}
       />
     </>

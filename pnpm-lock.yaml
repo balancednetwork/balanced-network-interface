@@ -38,36 +38,21 @@ importers:
       '@balancednetwork/v1-sdk':
         specifier: workspace:*
         version: link:../../packages/v1-sdk
-      '@chain-registry/types':
-        specifier: 0.16.0
-        version: 0.16.0
       '@cosmjs/cosmwasm-stargate':
         specifier: 0.32.2
         version: 0.32.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      '@cosmjs/crypto':
-        specifier: 0.32.3
-        version: 0.32.3
       '@cosmjs/encoding':
         specifier: 0.32.3
         version: 0.32.3
       '@cosmjs/proto-signing':
         specifier: 0.32.3
         version: 0.32.3
-      '@cosmjs/stargate':
-        specifier: 0.32.2
-        version: 0.32.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@cosmjs/tendermint-rpc':
         specifier: 0.32.3
         version: 0.32.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@ethereumjs/rlp':
         specifier: 5.0.0
         version: 5.0.0
-      '@ethersproject/address':
-        specifier: 5.4.0
-        version: 5.4.0
-      '@ethersproject/solidity':
-        specifier: 5.4.0
-        version: 5.4.0
       '@injectivelabs/networks':
         specifier: 1.14.13
         version: 1.14.13(google-protobuf@3.21.4)
@@ -77,9 +62,6 @@ importers:
       '@injectivelabs/ts-types':
         specifier: 1.14.13
         version: 1.14.13
-      '@injectivelabs/utils':
-        specifier: 1.14.13
-        version: 1.14.13(google-protobuf@3.21.4)
       '@injectivelabs/wallet-ts':
         specifier: 1.14.13
         version: 1.14.13(@babel/runtime@7.25.0)(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(@solana/web3.js@1.95.3(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@types/react@18.2.67)(bs58@6.0.0)(bufferutil@4.0.8)(expo@51.0.29(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(utf-8-validate@5.0.10))(google-protobuf@3.21.4)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(tslib@2.6.2)(utf-8-validate@5.0.10)
@@ -161,9 +143,6 @@ importers:
       bignumber.js:
         specifier: 9.0.1
         version: 9.0.1
-      chain-registry:
-        specifier: 1.18.1
-        version: 1.18.1
       class-variance-authority:
         specifier: 0.7.0
         version: 0.7.0
@@ -194,18 +173,12 @@ importers:
       immer:
         specifier: 10.1.1
         version: 10.1.1
-      lodash-es:
-        specifier: 4.17.21
-        version: 4.17.21
       lucide-react:
         specifier: 0.428.0
         version: 0.428.0(react@18.2.0)
       numbro:
         specifier: ^2.5.0
         version: 2.5.0
-      polished:
-        specifier: 4.0.5
-        version: 4.0.5
       prettier:
         specifier: 2.1.1
         version: 2.1.1
@@ -288,9 +261,6 @@ importers:
       '@lingui/vite-plugin':
         specifier: 4.7.1
         version: 4.7.1(typescript@5.5.4)(vite@5.4.0(@types/node@22.5.5)(terser@5.30.3))
-      '@types/lodash-es':
-        specifier: 4.17.12
-        version: 4.17.12
       '@types/node':
         specifier: 22.5.5
         version: 22.5.5

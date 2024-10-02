@@ -15,17 +15,6 @@ export const MenuList = styled.ul`
   user-select: none;
 `;
 
-export const MenuItem = styled.li`
-  padding: 10px 15px;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    cursor: pointer;
-    background-color: ${({ theme }) => theme.colors?.primary};
-    transition: background-color 0.2s ease;
-  }
-`;
-
 const InternalMenuItem = styled(Link)<{ $active?: boolean }>`
   padding: 10px 15px;
   transition: background-color 0.3s ease;

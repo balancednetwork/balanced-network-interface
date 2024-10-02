@@ -166,39 +166,6 @@ export interface PopperProps {
   strategy?: 'fixed' | 'absolute';
 }
 
-export function PopperWithoutArrow({
-  show,
-  children,
-  placement = 'auto',
-  anchorEl,
-  offset,
-  forcePlacement,
-}: PopperProps) {
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-
-  const { styles, update, attributes } = usePopper(anchorEl, popperElement, {
-    placement,
-    strategy: 'absolute',
-    modifiers: [
-      { name: 'offset', options: { offset: offset } },
-      { name: 'flip', options: { fallbackPlacements: forcePlacement ? [] : [placement] } },
-    ],
-  });
-
-  const updateCallback = useCallback(() => {
-    update && update();
-  }, [update]);
-  useInterval(updateCallback, show ? 100 : null);
-
-  return (
-    <Portal>
-      <PopoverContainer $show={show} ref={setPopperElement as any} style={{ ...styles.popper }} {...attributes.popper}>
-        <ContentWrapper>{children}</ContentWrapper>
-      </PopoverContainer>
-    </Portal>
-  );
-}
-
 export function DropdownPopper({
   show,
   children,
@@ -282,26 +249,6 @@ export interface PopperProps {
   zIndex?: number;
 }
 
-export function SelectorPopover({ show, children, placement = 'auto', anchorEl }: PopperProps) {
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-
-  const { styles, update, attributes } = usePopper(anchorEl, popperElement, {
-    placement,
-    strategy: 'absolute',
-    modifiers: [{ name: 'offset', options: { offset: [0, 1] } }],
-  });
-  const updateCallback = useCallback(() => {
-    update && update();
-  }, [update]);
-  useInterval(updateCallback, show ? 100 : null);
-  return (
-    <Portal>
-      <PopoverContainer $show={show} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
-        <SelectorPopoverWrapper>{children}</SelectorPopoverWrapper>
-      </PopoverContainer>
-    </Portal>
-  );
-}
 export interface Props {
   show: boolean;
   children: React.ReactNode;

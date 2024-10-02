@@ -145,7 +145,7 @@ function calcUSDValue(balance: string, price: BigNumber) {
   return new BigNumber(balance).times(price);
 }
 
-export function useXBalancesByToken(balances: CurrencyAmount<XToken>[]) {
+function useXBalancesByToken(balances: CurrencyAmount<XToken>[]) {
   const rates = useRatesWithOracle();
 
   return React.useMemo(() => {

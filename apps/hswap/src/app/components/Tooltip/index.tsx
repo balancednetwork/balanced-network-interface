@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components';
 
 import Popover, { PopoverProps, PopperWithoutArrowAndBorder } from '../Popover';
 
-export const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean; width?: number; className?: string }>`
+const TooltipContainer = styled.div<{ wide?: boolean; small?: boolean; width?: number; className?: string }>`
   width: ${props => (props.width ? `${props.width}px` : props.wide ? '300px' : '260px')};
   padding: 10px 0.9375rem;
   line-height: 150%;

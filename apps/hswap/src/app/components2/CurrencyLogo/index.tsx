@@ -8,11 +8,11 @@ import { WrappedTokenInfo } from '@/store/lists/wrappedTokenInfo';
 import { cn } from '@/lib/utils';
 import FallbackImage from '../FallbackImage';
 
-export const getTokenLogoURL = (address: string): string => {
+const getTokenLogoURL = (address: string): string => {
   return `https://raw.githubusercontent.com/balancednetwork/assets/master/blockchains/icon/assets/${address}/logo.png`;
 };
 
-export const getTokenLogoURLFromSymbol = (symbol: string): string => {
+const getTokenLogoURLFromSymbol = (symbol: string): string => {
   return `https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/${symbol.toLocaleLowerCase()}.png`;
 };
 

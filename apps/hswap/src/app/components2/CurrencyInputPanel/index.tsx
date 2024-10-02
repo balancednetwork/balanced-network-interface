@@ -30,7 +30,7 @@ interface CurrencyInputPanelProps {
   type: CurrencyInputPanelType;
 }
 
-export const inputRegex = /^\d*(?:\\[.])?\d*$/; // match escaped "." characters via in a non-capturing group
+const inputRegex = /^\d*(?:\\[.])?\d*$/; // match escaped "." characters via in a non-capturing group
 
 export default function CurrencyInputPanel({
   value,

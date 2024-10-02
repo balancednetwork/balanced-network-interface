@@ -3,8 +3,7 @@ import { Box } from 'rebass';
 import styled from 'styled-components';
 import { notificationCSS } from './ICONWallets/utils';
 
-export const walletBreakpoint = '385px';
-const modalWalletBreakpoint = '400px';
+const walletBreakpoint = '385px';
 
 export const HeaderText = styled(Typography)`
   font-size: 12px;
@@ -92,27 +91,6 @@ export const AssetSymbol = styled.div<{ $hasNotification?: boolean }>`
     z-index: 5;
   }
 `;
-
-export const ModalContent = styled(Box)`
-  padding: 25px;
-  width: 100%;
-  button[role='tab'] {
-    border-left: 0;
-    border-top: 0;
-    border-right: 0;
-  }
-  ${AssetSymbol} {
-    &:before,
-    &:after {
-      display: none;
-    }
-  }
-  @media screen and (max-width: ${modalWalletBreakpoint}) {
-    padding: 15px;
-  }
-`;
-
-export const Wrapper = styled.div``;
 
 export const BalanceBreakdown = styled.div<{ $arrowPosition: string }>`
   background: ${({ theme }) => theme.colors?.bg3};

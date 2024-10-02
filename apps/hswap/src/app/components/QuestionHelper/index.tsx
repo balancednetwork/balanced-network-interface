@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import Tooltip from '@/app/components/Tooltip';
 import QuestionIcon from '@/assets/icons/question.svg';
 
-export const QuestionWrapper = styled.div`
+const QuestionWrapper = styled.div`
   display: inline-flex;
   align-items: center;
   justify-content: center;

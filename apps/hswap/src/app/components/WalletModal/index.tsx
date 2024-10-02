@@ -29,7 +29,6 @@ import { getXChainType } from '@/xwagmi/actions';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXDisconnectAll } from '@/xwagmi/hooks';
 import { useSwitchChain } from 'wagmi';
-import Divider from '../Divider';
 import { DropdownPopper } from '../Popover';
 import { EVMWalletModal } from './EVMWalletModal';
 import { InjectiveWalletOptionsModal } from './InjectiveWalletOptionsModal';
@@ -37,6 +36,7 @@ import { SuiWalletOptionsModal } from './SuiWalletOptionsModal';
 import WalletItem, { WalletItemProps } from './WalletItem';
 import { StyledSearchInput } from './styled';
 import { Modal } from '@/app/components2/Modal';
+import { Separator } from '@/components/ui/separator';
 
 const presenceVariants = {
   initial: { opacity: 0, height: 0 },
@@ -254,7 +254,8 @@ export default function WalletModal() {
 
           {isMobile && (
             <>
-              <Divider />
+              <Separator />
+
               <div className="flex justify-center">
                 <Typography onClick={toggleWalletModal}>
                   <Trans>Close</Trans>

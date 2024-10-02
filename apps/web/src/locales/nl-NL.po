@@ -381,6 +381,10 @@ msgstr "Gekopieerd"
 msgid "wallet"
 msgstr ""
 
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+msgid "60% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
+msgstr ""
+
 #: src/app/pages/vote/_components/ProposalsPanel/index.tsx
 #: src/app/pages/vote/proposals/page.tsx
 msgid "Proposals"
@@ -1765,8 +1769,8 @@ msgid "The BALN APR is calculated from the USD value of BALN rewards allocated t
 msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
-msgid "47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
-msgstr ""
+#~ msgid "47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
+#~ msgstr ""
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Transferred {0} {1} to Archway."

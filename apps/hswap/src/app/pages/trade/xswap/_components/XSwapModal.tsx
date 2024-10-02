@@ -12,12 +12,16 @@ import { ApprovalState } from '@/hooks/useApproveCallback';
 import { Field } from '@/store/swap/reducer';
 import { formatBigNumber } from '@/utils';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
-import { ArrowRight, CheckIcon, Loader2, XIcon } from 'lucide-react';
+import { CheckIcon, Loader2, XIcon } from 'lucide-react';
 import { TradeRoute } from './AdvancedSwapDetails';
 import CurrencyCard from './CurrencyCard';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import { XTransactionStatus } from '@/xwagmi/xcall/types';
 import { ChevronRight } from 'react-feather';
+import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
+import { xChainMap } from '@/xwagmi/constants/xChains';
+import FlipIcon from '@/assets/icons/flip.svg';
+import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 
 export enum ConfirmModalState {
   REVIEWING,
@@ -62,7 +66,7 @@ const XSwapModal = ({
   //
   confirmModalState,
   xSwapErrorMessage,
-  attemptingTxn,
+  attemptingTxn, // TODO: remove this?
   xTransactionId,
   approvalState,
   pendingModalSteps,
@@ -72,9 +76,15 @@ const XSwapModal = ({
 }: XSwapModalProps) => {
   const { formattedXCallFee } = useXCallFee(direction.from, direction.to);
 
+  const [approved, setApproved] = useState(false);
   const [swapConfirmed, setSwapConfirmed] = useState(false);
   const currentXTransaction = xTransactionActions.get(xTransactionId || null);
 
+  useEffect(() => {
+    if (approvalState === ApprovalState.APPROVED) {
+      setApproved(true);
+    }
+  }, [approvalState]);
   useEffect(() => {
     if (
       currentXTransaction &&
@@ -97,7 +107,6 @@ const XSwapModal = ({
     } else {
       showProgressIndicator = true;
     }
-
     return {
       showDetails,
       showProgressIndicator,
@@ -109,10 +118,13 @@ const XSwapModal = ({
   const handleDismiss = useCallback(() => {
     onDismiss();
     setSwapConfirmed(false);
+    setApproved(false);
   }, [onDismiss]);
 
+  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(direction.from);
+
   return (
-    <Modal open={open} onDismiss={handleDismiss} title={showDetails ? 'Review Swap' : ''}>
+    <Modal open={open} onDismiss={handleDismiss} title={showDetails ? 'Review Swap' : ''} hideCloseIcon={false}>
       <div className="relative flex justify-between gap-2">
         <CurrencyCard currency={currencies[Field.INPUT]} currencyAmount={executionTrade?.inputAmount} />
         <CurrencyCard currency={currencies[Field.OUTPUT]} currencyAmount={executionTrade?.outputAmount} />
@@ -173,21 +185,67 @@ const XSwapModal = ({
               <div>{executionTrade ? <TradeRoute route={executionTrade.route} currencies={currencies} /> : '-'}</div>
             </div>
           </div>
-
-          <Button onClick={async () => await onConfirm()} className="h-[56px] text-base rounded-full">
-            <Trans>{approvalState !== ApprovalState.APPROVED ? 'Approve and Swap' : 'Swap'}</Trans>
-          </Button>
+          {isWrongChain ? (
+            <Button color="primary" onClick={handleSwitchChain} className="h-[56px] text-base rounded-full">
+              <Trans>Switch to {xChainMap[direction.from].name}</Trans>
+            </Button>
+          ) : (
+            <Button onClick={async () => await onConfirm()} className="h-[56px] text-base rounded-full">
+              <Trans>{approvalState !== ApprovalState.APPROVED ? 'Approve and Swap' : 'Swap'}</Trans>
+            </Button>
+          )}
         </>
       )}
       {/* Progress indicator displays all the steps of the swap flow and their current status  */}
       {confirmModalState !== ConfirmModalState.REVIEWING && showProgressIndicator && (
-        <div>
+        <div className="flex flex-col gap-2">
           {pendingModalSteps.map(step => (
-            <div key={step} className="flex items-center gap-2">
+            <div key={step} className="flex gap-2 items-center justify-between">
               {step === ConfirmModalState.APPROVING_TOKEN && (
-                <div>Approve USDC spending - {approvalState === ApprovalState.APPROVED ? 'Approved' : ''}</div>
+                <>
+                  <div className="flex gap-2 items-center">
+                    {approvalState === ApprovalState.NOT_APPROVED && !approved && (
+                      <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
+                        {currencies[Field.INPUT] && (
+                          <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} size="40px" />
+                        )}
+                      </div>
+                    )}
+                    {approvalState === ApprovalState.PENDING && (
+                      <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
+                        <Loader2 className="animate-spin" />
+                      </div>
+                    )}
+
+                    {approved && (
+                      <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
+                        {currencies[Field.INPUT] && (
+                          <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} size="40px" />
+                        )}
+                      </div>
+                    )}
+                    <div>Approve {currencies[Field.INPUT]?.symbol} spending</div>
+                  </div>
+                  {approved && <CheckIcon />}
+                </>
               )}
-              {step === ConfirmModalState.PENDING_CONFIRMATION && <div>Confirm swap in wallet</div>}
+              {step === ConfirmModalState.PENDING_CONFIRMATION && (
+                <>
+                  <div className="flex gap-2 items-center">
+                    {!xTransactionId && (
+                      <div className="bg-[#4C82FB] w-[40px] h-[40px] rounded-full flex items-center justify-center">
+                        <FlipIcon width={24} height={24} />
+                      </div>
+                    )}
+                    {xTransactionId && !swapConfirmed && (
+                      <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
+                        <Loader2 className="animate-spin" />
+                      </div>
+                    )}
+                    <div>Confirm swap in wallet</div>
+                  </div>
+                </>
+              )}
             </div>
           ))}
         </div>

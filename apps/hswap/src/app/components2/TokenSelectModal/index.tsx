@@ -18,7 +18,8 @@ export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, s
 
   const tokenComparator = useTokenComparator(account, invertSearchOrder);
 
-  const allTokens = allXTokens;
+  // TODO: hide aARCH token temporarily
+  const allTokens = allXTokens.filter(token => token.symbol !== 'aARCH');
 
   // const filteredTokens = useMemo(() => {
   //   return filterTokens(allTokens, debouncedQuery);

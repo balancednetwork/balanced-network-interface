@@ -19,7 +19,7 @@ export function Modal({ open, onDismiss, children, title, hideCloseIcon = false 
     return (
       <Dialog open={open} onOpenChange={_ => onDismiss()}>
         <DialogContent className="p-4 sm:max-w-[425px] border-[rgba(255,255,255,0.25)]">
-          {title && !hideCloseIcon && (
+          {(title || !hideCloseIcon) && (
             <DialogHeader className="flex flex-row-reverse justify-between items-center">
               {!hideCloseIcon && (
                 <DialogClose asChild>

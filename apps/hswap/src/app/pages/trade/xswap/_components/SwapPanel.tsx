@@ -10,7 +10,6 @@ import CurrencyInputPanel, { CurrencyInputPanelType } from '@/app/components2/Cu
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import { Button } from '@/components/ui/button';
-import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useSwapSlippageTolerance, useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
@@ -145,17 +144,7 @@ export default function SwapPanel() {
     }
   };
 
-  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(direction.from);
-
   const swapButton = useMemo(() => {
-    if (isValid && isWrongChain) {
-      return (
-        <Button color="primary" onClick={handleSwitchChain} className="w-full rounded-3xl">
-          <Trans>Switch to {xChainMap[direction.from].name}</Trans>
-        </Button>
-      );
-    }
-
     return isValid ? (
       <Button
         variant="default"
@@ -174,7 +163,7 @@ export default function SwapPanel() {
         {inputError || t`Swap`}
       </Button>
     );
-  }, [isValid, account, inputError, canBridge, handleOpenXSwapModal, isWrongChain, handleSwitchChain, direction.from]);
+  }, [isValid, account, inputError, canBridge, handleOpenXSwapModal]);
 
   // -------------------------------XSWAP--------------------------------
   const [pendingModalSteps, setPendingModalSteps] = useState<PendingConfirmModalState[]>([]);

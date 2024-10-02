@@ -6,9 +6,9 @@ import useAmountInUSD from '@/hooks/useAmountInUSD';
 import { escapeRegExp, toFraction } from '@/utils';
 import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
+import { ChevronDown } from 'react-feather';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { TokenSelectModal } from '../TokenSelectModal';
-import { ChevronDown } from 'react-feather';
 
 export enum CurrencyInputPanelType {
   INPUT = 'INPUT',
@@ -94,7 +94,7 @@ export default function CurrencyInputPanel({
           minLength={1}
           maxLength={79}
           spellCheck="false"
-          className="p-0 text-title text-[24px] bg-transparent border-none focus:border-none text-primary-foreground focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="p-0 text-title text-[1.5rem] font-bold bg-transparent border-none focus:border-none text-primary-foreground focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
         />
 
         <div>
@@ -104,7 +104,6 @@ export default function CurrencyInputPanel({
                 <CurrencyLogoWithNetwork currency={currency} size="40px" />
                 <div className="token-symbol-container text-title">{currency.symbol}</div>
                 <ChevronDown />
-                {/* {currency.symbol === 'BTCB' && <div style={{ marginLeft: 5, marginRight: 5 }}>(old)</div>} */}
               </div>
             ) : (
               <div>Choose a token</div>
@@ -124,14 +123,16 @@ export default function CurrencyInputPanel({
         </div>
       </div>
       <div className="flex justify-between items-center">
-        <span className="text-secondary-foreground text-smallbody h-[15px] flex items-center">{valueInUSD}</span>
+        <span className="text-secondary-foreground text-small h-[15px] flex items-center">{valueInUSD}</span>
         <div className="flex gap-2 items-center">
           {type === CurrencyInputPanelType.INPUT && (
             <>
-              <span className="text-secondary-foreground text-smallbody">
+              <span className="text-secondary-foreground text-small cursor-default">
                 {`${balance ? balance.toFixed(4, { groupSeparator: ',' }) : 0} ${currency?.symbol}`}
               </span>
-              <span onClick={() => onPercentSelect?.(100)}>Max</span>
+              <span className="text-base font-extrabold cursor-pointer" onClick={() => onPercentSelect?.(100)}>
+                Max
+              </span>
             </>
           )}
         </div>

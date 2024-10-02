@@ -74,17 +74,23 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Montserrat', Arial, sans-serif;
-  }
-  
+  }  
+}
+
+@layer components {
   .text-title {
-    @apply text-[24px];
+    @apply text-[1.5rem] font-bold;
   }
 
   .text-subtitle {
-    @apply text-[16px];
+    @apply text-[1rem] font-bold;
   }
 
-  .text-smallbody {
-    @apply text-[12px];
+  .text-body {
+    @apply text-[0.875rem] font-medium;
+  }
+
+  .text-small {
+    @apply text-[0.75rem];
   }
 }

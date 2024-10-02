@@ -10,7 +10,6 @@ import styled from 'styled-components';
 import { UnderlineTextWithArrow } from '@/app/components/DropdownText';
 import { Link } from '@/app/components/Link';
 import { LanguageMenuItem, MenuList } from '@/app/components/Menu';
-import Modal, { ModalProps } from '@/app/components/Modal';
 import { Typography } from '@/app/theme';
 import ArchWalletIcon from '@/assets/icons/chains/archway.svg';
 import ETHIcon from '@/assets/icons/chains/eth.svg';
@@ -38,13 +37,7 @@ import { InjectiveWalletOptionsModal } from './InjectiveWalletOptionsModal';
 import { SuiWalletOptionsModal } from './SuiWalletOptionsModal';
 import WalletItem, { WalletItemProps } from './WalletItem';
 import { StyledSearchInput } from './styled';
-
-const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
-  &[data-reach-dialog-content] {
-    width: 100%;
-    max-width: 530px;
-  }
-`;
+import { Modal } from '@/app/components2/Modal';
 
 const presenceVariants = {
   initial: { opacity: 0, height: 0 },
@@ -171,7 +164,7 @@ export default function WalletModal() {
 
   return (
     <>
-      <StyledModal isOpen={walletModalOpen} onDismiss={toggleWalletModal} mobile={isMobile}>
+      <Modal open={walletModalOpen} onDismiss={toggleWalletModal} title="">
         <div className="w-full flex flex-col gap-4 p-6">
           {isLoggedInSome ? (
             <div className="flex justify-between flex-col sm:flex-row mb-1 flex-nowrap">
@@ -271,7 +264,7 @@ export default function WalletModal() {
             </>
           )}
         </div>
-      </StyledModal>
+      </Modal>
 
       <EVMWalletModal />
       <InjectiveWalletOptionsModal />

@@ -16,23 +16,22 @@ const CurrencyLogoWithNetwork = ({
   size: string;
   className?: string;
 }) => {
-  const right = size === '20px' ? '-5px' : '-4px';
-  const bottom = size === '20px' ? '-6px' : '-5px';
-
   return (
-    <div className="relative w-[24px]">
+    <div
+      className="relative"
+      style={{
+        width: size,
+        height: size,
+      }}
+    >
       <CurrencyLogo currency={currency} size={size} />
       <div
         className={cn(
-          'absolute rounded-full w-[14px] h-[14px] bg-background outline-[2px] outline outline-background',
+          'absolute rounded-[3px] w-[50%] h-[50%] bg-background outline-[2px] outline outline-background right-0 bottom-0',
           className,
         )}
-        style={{
-          right: right,
-          bottom: bottom,
-        }}
       >
-        <ChainLogo chain={xChainMap[currency.xChainId]} size="14px" className="absolute top-0 left-0" />
+        <ChainLogo chain={xChainMap[currency.xChainId]} className="w-full h-full" />
       </div>
     </div>
   );

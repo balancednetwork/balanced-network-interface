@@ -78,6 +78,7 @@ const XSwapModal = ({
 
   const [approved, setApproved] = useState(false);
   const [swapConfirmed, setSwapConfirmed] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const currentXTransaction = xTransactionActions.get(xTransactionId || null);
 
   useEffect(() => {
@@ -86,19 +87,21 @@ const XSwapModal = ({
     }
   }, [approvalState]);
   useEffect(() => {
-    if (
-      currentXTransaction &&
-      (currentXTransaction.status === XTransactionStatus.success ||
-        currentXTransaction.status === XTransactionStatus.failure)
-    ) {
+    if (currentXTransaction) {
       // const swapConfirmed = !!txnHash || !!xTransactionId;
-      setSwapConfirmed(true);
+      if (currentXTransaction.status === XTransactionStatus.success) {
+        setSwapConfirmed(true);
+      }
+      if (currentXTransaction.status === XTransactionStatus.failure) {
+        setSwapConfirmed(true);
+        setErrorMessage('Swap failed');
+      }
     }
   }, [currentXTransaction]);
 
   const { showDetails, showProgressIndicator, showSuccess, showError } = useMemo(() => {
     let showDetails, showProgressIndicator, showSuccess, showError;
-    if (xSwapErrorMessage) {
+    if (xSwapErrorMessage || errorMessage) {
       showError = true;
     } else if (swapConfirmed) {
       showSuccess = true;
@@ -113,12 +116,13 @@ const XSwapModal = ({
       showSuccess,
       showError,
     };
-  }, [xSwapErrorMessage, swapConfirmed, confirmModalState]);
+  }, [xSwapErrorMessage, swapConfirmed, confirmModalState, errorMessage]);
 
   const handleDismiss = useCallback(() => {
     onDismiss();
     setSwapConfirmed(false);
     setApproved(false);
+    setErrorMessage(undefined);
   }, [onDismiss]);
 
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(direction.from);
@@ -253,7 +257,7 @@ const XSwapModal = ({
         )}
 
         {/* Error message displays if there is an error in the swap flow */}
-        {showError && <div className="text-red-500 text-center">{xSwapErrorMessage}</div>}
+        {showError && <div className="text-red-500 text-center">{xSwapErrorMessage || errorMessage}</div>}
 
         {/* {!isProcessing && !gasChecker.hasEnoughGas && (
         <Flex justifyContent="center" paddingY={2}>

@@ -1,6 +1,5 @@
-import { Link } from '@/app/components/Link';
 import { Typography } from '@/app/theme';
-import { Box, Flex } from 'rebass';
+import { Box } from 'rebass';
 import styled from 'styled-components';
 import { BoxPanel } from '../Panel';
 import { notificationCSS } from './ICONWallets/utils';
@@ -74,7 +73,6 @@ export const ListItem = styled(DashGrid)<{ $border?: boolean }>`
   &.active {
     color: ${({ theme }) => theme.colors?.primary};
   }
-
 
   &.has-modal {
     cursor: pointer;

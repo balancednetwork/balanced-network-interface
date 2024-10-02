@@ -1,8 +1,6 @@
 import { Tab, TabList } from '@reach/tabs';
 import styled, { css } from 'styled-components';
 
-import { Link } from '@/app/components/Link';
-
 export const StyledTabList = styled(TabList)`
   &[data-reach-tab-list] {
     width: 100%;
@@ -34,7 +32,7 @@ export const StyledTab = styled(Tab)<{ hasNotification?: boolean }>`
     }
 
     ${({ hasNotification }) => hasNotification && notificationCSS}
-    
+
     &:after, &:before {
       right: -4px;
       top: 5px;
@@ -46,10 +44,6 @@ export const Grid = styled.div`
   display: grid;
   grid-auto-rows: auto;
   row-gap: 15px;
-`;
-
-export const MaxButton = styled(Link)`
-  cursor: pointer;
 `;
 
 export const notificationCSS = css`

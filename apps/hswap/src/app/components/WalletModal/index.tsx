@@ -6,7 +6,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
 
-import { Link } from '@/app/components/Link';
 import { LanguageMenuItem, MenuList } from '@/app/components/Menu';
 import { Typography } from '@/app/theme';
 import ArchWalletIcon from '@/assets/icons/chains/archway.svg';
@@ -240,10 +239,10 @@ export default function WalletModal() {
             <Typography textAlign="center" as="div" maxWidth={300} mx="auto" mt={2}>
               <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
               <div className="pt-1">
-                <Link href="https://balanced.network/disclaimer/" target="_blank" tabIndex={-1}>
+                <a href="https://balanced.network/disclaimer/" target="_blank" rel="noreferrer" tabIndex={-1}>
                   <Trans>View disclaimer.</Trans>
                   <ExternalIcon width="11" height="11" style={{ marginLeft: '7px', marginTop: '-3px' }} />
-                </Link>
+                </a>
               </div>
             </Typography>
           )}

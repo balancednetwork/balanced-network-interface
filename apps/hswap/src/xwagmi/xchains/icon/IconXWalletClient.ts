@@ -117,10 +117,44 @@ export class IconXWalletClient extends XWalletClient {
     }
   }
 
+  async _executeSwapOnIcon(xTransactionInput: XTransactionInput) {
+    const { executionTrade, account, direction, recipient, slippageTolerance } = xTransactionInput;
+    if (!executionTrade || !slippageTolerance) {
+      return;
+    }
+
+    const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
+
+    let txResult;
+    if (executionTrade.inputAmount.currency.symbol === 'ICX') {
+      const rlpEncodedData = getRlpEncodedSwapData(executionTrade).toString('hex');
+
+      txResult = await bnJs
+        .inject({ account })
+        .Router.swapICXV2(toDec(executionTrade.inputAmount), rlpEncodedData, toDec(minReceived), recipient);
+    } else {
+      const token = executionTrade.inputAmount.currency.wrapped;
+
+      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', recipient, minReceived).toString('hex');
+
+      txResult = await bnJs
+        .inject({ account })
+        .getContract(token.address)
+        .swapUsingRouteV2(toDec(executionTrade.inputAmount), rlpEncodedData);
+    }
+
+    const { result: hash } = txResult || {};
+    if (hash) {
+      return hash;
+    }
+  }
+
   async executeTransaction(xTransactionInput: XTransactionInput) {
     const { type } = xTransactionInput;
 
-    if (type === XTransactionType.SWAP) {
+    if (type === XTransactionType.SWAP_ON_ICON) {
+      return this._executeSwapOnIcon(xTransactionInput);
+    } else if (type === XTransactionType.SWAP) {
       return this._executeSwap(xTransactionInput);
     } else if (type === XTransactionType.BRIDGE) {
       return this._executeBridge(xTransactionInput);

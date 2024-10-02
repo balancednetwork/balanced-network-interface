@@ -6,6 +6,7 @@ import useAmountInUSD from '@/hooks/useAmountInUSD';
 import { escapeRegExp, toFraction } from '@/utils';
 import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
+import { ChevronDown } from 'react-feather';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { TokenSelectModal } from '../TokenSelectModal';
 
@@ -69,11 +70,11 @@ export default function CurrencyInputPanel({
 
   return (
     <div className="rounded-xl w-full bg-card p-4 flex flex-col gap-2">
-      <span className="text-secondary-foreground text-subtitle">
+      <span className="text-secondary-foreground text-subtitle font-bold">
         {type === CurrencyInputPanelType.INPUT && 'You pay'}
         {type === CurrencyInputPanelType.OUTPUT && 'You receive'}
       </span>
-      <div className="inline-flex w-full">
+      <div className="inline-flex w-full items-center">
         <Input
           placeholder={placeholder}
           value={value}
@@ -93,16 +94,16 @@ export default function CurrencyInputPanel({
           minLength={1}
           maxLength={79}
           spellCheck="false"
-          className="p-0 text-title text-xl bg-transparent border-none focus:border-none text-primary-foreground focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="p-0 text-title text-[1.5rem] font-bold bg-transparent border-none focus:border-none text-primary-foreground focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
         />
 
         <div>
-          <Button onClick={toggleOpen} disabled={!onCurrencySelect} className="bg-background">
+          <Button onClick={toggleOpen} disabled={!onCurrencySelect} className="bg-background h-[56px] rounded-full">
             {currency ? (
-              <div className="flex gap-2">
-                <CurrencyLogoWithNetwork currency={currency} size="24px" />
-                <div className="token-symbol-container">{currency.symbol}</div>
-                {/* {currency.symbol === 'BTCB' && <div style={{ marginLeft: 5, marginRight: 5 }}>(old)</div>} */}
+              <div className="flex gap-2 items-center justify-center">
+                <CurrencyLogoWithNetwork currency={currency} size="40px" />
+                <div className="token-symbol-container text-title">{currency.symbol}</div>
+                <ChevronDown />
               </div>
             ) : (
               <div>Choose a token</div>
@@ -122,14 +123,16 @@ export default function CurrencyInputPanel({
         </div>
       </div>
       <div className="flex justify-between items-center">
-        <span className="text-secondary-foreground text-smallbody">{valueInUSD}</span>
+        <span className="text-secondary-foreground text-small h-[15px] flex items-center">{valueInUSD}</span>
         <div className="flex gap-2 items-center">
           {type === CurrencyInputPanelType.INPUT && (
             <>
-              <span className="text-secondary-foreground text-smallbody">
+              <span className="text-secondary-foreground text-small cursor-default">
                 {`${balance ? balance.toFixed(4, { groupSeparator: ',' }) : 0} ${currency?.symbol}`}
               </span>
-              <span onClick={() => onPercentSelect?.(100)}>Max</span>
+              <span className="text-base font-extrabold cursor-pointer" onClick={() => onPercentSelect?.(100)}>
+                Max
+              </span>
             </>
           )}
         </div>

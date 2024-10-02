@@ -8,8 +8,6 @@ import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from '@/app/components/Button';
-import Modal from '@/app/components/Modal';
-import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
@@ -20,6 +18,7 @@ import { formatBigNumber, shortenAddress, toDec } from '@/utils';
 import { getRlpEncodedSwapData } from '@/xwagmi/xcall/utils';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { swapMessage } from './utils';
+import { Modal } from '@/app/components2/Modal';
 
 type SwapModalProps = {
   isOpen: boolean;
@@ -109,84 +108,82 @@ const SwapModal = (props: SwapModalProps) => {
   const hasEnoughICX = useHasEnoughICX();
 
   return (
-    <Modal isOpen={isOpen} onDismiss={() => handleDismiss(false)}>
-      <ModalContent>
-        <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
-          <Trans>
-            Swap {currencies[Field.INPUT]?.symbol} for {currencies[Field.OUTPUT]?.symbol}?
-          </Trans>
-        </Typography>
+    <Modal open={isOpen} onDismiss={() => handleDismiss(false)} title="">
+      <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
+        <Trans>
+          Swap {currencies[Field.INPUT]?.symbol} for {currencies[Field.OUTPUT]?.symbol}?
+        </Trans>
+      </Typography>
 
-        <Typography variant="p" fontWeight="bold" textAlign="center" color={showWarning ? 'alert' : 'text'}>
-          <Trans>
-            {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
-              executionTrade?.executionPrice.quoteCurrency.symbol
-            } 
+      <Typography variant="p" fontWeight="bold" textAlign="center" color={showWarning ? 'alert' : 'text'}>
+        <Trans>
+          {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
+            executionTrade?.executionPrice.quoteCurrency.symbol
+          } 
           per ${executionTrade?.executionPrice.baseCurrency.symbol}`}
-          </Trans>
-        </Typography>
+        </Trans>
+      </Typography>
 
-        <Flex my={5}>
-          <Box width={1 / 2} className="border-right">
-            <Typography textAlign="center">
-              <Trans>Pay</Trans>
-            </Typography>
-            <Typography variant="p" textAlign="center" py="5px">
-              {formatBigNumber(new BigNumber(executionTrade?.inputAmount.toFixed() || 0), 'currency')}{' '}
-              {currencies[Field.INPUT]?.symbol}
-            </Typography>
-            {account !== recipient && (
-              <>
-                <Typography textAlign="center">
-                  <Trans>ICON</Trans>
-                </Typography>
-                <Typography textAlign="center">
-                  <Trans>{account && shortenAddress(account, 5)}</Trans>
-                </Typography>
-              </>
-            )}
-          </Box>
+      <Flex my={5}>
+        <Box width={1 / 2} className="border-right">
+          <Typography textAlign="center">
+            <Trans>Pay</Trans>
+          </Typography>
+          <Typography variant="p" textAlign="center" py="5px">
+            {formatBigNumber(new BigNumber(executionTrade?.inputAmount.toFixed() || 0), 'currency')}{' '}
+            {currencies[Field.INPUT]?.symbol}
+          </Typography>
+          {account !== recipient && (
+            <>
+              <Typography textAlign="center">
+                <Trans>ICON</Trans>
+              </Typography>
+              <Typography textAlign="center">
+                <Trans>{account && shortenAddress(account, 5)}</Trans>
+              </Typography>
+            </>
+          )}
+        </Box>
 
-          <Box width={1 / 2}>
-            <Typography textAlign="center">
-              <Trans>Receive</Trans>
-            </Typography>
-            <Typography variant="p" textAlign="center" py="5px">
-              {formatBigNumber(new BigNumber(executionTrade?.outputAmount.toFixed() || 0), 'currency')}{' '}
-              {currencies[Field.OUTPUT]?.symbol}
-            </Typography>
-            {account !== recipient && (
-              <>
-                <Typography textAlign="center">
-                  <Trans>ICON</Trans>
-                </Typography>
-                <Typography textAlign="center">
-                  <Trans>{recipient && shortenAddress(recipient, 5)}</Trans>
-                </Typography>
-              </>
-            )}
-          </Box>
-        </Flex>
+        <Box width={1 / 2}>
+          <Typography textAlign="center">
+            <Trans>Receive</Trans>
+          </Typography>
+          <Typography variant="p" textAlign="center" py="5px">
+            {formatBigNumber(new BigNumber(executionTrade?.outputAmount.toFixed() || 0), 'currency')}{' '}
+            {currencies[Field.OUTPUT]?.symbol}
+          </Typography>
+          {account !== recipient && (
+            <>
+              <Typography textAlign="center">
+                <Trans>ICON</Trans>
+              </Typography>
+              <Typography textAlign="center">
+                <Trans>{recipient && shortenAddress(recipient, 5)}</Trans>
+              </Typography>
+            </>
+          )}
+        </Box>
+      </Flex>
 
-        <Typography
-          textAlign="center"
-          hidden={currencies[Field.INPUT]?.symbol === 'ICX' && currencies[Field.OUTPUT]?.symbol === 'sICX'}
-        >
-          <Trans>
-            Includes a fee of {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
-            {currencies[Field.INPUT]?.symbol}.
-          </Trans>
-        </Typography>
+      <Typography
+        textAlign="center"
+        hidden={currencies[Field.INPUT]?.symbol === 'ICX' && currencies[Field.OUTPUT]?.symbol === 'sICX'}
+      >
+        <Trans>
+          Includes a fee of {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
+          {currencies[Field.INPUT]?.symbol}.
+        </Trans>
+      </Typography>
 
-        <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-          <TextButton onClick={() => handleDismiss(false)}>
-            <Trans>Cancel</Trans>
-          </TextButton>
-          <Button onClick={handleSwapConfirm} disabled={!hasEnoughICX}>
-            <Trans>Swap</Trans>
-          </Button>
-        </Flex>
-      </ModalContent>
+      <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+        <TextButton onClick={() => handleDismiss(false)}>
+          <Trans>Cancel</Trans>
+        </TextButton>
+        <Button onClick={handleSwapConfirm} disabled={!hasEnoughICX}>
+          <Trans>Swap</Trans>
+        </Button>
+      </Flex>
     </Modal>
   );
 };

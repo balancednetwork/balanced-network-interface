@@ -444,8 +444,10 @@ const XMessageUpdater2 = ({ xMessage }: { xMessage: XMessage }) => {
 
   useEffect(() => {
     if (messageWS) {
+      console.log('messageWS', messageWS);
       xMessageActions.updateXMessageXCallScannerData(xMessage.id, messageWS);
     } else if (message && !isLoading) {
+      console.log('message', message);
       xMessageActions.updateXMessageXCallScannerData(xMessage.id, message);
     }
   }, [messageWS, message, isLoading, xMessage.id]);

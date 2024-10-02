@@ -38,23 +38,21 @@ export default function AdvancedSwapDetails() {
 
   return (
     <div>
-      <Collapsible open={open} onOpenChange={setOpen}>
-        <div className="flex items-center justify-between">
+      <Collapsible open={open} onOpenChange={setOpen} className="w-full">
+        <CollapsibleTrigger className="w-full flex items-center justify-between py-2">
           {trade && (
             <>
               <TradePrice price={trade.executionPrice} showInverted={showInverted} setShowInverted={setShowInverted} />
-              <CollapsibleTrigger>
-                <span>{open ? <ChevronUpIcon /> : <ChevronDownIcon />}</span>
-              </CollapsibleTrigger>
+              <span>{open ? <ChevronUpIcon /> : <ChevronDownIcon />}</span>
             </>
           )}
-        </div>
+        </CollapsibleTrigger>
         <CollapsibleContent className="flex flex-col gap-2">
           <TooltipContainer tooltipText="The impact your trade has on the market price of this pool.">
             <div className="flex items-center justify-between">
-              <Typography className="text-secondary">
+              <span className="text-body text-secondary-foreground">
                 <Trans>Price impact</Trans>
-              </Typography>
+              </span>
 
               <Typography
                 className={showSlippageWarning ? 'error-anim' : ''}
@@ -64,18 +62,20 @@ export default function AdvancedSwapDetails() {
               </Typography>
             </div>
           </TooltipContainer>
+
           <div className="flex items-center justify-between gap-2">
-            <Typography as="span">
+            <span className="text-body text-secondary-foreground">
               <Trans>Slippage tolerance</Trans>
               <QuestionHelper text={t`If the price slips by more than this amount, your swap will fail.`} />
-            </Typography>
+            </span>
             <SlippageSetting rawSlippage={slippageTolerance} setRawSlippage={setSlippageTolerance} />
           </div>
+
           <div className="flex flex-col justify-between">
             <div className="flex justify-between gap-2">
-              <Typography className="text-secondary">
+              <span className="text-body text-secondary-foreground">
                 <Trans>Minimum to receive</Trans>
-              </Typography>
+              </span>
               <span>
                 {minimumToReceive
                   ? `${minimumToReceive?.toFixed(4)} ${minimumToReceive?.currency.symbol}`
@@ -83,10 +83,11 @@ export default function AdvancedSwapDetails() {
               </span>
             </div>
           </div>
+
           <div className="flex items-center justify-between gap-2">
-            <Typography>
+            <span className="text-body text-secondary-foreground">
               <Trans>Fee</Trans>
-            </Typography>
+            </span>
 
             <Typography textAlign="right">
               {trade ? trade.fee.toFixed(4) : '0'} {currencies[Field.INPUT]?.symbol}
@@ -94,34 +95,24 @@ export default function AdvancedSwapDetails() {
           </div>
 
           <div className="flex items-center justify-between gap-2">
-            <Typography>
-              <Trans>Route</Trans>
+            <span className="text-body text-secondary-foreground">
+              <Trans>Network cost</Trans>
+            </span>
+
+            <Typography textAlign="right">
+              {trade ? trade.fee.toFixed(4) : '0'} {currencies[Field.INPUT]?.symbol}
             </Typography>
+          </div>
+
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-body text-secondary-foreground">
+              <Trans>Order routing</Trans>
+            </span>
 
             <Typography textAlign="right" maxWidth="200px">
               {trade ? <TradeRoute route={trade.route} currencies={currencies} /> : '-'}
             </Typography>
           </div>
-
-          {/* {isXSwap && (
-            <>
-              <div className="flex items-center justify-between gap-2">
-                <Typography>
-                  <Trans>Bridge fee</Trans>
-                </Typography>
-
-                <Typography color="text">{formattedXCallFee ?? ''}</Typography>
-              </div>
-
-              <div className="flex items-center justify-between gap-2">
-                <Typography>
-                  <Trans>Transfer time</Trans>
-                </Typography>
-
-                <Typography textAlign="right">~ 30s</Typography>
-              </div>
-            </>
-          )} */}
         </CollapsibleContent>
       </Collapsible>
     </div>
@@ -144,15 +135,19 @@ function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
 
   const label = showInverted ? `${price.quoteCurrency?.symbol}` : `${price.baseCurrency?.symbol} `;
   const labelInverted = showInverted ? `${price.baseCurrency?.symbol} ` : `${price.quoteCurrency?.symbol}`;
-  const flipPrice = useCallback(() => setShowInverted(!showInverted), [setShowInverted, showInverted]);
+  const flipPrice: React.MouseEventHandler<HTMLDivElement> = useCallback(
+    e => {
+      e.stopPropagation();
+      setShowInverted(!showInverted);
+    },
+    [setShowInverted, showInverted],
+  );
 
   const text = `${'1 ' + labelInverted + ' = ' + formattedPrice ?? '-'} ${label}`;
 
   return (
     <div onClick={flipPrice} title={text}>
-      <div style={{ alignItems: 'center', display: 'flex', width: 'fit-content' }}>
-        <Typography textAlign="right">{text}</Typography>
-      </div>
+      <div className="text-body">{text}</div>
     </div>
   );
 }
@@ -160,18 +155,21 @@ function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
 export function TradeRoute({
   route,
   currencies,
-}: { route: Route<Currency, Currency>; currencies: { [field in Field]?: XToken } }) {
+}: {
+  route: Route<Currency, Currency>;
+  currencies: { [field in Field]?: XToken };
+}) {
   return (
     <div className="flex gap-2">
       {currencies[Field.INPUT] && currencies[Field.INPUT].xChainId !== '0x1.icon' && (
-        <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} size="24px" />
+        <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} size="32px" />
       )}
       {route.path.map((token: Token, index: number) => {
         const xtoken = XToken.getXToken('0x1.icon', token);
-        return <CurrencyLogoWithNetwork key={xtoken.address} currency={xtoken} size="24px" />;
+        return <CurrencyLogoWithNetwork key={xtoken.address} currency={xtoken} size="32px" />;
       })}
       {currencies[Field.OUTPUT] && currencies[Field.OUTPUT].xChainId !== '0x1.icon' && (
-        <CurrencyLogoWithNetwork currency={currencies[Field.OUTPUT]} size="24px" />
+        <CurrencyLogoWithNetwork currency={currencies[Field.OUTPUT]} size="32px" />
       )}
     </div>
   );

@@ -70,7 +70,7 @@ export default function CurrencyInputPanel({
 
   return (
     <div className="rounded-xl w-full bg-card p-4 flex flex-col gap-2">
-      <span className="text-secondary-foreground text-subtitle">
+      <span className="text-secondary-foreground text-subtitle font-bold">
         {type === CurrencyInputPanelType.INPUT && 'You pay'}
         {type === CurrencyInputPanelType.OUTPUT && 'You receive'}
       </span>

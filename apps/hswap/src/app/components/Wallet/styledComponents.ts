@@ -1,7 +1,6 @@
 import { Typography } from '@/app/theme';
 import { Box } from 'rebass';
 import styled from 'styled-components';
-import { BoxPanel } from '../Panel';
 import { notificationCSS } from './ICONWallets/utils';
 
 export const walletBreakpoint = '385px';
@@ -110,34 +109,6 @@ export const ModalContent = styled(Box)`
   }
   @media screen and (max-width: ${modalWalletBreakpoint}) {
     padding: 15px;
-  }
-`;
-
-export const BoxPanelWithArrow = styled(BoxPanel)`
-  position: relative;
-  width: 100%;
-  &:before {
-    content: '';
-    width: 0;
-    height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-bottom: 12px solid #144a68;
-    position: absolute;
-    transition: all ease-in-out 200ms;
-    top: 0;
-    left: 34px;
-    margin-top: -12px;
-  }
-  @media screen and (max-width: ${modalWalletBreakpoint}) {
-    width: calc(100% + 30px);
-    margin: 0 -15px -15px -15px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    padding: 15px;
-    &:before {
-      left: 50px;
-    }
   }
 `;
 

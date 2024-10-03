@@ -32,7 +32,22 @@ export const handleConnectWallet = (
   xConnect: (xConnector: XConnector) => Promise<void>,
 ) => {
   if (!xChainType) return;
-  if (!xConnectors || xConnectors.length === 0) return;
+  if (!xConnectors || xConnectors.length === 0) {
+    switch (xChainType) {
+      case 'EVM':
+        break;
+      case 'INJECTIVE':
+        break;
+      case 'SUI':
+        // window.open(
+        //   'https://chromewebstore.google.com/detail/sui-wallet/opcgpfmipidbgpenhmajoajpbobppdil?hl=en-US',
+        //   '_blank',
+        // );
+        break;
+      default:
+        break;
+    }
+  }
 
   if (xChainType === 'EVM') {
     modalActions.openModal(MODAL_ID.EVM_WALLET_OPTIONS_MODAL);

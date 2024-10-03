@@ -67,8 +67,8 @@ export const SuiWalletOptionsModal = ({ id = MODAL_ID.SUI_WALLET_OPTIONS_MODAL }
                   }
                 >
                   <UnderlineText>Hana</UnderlineText>
-                </Typography>
-                ,{' '}
+                </Typography>{' '}
+                or{' '}
                 <Typography
                   variant={'span'}
                   color="primaryBright"

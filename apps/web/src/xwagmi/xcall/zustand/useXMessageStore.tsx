@@ -129,10 +129,11 @@ export const useXMessageStore = create<XMessageStore>()(
           state.messages[id] = newXMessage;
         });
 
-        if (xMessage.status === XMessageStatus.AWAITING_CALL_MESSAGE_SENT) {
-          const newStatus = deriveStatus(newEvents);
-          get().updateStatus(id, newStatus);
-        }
+        // TODO: confirm if an additional check is needed
+        // if (xMessage.status === XMessageStatus.AWAITING_CALL_MESSAGE_SENT) {
+        const newStatus = deriveStatus(newEvents);
+        get().updateStatus(id, newStatus);
+        // }
       },
       remove: (id: string) => {
         set(state => {
@@ -206,7 +207,7 @@ export const useXMessageStore = create<XMessageStore>()(
       },
 
       createSecondaryMessage: (xTransaction: XTransaction, primaryMessage: XMessage) => {
-        if (primaryMessage.useXCallScanner) {
+        if (xTransaction.finalDestinationChainId === 'sui') {
           if (!primaryMessage.destinationTransactionHash) {
             throw new Error('destinationTransactionHash is undefined'); // it should not happen
           }

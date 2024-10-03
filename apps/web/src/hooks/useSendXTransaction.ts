@@ -131,9 +131,8 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
     destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
     isPrimary: true,
     createdAt: Date.now(),
-    useXCallScanner: primaryDestinationChainId === 'sui',
+    useXCallScanner: primaryDestinationChainId === 'sui' || sourceChainId === 'sui',
   };
-
   xMessageActions.add(xMessage);
 
   return xTransaction.id;

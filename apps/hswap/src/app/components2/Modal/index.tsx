@@ -1,15 +1,15 @@
 import * as React from 'react';
 
-import { Dialog, DialogContent, DialogHeader, DialogClose } from '@/components/ui/dialog';
+import { Dialog, DialogClose, DialogContent, DialogHeader } from '@/components/ui/dialog';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
-import { isMobile } from 'react-device-detect';
 import { XIcon } from 'lucide-react';
+import { isMobile } from 'react-device-detect';
 
 export function Modal({ open, onDismiss, children, title, hideCloseIcon = false }) {
   if (!isMobile) {
     return (
       <Dialog open={open} onOpenChange={_ => onDismiss()}>
-        <DialogContent className="p-4 sm:max-w-[560px] border-[rgba(255,255,255,0.25)]">
+        <DialogContent className="p-4 sm:max-w-[560px] border-border]">
           {(title || !hideCloseIcon) && (
             <DialogHeader className="flex flex-row-reverse justify-between items-center">
               {!hideCloseIcon && (
@@ -31,7 +31,7 @@ export function Modal({ open, onDismiss, children, title, hideCloseIcon = false 
 
   return (
     <Drawer open={open} onOpenChange={_ => onDismiss()}>
-      <DrawerContent className="p-4 border-[rgba(255,255,255,0.25)]">
+      <DrawerContent className="p-4 border-border">
         <DrawerHeader className="text-left px-0">{title && <DrawerTitle>{title}</DrawerTitle>}</DrawerHeader>
         {children}
       </DrawerContent>

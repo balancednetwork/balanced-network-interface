@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 
 import { CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
 import { Trans, t } from '@lingui/macro';
+import { Placement } from '@popperjs/core';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
 
@@ -13,12 +14,11 @@ import WalletIcon from '@/assets/icons/wallet.svg';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { shortenAddress } from '@/utils';
 
+import { Button } from '@/components/ui/button';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { Placement } from '@popperjs/core';
 import { MouseoverTooltip } from '../Tooltip';
 import Wallet from '../Wallet';
-import { Button } from '@/components/ui/button';
 
 const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
@@ -41,9 +41,8 @@ export const CopyableAddress = ({
 
   return account ? (
     <MouseoverTooltip
-      text={isCopied ? t`Copied` : t`Copy`}
+      content={isCopied ? t`Copied` : t`Copy`}
       placement={placement}
-      noArrowAndBorder
       closeAfterDelay={closeAfterDelay}
       zIndex={9999}
     >

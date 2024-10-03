@@ -2,21 +2,9 @@ import React, { useCallback, useState } from 'react';
 
 import { Placement } from '@popperjs/core';
 import { useMedia } from 'react-use';
-import styled from 'styled-components';
 
 import Tooltip from '@/app/components/Tooltip';
 import QuestionIcon from '@/assets/icons/question.svg';
-
-const QuestionWrapper = styled.div`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: none;
-  outline: none;
-  cursor: help;
-  color: ${({ theme }) => theme.colors?.text1};
-`;
 
 export default function QuestionHelper({
   text,
@@ -46,22 +34,25 @@ export default function QuestionHelper({
   const shouldShow = hideOnSmall ? !smallSp : true;
 
   return (
-    <span style={{ marginLeft: 4, verticalAlign: 'top' }}>
-      <Tooltip
-        text={text}
-        show={show}
-        placement={placement}
-        containerStyle={containerStyle}
-        width={width}
-        strategy={strategy}
-        offset={offset}
-      >
-        {shouldShow && (
-          <QuestionWrapper onClick={open} onMouseEnter={open} onMouseLeave={close} style={iconStyle}>
-            <QuestionIcon width={14} />
-          </QuestionWrapper>
-        )}
-      </Tooltip>
-    </span>
+    <Tooltip
+      content={<div className="w-72 p-4 text-secondary-foreground text-body">{text}</div>}
+      show={show}
+      placement={placement}
+      containerStyle={containerStyle}
+      width={width}
+      strategy={strategy}
+      offset={offset}
+    >
+      {shouldShow && (
+        <QuestionIcon
+          onClick={open}
+          onMouseEnter={open}
+          onMouseLeave={close}
+          className="cursor-help"
+          style={iconStyle}
+          width={14}
+        />
+      )}
+    </Tooltip>
   );
 }

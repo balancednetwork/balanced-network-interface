@@ -6,25 +6,24 @@ import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
 import CurrencyInputPanel, { CurrencyInputPanelType } from '@/app/components2/CurrencyInputPanel';
-import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import { Button } from '@/components/ui/button';
+import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
+import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useSwapSlippageTolerance, useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
+import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { getXChainType } from '@/xwagmi/actions';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount } from '@/xwagmi/hooks';
+import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
+import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import RecipientAddressPanel from './RecipientAddressPanel';
 import XSwapModal, { ConfirmModalState, PendingConfirmModalState } from './XSwapModal';
-import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
-import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
-import { useSendXTransaction } from '@/hooks/useSendXTransaction';
-import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
-import { showMessageOnBeforeUnload } from '@/utils/messages';
 
 interface XSwapModalState {
   confirmModalState: ConfirmModalState;
@@ -374,14 +373,12 @@ export default function SwapPanel() {
 
           {!canBridge && maximumBridgeAmount && (
             <div className="flex items-center justify-center mt-2">
-              <Typography textAlign="center">
+              <div className="text-center text-body">
                 {new BigNumber(maximumBridgeAmount.toFixed()).isGreaterThanOrEqualTo(0.0001) ? (
                   <>
                     <Trans>Only</Trans>{' '}
-                    <div onClick={handleMaximumBridgeAmountClick}>
-                      <Typography color="primaryBright" as="a">
-                        {maximumBridgeAmount?.toFixed(4)} {maximumBridgeAmount?.currency?.symbol}
-                      </Typography>
+                    <div className="hover:underline" onClick={handleMaximumBridgeAmountClick}>
+                      {maximumBridgeAmount?.toFixed(4)} {maximumBridgeAmount?.currency?.symbol}
                     </div>{' '}
                   </>
                 ) : (
@@ -391,7 +388,7 @@ export default function SwapPanel() {
                 )}
 
                 <Trans>is available on {xChainMap[direction?.to].name}.</Trans>
-              </Typography>
+              </div>
             </div>
           )}
         </div>

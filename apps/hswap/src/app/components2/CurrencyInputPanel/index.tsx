@@ -123,11 +123,11 @@ export default function CurrencyInputPanel({
         </div>
       </div>
       <div className="flex justify-between items-center">
-        <span className="text-secondary-foreground text-small h-[15px] flex items-center">{valueInUSD}</span>
+        <span className="text-secondary-foreground text-body h-[15px] flex items-center">{valueInUSD}</span>
         <div className="flex gap-2 items-center">
           {type === CurrencyInputPanelType.INPUT && (
             <>
-              <span className="text-secondary-foreground text-small cursor-default">
+              <span className="text-secondary-foreground text-body cursor-default">
                 {`${balance ? balance.toFixed(4, { groupSeparator: ',' }) : 0} ${currency?.symbol}`}
               </span>
               <span className="text-base font-extrabold cursor-pointer" onClick={() => onPercentSelect?.(100)}>

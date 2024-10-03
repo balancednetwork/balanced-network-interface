@@ -5,23 +5,22 @@ import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
+import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 import { Modal } from '@/app/components2/Modal';
-import TooltipContainer from '@/app/components2/TooltipContainer';
+import FlipIcon from '@/assets/icons/flip.svg';
 import { Button } from '@/components/ui/button';
 import { ApprovalState } from '@/hooks/useApproveCallback';
+import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { Field } from '@/store/swap/reducer';
 import { formatBigNumber } from '@/utils';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
+import { XTransactionStatus } from '@/xwagmi/xcall/types';
+import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import { CheckIcon, Loader2, XIcon } from 'lucide-react';
+import { ChevronRight } from 'react-feather';
 import { TradeRoute } from './AdvancedSwapDetails';
 import CurrencyCard from './CurrencyCard';
-import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
-import { XTransactionStatus } from '@/xwagmi/xcall/types';
-import { ChevronRight } from 'react-feather';
-import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import FlipIcon from '@/assets/icons/flip.svg';
-import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 
 export enum ConfirmModalState {
   REVIEWING,
@@ -153,17 +152,15 @@ const XSwapModal = ({
         {showDetails && (
           <>
             <div className="flex flex-col gap-2">
-              <TooltipContainer tooltipText="The impact your trade has on the market price of this pool.">
-                <div className="flex justify-between">
-                  <span className="text-secondary-foreground text-body">Rate</span>
-                  <span className="text-body">
-                    1 {executionTrade?.executionPrice.baseCurrency.symbol} ={' '}
-                    {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
-                      executionTrade?.executionPrice.quoteCurrency.symbol
-                    }`}
-                  </span>
-                </div>
-              </TooltipContainer>
+              <div className="flex justify-between">
+                <span className="text-secondary-foreground text-body">Rate</span>
+                <span className="text-body">
+                  1 {executionTrade?.executionPrice.baseCurrency.symbol} ={' '}
+                  {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
+                    executionTrade?.executionPrice.quoteCurrency.symbol
+                  }`}
+                </span>
+              </div>
               <div className="flex justify-between">
                 <span className="text-secondary-foreground text-body">Swap Fee</span>
                 <span className="text-body">

@@ -121,7 +121,7 @@ msgstr "Đang cung cấp {pair} vào hồ thanh khoản..."
 #~ msgid "15m"
 #~ msgstr "15 phút"
 
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Switch to {0}"
 msgstr ""
 
@@ -263,8 +263,8 @@ msgstr ""
 #~ msgstr "Phần thưởng"
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-msgid "Pay"
-msgstr "Thanh toán"
+#~ msgid "Pay"
+#~ msgstr "Thanh toán"
 
 #: src/app/pages/vote/_components/BribesPanel/index.tsx
 #~ msgid "Vote to incentivise specific liquidity pools and earn a kickback for it."
@@ -672,8 +672,8 @@ msgstr "hoặc"
 #~ msgstr ""
 
 #: src/app/components/CurrencyBalanceErrorMessage/index.tsx
-msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."
-msgstr "Bạn cần ít nhất {MINIMUM_ICX_FOR_TX} ICX trong ví để hoàn tất giao dịch này."
+#~ msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."
+#~ msgstr "Bạn cần ít nhất {MINIMUM_ICX_FOR_TX} ICX trong ví để hoàn tất giao dịch này."
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #~ msgid "Deposit in progress"
@@ -682,6 +682,10 @@ msgstr "Bạn cần ít nhất {MINIMUM_ICX_FOR_TX} ICX trong ví để hoàn t�
 #: src/store/mint/hooks.tsx
 #~ msgid "Connect Wallet"
 #~ msgstr "Kết nối ví"
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "The impact your trade has on the market price of this pool."
+msgstr ""
 
 #: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
 #~ msgid "Liquidity pools"
@@ -766,6 +770,14 @@ msgstr "Đang đổi {inputCurrency} thành {outputCurrency}..."
 #: src/hooks/useApproveCallback.tsx
 #: src/hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
+msgstr ""
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "The maximum price movement before your transaction will revert."
+msgstr ""
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Receive at least"
 msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
@@ -898,8 +910,6 @@ msgstr "{inputAmount}{inputCurrency} and {outputAmount}{outputCurrency} đã đ�
 
 #: src/app/components/XTransactionState/index.tsx
 #: src/app/components/XTransactionState/index.tsx
-#: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "{0}"
 msgstr "{0}"
@@ -1014,6 +1024,10 @@ msgstr ""
 #~ msgid "Do not send sICX to an exchange."
 #~ msgstr "Ko gửi sICX đến bất cứ sàn giao dịch nào."
 
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Network cost is paid in ETH on the ARBITRUM network in order to transact."
+msgstr ""
+
 #: src/app/components/home/Savings/index.tsx
 #~ msgid "Withdrawing bnUSD..."
 #~ msgstr ""
@@ -1036,8 +1050,8 @@ msgstr ""
 #~ msgstr "Tiêu đề"
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-msgid "Swap {0} for {1}?"
-msgstr "Đổi {0} thành {1}"
+#~ msgid "Swap {0} for {1}?"
+#~ msgstr "Đổi {0} thành {1}"
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 #~ msgid "Claimed Balanced incentives."
@@ -1335,8 +1349,8 @@ msgstr "Chọn 1 đồng tiền"
 #~ msgstr "Vay"
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-msgid "Includes a fee of {0} {1}."
-msgstr "Bao gồm tiền phí {0} {1}."
+#~ msgid "Includes a fee of {0} {1}."
+#~ msgstr "Bao gồm tiền phí {0} {1}."
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
 #~ msgid "Contract address"
@@ -1372,8 +1386,8 @@ msgstr "Bao gồm tiền phí {0} {1}."
 #~ msgstr "Hiện tại ko có ICX nào đang được gỡ ra."
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-msgid "{0} {1} per {2}"
-msgstr "{0}{1} cho mỗi {2}"
+#~ msgid "{0} {1} per {2}"
+#~ msgstr "{0}{1} cho mỗi {2}"
 
 #: src/btp/src/connectors/helper.ts
 #~ msgid "Couldn't remove {0} from {1}. Try again."
@@ -1415,8 +1429,8 @@ msgstr "Không đủ {0}"
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-msgid "ICON"
-msgstr ""
+#~ msgid "ICON"
+#~ msgstr ""
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -1488,8 +1502,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Minimum to receive"
-msgstr "Nhận được tối thiểu"
+#~ msgid "Minimum to receive"
+#~ msgstr "Nhận được tối thiểu"
 
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #~ msgid "Supply liquidity for these assets in any quantity to create a new pool."
@@ -1670,6 +1684,10 @@ msgstr ""
 msgid "Asset"
 msgstr "Tài sản"
 
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Network cost"
+msgstr ""
+
 #: src/app/components/home/LoanPanel.tsx
 #~ msgid "Borrowing bnUSD..."
 #~ msgstr "Đang vay bnUSD..."
@@ -1745,8 +1763,8 @@ msgstr "Tài sản"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-msgid "Cancel"
-msgstr "Hủy bỏ"
+#~ msgid "Cancel"
+#~ msgstr "Hủy bỏ"
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
@@ -2032,8 +2050,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-msgid "Receive"
-msgstr "Nhận"
+#~ msgid "Receive"
+#~ msgstr "Nhận"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
@@ -2136,6 +2154,10 @@ msgstr "Đang rút {inputCurrency}/{outputCurrency} trong hồ thanh khoản..."
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Connected to {numberOfConnectedWallets} blockchains"
+msgstr ""
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Order routing"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
@@ -2289,8 +2311,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Route"
-msgstr "Tuyến đường"
+#~ msgid "Route"
+#~ msgstr "Tuyến đường"
 
 #: src/app/pages/claim-legacy-fees/page.tsx
 #~ msgid "All fees claimed"
@@ -2453,7 +2475,6 @@ msgid "Learn how to resolve common transaction errors."
 msgstr ""
 
 #: src/app/pages/trade/layout.tsx
-#: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "Swap"
@@ -2559,6 +2580,12 @@ msgstr "Giá trị"
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 #~ msgid "The fee APR is calculated from the swap fees earned by a pool over the last 30 days."
 #~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid ""
+"If the price moves so that you will receive less than \n"
+"{0}, your transaction will revert."
+msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #~ msgid "{0} ICX is ready to claim"

@@ -6,7 +6,6 @@ import { configureStore } from '@reduxjs/toolkit';
 import { load, save } from 'redux-localstorage-simple';
 
 import application from './application/reducer';
-import bridge from './bridge/reducer';
 import lists from './lists/reducer';
 import oracle from './oracle/reducer';
 import ratio from './ratio/reducer';
@@ -30,7 +29,6 @@ export function configureAppStore() {
       user,
       oracle,
       lists,
-      bridge,
     },
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({

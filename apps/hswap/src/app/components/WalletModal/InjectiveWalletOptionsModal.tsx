@@ -35,7 +35,7 @@ export const InjectiveWalletOptionsModal = ({
 
   return (
     <>
-      <Modal open={modalOpen} onDismiss={onDismiss} title="">
+      <Modal open={modalOpen} onDismiss={onDismiss}>
         <Typography textAlign="center" margin={'0 0 25px'}>
           Connect with:
         </Typography>

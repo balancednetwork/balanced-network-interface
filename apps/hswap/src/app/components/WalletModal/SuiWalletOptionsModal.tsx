@@ -33,7 +33,7 @@ export const SuiWalletOptionsModal = ({ id = MODAL_ID.SUI_WALLET_OPTIONS_MODAL }
 
   return (
     <>
-      <Modal open={modalOpen} onDismiss={onDismiss} title="">
+      <Modal open={modalOpen} onDismiss={onDismiss}>
         {xConnectors.length > 0 ? (
           <>
             <Typography textAlign="center" margin={'0 0 25px'}>

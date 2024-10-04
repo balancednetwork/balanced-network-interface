@@ -4,12 +4,23 @@ import { Dialog, DialogClose, DialogContent, DialogHeader } from '@/components/u
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { XIcon } from 'lucide-react';
 import { isMobile } from 'react-device-detect';
+import { cn } from '@/lib/utils';
 
-export function Modal({ open, onDismiss, children, title, hideCloseIcon = false }) {
+//ModalProps
+interface ModalProps {
+  open: boolean;
+  onDismiss: () => void;
+  children: React.ReactNode;
+  title?: string;
+  hideCloseIcon?: boolean;
+  dialogClassName?: string;
+}
+
+export function Modal({ open, onDismiss, children, title, hideCloseIcon = false, dialogClassName }: ModalProps) {
   if (!isMobile) {
     return (
       <Dialog open={open} onOpenChange={_ => onDismiss()}>
-        <DialogContent className="p-4 sm:max-w-[560px] border-border]">
+        <DialogContent className={cn('p-4 border-border]', dialogClassName)}>
           {(title || !hideCloseIcon) && (
             <DialogHeader className="flex flex-row-reverse justify-between items-center">
               {!hideCloseIcon && (

@@ -162,7 +162,7 @@ export default function WalletModal() {
 
   return (
     <>
-      <Modal open={walletModalOpen} onDismiss={toggleWalletModal} title="">
+      <Modal open={walletModalOpen} onDismiss={toggleWalletModal}>
         <div className="w-full flex flex-col gap-4 p-6">
           {isLoggedInSome ? (
             <div className="flex justify-between flex-col sm:flex-row mb-1 flex-nowrap">

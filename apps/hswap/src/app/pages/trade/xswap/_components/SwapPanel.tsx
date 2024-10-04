@@ -55,12 +55,13 @@ export default function SwapPanel() {
     formattedAmounts,
     maximumBridgeAmount,
     canBridge,
+    xTransactionType,
   } = useDerivedSwapInfo();
 
   const signedInWallets = useSignedInWallets();
   const { recipient } = useSwapState();
 
-  const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
+  const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient } =
     useSwapActionHandlers();
 
   const [xSwapModalState, setXSwapModalState] = React.useState<XSwapModalState>(DEFAULT_XSWAP_MODAL_STATE);
@@ -94,7 +95,7 @@ export default function SwapPanel() {
     handleTypeOutput('');
   }, [handleTypeInput, handleTypeOutput]);
 
-  const maxInputAmount = React.useMemo(
+  const maxInputAmount = useMemo(
     () => maxAmountSpend(currencyBalances[Field.INPUT], direction.from),
     [currencyBalances, direction.from],
   );

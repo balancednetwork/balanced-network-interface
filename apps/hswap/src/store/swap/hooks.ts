@@ -8,7 +8,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { canBeQueue } from '@/constants/currency';
 import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
-import { useAllTokens } from '@/hooks/Tokens';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
@@ -20,21 +19,29 @@ import { allXTokens } from '@/xwagmi/constants/xTokens';
 import { useXAccount } from '@/xwagmi/hooks';
 import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
-import {
-  Field,
-  selectChain,
-  selectCurrency,
-  selectPercent,
-  setRecipient,
-  switchChain,
-  switchCurrencies,
-  typeInput,
-} from './reducer';
+import { Field, selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
+import { XTransactionType } from '@/xwagmi/xcall/types';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);
 }
+
+const calculateXTransactionType = (
+  token1: XToken | undefined,
+  token2: XToken | undefined,
+): XTransactionType | undefined => {
+  if (!token1 || !token2) return undefined;
+
+  if (token1.xChainId === token2.xChainId && token2.xChainId === '0x1.icon') {
+    return XTransactionType.SWAP_ON_ICON;
+  } else if (token1.symbol === token2.symbol) {
+    // TODO: check if this check is correct
+    return XTransactionType.BRIDGE;
+  } else {
+    return XTransactionType.SWAP;
+  }
+};
 
 export function useSwapActionHandlers() {
   const dispatch = useDispatch<AppDispatch>();
@@ -50,22 +57,6 @@ export function useSwapActionHandlers() {
     },
     [dispatch],
   );
-
-  const onChainSelection = useCallback(
-    (field: Field, xChainId: XChainId) => {
-      dispatch(
-        selectChain({
-          field,
-          xChainId,
-        }),
-      );
-    },
-    [dispatch],
-  );
-
-  const onSwitchChain = useCallback(() => {
-    dispatch(switchChain());
-  }, [dispatch]);
 
   const onPercentSelection = useCallback(
     (field: Field, percent: number, value: string) => {
@@ -98,8 +89,6 @@ export function useSwapActionHandlers() {
     onUserInput,
     onChangeRecipient,
     onPercentSelection,
-    onChainSelection,
-    onSwitchChain,
   };
 }
 
@@ -143,6 +132,7 @@ export function useDerivedSwapInfo(): {
   };
   canBridge: boolean;
   maximumBridgeAmount: CurrencyAmount<XToken> | undefined;
+  xTransactionType?: XTransactionType;
 } {
   const {
     independentField,
@@ -293,6 +283,10 @@ export function useDerivedSwapInfo(): {
     return maximumBridgeAmount && outputCurrencyAmount ? maximumBridgeAmount?.greaterThan(outputCurrencyAmount) : true;
   }, [maximumBridgeAmount, outputCurrencyAmount]);
 
+  const xTransactionType = useMemo(() => {
+    return calculateXTransactionType(inputCurrency, outputCurrency);
+  }, [inputCurrency, outputCurrency]);
+
   return {
     account,
     trade,
@@ -309,6 +303,7 @@ export function useDerivedSwapInfo(): {
     formattedAmounts,
     canBridge,
     maximumBridgeAmount,
+    xTransactionType,
   };
 }
 
@@ -317,7 +312,7 @@ export function useInitialSwapLoad(): void {
   const navigate = useNavigate();
   const tokens = allXTokens;
   const { pair = '' } = useParams<{ pair: string }>();
-  const { onCurrencySelection, onChainSelection } = useSwapActionHandlers();
+  const { onCurrencySelection } = useSwapActionHandlers();
   const { currencies } = useDerivedSwapInfo();
 
   useEffect(() => {
@@ -329,23 +324,20 @@ export function useInitialSwapLoad(): void {
       const [currentBase, currentBaseXChainId] = inputToken.split(':');
       const [currentQuote, currentQuoteXChainId] = outputToken.split(':');
 
-      const quote =
-        currentQuote && tokensArray.find(token => token.symbol?.toLowerCase() === currentQuote?.toLocaleLowerCase());
-      const base = currentBase && tokensArray.find(token => token.symbol?.toLowerCase() === currentBase?.toLowerCase());
+      const quote = tokensArray.find(
+        token =>
+          token.symbol?.toLowerCase() === currentQuote?.toLocaleLowerCase() && token.xChainId === currentQuoteXChainId,
+      );
+      const base = tokensArray.find(
+        token => token.symbol?.toLowerCase() === currentBase?.toLowerCase() && token.xChainId === currentBaseXChainId,
+      );
       if (quote && base) {
         onCurrencySelection(Field.INPUT, base);
         onCurrencySelection(Field.OUTPUT, quote);
-
-        if (currentBaseXChainId) {
-          onChainSelection(Field.INPUT, currentBaseXChainId as XChainId);
-        }
-        if (currentQuoteXChainId) {
-          onChainSelection(Field.OUTPUT, currentQuoteXChainId as XChainId);
-        }
       }
       setFirstLoad(false);
     }
-  }, [firstLoad, tokens, onCurrencySelection, onChainSelection, pair]);
+  }, [firstLoad, tokens, onCurrencySelection, pair]);
 
   useEffect(() => {
     if (!firstLoad && currencies.INPUT && currencies.OUTPUT) {

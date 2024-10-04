@@ -1,7 +1,5 @@
-import { getXTokenBySymbol, isXToken } from '@/utils/xTokens';
-import { DEFAULT_TOKEN_CHAIN, allXTokens, xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XChainId, XToken } from '@balancednetwork/sdk-core';
-import { Currency } from '@balancednetwork/sdk-core';
+import { allXTokens } from '@/xwagmi/constants/xTokens';
+import { XToken } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
 
 // !TODO: use one Field for swap and bridge panel
@@ -51,6 +49,7 @@ const swapSlice = createSlice({
     selectCurrency: create.reducer<{ currency: XToken | undefined; field: Field }>(
       (state, { payload: { currency, field } }) => {
         const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
+
         if (currency?.address === state[otherField].currency?.address) {
           // the case where we have to swap the order
           return {
@@ -86,17 +85,7 @@ const swapSlice = createSlice({
         [Field.OUTPUT]: { ...state[Field.INPUT], currency: state[Field.INPUT].currency },
       };
     }),
-    selectChain: create.reducer<{ field: Field; xChainId: XChainId }>((state, { payload: { field, xChainId } }) => {
-      const updatedCurrency = getXTokenBySymbol(xChainId, state[field].currency?.symbol);
-      if (updatedCurrency) {
-        state[field].currency = updatedCurrency;
-      }
-    }),
-    switchChain: create.reducer<void>(state => {
-      const fromCurrency = state[Field.INPUT].currency;
-      state[Field.INPUT].currency = state[Field.OUTPUT].currency;
-      state[Field.OUTPUT].currency = fromCurrency;
-    }),
+
     typeInput: create.reducer<{ field: Field; typedValue: string }>((state, { payload: { field, typedValue } }) => {
       const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 
@@ -114,7 +103,6 @@ const swapSlice = createSlice({
   }),
 });
 
-export const { selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput, switchChain, selectChain } =
-  swapSlice.actions;
+export const { selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput } = swapSlice.actions;
 
 export default swapSlice.reducer;

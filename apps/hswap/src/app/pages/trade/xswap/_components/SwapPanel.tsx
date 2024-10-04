@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Currency, CurrencyAmount, Percent, TradeType, XToken } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
@@ -40,7 +40,7 @@ const DEFAULT_XSWAP_MODAL_STATE: XSwapModalState = {
 };
 
 export default function SwapPanel() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   useInitialSwapLoad();
 
@@ -64,11 +64,11 @@ export default function SwapPanel() {
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient } =
     useSwapActionHandlers();
 
-  const [xSwapModalState, setXSwapModalState] = React.useState<XSwapModalState>(DEFAULT_XSWAP_MODAL_STATE);
+  const [xSwapModalState, setXSwapModalState] = useState<XSwapModalState>(DEFAULT_XSWAP_MODAL_STATE);
 
   const xAccount = useXAccount(getXChainType(direction.to));
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (xAccount.address) {
       onChangeRecipient(xAccount.address);
     } else {
@@ -126,7 +126,7 @@ export default function SwapPanel() {
 
   const toggleWalletModal = useWalletModalToggle();
 
-  const [executionTrade, setExecutionTrade] = React.useState<Trade<Currency, Currency, TradeType>>();
+  const [executionTrade, setExecutionTrade] = useState<Trade<Currency, Currency, TradeType>>();
 
   const handleOpenXSwapModal = useCallback(() => {
     if (!account || !recipient) {

@@ -221,12 +221,17 @@ export function useDerivedSwapInfo(): {
   }, [account, recipient, parsedAmount, currencies, currencyBalances, trade]);
 
   const [pairState, pair] = useV2Pair(_inputCurrencyOnIcon, _outputCurrencyOnIcon);
-
-  let price: Price<Token, Token> | undefined;
-  if (pair && pairState === PairState.EXISTS && _inputCurrencyOnIcon) {
-    if (pair.involvesToken(_inputCurrencyOnIcon.wrapped)) price = pair.priceOf(_inputCurrencyOnIcon.wrapped);
-    else price = pair.token0Price; // pair not ready, just set dummy price
-  }
+  const price = useMemo(() => {
+    let price: Price<Token, Token> | undefined;
+    if (pair && pairState === PairState.EXISTS && _inputCurrencyOnIcon) {
+      if (pair.involvesToken(_inputCurrencyOnIcon.wrapped)) {
+        price = pair.priceOf(_inputCurrencyOnIcon.wrapped);
+      } else {
+        price = pair.token0Price; // pair not ready, just set dummy price
+      }
+    }
+    return price;
+  }, [pair, pairState, _inputCurrencyOnIcon]);
 
   const direction = useMemo(
     () => ({ from: inputXChainId || '0x1.icon', to: outputXChainId || '0x1.icon' }),

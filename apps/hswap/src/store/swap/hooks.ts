@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Currency, CurrencyAmount, Price, Token, TradeType, XChainId, XToken } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
@@ -115,7 +115,6 @@ export function useDerivedSwapInfo(): {
   account: string | undefined;
   trade: Trade<Currency, Currency, TradeType> | undefined;
   currencies: { [field in Field]?: XToken };
-  _currencies: { [field in Field]?: Currency };
   percents: { [field in Field]?: number };
   currencyBalances: { [field in Field]?: CurrencyAmount<XToken> | undefined };
   parsedAmount: CurrencyAmount<XToken> | undefined;
@@ -151,102 +150,92 @@ export function useDerivedSwapInfo(): {
 
   const isExactIn: boolean = independentField === Field.INPUT;
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
-  const currencyBalances: { [field in Field]?: CurrencyAmount<XToken> } = React.useMemo(() => {
-    return {
+  const currencyBalances: { [field in Field]?: CurrencyAmount<XToken> } = useMemo(
+    () => ({
       [Field.INPUT]: inputCurrency ? walletBalances?.[inputCurrency?.wrapped.address] : undefined,
       [Field.OUTPUT]: outputCurrency ? walletBalances?.[outputCurrency?.wrapped.address] : undefined,
-    };
-  }, [walletBalances, inputCurrency, outputCurrency]);
-
-  const currencies: { [field in Field]?: XToken } = useMemo(() => {
-    return {
-      [Field.INPUT]: inputCurrency ?? undefined,
-      [Field.OUTPUT]: outputCurrency ?? undefined,
-    };
-  }, [inputCurrency, outputCurrency]);
-
-  const percents: { [field in Field]?: number } = React.useMemo(
-    () => ({
-      [Field.INPUT]: inputPercent,
     }),
-    [inputPercent],
+    [walletBalances, inputCurrency, outputCurrency],
   );
 
-  const _inputCurrency =
-    inputXChainId === '0x1.icon' ? inputCurrency : getXTokenBySymbol('0x1.icon', inputCurrency?.symbol);
-  const _outputCurrency =
-    outputXChainId === '0x1.icon' ? outputCurrency : getXTokenBySymbol('0x1.icon', outputCurrency?.symbol);
-  const _currencies: { [field in Field]?: Currency } = useMemo(() => {
-    return {
-      [Field.INPUT]: _inputCurrency ?? undefined,
-      [Field.OUTPUT]: _outputCurrency ?? undefined,
-    };
-  }, [_inputCurrency, _outputCurrency]);
-  const _parsedAmount = tryParseAmount(typedValue, (isExactIn ? _inputCurrency : _outputCurrency) ?? undefined);
+  const currencies: { [field in Field]?: XToken } = useMemo(
+    () => ({ [Field.INPUT]: inputCurrency, [Field.OUTPUT]: outputCurrency }),
+    [inputCurrency, outputCurrency],
+  );
+
+  const percents: { [field in Field]?: number } = useMemo(() => ({ [Field.INPUT]: inputPercent }), [inputPercent]);
+
+  const _inputCurrencyOnIcon = getXTokenBySymbol('0x1.icon', inputCurrency?.symbol);
+  const _outputCurrencyOnIcon = getXTokenBySymbol('0x1.icon', outputCurrency?.symbol);
+
+  const _parsedAmount = tryParseAmount(
+    typedValue,
+    (isExactIn ? _inputCurrencyOnIcon : _outputCurrencyOnIcon) ?? undefined,
+  );
   // cannot call `useTradeExactIn` or `useTradeExactOut` conditionally because they are hooks
-  const queue = canBeQueue(_inputCurrency, _outputCurrency);
-  const trade1 = useTradeExactIn(isExactIn ? _parsedAmount : undefined, _outputCurrency, {
+  const queue = canBeQueue(_inputCurrencyOnIcon, _outputCurrencyOnIcon);
+
+  const trade1 = useTradeExactIn(isExactIn ? _parsedAmount : undefined, _outputCurrencyOnIcon, {
     maxHops: queue ? 1 : undefined,
   });
-  const trade2 = useTradeExactOut(_inputCurrency, !isExactIn ? _parsedAmount : undefined, {
+  const trade2 = useTradeExactOut(_inputCurrencyOnIcon, !isExactIn ? _parsedAmount : undefined, {
     maxHops: queue ? 1 : undefined,
   });
-  const trade = isExactIn ? trade1 : trade2;
-  const swapDisabled = trade?.priceImpact.greaterThan(SLIPPAGE_SWAP_DISABLED_THRESHOLD);
+  const trade = useMemo(() => (isExactIn ? trade1 : trade2), [isExactIn, trade1, trade2]);
 
-  let inputError: string | undefined;
-  if (account && !recipient) {
-    inputError = t`Choose address`;
-  }
-
-  if (account && !parsedAmount) {
-    inputError = t`Enter amount`;
-  }
-
-  if (account && swapDisabled) {
-    inputError = t`Reduce price impact`;
-  }
-
-  if (!currencies[Field.INPUT] || !currencies[Field.OUTPUT]) {
-    inputError = inputError ?? t`Select a token`;
-  }
-
-  // compare input balance to max input based on version
   const allowedSlippage = useSwapSlippageTolerance();
+  const inputError = useMemo(() => {
+    const swapDisabled = trade?.priceImpact.greaterThan(SLIPPAGE_SWAP_DISABLED_THRESHOLD);
 
-  const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], trade?.inputAmount];
+    let error: string | undefined;
 
-  // decimal scales are different for different chains for the same token
-  if (balanceIn && amountIn && new BigNumber(balanceIn.toFixed()).isLessThan(amountIn.toFixed())) {
-    inputError = t`Insufficient ${currencies[Field.INPUT]?.symbol}`;
-  }
+    if (account) {
+      if (!recipient) {
+        error = t`Choose address`;
+      } else if (!parsedAmount) {
+        error = t`Enter amount`;
+      } else if (swapDisabled) {
+        error = t`Reduce price impact`;
+      }
+    }
 
-  //
-  const userHasSpecifiedInputOutput = Boolean(
-    currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmount?.greaterThan(0),
-  );
+    if (!currencies[Field.INPUT] || !currencies[Field.OUTPUT]) {
+      error = error ?? t`Select a token`;
+    }
 
-  if (userHasSpecifiedInputOutput && !trade) inputError = t`Insufficient liquidity`;
+    const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], trade?.inputAmount];
 
-  const [pairState, pair] = useV2Pair(_inputCurrency, _outputCurrency);
+    if (balanceIn && amountIn && new BigNumber(balanceIn.toFixed()).isLessThan(amountIn.toFixed())) {
+      error = t`Insufficient ${currencies[Field.INPUT]?.symbol}`;
+    }
+
+    const userHasSpecifiedInputOutput = Boolean(
+      currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmount?.greaterThan(0),
+    );
+
+    if (userHasSpecifiedInputOutput && !trade) {
+      error = t`Insufficient liquidity`;
+    }
+
+    return error;
+  }, [account, recipient, parsedAmount, currencies, currencyBalances, trade]);
+
+  const [pairState, pair] = useV2Pair(_inputCurrencyOnIcon, _outputCurrencyOnIcon);
 
   let price: Price<Token, Token> | undefined;
-  if (pair && pairState === PairState.EXISTS && _inputCurrency) {
-    if (pair.involvesToken(_inputCurrency.wrapped)) price = pair.priceOf(_inputCurrency.wrapped);
+  if (pair && pairState === PairState.EXISTS && _inputCurrencyOnIcon) {
+    if (pair.involvesToken(_inputCurrencyOnIcon.wrapped)) price = pair.priceOf(_inputCurrencyOnIcon.wrapped);
     else price = pair.token0Price; // pair not ready, just set dummy price
   }
 
   const direction = useMemo(
-    () => ({
-      from: inputXChainId || '0x1.icon',
-      to: outputXChainId || '0x1.icon',
-    }),
+    () => ({ from: inputXChainId || '0x1.icon', to: outputXChainId || '0x1.icon' }),
     [inputXChainId, outputXChainId],
   );
 
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 
-  const parsedAmounts = React.useMemo(
+  const parsedAmounts = useMemo(
     () => ({
       [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
       [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
@@ -254,7 +243,7 @@ export function useDerivedSwapInfo(): {
     [independentField, parsedAmount, trade],
   );
 
-  const formattedAmounts = React.useMemo(() => {
+  const formattedAmounts = useMemo(() => {
     return {
       [independentField]: typedValue,
       [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
@@ -291,7 +280,6 @@ export function useDerivedSwapInfo(): {
     account,
     trade,
     currencies,
-    _currencies,
     currencyBalances,
     parsedAmount,
     inputError,
@@ -308,7 +296,7 @@ export function useDerivedSwapInfo(): {
 }
 
 export function useInitialSwapLoad(): void {
-  const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
+  const [firstLoad, setFirstLoad] = useState<boolean>(true);
   const navigate = useNavigate();
   const tokens = allXTokens;
   const { pair = '' } = useParams<{ pair: string }>();
@@ -325,11 +313,10 @@ export function useInitialSwapLoad(): void {
       const [currentQuote, currentQuoteXChainId] = outputToken.split(':');
 
       const quote = tokensArray.find(
-        token =>
-          token.symbol?.toLowerCase() === currentQuote?.toLocaleLowerCase() && token.xChainId === currentQuoteXChainId,
+        x => x.symbol.toLowerCase() === currentQuote.toLocaleLowerCase() && x.xChainId === currentQuoteXChainId,
       );
       const base = tokensArray.find(
-        token => token.symbol?.toLowerCase() === currentBase?.toLowerCase() && token.xChainId === currentBaseXChainId,
+        x => x.symbol.toLowerCase() === currentBase.toLowerCase() && x.xChainId === currentBaseXChainId,
       );
       if (quote && base) {
         onCurrencySelection(Field.INPUT, base);

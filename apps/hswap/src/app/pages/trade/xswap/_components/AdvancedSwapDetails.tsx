@@ -18,8 +18,9 @@ import BigNumber from 'bignumber.js';
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 import { cn } from '@/lib/utils';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
+import { XTransactionType } from '@/xwagmi/xcall/types';
 
-export default function AdvancedSwapDetails() {
+export default function AdvancedSwapDetails({ xTransactionType }: { xTransactionType: XTransactionType }) {
   const [open, setOpen] = useState(false);
 
   const { trade, currencies, direction } = useDerivedSwapInfo();
@@ -30,8 +31,6 @@ export default function AdvancedSwapDetails() {
   const minimumToReceive = trade?.minimumAmountOut(new Percent(slippageTolerance, 10_000));
   const priceImpact = formatPercent(new BigNumber(trade?.priceImpact.toFixed() || 0));
   const showSlippageWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
-
-  const isXSwap = !(direction.from === '0x1.icon' && direction.to === '0x1.icon');
 
   const { formattedXCallFee } = useXCallFee(direction.from, direction.to);
 
@@ -87,7 +86,7 @@ export default function AdvancedSwapDetails() {
 
           <div className="flex items-center justify-between">
             <span className="text-body text-secondary-foreground flex items-center gap-1">
-              <Trans>Fee</Trans>
+              <Trans>Swap Fee</Trans>
               <QuestionHelper text={t`If the price slips by more than this amount, your swap will fail.`} />
             </span>
 
@@ -95,6 +94,17 @@ export default function AdvancedSwapDetails() {
               {trade ? trade.fee.toFixed(4) : '0'} {currencies[Field.INPUT]?.symbol}
             </span>
           </div>
+
+          {xTransactionType !== XTransactionType.SWAP_ON_ICON && (
+            <div className="flex items-center justify-between">
+              <span className="text-body text-secondary-foreground flex items-center gap-1">
+                <Trans>Bridge Fee</Trans>
+                <QuestionHelper text={t`If the price slips by more than this amount, your swap will fail.`} />
+              </span>
+
+              <span className="text-body">{formattedXCallFee}</span>
+            </div>
+          )}
 
           <div className="flex items-center justify-between">
             <span className="text-body text-secondary-foreground flex items-center gap-1">

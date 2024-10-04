@@ -56,13 +56,19 @@ export default function SwapPanel() {
     maximumBridgeAmount,
     canBridge,
     xTransactionType,
+    parsedAmount,
   } = useDerivedSwapInfo();
 
   const signedInWallets = useSignedInWallets();
   const { recipient } = useSwapState();
 
-  const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient } =
-    useSwapActionHandlers();
+  const {
+    onUserInput,
+    onCurrencySelection,
+    onSwitchTokens,
+    onPercentSelection,
+    onChangeRecipient,
+  } = useSwapActionHandlers();
 
   const [xSwapModalState, setXSwapModalState] = useState<XSwapModalState>(DEFAULT_XSWAP_MODAL_STATE);
 
@@ -95,10 +101,10 @@ export default function SwapPanel() {
     handleTypeOutput('');
   }, [handleTypeInput, handleTypeOutput]);
 
-  const maxInputAmount = useMemo(
-    () => maxAmountSpend(currencyBalances[Field.INPUT], direction.from),
-    [currencyBalances, direction.from],
-  );
+  const maxInputAmount = useMemo(() => maxAmountSpend(currencyBalances[Field.INPUT], direction.from), [
+    currencyBalances,
+    direction.from,
+  ]);
 
   const handleInputSelect = useCallback(
     (inputCurrency: XToken) => {
@@ -127,15 +133,36 @@ export default function SwapPanel() {
   const toggleWalletModal = useWalletModalToggle();
 
   const [executionTrade, setExecutionTrade] = useState<Trade<Currency, Currency, TradeType>>();
+  const [executionInputAmount, setExecutionInputAmount] = useState<CurrencyAmount<XToken>>();
+
+  const _inputAmount = useMemo(() => {
+    if (xTransactionType === XTransactionType.BRIDGE && currencies[Field.INPUT] && parsedAmount) {
+      return CurrencyAmount.fromRawAmount(
+        XToken.getXToken(direction.from, currencies[Field.INPUT].wrapped),
+        new BigNumber(parsedAmount.toFixed())
+          .times((10n ** BigInt(currencies[Field.INPUT].decimals)).toString())
+          .toFixed(0),
+      );
+    }
+    return executionTrade?.inputAmount && currencies[Field.INPUT]
+      ? CurrencyAmount.fromRawAmount(
+          XToken.getXToken(direction.from, currencies[Field.INPUT].wrapped),
+          new BigNumber(executionTrade.inputAmount.toFixed())
+            .times((10n ** BigInt(currencies[Field.INPUT].decimals)).toString())
+            .toFixed(0),
+        )
+      : undefined;
+  }, [executionTrade, direction.from, currencies, xTransactionType, parsedAmount]);
 
   const handleOpenXSwapModal = useCallback(() => {
     if (!account || !recipient) {
       toggleWalletModal();
     } else {
       setExecutionTrade(trade);
+      setExecutionInputAmount(_inputAmount);
       setOpen(true);
     }
-  }, [account, toggleWalletModal, trade, recipient]);
+  }, [account, toggleWalletModal, trade, recipient, _inputAmount]);
 
   const handleMaximumBridgeAmountClick = () => {
     if (maximumBridgeAmount) {
@@ -175,16 +202,6 @@ export default function SwapPanel() {
   }, []);
 
   const xChain = xChainMap[direction.from];
-  const _inputAmount = useMemo(() => {
-    return executionTrade?.inputAmount && currencies[Field.INPUT]
-      ? CurrencyAmount.fromRawAmount(
-          XToken.getXToken(direction.from, currencies[Field.INPUT].wrapped),
-          new BigNumber(executionTrade.inputAmount.toFixed())
-            .times((10n ** BigInt(currencies[Field.INPUT].decimals)).toString())
-            .toFixed(0),
-        )
-      : undefined;
-  }, [executionTrade, direction.from, currencies]);
   const { approvalState, approveCallback } = useApproveCallback(_inputAmount, xChain.contracts.assetManager);
 
   const { xCallFee, formattedXCallFee } = useXCallFee(direction.from, direction.to);
@@ -197,13 +214,13 @@ export default function SwapPanel() {
   }, [clearSwapInputOutput]);
 
   const handleConfirmXSwap = useCallback(async () => {
-    const isXSwap = !(direction.from === '0x1.icon' && direction.to === '0x1.icon');
-    if (!isXSwap) {
+    if (xTransactionType === XTransactionType.SWAP_ON_ICON) {
       await handleConfirmSwap();
       return;
     }
 
-    if (!executionTrade) return;
+    if (!xTransactionType) return;
+    // if (!executionTrade) return;
     if (!account) return;
     if (!recipient) return;
     if (!xCallFee) return;
@@ -242,7 +259,7 @@ export default function SwapPanel() {
     });
 
     const xTransactionInput: XTransactionInput = {
-      type: XTransactionType.SWAP,
+      type: xTransactionType,
       direction,
       executionTrade,
       account,
@@ -283,10 +300,11 @@ export default function SwapPanel() {
     approveCallback,
     cleanupSwap,
     slippageTolerance,
+    xTransactionType,
   ]);
 
   const handleConfirmSwap = useCallback(async () => {
-    if (!executionTrade) return;
+    // if (!executionTrade) return;
     if (!account) return;
     if (!recipient) return;
     if (!_inputAmount) return;
@@ -370,7 +388,22 @@ export default function SwapPanel() {
           <RecipientAddressPanel />
 
           <div className="flex justify-center">{swapButton}</div>
-          <AdvancedSwapDetails />
+
+          {xTransactionType === XTransactionType.BRIDGE && (
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between">
+                <span className="text-secondary-foreground text-body">Bridge Fee</span>
+                <span className="text-body">{formattedXCallFee}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-secondary-foreground text-body">Network Cost</span>
+                <span className="text-body">0.0001 ICX</span>
+              </div>
+            </div>
+          )}
+          {xTransactionType && xTransactionType !== XTransactionType.BRIDGE && (
+            <AdvancedSwapDetails xTransactionType={xTransactionType} />
+          )}
 
           {!canBridge && maximumBridgeAmount && (
             <div className="flex items-center justify-center mt-2">
@@ -394,21 +427,14 @@ export default function SwapPanel() {
           )}
         </div>
       </div>
-      {/* 
-      <SwapModal
-        isOpen={showSwapConfirm}
-        onClose={handleSwapConfirmDismiss}
-        account={account}
-        currencies={currencies}
-        executionTrade={executionTrade}
-        recipient={recipient || undefined}
-      /> */}
 
       <XSwapModal
         open={open}
         currencies={currencies}
         executionTrade={executionTrade}
         direction={direction}
+        xTransactionType={xTransactionType}
+        executionInputAmount={executionInputAmount}
         //
         // confirmModalState={xSwapModalState.confirmModalState}
         // xSwapErrorMessage={xSwapModalState.xSwapErrorMessage}

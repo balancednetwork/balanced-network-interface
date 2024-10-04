@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Currency, TradeType, XChainId, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, TradeType, XChainId, XToken } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -15,7 +15,7 @@ import { Field } from '@/store/swap/reducer';
 import { formatBigNumber } from '@/utils';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
-import { XTransactionStatus } from '@/xwagmi/xcall/types';
+import { XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import { CheckIcon, Loader2, XIcon } from 'lucide-react';
 import { ChevronRight } from 'react-feather';
@@ -38,6 +38,8 @@ type XSwapModalProps = {
     from: XChainId;
     to: XChainId;
   };
+  xTransactionType: XTransactionType | undefined;
+  executionInputAmount: CurrencyAmount<XToken> | undefined;
 
   //
   confirmModalState: ConfirmModalState;
@@ -56,6 +58,8 @@ const XSwapModal = ({
   currencies,
   executionTrade,
   direction,
+  xTransactionType,
+  executionInputAmount,
   //
   confirmModalState,
   xSwapErrorMessage,
@@ -68,7 +72,6 @@ const XSwapModal = ({
   onDismiss,
 }: XSwapModalProps) => {
   const { formattedXCallFee } = useXCallFee(direction.from, direction.to);
-
   const [approved, setApproved] = useState(false);
   const [swapConfirmed, setSwapConfirmed] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
@@ -120,6 +123,14 @@ const XSwapModal = ({
 
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(direction.from);
 
+  const [inputAmount, outputAmount] = useMemo(
+    () =>
+      xTransactionType === XTransactionType.BRIDGE
+        ? [executionInputAmount, executionInputAmount]
+        : [executionTrade?.inputAmount, executionTrade?.outputAmount],
+    [xTransactionType, executionInputAmount, executionTrade],
+  );
+
   return (
     <Modal
       open={open}
@@ -130,8 +141,9 @@ const XSwapModal = ({
     >
       <div className="flex flex-col gap-4">
         <div className="relative flex justify-between gap-2">
-          <CurrencyCard currency={currencies[Field.INPUT]} currencyAmount={executionTrade?.inputAmount} />
-          <CurrencyCard currency={currencies[Field.OUTPUT]} currencyAmount={executionTrade?.outputAmount} />
+          <CurrencyCard currency={currencies[Field.INPUT]} currencyAmount={inputAmount} />
+          <CurrencyCard currency={currencies[Field.OUTPUT]} currencyAmount={outputAmount} />
+
           {showDetails && (
             <span className="bg-[#221542] border-2 border-background absolute top-[50%] left-[50%] mx-[-24px] my-[-24px] w-[48px] h-[48px] flex justify-center items-center rounded-full">
               <ChevronRight />
@@ -158,34 +170,44 @@ const XSwapModal = ({
         {showDetails && (
           <>
             <div className="flex flex-col gap-2">
-              <div className="flex justify-between">
-                <span className="text-secondary-foreground text-body">Rate</span>
-                <span className="text-body">
-                  1 {executionTrade?.executionPrice.baseCurrency.symbol} ={' '}
-                  {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
-                    executionTrade?.executionPrice.quoteCurrency.symbol
-                  }`}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-secondary-foreground text-body">Swap Fee</span>
-                <span className="text-body">
-                  {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
-                  {currencies[Field.INPUT]?.symbol}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-secondary-foreground text-body">Bridge Fee</span>
-                <span className="text-body">{formattedXCallFee}</span>
-              </div>
+              {xTransactionType !== XTransactionType.BRIDGE && (
+                <div className="flex justify-between">
+                  <span className="text-secondary-foreground text-body">Rate</span>
+                  <span className="text-body">
+                    1 {executionTrade?.executionPrice.baseCurrency.symbol} ={' '}
+                    {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
+                      executionTrade?.executionPrice.quoteCurrency.symbol
+                    }`}
+                  </span>
+                </div>
+              )}
+              {xTransactionType !== XTransactionType.BRIDGE && (
+                <div className="flex justify-between">
+                  <span className="text-secondary-foreground text-body">Swap Fee</span>
+                  <span className="text-body">
+                    {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
+                    {currencies[Field.INPUT]?.symbol}
+                  </span>
+                </div>
+              )}
+              {xTransactionType !== XTransactionType.SWAP_ON_ICON && (
+                <div className="flex justify-between">
+                  <span className="text-secondary-foreground text-body">Bridge Fee</span>
+                  <span className="text-body">{formattedXCallFee}</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-secondary-foreground text-body">Network Cost</span>
                 <span className="text-body">0.0001 ICX</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-secondary-foreground text-body">Order routing</span>
-                <div>{executionTrade ? <TradeRoute route={executionTrade.route} currencies={currencies} /> : '-'}</div>
-              </div>
+              {xTransactionType !== XTransactionType.BRIDGE && (
+                <div className="flex justify-between items-center">
+                  <span className="text-secondary-foreground text-body">Order routing</span>
+                  <div>
+                    {executionTrade ? <TradeRoute route={executionTrade.route} currencies={currencies} /> : '-'}
+                  </div>
+                </div>
+              )}
             </div>
             {isWrongChain ? (
               <Button color="primary" onClick={handleSwitchChain} className="h-[56px] text-base rounded-full">

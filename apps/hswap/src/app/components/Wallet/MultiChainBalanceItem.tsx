@@ -1,4 +1,4 @@
-import { Typography } from '@/app/theme';
+import { Typography } from '@/app/components2/Typography';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
 import { XToken } from '@balancednetwork/sdk-core';
@@ -26,7 +26,7 @@ const MultiChainBalanceItem = ({ balances }: MultiChainBalanceItemProps) => {
       <ListItem $border={false} style={{ cursor: 'default' }}>
         <AssetSymbol>
           <CurrencyLogo currency={currency} />
-          <Typography fontSize={16} fontWeight="bold">
+          <Typography className="text-base font-bold">
             <span ref={arrowRef} style={{ display: 'inline-block' }}>
               {currency.symbol}
             </span>

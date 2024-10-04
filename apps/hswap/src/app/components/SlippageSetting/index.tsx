@@ -3,7 +3,7 @@ import React from 'react';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Typography } from '@/app/theme';
+import { Typography } from '@/app/components2/Typography';
 import { escapeRegExp } from '@/utils';
 
 // enum SlippageError {
@@ -109,9 +109,7 @@ export default function SlippageSettings({ rawSlippage, setRawSlippage }: Slippa
         <Flex>
           <SlippageEmojiContainer>
             <Box width={1}>
-              <Typography as="span" textAlign="right" color={'#fb6a6a'}>
-                10% max
-              </Typography>
+              <Typography className="text-right text-['#fb6a6a']">10% max</Typography>
             </Box>
           </SlippageEmojiContainer>
         </Flex>

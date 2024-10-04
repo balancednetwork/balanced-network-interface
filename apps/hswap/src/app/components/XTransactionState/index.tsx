@@ -4,7 +4,7 @@ import { Trans } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Box, Flex } from 'rebass';
 
-import { Typography } from '@/app/theme';
+import { Typography } from '@/app/components2/Typography';
 import { XTransaction, XTransactionStatus } from '@/xwagmi/xcall/types';
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
 
@@ -22,12 +22,12 @@ const XTransactionState = ({ xTransaction }: { xTransaction: XTransaction }) => 
         <Box pt={3}>
           <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
             {!secondaryMessage && primaryMessage && (
-              <Typography mb={4}>
+              <Typography>
                 <Trans>{xMessageActions.getXMessageStatusDescription(primaryMessage.id)}</Trans>
               </Typography>
             )}
             {secondaryMessage && (
-              <Typography mb={4}>
+              <Typography>
                 <Trans>{xMessageActions.getXMessageStatusDescription(secondaryMessage.id)}</Trans>
               </Typography>
             )}

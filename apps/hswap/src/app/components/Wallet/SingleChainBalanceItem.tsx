@@ -1,4 +1,4 @@
-import { Typography } from '@/app/theme';
+import { Typography } from '@/app/components2/Typography';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
 import { xChainMap } from '@/xwagmi/constants/xChains';
@@ -23,7 +23,7 @@ const SingleChainBalanceItem = ({ balance, isLast = false, isNested = false }: S
     <ListItem $border={!isNested && !isLast}>
       <AssetSymbol>
         <CurrencyLogoWithNetwork currency={currency} size={isNested ? '20px' : '24px'} />
-        <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>
+        <Typography className={isNested ? 'text-[14px] pl-[5px]' : 'text-base font-bold pl-0'}>
           {isNested ? xChainMap[currency.xChainId].name : currency.symbol}
         </Typography>
       </AssetSymbol>

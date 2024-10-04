@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 
 import { Flex } from 'rebass/styled-components';
 
-import { Typography } from '@/app/theme';
+import { Typography } from '@/app/components2/Typography';
 import WalletConnectIcon from '@/assets/icons/wallets/walletconnect.svg?inline';
 
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
@@ -36,9 +36,7 @@ export const EVMWalletModal = ({ id = MODAL_ID.EVM_WALLET_OPTIONS_MODAL }) => {
       <Modal open={modalOpen} onDismiss={onDismiss}>
         {xConnectors.length > 0 ? (
           <>
-            <Typography textAlign="center" margin={'0 0 25px'}>
-              Connect with:
-            </Typography>
+            <Typography className="text-center mb-6">Connect with:</Typography>
             <Flex alignItems="stretch" justifyContent="space-around" flexWrap="wrap">
               {xConnectors?.toReversed?.()?.map(xConnector => (
                 <WalletOption key={xConnector.id} onClick={() => handleConnect(xConnector)}>
@@ -50,10 +48,8 @@ export const EVMWalletModal = ({ id = MODAL_ID.EVM_WALLET_OPTIONS_MODAL }) => {
           </>
         ) : (
           <>
-            <Typography textAlign="center" margin={'0 0 25px'}>
-              No EVM-based wallet detected.
-            </Typography>
-            <Typography textAlign="center">
+            <Typography className="text-center mb-6">No EVM-based wallet detected.</Typography>
+            <Typography className="text-center">
               Add a wallet like{' '}
               <Typography
                 variant={'span'}

@@ -62,8 +62,13 @@ export default function SwapPanel() {
   const signedInWallets = useSignedInWallets();
   const { recipient } = useSwapState();
 
-  const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient } =
-    useSwapActionHandlers();
+  const {
+    onUserInput,
+    onCurrencySelection,
+    onSwitchTokens,
+    onPercentSelection,
+    onChangeRecipient,
+  } = useSwapActionHandlers();
 
   const [xSwapModalState, setXSwapModalState] = useState<XSwapModalState>(DEFAULT_XSWAP_MODAL_STATE);
 
@@ -96,10 +101,10 @@ export default function SwapPanel() {
     handleTypeOutput('');
   }, [handleTypeInput, handleTypeOutput]);
 
-  const maxInputAmount = useMemo(
-    () => maxAmountSpend(currencyBalances[Field.INPUT], direction.from),
-    [currencyBalances, direction.from],
-  );
+  const maxInputAmount = useMemo(() => maxAmountSpend(currencyBalances[Field.INPUT], direction.from), [
+    currencyBalances,
+    direction.from,
+  ]);
 
   const handleInputSelect = useCallback(
     (inputCurrency: XToken) => {

@@ -22,6 +22,7 @@ import { AppDispatch, AppState } from '../index';
 import { Field, selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
 import { XTransactionType } from '@/xwagmi/xcall/types';
+import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);
@@ -178,9 +179,17 @@ export function useDerivedSwapInfo(): {
   const _trade2 = useTradeExactOut(_inputCurrencyOnIcon, !_isExactIn ? _parsedAmountOnIcon : undefined, {
     maxHops: _queue ? 1 : undefined,
   });
-  const trade = useMemo(() => (_isExactIn ? _trade1 : _trade2), [_isExactIn, _trade1, _trade2]);
+  const trade = useMemo(() => {
+    if (xTransactionType === XTransactionType.BRIDGE) return;
+
+    return _isExactIn ? _trade1 : _trade2;
+  }, [_isExactIn, _trade1, _trade2, xTransactionType]);
 
   const allowedSlippage = useSwapSlippageTolerance();
+
+  // TODO: || '0x1.icon' is a temporary fix for type checking
+  const gasChecker = useXCallGasChecker(inputXChainId || '0x1.icon');
+
   const inputError = useMemo(() => {
     const swapDisabled = trade?.priceImpact.greaterThan(SLIPPAGE_SWAP_DISABLED_THRESHOLD);
 
@@ -200,22 +209,34 @@ export function useDerivedSwapInfo(): {
       error = error ?? t`Select a token`;
     }
 
-    const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], trade?.inputAmount];
+    if (xTransactionType === XTransactionType.BRIDGE) {
+      const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], parsedAmount];
 
-    if (balanceIn && amountIn && new BigNumber(balanceIn.toFixed()).isLessThan(amountIn.toFixed())) {
-      error = t`Insufficient ${currencies[Field.INPUT]?.symbol}`;
+      if (balanceIn && amountIn && new BigNumber(balanceIn.toFixed()).isLessThan(amountIn.toFixed())) {
+        error = t`Insufficient ${currencies[Field.INPUT]?.symbol}`;
+      }
+    } else {
+      const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], trade?.inputAmount];
+
+      if (balanceIn && amountIn && new BigNumber(balanceIn.toFixed()).isLessThan(amountIn.toFixed())) {
+        error = t`Insufficient ${currencies[Field.INPUT]?.symbol}`;
+      }
+
+      const userHasSpecifiedInputOutput = Boolean(
+        currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmount?.greaterThan(0),
+      );
+
+      if (userHasSpecifiedInputOutput && !trade) {
+        error = t`Insufficient liquidity`;
+      }
     }
 
-    const userHasSpecifiedInputOutput = Boolean(
-      currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmount?.greaterThan(0),
-    );
-
-    if (userHasSpecifiedInputOutput && !trade) {
-      error = t`Insufficient liquidity`;
+    if (!gasChecker.hasEnoughGas) {
+      error = t`Insufficient gas`;
     }
 
     return error;
-  }, [account, recipient, parsedAmount, currencies, currencyBalances, trade]);
+  }, [account, recipient, parsedAmount, currencies, currencyBalances, trade, xTransactionType, gasChecker]);
 
   const [_pairState, _pair] = useV2Pair(_inputCurrencyOnIcon, _outputCurrencyOnIcon);
   const price = useMemo(() => {
@@ -237,13 +258,16 @@ export function useDerivedSwapInfo(): {
 
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 
-  const parsedAmounts = useMemo(
-    () => ({
+  const parsedAmounts = useMemo(() => {
+    if (xTransactionType === XTransactionType.BRIDGE) {
+      return { [Field.INPUT]: parsedAmount, [Field.OUTPUT]: parsedAmount };
+    }
+
+    return {
       [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
       [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-    }),
-    [independentField, parsedAmount, trade],
-  );
+    };
+  }, [independentField, parsedAmount, trade, xTransactionType]);
 
   const formattedAmounts = useMemo(() => {
     return {

@@ -31,8 +31,6 @@ export default function AdvancedSwapDetails() {
   const priceImpact = formatPercent(new BigNumber(trade?.priceImpact.toFixed() || 0));
   const showSlippageWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
 
-  const isXSwap = !(direction.from === '0x1.icon' && direction.to === '0x1.icon');
-
   const { formattedXCallFee } = useXCallFee(direction.from, direction.to);
 
   return (

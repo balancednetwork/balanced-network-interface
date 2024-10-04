@@ -56,6 +56,7 @@ export default function SwapPanel() {
     maximumBridgeAmount,
     canBridge,
     xTransactionType,
+    parsedAmount,
   } = useDerivedSwapInfo();
 
   const signedInWallets = useSignedInWallets();
@@ -176,6 +177,9 @@ export default function SwapPanel() {
 
   const xChain = xChainMap[direction.from];
   const _inputAmount = useMemo(() => {
+    if (xTransactionType === XTransactionType.BRIDGE) {
+      return parsedAmount;
+    }
     return executionTrade?.inputAmount && currencies[Field.INPUT]
       ? CurrencyAmount.fromRawAmount(
           XToken.getXToken(direction.from, currencies[Field.INPUT].wrapped),
@@ -184,7 +188,7 @@ export default function SwapPanel() {
             .toFixed(0),
         )
       : undefined;
-  }, [executionTrade, direction.from, currencies]);
+  }, [executionTrade, direction.from, currencies, xTransactionType, parsedAmount]);
   const { approvalState, approveCallback } = useApproveCallback(_inputAmount, xChain.contracts.assetManager);
 
   const { xCallFee, formattedXCallFee } = useXCallFee(direction.from, direction.to);
@@ -197,13 +201,13 @@ export default function SwapPanel() {
   }, [clearSwapInputOutput]);
 
   const handleConfirmXSwap = useCallback(async () => {
-    const isXSwap = !(direction.from === '0x1.icon' && direction.to === '0x1.icon');
-    if (!isXSwap) {
+    if (xTransactionType === XTransactionType.SWAP_ON_ICON) {
       await handleConfirmSwap();
       return;
     }
 
-    if (!executionTrade) return;
+    if (!xTransactionType) return;
+    // if (!executionTrade) return;
     if (!account) return;
     if (!recipient) return;
     if (!xCallFee) return;
@@ -242,7 +246,7 @@ export default function SwapPanel() {
     });
 
     const xTransactionInput: XTransactionInput = {
-      type: XTransactionType.SWAP,
+      type: xTransactionType,
       direction,
       executionTrade,
       account,
@@ -283,10 +287,11 @@ export default function SwapPanel() {
     approveCallback,
     cleanupSwap,
     slippageTolerance,
+    xTransactionType,
   ]);
 
   const handleConfirmSwap = useCallback(async () => {
-    if (!executionTrade) return;
+    // if (!executionTrade) return;
     if (!account) return;
     if (!recipient) return;
     if (!_inputAmount) return;
@@ -370,7 +375,20 @@ export default function SwapPanel() {
           <RecipientAddressPanel />
 
           <div className="flex justify-center">{swapButton}</div>
-          <AdvancedSwapDetails />
+
+          {xTransactionType === XTransactionType.BRIDGE && (
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between">
+                <span className="text-secondary-foreground text-body">Bridge Fee</span>
+                <span className="text-body">{formattedXCallFee}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-secondary-foreground text-body">Network Cost</span>
+                <span className="text-body">0.0001 ICX</span>
+              </div>
+            </div>
+          )}
+          {xTransactionType !== XTransactionType.BRIDGE && <AdvancedSwapDetails />}
 
           {!canBridge && maximumBridgeAmount && (
             <div className="flex items-center justify-center mt-2">
@@ -394,15 +412,6 @@ export default function SwapPanel() {
           )}
         </div>
       </div>
-      {/* 
-      <SwapModal
-        isOpen={showSwapConfirm}
-        onClose={handleSwapConfirmDismiss}
-        account={account}
-        currencies={currencies}
-        executionTrade={executionTrade}
-        recipient={recipient || undefined}
-      /> */}
 
       <XSwapModal
         open={open}

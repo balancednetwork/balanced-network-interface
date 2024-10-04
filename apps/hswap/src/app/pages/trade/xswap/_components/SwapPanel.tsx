@@ -177,8 +177,13 @@ export default function SwapPanel() {
 
   const xChain = xChainMap[direction.from];
   const _inputAmount = useMemo(() => {
-    if (xTransactionType === XTransactionType.BRIDGE) {
-      return parsedAmount;
+    if (xTransactionType === XTransactionType.BRIDGE && currencies[Field.INPUT] && parsedAmount) {
+      return CurrencyAmount.fromRawAmount(
+        XToken.getXToken(direction.from, currencies[Field.INPUT].wrapped),
+        new BigNumber(parsedAmount.toFixed())
+          .times((10n ** BigInt(currencies[Field.INPUT].decimals)).toString())
+          .toFixed(0),
+      );
     }
     return executionTrade?.inputAmount && currencies[Field.INPUT]
       ? CurrencyAmount.fromRawAmount(

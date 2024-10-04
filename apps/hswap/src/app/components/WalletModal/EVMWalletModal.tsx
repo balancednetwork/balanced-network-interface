@@ -33,7 +33,7 @@ export const EVMWalletModal = ({ id = MODAL_ID.EVM_WALLET_OPTIONS_MODAL }) => {
 
   return (
     <>
-      <Modal open={modalOpen} onDismiss={onDismiss} title="">
+      <Modal open={modalOpen} onDismiss={onDismiss}>
         {xConnectors.length > 0 ? (
           <>
             <Typography textAlign="center" margin={'0 0 25px'}>

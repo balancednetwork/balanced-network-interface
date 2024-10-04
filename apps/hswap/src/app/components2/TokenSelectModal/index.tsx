@@ -32,7 +32,7 @@ export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, s
   // const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery, false);
 
   return (
-    <Modal open={open} onDismiss={onDismiss} title="" hideCloseIcon={true}>
+    <Modal open={open} onDismiss={onDismiss} hideCloseIcon={true} dialogClassName="max-w-[450px]">
       <div className="flex flex-col gap-4">
         <Command className="bg-transparent flex flex-col gap-4">
           <div className="bg-[#221542] rounded-xl">

@@ -121,7 +121,13 @@ const XSwapModal = ({
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(direction.from);
 
   return (
-    <Modal open={open} onDismiss={handleDismiss} title={showDetails ? 'Review Swap' : ''} hideCloseIcon={false}>
+    <Modal
+      open={open}
+      onDismiss={handleDismiss}
+      title={showDetails ? 'Review Swap' : ''}
+      hideCloseIcon={false}
+      dialogClassName="max-w-[450px]"
+    >
       <div className="flex flex-col gap-4">
         <div className="relative flex justify-between gap-2">
           <CurrencyCard currency={currencies[Field.INPUT]} currencyAmount={executionTrade?.inputAmount} />

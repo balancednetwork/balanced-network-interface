@@ -396,7 +396,9 @@ export default function SwapPanel() {
               </div>
             </div>
           )}
-          {xTransactionType !== XTransactionType.BRIDGE && <AdvancedSwapDetails />}
+          {xTransactionType && xTransactionType !== XTransactionType.BRIDGE && (
+            <AdvancedSwapDetails xTransactionType={xTransactionType} />
+          )}
 
           {!canBridge && maximumBridgeAmount && (
             <div className="flex items-center justify-center mt-2">

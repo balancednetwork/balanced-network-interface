@@ -184,10 +184,12 @@ const XSwapModal = ({
                   </span>
                 </div>
               )}
-              <div className="flex justify-between">
-                <span className="text-secondary-foreground text-body">Bridge Fee</span>
-                <span className="text-body">{formattedXCallFee}</span>
-              </div>
+              {xTransactionType !== XTransactionType.SWAP_ON_ICON && (
+                <div className="flex justify-between">
+                  <span className="text-secondary-foreground text-body">Bridge Fee</span>
+                  <span className="text-body">{formattedXCallFee}</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-secondary-foreground text-body">Network Cost</span>
                 <span className="text-body">0.0001 ICX</span>

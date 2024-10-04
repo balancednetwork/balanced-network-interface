@@ -147,7 +147,7 @@ export function useDerivedSwapInfo(): {
 
   const walletBalances = useWalletBalances();
 
-  const _isExactIn: boolean = independentField === Field.INPUT;
+  const _isExactIn = independentField === Field.INPUT;
   const parsedAmount = tryParseAmount(typedValue, (_isExactIn ? inputCurrency : outputCurrency) ?? undefined);
   const currencyBalances: { [field in Field]?: CurrencyAmount<XToken> } = useMemo(
     () => ({

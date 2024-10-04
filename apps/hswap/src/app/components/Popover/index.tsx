@@ -3,80 +3,9 @@ import React, { useCallback, useState } from 'react';
 import { Placement } from '@popperjs/core';
 import { Portal } from '@reach/portal';
 import { usePopper } from 'react-popper';
-import styled from 'styled-components';
 
 import useInterval from '@/hooks/useInterval';
-
-const PopoverContainer = styled.div<{ $show: boolean; $zIndex?: number }>`
-  z-index: ${({ $zIndex, theme }) => $zIndex || theme?.zIndices?.tooltip};
-  visibility: ${({ $show }) => ($show ? 'visible' : 'hidden')};
-  opacity: ${({ $show }) => ($show ? 1 : 0)};
-  transition: visibility 150ms linear, opacity 150ms linear;
-
-  /* box-shadow: 0px 10px 15px 0px rgba(1, 0, 42, 0.15); */
-`;
-
-const SelectorPopoverWrapper = styled.div`
-  background: ${({ theme }) => theme.colors?.bg4};
-  color: ${({ theme }) => theme.colors?.text1};
-  border-radius: 0px 0px 10px 10px;
-  overflow: hidden;
-`;
-
-const ContentWrapper = styled.div`
-  background: ${({ theme }) => theme.colors?.bg4};
-  border: 2px solid ${({ theme }) => theme?.colors?.primary};
-  color: ${({ theme }) => theme.colors?.text1};
-  border-radius: 8px;
-  overflow: hidden;
-`;
-
-const ReferenceElement = styled.div`
-  display: inline-block;
-  line-height: 0;
-`;
-
-const Arrow = styled.div`
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  z-index: -1;
-
-  &::before {
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    z-index: -1;
-
-    content: '';
-    transform: rotate(45deg);
-    background: ${({ theme }) => theme.colors?.primary};
-  }
-
-  &.arrow-top,
-  &.arrow-top-start,
-  &.arrow-top-end {
-    bottom: -6px;
-  }
-
-  &.arrow-bottom,
-  &.arrow-bottom-start,
-  &.arrow-bottom-end {
-    top: -6px;
-  }
-
-  &.arrow-left,
-  &.arrow-left-start,
-  &.arrow-left-end {
-    right: -6px;
-  }
-
-  &.arrow-right,
-  &.arrow-right-start,
-  &.arrow-right-end {
-    left: -6px;
-  }
-`;
+import { cn } from '@/lib/utils';
 
 const skidding = {
   'top-end': 8,
@@ -128,25 +57,32 @@ export default function Popover({
 
   return (
     <>
-      <ReferenceElement ref={setReferenceElement as any} style={refStyle}>
+      <div ref={setReferenceElement as any} style={refStyle}>
         {children}
-      </ReferenceElement>
+      </div>
       <Portal>
-        <PopoverContainer
-          $show={show}
+        <div
+          className={cn(
+            `z-${zIndex || 'auto'}`,
+            show ? 'visible opacity-100' : 'invisible opacity-0',
+            'transition-opacity duration-150',
+          )}
           ref={setPopperElement as any}
           style={{ ...style, ...styles.popper }}
-          $zIndex={zIndex}
           {...attributes.popper}
         >
-          <ContentWrapper>{content}</ContentWrapper>
-          <Arrow
-            className={`arrow-${attributes.popper?.['data-popper-placement'] ?? ''}`}
+          {/* content */}
+          <div className="bg-background border-[1px] border-border rounded-lg overflow-hidden">{content}</div>
+          {/* arrow */}
+          <div
+            className={`absolute w-3 h-3 z-[-1] ${attributes.popper?.['data-popper-placement']?.startsWith('top') ? 'bottom-[-6px]' : ''} ${attributes.popper?.['data-popper-placement']?.startsWith('bottom') ? 'top-[-6px]' : ''} ${attributes.popper?.['data-popper-placement']?.startsWith('left') ? 'right-[-6px]' : ''} ${attributes.popper?.['data-popper-placement']?.startsWith('right') ? 'left-[-6px]' : ''}`}
             ref={setArrowElement as any}
             style={styles.arrow}
             {...attributes.arrow}
-          />
-        </PopoverContainer>
+          >
+            <div className="absolute w-3 h-3 z-[-1] transform rotate-45 bg-background border-[1px] border-border"></div>
+          </div>
+        </div>
       </Portal>
     </>
   );
@@ -162,41 +98,10 @@ export interface PopperProps {
   show: boolean;
   children: React.ReactNode;
   placement?: Placement;
-  offset?: OffsetModifier;
+  zIndex?: number;
+  forcePlacement?: boolean;
   strategy?: 'fixed' | 'absolute';
-}
-
-export function PopperWithoutArrow({
-  show,
-  children,
-  placement = 'auto',
-  anchorEl,
-  offset,
-  forcePlacement,
-}: PopperProps) {
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-
-  const { styles, update, attributes } = usePopper(anchorEl, popperElement, {
-    placement,
-    strategy: 'absolute',
-    modifiers: [
-      { name: 'offset', options: { offset: offset } },
-      { name: 'flip', options: { fallbackPlacements: forcePlacement ? [] : [placement] } },
-    ],
-  });
-
-  const updateCallback = useCallback(() => {
-    update && update();
-  }, [update]);
-  useInterval(updateCallback, show ? 100 : null);
-
-  return (
-    <Portal>
-      <PopoverContainer $show={show} ref={setPopperElement as any} style={{ ...styles.popper }} {...attributes.popper}>
-        <ContentWrapper>{children}</ContentWrapper>
-      </PopoverContainer>
-    </Portal>
-  );
+  offset?: OffsetModifier;
 }
 
 export function DropdownPopper({
@@ -254,90 +159,26 @@ export function DropdownPopper({
 
   return (
     <Portal>
-      <PopoverContainer
-        $show={show}
+      <div
+        className={cn(
+          `z-${zIndex || 'auto'}`,
+          show ? 'visible opacity-100' : 'invisible opacity-0',
+          'transition-opacity duration-150',
+        )}
         ref={setPopperElement as any}
-        $zIndex={zIndex}
         style={styles.popper}
         {...attributes.popper}
       >
-        <ContentWrapper>{children}</ContentWrapper>
-        <Arrow
-          className={`arrow-${attributes.popper?.['data-popper-placement'] ?? ''}`}
+        <div className="bg-background border-[1px] border-border rounded-lg overflow-hidden">{children}</div>
+        <div
+          className={`absolute w-3 h-3 z-[-1] ${attributes.popper?.['data-popper-placement']?.startsWith('top') ? 'bottom-[-6px]' : ''} ${attributes.popper?.['data-popper-placement']?.startsWith('bottom') ? 'top-[-6px]' : ''} ${attributes.popper?.['data-popper-placement']?.startsWith('left') ? 'right-[-6px]' : ''} ${attributes.popper?.['data-popper-placement']?.startsWith('right') ? 'left-[-6px]' : ''}`}
           ref={setArrowElement as any}
           style={styles.arrow}
           {...attributes.arrow}
-        />
-      </PopoverContainer>
-    </Portal>
-  );
-}
-
-export interface PopperProps {
-  anchorEl: HTMLElement | null;
-  show: boolean;
-  children: React.ReactNode;
-  placement?: Placement;
-  forcePlacement?: boolean;
-  zIndex?: number;
-}
-
-export function SelectorPopover({ show, children, placement = 'auto', anchorEl }: PopperProps) {
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-
-  const { styles, update, attributes } = usePopper(anchorEl, popperElement, {
-    placement,
-    strategy: 'absolute',
-    modifiers: [{ name: 'offset', options: { offset: [0, 1] } }],
-  });
-  const updateCallback = useCallback(() => {
-    update && update();
-  }, [update]);
-  useInterval(updateCallback, show ? 100 : null);
-  return (
-    <Portal>
-      <PopoverContainer $show={show} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
-        <SelectorPopoverWrapper>{children}</SelectorPopoverWrapper>
-      </PopoverContainer>
-    </Portal>
-  );
-}
-export interface Props {
-  show: boolean;
-  children: React.ReactNode;
-  placement?: Placement;
-  content: React.ReactNode;
-  zIndex?: number;
-}
-
-export function PopperWithoutArrowAndBorder({ content, show, children, zIndex, placement = 'auto' }: Props) {
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-  const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
-
-  const { styles, update, attributes } = usePopper(referenceElement, popperElement, {
-    placement,
-    strategy: 'fixed',
-    modifiers: [{ name: 'offset', options: { offset: [0, 12] } }],
-  });
-  const updateCallback = useCallback(() => {
-    update && update();
-  }, [update]);
-  useInterval(updateCallback, show ? 100 : null);
-
-  return (
-    <>
-      <ReferenceElement ref={setReferenceElement as any}>{children}</ReferenceElement>
-      <Portal>
-        <PopoverContainer
-          $show={show}
-          ref={setPopperElement as any}
-          style={styles.popper}
-          {...attributes.popper}
-          $zIndex={zIndex}
         >
-          <ContentWrapper style={{ border: 'none' }}>{content}</ContentWrapper>
-        </PopoverContainer>
-      </Portal>
-    </>
+          <div className="absolute w-3 h-3 z-[-1] transform rotate-45 border-[1px] border-border bg-background"></div>
+        </div>
+      </div>
+    </Portal>
   );
 }

@@ -6,7 +6,6 @@ import { Trans, t } from '@lingui/macro';
 
 import QuestionHelper from '@/app/components/QuestionHelper';
 import SlippageSetting from '@/app/components/SlippageSetting';
-import { Typography } from '@/app/theme';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
 import { useSetSlippageTolerance, useSwapSlippageTolerance } from '@/store/application/hooks';
@@ -17,10 +16,11 @@ import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import BigNumber from 'bignumber.js';
 
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
-import TooltipContainer from '@/app/components2/TooltipContainer';
+import { cn } from '@/lib/utils';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
+import { XTransactionType } from '@/xwagmi/xcall/types';
 
-export default function AdvancedSwapDetails() {
+export default function AdvancedSwapDetails({ xTransactionType }: { xTransactionType: XTransactionType }) {
   const [open, setOpen] = useState(false);
 
   const { trade, currencies, direction } = useDerivedSwapInfo();
@@ -31,8 +31,6 @@ export default function AdvancedSwapDetails() {
   const minimumToReceive = trade?.minimumAmountOut(new Percent(slippageTolerance, 10_000));
   const priceImpact = formatPercent(new BigNumber(trade?.priceImpact.toFixed() || 0));
   const showSlippageWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
-
-  const isXSwap = !(direction.from === '0x1.icon' && direction.to === '0x1.icon');
 
   const { formattedXCallFee } = useXCallFee(direction.from, direction.to);
 
@@ -48,60 +46,75 @@ export default function AdvancedSwapDetails() {
           )}
         </CollapsibleTrigger>
         <CollapsibleContent className="flex flex-col gap-2">
-          <TooltipContainer tooltipText="The impact your trade has on the market price of this pool.">
-            <div className="flex items-center justify-between">
-              <span className="text-body text-secondary-foreground">
-                <Trans>Price impact</Trans>
-              </span>
+          <div className="flex items-center justify-between">
+            <span className="text-body text-secondary-foreground flex items-center gap-1">
+              <Trans>Price impact</Trans>
+              <QuestionHelper text={t`The impact your trade has on the market price of this pool.`} />
+            </span>
 
-              <Typography
-                className={showSlippageWarning ? 'error-anim' : ''}
-                color={showSlippageWarning ? 'alert' : 'text'}
-              >
-                {priceImpact}
-              </Typography>
-            </div>
-          </TooltipContainer>
+            <span className={cn(showSlippageWarning ? 'text-warning animate-wiggle' : 'text-primary-foreground')}>
+              {priceImpact}
+            </span>
+          </div>
 
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-body text-secondary-foreground">
+          <div className="flex items-center justify-between">
+            <span className="text-body text-secondary-foreground flex items-center gap-1">
               <Trans>Slippage tolerance</Trans>
-              <QuestionHelper text={t`If the price slips by more than this amount, your swap will fail.`} />
+              <QuestionHelper text={t`The maximum price movement before your transaction will revert.`} />
             </span>
             <SlippageSetting rawSlippage={slippageTolerance} setRawSlippage={setSlippageTolerance} />
           </div>
 
-          <div className="flex flex-col justify-between">
-            <div className="flex justify-between gap-2">
-              <span className="text-body text-secondary-foreground">
-                <Trans>Minimum to receive</Trans>
+          <div className="flex items-center justify-between">
+            <span className="text-body text-secondary-foreground flex items-center gap-1">
+              <Trans>Receive at least</Trans>
+              <QuestionHelper
+                text={t`If the price moves so that you will receive less than 
+                  ${
+                    minimumToReceive
+                      ? `${minimumToReceive?.toFixed(4)} ${minimumToReceive?.currency.symbol}`
+                      : `0 ${currencies[Field.OUTPUT]?.symbol}`
+                  }, your transaction will revert.`}
+              />
+            </span>
+            <span className="text-body text-primary-foreground">
+              {minimumToReceive
+                ? `${minimumToReceive?.toFixed(4)} ${minimumToReceive?.currency.symbol}`
+                : `0 ${currencies[Field.OUTPUT]?.symbol}`}
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <span className="text-body text-secondary-foreground flex items-center gap-1">
+              <Trans>Swap Fee</Trans>
+              <QuestionHelper text={t`If the price slips by more than this amount, your swap will fail.`} />
+            </span>
+
+            <span className="text-body">
+              {trade ? trade.fee.toFixed(4) : '0'} {currencies[Field.INPUT]?.symbol}
+            </span>
+          </div>
+
+          {xTransactionType !== XTransactionType.SWAP_ON_ICON && (
+            <div className="flex items-center justify-between">
+              <span className="text-body text-secondary-foreground flex items-center gap-1">
+                <Trans>Bridge Fee</Trans>
+                <QuestionHelper text={t`If the price slips by more than this amount, your swap will fail.`} />
               </span>
-              <span>
-                {minimumToReceive
-                  ? `${minimumToReceive?.toFixed(4)} ${minimumToReceive?.currency.symbol}`
-                  : `0 ${currencies[Field.OUTPUT]?.symbol}`}
-              </span>
+
+              <span className="text-body">{formattedXCallFee}</span>
             </div>
-          </div>
+          )}
 
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-body text-secondary-foreground">
-              <Trans>Fee</Trans>
-            </span>
-
-            <Typography textAlign="right">
-              {trade ? trade.fee.toFixed(4) : '0'} {currencies[Field.INPUT]?.symbol}
-            </Typography>
-          </div>
-
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-body text-secondary-foreground">
+          <div className="flex items-center justify-between">
+            <span className="text-body text-secondary-foreground flex items-center gap-1">
               <Trans>Network cost</Trans>
+              <QuestionHelper text={t`Network cost is paid in ETH on the ARBITRUM network in order to transact.`} />
             </span>
 
-            <Typography textAlign="right">
+            <span className="text-body text-primary-foreground">
               {trade ? trade.fee.toFixed(4) : '0'} {currencies[Field.INPUT]?.symbol}
-            </Typography>
+            </span>
           </div>
 
           <div className="flex items-center justify-between gap-2">
@@ -109,9 +122,7 @@ export default function AdvancedSwapDetails() {
               <Trans>Order routing</Trans>
             </span>
 
-            <Typography textAlign="right" maxWidth="200px">
-              {trade ? <TradeRoute route={trade.route} currencies={currencies} /> : '-'}
-            </Typography>
+            <div>{trade ? <TradeRoute route={trade.route} currencies={currencies} /> : '-'}</div>
           </div>
         </CollapsibleContent>
       </Collapsible>

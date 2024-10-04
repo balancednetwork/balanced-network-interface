@@ -2,10 +2,10 @@ import React, { useCallback } from 'react';
 
 import { CHAIN_INFO, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
 import { Trans, t } from '@lingui/macro';
+import { Placement } from '@popperjs/core';
 import ClickAwayListener from 'react-click-away-listener';
 import { useMedia } from 'react-use';
 
-import { Button, IconButton } from '@/app/components/Button';
 import { DropdownPopper } from '@/app/components/Popover';
 import Logo from '@/app/components2/Logo';
 import { Typography } from '@/app/theme';
@@ -14,9 +14,9 @@ import WalletIcon from '@/assets/icons/wallet.svg';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { shortenAddress } from '@/utils';
 
+import { Button } from '@/components/ui/button';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { Placement } from '@popperjs/core';
 import { MouseoverTooltip } from '../Tooltip';
 import Wallet from '../Wallet';
 
@@ -41,9 +41,8 @@ export const CopyableAddress = ({
 
   return account ? (
     <MouseoverTooltip
-      text={isCopied ? t`Copied` : t`Copy`}
+      content={isCopied ? t`Copied` : t`Copy`}
       placement={placement}
-      noArrowAndBorder
       closeAfterDelay={closeAfterDelay}
       zIndex={9999}
     >
@@ -100,7 +99,7 @@ export default function Header(props: { className?: string }) {
 
         {wallets.length === 0 && (
           <div className="flex items-center">
-            <Button onClick={toggleWalletModal}>
+            <Button onClick={toggleWalletModal} className="rounded-full">
               <Trans>Sign in</Trans>
             </Button>
           </div>
@@ -146,9 +145,10 @@ export default function Header(props: { className?: string }) {
             <div className="relative before:left-2 before:top-3 before:bg-[#021338] after:left-2 after::top-3 after:bg-[#021338]">
               <ClickAwayListener onClickAway={e => handleWalletClose(e)}>
                 <div>
-                  <IconButton ref={walletButtonRef} onClick={toggleWalletMenu}>
+                  {/* @ts-ignore */}
+                  <Button variant={'ghost'} ref={walletButtonRef} onClick={toggleWalletMenu}>
                     <WalletIcon />
-                  </IconButton>
+                  </Button>
 
                   <DropdownPopper
                     show={Boolean(anchor)}

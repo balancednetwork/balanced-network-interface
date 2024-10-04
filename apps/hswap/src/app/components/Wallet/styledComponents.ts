@@ -1,12 +1,9 @@
-import { Link } from '@/app/components/Link';
 import { Typography } from '@/app/theme';
-import { Box, Flex } from 'rebass';
+import { Box } from 'rebass';
 import styled from 'styled-components';
-import { BoxPanel } from '../Panel';
 import { notificationCSS } from './ICONWallets/utils';
 
-export const walletBreakpoint = '385px';
-const modalWalletBreakpoint = '400px';
+const walletBreakpoint = '385px';
 
 export const HeaderText = styled(Typography)`
   font-size: 12px;
@@ -75,7 +72,6 @@ export const ListItem = styled(DashGrid)<{ $border?: boolean }>`
     color: ${({ theme }) => theme.colors?.primary};
   }
 
-
   &.has-modal {
     cursor: pointer;
   }
@@ -95,55 +91,6 @@ export const AssetSymbol = styled.div<{ $hasNotification?: boolean }>`
     z-index: 5;
   }
 `;
-
-export const ModalContent = styled(Box)`
-  padding: 25px;
-  width: 100%;
-  button[role='tab'] {
-    border-left: 0;
-    border-top: 0;
-    border-right: 0;
-  }
-  ${AssetSymbol} {
-    &:before,
-    &:after {
-      display: none;
-    }
-  }
-  @media screen and (max-width: ${modalWalletBreakpoint}) {
-    padding: 15px;
-  }
-`;
-
-export const BoxPanelWithArrow = styled(BoxPanel)`
-  position: relative;
-  width: 100%;
-  &:before {
-    content: '';
-    width: 0;
-    height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-bottom: 12px solid #144a68;
-    position: absolute;
-    transition: all ease-in-out 200ms;
-    top: 0;
-    left: 34px;
-    margin-top: -12px;
-  }
-  @media screen and (max-width: ${modalWalletBreakpoint}) {
-    width: calc(100% + 30px);
-    margin: 0 -15px -15px -15px;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    padding: 15px;
-    &:before {
-      left: 50px;
-    }
-  }
-`;
-
-export const Wrapper = styled.div``;
 
 export const BalanceBreakdown = styled.div<{ $arrowPosition: string }>`
   background: ${({ theme }) => theme.colors?.bg3};

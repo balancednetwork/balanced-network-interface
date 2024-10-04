@@ -5,12 +5,8 @@ import { Trans, t } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
-import styled from 'styled-components';
 
-import { UnderlineTextWithArrow } from '@/app/components/DropdownText';
-import { Link } from '@/app/components/Link';
 import { LanguageMenuItem, MenuList } from '@/app/components/Menu';
-import Modal, { ModalProps } from '@/app/components/Modal';
 import { Typography } from '@/app/theme';
 import ArchWalletIcon from '@/assets/icons/chains/archway.svg';
 import ETHIcon from '@/assets/icons/chains/eth.svg';
@@ -31,20 +27,15 @@ import { getXChainType } from '@/xwagmi/actions';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXDisconnectAll } from '@/xwagmi/hooks';
 import { useSwitchChain } from 'wagmi';
-import Divider from '../Divider';
 import { DropdownPopper } from '../Popover';
 import { EVMWalletModal } from './EVMWalletModal';
 import { InjectiveWalletOptionsModal } from './InjectiveWalletOptionsModal';
 import { SuiWalletOptionsModal } from './SuiWalletOptionsModal';
 import WalletItem, { WalletItemProps } from './WalletItem';
 import { StyledSearchInput } from './styled';
-
-const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
-  &[data-reach-dialog-content] {
-    width: 100%;
-    max-width: 530px;
-  }
-`;
+import { Modal } from '@/app/components2/Modal';
+import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 
 const presenceVariants = {
   initial: { opacity: 0, height: 0 },
@@ -171,7 +162,7 @@ export default function WalletModal() {
 
   return (
     <>
-      <StyledModal isOpen={walletModalOpen} onDismiss={toggleWalletModal} mobile={isMobile}>
+      <Modal open={walletModalOpen} onDismiss={toggleWalletModal}>
         <div className="w-full flex flex-col gap-4 p-6">
           {isLoggedInSome ? (
             <div className="flex justify-between flex-col sm:flex-row mb-1 flex-nowrap">
@@ -199,11 +190,7 @@ export default function WalletModal() {
                 </Typography>
                 <ClickAwayListener onClickAway={closeMenu}>
                   <div>
-                    <UnderlineTextWithArrow
-                      onClick={toggleMenu}
-                      text={LOCALE_LABEL[activeLocale]}
-                      arrowRef={arrowRef}
-                    />
+                    <Button onClick={toggleMenu}>{LOCALE_LABEL[activeLocale]}</Button>
                     <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end" zIndex={6001}>
                       <MenuList>
                         {SUPPORTED_LOCALES.map((locale: SupportedLocale) => (
@@ -252,17 +239,18 @@ export default function WalletModal() {
             <Typography textAlign="center" as="div" maxWidth={300} mx="auto" mt={2}>
               <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
               <div className="pt-1">
-                <Link href="https://balanced.network/disclaimer/" target="_blank" tabIndex={-1}>
+                <a href="https://balanced.network/disclaimer/" target="_blank" rel="noreferrer" tabIndex={-1}>
                   <Trans>View disclaimer.</Trans>
                   <ExternalIcon width="11" height="11" style={{ marginLeft: '7px', marginTop: '-3px' }} />
-                </Link>
+                </a>
               </div>
             </Typography>
           )}
 
           {isMobile && (
             <>
-              <Divider />
+              <Separator />
+
               <div className="flex justify-center">
                 <Typography onClick={toggleWalletModal}>
                   <Trans>Close</Trans>
@@ -271,7 +259,7 @@ export default function WalletModal() {
             </>
           )}
         </div>
-      </StyledModal>
+      </Modal>
 
       <EVMWalletModal />
       <InjectiveWalletOptionsModal />

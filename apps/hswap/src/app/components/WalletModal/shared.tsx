@@ -1,8 +1,8 @@
-import { Box, Flex, Text } from 'rebass/styled-components';
+import { Box, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-export const ChainIcons = styled.div``;
-export const WalletIcons = styled.div``;
+const ChainIcons = styled.div``;
+const WalletIcons = styled.div``;
 
 export const WalletOption = styled(Box)`
   display: flex;

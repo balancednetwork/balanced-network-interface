@@ -9,9 +9,9 @@ import { useXAccount, useXConnect, useXConnectors, useXDisconnect } from '@/xwag
 import { XChain } from '@/xwagmi/types';
 import { XChainType } from '@balancednetwork/sdk-core';
 import { t } from '@lingui/macro';
-import { UnderlineText } from '../DropdownText';
 import { CopyableAddress } from '../Header';
 import { ActionDivider, MainLogo, WalletActions, WalletItemGrid, XChainsWrap } from './styled';
+import { Button } from '@/components/ui/button';
 
 export type WalletItemProps = {
   name: string;
@@ -87,18 +87,18 @@ const WalletItem = ({ name, xChainType, logo, description, border, xChains, swit
       <WalletActions>
         {address ? (
           <div className="flex wallet-options">
-            <UnderlineText onClick={handleConnect}>
+            <Button onClick={handleConnect} variant={'link'}>
               <Typography color="primaryBright">Change wallet</Typography>
-            </UnderlineText>
+            </Button>
             <ActionDivider text={t`or`} />
             <Typography color="alert" onClick={handleDisconnect} style={{ cursor: 'pointer' }}>
               Disconnect
             </Typography>
           </div>
         ) : (
-          <UnderlineText onClick={handleConnect}>
+          <Button onClick={handleConnect} variant={'link'}>
             <Typography color="primaryBright">Connect wallet</Typography>
-          </UnderlineText>
+          </Button>
         )}
       </WalletActions>
     </WalletItemGrid>

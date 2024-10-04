@@ -13,11 +13,11 @@ import { useXDisconnectAll } from '@/xwagmi/hooks';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useWalletBalances } from '@/store/wallet/hooks';
 import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
-import { Link } from '../Link';
 import SearchInput from '../SearchModal/SearchInput';
 import MultiChainBalanceItem from './MultiChainBalanceItem';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
 import { BalanceAndValueWrap, DashGrid, HeaderText, List } from './styledComponents';
+import { Button } from '@/components/ui/button';
 
 interface WalletProps {
   close: () => void;
@@ -73,13 +73,13 @@ const Wallet = ({ close }: WalletProps) => {
         </Typography>
 
         <div className="flex items-center">
-          <Link className="cursor-pointer" onClick={handleChangeWallet}>
+          <Button onClick={handleChangeWallet} variant="link">
             <Trans>Manage wallets</Trans>
-          </Link>
+          </Button>
           <Typography padding={'0px 5px'}>{' | '}</Typography>
-          <Link className="cursor-pointer" onClick={handleDisconnectWallet}>
+          <Button onClick={handleDisconnectWallet} variant="link">
             <Trans>Sign out</Trans>
-          </Link>
+          </Button>
         </div>
       </div>
 
@@ -145,7 +145,7 @@ function calcUSDValue(balance: string, price: BigNumber) {
   return new BigNumber(balance).times(price);
 }
 
-export function useXBalancesByToken(balances: CurrencyAmount<XToken>[]) {
+function useXBalancesByToken(balances: CurrencyAmount<XToken>[]) {
   const rates = useRatesWithOracle();
 
   return React.useMemo(() => {

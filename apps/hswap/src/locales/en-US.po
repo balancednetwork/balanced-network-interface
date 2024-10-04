@@ -120,7 +120,7 @@ msgstr "Supplying {pair} liquidity..."
 #~ msgid "15m"
 #~ msgstr "15m"
 
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Switch to {0}"
 msgstr "Switch to {0}"
 
@@ -258,8 +258,8 @@ msgstr "Switch to {0}"
 #~ msgstr "Weekly"
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-msgid "Pay"
-msgstr "Pay"
+#~ msgid "Pay"
+#~ msgstr "Pay"
 
 #: src/app/pages/vote/_components/BribesPanel/index.tsx
 #~ msgid "Vote to incentivise specific liquidity pools and earn a kickback for it."
@@ -639,8 +639,8 @@ msgstr "or"
 #~ msgstr "Average lock-up time"
 
 #: src/app/components/CurrencyBalanceErrorMessage/index.tsx
-msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."
-msgstr "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."
+#~ msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."
+#~ msgstr "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #~ msgid "Deposit in progress"
@@ -649,6 +649,10 @@ msgstr "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete th
 #: src/store/mint/hooks.tsx
 #~ msgid "Connect Wallet"
 #~ msgstr "Connect Wallet"
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "The impact your trade has on the market price of this pool."
+msgstr "The impact your trade has on the market price of this pool."
 
 #: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
 #~ msgid "Liquidity pools"
@@ -734,6 +738,14 @@ msgstr "Swapping {inputCurrency} for {outputCurrency}..."
 #: src/hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
 msgstr "{0} approved for cross-chain transfer."
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "The maximum price movement before your transaction will revert."
+msgstr "The maximum price movement before your transaction will revert."
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Receive at least"
+msgstr "Receive at least"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #~ msgid ""
@@ -855,8 +867,6 @@ msgstr "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added 
 
 #: src/app/components/XTransactionState/index.tsx
 #: src/app/components/XTransactionState/index.tsx
-#: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "{0}"
 msgstr "{0}"
@@ -971,6 +981,10 @@ msgstr "Manage wallets"
 #~ msgid "Do not send sICX to an exchange."
 #~ msgstr "Do not send sICX to an exchange."
 
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Network cost is paid in ETH on the ARBITRUM network in order to transact."
+msgstr "Network cost is paid in ETH on the ARBITRUM network in order to transact."
+
 #: src/app/components/home/Savings/index.tsx
 #~ msgid "Withdrawing bnUSD..."
 #~ msgstr "Withdrawing bnUSD..."
@@ -993,8 +1007,8 @@ msgstr "Manage wallets"
 #~ msgstr "Title"
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-msgid "Swap {0} for {1}?"
-msgstr "Swap {0} for {1}?"
+#~ msgid "Swap {0} for {1}?"
+#~ msgstr "Swap {0} for {1}?"
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 #~ msgid "Claimed Balanced incentives."
@@ -1292,8 +1306,8 @@ msgstr "Select a token"
 #~ msgstr "Borrow"
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-msgid "Includes a fee of {0} {1}."
-msgstr "Includes a fee of {0} {1}."
+#~ msgid "Includes a fee of {0} {1}."
+#~ msgstr "Includes a fee of {0} {1}."
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
 #~ msgid "Contract address"
@@ -1329,8 +1343,8 @@ msgstr "Includes a fee of {0} {1}."
 #~ msgstr "There's no ICX unstaking."
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-msgid "{0} {1} per {2}"
-msgstr "{0} {1} per {2}"
+#~ msgid "{0} {1} per {2}"
+#~ msgstr "{0} {1} per {2}"
 
 #: src/btp/src/connectors/helper.ts
 #~ msgid "Couldn't remove {0} from {1}. Try again."
@@ -1367,8 +1381,8 @@ msgstr "Insufficient {0}"
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-msgid "ICON"
-msgstr "ICON"
+#~ msgid "ICON"
+#~ msgstr "ICON"
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -1440,8 +1454,8 @@ msgstr "Multi-chain wallet"
 #~ msgstr "Future incentives"
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Minimum to receive"
-msgstr "Minimum to receive"
+#~ msgid "Minimum to receive"
+#~ msgstr "Minimum to receive"
 
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #~ msgid "Supply liquidity for these assets in any quantity to create a new pool."
@@ -1612,6 +1626,10 @@ msgstr "{0} wallet"
 msgid "Asset"
 msgstr "Asset"
 
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Network cost"
+msgstr "Network cost"
+
 #: src/app/components/home/LoanPanel.tsx
 #~ msgid "Borrowing bnUSD..."
 #~ msgstr "Borrowing bnUSD..."
@@ -1683,8 +1701,8 @@ msgstr "Asset"
 #~ msgstr "Send {0} to {1}."
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-msgid "Cancel"
-msgstr "Cancel"
+#~ msgid "Cancel"
+#~ msgstr "Cancel"
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
@@ -1966,8 +1984,8 @@ msgstr "Swap & transfer cross-chain."
 #~ msgstr "Buy or borrow bnUSD, then deposit it here to earn rewards."
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-msgid "Receive"
-msgstr "Receive"
+#~ msgid "Receive"
+#~ msgstr "Receive"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
@@ -2071,6 +2089,10 @@ msgstr "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
 #: src/app/components/WalletModal/index.tsx
 msgid "Connected to {numberOfConnectedWallets} blockchains"
 msgstr "Connected to {numberOfConnectedWallets} blockchains"
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Order routing"
+msgstr "Order routing"
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
 msgid "Couldn't send {currency} to the {pair} pool. Try again."
@@ -2223,8 +2245,8 @@ msgstr "Contract calls verified."
 #~ msgstr "APY"
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Route"
-msgstr "Route"
+#~ msgid "Route"
+#~ msgstr "Route"
 
 #: src/app/pages/claim-legacy-fees/page.tsx
 #~ msgid "All fees claimed"
@@ -2387,7 +2409,6 @@ msgid "Learn how to resolve common transaction errors."
 msgstr "Learn how to resolve common transaction errors."
 
 #: src/app/pages/trade/layout.tsx
-#: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "Swap"
@@ -2493,6 +2514,14 @@ msgstr "Value"
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 #~ msgid "The fee APR is calculated from the swap fees earned by a pool over the last 30 days."
 #~ msgstr "The fee APR is calculated from the swap fees earned by a pool over the last 30 days."
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid ""
+"If the price moves so that you will receive less than \n"
+"{0}, your transaction will revert."
+msgstr ""
+"If the price moves so that you will receive less than \n"
+"{0}, your transaction will revert."
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #~ msgid "{0} ICX is ready to claim"

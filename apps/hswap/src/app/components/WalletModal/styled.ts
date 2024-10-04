@@ -6,15 +6,16 @@ const mobileWalletBreakpoint = '530px';
 export const MainLogo = styled.div`
   position: relative;
 
-  img, svg {
+  img,
+  svg {
     max-width: 20px;
     max-height: 20px;
     transform: translateY(-2px);
   }
 
   @media screen and (min-width: ${mobileWalletBreakpoint}) {
-
-    img, svg {
+    img,
+    svg {
       max-width: 60px;
       max-height: 45px;
       transform: translateY(0);
@@ -39,7 +40,7 @@ export const ActionDivider = styled.div<{ text: string }>`
   }
 
   &:after {
-    content: '${props => props.text}';    
+    content: '${props => props.text}';
     text-transform: uppercase;
     letter-spacing: 3px;
     font-size: 10px;
@@ -103,9 +104,9 @@ export const WalletItemGrid = styled.div`
   }
 `;
 
-export const ActiveIndicator = styled.div<{ active: boolean }>`
+const ActiveIndicator = styled.div<{ active: boolean }>`
   position: relative;
-  
+
   &:before {
     content: '';
     background-color: ${({ theme }) => theme.colors?.primary};
@@ -123,11 +124,11 @@ export const ActiveIndicator = styled.div<{ active: boolean }>`
   ${({ active }) =>
     active &&
     css`
-    &:before {
-      animation: ${pulseAnimation} 1s infinite;
-    }
-    cursor: default !important;
-  `};
+      &:before {
+        animation: ${pulseAnimation} 1s infinite;
+      }
+      cursor: default !important;
+    `};
 `;
 
 export const XChainsWrap = styled.div<{ signedIn: boolean }>`
@@ -143,16 +144,16 @@ export const XChainsWrap = styled.div<{ signedIn: boolean }>`
   ${({ signedIn }) =>
     signedIn &&
     css`
-    ${ActiveIndicator} {
-      cursor: pointer;
+      ${ActiveIndicator} {
+        cursor: pointer;
 
-      &:hover {
-        &:before {
-          opacity: 1;
+        &:hover {
+          &:before {
+            opacity: 1;
+          }
         }
       }
-    }
-  `};
+    `};
 
   img {
     margin: 5px 8px;

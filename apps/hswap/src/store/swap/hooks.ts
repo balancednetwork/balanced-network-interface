@@ -27,22 +27,6 @@ export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);
 }
 
-const calculateXTransactionType = (
-  token1: XToken | undefined,
-  token2: XToken | undefined,
-): XTransactionType | undefined => {
-  if (!token1 || !token2) return undefined;
-
-  if (token1.xChainId === token2.xChainId && token2.xChainId === '0x1.icon') {
-    return XTransactionType.SWAP_ON_ICON;
-  } else if (token1.symbol === token2.symbol) {
-    // TODO: check if this check is correct
-    return XTransactionType.BRIDGE;
-  } else {
-    return XTransactionType.SWAP;
-  }
-};
-
 export function useSwapActionHandlers() {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -92,8 +76,24 @@ export function useSwapActionHandlers() {
   };
 }
 
+const calculateXTransactionType = (
+  token1: XToken | undefined,
+  token2: XToken | undefined,
+): XTransactionType | undefined => {
+  if (!token1 || !token2) return undefined;
+
+  if (token1.xChainId === token2.xChainId && token2.xChainId === '0x1.icon') {
+    return XTransactionType.SWAP_ON_ICON;
+  } else if (token1.symbol === token2.symbol) {
+    // TODO: check if this check is correct
+    return XTransactionType.BRIDGE;
+  } else {
+    return XTransactionType.SWAP;
+  }
+};
+
 // try to parse a user entered amount for a given token
-export function tryParseAmount(value?: string, currency?: XToken): CurrencyAmount<XToken> | undefined {
+function tryParseAmount(value?: string, currency?: XToken): CurrencyAmount<XToken> | undefined {
   if (!value || !currency) {
     return undefined;
   }

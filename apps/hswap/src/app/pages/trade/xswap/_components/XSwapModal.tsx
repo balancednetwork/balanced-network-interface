@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Currency, TradeType, XChainId, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, TradeType, XChainId, XToken } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -21,7 +21,6 @@ import { CheckIcon, Loader2, XIcon } from 'lucide-react';
 import { ChevronRight } from 'react-feather';
 import { TradeRoute } from './AdvancedSwapDetails';
 import CurrencyCard from './CurrencyCard';
-import { useDerivedSwapInfo } from '@/store/swap/hooks';
 
 export enum ConfirmModalState {
   REVIEWING,
@@ -39,6 +38,8 @@ type XSwapModalProps = {
     from: XChainId;
     to: XChainId;
   };
+  xTransactionType: XTransactionType | undefined;
+  executionInputAmount: CurrencyAmount<XToken> | undefined;
 
   //
   confirmModalState: ConfirmModalState;
@@ -57,6 +58,8 @@ const XSwapModal = ({
   currencies,
   executionTrade,
   direction,
+  xTransactionType,
+  executionInputAmount,
   //
   confirmModalState,
   xSwapErrorMessage,
@@ -68,8 +71,6 @@ const XSwapModal = ({
   onConfirm,
   onDismiss,
 }: XSwapModalProps) => {
-  const { xTransactionType, parsedAmount } = useDerivedSwapInfo();
-
   const { formattedXCallFee } = useXCallFee(direction.from, direction.to);
   const [approved, setApproved] = useState(false);
   const [swapConfirmed, setSwapConfirmed] = useState(false);
@@ -125,9 +126,9 @@ const XSwapModal = ({
   const [inputAmount, outputAmount] = useMemo(
     () =>
       xTransactionType === XTransactionType.BRIDGE
-        ? [parsedAmount, parsedAmount]
+        ? [executionInputAmount, executionInputAmount]
         : [executionTrade?.inputAmount, executionTrade?.outputAmount],
-    [xTransactionType, parsedAmount, executionTrade],
+    [xTransactionType, executionInputAmount, executionTrade],
   );
 
   return (

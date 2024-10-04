@@ -128,15 +128,36 @@ export default function SwapPanel() {
   const toggleWalletModal = useWalletModalToggle();
 
   const [executionTrade, setExecutionTrade] = useState<Trade<Currency, Currency, TradeType>>();
+  const [executionInputAmount, setExecutionInputAmount] = useState<CurrencyAmount<XToken>>();
+
+  const _inputAmount = useMemo(() => {
+    if (xTransactionType === XTransactionType.BRIDGE && currencies[Field.INPUT] && parsedAmount) {
+      return CurrencyAmount.fromRawAmount(
+        XToken.getXToken(direction.from, currencies[Field.INPUT].wrapped),
+        new BigNumber(parsedAmount.toFixed())
+          .times((10n ** BigInt(currencies[Field.INPUT].decimals)).toString())
+          .toFixed(0),
+      );
+    }
+    return executionTrade?.inputAmount && currencies[Field.INPUT]
+      ? CurrencyAmount.fromRawAmount(
+          XToken.getXToken(direction.from, currencies[Field.INPUT].wrapped),
+          new BigNumber(executionTrade.inputAmount.toFixed())
+            .times((10n ** BigInt(currencies[Field.INPUT].decimals)).toString())
+            .toFixed(0),
+        )
+      : undefined;
+  }, [executionTrade, direction.from, currencies, xTransactionType, parsedAmount]);
 
   const handleOpenXSwapModal = useCallback(() => {
     if (!account || !recipient) {
       toggleWalletModal();
     } else {
       setExecutionTrade(trade);
+      setExecutionInputAmount(_inputAmount);
       setOpen(true);
     }
-  }, [account, toggleWalletModal, trade, recipient]);
+  }, [account, toggleWalletModal, trade, recipient, _inputAmount]);
 
   const handleMaximumBridgeAmountClick = () => {
     if (maximumBridgeAmount) {
@@ -176,24 +197,6 @@ export default function SwapPanel() {
   }, []);
 
   const xChain = xChainMap[direction.from];
-  const _inputAmount = useMemo(() => {
-    if (xTransactionType === XTransactionType.BRIDGE && currencies[Field.INPUT] && parsedAmount) {
-      return CurrencyAmount.fromRawAmount(
-        XToken.getXToken(direction.from, currencies[Field.INPUT].wrapped),
-        new BigNumber(parsedAmount.toFixed())
-          .times((10n ** BigInt(currencies[Field.INPUT].decimals)).toString())
-          .toFixed(0),
-      );
-    }
-    return executionTrade?.inputAmount && currencies[Field.INPUT]
-      ? CurrencyAmount.fromRawAmount(
-          XToken.getXToken(direction.from, currencies[Field.INPUT].wrapped),
-          new BigNumber(executionTrade.inputAmount.toFixed())
-            .times((10n ** BigInt(currencies[Field.INPUT].decimals)).toString())
-            .toFixed(0),
-        )
-      : undefined;
-  }, [executionTrade, direction.from, currencies, xTransactionType, parsedAmount]);
   const { approvalState, approveCallback } = useApproveCallback(_inputAmount, xChain.contracts.assetManager);
 
   const { xCallFee, formattedXCallFee } = useXCallFee(direction.from, direction.to);
@@ -423,6 +426,8 @@ export default function SwapPanel() {
         currencies={currencies}
         executionTrade={executionTrade}
         direction={direction}
+        xTransactionType={xTransactionType}
+        executionInputAmount={executionInputAmount}
         //
         // confirmModalState={xSwapModalState.confirmModalState}
         // xSwapErrorMessage={xSwapModalState.xSwapErrorMessage}

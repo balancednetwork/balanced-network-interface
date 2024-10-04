@@ -121,14 +121,9 @@ export function useDerivedSwapInfo(): {
   inputError?: string;
   allowedSlippage: number;
   price: Price<Token, Token> | undefined;
-  direction: {
-    from: XChainId;
-    to: XChainId;
-  };
+  direction: { from: XChainId; to: XChainId };
   dependentField: Field;
-  formattedAmounts: {
-    [field in Field]: string;
-  };
+  formattedAmounts: { [field in Field]: string };
   canBridge: boolean;
   maximumBridgeAmount: CurrencyAmount<XToken> | undefined;
   xTransactionType?: XTransactionType;
@@ -143,13 +138,17 @@ export function useDerivedSwapInfo(): {
   const inputXChainId = inputCurrency?.xChainId;
   const outputXChainId = outputCurrency?.xChainId;
 
+  const xTransactionType = useMemo(() => {
+    return calculateXTransactionType(inputCurrency, outputCurrency);
+  }, [inputCurrency, outputCurrency]);
+
   const xAccount = useXAccount(getXChainType(inputXChainId));
   const account = xAccount.address;
 
   const walletBalances = useWalletBalances();
 
-  const isExactIn: boolean = independentField === Field.INPUT;
-  const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
+  const _isExactIn: boolean = independentField === Field.INPUT;
+  const parsedAmount = tryParseAmount(typedValue, (_isExactIn ? inputCurrency : outputCurrency) ?? undefined);
   const currencyBalances: { [field in Field]?: CurrencyAmount<XToken> } = useMemo(
     () => ({
       [Field.INPUT]: inputCurrency ? walletBalances?.[inputCurrency?.wrapped.address] : undefined,
@@ -167,21 +166,19 @@ export function useDerivedSwapInfo(): {
 
   const _inputCurrencyOnIcon = getXTokenBySymbol('0x1.icon', inputCurrency?.symbol);
   const _outputCurrencyOnIcon = getXTokenBySymbol('0x1.icon', outputCurrency?.symbol);
-
-  const _parsedAmount = tryParseAmount(
+  const _parsedAmountOnIcon = tryParseAmount(
     typedValue,
-    (isExactIn ? _inputCurrencyOnIcon : _outputCurrencyOnIcon) ?? undefined,
+    (_isExactIn ? _inputCurrencyOnIcon : _outputCurrencyOnIcon) ?? undefined,
   );
   // cannot call `useTradeExactIn` or `useTradeExactOut` conditionally because they are hooks
-  const queue = canBeQueue(_inputCurrencyOnIcon, _outputCurrencyOnIcon);
-
-  const trade1 = useTradeExactIn(isExactIn ? _parsedAmount : undefined, _outputCurrencyOnIcon, {
-    maxHops: queue ? 1 : undefined,
+  const _queue = canBeQueue(_inputCurrencyOnIcon, _outputCurrencyOnIcon);
+  const _trade1 = useTradeExactIn(_isExactIn ? _parsedAmountOnIcon : undefined, _outputCurrencyOnIcon, {
+    maxHops: _queue ? 1 : undefined,
   });
-  const trade2 = useTradeExactOut(_inputCurrencyOnIcon, !isExactIn ? _parsedAmount : undefined, {
-    maxHops: queue ? 1 : undefined,
+  const _trade2 = useTradeExactOut(_inputCurrencyOnIcon, !_isExactIn ? _parsedAmountOnIcon : undefined, {
+    maxHops: _queue ? 1 : undefined,
   });
-  const trade = useMemo(() => (isExactIn ? trade1 : trade2), [isExactIn, trade1, trade2]);
+  const trade = useMemo(() => (_isExactIn ? _trade1 : _trade2), [_isExactIn, _trade1, _trade2]);
 
   const allowedSlippage = useSwapSlippageTolerance();
   const inputError = useMemo(() => {
@@ -220,18 +217,18 @@ export function useDerivedSwapInfo(): {
     return error;
   }, [account, recipient, parsedAmount, currencies, currencyBalances, trade]);
 
-  const [pairState, pair] = useV2Pair(_inputCurrencyOnIcon, _outputCurrencyOnIcon);
+  const [_pairState, _pair] = useV2Pair(_inputCurrencyOnIcon, _outputCurrencyOnIcon);
   const price = useMemo(() => {
     let price: Price<Token, Token> | undefined;
-    if (pair && pairState === PairState.EXISTS && _inputCurrencyOnIcon) {
-      if (pair.involvesToken(_inputCurrencyOnIcon.wrapped)) {
-        price = pair.priceOf(_inputCurrencyOnIcon.wrapped);
+    if (_pair && _pairState === PairState.EXISTS && _inputCurrencyOnIcon) {
+      if (_pair.involvesToken(_inputCurrencyOnIcon.wrapped)) {
+        price = _pair.priceOf(_inputCurrencyOnIcon.wrapped);
       } else {
-        price = pair.token0Price; // pair not ready, just set dummy price
+        price = _pair.token0Price; // pair not ready, just set dummy price
       }
     }
     return price;
-  }, [pair, pairState, _inputCurrencyOnIcon]);
+  }, [_pair, _pairState, _inputCurrencyOnIcon]);
 
   const direction = useMemo(
     () => ({ from: inputXChainId || '0x1.icon', to: outputXChainId || '0x1.icon' }),
@@ -276,10 +273,6 @@ export function useDerivedSwapInfo(): {
   const canBridge = useMemo(() => {
     return maximumBridgeAmount && outputCurrencyAmount ? maximumBridgeAmount?.greaterThan(outputCurrencyAmount) : true;
   }, [maximumBridgeAmount, outputCurrencyAmount]);
-
-  const xTransactionType = useMemo(() => {
-    return calculateXTransactionType(inputCurrency, outputCurrency);
-  }, [inputCurrency, outputCurrency]);
 
   return {
     account,

@@ -97,7 +97,15 @@ const XTransactionHistoryItem = ({ xTransaction }: { xTransaction: XTransaction 
 
   return (
     <>
-      <Wrap>
+      <Wrap
+        onDoubleClick={() => {
+          console.log('xTransaction', xTransaction);
+          window.open(
+            `https://xcallscan.xyz/messages/search?value=${primaryMessage?.destinationTransactionHash}`,
+            '_blank',
+          );
+        }}
+      >
         <Flex alignItems="center">
           {getNetworkDisplayName(sourceChainId)}
           <ArrowIcon width="13px" style={{ margin: '0 7px' }} />

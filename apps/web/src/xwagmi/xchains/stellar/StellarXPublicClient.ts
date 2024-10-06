@@ -10,7 +10,9 @@ import {
   XCallMessageSentEvent,
 } from '@/xwagmi/xcall/types';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import * as StellarSdk from '@stellar/stellar-sdk';
 import { StellarXService } from './StellarXService';
+import { getTokenBalance } from './utils';
 
 //todo xlm event signatures
 const XCallEventSignatureMap = {
@@ -34,18 +36,24 @@ export class StellarXPublicClient extends XPublicClient {
     const xService = this.getXService();
     const stellarAccount = await xService.server.loadAccount(address);
 
-    //TODO: refactor for all the tokens, currently fetching only native balance
-    if (xToken.isNativeXToken()) {
+    if (xToken.symbol === 'XLM') {
       const xlmBalance = stellarAccount.balances.find(balance => balance.asset_type === 'native');
       if (xlmBalance) {
         return CurrencyAmount.fromRawAmount(xToken, BigInt(xlmBalance.balance.replace('.', '')));
       }
-    } else if (xToken.symbol === 'bnUSD') {
-      try {
-        return CurrencyAmount.fromRawAmount(xToken, 0);
-      } catch (e) {}
     } else {
-      throw new Error(`Unsupported token Stellar: ${xToken.symbol}`);
+      try {
+        const txBuilder = new StellarSdk.TransactionBuilder(stellarAccount, {
+          fee: StellarSdk.BASE_FEE,
+          networkPassphrase: StellarSdk.Networks.PUBLIC,
+        });
+
+        const balance = await getTokenBalance(address, xToken.address, txBuilder, xService.sorobanServer);
+
+        return CurrencyAmount.fromRawAmount(xToken, balance);
+      } catch (e) {
+        throw new Error(`Error while fetching token on Stellar: ${xToken.symbol}, Error: ${e}`);
+      }
     }
   }
 

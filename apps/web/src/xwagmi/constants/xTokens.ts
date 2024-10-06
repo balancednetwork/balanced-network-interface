@@ -128,7 +128,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'stellar',
       'stellar',
       'CAKU2J5T4TOMFATA56XRDZMQHNBFIOQW3JDZQNQBLNLV7LEWYTNYU6VX',
-      7,
+      18,
       'bnUSD',
       'Balanced Dollar',
     ),

@@ -1,37 +1,33 @@
-import { Typography } from '@/app/components2/Typography';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
-import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XToken } from '@balancednetwork/sdk-core';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import React from 'react';
 import CurrencyLogoWithNetwork from '../../components2/CurrencyLogoWithNetwork';
-import { AssetSymbol, BalanceAndValueWrap, DataText, ListItem } from './styledComponents';
 
 type SingleChainBalanceItemProps = {
   balance: CurrencyAmount<XToken>;
-  isLast?: boolean;
-  isNested?: boolean;
 };
 
-const SingleChainBalanceItem = ({ balance, isLast = false, isNested = false }: SingleChainBalanceItemProps) => {
+const SingleChainBalanceItem = ({ balance }: SingleChainBalanceItemProps) => {
   const currency = balance.currency;
   const rates = useRatesWithOracle();
   const value = new BigNumber(balance.toFixed()).times(rates?.[currency.symbol] || 0);
   return (
-    <ListItem $border={!isNested && !isLast}>
-      <AssetSymbol>
-        <CurrencyLogoWithNetwork currency={currency} size={isNested ? '20px' : '24px'} />
-        <Typography className={isNested ? 'text-[14px] pl-[5px]' : 'text-base font-bold pl-0'}>
-          {isNested ? xChainMap[currency.xChainId].name : currency.symbol}
-        </Typography>
-      </AssetSymbol>
-      <BalanceAndValueWrap>
-        <DataText as="div">{formatBalance(balance?.toFixed(), rates?.[currency.symbol]?.toFixed())}</DataText>
-        <DataText as="div">{!value ? '-' : formatValue(value.toFixed())}</DataText>
-      </BalanceAndValueWrap>
-    </ListItem>
+    <div className="p-4 bg-[#221542] rounded-xl flex items-center gap-2">
+      <CurrencyLogoWithNetwork currency={currency} size="48px" />
+      <div className="grow">
+        <div className="text-subtitle">{currency.symbol}</div>
+        <div className="text-subtitle">
+          {formatBalance(balance?.toFixed(), rates?.[currency.symbol]?.toFixed())} USDC
+        </div>
+      </div>
+      <div className="text-right">
+        <div className="text-subtitle">{!value ? '-' : formatValue(value.toFixed())}</div>
+        <div>{!rates?.[currency.symbol] ? '-' : formatValue(rates?.[currency.symbol].toFixed())}</div>
+      </div>
+    </div>
   );
 };
 

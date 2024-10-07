@@ -1,12 +1,10 @@
-import React, { useEffect, useMemo } from 'react';
-import MultiChainBalanceItem from './MultiChainBalanceItem';
+import React, { useMemo } from 'react';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
-import { BalanceAndValueWrap, DashGrid, HeaderText, List } from './styledComponents';
 import { useWalletBalances } from '@/store/wallet/hooks';
 import { useRatesWithOracle } from '@/queries/reward';
 import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
-import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const XTokenList = () => {
   const _balances = useWalletBalances();
@@ -15,28 +13,15 @@ const XTokenList = () => {
   const sortedFilteredBalances = useXBalancesByToken(balances);
 
   return (
-    <List>
-      <DashGrid>
-        <HeaderText>
-          <Trans>Asset</Trans>
-        </HeaderText>
-        <BalanceAndValueWrap>
-          <HeaderText>
-            <Trans>Balance</Trans>
-          </HeaderText>
-          <HeaderText className="hidden sm:block">
-            <Trans>Value</Trans>
-          </HeaderText>
-        </BalanceAndValueWrap>
-      </DashGrid>
-      {Object.values(sortedFilteredBalances).map((balances, index) =>
-        balances.length === 1 ? (
-          <SingleChainBalanceItem key={index} balance={balances[0]} />
-        ) : (
-          <MultiChainBalanceItem key={index} balances={balances} />
-        ),
-      )}
-    </List>
+    <ScrollArea className="h-[528px]">
+      <div className="flex flex-col gap-2">
+        {Object.values(sortedFilteredBalances)
+          .filter(balances => balances.length === 1)
+          .map((balances, index) => (
+            <SingleChainBalanceItem key={index} balance={balances[0]} />
+          ))}
+      </div>
+    </ScrollArea>
   );
 };
 

@@ -45,7 +45,7 @@ const MultiChainBalanceItem = ({ balances }: MultiChainBalanceItemProps) => {
         $arrowPosition={arrowRef.current ? `${Math.floor(arrowRef.current.clientWidth / 2 + 23)}px` : '40px'}
       >
         {balances.map(balance => (
-          <SingleChainBalanceItem key={balance.currency.address} balance={balance} isNested={true} />
+          <SingleChainBalanceItem key={balance.currency.address} balance={balance} />
         ))}
       </BalanceBreakdown>
     </>

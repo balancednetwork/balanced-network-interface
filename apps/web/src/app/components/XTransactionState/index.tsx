@@ -10,10 +10,9 @@ import { XMessage, XMessageStatus, XTransaction, XTransactionStatus } from '@/xw
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
 import { getNetworkDisplayName } from '@/xwagmi/utils';
 
-const getDescription = (xMessage: XMessage | undefined, secondaryMessageRequired = false) => {
+const getDescription = (xMessage: XMessage | undefined) => {
   if (!xMessage) return '';
 
-  secondaryMessageRequired = !xMessage.isPrimary ? false : secondaryMessageRequired;
   switch (xMessage.status) {
     case XMessageStatus.FAILED:
       return 'Transfer failed.';
@@ -24,13 +23,9 @@ const getDescription = (xMessage: XMessage | undefined, secondaryMessageRequired
       return `Confirming transaction on ${getNetworkDisplayName(xMessage.sourceChainId)}...`;
     case XMessageStatus.CALL_MESSAGE_SENT:
     case XMessageStatus.CALL_MESSAGE:
-      return secondaryMessageRequired
-        ? `Confirming transaction on ${getNetworkDisplayName(xMessage.destinationChainId)}...`
-        : `Finalising transaction on ${getNetworkDisplayName(xMessage.destinationChainId)}...`;
+      return `Finalising transaction on ${getNetworkDisplayName(xMessage.destinationChainId)}...`;
     case XMessageStatus.CALL_EXECUTED:
-      return secondaryMessageRequired
-        ? `Confirming transaction on ${getNetworkDisplayName(xMessage.destinationChainId)}...`
-        : 'Completed.';
+      return 'Completed.';
     default:
       return 'Unknown';
   }
@@ -42,9 +37,53 @@ const XTransactionState = ({ xTransaction }: { xTransaction: XTransaction }) => 
 
   const description = useMemo(() => {
     if (xTransaction.secondaryMessageRequired) {
-      return getDescription(secondaryMessage, true) || getDescription(primaryMessage, true);
+      let description = '';
+      if (primaryMessage) {
+        switch (primaryMessage.status) {
+          case XMessageStatus.FAILED:
+            description = 'Transfer failed.';
+            break;
+          case XMessageStatus.ROLLBACKED:
+            description = 'Transfer rollbacked.';
+            break;
+          case XMessageStatus.REQUESTED:
+          case XMessageStatus.AWAITING_CALL_MESSAGE_SENT:
+          case XMessageStatus.CALL_MESSAGE_SENT:
+          case XMessageStatus.CALL_MESSAGE:
+          case XMessageStatus.CALL_EXECUTED:
+            description = `Confirming transaction on ${getNetworkDisplayName(primaryMessage.sourceChainId)}...`;
+            break;
+          default:
+            description = 'Unknown';
+            break;
+        }
+      }
+      if (secondaryMessage) {
+        switch (secondaryMessage.status) {
+          case XMessageStatus.FAILED:
+            description = 'Transfer failed.';
+            break;
+          case XMessageStatus.ROLLBACKED:
+            description = 'Transfer rollbacked.';
+            break;
+          case XMessageStatus.REQUESTED:
+          case XMessageStatus.AWAITING_CALL_MESSAGE_SENT:
+          case XMessageStatus.CALL_MESSAGE_SENT:
+          case XMessageStatus.CALL_MESSAGE:
+            description = `Finalising transaction on ${getNetworkDisplayName(secondaryMessage.destinationChainId)}...`;
+            break;
+          case XMessageStatus.CALL_EXECUTED:
+            description = `Completed.`;
+            break;
+          default:
+            description = 'Unknown';
+            break;
+        }
+      }
+
+      return description;
     } else {
-      return getDescription(primaryMessage, false);
+      return getDescription(primaryMessage);
     }
   }, [primaryMessage, secondaryMessage, xTransaction]);
 

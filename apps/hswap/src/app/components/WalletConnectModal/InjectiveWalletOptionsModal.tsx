@@ -4,7 +4,7 @@ import { Flex } from 'rebass/styled-components';
 
 import { Typography } from '@/app/components2/Typography';
 
-import { UnbreakableText, WalletOption } from '@/app/components/WalletModal/shared';
+import { UnbreakableText, WalletOption } from '@/app/components/WalletConnectModal/shared';
 
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { XConnector } from '@/xwagmi/core';

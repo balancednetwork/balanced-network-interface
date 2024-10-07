@@ -34,7 +34,7 @@ const xChainTypes: WalletItemProps[] = [
   },
 ];
 
-export default function WalletModal({ modalId = MODAL_ID.WALLET_MODAL }) {
+export default function WalletConnectModal({ modalId = MODAL_ID.WALLET_CONNECT_MODAL }) {
   const open = useModalOpen(modalId);
   const onDismiss = useCallback(() => {
     modalActions.closeModal(modalId);

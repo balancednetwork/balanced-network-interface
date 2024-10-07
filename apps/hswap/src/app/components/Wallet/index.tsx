@@ -1,19 +1,16 @@
-import React, { RefObject, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
-import { Trans, t } from '@lingui/macro';
+import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { isMobile } from 'react-device-detect';
 
 import { Typography } from '@/app/components2/Typography';
 import useKeyPress from '@/hooks/useKeyPress';
 import { useWalletModalToggle } from '@/store/application/hooks';
-import { formatValue } from '@/utils/formatter';
 import { useXDisconnectAll } from '@/xwagmi/hooks';
 
 import { useRatesWithOracle } from '@/queries/reward';
 import { useWalletBalances } from '@/store/wallet/hooks';
 import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
-import SearchInput from '../SearchModal/SearchInput';
 import MultiChainBalanceItem from './MultiChainBalanceItem';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
 import { BalanceAndValueWrap, DashGrid, HeaderText, List } from './styledComponents';
@@ -28,8 +25,6 @@ const Wallet = ({ close }: WalletProps) => {
   const balances = useMemo(() => Object.values(_balances), [_balances]);
 
   const toggleWalletModal = useWalletModalToggle();
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const inputRef = useRef<HTMLInputElement>();
   const handleEscape = useKeyPress('Escape');
 
   const handleChangeWallet = () => {
@@ -44,11 +39,6 @@ const Wallet = ({ close }: WalletProps) => {
     await xDisconnectAll();
   };
 
-  const handleSearchQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-  };
-
   const sortedFilteredBalances = useXBalancesByToken(balances);
 
   useEffect(() => {
@@ -57,21 +47,9 @@ const Wallet = ({ close }: WalletProps) => {
     }
   }, [handleEscape, close]);
 
-  const rates = useRatesWithOracle();
-  const walletTotal = React.useMemo(() => {
-    return balances.reduce((sum, balance) => {
-      sum = sum.plus(new BigNumber(balance.toFixed()).times(rates?.[balance.currency.symbol] || 0));
-      return sum;
-    }, new BigNumber(0));
-  }, [balances, rates]);
-
   return (
     <div className="w-[400px] max-w-[calc(100vw - 4px)]">
-      <div className="text-sm pt-6 pr-6 pb-4 pl-6 flex flex-wrap">
-        <Typography variant="h2" className="mr-auto">
-          <Trans>Wallet</Trans>
-        </Typography>
-
+      <div className="text-sm pt-6 pr-6 pb-4 pl-6 flex flex-wrap justify-end">
         <div className="flex items-center">
           <Button onClick={handleChangeWallet} variant="link">
             <Trans>Manage wallets</Trans>
@@ -84,18 +62,6 @@ const Wallet = ({ close }: WalletProps) => {
       </div>
 
       <div className="pt-0 pr-0 pb-6">
-        <div className="px-6 mb-4">
-          <SearchInput
-            type="text"
-            id="token-search-input"
-            placeholder={t`Search assets and blockchains...`}
-            autoComplete="off"
-            value={searchQuery}
-            ref={inputRef as RefObject<HTMLInputElement>}
-            tabIndex={isMobile ? -1 : 1}
-            onChange={handleSearchQuery}
-          />
-        </div>
         <List>
           <DashGrid>
             <HeaderText>
@@ -117,19 +83,7 @@ const Wallet = ({ close }: WalletProps) => {
               <MultiChainBalanceItem key={index} balances={balances} />
             ),
           )}
-          {Object.keys(sortedFilteredBalances).length === 0 && searchQuery !== '' && (
-            <Typography className="text-center py-4 px-0">No assets found</Typography>
-          )}
         </List>
-
-        {Object.keys(sortedFilteredBalances).length > 0 && (
-          <div className="px-6">
-            <div className="border-top pt-6 flex justify-between">
-              <HeaderText>Total</HeaderText>
-              <Typography className="text-right">{formatValue(walletTotal.toFixed())}</Typography>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

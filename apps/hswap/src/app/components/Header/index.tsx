@@ -97,7 +97,7 @@ export default function Header(props: { className?: string }) {
 
         {wallets.length === 0 && (
           <div className="flex items-center">
-            <Button onClick={() => modalActions.openModal(MODAL_ID.WALLET_MODAL)} className="rounded-full">
+            <Button onClick={() => modalActions.openModal(MODAL_ID.WALLET_CONNECT_MODAL)} className="rounded-full">
               <Trans>Sign in</Trans>
             </Button>
           </div>

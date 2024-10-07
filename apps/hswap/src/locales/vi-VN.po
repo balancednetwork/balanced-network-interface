@@ -102,8 +102,8 @@ msgstr ""
 #~ msgstr "4 giờ"
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Supplying {pair} liquidity..."
-msgstr "Đang cung cấp {pair} vào hồ thanh khoản..."
+#~ msgid "Supplying {pair} liquidity..."
+#~ msgstr "Đang cung cấp {pair} vào hồ thanh khoản..."
 
 #: src/app/pages/home/_components/xCollateralModal/index.tsx
 #~ msgid "Collateral action"
@@ -184,6 +184,10 @@ msgstr ""
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 #~ msgid "Your allocation"
 #~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Bridge Fee"
+msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
@@ -306,8 +310,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Couldn't transfer {inputCurrency} to {network}. Try again."
-msgstr ""
+#~ msgid "Couldn't transfer {inputCurrency} to {network}. Try again."
+#~ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #~ msgid "Available since {0}"
@@ -522,6 +526,10 @@ msgstr ""
 #~ msgid "Submitting a proposal..."
 #~ msgstr "Đang gửi đề xuất..."
 
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Swap Fee"
+msgstr ""
+
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 #~ msgid "BALN APY"
 #~ msgstr ""
@@ -623,8 +631,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
-msgstr "Không thể rút {inputCurrency} / {outputCurrency} liquidity. Hãy thử lại."
+#~ msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
+#~ msgstr "Không thể rút {inputCurrency} / {outputCurrency} liquidity. Hãy thử lại."
 
 #: src/app/pages/home/BBaln/BBalnPanel.tsx
 #~ msgid "${0} was distributed over the last 30 days"
@@ -692,8 +700,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Swapping {inputCurrency} for {outputCurrency}..."
-msgstr "Đang đổi {inputCurrency} thành {outputCurrency}..."
+#~ msgid "Swapping {inputCurrency} for {outputCurrency}..."
+#~ msgstr "Đang đổi {inputCurrency} thành {outputCurrency}..."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #~ msgid "Liquidity supplied."
@@ -832,8 +840,8 @@ msgstr "Khả năng trượt giá"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
-msgstr "{inputAmount}{inputCurrency} and {outputAmount}{outputCurrency} đã được thêm vào ví của bạn."
+#~ msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
+#~ msgstr "{inputAmount}{inputCurrency} and {outputAmount}{outputCurrency} đã được thêm vào ví của bạn."
 
 #: src/app/components/ProposalModal/index.tsx
 #~ msgid "Change vote?"
@@ -908,8 +916,6 @@ msgstr "{inputAmount}{inputCurrency} and {outputAmount}{outputCurrency} đã đ�
 #~ msgid "Lock up Balance Tokens?"
 #~ msgstr ""
 
-#: src/app/components/XTransactionState/index.tsx
-#: src/app/components/XTransactionState/index.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "{0}"
 msgstr "{0}"
@@ -927,8 +933,8 @@ msgstr "Nhập vào số lượng"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Supplied {pair} liquidity."
-msgstr "Đã cung cấp {pair} vào hồ thanh khoản."
+#~ msgid "Supplied {pair} liquidity."
+#~ msgstr "Đã cung cấp {pair} vào hồ thanh khoản."
 
 #: src/app/Routes.tsx
 msgid "Trade"
@@ -1099,6 +1105,10 @@ msgstr ""
 #~ msgid "After"
 #~ msgstr "Sau"
 
+#: src/store/swap/hooks.ts
+msgid "Insufficient gas"
+msgstr ""
+
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 #~ msgid "{0} BALN added to your wallet."
 #~ msgstr ""
@@ -1109,8 +1119,8 @@ msgstr ""
 #~ msgstr "Mô tả"
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Couldn't supply {pair} liquidity. Try again."
-msgstr "Không thể cung cấp {pair} thanh khoản (liquidity). Hãy thử lại."
+#~ msgid "Couldn't supply {pair} liquidity. Try again."
+#~ msgstr "Không thể cung cấp {pair} thanh khoản (liquidity). Hãy thử lại."
 
 #: src/app/components/CommunityListToggle/index.tsx
 #~ msgid "Add community token list"
@@ -1125,8 +1135,8 @@ msgstr "Không thể cung cấp {pair} thanh khoản (liquidity). Hãy thử l�
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Couldn't swap {inputCurrency} for {outputCurrency}. Try again."
-msgstr "Không thể đổi {inputCurrency} thành {outputCurrency}. Hãy thử lại."
+#~ msgid "Couldn't swap {inputCurrency} for {outputCurrency}. Try again."
+#~ msgstr "Không thể đổi {inputCurrency} thành {outputCurrency}. Hãy thử lại."
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #~ msgid "interest"
@@ -1203,8 +1213,8 @@ msgstr ""
 #~ msgstr "Ko có tài sản sẵn có."
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Fee"
-msgstr "Mức phí"
+#~ msgid "Fee"
+#~ msgstr "Mức phí"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
@@ -1252,8 +1262,8 @@ msgstr "Mức phí"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "{outputAmount} {outputCurrency} added to your wallet."
-msgstr "{outputAmount}{outputCurrency} đã được thêm vào ví của bạn."
+#~ msgid "{outputAmount} {outputCurrency} added to your wallet."
+#~ msgstr "{outputAmount}{outputCurrency} đã được thêm vào ví của bạn."
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 #~ msgid "for maximum rewards."
@@ -1420,9 +1430,10 @@ msgstr "Chọn 1 đồng tiền"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Transfer {inputCurrency} to {network}..."
-msgstr ""
+#~ msgid "Transfer {inputCurrency} to {network}..."
+#~ msgstr ""
 
+#: src/store/swap/hooks.ts
 #: src/store/swap/hooks.ts
 msgid "Insufficient {0}"
 msgstr "Không đủ {0}"
@@ -1559,8 +1570,8 @@ msgstr ""
 #~ msgstr "Đang rút sICX..."
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "{currency} sent to the {pair} pool."
-msgstr "{currency} gửi tới ao {pair} thanh khoản."
+#~ msgid "{currency} sent to the {pair} pool."
+#~ msgstr "{currency} gửi tới ao {pair} thanh khoản."
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #~ msgid "For"
@@ -1807,6 +1818,7 @@ msgstr ""
 #~ msgid "Unlock Balance Tokens?"
 #~ msgstr ""
 
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "If the price slips by more than this amount, your swap will fail."
 msgstr "Nếu giá cả bị vượt quá mức này, vụ trao đổi này sẽ thất bại."
@@ -2149,8 +2161,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
-msgstr "Đang rút {inputCurrency}/{outputCurrency} trong hồ thanh khoản..."
+#~ msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
+#~ msgstr "Đang rút {inputCurrency}/{outputCurrency} trong hồ thanh khoản..."
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Connected to {numberOfConnectedWallets} blockchains"
@@ -2161,8 +2173,8 @@ msgid "Order routing"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Couldn't send {currency} to the {pair} pool. Try again."
-msgstr "Không thể gửi {currency} đến {pair} pool. Hãy thử lại."
+#~ msgid "Couldn't send {currency} to the {pair} pool. Try again."
+#~ msgstr "Không thể gửi {currency} đến {pair} pool. Hãy thử lại."
 
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #~ msgid "Total daily rewards"
@@ -2268,8 +2280,8 @@ msgstr "Không thể hoàn thành giao dịch."
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Transfer {inputAmount} {inputCurrency} to {network} with {address}."
-msgstr ""
+#~ msgid "Transfer {inputAmount} {inputCurrency} to {network} with {address}."
+#~ msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #~ msgid "Voting ends in {endTimeStr}"
@@ -2596,8 +2608,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Sending {currency} to the {pair} pool..."
-msgstr "Đang gửi {currency} đến {pair} thanh khoản (liquidity pool)..."
+#~ msgid "Sending {currency} to the {pair} pool..."
+#~ msgstr "Đang gửi {currency} đến {pair} thanh khoản (liquidity pool)..."
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #~ msgid "Preparing to unstake sICX..."
@@ -2649,8 +2661,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
-msgstr "Đã đổi {inputAmount} {inputCurrency} thành {outputAmount} {outputCurrency}."
+#~ msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
+#~ msgstr "Đã đổi {inputAmount} {inputCurrency} thành {outputAmount} {outputCurrency}."
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx

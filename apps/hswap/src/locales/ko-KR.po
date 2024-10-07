@@ -102,8 +102,8 @@ msgstr ""
 #~ msgstr "4시간"
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Supplying {pair} liquidity..."
-msgstr "{pair} 유동성을 제공하는 중..."
+#~ msgid "Supplying {pair} liquidity..."
+#~ msgstr "{pair} 유동성을 제공하는 중..."
 
 #: src/app/pages/home/_components/xCollateralModal/index.tsx
 #~ msgid "Collateral action"
@@ -184,6 +184,10 @@ msgstr ""
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 #~ msgid "Your allocation"
 #~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Bridge Fee"
+msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
@@ -306,8 +310,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Couldn't transfer {inputCurrency} to {network}. Try again."
-msgstr ""
+#~ msgid "Couldn't transfer {inputCurrency} to {network}. Try again."
+#~ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #~ msgid "Available since {0}"
@@ -522,6 +526,10 @@ msgstr ""
 #~ msgid "Submitting a proposal..."
 #~ msgstr "제안 제출 중..."
 
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Swap Fee"
+msgstr ""
+
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 #~ msgid "BALN APY"
 #~ msgstr ""
@@ -623,8 +631,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
-msgstr "{inputCurrency} / {outputCurrency} 유동성 공급을 해제할 수 없습니다. 다시 시도하십시오."
+#~ msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
+#~ msgstr "{inputCurrency} / {outputCurrency} 유동성 공급을 해제할 수 없습니다. 다시 시도하십시오."
 
 #: src/app/pages/home/BBaln/BBalnPanel.tsx
 #~ msgid "${0} was distributed over the last 30 days"
@@ -692,8 +700,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Swapping {inputCurrency} for {outputCurrency}..."
-msgstr "{inputCurrency} 을 {outputCurrency} 으로 스왑하는 중..."
+#~ msgid "Swapping {inputCurrency} for {outputCurrency}..."
+#~ msgstr "{inputCurrency} 을 {outputCurrency} 으로 스왑하는 중..."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #~ msgid "Liquidity supplied."
@@ -832,8 +840,8 @@ msgstr "오차 범위"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
-msgstr "{inputAmount} {inputCurrency} 및 {outputAmount} {outputCurrency} 가 지갑에 추가되었습니다."
+#~ msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
+#~ msgstr "{inputAmount} {inputCurrency} 및 {outputAmount} {outputCurrency} 가 지갑에 추가되었습니다."
 
 #: src/app/components/ProposalModal/index.tsx
 #~ msgid "Change vote?"
@@ -908,8 +916,6 @@ msgstr "{inputAmount} {inputCurrency} 및 {outputAmount} {outputCurrency} 가 �
 #~ msgid "Lock up Balance Tokens?"
 #~ msgstr ""
 
-#: src/app/components/XTransactionState/index.tsx
-#: src/app/components/XTransactionState/index.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "{0}"
 msgstr "{0}"
@@ -927,8 +933,8 @@ msgstr "수량을 입력하세요."
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Supplied {pair} liquidity."
-msgstr "{pair} 공급된 유동성."
+#~ msgid "Supplied {pair} liquidity."
+#~ msgstr "{pair} 공급된 유동성."
 
 #: src/app/Routes.tsx
 msgid "Trade"
@@ -1099,6 +1105,10 @@ msgstr ""
 #~ msgid "After"
 #~ msgstr "적용 후"
 
+#: src/store/swap/hooks.ts
+msgid "Insufficient gas"
+msgstr ""
+
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 #~ msgid "{0} BALN added to your wallet."
 #~ msgstr ""
@@ -1109,8 +1119,8 @@ msgstr ""
 #~ msgstr "설명"
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Couldn't supply {pair} liquidity. Try again."
-msgstr "{pair} 에 유동성 물량을 공급할 수 없습니다. 다시 시도하십시오."
+#~ msgid "Couldn't supply {pair} liquidity. Try again."
+#~ msgstr "{pair} 에 유동성 물량을 공급할 수 없습니다. 다시 시도하십시오."
 
 #: src/app/components/CommunityListToggle/index.tsx
 #~ msgid "Add community token list"
@@ -1125,8 +1135,8 @@ msgstr "{pair} 에 유동성 물량을 공급할 수 없습니다. 다시 시도
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Couldn't swap {inputCurrency} for {outputCurrency}. Try again."
-msgstr "{outputCurrency} 를 {inputCurrency} 와 스왑할 수 없습니다. 다시 시도하십시오."
+#~ msgid "Couldn't swap {inputCurrency} for {outputCurrency}. Try again."
+#~ msgstr "{outputCurrency} 를 {inputCurrency} 와 스왑할 수 없습니다. 다시 시도하십시오."
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #~ msgid "interest"
@@ -1203,8 +1213,8 @@ msgstr ""
 #~ msgstr "사용 가능한 자산이 없습니다."
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Fee"
-msgstr "수수료"
+#~ msgid "Fee"
+#~ msgstr "수수료"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
@@ -1252,8 +1262,8 @@ msgstr "수수료"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "{outputAmount} {outputCurrency} added to your wallet."
-msgstr "{outputAmount} {outputCurrency} 가 지갑에 추가되었습니다."
+#~ msgid "{outputAmount} {outputCurrency} added to your wallet."
+#~ msgstr "{outputAmount} {outputCurrency} 가 지갑에 추가되었습니다."
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 #~ msgid "for maximum rewards."
@@ -1420,9 +1430,10 @@ msgstr "토큰 선택"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Transfer {inputCurrency} to {network}..."
-msgstr ""
+#~ msgid "Transfer {inputCurrency} to {network}..."
+#~ msgstr ""
 
+#: src/store/swap/hooks.ts
 #: src/store/swap/hooks.ts
 msgid "Insufficient {0}"
 msgstr "{0} 가 부족합니다."
@@ -1559,8 +1570,8 @@ msgstr ""
 #~ msgstr "sICX 회수하는 중..."
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "{currency} sent to the {pair} pool."
-msgstr "{currency} 를 {pair} 풀로 보냈습니다."
+#~ msgid "{currency} sent to the {pair} pool."
+#~ msgstr "{currency} 를 {pair} 풀로 보냈습니다."
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #~ msgid "For"
@@ -1807,6 +1818,7 @@ msgstr ""
 #~ msgid "Unlock Balance Tokens?"
 #~ msgstr ""
 
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "If the price slips by more than this amount, your swap will fail."
 msgstr "이 금액보다 가격이 차이가 많이 나는 경우 스왑이 실패합니다."
@@ -2149,8 +2161,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
-msgstr "{inputCurrency} / {outputCurrency} 유동성 물량 회수 중..."
+#~ msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
+#~ msgstr "{inputCurrency} / {outputCurrency} 유동성 물량 회수 중..."
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Connected to {numberOfConnectedWallets} blockchains"
@@ -2161,8 +2173,8 @@ msgid "Order routing"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Couldn't send {currency} to the {pair} pool. Try again."
-msgstr "{pair} 풀에 {currency} 를 보낼 수 없습니다. 다시 시도하십시오."
+#~ msgid "Couldn't send {currency} to the {pair} pool. Try again."
+#~ msgstr "{pair} 풀에 {currency} 를 보낼 수 없습니다. 다시 시도하십시오."
 
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #~ msgid "Total daily rewards"
@@ -2268,8 +2280,8 @@ msgstr "트랜잭션을 완료할 수 없습니다."
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Transfer {inputAmount} {inputCurrency} to {network} with {address}."
-msgstr ""
+#~ msgid "Transfer {inputAmount} {inputCurrency} to {network} with {address}."
+#~ msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #~ msgid "Voting ends in {endTimeStr}"
@@ -2596,8 +2608,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Sending {currency} to the {pair} pool..."
-msgstr "{pair} 풀로 {currency} 를 보내는 중..."
+#~ msgid "Sending {currency} to the {pair} pool..."
+#~ msgstr "{pair} 풀로 {currency} 를 보내는 중..."
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #~ msgid "Preparing to unstake sICX..."
@@ -2649,8 +2661,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
-msgstr "{inputAmount} {inputCurrency} 을 {outputAmount} {outputCurrency} 으로 스왑했습니다."
+#~ msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
+#~ msgstr "{inputAmount} {inputCurrency} 을 {outputAmount} {outputCurrency} 으로 스왑했습니다."
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx

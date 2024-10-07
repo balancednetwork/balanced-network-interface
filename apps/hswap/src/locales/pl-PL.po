@@ -102,8 +102,8 @@ msgstr ""
 #~ msgstr "4G"
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Supplying {pair} liquidity..."
-msgstr "Dostarczanie płynności do pary {pair}..."
+#~ msgid "Supplying {pair} liquidity..."
+#~ msgstr "Dostarczanie płynności do pary {pair}..."
 
 #: src/app/pages/home/_components/xCollateralModal/index.tsx
 #~ msgid "Collateral action"
@@ -184,6 +184,10 @@ msgstr ""
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 #~ msgid "Your allocation"
 #~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Bridge Fee"
+msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
@@ -306,8 +310,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Couldn't transfer {inputCurrency} to {network}. Try again."
-msgstr ""
+#~ msgid "Couldn't transfer {inputCurrency} to {network}. Try again."
+#~ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #~ msgid "Available since {0}"
@@ -522,6 +526,10 @@ msgstr ""
 #~ msgid "Submitting a proposal..."
 #~ msgstr "Zgłaszanie propozycji..."
 
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Swap Fee"
+msgstr ""
+
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 #~ msgid "BALN APY"
 #~ msgstr ""
@@ -623,8 +631,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
-msgstr "Nie udało się wypłacić płynności {inputCurrency} / {outputCurrency}. Spróbuj ponownie."
+#~ msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
+#~ msgstr "Nie udało się wypłacić płynności {inputCurrency} / {outputCurrency}. Spróbuj ponownie."
 
 #: src/app/pages/home/BBaln/BBalnPanel.tsx
 #~ msgid "${0} was distributed over the last 30 days"
@@ -692,8 +700,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Swapping {inputCurrency} for {outputCurrency}..."
-msgstr "Wymienianie {inputCurrency} na {outputCurrency}..."
+#~ msgid "Swapping {inputCurrency} for {outputCurrency}..."
+#~ msgstr "Wymienianie {inputCurrency} na {outputCurrency}..."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #~ msgid "Liquidity supplied."
@@ -832,8 +840,8 @@ msgstr "Tolerancja poślizgu cenowego"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
-msgstr "Dodano {inputAmount} {inputCurrency} i {outputAmount} {outputCurrency} do Twojego portfela."
+#~ msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
+#~ msgstr "Dodano {inputAmount} {inputCurrency} i {outputAmount} {outputCurrency} do Twojego portfela."
 
 #: src/app/components/ProposalModal/index.tsx
 #~ msgid "Change vote?"
@@ -908,8 +916,6 @@ msgstr "Dodano {inputAmount} {inputCurrency} i {outputAmount} {outputCurrency} d
 #~ msgid "Lock up Balance Tokens?"
 #~ msgstr ""
 
-#: src/app/components/XTransactionState/index.tsx
-#: src/app/components/XTransactionState/index.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "{0}"
 msgstr "{0}"
@@ -927,8 +933,8 @@ msgstr "Wprowadź kwotę"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Supplied {pair} liquidity."
-msgstr "Dostarczono płynności do pary {pair}."
+#~ msgid "Supplied {pair} liquidity."
+#~ msgstr "Dostarczono płynności do pary {pair}."
 
 #: src/app/Routes.tsx
 msgid "Trade"
@@ -1099,6 +1105,10 @@ msgstr ""
 #~ msgid "After"
 #~ msgstr "Po"
 
+#: src/store/swap/hooks.ts
+msgid "Insufficient gas"
+msgstr ""
+
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 #~ msgid "{0} BALN added to your wallet."
 #~ msgstr ""
@@ -1109,8 +1119,8 @@ msgstr ""
 #~ msgstr "Opis"
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Couldn't supply {pair} liquidity. Try again."
-msgstr "Nie udało się dostarczyć płynności do pary {pair}. Spróbuj ponownie."
+#~ msgid "Couldn't supply {pair} liquidity. Try again."
+#~ msgstr "Nie udało się dostarczyć płynności do pary {pair}. Spróbuj ponownie."
 
 #: src/app/components/CommunityListToggle/index.tsx
 #~ msgid "Add community token list"
@@ -1125,8 +1135,8 @@ msgstr "Nie udało się dostarczyć płynności do pary {pair}. Spróbuj ponowni
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Couldn't swap {inputCurrency} for {outputCurrency}. Try again."
-msgstr "Nie udało się wymienić {inputCurrency} na {outputCurrency}. Spróbuj ponownie."
+#~ msgid "Couldn't swap {inputCurrency} for {outputCurrency}. Try again."
+#~ msgstr "Nie udało się wymienić {inputCurrency} na {outputCurrency}. Spróbuj ponownie."
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #~ msgid "interest"
@@ -1203,8 +1213,8 @@ msgstr ""
 #~ msgstr "Brak dostępnych aktywów."
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Fee"
-msgstr "Prowizja"
+#~ msgid "Fee"
+#~ msgstr "Prowizja"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
@@ -1252,8 +1262,8 @@ msgstr "Prowizja"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "{outputAmount} {outputCurrency} added to your wallet."
-msgstr "Dodano {outputAmount} {outputCurrency} do Twojego portfela."
+#~ msgid "{outputAmount} {outputCurrency} added to your wallet."
+#~ msgstr "Dodano {outputAmount} {outputCurrency} do Twojego portfela."
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 #~ msgid "for maximum rewards."
@@ -1420,9 +1430,10 @@ msgstr "Wybierz token"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Transfer {inputCurrency} to {network}..."
-msgstr ""
+#~ msgid "Transfer {inputCurrency} to {network}..."
+#~ msgstr ""
 
+#: src/store/swap/hooks.ts
 #: src/store/swap/hooks.ts
 msgid "Insufficient {0}"
 msgstr "Niewystarczająca ilość {0}"
@@ -1559,8 +1570,8 @@ msgstr ""
 #~ msgstr "Wycofywanie sICX..."
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "{currency} sent to the {pair} pool."
-msgstr "{currency} wysłano do puli {pair}."
+#~ msgid "{currency} sent to the {pair} pool."
+#~ msgstr "{currency} wysłano do puli {pair}."
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #~ msgid "For"
@@ -1807,6 +1818,7 @@ msgstr ""
 #~ msgid "Unlock Balance Tokens?"
 #~ msgstr ""
 
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "If the price slips by more than this amount, your swap will fail."
 msgstr "Jeśli cena spadnie o więcej niż o tę kwotę, Twoja wymiana nie powiedzie się."
@@ -2149,8 +2161,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
-msgstr "Wycofywanie płynności {inputCurrency} / {outputCurrency}..."
+#~ msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
+#~ msgstr "Wycofywanie płynności {inputCurrency} / {outputCurrency}..."
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Connected to {numberOfConnectedWallets} blockchains"
@@ -2161,8 +2173,8 @@ msgid "Order routing"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Couldn't send {currency} to the {pair} pool. Try again."
-msgstr "Nie udało się wysłać {currency} do puli {pair}. Spróbuj ponownie."
+#~ msgid "Couldn't send {currency} to the {pair} pool. Try again."
+#~ msgstr "Nie udało się wysłać {currency} do puli {pair}. Spróbuj ponownie."
 
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #~ msgid "Total daily rewards"
@@ -2268,8 +2280,8 @@ msgstr "Nie można sfinalizować transakcji."
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Transfer {inputAmount} {inputCurrency} to {network} with {address}."
-msgstr ""
+#~ msgid "Transfer {inputAmount} {inputCurrency} to {network} with {address}."
+#~ msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 #~ msgid "Voting ends in {endTimeStr}"
@@ -2596,8 +2608,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Sending {currency} to the {pair} pool..."
-msgstr "Wysyłanie {currency} do puli {pair}..."
+#~ msgid "Sending {currency} to the {pair} pool..."
+#~ msgstr "Wysyłanie {currency} do puli {pair}..."
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #~ msgid "Preparing to unstake sICX..."
@@ -2649,8 +2661,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
-msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
-msgstr "Wymieniono {inputAmount} {inputCurrency} na {outputAmount} {outputCurrency}."
+#~ msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
+#~ msgstr "Wymieniono {inputAmount} {inputCurrency} na {outputAmount} {outputCurrency}."
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx

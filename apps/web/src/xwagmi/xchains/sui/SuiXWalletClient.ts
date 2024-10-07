@@ -13,6 +13,7 @@ import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
 import { SuiXService } from './SuiXService';
 import { RLP } from '@ethereumjs/rlp';
 import { uintToBytes } from '@/xwagmi/utils';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
 
 const addressesMainnet = {
   'Balanced Package Id': '0x52af654cd5f58aaf99638d71fd46896637abff823a9c6e152a297b9832a7ee72',
@@ -372,7 +373,12 @@ export class SuiXWalletClient extends XWalletClient {
       return;
     }
 
-    const amount = BigInt(inputAmount.multiply(-1).quotient.toString());
+    const bnUSD = xTokenMap['sui'].find(token => token.symbol === 'bnUSD');
+    if (!bnUSD) {
+      throw new Error('bnUSD XToken not found');
+    }
+
+    const amount = BigInt(Math.floor(-1 * Number(inputAmount.toFixed()) * 10 ** bnUSD.decimals));
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = toBytes(
       JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
@@ -381,7 +387,7 @@ export class SuiXWalletClient extends XWalletClient {
     const coins = (
       await this.getXService().suiClient.getCoins({
         owner: account,
-        coinType: inputAmount.currency.wrapped.address,
+        coinType: bnUSD.address,
       })
     )?.data;
 

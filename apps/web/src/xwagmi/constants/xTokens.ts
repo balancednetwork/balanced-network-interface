@@ -123,7 +123,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     ),
   ],
   stellar: [
-    new XToken('stellar', 'stellar', 'CAS3J7GYLGXMF6TDJBBYYSE3HQ6BBSMLNUQ34T6TZMYMW2EVH34XOWMA', 7, 'XLM', 'XLM'),
+    new XToken('stellar', 'stellar', NATIVE_ADDRESS, 7, 'XLM', 'XLM'),
     new XToken(
       'stellar',
       'stellar',

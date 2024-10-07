@@ -8,15 +8,15 @@ import { ChainLogo } from '@/app/components/ChainLogo';
 import { UnderlineText } from '@/app/components/DropdownText';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { HeaderText } from '@/app/components/Wallet/styledComponents';
+import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
 import { Typography } from '@/app/theme';
-import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useDerivedCollateralInfo } from '@/store/collateral/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatBalance } from '@/utils/formatter';
 import { getXChainType } from '@/xwagmi/actions';
 import { xChainMap, xChains } from '@/xwagmi/constants/xChains';
-import { useXConnect, useXService } from '@/xwagmi/hooks';
+import { useXConnect, useXConnectors } from '@/xwagmi/hooks';
 import { XChain, XChainId } from '@/xwagmi/types';
 import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from './styledComponents';
 
@@ -43,20 +43,11 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const [waitingSignIn, setWaitingSignIn] = useState<XChainId | null>(null);
 
   const xChainType = getXChainType(chain.xChainId);
-  const xService = useXService(xChainType);
   const xConnect = useXConnect();
+  const xConnectors = useXConnectors(xChainType);
 
   const handleConnect = () => {
-    if (!xService) return;
-
-    const xConnectors = xService.getXConnectors();
-    if (xChainType === 'EVM') {
-      modalActions.openModal(MODAL_ID.EVM_WALLET_OPTIONS_MODAL);
-    } else if (xChainType === 'INJECTIVE') {
-      modalActions.openModal(MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL);
-    } else {
-      xConnect(xConnectors[0]);
-    }
+    handleConnectWallet(xChainType, xConnectors, xConnect);
   };
 
   React.useEffect(() => {

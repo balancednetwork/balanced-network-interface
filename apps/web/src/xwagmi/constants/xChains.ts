@@ -297,6 +297,31 @@ export const stellar: XChain = {
   testnet: false,
 };
 
+// TODO: complete SUI chain
+export const sui: XChain = {
+  id: 'sui',
+  name: 'Sui',
+  xChainId: 'sui',
+  xChainType: 'SUI',
+  tracker: 'https://suiscan.xyz/mainnet/',
+  nativeCurrency: {
+    decimals: 9,
+    name: 'SUI',
+    symbol: 'SUI',
+  },
+  rpc: {
+    http: 'https://sentry.tm.injective.network',
+  },
+  contracts: {
+    xCall: 'inj177fx40l0g3jqmtmmuyl2zhrjvhr3knvthlr0ul',
+    assetManager: 'inj1hayj9xnlh44sn29sgggn3jwl3ktl6djwcven25',
+    bnUSD: 'inj1qspaxnztkkzahvp6scq6xfpgafejmj2td83r9j',
+  },
+  autoExecution: true,
+  gasThreshold: 0.01,
+  testnet: false,
+};
+
 // the order is important, using manual order to display in the UI
 export const xChainMap: { [key in XChainId]: XChain } = {
   '0x1.icon': icon,
@@ -311,6 +336,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   '0x2105.base': base,
   'injective-1': injective,
   stellar: stellar,
+  sui: sui,
 };
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);
@@ -328,6 +354,7 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
     'CBPJSDR2QRMFUX25S5JXQMXDDMQVTN5M3TNYSCGFUJCCZ2LAJLKNJACQ',
     'CBXK5AZWM7AE5HF7KKZYXU7NVMMXIA4K3D5H5LV7LW23ZBE7HBAH3RVC',
   ],
+  sui: ['centralized-1', 'centralized-2'],
 };
 
 /** to other chain from icon sources */
@@ -339,4 +366,5 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   '0x100.icon': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
   'injective-1': ['cx6f86ed848f9f0d03ba1220811d95d864c72da88c'],
   stellar: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
+  sui: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
 };

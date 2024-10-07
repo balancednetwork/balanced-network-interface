@@ -4,15 +4,15 @@ import { Typography } from '@/app/theme';
 import { shortenAddress } from '@/utils';
 import { XChainId } from '@/xwagmi/types';
 
-import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSwapState } from '@/store/swap/hooks';
 import { getXChainType } from '@/xwagmi/actions';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { useXAccount, useXConnect, useXService } from '@/xwagmi/hooks';
+import { useXAccount, useXConnect, useXConnectors } from '@/xwagmi/hooks';
 import { Trans } from '@lingui/macro';
 import { UnderlineText } from '../DropdownText';
 import Modal from '../Modal';
 import { ModalContentWrapper } from '../ModalContent';
+import { handleConnectWallet } from '../WalletModal/WalletItem';
 import AddressInput from './AddressInput';
 
 const CrossChainWalletConnect = ({
@@ -28,25 +28,14 @@ const CrossChainWalletConnect = ({
   const { recipient } = useSwapState();
 
   const xChainType = getXChainType(xChainId);
-  const xService = useXService(xChainType);
+  const xConnectors = useXConnectors(xChainType);
   const { address } = useXAccount(xChainType);
-
   const xConnect = useXConnect();
-  const handleConnect = () => {
-    if (!xService) return;
 
+  const handleConnect = () => {
     setManualAddress && setManualAddress(xChainId, undefined);
 
-    // TODO: make a hook and reuse the hook
-    const xConnectors = xService.getXConnectors();
-
-    if (xChainType === 'EVM') {
-      modalActions.openModal(MODAL_ID.EVM_WALLET_OPTIONS_MODAL);
-    } else if (xChainType === 'INJECTIVE') {
-      modalActions.openModal(MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL);
-    } else {
-      xConnect(xConnectors[0]);
-    }
+    handleConnectWallet(xChainType, xConnectors, xConnect);
 
     closeModal();
   };

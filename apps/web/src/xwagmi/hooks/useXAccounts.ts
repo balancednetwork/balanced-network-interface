@@ -1,3 +1,4 @@
+import { useCurrentAccount } from '@mysten/dapp-kit';
 import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
 import { XChainType } from '../types';
@@ -8,6 +9,7 @@ export function useXAccounts() {
   const xChainTypes = useXWagmiStore(state => Object.keys(state.xServices));
   const xConnections = useXWagmiStore(state => state.xConnections);
   const { address: evmAddress } = useAccount();
+  const suiAccount = useCurrentAccount();
 
   const xAccounts = useMemo(() => {
     const result: Partial<Record<XChainType, XAccount>> = {};
@@ -30,8 +32,14 @@ export function useXAccounts() {
         xChainType: 'EVM',
       };
     }
+    if (suiAccount) {
+      result['SUI'] = {
+        address: suiAccount.address,
+        xChainType: 'SUI',
+      };
+    }
     return result;
-  }, [xConnections, evmAddress, xChainTypes]);
+  }, [xChainTypes, xConnections, evmAddress, suiAccount]);
 
   return xAccounts;
 }

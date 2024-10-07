@@ -1,5 +1,7 @@
 import { stellar, xChains } from '@/xwagmi/constants/xChains';
 import { XChainId, XChainType } from '@/xwagmi/types';
+import { useSuiClient } from '@mysten/dapp-kit';
+import { useEffect } from 'react';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -23,6 +25,7 @@ import {
   StellarXService,
   StellarXWalletClient,
 } from './xchains/stellar';
+import { SuiXPublicClient, SuiXService, SuiXWalletClient } from './xchains/sui';
 
 const iconXService = IconXService.getInstance();
 iconXService.setXConnectors([new IconHanaXConnector()]);
@@ -42,6 +45,9 @@ injectiveXService.setXConnectors([new InjectiveMetamaskXConnector(), new Injecti
 const stellarXService = StellarXService.getInstance();
 stellarXService.setXConnectors([new StellarWalletsKitXConnector()]);
 
+const suiXService = SuiXService.getInstance();
+suiXService.setXConnectors([]);
+
 export const xServices: Record<XChainType, XService> = {
   ICON: iconXService,
   ARCHWAY: archwayXService,
@@ -49,6 +55,7 @@ export const xServices: Record<XChainType, XService> = {
   HAVAH: havahXService,
   INJECTIVE: injectiveXService,
   STELLAR: stellarXService,
+  SUI: suiXService,
 };
 
 export const xPublicClients: Partial<Record<XChainId, XPublicClient>> = {};
@@ -144,6 +151,8 @@ function createXPublicClient(xChainId: XChainId) {
       return new InjectiveXPublicClient(xChainId);
     case 'STELLAR':
       return new StellarXPublicClient(xChainId);
+    case 'SUI':
+      return new SuiXPublicClient(xChainId);
     default:
       throw new Error(`Unsupported xChainType: ${xChainType}`);
   }
@@ -164,6 +173,8 @@ function createXWalletClient(xChainId: XChainId) {
       return new InjectiveXWalletClient(xChainId);
     case 'STELLAR':
       return new StellarXWalletClient(xChainId);
+    case 'SUI':
+      return new SuiXWalletClient(xChainId);
     default:
       throw new Error(`Unsupported xChainType: ${xChainType}`);
   }
@@ -189,8 +200,15 @@ export const initXWagmiStore = () => {
   archwayXService.init();
 };
 
-// export const useInitXWagmiStore = () => {
-//   useEffect(() => {
-//     initXWagmiStore();
-//   }, []);
-// };
+export const useInitXWagmiStore = () => {
+  // useEffect(() => {
+  //   initXWagmiStore();
+  // }, []);
+
+  const suiClient = useSuiClient();
+  useEffect(() => {
+    if (suiClient) {
+      suiXService.suiClient = suiClient;
+    }
+  }, [suiClient]);
+};

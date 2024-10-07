@@ -10,7 +10,7 @@ import { shortenAddress } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { MouseoverTooltip } from '../Tooltip';
-import WalletModal from '../Wallet';
+import WalletModal from '../WalletModal';
 import { Typography } from '@/app/components2/Typography';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 

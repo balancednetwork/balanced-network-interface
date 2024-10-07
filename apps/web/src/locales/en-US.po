@@ -687,6 +687,10 @@ msgstr "Enter a recipient address:"
 msgid "Vote for this pool to receive bribes."
 msgstr "Vote for this pool to receive bribes."
 
+#: src/app/components/XTransactionState/index.tsx
+msgid "{description}"
+msgstr "{description}"
+
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 msgid "Address"
 msgstr "Address"
@@ -872,8 +876,6 @@ msgid "Lock up Balance Tokens?"
 msgstr "Lock up Balance Tokens?"
 
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/components/XTransactionState/index.tsx
-#: src/app/components/XTransactionState/index.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { useBorrowersInfo, useCollateralInfo, useLoanInfo, useStakingAPR } from '@/queries';
-import { useTokenPrices } from '@/queries/backendv2';
+import { useDebtDataFor, useTokenPrices } from '@/queries/backendv2';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import { useMedia } from 'react-use';
@@ -51,6 +51,7 @@ export default function CollateralChart({
   const { data: supportedCollaterals } = useSupportedCollateralTokens();
   const stabilityFundTotal = useStabilityFundTotal();
   const { data: tokenPrices } = useTokenPrices();
+  const { data: debtData } = useDebtDataFor(365);
 
   const [collateralTVLHover, setCollateralTVLHover] = React.useState<number | undefined>();
   const [collateralLabel, setCollateralLabel] = React.useState<string | undefined>();
@@ -60,17 +61,27 @@ export default function CollateralChart({
   const [totalCollateral, setTotalCollateral] = React.useState<undefined | number>();
   const [collateralChange, setCollateralChange] = React.useState<undefined | number>();
 
+  const collateralTokenPrice = useMemo(() => {
+    if (
+      selectedCollateral === predefinedCollateralTypes.STABILITY_FUND ||
+      selectedCollateral === predefinedCollateralTypes.ALL
+    ) {
+      return new BigNumber(1);
+    }
+    return tokenPrices?.[selectedCollateral];
+  }, [selectedCollateral, tokenPrices]);
+
   const collateralTVLInUSDHover = useMemo(
     () =>
       getFormattedNumber(
         new BigNumber(collateralTVLHover || '0')
-          .times((tokenPrices && tokenPrices[selectedCollateral]) || ONE)
+          .times(collateralTokenPrice || ONE)
           .integerValue()
           .toNumber(),
         'currency0',
       ),
 
-    [selectedCollateral, tokenPrices, collateralTVLHover],
+    [collateralTokenPrice, collateralTVLHover],
   );
 
   //update chart collateral amount and value if user is not hovering over the chart
@@ -87,6 +98,38 @@ export default function CollateralChart({
       }
     }
   }, [collateralInfo, selectedCollateral, userHovering]);
+
+  const collateralChangeContent =
+    collateralTokenPrice &&
+    (collateralChange === undefined ? (
+      <LoaderComponent></LoaderComponent>
+    ) : collateralChange >= 0 ? (
+      <Typography
+        fontSize={18}
+        color="text"
+      >{`+ $${getFormattedNumber(collateralTokenPrice.times(collateralChange).toNumber() || 0, 'number')}`}</Typography>
+    ) : (
+      <Typography fontSize={18} color="text">
+        {getFormattedNumber(collateralTokenPrice.times(collateralChange).toNumber() || 0, 'number').replace('-', '- $')}
+      </Typography>
+    ));
+
+  const selectedCollateralDebt = useMemo(() => {
+    return debtData?.[selectedCollateral];
+  }, [debtData, selectedCollateral]);
+
+  const collateralRatio = useMemo(() => {
+    if (
+      totalCollateral &&
+      collateralTokenPrice &&
+      selectedCollateralDebt &&
+      selectedCollateralDebt[selectedCollateralDebt.length - 1]
+    ) {
+      const valueNow = selectedCollateralDebt[selectedCollateralDebt.length - 1].value;
+
+      return collateralTokenPrice.times(totalCollateral).div(valueNow);
+    }
+  }, [totalCollateral, collateralTokenPrice, selectedCollateralDebt]);
 
   const [ref, width] = useWidth();
   const isSmall = useMedia('(max-width: 699px)');
@@ -169,18 +212,7 @@ export default function CollateralChart({
               alignItems="center"
               width={isSmall ? '100%' : 'auto'}
             >
-              {collateralChange === undefined ? (
-                <LoaderComponent></LoaderComponent>
-              ) : collateralChange >= 0 ? (
-                <Typography fontSize={18} color="text">{`+ ${getFormattedNumber(
-                  collateralChange,
-                  'price',
-                )}`}</Typography>
-              ) : (
-                <Typography fontSize={18} color="text">
-                  {getFormattedNumber(collateralChange, 'price').replace('$-', '- $')}
-                </Typography>
-              )}
+              {collateralChangeContent}
               <Typography color="text1">Past month</Typography>
             </ChartInfoItem>
           </>
@@ -199,19 +231,34 @@ export default function CollateralChart({
               <Typography color="text1">Maximum limit</Typography>
             </ChartInfoItem>
           </>
-        ) : selectedCollateral === 'sICX' ? (
+        ) : (
           <>
             <ChartInfoItem smaller border>
               <Typography variant="p" fontSize="18px">
-                {stakingAPR ? getFormattedNumber(stakingAPR.toNumber(), 'percent2') : <LoaderComponent />}
+                {collateralTokenPrice ? (
+                  `$${collateralTokenPrice.toFormat(collateralTokenPrice.isGreaterThan(100) ? 0 : collateralTokenPrice.isLessThan(1) ? 4 : 2)}`
+                ) : (
+                  <LoaderComponent />
+                )}
               </Typography>
-              <Typography color="text1">Staking APY</Typography>
+              <Typography color="text1">{selectedCollateral} price</Typography>
             </ChartInfoItem>
             <ChartInfoItem smaller border={!isSmall || isExtraSmall}>
-              <Typography variant="p" fontSize="18px">
-                {collateralInfo?.rate ? getFormattedNumber(collateralInfo.rate, 'number4') : <LoaderComponent />}
-              </Typography>
-              <Typography color="text1">sICX / ICX price</Typography>
+              {selectedCollateral === 'sICX' ? (
+                <>
+                  <Typography variant="p" fontSize="18px">
+                    {stakingAPR ? getFormattedNumber(stakingAPR.toNumber(), 'percent2') : <LoaderComponent />}
+                  </Typography>
+                  <Typography color="text1">Staking APR</Typography>
+                </>
+              ) : (
+                <>
+                  <Typography variant="p" fontSize="18px">
+                    {collateralRatio ? getFormattedNumber(collateralRatio.toNumber(), 'percent0') : <LoaderComponent />}
+                  </Typography>
+                  <Typography color="text1">Collateral ratio</Typography>
+                </>
+              )}
             </ChartInfoItem>
             <ChartInfoItem
               smaller
@@ -220,33 +267,8 @@ export default function CollateralChart({
               alignItems="center"
               width={isSmall ? '100%' : 'auto'}
             >
-              <Typography variant="p" fontSize="18px">
-                {borrowersInfo ? getFormattedNumber(borrowersInfo['sICX'], 'number') : <LoaderComponent />}
-              </Typography>
-              <Typography color="text1">Suppliers</Typography>
-            </ChartInfoItem>
-          </>
-        ) : (
-          <>
-            <ChartInfoItem border>
-              <Typography variant="p" fontSize="18px">
-                {tokenPrices && tokenPrices[selectedCollateral] ? (
-                  `$${tokenPrices[selectedCollateral].toFormat(2)}`
-                ) : (
-                  <LoaderComponent />
-                )}
-              </Typography>
-              <Typography color="text1">{selectedCollateral} price</Typography>
-            </ChartInfoItem>
-            <ChartInfoItem flex={1} flexDirection="column" alignItems="center">
-              <Typography variant="p" fontSize="18px">
-                {borrowersInfo && borrowersInfo[selectedCollateral] ? (
-                  getFormattedNumber(borrowersInfo[selectedCollateral], 'number')
-                ) : (
-                  <LoaderComponent />
-                )}
-              </Typography>
-              <Typography color="text1">Suppliers</Typography>
+              {collateralChangeContent}
+              <Typography color="text1">Past month</Typography>
             </ChartInfoItem>
           </>
         )}

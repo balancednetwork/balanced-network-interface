@@ -13,7 +13,7 @@
     "dev": "tsup --watch",
     "test": "tsup test",
     "prepublishOnly": "tsup build",
-    "clean": "rm -rf dist && rm -rf node_modules",
+    "clean": "rm -rf dist && rm -rf node_modules && rm -rf .turbo",
     "pretty": "biome format . --write",
     "checkTs": "tsc --noEmit"
   },

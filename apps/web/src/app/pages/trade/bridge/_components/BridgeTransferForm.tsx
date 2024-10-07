@@ -119,6 +119,7 @@ export default function BridgeTransferForm({ openModal }) {
               currency={currencyToBridge}
               width={width}
               containerRef={ref.current}
+              showTotalXWalletValue={true}
             />
             <Box sx={{ cursor: 'pointer', marginLeft: '-25px' }} onClick={onSwitchChain}>
               <FlipIcon width={25} height={17} />

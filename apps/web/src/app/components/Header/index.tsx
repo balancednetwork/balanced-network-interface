@@ -74,7 +74,7 @@ const ConnectionStatus = styled(Flex)`
   }
 `;
 
-const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
+const NETWORK_ID = parseInt(import.meta.env.VITE_NETWORK_ID ?? '1');
 
 export const CopyableAddress = ({
   account,

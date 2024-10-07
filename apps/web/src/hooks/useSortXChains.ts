@@ -1,3 +1,4 @@
+import { useRatesWithOracle } from '@/queries/reward';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { WalletState } from '@/store/wallet/reducer';
 import { XChain, XChainId } from '@/xwagmi/types';
@@ -25,9 +26,14 @@ const getXCurrencyBalanceBySymbol = (
   return new BigNumber(currencyAmount?.toFixed() || 0);
 };
 
-export default function useSortXChains(initialState: SortingType, selectedCurrency: Currency | undefined) {
+export default function useSortXChains(
+  initialState: SortingType,
+  selectedCurrency: Currency | undefined,
+  useTotal?: boolean,
+) {
   const xBalances = useCrossChainWalletBalances();
   const signedInWallets = useSignedInWallets();
+  const prices = useRatesWithOracle();
 
   const [sortBy, setSortBy] = useState<SortingType>(initialState);
 
@@ -59,13 +65,35 @@ export default function useSortXChains(initialState: SortingType, selectedCurren
     }
 
     if (signedInWallets.length > 0 && sortBy.key === 'value') {
-      dataToSort.sort((a, b) => {
-        const aBalance =
-          getXCurrencyBalanceBySymbol(xBalances, selectedCurrency.symbol, a.xChainId) || new BigNumber(0);
-        const bBalance =
-          getXCurrencyBalanceBySymbol(xBalances, selectedCurrency.symbol, b.xChainId) || new BigNumber(0);
-        return aBalance.isGreaterThan(bBalance) ? -1 * direction : 1 * direction;
-      });
+      if (useTotal) {
+        dataToSort.sort((a, b) => {
+          const aTotal = Object.values(xBalances[a.xChainId] || {}).reduce((total, currAmount) => {
+            const currPrice = prices?.[currAmount.currency.symbol];
+            if (currPrice) {
+              return total.plus(currPrice.times(new BigNumber(currAmount.toFixed())));
+            }
+            return total;
+          }, new BigNumber(0));
+
+          const bTotal = Object.values(xBalances[b.xChainId] || {}).reduce((total, currAmount) => {
+            const currPrice = prices?.[currAmount.currency.symbol];
+            if (currPrice) {
+              return total.plus(currPrice.times(new BigNumber(currAmount.toFixed())));
+            }
+            return total;
+          }, new BigNumber(0));
+
+          return aTotal.isGreaterThan(bTotal) ? -1 * direction : 1 * direction;
+        });
+      } else {
+        dataToSort.sort((a, b) => {
+          const aBalance =
+            getXCurrencyBalanceBySymbol(xBalances, selectedCurrency.symbol, a.xChainId) || new BigNumber(0);
+          const bBalance =
+            getXCurrencyBalanceBySymbol(xBalances, selectedCurrency.symbol, b.xChainId) || new BigNumber(0);
+          return aBalance.isGreaterThan(bBalance) ? -1 * direction : 1 * direction;
+        });
+      }
     }
 
     return dataToSort;

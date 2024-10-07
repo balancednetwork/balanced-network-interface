@@ -6,9 +6,9 @@ import { predefinedCollateralTypes } from '@/components/CollateralSelector/Colla
 import LineChart, { DEFAULT_HEIGHT } from '@/components/LineChart';
 import Spinner from '@/components/Spinner';
 
+import { useTheme } from 'styled-components';
 import { ChartContainer } from '..';
 import { timeFrames } from '../TimeFrameSelector';
-import { useTheme } from 'styled-components';
 
 export default function Chart({
   selectedCollateral,
@@ -34,17 +34,15 @@ export default function Chart({
     }
   }, [collateralData, selectedCollateral]);
 
-  const seriesTotal = collateralData?.series.total;
-
   useEffect(() => {
-    if (seriesTotal) {
-      const valueNow = seriesTotal[seriesTotal.length - 1].value;
-      const valuePrev = seriesTotal[seriesTotal.length - 30].value;
+    if (seriesData) {
+      const valueNow = seriesData[seriesData.length - 1].value;
+      const valuePrev = seriesData[seriesData.length - 30].value;
 
       setCollateralChange(valueNow - valuePrev);
       setTotalCollateral(valueNow);
     }
-  }, [seriesTotal, setCollateralChange, setTotalCollateral]);
+  }, [seriesData, setCollateralChange, setTotalCollateral]);
 
   return (
     <>

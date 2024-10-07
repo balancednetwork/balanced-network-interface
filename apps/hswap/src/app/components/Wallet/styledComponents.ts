@@ -1,0 +1,125 @@
+import { Typography } from '@/app/components2/Typography';
+import { Box } from 'rebass';
+import styled from 'styled-components';
+import { notificationCSS } from './ICONWallets/utils';
+
+const walletBreakpoint = '385px';
+
+export const HeaderText = styled(Typography)`
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  white-space: nowrap;
+`;
+
+export const DashGrid = styled(Box)`
+  display: grid;
+  grid-template-columns: 3fr 4fr;
+  grid-template-areas: 'asset balance&value';
+  align-items: center;
+  @media screen and (max-width: ${walletBreakpoint}) {
+    grid-template-columns: 3fr 5fr;
+  }
+  & > * {
+    justify-content: flex-end;
+    text-align: right;
+    &:first-child {
+      justify-content: flex-start;
+      text-align: left;
+    }
+  }
+`;
+
+export const DataText = styled(Typography)<{ $fSize?: string }>`
+  font-size: ${({ $fSize }) => $fSize || '14px'};
+`;
+
+export const BalanceAndValueWrap = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  ${DataText}, ${HeaderText} {
+    width: 50%;
+    @media screen and (max-width: ${walletBreakpoint}) {
+      width: 100%;
+      &.value {
+        opacity: 0.7;
+      }
+    }
+  }
+`;
+
+export const List = styled(Box)`
+  max-height: 375px;
+  overflow-y: auto;
+  padding: 0 25px;
+
+  @media all and (max-width: 500px) {
+    max-height: 200px;
+  }
+`;
+
+export const ListItem = styled(DashGrid)<{ $border?: boolean }>`
+  padding: 20px 0;
+  cursor: pointer;
+  color: #ffffff;
+  transition: all 0.2s ease;
+  border-bottom: ${({ $border = true }) => ($border ? '1px solid rgba(255, 255, 255, 0.15)' : 'none')};
+  @media screen and (max-width: ${walletBreakpoint}) {
+    padding: 15px 0;
+  }
+  &.active {
+    color: ${({ theme }) => theme.colors?.primary};
+  }
+
+  &.has-modal {
+    cursor: pointer;
+  }
+`;
+
+export const AssetSymbol = styled.div<{ $hasNotification?: boolean }>`
+  display: grid;
+  grid-column-gap: 12px;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  position: relative;
+  ${({ $hasNotification }) => $hasNotification && notificationCSS}
+  &:before, &:after {
+    right: initial;
+    left: 18px;
+    top: -3px;
+    z-index: 5;
+  }
+`;
+
+export const BalanceBreakdown = styled.div<{ $arrowPosition: string }>`
+  background: ${({ theme }) => theme.colors?.bg3};
+  border-radius: 10px;
+  padding: 5px 15px 7px 10px;
+  position: relative;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 30px;
+    left: ${({ $arrowPosition }) => $arrowPosition};
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 12px solid ${({ theme }) => theme.colors?.bg3};
+    transition: all 0.3s ease-in-out;
+  }
+
+  ${DashGrid} {
+    grid-template-columns: 11fr 12fr;
+    @media screen and (max-width: ${walletBreakpoint}) {
+      grid-template-columns: 14fr 15fr;
+    }
+  }
+
+  ${ListItem} {
+    padding: 9px 0;
+  }
+`;

@@ -10,7 +10,6 @@ import { DropdownPopper } from '@/app/components/Popover';
 import Logo from '@/app/components2/Logo';
 import CopyIcon from '@/assets/icons/copy.svg';
 import WalletIcon from '@/assets/icons/wallet.svg';
-import { useWalletModalToggle } from '@/store/application/hooks';
 import { shortenAddress } from '@/utils';
 
 import { Button } from '@/components/ui/button';
@@ -20,6 +19,7 @@ import { MouseoverTooltip } from '../Tooltip';
 import Wallet from '../Wallet';
 import { Typography } from '@/app/components2/Typography';
 import { cn } from '@/lib/utils';
+import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 
 const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
@@ -75,8 +75,6 @@ export default function Header(props: { className?: string }) {
   };
   const closeWalletMenu = useCallback(() => setAnchor(null), []);
 
-  const toggleWalletModal = useWalletModalToggle();
-
   const handleWalletClose = e => {
     if (!e.target.closest('[data-reach-dialog-overlay]') && !e.target.closest('.has-modal')) {
       setAnchor(null);
@@ -99,7 +97,7 @@ export default function Header(props: { className?: string }) {
 
         {wallets.length === 0 && (
           <div className="flex items-center">
-            <Button onClick={toggleWalletModal} className="rounded-full">
+            <Button onClick={() => modalActions.openModal(MODAL_ID.WALLET_MODAL)} className="rounded-full">
               <Trans>Sign in</Trans>
             </Button>
           </div>

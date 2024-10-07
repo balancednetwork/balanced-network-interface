@@ -1,27 +1,15 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 
-import { Typography } from '@/app/components2/Typography';
-
-import { ChainLogo } from '@/app/components2/ChainLogo';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { XConnector } from '@/xwagmi/core';
-import { useXAccount, useXConnect, useXConnectors, useXDisconnect } from '@/xwagmi/hooks';
-import { XChain } from '@/xwagmi/types';
+import { useXAccount, useXConnect, useXConnection, useXConnectors, useXDisconnect } from '@/xwagmi/hooks';
 import { XChainType } from '@balancednetwork/sdk-core';
-import { t } from '@lingui/macro';
 import { CopyableAddress } from '../Header';
-import { ActionDivider, MainLogo, WalletActions, WalletItemGrid, XChainsWrap } from './styled';
 import { Button } from '@/components/ui/button';
 
 export type WalletItemProps = {
   name: string;
   xChainType: XChainType;
-  logo: JSX.Element;
-  description: string;
-  border: boolean;
-  keyWords: string[];
-  xChains?: XChain[];
-  switchChain?: (any) => void;
 };
 
 export const handleConnectWallet = (
@@ -43,63 +31,67 @@ export const handleConnectWallet = (
   }
 };
 
-const WalletItem = ({ name, xChainType, logo, description, border, xChains, switchChain }: WalletItemProps) => {
+const WalletItem = ({ name, xChainType }: WalletItemProps) => {
+  const xConnection = useXConnection(xChainType);
   const { address } = useXAccount(xChainType);
-
-  const handleSwitchChain = (chain: XChain): void => {
-    switchChain && switchChain({ chainId: chain.id });
-  };
 
   const xConnectors = useXConnectors(xChainType);
   const xConnect = useXConnect();
   const xDisconnect = useXDisconnect();
 
-  const handleConnect = () => {
-    handleConnectWallet(xChainType, xConnectors, xConnect);
-  };
+  const handleConnect = useCallback(
+    (xConnector: XConnector) => {
+      xConnect(xConnector);
+    },
+    [xConnect],
+  );
 
-  const handleDisconnect = () => {
+  const handleDisconnect = useCallback(() => {
     xDisconnect(xChainType);
-  };
+  }, [xDisconnect, xChainType]);
+
+  ///////////////////////////////////////////////////////////////////////////////////////////
+  const activeXConnector = useMemo(() => {
+    return xConnectors.find(connector => connector.id === xConnection?.xConnectorId);
+  }, [xConnectors, xConnection]);
 
   return (
-    <WalletItemGrid className={border ? 'border-bottom' : ''}>
-      <MainLogo>{logo}</MainLogo>
-      <div>
-        <Typography className="pl-7 sm:pl-0 font-bold text-base mb-1">{name}</Typography>
-        <div className="flex">
-          <Typography color="text1">
-            {address ? <CopyableAddress account={address} copyIcon placement="right" /> : description}
-          </Typography>
-        </div>
-        {xChains && (
-          <XChainsWrap signedIn={!!address}>
-            {xChains.map(chain => (
-              <div className="cursor-pointer" key={chain.xChainId} onClick={() => handleSwitchChain(chain)}>
-                <ChainLogo chain={chain} size="24px" key={chain.xChainId} />
-              </div>
-            ))}
-          </XChainsWrap>
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between gap-4">
+        <div className="text-subtitle">{name}</div>
+        {address && (
+          <div className="text-body cursor-pointer" onClick={handleDisconnect}>
+            disconnect
+          </div>
         )}
       </div>
-      <WalletActions>
+      <div className="flex flex-wrap justify-between gap-4">
         {address ? (
-          <div className="flex wallet-options">
-            <Button onClick={handleConnect} variant={'link'}>
-              <Typography color="primaryBright">Change wallet</Typography>
-            </Button>
-            <ActionDivider text={t`or`} />
-            <Typography color="alert" onClick={handleDisconnect} style={{ cursor: 'pointer' }}>
-              Disconnect
-            </Typography>
+          <div className="p-4 flex justify-between items-center bg-[#221542] h-[48px] rounded-full w-full">
+            <div className="flex gap-3 justify-start">
+              <img width={28} height={28} src={activeXConnector?.icon} />
+              {activeXConnector?.name}
+            </div>
+            <CopyableAddress account={address} copyIcon placement="right" />
           </div>
         ) : (
-          <Button onClick={handleConnect} variant={'link'}>
-            <Typography color="primaryBright">Connect wallet</Typography>
-          </Button>
+          <>
+            {xConnectors.map(xConnector => {
+              return (
+                <Button
+                  key={`${xChainType}-${xConnector.name}`}
+                  className="flex gap-3 justify-start bg-[#221542] h-[48px] rounded-full w-[180px]"
+                  onClick={() => handleConnect(xConnector)}
+                >
+                  <img width={28} height={28} src={xConnector.icon} />
+                  {xConnector.name}
+                </Button>
+              );
+            })}
+          </>
         )}
-      </WalletActions>
-    </WalletItemGrid>
+      </div>
+    </div>
   );
 };
 

@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 
 export enum MODAL_ID {
+  WALLET_MODAL = 'WALLET_MODAL',
+  //
   XTRANSFER_CONFIRM_MODAL = 'XTRANSFER_CONFIRM_MODAL',
   XSWAP_CONFIRM_MODAL = 'XSWAP_CONFIRM_MODAL',
   //

@@ -7,7 +7,7 @@ import ClickAwayListener from 'react-click-away-listener';
 import { isMobile } from 'react-device-detect';
 
 import { LanguageMenuItem, MenuList } from '@/app/components/Menu';
-import { Typography } from '@/app/theme';
+import { Typography } from '@/app/components2/Typography';
 import ArchWalletIcon from '@/assets/icons/chains/archway.svg';
 import ETHIcon from '@/assets/icons/chains/eth.svg';
 import HavahWalletIcon from '@/assets/icons/chains/havah.svg';
@@ -180,12 +180,12 @@ export default function WalletModal() {
             </div>
           ) : (
             <div>
-              <Typography textAlign="center" variant={'h2'} mb={1}>
+              <Typography className="text-center mb-1" variant={'h2'}>
                 <Trans>Sign in to Balanced</Trans>
               </Typography>
 
               <div className="mt-3 mb-1 flex justify-center items-center">
-                <Typography mr={1}>
+                <Typography className="mr-1">
                   <Trans>Use Balanced in</Trans>:
                 </Typography>
                 <ClickAwayListener onClickAway={closeMenu}>
@@ -227,7 +227,7 @@ export default function WalletModal() {
               ))}
               {filteredWallets.length === 0 && (
                 <motion.div key="no-result" {...presenceVariants}>
-                  <Typography textAlign="center" paddingTop="20px">
+                  <Typography className="text-center pt-5">
                     No matches for <strong>{chainQuery}</strong>
                   </Typography>
                 </motion.div>
@@ -236,7 +236,7 @@ export default function WalletModal() {
           </div>
 
           {!signedInWallets.length && (
-            <Typography textAlign="center" as="div" maxWidth={300} mx="auto" mt={2}>
+            <Typography className="text-center max-w-[300px] mx-auto mt-2">
               <Trans>Use at your own risk. Project contributors are not liable for any lost or stolen funds.</Trans>
               <div className="pt-1">
                 <a href="https://balanced.network/disclaimer/" target="_blank" rel="noreferrer" tabIndex={-1}>

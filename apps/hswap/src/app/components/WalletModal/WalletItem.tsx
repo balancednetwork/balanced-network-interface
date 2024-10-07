@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Typography } from '@/app/theme';
+import { Typography } from '@/app/components2/Typography';
 
 import { ChainLogo } from '@/app/components2/ChainLogo';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
@@ -66,9 +66,7 @@ const WalletItem = ({ name, xChainType, logo, description, border, xChains, swit
     <WalletItemGrid className={border ? 'border-bottom' : ''}>
       <MainLogo>{logo}</MainLogo>
       <div>
-        <Typography className="pl-7 sm:pl-0" fontWeight="bold" color="text" fontSize={15} mb="5px">
-          {name}
-        </Typography>
+        <Typography className="pl-7 sm:pl-0 font-bold text-base mb-1">{name}</Typography>
         <div className="flex">
           <Typography color="text1">
             {address ? <CopyableAddress account={address} copyIcon placement="right" /> : description}

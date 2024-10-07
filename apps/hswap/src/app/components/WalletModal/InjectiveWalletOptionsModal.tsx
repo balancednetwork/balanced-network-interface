@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 
 import { Flex } from 'rebass/styled-components';
 
-import { Typography } from '@/app/theme';
+import { Typography } from '@/app/components2/Typography';
 
 import { UnbreakableText, WalletOption } from '@/app/components/WalletModal/shared';
 
@@ -36,9 +36,7 @@ export const InjectiveWalletOptionsModal = ({
   return (
     <>
       <Modal open={modalOpen} onDismiss={onDismiss}>
-        <Typography textAlign="center" margin={'0 0 25px'}>
-          Connect with:
-        </Typography>
+        <Typography className="text-center mb-6">Connect with:</Typography>
         <Flex alignItems="stretch" justifyContent="space-around" flexWrap="wrap">
           {xConnectors?.map(xConnector => (
             <WalletOption key={xConnector.id} onClick={() => handleConnect(xConnector)}>

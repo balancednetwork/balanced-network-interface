@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Link } from 'react-router-dom';
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 
 import { LOCALE_LABEL, SupportedLocale } from '@/constants/locales';
 import { useLocationLinkProps } from '@/hooks/useLocationLinkProps';
@@ -54,7 +54,6 @@ export function LanguageMenuItem({
 
   if (!to) return null;
 
-  const theme = useTheme();
   return (
     <InternalLinkMenuItem
       onClick={() => {
@@ -64,7 +63,7 @@ export function LanguageMenuItem({
       to={to}
     >
       <li>{LOCALE_LABEL[locale]}</li>
-      {active && <Check opacity={0.6} size={16} color={theme.colors?.primary} />}
+      {active && <Check opacity={0.6} size={16} />}
     </InternalLinkMenuItem>
   );
 }

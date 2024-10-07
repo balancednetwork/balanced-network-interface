@@ -1,4 +1,4 @@
-import { Typography } from '@/app/theme';
+import { Typography } from '@/app/components2/Typography';
 import { Box } from 'rebass';
 import styled from 'styled-components';
 import { notificationCSS } from './ICONWallets/utils';

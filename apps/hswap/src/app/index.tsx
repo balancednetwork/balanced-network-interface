@@ -7,7 +7,6 @@ import WalletModal from '@/app/components/WalletModal';
 import ApplicationUpdater from '@/store/application/updater';
 import TransactionUpdater from '@/store/transactions/updater';
 
-import ThemeProvider from '@/app/theme';
 import { AllTransactionsUpdater } from '@/hooks/useTransactionStore';
 import { initXWagmiStore, useInitXWagmiStore } from '@/xwagmi/useXWagmiStore';
 import { AllXMessagesUpdater } from '@/xwagmi/xcall/zustand/useXMessageStore';
@@ -38,12 +37,10 @@ export function App() {
     <>
       <Updaters />
 
-      <ThemeProvider>
-        <WalletModal />
+      <WalletModal />
 
-        <Helmet titleTemplate="%s | Balanced" defaultTitle="Balanced" htmlAttributes={{ lang: i18n.language }} />
-        <RootRoutes />
-      </ThemeProvider>
+      <Helmet titleTemplate="%s | Balanced" defaultTitle="Balanced" htmlAttributes={{ lang: i18n.language }} />
+      <RootRoutes />
     </>
   );
 }

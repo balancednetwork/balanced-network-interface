@@ -300,30 +300,6 @@ export const xMessageActions = {
   remove: (id: string) => {
     useXMessageStore.getState().remove(id);
   },
-
-  getXMessageStatusDescription: (xMessageId: string) => {
-    const xMessage = useXMessageStore.getState().get(xMessageId);
-    if (!xMessage) {
-      return 'xMessage not found.';
-    }
-    switch (xMessage.status) {
-      case XMessageStatus.REQUESTED:
-      case XMessageStatus.AWAITING_CALL_MESSAGE_SENT:
-      case XMessageStatus.CALL_MESSAGE_SENT:
-      case XMessageStatus.CALL_MESSAGE:
-        if (xMessage.isPrimary) {
-          return `Confirming transaction on ${getNetworkDisplayName(xMessage.sourceChainId)}...`;
-        } else {
-          return `Finalising transaction on ${getNetworkDisplayName(xMessage.destinationChainId)}...`;
-        }
-      case XMessageStatus.FAILED:
-        return `Transfer failed.`;
-      case XMessageStatus.CALL_EXECUTED:
-        return `Complete.`;
-      default:
-        return `Unknown state.`;
-    }
-  },
 };
 
 export const useFetchXMessageEvents = (xMessage?: XMessage) => {

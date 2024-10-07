@@ -4,7 +4,7 @@ import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
 
-import { Typography } from '@/app/theme';
+import { Typography } from '@/app/components2/Typography';
 import useKeyPress from '@/hooks/useKeyPress';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { formatValue } from '@/utils/formatter';
@@ -68,7 +68,7 @@ const Wallet = ({ close }: WalletProps) => {
   return (
     <div className="w-[400px] max-w-[calc(100vw - 4px)]">
       <div className="text-sm pt-6 pr-6 pb-4 pl-6 flex flex-wrap">
-        <Typography variant="h2" mr={'auto'}>
+        <Typography variant="h2" className="mr-auto">
           <Trans>Wallet</Trans>
         </Typography>
 
@@ -76,7 +76,7 @@ const Wallet = ({ close }: WalletProps) => {
           <Button onClick={handleChangeWallet} variant="link">
             <Trans>Manage wallets</Trans>
           </Button>
-          <Typography padding={'0px 5px'}>{' | '}</Typography>
+          <Typography className="p-[0px_5px]">{' | '}</Typography>
           <Button onClick={handleDisconnectWallet} variant="link">
             <Trans>Sign out</Trans>
           </Button>
@@ -118,9 +118,7 @@ const Wallet = ({ close }: WalletProps) => {
             ),
           )}
           {Object.keys(sortedFilteredBalances).length === 0 && searchQuery !== '' && (
-            <Typography padding={'30px 0 15px 0'} textAlign={'center'}>
-              No assets found
-            </Typography>
+            <Typography className="text-center py-4 px-0">No assets found</Typography>
           )}
         </List>
 
@@ -128,9 +126,7 @@ const Wallet = ({ close }: WalletProps) => {
           <div className="px-6">
             <div className="border-top pt-6 flex justify-between">
               <HeaderText>Total</HeaderText>
-              <Typography fontWeight="bold" color="text">
-                {formatValue(walletTotal.toFixed())}
-              </Typography>
+              <Typography className="text-right">{formatValue(walletTotal.toFixed())}</Typography>
             </div>
           </div>
         )}

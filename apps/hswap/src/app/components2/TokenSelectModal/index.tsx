@@ -1,22 +1,17 @@
 import * as React from 'react';
 
-// import { filterTokens, useSortedTokensByQuery } from '@/app/components/SearchModal/filtering';
 import { useTokenComparator } from '@/app/components/SearchModal/sorting';
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 import { Modal } from '@/app/components2/Modal';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { ScrollArea } from '@/components/ui/scroll-area';
-// import useDebounce from '@/hooks/useDebounce';
 import { allXTokens } from '@/xwagmi/constants/xTokens';
 import { useMemo, useState } from 'react';
 import { xChains } from '@/xwagmi/constants/xChains';
-import XChainSelect from '@/app/pages/trade/xswap/_components/XChainSelect';
 import { XChainId } from '@balancednetwork/sdk-core';
+import XChainSelect from '../XChainSelect';
 
 export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, selectedCurrency }) {
-  // const [searchQuery, setSearchQuery] = React.useState<string>('');
-  // const debouncedQuery = useDebounce(searchQuery, 200);
-
   const [invertSearchOrder] = useState<boolean>(false);
 
   const tokenComparator = useTokenComparator(account, invertSearchOrder);
@@ -24,15 +19,9 @@ export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, s
   // TODO: hide aARCH token temporarily
   const allTokens = allXTokens.filter(token => token.symbol !== 'aARCH');
 
-  // const filteredTokens = useMemo(() => {
-  //   return filterTokens(allTokens, debouncedQuery);
-  // }, [allTokens, debouncedQuery]);
-
   const sortedTokens = useMemo(() => {
     return allTokens.sort(tokenComparator);
   }, [allTokens, tokenComparator]);
-
-  // const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery, false);
 
   const [xChainId, setXChainId] = useState<XChainId>('0x1.icon');
 

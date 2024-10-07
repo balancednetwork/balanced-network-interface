@@ -8,7 +8,6 @@ import { useMedia } from 'react-use';
 
 import { DropdownPopper } from '@/app/components/Popover';
 import Logo from '@/app/components2/Logo';
-import { Typography } from '@/app/theme';
 import CopyIcon from '@/assets/icons/copy.svg';
 import WalletIcon from '@/assets/icons/wallet.svg';
 import { useWalletModalToggle } from '@/store/application/hooks';
@@ -19,6 +18,8 @@ import { useSignedInWallets } from '@/hooks/useWallets';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { MouseoverTooltip } from '../Tooltip';
 import Wallet from '../Wallet';
+import { Typography } from '@/app/components2/Typography';
+import { cn } from '@/lib/utils';
 
 const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
 
@@ -89,9 +90,8 @@ export default function Header(props: { className?: string }) {
           <div className="mr-4 sm:mr-20">
             <Logo />
           </div>
-
           {NETWORK_ID !== NetworkId.MAINNET && (
-            <Typography variant="h3" color="alert" fontSize={upSmall ? 20 : 9}>
+            <Typography variant="h3" className={cn(upSmall ? 'text-[20px]' : 'text-9px', 'text-red-500')}>
               {CHAIN_INFO[NETWORK_ID].name}
             </Typography>
           )}
@@ -112,7 +112,7 @@ export default function Header(props: { className?: string }) {
                 <>
                   {wallets.length > 1 ? (
                     <>
-                      <Typography variant="p" textAlign="right">
+                      <Typography variant="p" className="text-right">
                         <Trans>Multi-chain wallet</Trans>
                       </Typography>
                       <div className="flex justify-end items-end">
@@ -130,7 +130,7 @@ export default function Header(props: { className?: string }) {
                     </>
                   ) : (
                     <>
-                      <Typography variant="p" textAlign="right">
+                      <Typography variant="p" className="text-right">
                         {wallets[0].xChainId
                           ? t`${xChainMap[wallets[0].xChainId].name} wallet`
                           : t`Unsupported network`}

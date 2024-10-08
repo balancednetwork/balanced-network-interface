@@ -1,11 +1,8 @@
 import { getXTokenBySymbol, isXToken } from '@/utils/xTokens';
-import { DEFAULT_TOKEN_CHAIN } from '@/xwagmi/constants/xTokens';
+import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XChainId } from '@/xwagmi/types';
 import { Currency } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
-
-import { NETWORK_ID } from '@/constants/config';
-import { BALN, bnUSD } from '@/constants/tokens';
 
 // !TODO: use one Field for swap and bridge panel
 export enum Field {
@@ -31,21 +28,24 @@ export interface SwapState {
   readonly recipient: string | null;
 }
 
+const Sui_Sui = xTokenMap['sui'][0];
+const ETH_BASE = xTokenMap['0x2105.base'][0];
+
 export const INITIAL_SWAP = {
-  base: BALN[NETWORK_ID],
-  quote: bnUSD[NETWORK_ID],
+  base: Sui_Sui,
+  quote: ETH_BASE,
 };
 
 const initialState: SwapState = {
   independentField: Field.INPUT,
   typedValue: '',
   [Field.INPUT]: {
-    xChainId: '0x1.icon',
+    xChainId: 'sui',
     currency: INITIAL_SWAP.base,
     percent: 0,
   },
   [Field.OUTPUT]: {
-    xChainId: '0x1.icon',
+    xChainId: '0x2105.base',
     currency: INITIAL_SWAP.quote,
   },
   recipient: null,

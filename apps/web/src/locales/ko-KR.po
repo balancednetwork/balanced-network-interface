@@ -381,6 +381,10 @@ msgstr "복사 됨"
 msgid "wallet"
 msgstr ""
 
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+msgid "60% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
+msgstr ""
+
 #: src/app/pages/vote/_components/ProposalsPanel/index.tsx
 #: src/app/pages/vote/proposals/page.tsx
 msgid "Proposals"
@@ -1765,8 +1769,8 @@ msgid "The BALN APR is calculated from the USD value of BALN rewards allocated t
 msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
-msgid "47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
-msgstr "일일 BALN 인플레이션의 47%는 유동성을 장려하기 위해 사용됩니다. bBALN 보유자는 \"라이브 보팅\"를 통해 각 유동성 풀에 할당된 금액을 조정할 수 있습니다."
+#~ msgid "47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
+#~ msgstr "일일 BALN 인플레이션의 47%는 유동성을 장려하기 위해 사용됩니다. bBALN 보유자는 \"라이브 보팅\"를 통해 각 유동성 풀에 할당된 금액을 조정할 수 있습니다."
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Transferred {0} {1} to Archway."

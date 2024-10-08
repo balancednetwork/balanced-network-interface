@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Typography } from '@/app/theme';
+import { Typography } from '@/app/components2/Typography';
 import ExternalIcon from '@/assets/icons/external.svg';
 import FailureIcon from '@/assets/icons/failure.svg';
 import PendingIcon from '@/assets/icons/pending.svg';
@@ -29,7 +29,7 @@ const NotificationPending = ({ summary }: NotificationProps) => {
       </TransactionStatus>
 
       <TransactionInfo>
-        <Typography variant="p" fontWeight={500}>
+        <Typography variant="p" className="font-[500]">
           {summary}
         </Typography>
       </TransactionInfo>
@@ -47,7 +47,7 @@ const NotificationSuccess = ({ summary, redirectOnSuccess }: NotificationProps) 
         <SuccessIcon width={20} height={20} />
       </TransactionStatus>
       <TransactionInfo>
-        <Typography variant="p" fontWeight={500}>
+        <Typography variant="p" className="font-[500]">
           {summary}
         </Typography>
       </TransactionInfo>
@@ -73,7 +73,7 @@ const NotificationError = ({ failureReason, generic, title }: NotificationProps)
 
       <TransactionInfo flexDirection="column">
         <TransactionInfoBody>
-          <Typography variant="p" fontWeight={500}>
+          <Typography variant="p" className="font-[500]">
             {title ? (
               <Trans>{title}</Trans>
             ) : arbitraryCallsTestExecutionPassed ? (
@@ -84,7 +84,7 @@ const NotificationError = ({ failureReason, generic, title }: NotificationProps)
           </Typography>
         </TransactionInfoBody>
         <TransactionInfoBody>
-          <Typography variant="p" fontWeight={500} color={generic ? 'primaryBright' : 'alert'}>
+          <Typography variant="p" className="font-[500]" color={generic ? 'primaryBright' : 'alert'}>
             {failureReason && !arbitraryCallsTestExecutionPassed && failureReason}
             {generic && <ExternalIcon width="15" height="15" style={{ marginLeft: 7, marginTop: -3 }} />}
           </Typography>

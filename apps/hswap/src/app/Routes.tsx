@@ -3,9 +3,9 @@ import React, { useEffect } from 'react';
 import { MessageDescriptor } from '@lingui/core';
 import { defineMessage } from '@lingui/macro';
 import { Helmet } from 'react-helmet-async';
-import { Outlet, Route, Routes, redirect, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 
-import { DefaultLayout } from '@/app/components/Layout';
+import { DefaultLayout } from '@/app/components2/Layout';
 
 import { TradePageLayout } from './pages/trade/layout';
 import { TradePage } from './pages/trade/xswap/page';

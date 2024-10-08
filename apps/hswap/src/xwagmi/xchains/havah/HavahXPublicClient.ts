@@ -120,10 +120,6 @@ export class HavahXPublicClient extends XPublicClient {
     return events;
   }
 
-  getScanBlockCount() {
-    return 1n;
-  }
-
   async getEventLogs(
     xChainId: XChainId,
     { startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint },

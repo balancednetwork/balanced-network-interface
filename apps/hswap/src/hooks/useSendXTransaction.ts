@@ -102,83 +102,42 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
   const finalDestinationChainId = direction.to;
   const primaryDestinationChainId = sourceChainId === iconChainId ? finalDestinationChainId : iconChainId;
 
-  // biome-ignore lint/correctness/noConstantCondition: <explanation>
-  if (true || direction.to === 'sui') {
-    const xTransaction: XTransaction = {
+  const primaryDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(primaryDestinationChainId) - 20n;
+  const finalDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(finalDestinationChainId);
+
+  const xTransaction: XTransaction = {
+    id: `${sourceChainId}/${sourceTransactionHash}`,
+    type: xTransactionInput.type,
+    status: XTransactionStatus.pending,
+    secondaryMessageRequired: primaryDestinationChainId !== finalDestinationChainId,
+    sourceChainId: sourceChainId,
+    finalDestinationChainId: finalDestinationChainId,
+    finalDestinationChainInitialBlockHeight,
+    attributes: {
+      descriptionAction,
+      descriptionAmount,
+    },
+  };
+  xTransactionActions.add(xTransaction);
+
+  if (xTransactionInput.type !== XTransactionType.SWAP_ON_ICON) {
+    const xMessage: XMessage = {
       id: `${sourceChainId}/${sourceTransactionHash}`,
-      type: xTransactionInput.type,
-      status: XTransactionStatus.pending,
-      secondaryMessageRequired: primaryDestinationChainId !== finalDestinationChainId,
+      xTransactionId: xTransaction.id,
       sourceChainId: sourceChainId,
-      finalDestinationChainId: finalDestinationChainId,
-      finalDestinationChainInitialBlockHeight: 0n,
-      attributes: {
-        descriptionAction,
-        descriptionAmount,
-      },
+      destinationChainId: primaryDestinationChainId,
+      sourceTransactionHash,
+      status: XMessageStatus.REQUESTED,
+      events: {},
+      destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
+      isPrimary: true,
+      createdAt: Date.now(),
+      useXCallScanner: primaryDestinationChainId === 'sui' || sourceChainId === 'sui',
     };
-
-    xTransactionActions.add(xTransaction);
-
-    if (xTransactionInput.type !== XTransactionType.SWAP_ON_ICON) {
-      const xMessage: XMessage = {
-        id: `${sourceChainId}/${sourceTransactionHash}`,
-        xTransactionId: xTransaction.id,
-        sourceChainId: sourceChainId,
-        destinationChainId: primaryDestinationChainId,
-        sourceTransactionHash,
-
-        status: XMessageStatus.REQUESTED,
-        events: {},
-        destinationChainInitialBlockHeight: 0n,
-        isPrimary: true,
-        useXCallScanner: true,
-        createdAt: Date.now(),
-      };
-
-      xMessageActions.add(xMessage);
-    }
-    return xTransaction.id;
-  } else {
-    const primaryDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(primaryDestinationChainId) - 20n;
-    const finalDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(finalDestinationChainId);
-
-    const xTransaction: XTransaction = {
-      id: `${sourceChainId}/${sourceTransaction.hash}`,
-      type: xTransactionInput.type,
-      status: XTransactionStatus.pending,
-      secondaryMessageRequired: primaryDestinationChainId !== finalDestinationChainId,
-      sourceChainId: sourceChainId,
-      finalDestinationChainId: finalDestinationChainId,
-      finalDestinationChainInitialBlockHeight,
-      attributes: {
-        descriptionAction,
-        descriptionAmount,
-      },
-    };
-
-    xTransactionActions.add(xTransaction);
-
-    if (xTransactionInput.type !== XTransactionType.SWAP_ON_ICON) {
-      const xMessage: XMessage = {
-        id: `${sourceChainId}/${sourceTransaction.hash}`,
-        xTransactionId: xTransaction.id,
-        sourceChainId: sourceChainId,
-        destinationChainId: primaryDestinationChainId,
-        // @ts-ignore
-        sourceTransactionHash,
-
-        status: XMessageStatus.REQUESTED,
-        events: {},
-        destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
-        isPrimary: true,
-        createdAt: Date.now(),
-      };
-
-      xMessageActions.add(xMessage);
-    }
-    return xTransaction.id;
+    xMessageActions.add(xMessage);
   }
+
+  return xTransaction.id;
 };
 
 export const useSendXTransaction = () => {

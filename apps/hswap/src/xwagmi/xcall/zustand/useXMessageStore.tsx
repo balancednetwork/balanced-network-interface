@@ -129,10 +129,11 @@ export const useXMessageStore = create<XMessageStore>()(
           state.messages[id] = newXMessage;
         });
 
-        if (xMessage.status === XMessageStatus.AWAITING_CALL_MESSAGE_SENT) {
-          const newStatus = deriveStatus(newEvents);
-          get().updateStatus(id, newStatus);
-        }
+        // TODO: confirm if an additional check is needed
+        // if (xMessage.status === XMessageStatus.AWAITING_CALL_MESSAGE_SENT) {
+        const newStatus = deriveStatus(newEvents);
+        get().updateStatus(id, newStatus);
+        // }
       },
       remove: (id: string) => {
         set(state => {
@@ -206,7 +207,7 @@ export const useXMessageStore = create<XMessageStore>()(
       },
 
       createSecondaryMessage: (xTransaction: XTransaction, primaryMessage: XMessage) => {
-        if (primaryMessage.useXCallScanner) {
+        if (xTransaction.finalDestinationChainId === 'sui') {
           if (!primaryMessage.destinationTransactionHash) {
             throw new Error('destinationTransactionHash is undefined'); // it should not happen
           }
@@ -298,30 +299,6 @@ export const xMessageActions = {
 
   remove: (id: string) => {
     useXMessageStore.getState().remove(id);
-  },
-
-  getXMessageStatusDescription: (xMessageId: string) => {
-    const xMessage = useXMessageStore.getState().get(xMessageId);
-    if (!xMessage) {
-      return 'xMessage not found.';
-    }
-    switch (xMessage.status) {
-      case XMessageStatus.REQUESTED:
-      case XMessageStatus.AWAITING_CALL_MESSAGE_SENT:
-      case XMessageStatus.CALL_MESSAGE_SENT:
-      case XMessageStatus.CALL_MESSAGE:
-        if (xMessage.isPrimary) {
-          return `Confirming transaction on ${getNetworkDisplayName(xMessage.sourceChainId)}...`;
-        } else {
-          return `Finalising transaction on ${getNetworkDisplayName(xMessage.destinationChainId)}...`;
-        }
-      case XMessageStatus.FAILED:
-        return `Transfer failed.`;
-      case XMessageStatus.CALL_EXECUTED:
-        return `Complete.`;
-      default:
-        return `Unknown state.`;
-    }
   },
 };
 
@@ -444,10 +421,8 @@ const XMessageUpdater2 = ({ xMessage }: { xMessage: XMessage }) => {
 
   useEffect(() => {
     if (messageWS) {
-      console.log('messageWS', messageWS);
       xMessageActions.updateXMessageXCallScannerData(xMessage.id, messageWS);
     } else if (message && !isLoading) {
-      console.log('message', message);
       xMessageActions.updateXMessageXCallScannerData(xMessage.id, message);
     }
   }, [messageWS, message, isLoading, xMessage.id]);

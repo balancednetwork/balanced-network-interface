@@ -46,6 +46,7 @@ module.exports = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        warning: 'hsl(var(--warning))',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -61,10 +62,20 @@ module.exports = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
+        wiggle: {
+          '0%': { transform: 'translate3d(0, 0, 0)' },
+          '10%': { transform: 'translate3d(-3px, 0, 0)' },
+          '30%': { transform: 'translate3d(3px, 0, 0)' },
+          '50%': { transform: 'translate3d(-2px, 0, 0)' },
+          '70%': { transform: 'translate3d(2px, 0, 0)' },
+          '90%': { transform: 'translate3d(-1px, 0, 0)' },
+          '100%': { transform: 'translate3d(0, 0, 0)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        wiggle: 'wiggle 0.5s forwards',
       },
     },
   },

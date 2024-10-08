@@ -1,4 +1,4 @@
-import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
+import { handleConnectWallet } from '@/app/components/WalletConnectModal/WalletItem';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';

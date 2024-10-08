@@ -3,7 +3,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 
-import WalletModal from '@/app/components/WalletModal';
+import WalletConnectModal from '@/app/components/WalletConnectModal';
 import ApplicationUpdater from '@/store/application/updater';
 import TransactionUpdater from '@/store/transactions/updater';
 
@@ -37,7 +37,7 @@ export function App() {
     <>
       <Updaters />
 
-      <WalletModal />
+      <WalletConnectModal />
 
       <Helmet titleTemplate="%s | Balanced" defaultTitle="Balanced" htmlAttributes={{ lang: i18n.language }} />
       <RootRoutes />

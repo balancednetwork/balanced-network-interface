@@ -1,4 +1,3 @@
-import { Typography } from '@/app/components2/Typography';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
 import { xChainMap } from '@/xwagmi/constants/xChains';
@@ -6,8 +5,8 @@ import { XToken } from '@balancednetwork/sdk-core';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import React from 'react';
-import CurrencyLogoWithNetwork from '../../components2/CurrencyLogoWithNetwork';
-import { AssetSymbol, BalanceAndValueWrap, DataText, ListItem } from './styledComponents';
+import { TableCell, TableRow } from '@/components/ui/table';
+import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 
 type SingleChainBalanceItemProps = {
   balance: CurrencyAmount<XToken>;
@@ -20,18 +19,16 @@ const SingleChainBalanceItem = ({ balance, isLast = false, isNested = false }: S
   const rates = useRatesWithOracle();
   const value = new BigNumber(balance.toFixed()).times(rates?.[currency.symbol] || 0);
   return (
-    <ListItem $border={!isNested && !isLast}>
-      <AssetSymbol>
+    <TableRow>
+      <TableCell className="font-medium flex items-center gap-2">
         <CurrencyLogoWithNetwork currency={currency} size={isNested ? '20px' : '24px'} />
-        <Typography className={isNested ? 'text-[14px] pl-[5px]' : 'text-base font-bold pl-0'}>
-          {isNested ? xChainMap[currency.xChainId].name : currency.symbol}
-        </Typography>
-      </AssetSymbol>
-      <BalanceAndValueWrap>
-        <DataText as="div">{formatBalance(balance?.toFixed(), rates?.[currency.symbol]?.toFixed())}</DataText>
-        <DataText as="div">{!value ? '-' : formatValue(value.toFixed())}</DataText>
-      </BalanceAndValueWrap>
-    </ListItem>
+        <div>{isNested ? xChainMap[currency.xChainId].name : currency.symbol}</div>
+      </TableCell>
+      <TableCell className="text-right">
+        {formatBalance(balance?.toFixed(), rates?.[currency.symbol]?.toFixed())}
+      </TableCell>
+      <TableCell className="text-right">{!value ? '-' : formatValue(value.toFixed())}</TableCell>
+    </TableRow>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import { Trans, t } from '@lingui/macro';
 import { Placement } from '@popperjs/core';
@@ -55,6 +55,12 @@ export const CopyableAddress = ({
 export default function Header(props: { className?: string }) {
   const { className } = props;
   const wallets = useSignedInWallets();
+
+  useEffect(() => {
+    if (wallets.length === 0) {
+      modalActions.closeModal(MODAL_ID.WALLET_MODAL);
+    }
+  }, [wallets]);
 
   return (
     <header className={className}>

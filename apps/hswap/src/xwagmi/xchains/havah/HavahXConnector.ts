@@ -1,5 +1,6 @@
 import { XConnector } from '@/xwagmi/core/XConnector';
 import { XAccount } from '@/xwagmi/types';
+import HavahIcon from '@/xwagmi/assets/wallets/havah.svg?inline';
 
 interface AccountResultType {
   address: string;
@@ -35,5 +36,9 @@ export class HavahXConnector extends XConnector {
     if (havah?.disconnect) {
       havah.disconnect();
     }
+  }
+
+  public get icon() {
+    return HavahIcon;
   }
 }

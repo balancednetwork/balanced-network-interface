@@ -1,9 +1,12 @@
 import React from 'react';
 
-import { Flex, Box, Text, Link } from 'rebass/styled-components';
+import { Box, Flex, Link, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
+import Coingecko from '@/assets/icons/coingecko-white.svg';
+import CoinMarketCap from '@/assets/icons/coinmarketcap.svg';
 import Discord from '@/assets/icons/discord.svg';
+import GitHub from '@/assets/icons/github.svg';
 import Logo from '@/assets/icons/logo.svg';
 import Reddit from '@/assets/icons/reddit.svg';
 import Twitter from '@/assets/icons/twitter.svg';
@@ -111,10 +114,15 @@ const FooterSocials = styled(Flex)`
 const SocialsList = styled(Flex)`
   justify-content: flex-end;
   margin-left: auto;
+  margin-right: -9px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     justify-content: center;
     margin: 0 0 15px 0; 
+  `}
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    flex-wrap: wrap;
   `}
 
   a {
@@ -149,6 +157,9 @@ const Footer = () => {
             <AnimatedLink className="top-right-menu-item" as="a" href={LINKS.howitworks}>
               How-to
             </AnimatedLink>
+            <AnimatedLink className="top-right-menu-item" as="a" href={LINKS.demo}>
+              Demo
+            </AnimatedLink>
             <AnimatedLink className="top-right-menu-item" as="a" href={LINKS.stats} active={true}>
               Stats
             </AnimatedLink>
@@ -163,20 +174,17 @@ const Footer = () => {
             </Button>
           </FooterNavTop>
           <FooterNavBottom>
-            <AnimatedLink as="a" href={LINKS.demo}>
-              Demo
-            </AnimatedLink>
             <AnimatedLink as="a" href={LINKS.docs}>
               Docs
             </AnimatedLink>
             <AnimatedLink as="a" href={LINKS.stablecoin}>
               Stablecoin
             </AnimatedLink>
-            <AnimatedLink as="a" href={LINKS.nfts}>
-              NFTs
-            </AnimatedLink>
             <AnimatedLink as="a" href={LINKS.reviews}>
               Reviews
+            </AnimatedLink>
+            <AnimatedLink as="a" href={LINKS.nfts}>
+              NFTs
             </AnimatedLink>
           </FooterNavBottom>
         </FooterNav>
@@ -198,11 +206,20 @@ const Footer = () => {
           <SocialButton as="a" href={SOCIAL_LINKS.twitter}>
             <Twitter height={16} />
           </SocialButton>
-          <SocialButton as="a" href={SOCIAL_LINKS.reddit}>
-            <Reddit height={16} />
-          </SocialButton>
-          <SocialButton style={{ marginRight: 0 }} as="a" href={SOCIAL_LINKS.discord}>
+          <SocialButton as="a" href={SOCIAL_LINKS.discord}>
             <Discord height={16} />
+          </SocialButton>
+          <SocialButton as="a" href={SOCIAL_LINKS.reddit}>
+            <Reddit height={18} />
+          </SocialButton>
+          <SocialButton as="a" href={LINKS.github}>
+            <GitHub height={22} />
+          </SocialButton>
+          <SocialButton as="a" href={LINKS.coingecko}>
+            <Coingecko height={22} />
+          </SocialButton>
+          <SocialButton as="a" href={LINKS.coinmarketcap}>
+            <CoinMarketCap height={22} />
           </SocialButton>
         </SocialsList>
       </FooterSocials>

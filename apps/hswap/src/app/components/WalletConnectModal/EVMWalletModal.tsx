@@ -32,7 +32,7 @@ export const EVMWalletModal = ({ id = MODAL_ID.EVM_WALLET_OPTIONS_MODAL }) => {
 
   return (
     <>
-      <Modal open={modalOpen} onDismiss={onDismiss}>
+      <Modal open={modalOpen} onDismiss={onDismiss} dialogClassName="max-w-[450px]">
         {xConnectors.length > 0 ? (
           <>
             <div className="text-center mb-6">Connect with:</div>

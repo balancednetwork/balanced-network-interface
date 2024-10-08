@@ -33,7 +33,7 @@ export const InjectiveWalletOptionsModal = ({
 
   return (
     <>
-      <Modal open={modalOpen} onDismiss={onDismiss}>
+      <Modal open={modalOpen} onDismiss={onDismiss} dialogClassName="max-w-[450px]">
         <div className="text-center mb-6">Connect with:</div>
         <Flex alignItems="stretch" justifyContent="space-around" flexWrap="wrap">
           {xConnectors?.map(xConnector => (

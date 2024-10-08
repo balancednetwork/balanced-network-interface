@@ -5,7 +5,6 @@ import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import React from 'react';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
-import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import CurrencyLogo from '@/app/components2/CurrencyLogo';
 
 type MultiChainBalanceItemProps = {
@@ -21,28 +20,19 @@ const MultiChainBalanceItem = ({ balances }: MultiChainBalanceItemProps) => {
 
   return (
     <>
-      <TableRow>
-        <TableCell className="font-medium flex items-center gap-2">
-          <CurrencyLogo currency={currency} />
-          <div>{currency.symbol}</div>
-        </TableCell>
-        <TableCell className="text-right">
-          {formatBalance(total?.toFixed(), rates?.[currency.symbol]?.toFixed())}
-        </TableCell>
-        <TableCell className="text-right">{!value ? '-' : formatValue(value.toFixed())}</TableCell>
-      </TableRow>
+      <div className="font-medium flex items-center gap-2">
+        <CurrencyLogo currency={currency} />
+        <div>{currency.symbol}</div>
+      </div>
+      <div className="text-right">{formatBalance(total?.toFixed(), rates?.[currency.symbol]?.toFixed())}</div>
+      <div className="text-right">{!value ? '-' : formatValue(value.toFixed())}</div>
 
-      <TableRow>
-        <TableCell colSpan={3}>
-          <Table>
-            <TableBody>
-              {balances.map(balance => (
-                <SingleChainBalanceItem key={balance.currency.address} balance={balance} />
-              ))}
-            </TableBody>
-          </Table>
-        </TableCell>
-      </TableRow>
+      <div className="relative col-span-3 grid grid-cols-3 gap-4 bg-[#221542] p-3 rounded-xl">
+        {balances.map(balance => (
+          <SingleChainBalanceItem key={balance.currency.address} balance={balance} isNested={true} />
+        ))}
+        <div className="absolute left-[48px] transform -translate-x-1/2 top-[-10px] w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[10px] border-[#221542]"></div>
+      </div>
     </>
   );
 };

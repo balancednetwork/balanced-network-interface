@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useEffect } from 'react';
 
 import { Trans, t } from '@lingui/macro';
 import { Placement } from '@popperjs/core';
@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { MouseoverTooltip } from '../Tooltip';
 import WalletModal from '../WalletModal';
-import { Typography } from '@/app/components2/Typography';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 
 export const CopyableAddress = ({
@@ -38,16 +37,16 @@ export const CopyableAddress = ({
       closeAfterDelay={closeAfterDelay}
       zIndex={9999}
     >
-      <Typography
-        className="hover:text-[#2fccdc] cursor-pointer flex"
+      <span
+        className="text-[#D4C5F9] cursor-pointer flex text-body font-[500]"
         onMouseLeave={() => {
           setTimeout(() => updateCopyState(false), 250);
         }}
         onClick={() => copyAddress(account)}
       >
-        {shortenAddress(account)}
-        {copyIcon && <CopyIcon width="13" height="13" style={{ marginLeft: 7, marginRight: 0, marginTop: -4 }} />}
-      </Typography>
+        {shortenAddress(account, 4)}
+        {/* {copyIcon && <CopyIcon width="13" height="13" style={{ marginLeft: 7, marginRight: 0, marginTop: -4 }} />} */}
+      </span>
     </MouseoverTooltip>
   ) : null;
 };
@@ -55,6 +54,12 @@ export const CopyableAddress = ({
 export default function Header(props: { className?: string }) {
   const { className } = props;
   const wallets = useSignedInWallets();
+
+  useEffect(() => {
+    if (wallets.length === 0) {
+      modalActions.closeModal(MODAL_ID.WALLET_MODAL);
+    }
+  }, [wallets]);
 
   return (
     <header className={className}>

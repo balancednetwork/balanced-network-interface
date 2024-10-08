@@ -6,6 +6,7 @@ import { Modal } from '@/app/components2/Modal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import XTokenList from './XTokenList';
 import { PowerIcon } from 'lucide-react';
+import HistoryItemList from './HistoryItemList';
 
 const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
   const open = useModalOpen(modalId);
@@ -54,10 +55,14 @@ const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="tokens" className="mt-4">
-          <XTokenList />
+          <div className="h-[500px] flex flex-col justify-between">
+            <XTokenList />
+          </div>
         </TabsContent>
         <TabsContent value="history" className="mt-4">
-          <div>History</div>
+          <div className="h-[500px] flex flex-col">
+            <HistoryItemList />
+          </div>
         </TabsContent>
       </Tabs>
     </Modal>

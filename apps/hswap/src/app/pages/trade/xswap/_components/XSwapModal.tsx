@@ -277,14 +277,6 @@ const XSwapModal = ({
 
         {/* Error message displays if there is an error in the swap flow */}
         {showError && <div className="text-red-500 text-center">{xSwapErrorMessage || errorMessage}</div>}
-
-        {/* {!isProcessing && !gasChecker.hasEnoughGas && (
-        <Flex justifyContent="center" paddingY={2}>
-          <Typography maxWidth="320px" color="alert" textAlign="center">
-            {gasChecker.errorMessage}
-          </Typography>
-        </Flex>
-      )} */}
       </div>
     </Modal>
   );

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import { Trans, t } from '@lingui/macro';
 import { Placement } from '@popperjs/core';
@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { MouseoverTooltip } from '../Tooltip';
 import WalletModal from '../WalletModal';
-import { Typography } from '@/app/components2/Typography';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 
 export const CopyableAddress = ({
@@ -38,7 +37,7 @@ export const CopyableAddress = ({
       closeAfterDelay={closeAfterDelay}
       zIndex={9999}
     >
-      <Typography
+      <span
         className="hover:text-[#2fccdc] cursor-pointer flex"
         onMouseLeave={() => {
           setTimeout(() => updateCopyState(false), 250);
@@ -47,7 +46,7 @@ export const CopyableAddress = ({
       >
         {shortenAddress(account)}
         {copyIcon && <CopyIcon width="13" height="13" style={{ marginLeft: 7, marginRight: 0, marginTop: -4 }} />}
-      </Typography>
+      </span>
     </MouseoverTooltip>
   ) : null;
 };

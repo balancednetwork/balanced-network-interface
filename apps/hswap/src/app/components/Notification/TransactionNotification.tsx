@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Typography } from '@/app/components2/Typography';
 import ExternalIcon from '@/assets/icons/external.svg';
 import FailureIcon from '@/assets/icons/failure.svg';
 import PendingIcon from '@/assets/icons/pending.svg';
@@ -29,9 +28,7 @@ const NotificationPending = ({ summary }: NotificationProps) => {
       </TransactionStatus>
 
       <TransactionInfo>
-        <Typography variant="p" className="font-[500]">
-          {summary}
-        </Typography>
+        <span className="font-[500]">{summary}</span>
       </TransactionInfo>
     </NotificationContainer>
   );
@@ -47,9 +44,7 @@ const NotificationSuccess = ({ summary, redirectOnSuccess }: NotificationProps) 
         <SuccessIcon width={20} height={20} />
       </TransactionStatus>
       <TransactionInfo>
-        <Typography variant="p" className="font-[500]">
-          {summary}
-        </Typography>
+        <span className="font-[500]">{summary}</span>
       </TransactionInfo>
     </NotificationContainer>
   );
@@ -73,7 +68,7 @@ const NotificationError = ({ failureReason, generic, title }: NotificationProps)
 
       <TransactionInfo flexDirection="column">
         <TransactionInfoBody>
-          <Typography variant="p" className="font-[500]">
+          <span className="font-[500]">
             {title ? (
               <Trans>{title}</Trans>
             ) : arbitraryCallsTestExecutionPassed ? (
@@ -81,13 +76,13 @@ const NotificationError = ({ failureReason, generic, title }: NotificationProps)
             ) : (
               <Trans>Couldn't complete your transaction.</Trans>
             )}
-          </Typography>
+          </span>
         </TransactionInfoBody>
         <TransactionInfoBody>
-          <Typography variant="p" className="font-[500]" color={generic ? 'primaryBright' : 'alert'}>
+          <span className="font-[500]" color={generic ? 'primaryBright' : 'alert'}>
             {failureReason && !arbitraryCallsTestExecutionPassed && failureReason}
             {generic && <ExternalIcon width="15" height="15" style={{ marginLeft: 7, marginTop: -3 }} />}
-          </Typography>
+          </span>
         </TransactionInfoBody>
       </TransactionInfo>
     </NotificationContainer>

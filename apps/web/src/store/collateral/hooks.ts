@@ -581,6 +581,8 @@ export function useUserPositionsData(): UseQueryResult<XPositionsRecord[]> {
   const borrowedAmounts = useBorrowedAmounts();
   const allWallets = useSignedInWallets();
   const xWallet = useCrossChainWalletBalances();
+  const prices = useRatesWithOracle();
+  const MIN_VALUE_TO_SHOW_POTENTIAL_POSITION = 1;
 
   const createDepositAmount = (token: Token, amount: BigNumber) =>
     CurrencyAmount.fromRawAmount(token, amount.times(10 ** token.decimals).toFixed(0));
@@ -603,7 +605,7 @@ export function useUserPositionsData(): UseQueryResult<XPositionsRecord[]> {
   };
 
   return useQuery({
-    queryKey: ['xPositionsData', allWallets],
+    queryKey: ['xPositionsData', allWallets, prices],
     queryFn: () => {
       return Object.entries(
         Object.entries(xDepositedAmounts).reduce((acc, [xChainId, xChainDeposits]) => {
@@ -616,26 +618,28 @@ export function useUserPositionsData(): UseQueryResult<XPositionsRecord[]> {
               if (xToken) {
                 const depositAmount = createDepositAmount(xToken, deposit);
                 const loanAmount = getLoanAmount(symbol, xChainId as XChainId, account);
+                const availableAmount = xWallet[xChainId]?.[xToken.address];
+                const price = prices?.[symbol] || new BigNumber(0);
+                const availableValue = price.times(availableAmount?.toFixed() || 0);
 
                 if (depositAmount.greaterThan(0)) {
                   updateAccumulator(acc, symbol, xChainId as XChainId, depositAmount, loanAmount);
-                } else {
-                  const availableAmount = xWallet[xChainId]?.[xToken.address];
-                  if (availableAmount?.greaterThan(0)) {
-                    updateAccumulator(acc, symbol, xChainId as XChainId, availableAmount, new BigNumber(0), true);
-                  }
+                } else if (availableAmount && availableValue?.isGreaterThan(MIN_VALUE_TO_SHOW_POTENTIAL_POSITION)) {
+                  updateAccumulator(acc, symbol, xChainId as XChainId, availableAmount, new BigNumber(0), true);
                 }
               } else {
                 const token = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
                 if (xChainId === ICON_XCALL_NETWORK_ID && token) {
                   const depositAmount = createDepositAmount(token, deposit);
                   const loanAmount = borrowedAmounts[symbol]?.[account];
+                  const availableAmount = xWallet[xChainId]?.[token.address];
+                  const price = prices?.[symbol] || new BigNumber(0);
+                  const availableValue = price.times(availableAmount?.toFixed() || 0);
 
                   if (depositAmount.greaterThan(0)) {
                     updateAccumulator(acc, symbol, xChainId, depositAmount, loanAmount);
                   } else {
-                    const availableAmount = xWallet[xChainId]?.[token.address];
-                    if (availableAmount?.greaterThan(0)) {
+                    if (availableAmount && availableValue?.isGreaterThan(MIN_VALUE_TO_SHOW_POTENTIAL_POSITION)) {
                       updateAccumulator(acc, symbol, xChainId, availableAmount, new BigNumber(0), true);
                     }
                   }
@@ -657,7 +661,7 @@ export function useUserPositionsData(): UseQueryResult<XPositionsRecord[]> {
         })
         .filter((item): item is XPositionsRecord => Boolean(item));
     },
-    enabled: allWallets?.length > 0,
+    enabled: allWallets?.length > 0 && !!prices,
     placeholderData: keepPreviousData,
     refetchInterval: 4000,
   });

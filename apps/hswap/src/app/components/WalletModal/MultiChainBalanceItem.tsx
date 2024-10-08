@@ -1,13 +1,12 @@
-import { Typography } from '@/app/components2/Typography';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
 import { XToken } from '@balancednetwork/sdk-core';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import React from 'react';
-import CurrencyLogo from '../../components2/CurrencyLogo';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
-import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, DataText, ListItem } from './styledComponents';
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
+import CurrencyLogo from '@/app/components2/CurrencyLogo';
 
 type MultiChainBalanceItemProps = {
   balances: CurrencyAmount<XToken>[];
@@ -15,7 +14,6 @@ type MultiChainBalanceItemProps = {
 
 const MultiChainBalanceItem = ({ balances }: MultiChainBalanceItemProps) => {
   const currency = balances[0].currency;
-  const arrowRef = React.useRef<HTMLElement>(null);
   const rates = useRatesWithOracle();
 
   const total = balances.reduce((acc, balance) => acc.plus(new BigNumber(balance.toFixed())), new BigNumber(0));
@@ -23,31 +21,28 @@ const MultiChainBalanceItem = ({ balances }: MultiChainBalanceItemProps) => {
 
   return (
     <>
-      <ListItem $border={false} style={{ cursor: 'default' }}>
-        <AssetSymbol>
+      <TableRow>
+        <TableCell className="font-medium flex items-center gap-2">
           <CurrencyLogo currency={currency} />
-          <Typography className="text-base font-bold">
-            <span ref={arrowRef} style={{ display: 'inline-block' }}>
-              {currency.symbol}
-            </span>
-          </Typography>
-        </AssetSymbol>
-        <BalanceAndValueWrap>
-          <DataText as="div" style={{ opacity: 0.75, fontSize: 12 }}>
-            {formatBalance(total?.toFixed(), rates?.[currency.symbol]?.toFixed())}
-          </DataText>
-          <DataText as="div" style={{ opacity: 0.75, fontSize: 12 }}>
-            {!value ? '-' : formatValue(value.toFixed())}
-          </DataText>
-        </BalanceAndValueWrap>
-      </ListItem>
-      <BalanceBreakdown
-        $arrowPosition={arrowRef.current ? `${Math.floor(arrowRef.current.clientWidth / 2 + 23)}px` : '40px'}
-      >
-        {balances.map(balance => (
-          <SingleChainBalanceItem key={balance.currency.address} balance={balance} />
-        ))}
-      </BalanceBreakdown>
+          <div>{currency.symbol}</div>
+        </TableCell>
+        <TableCell className="text-right">
+          {formatBalance(total?.toFixed(), rates?.[currency.symbol]?.toFixed())}
+        </TableCell>
+        <TableCell className="text-right">{!value ? '-' : formatValue(value.toFixed())}</TableCell>
+      </TableRow>
+
+      <TableRow>
+        <TableCell colSpan={3}>
+          <Table>
+            <TableBody>
+              {balances.map(balance => (
+                <SingleChainBalanceItem key={balance.currency.address} balance={balance} />
+              ))}
+            </TableBody>
+          </Table>
+        </TableCell>
+      </TableRow>
     </>
   );
 };

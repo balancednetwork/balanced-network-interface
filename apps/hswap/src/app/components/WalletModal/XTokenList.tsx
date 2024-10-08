@@ -5,6 +5,8 @@ import { useRatesWithOracle } from '@/queries/reward';
 import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import MultiChainBalanceItem from './MultiChainBalanceItem';
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const XTokenList = () => {
   const _balances = useWalletBalances();
@@ -14,13 +16,30 @@ const XTokenList = () => {
 
   return (
     <ScrollArea className="h-[528px]">
-      <div className="flex flex-col gap-2">
-        {Object.values(sortedFilteredBalances)
-          .filter(balances => balances.length === 1)
-          .map((balances, index) => (
-            <SingleChainBalanceItem key={index} balance={balances[0]} />
-          ))}
-      </div>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="">Assets</TableHead>
+            <TableHead className="text-right">Balance</TableHead>
+            <TableHead className="text-right">Value</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {Object.values(sortedFilteredBalances).map((balances, index) =>
+            balances.length === 1 ? (
+              <SingleChainBalanceItem key={index} balance={balances[0]} />
+            ) : (
+              <MultiChainBalanceItem key={index} balances={balances} />
+            ),
+          )}
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TableCell colSpan={2}>Total</TableCell>
+            <TableCell className="text-right">$2,500.00</TableCell>
+          </TableRow>
+        </TableFooter>
+      </Table>
     </ScrollArea>
   );
 };

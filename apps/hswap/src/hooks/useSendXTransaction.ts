@@ -1,6 +1,3 @@
-import BigNumber from 'bignumber.js';
-
-import { formatBigNumber } from '@/utils';
 import { getXWalletClient } from '@/xwagmi/actions';
 import {
   XMessage,
@@ -17,6 +14,7 @@ import { XChainId } from '@balancednetwork/sdk-core';
 import { useSignTransaction } from '@mysten/dapp-kit';
 import { useMemo } from 'react';
 import { transactionActions } from './useTransactionStore';
+import { allXTokens } from '@/xwagmi/constants/xTokens';
 
 const iconChainId: XChainId = '0x1.icon';
 
@@ -37,59 +35,37 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  let descriptionAction, descriptionAmount;
+  let attributes = {};
   if (xTransactionInput.type === XTransactionType.BRIDGE) {
-    const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
-    const _formattedAmount = formatBigNumber(new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0), 'currency');
-    descriptionAction = `Transfer ${_tokenSymbol}`;
-    descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
-  } else if (xTransactionInput.type === XTransactionType.SWAP) {
+    const inputXToken = allXTokens.find(
+      xToken => xToken.xChainId === direction.from && xToken.symbol === xTransactionInput.inputAmount.currency.symbol,
+    );
+    const outputXToken = allXTokens.find(
+      xToken => xToken.xChainId === direction.to && xToken.symbol === xTransactionInput.inputAmount.currency.symbol,
+    );
+    const _inputAmount = xTransactionInput.inputAmount.toFixed();
+
+    attributes = { inputXToken, outputXToken, inputAmount: _inputAmount, outputAmount: _inputAmount };
+  } else if (
+    xTransactionInput.type === XTransactionType.SWAP ||
+    xTransactionInput.type === XTransactionType.SWAP_ON_ICON
+  ) {
     const { executionTrade } = xTransactionInput;
     if (executionTrade) {
-      const _inputTokenSymbol = executionTrade?.inputAmount.currency.symbol || '';
-      const _outputTokenSymbol = executionTrade?.outputAmount.currency.symbol || '';
-      const _inputAmount = formatBigNumber(new BigNumber(executionTrade?.inputAmount.toFixed() || 0), 'currency');
-      const _outputAmount = formatBigNumber(new BigNumber(executionTrade?.outputAmount.toFixed() || 0), 'currency');
-
-      descriptionAction = `Swap ${_inputTokenSymbol} for ${_outputTokenSymbol}`;
-      descriptionAmount = `${_inputAmount} ${_inputTokenSymbol} for ${_outputAmount} ${_outputTokenSymbol}`;
+      const inputXToken = allXTokens.find(
+        xToken => xToken.xChainId === direction.from && xToken.symbol === executionTrade.inputAmount.currency.symbol,
+      );
+      const outputXToken = allXTokens.find(
+        xToken => xToken.xChainId === direction.to && xToken.symbol === executionTrade.outputAmount.currency.symbol,
+      );
+      const _inputAmount = executionTrade.inputAmount.toFixed();
+      const _outputAmount = executionTrade.outputAmount.toFixed();
+      attributes = { inputXToken, outputXToken, inputAmount: _inputAmount, outputAmount: _outputAmount };
     }
   } else if (xTransactionInput.type === XTransactionType.DEPOSIT) {
-    const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
-    const _formattedAmount = formatBigNumber(new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0), 'currency');
-
-    descriptionAction = `Deposit ${_tokenSymbol} as collateral`;
-    descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
   } else if (xTransactionInput.type === XTransactionType.WITHDRAW) {
-    const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
-    const _formattedAmount = formatBigNumber(
-      new BigNumber(xTransactionInput?.inputAmount.multiply(-1).toFixed() || 0),
-      'currency',
-    );
-
-    descriptionAction = `Withdraw ${_tokenSymbol} collateral`;
-    descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
   } else if (xTransactionInput.type === XTransactionType.BORROW) {
-    const _formattedAmount = formatBigNumber(new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0), 'currency');
-
-    descriptionAction = `Borrow bnUSD`;
-    descriptionAmount = `${_formattedAmount} bnUSD`;
   } else if (xTransactionInput.type === XTransactionType.REPAY) {
-    const _formattedAmount = formatBigNumber(
-      new BigNumber(xTransactionInput?.inputAmount.multiply(-1).toFixed() || 0),
-      'currency',
-    );
-
-    descriptionAction = `Repay bnUSD`;
-    descriptionAmount = `${_formattedAmount} bnUSD`;
-  } else if (xTransactionInput.type === XTransactionType.SWAP_ON_ICON) {
-    // TODO: Implement this
-    //     const message = swapMessage(
-    //   formatBigNumber(new BigNumber(executionTrade?.inputAmount?.toFixed() || 0), 'currency'),
-    //   executionTrade.inputAmount.currency.symbol || 'IN',
-    //   formatBigNumber(new BigNumber(executionTrade?.outputAmount?.toFixed() || 0), 'currency'),
-    //   executionTrade.outputAmount.currency.symbol || 'OUT',
-    // );
   }
 
   xTransactionInput?.callback?.();
@@ -113,10 +89,7 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
     sourceChainId: sourceChainId,
     finalDestinationChainId: finalDestinationChainId,
     finalDestinationChainInitialBlockHeight,
-    attributes: {
-      descriptionAction,
-      descriptionAmount,
-    },
+    attributes,
   };
   xTransactionActions.add(xTransaction);
 

@@ -55,12 +55,12 @@ const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="tokens" className="mt-4">
-          <div className="flex flex-col h-[500px]">
+          <div className="h-[500px] flex flex-col justify-between">
             <XTokenList />
           </div>
         </TabsContent>
         <TabsContent value="history" className="mt-4">
-          <div className="flex flex-col h-[500px]">
+          <div className="h-[500px] flex flex-col">
             <HistoryItemList />
           </div>
         </TabsContent>

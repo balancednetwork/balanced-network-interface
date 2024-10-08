@@ -38,14 +38,14 @@ export const CopyableAddress = ({
       zIndex={9999}
     >
       <span
-        className="hover:text-[#2fccdc] cursor-pointer flex"
+        className="text-[#D4C5F9] cursor-pointer flex text-body font-[500]"
         onMouseLeave={() => {
           setTimeout(() => updateCopyState(false), 250);
         }}
         onClick={() => copyAddress(account)}
       >
-        {shortenAddress(account)}
-        {copyIcon && <CopyIcon width="13" height="13" style={{ marginLeft: 7, marginRight: 0, marginTop: -4 }} />}
+        {shortenAddress(account, 4)}
+        {/* {copyIcon && <CopyIcon width="13" height="13" style={{ marginLeft: 7, marginRight: 0, marginTop: -4 }} />} */}
       </span>
     </MouseoverTooltip>
   ) : null;

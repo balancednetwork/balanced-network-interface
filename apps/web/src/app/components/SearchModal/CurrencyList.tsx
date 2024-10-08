@@ -22,6 +22,7 @@ import { formatBigNumber, toFraction } from '@/utils';
 import { formatPrice } from '@/utils/formatter';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XChainId } from '@/xwagmi/types';
 import { getSupportedXChainIdsForToken } from '@/xwagmi/xcall/utils';
 import { ChainLogo } from '../ChainLogo';
@@ -305,13 +306,23 @@ function CurrencyRow({
             ))
           ) : (
             <XChainLogoList>
-              {sortedXChains?.map(xChainId => (
-                <MouseoverTooltip key={xChainId} text={xChainMap[xChainId].name} autoWidth placement="bottom">
-                  <Box style={{ cursor: 'pointer' }} onClick={() => handleXChainCurrencySelect(currency, xChainId)}>
-                    <ChainLogo chain={xChainMap[xChainId]} size="18px" />
-                  </Box>
-                </MouseoverTooltip>
-              ))}
+              {sortedXChains?.map(xChainId => {
+                const spokeAssetVersion: string | undefined = xTokenMap[xChainId].find(
+                  xToken => xToken.symbol === currency.symbol,
+                )?.spokeVersion;
+                return (
+                  <MouseoverTooltip
+                    key={xChainId}
+                    text={`${xChainMap[xChainId].name}${spokeAssetVersion ? ' (' + spokeAssetVersion + ')' : ''}`}
+                    autoWidth
+                    placement="bottom"
+                  >
+                    <Box style={{ cursor: 'pointer' }} onClick={() => handleXChainCurrencySelect(currency, xChainId)}>
+                      <ChainLogo chain={xChainMap[xChainId]} size="18px" />
+                    </Box>
+                  </MouseoverTooltip>
+                );
+              })}
             </XChainLogoList>
           )}
         </StyledBalanceBreakdown>

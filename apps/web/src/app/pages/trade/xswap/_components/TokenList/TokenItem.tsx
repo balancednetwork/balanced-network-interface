@@ -13,6 +13,7 @@ import { TokenStats, useTokenTrendData } from '@/queries/backendv2';
 import { formatPrice, formatPriceChange, getFormattedNumber } from '@/utils/formatter';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XToken } from '@/xwagmi/types';
 import { getSupportedXChainIdsForToken } from '@/xwagmi/xcall/utils';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
@@ -86,11 +87,22 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
                 </Typography>
               </Flex>
               <ChainsWrapper>
-                {xChainIds.map(xChainId => (
-                  <MouseoverTooltip key={xChainId} text={xChainMap[xChainId].name} autoWidth placement="bottom">
-                    <ChainLogo chain={xChainMap[xChainId]} size="18px" />
-                  </MouseoverTooltip>
-                ))}
+                {xChainIds.map(xChainId => {
+                  const spokeAssetVersion: string | undefined = xTokenMap[xChainId].find(
+                    xToken => xToken.symbol === currency.symbol,
+                  )?.spokeVersion;
+
+                  return (
+                    <MouseoverTooltip
+                      key={xChainId}
+                      text={`${xChainMap[xChainId].name}${spokeAssetVersion ? ' (' + spokeAssetVersion + ')' : ''}`}
+                      autoWidth
+                      placement="bottom"
+                    >
+                      <ChainLogo chain={xChainMap[xChainId]} size="18px" />
+                    </MouseoverTooltip>
+                  );
+                })}
               </ChainsWrapper>
             </Box>
           </Flex>

@@ -2,8 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/xwagmi/constants/xChains';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
 import { useXPublicClient } from '@/xwagmi/hooks';
 import { XChainId } from '@/xwagmi/types';
+import { BigNumber } from 'icon-sdk-js';
 import { formatEther } from 'viem';
 import { IXCallFee } from '../types';
 
@@ -30,7 +32,13 @@ const useXCallFee = (from: XChainId, to: XChainId): { xCallFee: IXCallFee | unde
   });
 
   const formattedXCallFee: string = useMemo(() => {
-    return xCallFee ? formatEther(xCallFee.rollback) + ' ' + xChainMap[from].nativeCurrency.symbol : '';
+    if (xChainMap[from].xChainType === 'EVM') {
+      return xCallFee ? formatEther(xCallFee.rollback) + ' ' + xChainMap[from].nativeCurrency.symbol : '';
+    } else {
+      return xCallFee
+        ? `${new BigNumber(xCallFee.rollback.toString()).div(10 ** xChainMap[from].nativeCurrency.decimals).toFixed()} ${xChainMap[from].nativeCurrency.symbol}`
+        : '';
+    }
   }, [xCallFee, from]);
 
   return { xCallFee, formattedXCallFee };

@@ -1,0 +1,124 @@
+#hero-background {
+  position: absolute;
+  width: 250%;
+  height: 743px;
+  top: -50px;
+  left: -75%;
+  z-index: -1;
+  overflow: hidden;
+  background: #01002a;
+  background: -moz-linear-gradient(top, #01002a 75%, #0f2e4f 100%);
+  background: -webkit-linear-gradient(top, #01002a 75%, #0f2e4f 100%);
+  background: linear-gradient(to bottom, #01002a 75%, #0f2e4f 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#01002a', endColorstr='#0f2e4f',GradientType=0 );
+}
+#hero-background {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+#hero-background .drip {
+  width: 15px;
+  height: 200px;
+  opacity: 0.75;
+  background: -moz-linear-gradient(top, transparent 10%, rgba(44, 169, 183, 1) 100%);
+  background: -webkit-linear-gradient(top, transparent 10%, rgba(44, 169, 183, 1) 100%);
+  background: linear-gradient(to bottom, transparent 10%, rgba(44, 169, 183, 1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0001002a', endColorstr='#2ca9b7',GradientType=0 );
+  border-radius: 25px;
+  display: block;
+  position: absolute;
+  animation: falling-rain 35s infinite;
+}
+
+/* Floating bubbles */
+
+@keyframes falling-rain {
+  0% {
+    -webkit-transform: translateY(-500px);
+    transform: translateY(-500px);
+  }
+  100% {
+    -webkit-transform: translateY(1200px);
+    transform: translateY(1200px);
+  }
+}
+#hero-background .drip#drip-1 {
+  left: 37%;
+  height: 100px;
+  top: 150px;
+  animation-duration: 50s;
+}
+#hero-background .drip#drip-2 {
+  left: 27%;
+  height: 150px;
+  width: 20px;
+  top: 350px;
+  animation-duration: 75s;
+}
+#hero-background .drip#drip-3 {
+  left: 57%;
+  height: 100px;
+  top: 50px;
+  animation-duration: 28s;
+}
+#hero-background .drip#drip-4 {
+  left: 33%;
+  height: 150px;
+  width: 20px;
+  animation-duration: 67s;
+}
+#hero-background .drip#drip-5 {
+  left: 44%;
+  height: 155px;
+  width: 25px;
+  top: -450px;
+  animation-duration: 27s;
+}
+#hero-background .drip#drip-6 {
+  left: 69%;
+  height: 100px;
+  top: 500px;
+  animation-duration: 35s;
+}
+#hero-background .drip#drip-7 {
+  left: 64%;
+  height: 150px;
+  width: 20px;
+}
+#hero-background .drip#drip-8 {
+  left: 7%;
+  top: -100px;
+  height: 100px;
+  animation-delay: 15s;
+}
+#hero-background .drip#drip-9 {
+  left: 44%;
+  height: 155px;
+  width: 25px;
+  top: -450px;
+  animation-duration: 27s;
+  animation-delay: 15s;
+}
+#hero-background .drip#drip-10 {
+  left: 60%;
+  height: 100px;
+  top: -300px;
+  animation-duration: 35s;
+  animation-delay: 35s;
+}
+#hero-background .drip#drip-11 {
+  left: 14%;
+  height: 50px;
+  width: 15px;
+  animation-delay: 15s;
+  top: -50px;
+}
+#hero-background .drip#drip-12 {
+  left: 37%;
+  top: -500px;
+  height: 100px;
+  animation-delay: 35s;
+}

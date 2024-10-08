@@ -173,6 +173,7 @@ export const HeaderText = styled(Flex)<{ className?: string }>`
 
 export const XChainLogoList = styled.div`
   >* {
+    display: inline-block;
     margin: 2px 7px 2px 0;
   }
 `;

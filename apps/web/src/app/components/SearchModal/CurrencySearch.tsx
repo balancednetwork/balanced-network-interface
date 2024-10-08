@@ -298,6 +298,7 @@ export function CurrencySearch({
           showCrossChainBreakdown={showCrossChainBreakdown}
           basedOnWallet={assetsTab === AssetsTab.YOUR}
           selectorType={selectorType}
+          width={width}
         />
       ) : (
         <Column style={{ padding: '20px 20px 0 20px' }} mb={showCommunityListControl ? -4 : 0}>

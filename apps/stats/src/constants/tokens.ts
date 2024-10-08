@@ -1,5 +1,5 @@
 import { SupportedChainId } from '@balancednetwork/balanced-js';
-import { Token, Currency } from '@balancednetwork/sdk-core';
+import { Currency, Token } from '@balancednetwork/sdk-core';
 
 import { NETWORK_ID } from './config';
 
@@ -266,6 +266,30 @@ export const HVH = new Token(
   'HAVAH',
 );
 
+export const tBTC = new Token(
+  SupportedChainId.MAINNET,
+  'cx15ddac8c2663bd7e71ca1688dffa426070752fbd',
+  18,
+  'tBTC',
+  'Threshold BTC',
+);
+
+export const weETH = new Token(
+  SupportedChainId.MAINNET,
+  'cxce7b23917ddf57656010decd6017fe5016de681b',
+  18,
+  'weETH',
+  'Wrapped Ethereum',
+);
+
+export const wstETH = new Token(
+  SupportedChainId.MAINNET,
+  'cxb940dbfbc45c92f3a0cde464c4331102e7a84da8',
+  18,
+  'wstETH',
+  'Wrapped stETH',
+);
+
 // todo: calculate supported tokens from supported tokens info
 export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
   [SupportedChainId.MAINNET]: [
@@ -292,6 +316,9 @@ export const SUPPORTED_TOKENS: { [chainId: number]: Token[] } = {
     BTC,
     HVH,
     USDT,
+    tBTC,
+    weETH,
+    wstETH,
   ],
   [SupportedChainId.YEOUIDO]: [
     ICX_YEOUIDO,

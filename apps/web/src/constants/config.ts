@@ -1,3 +1,3 @@
 import { SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
 
-export const NETWORK_ID: NetworkId = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
+export const NETWORK_ID: NetworkId = parseInt(import.meta.env.VITE_NETWORK_ID ?? '1');

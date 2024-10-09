@@ -130,7 +130,10 @@ const XCollateralModal = ({
     setCurrentId(xTransactionId || null);
   };
 
-  const gasChecker = useXCallGasChecker(sourceChain, _inputAmount);
+  const gasChecker = useXCallGasChecker(
+    sourceChain,
+    storedModalValues.action === XCollateralAction.DEPOSIT ? _inputAmount : undefined,
+  );
 
   useLoanWalletServiceHandler();
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(sourceChain);

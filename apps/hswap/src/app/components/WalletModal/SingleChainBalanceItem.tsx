@@ -5,7 +5,6 @@ import { XToken } from '@balancednetwork/sdk-core';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import React from 'react';
-import { TableCell, TableRow } from '@/components/ui/table';
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 
 type SingleChainBalanceItemProps = {
@@ -19,16 +18,14 @@ const SingleChainBalanceItem = ({ balance, isLast = false, isNested = false }: S
   const rates = useRatesWithOracle();
   const value = new BigNumber(balance.toFixed()).times(rates?.[currency.symbol] || 0);
   return (
-    <TableRow>
-      <TableCell className="font-medium flex items-center gap-2">
+    <>
+      <div className="font-medium flex items-center gap-2">
         <CurrencyLogoWithNetwork currency={currency} size={isNested ? '20px' : '24px'} />
         <div>{isNested ? xChainMap[currency.xChainId].name : currency.symbol}</div>
-      </TableCell>
-      <TableCell className="text-right">
-        {formatBalance(balance?.toFixed(), rates?.[currency.symbol]?.toFixed())}
-      </TableCell>
-      <TableCell className="text-right">{!value ? '-' : formatValue(value.toFixed())}</TableCell>
-    </TableRow>
+      </div>
+      <div className="text-right">{formatBalance(balance?.toFixed(), rates?.[currency.symbol]?.toFixed())}</div>
+      <div className="text-right">{!value ? '-' : formatValue(value.toFixed())}</div>
+    </>
   );
 };
 

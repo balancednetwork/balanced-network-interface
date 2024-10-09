@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
-import { Box } from 'rebass';
+import { Box, Flex } from 'rebass';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
@@ -17,6 +17,7 @@ import { XChain, XChainId } from '@/xwagmi/types';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
+import { useMedia } from 'react-use';
 import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from '../LoanChainSelector/styledComponents';
 
 type ChainListProps = {
@@ -43,6 +44,8 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const existingPosition = depositedAmounts[collateralType];
   const prices = useOraclePrices();
   const xTokenPrice = prices?.[xToken?.symbol || ''];
+  const selectedCollateralType = useCollateralType();
+  const isSmall = useMedia('(max-width: 440px)');
 
   const formattedWalletBalance = useMemo(() => {
     if (existingPosition?.isGreaterThan(0) || !xToken) return;
@@ -59,15 +62,23 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
     return xTokenPrice ? formatValue(existingPosition.times(xTokenPrice).toFixed()) : '-';
   }, [existingPosition, xTokenPrice]);
 
+  const spokeAssetVersion = xTokenMap[chain.xChainId].find(
+    xToken => xToken.symbol === selectedCollateralType,
+  )?.spokeVersion;
+
   return (
     <Grid $isSignedIn={isSignedIn} className={isLast ? '' : 'border-bottom'} onClick={e => setChainId(chain.xChainId)}>
       <ChainItemWrap>
         <Box pr="10px">
           <ChainLogo chain={chain} />
         </Box>
-        <Typography fontWeight="bold" fontSize={14} color="inherit">
-          {chain.name}
-        </Typography>
+        <Flex flexDirection={isSmall ? 'column' : 'row'} alignItems={'start'}>
+          <Typography fontWeight="bold" fontSize={14} color="inherit" mr={'6px'}>
+            {chain.name}
+            <span style={{ fontWeight: 'normal' }}></span>
+          </Typography>
+          {spokeAssetVersion && <Typography>{` (${spokeAssetVersion})`}</Typography>}
+        </Flex>
       </ChainItemWrap>
       {isSignedIn ? (
         <Typography

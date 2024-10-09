@@ -6,7 +6,7 @@ import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import MultiChainBalanceItem from './MultiChainBalanceItem';
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { formatValue } from '@/utils/formatter';
 
 const XTokenList = () => {
   const _balances = useWalletBalances();
@@ -14,33 +14,40 @@ const XTokenList = () => {
 
   const sortedFilteredBalances = useXBalancesByToken(balances);
 
+  // calculate total
+  const rates = useRatesWithOracle();
+  const walletTotal = React.useMemo(() => {
+    return balances.reduce((sum, balance) => {
+      sum = sum.plus(new BigNumber(balance.toFixed()).times(rates?.[balance.currency.symbol] || 0));
+      return sum;
+    }, new BigNumber(0));
+  }, [balances, rates]);
+
   return (
-    <ScrollArea className="h-[528px]">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="">Assets</TableHead>
-            <TableHead className="text-right">Balance</TableHead>
-            <TableHead className="text-right">Value</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {Object.values(sortedFilteredBalances).map((balances, index) =>
-            balances.length === 1 ? (
-              <SingleChainBalanceItem key={index} balance={balances[0]} />
-            ) : (
-              <MultiChainBalanceItem key={index} balances={balances} />
-            ),
-          )}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan={2}>Total</TableCell>
-            <TableCell className="text-right">$2,500.00</TableCell>
-          </TableRow>
-        </TableFooter>
-      </Table>
-    </ScrollArea>
+    <>
+      <ScrollArea>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="">Assets</div>
+          <div className="text-right">Balance</div>
+          <div className="text-right">Value</div>
+          <>
+            {Object.values(sortedFilteredBalances).map((balances, index) =>
+              balances.length === 1 ? (
+                <SingleChainBalanceItem key={index} balance={balances[0]} />
+              ) : (
+                <MultiChainBalanceItem key={index} balances={balances} />
+              ),
+            )}
+          </>
+        </div>
+      </ScrollArea>
+      {Object.keys(sortedFilteredBalances).length > 0 && (
+        <div className="pt-4 flex justify-between">
+          <div className="text-subtitle">Total</div>
+          <div>{formatValue(walletTotal.toFixed())}</div>
+        </div>
+      )}
+    </>
   );
 };
 

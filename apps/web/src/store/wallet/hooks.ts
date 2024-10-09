@@ -410,7 +410,7 @@ export function useXBalancesByToken(): XWalletAssetRecord[] {
         (acc, [chainId, chainBalances]) => {
           if (chainBalances) {
             forEach(chainBalances, balance => {
-              const price = prices?.[balance.currency.symbol] || new BigNumber(0);
+              const price = prices?.[balance.currency?.symbol || ''] || new BigNumber(0);
               if (
                 balance.currency &&
                 balance?.greaterThan(0) &&

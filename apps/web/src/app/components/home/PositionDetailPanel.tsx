@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 
+import Nouislider from '@/packages/nouislider-react';
 import { MessageDescriptor } from '@lingui/core';
-import { t, Trans, msg } from '@lingui/macro';
+import { Trans, msg, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { AnimatePresence, motion } from 'framer-motion';
-import Nouislider from '@/packages/nouislider-react';
 import ClickAwayListener from 'react-click-away-listener';
 import { isIOS } from 'react-device-detect';
 import { useMedia } from 'react-use';
@@ -13,32 +13,32 @@ import styled, { useTheme } from 'styled-components';
 
 import Divider from '@/app/components/Divider';
 import { UnderlineTextWithArrow } from '@/app/components/DropdownText';
-import { MenuList, MenuItem } from '@/app/components/Menu';
+import { MenuItem, MenuList } from '@/app/components/Menu';
 import { BoxPanel, FlexPanel } from '@/app/components/Panel';
+import { DropdownPopper } from '@/app/components/Popover';
 import { QuestionWrapper } from '@/app/components/QuestionHelper';
+import Skeleton from '@/app/components/Skeleton';
 import Tooltip, { TooltipContainer } from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import QuestionIcon from '@/assets/icons/question.svg';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
-import { useRebalancingDataQuery_DEPRECATED, Period } from '@/queries/rebalancing';
+import { useTokenPrices } from '@/queries/backendv2';
+import { Period, useRebalancingDataQuery_DEPRECATED } from '@/queries/rebalancing';
 import { useCollateralInputAmountInUSD, useCollateralType, useIsHandlingICX } from '@/store/collateral/hooks';
 import {
-  useLoanInputAmount,
-  useThresholdPrices,
   useCollateralLockedSliderPos,
-  useLoanAvailableAmount,
   useInterestRate,
-  useRedemptionFee,
+  useLoanAvailableAmount,
+  useLoanInputAmount,
   useRedemptionDaoFee,
+  useRedemptionFee,
+  useThresholdPrices,
 } from '@/store/loan/hooks';
 import { useOraclePrice } from '@/store/oracle/hooks';
 import { useRatio } from '@/store/ratio/hooks';
 import { useCurrentCollateralRatio } from '@/store/reward/hooks';
 import { InterestPeriod } from '@/types';
 import { formatBigNumber, getAccumulatedInterest } from '@/utils';
-import { DropdownPopper } from '@/app/components/Popover';
-import Skeleton from '@/app/components/Skeleton';
-import { useTokenPrices } from '@/queries/backendv2';
 import { formatPrice } from '@/utils/formatter';
 
 const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
@@ -311,8 +311,7 @@ const PositionDetailPanel = () => {
                   <Typography variant="body">
                     {t`If the ${
                       collateralType === 'sICX' ? 'ICX' : collateralType
-                    } price reaches $${liquidationThresholdPrice.dp(collateralType === 'sICX' ? 3 : 0).toFixed()}, all your collateral will be
-                  liquidated.`}
+                    } price reaches $${liquidationThresholdPrice.dp(collateralType === 'sICX' ? 3 : 0).toFixed()}, some of your collateral will be liquidated to reduce your risk.`}
                   </Typography>
                 }
                 show={show}

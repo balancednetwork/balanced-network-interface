@@ -140,7 +140,7 @@ const XSwapModal = ({
     setCurrentId(xTransactionId || null);
   };
 
-  const gasChecker = useXCallGasChecker(direction.from);
+  const gasChecker = useXCallGasChecker(direction.from, _inputAmount);
 
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(direction.from);
 

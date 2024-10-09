@@ -187,8 +187,7 @@ export function useDerivedSwapInfo(): {
 
   const allowedSlippage = useSwapSlippageTolerance();
 
-  // TODO: || '0x1.icon' is a temporary fix for type checking
-  const gasChecker = useXCallGasChecker(inputXChainId || '0x1.icon');
+  const gasChecker = useXCallGasChecker(parsedAmount);
 
   const inputError = useMemo(() => {
     const swapDisabled = trade?.priceImpact.greaterThan(SLIPPAGE_SWAP_DISABLED_THRESHOLD);

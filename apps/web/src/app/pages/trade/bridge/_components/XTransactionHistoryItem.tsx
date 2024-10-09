@@ -101,7 +101,7 @@ const XTransactionHistoryItem = ({ xTransaction }: { xTransaction: XTransaction 
         onDoubleClick={() => {
           console.log('xTransaction', xTransaction);
           window.open(
-            `https://xcallscan.xyz/messages/search?value=${primaryMessage?.destinationTransactionHash}`,
+            `https://xcallscan.xyz/messages/search?value=${primaryMessage?.destinationTransactionHash || primaryMessage?.sourceTransactionHash}`,
             '_blank',
           );
         }}

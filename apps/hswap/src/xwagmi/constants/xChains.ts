@@ -290,12 +290,12 @@ export const sui: XChain = {
     http: 'https://sentry.tm.injective.network',
   },
   contracts: {
-    xCall: 'inj177fx40l0g3jqmtmmuyl2zhrjvhr3knvthlr0ul',
-    assetManager: 'inj1hayj9xnlh44sn29sgggn3jwl3ktl6djwcven25',
-    bnUSD: 'inj1qspaxnztkkzahvp6scq6xfpgafejmj2td83r9j',
+    xCall: '0x3638b141b349173a97261bbfa33ccd45334d41a80584db6f30429e18736206fe', // TODO: not being used, just empty string
+    assetManager: '0x1c1795e30fbc0b9c18543527940446e7601f5a3ca4db9830da4f3c68557e1fb3', // TODO: not being used, just empty string
+    bnUSD: '0x03917a812fe4a6d6bc779c5ab53f8a80ba741f8af04121193fc44e0f662e2ceb::balanced_dollar::BALANCED_DOLLAR',
   },
   autoExecution: true,
-  gasThreshold: 0.01,
+  gasThreshold: 0.18,
   testnet: false,
 };
 

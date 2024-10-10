@@ -49,21 +49,49 @@ export class StellarXWalletClient extends XWalletClient {
 
     if (type === XTransactionType.BRIDGE) {
       const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
+      const dataObj = {
+        method: '_swap',
+        params: {
+          path: [],
+          receiver: recipient,
+        },
+      };
+      const encoder = new TextEncoder();
+      const uint8Array = encoder.encode(JSON.stringify(dataObj));
 
       if (inputAmount.currency.symbol === 'XLM') {
+        const contract = new Contract(stellar.contracts.assetManager);
+
+        //deposit(from: address, token: address, amount: u128, to: option<string>, data: option<bytes>)
+        const params = [
+          accountToScVal(account),
+          nativeToScVal(XLM_CONTRACT_ADDRESS, { type: 'address' }),
+          nativeToScVal(inputAmount.quotient, { type: 'u128' }),
+          nativeToScVal(destination),
+          nativeToScVal(uint8Array, { type: 'bytes' }),
+        ];
+
+        const simulateTx = simulateTxBuilder
+          .addOperation(contract.call('deposit', ...params))
+          .setTimeout(30)
+          .build();
+
+        const simResult = await sorobanServer.simulateTransaction(simulateTx);
+
+        const tx = rpc.assembleTransaction(simulateTx, simResult).build();
+
+        if (tx) {
+          const { signedTxXdr } = await walletsKit.signTransaction(tx.toXDR());
+          const txToSubmit = TransactionBuilder.fromXDR(signedTxXdr, Networks.PUBLIC);
+
+          const { hash } = await sorobanServer.sendTransaction(txToSubmit);
+          console.log('txResponse', hash);
+          return hash;
+        } else {
+          throw new Error('Failed to assemble stellar transaction');
+        }
       } else {
         const contract = new Contract(stellar.contracts.bnUSD!);
-
-        const dataObj = {
-          method: '_swap',
-          params: {
-            path: [],
-            receiver: recipient,
-          },
-        };
-
-        const encoder = new TextEncoder();
-        const uint8Array = encoder.encode(JSON.stringify(dataObj));
 
         //cross_transfer(from: address, amount: u128, to: string, data: option<bytes>)
         const params = [

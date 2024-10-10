@@ -51,7 +51,7 @@ const CrossChainWalletConnect = ({
   return !editable ? (
     <Typography onClick={handleConnect} color="primaryBright">
       {address ? (
-        <UnderlineText>{shortenAddress(address || '', 5)}</UnderlineText>
+        <UnderlineText>{shortenAddress(address || '', 4)}</UnderlineText>
       ) : (
         <UnderlineText>Connect wallet</UnderlineText>
       )}
@@ -60,7 +60,7 @@ const CrossChainWalletConnect = ({
     <>
       <Typography onClick={openModal} color="primaryBright">
         {recipient ? (
-          <UnderlineText>{shortenAddress(recipient, 5)}</UnderlineText>
+          <UnderlineText>{shortenAddress(recipient, 4)}</UnderlineText>
         ) : (
           <UnderlineText>Choose address</UnderlineText>
         )}

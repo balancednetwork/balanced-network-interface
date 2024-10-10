@@ -8,6 +8,7 @@ import { immer } from 'zustand/middleware/immer';
 
 import { transactionActions } from '@/hooks/useTransactionStore';
 import { getXPublicClient } from '@/xwagmi/actions';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XCallEventType, XTransaction } from '../types';
 import { TransactionStatus, XCallEventMap, XMessage, XMessageStatus } from '../types';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
@@ -206,7 +207,7 @@ export const useXMessageStore = create<XMessageStore>()(
       },
 
       createSecondaryMessage: (xTransaction: XTransaction, primaryMessage: XMessage) => {
-        if (xTransaction.finalDestinationChainId === 'sui') {
+        if (xChainMap[xTransaction.finalDestinationChainId].useXCallScanner) {
           if (!primaryMessage.destinationTransactionHash) {
             throw new Error('destinationTransactionHash is undefined'); // it should not happen
           }

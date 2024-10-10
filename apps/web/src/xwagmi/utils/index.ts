@@ -147,6 +147,9 @@ export function validateAddress(address: string, chainId: XChainId): boolean {
       return isArchEoaAddress(address);
     case 'INJECTIVE':
       return isInjectiveAddress(address);
+    case 'STELLAR':
+      //todo: validate stellar address
+      return true;
     case 'SUI':
       return isSuiAddress(address);
   }

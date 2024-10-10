@@ -436,8 +436,7 @@ export function useXBalancesByToken(): XWalletAssetRecord[] {
               if (
                 balance.currency &&
                 balance?.greaterThan(0) &&
-                price &&
-                price.times(balance.toFixed()).isGreaterThan(MIN_VALUE_TO_DISPLAY)
+                (price.isZero() || price.times(balance.toFixed()).isGreaterThan(MIN_VALUE_TO_DISPLAY))
               ) {
                 acc[balance.currency.symbol] = {
                   ...acc[balance.currency.symbol],

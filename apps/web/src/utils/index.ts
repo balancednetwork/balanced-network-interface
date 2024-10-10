@@ -102,17 +102,13 @@ export function maxAmountSpend(
     (xChainId === 'archway-1' && currencyAmount.currency.symbol === 'ARCH') ||
     currencyAmount.currency.wrapped.address === NATIVE_ADDRESS
   ) {
-    if (xChainId === 'sui') {
-      minCurrencyGas = CurrencyAmount.fromRawAmount(
-        currencyAmount.currency,
-        new BigNumber(xChainMap[xChainId].gasThreshold * 3 * Number(10 ** currencyAmount.currency.decimals)).toString(),
-      );
-    } else {
-      minCurrencyGas = CurrencyAmount.fromRawAmount(
-        currencyAmount.currency,
-        new BigNumber(xChainMap[xChainId].gasThreshold * 2 * Number(10 ** currencyAmount.currency.decimals)).toString(),
-      );
-    }
+    minCurrencyGas = CurrencyAmount.fromRawAmount(
+      currencyAmount.currency,
+      new BigNumber(xChainMap[xChainId].gasThreshold)
+        .times(2)
+        .times(10 ** currencyAmount.currency.decimals)
+        .toString(),
+    );
   }
   return currencyAmount.subtract(minCurrencyGas).greaterThan(0)
     ? currencyAmount.subtract(minCurrencyGas)

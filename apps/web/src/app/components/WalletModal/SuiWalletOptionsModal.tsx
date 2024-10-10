@@ -18,10 +18,10 @@ const icons = {
   walletConnect: WalletConnectIcon,
 };
 
-export const EVMWalletModal = ({ id = MODAL_ID.EVM_WALLET_OPTIONS_MODAL }) => {
+export const SuiWalletOptionsModal = ({ id = MODAL_ID.SUI_WALLET_OPTIONS_MODAL }: { id?: MODAL_ID }) => {
   const modalOpen = useModalOpen(id);
 
-  const xConnectors = useXConnectors('EVM');
+  const xConnectors = useXConnectors('SUI');
   const xConnect = useXConnect();
 
   const onDismiss = useCallback(() => {
@@ -55,7 +55,7 @@ export const EVMWalletModal = ({ id = MODAL_ID.EVM_WALLET_OPTIONS_MODAL }) => {
           ) : (
             <>
               <Typography textAlign="center" margin={'0 0 25px'}>
-                No EVM-based wallet detected.
+                No SUI-based wallet detected.
               </Typography>
               <Typography textAlign="center">
                 Add a wallet like{' '}
@@ -67,28 +67,18 @@ export const EVMWalletModal = ({ id = MODAL_ID.EVM_WALLET_OPTIONS_MODAL }) => {
                   }
                 >
                   <UnderlineText>Hana</UnderlineText>
-                </Typography>
-                ,{' '}
-                <Typography
-                  variant={'span'}
-                  color="primaryBright"
-                  onClick={() =>
-                    window.open('https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn')
-                  }
-                >
-                  <UnderlineText>MetaMask</UnderlineText>
-                </Typography>
-                , or{' '}
+                </Typography>{' '}
+                or{' '}
                 <Typography
                   variant={'span'}
                   color="primaryBright"
                   onClick={() =>
                     window.open(
-                      'https://chromewebstore.google.com/detail/rabby-wallet/acmacodkjbdgmoleebolmdjonilkdbch',
+                      'https://chromewebstore.google.com/detail/sui-wallet/opcgpfmipidbgpenhmajoajpbobppdil?hl=en-US',
                     )
                   }
                 >
-                  <UnderlineText>Rabby</UnderlineText>
+                  <UnderlineText>Sui Wallet</UnderlineText>
                 </Typography>{' '}
                 to your browser, then try again.
               </Typography>

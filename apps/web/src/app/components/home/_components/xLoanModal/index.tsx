@@ -140,7 +140,7 @@ const XLoanModal = ({
     setCurrentId(xTransactionId || null);
   };
 
-  const gasChecker = useXCallGasChecker(activeChain);
+  const gasChecker = useXCallGasChecker(activeChain, _inputAmount);
 
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(activeChain);
 

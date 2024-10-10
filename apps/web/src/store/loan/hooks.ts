@@ -30,7 +30,7 @@ import { getXChainType } from '@/xwagmi/actions';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { useXAccount } from '@/xwagmi/hooks';
 import { XChainId } from '@/xwagmi/types';
-import { useDestinationEvents } from '@/xwagmi/xcall/zustand/useXCallEventStore';
+import { useXTransactionStore } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { AppState } from '..';
 import {
@@ -86,10 +86,10 @@ export function useLoanFetchInfo(account?: string | null) {
   const { changeBorrowedAmount, changeBadDebt, changeTotalSupply } = useLoanActionHandlers();
   const { data: collateralTokens } = useSupportedCollateralTokens();
   const supportedSymbols = React.useMemo(() => collateralTokens && Object.keys(collateralTokens), [collateralTokens]);
-  const pendingXCalls = useDestinationEvents(ICON_XCALL_NETWORK_ID);
-
   const transactions = useAllTransactions();
   const allWallets = useSignedInWallets();
+  const { getPendingTransactions } = useXTransactionStore();
+  const pendingTxs = getPendingTransactions(allWallets);
 
   const fetchLoanInfo = React.useCallback(
     (wallet: {
@@ -141,7 +141,7 @@ export function useLoanFetchInfo(account?: string | null) {
       }
     };
     fetchData();
-  }, [fetchLoanInfo, allWallets.length, pendingXCalls.length, transactions]);
+  }, [fetchLoanInfo, allWallets.length, pendingTxs.length, transactions]);
 
   React.useEffect(() => {
     (async () => {

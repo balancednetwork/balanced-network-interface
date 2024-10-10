@@ -15,5 +15,6 @@ const SocialButton = styled.a`
     background-color: #2ca9b7;
     box-shadow: 0 0 0 10px rgb(44 169 183 / 50%), inset 0 0 0 0 #2ca9b7, 0 0 5px 2px #2ca9b7;
   }
+  margin-bottom: 10px !important; 
 `;
 export default SocialButton;

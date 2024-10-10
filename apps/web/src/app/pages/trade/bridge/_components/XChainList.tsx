@@ -14,6 +14,7 @@ import { useRatesWithOracle } from '@/queries/reward';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatValue } from '@/utils/formatter';
 import { xChains } from '@/xwagmi/constants/xChains';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XChain, XChainId } from '@/xwagmi/types';
 import { Currency } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
@@ -88,6 +89,10 @@ const XChainItem = ({ xChain, isActive, isLast, currency, showTotalXWalletValue 
     }, new BigNumber(0));
   }, [price, currencyAmount, xWallet, prices, showTotalXWalletValue, xChain.xChainId]);
 
+  const spokeAssetVersion: string | undefined = xTokenMap[xChain.xChainId].find(
+    xToken => xToken.symbol === currency?.symbol,
+  )?.spokeVersion;
+
   return (
     <XChainItemWrap className={isLast ? '' : 'border-bottom'}>
       <Flex width="100%" alignItems="center">
@@ -96,6 +101,7 @@ const XChainItem = ({ xChain, isActive, isLast, currency, showTotalXWalletValue 
         </Box>
         <Typography fontWeight="bold" marginRight={2}>
           {xChain.name}
+          <span style={{ fontWeight: 'normal' }}>{spokeAssetVersion ? ` (${spokeAssetVersion})` : ''}</span>
         </Typography>
         {hasSignedIn ? (
           <Typography ml="auto">{value ? formatValue(value.toFixed()).replace('$0.0000', '-') : '-'}</Typography>

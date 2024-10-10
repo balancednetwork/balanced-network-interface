@@ -1,5 +1,5 @@
 export const SOCIAL_LINKS = {
-  twitter: 'https://twitter.com/BalancedDAO',
+  twitter: 'https://x.com/BalancedDAO',
   telegram: 'https://t.me/balanced_official',
   reddit: 'https://www.reddit.com/r/BalancedNetwork/',
   medium: 'https://medium.com/@BalancedDAO',
@@ -24,4 +24,7 @@ export const LINKS = {
   stablecoin: 'https://balanced.network/stablecoin/',
   nfts: 'https://balanced.network/nft/',
   reviews: 'https://balanced.network/reviews/',
+  coingecko: 'https://www.coingecko.com/en/exchanges/balanced_network',
+  coinmarketcap: 'https://coinmarketcap.com/exchanges/balanced/',
+  github: 'https://github.com/balancednetwork/',
 };

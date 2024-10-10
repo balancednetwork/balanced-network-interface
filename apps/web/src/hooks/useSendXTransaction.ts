@@ -14,35 +14,30 @@ import {
 } from '@/xwagmi/xcall/types';
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
 import { xServiceActions } from '@/xwagmi/xcall/zustand/useXServiceStore';
-import { useXTransactionStore } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { useSignTransaction } from '@mysten/dapp-kit';
 import { useMemo } from 'react';
 import { transactionActions } from './useTransactionStore';
 
 const iconChainId: XChainId = '0x1.icon';
 
-const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess = () => {}) => {
+const sendXTransaction = async (xTransactionInput: XTransactionInput, options: any) => {
   const { direction } = xTransactionInput;
   const sourceChainId = direction.from;
-  const finalDestinationChainId = direction.to;
-  const primaryDestinationChainId = sourceChainId === iconChainId ? finalDestinationChainId : iconChainId;
 
   const srcXWalletClient = getXWalletClient(sourceChainId);
-
   if (!srcXWalletClient) {
     throw new Error('WalletXService for source chain is not found');
   }
 
   console.log('xTransactionInput', xTransactionInput);
 
-  const sourceTransactionHash = await srcXWalletClient.executeTransaction(xTransactionInput);
-
-  const primaryDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(primaryDestinationChainId) - 20n;
-  const finalDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(finalDestinationChainId);
-
+  const sourceTransactionHash = await srcXWalletClient.executeTransaction(xTransactionInput, options);
   if (!sourceTransactionHash) {
     return;
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   let descriptionAction, descriptionAmount;
   if (xTransactionInput.type === XTransactionType.BRIDGE) {
     const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
@@ -103,47 +98,54 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess 
     hash: sourceTransactionHash,
   });
 
-  if (sourceTransaction && sourceTransaction.hash) {
-    const xMessage: XMessage = {
-      id: `${sourceChainId}/${sourceTransaction.hash}`,
-      sourceChainId: sourceChainId,
-      destinationChainId: primaryDestinationChainId,
-      sourceTransaction,
-      status: XMessageStatus.REQUESTED,
-      events: {},
-      destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
-    };
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  const finalDestinationChainId = direction.to;
+  const primaryDestinationChainId = sourceChainId === iconChainId ? finalDestinationChainId : iconChainId;
 
-    xMessageActions.add(xMessage);
+  const primaryDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(primaryDestinationChainId) - 20n;
+  const finalDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(finalDestinationChainId);
 
-    const xTransaction: XTransaction = {
-      id: xMessage.id,
-      type: xTransactionInput.type,
-      status: XTransactionStatus.pending,
-      primaryMessageId: xMessage.id,
-      secondaryMessageRequired: primaryDestinationChainId !== finalDestinationChainId,
-      sourceChainId: sourceChainId,
-      finalDestinationChainId: finalDestinationChainId,
-      finalDestinationChainInitialBlockHeight,
-      attributes: {
-        descriptionAction,
-        descriptionAmount,
-      },
-    };
+  const xTransaction: XTransaction = {
+    id: `${sourceChainId}/${sourceTransactionHash}`,
+    type: xTransactionInput.type,
+    status: XTransactionStatus.pending,
+    secondaryMessageRequired: primaryDestinationChainId !== finalDestinationChainId,
+    sourceChainId: sourceChainId,
+    finalDestinationChainId: finalDestinationChainId,
+    finalDestinationChainInitialBlockHeight,
+    attributes: {
+      descriptionAction,
+      descriptionAmount,
+    },
+  };
+  xTransactionActions.add(xTransaction);
 
-    useXTransactionStore.setState(state => {
-      state.transactions[xTransaction.id] = xTransaction;
-    });
-    return xTransaction.id;
-  }
+  const xMessage: XMessage = {
+    id: `${sourceChainId}/${sourceTransactionHash}`,
+    xTransactionId: xTransaction.id,
+    sourceChainId: sourceChainId,
+    destinationChainId: primaryDestinationChainId,
+    sourceTransactionHash,
+    status: XMessageStatus.REQUESTED,
+    events: {},
+    destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
+    isPrimary: true,
+    createdAt: Date.now(),
+    useXCallScanner: primaryDestinationChainId === 'sui' || sourceChainId === 'sui',
+  };
+  xMessageActions.add(xMessage);
+
+  return xTransaction.id;
 };
 
 export const useSendXTransaction = () => {
+  const { mutateAsync: signTransaction } = useSignTransaction();
+
   return useMemo(
     () => ({
-      sendXTransaction: (xTransactionInput: XTransactionInput, onSuccess = () => {}) =>
-        sendXTransaction(xTransactionInput, onSuccess),
+      sendXTransaction: (xTransactionInput: XTransactionInput) =>
+        sendXTransaction(xTransactionInput, { signTransaction }),
     }),
-    [],
+    [signTransaction],
   );
 };

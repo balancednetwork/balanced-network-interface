@@ -12,6 +12,7 @@ import { uintToBytes } from '@/xwagmi/utils';
 import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import { RLP } from '@ethereumjs/rlp';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
+import { isDenomAsset } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
 
 export class InjectiveXWalletClient extends XWalletClient {
@@ -60,6 +61,7 @@ export class InjectiveXWalletClient extends XWalletClient {
     }
 
     const isBnUSD = inputAmount.currency?.symbol === 'bnUSD';
+    const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
 
     if (isBnUSD) {
       const msg = MsgExecuteContractCompat.fromJSON({
@@ -87,24 +89,45 @@ export class InjectiveXWalletClient extends XWalletClient {
 
       return txResult.txHash;
     } else {
-      // assume it's an only native asset - INJ
-      const msg = MsgExecuteContractCompat.fromJSON({
-        contractAddress: injective.contracts.assetManager,
-        sender: account,
-        msg: {
-          deposit_denom: {
-            denom: 'inj',
-            to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
-            data,
+      let msg;
+      if (isDenom) {
+        msg = MsgExecuteContractCompat.fromJSON({
+          contractAddress: injective.contracts.assetManager,
+          sender: account,
+          msg: {
+            deposit_denom: {
+              denom: token.address,
+              to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
+              data,
+            },
           },
-        },
-        funds: [
-          {
-            denom: 'inj',
-            amount: BigInt(inputAmount.quotient + xCallFee.rollback).toString(),
+          funds: [
+            {
+              denom: 'inj',
+              amount: BigInt(xCallFee.rollback).toString(),
+            },
+            { denom: token.address, amount: `${inputAmount.quotient}` },
+          ],
+        });
+      } else {
+        msg = MsgExecuteContractCompat.fromJSON({
+          contractAddress: injective.contracts.assetManager,
+          sender: account,
+          msg: {
+            deposit_denom: {
+              denom: 'inj',
+              to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
+              data,
+            },
           },
-        ],
-      });
+          funds: [
+            {
+              denom: 'inj',
+              amount: BigInt(inputAmount.quotient + xCallFee.rollback).toString(),
+            },
+          ],
+        });
+      }
 
       const txResult = await this.getXService().msgBroadcastClient.broadcastWithFeeDelegation({
         msgs: msg,

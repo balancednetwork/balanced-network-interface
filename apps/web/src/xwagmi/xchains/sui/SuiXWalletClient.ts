@@ -27,7 +27,7 @@ const addressesMainnet = {
   'bnUSD Storage': '0xd28c9da258f082d5a98556fc08760ec321451216087609acd2ff654d9827c5b5',
 };
 
-const GAS_AMOUNT = 160_000_000n;
+const XCALL_FEE_AMOUNT = 160_000_000n;
 
 export class SuiXWalletClient extends XWalletClient {
   getXService(): SuiXService {
@@ -88,7 +88,7 @@ export class SuiXWalletClient extends XWalletClient {
     if (isNative) {
       const txb = new Transaction();
 
-      const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, GAS_AMOUNT]);
+      const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, XCALL_FEE_AMOUNT]);
       txb.moveCall({
         target: `${addressesMainnet['Balanced Package Id']}::asset_manager::deposit`,
         arguments: [
@@ -138,7 +138,7 @@ export class SuiXWalletClient extends XWalletClient {
       }
 
       const [depositCoin] = txb.splitCoins(coins[0].coinObjectId, [amount]);
-      const [feeCoin] = txb.splitCoins(txb.gas, [GAS_AMOUNT]);
+      const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
 
       txb.moveCall({
         target: `${addressesMainnet['Balanced Package Id']}::balanced_dollar_crosschain::cross_transfer`,
@@ -197,7 +197,7 @@ export class SuiXWalletClient extends XWalletClient {
     if (isNative) {
       const txb = new Transaction();
 
-      const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, GAS_AMOUNT]);
+      const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, XCALL_FEE_AMOUNT]);
       txb.moveCall({
         target: `${addressesMainnet['Balanced Package Id']}::asset_manager::deposit`,
         arguments: [
@@ -264,7 +264,7 @@ export class SuiXWalletClient extends XWalletClient {
 
     console.log("addressesMainnet['xCall Storage']", addressesMainnet['xCall Storage']);
 
-    const [feeCoin] = txb.splitCoins(txb.gas, [GAS_AMOUNT]);
+    const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
     txb.moveCall({
       target: `${addressesMainnet['xCall Package Id']}::main::send_call_ua`,
       arguments: [
@@ -332,7 +332,7 @@ export class SuiXWalletClient extends XWalletClient {
 
     console.log("addressesMainnet['xCall Storage']", addressesMainnet['xCall Storage']);
 
-    const [feeCoin] = txb.splitCoins(txb.gas, [GAS_AMOUNT]);
+    const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
     txb.moveCall({
       target: `${addressesMainnet['xCall Package Id']}::main::send_call_ua`,
       arguments: [
@@ -412,7 +412,7 @@ export class SuiXWalletClient extends XWalletClient {
     const [depositCoin] = txb.splitCoins(coins[0].coinObjectId, [
       amount < bnUSDTotalAmount ? amount : bnUSDTotalAmount,
     ]);
-    const [feeCoin] = txb.splitCoins(txb.gas, [GAS_AMOUNT]);
+    const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
 
     txb.moveCall({
       target: `${addressesMainnet['Balanced Package Id']}::balanced_dollar_crosschain::cross_transfer_exact`,

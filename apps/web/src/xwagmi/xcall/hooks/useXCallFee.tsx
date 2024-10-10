@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/xwagmi/constants/xChains';
 import { useXPublicClient } from '@/xwagmi/hooks';
 import { XChainId } from '@/xwagmi/types';
-import { formatEther, formatUnits } from 'viem';
+import { formatUnits } from 'viem';
 import { IXCallFee } from '../types';
 
 const useXCallFee = (from: XChainId, to: XChainId): { xCallFee: IXCallFee | undefined; formattedXCallFee: string } => {

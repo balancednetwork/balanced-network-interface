@@ -37,7 +37,7 @@ export class SuiXPublicClient extends XPublicClient {
 
   async getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean, sources?: string[]) {
     // TODO: hardcoded for now, confirm with the team
-    return BigInt(50_000_000);
+    return BigInt(110_000_000);
   }
 
   async getBlockHeight() {

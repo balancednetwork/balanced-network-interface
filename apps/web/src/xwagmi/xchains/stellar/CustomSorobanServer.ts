@@ -1,4 +1,4 @@
-import { Memo, MemoType, Operation, SorobanRpc, Transaction } from '@stellar/stellar-sdk';
+import { FeeBumpTransaction, Memo, MemoType, Operation, SorobanRpc, Transaction } from '@stellar/stellar-sdk';
 
 class CustomSorobanServer extends SorobanRpc.Server {
   private customHeaders: Record<string, string>;
@@ -10,7 +10,9 @@ class CustomSorobanServer extends SorobanRpc.Server {
     this.customHeaders = customHeaders;
   }
 
-  async simulateTransaction(tx: Transaction<Memo<MemoType>, Operation[]>): Promise<any> {
+  async simulateTransaction(
+    tx: Transaction<Memo<MemoType>, Operation[]>,
+  ): Promise<SorobanRpc.Api.SimulateTransactionResponse> {
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -29,9 +31,33 @@ class CustomSorobanServer extends SorobanRpc.Server {
 
     const response = await fetch(`${this.serverURL}`, requestOptions);
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error simulating TX! status: ${response.status}`);
     }
-    return response.json();
+    return response.json().then(json => json.result);
+  }
+
+  async sendTransaction(tx: Transaction | FeeBumpTransaction): Promise<SorobanRpc.Api.SendTransactionResponse> {
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...this.customHeaders,
+      },
+      body: JSON.stringify({
+        id: 1,
+        jsonrpc: '2.0',
+        method: 'sendTransaction',
+        params: {
+          transaction: tx.toXDR(),
+        },
+      }),
+    };
+
+    const response = await fetch(`${this.serverURL}`, requestOptions);
+    if (!response.ok) {
+      throw new Error(`HTTP error submitting TX! status: ${response.status}`);
+    }
+    return response.json().then(json => json.result);
   }
 }
 

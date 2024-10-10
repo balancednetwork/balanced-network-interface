@@ -20,13 +20,19 @@ export class StellarWalletsKitXConnector extends XConnector {
     //todo: support all supported wallets
     const wallets = await kit.getSupportedWallets();
     const freighterWallet = wallets.find(wallet => wallet.id === FREIGHTER_ID);
+    const hanaWallet = wallets.find(wallet => wallet.id === 'hana');
 
-    if (!freighterWallet || !freighterWallet.isAvailable) {
-      window.open('https://chromewebstore.google.com/detail/freighter/bcacfldlkkdogcmkkibnjlakofdplcbk', '_blank');
+    // if (!freighterWallet || !freighterWallet.isAvailable) {
+    //   window.open('https://chromewebstore.google.com/detail/freighter/bcacfldlkkdogcmkkibnjlakofdplcbk', '_blank');
+    //   return;
+    // }
+
+    if (!hanaWallet || !hanaWallet.isAvailable) {
+      alert('Hana wallet is not available');
       return;
     }
 
-    kit.setWallet(FREIGHTER_ID);
+    kit.setWallet('hana');
     const { address } = await kit.getAddress();
 
     return {

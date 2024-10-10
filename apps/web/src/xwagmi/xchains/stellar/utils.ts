@@ -17,6 +17,8 @@ import {
 } from '@stellar/stellar-sdk';
 import CustomSorobanServer from './CustomSorobanServer';
 
+export const XLM_CONTRACT_ADDRESS = 'CAS3J7GYLGXMF6TDJBBYYSE3HQ6BBSMLNUQ34T6TZMYMW2EVH34XOWMA';
+
 export const SendTxStatus: {
   [index: string]: SorobanRpc.Api.SendTransactionStatus;
 } = {
@@ -48,14 +50,14 @@ export const getTxBuilder = async (
 
 //  Can be used whenever we need to perform a "read-only" operation
 //  Used in getTokenSymbol, getTokenName, getTokenDecimals, and getTokenBalance
-export const simulateTx = async <ArgType>(
+export const simulateTx = async (
   tx: Transaction<Memo<MemoType>, Operation[]>,
   server: CustomSorobanServer,
-): Promise<ArgType> => {
+): Promise<any> => {
   const response = await server.simulateTransaction(tx);
 
-  if (response.result !== undefined) {
-    return response.result;
+  if (response !== undefined) {
+    return response;
   }
 
   throw new Error('cannot simulate transaction');
@@ -121,7 +123,8 @@ export const getTokenBalance = async (
     .setTimeout(TimeoutInfinite)
     .build();
 
-  const result = await simulateTx<{ results: { xdr: string }[] }>(tx, server);
+  const result = await simulateTx(tx, server);
+
   return scValToBigInt(xdr.ScVal.fromXDR(result.results[0].xdr, 'base64'));
 };
 

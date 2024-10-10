@@ -43,14 +43,8 @@ export class StellarXPublicClient extends XPublicClient {
   }
 
   async getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean) {
-    // const response: any = await this.getXService().chainGrpcWasmApi.fetchSmartContractState(
-    //   Stellar.contracts.xCall,
-    //   toBase64({ get_fee: { nid: nid, rollback } }),
-    // );
-
-    // const fee: any = fromBase64(response.data);
     //todo
-    return BigInt(1);
+    return BigInt(10_700_000);
   }
 
   async getBlockHeight() {

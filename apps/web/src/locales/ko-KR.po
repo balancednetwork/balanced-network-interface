@@ -720,6 +720,10 @@ msgstr ""
 msgid "Vote for this pool to receive bribes."
 msgstr ""
 
+#: src/app/components/XTransactionState/index.tsx
+msgid "{description}"
+msgstr ""
+
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 msgid "Address"
 msgstr "주소"
@@ -915,8 +919,6 @@ msgid "Lock up Balance Tokens?"
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/components/XTransactionState/index.tsx
-#: src/app/components/XTransactionState/index.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
@@ -2388,6 +2390,7 @@ msgstr ""
 msgid "Allocating bBALN..."
 msgstr ""
 
+#: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 msgid "Borrow, swap, & transfer cross-chain."

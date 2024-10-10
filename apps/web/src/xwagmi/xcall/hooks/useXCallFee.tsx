@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/xwagmi/constants/xChains';
 import { useXPublicClient } from '@/xwagmi/hooks';
 import { XChainId } from '@/xwagmi/types';
-import { formatEther } from 'viem';
+import { formatUnits } from 'viem';
 import { IXCallFee } from '../types';
 
 const useXCallFee = (from: XChainId, to: XChainId): { xCallFee: IXCallFee | undefined; formattedXCallFee: string } => {
@@ -30,7 +30,11 @@ const useXCallFee = (from: XChainId, to: XChainId): { xCallFee: IXCallFee | unde
   });
 
   const formattedXCallFee: string = useMemo(() => {
-    return xCallFee ? formatEther(xCallFee.rollback) + ' ' + xChainMap[from].nativeCurrency.symbol : '';
+    return xCallFee
+      ? formatUnits(xCallFee.rollback, xChainMap[from].nativeCurrency.decimals) +
+          ' ' +
+          xChainMap[from].nativeCurrency.symbol
+      : '';
   }, [xCallFee, from]);
 
   return { xCallFee, formattedXCallFee };

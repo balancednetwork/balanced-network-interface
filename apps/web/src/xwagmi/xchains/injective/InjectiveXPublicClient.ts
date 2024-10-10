@@ -104,7 +104,7 @@ export class InjectiveXPublicClient extends XPublicClient {
   }
 
   getScanBlockCount() {
-    return 10n;
+    return 30n;
   }
 
   async getEventLogs(

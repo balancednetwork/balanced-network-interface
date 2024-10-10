@@ -104,9 +104,10 @@ export function maxAmountSpend(
   ) {
     minCurrencyGas = CurrencyAmount.fromRawAmount(
       currencyAmount.currency,
-      new BigNumber(
-        Math.ceil(xChainMap[xChainId].gasThreshold * 2 * Number(10 ** currencyAmount.currency.decimals)),
-      ).toString(),
+      new BigNumber(xChainMap[xChainId].gasThreshold)
+        .times(3)
+        .times(10 ** currencyAmount.currency.decimals)
+        .toString(),
     );
   }
   return currencyAmount.subtract(minCurrencyGas).greaterThan(0)

@@ -197,9 +197,6 @@ export class SuiXWalletClient extends XWalletClient {
     if (isNative) {
       const txb = new Transaction();
 
-      console.log('amount', amount);
-      console.log('GAS_AMOUNT', GAS_AMOUNT);
-
       const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, GAS_AMOUNT]);
       txb.moveCall({
         target: `${addressesMainnet['Balanced Package Id']}::asset_manager::deposit`,

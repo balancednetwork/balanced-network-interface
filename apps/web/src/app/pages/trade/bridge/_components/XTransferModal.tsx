@@ -100,7 +100,7 @@ function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
     approveCallback();
   };
 
-  const gasChecker = useXCallGasChecker(direction.from);
+  const gasChecker = useXCallGasChecker(direction.from, currencyAmountToBridge);
 
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(direction.from);
 

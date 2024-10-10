@@ -4,18 +4,19 @@ import bnJs from '../icon/bnJs';
 import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
 
 import { FROM_SOURCES, TO_SOURCES } from '@/xwagmi/constants/xChains';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
+import { uintToBytes } from '@/xwagmi/utils';
+import { RLP } from '@ethereumjs/rlp';
 import { bcs } from '@mysten/sui/bcs';
 import { Transaction } from '@mysten/sui/transactions';
 import { toBytes, toHex } from 'viem';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
 import { SuiXService } from './SuiXService';
-import { RLP } from '@ethereumjs/rlp';
-import { uintToBytes } from '@/xwagmi/utils';
 
 const addressesMainnet = {
-  'Balanced Package Id': '0x52af654cd5f58aaf99638d71fd46896637abff823a9c6e152a297b9832a7ee72',
+  'Balanced Package Id': '0xa3c66ac08bca78a475954683a872a296fd61a28d478c4a8ebce676fc38f502d6',
   'xCall Package Id': '0x3638b141b349173a97261bbfa33ccd45334d41a80584db6f30429e18736206fe',
   'xCall Storage': '0xe9ae3e2d32cdf659ad5db4219b1086cc0b375da5c4f8859c872148895a2eace2',
   'xCall Manager Id': '0xa1fe210d98fb18114455e75f241ab985375dfa27720181268d92fe3499a1111e',
@@ -25,6 +26,8 @@ const addressesMainnet = {
   'bnUSD Id': '0xa2d713bd53ccb8855f9d5ac8f174e07450f2ff18e9bbfaa4e17f90f28b919230',
   'bnUSD Storage': '0xd28c9da258f082d5a98556fc08760ec321451216087609acd2ff654d9827c5b5',
 };
+
+const XCALL_FEE_AMOUNT = 160_000_000n;
 
 export class SuiXWalletClient extends XWalletClient {
   getXService(): SuiXService {
@@ -85,7 +88,7 @@ export class SuiXWalletClient extends XWalletClient {
     if (isNative) {
       const txb = new Transaction();
 
-      const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, 200_000_000]);
+      const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, XCALL_FEE_AMOUNT]);
       txb.moveCall({
         target: `${addressesMainnet['Balanced Package Id']}::asset_manager::deposit`,
         arguments: [
@@ -135,7 +138,7 @@ export class SuiXWalletClient extends XWalletClient {
       }
 
       const [depositCoin] = txb.splitCoins(coins[0].coinObjectId, [amount]);
-      const [feeCoin] = txb.splitCoins(txb.gas, [200_000_000]);
+      const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
 
       txb.moveCall({
         target: `${addressesMainnet['Balanced Package Id']}::balanced_dollar_crosschain::cross_transfer`,
@@ -194,7 +197,7 @@ export class SuiXWalletClient extends XWalletClient {
     if (isNative) {
       const txb = new Transaction();
 
-      const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, 200_000_000]);
+      const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, XCALL_FEE_AMOUNT]);
       txb.moveCall({
         target: `${addressesMainnet['Balanced Package Id']}::asset_manager::deposit`,
         arguments: [
@@ -261,7 +264,7 @@ export class SuiXWalletClient extends XWalletClient {
 
     console.log("addressesMainnet['xCall Storage']", addressesMainnet['xCall Storage']);
 
-    const [feeCoin] = txb.splitCoins(txb.gas, [200_000_000]);
+    const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
     txb.moveCall({
       target: `${addressesMainnet['xCall Package Id']}::main::send_call_ua`,
       arguments: [
@@ -329,7 +332,7 @@ export class SuiXWalletClient extends XWalletClient {
 
     console.log("addressesMainnet['xCall Storage']", addressesMainnet['xCall Storage']);
 
-    const [feeCoin] = txb.splitCoins(txb.gas, [200_000_000]);
+    const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
     txb.moveCall({
       target: `${addressesMainnet['xCall Package Id']}::main::send_call_ua`,
       arguments: [
@@ -372,7 +375,14 @@ export class SuiXWalletClient extends XWalletClient {
       return;
     }
 
-    const amount = BigInt(inputAmount.multiply(-1).quotient.toString());
+    const bnUSD = xTokenMap['sui'].find(token => token.symbol === 'bnUSD');
+    if (!bnUSD) {
+      throw new Error('bnUSD XToken not found');
+    }
+
+    const iconBnUSDAmount = BigInt(inputAmount.multiply(-1).quotient.toString());
+
+    const amount = BigInt(Math.ceil(-1 * Number(inputAmount.toFixed()) * 10 ** bnUSD.decimals));
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = toBytes(
       JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
@@ -381,32 +391,38 @@ export class SuiXWalletClient extends XWalletClient {
     const coins = (
       await this.getXService().suiClient.getCoins({
         owner: account,
-        coinType: inputAmount.currency.wrapped.address,
+        coinType: bnUSD.address,
       })
     )?.data;
+
+    let bnUSDTotalAmount = BigInt(0);
 
     const txb = new Transaction();
 
     if (!coins || coins.length === 0) {
       throw new Error('No coins found');
     } else if (coins.length > 1) {
+      bnUSDTotalAmount = coins.reduce((acc, coin) => acc + BigInt(coin.balance), BigInt(0));
       await txb.mergeCoins(
         coins[0].coinObjectId,
         coins.slice(1).map(coin => coin.coinObjectId),
       );
     }
 
-    const [depositCoin] = txb.splitCoins(coins[0].coinObjectId, [amount]);
-    const [feeCoin] = txb.splitCoins(txb.gas, [200_000_000]);
+    const [depositCoin] = txb.splitCoins(coins[0].coinObjectId, [
+      amount < bnUSDTotalAmount ? amount : bnUSDTotalAmount,
+    ]);
+    const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
 
     txb.moveCall({
-      target: `${addressesMainnet['Balanced Package Id']}::balanced_dollar_crosschain::cross_transfer`,
+      target: `${addressesMainnet['Balanced Package Id']}::balanced_dollar_crosschain::cross_transfer_exact`,
       arguments: [
         txb.object(addressesMainnet['bnUSD Storage']),
         txb.object(addressesMainnet['xCall Storage']),
         txb.object(addressesMainnet['xCall Manager Storage']),
         feeCoin,
         depositCoin,
+        txb.pure(bcs.u128().serialize(iconBnUSDAmount)),
         txb.pure(bcs.string().serialize(destination)),
         txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([data])),
       ],

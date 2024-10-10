@@ -2,7 +2,6 @@ import React, { useCallback } from 'react';
 
 import { Flex } from 'rebass/styled-components';
 
-import { Typography } from '@/app/components2/Typography';
 import WalletConnectIcon from '@/assets/icons/wallets/walletconnect.svg?inline';
 
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
@@ -15,10 +14,10 @@ const icons = {
   walletConnect: WalletConnectIcon,
 };
 
-export const SuiWalletOptionsModal = ({ id = MODAL_ID.SUI_WALLET_OPTIONS_MODAL }: { id?: MODAL_ID }) => {
+export const EVMWalletModal = ({ id = MODAL_ID.EVM_WALLET_OPTIONS_MODAL }) => {
   const modalOpen = useModalOpen(id);
 
-  const xConnectors = useXConnectors('SUI');
+  const xConnectors = useXConnectors('EVM');
   const xConnect = useXConnect();
 
   const onDismiss = useCallback(() => {
@@ -33,10 +32,10 @@ export const SuiWalletOptionsModal = ({ id = MODAL_ID.SUI_WALLET_OPTIONS_MODAL }
 
   return (
     <>
-      <Modal open={modalOpen} onDismiss={onDismiss}>
+      <Modal open={modalOpen} onDismiss={onDismiss} dialogClassName="max-w-[450px]">
         {xConnectors.length > 0 ? (
           <>
-            <Typography className="text-center mb-6">Connect with:</Typography>
+            <div className="text-center mb-6">Connect with:</div>
             <Flex alignItems="stretch" justifyContent="space-around" flexWrap="wrap">
               {xConnectors?.toReversed?.()?.map(xConnector => (
                 <WalletOption key={xConnector.id} onClick={() => handleConnect(xConnector)}>
@@ -48,32 +47,34 @@ export const SuiWalletOptionsModal = ({ id = MODAL_ID.SUI_WALLET_OPTIONS_MODAL }
           </>
         ) : (
           <>
-            <Typography className="text-center mb-6">No SUI-based wallet detected.</Typography>
-            <Typography className="text-center">
+            <div className="text-center mb-6">No EVM-based wallet detected.</div>
+            <div className="text-center">
               Add a wallet like{' '}
-              <Typography
-                variant={'span'}
-                color="primaryBright"
+              <div
                 onClick={() =>
                   window.open('https://chromewebstore.google.com/detail/hana-wallet/jfdlamikmbghhapbgfoogdffldioobgl')
                 }
               >
                 <span>Hana</span>
-              </Typography>
+              </div>
               ,{' '}
-              <Typography
-                variant={'span'}
-                color="primaryBright"
+              <div
                 onClick={() =>
-                  window.open(
-                    'https://chromewebstore.google.com/detail/sui-wallet/opcgpfmipidbgpenhmajoajpbobppdil?hl=en-US',
-                  )
+                  window.open('https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn')
                 }
               >
-                <span>Sui Wallet</span>
-              </Typography>{' '}
+                <span>MetaMask</span>
+              </div>
+              , or{' '}
+              <div
+                onClick={() =>
+                  window.open('https://chromewebstore.google.com/detail/rabby-wallet/acmacodkjbdgmoleebolmdjonilkdbch')
+                }
+              >
+                <span>Rabby</span>
+              </div>{' '}
               to your browser, then try again.
-            </Typography>
+            </div>
           </>
         )}
       </Modal>

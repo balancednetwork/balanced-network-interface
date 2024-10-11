@@ -395,19 +395,17 @@ export class SuiXWalletClient extends XWalletClient {
       })
     )?.data;
 
-    let bnUSDTotalAmount = BigInt(0);
-
     const txb = new Transaction();
 
     if (!coins || coins.length === 0) {
       throw new Error('No coins found');
     } else if (coins.length > 1) {
-      bnUSDTotalAmount = coins.reduce((acc, coin) => acc + BigInt(coin.balance), BigInt(0));
       await txb.mergeCoins(
         coins[0].coinObjectId,
         coins.slice(1).map(coin => coin.coinObjectId),
       );
     }
+    const bnUSDTotalAmount = coins.reduce((acc, coin) => acc + BigInt(coin.balance), BigInt(0));
 
     const [depositCoin] = txb.splitCoins(coins[0].coinObjectId, [
       amount < bnUSDTotalAmount ? amount : bnUSDTotalAmount,

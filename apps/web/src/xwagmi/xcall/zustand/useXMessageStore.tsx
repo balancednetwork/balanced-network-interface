@@ -8,11 +8,11 @@ import { immer } from 'zustand/middleware/immer';
 
 import { transactionActions } from '@/hooks/useTransactionStore';
 import { getXPublicClient } from '@/xwagmi/actions';
-import { XCallEventType, XTransaction } from '../types';
+import { XCallEventType, XTransaction, XTransactionStatus } from '../types';
 import { TransactionStatus, XCallEventMap, XMessage, XMessageStatus } from '../types';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { useXCallScannerStore, useXCallScannerSubscription } from './useXCallScannerStore';
-import { xTransactionActions } from './useXTransactionStore';
+import { useXTransactionStore, xTransactionActions } from './useXTransactionStore';
 
 const jsonStorageOptions = {
   reviver: (key, value: any) => {
@@ -464,6 +464,30 @@ export const AllXMessagesUpdater = () => {
             )}
           </>
         ))}
+    </>
+  );
+};
+
+export const AllXTransactionsUpdater = () => {
+  useXCallScannerSubscription();
+
+  const xTransactions = useXTransactionStore(state =>
+    Object.values(state.transactions).filter(x => x.status === XTransactionStatus.pending),
+  );
+
+  return (
+    <>
+      {xTransactions.map(xTransaction => {
+        const primaryMessage = xMessageActions.getOf(xTransaction.id, true);
+        const secondaryMessage = xMessageActions.getOf(xTransaction.id, false);
+
+        return (
+          <div key={xTransaction.id}>
+            {primaryMessage && primaryMessage.useXCallScanner && <XMessageUpdater2 xMessage={primaryMessage} />}
+            {secondaryMessage && secondaryMessage.useXCallScanner && <XMessageUpdater2 xMessage={secondaryMessage} />}
+          </div>
+        );
+      })}
     </>
   );
 };

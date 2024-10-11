@@ -15,7 +15,8 @@ import { useDerivedCollateralInfo } from '@/store/collateral/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatBalance } from '@/utils/formatter';
 import { getXChainType } from '@/xwagmi/actions';
-import { xChainMap, xChains } from '@/xwagmi/constants/xChains';
+import { xChains } from '@/xwagmi/constants/xChains';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
 import { useXConnect, useXConnectors } from '@/xwagmi/hooks';
 import { XChain, XChainId } from '@/xwagmi/types';
 import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from './styledComponents';
@@ -68,6 +69,8 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
     }
   }, [isSignedIn, waitingSignIn, setChainId, collateralChain]);
 
+  const bnUSD = xTokenMap[chain.xChainId].find(token => token.symbol === 'bnUSD');
+
   return (
     <Grid
       $isSignedIn={isSignedIn}
@@ -85,11 +88,11 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
       {isSignedIn ? (
         <Typography color="inherit" style={{ transition: 'all ease 0.3s' }}>
           {`${
-            crossChainBalances[chain.xChainId]?.[xChainMap[chain.xChainId].contracts.bnUSD || '']
-              ? formatBalance(
-                  crossChainBalances[chain.xChainId]?.[xChainMap[chain.xChainId].contracts.bnUSD || '']?.toFixed(),
-                  1,
-                ).replace('.00', '')
+            crossChainBalances[chain.xChainId]?.[bnUSD?.address || '']
+              ? formatBalance(crossChainBalances[chain.xChainId]?.[bnUSD?.address || '']?.toFixed(), 1).replace(
+                  '.00',
+                  '',
+                )
               : 0
           }`}
           {' bnUSD'}

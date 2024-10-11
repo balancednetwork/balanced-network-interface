@@ -152,7 +152,11 @@ export const useXMessageStore = create<XMessageStore>()(
             newStatus = XMessageStatus.CALL_MESSAGE;
             break;
           case 'executed':
-            newStatus = XMessageStatus.CALL_EXECUTED;
+            if (data.dest_error) {
+              newStatus = XMessageStatus.ROLLBACKED;
+            } else {
+              newStatus = XMessageStatus.CALL_EXECUTED;
+            }
             break;
           case 'rollbacked':
             newStatus = XMessageStatus.ROLLBACKED;
@@ -171,7 +175,9 @@ export const useXMessageStore = create<XMessageStore>()(
           state.messages[id] = newXMessage;
         });
 
-        get().updateStatus(id, newStatus);
+        if (newStatus) {
+          get().updateStatus(id, newStatus);
+        }
       },
 
       onMessageUpdate: (id: string) => {

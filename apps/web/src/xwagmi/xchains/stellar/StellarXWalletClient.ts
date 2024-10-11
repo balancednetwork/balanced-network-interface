@@ -91,7 +91,7 @@ export class StellarXWalletClient extends XWalletClient {
           const txToSubmit = TransactionBuilder.fromXDR(signedTxXdr, Networks.PUBLIC);
 
           const { hash } = await sorobanServer.sendTransaction(txToSubmit);
-          console.log('txResponse', hash);
+
           return hash;
         } else {
           throw new Error('Failed to assemble stellar transaction');
@@ -121,7 +121,7 @@ export class StellarXWalletClient extends XWalletClient {
           const txToSubmit = TransactionBuilder.fromXDR(signedTxXdr, Networks.PUBLIC);
 
           const { hash } = await sorobanServer.sendTransaction(txToSubmit);
-          console.log('txResponse', hash);
+
           return hash;
         } else {
           throw new Error('Failed to assemble stellar transaction');
@@ -165,7 +165,7 @@ export class StellarXWalletClient extends XWalletClient {
           const txToSubmit = TransactionBuilder.fromXDR(signedTxXdr, Networks.PUBLIC);
 
           const { hash } = await sorobanServer.sendTransaction(txToSubmit);
-          console.log('txResponse', hash);
+
           return hash;
         } else {
           throw new Error('Failed to assemble stellar transaction');
@@ -195,7 +195,7 @@ export class StellarXWalletClient extends XWalletClient {
           const txToSubmit = TransactionBuilder.fromXDR(signedTxXdr, Networks.PUBLIC);
 
           const { hash } = await sorobanServer.sendTransaction(txToSubmit);
-          console.log('txResponse', hash);
+
           return hash;
         }
       } else {

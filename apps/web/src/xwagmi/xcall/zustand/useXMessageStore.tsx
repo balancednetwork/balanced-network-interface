@@ -155,10 +155,10 @@ export const useXMessageStore = create<XMessageStore>()(
             newStatus = XMessageStatus.CALL_MESSAGE;
             break;
           case 'executed':
-            if (data.dest_error) {
-              newStatus = XMessageStatus.ROLLBACKED;
-            } else {
+            if (!data.dest_error || data.dest_error === 'success') {
               newStatus = XMessageStatus.CALL_EXECUTED;
+            } else {
+              newStatus = XMessageStatus.ROLLBACKED;
             }
             break;
           case 'rollbacked':

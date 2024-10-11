@@ -145,6 +145,9 @@ export const useXMessageStore = create<XMessageStore>()(
 
         let newStatus;
         switch (data.status) {
+          case 'failed':
+            newStatus = XMessageStatus.FAILED;
+            break;
           case 'pending':
             newStatus = XMessageStatus.CALL_MESSAGE_SENT;
             break;

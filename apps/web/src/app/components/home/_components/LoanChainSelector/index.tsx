@@ -9,7 +9,7 @@ import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
 import { getSupportedXChainForToken } from '@/xwagmi/xcall/utils';
 import { Trans } from '@lingui/macro';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
 import ChainSelectorLogo from '../CollateralChainSelector/ChainSelectorLogo';
@@ -23,9 +23,7 @@ const LoanChainSelector = ({
   const loanRecipientNetwork = useLoanRecipientNetwork();
   const { onAdjust: adjust, setRecipientNetwork } = useLoanActionHandlers();
 
-  const xChains = getSupportedXChainForToken(bnUSD[NETWORK_ID])?.filter(
-    chain => chain.xChainId !== 'archway-1' && chain.xChainId !== '0x100.icon',
-  );
+  const xChains = getSupportedXChainForToken(bnUSD[NETWORK_ID]);
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
@@ -45,16 +43,11 @@ const LoanChainSelector = ({
     }
   };
 
-  const isCrossChain: boolean = useMemo(() => {
-    return (xChains?.length ?? 0) > 1;
-  }, [xChains]);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (containerRef) {
       setAnchor(containerRef);
     }
-  }, [isCrossChain, containerRef]);
+  }, [containerRef]);
 
   const setChainWrap = React.useCallback(
     (chainId: XChainId) => {
@@ -70,40 +63,31 @@ const LoanChainSelector = ({
       <Typography mr={1} lineHeight="1.7">
         <Trans>Receive / repay on:</Trans>
       </Typography>
-      {isCrossChain ? (
-        <ClickAwayListener onClickAway={closeDropdown}>
-          <div>
-            <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }}>
-              <Typography fontSize={14} pr="1px" variant="span">
-                <ChainSelectorLogo chain={xChainMap[loanRecipientNetwork]} />
-                {xChainMap[loanRecipientNetwork].name}
-              </Typography>
-              <div ref={arrowRef} style={{ display: 'inline-block' }}>
-                <StyledArrowDownIcon style={{ transform: 'translate3d(-2px, -4px, 0)' }} />
-              </div>
-            </SelectorWrap>
+      <ClickAwayListener onClickAway={closeDropdown}>
+        <div>
+          <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }}>
+            <Typography fontSize={14} pr="1px" variant="span">
+              <ChainSelectorLogo chain={xChainMap[loanRecipientNetwork]} />
+              {xChainMap[loanRecipientNetwork].name}
+            </Typography>
+            <div ref={arrowRef} style={{ display: 'inline-block' }}>
+              <StyledArrowDownIcon style={{ transform: 'translate3d(-2px, -4px, 0)' }} />
+            </div>
+          </SelectorWrap>
 
-            <DropdownPopper
-              show={isOpen}
-              anchorEl={anchor}
-              arrowEl={arrowRef.current}
-              placement="bottom"
-              offset={[0, 9]}
-              strategy="absolute"
-              containerOffset={containerRef ? containerRef.getBoundingClientRect().x + 2 : 0}
-            >
-              <ChainList setChainId={setChainWrap} chainId={loanRecipientNetwork} chains={xChains} width={width} />
-            </DropdownPopper>
-          </div>
-        </ClickAwayListener>
-      ) : (
-        <Flex>
-          <Typography mr={1} lineHeight="1.7">
-            <ChainSelectorLogo chain={xChainMap[loanRecipientNetwork]} />
-            {xChainMap[loanRecipientNetwork].name}
-          </Typography>
-        </Flex>
-      )}
+          <DropdownPopper
+            show={isOpen}
+            anchorEl={anchor}
+            arrowEl={arrowRef.current}
+            placement="bottom"
+            offset={[0, 9]}
+            strategy="absolute"
+            containerOffset={containerRef ? containerRef.getBoundingClientRect().x + 2 : 0}
+          >
+            <ChainList setChainId={setChainWrap} chainId={loanRecipientNetwork} chains={xChains} width={width} />
+          </DropdownPopper>
+        </div>
+      </ClickAwayListener>
     </Flex>
   );
 };

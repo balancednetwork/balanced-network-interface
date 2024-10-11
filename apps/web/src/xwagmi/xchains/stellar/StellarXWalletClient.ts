@@ -7,9 +7,14 @@ import { XWalletClient } from '@/xwagmi/core';
 import { XToken } from '@/xwagmi/types';
 import { uintToBytes } from '@/xwagmi/utils';
 import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
-import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xwagmi/xcall/utils';
+import {
+  getBytesFromAddress,
+  getBytesFromNumber,
+  getBytesFromString,
+  getRlpEncodedSwapData,
+  toICONDecimals,
+} from '@/xwagmi/xcall/utils';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import { RLP } from '@ethereumjs/rlp';
 import {
   Asset,
   BASE_FEE,
@@ -41,6 +46,7 @@ export class StellarXWalletClient extends XWalletClient {
     const stellarAccount = await this.getXService().server.loadAccount(account);
     const sorobanServer = this.getXService().sorobanServer;
     const walletsKit = this.getXService().walletsKit;
+    const receiver = `${direction.to}/${recipient}`;
 
     const simulateTxBuilder = new TransactionBuilder(stellarAccount, {
       fee: BASE_FEE,
@@ -53,7 +59,7 @@ export class StellarXWalletClient extends XWalletClient {
         method: '_swap',
         params: {
           path: [],
-          receiver: recipient,
+          receiver,
         },
       };
       const encoder = new TextEncoder();
@@ -90,7 +96,7 @@ export class StellarXWalletClient extends XWalletClient {
         } else {
           throw new Error('Failed to assemble stellar transaction');
         }
-      } else {
+      } else if (inputAmount.currency.symbol === 'bnUSD') {
         const contract = new Contract(stellar.contracts.bnUSD!);
 
         //cross_transfer(from: address, amount: u128, to: string, data: option<bytes>)
@@ -120,10 +126,92 @@ export class StellarXWalletClient extends XWalletClient {
         } else {
           throw new Error('Failed to assemble stellar transaction');
         }
+      } else {
+        throw new Error('Invalid currency for Stellar bridge');
       }
-    }
+    } else if (type === XTransactionType.SWAP) {
+      if (!executionTrade || !slippageTolerance) {
+        return;
+      }
+      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
+      const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
+      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived);
 
-    return '';
+      const uint8Array = new Uint8Array(rlpEncodedData);
+
+      if (inputAmount.currency.symbol === 'XLM') {
+        const contract = new Contract(stellar.contracts.assetManager);
+
+        //deposit(from: address, token: address, amount: u128, to: option<string>, data: option<bytes>)
+        const params = [
+          accountToScVal(account),
+          nativeToScVal(XLM_CONTRACT_ADDRESS, { type: 'address' }),
+          nativeToScVal(inputAmount.quotient, { type: 'u128' }),
+          nativeToScVal(destination),
+          nativeToScVal(uint8Array, { type: 'bytes' }),
+        ];
+
+        const simulateTx = simulateTxBuilder
+          .addOperation(contract.call('deposit', ...params))
+          .setTimeout(30)
+          .build();
+
+        const simResult = await sorobanServer.simulateTransaction(simulateTx);
+
+        const tx = rpc.assembleTransaction(simulateTx, simResult).build();
+
+        if (tx) {
+          const { signedTxXdr } = await walletsKit.signTransaction(tx.toXDR());
+          const txToSubmit = TransactionBuilder.fromXDR(signedTxXdr, Networks.PUBLIC);
+
+          const { hash } = await sorobanServer.sendTransaction(txToSubmit);
+          console.log('txResponse', hash);
+          return hash;
+        } else {
+          throw new Error('Failed to assemble stellar transaction');
+        }
+      } else if (inputAmount.currency.symbol === 'bnUSD') {
+        const contract = new Contract(inputAmount.currency.wrapped.address);
+
+        //cross_transfer(from: address, amount: u128, to: string, data: option<bytes>)
+        const params = [
+          accountToScVal(account),
+          nativeToScVal(inputAmount.quotient, { type: 'u128' }),
+          nativeToScVal(destination),
+          nativeToScVal(uint8Array, { type: 'bytes' }),
+        ];
+
+        const simulateTx = simulateTxBuilder
+          .addOperation(contract.call('cross_transfer', ...params))
+          .setTimeout(30)
+          .build();
+
+        const simResult = await sorobanServer.simulateTransaction(simulateTx);
+
+        const tx = rpc.assembleTransaction(simulateTx, simResult).build();
+
+        if (tx) {
+          const { signedTxXdr } = await walletsKit.signTransaction(tx.toXDR());
+          const txToSubmit = TransactionBuilder.fromXDR(signedTxXdr, Networks.PUBLIC);
+
+          const { hash } = await sorobanServer.sendTransaction(txToSubmit);
+          console.log('txResponse', hash);
+          return hash;
+        }
+      } else {
+        throw new Error('Invalid currency for Stellar swap');
+      }
+    } else if (type === XTransactionType.DEPOSIT) {
+      return '';
+    } else if (type === XTransactionType.WITHDRAW) {
+      return '';
+    } else if (type === XTransactionType.BORROW) {
+      return '';
+    } else if (type === XTransactionType.REPAY) {
+      return '';
+    } else {
+      throw new Error('Invalid XTransactionType');
+    }
 
     // const token = inputAmount.currency.wrapped;
     // const receiver = `${direction.to}/${recipient}`;

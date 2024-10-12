@@ -1,3 +1,4 @@
+import { StellarWalletsKit } from '@creit.tech/stellar-wallets-kit';
 import {
   Address,
   BASE_FEE,
@@ -11,6 +12,7 @@ import {
   Transaction,
   TransactionBuilder,
   nativeToScVal,
+  rpc,
   scValToBigInt,
   scValToNative,
   xdr,
@@ -205,3 +207,30 @@ export const getEstimatedFee = async (
   const fee = (classicFeeNum + minResourceFeeNum).toString();
   return fee;
 };
+
+export async function sendTX(
+  contractAddress: string,
+  contractMethod: string,
+  params: xdr.ScVal[],
+  txBuilder: TransactionBuilder,
+  server: CustomSorobanServer,
+  kit: StellarWalletsKit,
+): Promise<string> {
+  const contract = new Contract(contractAddress);
+  const simulateTx = txBuilder
+    .addOperation(contract.call(contractMethod, ...params))
+    .setTimeout(30)
+    .build();
+
+  const simResult = await server.simulateTransaction(simulateTx);
+  const tx = rpc.assembleTransaction(simulateTx, simResult).build();
+
+  if (tx) {
+    const { signedTxXdr } = await kit.signTransaction(tx.toXDR());
+    const txToSubmit = TransactionBuilder.fromXDR(signedTxXdr, Networks.PUBLIC);
+    const { hash } = await server.sendTransaction(txToSubmit);
+    return hash;
+  } else {
+    throw new Error('Failed to send stellar transaction');
+  }
+}

@@ -2,35 +2,17 @@ import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
-import { FROM_SOURCES, TO_SOURCES, stellar } from '@/xwagmi/constants/xChains';
+import { stellar } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core';
 import { XToken } from '@/xwagmi/types';
-import { uintToBytes } from '@/xwagmi/utils';
 import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
-import {
-  getBytesFromAddress,
-  getBytesFromNumber,
-  getBytesFromString,
-  getRlpEncodedSwapData,
-  toICONDecimals,
-} from '@/xwagmi/xcall/utils';
+import { getRlpEncodedSwapData } from '@/xwagmi/xcall/utils';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import {
-  Asset,
-  BASE_FEE,
-  Contract,
-  Keypair,
-  Networks,
-  Operation,
-  OperationOptions,
-  SorobanRpc,
-  TransactionBuilder,
-  nativeToScVal,
-  rpc,
-  xdr,
-} from '@stellar/stellar-sdk';
+import { StellarWalletsKit } from '@creit.tech/stellar-wallets-kit';
+import { BASE_FEE, Networks, TransactionBuilder, nativeToScVal } from '@stellar/stellar-sdk';
+import CustomSorobanServer from './CustomSorobanServer';
 import { StellarXService } from './StellarXService';
-import { XLM_CONTRACT_ADDRESS, accountToScVal, numberToI128 } from './utils';
+import { XLM_CONTRACT_ADDRESS, accountToScVal, sendTX } from './utils';
 
 export class StellarXWalletClient extends XWalletClient {
   getXService(): StellarXService {
@@ -40,222 +22,129 @@ export class StellarXWalletClient extends XWalletClient {
   async approve(token: XToken, owner: string, spender: string, currencyAmountToApprove: CurrencyAmount<XToken>) {}
 
   async executeTransaction(xTransactionInput: XTransactionInput) {
-    const { type, direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } =
-      xTransactionInput;
-
+    const { type, account } = xTransactionInput;
     const stellarAccount = await this.getXService().server.loadAccount(account);
     const sorobanServer = this.getXService().sorobanServer;
     const walletsKit = this.getXService().walletsKit;
-    const receiver = `${direction.to}/${recipient}`;
-
     const simulateTxBuilder = new TransactionBuilder(stellarAccount, {
       fee: BASE_FEE,
       networkPassphrase: Networks.PUBLIC,
     });
 
-    if (type === XTransactionType.BRIDGE) {
-      const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
-      const dataObj = {
-        method: '_swap',
-        params: {
-          path: [],
-          receiver,
-        },
-      };
-      const encoder = new TextEncoder();
-      const uint8Array = encoder.encode(JSON.stringify(dataObj));
-
-      if (inputAmount.currency.symbol === 'XLM') {
-        const contract = new Contract(stellar.contracts.assetManager);
-
-        //deposit(from: address, token: address, amount: u128, to: option<string>, data: option<bytes>)
-        const params = [
-          accountToScVal(account),
-          nativeToScVal(XLM_CONTRACT_ADDRESS, { type: 'address' }),
-          nativeToScVal(inputAmount.quotient, { type: 'u128' }),
-          nativeToScVal(destination),
-          nativeToScVal(uint8Array, { type: 'bytes' }),
-        ];
-
-        const simulateTx = simulateTxBuilder
-          .addOperation(contract.call('deposit', ...params))
-          .setTimeout(30)
-          .build();
-
-        const simResult = await sorobanServer.simulateTransaction(simulateTx);
-
-        const tx = rpc.assembleTransaction(simulateTx, simResult).build();
-
-        if (tx) {
-          const { signedTxXdr } = await walletsKit.signTransaction(tx.toXDR());
-          const txToSubmit = TransactionBuilder.fromXDR(signedTxXdr, Networks.PUBLIC);
-
-          const { hash } = await sorobanServer.sendTransaction(txToSubmit);
-
-          return hash;
-        } else {
-          throw new Error('Failed to assemble stellar transaction');
-        }
-      } else if (inputAmount.currency.symbol === 'bnUSD') {
-        const contract = new Contract(stellar.contracts.bnUSD!);
-
-        //cross_transfer(from: address, amount: u128, to: string, data: option<bytes>)
-        const params = [
-          accountToScVal(account),
-          nativeToScVal(inputAmount.quotient, { type: 'u128' }),
-          nativeToScVal(destination),
-          nativeToScVal(uint8Array, { type: 'bytes' }),
-        ];
-
-        const simulateTx = simulateTxBuilder
-          .addOperation(contract.call('cross_transfer', ...params))
-          .setTimeout(30)
-          .build();
-
-        const simResult = await sorobanServer.simulateTransaction(simulateTx);
-
-        const tx = rpc.assembleTransaction(simulateTx, simResult).build();
-
-        if (tx) {
-          const { signedTxXdr } = await walletsKit.signTransaction(tx.toXDR());
-          const txToSubmit = TransactionBuilder.fromXDR(signedTxXdr, Networks.PUBLIC);
-
-          const { hash } = await sorobanServer.sendTransaction(txToSubmit);
-
-          return hash;
-        } else {
-          throw new Error('Failed to assemble stellar transaction');
-        }
-      } else {
-        throw new Error('Invalid currency for Stellar bridge');
+    try {
+      switch (type) {
+        case XTransactionType.BRIDGE:
+          return await this.handleBridgeTransaction(xTransactionInput, simulateTxBuilder, sorobanServer, walletsKit);
+        case XTransactionType.SWAP:
+          return await this.handleSwapTransaction(xTransactionInput, simulateTxBuilder, sorobanServer, walletsKit);
+        case XTransactionType.WITHDRAW:
+          return ''; // Implement withdraw logic
+        case XTransactionType.BORROW:
+          return ''; // Implement borrow logic
+        case XTransactionType.REPAY:
+          return ''; // Implement repay
+        case XTransactionType.DEPOSIT:
+          return ''; // Implement deposit
+        default:
+          throw new Error('Unsupported transaction type');
       }
-    } else if (type === XTransactionType.SWAP) {
-      if (!executionTrade || !slippageTolerance) {
-        return;
-      }
-      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-      const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived);
+    } catch (error) {
+      console.error('Error executing Stellar transaction:', error);
+      throw new Error(`Error executing Stellar transaction: ${error}`);
+    }
+  }
 
-      const uint8Array = new Uint8Array(rlpEncodedData);
+  private async handleBridgeTransaction(
+    xTransactionInput: XTransactionInput,
+    txBuilder: TransactionBuilder,
+    server: CustomSorobanServer,
+    kit: StellarWalletsKit,
+  ): Promise<string | undefined> {
+    const { account, inputAmount, recipient, direction } = xTransactionInput;
+    const receiver = `${direction.to}/${recipient}`;
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
+    const dataObj = {
+      method: '_swap',
+      params: {
+        path: [],
+        receiver,
+      },
+    };
+    const encoder = new TextEncoder();
+    const uint8Array = encoder.encode(JSON.stringify(dataObj));
 
-      if (inputAmount.currency.symbol === 'XLM') {
-        const contract = new Contract(stellar.contracts.assetManager);
+    if (inputAmount.currency.symbol === 'XLM') {
+      //deposit(from: address, token: address, amount: u128, to: option<string>, data: option<bytes>)
+      const params = [
+        accountToScVal(account),
+        nativeToScVal(XLM_CONTRACT_ADDRESS, { type: 'address' }),
+        nativeToScVal(inputAmount.quotient, { type: 'u128' }),
+        nativeToScVal(destination),
+        nativeToScVal(uint8Array, { type: 'bytes' }),
+      ];
 
-        //deposit(from: address, token: address, amount: u128, to: option<string>, data: option<bytes>)
-        const params = [
-          accountToScVal(account),
-          nativeToScVal(XLM_CONTRACT_ADDRESS, { type: 'address' }),
-          nativeToScVal(inputAmount.quotient, { type: 'u128' }),
-          nativeToScVal(destination),
-          nativeToScVal(uint8Array, { type: 'bytes' }),
-        ];
+      const hash = await sendTX(stellar.contracts.assetManager, 'deposit', params, txBuilder, server, kit);
+      return hash;
+    } else if (inputAmount.currency.symbol === 'bnUSD') {
+      //cross_transfer(from: address, amount: u128, to: string, data: option<bytes>)
+      const params = [
+        accountToScVal(account),
+        nativeToScVal(inputAmount.quotient, { type: 'u128' }),
+        nativeToScVal(destination),
+        nativeToScVal(uint8Array, { type: 'bytes' }),
+      ];
 
-        const simulateTx = simulateTxBuilder
-          .addOperation(contract.call('deposit', ...params))
-          .setTimeout(30)
-          .build();
-
-        const simResult = await sorobanServer.simulateTransaction(simulateTx);
-
-        const tx = rpc.assembleTransaction(simulateTx, simResult).build();
-
-        if (tx) {
-          const { signedTxXdr } = await walletsKit.signTransaction(tx.toXDR());
-          const txToSubmit = TransactionBuilder.fromXDR(signedTxXdr, Networks.PUBLIC);
-
-          const { hash } = await sorobanServer.sendTransaction(txToSubmit);
-
-          return hash;
-        } else {
-          throw new Error('Failed to assemble stellar transaction');
-        }
-      } else if (inputAmount.currency.symbol === 'bnUSD') {
-        const contract = new Contract(inputAmount.currency.wrapped.address);
-
-        //cross_transfer(from: address, amount: u128, to: string, data: option<bytes>)
-        const params = [
-          accountToScVal(account),
-          nativeToScVal(inputAmount.quotient, { type: 'u128' }),
-          nativeToScVal(destination),
-          nativeToScVal(uint8Array, { type: 'bytes' }),
-        ];
-
-        const simulateTx = simulateTxBuilder
-          .addOperation(contract.call('cross_transfer', ...params))
-          .setTimeout(30)
-          .build();
-
-        const simResult = await sorobanServer.simulateTransaction(simulateTx);
-
-        const tx = rpc.assembleTransaction(simulateTx, simResult).build();
-
-        if (tx) {
-          const { signedTxXdr } = await walletsKit.signTransaction(tx.toXDR());
-          const txToSubmit = TransactionBuilder.fromXDR(signedTxXdr, Networks.PUBLIC);
-
-          const { hash } = await sorobanServer.sendTransaction(txToSubmit);
-
-          return hash;
-        }
-      } else {
-        throw new Error('Invalid currency for Stellar swap');
-      }
-    } else if (type === XTransactionType.DEPOSIT) {
-      return '';
-    } else if (type === XTransactionType.WITHDRAW) {
-      return '';
-    } else if (type === XTransactionType.BORROW) {
-      return '';
-    } else if (type === XTransactionType.REPAY) {
-      return '';
+      const hash = await sendTX(stellar.contracts.bnUSD!, 'cross_transfer', params, txBuilder, server, kit);
+      return hash;
     } else {
-      throw new Error('Invalid XTransactionType');
+      throw new Error('Invalid currency for Stellar bridge');
+    }
+  }
+
+  private async handleSwapTransaction(
+    xTransactionInput: XTransactionInput,
+    txBuilder: TransactionBuilder,
+    server: CustomSorobanServer,
+    kit: StellarWalletsKit,
+  ): Promise<string | undefined> {
+    const { inputAmount, executionTrade, account, recipient, direction, slippageTolerance } = xTransactionInput;
+    const receiver = `${direction.to}/${recipient}`;
+
+    if (!executionTrade || !slippageTolerance) {
+      return;
     }
 
-    // const token = inputAmount.currency.wrapped;
-    // const receiver = `${direction.to}/${recipient}`;
+    const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
+    const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived);
+    const uint8Array = new Uint8Array(rlpEncodedData);
 
-    // let data;
-    // if (type === XTransactionType.SWAP) {
-    //   if (!executionTrade || !slippageTolerance) {
-    //     return;
-    //   }
+    if (inputAmount.currency.symbol === 'XLM') {
+      //deposit(from: address, token: address, amount: u128, to: option<string>, data: option<bytes>)
+      const params = [
+        accountToScVal(account),
+        nativeToScVal(XLM_CONTRACT_ADDRESS, { type: 'address' }),
+        nativeToScVal(inputAmount.quotient, { type: 'u128' }),
+        nativeToScVal(destination),
+        nativeToScVal(uint8Array, { type: 'bytes' }),
+      ];
 
-    //   const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-    //   const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived);
-    //   data = Array.from(rlpEncodedData);
-    // } else if (type === XTransactionType.BRIDGE) {
-    //   data = getBytesFromString(
-    //     JSON.stringify({
-    //       method: '_swap',
-    //       params: {
-    //         path: [],
-    //         receiver: receiver,
-    //       },
-    //     }),
-    //   );
-    // } else if (type === XTransactionType.DEPOSIT) {
-    //   return await this.executeDepositCollateral(xTransactionInput);
-    // } else if (type === XTransactionType.WITHDRAW) {
-    //   return await this.executeWithdrawCollateral(xTransactionInput);
-    // } else if (type === XTransactionType.BORROW) {
-    //   return await this.executeBorrow(xTransactionInput);
-    // } else if (type === XTransactionType.REPAY) {
-    //   return await this.executeRepay(xTransactionInput);
-    // } else {
-    //   throw new Error('Invalid XTransactionType');
-    // }
+      const hash = await sendTX(stellar.contracts.assetManager, 'deposit', params, txBuilder, server, kit);
+      return hash;
+    } else if (inputAmount.currency.symbol === 'bnUSD') {
+      //cross_transfer(from: address, amount: u128, to: string, data: option<bytes>)
+      const params = [
+        accountToScVal(account),
+        nativeToScVal(inputAmount.quotient, { type: 'u128' }),
+        nativeToScVal(destination),
+        nativeToScVal(uint8Array, { type: 'bytes' }),
+      ];
 
-    // const isBnUSD = inputAmount.currency?.symbol === 'bnUSD';
-
-    // if (isBnUSD) {
-
-    //   return '';
-    // } else {
-
-    //   return '';
-    // }
+      const hash = await sendTX(inputAmount.currency.wrapped.address, 'cross_transfer', params, txBuilder, server, kit);
+      return hash;
+    } else {
+      throw new Error('Invalid currency for Stellar swap');
+    }
   }
 
   async executeDepositCollateral(xTransactionInput: XTransactionInput) {

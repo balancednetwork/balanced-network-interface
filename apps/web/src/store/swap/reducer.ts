@@ -29,11 +29,11 @@ export interface SwapState {
 }
 
 const Sui_Sui = xTokenMap['sui'][0];
-const ETH_BASE = xTokenMap['0x2105.base'][0];
+const BNUSD_BASE = xTokenMap['0x2105.base'][1];
 
 export const INITIAL_SWAP = {
   base: Sui_Sui,
-  quote: ETH_BASE,
+  quote: BNUSD_BASE,
 };
 
 const initialState: SwapState = {

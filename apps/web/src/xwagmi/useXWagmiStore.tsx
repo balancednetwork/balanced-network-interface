@@ -43,7 +43,7 @@ const injectiveXService = InjectiveXService.getInstance();
 injectiveXService.setXConnectors([new InjectiveMetamaskXConnector(), new InjectiveKelprXConnector()]);
 
 const stellarXService = StellarXService.getInstance();
-stellarXService.setXConnectors([new StellarWalletsKitXConnector()]);
+stellarXService.setXConnectors([]);
 
 const suiXService = SuiXService.getInstance();
 suiXService.setXConnectors([]);

@@ -1,13 +1,15 @@
 import { XAccount } from '@/xwagmi/types';
 
 import { XConnector } from '@/xwagmi/core';
-import { FREIGHTER_ID } from '@creit.tech/stellar-wallets-kit';
-import { Wallet } from '@injectivelabs/wallet-ts';
 import { StellarXService } from './StellarXService';
+import { StellarWalletType } from './useStellarXConnectors';
 
 export class StellarWalletsKitXConnector extends XConnector {
-  constructor() {
-    super('STELLAR', 'Freighter', 'freighter-id');
+  _wallet: StellarWalletType;
+
+  constructor(wallet: StellarWalletType) {
+    super('STELLAR', wallet.name, wallet.id);
+    this._wallet = wallet;
   }
 
   getXService(): StellarXService {
@@ -17,22 +19,16 @@ export class StellarWalletsKitXConnector extends XConnector {
   async connect(): Promise<XAccount | undefined> {
     const kit = this.getXService().walletsKit;
 
-    //todo: support all supported wallets
-    const wallets = await kit.getSupportedWallets();
-    const freighterWallet = wallets.find(wallet => wallet.id === FREIGHTER_ID);
-    const hanaWallet = wallets.find(wallet => wallet.id === 'hana');
-
-    // if (!freighterWallet || !freighterWallet.isAvailable) {
-    //   window.open('https://chromewebstore.google.com/detail/freighter/bcacfldlkkdogcmkkibnjlakofdplcbk', '_blank');
-    //   return;
-    // }
-
-    if (!hanaWallet || !hanaWallet.isAvailable) {
-      alert('Hana wallet is not available');
+    if (!this._wallet) {
       return;
     }
 
-    kit.setWallet('hana');
+    if (!this._wallet.isAvailable && this._wallet.url) {
+      window.open(this._wallet.url, '_blank');
+      return;
+    }
+
+    kit.setWallet(this._wallet.id);
     const { address } = await kit.getAddress();
 
     return {
@@ -44,6 +40,6 @@ export class StellarWalletsKitXConnector extends XConnector {
   async disconnect(): Promise<void> {}
 
   public get icon() {
-    return this._icon;
+    return this._wallet.icon;
   }
 }

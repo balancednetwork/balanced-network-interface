@@ -2,13 +2,15 @@ import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
-import { stellar } from '@/xwagmi/constants/xChains';
+import { FROM_SOURCES, TO_SOURCES, stellar } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core';
 import { XToken } from '@/xwagmi/types';
+import { uintToBytes } from '@/xwagmi/utils';
 import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
-import { getRlpEncodedSwapData } from '@/xwagmi/xcall/utils';
+import { getRlpEncodedSwapData, toICONDecimals } from '@/xwagmi/xcall/utils';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { StellarWalletsKit } from '@creit.tech/stellar-wallets-kit';
+import { RLP } from '@ethereumjs/rlp';
 import { BASE_FEE, Networks, TransactionBuilder, nativeToScVal } from '@stellar/stellar-sdk';
 import CustomSorobanServer from './CustomSorobanServer';
 import { StellarXService } from './StellarXService';
@@ -37,14 +39,24 @@ export class StellarXWalletClient extends XWalletClient {
           return await this.handleBridgeTransaction(xTransactionInput, simulateTxBuilder, sorobanServer, walletsKit);
         case XTransactionType.SWAP:
           return await this.handleSwapTransaction(xTransactionInput, simulateTxBuilder, sorobanServer, walletsKit);
-        case XTransactionType.WITHDRAW:
-          return ''; // Implement withdraw logic
-        case XTransactionType.BORROW:
-          return ''; // Implement borrow logic
-        case XTransactionType.REPAY:
-          return ''; // Implement repay
         case XTransactionType.DEPOSIT:
-          return ''; // Implement deposit
+          return await this.handleDepositCollateralTransaction(
+            xTransactionInput,
+            simulateTxBuilder,
+            sorobanServer,
+            walletsKit,
+          );
+        case XTransactionType.WITHDRAW:
+          return await this.handleWithdrawCollateralTransaction(
+            xTransactionInput,
+            simulateTxBuilder,
+            sorobanServer,
+            walletsKit,
+          );
+        case XTransactionType.BORROW:
+          return await this.handleBorrowTransaction(xTransactionInput, simulateTxBuilder, sorobanServer, walletsKit);
+        case XTransactionType.REPAY:
+          return await this.handleRepayLoanTransaction(xTransactionInput, simulateTxBuilder, sorobanServer, walletsKit);
         default:
           throw new Error('Unsupported transaction type');
       }
@@ -147,153 +159,135 @@ export class StellarXWalletClient extends XWalletClient {
     }
   }
 
-  async executeDepositCollateral(xTransactionInput: XTransactionInput) {
-    // const { inputAmount, account, xCallFee } = xTransactionInput;
-    // if (!inputAmount) {
-    //   return;
-    // }
-    // const data = getBytesFromString(JSON.stringify({}));
-    // const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
-    // if (isNative) {
-    //   const msg = MsgExecuteContractCompat.fromJSON({
-    //     contractAddress: stellar.contracts.assetManager,
-    //     sender: account,
-    //     msg: {
-    //       deposit_denom: {
-    //         denom: 'inj',
-    //         to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`,
-    //         data,
-    //       },
-    //     },
-    //     funds: [
-    //       {
-    //         denom: 'inj',
-    //         amount: BigInt(inputAmount.quotient + xCallFee.rollback).toString(),
-    //       },
-    //     ],
-    //   });
-    //   const txResult = await this.getXService().msgBroadcastClient.broadcastWithFeeDelegation({
-    //     msgs: msg,
-    //     stellarAddress: account,
-    //   });
-    //   return txResult.txHash;
-    // } else {
-    //   throw new Error('Stellar tokens not supported yet');
-    // }
+  private async handleDepositCollateralTransaction(
+    xTransactionInput: XTransactionInput,
+    txBuilder: TransactionBuilder,
+    server: CustomSorobanServer,
+    kit: StellarWalletsKit,
+  ): Promise<string | undefined> {
+    const { inputAmount, account } = xTransactionInput;
+    if (!inputAmount) {
+      return;
+    }
+
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
+    const encoder = new TextEncoder();
+    const uint8Array = encoder.encode(JSON.stringify({}));
+
+    if (inputAmount.currency.symbol === 'XLM') {
+      //deposit(from: address, token: address, amount: u128, to: option<string>, data: option<bytes>)
+      const params = [
+        accountToScVal(account),
+        nativeToScVal(XLM_CONTRACT_ADDRESS, { type: 'address' }),
+        nativeToScVal(inputAmount.quotient, { type: 'u128' }),
+        nativeToScVal(destination),
+        nativeToScVal(uint8Array, { type: 'bytes' }),
+      ];
+
+      const hash = await sendTX(stellar.contracts.assetManager, 'deposit', params, txBuilder, server, kit);
+      return hash;
+    } else {
+      throw new Error('Invalid currency for Stellar swap');
+    }
   }
 
-  async executeWithdrawCollateral(xTransactionInput: XTransactionInput) {
-    // const { inputAmount, account, xCallFee, usedCollateral } = xTransactionInput;
-    // if (!inputAmount || !usedCollateral) {
-    //   return;
-    // }
-    // const amount = toICONDecimals(inputAmount.multiply(-1));
-    // const envelope = {
-    //   message: {
-    //     call_message: {
-    //       data: Array.from(RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral])),
-    //     },
-    //   },
-    //   sources: FROM_SOURCES[this.xChainId],
-    //   destinations: TO_SOURCES[this.xChainId],
-    // };
-    // const msg = MsgExecuteContractCompat.fromJSON({
-    //   contractAddress: stellar.contracts.xCall,
-    //   sender: account,
-    //   msg: {
-    //     send_call: {
-    //       to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`,
-    //       envelope,
-    //     },
-    //   },
-    //   funds: [
-    //     {
-    //       denom: 'inj',
-    //       amount: xCallFee.rollback.toString(),
-    //     },
-    //   ],
-    // });
-    // const txResult = await this.getXService().msgBroadcastClient.broadcastWithFeeDelegation({
-    //   msgs: msg,
-    //   stellarAddress: account,
-    // });
-    // return txResult.txHash;
+  private async handleWithdrawCollateralTransaction(
+    xTransactionInput: XTransactionInput,
+    txBuilder: TransactionBuilder,
+    server: CustomSorobanServer,
+    kit: StellarWalletsKit,
+  ): Promise<string | undefined> {
+    const { inputAmount, account, direction, usedCollateral } = xTransactionInput;
+    if (!inputAmount || !usedCollateral) {
+      return;
+    }
+
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
+    const amount = toICONDecimals(inputAmount.multiply(-1));
+    const data = RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]);
+    const envelope = {
+      destinations: TO_SOURCES[direction.from],
+      message: data,
+      sources: FROM_SOURCES[direction.from],
+    };
+
+    // send_call(tx_origin: address, sender: address, envelope: Envelope, to: string)
+    const params = [
+      accountToScVal(account),
+      accountToScVal(account),
+      nativeToScVal(envelope),
+      nativeToScVal(destination),
+    ];
+
+    const hash = await sendTX(stellar.contracts.xCall, 'send_call', params, txBuilder, server, kit);
+    return hash;
   }
 
-  async executeBorrow(xTransactionInput: XTransactionInput) {
-    // const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
-    // if (!inputAmount || !usedCollateral) {
-    //   return;
-    // }
-    // const amount = BigInt(inputAmount.quotient.toString());
-    // const envelope = {
-    //   message: {
-    //     call_message: {
-    //       data: Array.from(
-    //         RLP.encode(
-    //           recipient
-    //             ? ['xBorrow', usedCollateral, uintToBytes(amount), Buffer.from(recipient)]
-    //             : ['xBorrow', usedCollateral, uintToBytes(amount)],
-    //         ),
-    //       ),
-    //     },
-    //   },
-    //   sources: FROM_SOURCES[this.xChainId],
-    //   destinations: TO_SOURCES[this.xChainId],
-    // };
-    // const msg = MsgExecuteContractCompat.fromJSON({
-    //   contractAddress: stellar.contracts.xCall,
-    //   sender: account,
-    //   msg: {
-    //     send_call: {
-    //       to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`,
-    //       envelope,
-    //     },
-    //   },
-    //   funds: [
-    //     {
-    //       denom: 'inj',
-    //       amount: xCallFee.rollback.toString(),
-    //     },
-    //   ],
-    // });
-    // const txResult = await this.getXService().msgBroadcastClient.broadcastWithFeeDelegation({
-    //   msgs: msg,
-    //   stellarAddress: account,
-    // });
-    // return txResult.txHash;
+  private async handleBorrowTransaction(
+    xTransactionInput: XTransactionInput,
+    txBuilder: TransactionBuilder,
+    server: CustomSorobanServer,
+    kit: StellarWalletsKit,
+  ): Promise<string | undefined> {
+    const { inputAmount, account, direction, usedCollateral, recipient } = xTransactionInput;
+    if (!inputAmount || !usedCollateral) {
+      return;
+    }
+
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
+    const amount = BigInt(inputAmount.quotient.toString());
+    const data = RLP.encode(
+      recipient
+        ? ['xBorrow', usedCollateral, uintToBytes(amount), Buffer.from(recipient)]
+        : ['xBorrow', usedCollateral, uintToBytes(amount)],
+    );
+    const envelope = {
+      destinations: TO_SOURCES[direction.from],
+      message: data,
+      sources: FROM_SOURCES[direction.from],
+    };
+
+    // send_call(tx_origin: address, sender: address, envelope: Envelope, to: string)
+    const params = [
+      accountToScVal(account),
+      accountToScVal(account),
+      nativeToScVal(envelope),
+      nativeToScVal(destination),
+    ];
+
+    const hash = await sendTX(stellar.contracts.xCall, 'send_call', params, txBuilder, server, kit);
+    return hash;
   }
 
-  async executeRepay(xTransactionInput: XTransactionInput) {
-    // const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
-    // if (!inputAmount || !usedCollateral) {
-    //   return;
-    // }
-    // const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    // const data = getBytesFromString(
-    //   JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
-    // );
-    // const msg = MsgExecuteContractCompat.fromJSON({
-    //   contractAddress: stellar.contracts.bnUSD!,
-    //   sender: account,
-    //   msg: {
-    //     cross_transfer: {
-    //       amount: inputAmount.multiply(-1).quotient.toString(),
-    //       to: destination,
-    //       data,
-    //     },
-    //   },
-    //   funds: [
-    //     {
-    //       denom: 'inj',
-    //       amount: xCallFee.rollback.toString(),
-    //     },
-    //   ],
-    // });
-    // const txResult = await this.getXService().msgBroadcastClient.broadcastWithFeeDelegation({
-    //   msgs: msg,
-    //   stellarAddress: account,
-    // });
-    // return txResult.txHash;
+  private async handleRepayLoanTransaction(
+    xTransactionInput: XTransactionInput,
+    txBuilder: TransactionBuilder,
+    server: CustomSorobanServer,
+    kit: StellarWalletsKit,
+  ): Promise<string | undefined> {
+    const { inputAmount, account, usedCollateral, recipient } = xTransactionInput;
+    if (!inputAmount || !usedCollateral) {
+      return;
+    }
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
+    const dataObj = recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral };
+
+    const encoder = new TextEncoder();
+    const uint8Array = encoder.encode(JSON.stringify(dataObj));
+
+    if (inputAmount.currency.symbol === 'bnUSD') {
+      //cross_transfer(from: address, amount: u128, to: string, data: option<bytes>)
+      const params = [
+        accountToScVal(account),
+        nativeToScVal(inputAmount.multiply(-1).quotient, { type: 'u128' }),
+        nativeToScVal(destination),
+        nativeToScVal(uint8Array, { type: 'bytes' }),
+      ];
+
+      const hash = await sendTX(stellar.contracts.bnUSD!, 'cross_transfer', params, txBuilder, server, kit);
+      return hash;
+    } else {
+      throw new Error('Invalid currency for Stellar repay loan');
+    }
   }
 }

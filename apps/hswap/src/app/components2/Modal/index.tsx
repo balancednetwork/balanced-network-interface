@@ -25,7 +25,7 @@ export function Modal({ open, onDismiss, children, title, hideCloseIcon = false,
             <DialogHeader className="flex flex-row-reverse justify-between items-center">
               {!hideCloseIcon && (
                 <DialogClose asChild>
-                  <div className="rounded-sm opacity-70 !mt-0 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+                  <div className="cursor-pointer rounded-sm opacity-70 !mt-0 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
                     <XIcon className="h-6 w-6" />
                     <span className="sr-only">Close</span>
                   </div>

@@ -55,10 +55,18 @@ const WalletItem = ({ name, xChainType }: WalletItemProps) => {
     return xConnectors.find(connector => connector.id === xConnection?.xConnectorId);
   }, [xConnectors, xConnection]);
 
+  const sortedXConnectors = useMemo(() => {
+    const hanaWallet = xConnectors.find(connector => connector.name === 'Hana Wallet');
+    if (!hanaWallet) return xConnectors;
+
+    const filteredConnectors = xConnectors.filter(connector => connector.name !== 'Hana Wallet');
+    return xChainType === 'SUI' ? filteredConnectors : [hanaWallet, ...filteredConnectors];
+  }, [xConnectors, xChainType]);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between gap-4">
-        <div className="text-subtitle">{name}</div>
+        <div className="text-base">{name}</div>
         {address && (
           <div className="text-body cursor-pointer" onClick={handleDisconnect}>
             disconnect
@@ -76,11 +84,11 @@ const WalletItem = ({ name, xChainType }: WalletItemProps) => {
           </div>
         ) : (
           <>
-            {xConnectors.map(xConnector => {
+            {sortedXConnectors.map(xConnector => {
               return (
                 <Button
                   key={`${xChainType}-${xConnector.name}`}
-                  className="flex gap-3 justify-start bg-[#221542] h-[48px] rounded-full w-[180px]"
+                  className="flex gap-3 justify-start bg-[#221542] h-[48px] rounded-full w-[calc(50%-8px)]"
                   onClick={() => handleConnect(xConnector)}
                 >
                   <img width={28} height={28} src={xConnector.icon} />

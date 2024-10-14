@@ -8,11 +8,11 @@ import { immer } from 'zustand/middleware/immer';
 
 import { transactionActions } from '@/hooks/useTransactionStore';
 import { getXPublicClient } from '@/xwagmi/actions';
-import { XCallEventType, XTransaction } from '../types';
+import { XCallEventType, XTransaction, XTransactionStatus } from '../types';
 import { TransactionStatus, XCallEventMap, XMessage, XMessageStatus } from '../types';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { useXCallScannerStore, useXCallScannerSubscription } from './useXCallScannerStore';
-import { xTransactionActions } from './useXTransactionStore';
+import { useXTransactionStore, xTransactionActions } from './useXTransactionStore';
 
 const jsonStorageOptions = {
   reviver: (key, value: any) => {
@@ -145,6 +145,9 @@ export const useXMessageStore = create<XMessageStore>()(
 
         let newStatus;
         switch (data.status) {
+          case 'failed':
+            newStatus = XMessageStatus.FAILED;
+            break;
           case 'pending':
             newStatus = XMessageStatus.CALL_MESSAGE_SENT;
             break;
@@ -152,7 +155,11 @@ export const useXMessageStore = create<XMessageStore>()(
             newStatus = XMessageStatus.CALL_MESSAGE;
             break;
           case 'executed':
-            newStatus = XMessageStatus.CALL_EXECUTED;
+            if (!data.dest_error || data.dest_error === 'success') {
+              newStatus = XMessageStatus.CALL_EXECUTED;
+            } else {
+              newStatus = XMessageStatus.ROLLBACKED;
+            }
             break;
           case 'rollbacked':
             newStatus = XMessageStatus.ROLLBACKED;
@@ -171,7 +178,9 @@ export const useXMessageStore = create<XMessageStore>()(
           state.messages[id] = newXMessage;
         });
 
-        get().updateStatus(id, newStatus);
+        if (newStatus) {
+          get().updateStatus(id, newStatus);
+        }
       },
 
       onMessageUpdate: (id: string) => {
@@ -455,6 +464,30 @@ export const AllXMessagesUpdater = () => {
             )}
           </>
         ))}
+    </>
+  );
+};
+
+export const AllXTransactionsUpdater = () => {
+  useXCallScannerSubscription();
+
+  const xTransactions = useXTransactionStore(state =>
+    Object.values(state.transactions).filter(x => x.status === XTransactionStatus.pending),
+  );
+
+  return (
+    <>
+      {xTransactions.map(xTransaction => {
+        const primaryMessage = xMessageActions.getOf(xTransaction.id, true);
+        const secondaryMessage = xMessageActions.getOf(xTransaction.id, false);
+
+        return (
+          <div key={xTransaction.id}>
+            {primaryMessage && primaryMessage.useXCallScanner && <XMessageUpdater2 xMessage={primaryMessage} />}
+            {secondaryMessage && secondaryMessage.useXCallScanner && <XMessageUpdater2 xMessage={secondaryMessage} />}
+          </div>
+        );
+      })}
     </>
   );
 };

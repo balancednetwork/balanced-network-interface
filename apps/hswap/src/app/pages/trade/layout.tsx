@@ -8,6 +8,8 @@ import { useFetchOraclePrices } from '@/store/oracle/hooks';
 import { useFetchPrice } from '@/store/ratio/hooks';
 import { useFetchStabilityFundBalances } from '@/store/stabilityFund/hooks';
 import { useWalletFetchBalances } from '@/store/wallet/hooks';
+// import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { MouseoverTooltip } from '@/app/components/Tooltip';
 
 export function TradePageLayout() {
   const location = useLocation();
@@ -37,22 +39,35 @@ export function TradePageLayout() {
                 <Trans>Swap</Trans>
               </div>
             </TabsTrigger>
-            <TabsTrigger
+            {/* <TabsTrigger
               value="limit"
               className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex"
-            >
-              <div className="text-base font-bold font-['Montserrat']">
-                <Trans>Limit</Trans>
-              </div>
-            </TabsTrigger>
-            <TabsTrigger
-              value="dca"
-              className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex"
-            >
-              <div className="text-base font-bold font-['Montserrat']">
-                <Trans>DCA</Trans>
-              </div>
-            </TabsTrigger>
+            > */}
+            {/* </TabsTrigger> */}
+            <div className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex">
+              <MouseoverTooltip
+                content={<div className="p-2">Coming Soon</div>}
+                placement={'top'}
+                closeAfterDelay={0}
+                zIndex={9999}
+              >
+                <div className="text-base font-bold font-['Montserrat'] cursor-default">
+                  <Trans>Limit</Trans>
+                </div>
+              </MouseoverTooltip>
+            </div>
+            <div className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex">
+              <MouseoverTooltip
+                content={<div className="p-2">Coming Soon</div>}
+                placement={'top'}
+                closeAfterDelay={0}
+                zIndex={9999}
+              >
+                <div className="text-base font-bold font-['Montserrat'] cursor-default">
+                  <Trans>DCA</Trans>
+                </div>
+              </MouseoverTooltip>
+            </div>
           </TabsList>
         </Tabs>
         <Outlet />

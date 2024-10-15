@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Currency, CurrencyAmount, TradeType, XChainId, XToken } from '@balancednetwork/sdk-core';
-import { Trade } from '@balancednetwork/v1-sdk';
+import { XToken } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
@@ -15,7 +14,7 @@ import { Field } from '@/store/swap/reducer';
 import { formatBigNumber } from '@/utils';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
-import { XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
+import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import { CheckIcon, Loader2, XIcon } from 'lucide-react';
 import { ChevronRight } from 'react-feather';
@@ -33,13 +32,7 @@ export type PendingConfirmModalState = ConfirmModalState.APPROVING_TOKEN | Confi
 type XSwapModalProps = {
   open: boolean;
   currencies: { [field in Field]?: XToken };
-  executionTrade?: Trade<Currency, Currency, TradeType>;
-  direction: {
-    from: XChainId;
-    to: XChainId;
-  };
-  xTransactionType: XTransactionType | undefined;
-  executionInputAmount: CurrencyAmount<XToken> | undefined;
+  executionXTransactionInput: XTransactionInput;
 
   //
   confirmModalState: ConfirmModalState;
@@ -56,10 +49,7 @@ type XSwapModalProps = {
 const XSwapModal = ({
   open,
   currencies,
-  executionTrade,
-  direction,
-  xTransactionType,
-  executionInputAmount,
+  executionXTransactionInput,
   //
   confirmModalState,
   xSwapErrorMessage,
@@ -71,6 +61,13 @@ const XSwapModal = ({
   onConfirm,
   onDismiss,
 }: XSwapModalProps) => {
+  const {
+    executionTrade,
+    direction,
+    inputAmount: executionInputAmount,
+    type: xTransactionType,
+  } = executionXTransactionInput;
+
   const { formattedXCallFee } = useXCallFee(direction.from, direction.to);
   const [approved, setApproved] = useState(false);
   const [swapConfirmed, setSwapConfirmed] = useState(false);

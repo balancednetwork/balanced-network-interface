@@ -185,9 +185,6 @@ importers:
       numbro:
         specifier: ^2.5.0
         version: 2.5.0
-      prettier:
-        specifier: 2.1.1
-        version: 2.1.1
       qs:
         specifier: 6.10.3
         version: 6.10.3
@@ -15236,7 +15233,7 @@ snapshots:
       bplist-creator: 0.0.7
       bplist-parser: 0.3.2
       cacache: 18.0.4
-      chalk: 4.1.0
+      chalk: 4.1.2
       ci-info: 3.9.0
       connect: 3.7.0
       debug: 4.3.4
@@ -15397,7 +15394,7 @@ snapshots:
 
   '@expo/env@0.3.0':
     dependencies:
-      chalk: 4.1.0
+      chalk: 4.1.2
       debug: 4.3.4
       dotenv: 16.4.5
       dotenv-expand: 11.0.6
@@ -15420,7 +15417,7 @@ snapshots:
   '@expo/image-utils@0.5.1':
     dependencies:
       '@expo/spawn-async': 1.7.2
-      chalk: 4.1.0
+      chalk: 4.1.2
       fs-extra: 9.0.0
       getenv: 1.0.0
       jimp-compact: 0.16.1
@@ -15448,7 +15445,7 @@ snapshots:
       '@expo/env': 0.3.0
       '@expo/json-file': 8.3.3
       '@expo/spawn-async': 1.7.2
-      chalk: 4.1.0
+      chalk: 4.1.2
       debug: 4.3.4
       find-yarn-workspace-root: 2.0.0
       fs-extra: 9.1.0
@@ -15471,7 +15468,7 @@ snapshots:
       '@expo/json-file': 8.3.3
       '@expo/spawn-async': 1.7.2
       ansi-regex: 5.0.1
-      chalk: 4.1.0
+      chalk: 4.1.2
       find-up: 5.0.0
       find-yarn-workspace-root: 2.0.0
       js-yaml: 3.14.1
@@ -15530,7 +15527,7 @@ snapshots:
   '@expo/xcpretty@4.3.1':
     dependencies:
       '@babel/code-frame': 7.10.4
-      chalk: 4.1.0
+      chalk: 4.1.2
       find-up: 5.0.0
       js-yaml: 4.1.0
 
@@ -20526,7 +20523,7 @@ snapshots:
     dependencies:
       '@babel/generator': 7.2.0
       '@babel/types': 7.25.2
-      chalk: 4.1.0
+      chalk: 4.1.2
       invariant: 2.2.4
       pretty-format: 24.9.0
       zod: 3.23.8
@@ -22438,7 +22435,7 @@ snapshots:
 
   expo-modules-autolinking@1.11.2:
     dependencies:
-      chalk: 4.1.0
+      chalk: 4.1.2
       commander: 7.2.0
       fast-glob: 3.3.2
       find-up: 5.0.0

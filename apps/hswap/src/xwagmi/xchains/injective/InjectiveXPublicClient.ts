@@ -198,4 +198,8 @@ export class InjectiveXPublicClient extends XPublicClient {
       msg: eventLog.attributes.find(attr => attr.key === 'msg')?.value,
     };
   }
+
+  needsApprovalCheck(xToken: XToken): boolean {
+    return false;
+  }
 }

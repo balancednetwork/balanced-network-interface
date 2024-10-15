@@ -34,6 +34,12 @@ export default function AdvancedSwapDetails({ xTransactionType }: { xTransaction
 
   const { formattedXCallFee } = useXCallFee(direction.from, direction.to);
 
+  // approveGasEstimate
+  // xSwapGasEstimate
+
+  // useEstimateApproveGas();
+  // useEstimateXSwapGas();
+
   return (
     <div>
       <Collapsible open={open} onOpenChange={setOpen} className="w-full">

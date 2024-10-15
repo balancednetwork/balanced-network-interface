@@ -211,4 +211,8 @@ export class HavahXPublicClient extends XPublicClient {
       msg: data[1],
     };
   }
+
+  needsApprovalCheck(xToken: XToken): boolean {
+    return false;
+  }
 }

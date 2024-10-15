@@ -79,4 +79,8 @@ export class SuiXPublicClient extends XPublicClient {
   parseEventLogs(eventLogs: any[]): XCallEvent[] {
     return []; // not used
   }
+
+  needsApprovalCheck(xToken: XToken): boolean {
+    return false;
+  }
 }

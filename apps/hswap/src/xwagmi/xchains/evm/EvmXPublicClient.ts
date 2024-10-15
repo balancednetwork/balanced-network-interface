@@ -11,9 +11,11 @@ import {
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
+  XTransactionInput,
 } from '../../xcall/types';
 import { EvmXService } from './EvmXService';
 import { xCallContractAbi } from './abis/xCallContractAbi';
+import { isNativeCurrency } from '@/constants/tokens';
 
 const XCallEventSignatureMap = {
   [XCallEventType.CallMessageSent]: 'CallMessageSent',
@@ -212,5 +214,31 @@ export class EvmXPublicClient extends XPublicClient {
       code: parseInt(eventLog.args._code),
       msg: eventLog.args._msg,
     };
+  }
+
+  async estimateGas(xTransactionInput: XTransactionInput) {
+    return 1_000_000_000_000n;
+  }
+
+  async getTokenAllowance(owner: string | null | undefined, spender: string | undefined, xToken: XToken | undefined) {
+    if (!owner || !spender || !xToken) return;
+
+    const res = await this.getPublicClient().readContract({
+      abi: erc20Abi,
+      address: xToken.address as `0x${string}`,
+      functionName: 'allowance',
+      args: [owner as `0x${string}`, spender as `0x${string}`],
+    });
+
+    return res;
+  }
+
+  needsApprovalCheck(xToken: XToken): boolean {
+    if (isNativeCurrency(xToken)) return false;
+
+    const isBnUSD = xToken.symbol === 'bnUSD';
+    if (isBnUSD) return false;
+
+    return true;
   }
 }

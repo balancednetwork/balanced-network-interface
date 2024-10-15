@@ -20,7 +20,9 @@ export class InjectiveXWalletClient extends XWalletClient {
     return InjectiveXService.getInstance();
   }
 
-  async approve(token: XToken, owner: string, spender: string, currencyAmountToApprove: CurrencyAmount<XToken>) {}
+  async approve(token, owner, spender, currencyAmountToApprove) {
+    return Promise.resolve(undefined);
+  }
 
   async executeTransaction(xTransactionInput: XTransactionInput) {
     const { type, direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } =

@@ -16,6 +16,7 @@ import {
 import { ArchwayXService } from './ArchwayXService';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from './constants';
 import { isDenomAsset } from './utils';
+import { isNativeCurrency } from '@/constants/tokens';
 
 const XCallEventSignatureMap = {
   [XCallEventType.CallMessageSent]: 'wasm-CallMessageSent',
@@ -178,5 +179,25 @@ export class ArchwayXPublicClient extends XPublicClient {
       code: parseInt(eventLog.attributes.find(attr => attr.key === 'code')?.value),
       msg: eventLog.attributes.find(attr => attr.key === 'msg')?.value,
     };
+  }
+
+  async getTokenAllowance(owner: string | null | undefined, spender: string | undefined, xToken: XToken | undefined) {
+    if (!owner || !spender || !xToken) return;
+
+    const res = await this.getPublicClient().queryContractSmart(xToken.address, {
+      allowance: { owner, spender },
+    });
+
+    return res.allowance;
+  }
+
+  needsApprovalCheck(xToken: XToken): boolean {
+    if (isNativeCurrency(xToken)) return false;
+
+    const isBnUSD = xToken.symbol === 'bnUSD';
+    const isDenom = isDenomAsset(xToken);
+    if (isDenom || isBnUSD) return false;
+
+    return true;
   }
 }

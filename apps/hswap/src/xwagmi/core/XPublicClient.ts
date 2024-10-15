@@ -4,6 +4,7 @@ import {
   XCallEvent,
   XCallEventType,
   XCallMessageSentEvent,
+  XTransactionInput,
 } from '@/xwagmi/xcall/types';
 import { Currency, CurrencyAmount, XChainId, XToken } from '@balancednetwork/sdk-core';
 
@@ -29,6 +30,17 @@ export interface IXPublicClient {
 
   getBalance(address: string | undefined, xToken: XToken): Promise<CurrencyAmount<Currency> | undefined>;
   getBalances(address: string | undefined, xTokens: XToken[]): Promise<Record<string, CurrencyAmount<Currency>>>;
+
+  estimateApprovalGas(): Promise<bigint>;
+  estimateGas(xTransactionInput: XTransactionInput): Promise<bigint>;
+
+  getTokenAllowance(
+    owner: string | null | undefined,
+    spender: string | undefined,
+    xToken: XToken | undefined,
+  ): Promise<bigint | undefined>;
+
+  needsApprovalCheck(xToken: XToken): boolean;
 }
 
 export abstract class XPublicClient implements IXPublicClient {
@@ -105,4 +117,23 @@ export abstract class XPublicClient implements IXPublicClient {
     }
     return null;
   }
+
+  async estimateApprovalGas() {
+    return 0n;
+  }
+
+  async estimateGas(xTransactionInput: XTransactionInput) {
+    return 0n;
+  }
+
+  // TODO: make this abstract?
+  async getTokenAllowance(
+    owner: string | null | undefined,
+    spender: string | undefined,
+    xToken: XToken | undefined,
+  ): Promise<bigint | undefined> {
+    return 0n;
+  }
+
+  abstract needsApprovalCheck(xToken: XToken): boolean;
 }

@@ -30,7 +30,9 @@ export class SuiXWalletClient extends XWalletClient {
     return SuiXService.getInstance();
   }
 
-  async approve(token, owner, spender, currencyAmountToApprove) {}
+  async approve(token, owner, spender, currencyAmountToApprove) {
+    return Promise.resolve(undefined);
+  }
 
   async executeTransaction(xTransactionInput: XTransactionInput, options) {
     const { signTransaction } = options;

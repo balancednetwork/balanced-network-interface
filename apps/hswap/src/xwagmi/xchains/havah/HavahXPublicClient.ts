@@ -11,6 +11,7 @@ import {
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
+  XTransactionInput,
 } from '../../xcall/types';
 import { ICONTxResultType } from '../icon/types';
 import { HavahXService } from './HavahXService';
@@ -214,5 +215,14 @@ export class HavahXPublicClient extends XPublicClient {
 
   needsApprovalCheck(xToken: XToken): boolean {
     return false;
+  }
+
+  async estimateApproveGas(amountToApprove: CurrencyAmount<XToken>, spender: string, owner: string) {
+    return 0n;
+  }
+
+  async estimateSwapGas(xTransactionInput: XTransactionInput) {
+    // TODO: implement
+    return 0n;
   }
 }

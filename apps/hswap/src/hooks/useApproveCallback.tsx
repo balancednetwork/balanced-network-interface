@@ -58,7 +58,7 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
     }
 
     try {
-      const hash = await xWalletClient.approve(token, account, spender, amountToApprove);
+      const hash = await xWalletClient.approve(amountToApprove, spender, account);
 
       setPending(true);
 

@@ -4,7 +4,7 @@ import bnJs from './bnJs';
 
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
 import { sleep } from '@/xwagmi/utils';
-import { XChainId, XToken } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, XChainId, XToken } from '@balancednetwork/sdk-core';
 import {
   TransactionStatus,
   XCallEvent,
@@ -12,6 +12,7 @@ import {
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
+  XTransactionInput,
 } from '../../xcall/types';
 import { IconXService } from './IconXService';
 import { ICONTxResultType } from './types';
@@ -220,5 +221,14 @@ export class IconXPublicClient extends XPublicClient {
 
   needsApprovalCheck(xToken: XToken): boolean {
     return false;
+  }
+
+  async estimateApproveGas(amountToApprove: CurrencyAmount<XToken>, spender: string, owner: string) {
+    return 0n;
+  }
+
+  async estimateSwapGas(xTransactionInput: XTransactionInput) {
+    // TODO: implement
+    return 0n;
   }
 }

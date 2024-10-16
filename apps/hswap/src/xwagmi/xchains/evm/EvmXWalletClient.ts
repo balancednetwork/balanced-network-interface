@@ -41,13 +41,15 @@ export class EvmXWalletClient extends XWalletClient {
     return walletClient;
   }
 
-  async approve(token: XToken, owner: string, spender: string, amountToApprove: CurrencyAmount<XToken>) {
+  async approve(amountToApprove: CurrencyAmount<XToken>, spender: string, owner: string) {
+    const xToken = amountToApprove.currency;
+
     const publicClient = await this.getPublicClient();
     const walletClient = await this.getWalletClient();
 
     const tokenContract = getContract({
       abi: erc20Abi,
-      address: token.address as Address,
+      address: xToken.address as Address,
       client: { public: publicClient, wallet: walletClient },
     });
     const account = owner as Address;

@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
-import { Currency, Percent, Price, Token, XToken } from '@balancednetwork/sdk-core';
+import { Currency, Fraction, Percent, Price, Token, XToken } from '@balancednetwork/sdk-core';
 import { Route } from '@balancednetwork/v1-sdk';
 import { Trans, t } from '@lingui/macro';
 
@@ -18,12 +18,25 @@ import BigNumber from 'bignumber.js';
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 import { cn } from '@/lib/utils';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
-import { XTransactionType } from '@/xwagmi/xcall/types';
+import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
+import { useXEstimateApproveGas } from '@/xwagmi/hooks/useXEstimateApproveGas';
+import { xChainMap } from '@/xwagmi/constants/xChains';
+import { useXEstimateSwapGas } from '@/xwagmi/hooks/useXEstimateSwapGas';
 
-export default function AdvancedSwapDetails({ xTransactionType }: { xTransactionType: XTransactionType }) {
+export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactionInput?: XTransactionInput }) {
+  const {
+    account,
+    type: xTransactionType,
+    inputAmount,
+    executionTrade: trade,
+    direction,
+  } = xTransactionInput || {
+    direction: { from: '0x1.icon', to: '0x1.icon' }, // TODO: temporary fix for type error
+  };
+
   const [open, setOpen] = useState(false);
 
-  const { trade, currencies, direction } = useDerivedSwapInfo();
+  const { currencies } = useDerivedSwapInfo();
 
   const [showInverted, setShowInverted] = useState<boolean>(false);
   const slippageTolerance = useSwapSlippageTolerance();
@@ -34,11 +47,19 @@ export default function AdvancedSwapDetails({ xTransactionType }: { xTransaction
 
   const { formattedXCallFee } = useXCallFee(direction.from, direction.to);
 
-  // approveGasEstimate
-  // xSwapGasEstimate
+  const sourceXChain = xChainMap[direction.from];
+  const approveGasEstimate = useXEstimateApproveGas(inputAmount, sourceXChain.contracts.assetManager, account);
+  const swapGasEstimate = useXEstimateSwapGas(xTransactionInput);
 
-  // useEstimateApproveGas();
-  // useEstimateXSwapGas();
+  const networkCost = useMemo(() => {
+    if (!swapGasEstimate) return;
+
+    if (approveGasEstimate) {
+      return new Fraction(swapGasEstimate + approveGasEstimate, 10 ** sourceXChain.nativeCurrency.decimals).toFixed(5);
+    }
+
+    return new Fraction(swapGasEstimate, 10 ** sourceXChain.nativeCurrency.decimals).toString();
+  }, [approveGasEstimate, swapGasEstimate, sourceXChain]);
 
   return (
     <div>
@@ -119,7 +140,7 @@ export default function AdvancedSwapDetails({ xTransactionType }: { xTransaction
             </span>
 
             <span className="text-body text-primary-foreground">
-              {trade ? trade.fee.toFixed(4) : '0'} {currencies[Field.INPUT]?.symbol}
+              {networkCost ? `${networkCost} ${sourceXChain.nativeCurrency.symbol}` : '---'}
             </span>
           </div>
 

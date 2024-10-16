@@ -159,8 +159,8 @@ export default function SwapPanel() {
 
   const [executionXTransactionInput, setExecutionXTransactionInput] = useState<XTransactionInput>();
   const [pendingModalSteps, setPendingModalSteps] = useState<PendingConfirmModalState[]>([]);
-  const xChain = xChainMap[direction.from];
-  const { approvalState, approveCallback } = useApproveCallback(inputAmount, xChain.contracts.assetManager);
+  const sourceXChain = xChainMap[direction.from];
+  const { approvalState, approveCallback } = useApproveCallback(inputAmount, sourceXChain.contracts.assetManager);
   const { xCallFee, formattedXCallFee } = useXCallFee(direction.from, direction.to);
   const slippageTolerance = useSwapSlippageTolerance();
   const { sendXTransaction } = useSendXTransaction();
@@ -338,7 +338,7 @@ export default function SwapPanel() {
             </div>
           )}
           {xTransactionType && xTransactionType !== XTransactionType.BRIDGE && (
-            <AdvancedSwapDetails xTransactionType={xTransactionType} />
+            <AdvancedSwapDetails xTransactionInput={xTransactionInput} />
           )}
 
           {!canBridge && maximumBridgeAmount && (

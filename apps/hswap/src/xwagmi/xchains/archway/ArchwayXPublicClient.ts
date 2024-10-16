@@ -12,6 +12,7 @@ import {
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
+  XTransactionInput,
 } from '../../xcall/types';
 import { ArchwayXService } from './ArchwayXService';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from './constants';
@@ -199,5 +200,30 @@ export class ArchwayXPublicClient extends XPublicClient {
     if (isDenom || isBnUSD) return false;
 
     return true;
+  }
+
+  async estimateApproveGas(amountToApprove: CurrencyAmount<XToken>, spender: string, owner: string) {
+    const publicClient = this.getPublicClient();
+    try {
+      const res = await publicClient.getEstimateTxFees(400_000);
+
+      const fee = res.estimatedFee?.amount[0].amount.toString();
+
+      return BigInt(fee || 0n);
+    } catch (e) {}
+    return 0n;
+  }
+
+  async estimateSwapGas(xTransactionInput: XTransactionInput) {
+    const publicClient = this.getPublicClient();
+    try {
+      const res = await publicClient.getEstimateTxFees(2_000_000);
+
+      const fee = res.estimatedFee?.amount[0].amount.toString();
+      console.log('estimateSwapGas', fee);
+
+      return BigInt(fee || 0n);
+    } catch (e) {}
+    return 0n;
   }
 }

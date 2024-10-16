@@ -31,8 +31,12 @@ export interface IXPublicClient {
   getBalance(address: string | undefined, xToken: XToken): Promise<CurrencyAmount<Currency> | undefined>;
   getBalances(address: string | undefined, xTokens: XToken[]): Promise<Record<string, CurrencyAmount<Currency>>>;
 
-  estimateApprovalGas(): Promise<bigint>;
-  estimateGas(xTransactionInput: XTransactionInput): Promise<bigint>;
+  estimateApproveGas(
+    amountToApprove: CurrencyAmount<XToken>,
+    spender: string,
+    owner: string,
+  ): Promise<bigint | undefined>;
+  estimateSwapGas(xTransactionInput: XTransactionInput): Promise<bigint | undefined>;
 
   getTokenAllowance(
     owner: string | null | undefined,
@@ -118,13 +122,12 @@ export abstract class XPublicClient implements IXPublicClient {
     return null;
   }
 
-  async estimateApprovalGas() {
-    return 0n;
-  }
-
-  async estimateGas(xTransactionInput: XTransactionInput) {
-    return 0n;
-  }
+  abstract estimateApproveGas(
+    amountToApprove: CurrencyAmount<XToken>,
+    spender: string,
+    owner: string,
+  ): Promise<bigint | undefined>;
+  abstract estimateSwapGas(xTransactionInput: XTransactionInput): Promise<bigint | undefined>;
 
   // TODO: make this abstract?
   async getTokenAllowance(

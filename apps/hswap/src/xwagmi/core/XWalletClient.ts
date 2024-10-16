@@ -9,10 +9,9 @@ export abstract class XWalletClient {
   }
 
   abstract approve(
-    token: XToken,
-    owner: string,
-    spender: string,
     amountToApprove: CurrencyAmount<XToken>,
+    spender: string,
+    owner: string,
   ): Promise<string | undefined>;
 
   abstract executeTransaction(xTransactionInput: XTransactionInput, options?: any): Promise<string | undefined>;

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { CurrencyAmount, Percent, XToken } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
@@ -8,6 +8,7 @@ import CurrencyInputPanel, { CurrencyInputPanelType } from '@/app/components2/Cu
 import FlipIcon from '@/assets/icons/flip.svg';
 import { Button } from '@/components/ui/button';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
+import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
@@ -15,9 +16,7 @@ import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapS
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { getXChainType } from '@/xwagmi/actions';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { useXAccount } from '@/xwagmi/hooks';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
@@ -61,20 +60,9 @@ export default function SwapPanel() {
   const signedInWallets = useSignedInWallets();
   const { recipient } = useSwapState();
 
-  const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient } =
-    useSwapActionHandlers();
+  const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection } = useSwapActionHandlers();
 
   const [xSwapModalState, setXSwapModalState] = useState<XSwapModalState>(DEFAULT_XSWAP_MODAL_STATE);
-
-  const xAccount = useXAccount(getXChainType(direction.to));
-
-  useEffect(() => {
-    if (xAccount.address) {
-      onChangeRecipient(xAccount.address);
-    } else {
-      onChangeRecipient(null);
-    }
-  }, [onChangeRecipient, xAccount]);
 
   const handleTypeInput = useCallback(
     (value: string) => {
@@ -211,7 +199,17 @@ export default function SwapPanel() {
   }, [xTransactionInput]);
 
   const swapButton = useMemo(() => {
-    return isValid ? (
+    return !account ? (
+      <Button
+        variant="default"
+        onClick={() => {
+          modalActions.openModal(MODAL_ID.WALLET_CONNECT_MODAL);
+        }}
+        className="w-full rounded-full h-[56px] font-bold text-base"
+      >
+        <Trans>Sign in</Trans>
+      </Button>
+    ) : isValid ? (
       <Button
         variant="default"
         onClick={handleOpenXSwapModal}
@@ -321,6 +319,7 @@ export default function SwapPanel() {
               type={CurrencyInputPanelType.OUTPUT}
             />
           </div>
+
           <RecipientAddressPanel />
 
           <div className="flex justify-center">{swapButton}</div>

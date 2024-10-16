@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { XConnector } from '@/xwagmi/core';
 import { useXAccount, useXConnect, useXConnection, useXConnectors, useXDisconnect } from '@/xwagmi/hooks';
 import { XChainType } from '@balancednetwork/sdk-core';
 import { CopyableAddress } from '../Header';
-import { Button } from '@/components/ui/button';
 
 export type WalletItemProps = {
   name: string;
@@ -68,7 +68,7 @@ const WalletItem = ({ name, xChainType }: WalletItemProps) => {
       <div className="flex justify-between gap-4">
         <div className="text-base">{name}</div>
         {address && (
-          <div className="text-body cursor-pointer" onClick={handleDisconnect}>
+          <div className="text-body cursor-pointer text-light-purple" onClick={handleDisconnect}>
             disconnect
           </div>
         )}

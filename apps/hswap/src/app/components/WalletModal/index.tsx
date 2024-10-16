@@ -1,12 +1,12 @@
-import React, { useCallback } from 'react';
-import { Trans } from '@lingui/macro';
-import { useXDisconnectAll } from '@/xwagmi/hooks';
-import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { Modal } from '@/app/components2/Modal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import XTokenList from './XTokenList';
+import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
+import { useXDisconnectAll } from '@/xwagmi/hooks';
+import { Trans } from '@lingui/macro';
 import { PowerIcon } from 'lucide-react';
+import React, { useCallback } from 'react';
 import HistoryItemList from './HistoryItemList';
+import XTokenList from './XTokenList';
 
 const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
   const open = useModalOpen(modalId);
@@ -28,7 +28,7 @@ const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
   return (
     <Modal open={open} onDismiss={onDismiss} title="" dialogClassName="max-w-[450px]" hideCloseIcon={true}>
       <div className="flex items-center justify-end gap-2">
-        <div className="cursor-pointer text-[#D4C5F9] text-body" onClick={handleChangeWallet}>
+        <div className="cursor-pointer text-light-purple text-body" onClick={handleChangeWallet}>
           <Trans>Manage wallets</Trans>
         </div>
         <div className="cursor-pointer" onClick={handleDisconnectWallet}>

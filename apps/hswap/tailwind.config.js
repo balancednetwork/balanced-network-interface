@@ -47,6 +47,7 @@ module.exports = {
           foreground: 'hsl(var(--card-foreground))',
         },
         warning: 'hsl(var(--warning))',
+        'light-purple': '#D4C5F9',
       },
       borderRadius: {
         lg: 'var(--radius)',

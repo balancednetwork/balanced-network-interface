@@ -17,7 +17,9 @@ export class HavahXWalletClient extends XWalletClient {
     return HavahXService.getInstance();
   }
 
-  async approve(token, owner, spender, currencyAmountToApprove) {}
+  async approve(amountToApprove, spender, owner) {
+    return Promise.resolve(undefined);
+  }
 
   async executeTransaction(xTransactionInput: XTransactionInput) {
     const { type, executionTrade, account, direction, inputAmount, recipient, slippageTolerance, xCallFee } =

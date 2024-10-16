@@ -9,6 +9,7 @@ import {
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
+  XTransactionInput,
 } from '@/xwagmi/xcall/types';
 import { CurrencyAmount, XChainId, XToken } from '@balancednetwork/sdk-core';
 import { InjectiveXService } from './InjectiveXService';
@@ -197,5 +198,18 @@ export class InjectiveXPublicClient extends XPublicClient {
       code: parseInt(eventLog.attributes.find(attr => attr.key === 'code')?.value),
       msg: eventLog.attributes.find(attr => attr.key === 'msg')?.value,
     };
+  }
+
+  needsApprovalCheck(xToken: XToken): boolean {
+    return false;
+  }
+
+  async estimateApproveGas(amountToApprove: CurrencyAmount<XToken>, spender: string, owner: string) {
+    return 0n;
+  }
+
+  async estimateSwapGas(xTransactionInput: XTransactionInput) {
+    // TODO: implement
+    return 0n;
   }
 }

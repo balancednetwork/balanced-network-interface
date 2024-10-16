@@ -77,6 +77,7 @@ export default function Header(props: { className?: string }) {
           <>
             <Button
               variant="ghost"
+              size="icon"
               onClick={() => {
                 modalActions.openModal(MODAL_ID.WALLET_MODAL);
               }}

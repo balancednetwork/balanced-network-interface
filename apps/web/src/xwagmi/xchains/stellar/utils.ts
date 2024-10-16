@@ -15,6 +15,22 @@ import {
 } from '@stellar/stellar-sdk';
 import CustomSorobanServer from './CustomSorobanServer';
 
+export const STELLAR_RLP_MSG_TYPE = { type: 'symbol' };
+
+export const STELLAR_RLP_DATA_TYPE = {
+  type: {
+    data: ['symbol', null],
+  },
+};
+
+export const STELLAR_RLP_ENVELOPE_TYPE = {
+  type: {
+    destinations: ['symbol', null],
+    sources: ['symbol', null],
+    message: ['symbol', null],
+  },
+};
+
 export const XLM_CONTRACT_ADDRESS = 'CAS3J7GYLGXMF6TDJBBYYSE3HQ6BBSMLNUQ34T6TZMYMW2EVH34XOWMA';
 
 // Can be used whenever you need an Address argument for a contract method
@@ -66,6 +82,7 @@ export async function sendTX(
     .setTimeout(30)
     .build();
 
+  console.log('TXXX', simulateTx.toXDR());
   const simResult = await server.simulateTransaction(simulateTx);
   const tx = rpc.assembleTransaction(simulateTx, simResult).build();
 

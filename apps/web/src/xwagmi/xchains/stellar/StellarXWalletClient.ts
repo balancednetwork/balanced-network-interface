@@ -14,7 +14,14 @@ import { RLP } from '@ethereumjs/rlp';
 import { BASE_FEE, Networks, TransactionBuilder, nativeToScVal } from '@stellar/stellar-sdk';
 import CustomSorobanServer from './CustomSorobanServer';
 import { StellarXService } from './StellarXService';
-import { XLM_CONTRACT_ADDRESS, accountToScVal, sendTX } from './utils';
+import {
+  STELLAR_RLP_DATA_TYPE,
+  STELLAR_RLP_ENVELOPE_TYPE,
+  STELLAR_RLP_MSG_TYPE,
+  XLM_CONTRACT_ADDRESS,
+  accountToScVal,
+  sendTX,
+} from './utils';
 
 export class StellarXWalletClient extends XWalletClient {
   getXService(): StellarXService {
@@ -204,18 +211,20 @@ export class StellarXWalletClient extends XWalletClient {
 
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const amount = toICONDecimals(inputAmount.multiply(-1));
-    const data = RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]);
     const envelope = {
       destinations: TO_SOURCES[direction.from],
-      message: data,
       sources: FROM_SOURCES[direction.from],
+      message: [
+        nativeToScVal('CallMessage', STELLAR_RLP_MSG_TYPE),
+        nativeToScVal({ data: RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]) }, STELLAR_RLP_DATA_TYPE),
+      ],
     };
 
     // send_call(tx_origin: address, sender: address, envelope: Envelope, to: string)
     const params = [
       accountToScVal(account),
       accountToScVal(account),
-      nativeToScVal(envelope),
+      nativeToScVal(envelope, STELLAR_RLP_ENVELOPE_TYPE),
       nativeToScVal(destination),
     ];
 
@@ -243,15 +252,15 @@ export class StellarXWalletClient extends XWalletClient {
     );
     const envelope = {
       destinations: TO_SOURCES[direction.from],
-      message: data,
       sources: FROM_SOURCES[direction.from],
+      message: [nativeToScVal('CallMessage', STELLAR_RLP_MSG_TYPE), nativeToScVal({ data }, STELLAR_RLP_DATA_TYPE)],
     };
 
     // send_call(tx_origin: address, sender: address, envelope: Envelope, to: string)
     const params = [
       accountToScVal(account),
       accountToScVal(account),
-      nativeToScVal(envelope),
+      nativeToScVal(envelope, STELLAR_RLP_ENVELOPE_TYPE),
       nativeToScVal(destination),
     ];
 

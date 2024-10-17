@@ -687,6 +687,10 @@ msgstr "Enter a recipient address:"
 msgid "Vote for this pool to receive bribes."
 msgstr "Vote for this pool to receive bribes."
 
+#: src/app/components/XTransactionState/index.tsx
+msgid "{description}"
+msgstr "{description}"
+
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 msgid "Address"
 msgstr "Address"
@@ -750,12 +754,12 @@ msgid "{0} approved for cross-chain transfer."
 msgstr "{0} approved for cross-chain transfer."
 
 #: src/app/components/home/PositionDetailPanel.tsx
-msgid ""
-"If the {0} price reaches ${1}, all your collateral will be\n"
-"liquidated."
-msgstr ""
-"If the {0} price reaches ${1}, all your collateral will be\n"
-"liquidated."
+#~ msgid ""
+#~ "If the {0} price reaches ${1}, all your collateral will be\n"
+#~ "liquidated."
+#~ msgstr ""
+#~ "If the {0} price reaches ${1}, all your collateral will be\n"
+#~ "liquidated."
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 msgid "Claimed liquidity incentives."
@@ -872,8 +876,6 @@ msgid "Lock up Balance Tokens?"
 msgstr "Lock up Balance Tokens?"
 
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/components/XTransactionState/index.tsx
-#: src/app/components/XTransactionState/index.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
@@ -2037,6 +2039,10 @@ msgstr "Swap & transfer cross-chain."
 msgid "Withdraw liquidity?"
 msgstr "Withdraw liquidity?"
 
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "If the {0} price reaches ${1}, some of your collateral will be liquidated to reduce your risk."
+msgstr "If the {0} price reaches ${1}, some of your collateral will be liquidated to reduce your risk."
+
 #: src/app/components/home/Savings/index.tsx
 msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
 msgstr "Buy or borrow bnUSD, then deposit it here to earn rewards."
@@ -2327,6 +2333,7 @@ msgstr "Deposit {0} collateral?"
 msgid "Allocating bBALN..."
 msgstr "Allocating bBALN..."
 
+#: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 msgid "Borrow, swap, & transfer cross-chain."

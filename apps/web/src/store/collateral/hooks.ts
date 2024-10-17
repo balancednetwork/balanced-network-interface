@@ -28,7 +28,7 @@ import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/xwagmi/constants/xTokens';
 import { useXAccount } from '@/xwagmi/hooks';
 import { Position, XPositions, XPositionsRecord, XToken } from '@/xwagmi/types';
 import { XChainId } from '@/xwagmi/types';
-import { useDestinationEvents } from '@/xwagmi/xcall/zustand/useXCallEventStore';
+import { useXTransactionStore } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { AppState } from '../index';
 import {
@@ -177,10 +177,10 @@ export function useTotalCollateralData(): UseQueryResult<{ [key in string]: Posi
 export function useCollateralFetchInfo(account?: string | null) {
   const { changeDepositedAmount } = useCollateralActionHandlers();
   const transactions = useAllTransactions();
-  const pendingXCalls = useDestinationEvents(ICON_XCALL_NETWORK_ID);
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
-
   const allWallets = useSignedInWallets();
+  const { getPendingTransactions } = useXTransactionStore();
+  const pendingTxs = getPendingTransactions(allWallets);
 
   const isSupported = React.useCallback(
     (symbol: string) => {
@@ -241,7 +241,7 @@ export function useCollateralFetchInfo(account?: string | null) {
       }
     };
     fetchData();
-  }, [fetchCollateralInfo, allWallets.length, pendingXCalls.length, transactions]);
+  }, [fetchCollateralInfo, allWallets.length, pendingTxs.length, transactions]);
 }
 
 export function useCollateralState() {

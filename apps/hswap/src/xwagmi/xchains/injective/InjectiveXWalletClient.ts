@@ -1,16 +1,14 @@
-import { Percent } from '@balancednetwork/sdk-core';
+import { Percent, XToken } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xwagmi/xcall/utils';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
 
 import { isNativeCurrency } from '@/constants/tokens';
 import { FROM_SOURCES, TO_SOURCES, injective } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core';
 import { uintToBytes } from '@/xwagmi/utils';
 import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
-import { XToken } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { isDenomAsset } from '../archway/utils';
@@ -21,7 +19,9 @@ export class InjectiveXWalletClient extends XWalletClient {
     return InjectiveXService.getInstance();
   }
 
-  async approve(token: XToken, owner: string, spender: string, currencyAmountToApprove: CurrencyAmount<XToken>) {}
+  async approve(amountToApprove, spender, owner) {
+    return Promise.resolve(undefined);
+  }
 
   async executeTransaction(xTransactionInput: XTransactionInput) {
     const { type, direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } =

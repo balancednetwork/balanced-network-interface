@@ -11,33 +11,18 @@ export type PopupContent = {
   };
 };
 
-export enum ApplicationModal {
-  WALLET,
-  SETTINGS,
-  SELF_CLAIM,
-  ADDRESS_CLAIM,
-  CLAIM_POPUP,
-  MENU,
-  DELEGATE,
-  VOTE,
-  BRIDGE_WALLET,
-  TRANSFER_ASSETS,
-}
-
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>;
 
 export interface ApplicationState {
   blockNumber: { readonly [chainId: number]: number };
   chainId: number | null;
   popupList: PopupList;
-  openModal: ApplicationModal | null;
   slippageTolerance: number;
 }
 
 const initialState: ApplicationState = {
   blockNumber: {},
   chainId: null,
-  openModal: null,
   popupList: [],
   slippageTolerance: DEFAULT_SLIPPAGE,
 };
@@ -57,9 +42,6 @@ const applicationSlice = createSlice({
       } else {
         state.blockNumber[chainId] = Math.max(blockNumber, state.blockNumber[chainId]);
       }
-    },
-    setOpenModal(state, action) {
-      state.openModal = action.payload;
     },
     addPopup(state, { payload: { content, key, removeAfterMs = DEFAULT_TXN_DISMISS_MS } }) {
       state.popupList = (key ? state.popupList.filter(popup => popup.key !== key) : state.popupList).concat([
@@ -84,6 +66,6 @@ const applicationSlice = createSlice({
   },
 });
 
-export const { updateChainId, updateBlockNumber, setOpenModal, addPopup, removePopup, updateSlippageTolerance } =
+export const { updateChainId, updateBlockNumber, addPopup, removePopup, updateSlippageTolerance } =
   applicationSlice.actions;
 export default applicationSlice.reducer;

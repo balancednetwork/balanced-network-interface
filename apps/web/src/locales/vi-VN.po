@@ -720,6 +720,10 @@ msgstr ""
 msgid "Vote for this pool to receive bribes."
 msgstr ""
 
+#: src/app/components/XTransactionState/index.tsx
+msgid "{description}"
+msgstr ""
+
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 msgid "Address"
 msgstr "Địa chỉ"
@@ -783,10 +787,10 @@ msgid "{0} approved for cross-chain transfer."
 msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
-msgid ""
-"If the {0} price reaches ${1}, all your collateral will be\n"
-"liquidated."
-msgstr ""
+#~ msgid ""
+#~ "If the {0} price reaches ${1}, all your collateral will be\n"
+#~ "liquidated."
+#~ msgstr ""
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 msgid "Claimed liquidity incentives."
@@ -915,8 +919,6 @@ msgid "Lock up Balance Tokens?"
 msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/components/XTransactionState/index.tsx
-#: src/app/components/XTransactionState/index.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
@@ -2103,6 +2105,10 @@ msgstr ""
 msgid "Withdraw liquidity?"
 msgstr "Lấy lại thanh khoản?"
 
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "If the {0} price reaches ${1}, some of your collateral will be liquidated to reduce your risk."
+msgstr ""
+
 #: src/app/components/home/Savings/index.tsx
 msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
 msgstr ""
@@ -2393,6 +2399,7 @@ msgstr ""
 msgid "Allocating bBALN..."
 msgstr ""
 
+#: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 msgid "Borrow, swap, & transfer cross-chain."

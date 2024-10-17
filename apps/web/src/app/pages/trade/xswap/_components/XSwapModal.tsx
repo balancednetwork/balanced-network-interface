@@ -140,13 +140,12 @@ const XSwapModal = ({
     setCurrentId(xTransactionId || null);
   };
 
-  const gasChecker = useXCallGasChecker(direction.from);
+  const gasChecker = useXCallGasChecker(direction.from, _inputAmount);
 
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(direction.from);
 
   return (
     <>
-      {/* {currentXTransaction && <XTransactionUpdater xTransaction={currentXTransaction} />} */}
       <Modal isOpen={modalOpen} onDismiss={handleDismiss}>
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">

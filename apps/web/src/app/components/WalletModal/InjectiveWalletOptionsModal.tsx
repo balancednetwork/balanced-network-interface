@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 
 import { Flex } from 'rebass/styled-components';
 
@@ -10,7 +10,7 @@ import { UnbreakableText, WalletOption } from '@/app/components/WalletModal/shar
 
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { XConnector } from '@/xwagmi/core';
-import { useXConnect, useXService } from '@/xwagmi/hooks';
+import { useXConnect, useXConnectors } from '@/xwagmi/hooks';
 
 type InjectiveWalletOptionsModalProps = {
   id?: MODAL_ID;
@@ -21,8 +21,7 @@ export const InjectiveWalletOptionsModal = ({
 }: InjectiveWalletOptionsModalProps) => {
   const modalOpen = useModalOpen(id);
 
-  const xService = useXService('INJECTIVE');
-  const xConnectors = useMemo(() => xService?.getXConnectors() || [], [xService]);
+  const xConnectors = useXConnectors('INJECTIVE');
 
   const onDismiss = useCallback(() => {
     modalActions.closeModal(id);

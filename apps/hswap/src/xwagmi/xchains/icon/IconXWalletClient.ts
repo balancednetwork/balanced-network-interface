@@ -16,7 +16,9 @@ export class IconXWalletClient extends XWalletClient {
     return this.getXService().iconService;
   }
 
-  async approve(token, owner, spender, currencyAmountToApprove) {}
+  async approve(amountToApprove, spender, owner) {
+    return Promise.resolve(undefined);
+  }
 
   async _executeBridge(xTransactionInput: XTransactionInput) {
     const {

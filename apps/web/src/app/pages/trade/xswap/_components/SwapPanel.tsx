@@ -338,7 +338,7 @@ export default function SwapPanel() {
                   </>
                 )}
 
-                <Trans>is available on {xChainMap[direction?.to].name}.</Trans>
+                <Trans>available on {xChainMap[direction?.to].name}.</Trans>
               </Typography>
             </Flex>
           )}

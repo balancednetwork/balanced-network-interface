@@ -9,8 +9,10 @@ import {
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
+  XTransactionInput,
 } from '@/xwagmi/xcall/types';
 import { CurrencyAmount, XChainId, XToken } from '@balancednetwork/sdk-core';
+import { isDenomAsset } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
 
 const XCallEventSignatureMap = {
@@ -32,25 +34,24 @@ export class InjectiveXPublicClient extends XPublicClient {
     if (!address) return;
 
     const xService = this.getXService();
-    if (xToken.isNativeXToken()) {
+    if (xToken.isNativeXToken() || isDenomAsset(xToken)) {
       const portfolio = await xService.indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(address);
+      const xTokenAddress = xToken.isNativeXToken() ? 'inj' : xToken.address;
 
-      const injBalance = portfolio.bankBalancesList.find(balance => balance.denom === 'inj');
-      if (injBalance) {
-        return CurrencyAmount.fromRawAmount(xToken, BigInt(injBalance.amount));
+      const balance = portfolio.bankBalancesList.find(_balance => _balance.denom === xTokenAddress);
+      if (balance) {
+        return CurrencyAmount.fromRawAmount(xToken, BigInt(balance.amount));
       }
-    } else if (xToken.symbol === 'bnUSD') {
+    } else {
       try {
         const response: any = await xService.chainGrpcWasmApi.fetchSmartContractState(
-          injective.contracts.bnUSD!,
+          xToken.address,
           toBase64({ balance: { address } }),
         );
 
         const result = fromBase64(response.data);
         return CurrencyAmount.fromRawAmount(xToken, result.balance);
       } catch (e) {}
-    } else {
-      throw new Error(`Unsupported token: ${xToken.symbol}`);
     }
   }
 
@@ -197,5 +198,18 @@ export class InjectiveXPublicClient extends XPublicClient {
       code: parseInt(eventLog.attributes.find(attr => attr.key === 'code')?.value),
       msg: eventLog.attributes.find(attr => attr.key === 'msg')?.value,
     };
+  }
+
+  needsApprovalCheck(xToken: XToken): boolean {
+    return false;
+  }
+
+  async estimateApproveGas(amountToApprove: CurrencyAmount<XToken>, spender: string, owner: string) {
+    return 0n;
+  }
+
+  async estimateSwapGas(xTransactionInput: XTransactionInput) {
+    // TODO: implement
+    return 0n;
   }
 }

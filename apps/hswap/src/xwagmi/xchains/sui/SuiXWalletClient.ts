@@ -11,8 +11,8 @@ import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData } from '../../xcall/utils';
 import { SuiXService } from './SuiXService';
 
-const addressesMainnet = {
-  'Balanced Package Id': '0x52af654cd5f58aaf99638d71fd46896637abff823a9c6e152a297b9832a7ee72',
+export const addressesMainnet = {
+  'Balanced Package Id': '0xa3c66ac08bca78a475954683a872a296fd61a28d478c4a8ebce676fc38f502d6',
   'xCall Package Id': '0x3638b141b349173a97261bbfa33ccd45334d41a80584db6f30429e18736206fe',
   'xCall Storage': '0xe9ae3e2d32cdf659ad5db4219b1086cc0b375da5c4f8859c872148895a2eace2',
   'xCall Manager Id': '0xa1fe210d98fb18114455e75f241ab985375dfa27720181268d92fe3499a1111e',
@@ -23,12 +23,16 @@ const addressesMainnet = {
   'bnUSD Storage': '0xd28c9da258f082d5a98556fc08760ec321451216087609acd2ff654d9827c5b5',
 };
 
+export const XCALL_FEE_AMOUNT = 160_000_000n;
+
 export class SuiXWalletClient extends XWalletClient {
   getXService(): SuiXService {
     return SuiXService.getInstance();
   }
 
-  async approve(token, owner, spender, currencyAmountToApprove) {}
+  async approve(amountToApprove, spender, owner) {
+    return Promise.resolve(undefined);
+  }
 
   async executeTransaction(xTransactionInput: XTransactionInput, options) {
     const { signTransaction } = options;
@@ -73,7 +77,7 @@ export class SuiXWalletClient extends XWalletClient {
     if (isNativeCurrency(inputAmount.currency)) {
       const txb = new Transaction();
 
-      const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, 200_000_000]);
+      const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, XCALL_FEE_AMOUNT]);
       txb.moveCall({
         target: `${addressesMainnet['Balanced Package Id']}::asset_manager::deposit`,
         arguments: [
@@ -123,7 +127,7 @@ export class SuiXWalletClient extends XWalletClient {
       }
 
       const [depositCoin] = txb.splitCoins(coins[0].coinObjectId, [amount]);
-      const [feeCoin] = txb.splitCoins(txb.gas, [200_000_000]);
+      const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
 
       txb.moveCall({
         target: `${addressesMainnet['Balanced Package Id']}::balanced_dollar_crosschain::cross_transfer`,

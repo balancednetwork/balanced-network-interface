@@ -10,6 +10,7 @@ import { canBeQueue } from '@/constants/currency';
 import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
+import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useWalletBalances } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
@@ -17,12 +18,12 @@ import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
 import { getXChainType } from '@/xwagmi/actions';
 import { allXTokens } from '@/xwagmi/constants/xTokens';
 import { useXAccount } from '@/xwagmi/hooks';
+import { validateAddress } from '@/xwagmi/utils';
+import { XTransactionType } from '@/xwagmi/xcall/types';
 import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
 import { Field, selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
-import { XTransactionType } from '@/xwagmi/xcall/types';
-import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);
@@ -187,8 +188,7 @@ export function useDerivedSwapInfo(): {
 
   const allowedSlippage = useSwapSlippageTolerance();
 
-  // TODO: || '0x1.icon' is a temporary fix for type checking
-  const gasChecker = useXCallGasChecker(inputXChainId || '0x1.icon');
+  const gasChecker = useXCallGasChecker(parsedAmount);
 
   const inputError = useMemo(() => {
     const swapDisabled = trade?.priceImpact.greaterThan(SLIPPAGE_SWAP_DISABLED_THRESHOLD);
@@ -197,7 +197,9 @@ export function useDerivedSwapInfo(): {
 
     if (account) {
       if (!recipient) {
-        error = t`Choose address`;
+        error = t`Input address`;
+      } else if (outputXChainId && !validateAddress(recipient, outputXChainId)) {
+        error = t`Invalid address`;
       } else if (!parsedAmount) {
         error = t`Enter amount`;
       } else if (swapDisabled) {
@@ -236,7 +238,17 @@ export function useDerivedSwapInfo(): {
     }
 
     return error;
-  }, [account, recipient, parsedAmount, currencies, currencyBalances, trade, xTransactionType, gasChecker]);
+  }, [
+    account,
+    recipient,
+    parsedAmount,
+    currencies,
+    currencyBalances,
+    trade,
+    xTransactionType,
+    gasChecker,
+    outputXChainId,
+  ]);
 
   const [_pairState, _pair] = useV2Pair(_inputCurrencyOnIcon, _outputCurrencyOnIcon);
   const price = useMemo(() => {

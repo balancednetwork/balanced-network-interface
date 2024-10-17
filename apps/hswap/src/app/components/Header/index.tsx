@@ -1,22 +1,20 @@
 import React, { useEffect } from 'react';
 
-import { Trans, t } from '@lingui/macro';
-import { Placement } from '@popperjs/core';
 import Logo from '@/app/components2/Logo';
-import CopyIcon from '@/assets/icons/copy.svg';
 import WalletIcon from '@/assets/icons/wallet.svg';
 import { shortenAddress } from '@/utils';
+import { Trans, t } from '@lingui/macro';
+import { Placement } from '@popperjs/core';
 
 import { Button } from '@/components/ui/button';
+import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { MouseoverTooltip } from '../Tooltip';
 import WalletModal from '../WalletModal';
-import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 
 export const CopyableAddress = ({
   account,
   closeAfterDelay,
-  copyIcon,
   placement = 'left',
 }: {
   account: string | null | undefined;
@@ -38,14 +36,13 @@ export const CopyableAddress = ({
       zIndex={9999}
     >
       <span
-        className="text-[#D4C5F9] cursor-pointer flex text-body font-[500]"
+        className="text-light-purple cursor-pointer flex text-body font-[500]"
         onMouseLeave={() => {
           setTimeout(() => updateCopyState(false), 250);
         }}
         onClick={() => copyAddress(account)}
       >
         {shortenAddress(account, 4)}
-        {/* {copyIcon && <CopyIcon width="13" height="13" style={{ marginLeft: 7, marginRight: 0, marginTop: -4 }} />} */}
       </span>
     </MouseoverTooltip>
   ) : null;
@@ -80,6 +77,7 @@ export default function Header(props: { className?: string }) {
           <>
             <Button
               variant="ghost"
+              size="icon"
               onClick={() => {
                 modalActions.openModal(MODAL_ID.WALLET_MODAL);
               }}

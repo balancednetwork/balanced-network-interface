@@ -575,8 +575,8 @@ msgstr "Transaction failed!"
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-msgid "is available on {0}."
-msgstr "is available on {0}."
+#~ msgid "is available on {0}."
+#~ msgstr "is available on {0}."
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
 #~ msgid "Add your sICX to the collateral pool."
@@ -754,12 +754,12 @@ msgid "{0} approved for cross-chain transfer."
 msgstr "{0} approved for cross-chain transfer."
 
 #: src/app/components/home/PositionDetailPanel.tsx
-msgid ""
-"If the {0} price reaches ${1}, all your collateral will be\n"
-"liquidated."
-msgstr ""
-"If the {0} price reaches ${1}, all your collateral will be\n"
-"liquidated."
+#~ msgid ""
+#~ "If the {0} price reaches ${1}, all your collateral will be\n"
+#~ "liquidated."
+#~ msgstr ""
+#~ "If the {0} price reaches ${1}, all your collateral will be\n"
+#~ "liquidated."
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 msgid "Claimed liquidity incentives."
@@ -2040,6 +2040,10 @@ msgstr "Swap & transfer cross-chain."
 msgid "Withdraw liquidity?"
 msgstr "Withdraw liquidity?"
 
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "If the {0} price reaches ${1}, some of your collateral will be liquidated to reduce your risk."
+msgstr "If the {0} price reaches ${1}, some of your collateral will be liquidated to reduce your risk."
+
 #: src/app/components/home/Savings/index.tsx
 msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
 msgstr "Buy or borrow bnUSD, then deposit it here to earn rewards."
@@ -2140,6 +2144,11 @@ msgstr "Verifying contract calls..."
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
 msgstr "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
+
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "available on {0}."
+msgstr "available on {0}."
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "and ends after {duration} days."

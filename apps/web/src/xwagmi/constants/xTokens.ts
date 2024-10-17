@@ -169,6 +169,14 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'bnUSD',
       'Balanced Dollar',
     ),
+    new XToken(
+      'injective-1',
+      'injective-1',
+      'ibc/2CBC2EA121AE42563B08028466F37B600F2D7D4282342DE938283CC3FB2BC00E',
+      6,
+      'USDC',
+      'USD Coin',
+    ),
   ],
   stellar: [
     new XToken('stellar', 'stellar', NATIVE_ADDRESS, 7, 'XLM', 'XLM'),

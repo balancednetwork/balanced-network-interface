@@ -575,8 +575,8 @@ msgstr "Transaction failed!"
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-msgid "is available on {0}."
-msgstr "is available on {0}."
+#~ msgid "is available on {0}."
+#~ msgstr "is available on {0}."
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
 #~ msgid "Add your sICX to the collateral pool."
@@ -2137,6 +2137,11 @@ msgstr "Verifying contract calls..."
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
 msgstr "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
+
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "available on {0}."
+msgstr "available on {0}."
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "and ends after {duration} days."

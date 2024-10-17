@@ -23,7 +23,7 @@ import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from './styledCompone
 
 type ChainListProps = {
   chainId: XChainId;
-  setChainId: (chain: XChainId) => void;
+  onChainIdChange: (chainId: XChainId) => void;
   chains?: XChain[];
   width: number | undefined;
 };
@@ -38,9 +38,6 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const signedInWallets = useSignedInWallets();
   const isSignedIn = signedInWallets.some(wallet => wallet.xChainId === chain.xChainId);
   const crossChainBalances = useCrossChainWalletBalances();
-  const { sourceChain: collateralChain } = useDerivedCollateralInfo();
-
-  const [waitingSignIn, setWaitingSignIn] = useState<XChainId | null>(null);
 
   const xChainType = getXChainType(chain.xChainId);
   const xConnect = useXConnect();
@@ -49,24 +46,6 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const handleConnect = () => {
     handleConnectWallet(xChainType, xConnectors, xConnect);
   };
-
-  React.useEffect(() => {
-    if (waitingSignIn && signedInWallets.some(wallet => wallet.xChainId === waitingSignIn)) {
-      setChainId(waitingSignIn);
-      setWaitingSignIn(null);
-    }
-    return () => {
-      if (waitingSignIn) {
-        setWaitingSignIn(null);
-      }
-    };
-  }, [signedInWallets, waitingSignIn, setChainId]);
-
-  React.useEffect(() => {
-    if (!isSignedIn && !waitingSignIn) {
-      setChainId(collateralChain);
-    }
-  }, [isSignedIn, waitingSignIn, setChainId, collateralChain]);
 
   const bnUSD = xTokenMap[chain.xChainId].find(token => token.symbol === 'bnUSD');
 
@@ -105,7 +84,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   );
 };
 
-const ChainList = ({ chainId, setChainId, chains, width }: ChainListProps) => {
+const ChainList = ({ onChainIdChange, chains, width }: ChainListProps) => {
   const relevantChains = chains || xChains;
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -150,7 +129,11 @@ const ChainList = ({ chainId, setChainId, chains, width }: ChainListProps) => {
         </Grid>
         {sortedFilteredChains.map((chainItem, index) => (
           <Box key={index}>
-            <ChainItem chain={chainItem} isLast={sortedFilteredChains.length === index + 1} setChainId={setChainId} />
+            <ChainItem
+              chain={chainItem}
+              isLast={sortedFilteredChains.length === index + 1}
+              setChainId={onChainIdChange}
+            />
           </Box>
         ))}
         {sortedFilteredChains.length === 0 && searchQuery !== '' && (

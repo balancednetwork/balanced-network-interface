@@ -49,7 +49,7 @@ const LoanChainSelector = ({
     }
   }, [containerRef]);
 
-  const setChainWrap = React.useCallback(
+  const handleChainIdChange = React.useCallback(
     (chainId: XChainId) => {
       adjust(false);
       setRecipientNetwork(chainId);
@@ -84,7 +84,12 @@ const LoanChainSelector = ({
             strategy="absolute"
             containerOffset={containerRef ? containerRef.getBoundingClientRect().x + 2 : 0}
           >
-            <ChainList setChainId={setChainWrap} chainId={loanRecipientNetwork} chains={xChains} width={width} />
+            <ChainList
+              onChainIdChange={handleChainIdChange}
+              chainId={loanRecipientNetwork}
+              chains={xChains}
+              width={width}
+            />
           </DropdownPopper>
         </div>
       </ClickAwayListener>

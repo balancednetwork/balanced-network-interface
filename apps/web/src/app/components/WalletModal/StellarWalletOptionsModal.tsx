@@ -18,9 +18,9 @@ const icons = {
   walletConnect: WalletConnectIcon,
 };
 
-export const SuiWalletOptionsModal = ({ id = MODAL_ID.SUI_WALLET_OPTIONS_MODAL }: { id?: MODAL_ID }) => {
+export const StellarWalletOptionsModal = ({ id = MODAL_ID.STELLAR_WALLET_OPTIONS_MODAL }: { id?: MODAL_ID }) => {
   const modalOpen = useModalOpen(id);
-  const xConnectors = useXConnectors('SUI');
+  const xConnectors = useXConnectors('STELLAR');
   const xConnect = useXConnect();
 
   const onDismiss = useCallback(() => {
@@ -54,7 +54,7 @@ export const SuiWalletOptionsModal = ({ id = MODAL_ID.SUI_WALLET_OPTIONS_MODAL }
           ) : (
             <>
               <Typography textAlign="center" margin={'0 0 25px'}>
-                No SUI-based wallet detected.
+                No Stellar-based wallet detected.
               </Typography>
               <Typography textAlign="center">
                 Add a wallet like{' '}
@@ -72,12 +72,10 @@ export const SuiWalletOptionsModal = ({ id = MODAL_ID.SUI_WALLET_OPTIONS_MODAL }
                   variant={'span'}
                   color="primaryBright"
                   onClick={() =>
-                    window.open(
-                      'https://chromewebstore.google.com/detail/sui-wallet/opcgpfmipidbgpenhmajoajpbobppdil?hl=en-US',
-                    )
+                    window.open('https://chromewebstore.google.com/detail/freighter/bcacfldlkkdogcmkkibnjlakofdplcbk')
                   }
                 >
-                  <UnderlineText>Sui Wallet</UnderlineText>
+                  <UnderlineText>Freighter</UnderlineText>
                 </Typography>{' '}
                 to your browser, then try again.
               </Typography>

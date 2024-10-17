@@ -30,12 +30,11 @@ type ChainListProps = {
 
 type ChainItemProps = {
   chain: XChain;
-  selectedChainId: XChainId;
   isLast: boolean;
   setChainId: (chain: XChainId) => void;
 };
 
-const ChainItem = ({ chain, setChainId, isLast, selectedChainId }: ChainItemProps) => {
+const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const signedInWallets = useSignedInWallets();
   const isSignedIn = signedInWallets.some(wallet => wallet.xChainId === chain.xChainId);
   const crossChainBalances = useCrossChainWalletBalances();
@@ -43,7 +42,7 @@ const ChainItem = ({ chain, setChainId, isLast, selectedChainId }: ChainItemProp
 
   const [waitingSignIn, setWaitingSignIn] = useState<XChainId | null>(null);
 
-  const xChainType = getXChainType(selectedChainId);
+  const xChainType = getXChainType(chain.xChainId);
   const xConnect = useXConnect();
   const xConnectors = useXConnectors(xChainType);
 
@@ -151,12 +150,7 @@ const ChainList = ({ chainId, setChainId, chains, width }: ChainListProps) => {
         </Grid>
         {sortedFilteredChains.map((chainItem, index) => (
           <Box key={index}>
-            <ChainItem
-              chain={chainItem}
-              selectedChainId={chainId}
-              isLast={sortedFilteredChains.length === index + 1}
-              setChainId={setChainId}
-            />
+            <ChainItem chain={chainItem} isLast={sortedFilteredChains.length === index + 1} setChainId={setChainId} />
           </Box>
         ))}
         {sortedFilteredChains.length === 0 && searchQuery !== '' && (

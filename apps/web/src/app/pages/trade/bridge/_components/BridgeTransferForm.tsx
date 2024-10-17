@@ -210,7 +210,7 @@ export default function BridgeTransferForm({ openModal }) {
                   </>
                 )}
 
-                <Trans>is available on {xChainMap[bridgeDirection?.to].name}.</Trans>
+                <Trans>available on {xChainMap[bridgeDirection?.to].name}.</Trans>
               </Typography>
             </Flex>
           )}

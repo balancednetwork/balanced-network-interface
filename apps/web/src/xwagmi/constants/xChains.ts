@@ -304,7 +304,7 @@ export const stellar: XChain = {
     bnUSD: 'CAKU2J5T4TOMFATA56XRDZMQHNBFIOQW3JDZQNQBLNLV7LEWYTNYU6VX',
   },
   autoExecution: true,
-  gasThreshold: 1.5,
+  gasThreshold: 2,
   testnet: false,
   useXCallScanner: true,
 };

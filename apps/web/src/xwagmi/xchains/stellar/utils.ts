@@ -95,3 +95,12 @@ export async function sendTX(
     throw new Error('Failed to send stellar transaction');
   }
 }
+
+export const isStellarAddress = (address: string) => {
+  try {
+    new Address(address);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};

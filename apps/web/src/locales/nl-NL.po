@@ -2098,6 +2098,7 @@ msgstr "Storten"
 
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
 msgid "Swap & transfer cross-chain."
 msgstr ""
 

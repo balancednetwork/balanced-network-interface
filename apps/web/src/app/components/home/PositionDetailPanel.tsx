@@ -109,7 +109,9 @@ const PositionDetailPanel = () => {
   const isLockWarning = useMemo(
     () =>
       oraclePrice &&
-      (availableLoanAmount.isGreaterThan(0.005) ? lockThresholdPrice.minus(oraclePrice).isGreaterThan(-0.01) : true),
+      (availableLoanAmount.isGreaterThan(0.005)
+        ? lockThresholdPrice.minus(oraclePrice).isGreaterThan(lockThresholdPrice.times(-1).times(0.001))
+        : true),
     [lockThresholdPrice, oraclePrice, availableLoanAmount],
   );
 

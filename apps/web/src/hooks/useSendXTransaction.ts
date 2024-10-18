@@ -13,7 +13,7 @@ import {
   XTransactionType,
 } from '@/xwagmi/xcall/types';
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
-import { xServiceActions } from '@/xwagmi/xcall/zustand/useXServiceStore';
+import { xChainHeightActions } from '@/xwagmi/xcall/zustand/useXChainHeightStore';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import { useSignTransaction } from '@mysten/dapp-kit';
 import { useMemo } from 'react';
@@ -102,8 +102,9 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
   const finalDestinationChainId = direction.to;
   const primaryDestinationChainId = sourceChainId === iconChainId ? finalDestinationChainId : iconChainId;
 
-  const primaryDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(primaryDestinationChainId) - 20n;
-  const finalDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(finalDestinationChainId);
+  const primaryDestinationChainInitialBlockHeight =
+    xChainHeightActions.getXChainHeight(primaryDestinationChainId) - 20n;
+  const finalDestinationChainInitialBlockHeight = xChainHeightActions.getXChainHeight(finalDestinationChainId);
 
   const xTransaction: XTransaction = {
     id: `${sourceChainId}/${sourceTransactionHash}`,

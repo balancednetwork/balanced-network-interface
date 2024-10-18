@@ -11,6 +11,7 @@ export type XChainId =
   | '0x2105.base'
   | 'injective-1'
   | 'sui';
+// | 'solana';
 
 export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH' | 'INJECTIVE' | 'SUI';
 

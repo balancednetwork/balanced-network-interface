@@ -12,7 +12,7 @@ import TransactionUpdater from '@/store/transactions/updater';
 import { AllTransactionsUpdater } from '@/hooks/useTransactionStore';
 import { initXWagmiStore, useInitXWagmiStore } from '@/xwagmi/useXWagmiStore';
 import { AllXMessagesUpdater, AllXTransactionsUpdater } from '@/xwagmi/xcall/zustand/useXMessageStore';
-import { AllXChainHeightsUpdater } from '@/xwagmi/xcall/zustand/useXServiceStore';
+import { AllXChainHeightsUpdater } from '@/xwagmi/xcall/zustand/useXChainHeightStore';
 import { xChains } from '../xwagmi/constants/xChains';
 import RootRoutes from './Routes';
 

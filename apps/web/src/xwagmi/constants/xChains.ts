@@ -286,12 +286,37 @@ export const sui: XChain = {
     symbol: 'SUI',
   },
   rpc: {
-    http: 'https://sentry.tm.injective.network',
+    http: 'https://sentry.tm.sui.network',
   },
   contracts: {
     xCall: '0x3638b141b349173a97261bbfa33ccd45334d41a80584db6f30429e18736206fe', // TODO: not being used, just empty string
     assetManager: '0x1c1795e30fbc0b9c18543527940446e7601f5a3ca4db9830da4f3c68557e1fb3', // TODO: not being used, just empty string
     bnUSD: '0x03917a812fe4a6d6bc779c5ab53f8a80ba741f8af04121193fc44e0f662e2ceb::balanced_dollar::BALANCED_DOLLAR',
+  },
+  autoExecution: true,
+  gasThreshold: 0.2,
+  testnet: false,
+};
+
+// TODO: complete solana chain
+export const solana: XChain = {
+  id: 'solana',
+  name: 'Solana',
+  xChainId: 'solana',
+  xChainType: 'SOLANA',
+  tracker: 'https://solscan.io/',
+  nativeCurrency: {
+    decimals: 9,
+    name: 'SOL',
+    symbol: 'SOL',
+  },
+  rpc: {
+    http: 'https://sentry.tm.solana.network',
+  },
+  contracts: {
+    xCall: '3LWnGCRFuS4TJ5WeDKeWdoSRptB2tzeEFhSBFFu4ogMo',
+    assetManager: '4u979CPSHUeJQbCYUAvoki4CQHDiG1257vt2DaJULPV9',
+    bnUSD: '3JfaNQh3zRyBQ3spQJJWKmgRcXuQrcNrpLH5pDvaX2gG',
   },
   autoExecution: true,
   gasThreshold: 0.2,
@@ -312,11 +337,13 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   '0x2105.base': base,
   'injective-1': injective,
   sui: sui,
+  solana: solana,
 };
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);
 export const SUPPORTED_XCALL_CHAINS = xChains.map(({ xChainId }) => xChainId);
 
+// you can the following values by calling getProtocols function of the XCallManager contract on ICON
 /** from other chain to icon sources */
 export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   '0x2105.base': ['0x8A47E036B9c4594dF95F2dbFA09fb475Fa75469d', '0x6185D52640EA3b683AedD8bA52d18053A41fee09'],
@@ -326,6 +353,7 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   '0x100.icon': ['cxcf2c8d58fd7bbd25866de0660b155f057ea489eb'],
   'injective-1': ['inj15jcde723hrm5f4fx3r2stnq59jykt2askud8ht'],
   sui: ['centralized-1', 'centralized-2'],
+  solana: ['3FYPqMDqxXi1jtFxj4weW3etedRb1bXMnMTPVS9UHgvH', 'DWhzoYAJPvRnPspzDs6PNNzTh5povHNWLpjSn5xCamuk'],
 };
 
 /** to other chain from icon sources */
@@ -337,4 +365,5 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   '0x100.icon': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
   'injective-1': ['cx6f86ed848f9f0d03ba1220811d95d864c72da88c'],
   sui: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
+  solana: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
 };

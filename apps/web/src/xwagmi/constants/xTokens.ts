@@ -179,6 +179,10 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'Balanced Dollar',
     ),
   ],
+  solana: [
+    new XToken('solana', 'solana', NATIVE_ADDRESS, 9, 'SOL', 'SOL'),
+    new XToken('solana', 'solana', '2yN29zk8jgRTW7GUF9WwYAEz8vvABVnvbfQc5DpGi9CJ', 9, 'bnUSD', 'Balanced Dollar'),
+  ],
 };
 
 export const sARCHOnArchway = {

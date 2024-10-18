@@ -77,7 +77,7 @@ const xChainIdMap: Record<XChainId, string> = {
   '0x2105.base': 'base',
   'injective-1': 'ibc_injective',
   sui: 'sui',
-  // solana: 'solana',
+  solana: 'solana',
 };
 
 export const AllXChainHeightsUpdater = ({ xChains }: { xChains: XChain[] }) => {

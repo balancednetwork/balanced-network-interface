@@ -10,10 +10,10 @@ export type XChainId =
   | '0xa4b1.arbitrum'
   | '0x2105.base'
   | 'injective-1'
-  | 'sui';
-// | 'solana';
+  | 'sui'
+  | 'solana';
 
-export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH' | 'INJECTIVE' | 'SUI';
+export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH' | 'INJECTIVE' | 'SUI' | 'SOLANA';
 
 export type Chain = {
   id: string | number;

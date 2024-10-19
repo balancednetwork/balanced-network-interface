@@ -14,7 +14,9 @@ export class SolanaXWalletClient extends XWalletClient {
     return SolanaXService.getInstance();
   }
 
-  async approve(token, owner, spender, currencyAmountToApprove) {}
+  async approve(amountToApprove, spender, owner) {
+    return Promise.resolve(undefined);
+  }
 
   async executeTransaction(xTransactionInput: XTransactionInput, options) {
     const { signTransaction } = options;

@@ -37,6 +37,7 @@ export enum XTransactionType {
   WITHDRAW = 'withdraw',
   BORROW = 'borrow',
   REPAY = 'repay',
+  SWAP_ON_ICON = 'swap_on_icon',
 }
 
 export enum XMessageStatus {

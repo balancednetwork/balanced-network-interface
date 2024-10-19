@@ -26,17 +26,17 @@ export class ArchwayXWalletClient extends XWalletClient {
     return walletClient;
   }
 
-  async approve(token: XToken, owner: string, spender: string, currencyAmountToApprove: CurrencyAmount<XToken>) {
+  async approve(amountToApprove: CurrencyAmount<XToken>, spender: string, owner: string) {
+    const xToken = amountToApprove.currency;
+
     const msg = {
       increase_allowance: {
         spender: spender,
-        amount: currencyAmountToApprove?.quotient
-          ? currencyAmountToApprove?.quotient.toString()
-          : MaxUint256.toString(),
+        amount: amountToApprove?.quotient ? amountToApprove?.quotient.toString() : MaxUint256.toString(),
       },
     };
 
-    const hash = await this.getWalletClient().executeSync(owner, token.address, msg, getFeeParam(400000));
+    const hash = await this.getWalletClient().executeSync(owner, xToken.address, msg, getFeeParam(400000));
 
     if (hash) {
       return hash;

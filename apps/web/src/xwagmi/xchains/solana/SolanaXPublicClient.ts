@@ -1,7 +1,8 @@
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
 import { XChainId, XToken } from '@/xwagmi/types';
-import { TransactionStatus, XCallEvent } from '../../xcall/types';
+import { TransactionStatus, XCallEvent, XTransactionInput } from '../../xcall/types';
 import { SolanaXService } from './SolanaXService';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 
 export class SolanaXPublicClient extends XPublicClient {
   getXService(): SolanaXService {
@@ -52,5 +53,18 @@ export class SolanaXPublicClient extends XPublicClient {
 
   parseEventLogs(eventLogs: any[]): XCallEvent[] {
     return []; // not used
+  }
+
+  needsApprovalCheck(xToken: XToken): boolean {
+    return false;
+  }
+
+  async estimateApproveGas(amountToApprove: CurrencyAmount<XToken>, spender: string, owner: string) {
+    return 0n;
+  }
+
+  async estimateSwapGas(xTransactionInput: XTransactionInput) {
+    // TODO: implement
+    return 0n;
   }
 }

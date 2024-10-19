@@ -3,7 +3,7 @@ import { XAccount } from '@/xwagmi/types';
 import { XConnector } from '@/xwagmi/core';
 import { Wallet } from '@injectivelabs/wallet-ts';
 import { InjectiveXService } from './InjectiveXService';
-import KeplrIcon from './assets/keplr.svg?inline';
+import KeplrIcon from '@/xwagmi/assets/wallets/keplr.svg?inline';
 
 export class InjectiveKelprXConnector extends XConnector {
   constructor() {

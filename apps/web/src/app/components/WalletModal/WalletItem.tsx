@@ -39,10 +39,6 @@ export const handleConnectWallet = (
       case 'INJECTIVE':
         break;
       case 'SUI':
-        // window.open(
-        //   'https://chromewebstore.google.com/detail/sui-wallet/opcgpfmipidbgpenhmajoajpbobppdil?hl=en-US',
-        //   '_blank',
-        // );
         break;
       default:
         break;

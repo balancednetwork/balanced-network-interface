@@ -12,7 +12,7 @@ export interface IXCallFee {
   rollback: bigint;
 }
 
-import { Currency, CurrencyAmount, TradeType, XChainId } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, TradeType, XChainId, XToken } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 
 import { CurrencyKey } from '@/xwagmi/types';
@@ -58,7 +58,7 @@ export type XTransactionInput = {
     to: XChainId;
   };
   type: XTransactionType;
-  inputAmount: CurrencyAmount<Currency>;
+  inputAmount: CurrencyAmount<XToken>;
   account: string;
   xCallFee: IXCallFee;
   callback?: () => void;

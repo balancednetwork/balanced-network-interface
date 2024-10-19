@@ -92,7 +92,6 @@ msgstr "Only"
 
 #: src/hooks/useApproveCallback.tsx
 #: src/hooks/useApproveCallback.tsx
-#: src/hooks/useApproveCallback.tsx
 msgid "{0} transfer approval failed."
 msgstr "{0} transfer approval failed."
 
@@ -321,6 +320,7 @@ msgstr "Bridge Fee"
 #~ msgstr "Add a contract call"
 
 #: src/app/components/Header/index.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "Sign in"
 msgstr "Sign in"
 
@@ -439,7 +439,6 @@ msgstr "Copied"
 #~ msgid "Review the community token list on GitHub."
 #~ msgstr "Review the community token list on GitHub."
 
-#: src/hooks/useApproveCallback.tsx
 #: src/hooks/useApproveCallback.tsx
 msgid "Approving {0} for cross-chain transfer..."
 msgstr "Approving {0} for cross-chain transfer..."
@@ -747,7 +746,6 @@ msgstr "The impact your trade has on the market price of this pool."
 #~ msgstr "Active"
 
 #: src/hooks/useApproveCallback.tsx
-#: src/hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
 msgstr "{0} approved for cross-chain transfer."
 
@@ -961,6 +959,10 @@ msgstr "Manage wallets"
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #~ msgid "Withdrawing..."
 #~ msgstr "Withdrawing..."
+
+#: src/store/swap/hooks.ts
+msgid "Invalid address"
+msgstr "Invalid address"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #~ msgid "{0} BALN withdrawn."
@@ -1416,6 +1418,10 @@ msgstr "Insufficient {0}"
 #~ msgid "Search name or contract"
 #~ msgstr "Search name or contract"
 
+#: src/store/swap/hooks.ts
+msgid "Input address"
+msgstr "Input address"
+
 #: src/store/bridge/hooks.tsx
 #~ msgid "Connect wallet"
 #~ msgstr "Connect wallet"
@@ -1601,8 +1607,8 @@ msgstr "Processing transaction..."
 #~ msgstr "Transfer in progress"
 
 #: src/store/swap/hooks.ts
-msgid "Choose address"
-msgstr "Choose address"
+#~ msgid "Choose address"
+#~ msgstr "Choose address"
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
 #~ msgid "Your assets"

@@ -130,7 +130,10 @@ export default function CurrencyInputPanel({
               <span className="text-secondary-foreground text-body cursor-default">
                 {`${balance ? balance.toFixed(4, { groupSeparator: ',' }) : 0} ${currency?.symbol}`}
               </span>
-              <span className="text-base font-extrabold cursor-pointer" onClick={() => onPercentSelect?.(100)}>
+              <span
+                className="text-base font-extrabold cursor-pointer text-light-purple"
+                onClick={() => onPercentSelect?.(100)}
+              >
                 Max
               </span>
             </>

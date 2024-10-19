@@ -69,6 +69,8 @@ export class ArchwayXWalletClient extends XWalletClient {
           },
         }),
       );
+    } else if (type === XTransactionType.REPAY) {
+      return await this._executeRepay(xTransactionInput);
     } else {
       throw new Error('Invalid XTransactionType');
     }
@@ -138,5 +140,37 @@ export class ArchwayXWalletClient extends XWalletClient {
         return hash;
       }
     }
+  }
+
+  async _executeRepay(xTransactionInput: XTransactionInput) {
+    const { account, inputAmount, recipient, xCallFee, usedCollateral } = xTransactionInput;
+
+    if (!inputAmount || !usedCollateral) {
+      return;
+    }
+
+    const amount = inputAmount.multiply(-1).quotient.toString();
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
+    const data = getBytesFromString(
+      JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
+    );
+
+    const msg = {
+      cross_transfer: {
+        amount,
+        to: destination,
+        data,
+      },
+    };
+
+    const hash = await this.getWalletClient().executeSync(
+      account, //
+      archway.contracts.bnUSD!,
+      msg,
+      'auto',
+      undefined,
+      [{ amount: xCallFee?.rollback.toString(), denom: ARCHWAY_FEE_TOKEN_SYMBOL }],
+    );
+    return hash;
   }
 }

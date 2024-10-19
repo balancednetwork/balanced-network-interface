@@ -1,4 +1,5 @@
 import { XChainId, XChainType } from '@balancednetwork/sdk-core';
+export type { XChainId, XChainType } from '@balancednetwork/sdk-core';
 
 export type Chain = {
   id: string | number;

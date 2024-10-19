@@ -2,6 +2,7 @@ import { fromBase64, toBase64 } from '@injectivelabs/sdk-ts';
 
 import { injective } from '@/xwagmi/constants/xChains';
 import { XPublicClient } from '@/xwagmi/core';
+import { XChainId, XToken } from '@/xwagmi/types';
 import {
   TransactionStatus,
   XCallEvent,
@@ -11,7 +12,7 @@ import {
   XCallMessageSentEvent,
   XTransactionInput,
 } from '@/xwagmi/xcall/types';
-import { CurrencyAmount, XChainId, XToken } from '@balancednetwork/sdk-core';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { isDenomAsset } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
 
@@ -36,6 +37,7 @@ export class InjectiveXPublicClient extends XPublicClient {
     const xService = this.getXService();
     if (xToken.isNativeXToken() || isDenomAsset(xToken)) {
       const portfolio = await xService.indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(address);
+
       const xTokenAddress = xToken.isNativeXToken() ? 'inj' : xToken.address;
 
       const balance = portfolio.bankBalancesList.find(_balance => _balance.denom === xTokenAddress);

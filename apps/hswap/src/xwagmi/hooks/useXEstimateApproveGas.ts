@@ -1,6 +1,7 @@
-import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { useXPublicClient } from './useXPublicClient';
 import { useQuery } from '@tanstack/react-query';
+import { XToken } from '../types';
 
 export function useXEstimateApproveGas(
   amountToApprove: CurrencyAmount<XToken> | undefined,

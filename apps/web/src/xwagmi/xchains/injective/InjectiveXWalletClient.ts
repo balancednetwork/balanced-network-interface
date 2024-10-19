@@ -13,6 +13,7 @@ import { RLP } from '@ethereumjs/rlp';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { isDenomAsset } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
+import { XToken } from '@/xwagmi/types';
 
 export class InjectiveXWalletClient extends XWalletClient {
   getXService(): InjectiveXService {

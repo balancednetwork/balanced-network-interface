@@ -19,6 +19,7 @@ import HavahWalletIcon from '@/assets/icons/chains/havah.svg';
 import InjectiveWalletIcon from '@/assets/icons/chains/injective.svg';
 import SuiWalletIcon from '@/assets/icons/chains/sui.svg';
 import IconWalletIcon from '@/assets/icons/wallets/iconex.svg';
+import SolanaWalletIcon from '@/assets/icons/chains/solana.svg';
 
 import { LOCALE_LABEL, SUPPORTED_LOCALES, SupportedLocale } from '@/constants/locales';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
@@ -155,6 +156,13 @@ export default function WalletModal() {
           logo: <SuiWalletIcon width="40" height="40" />,
           description: t`Borrow, swap, & transfer cross-chain.`,
           keyWords: ['sui'],
+        },
+        {
+          name: 'Solana',
+          xChainType: 'SOLANA',
+          logo: <SolanaWalletIcon width="40" height="40" />,
+          description: t`Borrow, swap, & transfer cross-chain.`,
+          keyWords: ['solana'],
         },
       ].sort((a, b) => a.name.localeCompare(b.name)),
     ] as WalletItemProps[];

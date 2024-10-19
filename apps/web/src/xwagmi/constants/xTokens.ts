@@ -18,6 +18,7 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   tBTC: '0xa4b1.arbitrum',
   weETH: '0xa4b1.arbitrum',
   wstETH: '0xa4b1.arbitrum',
+  SOL: 'solana',
 };
 
 export const xTokenMap: { [key in XChainId]: XToken[] } = {

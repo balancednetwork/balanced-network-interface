@@ -37,6 +37,7 @@ import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import useWidth from '@/hooks/useWidth';
 import { useIconReact } from '@/packages/icon-react';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
+import BigNumber from 'bignumber.js';
 import { PanelInfoItem, PanelInfoWrap, UnderPanel } from './CollateralPanel';
 import LoanChainSelector from './_components/LoanChainSelector';
 import XLoanModal, { XLoanAction } from './_components/xLoanModal';
@@ -77,12 +78,19 @@ const LoanPanel = () => {
     before: string;
     after: string;
     action: XLoanAction;
+    originationFee: BigNumber;
   }>({
     amount: '',
     before: '',
     after: '',
     action: shouldBorrow ? XLoanAction.BORROW : XLoanAction.REPAY,
+    originationFee: new BigNumber(0),
   });
+
+  const { originationFee = 0 } = useLoanParameters() || {};
+  //borrow fee
+  const fee = differenceAmount.times(originationFee);
+  const addTransaction = useTransactionAdder();
 
   const handleEnableAdjusting = () => {
     adjust(true);
@@ -120,17 +128,13 @@ const LoanPanel = () => {
         before: borrowedAmount.dp(2).toFormat(),
         after: parsedAmount[Field.LEFT].dp(2).toFormat(),
         action: shouldBorrow ? XLoanAction.BORROW : XLoanAction.REPAY,
+        originationFee: fee,
       });
       modalActions.openModal(MODAL_ID.XLOAN_CONFIRM_MODAL);
     } else {
       setOpen(!open);
     }
   };
-
-  const { originationFee = 0 } = useLoanParameters() || {};
-  //borrow fee
-  const fee = differenceAmount.times(originationFee);
-  const addTransaction = useTransactionAdder();
 
   const handleLoanConfirm = () => {
     if (!iconAccount) return;
@@ -364,7 +368,6 @@ const LoanPanel = () => {
         collateralAccount={account}
         bnUSDAmount={bnUSDAmount}
         sourceChain={sourceChain}
-        originationFee={fee}
         interestRate={interestRate}
         storedModalValues={storedModalValues}
       />

@@ -2,11 +2,11 @@ import Divider from '@/components/Divider';
 import { CurrencyLogoFromURI } from '@/components/shared/CurrencyLogo';
 import { HIGH_PRICE_ASSET_DP } from '@/constants/tokens';
 import { useWithdrawalsFloorDEXData } from '@/queries';
-import React, { Fragment } from 'react';
-import { Box, Flex } from 'rebass';
 import { HeaderText } from '@/sections/TokenSection';
 import { Typography } from '@/theme';
 import { getFormattedNumber } from '@/utils/formatter';
+import React, { Fragment } from 'react';
+import { Box, Flex } from 'rebass';
 import { DashGrid, DataText, MinWidthContainer, SkeletonTokenPlaceholder } from '../CollateralLimits';
 
 const ExchangeLimits = () => {
@@ -68,9 +68,7 @@ const ExchangeLimits = () => {
                           <Typography
                             ml="10px"
                             color={
-                              availableRatio.isGreaterThanOrEqualTo(withdrawalsFloorData.percentageFloor.div(2))
-                                ? 'primary'
-                                : 'alert'
+                              availableRatio.isGreaterThanOrEqualTo(asset.percentageFloor.div(2)) ? 'primary' : 'alert'
                             }
                           >
                             {`(~${getFormattedNumber(availableRatio.toNumber(), 'percent0')})`}

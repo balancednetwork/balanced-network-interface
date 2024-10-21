@@ -263,7 +263,7 @@ export function CurrencySearch({
         <SearchInput
           type="text"
           id="token-search-input"
-          placeholder={t`Search name or contract`}
+          placeholder={t`Search name or contract...`}
           autoComplete="off"
           value={searchQuery}
           ref={inputRef as RefObject<HTMLInputElement>}
@@ -298,6 +298,7 @@ export function CurrencySearch({
           showCrossChainBreakdown={showCrossChainBreakdown}
           basedOnWallet={assetsTab === AssetsTab.YOUR}
           selectorType={selectorType}
+          width={width}
         />
       ) : (
         <Column style={{ padding: '20px 20px 0 20px' }} mb={showCommunityListControl ? -4 : 0}>

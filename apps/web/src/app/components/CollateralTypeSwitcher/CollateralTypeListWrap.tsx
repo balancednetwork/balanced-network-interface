@@ -33,7 +33,7 @@ const CollateralTypeListWrap = ({ width, setAnchor, anchor, ...rest }) => {
       <SearchInput
         type="text"
         id="collateral-search-input"
-        placeholder={t`Search assets`}
+        placeholder={t`Search assets...`}
         autoComplete="off"
         value={searchQuery}
         ref={inputRef as RefObject<HTMLInputElement>}

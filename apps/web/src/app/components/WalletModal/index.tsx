@@ -17,6 +17,7 @@ import ArchWalletIcon from '@/assets/icons/chains/archway.svg';
 import ETHIcon from '@/assets/icons/chains/eth.svg';
 import HavahWalletIcon from '@/assets/icons/chains/havah.svg';
 import InjectiveWalletIcon from '@/assets/icons/chains/injective.svg';
+import SuiWalletIcon from '@/assets/icons/chains/sui.svg';
 import IconWalletIcon from '@/assets/icons/wallets/iconex.svg';
 
 import { LOCALE_LABEL, SUPPORTED_LOCALES, SupportedLocale } from '@/constants/locales';
@@ -35,6 +36,7 @@ import Divider from '../Divider';
 import { DropdownPopper } from '../Popover';
 import { EVMWalletModal } from './EVMWalletModal';
 import { InjectiveWalletOptionsModal } from './InjectiveWalletOptionsModal';
+import { SuiWalletOptionsModal } from './SuiWalletOptionsModal';
 import WalletItem, { WalletItemProps } from './WalletItem';
 import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
 
@@ -147,6 +149,13 @@ export default function WalletModal() {
           keyWords: ['injective', 'cosmos', 'keplr', 'leap'],
           walletOptionsModalId: MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL,
         },
+        {
+          name: 'Sui',
+          xChainType: 'SUI',
+          logo: <SuiWalletIcon width="40" height="40" />,
+          description: t`Borrow, swap, & transfer cross-chain.`,
+          keyWords: ['sui'],
+        },
       ].sort((a, b) => a.name.localeCompare(b.name)),
     ] as WalletItemProps[];
   }, [switchChain]);
@@ -218,7 +227,7 @@ export default function WalletModal() {
             type="text"
             value={chainQuery}
             onChange={handleChainQuery}
-            placeholder="Search for blockchains..."
+            placeholder="Search blockchains..."
             style={{ minHeight: '40px' }}
             tabIndex={isMobile ? -1 : 1}
           />
@@ -267,6 +276,7 @@ export default function WalletModal() {
 
       <EVMWalletModal />
       <InjectiveWalletOptionsModal />
+      <SuiWalletOptionsModal />
     </>
   );
 }

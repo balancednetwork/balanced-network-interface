@@ -273,6 +273,31 @@ export const injective: XChain = {
   testnet: false,
 };
 
+// TODO: complete SUI chain
+export const sui: XChain = {
+  id: 'sui',
+  name: 'Sui',
+  xChainId: 'sui',
+  xChainType: 'SUI',
+  tracker: 'https://suiscan.xyz/mainnet/',
+  nativeCurrency: {
+    decimals: 9,
+    name: 'SUI',
+    symbol: 'SUI',
+  },
+  rpc: {
+    http: 'https://sentry.tm.injective.network',
+  },
+  contracts: {
+    xCall: '0x3638b141b349173a97261bbfa33ccd45334d41a80584db6f30429e18736206fe', // TODO: not being used, just empty string
+    assetManager: '0x1c1795e30fbc0b9c18543527940446e7601f5a3ca4db9830da4f3c68557e1fb3', // TODO: not being used, just empty string
+    bnUSD: '0x03917a812fe4a6d6bc779c5ab53f8a80ba741f8af04121193fc44e0f662e2ceb::balanced_dollar::BALANCED_DOLLAR',
+  },
+  autoExecution: true,
+  gasThreshold: 0.2,
+  testnet: false,
+};
+
 // the order is important, using manual order to display in the UI
 export const xChainMap: { [key in XChainId]: XChain } = {
   '0x1.icon': icon,
@@ -286,6 +311,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   '0x38.bsc': bsc,
   '0x2105.base': base,
   'injective-1': injective,
+  sui: sui,
 };
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);
@@ -295,18 +321,20 @@ export const SUPPORTED_XCALL_CHAINS = xChains.map(({ xChainId }) => xChainId);
 export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   '0x2105.base': ['0x8A47E036B9c4594dF95F2dbFA09fb475Fa75469d', '0x6185D52640EA3b683AedD8bA52d18053A41fee09'],
   '0xa4b1.arbitrum': ['0x4c6C68E8F5206EE4a1690C808cfF5c3fD35b512F', '0x1F8B1e9d3633229d38BDFc93dCa50B6453Ad8E97'],
-  '0x38.bsc': ['0x24415977c566f9300Ea6F0aC75AEA0c09C500e46'],
+  '0x38.bsc': ['0x24415977c566f9300Ea6F0aC75AEA0c09C500e46', '0xF3F1ab667a6176CCa4f916062e55115B576425F8'],
   '0xa86a.avax': ['0xC1a39C4e7AA98DEC394eF54559960873Bd619cA3', '0x7F3665eF19258cD5cE15eA39d014F47Fc942AE0C'],
   '0x100.icon': ['cxcf2c8d58fd7bbd25866de0660b155f057ea489eb'],
   'injective-1': ['inj15jcde723hrm5f4fx3r2stnq59jykt2askud8ht'],
+  sui: ['centralized-1', 'centralized-2'],
 };
 
 /** to other chain from icon sources */
 export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   '0x2105.base': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
   '0xa4b1.arbitrum': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
-  '0x38.bsc': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
+  '0x38.bsc': ['cxee7a00755a757e3c519a0616456030e33dc9d47f', 'cx59d899fce52cadd1feb5128ff5e6672f03943eec'],
   '0xa86a.avax': ['cx59d899fce52cadd1feb5128ff5e6672f03943eec', 'cx917f88460d4ebec1fd656d4dbe51131a37d16837'],
   '0x100.icon': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
   'injective-1': ['cx6f86ed848f9f0d03ba1220811d95d864c72da88c'],
+  sui: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
 };

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 20 22" style="clip-rule:evenodd;fill-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;version:1.1">
+    <style>.a{fill-rule:nonzero;fill:none;stroke-width:1.5px;stroke:rgb(44,169,183);}</style>
+    <g transform="matrix(1 0 0 1 -2.25 -1.25)">
+        <path d="M21 6C21 4.896 20.104 4 19 4L5 4C3.896 4 3 4.896 3 6L3 20C3 21.104 3.896 22 5 22L19 22C20.104 22 21 21.104 21 20L21 6Z" style="fill:none;stroke-width:1.5px;stroke:rgb(44,169,183)"/>
+        <path d="M16 2L16 6" class="a"/>
+        <path d="M8 2L8 6" class="a"/>
+        <path d="M3 10L21 10" class="a"/>
+    </g>
+</svg>

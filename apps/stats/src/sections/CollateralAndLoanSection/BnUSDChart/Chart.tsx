@@ -18,6 +18,7 @@ export default function Chart({
   setCollateralTVLHover,
   setCollateralLabel,
   setTotalBnUSD,
+  setBnUSDChange,
   setUserHovering,
 }) {
   const { data: debtData } = useDebtDataFor(timeFrames[selectedTimeFrame].days);
@@ -28,9 +29,13 @@ export default function Chart({
 
   useEffect(() => {
     if (data && data[data.length - 1]) {
-      setTotalBnUSD(data[data.length - 1].value);
+      const valueNow = data[data.length - 1].value;
+      const valuePrev = data[data.length - 30].value;
+
+      setTotalBnUSD(valueNow);
+      setBnUSDChange(valueNow - valuePrev);
     }
-  }, [data, setTotalBnUSD]);
+  }, [data, setTotalBnUSD, setBnUSDChange]);
 
   return (
     <>

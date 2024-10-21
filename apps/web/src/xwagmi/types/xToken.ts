@@ -5,6 +5,7 @@ import { XChainId } from './xChain';
 export class XToken extends Token {
   xChainId: XChainId;
   identifier: string;
+  spokeVersion?: string;
 
   public constructor(
     xChainId: XChainId,
@@ -14,10 +15,12 @@ export class XToken extends Token {
     symbol: string,
     name?: string,
     identifier?: string,
+    spokeVersion?: string,
   ) {
     super(chainId, address, decimals, symbol, name);
     this.xChainId = xChainId;
     this.identifier = identifier || symbol;
+    this.spokeVersion = spokeVersion;
   }
 
   static getXToken(xChainId: XChainId, token: Token) {

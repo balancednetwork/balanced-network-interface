@@ -1,5 +1,3 @@
-import { Event } from '@cosmjs/cosmwasm-stargate';
-
 export enum XCallEventType {
   CallMessageSent = 'CallMessageSent',
   CallMessage = 'CallMessage',
@@ -47,9 +45,10 @@ export enum XMessageStatus {
   // COMPLETED = 'COMPLETED',
 
   AWAITING_CALL_MESSAGE_SENT = 'AWAITING_CALL_MESSAGE_SENT',
-  CALL_MESSAGE_SENT = 'CALL_MESSAGE_SENT',
-  CALL_MESSAGE = 'CALL_MESSAGE',
-  CALL_EXECUTED = 'CALL_EXECUTED',
+  CALL_MESSAGE_SENT = 'CALL_MESSAGE_SENT', // pending
+  CALL_MESSAGE = 'CALL_MESSAGE', // delivered
+  CALL_EXECUTED = 'CALL_EXECUTED', // executed
+  ROLLBACKED = 'ROLLBACKED', // rollbacked
 }
 
 export type XTransactionInput = {
@@ -121,15 +120,21 @@ export type XCallEventMap = Partial<{
 
 export type XMessage = {
   id: string;
+  xTransactionId: string;
+
   sourceChainId: XChainId;
   destinationChainId: XChainId;
-  sourceTransaction: Transaction;
-  destinationTransaction?: Transaction;
+  sourceTransactionHash: string;
+  destinationTransactionHash?: string;
+
   events: XCallEventMap;
   status: XMessageStatus;
   destinationChainInitialBlockHeight: bigint;
-  // onSuccess: (xMessage: XMessage) => Promise<void>;
-  // onFail: (xMessage: XMessage) => Promise<void>;
+  isPrimary: boolean;
+
+  useXCallScanner?: boolean;
+  xCallScannerData?: any;
+  createdAt: number; // timestamp in milliseconds
 };
 
 export type XTransaction = {
@@ -137,12 +142,9 @@ export type XTransaction = {
   type: XTransactionType;
   status: XTransactionStatus;
 
-  primaryMessageId: string;
-  secondaryMessageId?: string;
   secondaryMessageRequired: boolean;
 
   sourceChainId: XChainId;
-  // primaryDestinationChainId: XChainId;
   finalDestinationChainId: XChainId;
   finalDestinationChainInitialBlockHeight: bigint;
 

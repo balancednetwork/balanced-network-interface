@@ -14,42 +14,32 @@ import {
 } from '@/xwagmi/xcall/types';
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
 import { xServiceActions } from '@/xwagmi/xcall/zustand/useXServiceStore';
-import { useXTransactionStore } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { useSignTransaction } from '@mysten/dapp-kit';
 import { useMemo } from 'react';
 import { transactionActions } from './useTransactionStore';
 
 const iconChainId: XChainId = '0x1.icon';
 
-const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess = () => {}) => {
+const sendXTransaction = async (xTransactionInput: XTransactionInput, options: any) => {
   const { direction } = xTransactionInput;
   const sourceChainId = direction.from;
-  const finalDestinationChainId = direction.to;
-  const primaryDestinationChainId = sourceChainId === iconChainId ? finalDestinationChainId : iconChainId;
 
   const srcXWalletClient = getXWalletClient(sourceChainId);
-
   if (!srcXWalletClient) {
     throw new Error('WalletXService for source chain is not found');
   }
 
   console.log('xTransactionInput', xTransactionInput);
 
-  const sourceTransactionHash = await srcXWalletClient.executeTransaction(xTransactionInput);
-
-  const primaryDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(primaryDestinationChainId) - 20n;
-  const finalDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(finalDestinationChainId);
-
+  const sourceTransactionHash = await srcXWalletClient.executeTransaction(xTransactionInput, options);
   if (!sourceTransactionHash) {
     return;
   }
 
-  let pendingMessage, successMessage, errorMessage;
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   let descriptionAction, descriptionAmount;
   if (xTransactionInput.type === XTransactionType.BRIDGE) {
-    pendingMessage = 'Requesting cross-chain transfer...';
-    successMessage = 'Cross-chain transfer requested.';
-    errorMessage = 'Cross-chain transfer failed.';
-
     const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
     const _formattedAmount = formatBigNumber(new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0), 'currency');
     descriptionAction = `Transfer ${_tokenSymbol}`;
@@ -69,18 +59,12 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess 
         _outputTokenSymbol === '' ? 'OUT' : _outputTokenSymbol,
       );
 
-      pendingMessage = swapMessages.pendingMessage;
-      successMessage = swapMessages.successMessage;
-      errorMessage = 'Cross-chain swap failed.';
       descriptionAction = `Swap ${_inputTokenSymbol} for ${_outputTokenSymbol}`;
       descriptionAmount = `${_inputAmount} ${_inputTokenSymbol} for ${_outputAmount} ${_outputTokenSymbol}`;
     }
   } else if (xTransactionInput.type === XTransactionType.DEPOSIT) {
     const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
     const _formattedAmount = formatBigNumber(new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0), 'currency');
-    pendingMessage = `Depositing ${_tokenSymbol} collateral...`;
-    successMessage = `Deposited ${_formattedAmount} ${_tokenSymbol}.`;
-    errorMessage = 'Collateral deposit failed.';
 
     descriptionAction = `Deposit ${_tokenSymbol} as collateral`;
     descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
@@ -90,17 +74,11 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess 
       new BigNumber(xTransactionInput?.inputAmount.multiply(-1).toFixed() || 0),
       'currency',
     );
-    pendingMessage = `Withdrawing ${_tokenSymbol} collateral...`;
-    successMessage = `Withdrew ${_formattedAmount} ${_tokenSymbol}.`;
-    errorMessage = 'Collateral withdrawal failed.';
 
     descriptionAction = `Withdraw ${_tokenSymbol} collateral`;
     descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
   } else if (xTransactionInput.type === XTransactionType.BORROW) {
     const _formattedAmount = formatBigNumber(new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0), 'currency');
-    pendingMessage = 'Borrowing bnUSD...';
-    successMessage = `Borrowed ${_formattedAmount} bnUSD.`;
-    errorMessage = 'Borrow failed.';
 
     descriptionAction = `Borrow bnUSD`;
     descriptionAmount = `${_formattedAmount} bnUSD`;
@@ -109,9 +87,6 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess 
       new BigNumber(xTransactionInput?.inputAmount.multiply(-1).toFixed() || 0),
       'currency',
     );
-    pendingMessage = 'Repaying bnUSD...';
-    successMessage = `Repaid ${_formattedAmount} bnUSD.`;
-    errorMessage = 'Repay failed.';
 
     descriptionAction = `Repay bnUSD`;
     descriptionAmount = `${_formattedAmount} bnUSD`;
@@ -121,52 +96,56 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, onSuccess 
 
   const sourceTransaction = transactionActions.add(sourceChainId, {
     hash: sourceTransactionHash,
-    pendingMessage,
-    successMessage,
-    errorMessage,
   });
 
-  if (sourceTransaction && sourceTransaction.hash) {
-    const xMessage: XMessage = {
-      id: `${sourceChainId}/${sourceTransaction.hash}`,
-      sourceChainId: sourceChainId,
-      destinationChainId: primaryDestinationChainId,
-      sourceTransaction,
-      status: XMessageStatus.REQUESTED,
-      events: {},
-      destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
-    };
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  const finalDestinationChainId = direction.to;
+  const primaryDestinationChainId = sourceChainId === iconChainId ? finalDestinationChainId : iconChainId;
 
-    xMessageActions.add(xMessage);
+  const primaryDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(primaryDestinationChainId) - 20n;
+  const finalDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(finalDestinationChainId);
 
-    const xTransaction: XTransaction = {
-      id: xMessage.id,
-      type: xTransactionInput.type,
-      status: XTransactionStatus.pending,
-      primaryMessageId: xMessage.id,
-      secondaryMessageRequired: primaryDestinationChainId !== finalDestinationChainId,
-      sourceChainId: sourceChainId,
-      finalDestinationChainId: finalDestinationChainId,
-      finalDestinationChainInitialBlockHeight,
-      attributes: {
-        descriptionAction,
-        descriptionAmount,
-      },
-    };
+  const xTransaction: XTransaction = {
+    id: `${sourceChainId}/${sourceTransactionHash}`,
+    type: xTransactionInput.type,
+    status: XTransactionStatus.pending,
+    secondaryMessageRequired: primaryDestinationChainId !== finalDestinationChainId,
+    sourceChainId: sourceChainId,
+    finalDestinationChainId: finalDestinationChainId,
+    finalDestinationChainInitialBlockHeight,
+    attributes: {
+      descriptionAction,
+      descriptionAmount,
+    },
+  };
+  xTransactionActions.add(xTransaction);
 
-    useXTransactionStore.setState(state => {
-      state.transactions[xTransaction.id] = xTransaction;
-    });
-    return xTransaction.id;
-  }
+  const xMessage: XMessage = {
+    id: `${sourceChainId}/${sourceTransactionHash}`,
+    xTransactionId: xTransaction.id,
+    sourceChainId: sourceChainId,
+    destinationChainId: primaryDestinationChainId,
+    sourceTransactionHash,
+    status: XMessageStatus.REQUESTED,
+    events: {},
+    destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
+    isPrimary: true,
+    createdAt: Date.now(),
+    useXCallScanner: primaryDestinationChainId === 'sui' || sourceChainId === 'sui',
+  };
+  xMessageActions.add(xMessage);
+
+  return xTransaction.id;
 };
 
 export const useSendXTransaction = () => {
+  const { mutateAsync: signTransaction } = useSignTransaction();
+
   return useMemo(
     () => ({
-      sendXTransaction: (xTransactionInput: XTransactionInput, onSuccess = () => {}) =>
-        sendXTransaction(xTransactionInput, onSuccess),
+      sendXTransaction: (xTransactionInput: XTransactionInput) =>
+        sendXTransaction(xTransactionInput, { signTransaction }),
     }),
-    [],
+    [signTransaction],
   );
 };

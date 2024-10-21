@@ -25,7 +25,6 @@ const PositionRewardsInfo = () => {
   const getWorkingBalance = useWorkingBalance();
   const sources = useSources();
   const { data: incentivisedPairs } = useIncentivisedPairs();
-  const rewardsAPY = useLoanAPY();
   const { data: allPairs } = useAllPairs();
 
   const boostedLPs = React.useMemo(() => {
@@ -52,18 +51,10 @@ const PositionRewardsInfo = () => {
     [boostedLPs, getWorkingBalance],
   );
 
-  const loanBoost =
-    sources && getWorkingBalance(sources.Loans.balance, sources.Loans.supply).dividedBy(sources.Loans.balance);
-
   return (
     <Wrap>
       <Typography mt={3}>Your return:</Typography>
       <ul>
-        {sources && !sources.Loans.balance.isEqualTo(0) && (
-          <li>
-            <SourceInfo name="Loans" boost={loanBoost} apy={rewardsAPY} />
-          </li>
-        )}
         {boostedLPNumbers !== undefined &&
           boostedLPNumbers?.length !== 0 &&
           boostedLPs &&

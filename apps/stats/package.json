@@ -40,7 +40,7 @@
     "lint:fix": "biome lint . --apply",
     "lint:css": "stylelint src/**/*.css",
     "pretty": "biome format .",
-    "clean": "rm -rf node_modules && rm -rf dist && rm -rf tsconfig.tsbuildinfo"
+    "clean": "rm -rf node_modules && rm -rf dist && rm -rf tsconfig.tsbuildinfo && rm -rf .turbo"
   },
   "proxy": "https://balanced.sudoblock.io",
   "browserslist": [">0.2%", "not dead", "not op_mini all"],

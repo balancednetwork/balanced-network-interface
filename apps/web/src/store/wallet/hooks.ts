@@ -187,6 +187,17 @@ export function useWalletFetchBalances() {
   React.useEffect(() => {
     injectiveBalances && dispatch(changeBalances({ xChainId: 'injective-1', balances: injectiveBalances }));
   }, [injectiveBalances, dispatch]);
+
+  const { address: accountSui } = useXAccount('SUI');
+  const suiTokens = useXTokens('sui');
+  const { data: suiBalances } = useXBalances({
+    xChainId: 'sui',
+    xTokens: suiTokens,
+    address: accountSui,
+  });
+  React.useEffect(() => {
+    suiBalances && dispatch(changeBalances({ xChainId: 'sui', balances: suiBalances }));
+  }, [suiBalances, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {
@@ -402,6 +413,7 @@ export function useXBalancesByToken(): XWalletAssetRecord[] {
   const balances = useCrossChainWalletBalances();
   const tokenListConfig = useTokenListConfig();
   const prices = useRatesWithOracle();
+  const MIN_VALUE_TO_DISPLAY = new BigNumber(0.01);
 
   return React.useMemo(() => {
     return Object.entries(
@@ -409,7 +421,13 @@ export function useXBalancesByToken(): XWalletAssetRecord[] {
         (acc, [chainId, chainBalances]) => {
           if (chainBalances) {
             forEach(chainBalances, balance => {
-              if (balance.currency && balance?.greaterThan(0)) {
+              const price = prices?.[balance.currency?.symbol || ''] || new BigNumber(0);
+              if (
+                balance.currency &&
+                balance?.greaterThan(0) &&
+                price &&
+                price.times(balance.toFixed()).isGreaterThan(MIN_VALUE_TO_DISPLAY)
+              ) {
                 acc[balance.currency.symbol] = {
                   ...acc[balance.currency.symbol],
                   [chainId]: balance,
@@ -442,5 +460,5 @@ export function useXBalancesByToken(): XWalletAssetRecord[] {
         };
       })
       .filter((item): item is XWalletAssetRecord => Boolean(item));
-  }, [balances, tokenListConfig, prices]);
+  }, [balances, tokenListConfig, prices, MIN_VALUE_TO_DISPLAY]);
 }

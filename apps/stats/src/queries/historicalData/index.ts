@@ -1,8 +1,8 @@
-import axios from 'axios';
-import BigNumber from 'bignumber.js';
 import { useTokenPrices } from '@/queries/backendv2';
 import { BlockDetails } from '@/queries/blockDetails';
-import { keepPreviousData, useQuery, UseQueryResult } from '@tanstack/react-query';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import BigNumber from 'bignumber.js';
 
 import bnJs from '@/bnJs';
 import { formatUnits } from '@/utils';
@@ -11,10 +11,10 @@ import { DATES, DATE_DEFAULT, DATE_STABILITY_FUND_LAUNCH, DEFAULT_GRANULARITY } 
 import { Granularity, HistoryForParams } from './types';
 import { GRANULARITY_MILLISECONDS } from './utils';
 
-const API_ENDPOINT = 'https://tracker.icon.community/api/v1/';
+export const API_ICON_ENDPOINT = 'https://tracker.icon.community/api/v1/';
 
 const getBlock = async (timestamp): Promise<BlockDetails> => {
-  const { data } = await axios.get(`${API_ENDPOINT}blocks/timestamp/${timestamp * 1000}`);
+  const { data } = await axios.get(`${API_ICON_ENDPOINT}blocks/timestamp/${timestamp * 1000}`);
   return data;
 };
 

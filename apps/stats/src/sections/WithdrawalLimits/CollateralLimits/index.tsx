@@ -2,12 +2,12 @@ import Divider from '@/components/Divider';
 import { CurrencyLogoFromURI } from '@/components/shared/CurrencyLogo';
 import { HIGH_PRICE_ASSET_DP } from '@/constants/tokens';
 import { useWithdrawalsFloorCollateralData } from '@/queries';
-import React, { Fragment } from 'react';
-import { Box, Flex } from 'rebass';
 import { HeaderText, StyledSkeleton } from '@/sections/TokenSection';
-import styled from 'styled-components';
 import { Typography } from '@/theme';
 import { getFormattedNumber } from '@/utils/formatter';
+import React, { Fragment } from 'react';
+import { Box, Flex } from 'rebass';
+import styled from 'styled-components';
 
 export const DashGrid = styled(Box)`
   display: grid;
@@ -155,7 +155,7 @@ const CollateralLimits = () => {
                           <Typography
                             ml="10px"
                             color={
-                              availableRatio.isGreaterThanOrEqualTo(withdrawalsFloorData.percentageFloor.div(2))
+                              availableRatio.isGreaterThanOrEqualTo(collateral.percentageFloor.div(2))
                                 ? 'primary'
                                 : 'alert'
                             }

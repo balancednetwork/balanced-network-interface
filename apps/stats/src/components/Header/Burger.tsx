@@ -67,6 +67,9 @@ const BurgerMenu = ({ show }: { show: boolean }) => {
       <AnimatedLinkMobile as="a" href={LINKS.howitworks}>
         How-to
       </AnimatedLinkMobile>
+      <AnimatedLinkMobile as="a" href={LINKS.demo}>
+        Demo
+      </AnimatedLinkMobile>
       <AnimatedLinkMobile as="a" href={LINKS.stats}>
         Stats
       </AnimatedLinkMobile>

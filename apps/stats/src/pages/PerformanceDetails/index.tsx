@@ -9,11 +9,11 @@ import Header from '@/components/Header';
 import { Container, Divider } from '@/pages/StatsPage';
 import { Typography } from '@/theme';
 
+import { useLocation } from 'react-router-dom';
 // import BBALNSection from './sections/BBALNSection';
 import EarningsSection from './sections/EarningSection';
 import HoldingsSection from './sections/HoldingsSection';
 import StabilityFundSection from './sections/StabilityFundSection';
-import { useLocation } from 'react-router-dom';
 
 export const GridItem = styled.div`
   text-align: right;
@@ -61,9 +61,9 @@ export const GridItemLight = styled(GridItem)`
   }
 `;
 
-export const GridItemSubtotal = styled(GridItemStrong)`
+export const GridItemSubtotal = styled(GridItemStrong)<{ $borderBottom?: boolean }>`
   border-top: 1px solid #304a68;
-  border-bottom: 1px solid #304a68;
+  border-bottom: ${({ $borderBottom = true }) => ($borderBottom ? '1px solid #304a68' : '0')};
   padding-top: 9px;
 
   &:nth-of-type(3n + 1) {

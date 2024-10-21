@@ -1,15 +1,17 @@
 import { LoaderComponent } from '@/pages/PerformanceDetails/utils';
 import { useSavingsRateInfo } from '@/queries/bsr';
+import { ChartInfo, ChartInfoItem } from '@/sections/BALNSection/DistributionChart';
+import { Typography } from '@/theme';
 import React from 'react';
 import { Box, Flex } from 'rebass';
-import { ChartInfo, ChartInfoItem } from '@/sections/BALNSection/DistributionChart';
 import styled from 'styled-components';
-import { Typography } from '@/theme';
 
 const Wrap = styled(Box)``;
 
 const RewardsOverview = () => {
   const { data: savingsRate } = useSavingsRateInfo();
+
+  console.log('savingsRate', savingsRate);
 
   return (
     <Wrap>

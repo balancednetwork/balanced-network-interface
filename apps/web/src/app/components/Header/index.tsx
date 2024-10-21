@@ -74,7 +74,7 @@ const ConnectionStatus = styled(Flex)`
   }
 `;
 
-const NETWORK_ID = parseInt(process.env.REACT_APP_NETWORK_ID ?? '1');
+const NETWORK_ID = parseInt(import.meta.env.VITE_NETWORK_ID ?? '1');
 
 export const CopyableAddress = ({
   account,
@@ -148,7 +148,7 @@ export default function Header(props: { title?: string; className?: string }) {
   const toggleWalletModal = useWalletModalToggle();
 
   const handleWalletClose = e => {
-    if (!e.target.closest('[data-reach-dialog-overlay]')) {
+    if (!e.target.closest('[data-reach-dialog-overlay]') && !e.target.closest('.has-modal')) {
       setAnchor(null);
     }
   };

@@ -1,16 +1,16 @@
+import AssetManagerTokenBreakdown from '@/components/AssetManagerTokenBreakdown';
 import Divider from '@/components/Divider';
 import CurrencyLogo from '@/components/shared/CurrencyLogo';
 import { HIGH_PRICE_ASSET_DP } from '@/constants/tokens';
 import { useWithdrawalsFloorStabilityFundData } from '@/queries';
-import React, { Fragment } from 'react';
-import { Box, Flex } from 'rebass';
+import { useAssetManagerTokens } from '@/queries/assetManager';
 import { HeaderText, StyledSkeleton } from '@/sections/TokenSection';
 import { Typography } from '@/theme';
 import { getFormattedNumber } from '@/utils/formatter';
-import { DashGrid, DataText, MinWidthContainer } from '../CollateralLimits';
 import { Token } from '@balancednetwork/sdk-core';
-import { useAssetManagerTokens } from '@/queries/assetManager';
-import AssetManagerTokenBreakdown from '@/components/AssetManagerTokenBreakdown';
+import React, { Fragment } from 'react';
+import { Box, Flex } from 'rebass';
+import { DashGrid, DataText, MinWidthContainer } from '../CollateralLimits';
 
 export const SkeletonTokenPlaceholder = () => {
   return (

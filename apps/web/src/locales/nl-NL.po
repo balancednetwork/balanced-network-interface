@@ -217,8 +217,8 @@ msgid "Assets to send"
 msgstr "Te verzenden valuta"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
-msgid "Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity pools."
-msgstr ""
+#~ msgid "Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity pools."
+#~ msgstr ""
 
 #: src/app/pages/vote/_components/VotingPowerPanel/index.tsx
 msgid "Total voting power"
@@ -381,6 +381,10 @@ msgstr "Gekopieerd"
 msgid "wallet"
 msgstr ""
 
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+msgid "60% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
+msgstr ""
+
 #: src/app/pages/vote/_components/ProposalsPanel/index.tsx
 #: src/app/pages/vote/proposals/page.tsx
 msgid "Proposals"
@@ -392,8 +396,8 @@ msgstr "Voorstellen"
 
 #: src/app/components/CollateralTypeSwitcher/CollateralTypeListWrap.tsx
 #: src/app/components/Wallet/index.tsx
-msgid "Search assets"
-msgstr ""
+#~ msgid "Search assets"
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
@@ -439,8 +443,8 @@ msgstr "Bevestigen"
 #~ msgstr "Log in om de startpagina te gebruiken."
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
-msgid "Claiming Balanced incentives..."
-msgstr ""
+#~ msgid "Claiming Balanced incentives..."
+#~ msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Approved"
@@ -596,8 +600,8 @@ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-msgid "is available on {0}."
-msgstr ""
+#~ msgid "is available on {0}."
+#~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
 #~ msgid "Add your sICX to the collateral pool."
@@ -716,6 +720,10 @@ msgstr ""
 msgid "Vote for this pool to receive bribes."
 msgstr ""
 
+#: src/app/components/XTransactionState/index.tsx
+msgid "{description}"
+msgstr ""
+
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 msgid "Address"
 msgstr "Adres"
@@ -779,9 +787,13 @@ msgid "{0} approved for cross-chain transfer."
 msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
-msgid ""
-"If the {0} price reaches ${1}, all your collateral will be\n"
-"liquidated."
+#~ msgid ""
+#~ "If the {0} price reaches ${1}, all your collateral will be\n"
+#~ "liquidated."
+#~ msgstr ""
+
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+msgid "Claimed liquidity incentives."
 msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
@@ -791,6 +803,10 @@ msgstr "Vergrendeld"
 #: src/app/pages/home/BBaln/BBalnPanel.tsx
 #~ msgid "${0}."
 #~ msgstr ""
+
+#: src/app/components/Wallet/index.tsx
+msgid "Search assets and blockchains..."
+msgstr ""
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #~ msgid "Transfer fee: <0>{formattedXCallFee}</0>"
@@ -903,8 +919,6 @@ msgid "Lock up Balance Tokens?"
 msgstr "Balance Tokens vergrendelen?"
 
 #: src/app/components/home/LoanPanel.tsx
-#: src/app/components/XTransactionState/index.tsx
-#: src/app/components/XTransactionState/index.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
@@ -1061,8 +1075,8 @@ msgid "Swap {0} for {1}?"
 msgstr "{0} omwisselen voor {1}?"
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
-msgid "Claimed Balanced incentives."
-msgstr ""
+#~ msgid "Claimed Balanced incentives."
+#~ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x."
@@ -1078,6 +1092,10 @@ msgstr "Geen resultaten gevonden."
 
 #: src/app/components/home/RewardsPanel/index.tsx
 msgid "To earn rewards: supply liquidity, deposit bnUSD into the savings rate, or lock up BALN."
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+msgid "Lock up BALN to hold bBALN, a non-transferable token that earns network fees and boosts your BALN liquidity incentives."
 msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
@@ -1261,6 +1279,7 @@ msgstr ""
 
 #: src/app/components/home/_components/CollateralChainSelector/ChainList.tsx
 #: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
+#: src/app/pages/trade/bridge/_components/XChainList.tsx
 msgid "Search blockchains..."
 msgstr ""
 
@@ -1306,8 +1325,8 @@ msgid "If bnUSD ever falls below ${redeemLimit}, traders can use the smart contr
 msgstr ""
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
-msgid "Claim Balanced incentives?"
-msgstr ""
+#~ msgid "Claim Balanced incentives?"
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
 msgid "Wallet: {0} {1}"
@@ -1464,8 +1483,8 @@ msgid "Total locked"
 msgstr ""
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
-msgid "Search name or contract"
-msgstr "Zoek een naam of contract"
+#~ msgid "Search name or contract"
+#~ msgstr "Zoek een naam of contract"
 
 #: src/store/bridge/hooks.tsx
 msgid "Connect wallet"
@@ -1589,8 +1608,8 @@ msgid "Voting power available: {0}"
 msgstr ""
 
 #: src/app/pages/trade/bridge/_components/XChainList.tsx
-msgid "Search for blockchains..."
-msgstr ""
+#~ msgid "Search for blockchains..."
+#~ msgstr ""
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "You'll only be able to interact with the default assets listed on Balanced."
@@ -1752,8 +1771,8 @@ msgid "The BALN APR is calculated from the USD value of BALN rewards allocated t
 msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
-msgid "47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
-msgstr ""
+#~ msgid "47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
+#~ msgstr ""
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Transferred {0} {1} to Archway."
@@ -1832,6 +1851,10 @@ msgstr ""
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "0 {0}"
+msgstr ""
+
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+msgid "Claiming liquidity incentives..."
 msgstr ""
 
 #: src/app/components/CollateralTypeSwitcher/SingleChainItem.tsx
@@ -2083,6 +2106,10 @@ msgstr ""
 msgid "Withdraw liquidity?"
 msgstr "Liquiditeit opnemen?"
 
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "If the {0} price reaches ${1}, some of your collateral will be liquidated to reduce your risk."
+msgstr ""
+
 #: src/app/components/home/Savings/index.tsx
 msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
 msgstr ""
@@ -2182,6 +2209,11 @@ msgstr ""
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
+msgstr ""
+
+#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "available on {0}."
 msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
@@ -2370,6 +2402,7 @@ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
 msgid "Borrow, swap, & transfer cross-chain."
 msgstr ""
 
@@ -2471,6 +2504,10 @@ msgstr "Positie details"
 msgid "Adjust allocation"
 msgstr ""
 
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "Search name or contract..."
+msgstr ""
+
 #: src/app/components/WalletModal/IconWalletModal.tsx
 #~ msgid "Make sure it's connected and try again."
 #~ msgstr ""
@@ -2562,6 +2599,10 @@ msgstr "Liquiditeit opnemen"
 msgid "Test your contract calls before you submit the proposal."
 msgstr ""
 
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+msgid "Claim liquidity incentives?"
+msgstr ""
+
 #: src/app/components/Wallet/ICONAssetModal.tsx
 #: src/app/components/Wallet/index.tsx
 msgid "Value"
@@ -2610,6 +2651,10 @@ msgstr ""
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Create pool"
 msgstr "Pool aanmaken"
+
+#: src/app/components/CollateralTypeSwitcher/CollateralTypeListWrap.tsx
+msgid "Search assets..."
+msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 msgid "To borrow bnUSD, deposit collateral."

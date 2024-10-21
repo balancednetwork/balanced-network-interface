@@ -2,14 +2,15 @@ import { Typography } from '@/app/theme';
 import useKeyPress from '@/hooks/useKeyPress';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useXBalancesByToken } from '@/store/wallet/hooks';
+import { formatValue } from '@/utils/formatter';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXDisconnectAll } from '@/xwagmi/hooks';
-import { XChainId } from '@/xwagmi/types';
 import { Trans, t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
-import { Box } from 'rebass';
+import { Box, Flex } from 'rebass';
 import SearchInput from '../SearchModal/SearchInput';
 import MultiChainBalanceItem from './MultiChainBalanceItem';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
@@ -88,6 +89,15 @@ const Wallet = ({ close }: WalletProps) => {
     });
   }, [filteredBalances]);
 
+  const walletTotal = React.useMemo(() => {
+    return sortedFilteredBalances.reduce((acc, balance) => {
+      if (balance.value) {
+        return acc.plus(balance.value);
+      }
+      return acc;
+    }, new BigNumber(0));
+  }, [sortedFilteredBalances]);
+
   return (
     <WalletWrap>
       <WalletMenu>
@@ -109,7 +119,7 @@ const Wallet = ({ close }: WalletProps) => {
           <SearchInput
             type="text"
             id="token-search-input"
-            placeholder={t`Search assets`}
+            placeholder={t`Search assets and blockchains...`}
             autoComplete="off"
             value={searchQuery}
             ref={inputRef as RefObject<HTMLInputElement>}
@@ -159,6 +169,16 @@ const Wallet = ({ close }: WalletProps) => {
             </Typography>
           )}
         </List>
+        {sortedFilteredBalances.length > 0 && (
+          <Box px="25px">
+            <Flex className="border-top" pt="25px" justifyContent="space-between">
+              <HeaderText>Total</HeaderText>
+              <Typography fontWeight="bold" color="text">
+                {formatValue(walletTotal.toFixed())}
+              </Typography>
+            </Flex>
+          </Box>
+        )}
       </WalletContent>
     </WalletWrap>
   );

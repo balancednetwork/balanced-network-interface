@@ -1,7 +1,7 @@
 import React from 'react';
 
 import ClickAwayListener from 'react-click-away-listener';
-import { Flex, Box, Link } from 'rebass/styled-components';
+import { Box, Flex, Link } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import Logo from '@/assets/icons/logo.svg';
@@ -58,6 +58,9 @@ const Header = () => {
       <DesktopMenu sx={{ a: { marginLeft: 25 } }} alignItems="center" justifyContent="flex-end">
         <AnimatedLink as="a" href={LINKS.howitworks}>
           How-to
+        </AnimatedLink>
+        <AnimatedLink as="a" href={LINKS.demo}>
+          Demo
         </AnimatedLink>
         <AnimatedLink as="a" href={LINKS.stats} active={true}>
           Stats

@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 
+import { useIconReact } from '@/packages/icon-react';
 import { Fraction } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
-import { useIconReact } from '@/packages/icon-react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -160,7 +160,7 @@ export default function LiveVotingPanel() {
                 <>
                   <Typography>
                     <Trans>
-                      47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the
+                      60% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the
                       amount allocated to each liquidity pool via "live" voting.
                     </Trans>
                   </Typography>

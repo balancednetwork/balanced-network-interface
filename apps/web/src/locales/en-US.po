@@ -545,6 +545,10 @@ msgstr "Sending"
 msgid "Deposit bnUSD?"
 msgstr "Deposit bnUSD?"
 
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Receive sICX, which you can trade or unstake from the wallet section later."
+msgstr "Receive sICX, which you can trade or unstake from the wallet section later."
+
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Requesting cross-chain swap..."
 #~ msgstr "Requesting cross-chain swap..."
@@ -773,9 +777,10 @@ msgstr "Locked"
 msgid "Search assets and blockchains..."
 msgstr "Search assets and blockchains..."
 
+#: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
-#~ msgid "Transfer fee: <0>{formattedXCallFee}</0>"
-#~ msgstr "Transfer fee: <0>{formattedXCallFee}</0>"
+msgid "Transfer fee: <0>{formattedXCallFee}</0>"
+msgstr "Transfer fee: <0>{formattedXCallFee}</0>"
 
 #: src/app/pages/vote/_components/BribesPanel/index.tsx
 msgid "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
@@ -901,8 +906,8 @@ msgid "Enter amount"
 msgstr "Enter amount"
 
 #: src/app/components/home/CollateralPanel.tsx
-msgid "sign in with"
-msgstr "sign in with"
+#~ msgid "sign in with"
+#~ msgstr "sign in with"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Supplied {pair} liquidity."
@@ -944,8 +949,8 @@ msgid "Manage wallets"
 msgstr "Manage wallets"
 
 #: src/app/components/home/CollateralPanel.tsx
-msgid "Recieve sICX, which you can trade or unstake from the wallet section later."
-msgstr "Recieve sICX, which you can trade or unstake from the wallet section later."
+#~ msgid "Recieve sICX, which you can trade or unstake from the wallet section later."
+#~ msgstr "Recieve sICX, which you can trade or unstake from the wallet section later."
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 msgid "Liquidity incentives"
@@ -1034,6 +1039,10 @@ msgstr "Swap {0} for {1}?"
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 #~ msgid "Claimed Balanced incentives."
 #~ msgstr "Claimed Balanced incentives."
+
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Add {collateralType} to your {0} wallet."
+msgstr "Add {collateralType} to your {0} wallet."
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x."
@@ -1200,8 +1209,8 @@ msgstr "Fee"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
-msgid "Cross-chain fee: <0>{formattedXCallFee}</0>"
-msgstr "Cross-chain fee: <0>{formattedXCallFee}</0>"
+#~ msgid "Cross-chain fee: <0>{formattedXCallFee}</0>"
+#~ msgstr "Cross-chain fee: <0>{formattedXCallFee}</0>"
 
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
@@ -2031,7 +2040,6 @@ msgstr "Deposit"
 
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
-#: src/app/components/WalletModal/index.tsx
 msgid "Swap & transfer cross-chain."
 msgstr "Swap & transfer cross-chain."
 
@@ -2266,6 +2274,10 @@ msgstr "{0} BALN locked until {1}."
 msgid "{0} {1} added to your wallet"
 msgstr "{0} {1} added to your wallet"
 
+#: src/app/components/home/CollateralPanel.tsx
+msgid "sign in on"
+msgstr "sign in on"
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaid {0} bnUSD."
 msgstr "Repaid {0} bnUSD."
@@ -2334,6 +2346,7 @@ msgstr "Deposit {0} collateral?"
 msgid "Allocating bBALN..."
 msgstr "Allocating bBALN..."
 
+#: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx

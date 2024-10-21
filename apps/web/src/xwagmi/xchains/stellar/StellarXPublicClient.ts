@@ -43,7 +43,6 @@ export class StellarXPublicClient extends XPublicClient {
   }
 
   async getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean) {
-    //todo
     return BigInt(10_700_000);
   }
 
@@ -52,8 +51,7 @@ export class StellarXPublicClient extends XPublicClient {
   }
 
   async getTxReceipt(txHash) {
-    // const tx = await this.getXService().indexerRestExplorerApi.fetchTransaction(txHash);
-    // return tx;
+    // not used
   }
 
   getTxEventLogs(rawTx) {

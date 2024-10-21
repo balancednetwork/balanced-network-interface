@@ -1,4 +1,3 @@
-import { stellar } from '@/xwagmi/constants/xChains';
 import { XService } from '@/xwagmi/core/XService';
 import { FREIGHTER_ID, StellarWalletsKit, WalletNetwork, allowAllModules } from '@creit.tech/stellar-wallets-kit';
 import * as StellarSdk from '@stellar/stellar-sdk';

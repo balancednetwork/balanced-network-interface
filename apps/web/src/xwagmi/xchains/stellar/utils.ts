@@ -49,7 +49,7 @@ export const simulateTx = async (
   throw new Error('cannot simulate transaction');
 };
 
-// Get the tokens balance, decoded as a string
+// Get the tokens balance
 export const getTokenBalance = async (
   address: string,
   tokenId: string,
@@ -82,7 +82,6 @@ export async function sendTX(
     .setTimeout(30)
     .build();
 
-  console.log('TXXX', simulateTx.toXDR());
   const simResult = await server.simulateTransaction(simulateTx);
   const tx = rpc.assembleTransaction(simulateTx, simResult).build();
 

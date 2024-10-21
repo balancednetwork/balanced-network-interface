@@ -1,7 +1,7 @@
 import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
-import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
+import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { FROM_SOURCES, TO_SOURCES, stellar } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core';
 import { XToken } from '@/xwagmi/types';

@@ -60,8 +60,8 @@ const WalletItem = ({ name, xChainType }: WalletItemProps) => {
     if (!hanaWallet) return xConnectors;
 
     const filteredConnectors = xConnectors.filter(connector => connector.name !== 'Hana Wallet');
-    return xChainType === 'SUI' ? filteredConnectors : [hanaWallet, ...filteredConnectors];
-  }, [xConnectors, xChainType]);
+    return [hanaWallet, ...filteredConnectors];
+  }, [xConnectors]);
 
   return (
     <div className="flex flex-col gap-4">

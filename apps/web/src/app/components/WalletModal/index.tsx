@@ -155,7 +155,7 @@ export default function WalletModal() {
           name: 'Stellar',
           xChainType: 'STELLAR',
           logo: <StellarWalletIcon width="40" height="40" />,
-          description: t`Swap & transfer cross-chain.`,
+          description: t`Borrow, swap, & transfer cross-chain.`,
           keyWords: ['stellar', 'lumens', 'xlm'],
           walletOptionsModalId: MODAL_ID.STELLAR_WALLET_OPTIONS_MODAL,
         },

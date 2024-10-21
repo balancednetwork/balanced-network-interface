@@ -3,6 +3,8 @@ import { XService } from '@/xwagmi/core/XService';
 export class SolanaXService extends XService {
   private static instance: SolanaXService;
 
+  public connection: any;
+
   private constructor() {
     super('SOLANA');
   }

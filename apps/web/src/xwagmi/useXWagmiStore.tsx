@@ -22,6 +22,7 @@ import {
 import { SuiXPublicClient, SuiXService, SuiXWalletClient } from './xchains/sui';
 import { SolanaXService } from './xchains/solana/SolanaXService';
 import { SolanaXPublicClient, SolanaXWalletClient } from './xchains/solana';
+import { useConnection } from '@solana/wallet-adapter-react';
 
 const iconXService = IconXService.getInstance();
 iconXService.setXConnectors([new IconHanaXConnector()]);
@@ -207,4 +208,11 @@ export const useInitXWagmiStore = () => {
       suiXService.suiClient = suiClient;
     }
   }, [suiClient]);
+
+  const { connection: solanaConnection } = useConnection();
+  useEffect(() => {
+    if (solanaConnection) {
+      solanaXService.connection = solanaConnection;
+    }
+  }, [solanaConnection]);
 };

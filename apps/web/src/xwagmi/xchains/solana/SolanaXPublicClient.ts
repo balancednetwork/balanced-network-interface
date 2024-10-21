@@ -3,6 +3,7 @@ import { XChainId, XToken } from '@/xwagmi/types';
 import { TransactionStatus, XCallEvent, XTransactionInput } from '../../xcall/types';
 import { SolanaXService } from './SolanaXService';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { PublicKey } from '@solana/web3.js';
 
 export class SolanaXPublicClient extends XPublicClient {
   getXService(): SolanaXService {
@@ -13,30 +14,44 @@ export class SolanaXPublicClient extends XPublicClient {
 
   // TODO implement this
   async getBalance(address: string | undefined, xToken: XToken) {
-    return undefined;
-  }
+    address = 'Gza3H3Pw7cdFWpfqaHZvZAaH1rRuuzuhRE4gK96rZKVS';
+    const connection = this.getXService().connection;
 
-  // TODO: implement this using suiClient.getAllBalances
-  // async getBalances(address: string | undefined, xTokens: XToken[]) {
-  // }
+    try {
+      const newBalance = await connection.getBalance(new PublicKey(address));
+      return CurrencyAmount.fromRawAmount(xToken, BigInt(newBalance));
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   // TODO implement this
   async getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean, sources?: string[]) {
     return 0n;
   }
 
-  // TODO implement this
   async getTxReceipt(txHash: string) {
-    throw new Error('Method not implemented.');
+    const connection = this.getXService().connection;
+    return await connection.getParsedTransaction(txHash, { maxSupportedTransactionVersion: 0 });
   }
 
-  // TODO implement this
   deriveTxStatus(rawTx): TransactionStatus {
-    throw new Error('Method not implemented.');
+    try {
+      if (rawTx.transactionHash) {
+        if (rawTx.meta.status.Err) {
+          return TransactionStatus.failure;
+        } else {
+          return TransactionStatus.success;
+        }
+      }
+    } catch (e) {}
+
+    return TransactionStatus.pending;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////
   async getBlockHeight() {
+    // const blockHeight = await connection.getBlockHeight();
     return BigInt(0); // not used
   }
 

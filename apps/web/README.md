@@ -1,3 +1,5 @@
+# PR for legacy bnUSD token on Injective 
+
 # Balanced
 
 An open-source interface for Balanced: a decentralised exchange and stablecoin platform on the ICON Network.

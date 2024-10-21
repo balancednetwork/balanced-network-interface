@@ -412,7 +412,7 @@ const CollateralPanel = () => {
               <Typography mr={1}>{t`To deposit ${collateralType}`},</Typography>
               <Typography color="primaryBright">
                 <UnderlineText onClick={handleConnect}>
-                  <Trans>sign in with</Trans>
+                  <Trans>sign in on</Trans>
                   {` ${xChainMap[sourceChain].name}`}
                 </UnderlineText>
               </Typography>

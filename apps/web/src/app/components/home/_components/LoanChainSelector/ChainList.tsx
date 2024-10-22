@@ -2,16 +2,17 @@ import React, { useEffect, useState } from 'react';
 
 import { Trans, t } from '@lingui/macro';
 import { isMobile } from 'react-device-detect';
-import { Box } from 'rebass';
+import { Box, Flex } from 'rebass';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
 import { UnderlineText } from '@/app/components/DropdownText';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
-import { HeaderText } from '@/app/components/Wallet/styledComponents';
 import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
+import { StyledHeaderText } from '@/app/pages/trade/bridge/_components/XChainList';
 import { Typography } from '@/app/theme';
-import { useSignedInWallets } from '@/hooks/useWallets';
-import { useDerivedCollateralInfo } from '@/store/collateral/hooks';
+import { bnUSD } from '@/constants/tokens';
+import useSortXChains from '@/hooks/useSortXChains';
+import { useHasSignedIn, useSignedInWallets } from '@/hooks/useWallets';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatBalance } from '@/utils/formatter';
 import { getXChainType } from '@/xwagmi/actions';
@@ -39,6 +40,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const isSignedIn = signedInWallets.some(wallet => wallet.xChainId === chain.xChainId);
   const [isAwaitingSignIn, setAwaitingSignIn] = React.useState(false);
   const crossChainBalances = useCrossChainWalletBalances();
+  const bnUSD = xTokenMap[chain.xChainId].find(token => token.symbol === 'bnUSD');
 
   const xChainType = getXChainType(chain.xChainId);
   const xConnect = useXConnect();
@@ -63,8 +65,6 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
       setAwaitingSignIn(false);
     }
   }, [isAwaitingSignIn, isSignedIn, setChainId, chain.xChainId]);
-
-  const bnUSD = xTokenMap[chain.xChainId].find(token => token.symbol === 'bnUSD');
 
   return (
     <Grid $isSignedIn={isSignedIn} className={isLast ? '' : 'border-bottom'} onClick={handleChainSelect}>
@@ -100,6 +100,11 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
 const ChainList = ({ onChainIdChange, chains, width }: ChainListProps) => {
   const relevantChains = chains || xChains;
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const hasSignedIn = useHasSignedIn();
+  const { sortBy, handleSortSelect, sortData } = useSortXChains(
+    hasSignedIn ? { key: 'value', order: 'DESC' } : { key: 'symbol', order: 'ASC' },
+    bnUSD[1],
+  );
 
   const filteredChains = React.useMemo(() => {
     if (searchQuery === '') return relevantChains;
@@ -112,12 +117,8 @@ const ChainList = ({ onChainIdChange, chains, width }: ChainListProps) => {
   }, [relevantChains, searchQuery]);
 
   const sortedFilteredChains = React.useMemo(() => {
-    return filteredChains.sort((a, b) => {
-      if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
-      if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
-      return 0;
-    });
-  }, [filteredChains]);
+    return sortData(filteredChains, bnUSD[1]);
+  }, [filteredChains, sortData]);
 
   return (
     <SelectorWrap $width={width}>
@@ -132,14 +133,36 @@ const ChainList = ({ onChainIdChange, chains, width }: ChainListProps) => {
         }}
       />
       <ScrollHelper>
-        <Grid mb="-10px" style={{ pointerEvents: 'none' }}>
-          <HeaderText>
-            <Trans>Blockchain</Trans>
-          </HeaderText>
-          <HeaderText>
-            <Trans>Wallet</Trans>
-          </HeaderText>
-        </Grid>
+        <Flex width="100%" justifyContent="space-between">
+          <StyledHeaderText
+            role="button"
+            className={sortBy.key === 'name' ? sortBy.order : ''}
+            onClick={() =>
+              handleSortSelect({
+                key: 'name',
+                order: sortBy.order === 'DESC' ? 'ASC' : 'DESC',
+              })
+            }
+          >
+            <span>
+              <Trans>Blockchain</Trans>
+            </span>
+          </StyledHeaderText>
+          <StyledHeaderText
+            role="button"
+            className={sortBy.key === 'value' ? sortBy.order : ''}
+            onClick={() =>
+              handleSortSelect({
+                key: 'value',
+              })
+            }
+            style={{ cursor: 'pointer' }}
+          >
+            <span>
+              <Trans>Wallet</Trans>
+            </span>
+          </StyledHeaderText>
+        </Flex>
         {sortedFilteredChains.map((chainItem, index) => (
           <Box key={index}>
             <ChainItem

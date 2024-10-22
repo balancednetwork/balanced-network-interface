@@ -4,7 +4,7 @@ import { WalletState } from '@/store/wallet/reducer';
 import { XChain, XChainId } from '@/xwagmi/types';
 import { Currency } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSignedInWallets } from './useWallets';
 
 type SortingType = {
@@ -45,14 +45,21 @@ export default function useSortXChains(
     }
   }, [signedInWallets.length]);
 
-  const handleSortSelect = (clickedSortBy: SortingType) => {
-    if (clickedSortBy.key === sortBy.key) {
-      sortBy.order === 'DESC' ? (clickedSortBy.order = 'ASC') : (clickedSortBy.order = 'DESC');
-    } else {
-      clickedSortBy.order = 'DESC';
-    }
-    setSortBy(clickedSortBy);
-  };
+  const handleSortSelect = useCallback(
+    (clickedSortBy: SortingType) => {
+      if (clickedSortBy.key === sortBy.key && !clickedSortBy.order) {
+        if (!sortBy.order) {
+          clickedSortBy.order = clickedSortBy.key === 'name' ? 'ASC' : 'DESC';
+        } else {
+          sortBy.order === 'DESC' ? (clickedSortBy.order = 'ASC') : (clickedSortBy.order = 'DESC');
+        }
+      } else {
+        clickedSortBy.order = clickedSortBy.order || (clickedSortBy.key === 'name' ? 'ASC' : 'DESC');
+      }
+      setSortBy(clickedSortBy);
+    },
+    [sortBy],
+  );
 
   const sortData = (data: XChain[], selectedCurrency: Currency) => {
     const dataToSort = [...data];

@@ -14,6 +14,7 @@ import { RLP } from '@ethereumjs/rlp';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { isDenomAsset } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
 
 export class InjectiveXWalletClient extends XWalletClient {
   getXService(): InjectiveXService {
@@ -276,11 +277,12 @@ export class InjectiveXWalletClient extends XWalletClient {
   async executeRepay(xTransactionInput: XTransactionInput) {
     const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
 
-    if (!inputAmount || !usedCollateral) {
+    const bnUSD = xTokenMap['injective-1'].find(xToken => xToken.symbol === 'bnUSD');
+
+    if (!inputAmount || !usedCollateral || !bnUSD) {
       return;
     }
 
-    const token = inputAmount.currency.wrapped;
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = getBytesFromString(
       JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
@@ -302,7 +304,7 @@ export class InjectiveXWalletClient extends XWalletClient {
           denom: 'inj',
           amount: xCallFee.rollback.toString(),
         },
-        { denom: token.address, amount },
+        { denom: bnUSD.address, amount },
       ],
     });
 

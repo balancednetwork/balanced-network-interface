@@ -4,6 +4,7 @@ import { TransactionStatus, XCallEvent, XTransactionInput } from '../../xcall/ty
 import { SolanaXService } from './SolanaXService';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { PublicKey } from '@solana/web3.js';
+import { getAccount, getAssociatedTokenAddressSync } from '@solana/spl-token';
 
 export class SolanaXPublicClient extends XPublicClient {
   getXService(): SolanaXService {
@@ -14,12 +15,26 @@ export class SolanaXPublicClient extends XPublicClient {
 
   // TODO implement this
   async getBalance(address: string | undefined, xToken: XToken) {
-    address = 'Gza3H3Pw7cdFWpfqaHZvZAaH1rRuuzuhRE4gK96rZKVS';
+    if (!address) {
+      return;
+    }
+
     const connection = this.getXService().connection;
 
     try {
-      const newBalance = await connection.getBalance(new PublicKey(address));
-      return CurrencyAmount.fromRawAmount(xToken, BigInt(newBalance));
+      if (xToken.isNativeXToken()) {
+        const newBalance = await connection.getBalance(new PublicKey(address));
+        return CurrencyAmount.fromRawAmount(xToken, BigInt(newBalance));
+      } else {
+        // const mintAddress = 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB';
+        // const address = 'Gza3H3Pw7cdFWpfqaHZvZAaH1rRuuzuhRE4gK96rZKVS';
+        // const tokenAccountPubkey = getAssociatedTokenAddressSync(new PublicKey(mintAddress), new PublicKey(address));
+        // console.log('tokenAccountPubkey', tokenAccountPubkey.toString());
+        // const tokenAccountPubkey = new PublicKey('CebVkrtQKEWsh5iEcgpTpqnHEiY5dis7Lsckx8N2RsMB');
+        const tokenAccountPubkey = getAssociatedTokenAddressSync(new PublicKey(xToken.address), new PublicKey(address));
+        const tokenAccount = await getAccount(connection, tokenAccountPubkey);
+        return CurrencyAmount.fromRawAmount(xToken, BigInt(tokenAccount.amount));
+      }
     } catch (e) {
       console.log(e);
     }

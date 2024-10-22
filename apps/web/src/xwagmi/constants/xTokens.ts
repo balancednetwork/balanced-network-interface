@@ -164,7 +164,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken(
       'injective-1',
       'injective-1',
-      'inj1qspaxnztkkzahvp6scq6xfpgafejmj2td83r9j',
+      'factory/inj14ejqjyq8um4p3xfqj74yld5waqljf88f9eneuk/inj1qspaxnztkkzahvp6scq6xfpgafejmj2td83r9j',
       18,
       'bnUSD',
       'Balanced Dollar',

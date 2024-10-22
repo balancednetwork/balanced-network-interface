@@ -2098,7 +2098,6 @@ msgstr "Storten"
 
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
-#: src/app/components/WalletModal/index.tsx
 msgid "Swap & transfer cross-chain."
 msgstr ""
 
@@ -2401,6 +2400,7 @@ msgstr "{0} storten als onderpand?"
 msgid "Allocating bBALN..."
 msgstr ""
 
+#: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx

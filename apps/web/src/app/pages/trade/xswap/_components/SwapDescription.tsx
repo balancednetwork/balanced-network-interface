@@ -234,7 +234,7 @@ export default function SwapDescription() {
               symbol={symbolName.replaceAll(' ', '')}
               setActiveSymbol={setActiveSymbol}
               userId={account || 'not_signed_in'}
-              locale={locale.split('-')[0] as LanguageCode | undefined}
+              locale={'en' as LanguageCode}
             />
           </TVChartContainerWrap>
         )}

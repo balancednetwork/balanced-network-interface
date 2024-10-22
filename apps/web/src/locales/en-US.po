@@ -2031,7 +2031,6 @@ msgstr "Deposit"
 
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
-#: src/app/components/WalletModal/index.tsx
 msgid "Swap & transfer cross-chain."
 msgstr "Swap & transfer cross-chain."
 
@@ -2334,6 +2333,7 @@ msgstr "Deposit {0} collateral?"
 msgid "Allocating bBALN..."
 msgstr "Allocating bBALN..."
 
+#: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx

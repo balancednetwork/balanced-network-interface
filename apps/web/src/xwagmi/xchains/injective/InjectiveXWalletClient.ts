@@ -64,12 +64,13 @@ export class InjectiveXWalletClient extends XWalletClient {
     const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
 
     if (isBnUSD) {
+      const amount = inputAmount.quotient.toString();
       const msg = MsgExecuteContractCompat.fromJSON({
         contractAddress: injective.contracts.bnUSD!,
         sender: account,
         msg: {
           cross_transfer: {
-            amount: inputAmount.quotient.toString(),
+            amount,
             to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
             data,
           },
@@ -79,6 +80,7 @@ export class InjectiveXWalletClient extends XWalletClient {
             denom: 'inj',
             amount: xCallFee.rollback.toString(),
           },
+          { denom: token.address, amount },
         ],
       });
 
@@ -278,17 +280,19 @@ export class InjectiveXWalletClient extends XWalletClient {
       return;
     }
 
+    const token = inputAmount.currency.wrapped;
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = getBytesFromString(
       JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
     );
+    const amount = inputAmount.multiply(-1).quotient.toString();
 
     const msg = MsgExecuteContractCompat.fromJSON({
       contractAddress: injective.contracts.bnUSD!,
       sender: account,
       msg: {
         cross_transfer: {
-          amount: inputAmount.multiply(-1).quotient.toString(),
+          amount,
           to: destination,
           data,
         },
@@ -298,6 +302,7 @@ export class InjectiveXWalletClient extends XWalletClient {
           denom: 'inj',
           amount: xCallFee.rollback.toString(),
         },
+        { denom: token.address, amount },
       ],
     });
 

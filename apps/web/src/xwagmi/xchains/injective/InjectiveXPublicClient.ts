@@ -13,7 +13,6 @@ import {
   XTransactionInput,
 } from '@/xwagmi/xcall/types';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import { isDenomAsset } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
 
 const XCallEventSignatureMap = {
@@ -35,25 +34,13 @@ export class InjectiveXPublicClient extends XPublicClient {
     if (!address) return;
 
     const xService = this.getXService();
-    if (xToken.isNativeXToken() || isDenomAsset(xToken)) {
-      const portfolio = await xService.indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(address);
+    const portfolio = await xService.indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(address);
 
-      const xTokenAddress = xToken.isNativeXToken() ? 'inj' : xToken.address;
+    const xTokenAddress = xToken.isNativeXToken() ? 'inj' : xToken.address;
 
-      const balance = portfolio.bankBalancesList.find(_balance => _balance.denom === xTokenAddress);
-      if (balance) {
-        return CurrencyAmount.fromRawAmount(xToken, BigInt(balance.amount));
-      }
-    } else {
-      try {
-        const response: any = await xService.chainGrpcWasmApi.fetchSmartContractState(
-          xToken.address,
-          toBase64({ balance: { address } }),
-        );
-
-        const result = fromBase64(response.data);
-        return CurrencyAmount.fromRawAmount(xToken, result.balance);
-      } catch (e) {}
+    const balance = portfolio.bankBalancesList.find(_balance => _balance.denom === xTokenAddress);
+    if (balance) {
+      return CurrencyAmount.fromRawAmount(xToken, BigInt(balance.amount));
     }
   }
 
@@ -98,10 +85,8 @@ export class InjectiveXPublicClient extends XPublicClient {
       if (rawTx.code) {
         return TransactionStatus.failure;
       }
-
       return TransactionStatus.success;
     }
-
     return TransactionStatus.failure;
   }
 

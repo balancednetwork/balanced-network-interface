@@ -1,4 +1,4 @@
-import { Percent } from '@balancednetwork/sdk-core';
+import { Percent, Token } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
@@ -13,7 +13,7 @@ import { RLP } from '@ethereumjs/rlp';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { isDenomAsset } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
-import { XToken } from '@/xwagmi/types';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
 
 export class InjectiveXWalletClient extends XWalletClient {
   getXService(): InjectiveXService {
@@ -63,15 +63,16 @@ export class InjectiveXWalletClient extends XWalletClient {
     }
 
     const isBnUSD = inputAmount.currency?.symbol === 'bnUSD';
-    const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
+    const isDenom = inputAmount && inputAmount.currency instanceof Token ? isDenomAsset(inputAmount.currency) : false;
 
     if (isBnUSD) {
+      const amount = inputAmount.quotient.toString();
       const msg = MsgExecuteContractCompat.fromJSON({
         contractAddress: injective.contracts.bnUSD!,
         sender: account,
         msg: {
           cross_transfer: {
-            amount: inputAmount.quotient.toString(),
+            amount,
             to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
             data,
           },
@@ -81,6 +82,7 @@ export class InjectiveXWalletClient extends XWalletClient {
             denom: 'inj',
             amount: xCallFee.rollback.toString(),
           },
+          { denom: token.address, amount },
         ],
       });
 
@@ -275,7 +277,9 @@ export class InjectiveXWalletClient extends XWalletClient {
   async executeRepay(xTransactionInput: XTransactionInput) {
     const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
 
-    if (!inputAmount || !usedCollateral) {
+    const bnUSD = xTokenMap['injective-1'].find(xToken => xToken.symbol === 'bnUSD');
+
+    if (!inputAmount || !usedCollateral || !bnUSD) {
       return;
     }
 
@@ -283,13 +287,14 @@ export class InjectiveXWalletClient extends XWalletClient {
     const data = getBytesFromString(
       JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
     );
+    const amount = inputAmount.multiply(-1).quotient.toString();
 
     const msg = MsgExecuteContractCompat.fromJSON({
       contractAddress: injective.contracts.bnUSD!,
       sender: account,
       msg: {
         cross_transfer: {
-          amount: inputAmount.multiply(-1).quotient.toString(),
+          amount,
           to: destination,
           data,
         },
@@ -299,6 +304,7 @@ export class InjectiveXWalletClient extends XWalletClient {
           denom: 'inj',
           amount: xCallFee.rollback.toString(),
         },
+        { denom: bnUSD.address, amount },
       ],
     });
 

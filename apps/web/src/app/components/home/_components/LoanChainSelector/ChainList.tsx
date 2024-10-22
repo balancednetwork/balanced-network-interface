@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Trans, t } from '@lingui/macro';
 import { isMobile } from 'react-device-detect';
@@ -37,6 +37,7 @@ type ChainItemProps = {
 const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const signedInWallets = useSignedInWallets();
   const isSignedIn = signedInWallets.some(wallet => wallet.xChainId === chain.xChainId);
+  const [isAwaitingSignIn, setAwaitingSignIn] = React.useState(false);
   const crossChainBalances = useCrossChainWalletBalances();
 
   const xChainType = getXChainType(chain.xChainId);
@@ -47,14 +48,26 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
     handleConnectWallet(xChainType, xConnectors, xConnect);
   };
 
+  const handleChainSelect = () => {
+    if (isSignedIn) {
+      setChainId(chain.xChainId);
+    } else {
+      setAwaitingSignIn(true);
+      handleConnect();
+    }
+  };
+
+  useEffect(() => {
+    if (isAwaitingSignIn && isSignedIn) {
+      setChainId(chain.xChainId);
+      setAwaitingSignIn(false);
+    }
+  }, [isAwaitingSignIn, isSignedIn, setChainId, chain.xChainId]);
+
   const bnUSD = xTokenMap[chain.xChainId].find(token => token.symbol === 'bnUSD');
 
   return (
-    <Grid
-      $isSignedIn={isSignedIn}
-      className={isLast ? '' : 'border-bottom'}
-      onClick={e => (isSignedIn ? setChainId(chain.xChainId) : handleConnect())}
-    >
+    <Grid $isSignedIn={isSignedIn} className={isLast ? '' : 'border-bottom'} onClick={handleChainSelect}>
       <ChainItemWrap>
         <Box pr="10px">
           <ChainLogo chain={chain} />

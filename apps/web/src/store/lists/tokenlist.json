@@ -265,6 +265,14 @@
       "symbol": "weETH",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/weeth.png"
+    },
+    {
+      "address": "cx65c9e3d4fea842e00add0d32a5b4c5e4e04c7a6b",
+      "chainId": 1,
+      "name": "SOL",
+      "symbol": "SOL",
+      "decimals": 9,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sol.png"
     }
   ]
 }

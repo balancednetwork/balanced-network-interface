@@ -66,6 +66,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('0x1.icon', ChainId.MAINNET, 'cx4297f4b63262507623b6ad575d0d8dd2db980e4e', 18, 'INJ', 'INJ'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx16f3cb9f09f5cdd902cf07aa752c8b3bd1bc9609', 6, 'USDT', 'Tether USD'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx508002ec116fbf3ab406329c0df28e70d7e75fb3', 9, 'SUI', 'SUI'),
+    new XToken('0x1.icon', ChainId.MAINNET, 'cx65c9e3d4fea842e00add0d32a5b4c5e4e04c7a6b', 9, 'SOL', 'SOL'),
   ],
   'archway-1': [
     new XToken(

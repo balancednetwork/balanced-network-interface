@@ -1,4 +1,4 @@
-import { stellar, xChains } from '@/xwagmi/constants/xChains';
+import { xChains } from '@/xwagmi/constants/xChains';
 import { XChainId, XChainType } from '@/xwagmi/types';
 import { useSuiClient } from '@mysten/dapp-kit';
 import { useEffect } from 'react';
@@ -19,12 +19,7 @@ import {
   InjectiveXService,
   InjectiveXWalletClient,
 } from './xchains/injective';
-import {
-  StellarWalletsKitXConnector,
-  StellarXPublicClient,
-  StellarXService,
-  StellarXWalletClient,
-} from './xchains/stellar';
+import { StellarXPublicClient, StellarXService, StellarXWalletClient } from './xchains/stellar';
 import { SuiXPublicClient, SuiXService, SuiXWalletClient } from './xchains/sui';
 
 const iconXService = IconXService.getInstance();
@@ -201,10 +196,6 @@ export const initXWagmiStore = () => {
 };
 
 export const useInitXWagmiStore = () => {
-  // useEffect(() => {
-  //   initXWagmiStore();
-  // }, []);
-
   const suiClient = useSuiClient();
   useEffect(() => {
     if (suiClient) {

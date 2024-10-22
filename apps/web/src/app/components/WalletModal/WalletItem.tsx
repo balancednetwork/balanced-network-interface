@@ -32,18 +32,6 @@ export const handleConnectWallet = (
   xConnect: (xConnector: XConnector) => Promise<void>,
 ) => {
   if (!xChainType) return;
-  if (!xConnectors || xConnectors.length === 0) {
-    switch (xChainType) {
-      case 'EVM':
-        break;
-      case 'INJECTIVE':
-        break;
-      case 'SUI':
-        break;
-      default:
-        break;
-    }
-  }
 
   if (xChainType === 'EVM') {
     modalActions.openModal(MODAL_ID.EVM_WALLET_OPTIONS_MODAL);

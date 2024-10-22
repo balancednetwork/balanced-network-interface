@@ -5,6 +5,7 @@ import { bech32 } from 'bech32';
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
 import { Validator } from 'icon-sdk-js';
+import { PublicKey } from '@solana/web3.js';
 import { XChainId } from '../types';
 
 const { isEoaAddress, isScoreAddress } = Validator;
@@ -136,6 +137,15 @@ function isSuiAddress(address: string) {
   return true;
 }
 
+function isSolanaAddress(address) {
+  try {
+    const publicKey = new PublicKey(address);
+    return PublicKey.isOnCurve(publicKey);
+  } catch (error) {
+    return false;
+  }
+}
+
 export function validateAddress(address: string, chainId: XChainId): boolean {
   switch (xChainMap[chainId].xChainType) {
     case 'ICON':
@@ -150,7 +160,6 @@ export function validateAddress(address: string, chainId: XChainId): boolean {
     case 'SUI':
       return isSuiAddress(address);
     case 'SOLANA':
-      // TODO: implement Solana address validation
-      return true;
+      return isSolanaAddress(address);
   }
 }

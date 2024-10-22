@@ -1,16 +1,13 @@
 import { useRatesWithOracle } from '@/queries/reward';
+import { useUserPositionsData } from '@/store/collateral/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { WalletState } from '@/store/wallet/reducer';
 import { XChain, XChainId } from '@/xwagmi/types';
 import { Currency } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useState } from 'react';
+import { SortingType } from './useSort';
 import { useSignedInWallets } from './useWallets';
-
-type SortingType = {
-  key: string;
-  order?: 'ASC' | 'DESC';
-};
 
 const getXCurrencyBalanceBySymbol = (
   xBalances: WalletState,

@@ -29,4 +29,5 @@ export type XChain = Chain & {
   };
   autoExecution: boolean;
   gasThreshold: number;
+  useXCallScanner: boolean;
 };

@@ -19,6 +19,7 @@ import {
   InjectiveXService,
   InjectiveXWalletClient,
 } from './xchains/injective';
+import { StellarXPublicClient, StellarXService, StellarXWalletClient } from './xchains/stellar';
 import { SuiXPublicClient, SuiXService, SuiXWalletClient } from './xchains/sui';
 import { SolanaXService } from './xchains/solana/SolanaXService';
 import { SolanaXPublicClient, SolanaXWalletClient } from './xchains/solana';
@@ -40,6 +41,9 @@ havahXService.setXConnectors([new HavahXConnector()]);
 const injectiveXService = InjectiveXService.getInstance();
 injectiveXService.setXConnectors([new InjectiveMetamaskXConnector(), new InjectiveKelprXConnector()]);
 
+const stellarXService = StellarXService.getInstance();
+stellarXService.setXConnectors([]);
+
 const suiXService = SuiXService.getInstance();
 suiXService.setXConnectors([]);
 
@@ -52,6 +56,7 @@ export const xServices: Record<XChainType, XService> = {
   EVM: evmXService,
   HAVAH: havahXService,
   INJECTIVE: injectiveXService,
+  STELLAR: stellarXService,
   SUI: suiXService,
   SOLANA: solanaXService,
 };
@@ -147,6 +152,8 @@ function createXPublicClient(xChainId: XChainId) {
       return new HavahXPublicClient(xChainId);
     case 'INJECTIVE':
       return new InjectiveXPublicClient(xChainId);
+    case 'STELLAR':
+      return new StellarXPublicClient(xChainId);
     case 'SUI':
       return new SuiXPublicClient(xChainId);
     case 'SOLANA':
@@ -169,6 +176,8 @@ function createXWalletClient(xChainId: XChainId) {
       return new HavahXWalletClient(xChainId);
     case 'INJECTIVE':
       return new InjectiveXWalletClient(xChainId);
+    case 'STELLAR':
+      return new StellarXWalletClient(xChainId);
     case 'SUI':
       return new SuiXWalletClient(xChainId);
     case 'SOLANA':
@@ -199,10 +208,6 @@ export const initXWagmiStore = () => {
 };
 
 export const useInitXWagmiStore = () => {
-  // useEffect(() => {
-  //   initXWagmiStore();
-  // }, []);
-
   const suiClient = useSuiClient();
   useEffect(() => {
     if (suiClient) {

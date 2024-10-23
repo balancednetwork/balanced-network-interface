@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js';
 import { swapMessage } from '@/app/pages/trade/supply/_components/utils';
 import { formatBigNumber } from '@/utils';
 import { getXWalletClient } from '@/xwagmi/actions';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
 import {
   XMessage,
@@ -132,7 +133,7 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
     destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
     isPrimary: true,
     createdAt: Date.now(),
-    useXCallScanner: primaryDestinationChainId === 'sui' || sourceChainId === 'sui',
+    useXCallScanner: xChainMap[primaryDestinationChainId].useXCallScanner || xChainMap[sourceChainId].useXCallScanner,
   };
   xMessageActions.add(xMessage);
 

@@ -7,6 +7,7 @@ import { ethers } from 'ethers';
 import { Validator } from 'icon-sdk-js';
 import { PublicKey } from '@solana/web3.js';
 import { XChainId } from '../types';
+import { isStellarAddress } from '../xchains/stellar/utils';
 
 const { isEoaAddress, isScoreAddress } = Validator;
 
@@ -157,6 +158,8 @@ export function validateAddress(address: string, chainId: XChainId): boolean {
       return isArchEoaAddress(address);
     case 'INJECTIVE':
       return isInjectiveAddress(address);
+    case 'STELLAR':
+      return isStellarAddress(address);
     case 'SUI':
       return isSuiAddress(address);
     case 'SOLANA':

@@ -25,7 +25,7 @@ const suiNetworks = {
 
 export const XWagmiProviders = ({ children }) => {
   // const endpoint = useMemo(() => clusterApiUrl(solanaNetwork), []);
-  const endpoint = 'https://solana-mainnet.g.alchemy.com/v2/pS4zdtErwRHuV1_PILGI-kcaYEFLmXUH';
+  const endpoint = 'https://solana-mainnet.g.alchemy.com/v2/nCndZC8P7BdiVKkczCErdwpIgaBQpPFM';
   const wallets = useMemo(
     () => [
       /**

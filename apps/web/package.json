@@ -8,6 +8,7 @@
     "@balancednetwork/sdk-core": "workspace:*",
     "@balancednetwork/v1-sdk": "workspace:*",
     "@chain-registry/types": "0.16.0",
+    "@coral-xyz/anchor": "0.30.1",
     "@cosmjs/cosmwasm-stargate": "0.32.2",
     "@cosmjs/crypto": "0.32.3",
     "@cosmjs/encoding": "0.32.3",

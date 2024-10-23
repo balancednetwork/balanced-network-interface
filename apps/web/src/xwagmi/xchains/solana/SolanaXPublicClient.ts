@@ -5,6 +5,19 @@ import { SolanaXService } from './SolanaXService';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { PublicKey } from '@solana/web3.js';
 import { getAccount, getAssociatedTokenAddressSync } from '@solana/spl-token';
+import { Program } from '@coral-xyz/anchor';
+import xCallIdl from './idls/xCall.json';
+import { findPda } from './utils';
+import { xChainMap } from '@/xwagmi/constants/xChains';
+
+function network_fee(networkId: string, source) {
+  const [pda, bump] = PublicKey.findProgramAddressSync(
+    [Buffer.from('fee'), Buffer.from(networkId)],
+    new PublicKey(source),
+  );
+
+  return { pda, bump };
+}
 
 export class SolanaXPublicClient extends XPublicClient {
   getXService(): SolanaXService {
@@ -13,7 +26,6 @@ export class SolanaXPublicClient extends XPublicClient {
 
   getPublicClient(): any {}
 
-  // TODO implement this
   async getBalance(address: string | undefined, xToken: XToken) {
     if (!address) {
       return;
@@ -36,13 +48,50 @@ export class SolanaXPublicClient extends XPublicClient {
         return CurrencyAmount.fromRawAmount(xToken, BigInt(tokenAccount.amount));
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   }
 
   // TODO implement this
   async getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean, sources?: string[]) {
-    return 0n;
+    const provider = this.getXService().provider;
+    const xCallId = new PublicKey(xChainMap['solana'].contracts.xCall);
+
+    const configPda = await findPda(['config'], xCallId);
+
+    // @ts-ignore
+    const program = new Program(xCallIdl, provider);
+
+    try {
+      if (sources && sources.length > 0) {
+        const fee = await program.methods
+          .getFee(nid, rollback, sources)
+          .accountsStrict({
+            config: configPda,
+          })
+          .remainingAccounts([
+            ...sources.map(source => ({
+              pubkey: network_fee(nid, source).pda,
+              isSigner: false,
+              isWritable: true,
+            })),
+            ...sources.map(source => ({
+              pubkey: new PublicKey(source),
+              isSigner: false,
+              isWritable: true,
+            })),
+          ])
+          .view({ commitment: 'confirmed' });
+
+        return BigInt(fee);
+      }
+    } catch (e) {
+      // @ts-ignore
+      // console.log(e.simulationResponse);
+    }
+
+    // hardcoded
+    return 600_000n;
   }
 
   async getTxReceipt(txHash: string) {

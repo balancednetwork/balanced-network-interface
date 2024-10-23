@@ -15,7 +15,7 @@ export interface IXCallFee {
 import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 
-import { CurrencyKey, XChainId } from '@/xwagmi/types';
+import { CurrencyKey, XChainId, XToken } from '@/xwagmi/types';
 
 export enum TransactionStatus {
   pending = 'pending',
@@ -58,7 +58,7 @@ export type XTransactionInput = {
     to: XChainId;
   };
   type: XTransactionType;
-  inputAmount: CurrencyAmount<Currency>;
+  inputAmount: CurrencyAmount<XToken>;
   account: string;
   xCallFee: IXCallFee;
   callback?: () => void;

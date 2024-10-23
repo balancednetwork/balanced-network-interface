@@ -317,9 +317,10 @@ export const solana: XChain = {
     xCall: '3LWnGCRFuS4TJ5WeDKeWdoSRptB2tzeEFhSBFFu4ogMo',
     assetManager: '4u979CPSHUeJQbCYUAvoki4CQHDiG1257vt2DaJULPV9',
     bnUSD: '3JfaNQh3zRyBQ3spQJJWKmgRcXuQrcNrpLH5pDvaX2gG',
+    xCallManager: 'Ganbqm2tJ8SuaN6kSRWsJhXGb7aLCvHLuCySxCfkXPVL',
   },
   autoExecution: true,
-  gasThreshold: 0.2,
+  gasThreshold: 0.001,
   testnet: false,
 };
 

@@ -10,6 +10,7 @@ const getPositionValue = (
   xPositionsRecord: XPositionsRecord,
   collateralTab: CollateralTab,
   price: BigNumber,
+  checkPotential?: boolean,
 ): BigNumber | undefined => {
   if (!xPositionsRecord) return;
 
@@ -22,7 +23,7 @@ const getPositionValue = (
   if (collateralTab === CollateralTab.YOUR) {
     total = Object.values(xPositionsRecord.positions).reduce((acc, position) => {
       const currentPosition = position as Position;
-      if (currentPosition.collateral) {
+      if (currentPosition.collateral && !!checkPotential === !!currentPosition.isPotential) {
         acc = acc.plus(new BigNumber(currentPosition.collateral.toFixed()));
       }
       return acc;
@@ -99,10 +100,26 @@ export default function useSortXCollateralTypes(initialState: SortingType) {
 
         const aPosition = getPositionValue(a, tab, prices[a.baseToken.symbol]);
         const bPosition = getPositionValue(b, tab, prices[b.baseToken.symbol]);
+        const aPositionPotential = getPositionValue(a, tab, prices[a.baseToken.symbol], true);
+        const bPositionPotential = getPositionValue(b, tab, prices[b.baseToken.symbol], true);
 
-        if (!aPosition || !bPosition) return 0;
+        if (aPosition?.isGreaterThan(0) && bPosition?.isGreaterThan(0)) {
+          return aPosition.isGreaterThan(bPosition) ? -1 * direction : 1 * direction;
+        }
 
-        return aPosition.isGreaterThan(bPosition) ? -1 * direction : 1 * direction;
+        if (aPosition?.isGreaterThan(0)) {
+          return -1 * direction;
+        }
+
+        if (bPosition?.isGreaterThan(0)) {
+          return 1 * direction;
+        }
+
+        if (aPositionPotential?.isGreaterThan(0) && bPositionPotential?.isGreaterThan(0)) {
+          return aPositionPotential.isGreaterThan(bPositionPotential) ? -1 * direction : 1 * direction;
+        }
+
+        return 0;
       });
     }
 

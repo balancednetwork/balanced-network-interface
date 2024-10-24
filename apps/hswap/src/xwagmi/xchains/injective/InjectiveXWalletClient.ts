@@ -1,4 +1,4 @@
-import { Percent, XToken } from '@balancednetwork/sdk-core';
+import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
@@ -13,6 +13,7 @@ import { RLP } from '@ethereumjs/rlp';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { isDenomAsset } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
+import { XToken } from '@/xwagmi/types';
 
 export class InjectiveXWalletClient extends XWalletClient {
   getXService(): InjectiveXService {

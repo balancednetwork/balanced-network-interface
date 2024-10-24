@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js';
 import { swapMessage } from '@/app/pages/trade/supply/_components/utils';
 import { formatBigNumber } from '@/utils';
 import { getXWalletClient } from '@/xwagmi/actions';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
 import {
   XMessage,
@@ -13,7 +14,7 @@ import {
   XTransactionType,
 } from '@/xwagmi/xcall/types';
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
-import { xServiceActions } from '@/xwagmi/xcall/zustand/useXServiceStore';
+import { xChainHeightActions } from '@/xwagmi/xcall/zustand/useXChainHeightStore';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import { useSignTransaction } from '@mysten/dapp-kit';
 import { useMemo } from 'react';
@@ -102,8 +103,9 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
   const finalDestinationChainId = direction.to;
   const primaryDestinationChainId = sourceChainId === iconChainId ? finalDestinationChainId : iconChainId;
 
-  const primaryDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(primaryDestinationChainId) - 20n;
-  const finalDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(finalDestinationChainId);
+  const primaryDestinationChainInitialBlockHeight =
+    xChainHeightActions.getXChainHeight(primaryDestinationChainId) - 20n;
+  const finalDestinationChainInitialBlockHeight = xChainHeightActions.getXChainHeight(finalDestinationChainId);
 
   const xTransaction: XTransaction = {
     id: `${sourceChainId}/${sourceTransactionHash}`,
@@ -131,7 +133,7 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
     destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
     isPrimary: true,
     createdAt: Date.now(),
-    useXCallScanner: primaryDestinationChainId === 'sui' || sourceChainId === 'sui',
+    useXCallScanner: xChainMap[primaryDestinationChainId].useXCallScanner || xChainMap[sourceChainId].useXCallScanner,
   };
   xMessageActions.add(xMessage);
 

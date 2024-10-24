@@ -4,10 +4,10 @@ import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { getXPublicClient } from '@/xwagmi/actions';
-import { XChainId } from '@balancednetwork/sdk-core';
+import { XChainId } from '@/xwagmi/types';
 import { XCallEventType } from '../types';
 import { XCallDestinationEvent, XCallExecutedEvent, XCallMessageEvent } from '../types';
-import { xServiceActions } from './useXServiceStore';
+import { xChainHeightActions } from './useXChainHeightStore';
 
 type XCallScanner = {
   id: string;
@@ -84,7 +84,7 @@ export const useXCallEventStore = create<XCallEventStore>()(
       incrementCurrentHeight: (id: string, step = 1n) => {
         set(state => {
           const xChainId = state.scanners[id].xChainId;
-          const chainHeight = xServiceActions.getXChainHeight(xChainId) - 1n;
+          const chainHeight = xChainHeightActions.getXChainHeight(xChainId) - 1n;
 
           const newCurrentHeight = state.scanners[id].currentHeight + step;
           if (newCurrentHeight > chainHeight) {
@@ -108,7 +108,7 @@ export const useXCallEventStore = create<XCallEventStore>()(
 
         let currentHeight = scanner.currentHeight;
 
-        const chainHeight = xServiceActions.getXChainHeight(xChainId) - 1n;
+        const chainHeight = xChainHeightActions.getXChainHeight(xChainId) - 1n;
 
         while (currentHeight < chainHeight) {
           if (get().isScanned(xChainId, currentHeight)) {

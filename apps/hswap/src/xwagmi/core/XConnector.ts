@@ -1,5 +1,4 @@
-import { XChainType } from '@balancednetwork/sdk-core';
-import { XAccount } from '../types';
+import { XAccount, XChainType } from '../types';
 
 export abstract class XConnector {
   xChainType: XChainType;

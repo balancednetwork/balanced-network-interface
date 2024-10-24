@@ -2,7 +2,8 @@ import { Address, PublicClient, WriteContractParameters, erc20Abi, getContract, 
 
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
-import { MaxUint256, Percent, XChainId, XToken } from '@balancednetwork/sdk-core';
+import { XChainId, XToken } from '@/xwagmi/types';
+import { MaxUint256, Percent } from '@balancednetwork/sdk-core';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import {
   TransactionStatus,

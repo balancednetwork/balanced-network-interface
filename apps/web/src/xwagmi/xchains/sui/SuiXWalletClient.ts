@@ -3,7 +3,7 @@ import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
 
-import { FROM_SOURCES, TO_SOURCES } from '@/xwagmi/constants/xChains';
+import { FROM_SOURCES, TO_SOURCES, sui } from '@/xwagmi/constants/xChains';
 import { xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { uintToBytes } from '@/xwagmi/utils';
@@ -14,6 +14,7 @@ import { toBytes, toHex } from 'viem';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
 import { SuiXService } from './SuiXService';
+import { isNativeCurrency } from '@/constants/tokens';
 
 const addressesMainnet = {
   'Balanced Package Id': '0xa3c66ac08bca78a475954683a872a296fd61a28d478c4a8ebce676fc38f502d6',
@@ -27,14 +28,16 @@ const addressesMainnet = {
   'bnUSD Storage': '0xd28c9da258f082d5a98556fc08760ec321451216087609acd2ff654d9827c5b5',
 };
 
-const XCALL_FEE_AMOUNT = 160_000_000n;
+const XCALL_FEE_AMOUNT = BigInt(sui.gasThreshold * 10 ** sui.nativeCurrency.decimals);
 
 export class SuiXWalletClient extends XWalletClient {
   getXService(): SuiXService {
     return SuiXService.getInstance();
   }
 
-  async approve(token, owner, spender, currencyAmountToApprove) {}
+  async approve(amountToApprove, spender, owner) {
+    return Promise.resolve(undefined);
+  }
 
   async executeTransaction(xTransactionInput: XTransactionInput, options) {
     const { signTransaction } = options;
@@ -80,12 +83,11 @@ export class SuiXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
-    const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
     const amount = BigInt(inputAmount.quotient.toString());
 
     let txResult;
-    if (isNative) {
+    if (isNativeCurrency(inputAmount.currency)) {
       const txb = new Transaction();
 
       const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, XCALL_FEE_AMOUNT]);

@@ -7,7 +7,7 @@ import { EVMWalletModal } from './EVMWalletModal';
 import { InjectiveWalletOptionsModal } from './InjectiveWalletOptionsModal';
 import { SuiWalletOptionsModal } from './SuiWalletOptionsModal';
 
-const xChainTypes: WalletItemProps[] = [
+export const xChainTypes: WalletItemProps[] = [
   {
     name: 'EVM wallets',
     xChainType: 'EVM',

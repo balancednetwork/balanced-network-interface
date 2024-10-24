@@ -7,7 +7,7 @@ export const DefaultLayout: React.FC<{ title?: string; children: React.ReactNode
 
   return (
     <>
-      <div className="flex flex-col max-w-screen-xl min-h-screen mx-auto px-4 lg:px-10 bg-background">
+      <div className="flex flex-col w-full min-h-screen mx-auto px-4 lg:px-10 bg-background">
         <Header className="my-6 lg:my-12" />
         {children}
       </div>

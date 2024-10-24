@@ -69,7 +69,7 @@ export default function LiquidityPoolsPanel() {
               onClick={() => handleSwitch(PanelType.AllPools)}
               $active={panelType === PanelType.AllPools}
             >
-              <Trans>Incentivised pools</Trans>
+              <Trans>All pools</Trans>
             </ChartControlButton>
           </ChartControlGroup>
         )}
@@ -86,12 +86,7 @@ export default function LiquidityPoolsPanel() {
             <LiquidityDetails />
           </motion.div>
         ) : (
-          <motion.div
-            key="IncentivisedPools"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ type: 'just' }}
-          >
+          <motion.div key="AllPools" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: 'just' }}>
             <AllPoolsPanel />
           </motion.div>
         )}

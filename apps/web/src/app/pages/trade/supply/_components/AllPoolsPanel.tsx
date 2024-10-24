@@ -15,10 +15,13 @@ import { useDerivedMintInfo, useMintActionHandlers } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
 import { getFormattedNumber } from '@/utils/formatter';
 
+import DropdownLink from '@/app/components/DropdownLink';
 import { HeaderText } from '@/app/components/SearchModal/styleds';
 import Skeleton from '@/app/components/Skeleton';
 import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
 import { PairInfo } from '@/types';
+
+const COMPACT_ITEM_COUNT = 8;
 
 const List = styled(Box)`
   -webkit-overflow-scrolling: touch;
@@ -150,7 +153,7 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
         <Flex flexDirection="column" py={2} alignItems="flex-end">
           {pair.liquidity > MIN_LIQUIDITY_TO_INCLUDE ? (
             <>
-              {pair.balnApy && (
+              {pair.balnApy ? (
                 <APYItem>
                   <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
                     BALN:
@@ -160,15 +163,15 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
                     'percent2',
                   )}`}
                 </APYItem>
-              )}
-              {pair.feesApy !== 0 && (
+              ) : null}
+              {pair.feesApy !== 0 ? (
                 <APYItem>
                   <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
                     <Trans>Fees:</Trans>
                   </Typography>
                   {getFormattedNumber(pair.feesApy, 'percent2')}
                 </APYItem>
-              )}
+              ) : null}
             </>
           ) : (
             '-'
@@ -189,18 +192,7 @@ export default function AllPoolsPanel() {
   const { sortBy, handleSortSelect, sortData } = useSort({ key: 'apyTotal', order: 'DESC' });
   const { noLiquidity } = useDerivedMintInfo();
   const { onCurrencySelection } = useMintActionHandlers(noLiquidity);
-
-  const incentivisedPairs = useMemo(
-    () =>
-      allPairs &&
-      Object.keys(allPairs).reduce((pairs, pairID) => {
-        if (allPairs && allPairs[pairID].balnApy) {
-          pairs[pairID] = allPairs[pairID];
-        }
-        return pairs;
-      }, {}),
-    [allPairs],
-  );
+  const [showingExpanded, setShowingExpanded] = React.useState(false);
 
   const handlePoolLick = (pair: PairInfo) => {
     if (pair.id === 1) {
@@ -298,10 +290,17 @@ export default function AllPoolsPanel() {
           </HeaderText>
         </DashGrid>
 
-        {incentivisedPairs ? (
-          sortData(Object.values(incentivisedPairs)).map((pair, index, array) => (
-            <PairItem key={index} pair={pair} onClick={handlePoolLick} isLast={array.length - 1 === index} />
-          ))
+        {allPairs ? (
+          sortData(Object.values(allPairs)).map((pair, index, array) =>
+            showingExpanded || index < COMPACT_ITEM_COUNT ? (
+              <PairItem
+                key={index}
+                pair={pair}
+                onClick={handlePoolLick}
+                isLast={index === array.length - 1 || (!showingExpanded && index === COMPACT_ITEM_COUNT - 1)}
+              />
+            ) : null,
+          )
         ) : (
           <>
             <SkeletonPairPlaceholder />
@@ -318,6 +317,12 @@ export default function AllPoolsPanel() {
             <Divider />
             <SkeletonPairPlaceholder />
           </>
+        )}
+
+        {allPairs && Object.values(allPairs).length > COMPACT_ITEM_COUNT && (
+          <Box>
+            <DropdownLink expanded={showingExpanded} setExpanded={setShowingExpanded} />
+          </Box>
         )}
       </List>
     </Box>

@@ -21,6 +21,6 @@ export class SolanaXConnector extends XConnector {
   async disconnect(): Promise<void> {}
 
   public get icon() {
-    return this.wallet?.icon;
+    return this.wallet?.adapter.icon;
   }
 }

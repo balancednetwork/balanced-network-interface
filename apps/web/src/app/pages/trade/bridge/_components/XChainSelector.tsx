@@ -29,6 +29,14 @@ const Wrap = styled.div`
   cursor: pointer;
   font-size: 16px;
   color: ${({ theme }) => theme.colors.primaryBright};
+
+
+  @-moz-document url-prefix() {
+    svg {
+      position: relative;
+      top: -2px;
+    }
+  }
 `;
 
 const XChainSelector = ({ chainId, setChainId, label, currency, width, containerRef }: ChainSelectorProps) => {

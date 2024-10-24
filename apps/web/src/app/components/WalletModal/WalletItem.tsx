@@ -51,6 +51,8 @@ export const handleConnectWallet = (
     modalActions.openModal(MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL);
   } else if (xChainType === 'SUI') {
     modalActions.openModal(MODAL_ID.SUI_WALLET_OPTIONS_MODAL);
+  } else if (xChainType === 'STELLAR') {
+    modalActions.openModal(MODAL_ID.STELLAR_WALLET_OPTIONS_MODAL);
   } else {
     xConnect(xConnectors[0]);
   }

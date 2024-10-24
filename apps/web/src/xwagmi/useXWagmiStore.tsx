@@ -1,4 +1,4 @@
-import { xChains } from '@/xwagmi/constants/xChains';
+import { stellar, xChains } from '@/xwagmi/constants/xChains';
 import { XChainId, XChainType } from '@/xwagmi/types';
 import { useSuiClient } from '@mysten/dapp-kit';
 import { useEffect } from 'react';
@@ -19,6 +19,12 @@ import {
   InjectiveXService,
   InjectiveXWalletClient,
 } from './xchains/injective';
+import {
+  StellarWalletsKitXConnector,
+  StellarXPublicClient,
+  StellarXService,
+  StellarXWalletClient,
+} from './xchains/stellar';
 import { SuiXPublicClient, SuiXService, SuiXWalletClient } from './xchains/sui';
 
 const iconXService = IconXService.getInstance();
@@ -36,6 +42,9 @@ havahXService.setXConnectors([new HavahXConnector()]);
 const injectiveXService = InjectiveXService.getInstance();
 injectiveXService.setXConnectors([new InjectiveMetamaskXConnector(), new InjectiveKelprXConnector()]);
 
+const stellarXService = StellarXService.getInstance();
+stellarXService.setXConnectors([]);
+
 const suiXService = SuiXService.getInstance();
 suiXService.setXConnectors([]);
 
@@ -45,6 +54,7 @@ export const xServices: Record<XChainType, XService> = {
   EVM: evmXService,
   HAVAH: havahXService,
   INJECTIVE: injectiveXService,
+  STELLAR: stellarXService,
   SUI: suiXService,
 };
 
@@ -139,6 +149,8 @@ function createXPublicClient(xChainId: XChainId) {
       return new HavahXPublicClient(xChainId);
     case 'INJECTIVE':
       return new InjectiveXPublicClient(xChainId);
+    case 'STELLAR':
+      return new StellarXPublicClient(xChainId);
     case 'SUI':
       return new SuiXPublicClient(xChainId);
     default:
@@ -159,6 +171,8 @@ function createXWalletClient(xChainId: XChainId) {
       return new HavahXWalletClient(xChainId);
     case 'INJECTIVE':
       return new InjectiveXWalletClient(xChainId);
+    case 'STELLAR':
+      return new StellarXWalletClient(xChainId);
     case 'SUI':
       return new SuiXWalletClient(xChainId);
     default:

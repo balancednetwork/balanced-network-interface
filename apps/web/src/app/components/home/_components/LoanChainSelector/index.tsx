@@ -1,6 +1,5 @@
 import { StyledArrowDownIcon } from '@/app/components/DropdownText';
 import { DropdownPopper } from '@/app/components/Popover';
-import { SelectorWrap } from '@/app/components/trade/CrossChainOptions';
 import { Typography } from '@/app/theme';
 import { NETWORK_ID } from '@/constants/config';
 import { bnUSD } from '@/constants/tokens';
@@ -12,6 +11,7 @@ import { Trans } from '@lingui/macro';
 import React, { useEffect } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
+import { SelectorWrap } from '../CollateralChainSelector';
 import ChainSelectorLogo from '../CollateralChainSelector/ChainSelectorLogo';
 import ChainList from './ChainList';
 

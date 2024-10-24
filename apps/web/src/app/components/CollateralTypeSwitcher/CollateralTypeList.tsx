@@ -2,18 +2,38 @@ import React, { useCallback, useMemo } from 'react';
 
 import { useMedia } from 'react-use';
 
+import { StyledHeaderText } from '@/app/pages/trade/bridge/_components/XChainList';
 import { Typography } from '@/app/theme';
+import useSortXCollateralTypes from '@/hooks/useSortXCollateralTypes';
+import { useHasSignedIn } from '@/hooks/useWallets';
 import { useAllCollateralData, useCollateralActionHandlers, useUserPositionsData } from '@/store/collateral/hooks';
 import { useLoanActionHandlers } from '@/store/loan/hooks';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
 import { Trans } from '@lingui/macro';
-import { BalanceAndValueWrap, DashGrid, HeaderText, List, walletBreakpoint } from '../Wallet/styledComponents';
+import styled from 'styled-components';
+import { BalanceAndValueWrap, DashGrid, List, walletBreakpoint } from '../Wallet/styledComponents';
 import { CollateralTab } from './CollateralTypeListWrap';
 import MultiChainItem from './MultiChainItem';
 import SingleChainItem from './SingleChainItem';
 import SingleChainItemOverview from './SingleChainItemOverview';
+
+const StyledDashGrid = styled(DashGrid)`
+grid-template-columns: 11fr 12fr;
+
+ ${BalanceAndValueWrap} {
+  [role='button']:first-of-type {
+    transform: translateX(-7px);
+  }
+
+  [role='button'] {
+    width: 50%;
+    display: flex;
+    justify-content: end;
+  }
+ }
+`;
 
 const CollateralTypeList = ({
   setAnchor,
@@ -27,6 +47,7 @@ const CollateralTypeList = ({
   const { onAdjust: adjust, changeCollateralType, changeCollateralXChain } = useCollateralActionHandlers();
   const { onAdjust: adjustLoan, setRecipientNetwork: setLoanNetwork } = useLoanActionHandlers();
   const isSmallScreen = useMedia(`(max-width: ${walletBreakpoint})`);
+  const isSignedIn = useHasSignedIn();
 
   const { data: userPositionsData } = useUserPositionsData();
   const { data: allPositionsData } = useAllCollateralData();
@@ -58,33 +79,72 @@ const CollateralTypeList = ({
     );
   }, [positions, query]);
 
+  const { sortBy, handleSortSelect, sortData } = useSortXCollateralTypes(
+    isSignedIn ? { key: 'collateral', order: 'DESC' } : { key: 'name', order: 'ASC' },
+  );
+
+  const sortedFilteredPositions = useMemo(
+    () => sortData(filteredPositions, collateralTab),
+    [filteredPositions, sortData, collateralTab],
+  );
+
   return (
     <List mx="-25px">
-      <DashGrid>
-        <HeaderText>
-          <Trans>Asset</Trans>
-        </HeaderText>
+      <StyledDashGrid>
+        <StyledHeaderText
+          role="button"
+          className={sortBy.key === 'name' ? sortBy.order : ''}
+          onClick={() =>
+            handleSortSelect({
+              key: 'name',
+            })
+          }
+        >
+          <span>
+            <Trans>Asset</Trans>
+          </span>
+        </StyledHeaderText>
         <BalanceAndValueWrap>
-          <HeaderText>
-            <Trans>Collateral</Trans>
-          </HeaderText>
+          <StyledHeaderText
+            role="button"
+            className={sortBy.key === 'collateral' ? sortBy.order : ''}
+            onClick={() =>
+              handleSortSelect({
+                key: 'collateral',
+              })
+            }
+          >
+            <span>
+              <Trans>Collateral</Trans>
+            </span>
+          </StyledHeaderText>
           {isSmallScreen ? null : (
-            <HeaderText>
-              <Trans>Loan</Trans>
-            </HeaderText>
+            <StyledHeaderText
+              role="button"
+              className={sortBy.key === 'loan' ? sortBy.order : ''}
+              onClick={() =>
+                handleSortSelect({
+                  key: 'loan',
+                })
+              }
+            >
+              <span>
+                <Trans>Loan</Trans>
+              </span>
+            </StyledHeaderText>
           )}
         </BalanceAndValueWrap>
-      </DashGrid>
+      </StyledDashGrid>
 
       {collateralTab === CollateralTab.YOUR && (
         <>
-          {filteredPositions?.map((xPosition, index) =>
+          {sortedFilteredPositions?.map((xPosition, index) =>
             xPosition.isSingleChain ? (
               <SingleChainItem
                 baseToken={xPosition.baseToken}
                 key={index}
                 networkPosition={xPosition.positions}
-                isLast={index === filteredPositions.length - 1}
+                isLast={index === sortedFilteredPositions.length - 1}
                 onSelect={handleCollateralTypeChange}
               />
             ) : (
@@ -96,7 +156,7 @@ const CollateralTypeList = ({
               />
             ),
           )}
-          {filteredPositions?.length === 0 && (
+          {sortedFilteredPositions?.length === 0 && (
             <Typography p="30px 0 0" textAlign="center">
               <Trans>No positions found.</Trans>
             </Typography>
@@ -105,38 +165,36 @@ const CollateralTypeList = ({
       )}
 
       {collateralTab === CollateralTab.ALL &&
-        filteredPositions
-          ?.sort((a, b) => a.baseToken.symbol.localeCompare(b.baseToken.symbol))
-          .map((xCollateral, index, { length }) => {
-            //temporarily show single chain view only (backend support needed first)
-            return (
-              <SingleChainItemOverview
-                baseToken={xCollateral.baseToken}
-                key={index}
-                networkPosition={{ [ICON_XCALL_NETWORK_ID]: xCollateral.total }}
-                hideNetworkIcon={true}
-                isLast={index === length - 1}
-                onSelect={handleCollateralTypeChange}
-              />
-            );
-            // return xCollateral.isCollateralSingleChain ? (
-            //   <SingleChainItemOverview
-            //     baseToken={xCollateral.baseToken}
-            //     key={index}
-            //     networkPosition={{ [ICON_XCALL_NETWORK_ID]: xCollateral.total }}
-            //     isLast={index === length - 1}
-            //     onSelect={handleCollateralTypeChange}
-            //   />
-            // ) : (
-            //   <MultiChainItemOverview
-            //     key={index}
-            //     baseToken={xCollateral.baseToken}
-            //     chains={xCollateral.chains}
-            //     onSelect={handleCollateralTypeChange}
-            //     total={xCollateral.total}
-            //   />
-            // );
-          })}
+        sortedFilteredPositions.map((xCollateral, index, { length }) => {
+          //temporarily show single chain view only (backend support needed first)
+          return (
+            <SingleChainItemOverview
+              baseToken={xCollateral.baseToken}
+              key={index}
+              networkPosition={{ [ICON_XCALL_NETWORK_ID]: xCollateral.total }}
+              hideNetworkIcon={true}
+              isLast={index === length - 1}
+              onSelect={handleCollateralTypeChange}
+            />
+          );
+          // return xCollateral.isCollateralSingleChain ? (
+          //   <SingleChainItemOverview
+          //     baseToken={xCollateral.baseToken}
+          //     key={index}
+          //     networkPosition={{ [ICON_XCALL_NETWORK_ID]: xCollateral.total }}
+          //     isLast={index === length - 1}
+          //     onSelect={handleCollateralTypeChange}
+          //   />
+          // ) : (
+          //   <MultiChainItemOverview
+          //     key={index}
+          //     baseToken={xCollateral.baseToken}
+          //     chains={xCollateral.chains}
+          //     onSelect={handleCollateralTypeChange}
+          //     total={xCollateral.total}
+          //   />
+          // );
+        })}
     </List>
   );
 };

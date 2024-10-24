@@ -149,7 +149,7 @@ const CollateralPanel = () => {
   const ratio = useRatio();
   const isHandlingICX = useIsHandlingICX();
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();
-  const [ICXWithdrawOption, setICXWithdrawOption] = useState<ICXWithdrawOptions>(ICXWithdrawOptions.EMPTY);
+  const [ICXWithdrawOption, setICXWithdrawOption] = useState<ICXWithdrawOptions>(ICXWithdrawOptions.KEEPSICX);
   const { data: icxUnstakingTime } = useICXUnstakingTime();
   const isSuperSmall = useMedia(`(max-width: 359px)`);
 
@@ -382,7 +382,7 @@ const CollateralPanel = () => {
               <CollateralTypeSwitcher width={width} containerRef={ref.current} />
             </CollateralTypeSwitcherWrap>
 
-            {account && (
+            {account && collateralTotal?.isGreaterThan(0) && (
               <Flex flexDirection={isSuperSmall ? 'column' : 'row'} ml="auto" paddingTop={isSuperSmall ? '4px' : '0'}>
                 {isAdjusting ? (
                   <>
@@ -394,12 +394,12 @@ const CollateralPanel = () => {
                     >
                       <Trans>Cancel</Trans>
                     </TextButton>
-                    <Button onClick={toggleOpen} fontSize={14}>
+                    <Button onClick={toggleOpen} fontSize={14} disabled={differenceAmount?.isEqualTo(0)}>
                       <Trans>Confirm</Trans>
                     </Button>
                   </>
                 ) : (
-                  <Button onClick={handleEnableAdjusting} fontSize={14} disabled={collateralTotal?.isEqualTo(0)}>
+                  <Button onClick={handleEnableAdjusting} fontSize={14}>
                     {buttonText}
                   </Button>
                 )}
@@ -412,7 +412,7 @@ const CollateralPanel = () => {
               <Typography mr={1}>{t`To deposit ${collateralType}`},</Typography>
               <Typography color="primaryBright">
                 <UnderlineText onClick={handleConnect}>
-                  <Trans>sign in with</Trans>
+                  <Trans>sign in on</Trans>
                   {` ${xChainMap[sourceChain].name}`}
                 </UnderlineText>
               </Typography>
@@ -420,7 +420,13 @@ const CollateralPanel = () => {
             </Flex>
           )}
 
-          {account && (
+          {account && collateralTotal?.isEqualTo(0) && (
+            <Flex minHeight={140} alignItems="center" justifyContent="center">
+              <Typography mr={1}>{t`Add ${collateralType} to your ${xChainMap[sourceChain].name} wallet.`}</Typography>
+            </Flex>
+          )}
+
+          {account && collateralTotal?.isGreaterThan(0) && (
             <>
               {shouldShowLock && <LockBar disabled={!isAdjusting} percent={percent} text={t`Locked`} />}
 
@@ -577,7 +583,7 @@ const CollateralPanel = () => {
 
                   {ICXWithdrawOption === ICXWithdrawOptions.KEEPSICX && (
                     <Typography textAlign="center">
-                      <Trans>Recieve sICX, which you can trade or unstake from the wallet section later.</Trans>
+                      <Trans>Receive sICX, which you can trade or unstake from the wallet section later.</Trans>
                     </Typography>
                   )}
                   {ICXWithdrawOption === ICXWithdrawOptions.UNSTAKE && (

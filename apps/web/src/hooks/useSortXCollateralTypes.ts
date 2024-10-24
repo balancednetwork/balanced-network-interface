@@ -94,7 +94,7 @@ export default function useSortXCollateralTypes(initialState: SortingType) {
       });
     }
 
-    if (signedInWallets.length > 0 && sortBy.key === 'collateral') {
+    if ((signedInWallets.length > 0 || tab === CollateralTab.ALL) && sortBy.key === 'collateral') {
       dataToSort.sort((a, b) => {
         if (!prices || !prices[a.baseToken.symbol] || !prices[b.baseToken.symbol]) return 0;
 

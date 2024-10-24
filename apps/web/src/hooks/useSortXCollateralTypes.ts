@@ -123,7 +123,7 @@ export default function useSortXCollateralTypes(initialState: SortingType) {
       });
     }
 
-    if (signedInWallets.length > 0 && sortBy.key === 'loan') {
+    if ((signedInWallets.length > 0 || tab === CollateralTab.ALL) && sortBy.key === 'loan') {
       dataToSort.sort((a, b) => {
         const aLoan = getPositionLoan(a, tab);
         const bLoan = getPositionLoan(b, tab);

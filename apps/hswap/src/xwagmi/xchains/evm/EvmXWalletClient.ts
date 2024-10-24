@@ -1,4 +1,4 @@
-import { CurrencyAmount, MaxUint256, Percent, XToken } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, MaxUint256, Percent } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
 import { Address, PublicClient, WalletClient, WriteContractParameters, toHex, erc20Abi, getContract } from 'viem';
 import bnJs from '../icon/bnJs';
@@ -14,6 +14,7 @@ import { EvmXService } from './EvmXService';
 import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
 import { bnUSDContractAbi } from './abis/bnUSDContractAbi';
 import { xCallContractAbi } from './abis/xCallContractAbi';
+import { XToken } from '@/xwagmi/types';
 
 export class EvmXWalletClient extends XWalletClient {
   getXService(): EvmXService {

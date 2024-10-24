@@ -29,7 +29,7 @@ import { getXTokenAddress } from '@/utils/xTokens';
 import { getXChainType } from '@/xwagmi/actions';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { useXAccount } from '@/xwagmi/hooks';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId, XToken } from '@/xwagmi/types';
 import { useXTransactionStore } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { AppState } from '..';
@@ -44,6 +44,7 @@ import {
   setRecipientNetwork as setRecipientNetworkAction,
   type,
 } from './reducer';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 
 export function useLoanBorrowedAmount(address?: string): BigNumber {
   const borrowedAmounts = useBorrowedAmounts();
@@ -529,7 +530,7 @@ export function useDerivedLoanInfo(): {
   borrowedAmount: BigNumber;
   borrowableAmountWithReserve: BigNumber;
   totalBorrowableAmount: BigNumber;
-  bnUSDAmount: CurrencyAmount<Token> | undefined;
+  bnUSDAmount: CurrencyAmount<XToken> | undefined;
   direction: {
     from: XChainId;
     to: XChainId;
@@ -571,7 +572,7 @@ export function useDerivedLoanInfo(): {
 
   const bnUSDAmount = differenceAmount
     ? CurrencyAmount.fromRawAmount(
-        bnUSD[NETWORK_ID],
+        XToken.getXToken(ICON_XCALL_NETWORK_ID, bnUSD[NETWORK_ID]),
         differenceAmount.times(10 ** bnUSD[NETWORK_ID].decimals).toFixed(0),
       )
     : undefined;

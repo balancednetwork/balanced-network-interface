@@ -1,4 +1,4 @@
-import { XChainType } from '@balancednetwork/sdk-core';
+import { XChainType } from '../types';
 import { XConnector } from './XConnector';
 
 export abstract class XService {

@@ -1,13 +1,18 @@
 import { XTransactionInput } from '@/xwagmi/xcall/types';
-import { XChainId } from '../types';
-
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XChainId, XToken } from '../types';
 export abstract class XWalletClient {
   public xChainId: XChainId;
 
   constructor(xChainId: XChainId) {
     this.xChainId = xChainId;
   }
-  // getAllowance(token: XToken, owner: string | null, spender: string): Promise<string>;
-  abstract approve(token, owner, spender, currencyAmountToApprove);
+
+  abstract approve(
+    amountToApprove: CurrencyAmount<XToken>,
+    spender: string,
+    owner: string,
+  ): Promise<string | undefined>;
+
   abstract executeTransaction(xTransactionInput: XTransactionInput, options?: any): Promise<string | undefined>;
 }

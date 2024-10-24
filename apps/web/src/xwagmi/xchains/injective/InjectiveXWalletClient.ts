@@ -1,26 +1,28 @@
-import { Percent } from '@balancednetwork/sdk-core';
+import { Percent, Token } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
-import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
+import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xwagmi/xcall/utils';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
 
+import { isNativeCurrency } from '@/constants/tokens';
 import { FROM_SOURCES, TO_SOURCES, injective } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core';
-import { XToken } from '@/xwagmi/types';
 import { uintToBytes } from '@/xwagmi/utils';
 import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import { RLP } from '@ethereumjs/rlp';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { isDenomAsset } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
 
 export class InjectiveXWalletClient extends XWalletClient {
   getXService(): InjectiveXService {
     return InjectiveXService.getInstance();
   }
 
-  async approve(token: XToken, owner: string, spender: string, currencyAmountToApprove: CurrencyAmount<XToken>) {}
+  async approve(amountToApprove, spender, owner) {
+    return Promise.resolve(undefined);
+  }
 
   async executeTransaction(xTransactionInput: XTransactionInput) {
     const { type, direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } =
@@ -61,15 +63,16 @@ export class InjectiveXWalletClient extends XWalletClient {
     }
 
     const isBnUSD = inputAmount.currency?.symbol === 'bnUSD';
-    const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
+    const isDenom = inputAmount && inputAmount.currency instanceof Token ? isDenomAsset(inputAmount.currency) : false;
 
     if (isBnUSD) {
+      const amount = inputAmount.quotient.toString();
       const msg = MsgExecuteContractCompat.fromJSON({
         contractAddress: injective.contracts.bnUSD!,
         sender: account,
         msg: {
           cross_transfer: {
-            amount: inputAmount.quotient.toString(),
+            amount,
             to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
             data,
           },
@@ -79,6 +82,7 @@ export class InjectiveXWalletClient extends XWalletClient {
             denom: 'inj',
             amount: xCallFee.rollback.toString(),
           },
+          { denom: token.address, amount },
         ],
       });
 
@@ -146,9 +150,8 @@ export class InjectiveXWalletClient extends XWalletClient {
     }
 
     const data = getBytesFromString(JSON.stringify({}));
-    const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
 
-    if (isNative) {
+    if (isNativeCurrency(inputAmount.currency)) {
       const msg = MsgExecuteContractCompat.fromJSON({
         contractAddress: injective.contracts.assetManager,
         sender: account,
@@ -274,7 +277,9 @@ export class InjectiveXWalletClient extends XWalletClient {
   async executeRepay(xTransactionInput: XTransactionInput) {
     const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
 
-    if (!inputAmount || !usedCollateral) {
+    const bnUSD = xTokenMap['injective-1'].find(xToken => xToken.symbol === 'bnUSD');
+
+    if (!inputAmount || !usedCollateral || !bnUSD) {
       return;
     }
 
@@ -282,13 +287,14 @@ export class InjectiveXWalletClient extends XWalletClient {
     const data = getBytesFromString(
       JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
     );
+    const amount = inputAmount.multiply(-1).quotient.toString();
 
     const msg = MsgExecuteContractCompat.fromJSON({
       contractAddress: injective.contracts.bnUSD!,
       sender: account,
       msg: {
         cross_transfer: {
-          amount: inputAmount.multiply(-1).quotient.toString(),
+          amount,
           to: destination,
           data,
         },
@@ -298,6 +304,7 @@ export class InjectiveXWalletClient extends XWalletClient {
           denom: 'inj',
           amount: xCallFee.rollback.toString(),
         },
+        { denom: bnUSD.address, amount },
       ],
     });
 

@@ -1,4 +1,4 @@
-import { XChainType } from '../types';
+import { XChainType } from './xChain';
 
 export type XAccount = {
   address: string | undefined;
@@ -13,5 +13,4 @@ export type XConnection = {
 export type CurrencyKey = string;
 
 export * from './xChain';
-
 export * from './xToken';

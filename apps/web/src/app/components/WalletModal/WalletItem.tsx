@@ -32,18 +32,6 @@ export const handleConnectWallet = (
   xConnect: (xConnector: XConnector) => Promise<void>,
 ) => {
   if (!xChainType) return;
-  if (!xConnectors || xConnectors.length === 0) {
-    switch (xChainType) {
-      case 'EVM':
-        break;
-      case 'INJECTIVE':
-        break;
-      case 'SUI':
-        break;
-      default:
-        break;
-    }
-  }
 
   if (xChainType === 'EVM') {
     modalActions.openModal(MODAL_ID.EVM_WALLET_OPTIONS_MODAL);
@@ -51,6 +39,8 @@ export const handleConnectWallet = (
     modalActions.openModal(MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL);
   } else if (xChainType === 'SUI') {
     modalActions.openModal(MODAL_ID.SUI_WALLET_OPTIONS_MODAL);
+  } else if (xChainType === 'STELLAR') {
+    modalActions.openModal(MODAL_ID.STELLAR_WALLET_OPTIONS_MODAL);
   } else {
     xConnect(xConnectors[0]);
   }

@@ -1,6 +1,7 @@
 import { isBrowser } from 'react-device-detect';
 import { XAccount } from '@/xwagmi/types';
 import { ICONexRequestEventType, ICONexResponseEventType, request } from './iconex';
+import HanaIcon from '@/xwagmi/assets/wallets/hana.svg?inline';
 
 import { XConnector } from '@/xwagmi/core/XConnector';
 
@@ -30,5 +31,9 @@ export class IconHanaXConnector extends XConnector {
 
   async disconnect(): Promise<void> {
     console.log('HanaIconXConnector disconnected');
+  }
+
+  public get icon() {
+    return HanaIcon;
   }
 }

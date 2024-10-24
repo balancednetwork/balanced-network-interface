@@ -243,6 +243,14 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sui.png"
     },
     {
+      "address": "cx518f64edcd35db9044a2de63fdc10abfd5f7d611",
+      "chainId": 1,
+      "name": "XLM",
+      "symbol": "XLM",
+      "decimals": 7,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/xlm.png"
+    },
+    {
       "address": "cx15ddac8c2663bd7e71ca1688dffa426070752fbd",
       "chainId": 1,
       "name": "Threshold BTC",
@@ -265,6 +273,14 @@
       "symbol": "weETH",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/weeth.png"
+    },
+    {
+      "address": "cx65c9e3d4fea842e00add0d32a5b4c5e4e04c7a6b",
+      "chainId": 1,
+      "name": "SOL",
+      "symbol": "SOL",
+      "decimals": 9,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sol.png"
     }
   ]
 }

@@ -42,6 +42,16 @@ export const SelectorWrap = styled.div`
   cursor: pointer;
   font-size: 16px;
   color: ${({ theme }) => theme.colors.primaryBright};
+
+  @-moz-document url-prefix() {
+    img {
+      transform: translate3d(0, -3px, 0)
+    }
+    svg {
+      position: relative;
+      top: -1px;
+    }
+  }
 `;
 
 const CrossChainOptions = ({

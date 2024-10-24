@@ -14,6 +14,7 @@ import { toBytes, toHex } from 'viem';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
 import { SuiXService } from './SuiXService';
+import { isNativeCurrency } from '@/constants/tokens';
 
 const addressesMainnet = {
   'Balanced Package Id': '0xa3c66ac08bca78a475954683a872a296fd61a28d478c4a8ebce676fc38f502d6',
@@ -34,7 +35,9 @@ export class SuiXWalletClient extends XWalletClient {
     return SuiXService.getInstance();
   }
 
-  async approve(token, owner, spender, currencyAmountToApprove) {}
+  async approve(amountToApprove, spender, owner) {
+    return Promise.resolve(undefined);
+  }
 
   async executeTransaction(xTransactionInput: XTransactionInput, options) {
     const { signTransaction } = options;
@@ -80,12 +83,11 @@ export class SuiXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
-    const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
     const amount = BigInt(inputAmount.quotient.toString());
 
     let txResult;
-    if (isNative) {
+    if (isNativeCurrency(inputAmount.currency)) {
       const txb = new Transaction();
 
       const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, XCALL_FEE_AMOUNT]);

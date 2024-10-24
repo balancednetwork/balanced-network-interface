@@ -1,5 +1,5 @@
 import { xChains } from '@/xwagmi/constants/xChains';
-import { XChainId, XChainType } from '@balancednetwork/sdk-core';
+import { XChainId, XChainType } from '@/xwagmi/types';
 import { useSuiClient } from '@mysten/dapp-kit';
 import { useEffect } from 'react';
 import { create } from 'zustand';
@@ -20,6 +20,8 @@ import {
   InjectiveXWalletClient,
 } from './xchains/injective';
 import { SuiXPublicClient, SuiXService, SuiXWalletClient } from './xchains/sui';
+import { SolanaXService } from './xchains/solana/SolanaXService';
+import { SolanaXPublicClient, SolanaXWalletClient } from './xchains/solana';
 
 const iconXService = IconXService.getInstance();
 iconXService.setXConnectors([new IconHanaXConnector()]);
@@ -39,6 +41,9 @@ injectiveXService.setXConnectors([new InjectiveMetamaskXConnector(), new Injecti
 const suiXService = SuiXService.getInstance();
 suiXService.setXConnectors([]);
 
+const solanaXService = SolanaXService.getInstance();
+solanaXService.setXConnectors([]);
+
 export const xServices: Record<XChainType, XService> = {
   ICON: iconXService,
   ARCHWAY: archwayXService,
@@ -46,6 +51,7 @@ export const xServices: Record<XChainType, XService> = {
   HAVAH: havahXService,
   INJECTIVE: injectiveXService,
   SUI: suiXService,
+  SOLANA: solanaXService,
 };
 
 export const xPublicClients: Partial<Record<XChainId, XPublicClient>> = {};
@@ -141,6 +147,8 @@ function createXPublicClient(xChainId: XChainId) {
       return new InjectiveXPublicClient(xChainId);
     case 'SUI':
       return new SuiXPublicClient(xChainId);
+    case 'SOLANA':
+      return new SolanaXPublicClient(xChainId);
     default:
       throw new Error(`Unsupported xChainType: ${xChainType}`);
   }
@@ -161,6 +169,8 @@ function createXWalletClient(xChainId: XChainId) {
       return new InjectiveXWalletClient(xChainId);
     case 'SUI':
       return new SuiXWalletClient(xChainId);
+    case 'SOLANA':
+      return new SolanaXWalletClient(xChainId);
     default:
       throw new Error(`Unsupported xChainType: ${xChainType}`);
   }

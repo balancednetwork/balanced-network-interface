@@ -11,6 +11,7 @@ import {
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
+  XTransactionInput,
 } from '../../xcall/types';
 import { ICONTxResultType } from '../icon/types';
 import { HavahXService } from './HavahXService';
@@ -120,10 +121,6 @@ export class HavahXPublicClient extends XPublicClient {
     return events;
   }
 
-  // getScanBlockCount() {
-  //   return 1n;
-  // }
-
   async getEventLogs(
     xChainId: XChainId,
     { startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint },
@@ -183,9 +180,7 @@ export class HavahXPublicClient extends XPublicClient {
 
     return {
       eventType: XCallEventType.CallMessageSent,
-      // xChainId: this.xChainId,
       txHash,
-      // rawEventData: eventLog,
       from: indexed[1],
       to: indexed[2],
       sn: BigInt(parseInt(indexed[3], 16)),
@@ -211,12 +206,23 @@ export class HavahXPublicClient extends XPublicClient {
 
     return {
       eventType: XCallEventType.CallExecuted,
-      // xChainId: this.xChainId,
       txHash,
-      // rawEventData: eventLog,
       reqId: BigInt(parseInt(indexed[1], 16)),
       code: parseInt(data[0], 16),
       msg: data[1],
     };
+  }
+
+  needsApprovalCheck(xToken: XToken): boolean {
+    return false;
+  }
+
+  async estimateApproveGas(amountToApprove: CurrencyAmount<XToken>, spender: string, owner: string) {
+    return 0n;
+  }
+
+  async estimateSwapGas(xTransactionInput: XTransactionInput) {
+    // TODO: implement
+    return 0n;
   }
 }

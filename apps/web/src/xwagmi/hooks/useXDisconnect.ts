@@ -4,6 +4,7 @@ import { useDisconnect } from 'wagmi';
 import { getXService } from '../actions';
 import { XChainType } from '../types';
 import { useXWagmiStore } from '../useXWagmiStore';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 export function useXDisconnect() {
   const xConnections = useXWagmiStore(state => state.xConnections);
@@ -11,6 +12,7 @@ export function useXDisconnect() {
 
   const { disconnectAsync } = useDisconnect();
   const { mutateAsync: suiDisconnectAsync } = useDisconnectWallet();
+  const solanaWallet = useWallet();
 
   const disconnect = useCallback(
     async (xChainType: XChainType) => {
@@ -20,6 +22,9 @@ export function useXDisconnect() {
           break;
         case 'SUI':
           await suiDisconnectAsync();
+          break;
+        case 'SOLANA':
+          await solanaWallet.disconnect();
           break;
         default: {
           const xService = getXService(xChainType);
@@ -32,7 +37,7 @@ export function useXDisconnect() {
 
       unsetXConnection(xChainType);
     },
-    [xConnections, unsetXConnection, disconnectAsync, suiDisconnectAsync],
+    [xConnections, unsetXConnection, disconnectAsync, suiDisconnectAsync, solanaWallet],
   );
   return disconnect;
 }

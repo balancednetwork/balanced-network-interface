@@ -14,6 +14,7 @@ type XTransactionStore = {
   add: (transaction: XTransaction) => void;
   success: (id) => void;
   fail: (id) => void;
+  getTransactions: () => XTransaction[];
   getPendingTransactions: (signedWallets: { xChainId: XChainId | undefined; address: string }[]) => XTransaction[];
   remove: (id: string) => void;
 };
@@ -60,6 +61,17 @@ export const useXTransactionStore = create<XTransactionStore>()(
       fail: (id: string) => {
         set(state => {
           state.transactions[id].status = XTransactionStatus.failure;
+        });
+      },
+
+      getTransactions: () => {
+        return Object.values(get().transactions).sort((a: XTransaction, b: XTransaction) => {
+          const aPrimaryMessage = xMessageActions.getOf(a.id, true);
+          const bPrimaryMessage = xMessageActions.getOf(b.id, true);
+          if (aPrimaryMessage && bPrimaryMessage) {
+            return bPrimaryMessage.createdAt - aPrimaryMessage.createdAt;
+          }
+          return 0;
         });
       },
 

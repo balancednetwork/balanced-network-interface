@@ -26,7 +26,7 @@ const XTokenList = () => {
   return (
     <>
       <ScrollArea>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-4 cursor-default">
           <div className="">Assets</div>
           <div className="text-right">Balance</div>
           <div className="text-right">Value</div>

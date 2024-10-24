@@ -20,7 +20,6 @@ const icons = {
 
 export const SuiWalletOptionsModal = ({ id = MODAL_ID.SUI_WALLET_OPTIONS_MODAL }: { id?: MODAL_ID }) => {
   const modalOpen = useModalOpen(id);
-
   const xConnectors = useXConnectors('SUI');
   const xConnect = useXConnect();
 

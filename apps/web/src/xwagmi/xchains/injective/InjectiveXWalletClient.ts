@@ -1,13 +1,12 @@
-import { Percent } from '@balancednetwork/sdk-core';
+import { Percent, Token } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
-import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
+import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xwagmi/xcall/utils';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
 
+import { isNativeCurrency } from '@/constants/tokens';
 import { FROM_SOURCES, TO_SOURCES, injective } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core';
-import { XToken } from '@/xwagmi/types';
 import { uintToBytes } from '@/xwagmi/utils';
 import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import { RLP } from '@ethereumjs/rlp';
@@ -21,7 +20,9 @@ export class InjectiveXWalletClient extends XWalletClient {
     return InjectiveXService.getInstance();
   }
 
-  async approve(token: XToken, owner: string, spender: string, currencyAmountToApprove: CurrencyAmount<XToken>) {}
+  async approve(amountToApprove, spender, owner) {
+    return Promise.resolve(undefined);
+  }
 
   async executeTransaction(xTransactionInput: XTransactionInput) {
     const { type, direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } =
@@ -62,7 +63,7 @@ export class InjectiveXWalletClient extends XWalletClient {
     }
 
     const isBnUSD = inputAmount.currency?.symbol === 'bnUSD';
-    const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
+    const isDenom = inputAmount && inputAmount.currency instanceof Token ? isDenomAsset(inputAmount.currency) : false;
 
     if (isBnUSD) {
       const amount = inputAmount.quotient.toString();
@@ -149,9 +150,8 @@ export class InjectiveXWalletClient extends XWalletClient {
     }
 
     const data = getBytesFromString(JSON.stringify({}));
-    const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
 
-    if (isNative) {
+    if (isNativeCurrency(inputAmount.currency)) {
       const msg = MsgExecuteContractCompat.fromJSON({
         contractAddress: injective.contracts.assetManager,
         sender: account,

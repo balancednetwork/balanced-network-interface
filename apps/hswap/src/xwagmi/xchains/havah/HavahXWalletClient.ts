@@ -2,7 +2,6 @@ import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
-
 import { isNativeCurrency } from '@/constants/tokens';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { showMessageOnBeforeUnload, toDec } from '@/xwagmi/utils';
@@ -61,6 +60,8 @@ export class HavahXWalletClient extends XWalletClient {
           },
         }),
       );
+    } else if (type === XTransactionType.REPAY) {
+      return await this._executeRepay(xTransactionInput);
     } else {
       throw new Error('Invalid XTransactionType');
     }
@@ -70,14 +71,9 @@ export class HavahXWalletClient extends XWalletClient {
 
     let txResult;
     if (isBnUSD) {
-      console.log('isBnUSD');
-      txResult = await havahJs.inject({ account }).bnUSD['crossTransferV2'](
-        destination,
-        // parseInt(inputAmount.quotient.toString()),
-        toDec(inputAmount),
-        data,
-        xCallFee.rollback.toString(),
-      );
+      txResult = await havahJs
+        .inject({ account })
+        .bnUSD['crossTransferV2'](destination, toDec(inputAmount), data, xCallFee.rollback.toString());
     } else {
       if (!isNative) {
         throw new Error('Only native token and bnUSD are supported');
@@ -88,6 +84,31 @@ export class HavahXWalletClient extends XWalletClient {
           .AssetManager['deposit'](parseFloat(inputAmount.toExact()), destination, data, xCallFee.rollback.toString());
       }
     }
+    const { txHash: hash } = txResult || {};
+
+    if (hash) {
+      return hash;
+    }
+  }
+
+  async _executeRepay(xTransactionInput: XTransactionInput) {
+    const { account, inputAmount, recipient, xCallFee, usedCollateral } = xTransactionInput;
+
+    if (!inputAmount || !usedCollateral) {
+      return;
+    }
+
+    const amount = toDec(inputAmount.multiply(-1));
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
+    const data = toHex(
+      JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
+    );
+
+    const txResult = await havahJs
+      .inject({ account })
+      .bnUSD['crossTransferV2'](destination, amount, data, xCallFee.rollback.toString());
+
+    // @ts-ignore
     const { txHash: hash } = txResult || {};
 
     if (hash) {

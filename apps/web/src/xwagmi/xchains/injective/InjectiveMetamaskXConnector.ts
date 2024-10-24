@@ -4,7 +4,7 @@ import { XConnector } from '@/xwagmi/core';
 import { getInjectiveAddress } from '@injectivelabs/sdk-ts';
 import { Wallet } from '@injectivelabs/wallet-ts';
 import { InjectiveXService } from './InjectiveXService';
-import MetamaskIcon from './assets/metamask.svg?inline';
+import MetamaskIcon from '@/xwagmi/assets/wallets/metamask.svg?inline';
 
 export class InjectiveMetamaskXConnector extends XConnector {
   constructor() {

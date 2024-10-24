@@ -101,7 +101,9 @@ const XChainItem = ({ xChain, isActive, isLast, currency, showTotalXWalletValue 
         </Box>
         <Typography fontWeight="bold" marginRight={2}>
           {xChain.name}
-          <span style={{ fontWeight: 'normal' }}>{spokeAssetVersion ? ` (${spokeAssetVersion})` : ''}</span>
+          <span style={{ fontWeight: 'normal' }}>
+            {spokeAssetVersion && !showTotalXWalletValue ? ` (${spokeAssetVersion})` : ''}
+          </span>
         </Typography>
         {hasSignedIn ? (
           <Typography ml="auto">{value ? formatValue(value.toFixed()).replace('$0.0000', '-') : '-'}</Typography>

@@ -225,12 +225,22 @@ export default function AllPoolsPanel({ query }: { query: string }) {
     if (!query) return relevantPairs;
 
     return relevantPairs.filter(pair => {
+      //show network owned liquidity
+      if (query === 'nol' && nolPairs) {
+        return nolPairs.includes(pair.info.id);
+      }
+      //show pair with crosschain native token
+      if (query === 'native') {
+        return Object.values(xChainMap)
+          .map(chain => chain.nativeCurrency.symbol)
+          .includes(pair.info.baseCurrencyKey);
+      }
       return (
         pair.info.baseCurrencyKey.toLowerCase().includes(query.toLowerCase()) ||
         pair.info.quoteCurrencyKey.toLowerCase().includes(query.toLowerCase())
       );
     });
-  }, [relevantPairs, query]);
+  }, [relevantPairs, query, nolPairs]);
 
   return (
     <Box overflow="auto">

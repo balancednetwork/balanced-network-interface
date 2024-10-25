@@ -10,7 +10,7 @@ import { MouseoverTooltip } from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import QuestionIcon from '@/assets/icons/question.svg';
 import useSort from '@/hooks/useSort';
-import { MIN_LIQUIDITY_TO_INCLUDE, PairData, useAllPairsById } from '@/queries/backendv2';
+import { MIN_LIQUIDITY_TO_INCLUDE, PairData, useAllPairsById, useNOLPools } from '@/queries/backendv2';
 import { useDerivedMintInfo, useMintActionHandlers } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
 import { getFormattedNumber } from '@/utils/formatter';
@@ -20,6 +20,7 @@ import { HeaderText } from '@/app/components/SearchModal/styleds';
 import Skeleton from '@/app/components/Skeleton';
 import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
 import { PairInfo } from '@/types';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 
 const COMPACT_ITEM_COUNT = 8;
 
@@ -189,6 +190,7 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
 
 export default function AllPoolsPanel() {
   const { data: allPairs } = useAllPairsById();
+  const { data: nolPairs } = useNOLPools();
   const { sortBy, handleSortSelect, sortData } = useSort({ key: 'apyTotal', order: 'DESC' });
   const { noLiquidity } = useDerivedMintInfo();
   const { onCurrencySelection } = useMintActionHandlers(noLiquidity);
@@ -202,6 +204,16 @@ export default function AllPoolsPanel() {
       onCurrencySelection(Field.CURRENCY_B, pair.quoteToken);
     }
   };
+
+  //show only incentivised, cross native or NOL pairs
+  const relevantPairs = useMemo(() => {
+    if (!allPairs || !nolPairs) return [];
+    const nativeSymbols = Object.values(xChainMap).map(chain => chain.nativeCurrency.symbol);
+
+    return Object.values(allPairs).filter(pair => {
+      return pair.balnApy || nolPairs.includes(pair.info.id) || nativeSymbols.includes(pair.info.baseCurrencyKey);
+    });
+  }, [allPairs, nolPairs]);
 
   return (
     <Box overflow="auto">
@@ -290,8 +302,8 @@ export default function AllPoolsPanel() {
           </HeaderText>
         </DashGrid>
 
-        {allPairs ? (
-          sortData(Object.values(allPairs)).map((pair, index, array) =>
+        {relevantPairs ? (
+          sortData(relevantPairs).map((pair, index, array) =>
             showingExpanded || index < COMPACT_ITEM_COUNT ? (
               <PairItem
                 key={index}
@@ -319,7 +331,7 @@ export default function AllPoolsPanel() {
           </>
         )}
 
-        {allPairs && Object.values(allPairs).length > COMPACT_ITEM_COUNT && (
+        {relevantPairs.length > COMPACT_ITEM_COUNT && (
           <Box>
             <DropdownLink expanded={showingExpanded} setExpanded={setShowingExpanded} />
           </Box>

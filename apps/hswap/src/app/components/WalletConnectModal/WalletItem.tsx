@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
 
+import CopyableAddress from '@/app/components2/CopyableAddress';
 import { Button } from '@/components/ui/button';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { XConnector } from '@/xwagmi/core';
 import { useXAccount, useXConnect, useXConnection, useXConnectors, useXDisconnect } from '@/xwagmi/hooks';
 import { XChainType } from '@balancednetwork/sdk-core';
-import { CopyableAddress } from '../Header';
 
 export type WalletItemProps = {
   name: string;

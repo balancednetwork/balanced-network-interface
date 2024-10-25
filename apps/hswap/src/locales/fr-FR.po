@@ -376,7 +376,7 @@ msgstr "Se connecter"
 msgid "Tokens"
 msgstr ""
 
-#: src/app/components/Header/index.tsx
+#: src/app/components2/CopyableAddress/index.tsx
 msgid "Copied"
 msgstr "Copié"
 
@@ -1946,7 +1946,7 @@ msgstr ""
 #~ msgid "You must have at least {0} bBALN to propose a change."
 #~ msgstr ""
 
-#: src/app/components/Header/index.tsx
+#: src/app/components2/CopyableAddress/index.tsx
 msgid "Copy"
 msgstr ""
 

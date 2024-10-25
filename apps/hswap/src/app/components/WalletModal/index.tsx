@@ -1,24 +1,24 @@
+import React, { useCallback } from 'react';
+
+import { Trans } from '@lingui/macro';
+import { ChevronsRightIcon, PowerIcon } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { useXDisconnectAll } from '@/xwagmi/hooks';
-import { Trans } from '@lingui/macro';
-import { ChevronsRightIcon, PowerIcon } from 'lucide-react';
-import React, { useCallback } from 'react';
-import HistoryItemList from './HistoryItemList';
-import XTokenList from './XTokenList';
 import { xChainTypes } from '../WalletConnectModal';
 import WalletItem from '../WalletConnectModal/WalletItem';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import HistoryItemList from './HistoryItemList';
+import { IconWithConfirmTextButton } from './IconWithConfirmTextButton';
+import XTokenList from './XTokenList';
 
 const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
   const open = useModalOpen(modalId);
   const onDismiss = useCallback(() => {
     modalActions.closeModal(modalId);
   }, [modalId]);
-
-  const handleChangeWallet = () => {
-    modalActions.openModal(MODAL_ID.WALLET_CONNECT_MODAL);
-  };
 
   const xDisconnectAll = useXDisconnectAll();
 
@@ -30,15 +30,19 @@ const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
   return (
     <Sheet open={open} modal={false}>
       <SheetContent className="flex flex-col gap-2">
-        <div className="absolute left-[-40px] top-[50px] cursor-pointer" onClick={onDismiss}>
+        <Button variant="ghost" size="icon" className="absolute left-[-40px] top-[50px]" onClick={onDismiss}>
           <ChevronsRightIcon className="w-6 h-6" />
-        </div>
+        </Button>
 
         <div className="flex items-center justify-end gap-2">
-          <div className="cursor-pointer" onClick={handleDisconnectWallet}>
-            <PowerIcon className="w-6 h-6" />
-          </div>
+          <IconWithConfirmTextButton
+            Icon={<PowerIcon className="w-6 h-6" />}
+            text="Disconnect"
+            dismissOnHoverOut={true}
+            onConfirm={handleDisconnectWallet}
+          />
         </div>
+
         <Tabs defaultValue="tokens">
           <TabsList className="gap-2">
             <TabsTrigger

@@ -367,7 +367,7 @@ msgstr "Sign in"
 msgid "Tokens"
 msgstr "Tokens"
 
-#: src/app/components/Header/index.tsx
+#: src/app/components2/CopyableAddress/index.tsx
 msgid "Copied"
 msgstr "Copied"
 
@@ -1884,7 +1884,7 @@ msgstr "Wallets"
 #~ msgid "You must have at least {0} bBALN to propose a change."
 #~ msgstr "You must have at least {0} bBALN to propose a change."
 
-#: src/app/components/Header/index.tsx
+#: src/app/components2/CopyableAddress/index.tsx
 msgid "Copy"
 msgstr "Copy"
 

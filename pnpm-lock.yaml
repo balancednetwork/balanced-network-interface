@@ -278,6 +278,9 @@ importers:
       tailwindcss-animate:
         specifier: 1.0.7
         version: 1.0.7(tailwindcss@3.4.10)
+      use-resize-observer:
+        specifier: 9.1.0
+        version: 9.1.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       vaul:
         specifier: 0.9.4
         version: 0.9.4(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -3078,6 +3081,9 @@ packages:
   '@json-rpc-tools/utils@1.7.6':
     resolution: {integrity: sha512-HjA8x/U/Q78HRRe19yh8HVKoZ+Iaoo3YZjakJYxR+rw52NHo6jM+VE9b8+7ygkCFXl/EHID5wh/MkXaE/jGyYw==}
     deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+
+  '@juggle/resize-observer@3.4.0':
+    resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
 
   '@keplr-wallet/common@0.12.122':
     resolution: {integrity: sha512-Q+8+wmGYDarEcyXQQSD//ugKmBTl0Gxam0MGydERHSnm5BEl/1bQNAT4ZSo+1zeuncKdwHQ6MSRegX46/XjMTQ==}
@@ -12536,6 +12542,12 @@ packages:
       '@types/react':
         optional: true
 
+  use-resize-observer@9.1.0:
+    resolution: {integrity: sha512-R25VqO9Wb3asSD4eqtcxk8sJalvIOYBqS8MNZlpDSQ4l4xMQxC/J7Id9HoTqPq8FwULIn0PVW+OAqF2dyYbjow==}
+    peerDependencies:
+      react: 16.8.0 - 18
+      react-dom: 16.8.0 - 18
+
   use-sidecar@1.1.2:
     resolution: {integrity: sha512-epTbsLuzZ7lPClpz2TyryBfztm7m+28DlEv2ZCQ3MDr5ssiwyOwGH/e5F9CkfWjJ1t4clvI58yF822/GUkjjhw==}
     engines: {node: '>=10'}
@@ -16397,6 +16409,8 @@ snapshots:
     dependencies:
       '@json-rpc-tools/types': 1.7.6
       '@pedrouid/environment': 1.0.1
+
+  '@juggle/resize-observer@3.4.0': {}
 
   '@keplr-wallet/common@0.12.122':
     dependencies:
@@ -28718,6 +28732,12 @@ snapshots:
       tslib: 2.6.2
     optionalDependencies:
       '@types/react': 18.2.67
+
+  use-resize-observer@9.1.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      '@juggle/resize-observer': 3.4.0
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
 
   use-sidecar@1.1.2(@types/react@18.2.67)(react@18.2.0):
     dependencies:

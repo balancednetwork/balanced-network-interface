@@ -10,14 +10,42 @@ import { getRlpEncodedSwapData } from '../../xcall/utils';
 import { SolanaXService } from './SolanaXService';
 import { ComputeBudgetProgram, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import { isNativeCurrency } from '@/constants/tokens';
-import { xChainMap } from '@/xwagmi/constants/xChains';
+import { solana, xChainMap } from '@/xwagmi/constants/xChains';
 import { Program } from '@coral-xyz/anchor';
 
 import assetManagerIdl from './idls/assetManager.json';
-import xCallIdl from './idls/xCall.json';
 import bnUSDIdl from './idls/bnUSD.json';
 import * as anchor from '@coral-xyz/anchor';
-import { findPda, getConnectionAccounts, getXCallAccounts } from './utils';
+import { fetchMintToken, findPda, getConnectionAccounts, getXCallAccounts } from './utils';
+import {
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  createAssociatedTokenAccountInstruction,
+  getAssociatedTokenAddressSync,
+  TOKEN_PROGRAM_ID,
+} from '@solana/spl-token';
+
+const createAssociatedTokenTx = account => {
+  const bnUSDMint = new PublicKey(solana.contracts.bnUSD!);
+  const associatedToken = getAssociatedTokenAddressSync(
+    bnUSDMint,
+    new PublicKey(account),
+    false,
+    TOKEN_PROGRAM_ID,
+    ASSOCIATED_TOKEN_PROGRAM_ID,
+  );
+
+  const tx = new Transaction().add(
+    createAssociatedTokenAccountInstruction(
+      new PublicKey(account), // payer.publicKey,
+      associatedToken,
+      new PublicKey(account), // owner,
+      bnUSDMint,
+      TOKEN_PROGRAM_ID,
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+    ),
+  );
+  return tx;
+};
 
 export class SolanaXWalletClient extends XWalletClient {
   getXService(): SolanaXService {
@@ -40,7 +68,6 @@ export class SolanaXWalletClient extends XWalletClient {
 
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
     const receiver = `${direction.to}/${recipient}`;
-    const amount = inputAmount.quotient.toString();
 
     let data;
     if (type === XTransactionType.SWAP) {
@@ -74,19 +101,21 @@ export class SolanaXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
-    // @ts-ignore
-    const assetManagerProgram = new Program(assetManagerIdl, provider);
-
     const isNative = isNativeCurrency(inputAmount.currency);
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
     let txSignature;
 
-    console.log('isNative', isNative, inputAmount);
+    const assetManagerId = new PublicKey(solana.contracts.assetManager);
+    const xCallId = new PublicKey(solana.contracts.xCall);
+    const xCallManagerId = new PublicKey(solana.contracts.xCallManager!);
+    const bnUSDId = new PublicKey(solana.contracts.bnUSD!);
+
     if (inputAmount.currency.isNativeXToken()) {
-      const assetManagerId = new PublicKey(xChainMap[direction.from].contracts.assetManager);
-      const xCallId = new PublicKey(xChainMap[direction.from].contracts.xCall);
-      const xCallManagerId = new PublicKey(xChainMap[direction.from].contracts.xCallManager!);
+      const amount = inputAmount.quotient.toString();
+
+      // @ts-ignore
+      const assetManagerProgram = new Program(assetManagerIdl, provider);
 
       const vaultNativePda = await findPda(['vault_native'], assetManagerId);
       const statePda = await findPda(['state'], assetManagerId);
@@ -94,7 +123,7 @@ export class SolanaXWalletClient extends XWalletClient {
       const xCallConfigPda = await findPda(['config'], xCallId);
       const xCallAuthorityPda = await findPda(['dapp_authority'], assetManagerId);
 
-      const xcallAccounts = await getXCallAccounts(xCallId, provider);
+      const xCallAccounts = await getXCallAccounts(xCallId, provider);
       const connectionAccounts = await getConnectionAccounts(direction.to, xCallManagerId, provider);
 
       const computeBudgetIx = ComputeBudgetProgram.setComputeUnitLimit({ units: 1_000_000 });
@@ -122,15 +151,56 @@ export class SolanaXWalletClient extends XWalletClient {
           systemProgram: SystemProgram.programId,
           xcallAuthority: xCallAuthorityPda,
         })
-        .remainingAccounts([...xcallAccounts, ...connectionAccounts])
+        .remainingAccounts([...xCallAccounts, ...connectionAccounts])
         .instruction();
 
       tx.add(instruction);
 
-      console.log('tx', tx);
       txSignature = await wallet.sendTransaction(tx, connection);
-      console.log('txSignature', txSignature);
+    } else if (isBnUSD) {
+      const amount = inputAmount.quotient * 1_000_000_000n + '';
+
+      // @ts-ignore
+      const bnUSDProgram = new Program(bnUSDIdl, provider);
+
+      const mintToken = await fetchMintToken(bnUSDId, provider);
+
+      const statePda = await findPda(['state'], bnUSDId);
+      const xcallManagerStatePda = await findPda(['state'], xCallManagerId);
+      const xcallConfigPda = await findPda(['config'], xCallId);
+      const xcallAuthorityPda = await findPda(['dapp_authority'], bnUSDId);
+
+      const xCallAccounts = await getXCallAccounts(xCallId, provider);
+      const connectionAccounts = await getConnectionAccounts(direction.to, xCallManagerId, provider);
+
+      const associatedTokenAcc = getAssociatedTokenAddressSync(mintToken, new PublicKey(account));
+
+      const computeBudgetIx = ComputeBudgetProgram.setComputeUnitLimit({ units: 1_000_000 });
+      const tx = new Transaction().add(computeBudgetIx);
+
+      const crossTransferTx = await bnUSDProgram.methods
+        .crossTransfer(destination, new anchor.BN(amount), Buffer.from(data, 'hex'))
+        .accounts({
+          from: associatedTokenAcc,
+          mint: mintToken,
+          fromAuthority: new PublicKey(account),
+          state: statePda,
+          xcallManagerState: xcallManagerStatePda,
+          xcallConfig: xcallConfigPda,
+          xcall: xCallId,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          systemProgram: SystemProgram.programId,
+          xcallAuthority: xcallAuthorityPda,
+        })
+        .remainingAccounts([...xCallAccounts, ...connectionAccounts])
+        .instruction();
+
+      tx.add(crossTransferTx);
+
+      txSignature = await wallet.sendTransaction(tx, connection);
     }
+
+    console.log('txSignature', txSignature);
 
     if (txSignature) {
       return txSignature;

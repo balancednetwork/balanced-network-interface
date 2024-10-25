@@ -29,6 +29,14 @@ export const xChainTypes: WalletItemProps[] = [
     xChainType: 'SUI',
   },
   {
+    name: 'Stellar wallets',
+    xChainType: 'STELLAR',
+  },
+  {
+    name: 'Solana wallets',
+    xChainType: 'SOLANA',
+  },
+  {
     name: 'Icon wallets',
     xChainType: 'ICON',
   },

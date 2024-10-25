@@ -38,6 +38,9 @@ importers:
       '@balancednetwork/v1-sdk':
         specifier: workspace:*
         version: link:../../packages/v1-sdk
+      '@coral-xyz/anchor':
+        specifier: 0.30.1
+        version: 0.30.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@cosmjs/cosmwasm-stargate':
         specifier: 0.32.2
         version: 0.32.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -50,6 +53,9 @@ importers:
       '@cosmjs/tendermint-rpc':
         specifier: 0.32.3
         version: 0.32.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@creit.tech/stellar-wallets-kit':
+        specifier: 1.2.1
+        version: 1.2.1(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(@types/react@18.2.67)(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)
       '@ethereumjs/rlp':
         specifier: 5.0.0
         version: 5.0.0
@@ -131,6 +137,9 @@ importers:
       '@reduxjs/toolkit':
         specifier: 2.2.0
         version: 2.2.0(react-redux@9.1.0(@types/react@18.2.67)(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(redux@5.0.1))(react@18.2.0)
+      '@solana/spl-token':
+        specifier: 0.4.9
+        version: 0.4.9(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)
       '@solana/wallet-adapter-base':
         specifier: 0.9.23
         version: 0.9.23(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))
@@ -146,6 +155,9 @@ importers:
       '@solana/web3.js':
         specifier: 1.95.4
         version: 1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@stellar/stellar-sdk':
+        specifier: 12.3.0
+        version: 12.3.0
       '@tanstack/react-query':
         specifier: 5.29.2
         version: 5.29.2(react@18.2.0)

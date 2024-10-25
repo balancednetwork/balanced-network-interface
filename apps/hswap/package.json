@@ -7,10 +7,12 @@
     "@balancednetwork/balanced-js": "workspace:*",
     "@balancednetwork/sdk-core": "workspace:*",
     "@balancednetwork/v1-sdk": "workspace:*",
+    "@coral-xyz/anchor": "0.30.1",
     "@cosmjs/cosmwasm-stargate": "0.32.2",
     "@cosmjs/encoding": "0.32.3",
     "@cosmjs/proto-signing": "0.32.3",
     "@cosmjs/tendermint-rpc": "0.32.3",
+    "@creit.tech/stellar-wallets-kit": "1.2.1",
     "@ethereumjs/rlp": "5.0.0",
     "@injectivelabs/networks": "1.14.13",
     "@injectivelabs/sdk-ts": "1.14.13",
@@ -38,11 +40,13 @@
     "@radix-ui/react-tooltip": "1.1.3",
     "@reach/portal": "0.18.0",
     "@reduxjs/toolkit": "2.2.0",
+    "@solana/spl-token": "0.4.9",
     "@solana/wallet-adapter-base": "0.9.23",
     "@solana/wallet-adapter-react": "0.15.35",
     "@solana/wallet-adapter-react-ui": "0.9.35",
     "@solana/wallet-adapter-wallets": "0.19.32",
     "@solana/web3.js": "1.95.4",
+    "@stellar/stellar-sdk": "12.3.0",
     "@tanstack/react-query": "5.29.2",
     "@tanstack/react-table": "8.20.5",
     "@uniswap/token-lists": "1.0.0-beta.30",
@@ -105,11 +109,7 @@
     "knip": "knip"
   },
   "proxy": "https://balanced.sudoblock.io",
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not op_mini all"
-  ],
+  "browserslist": [">0.2%", "not dead", "not op_mini all"],
   "engines": {
     "node": ">=18.0.0"
   },

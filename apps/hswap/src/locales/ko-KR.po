@@ -968,8 +968,8 @@ msgstr "거래"
 #~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Manage wallets"
-msgstr ""
+#~ msgid "Manage wallets"
+#~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "Recieve sICX, which you can trade or unstake from the wallet section later."
@@ -1868,6 +1868,10 @@ msgstr "이 금액보다 가격이 차이가 많이 나는 경우 스왑이 실�
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 #~ msgid "Includes a fee of"
 #~ msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Wallets"
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "To deposit {collateralType}"

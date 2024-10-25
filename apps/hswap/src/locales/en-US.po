@@ -925,8 +925,8 @@ msgstr "Trade"
 #~ msgstr "Your pools"
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Manage wallets"
-msgstr "Manage wallets"
+#~ msgid "Manage wallets"
+#~ msgstr "Manage wallets"
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "Recieve sICX, which you can trade or unstake from the wallet section later."
@@ -1806,6 +1806,10 @@ msgstr "If the price slips by more than this amount, your swap will fail."
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 #~ msgid "Includes a fee of"
 #~ msgstr "Includes a fee of"
+
+#: src/app/components/WalletModal/index.tsx
+msgid "Wallets"
+msgstr "Wallets"
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "To deposit {collateralType}"

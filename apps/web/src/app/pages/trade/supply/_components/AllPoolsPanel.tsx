@@ -10,7 +10,7 @@ import { MouseoverTooltip } from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import QuestionIcon from '@/assets/icons/question.svg';
 import useSort from '@/hooks/useSort';
-import { MIN_LIQUIDITY_TO_INCLUDE, PairData, useAllPairsById, useNOLPools } from '@/queries/backendv2';
+import { MIN_LIQUIDITY_TO_INCLUDE, PairData, TOKEN_BLACKLIST, useAllPairsById, useNOLPools } from '@/queries/backendv2';
 import { useDerivedMintInfo, useMintActionHandlers } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
 import { getFormattedNumber } from '@/utils/formatter';
@@ -188,7 +188,7 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
   </>
 );
 
-export default function AllPoolsPanel() {
+export default function AllPoolsPanel({ query }: { query: string }) {
   const { data: allPairs } = useAllPairsById();
   const { data: nolPairs } = useNOLPools();
   const { sortBy, handleSortSelect, sortData } = useSort({ key: 'apyTotal', order: 'DESC' });
@@ -211,9 +211,26 @@ export default function AllPoolsPanel() {
     const nativeSymbols = Object.values(xChainMap).map(chain => chain.nativeCurrency.symbol);
 
     return Object.values(allPairs).filter(pair => {
-      return pair.balnApy || nolPairs.includes(pair.info.id) || nativeSymbols.includes(pair.info.baseCurrencyKey);
+      const isTokenBlacklisted = TOKEN_BLACKLIST.some(
+        token => token === pair.info.baseCurrencyKey || token === pair.info.quoteCurrencyKey,
+      );
+      return (
+        !isTokenBlacklisted &&
+        (pair.balnApy || nolPairs.includes(pair.info.id) || nativeSymbols.includes(pair.info.baseCurrencyKey))
+      );
     });
   }, [allPairs, nolPairs]);
+
+  const filteredRelevantPairs = useMemo(() => {
+    if (!query) return relevantPairs;
+
+    return relevantPairs.filter(pair => {
+      return (
+        pair.info.baseCurrencyKey.toLowerCase().includes(query.toLowerCase()) ||
+        pair.info.quoteCurrencyKey.toLowerCase().includes(query.toLowerCase())
+      );
+    });
+  }, [relevantPairs, query]);
 
   return (
     <Box overflow="auto">
@@ -302,8 +319,8 @@ export default function AllPoolsPanel() {
           </HeaderText>
         </DashGrid>
 
-        {relevantPairs ? (
-          sortData(relevantPairs).map((pair, index, array) =>
+        {filteredRelevantPairs ? (
+          sortData(filteredRelevantPairs).map((pair, index, array) =>
             showingExpanded || index < COMPACT_ITEM_COUNT ? (
               <PairItem
                 key={index}
@@ -331,7 +348,13 @@ export default function AllPoolsPanel() {
           </>
         )}
 
-        {relevantPairs.length > COMPACT_ITEM_COUNT && (
+        {filteredRelevantPairs.length === 0 && query && (
+          <Typography textAlign="center" mt={'30px'}>
+            <Trans>No pools found.</Trans>
+          </Typography>
+        )}
+
+        {filteredRelevantPairs.length > COMPACT_ITEM_COUNT && (
           <Box>
             <DropdownLink expanded={showingExpanded} setExpanded={setShowingExpanded} />
           </Box>

@@ -88,20 +88,25 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
               </Flex>
               <ChainsWrapper>
                 {xChainIds.map(xChainId => {
-                  const spokeAssetVersion: string | undefined = xTokenMap[xChainId].find(
-                    xToken => xToken.symbol === currency.symbol,
-                  )?.spokeVersion;
+                  try {
+                    const spokeAssetVersion: string | undefined = xTokenMap[xChainId].find(xToken => {
+                      console.log(xToken.symbol, currency.symbol);
+                      return xToken.symbol === currency.symbol;
+                    })?.spokeVersion;
 
-                  return (
-                    <MouseoverTooltip
-                      key={xChainId}
-                      text={`${xChainMap[xChainId].name}${spokeAssetVersion ? ' (' + spokeAssetVersion + ')' : ''}`}
-                      autoWidth
-                      placement="bottom"
-                    >
-                      <ChainLogo chain={xChainMap[xChainId]} size="18px" />
-                    </MouseoverTooltip>
-                  );
+                    return (
+                      <MouseoverTooltip
+                        key={xChainId}
+                        text={`${xChainMap[xChainId].name}${spokeAssetVersion ? ' (' + spokeAssetVersion + ')' : ''}`}
+                        autoWidth
+                        placement="bottom"
+                      >
+                        <ChainLogo chain={xChainMap[xChainId]} size="18px" />
+                      </MouseoverTooltip>
+                    );
+                  } catch (e) {
+                    return null;
+                  }
                 })}
               </ChainsWrapper>
             </Box>

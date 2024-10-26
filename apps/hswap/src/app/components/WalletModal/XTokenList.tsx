@@ -1,12 +1,12 @@
-import React, { useMemo } from 'react';
-import SingleChainBalanceItem from './SingleChainBalanceItem';
-import { useWalletBalances } from '@/store/wallet/hooks';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { useRatesWithOracle } from '@/queries/reward';
+import { useWalletBalances } from '@/store/wallet/hooks';
+import { formatValue } from '@/utils/formatter';
 import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import React, { useMemo } from 'react';
 import MultiChainBalanceItem from './MultiChainBalanceItem';
-import { formatValue } from '@/utils/formatter';
+import SingleChainBalanceItem from './SingleChainBalanceItem';
 
 const XTokenList = () => {
   const _balances = useWalletBalances();
@@ -26,10 +26,13 @@ const XTokenList = () => {
   return (
     <>
       <ScrollArea>
-        <div className="grid grid-cols-3 gap-4 cursor-default">
-          <div className="">Assets</div>
-          <div className="text-right">Balance</div>
-          <div className="text-right">Value</div>
+        <div className="cursor-default flex flex-col gap-1">
+          <div className="grid grid-cols-3 h-10 items-center px-2">
+            <div className="">Assets</div>
+            <div className="text-right">Balance</div>
+            <div className="text-right">Value</div>
+          </div>
+
           <>
             {Object.values(sortedFilteredBalances).map((balances, index) =>
               balances.length === 1 ? (
@@ -42,9 +45,9 @@ const XTokenList = () => {
         </div>
       </ScrollArea>
       {Object.keys(sortedFilteredBalances).length > 0 && (
-        <div className="pt-4 flex justify-between">
+        <div className="pt-4 px-2 flex justify-between">
           <div className="text-subtitle">Total</div>
-          <div>{formatValue(walletTotal.toFixed())}</div>
+          <div className="font-bold">{formatValue(walletTotal.toFixed())}</div>
         </div>
       )}
     </>

@@ -29,7 +29,7 @@ const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
 
   return (
     <Sheet open={open} modal={false}>
-      <SheetContent className="flex flex-col gap-2">
+      <SheetContent className="flex flex-col gap-2 p-4">
         <Button variant="ghost" size="icon" className="absolute left-[-40px] top-[50px]" onClick={onDismiss}>
           <ChevronsRightIcon className="w-6 h-6" />
         </Button>

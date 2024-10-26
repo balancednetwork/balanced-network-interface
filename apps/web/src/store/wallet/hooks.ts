@@ -199,6 +199,8 @@ export function useWalletFetchBalances() {
   React.useEffect(() => {
     stellarBalances && dispatch(changeBalances({ xChainId: stellar.xChainId, balances: stellarBalances }));
   }, [stellarBalances, dispatch]);
+
+  //fetch balances on sui
   const { address: accountSui } = useXAccount('SUI');
   const suiTokens = useXTokens('sui');
   const { data: suiBalances } = useXBalances({
@@ -210,6 +212,7 @@ export function useWalletFetchBalances() {
     suiBalances && dispatch(changeBalances({ xChainId: 'sui', balances: suiBalances }));
   }, [suiBalances, dispatch]);
 
+  // fetch balances on solana
   const { address: accountSolana } = useXAccount('SOLANA');
   const solanaTokens = useXTokens('solana');
   const { data: solanaBalances } = useXBalances({

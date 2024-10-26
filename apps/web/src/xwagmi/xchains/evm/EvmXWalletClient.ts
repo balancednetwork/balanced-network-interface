@@ -103,7 +103,7 @@ export class EvmXWalletClient extends XWalletClient {
     }
 
     // check if the bridge asset is native
-    const isNative = isNativeCurrency(inputAmount.currency);
+    const isNative = inputAmount.currency.isNativeXToken();
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
     let request: WriteContractParameters;

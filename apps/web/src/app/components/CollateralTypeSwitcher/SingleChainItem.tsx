@@ -1,6 +1,7 @@
 import { Typography } from '@/app/theme';
 import { useICX } from '@/constants/tokens';
 import { useIcxDisplayType } from '@/store/collateral/hooks';
+import { useIsPositionLocked } from '@/store/loan/hooks';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { toFraction } from '@/utils';
 import { formatValue } from '@/utils/formatter';
@@ -43,6 +44,8 @@ const SingleChainItem = ({
     return toFraction(prices[symbol!]);
   }, [prices, symbol]);
 
+  const shouldShowWarning = useIsPositionLocked(collateral, loan);
+
   return (
     <>
       <StyledListItem $border={!isNested && !isLast} onClick={() => onSelect(baseToken.symbol, xChainId as XChainId)}>
@@ -57,7 +60,7 @@ const SingleChainItem = ({
             {isNested ? xChainMap[xChainId].name : symbol === 'sICX' ? icxDisplayType : symbol}
           </Typography>
         </AssetSymbol>
-        <BalanceAndValueWrap>
+        <BalanceAndValueWrap $warning={!isPotential && !!shouldShowWarning}>
           {collateral && collateral.greaterThan(0) && (
             <DataText
               as="div"

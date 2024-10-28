@@ -1,7 +1,7 @@
 import { Link } from '@/app/components/Link';
 import { Typography } from '@/app/theme';
 import { Box, Flex } from 'rebass';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { BoxPanel } from '../Panel';
 import { notificationCSS } from './ICONWallets/utils';
 
@@ -68,7 +68,7 @@ export const DataText = styled(Typography)<{ $fSize?: string }>`
   font-size: ${({ $fSize }) => $fSize || '14px'};
 `;
 
-export const BalanceAndValueWrap = styled.div`
+export const BalanceAndValueWrap = styled.div<{ $warning?: boolean }>`
   display: flex;
   flex-wrap: wrap;
   width: 100%;
@@ -81,6 +81,14 @@ export const BalanceAndValueWrap = styled.div`
       }
     }
   }
+
+  ${({ $warning }) =>
+    $warning &&
+    css`
+  ${DataText} {
+    color: ${({ theme }) => theme.colors.alert};
+  }
+  `};
 `;
 
 export const List = styled(Box)`

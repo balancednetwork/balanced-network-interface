@@ -106,16 +106,11 @@ const PositionDetailPanel = () => {
 
   const availableLoanAmount = useLoanAvailableAmount();
 
-  const isLockWarning = useMemo(
+  const showLockWarning = useMemo(
     () =>
-      oraclePrice &&
-      (availableLoanAmount.isGreaterThan(0.005)
-        ? lockThresholdPrice.minus(oraclePrice).isGreaterThan(lockThresholdPrice.times(-1).times(0.001))
-        : true),
+      oraclePrice && (availableLoanAmount.isGreaterThan(0.01) ? lockThresholdPrice.isGreaterThan(oraclePrice) : true),
     [lockThresholdPrice, oraclePrice, availableLoanAmount],
   );
-
-  const isPassAllCollateralLocked = oraclePrice?.isLessThan(lockThresholdPrice);
 
   // handle rebalancing logic
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
@@ -223,7 +218,7 @@ const PositionDetailPanel = () => {
             <Divider my={4} />
             <Typography mb={2}>
               {t`The current ${collateralType === 'sICX' ? 'ICX' : collateralType} price is`}{' '}
-              <span style={{ color: isLockWarning ? theme.colors.alert : '#ffffff' }}>
+              <span style={{ color: showLockWarning ? theme.colors.alert : '#ffffff' }}>
                 {ratio.ICXUSDratio && oraclePrice
                   ? formatPrice(
                       collateralType === 'sICX' ? ratio.ICXUSDratio.dp(8).toFormat() : oraclePrice.dp(8).toFormat(),
@@ -257,14 +252,14 @@ const PositionDetailPanel = () => {
               <LeftChip
                 bg="primary"
                 style={{
-                  background: isPassAllCollateralLocked
+                  background: showLockWarning
                     ? '#fb6a6a'
                     : 'linear-gradient(to right, #2ca9b7 ' + lowRisk1 + '%, #144a68 ' + lowRisk1 + '%)',
                 }}
               />
 
-              <Box flex={1} style={{ position: 'relative' }} className={`slider-warning-${isPassAllCollateralLocked}`}>
-                <Locked $warned={isLockWarning} $pos={pos} $heightened={heightenBars}>
+              <Box flex={1} style={{ position: 'relative' }} className={`slider-warning-${showLockWarning}`}>
+                <Locked $warned={showLockWarning} $pos={pos} $heightened={heightenBars}>
                   <MetaData as="dl" style={{ textAlign: 'right' }}>
                     <Tooltip
                       text={t`You can't withdraw any collateral if you go beyond this threshold.`}

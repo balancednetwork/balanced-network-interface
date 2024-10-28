@@ -17,11 +17,11 @@ import BigNumber from 'bignumber.js';
 
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 import { cn } from '@/lib/utils';
-import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
+// import { xChainMap } from '@/xwagmi/constants/xChains';
+// import { useXEstimateApproveGas } from '@/xwagmi/hooks/useXEstimateApproveGas';
+// import { useXEstimateSwapGas } from '@/xwagmi/hooks/useXEstimateSwapGas';
 import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
-import { useXEstimateApproveGas } from '@/xwagmi/hooks/useXEstimateApproveGas';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { useXEstimateSwapGas } from '@/xwagmi/hooks/useXEstimateSwapGas';
+import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 
 export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactionInput?: XTransactionInput }) {
   const {
@@ -47,19 +47,19 @@ export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactio
 
   const { formattedXCallFee } = useXCallFee(direction.from, direction.to);
 
-  const sourceXChain = xChainMap[direction.from];
-  const approveGasEstimate = useXEstimateApproveGas(inputAmount, sourceXChain.contracts.assetManager, account);
-  const swapGasEstimate = useXEstimateSwapGas(xTransactionInput);
+  // const sourceXChain = xChainMap[direction.from];
+  // const approveGasEstimate = useXEstimateApproveGas(inputAmount, sourceXChain.contracts.assetManager, account);
+  // const swapGasEstimate = useXEstimateSwapGas(xTransactionInput);
 
-  const networkCost = useMemo(() => {
-    if (!swapGasEstimate) return;
+  // const networkCost = useMemo(() => {
+  //   if (!swapGasEstimate) return;
 
-    if (approveGasEstimate) {
-      return new Fraction(swapGasEstimate + approveGasEstimate, 10 ** sourceXChain.nativeCurrency.decimals).toFixed(5);
-    }
+  //   if (approveGasEstimate) {
+  //     return new Fraction(swapGasEstimate + approveGasEstimate, 10 ** sourceXChain.nativeCurrency.decimals).toFixed(5);
+  //   }
 
-    return new Fraction(swapGasEstimate, 10 ** sourceXChain.nativeCurrency.decimals).toString();
-  }, [approveGasEstimate, swapGasEstimate, sourceXChain]);
+  //   return new Fraction(swapGasEstimate, 10 ** sourceXChain.nativeCurrency.decimals).toString();
+  // }, [approveGasEstimate, swapGasEstimate, sourceXChain]);
 
   return (
     <div>
@@ -133,7 +133,7 @@ export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactio
             </div>
           )}
 
-          <div className="flex items-center justify-between">
+          {/* <div className="flex items-center justify-between">
             <span className="text-body text-secondary-foreground flex items-center gap-1">
               <Trans>Network cost</Trans>
               <QuestionHelper text={t`Network cost is paid in ETH on the ARBITRUM network in order to transact.`} />
@@ -142,7 +142,7 @@ export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactio
             <span className="text-body text-primary-foreground">
               {networkCost ? `${networkCost} ${sourceXChain.nativeCurrency.symbol}` : '---'}
             </span>
-          </div>
+          </div> */}
 
           <div className="flex items-center justify-between gap-2">
             <span className="text-body text-secondary-foreground">

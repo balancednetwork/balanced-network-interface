@@ -1,8 +1,6 @@
 import React from 'react';
 
-import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
-
+import { Input } from '@/components/ui/input';
 import { escapeRegExp } from '@/utils';
 
 // enum SlippageError {
@@ -10,43 +8,6 @@ import { escapeRegExp } from '@/utils';
 //   RiskyLow = 'RiskyLow',
 //   RiskyHigh = 'RiskyHigh',
 // }
-
-const SlippageEmojiContainer = styled.span`
-  color: #f3841e;
-  display: none;
-`;
-
-const SlippageInput = styled(Flex)`
-  width: 100px;
-  height: 30px;
-  color: ${({ theme, color }) => (color === '#fb6a6a' ? '#fb6a6a' : theme.colors?.text1)};
-  outline: none;
-  border-radius: 8px;
-  border: 2px solid rgb(44, 169, 183);
-  background-color: #0c2a4d;
-  transition: border 0.3s ease;
-  line-height: 1.15;
-  text-align: center;
-  align-items: center;
-  overflow: hidden;
-
-  &:hover,
-  &:focus {
-    border: 2px solid #2ca9b7;
-  }
-`;
-
-const Input = styled.input`
-  width: 80px;
-  color: ${({ theme, color }) => (color === '#fb6a6a' ? '#fb6a6a' : theme.colors?.text1)};
-  outline: none;
-  border: none;
-  background-color: #0c2a4d;
-  transition: border 0.3s ease;
-  overflow: visible;
-  line-height: 1.15;
-  text-align: right;
-`;
 
 export interface SlippageSettingsProps {
   rawSlippage: number;
@@ -89,8 +50,8 @@ export default function SlippageSettings({ rawSlippage, setRawSlippage }: Slippa
   }
 
   return (
-    <Flex flexDirection="column" alignItems="flex-end">
-      <SlippageInput>
+    <div className="flex flex-col justify-end">
+      <div className="rounded-xl p-1 flex items-center gap-1 bg-[#221542]">
         <Input
           placeholder={(rawSlippage / 100).toFixed(2)}
           value={slippageInput}
@@ -100,19 +61,17 @@ export default function SlippageSettings({ rawSlippage, setRawSlippage }: Slippa
           onChange={e => {
             handleSlippageInput(e.target.value.replace(/,/g, '.'));
           }}
-          color={!slippageInputIsValid ? '#fb6a6a' : ''}
+          className="p-0 w-[72px] h-6 text-right bg-transparent border-none focus:border-none text-primary-foreground focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
         />
-        %
-      </SlippageInput>
+        <span>%</span>
+      </div>
       {!slippageInputIsValid ? (
-        <Flex>
-          <SlippageEmojiContainer>
-            <Box width={1}>
-              <div className="text-right text-['#fb6a6a']">10% max</div>
-            </Box>
-          </SlippageEmojiContainer>
-        </Flex>
+        <div>
+          <div className="text-[#f3841e] hidden">
+            <div className="text-right text-['#fb6a6a']">10% max</div>
+          </div>
+        </div>
       ) : null}
-    </Flex>
+    </div>
   );
 }

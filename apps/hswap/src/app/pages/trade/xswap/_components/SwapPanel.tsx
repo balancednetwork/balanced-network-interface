@@ -303,7 +303,7 @@ export default function SwapPanel() {
 
             <div className="relative flex items-center justify-center h-0 z-1">
               <div
-                className="cursor-pointer w-[40px] h-[40px] bg-[#695682] rounded-full flex items-center justify-center"
+                className="cursor-pointer w-[40px] h-[40px] bg-background rounded-full flex items-center justify-center"
                 onClick={onSwitchTokens}
               >
                 <FlipIcon width={24} height={24} />

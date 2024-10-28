@@ -60,7 +60,16 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
 
   return (
     <>
-      <div className="relative bg-[#221542] p-2 rounded-xl flex justify-between items-center gap-2">
+      <div
+        className="relative bg-[#221542] p-2 rounded-xl flex justify-between items-center gap-2 cursor-pointer"
+        onClick={() => {
+          console.log('xTransaction', xTransaction);
+          window.open(
+            `https://xcallscan.xyz/messages/search?value=${primaryMessage?.destinationTransactionHash || primaryMessage?.sourceTransactionHash}`,
+            '_blank',
+          );
+        }}
+      >
         <div>
           <div className="flex gap-3">
             <div className="flex items-center">

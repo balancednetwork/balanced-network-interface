@@ -502,6 +502,7 @@ export function useDerivedCollateralInfo(): {
   collateralTotal: BigNumber;
   collateralDecimalPlaces: number;
   differenceAmount: BigNumber;
+  isSliderStateChanged: boolean;
   xTokenAmount: CurrencyAmount<XToken> | undefined;
   formattedAmounts: {
     [x: string]: string;
@@ -553,7 +554,8 @@ export function useDerivedCollateralInfo(): {
     };
   }, [independentField, dependentField, typedValue, parsedAmount, collateralDecimalPlaces]);
 
-  const differenceAmount = parsedAmount[Field.LEFT].minus(collateralDeposit.dp(collateralDecimalPlaces));
+  const differenceAmount = parsedAmount[Field.LEFT].minus(collateralDeposit);
+  const isSliderStateChanged = !parsedAmount[Field.LEFT].isEqualTo(collateralDeposit.dp(collateralDecimalPlaces));
 
   const xToken = xTokenMap[sourceChain].find(t => t.symbol === collateralType);
   const xTokenAmount =
@@ -572,6 +574,8 @@ export function useDerivedCollateralInfo(): {
     parsedAmount,
     collateralDecimalPlaces,
     differenceAmount,
+
+    isSliderStateChanged,
     xTokenAmount,
   };
 }

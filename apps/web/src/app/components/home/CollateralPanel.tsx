@@ -142,6 +142,7 @@ const CollateralPanel = () => {
     collateralDecimalPlaces,
     formattedAmounts,
     differenceAmount,
+    isSliderStateChanged,
     xTokenAmount,
   } = useDerivedCollateralInfo();
 
@@ -394,7 +395,7 @@ const CollateralPanel = () => {
                     >
                       <Trans>Cancel</Trans>
                     </TextButton>
-                    <Button onClick={toggleOpen} fontSize={14} disabled={differenceAmount?.isEqualTo(0)}>
+                    <Button onClick={toggleOpen} fontSize={14} disabled={!isSliderStateChanged}>
                       <Trans>Confirm</Trans>
                     </Button>
                   </>

@@ -548,6 +548,7 @@ export function useDerivedLoanInfo(): {
   account: string | undefined;
   receiver: string | undefined;
   differenceAmount: BigNumber;
+  isSliderStateChanged: boolean;
   borrowedAmount: BigNumber;
   borrowableAmountWithReserve: BigNumber;
   totalBorrowableAmount: BigNumber;
@@ -590,6 +591,7 @@ export function useDerivedLoanInfo(): {
   };
 
   const differenceAmount = parsedAmount[Field.LEFT].minus(borrowedAmount);
+  const isSliderStateChanged = !parsedAmount[Field.LEFT].isEqualTo(borrowedAmount.dp(2));
 
   const bnUSDAmount = differenceAmount
     ? CurrencyAmount.fromRawAmount(
@@ -617,6 +619,7 @@ export function useDerivedLoanInfo(): {
     borrowableAmountWithReserve,
     totalBorrowableAmount,
     differenceAmount,
+    isSliderStateChanged,
     bnUSDAmount,
     direction,
   };

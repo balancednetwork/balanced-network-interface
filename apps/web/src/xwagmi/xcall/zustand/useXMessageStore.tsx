@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -56,6 +56,12 @@ export const deriveStatus = (events: XCallEventMap): XMessageStatus => {
   return XMessageStatus.AWAITING_CALL_MESSAGE_SENT;
 };
 
+const isXMessagePending = (status: XMessageStatus) => {
+  return (
+    status !== XMessageStatus.CALL_EXECUTED && status !== XMessageStatus.FAILED && status !== XMessageStatus.ROLLBACKED
+  );
+};
+
 type XMessageStore = {
   messages: Record<string, XMessage>;
   get: (id: string | null) => XMessage | undefined;
@@ -95,11 +101,7 @@ export const useXMessageStore = create<XMessageStore>()(
         });
 
         console.log('XMessage status changed:', id, oldStatus, '->', status);
-        if (
-          status === XMessageStatus.CALL_EXECUTED ||
-          status === XMessageStatus.FAILED ||
-          status === XMessageStatus.ROLLBACKED
-        ) {
+        if (!isXMessagePending(status)) {
           xCallEventActions.disableScanner(xMessage.id);
           get().onMessageUpdate(id);
         }
@@ -363,9 +365,29 @@ export const useFetchXMessageEvents = (xMessage?: XMessage) => {
 };
 
 const XMessageUpdater = ({ xMessage }: { xMessage: XMessage }) => {
-  const { id, destinationChainId, destinationChainInitialBlockHeight, status, sourceTransactionHash } = xMessage || {};
+  const { id, destinationChainId, destinationChainInitialBlockHeight, status, sourceTransactionHash, createdAt } =
+    xMessage || {};
 
   useXCallEventScanner(id);
+
+  const [isStale, setIsStale] = useState(false);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = Date.now();
+      setIsStale(now - createdAt >= 2 * 60 * 1000); // 2mins
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [createdAt]);
+
+  useEffect(() => {
+    if (isStale && isXMessagePending(status)) {
+      xCallEventActions.disableScanner(id);
+      useXMessageStore.setState(state => {
+        state.messages[id].useXCallScanner = true;
+      });
+    }
+  }, [isStale, status, id]);
 
   const sourceTransaction = transactionActions.get(sourceTransactionHash);
   useEffect(() => {
@@ -387,11 +409,7 @@ const XMessageUpdater = ({ xMessage }: { xMessage: XMessage }) => {
 
   useEffect(() => {
     if (id) {
-      if (
-        status !== XMessageStatus.CALL_EXECUTED &&
-        status !== XMessageStatus.FAILED &&
-        !xCallEventActions.isScannerEnabled(id)
-      ) {
+      if (isXMessagePending(status) && !xCallEventActions.isScannerEnabled(id)) {
         xCallEventActions.enableScanner(id, destinationChainId, BigInt(destinationChainInitialBlockHeight));
       }
     }
@@ -450,12 +468,7 @@ export const AllXMessagesUpdater = () => {
   return (
     <>
       {xMessages
-        .filter(
-          x =>
-            x.status !== XMessageStatus.CALL_EXECUTED &&
-            x.status !== XMessageStatus.FAILED &&
-            x.status !== XMessageStatus.ROLLBACKED,
-        )
+        .filter(x => isXMessagePending(x.status))
         .map(xMessage => (
           <>
             {xMessage.useXCallScanner ? (
@@ -469,26 +482,26 @@ export const AllXMessagesUpdater = () => {
   );
 };
 
-export const AllXTransactionsUpdater = () => {
-  useXCallScannerSubscription();
+// export const AllXTransactionsUpdater = () => {
+//   useXCallScannerSubscription();
 
-  const xTransactions = useXTransactionStore(state =>
-    Object.values(state.transactions).filter(x => x.status === XTransactionStatus.pending),
-  );
+//   const xTransactions = useXTransactionStore(state =>
+//     Object.values(state.transactions).filter(x => x.status === XTransactionStatus.pending),
+//   );
 
-  return (
-    <>
-      {xTransactions.map(xTransaction => {
-        const primaryMessage = xMessageActions.getOf(xTransaction.id, true);
-        const secondaryMessage = xMessageActions.getOf(xTransaction.id, false);
+//   return (
+//     <>
+//       {xTransactions.map(xTransaction => {
+//         const primaryMessage = xMessageActions.getOf(xTransaction.id, true);
+//         const secondaryMessage = xMessageActions.getOf(xTransaction.id, false);
 
-        return (
-          <div key={xTransaction.id}>
-            {primaryMessage && primaryMessage.useXCallScanner && <XMessageUpdater2 xMessage={primaryMessage} />}
-            {secondaryMessage && secondaryMessage.useXCallScanner && <XMessageUpdater2 xMessage={secondaryMessage} />}
-          </div>
-        );
-      })}
-    </>
-  );
-};
+//         return (
+//           <div key={xTransaction.id}>
+//             {primaryMessage && primaryMessage.useXCallScanner && <XMessageUpdater2 xMessage={primaryMessage} />}
+//             {secondaryMessage && secondaryMessage.useXCallScanner && <XMessageUpdater2 xMessage={secondaryMessage} />}
+//           </div>
+//         );
+//       })}
+//     </>
+//   );
+// };

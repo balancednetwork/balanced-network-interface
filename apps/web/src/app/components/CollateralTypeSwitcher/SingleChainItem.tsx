@@ -1,6 +1,6 @@
 import { Typography } from '@/app/theme';
 import { useICX } from '@/constants/tokens';
-import { useIcxDisplayType } from '@/store/collateral/hooks';
+import { useCollateralChangeIcxDisplayType, useIcxDisplayType } from '@/store/collateral/hooks';
 import { useIsPositionLocked } from '@/store/loan/hooks';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { toFraction } from '@/utils';
@@ -36,8 +36,7 @@ const SingleChainItem = ({
   const { currency } = collateral || {};
   const { symbol } = currency || {};
   const theme = useTheme();
-  const ICX = useICX();
-  const icxDisplayType = useIcxDisplayType();
+  const collateralChangeIcxDisplayType = useCollateralChangeIcxDisplayType();
 
   const price = React.useMemo(() => {
     if (!prices || (symbol && !prices[symbol])) return;
@@ -46,17 +45,27 @@ const SingleChainItem = ({
 
   const shouldShowWarning = useIsPositionLocked(collateral, loan);
 
+  const handleItemClick = (symbol: string, chainId?: XChainId) => {
+    onSelect(symbol === 'ICX' ? 'sICX' : symbol, chainId);
+    if (symbol === 'sICX' || symbol === 'ICX') {
+      collateralChangeIcxDisplayType(symbol);
+    }
+  };
+
   return (
-    <StyledListItem $border={!isNested && !isLast} onClick={() => onSelect(baseToken.symbol, xChainId as XChainId)}>
+    <StyledListItem
+      $border={!isNested && !isLast}
+      onClick={() => handleItemClick(baseToken.symbol, xChainId as XChainId)}
+    >
       <AssetSymbol>
         <CurrencyLogoWithNetwork
-          currency={baseToken.symbol === 'sICX' && icxDisplayType === 'ICX' ? ICX : baseToken}
+          currency={baseToken}
           chainId={xChainId as XChainId}
           bgColor={isNested ? theme.colors.bg3 : theme.colors.bg4}
           size={isNested ? '20px' : '24px'}
         />
         <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>
-          {isNested ? xChainMap[xChainId].name : symbol === 'sICX' ? icxDisplayType : symbol}
+          {isNested ? xChainMap[xChainId].name : symbol}
         </Typography>
       </AssetSymbol>
       <BalanceAndValueWrap $warning={!isPotential && !!shouldShowWarning}>

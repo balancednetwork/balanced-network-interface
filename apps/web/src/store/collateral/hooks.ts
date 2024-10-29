@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { NETWORK_ID } from '@/constants/config';
 import { MINIMUM_ICX_FOR_ACTION } from '@/constants/index';
-import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
+import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useBorrowedAmounts } from '@/store/loan/hooks';
@@ -643,6 +643,14 @@ export function useUserPositionsData(): UseQueryResult<XPositionsRecord[]> {
                   if (depositAmount.greaterThan(0)) {
                     updateAccumulator(acc, symbol, xChainId, depositAmount, loanAmount);
                   } else {
+                    //if there is no sICX position and user holds ICX, show it as potential position
+                    if (symbol === 'sICX') {
+                      const icxAmount = xWallet[xChainId]?.[NULL_CONTRACT_ADDRESS];
+                      const icxValue = prices?.['ICX'].times(icxAmount?.toFixed() || 0);
+                      if (icxAmount && icxValue?.isGreaterThan(MIN_VALUE_TO_SHOW_POTENTIAL_POSITION)) {
+                        updateAccumulator(acc, 'ICX', xChainId, icxAmount, new BigNumber(0), true);
+                      }
+                    }
                     if (availableAmount && availableValue?.isGreaterThan(MIN_VALUE_TO_SHOW_POTENTIAL_POSITION)) {
                       updateAccumulator(acc, symbol, xChainId, availableAmount, new BigNumber(0), true);
                     }

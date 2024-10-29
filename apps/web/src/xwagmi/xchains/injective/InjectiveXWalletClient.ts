@@ -4,7 +4,6 @@ import bnJs from '../icon/bnJs';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xwagmi/xcall/utils';
 
-import { isNativeCurrency } from '@/constants/tokens';
 import { FROM_SOURCES, TO_SOURCES, injective } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core';
 import { uintToBytes } from '@/xwagmi/utils';
@@ -151,7 +150,7 @@ export class InjectiveXWalletClient extends XWalletClient {
 
     const data = getBytesFromString(JSON.stringify({}));
 
-    if (isNativeCurrency(inputAmount.currency)) {
+    if (inputAmount.currency.isNativeXToken()) {
       const msg = MsgExecuteContractCompat.fromJSON({
         contractAddress: injective.contracts.assetManager,
         sender: account,

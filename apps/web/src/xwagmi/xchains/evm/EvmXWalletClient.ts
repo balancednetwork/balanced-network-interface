@@ -3,7 +3,6 @@ import { RLP } from '@ethereumjs/rlp';
 import { Address, PublicClient, WalletClient, WriteContractParameters, toHex, erc20Abi, getContract } from 'viem';
 import bnJs from '../icon/bnJs';
 
-import { isNativeCurrency } from '@/constants/tokens';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
@@ -161,7 +160,7 @@ export class EvmXWalletClient extends XWalletClient {
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = toHex(JSON.stringify({}));
     // check if the asset is native
-    const isNative = isNativeCurrency(inputAmount.currency);
+    const isNative = inputAmount.currency.isNativeXToken();
 
     let request: WriteContractParameters;
     if (!isNative) {

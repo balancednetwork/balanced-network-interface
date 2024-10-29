@@ -9,8 +9,7 @@ import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData } from '../../xcall/utils';
 import { SolanaXService } from './SolanaXService';
 import { ComputeBudgetProgram, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
-import { isNativeCurrency } from '@/constants/tokens';
-import { solana, xChainMap } from '@/xwagmi/constants/xChains';
+import { solana } from '@/xwagmi/constants/xChains';
 import { Program } from '@coral-xyz/anchor';
 
 import assetManagerIdl from './idls/assetManager.json';
@@ -103,7 +102,6 @@ export class SolanaXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
-    const isNative = isNativeCurrency(inputAmount.currency);
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
     let txSignature;

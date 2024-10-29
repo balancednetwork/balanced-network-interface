@@ -304,7 +304,7 @@ export const stellar: XChain = {
     bnUSD: 'CAKU2J5T4TOMFATA56XRDZMQHNBFIOQW3JDZQNQBLNLV7LEWYTNYU6VX',
   },
   autoExecution: true,
-  gasThreshold: 2,
+  gasThreshold: 2, // xCall fee: 1.07 XLM
   testnet: false,
   useXCallScanner: true,
 };
@@ -330,7 +330,7 @@ export const sui: XChain = {
     bnUSD: '0x03917a812fe4a6d6bc779c5ab53f8a80ba741f8af04121193fc44e0f662e2ceb::balanced_dollar::BALANCED_DOLLAR',
   },
   autoExecution: true,
-  gasThreshold: 0.2,
+  gasThreshold: 0.1, // xCall fee: 0.05 SUI
   testnet: false,
   useXCallScanner: true,
 };
@@ -357,7 +357,7 @@ export const solana: XChain = {
     xCallManager: 'Ganbqm2tJ8SuaN6kSRWsJhXGb7aLCvHLuCySxCfkXPVL',
   },
   autoExecution: true,
-  gasThreshold: 0.001,
+  gasThreshold: 0.001, // xCall fee: 0.0006 SOL
   testnet: false,
   useXCallScanner: true,
 };

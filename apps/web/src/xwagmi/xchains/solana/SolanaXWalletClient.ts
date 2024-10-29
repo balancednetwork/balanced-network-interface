@@ -47,6 +47,8 @@ const createAssociatedTokenTx = account => {
   return tx;
 };
 
+const COMPUTE_UNIT_LIMIT = 1_000_000;
+
 export class SolanaXWalletClient extends XWalletClient {
   getXService(): SolanaXService {
     return SolanaXService.getInstance();
@@ -124,9 +126,9 @@ export class SolanaXWalletClient extends XWalletClient {
       const xCallAuthorityPda = await findPda(['dapp_authority'], assetManagerId);
 
       const xCallAccounts = await getXCallAccounts(xCallId, provider);
-      const connectionAccounts = await getConnectionAccounts(direction.to, xCallManagerId, provider);
+      const connectionAccounts = await getConnectionAccounts('0x1.icon', xCallManagerId, provider);
 
-      const computeBudgetIx = ComputeBudgetProgram.setComputeUnitLimit({ units: 1_000_000 });
+      const computeBudgetIx = ComputeBudgetProgram.setComputeUnitLimit({ units: COMPUTE_UNIT_LIMIT });
       const tx = new Transaction().add(computeBudgetIx);
 
       // @ts-ignore
@@ -171,11 +173,11 @@ export class SolanaXWalletClient extends XWalletClient {
       const xcallAuthorityPda = await findPda(['dapp_authority'], bnUSDId);
 
       const xCallAccounts = await getXCallAccounts(xCallId, provider);
-      const connectionAccounts = await getConnectionAccounts(direction.to, xCallManagerId, provider);
+      const connectionAccounts = await getConnectionAccounts('0x1.icon', xCallManagerId, provider);
 
       const associatedTokenAcc = getAssociatedTokenAddressSync(mintToken, new PublicKey(account));
 
-      const computeBudgetIx = ComputeBudgetProgram.setComputeUnitLimit({ units: 1_000_000 });
+      const computeBudgetIx = ComputeBudgetProgram.setComputeUnitLimit({ units: COMPUTE_UNIT_LIMIT });
       const tx = new Transaction().add(computeBudgetIx);
 
       const crossTransferTx = await bnUSDProgram.methods

@@ -16,6 +16,7 @@ import {
 import { ICONTxResultType } from '../icon/types';
 import { HavahXService } from './HavahXService';
 import { havahJs } from './havahJs';
+import { isNativeXToken } from '@/xwagmi/constants/xTokens';
 
 export const getICONEventSignature = (eventName: XCallEventType) => {
   switch (eventName) {
@@ -51,7 +52,7 @@ export class HavahXPublicClient extends XPublicClient {
   async getBalance(address: string | undefined, xToken: XToken) {
     if (!address) return;
 
-    if (xToken.isNativeXToken()) {
+    if (isNativeXToken(xToken)) {
       return havahJs.ICX.balanceOf(address).then(res => CurrencyAmount.fromRawAmount(xToken, res.toFixed()));
     } else {
       return havahJs[xToken.symbol]

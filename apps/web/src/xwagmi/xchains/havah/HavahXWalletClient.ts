@@ -2,7 +2,6 @@ import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
-import { isNativeCurrency } from '@/constants/tokens';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { showMessageOnBeforeUnload, toDec } from '@/xwagmi/utils';
 import { toHex } from 'viem';
@@ -10,6 +9,7 @@ import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData } from '../../xcall/utils';
 import { HavahXService } from './HavahXService';
 import { havahJs } from './havahJs';
+import { isNativeXToken } from '@/xwagmi/constants/xTokens';
 
 export class HavahXWalletClient extends XWalletClient {
   getXService(): HavahXService {
@@ -66,7 +66,7 @@ export class HavahXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
-    const isNative = isNativeCurrency(inputAmount.currency);
+    const isNative = isNativeXToken(inputAmount.currency);
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
     let txResult;

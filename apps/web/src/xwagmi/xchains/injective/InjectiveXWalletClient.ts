@@ -1,10 +1,9 @@
-import { Percent, Token } from '@balancednetwork/sdk-core';
+import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xwagmi/xcall/utils';
 
-import { isNativeCurrency } from '@/constants/tokens';
 import { FROM_SOURCES, TO_SOURCES, injective } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core';
 import { uintToBytes } from '@/xwagmi/utils';
@@ -13,7 +12,8 @@ import { RLP } from '@ethereumjs/rlp';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { isDenomAsset } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
+import { isNativeXToken, xTokenMap } from '@/xwagmi/constants/xTokens';
+import { XToken } from '@/xwagmi/types';
 
 export class InjectiveXWalletClient extends XWalletClient {
   getXService(): InjectiveXService {
@@ -63,7 +63,7 @@ export class InjectiveXWalletClient extends XWalletClient {
     }
 
     const isBnUSD = inputAmount.currency?.symbol === 'bnUSD';
-    const isDenom = inputAmount && inputAmount.currency instanceof Token ? isDenomAsset(inputAmount.currency) : false;
+    const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
 
     if (isBnUSD) {
       const amount = inputAmount.quotient.toString();
@@ -151,7 +151,7 @@ export class InjectiveXWalletClient extends XWalletClient {
 
     const data = getBytesFromString(JSON.stringify({}));
 
-    if (isNativeCurrency(inputAmount.currency)) {
+    if (isNativeXToken(inputAmount.currency)) {
       const msg = MsgExecuteContractCompat.fromJSON({
         contractAddress: injective.contracts.assetManager,
         sender: account,
@@ -278,7 +278,6 @@ export class InjectiveXWalletClient extends XWalletClient {
     const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
 
     const bnUSD = xTokenMap['injective-1'].find(xToken => xToken.symbol === 'bnUSD');
-
     if (!inputAmount || !usedCollateral || !bnUSD) {
       return;
     }

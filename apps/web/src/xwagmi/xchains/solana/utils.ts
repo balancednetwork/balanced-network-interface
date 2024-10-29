@@ -56,13 +56,30 @@ export async function initializeProgram(programId, provider) {
 
 export async function fetchXCallConfig(programId, provider) {
   try {
-    const xcall_program = await initializeProgram(programId, provider);
-    const xcall_state = await findPda(['config'], programId);
+    const program = await initializeProgram(programId, provider);
+    const configPda = await findPda(['config'], programId);
 
     // @ts-ignore
-    const config = await xcall_program.account.config.fetch(xcall_state);
+    const config = await program.account.config.fetch(configPda);
     return config;
-  } catch (error) {}
+  } catch (error) {
+    // @ts-ignore
+    console.error('Error fetching xCallConfig:', error.message);
+  }
+}
+
+export async function fetchMintToken(programId, provider) {
+  try {
+    const program = await initializeProgram(programId, provider);
+    const statePda = await findPda(['state'], programId);
+
+    // @ts-ignore
+    const state = await program.account.state.fetch(statePda);
+    return state.bnUsdToken;
+  } catch (error) {
+    // @ts-ignore
+    console.error('Error fetching mintToken:', error.message);
+  }
 }
 
 export async function getXCallAccounts(xcallProgramId, provider) {

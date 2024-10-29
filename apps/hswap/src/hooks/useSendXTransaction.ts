@@ -8,13 +8,13 @@ import {
   XTransactionType,
 } from '@/xwagmi/xcall/types';
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
-import { xServiceActions } from '@/xwagmi/xcall/zustand/useXServiceStore';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import { XChainId } from '@balancednetwork/sdk-core';
 import { useSignTransaction } from '@mysten/dapp-kit';
 import { useMemo } from 'react';
 import { transactionActions } from './useTransactionStore';
 import { allXTokens } from '@/xwagmi/constants/xTokens';
+import { xChainHeightActions } from '@/xwagmi/xcall/zustand/useXChainHeightStore';
 
 const iconChainId: XChainId = '0x1.icon';
 
@@ -78,8 +78,9 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
   const finalDestinationChainId = direction.to;
   const primaryDestinationChainId = sourceChainId === iconChainId ? finalDestinationChainId : iconChainId;
 
-  const primaryDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(primaryDestinationChainId) - 20n;
-  const finalDestinationChainInitialBlockHeight = xServiceActions.getXChainHeight(finalDestinationChainId);
+  const primaryDestinationChainInitialBlockHeight =
+    xChainHeightActions.getXChainHeight(primaryDestinationChainId) - 20n;
+  const finalDestinationChainInitialBlockHeight = xChainHeightActions.getXChainHeight(finalDestinationChainId);
 
   const xTransaction: XTransaction = {
     id: `${sourceChainId}/${sourceTransactionHash}`,

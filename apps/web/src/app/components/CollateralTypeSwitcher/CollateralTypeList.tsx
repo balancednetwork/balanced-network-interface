@@ -158,7 +158,7 @@ const CollateralTypeList = ({
         ) : (
           <motion.div
             key="collateral-content"
-            initial={{ opacity: 0, height: 0, y: 20 }}
+            initial={{ opacity: 0, height: 0, y: -20 }}
             animate={{ opacity: 1, height: 'auto', y: 0 }}
             exit={{ opacity: 0, height: 0, y: 0 }}
           >

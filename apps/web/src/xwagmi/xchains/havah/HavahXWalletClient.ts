@@ -9,6 +9,7 @@ import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData } from '../../xcall/utils';
 import { HavahXService } from './HavahXService';
 import { havahJs } from './havahJs';
+import { isNativeXToken } from '@/xwagmi/constants/xTokens';
 
 export class HavahXWalletClient extends XWalletClient {
   getXService(): HavahXService {
@@ -65,7 +66,7 @@ export class HavahXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
-    const isNative = inputAmount.currency.isNativeXToken();
+    const isNative = isNativeXToken(inputAmount.currency);
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
     let txResult;

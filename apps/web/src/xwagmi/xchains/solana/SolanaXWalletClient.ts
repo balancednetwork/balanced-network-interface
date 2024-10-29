@@ -22,6 +22,7 @@ import {
   getAssociatedTokenAddressSync,
   TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
+import { isNativeXToken } from '@/xwagmi/constants/xTokens';
 
 const createAssociatedTokenTx = account => {
   const bnUSDMint = new PublicKey(solana.contracts.bnUSD!);
@@ -102,6 +103,7 @@ export class SolanaXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
+    const isNative = isNativeXToken(inputAmount.currency);
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
     let txSignature;
@@ -111,7 +113,7 @@ export class SolanaXWalletClient extends XWalletClient {
     const xCallManagerId = new PublicKey(solana.contracts.xCallManager!);
     const bnUSDId = new PublicKey(solana.contracts.bnUSD!);
 
-    if (inputAmount.currency.isNativeXToken()) {
+    if (isNative) {
       const amount = inputAmount.quotient.toString();
 
       // @ts-ignore

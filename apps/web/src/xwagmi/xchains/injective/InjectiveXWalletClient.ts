@@ -12,7 +12,7 @@ import { RLP } from '@ethereumjs/rlp';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { isDenomAsset } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
+import { isNativeXToken, xTokenMap } from '@/xwagmi/constants/xTokens';
 
 export class InjectiveXWalletClient extends XWalletClient {
   getXService(): InjectiveXService {
@@ -150,7 +150,7 @@ export class InjectiveXWalletClient extends XWalletClient {
 
     const data = getBytesFromString(JSON.stringify({}));
 
-    if (inputAmount.currency.isNativeXToken()) {
+    if (isNativeXToken(inputAmount.currency)) {
       const msg = MsgExecuteContractCompat.fromJSON({
         contractAddress: injective.contracts.assetManager,
         sender: account,

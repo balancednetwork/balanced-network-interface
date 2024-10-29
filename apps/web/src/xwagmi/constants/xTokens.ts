@@ -2,6 +2,10 @@ import { XChainId, XToken } from '@/xwagmi/types';
 import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balanced-js';
 import { NATIVE_ADDRESS } from '.';
 
+export const isNativeXToken = (xToken: XToken): boolean => {
+  return !!xToken && xToken.wrapped?.address.includes('native');
+};
+
 export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   bnUSD: '0x1.icon',
   sARCH: 'archway-1',

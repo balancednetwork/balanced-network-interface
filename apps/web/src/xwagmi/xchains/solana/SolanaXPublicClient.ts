@@ -9,6 +9,7 @@ import { Program } from '@coral-xyz/anchor';
 import xCallIdl from './idls/xCall.json';
 import { findPda } from './utils';
 import { xChainMap } from '@/xwagmi/constants/xChains';
+import { isNativeXToken } from '@/xwagmi/constants/xTokens';
 
 function network_fee(networkId: string, source) {
   const [pda, bump] = PublicKey.findProgramAddressSync(
@@ -34,7 +35,7 @@ export class SolanaXPublicClient extends XPublicClient {
     const connection = this.getXService().connection;
 
     try {
-      if (xToken.isNativeXToken()) {
+      if (isNativeXToken(xToken)) {
         const newBalance = await connection.getBalance(new PublicKey(address));
         return CurrencyAmount.fromRawAmount(xToken, BigInt(newBalance));
       } else {

@@ -3,6 +3,7 @@ import { XChainId, XToken } from '@/xwagmi/types';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { TransactionStatus, XCallEvent, XTransactionInput } from '../../xcall/types';
 import { SuiXService } from './SuiXService';
+import { isNativeXToken } from '@/xwagmi/constants/xTokens';
 
 export class SuiXPublicClient extends XPublicClient {
   getXService(): SuiXService {
@@ -16,7 +17,7 @@ export class SuiXPublicClient extends XPublicClient {
   async getBalance(address: string | undefined, xToken: XToken) {
     if (!address) return;
 
-    if (xToken.isNativeXToken()) {
+    if (isNativeXToken(xToken)) {
       const balance = await this.getPublicClient().getBalance({
         owner: address,
         coinType: '0x2::sui::SUI',

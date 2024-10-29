@@ -212,6 +212,10 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
   ],
 };
 
+export const allXTokens = Object.values(xTokenMap).reduce((acc, xTokens) => {
+  return acc.concat(xTokens);
+}, []);
+
 export const sARCHOnArchway = {
   ['archway-1']: new XToken(
     'archway-1',

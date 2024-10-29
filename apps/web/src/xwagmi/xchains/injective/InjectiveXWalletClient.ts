@@ -1,4 +1,4 @@
-import { Percent, Token } from '@balancednetwork/sdk-core';
+import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
@@ -13,6 +13,7 @@ import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { isDenomAsset } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
 import { isNativeXToken, xTokenMap } from '@/xwagmi/constants/xTokens';
+import { XToken } from '@/xwagmi/types';
 
 export class InjectiveXWalletClient extends XWalletClient {
   getXService(): InjectiveXService {
@@ -62,7 +63,7 @@ export class InjectiveXWalletClient extends XWalletClient {
     }
 
     const isBnUSD = inputAmount.currency?.symbol === 'bnUSD';
-    const isDenom = inputAmount && inputAmount.currency instanceof Token ? isDenomAsset(inputAmount.currency) : false;
+    const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
 
     if (isBnUSD) {
       const amount = inputAmount.quotient.toString();
@@ -277,7 +278,6 @@ export class InjectiveXWalletClient extends XWalletClient {
     const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
 
     const bnUSD = xTokenMap['injective-1'].find(xToken => xToken.symbol === 'bnUSD');
-
     if (!inputAmount || !usedCollateral || !bnUSD) {
       return;
     }

@@ -47,37 +47,35 @@ const SingleChainItem = ({
   const shouldShowWarning = useIsPositionLocked(collateral, loan);
 
   return (
-    <>
-      <StyledListItem $border={!isNested && !isLast} onClick={() => onSelect(baseToken.symbol, xChainId as XChainId)}>
-        <AssetSymbol>
-          <CurrencyLogoWithNetwork
-            currency={baseToken.symbol === 'sICX' && icxDisplayType === 'ICX' ? ICX : baseToken}
-            chainId={xChainId as XChainId}
-            bgColor={isNested ? theme.colors.bg3 : theme.colors.bg4}
-            size={isNested ? '20px' : '24px'}
-          />
-          <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>
-            {isNested ? xChainMap[xChainId].name : symbol === 'sICX' ? icxDisplayType : symbol}
-          </Typography>
-        </AssetSymbol>
-        <BalanceAndValueWrap $warning={!isPotential && !!shouldShowWarning}>
-          {collateral && collateral.greaterThan(0) && (
-            <DataText
-              as="div"
-              $fSize={isPotential ? '12px' : '14px'}
-              style={{ opacity: isPotential ? 0.75 : 1, whiteSpace: 'nowrap' }}
-            >
-              {price && formatValue(collateral?.multiply(price || 1).toFixed())}
-              {isPotential && ' ' + t`available`}
-            </DataText>
-          )}
+    <StyledListItem $border={!isNested && !isLast} onClick={() => onSelect(baseToken.symbol, xChainId as XChainId)}>
+      <AssetSymbol>
+        <CurrencyLogoWithNetwork
+          currency={baseToken.symbol === 'sICX' && icxDisplayType === 'ICX' ? ICX : baseToken}
+          chainId={xChainId as XChainId}
+          bgColor={isNested ? theme.colors.bg3 : theme.colors.bg4}
+          size={isNested ? '20px' : '24px'}
+        />
+        <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>
+          {isNested ? xChainMap[xChainId].name : symbol === 'sICX' ? icxDisplayType : symbol}
+        </Typography>
+      </AssetSymbol>
+      <BalanceAndValueWrap $warning={!isPotential && !!shouldShowWarning}>
+        {collateral && collateral.greaterThan(0) && (
+          <DataText
+            as="div"
+            $fSize={isPotential ? '12px' : '14px'}
+            style={{ opacity: isPotential ? 0.75 : 1, whiteSpace: 'nowrap' }}
+          >
+            {price && formatValue(collateral?.multiply(price || 1).toFixed())}
+            {isPotential && ' ' + t`available`}
+          </DataText>
+        )}
 
-          {!collateral?.greaterThan(0) && <DataText as="div">-</DataText>}
+        {!collateral?.greaterThan(0) && <DataText as="div">-</DataText>}
 
-          <DataText as="div">{!loan || loan.isEqualTo(0) ? '-' : formatValue(loan.toFixed())}</DataText>
-        </BalanceAndValueWrap>
-      </StyledListItem>
-    </>
+        <DataText as="div">{!loan || loan.isEqualTo(0) ? '-' : formatValue(loan.toFixed())}</DataText>
+      </BalanceAndValueWrap>
+    </StyledListItem>
   );
 };
 

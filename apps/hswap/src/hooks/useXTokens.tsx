@@ -1,4 +1,4 @@
-import { allXTokens, xTokenMap } from '@/xwagmi/constants/xTokens';
+import { allXTokens } from '@/xwagmi/constants/xTokens';
 import { XChainId } from '@balancednetwork/sdk-core';
 
 const useXTokens = (from: XChainId) => {

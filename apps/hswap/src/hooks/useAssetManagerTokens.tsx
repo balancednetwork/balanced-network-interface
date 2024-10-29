@@ -17,7 +17,7 @@ type ResultMap = {
 };
 
 const getXChainDecimalDifference = (xToken: XToken) => {
-  const iconToken = Object.values(xTokenMap)?.find(t => t.symbol === xToken.symbol && t.xChainId === '0x1.icon');
+  const iconToken = xTokenMap['0x1.icon'].find(t => t.symbol === xToken.symbol);
   if (iconToken) {
     return iconToken.decimals - xToken.decimals;
   }

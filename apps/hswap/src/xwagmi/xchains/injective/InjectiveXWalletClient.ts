@@ -1,4 +1,4 @@
-import { Percent, Token } from '@balancednetwork/sdk-core';
+import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
@@ -277,7 +277,7 @@ export class InjectiveXWalletClient extends XWalletClient {
   async executeRepay(xTransactionInput: XTransactionInput) {
     const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
 
-    const bnUSD = Object.values(xTokenMap).find(token => token.symbol === 'bnUSD' && token.xChainId === 'injective-1');
+    const bnUSD = xTokenMap['injective-1'].find(xToken => xToken.symbol === 'bnUSD');
     if (!inputAmount || !usedCollateral || !bnUSD) {
       return;
     }

@@ -27,6 +27,7 @@ export class XToken extends Token {
     return new XToken(xChainId, token.chainId, token.address, token.decimals, token.symbol, token.name);
   }
 
+  // TODO: remove this
   isNativeXToken() {
     return this.address.includes('native');
   }

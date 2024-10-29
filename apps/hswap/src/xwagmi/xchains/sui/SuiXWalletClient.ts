@@ -4,7 +4,7 @@ import bnJs from '../icon/bnJs';
 import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
 
 import { FROM_SOURCES, TO_SOURCES } from '@/xwagmi/constants/xChains';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
+import { isNativeXToken, xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { uintToBytes } from '@/xwagmi/utils';
 import { RLP } from '@ethereumjs/rlp';
@@ -14,7 +14,6 @@ import { toBytes, toHex } from 'viem';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
 import { SuiXService } from './SuiXService';
-import { isNativeCurrency } from '@/constants/tokens';
 
 const addressesMainnet = {
   'Balanced Package Id': '0xa3c66ac08bca78a475954683a872a296fd61a28d478c4a8ebce676fc38f502d6',
@@ -83,11 +82,12 @@ export class SuiXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
+    const isNative = isNativeXToken(inputAmount.currency);
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
     const amount = BigInt(inputAmount.quotient.toString());
 
     let txResult;
-    if (isNativeCurrency(inputAmount.currency)) {
+    if (isNative) {
       const txb = new Transaction();
 
       const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, XCALL_FEE_AMOUNT]);

@@ -4,7 +4,6 @@ import bnJs from '../icon/bnJs';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xwagmi/xcall/utils';
 
-import { isNativeCurrency } from '@/constants/tokens';
 import { FROM_SOURCES, TO_SOURCES, injective } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core';
 import { uintToBytes } from '@/xwagmi/utils';
@@ -13,7 +12,7 @@ import { RLP } from '@ethereumjs/rlp';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { isDenomAsset } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
+import { isNativeXToken, xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XToken } from '@/xwagmi/types';
 
 export class InjectiveXWalletClient extends XWalletClient {
@@ -152,7 +151,7 @@ export class InjectiveXWalletClient extends XWalletClient {
 
     const data = getBytesFromString(JSON.stringify({}));
 
-    if (isNativeCurrency(inputAmount.currency)) {
+    if (isNativeXToken(inputAmount.currency)) {
       const msg = MsgExecuteContractCompat.fromJSON({
         contractAddress: injective.contracts.assetManager,
         sender: account,

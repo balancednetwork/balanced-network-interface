@@ -9,7 +9,6 @@ import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData } from '../../xcall/utils';
 import { SolanaXService } from './SolanaXService';
 import { ComputeBudgetProgram, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
-import { isNativeCurrency } from '@/constants/tokens';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { Program } from '@coral-xyz/anchor';
 
@@ -18,6 +17,7 @@ import xCallIdl from './idls/xCall.json';
 import bnUSDIdl from './idls/bnUSD.json';
 import * as anchor from '@coral-xyz/anchor';
 import { findPda, getConnectionAccounts, getXCallAccounts } from './utils';
+import { isNativeXToken } from '@/xwagmi/constants/xTokens';
 
 export class SolanaXWalletClient extends XWalletClient {
   getXService(): SolanaXService {
@@ -77,13 +77,11 @@ export class SolanaXWalletClient extends XWalletClient {
     // @ts-ignore
     const assetManagerProgram = new Program(assetManagerIdl, provider);
 
-    const isNative = isNativeCurrency(inputAmount.currency);
+    const isNative = isNativeXToken(inputAmount.currency);
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
     let txSignature;
-
-    console.log('isNative', isNative, inputAmount);
-    if (inputAmount.currency.isNativeXToken()) {
+    if (isNative) {
       const assetManagerId = new PublicKey(xChainMap[direction.from].contracts.assetManager);
       const xCallId = new PublicKey(xChainMap[direction.from].contracts.xCall);
       const xCallManagerId = new PublicKey(xChainMap[direction.from].contracts.xCallManager!);

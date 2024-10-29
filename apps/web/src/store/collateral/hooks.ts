@@ -553,7 +553,7 @@ export function useDerivedCollateralInfo(): {
     };
   }, [independentField, dependentField, typedValue, parsedAmount, collateralDecimalPlaces]);
 
-  const differenceAmount = parsedAmount[Field.LEFT].minus(collateralDeposit);
+  const differenceAmount = parsedAmount[Field.LEFT].minus(collateralDeposit.dp(collateralDecimalPlaces));
 
   const xToken = xTokenMap[sourceChain].find(t => t.symbol === collateralType);
   const xTokenAmount =

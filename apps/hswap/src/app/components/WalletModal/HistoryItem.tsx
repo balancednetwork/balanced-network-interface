@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { XTransaction, XTransactionStatus } from '@/xwagmi/xcall/types';
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
-import { CheckIcon, ChevronRightIcon, Loader2, XIcon } from 'lucide-react';
+import { CheckIcon, ChevronRightIcon, Loader2Icon, XIcon } from 'lucide-react';
 import { getNetworkDisplayName } from '@/xwagmi/utils';
 import { formatBalance } from '@/utils/formatter';
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
@@ -94,8 +94,8 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
           </div>
         </div>
         {xTransaction.status === XTransactionStatus.pending && (
-          <div className="bg-green-500 border-2 border-background  w-[28px] h-[28px] flex justify-center items-center rounded-full">
-            <CheckIcon className="text-background  w-4 h-4" />
+          <div className="bg-transparent w-[28px] h-[28px] flex justify-center items-center rounded-full">
+            <Loader2Icon className="animate-spin" />
           </div>
         )}
         {xTransaction.status === XTransactionStatus.success && (

@@ -4,8 +4,7 @@ import { useXTransactionStore } from '@/xwagmi/xcall/zustand/useXTransactionStor
 import HistoryItem from './HistoryItem';
 
 const HistoryItemList = () => {
-  const getTransactions = useXTransactionStore(state => state.getTransactions);
-  const xTransactions = useMemo(() => getTransactions(), [getTransactions]);
+  const xTransactions = useXTransactionStore(state => state.getTransactions());
 
   return (
     <ScrollArea>

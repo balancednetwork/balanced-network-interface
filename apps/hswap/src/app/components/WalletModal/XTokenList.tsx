@@ -1,4 +1,3 @@
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useWalletBalances } from '@/store/wallet/hooks';
 import { formatValue } from '@/utils/formatter';
@@ -25,25 +24,23 @@ const XTokenList = () => {
 
   return (
     <>
-      <ScrollArea>
-        <div className="cursor-default flex flex-col gap-1">
-          <div className="grid grid-cols-3 h-10 items-center px-2">
-            <div className="">Assets</div>
-            <div className="text-right">Balance</div>
-            <div className="text-right">Value</div>
-          </div>
-
-          <>
-            {Object.values(sortedFilteredBalances).map((balances, index) =>
-              balances.length === 1 ? (
-                <SingleChainBalanceItem key={index} balance={balances[0]} />
-              ) : (
-                <MultiChainBalanceItem key={index} balances={balances} />
-              ),
-            )}
-          </>
+      <div className="cursor-default flex flex-col gap-1">
+        <div className="grid grid-cols-3 h-10 items-center px-2">
+          <div className="">Assets</div>
+          <div className="text-right">Balance</div>
+          <div className="text-right">Value</div>
         </div>
-      </ScrollArea>
+
+        <>
+          {Object.values(sortedFilteredBalances).map((balances, index) =>
+            balances.length === 1 ? (
+              <SingleChainBalanceItem key={index} balance={balances[0]} />
+            ) : (
+              <MultiChainBalanceItem key={index} balances={balances} />
+            ),
+          )}
+        </>
+      </div>
       {Object.keys(sortedFilteredBalances).length > 0 && (
         <div className="pt-4 px-2 flex justify-between">
           <div className="text-subtitle">Total</div>

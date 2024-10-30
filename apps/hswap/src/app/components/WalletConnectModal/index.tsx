@@ -6,6 +6,7 @@ import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { EVMWalletModal } from './EVMWalletModal';
 import { InjectiveWalletOptionsModal } from './InjectiveWalletOptionsModal';
 import { SuiWalletOptionsModal } from './SuiWalletOptionsModal';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export const xChainTypes: WalletItemProps[] = [
   {
@@ -51,11 +52,13 @@ export default function WalletConnectModal({ modalId = MODAL_ID.WALLET_CONNECT_M
   return (
     <>
       <Modal open={open} onDismiss={onDismiss} title="Sign in with" dialogClassName="max-w-[450px]">
-        <div className="w-full flex flex-col gap-4 mt-2">
-          {xChainTypes.map(wallet => (
-            <WalletItem key={wallet.xChainType} {...wallet} />
-          ))}
-        </div>
+        <ScrollArea className="h-[600px]">
+          <div className="w-full flex flex-col gap-4 mt-2">
+            {xChainTypes.map(wallet => (
+              <WalletItem key={wallet.xChainType} {...wallet} />
+            ))}
+          </div>
+        </ScrollArea>
       </Modal>
       <EVMWalletModal />
       <InjectiveWalletOptionsModal />

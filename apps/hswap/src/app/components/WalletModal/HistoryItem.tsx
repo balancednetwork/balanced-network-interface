@@ -34,11 +34,10 @@ function formatElapsedTime(elapsedTime: number): string {
 const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
   const { inputXToken, outputXToken, inputAmount, outputAmount } = xTransaction.attributes;
 
-  const [elapsedTime, setElapsedTime] = useState(0);
-
   const primaryMessage = xMessageActions.getOf(xTransaction.id, true);
-  const timestamp = primaryMessage?.createdAt;
 
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const timestamp = xTransaction.createdAt;
   useEffect(() => {
     if (timestamp) {
       const updateElapsedTime = () => {

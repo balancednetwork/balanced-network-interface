@@ -37,6 +37,8 @@ const SingleChainItem = ({
   const { symbol } = currency || {};
   const theme = useTheme();
   const collateralChangeIcxDisplayType = useCollateralChangeIcxDisplayType();
+  const icxDisplayType = useIcxDisplayType();
+  const ICX = useICX();
 
   const price = React.useMemo(() => {
     if (!prices || (symbol && !prices[symbol])) return;
@@ -45,27 +47,35 @@ const SingleChainItem = ({
 
   const shouldShowWarning = useIsPositionLocked(collateral, loan);
 
-  const handleItemClick = (symbol: string, chainId?: XChainId) => {
+  const handleItemClick = (symbol: string, chainId: XChainId, isPotential: boolean) => {
     onSelect(symbol === 'ICX' ? 'sICX' : symbol, chainId);
     if (symbol === 'sICX' || symbol === 'ICX') {
-      collateralChangeIcxDisplayType(symbol);
+      isPotential && collateralChangeIcxDisplayType(symbol);
     }
   };
 
   return (
     <StyledListItem
       $border={!isNested && !isLast}
-      onClick={() => handleItemClick(baseToken.symbol, xChainId as XChainId)}
+      onClick={() => handleItemClick(baseToken.symbol, xChainId as XChainId, !!isPotential)}
     >
       <AssetSymbol>
         <CurrencyLogoWithNetwork
-          currency={baseToken}
+          currency={
+            isPotential
+              ? baseToken
+              : baseToken.symbol === 'sICX'
+                ? icxDisplayType === 'ICX'
+                  ? ICX
+                  : baseToken
+                : baseToken
+          }
           chainId={xChainId as XChainId}
           bgColor={isNested ? theme.colors.bg3 : theme.colors.bg4}
           size={isNested ? '20px' : '24px'}
         />
         <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>
-          {isNested ? xChainMap[xChainId].name : symbol}
+          {isNested ? xChainMap[xChainId].name : symbol === 'sICX' ? (isPotential ? symbol : icxDisplayType) : symbol}
         </Typography>
       </AssetSymbol>
       <BalanceAndValueWrap $warning={!isPotential && !!shouldShowWarning}>

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { XTransaction, XTransactionStatus } from '@/xwagmi/xcall/types';
+import { XTransaction, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 import { CheckIcon, ChevronRightIcon, Loader2Icon, XIcon } from 'lucide-react';
 import { getNetworkDisplayName } from '@/xwagmi/utils';
 import { formatBalance } from '@/utils/formatter';
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
+import { getTrackerLink } from '@/hooks/useTransactionStore';
 
 interface HistoryItemProps {
   xTransaction: XTransaction;
@@ -62,11 +63,15 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
       <div
         className="relative bg-[#221542] p-2 rounded-xl flex justify-between items-center gap-2 cursor-pointer"
         onClick={() => {
-          console.log('xTransaction', xTransaction);
-          window.open(
-            `https://xcallscan.xyz/messages/search?value=${primaryMessage?.destinationTransactionHash || primaryMessage?.sourceTransactionHash}`,
-            '_blank',
-          );
+          if (xTransaction.type === XTransactionType.SWAP_ON_ICON) {
+            const sourceTransactionHash = xTransaction.id.split('/')[1];
+            window.open(getTrackerLink('0x1.icon', sourceTransactionHash), '_blank');
+          } else {
+            window.open(
+              `https://xcallscan.xyz/messages/search?value=${primaryMessage?.destinationTransactionHash || primaryMessage?.sourceTransactionHash}`,
+              '_blank',
+            );
+          }
         }}
       >
         <div>

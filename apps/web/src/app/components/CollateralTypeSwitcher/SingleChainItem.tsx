@@ -73,7 +73,7 @@ const SingleChainItem = ({
           <DataText
             as="div"
             $fSize={isPotential ? '12px' : '14px'}
-            style={{ opacity: isPotential ? 0.75 : 1, whiteSpace: 'nowrap' }}
+            style={{ opacity: isPotential ? 0.75 : 1, whiteSpace: 'nowrap', alignSelf: 'center' }}
           >
             {price && formatValue(collateral?.multiply(price || 1).toFixed())}
             {isPotential && ' ' + t`available`}

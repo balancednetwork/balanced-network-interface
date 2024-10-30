@@ -34,7 +34,10 @@ const LoanChainSelector = ({
   const arrowRef = React.useRef(null);
 
   React.useEffect(() => {
-    if (!signedInWallets.find(wallet => wallet.xChainId === loanRecipientNetwork)) {
+    if (
+      loanRecipientNetwork !== sourceChain &&
+      !signedInWallets.find(wallet => wallet.xChainId === loanRecipientNetwork)
+    ) {
       setRecipientNetwork(sourceChain);
     }
   }, [sourceChain, signedInWallets, loanRecipientNetwork, setRecipientNetwork]);

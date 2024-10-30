@@ -13,16 +13,20 @@ import { XChainId } from '@balancednetwork/sdk-core';
 interface XChainSelectProps {
   xChains: XChain[];
   onValueChange?: (value: XChainId) => void;
-  value?: XChainId;
-  defaultValue?: XChainId;
+  value?: XChainId | 'all';
+  defaultValue?: XChainId | 'all';
   className?: string;
 }
+
+const AllChainLogo = () => {
+  return <img width="28px" height="28px" src="/icons/chains/all.png" srcSet="" alt={'All'} className="" />;
+};
 
 export default function XChainSelect({
   xChains = [],
   onValueChange,
   value,
-  defaultValue = '0x1.icon',
+  defaultValue = 'all',
   className,
 }: XChainSelectProps) {
   const [open, setOpen] = useState(false);
@@ -41,7 +45,7 @@ export default function XChainSelect({
       <Select open={open} onOpenChange={setOpen} value={_value} onValueChange={handleValueChange}>
         <SelectPrimitive.Trigger asChild>
           <div className="cursor-pointer flex gap-2 items-center">
-            <ChainLogo chain={xChainMap[_value]} size="28px" />
+            {_value === 'all' ? <AllChainLogo /> : <ChainLogo chain={xChainMap[_value]} size="28px" />}
             {open ? (
               <ChevronUp className="h-4 w-4 opacity-50 text-foreground" />
             ) : (
@@ -51,6 +55,12 @@ export default function XChainSelect({
         </SelectPrimitive.Trigger>
 
         <SelectContent className="bg-background text-foreground p-2 gap-2 flex flex-col w-[200px]">
+          <SelectItem value={'all'} className="pl-2 focus:bg-[#221542] focus:text-foreground">
+            <div className="flex gap-2 items-center py-1">
+              <AllChainLogo />
+              <span className="text-base font-[600]">All</span>
+            </div>
+          </SelectItem>
           {xChains.map(xChain => (
             <SelectItem
               key={xChain.xChainId}

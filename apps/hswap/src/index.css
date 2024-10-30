@@ -111,3 +111,8 @@
     @apply text-[0.75rem];
   }
 }
+
+.PopoverContent {
+  width: var(--radix-popover-trigger-width);
+  max-height: var(--radix-popover-content-available-height);
+}

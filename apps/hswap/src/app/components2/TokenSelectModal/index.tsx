@@ -98,9 +98,9 @@ export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, s
           <XChainSelect xChains={xChains} value={xChainId} onValueChange={value => setXChainId(value)} />
         </div>
 
-        <ScrollArea className="h-[500px] border-none p-2 m-[-4px]">
+        <ScrollArea className="h-[500px] border-none p-2 mx-[-8px]">
           <div className="flex flex-col gap-2">
-            <div className="flex justify-between">
+            <div className="flex justify-between px-1">
               <div>Asset</div>
               <div>Price</div>
             </div>
@@ -113,7 +113,7 @@ export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, s
                   return (
                     <div key={row.id}>
                       <div
-                        className="flex justify-between py-2 cursor-pointer"
+                        className="flex justify-between py-2 cursor-pointer hover:bg-accent rounded-xl px-1"
                         onClick={() => {
                           onCurrencySelect(xTokens?.[0]);
                           onDismiss();

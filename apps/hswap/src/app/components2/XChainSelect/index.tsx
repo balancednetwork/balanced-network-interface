@@ -55,7 +55,7 @@ export default function XChainSelect({
         </SelectPrimitive.Trigger>
 
         <SelectContent className="bg-background text-foreground p-2 gap-2 flex flex-col w-[200px]">
-          <SelectItem value={'all'} className="pl-2 focus:bg-[#221542] focus:text-foreground">
+          <SelectItem value={'all'} className="pl-2 focus:bg-[#221542] focus:text-foreground cursor-pointer">
             <div className="flex gap-2 items-center py-1">
               <AllChainLogo />
               <span className="text-base font-[600]">All</span>
@@ -65,7 +65,7 @@ export default function XChainSelect({
             <SelectItem
               key={xChain.xChainId}
               value={xChain.xChainId}
-              className="pl-2 focus:bg-[#221542] focus:text-foreground"
+              className="pl-2 focus:bg-[#221542] focus:text-foreground cursor-pointer"
             >
               <div className="flex gap-2 items-center py-1">
                 <ChainLogo chain={xChain} size="28px" />

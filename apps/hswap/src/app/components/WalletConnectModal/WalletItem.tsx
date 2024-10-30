@@ -80,7 +80,7 @@ const WalletItem = ({ name, xChainType }: WalletItemProps) => {
               <img width={28} height={28} src={activeXConnector?.icon} />
               {activeXConnector?.name}
             </div>
-            <CopyableAddress account={address} copyIcon placement="right" />
+            <CopyableAddress account={address} />
           </div>
         ) : (
           <>

@@ -75,7 +75,7 @@ export default function LiquidityPoolsPanel() {
                 onClick={() => handleSwitch(PanelType.AllPools)}
                 $active={panelType === PanelType.AllPools}
               >
-                <Trans>All pools</Trans>
+                <Trans>Core pools</Trans>
               </ChartControlButton>
             </ChartControlGroup>
           )}

@@ -1,5 +1,5 @@
 import { CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
 
@@ -283,6 +283,16 @@ export function useAllPairsByName() {
     },
     placeholderData: keepPreviousData,
     enabled: allPairsSuccess && !!allPairs,
+  });
+}
+
+export function useNOLPools(): UseQueryResult<number[] | undefined> {
+  return useQuery({
+    queryKey: ['nolPools'],
+    queryFn: async () => {
+      const orders = await bnJs.NOL.getOrders();
+      return orders.map(order => parseInt(order.pid, 16));
+    },
   });
 }
 

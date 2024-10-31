@@ -25,7 +25,6 @@ const SingleChainBalanceItem = ({
   baseToken,
   networkBalance,
   value,
-  isLast = false,
   isNested = false,
 }: SingleChainBalanceItemProps) => {
   const [xChainId, balance] = Object.entries(networkBalance)[0];
@@ -50,7 +49,7 @@ const SingleChainBalanceItem = ({
 
   return (
     <>
-      <ListItem $border={!isNested && !isLast} onClick={handleModalOpen} className={isICONAsset ? 'has-modal' : ''}>
+      <ListItem $border={!isNested} onClick={handleModalOpen} className={isICONAsset ? 'has-modal' : ''}>
         <AssetSymbol $hasNotification={hasNotification}>
           <CurrencyLogoWithNetwork
             currency={baseToken}

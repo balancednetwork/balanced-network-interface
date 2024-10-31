@@ -171,7 +171,7 @@ const Wallet = ({ close }: WalletProps) => {
         </List>
         {sortedFilteredBalances.length > 0 && (
           <Box px="25px">
-            <Flex className="border-top" pt="25px" justifyContent="space-between">
+            <Flex pt="25px" justifyContent="space-between">
               <HeaderText>Total</HeaderText>
               <Typography fontWeight="bold" color="text">
                 {formatValue(walletTotal.toFixed())}

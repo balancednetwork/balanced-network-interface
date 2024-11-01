@@ -1,13 +1,13 @@
 import {
-  IExternalDatafeed,
-  IDatafeedChartApi,
-  ResolutionString,
   HistoryCallback,
+  IDatafeedChartApi,
+  IExternalDatafeed,
   OnReadyCallback,
-  SearchSymbolsCallback,
-  ResolveCallback,
-  SubscribeBarsCallback,
   PeriodParams,
+  ResolutionString,
+  ResolveCallback,
+  SearchSymbolsCallback,
+  SubscribeBarsCallback,
 } from '@/charting_library/charting_library';
 import { DatafeedConfiguration } from '@/charting_library/datafeed-api';
 
@@ -37,12 +37,11 @@ type PeriodParamsWithOptionalCountBack = Omit<PeriodParams, 'countBack'> & { cou
 
 export const defaultConfig: DatafeedConfiguration = {
   supported_resolutions: [
+    '15' as ResolutionString,
     '60' as ResolutionString,
-    '120' as ResolutionString,
     '240' as ResolutionString,
-    '480' as ResolutionString,
     '1D' as ResolutionString,
-    '2D' as ResolutionString,
+    '1W' as ResolutionString,
   ],
 };
 

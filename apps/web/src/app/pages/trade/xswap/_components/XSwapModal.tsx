@@ -201,16 +201,15 @@ const XSwapModal = ({
             textAlign="center"
             hidden={currencies[Field.INPUT]?.symbol === 'ICX' && currencies[Field.OUTPUT]?.symbol === 'sICX'}
           >
-            <Trans>Includes a fee of</Trans>{' '}
+            <Trans>Swap fee (included):</Trans>{' '}
             <strong>
               {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
               {currencies[Field.INPUT]?.symbol}
             </strong>
-            .
           </Typography>
 
           <Typography textAlign="center">
-            <Trans>You'll also pay</Trans> <strong>{formattedXCallFee}</strong> <Trans>to transfer cross-chain.</Trans>
+            <Trans>Transfer fee:</Trans> <strong>{formattedXCallFee}</strong>
           </Typography>
 
           {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}

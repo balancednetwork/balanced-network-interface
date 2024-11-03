@@ -30,13 +30,8 @@ const DashGrid = styled(Box)`
   display: grid;
   gap: 1em;
   align-items: center;
-  grid-template-columns: repeat(5, 1fr);
-  ${({ theme }) => theme.mediaWidth.upExtraSmall`
-    grid-template-columns: 2fr repeat(4, 1fr);
-  `}
-  ${({ theme }) => theme.mediaWidth.upLarge`
-    grid-template-columns: 1.2fr repeat(4, 1fr);
-  `}
+  grid-template-columns: 1.8fr 1.3fr 1fr 1.1fr 0.9fr;
+  
   > * {
     justify-content: flex-end;
     &:first-child {
@@ -102,7 +97,7 @@ const TooltipWrapper = styled.span`
 const SkeletonPairPlaceholder = () => {
   return (
     <DashGrid my={2}>
-      <DataText minWidth="220px">
+      <DataText>
         <Flex alignItems="center">
           <Box sx={{ minWidth: '95px', minHeight: '48px', position: 'relative' }}>
             <StyledSkeleton variant="circle" width={48} className="pool-icon-skeleton" />
@@ -113,7 +108,7 @@ const SkeletonPairPlaceholder = () => {
           </Text>
         </Flex>
       </DataText>
-      <DataText minWidth="200px">
+      <DataText>
         <Skeleton width={50} />
       </DataText>
       <DataText>
@@ -138,7 +133,7 @@ type PairItemProps = {
 const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
   <>
     <PairGrid my={2} onClick={() => onClick(pair.info)}>
-      <DataText minWidth={'220px'}>
+      <DataText>
         <Flex alignItems="center">
           <Box sx={{ minWidth: '95px' }}>
             <PoolLogo baseCurrency={pair.info.baseToken} quoteCurrency={pair.info.quoteToken} />
@@ -146,7 +141,7 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
           <Text ml={2}>{`${pair.info.baseCurrencyKey} / ${pair.info.quoteCurrencyKey}`}</Text>
         </Flex>
       </DataText>
-      <DataText minWidth={'200px'}>
+      <DataText>
         <Flex flexDirection="column" py={2} alignItems="flex-end">
           {pair.liquidity > MIN_LIQUIDITY_TO_INCLUDE ? (
             <>
@@ -217,7 +212,6 @@ export default function AllPoolsPanel() {
         <DashGrid>
           <HeaderText
             role="button"
-            minWidth="220px"
             className={sortBy.key === 'name' ? sortBy.order : ''}
             onClick={() =>
               handleSortSelect({
@@ -230,7 +224,6 @@ export default function AllPoolsPanel() {
             </span>
           </HeaderText>
           <HeaderText
-            minWidth="200px"
             role="button"
             className={sortBy.key === 'apyTotal' ? sortBy.order : ''}
             onClick={() =>

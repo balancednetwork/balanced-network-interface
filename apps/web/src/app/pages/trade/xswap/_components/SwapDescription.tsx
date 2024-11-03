@@ -22,7 +22,7 @@ import { useRatio } from '@/store/ratio/hooks';
 import { useDerivedSwapInfo, useSwapActionHandlers } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { generateChartData, toFraction } from '@/utils';
-import { formatBalance, formatUnitPrice } from '@/utils/formatter';
+import { formatUnitPrice } from '@/utils/formatter';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 const CHART_TYPES_LABELS = {

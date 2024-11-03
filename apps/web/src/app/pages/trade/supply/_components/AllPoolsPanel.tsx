@@ -19,6 +19,7 @@ import { HeaderText } from '@/app/components/SearchModal/styleds';
 import Skeleton from '@/app/components/Skeleton';
 import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
 import { PairInfo } from '@/types';
+import { useMedia } from 'react-use';
 
 const List = styled(Box)`
   -webkit-overflow-scrolling: touch;
@@ -184,6 +185,7 @@ export default function AllPoolsPanel() {
   const { sortBy, handleSortSelect, sortData } = useSort({ key: 'apyTotal', order: 'DESC' });
   const { noLiquidity } = useDerivedMintInfo();
   const { onCurrencySelection } = useMintActionHandlers(noLiquidity);
+  const showAPRTooltip = useMedia('(min-width: 700px)');
 
   const incentivisedPairs = useMemo(
     () =>
@@ -232,28 +234,32 @@ export default function AllPoolsPanel() {
               })
             }
           >
-            <TooltipWrapper onClick={e => e.stopPropagation()}>
-              <MouseoverTooltip
-                width={330}
-                text={
-                  <>
-                    <Trans>
-                      The BALN APR is calculated from the USD value of BALN rewards allocated to a pool. Your rate will
-                      vary based on the amount of bBALN you hold.
-                    </Trans>
-                    <br />
-                    <br />
-                    <Trans>The fee APR is calculated from the swap fees earned by a pool over the last 30 days.</Trans>
-                  </>
-                }
-                placement="top"
-                strategy="absolute"
-              >
-                <QuestionWrapper>
-                  <QuestionIcon className="header-tooltip" width={14} />
-                </QuestionWrapper>
-              </MouseoverTooltip>
-            </TooltipWrapper>
+            {showAPRTooltip && (
+              <TooltipWrapper onClick={e => e.stopPropagation()}>
+                <MouseoverTooltip
+                  width={330}
+                  text={
+                    <>
+                      <Trans>
+                        The BALN APR is calculated from the USD value of BALN rewards allocated to a pool. Your rate
+                        will vary based on the amount of bBALN you hold.
+                      </Trans>
+                      <br />
+                      <br />
+                      <Trans>
+                        The fee APR is calculated from the swap fees earned by a pool over the last 30 days.
+                      </Trans>
+                    </>
+                  }
+                  placement="top"
+                  strategy="absolute"
+                >
+                  <QuestionWrapper>
+                    <QuestionIcon className="header-tooltip" width={14} />
+                  </QuestionWrapper>
+                </MouseoverTooltip>
+              </TooltipWrapper>
+            )}
             <Trans>APR</Trans>
           </HeaderText>
           <HeaderText

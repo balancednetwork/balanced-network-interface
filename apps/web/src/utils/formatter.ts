@@ -102,6 +102,30 @@ export const formatPrice = (value: string | number) => {
   );
 };
 
+export const formatUnitPrice = (price: string | number) => {
+  if (price !== 0 && !price) {
+    return '...';
+  }
+
+  let decimals = 0;
+  if (toBigNumber(price).isLessThan(0.0001)) {
+    decimals = 8;
+  } else if (toBigNumber(price).isLessThan(0.01)) {
+    decimals = 6;
+  } else if (toBigNumber(price).isLessThan(10)) {
+    decimals = 4;
+  } else if (toBigNumber(price).isLessThan(1000)) {
+    decimals = 2;
+  } else {
+    decimals = 0;
+  }
+
+  return numbro(price).format({
+    thousandSeparated: true,
+    mantissa: Number.isInteger(price) ? 0 : decimals,
+  });
+};
+
 export const formatValue = (value: string | number) => {
   if (value !== 0 && !value) {
     return '$-.--';

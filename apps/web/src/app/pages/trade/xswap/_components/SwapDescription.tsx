@@ -14,7 +14,6 @@ import TradingViewChart, { CHART_TYPES, CHART_PERIODS } from '@/app/components/T
 import { Typography } from '@/app/theme';
 import { LanguageCode, ResolutionString } from '@/charting_library/charting_library';
 import { SUPPORTED_TOKENS_LIST, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
-import { useActiveLocale } from '@/hooks/useActiveLocale';
 import { useV2Pair } from '@/hooks/useV2Pairs';
 import useWidth from '@/hooks/useWidth';
 import { useIconReact } from '@/packages/icon-react';
@@ -103,7 +102,13 @@ export default function SwapDescription() {
   const [activeSymbol, setActiveSymbol] = useState<string | undefined>(undefined);
   const symbolName = `${currencies[Field.INPUT]?.symbol} / ${currencies[Field.OUTPUT]?.symbol}`;
   const isSuperSmall = useMedia('(max-width: 359px)');
-  const locale = useActiveLocale();
+
+  const hasTradingView = React.useMemo(() => {
+    return (
+      SUPPORTED_TOKENS_LIST.some(token => token.symbol === currencies[Field.INPUT]?.symbol) &&
+      SUPPORTED_TOKENS_LIST.some(token => token.symbol === currencies[Field.OUTPUT]?.symbol)
+    );
+  }, [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol]);
 
   const { onCurrencySelection } = useSwapActionHandlers();
 
@@ -185,7 +190,7 @@ export default function SwapDescription() {
               </ChartControlButton>
             ))}
 
-            {!isSuperSmall && (
+            {!isSuperSmall && hasTradingView && (
               <ChartControlButton type="button" onClick={() => setTradingViewActive(true)} $active={tradingViewActive}>
                 TradingView
               </ChartControlButton>

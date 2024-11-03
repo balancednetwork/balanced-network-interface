@@ -316,7 +316,7 @@ function CurrencyRow({
               <XChainLogoList>
                 {sortedXChains?.map(xChainId => {
                   const spokeAssetVersion: string | undefined = xTokenMap[xChainId].find(
-                    xToken => xToken.symbol === currency.symbol,
+                    xToken => xToken.symbol === currency?.symbol,
                   )?.spokeVersion;
                   return isMobile ? (
                     <Box key={xChainId} onClick={() => handleXChainCurrencySelect(currency, xChainId)}>

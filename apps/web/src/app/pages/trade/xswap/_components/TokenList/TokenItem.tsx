@@ -89,7 +89,7 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
               <ChainsWrapper>
                 {xChainIds.map(xChainId => {
                   const spokeAssetVersion: string | undefined = xTokenMap[xChainId].find(
-                    xToken => xToken.symbol === currency.symbol,
+                    xToken => xToken.symbol === currency?.symbol,
                   )?.spokeVersion;
 
                   return (

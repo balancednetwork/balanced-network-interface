@@ -361,13 +361,17 @@ msgstr ""
 msgid "No assets found."
 msgstr ""
 
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Swap fee"
+msgstr ""
+
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 msgid "Claiming network fees..."
 msgstr ""
 
-#: src/app/components/trade/SwapPanel.tsx
-#~ msgid "Transfer fee"
-#~ msgstr ""
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Transfer fee"
+msgstr ""
 
 #: src/app/pages/trade/xswap/_components/TokenList/index.tsx
 msgid "Tokens"
@@ -872,8 +876,8 @@ msgstr ""
 #~ msgstr "Đã nhận {0} BALN."
 
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
-msgid "You'll also pay"
-msgstr ""
+#~ msgid "You'll also pay"
+#~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 msgid "1H"
@@ -1033,8 +1037,8 @@ msgid "Unlock {0} BALN"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
-msgid "to transfer cross-chain."
-msgstr ""
+#~ msgid "to transfer cross-chain."
+#~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
 #~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer crypto cross-chain."
@@ -1237,7 +1241,6 @@ msgstr ""
 #~ msgstr "Ko có tài sản sẵn có."
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
-#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Fee"
 msgstr "Mức phí"
 
@@ -1367,6 +1370,11 @@ msgstr "({0}% yêu cầu)"
 msgid "Claimed {0} ICX."
 msgstr "Đã nhận {0} ICX."
 
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+msgid "Transfer fee:"
+msgstr ""
+
 #: src/app/components/home/Savings/index.tsx
 msgid "Withdraw bnUSD?"
 msgstr ""
@@ -1386,8 +1394,8 @@ msgid "Borrow"
 msgstr "Vay"
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-msgid "Includes a fee of {0} {1}."
-msgstr "Bao gồm tiền phí {0} {1}."
+#~ msgid "Includes a fee of {0} {1}."
+#~ msgstr "Bao gồm tiền phí {0} {1}."
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
 msgid "Contract address"
@@ -1902,8 +1910,8 @@ msgstr "Đã từ chối"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
-msgid "Includes a fee of"
-msgstr ""
+#~ msgid "Includes a fee of"
+#~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "To deposit {collateralType}"
@@ -1999,6 +2007,10 @@ msgstr "Nhận"
 #: src/app/Routes.tsx
 msgid "Home"
 msgstr "Trang chủ"
+
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+msgid "Swap fee (included):"
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "To deposit {collateralType} from {0},"
@@ -2168,6 +2180,10 @@ msgstr ""
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Creating pool"
 msgstr "Đang tạo ao thanh khoản"
+
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+msgid "Swap fee (included): <0>{0} {1}</0>"
+msgstr ""
 
 #: src/app/components/ICXDisplayTypeSwitcher/index.tsx
 msgid "The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset."
@@ -2563,8 +2579,8 @@ msgid "Unlocking BALN early..."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Bridge fee"
-msgstr ""
+#~ msgid "Bridge fee"
+#~ msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"

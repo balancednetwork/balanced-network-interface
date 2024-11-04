@@ -90,7 +90,6 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
                 {xChainIds.map(xChainId => {
                   try {
                     const spokeAssetVersion: string | undefined = xTokenMap[xChainId].find(xToken => {
-                      console.log(xToken.symbol, currency.symbol);
                       return xToken.symbol === currency.symbol;
                     })?.spokeVersion;
 

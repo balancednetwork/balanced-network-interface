@@ -13,6 +13,7 @@ export class SuiXPublicClient extends XPublicClient {
     return this.getXService().suiClient;
   }
 
+  // getBalance is not used because getBalances uses getAllBalances which returns all balances
   async getBalance(address: string | undefined, xToken: XToken) {
     if (!address) return;
 
@@ -31,9 +32,27 @@ export class SuiXPublicClient extends XPublicClient {
     }
   }
 
-  // TODO: implement this using suiClient.getAllBalances
-  // async getBalances(address: string | undefined, xTokens: XToken[]) {
-  // }
+  async getBalances(address: string | undefined, xTokens: XToken[]) {
+    if (!address) return {};
+
+    try {
+      const allBalances = await this.getPublicClient().getAllBalances({
+        owner: address,
+      });
+      const tokenMap = xTokens.reduce((map, xToken) => {
+        const coinType = xToken.isNativeXToken() ? '0x2::sui::SUI' : xToken.address;
+        const balance = allBalances.find(b => b.coinType === coinType);
+
+        if (balance) map[xToken.address] = CurrencyAmount.fromRawAmount(xToken, balance.totalBalance);
+        return map;
+      }, {});
+
+      return tokenMap;
+    } catch (e) {
+      console.log('error', e);
+      return {};
+    }
+  }
 
   async getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean, sources?: string[]) {
     // TODO: hardcoded for now, confirm with the team

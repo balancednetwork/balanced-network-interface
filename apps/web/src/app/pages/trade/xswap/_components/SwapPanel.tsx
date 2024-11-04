@@ -15,6 +15,7 @@ import { UnderlineText, UnderlineTextWithArrow } from '@/app/components/Dropdown
 import { BrightPanel } from '@/app/components/Panel';
 import { DropdownPopper } from '@/app/components/Popover';
 import { SelectorType } from '@/app/components/SearchModal/CurrencySearch';
+import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
@@ -27,7 +28,7 @@ import { Field } from '@/store/swap/reducer';
 import { formatPercent, maxAmountSpend } from '@/utils';
 import { getXChainType } from '@/xwagmi/actions';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { useXAccount } from '@/xwagmi/hooks';
+import { useXAccount, useXConnect, useXConnectors } from '@/xwagmi/hooks';
 import { XChainId } from '@/xwagmi/types';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import SwapModal from './SwapModal';
@@ -133,6 +134,10 @@ export default function SwapPanel() {
   const slippageTolerance = useSwapSlippageTolerance();
   const isValid = !inputError && canBridge;
 
+  const xChainType = getXChainType(direction.from);
+  const xConnectors = useXConnectors(xChainType);
+  const xConnect = useXConnect();
+
   // handle swap modal
   const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
 
@@ -152,7 +157,9 @@ export default function SwapPanel() {
 
   const handleSwap = useCallback(() => {
     if (isXSwap) {
-      if (!account || !recipient) {
+      if ((!account && recipient) || direction.from === direction.to) {
+        handleConnectWallet(xChainType, xConnectors, xConnect);
+      } else if (!account && !recipient) {
         toggleWalletModal();
       } else {
         setExecutionTrade(trade);
@@ -166,7 +173,18 @@ export default function SwapPanel() {
         setExecutionTrade(trade);
       }
     }
-  }, [account, toggleWalletModal, trade, isXSwap, recipient]);
+  }, [
+    account,
+    toggleWalletModal,
+    trade,
+    isXSwap,
+    recipient,
+    direction.from,
+    direction.to,
+    xChainType,
+    xConnectors,
+    xConnect,
+  ]);
 
   const minimumToReceive = trade?.minimumAmountOut(new Percent(slippageTolerance, 10_000));
   const priceImpact = formatPercent(new BigNumber(trade?.priceImpact.toFixed() || 0));

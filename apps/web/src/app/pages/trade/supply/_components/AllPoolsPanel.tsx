@@ -10,16 +10,20 @@ import { MouseoverTooltip } from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import QuestionIcon from '@/assets/icons/question.svg';
 import useSort from '@/hooks/useSort';
-import { MIN_LIQUIDITY_TO_INCLUDE, PairData, useAllPairsById } from '@/queries/backendv2';
+import { MIN_LIQUIDITY_TO_INCLUDE, PairData, TOKEN_BLACKLIST, useAllPairsById, useNOLPools } from '@/queries/backendv2';
 import { useDerivedMintInfo, useMintActionHandlers } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
 import { getFormattedNumber } from '@/utils/formatter';
 
+import DropdownLink from '@/app/components/DropdownLink';
 import { HeaderText } from '@/app/components/SearchModal/styleds';
 import Skeleton from '@/app/components/Skeleton';
 import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
 import { PairInfo } from '@/types';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useMedia } from 'react-use';
+
+const COMPACT_ITEM_COUNT = 8;
 
 const List = styled(Box)`
   -webkit-overflow-scrolling: touch;
@@ -146,7 +150,7 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
         <Flex flexDirection="column" py={2} alignItems="flex-end">
           {pair.liquidity > MIN_LIQUIDITY_TO_INCLUDE ? (
             <>
-              {pair.balnApy && (
+              {pair.balnApy ? (
                 <APYItem>
                   <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
                     BALN:
@@ -156,15 +160,15 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
                     'percent2',
                   )}`}
                 </APYItem>
-              )}
-              {pair.feesApy !== 0 && (
+              ) : null}
+              {pair.feesApy !== 0 ? (
                 <APYItem>
                   <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
                     <Trans>Fees:</Trans>
                   </Typography>
                   {getFormattedNumber(pair.feesApy, 'percent2')}
                 </APYItem>
-              )}
+              ) : null}
             </>
           ) : (
             '-'
@@ -180,24 +184,14 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
   </>
 );
 
-export default function AllPoolsPanel() {
+export default function AllPoolsPanel({ query }: { query: string }) {
   const { data: allPairs } = useAllPairsById();
+  const { data: nolPairs } = useNOLPools();
   const { sortBy, handleSortSelect, sortData } = useSort({ key: 'apyTotal', order: 'DESC' });
   const { noLiquidity } = useDerivedMintInfo();
   const { onCurrencySelection } = useMintActionHandlers(noLiquidity);
   const showAPRTooltip = useMedia('(min-width: 700px)');
-
-  const incentivisedPairs = useMemo(
-    () =>
-      allPairs &&
-      Object.keys(allPairs).reduce((pairs, pairID) => {
-        if (allPairs && allPairs[pairID].balnApy) {
-          pairs[pairID] = allPairs[pairID];
-        }
-        return pairs;
-      }, {}),
-    [allPairs],
-  );
+  const [showingExpanded, setShowingExpanded] = React.useState(false);
 
   const handlePoolLick = (pair: PairInfo) => {
     if (pair.id === 1) {
@@ -207,6 +201,43 @@ export default function AllPoolsPanel() {
       onCurrencySelection(Field.CURRENCY_B, pair.quoteToken);
     }
   };
+
+  //show only incentivised, cross native or NOL pairs
+  const relevantPairs = useMemo(() => {
+    if (!allPairs || !nolPairs) return [];
+    const nativeSymbols = Object.values(xChainMap).map(chain => chain.nativeCurrency.symbol);
+
+    return Object.values(allPairs).filter(pair => {
+      const isTokenBlacklisted = TOKEN_BLACKLIST.some(
+        token => token === pair.info.baseCurrencyKey || token === pair.info.quoteCurrencyKey,
+      );
+      return (
+        !isTokenBlacklisted &&
+        (pair.balnApy || nolPairs.includes(pair.info.id) || nativeSymbols.includes(pair.info.baseCurrencyKey))
+      );
+    });
+  }, [allPairs, nolPairs]);
+
+  const filteredRelevantPairs = useMemo(() => {
+    if (!query) return relevantPairs;
+
+    return relevantPairs.filter(pair => {
+      //show network owned liquidity
+      if (query === 'nol' && nolPairs) {
+        return nolPairs.includes(pair.info.id);
+      }
+      //show pair with crosschain native token
+      if (query === 'native') {
+        return Object.values(xChainMap)
+          .map(chain => chain.nativeCurrency.symbol)
+          .includes(pair.info.baseCurrencyKey);
+      }
+      return (
+        pair.info.baseCurrencyKey.toLowerCase().includes(query.toLowerCase()) ||
+        pair.info.quoteCurrencyKey.toLowerCase().includes(query.toLowerCase())
+      );
+    });
+  }, [relevantPairs, query, nolPairs]);
 
   return (
     <Box overflow="auto">
@@ -297,10 +328,17 @@ export default function AllPoolsPanel() {
           </HeaderText>
         </DashGrid>
 
-        {incentivisedPairs ? (
-          sortData(Object.values(incentivisedPairs)).map((pair, index, array) => (
-            <PairItem key={index} pair={pair} onClick={handlePoolLick} isLast={array.length - 1 === index} />
-          ))
+        {filteredRelevantPairs ? (
+          sortData(filteredRelevantPairs).map((pair, index, array) =>
+            showingExpanded || index < COMPACT_ITEM_COUNT ? (
+              <PairItem
+                key={index}
+                pair={pair}
+                onClick={handlePoolLick}
+                isLast={index === array.length - 1 || (!showingExpanded && index === COMPACT_ITEM_COUNT - 1)}
+              />
+            ) : null,
+          )
         ) : (
           <>
             <SkeletonPairPlaceholder />
@@ -317,6 +355,18 @@ export default function AllPoolsPanel() {
             <Divider />
             <SkeletonPairPlaceholder />
           </>
+        )}
+
+        {filteredRelevantPairs.length === 0 && query && (
+          <Typography textAlign="center" mt={'30px'}>
+            <Trans>No pools found.</Trans>
+          </Typography>
+        )}
+
+        {filteredRelevantPairs.length > COMPACT_ITEM_COUNT && (
+          <Box>
+            <DropdownLink expanded={showingExpanded} setExpanded={setShowingExpanded} />
+          </Box>
         )}
       </List>
     </Box>

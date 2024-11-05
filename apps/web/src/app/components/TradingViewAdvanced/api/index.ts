@@ -27,9 +27,7 @@ interface Subscriber {
 
 const __subs: Subscriber[] = [];
 
-const LAST_BAR_CONSTANT = 604800000000;
-
-const TIME_FORMAT_CONSTATNT = 1_000;
+const TIME_FORMAT_CONSTANT = 1_000;
 
 const PAIR_NAMES = SUPPORTED_PAIRS.map(pair => pair.name);
 
@@ -42,6 +40,7 @@ export const defaultConfig: DatafeedConfiguration = {
     '240' as ResolutionString,
     '1D' as ResolutionString,
     '1W' as ResolutionString,
+    '1M' as ResolutionString,
   ],
 };
 
@@ -80,7 +79,7 @@ class DataFeed implements IExternalDatafeed, IDatafeedChartApi {
         const { data } = response;
         const meta: { noData?: boolean } = {};
         const dataMapped = data.map(item =>
-          formatBarItem(item, symbolInfo.decimal, symbolInfo.isPairInverted, TIME_FORMAT_CONSTATNT),
+          formatBarItem(item, symbolInfo.decimal, symbolInfo.isPairInverted, TIME_FORMAT_CONSTANT),
         );
 
         if (countBack && countBack > data.length) {
@@ -88,6 +87,8 @@ class DataFeed implements IExternalDatafeed, IDatafeedChartApi {
         }
 
         onResult(dataMapped, meta);
+      } else if (response.status === 204) {
+        onResult([], { noData: true });
       }
     });
   }
@@ -102,20 +103,23 @@ class DataFeed implements IExternalDatafeed, IDatafeedChartApi {
     const _onTick = onTick;
     const _symbolInfo = symbolInfo;
     const subListenerInterval: ReturnType<typeof setInterval> = setInterval(() => {
-      const now = new Date().valueOf() * 1_000;
+      const now = new Date().valueOf();
+      const nowSeconds = Math.floor(now / 1000);
 
-      getHistoryBars(_symbolInfo.pairID, resolution, now - LAST_BAR_CONSTANT, now).then(response => {
-        if (response.status === 200) {
-          const { data } = response;
-          const latestBar = formatBarItem(
-            data.at(-1),
-            _symbolInfo.decimal,
-            _symbolInfo.isPairInverted,
-            TIME_FORMAT_CONSTATNT,
-          );
-          _onTick(latestBar);
-        }
-      });
+      getHistoryBars(_symbolInfo.pairID, resolution, this.getLastBarTime(resolution, nowSeconds), nowSeconds).then(
+        response => {
+          if (response.status === 200) {
+            const { data } = response;
+            const latestBar = formatBarItem(
+              data.at(-1),
+              _symbolInfo.decimal,
+              _symbolInfo.isPairInverted,
+              TIME_FORMAT_CONSTANT,
+            );
+            _onTick(latestBar);
+          }
+        },
+      );
     }, 5000);
 
     const existingSubIndex = __subs.findIndex(e => e.guid === listenerGuid);
@@ -137,6 +141,24 @@ class DataFeed implements IExternalDatafeed, IDatafeedChartApi {
     if (subIndex >= 0) {
       clearInterval(__subs[subIndex].listener);
     }
+  }
+
+  private getLastBarTime(resolution: ResolutionString, now: number): number {
+    let lastBarTime = 0;
+    if (resolution === '15') {
+      lastBarTime = now - 60 * 15;
+    } else if (resolution === '60') {
+      lastBarTime = now - 60 * 60;
+    } else if (resolution === '240') {
+      lastBarTime = now - 60 * 240;
+    } else if (resolution === '1D') {
+      lastBarTime = now - 60 * 60 * 24;
+    } else if (resolution === '1W') {
+      lastBarTime = now - 60 * 60 * 24 * 7;
+    } else if (resolution === '1M') {
+      lastBarTime = now - 60 * 60 * 24 * 30;
+    }
+    return lastBarTime;
   }
 }
 

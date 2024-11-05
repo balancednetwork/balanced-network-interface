@@ -13,7 +13,7 @@ import { TVChartContainer } from '@/app/components/TradingViewAdvanced/TVChartCo
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS } from '@/app/components/TradingViewChart';
 import { Typography } from '@/app/theme';
 import { LanguageCode, ResolutionString } from '@/charting_library/charting_library';
-import { SUPPORTED_TOKENS_LIST, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
+import { ORACLE_PRICED_TOKENS, SUPPORTED_TOKENS_LIST, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
 import { useV2Pair } from '@/hooks/useV2Pairs';
 import useWidth from '@/hooks/useWidth';
 import { useIconReact } from '@/packages/icon-react';
@@ -111,6 +111,15 @@ export default function SwapDescription() {
     );
   }, [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol]);
 
+  const hasChart = React.useMemo(() => {
+    const pairExists = pair !== undefined;
+    const isOraclePriced =
+      ORACLE_PRICED_TOKENS.includes(currencies[Field.INPUT]?.symbol!) ||
+      ORACLE_PRICED_TOKENS.includes(currencies[Field.OUTPUT]?.symbol!);
+
+    return pairExists && !isOraclePriced;
+  }, [pair, currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol]);
+
   const { onCurrencySelection } = useSwapActionHandlers();
 
   const handleTVDismiss = () => {
@@ -141,7 +150,7 @@ export default function SwapDescription() {
             {symbolName}
           </Typography>
 
-          {pair && (
+          {hasChart && (
             <>
               <Typography variant="p">
                 <Trans>
@@ -161,7 +170,7 @@ export default function SwapDescription() {
             </>
           )}
         </Box>
-        <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={!pair || pair.poolId === 1}>
+        <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={!hasChart || pair?.poolId === 1}>
           <ChartControlGroup mb={2}>
             {Object.keys(CHART_PERIODS).map(key => (
               <ChartControlButton
@@ -201,7 +210,7 @@ export default function SwapDescription() {
       </Flex>
       <div style={{ flexGrow: 1, display: 'flex', justifyContent: 'center', width: '100%' }}>
         <ChartContainer my="auto" width="100%" ref={ref}>
-          {pair ? (
+          {hasChart && pair ? (
             <>
               {isChartLoading ? (
                 <Spinner size={75} $centered />

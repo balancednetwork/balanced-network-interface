@@ -65,13 +65,13 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('0x1.icon', ChainId.MAINNET, 'cx4297f4b63262507623b6ad575d0d8dd2db980e4e', 18, 'INJ', 'INJ'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx16f3cb9f09f5cdd902cf07aa752c8b3bd1bc9609', 6, 'USDT', 'Tether USD'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx508002ec116fbf3ab406329c0df28e70d7e75fb3', 9, 'SUI', 'SUI'),
-    new XToken('0x1.icon', ChainId.MAINNET, 'cxb9d0727849a6ce6453f8c9dda2dec2fd543075d4', 9, 'VSUI', 'Volo Staked SUI'),
+    new XToken('0x1.icon', ChainId.MAINNET, 'cxb9d0727849a6ce6453f8c9dda2dec2fd543075d4', 9, 'vSUI', 'Volo Staked SUI'),
     new XToken(
       '0x1.icon',
       ChainId.MAINNET,
       'cx0664cceb34d391ba78a897200fab94b9b49443d0',
       9,
-      'HASUI',
+      'haSUI',
       'Haedal Staked SUI',
     ),
     new XToken(
@@ -79,7 +79,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       ChainId.MAINNET,
       'cx27fa4bdb0522e3be5a51daab06eb39889fb4c8da',
       9,
-      'AFSUI',
+      'afSUI',
       'Aftermath Staked SUI',
     ),
   ],
@@ -200,7 +200,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'sui',
       '0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT',
       9,
-      'VSUI',
+      'vSUI',
       'Volo Staked SUI',
     ),
     new XToken(
@@ -208,7 +208,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'sui',
       '0xbde4ba4c2e274a60ce15c1cfff9e5c42e41654ac8b6d906a57efa4bd3c29f47d::hasui::HASUI',
       9,
-      'HASUI',
+      'haSUI',
       'Haedal Staked SUI',
     ),
     new XToken(
@@ -216,7 +216,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'sui',
       '0xf325ce1300e8dac124071d3152c5c5ee6174914f8bc2161e88329cf579246efc::afsui::AFSUI',
       9,
-      'AFSUI',
+      'afSUI',
       'Aftermath Staked SUI',
     ),
     new XToken(

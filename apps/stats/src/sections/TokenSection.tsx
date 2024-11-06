@@ -241,7 +241,7 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
           <Flex alignItems="flex-end" flexDirection="column" minWidth={200} pl={2}>
             <Typography variant="p">{getFormattedNumber(token.market_cap, 'currency0')}</Typography>
             <Flex>
-              {tokenBreakdown && tokenBreakdown.length > 1 && (
+              {!isMobile && tokenBreakdown && tokenBreakdown.length > 1 && (
                 <Box mr={1}>
                   <AssetManagerTokenBreakdown breakdown={tokenBreakdown} spacing={{ x: 0, y: 1 }} />
                 </Box>

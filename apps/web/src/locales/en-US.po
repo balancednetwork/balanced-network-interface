@@ -1071,6 +1071,10 @@ msgstr "Failed to enact"
 msgid "Sign in to Balanced"
 msgstr "Sign in to Balanced"
 
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+msgid "No pools found."
+msgstr "No pools found."
+
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Risk ratio"
 msgstr "Risk ratio"
@@ -1594,6 +1598,10 @@ msgstr "Processing transaction..."
 #~ msgid "Or"
 #~ msgstr "Or"
 
+#: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
+msgid "Core pools"
+msgstr "Core pools"
+
 #: src/app/components/trade/XCallEventManager.tsx
 #~ msgid "Awaiting confirmation on {0}."
 #~ msgstr "Awaiting confirmation on {0}."
@@ -1893,8 +1901,8 @@ msgid "Withdrawing {0}"
 msgstr "Withdrawing {0}"
 
 #: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
-msgid "Incentivised pools"
-msgstr "Incentivised pools"
+#~ msgid "Incentivised pools"
+#~ msgstr "Incentivised pools"
 
 #: src/app/pages/vote/_components/utils.ts
 #: src/utils/timeformat.ts

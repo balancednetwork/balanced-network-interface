@@ -1114,6 +1114,10 @@ msgstr "Uitvoeren mislukt"
 msgid "Sign in to Balanced"
 msgstr ""
 
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+msgid "No pools found."
+msgstr ""
+
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Risk ratio"
 msgstr "Risico ratio"
@@ -1650,6 +1654,10 @@ msgstr "Transactie verwerken..."
 #~ msgid "Or"
 #~ msgstr "Of"
 
+#: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
+msgid "Core pools"
+msgstr ""
+
 #: src/app/components/trade/XCallEventManager.tsx
 #~ msgid "Awaiting confirmation on {0}."
 #~ msgstr ""
@@ -1955,8 +1963,8 @@ msgid "Withdrawing {0}"
 msgstr "{0} aan het opnemen"
 
 #: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
-msgid "Incentivised pools"
-msgstr "Geïncentiviseerde pools"
+#~ msgid "Incentivised pools"
+#~ msgstr "Geïncentiviseerde pools"
 
 #: src/app/pages/vote/_components/utils.ts
 #: src/utils/timeformat.ts

@@ -144,15 +144,15 @@ export function useWalletFetchBalances() {
   }, [avaxBalances, dispatch]);
 
   // fetch balances on bsc
-  const bscTokens = useXTokens('0x38.bsc');
-  const { data: bscBalances } = useXBalances({
-    xChainId: '0x38.bsc',
-    xTokens: bscTokens,
-    address,
-  });
-  React.useEffect(() => {
-    bscBalances && dispatch(changeBalances({ xChainId: '0x38.bsc', balances: bscBalances }));
-  }, [bscBalances, dispatch]);
+  // const bscTokens = useXTokens('0x38.bsc');
+  // const { data: bscBalances } = useXBalances({
+  //   xChainId: '0x38.bsc',
+  //   xTokens: bscTokens,
+  //   address,
+  // });
+  // React.useEffect(() => {
+  //   bscBalances && dispatch(changeBalances({ xChainId: '0x38.bsc', balances: bscBalances }));
+  // }, [bscBalances, dispatch]);
 
   // fetch balances on arb
   const arbTokens = useXTokens('0xa4b1.arbitrum');

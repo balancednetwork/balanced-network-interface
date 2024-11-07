@@ -13,6 +13,7 @@ import { LoaderComponent } from '@/pages/PerformanceDetails/utils';
 import { Typography } from '@/theme';
 import { getFormattedNumber } from '@/utils/formatter';
 
+import { isMobile } from 'react-device-detect';
 import {
   ChartInfo,
   ChartInfoItem,
@@ -102,7 +103,7 @@ export default function BBALNChart() {
             `${getFormattedNumber(overviewInfo.bBALNAPY.toNumber(), 'percent2')} APR`}
         </Typography>
         <Box margin="1px 0 0 7px">
-          {overviewInfo.monthlyFeesTotal ? (
+          {!isMobile && overviewInfo.monthlyFeesTotal ? (
             <MouseoverTooltip
               width={300}
               text={

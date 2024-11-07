@@ -96,9 +96,7 @@ export default function Popover({ content, show, children, placement = 'auto' }:
 
   return (
     <>
-      <span style={{ maxWidth: '100vw', overflow: 'hidden' }}>
-        <ReferenceElement ref={setReferenceElement as any}>{children}</ReferenceElement>
-      </span>
+      <ReferenceElement ref={setReferenceElement as any}>{children}</ReferenceElement>
       <Portal>
         <PopoverContainer show={show} ref={setPopperElement as any} style={styles.popper} {...attributes.popper}>
           <ContentWrapper>{content}</ContentWrapper>

@@ -216,9 +216,4 @@ export const ThemedGlobalStyle = createGlobalStyle`
   body {
     min-height: 100vh;
   }
-
-  reach-portal {
-    max-width: 100vw !important;
-    overflow: hidden !important;
-  }
 `;

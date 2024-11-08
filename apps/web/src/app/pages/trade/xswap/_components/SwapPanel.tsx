@@ -157,7 +157,7 @@ export default function SwapPanel() {
 
   const handleSwap = useCallback(() => {
     if (isXSwap) {
-      if ((!account && recipient) || direction.from === direction.to) {
+      if ((!account && recipient) || (!account && direction.from === direction.to)) {
         handleConnectWallet(xChainType, xConnectors, xConnect);
       } else if (!account && !recipient) {
         toggleWalletModal();

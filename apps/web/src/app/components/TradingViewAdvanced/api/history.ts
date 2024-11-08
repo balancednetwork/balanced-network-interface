@@ -26,7 +26,6 @@ const getTimeResolutionForBalancedBE = (tvResolutionString: string): string => {
     case '1D':
       return '1d';
     case '1W':
-    case '1M':
       return '1w';
     default:
       return '1h';

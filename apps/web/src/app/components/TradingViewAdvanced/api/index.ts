@@ -40,7 +40,6 @@ export const defaultConfig: DatafeedConfiguration = {
     '240' as ResolutionString,
     '1D' as ResolutionString,
     '1W' as ResolutionString,
-    '1M' as ResolutionString,
   ],
 };
 
@@ -155,8 +154,6 @@ class DataFeed implements IExternalDatafeed, IDatafeedChartApi {
       lastBarTime = now - 60 * 60 * 24;
     } else if (resolution === '1W') {
       lastBarTime = now - 60 * 60 * 24 * 7;
-    } else if (resolution === '1M') {
-      lastBarTime = now - 60 * 60 * 24 * 30;
     }
     return lastBarTime;
   }

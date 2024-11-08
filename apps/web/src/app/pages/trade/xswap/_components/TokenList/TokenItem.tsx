@@ -109,7 +109,6 @@ const TokenItem = ({ token, price, isLast }: TokenItemProps) => {
                       </MouseoverTooltip>
                     );
                   } catch (e) {
-                    console.log(e);
                     return null;
                   }
                 })}

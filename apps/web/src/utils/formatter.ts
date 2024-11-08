@@ -70,9 +70,11 @@ export const formatBalance = (balance: number | string | undefined, price: strin
 
   const decimals = getBalanceDecimals(price);
 
+  const amount = toBigNumber(balance);
+
   return numbro(balance).format({
     thousandSeparated: true,
-    mantissa: decimals,
+    mantissa: amount.isGreaterThan(100) ? 0 : decimals,
   });
 };
 
@@ -131,13 +133,14 @@ export const formatValue = (value: string | number) => {
     return '$-.--';
   }
 
+  const number = toBigNumber(value);
+
   let decimals = 0;
-  if (toBigNumber(value).isLessThan(0.01)) {
+
+  if (number.isLessThan(0.01)) {
     decimals = 4;
-  } else if (toBigNumber(value).isLessThan(1000)) {
+  } else if (number.isLessThan(100)) {
     decimals = 2;
-  } else {
-    decimals = 0;
   }
 
   // always use dollars for now

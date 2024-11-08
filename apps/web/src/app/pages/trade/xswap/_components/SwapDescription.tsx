@@ -112,7 +112,7 @@ export default function SwapDescription() {
   }, [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol]);
 
   const hasChart = React.useMemo(() => {
-    const pairExists = pair !== undefined;
+    const pairExists = !!pair;
     const isOraclePriced =
       ORACLE_PRICED_TOKENS.includes(currencies[Field.INPUT]?.symbol!) ||
       ORACLE_PRICED_TOKENS.includes(currencies[Field.OUTPUT]?.symbol!);

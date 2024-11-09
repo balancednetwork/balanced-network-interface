@@ -26,6 +26,7 @@ import TokenSection from '@/sections/TokenSection';
 import WithdrawalLimits from '@/sections/WithdrawalLimits';
 import { Typography } from '@/theme';
 import { getFormattedNumber } from '@/utils/formatter';
+import { isMobile } from 'react-device-detect';
 import { useLocation } from 'react-router-dom';
 
 export const Container = styled(Box)`
@@ -219,7 +220,7 @@ export function StatsPage() {
                       <LoaderComponent />
                     )}
                   </Typography>
-                  {overviewInfo.monthlyFeesTotal ? (
+                  {!isMobile && overviewInfo.monthlyFeesTotal ? (
                     <MouseoverTooltip
                       width={300}
                       text={

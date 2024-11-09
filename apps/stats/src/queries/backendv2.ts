@@ -89,8 +89,8 @@ export function useAllTokens() {
           })
           .filter(
             item =>
-              !TOKEN_BLACKLIST.some(token => token.address === item['address']) &&
-              (item['liquidity'] > MIN_LIQUIDITY_TO_INCLUDE || item['address'] === 'ICX'),
+              !TOKEN_BLACKLIST.some(symbol => symbol === item['symbol']) &&
+              (item['liquidity'] > MIN_LIQUIDITY_TO_INCLUDE || item['symbol'] === 'ICX'),
           ) as TokenStats[];
       }
     },

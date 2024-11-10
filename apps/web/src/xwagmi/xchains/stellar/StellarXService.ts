@@ -21,7 +21,8 @@ export class StellarXService extends XService {
     });
 
     this.server = new StellarSdk.Horizon.Server('https://horizon.stellar.org', { allowHttp: true });
-    this.sorobanServer = new CustomSorobanServer('https://rpc.ankr.com/stellar_soroban', {});
+    // this.sorobanServer = new CustomSorobanServer('https://rpc.ankr.com/stellar_soroban', {});
+    this.sorobanServer = new CustomSorobanServer('https://soroban-rpc.mainnet.stellar.gateway.fm', {});
   }
 
   public static getInstance(): StellarXService {

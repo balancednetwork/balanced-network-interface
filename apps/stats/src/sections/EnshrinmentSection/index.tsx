@@ -1,14 +1,15 @@
-import { BoxPanel } from '@/components/Panel';
-import React from 'react';
-import { Box, Flex } from 'rebass';
-import NetworkOwnedLiquidity from './NetworkOwnedLiquidity';
-import ICXBurn from './ICXBurn';
-import { Typography } from '@/theme';
-import QuestionHelper, { QuestionWrapper } from '@/components/QuestionHelper';
 import { UnderlineText } from '@/components/DropdownText';
-import styled from 'styled-components';
+import { BoxPanel } from '@/components/Panel';
+import QuestionHelper, { QuestionWrapper } from '@/components/QuestionHelper';
+import { Typography } from '@/theme';
+import React from 'react';
 import ClickAwayListener from 'react-click-away-listener';
+import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
+import { Box, Flex } from 'rebass';
+import styled from 'styled-components';
+import ICXBurn from './ICXBurn';
+import NetworkOwnedLiquidity from './NetworkOwnedLiquidity';
 
 export const EnshrinementTooltipContent = () => (
   <>
@@ -52,15 +53,17 @@ const EnshrinementSection = () => {
         <Typography variant="h2" mr="5px">
           ICON enshrinement
         </Typography>
-        <ClickAwayListener onClickAway={() => setShow(false)}>
-          <QuestionWrapper
-            style={{ transform: 'translateY(4px)' }}
-            onMouseEnter={() => setShow(true)}
-            onTouchStart={() => setShow(true)}
-          >
-            <QuestionHelper width={370} defaultShow={show} text={<EnshrinementTooltipContent />} />
-          </QuestionWrapper>
-        </ClickAwayListener>
+        {!isMobile && (
+          <ClickAwayListener onClickAway={() => setShow(false)}>
+            <QuestionWrapper
+              style={{ transform: 'translateY(4px)' }}
+              onMouseEnter={() => setShow(true)}
+              onTouchStart={() => setShow(true)}
+            >
+              <QuestionHelper width={370} defaultShow={show} text={<EnshrinementTooltipContent />} />
+            </QuestionWrapper>
+          </ClickAwayListener>
+        )}
       </Flex>
       <Flex flexWrap="wrap">
         <Box

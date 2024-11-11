@@ -88,7 +88,7 @@ export const formatPrice = (value: string | number) => {
     decimals = 6;
   } else if (toBigNumber(value).isLessThan(10)) {
     decimals = 4;
-  } else if (toBigNumber(value).isLessThan(1000)) {
+  } else if (toBigNumber(value).isLessThan(100)) {
     decimals = 2;
   } else {
     decimals = 0;

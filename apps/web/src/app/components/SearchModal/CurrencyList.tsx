@@ -19,7 +19,7 @@ import { useBridgeDirection } from '@/store/bridge/hooks';
 import { useIsUserAddedToken } from '@/store/user/hooks';
 import { useCrossChainWalletBalances, useXCurrencyBalance } from '@/store/wallet/hooks';
 import { formatBigNumber, toFraction } from '@/utils';
-import { formatBalance, formatPrice } from '@/utils/formatter';
+import { formatBalance, formatPrice, formatValue } from '@/utils/formatter';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { xTokenMap } from '@/xwagmi/constants/xTokens';
@@ -202,7 +202,7 @@ function CurrencyRow({
 
             {balance && balance.isGreaterThan(0) && price && !price.isNaN() ? (
               <Typography variant="span" fontSize={14} color="text2" display="block">
-                {`$${balance.times(price).toFormat(2)}`}
+                {formatValue(balance.times(price).toFixed())}
               </Typography>
             ) : null}
           </DataText>

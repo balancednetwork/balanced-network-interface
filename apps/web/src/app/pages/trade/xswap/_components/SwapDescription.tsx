@@ -13,8 +13,7 @@ import { TVChartContainer } from '@/app/components/TradingViewAdvanced/TVChartCo
 import TradingViewChart, { CHART_TYPES, CHART_PERIODS } from '@/app/components/TradingViewChart';
 import { Typography } from '@/app/theme';
 import { LanguageCode, ResolutionString } from '@/charting_library/charting_library';
-import { SUPPORTED_TOKENS_LIST, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
-import { useActiveLocale } from '@/hooks/useActiveLocale';
+import { ORACLE_PRICED_TOKENS, SUPPORTED_TOKENS_LIST, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
 import { useV2Pair } from '@/hooks/useV2Pairs';
 import useWidth from '@/hooks/useWidth';
 import { useIconReact } from '@/packages/icon-react';
@@ -23,6 +22,7 @@ import { useRatio } from '@/store/ratio/hooks';
 import { useDerivedSwapInfo, useSwapActionHandlers } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { generateChartData, toFraction } from '@/utils';
+import { formatUnitPrice } from '@/utils/formatter';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 const CHART_TYPES_LABELS = {
@@ -44,7 +44,7 @@ export default function SwapDescription() {
 
   const [chartOption, setChartOption] = React.useState<{ type: CHART_TYPES; period: CHART_PERIODS }>({
     type: CHART_TYPES.AREA,
-    period: CHART_PERIODS['1H'],
+    period: CHART_PERIODS['1D'],
   });
 
   const [ref, width] = useWidth();
@@ -103,7 +103,22 @@ export default function SwapDescription() {
   const [activeSymbol, setActiveSymbol] = useState<string | undefined>(undefined);
   const symbolName = `${currencies[Field.INPUT]?.symbol} / ${currencies[Field.OUTPUT]?.symbol}`;
   const isSuperSmall = useMedia('(max-width: 359px)');
-  const locale = useActiveLocale();
+
+  const hasTradingView = React.useMemo(() => {
+    return (
+      SUPPORTED_TOKENS_LIST.some(token => token.symbol === currencies[Field.INPUT]?.symbol) &&
+      SUPPORTED_TOKENS_LIST.some(token => token.symbol === currencies[Field.OUTPUT]?.symbol)
+    );
+  }, [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol]);
+
+  const hasChart = React.useMemo(() => {
+    const pairExists = !!pair;
+    const isOraclePriced =
+      ORACLE_PRICED_TOKENS.includes(currencies[Field.INPUT]?.symbol!) ||
+      ORACLE_PRICED_TOKENS.includes(currencies[Field.OUTPUT]?.symbol!);
+
+    return pairExists && !isOraclePriced;
+  }, [pair, currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol]);
 
   const { onCurrencySelection } = useSwapActionHandlers();
 
@@ -135,11 +150,11 @@ export default function SwapDescription() {
             {symbolName}
           </Typography>
 
-          {pair && (
+          {hasChart && (
             <>
               <Typography variant="p">
                 <Trans>
-                  {`${price?.toFixed(4) || '...'} 
+                  {`${price ? formatUnitPrice(price.toFixed(10)) : '...'} 
                     ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
                 </Trans>
               </Typography>
@@ -155,7 +170,7 @@ export default function SwapDescription() {
             </>
           )}
         </Box>
-        <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={!pair || pair.poolId === 1}>
+        <Box width={[1, 1 / 2]} marginTop={[3, 0]} hidden={!hasChart || pair?.poolId === 1}>
           <ChartControlGroup mb={2}>
             {Object.keys(CHART_PERIODS).map(key => (
               <ChartControlButton
@@ -185,7 +200,7 @@ export default function SwapDescription() {
               </ChartControlButton>
             ))}
 
-            {!isSuperSmall && (
+            {!isSuperSmall && hasTradingView && (
               <ChartControlButton type="button" onClick={() => setTradingViewActive(true)} $active={tradingViewActive}>
                 TradingView
               </ChartControlButton>
@@ -195,7 +210,7 @@ export default function SwapDescription() {
       </Flex>
       <div style={{ flexGrow: 1, display: 'flex', justifyContent: 'center', width: '100%' }}>
         <ChartContainer my="auto" width="100%" ref={ref}>
-          {pair ? (
+          {hasChart && pair ? (
             <>
               {isChartLoading ? (
                 <Spinner size={75} $centered />

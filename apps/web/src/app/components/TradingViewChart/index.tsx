@@ -3,14 +3,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import BigNumber from 'bignumber.js';
 import dayjs from 'dayjs';
 import {
-  createChart,
-  IChartApi,
-  ChartOptions,
-  DeepPartial,
-  CrosshairMode,
-  isBusinessDay,
   BusinessDay,
+  ChartOptions,
+  CrosshairMode,
+  DeepPartial,
+  IChartApi,
   UTCTimestamp,
+  createChart,
+  isBusinessDay,
 } from 'lightweight-charts';
 import { usePrevious } from 'react-use';
 import styled from 'styled-components';

@@ -173,8 +173,11 @@ const SwapModal = (props: SwapModalProps) => {
           hidden={currencies[Field.INPUT]?.symbol === 'ICX' && currencies[Field.OUTPUT]?.symbol === 'sICX'}
         >
           <Trans>
-            Includes a fee of {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
-            {currencies[Field.INPUT]?.symbol}.
+            Swap fee (included):{' '}
+            <strong>
+              {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
+              {currencies[Field.INPUT]?.symbol}
+            </strong>
           </Trans>
         </Typography>
 

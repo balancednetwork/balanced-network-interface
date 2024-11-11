@@ -109,8 +109,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "History"
-msgstr ""
+#~ msgid "History"
+#~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #~ msgid "{0} ICX"
@@ -373,8 +373,8 @@ msgstr "Đăng nhập"
 #~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Tokens"
-msgstr ""
+#~ msgid "Tokens"
+#~ msgstr ""
 
 #: src/app/components2/CopyableAddress/index.tsx
 msgid "Copied"
@@ -1037,8 +1037,8 @@ msgstr ""
 #~ msgstr "Ko gửi sICX đến bất cứ sàn giao dịch nào."
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Network cost is paid in ETH on the ARBITRUM network in order to transact."
-msgstr ""
+#~ msgid "Network cost is paid in ETH on the ARBITRUM network in order to transact."
+#~ msgstr ""
 
 #: src/app/components/home/Savings/index.tsx
 #~ msgid "Withdrawing bnUSD..."
@@ -1706,8 +1706,8 @@ msgstr "Đang xử lý giao dịch..."
 #~ msgstr "Tài sản"
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Network cost"
-msgstr ""
+#~ msgid "Network cost"
+#~ msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 #~ msgid "Borrowing bnUSD..."
@@ -1870,8 +1870,8 @@ msgstr "Nếu giá cả bị vượt quá mức này, vụ trao đổi này sẽ
 #~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Wallets"
-msgstr ""
+#~ msgid "Wallets"
+#~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "To deposit {collateralType}"

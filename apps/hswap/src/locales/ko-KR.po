@@ -109,8 +109,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "History"
-msgstr ""
+#~ msgid "History"
+#~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #~ msgid "{0} ICX"
@@ -373,8 +373,8 @@ msgstr "연결하기"
 #~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Tokens"
-msgstr ""
+#~ msgid "Tokens"
+#~ msgstr ""
 
 #: src/app/components2/CopyableAddress/index.tsx
 msgid "Copied"
@@ -1037,8 +1037,8 @@ msgstr ""
 #~ msgstr "sICX를 거래소에 보내지 마십시오."
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Network cost is paid in ETH on the ARBITRUM network in order to transact."
-msgstr ""
+#~ msgid "Network cost is paid in ETH on the ARBITRUM network in order to transact."
+#~ msgstr ""
 
 #: src/app/components/home/Savings/index.tsx
 #~ msgid "Withdrawing bnUSD..."
@@ -1706,8 +1706,8 @@ msgstr "트랜잭션 처리 중..."
 #~ msgstr "자산"
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Network cost"
-msgstr ""
+#~ msgid "Network cost"
+#~ msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 #~ msgid "Borrowing bnUSD..."
@@ -1870,8 +1870,8 @@ msgstr "이 금액보다 가격이 차이가 많이 나는 경우 스왑이 실�
 #~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Wallets"
-msgstr ""
+#~ msgid "Wallets"
+#~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "To deposit {collateralType}"

@@ -108,8 +108,8 @@ msgstr "{0} transfer approval failed."
 #~ msgstr "Collateral action"
 
 #: src/app/components/WalletModal/index.tsx
-msgid "History"
-msgstr "History"
+#~ msgid "History"
+#~ msgstr "History"
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #~ msgid "{0} ICX"
@@ -364,8 +364,8 @@ msgstr "Sign in"
 #~ msgstr "Transfer fee"
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Tokens"
-msgstr "Tokens"
+#~ msgid "Tokens"
+#~ msgstr "Tokens"
 
 #: src/app/components2/CopyableAddress/index.tsx
 msgid "Copied"
@@ -994,8 +994,8 @@ msgstr "Invalid address"
 #~ msgstr "Do not send sICX to an exchange."
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Network cost is paid in ETH on the ARBITRUM network in order to transact."
-msgstr "Network cost is paid in ETH on the ARBITRUM network in order to transact."
+#~ msgid "Network cost is paid in ETH on the ARBITRUM network in order to transact."
+#~ msgstr "Network cost is paid in ETH on the ARBITRUM network in order to transact."
 
 #: src/app/components/home/Savings/index.tsx
 #~ msgid "Withdrawing bnUSD..."
@@ -1648,8 +1648,8 @@ msgstr "Processing transaction..."
 #~ msgstr "Asset"
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Network cost"
-msgstr "Network cost"
+#~ msgid "Network cost"
+#~ msgstr "Network cost"
 
 #: src/app/components/home/LoanPanel.tsx
 #~ msgid "Borrowing bnUSD..."
@@ -1808,8 +1808,8 @@ msgstr "If the price slips by more than this amount, your swap will fail."
 #~ msgstr "Includes a fee of"
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Wallets"
-msgstr "Wallets"
+#~ msgid "Wallets"
+#~ msgstr "Wallets"
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "To deposit {collateralType}"

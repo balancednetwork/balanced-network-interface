@@ -392,6 +392,7 @@ export default function CurrencyList({
     if (currencies && rateFracs) {
       return sortData(currencies, rateFracs);
     }
+    return currencies;
   }, [currencies, rateFracs, sortData]);
 
   useEffect(() => {

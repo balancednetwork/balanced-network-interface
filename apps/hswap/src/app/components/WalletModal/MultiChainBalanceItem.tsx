@@ -30,8 +30,8 @@ const MultiChainBalanceItem = ({ balances }: MultiChainBalanceItemProps) => {
         <div className="py-4">
           <div className="grid grid-cols-4 items-center cursor-pointer rounded-xl px-10" onClick={() => setOpen(!open)}>
             <div className="col-span-2 font-medium flex items-center gap-2 cursor-pointer">
-              <CurrencyLogoWithNumber currency={currency} size="32px" />
-              <div className="text-sm font-bold hover:title-gradient">{currency.symbol}</div>
+              <CurrencyLogoWithNumber currency={currency} size="32px" amount={balances.length} />
+              <div className="text-sm font-bold hover:text-title-gradient">{currency.symbol}</div>
               <span className="">{open ? <ChevronUpIcon /> : <ChevronDownIcon />}</span>
             </div>
             <div className="text-right text-sm font-bold">

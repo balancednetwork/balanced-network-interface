@@ -298,6 +298,30 @@ export const sui: XChain = {
   testnet: false,
 };
 
+export const optimism: XChain = {
+  id: 10,
+  name: 'Optimism',
+  xChainId: '0xa.optimism',
+  xChainType: 'EVM',
+  tracker: 'https://optimistic.etherscan.io',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'ETH',
+    symbol: 'ETH',
+  },
+  rpc: {
+    http: 'https://mainnet.optimism.io',
+  },
+  contracts: {
+    xCall: '0xfC83a3F252090B26f92F91DFB9dC3Eb710AdAf1b',
+    assetManager: '0xbcbd42Ab3c9d219b9c992Cc984DD2a77AfD95EF3',
+    bnUSD: '0xdccd213951d8214fbaca720728474e2cef9d247b',
+  },
+  autoExecution: true,
+  gasThreshold: 0.0001,
+  testnet: false,
+};
+
 // the order is important, using manual order to display in the UI
 export const xChainMap: { [key in XChainId]: XChain } = {
   '0x1.icon': icon,
@@ -312,6 +336,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   '0x2105.base': base,
   'injective-1': injective,
   sui: sui,
+  '0xa.optimism': optimism,
 };
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);
@@ -321,6 +346,7 @@ export const SUPPORTED_XCALL_CHAINS = xChains.map(({ xChainId }) => xChainId);
 export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   '0x2105.base': ['0x8A47E036B9c4594dF95F2dbFA09fb475Fa75469d', '0x6185D52640EA3b683AedD8bA52d18053A41fee09'],
   '0xa4b1.arbitrum': ['0x4c6C68E8F5206EE4a1690C808cfF5c3fD35b512F', '0x1F8B1e9d3633229d38BDFc93dCa50B6453Ad8E97'],
+  '0xa.optimism': ['0x8A47E036B9c4594dF95F2dbFA09fb475Fa75469d', '0x3A930aA00cDfbb2D4A2646E9Bdd19B27e54354Ba'],
   '0x38.bsc': ['0x24415977c566f9300Ea6F0aC75AEA0c09C500e46', '0xF3F1ab667a6176CCa4f916062e55115B576425F8'],
   '0xa86a.avax': ['0xC1a39C4e7AA98DEC394eF54559960873Bd619cA3', '0x7F3665eF19258cD5cE15eA39d014F47Fc942AE0C'],
   '0x100.icon': ['cxcf2c8d58fd7bbd25866de0660b155f057ea489eb'],
@@ -332,6 +358,7 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
 export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   '0x2105.base': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
   '0xa4b1.arbitrum': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
+  '0xa.optimism': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
   '0x38.bsc': ['cxee7a00755a757e3c519a0616456030e33dc9d47f', 'cx59d899fce52cadd1feb5128ff5e6672f03943eec'],
   '0xa86a.avax': ['cx59d899fce52cadd1feb5128ff5e6672f03943eec', 'cx917f88460d4ebec1fd656d4dbe51131a37d16837'],
   '0x100.icon': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],

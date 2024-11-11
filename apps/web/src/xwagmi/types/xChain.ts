@@ -8,6 +8,7 @@ export type XChainId =
   | '0x100.icon'
   | '0x38.bsc'
   | '0xa4b1.arbitrum'
+  | '0xa.optimism'
   | '0x2105.base'
   | 'injective-1'
   | 'sui';

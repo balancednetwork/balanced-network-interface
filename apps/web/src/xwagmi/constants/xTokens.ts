@@ -31,7 +31,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'sARCH',
       'Staked Archway',
     ),
-    new XToken('0x1.icon', ChainId.MAINNET, 'cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f', 6, 'USDC', 'Archway USDC'),
+    new XToken('0x1.icon', ChainId.MAINNET, 'cx22319ac7f412f53eabe3c9827acf5e27e9c6a95f', 6, 'USDC', 'USDC'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx66a031cc3bd305c76371fb586e93801b948254f0', 18, 'AVAX', 'AVAX'),
     new XToken(
       '0x1.icon',
@@ -132,6 +132,11 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     ),
     new XToken('0xa4b1.arbitrum', 42161, '0x6c84a8f1c29108F47a79964b5Fe888D4f4D0dE40', 18, 'tBTC', 'Threshold BTC'),
     new XToken('0xa4b1.arbitrum', 42161, '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9', 6, 'USDT', 'Tether USD'),
+  ],
+  '0xa.optimism': [
+    new XToken('0xa.optimism', 10, NATIVE_ADDRESS, 18, 'ETH', 'ETH'),
+    new XToken('0xa.optimism', 10, '0xdccd213951d8214fbaca720728474e2cef9d247b', 18, 'bnUSD', 'Balanced Dollar'),
+    new XToken('0xa.optimism', 10, '0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85', 6, 'USDC', 'USD Coin'),
   ],
   '0x2105.base': [
     new XToken('0x2105.base', 8453, NATIVE_ADDRESS, 18, 'ETH', 'ETH'),

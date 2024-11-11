@@ -31,11 +31,11 @@ const SingleChainBalanceItem = ({ balance, isNested = false, className = '' }: S
     >
       <div className="col-span-2 font-medium flex items-center gap-2">
         <CurrencyLogoWithNetwork currency={currency} size={isNested ? '32px' : '32px'} />
-        <div className="text-[#0d0229] text-sm font-bold hover:title-gradient">
+        <div className="text-sm font-bold hover:title-gradient">
           {isNested ? xChainMap[currency.xChainId].name : currency.symbol}
         </div>
       </div>
-      <div className="text-right text-[#0d0229] text-sm font-bold">
+      <div className="text-right text-sm font-bold">
         {formatBalance(balance?.toFixed(), rates?.[currency.symbol]?.toFixed())}
       </div>
       <div className="text-right text-[#685682] text-sm leading-tight">

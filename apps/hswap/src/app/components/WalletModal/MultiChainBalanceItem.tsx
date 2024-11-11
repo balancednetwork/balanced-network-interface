@@ -31,10 +31,10 @@ const MultiChainBalanceItem = ({ balances }: MultiChainBalanceItemProps) => {
           <div className="grid grid-cols-4 items-center cursor-pointer rounded-xl px-10" onClick={() => setOpen(!open)}>
             <div className="col-span-2 font-medium flex items-center gap-2 cursor-pointer">
               <CurrencyLogoWithNumber currency={currency} size="32px" />
-              <div>{currency.symbol}</div>
-              <span>{open ? <ChevronUpIcon /> : <ChevronDownIcon />}</span>
+              <div className="text-sm font-bold hover:title-gradient">{currency.symbol}</div>
+              <span className="">{open ? <ChevronUpIcon /> : <ChevronDownIcon />}</span>
             </div>
-            <div className="text-right text-[#0d0229] text-sm font-bold">
+            <div className="text-right text-sm font-bold">
               {formatBalance(total?.toFixed(), rates?.[currency.symbol]?.toFixed())}
             </div>
             <div className="text-right text-[#685682] text-sm leading-tight">

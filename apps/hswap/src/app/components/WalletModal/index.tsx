@@ -1,14 +1,12 @@
 import React, { useCallback, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 
-import { Trans } from '@lingui/macro';
-import { ChevronsRightIcon, HeartIcon, LogsIcon, PowerIcon, SettingsIcon } from 'lucide-react';
+import { HeartIcon, LogsIcon, SettingsIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
+import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
 import { useXDisconnectAll } from '@/xwagmi/hooks';
@@ -32,7 +30,7 @@ const WalletModalContent = ({ onDismiss }) => {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-2 mt-[60px] mb-[44px] px-12">
+      <div className="flex items-center justify-between mt-[60px] mb-[44px] px-12">
         <Button variant="ghost" size="icon" onClick={onDismiss}>
           <HideIcon />
         </Button>
@@ -44,7 +42,7 @@ const WalletModalContent = ({ onDismiss }) => {
         />
       </div>
 
-      <div className="flex gap-2 justify-center">
+      <div className="flex gap-2 justify-center mb-[66px]">
         <button
           type="button"
           className={cn(
@@ -130,64 +128,6 @@ const WalletModalContent = ({ onDismiss }) => {
           </ScrollArea>
         </div>
       )}
-
-      {/* <Tabs defaultValue="tokens">
-        <TabsList className="gap-2">
-      <Tabs defaultValue="tokens">
-        <TabsList className="gap-2 justify-center flex">
-          <TabsTrigger
-            value="tokens"
-            className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex"
-          >
-            <div className="text-base font-bold font-['Montserrat']">
-              <Trans>Tokens</Trans>
-            </div>
-          </TabsTrigger>
-          <TabsTrigger
-            value="history"
-            className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex"
-          >
-            <div className="text-base font-bold font-['Montserrat']">
-              <Trans>History</Trans>
-            </div>
-          </TabsTrigger>
-          <TabsTrigger
-            value="wallets"
-            className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex"
-          >
-            <div className="text-base font-bold font-['Montserrat']">
-              <Trans>Wallets</Trans>
-            </div>
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="tokens" className="mt-4">
-          <div
-            className={cn('flex flex-col justify-between text-black', isMobile ? 'h-[500px]' : 'h-[calc(100vh-130px)]')}
-          >
-            <ScrollArea>
-              <XTokenList />
-            </ScrollArea>
-          </div>
-        </TabsContent>
-        <TabsContent value="history" className="mt-4">
-          <div className={cn('flex flex-col justify-between', isMobile ? 'h-[500px]' : 'h-[calc(100vh-130px)]')}>
-            <ScrollArea>
-              <HistoryItemList />
-            </ScrollArea>
-          </div>
-        </TabsContent>
-        <TabsContent value="wallets" className="mt-4">
-          <div className={cn('flex flex-col justify-between', isMobile ? 'h-[500px]' : 'h-[calc(100vh-130px)]')}>
-            <ScrollArea className="h-full">
-              <div className="w-full flex flex-col gap-4 mt-2">
-                {xChainTypes.map(wallet => (
-                  <WalletItem key={wallet.xChainType} {...wallet} />
-                ))}
-              </div>
-            </ScrollArea>
-          </div>
-        </TabsContent>
-      </Tabs> */}
     </>
   );
 };

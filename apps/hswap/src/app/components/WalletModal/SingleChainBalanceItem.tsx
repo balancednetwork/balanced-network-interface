@@ -1,4 +1,5 @@
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
+import { cn } from '@/lib/utils';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useSwapActionHandlers } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
@@ -12,9 +13,10 @@ import React from 'react';
 type SingleChainBalanceItemProps = {
   balance: CurrencyAmount<XToken>;
   isNested?: boolean;
+  className?: string;
 };
 
-const SingleChainBalanceItem = ({ balance, isNested = false }: SingleChainBalanceItemProps) => {
+const SingleChainBalanceItem = ({ balance, isNested = false, className = '' }: SingleChainBalanceItemProps) => {
   const currency = balance.currency;
   const rates = useRatesWithOracle();
   const value = new BigNumber(balance.toFixed()).times(rates?.[currency.symbol] || 0);
@@ -22,17 +24,23 @@ const SingleChainBalanceItem = ({ balance, isNested = false }: SingleChainBalanc
 
   return (
     <div
-      className="grid grid-cols-3 h-10 items-center hover:bg-accent cursor-pointer rounded-xl px-2"
+      className={cn('grid grid-cols-4 items-center cursor-pointer rounded-xl px-10 py-4', className)}
       onClick={() => {
         onCurrencySelection(Field.INPUT, balance.currency);
       }}
     >
-      <div className="font-medium flex items-center gap-2">
-        <CurrencyLogoWithNetwork currency={currency} size={isNested ? '20px' : '24px'} />
-        <div className="text-body">{isNested ? xChainMap[currency.xChainId].name : currency.symbol}</div>
+      <div className="col-span-2 font-medium flex items-center gap-2">
+        <CurrencyLogoWithNetwork currency={currency} size={isNested ? '32px' : '32px'} />
+        <div className="text-[#0d0229] text-sm font-bold hover:title-gradient">
+          {isNested ? xChainMap[currency.xChainId].name : currency.symbol}
+        </div>
       </div>
-      <div className="text-right">{formatBalance(balance?.toFixed(), rates?.[currency.symbol]?.toFixed())}</div>
-      <div className="text-right">{!value ? '-' : formatValue(value.toFixed())}</div>
+      <div className="text-right text-[#0d0229] text-sm font-bold">
+        {formatBalance(balance?.toFixed(), rates?.[currency.symbol]?.toFixed())}
+      </div>
+      <div className="text-right text-[#685682] text-sm leading-tight">
+        {!value ? '-' : formatValue(value.toFixed())}
+      </div>
     </div>
   );
 };

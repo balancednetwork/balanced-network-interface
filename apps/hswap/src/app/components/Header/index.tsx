@@ -29,8 +29,13 @@ export default function Header(props: { className?: string }) {
         </div>
 
         {wallets.length === 0 && (
-          <Button onClick={() => modalActions.openModal(MODAL_ID.WALLET_CONNECT_MODAL)} className="rounded-full">
-            <Trans>Sign in</Trans>
+          <Button
+            onClick={() => modalActions.openModal(MODAL_ID.WALLET_CONNECT_MODAL)}
+            className="bg-[#E6E0F7] rounded-full px-10"
+          >
+            <span className="bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text">
+              Sign in
+            </span>
           </Button>
         )}
 

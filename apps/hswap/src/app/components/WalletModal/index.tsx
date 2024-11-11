@@ -17,6 +17,8 @@ import WalletItem from '../WalletConnectModal/WalletItem';
 import HistoryItemList from './HistoryItemList';
 import { IconWithConfirmTextButton } from './IconWithConfirmTextButton';
 import XTokenList from './XTokenList';
+import HideIcon from '@/assets/icons2/hide.svg';
+import ShutdownIcon from '@/assets/icons2/shutdown.svg';
 
 const WalletModalContent = ({ onDismiss }) => {
   const xDisconnectAll = useXDisconnectAll();
@@ -30,24 +32,19 @@ const WalletModalContent = ({ onDismiss }) => {
 
   return (
     <>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute left-[-40px] top-0 bottom-0 h-full items-start py-6"
-        onClick={onDismiss}
-      >
-        <ChevronsRightIcon className="w-6 h-6" />
-      </Button>
-      <div className="flex items-center justify-end gap-2">
+      <div className="flex items-center justify-between gap-2 mt-[60px] mb-[44px] px-12">
+        <Button variant="ghost" size="icon" onClick={onDismiss}>
+          <HideIcon />
+        </Button>
         <IconWithConfirmTextButton
-          Icon={<PowerIcon className="w-6 h-6" />}
+          Icon={<ShutdownIcon />}
           text="Disconnect"
           dismissOnHoverOut={true}
           onConfirm={handleDisconnectWallet}
         />
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 justify-center">
         <button
           type="button"
           className={cn(
@@ -136,6 +133,8 @@ const WalletModalContent = ({ onDismiss }) => {
 
       {/* <Tabs defaultValue="tokens">
         <TabsList className="gap-2">
+      <Tabs defaultValue="tokens">
+        <TabsList className="gap-2 justify-center flex">
           <TabsTrigger
             value="tokens"
             className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex"
@@ -162,7 +161,9 @@ const WalletModalContent = ({ onDismiss }) => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="tokens" className="mt-4">
-          <div className={cn('flex flex-col justify-between', isMobile ? 'h-[500px]' : 'h-[calc(100vh-130px)]')}>
+          <div
+            className={cn('flex flex-col justify-between text-black', isMobile ? 'h-[500px]' : 'h-[calc(100vh-130px)]')}
+          >
             <ScrollArea>
               <XTokenList />
             </ScrollArea>
@@ -200,7 +201,7 @@ const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
   if (!isMobile) {
     return (
       <Sheet open={open} modal={false}>
-        <SheetContent className="flex flex-col gap-2 p-4">
+        <SheetContent className="flex flex-col gap-2 px-0 py-4 w-96 bg-gradient-to-b from-[#f5e7f5] via-[#d29fff] to-[#a079fd] rounded-tl-3xl rounded-bl-3xl">
           <WalletModalContent onDismiss={onDismiss} />
         </SheetContent>
       </Sheet>

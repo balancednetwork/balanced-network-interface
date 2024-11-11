@@ -28,7 +28,7 @@ export default function CurrencyLogo({
 }) {
   const uriLocation = currency instanceof WrappedTokenInfo ? currency.logoURI || currency.tokenInfo.logoURI : undefined;
 
-  const boxShadowClass = 'shadow-[0px_6px_10px_rgba(0,0,0,0.075)]';
+  // const boxShadowClass = 'shadow-[0px_6px_10px_rgba(0,0,0,0.075)]';
 
   const srcs: string[] = useMemo(() => {
     if (!currency || currency.isNative) return [];
@@ -47,13 +47,7 @@ export default function CurrencyLogo({
 
   if (currency?.isNative || currency?.symbol === 'ICX') {
     return (
-      <img
-        src={ICONLogo}
-        alt="icon logo"
-        className={cn(boxShadowClass, className)}
-        style={{ width: size, height: size }}
-        {...rest}
-      />
+      <img src={ICONLogo} alt="icon logo" className={cn(className)} style={{ width: size, height: size }} {...rest} />
     );
   }
 
@@ -61,7 +55,7 @@ export default function CurrencyLogo({
     <FallbackImage
       srcs={srcs}
       alt={`${currency?.symbol ?? 'token'} logo`}
-      className={cn(boxShadowClass, className)}
+      className={cn(className)}
       style={{ width: size, height: size }}
       {...rest}
     />

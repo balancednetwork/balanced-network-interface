@@ -6,6 +6,7 @@ import BigNumber from 'bignumber.js';
 import React, { useMemo } from 'react';
 import MultiChainBalanceItem from './MultiChainBalanceItem';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
+import { Separator } from '@/components/ui/separator';
 
 const XTokenList = () => {
   const _balances = useWalletBalances();
@@ -25,8 +26,8 @@ const XTokenList = () => {
   return (
     <>
       <div className="cursor-default flex flex-col gap-1">
-        <div className="grid grid-cols-3 h-10 items-center px-2">
-          <div className="">Assets</div>
+        <div className="grid grid-cols-4 h-10 items-center px-10 uppercase text-[#695682] text-[10px] font-medium leading-[14px]">
+          <div className="col-span-2">Asset</div>
           <div className="text-right">Balance</div>
           <div className="text-right">Value</div>
         </div>
@@ -34,17 +35,23 @@ const XTokenList = () => {
         <>
           {Object.values(sortedFilteredBalances).map((balances, index) =>
             balances.length === 1 ? (
-              <SingleChainBalanceItem key={index} balance={balances[0]} />
+              <div key={index}>
+                <SingleChainBalanceItem balance={balances[0]} />
+                <Separator className="h-1 bg-[#d4c5f9]/30" />
+              </div>
             ) : (
-              <MultiChainBalanceItem key={index} balances={balances} />
+              <div key={index}>
+                <MultiChainBalanceItem balances={balances} />
+                <Separator className="h-1 bg-[#d4c5f9]/30" />
+              </div>
             ),
           )}
         </>
       </div>
       {Object.keys(sortedFilteredBalances).length > 0 && (
-        <div className="pt-4 px-2 flex justify-between">
-          <div className="text-subtitle">Total</div>
-          <div className="font-bold">{formatValue(walletTotal.toFixed())}</div>
+        <div className="pt-4 px-10 flex justify-between">
+          <div className="text-[#685682] text-sm font-bold leading-tight">Total value</div>
+          <div className="text-[#685682] text-sm font-bold leading-tight">{formatValue(walletTotal.toFixed())}</div>
         </div>
       )}
     </>

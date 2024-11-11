@@ -110,6 +110,13 @@
   .text-small {
     @apply text-[0.75rem];
   }
+
+  .title-gradient {
+    background: var(--Title-gradient, radial-gradient(272.38% 159.32% at 0% 11.29%, #6256E9 20%, #D772D3 93.5%));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 }
 
 .PopoverContent {

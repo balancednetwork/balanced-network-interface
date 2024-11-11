@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { ChainLogo } from '../ChainLogo';
 import CurrencyLogo from '../CurrencyLogo';
 
-const CurrencyLogoWithNetwork = ({
+const CurrencyLogoWithNumber = ({
   currency,
   size,
   className,
@@ -17,7 +17,7 @@ const CurrencyLogoWithNetwork = ({
   className?: string;
 }) => {
   return (
-    <div className="relative bg-[#d4c5f9] rounded-full p-1">
+    <div className={cn('relative bg-[#d4c5f9] rounded-full p-1')}>
       <CurrencyLogo currency={currency} size={size} />
       <div className={cn('absolute w-[50%] h-[50%] rounded-full bg-[#E6E0F7] p-[2px] right-0 bottom-0', className)}>
         <ChainLogo chain={xChainMap[currency.xChainId]} className="w-full h-full" />
@@ -26,4 +26,4 @@ const CurrencyLogoWithNetwork = ({
   );
 };
 
-export default CurrencyLogoWithNetwork;
+export default CurrencyLogoWithNumber;

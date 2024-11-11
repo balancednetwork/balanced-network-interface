@@ -48,3 +48,10 @@ export const getXAddress = (xToken: XToken | undefined) => {
     (xToken.address === NATIVE_ADDRESS ? '0x0000000000000000000000000000000000000000' : xToken.address)
   );
 };
+
+export const getSpokeVersions = (symbol: string): string[] => {
+  const allTokens = Object.values(xTokenMap).flat();
+  const spokeVersions = allTokens.filter(t => t.spokeVersion);
+  const symbolSpokeVersions = spokeVersions.filter(t => t.symbol === symbol);
+  return symbolSpokeVersions.map(t => t.spokeVersion) as string[];
+};

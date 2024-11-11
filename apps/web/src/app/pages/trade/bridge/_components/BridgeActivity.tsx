@@ -61,8 +61,8 @@ export default function BridgeActivity() {
       </Box>
       <Box className="border-top" py={4}>
         <Box
-          pr={pendingTransactions.length >= 4 ? 2 : 0}
-          style={pendingTransactions.length >= 4 ? { overflowY: 'scroll', maxHeight: '180px' } : {}}
+          pr={pendingTransactions.length >= 3 ? 2 : 0}
+          style={pendingTransactions.length >= 3 ? { overflowY: 'scroll', maxHeight: '180px' } : {}}
         >
           {pendingTransactions.length > 0 &&
             pendingTransactions.map((x, index) => <XTransactionHistoryItem key={index} xTransaction={x} />)}

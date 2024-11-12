@@ -228,7 +228,7 @@ export class SuiXWalletClient extends XWalletClient {
       // @ts-ignore
       reportTransactionEffects(txResult.rawEffects!);
     } else {
-      // vSUI, haSUI, afSUI
+      // VSUI, HASUI, AFSUI
       const coins = (
         await this.getXService().suiClient.getCoins({
           owner: account,

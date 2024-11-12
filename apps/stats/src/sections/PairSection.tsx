@@ -3,7 +3,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { Pair, useAllPairsIncentivisedById, useAllPairsTotal } from '@/queries/backendv2';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
-import { Flex, Box, Text } from 'rebass/styled-components';
+import { Box, Flex, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import QuestionIcon from '@/assets/icons/question.svg';
@@ -12,12 +12,13 @@ import Divider from '@/components/Divider';
 import DropdownLink from '@/components/DropdownLink';
 import { BoxPanel } from '@/components/Panel';
 import SearchInput from '@/components/SearchInput';
-import PoolLogo, { IconWrapper, PoolLogoWrapper } from '@/components/shared/PoolLogo';
 import { MouseoverTooltip } from '@/components/Tooltip';
+import PoolLogo, { IconWrapper, PoolLogoWrapper } from '@/components/shared/PoolLogo';
 import useSort from '@/hooks/useSort';
 import { Typography } from '@/theme';
 import { getFormattedNumber } from '@/utils/formatter';
 
+import { TOKEN_BLACKLIST } from '@/constants/tokens';
 import { COMPACT_ITEM_COUNT, HeaderText, StyledSkeleton as Skeleton } from './TokenSection';
 
 export const MAX_BOOST = 2.5;
@@ -191,9 +192,10 @@ export default function PairSection() {
   const pairs = useMemo(() => {
     if (!allPairs) return [];
     const filteredTokens = Object.values(allPairs).filter(pair => {
+      const isBlacklisted = TOKEN_BLACKLIST.includes(pair.baseSymbol) || TOKEN_BLACKLIST.includes(pair.quoteSymbol);
       const tokenName = pair.name.toLowerCase();
       const search = searched.toLowerCase();
-      return tokenName.includes(search);
+      return !isBlacklisted && tokenName.includes(search);
     });
     return sortData(filteredTokens);
   }, [allPairs, searched, sortData]);

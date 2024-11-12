@@ -50,7 +50,7 @@ function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
   const { currencyAmountToBridge, account } = useDerivedBridgeInfo();
   const direction = useBridgeDirection();
 
-  const { xCallFee } = useXCallFee(direction.from, direction.to);
+  const { xCallFee, formattedXCallFee } = useXCallFee(direction.from, direction.to);
 
   const xChain = xChainMap[direction.from];
   const { approvalState, approveCallback } = useApproveCallback(currencyAmountToBridge, xChain.contracts.assetManager);
@@ -145,6 +145,10 @@ function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
 
           <Typography variant="p" textAlign="center" margin={'auto'} maxWidth={225} fontSize={16}>
             {recipient}
+          </Typography>
+
+          <Typography textAlign="center" mt={3}>
+            <Trans>Transfer fee:</Trans> <strong>{formattedXCallFee}</strong>
           </Typography>
 
           <LiquidFinanceIntegration />

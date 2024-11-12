@@ -11,8 +11,6 @@ const Wrap = styled(Box)``;
 const RewardsOverview = () => {
   const { data: savingsRate } = useSavingsRateInfo();
 
-  console.log('savingsRate', savingsRate);
-
   return (
     <Wrap>
       <Flex alignItems="center" mb="25px">

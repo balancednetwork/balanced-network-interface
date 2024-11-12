@@ -51,7 +51,7 @@ export default function AdvancedSwapDetails() {
 
       <Flex alignItems="center" justifyContent="space-between" mb={2}>
         <Typography>
-          <Trans>Fee</Trans>
+          <Trans>Swap fee</Trans>
         </Typography>
 
         <Typography textAlign="right">
@@ -73,10 +73,10 @@ export default function AdvancedSwapDetails() {
 
           <Flex alignItems="center" justifyContent="space-between" mb={2}>
             <Typography>
-              <Trans>Bridge fee</Trans>
+              <Trans>Transfer fee</Trans>
             </Typography>
 
-            <Typography color="text">{formattedXCallFee ?? ''}</Typography>
+            <Typography>{formattedXCallFee ?? ''}</Typography>
           </Flex>
 
           <Flex alignItems="center" justifyContent="space-between">

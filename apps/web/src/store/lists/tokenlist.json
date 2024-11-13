@@ -281,6 +281,14 @@
       "symbol": "SOL",
       "decimals": 9,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sol.png"
+    },
+    {
+      "address": "cx4b48a4789636aa737285feec8908c765d8bc8042",
+      "chainId": 1,
+      "name": "Jito Staked SOL",
+      "symbol": "JITOSOL",
+      "decimals": 9,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/jitosol.png"
     }
   ]
 }

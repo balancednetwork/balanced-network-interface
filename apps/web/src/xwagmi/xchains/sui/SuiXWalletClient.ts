@@ -16,7 +16,7 @@ import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
 import { SuiXService } from './SuiXService';
 
 const addressesMainnet = {
-  'Balanced Package Id': '0xa3c66ac08bca78a475954683a872a296fd61a28d478c4a8ebce676fc38f502d6',
+  'Balanced Package Id': '0xede387fa2f3789f2e64d46744741d317b21f3022488d8f8ef850b3855ae37919',
   'xCall Package Id': '0x3638b141b349173a97261bbfa33ccd45334d41a80584db6f30429e18736206fe',
   'xCall Storage': '0xe9ae3e2d32cdf659ad5db4219b1086cc0b375da5c4f8859c872148895a2eace2',
   'xCall Manager Id': '0xa1fe210d98fb18114455e75f241ab985375dfa27720181268d92fe3499a1111e',
@@ -27,7 +27,7 @@ const addressesMainnet = {
   'bnUSD Storage': '0xd28c9da258f082d5a98556fc08760ec321451216087609acd2ff654d9827c5b5',
 };
 
-const XCALL_FEE_AMOUNT = 160_000_000n;
+const XCALL_FEE_AMOUNT = 100_000_000n;
 
 export class SuiXWalletClient extends XWalletClient {
   getXService(): SuiXService {
@@ -170,7 +170,57 @@ export class SuiXWalletClient extends XWalletClient {
       // @ts-ignore
       reportTransactionEffects(txResult.rawEffects!);
     } else {
-      throw new Error('Only native token and bnUSD are supported');
+      // USDC
+      const coins = (
+        await this.getXService().suiClient.getCoins({
+          owner: account,
+          coinType: inputAmount.currency.wrapped.address,
+        })
+      )?.data;
+
+      const txb = new Transaction();
+
+      if (!coins || coins.length === 0) {
+        throw new Error('No coins found');
+      } else if (coins.length > 1) {
+        await txb.mergeCoins(
+          coins[0].coinObjectId,
+          coins.slice(1).map(coin => coin.coinObjectId),
+        );
+      }
+
+      const [depositCoin] = txb.splitCoins(coins[0].coinObjectId, [amount]);
+      const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
+
+      txb.moveCall({
+        target: `${addressesMainnet['Balanced Package Id']}::asset_manager::deposit`,
+        arguments: [
+          txb.object(addressesMainnet['Asset Manager Storage']),
+          txb.object(addressesMainnet['xCall Storage']),
+          txb.object(addressesMainnet['xCall Manager Storage']),
+          feeCoin,
+          depositCoin,
+          txb.pure(bcs.vector(bcs.string()).serialize([destination])),
+          txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([data])),
+        ],
+        typeArguments: [inputAmount.currency.wrapped.address],
+      });
+
+      const { bytes, signature, reportTransactionEffects } = await signTransaction({
+        transaction: txb,
+      });
+
+      txResult = await this.getXService().suiClient.executeTransactionBlock({
+        transactionBlock: bytes,
+        signature,
+        options: {
+          showRawEffects: true,
+        },
+      });
+
+      // Always report transaction effects to the wallet after execution
+      // @ts-ignore
+      reportTransactionEffects(txResult.rawEffects!);
     }
 
     const { digest: hash } = txResult || {};

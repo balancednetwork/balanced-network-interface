@@ -42,11 +42,24 @@ export const getAvailableXChains = (currency?: Currency | XToken | null): XChain
 export const getXAddress = (xToken: XToken | undefined) => {
   if (!xToken) return undefined;
 
-  return (
-    xToken.xChainId +
-    '/' +
-    (xToken.address === NATIVE_ADDRESS ? '0x0000000000000000000000000000000000000000' : xToken.address)
-  );
+  let addr = xToken.address;
+  // return different native address depends on the chain
+  if (xToken.address === NATIVE_ADDRESS) {
+    switch (xToken.xChainId) {
+      case 'sui':
+        addr = '0000000000000000000000000000000000000000000000000000000000000002::sui::SUI';
+        break;
+      // !TODO: enable the code after the solana chain is added
+      // case 'solana':
+      //   addr = '11111111111111111111111111111111';
+      //   break;
+      default:
+        addr = '0x0000000000000000000000000000000000000000';
+        break;
+    }
+  }
+
+  return xToken.xChainId + '/' + addr;
 };
 
 export const getSpokeVersions = (symbol: string): string[] => {

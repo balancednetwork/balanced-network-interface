@@ -219,7 +219,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'sui',
       '0xf325ce1300e8dac124071d3152c5c5ee6174914f8bc2161e88329cf579246efc::afsui::AFSUI',
       9,
-      'AfSUI',
+      'AFSUI',
       'Aftermath Staked SUI',
     ),
     new XToken(

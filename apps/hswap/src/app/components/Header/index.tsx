@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react';
 
 import Logo from '@/app/components2/Logo';
-import WalletIcon from '@/assets/icons/wallet.svg';
-import { Trans } from '@lingui/macro';
-
-import { Button } from '@/components/ui/button';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import WalletModal from '../WalletModal';
+import { WhiteButton } from '@/app/components2/Button';
+import ArrowIcon from '@/assets/icons2/arrow.svg';
+import ShowIcon from '@/assets/icons2/show.svg';
 
 export default function Header(props: { className?: string }) {
   const { className } = props;
@@ -23,33 +22,22 @@ export default function Header(props: { className?: string }) {
     <header className={className}>
       <div className="flex justify-between">
         <div className="flex items-center">
-          <div className="mr-4 sm:mr-20">
-            <Logo />
-          </div>
+          <div className="mr-4 sm:mr-20">{/* <Logo /> */}</div>
         </div>
 
         {wallets.length === 0 && (
-          <Button
-            onClick={() => modalActions.openModal(MODAL_ID.WALLET_CONNECT_MODAL)}
-            className="bg-[#E6E0F7] rounded-full px-10"
-          >
-            <span className="bg-gradient-to-r from-blue-600 via-green-500 to-indigo-400 inline-block text-transparent bg-clip-text">
-              Sign in
-            </span>
-          </Button>
+          <WhiteButton onClick={() => modalActions.openModal(MODAL_ID.WALLET_CONNECT_MODAL)}>
+            <span>Sign in</span>
+            <ArrowIcon />
+          </WhiteButton>
         )}
 
         {wallets.length > 0 && (
           <>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                modalActions.openModal(MODAL_ID.WALLET_MODAL);
-              }}
-            >
-              <WalletIcon />
-            </Button>
+            <WhiteButton onClick={() => modalActions.openModal(MODAL_ID.WALLET_MODAL)}>
+              <span>Wallet view</span>
+              <ShowIcon />
+            </WhiteButton>
 
             <WalletModal />
           </>

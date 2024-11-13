@@ -69,12 +69,12 @@ export default function CurrencyInputPanel({
   const valueInUSD = useAmountInUSD(currencyAmount);
 
   return (
-    <div className="rounded-xl w-full bg-card p-4 flex flex-col gap-2">
+    <div className="rounded-xl w-full p-4 flex flex-col gap-2 justify-center items-center">
       <span className="text-secondary-foreground text-subtitle font-bold">
         {type === CurrencyInputPanelType.INPUT && 'You pay'}
         {type === CurrencyInputPanelType.OUTPUT && 'You receive'}
       </span>
-      <div className="inline-flex w-full items-center">
+      <div className="flex flex-col justify-center items-center">
         <Input
           placeholder={placeholder}
           value={value}
@@ -94,7 +94,7 @@ export default function CurrencyInputPanel({
           minLength={1}
           maxLength={79}
           spellCheck="false"
-          className="p-0 text-title text-[1.5rem] font-bold bg-transparent border-none focus:border-none text-primary-foreground focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="p-0 text-title text-center text-[1.5rem] font-bold bg-transparent border-none focus:border-none text-primary-foreground focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
         />
 
         <div>
@@ -122,7 +122,7 @@ export default function CurrencyInputPanel({
           )}
         </div>
       </div>
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col justify-between items-center">
         <span className="text-secondary-foreground text-body h-[15px] flex items-center">{valueInUSD}</span>
         <div className="flex gap-2 items-center">
           {type === CurrencyInputPanelType.INPUT && (

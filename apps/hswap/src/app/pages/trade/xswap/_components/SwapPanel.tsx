@@ -286,7 +286,7 @@ export default function SwapPanel() {
 
   return (
     <>
-      <div className="py-4 flex flex-col">
+      <div className="py-4 flex flex-col bg-[rgba(105,86,130,0.3)] rounded-[24px] backdrop-blur-[50px]">
         <div className="flex flex-col gap-4 items-stretch">
           <div className="flex flex-col gap-2">
             <CurrencyInputPanel

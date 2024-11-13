@@ -24,8 +24,8 @@ const XTokenList = () => {
   }, [balances, rates]);
 
   return (
-    <>
-      <div className="cursor-default flex flex-col gap-1 text-[#0d0229]">
+    <div className="pb-5">
+      <div className="cursor-default flex flex-col text-[#0d0229]">
         <div className="grid grid-cols-4 h-10 items-center px-10 uppercase text-[#695682] text-[10px] font-medium leading-[14px]">
           <div className="col-span-2">Asset</div>
           <div className="text-right">Balance</div>
@@ -54,7 +54,7 @@ const XTokenList = () => {
           <div className="text-[#685682] text-sm font-bold leading-tight">{formatValue(walletTotal.toFixed())}</div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

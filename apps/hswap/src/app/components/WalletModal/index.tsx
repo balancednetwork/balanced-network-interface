@@ -102,7 +102,7 @@ const WalletModalContent = ({ onDismiss }) => {
       </div>
 
       {step === 1 && (
-        <div className={cn('flex flex-col justify-between', isMobile ? 'h-[500px]' : 'h-[calc(100vh-130px)]')}>
+        <div className={cn('flex flex-col justify-between', isMobile ? 'h-[500px]' : 'h-[calc(100vh-290px)]')}>
           <ScrollArea>
             <XTokenList />
           </ScrollArea>
@@ -110,7 +110,7 @@ const WalletModalContent = ({ onDismiss }) => {
       )}
 
       {step === 2 && (
-        <div className={cn('flex flex-col justify-between', isMobile ? 'h-[500px]' : 'h-[calc(100vh-130px)]')}>
+        <div className={cn('flex flex-col justify-between', isMobile ? 'h-[500px]' : 'h-[calc(100vh-290px)]')}>
           <ScrollArea>
             <HistoryItemList />
           </ScrollArea>
@@ -118,7 +118,7 @@ const WalletModalContent = ({ onDismiss }) => {
       )}
 
       {step === 3 && (
-        <div className={cn('flex flex-col justify-between', isMobile ? 'h-[500px]' : 'h-[calc(100vh-130px)]')}>
+        <div className={cn('flex flex-col justify-between', isMobile ? 'h-[500px]' : 'h-[calc(100vh-290px)]')}>
           <ScrollArea className="h-full">
             <div className="w-full flex flex-col gap-4 mt-2">
               {xChainTypes.map(wallet => (

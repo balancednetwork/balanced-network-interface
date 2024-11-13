@@ -117,6 +117,13 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
+  .text-title-gradient-hover {
+    background: radial-gradient(272.38% 159.32% at 0% 11.29%, #D772D3 6.5%, #6256E9 80%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
   .bg-title-gradient {
     background: radial-gradient(272.38% 159.32% at 0% 11.29%, #6256E9 20%, #D772D3 93.5%);
   }

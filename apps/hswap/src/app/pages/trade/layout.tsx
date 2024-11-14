@@ -52,44 +52,6 @@ export function TradePageLayout() {
             onClick={() => handleTabClick('dca')}
           />
         </div>
-
-        <Tabs value={value} onValueChange={handleTabClick}>
-          <TabsList className="gap-2">
-            <TabsTrigger
-              value="swap"
-              className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex"
-            >
-              <div className="text-base font-bold font-['Montserrat']">
-                <Trans>Swap</Trans>
-              </div>
-            </TabsTrigger>
-
-            <div className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex">
-              <MouseoverTooltip
-                content={<div className="p-2">Coming Soon</div>}
-                placement={'top'}
-                closeAfterDelay={0}
-                zIndex={9999}
-              >
-                <div className="text-base font-bold font-['Montserrat'] cursor-default">
-                  <Trans>Limit</Trans>
-                </div>
-              </MouseoverTooltip>
-            </div>
-            <div className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex">
-              <MouseoverTooltip
-                content={<div className="p-2">Coming Soon</div>}
-                placement={'top'}
-                closeAfterDelay={0}
-                zIndex={9999}
-              >
-                <div className="text-base font-bold font-['Montserrat'] cursor-default">
-                  <Trans>DCA</Trans>
-                </div>
-              </MouseoverTooltip>
-            </div>
-          </TabsList>
-        </Tabs>
         <Outlet />
       </div>
     </div>

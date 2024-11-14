@@ -102,7 +102,7 @@ export default function BridgeTransferForm({ openModal }) {
   const { formattedXCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
 
   React.useEffect(() => {
-    setValid(validateAddress(recipient || '', bridgeDirection.to));
+    validateAddress(recipient || '', bridgeDirection.to).then(setValid);
   }, [recipient, bridgeDirection.to]);
 
   const handleMaximumBridgeAmountClick = () => {

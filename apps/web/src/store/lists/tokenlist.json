@@ -271,7 +271,7 @@
       "chainId": 1,
       "name": "Volo Staked SUI",
       "symbol": "VSUI",
-      "decimals": 18,
+      "decimals": 9,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/vsui.png"
     },
     {
@@ -279,7 +279,7 @@
       "chainId": 1,
       "name": "Haedal Staked SUI",
       "symbol": "HASUI",
-      "decimals": 18,
+      "decimals": 9,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/hasui.png"
     },
     {
@@ -287,7 +287,7 @@
       "chainId": 1,
       "name": "Aftermath Staked SUI",
       "symbol": "AFSUI",
-      "decimals": 18,
+      "decimals": 9,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/afsui.png"
     }
   ]

@@ -28,7 +28,7 @@ export function TradePageLayout() {
 
   return (
     <div className="flex-1 flex justify-center">
-      <div className="flex flex-col mb-10 w-full max-w-md">
+      <div className="flex flex-col mb-10 w-full max-w-[400px]">
         <Tabs value={value} onValueChange={handleTabClick}>
           <TabsList className="gap-2">
             <TabsTrigger

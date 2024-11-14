@@ -126,6 +126,15 @@
 
   .bg-title-gradient {
     background: radial-gradient(272.38% 159.32% at 0% 11.29%, #6256E9 20%, #D772D3 93.5%);
+    
+  }
+
+  .blue-button-bg-gradient {
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.20) 0%, rgba(0, 0, 0, 0.20) 100%), radial-gradient(126.41% 86.77% at 100% 0%, #0047FF 0%, #3308A8 100%);
+  }
+
+ .blue-button-bg-gradient-hover {
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.20) 0%, rgba(0, 0, 0, 0.20) 100%), radial-gradient(126.41% 86.77% at 100% 0%, #215FFF 0%, #3D09CB 100%);
   }
 }
 

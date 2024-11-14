@@ -194,9 +194,9 @@ const CollateralPanel = () => {
   const toggleOpen = () => {
     if (isCrossChain) {
       setStoredModalValues({
-        amount: `${differenceAmount.dp(collateralDecimalPlaces).toFormat()} ${collateralType}`,
-        before: `${collateralDeposit.dp(collateralDecimalPlaces).toFormat()} ${collateralType}`,
-        after: `${parsedAmount[Field.LEFT].dp(collateralDecimalPlaces).toFormat()} ${collateralType}`,
+        amount: `${differenceAmount.dp(collateralDecimalPlaces).toFormat()} ${formatSymbol(collateralType)}`,
+        before: `${collateralDeposit.dp(collateralDecimalPlaces).toFormat()} ${formatSymbol(collateralType)}`,
+        after: `${parsedAmount[Field.LEFT].dp(collateralDecimalPlaces).toFormat()} ${formatSymbol(collateralType)}`,
         action: shouldDeposit ? XCollateralAction.DEPOSIT : XCollateralAction.WITHDRAW,
       });
       modalActions.openModal(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL);

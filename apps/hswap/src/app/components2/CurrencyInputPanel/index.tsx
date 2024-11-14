@@ -9,6 +9,7 @@ import BigNumber from 'bignumber.js';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { TokenSelectModal } from '../TokenSelectModal';
 import ChevronDownIcon from '@/assets/icons2/chevron-down.svg';
+import { cn } from '@/lib/utils';
 
 export enum CurrencyInputPanelType {
   INPUT = 'INPUT',
@@ -69,7 +70,12 @@ export default function CurrencyInputPanel({
   const valueInUSD = useAmountInUSD(currencyAmount);
 
   return (
-    <div className="rounded-xl w-full flex flex-col gap-1 justify-center items-center">
+    <div
+      className={cn(
+        'rounded-xl w-full flex flex-col gap-1 items-center',
+        type === CurrencyInputPanelType.OUTPUT ? "bg-[url('/border-bg.png')] bg-[center_5px] bg-no-repeat" : '',
+      )}
+    >
       <span className="text-[#685682] text-[10px] font-semibold uppercase leading-3">
         {type === CurrencyInputPanelType.INPUT && 'You swap'}
         {type === CurrencyInputPanelType.OUTPUT && 'You receive'}

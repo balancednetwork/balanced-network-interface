@@ -1,14 +1,11 @@
 import React from 'react';
 
-import { Trans } from '@lingui/macro';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
-import { MouseoverTooltip } from '@/app/components/Tooltip';
 import { DarkAnimateButton } from '@/app/components2/Button/DarkAnimateButton';
 import LimitIcon from '@/assets/icons/candle.svg';
 import DCAIcon from '@/assets/icons/dca.svg';
 import SwapIcon from '@/assets/icons/swap.svg';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useFetchOraclePrices } from '@/store/oracle/hooks';
 import { useFetchPrice } from '@/store/ratio/hooks';
 import { useFetchStabilityFundBalances } from '@/store/stabilityFund/hooks';

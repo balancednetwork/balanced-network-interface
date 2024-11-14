@@ -328,7 +328,6 @@ msgstr ""
 #~ msgid "Add a contract call"
 #~ msgstr ""
 
-#: src/app/components/Header/index.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "Sign in"
 msgstr "Zaloguj się"

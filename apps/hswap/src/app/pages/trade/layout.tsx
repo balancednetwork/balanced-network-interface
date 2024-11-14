@@ -3,13 +3,16 @@ import React from 'react';
 import { Trans } from '@lingui/macro';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
+import { MouseoverTooltip } from '@/app/components/Tooltip';
+import { DarkAnimateButton } from '@/app/components2/Button/DarkAnimateButton';
+import LimitIcon from '@/assets/icons/candle.svg';
+import DCAIcon from '@/assets/icons/dca.svg';
+import SwapIcon from '@/assets/icons/swap.svg';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useFetchOraclePrices } from '@/store/oracle/hooks';
 import { useFetchPrice } from '@/store/ratio/hooks';
 import { useFetchStabilityFundBalances } from '@/store/stabilityFund/hooks';
 import { useWalletFetchBalances } from '@/store/wallet/hooks';
-// import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { MouseoverTooltip } from '@/app/components/Tooltip';
 
 export function TradePageLayout() {
   const location = useLocation();
@@ -29,6 +32,27 @@ export function TradePageLayout() {
   return (
     <div className="flex-1 flex justify-center">
       <div className="flex flex-col mb-10 w-full max-w-md">
+        <div className="flex gap-2 justify-center">
+          <DarkAnimateButton
+            Icon={<SwapIcon className="text-[#695682]" />}
+            text="Swap"
+            showText={!(value === 'swap')}
+            onClick={() => handleTabClick('swap')}
+          />
+          <DarkAnimateButton
+            Icon={<LimitIcon className="text-[#695682]" />}
+            text="Limit"
+            showText={!(value === 'limit')}
+            onClick={() => handleTabClick('limit')}
+          />
+          <DarkAnimateButton
+            Icon={<DCAIcon className="text-[#695682]" />}
+            text="DCA"
+            showText={!(value === 'dca')}
+            onClick={() => handleTabClick('dca')}
+          />
+        </div>
+
         <Tabs value={value} onValueChange={handleTabClick}>
           <TabsList className="gap-2">
             <TabsTrigger
@@ -39,11 +63,7 @@ export function TradePageLayout() {
                 <Trans>Swap</Trans>
               </div>
             </TabsTrigger>
-            {/* <TabsTrigger
-              value="limit"
-              className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex"
-            > */}
-            {/* </TabsTrigger> */}
+
             <div className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex">
               <MouseoverTooltip
                 content={<div className="p-2">Coming Soon</div>}

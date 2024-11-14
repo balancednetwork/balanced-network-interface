@@ -319,7 +319,6 @@ msgstr "Bridge Fee"
 #~ msgid "Add a contract call"
 #~ msgstr "Add a contract call"
 
-#: src/app/components/Header/index.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "Sign in"
 msgstr "Sign in"

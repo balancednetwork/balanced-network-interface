@@ -3,6 +3,9 @@ import { isMobile } from 'react-device-detect';
 
 import { HeartIcon, LogsIcon, SettingsIcon } from 'lucide-react';
 
+import { AnimateButton } from '@/app/components2/Button/AnimateButton';
+import HideIcon from '@/assets/icons2/hide.svg';
+import ShutdownIcon from '@/assets/icons2/shutdown.svg';
 import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -15,8 +18,6 @@ import WalletItem from '../WalletConnectModal/WalletItem';
 import HistoryItemList from './HistoryItemList';
 import { IconWithConfirmTextButton } from './IconWithConfirmTextButton';
 import XTokenList from './XTokenList';
-import HideIcon from '@/assets/icons2/hide.svg';
-import ShutdownIcon from '@/assets/icons2/shutdown.svg';
 
 const WalletModalContent = ({ onDismiss }) => {
   const xDisconnectAll = useXDisconnectAll();
@@ -43,62 +44,24 @@ const WalletModalContent = ({ onDismiss }) => {
       </div>
 
       <div className="flex gap-2 justify-center mb-[66px]">
-        <button
-          type="button"
-          className={cn(
-            'h-12 px-3 rounded-[64px] flex items-center justify-center hover:bg-white/80 overflow-hidden',
-            step === 1 ? 'bg-white' : 'bg-white/60',
-          )}
+        <AnimateButton
+          Icon={<HeartIcon className="text-[#695682]" />}
+          text="Tokens"
+          showText={step === 1}
           onClick={() => setStep(1)}
-        >
-          <HeartIcon className="text-[#695682]" />
-          <span
-            className={cn(
-              'text-[#695682] text-sm font-bold overflow-hidden',
-              step === 1 ? 'w-16 transition-all duration-500' : 'w-0 transition-all duration-500',
-            )}
-          >
-            Tokens
-          </span>
-        </button>
-
-        <button
-          type="button"
-          className={cn(
-            'h-12 px-3 rounded-[64px] flex items-center justify-center hover:bg-white/80 overflow-hidden',
-            step === 2 ? 'bg-white' : 'bg-white/60',
-          )}
+        />
+        <AnimateButton
+          Icon={<LogsIcon className="text-[#695682]" />}
+          text="History"
+          showText={step === 2}
           onClick={() => setStep(2)}
-        >
-          <LogsIcon className="text-[#695682]" />
-          <span
-            className={cn(
-              'text-[#695682] text-sm font-bold overflow-hidden',
-              step === 2 ? 'w-16 transition-all duration-500' : 'w-0 transition-all duration-500',
-            )}
-          >
-            History
-          </span>
-        </button>
-
-        <button
-          type="button"
-          className={cn(
-            'h-12 px-3 rounded-[64px] flex items-center justify-center hover:bg-white/80 overflow-hidden',
-            step === 3 ? 'bg-white' : 'bg-white/60',
-          )}
+        />
+        <AnimateButton
+          Icon={<SettingsIcon className="text-[#695682]" />}
+          text="Setting"
+          showText={step === 3}
           onClick={() => setStep(3)}
-        >
-          <SettingsIcon className="text-[#695682]" />
-          <span
-            className={cn(
-              'text-[#695682] text-sm font-bold overflow-hidden',
-              step === 3 ? 'w-16 transition-all duration-500' : 'w-0 transition-all duration-500',
-            )}
-          >
-            Setting
-          </span>
-        </button>
+        />
       </div>
 
       {step === 1 && (

@@ -10,6 +10,7 @@ import { DropdownPopper } from '../Popover';
 import CollateralTypeListWrap from './CollateralTypeListWrap';
 import CurrencyLogo from '../CurrencyLogo';
 import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
+import { formatSymbol } from '@/utils/formatter';
 
 const Wrap = styled.span`
   cursor: pointer;
@@ -68,7 +69,7 @@ const CollateralTypeSwitcher = ({ width, containerRef }) => {
                   size={'18px'}
                 />
               </LogoWrap>
-              {collateralType === 'sICX' ? icxDisplayType : collateralType}
+              {collateralType === 'sICX' ? icxDisplayType : formatSymbol(collateralType)}
             </>
             <div ref={arrowRef} style={{ display: 'inline-block' }}>
               <StyledArrowDownIcon />

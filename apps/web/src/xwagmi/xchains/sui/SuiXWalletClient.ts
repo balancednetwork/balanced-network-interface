@@ -278,7 +278,56 @@ export class SuiXWalletClient extends XWalletClient {
       // @ts-ignore
       reportTransactionEffects(txResult.rawEffects!);
     } else {
-      throw new Error('not supported yet');
+      // VSUI, HASUI, AFSUI
+      const coins = (
+        await this.getXService().suiClient.getCoins({
+          owner: account,
+          coinType: inputAmount.currency.wrapped.address,
+        })
+      )?.data;
+
+      const txb = new Transaction();
+
+      if (!coins || coins.length === 0) {
+        throw new Error('No coins found');
+      } else if (coins.length > 1) {
+        await txb.mergeCoins(
+          coins[0].coinObjectId,
+          coins.slice(1).map(coin => coin.coinObjectId),
+        );
+      }
+
+      const [depositCoin] = txb.splitCoins(coins[0].coinObjectId, [amount]);
+      const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
+      txb.moveCall({
+        target: `${addressesMainnet['Balanced Package Id']}::asset_manager::deposit`,
+        arguments: [
+          txb.object(addressesMainnet['Asset Manager Storage']),
+          txb.object(addressesMainnet['xCall Storage']),
+          txb.object(addressesMainnet['xCall Manager Storage']),
+          feeCoin,
+          depositCoin,
+          txb.pure(bcs.vector(bcs.string()).serialize([destination])),
+          txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([data])),
+        ],
+        typeArguments: [inputAmount.currency.wrapped.address],
+      });
+
+      const { bytes, signature, reportTransactionEffects } = await signTransaction({
+        transaction: txb,
+      });
+
+      txResult = await this.getXService().suiClient.executeTransactionBlock({
+        transactionBlock: bytes,
+        signature,
+        options: {
+          showRawEffects: true,
+        },
+      });
+
+      // Always report transaction effects to the wallet after execution
+      // @ts-ignore
+      reportTransactionEffects(txResult.rawEffects!);
     }
 
     const { digest: hash } = txResult || {};

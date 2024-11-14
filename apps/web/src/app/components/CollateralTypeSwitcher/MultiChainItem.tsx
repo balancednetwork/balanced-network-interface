@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import CurrencyLogo from '../CurrencyLogo';
 import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, ListItem } from '../Wallet/styledComponents';
 import SingleChainItem from './SingleChainItem';
+import { formatSymbol } from '@/utils/formatter';
 
 type MultiChainItemProps = {
   baseToken: Token;
@@ -42,7 +43,7 @@ const MultiChainItem = ({ baseToken, positions, onSelect }: MultiChainItemProps)
           <CurrencyLogo currency={baseToken} />
           <Typography fontSize={16} fontWeight="bold">
             <span ref={arrowRef} style={{ display: 'inline-block' }}>
-              {symbol}
+              {formatSymbol(symbol)}
             </span>
           </Typography>
         </AssetSymbol>

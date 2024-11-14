@@ -22,7 +22,7 @@ export default function Header(props: { className?: string }) {
     <header className={className}>
       <div className="flex justify-between">
         <div className="flex items-center">
-          <div className="mr-4 sm:mr-20">{/* <Logo /> */}</div>
+          <Logo />
         </div>
 
         {wallets.length === 0 && (

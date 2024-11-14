@@ -7,8 +7,8 @@ export const DefaultLayout: React.FC<{ title?: string; children: React.ReactNode
 
   return (
     <>
-      <div className="flex flex-col w-full min-h-screen mx-auto px-4 lg:px-10 bg-background">
-        <Header className="my-6 lg:my-12" />
+      <div className="flex flex-col w-full min-h-screen mx-auto px-6 md:px-[40px] lg:px-[80px] bg-background">
+        <Header className="my-6 sm:mt-12 sm:mb-10" />
         {children}
       </div>
     </>

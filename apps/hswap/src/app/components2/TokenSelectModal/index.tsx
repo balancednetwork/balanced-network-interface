@@ -39,8 +39,10 @@ const columns: ColumnDef<any>[] = [
   },
 ];
 
+const DEFAULT_XCHAIN_ID = 'all';
+
 export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, selectedCurrency }) {
-  const [xChainId, setXChainId] = useState<XChainId | 'all'>('0x1.icon');
+  const [xChainId, setXChainId] = useState<XChainId | 'all'>(DEFAULT_XCHAIN_ID);
 
   const rates = useRatesWithOracle();
 

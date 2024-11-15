@@ -146,7 +146,7 @@ export default function CurrencyInputPanel({
                 {`${balance ? balance.toFixed(4, { groupSeparator: ',' }) : 0} ${currency?.symbol}`}
               </span>
               <span
-                className="px-2 py-0.5 bg-[#685682] rounded-full cursor-pointer text-[#0d0229] text-[10px] font-medium leading-3"
+                className="px-2 py-0.5 bg-[#685682] rounded-full cursor-pointer text-[#0d0229] text-[10px] font-medium leading-3 uppercase"
                 onClick={() => onPercentSelect?.(100)}
               >
                 Max

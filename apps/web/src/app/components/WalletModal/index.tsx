@@ -168,7 +168,7 @@ export default function WalletModal() {
         {
           name: 'Solana',
           xChainType: 'SOLANA',
-          logo: <SolanaWalletIcon width="40" height="40" />,
+          logo: <SolanaWalletIcon width="40" height="40" style={{ color: '#000' }} />,
           description: t`Borrow, swap, & transfer cross-chain.`,
           keyWords: ['solana'],
         },

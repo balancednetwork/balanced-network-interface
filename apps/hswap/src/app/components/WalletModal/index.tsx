@@ -112,7 +112,7 @@ const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
 
   return (
     <Drawer open={open} onOpenChange={_ => onDismiss()}>
-      <DrawerContent className="p-4 border-border">
+      <DrawerContent className="p-4 border-border bg-gradient-to-b from-[#f5e7f5] via-[#d29fff] to-[#a079fd]">
         {/* <DrawerHeader className="text-left px-0">{<DrawerTitle>{title}</DrawerTitle>}</DrawerHeader> */}
         <WalletModalContent onDismiss={onDismiss} />
       </DrawerContent>

@@ -17,7 +17,7 @@ const CurrencyCard: React.FC<CurrencyCardProps> = ({ currency, currencyAmount })
 
   return (
     <Card className="flex flex-col items-center gap-4 p-6 my-1 border-none w-1/2 rounded-xl">
-      <div>{currency && <CurrencyLogoWithNetwork currency={currency} size="48px" />}</div>
+      <div>{currency && <CurrencyLogoWithNetwork currency={currency} />}</div>
       <div className="text-primary-foreground text-base font-bold">
         {formatBigNumber(new BigNumber(currencyAmount?.toFixed() || 0), 'currency')} {currency?.symbol}
       </div>

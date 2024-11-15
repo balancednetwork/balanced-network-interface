@@ -77,9 +77,9 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
         <div>
           <div className="flex gap-3">
             <div className="flex items-center">
-              <CurrencyLogoWithNetwork currency={inputXToken} size="32px" />
+              <CurrencyLogoWithNetwork currency={inputXToken} className="w-8 h-8" />
               <ChevronRightIcon className="w-4 h-4" />
-              <CurrencyLogoWithNetwork currency={outputXToken} size="32px" />
+              <CurrencyLogoWithNetwork currency={outputXToken} className="w-8 h-8" />
             </div>
 
             <div className="flex flex-col">

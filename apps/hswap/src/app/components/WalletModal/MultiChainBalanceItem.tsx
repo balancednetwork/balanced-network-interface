@@ -9,7 +9,7 @@ import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
 import CurrencyLogoWithNumber from '@/app/components2/CurrencyLogoWithNumber';
-import SubtractIcon from '@/assets/icons2/subtract.svg';
+import { SubtractIcon } from '@/app/components2/Icons';
 
 type MultiChainBalanceItemProps = {
   balances: CurrencyAmount<XToken>[];
@@ -30,7 +30,7 @@ const MultiChainBalanceItem = ({ balances }: MultiChainBalanceItemProps) => {
         <div className="py-4">
           <div className="grid grid-cols-4 items-center cursor-pointer rounded-xl px-10" onClick={() => setOpen(!open)}>
             <div className="col-span-2 font-medium flex items-center gap-2 cursor-pointer">
-              <CurrencyLogoWithNumber currency={currency} size="32px" amount={balances.length} />
+              <CurrencyLogoWithNumber currency={currency} amount={balances.length} />
               <div className="text-sm font-bold hover:text-title-gradient">{currency.symbol}</div>
               <span className="">{open ? <ChevronUpIcon /> : <ChevronDownIcon />}</span>
             </div>

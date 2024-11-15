@@ -8,8 +8,8 @@ import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { TokenSelectModal } from '../TokenSelectModal';
-import ChevronDownIcon from '@/assets/icons2/chevron-down.svg';
 import { cn } from '@/lib/utils';
+import { ChevronDownIcon } from 'lucide-react';
 
 export enum CurrencyInputPanelType {
   INPUT = 'INPUT',
@@ -112,8 +112,7 @@ export default function CurrencyInputPanel({
               <div className="flex gap-2 items-center justify-between">
                 <CurrencyLogoWithNetwork
                   currency={currency}
-                  size="24px"
-                  className="p-[2.5px]"
+                  className="p-[2.5px] h-8 w-8"
                   chainLogoClassName="p-[1.5px]"
                 />
                 <div className="token-symbol-container text-[#E6E0F7] text-sm font-bold">{currency.symbol}</div>

@@ -7,7 +7,6 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { SearchIcon } from 'lucide-react';
 import { Modal } from '@/app/components2/Modal';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { allXTokens } from '@/xwagmi/constants/xTokens';
@@ -20,6 +19,7 @@ import { formatPrice } from '@/utils/formatter';
 import { XChainId, XToken } from '@/xwagmi/types';
 import XChainSelect from '../XChainSelect';
 import { cn } from '@/lib/utils';
+import { SearchGradientIcon, SubtractIcon } from '../Icons';
 
 const columns: ColumnDef<any>[] = [
   {
@@ -82,28 +82,30 @@ export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, s
   });
 
   return (
-    <Modal open={open} onDismiss={onDismiss} hideCloseIcon={true} dialogClassName="max-w-[450px]">
-      <div className="flex flex-col gap-4">
-        <div className="bg-[#221542] rounded-xl relative flex justify-between items-center px-2 py-1">
-          <SearchIcon className="absolute left-2 top-1/2 transform -translate-y-1/2" />
+    <Modal
+      open={open}
+      onDismiss={onDismiss}
+      dialogClassName="max-w-[350px] bg-[#D4C5F9]/30 !rounded-3xl backdrop-blur-[50px] border-none"
+    >
+      <div className="flex flex-col gap-2 justify-center items-center">
+        <XChainSelect xChains={xChains} value={xChainId} onValueChange={value => setXChainId(value)} />
+
+        <div className="bg-[#D4C5F9] rounded-full relative flex justify-between items-center pl-4 pr-6 py-2 gap-2 w-[187px] mb-2">
+          <SearchGradientIcon className="h-6 w-6" />
           <Input
             placeholder="Search tokens..."
             className={cn(
-              'pl-10 bg-transparent text-primary-foreground !text-subtitle',
+              'bg-transparent text-[#0d0229] text-sm font-medium leading-tight p-0 h-8',
               'border-none focus:border-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0',
             )}
             value={(table.getColumn('asset')?.getFilterValue() as string) ?? ''}
             onChange={event => table.getColumn('asset')?.setFilterValue(event.target.value)}
           />
-          <XChainSelect xChains={xChains} value={xChainId} onValueChange={value => setXChainId(value)} />
+          {/* <ChevronDownGradientIcon /> */}
         </div>
 
-        <ScrollArea className="h-[500px] border-none p-2 mx-[-8px]">
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-between px-1">
-              <div>Asset</div>
-              <div>Price</div>
-            </div>
+        <ScrollArea className="h-[500px] border-none w-full px-2 py-2">
+          <div className="flex flex-col gap-2 justify-center items-center">
             <div className="flex flex-col gap-2">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map(row => {
@@ -113,34 +115,40 @@ export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, s
                   return (
                     <div key={row.id}>
                       <div
-                        className="flex justify-between py-2 cursor-pointer hover:bg-accent rounded-xl px-1"
+                        className="flex justify-between items-center gap-4 py-2 cursor-pointer hover:bg-accent rounded-xl px-16"
                         onClick={() => {
                           onCurrencySelect(xTokens?.[0]);
                           onDismiss();
                         }}
                       >
                         <div className="flex items-center gap-2">
-                          <CurrencyLogo currency={xTokens?.[0]} />
-                          <span>{xTokens?.[0].symbol}</span>
+                          <CurrencyLogo currency={xTokens?.[0]} className="" />
+                          <div className="text-[#e6e0f7] text-sm font-bold leading-tight">{xTokens?.[0].symbol}</div>
                         </div>
-                        <div>{price && formatPrice(price.toString())}</div>
+                        <div className="text-[#d4c5f9] text-sm font-medium leading-tight">
+                          {price && formatPrice(price.toString())}
+                        </div>
                       </div>
                       {xChainId === 'all' && (
-                        <div className="relative flex gap-2 bg-[#221542] p-2 rounded-xl">
-                          <div className="absolute left-[48px] transform -translate-x-1/2 top-[-10px] w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[10px] border-[#221542]"></div>
-
-                          {xTokens.map((xToken: XToken) => (
-                            <div
-                              key={xToken.xChainId}
-                              className="cursor-pointer"
-                              onClick={() => {
-                                onCurrencySelect(xToken);
-                                onDismiss();
-                              }}
-                            >
-                              <ChainLogo chain={xChainMap[xToken.xChainId]} />
+                        <div className="flex flex-col gap-2 justify-center items-center">
+                          <div className="relative flex justify-center flex-wrap gap-2 w-[270px] bg-[#d4c5f9]/30 rounded-3xl py-4 px-4">
+                            <div className="absolute top-[-8px] left-[50%] mx-[-12px]">
+                              <SubtractIcon className="w-8 h-2" />
                             </div>
-                          ))}
+
+                            {xTokens.map((xToken: XToken) => (
+                              <div
+                                key={xToken.xChainId}
+                                className="cursor-pointer"
+                                onClick={() => {
+                                  onCurrencySelect(xToken);
+                                  onDismiss();
+                                }}
+                              >
+                                <ChainLogo chain={xChainMap[xToken.xChainId]} />
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>

@@ -4,8 +4,6 @@ import { isMobile } from 'react-device-detect';
 import { HeartIcon, LogsIcon, SettingsIcon } from 'lucide-react';
 
 import { AnimateButton } from '@/app/components2/Button/AnimateButton';
-import HideIcon from '@/assets/icons2/hide.svg';
-import ShutdownIcon from '@/assets/icons2/shutdown.svg';
 import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -18,6 +16,7 @@ import WalletItem from '../WalletConnectModal/WalletItem';
 import HistoryItemList from './HistoryItemList';
 import { IconWithConfirmTextButton } from './IconWithConfirmTextButton';
 import XTokenList from './XTokenList';
+import { HideIcon, ShutdownIcon } from '@/app/components2/Icons';
 
 const WalletModalContent = ({ onDismiss }) => {
   const xDisconnectAll = useXDisconnectAll();
@@ -58,7 +57,7 @@ const WalletModalContent = ({ onDismiss }) => {
         />
         <AnimateButton
           Icon={<SettingsIcon className="text-[#695682]" />}
-          text="Setting"
+          text="Wallets"
           showText={step === 3}
           onClick={() => setStep(3)}
         />

@@ -227,9 +227,7 @@ const XSwapModal = ({
                     <div className="flex gap-2 items-center">
                       {approvalState === ApprovalState.NOT_APPROVED && !approved && (
                         <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
-                          {currencies[Field.INPUT] && (
-                            <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} size="40px" />
-                          )}
+                          {currencies[Field.INPUT] && <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} />}
                         </div>
                       )}
                       {approvalState === ApprovalState.PENDING && (
@@ -240,9 +238,7 @@ const XSwapModal = ({
 
                       {approved && (
                         <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
-                          {currencies[Field.INPUT] && (
-                            <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} size="40px" />
-                          )}
+                          {currencies[Field.INPUT] && <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} />}
                         </div>
                       )}
                       <div>Approve {currencies[Field.INPUT]?.symbol} spending</div>

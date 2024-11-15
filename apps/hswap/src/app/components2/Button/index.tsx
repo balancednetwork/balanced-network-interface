@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import ArrowIcon from '@/assets/icons2/arrow.svg';
-import ArrowWhiteIcon from '@/assets/icons2/arrow-white.svg';
+import { ArrowIcon, ArrowWhiteIcon } from '../Icons';
 
 interface WhiteButtonProps {
   children: React.ReactNode;

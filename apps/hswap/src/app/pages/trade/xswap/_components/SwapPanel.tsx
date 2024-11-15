@@ -23,8 +23,8 @@ import AdvancedSwapDetails from './AdvancedSwapDetails';
 import RecipientAddressPanel from './RecipientAddressPanel';
 import XSwapModal, { ConfirmModalState, PendingConfirmModalState } from './XSwapModal';
 import MarshFlyingSrc from '@/assets/images/marsh-flying.png';
-import SwitchGradientIcon from '@/assets/icons2/switch-gradient.svg';
 import { BlueButton } from '@/app/components2/Button';
+import { SwitchGradientIcon } from '@/app/components2/Icons';
 
 interface XSwapModalState {
   confirmModalState: ConfirmModalState;

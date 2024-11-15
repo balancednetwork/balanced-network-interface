@@ -18,12 +18,10 @@ const getTokenLogoURLFromSymbol = (symbol: string): string => {
 
 export default function CurrencyLogo({
   currency,
-  size = '24px',
   className,
   ...rest
 }: {
   currency?: Currency | null;
-  size?: string;
   className?: string;
 }) {
   const uriLocation = currency instanceof WrappedTokenInfo ? currency.logoURI || currency.tokenInfo.logoURI : undefined;
@@ -47,17 +45,15 @@ export default function CurrencyLogo({
 
   if (currency?.isNative || currency?.symbol === 'ICX') {
     return (
-      <img src={ICONLogo} alt="icon logo" className={cn(className)} style={{ width: size, height: size }} {...rest} />
+      <div className={cn('rounded-full w-10 h-10 bg-[#d4c5f9] p-1 justify-center items-center inline-flex', className)}>
+        <img src={ICONLogo} alt="icon logo" />
+      </div>
     );
   }
 
   return (
-    <FallbackImage
-      srcs={srcs}
-      alt={`${currency?.symbol ?? 'token'} logo`}
-      className={cn(className)}
-      style={{ width: size, height: size }}
-      {...rest}
-    />
+    <div className={cn('rounded-full w-10 h-10 bg-[#d4c5f9] p-1 justify-center items-center inline-flex', className)}>
+      <FallbackImage srcs={srcs} alt={`${currency?.symbol ?? 'token'} logo`} />
+    </div>
   );
 }

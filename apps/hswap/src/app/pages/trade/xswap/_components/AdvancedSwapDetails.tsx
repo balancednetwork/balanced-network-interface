@@ -200,14 +200,14 @@ export function TradeRoute({
   return (
     <div className="flex gap-2">
       {currencies[Field.INPUT] && currencies[Field.INPUT].xChainId !== '0x1.icon' && (
-        <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} size="32px" />
+        <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} />
       )}
       {route.path.map((token: Token, index: number) => {
         const xtoken = XToken.getXToken('0x1.icon', token);
-        return <CurrencyLogoWithNetwork key={xtoken.address} currency={xtoken} size="32px" />;
+        return <CurrencyLogoWithNetwork key={xtoken.address} currency={xtoken} />;
       })}
       {currencies[Field.OUTPUT] && currencies[Field.OUTPUT].xChainId !== '0x1.icon' && (
-        <CurrencyLogoWithNetwork currency={currencies[Field.OUTPUT]} size="32px" />
+        <CurrencyLogoWithNetwork currency={currencies[Field.OUTPUT]} />
       )}
     </div>
   );

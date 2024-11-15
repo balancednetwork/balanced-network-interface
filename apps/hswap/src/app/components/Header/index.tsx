@@ -5,8 +5,7 @@ import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import WalletModal from '../WalletModal';
 import { WhiteButton } from '@/app/components2/Button';
-import ArrowIcon from '@/assets/icons2/arrow.svg';
-import ShowIcon from '@/assets/icons2/show.svg';
+import { ArrowIcon, ShowIcon } from '@/app/components2/Icons';
 
 export default function Header(props: { className?: string }) {
   const { className } = props;

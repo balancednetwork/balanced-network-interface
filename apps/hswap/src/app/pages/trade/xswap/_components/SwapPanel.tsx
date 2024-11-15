@@ -5,8 +5,6 @@ import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
 import CurrencyInputPanel, { CurrencyInputPanelType } from '@/app/components2/CurrencyInputPanel';
-import FlipIcon from '@/assets/icons/flip.svg';
-import { Button } from '@/components/ui/button';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSendXTransaction } from '@/hooks/useSendXTransaction';
@@ -22,7 +20,6 @@ import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import RecipientAddressPanel from './RecipientAddressPanel';
 import XSwapModal, { ConfirmModalState, PendingConfirmModalState } from './XSwapModal';
-import MarshFlyingSrc from '@/assets/images/marsh-flying.png';
 import { BlueButton } from '@/app/components2/Button';
 import { SwitchGradientIcon } from '@/app/components2/Icons';
 
@@ -279,9 +276,6 @@ export default function SwapPanel() {
   return (
     <>
       <div className="py-4 flex flex-col relative">
-        <div className="absolute right-0 mr-[-50%] w-[367px]">
-          <img src={MarshFlyingSrc} />
-        </div>
         <div className="py-10 px-[60px] flex flex-col gap-4 bg-[rgba(105,86,130,0.3)] rounded-[24px] backdrop-blur-[50px]">
           <div className="flex flex-col gap-4 justify-center items-center">
             <CurrencyInputPanel

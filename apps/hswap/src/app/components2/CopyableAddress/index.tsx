@@ -39,7 +39,7 @@ const CopyableAddress = ({ account }: { account: string | null | undefined }) =>
   return account ? (
     <CustomTooltip content={isCopied ? t`Copied` : t`Copy`}>
       <span
-        className="text-light-purple cursor-pointer flex text-body font-[500]"
+        className="text-[#0d0229] cursor-pointer flex text-body font-[500]"
         onMouseLeave={() => {
           setTimeout(() => updateCopyState(false), 250);
         }}

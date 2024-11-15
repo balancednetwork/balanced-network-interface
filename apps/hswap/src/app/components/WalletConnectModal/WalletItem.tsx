@@ -64,18 +64,18 @@ const WalletItem = ({ name, xChainType }: WalletItemProps) => {
   }, [xConnectors]);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 px-10 text-[#0d0229]">
       <div className="flex justify-between gap-4">
-        <div className="text-base">{name}</div>
+        <div className="text-base font-bold">{name}</div>
         {address && (
-          <div className="text-body cursor-pointer text-light-purple" onClick={handleDisconnect}>
+          <div className="text-body cursor-pointer" onClick={handleDisconnect}>
             disconnect
           </div>
         )}
       </div>
       <div className="flex flex-wrap justify-between gap-4">
         {address ? (
-          <div className="p-4 flex justify-between items-center bg-[#221542] h-[48px] rounded-full w-full">
+          <div className="flex justify-between items-center h-[48px] rounded-full w-full">
             <div className="flex gap-3 justify-start">
               <img width={28} height={28} src={activeXConnector?.icon} />
               {activeXConnector?.name}
@@ -86,14 +86,14 @@ const WalletItem = ({ name, xChainType }: WalletItemProps) => {
           <>
             {sortedXConnectors.map(xConnector => {
               return (
-                <Button
+                <div
                   key={`${xChainType}-${xConnector.name}`}
-                  className="flex gap-3 justify-start bg-[#221542] h-[48px] rounded-full w-[calc(50%-8px)]"
+                  className="flex gap-3 justify-start items-center cursor-pointer h-[48px] rounded-full w-[calc(50%-8px)]"
                   onClick={() => handleConnect(xConnector)}
                 >
                   <img width={28} height={28} src={xConnector.icon} />
                   {xConnector.name}
-                </Button>
+                </div>
               );
             })}
           </>

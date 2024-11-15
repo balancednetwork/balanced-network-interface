@@ -23,9 +23,9 @@ const SubtractIcon: React.FC<React.ComponentProps<'svg'>> = props => {
 };
 
 import ChevronDownGradientIcon from '@/assets/icons2/chevron-down-gradient.svg';
-import ChevronUpGradientIcon from '@/assets/icons2/chevron-up-gradient.svg';
 import ChevronDownWhiteIcon from '@/assets/icons2/chevron-down-white.svg';
 import ChevronDownIcon from '@/assets/icons2/chevron-down.svg';
+import ChevronUpGradientIcon from '@/assets/icons2/chevron-up-gradient.svg';
 
 import HideIcon from '@/assets/icons2/hide.svg';
 import ShowIcon from '@/assets/icons2/show.svg';
@@ -43,6 +43,15 @@ import LimitIcon from '@/assets/icons2/limit.svg';
 
 import DCAGradientIcon from '@/assets/icons2/dca-gradient.svg';
 import DCAIcon from '@/assets/icons2/dca.svg';
+
+import HeartGradientIcon from '@/assets/icons2/heart-gradient.svg';
+import HeartIcon from '@/assets/icons2/heart.svg';
+
+import LogsGradientIcon from '@/assets/icons2/logs-gradient.svg';
+import LogsIcon from '@/assets/icons2/logs.svg';
+
+import SettingsGradientIcon from '@/assets/icons2/settings-gradient.svg';
+import SettingsIcon from '@/assets/icons2/settings.svg';
 
 export {
   AllChainIcon,
@@ -68,4 +77,10 @@ export {
   LimitGradientIcon,
   DCAIcon,
   DCAGradientIcon,
+  HeartIcon,
+  HeartGradientIcon,
+  LogsIcon,
+  LogsGradientIcon,
+  SettingsIcon,
+  SettingsGradientIcon,
 };

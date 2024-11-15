@@ -37,7 +37,7 @@ export function AnimateButton(props: AnimateButtonProps) {
     <button
       type="button"
       className={cn(
-        'h-12 rounded-[64px] flex items-center hover:bg-white/80 overflow-hidden',
+        'h-12 rounded-[64px] flex items-center hover:bg-white overflow-hidden',
         showText ? 'bg-white' : 'bg-white/60',
       )}
       style={{
@@ -63,7 +63,7 @@ export function AnimateButton(props: AnimateButtonProps) {
             minWidth: showText ? dimensions.innerText : 0,
           }}
         >
-          <div className="flex shrink-0 overflow-hidden min-w-min" ref={hiddenObserver.ref}>
+          <div className="flex shrink-0 overflow-hidden min-w-min text-title-gradient" ref={hiddenObserver.ref}>
             {text}
           </div>
         </div>

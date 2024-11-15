@@ -1,9 +1,17 @@
 import React, { useCallback, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 
-import { HeartIcon, LogsIcon, SettingsIcon } from 'lucide-react';
-
 import { AnimateButton } from '@/app/components2/Button/AnimateButton';
+import {
+  HeartGradientIcon,
+  HeartIcon,
+  HideIcon,
+  LogsGradientIcon,
+  LogsIcon,
+  SettingsGradientIcon,
+  SettingsIcon,
+  ShutdownIcon,
+} from '@/app/components2/Icons';
 import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -16,7 +24,6 @@ import WalletItem from '../WalletConnectModal/WalletItem';
 import HistoryItemList from './HistoryItemList';
 import { IconWithConfirmTextButton } from './IconWithConfirmTextButton';
 import XTokenList from './XTokenList';
-import { HideIcon, ShutdownIcon } from '@/app/components2/Icons';
 
 const WalletModalContent = ({ onDismiss }) => {
   const xDisconnectAll = useXDisconnectAll();
@@ -44,19 +51,19 @@ const WalletModalContent = ({ onDismiss }) => {
 
       <div className="flex gap-2 justify-center mb-[66px]">
         <AnimateButton
-          Icon={<HeartIcon className="text-[#695682]" />}
+          Icon={step === 1 ? <HeartGradientIcon /> : <HeartIcon />}
           text="Tokens"
           showText={step === 1}
           onClick={() => setStep(1)}
         />
         <AnimateButton
-          Icon={<LogsIcon className="text-[#695682]" />}
+          Icon={step === 2 ? <LogsGradientIcon /> : <LogsIcon />}
           text="History"
           showText={step === 2}
           onClick={() => setStep(2)}
         />
         <AnimateButton
-          Icon={<SettingsIcon className="text-[#695682]" />}
+          Icon={step === 3 ? <SettingsGradientIcon /> : <SettingsIcon />}
           text="Wallets"
           showText={step === 3}
           onClick={() => setStep(3)}

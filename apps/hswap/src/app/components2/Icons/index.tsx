@@ -11,6 +11,7 @@ import SubtractIcon from '@/assets/icons2/subtract.svg';
 import ChevronDownIcon from '@/assets/icons2/chevron-down.svg';
 import ChevronDownWhiteIcon from '@/assets/icons2/chevron-down-white.svg';
 import ChevronDownGradientIcon from '@/assets/icons2/chevron-down-gradient.svg';
+import ChevronUpGradientIcon from '@/assets/icons2/chevron-up-gradient.svg';
 
 import ShowIcon from '@/assets/icons2/show.svg';
 import HideIcon from '@/assets/icons2/hide.svg';
@@ -30,6 +31,7 @@ export {
   ChevronDownIcon,
   ChevronDownWhiteIcon,
   ChevronDownGradientIcon,
+  ChevronUpGradientIcon,
   SubtractIcon,
   ShowIcon,
   HideIcon,

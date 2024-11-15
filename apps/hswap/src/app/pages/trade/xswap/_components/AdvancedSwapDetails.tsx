@@ -21,7 +21,7 @@ import { cn } from '@/lib/utils';
 // import { useXEstimateApproveGas } from '@/xwagmi/hooks/useXEstimateApproveGas';
 // import { useXEstimateSwapGas } from '@/xwagmi/hooks/useXEstimateSwapGas';
 import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
-import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
+import { ChevronDownGradientIcon, ChevronUpGradientIcon } from '@/app/components2/Icons';
 
 export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactionInput?: XTransactionInput }) {
   const {
@@ -62,49 +62,54 @@ export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactio
   // }, [approveGasEstimate, swapGasEstimate, sourceXChain]);
 
   return (
-    <div>
+    <div className="px-4">
       <Collapsible open={open} onOpenChange={setOpen} className="w-full">
         <CollapsibleTrigger className="w-full flex items-center justify-between py-2">
           {trade && (
             <>
               <TradePrice price={trade.executionPrice} showInverted={showInverted} setShowInverted={setShowInverted} />
-              <span>{open ? <ChevronUpIcon /> : <ChevronDownIcon />}</span>
+              <span>{open ? <ChevronUpGradientIcon /> : <ChevronDownGradientIcon />}</span>
             </>
           )}
         </CollapsibleTrigger>
         <CollapsibleContent className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <span className="text-body text-secondary-foreground flex items-center gap-1">
+            <span className="text-[#d4c5f9] text-sm font-medium flex items-center gap-1">
               <Trans>Price impact</Trans>
-              <QuestionHelper text={t`The impact your trade has on the market price of this pool.`} />
+              {/* <QuestionHelper text={t`The impact your trade has on the market price of this pool.`} /> */}
             </span>
 
-            <span className={cn(showSlippageWarning ? 'text-warning animate-wiggle' : 'text-primary-foreground')}>
+            <span
+              className={cn(
+                'text-right text-sm font-bold',
+                showSlippageWarning ? 'text-warning animate-wiggle' : 'text-white',
+              )}
+            >
               {priceImpact}
             </span>
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="text-body text-secondary-foreground flex items-center gap-1">
-              <Trans>Slippage tolerance</Trans>
-              <QuestionHelper text={t`The maximum price movement before your transaction will revert.`} />
+            <span className="text-[#d4c5f9] text-sm font-medium flex items-center gap-1">
+              <Trans>Max. slippage</Trans>
+              {/* <QuestionHelper text={t`The maximum price movement before your transaction will revert.`} /> */}
             </span>
             <SlippageSetting rawSlippage={slippageTolerance} setRawSlippage={setSlippageTolerance} />
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="text-body text-secondary-foreground flex items-center gap-1">
+            <span className="text-[#d4c5f9] text-sm font-medium flex items-center gap-1">
               <Trans>Receive at least</Trans>
-              <QuestionHelper
+              {/* <QuestionHelper
                 text={t`If the price moves so that you will receive less than 
                   ${
                     minimumToReceive
                       ? `${minimumToReceive?.toFixed(4)} ${minimumToReceive?.currency.symbol}`
                       : `0 ${currencies[Field.OUTPUT]?.symbol}`
                   }, your transaction will revert.`}
-              />
+              /> */}
             </span>
-            <span className="text-body text-primary-foreground">
+            <span className="text-sm font-bold text-white">
               {minimumToReceive
                 ? `${minimumToReceive?.toFixed(4)} ${minimumToReceive?.currency.symbol}`
                 : `0 ${currencies[Field.OUTPUT]?.symbol}`}
@@ -112,24 +117,24 @@ export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactio
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="text-body text-secondary-foreground flex items-center gap-1">
+            <span className="text-[#d4c5f9] text-sm font-medium flex items-center gap-1">
               <Trans>Swap Fee</Trans>
-              <QuestionHelper text={t`If the price slips by more than this amount, your swap will fail.`} />
+              {/* <QuestionHelper text={t`If the price slips by more than this amount, your swap will fail.`} /> */}
             </span>
 
-            <span className="text-body">
+            <span className="text-sm font-bold text-white">
               {trade ? trade.fee.toFixed(4) : '0'} {currencies[Field.INPUT]?.symbol}
             </span>
           </div>
 
           {xTransactionType !== XTransactionType.SWAP_ON_ICON && (
             <div className="flex items-center justify-between">
-              <span className="text-body text-secondary-foreground flex items-center gap-1">
+              <span className="text-[#d4c5f9] text-sm font-medium flex items-center gap-1">
                 <Trans>Bridge Fee</Trans>
-                <QuestionHelper text={t`If the price slips by more than this amount, your swap will fail.`} />
+                {/* <QuestionHelper text={t`If the price slips by more than this amount, your swap will fail.`} /> */}
               </span>
 
-              <span className="text-body">{formattedXCallFee}</span>
+              <span className="text-sm font-bold text-white">{formattedXCallFee}</span>
             </div>
           )}
 
@@ -139,18 +144,18 @@ export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactio
               <QuestionHelper text={t`Network cost is paid in ETH on the ARBITRUM network in order to transact.`} />
             </span>
 
-            <span className="text-body text-primary-foreground">
+            <span className="text-sm font-bold text-white">
               {networkCost ? `${networkCost} ${sourceXChain.nativeCurrency.symbol}` : '---'}
             </span>
           </div> */}
 
-          <div className="flex items-center justify-between gap-2">
+          {/* <div className="flex items-center justify-between gap-2">
             <span className="text-body text-secondary-foreground">
               <Trans>Order routing</Trans>
             </span>
 
             <div>{trade ? <TradeRoute route={trade.route} currencies={currencies} /> : '-'}</div>
-          </div>
+          </div> */}
         </CollapsibleContent>
       </Collapsible>
     </div>
@@ -185,7 +190,7 @@ function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
 
   return (
     <div onClick={flipPrice} title={text}>
-      <div className="text-body">{text}</div>
+      <div className="text-sm font-medium text-title-gradient">{text}</div>
     </div>
   );
 }

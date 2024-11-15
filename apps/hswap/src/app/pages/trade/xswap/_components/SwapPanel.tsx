@@ -304,7 +304,7 @@ export default function SwapPanel() {
             />
           </div>
 
-          {/* <RecipientAddressPanel /> */}
+          <RecipientAddressPanel />
 
           <div className="flex justify-center">{swapButton}</div>
 

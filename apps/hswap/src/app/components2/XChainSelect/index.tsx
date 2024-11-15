@@ -10,7 +10,7 @@ import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@balancednetwork/sdk-core';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import { AllChainIcon, ChevronDownIcon, ChevronDownWhiteIcon } from '../Icons';
+import { AllChainIcon, ChevronDownIcon } from '../Icons';
 
 interface XChainSelectProps {
   xChains: XChain[];
@@ -57,7 +57,6 @@ export default function XChainSelect({
               ) : (
                 <ChainLogo chain={xChainMap[_value]} className="w-10 h-10 p-1" />
               )}
-              {/* <ChevronDown className="absolute bottom-0 right-0 h-4 w-4 opacity-50 text-foreground" /> */}
               <div
                 className={cn(
                   'absolute w-[50%] h-[50%] rounded-full border-[#E6E0F7] right-0 bottom-0 border-[2px]',
@@ -65,7 +64,7 @@ export default function XChainSelect({
                 )}
               >
                 <div className="bg-title-gradient rounded-full w-full h-full flex justify-center items-center">
-                  <ChevronDownWhiteIcon />
+                  <ChevronDownIcon className="fill-white" />
                 </div>
               </div>
             </div>

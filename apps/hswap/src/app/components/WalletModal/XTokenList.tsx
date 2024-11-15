@@ -25,7 +25,7 @@ const XTokenList = () => {
 
   return (
     <div className="pb-5">
-      <div className="cursor-default flex flex-col text-[#0d0229]">
+      <div className="cursor-default flex flex-col">
         <div className="grid grid-cols-4 h-10 items-center px-10 uppercase text-[#695682] text-[10px] font-medium leading-[14px]">
           <div className="col-span-2">Asset</div>
           <div className="text-right">Balance</div>

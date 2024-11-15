@@ -1,15 +1,13 @@
-import CurrencyLogo from '@/app/components2/CurrencyLogo';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
 import { XToken } from '@balancednetwork/sdk-core';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
-import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
 import CurrencyLogoWithNumber from '@/app/components2/CurrencyLogoWithNumber';
-import { SubtractIcon } from '@/app/components2/Icons';
+import { ChevronDownIcon, ChevronUpIcon, SubtractIcon } from '@/app/components2/Icons';
 
 type MultiChainBalanceItemProps = {
   balances: CurrencyAmount<XToken>[];
@@ -31,13 +29,15 @@ const MultiChainBalanceItem = ({ balances }: MultiChainBalanceItemProps) => {
           <div className="grid grid-cols-4 items-center cursor-pointer rounded-xl px-10" onClick={() => setOpen(!open)}>
             <div className="col-span-2 font-medium flex items-center gap-2 cursor-pointer">
               <CurrencyLogoWithNumber currency={currency} amount={balances.length} />
-              <div className="text-sm font-bold hover:text-title-gradient">{currency.symbol}</div>
+              <div className="text-[#0d0229] text-sm font-bold hover:text-title-gradient leading-tight">
+                {currency.symbol}
+              </div>
               <span className="">{open ? <ChevronUpIcon /> : <ChevronDownIcon />}</span>
             </div>
-            <div className="text-right text-sm font-bold">
+            <div className="text-right text-[#0d0229] text-sm font-bold leading-tight">
               {formatBalance(total?.toFixed(), rates?.[currency.symbol]?.toFixed())}
             </div>
-            <div className="text-right text-[#685682] text-sm leading-tight">
+            <div className="text-right text-[#685682] text-sm font-medium leading-tight">
               {!value ? '-' : formatValue(value.toFixed())}
             </div>
           </div>

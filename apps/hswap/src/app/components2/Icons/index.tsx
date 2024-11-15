@@ -22,9 +22,10 @@ const SubtractIcon: React.FC<React.ComponentProps<'svg'>> = props => {
   );
 };
 
+import { ChevronDownIcon } from './ChevronDownIcon';
 import ChevronDownGradientIcon from '@/assets/icons2/chevron-down-gradient.svg';
-import ChevronDownWhiteIcon from '@/assets/icons2/chevron-down-white.svg';
-import ChevronDownIcon from '@/assets/icons2/chevron-down.svg';
+
+import { ChevronUpIcon } from './ChevronUpIcon';
 import ChevronUpGradientIcon from '@/assets/icons2/chevron-up-gradient.svg';
 
 import HideIcon from '@/assets/icons2/hide.svg';
@@ -63,8 +64,8 @@ export {
   ArrowWhiteIcon,
   ArrowGradientIcon,
   ChevronDownIcon,
-  ChevronDownWhiteIcon,
   ChevronDownGradientIcon,
+  ChevronUpIcon,
   ChevronUpGradientIcon,
   SubtractIcon,
   ShowIcon,

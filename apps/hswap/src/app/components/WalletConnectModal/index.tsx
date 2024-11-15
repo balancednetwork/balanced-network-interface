@@ -51,7 +51,13 @@ export default function WalletConnectModal({ modalId = MODAL_ID.WALLET_CONNECT_M
 
   return (
     <>
-      <Modal open={open} onDismiss={onDismiss} title="Sign in with" dialogClassName="max-w-[450px]">
+      <Modal
+        open={open}
+        onDismiss={onDismiss}
+        title="Sign in with"
+        dialogClassName="max-w-[350px]"
+        className="bg-[#D4C5F9]/30 backdrop-blur-[50px] border-none"
+      >
         <ScrollArea className="h-[600px]">
           <div className="w-full flex flex-col gap-4 mt-2">
             {xChainTypes.map(wallet => (

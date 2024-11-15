@@ -6,6 +6,7 @@ import { getNetworkDisplayName } from '@/xwagmi/utils';
 import { formatBalance } from '@/utils/formatter';
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
 import { getTrackerLink } from '@/hooks/useTransactionStore';
+import { Separator } from '@/components/ui/separator';
 
 interface HistoryItemProps {
   xTransaction: XTransaction;
@@ -61,7 +62,7 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
   return (
     <>
       <div
-        className="relative bg-[#221542] p-2 rounded-xl flex justify-between items-center gap-2 cursor-pointer"
+        className="relative py-2 px-5 rounded-xl flex justify-between items-center gap-2 cursor-pointer"
         onClick={() => {
           if (xTransaction.type === XTransactionType.SWAP_ON_ICON) {
             const sourceTransactionHash = xTransaction.id.split('/')[1];
@@ -78,20 +79,20 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
           <div className="flex gap-3">
             <div className="flex items-center">
               <CurrencyLogoWithNetwork currency={inputXToken} className="w-8 h-8" />
-              <ChevronRightIcon className="w-4 h-4" />
+              <ChevronRightIcon className="w-4 h-4 text-[#0d0229]" />
               <CurrencyLogoWithNetwork currency={outputXToken} className="w-8 h-8" />
             </div>
 
             <div className="flex flex-col">
-              <div className="text-primary-foreground text-body">
+              <div className="text-[#0d0229] text-sm font-medium">
                 Swap {formatBalance(inputAmount, undefined)} {inputXToken.symbol} on{' '}
                 {getNetworkDisplayName(inputXToken.xChainId)}
               </div>
-              <div className="text-primary-foreground text-body">
+              <div className="text-[#0d0229] text-sm font-medium">
                 for {formatBalance(outputAmount, undefined)} {outputXToken.symbol} on{' '}
                 {getNetworkDisplayName(outputXToken.xChainId)}
               </div>
-              <div className="text-primary-foreground text-body">
+              <div className="text-[#0d0229] text-sm font-medium">
                 {elapsedTime ? formatElapsedTime(elapsedTime) + ' ago' : '...'}
               </div>
             </div>
@@ -113,6 +114,7 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
           </div>
         )}
       </div>
+      <Separator className="h-1 bg-[#d4c5f9]/30" />
     </>
   );
 };

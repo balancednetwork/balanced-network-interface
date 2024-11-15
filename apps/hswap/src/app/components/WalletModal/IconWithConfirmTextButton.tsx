@@ -1,4 +1,5 @@
 import { Button, ButtonProps } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import useResizeObserver from 'use-resize-observer';
 
@@ -139,7 +140,7 @@ export const IconWithConfirmTextButton = ({
 
         {/* this outer div is so we can cut it off but keep the inner text width full-width so we can measure it */}
         <div
-          className="overflow-hidden"
+          className={cn('text-title-gradient text-sm font-bold overflow-hidden')}
           style={{
             transition: 'width 0.2s ease-in-out, max-width 0.2s ease-in-out',
             maxWidth: showText ? dimensions.innerText : 0,
@@ -150,7 +151,7 @@ export const IconWithConfirmTextButton = ({
             minWidth: showText ? dimensions.innerText : 0,
           }}
         >
-          <div className="flex shrink-0 overflow-hidden min-w-min" ref={hiddenObserver.ref}>
+          <div className="flex shrink-0 overflow-hidden min-w-min text-title-gradient" ref={hiddenObserver.ref}>
             {text}
           </div>
         </div>

@@ -52,7 +52,7 @@ export function AnimateButton(props: AnimateButtonProps) {
       <div className="w-full h-full flex items-center">
         <div className="m-auto flex items-center justify-center">{Icon}</div>
         <div
-          className={cn('text-[#695682] text-sm font-bold overflow-hidden')}
+          className={cn('text-title-gradient text-sm font-bold overflow-hidden')}
           style={{
             transition: 'width 0.2s ease-in-out, max-width 0.2s ease-in-out',
             maxWidth: showText ? dimensions.innerText : 0,
@@ -63,7 +63,7 @@ export function AnimateButton(props: AnimateButtonProps) {
             minWidth: showText ? dimensions.innerText : 0,
           }}
         >
-          <div className="flex shrink-0 overflow-hidden min-w-min text-title-gradient" ref={hiddenObserver.ref}>
+          <div className="flex shrink-0 overflow-hidden min-w-min" ref={hiddenObserver.ref}>
             {text}
           </div>
         </div>

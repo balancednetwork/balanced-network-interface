@@ -29,7 +29,6 @@ import ChevronUpGradientIcon from '@/assets/icons2/chevron-up-gradient.svg';
 
 import HideIcon from '@/assets/icons2/hide.svg';
 import ShowIcon from '@/assets/icons2/show.svg';
-import ShutdownIcon from '@/assets/icons2/shutdown.svg';
 import SwitchGradientIcon from '@/assets/icons2/switch-gradient.svg';
 
 import SearchGradientIcon from '@/assets/icons2/search-gradient.svg';
@@ -53,6 +52,9 @@ import LogsIcon from '@/assets/icons2/logs.svg';
 import SettingsGradientIcon from '@/assets/icons2/settings-gradient.svg';
 import SettingsIcon from '@/assets/icons2/settings.svg';
 
+import ShutdownGradientIcon from '@/assets/icons2/shutdown-gradient.svg';
+import ShutdownIcon from '@/assets/icons2/shutdown.svg';
+
 export {
   AllChainIcon,
   AllChainWhiteIcon,
@@ -68,6 +70,7 @@ export {
   ShowIcon,
   HideIcon,
   ShutdownIcon,
+  ShutdownGradientIcon,
   SwitchGradientIcon,
   SearchIcon,
   SearchGradientIcon,

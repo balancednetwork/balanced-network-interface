@@ -10,6 +10,7 @@ import {
   LogsIcon,
   SettingsGradientIcon,
   SettingsIcon,
+  ShutdownGradientIcon,
   ShutdownIcon,
 } from '@/app/components2/Icons';
 import { Button } from '@/components/ui/button';
@@ -35,6 +36,8 @@ const WalletModalContent = ({ onDismiss }) => {
 
   const [step, setStep] = useState(1);
 
+  const [showText, setShowText] = useState(false);
+
   return (
     <>
       <div className="flex items-center justify-between mt-[60px] mb-[44px] px-12">
@@ -42,10 +45,11 @@ const WalletModalContent = ({ onDismiss }) => {
           <HideIcon />
         </Button>
         <IconWithConfirmTextButton
-          Icon={<ShutdownIcon />}
+          Icon={showText ? <ShutdownGradientIcon /> : <ShutdownIcon />}
           text="Disconnect"
           dismissOnHoverOut={true}
           onConfirm={handleDisconnectWallet}
+          onShowConfirm={setShowText}
         />
       </div>
 

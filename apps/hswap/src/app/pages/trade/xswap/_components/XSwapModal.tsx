@@ -134,7 +134,7 @@ const XSwapModal = ({
       onDismiss={handleDismiss}
       title={''}
       hideCloseIcon={false}
-      className="bg-[#D4C5F9]/30 backdrop-blur-[50px]"
+      className="bg-[#D4C5F9]/30 backdrop-blur-[50px] border-none px-10"
       dialogClassName="max-w-[350px] !rounded-3xl border-none px-10 py-10"
     >
       <div className="flex flex-col gap-8">

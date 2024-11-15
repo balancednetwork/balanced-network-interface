@@ -85,7 +85,8 @@ export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, s
     <Modal
       open={open}
       onDismiss={onDismiss}
-      dialogClassName="max-w-[350px] bg-[#D4C5F9]/30 !rounded-3xl backdrop-blur-[50px] border-none"
+      className="bg-[#D4C5F9]/30 backdrop-blur-[50px] border-none"
+      dialogClassName="max-w-[350px] !rounded-3xl"
     >
       <div className="flex flex-col gap-2 justify-center items-center">
         <XChainSelect xChains={xChains} value={xChainId} onValueChange={value => setXChainId(value)} />

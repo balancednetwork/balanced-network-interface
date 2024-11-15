@@ -133,7 +133,7 @@ export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, s
                         <div className="flex flex-col gap-2 justify-center items-center">
                           <div className="relative flex justify-center flex-wrap gap-2 w-[270px] bg-[#d4c5f9]/30 rounded-3xl py-4 px-4">
                             <div className="absolute top-[-8px] left-[50%] mx-[-12px]">
-                              <SubtractIcon className="w-8 h-2" />
+                              <SubtractIcon className="w-8 h-2 fill-[#d4c5f9]/30" />
                             </div>
 
                             {xTokens.map((xToken: XToken) => (

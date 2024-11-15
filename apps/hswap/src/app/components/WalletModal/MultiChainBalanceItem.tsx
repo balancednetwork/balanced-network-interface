@@ -54,7 +54,7 @@ const MultiChainBalanceItem = ({ balances }: MultiChainBalanceItemProps) => {
               ))}
 
               <div className="absolute top-[-16px] left-[48px]">
-                <SubtractIcon />
+                <SubtractIcon className="fill-[#d4c5f9]/30" />
               </div>
             </div>
           </CollapsibleContent>

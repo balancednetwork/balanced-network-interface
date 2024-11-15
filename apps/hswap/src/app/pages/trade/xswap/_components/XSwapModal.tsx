@@ -7,7 +7,6 @@ import BigNumber from 'bignumber.js';
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 import { Modal } from '@/app/components2/Modal';
 import FlipIcon from '@/assets/icons/flip.svg';
-import { Button } from '@/components/ui/button';
 import { ApprovalState } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { Field } from '@/store/swap/reducer';
@@ -18,8 +17,9 @@ import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagm
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import { CheckIcon, Loader2, XIcon } from 'lucide-react';
 import { ChevronRight } from 'react-feather';
-import { TradeRoute } from './AdvancedSwapDetails';
 import CurrencyCard from './CurrencyCard';
+import { WhiteButton } from '@/app/components2/Button';
+import { ArrowGradientIcon } from '@/app/components2/Icons';
 
 export enum ConfirmModalState {
   REVIEWING,
@@ -132,34 +132,43 @@ const XSwapModal = ({
     <Modal
       open={open}
       onDismiss={handleDismiss}
-      title={showDetails ? 'Review Swap' : ''}
+      title={''}
       hideCloseIcon={false}
-      dialogClassName="max-w-[450px]"
+      className="bg-[#D4C5F9]/30 backdrop-blur-[50px]"
+      dialogClassName="max-w-[350px] !rounded-3xl border-none px-10 py-10"
     >
-      <div className="flex flex-col gap-4">
-        <div className="relative flex justify-between gap-2">
+      <div className="flex flex-col gap-8">
+        <div className="relative flex justify-center gap-2">
           <CurrencyCard currency={currencies[Field.INPUT]} currencyAmount={inputAmount} />
           <CurrencyCard currency={currencies[Field.OUTPUT]} currencyAmount={outputAmount} />
 
           {showDetails && (
-            <span className="bg-[#221542] border-2 border-background absolute top-[50%] left-[50%] mx-[-24px] my-[-24px] w-[48px] h-[48px] flex justify-center items-center rounded-full">
-              <ChevronRight />
-            </span>
+            <div className="bg-title-gradient absolute top-[50%] left-[50%] mx-[-16px] my-[-32px] w-8 h-8 p-1 rounded-full">
+              <div className="bg-white flex justify-center items-center rounded-full w-full h-full">
+                <ArrowGradientIcon />
+              </div>
+            </div>
           )}
           {confirmModalState !== ConfirmModalState.REVIEWING && showProgressIndicator && (
-            <span className="bg-[#221542] border-2 border-background absolute top-[50%] left-[50%] mx-[-24px] my-[-24px] w-[48px] h-[48px] flex justify-center items-center rounded-full">
-              <ChevronRight />
-            </span>
+            <div className="bg-title-gradient absolute top-[50%] left-[50%] mx-[-16px] my-[-32px] w-8 h-8 p-1 rounded-full">
+              <div className="bg-white flex justify-center items-center rounded-full w-full h-full">
+                <ArrowGradientIcon />
+              </div>
+            </div>
           )}
           {showSuccess && (
-            <span className="bg-green-500 border-2 border-background absolute top-[50%] left-[50%] mx-[-24px] my-[-24px] w-[48px] h-[48px] flex justify-center items-center rounded-full">
-              <CheckIcon className="text-background" />
-            </span>
+            <div className="bg-title-gradient absolute top-[50%] left-[50%] mx-[-16px] my-[-32px] w-8 h-8 p-1 rounded-full">
+              <div className="bg-green-500 flex justify-center items-center rounded-full w-full h-full">
+                <CheckIcon className="text-background" />
+              </div>
+            </div>
           )}
           {showError && (
-            <span className="bg-red-500 border-2 border-background absolute top-[50%] left-[50%] mx-[-24px] my-[-24px] w-[48px] h-[48px] flex justify-center items-center rounded-full">
-              <XIcon className="text-background" />
-            </span>
+            <div className="bg-title-gradient absolute top-[50%] left-[50%] mx-[-16px] my-[-32px] w-8 h-8 p-1 rounded-full">
+              <div className="bg-red-500 flex justify-center items-center rounded-full w-full h-full">
+                <XIcon className="text-background" />
+              </div>
+            </div>
           )}
         </div>
 
@@ -169,8 +178,8 @@ const XSwapModal = ({
             <div className="flex flex-col gap-2">
               {xTransactionType !== XTransactionType.BRIDGE && (
                 <div className="flex justify-between">
-                  <span className="text-secondary-foreground text-body">Rate</span>
-                  <span className="text-body">
+                  <span className="text-[#d4c5f9] text-sm font-medium">Rate</span>
+                  <span className="text-white text-sm font-medium">
                     1 {executionTrade?.executionPrice.baseCurrency.symbol} ={' '}
                     {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
                       executionTrade?.executionPrice.quoteCurrency.symbol
@@ -180,8 +189,8 @@ const XSwapModal = ({
               )}
               {xTransactionType !== XTransactionType.BRIDGE && (
                 <div className="flex justify-between">
-                  <span className="text-secondary-foreground text-body">Swap Fee</span>
-                  <span className="text-body">
+                  <span className="text-[#d4c5f9] text-sm font-medium">Swap Fee</span>
+                  <span className="text-white text-sm font-medium">
                     {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
                     {currencies[Field.INPUT]?.symbol}
                   </span>
@@ -189,31 +198,33 @@ const XSwapModal = ({
               )}
               {xTransactionType !== XTransactionType.SWAP_ON_ICON && (
                 <div className="flex justify-between">
-                  <span className="text-secondary-foreground text-body">Bridge Fee</span>
-                  <span className="text-body">{formattedXCallFee}</span>
+                  <span className="text-[#d4c5f9] text-sm font-medium">Bridge Fee</span>
+                  <span className="text-white text-sm font-medium">{formattedXCallFee}</span>
                 </div>
               )}
               <div className="flex justify-between">
-                <span className="text-secondary-foreground text-body">Network Cost</span>
-                <span className="text-body">0.0001 ICX</span>
+                <span className="text-[#d4c5f9] text-sm font-medium">Network Cost</span>
+                <span className="text-white text-sm font-medium">0.0001 ICX</span>
               </div>
-              {xTransactionType !== XTransactionType.BRIDGE && (
+              {/* {xTransactionType !== XTransactionType.BRIDGE && (
                 <div className="flex justify-between items-center">
                   <span className="text-secondary-foreground text-body">Order routing</span>
                   <div>
                     {executionTrade ? <TradeRoute route={executionTrade.route} currencies={currencies} /> : '-'}
                   </div>
                 </div>
-              )}
+              )} */}
             </div>
             {isWrongChain ? (
-              <Button color="primary" onClick={handleSwitchChain} className="h-[56px] text-base rounded-full">
+              <WhiteButton onClick={handleSwitchChain} className="h-[56px] text-base rounded-full">
                 <Trans>Switch to {xChainMap[direction.from].name}</Trans>
-              </Button>
+                <ArrowGradientIcon />
+              </WhiteButton>
             ) : (
-              <Button onClick={async () => await onConfirm()} className="h-[56px] text-base rounded-full">
+              <WhiteButton onClick={async () => await onConfirm()} className="h-[56px] text-base rounded-full">
                 <Trans>{approvalState !== ApprovalState.APPROVED ? 'Approve and Swap' : 'Swap'}</Trans>
-              </Button>
+                <ArrowGradientIcon />
+              </WhiteButton>
             )}
           </>
         )}

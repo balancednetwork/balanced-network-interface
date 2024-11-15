@@ -13,14 +13,23 @@ interface ModalProps {
   children: React.ReactNode;
   title?: string;
   hideCloseIcon?: boolean;
+  className?: string;
   dialogClassName?: string;
 }
 
-export function Modal({ open, onDismiss, children, title, hideCloseIcon = false, dialogClassName }: ModalProps) {
+export function Modal({
+  open,
+  onDismiss,
+  children,
+  title,
+  hideCloseIcon = false,
+  className,
+  dialogClassName,
+}: ModalProps) {
   if (!isMobile) {
     return (
       <Dialog open={open} onOpenChange={_ => onDismiss()}>
-        <DialogContent className={cn('p-4 border-border]', dialogClassName)}>
+        <DialogContent className={cn('p-4 border-none', className, dialogClassName)}>
           {(title || !hideCloseIcon) && (
             <DialogHeader className="flex flex-row-reverse justify-between items-center">
               {!hideCloseIcon && (
@@ -42,7 +51,7 @@ export function Modal({ open, onDismiss, children, title, hideCloseIcon = false,
 
   return (
     <Drawer open={open} onOpenChange={_ => onDismiss()}>
-      <DrawerContent className="p-4 border-border">
+      <DrawerContent className={cn('p-4 border-border', className)}>
         <DrawerHeader className="text-left px-0">{title && <DrawerTitle>{title}</DrawerTitle>}</DrawerHeader>
         {children}
       </DrawerContent>

@@ -183,7 +183,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken(
       'stellar',
       'stellar',
-      'CAKU2J5T4TOMFATA56XRDZMQHNBFIOQW3JDZQNQBLNLV7LEWYTNYU6VX',
+      'CCT4ZYIYZ3TUO2AWQFEOFGBZ6HQP3GW5TA37CK7CRZVFRDXYTHTYX7KP',
       18,
       'bnUSD',
       'Balanced Dollar',

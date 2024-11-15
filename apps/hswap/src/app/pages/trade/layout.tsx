@@ -3,9 +3,14 @@ import React from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { DarkAnimateButton } from '@/app/components2/Button/DarkAnimateButton';
-import LimitIcon from '@/assets/icons/candle.svg';
-import DCAIcon from '@/assets/icons/dca.svg';
-import SwapIcon from '@/assets/icons/swap.svg';
+import {
+  DCAGradientIcon,
+  DCAIcon,
+  LimitGradientIcon,
+  LimitIcon,
+  SwapGradientIcon,
+  SwapIcon,
+} from '@/app/components2/Icons';
 import { useFetchOraclePrices } from '@/store/oracle/hooks';
 import { useFetchPrice } from '@/store/ratio/hooks';
 import { useFetchStabilityFundBalances } from '@/store/stabilityFund/hooks';
@@ -31,19 +36,19 @@ export function TradePageLayout() {
       <div className="flex flex-col mb-10 w-full max-w-[400px]">
         <div className="flex gap-2 justify-center">
           <DarkAnimateButton
-            Icon={<SwapIcon className="text-[#695682]" />}
+            Icon={value === 'swap' ? <SwapGradientIcon /> : <SwapIcon />}
             text="Swap"
             showText={!(value === 'swap')}
             onClick={() => handleTabClick('swap')}
           />
           <DarkAnimateButton
-            Icon={<LimitIcon className="text-[#695682]" />}
+            Icon={value === 'limit' ? <LimitGradientIcon /> : <LimitIcon />}
             text="Limit"
             showText={!(value === 'limit')}
             onClick={() => handleTabClick('limit')}
           />
           <DarkAnimateButton
-            Icon={<DCAIcon className="text-[#695682]" />}
+            Icon={value === 'dca' ? <DCAGradientIcon /> : <DCAIcon />}
             text="DCA"
             showText={!(value === 'dca')}
             onClick={() => handleTabClick('dca')}

@@ -2420,8 +2420,8 @@ msgstr "Contract calls verified."
 #~ msgstr "<0>{0}</0> {1}."
 
 #: src/app/pages/trade/layout.tsx
-msgid "DCA"
-msgstr "DCA"
+#~ msgid "DCA"
+#~ msgstr "DCA"
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
@@ -2433,7 +2433,6 @@ msgstr "DCA"
 msgid "Learn how to resolve common transaction errors."
 msgstr "Learn how to resolve common transaction errors."
 
-#: src/app/pages/trade/layout.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "Swap"
@@ -2569,8 +2568,8 @@ msgstr ""
 #~ msgstr "VOLUME (24H)"
 
 #: src/app/pages/trade/layout.tsx
-msgid "Limit"
-msgstr "Limit"
+#~ msgid "Limit"
+#~ msgstr "Limit"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #~ msgid "Sign in on ICON, then lock up BALN to boost your rewards."

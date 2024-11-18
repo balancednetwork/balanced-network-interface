@@ -19,7 +19,7 @@ import { useBridgeDirection } from '@/store/bridge/hooks';
 import { useIsUserAddedToken } from '@/store/user/hooks';
 import { useCrossChainWalletBalances, useXCurrencyBalance } from '@/store/wallet/hooks';
 import { formatBigNumber, toFraction } from '@/utils';
-import { formatBalance, formatPrice, formatValue } from '@/utils/formatter';
+import { formatBalance, formatPrice, formatSymbol, formatValue } from '@/utils/formatter';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { xTokenMap } from '@/xwagmi/constants/xTokens';
@@ -182,7 +182,7 @@ function CurrencyRow({
           <Flex flexDirection="column" ml={'15px'}>
             <Flex flexDirection="row">
               <DataText variant="p" fontWeight="bold">
-                {currency?.symbol}
+                {formatSymbol(currency?.symbol)}
               </DataText>
               {currency?.symbol === 'BTCB' && <DataText style={{ marginLeft: '4px' }}>{`(old)`}</DataText>}
             </Flex>

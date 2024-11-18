@@ -1,18 +1,18 @@
 import invariant from 'tiny-invariant';
 
 import {
-  computePriceImpact,
-  Token,
   Currency,
   CurrencyAmount,
   Fraction,
   Percent,
   Price,
-  sortedInsert,
+  Token,
   TradeType,
+  computePriceImpact,
+  sortedInsert,
 } from '@balancednetwork/sdk-core';
 
-import { ONE, ZERO } from '../constants';
+import { ONE, STABILITY_FUND_FRACTION, ZERO } from '../constants';
 import { Pair } from './pair';
 import { Route } from './route';
 
@@ -414,7 +414,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
 
       if (pair.isStabilityFund) {
         if (inputCurrencySymbol === 'bnUSD') {
-          result = result.multiply(new Fraction(999, 1000));
+          result = result.multiply(STABILITY_FUND_FRACTION);
         }
       } else if (inputCurrencySymbol === 'sICX' && outputCurrencySymbol === 'ICX') {
         result = result.multiply(new Fraction(99, 100));
@@ -423,6 +423,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
       } else if (outputCurrencySymbol === 'ARCH') {
         result = result.multiply(new Fraction(99, 100));
       } else {
+        // TODO: what is this for?
         result = result.multiply(new Fraction(997, 1000));
       }
     }

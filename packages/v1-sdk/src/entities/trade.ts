@@ -1,15 +1,15 @@
 import invariant from 'tiny-invariant';
 
 import {
-  computePriceImpact,
-  Token,
   Currency,
   CurrencyAmount,
   Fraction,
   Percent,
   Price,
-  sortedInsert,
+  Token,
   TradeType,
+  computePriceImpact,
+  sortedInsert,
 } from '@balancednetwork/sdk-core';
 
 import { ONE, ZERO } from '../constants';
@@ -423,6 +423,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
       } else if (outputCurrencySymbol === 'ARCH') {
         result = result.multiply(new Fraction(99, 100));
       } else {
+        // TODO: what is this for?
         result = result.multiply(new Fraction(997, 1000));
       }
     }

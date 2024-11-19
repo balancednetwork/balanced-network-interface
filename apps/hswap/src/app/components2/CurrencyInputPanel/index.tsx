@@ -136,17 +136,17 @@ export default function CurrencyInputPanel({
         </div>
       </div>
       <div className="flex flex-col justify-between items-center gap-4">
-        <span className="text-[#d4c5f9] text-[10px] font-semibold uppercase leading-3 cursor-default min-h-3">
+        <span className="text-[#d4c5f9] text-[12px] font-semibold uppercase leading-3 cursor-default min-h-3">
           {valueInUSD}
         </span>
         <div className="flex gap-2 items-center">
           {type === CurrencyInputPanelType.INPUT && (
             <>
-              <span className="text-[#685682] text-[10px] font-medium leading-3 cursor-default">
+              <span className="text-[#685682] text-[12px] font-medium leading-3 cursor-default">
                 {`${balance ? balance.toFixed(4, { groupSeparator: ',' }) : 0} ${currency?.symbol}`}
               </span>
               <span
-                className="px-2 py-0.5 bg-[#685682] rounded-full cursor-pointer text-[#0d0229] text-[10px] font-medium leading-3 uppercase"
+                className="px-2 py-0.5 bg-[#685682] rounded-full cursor-pointer text-[#0d0229] text-[12px] font-medium leading-3 uppercase"
                 onClick={() => onPercentSelect?.(100)}
               >
                 Max

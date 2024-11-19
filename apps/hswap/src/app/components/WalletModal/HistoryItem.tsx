@@ -24,13 +24,13 @@ function formatElapsedTime(elapsedTime: number): string {
   const seconds = elapsedTime % secondsInMinute;
 
   if (days > 0) {
-    return `${days} days ${hours} hours`;
+    return `${days} days` + (hours > 0 ? ` ${hours} hours` : '') + ' ago';
   } else if (hours > 0) {
-    return `${hours} hours ${minutes} mins`;
+    return `${hours} hours` + (minutes > 0 ? ` ${minutes} mins` : '') + ' ago';
   } else if (minutes > 0) {
-    return `${minutes} mins ${seconds} seconds`;
+    return `${minutes} mins` + ' ago';
   } else {
-    return `${seconds} seconds`;
+    return `just now`;
   }
 }
 
@@ -106,8 +106,8 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
           )}
         </div>
         <div className="mt-1 px-10 flex justify-end items-center gap-2">
-          <div className="text-[#0d0229] text-[10px] font-bold">
-            {elapsedTime ? formatElapsedTime(elapsedTime) + ' ago' : '...'}
+          <div className="text-[#0d0229] text-[10px] font-bold uppercase">
+            {elapsedTime ? formatElapsedTime(elapsedTime) : '...'}
           </div>
           <a
             href={

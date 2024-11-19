@@ -128,7 +128,7 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
           )}
         </div>
       </div>
-      <Separator className="h-1 bg-[#d4c5f9]/30" />
+      <Separator className="h-1 bg-[#ffffff59]" />
     </>
   );
 };

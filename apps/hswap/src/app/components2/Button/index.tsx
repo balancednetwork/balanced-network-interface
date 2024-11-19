@@ -40,7 +40,10 @@ export const BlueButton = ({
   return (
     <Button
       {...props}
-      className="blue-button-bg-gradient hover:blue-button-bg-gradient-hover rounded-full group px-8 py-[14px] w-full"
+      className={cn(
+        'blue-button-bg-gradient hover:blue-button-bg-gradient-hover rounded-full group px-8 py-[14px] w-full h-[48px]',
+        className,
+      )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

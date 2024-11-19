@@ -17,7 +17,7 @@ const HistoryItemList = () => {
         {xTransactions.length === 0 && <div className="text-center my-10">No items</div>}
         {xTransactions.length > 0 && (
           <>
-            <Separator className="h-1 bg-[#d4c5f9]/70" />
+            <Separator className="h-1 bg-[#ffffff59]" />
             {xTransactions.map(xTransaction => (
               <HistoryItem key={xTransaction.id} xTransaction={xTransaction} />
             ))}

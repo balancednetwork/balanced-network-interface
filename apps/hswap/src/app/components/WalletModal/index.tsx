@@ -129,12 +129,12 @@ const WalletModalContent = ({ onDismiss }) => {
         <div className={cn('flex flex-col justify-between', isMobile ? 'h-[500px]' : 'h-[calc(100vh-290px)]')}>
           <ScrollArea className="h-full">
             <div className="w-full flex flex-col gap-4 mt-2">
-              <Separator className="h-1 bg-[#d4c5f9]/70" />
+              <Separator className="h-1 bg-[#ffffff59]" />
 
               {xChainTypes.map(wallet => (
                 <>
                   <WalletItem key={wallet.xChainType} {...wallet} />
-                  <Separator key={wallet.xChainType + '_separator'} className="h-1 bg-[#d4c5f9]/30" />
+                  <Separator key={wallet.xChainType + '_separator'} className="h-1 bg-[#ffffff59]" />
                 </>
               ))}
             </div>

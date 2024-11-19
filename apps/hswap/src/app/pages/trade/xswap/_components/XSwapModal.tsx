@@ -179,7 +179,7 @@ const XSwapModal = ({
               {xTransactionType !== XTransactionType.BRIDGE && (
                 <div className="flex justify-between">
                   <span className="text-[#d4c5f9] text-sm font-medium">Rate</span>
-                  <span className="text-white text-sm font-medium">
+                  <span className="text-white text-sm">
                     1 {executionTrade?.executionPrice.baseCurrency.symbol} ={' '}
                     {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
                       executionTrade?.executionPrice.quoteCurrency.symbol
@@ -190,7 +190,7 @@ const XSwapModal = ({
               {xTransactionType !== XTransactionType.BRIDGE && (
                 <div className="flex justify-between">
                   <span className="text-[#d4c5f9] text-sm font-medium">Swap Fee</span>
-                  <span className="text-white text-sm font-medium">
+                  <span className="text-white text-sm">
                     {formatBigNumber(new BigNumber(executionTrade?.fee.toFixed() || 0), 'currency')}{' '}
                     {currencies[Field.INPUT]?.symbol}
                   </span>
@@ -199,12 +199,12 @@ const XSwapModal = ({
               {xTransactionType !== XTransactionType.SWAP_ON_ICON && (
                 <div className="flex justify-between">
                   <span className="text-[#d4c5f9] text-sm font-medium">Bridge Fee</span>
-                  <span className="text-white text-sm font-medium">{formattedXCallFee}</span>
+                  <span className="text-white text-sm">{formattedXCallFee}</span>
                 </div>
               )}
               <div className="flex justify-between">
                 <span className="text-[#d4c5f9] text-sm font-medium">Network Cost</span>
-                <span className="text-white text-sm font-medium">0.0001 ICX</span>
+                <span className="text-white text-sm">0.0001 ICX</span>
               </div>
               {/* {xTransactionType !== XTransactionType.BRIDGE && (
                 <div className="flex justify-between items-center">

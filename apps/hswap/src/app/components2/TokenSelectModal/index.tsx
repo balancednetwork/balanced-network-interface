@@ -118,11 +118,11 @@ export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, s
                   return (
                     <div key={row.id}>
                       <div
-                        className="flex justify-between items-center gap-4 py-2 cursor-pointer hover:bg-accent rounded-xl px-16"
-                        onClick={() => {
-                          onCurrencySelect(xTokens?.[0]);
-                          onDismiss();
-                        }}
+                        className="flex justify-between items-center gap-4 py-2 cursor-default rounded-xl px-16"
+                        // onClick={() => {
+                        //   onCurrencySelect(xTokens?.[0]);
+                        //   onDismiss();
+                        // }}
                       >
                         <div className="flex items-center gap-2">
                           <CurrencyLogo currency={xTokens?.[0]} className="" />
@@ -135,7 +135,7 @@ export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, s
                       {xChainId === 'all' && (
                         <div className="flex flex-col gap-2 justify-center items-center">
                           <div className="relative flex justify-center flex-wrap gap-2 w-[270px] bg-[#d4c5f9]/30 rounded-3xl py-4 px-4">
-                            <div className="absolute top-[-8px] left-[50%] mx-[-12px]">
+                            <div className="absolute top-[-8px] left-[50%] mx-[-16px]">
                               <SubtractIcon className="w-8 h-2 fill-[#d4c5f9]/30" />
                             </div>
 

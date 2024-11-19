@@ -33,17 +33,17 @@ const XTokenList = () => {
         </div>
 
         <>
-          <Separator className="h-1 bg-[#d4c5f9]/70" />
+          <Separator className="h-1 bg-[#ffffff59]" />
           {Object.values(sortedFilteredBalances).map((balances, index) =>
             balances.length === 1 ? (
               <div key={index}>
                 <SingleChainBalanceItem balance={balances[0]} />
-                <Separator className="h-1 bg-[#d4c5f9]/30" />
+                <Separator className="h-1 bg-[#ffffff59]" />
               </div>
             ) : (
               <div key={index}>
                 <MultiChainBalanceItem balances={balances} />
-                <Separator className="h-1 bg-[#d4c5f9]/30" />
+                <Separator className="h-1 bg-[#ffffff59]" />
               </div>
             ),
           )}

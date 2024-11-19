@@ -20,11 +20,45 @@ import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
 import { useXDisconnectAll } from '@/xwagmi/hooks';
-import { xChainTypes } from '../WalletConnectModal';
-import WalletItem from '../WalletConnectModal/WalletItem';
+import WalletItem, { WalletItemProps } from '../WalletConnectModal/WalletItem';
 import HistoryItemList from './HistoryItemList';
 import { IconWithConfirmTextButton } from './IconWithConfirmTextButton';
 import XTokenList from './XTokenList';
+
+export const xChainTypes: WalletItemProps[] = [
+  {
+    name: 'EVM wallets',
+    xChainType: 'EVM',
+  },
+  {
+    name: 'Injective wallets',
+    xChainType: 'INJECTIVE',
+  },
+  {
+    name: 'Archway wallets',
+    xChainType: 'ARCHWAY',
+  },
+  {
+    name: 'Havah wallets',
+    xChainType: 'HAVAH',
+  },
+  {
+    name: 'Sui wallets',
+    xChainType: 'SUI',
+  },
+  {
+    name: 'Stellar wallets',
+    xChainType: 'STELLAR',
+  },
+  {
+    name: 'Solana wallets',
+    xChainType: 'SOLANA',
+  },
+  {
+    name: 'Icon wallets',
+    xChainType: 'ICON',
+  },
+];
 
 const WalletModalContent = ({ onDismiss }) => {
   const xDisconnectAll = useXDisconnectAll();

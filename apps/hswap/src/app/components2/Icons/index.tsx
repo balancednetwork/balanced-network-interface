@@ -56,6 +56,8 @@ import SettingsIcon from '@/assets/icons2/settings.svg';
 import ShutdownGradientIcon from '@/assets/icons2/shutdown-gradient.svg';
 import ShutdownIcon from '@/assets/icons2/shutdown.svg';
 
+import ExclamationIcon from '@/assets/icons2/exclamation.svg';
+
 export {
   AllChainIcon,
   AllChainWhiteIcon,
@@ -87,4 +89,5 @@ export {
   LogsGradientIcon,
   SettingsIcon,
   SettingsGradientIcon,
+  ExclamationIcon,
 };

@@ -8,6 +8,7 @@ import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
 import { getTrackerLink } from '@/hooks/useTransactionStore';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { ExclamationIcon } from '@/app/components2/Icons';
 
 interface HistoryItemProps {
   xTransaction: XTransaction;
@@ -24,11 +25,11 @@ function formatElapsedTime(elapsedTime: number): string {
   const seconds = elapsedTime % secondsInMinute;
 
   if (days > 0) {
-    return `${days} days` + (hours > 0 ? ` ${hours} hours` : '') + ' ago';
+    return `${days} days ago`;
   } else if (hours > 0) {
-    return `${hours} hours` + (minutes > 0 ? ` ${minutes} mins` : '') + ' ago';
+    return `${hours} hours ago`;
   } else if (minutes > 0) {
-    return `${minutes} mins` + ' ago';
+    return `${minutes} mins ago`;
   } else {
     return `just now`;
   }
@@ -64,7 +65,7 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
     <>
       <div className="py-2">
         <div className="relative px-10 rounded-xl flex justify-between items-center gap-2 cursor-pointer">
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-6 items-center">
             <div className="flex items-center">
               <CurrencyLogoWithNetwork currency={inputXToken} />
               <CurrencyLogoWithNetwork currency={outputXToken} className="mx-[-8px]" />
@@ -87,28 +88,6 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
               </div>
             </div>
           </div>
-          {xTransaction.status === XTransactionStatus.pending && (
-            <div className="bg-transparent w-[16px] h-[16px] flex justify-center items-center rounded-full">
-              <Loader2Icon className="animate-spin" />
-            </div>
-          )}
-          {xTransaction.status === XTransactionStatus.success && (
-            <div className={cn('w-4 h-4 rounded-full border-[#E6E0F7] border-[2px]')}>
-              <div className="bg-title-gradient rounded-full w-full h-full flex justify-center items-center">
-                <CheckIcon className="w-2 h-2" />
-              </div>
-            </div>
-          )}
-          {xTransaction.status === XTransactionStatus.failure && (
-            <div className="bg-red-500 border-2 border-background  w-[16px] h-[16px] flex justify-center items-center rounded-full">
-              <XIcon className="text-background  w-4 h-4" />
-            </div>
-          )}
-        </div>
-        <div className="mt-1 px-10 flex justify-end items-center gap-2">
-          <div className="text-[#0d0229] text-[10px] font-bold uppercase">
-            {elapsedTime ? formatElapsedTime(elapsedTime) : '...'}
-          </div>
           <a
             href={
               xTransaction.type === XTransactionType.SWAP_ON_ICON
@@ -120,6 +99,33 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
           >
             <ExternalLink className="w-4 h-4 text-[#695682]" />
           </a>
+        </div>
+        <div className="mt-1 px-10 flex justify-end items-center gap-2">
+          <div className="text-[#0d0229] text-[10px] font-bold uppercase">
+            {xTransaction.status === XTransactionStatus.pending
+              ? 'Swapping'
+              : elapsedTime
+                ? formatElapsedTime(elapsedTime)
+                : '...'}
+          </div>
+
+          {xTransaction.status === XTransactionStatus.pending && (
+            <div className={cn('w-4 h-4 rounded-full bg-[#d4c5f9] p-[2px]')}>
+              <Loader2Icon className="text-[#695682] animate-spin w-3 h-3" />
+            </div>
+          )}
+          {xTransaction.status === XTransactionStatus.success && (
+            <div className={cn('w-4 h-4 rounded-full border-[#E6E0F7] border-[2px]')}>
+              <div className="bg-title-gradient rounded-full w-full h-full flex justify-center items-center">
+                <CheckIcon className="w-2 h-2" />
+              </div>
+            </div>
+          )}
+          {xTransaction.status === XTransactionStatus.failure && (
+            <div className={cn('w-4 h-4 rounded-full border-[#E6E0F7] border-[2px]')}>
+              <ExclamationIcon />
+            </div>
+          )}
         </div>
       </div>
       <Separator className="h-1 bg-[#d4c5f9]/30" />

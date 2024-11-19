@@ -25,7 +25,7 @@ export default function Header(props: { className?: string }) {
         </div>
 
         {wallets.length === 0 && (
-          <WhiteButton onClick={() => modalActions.openModal(MODAL_ID.WALLET_CONNECT_MODAL)}>
+          <WhiteButton onClick={() => modalActions.openModal(MODAL_ID.WALLET_CONNECT_MODAL)} className="px-4 sm:px-8">
             <span>Sign in</span>
             <ArrowIcon />
           </WhiteButton>
@@ -33,7 +33,7 @@ export default function Header(props: { className?: string }) {
 
         {wallets.length > 0 && (
           <>
-            <WhiteButton onClick={() => modalActions.openModal(MODAL_ID.WALLET_MODAL)}>
+            <WhiteButton onClick={() => modalActions.openModal(MODAL_ID.WALLET_MODAL)} className="px-2 sm:px-8">
               <span>Wallet view</span>
               <ShowIcon />
             </WhiteButton>

@@ -41,7 +41,7 @@ export function TradePageLayout() {
   return (
     <div className="flex-1 flex justify-center">
       <div className="flex flex-col mb-10 w-full max-w-[400px] gap-6">
-        <div className="flex gap-2 justify-center">
+        <div className="flex gap-2 pr-6 justify-end sm:pr-0 sm:justify-center">
           <div className="relative">
             <DarkAnimateButton
               Icon={value === 'swap' ? <SwapGradientIcon /> : <SwapIcon />}

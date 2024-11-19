@@ -25,7 +25,7 @@ const MultiChainBalanceItem = ({ balances }: MultiChainBalanceItemProps) => {
   return (
     <>
       <Collapsible open={open} onOpenChange={setOpen} asChild>
-        <div className="py-4">
+        <div>
           <div className="grid grid-cols-4 items-center cursor-pointer rounded-xl px-10" onClick={() => setOpen(!open)}>
             <div className="col-span-2 font-medium flex items-center gap-2 cursor-pointer">
               <CurrencyLogoWithNumber currency={currency} amount={balances.length} />
@@ -43,7 +43,7 @@ const MultiChainBalanceItem = ({ balances }: MultiChainBalanceItemProps) => {
           </div>
 
           <CollapsibleContent asChild>
-            <div className="relative mt-4 mx-6 rounded-3xl bg-[#d4c5f9]/30">
+            <div className="relative mt-4 mx-6 rounded-3xl bg-[#d4c5f98f] flex flex-col gap-4 py-4">
               {balances.map(balance => (
                 <SingleChainBalanceItem
                   key={balance.currency.address}
@@ -54,7 +54,7 @@ const MultiChainBalanceItem = ({ balances }: MultiChainBalanceItemProps) => {
               ))}
 
               <div className="absolute top-[-16px] left-[48px]">
-                <SubtractIcon className="fill-[#d4c5f9]/30" />
+                <SubtractIcon className="fill-[#d4c5f98f]" />
               </div>
             </div>
           </CollapsibleContent>

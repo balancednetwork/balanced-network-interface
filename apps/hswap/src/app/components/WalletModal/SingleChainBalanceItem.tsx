@@ -24,20 +24,20 @@ const SingleChainBalanceItem = ({ balance, isNested = false, className = '' }: S
 
   return (
     <div
-      className={cn('grid grid-cols-4 items-center cursor-pointer rounded-xl px-10 py-4', className)}
+      className={cn('grid grid-cols-4 items-center cursor-pointer rounded-xl px-10', className)}
       onClick={() => {
         onCurrencySelection(Field.INPUT, balance.currency);
       }}
     >
       <div className="col-span-2 font-medium flex items-center gap-2">
-        <CurrencyLogoWithNetwork currency={currency} />
+        <CurrencyLogoWithNetwork currency={currency} className={cn(isNested ? 'w-8 h-8' : '')} />
         <div
           className={cn(
             'text-[#0d0229] text-sm font-bold hover:text-title-gradient leading-tight',
             isNested ? 'text-xs' : '',
           )}
         >
-          {isNested ? xChainMap[currency.xChainId].name : currency.symbol}
+          {isNested ? `on ${xChainMap[currency.xChainId].name}` : currency.symbol}
         </div>
       </div>
       <div className={cn('text-right text-[#0d0229] text-sm font-bold leading-tight', isNested ? 'text-xs' : '')}>

@@ -32,22 +32,22 @@ const XTokenList = () => {
           <div className="text-right">Value</div>
         </div>
 
-        <>
+        <div className="flex flex-col gap-4">
           <Separator className="h-1 bg-[#ffffff59]" />
           {Object.values(sortedFilteredBalances).map((balances, index) =>
             balances.length === 1 ? (
-              <div key={index}>
-                <SingleChainBalanceItem balance={balances[0]} />
-                <Separator className="h-1 bg-[#ffffff59]" />
-              </div>
+              <>
+                <SingleChainBalanceItem key={index} balance={balances[0]} />
+                <Separator key={index + '_separator'} className="h-1 bg-[#ffffff59]" />
+              </>
             ) : (
-              <div key={index}>
-                <MultiChainBalanceItem balances={balances} />
-                <Separator className="h-1 bg-[#ffffff59]" />
-              </div>
+              <>
+                <MultiChainBalanceItem key={index} balances={balances} />
+                <Separator key={index + '_separator'} className="h-1 bg-[#ffffff59]" />
+              </>
             ),
           )}
-        </>
+        </div>
       </div>
       {Object.keys(sortedFilteredBalances).length > 0 && (
         <div className="pt-4 px-10 flex justify-between">

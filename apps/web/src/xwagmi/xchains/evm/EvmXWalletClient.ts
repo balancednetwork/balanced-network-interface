@@ -5,6 +5,7 @@ import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/xwagmi/constants/xChains';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { uintToBytes } from '@/xwagmi/utils';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
@@ -83,13 +84,14 @@ export class EvmXWalletClient extends XWalletClient {
 
     // check if the bridge asset is native
     const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
-    const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
+    const isSpokeToken = inputAmount.currency.symbol === 'bnUSD' || inputAmount.currency.symbol === 'sICX';
 
     let request: WriteContractParameters;
-    if (isBnUSD) {
+    if (isSpokeToken) {
+      const tokenAddr = xTokenMap[direction.from].find(token => token.symbol === inputAmount.currency.symbol)?.address;
       const res = await this.getPublicClient().simulateContract({
         account: account as Address,
-        address: xChainMap[direction.from].contracts.bnUSD as Address,
+        address: tokenAddr as Address,
         abi: bnUSDContractAbi,
         functionName: 'crossTransfer',
         args: [destination, amount, data],

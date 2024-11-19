@@ -77,18 +77,18 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
 
     if (xChainType === 'ICON') return ApprovalState.APPROVED;
 
-    const isBnUSD = amountToApprove.currency.symbol === 'bnUSD';
-    if (isBnUSD) return ApprovalState.APPROVED;
+    const isSpokeToken = amountToApprove.currency.symbol === 'bnUSD' || amountToApprove.currency.symbol === 'sICX';
+    if (isSpokeToken) return ApprovalState.APPROVED;
 
     const isNative = amountToApprove.currency.wrapped.address === NATIVE_ADDRESS;
     if (isNative) return ApprovalState.APPROVED;
 
     if (xChainType === 'ARCHWAY') {
       const isDenom = isDenomAsset(amountToApprove.currency);
-      if (isDenom || isBnUSD) return ApprovalState.APPROVED;
+      if (isDenom || isSpokeToken) return ApprovalState.APPROVED;
     }
 
-    if (xChainType === 'EVM' && isBnUSD) return ApprovalState.APPROVED;
+    if (xChainType === 'EVM' && isSpokeToken) return ApprovalState.APPROVED;
 
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance) return ApprovalState.UNKNOWN;

@@ -98,7 +98,7 @@ export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, s
           <Input
             placeholder="Search tokens..."
             className={cn(
-              'bg-transparent text-[#0d0229] text-sm font-medium leading-tight p-0 h-8',
+              'bg-transparent !placeholder-[#0d0229] text-[#0d0229] text-sm font-medium leading-tight p-0 h-8',
               'border-none focus:border-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0',
             )}
             value={(table.getColumn('asset')?.getFilterValue() as string) ?? ''}

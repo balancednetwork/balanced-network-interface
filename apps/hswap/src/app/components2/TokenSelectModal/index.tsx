@@ -148,7 +148,7 @@ export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, s
                                   onDismiss();
                                 }}
                               >
-                                <ChainLogo chain={xChainMap[xToken.xChainId]} />
+                                <ChainLogo chain={xChainMap[xToken.xChainId]} className="hover:bg-white" />
                               </div>
                             ))}
                           </div>

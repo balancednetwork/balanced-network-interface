@@ -24,39 +24,40 @@ import WalletItem, { WalletItemProps } from '../WalletConnectModal/WalletItem';
 import HistoryItemList from './HistoryItemList';
 import { IconWithConfirmTextButton } from './IconWithConfirmTextButton';
 import XTokenList from './XTokenList';
+import { Separator } from '@/components/ui/separator';
 
 export const xChainTypes: WalletItemProps[] = [
   {
-    name: 'EVM wallets',
+    name: 'EVM',
     xChainType: 'EVM',
   },
   {
-    name: 'Injective wallets',
-    xChainType: 'INJECTIVE',
-  },
-  {
-    name: 'Archway wallets',
-    xChainType: 'ARCHWAY',
-  },
-  {
-    name: 'Havah wallets',
-    xChainType: 'HAVAH',
-  },
-  {
-    name: 'Sui wallets',
-    xChainType: 'SUI',
-  },
-  {
-    name: 'Stellar wallets',
-    xChainType: 'STELLAR',
-  },
-  {
-    name: 'Solana wallets',
+    name: 'Solana',
     xChainType: 'SOLANA',
   },
   {
-    name: 'Icon wallets',
+    name: 'Sui',
+    xChainType: 'SUI',
+  },
+  {
+    name: 'Injective',
+    xChainType: 'INJECTIVE',
+  },
+  {
+    name: 'Stellar',
+    xChainType: 'STELLAR',
+  },
+  {
+    name: 'ICON',
     xChainType: 'ICON',
+  },
+  {
+    name: 'Archway',
+    xChainType: 'ARCHWAY',
+  },
+  {
+    name: 'Havah',
+    xChainType: 'HAVAH',
   },
 ];
 
@@ -128,8 +129,13 @@ const WalletModalContent = ({ onDismiss }) => {
         <div className={cn('flex flex-col justify-between', isMobile ? 'h-[500px]' : 'h-[calc(100vh-290px)]')}>
           <ScrollArea className="h-full">
             <div className="w-full flex flex-col gap-4 mt-2">
+              <Separator className="h-1 bg-[#d4c5f9]/70" />
+
               {xChainTypes.map(wallet => (
-                <WalletItem key={wallet.xChainType} {...wallet} />
+                <>
+                  <WalletItem key={wallet.xChainType} {...wallet} />
+                  <Separator key={wallet.xChainType + '_separator'} className="h-1 bg-[#d4c5f9]/30" />
+                </>
               ))}
             </div>
           </ScrollArea>

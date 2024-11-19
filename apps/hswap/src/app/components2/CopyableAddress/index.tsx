@@ -21,7 +21,7 @@ export function CustomTooltip({ children, content, ...props }) {
         <TooltipContent side="top" align="center" {...props} className="p-0 bg-transparent">
           <div className="relative z-[100] bg-background text-white py-1 px-2">{content}</div>
           <TooltipPrimitive.Arrow width={11} height={5} asChild>
-            <div className="relative z-[99] w-[10px] h-[10px] mt-[-6px] transform rotate-45 border-[1px] bg-background"></div>
+            {/* <div className="relative z-[99] w-[10px] h-[10px] mt-[-6px] transform rotate-45 border-[1px] bg-background"></div> */}
           </TooltipPrimitive.Arrow>
         </TooltipContent>
       </Tooltip>

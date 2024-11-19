@@ -13,7 +13,7 @@ const HistoryItemList = () => {
         <div>Swap Info</div>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-4">
         {xTransactions.length === 0 && <div className="text-center my-10">No items</div>}
         {xTransactions.length > 0 && (
           <>

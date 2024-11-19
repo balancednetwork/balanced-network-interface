@@ -63,8 +63,8 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
 
   return (
     <>
-      <div className="py-2">
-        <div className="relative px-10 rounded-xl flex justify-between items-center gap-2 cursor-pointer">
+      <div className="pt-4">
+        <div className="relative px-10 rounded-xl flex justify-between items-start gap-2 cursor-pointer">
           <div className="flex gap-6 items-center">
             <div className="flex items-center">
               <CurrencyLogoWithNetwork currency={inputXToken} />

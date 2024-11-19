@@ -7,16 +7,15 @@ import MetaMaskIcon from '@/xwagmi/assets/wallets/metamask.svg?inline';
 import HavahIcon from '@/xwagmi/assets/wallets/havah.svg?inline';
 import PhantomIcon from '@/xwagmi/assets/wallets/phantom.svg?inline';
 import SuiIcon from '@/xwagmi/assets/wallets/sui.svg?inline';
-
-export type WalletId = 'metamask' | 'keplr' | 'phantom' | 'sui' | 'havah' | 'hana';
+import { WalletId } from '@/xwagmi/types';
 
 const walletIcons: Record<WalletId, any> = {
-  hana: HanaIcon,
-  metamask: MetaMaskIcon,
-  keplr: KeplrIcon,
-  phantom: PhantomIcon,
-  sui: SuiIcon,
-  havah: HavahIcon,
+  [WalletId.METAMASK]: MetaMaskIcon,
+  [WalletId.HANA]: HanaIcon,
+  [WalletId.KEPLR]: KeplrIcon,
+  [WalletId.PHANTOM]: PhantomIcon,
+  [WalletId.SUI]: SuiIcon,
+  [WalletId.HAVAH]: HavahIcon,
 };
 
 export const WalletLogo = ({ walletId, className }: { walletId: WalletId; className?: string }) => {

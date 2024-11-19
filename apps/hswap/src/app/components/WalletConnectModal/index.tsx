@@ -5,10 +5,12 @@ import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { EVMWalletModal } from './EVMWalletModal';
 import { InjectiveWalletOptionsModal } from './InjectiveWalletOptionsModal';
 import { SuiWalletOptionsModal } from './SuiWalletOptionsModal';
-import { WalletId, WalletLogo } from '@/app/components2/WalletLogo';
+import { WalletLogo } from '@/app/components2/WalletLogo';
 import { ArrowIcon, SubtractIcon } from '@/app/components2/Icons';
 import { cn } from '@/lib/utils';
 import { XIcon } from 'lucide-react';
+import { WalletId } from '@/xwagmi/types';
+import { useXConnectAllChains } from '@/xwagmi/hooks/useXConnectAllChains';
 
 export const wallets: {
   id: WalletId;
@@ -16,27 +18,27 @@ export const wallets: {
   description: string;
 }[] = [
   {
-    id: 'sui',
+    id: WalletId.SUI,
     name: 'Sui Wallet',
     description: 'MOVE',
   },
   {
-    id: 'havah',
+    id: WalletId.HAVAH,
     name: 'HAVAH',
     description: 'JVM',
   },
   {
-    id: 'metamask',
+    id: WalletId.METAMASK,
     name: 'MetaMask',
     description: 'EVM & COSMOS',
   },
   {
-    id: 'phantom',
+    id: WalletId.PHANTOM,
     name: 'Phantom',
     description: 'EVM & SOLANA',
   },
   {
-    id: 'keplr',
+    id: WalletId.KEPLR,
     name: 'Keplr',
     description: 'COSMOS',
   },
@@ -48,7 +50,13 @@ export default function WalletConnectModal({ modalId = MODAL_ID.WALLET_CONNECT_M
     modalActions.closeModal(modalId);
   }, [modalId]);
 
-  const isHanaWalletInstalled = false;
+  const isHanaWalletInstalled = true;
+
+  const xConnectAllChains = useXConnectAllChains();
+  const handleConnect = async (walletId: WalletId) => {
+    await xConnectAllChains(walletId);
+    onDismiss();
+  };
 
   return (
     <>
@@ -69,8 +77,10 @@ export default function WalletConnectModal({ modalId = MODAL_ID.WALLET_CONNECT_M
           )}
         >
           <XIcon className="absolute top-10 right-6 cursor-pointer" onClick={onDismiss} />
-
-          <div className="relative h-36 bg-[#221542] rounded-3xl w-full gap-2 col-span-2 flex items-end p-6 cursor-pointer">
+          <div
+            className="relative h-36 bg-[#221542] rounded-3xl w-full gap-2 col-span-2 flex items-end p-6 cursor-pointer"
+            onClick={() => handleConnect(WalletId.HANA)}
+          >
             {isHanaWalletInstalled ? (
               <>
                 <div className="absolute right-0 top-[-110px] text-right text-title-gradient text-[28px] font-extrabold leading-[30px] cursor-default">
@@ -81,7 +91,7 @@ export default function WalletConnectModal({ modalId = MODAL_ID.WALLET_CONNECT_M
                   <SubtractIcon className="fill-[#221542]" />
                 </div>
                 <div className="flex gap-2 items-center">
-                  <WalletLogo walletId={'hana'} />
+                  <WalletLogo walletId={WalletId.HANA} />
                   <div className="flex flex-col gap-1">
                     <div className="text-[#685682] text-[10px] font-semibold uppercase leading-3">ALL CHAINS</div>
                     <div className="text-[#e6e0f7] text-xs font-bold leading-none">Hana Wallet</div>
@@ -105,7 +115,7 @@ export default function WalletConnectModal({ modalId = MODAL_ID.WALLET_CONNECT_M
                 </div>
                 <div className="w-full flex flex-col gap-1">
                   <div className="flex gap-2 items-center">
-                    <WalletLogo walletId={'hana'} />
+                    <WalletLogo walletId={WalletId.HANA} />
                     <div className="flex flex-col gap-1">
                       <div className="text-[#e6e0f7] text-xs font-bold leading-none">Try Hana</div>
                       <div className="text-[#e6e0f7] text-xs font-bold leading-none">multi-chain!</div>
@@ -123,7 +133,11 @@ export default function WalletConnectModal({ modalId = MODAL_ID.WALLET_CONNECT_M
             )}
           </div>
           {wallets.map(wallet => (
-            <div key={wallet.name} className="h-[88px] bg-[#221542] rounded-3xl flex items-end p-4 pr-0 cursor-pointer">
+            <div
+              key={wallet.name}
+              className="h-[88px] bg-[#221542] rounded-3xl flex items-end p-4 pr-0 cursor-pointer"
+              onClick={() => handleConnect(wallet.id)}
+            >
               <div className="flex gap-2 items-center">
                 <WalletLogo walletId={wallet.id} />
                 <div className="flex flex-col gap-1">
@@ -137,9 +151,10 @@ export default function WalletConnectModal({ modalId = MODAL_ID.WALLET_CONNECT_M
           ))}
         </div>
       </Modal>
-      <EVMWalletModal />
+
+      {/* <EVMWalletModal />
       <InjectiveWalletOptionsModal />
-      <SuiWalletOptionsModal />
+      <SuiWalletOptionsModal /> */}
     </>
   );
 }

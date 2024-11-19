@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { XTransaction, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
-import { CheckIcon, ChevronRightIcon, Loader2Icon, XIcon } from 'lucide-react';
+import { CheckIcon, ExternalLink, Loader2Icon, XIcon } from 'lucide-react';
 import { getNetworkDisplayName } from '@/xwagmi/utils';
 import { formatBalance } from '@/utils/formatter';
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
 import { getTrackerLink } from '@/hooks/useTransactionStore';
 import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 
 interface HistoryItemProps {
   xTransaction: XTransaction;
@@ -61,58 +62,65 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
 
   return (
     <>
-      <div
-        className="relative py-2 px-5 rounded-xl flex justify-between items-center gap-2 cursor-pointer"
-        onClick={() => {
-          if (xTransaction.type === XTransactionType.SWAP_ON_ICON) {
-            const sourceTransactionHash = xTransaction.id.split('/')[1];
-            window.open(getTrackerLink('0x1.icon', sourceTransactionHash), '_blank');
-          } else {
-            window.open(
-              `https://xcallscan.xyz/messages/search?value=${primaryMessage?.destinationTransactionHash || primaryMessage?.sourceTransactionHash}`,
-              '_blank',
-            );
-          }
-        }}
-      >
-        <div>
-          <div className="flex gap-3">
+      <div className="py-2">
+        <div className="relative px-10 rounded-xl flex justify-between items-center gap-2 cursor-pointer">
+          <div className="flex gap-4 items-center">
             <div className="flex items-center">
-              <CurrencyLogoWithNetwork currency={inputXToken} className="w-8 h-8" />
-              <ChevronRightIcon className="w-4 h-4 text-[#0d0229]" />
-              <CurrencyLogoWithNetwork currency={outputXToken} className="w-8 h-8" />
+              <CurrencyLogoWithNetwork currency={inputXToken} />
+              <CurrencyLogoWithNetwork currency={outputXToken} className="mx-[-8px]" />
             </div>
 
-            <div className="flex flex-col">
-              <div className="text-[#0d0229] text-sm font-medium">
-                Swap {formatBalance(inputAmount, undefined)} {inputXToken.symbol} on{' '}
-                {getNetworkDisplayName(inputXToken.xChainId)}
+            <div className="flex flex-col gap-1">
+              <div className="text-[#0d0229] text-xs leading-none">
+                From{' '}
+                <strong>
+                  {formatBalance(inputAmount, undefined)} {inputXToken.symbol}
+                </strong>{' '}
+                on {getNetworkDisplayName(inputXToken.xChainId)}
               </div>
-              <div className="text-[#0d0229] text-sm font-medium">
-                for {formatBalance(outputAmount, undefined)} {outputXToken.symbol} on{' '}
-                {getNetworkDisplayName(outputXToken.xChainId)}
-              </div>
-              <div className="text-[#0d0229] text-sm font-medium">
-                {elapsedTime ? formatElapsedTime(elapsedTime) + ' ago' : '...'}
+              <div className="text-[#0d0229] text-xs leading-none">
+                to{' '}
+                <strong>
+                  {formatBalance(outputAmount, undefined)} {outputXToken.symbol}
+                </strong>{' '}
+                on {getNetworkDisplayName(outputXToken.xChainId)}
               </div>
             </div>
           </div>
+          {xTransaction.status === XTransactionStatus.pending && (
+            <div className="bg-transparent w-[16px] h-[16px] flex justify-center items-center rounded-full">
+              <Loader2Icon className="animate-spin" />
+            </div>
+          )}
+          {xTransaction.status === XTransactionStatus.success && (
+            <div className={cn('w-4 h-4 rounded-full border-[#E6E0F7] border-[2px]')}>
+              <div className="bg-title-gradient rounded-full w-full h-full flex justify-center items-center">
+                <CheckIcon className="w-2 h-2" />
+              </div>
+            </div>
+          )}
+          {xTransaction.status === XTransactionStatus.failure && (
+            <div className="bg-red-500 border-2 border-background  w-[16px] h-[16px] flex justify-center items-center rounded-full">
+              <XIcon className="text-background  w-4 h-4" />
+            </div>
+          )}
         </div>
-        {xTransaction.status === XTransactionStatus.pending && (
-          <div className="bg-transparent w-[28px] h-[28px] flex justify-center items-center rounded-full">
-            <Loader2Icon className="animate-spin" />
+        <div className="mt-1 px-10 flex justify-end items-center gap-2">
+          <div className="text-[#0d0229] text-[10px] font-bold">
+            {elapsedTime ? formatElapsedTime(elapsedTime) + ' ago' : '...'}
           </div>
-        )}
-        {xTransaction.status === XTransactionStatus.success && (
-          <div className="bg-green-500 border-2 border-background  w-[28px] h-[28px] flex justify-center items-center rounded-full">
-            <CheckIcon className="text-background w-4 h-4" />
-          </div>
-        )}
-        {xTransaction.status === XTransactionStatus.failure && (
-          <div className="bg-red-500 border-2 border-background  w-[28px] h-[28px] flex justify-center items-center rounded-full">
-            <XIcon className="text-background  w-4 h-4" />
-          </div>
-        )}
+          <a
+            href={
+              xTransaction.type === XTransactionType.SWAP_ON_ICON
+                ? getTrackerLink('0x1.icon', xTransaction.id.split('/')[1])
+                : `https://xcallscan.xyz/messages/search?value=${primaryMessage?.destinationTransactionHash || primaryMessage?.sourceTransactionHash}`
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ExternalLink className="w-4 h-4 text-[#695682]" />
+          </a>
+        </div>
       </div>
       <Separator className="h-1 bg-[#d4c5f9]/30" />
     </>

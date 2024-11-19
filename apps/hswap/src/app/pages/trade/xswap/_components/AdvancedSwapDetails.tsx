@@ -80,10 +80,7 @@ export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactio
             </span>
 
             <span
-              className={cn(
-                'text-right text-sm font-bold',
-                showSlippageWarning ? 'text-warning animate-wiggle' : 'text-white',
-              )}
+              className={cn('text-right text-sm', showSlippageWarning ? 'text-warning animate-wiggle' : 'text-white')}
             >
               {priceImpact}
             </span>
@@ -109,7 +106,7 @@ export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactio
                   }, your transaction will revert.`}
               /> */}
             </span>
-            <span className="text-sm font-bold text-white">
+            <span className="text-sm text-white">
               {minimumToReceive
                 ? `${minimumToReceive?.toFixed(4)} ${minimumToReceive?.currency.symbol}`
                 : `0 ${currencies[Field.OUTPUT]?.symbol}`}
@@ -122,7 +119,7 @@ export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactio
               {/* <QuestionHelper text={t`If the price slips by more than this amount, your swap will fail.`} /> */}
             </span>
 
-            <span className="text-sm font-bold text-white">
+            <span className="text-sm text-white">
               {trade ? trade.fee.toFixed(4) : '0'} {currencies[Field.INPUT]?.symbol}
             </span>
           </div>
@@ -134,7 +131,7 @@ export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactio
                 {/* <QuestionHelper text={t`If the price slips by more than this amount, your swap will fail.`} /> */}
               </span>
 
-              <span className="text-sm font-bold text-white">{formattedXCallFee}</span>
+              <span className="text-sm text-white">{formattedXCallFee}</span>
             </div>
           )}
 
@@ -144,7 +141,7 @@ export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactio
               <QuestionHelper text={t`Network cost is paid in ETH on the ARBITRUM network in order to transact.`} />
             </span>
 
-            <span className="text-sm font-bold text-white">
+            <span className="text-sm text-white">
               {networkCost ? `${networkCost} ${sourceXChain.nativeCurrency.symbol}` : '---'}
             </span>
           </div> */}

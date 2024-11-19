@@ -51,7 +51,7 @@ export default function SlippageSettings({ rawSlippage, setRawSlippage }: Slippa
 
   return (
     <div className="flex flex-col justify-end">
-      <div className="p-0 flex items-center gap-1 text-sm font-bold text-white">
+      <div className="p-0 flex items-center gap-1 text-sm text-white">
         <Input
           placeholder={(rawSlippage / 100).toFixed(2)}
           value={slippageInput}

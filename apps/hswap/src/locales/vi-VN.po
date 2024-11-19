@@ -694,8 +694,8 @@ msgstr ""
 #~ msgstr "Kết nối ví"
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "The impact your trade has on the market price of this pool."
-msgstr ""
+#~ msgid "The impact your trade has on the market price of this pool."
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
 #~ msgid "Liquidity pools"
@@ -782,8 +782,8 @@ msgid "{0} approved for cross-chain transfer."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "The maximum price movement before your transaction will revert."
-msgstr ""
+#~ msgid "The maximum price movement before your transaction will revert."
+#~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Receive at least"
@@ -816,8 +816,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Slippage tolerance"
-msgstr "Khả năng trượt giá"
+#~ msgid "Slippage tolerance"
+#~ msgstr "Khả năng trượt giá"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #~ msgid "For every bnUSD they redeem, they'll receive ${redeemLimit} of collateral. The bnUSD is burned, and {redeemRepaidAmt} bnUSD of borrower debt repaid."
@@ -1001,6 +1001,10 @@ msgstr "Giao dịch"
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #~ msgid "Withdrawing..."
 #~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Max. slippage"
+msgstr ""
 
 #: src/store/swap/hooks.ts
 msgid "Invalid address"
@@ -1829,8 +1833,8 @@ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "If the price slips by more than this amount, your swap will fail."
-msgstr "Nếu giá cả bị vượt quá mức này, vụ trao đổi này sẽ thất bại."
+#~ msgid "If the price slips by more than this amount, your swap will fail."
+#~ msgstr "Nếu giá cả bị vượt quá mức này, vụ trao đổi này sẽ thất bại."
 
 #: src/app/components/ProposalModal/index.tsx
 #~ msgid "Voting weight"
@@ -2182,8 +2186,8 @@ msgstr "Bỏ phiếu"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Order routing"
-msgstr ""
+#~ msgid "Order routing"
+#~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
 #~ msgid "Couldn't send {currency} to the {pair} pool. Try again."
@@ -2606,10 +2610,10 @@ msgstr "Đổi"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid ""
-"If the price moves so that you will receive less than \n"
-"{0}, your transaction will revert."
-msgstr ""
+#~ msgid ""
+#~ "If the price moves so that you will receive less than \n"
+#~ "{0}, your transaction will revert."
+#~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #~ msgid "{0} ICX is ready to claim"

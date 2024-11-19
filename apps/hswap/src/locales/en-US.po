@@ -661,8 +661,8 @@ msgstr "is available on {0}."
 #~ msgstr "Connect Wallet"
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "The impact your trade has on the market price of this pool."
-msgstr "The impact your trade has on the market price of this pool."
+#~ msgid "The impact your trade has on the market price of this pool."
+#~ msgstr "The impact your trade has on the market price of this pool."
 
 #: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
 #~ msgid "Liquidity pools"
@@ -749,8 +749,8 @@ msgid "{0} approved for cross-chain transfer."
 msgstr "{0} approved for cross-chain transfer."
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "The maximum price movement before your transaction will revert."
-msgstr "The maximum price movement before your transaction will revert."
+#~ msgid "The maximum price movement before your transaction will revert."
+#~ msgstr "The maximum price movement before your transaction will revert."
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Receive at least"
@@ -781,8 +781,8 @@ msgstr "Receive at least"
 #~ msgstr "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Slippage tolerance"
-msgstr "Slippage tolerance"
+#~ msgid "Slippage tolerance"
+#~ msgstr "Slippage tolerance"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #~ msgid "For every bnUSD they redeem, they'll receive ${redeemLimit} of collateral. The bnUSD is burned, and {redeemRepaidAmt} bnUSD of borrower debt repaid."
@@ -958,6 +958,10 @@ msgstr "Trade"
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #~ msgid "Withdrawing..."
 #~ msgstr "Withdrawing..."
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Max. slippage"
+msgstr "Max. slippage"
 
 #: src/store/swap/hooks.ts
 msgid "Invalid address"
@@ -1767,8 +1771,8 @@ msgstr "0 {0}"
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "If the price slips by more than this amount, your swap will fail."
-msgstr "If the price slips by more than this amount, your swap will fail."
+#~ msgid "If the price slips by more than this amount, your swap will fail."
+#~ msgstr "If the price slips by more than this amount, your swap will fail."
 
 #: src/app/components/ProposalModal/index.tsx
 #~ msgid "Voting weight"
@@ -2116,8 +2120,8 @@ msgstr "Vote"
 #~ msgstr "Connected to {numberOfConnectedWallets} blockchains"
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Order routing"
-msgstr "Order routing"
+#~ msgid "Order routing"
+#~ msgstr "Order routing"
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
 #~ msgid "Couldn't send {currency} to the {pair} pool. Try again."
@@ -2540,12 +2544,12 @@ msgstr "Swap"
 #~ msgstr "The fee APR is calculated from the swap fees earned by a pool over the last 30 days."
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid ""
-"If the price moves so that you will receive less than \n"
-"{0}, your transaction will revert."
-msgstr ""
-"If the price moves so that you will receive less than \n"
-"{0}, your transaction will revert."
+#~ msgid ""
+#~ "If the price moves so that you will receive less than \n"
+#~ "{0}, your transaction will revert."
+#~ msgstr ""
+#~ "If the price moves so that you will receive less than \n"
+#~ "{0}, your transaction will revert."
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #~ msgid "{0} ICX is ready to claim"

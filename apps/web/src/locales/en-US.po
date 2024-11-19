@@ -1009,6 +1009,10 @@ msgstr "Casting your vote..."
 msgid "Do not send sICX to an exchange."
 msgstr "Do not send sICX to an exchange."
 
+#: src/app/components/home/CollateralPanel.tsx
+msgid "To deposit {0}"
+msgstr "To deposit {0}"
+
 #: src/app/components/home/Savings/index.tsx
 msgid "Withdrawing bnUSD..."
 msgstr "Withdrawing bnUSD..."
@@ -1860,8 +1864,8 @@ msgstr "Rejected"
 #~ msgstr "Includes a fee of"
 
 #: src/app/components/home/CollateralPanel.tsx
-msgid "To deposit {collateralType}"
-msgstr "To deposit {collateralType}"
+#~ msgid "To deposit {collateralType}"
+#~ msgstr "To deposit {collateralType}"
 
 #: src/app/components/Wallet/index.tsx
 msgid "Sign out"

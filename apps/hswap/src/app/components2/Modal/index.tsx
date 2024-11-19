@@ -15,6 +15,7 @@ interface ModalProps {
   hideCloseIcon?: boolean;
   className?: string;
   dialogClassName?: string;
+  showOverlay?: boolean;
 }
 
 export function Modal({
@@ -25,11 +26,15 @@ export function Modal({
   hideCloseIcon = false,
   className,
   dialogClassName,
+  showOverlay = false,
 }: ModalProps) {
   if (!isMobile) {
     return (
       <Dialog open={open} onOpenChange={_ => onDismiss()}>
-        <DialogContent className={cn('p-4 border-none', className, dialogClassName)}>
+        <DialogContent
+          className={cn('p-4 border-none top-[136px] translate-y-0', className, dialogClassName)}
+          showOverlay={showOverlay}
+        >
           {(title || !hideCloseIcon) && (
             <DialogHeader className="flex flex-row-reverse justify-between items-center">
               {!hideCloseIcon && (

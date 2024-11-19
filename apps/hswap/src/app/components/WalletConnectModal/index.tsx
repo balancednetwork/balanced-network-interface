@@ -58,6 +58,7 @@ export default function WalletConnectModal({ modalId = MODAL_ID.WALLET_CONNECT_M
         dialogClassName="max-w-[375px]"
         hideCloseIcon={true}
         className="bg-[#0d0229] p-0"
+        showOverlay={true}
       >
         <div
           className={cn(
@@ -72,7 +73,7 @@ export default function WalletConnectModal({ modalId = MODAL_ID.WALLET_CONNECT_M
           <div className="relative h-36 bg-[#221542] rounded-3xl w-full gap-2 col-span-2 flex items-end p-6 cursor-pointer">
             {isHanaWalletInstalled ? (
               <>
-                <div className="absolute right-0 top-[-110px] text-right text-title-gradient text-[28px] font-extrabold leading-[30px]">
+                <div className="absolute right-0 top-[-110px] text-right text-title-gradient text-[28px] font-extrabold leading-[30px] cursor-default">
                   <div>Choose</div>
                   <div>your wallet.</div>
                 </div>
@@ -89,7 +90,7 @@ export default function WalletConnectModal({ modalId = MODAL_ID.WALLET_CONNECT_M
               </>
             ) : (
               <>
-                <div className="absolute left-0 top-[-140px] flex flex-col gap-1">
+                <div className="absolute left-0 top-[-140px] flex flex-col gap-1 cursor-default">
                   <div className="text-title-gradient text-[28px] font-extrabold leading-[30px]">
                     <div>All chains,</div>
                     <div>one wallet.</div>
@@ -106,7 +107,7 @@ export default function WalletConnectModal({ modalId = MODAL_ID.WALLET_CONNECT_M
                   <div className="flex gap-2 items-center">
                     <WalletLogo walletId={'hana'} />
                     <div className="flex flex-col gap-1">
-                      <div className="text-[#685682] text-[10px] font-semibold uppercase leading-3">Try Hana</div>
+                      <div className="text-[#e6e0f7] text-xs font-bold leading-none">Try Hana</div>
                       <div className="text-[#e6e0f7] text-xs font-bold leading-none">multi-chain!</div>
                     </div>
                   </div>

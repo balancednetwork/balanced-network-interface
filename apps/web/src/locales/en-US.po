@@ -352,13 +352,17 @@ msgstr "{0} {collateralType} added to your wallet."
 msgid "No assets found."
 msgstr "No assets found."
 
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Swap fee"
+msgstr "Swap fee"
+
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 msgid "Claiming network fees..."
 msgstr "Claiming network fees..."
 
-#: src/app/components/trade/SwapPanel.tsx
-#~ msgid "Transfer fee"
-#~ msgstr "Transfer fee"
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Transfer fee"
+msgstr "Transfer fee"
 
 #: src/app/pages/trade/xswap/_components/TokenList/index.tsx
 msgid "Tokens"
@@ -833,8 +837,8 @@ msgid "Locking BALN..."
 msgstr "Locking BALN..."
 
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
-msgid "You'll also pay"
-msgstr "You'll also pay"
+#~ msgid "You'll also pay"
+#~ msgstr "You'll also pay"
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 msgid "1H"
@@ -990,8 +994,8 @@ msgid "Unlock {0} BALN"
 msgstr "Unlock {0} BALN"
 
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
-msgid "to transfer cross-chain."
-msgstr "to transfer cross-chain."
+#~ msgid "to transfer cross-chain."
+#~ msgstr "to transfer cross-chain."
 
 #: src/app/components/WalletModal/index.tsx
 #~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer crypto cross-chain."
@@ -1066,6 +1070,10 @@ msgstr "Failed to enact"
 #: src/app/components/WalletModal/index.tsx
 msgid "Sign in to Balanced"
 msgstr "Sign in to Balanced"
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+msgid "No pools found."
+msgstr "No pools found."
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Risk ratio"
@@ -1194,7 +1202,6 @@ msgstr "Unsupported network"
 #~ msgstr "No assets available."
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
-#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Fee"
 msgstr "Fee"
 
@@ -1324,6 +1331,11 @@ msgstr "({0}% required)"
 msgid "Claimed {0} ICX."
 msgstr "Claimed {0} ICX."
 
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+msgid "Transfer fee:"
+msgstr "Transfer fee:"
+
 #: src/app/components/home/Savings/index.tsx
 msgid "Withdraw bnUSD?"
 msgstr "Withdraw bnUSD?"
@@ -1343,8 +1355,8 @@ msgid "Borrow"
 msgstr "Borrow"
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-msgid "Includes a fee of {0} {1}."
-msgstr "Includes a fee of {0} {1}."
+#~ msgid "Includes a fee of {0} {1}."
+#~ msgstr "Includes a fee of {0} {1}."
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
 msgid "Contract address"
@@ -1585,6 +1597,10 @@ msgstr "Processing transaction..."
 #: src/app/components/StabilityFund/index.tsx
 #~ msgid "Or"
 #~ msgstr "Or"
+
+#: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
+msgid "Core pools"
+msgstr "Core pools"
 
 #: src/app/components/trade/XCallEventManager.tsx
 #~ msgid "Awaiting confirmation on {0}."
@@ -1840,8 +1856,8 @@ msgstr "Rejected"
 #~ msgstr "Repay in progress"
 
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
-msgid "Includes a fee of"
-msgstr "Includes a fee of"
+#~ msgid "Includes a fee of"
+#~ msgstr "Includes a fee of"
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "To deposit {collateralType}"
@@ -1885,8 +1901,8 @@ msgid "Withdrawing {0}"
 msgstr "Withdrawing {0}"
 
 #: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
-msgid "Incentivised pools"
-msgstr "Incentivised pools"
+#~ msgid "Incentivised pools"
+#~ msgstr "Incentivised pools"
 
 #: src/app/pages/vote/_components/utils.ts
 #: src/utils/timeformat.ts
@@ -1937,6 +1953,10 @@ msgstr "Claim"
 #: src/app/Routes.tsx
 msgid "Home"
 msgstr "Home"
+
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+msgid "Swap fee (included):"
+msgstr "Swap fee (included):"
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "To deposit {collateralType} from {0},"
@@ -2102,6 +2122,10 @@ msgstr "{inputValue}% of bBALN allocated to {editing}."
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Creating pool"
 msgstr "Creating pool"
+
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+msgid "Swap fee (included): <0>{0} {1}</0>"
+msgstr "Swap fee (included): <0>{0} {1}</0>"
 
 #: src/app/components/ICXDisplayTypeSwitcher/index.tsx
 msgid "The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset."
@@ -2499,8 +2523,8 @@ msgid "Unlocking BALN early..."
 msgstr "Unlocking BALN early..."
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Bridge fee"
-msgstr "Bridge fee"
+#~ msgid "Bridge fee"
+#~ msgstr "Bridge fee"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"

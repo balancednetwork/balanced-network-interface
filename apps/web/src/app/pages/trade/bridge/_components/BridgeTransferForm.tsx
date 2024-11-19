@@ -12,6 +12,7 @@ import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { UnderlineText } from '@/app/components/DropdownText';
 import { BrightPanel } from '@/app/components/Panel';
 import { CurrencySelectionType, SelectorType } from '@/app/components/SearchModal/CurrencySearch';
+import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
 import useManualAddresses from '@/hooks/useManualAddresses';
@@ -28,7 +29,7 @@ import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend } from '@/utils';
 import { getXChainType } from '@/xwagmi/actions';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { useXAccount } from '@/xwagmi/hooks';
+import { useXAccount, useXConnect, useXConnectors } from '@/xwagmi/hooks';
 import { validateAddress } from '@/xwagmi/utils';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import XChainSelector from './XChainSelector';
@@ -84,8 +85,14 @@ export default function BridgeTransferForm({ openModal }) {
 
   const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount } = useDerivedBridgeInfo();
 
+  const xChainType = getXChainType(bridgeDirection.from);
+  const xConnectors = useXConnectors(xChainType);
+  const xConnect = useXConnect();
+
   const handleSubmit = async () => {
-    if (account) {
+    if (recipient && !account) {
+      handleConnectWallet(xChainType, xConnectors, xConnect);
+    } else if (account) {
       openModal();
     } else {
       toggleWalletModal();
@@ -95,7 +102,7 @@ export default function BridgeTransferForm({ openModal }) {
   const { formattedXCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
 
   React.useEffect(() => {
-    setValid(validateAddress(recipient || '', bridgeDirection.to));
+    validateAddress(recipient || '', bridgeDirection.to).then(setValid);
   }, [recipient, bridgeDirection.to]);
 
   const handleMaximumBridgeAmountClick = () => {

@@ -5,6 +5,7 @@ import { TokenInfo } from '@uniswap/token-lists';
 
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { isAddress } from '@/utils';
+import { getSpokeVersions } from '@/utils/xTokens';
 
 const alwaysTrue = () => true;
 
@@ -36,7 +37,12 @@ export function createTokenFilterFunction<T extends Token | TokenInfo>(search: s
     return lowerSearchParts.every(p => p.length === 0 || sParts.some(sp => sp.indexOf(p) >= 0));
   };
 
-  return ({ name, symbol }: T): boolean => Boolean((symbol && matchesSearch(symbol)) || (name && matchesSearch(name)));
+  return ({ name, symbol }: T): boolean =>
+    Boolean(
+      (symbol && matchesSearch(symbol)) ||
+        (name && matchesSearch(name)) ||
+        getSpokeVersions(symbol).some(v => matchesSearch(v)),
+    );
 }
 
 export function filterTokens<T extends Token | TokenInfo>(tokens: T[], search: string): T[] {

@@ -23,6 +23,7 @@ import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagm
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import { AnimatePresence, motion } from 'framer-motion';
 import useLoanWalletServiceHandler from '../../useLoanWalletServiceHandler';
+import { formatSymbol } from '@/utils/formatter';
 
 export enum XCollateralAction {
   DEPOSIT = 'DEPOSIT',
@@ -144,8 +145,8 @@ const XCollateralModal = ({
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px">
             {storedModalValues.action === XCollateralAction.DEPOSIT
-              ? t`Deposit ${_inputAmount?.currency.symbol} collateral?`
-              : t`Withdraw ${_inputAmount?.currency.symbol} collateral?`}
+              ? t`Deposit ${formatSymbol(_inputAmount?.currency.symbol)} collateral?`
+              : t`Withdraw ${formatSymbol(_inputAmount?.currency.symbol)} collateral?`}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>

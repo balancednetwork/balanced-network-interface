@@ -99,7 +99,7 @@ const AddressInput = ({
   };
 
   React.useEffect(() => {
-    setValid(validateAddress(value, xChainId));
+    validateAddress(value, xChainId).then(setValid);
   }, [value, xChainId]);
 
   React.useEffect(() => {

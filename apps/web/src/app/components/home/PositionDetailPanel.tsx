@@ -39,7 +39,7 @@ import { useRatio } from '@/store/ratio/hooks';
 import { useCurrentCollateralRatio } from '@/store/reward/hooks';
 import { InterestPeriod } from '@/types';
 import { formatBigNumber, getAccumulatedInterest } from '@/utils';
-import { formatPrice } from '@/utils/formatter';
+import { formatPrice, formatSymbol } from '@/utils/formatter';
 
 const PERIODS: Period[] = [Period.day, Period.week, Period.month, Period.all];
 
@@ -222,7 +222,7 @@ const PositionDetailPanel = () => {
             </Flex>
             <Divider my={4} />
             <Typography mb={2}>
-              {t`The current ${collateralType === 'sICX' ? 'ICX' : collateralType} price is`}{' '}
+              {t`The current ${collateralType === 'sICX' ? 'ICX' : formatSymbol(collateralType)} price is`}{' '}
               <span style={{ color: isLockWarning ? theme.colors.alert : '#ffffff' }}>
                 {ratio.ICXUSDratio && oraclePrice
                   ? formatPrice(
@@ -312,7 +312,7 @@ const PositionDetailPanel = () => {
                 text={
                   <Typography variant="body">
                     {t`If the ${
-                      collateralType === 'sICX' ? 'ICX' : collateralType
+                      collateralType === 'sICX' ? 'ICX' : formatSymbol(collateralType)
                     } price reaches $${liquidationThresholdPrice.dp(collateralType === 'sICX' ? 3 : 0).toFormat()}, some of your collateral will be liquidated to reduce your risk.`}
                   </Typography>
                 }
@@ -389,7 +389,7 @@ const PositionDetailPanel = () => {
                         isHandlingICX ? data?.totalCollateralSold.times(ratio.sICXICXratio) : data?.totalCollateralSold,
                         'currency',
                       )}
-                      {` ${isHandlingICX ? 'ICX' : collateralType}`}
+                      {` ${isHandlingICX ? 'ICX' : formatSymbol(collateralType)}`}
                     </Typography>
                     <Typography mt={1} sx={{ position: 'relative' }}>
                       <Trans>Collateral</Trans>

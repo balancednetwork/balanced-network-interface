@@ -361,13 +361,17 @@ msgstr ""
 msgid "No assets found."
 msgstr ""
 
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Swap fee"
+msgstr ""
+
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 msgid "Claiming network fees..."
 msgstr ""
 
-#: src/app/components/trade/SwapPanel.tsx
-#~ msgid "Transfer fee"
-#~ msgstr ""
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Transfer fee"
+msgstr ""
 
 #: src/app/pages/trade/xswap/_components/TokenList/index.tsx
 msgid "Tokens"
@@ -872,8 +876,8 @@ msgstr ""
 #~ msgstr "청구된 {0} BALN."
 
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
-msgid "You'll also pay"
-msgstr ""
+#~ msgid "You'll also pay"
+#~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 msgid "1H"
@@ -1033,8 +1037,8 @@ msgid "Unlock {0} BALN"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
-msgid "to transfer cross-chain."
-msgstr ""
+#~ msgid "to transfer cross-chain."
+#~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
 #~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer crypto cross-chain."
@@ -1108,6 +1112,10 @@ msgstr "제정 실패"
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Sign in to Balanced"
+msgstr ""
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+msgid "No pools found."
 msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
@@ -1237,7 +1245,6 @@ msgstr ""
 #~ msgstr "사용 가능한 자산이 없습니다."
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
-#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Fee"
 msgstr "수수료"
 
@@ -1367,6 +1374,11 @@ msgstr "({0}% 필요)"
 msgid "Claimed {0} ICX."
 msgstr "승인된 {0} ICX."
 
+#: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+msgid "Transfer fee:"
+msgstr ""
+
 #: src/app/components/home/Savings/index.tsx
 msgid "Withdraw bnUSD?"
 msgstr ""
@@ -1386,8 +1398,8 @@ msgid "Borrow"
 msgstr "대출"
 
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-msgid "Includes a fee of {0} {1}."
-msgstr "{0} {1} 의 수수료가 포함됩니다."
+#~ msgid "Includes a fee of {0} {1}."
+#~ msgstr "{0} {1} 의 수수료가 포함됩니다."
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
 msgid "Contract address"
@@ -1641,6 +1653,10 @@ msgstr "트랜잭션 처리 중..."
 #: src/app/components/StabilityFund/index.tsx
 #~ msgid "Or"
 #~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
+msgid "Core pools"
+msgstr ""
 
 #: src/app/components/trade/XCallEventManager.tsx
 #~ msgid "Awaiting confirmation on {0}."
@@ -1902,8 +1918,8 @@ msgstr "거부됨"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
-msgid "Includes a fee of"
-msgstr ""
+#~ msgid "Includes a fee of"
+#~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "To deposit {collateralType}"
@@ -1947,8 +1963,8 @@ msgid "Withdrawing {0}"
 msgstr "{0} 를 회수하는 중"
 
 #: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
-msgid "Incentivised pools"
-msgstr ""
+#~ msgid "Incentivised pools"
+#~ msgstr ""
 
 #: src/app/pages/vote/_components/utils.ts
 #: src/utils/timeformat.ts
@@ -1999,6 +2015,10 @@ msgstr "요구하기"
 #: src/app/Routes.tsx
 msgid "Home"
 msgstr "홈"
+
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+msgid "Swap fee (included):"
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "To deposit {collateralType} from {0},"
@@ -2168,6 +2188,10 @@ msgstr ""
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Creating pool"
 msgstr "풀 생성 중"
+
+#: src/app/pages/trade/xswap/_components/SwapModal.tsx
+msgid "Swap fee (included): <0>{0} {1}</0>"
+msgstr ""
 
 #: src/app/components/ICXDisplayTypeSwitcher/index.tsx
 msgid "The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset."
@@ -2565,8 +2589,8 @@ msgid "Unlocking BALN early..."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Bridge fee"
-msgstr ""
+#~ msgid "Bridge fee"
+#~ msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Quorum not reached"

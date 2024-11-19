@@ -47,6 +47,7 @@ import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { handleConnectWallet } from '../WalletModal/WalletItem';
 import CollateralChainSelector from './_components/CollateralChainSelector';
 import XCollateralModal, { XCollateralAction } from './_components/xCollateralModal';
+import { formatSymbol } from '@/utils/formatter';
 
 export const PanelInfoWrap = styled(Flex)`
   justify-content: space-between;
@@ -193,9 +194,9 @@ const CollateralPanel = () => {
   const toggleOpen = () => {
     if (isCrossChain) {
       setStoredModalValues({
-        amount: `${differenceAmount.dp(collateralDecimalPlaces).toFormat()} ${collateralType}`,
-        before: `${collateralDeposit.dp(collateralDecimalPlaces).toFormat()} ${collateralType}`,
-        after: `${parsedAmount[Field.LEFT].dp(collateralDecimalPlaces).toFormat()} ${collateralType}`,
+        amount: `${differenceAmount.dp(collateralDecimalPlaces).toFormat()} ${formatSymbol(collateralType)}`,
+        before: `${collateralDeposit.dp(collateralDecimalPlaces).toFormat()} ${formatSymbol(collateralType)}`,
+        after: `${parsedAmount[Field.LEFT].dp(collateralDecimalPlaces).toFormat()} ${formatSymbol(collateralType)}`,
         action: shouldDeposit ? XCollateralAction.DEPOSIT : XCollateralAction.WITHDRAW,
       });
       modalActions.openModal(MODAL_ID.XCOLLATERAL_CONFIRM_MODAL);
@@ -409,7 +410,7 @@ const CollateralPanel = () => {
 
           {!account && (
             <Flex minHeight={140} alignItems="center" justifyContent="center">
-              <Typography mr={1}>{t`To deposit ${collateralType}`},</Typography>
+              <Typography mr={1}>{t`To deposit ${formatSymbol(collateralType)}`},</Typography>
               <Typography color="primaryBright">
                 <UnderlineText onClick={handleConnect}>
                   <Trans>sign in with</Trans>
@@ -457,7 +458,7 @@ const CollateralPanel = () => {
                     tooltip={false}
                     value={formattedAmounts[Field.LEFT]}
                     decimalPlaces={collateralDecimalPlaces}
-                    currency={isHandlingICX ? 'ICX' : collateralType}
+                    currency={isHandlingICX ? 'ICX' : formatSymbol(collateralType)}
                     maxValue={collateralTotal}
                     onUserInput={onFieldAInput}
                   />
@@ -473,7 +474,7 @@ const CollateralPanel = () => {
                     }
                     value={formattedAmounts[Field.RIGHT]}
                     decimalPlaces={collateralDecimalPlaces}
-                    currency={isHandlingICX ? 'ICX' : collateralType}
+                    currency={isHandlingICX ? 'ICX' : formatSymbol(collateralType)}
                     maxValue={collateralTotal}
                     onUserInput={onFieldBInput}
                   />
@@ -501,8 +502,8 @@ const CollateralPanel = () => {
         <ModalContent>
           <Typography textAlign="center" mb="5px">
             {shouldDeposit
-              ? t`Deposit ${isHandlingICX ? 'ICX' : collateralType} collateral?`
-              : t`Withdraw ${isHandlingICX ? 'ICX' : collateralType} collateral?`}
+              ? t`Deposit ${isHandlingICX ? 'ICX' : formatSymbol(collateralType)} collateral?`
+              : t`Withdraw ${isHandlingICX ? 'ICX' : formatSymbol(collateralType)} collateral?`}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
@@ -522,7 +523,7 @@ const CollateralPanel = () => {
               </Typography>
               <Typography variant="p" textAlign="center">
                 {collateralDeposit.dp(collateralDecimalPlaces).toFormat() +
-                  (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
+                  (isHandlingICX ? ' ICX' : ` ${formatSymbol(collateralType)}`)}
               </Typography>
             </Box>
 
@@ -532,7 +533,7 @@ const CollateralPanel = () => {
               </Typography>
               <Typography variant="p" textAlign="center">
                 {parsedAmount[Field.LEFT].dp(collateralDecimalPlaces).toFormat() +
-                  (isHandlingICX ? ' ICX' : ` ${collateralType}`)}
+                  (isHandlingICX ? ' ICX' : ` ${formatSymbol(collateralType)}`)}
               </Typography>
             </Box>
           </Flex>

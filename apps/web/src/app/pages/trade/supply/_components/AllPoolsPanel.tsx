@@ -206,6 +206,7 @@ export default function AllPoolsPanel({ query }: { query: string }) {
   const relevantPairs = useMemo(() => {
     if (!allPairs || !nolPairs) return [];
     const nativeSymbols = Object.values(xChainMap).map(chain => chain.nativeCurrency.symbol);
+    nativeSymbols.push('wICX');
 
     return Object.values(allPairs).filter(pair => {
       const isTokenBlacklisted = TOKEN_BLACKLIST.some(

@@ -118,11 +118,16 @@ export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, s
                   return (
                     <div key={row.id}>
                       <div
-                        className="flex justify-between items-center gap-4 py-2 cursor-default rounded-xl px-16"
-                        // onClick={() => {
-                        //   onCurrencySelect(xTokens?.[0]);
-                        //   onDismiss();
-                        // }}
+                        className={cn(
+                          'flex justify-start items-center gap-2 py-2 cursor-default rounded-xl px-16 w-full',
+                          xChainId !== 'all' ? 'cursor-pointer' : '',
+                        )}
+                        onClick={() => {
+                          if (xChainId !== 'all') {
+                            onCurrencySelect(xTokens?.[0]);
+                            onDismiss();
+                          }
+                        }}
                       >
                         <div className="flex items-center gap-2">
                           <CurrencyLogo currency={xTokens?.[0]} className="" />

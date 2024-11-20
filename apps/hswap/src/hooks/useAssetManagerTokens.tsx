@@ -1,9 +1,9 @@
 import { getXAddress } from '@/utils/xTokens';
 import { NATIVE_ADDRESS } from '@/xwagmi/constants';
-import { allXTokens, xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XToken } from '@/xwagmi/types';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
+import { XToken, XChainId } from '@/xwagmi/types';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
-import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 

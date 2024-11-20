@@ -2,12 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { Select, SelectContent, SelectItem } from '@/components/ui/select';
-import { XChain } from '@/xwagmi/types';
+import { XChain, XChainId } from '@/xwagmi/types';
 import { ChainLogo } from '@/app/components2/ChainLogo';
 import * as SelectPrimitive from '@radix-ui/react-select';
-import { ChevronDown } from 'react-feather';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@balancednetwork/sdk-core';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { AllChainIcon, ChevronDownIcon } from '../Icons';

@@ -12,9 +12,8 @@ import { PairData, PairState } from '@/hooks/useV2Pairs';
 import { Field } from '@/store/swap/reducer';
 import { PairInfo } from '@/types';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@balancednetwork/sdk-core';
 import { Validator } from 'icon-sdk-js';
-import { XToken } from '@/xwagmi/types';
+import { XToken, XChainId } from '@/xwagmi/types';
 
 const { isScoreAddress } = Validator;
 

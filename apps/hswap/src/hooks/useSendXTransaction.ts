@@ -9,12 +9,12 @@ import {
 } from '@/xwagmi/xcall/types';
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
-import { XChainId } from '@balancednetwork/sdk-core';
 import { useSignTransaction } from '@mysten/dapp-kit';
 import { useMemo } from 'react';
 import { transactionActions } from './useTransactionStore';
 import { allXTokens } from '@/xwagmi/constants/xTokens';
 import { xChainHeightActions } from '@/xwagmi/xcall/zustand/useXChainHeightStore';
+import { XChainId } from '@/xwagmi/types';
 
 const iconChainId: XChainId = '0x1.icon';
 

@@ -25,11 +25,10 @@ import { useAllTokens } from '../../hooks/Tokens';
 import { TokenAmountMap, changeBalances } from './reducer';
 
 import { useXBalances } from '@/xwagmi/hooks/useXBalances';
-import { XChainId } from '@balancednetwork/sdk-core';
 
 import useXTokens from '@/hooks/useXTokens';
 import { useXAccount } from '@/xwagmi/hooks';
-import { XToken } from '@/xwagmi/types';
+import { XToken, XChainId } from '@/xwagmi/types';
 
 export function useWalletBalances() {
   const wallet = useSelector((state: AppState) => state.wallet);

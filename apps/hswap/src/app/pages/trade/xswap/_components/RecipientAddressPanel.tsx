@@ -9,8 +9,8 @@ import { shortenAddress } from '@/utils';
 import { getXChainType } from '@/xwagmi/actions';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount, useXConnect, useXConnectors } from '@/xwagmi/hooks';
+import { XChainId } from '@/xwagmi/types';
 import { validateAddress } from '@/xwagmi/utils';
-import { XChainId } from '@balancednetwork/sdk-core';
 import { X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 

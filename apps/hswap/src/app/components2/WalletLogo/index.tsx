@@ -17,8 +17,25 @@ const walletIcons: Record<WalletId, any> = {
   [WalletId.SUI]: SuiIcon,
   [WalletId.HAVAH]: HavahIcon,
 };
+interface WalletLogoPropsBase {
+  className?: string;
+}
 
-export const WalletLogo = ({ walletId, className }: { walletId: WalletId; className?: string }) => {
+interface WalletLogoWithIdProps extends WalletLogoPropsBase {
+  walletId: WalletId;
+  logo?: never;
+}
+
+interface WalletLogoWithLogoProps extends WalletLogoPropsBase {
+  walletId?: never;
+  logo: any;
+}
+
+type WalletLogoProps = WalletLogoWithIdProps | WalletLogoWithLogoProps;
+
+export const WalletLogo = ({ walletId, logo, className }: WalletLogoProps) => {
+  const icon = logo || (walletId && walletIcons[walletId]);
+
   return (
     <div
       className={cn(
@@ -26,7 +43,7 @@ export const WalletLogo = ({ walletId, className }: { walletId: WalletId; classN
         className,
       )}
     >
-      <img width="100%" height="100%" src={walletIcons[walletId]} alt={walletId} />
+      {icon && <img width="100%" height="100%" src={icon} alt={walletId || 'wallet logo'} />}
     </div>
   );
 };

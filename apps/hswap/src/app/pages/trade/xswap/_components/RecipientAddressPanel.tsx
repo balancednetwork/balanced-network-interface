@@ -1,4 +1,5 @@
 import { handleConnectWallet } from '@/app/components/WalletConnectModal/WalletItem';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -6,11 +7,18 @@ import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '@/store
 import { Field } from '@/store/swap/reducer';
 import { shortenAddress } from '@/utils';
 import { getXChainType } from '@/xwagmi/actions';
+import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount, useXConnect, useXConnectors } from '@/xwagmi/hooks';
 import { validateAddress } from '@/xwagmi/utils';
 import { XChainId } from '@balancednetwork/sdk-core';
 import { X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+
+const getChainName = (xChainId?: XChainId) => {
+  if (!xChainId) return '';
+
+  return xChainMap[xChainId].name;
+};
 
 export default function RecipientAddressPanel() {
   const { recipient } = useSwapState();
@@ -70,7 +78,7 @@ export default function RecipientAddressPanel() {
       <div className="flex items-center justify-center gap-3 mb-1">
         <label
           htmlFor="send-to-another-address"
-          className="text-[#695682] text-[12px] font-medium select-none cursor-pointer"
+          className="text-[#695682] text-sm font-medium select-none cursor-pointer"
         >
           Send to another address
         </label>
@@ -102,10 +110,12 @@ export default function RecipientAddressPanel() {
       )}
 
       {!outputAccount.address && (
-        <div className="text-light-purple font-bold text-[12px] text-center" onClick={handleFillAddress}>
-          Or <span className="hover:underline cursor-pointer">connect</span> your {currencies[Field.OUTPUT]?.xChainId}{' '}
-          wallet
-        </div>
+        <Button
+          className="group bg-[#695682]/30 hover:bg-[#695682]/50 rounded-full w-fit self-center"
+          onClick={handleFillAddress}
+        >
+          <span className="text-[#E6E0F7] group-hover:text-title-gradient font-bold text-sm">Or connect a wallet</span>
+        </Button>
       )}
     </div>
   );
@@ -135,7 +145,7 @@ function AddressInputForm({
       <div className="relative border-4 border-[#695682]/30 rounded-full">
         <Input
           id="recipient-address-input"
-          placeholder={`Add ${xChainId} address`}
+          placeholder={`Add ${getChainName(xChainId)} address`}
           value={value}
           onChange={e => {
             onChange(e.target.value);
@@ -147,7 +157,7 @@ function AddressInputForm({
           }}
           autoFocus
           className={cn(
-            'py-0 h-6 rounded-full bg-transparent border-none px-2 focus-visible:ring-0 focus-visible:ring-offset-0 font-me text-[10px] text-center',
+            'py-0 h-7 rounded-full bg-transparent border-none px-2 focus-visible:ring-0 focus-visible:ring-offset-0 font-me text-sm text-center',
             editable ? 'w-full' : 'w-0',
           )}
           autoComplete="off"
@@ -156,7 +166,7 @@ function AddressInputForm({
         {!editable && (
           <button
             type="button"
-            className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 text-[10px] px-1 py-0.5 flex items-center"
+            className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 text-sm px-1 py-0.5 flex items-center"
             onClick={() => {
               // make the input focused
               document.getElementById('recipient-address-input')?.focus();
@@ -183,7 +193,7 @@ function AddressInputForm({
       </div>
 
       {!(value.length === 0 || isValidAddress) && (
-        <div className="font-bold text-[12px] text-warning text-center">Invalid {xChainId} address</div>
+        <div className="font-bold text-sm text-warning text-center">Invalid {getChainName(xChainId)} address</div>
       )}
     </>
   );

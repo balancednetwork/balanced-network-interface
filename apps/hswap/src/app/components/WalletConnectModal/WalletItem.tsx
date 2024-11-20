@@ -4,8 +4,8 @@ import CopyableAddress from '@/app/components2/CopyableAddress';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { XConnector } from '@/xwagmi/core';
 import { useXAccount, useXConnect, useXConnection, useXConnectors, useXDisconnect } from '@/xwagmi/hooks';
-import { XChainType } from '@balancednetwork/sdk-core';
 import { XIcon } from 'lucide-react';
+import { XChainType } from '@/xwagmi/types';
 
 export type WalletItemProps = {
   name: string;

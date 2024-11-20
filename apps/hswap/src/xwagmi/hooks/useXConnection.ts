@@ -1,5 +1,4 @@
-import { XChainType } from '@balancednetwork/sdk-core';
-import { XConnection } from '../types';
+import { XChainType, XConnection } from '../types';
 import { useXWagmiStore } from '../useXWagmiStore';
 import { useAccount, useConnections } from 'wagmi';
 import { useCurrentAccount, useCurrentWallet } from '@mysten/dapp-kit';

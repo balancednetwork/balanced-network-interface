@@ -68,10 +68,16 @@ export default function RecipientAddressPanel() {
   }, [checked]);
 
   return (
-    <div className="rounded-xl w-full bg-card p-4 flex flex-col gap-2">
-      <div className="flex items-center space-x-2 mb-1">
+    <div className="w-full p-4 flex flex-col gap-2">
+      <div className="flex items-center justify-center gap-3 mb-1">
+        <label
+          htmlFor="send-to-another-address"
+          className="text-[#695682] text-[12px] font-medium select-none cursor-pointer"
+        >
+          Send to another address
+        </label>
         <Checkbox
-          id="xyz"
+          id="send-to-another-address"
           checked={enabled}
           disabled={!isSameChainType}
           onCheckedChange={_checked => {
@@ -84,11 +90,8 @@ export default function RecipientAddressPanel() {
               }
             }
           }}
-          className="border-light-purple data-[state=checked]:bg-light-purple data-[state=checked]:text-primary"
+          className="border-light-purple data-[state=checked]:bg-light-purple data-[state=checked]:text-primary rounded-full"
         />
-        <label htmlFor="xyz" className="text-secondary-foreground text-subtitle font-bold select-none cursor-pointer">
-          Trade and send to another address
-        </label>
       </div>
 
       {enabled && currencies[Field.OUTPUT]?.xChainId && (
@@ -126,10 +129,10 @@ function AddressInputForm({
 
   return (
     <>
-      <div className="relative bg-background rounded-sm">
+      <div className="relative border-4 border-[#695682]/30 rounded-full">
         <Input
           id="recipient-address-input"
-          placeholder={`Type/Paste ${xChainId} address`}
+          placeholder={`Add ${xChainId} address`}
           value={value}
           onChange={e => {
             onChange(e.target.value);
@@ -141,7 +144,7 @@ function AddressInputForm({
           }}
           autoFocus
           className={cn(
-            'rounded-lg border-none bg-transparent px-2 focus-visible:ring-0 focus-visible:ring-offset-0',
+            'py-0 h-6 rounded-full bg-transparent border-none px-2 focus-visible:ring-0 focus-visible:ring-offset-0 font-me text-[10px] text-center',
             editable ? 'w-full' : 'w-0',
           )}
           autoComplete="off"
@@ -150,7 +153,7 @@ function AddressInputForm({
         {!editable && (
           <button
             type="button"
-            className="bg-card absolute left-1 rounded-sm top-1/2 -translate-y-1/2 text-body px-1 py-0.5 flex items-center"
+            className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 text-[10px] px-1 py-0.5 flex items-center"
             onClick={() => {
               // make the input focused
               document.getElementById('recipient-address-input')?.focus();
@@ -170,7 +173,7 @@ function AddressInputForm({
                 document.getElementById('recipient-address-input')?.focus();
               }}
             >
-              <X width={20} height={20} />
+              <X width={14} height={14} />
             </button>
           </button>
         )}
@@ -178,13 +181,13 @@ function AddressInputForm({
 
       {value.length === 0 ? (
         <div className="text-base">
-          <span className="font-bold text-light-purple cursor-pointer select-none" onClick={onConnect}>
+          {/* <span className="font-bold text-light-purple cursor-pointer select-none" onClick={onConnect}>
             {outputAccount.address ? 'Autofill' : 'Connect'}
-          </span>
-          <span className="text-body text-secondary-foreground"> or Paste recipient address</span>
+          </span> */}
+          <span className="text-[12px] font-bold text-light-purple"> or connect your {xChainId} wallet</span>
         </div>
       ) : isValidAddress ? null : (
-        <div className="text-body text-warning">Invalid {xChainId} address</div>
+        <div className="font-bold text-[12px] text-warning text-center">Invalid {xChainId} address</div>
       )}
     </>
   );

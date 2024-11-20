@@ -128,7 +128,7 @@ export default function CurrencyInputPanel({
         </div>
       </div>
       <div className="flex flex-col justify-between items-center gap-4">
-        <span className="text-[#d4c5f9] text-[12px] font-semibold uppercase leading-3 cursor-default min-h-3">
+        <span className="text-[#d4c5f9] text-[12px] font-semibold uppercase cursor-default min-h-[18px]">
           {valueInUSD}
         </span>
         <div className="flex gap-2 items-center">

@@ -307,7 +307,7 @@ export default function SwapPanel() {
               <SwitchGradientIcon />
             </div>
 
-            <div className="gradient-border-mask flex flex-col px-4 py-4 relative mt-1">
+            <div className="gradient-border-mask flex flex-col px-4 pb-4 pt-6 relative mt-1 mb-2">
               <label className="absolute -top-1 inset-x-0 text-center text-[#685682] text-[10px] font-semibold uppercase leading-3">
                 You receive
               </label>

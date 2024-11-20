@@ -597,6 +597,10 @@ msgstr ""
 #~ msgid "Lock up BALN and vote for this pool to receive bribes."
 #~ msgstr ""
 
+#: src/store/swap/hooks.ts
+msgid "Type an address"
+msgstr ""
+
 #: src/app/components/CommunityListToggle/index.tsx
 #~ msgid "Remove community token list"
 #~ msgstr ""
@@ -718,6 +722,10 @@ msgstr ""
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #~ msgid "bBALN holders received"
 #~ msgstr ""
+
+#: src/app/pages/NewFeaturePage.tsx
+msgid "Follow us now"
+msgstr ""
 
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 #~ msgid "Unstaking BALN..."
@@ -1418,8 +1426,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/store/swap/hooks.ts
-msgid "Input address"
-msgstr ""
+#~ msgid "Input address"
+#~ msgstr ""
 
 #: src/store/bridge/hooks.tsx
 #~ msgid "Connect wallet"
@@ -1537,6 +1545,10 @@ msgstr ""
 #: src/app/pages/trade/bridge/_components/XChainList.tsx
 #~ msgid "Search for blockchains..."
 #~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "Swap to address"
+msgstr ""
 
 #: src/app/components/CommunityListToggle/index.tsx
 #~ msgid "You'll only be able to interact with the default assets listed on Balanced."
@@ -1808,6 +1820,10 @@ msgstr ""
 #~ msgid "Wallets"
 #~ msgstr ""
 
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "Swap to my wallet"
+msgstr ""
+
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "To deposit {collateralType}"
 #~ msgstr ""
@@ -1959,6 +1975,10 @@ msgstr ""
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #~ msgid "Current unlock date"
 #~ msgstr ""
+
+#: src/store/swap/hooks.ts
+msgid "Connect or add address"
+msgstr ""
 
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #~ msgid "Claim network fees?"
@@ -2429,7 +2449,6 @@ msgstr ""
 msgid "Learn how to resolve common transaction errors."
 msgstr ""
 
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "Swap"
 msgstr ""

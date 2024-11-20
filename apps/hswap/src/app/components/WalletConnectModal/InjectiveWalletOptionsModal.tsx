@@ -29,12 +29,7 @@ export const InjectiveWalletOptionsModal = ({
 
   return (
     <>
-      <Modal
-        open={modalOpen}
-        onDismiss={onDismiss}
-        dialogClassName="max-w-[375px] h-[622px] p-0 !rounded-3xl"
-        showOverlay={true}
-      >
+      <Modal open={modalOpen} onDismiss={onDismiss} dialogClassName="max-w-[375px] h-[622px] p-0" showOverlay={true}>
         <div className="pt-[120px] pb-[216px] px-6 bg-[url('/marsh-with-coins.png')] bg-[center_bottom_0] bg-no-repeat">
           <div className="mb-10 text-title-gradient text-[28px] font-extrabold leading-[30px] cursor-default">
             <div>Connect an</div>

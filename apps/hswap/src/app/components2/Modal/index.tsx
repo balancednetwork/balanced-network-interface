@@ -32,7 +32,7 @@ export function Modal({
     return (
       <Dialog open={open} onOpenChange={_ => onDismiss()}>
         <DialogContent
-          className={cn('p-4 border-none top-[136px] translate-y-0', className, dialogClassName)}
+          className={cn('p-4 border-none top-[136px] translate-y-0 !rounded-3xl', className, dialogClassName)}
           showOverlay={showOverlay}
         >
           {!hideCloseIcon && (

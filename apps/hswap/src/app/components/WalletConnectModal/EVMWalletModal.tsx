@@ -23,12 +23,7 @@ export const EVMWalletModal = ({ id = MODAL_ID.EVM_WALLET_OPTIONS_MODAL }) => {
 
   return (
     <>
-      <Modal
-        open={modalOpen}
-        onDismiss={onDismiss}
-        dialogClassName="max-w-[375px] h-[622px] p-0 !rounded-3xl"
-        showOverlay={true}
-      >
+      <Modal open={modalOpen} onDismiss={onDismiss} dialogClassName="max-w-[375px] h-[622px] p-0" showOverlay={true}>
         <div className="pt-[120px] pb-[216px] px-6 bg-[url('/marsh-with-coins.png')] bg-[center_bottom_0] bg-no-repeat">
           {xConnectors.length > 0 ? (
             <>

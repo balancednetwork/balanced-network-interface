@@ -132,7 +132,7 @@ const XSwapModal = ({
       onDismiss={handleDismiss}
       title={''}
       className="bg-[#D4C5F9]/30 backdrop-blur-[50px] border-none px-10"
-      dialogClassName="max-w-[350px] h-[625px] !rounded-3xl pt-[120px]"
+      dialogClassName="max-w-[350px] h-[625px] pt-[120px]"
     >
       <div className="flex flex-col gap-8">
         <div className="relative flex justify-center gap-2">

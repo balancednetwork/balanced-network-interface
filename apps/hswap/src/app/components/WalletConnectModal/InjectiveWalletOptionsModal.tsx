@@ -1,16 +1,9 @@
 import React, { useCallback } from 'react';
-
-import { Flex } from 'rebass/styled-components';
-
-import { UnbreakableText, WalletOption } from '@/app/components/WalletConnectModal/shared';
-
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { XConnector } from '@/xwagmi/core';
 import { useXConnect, useXConnectors } from '@/xwagmi/hooks';
 import { Modal } from '@/app/components2/Modal';
 import { WalletLogo } from '@/app/components2/WalletLogo';
-import { cn } from '@/lib/utils';
-import { XIcon } from 'lucide-react';
 
 type InjectiveWalletOptionsModalProps = {
   id?: MODAL_ID;
@@ -41,10 +34,8 @@ export const InjectiveWalletOptionsModal = ({
         onDismiss={onDismiss}
         dialogClassName="max-w-[375px] h-[622px] p-0 !rounded-3xl"
         showOverlay={true}
-        hideCloseIcon={true}
       >
         <div className="pt-[120px] pb-[216px] px-6 bg-[url('/marsh-with-coins.png')] bg-[center_bottom_0] bg-no-repeat">
-          <XIcon className="absolute top-10 right-6 cursor-pointer" onClick={onDismiss} />
           <div className="mb-10 text-title-gradient text-[28px] font-extrabold leading-[30px] cursor-default">
             <div>Connect an</div>
             <div>Injective wallet.</div>

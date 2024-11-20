@@ -7,7 +7,6 @@ import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
 import { useXConnectAllChains } from '@/xwagmi/hooks/useXConnectAllChains';
 import { WalletId } from '@/xwagmi/types';
-import { XIcon } from 'lucide-react';
 import { EVMWalletModal } from './EVMWalletModal';
 import { InjectiveWalletOptionsModal } from './InjectiveWalletOptionsModal';
 import { SuiWalletOptionsModal } from './SuiWalletOptionsModal';
@@ -64,7 +63,6 @@ export default function WalletConnectModal({ modalId = MODAL_ID.WALLET_CONNECT_M
         open={open}
         onDismiss={onDismiss}
         dialogClassName="max-w-[375px]"
-        hideCloseIcon={true}
         className="bg-[#0d0229] p-0"
         showOverlay={true}
       >
@@ -76,7 +74,6 @@ export default function WalletConnectModal({ modalId = MODAL_ID.WALLET_CONNECT_M
               : "bg-[url('/marsh-with-stick.png')] bg-[right_0_top_54px]",
           )}
         >
-          <XIcon className="absolute top-10 right-6 cursor-pointer" onClick={onDismiss} />
           <div
             className="relative h-36 bg-[#221542] rounded-3xl w-full gap-2 col-span-2 flex items-end p-6 cursor-pointer"
             onClick={() => handleConnect(WalletId.HANA)}

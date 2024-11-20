@@ -61,6 +61,8 @@ import WalletIcon from '@/assets/icons2/wallet.svg';
 
 import ExclamationIcon from '@/assets/icons2/exclamation.svg';
 
+import TimeGradientIcon from '@/assets/icons2/time-gradient.svg';
+
 export {
   AllChainIcon,
   AllChainWhiteIcon,
@@ -95,4 +97,5 @@ export {
   ExclamationIcon,
   WalletIcon,
   WalletGradientIcon,
+  TimeGradientIcon,
 };

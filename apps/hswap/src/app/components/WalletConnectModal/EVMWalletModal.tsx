@@ -4,11 +4,11 @@ import { Flex } from 'rebass/styled-components';
 
 import WalletConnectIcon from '@/assets/icons/wallets/walletconnect.svg?inline';
 
+import { Modal } from '@/app/components2/Modal';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { XConnector } from '@/xwagmi/core';
 import { useXConnect, useXConnectors } from '@/xwagmi/hooks';
 import { UnbreakableText, WalletOption } from './shared';
-import { Modal } from '@/app/components2/Modal';
 
 const icons = {
   walletConnect: WalletConnectIcon,
@@ -32,7 +32,7 @@ export const EVMWalletModal = ({ id = MODAL_ID.EVM_WALLET_OPTIONS_MODAL }) => {
 
   return (
     <>
-      <Modal open={modalOpen} onDismiss={onDismiss} dialogClassName="max-w-[450px]">
+      <Modal open={modalOpen} onDismiss={onDismiss} dialogClassName="max-w-[450px]" showOverlay={true}>
         {xConnectors.length > 0 ? (
           <>
             <div className="text-center mb-6">Connect with:</div>

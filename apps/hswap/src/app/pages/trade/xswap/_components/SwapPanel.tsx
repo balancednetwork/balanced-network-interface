@@ -4,7 +4,9 @@ import { CurrencyAmount, Percent, XToken } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
+import { BlueButton } from '@/app/components2/Button';
 import CurrencyInputPanel, { CurrencyInputPanelType } from '@/app/components2/CurrencyInputPanel';
+import { SwitchGradientIcon } from '@/app/components2/Icons';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSendXTransaction } from '@/hooks/useSendXTransaction';
@@ -20,8 +22,6 @@ import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import RecipientAddressPanel from './RecipientAddressPanel';
 import XSwapModal, { ConfirmModalState, PendingConfirmModalState } from './XSwapModal';
-import { BlueButton } from '@/app/components2/Button';
-import { SwitchGradientIcon } from '@/app/components2/Icons';
 
 interface XSwapModalState {
   confirmModalState: ConfirmModalState;
@@ -276,35 +276,44 @@ export default function SwapPanel() {
   return (
     <>
       <div className="flex flex-col">
-        <div className="pt-10 pb-16 px-[60px] flex flex-col gap-4 bg-[rgba(105,86,130,0.3)] rounded-[24px] backdrop-blur-[50px]">
+        <div className="pt-10 pb-16 px-[60px] flex flex-col bg-[rgba(105,86,130,0.3)] rounded-[24px] backdrop-blur-[50px]">
           <div className="flex flex-col gap-4 justify-center items-center">
-            <CurrencyInputPanel
-              account={account}
-              value={formattedAmounts[Field.INPUT]}
-              currency={currencies[Field.INPUT]}
-              onUserInput={handleTypeInput}
-              onCurrencySelect={handleInputSelect}
-              onPercentSelect={signedInWallets.length > 0 ? handleInputPercentSelect : undefined}
-              // percent={percents[Field.INPUT]}
-              type={CurrencyInputPanelType.INPUT}
-              balance={currencyBalances[Field.INPUT]}
-            />
+            <div className="flex flex-col">
+              <label className="text-[#685682] text-[10px] font-semibold uppercase leading-3 text-center mb-1">
+                You swap
+              </label>
+              <CurrencyInputPanel
+                account={account}
+                value={formattedAmounts[Field.INPUT]}
+                currency={currencies[Field.INPUT]}
+                onUserInput={handleTypeInput}
+                onCurrencySelect={handleInputSelect}
+                onPercentSelect={signedInWallets.length > 0 ? handleInputPercentSelect : undefined}
+                // percent={percents[Field.INPUT]}
+                type={CurrencyInputPanelType.INPUT}
+                balance={currencyBalances[Field.INPUT]}
+              />
+            </div>
 
             <div className="cursor-pointer" onClick={onSwitchTokens}>
               <SwitchGradientIcon />
             </div>
 
-            <CurrencyInputPanel
-              account={account}
-              value={formattedAmounts[Field.OUTPUT]}
-              currency={currencies[Field.OUTPUT]}
-              onUserInput={handleTypeOutput}
-              onCurrencySelect={handleOutputSelect}
-              type={CurrencyInputPanelType.OUTPUT}
-            />
+            <div className="gradient-border-mask flex flex-col px-4 py-4 relative mt-1">
+              <label className="absolute -top-1 inset-x-0 text-center text-[#685682] text-[10px] font-semibold uppercase leading-3">
+                You receive
+              </label>
+              <CurrencyInputPanel
+                account={account}
+                value={formattedAmounts[Field.OUTPUT]}
+                currency={currencies[Field.OUTPUT]}
+                onUserInput={handleTypeOutput}
+                onCurrencySelect={handleOutputSelect}
+                type={CurrencyInputPanelType.OUTPUT}
+              />
+              <RecipientAddressPanel />
+            </div>
           </div>
-
-          <RecipientAddressPanel />
 
           <div className="flex justify-center">{swapButton}</div>
 

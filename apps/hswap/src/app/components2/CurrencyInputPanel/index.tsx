@@ -1,15 +1,15 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import useAmountInUSD from '@/hooks/useAmountInUSD';
+import { cn } from '@/lib/utils';
 import { escapeRegExp, toFraction } from '@/utils';
 import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
+import { ChevronDownIcon } from 'lucide-react';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { TokenSelectModal } from '../TokenSelectModal';
-import { cn } from '@/lib/utils';
-import { ChevronDownIcon } from 'lucide-react';
 
 export enum CurrencyInputPanelType {
   INPUT = 'INPUT',
@@ -70,16 +70,7 @@ export default function CurrencyInputPanel({
   const valueInUSD = useAmountInUSD(currencyAmount);
 
   return (
-    <div
-      className={cn(
-        'rounded-xl w-full flex flex-col gap-1 items-center',
-        type === CurrencyInputPanelType.OUTPUT ? "bg-[url('/border-bg.png')] bg-[center_5px] bg-no-repeat" : '',
-      )}
-    >
-      <span className="text-[#685682] text-[10px] font-semibold uppercase leading-3">
-        {type === CurrencyInputPanelType.INPUT && 'You swap'}
-        {type === CurrencyInputPanelType.OUTPUT && 'You receive'}
-      </span>
+    <div className={cn('rounded-xl w-full flex flex-col gap-1 items-center')}>
       <div className="flex flex-col justify-center items-center gap-1">
         <Input
           placeholder={placeholder}

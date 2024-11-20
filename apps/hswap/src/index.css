@@ -156,6 +156,7 @@
     -webkit-mask: linear-gradient(90deg, #fff calc(50% - 50px), transparent calc(50% - 50px), transparent calc(50% + 50px), #fff calc(50% + 50px)) padding-box, linear-gradient(90deg, #fff calc(50% - 50px), transparent calc(50% - 50px), transparent calc(50% + 50px), #fff calc(50% + 50px));
     -webkit-mask-composite: destination-out;
     mask-composite: exclude;
+    z-index: -1;
   }
 }
 

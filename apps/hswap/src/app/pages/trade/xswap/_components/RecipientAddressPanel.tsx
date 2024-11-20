@@ -74,7 +74,7 @@ export default function RecipientAddressPanel() {
   }, [checked]);
 
   return (
-    <div className="w-full p-4 flex flex-col gap-2">
+    <div className="w-full flex flex-col gap-2">
       <div className="flex items-center justify-center gap-3 mb-1">
         <label
           htmlFor="send-to-another-address"

@@ -1,6 +1,6 @@
 import { Currency, XChainId, XToken } from '@balancednetwork/sdk-core';
 
-import { isNativeCurrency } from '@/constants/tokens';
+import { NATIVE_ADDRESS } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { allXTokens, xTokenMap } from '@/xwagmi/constants/xTokens';
 
@@ -25,7 +25,21 @@ export const isXToken = (token?: Currency) => {
 export const getXAddress = (xToken: XToken | undefined) => {
   if (!xToken) return undefined;
 
-  return (
-    xToken.xChainId + '/' + (isNativeCurrency(xToken) ? '0x0000000000000000000000000000000000000000' : xToken.address)
-  );
+  let addr = xToken.address;
+  // return different native address depends on the chain
+  if (xToken.address === NATIVE_ADDRESS) {
+    switch (xToken.xChainId) {
+      case 'sui':
+        addr = '0000000000000000000000000000000000000000000000000000000000000002::sui::SUI';
+        break;
+      case 'solana':
+        addr = '11111111111111111111111111111111';
+        break;
+      default:
+        addr = '0x0000000000000000000000000000000000000000';
+        break;
+    }
+  }
+
+  return xToken.xChainId + '/' + addr;
 };

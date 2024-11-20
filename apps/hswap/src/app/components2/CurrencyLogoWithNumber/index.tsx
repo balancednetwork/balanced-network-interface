@@ -1,9 +1,8 @@
 import React from 'react';
 
-import { XToken } from '@balancednetwork/sdk-core';
-
 import { cn } from '@/lib/utils';
 import CurrencyLogo from '../CurrencyLogo';
+import { XToken } from '@/xwagmi/types';
 
 const CurrencyLogoWithNumber = ({
   currency,

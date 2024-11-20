@@ -1,12 +1,13 @@
 import { useRatesWithOracle } from '@/queries/reward';
 import { useWalletBalances } from '@/store/wallet/hooks';
 import { formatValue } from '@/utils/formatter';
-import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import React, { useMemo } from 'react';
 import MultiChainBalanceItem from './MultiChainBalanceItem';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
 import { Separator } from '@/components/ui/separator';
+import { XToken } from '@/xwagmi/types';
 
 const XTokenList = () => {
   const _balances = useWalletBalances();

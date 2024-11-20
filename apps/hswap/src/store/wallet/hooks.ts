@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
 import { CallData } from '@balancednetwork/balanced-js';
-import { Currency, CurrencyAmount, Token, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
@@ -29,6 +29,7 @@ import { XChainId } from '@balancednetwork/sdk-core';
 
 import useXTokens from '@/hooks/useXTokens';
 import { useXAccount } from '@/xwagmi/hooks';
+import { XToken } from '@/xwagmi/types';
 
 export function useWalletBalances() {
   const wallet = useSelector((state: AppState) => state.wallet);

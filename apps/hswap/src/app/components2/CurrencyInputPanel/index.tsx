@@ -5,11 +5,12 @@ import { Input } from '@/components/ui/input';
 import useAmountInUSD from '@/hooks/useAmountInUSD';
 import { cn } from '@/lib/utils';
 import { escapeRegExp, toFraction } from '@/utils';
-import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { ChevronDownIcon } from 'lucide-react';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { TokenSelectModal } from '../TokenSelectModal';
+import { XToken } from '@/xwagmi/types';
 
 export enum CurrencyInputPanelType {
   INPUT = 'INPUT',

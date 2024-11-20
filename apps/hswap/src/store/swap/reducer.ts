@@ -1,5 +1,5 @@
 import { allXTokens } from '@/xwagmi/constants/xTokens';
-import { XToken } from '@balancednetwork/sdk-core';
+import { XToken } from '@/xwagmi/types';
 import { createSlice } from '@reduxjs/toolkit';
 
 // !TODO: use one Field for swap and bridge panel

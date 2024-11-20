@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { t } from '@lingui/macro';
 import { useQuery } from '@tanstack/react-query';
 
@@ -9,6 +9,7 @@ import { transactionActions } from '@/hooks/useTransactionStore';
 import { TransactionStatus } from '@/store/transactions/hooks';
 import { getXChainType } from '@/xwagmi/actions/getXChainType';
 import { useXAccount, useXPublicClient, useXWalletClient } from '@/xwagmi/hooks';
+import { XToken } from '@/xwagmi/types';
 
 export const FAST_INTERVAL = 10000;
 

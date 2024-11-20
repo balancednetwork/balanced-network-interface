@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { Currency, Fraction, Percent, Price, Token, XToken } from '@balancednetwork/sdk-core';
+import { Currency, Fraction, Percent, Price, Token } from '@balancednetwork/sdk-core';
 import { Route } from '@balancednetwork/v1-sdk';
 import { Trans, t } from '@lingui/macro';
 
@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 // import { useXEstimateSwapGas } from '@/xwagmi/hooks/useXEstimateSwapGas';
 import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import { ChevronDownGradientIcon, ChevronUpGradientIcon } from '@/app/components2/Icons';
+import { XToken } from '@/xwagmi/types';
 
 export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactionInput?: XTransactionInput }) {
   const {

@@ -1,7 +1,8 @@
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 import useAmountInUSD from '@/hooks/useAmountInUSD';
 import { formatBigNumber } from '@/utils';
-import { Currency, CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
+import { XToken } from '@/xwagmi/types';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import React from 'react';
 

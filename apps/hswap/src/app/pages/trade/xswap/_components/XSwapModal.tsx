@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { XToken } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
@@ -16,10 +15,10 @@ import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import { CheckIcon, Loader2, XIcon } from 'lucide-react';
-import { ChevronRight } from 'react-feather';
 import CurrencyCard from './CurrencyCard';
 import { WhiteButton } from '@/app/components2/Button';
 import { ArrowGradientIcon } from '@/app/components2/Icons';
+import { XToken } from '@/xwagmi/types';
 
 export enum ConfirmModalState {
   REVIEWING,

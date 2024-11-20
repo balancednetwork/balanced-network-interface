@@ -1,13 +1,13 @@
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
-import { XToken } from '@balancednetwork/sdk-core';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import React, { useState } from 'react';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
 import CurrencyLogoWithNumber from '@/app/components2/CurrencyLogoWithNumber';
 import { ChevronDownIcon, ChevronUpIcon, SubtractIcon } from '@/app/components2/Icons';
+import { XToken } from '@/xwagmi/types';
 
 type MultiChainBalanceItemProps = {
   balances: CurrencyAmount<XToken>[];

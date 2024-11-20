@@ -1,5 +1,5 @@
 import { BalancedJs, CHAIN_INFO, LOOP, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
-import { Currency, CurrencyAmount, Fraction, Token, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 
@@ -14,6 +14,7 @@ import { PairInfo } from '@/types';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@balancednetwork/sdk-core';
 import { Validator } from 'icon-sdk-js';
+import { XToken } from '@/xwagmi/types';
 
 const { isScoreAddress } = Validator;
 

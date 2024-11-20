@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Currency, CurrencyAmount, Price, Token, TradeType, XChainId, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Price, Token, TradeType, XChainId } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { t } from '@lingui/macro';
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,6 +24,7 @@ import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
 import { Field, selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
+import { XToken } from '@/xwagmi/types';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);

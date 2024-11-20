@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { CurrencyAmount, Percent, XToken } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, Percent } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
@@ -24,6 +24,7 @@ import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import RecipientAddressPanel from './RecipientAddressPanel';
 import XSwapModal, { ConfirmModalState, PendingConfirmModalState } from './XSwapModal';
+import { XToken } from '@/xwagmi/types';
 
 interface XSwapModalState {
   confirmModalState: ConfirmModalState;

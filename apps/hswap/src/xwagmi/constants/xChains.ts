@@ -364,20 +364,22 @@ export const solana: XChain = {
 
 // the order is important, using manual order to display in the UI
 export const xChainMap: { [key in XChainId]: XChain } = {
-  '0x1.icon': icon,
-  '0x2.icon': lisbon,
-  archway: archwayTestnet,
-  'archway-1': archway,
+  solana: solana,
+  sui: sui,
+  '0x2105.base': base,
   '0xa4b1.arbitrum': arbitrum,
   '0xa86a.avax': avalanche,
-  '0x100.icon': havah,
-  '0xa869.fuji': fuji,
   '0x38.bsc': bsc,
-  '0x2105.base': base,
   'injective-1': injective,
   stellar: stellar,
-  sui: sui,
-  solana: solana,
+  '0x1.icon': icon,
+  '0x100.icon': havah,
+  'archway-1': archway,
+
+  //testnet
+  '0x2.icon': lisbon,
+  archway: archwayTestnet,
+  '0xa869.fuji': fuji,
 };
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);

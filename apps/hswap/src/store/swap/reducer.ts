@@ -25,8 +25,8 @@ export interface SwapState {
 }
 
 export const INITIAL_SWAP = {
-  base: allXTokens[31],
-  quote: allXTokens[38],
+  base: allXTokens[9],
+  quote: allXTokens[0],
 };
 
 const initialState: SwapState = {

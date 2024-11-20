@@ -16,7 +16,9 @@ import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapS
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import { getXChainType } from '@/xwagmi/actions';
 import { xChainMap } from '@/xwagmi/constants/xChains';
+import { useXAccount } from '@/xwagmi/hooks';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
@@ -198,6 +200,7 @@ export default function SwapPanel() {
     setOpen(true);
   }, [xTransactionInput]);
 
+  const outputAccount = useXAccount(getXChainType(currencies[Field.OUTPUT]?.xChainId));
   const swapButton = useMemo(() => {
     return !account ? (
       <BlueButton
@@ -209,14 +212,18 @@ export default function SwapPanel() {
       </BlueButton>
     ) : isValid ? (
       <BlueButton onClick={handleOpenXSwapModal}>
-        <Trans>Swap</Trans>
+        {recipient?.toLocaleLowerCase() === outputAccount.address?.toLocaleLowerCase() ? (
+          <Trans>Swap to my wallet</Trans>
+        ) : (
+          <Trans>Swap to address</Trans>
+        )}
       </BlueButton>
     ) : (
       <BlueButton disabled={!account || !!inputError || !canBridge} onClick={handleOpenXSwapModal}>
         {inputError || t`Swap`}
       </BlueButton>
     );
-  }, [isValid, account, inputError, canBridge, handleOpenXSwapModal]);
+  }, [isValid, account, inputError, canBridge, handleOpenXSwapModal, recipient, outputAccount.address]);
 
   const handleConfirmXSwap = useCallback(async () => {
     if (!executionXTransactionInput) return;

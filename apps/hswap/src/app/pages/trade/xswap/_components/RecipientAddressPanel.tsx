@@ -109,7 +109,7 @@ export default function RecipientAddressPanel() {
         />
       )}
 
-      {!outputAccount.address && (
+      {!outputAccount.address && !checked && (
         <Button
           className="group bg-[#695682]/30 hover:bg-[#695682]/50 rounded-full w-fit self-center"
           onClick={handleFillAddress}

@@ -190,6 +190,8 @@ export function useDerivedSwapInfo(): {
 
   const gasChecker = useXCallGasChecker(parsedAmount);
 
+  const outputAccount = useXAccount(getXChainType(outputXChainId));
+
   const inputError = useMemo(() => {
     const swapDisabled = trade?.priceImpact.greaterThan(SLIPPAGE_SWAP_DISABLED_THRESHOLD);
 
@@ -197,7 +199,11 @@ export function useDerivedSwapInfo(): {
 
     if (account) {
       if (!recipient) {
-        error = t`Input address`;
+        if (outputAccount.address) {
+          error = t`Type an address`;
+        } else {
+          error = t`Connect or add address`;
+        }
       } else if (outputXChainId && !validateAddress(recipient, outputXChainId)) {
         error = t`Invalid address`;
       } else if (!parsedAmount) {
@@ -248,6 +254,7 @@ export function useDerivedSwapInfo(): {
     xTransactionType,
     gasChecker,
     outputXChainId,
+    outputAccount.address,
   ]);
 
   const [_pairState, _pair] = useV2Pair(_inputCurrencyOnIcon, _outputCurrencyOnIcon);

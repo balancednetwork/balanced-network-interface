@@ -22,7 +22,7 @@ import { useRatio } from '@/store/ratio/hooks';
 import { useDerivedSwapInfo, useSwapActionHandlers } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { generateChartData, toFraction } from '@/utils';
-import { formatUnitPrice } from '@/utils/formatter';
+import { formatSymbol, formatUnitPrice } from '@/utils/formatter';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
 const CHART_TYPES_LABELS = {
@@ -101,7 +101,7 @@ export default function SwapDescription() {
 
   const { account } = useIconReact();
   const [activeSymbol, setActiveSymbol] = useState<string | undefined>(undefined);
-  const symbolName = `${currencies[Field.INPUT]?.symbol} / ${currencies[Field.OUTPUT]?.symbol}`;
+  const symbolName = `${formatSymbol(currencies[Field.INPUT]?.symbol)} / ${formatSymbol(currencies[Field.OUTPUT]?.symbol)}`;
   const isSuperSmall = useMedia('(max-width: 359px)');
 
   const hasTradingView = React.useMemo(() => {

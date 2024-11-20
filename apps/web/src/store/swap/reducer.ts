@@ -1,3 +1,5 @@
+import { NETWORK_ID } from '@/constants/config';
+import { ICX, wICX } from '@/constants/tokens';
 import { getXTokenBySymbol, isXToken } from '@/utils/xTokens';
 import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XChainId } from '@/xwagmi/types';
@@ -58,7 +60,23 @@ const swapSlice = createSlice({
     selectCurrency: create.reducer<{ currency: Currency | undefined; field: Field }>(
       (state, { payload: { currency, field } }) => {
         const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
-        if (currency?.symbol === state[otherField].currency?.symbol) {
+        // the case where we have to swap the order
+        // and handle icx vs wicx
+        if (currency?.symbol === 'ICX' && state[otherField].currency?.symbol === 'wICX') {
+          return {
+            ...state,
+            independentField: state.independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
+            [field]: { ...state[otherField], currency: ICX[NETWORK_ID] },
+            [otherField]: state[field],
+          };
+        } else if (currency?.symbol === 'wICX' && state[otherField].currency?.symbol === 'ICX') {
+          return {
+            ...state,
+            independentField: state.independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
+            [field]: { ...state[otherField], currency: wICX[NETWORK_ID] },
+            [otherField]: state[field],
+          };
+        } else if (currency?.symbol === state[otherField].currency?.symbol) {
           // the case where we have to swap the order
           return {
             ...state,
@@ -89,11 +107,16 @@ const swapSlice = createSlice({
       },
     ),
     switchCurrencies: create.reducer<void>(state => {
+      const inputCurrency =
+        state[Field.INPUT].currency?.symbol === 'ICX' ? wICX[NETWORK_ID] : state[Field.INPUT].currency;
+      const outputCurrency =
+        state[Field.OUTPUT].currency?.symbol === 'wICX' ? ICX[NETWORK_ID] : state[Field.OUTPUT].currency;
+
       return {
         ...state,
         independentField: state.independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
-        [Field.INPUT]: { ...state[Field.OUTPUT], currency: state[Field.OUTPUT].currency, percent: 0 },
-        [Field.OUTPUT]: { ...state[Field.INPUT], currency: state[Field.INPUT].currency },
+        [Field.INPUT]: { ...state[Field.OUTPUT], currency: outputCurrency, percent: 0 },
+        [Field.OUTPUT]: { ...state[Field.INPUT], currency: inputCurrency },
       };
     }),
     selectChain: create.reducer<{ field: Field; xChainId: XChainId }>((state, { payload: { field, xChainId } }) => {

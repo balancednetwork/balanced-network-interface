@@ -23,6 +23,7 @@ import { XChainId } from '@/xwagmi/types';
 import { AutoColumn } from '@/app/components/Column';
 import { BrightPanel, SectionPanel } from '@/app/components/Panel';
 import { CurrencySelectionType, SelectorType } from '@/app/components/SearchModal/CurrencySearch';
+import { formatSymbol } from '@/utils/formatter';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 
@@ -83,8 +84,8 @@ function WalletSection({ AChain, BChain }: { AChain?: XChainId; BChain?: XChainI
     return (
       <Flex flexDirection="row" justifyContent="center" alignItems="center">
         <Typography sx={{ whiteSpace: 'nowrap' }}>
-          {t`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${currencies[Field.CURRENCY_A]?.symbol} /
-                      ${formattedRemains[Field.CURRENCY_B]} ${currencies[Field.CURRENCY_B]?.symbol}`}
+          {t`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} /
+                      ${formattedRemains[Field.CURRENCY_B]} ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}`}
         </Typography>
       </Flex>
     );

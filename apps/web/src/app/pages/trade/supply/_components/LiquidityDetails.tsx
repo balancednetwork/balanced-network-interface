@@ -89,7 +89,7 @@ export default function LiquidityDetails() {
     }, {});
 
   const hasLiquidity = shouldShowQueue || userPools.length;
-  const isLiquidityInfoLoading = shouldShowQueue === undefined;
+  const isLiquidityInfoLoading = shouldShowQueue === undefined && userPools.length === 0;
 
   return (
     <>

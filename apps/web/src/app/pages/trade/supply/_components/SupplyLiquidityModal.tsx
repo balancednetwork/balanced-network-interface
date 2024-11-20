@@ -221,7 +221,8 @@ export default function SupplyLiquidityModal({
     const token = currencies[field] as Token;
 
     try {
-      const res: any = await bnJs.inject({ account }).getContract(token.address).deposit(toDec(parsedAmounts[field]));
+      const contract = token.symbol === 'wICX' ? bnJs.wICX : bnJs.getContract(token.address);
+      const res: any = await contract.inject({ account }).deposit(toDec(parsedAmounts[field]));
 
       addTransaction(
         { hash: res.result },

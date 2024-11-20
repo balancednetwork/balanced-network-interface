@@ -19,14 +19,6 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sicx.png"
     },
     {
-      "address": "cx3975b43d260fb8ec802cef6e60c2f4d07486f11d",
-      "chainId": 1,
-      "name": "Wrapped ICX",
-      "symbol": "wICX",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/icx.png"
-    },
-    {
       "address": "cx88fd7df7ddff82f7cc735c871dc519838cb235bb",
       "chainId": 1,
       "name": "Balanced Dollar",

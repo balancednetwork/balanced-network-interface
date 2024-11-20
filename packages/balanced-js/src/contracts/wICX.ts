@@ -22,6 +22,10 @@ export default class wICX extends IRC2 {
     return this.callICONPlugins(payload);
   }
 
+  deposit(value: string) {
+    return this.transfer(addresses[this.nid].dex, value, JSON.stringify({ method: '_deposit' }));
+  }
+
   unwrap(amount: string) {
     const payload = this.transactionParamsBuilder({
       method: 'unwrap',

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { MessageDescriptor } from '@lingui/core';
 import { defineMessage } from '@lingui/macro';
@@ -6,7 +6,7 @@ import { Helmet } from 'react-helmet-async';
 import { Route, Routes, useLocation } from 'react-router-dom';
 
 import { DefaultLayout } from '@/app/components2/Layout';
-
+import NewFeaturePage from './pages/NewFeaturePage';
 import { TradePageLayout } from './pages/trade/layout';
 import { TradePage } from './pages/trade/xswap/page';
 
@@ -40,22 +40,8 @@ export default function RootRoutes() {
           <Route index element={<TradePage />} />
           <Route path=":pair" element={<TradePage />} />
         </Route>
-        <Route
-          path="limit"
-          element={
-            <div className="min-h-[500px] pt-10 pb-16 px-[60px] flex flex-col gap-4 bg-[rgba(105,86,130,0.3)] rounded-[24px] backdrop-blur-[50px]">
-              <div className="text-foreground">Limit feature soon</div>
-            </div>
-          }
-        />
-        <Route
-          path="dca"
-          element={
-            <div className="min-h-[500px] pt-10 pb-16 px-[60px] flex flex-col gap-4 bg-[rgba(105,86,130,0.3)] rounded-[24px] backdrop-blur-[50px]">
-              <div className="text-foreground">DCA feature soon</div>
-            </div>
-          }
-        />
+        <Route path="limit" element={<NewFeaturePage />} />
+        <Route path="dca" element={<NewFeaturePage />} />
       </Route>
     </Routes>
   );

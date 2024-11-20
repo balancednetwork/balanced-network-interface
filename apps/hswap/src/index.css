@@ -136,6 +136,27 @@
  .blue-button-bg-gradient-hover {
     background: linear-gradient(264deg, #215FFF 4.92%, #3D09CB 95.08%);
   }
+
+  .gradient-border-mask {
+    display: flow-root;
+    position: relative;
+  }
+  
+  .gradient-border-mask::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 14px;
+    border: 1.5px solid transparent;
+    opacity: 0.5;
+    background: linear-gradient(#A188C3 0%, rgba(60, 28, 104, 0) 94%) border-box;
+    -webkit-mask: linear-gradient(90deg, #fff calc(50% - 50px), transparent calc(50% - 50px), transparent calc(50% + 50px), #fff calc(50% + 50px)) padding-box, linear-gradient(90deg, #fff calc(50% - 50px), transparent calc(50% - 50px), transparent calc(50% + 50px), #fff calc(50% + 50px));
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+  }
 }
 
 .PopoverContent {

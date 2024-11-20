@@ -5,7 +5,7 @@ import { Trans, t } from '@lingui/macro';
 
 export default function NewFeaturePage() {
   return (
-    <div className="min-h-[600px] pt-10 pb-16 px-[60px] flex flex-col gap-4 bg-[rgba(105,86,130,0.3)] rounded-[24px] backdrop-blur-[50px] justify-center relative">
+    <div className="min-h-[594px] pt-10 pb-16 px-[60px] flex flex-col gap-4 bg-[rgba(105,86,130,0.3)] rounded-[24px] backdrop-blur-[50px] justify-center relative">
       <div className="gradient-border-mask flex flex-col gap-6 px-4 py-6 relative">
         <div className="text-[10px] font-semibold text-center text-[#695682] absolute -top-2 inset-x-0 bg-transparent px-3">
           NEW FEATURE

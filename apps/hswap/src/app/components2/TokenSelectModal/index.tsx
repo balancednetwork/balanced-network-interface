@@ -88,9 +88,9 @@ export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, s
       open={open}
       onDismiss={onDismiss}
       className="bg-[#D4C5F9]/30 backdrop-blur-[50px] border-none"
-      dialogClassName="max-w-[350px] !rounded-3xl pt-20"
+      dialogClassName="max-w-[350px] h-[625px] !rounded-3xl pt-16"
     >
-      <div className="flex flex-col gap-2 justify-center items-center">
+      <div className="flex flex-col gap-2 justify-between items-center">
         <XChainSelect xChains={xChains} value={xChainId} onValueChange={value => setXChainId(value)} />
 
         <div className="bg-[#D4C5F9] rounded-full relative flex justify-between items-center pl-4 pr-6 py-2 gap-2 w-[187px] mb-2">
@@ -107,7 +107,7 @@ export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, s
           {/* <ChevronDownGradientIcon /> */}
         </div>
 
-        <ScrollArea className="h-[500px] border-none w-full px-2 py-2">
+        <ScrollArea className="h-[400px] border-none w-full px-2 py-2">
           <div className="flex flex-col gap-2 justify-center items-center">
             <div className="flex flex-col gap-2">
               {table.getRowModel().rows?.length ? (

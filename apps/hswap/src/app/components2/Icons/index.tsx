@@ -22,11 +22,11 @@ const SubtractIcon: React.FC<React.ComponentProps<'svg'>> = props => {
   );
 };
 
-import { ChevronDownIcon } from './ChevronDownIcon';
 import ChevronDownGradientIcon from '@/assets/icons2/chevron-down-gradient.svg';
+import { ChevronDownIcon } from './ChevronDownIcon';
 
-import { ChevronUpIcon } from './ChevronUpIcon';
 import ChevronUpGradientIcon from '@/assets/icons2/chevron-up-gradient.svg';
+import { ChevronUpIcon } from './ChevronUpIcon';
 
 import HideIcon from '@/assets/icons2/hide.svg';
 import ShowIcon from '@/assets/icons2/show.svg';
@@ -55,6 +55,9 @@ import SettingsIcon from '@/assets/icons2/settings.svg';
 
 import ShutdownGradientIcon from '@/assets/icons2/shutdown-gradient.svg';
 import ShutdownIcon from '@/assets/icons2/shutdown.svg';
+
+import WalletGradientIcon from '@/assets/icons2/wallet-gradient.svg';
+import WalletIcon from '@/assets/icons2/wallet.svg';
 
 import ExclamationIcon from '@/assets/icons2/exclamation.svg';
 
@@ -90,4 +93,6 @@ export {
   SettingsIcon,
   SettingsGradientIcon,
   ExclamationIcon,
+  WalletIcon,
+  WalletGradientIcon,
 };

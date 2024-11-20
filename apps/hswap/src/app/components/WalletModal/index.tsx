@@ -8,14 +8,15 @@ import {
   HideIcon,
   LogsGradientIcon,
   LogsIcon,
-  SettingsGradientIcon,
-  SettingsIcon,
   ShutdownGradientIcon,
   ShutdownIcon,
+  WalletGradientIcon,
+  WalletIcon,
 } from '@/app/components2/Icons';
 import { Button } from '@/components/ui/button';
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
@@ -24,7 +25,6 @@ import WalletItem, { WalletItemProps } from '../WalletConnectModal/WalletItem';
 import HistoryItemList from './HistoryItemList';
 import { IconWithConfirmTextButton } from './IconWithConfirmTextButton';
 import XTokenList from './XTokenList';
-import { Separator } from '@/components/ui/separator';
 
 export const xChainTypes: WalletItemProps[] = [
   {
@@ -102,7 +102,7 @@ const WalletModalContent = ({ onDismiss }) => {
           onClick={() => setStep(2)}
         />
         <AnimateButton
-          Icon={step === 3 ? <SettingsGradientIcon /> : <SettingsIcon />}
+          Icon={step === 3 ? <WalletGradientIcon /> : <WalletIcon />}
           text="Wallets"
           showText={step === 3}
           onClick={() => setStep(3)}

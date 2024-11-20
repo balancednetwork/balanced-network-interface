@@ -49,18 +49,16 @@ export default function RecipientAddressPanel() {
   const [editable, setEditable] = useState(true);
 
   useEffect(() => {
-    const _isSame = inputXChainType === outputXChainType;
-
-    if (_isSame) {
+    if (outputAccount.address) {
       setChecked(false);
-      onChangeRecipient(inputAccount.address || '');
+      onChangeRecipient(outputAccount.address || '');
       setEditable(false);
     } else {
-      setChecked(true);
+      setChecked(false);
       onChangeRecipient('');
       setEditable(true);
     }
-  }, [inputXChainType, outputXChainType, inputAccount.address, onChangeRecipient]);
+  }, [onChangeRecipient, outputAccount.address]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -78,23 +76,21 @@ export default function RecipientAddressPanel() {
         </label>
         <Checkbox
           id="send-to-another-address"
-          checked={enabled}
-          disabled={!isSameChainType}
+          checked={checked}
           onCheckedChange={_checked => {
             if (_checked !== 'indeterminate') {
               setChecked(_checked);
               if (_checked) {
                 onChangeRecipient('');
               } else {
-                onChangeRecipient(inputAccount.address || '');
+                onChangeRecipient(outputAccount.address || '');
               }
             }
           }}
           className="border-light-purple data-[state=checked]:bg-light-purple data-[state=checked]:text-primary rounded-full"
         />
       </div>
-
-      {enabled && currencies[Field.OUTPUT]?.xChainId && (
+      {checked && currencies[Field.OUTPUT]?.xChainId && (
         <AddressInputForm
           xChainId={currencies[Field.OUTPUT]?.xChainId}
           value={recipient || ''}
@@ -103,6 +99,13 @@ export default function RecipientAddressPanel() {
           editable={editable}
           onEditableChange={setEditable}
         />
+      )}
+
+      {!outputAccount.address && (
+        <div className="text-light-purple font-bold text-[12px] text-center" onClick={handleFillAddress}>
+          Or <span className="hover:underline cursor-pointer">connect</span> your {currencies[Field.OUTPUT]?.xChainId}{' '}
+          wallet
+        </div>
       )}
     </div>
   );
@@ -179,14 +182,7 @@ function AddressInputForm({
         )}
       </div>
 
-      {value.length === 0 ? (
-        <div className="text-base">
-          {/* <span className="font-bold text-light-purple cursor-pointer select-none" onClick={onConnect}>
-            {outputAccount.address ? 'Autofill' : 'Connect'}
-          </span> */}
-          <span className="text-[12px] font-bold text-light-purple"> or connect your {xChainId} wallet</span>
-        </div>
-      ) : isValidAddress ? null : (
+      {!(value.length === 0 || isValidAddress) && (
         <div className="font-bold text-[12px] text-warning text-center">Invalid {xChainId} address</div>
       )}
     </>

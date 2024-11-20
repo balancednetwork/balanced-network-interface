@@ -1,16 +1,16 @@
 import React, { useCallback } from 'react';
 
+import { ArrowIcon, SubtractIcon } from '@/app/components2/Icons';
 import { Modal } from '@/app/components2/Modal';
+import { WalletLogo } from '@/app/components2/WalletLogo';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
+import { cn } from '@/lib/utils';
+import { useXConnectAllChains } from '@/xwagmi/hooks/useXConnectAllChains';
+import { WalletId } from '@/xwagmi/types';
+import { XIcon } from 'lucide-react';
 import { EVMWalletModal } from './EVMWalletModal';
 import { InjectiveWalletOptionsModal } from './InjectiveWalletOptionsModal';
 import { SuiWalletOptionsModal } from './SuiWalletOptionsModal';
-import { WalletLogo } from '@/app/components2/WalletLogo';
-import { ArrowIcon, SubtractIcon } from '@/app/components2/Icons';
-import { cn } from '@/lib/utils';
-import { XIcon } from 'lucide-react';
-import { WalletId } from '@/xwagmi/types';
-import { useXConnectAllChains } from '@/xwagmi/hooks/useXConnectAllChains';
 
 export const wallets: {
   id: WalletId;
@@ -152,9 +152,9 @@ export default function WalletConnectModal({ modalId = MODAL_ID.WALLET_CONNECT_M
         </div>
       </Modal>
 
-      {/* <EVMWalletModal />
+      <EVMWalletModal />
       <InjectiveWalletOptionsModal />
-      <SuiWalletOptionsModal /> */}
+      <SuiWalletOptionsModal />
     </>
   );
 }

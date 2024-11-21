@@ -14,7 +14,6 @@ import {
   WalletIcon,
 } from '@/app/components2/Icons';
 import { Button } from '@/components/ui/button';
-import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
@@ -151,23 +150,18 @@ const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
     modalActions.closeModal(modalId);
   }, [modalId]);
 
-  if (!isMobile) {
-    return (
-      <Sheet open={open} modal={false}>
-        <SheetContent className="flex flex-col gap-2 px-0 py-4 w-96 bg-gradient-to-b from-[#f5e7f5] via-[#d29fff] to-[#a079fd] rounded-tl-3xl rounded-bl-3xl">
-          <WalletModalContent onDismiss={onDismiss} />
-        </SheetContent>
-      </Sheet>
-    );
-  }
-
   return (
-    <Drawer open={open} onOpenChange={_ => onDismiss()}>
-      <DrawerContent className="p-4 border-border bg-gradient-to-b from-[#f5e7f5] via-[#d29fff] to-[#a079fd]">
-        {/* <DrawerHeader className="text-left px-0">{<DrawerTitle>{title}</DrawerTitle>}</DrawerHeader> */}
+    <Sheet open={open} onOpenChange={_ => onDismiss()} modal={isMobile}>
+      <SheetContent
+        side={isMobile ? 'bottom' : 'right'}
+        className={cn(
+          'flex flex-col gap-2 px-0 py-4 w-96 bg-gradient-to-b from-[#f5e7f5] via-[#d29fff] to-[#a079fd] ',
+          isMobile ? 'w-full' : 'rounded-tl-3xl rounded-bl-3xl',
+        )}
+      >
         <WalletModalContent onDismiss={onDismiss} />
-      </DrawerContent>
-    </Drawer>
+      </SheetContent>
+    </Sheet>
   );
 };
 

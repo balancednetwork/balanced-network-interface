@@ -1,10 +1,10 @@
 import * as React from 'react';
 
 import { Dialog, DialogClose, DialogContent, DialogHeader } from '@/components/ui/dialog';
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { XIcon } from 'lucide-react';
 import { isMobile } from 'react-device-detect';
 import { cn } from '@/lib/utils';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 //ModalProps
 interface ModalProps {
@@ -52,11 +52,11 @@ export function Modal({
   }
 
   return (
-    <Drawer open={open} onOpenChange={_ => onDismiss()}>
-      <DrawerContent className={cn('p-4 border-border', className)}>
-        <DrawerHeader className="text-left px-0">{title && <DrawerTitle>{title}</DrawerTitle>}</DrawerHeader>
+    <Sheet open={open} onOpenChange={_ => onDismiss()}>
+      <SheetContent className={cn('p-4 border-border', className)} side={'bottom'}>
+        <SheetHeader className="text-left px-0">{title && <SheetTitle>{title}</SheetTitle>}</SheetHeader>
         {children}
-      </DrawerContent>
-    </Drawer>
+      </SheetContent>
+    </Sheet>
   );
 }

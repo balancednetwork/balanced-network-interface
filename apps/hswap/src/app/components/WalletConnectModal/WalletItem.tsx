@@ -64,7 +64,7 @@ const WalletItem = ({ name, xChainType }: WalletItemProps) => {
   }, [xConnectors]);
 
   return (
-    <div className="flex items-center gap-6 px-10 text-[#0d0229]">
+    <div className="flex items-center gap-6 px-8 text-[#0d0229]">
       <div className="w-[76px] text-right text-black text-xs font-bold leading-none">{name}</div>
 
       <div className="flex flex-wrap justify-start gap-2 grow">

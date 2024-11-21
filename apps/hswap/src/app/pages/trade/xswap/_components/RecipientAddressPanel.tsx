@@ -111,7 +111,7 @@ export default function RecipientAddressPanel() {
 
       {!outputAccount.address && !checked && (
         <Button
-          className="group bg-[#695682]/30 hover:bg-[#695682]/50 rounded-full w-fit self-center"
+          className="group bg-[#695682]/30 hover:bg-[#695682]/50 rounded-full w-fit self-center h-[37px]"
           onClick={handleFillAddress}
         >
           <span className="text-[#E6E0F7] group-hover:text-title-gradient font-bold text-sm">Or connect a wallet</span>
@@ -142,7 +142,7 @@ function AddressInputForm({
 
   return (
     <>
-      <div className="relative border-4 border-[#695682]/30 rounded-full">
+      <div className="relative border-4 border-[#695682]/30 rounded-full h-[37px]">
         <Input
           id="recipient-address-input"
           placeholder={`Add ${getChainName(xChainId)} address`}

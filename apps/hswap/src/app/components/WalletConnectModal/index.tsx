@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { ArrowIcon, SubtractIcon } from '@/app/components2/Icons';
 import { Modal } from '@/app/components2/Modal';
@@ -49,7 +49,10 @@ export default function WalletConnectModal({ modalId = MODAL_ID.WALLET_CONNECT_M
     modalActions.closeModal(modalId);
   }, [modalId]);
 
-  const isHanaWalletInstalled = true;
+  const isHanaWalletInstalled = useMemo(() => {
+    // @ts-ignore
+    return !!window?.hanaWallet;
+  }, []);
 
   const xConnectAllChains = useXConnectAllChains();
   const handleConnect = async (walletId: WalletId) => {

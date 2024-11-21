@@ -8,8 +8,8 @@ const HistoryItemList = () => {
 
   return (
     <>
-      <div className="pb-2 flex gap-4 px-10 uppercase text-[#695682] text-[10px] font-medium leading-[14px]">
-        <div className="w-[72px]">Assets</div>
+      <div className="pb-2 flex gap-4 px-8 uppercase text-[#695682] text-[10px] font-medium leading-[14px]">
+        <div className="w-[64px]">Assets</div>
         <div>Swap Info</div>
       </div>
 

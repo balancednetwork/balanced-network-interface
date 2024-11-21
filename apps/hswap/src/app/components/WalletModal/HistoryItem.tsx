@@ -64,7 +64,7 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
   return (
     <>
       <div className="pt-4">
-        <div className="relative px-10 rounded-xl flex justify-between items-start gap-2 cursor-pointer">
+        <div className="relative px-8 rounded-xl flex justify-between items-start gap-0">
           <div className="flex gap-6 items-center">
             <div className="flex items-center">
               <CurrencyLogoWithNetwork currency={inputXToken} />
@@ -96,11 +96,12 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
             }
             target="_blank"
             rel="noopener noreferrer"
+            className="mt-[3px]"
           >
             <ExternalLink className="w-4 h-4 text-[#695682]" />
           </a>
         </div>
-        <div className="mt-1 px-10 flex justify-end items-center gap-2">
+        <div className="mt-1 px-8 flex justify-end items-center gap-2">
           <div className="text-[#0d0229] text-[10px] font-bold uppercase">
             {xTransaction.status === XTransactionStatus.pending
               ? 'Swapping'

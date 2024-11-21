@@ -11,16 +11,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { MINIMUM_ICX_FOR_TX } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
 import {
-  COMBINED_TOKENS_LIST,
   NULL_CONTRACT_ADDRESS,
-  SUPPORTED_TOKENS_LIST,
   SUPPORTED_TOKENS_MAP_BY_ADDRESS,
   isBALN,
   isFIN,
   isNativeCurrency,
 } from '@/constants/tokens';
-import { useTokenListConfig } from '@/store/lists/hooks';
-import { useUserAddedTokens } from '@/store/user/hooks';
 import { isXToken } from '@/utils/xTokens';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
 
@@ -66,17 +62,10 @@ export function useAvailableBalances(
 
 export function useWalletFetchBalances() {
   const dispatch = useDispatch();
-  const tokenListConfig = useTokenListConfig();
-  const userAddedTokens = useUserAddedTokens();
-
-  const tokens = useMemo(() => {
-    return tokenListConfig.community
-      ? [...COMBINED_TOKENS_LIST, ...userAddedTokens]
-      : [...SUPPORTED_TOKENS_LIST, ...userAddedTokens];
-  }, [userAddedTokens, tokenListConfig]);
 
   // fetch balances on icon
   const { account } = useIconReact();
+  const tokens = useXTokens('0x1.icon') || [];
   const balances = useAvailableBalances(account || undefined, tokens);
   //convert balances to {[key: string]: CurrencyAmount<XToken>}
   const xBalances = React.useMemo(() => {
@@ -196,6 +185,32 @@ export function useWalletFetchBalances() {
   React.useEffect(() => {
     suiBalances && dispatch(changeBalances({ xChainType: 'SUI', account: accountSui, balances: suiBalances }));
   }, [suiBalances, dispatch, accountSui]);
+
+  // fetch balances on stellar
+  const { address: accountStellar } = useXAccount('STELLAR');
+  const stellarTokens = useXTokens('stellar');
+  const { data: stellarBalances } = useXBalances({
+    xChainId: 'stellar',
+    xTokens: stellarTokens,
+    address: accountStellar,
+  });
+  React.useEffect(() => {
+    stellarBalances &&
+      dispatch(changeBalances({ xChainType: 'STELLAR', account: accountStellar, balances: stellarBalances }));
+  }, [stellarBalances, dispatch, accountStellar]);
+
+  // fetch balances on solanax
+  const { address: accountSolana } = useXAccount('SOLANA');
+  const solanaTokens = useXTokens('solana');
+  const { data: solanaBalances } = useXBalances({
+    xChainId: 'solana',
+    xTokens: solanaTokens,
+    address: accountSolana,
+  });
+  React.useEffect(() => {
+    solanaBalances &&
+      dispatch(changeBalances({ xChainType: 'SOLANA', account: accountSolana, balances: solanaBalances }));
+  }, [solanaBalances, dispatch, accountSolana]);
 }
 
 export const useHasEnoughICX = () => {

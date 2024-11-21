@@ -40,8 +40,22 @@ export default function RootRoutes() {
           <Route index element={<TradePage />} />
           <Route path=":pair" element={<TradePage />} />
         </Route>
-        <Route path="limit" element={<div className="text-foreground">Limit feature soon</div>} />
-        <Route path="dca" element={<div className="text-foreground">DCA feature soon</div>} />
+        <Route
+          path="limit"
+          element={
+            <div className="min-h-[500px] pt-10 pb-16 px-[60px] flex flex-col gap-4 bg-[rgba(105,86,130,0.3)] rounded-[24px] backdrop-blur-[50px]">
+              <div className="text-foreground">Limit feature soon</div>
+            </div>
+          }
+        />
+        <Route
+          path="dca"
+          element={
+            <div className="min-h-[500px] pt-10 pb-16 px-[60px] flex flex-col gap-4 bg-[rgba(105,86,130,0.3)] rounded-[24px] backdrop-blur-[50px]">
+              <div className="text-foreground">DCA feature soon</div>
+            </div>
+          }
+        />
       </Route>
     </Routes>
   );

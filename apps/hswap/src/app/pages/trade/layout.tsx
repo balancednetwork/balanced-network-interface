@@ -1,15 +1,27 @@
 import React from 'react';
 
-import { Trans } from '@lingui/macro';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { DarkAnimateButton } from '@/app/components2/Button/DarkAnimateButton';
+import {
+  DCAGradientIcon,
+  DCAIcon,
+  LimitGradientIcon,
+  LimitIcon,
+  SubtractIcon,
+  SwapGradientIcon,
+  SwapIcon,
+} from '@/app/components2/Icons';
 import { useFetchOraclePrices } from '@/store/oracle/hooks';
 import { useFetchPrice } from '@/store/ratio/hooks';
 import { useFetchStabilityFundBalances } from '@/store/stabilityFund/hooks';
 import { useWalletFetchBalances } from '@/store/wallet/hooks';
-// import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { MouseoverTooltip } from '@/app/components/Tooltip';
+
+const AbsoluteSubtractIcon = () => (
+  <div className="absolute bottom-[-24px] left-[50%] mx-[-32px]">
+    <SubtractIcon className="fill-[rgba(105,86,130,0.3)]" />
+  </div>
+);
 
 export function TradePageLayout() {
   const location = useLocation();
@@ -28,48 +40,36 @@ export function TradePageLayout() {
 
   return (
     <div className="flex-1 flex justify-center">
-      <div className="flex flex-col mb-10 w-full max-w-md">
-        <Tabs value={value} onValueChange={handleTabClick}>
-          <TabsList className="gap-2">
-            <TabsTrigger
-              value="swap"
-              className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex"
-            >
-              <div className="text-base font-bold font-['Montserrat']">
-                <Trans>Swap</Trans>
-              </div>
-            </TabsTrigger>
-            {/* <TabsTrigger
-              value="limit"
-              className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex"
-            > */}
-            {/* </TabsTrigger> */}
-            <div className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex">
-              <MouseoverTooltip
-                content={<div className="p-2">Coming Soon</div>}
-                placement={'top'}
-                closeAfterDelay={0}
-                zIndex={9999}
-              >
-                <div className="text-base font-bold font-['Montserrat'] cursor-default">
-                  <Trans>Limit</Trans>
-                </div>
-              </MouseoverTooltip>
-            </div>
-            <div className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex">
-              <MouseoverTooltip
-                content={<div className="p-2">Coming Soon</div>}
-                placement={'top'}
-                closeAfterDelay={0}
-                zIndex={9999}
-              >
-                <div className="text-base font-bold font-['Montserrat'] cursor-default">
-                  <Trans>DCA</Trans>
-                </div>
-              </MouseoverTooltip>
-            </div>
-          </TabsList>
-        </Tabs>
+      <div className="flex flex-col mb-10 w-full max-w-[400px] gap-6">
+        <div className="flex gap-2 justify-center">
+          <div className="relative">
+            <DarkAnimateButton
+              Icon={value === 'swap' ? <SwapGradientIcon /> : <SwapIcon />}
+              text="Swap"
+              showText={!(value === 'swap')}
+              onClick={() => handleTabClick('swap')}
+            />
+            {value === 'swap' && <AbsoluteSubtractIcon />}
+          </div>
+          <div className="relative">
+            <DarkAnimateButton
+              Icon={value === 'limit' ? <LimitGradientIcon /> : <LimitIcon />}
+              text="Limit"
+              showText={!(value === 'limit')}
+              onClick={() => handleTabClick('limit')}
+            />
+            {value === 'limit' && <AbsoluteSubtractIcon />}
+          </div>
+          <div className="relative">
+            <DarkAnimateButton
+              Icon={value === 'dca' ? <DCAGradientIcon /> : <DCAIcon />}
+              text="DCA"
+              showText={!(value === 'dca')}
+              onClick={() => handleTabClick('dca')}
+            />
+            {value === 'dca' && <AbsoluteSubtractIcon />}
+          </div>
+        </div>
         <Outlet />
       </div>
     </div>

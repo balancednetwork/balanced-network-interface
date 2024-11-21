@@ -31,7 +31,7 @@ export const useTransactionStore = create<TransactionStore>()(
   ),
 );
 
-const getTrackerLink = (xChainId: XChainId, hash: string, type) => {
+export const getTrackerLink = (xChainId: XChainId, hash: string, type = 'transaction') => {
   // TODO: handle different chain types
   return `https://tracker.icon.foundation/transaction/${hash}?network=${xChainId}`;
 

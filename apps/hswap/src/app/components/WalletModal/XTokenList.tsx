@@ -1,12 +1,12 @@
-import React, { useMemo } from 'react';
-import SingleChainBalanceItem from './SingleChainBalanceItem';
-import { useWalletBalances } from '@/store/wallet/hooks';
 import { useRatesWithOracle } from '@/queries/reward';
+import { useWalletBalances } from '@/store/wallet/hooks';
+import { formatValue } from '@/utils/formatter';
 import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import React, { useMemo } from 'react';
 import MultiChainBalanceItem from './MultiChainBalanceItem';
-import { formatValue } from '@/utils/formatter';
+import SingleChainBalanceItem from './SingleChainBalanceItem';
+import { Separator } from '@/components/ui/separator';
 
 const XTokenList = () => {
   const _balances = useWalletBalances();
@@ -24,30 +24,37 @@ const XTokenList = () => {
   }, [balances, rates]);
 
   return (
-    <>
-      <ScrollArea>
-        <div className="grid grid-cols-3 gap-4">
-          <div className="">Assets</div>
+    <div className="pb-5">
+      <div className="cursor-default flex flex-col">
+        <div className="grid grid-cols-4 h-10 items-center px-10 uppercase text-[#695682] text-[10px] font-medium leading-[14px]">
+          <div className="col-span-2">Asset</div>
           <div className="text-right">Balance</div>
           <div className="text-right">Value</div>
-          <>
-            {Object.values(sortedFilteredBalances).map((balances, index) =>
-              balances.length === 1 ? (
-                <SingleChainBalanceItem key={index} balance={balances[0]} />
-              ) : (
-                <MultiChainBalanceItem key={index} balances={balances} />
-              ),
-            )}
-          </>
         </div>
-      </ScrollArea>
+
+        <>
+          {Object.values(sortedFilteredBalances).map((balances, index) =>
+            balances.length === 1 ? (
+              <div key={index}>
+                <SingleChainBalanceItem balance={balances[0]} />
+                <Separator className="h-1 bg-[#d4c5f9]/30" />
+              </div>
+            ) : (
+              <div key={index}>
+                <MultiChainBalanceItem balances={balances} />
+                <Separator className="h-1 bg-[#d4c5f9]/30" />
+              </div>
+            ),
+          )}
+        </>
+      </div>
       {Object.keys(sortedFilteredBalances).length > 0 && (
-        <div className="pt-4 flex justify-between">
-          <div className="text-subtitle">Total</div>
-          <div>{formatValue(walletTotal.toFixed())}</div>
+        <div className="pt-4 px-10 flex justify-between">
+          <div className="text-[#685682] text-sm font-bold leading-tight">Total value</div>
+          <div className="text-[#685682] text-sm font-bold leading-tight">{formatValue(walletTotal.toFixed())}</div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

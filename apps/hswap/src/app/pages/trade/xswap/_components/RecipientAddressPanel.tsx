@@ -1,8 +1,10 @@
 import { handleConnectWallet } from '@/app/components/WalletConnectModal/WalletItem';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
+import { shortenAddress } from '@/utils';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount, useXConnect, useXConnectors } from '@/xwagmi/hooks';
 import { validateAddress } from '@/xwagmi/utils';
@@ -33,6 +35,7 @@ export default function RecipientAddressPanel() {
 
   const handleFillAddress = () => {
     if (outputAccount.address) {
+      setEditable(false);
       onChangeRecipient(outputAccount.address);
     } else {
       handleConnectWallet(xChainType, xConnectors, xConnect);
@@ -119,6 +122,7 @@ function AddressInputForm({
 }) {
   // validate address
   const isValidAddress = value.length > 0 && validateAddress(value, xChainId);
+  const outputAccount = useXAccount(getXChainType(xChainId));
 
   return (
     <>
@@ -126,7 +130,6 @@ function AddressInputForm({
         <Input
           id="recipient-address-input"
           placeholder={`Type/Paste ${xChainId} address`}
-          // disabled={!editable}
           value={value}
           onChange={e => {
             onChange(e.target.value);
@@ -137,8 +140,11 @@ function AddressInputForm({
             }
           }}
           autoFocus
-          className="rounded-lg border-none bg-transparent px-2 focus-visible:ring-0 focus-visible:ring-offset-0"
-          hidden={!editable}
+          className={cn(
+            'rounded-lg border-none bg-transparent px-2 focus-visible:ring-0 focus-visible:ring-offset-0',
+            editable ? 'w-full' : 'w-0',
+          )}
+          autoComplete="off"
         />
 
         {!editable && (
@@ -152,7 +158,7 @@ function AddressInputForm({
               onEditableChange(true);
             }}
           >
-            {value}
+            {shortenAddress(value)}
             <button
               type="button"
               className=""
@@ -173,7 +179,7 @@ function AddressInputForm({
       {value.length === 0 ? (
         <div className="text-base">
           <span className="font-bold text-light-purple cursor-pointer select-none" onClick={onConnect}>
-            Connect
+            {outputAccount.address ? 'Autofill' : 'Connect'}
           </span>
           <span className="text-body text-secondary-foreground"> or Paste recipient address</span>
         </div>

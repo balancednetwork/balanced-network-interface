@@ -3,7 +3,6 @@ import { RLP } from '@ethereumjs/rlp';
 import { Address, PublicClient, WalletClient, WriteContractParameters, toHex, erc20Abi, getContract } from 'viem';
 import bnJs from '../icon/bnJs';
 
-import { isNativeCurrency } from '@/constants/tokens';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
@@ -15,6 +14,7 @@ import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
 import { bnUSDContractAbi } from './abis/bnUSDContractAbi';
 import { xCallContractAbi } from './abis/xCallContractAbi';
 import { XToken } from '@/xwagmi/types';
+import { isNativeXToken } from '@/xwagmi/constants/xTokens';
 
 export class EvmXWalletClient extends XWalletClient {
   getXService(): EvmXService {
@@ -102,8 +102,7 @@ export class EvmXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
-    // check if the bridge asset is native
-    const isNative = isNativeCurrency(inputAmount.currency);
+    const isNative = isNativeXToken(inputAmount.currency);
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
     let request: WriteContractParameters;
@@ -160,8 +159,8 @@ export class EvmXWalletClient extends XWalletClient {
     const amount = BigInt(inputAmount.quotient.toString());
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = toHex(JSON.stringify({}));
-    // check if the asset is native
-    const isNative = isNativeCurrency(inputAmount.currency);
+
+    const isNative = isNativeXToken(inputAmount.currency);
 
     let request: WriteContractParameters;
     if (!isNative) {

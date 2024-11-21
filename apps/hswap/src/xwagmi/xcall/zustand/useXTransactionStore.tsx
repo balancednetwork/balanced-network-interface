@@ -65,14 +65,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
       },
 
       getTransactions: () => {
-        return Object.values(get().transactions).sort((a: XTransaction, b: XTransaction) => {
-          const aPrimaryMessage = xMessageActions.getOf(a.id, true);
-          const bPrimaryMessage = xMessageActions.getOf(b.id, true);
-          if (aPrimaryMessage && bPrimaryMessage) {
-            return bPrimaryMessage.createdAt - aPrimaryMessage.createdAt;
-          }
-          return 0;
-        });
+        return Object.values(get().transactions).sort((a: XTransaction, b: XTransaction) => b.createdAt - a.createdAt);
       },
 
       getPendingTransactions: (signedWallets: { xChainId: XChainId | undefined; address: string }[]) => {
@@ -83,14 +76,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
               signedWallets.some(wallet => wallet.xChainId === transaction.sourceChainId)
             );
           })
-          .sort((a: XTransaction, b: XTransaction) => {
-            const aPrimaryMessage = xMessageActions.getOf(a.id, true);
-            const bPrimaryMessage = xMessageActions.getOf(b.id, true);
-            if (aPrimaryMessage && bPrimaryMessage) {
-              return bPrimaryMessage.createdAt - aPrimaryMessage.createdAt;
-            }
-            return 0;
-          });
+          .sort((a: XTransaction, b: XTransaction) => b.createdAt - a.createdAt);
       },
       remove: (id: string) => {
         set(state => {

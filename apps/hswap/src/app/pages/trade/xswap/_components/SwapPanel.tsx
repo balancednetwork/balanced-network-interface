@@ -5,8 +5,6 @@ import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
 import CurrencyInputPanel, { CurrencyInputPanelType } from '@/app/components2/CurrencyInputPanel';
-import FlipIcon from '@/assets/icons/flip.svg';
-import { Button } from '@/components/ui/button';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSendXTransaction } from '@/hooks/useSendXTransaction';
@@ -22,6 +20,8 @@ import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import RecipientAddressPanel from './RecipientAddressPanel';
 import XSwapModal, { ConfirmModalState, PendingConfirmModalState } from './XSwapModal';
+import { BlueButton } from '@/app/components2/Button';
+import { SwitchGradientIcon } from '@/app/components2/Icons';
 
 interface XSwapModalState {
   confirmModalState: ConfirmModalState;
@@ -200,32 +200,21 @@ export default function SwapPanel() {
 
   const swapButton = useMemo(() => {
     return !account ? (
-      <Button
-        variant="default"
+      <BlueButton
         onClick={() => {
           modalActions.openModal(MODAL_ID.WALLET_CONNECT_MODAL);
         }}
-        className="w-full rounded-full h-[56px] font-bold text-base"
       >
         <Trans>Sign in</Trans>
-      </Button>
+      </BlueButton>
     ) : isValid ? (
-      <Button
-        variant="default"
-        onClick={handleOpenXSwapModal}
-        className="w-full rounded-full h-[56px] font-bold text-base"
-      >
+      <BlueButton onClick={handleOpenXSwapModal}>
         <Trans>Swap</Trans>
-      </Button>
+      </BlueButton>
     ) : (
-      <Button
-        disabled={!account || !!inputError || !canBridge}
-        color="primary"
-        onClick={handleOpenXSwapModal}
-        className="w-full rounded-full h-[56px] font-bold text-base"
-      >
+      <BlueButton disabled={!account || !!inputError || !canBridge} onClick={handleOpenXSwapModal}>
         {inputError || t`Swap`}
-      </Button>
+      </BlueButton>
     );
   }, [isValid, account, inputError, canBridge, handleOpenXSwapModal]);
 
@@ -286,9 +275,9 @@ export default function SwapPanel() {
 
   return (
     <>
-      <div className="py-4 flex flex-col">
-        <div className="flex flex-col gap-4 items-stretch">
-          <div className="flex flex-col gap-2">
+      <div className="flex flex-col">
+        <div className="pt-10 pb-16 px-[60px] flex flex-col gap-4 bg-[rgba(105,86,130,0.3)] rounded-[24px] backdrop-blur-[50px]">
+          <div className="flex flex-col gap-4 justify-center items-center">
             <CurrencyInputPanel
               account={account}
               value={formattedAmounts[Field.INPUT]}
@@ -301,13 +290,8 @@ export default function SwapPanel() {
               balance={currencyBalances[Field.INPUT]}
             />
 
-            <div className="relative flex items-center justify-center h-0 z-1">
-              <div
-                className="cursor-pointer w-[40px] h-[40px] bg-[#695682] rounded-full flex items-center justify-center"
-                onClick={onSwitchTokens}
-              >
-                <FlipIcon width={24} height={24} />
-              </div>
+            <div className="cursor-pointer" onClick={onSwitchTokens}>
+              <SwitchGradientIcon />
             </div>
 
             <CurrencyInputPanel
@@ -336,9 +320,6 @@ export default function SwapPanel() {
               </div>
             </div>
           )}
-          {xTransactionType && xTransactionType !== XTransactionType.BRIDGE && (
-            <AdvancedSwapDetails xTransactionInput={xTransactionInput} />
-          )}
 
           {!canBridge && maximumBridgeAmount && (
             <div className="flex items-center justify-center mt-2">
@@ -361,6 +342,10 @@ export default function SwapPanel() {
             </div>
           )}
         </div>
+
+        {xTransactionType && xTransactionType !== XTransactionType.BRIDGE && (
+          <AdvancedSwapDetails xTransactionInput={xTransactionInput} />
+        )}
       </div>
 
       {executionXTransactionInput && (

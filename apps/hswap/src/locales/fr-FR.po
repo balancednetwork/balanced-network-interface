@@ -109,8 +109,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "History"
-msgstr ""
+#~ msgid "History"
+#~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #~ msgid "{0} ICX"
@@ -328,7 +328,6 @@ msgstr ""
 #~ msgid "Add a contract call"
 #~ msgstr ""
 
-#: src/app/components/Header/index.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "Sign in"
 msgstr "Se connecter"
@@ -373,10 +372,10 @@ msgstr "Se connecter"
 #~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Tokens"
-msgstr ""
+#~ msgid "Tokens"
+#~ msgstr ""
 
-#: src/app/components/Header/index.tsx
+#: src/app/components2/CopyableAddress/index.tsx
 msgid "Copied"
 msgstr "Copié"
 
@@ -968,8 +967,8 @@ msgstr "Échanger"
 #~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Manage wallets"
-msgstr ""
+#~ msgid "Manage wallets"
+#~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "Recieve sICX, which you can trade or unstake from the wallet section later."
@@ -1037,8 +1036,8 @@ msgstr ""
 #~ msgstr "Ne pas envoyer sICX vers un exchange."
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Network cost is paid in ETH on the ARBITRUM network in order to transact."
-msgstr ""
+#~ msgid "Network cost is paid in ETH on the ARBITRUM network in order to transact."
+#~ msgstr ""
 
 #: src/app/components/home/Savings/index.tsx
 #~ msgid "Withdrawing bnUSD..."
@@ -1706,8 +1705,8 @@ msgstr "Transaction en cours..."
 #~ msgstr "Actif"
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Network cost"
-msgstr ""
+#~ msgid "Network cost"
+#~ msgstr ""
 
 #: src/app/components/home/LoanPanel.tsx
 #~ msgid "Borrowing bnUSD..."
@@ -1869,6 +1868,10 @@ msgstr "Si le prix baisse plus que ce montant, votre échange échouera."
 #~ msgid "Includes a fee of"
 #~ msgstr ""
 
+#: src/app/components/WalletModal/index.tsx
+#~ msgid "Wallets"
+#~ msgstr ""
+
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "To deposit {collateralType}"
 #~ msgstr ""
@@ -1942,7 +1945,7 @@ msgstr "Si le prix baisse plus que ce montant, votre échange échouera."
 #~ msgid "You must have at least {0} bBALN to propose a change."
 #~ msgstr ""
 
-#: src/app/components/Header/index.tsx
+#: src/app/components2/CopyableAddress/index.tsx
 msgid "Copy"
 msgstr ""
 
@@ -2481,8 +2484,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/layout.tsx
-msgid "DCA"
-msgstr ""
+#~ msgid "DCA"
+#~ msgstr ""
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
@@ -2494,7 +2497,6 @@ msgstr ""
 msgid "Learn how to resolve common transaction errors."
 msgstr ""
 
-#: src/app/pages/trade/layout.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "Swap"
@@ -2632,8 +2634,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/layout.tsx
-msgid "Limit"
-msgstr ""
+#~ msgid "Limit"
+#~ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #~ msgid "Sign in on ICON, then lock up BALN to boost your rewards."

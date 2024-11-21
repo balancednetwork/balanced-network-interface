@@ -1,23 +1,32 @@
-import { Modal } from '@/app/components2/Modal';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React, { useCallback, useState } from 'react';
+import { isMobile } from 'react-device-detect';
+
+import { AnimateButton } from '@/app/components2/Button/AnimateButton';
+import {
+  HeartGradientIcon,
+  HeartIcon,
+  HideIcon,
+  LogsGradientIcon,
+  LogsIcon,
+  SettingsGradientIcon,
+  SettingsIcon,
+  ShutdownGradientIcon,
+  ShutdownIcon,
+} from '@/app/components2/Icons';
+import { Button } from '@/components/ui/button';
+import { Drawer, DrawerContent } from '@/components/ui/drawer';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
+import { cn } from '@/lib/utils';
 import { useXDisconnectAll } from '@/xwagmi/hooks';
-import { Trans } from '@lingui/macro';
-import { PowerIcon } from 'lucide-react';
-import React, { useCallback } from 'react';
+import { xChainTypes } from '../WalletConnectModal';
+import WalletItem from '../WalletConnectModal/WalletItem';
 import HistoryItemList from './HistoryItemList';
+import { IconWithConfirmTextButton } from './IconWithConfirmTextButton';
 import XTokenList from './XTokenList';
 
-const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
-  const open = useModalOpen(modalId);
-  const onDismiss = useCallback(() => {
-    modalActions.closeModal(modalId);
-  }, [modalId]);
-
-  const handleChangeWallet = () => {
-    modalActions.openModal(MODAL_ID.WALLET_CONNECT_MODAL);
-  };
-
+const WalletModalContent = ({ onDismiss }) => {
   const xDisconnectAll = useXDisconnectAll();
 
   const handleDisconnectWallet = async () => {
@@ -25,47 +34,100 @@ const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
     await xDisconnectAll();
   };
 
+  const [step, setStep] = useState(1);
+
+  const [showText, setShowText] = useState(false);
+
   return (
-    <Modal open={open} onDismiss={onDismiss} title="" dialogClassName="max-w-[450px]" hideCloseIcon={true}>
-      <div className="flex items-center justify-end gap-2">
-        <div className="cursor-pointer text-light-purple text-body" onClick={handleChangeWallet}>
-          <Trans>Manage wallets</Trans>
-        </div>
-        <div className="cursor-pointer" onClick={handleDisconnectWallet}>
-          <PowerIcon className="w-6 h-6" />
-        </div>
+    <>
+      <div className="flex items-center justify-between mt-[60px] mb-[44px] px-12">
+        <Button variant="ghost" size="icon" onClick={onDismiss}>
+          <HideIcon />
+        </Button>
+        <IconWithConfirmTextButton
+          Icon={showText ? <ShutdownGradientIcon /> : <ShutdownIcon />}
+          text="Disconnect"
+          dismissOnHoverOut={true}
+          onConfirm={handleDisconnectWallet}
+          onShowConfirm={setShowText}
+        />
       </div>
-      <Tabs defaultValue="tokens">
-        <TabsList className="gap-2">
-          <TabsTrigger
-            value="tokens"
-            className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex"
-          >
-            <div className="text-base font-bold font-['Montserrat']">
-              <Trans>Tokens</Trans>
-            </div>
-          </TabsTrigger>
-          <TabsTrigger
-            value="history"
-            className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex"
-          >
-            <div className="text-base font-bold font-['Montserrat']">
-              <Trans>History</Trans>
-            </div>
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="tokens" className="mt-4">
-          <div className="h-[500px] flex flex-col justify-between">
+
+      <div className="flex gap-2 justify-center mb-[66px]">
+        <AnimateButton
+          Icon={step === 1 ? <HeartGradientIcon /> : <HeartIcon />}
+          text="Tokens"
+          showText={step === 1}
+          onClick={() => setStep(1)}
+        />
+        <AnimateButton
+          Icon={step === 2 ? <LogsGradientIcon /> : <LogsIcon />}
+          text="History"
+          showText={step === 2}
+          onClick={() => setStep(2)}
+        />
+        <AnimateButton
+          Icon={step === 3 ? <SettingsGradientIcon /> : <SettingsIcon />}
+          text="Wallets"
+          showText={step === 3}
+          onClick={() => setStep(3)}
+        />
+      </div>
+
+      {step === 1 && (
+        <div className={cn('flex flex-col justify-between', isMobile ? 'h-[500px]' : 'h-[calc(100vh-290px)]')}>
+          <ScrollArea>
             <XTokenList />
-          </div>
-        </TabsContent>
-        <TabsContent value="history" className="mt-4">
-          <div className="h-[500px] flex flex-col">
+          </ScrollArea>
+        </div>
+      )}
+
+      {step === 2 && (
+        <div className={cn('flex flex-col justify-between', isMobile ? 'h-[500px]' : 'h-[calc(100vh-290px)]')}>
+          <ScrollArea>
             <HistoryItemList />
-          </div>
-        </TabsContent>
-      </Tabs>
-    </Modal>
+          </ScrollArea>
+        </div>
+      )}
+
+      {step === 3 && (
+        <div className={cn('flex flex-col justify-between', isMobile ? 'h-[500px]' : 'h-[calc(100vh-290px)]')}>
+          <ScrollArea className="h-full">
+            <div className="w-full flex flex-col gap-4 mt-2">
+              {xChainTypes.map(wallet => (
+                <WalletItem key={wallet.xChainType} {...wallet} />
+              ))}
+            </div>
+          </ScrollArea>
+        </div>
+      )}
+    </>
+  );
+};
+
+const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
+  const open = useModalOpen(modalId);
+  const onDismiss = useCallback(() => {
+    modalActions.closeModal(modalId);
+  }, [modalId]);
+
+  if (!isMobile) {
+    return (
+      <Sheet open={open} modal={false}>
+        <SheetContent className="flex flex-col gap-2 px-0 py-4 w-96 bg-gradient-to-b from-[#f5e7f5] via-[#d29fff] to-[#a079fd] rounded-tl-3xl rounded-bl-3xl">
+          <WalletModalContent onDismiss={onDismiss} />
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  return (
+    <Drawer open={open} onOpenChange={_ => onDismiss()}>
+      <DrawerContent className="p-4 border-border bg-gradient-to-b from-[#f5e7f5] via-[#d29fff] to-[#a079fd]">
+        {/* <DrawerHeader className="text-left px-0">{<DrawerTitle>{title}</DrawerTitle>}</DrawerHeader> */}
+        <WalletModalContent onDismiss={onDismiss} />
+      </DrawerContent>
+    </Drawer>
   );
 };
 

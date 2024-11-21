@@ -25,7 +25,10 @@ export type XChain = Chain & {
     assetManager: string;
     bnUSD?: string;
     liquidSwap?: string;
+    xCallManager?: string;
+    bnUSDToken?: string;
   };
   autoExecution: boolean;
   gasThreshold: number;
+  useXCallScanner: boolean;
 };

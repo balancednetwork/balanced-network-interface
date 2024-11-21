@@ -3,9 +3,11 @@ import { XAccount } from '@/xwagmi/types';
 import { XConnector } from '@/xwagmi/core';
 import { SolanaXService } from './SolanaXService';
 
-export class SolanaKelprXConnector extends XConnector {
-  constructor() {
-    super('SOLANA', 'Keplr', 'keplr');
+export class SolanaXConnector extends XConnector {
+  wallet: any;
+  constructor(wallet: any) {
+    super('SOLANA', wallet?.adapter.name, wallet?.adapter.name);
+    this.wallet = wallet;
   }
 
   getXService(): SolanaXService {
@@ -13,8 +15,12 @@ export class SolanaKelprXConnector extends XConnector {
   }
 
   async connect(): Promise<XAccount | undefined> {
-    throw new Error('Method not implemented.');
+    return;
   }
 
   async disconnect(): Promise<void> {}
+
+  public get icon() {
+    return this.wallet?.adapter.icon;
+  }
 }

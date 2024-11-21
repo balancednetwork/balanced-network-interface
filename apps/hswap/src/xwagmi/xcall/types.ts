@@ -150,4 +150,6 @@ export type XTransaction = {
   finalDestinationChainInitialBlockHeight: bigint;
 
   attributes: Record<string, any>;
+
+  createdAt: number; // timestamp in milliseconds
 };

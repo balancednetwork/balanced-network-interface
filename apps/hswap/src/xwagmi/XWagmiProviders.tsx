@@ -20,11 +20,12 @@ import { clusterApiUrl } from '@solana/web3.js';
 const solanaNetwork = WalletAdapterNetwork.Mainnet;
 const suiNetworks = {
   mainnet: { url: getFullnodeUrl('mainnet') },
-  //   devnet: { url: getFullnodeUrl('devnet') },
+  // devnet: { url: getFullnodeUrl('devnet') },
 };
 
 export const XWagmiProviders = ({ children }) => {
-  const endpoint = useMemo(() => clusterApiUrl(solanaNetwork), []);
+  // const endpoint = useMemo(() => clusterApiUrl(solanaNetwork), []);
+  const endpoint = 'https://solana-mainnet.g.alchemy.com/v2/nCndZC8P7BdiVKkczCErdwpIgaBQpPFM';
   const wallets = useMemo(
     () => [
       /**

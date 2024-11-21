@@ -19,7 +19,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      'fixed inset-0 z-50 bg-[rgba(141,130,168,0.6)]  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+      'fixed inset-0 z-50 overflow-y-auto grid place-items-center bg-[rgba(141,130,168,0.6)]  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
       className,
     )}
     {...props}
@@ -32,7 +32,7 @@ const DialogContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, ...props }, ref) => (
   <DialogPortal>
-    <DialogOverlay />
+    {/* <DialogOverlay> */}
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
@@ -43,6 +43,7 @@ const DialogContent = React.forwardRef<
     >
       {children}
     </DialogPrimitive.Content>
+    {/* </DialogOverlay> */}
   </DialogPortal>
 ));
 DialogContent.displayName = DialogPrimitive.Content.displayName;

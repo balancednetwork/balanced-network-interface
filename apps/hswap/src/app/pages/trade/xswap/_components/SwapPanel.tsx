@@ -325,19 +325,6 @@ export default function SwapPanel() {
 
           <div className="flex justify-center">{swapButton}</div>
 
-          {xTransactionType === XTransactionType.BRIDGE && (
-            <div className="flex flex-col gap-2">
-              <div className="flex justify-between">
-                <span className="text-secondary-foreground text-body">Bridge Fee</span>
-                <span className="text-body">{formattedXCallFee}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-secondary-foreground text-body">Network Cost</span>
-                <span className="text-body">0.0001 ICX</span>
-              </div>
-            </div>
-          )}
-
           {!canBridge && maximumBridgeAmount && (
             <div className="flex items-center justify-center mt-2">
               <div className="text-center text-body">

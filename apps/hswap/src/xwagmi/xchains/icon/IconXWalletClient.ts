@@ -37,9 +37,9 @@ export class IconXWalletClient extends XWalletClient {
       const destination = `${direction.to}/${destinationAddress}`;
 
       let txResult;
-      const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
+      const isSpokeToken = inputAmount.currency.symbol === 'bnUSD' || inputAmount.currency.symbol === 'sICX';
 
-      if (isBnUSD) {
+      if (isSpokeToken) {
         const cx = bnJs.inject({ account }).getContract(tokenAddress);
         txResult = await cx.crossTransfer(destination, `${inputAmount.quotient}`, xCallFee.rollback.toString());
       } else {

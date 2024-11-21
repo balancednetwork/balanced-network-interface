@@ -1,11 +1,12 @@
 import { CurrencyAmount, MaxUint256, Percent, XToken } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
-import { Address, PublicClient, WalletClient, WriteContractParameters, toHex, erc20Abi, getContract } from 'viem';
+import { Address, PublicClient, WalletClient, WriteContractParameters, erc20Abi, getContract, toHex } from 'viem';
 import bnJs from '../icon/bnJs';
 
 import { isNativeCurrency } from '@/constants/tokens';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/xwagmi/constants/xChains';
+import { allXTokens } from '@/xwagmi/constants/xTokens';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { uintToBytes } from '@/xwagmi/utils';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
@@ -103,13 +104,16 @@ export class EvmXWalletClient extends XWalletClient {
 
     // check if the bridge asset is native
     const isNative = isNativeCurrency(inputAmount.currency);
-    const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
+    const isSpokeToken = inputAmount.currency.symbol === 'bnUSD' || inputAmount.currency.symbol === 'sICX';
 
     let request: WriteContractParameters;
-    if (isBnUSD) {
+    if (isSpokeToken) {
+      const tokenAddr = allXTokens.find(
+        token => token.xChainId === direction.from && token.symbol === inputAmount.currency.symbol,
+      )?.address;
       const res = await this.getPublicClient().simulateContract({
         account: account as Address,
-        address: xChainMap[direction.from].contracts.bnUSD as Address,
+        address: tokenAddr as Address,
         abi: bnUSDContractAbi,
         functionName: 'crossTransfer',
         args: [destination, amount, data],

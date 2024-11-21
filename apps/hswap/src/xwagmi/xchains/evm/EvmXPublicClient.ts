@@ -1,7 +1,10 @@
 import { Address, PublicClient, WriteContractParameters, erc20Abi, getContract, parseEventLogs, toHex } from 'viem';
 
+import { isNativeCurrency } from '@/constants/tokens';
+import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
+import { getRlpEncodedSwapData } from '@/xwagmi/xcall/utils';
 import { MaxUint256, Percent, XChainId, XToken } from '@balancednetwork/sdk-core';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import {
@@ -14,14 +17,11 @@ import {
   XTransactionInput,
   XTransactionType,
 } from '../../xcall/types';
+import bnJs from '../icon/bnJs';
 import { EvmXService } from './EvmXService';
-import { xCallContractAbi } from './abis/xCallContractAbi';
-import { isNativeCurrency } from '@/constants/tokens';
-import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
 import { bnUSDContractAbi } from './abis/bnUSDContractAbi';
-import { getRlpEncodedSwapData } from '@/xwagmi/xcall/utils';
-import bnJs from '../icon/bnJs';
+import { xCallContractAbi } from './abis/xCallContractAbi';
 
 const XCallEventSignatureMap = {
   [XCallEventType.CallMessageSent]: 'CallMessageSent',
@@ -238,8 +238,8 @@ export class EvmXPublicClient extends XPublicClient {
   needsApprovalCheck(xToken: XToken): boolean {
     if (isNativeCurrency(xToken)) return false;
 
-    const isBnUSD = xToken.symbol === 'bnUSD';
-    if (isBnUSD) return false;
+    const isSpokeToken = xToken.symbol === 'bnUSD' || xToken.symbol === 'sICX';
+    if (isSpokeToken) return false;
 
     return true;
   }

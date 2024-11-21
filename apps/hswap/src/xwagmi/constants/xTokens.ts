@@ -37,6 +37,7 @@ export const allXTokens: XToken[] = [
   new XToken('0x1.icon', ChainId.MAINNET, 'cx4297f4b63262507623b6ad575d0d8dd2db980e4e', 18, 'INJ', 'INJ'),
   new XToken('0x1.icon', ChainId.MAINNET, 'cx16f3cb9f09f5cdd902cf07aa752c8b3bd1bc9609', 6, 'USDT', 'Tether USD'),
   new XToken('0x1.icon', ChainId.MAINNET, 'cx508002ec116fbf3ab406329c0df28e70d7e75fb3', 9, 'SUI', 'SUI'),
+  new XToken('0x1.icon', ChainId.MAINNET, 'cx2609b924e33ef00b648a409245c7ea394c467824', 18, 'sICX', 'Staked ICX'),
 
   //  archway-1
   new XToken('archway-1', 'archway-1', 'archway-1-native', 18, 'aARCH', 'Arch'),
@@ -71,12 +72,14 @@ export const allXTokens: XToken[] = [
   new XToken('0xa86a.avax', 43114, '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E', 6, 'USDC', 'USD Coin'),
   new XToken('0xa86a.avax', 43114, '0xdBDd50997361522495EcFE57EBb6850dA0E4C699', 18, 'bnUSD', 'Balanced Dollar'),
   new XToken('0xa86a.avax', 43114, '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7', 6, 'USDT', 'Tether USD'),
+  new XToken('0xa86a.avax', 43114, '0xC7FE3f5B4970Ddc36d850A98e87bb28FaBb866D2', 18, 'sICX', 'Staked ICX'),
 
   // '0x38.bsc': [
   new XToken('0x38.bsc', 56, '0x38.bsc-native', 18, 'BNB', 'BNB'),
   new XToken('0x38.bsc', 56, '0x2170Ed0880ac9A755fd29B2688956BD959F933F8', 18, 'ETH', 'Ethereum'),
   new XToken('0x38.bsc', 56, '0xc65132325bD4FcF2Ec5F3a9375487163B6999206', 18, 'bnUSD', 'Balanced Dollar'),
   new XToken('0x38.bsc', 56, '0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c', 18, 'BTC', 'Binance-Peg BTCB Token', 'BTC1'),
+  new XToken('0x38.bsc', 56, '0xd94F0Aea6d6f14C012d992e8886C8C1736921e10', 18, 'sICX', 'Staked ICX'),
 
   // '0xa4b1.arbitrum': [
   new XToken('0xa4b1.arbitrum', 42161, '0xa4b1.arbitrum-native', 18, 'ETH', 'ETH'),
@@ -84,11 +87,13 @@ export const allXTokens: XToken[] = [
   new XToken('0xa4b1.arbitrum', 42161, '0xaf88d065e77c8cC2239327C5EDb3A432268e5831', 6, 'USDC', 'USD Coin'),
   new XToken('0xa4b1.arbitrum', 42161, '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f', 8, 'BTC', 'Wrapped BTC', 'BTC1'),
   new XToken('0xa4b1.arbitrum', 42161, '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9', 6, 'USDT', 'Tether USD'),
+  new XToken('0xa4b1.arbitrum', 42161, '0xD336c74B840f9962cF2c666f8666d6d61Ec24440', 18, 'sICX', 'Staked ICX'),
 
   // '0x2105.base': [
   new XToken('0x2105.base', 8453, '0x2105.base-native', 18, 'ETH', 'ETH'),
   new XToken('0x2105.base', 8453, '0x78b7CD9308287DEb724527d8703c889e2d6C3708', 18, 'bnUSD', 'Balanced Dollar'),
   new XToken('0x2105.base', 8453, '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', 6, 'USDC', 'USD Coin'),
+  new XToken('0x2105.base', 8453, '0xd94F0Aea6d6f14C012d992e8886C8C1736921e10', 18, 'sICX', 'Staked ICX'),
 
   // '0x100.icon': [
   new XToken('0x100.icon', 0x100, '0x100.icon-native', 18, 'HVH', 'HVH'),

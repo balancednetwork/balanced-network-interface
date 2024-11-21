@@ -18,6 +18,7 @@ import { Field } from '@/store/mint/reducer';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { toDec } from '@/utils';
+import { formatSymbol } from '@/utils/formatter';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { XChainId } from '@/xwagmi/types';
 import bnJs from '@/xwagmi/xchains/icon/bnJs';
@@ -72,8 +73,8 @@ export default function SupplyLiquidityModal({
       addTransaction(
         { hash: res.result },
         {
-          pending: t`Withdrawing ${token.symbol}`,
-          summary: t`${amountWithdraw?.toSignificant(6)} ${token.symbol} added to your wallet`,
+          pending: t`Withdrawing ${formatSymbol(token.symbol)}`,
+          summary: t`${amountWithdraw?.toSignificant(6)} ${formatSymbol(token.symbol)} added to your wallet`,
         },
       );
 
@@ -282,7 +283,7 @@ export default function SupplyLiquidityModal({
                     {UIStatus[field].shouldSend ? (
                       <>
                         <Typography variant="p" fontWeight="bold" textAlign="center">
-                          {parsedAmounts[field]?.toSignificant(6)} {currencies[field]?.symbol}
+                          {parsedAmounts[field]?.toSignificant(6)} {formatSymbol(currencies[field]?.symbol)}
                         </Typography>
 
                         <SupplyButton
@@ -320,7 +321,7 @@ export default function SupplyLiquidityModal({
                     ) : (
                       <>
                         <Typography variant="p" fontWeight="bold" textAlign="center">
-                          {currencyDeposits[field]?.toSignificant(6)} {currencies[field]?.symbol}
+                          {currencyDeposits[field]?.toSignificant(6)} {formatSymbol(currencies[field]?.symbol)}
                         </Typography>
 
                         <RemoveButton
@@ -364,7 +365,7 @@ export default function SupplyLiquidityModal({
             </TextButton>
 
             {pair ? (
-              <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
+              <Button disabled={!isEnabled || !hasEnoughICX || !!confirmTx} onClick={handleSupplyConfirm}>
                 {confirmTx ? t`Supplying` : t`Supply`}
               </Button>
             ) : (

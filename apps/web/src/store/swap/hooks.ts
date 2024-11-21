@@ -14,6 +14,7 @@ import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
+import { formatSymbol } from '@/utils/formatter';
 import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
@@ -229,7 +230,7 @@ export function useDerivedSwapInfo(): {
 
   // decimal scales are different for different chains for the same token
   if (balanceIn && amountIn && new BigNumber(balanceIn.toFixed()).isLessThan(amountIn.toFixed())) {
-    inputError = t`Insufficient ${currencies[Field.INPUT]?.symbol}`;
+    inputError = t`Insufficient ${formatSymbol(currencies[Field.INPUT]?.symbol)}`;
   }
 
   //

@@ -12,7 +12,7 @@ import useWidth from '@/hooks/useWidth';
 import { useRatesWithOracle } from '@/queries/reward';
 import { COMMON_PERCENTS } from '@/store/swap/reducer';
 import { escapeRegExp } from '@/utils';
-import { formatBalance } from '@/utils/formatter';
+import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { DEFAULT_TOKEN_CHAIN } from '@/xwagmi/constants/xTokens';
 import { XChainId } from '@/xwagmi/types';
 import { getSupportedXChainForToken } from '@/xwagmi/xcall/utils';
@@ -209,7 +209,7 @@ export default function CurrencyInputPanel({
               {currency ? (
                 <>
                   <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
-                  <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName>
+                  <StyledTokenName className="token-symbol-container">{formatSymbol(currency.symbol)}</StyledTokenName>
                   {currency.symbol === 'BTCB' && <div style={{ marginLeft: 5, marginRight: 5 }}>(old)</div>}
                 </>
               ) : (

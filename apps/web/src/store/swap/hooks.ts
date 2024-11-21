@@ -8,6 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { canBeQueue } from '@/constants/currency';
 import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
+import { useICX } from '@/constants/tokens';
 import { useAllTokens } from '@/hooks/Tokens';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
@@ -202,7 +203,29 @@ export function useDerivedSwapInfo(): {
   const trade2 = useTradeExactOut(_inputCurrency, !isExactIn ? _parsedAmount : undefined, {
     maxHops: queue ? 1 : undefined,
   });
-  const trade = isExactIn ? trade1 : trade2;
+  let trade = isExactIn ? trade1 : trade2;
+
+  //TODO: Remove this when the queue is emptied
+  //temporary solution for determining better trade between using wICX and queue pairs
+  const ICX = useICX();
+  const parsedAmountTMP = tryParseAmount(typedValue, (isExactIn ? _inputCurrency : ICX) ?? undefined);
+  const queueTMP = canBeQueue(_inputCurrency, ICX);
+  const trade1TMP = useTradeExactIn(isExactIn ? parsedAmountTMP : undefined, ICX, {
+    maxHops: queueTMP ? 1 : undefined,
+  });
+  const trade2TMP = useTradeExactOut(_inputCurrency, !isExactIn ? parsedAmountTMP : undefined, {
+    maxHops: queueTMP ? 1 : undefined,
+  });
+  const tradeICX = isExactIn ? trade1TMP : trade2TMP;
+  if (_outputCurrency?.symbol === 'wICX') {
+    console.log('trades - default | tradeICX: ', trade?.executionPrice.toFixed(), tradeICX?.executionPrice.toFixed());
+    // Pick the trade with the better execution amount
+    if (tradeICX && (!trade || tradeICX.executionPrice.greaterThan(trade.executionPrice))) {
+      trade = tradeICX;
+    }
+  }
+  //TODO: end of temporary solution
+
   const swapDisabled = trade?.priceImpact.greaterThan(SLIPPAGE_SWAP_DISABLED_THRESHOLD);
 
   let inputError: string | undefined;

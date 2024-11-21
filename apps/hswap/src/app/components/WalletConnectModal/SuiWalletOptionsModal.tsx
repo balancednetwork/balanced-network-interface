@@ -24,7 +24,7 @@ export const SuiWalletOptionsModal = ({ id = MODAL_ID.SUI_WALLET_OPTIONS_MODAL }
   return (
     <>
       <Modal open={modalOpen} onDismiss={onDismiss} dialogClassName="max-w-[375px] h-[622px] p-0" showOverlay={true}>
-        <div className="pt-[120px] pb-[216px] px-6 bg-[url('/marsh-with-coins.png')] bg-[center_bottom_0] bg-no-repeat">
+        <div className="pt-[120px] pb-[216px] px-6 bg-[url('/marsh-with-coins.png')] bg-[center_bottom_0] bg-[length:319px] bg-no-repeat">
           {xConnectors.length > 0 ? (
             <>
               <div className="col-span-2 mb-10 text-title-gradient text-[28px] font-extrabold leading-[30px] cursor-default">

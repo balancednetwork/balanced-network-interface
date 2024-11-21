@@ -31,7 +31,7 @@ interface BlueButtonProps {
 export const BlueButton = ({
   children,
   className,
-  icon = <ArrowIcon />,
+  icon = <ArrowIcon className="fill-[#e6e0f7] opacity-40" />,
   hoverIcon = <ArrowWhiteIcon />,
   ...props
 }: BlueButtonProps) => {

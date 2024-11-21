@@ -6,7 +6,14 @@ import AllChainIcon from '@/assets/icons2/all-chain.svg';
 
 import ArrowGradientIcon from '@/assets/icons2/arrow-gradient.svg';
 import ArrowWhiteIcon from '@/assets/icons2/arrow-white.svg';
-import ArrowIcon from '@/assets/icons2/arrow.svg';
+const ArrowIcon: React.FC<React.ComponentProps<'svg'>> = props => {
+  return (
+    // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
+    <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" {...props}>
+      <path d="M9.03764 13.22C9.82742 11.3196 10.9573 9.95449 12.082 8.99L-4.37988e-07 8.99L-6.11085e-07 7.01L12.082 7.01C10.9573 6.04551 9.82742 4.68038 9.03763 2.77996L10.8024 2C12.1921 5.34399 14.871 6.6219 16 7.01L16 8.99C14.871 9.3781 12.1921 10.656 10.8024 14L9.03764 13.22Z" />
+    </svg>
+  );
+};
 
 // import SubtractIcon from '@/assets/icons2/subtract.svg';
 const SubtractIcon: React.FC<React.ComponentProps<'svg'>> = props => {

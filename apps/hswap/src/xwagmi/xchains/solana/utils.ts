@@ -156,3 +156,11 @@ export async function getConnectionAccounts(nid, xcallManagerId, provider) {
 
   return connectionAccounts;
 }
+
+export async function checkIfAccountInitialized(connection, accountPubkey) {
+  const accountInfo = await connection.getAccountInfo(new PublicKey(accountPubkey));
+  if (!accountInfo) {
+    return false;
+  }
+  return true;
+}

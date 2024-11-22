@@ -357,7 +357,7 @@ export const solana: XChain = {
     xCallManager: 'Ganbqm2tJ8SuaN6kSRWsJhXGb7aLCvHLuCySxCfkXPVL',
   },
   autoExecution: true,
-  gasThreshold: 0.001, // xCall fee: 0.0006 SOL
+  gasThreshold: 0.01, // xCall fee: 0.0006 SOL
   testnet: false,
   useXCallScanner: true,
 };

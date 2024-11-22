@@ -1,9 +1,10 @@
 import { BoxPanel } from '@/components/Panel';
 import QuestionHelper, { QuestionWrapper } from '@/components/QuestionHelper';
+import { Typography } from '@/theme';
 import React from 'react';
+import { isMobile } from 'react-device-detect';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
-import { Typography } from '@/theme';
 import CollateralLimits from './CollateralLimits';
 import ExchangeLimits from './ExchangeLimits';
 import StabilityFundLimits from './StabilityFundLimits';
@@ -50,12 +51,14 @@ const WithdrawalLimits = () => {
             <Typography variant="h2" mr={1}>
               Withdrawal limits
             </Typography>
-            <QuestionWrapper mt="9px">
-              <QuestionHelper
-                width={290}
-                text={`To protect assets on Balanced, the smart contracts limit the amount that can be withdrawn during a 24-hour period.`}
-              />
-            </QuestionWrapper>
+            {!isMobile && (
+              <QuestionWrapper mt="9px">
+                <QuestionHelper
+                  width={290}
+                  text={`To protect assets on Balanced, the smart contracts limit the amount that can be withdrawn during a 24-hour period.`}
+                />
+              </QuestionWrapper>
+            )}
           </Flex>
           <Tabs m={['10px 0 -20px', '10px 0 -20px', '0']}>
             <Tab isActive={activeTab === 0} onClick={() => setActiveTab(0)}>

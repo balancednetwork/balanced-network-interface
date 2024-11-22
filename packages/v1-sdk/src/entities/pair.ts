@@ -2,7 +2,7 @@ import { getCreate2Address } from '@ethersproject/address';
 import { keccak256, pack } from '@ethersproject/solidity';
 import invariant from 'tiny-invariant';
 
-import { BigintIsh, CurrencyAmount, Fraction, Price, Token, sqrt } from '@balancednetwork/sdk-core';
+import { BigintIsh, CurrencyAmount, Price, Token, sqrt } from '@balancednetwork/sdk-core';
 
 import {
   FACTORY_ADDRESS,
@@ -11,6 +11,7 @@ import {
   MINIMUM_LIQUIDITY,
   NULL_CONTRACT_ADDRESS,
   ONE,
+  STABILITY_FUND_FRACTION,
   ZERO,
   _99,
   _100,
@@ -191,11 +192,11 @@ export class Pair {
       // this.token1 is always bnUSD
       if (inputAmount.currency.symbol === 'bnUSD') {
         // bnUSD -> USDC
-        // apply fee 0.3%
+        // apply fee 0.1%
         const outputAmount = CurrencyAmount.fromRawAmount(
           this.token0,
           (inputAmount.quotient * 10n ** BigInt(this.token0.decimals)) / inputAmount.decimalScale,
-        ).multiply(new Fraction(997, 1000));
+        ).multiply(STABILITY_FUND_FRACTION);
 
         if (outputAmount.quotient > this.reserve0.quotient) {
           throw new InsufficientInputAmountError();
@@ -264,7 +265,7 @@ export class Pair {
         ];
       } else {
         // bnUSD -> USDC
-        // apply fee 0.3%
+        // apply fee 0.1%
         if (outputAmount.quotient > this.reserve0.quotient) {
           throw new InsufficientInputAmountError();
         }
@@ -273,7 +274,7 @@ export class Pair {
           CurrencyAmount.fromRawAmount(
             this.token1,
             (outputAmount.quotient * 10n ** BigInt(this.token1.decimals)) / outputAmount.decimalScale,
-          ).divide(new Fraction(997, 1000)),
+          ).divide(STABILITY_FUND_FRACTION),
           this,
         ];
       }

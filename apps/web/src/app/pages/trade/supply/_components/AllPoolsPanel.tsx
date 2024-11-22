@@ -10,15 +10,20 @@ import { MouseoverTooltip } from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import QuestionIcon from '@/assets/icons/question.svg';
 import useSort from '@/hooks/useSort';
-import { MIN_LIQUIDITY_TO_INCLUDE, PairData, useAllPairsById } from '@/queries/backendv2';
+import { MIN_LIQUIDITY_TO_INCLUDE, PairData, TOKEN_BLACKLIST, useAllPairsById, useNOLPools } from '@/queries/backendv2';
 import { useDerivedMintInfo, useMintActionHandlers } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
 import { getFormattedNumber } from '@/utils/formatter';
 
+import DropdownLink from '@/app/components/DropdownLink';
 import { HeaderText } from '@/app/components/SearchModal/styleds';
 import Skeleton from '@/app/components/Skeleton';
 import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
 import { PairInfo } from '@/types';
+import { xChainMap } from '@/xwagmi/constants/xChains';
+import { useMedia } from 'react-use';
+
+const COMPACT_ITEM_COUNT = 8;
 
 const List = styled(Box)`
   -webkit-overflow-scrolling: touch;
@@ -30,13 +35,8 @@ const DashGrid = styled(Box)`
   display: grid;
   gap: 1em;
   align-items: center;
-  grid-template-columns: repeat(5, 1fr);
-  ${({ theme }) => theme.mediaWidth.upExtraSmall`
-    grid-template-columns: 2fr repeat(4, 1fr);
-  `}
-  ${({ theme }) => theme.mediaWidth.upLarge`
-    grid-template-columns: 1.2fr repeat(4, 1fr);
-  `}
+  grid-template-columns: 1.8fr 1.3fr 1fr 1.1fr 0.9fr;
+  
   > * {
     justify-content: flex-end;
     &:first-child {
@@ -102,7 +102,7 @@ const TooltipWrapper = styled.span`
 const SkeletonPairPlaceholder = () => {
   return (
     <DashGrid my={2}>
-      <DataText minWidth="220px">
+      <DataText>
         <Flex alignItems="center">
           <Box sx={{ minWidth: '95px', minHeight: '48px', position: 'relative' }}>
             <StyledSkeleton variant="circle" width={48} className="pool-icon-skeleton" />
@@ -113,7 +113,7 @@ const SkeletonPairPlaceholder = () => {
           </Text>
         </Flex>
       </DataText>
-      <DataText minWidth="200px">
+      <DataText>
         <Skeleton width={50} />
       </DataText>
       <DataText>
@@ -138,7 +138,7 @@ type PairItemProps = {
 const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
   <>
     <PairGrid my={2} onClick={() => onClick(pair.info)}>
-      <DataText minWidth={'220px'}>
+      <DataText>
         <Flex alignItems="center">
           <Box sx={{ minWidth: '95px' }}>
             <PoolLogo baseCurrency={pair.info.baseToken} quoteCurrency={pair.info.quoteToken} />
@@ -146,11 +146,11 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
           <Text ml={2}>{`${pair.info.baseCurrencyKey} / ${pair.info.quoteCurrencyKey}`}</Text>
         </Flex>
       </DataText>
-      <DataText minWidth={'200px'}>
+      <DataText>
         <Flex flexDirection="column" py={2} alignItems="flex-end">
           {pair.liquidity > MIN_LIQUIDITY_TO_INCLUDE ? (
             <>
-              {pair.balnApy && (
+              {pair.balnApy ? (
                 <APYItem>
                   <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
                     BALN:
@@ -160,15 +160,15 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
                     'percent2',
                   )}`}
                 </APYItem>
-              )}
-              {pair.feesApy !== 0 && (
+              ) : null}
+              {pair.feesApy !== 0 ? (
                 <APYItem>
                   <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
                     <Trans>Fees:</Trans>
                   </Typography>
                   {getFormattedNumber(pair.feesApy, 'percent2')}
                 </APYItem>
-              )}
+              ) : null}
             </>
           ) : (
             '-'
@@ -184,23 +184,14 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
   </>
 );
 
-export default function AllPoolsPanel() {
+export default function AllPoolsPanel({ query }: { query: string }) {
   const { data: allPairs } = useAllPairsById();
+  const { data: nolPairs } = useNOLPools();
   const { sortBy, handleSortSelect, sortData } = useSort({ key: 'apyTotal', order: 'DESC' });
   const { noLiquidity } = useDerivedMintInfo();
   const { onCurrencySelection } = useMintActionHandlers(noLiquidity);
-
-  const incentivisedPairs = useMemo(
-    () =>
-      allPairs &&
-      Object.keys(allPairs).reduce((pairs, pairID) => {
-        if (allPairs && allPairs[pairID].balnApy) {
-          pairs[pairID] = allPairs[pairID];
-        }
-        return pairs;
-      }, {}),
-    [allPairs],
-  );
+  const showAPRTooltip = useMedia('(min-width: 700px)');
+  const [showingExpanded, setShowingExpanded] = React.useState(false);
 
   const handlePoolLick = (pair: PairInfo) => {
     if (pair.id === 1) {
@@ -211,13 +202,49 @@ export default function AllPoolsPanel() {
     }
   };
 
+  //show only incentivised, cross native or NOL pairs
+  const relevantPairs = useMemo(() => {
+    if (!allPairs || !nolPairs) return [];
+    const nativeSymbols = Object.values(xChainMap).map(chain => chain.nativeCurrency.symbol);
+
+    return Object.values(allPairs).filter(pair => {
+      const isTokenBlacklisted = TOKEN_BLACKLIST.some(
+        token => token === pair.info.baseCurrencyKey || token === pair.info.quoteCurrencyKey,
+      );
+      return (
+        !isTokenBlacklisted &&
+        (pair.balnApy || nolPairs.includes(pair.info.id) || nativeSymbols.includes(pair.info.baseCurrencyKey))
+      );
+    });
+  }, [allPairs, nolPairs]);
+
+  const filteredRelevantPairs = useMemo(() => {
+    if (!query) return relevantPairs;
+
+    return relevantPairs.filter(pair => {
+      //show network owned liquidity
+      if (query === 'nol' && nolPairs) {
+        return nolPairs.includes(pair.info.id);
+      }
+      //show pair with crosschain native token
+      if (query === 'native') {
+        return Object.values(xChainMap)
+          .map(chain => chain.nativeCurrency.symbol)
+          .includes(pair.info.baseCurrencyKey);
+      }
+      return (
+        pair.info.baseCurrencyKey.toLowerCase().includes(query.toLowerCase()) ||
+        pair.info.quoteCurrencyKey.toLowerCase().includes(query.toLowerCase())
+      );
+    });
+  }, [relevantPairs, query, nolPairs]);
+
   return (
     <Box overflow="auto">
       <List>
         <DashGrid>
           <HeaderText
             role="button"
-            minWidth="220px"
             className={sortBy.key === 'name' ? sortBy.order : ''}
             onClick={() =>
               handleSortSelect({
@@ -230,7 +257,6 @@ export default function AllPoolsPanel() {
             </span>
           </HeaderText>
           <HeaderText
-            minWidth="200px"
             role="button"
             className={sortBy.key === 'apyTotal' ? sortBy.order : ''}
             onClick={() =>
@@ -239,28 +265,32 @@ export default function AllPoolsPanel() {
               })
             }
           >
-            <TooltipWrapper onClick={e => e.stopPropagation()}>
-              <MouseoverTooltip
-                width={330}
-                text={
-                  <>
-                    <Trans>
-                      The BALN APR is calculated from the USD value of BALN rewards allocated to a pool. Your rate will
-                      vary based on the amount of bBALN you hold.
-                    </Trans>
-                    <br />
-                    <br />
-                    <Trans>The fee APR is calculated from the swap fees earned by a pool over the last 30 days.</Trans>
-                  </>
-                }
-                placement="top"
-                strategy="absolute"
-              >
-                <QuestionWrapper>
-                  <QuestionIcon className="header-tooltip" width={14} />
-                </QuestionWrapper>
-              </MouseoverTooltip>
-            </TooltipWrapper>
+            {showAPRTooltip && (
+              <TooltipWrapper onClick={e => e.stopPropagation()}>
+                <MouseoverTooltip
+                  width={330}
+                  text={
+                    <>
+                      <Trans>
+                        The BALN APR is calculated from the USD value of BALN rewards allocated to a pool. Your rate
+                        will vary based on the amount of bBALN you hold.
+                      </Trans>
+                      <br />
+                      <br />
+                      <Trans>
+                        The fee APR is calculated from the swap fees earned by a pool over the last 30 days.
+                      </Trans>
+                    </>
+                  }
+                  placement="top"
+                  strategy="absolute"
+                >
+                  <QuestionWrapper>
+                    <QuestionIcon className="header-tooltip" width={14} />
+                  </QuestionWrapper>
+                </MouseoverTooltip>
+              </TooltipWrapper>
+            )}
             <Trans>APR</Trans>
           </HeaderText>
           <HeaderText
@@ -298,10 +328,17 @@ export default function AllPoolsPanel() {
           </HeaderText>
         </DashGrid>
 
-        {incentivisedPairs ? (
-          sortData(Object.values(incentivisedPairs)).map((pair, index, array) => (
-            <PairItem key={index} pair={pair} onClick={handlePoolLick} isLast={array.length - 1 === index} />
-          ))
+        {filteredRelevantPairs ? (
+          sortData(filteredRelevantPairs).map((pair, index, array) =>
+            showingExpanded || index < COMPACT_ITEM_COUNT ? (
+              <PairItem
+                key={index}
+                pair={pair}
+                onClick={handlePoolLick}
+                isLast={index === array.length - 1 || (!showingExpanded && index === COMPACT_ITEM_COUNT - 1)}
+              />
+            ) : null,
+          )
         ) : (
           <>
             <SkeletonPairPlaceholder />
@@ -318,6 +355,18 @@ export default function AllPoolsPanel() {
             <Divider />
             <SkeletonPairPlaceholder />
           </>
+        )}
+
+        {filteredRelevantPairs.length === 0 && query && (
+          <Typography textAlign="center" mt={'30px'}>
+            <Trans>No pools found.</Trans>
+          </Typography>
+        )}
+
+        {filteredRelevantPairs.length > COMPACT_ITEM_COUNT && (
+          <Box>
+            <DropdownLink expanded={showingExpanded} setExpanded={setShowingExpanded} />
+          </Box>
         )}
       </List>
     </Box>

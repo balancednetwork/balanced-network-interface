@@ -1,6 +1,6 @@
 import { Typography } from '@/app/theme';
 import { useRatesWithOracle } from '@/queries/reward';
-import { formatBalance, formatValue } from '@/utils/formatter';
+import { formatBalance, formatSymbol, formatValue } from '@/utils/formatter';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
@@ -58,7 +58,7 @@ const SingleChainBalanceItem = ({
             size={isNested ? '20px' : '24px'}
           />
           <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>
-            {isNested ? xChainMap[xChainId].name : symbol}
+            {isNested ? xChainMap[xChainId].name : formatSymbol(symbol)}
             {isICONAsset && <Chevron $isNested={isNested} />}
           </Typography>
         </AssetSymbol>

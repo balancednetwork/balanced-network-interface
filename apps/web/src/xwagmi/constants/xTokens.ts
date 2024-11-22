@@ -19,6 +19,9 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   weETH: '0xa4b1.arbitrum',
   wstETH: '0xa4b1.arbitrum',
   XLM: 'stellar',
+  AFSUI: 'sui',
+  HASUI: 'sui',
+  VSUI: 'sui',
 };
 
 export const xTokenMap: { [key in XChainId]: XToken[] } = {
@@ -67,6 +70,23 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('0x1.icon', ChainId.MAINNET, 'cx16f3cb9f09f5cdd902cf07aa752c8b3bd1bc9609', 6, 'USDT', 'Tether USD'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx518f64edcd35db9044a2de63fdc10abfd5f7d611', 7, 'XLM', 'XLM'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx508002ec116fbf3ab406329c0df28e70d7e75fb3', 9, 'SUI', 'SUI'),
+    new XToken('0x1.icon', ChainId.MAINNET, 'cxb9d0727849a6ce6453f8c9dda2dec2fd543075d4', 9, 'VSUI', 'Volo Staked SUI'),
+    new XToken(
+      '0x1.icon',
+      ChainId.MAINNET,
+      'cx0664cceb34d391ba78a897200fab94b9b49443d0',
+      9,
+      'HASUI',
+      'Haedal Staked SUI',
+    ),
+    new XToken(
+      '0x1.icon',
+      ChainId.MAINNET,
+      'cx27fa4bdb0522e3be5a51daab06eb39889fb4c8da',
+      9,
+      'AFSUI',
+      'Aftermath Staked SUI',
+    ),
   ],
   'archway-1': [
     new XToken(
@@ -164,7 +184,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken(
       'injective-1',
       'injective-1',
-      'inj1qspaxnztkkzahvp6scq6xfpgafejmj2td83r9j',
+      'factory/inj14ejqjyq8um4p3xfqj74yld5waqljf88f9eneuk/inj1qspaxnztkkzahvp6scq6xfpgafejmj2td83r9j',
       18,
       'bnUSD',
       'Balanced Dollar',
@@ -194,10 +214,42 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken(
       'sui',
       'sui',
-      '0x03917a812fe4a6d6bc779c5ab53f8a80ba741f8af04121193fc44e0f662e2ceb::balanced_dollar::BALANCED_DOLLAR',
+      '0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT',
+      9,
+      'VSUI',
+      'Volo Staked SUI',
+    ),
+    new XToken(
+      'sui',
+      'sui',
+      '0xbde4ba4c2e274a60ce15c1cfff9e5c42e41654ac8b6d906a57efa4bd3c29f47d::hasui::HASUI',
+      9,
+      'HASUI',
+      'Haedal Staked SUI',
+    ),
+    new XToken(
+      'sui',
+      'sui',
+      '0xf325ce1300e8dac124071d3152c5c5ee6174914f8bc2161e88329cf579246efc::afsui::AFSUI',
+      9,
+      'AFSUI',
+      'Aftermath Staked SUI',
+    ),
+    new XToken(
+      'sui',
+      'sui',
+      '0x3917a812fe4a6d6bc779c5ab53f8a80ba741f8af04121193fc44e0f662e2ceb::balanced_dollar::BALANCED_DOLLAR',
       9,
       'bnUSD',
       'Balanced Dollar',
+    ),
+    new XToken(
+      'sui',
+      'sui',
+      '0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC',
+      6,
+      'USDC',
+      'USD Coin',
     ),
   ],
 };

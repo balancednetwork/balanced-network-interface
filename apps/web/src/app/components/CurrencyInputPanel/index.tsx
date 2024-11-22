@@ -9,8 +9,10 @@ import CurrencyLogo from '@/app/components/CurrencyLogo';
 import { SelectorPopover } from '@/app/components/Popover';
 import DropDown from '@/assets/icons/arrow-down.svg';
 import useWidth from '@/hooks/useWidth';
+import { useRatesWithOracle } from '@/queries/reward';
 import { COMMON_PERCENTS } from '@/store/swap/reducer';
 import { escapeRegExp } from '@/utils';
+import { formatBalance } from '@/utils/formatter';
 import { DEFAULT_TOKEN_CHAIN } from '@/xwagmi/constants/xTokens';
 import { XChainId } from '@/xwagmi/types';
 import { getSupportedXChainForToken } from '@/xwagmi/xcall/utils';
@@ -147,6 +149,13 @@ export default function CurrencyInputPanel({
 
   const [ref, width] = useWidth();
 
+  const prices = useRatesWithOracle();
+  const price = useMemo(() => {
+    if (prices && currency?.symbol) {
+      return prices[currency.symbol];
+    }
+  }, [prices, currency]);
+
   const handlePercentSelect = (instant: number) => (e: React.MouseEvent) => {
     onPercentSelect && onPercentSelect(instant);
   };
@@ -232,7 +241,7 @@ export default function CurrencyInputPanel({
 
         <NumberInput
           placeholder={placeholder}
-          value={value}
+          value={!percent ? value : price ? formatBalance(value, price.toFixed()) : value}
           onClick={() => setIsActive(!isActive)}
           onBlur={() => setIsActive(false)}
           onChange={event => {

@@ -4,7 +4,7 @@ import { useCollateralChangeIcxDisplayType, useIcxDisplayType } from '@/store/co
 import { useIsPositionLocked } from '@/store/loan/hooks';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { toFraction } from '@/utils';
-import { formatValue } from '@/utils/formatter';
+import { formatSymbol, formatValue } from '@/utils/formatter';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { Position, XChainId } from '@/xwagmi/types';
 import { Token } from '@balancednetwork/sdk-core';

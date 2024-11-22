@@ -9,6 +9,7 @@ import { useHasSignedIn } from '@/hooks/useWallets';
 import { useAllCollateralData, useCollateralActionHandlers, useUserPositionsData } from '@/store/collateral/hooks';
 import { useLoanActionHandlers } from '@/store/loan/hooks';
 import { useOraclePrices } from '@/store/oracle/hooks';
+import { getSpokeVersions } from '@/utils/xTokens';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
@@ -82,6 +83,7 @@ const CollateralTypeList = ({
       xPosition =>
         xPosition.baseToken.symbol.toLowerCase().includes(query.toLowerCase()) ||
         xPosition.baseToken.name?.toLowerCase().includes(query.toLowerCase()) ||
+        getSpokeVersions(xPosition.baseToken.symbol).some(v => v.toLowerCase().includes(query.toLowerCase())) ||
         Object.keys(xPosition.positions).some(x => xChainMap[x].name.toLowerCase().includes(query.toLowerCase())),
     );
   }, [positions, query]);

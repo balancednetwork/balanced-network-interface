@@ -8,7 +8,7 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
-import { FUNDING_TOKENS_LIST, useICX } from '@/constants/tokens';
+import { FUNDING_TOKENS_LIST, UNTRADEABLE_TOKENS, useICX } from '@/constants/tokens';
 import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from '@/hooks/Tokens';
 import useDebounce from '@/hooks/useDebounce';
 import { useOnClickOutside } from '@/hooks/useOnClickOutside';
@@ -51,7 +51,7 @@ export enum SelectorType {
   OTHER,
 }
 
-const removebnUSD = (tokens: { [address: string]: Token }) => {
+const removeBnUSD = (tokens: { [address: string]: Token }) => {
   return Object.values(tokens)
     .filter(token => token.symbol !== 'bnUSD')
     .reduce((tokenMap, token) => {
@@ -59,6 +59,15 @@ const removebnUSD = (tokens: { [address: string]: Token }) => {
       return tokenMap;
     }, {});
 };
+
+function filterUntradeableTokens(tokens: { [address: string]: Token }): { [address: string]: Token } {
+  return Object.values(tokens)
+    .filter(token => !UNTRADEABLE_TOKENS.includes(token.symbol))
+    .reduce((tokenMap, token) => {
+      tokenMap[token.address] = token;
+      return tokenMap;
+    }, {});
+}
 
 interface CurrencySearchProps {
   account?: string | null;
@@ -79,16 +88,6 @@ interface CurrencySearchProps {
   showCrossChainBreakdown: boolean;
   selectorType?: SelectorType;
 }
-
-const useFilteredXTokens = () => {
-  const tokens = useAllTokens();
-
-  return useMemo(() => {
-    const allTokens = Object.values(tokens);
-    const allXTokens = Object.values(xTokenMap).flat();
-    return allXTokens.filter(x => !allTokens.some(t => t.symbol === x.symbol));
-  }, [tokens]);
-};
 
 export function CurrencySearch({
   account,
@@ -117,7 +116,6 @@ export function CurrencySearch({
 
   const xWallet = useCrossChainWalletBalances();
   const tokens = useAllTokens();
-  const filteredXTokens = useFilteredXTokens();
   const bases = useCommonBases();
 
   const [assetsTab, setAssetsTab] = useState(AssetsTab.ALL);
@@ -139,10 +137,11 @@ export function CurrencySearch({
 
   const allTokens: { [address: string]: Token } = useMemo(() => {
     switch (currencySelectionType) {
-      case CurrencySelectionType.NORMAL:
-        return { ...tokens, ...filteredXTokens };
+      case CurrencySelectionType.NORMAL: {
+        return filterUntradeableTokens(tokens);
+      }
       case CurrencySelectionType.TRADE_MINT_BASE:
-        return removebnUSD(tokens);
+        return removeBnUSD(filterUntradeableTokens(tokens));
       case CurrencySelectionType.TRADE_MINT_QUOTE:
         return bases;
       case CurrencySelectionType.VOTE_FUNDING:
@@ -151,7 +150,7 @@ export function CurrencySearch({
         return xTokens || [];
       }
     }
-  }, [currencySelectionType, tokens, bases, xTokens, filteredXTokens]);
+  }, [currencySelectionType, tokens, bases, xTokens]);
 
   //select first currency from list if there is none selected for bridging
   useEffect(() => {

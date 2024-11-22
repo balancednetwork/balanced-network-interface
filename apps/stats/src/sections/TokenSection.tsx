@@ -21,6 +21,7 @@ import { LoaderComponent } from '@/pages/PerformanceDetails/utils';
 import { useAssetManagerTokens } from '@/queries/assetManager';
 import { Typography } from '@/theme';
 import { formatPriceChange, getFormattedNumber } from '@/utils/formatter';
+import { isMobile } from 'react-device-detect';
 
 export const COMPACT_ITEM_COUNT = 8;
 
@@ -240,7 +241,7 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
           <Flex alignItems="flex-end" flexDirection="column" minWidth={200} pl={2}>
             <Typography variant="p">{getFormattedNumber(token.market_cap, 'currency0')}</Typography>
             <Flex>
-              {tokenBreakdown && tokenBreakdown.length > 1 && (
+              {!isMobile && tokenBreakdown && tokenBreakdown.length > 1 && (
                 <Box mr={1}>
                   <AssetManagerTokenBreakdown breakdown={tokenBreakdown} spacing={{ x: 0, y: 1 }} />
                 </Box>
@@ -324,21 +325,23 @@ export default React.memo(function TokenSection() {
                 PRICE (24H)
               </HeaderText>
               <Flex>
-                <QuestionWrapper style={{ transform: 'translate3d(-5px, 1px, 0)' }}>
-                  <QuestionHelper
-                    width={280}
-                    text={
-                      <>
-                        <Typography color="text1">
-                          Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain.
-                        </Typography>
-                        <Typography color="text1" mt={2}>
-                          It does not reflect the total market cap for multi-chain assets.
-                        </Typography>
-                      </>
-                    }
-                  />
-                </QuestionWrapper>
+                {!isMobile && (
+                  <QuestionWrapper style={{ transform: 'translate3d(-5px, 1px, 0)' }}>
+                    <QuestionHelper
+                      width={280}
+                      text={
+                        <>
+                          <Typography color="text1">
+                            Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain.
+                          </Typography>
+                          <Typography color="text1" mt={2}>
+                            It does not reflect the total market cap for multi-chain assets.
+                          </Typography>
+                        </>
+                      }
+                    />
+                  </QuestionWrapper>
+                )}
 
                 <HeaderText
                   role="button"

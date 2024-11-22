@@ -11,6 +11,8 @@ import CurrencyLogo from '../CurrencyLogo';
 import { DropdownPopper } from '../Popover';
 import CollateralTypeListWrap from './CollateralTypeListWrap';
 
+import { formatSymbol } from '@/utils/formatter';
+
 const Wrap = styled.span`
   cursor: pointer;
   font-size: 18px;

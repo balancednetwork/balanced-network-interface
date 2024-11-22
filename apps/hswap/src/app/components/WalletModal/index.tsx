@@ -151,7 +151,7 @@ const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
   }, [modalId]);
 
   return (
-    <Sheet open={open} onOpenChange={_ => onDismiss()} modal={isMobile}>
+    <Sheet open={open} onOpenChange={_ => isMobile && onDismiss()} modal={isMobile}>
       <SheetContent
         side={isMobile ? 'bottom' : 'right'}
         className={cn(

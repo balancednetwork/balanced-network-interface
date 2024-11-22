@@ -1,9 +1,7 @@
 import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
 import { useDerivedSwapInfo } from '@/store/swap/hooks';
 import { formatValue } from '@/utils/formatter';
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
-import { duration } from 'dayjs';
 import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
@@ -42,8 +40,8 @@ const DollarValue: React.FC<DollarValueProps> = ({ amount, price, showWarning })
   }, [price, amount]);
 
   useEffect(() => {
-    if (price && amount && amount !== '0') {
-      setAnimationIntensity(Math.min(Math.abs(price.times(amount).toNumber()) / 1000, 0.09));
+    if (price && amount && amount !== '0' && amount !== '.') {
+      setAnimationIntensity(Math.min(Math.abs(price.times(amount || 0).toNumber()) / 1000, 0.09));
     } else {
       setAnimationIntensity(0);
     }

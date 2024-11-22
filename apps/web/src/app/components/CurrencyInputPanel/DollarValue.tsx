@@ -28,13 +28,13 @@ const DollarValueWrap = styled.div<{ $warn: boolean }>`
 
 const DollarValue: React.FC<DollarValueProps> = ({ amount, price, showWarning }) => {
   const [dollarValue, setDollarValue] = useState('$0');
-  const [wiggleIntensity, setWiggleIntensity] = useState(0);
+  const [animationIntensity, setAnimationIntensity] = useState(0);
   const { trade } = useDerivedSwapInfo();
 
   const showSlippageWarning = showWarning && trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
 
   useEffect(() => {
-    if (price && amount && amount !== '0') {
+    if (price && amount && amount !== '0' && amount !== '.') {
       setDollarValue(formatValue(price.times(amount || 0).toFixed()));
     } else {
       setDollarValue('$0');
@@ -43,18 +43,19 @@ const DollarValue: React.FC<DollarValueProps> = ({ amount, price, showWarning })
 
   useEffect(() => {
     if (price && amount && amount !== '0') {
-      setWiggleIntensity(Math.min(Math.abs(price.times(amount).toNumber()) / 100, 1));
+      setAnimationIntensity(Math.min(Math.abs(price.times(amount).toNumber()) / 1000, 0.09));
     } else {
-      setWiggleIntensity(0);
+      setAnimationIntensity(0);
     }
   }, [price, amount]);
 
   return (
     <motion.div
       key={dollarValue}
-      initial={{ opacity: 0, x: -wiggleIntensity * 5 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ opacity: { duration: 0.2 }, x: { type: 'spring', stiffness: 800, damping: 10 } }}
+      style={{ transformOrigin: 'center' }}
+      initial={{ opacity: 0, y: 0, x: 20 * animationIntensity, scale: 1 + animationIntensity }}
+      animate={{ opacity: 1, y: 0, x: 0, scale: 1 }}
+      transition={{ duration: 0.3 }}
     >
       <DollarValueWrap $warn={!!showSlippageWarning}>{dollarValue}</DollarValueWrap>
     </motion.div>

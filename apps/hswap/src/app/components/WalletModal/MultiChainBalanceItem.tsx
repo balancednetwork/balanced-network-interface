@@ -1,13 +1,13 @@
+import CurrencyLogoWithNumber from '@/app/components2/CurrencyLogoWithNumber';
+import { ChevronDownIcon, ChevronUpIcon, SubtractIcon } from '@/app/components2/Icons';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
+import { XToken } from '@/xwagmi/types';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import React, { useState } from 'react';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
-import CurrencyLogoWithNumber from '@/app/components2/CurrencyLogoWithNumber';
-import { ChevronDownIcon, ChevronUpIcon, SubtractIcon } from '@/app/components2/Icons';
-import { XToken } from '@/xwagmi/types';
 
 type MultiChainBalanceItemProps = {
   balances: CurrencyAmount<XToken>[];
@@ -43,7 +43,7 @@ const MultiChainBalanceItem = ({ balances }: MultiChainBalanceItemProps) => {
           </div>
 
           <CollapsibleContent asChild>
-            <div className="relative mt-4 mx-6 rounded-3xl bg-[#d4c5f98f] flex flex-col gap-4 py-4">
+            <div className="relative mt-4 mx-6 rounded-3xl bg-[#ffffff4a] flex flex-col gap-4 py-4">
               {balances.map(balance => (
                 <SingleChainBalanceItem
                   key={balance.currency.address}
@@ -54,7 +54,7 @@ const MultiChainBalanceItem = ({ balances }: MultiChainBalanceItemProps) => {
               ))}
 
               <div className="absolute top-[-16px] left-[48px]">
-                <SubtractIcon className="fill-[#d4c5f98f]" />
+                <SubtractIcon className="fill-[#ffffff4a]" />
               </div>
             </div>
           </CollapsibleContent>

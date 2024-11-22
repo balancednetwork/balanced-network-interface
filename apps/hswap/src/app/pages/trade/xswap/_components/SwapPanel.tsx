@@ -19,12 +19,12 @@ import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { getXChainType } from '@/xwagmi/actions';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount } from '@/xwagmi/hooks';
+import { XToken } from '@/xwagmi/types';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import RecipientAddressPanel from './RecipientAddressPanel';
 import XSwapModal, { ConfirmModalState, PendingConfirmModalState } from './XSwapModal';
-import { XToken } from '@/xwagmi/types';
 
 interface XSwapModalState {
   confirmModalState: ConfirmModalState;
@@ -318,6 +318,7 @@ export default function SwapPanel() {
                 onUserInput={handleTypeOutput}
                 onCurrencySelect={handleOutputSelect}
                 type={CurrencyInputPanelType.OUTPUT}
+                showWarning={!!(!canBridge && maximumBridgeAmount)}
               />
               <RecipientAddressPanel />
             </div>
@@ -327,21 +328,15 @@ export default function SwapPanel() {
 
           {!canBridge && maximumBridgeAmount && (
             <div className="flex items-center justify-center mt-2">
-              <div className="text-center text-body">
-                {new BigNumber(maximumBridgeAmount.toFixed()).isGreaterThanOrEqualTo(0.0001) ? (
-                  <>
-                    <Trans>Only</Trans>{' '}
-                    <div className="hover:underline" onClick={handleMaximumBridgeAmountClick}>
-                      {maximumBridgeAmount?.toFixed(4)} {maximumBridgeAmount?.currency?.symbol}
-                    </div>{' '}
-                  </>
-                ) : (
-                  <>
-                    <Trans>0 {maximumBridgeAmount?.currency?.symbol}</Trans>{' '}
-                  </>
-                )}
-
-                <Trans>is available on {xChainMap[direction?.to].name}.</Trans>
+              <div className="text-center text-[14px]">
+                <Trans>Max</Trans>{' '}
+                <span
+                  className="text-warning font-bold hover:underline cursor-pointer"
+                  onClick={handleMaximumBridgeAmountClick}
+                >
+                  {maximumBridgeAmount?.toFixed(4)}
+                </span>{' '}
+                {maximumBridgeAmount?.currency?.symbol}
               </div>
             </div>
           )}

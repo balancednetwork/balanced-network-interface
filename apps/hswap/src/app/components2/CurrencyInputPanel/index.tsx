@@ -5,12 +5,12 @@ import { Input } from '@/components/ui/input';
 import useAmountInUSD from '@/hooks/useAmountInUSD';
 import { cn } from '@/lib/utils';
 import { escapeRegExp, toFraction } from '@/utils';
+import { XToken } from '@/xwagmi/types';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { ChevronDownIcon } from 'lucide-react';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { TokenSelectModal } from '../TokenSelectModal';
-import { XToken } from '@/xwagmi/types';
 
 export enum CurrencyInputPanelType {
   INPUT = 'INPUT',
@@ -30,6 +30,7 @@ interface CurrencyInputPanelProps {
   account?: string | null;
   balance?: CurrencyAmount<XToken> | undefined;
   type: CurrencyInputPanelType;
+  showWarning?: boolean;
 }
 
 const inputRegex = /^\d*(?:\\[.])?\d*$/; // match escaped "." characters via in a non-capturing group
@@ -46,6 +47,7 @@ export default function CurrencyInputPanel({
   account,
   balance,
   type,
+  showWarning,
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
@@ -92,7 +94,10 @@ export default function CurrencyInputPanel({
           minLength={1}
           maxLength={79}
           spellCheck="false"
-          className="p-0 text-center text-4xl font-extrabold leading-10 text-title-gradient bg-transparent border-none focus:border-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+          className={cn(
+            'p-0 text-center text-4xl font-extrabold leading-10 text-title-gradient bg-transparent border-none focus:border-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0',
+            showWarning && 'text-warning',
+          )}
         />
         <div>
           <Button

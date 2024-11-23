@@ -17,4 +17,4 @@ export const _100 = 100n;
 
 export const NULL_CONTRACT_ADDRESS = 'cx0000000000000000000000000000000000000000';
 
-export const STABILITY_FUND_FRACTION = new Fraction(999n, 1000n);
+export const STABILITY_FUND_FRACTION = new Fraction(997n, 1000n);

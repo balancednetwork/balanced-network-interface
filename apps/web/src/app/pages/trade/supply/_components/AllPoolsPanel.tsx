@@ -21,6 +21,7 @@ import Skeleton from '@/app/components/Skeleton';
 import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
 import { PairInfo } from '@/types';
 import { xChainMap } from '@/xwagmi/constants/xChains';
+import { useMedia } from 'react-use';
 
 const COMPACT_ITEM_COUNT = 8;
 
@@ -34,13 +35,8 @@ const DashGrid = styled(Box)`
   display: grid;
   gap: 1em;
   align-items: center;
-  grid-template-columns: repeat(5, 1fr);
-  ${({ theme }) => theme.mediaWidth.upExtraSmall`
-    grid-template-columns: 2fr repeat(4, 1fr);
-  `}
-  ${({ theme }) => theme.mediaWidth.upLarge`
-    grid-template-columns: 1.2fr repeat(4, 1fr);
-  `}
+  grid-template-columns: 1.8fr 1.3fr 1fr 1.1fr 0.9fr;
+  
   > * {
     justify-content: flex-end;
     &:first-child {
@@ -106,7 +102,7 @@ const TooltipWrapper = styled.span`
 const SkeletonPairPlaceholder = () => {
   return (
     <DashGrid my={2}>
-      <DataText minWidth="220px">
+      <DataText>
         <Flex alignItems="center">
           <Box sx={{ minWidth: '95px', minHeight: '48px', position: 'relative' }}>
             <StyledSkeleton variant="circle" width={48} className="pool-icon-skeleton" />
@@ -117,7 +113,7 @@ const SkeletonPairPlaceholder = () => {
           </Text>
         </Flex>
       </DataText>
-      <DataText minWidth="200px">
+      <DataText>
         <Skeleton width={50} />
       </DataText>
       <DataText>
@@ -142,7 +138,7 @@ type PairItemProps = {
 const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
   <>
     <PairGrid my={2} onClick={() => onClick(pair.info)}>
-      <DataText minWidth={'220px'}>
+      <DataText>
         <Flex alignItems="center">
           <Box sx={{ minWidth: '95px' }}>
             <PoolLogo baseCurrency={pair.info.baseToken} quoteCurrency={pair.info.quoteToken} />
@@ -150,7 +146,7 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
           <Text ml={2}>{`${pair.info.baseCurrencyKey} / ${pair.info.quoteCurrencyKey}`}</Text>
         </Flex>
       </DataText>
-      <DataText minWidth={'200px'}>
+      <DataText>
         <Flex flexDirection="column" py={2} alignItems="flex-end">
           {pair.liquidity > MIN_LIQUIDITY_TO_INCLUDE ? (
             <>
@@ -194,6 +190,7 @@ export default function AllPoolsPanel({ query }: { query: string }) {
   const { sortBy, handleSortSelect, sortData } = useSort({ key: 'apyTotal', order: 'DESC' });
   const { noLiquidity } = useDerivedMintInfo();
   const { onCurrencySelection } = useMintActionHandlers(noLiquidity);
+  const showAPRTooltip = useMedia('(min-width: 700px)');
   const [showingExpanded, setShowingExpanded] = React.useState(false);
 
   const handlePoolLick = (pair: PairInfo) => {
@@ -248,7 +245,6 @@ export default function AllPoolsPanel({ query }: { query: string }) {
         <DashGrid>
           <HeaderText
             role="button"
-            minWidth="220px"
             className={sortBy.key === 'name' ? sortBy.order : ''}
             onClick={() =>
               handleSortSelect({
@@ -261,7 +257,6 @@ export default function AllPoolsPanel({ query }: { query: string }) {
             </span>
           </HeaderText>
           <HeaderText
-            minWidth="200px"
             role="button"
             className={sortBy.key === 'apyTotal' ? sortBy.order : ''}
             onClick={() =>
@@ -270,28 +265,32 @@ export default function AllPoolsPanel({ query }: { query: string }) {
               })
             }
           >
-            <TooltipWrapper onClick={e => e.stopPropagation()}>
-              <MouseoverTooltip
-                width={330}
-                text={
-                  <>
-                    <Trans>
-                      The BALN APR is calculated from the USD value of BALN rewards allocated to a pool. Your rate will
-                      vary based on the amount of bBALN you hold.
-                    </Trans>
-                    <br />
-                    <br />
-                    <Trans>The fee APR is calculated from the swap fees earned by a pool over the last 30 days.</Trans>
-                  </>
-                }
-                placement="top"
-                strategy="absolute"
-              >
-                <QuestionWrapper>
-                  <QuestionIcon className="header-tooltip" width={14} />
-                </QuestionWrapper>
-              </MouseoverTooltip>
-            </TooltipWrapper>
+            {showAPRTooltip && (
+              <TooltipWrapper onClick={e => e.stopPropagation()}>
+                <MouseoverTooltip
+                  width={330}
+                  text={
+                    <>
+                      <Trans>
+                        The BALN APR is calculated from the USD value of BALN rewards allocated to a pool. Your rate
+                        will vary based on the amount of bBALN you hold.
+                      </Trans>
+                      <br />
+                      <br />
+                      <Trans>
+                        The fee APR is calculated from the swap fees earned by a pool over the last 30 days.
+                      </Trans>
+                    </>
+                  }
+                  placement="top"
+                  strategy="absolute"
+                >
+                  <QuestionWrapper>
+                    <QuestionIcon className="header-tooltip" width={14} />
+                  </QuestionWrapper>
+                </MouseoverTooltip>
+              </TooltipWrapper>
+            )}
             <Trans>APR</Trans>
           </HeaderText>
           <HeaderText

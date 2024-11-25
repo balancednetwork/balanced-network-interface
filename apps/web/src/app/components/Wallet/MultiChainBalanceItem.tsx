@@ -1,6 +1,6 @@
 import { Typography } from '@/app/theme';
 import { useRatesWithOracle } from '@/queries/reward';
-import { formatBalance, formatValue } from '@/utils/formatter';
+import { formatBalance, formatSymbol, formatValue } from '@/utils/formatter';
 import { XChainId } from '@/xwagmi/types';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
@@ -46,7 +46,7 @@ const MultiChainBalanceItem = ({ baseToken, balances, total, value, searchedXCha
           <CurrencyLogo currency={baseToken} />
           <Typography fontSize={16} fontWeight="bold">
             <span ref={arrowRef} style={{ display: 'inline-block' }}>
-              {symbol}
+              {formatSymbol(symbol)}
             </span>
           </Typography>
         </AssetSymbol>

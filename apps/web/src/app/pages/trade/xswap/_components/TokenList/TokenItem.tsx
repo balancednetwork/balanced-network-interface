@@ -6,10 +6,11 @@ import { DataText } from '@/app/components/List';
 import { MouseoverTooltip } from '@/app/components/Tooltip';
 import { LoaderComponent } from '@/app/pages/vote/_components/styledComponents';
 import { Typography, sizes } from '@/app/theme';
-import { COMBINED_TOKENS_MAP_BY_ADDRESS, useICX } from '@/constants/tokens';
+import { COMBINED_TOKENS_MAP_BY_ADDRESS, ORACLE_PRICED_TOKENS, useICX } from '@/constants/tokens';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import useTimestampRounded from '@/hooks/useTimestampRounded';
 import { TokenStats, useTokenTrendData } from '@/queries/backendv2';
+import { useRatesWithOracle } from '@/queries/reward';
 import { formatPrice, formatPriceChange, getFormattedNumber } from '@/utils/formatter';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
@@ -17,6 +18,7 @@ import { xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XToken } from '@/xwagmi/types';
 import { getSupportedXChainIdsForToken } from '@/xwagmi/xcall/utils';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import BigNumber from 'bignumber.js';
 import React from 'react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
@@ -26,6 +28,7 @@ import Sparkline from './Sparkline';
 
 type TokenItemProps = {
   token: TokenStats;
+  price: BigNumber | undefined;
   isLast: boolean;
 };
 
@@ -37,7 +40,7 @@ const ChainsWrapper = styled.div`
   }
 `;
 
-const TokenItem = ({ token, isLast }: TokenItemProps) => {
+const TokenItem = ({ token, price, isLast }: TokenItemProps) => {
   const ICX = useICX();
   const tsStart = useTimestampRounded(1000 * 60, 7);
   const tsEnd = useTimestampRounded(1000 * 60);
@@ -69,6 +72,8 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
     }, [] as CurrencyAmount<XToken>[]);
   }, [assetManagerTokensBreakdown, token]);
 
+  const isOraclePriced = ORACLE_PRICED_TOKENS.includes(token.symbol);
+
   return (
     <>
       <Grid>
@@ -90,7 +95,6 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
                 {xChainIds.map(xChainId => {
                   try {
                     const spokeAssetVersion: string | undefined = xTokenMap[xChainId].find(xToken => {
-                      console.log(xToken.symbol, currency.symbol);
                       return xToken.symbol === currency.symbol;
                     })?.spokeVersion;
 
@@ -105,7 +109,6 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
                       </MouseoverTooltip>
                     );
                   } catch (e) {
-                    console.log(e);
                     return null;
                   }
                 })}
@@ -115,10 +118,12 @@ const TokenItem = ({ token, isLast }: TokenItemProps) => {
         </DataText>
         <DataText>
           <Flex alignItems="flex-end" flexDirection="column">
-            <Typography variant="p">{formatPrice(token.price)}</Typography>
-            <Typography variant="p" color={token.price >= token.price_24h ? 'primary' : 'alert'}>
-              {formatPriceChange(token.price_24h_change)}
-            </Typography>
+            <Typography variant="p">{price ? formatPrice(price.toFixed()) : '-'}</Typography>
+            {!isOraclePriced && (
+              <Typography variant="p" color={token.price >= token.price_24h ? 'primary' : 'alert'}>
+                {formatPriceChange(token.price_24h_change)}
+              </Typography>
+            )}
           </Flex>
         </DataText>
         <DataText>

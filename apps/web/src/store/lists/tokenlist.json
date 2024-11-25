@@ -273,6 +273,30 @@
       "symbol": "weETH",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/weeth.png"
+    },
+    {
+      "address": "cxb9d0727849a6ce6453f8c9dda2dec2fd543075d4",
+      "chainId": 1,
+      "name": "Volo Staked SUI",
+      "symbol": "VSUI",
+      "decimals": 9,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/vsui.png"
+    },
+    {
+      "address": "cx0664cceb34d391ba78a897200fab94b9b49443d0",
+      "chainId": 1,
+      "name": "Haedal Staked SUI",
+      "symbol": "HASUI",
+      "decimals": 9,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/hasui.png"
+    },
+    {
+      "address": "cx27fa4bdb0522e3be5a51daab06eb39889fb4c8da",
+      "chainId": 1,
+      "name": "Aftermath Staked SUI",
+      "symbol": "AFSUI",
+      "decimals": 9,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/afsui.png"
     }
   ]
 }

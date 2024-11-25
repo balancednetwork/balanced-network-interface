@@ -15,6 +15,7 @@ import { Typography } from '@/app/theme';
 import { COMBINED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
 import useSort from '@/hooks/useSort';
 import { TokenStats, useAllTokensByAddress } from '@/queries/backendv2';
+import { useRatesWithOracle } from '@/queries/reward';
 import { useTokenListConfig } from '@/store/lists/hooks';
 import { getSupportedXChainForToken } from '@/xwagmi/xcall/utils';
 import SkeletonTokenPlaceholder from './SkeletonTokenPlaceholder';
@@ -62,6 +63,7 @@ const TokenList = () => {
   const isSmallScreen = useMedia(`(minWidth: ${theme.mediaWidth.upSmall})`);
   const [query, setQuery] = React.useState('');
   const { community: isCommunityListEnabled } = useTokenListConfig();
+  const prices = useRatesWithOracle();
 
   const tokens = React.useMemo(() => {
     if (!allTokens) return [];
@@ -172,6 +174,7 @@ const TokenList = () => {
                 showingExpanded || index < COMPACT_ITEM_COUNT ? (
                   <TokenItem
                     key={token.symbol}
+                    price={prices?.[token.symbol]}
                     token={token}
                     isLast={index === arr.length - 1 || (!showingExpanded && index === COMPACT_ITEM_COUNT - 1)}
                   />

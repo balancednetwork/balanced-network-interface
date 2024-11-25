@@ -170,7 +170,6 @@ function AddressInputForm({
             onClick={() => {
               // make the input focused
               document.getElementById('recipient-address-input')?.focus();
-              console.log(document.getElementById('recipient-address-input'));
               onEditableChange(true);
             }}
           >

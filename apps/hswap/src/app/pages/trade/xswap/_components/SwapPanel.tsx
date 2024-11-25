@@ -1,8 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { CurrencyAmount, Percent } from '@balancednetwork/sdk-core';
+import { Percent } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 
 import { BlueButton } from '@/app/components2/Button';
 import CurrencyInputPanel, { CurrencyInputPanelType } from '@/app/components2/CurrencyInputPanel';
@@ -50,15 +49,16 @@ export default function SwapPanel() {
     currencyBalances,
     currencies,
     inputError,
-    percents,
-    account,
+    accounts,
     direction,
     formattedAmounts,
     maximumBridgeAmount,
     canBridge,
     xTransactionType,
-    parsedAmount,
+    currencyAmounts,
   } = useDerivedSwapInfo();
+  const account = accounts[Field.INPUT];
+  const inputAmount = currencyAmounts[Field.INPUT];
 
   const signedInWallets = useSignedInWallets();
   const { recipient } = useSwapState();
@@ -129,30 +129,11 @@ export default function SwapPanel() {
     }, 500);
   }, []);
 
-  const inputAmount: CurrencyAmount<XToken> | undefined = useMemo(() => {
-    if (xTransactionType === XTransactionType.BRIDGE && currencies[Field.INPUT] && parsedAmount) {
-      return CurrencyAmount.fromRawAmount(
-        XToken.getXToken(direction.from, currencies[Field.INPUT].wrapped),
-        new BigNumber(parsedAmount.toFixed())
-          .times((10n ** BigInt(currencies[Field.INPUT].decimals)).toString())
-          .toFixed(0),
-      );
-    }
-    return trade?.inputAmount && currencies[Field.INPUT]
-      ? CurrencyAmount.fromRawAmount(
-          XToken.getXToken(direction.from, currencies[Field.INPUT].wrapped),
-          new BigNumber(trade.inputAmount.toFixed())
-            .times((10n ** BigInt(currencies[Field.INPUT].decimals)).toString())
-            .toFixed(0),
-        )
-      : undefined;
-  }, [trade, direction.from, currencies, xTransactionType, parsedAmount]);
-
   const [executionXTransactionInput, setExecutionXTransactionInput] = useState<XTransactionInput>();
   const [pendingModalSteps, setPendingModalSteps] = useState<PendingConfirmModalState[]>([]);
   const sourceXChain = xChainMap[direction.from];
   const { approvalState, approveCallback } = useApproveCallback(inputAmount, sourceXChain.contracts.assetManager);
-  const { xCallFee, formattedXCallFee } = useXCallFee(direction.from, direction.to);
+  const { xCallFee } = useXCallFee(direction.from, direction.to);
   const slippageTolerance = useSwapSlippageTolerance();
   const { sendXTransaction } = useSendXTransaction();
   const cleanupSwap = useCallback(() => {
@@ -263,7 +244,6 @@ export default function SwapPanel() {
 
     try {
       const xTransactionId = await sendXTransaction(executionXTransactionInput);
-      console.log('xTransactionId', xTransactionId);
 
       if (!xTransactionId) {
         throw new Error('xTransactionId is undefined');

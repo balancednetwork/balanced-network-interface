@@ -10,13 +10,13 @@ function useXCallGasChecker(inputAmount: CurrencyAmount<XToken> | undefined): {
   hasEnoughGas: boolean;
   errorMessage: string;
 } {
-  // TODO: || '0x1.icon' is a temporary fix for type checking
-  const xChainId = inputAmount?.currency.xChainId || '0x1.icon';
-
   const walletBalances = useWalletBalances();
 
   return useMemo(() => {
     try {
+      const xChainId = inputAmount?.currency.xChainId;
+      if (!xChainId) return { hasEnoughGas: false, errorMessage: 'Unknown' };
+
       const xChain: XChain = xChainMap[xChainId];
       const nativeCurrency = xChain?.nativeCurrency;
 
@@ -41,7 +41,7 @@ function useXCallGasChecker(inputAmount: CurrencyAmount<XToken> | undefined): {
     }
 
     return { hasEnoughGas: false, errorMessage: 'Unknown' };
-  }, [walletBalances, xChainId, inputAmount]);
+  }, [walletBalances, inputAmount]);
 }
 
 export default useXCallGasChecker;

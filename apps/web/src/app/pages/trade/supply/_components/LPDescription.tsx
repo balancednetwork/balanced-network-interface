@@ -141,7 +141,7 @@ export default function LPDescription() {
         {pairState === PairState.NOT_EXISTS && (
           <Flex flex={1} padding={[5, 7]} flexDirection="column">
             <Typography variant="h3" mb={2} marginBottom={40}>
-              {`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}`}{' '}
+              {`${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} / ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}`}{' '}
               <Trans>liquidity pool</Trans>
             </Typography>
 
@@ -160,9 +160,9 @@ export default function LPDescription() {
             {poolRewards ? (
               <Typography variant="h3" mb={2} marginBottom={40}>
                 {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-                  ? t`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}
+                  ? t`${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} / ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}
                     liquidity pool${upSmall ? ': ' : ''}`
-                  : t`${currencies[Field.CURRENCY_A]?.symbol} queue${upSmall ? ': ' : ''}`}{' '}
+                  : t`${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} queue${upSmall ? ': ' : ''}`}{' '}
                 <Typography fontWeight="normal" fontSize={16} as={upSmall ? 'span' : 'p'}>
                   {apy && allPairs
                     ? `${apy
@@ -201,11 +201,10 @@ export default function LPDescription() {
             ) : (
               <Typography variant="h3" mb={2} marginBottom={40}>
                 {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-                  ? t`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool`
+                  ? t`${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} / ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)} liquidity pool`
                   : t`${currencies[Field.CURRENCY_A]?.symbol} queue`}
               </Typography>
             )}
-
             <Flex flexWrap="wrap">
               <Box
                 width={[1, 1 / 2]} //

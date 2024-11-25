@@ -312,9 +312,9 @@ export default function LPPanel() {
                     <Typography color="white" as="span">
                       {price?.toSignificant(6) ?? '-'}
                     </Typography>{' '}
-                    {currencies[Field.CURRENCY_B]?.symbol}
+                    {formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}
                   </Typography>
-                  <Typography pt={1}>per {currencies[Field.CURRENCY_A]?.symbol}</Typography>
+                  <Typography pt={1}>per {formatSymbol(currencies[Field.CURRENCY_A]?.symbol)}</Typography>
                 </Flex>
                 <VerticalDivider />
                 <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
@@ -322,9 +322,9 @@ export default function LPPanel() {
                     <Typography color="white" as="span">
                       {price?.invert()?.toSignificant(6) ?? '-'}
                     </Typography>{' '}
-                    {currencies[Field.CURRENCY_A]?.symbol}
+                    {formatSymbol(currencies[Field.CURRENCY_A]?.symbol)}
                   </Typography>
-                  <Typography pt={1}>per {currencies[Field.CURRENCY_B]?.symbol}</Typography>
+                  <Typography pt={1}>per {formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}</Typography>
                 </Flex>
               </PoolPriceBar>
             )}

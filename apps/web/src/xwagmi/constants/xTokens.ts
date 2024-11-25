@@ -22,11 +22,11 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   tBTC: '0xa4b1.arbitrum',
   weETH: '0xa4b1.arbitrum',
   wstETH: '0xa4b1.arbitrum',
-  SOL: 'solana',
   XLM: 'stellar',
   AFSUI: 'sui',
   HASUI: 'sui',
   VSUI: 'sui',
+  SOL: 'solana',
   JITOSOL: 'sui',
 };
 
@@ -218,7 +218,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken(
       'stellar',
       'stellar',
-      'CAKU2J5T4TOMFATA56XRDZMQHNBFIOQW3JDZQNQBLNLV7LEWYTNYU6VX',
+      'CCT4ZYIYZ3TUO2AWQFEOFGBZ6HQP3GW5TA37CK7CRZVFRDXYTHTYX7KP',
       18,
       'bnUSD',
       'Balanced Dollar',

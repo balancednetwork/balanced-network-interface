@@ -79,7 +79,7 @@ const quoteResult = await IntentService.getQuote({
   token_src_blockchain_id: "0xa4b1.arbitrum",
   token_dst: "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
   token_dst_blockchain_id: "sui",
-  src_amount: "100000000000000000",
+  src_amount: 100000000000000000n,
 })
 
 /**

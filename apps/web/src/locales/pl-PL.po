@@ -1271,6 +1271,11 @@ msgstr ""
 msgid "less then a minute"
 msgstr "mniej niż minutę"
 
+#: src/store/bridge/hooks.tsx
+#: src/store/swap/hooks.ts
+msgid "Validating Stellar account"
+msgstr ""
+
 #: src/btp/src/connectors/helper.ts
 msgid "Couldn't transfer {0} to {1}. Try again."
 msgstr ""

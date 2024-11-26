@@ -1228,6 +1228,11 @@ msgstr "Depositing bnUSD..."
 msgid "less then a minute"
 msgstr "less then a minute"
 
+#: src/store/bridge/hooks.tsx
+#: src/store/swap/hooks.ts
+msgid "Validating Stellar account"
+msgstr "Validating Stellar account"
+
 #: src/btp/src/connectors/helper.ts
 msgid "Couldn't transfer {0} to {1}. Try again."
 msgstr "Couldn't transfer {0} to {1}. Try again."

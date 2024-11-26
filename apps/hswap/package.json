@@ -107,7 +107,7 @@
   "devDependencies": {
     "@lingui/cli": "4.7.1",
     "@lingui/vite-plugin": "4.7.1",
-    "@types/node": "^22.9.3",
+    "@types/node": "22.5.5",
     "@types/qs": "6.9.7",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.0.6",

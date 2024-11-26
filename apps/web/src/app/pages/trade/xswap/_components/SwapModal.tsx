@@ -80,13 +80,11 @@ const SwapModal = (props: SwapModalProps) => {
         });
     } else {
       const token = executionTrade.inputAmount.currency as Token;
-      const outputToken = executionTrade.outputAmount.currency as Token;
-
       const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', recipient, minReceived).toString('hex');
+      const contract = token.symbol === 'wICX' ? bnJs.wICX : bnJs.getContract(token.address);
 
-      bnJs
+      contract
         .inject({ account })
-        .getContract(token.address)
         .swapUsingRouteV2(toDec(executionTrade.inputAmount), rlpEncodedData)
         .then((res: any) => {
           addTransaction(

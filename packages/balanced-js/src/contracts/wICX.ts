@@ -26,6 +26,10 @@ export default class wICX extends IRC2 {
     return this.transfer(addresses[this.nid].dex, value, JSON.stringify({ method: '_deposit' }));
   }
 
+  swapUsingRouteV2(value: string, rlpEncodedData: string) {
+    return this.transfer(addresses[this.nid].router, value, rlpEncodedData, false);
+  }
+
   unwrap(amount: string) {
     const payload = this.transactionParamsBuilder({
       method: 'unwrap',

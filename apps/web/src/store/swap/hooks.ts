@@ -6,9 +6,10 @@ import { t } from '@lingui/macro';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { NETWORK_ID } from '@/constants/config';
 import { canBeQueue } from '@/constants/currency';
 import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
-import { useICX } from '@/constants/tokens';
+import { useICX, wICX } from '@/constants/tokens';
 import { useAllTokens } from '@/hooks/Tokens';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
@@ -205,23 +206,47 @@ export function useDerivedSwapInfo(): {
   });
   let trade = isExactIn ? trade1 : trade2;
 
+  console.log('current route', trade?.route.routeActionPath);
   //TODO: Remove this when the queue is emptied
   //temporary solution for determining better trade between using wICX and queue pairs
   const ICX = useICX();
-  const parsedAmountTMP = tryParseAmount(typedValue, (isExactIn ? _inputCurrency : ICX) ?? undefined);
+
+  //check trade setup for ICX output
+  const parsedAmountTMP1 = tryParseAmount(typedValue, (isExactIn ? _inputCurrency : ICX) ?? undefined);
   const queueTMP = canBeQueue(_inputCurrency, ICX);
-  const trade1TMP = useTradeExactIn(isExactIn ? parsedAmountTMP : undefined, ICX, {
+  const trade1TMP = useTradeExactIn(isExactIn ? parsedAmountTMP1 : undefined, ICX, {
     maxHops: queueTMP ? 1 : undefined,
   });
-  const trade2TMP = useTradeExactOut(_inputCurrency, !isExactIn ? parsedAmountTMP : undefined, {
+  const trade2TMP = useTradeExactOut(_inputCurrency, !isExactIn ? parsedAmountTMP1 : undefined, {
     maxHops: queueTMP ? 1 : undefined,
   });
   const tradeICX = isExactIn ? trade1TMP : trade2TMP;
+
+  //check trade setup for wICX input
+  const parsedAmountTMP2 = tryParseAmount(typedValue, (isExactIn ? wICX[NETWORK_ID] : _outputCurrency) ?? undefined);
+  const trade1TMP2 = useTradeExactIn(isExactIn ? parsedAmountTMP2 : undefined, _outputCurrency);
+  const trade2TMP2 = useTradeExactOut(wICX[NETWORK_ID], !isExactIn ? parsedAmountTMP2 : undefined);
+  const tradeWICX = isExactIn ? trade1TMP2 : trade2TMP2;
+
+  //if output is wICX, set the trade to the one with the better execution amount
   if (_outputCurrency?.symbol === 'wICX') {
     console.log('trades - default | tradeICX: ', trade?.executionPrice.toFixed(), tradeICX?.executionPrice.toFixed());
     // Pick the trade with the better execution amount
     if (tradeICX && (!trade || tradeICX.executionPrice.greaterThan(trade.executionPrice))) {
       trade = tradeICX;
+    }
+  }
+
+  //if input is ICX, set the trade to the one with the better execution amount
+  if (_inputCurrency?.symbol === 'ICX') {
+    console.log(
+      'NEW trades - default | tradeICX: ',
+      trade?.executionPrice.toFixed(),
+      tradeWICX?.executionPrice.toFixed(),
+    );
+    // Pick the trade with the better execution amount
+    if (tradeWICX && (!trade || tradeWICX.executionPrice.greaterThan(trade.executionPrice))) {
+      trade = tradeWICX;
     }
   }
   //TODO: end of temporary solution

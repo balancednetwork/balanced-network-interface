@@ -103,8 +103,8 @@ msgid "4H"
 msgstr "4H"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Supplying {pair} liquidity..."
-msgstr "Supplying {pair} liquidity..."
+#~ msgid "Supplying {pair} liquidity..."
+#~ msgstr "Supplying {pair} liquidity..."
 
 #: src/app/pages/home/_components/xCollateralModal/index.tsx
 #~ msgid "Collateral action"
@@ -188,6 +188,10 @@ msgstr "Reject"
 msgid "Your allocation"
 msgstr "Your allocation"
 
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Swapping {0} for {1}..."
+msgstr "Swapping {0} for {1}..."
+
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
@@ -214,6 +218,10 @@ msgstr "Borrowing"
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Assets to send"
 msgstr "Assets to send"
+
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "{0} sent to the {1} pool."
+msgstr "{0} sent to the {1} pool."
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #~ msgid "Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity pools."
@@ -607,8 +615,8 @@ msgid "Remove community token list"
 msgstr "Remove community token list"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
-msgstr "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
+#~ msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
+#~ msgstr "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "Verify contract call"
@@ -668,8 +676,8 @@ msgid "Liquidity pools"
 msgstr "Liquidity pools"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Swapping {inputCurrency} for {outputCurrency}..."
-msgstr "Swapping {inputCurrency} for {outputCurrency}..."
+#~ msgid "Swapping {inputCurrency} for {outputCurrency}..."
+#~ msgstr "Swapping {inputCurrency} for {outputCurrency}..."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #~ msgid "Liquidity supplied."
@@ -711,6 +719,10 @@ msgstr "Earn or buy BALN, then lock it up here to boost your rewards."
 msgid "Deposited {0} {collateralType} as collateral."
 msgstr "Deposited {0} {collateralType} as collateral."
 
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Supplying {0} liquidity..."
+msgstr "Supplying {0} liquidity..."
+
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "100 bnUSD"
 msgstr "100 bnUSD"
@@ -751,6 +763,14 @@ msgstr "Before"
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Active"
 msgstr "Active"
+
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Withdrawing {0} / {1} liquidity..."
+msgstr "Withdrawing {0} / {1} liquidity..."
+
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Sending {0} to the {1} pool..."
+msgstr "Sending {0} to the {1} pool..."
 
 #: src/hooks/useApproveCallback.tsx
 #: src/hooks/useApproveCallback.tsx
@@ -811,8 +831,8 @@ msgstr "Withdrew {0} bnUSD."
 #~ msgstr "sign in"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
-msgstr "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
+#~ msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
+#~ msgstr "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Change vote?"
@@ -909,8 +929,8 @@ msgid "sign in with"
 msgstr "sign in with"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Supplied {pair} liquidity."
-msgstr "Supplied {pair} liquidity."
+#~ msgid "Supplied {pair} liquidity."
+#~ msgstr "Supplied {pair} liquidity."
 
 #: src/app/components/AppBar/index.tsx
 #: src/app/Routes.tsx
@@ -1108,8 +1128,8 @@ msgid "Description"
 msgstr "Description"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Couldn't supply {pair} liquidity. Try again."
-msgstr "Couldn't supply {pair} liquidity. Try again."
+#~ msgid "Couldn't supply {pair} liquidity. Try again."
+#~ msgstr "Couldn't supply {pair} liquidity. Try again."
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Add community token list"
@@ -1309,6 +1329,10 @@ msgstr "Wallet: {0} {1}"
 msgid "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
 msgstr "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
 
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Couldn't supply {0} liquidity. Try again."
+msgstr "Couldn't supply {0} liquidity. Try again."
+
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Forum link"
 msgstr "Forum link"
@@ -1343,6 +1367,10 @@ msgstr "Transfer fee:"
 #: src/app/components/home/Savings/index.tsx
 msgid "Withdraw bnUSD?"
 msgstr "Withdraw bnUSD?"
+
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Couldn't send {0} to the {1} pool. Try again."
+msgstr "Couldn't send {0} to the {1} pool. Try again."
 
 #: src/store/swap/hooks.ts
 msgid "Select a token"
@@ -1409,6 +1437,10 @@ msgstr "Couldn't remove {0} from {1}. Try again."
 #: src/app/components/ProposalInfo/components.tsx
 msgid "{value}% voted"
 msgstr "{value}% voted"
+
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Couldn't withdraw {0} / {1} liquidity. Try again."
+msgstr "Couldn't withdraw {0} / {1} liquidity. Try again."
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -1556,8 +1588,8 @@ msgid "Withdrawing sICX..."
 msgstr "Withdrawing sICX..."
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "{currency} sent to the {pair} pool."
-msgstr "{currency} sent to the {pair} pool."
+#~ msgid "{currency} sent to the {pair} pool."
+#~ msgstr "{currency} sent to the {pair} pool."
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "For"
@@ -1831,6 +1863,10 @@ msgstr "If the price slips by more than this amount, your swap will fail."
 msgid "Voting weight"
 msgstr "Voting weight"
 
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Supplied {0} liquidity."
+msgstr "Supplied {0} liquidity."
+
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 msgid "Your position requires"
 msgstr "Your position requires"
@@ -2002,6 +2038,10 @@ msgstr "Unlocked {0} BALN."
 #: src/app/components/WalletModal/IconWalletModal.tsx
 #~ msgid "Choose a wallet from your Ledger:"
 #~ msgstr "Choose a wallet from your Ledger:"
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+msgid "ICX queue"
+msgstr "ICX queue"
 
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
 #~ msgid "Revert"
@@ -2186,16 +2226,16 @@ msgid "Loan interest"
 msgstr "Loan interest"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
-msgstr "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
+#~ msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
+#~ msgstr "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Connected to {numberOfConnectedWallets} blockchains"
 msgstr "Connected to {numberOfConnectedWallets} blockchains"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Couldn't send {currency} to the {pair} pool. Try again."
-msgstr "Couldn't send {currency} to the {pair} pool. Try again."
+#~ msgid "Couldn't send {currency} to the {pair} pool. Try again."
+#~ msgstr "Couldn't send {currency} to the {pair} pool. Try again."
 
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "Total daily rewards"
@@ -2485,6 +2525,10 @@ msgstr "Your earning potential depends on your bBALN holdings and position size 
 msgid "Receive / repay on:"
 msgstr "Receive / repay on:"
 
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "{inputAmount} {0} and {outputAmount} {1} added to your wallet."
+msgstr "{inputAmount} {0} and {outputAmount} {1} added to your wallet."
+
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "There are no pending cross-chain transactions."
 msgstr "There are no pending cross-chain transactions."
@@ -2635,8 +2679,12 @@ msgid "Pay a {0} BALN fee to unlock early."
 msgstr "Pay a {0} BALN fee to unlock early."
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Sending {currency} to the {pair} pool..."
-msgstr "Sending {currency} to the {pair} pool..."
+#~ msgid "Sending {currency} to the {pair} pool..."
+#~ msgstr "Sending {currency} to the {pair} pool..."
+
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Swapped {inputAmount} {0} for {outputAmount} {1}."
+msgstr "Swapped {inputAmount} {0} for {outputAmount} {1}."
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 msgid "Preparing to unstake sICX..."
@@ -2682,8 +2730,8 @@ msgid "The current {0} price is"
 msgstr "The current {0} price is"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
-msgstr "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
+#~ msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
+#~ msgstr "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx

@@ -120,15 +120,9 @@ export function useValidateStellarAccount(
       }
 
       try {
-        const account = await stellarService.server.loadAccount(address);
-        const xlmBalance = Number(account.balances.find(b => b.asset_type === 'native')?.balance || 0);
-        if (xlmBalance > 1) {
-          return { ok: true };
-        } else {
-          return { ok: false, error: 'Fund your Stellar account' };
-        }
+        await stellarService.server.loadAccount(address);
       } catch (e) {
-        return { ok: false, error: 'Invalid Stellar account' };
+        return { ok: false, error: 'Fund the Stellar account' };
       }
     },
   });

@@ -15,6 +15,7 @@ import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
 import { XChainId, XToken } from '@/xwagmi/types';
 import { isDenomAsset } from '@/xwagmi/xchains/archway/utils';
+import { useValidateStellarAccount } from '@/xwagmi/xchains/stellar/utils';
 import {
   Field,
   selectChain,
@@ -130,6 +131,11 @@ export function useDerivedBridgeInfo() {
   const xAccount = useXAccount(getXChainType(bridgeDirection.from));
   const account = xAccount.address;
 
+  //temporary check for valid stellar account
+  const { data: stellarValidation, isLoading: validatingStellarAccount } = useValidateStellarAccount(
+    bridgeDirection.to === 'stellar' ? recipient : undefined,
+  );
+
   const errorMessage = useMemo(() => {
     if (!account) return t`Connect wallet`;
 
@@ -152,10 +158,26 @@ export function useDerivedBridgeInfo() {
       ) {
         return t`Insufficient ${currencyAmountToBridge.currency.symbol}`;
       } else {
+        if (validatingStellarAccount) {
+          return t`Validating Stellar account`;
+        }
+
+        if (stellarValidation?.ok === false) {
+          return stellarValidation.error;
+        }
         return undefined;
       }
     }
-  }, [bridgeDirection.from, crossChainWallet, currencyAmountToBridge, signedInWallets, account, recipient]);
+  }, [
+    bridgeDirection.from,
+    crossChainWallet,
+    currencyAmountToBridge,
+    signedInWallets,
+    account,
+    recipient,
+    stellarValidation,
+    validatingStellarAccount,
+  ]);
 
   const selectedTokenWalletBalance = React.useMemo(() => {
     if (currencyToBridge) {

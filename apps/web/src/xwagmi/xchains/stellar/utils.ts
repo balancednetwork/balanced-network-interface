@@ -1,3 +1,4 @@
+import { useXService } from '@/xwagmi/hooks';
 import { StellarWalletsKit } from '@creit.tech/stellar-wallets-kit';
 import {
   Address,
@@ -13,7 +14,9 @@ import {
   scValToBigInt,
   xdr,
 } from '@stellar/stellar-sdk';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import CustomSorobanServer from './CustomSorobanServer';
+import { StellarXService } from './StellarXService';
 
 export const STELLAR_RLP_MSG_TYPE = { type: 'symbol' };
 
@@ -103,3 +106,30 @@ export const isStellarAddress = (address: string) => {
     return false;
   }
 };
+
+export function useValidateStellarAccount(
+  address?: string | null,
+): UseQueryResult<{ ok: true } | { ok: false; error: string }> {
+  const stellarService = useXService('STELLAR') as StellarXService;
+
+  return useQuery({
+    queryKey: [`stellarAccountValidation`, stellarService, address],
+    queryFn: async () => {
+      if (!address) {
+        return { ok: true };
+      }
+
+      try {
+        const account = await stellarService.server.loadAccount(address);
+        const xlmBalance = Number(account.balances.find(b => b.asset_type === 'native')?.balance || 0);
+        if (xlmBalance > 1) {
+          return { ok: true };
+        } else {
+          return { ok: false, error: 'Fund your Stellar account' };
+        }
+      } catch (e) {
+        return { ok: false, error: 'Invalid Stellar account' };
+      }
+    },
+  });
+}

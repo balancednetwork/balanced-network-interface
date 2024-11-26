@@ -16,8 +16,10 @@ import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
 import { getXChainType } from '@/xwagmi/actions';
-import { useXAccount } from '@/xwagmi/hooks';
+import { useXAccount, useXService } from '@/xwagmi/hooks';
 import { XChainId, XToken } from '@/xwagmi/types';
+import { StellarXService } from '@/xwagmi/xchains/stellar';
+import { useValidateStellarAccount } from '@/xwagmi/xchains/stellar/utils';
 import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
 import {
@@ -293,6 +295,19 @@ export function useDerivedSwapInfo(): {
   const canBridge = useMemo(() => {
     return maximumBridgeAmount && outputCurrencyAmount ? maximumBridgeAmount?.greaterThan(outputCurrencyAmount) : true;
   }, [maximumBridgeAmount, outputCurrencyAmount]);
+
+  //temporary check for valid stellar account
+  const { data: stellarValidation, isLoading: validatingStellarAccount } = useValidateStellarAccount(
+    direction.to === 'stellar' ? recipient : undefined,
+  );
+
+  if (validatingStellarAccount) {
+    inputError = t`Validating Stellar account`;
+  }
+
+  if (stellarValidation?.ok === false) {
+    inputError = stellarValidation.error;
+  }
 
   return {
     account,

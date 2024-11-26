@@ -30,6 +30,10 @@ export class XToken extends Token {
   isNativeXToken() {
     return 'native' === this.address;
   }
+
+  get id(): string {
+    return `${this.xChainId}:${this.address}`;
+  }
 }
 
 export type XWalletAssetRecord = {

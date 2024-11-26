@@ -8,7 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { canBeQueue } from '@/constants/currency';
 import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
-import { useAllTokens } from '@/hooks/Tokens';
+import { useAllXTokens } from '@/hooks/Tokens';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
@@ -26,7 +26,6 @@ import {
   selectCurrency,
   selectPercent,
   setRecipient,
-  switchChain,
   switchCurrencies,
   typeInput,
 } from './reducer';
@@ -44,7 +43,7 @@ export function useSwapActionHandlers() {
       dispatch(
         selectCurrency({
           field,
-          currency: currency,
+          currency: XToken.getXToken('0x1.icon', currency.wrapped),
         }),
       );
     },
@@ -62,10 +61,6 @@ export function useSwapActionHandlers() {
     },
     [dispatch],
   );
-
-  const onSwitchChain = useCallback(() => {
-    dispatch(switchChain());
-  }, [dispatch]);
 
   const onPercentSelection = useCallback(
     (field: Field, percent: number, value: string) => {
@@ -99,12 +94,11 @@ export function useSwapActionHandlers() {
     onChangeRecipient,
     onPercentSelection,
     onChainSelection,
-    onSwitchChain,
   };
 }
 
 // try to parse a user entered amount for a given token
-export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmount<Currency> | undefined {
+export function tryParseAmount<T extends Currency>(value?: string, currency?: T): CurrencyAmount<T> | undefined {
   if (!value || !currency) {
     return undefined;
   }
@@ -125,18 +119,15 @@ export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmo
 export function useDerivedSwapInfo(): {
   account: string | undefined;
   trade: Trade<Currency, Currency, TradeType> | undefined;
-  currencies: { [field in Field]?: Currency };
+  currencies: { [field in Field]?: XToken };
   _currencies: { [field in Field]?: Currency };
   percents: { [field in Field]?: number };
-  currencyBalances: { [field in Field]?: CurrencyAmount<Currency> | undefined };
+  currencyBalances: { [field in Field]?: CurrencyAmount<XToken> | undefined };
   parsedAmount: CurrencyAmount<Currency> | undefined;
   inputError?: string;
   allowedSlippage: number;
   price: Price<Token, Token> | undefined;
-  direction: {
-    from: XChainId;
-    to: XChainId;
-  };
+  direction: { from: XChainId; to: XChainId };
   dependentField: Field;
   parsedAmounts: {
     [field in Field]: CurrencyAmount<Currency> | undefined;
@@ -151,9 +142,11 @@ export function useDerivedSwapInfo(): {
     independentField,
     typedValue,
     recipient,
-    [Field.INPUT]: { currency: inputCurrency, percent: inputPercent, xChainId: inputXChainId },
-    [Field.OUTPUT]: { currency: outputCurrency, xChainId: outputXChainId },
+    [Field.INPUT]: { currency: inputCurrency, percent: inputPercent },
+    [Field.OUTPUT]: { currency: outputCurrency },
   } = useSwapState();
+  const inputXChainId = inputCurrency?.xChainId;
+  const outputXChainId = outputCurrency?.xChainId;
 
   const xAccount = useXAccount(getXChainType(inputXChainId));
   const account = xAccount.address;
@@ -162,14 +155,18 @@ export function useDerivedSwapInfo(): {
 
   const isExactIn: boolean = independentField === Field.INPUT;
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
-  const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(() => {
+  const currencyBalances: { [field in Field]?: CurrencyAmount<XToken> } = React.useMemo(() => {
     return {
-      [Field.INPUT]: inputCurrency ? crossChainWallet[inputXChainId]?.[inputCurrency?.wrapped.address] : undefined,
-      [Field.OUTPUT]: outputCurrency ? crossChainWallet[outputXChainId]?.[outputCurrency?.wrapped.address] : undefined,
+      [Field.INPUT]: inputCurrency
+        ? crossChainWallet[inputCurrency.xChainId]?.[inputCurrency?.wrapped.address]
+        : undefined,
+      [Field.OUTPUT]: outputCurrency
+        ? crossChainWallet[outputCurrency.xChainId]?.[outputCurrency?.wrapped.address]
+        : undefined,
     };
-  }, [inputXChainId, outputXChainId, crossChainWallet, inputCurrency, outputCurrency]);
+  }, [crossChainWallet, inputCurrency, outputCurrency]);
 
-  const currencies: { [field in Field]?: Currency } = useMemo(() => {
+  const currencies: { [field in Field]?: XToken } = useMemo(() => {
     return {
       [Field.INPUT]: inputCurrency ?? undefined,
       [Field.OUTPUT]: outputCurrency ?? undefined,
@@ -249,8 +246,8 @@ export function useDerivedSwapInfo(): {
 
   const direction = useMemo(
     () => ({
-      from: inputXChainId,
-      to: outputXChainId,
+      from: inputXChainId || '0x1.icon',
+      to: outputXChainId || '0x1.icon',
     }),
     [inputXChainId, outputXChainId],
   );
@@ -317,37 +314,34 @@ export function useDerivedSwapInfo(): {
 export function useInitialSwapLoad(): void {
   const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
   const navigate = useNavigate();
-  const tokens = useAllTokens();
+  const tokens = useAllXTokens();
   const { pair = '' } = useParams<{ pair: string }>();
-  const { onCurrencySelection, onChainSelection } = useSwapActionHandlers();
+  const { onCurrencySelection } = useSwapActionHandlers();
   const { currencies } = useDerivedSwapInfo();
 
   useEffect(() => {
     if (firstLoad && Object.values(tokens).length > 0) {
       const tokensArray = Object.values(tokens);
 
-      const inputToken = pair.split('_')[0];
+      const inputToken = pair.split('_')[0] || '';
       const outputToken = pair.split('_')[1] || '';
       const [currentBase, currentBaseXChainId] = inputToken.split(':');
       const [currentQuote, currentQuoteXChainId] = outputToken.split(':');
 
-      const quote =
-        currentQuote && tokensArray.find(token => token.symbol?.toLowerCase() === currentQuote?.toLocaleLowerCase());
-      const base = currentBase && tokensArray.find(token => token.symbol?.toLowerCase() === currentBase?.toLowerCase());
+      const quote = tokensArray.find(
+        x => x.symbol.toLowerCase() === currentQuote.toLowerCase() && x.xChainId === currentQuoteXChainId,
+      );
+      const base = tokensArray.find(
+        x => x.symbol.toLowerCase() === currentBase.toLowerCase() && x.xChainId === currentBaseXChainId,
+      );
+
       if (quote && base) {
         onCurrencySelection(Field.INPUT, base);
         onCurrencySelection(Field.OUTPUT, quote);
-
-        if (currentBaseXChainId) {
-          onChainSelection(Field.INPUT, currentBaseXChainId as XChainId);
-        }
-        if (currentQuoteXChainId) {
-          onChainSelection(Field.OUTPUT, currentQuoteXChainId as XChainId);
-        }
       }
       setFirstLoad(false);
     }
-  }, [firstLoad, tokens, onCurrencySelection, onChainSelection, pair]);
+  }, [firstLoad, tokens, onCurrencySelection, pair]);
 
   useEffect(() => {
     if (!firstLoad && currencies.INPUT && currencies.OUTPUT) {

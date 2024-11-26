@@ -1,0 +1,43 @@
+{
+  "name": "@balancednetwork/intents-sdk",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "Balanced Network Intents SDK",
+  "keywords": ["intents-sdk"],
+  "homepage": "https://github.com/balancednetwork/balanced-network-interface",
+  "bugs": {
+    "url": "https://github.com/balancednetwork/balanced-network-interface/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/balancednetwork/balanced-network-interface"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "dev": "vitest",
+    "ci": "pnpm run pretty && pnpm run build && npm run check-exports",
+    "pretty": "biome format . --write",
+    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
+    "prepublishOnly": "npm run ci",
+    "local-release": "changeset version && changeset publish"
+  },
+  "files": ["dist"],
+  "type": "module",
+  "dependencies": {
+    "@mysten/bcs": "^1.1.0",
+    "@mysten/sui": "^1.14.1",
+    "@mysten/wallet-standard": "^0.13.9",
+    "@uniswap/permit2-sdk": "^1.3.0",
+    "tiny-invariant": "1.3.3",
+    "viem": "^2.21.35"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.16.4",
+    "@changesets/cli": "^2.27.9",
+    "@types/node": "^22.9.3",
+    "typescript": "5.5.4",
+    "vitest": "^2.1.3"
+  }
+}

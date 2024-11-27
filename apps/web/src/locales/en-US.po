@@ -2691,6 +2691,10 @@ msgstr "The current {0} price is"
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
 msgstr "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
 
+#: src/xwagmi/xchains/stellar/utils.ts
+msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."
+msgstr "Stellar wallet inactive. Add at least 1 XLM from an external source."
+
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx

@@ -125,7 +125,6 @@ export function useDerivedSwapInfo(): {
   currencyBalances: { [field in Field]?: CurrencyAmount<XToken> | undefined };
   parsedAmount: CurrencyAmount<Currency> | undefined;
   inputError?: string;
-  allowedSlippage: number;
   price: Price<Token, Token> | undefined;
   direction: { from: XChainId; to: XChainId };
   dependentField: Field;
@@ -180,10 +179,8 @@ export function useDerivedSwapInfo(): {
     [inputPercent],
   );
 
-  const _inputCurrency =
-    inputXChainId === '0x1.icon' ? inputCurrency : getXTokenBySymbol('0x1.icon', inputCurrency?.symbol);
-  const _outputCurrency =
-    outputXChainId === '0x1.icon' ? outputCurrency : getXTokenBySymbol('0x1.icon', outputCurrency?.symbol);
+  const _inputCurrency = getXTokenBySymbol('0x1.icon', inputCurrency?.symbol);
+  const _outputCurrency = getXTokenBySymbol('0x1.icon', outputCurrency?.symbol);
   const _currencies: { [field in Field]?: Currency } = useMemo(() => {
     return {
       [Field.INPUT]: _inputCurrency ?? undefined,
@@ -218,9 +215,6 @@ export function useDerivedSwapInfo(): {
   if (!currencies[Field.INPUT] || !currencies[Field.OUTPUT]) {
     inputError = inputError ?? t`Select a token`;
   }
-
-  // compare input balance to max input based on version
-  const allowedSlippage = useSwapSlippageTolerance();
 
   const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], trade?.inputAmount];
 
@@ -299,7 +293,6 @@ export function useDerivedSwapInfo(): {
     currencyBalances,
     parsedAmount,
     inputError,
-    allowedSlippage,
     percents,
     price,
     direction,

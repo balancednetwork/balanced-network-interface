@@ -1,36 +1,32 @@
 import React, { useCallback } from 'react';
 
-import { Currency, Percent, TradeType } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Percent, TradeType, XToken } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans, t } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
-import ClickAwayListener from 'react-click-away-listener';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
+import BridgeLimitWarning from '@/app/components/BridgeLimitWarning';
 import { Button } from '@/app/components/Button';
 import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
-import { UnderlineText, UnderlineTextWithArrow } from '@/app/components/DropdownText';
 import { BrightPanel } from '@/app/components/Panel';
-import { DropdownPopper } from '@/app/components/Popover';
 import { SelectorType } from '@/app/components/SearchModal/CurrencySearch';
 import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
-import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
 import useManualAddresses from '@/hooks/useManualAddresses';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { useSwapSlippageTolerance, useWalletModalToggle } from '@/store/application/hooks';
+import { useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
-import { formatPercent, maxAmountSpend } from '@/utils';
+import { maxAmountSpend } from '@/utils';
 import { getXChainType } from '@/xwagmi/actions';
-import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount, useXConnect, useXConnectors } from '@/xwagmi/hooks';
 import { XChainId } from '@/xwagmi/types';
-import AdvancedSwapDetails from './AdvancedSwapDetails';
+import PriceImpact from './PriceImpact';
+import SwapInfo from './SwapInfo';
 import SwapModal from './SwapModal';
 import XSwapModal from './XSwapModal';
 
@@ -49,7 +45,6 @@ export default function SwapPanel() {
     maximumBridgeAmount,
     canBridge,
   } = useDerivedSwapInfo();
-  const showSlippageWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
 
   const signedInWallets = useSignedInWallets();
   const { recipient } = useSwapState();
@@ -71,19 +66,19 @@ export default function SwapPanel() {
     [onChainSelection],
   );
 
-  const xAccount = useXAccount(getXChainType(direction.to));
+  const outputAccount = useXAccount(getXChainType(direction.to));
 
   const { manualAddresses, setManualAddress } = useManualAddresses();
 
   React.useEffect(() => {
     if (manualAddresses[direction.to]) {
       onChangeRecipient(manualAddresses[direction.to] ?? null);
-    } else if (xAccount.address) {
-      onChangeRecipient(xAccount.address);
+    } else if (outputAccount.address) {
+      onChangeRecipient(outputAccount.address);
     } else {
       onChangeRecipient(null);
     }
-  }, [onChangeRecipient, xAccount, manualAddresses[direction.to], direction.to]);
+  }, [onChangeRecipient, outputAccount, manualAddresses[direction.to], direction.to]);
 
   const handleTypeInput = useCallback(
     (value: string) => {
@@ -131,7 +126,6 @@ export default function SwapPanel() {
     [onPercentSelection, maxInputAmount],
   );
 
-  const slippageTolerance = useSwapSlippageTolerance();
   const isValid = !inputError && canBridge;
 
   const xChainType = getXChainType(direction.from);
@@ -186,25 +180,8 @@ export default function SwapPanel() {
     xConnect,
   ]);
 
-  const minimumToReceive = trade?.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-  const priceImpact = formatPercent(new BigNumber(trade?.priceImpact.toFixed() || 0));
-
-  const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
-
-  const arrowRef = React.useRef(null);
-
-  const handleToggleDropdown = (e: React.MouseEvent<HTMLElement>) => {
-    setAnchor(anchor ? null : arrowRef.current);
-  };
-
-  const closeDropdown = () => {
-    setAnchor(null);
-  };
-
-  const handleMaximumBridgeAmountClick = () => {
-    if (maximumBridgeAmount) {
-      onUserInput(Field.OUTPUT, maximumBridgeAmount?.toFixed(4));
-    }
+  const handleMaximumBridgeAmountClick = (amount: CurrencyAmount<XToken>) => {
+    onUserInput(Field.OUTPUT, amount?.toFixed(4));
   };
 
   const swapButton = isValid ? (
@@ -297,68 +274,16 @@ export default function SwapPanel() {
         </AutoColumn>
 
         <AutoColumn gap="5px" mt={5}>
-          <Flex alignItems="center" justifyContent="space-between">
-            <Typography>
-              <Trans>Price impact</Trans>
-            </Typography>
+          <PriceImpact trade={trade} />
 
-            <Typography
-              className={showSlippageWarning ? 'error-anim' : ''}
-              color={showSlippageWarning ? 'alert' : 'text'}
-            >
-              {priceImpact}
-            </Typography>
-          </Flex>
-
-          <Flex alignItems="center" justifyContent="space-between">
-            <Typography>
-              <Trans>Minimum to receive</Trans>
-            </Typography>
-
-            <ClickAwayListener onClickAway={closeDropdown}>
-              <div>
-                <UnderlineTextWithArrow
-                  onClick={handleToggleDropdown}
-                  text={
-                    minimumToReceive
-                      ? `${minimumToReceive?.toFixed(4)} ${minimumToReceive?.currency.symbol}`
-                      : `0 ${currencies[Field.OUTPUT]?.symbol}`
-                  }
-                  arrowRef={arrowRef}
-                />
-
-                <DropdownPopper show={Boolean(anchor)} anchorEl={anchor} placement="bottom-end">
-                  <AdvancedSwapDetails />
-                </DropdownPopper>
-              </div>
-            </ClickAwayListener>
-          </Flex>
+          <SwapInfo trade={trade} />
 
           <Flex justifyContent="center" mt={4}>
             {swapButton}
           </Flex>
 
           {!canBridge && maximumBridgeAmount && (
-            <Flex alignItems="center" justifyContent="center" mt={2}>
-              <Typography textAlign="center">
-                {new BigNumber(maximumBridgeAmount.toFixed()).isGreaterThanOrEqualTo(0.0001) ? (
-                  <>
-                    <Trans>Only</Trans>{' '}
-                    <UnderlineText onClick={handleMaximumBridgeAmountClick}>
-                      <Typography color="primaryBright" as="a">
-                        {maximumBridgeAmount?.toFixed(4)} {maximumBridgeAmount?.currency?.symbol}
-                      </Typography>
-                    </UnderlineText>{' '}
-                  </>
-                ) : (
-                  <>
-                    <Trans>0 {maximumBridgeAmount?.currency?.symbol}</Trans>{' '}
-                  </>
-                )}
-
-                <Trans>available on {xChainMap[direction?.to].name}.</Trans>
-              </Typography>
-            </Flex>
+            <BridgeLimitWarning limitAmount={maximumBridgeAmount} onLimitAmountClick={handleMaximumBridgeAmountClick} />
           )}
         </AutoColumn>
       </BrightPanel>

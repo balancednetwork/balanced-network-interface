@@ -2,14 +2,13 @@ import React, { useCallback } from 'react';
 
 import { Percent } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass/styled-components';
 
 import AddressInputPanel from '@/app/components/AddressInputPanel';
+import BridgeLimitWarning from '@/app/components/BridgeLimitWarning';
 import { Button } from '@/app/components/Button';
 import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
-import { UnderlineText } from '@/app/components/DropdownText';
 import { BrightPanel } from '@/app/components/Panel';
 import { CurrencySelectionType, SelectorType } from '@/app/components/SearchModal/CurrencySearch';
 import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
@@ -200,26 +199,7 @@ export default function BridgeTransferForm({ openModal }) {
           </Flex>
 
           {!canBridge && maximumBridgeAmount && (
-            <Flex alignItems="center" justifyContent="center" mt={2}>
-              <Typography textAlign="center">
-                {new BigNumber(maximumBridgeAmount.toFixed()).isGreaterThanOrEqualTo(0.0001) ? (
-                  <>
-                    <Trans>Only</Trans>{' '}
-                    <UnderlineText onClick={handleMaximumBridgeAmountClick}>
-                      <Typography color="primaryBright" as="a">
-                        {maximumBridgeAmount?.toFixed(4)} {maximumBridgeAmount?.currency?.symbol}
-                      </Typography>
-                    </UnderlineText>{' '}
-                  </>
-                ) : (
-                  <>
-                    <Trans>0 {maximumBridgeAmount?.currency?.symbol}</Trans>{' '}
-                  </>
-                )}
-
-                <Trans>available on {xChainMap[bridgeDirection?.to].name}.</Trans>
-              </Typography>
-            </Flex>
+            <BridgeLimitWarning limitAmount={maximumBridgeAmount} onLimitAmountClick={handleMaximumBridgeAmountClick} />
           )}
         </AutoColumn>
       </BrightPanel>

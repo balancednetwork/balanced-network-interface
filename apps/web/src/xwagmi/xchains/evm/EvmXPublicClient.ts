@@ -42,7 +42,7 @@ export class EvmXPublicClient extends XPublicClient {
   async getBalance(address: string | undefined, xToken: XToken) {
     if (!address) return;
 
-    if (xToken.isNativeXToken()) {
+    if (xToken.isNativeToken) {
       const balance = await this.getPublicClient().getBalance({ address: address as Address });
       return CurrencyAmount.fromRawAmount(xToken, balance);
     } else {
@@ -54,7 +54,7 @@ export class EvmXPublicClient extends XPublicClient {
     if (!address) return {};
 
     const balancePromises = xTokens
-      .filter(xToken => xToken.isNativeXToken())
+      .filter(xToken => xToken.isNativeToken)
       .map(async xToken => {
         const balance = await this.getBalance(address, xToken);
         return { symbol: xToken.symbol, address: xToken.address, balance };
@@ -66,7 +66,7 @@ export class EvmXPublicClient extends XPublicClient {
       return map;
     }, {});
 
-    const nonNativeXTokens = xTokens.filter(xToken => !xToken.isNativeXToken());
+    const nonNativeXTokens = xTokens.filter(xToken => !xToken.isNativeToken);
     const result = await this.getPublicClient().multicall({
       contracts: nonNativeXTokens.map(token => ({
         abi: erc20Abi,

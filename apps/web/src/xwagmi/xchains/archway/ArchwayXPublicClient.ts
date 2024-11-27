@@ -39,7 +39,7 @@ export class ArchwayXPublicClient extends XPublicClient {
   async getBalance(address: string | undefined, xToken: XToken) {
     if (!address) return;
 
-    if (xToken.isNativeXToken()) {
+    if (xToken.isNativeToken) {
       const archTokenBalance = await this.getPublicClient().getBalance(address, ARCHWAY_FEE_TOKEN_SYMBOL);
       return CurrencyAmount.fromRawAmount(xToken, archTokenBalance.amount || 0);
     } else if (isDenomAsset(xToken)) {

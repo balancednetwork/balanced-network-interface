@@ -1,7 +1,8 @@
 import { UnderlineText } from '@/app/components/DropdownText';
 import { Typography } from '@/app/theme';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
+import { XToken } from '@/xwagmi/types';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import React from 'react';

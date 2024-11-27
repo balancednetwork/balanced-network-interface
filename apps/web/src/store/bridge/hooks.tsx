@@ -10,7 +10,7 @@ import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { AppState } from '@/store';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
+import { getXTokenBySymbol } from '@/utils/xTokens';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
 import { XChainId, XToken } from '@/xwagmi/types';
@@ -188,7 +188,7 @@ export function useDerivedBridgeInfo() {
   const { data: assetManager } = useAssetManagerTokens();
 
   const maximumBridgeAmount = useMemo(() => {
-    return assetManager?.[getXAddress(outputCurrency) ?? '']?.depositedAmount;
+    return assetManager?.[outputCurrency?.id ?? '']?.depositedAmount;
   }, [assetManager, outputCurrency]);
 
   const canBridge = useMemo(() => {

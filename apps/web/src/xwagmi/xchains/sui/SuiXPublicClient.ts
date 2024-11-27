@@ -17,7 +17,7 @@ export class SuiXPublicClient extends XPublicClient {
   async getBalance(address: string | undefined, xToken: XToken) {
     if (!address) return;
 
-    if (xToken.isNativeXToken()) {
+    if (xToken.isNativeToken) {
       const balance = await this.getPublicClient().getBalance({
         owner: address,
         coinType: '0x2::sui::SUI',
@@ -40,7 +40,7 @@ export class SuiXPublicClient extends XPublicClient {
         owner: address,
       });
       const tokenMap = xTokens.reduce((map, xToken) => {
-        const coinType = xToken.isNativeXToken() ? '0x2::sui::SUI' : xToken.address;
+        const coinType = xToken.isNativeToken ? '0x2::sui::SUI' : xToken.address;
         const balance = allBalances.find(b => b.coinType === coinType);
 
         if (balance) map[xToken.address] = CurrencyAmount.fromRawAmount(xToken, balance.totalBalance);

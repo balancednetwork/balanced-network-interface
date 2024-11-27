@@ -11,7 +11,6 @@ import { transactionActions } from '@/hooks/useTransactionStore';
 import { TransactionStatus } from '@/store/transactions/hooks';
 import { getXChainType } from '@/xwagmi/actions/getXChainType';
 import { getXWalletClient } from '@/xwagmi/actions/getXWalletClient';
-import { NATIVE_ADDRESS } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount, useXService } from '@/xwagmi/hooks';
 import { ArchwayXService } from '@/xwagmi/xchains/archway';
@@ -80,7 +79,7 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
     const isBnUSD = amountToApprove.currency.symbol === 'bnUSD';
     if (isBnUSD) return ApprovalState.APPROVED;
 
-    const isNative = amountToApprove.currency.wrapped.address === NATIVE_ADDRESS;
+    const isNative = amountToApprove.currency.isNativeToken;
     if (isNative) return ApprovalState.APPROVED;
 
     if (xChainType === 'ARCHWAY') {

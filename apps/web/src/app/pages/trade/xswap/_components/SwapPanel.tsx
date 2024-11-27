@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { Currency, CurrencyAmount, Percent, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Percent } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -19,7 +19,7 @@ import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId, XToken } from '@/xwagmi/types';
 import PriceImpact from './PriceImpact';
 import SwapCommitButton from './SwapCommitButton';
 import SwapInfo from './SwapInfo';

@@ -50,7 +50,7 @@ export class HavahXPublicClient extends XPublicClient {
   async getBalance(address: string | undefined, xToken: XToken) {
     if (!address) return;
 
-    if (xToken.isNativeXToken()) {
+    if (xToken.isNativeToken) {
       return havahJs.ICX.balanceOf(address).then(res => CurrencyAmount.fromRawAmount(xToken, res.toFixed()));
     } else {
       return havahJs[xToken.symbol]

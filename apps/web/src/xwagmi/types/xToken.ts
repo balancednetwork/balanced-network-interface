@@ -27,12 +27,8 @@ export class XToken extends Token {
     return new XToken(xChainId, token.chainId, token.address, token.decimals, token.symbol, token.name);
   }
 
-  isNativeXToken() {
-    return 'native' === this.address;
-  }
-
   get id(): string {
-    return `${this.xChainId}:${this.address}`;
+    return `${this.xChainId}/${this.address}`;
   }
 }
 

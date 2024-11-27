@@ -1,11 +1,12 @@
 import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
-import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
+import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xwagmi/xcall/utils';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 
 import { FROM_SOURCES, TO_SOURCES, injective } from '@/xwagmi/constants/xChains';
+import { xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XWalletClient } from '@/xwagmi/core';
 import { XToken } from '@/xwagmi/types';
 import { uintToBytes } from '@/xwagmi/utils';
@@ -14,7 +15,6 @@ import { RLP } from '@ethereumjs/rlp';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { isDenomAsset } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
 
 export class InjectiveXWalletClient extends XWalletClient {
   getXService(): InjectiveXService {
@@ -149,7 +149,7 @@ export class InjectiveXWalletClient extends XWalletClient {
     }
 
     const data = getBytesFromString(JSON.stringify({}));
-    const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
+    const isNative = inputAmount.currency.isNativeToken;
 
     if (isNative) {
       const msg = MsgExecuteContractCompat.fromJSON({

@@ -18,6 +18,18 @@ export default class Rewards extends Contract {
     return this.callICONPlugins(payload);
   }
 
+  getRewards(holder: string) {
+    const payload = this.paramsBuilder({
+      method: 'getRewards',
+      params: {
+        _holder: holder,
+      },
+    });
+
+    return this.call(payload);
+  }
+
+  //todo: remove
   getBalnHolding(holder: string) {
     const payload = this.paramsBuilder({
       method: 'getBalnHolding',

@@ -1,5 +1,6 @@
 import { useXService } from '@/xwagmi/hooks';
 import { StellarWalletsKit } from '@creit.tech/stellar-wallets-kit';
+import { t } from '@lingui/macro';
 import {
   Address,
   Contract,
@@ -107,9 +108,9 @@ export const isStellarAddress = (address: string) => {
   }
 };
 
-export function useValidateStellarAccount(
-  address?: string | null,
-): UseQueryResult<{ ok: true } | { ok: false; error: string }> {
+export type StellarAccountValidation = { ok: true } | { ok: false; error: string };
+
+export function useValidateStellarAccount(address?: string | null): UseQueryResult<StellarAccountValidation> {
   const stellarService = useXService('STELLAR') as StellarXService;
 
   return useQuery({
@@ -121,8 +122,9 @@ export function useValidateStellarAccount(
 
       try {
         await stellarService.server.loadAccount(address);
+        return { ok: true };
       } catch (e) {
-        return { ok: false, error: 'Fund the Stellar account' };
+        return { ok: false, error: t`Stellar wallet inactive. Add at least 1 XLM from an external source.` };
       }
     },
   });

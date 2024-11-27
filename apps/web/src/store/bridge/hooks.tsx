@@ -132,9 +132,8 @@ export function useDerivedBridgeInfo() {
   const account = xAccount.address;
 
   //temporary check for valid stellar account
-  const { data: stellarValidation, isLoading: validatingStellarAccount } = useValidateStellarAccount(
-    bridgeDirection.to === 'stellar' ? recipient : undefined,
-  );
+  const stellarValidationQuery = useValidateStellarAccount(bridgeDirection.to === 'stellar' ? recipient : undefined);
+  const { data: stellarValidation } = stellarValidationQuery;
 
   const errorMessage = useMemo(() => {
     if (!account) return t`Connect wallet`;
@@ -158,12 +157,8 @@ export function useDerivedBridgeInfo() {
       ) {
         return t`Insufficient ${currencyAmountToBridge.currency.symbol}`;
       } else {
-        if (validatingStellarAccount) {
+        if (stellarValidationQuery.isLoading) {
           return t`Validating Stellar account`;
-        }
-
-        if (stellarValidation?.ok === false) {
-          return stellarValidation.error;
         }
         return undefined;
       }
@@ -175,8 +170,7 @@ export function useDerivedBridgeInfo() {
     signedInWallets,
     account,
     recipient,
-    stellarValidation,
-    validatingStellarAccount,
+    stellarValidationQuery,
   ]);
 
   const selectedTokenWalletBalance = React.useMemo(() => {
@@ -226,5 +220,6 @@ export function useDerivedBridgeInfo() {
     isLiquidsARCH,
     canBridge,
     maximumBridgeAmount,
+    stellarValidation,
   };
 }

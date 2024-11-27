@@ -1,34 +1,28 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
-import { Currency, CurrencyAmount, Percent, TradeType, XToken } from '@balancednetwork/sdk-core';
-import { Trade } from '@balancednetwork/v1-sdk';
-import { Trans, t } from '@lingui/macro';
+import { Currency, CurrencyAmount, Percent, XToken } from '@balancednetwork/sdk-core';
+import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import BridgeLimitWarning from '@/app/components/BridgeLimitWarning';
-import { Button } from '@/app/components/Button';
 import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { BrightPanel } from '@/app/components/Panel';
 import { SelectorType } from '@/app/components/SearchModal/CurrencySearch';
-import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import useManualAddresses from '@/hooks/useManualAddresses';
-import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
 import { getXChainType } from '@/xwagmi/actions';
-import { useXAccount, useXConnect, useXConnectors } from '@/xwagmi/hooks';
+import { useXAccount } from '@/xwagmi/hooks';
 import { XChainId } from '@/xwagmi/types';
 import PriceImpact from './PriceImpact';
+import SwapCommitButton from './SwapCommitButton';
 import SwapInfo from './SwapInfo';
-import SwapModal from './SwapModal';
-import XSwapModal from './XSwapModal';
 
 export default function SwapPanel() {
   useInitialSwapLoad();
@@ -53,13 +47,14 @@ export default function SwapPanel() {
   const { onUserInput, onCurrencySelection, onSwitchTokens, onPercentSelection, onChangeRecipient, onChainSelection } =
     useSwapActionHandlers();
 
-  const handleSwapInputChainSelection = useCallback(
+  const handleInputChainSelection = useCallback(
     (xChainId: XChainId) => {
       onChainSelection(Field.INPUT, xChainId);
     },
     [onChainSelection],
   );
-  const handleSwapOutputChainSelection = useCallback(
+
+  const handleOutputChainSelection = useCallback(
     (xChainId: XChainId) => {
       onChainSelection(Field.OUTPUT, xChainId);
     },
@@ -80,28 +75,18 @@ export default function SwapPanel() {
     }
   }, [onChangeRecipient, outputAccount, manualAddresses[direction.to], direction.to]);
 
-  const handleTypeInput = useCallback(
+  const handleInputType = useCallback(
     (value: string) => {
       onUserInput(Field.INPUT, value);
     },
     [onUserInput],
   );
 
-  const handleTypeOutput = useCallback(
+  const handleOutputType = useCallback(
     (value: string) => {
       onUserInput(Field.OUTPUT, value);
     },
     [onUserInput],
-  );
-
-  const clearSwapInputOutput = useCallback((): void => {
-    handleTypeInput('');
-    handleTypeOutput('');
-  }, [handleTypeInput, handleTypeOutput]);
-
-  const maxInputAmount = React.useMemo(
-    () => maxAmountSpend(currencyBalances[Field.INPUT], direction.from),
-    [currencyBalances, direction.from],
   );
 
   const handleInputSelect = useCallback(
@@ -118,6 +103,11 @@ export default function SwapPanel() {
     [onCurrencySelection],
   );
 
+  const maxInputAmount = useMemo(
+    () => maxAmountSpend(currencyBalances[Field.INPUT], direction.from),
+    [currencyBalances, direction.from],
+  );
+
   const handleInputPercentSelect = useCallback(
     (percent: number) => {
       maxInputAmount &&
@@ -126,73 +116,9 @@ export default function SwapPanel() {
     [onPercentSelection, maxInputAmount],
   );
 
-  const isValid = !inputError && canBridge;
-
-  const xChainType = getXChainType(direction.from);
-  const xConnectors = useXConnectors(xChainType);
-  const xConnect = useXConnect();
-
-  // handle swap modal
-  const [showSwapConfirm, setShowSwapConfirm] = React.useState(false);
-
-  const handleSwapConfirmDismiss = React.useCallback(
-    (clearInputs = true) => {
-      setShowSwapConfirm(false);
-      clearInputs && clearSwapInputOutput();
-    },
-    [clearSwapInputOutput],
-  );
-
-  const toggleWalletModal = useWalletModalToggle();
-
-  const [executionTrade, setExecutionTrade] = React.useState<Trade<Currency, Currency, TradeType>>();
-
-  const isXSwap = !(direction.from === '0x1.icon' && direction.to === '0x1.icon');
-
-  const handleSwap = useCallback(() => {
-    if (isXSwap) {
-      if ((!account && recipient) || (!account && direction.from === direction.to)) {
-        handleConnectWallet(xChainType, xConnectors, xConnect);
-      } else if (!account && !recipient) {
-        toggleWalletModal();
-      } else {
-        setExecutionTrade(trade);
-        modalActions.openModal(MODAL_ID.XSWAP_CONFIRM_MODAL);
-      }
-    } else {
-      if (!account) {
-        toggleWalletModal();
-      } else {
-        setShowSwapConfirm(true);
-        setExecutionTrade(trade);
-      }
-    }
-  }, [
-    account,
-    toggleWalletModal,
-    trade,
-    isXSwap,
-    recipient,
-    direction.from,
-    direction.to,
-    xChainType,
-    xConnectors,
-    xConnect,
-  ]);
-
-  const handleMaximumBridgeAmountClick = (amount: CurrencyAmount<XToken>) => {
+  const handleMaxBridgeAmountClick = (amount: CurrencyAmount<XToken>) => {
     onUserInput(Field.OUTPUT, amount?.toFixed(4));
   };
-
-  const swapButton = isValid ? (
-    <Button color="primary" onClick={handleSwap}>
-      <Trans>Swap</Trans>
-    </Button>
-  ) : (
-    <Button disabled={!account || !!inputError || !canBridge} color="primary" onClick={handleSwap}>
-      {inputError || t`Swap`}
-    </Button>
-  );
 
   return (
     <>
@@ -216,12 +142,12 @@ export default function SwapPanel() {
               account={account}
               value={formattedAmounts[Field.INPUT]}
               currency={currencies[Field.INPUT]}
-              onUserInput={handleTypeInput}
+              onUserInput={handleInputType}
               onCurrencySelect={handleInputSelect}
               onPercentSelect={signedInWallets.length > 0 ? handleInputPercentSelect : undefined}
               percent={percents[Field.INPUT]}
               xChainId={direction.from}
-              onChainSelect={handleSwapInputChainSelection}
+              onChainSelect={handleInputChainSelection}
               showCrossChainOptions={true}
               selectorType={SelectorType.SWAP_IN}
             />
@@ -261,10 +187,10 @@ export default function SwapPanel() {
               account={account}
               value={formattedAmounts[Field.OUTPUT]}
               currency={currencies[Field.OUTPUT]}
-              onUserInput={handleTypeOutput}
+              onUserInput={handleOutputType}
               onCurrencySelect={handleOutputSelect}
               xChainId={direction.to}
-              onChainSelect={handleSwapOutputChainSelection}
+              onChainSelect={handleOutputChainSelection}
               showCrossChainOptions={true}
               addressEditable
               selectorType={SelectorType.SWAP_OUT}
@@ -279,32 +205,22 @@ export default function SwapPanel() {
           <SwapInfo trade={trade} />
 
           <Flex justifyContent="center" mt={4}>
-            {swapButton}
+            <SwapCommitButton
+              trade={trade}
+              error={inputError}
+              currencies={currencies}
+              canBridge={canBridge}
+              account={account}
+              recipient={recipient}
+              direction={direction}
+            />
           </Flex>
 
           {!canBridge && maximumBridgeAmount && (
-            <BridgeLimitWarning limitAmount={maximumBridgeAmount} onLimitAmountClick={handleMaximumBridgeAmountClick} />
+            <BridgeLimitWarning limitAmount={maximumBridgeAmount} onLimitAmountClick={handleMaxBridgeAmountClick} />
           )}
         </AutoColumn>
       </BrightPanel>
-
-      <SwapModal
-        isOpen={showSwapConfirm}
-        onClose={handleSwapConfirmDismiss}
-        account={account}
-        currencies={currencies}
-        executionTrade={executionTrade}
-        recipient={recipient || undefined}
-      />
-
-      <XSwapModal
-        account={account}
-        currencies={currencies}
-        executionTrade={executionTrade}
-        direction={direction}
-        recipient={recipient}
-        clearInputs={clearSwapInputOutput}
-      />
     </>
   );
 }

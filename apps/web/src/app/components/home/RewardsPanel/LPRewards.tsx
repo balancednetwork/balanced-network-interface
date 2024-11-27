@@ -25,7 +25,7 @@ import PositionRewardsInfo from './PositionRewardsInfo';
 import RewardsGrid from './RewardsGrid';
 
 const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
-  const { data: reward } = useLPReward();
+  const { data: rewards } = useLPReward();
   const [isOpen, setOpen] = React.useState(false);
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
@@ -34,7 +34,6 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   const dynamicBBalnAmount = useDynamicBBalnAmount();
   const bBalnAmount = useBBalnAmount();
   const hasEnoughICX = useHasEnoughICX();
-  const balances = useICONWalletBalances();
   const isSmall = useMedia('(max-width: 1050px)');
   const isExtraSmall = useMedia('(max-width: 800px)');
   const [tooltipHovered, setTooltipHovered] = React.useState(false);
@@ -75,8 +74,6 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   ) : (
     <Trans>You receive maximum rewards for your position.</Trans>
   );
-
-  const balnBalance = balances?.[bnJs.BALN.address];
 
   const handleClaim = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
@@ -146,7 +143,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
               </Tooltip>
             </Typography>
           </Flex>
-          {reward?.greaterThan(0) && (
+          {rewards?.some(reward => reward.greaterThan(0)) && (
             <UnderlineText>
               <Typography color="primaryBright" onClick={toggleOpen}>
                 <Trans>Claim</Trans>
@@ -154,8 +151,8 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
             </UnderlineText>
           )}
         </Flex>
-        {reward?.greaterThan(0) ? (
-          <RewardsGrid rewards={[reward]} />
+        {rewards?.some(reward => reward.greaterThan(0)) ? (
+          <RewardsGrid rewards={rewards} />
         ) : (
           <Typography fontSize={14} opacity={0.75} mb={5}>
             Supply liquidity on the Trade page to earn BALN incentives.
@@ -170,33 +167,17 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
           </Typography>
 
           <Flex flexDirection="column" alignItems="center" mt={2}>
-            {reward && (
-              <Typography variant="p">
+            {rewards?.map((reward, index) => (
+              <Typography key={index} variant="p">
                 {`${reward.toFixed(2, { groupSeparator: ',' })}`}{' '}
                 <Typography as="span" color="text1">
                   {reward.currency.symbol}
                 </Typography>
               </Typography>
-            )}
+            ))}
           </Flex>
 
-          <Flex my={'25px'}>
-            <Box width={1 / 2} className="border-right">
-              <Typography textAlign="center">Before</Typography>
-              <Typography variant="p" textAlign="center">
-                {balnBalance?.toFixed(2, { groupSeparator: ',' }) || 0} BALN
-              </Typography>
-            </Box>
-
-            <Box width={1 / 2}>
-              <Typography textAlign="center">After</Typography>
-              <Typography variant="p" textAlign="center">
-                {reward && `${balnBalance?.add(reward).toFixed(2, { groupSeparator: ',' })} BALN`}
-              </Typography>
-            </Box>
-          </Flex>
-
-          <Flex justifyContent="center" pt={4} className="border-top">
+          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen} fontSize={14}>
               <Trans>Not now</Trans>
             </TextButton>

@@ -152,6 +152,10 @@ export const ListItem = styled(DashGrid)<{ $border?: boolean }>`
   &.has-modal {
     cursor: pointer;
   }
+
+  &.no-pointer {
+    cursor: default;
+  }
 `;
 
 export const StandardCursorListItem = styled(DashGrid)<{ $border?: boolean }>`

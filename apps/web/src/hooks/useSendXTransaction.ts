@@ -13,8 +13,8 @@ import {
   XTransactionStatus,
   XTransactionType,
 } from '@/xwagmi/xcall/types';
-import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
 import { xChainHeightActions } from '@/xwagmi/xcall/zustand/useXChainHeightStore';
+import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import { useSignTransaction } from '@mysten/dapp-kit';
 import { useMemo } from 'react';
@@ -40,11 +40,14 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   let descriptionAction, descriptionAmount;
+  let attributes;
   if (xTransactionInput.type === XTransactionType.BRIDGE) {
     const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
     const _formattedAmount = formatBigNumber(new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0), 'currency');
     descriptionAction = `Transfer ${_tokenSymbol}`;
     descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+
+    attributes = { descriptionAction, descriptionAmount };
   } else if (xTransactionInput.type === XTransactionType.SWAP) {
     const { executionTrade } = xTransactionInput;
     if (executionTrade) {
@@ -63,12 +66,16 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
       descriptionAction = `Swap ${_inputTokenSymbol} for ${_outputTokenSymbol}`;
       descriptionAmount = `${_inputAmount} ${_inputTokenSymbol} for ${_outputAmount} ${_outputTokenSymbol}`;
     }
+
+    attributes = { descriptionAction, descriptionAmount };
   } else if (xTransactionInput.type === XTransactionType.DEPOSIT) {
     const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
     const _formattedAmount = formatBigNumber(new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0), 'currency');
 
     descriptionAction = `Deposit ${_tokenSymbol} as collateral`;
     descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+
+    attributes = { descriptionAction, descriptionAmount };
   } else if (xTransactionInput.type === XTransactionType.WITHDRAW) {
     const _tokenSymbol = xTransactionInput.inputAmount.currency.symbol;
     const _formattedAmount = formatBigNumber(
@@ -78,11 +85,15 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
 
     descriptionAction = `Withdraw ${_tokenSymbol} collateral`;
     descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+
+    attributes = { descriptionAction, descriptionAmount };
   } else if (xTransactionInput.type === XTransactionType.BORROW) {
     const _formattedAmount = formatBigNumber(new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0), 'currency');
 
     descriptionAction = `Borrow bnUSD`;
     descriptionAmount = `${_formattedAmount} bnUSD`;
+
+    attributes = { descriptionAction, descriptionAmount };
   } else if (xTransactionInput.type === XTransactionType.REPAY) {
     const _formattedAmount = formatBigNumber(
       new BigNumber(xTransactionInput?.inputAmount.multiply(-1).toFixed() || 0),
@@ -91,8 +102,13 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
 
     descriptionAction = `Repay bnUSD`;
     descriptionAmount = `${_formattedAmount} bnUSD`;
-  }
 
+    attributes = {
+      descriptionAction,
+      descriptionAmount,
+      collateralChainId: xTransactionInput.recipient?.split('/')?.[0],
+    };
+  }
   xTransactionInput?.callback?.();
 
   const sourceTransaction = transactionActions.add(sourceChainId, {
@@ -115,10 +131,7 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
     sourceChainId: sourceChainId,
     finalDestinationChainId: finalDestinationChainId,
     finalDestinationChainInitialBlockHeight,
-    attributes: {
-      descriptionAction,
-      descriptionAmount,
-    },
+    attributes,
   };
   xTransactionActions.add(xTransaction);
 

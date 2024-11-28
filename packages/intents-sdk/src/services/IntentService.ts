@@ -1,31 +1,31 @@
+import invariant from 'tiny-invariant';
 import { type Address, type Hash, type TransactionReceipt } from 'viem';
-import {
-  type ChainName,
-  type Result,
-  type IntentQuoteRequest,
-  type IntentQuoteResponse,
-  type CreateIntentOrderPayload,
-  type IntentErrorResponse,
-  type IntentExecutionResponse,
-  type IntentStatusRequest,
-  type IntentStatusResponse,
-  type GetChainConfigType,
-  type ChainConfig,
-} from '../types.js';
 import { chainConfig, supportedChains } from '../constants.js';
-import { isEvmChainConfig, isSuiChainConfig } from '../guards.js';
 import {
-  EvmProvider,
-  SuiProvider,
-  type GetChainProviderType,
-  SwapOrder,
   type ChainProvider,
   type ChainProviderType,
+  EvmProvider,
+  type GetChainProviderType,
+  SuiProvider,
+  SwapOrder,
 } from '../entities/index.js';
+import { isEvmChainConfig, isSuiChainConfig } from '../guards.js';
+import {
+  type ChainConfig,
+  type ChainName,
+  type CreateIntentOrderPayload,
+  type GetChainConfigType,
+  type IntentErrorResponse,
+  type IntentExecutionResponse,
+  type IntentQuoteRequest,
+  type IntentQuoteResponse,
+  type IntentStatusRequest,
+  type IntentStatusResponse,
+  type Result,
+} from '../types.js';
 import { EvmIntentService } from './EvmIntentService.js';
-import { SuiIntentService } from './SuiIntentService.js';
 import { SolverApiService } from './SolverApiService.js';
-import invariant from 'tiny-invariant';
+import { SuiIntentService } from './SuiIntentService.js';
 
 export class IntentService {
   private constructor() {}
@@ -36,10 +36,10 @@ export class IntentService {
    * // request
    * {
    *     "token_src": "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
-   *     "token_src_blockchain_id": "42161",
-   *     "token_dst": "0x2::sui::SUI",
-   *     "token_dst_blockchain_id": "101",
-   *     "src_amount": "10000"
+   *     "token_src_blockchain_id": "0xa4b1.arbitrum",
+   *     "token_dst": "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
+   *     "token_dst_blockchain_id": "sui",
+   *     "src_amount": 10000n
    * }
    *
    * // response

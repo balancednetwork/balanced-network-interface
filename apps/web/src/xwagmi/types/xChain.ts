@@ -21,6 +21,7 @@ export type Chain = {
     decimals: number;
     name: string;
     symbol: string;
+    address: string;
   };
   rpc: {
     http: string;

@@ -51,6 +51,7 @@ export class Token extends BaseCurrency {
 
   public get isNativeToken() {
     if (
+      this.address === 'cx0000000000000000000000000000000000000000' ||
       this.address === '0x0000000000000000000000000000000000000000' ||
       this.address === 'inj' ||
       this.address === '0000000000000000000000000000000000000000000000000000000000000002::sui::SUI' ||

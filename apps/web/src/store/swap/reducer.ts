@@ -25,12 +25,9 @@ export interface SwapState {
   readonly recipient: string | null;
 }
 
-const Sui_Sui = xTokenMap['sui'][0];
-const BNUSD_BASE = xTokenMap['0x2105.base'][1];
-
 export const INITIAL_SWAP = {
-  base: Sui_Sui,
-  quote: BNUSD_BASE,
+  base: xTokenMap['0xa4b1.arbitrum'][0],
+  quote: xTokenMap['sui'][0],
 };
 
 const initialState: SwapState = {

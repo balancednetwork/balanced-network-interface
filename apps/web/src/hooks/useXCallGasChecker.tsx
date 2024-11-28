@@ -12,23 +12,25 @@ function useXCallGasChecker(
   inputAmount: CurrencyAmount<XToken> | CurrencyAmount<Currency> | undefined,
 ): { hasEnoughGas: boolean; errorMessage: string } {
   const balances = useCrossChainWalletBalances();
-  const ICX = useICX();
 
   return useMemo(() => {
     try {
+      if (!inputAmount) {
+        throw new Error('inputAmount is undefined');
+      }
+
       const xChain: XChain = xChainMap[xChainId];
       const nativeCurrency = xChain?.nativeCurrency;
 
-      const nativeAddress = xChainId === '0x1.icon' ? ICX.address : 'native';
-
-      const gasThreshold =
-        nativeAddress === inputAmount?.currency.wrapped.address
-          ? xChain.gasThreshold + Number(inputAmount.toFixed())
-          : xChain.gasThreshold;
+      const gasThreshold = inputAmount?.currency.isNativeToken
+        ? xChain.gasThreshold + Number(inputAmount.toFixed())
+        : xChain.gasThreshold;
 
       const hasEnoughGas =
         balances[xChainId] &&
-        balances[xChainId]?.[nativeAddress].greaterThan(Math.round(gasThreshold * 10 ** nativeCurrency.decimals));
+        balances[xChainId]?.[nativeCurrency.address].greaterThan(
+          Math.round(gasThreshold * 10 ** nativeCurrency.decimals),
+        );
 
       const errorMessage = !hasEnoughGas
         ? `You need at least ${formatBigNumber(new BigNumber(xChain.gasThreshold), 'currency')} ${
@@ -42,7 +44,7 @@ function useXCallGasChecker(
     }
 
     return { hasEnoughGas: false, errorMessage: 'Unknown' };
-  }, [balances, xChainId, ICX, inputAmount]);
+  }, [balances, xChainId, inputAmount]);
 }
 
 export default useXCallGasChecker;

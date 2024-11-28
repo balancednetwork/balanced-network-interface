@@ -1,10 +1,10 @@
-import type { ChainConfig, ChainName, EvmChainConfig, SuiChainConfig } from './types.js';
-import { arbitrum } from 'viem/chains';
 import type { Chain } from 'viem';
+import { arbitrum } from 'viem/chains';
+import type { ChainConfig, ChainName, EvmChainConfig, SuiChainConfig } from './types.js';
 
 export const DEFAULT_MAX_RETRY = 3;
 export const DEFAULT_RETRY_DELAY_MS = 2000;
-export const SOLVER_API_ENDPOINT = 'http://34.224.47.185'; // TODO - replace with the production one
+export const SOLVER_API_ENDPOINT = 'https://solver.iconblockchain.xyz'; // TODO - replace with the production one
 
 export const supportedChains: ChainName[] = ['arb', 'sui'];
 

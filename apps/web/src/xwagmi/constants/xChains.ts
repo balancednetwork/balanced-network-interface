@@ -9,6 +9,7 @@ export const archway: XChain = {
     decimals: 18,
     name: 'Archway',
     symbol: 'ARCH',
+    address: 'arch',
   },
   tracker: 'https://www.mintscan.io/archway/tx/',
   rpc: {
@@ -35,6 +36,7 @@ export const archwayTestnet: XChain = {
     decimals: 18,
     name: 'Archway',
     symbol: 'ARCH',
+    address: 'arch',
   },
   tracker: 'https://www.mintscan.io/archway/tx/',
   rpc: {
@@ -62,6 +64,7 @@ export const icon: XChain = {
     decimals: 18,
     name: 'ICON',
     symbol: 'ICX',
+    address: 'cx0000000000000000000000000000000000000000',
   },
   rpc: {
     http: '',
@@ -88,6 +91,7 @@ export const lisbon: XChain = {
     decimals: 18,
     name: 'ICON',
     symbol: 'ICX',
+    address: 'cx0000000000000000000000000000000000000000',
   },
   rpc: {
     http: '',
@@ -114,6 +118,7 @@ export const avalanche: XChain = {
     decimals: 18,
     name: 'Avalanche',
     symbol: 'AVAX',
+    address: '0x0000000000000000000000000000000000000000',
   },
   rpc: {
     http: 'https://api.avax.network/ext/bc/C/rpc',
@@ -138,6 +143,7 @@ export const fuji: XChain = {
     decimals: 18,
     name: 'Avalanche',
     symbol: 'AVAX',
+    address: '0x0000000000000000000000000000000000000000',
   },
   rpc: {
     http: 'https://api.avax.network/ext/bc/C/rpc',
@@ -162,6 +168,7 @@ export const havah: XChain = {
     decimals: 18,
     name: 'Havah',
     symbol: 'HVH',
+    address: 'hx0000000000000000000000000000000000000000',
   },
   rpc: {
     http: 'https://ctz.havah.io/api/v3',
@@ -187,6 +194,7 @@ export const bsc: XChain = {
     decimals: 18,
     name: 'BNB',
     symbol: 'BNB',
+    address: '0x0000000000000000000000000000000000000000',
   },
   rpc: {
     http: 'https://bsc-dataseed.bnbchain.org',
@@ -211,6 +219,7 @@ export const arbitrum: XChain = {
     decimals: 18,
     name: 'ETH',
     symbol: 'ETH',
+    address: '0x0000000000000000000000000000000000000000',
   },
   rpc: {
     http: 'https://arb1.arbitrum.io/rpc',
@@ -235,6 +244,7 @@ export const base: XChain = {
     decimals: 18,
     name: 'ETH',
     symbol: 'ETH',
+    address: '0x0000000000000000000000000000000000000000',
   },
   rpc: {
     http: 'https://mainnet.base.org',
@@ -259,6 +269,7 @@ export const injective: XChain = {
     decimals: 18,
     name: 'INJ',
     symbol: 'INJ',
+    address: 'inj',
   },
   rpc: {
     http: 'https://sentry.tm.injective.network',
@@ -284,6 +295,7 @@ export const sui: XChain = {
     decimals: 9,
     name: 'SUI',
     symbol: 'SUI',
+    address: '0000000000000000000000000000000000000000000000000000000000000002::sui::SUI',
   },
   rpc: {
     http: 'https://sentry.tm.injective.network',

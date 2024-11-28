@@ -14,7 +14,14 @@ import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import useManualAddresses from '@/hooks/useManualAddresses';
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
+import {
+  useDerivedMMTradeInfo,
+  useDerivedSwapInfo,
+  useInitialSwapLoad,
+  useMMTrade,
+  useSwapActionHandlers,
+  useSwapState,
+} from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
 import { getXChainType } from '@/xwagmi/actions';
@@ -23,6 +30,7 @@ import { XChainId, XToken } from '@/xwagmi/types';
 import PriceImpact from './PriceImpact';
 import SwapCommitButton from './SwapCommitButton';
 import SwapInfo from './SwapInfo';
+import SwapMMCommitButton from './SwapMMCommitButton';
 
 export default function SwapPanel() {
   useInitialSwapLoad();
@@ -39,6 +47,7 @@ export default function SwapPanel() {
     maximumBridgeAmount,
     canBridge,
   } = useDerivedSwapInfo();
+  const mmTrade = useDerivedMMTradeInfo(trade);
 
   const signedInWallets = useSignedInWallets();
   const { recipient } = useSwapState();
@@ -214,6 +223,8 @@ export default function SwapPanel() {
               recipient={recipient}
               direction={direction}
             />
+
+            <SwapMMCommitButton currencies={currencies} account={account} recipient={recipient} trade={mmTrade.trade} />
           </Flex>
 
           {!canBridge && maximumBridgeAmount && (

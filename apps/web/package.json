@@ -7,7 +7,6 @@
     "@balancednetwork/balanced-js": "workspace:*",
     "@balancednetwork/sdk-core": "workspace:*",
     "@balancednetwork/v1-sdk": "workspace:*",
-    "@balancednetwork/intents-sdk": "workspace:*",
     "@chain-registry/types": "0.16.0",
     "@coral-xyz/anchor": "0.30.1",
     "@cosmjs/cosmwasm-stargate": "0.32.2",
@@ -124,7 +123,8 @@
     "pretty": "biome format .",
     "i18n:extract": "lingui extract",
     "i18n:compile": "pnpm run i18n:extract && lingui compile",
-    "clean": "rm -rf node_modules && rm -rf dist && rm -rf .turbo"
+    "clean": "rm -rf node_modules && rm -rf dist && rm -rf .turbo",
+    "prepare": "pnpm run i18n:compile"
   },
   "proxy": "https://balanced.sudoblock.io",
   "browserslist": [">0.2%", "not dead", "not op_mini all"],

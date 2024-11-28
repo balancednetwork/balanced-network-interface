@@ -49,6 +49,7 @@ const LoanPanel = () => {
     borrowedAmount,
     borrowableAmountWithReserve,
     differenceAmount,
+    isSliderStateChanged,
     formattedAmounts,
     parsedAmount,
     totalBorrowableAmount,
@@ -268,9 +269,10 @@ const LoanPanel = () => {
                     </TextButton>
                     <Button
                       disabled={
-                        borrowedAmount.isLessThanOrEqualTo(0)
+                        !isSliderStateChanged ||
+                        (borrowedAmount.isLessThanOrEqualTo(0)
                           ? currentValue >= 0 && currentValue < 10
-                          : currentValue < 0
+                          : currentValue < 0)
                       }
                       onClick={toggleOpen}
                       fontSize={14}

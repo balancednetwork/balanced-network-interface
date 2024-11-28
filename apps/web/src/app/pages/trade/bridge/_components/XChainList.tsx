@@ -39,7 +39,7 @@ type XChainItemProps = {
   showTotalXWalletValue?: boolean;
 };
 
-const StyledHeaderText = styled(HeaderText)`
+export const StyledHeaderText = styled(HeaderText)`
   font-size: 12px;
 `;
 

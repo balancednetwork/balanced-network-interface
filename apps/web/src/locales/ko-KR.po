@@ -1052,6 +1052,10 @@ msgstr "투표하는 중..."
 msgid "Do not send sICX to an exchange."
 msgstr "sICX를 거래소에 보내지 마십시오."
 
+#: src/app/components/home/CollateralPanel.tsx
+msgid "To deposit {0}"
+msgstr ""
+
 #: src/app/components/home/Savings/index.tsx
 msgid "Withdrawing bnUSD..."
 msgstr ""
@@ -1265,6 +1269,11 @@ msgstr ""
 #: src/app/pages/vote/_components/utils.ts
 #: src/utils/timeformat.ts
 msgid "less then a minute"
+msgstr ""
+
+#: src/store/bridge/hooks.tsx
+#: src/store/swap/hooks.ts
+msgid "Validating Stellar account"
 msgstr ""
 
 #: src/btp/src/connectors/helper.ts
@@ -1922,8 +1931,8 @@ msgstr "거부됨"
 #~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
-msgid "To deposit {collateralType}"
-msgstr ""
+#~ msgid "To deposit {collateralType}"
+#~ msgstr ""
 
 #: src/app/components/Wallet/index.tsx
 msgid "Sign out"
@@ -2752,6 +2761,10 @@ msgstr ""
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
 msgstr "{inputAmount} {inputCurrency} 을 {outputAmount} {outputCurrency} 으로 스왑했습니다."
+
+#: src/xwagmi/xchains/stellar/utils.ts
+msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."
+msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx

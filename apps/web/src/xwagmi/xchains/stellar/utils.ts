@@ -1,4 +1,6 @@
+import { useXService } from '@/xwagmi/hooks';
 import { StellarWalletsKit } from '@creit.tech/stellar-wallets-kit';
+import { t } from '@lingui/macro';
 import {
   Address,
   Contract,
@@ -13,7 +15,9 @@ import {
   scValToBigInt,
   xdr,
 } from '@stellar/stellar-sdk';
+import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import CustomSorobanServer from './CustomSorobanServer';
+import { StellarXService } from './StellarXService';
 
 export const STELLAR_RLP_MSG_TYPE = { type: 'symbol' };
 
@@ -103,3 +107,25 @@ export const isStellarAddress = (address: string) => {
     return false;
   }
 };
+
+export type StellarAccountValidation = { ok: true } | { ok: false; error: string };
+
+export function useValidateStellarAccount(address?: string | null): UseQueryResult<StellarAccountValidation> {
+  const stellarService = useXService('STELLAR') as StellarXService;
+
+  return useQuery({
+    queryKey: [`stellarAccountValidation`, stellarService, address],
+    queryFn: async () => {
+      if (!address) {
+        return { ok: true };
+      }
+
+      try {
+        await stellarService.server.loadAccount(address);
+        return { ok: true };
+      } catch (e) {
+        return { ok: false, error: t`Stellar wallet inactive. Add at least 1 XLM from an external source.` };
+      }
+    },
+  });
+}

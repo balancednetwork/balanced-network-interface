@@ -6344,8 +6344,8 @@ packages:
   axios@1.6.8:
     resolution: {integrity: sha512-v/ZHtJDU39mDpyBoFVkETcd/uNdxrWRrg3bKpOKzXFA6Bvqopts6ALSMU3y6ijYxbw2B+wPrIv46egTzJXCLGQ==}
 
-  axios@1.7.7:
-    resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
+  axios@1.7.8:
+    resolution: {integrity: sha512-Uu0wb7KNqK2t5K+YQyVCLM76prD5sRFjKHbJYCP1J7JFGEQ6nN7HWn9+04LAeiJ3ji54lgS/gZCH1oxyrf1SPw==}
 
   babel-core@7.0.0-bridge.0:
     resolution: {integrity: sha512-poPX9mZH/5CSanm50Q+1toVci6pv5KSRv/5TWCwtzQS5XEwn40BcCrgIeMFWP9CKKIniKXNxoIOnOq4VVlGXhg==}
@@ -11602,8 +11602,8 @@ packages:
     resolution: {integrity: sha512-l5x7VUUWbjVFbafGLxPWkYsHIhEvmF85tbIeFZWc8ZPtoMyybuEhL7Jye/ooC4/d48FgOjSJXgsF/AJPYCW8Zw==}
     engines: {node: '>= 10.0.0', npm: '>= 3.0.0'}
 
-  sodium-native@4.2.2:
-    resolution: {integrity: sha512-/gYaDtIK76FRcW0oBhIKJvLCDp706rJugd8wxJUBdbutgWrDlviG4tp8k+HfIRdy0Z+MbQE32ZGr4RPu1vXSsw==}
+  sodium-native@4.3.1:
+    resolution: {integrity: sha512-YdP64gAdpIKHfL4ttuX4aIfjeunh9f+hNeQJpE9C8UMndB3zkgZ7YmmGT4J2+v6Ibyp6Wem8D1TcSrtdW0bqtg==}
 
   sonic-boom@2.8.0:
     resolution: {integrity: sha512-kuonw1YOYYNOve5iHdSahXPOK49GqwA+LZhI6Wz/l0rP57iKyXXIHaRagOBHAPmGwJC6od2Z9zgvZ5loSgMlVg==}
@@ -19451,12 +19451,12 @@ snapshots:
       sha.js: 2.4.11
       tweetnacl: 1.0.3
     optionalDependencies:
-      sodium-native: 4.2.2
+      sodium-native: 4.3.1
 
   '@stellar/stellar-sdk@12.3.0':
     dependencies:
       '@stellar/stellar-base': 12.1.1
-      axios: 1.7.7
+      axios: 1.7.8
       bignumber.js: 9.1.2
       eventsource: 2.0.2
       randombytes: 2.1.0
@@ -21510,7 +21510,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  axios@1.7.7:
+  axios@1.7.8:
     dependencies:
       follow-redirects: 1.15.6
       form-data: 4.0.0
@@ -27775,7 +27775,7 @@ snapshots:
       ip-address: 9.0.5
       smart-buffer: 4.2.0
 
-  sodium-native@4.2.2:
+  sodium-native@4.3.1:
     dependencies:
       node-gyp-build: 4.8.0
     optional: true

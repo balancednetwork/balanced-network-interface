@@ -1057,6 +1057,10 @@ msgstr "Przesyłanie Twojego głosu..."
 msgid "Do not send sICX to an exchange."
 msgstr "Nie wysyłaj sICX na giełdę."
 
+#: src/app/components/home/CollateralPanel.tsx
+msgid "To deposit {0}"
+msgstr ""
+
 #: src/app/components/home/Savings/index.tsx
 msgid "Withdrawing bnUSD..."
 msgstr ""
@@ -1275,6 +1279,11 @@ msgstr ""
 #: src/utils/timeformat.ts
 msgid "less then a minute"
 msgstr "mniej niż minutę"
+
+#: src/store/bridge/hooks.tsx
+#: src/store/swap/hooks.ts
+msgid "Validating Stellar account"
+msgstr ""
 
 #: src/btp/src/connectors/helper.ts
 msgid "Couldn't transfer {0} to {1}. Try again."
@@ -1931,8 +1940,8 @@ msgstr "Odrzucona"
 #~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
-msgid "To deposit {collateralType}"
-msgstr ""
+#~ msgid "To deposit {collateralType}"
+#~ msgstr ""
 
 #: src/app/components/Wallet/index.tsx
 msgid "Sign out"
@@ -2764,6 +2773,10 @@ msgstr ""
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
 msgstr "Wymieniono {inputAmount} {inputCurrency} na {outputAmount} {outputCurrency}."
+
+#: src/xwagmi/xchains/stellar/utils.ts
+msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."
+msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx

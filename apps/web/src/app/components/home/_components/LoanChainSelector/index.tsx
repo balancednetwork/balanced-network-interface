@@ -25,9 +25,18 @@ const LoanChainSelector = ({
   const loanRecipientNetwork = useLoanRecipientNetwork();
   const { onAdjust: adjust, setRecipientNetwork } = useLoanActionHandlers();
   const signedInWallets = useSignedInWallets();
-  const { sourceChain } = useDerivedCollateralInfo();
 
-  const xChains = getSupportedXChainForToken(bnUSD[NETWORK_ID]);
+  //temporarily validate stellar account
+  // const xChains = getSupportedXChainForToken(bnUSD[NETWORK_ID]);
+  const { sourceChain } = useDerivedCollateralInfo();
+  const xChains = React.useMemo(() => {
+    if (sourceChain === 'stellar') {
+      return getSupportedXChainForToken(bnUSD[NETWORK_ID]);
+    } else {
+      return getSupportedXChainForToken(bnUSD[NETWORK_ID])?.filter(chain => chain.xChainId !== 'stellar');
+    }
+  }, [sourceChain]);
+  //end of temporary stellar account validation
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 

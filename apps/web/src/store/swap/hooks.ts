@@ -18,6 +18,8 @@ import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
 import { XChainId, XToken } from '@/xwagmi/types';
+import { StellarAccountValidation, useValidateStellarAccount } from '@/xwagmi/xchains/stellar/utils';
+import { UseQueryResult } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
 import {
@@ -146,6 +148,7 @@ export function useDerivedSwapInfo(): {
   };
   canBridge: boolean;
   maximumBridgeAmount: CurrencyAmount<XToken> | undefined;
+  stellarValidation?: StellarAccountValidation;
 } {
   const {
     independentField,
@@ -228,7 +231,7 @@ export function useDerivedSwapInfo(): {
   const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], trade?.inputAmount];
 
   // decimal scales are different for different chains for the same token
-  if (balanceIn && amountIn && new BigNumber(balanceIn.toFixed()).isLessThan(amountIn.toFixed())) {
+  if (!balanceIn || (balanceIn && amountIn && new BigNumber(balanceIn.toFixed()).isLessThan(amountIn.toFixed()))) {
     inputError = t`Insufficient ${currencies[Field.INPUT]?.symbol}`;
   }
 
@@ -294,6 +297,14 @@ export function useDerivedSwapInfo(): {
     return maximumBridgeAmount && outputCurrencyAmount ? maximumBridgeAmount?.greaterThan(outputCurrencyAmount) : true;
   }, [maximumBridgeAmount, outputCurrencyAmount]);
 
+  //temporary check for valid stellar account
+  const stellarValidationQuery = useValidateStellarAccount(direction.to === 'stellar' ? recipient : undefined);
+  const { data: stellarValidation } = stellarValidationQuery;
+
+  if (stellarValidationQuery.isLoading) {
+    inputError = t`Validating Stellar account`;
+  }
+
   return {
     account,
     trade,
@@ -311,6 +322,7 @@ export function useDerivedSwapInfo(): {
     formattedAmounts,
     canBridge,
     maximumBridgeAmount,
+    stellarValidation,
   };
 }
 

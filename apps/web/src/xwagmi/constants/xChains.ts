@@ -24,6 +24,7 @@ export const archway: XChain = {
   autoExecution: true,
   gasThreshold: 2,
   testnet: false,
+  useXCallScanner: false,
 };
 
 export const archwayTestnet: XChain = {
@@ -50,6 +51,7 @@ export const archwayTestnet: XChain = {
   autoExecution: true,
   gasThreshold: 10,
   testnet: true,
+  useXCallScanner: false,
 };
 
 export const icon: XChain = {
@@ -76,6 +78,7 @@ export const icon: XChain = {
   autoExecution: true,
   gasThreshold: 2.5,
   testnet: false,
+  useXCallScanner: false,
 };
 
 export const lisbon: XChain = {
@@ -102,6 +105,7 @@ export const lisbon: XChain = {
   autoExecution: true,
   gasThreshold: 4,
   testnet: true,
+  useXCallScanner: false,
 };
 
 export const avalanche: XChain = {
@@ -126,6 +130,7 @@ export const avalanche: XChain = {
   autoExecution: true,
   gasThreshold: 0.05,
   testnet: false,
+  useXCallScanner: false,
 };
 
 export const fuji: XChain = {
@@ -150,6 +155,7 @@ export const fuji: XChain = {
   autoExecution: true,
   gasThreshold: 0,
   testnet: true,
+  useXCallScanner: false,
 };
 
 export const havah: XChain = {
@@ -175,6 +181,7 @@ export const havah: XChain = {
   autoExecution: true,
   gasThreshold: 0.2,
   testnet: false,
+  useXCallScanner: false,
 };
 
 export const bsc: XChain = {
@@ -199,6 +206,7 @@ export const bsc: XChain = {
   autoExecution: true,
   gasThreshold: 0.005,
   testnet: false,
+  useXCallScanner: false,
 };
 
 export const arbitrum: XChain = {
@@ -223,6 +231,7 @@ export const arbitrum: XChain = {
   autoExecution: true,
   gasThreshold: 0.0001,
   testnet: false,
+  useXCallScanner: false,
 };
 
 export const base: XChain = {
@@ -247,6 +256,7 @@ export const base: XChain = {
   autoExecution: true,
   gasThreshold: 0.0001,
   testnet: false,
+  useXCallScanner: false,
 };
 
 export const injective: XChain = {
@@ -271,6 +281,32 @@ export const injective: XChain = {
   autoExecution: true,
   gasThreshold: 0.01,
   testnet: false,
+  useXCallScanner: false,
+};
+
+export const stellar: XChain = {
+  id: 'stellar',
+  name: 'Stellar',
+  xChainId: 'stellar',
+  xChainType: 'STELLAR',
+  tracker: 'https://stellar.expert/explorer/public/',
+  nativeCurrency: {
+    decimals: 7,
+    name: 'XLM',
+    symbol: 'XLM',
+  },
+  rpc: {
+    http: 'https://horizon.stellar.org',
+  },
+  contracts: {
+    xCall: 'CB6IJRLOWGQXUDSYGFOAAZYVOESQ6TVSTU3242I7PG3LH7F43PPX2HE6',
+    assetManager: 'CAGP34E2VHGO7Y3NEJHCMVFMTTTIYCGBWUH7FTCMHMVYAMQBIILX5GXH',
+    bnUSD: 'CCT4ZYIYZ3TUO2AWQFEOFGBZ6HQP3GW5TA37CK7CRZVFRDXYTHTYX7KP',
+  },
+  autoExecution: true,
+  gasThreshold: 2,
+  testnet: false,
+  useXCallScanner: true,
 };
 
 // TODO: complete SUI chain
@@ -296,6 +332,7 @@ export const sui: XChain = {
   autoExecution: true,
   gasThreshold: 0.1,
   testnet: false,
+  useXCallScanner: true,
 };
 
 // the order is important, using manual order to display in the UI
@@ -311,6 +348,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   '0x38.bsc': bsc,
   '0x2105.base': base,
   'injective-1': injective,
+  stellar: stellar,
   sui: sui,
 };
 
@@ -325,6 +363,10 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   '0xa86a.avax': ['0xC1a39C4e7AA98DEC394eF54559960873Bd619cA3', '0x7F3665eF19258cD5cE15eA39d014F47Fc942AE0C'],
   '0x100.icon': ['cxcf2c8d58fd7bbd25866de0660b155f057ea489eb'],
   'injective-1': ['inj15jcde723hrm5f4fx3r2stnq59jykt2askud8ht'],
+  stellar: [
+    'CBPJSDR2QRMFUX25S5JXQMXDDMQVTN5M3TNYSCGFUJCCZ2LAJLKNJACQ',
+    'CBXK5AZWM7AE5HF7KKZYXU7NVMMXIA4K3D5H5LV7LW23ZBE7HBAH3RVC',
+  ],
   sui: ['centralized-1', 'centralized-2'],
 };
 
@@ -336,5 +378,6 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   '0xa86a.avax': ['cx59d899fce52cadd1feb5128ff5e6672f03943eec', 'cx917f88460d4ebec1fd656d4dbe51131a37d16837'],
   '0x100.icon': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
   'injective-1': ['cx6f86ed848f9f0d03ba1220811d95d864c72da88c'],
+  stellar: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
   sui: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
 };

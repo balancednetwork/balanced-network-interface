@@ -48,6 +48,7 @@ export default function SwapPanel() {
     formattedAmounts,
     maximumBridgeAmount,
     canBridge,
+    stellarValidation,
   } = useDerivedSwapInfo();
   const showSlippageWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
 
@@ -132,7 +133,7 @@ export default function SwapPanel() {
   );
 
   const slippageTolerance = useSwapSlippageTolerance();
-  const isValid = !inputError && canBridge;
+  const isValid = !inputError && canBridge && stellarValidation?.ok;
 
   const xChainType = getXChainType(direction.from);
   const xConnectors = useXConnectors(xChainType);
@@ -212,7 +213,11 @@ export default function SwapPanel() {
       <Trans>Swap</Trans>
     </Button>
   ) : (
-    <Button disabled={!account || !!inputError || !canBridge} color="primary" onClick={handleSwap}>
+    <Button
+      disabled={!account || !!inputError || !canBridge || !stellarValidation?.ok}
+      color="primary"
+      onClick={handleSwap}
+    >
       {inputError || t`Swap`}
     </Button>
   );
@@ -337,6 +342,12 @@ export default function SwapPanel() {
           <Flex justifyContent="center" mt={4}>
             {swapButton}
           </Flex>
+
+          {stellarValidation?.ok === false && stellarValidation.error && (
+            <Flex alignItems="center" justifyContent="center" mt={2}>
+              <Typography textAlign="center">{stellarValidation.error}</Typography>
+            </Flex>
+          )}
 
           {!canBridge && maximumBridgeAmount && (
             <Flex alignItems="center" justifyContent="center" mt={2}>

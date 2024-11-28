@@ -4,6 +4,7 @@ import { SelectorWrap } from '@/app/components/trade/CrossChainOptions';
 import { Typography } from '@/app/theme';
 import { NETWORK_ID } from '@/constants/config';
 import { bnUSD } from '@/constants/tokens';
+import { useDerivedCollateralInfo } from '@/store/collateral/hooks';
 import { useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
@@ -23,7 +24,17 @@ const LoanChainSelector = ({
   const loanRecipientNetwork = useLoanRecipientNetwork();
   const { onAdjust: adjust, setRecipientNetwork } = useLoanActionHandlers();
 
-  const xChains = getSupportedXChainForToken(bnUSD[NETWORK_ID]);
+  //temporarily validate stellar account
+  // const xChains = getSupportedXChainForToken(bnUSD[NETWORK_ID]);
+  const { sourceChain } = useDerivedCollateralInfo();
+  const xChains = React.useMemo(() => {
+    if (sourceChain === 'stellar') {
+      return getSupportedXChainForToken(bnUSD[NETWORK_ID]);
+    } else {
+      return getSupportedXChainForToken(bnUSD[NETWORK_ID])?.filter(chain => chain.xChainId !== 'stellar');
+    }
+  }, [sourceChain]);
+  //end of temporary stellar account validation
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 

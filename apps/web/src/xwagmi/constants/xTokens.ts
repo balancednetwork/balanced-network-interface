@@ -18,6 +18,7 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   tBTC: '0xa4b1.arbitrum',
   weETH: '0xa4b1.arbitrum',
   wstETH: '0xa4b1.arbitrum',
+  XLM: 'stellar',
   AFSUI: 'sui',
   HASUI: 'sui',
   VSUI: 'sui',
@@ -67,6 +68,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     ),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx4297f4b63262507623b6ad575d0d8dd2db980e4e', 18, 'INJ', 'INJ'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx16f3cb9f09f5cdd902cf07aa752c8b3bd1bc9609', 6, 'USDT', 'Tether USD'),
+    new XToken('0x1.icon', ChainId.MAINNET, 'cx518f64edcd35db9044a2de63fdc10abfd5f7d611', 7, 'XLM', 'XLM'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx508002ec116fbf3ab406329c0df28e70d7e75fb3', 9, 'SUI', 'SUI'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cxb9d0727849a6ce6453f8c9dda2dec2fd543075d4', 9, 'VSUI', 'Volo Staked SUI'),
     new XToken(
@@ -194,6 +196,17 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       6,
       'USDC',
       'USD Coin',
+    ),
+  ],
+  stellar: [
+    new XToken('stellar', 'stellar', NATIVE_ADDRESS, 7, 'XLM', 'XLM'),
+    new XToken(
+      'stellar',
+      'stellar',
+      'CCT4ZYIYZ3TUO2AWQFEOFGBZ6HQP3GW5TA37CK7CRZVFRDXYTHTYX7KP',
+      18,
+      'bnUSD',
+      'Balanced Dollar',
     ),
   ],
   sui: [

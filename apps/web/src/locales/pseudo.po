@@ -1005,6 +1005,10 @@ msgstr ""
 msgid "Do not send sICX to an exchange."
 msgstr ""
 
+#: src/app/components/home/CollateralPanel.tsx
+msgid "To deposit {0}"
+msgstr ""
+
 #: src/app/components/home/Savings/index.tsx
 msgid "Withdrawing bnUSD..."
 msgstr ""
@@ -1218,6 +1222,11 @@ msgstr ""
 #: src/app/pages/vote/_components/utils.ts
 #: src/utils/timeformat.ts
 msgid "less then a minute"
+msgstr ""
+
+#: src/store/bridge/hooks.tsx
+#: src/store/swap/hooks.ts
+msgid "Validating Stellar account"
 msgstr ""
 
 #: src/btp/src/connectors/helper.ts
@@ -1854,8 +1863,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
-msgid "To deposit {collateralType}"
-msgstr ""
+#~ msgid "To deposit {collateralType}"
+#~ msgstr ""
 
 #: src/app/components/Wallet/index.tsx
 msgid "Sign out"
@@ -2352,6 +2361,7 @@ msgstr ""
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
 msgid "Borrow, swap, & transfer cross-chain."
 msgstr ""
 
@@ -2671,6 +2681,10 @@ msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
+msgstr ""
+
+#: src/xwagmi/xchains/stellar/utils.ts
+msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."
 msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx

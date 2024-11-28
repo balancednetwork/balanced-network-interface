@@ -10,9 +10,10 @@ export type XChainId =
   | '0xa4b1.arbitrum'
   | '0x2105.base'
   | 'injective-1'
+  | 'stellar'
   | 'sui';
 
-export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH' | 'INJECTIVE' | 'SUI';
+export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH' | 'INJECTIVE' | 'STELLAR' | 'SUI';
 
 export type Chain = {
   id: string | number;
@@ -41,4 +42,5 @@ export type XChain = Chain & {
   };
   autoExecution: boolean;
   gasThreshold: number;
+  useXCallScanner: boolean;
 };

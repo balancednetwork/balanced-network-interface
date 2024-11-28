@@ -83,8 +83,8 @@ export default function BridgeTransferForm({ openModal }) {
     }
   }, [onChangeRecipient, xAccount, manualAddresses[bridgeDirection.to], bridgeDirection.to]);
 
-  const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount } = useDerivedBridgeInfo();
-
+  const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount, stellarValidation } =
+    useDerivedBridgeInfo();
   const xChainType = getXChainType(bridgeDirection.from);
   const xConnectors = useXConnectors(xChainType);
   const xConnect = useXConnect();
@@ -191,13 +191,22 @@ export default function BridgeTransferForm({ openModal }) {
 
           <Flex alignItems="center" justifyContent="center" mt={4}>
             {account ? (
-              <Button onClick={handleSubmit} disabled={!!errorMessage || !isValid || !canBridge}>
+              <Button
+                onClick={handleSubmit}
+                disabled={!!errorMessage || !isValid || !canBridge || !stellarValidation?.ok}
+              >
                 {errorMessage ? errorMessage : <Trans>Transfer</Trans>}
               </Button>
             ) : (
               <Button onClick={handleSubmit}>{<Trans>Transfer</Trans>}</Button>
             )}
           </Flex>
+
+          {stellarValidation?.ok === false && stellarValidation.error && (
+            <Flex alignItems="center" justifyContent="center" mt={2}>
+              <Typography textAlign="center">{stellarValidation.error}</Typography>
+            </Flex>
+          )}
 
           {!canBridge && maximumBridgeAmount && (
             <Flex alignItems="center" justifyContent="center" mt={2}>

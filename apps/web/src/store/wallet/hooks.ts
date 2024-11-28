@@ -39,7 +39,7 @@ import { useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
 import { useRatesWithOracle } from '@/queries/reward';
 import { NATIVE_ADDRESS } from '@/xwagmi/constants';
-import { SUPPORTED_XCALL_CHAINS } from '@/xwagmi/constants/xChains';
+import { SUPPORTED_XCALL_CHAINS, stellar } from '@/xwagmi/constants/xChains';
 import { useXAccount } from '@/xwagmi/hooks';
 
 export function useCrossChainWalletBalances(): AppState['wallet'] {
@@ -188,6 +188,17 @@ export function useWalletFetchBalances() {
     injectiveBalances && dispatch(changeBalances({ xChainId: 'injective-1', balances: injectiveBalances }));
   }, [injectiveBalances, dispatch]);
 
+  // fetch balances on stellar
+  const { address: accountStellar } = useXAccount('STELLAR');
+  const stellarTokens = useXTokens(stellar.xChainId);
+  const { data: stellarBalances } = useXBalances({
+    xChainId: stellar.xChainId,
+    xTokens: stellarTokens,
+    address: accountStellar,
+  });
+  React.useEffect(() => {
+    stellarBalances && dispatch(changeBalances({ xChainId: stellar.xChainId, balances: stellarBalances }));
+  }, [stellarBalances, dispatch]);
   const { address: accountSui } = useXAccount('SUI');
   const suiTokens = useXTokens('sui');
   const { data: suiBalances } = useXBalances({
@@ -425,8 +436,7 @@ export function useXBalancesByToken(): XWalletAssetRecord[] {
               if (
                 balance.currency &&
                 balance?.greaterThan(0) &&
-                price &&
-                price.times(balance.toFixed()).isGreaterThan(MIN_VALUE_TO_DISPLAY)
+                (price.isZero() || price.times(balance.toFixed()).isGreaterThan(MIN_VALUE_TO_DISPLAY))
               ) {
                 acc[balance.currency.symbol] = {
                   ...acc[balance.currency.symbol],

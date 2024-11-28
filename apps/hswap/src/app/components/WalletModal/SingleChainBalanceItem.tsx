@@ -1,3 +1,4 @@
+import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
 import { xChainMap } from '@/xwagmi/constants/xChains';
@@ -5,7 +6,6 @@ import { XToken } from '@balancednetwork/sdk-core';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import React from 'react';
-import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 
 type SingleChainBalanceItemProps = {
   balance: CurrencyAmount<XToken>;

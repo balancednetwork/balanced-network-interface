@@ -19,7 +19,6 @@ import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
 import { XChainId, XToken } from '@/xwagmi/types';
 import { StellarAccountValidation, useValidateStellarAccount } from '@/xwagmi/xchains/stellar/utils';
-import { UseQueryResult } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
 import {
@@ -231,7 +230,10 @@ export function useDerivedSwapInfo(): {
   const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], trade?.inputAmount];
 
   // decimal scales are different for different chains for the same token
-  if (!balanceIn || (balanceIn && amountIn && new BigNumber(balanceIn.toFixed()).isLessThan(amountIn.toFixed()))) {
+  if (
+    (account && !balanceIn && amountIn?.greaterThan(0)) ||
+    (balanceIn && amountIn && new BigNumber(balanceIn.toFixed()).isLessThan(amountIn.toFixed()))
+  ) {
     inputError = t`Insufficient ${currencies[Field.INPUT]?.symbol}`;
   }
 

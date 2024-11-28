@@ -77,7 +77,7 @@ const CollateralTypeSwitcher = ({ width, containerRef }) => {
                 currency={SUPPORTED_TOKENS_LIST.find(
                   token => token.symbol === (collateralType === 'sICX' ? icxDisplayType : collateralType),
                 )}
-                size={'18px'}
+                size={'24px'}
               />
             </LogoWrap>
             {collateralType === 'sICX' ? icxDisplayType : collateralType}

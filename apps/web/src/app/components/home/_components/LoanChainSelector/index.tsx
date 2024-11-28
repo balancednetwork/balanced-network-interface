@@ -80,7 +80,7 @@ const LoanChainSelector = ({
         <div>
           <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }}>
             <Typography fontSize={14} pr="1px" variant="span">
-              <ChainSelectorLogo chain={xChainMap[loanRecipientNetwork]} />
+              <ChainSelectorLogo chain={xChainMap[loanRecipientNetwork]} size={18} />
               {xChainMap[loanRecipientNetwork].name}
             </Typography>
             <div ref={arrowRef} style={{ display: 'inline-block' }}>

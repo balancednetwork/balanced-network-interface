@@ -93,7 +93,7 @@ const CollateralChainSelector = ({
           <div>
             <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }}>
               <Typography fontSize={14} pr="1px" variant="span">
-                <ChainSelectorLogo chain={xChainMap[collateralXChain]} />
+                <ChainSelectorLogo chain={xChainMap[collateralXChain]} size={18} />
                 {xChainMap[collateralXChain].name}
               </Typography>
               <div ref={arrowRef} style={{ display: 'inline-block' }}>

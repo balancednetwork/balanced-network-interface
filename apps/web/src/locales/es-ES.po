@@ -56,8 +56,7 @@ msgstr ""
 msgid "then create the pool."
 msgstr "después cree el pool."
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/components/BridgeLimitWarning/index.tsx
 msgid "Only"
 msgstr ""
 
@@ -125,6 +124,7 @@ msgstr "15m"
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Switch to {0}"
 msgstr ""
@@ -266,6 +266,7 @@ msgstr ""
 #~ msgid "Rewards"
 #~ msgstr "Recompensas"
 
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Pay"
@@ -925,6 +926,11 @@ msgstr ""
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
@@ -966,6 +972,7 @@ msgstr "Trading"
 #~ msgid "Confirm the transaction on your Ledger."
 #~ msgstr "Confirma la transacción en tu Ledger."
 
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swapping"
 msgstr ""
@@ -1052,6 +1059,10 @@ msgstr "Enviando voto..."
 msgid "Do not send sICX to an exchange."
 msgstr "No envíes sICX a un exchange."
 
+#: src/app/components/home/CollateralPanel.tsx
+msgid "To deposit {0}"
+msgstr ""
+
 #: src/app/components/home/Savings/index.tsx
 msgid "Withdrawing bnUSD..."
 msgstr ""
@@ -1073,6 +1084,7 @@ msgstr ""
 msgid "Title"
 msgstr "Título"
 
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap {0} for {1}?"
@@ -1434,6 +1446,7 @@ msgstr ""
 msgid "There's no ICX unstaking."
 msgstr "No hay ICX en unstaking."
 
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
@@ -1550,7 +1563,7 @@ msgstr ""
 msgid "Future incentives"
 msgstr ""
 
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapInfo.tsx
 msgid "Minimum to receive"
 msgstr "Mínimo a recibir"
 
@@ -1864,8 +1877,7 @@ msgstr ""
 msgid "Claiming bribe..."
 msgstr ""
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/components/BridgeLimitWarning/index.tsx
 msgid "0 {0}"
 msgstr ""
 
@@ -1922,8 +1934,8 @@ msgstr "Rechazado"
 #~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
-msgid "To deposit {collateralType}"
-msgstr ""
+#~ msgid "To deposit {collateralType}"
+#~ msgstr ""
 
 #: src/app/components/Wallet/index.tsx
 msgid "Sign out"
@@ -2085,7 +2097,7 @@ msgstr ""
 msgid "Claim network fees?"
 msgstr "¿Cobrar ganancias?"
 
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/PriceImpact.tsx
 msgid "Price impact"
 msgstr "Impacto en el precio"
 
@@ -2133,6 +2145,7 @@ msgstr ""
 msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
 msgstr ""
 
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Receive"
@@ -2234,8 +2247,7 @@ msgstr ""
 msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
 msgstr ""
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/components/BridgeLimitWarning/index.tsx
 msgid "available on {0}."
 msgstr ""
 
@@ -2282,6 +2294,10 @@ msgstr "Pool"
 #: src/app/components/StabilityFund/index.tsx
 #~ msgid "1 {sendSymbol} per {0}"
 #~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/SwapMMCommitButton.tsx
+msgid "MM Swap"
+msgstr ""
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
@@ -2570,9 +2586,10 @@ msgid "Learn how to resolve common transaction errors."
 msgstr ""
 
 #: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
+#: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap"

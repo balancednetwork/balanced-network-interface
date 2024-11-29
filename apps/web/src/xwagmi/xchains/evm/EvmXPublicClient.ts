@@ -36,7 +36,7 @@ export class EvmXPublicClient extends XPublicClient {
     if (!publicClient) {
       throw new Error('EvmXPublicClient: publicClient is not initialized yet');
     }
-    return publicClient;
+    return publicClient as PublicClient;
   }
 
   async getBalance(address: string | undefined, xToken: XToken) {

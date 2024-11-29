@@ -1,6 +1,6 @@
 import { CurrencyAmount, MaxUint256, Percent, XToken } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
-import { Address, PublicClient, WalletClient, WriteContractParameters, toHex, erc20Abi, getContract } from 'viem';
+import { Address, PublicClient, WalletClient, WriteContractParameters, erc20Abi, getContract, toHex } from 'viem';
 import bnJs from '../icon/bnJs';
 
 import { isNativeCurrency } from '@/constants/tokens';
@@ -30,7 +30,7 @@ export class EvmXWalletClient extends XWalletClient {
     if (!publicClient) {
       throw new Error('EvmXPublicClient: publicClient is not initialized yet');
     }
-    return publicClient;
+    return publicClient as PublicClient;
   }
 
   async getWalletClient(): Promise<WalletClient> {

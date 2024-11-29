@@ -143,9 +143,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: 4.2.1
         version: 4.2.1(vite@5.4.0(@types/node@22.9.3)(terser@5.30.3))
-      '@wagmi/core':
-        specifier: 2.9.0
-        version: 2.9.0(@tanstack/query-core@5.29.0)(@types/react@18.2.67)(bufferutil@4.0.8)(immer@10.1.1)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@2.9.23(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       axios:
         specifier: 0.21.3
         version: 0.21.3
@@ -595,9 +592,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: 4.2.1
         version: 4.2.1(vite@5.4.0(@types/node@22.9.3)(terser@5.30.3))
-      '@wagmi/core':
-        specifier: 2.9.0
-        version: 2.9.0(@tanstack/query-core@5.29.0)(@types/react@18.2.67)(bufferutil@4.0.8)(immer@10.1.1)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@2.9.23(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       axios:
         specifier: 0.21.3
         version: 0.21.3
@@ -5618,18 +5612,6 @@ packages:
 
   '@wagmi/core@2.6.17':
     resolution: {integrity: sha512-Ghr7PlD5HO1YJrsaC52j/csgaigBAiTR7cFiwrY7WdwvWLsR5na4Dv6KfHTU3d3al0CKDLanQdRS5nB4mX1M+g==}
-    peerDependencies:
-      '@tanstack/query-core': '>=5.0.0'
-      typescript: '>=5.0.4'
-      viem: 2.x
-    peerDependenciesMeta:
-      '@tanstack/query-core':
-        optional: true
-      typescript:
-        optional: true
-
-  '@wagmi/core@2.9.0':
-    resolution: {integrity: sha512-LPfZPZe2VTAu35m+o2Ej31RN/8zdgv2aeESLb/QVf9n2Rskek0oz23uTMeW51RbYj6amo9wPR2ok20i3F18YLw==}
     peerDependencies:
       '@tanstack/query-core': '>=5.0.0'
       typescript: '>=5.0.4'
@@ -20204,23 +20186,6 @@ snapshots:
       - zod
 
   '@wagmi/core@2.6.17(@tanstack/query-core@5.29.0)(@types/react@18.2.67)(bufferutil@4.0.8)(immer@10.1.1)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@2.9.23(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)':
-    dependencies:
-      eventemitter3: 5.0.1
-      mipd: 0.0.5(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
-      viem: 2.9.23(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
-      zustand: 4.4.1(@types/react@18.2.67)(immer@10.1.1)(react@18.2.0)
-    optionalDependencies:
-      '@tanstack/query-core': 5.29.0
-      typescript: 5.5.4
-    transitivePeerDependencies:
-      - '@types/react'
-      - bufferutil
-      - immer
-      - react
-      - utf-8-validate
-      - zod
-
-  '@wagmi/core@2.9.0(@tanstack/query-core@5.29.0)(@types/react@18.2.67)(bufferutil@4.0.8)(immer@10.1.1)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@2.9.23(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)':
     dependencies:
       eventemitter3: 5.0.1
       mipd: 0.0.5(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)

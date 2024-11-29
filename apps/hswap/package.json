@@ -42,7 +42,6 @@
     "@tanstack/react-table": "8.20.5",
     "@uniswap/token-lists": "1.0.0-beta.30",
     "@vitejs/plugin-react": "4.2.1",
-    "@wagmi/core": "2.9.0",
     "axios": "0.21.3",
     "bech32": "2.0.0",
     "bignumber.js": "9.0.1",

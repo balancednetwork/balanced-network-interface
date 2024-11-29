@@ -374,7 +374,7 @@ export function useMMTrade(inputAmount: CurrencyAmount<XToken> | undefined, outp
       const res = await IntentService.getQuote({
         token_src: inputAmount.currency.address,
         token_src_blockchain_id: inputAmount.currency.xChainId,
-        token_dst: outputCurrency.xChainId === 'sui' ? '0x' + outputCurrency.address : outputCurrency.address,
+        token_dst: outputCurrency.address,
         token_dst_blockchain_id: outputCurrency.xChainId,
         src_amount: inputAmount.quotient,
       });

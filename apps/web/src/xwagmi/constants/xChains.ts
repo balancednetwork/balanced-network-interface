@@ -295,7 +295,7 @@ export const sui: XChain = {
     decimals: 9,
     name: 'SUI',
     symbol: 'SUI',
-    address: '0000000000000000000000000000000000000000000000000000000000000002::sui::SUI',
+    address: '0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI',
   },
   rpc: {
     http: 'https://sentry.tm.injective.network',

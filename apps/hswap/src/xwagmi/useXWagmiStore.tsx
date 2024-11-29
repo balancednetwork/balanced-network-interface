@@ -1,16 +1,25 @@
 import { xChains } from '@/xwagmi/constants/xChains';
 import { XChainId, XChainType } from '@/xwagmi/types';
+import { BalancedJs } from '@balancednetwork/balanced-js';
 import { useSuiClient } from '@mysten/dapp-kit';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useEffect } from 'react';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { getXChainType } from './actions';
 import { XPublicClient, XService, XWalletClient } from './core';
+import { useXConnection } from './hooks';
 import { XConnection } from './types';
 import { ArchwayXConnector, ArchwayXPublicClient, ArchwayXService, ArchwayXWalletClient } from './xchains/archway';
 import { EvmXPublicClient, EvmXService, EvmXWalletClient } from './xchains/evm';
-import { HavahXConnector, HavahXPublicClient, HavahXService, HavahXWalletClient } from './xchains/havah';
+import {
+  HavahHanaXConnector,
+  HavahXConnector,
+  HavahXPublicClient,
+  HavahXService,
+  HavahXWalletClient,
+} from './xchains/havah';
 import { IconHanaXConnector, IconXPublicClient, IconXService, IconXWalletClient } from './xchains/icon';
 import {
   InjectiveKelprXConnector,
@@ -19,12 +28,11 @@ import {
   InjectiveXService,
   InjectiveXWalletClient,
 } from './xchains/injective';
+import { SolanaXPublicClient, SolanaXWalletClient } from './xchains/solana';
+import { SolanaXService } from './xchains/solana/SolanaXService';
+import { useAnchorProvider } from './xchains/solana/hooks/useAnchorProvider';
 import { StellarXPublicClient, StellarXService, StellarXWalletClient } from './xchains/stellar';
 import { SuiXPublicClient, SuiXService, SuiXWalletClient } from './xchains/sui';
-import { SolanaXService } from './xchains/solana/SolanaXService';
-import { SolanaXPublicClient, SolanaXWalletClient } from './xchains/solana';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { useAnchorProvider } from './xchains/solana/hooks/useAnchorProvider';
 
 const iconXService = IconXService.getInstance();
 iconXService.setXConnectors([new IconHanaXConnector()]);
@@ -36,7 +44,7 @@ const evmXService = EvmXService.getInstance();
 evmXService.setXConnectors([]);
 
 const havahXService = HavahXService.getInstance();
-havahXService.setXConnectors([new HavahXConnector()]);
+havahXService.setXConnectors([new HavahHanaXConnector(), new HavahXConnector()]);
 
 const injectiveXService = InjectiveXService.getInstance();
 injectiveXService.setXConnectors([new InjectiveMetamaskXConnector(), new InjectiveKelprXConnector()]);
@@ -233,4 +241,17 @@ export const useInitXWagmiStore = () => {
       solanaXService.provider = solanaProvider;
     }
   }, [solanaProvider]);
+
+  const havahXConnection = useXConnection('HAVAH');
+  useEffect(() => {
+    if (havahXConnection) {
+      if (havahXConnection.xConnectorId === 'hana') {
+        // @ts-ignore
+        havahXService.walletClient = new BalancedJs({ networkId: 0x100, walletProvider: window.hanaWallet.havah });
+      } else if (havahXConnection.xConnectorId === 'havah') {
+        // @ts-ignore
+        havahXService.walletClient = new BalancedJs({ networkId: 0x100, walletProvider: window.havah });
+      }
+    }
+  }, [havahXConnection]);
 };

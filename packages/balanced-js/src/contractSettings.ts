@@ -1,6 +1,6 @@
 import IconService from 'icon-sdk-js';
 
-import { SupportedChainId as NetworkId, CHAIN_INFO } from './chain';
+import { CHAIN_INFO, SupportedChainId as NetworkId } from './chain';
 
 export type AccountType = string | undefined | null;
 
@@ -12,6 +12,7 @@ class ContractSettings {
   networkId: NetworkId;
   provider: any;
   account: AccountType = '';
+  walletProvider: any; // it's for havah - window.havah or window.hanaWallet.havah
 
   /**
    * @constructor
@@ -20,10 +21,11 @@ class ContractSettings {
    */
   constructor(contractSettings?: Partial<ContractSettings>) {
     contractSettings = contractSettings || {};
-    const { provider, networkId } = contractSettings;
+    const { provider, networkId, walletProvider } = contractSettings;
     this.networkId = networkId || 1;
 
     this.provider = provider || getDefaultProvider(this.networkId);
+    this.walletProvider = walletProvider;
   }
 }
 

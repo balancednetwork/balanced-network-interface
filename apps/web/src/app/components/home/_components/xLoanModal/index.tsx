@@ -184,7 +184,7 @@ const XLoanModal = ({
 
           <Typography textAlign="center">
             <Trans>
-              Cross-chain fee: <strong>{formattedXCallFee}</strong>
+              Transfer fee: <strong>{formattedXCallFee}</strong>
             </Trans>
           </Typography>
 
@@ -197,7 +197,7 @@ const XLoanModal = ({
             </Typography>
           )}
 
-          {receiver && storedModalValues.action === XLoanAction.BORROW && (
+          {receiver && loanNetwork !== sourceChain && storedModalValues.action === XLoanAction.BORROW && (
             <Box className="border-top" mt={3} pt={3}>
               <Typography color="text1" textAlign="center">
                 {xChainMap[loanNetwork].name} address

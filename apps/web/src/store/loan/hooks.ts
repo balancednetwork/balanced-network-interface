@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { BalancedJs, CallData, addresses } from '@balancednetwork/balanced-js';
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
@@ -422,6 +422,28 @@ export function useLoanParameters() {
   }
 }
 
+export const useIsPositionLocked = (collateral?: CurrencyAmount<Currency>, loan?: BigNumber) => {
+  const collateralType = collateral?.currency.symbol;
+  const price = useOraclePrice(collateralType) || new BigNumber(0);
+  const ratios = useLockingRatios();
+  const ratio = ratios && ratios[collateralType || ''];
+  const { originationFee = 0 } = useLoanParameters() || {};
+
+  const lockThresholdPrice = loan?.div(new BigNumber(collateral?.toFixed() || 0)).times(ratio ?? 0);
+  const totalBorrowableAmount = new BigNumber(collateral?.toFixed() || 0).multipliedBy(price).div(ratio);
+
+  const borrowableAmountWithReserve = BigNumber.max(
+    totalBorrowableAmount.dividedBy(1 + originationFee),
+    loan || new BigNumber(0),
+  );
+
+  const availableLoan = borrowableAmountWithReserve.minus(loan || new BigNumber(0));
+
+  if (price.isZero()) return false;
+
+  return !availableLoan.isGreaterThan(0.01) || lockThresholdPrice?.isGreaterThan(price);
+};
+
 export const useThresholdPrices = (): [BigNumber, BigNumber] => {
   const collateralInputAmount = useCollateralInputAmountAbsolute();
   const loanInputAmount = useLoanInputAmount();
@@ -527,6 +549,7 @@ export function useDerivedLoanInfo(): {
   account: string | undefined;
   receiver: string | undefined;
   differenceAmount: BigNumber;
+  isSliderStateChanged: boolean;
   borrowedAmount: BigNumber;
   borrowableAmountWithReserve: BigNumber;
   totalBorrowableAmount: BigNumber;
@@ -569,6 +592,7 @@ export function useDerivedLoanInfo(): {
   };
 
   const differenceAmount = parsedAmount[Field.LEFT].minus(borrowedAmount);
+  const isSliderStateChanged = !parsedAmount[Field.LEFT].isEqualTo(borrowedAmount.dp(2));
 
   const bnUSDAmount = differenceAmount
     ? CurrencyAmount.fromRawAmount(
@@ -596,6 +620,7 @@ export function useDerivedLoanInfo(): {
     borrowableAmountWithReserve,
     totalBorrowableAmount,
     differenceAmount,
+    isSliderStateChanged,
     bnUSDAmount,
     direction,
   };

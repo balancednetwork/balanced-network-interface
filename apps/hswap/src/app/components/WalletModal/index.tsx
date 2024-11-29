@@ -1,3 +1,4 @@
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import React, { useCallback, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 
@@ -16,7 +17,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetDescription } from '@/components/ui/sheet';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
 import { useXDisconnectAll } from '@/xwagmi/hooks';
@@ -159,6 +160,9 @@ const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
           isMobile ? 'w-full' : 'rounded-tl-3xl rounded-bl-3xl',
         )}
       >
+        <VisuallyHidden.Root>
+          <SheetDescription>Wallet Modal</SheetDescription>
+        </VisuallyHidden.Root>
         <WalletModalContent onDismiss={onDismiss} />
       </SheetContent>
     </Sheet>

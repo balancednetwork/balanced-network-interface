@@ -1,9 +1,9 @@
-import type { ChainConfig, CreateIntentOrderPayload, Result, SuiChainConfig } from '../types.js';
+import { bcs } from '@mysten/sui/bcs';
 import { Transaction, type TransactionResult } from '@mysten/sui/transactions';
 import { signAndExecuteTransaction, signTransaction } from '@mysten/wallet-standard';
-import { SuiProvider, SwapOrder } from '../entities/index.js';
 import { stringToBytes } from 'viem';
-import { bcs } from '@mysten/bcs';
+import { SuiProvider, SwapOrder } from '../entities/index.js';
+import type { ChainConfig, CreateIntentOrderPayload, Result, SuiChainConfig } from '../types.js';
 
 export class SuiIntentService {
   private constructor() {}

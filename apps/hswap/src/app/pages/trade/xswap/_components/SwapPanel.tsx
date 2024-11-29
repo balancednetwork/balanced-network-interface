@@ -207,17 +207,15 @@ export default function SwapPanel() {
     );
   }, [isValid, account, inputError, canBridge, handleOpenXSwapModal, recipient, outputAccount.address]);
 
-  const handleConfirmXSwap = useCallback(async () => {
-    if (!executionXTransactionInput) return;
+  const handleApprove = useCallback(async () => {
+    if (!approvalState || approvalState !== ApprovalState.NOT_APPROVED) return;
 
-    const pendingModalSteps: PendingConfirmModalState[] = [];
-    if (approvalState !== ApprovalState.APPROVED) {
+    try {
+      const pendingModalSteps: PendingConfirmModalState[] = [];
+
       pendingModalSteps.push(ConfirmModalState.APPROVING_TOKEN);
-    }
-    pendingModalSteps.push(ConfirmModalState.PENDING_CONFIRMATION);
-    setPendingModalSteps(pendingModalSteps);
+      setPendingModalSteps(pendingModalSteps);
 
-    if (approvalState !== ApprovalState.APPROVED) {
       setXSwapModalState({
         confirmModalState: ConfirmModalState.APPROVING_TOKEN,
         xSwapErrorMessage: '',
@@ -226,14 +224,19 @@ export default function SwapPanel() {
       });
 
       await approveCallback();
-
-      // setXSwapModalState({
-      //   confirmModalState: ConfirmModalState.APPROVING_TOKEN,
-      //   xSwapErrorMessage: '',
-      //   attemptingTxn: false,
-      //   xTransactionId: '',
-      // });
+    } catch (e) {
+      console.log('approve failed', e);
     }
+
+    setXSwapModalState(DEFAULT_XSWAP_MODAL_STATE);
+  }, [approvalState, approveCallback]);
+
+  const handleConfirmXSwap = useCallback(async () => {
+    if (!executionXTransactionInput) return;
+
+    const pendingModalSteps: PendingConfirmModalState[] = [];
+    pendingModalSteps.push(ConfirmModalState.PENDING_CONFIRMATION);
+    setPendingModalSteps(pendingModalSteps);
 
     setXSwapModalState({
       confirmModalState: ConfirmModalState.PENDING_CONFIRMATION,
@@ -259,7 +262,7 @@ export default function SwapPanel() {
       console.log(e);
       setXSwapModalState(DEFAULT_XSWAP_MODAL_STATE);
     }
-  }, [sendXTransaction, executionXTransactionInput, approvalState, approveCallback]);
+  }, [sendXTransaction, executionXTransactionInput]);
 
   return (
     <>
@@ -341,6 +344,7 @@ export default function SwapPanel() {
           pendingModalSteps={pendingModalSteps}
           approvalState={approvalState}
           //
+          onApprove={handleApprove}
           onConfirm={handleConfirmXSwap}
           onDismiss={handleDismiss}
         />

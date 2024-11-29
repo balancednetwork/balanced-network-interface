@@ -3,21 +3,21 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
+import { WhiteButton } from '@/app/components2/Button';
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
+import { ArrowGradientIcon, TimeGradientIcon } from '@/app/components2/Icons';
 import { Modal } from '@/app/components2/Modal';
 import { ApprovalState } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { Field } from '@/store/swap/reducer';
 import { formatBigNumber } from '@/utils';
 import { xChainMap } from '@/xwagmi/constants/xChains';
+import { XToken } from '@/xwagmi/types';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
-import { CheckIcon, Loader2, XIcon } from 'lucide-react';
+import { CheckIcon, Loader2 } from 'lucide-react';
 import CurrencyCard from './CurrencyCard';
-import { WhiteButton } from '@/app/components2/Button';
-import { ArrowGradientIcon, TimeGradientIcon } from '@/app/components2/Icons';
-import { XToken } from '@/xwagmi/types';
 
 export enum ConfirmModalState {
   REVIEWING,
@@ -40,6 +40,7 @@ type XSwapModalProps = {
   approvalState: ApprovalState;
   pendingModalSteps: PendingConfirmModalState[];
   //
+  onApprove: () => Promise<void>;
   onConfirm: () => Promise<void>;
   onDismiss: () => void;
 };
@@ -56,6 +57,7 @@ const XSwapModal = ({
   approvalState,
   pendingModalSteps,
   //
+  onApprove,
   onConfirm,
   onDismiss,
 }: XSwapModalProps) => {
@@ -67,16 +69,10 @@ const XSwapModal = ({
   } = executionXTransactionInput;
 
   const { formattedXCallFee } = useXCallFee(direction.from, direction.to);
-  const [approved, setApproved] = useState(false);
   const [swapConfirmed, setSwapConfirmed] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const currentXTransaction = xTransactionActions.get(xTransactionId || null);
 
-  useEffect(() => {
-    if (approvalState === ApprovalState.APPROVED) {
-      setApproved(true);
-    }
-  }, [approvalState]);
   useEffect(() => {
     if (currentXTransaction) {
       // const swapConfirmed = !!txnHash || !!xTransactionId;
@@ -112,7 +108,6 @@ const XSwapModal = ({
   const handleDismiss = useCallback(() => {
     onDismiss();
     setSwapConfirmed(false);
-    setApproved(false);
     setErrorMessage(undefined);
   }, [onDismiss]);
 
@@ -143,34 +138,6 @@ const XSwapModal = ({
               <ArrowGradientIcon />
             </div>
           </div>
-          {/* {showDetails && (
-            <div className="bg-title-gradient absolute top-[50%] left-[50%] mx-[-16px] my-[-32px] w-8 h-8 p-1 rounded-full">
-              <div className="bg-white flex justify-center items-center rounded-full w-full h-full">
-                <ArrowGradientIcon />
-              </div>
-            </div>
-          )}
-          {confirmModalState !== ConfirmModalState.REVIEWING && showProgressIndicator && (
-            <div className="bg-title-gradient absolute top-[50%] left-[50%] mx-[-16px] my-[-32px] w-8 h-8 p-1 rounded-full">
-              <div className="bg-white flex justify-center items-center rounded-full w-full h-full">
-                <ArrowGradientIcon />
-              </div>
-            </div>
-          )}
-          {showSuccess && (
-            <div className="bg-title-gradient absolute top-[50%] left-[50%] mx-[-16px] my-[-32px] w-8 h-8 p-1 rounded-full">
-              <div className="bg-green-500 flex justify-center items-center rounded-full w-full h-full">
-                <CheckIcon className="text-background" />
-              </div>
-            </div>
-          )}
-          {showError && (
-            <div className="bg-title-gradient absolute top-[50%] left-[50%] mx-[-16px] my-[-32px] w-8 h-8 p-1 rounded-full">
-              <div className="bg-red-500 flex justify-center items-center rounded-full w-full h-full">
-                <XIcon className="text-background" />
-              </div>
-            </div>
-          )} */}
         </div>
 
         {/* Details section displays rate, fees, network cost, etc. w/ additional details in drop-down menu .*/}
@@ -203,10 +170,10 @@ const XSwapModal = ({
                   <span className="text-white text-sm">{formattedXCallFee}</span>
                 </div>
               )}
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between">
                 <span className="text-[#d4c5f9] text-sm font-medium">Network Cost</span>
                 <span className="text-white text-sm">0.0001 ICX</span>
-              </div>
+              </div> */}
               {/* {xTransactionType !== XTransactionType.BRIDGE && (
                 <div className="flex justify-between items-center">
                   <span className="text-secondary-foreground text-body">Order routing</span>
@@ -221,9 +188,14 @@ const XSwapModal = ({
                 <Trans>Switch to {xChainMap[direction.from].name}</Trans>
                 <ArrowGradientIcon />
               </WhiteButton>
+            ) : approvalState !== ApprovalState.APPROVED ? (
+              <WhiteButton onClick={async () => await onApprove()} className="h-[48px] text-base rounded-full">
+                <Trans>Approve</Trans>
+                <ArrowGradientIcon />
+              </WhiteButton>
             ) : (
               <WhiteButton onClick={async () => await onConfirm()} className="h-[48px] text-base rounded-full">
-                <Trans>{approvalState !== ApprovalState.APPROVED ? 'Approve and Swap' : 'Swap'}</Trans>
+                <Trans>Swap</Trans>
                 <ArrowGradientIcon />
               </WhiteButton>
             )}
@@ -237,8 +209,8 @@ const XSwapModal = ({
               <div key={step} className="flex gap-2 items-center justify-between">
                 {step === ConfirmModalState.APPROVING_TOKEN && (
                   <>
-                    <div className="flex gap-2 items-center">
-                      {approvalState === ApprovalState.NOT_APPROVED && !approved && (
+                    <div className="flex flex-col gap-2 items-center items-center">
+                      {approvalState === ApprovalState.NOT_APPROVED && (
                         <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
                           {currencies[Field.INPUT] && <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} />}
                         </div>
@@ -249,14 +221,10 @@ const XSwapModal = ({
                         </div>
                       )}
 
-                      {approved && (
-                        <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
-                          {currencies[Field.INPUT] && <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} />}
-                        </div>
-                      )}
-                      <div>Approve {currencies[Field.INPUT]?.symbol} spending</div>
+                      <div className="text-[#e6e0f7] text-sm font-bold">
+                        Approve {currencies[Field.INPUT]?.symbol} in wallet
+                      </div>
                     </div>
-                    {approved && <CheckIcon />}
                   </>
                 )}
                 {step === ConfirmModalState.PENDING_CONFIRMATION && (
@@ -272,7 +240,7 @@ const XSwapModal = ({
                           <Loader2 className="animate-spin" />
                         </div>
                       )}
-                      <div className=" text-[#e6e0f7] text-sm font-bold">Confirm swap in wallet</div>
+                      <div className="text-[#e6e0f7] text-sm font-bold">Confirm swap in wallet</div>
                     </div>
                   </>
                 )}

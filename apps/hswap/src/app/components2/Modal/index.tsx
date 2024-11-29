@@ -1,10 +1,10 @@
 import * as React from 'react';
 
 import { Dialog, DialogClose, DialogContent, DialogHeader } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { cn } from '@/lib/utils';
 import { XIcon } from 'lucide-react';
 import { isMobile } from 'react-device-detect';
-import { cn } from '@/lib/utils';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 //ModalProps
 interface ModalProps {

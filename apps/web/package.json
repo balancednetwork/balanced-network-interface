@@ -98,8 +98,8 @@
     "tiny-invariant": "1.1.0",
     "toformat": "2.0.0",
     "uuid": "9.0.0",
-    "viem": "2.x",
-    "wagmi": "2.5.20",
+    "viem": "^2.21.35",
+    "wagmi": "2.13.2",
     "zustand": "4.5.2"
   },
   "scripts": {

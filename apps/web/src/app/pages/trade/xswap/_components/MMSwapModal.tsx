@@ -1,24 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
-import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
 
-import { Button, TextButton } from '@/app/components/Button';
+import { TextButton } from '@/app/components/Button';
 import { StyledButton } from '@/app/components/Button/StyledButton';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
-import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
-import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
-import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
-import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
-import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { MMTrade } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatBigNumber, shortenAddress } from '@/utils';
@@ -27,11 +20,11 @@ import { getNetworkDisplayName } from '@/utils/xTokens';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXService } from '@/xwagmi/hooks';
 import { XChainId, XToken } from '@/xwagmi/types';
-import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import { EvmXService } from '@/xwagmi/xchains/evm';
-import { CreateIntentOrderPayload, EvmProvider, IntentService } from '@balancednetwork/intents-sdk';
+import { CreateIntentOrderPayload, EvmProvider, IntentService, SuiProvider } from '@balancednetwork/intents-sdk';
+import { useCurrentAccount, useCurrentWallet, useSuiClient } from '@mysten/dapp-kit';
 import { AnimatePresence, motion } from 'framer-motion';
 
 type MMSwapModalProps = {
@@ -40,12 +33,6 @@ type MMSwapModalProps = {
   currencies: { [field in Field]?: XToken | undefined };
   trade?: MMTrade;
   recipient?: string | null;
-};
-
-export const presenceVariants = {
-  initial: { opacity: 0, height: 0 },
-  animate: { opacity: 1, height: 'auto' },
-  exit: { opacity: 0, height: 0 },
 };
 
 const MMSwapModal = ({
@@ -92,8 +79,14 @@ const MMSwapModal = ({
 
   const xService = useXService('EVM') as EvmXService;
 
-  const { sendXTransaction } = useSendXTransaction();
-  const handleXCallSwap = async () => {
+  // sui part
+  const suiClient = useSuiClient();
+  const { currentWallet: suiWallet } = useCurrentWallet();
+  const suiAccount = useCurrentAccount();
+  console.log('suiClient', suiClient, suiWallet, suiAccount?.address);
+  // end sui part
+
+  const handleMMSwap = async () => {
     if (!account || !recipient || !currencies[Field.INPUT] || !currencies[Field.OUTPUT] || !trade) {
       return;
     }
@@ -107,26 +100,27 @@ const MMSwapModal = ({
       toAddress: recipient, // destination address where funds are transfered to (toChain)
       // fromChain: currencies[Field.INPUT]?.xChainId, // ChainName
       // toChain: currencies[Field.OUTPUT]?.xChainId, // ChainName
-      fromChain: 'arb',
-      toChain: 'sui',
+      fromChain: currencies[Field.INPUT].xChainId === '0xa4b1.arbitrum' ? 'arb' : 'sui',
+      toChain: currencies[Field.OUTPUT].xChainId === 'sui' ? 'sui' : 'arb',
       token: currencies[Field.INPUT]?.address,
-      toToken: '0x2::sui::SUI',
+      toToken: currencies[Field.OUTPUT]?.address,
       amount: trade.inputAmount.quotient,
       toAmount: trade.outputAmount.quotient,
     };
     try {
       const executionResult = await IntentService.executeIntentOrder(
         order,
-        // @ts-ignore
-        new EvmProvider({ walletClient: walletClient, publicClient: publicClient }),
+        currencies[Field.INPUT].xChainId === '0xa4b1.arbitrum'
+          ? // @ts-ignore
+            new EvmProvider({ walletClient: walletClient, publicClient: publicClient })
+          : // @ts-ignore
+            new SuiProvider({ client: suiClient, wallet: suiWallet, account: suiAccount }),
       );
       console.log('SwapMMCommitButton', executionResult);
     } catch (e) {
       console.error('SwapMMCommitButton error', e);
     }
   };
-
-  const from = trade?.inputAmount.currency.xChainId || '0x1.icon';
 
   const direction = {
     from: currencies[Field.INPUT]?.xChainId || '0x1.icon',
@@ -232,7 +226,7 @@ const MMSwapModal = ({
                     </>
                   ) : (
                     <>
-                      <StyledButton onClick={handleXCallSwap} disabled={!gasChecker.hasEnoughGas}>
+                      <StyledButton onClick={handleMMSwap} disabled={!gasChecker.hasEnoughGas}>
                         <Trans>Swap</Trans>
                       </StyledButton>
 
@@ -241,7 +235,7 @@ const MMSwapModal = ({
                           {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
                         </Button>
                       ) : (
-                        <StyledButton onClick={handleXCallSwap} disabled={!gasChecker.hasEnoughGas}>
+                        <StyledButton onClick={handleMMSwap} disabled={!gasChecker.hasEnoughGas}>
                           <Trans>Swap</Trans>
                         </StyledButton>
                       )} */}

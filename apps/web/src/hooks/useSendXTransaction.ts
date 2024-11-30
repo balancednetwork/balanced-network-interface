@@ -123,6 +123,7 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
     xChainHeightActions.getXChainHeight(primaryDestinationChainId) - 20n;
   const finalDestinationChainInitialBlockHeight = xChainHeightActions.getXChainHeight(finalDestinationChainId);
 
+  const now = Date.now();
   const xTransaction: XTransaction = {
     id: `${sourceChainId}/${sourceTransactionHash}`,
     type: xTransactionInput.type,
@@ -132,6 +133,7 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
     finalDestinationChainId: finalDestinationChainId,
     finalDestinationChainInitialBlockHeight,
     attributes,
+    createdAt: now,
   };
   xTransactionActions.add(xTransaction);
 
@@ -145,7 +147,7 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
     events: {},
     destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
     isPrimary: true,
-    createdAt: Date.now(),
+    createdAt: now,
     useXCallScanner: xChainMap[primaryDestinationChainId].useXCallScanner || xChainMap[sourceChainId].useXCallScanner,
   };
   xMessageActions.add(xMessage);

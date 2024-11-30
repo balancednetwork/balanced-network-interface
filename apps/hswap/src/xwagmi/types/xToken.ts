@@ -17,10 +17,6 @@ export class XToken extends Token {
     identifier?: string,
     spokeVersion?: string,
   ) {
-    if (address === 'native') {
-      address = `${xChainId}-native`;
-    }
-
     super(chainId, address, decimals, symbol, name);
     this.xChainId = xChainId;
     this.identifier = identifier || symbol;

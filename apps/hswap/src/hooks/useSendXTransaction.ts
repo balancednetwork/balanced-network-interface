@@ -1,4 +1,7 @@
 import { getXWalletClient } from '@/xwagmi/actions';
+import { xChainMap } from '@/xwagmi/constants/xChains';
+import { allXTokens } from '@/xwagmi/constants/xTokens';
+import { XChainId } from '@/xwagmi/types';
 import {
   XMessage,
   XMessageStatus,
@@ -7,14 +10,12 @@ import {
   XTransactionStatus,
   XTransactionType,
 } from '@/xwagmi/xcall/types';
+import { xChainHeightActions } from '@/xwagmi/xcall/zustand/useXChainHeightStore';
 import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
 import { useSignTransaction } from '@mysten/dapp-kit';
 import { useMemo } from 'react';
 import { transactionActions } from './useTransactionStore';
-import { allXTokens } from '@/xwagmi/constants/xTokens';
-import { xChainHeightActions } from '@/xwagmi/xcall/zustand/useXChainHeightStore';
-import { XChainId } from '@/xwagmi/types';
 
 const iconChainId: XChainId = '0x1.icon';
 
@@ -108,7 +109,7 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
       destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
       isPrimary: true,
       createdAt: now,
-      useXCallScanner: primaryDestinationChainId === 'sui' || sourceChainId === 'sui',
+      useXCallScanner: xChainMap[primaryDestinationChainId].useXCallScanner || xChainMap[sourceChainId].useXCallScanner,
     };
     xMessageActions.add(xMessage);
   }

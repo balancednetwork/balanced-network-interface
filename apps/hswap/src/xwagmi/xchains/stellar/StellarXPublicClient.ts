@@ -43,7 +43,7 @@ export class StellarXPublicClient extends XPublicClient {
   }
 
   async getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean) {
-    return BigInt(10_700_000);
+    return BigInt(1_000_000);
   }
 
   async getBlockHeight() {

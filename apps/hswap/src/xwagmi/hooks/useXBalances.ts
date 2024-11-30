@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import { XChainId, XToken } from '../types';
 import { useXPublicClient } from './useXPublicClient';

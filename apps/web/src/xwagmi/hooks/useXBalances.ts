@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import { XChainId, XToken } from '../types';
 import { useXPublicClient } from './useXPublicClient';
@@ -8,7 +8,7 @@ export function useXBalances({
   xTokens,
   address,
 }: { xChainId: XChainId; xTokens: XToken[]; address: string | undefined }): UseQueryResult<{
-  [key: string]: CurrencyAmount<Currency>;
+  [key: string]: CurrencyAmount<XToken>;
 }> {
   const xPublicClient = useXPublicClient(xChainId);
   return useQuery({

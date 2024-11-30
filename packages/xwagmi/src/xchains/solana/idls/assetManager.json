@@ -1,0 +1,788 @@
+{
+  "address": "4u979CPSHUeJQbCYUAvoki4CQHDiG1257vt2DaJULPV9",
+  "metadata": {
+    "name": "asset_manager",
+    "version": "0.1.0",
+    "spec": "0.1.0"
+  },
+  "instructions": [
+    {
+      "name": "configure_rate_limit",
+      "discriminator": [227, 52, 114, 110, 151, 143, 179, 169],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "state",
+          "writable": true
+        },
+        {
+          "name": "token_state",
+          "writable": true
+        },
+        {
+          "name": "system_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "token",
+          "type": "pubkey"
+        },
+        {
+          "name": "period",
+          "type": "u64"
+        },
+        {
+          "name": "percentage",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "deposit_native",
+      "discriminator": [13, 158, 13, 223, 95, 213, 28, 6],
+      "accounts": [
+        {
+          "name": "from",
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "from_authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "vault_token_account",
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "valult_authority",
+          "optional": true
+        },
+        {
+          "name": "vault_native_account",
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "state",
+          "writable": true
+        },
+        {
+          "name": "xcall_manager_state"
+        },
+        {
+          "name": "xcall"
+        },
+        {
+          "name": "xcall_authority",
+          "writable": true
+        },
+        {
+          "name": "xcall_config",
+          "writable": true
+        },
+        {
+          "name": "xcall_manager"
+        },
+        {
+          "name": "token_program",
+          "optional": true
+        },
+        {
+          "name": "system_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "to",
+          "type": {
+            "option": "string"
+          }
+        },
+        {
+          "name": "data",
+          "type": {
+            "option": "bytes"
+          }
+        }
+      ],
+      "returns": "u128"
+    },
+    {
+      "name": "deposit_token",
+      "discriminator": [11, 156, 96, 218, 39, 163, 180, 19],
+      "accounts": [
+        {
+          "name": "from",
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "from_authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "vault_token_account",
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "valult_authority",
+          "optional": true
+        },
+        {
+          "name": "vault_native_account",
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "state",
+          "writable": true
+        },
+        {
+          "name": "xcall_manager_state"
+        },
+        {
+          "name": "xcall"
+        },
+        {
+          "name": "xcall_authority",
+          "writable": true
+        },
+        {
+          "name": "xcall_config",
+          "writable": true
+        },
+        {
+          "name": "xcall_manager"
+        },
+        {
+          "name": "token_program",
+          "optional": true
+        },
+        {
+          "name": "system_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "to",
+          "type": {
+            "option": "string"
+          }
+        },
+        {
+          "name": "data",
+          "type": {
+            "option": "bytes"
+          }
+        }
+      ],
+      "returns": "u128"
+    },
+    {
+      "name": "force_rollback",
+      "discriminator": [33, 71, 170, 56, 159, 152, 4, 33],
+      "accounts": [
+        {
+          "name": "state"
+        },
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "xcall"
+        },
+        {
+          "name": "xcall_authority",
+          "writable": true
+        },
+        {
+          "name": "system_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "request_id",
+          "type": "u128"
+        }
+      ]
+    },
+    {
+      "name": "get_withdraw_limit",
+      "discriminator": [179, 83, 137, 108, 167, 111, 26, 99],
+      "accounts": [
+        {
+          "name": "token_state"
+        },
+        {
+          "name": "vault_token_account"
+        }
+      ],
+      "args": [],
+      "returns": "u64"
+    },
+    {
+      "name": "handle_call_message",
+      "discriminator": [70, 67, 201, 55, 42, 121, 72, 196],
+      "accounts": [
+        {
+          "name": "signer",
+          "signer": true
+        },
+        {
+          "name": "xcall_singer",
+          "signer": true
+        },
+        {
+          "name": "to",
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "to_native",
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "state"
+        },
+        {
+          "name": "token_state"
+        },
+        {
+          "name": "vault_token_account",
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "vault_native_account",
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "mint",
+          "optional": true
+        },
+        {
+          "name": "valult_authority",
+          "optional": true
+        },
+        {
+          "name": "token_program",
+          "optional": true
+        },
+        {
+          "name": "xcall_manager"
+        },
+        {
+          "name": "xcall_manager_state"
+        },
+        {
+          "name": "system_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "from",
+          "type": "string"
+        },
+        {
+          "name": "data",
+          "type": "bytes"
+        },
+        {
+          "name": "protocols",
+          "type": {
+            "vec": "string"
+          }
+        }
+      ],
+      "returns": {
+        "defined": {
+          "name": "HandleCallMessageResponse"
+        }
+      }
+    },
+    {
+      "name": "initialize",
+      "discriminator": [175, 175, 109, 31, 13, 152, 155, 237],
+      "accounts": [
+        {
+          "name": "state",
+          "writable": true
+        },
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program"
+        }
+      ],
+      "args": [
+        {
+          "name": "xcall",
+          "type": "pubkey"
+        },
+        {
+          "name": "icon_asset_manager",
+          "type": "string"
+        },
+        {
+          "name": "xcall_manager",
+          "type": "pubkey"
+        },
+        {
+          "name": "xcall_manager_state",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "query_handle_call_message_accounts",
+      "discriminator": [7, 131, 192, 232, 124, 51, 47, 101],
+      "accounts": [
+        {
+          "name": "state"
+        }
+      ],
+      "args": [
+        {
+          "name": "_from",
+          "type": "string"
+        },
+        {
+          "name": "data",
+          "type": "bytes"
+        },
+        {
+          "name": "_protocols",
+          "type": {
+            "vec": "string"
+          }
+        }
+      ],
+      "returns": {
+        "defined": {
+          "name": "ParamAccounts"
+        }
+      }
+    },
+    {
+      "name": "set_admin",
+      "discriminator": [251, 163, 0, 52, 91, 194, 187, 92],
+      "accounts": [
+        {
+          "name": "state",
+          "writable": true
+        },
+        {
+          "name": "admin",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "admin",
+          "type": "pubkey"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Authority",
+      "discriminator": [36, 108, 254, 18, 167, 144, 27, 36]
+    },
+    {
+      "name": "Config",
+      "discriminator": [155, 12, 170, 224, 30, 250, 204, 130]
+    },
+    {
+      "name": "State",
+      "discriminator": [216, 146, 107, 94, 104, 75, 182, 177]
+    },
+    {
+      "name": "TokenState",
+      "discriminator": [218, 112, 6, 149, 55, 186, 168, 163]
+    },
+    {
+      "name": "XmState",
+      "discriminator": [90, 244, 152, 182, 246, 152, 23, 158]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "AmountLessThanMinimum",
+      "msg": "Amount less than minimum amount"
+    },
+    {
+      "code": 6001,
+      "name": "ExceedsWithdrawLimit",
+      "msg": "Exceeds withdraw limit"
+    },
+    {
+      "code": 6002,
+      "name": "TokenTransferFailed",
+      "msg": "Failed to send tokens"
+    },
+    {
+      "code": 6003,
+      "name": "PercentageTooHigh",
+      "msg": "Percentage should be less than or equal to 10000"
+    },
+    {
+      "code": 6004,
+      "name": "UnauthorizedCaller",
+      "msg": "Unauthorized caller"
+    },
+    {
+      "code": 6005,
+      "name": "InvalidAmount",
+      "msg": "Invalid Amount"
+    },
+    {
+      "code": 6006,
+      "name": "UnknownMethod",
+      "msg": "Unknown Method"
+    },
+    {
+      "code": 6007,
+      "name": "DecoderError",
+      "msg": "Method Decode Error"
+    },
+    {
+      "code": 6008,
+      "name": "InvalidInstruction",
+      "msg": "Invalid Instruction"
+    },
+    {
+      "code": 6009,
+      "name": "TokenNotConfigured",
+      "msg": "Token not configured"
+    },
+    {
+      "code": 6010,
+      "name": "XcallManagerRequired",
+      "msg": "Xcall manager required"
+    },
+    {
+      "code": 6011,
+      "name": "NotIconAssetManager",
+      "msg": "Not the icon asset manager"
+    },
+    {
+      "code": 6012,
+      "name": "ProtocolMismatch",
+      "msg": "Protocol Mismatch"
+    },
+    {
+      "code": 6013,
+      "name": "UnknownMessage",
+      "msg": "Unknown Message"
+    },
+    {
+      "code": 6014,
+      "name": "InsufficientBalance",
+      "msg": "Insufficient Balance"
+    },
+    {
+      "code": 6015,
+      "name": "NotAssetManager",
+      "msg": "Not the asset manager key"
+    },
+    {
+      "code": 6016,
+      "name": "TestError",
+      "msg": "test error"
+    },
+    {
+      "code": 6017,
+      "name": "InvalidToAddress",
+      "msg": "invalid to address"
+    },
+    {
+      "code": 6018,
+      "name": "InvalidFromAddress",
+      "msg": "invalid from address"
+    },
+    {
+      "code": 6019,
+      "name": "MintIsRequired",
+      "msg": "Mint is required"
+    },
+    {
+      "code": 6020,
+      "name": "TokenProgramIsRequired",
+      "msg": "Token program is required"
+    },
+    {
+      "code": 6021,
+      "name": "ValultTokenAccountIsRequired",
+      "msg": "Vault Token Program is required"
+    },
+    {
+      "code": 6022,
+      "name": "ValultAuthorityIsRequired",
+      "msg": "Vault authority is required"
+    },
+    {
+      "code": 6023,
+      "name": "NotAnAddress",
+      "msg": "Not an address"
+    },
+    {
+      "code": 6024,
+      "name": "OnlyXcall",
+      "msg": "Only Xcall"
+    },
+    {
+      "code": 6025,
+      "name": "InvalidProgram",
+      "msg": "Invalid Program"
+    },
+    {
+      "code": 6026,
+      "name": "InvalidXcallManagerState",
+      "msg": "Invalid Xcall Manager State"
+    },
+    {
+      "code": 6027,
+      "name": "InvalidValultTokenAccount",
+      "msg": "Invalid Vault Token Account"
+    },
+    {
+      "code": 6028,
+      "name": "InvalidValutAuthority",
+      "msg": "Invalid Vault Authority"
+    },
+    {
+      "code": 6029,
+      "name": "InvalidValutNativeAuthority",
+      "msg": "Invalid Vault Native Authority"
+    }
+  ],
+  "types": [
+    {
+      "name": "Authority",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Config",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "pubkey"
+          },
+          {
+            "name": "fee_handler",
+            "type": "pubkey"
+          },
+          {
+            "name": "network_id",
+            "type": "string"
+          },
+          {
+            "name": "protocol_fee",
+            "type": "u64"
+          },
+          {
+            "name": "sequence_no",
+            "type": "u128"
+          },
+          {
+            "name": "last_req_id",
+            "type": "u128"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "HandleCallMessageResponse",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "success",
+            "type": "bool"
+          },
+          {
+            "name": "message",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ParamAccountProps",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "pubkey",
+            "type": "pubkey"
+          },
+          {
+            "name": "is_writable",
+            "type": "bool"
+          },
+          {
+            "name": "is_signer",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ParamAccounts",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "accounts",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "ParamAccountProps"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "State",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "xcall",
+            "type": "pubkey"
+          },
+          {
+            "name": "icon_asset_manager",
+            "type": "string"
+          },
+          {
+            "name": "xcall_manager",
+            "type": "pubkey"
+          },
+          {
+            "name": "xcall_manager_state",
+            "type": "pubkey"
+          },
+          {
+            "name": "admin",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TokenState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "token",
+            "type": "pubkey"
+          },
+          {
+            "name": "period",
+            "type": "u64"
+          },
+          {
+            "name": "percentage",
+            "type": "u64"
+          },
+          {
+            "name": "last_update",
+            "type": "i64"
+          },
+          {
+            "name": "current_limit",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "XmState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "admin",
+            "type": "pubkey"
+          },
+          {
+            "name": "xcall",
+            "type": "pubkey"
+          },
+          {
+            "name": "icon_governance",
+            "type": "string"
+          },
+          {
+            "name": "sources",
+            "type": {
+              "vec": "string"
+            }
+          },
+          {
+            "name": "destinations",
+            "type": {
+              "vec": "string"
+            }
+          },
+          {
+            "name": "whitelisted_actions",
+            "type": {
+              "vec": "bytes"
+            }
+          },
+          {
+            "name": "proposed_protocol_to_remove",
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ]
+}

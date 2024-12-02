@@ -1,6 +1,6 @@
 import { Chain, PublicClient, createPublicClient } from 'viem';
 import { http, createConfig } from 'wagmi';
-import { arbitrum, avalanche, avalancheFuji, base, bsc, mainnet } from 'wagmi/chains';
+import { arbitrum, avalanche, avalancheFuji, base, bsc, mainnet, optimism } from 'wagmi/chains';
 export const noopStorage = {
   getItem: (_key: any) => '',
   setItem: (_key: any, _value: any) => null,
@@ -8,7 +8,7 @@ export const noopStorage = {
 };
 
 export const wagmiConfig = createConfig({
-  chains: [avalanche, bsc, avalancheFuji, arbitrum, base],
+  chains: [avalanche, bsc, avalancheFuji, arbitrum, base, optimism],
   connectors: [],
   transports: {
     [mainnet.id]: http(),
@@ -16,15 +16,17 @@ export const wagmiConfig = createConfig({
     [bsc.id]: http(),
     [avalancheFuji.id]: http(),
     [arbitrum.id]: http(),
+    [optimism.id]: http(),
     [base.id]: http(),
   },
 });
 
-export const CHAINS: [Chain, ...Chain[]] = [bsc, arbitrum, avalanche, base];
+export const CHAINS: [Chain, ...Chain[]] = [bsc, arbitrum, avalanche, base, optimism];
 
 export enum ChainId {
   ETHEREUM = 1,
   GOERLI = 5,
+  OP_MAINNET = 10,
   BSC = 56,
   BSC_TESTNET = 97,
   ZKSYNC_TESTNET = 280,

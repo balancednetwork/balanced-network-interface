@@ -18,7 +18,6 @@ import useXTokens from '@/hooks/useXTokens';
 import { useBridgeDirection } from '@/store/bridge/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { isAddress } from '@/utils';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XChainId } from '@/xwagmi/types';
 import { ChartControlButton as AssetsTabButton } from '../ChartControl';
 import Column from '../Column';

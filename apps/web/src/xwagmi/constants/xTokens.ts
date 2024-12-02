@@ -27,7 +27,7 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   HASUI: 'sui',
   VSUI: 'sui',
   SOL: 'solana',
-  JITOSOL: 'sui',
+  JITOSOL: 'solana',
 };
 
 export const xTokenMap: { [key in XChainId]: XToken[] } = {

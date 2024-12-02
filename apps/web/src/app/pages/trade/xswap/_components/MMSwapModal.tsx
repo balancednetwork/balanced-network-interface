@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -14,14 +14,16 @@ import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { MMTrade } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
+import {
+  MMTransactionActions,
+  MMTransactionStatus,
+  useMMTransactionStore,
+} from '@/store/transactions/useXTransactionStore';
 import { formatBigNumber, shortenAddress } from '@/utils';
-import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXService } from '@/xwagmi/hooks';
-import { XChainId, XToken } from '@/xwagmi/types';
-import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
-import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { XToken } from '@/xwagmi/types';
 import { EvmXService } from '@/xwagmi/xchains/evm';
 import { CreateIntentOrderPayload, EvmProvider, IntentService, SuiProvider } from '@balancednetwork/intents-sdk';
 import { useCurrentAccount, useCurrentWallet, useSuiClient } from '@mysten/dapp-kit';
@@ -35,6 +37,18 @@ type MMSwapModalProps = {
   recipient?: string | null;
 };
 
+enum IntentOrderStatus {
+  None,
+  // Intent order is signed and broadcasted to the source chain
+  SigningAndCreating,
+  // Intent order is created on the source chain and waiting for execution.
+  Executing,
+  // Intent order is filled on the target chain.
+  Filled,
+  //
+  Failure,
+}
+
 const MMSwapModal = ({
   modalId = MODAL_ID.MM_SWAP_CONFIRM_MODAL,
   account,
@@ -43,20 +57,26 @@ const MMSwapModal = ({
   recipient,
 }: MMSwapModalProps) => {
   const modalOpen = useModalOpen(modalId);
-
   const [currentId, setCurrentId] = useState<string | null>(null);
-  const currentXTransaction = xTransactionActions.get(currentId);
-  const isProcessing: boolean = currentId !== null;
-  const isExecuted =
-    currentXTransaction?.status === XTransactionStatus.success ||
-    currentXTransaction?.status === XTransactionStatus.failure;
+  const [orderStatus, setOrderStatus] = useState<IntentOrderStatus>(IntentOrderStatus.None);
 
-  // const { approvalState, approveCallback } = useApproveCallback(_inputAmount, xChain.contracts.assetManager);
+  const currentMMTransaction = useMMTransactionStore(state => state.get(currentId));
+
+  useEffect(() => {
+    if (currentMMTransaction) {
+      currentMMTransaction.status === MMTransactionStatus.success && setOrderStatus(IntentOrderStatus.Filled);
+      currentMMTransaction.status === MMTransactionStatus.failure && setOrderStatus(IntentOrderStatus.Failure);
+    }
+  }, [currentMMTransaction]);
+
+  // const isProcessing: boolean = currentId !== null;
+  const isExecuted = orderStatus === IntentOrderStatus.Filled || orderStatus === IntentOrderStatus.Failure;
 
   const handleDismiss = useCallback(() => {
     modalActions.closeModal(modalId);
     setTimeout(() => {
       setCurrentId(null);
+      setOrderStatus(IntentOrderStatus.None);
     }, 500);
   }, [modalId]);
 
@@ -68,32 +88,29 @@ const MMSwapModal = ({
   }, [handleDismiss]);
 
   useEffect(() => {
-    if (
-      currentXTransaction &&
-      (currentXTransaction.status === XTransactionStatus.success ||
-        currentXTransaction.status === XTransactionStatus.failure)
-    ) {
+    if (isExecuted) {
       slowDismiss();
     }
-  }, [currentXTransaction, slowDismiss]);
+  }, [isExecuted, slowDismiss]);
 
+  // arb part
   const xService = useXService('EVM') as EvmXService;
+  // end arb part
 
   // sui part
   const suiClient = useSuiClient();
   const { currentWallet: suiWallet } = useCurrentWallet();
   const suiAccount = useCurrentAccount();
-  console.log('suiClient', suiClient, suiWallet, suiAccount?.address);
   // end sui part
 
   const handleMMSwap = async () => {
     if (!account || !recipient || !currencies[Field.INPUT] || !currencies[Field.OUTPUT] || !trade) {
       return;
     }
+    setOrderStatus(IntentOrderStatus.SigningAndCreating);
     const walletClient = await xService.getWalletClient(xChainMap[currencies[Field.INPUT]?.chainId]);
-    const publicClient = await xService.getPublicClient(xChainMap[currencies[Field.INPUT]?.chainId]);
+    const publicClient = xService.getPublicClient(xChainMap[currencies[Field.INPUT]?.chainId]);
 
-    console.log('SwapMMCommitButton123', account, recipient, currencies, trade);
     const order: CreateIntentOrderPayload = {
       quote_uuid: trade.uuid,
       fromAddress: account, // address we are sending funds from (fromChain)
@@ -116,8 +133,22 @@ const MMSwapModal = ({
           : // @ts-ignore
             new SuiProvider({ client: suiClient, wallet: suiWallet, account: suiAccount }),
       );
-      console.log('SwapMMCommitButton', executionResult);
+
+      if (executionResult.ok) {
+        // an intent order was successfully created on the source chain.
+        setOrderStatus(IntentOrderStatus.Executing);
+
+        setCurrentId(executionResult.value.task_id);
+        MMTransactionActions.add({
+          id: executionResult.value.task_id,
+          status: MMTransactionStatus.pending,
+        });
+      } else {
+        console.error('IntentService.executeIntentOrder error', executionResult.error);
+        setOrderStatus(IntentOrderStatus.Failure);
+      }
     } catch (e) {
+      setOrderStatus(IntentOrderStatus.None);
       console.error('SwapMMCommitButton error', e);
     }
   };
@@ -129,6 +160,9 @@ const MMSwapModal = ({
   const gasChecker = useXCallGasChecker(direction.from, trade?.inputAmount);
 
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(direction.from);
+
+  const isProcessing =
+    orderStatus === IntentOrderStatus.SigningAndCreating || orderStatus === IntentOrderStatus.Executing;
 
   return (
     <>
@@ -183,22 +217,7 @@ const MMSwapModal = ({
             </Box>
           </Flex>
 
-          {/* <Typography
-            textAlign="center"
-            hidden={currencies[Field.INPUT]?.symbol === 'ICX' && currencies[Field.OUTPUT]?.symbol === 'sICX'}
-          >
-            <Trans>Swap fee (included):</Trans>{' '}
-            <strong>
-              {formatBigNumber(new BigNumber(trade?.fee.toFixed() || 0), 'currency')}{' '}
-              {currencies[Field.INPUT]?.symbol}
-            </strong>
-          </Typography> */}
-
-          {/* <Typography textAlign="center">
-            <Trans>Transfer fee:</Trans> <strong>{formattedXCallFee}</strong>
-          </Typography> */}
-
-          {/* {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />} */}
+          {/* {currentMMTransaction && <XTransactionState xTransaction={currentMMTransaction} />} */}
 
           <AnimatePresence>
             {((!isExecuted && isProcessing) || !isProcessing) && (
@@ -219,27 +238,13 @@ const MMSwapModal = ({
                       <Trans>Switch to {xChainMap[direction.from].name}</Trans>
                     </StyledButton>
                   ) : isProcessing ? (
-                    <>
-                      <StyledButton disabled $loading>
-                        <Trans>Swapping</Trans>
-                      </StyledButton>
-                    </>
+                    <StyledButton disabled $loading>
+                      <Trans>Swapping</Trans>
+                    </StyledButton>
                   ) : (
-                    <>
-                      <StyledButton onClick={handleMMSwap} disabled={!gasChecker.hasEnoughGas}>
-                        <Trans>Swap</Trans>
-                      </StyledButton>
-
-                      {/* {approvalState !== ApprovalState.APPROVED ? (
-                        <Button onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
-                          {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
-                        </Button>
-                      ) : (
-                        <StyledButton onClick={handleMMSwap} disabled={!gasChecker.hasEnoughGas}>
-                          <Trans>Swap</Trans>
-                        </StyledButton>
-                      )} */}
-                    </>
+                    <StyledButton onClick={handleMMSwap} disabled={!gasChecker.hasEnoughGas}>
+                      <Trans>Swap</Trans>
+                    </StyledButton>
                   )}
                 </Flex>
               </motion.div>
@@ -259,4 +264,4 @@ const MMSwapModal = ({
   );
 };
 
-export default MMSwapModal;
+export default memo(MMSwapModal);

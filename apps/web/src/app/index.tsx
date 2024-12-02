@@ -10,6 +10,7 @@ import ApplicationUpdater from '@/store/application/updater';
 import TransactionUpdater from '@/store/transactions/updater';
 
 import { AllTransactionsUpdater } from '@/hooks/useTransactionStore';
+import { Updater as MMUpdater } from '@/store/transactions/useXTransactionStore';
 import { initXWagmiStore, useInitXWagmiStore } from '@/xwagmi/useXWagmiStore';
 import { AllXMessagesUpdater, AllXTransactionsUpdater } from '@/xwagmi/xcall/zustand/useXMessageStore';
 import { AllXChainHeightsUpdater } from '@/xwagmi/xcall/zustand/useXServiceStore';
@@ -19,6 +20,7 @@ import RootRoutes from './Routes';
 function Updaters() {
   return (
     <>
+      <MMUpdater />
       <TransactionUpdater />
       <ApplicationUpdater />
       <AllTransactionsUpdater />

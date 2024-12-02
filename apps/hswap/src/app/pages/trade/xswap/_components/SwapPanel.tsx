@@ -19,7 +19,7 @@ import { getXChainType } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { XToken } from '@balancednetwork/xwagmi';
-import useXCallFee from '@balancednetwork/xwagmi';
+import { useXCallFee } from '@balancednetwork/xwagmi';
 import { XTransactionInput, XTransactionType } from '@balancednetwork/xwagmi';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import RecipientAddressPanel from './RecipientAddressPanel';

@@ -1,6 +1,5 @@
 import { useXService } from '@/hooks';
 import { StellarWalletsKit } from '@creit.tech/stellar-wallets-kit';
-import { t } from '@lingui/macro';
 import {
   Address,
   Contract,
@@ -124,7 +123,7 @@ export function useValidateStellarAccount(address?: string | null): UseQueryResu
         await stellarService.server.loadAccount(address);
         return { ok: true };
       } catch (e) {
-        return { ok: false, error: t`Stellar wallet inactive. Add at least 1 XLM from an external source.` };
+        return { ok: false, error: `Stellar wallet inactive. Add at least 1 XLM from an external source.` };
       }
     },
   });

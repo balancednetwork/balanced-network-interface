@@ -12,7 +12,7 @@ import { useSetSlippageTolerance, useSwapSlippageTolerance } from '@/store/appli
 import { useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatPercent } from '@/utils';
-import useXCallFee from '@balancednetwork/xwagmi';
+import { useXCallFee } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';

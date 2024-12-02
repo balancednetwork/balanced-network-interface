@@ -3,7 +3,7 @@ import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balance
 import { NATIVE_ADDRESS } from '.';
 
 export const isNativeXToken = (xToken: XToken): boolean => {
-  return !!xToken && xToken.wrapped?.address.includes('native');
+  return !!xToken && xToken.wrapped?.address?.includes('native');
 };
 
 export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {

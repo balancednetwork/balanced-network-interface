@@ -10,7 +10,7 @@ import { canBeQueue } from '@/constants/currency';
 import { bnUSD } from '@/constants/tokens';
 import { fetchStabilityFundBalances, getAcceptedTokens } from '@/store/stabilityFund/hooks';
 import { getPair } from '@/utils';
-import bnJs from '@balancednetwork/xwagmi';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { NETWORK_ID } from '@/constants/config';
 

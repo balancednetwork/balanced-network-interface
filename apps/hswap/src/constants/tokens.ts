@@ -9,7 +9,7 @@ import { NETWORK_ID } from './config';
 export const NULL_CONTRACT_ADDRESS = '0x1.icon-native';
 
 export const isNativeCurrency = (token?: Currency | XToken): boolean => {
-  return !!token && token.wrapped?.address.includes('native');
+  return !!token && token.wrapped?.address?.includes('native');
 };
 
 export const isBALN = (token?: Token): boolean => {

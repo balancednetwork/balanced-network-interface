@@ -1,7 +1,6 @@
 export * from './actions';
 export * from './constants';
 export * from './core';
-export * from './types';
 export * from './utils';
 export * from './xchains/archway';
 export * from './xchains/evm';
@@ -16,5 +15,8 @@ export * from './useXWagmiStore';
 export * from './XWagmiProviders';
 export * from './xcall';
 
+export * from './types';
 export type * from './types';
+
+export * from './xcall/types';
 export type * from './xcall/types';

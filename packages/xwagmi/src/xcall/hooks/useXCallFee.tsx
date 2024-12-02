@@ -7,7 +7,10 @@ import { XChainId } from '@/types';
 import { formatUnits } from 'viem';
 import { IXCallFee } from '../types';
 
-const useXCallFee = (from: XChainId, to: XChainId): { xCallFee: IXCallFee | undefined; formattedXCallFee: string } => {
+export const useXCallFee = (
+  from: XChainId,
+  to: XChainId,
+): { xCallFee: IXCallFee | undefined; formattedXCallFee: string } => {
   const sourceXPublicClient = useXPublicClient(from);
 
   const { data: xCallFee } = useQuery({
@@ -39,5 +42,3 @@ const useXCallFee = (from: XChainId, to: XChainId): { xCallFee: IXCallFee | unde
 
   return { xCallFee, formattedXCallFee };
 };
-
-export default useXCallFee;

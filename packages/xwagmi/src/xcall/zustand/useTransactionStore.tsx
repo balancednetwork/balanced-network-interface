@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 
-import { t } from '@lingui/macro';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { create } from 'zustand';
@@ -68,7 +67,7 @@ export const transactionActions = {
     };
 
     transaction.pendingMessage &&
-      toast(<NotificationPending summary={transaction.pendingMessage || t`Processing transaction...`} />, {
+      toast(<NotificationPending summary={transaction.pendingMessage || `Processing transaction...`} />, {
         ...toastProps,
         toastId: hash,
       });

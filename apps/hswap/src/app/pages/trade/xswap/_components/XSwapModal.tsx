@@ -13,7 +13,7 @@ import { Field } from '@/store/swap/reducer';
 import { formatBigNumber } from '@/utils';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { XToken } from '@balancednetwork/xwagmi';
-import useXCallFee from '@balancednetwork/xwagmi';
+import { useXCallFee } from '@balancednetwork/xwagmi';
 import { XTransactionInput, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
 import { xTransactionActions } from '@balancednetwork/xwagmi';
 import { CheckIcon, Loader2 } from 'lucide-react';

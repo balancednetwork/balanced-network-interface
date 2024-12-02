@@ -3,3 +3,4 @@ export { InjectiveXPublicClient } from './InjectiveXPublicClient';
 export { InjectiveXWalletClient } from './InjectiveXWalletClient';
 export { InjectiveKelprXConnector } from './InjectiveKelprXConnector';
 export { InjectiveMetamaskXConnector } from './InjectiveMetamaskXConnector';
+export * from './utils';

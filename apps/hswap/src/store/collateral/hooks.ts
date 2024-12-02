@@ -3,7 +3,7 @@ import { UseQueryResult, useQuery } from '@tanstack/react-query';
 
 import { NETWORK_ID } from '@/constants/config';
 import { formatUnits } from '@/utils';
-import bnJs from '@balancednetwork/xwagmi';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]: string }> {
   return useQuery({

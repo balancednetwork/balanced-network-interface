@@ -18,7 +18,7 @@ import {
   isNativeCurrency,
 } from '@/constants/tokens';
 import { isXToken } from '@/utils/xTokens';
-import bnJs from '@balancednetwork/xwagmi';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';

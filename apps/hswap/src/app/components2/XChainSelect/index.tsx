@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Select, SelectContent, SelectItem } from '@/components/ui/select';
-import { XChain, XChainId } from '@/xwagmi/types';
 import { ChainLogo } from '@/app/components2/ChainLogo';
-import * as SelectPrimitive from '@radix-ui/react-select';
-import { xChainMap } from '@/xwagmi/constants/xChains';
+import { Select, SelectContent, SelectItem } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { xChainMap } from '@balancednetwork/xwagmi/constants/xChains';
+import { XChain, XChainId } from '@balancednetwork/xwagmi/types';
+import * as SelectPrimitive from '@radix-ui/react-select';
+import React, { useEffect, useState } from 'react';
 import { AllChainIcon, ChevronDownIcon } from '../Icons';
 
 interface XChainSelectProps {

@@ -3,8 +3,8 @@ import { ChevronDownIcon, ChevronUpIcon, SubtractIcon } from '@/app/components2/
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
-import { XToken } from '@/xwagmi/types';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XToken } from '@balancednetwork/xwagmi/types';
 import BigNumber from 'bignumber.js';
 import React, { useState } from 'react';
 import SingleChainBalanceItem from './SingleChainBalanceItem';

@@ -11,11 +11,11 @@ import { ApprovalState } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { Field } from '@/store/swap/reducer';
 import { formatBigNumber } from '@/utils';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XToken } from '@/xwagmi/types';
-import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
-import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
-import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { xChainMap } from '@balancednetwork/xwagmi/constants/xChains';
+import { XToken } from '@balancednetwork/xwagmi/types';
+import useXCallFee from '@balancednetwork/xwagmi/xcall/hooks/useXCallFee';
+import { XTransactionInput, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi/xcall/types';
+import { xTransactionActions } from '@balancednetwork/xwagmi/xcall/zustand/useXTransactionStore';
 import { CheckIcon, Loader2 } from 'lucide-react';
 import CurrencyCard from './CurrencyCard';
 

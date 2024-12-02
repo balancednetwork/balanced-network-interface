@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
-import { useXTransactionStore } from '@/xwagmi/xcall/zustand/useXTransactionStore';
-import HistoryItem from './HistoryItem';
 import { Separator } from '@/components/ui/separator';
+import { useXTransactionStore } from '@balancednetwork/xwagmi/xcall/zustand/useXTransactionStore';
+import React, { useMemo } from 'react';
+import HistoryItem from './HistoryItem';
 
 const HistoryItemList = () => {
   const xTransactions = useXTransactionStore(state => state.getTransactions());

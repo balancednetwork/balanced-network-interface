@@ -1,7 +1,7 @@
 import { Converter as IconConverter } from 'icon-sdk-js';
 
-import { useXAccount, useXService } from '@/xwagmi/hooks';
-import { IconXService } from '@/xwagmi/xchains/icon';
+import { useXAccount, useXService } from '@balancednetwork/xwagmi/hooks';
+import { IconXService } from '@balancednetwork/xwagmi/xchains/icon';
 
 export const GOVERNANCE_BASE_ADDRESS = 'cx0000000000000000000000000000000000000001';
 

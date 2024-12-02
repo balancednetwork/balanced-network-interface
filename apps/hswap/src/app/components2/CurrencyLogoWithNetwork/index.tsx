@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { xChainMap } from '@/xwagmi/constants/xChains';
+import { xChainMap } from '@balancednetwork/xwagmi/constants/xChains';
 
 import { cn } from '@/lib/utils';
+import { XToken } from '@balancednetwork/xwagmi/types';
 import { ChainLogo } from '../ChainLogo';
 import CurrencyLogo from '../CurrencyLogo';
-import { XToken } from '@/xwagmi/types';
 
 const CurrencyLogoWithNetwork = ({
   currency,

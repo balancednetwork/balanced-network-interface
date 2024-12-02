@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
 import useInterval from '@/hooks/useInterval';
 import { useBnJsContractQuery } from '@/queries/utils';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import bnJs from '@balancednetwork/xwagmi/xchains/icon/bnJs';
 
 import { setBalances } from './reducer';
 

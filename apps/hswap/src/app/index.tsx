@@ -8,10 +8,10 @@ import ApplicationUpdater from '@/store/application/updater';
 import TransactionUpdater from '@/store/transactions/updater';
 
 import { AllTransactionsUpdater } from '@/hooks/useTransactionStore';
-import { initXWagmiStore, useInitXWagmiStore } from '@/xwagmi/useXWagmiStore';
-import { AllXMessagesUpdater } from '@/xwagmi/xcall/zustand/useXMessageStore';
-import { AllXChainHeightsUpdater } from '@/xwagmi/xcall/zustand/useXChainHeightStore';
-import { xChains } from '../xwagmi/constants/xChains';
+import { getXChainType } from '@balancednetwork/xwagmi/actions';
+import { initXWagmiStore, useInitXWagmiStore } from '@balancednetwork/xwagmi/useXWagmiStore';
+import { AllXChainHeightsUpdater } from '@balancednetwork/xwagmi/xcall/zustand/useXChainHeightStore';
+import { AllXMessagesUpdater } from '@balancednetwork/xwagmi/xcall/zustand/useXMessageStore';
 import RootRoutes from './Routes';
 
 function Updaters() {

@@ -4,9 +4,9 @@ import { useRatesWithOracle } from '@/queries/reward';
 import { useSwapActionHandlers } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatBalance, formatValue } from '@/utils/formatter';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XToken } from '@/xwagmi/types';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { xChainMap } from '@balancednetwork/xwagmi/constants/xChains';
+import { XToken } from '@balancednetwork/xwagmi/types';
 import BigNumber from 'bignumber.js';
 import React from 'react';
 

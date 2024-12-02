@@ -6,11 +6,11 @@ import { cn } from '@/lib/utils';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { shortenAddress } from '@/utils';
-import { getXChainType } from '@/xwagmi/actions';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { useXAccount, useXConnect, useXConnectors } from '@/xwagmi/hooks';
-import { XChainId } from '@/xwagmi/types';
-import { validateAddress } from '@/xwagmi/utils';
+import { getXChainType } from '@balancednetwork/xwagmi/actions';
+import { xChainMap } from '@balancednetwork/xwagmi/constants/xChains';
+import { useXAccount, useXConnect, useXConnectors } from '@balancednetwork/xwagmi/hooks';
+import { XChainId } from '@balancednetwork/xwagmi/types';
+import { validateAddress } from '@balancednetwork/xwagmi/utils';
 import { X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 

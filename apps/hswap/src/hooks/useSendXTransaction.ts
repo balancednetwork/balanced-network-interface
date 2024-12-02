@@ -1,7 +1,7 @@
-import { getXWalletClient } from '@/xwagmi/actions';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { allXTokens } from '@/xwagmi/constants/xTokens';
-import { XChainId } from '@/xwagmi/types';
+import { getXWalletClient } from '@balancednetwork/xwagmi/actions';
+import { xChainMap } from '@balancednetwork/xwagmi/constants/xChains';
+import { allXTokens } from '@balancednetwork/xwagmi/constants/xTokens';
+import { XChainId } from '@balancednetwork/xwagmi/types';
 import {
   XMessage,
   XMessageStatus,
@@ -9,10 +9,10 @@ import {
   XTransactionInput,
   XTransactionStatus,
   XTransactionType,
-} from '@/xwagmi/xcall/types';
-import { xChainHeightActions } from '@/xwagmi/xcall/zustand/useXChainHeightStore';
-import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
-import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+} from '@balancednetwork/xwagmi/xcall/types';
+import { xChainHeightActions } from '@balancednetwork/xwagmi/xcall/zustand/useXChainHeightStore';
+import { xMessageActions } from '@balancednetwork/xwagmi/xcall/zustand/useXMessageStore';
+import { xTransactionActions } from '@balancednetwork/xwagmi/xcall/zustand/useXTransactionStore';
 import { useSignTransaction } from '@mysten/dapp-kit';
 import { useMemo } from 'react';
 import { transactionActions } from './useTransactionStore';

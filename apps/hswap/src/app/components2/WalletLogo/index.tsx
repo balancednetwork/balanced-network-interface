@@ -1,13 +1,13 @@
-import React from 'react';
 import { cn } from '@/lib/utils';
+import React from 'react';
 
-import HanaIcon from '@/xwagmi/assets/wallets/hana.svg?inline';
-import KeplrIcon from '@/xwagmi/assets/wallets/keplr.svg?inline';
-import MetaMaskIcon from '@/xwagmi/assets/wallets/metamask.svg?inline';
-import HavahIcon from '@/xwagmi/assets/wallets/havah.svg?inline';
-import PhantomIcon from '@/xwagmi/assets/wallets/phantom.svg?inline';
-import SuiIcon from '@/xwagmi/assets/wallets/sui.svg?inline';
-import { WalletId } from '@/xwagmi/types';
+import HanaIcon from '@balancednetwork/xwagmi/assets/wallets/hana.svg?inline';
+import HavahIcon from '@balancednetwork/xwagmi/assets/wallets/havah.svg?inline';
+import KeplrIcon from '@balancednetwork/xwagmi/assets/wallets/keplr.svg?inline';
+import MetaMaskIcon from '@balancednetwork/xwagmi/assets/wallets/metamask.svg?inline';
+import PhantomIcon from '@balancednetwork/xwagmi/assets/wallets/phantom.svg?inline';
+import SuiIcon from '@balancednetwork/xwagmi/assets/wallets/sui.svg?inline';
+import { WalletId } from '@balancednetwork/xwagmi/types';
 
 const walletIcons: Record<WalletId, any> = {
   [WalletId.METAMASK]: MetaMaskIcon,

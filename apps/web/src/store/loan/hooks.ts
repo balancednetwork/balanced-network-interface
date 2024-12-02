@@ -591,9 +591,9 @@ export function useDerivedLoanInfo(): {
   };
 
   const differenceAmount = parsedAmount[Field.LEFT].minus(borrowedAmount);
-  const isSliderStateChanged =
-    (borrowedAmount.dp(2) < new BigNumber(0.01) && parsedAmount[Field.LEFT].isEqualTo(borrowedAmount)) ||
-    !parsedAmount[Field.LEFT].isEqualTo(borrowedAmount.dp(2));
+  const isSliderStateChanged = !parsedAmount[Field.LEFT].isEqualTo(
+    borrowedAmount.dp(2) < new BigNumber(0.01) ? borrowedAmount : borrowedAmount.dp(2),
+  );
 
   const bnUSDAmount = differenceAmount
     ? CurrencyAmount.fromRawAmount(

@@ -32,7 +32,6 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
 
 export const xTokenMap: { [key in XChainId]: XToken[] } = {
   '0x1.icon': [
-    new XToken('0x1.icon', ChainId.MAINNET, NATIVE_ADDRESS, 18, 'ICX', 'ICX'),
     new XToken('0x1.icon', ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
     new XToken(
       '0x1.icon',
@@ -105,7 +104,6 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     ),
   ],
   'archway-1': [
-    new XToken('archway-1', 'archway-1', NATIVE_ADDRESS, 18, 'aARCH', 'Arch'),
     new XToken(
       'archway-1',
       'archway-1',

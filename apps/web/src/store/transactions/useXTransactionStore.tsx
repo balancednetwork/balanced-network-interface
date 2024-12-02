@@ -140,7 +140,6 @@ export const Updater = () => {
   useQuery({
     queryKey: ['checkMMTransactions'],
     queryFn: async () => {
-      console.log('checking transactions');
       return Promise.all(
         pendingTxs.map(async id => {
           const intentStatus = await IntentService.getStatus({ task_id: id });
@@ -152,6 +151,7 @@ export const Updater = () => {
       );
     },
     refetchInterval: 5_000,
+    enabled: pendingTxs.length > 0,
   });
 
   return null;

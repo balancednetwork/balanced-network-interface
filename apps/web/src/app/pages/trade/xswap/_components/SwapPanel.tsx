@@ -14,16 +14,17 @@ import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import useManualAddresses from '@/hooks/useManualAddresses';
 import { useSignedInWallets } from '@/hooks/useWallets';
+import { useRatesWithOracle } from '@/queries/reward';
 import {
   useDerivedMMTradeInfo,
   useDerivedSwapInfo,
   useInitialSwapLoad,
-  useMMTrade,
   useSwapActionHandlers,
   useSwapState,
 } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
+import { formatBalance } from '@/utils/formatter';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
 import { XChainId, XToken } from '@/xwagmi/types';
@@ -129,6 +130,8 @@ export default function SwapPanel() {
     onUserInput(Field.OUTPUT, amount?.toFixed(4));
   };
 
+  const rates = useRatesWithOracle();
+
   return (
     <>
       <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
@@ -137,13 +140,12 @@ export default function SwapPanel() {
             <Typography variant="h2">
               <Trans>Swap</Trans>
             </Typography>
-            <Typography as="div" hidden={!account}>
-              <Trans>Wallet:</Trans>{' '}
-              {`${
-                currencyBalances[Field.INPUT] ? currencyBalances[Field.INPUT]?.toFixed(4, { groupSeparator: ',' }) : 0
-              } 
-                ${currencies[Field.INPUT]?.symbol}`}
-            </Typography>
+            {account && currencyBalances[Field.INPUT] && (
+              <Typography as="div" hidden={!account}>
+                <Trans>Wallet:</Trans>{' '}
+                {`${formatBalance(currencyBalances[Field.INPUT]?.toFixed(), rates?.[currencyBalances[Field.INPUT]?.currency.symbol]?.toFixed())} ${currencies[Field.INPUT]?.symbol}`}
+              </Typography>
+            )}
           </Flex>
 
           <Flex>
@@ -179,12 +181,7 @@ export default function SwapPanel() {
                   {isRecipientCustom ? (
                     <Trans>Custom</Trans>
                   ) : (
-                    `${
-                      currencyBalances[Field.OUTPUT]
-                        ? currencyBalances[Field.OUTPUT]?.toFixed(4, { groupSeparator: ',' })
-                        : 0
-                    } 
-                ${currencies[Field.OUTPUT]?.symbol}`
+                    `${currencyBalances[Field.OUTPUT] ? formatBalance(currencyBalances[Field.OUTPUT]?.toFixed(), rates?.[currencyBalances[Field.OUTPUT]?.currency.symbol]?.toFixed()) : '0'} ${currencies[Field.OUTPUT]?.symbol}`
                   )}
                 </>
               )}

@@ -42,7 +42,7 @@ export function useSwapActionHandlers() {
       dispatch(
         selectCurrency({
           field,
-          currency: XToken.getXToken('0x1.icon', currency.wrapped),
+          currency: currency instanceof XToken ? currency : XToken.getXToken('0x1.icon', currency.wrapped),
         }),
       );
     },
@@ -177,8 +177,12 @@ export function useDerivedSwapInfo(): {
 
   const _currencies: { [field in Field]?: Currency } = useMemo(() => {
     return {
-      [Field.INPUT]: getXTokenBySymbol('0x1.icon', inputCurrency?.symbol),
-      [Field.OUTPUT]: getXTokenBySymbol('0x1.icon', outputCurrency?.symbol),
+      [Field.INPUT]:
+        inputCurrency?.xChainId === '0x1.icon' ? inputCurrency : getXTokenBySymbol('0x1.icon', inputCurrency?.symbol),
+      [Field.OUTPUT]:
+        outputCurrency?.xChainId === '0x1.icon'
+          ? outputCurrency
+          : getXTokenBySymbol('0x1.icon', outputCurrency?.symbol),
     };
   }, [inputCurrency, outputCurrency]);
   const _parsedAmount = tryParseAmount(
@@ -364,6 +368,18 @@ export interface MMTrade {
 }
 
 export function useMMTrade(inputAmount: CurrencyAmount<XToken> | undefined, outputCurrency: XToken | undefined) {
+  const isMMTrade =
+    inputAmount?.currency &&
+    outputCurrency &&
+    ((inputAmount.currency.xChainId === '0xa4b1.arbitrum' &&
+      inputAmount.currency.isNativeToken &&
+      outputCurrency.xChainId === 'sui' &&
+      outputCurrency.isNativeToken) ||
+      (inputAmount.currency.xChainId === 'sui' &&
+        inputAmount.currency.isNativeToken &&
+        outputCurrency.xChainId === '0xa4b1.arbitrum' &&
+        outputCurrency.isNativeToken));
+
   return useQuery<MMTrade | undefined>({
     queryKey: ['quote', inputAmount, outputCurrency],
     queryFn: async () => {
@@ -395,7 +411,7 @@ export function useMMTrade(inputAmount: CurrencyAmount<XToken> | undefined, outp
       return;
     },
     refetchInterval: 10_000,
-    enabled: !!inputAmount && !!outputCurrency,
+    enabled: !!inputAmount && !!outputCurrency && isMMTrade,
   });
 }
 

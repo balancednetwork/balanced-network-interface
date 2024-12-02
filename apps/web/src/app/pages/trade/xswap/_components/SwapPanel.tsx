@@ -206,6 +206,14 @@ export default function SwapPanel() {
         </AutoColumn>
 
         <AutoColumn gap="5px" mt={5}>
+          <Flex alignItems="center" justifyContent="space-between">
+            <Typography>
+              <Trans>Order type</Trans>
+            </Typography>
+
+            <Typography>{mmTrade.isMMBetter ? 'Intent' : 'Normal'}</Typography>
+          </Flex>
+
           <PriceImpact trade={trade} />
 
           <SwapInfo trade={trade} />
@@ -221,7 +229,13 @@ export default function SwapPanel() {
               direction={direction}
             />
 
-            <SwapMMCommitButton currencies={currencies} account={account} recipient={recipient} trade={mmTrade.trade} />
+            <SwapMMCommitButton
+              currencies={currencies}
+              account={account}
+              recipient={recipient}
+              trade={mmTrade.trade}
+              direction={direction}
+            />
           </Flex>
 
           {!canBridge && maximumBridgeAmount && (

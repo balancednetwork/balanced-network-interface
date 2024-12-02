@@ -8,10 +8,13 @@ import ApplicationUpdater from '@/store/application/updater';
 import TransactionUpdater from '@/store/transactions/updater';
 
 import { AllTransactionsUpdater } from '@/hooks/useTransactionStore';
-import { getXChainType } from '@balancednetwork/xwagmi/actions';
-import { initXWagmiStore, useInitXWagmiStore } from '@balancednetwork/xwagmi/useXWagmiStore';
-import { AllXChainHeightsUpdater } from '@balancednetwork/xwagmi/xcall/zustand/useXChainHeightStore';
-import { AllXMessagesUpdater } from '@balancednetwork/xwagmi/xcall/zustand/useXMessageStore';
+import {
+  AllXChainHeightsUpdater,
+  AllXMessagesUpdater,
+  initXWagmiStore,
+  useInitXWagmiStore,
+  xChains,
+} from '@balancednetwork/xwagmi';
 import RootRoutes from './Routes';
 
 function Updaters() {

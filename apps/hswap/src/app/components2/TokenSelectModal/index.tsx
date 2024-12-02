@@ -4,9 +4,9 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatPrice } from '@/utils/formatter';
-import { xChainMap, xChains } from '@balancednetwork/xwagmi/constants/xChains';
-import { allXTokens } from '@balancednetwork/xwagmi/constants/xTokens';
-import { XChainId, XToken } from '@balancednetwork/xwagmi/types';
+import { xChainMap, xChains } from '@balancednetwork/xwagmi';
+import { allXTokens } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import {
   ColumnDef,
   ColumnFiltersState,

@@ -1,5 +1,5 @@
-import { useXService } from '@balancednetwork/xwagmi/hooks';
-import { InjectiveXService } from '@balancednetwork/xwagmi/xchains/injective';
+import { useXService } from '@balancednetwork/xwagmi';
+import { InjectiveXService } from '@balancednetwork/xwagmi';
 import { Wallet } from '@injectivelabs/wallet-ts';
 import React from 'react';
 import { useEffect } from 'react';

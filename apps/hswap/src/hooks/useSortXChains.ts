@@ -1,6 +1,6 @@
 import { useWalletBalances } from '@/store/wallet/hooks';
 import { Currency } from '@balancednetwork/sdk-core';
-import { XChain } from '@balancednetwork/xwagmi/types';
+import { XChain } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { useEffect, useState } from 'react';
 import { useSignedInWallets } from './useWallets';

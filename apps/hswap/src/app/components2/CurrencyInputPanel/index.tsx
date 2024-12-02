@@ -6,7 +6,7 @@ import useAmountInUSD from '@/hooks/useAmountInUSD';
 import { cn } from '@/lib/utils';
 import { escapeRegExp, toFraction } from '@/utils';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import { XToken } from '@balancednetwork/xwagmi/types';
+import { XToken } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { ChevronDownIcon } from 'lucide-react';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';

@@ -10,11 +10,11 @@ import {
   NotificationPending,
   NotificationSuccess,
 } from '@/app/components/Notification/TransactionNotification';
-import { getXPublicClient } from '@balancednetwork/xwagmi/actions';
-import { XChainId } from '@balancednetwork/xwagmi/types';
-import { xTransactionActions } from '@balancednetwork/xwagmi/xcall/zustand/useXTransactionStore';
+import { getXPublicClient } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
+import { xTransactionActions } from '@balancednetwork/xwagmi';
+import { Transaction, TransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
 import { persist } from 'zustand/middleware';
-import { Transaction, TransactionStatus, XTransactionType } from '../xwagmi/xcall/types';
 
 type TransactionStore = {
   transactions: Transaction[];

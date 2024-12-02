@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 
 import { API_ENDPOINT } from '@/queries/constants';
 import { PairInfo } from '@/types';
-import bnJs from '@balancednetwork/xwagmi/xchains/icon/bnJs';
+import bnJs from '@balancednetwork/xwagmi';
 
 export type ContractMethodsDataType = {
   address: string;

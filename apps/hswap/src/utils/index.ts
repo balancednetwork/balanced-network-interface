@@ -11,8 +11,8 @@ import { COMBINED_TOKENS_LIST, isNativeCurrency } from '@/constants/tokens';
 import { PairData, PairState } from '@/hooks/useV2Pairs';
 import { Field } from '@/store/swap/reducer';
 import { PairInfo } from '@/types';
-import { xChainMap } from '@balancednetwork/xwagmi/constants/xChains';
-import { XChainId, XToken } from '@balancednetwork/xwagmi/types';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import { Validator } from 'icon-sdk-js';
 
 const { isScoreAddress } = Validator;

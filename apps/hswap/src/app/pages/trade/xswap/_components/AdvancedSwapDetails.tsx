@@ -12,17 +12,17 @@ import { useSetSlippageTolerance, useSwapSlippageTolerance } from '@/store/appli
 import { useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatPercent } from '@/utils';
-import useXCallFee from '@balancednetwork/xwagmi/xcall/hooks/useXCallFee';
+import useXCallFee from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 import { ChevronDownGradientIcon, ChevronUpGradientIcon } from '@/app/components2/Icons';
 import { cn } from '@/lib/utils';
-import { XToken } from '@balancednetwork/xwagmi/types';
-// import { xChainMap } from '@balancednetwork/xwagmi/constants/xChains';
-// import { useXEstimateApproveGas } from '@balancednetwork/xwagmi/hooks/useXEstimateApproveGas';
-// import { useXEstimateSwapGas } from '@balancednetwork/xwagmi/hooks/useXEstimateSwapGas';
-import { XTransactionInput, XTransactionType } from '@balancednetwork/xwagmi/xcall/types';
+import { XToken } from '@balancednetwork/xwagmi';
+// import { xChainMap } from '@balancednetwork/xwagmi';
+// import { useXEstimateApproveGas } from '@balancednetwork/xwagmi';
+// import { useXEstimateSwapGas } from '@balancednetwork/xwagmi';
+import { XTransactionInput, XTransactionType } from '@balancednetwork/xwagmi';
 
 export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactionInput?: XTransactionInput }) {
   const {

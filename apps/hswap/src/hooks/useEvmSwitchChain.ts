@@ -1,9 +1,9 @@
-import { getXChainType } from '@balancednetwork/xwagmi/actions';
-import { xChainMap } from '@balancednetwork/xwagmi/constants/xChains';
-import { useXService } from '@balancednetwork/xwagmi/hooks';
-import { XChainId } from '@balancednetwork/xwagmi/types';
-import { InjectiveXService } from '@balancednetwork/xwagmi/xchains/injective';
-import { switchEthereumChain } from '@balancednetwork/xwagmi/xchains/injective/utils';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { useXService } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
+import { InjectiveXService } from '@balancednetwork/xwagmi';
+import { switchEthereumChain } from '@balancednetwork/xwagmi';
 import { Wallet } from '@injectivelabs/wallet-ts';
 import { useCallback, useMemo } from 'react';
 import { mainnet } from 'viem/chains';

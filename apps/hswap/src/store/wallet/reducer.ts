@@ -1,5 +1,5 @@
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import { XChainType, XToken } from '@balancednetwork/xwagmi/types';
+import { XChainType, XToken } from '@balancednetwork/xwagmi';
 import { createSlice } from '@reduxjs/toolkit';
 
 /**

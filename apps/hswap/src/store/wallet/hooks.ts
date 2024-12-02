@@ -18,17 +18,17 @@ import {
   isNativeCurrency,
 } from '@/constants/tokens';
 import { isXToken } from '@/utils/xTokens';
-import bnJs from '@balancednetwork/xwagmi/xchains/icon/bnJs';
+import bnJs from '@balancednetwork/xwagmi';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
 import { TokenAmountMap, changeBalances } from './reducer';
 
-import { useXBalances } from '@balancednetwork/xwagmi/hooks/useXBalances';
+import { useXBalances } from '@balancednetwork/xwagmi';
 
 import useXTokens from '@/hooks/useXTokens';
-import { useXAccount } from '@balancednetwork/xwagmi/hooks';
-import { XChainId, XToken } from '@balancednetwork/xwagmi/types';
+import { useXAccount } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
 
 export function useWalletBalances() {
   const wallet = useSelector((state: AppState) => state.wallet);

@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { xChainMap } from '@balancednetwork/xwagmi/constants/xChains';
+import { xChainMap } from '@balancednetwork/xwagmi';
 
 import { cn } from '@/lib/utils';
-import { XToken } from '@balancednetwork/xwagmi/types';
+import { XToken } from '@balancednetwork/xwagmi';
 import { ChainLogo } from '../ChainLogo';
 import CurrencyLogo from '../CurrencyLogo';
 

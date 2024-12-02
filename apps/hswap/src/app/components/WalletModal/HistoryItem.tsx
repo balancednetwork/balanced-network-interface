@@ -4,9 +4,9 @@ import { Separator } from '@/components/ui/separator';
 import { getTrackerLink } from '@/hooks/useTransactionStore';
 import { cn } from '@/lib/utils';
 import { formatBalance } from '@/utils/formatter';
-import { getNetworkDisplayName } from '@balancednetwork/xwagmi/utils';
-import { XTransaction, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi/xcall/types';
-import { xMessageActions } from '@balancednetwork/xwagmi/xcall/zustand/useXMessageStore';
+import { getNetworkDisplayName } from '@balancednetwork/xwagmi';
+import { XTransaction, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
+import { xMessageActions } from '@balancednetwork/xwagmi';
 import { CheckIcon, ExternalLink, Loader2Icon, XIcon } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 

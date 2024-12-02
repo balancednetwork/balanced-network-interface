@@ -2,15 +2,9 @@ import React, { useCallback, useMemo } from 'react';
 
 import CopyableAddress from '@/app/components2/CopyableAddress';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
-import { XConnector } from '@balancednetwork/xwagmi/core';
-import {
-  useXAccount,
-  useXConnect,
-  useXConnection,
-  useXConnectors,
-  useXDisconnect,
-} from '@balancednetwork/xwagmi/hooks';
-import { XChainType } from '@balancednetwork/xwagmi/types';
+import { XConnector } from '@balancednetwork/xwagmi';
+import { useXAccount, useXConnect, useXConnection, useXConnectors, useXDisconnect } from '@balancednetwork/xwagmi';
+import { XChainType } from '@balancednetwork/xwagmi';
 import { XIcon } from 'lucide-react';
 
 export type WalletItemProps = {

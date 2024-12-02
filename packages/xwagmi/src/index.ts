@@ -13,3 +13,8 @@ export * from './xchains/stellar';
 export * from './xchains/sui';
 export * from './hooks';
 export * from './useXWagmiStore';
+export * from './XWagmiProviders';
+export * from './xcall';
+
+export type * from './types';
+export type * from './xcall/types';

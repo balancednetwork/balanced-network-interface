@@ -1,5 +1,5 @@
 import { Separator } from '@/components/ui/separator';
-import { useXTransactionStore } from '@balancednetwork/xwagmi/xcall/zustand/useXTransactionStore';
+import { useXTransactionStore } from '@balancednetwork/xwagmi';
 import React, { useMemo } from 'react';
 import HistoryItem from './HistoryItem';
 

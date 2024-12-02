@@ -4,7 +4,7 @@ import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import { XToken } from '@balancednetwork/xwagmi/types';
+import { XToken } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import React, { useState } from 'react';
 import SingleChainBalanceItem from './SingleChainBalanceItem';

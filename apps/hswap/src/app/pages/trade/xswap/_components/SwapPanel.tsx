@@ -15,12 +15,12 @@ import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapS
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { getXChainType } from '@balancednetwork/xwagmi/actions';
-import { xChainMap } from '@balancednetwork/xwagmi/constants/xChains';
-import { useXAccount } from '@balancednetwork/xwagmi/hooks';
-import { XToken } from '@balancednetwork/xwagmi/types';
-import useXCallFee from '@balancednetwork/xwagmi/xcall/hooks/useXCallFee';
-import { XTransactionInput, XTransactionType } from '@balancednetwork/xwagmi/xcall/types';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { useXAccount } from '@balancednetwork/xwagmi';
+import { XToken } from '@balancednetwork/xwagmi';
+import useXCallFee from '@balancednetwork/xwagmi';
+import { XTransactionInput, XTransactionType } from '@balancednetwork/xwagmi';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import RecipientAddressPanel from './RecipientAddressPanel';
 import XSwapModal, { ConfirmModalState, PendingConfirmModalState } from './XSwapModal';

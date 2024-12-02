@@ -5,8 +5,8 @@ import { useSwapActionHandlers } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatBalance, formatValue } from '@/utils/formatter';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import { xChainMap } from '@balancednetwork/xwagmi/constants/xChains';
-import { XToken } from '@balancednetwork/xwagmi/types';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { XToken } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import React from 'react';
 

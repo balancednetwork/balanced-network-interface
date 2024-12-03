@@ -41,42 +41,9 @@ importers:
       '@balancednetwork/xwagmi':
         specifier: workspace:*
         version: link:../../packages/xwagmi
-      '@coral-xyz/anchor':
-        specifier: 0.30.1
-        version: 0.30.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      '@cosmjs/cosmwasm-stargate':
-        specifier: 0.32.2
-        version: 0.32.2(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      '@cosmjs/encoding':
-        specifier: 0.32.3
-        version: 0.32.3
-      '@cosmjs/proto-signing':
-        specifier: 0.32.3
-        version: 0.32.3
-      '@cosmjs/tendermint-rpc':
-        specifier: 0.32.3
-        version: 0.32.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      '@creit.tech/stellar-wallets-kit':
-        specifier: 1.2.1
-        version: 1.2.1(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(@types/react@18.2.67)(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)
-      '@ethereumjs/rlp':
-        specifier: 5.0.0
-        version: 5.0.0
-      '@injectivelabs/networks':
-        specifier: 1.14.13
-        version: 1.14.13(google-protobuf@3.21.4)
-      '@injectivelabs/sdk-ts':
-        specifier: 1.14.13
-        version: 1.14.13(@types/react@18.2.67)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(utf-8-validate@5.0.10)
-      '@injectivelabs/ts-types':
-        specifier: 1.14.13
-        version: 1.14.13
       '@injectivelabs/wallet-ts':
         specifier: 1.14.13
-        version: 1.14.13(@babel/runtime@7.25.0)(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@types/react@18.2.67)(bs58@6.0.0)(bufferutil@4.0.8)(expo@51.0.29(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(utf-8-validate@5.0.10))(google-protobuf@3.21.4)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(tslib@2.6.2)(utf-8-validate@5.0.10)
-      '@keplr-wallet/types':
-        specifier: 0.12.18
-        version: 0.12.18
+        version: 1.14.13(@babel/runtime@7.25.0)(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@types/react@18.2.67)(bufferutil@4.0.8)(expo@51.0.29(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(utf-8-validate@5.0.10))(google-protobuf@3.21.4)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(tslib@2.6.2)(utf-8-validate@5.0.10)
       '@lingui/conf':
         specifier: 4.7.1
         version: 4.7.1(typescript@5.5.4)
@@ -92,9 +59,6 @@ importers:
       '@mysten/dapp-kit':
         specifier: 0.14.18
         version: 0.14.18(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react-dom@18.2.22)(@types/react@18.2.67)(babel-plugin-macros@3.1.0)(immer@10.1.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.5.4)
-      '@mysten/sui':
-        specifier: 1.8.0
-        version: 1.8.0(typescript@5.5.4)
       '@popperjs/core':
         specifier: 2.8.4
         version: 2.8.4
@@ -143,27 +107,6 @@ importers:
       '@reduxjs/toolkit':
         specifier: 2.2.0
         version: 2.2.0(react-redux@9.1.0(@types/react@18.2.67)(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(redux@5.0.1))(react@18.2.0)
-      '@solana/spl-token':
-        specifier: 0.4.9
-        version: 0.4.9(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.5.4)(utf-8-validate@5.0.10)
-      '@solana/wallet-adapter-base':
-        specifier: 0.9.23
-        version: 0.9.23(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))
-      '@solana/wallet-adapter-react':
-        specifier: 0.15.35
-        version: 0.15.35(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@6.0.0)(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)
-      '@solana/wallet-adapter-react-ui':
-        specifier: 0.9.35
-        version: 0.9.35(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@6.0.0)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)
-      '@solana/wallet-adapter-wallets':
-        specifier: 0.19.32
-        version: 0.19.32(@babel/runtime@7.25.0)(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@6.0.0)(bufferutil@4.0.8)(expo@51.0.29(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(tslib@2.6.2)(utf-8-validate@5.0.10)
-      '@solana/web3.js':
-        specifier: 1.95.4
-        version: 1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      '@stellar/stellar-sdk':
-        specifier: 12.3.0
-        version: 12.3.0
       '@tanstack/react-query':
         specifier: 5.29.2
         version: 5.29.2(react@18.2.0)
@@ -176,15 +119,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: 4.2.1
         version: 4.2.1(vite@5.4.0(@types/node@22.5.5)(terser@5.30.3))
-      '@wagmi/core':
-        specifier: 2.9.0
-        version: 2.9.0(@tanstack/query-core@5.29.0)(@types/react@18.2.67)(bufferutil@4.0.8)(immer@10.1.1)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@2.9.23(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       axios:
         specifier: 0.21.3
         version: 0.21.3
-      bech32:
-        specifier: 2.0.0
-        version: 2.0.0
       bignumber.js:
         specifier: 9.0.1
         version: 9.0.1
@@ -197,18 +134,9 @@ importers:
       cmdk:
         specifier: 1.0.0
         version: 1.0.0(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      cosmjs-types:
-        specifier: 0.9.0
-        version: 0.9.0
       dayjs:
         specifier: 1.10.7
         version: 1.10.7
-      ethers:
-        specifier: 5.6.1
-        version: 5.6.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      framer-motion:
-        specifier: 11.0.14
-        version: 11.0.14(@emotion/is-prop-valid@1.2.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       i18next:
         specifier: 19.7.0
         version: 19.7.0
@@ -230,18 +158,12 @@ importers:
       react:
         specifier: ^18.2.0
         version: 18.2.0
-      react-click-away-listener:
-        specifier: 2.2.3
-        version: 2.2.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-device-detect:
         specifier: 2.2.3
         version: 2.2.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-feather:
-        specifier: 2.0.10
-        version: 2.0.10(react@18.2.0)
       react-helmet-async:
         specifier: 2.0.4
         version: 2.0.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -269,9 +191,6 @@ importers:
       redux-localstorage-simple:
         specifier: 2.4.0
         version: 2.4.0
-      rlp:
-        specifier: 3.0.0
-        version: 3.0.0
       serve:
         specifier: 11.3.2
         version: 11.3.2

@@ -1,6 +1,5 @@
 import { XAccount } from '@/types';
 
-// import KeplrIcon from '@/assets/wallets/keplr.svg?inline';
 import { XConnector } from '@/core';
 import { Wallet } from '@injectivelabs/wallet-ts';
 import { InjectiveXService } from './InjectiveXService';
@@ -33,6 +32,6 @@ export class InjectiveKelprXConnector extends XConnector {
   async disconnect(): Promise<void> {}
 
   public get icon() {
-    return 'https://google.com';
+    return 'https://raw.githubusercontent.com/balancednetwork/icons/master/wallets/keplr.svg';
   }
 }

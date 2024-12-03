@@ -1,6 +1,5 @@
 import { XAccount } from '@/types';
 
-// import MetamaskIcon from '@/assets/wallets/metamask.svg?inline';
 import { XConnector } from '@/core';
 import { getInjectiveAddress } from '@injectivelabs/sdk-ts';
 import { Wallet } from '@injectivelabs/wallet-ts';
@@ -37,6 +36,6 @@ export class InjectiveMetamaskXConnector extends XConnector {
   }
 
   public get icon() {
-    return 'https://google.com';
+    return 'https://raw.githubusercontent.com/balancednetwork/icons/master/wallets/metamask.svg';
   }
 }

@@ -1,4 +1,3 @@
-// import HanaIcon from '@/assets/wallets/hana.svg?inline';
 import { XAccount } from '@/types';
 import { isBrowser } from 'react-device-detect';
 import { ICONexRequestEventType, ICONexResponseEventType, request } from './iconex';
@@ -36,6 +35,6 @@ export class IconHanaXConnector extends XConnector {
   }
 
   public get icon() {
-    return 'https://google.com';
+    return 'https://raw.githubusercontent.com/balancednetwork/icons/master/wallets/hana.svg';
   }
 }

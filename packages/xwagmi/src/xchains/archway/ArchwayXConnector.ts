@@ -1,4 +1,3 @@
-// import KeplrIcon from '@/assets/wallets/keplr.svg?inline';
 import { XConnector } from '@/core/XConnector';
 import { XAccount } from '@/types';
 import { AccountData } from '@keplr-wallet/types';
@@ -57,6 +56,6 @@ export class ArchwayXConnector extends XConnector {
   }
 
   public get icon() {
-    return 'https://google.com';
+    return 'https://raw.githubusercontent.com/balancednetwork/icons/master/wallets/keplr.svg';
   }
 }

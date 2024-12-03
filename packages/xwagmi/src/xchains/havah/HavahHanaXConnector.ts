@@ -1,4 +1,3 @@
-// import HanaIcon from '@/assets/wallets/hana.svg?inline';
 import { XConnector } from '@/core/XConnector';
 import { XAccount } from '@/types';
 
@@ -40,6 +39,6 @@ export class HavahHanaXConnector extends XConnector {
   }
 
   public get icon() {
-    return 'https://google.com';
+    return 'https://raw.githubusercontent.com/balancednetwork/icons/master/wallets/hana.svg';
   }
 }

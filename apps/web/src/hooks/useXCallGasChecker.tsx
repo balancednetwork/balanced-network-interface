@@ -19,9 +19,9 @@ function useXCallGasChecker(
 
   return useMemo(() => {
     try {
-      if (!inputAmount) {
-        throw new Error('inputAmount is undefined');
-      }
+      // if (!inputAmount) {
+      //   throw new Error('inputAmount is undefined');
+      // }
 
       const xChain: XChain = xChainMap[xChainId];
       const nativeCurrency: XToken = xTokenMap[xChainId].find(x => x.isNativeToken);
@@ -44,7 +44,7 @@ function useXCallGasChecker(
 
       return { hasEnoughGas: !!hasEnoughGas, errorMessage };
     } catch (e) {
-      // console.log(e);
+      console.log(e);
     }
 
     return { hasEnoughGas: false, errorMessage: 'Unknown' };

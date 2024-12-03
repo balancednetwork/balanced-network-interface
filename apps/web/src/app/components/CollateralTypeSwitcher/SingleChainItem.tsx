@@ -75,7 +75,13 @@ const SingleChainItem = ({
           size={isNested ? '20px' : '24px'}
         />
         <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>
-          {isNested ? xChainMap[xChainId].name : symbol === 'sICX' ? (isPotential ? symbol : icxDisplayType) : symbol}
+          {isNested
+            ? xChainMap[xChainId].name
+            : symbol === 'sICX'
+              ? isPotential
+                ? symbol
+                : icxDisplayType
+              : formatSymbol(symbol)}
         </Typography>
       </AssetSymbol>
       <BalanceAndValueWrap $warning={!isPotential && !!shouldShowWarning}>

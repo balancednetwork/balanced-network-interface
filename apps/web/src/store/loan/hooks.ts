@@ -44,7 +44,6 @@ import {
   setRecipientNetwork as setRecipientNetworkAction,
   type,
 } from './reducer';
-import { xChainMap } from '@/xwagmi/constants/xChains';
 
 export function useLoanBorrowedAmount(address?: string): BigNumber {
   const borrowedAmounts = useBorrowedAmounts();
@@ -592,7 +591,9 @@ export function useDerivedLoanInfo(): {
   };
 
   const differenceAmount = parsedAmount[Field.LEFT].minus(borrowedAmount);
-  const isSliderStateChanged = !parsedAmount[Field.LEFT].isEqualTo(borrowedAmount.dp(2));
+  const isSliderStateChanged = !parsedAmount[Field.LEFT].isEqualTo(
+    borrowedAmount.dp(2) < new BigNumber(0.01) ? borrowedAmount : borrowedAmount.dp(2),
+  );
 
   const bnUSDAmount = differenceAmount
     ? CurrencyAmount.fromRawAmount(

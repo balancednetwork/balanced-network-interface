@@ -39,6 +39,7 @@ import { useRatio } from '@/store/ratio/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
+import { formatSymbol } from '@/utils/formatter';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { getXChainType } from '@/xwagmi/actions';
 import { xChainMap } from '@/xwagmi/constants/xChains';
@@ -47,7 +48,6 @@ import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { handleConnectWallet } from '../WalletModal/WalletItem';
 import CollateralChainSelector from './_components/CollateralChainSelector';
 import XCollateralModal, { XCollateralAction } from './_components/xCollateralModal';
-import { formatSymbol } from '@/utils/formatter';
 
 export const PanelInfoWrap = styled(Flex)`
   justify-content: space-between;
@@ -286,7 +286,7 @@ const CollateralPanel = () => {
                 pending: t`Withdrawing collateral...`,
                 summary: t`${collateralDifferenceInSICX
                   .dp(collateralDecimalPlaces)
-                  .toFormat()} ${collateralType} added to your wallet.`,
+                  .toFormat()} ${formatSymbol(collateralType)} added to your wallet.`,
               },
             );
           }
@@ -301,7 +301,7 @@ const CollateralPanel = () => {
               pending: t`Withdrawing collateral...`,
               summary: t`${collateralDifference
                 .dp(collateralDecimalPlaces)
-                .toFormat()} ${collateralType} added to your wallet.`,
+                .toFormat()} ${formatSymbol(collateralType)} added to your wallet.`,
             },
           );
         }
@@ -424,7 +424,9 @@ const CollateralPanel = () => {
 
           {account && collateralTotal?.isEqualTo(0) && (
             <Flex minHeight={140} alignItems="center" justifyContent="center">
-              <Typography mr={1}>{t`Add ${collateralType} to your ${xChainMap[sourceChain].name} wallet.`}</Typography>
+              <Typography
+                mr={1}
+              >{t`Add ${formatSymbol(collateralType)} to your ${xChainMap[sourceChain].name} wallet.`}</Typography>
             </Flex>
           )}
 

@@ -103,12 +103,10 @@ export class SolanaXPublicClient extends XPublicClient {
 
   deriveTxStatus(rawTx): TransactionStatus {
     try {
-      if (rawTx.transactionHash) {
-        if (rawTx.meta.status.Err) {
-          return TransactionStatus.failure;
-        } else {
-          return TransactionStatus.success;
-        }
+      if (rawTx.meta.status.Err) {
+        return TransactionStatus.failure;
+      } else {
+        return TransactionStatus.success;
       }
     } catch (e) {}
 

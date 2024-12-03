@@ -96,7 +96,7 @@ export const AllXChainHeightsUpdater = ({ xChains }: { xChains: XChain[] }) => {
       }
       return null;
     },
-    refetchInterval: 1000,
+    refetchInterval: 2000,
   });
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import { CollateralTab } from '@/app/components/CollateralTypeSwitcher/CollateralTypeListWrap';
 import { useRatesWithOracle } from '@/queries/reward';
-import { Position, XChain, XChainId, XPositionsRecord } from '@/xwagmi/types';
+import { Position, XChain, XChainId, XPositionsRecord } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useState } from 'react';
 import { SortingType } from './useSort';

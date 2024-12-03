@@ -26,7 +26,7 @@ import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useCurrencyBalances, useHasEnoughICX } from '@/store/wallet/hooks';
 import { formatBigNumber, multiplyCABN, toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { EXA, WEIGHT } from '@/app/components/home/BBaln/utils';
 import { withdrawMessage } from '../utils';

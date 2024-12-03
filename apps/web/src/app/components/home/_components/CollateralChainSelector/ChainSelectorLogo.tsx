@@ -1,5 +1,5 @@
 import { ChainLogo } from '@/app/components/ChainLogo';
-import { XChain } from '@/xwagmi/types';
+import { XChain } from '@balancednetwork/xwagmi';
 import React from 'react';
 import styled from 'styled-components';
 

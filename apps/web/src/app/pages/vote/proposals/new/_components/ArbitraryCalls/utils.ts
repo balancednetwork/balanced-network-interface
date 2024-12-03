@@ -9,7 +9,7 @@ import {
   ArbitraryCallParameterType,
   EditableArbitraryCall,
 } from '@/store/arbitraryCalls/reducer';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 export function getTransactionsString(transactions: EditableArbitraryCall[]): string {
   const formatted = transactions.map(transaction => {

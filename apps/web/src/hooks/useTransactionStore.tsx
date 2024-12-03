@@ -10,10 +10,10 @@ import {
   NotificationPending,
   NotificationSuccess,
 } from '@/app/components/Notification/TransactionNotification';
-import { getXPublicClient } from '@/xwagmi/actions';
-import { XChainId } from '@/xwagmi/types';
+import { getXPublicClient } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
+import { Transaction, TransactionStatus } from '@balancednetwork/xwagmi';
 import { persist } from 'zustand/middleware';
-import { Transaction, TransactionStatus } from '../xwagmi/xcall/types';
 
 type TransactionStore = {
   transactions: Transaction[];

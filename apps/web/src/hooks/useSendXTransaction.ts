@@ -3,9 +3,9 @@ import BigNumber from 'bignumber.js';
 import { swapMessage } from '@/app/pages/trade/supply/_components/utils';
 import { formatBigNumber } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
-import { getXWalletClient } from '@/xwagmi/actions';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@/xwagmi/types';
+import { getXWalletClient } from '@balancednetwork/xwagmi';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
 import {
   XMessage,
   XMessageStatus,
@@ -13,10 +13,10 @@ import {
   XTransactionInput,
   XTransactionStatus,
   XTransactionType,
-} from '@/xwagmi/xcall/types';
-import { xChainHeightActions } from '@/xwagmi/xcall/zustand/useXChainHeightStore';
-import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
-import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+} from '@balancednetwork/xwagmi';
+import { xChainHeightActions } from '@balancednetwork/xwagmi';
+import { xMessageActions } from '@balancednetwork/xwagmi';
+import { xTransactionActions } from '@balancednetwork/xwagmi';
 import { useSignTransaction } from '@mysten/dapp-kit';
 import { useMemo } from 'react';
 import { transactionActions } from './useTransactionStore';

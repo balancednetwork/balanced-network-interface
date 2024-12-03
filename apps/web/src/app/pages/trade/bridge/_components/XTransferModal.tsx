@@ -20,10 +20,10 @@ import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from '@/stor
 import { formatBigNumber } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
 import { getNetworkDisplayName } from '@/utils/xTokens';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
-import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
-import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { useXCallFee } from '@balancednetwork/xwagmi';
+import { XTransactionInput, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
+import { xTransactionActions } from '@balancednetwork/xwagmi';
 import { AnimatePresence, motion } from 'framer-motion';
 import LiquidFinanceIntegration from './LiquidFinanceIntegration';
 

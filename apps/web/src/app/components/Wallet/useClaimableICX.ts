@@ -1,7 +1,7 @@
 import { useIconReact } from '@/packages/icon-react';
 import { useAllTransactions } from '@/store/transactions/hooks';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { BalancedJs } from '@balancednetwork/balanced-js';
+import { bnJs } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { useEffect, useState } from 'react';
 

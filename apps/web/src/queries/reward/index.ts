@@ -17,7 +17,7 @@ import QUERY_KEYS from '@/queries/queryKeys';
 import { useBlockNumber } from '@/store/application/hooks';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { useFlattenedRewardsDistribution } from '@/store/reward/hooks';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 export const BATCH_SIZE = 10;
 

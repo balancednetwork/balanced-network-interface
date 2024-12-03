@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 
 import QUERY_KEYS from '@/queries/queryKeys';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 export enum Period {
   day = 'day',

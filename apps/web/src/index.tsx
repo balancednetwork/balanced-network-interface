@@ -1,15 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 import { App } from '@/app';
 import store from '@/store';
+import { XWagmiProviders } from '@balancednetwork/xwagmi';
 import { LanguageProvider } from './i18n';
-import { XWagmiProviders } from './xwagmi/XWagmiProviders';
 
 // Use consistent styling
 import 'sanitize.css/sanitize.css';

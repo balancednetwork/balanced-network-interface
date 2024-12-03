@@ -26,10 +26,10 @@ import { useSwapSlippageTolerance, useWalletModalToggle } from '@/store/applicat
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatPercent, maxAmountSpend } from '@/utils';
-import { getXChainType } from '@/xwagmi/actions';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { useXAccount, useXConnect, useXConnectors } from '@/xwagmi/hooks';
-import { XChainId } from '@/xwagmi/types';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { useXAccount, useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import SwapModal from './SwapModal';
 import XSwapModal from './XSwapModal';

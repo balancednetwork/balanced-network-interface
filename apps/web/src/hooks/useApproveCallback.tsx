@@ -9,14 +9,16 @@ import { usePublicClient, useWalletClient } from 'wagmi';
 import { openToast } from '@/btp/src/connectors/transactionToast';
 import { transactionActions } from '@/hooks/useTransactionStore';
 import { TransactionStatus } from '@/store/transactions/hooks';
-import { getXChainType } from '@/xwagmi/actions/getXChainType';
-import { getXWalletClient } from '@/xwagmi/actions/getXWalletClient';
-import { NATIVE_ADDRESS } from '@/xwagmi/constants';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { useXAccount, useXService } from '@/xwagmi/hooks';
-import { ArchwayXService } from '@/xwagmi/xchains/archway';
-import { isDenomAsset } from '@/xwagmi/xchains/archway/utils';
-import { XToken } from '../xwagmi/types';
+import {
+  ArchwayXService,
+  XToken,
+  getXChainType,
+  getXWalletClient,
+  isDenomAsset,
+  useXAccount,
+  useXService,
+  xChainMap,
+} from '@balancednetwork/xwagmi';
 
 export const FAST_INTERVAL = 10000;
 
@@ -80,7 +82,7 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
     const isBnUSD = amountToApprove.currency.symbol === 'bnUSD';
     if (isBnUSD) return ApprovalState.APPROVED;
 
-    const isNative = amountToApprove.currency.wrapped.address === NATIVE_ADDRESS;
+    const isNative = amountToApprove.currency.isNativeToken;
     if (isNative) return ApprovalState.APPROVED;
 
     if (xChainType === 'ARCHWAY') {
@@ -277,7 +279,7 @@ export function useTokenAllowance(
 } {
   const inputs = useMemo(() => [owner, spender] as [`0x${string}`, `0x${string}`], [owner, spender]);
   const evmPublicClient = usePublicClient();
-  const archwayXService: ArchwayXService = useXService('ARCHWAY') as ArchwayXService;
+  const archwayXService: ArchwayXService = useXService('ARCHWAY') as unknown as ArchwayXService;
   const archwayPublicClient = archwayXService.publicClient;
 
   const { data: allowance, refetch } = useQuery({

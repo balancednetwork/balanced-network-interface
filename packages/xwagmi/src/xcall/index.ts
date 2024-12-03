@@ -7,3 +7,5 @@ export * from './zustand/useXChainHeightStore';
 export * from './zustand/useXMessageStore';
 export * from './zustand/useXTransactionStore';
 export * from './zustand/useXCallScannerStore';
+
+export * from './utils';

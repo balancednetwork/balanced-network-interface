@@ -1,8 +1,8 @@
 import useKeyPress from '@/hooks/useKeyPress';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@/xwagmi/types';
-import { validateAddress } from '@/xwagmi/utils';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
+import { validateAddress } from '@balancednetwork/xwagmi';
 import React from 'react';
 import { Flex } from 'rebass';
 import styled from 'styled-components';

@@ -30,13 +30,13 @@ import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import ModalContent from '@/app/components/ModalContent';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import useWidth from '@/hooks/useWidth';
 import { useIconReact } from '@/packages/icon-react';
-import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
+import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { PanelInfoItem, PanelInfoWrap, UnderPanel } from './CollateralPanel';
 import LoanChainSelector from './_components/LoanChainSelector';

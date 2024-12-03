@@ -3,9 +3,9 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@/xwagmi/types';
 import { Currency } from '@balancednetwork/sdk-core';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
 
 import CurrencyLogo from '../CurrencyLogo';
 

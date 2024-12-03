@@ -526,6 +526,9 @@ importers:
       '@balancednetwork/v1-sdk':
         specifier: workspace:*
         version: link:../../packages/v1-sdk
+      '@balancednetwork/xwagmi':
+        specifier: workspace:*
+        version: link:../../packages/xwagmi
       '@chain-registry/types':
         specifier: 0.16.0
         version: 0.16.0

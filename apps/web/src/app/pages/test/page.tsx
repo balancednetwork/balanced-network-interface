@@ -1,17 +1,12 @@
 import { Button } from '@/app/components/Button';
 import { tryParseAmount } from '@/store/swap/hooks';
-import { getXChainType } from '@/xwagmi/actions';
-import { NATIVE_ADDRESS } from '@/xwagmi/constants';
-import { useXAccount } from '@/xwagmi/hooks';
-import { XToken } from '@/xwagmi/types';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { useXAccount } from '@balancednetwork/xwagmi';
 import { useSignTransaction, useSuiClient } from '@mysten/dapp-kit';
 import { bcs } from '@mysten/sui/bcs';
 import { Transaction } from '@mysten/sui/transactions';
 import React from 'react';
 import { Flex } from 'rebass/styled-components';
-
-const SUI = new XToken('sui', 'sui', NATIVE_ADDRESS, 9, 'SUI', 'SUI');
 
 const addressesMainnet = {
   'Balanced Package Id': '0x52af654cd5f58aaf99638d71fd46896637abff823a9c6e152a297b9832a7ee72',

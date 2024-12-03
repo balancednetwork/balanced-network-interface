@@ -1,15 +1,15 @@
-import { XPublicClient } from '@/xwagmi/core/XPublicClient';
-import { XChainId, XToken } from '@/xwagmi/types';
-import { TransactionStatus, XCallEvent, XTransactionInput } from '../../xcall/types';
-import { SolanaXService } from './SolanaXService';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import { PublicKey } from '@solana/web3.js';
-import { getAccount, getAssociatedTokenAddressSync } from '@solana/spl-token';
-import { Program } from '@coral-xyz/anchor';
-import xCallIdl from './idls/xCall.json';
-import { findPda } from './utils';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { isNativeXToken } from '@/xwagmi/constants/xTokens';
+import { XPublicClient } from '@/xwagmi/core/XPublicClient';
+import { XChainId, XToken } from '@/xwagmi/types';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { Program } from '@coral-xyz/anchor';
+import { getAccount, getAssociatedTokenAddressSync } from '@solana/spl-token';
+import { PublicKey } from '@solana/web3.js';
+import { TransactionStatus, XCallEvent, XTransactionInput } from '../../xcall/types';
+import { SolanaXService } from './SolanaXService';
+import xCallIdl from './idls/xCall.json';
+import { findPda } from './utils';
 
 function network_fee(networkId: string, source) {
   const [pda, bump] = PublicKey.findProgramAddressSync(
@@ -102,12 +102,10 @@ export class SolanaXPublicClient extends XPublicClient {
 
   deriveTxStatus(rawTx): TransactionStatus {
     try {
-      if (rawTx.transactionHash) {
-        if (rawTx.meta.status.Err) {
-          return TransactionStatus.failure;
-        } else {
-          return TransactionStatus.success;
-        }
+      if (rawTx.meta.status.Err) {
+        return TransactionStatus.failure;
+      } else {
+        return TransactionStatus.success;
       }
     } catch (e) {}
 

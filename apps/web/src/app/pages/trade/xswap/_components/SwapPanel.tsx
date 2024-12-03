@@ -28,10 +28,11 @@ import { formatBalance } from '@/utils/formatter';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
 import { XChainId, XToken } from '@/xwagmi/types';
+import MMSwapCommitButton from './MMSwapCommitButton';
+import MMSwapInfo from './MMSwapInfo';
 import PriceImpact from './PriceImpact';
 import SwapCommitButton from './SwapCommitButton';
 import SwapInfo from './SwapInfo';
-import SwapMMCommitButton from './SwapMMCommitButton';
 
 export default function SwapPanel() {
   useInitialSwapLoad();
@@ -217,6 +218,7 @@ export default function SwapPanel() {
           <PriceImpact trade={trade} />
 
           <SwapInfo trade={trade} />
+          <MMSwapInfo trade={mmTrade.trade} />
 
           <Flex justifyContent="center" mt={4}>
             <SwapCommitButton
@@ -229,7 +231,7 @@ export default function SwapPanel() {
               direction={direction}
             />
 
-            <SwapMMCommitButton
+            <MMSwapCommitButton
               currencies={currencies}
               account={account}
               recipient={recipient}

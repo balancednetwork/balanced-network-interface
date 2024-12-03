@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { Currency, CurrencyAmount, Price, Token, TradeType } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Fraction, Price, Token, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { t } from '@lingui/macro';
 import { useDispatch, useSelector } from 'react-redux';
@@ -122,7 +122,7 @@ export function useDerivedSwapInfo(): {
   _currencies: { [field in Field]?: Currency };
   percents: { [field in Field]?: number };
   currencyBalances: { [field in Field]?: CurrencyAmount<XToken> | undefined };
-  parsedAmount: CurrencyAmount<Currency> | undefined;
+  parsedAmount: CurrencyAmount<XToken> | undefined;
   inputError?: string;
   price: Price<Token, Token> | undefined;
   direction: { from: XChainId; to: XChainId };
@@ -363,6 +363,7 @@ import { useQuery } from '@tanstack/react-query';
 export interface MMTrade {
   inputAmount: CurrencyAmount<XToken>;
   outputAmount: CurrencyAmount<XToken>;
+  fee: CurrencyAmount<XToken>;
   executionPrice: Price<Token, Token>;
   uuid: string;
 }
@@ -400,11 +401,13 @@ export function useMMTrade(inputAmount: CurrencyAmount<XToken> | undefined, outp
           outputCurrency,
           BigInt(res.value.output.expected_output ?? 0),
         );
+
         return {
           inputAmount: inputAmount,
           outputAmount: outputAmount,
           executionPrice: new Price({ baseAmount: inputAmount, quoteAmount: outputAmount }),
           uuid: res.value.output.uuid,
+          fee: outputAmount.multiply(new Fraction(3, 1_000)),
         };
       }
 

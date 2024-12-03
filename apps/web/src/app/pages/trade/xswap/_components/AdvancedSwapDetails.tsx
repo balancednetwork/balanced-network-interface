@@ -1,11 +1,7 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
-import { Currency, Price, Token } from '@balancednetwork/sdk-core';
-import { Route } from '@balancednetwork/v1-sdk';
 import { Trans, t } from '@lingui/macro';
-import { ChevronRight } from 'react-feather';
 import { Box, Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
 
 import Divider from '@/app/components/Divider';
 import QuestionHelper from '@/app/components/QuestionHelper';
@@ -15,6 +11,8 @@ import { useSetSlippageTolerance, useSwapSlippageTolerance } from '@/store/appli
 import { useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
+import TradePrice from './TradePrice';
+import TradeRoute from './TradeRoute';
 
 export default function AdvancedSwapDetails() {
   const { trade, currencies, direction } = useDerivedSwapInfo();
@@ -89,56 +87,5 @@ export default function AdvancedSwapDetails() {
         </>
       )}
     </Box>
-  );
-}
-
-interface TradePriceProps {
-  price: Price<Currency, Currency>;
-  showInverted: boolean;
-  setShowInverted: (showInverted: boolean) => void;
-}
-
-const StyledPriceContainer = styled(Box)`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  user-select: none;
-  padding: 0;
-  border: none;
-  cursor: pointer;
-`;
-
-function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
-  let formattedPrice: string;
-  try {
-    formattedPrice = showInverted ? price.toSignificant(4) : price.invert()?.toSignificant(4);
-  } catch (error) {
-    formattedPrice = '0';
-  }
-
-  const label = showInverted ? `${price.quoteCurrency?.symbol}` : `${price.baseCurrency?.symbol} `;
-  const labelInverted = showInverted ? `${price.baseCurrency?.symbol} ` : `${price.quoteCurrency?.symbol}`;
-  const flipPrice = useCallback(() => setShowInverted(!showInverted), [setShowInverted, showInverted]);
-
-  const text = `1 ${labelInverted} = ${formattedPrice ?? '-'} ${label}`;
-
-  return (
-    <StyledPriceContainer onClick={flipPrice} title={text}>
-      <div style={{ alignItems: 'center', display: 'flex', width: 'fit-content' }}>
-        <Typography textAlign="right">{text}</Typography>
-      </div>
-    </StyledPriceContainer>
-  );
-}
-
-function TradeRoute({ route }: { route: Route<Currency, Currency> }) {
-  return (
-    <>
-      {route.path.map((token: Token, index: number) => (
-        <span key={token.address}>
-          {index > 0 && <ChevronRight size={14} />} {token.symbol}
-        </span>
-      ))}
-    </>
   );
 }

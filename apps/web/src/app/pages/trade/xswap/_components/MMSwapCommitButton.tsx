@@ -6,14 +6,15 @@ import { Button } from '@/app/components/Button';
 import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useWalletModalToggle } from '@/store/application/hooks';
-import { MMTrade } from '@/store/swap/hooks';
+import { MMTrade, useDerivedSwapInfo } from '@/store/swap/hooks';
+import { Field } from '@/store/swap/reducer';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXConnect, useXConnectors } from '@/xwagmi/hooks';
 import { XChainId } from '@/xwagmi/types';
 import { XToken } from '@/xwagmi/types/xToken';
 import MMSwapModal from './MMSwapModal';
 
-interface SwapMMCommitButtonProps {
+interface MMSwapCommitButtonProps {
   trade: MMTrade | undefined;
   currencies: {
     INPUT?: XToken | undefined;
@@ -27,8 +28,39 @@ interface SwapMMCommitButtonProps {
   };
 }
 
-const SwapMMCommitButton: React.FC<SwapMMCommitButtonProps> = props => {
+const UseMMDerivedInfo = (
+  trade: MMTrade | undefined,
+  account: string | undefined,
+  recipient: string | undefined | null,
+  currencies: {
+    INPUT?: XToken | undefined;
+    OUTPUT?: XToken | undefined;
+  },
+) => {
+  let error: string | undefined;
+  const { currencyBalances, parsedAmount } = useDerivedSwapInfo();
+
+  if (account && !parsedAmount) {
+    error = error ?? t`Enter amount`;
+  }
+
+  const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], parsedAmount];
+
+  // decimal scales are different for different chains for the same token
+  if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {
+    error = error ?? t`Insufficient ${currencies[Field.INPUT]?.symbol}`;
+  }
+
+  if (account && !recipient) {
+    error = error ?? t`Choose address`;
+  }
+
+  return { error };
+};
+
+const MMSwapCommitButton: React.FC<MMSwapCommitButtonProps> = props => {
   const { trade, currencies, account, recipient, direction } = props;
+  const { error } = UseMMDerivedInfo(trade, account, recipient, currencies);
 
   const toggleWalletModal = useWalletModalToggle();
 
@@ -37,11 +69,6 @@ const SwapMMCommitButton: React.FC<SwapMMCommitButtonProps> = props => {
   const xChainType = getXChainType(direction.from);
   const xConnectors = useXConnectors(xChainType);
   const xConnect = useXConnect();
-
-  let error: string | undefined;
-  if (account && !recipient) {
-    error = t`Choose address`;
-  }
 
   const handleSwap = async () => {
     if ((!account && recipient) || (!account && direction.from === direction.to)) {
@@ -65,4 +92,4 @@ const SwapMMCommitButton: React.FC<SwapMMCommitButtonProps> = props => {
   );
 };
 
-export default SwapMMCommitButton;
+export default MMSwapCommitButton;

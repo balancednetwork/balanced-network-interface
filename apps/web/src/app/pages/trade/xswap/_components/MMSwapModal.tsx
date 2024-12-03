@@ -70,7 +70,7 @@ const MMSwapModal = ({
   }, [currentMMTransaction]);
 
   // const isProcessing: boolean = currentId !== null;
-  const isExecuted = orderStatus === IntentOrderStatus.Filled || orderStatus === IntentOrderStatus.Failure;
+  const isFilled = orderStatus === IntentOrderStatus.Filled;
 
   const handleDismiss = useCallback(() => {
     modalActions.closeModal(modalId);
@@ -88,10 +88,10 @@ const MMSwapModal = ({
   }, [handleDismiss]);
 
   useEffect(() => {
-    if (isExecuted) {
+    if (isFilled) {
       slowDismiss();
     }
-  }, [isExecuted, slowDismiss]);
+  }, [isFilled, slowDismiss]);
 
   // arb part
   const xService = useXService('EVM') as EvmXService;
@@ -217,10 +217,17 @@ const MMSwapModal = ({
             </Box>
           </Flex>
 
-          {/* {currentMMTransaction && <XTransactionState xTransaction={currentMMTransaction} />} */}
+          <Typography textAlign="center">
+            <Trans>Swap fee:</Trans>{' '}
+            <strong>
+              {formatBigNumber(new BigNumber(trade?.fee.toFixed() || 0), 'currency')} {trade?.fee.currency.symbol}
+            </strong>
+          </Typography>
+
+          <Typography textAlign="center">(deducted from receive amount)</Typography>
 
           <AnimatePresence>
-            {((!isExecuted && isProcessing) || !isProcessing) && (
+            {((!isFilled && isProcessing) || !isProcessing) && (
               <motion.div
                 key={'tx-actions'}
                 initial={{ opacity: 0, height: 0 }}

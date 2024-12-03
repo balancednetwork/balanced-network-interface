@@ -782,6 +782,10 @@ msgstr ""
 msgid "Before"
 msgstr "적용 전"
 
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "Order type"
+msgstr ""
+
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Active"
 msgstr "활성화"
@@ -1712,6 +1716,7 @@ msgstr ""
 #~ msgid "Transfer in progress"
 #~ msgstr ""
 
+#: src/app/pages/trade/xswap/_components/SwapMMCommitButton.tsx
 #: src/store/swap/hooks.ts
 msgid "Choose address"
 msgstr ""
@@ -2296,8 +2301,8 @@ msgstr "풀"
 #~ msgstr "{0} 당 1 {sendSymbol} 개"
 
 #: src/app/pages/trade/xswap/_components/SwapMMCommitButton.tsx
-msgid "MM Swap"
-msgstr ""
+#~ msgid "MM Swap"
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
@@ -2589,6 +2594,7 @@ msgstr ""
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
+#: src/app/pages/trade/xswap/_components/SwapMMCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx

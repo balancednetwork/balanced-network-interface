@@ -1,5 +1,4 @@
 import { xChainMap } from '@/constants/xChains';
-import { isNativeXToken } from '@/constants/xTokens';
 import { XPublicClient } from '@/core/XPublicClient';
 import { XChainId, XToken } from '@/types';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
@@ -35,7 +34,7 @@ export class SolanaXPublicClient extends XPublicClient {
     const connection = this.getXService().connection;
 
     try {
-      if (isNativeXToken(xToken)) {
+      if (xToken.isNativeToken) {
         const newBalance = await connection.getBalance(new PublicKey(address));
         return CurrencyAmount.fromRawAmount(xToken, BigInt(newBalance));
       } else {

@@ -5,7 +5,6 @@ import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/constants/xChains';
-import { isNativeXToken } from '@/constants/xTokens';
 import { XWalletClient } from '@/core/XWalletClient';
 import { XToken } from '@/types';
 import { uintToBytes } from '@/utils';
@@ -102,7 +101,7 @@ export class EvmXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
-    const isNative = isNativeXToken(inputAmount.currency);
+    const isNative = inputAmount.currency.isNativeToken;
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
     let request: WriteContractParameters;
@@ -161,7 +160,7 @@ export class EvmXWalletClient extends XWalletClient {
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = toHex(JSON.stringify({}));
 
-    const isNative = isNativeXToken(inputAmount.currency);
+    const isNative = inputAmount.currency.isNativeToken;
 
     let request: WriteContractParameters;
     if (!isNative) {

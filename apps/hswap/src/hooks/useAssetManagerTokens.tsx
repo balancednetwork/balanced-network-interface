@@ -1,6 +1,4 @@
-import { getXAddress } from '@/utils/xTokens';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import { NATIVE_ADDRESS } from '@balancednetwork/xwagmi';
 import { xTokenMap } from '@balancednetwork/xwagmi';
 import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
@@ -59,22 +57,13 @@ export function useAssetManagerTokens(): UseQueryResult<ResultMap> {
           address = '0x' + address;
         }
 
-        const token = xTokenMap[xChainId]?.find(
-          t =>
-            t.address.toLowerCase() ===
-            (address === '0x0000000000000000000000000000000000000000' ||
-            address === '0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI' ||
-            address === '11111111111111111111111111111111'
-              ? NATIVE_ADDRESS
-              : address
-            ).toLowerCase(),
-        );
+        const token = xTokenMap[xChainId]?.find(t => t.address.toLowerCase() === address.toLowerCase());
 
         if (!token) return;
 
         const decimalsDifference = getXChainDecimalDifference(token);
 
-        const _xAddress = getXAddress(token)!;
+        const _xAddress = token.id;
         result[_xAddress] = {
           address: tokensMap[_xAddress],
           depositedAmount: CurrencyAmount.fromRawAmount(

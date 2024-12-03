@@ -2,7 +2,6 @@ import { Address, PublicClient, WriteContractParameters, erc20Abi, getContract, 
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { xChainMap } from '@/constants/xChains';
-import { isNativeXToken } from '@/constants/xTokens';
 import { XPublicClient } from '@/core/XPublicClient';
 import { XChainId, XToken } from '@/types';
 import { getRlpEncodedSwapData } from '@/xcall/utils';
@@ -51,7 +50,7 @@ export class EvmXPublicClient extends XPublicClient {
   async getBalance(address: string | undefined, xToken: XToken) {
     if (!address) return;
 
-    if (isNativeXToken(xToken)) {
+    if (xToken.isNativeToken) {
       const balance = await this.getPublicClient().getBalance({ address: address as Address });
       return CurrencyAmount.fromRawAmount(xToken, balance);
     } else {
@@ -63,7 +62,7 @@ export class EvmXPublicClient extends XPublicClient {
     if (!address) return {};
 
     const balancePromises = xTokens
-      .filter(xToken => isNativeXToken(xToken))
+      .filter(xToken => xToken.isNativeToken)
       .map(async xToken => {
         const balance = await this.getBalance(address, xToken);
         return { symbol: xToken.symbol, address: xToken.address, balance };
@@ -75,7 +74,7 @@ export class EvmXPublicClient extends XPublicClient {
       return map;
     }, {});
 
-    const nonNativeXTokens = xTokens.filter(xToken => !isNativeXToken(xToken));
+    const nonNativeXTokens = xTokens.filter(xToken => !xToken.isNativeToken);
     const result = await this.getPublicClient().multicall({
       contracts: nonNativeXTokens.map(token => ({
         abi: erc20Abi,
@@ -237,7 +236,7 @@ export class EvmXPublicClient extends XPublicClient {
   }
 
   needsApprovalCheck(xToken: XToken): boolean {
-    if (isNativeXToken(xToken)) return false;
+    if (xToken.isNativeToken) return false;
 
     const isBnUSD = xToken.symbol === 'bnUSD';
     if (isBnUSD) return false;
@@ -297,7 +296,7 @@ export class EvmXPublicClient extends XPublicClient {
     }
 
     // check if the bridge asset is native
-    const isNative = isNativeXToken(inputAmount.currency);
+    const isNative = inputAmount.currency.isNativeToken;
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
     const publicClient = this.getPublicClient();

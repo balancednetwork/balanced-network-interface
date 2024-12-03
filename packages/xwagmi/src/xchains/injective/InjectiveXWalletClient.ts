@@ -5,7 +5,7 @@ import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xcall/utils';
 
 import { FROM_SOURCES, TO_SOURCES, injective } from '@/constants/xChains';
-import { isNativeXToken, xTokenMap } from '@/constants/xTokens';
+import { xTokenMap } from '@/constants/xTokens';
 import { XWalletClient } from '@/core';
 import { XToken } from '@/types';
 import { uintToBytes } from '@/utils';
@@ -151,7 +151,7 @@ export class InjectiveXWalletClient extends XWalletClient {
 
     const data = getBytesFromString(JSON.stringify({}));
 
-    if (isNativeXToken(inputAmount.currency)) {
+    if (inputAmount.currency.isNativeToken) {
       const msg = MsgExecuteContractCompat.fromJSON({
         contractAddress: injective.contracts.assetManager,
         sender: account,

@@ -26,6 +26,10 @@ export class XToken extends Token {
   static getXToken(xChainId: XChainId, token: Token) {
     return new XToken(xChainId, token.chainId, token.address, token.decimals, token.symbol, token.name);
   }
+
+  get id(): string {
+    return `${this.xChainId}/${this.address}`;
+  }
 }
 
 export type XWalletAssetRecord = {

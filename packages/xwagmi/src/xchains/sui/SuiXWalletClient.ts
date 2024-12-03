@@ -1,10 +1,9 @@
 import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
-import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/constants';
+import { ICON_XCALL_NETWORK_ID, xTokenMap } from '@/constants';
 
 import { FROM_SOURCES, TO_SOURCES, sui } from '@/constants/xChains';
-import { isNativeXToken, xTokenMap } from '@/constants/xTokens';
 import { XWalletClient } from '@/core/XWalletClient';
 import { uintToBytes } from '@/utils';
 import { RLP } from '@ethereumjs/rlp';
@@ -82,7 +81,7 @@ export class SuiXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
-    const isNative = isNativeXToken(inputAmount.currency);
+    const isNative = inputAmount.currency.isNativeToken;
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
     const amount = BigInt(inputAmount.quotient.toString());
 
@@ -240,7 +239,7 @@ export class SuiXWalletClient extends XWalletClient {
       return;
     }
 
-    const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
+    const isNative = inputAmount.currency.isNativeToken;
     const amount = BigInt(inputAmount.quotient.toString());
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = toBytes(JSON.stringify({}));

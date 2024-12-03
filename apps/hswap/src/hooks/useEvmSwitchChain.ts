@@ -14,7 +14,7 @@ export const useEvmSwitchChain = (expectedXChainId: XChainId) => {
   const xChainType = getXChainType(expectedXChainId);
   const expectedChainId = xChainMap[expectedXChainId].id as number;
 
-  const injectiveXService = useXService('INJECTIVE') as InjectiveXService;
+  const injectiveXService = useXService('INJECTIVE') as unknown as InjectiveXService;
   const ethereumChainId = useEthereumChainId();
 
   const { chainId } = useAccount();

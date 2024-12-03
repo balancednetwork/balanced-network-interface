@@ -5,7 +5,7 @@ import React from 'react';
 import { useEffect } from 'react';
 
 export default function useEthereumChainId(): number | null {
-  const injectiveXService = useXService('INJECTIVE') as InjectiveXService;
+  const injectiveXService = useXService('INJECTIVE') as unknown as InjectiveXService;
   const [ethereumChainId, setEthereumChainId] = React.useState<number | null>(null);
   useEffect(() => {
     if (!injectiveXService) {

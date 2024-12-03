@@ -13,7 +13,7 @@ import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useWalletBalances } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
-import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
+import { getXTokenBySymbol } from '@/utils/xTokens';
 import { getXChainType } from '@balancednetwork/xwagmi';
 import { allXTokens } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
@@ -323,7 +323,7 @@ export function useDerivedSwapInfo(): {
 
   const maximumBridgeAmount = useMemo(() => {
     if (currencies[Field.OUTPUT] instanceof XToken) {
-      return assetManager?.[getXAddress(currencies[Field.OUTPUT]) ?? '']?.depositedAmount;
+      return assetManager?.[currencies[Field.OUTPUT].id ?? '']?.depositedAmount;
     }
   }, [assetManager, currencies[Field.OUTPUT]]);
 

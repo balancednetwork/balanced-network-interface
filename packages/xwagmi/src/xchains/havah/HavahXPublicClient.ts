@@ -1,6 +1,5 @@
 import IconService, { BigNumber, Converter } from 'icon-sdk-js';
 
-import { isNativeXToken } from '@/constants/xTokens';
 import { XPublicClient } from '@/core/XPublicClient';
 import { XChainId, XToken } from '@/types';
 import { sleep } from '@/utils';
@@ -52,7 +51,7 @@ export class HavahXPublicClient extends XPublicClient {
   async getBalance(address: string | undefined, xToken: XToken) {
     if (!address) return;
 
-    if (isNativeXToken(xToken)) {
+    if (xToken.isNativeToken) {
       return havahJs.ICX.balanceOf(address).then(res => CurrencyAmount.fromRawAmount(xToken, res.toFixed()));
     } else {
       return havahJs[xToken.symbol]

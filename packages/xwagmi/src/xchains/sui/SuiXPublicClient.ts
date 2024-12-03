@@ -1,4 +1,3 @@
-import { isNativeXToken } from '@/constants/xTokens';
 import { XPublicClient } from '@/core/XPublicClient';
 import { XChainId, XToken } from '@/types';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
@@ -18,7 +17,7 @@ export class SuiXPublicClient extends XPublicClient {
   async getBalance(address: string | undefined, xToken: XToken) {
     if (!address) return;
 
-    if (isNativeXToken(xToken)) {
+    if (xToken.isNativeToken) {
       const balance = await this.getPublicClient().getBalance({
         owner: address,
         coinType: '0x2::sui::SUI',
@@ -41,7 +40,7 @@ export class SuiXPublicClient extends XPublicClient {
         owner: address,
       });
       const tokenMap = xTokens.reduce((map, xToken) => {
-        const coinType = isNativeXToken(xToken) ? '0x2::sui::SUI' : xToken.address;
+        const coinType = xToken.isNativeToken ? '0x2::sui::SUI' : xToken.address;
         const balance = allBalances.find(b => b.coinType === coinType);
 
         if (balance) map[xToken.address] = CurrencyAmount.fromRawAmount(xToken, balance.totalBalance);

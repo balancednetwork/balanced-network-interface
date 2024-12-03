@@ -2,7 +2,6 @@ import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
-import { isNativeXToken } from '@/constants/xTokens';
 import { XWalletClient } from '@/core/XWalletClient';
 import { showMessageOnBeforeUnload, toDec } from '@/utils';
 import { toHex } from 'viem';
@@ -53,7 +52,7 @@ export class HavahXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
-    const isNative = isNativeXToken(inputAmount.currency);
+    const isNative = inputAmount.currency.isNativeToken;
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
     let txResult;

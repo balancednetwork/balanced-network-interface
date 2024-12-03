@@ -8,7 +8,7 @@ export const GOVERNANCE_BASE_ADDRESS = 'cx00000000000000000000000000000000000000
 export const API_VERSION = IconConverter.toBigNumber(3);
 
 export function useIconReact() {
-  const iconXService: IconXService = useXService('ICON') as IconXService;
+  const iconXService: IconXService = useXService('ICON') as unknown as IconXService;
   const iconXAccount = useXAccount('ICON');
 
   return {

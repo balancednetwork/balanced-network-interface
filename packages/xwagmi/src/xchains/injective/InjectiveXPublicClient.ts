@@ -1,7 +1,6 @@
 import { fromBase64, toBase64 } from '@injectivelabs/sdk-ts';
 
 import { injective } from '@/constants/xChains';
-import { isNativeXToken } from '@/constants/xTokens';
 import { XPublicClient } from '@/core';
 import { XChainId, XToken } from '@/types';
 import {
@@ -37,7 +36,7 @@ export class InjectiveXPublicClient extends XPublicClient {
     const xService = this.getXService();
     const portfolio = await xService.indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(address);
 
-    const xTokenAddress = isNativeXToken(xToken) ? 'inj' : xToken.address;
+    const xTokenAddress = xToken.address;
 
     const balance = portfolio.bankBalancesList.find(_balance => _balance.denom === xTokenAddress);
     if (balance) {

@@ -1,6 +1,5 @@
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { FROM_SOURCES, TO_SOURCES, solana } from '@/constants/xChains';
-import { isNativeXToken } from '@/constants/xTokens';
 import { XWalletClient } from '@/core/XWalletClient';
 import { uintToBytes } from '@/utils';
 import { Percent } from '@balancednetwork/sdk-core';
@@ -89,7 +88,7 @@ export class SolanaXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
-    const isNative = isNativeXToken(inputAmount.currency);
+    const isNative = inputAmount.currency.isNativeToken;
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
     let txSignature;
@@ -203,7 +202,7 @@ export class SolanaXWalletClient extends XWalletClient {
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data: any = toBytes(JSON.stringify({}));
 
-    const isNative = isNativeXToken(inputAmount.currency);
+    const isNative = inputAmount.currency.isNativeToken;
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
     let txSignature;

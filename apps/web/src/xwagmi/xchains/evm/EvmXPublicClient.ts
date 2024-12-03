@@ -1,8 +1,9 @@
-import { Address, PublicClient, erc20Abi, getContract, parseEventLogs } from 'viem';
+import { Address, PublicClient, WriteContractParameters, erc20Abi, getContract, parseEventLogs, toHex } from 'viem';
 
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
 import { XChainId, XToken } from '@/xwagmi/types';
+import { MaxUint256, Percent } from '@balancednetwork/sdk-core';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import {
   TransactionStatus,
@@ -11,9 +12,17 @@ import {
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
+  XTransactionInput,
+  XTransactionType,
 } from '../../xcall/types';
 import { EvmXService } from './EvmXService';
 import { xCallContractAbi } from './abis/xCallContractAbi';
+import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
+import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
+import { bnUSDContractAbi } from './abis/bnUSDContractAbi';
+import { getRlpEncodedSwapData } from '@/xwagmi/xcall/utils';
+import bnJs from '../icon/bnJs';
+import { isNativeXToken } from '@/xwagmi/constants/xTokens';
 
 const XCallEventSignatureMap = {
   [XCallEventType.CallMessageSent]: 'CallMessageSent',
@@ -42,7 +51,7 @@ export class EvmXPublicClient extends XPublicClient {
   async getBalance(address: string | undefined, xToken: XToken) {
     if (!address) return;
 
-    if (xToken.isNativeXToken()) {
+    if (isNativeXToken(xToken)) {
       const balance = await this.getPublicClient().getBalance({ address: address as Address });
       return CurrencyAmount.fromRawAmount(xToken, balance);
     } else {
@@ -54,7 +63,7 @@ export class EvmXPublicClient extends XPublicClient {
     if (!address) return {};
 
     const balancePromises = xTokens
-      .filter(xToken => xToken.isNativeXToken())
+      .filter(xToken => isNativeXToken(xToken))
       .map(async xToken => {
         const balance = await this.getBalance(address, xToken);
         return { symbol: xToken.symbol, address: xToken.address, balance };
@@ -66,7 +75,7 @@ export class EvmXPublicClient extends XPublicClient {
       return map;
     }, {});
 
-    const nonNativeXTokens = xTokens.filter(xToken => !xToken.isNativeXToken());
+    const nonNativeXTokens = xTokens.filter(xToken => !isNativeXToken(xToken));
     const result = await this.getPublicClient().multicall({
       contracts: nonNativeXTokens.map(token => ({
         abi: erc20Abi,
@@ -212,5 +221,122 @@ export class EvmXPublicClient extends XPublicClient {
       code: parseInt(eventLog.args._code),
       msg: eventLog.args._msg,
     };
+  }
+
+  async getTokenAllowance(owner: string | null | undefined, spender: string | undefined, xToken: XToken | undefined) {
+    if (!owner || !spender || !xToken) return;
+
+    const res = await this.getPublicClient().readContract({
+      abi: erc20Abi,
+      address: xToken.address as `0x${string}`,
+      functionName: 'allowance',
+      args: [owner as `0x${string}`, spender as `0x${string}`],
+    });
+
+    return res;
+  }
+
+  needsApprovalCheck(xToken: XToken): boolean {
+    if (isNativeXToken(xToken)) return false;
+
+    const isBnUSD = xToken.symbol === 'bnUSD';
+    if (isBnUSD) return false;
+
+    return true;
+  }
+
+  async estimateApproveGas(amountToApprove: CurrencyAmount<XToken>, spender: string, owner: string) {
+    const xToken = amountToApprove.currency;
+
+    const publicClient = await this.getPublicClient();
+
+    const tokenContract = getContract({
+      abi: erc20Abi,
+      address: xToken.address as Address,
+      client: { public: publicClient },
+    });
+    const account = owner as Address;
+    const res = await tokenContract.estimateGas.approve(
+      [spender as `0x${string}`, amountToApprove?.quotient ? BigInt(amountToApprove.quotient.toString()) : MaxUint256],
+      { account },
+    );
+
+    console.log('approve gas', res);
+    return res;
+  }
+
+  async estimateSwapGas(xTransactionInput: XTransactionInput) {
+    const { type, direction, inputAmount, recipient, account, xCallFee, executionTrade, slippageTolerance } =
+      xTransactionInput;
+
+    const receiver = `${direction.to}/${recipient}`;
+    const tokenAddress = inputAmount.wrapped.currency.address;
+    const amount = BigInt('0');
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
+
+    let data: Address;
+    if (type === XTransactionType.SWAP) {
+      if (!executionTrade || !slippageTolerance) {
+        return;
+      }
+      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
+      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived).toString('hex');
+      data = `0x${rlpEncodedData}`;
+    } else if (type === XTransactionType.BRIDGE) {
+      data = toHex(
+        JSON.stringify({
+          method: '_swap',
+          params: {
+            path: [],
+            receiver: receiver,
+          },
+        }),
+      );
+    } else {
+      throw new Error('Invalid XTransactionType');
+    }
+
+    // check if the bridge asset is native
+    const isNative = isNativeXToken(inputAmount.currency);
+    const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
+
+    const publicClient = this.getPublicClient();
+    try {
+      let res;
+      if (isBnUSD) {
+        res = await publicClient.estimateContractGas({
+          account: account as Address,
+          address: xChainMap[direction.from].contracts.bnUSD as Address,
+          abi: bnUSDContractAbi,
+          functionName: 'crossTransfer',
+          args: [destination, amount, data],
+          value: xCallFee.rollback,
+        });
+      } else {
+        if (!isNative) {
+          res = await publicClient.estimateContractGas({
+            account: account as Address,
+            address: xChainMap[direction.from].contracts.assetManager as Address,
+            abi: assetManagerContractAbi,
+            functionName: 'deposit',
+            args: [tokenAddress as Address, amount, destination, data],
+            value: xCallFee.rollback,
+          });
+        } else {
+          res = await publicClient.estimateContractGas({
+            account: account as Address,
+            address: xChainMap[direction.from].contracts.assetManager as Address,
+            abi: assetManagerContractAbi,
+            functionName: 'depositNative',
+            args: [amount, destination, data],
+            value: xCallFee.rollback + amount,
+          });
+        }
+      }
+      console.log('swap gas', res);
+      return res;
+    } catch (e) {
+      console.log(e);
+    }
   }
 }

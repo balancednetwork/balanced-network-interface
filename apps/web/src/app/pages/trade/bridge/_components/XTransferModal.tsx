@@ -18,6 +18,7 @@ import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from '@/store/bridge/hooks';
 import { formatBigNumber } from '@/utils';
+import { formatSymbol } from '@/utils/formatter';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
@@ -113,9 +114,9 @@ function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {`${formatBigNumber(new BigNumber(currencyAmountToBridge?.toFixed() || 0), 'currency')} ${
-              currencyAmountToBridge?.currency.symbol
-            }`}
+            {`${formatBigNumber(new BigNumber(currencyAmountToBridge?.toFixed() || 0), 'currency')} ${formatSymbol(
+              currencyAmountToBridge?.currency.symbol,
+            )}`}
           </Typography>
 
           <Flex my={5}>

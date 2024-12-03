@@ -1,8 +1,8 @@
 import IconService, { BigNumber, Converter } from 'icon-sdk-js';
 
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
+import { XChainId, XToken } from '@/xwagmi/types';
 import { sleep } from '@/xwagmi/utils';
-import { XChainId, XToken } from '@balancednetwork/sdk-core';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import {
   TransactionStatus,
@@ -16,6 +16,7 @@ import {
 import { ICONTxResultType } from '../icon/types';
 import { HavahXService } from './HavahXService';
 import { havahJs } from './havahJs';
+import { isNativeXToken } from '@/xwagmi/constants/xTokens';
 
 export const getICONEventSignature = (eventName: XCallEventType) => {
   switch (eventName) {
@@ -51,7 +52,7 @@ export class HavahXPublicClient extends XPublicClient {
   async getBalance(address: string | undefined, xToken: XToken) {
     if (!address) return;
 
-    if (xToken.isNativeXToken()) {
+    if (isNativeXToken(xToken)) {
       return havahJs.ICX.balanceOf(address).then(res => CurrencyAmount.fromRawAmount(xToken, res.toFixed()));
     } else {
       return havahJs[xToken.symbol]

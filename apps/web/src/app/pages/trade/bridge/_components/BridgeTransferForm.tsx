@@ -27,6 +27,7 @@ import {
 import { Field } from '@/store/bridge/reducer';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend } from '@/utils';
+import { formatSymbol } from '@/utils/formatter';
 import { getXChainType } from '@/xwagmi/actions';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount, useXConnect, useXConnectors } from '@/xwagmi/hooks';
@@ -102,7 +103,7 @@ export default function BridgeTransferForm({ openModal }) {
   const { formattedXCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
 
   React.useEffect(() => {
-    setValid(validateAddress(recipient || '', bridgeDirection.to));
+    validateAddress(recipient || '', bridgeDirection.to).then(setValid);
   }, [recipient, bridgeDirection.to]);
 
   const handleMaximumBridgeAmountClick = () => {
@@ -143,7 +144,7 @@ export default function BridgeTransferForm({ openModal }) {
 
           <Typography as="div" mb={-1} textAlign="right" hidden={!account}>
             <Trans>Wallet:</Trans>{' '}
-            {`${selectedTokenWalletBalance?.toFixed(4, { groupSeparator: ',' }) ?? 0} ${currencyToBridge?.symbol}`}
+            {`${selectedTokenWalletBalance?.toFixed(4, { groupSeparator: ',' }) ?? 0} ${formatSymbol(currencyToBridge?.symbol)}`}
           </Typography>
 
           <Flex>

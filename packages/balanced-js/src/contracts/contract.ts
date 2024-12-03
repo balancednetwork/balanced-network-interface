@@ -14,6 +14,7 @@ export interface TransactionParams {
 
 export class Contract {
   protected provider: IconService;
+  protected walletProvider: any; // it's for havah - window.havah or window.hanaWallet.havah
   protected nid: NetworkId;
   public address: string = '';
 
@@ -23,6 +24,7 @@ export class Contract {
   ) {
     this.provider = contractSettings.provider;
     this.nid = contractSettings.networkId;
+    this.walletProvider = contractSettings.walletProvider;
     this.address = address || '';
   }
 
@@ -117,8 +119,7 @@ export class Contract {
 
   private callIconex(payload: any): Promise<ResponseJsonRPCPayload> {
     if (this.nid === NetworkId.HAVAH) {
-      // @ts-ignore
-      return window.havah.sendTransaction(payload);
+      return this.walletProvider.sendTransaction(payload);
     } else {
       window.dispatchEvent(
         new CustomEvent('ICONEX_RELAY_REQUEST', {

@@ -10,9 +10,11 @@ import {
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
+  XTransactionInput,
 } from '@/xwagmi/xcall/types';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { InjectiveXService } from './InjectiveXService';
+import { isNativeXToken } from '@/xwagmi/constants/xTokens';
 
 const XCallEventSignatureMap = {
   [XCallEventType.CallMessageSent]: 'wasm-CallMessageSent',
@@ -35,7 +37,7 @@ export class InjectiveXPublicClient extends XPublicClient {
     const xService = this.getXService();
     const portfolio = await xService.indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(address);
 
-    const xTokenAddress = xToken.isNativeXToken() ? 'inj' : xToken.address;
+    const xTokenAddress = isNativeXToken(xToken) ? 'inj' : xToken.address;
 
     const balance = portfolio.bankBalancesList.find(_balance => _balance.denom === xTokenAddress);
     if (balance) {
@@ -184,5 +186,18 @@ export class InjectiveXPublicClient extends XPublicClient {
       code: parseInt(eventLog.attributes.find(attr => attr.key === 'code')?.value),
       msg: eventLog.attributes.find(attr => attr.key === 'msg')?.value,
     };
+  }
+
+  needsApprovalCheck(xToken: XToken): boolean {
+    return false;
+  }
+
+  async estimateApproveGas(amountToApprove: CurrencyAmount<XToken>, spender: string, owner: string) {
+    return 0n;
+  }
+
+  async estimateSwapGas(xTransactionInput: XTransactionInput) {
+    // TODO: implement
+    return 0n;
   }
 }

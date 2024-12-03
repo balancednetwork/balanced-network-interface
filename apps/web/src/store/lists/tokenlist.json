@@ -275,6 +275,22 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/weeth.png"
     },
     {
+      "address": "cx65c9e3d4fea842e00add0d32a5b4c5e4e04c7a6b",
+      "chainId": 1,
+      "name": "SOL",
+      "symbol": "SOL",
+      "decimals": 9,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sol.png"
+    },
+    {
+      "address": "cx4b48a4789636aa737285feec8908c765d8bc8042",
+      "chainId": 1,
+      "name": "Jito Staked SOL",
+      "symbol": "JITOSOL",
+      "decimals": 9,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/jitosol.png"
+    },
+    {
       "address": "cxb9d0727849a6ce6453f8c9dda2dec2fd543075d4",
       "chainId": 1,
       "name": "Volo Staked SUI",

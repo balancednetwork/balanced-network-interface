@@ -23,7 +23,6 @@ export type WalletItemProps = {
   keyWords: string[];
   xChains?: XChain[];
   switchChain?: (any) => void;
-  walletOptionsModalId?: MODAL_ID;
 };
 
 export const handleConnectWallet = (
@@ -41,21 +40,18 @@ export const handleConnectWallet = (
     modalActions.openModal(MODAL_ID.SUI_WALLET_OPTIONS_MODAL);
   } else if (xChainType === 'STELLAR') {
     modalActions.openModal(MODAL_ID.STELLAR_WALLET_OPTIONS_MODAL);
+  } else if (xChainType === 'SOLANA') {
+    if (xConnectors.length === 1) {
+      xConnect(xConnectors[0]);
+    } else {
+      modalActions.openModal(MODAL_ID.SOLANA_WALLET_OPTIONS_MODAL);
+    }
   } else {
     xConnect(xConnectors[0]);
   }
 };
 
-const WalletItem = ({
-  name,
-  xChainType,
-  logo,
-  description,
-  border,
-  xChains,
-  switchChain,
-  walletOptionsModalId,
-}: WalletItemProps) => {
+const WalletItem = ({ name, xChainType, logo, description, border, xChains, switchChain }: WalletItemProps) => {
   const { address } = useXAccount(xChainType);
 
   const handleSwitchChain = (chain: XChain): void => {

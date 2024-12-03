@@ -1,9 +1,9 @@
-import { XChainType } from '@balancednetwork/sdk-core';
-import { XConnection } from '../types';
-import { useXWagmiStore } from '../useXWagmiStore';
-import { useAccount, useConnections } from 'wagmi';
 import { useCurrentAccount, useCurrentWallet } from '@mysten/dapp-kit';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { useMemo } from 'react';
+import { useAccount, useConnections } from 'wagmi';
+import { XChainType, XConnection } from '../types';
+import { useXWagmiStore } from '../useXWagmiStore';
 
 export function useXConnection(xChainType: XChainType | undefined): XConnection | undefined {
   const xConnection = useXWagmiStore(state => (xChainType ? state.xConnections?.[xChainType] : undefined));
@@ -12,6 +12,7 @@ export function useXConnection(xChainType: XChainType | undefined): XConnection 
   const { address: evmAddress } = useAccount();
   const suiAccount = useCurrentAccount();
   const suiCurrentWallet = useCurrentWallet();
+  const solanaWallet = useWallet();
 
   const xConnection2 = useMemo(() => {
     if (!xChainType) {
@@ -32,10 +33,19 @@ export function useXConnection(xChainType: XChainType | undefined): XConnection 
           };
         }
         return undefined;
+
+      case 'SOLANA':
+        if (solanaWallet.connected) {
+          return {
+            xAccount: { address: solanaWallet.publicKey?.toString(), xChainType },
+            xConnectorId: solanaWallet.wallet?.adapter.name + '',
+          };
+        }
+        return undefined;
       default:
         return xConnection;
     }
-  }, [xChainType, xConnection, evmAddress, suiAccount, evmConnections, suiCurrentWallet]);
+  }, [xChainType, xConnection, evmAddress, suiAccount, evmConnections, suiCurrentWallet, solanaWallet]);
 
   return xConnection2;
 }

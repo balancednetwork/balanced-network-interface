@@ -10,6 +10,7 @@ import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { AppState } from '@/store';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
+import { formatSymbol } from '@/utils/formatter';
 import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
 import { getXChainType } from '@/xwagmi/actions';
 import { useXAccount } from '@/xwagmi/hooks';
@@ -155,7 +156,7 @@ export function useDerivedBridgeInfo() {
               )),
         )
       ) {
-        return t`Insufficient ${currencyAmountToBridge.currency.symbol}`;
+        return t`Insufficient ${formatSymbol(currencyAmountToBridge.currency.symbol)}`;
       } else {
         if (stellarValidationQuery.isLoading) {
           return t`Validating Stellar account`;

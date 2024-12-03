@@ -1,19 +1,5 @@
-export type XChainId =
-  | 'archway-1'
-  | 'archway'
-  | '0x1.icon'
-  | '0x2.icon'
-  | '0xa86a.avax'
-  | '0xa869.fuji'
-  | '0x100.icon'
-  | '0x38.bsc'
-  | '0xa4b1.arbitrum'
-  | '0x2105.base'
-  | 'injective-1'
-  | 'stellar'
-  | 'sui';
-
-export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH' | 'INJECTIVE' | 'STELLAR' | 'SUI';
+import { XChainId, XChainType } from '@balancednetwork/sdk-core';
+export type { XChainId, XChainType } from '@balancednetwork/sdk-core';
 
 export type Chain = {
   id: string | number;
@@ -39,6 +25,8 @@ export type XChain = Chain & {
     assetManager: string;
     bnUSD?: string;
     liquidSwap?: string;
+    xCallManager?: string;
+    bnUSDToken?: string;
   };
   autoExecution: boolean;
   gasThreshold: number;

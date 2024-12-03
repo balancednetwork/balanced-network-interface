@@ -6,7 +6,7 @@ import { xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XChain, XChainId, XToken } from '@/xwagmi/types';
 
 export const getNetworkDisplayName = (chain: XChainId) => {
-  return xChainMap[chain].name;
+  return xChainMap?.[chain]?.name || 'unknown';
 };
 
 export const getXTokenAddress = (chain: XChainId, tokenSymbol?: string): string | undefined => {
@@ -49,10 +49,9 @@ export const getXAddress = (xToken: XToken | undefined) => {
       case 'sui':
         addr = '0000000000000000000000000000000000000000000000000000000000000002::sui::SUI';
         break;
-      // !TODO: enable the code after the solana chain is added
-      // case 'solana':
-      //   addr = '11111111111111111111111111111111';
-      //   break;
+      case 'solana':
+        addr = '11111111111111111111111111111111';
+        break;
       default:
         addr = '0x0000000000000000000000000000000000000000';
         break;

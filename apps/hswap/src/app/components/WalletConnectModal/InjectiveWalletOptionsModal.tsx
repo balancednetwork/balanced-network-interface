@@ -1,13 +1,9 @@
 import React, { useCallback } from 'react';
-
-import { Flex } from 'rebass/styled-components';
-
-import { UnbreakableText, WalletOption } from '@/app/components/WalletConnectModal/shared';
-
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { XConnector } from '@/xwagmi/core';
 import { useXConnect, useXConnectors } from '@/xwagmi/hooks';
 import { Modal } from '@/app/components2/Modal';
+import { WalletLogo } from '@/app/components2/WalletLogo';
 
 type InjectiveWalletOptionsModalProps = {
   id?: MODAL_ID;
@@ -33,16 +29,27 @@ export const InjectiveWalletOptionsModal = ({
 
   return (
     <>
-      <Modal open={modalOpen} onDismiss={onDismiss} dialogClassName="max-w-[450px]">
-        <div className="text-center mb-6">Connect with:</div>
-        <Flex alignItems="stretch" justifyContent="space-around" flexWrap="wrap">
-          {xConnectors?.map(xConnector => (
-            <WalletOption key={xConnector.id} onClick={() => handleConnect(xConnector)}>
-              <img width={50} height={50} src={xConnector.icon} />
-              <UnbreakableText>{xConnector.name}</UnbreakableText>
-            </WalletOption>
-          ))}
-        </Flex>
+      <Modal open={modalOpen} onDismiss={onDismiss} dialogClassName="max-w-[375px] h-[622px] p-0" showOverlay={true}>
+        <div className="pt-[120px] pb-[216px] px-6 bg-[url('/marsh-with-coins.png')] bg-[center_bottom_0] bg-[length:319px] bg-no-repeat">
+          <div className="mb-10 text-title-gradient text-[28px] font-extrabold leading-[30px] cursor-default">
+            <div>Connect an</div>
+            <div>Injective wallet.</div>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {xConnectors?.toReversed?.()?.map(xConnector => (
+              <div
+                key={xConnector.id}
+                className="h-[88px] bg-[#221542] rounded-3xl flex items-end p-4 pr-0 cursor-pointer"
+                onClick={() => handleConnect(xConnector)}
+              >
+                <div className="flex gap-2 items-center">
+                  <WalletLogo logo={xConnector.icon} />
+                  <div className="text-[#e6e0f7] text-xs font-bold leading-none">{xConnector.name}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </Modal>
     </>
   );

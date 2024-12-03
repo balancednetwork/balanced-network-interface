@@ -19,7 +19,7 @@ import { useCollateralType } from '@/store/collateral/hooks';
 import { useDerivedLoanInfo, useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId, XToken } from '@/xwagmi/types';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
@@ -42,7 +42,7 @@ type XLoanModalProps = {
     action: XLoanAction;
     originationFee: BigNumber;
   };
-  bnUSDAmount?: CurrencyAmount<Token>;
+  bnUSDAmount?: CurrencyAmount<XToken>;
   interestRate?: BigNumber;
 };
 

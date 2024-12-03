@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 
-import { Currency, CurrencyAmount, Token, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 
 import { useAllTokenBalances } from '@/store/wallet/hooks';
+import { XToken } from '@/xwagmi/types';
 
 // compare two token amounts with highest one coming first
 function balanceComparator(balanceA?: CurrencyAmount<Currency>, balanceB?: CurrencyAmount<Currency>) {

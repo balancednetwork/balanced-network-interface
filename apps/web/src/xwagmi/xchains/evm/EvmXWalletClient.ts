@@ -1,9 +1,9 @@
-import { Percent } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, MaxUint256, Percent } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
-import { Address, PublicClient, WalletClient, WriteContractParameters, toHex } from 'viem';
+import { Address, PublicClient, WalletClient, WriteContractParameters, toHex, erc20Abi, getContract } from 'viem';
 import bnJs from '../icon/bnJs';
 
-import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
+import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/xwagmi/constants/xChains';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { uintToBytes } from '@/xwagmi/utils';
@@ -13,6 +13,8 @@ import { EvmXService } from './EvmXService';
 import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
 import { bnUSDContractAbi } from './abis/bnUSDContractAbi';
 import { xCallContractAbi } from './abis/xCallContractAbi';
+import { XToken } from '@/xwagmi/types';
+import { isNativeXToken } from '@/xwagmi/constants/xTokens';
 
 export class EvmXWalletClient extends XWalletClient {
   getXService(): EvmXService {
@@ -40,7 +42,26 @@ export class EvmXWalletClient extends XWalletClient {
     return walletClient;
   }
 
-  async approve(token, owner, spender, currencyAmountToApprove) {}
+  async approve(amountToApprove: CurrencyAmount<XToken>, spender: string, owner: string) {
+    const xToken = amountToApprove.currency;
+
+    const publicClient = await this.getPublicClient();
+    const walletClient = await this.getWalletClient();
+
+    const tokenContract = getContract({
+      abi: erc20Abi,
+      address: xToken.address as Address,
+      client: { public: publicClient, wallet: walletClient },
+    });
+    const account = owner as Address;
+    const { request } = await tokenContract.simulate.approve(
+      [spender as `0x${string}`, amountToApprove?.quotient ? BigInt(amountToApprove.quotient.toString()) : MaxUint256],
+      { account },
+    );
+
+    const hash = await walletClient.writeContract({ ...request, account });
+    return hash;
+  }
 
   async executeTransaction(xTransactionInput: XTransactionInput) {
     const { type, direction, inputAmount, recipient, account, xCallFee, executionTrade, slippageTolerance } =
@@ -81,8 +102,7 @@ export class EvmXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
-    // check if the bridge asset is native
-    const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
+    const isNative = isNativeXToken(inputAmount.currency);
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
     let request: WriteContractParameters;
@@ -139,8 +159,8 @@ export class EvmXWalletClient extends XWalletClient {
     const amount = BigInt(inputAmount.quotient.toString());
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = toHex(JSON.stringify({}));
-    // check if the asset is native
-    const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
+
+    const isNative = isNativeXToken(inputAmount.currency);
 
     let request: WriteContractParameters;
     if (!isNative) {

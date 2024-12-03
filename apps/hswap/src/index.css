@@ -16,8 +16,8 @@
     --secondary-foreground: 0 0 61%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 257 18% 58% / 20%;
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 0 0% 100% / 25%;
@@ -30,6 +30,14 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --warning: 0 95% 70%;
+    --sidebar-background: 257 91% 8%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
@@ -57,6 +65,14 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -94,4 +110,57 @@
   .text-small {
     @apply text-[0.75rem];
   }
+
+  .text-title-gradient {
+    background: radial-gradient(272.38% 159.32% at 0% 11.29%, #6256E9 20%, #D772D3 93.5%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .text-title-gradient-hover {
+    background: radial-gradient(272.38% 159.32% at 0% 11.29%, #D772D3 6.5%, #6256E9 80%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .bg-title-gradient {
+    background: radial-gradient(272.38% 159.32% at 0% 11.29%, #6256E9 20%, #D772D3 93.5%);
+    
+  }
+
+  .blue-button-bg-gradient {
+    background: linear-gradient(270deg, #0047FF 0%, #3308A8 100%);
+  }
+
+ .blue-button-bg-gradient-hover {
+    background: linear-gradient(264deg, #215FFF 4.92%, #3D09CB 95.08%);
+  }
+
+  .gradient-border-mask {
+    display: flow-root;
+    position: relative;
+  }
+  
+  .gradient-border-mask::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 14px;
+    border: 1.5px solid transparent;
+    opacity: 0.5;
+    background: linear-gradient(#A188C3 0%, rgba(60, 28, 104, 0) 94%) border-box;
+    -webkit-mask: linear-gradient(90deg, #fff calc(50% - 50px), transparent calc(50% - 50px), transparent calc(50% + 50px), #fff calc(50% + 50px)) padding-box, linear-gradient(90deg, #fff calc(50% - 50px), transparent calc(50% - 50px), transparent calc(50% + 50px), #fff calc(50% + 50px));
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+    z-index: -1;
+  }
+}
+
+.PopoverContent {
+  width: var(--radix-popover-trigger-width);
+  max-height: var(--radix-popover-content-available-height);
 }

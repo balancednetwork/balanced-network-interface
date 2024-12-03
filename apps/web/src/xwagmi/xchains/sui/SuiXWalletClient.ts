@@ -3,8 +3,8 @@ import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID, NATIVE_ADDRESS } from '@/xwagmi/constants';
 
-import { FROM_SOURCES, TO_SOURCES } from '@/xwagmi/constants/xChains';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
+import { FROM_SOURCES, TO_SOURCES, sui } from '@/xwagmi/constants/xChains';
+import { isNativeXToken, xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { uintToBytes } from '@/xwagmi/utils';
 import { RLP } from '@ethereumjs/rlp';
@@ -27,14 +27,16 @@ const addressesMainnet = {
   'bnUSD Storage': '0xd28c9da258f082d5a98556fc08760ec321451216087609acd2ff654d9827c5b5',
 };
 
-const XCALL_FEE_AMOUNT = 100_000_000n;
+const XCALL_FEE_AMOUNT = BigInt(sui.gasThreshold * 10 ** sui.nativeCurrency.decimals);
 
 export class SuiXWalletClient extends XWalletClient {
   getXService(): SuiXService {
     return SuiXService.getInstance();
   }
 
-  async approve(token, owner, spender, currencyAmountToApprove) {}
+  async approve(amountToApprove, spender, owner) {
+    return Promise.resolve(undefined);
+  }
 
   async executeTransaction(xTransactionInput: XTransactionInput, options) {
     const { signTransaction } = options;
@@ -80,7 +82,7 @@ export class SuiXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
-    const isNative = inputAmount.currency.wrapped.address === NATIVE_ADDRESS;
+    const isNative = isNativeXToken(inputAmount.currency);
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
     const amount = BigInt(inputAmount.quotient.toString());
 

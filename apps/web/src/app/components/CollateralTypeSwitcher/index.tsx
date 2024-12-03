@@ -80,7 +80,7 @@ const CollateralTypeSwitcher = ({ width, containerRef }) => {
                 size={'24px'}
               />
             </LogoWrap>
-            {collateralType === 'sICX' ? icxDisplayType : collateralType}
+            {collateralType === 'sICX' ? icxDisplayType : formatSymbol(collateralType)}
             <div ref={arrowRef} style={{ display: 'inline-block' }} className="arrow-container">
               <StyledArrowDownIcon />
             </div>

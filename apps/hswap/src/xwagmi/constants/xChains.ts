@@ -1,5 +1,4 @@
-import { XChain } from '@/xwagmi/types';
-import { XChainId } from '@balancednetwork/sdk-core';
+import { XChain, XChainId } from '@/xwagmi/types';
 
 export const archway: XChain = {
   id: 'archway-1',
@@ -25,6 +24,7 @@ export const archway: XChain = {
   autoExecution: true,
   gasThreshold: 2,
   testnet: false,
+  useXCallScanner: false,
 };
 
 export const archwayTestnet: XChain = {
@@ -51,6 +51,7 @@ export const archwayTestnet: XChain = {
   autoExecution: true,
   gasThreshold: 10,
   testnet: true,
+  useXCallScanner: false,
 };
 
 export const icon: XChain = {
@@ -77,6 +78,7 @@ export const icon: XChain = {
   autoExecution: true,
   gasThreshold: 2.5,
   testnet: false,
+  useXCallScanner: false,
 };
 
 export const lisbon: XChain = {
@@ -103,6 +105,7 @@ export const lisbon: XChain = {
   autoExecution: true,
   gasThreshold: 4,
   testnet: true,
+  useXCallScanner: false,
 };
 
 export const avalanche: XChain = {
@@ -127,6 +130,7 @@ export const avalanche: XChain = {
   autoExecution: true,
   gasThreshold: 0.05,
   testnet: false,
+  useXCallScanner: false,
 };
 
 export const fuji: XChain = {
@@ -151,6 +155,7 @@ export const fuji: XChain = {
   autoExecution: true,
   gasThreshold: 0,
   testnet: true,
+  useXCallScanner: false,
 };
 
 export const havah: XChain = {
@@ -176,6 +181,7 @@ export const havah: XChain = {
   autoExecution: true,
   gasThreshold: 0.2,
   testnet: false,
+  useXCallScanner: false,
 };
 
 export const bsc: XChain = {
@@ -200,6 +206,7 @@ export const bsc: XChain = {
   autoExecution: true,
   gasThreshold: 0.005,
   testnet: false,
+  useXCallScanner: false,
 };
 
 export const arbitrum: XChain = {
@@ -224,6 +231,7 @@ export const arbitrum: XChain = {
   autoExecution: true,
   gasThreshold: 0.0001,
   testnet: false,
+  useXCallScanner: false,
 };
 
 export const base: XChain = {
@@ -248,6 +256,7 @@ export const base: XChain = {
   autoExecution: true,
   gasThreshold: 0.0001,
   testnet: false,
+  useXCallScanner: false,
 };
 
 export const injective: XChain = {
@@ -272,6 +281,32 @@ export const injective: XChain = {
   autoExecution: true,
   gasThreshold: 0.01,
   testnet: false,
+  useXCallScanner: false,
+};
+
+export const stellar: XChain = {
+  id: 'stellar',
+  name: 'Stellar',
+  xChainId: 'stellar',
+  xChainType: 'STELLAR',
+  tracker: 'https://stellar.expert/explorer/public/',
+  nativeCurrency: {
+    decimals: 7,
+    name: 'XLM',
+    symbol: 'XLM',
+  },
+  rpc: {
+    http: 'https://horizon.stellar.org',
+  },
+  contracts: {
+    xCall: 'CB6IJRLOWGQXUDSYGFOAAZYVOESQ6TVSTU3242I7PG3LH7F43PPX2HE6',
+    assetManager: 'CAGP34E2VHGO7Y3NEJHCMVFMTTTIYCGBWUH7FTCMHMVYAMQBIILX5GXH',
+    bnUSD: 'CCT4ZYIYZ3TUO2AWQFEOFGBZ6HQP3GW5TA37CK7CRZVFRDXYTHTYX7KP',
+  },
+  autoExecution: true,
+  gasThreshold: 2, // xCall fee: 1.07 XLM
+  testnet: false,
+  useXCallScanner: true,
 };
 
 // TODO: complete SUI chain
@@ -287,7 +322,7 @@ export const sui: XChain = {
     symbol: 'SUI',
   },
   rpc: {
-    http: 'https://sentry.tm.injective.network',
+    http: 'https://sentry.tm.sui.network',
   },
   contracts: {
     xCall: '0x3638b141b349173a97261bbfa33ccd45334d41a80584db6f30429e18736206fe', // TODO: not being used, just empty string
@@ -295,8 +330,36 @@ export const sui: XChain = {
     bnUSD: '0x03917a812fe4a6d6bc779c5ab53f8a80ba741f8af04121193fc44e0f662e2ceb::balanced_dollar::BALANCED_DOLLAR',
   },
   autoExecution: true,
-  gasThreshold: 0.18,
+  gasThreshold: 0.1, // xCall fee: 0.05 SUI
   testnet: false,
+  useXCallScanner: true,
+};
+
+// TODO: complete solana chain
+export const solana: XChain = {
+  id: 'solana',
+  name: 'Solana',
+  xChainId: 'solana',
+  xChainType: 'SOLANA',
+  tracker: 'https://solscan.io/',
+  nativeCurrency: {
+    decimals: 9,
+    name: 'SOL',
+    symbol: 'SOL',
+  },
+  rpc: {
+    http: 'https://sentry.tm.solana.network',
+  },
+  contracts: {
+    xCall: '3LWnGCRFuS4TJ5WeDKeWdoSRptB2tzeEFhSBFFu4ogMo',
+    assetManager: '4u979CPSHUeJQbCYUAvoki4CQHDiG1257vt2DaJULPV9',
+    bnUSD: '3JfaNQh3zRyBQ3spQJJWKmgRcXuQrcNrpLH5pDvaX2gG',
+    xCallManager: 'Ganbqm2tJ8SuaN6kSRWsJhXGb7aLCvHLuCySxCfkXPVL',
+  },
+  autoExecution: true,
+  gasThreshold: 0.01, // xCall fee: 0.0006 SOL
+  testnet: false,
+  useXCallScanner: true,
 };
 
 // the order is important, using manual order to display in the UI
@@ -312,29 +375,40 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   '0x38.bsc': bsc,
   '0x2105.base': base,
   'injective-1': injective,
+  stellar: stellar,
   sui: sui,
+  solana: solana,
 };
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);
+export const SUPPORTED_XCALL_CHAINS = xChains.map(({ xChainId }) => xChainId);
 
+// you can the following values by calling getProtocols function of the XCallManager contract on ICON
 /** from other chain to icon sources */
 export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   '0x2105.base': ['0x8A47E036B9c4594dF95F2dbFA09fb475Fa75469d', '0x6185D52640EA3b683AedD8bA52d18053A41fee09'],
   '0xa4b1.arbitrum': ['0x4c6C68E8F5206EE4a1690C808cfF5c3fD35b512F', '0x1F8B1e9d3633229d38BDFc93dCa50B6453Ad8E97'],
-  '0x38.bsc': ['0x24415977c566f9300Ea6F0aC75AEA0c09C500e46'],
+  '0x38.bsc': ['0x24415977c566f9300Ea6F0aC75AEA0c09C500e46', '0xF3F1ab667a6176CCa4f916062e55115B576425F8'],
   '0xa86a.avax': ['0xC1a39C4e7AA98DEC394eF54559960873Bd619cA3', '0x7F3665eF19258cD5cE15eA39d014F47Fc942AE0C'],
   '0x100.icon': ['cxcf2c8d58fd7bbd25866de0660b155f057ea489eb'],
   'injective-1': ['inj15jcde723hrm5f4fx3r2stnq59jykt2askud8ht'],
+  stellar: [
+    'CBPJSDR2QRMFUX25S5JXQMXDDMQVTN5M3TNYSCGFUJCCZ2LAJLKNJACQ',
+    'CBXK5AZWM7AE5HF7KKZYXU7NVMMXIA4K3D5H5LV7LW23ZBE7HBAH3RVC',
+  ],
   sui: ['centralized-1', 'centralized-2'],
+  solana: ['3FYPqMDqxXi1jtFxj4weW3etedRb1bXMnMTPVS9UHgvH', 'DWhzoYAJPvRnPspzDs6PNNzTh5povHNWLpjSn5xCamuk'],
 };
 
 /** to other chain from icon sources */
 export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   '0x2105.base': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
   '0xa4b1.arbitrum': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
-  '0x38.bsc': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
+  '0x38.bsc': ['cxee7a00755a757e3c519a0616456030e33dc9d47f', 'cx59d899fce52cadd1feb5128ff5e6672f03943eec'],
   '0xa86a.avax': ['cx59d899fce52cadd1feb5128ff5e6672f03943eec', 'cx917f88460d4ebec1fd656d4dbe51131a37d16837'],
   '0x100.icon': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
   'injective-1': ['cx6f86ed848f9f0d03ba1220811d95d864c72da88c'],
+  stellar: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
   sui: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
+  solana: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
 };

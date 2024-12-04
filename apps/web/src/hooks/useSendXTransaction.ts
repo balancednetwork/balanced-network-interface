@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js';
 
-import { swapMessage } from '@/app/pages/trade/supply/_components/utils';
 import { formatBigNumber } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
 import { getXWalletClient } from '@balancednetwork/xwagmi';

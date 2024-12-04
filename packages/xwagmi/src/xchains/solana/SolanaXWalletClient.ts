@@ -185,6 +185,67 @@ export class SolanaXWalletClient extends XWalletClient {
       tx.add(crossTransferTx);
 
       txSignature = await wallet.sendTransaction(tx, connection);
+    } else {
+      const assetToken = new PublicKey(inputAmount.currency.address);
+
+      const amount = inputAmount.quotient.toString();
+
+      // @ts-ignore
+      const assetManagerProgram = new Program(assetManagerIdl, provider);
+
+      const vaultPda = await findPda(['vault', assetToken], assetManagerId);
+      const statePda = await findPda(['state'], assetManagerId);
+      const xCallManagerStatePda = await findPda(['state'], xCallManagerId);
+      const xCallConfigPda = await findPda(['config'], xCallId);
+      const xCallAuthorityPda = await findPda(['dapp_authority'], assetManagerId);
+
+      const xCallAccounts = await getXCallAccounts(xCallId, provider);
+      const connectionAccounts = await getConnectionAccounts('0x1.icon', xCallManagerId, provider);
+
+      const depositorTokenAccount = getAssociatedTokenAddressSync(assetToken, new PublicKey(account), true);
+      const vaultTokenAccount = getAssociatedTokenAddressSync(assetToken, vaultPda, true);
+
+      const computeBudgetIx = ComputeBudgetProgram.setComputeUnitLimit({ units: COMPUTE_UNIT_LIMIT });
+      const tx = new Transaction().add(computeBudgetIx);
+
+      if (!(await checkIfAccountInitialized(connection, vaultTokenAccount))) {
+        tx.add(
+          createAssociatedTokenAccountInstruction(
+            new PublicKey(account), // payer.publicKey,
+            vaultTokenAccount,
+            new PublicKey(vaultPda), // owner,
+            assetToken,
+            TOKEN_PROGRAM_ID,
+            ASSOCIATED_TOKEN_PROGRAM_ID,
+          ),
+        );
+      }
+
+      // @ts-ignore
+      const instruction = await assetManagerProgram.methods
+        .depositToken(new anchor.BN(amount), destination, Buffer.from(data, 'hex'))
+        .accounts({
+          from: depositorTokenAccount,
+          fromAuthority: new PublicKey(account),
+          vaultTokenAccount: vaultTokenAccount,
+          valultAuthority: vaultPda, // Ensure this PDA is correct
+          // @ts-ignore
+          vaultNativeAccount: null,
+          state: statePda,
+          xcallManagerState: xCallManagerStatePda,
+          xcallConfig: xCallConfigPda,
+          xcall: xCallId,
+          xcallManager: xCallManagerId,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          systemProgram: SystemProgram.programId,
+          xcallAuthority: xCallAuthorityPda,
+        })
+        .remainingAccounts([...xCallAccounts, ...connectionAccounts])
+        .instruction();
+
+      tx.add(instruction);
+
+      txSignature = await wallet.sendTransaction(tx, connection);
     }
 
     if (txSignature) {

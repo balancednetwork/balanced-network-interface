@@ -217,13 +217,13 @@ export default function BridgeTransferForm({ openModal }) {
                     <Trans>Only</Trans>{' '}
                     <UnderlineText onClick={handleMaximumBridgeAmountClick}>
                       <Typography color="primaryBright" as="a">
-                        {maximumBridgeAmount?.toFixed(4)} {maximumBridgeAmount?.currency?.symbol}
+                        {maximumBridgeAmount?.toFixed(4)} {formatSymbol(maximumBridgeAmount?.currency?.symbol)}
                       </Typography>
                     </UnderlineText>{' '}
                   </>
                 ) : (
                   <>
-                    <Trans>0 {maximumBridgeAmount?.currency?.symbol}</Trans>{' '}
+                    <Trans>0 {formatSymbol(maximumBridgeAmount?.currency?.symbol)}</Trans>{' '}
                   </>
                 )}
 

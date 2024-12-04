@@ -36,7 +36,7 @@ export class InjectiveXPublicClient extends XPublicClient {
     const xService = this.getXService();
     const portfolio = await xService.indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(address);
 
-    const xTokenAddress = xToken.isNativeToken ? 'inj' : xToken.address;
+    const xTokenAddress = xToken.address;
 
     const balance = portfolio.bankBalancesList.find(_balance => _balance.denom === xTokenAddress);
     if (balance) {

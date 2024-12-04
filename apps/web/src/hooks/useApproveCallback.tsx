@@ -4,7 +4,6 @@ import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { t } from '@lingui/macro';
 import { useQuery } from '@tanstack/react-query';
 import { Abi, Address, WriteContractReturnType, erc20Abi, getContract } from 'viem';
-import { usePublicClient, useWalletClient } from 'wagmi';
 
 import { openToast } from '@/btp/src/connectors/transactionToast';
 import { transactionActions } from '@/hooks/useTransactionStore';
@@ -19,6 +18,7 @@ import {
   useXService,
   xChainMap,
 } from '@balancednetwork/xwagmi';
+import { usePublicClient, useWalletClient } from '@balancednetwork/xwagmi';
 
 export const FAST_INTERVAL = 10000;
 

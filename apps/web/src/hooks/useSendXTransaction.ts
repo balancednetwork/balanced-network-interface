@@ -16,7 +16,7 @@ import {
 import { xChainHeightActions } from '@balancednetwork/xwagmi';
 import { xMessageActions } from '@balancednetwork/xwagmi';
 import { xTransactionActions } from '@balancednetwork/xwagmi';
-import { useSignTransaction } from '@mysten/dapp-kit';
+import { useSignTransaction } from '@balancednetwork/xwagmi';
 import { useMemo } from 'react';
 import { transactionActions } from './useTransactionStore';
 

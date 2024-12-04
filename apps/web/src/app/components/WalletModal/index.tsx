@@ -28,12 +28,8 @@ import { useModalOpen, useWalletModalToggle } from '@/store/application/hooks';
 import { ApplicationModal } from '@/store/application/reducer';
 
 import useDebounce from '@/hooks/useDebounce';
-import { MODAL_ID } from '@/hooks/useModalStore';
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { getXChainType } from '@balancednetwork/xwagmi';
-import { xChainMap } from '@balancednetwork/xwagmi';
-import { useXDisconnectAll } from '@balancednetwork/xwagmi';
-import { useSwitchChain } from 'wagmi';
+import { getXChainType, useSwitchChain, useXDisconnectAll, xChainMap } from '@balancednetwork/xwagmi';
 import Divider from '../Divider';
 import { DropdownPopper } from '../Popover';
 import { EVMWalletModal } from './EVMWalletModal';

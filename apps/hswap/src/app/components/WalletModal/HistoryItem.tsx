@@ -1,10 +1,9 @@
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 import { ExclamationIcon } from '@/app/components2/Icons';
 import { Separator } from '@/components/ui/separator';
-import { getTrackerLink } from '@/hooks/useTransactionStore';
 import { cn } from '@/lib/utils';
 import { formatBalance } from '@/utils/formatter';
-import { getNetworkDisplayName } from '@balancednetwork/xwagmi';
+import { getNetworkDisplayName, getTrackerLink } from '@balancednetwork/xwagmi';
 import { XTransaction, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
 import { xMessageActions } from '@balancednetwork/xwagmi';
 import { CheckIcon, ExternalLink, Loader2Icon, XIcon } from 'lucide-react';

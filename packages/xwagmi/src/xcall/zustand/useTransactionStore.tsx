@@ -11,8 +11,9 @@ import { getXPublicClient } from '@/actions';
 //   NotificationSuccess,
 // } from '@/app/components/Notification/TransactionNotification';
 import { XChainId } from '@/types';
-import { Transaction, TransactionStatus } from '@/xcall/types';
+import { Transaction, TransactionStatus, XTransactionType } from '@/xcall/types';
 import { persist } from 'zustand/middleware';
+import { xTransactionActions } from './useXTransactionStore';
 
 type TransactionStore = {
   transactions: Transaction[];
@@ -29,7 +30,7 @@ export const useTransactionStore = create<TransactionStore>()(
   ),
 );
 
-const getTrackerLink = (xChainId: XChainId, hash: string, type) => {
+export const getTrackerLink = (xChainId: XChainId, hash: string, type = 'transaction') => {
   // TODO: handle different chain types
   return `https://tracker.icon.foundation/transaction/${hash}?network=${xChainId}`;
 
@@ -100,6 +101,10 @@ export const transactionActions = {
     const _transaction = transactions.find(item => item.id === id && item.xChainId === xChainId);
     if (_transaction) {
       if (status === TransactionStatus.success) {
+        const xTransaction = xTransactionActions.get(`${xChainId}/${_transaction.hash}`);
+        if (xTransaction?.type === XTransactionType.SWAP_ON_ICON) {
+          xTransactionActions.success(xTransaction.id);
+        }
         const toastProps = {
           onClick: () => window.open(getTrackerLink(xChainId, _transaction.hash, 'transaction'), '_blank'),
         };
@@ -119,6 +124,11 @@ export const transactionActions = {
       }
 
       if (status === TransactionStatus.failure) {
+        const xTransaction = xTransactionActions.get(`${xChainId}/${_transaction.hash}`);
+        if (xTransaction?.type === XTransactionType.SWAP_ON_ICON) {
+          xTransactionActions.fail(xTransaction.id);
+        }
+
         const toastProps = {
           onClick: () => window.open(getTrackerLink(xChainId, _transaction.hash, 'transaction'), '_blank'),
         };

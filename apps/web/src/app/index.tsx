@@ -9,8 +9,8 @@ import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from '@/app/theme'
 import ApplicationUpdater from '@/store/application/updater';
 import TransactionUpdater from '@/store/transactions/updater';
 
-import { AllTransactionsUpdater } from '@/hooks/useTransactionStore';
 import {
+  AllTransactionsUpdater,
   AllXChainHeightsUpdater,
   AllXMessagesUpdater,
   initXWagmiStore,

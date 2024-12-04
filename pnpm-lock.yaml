@@ -851,72 +851,12 @@ importers:
       '@keplr-wallet/types':
         specifier: 0.12.18
         version: 0.12.18
-      '@lingui/conf':
-        specifier: 4.7.1
-        version: 4.7.1(typescript@5.6.1-rc)
-      '@lingui/core':
-        specifier: 4.7.1
-        version: 4.7.1
-      '@lingui/macro':
-        specifier: 4.7.1
-        version: 4.7.1(@lingui/react@4.7.1(react@18.2.0))(babel-plugin-macros@3.1.0)(typescript@5.6.1-rc)
-      '@lingui/react':
-        specifier: 4.7.1
-        version: 4.7.1(react@18.2.0)
       '@mysten/dapp-kit':
         specifier: 0.14.18
         version: 0.14.18(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react-dom@18.2.22)(@types/react@18.2.67)(babel-plugin-macros@3.1.0)(immer@10.1.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.6.1-rc)
       '@mysten/sui':
         specifier: 1.8.0
         version: 1.8.0(typescript@5.6.1-rc)
-      '@popperjs/core':
-        specifier: 2.8.4
-        version: 2.8.4
-      '@radix-ui/react-checkbox':
-        specifier: 1.1.2
-        version: 1.1.2(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-collapsible':
-        specifier: 1.1.0
-        version: 1.1.0(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-dialog':
-        specifier: 1.1.1
-        version: 1.1.1(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-hover-card':
-        specifier: 1.1.1
-        version: 1.1.1(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-label':
-        specifier: 2.1.0
-        version: 2.1.0(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-popover':
-        specifier: 1.1.2
-        version: 1.1.2(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-scroll-area':
-        specifier: 1.1.0
-        version: 1.1.0(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-select':
-        specifier: 2.1.2
-        version: 2.1.2(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-separator':
-        specifier: 1.1.0
-        version: 1.1.0(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-slot':
-        specifier: 1.1.0
-        version: 1.1.0(@types/react@18.2.67)(react@18.2.0)
-      '@radix-ui/react-tabs':
-        specifier: 1.1.0
-        version: 1.1.0(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-tooltip':
-        specifier: 1.1.3
-        version: 1.1.3(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-visually-hidden':
-        specifier: 1.1.0
-        version: 1.1.0(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@reach/portal':
-        specifier: 0.18.0
-        version: 0.18.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@reduxjs/toolkit':
-        specifier: 2.2.0
-        version: 2.2.0(react-redux@9.1.0(@types/react@18.2.67)(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(redux@5.0.1))(react@18.2.0)
       '@solana/spl-token':
         specifier: 0.4.9
         version: 0.4.9(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.6.1-rc)(utf-8-validate@5.0.10)
@@ -926,9 +866,6 @@ importers:
       '@solana/wallet-adapter-react':
         specifier: 0.15.35
         version: 0.15.35(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)
-      '@solana/wallet-adapter-react-ui':
-        specifier: 0.9.35
-        version: 0.9.35(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)
       '@solana/wallet-adapter-wallets':
         specifier: 0.19.32
         version: 0.19.32(@babel/runtime@7.25.0)(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(bufferutil@4.0.8)(expo@51.0.29(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(tslib@2.6.2)(utf-8-validate@5.0.10)
@@ -941,15 +878,6 @@ importers:
       '@tanstack/react-query':
         specifier: 5.29.2
         version: 5.29.2(react@18.2.0)
-      '@tanstack/react-table':
-        specifier: 8.20.5
-        version: 8.20.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@uniswap/token-lists':
-        specifier: 1.0.0-beta.30
-        version: 1.0.0-beta.30
-      '@vitejs/plugin-react':
-        specifier: 4.2.1
-        version: 4.2.1(vite@5.4.0(@types/node@22.10.0)(terser@5.30.3))
       '@wagmi/core':
         specifier: 2.9.0
         version: 2.9.0(@tanstack/query-core@5.29.0)(@types/react@18.2.67)(bufferutil@4.0.8)(immer@10.1.1)(react@18.2.0)(typescript@5.6.1-rc)(utf-8-validate@5.0.10)(viem@2.9.23(bufferutil@4.0.8)(typescript@5.6.1-rc)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
@@ -962,108 +890,33 @@ importers:
       bignumber.js:
         specifier: 9.0.1
         version: 9.0.1
-      class-variance-authority:
-        specifier: 0.7.0
-        version: 0.7.0
-      clsx:
-        specifier: 2.1.1
-        version: 2.1.1
-      cmdk:
-        specifier: 1.0.0
-        version: 1.0.0(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       cosmjs-types:
         specifier: 0.9.0
         version: 0.9.0
-      dayjs:
-        specifier: 1.10.7
-        version: 1.10.7
       ethers:
         specifier: 5.6.1
         version: 5.6.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      framer-motion:
-        specifier: 11.0.14
-        version: 11.0.14(@emotion/is-prop-valid@1.2.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      i18next:
-        specifier: 19.7.0
-        version: 19.7.0
       icon-sdk-js:
         specifier: 1.5.1
         version: 1.5.1
       immer:
         specifier: 10.1.1
         version: 10.1.1
-      lucide-react:
-        specifier: 0.428.0
-        version: 0.428.0(react@18.2.0)
-      numbro:
-        specifier: ^2.5.0
-        version: 2.5.0
-      qs:
-        specifier: 6.10.3
-        version: 6.10.3
       react:
         specifier: ^18.2.0
         version: 18.2.0
-      react-click-away-listener:
-        specifier: 2.2.3
-        version: 2.2.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-device-detect:
         specifier: 2.2.3
         version: 2.2.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
-      react-feather:
-        specifier: 2.0.10
-        version: 2.0.10(react@18.2.0)
-      react-helmet-async:
-        specifier: 2.0.4
-        version: 2.0.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      react-i18next:
-        specifier: 11.7.2
-        version: 11.7.2(i18next@19.7.0)(react@18.2.0)
-      react-popper:
-        specifier: 2.3.0
-        version: 2.3.0(@popperjs/core@2.8.4)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      react-redux:
-        specifier: 9.1.0
-        version: 9.1.0(@types/react@18.2.67)(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(redux@5.0.1)
-      react-router-dom:
-        specifier: '6'
-        version: 6.22.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-toastify:
         specifier: 7.0.3
         version: 7.0.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      react-use:
-        specifier: 17.5.0
-        version: 17.5.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      rebass:
-        specifier: 4.0.7
-        version: 4.0.7(react@18.2.0)
-      redux-localstorage-simple:
-        specifier: 2.4.0
-        version: 2.4.0
       rlp:
         specifier: 3.0.0
         version: 3.0.0
-      serve:
-        specifier: 11.3.2
-        version: 11.3.2
-      styled-components:
-        specifier: 6.1.8
-        version: 6.1.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      tailwind-merge:
-        specifier: 2.5.2
-        version: 2.5.2
-      tailwindcss-animate:
-        specifier: 1.0.7
-        version: 1.0.7(tailwindcss@3.4.10)
-      use-resize-observer:
-        specifier: 9.1.0
-        version: 9.1.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      vaul:
-        specifier: 0.9.4
-        version: 0.9.4(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       viem:
         specifier: 2.x
         version: 2.9.23(bufferutil@4.0.8)(typescript@5.6.1-rc)(utf-8-validate@5.0.10)(zod@3.23.8)
@@ -1080,6 +933,9 @@ importers:
       '@types/react-dom':
         specifier: ^18.0.6
         version: 18.2.22
+      knip:
+        specifier: 5.30.5
+        version: 5.30.5(@types/node@22.10.0)(typescript@5.6.1-rc)
       tsup:
         specifier: ^8.0.2
         version: 8.0.2(@swc/core@1.4.8)(postcss@8.4.41)(typescript@5.6.1-rc)
@@ -4784,13 +4640,6 @@ packages:
     peerDependencies:
       '@solana/web3.js': ^1.77.3
 
-  '@solana/wallet-adapter-base-ui@0.1.2':
-    resolution: {integrity: sha512-33l0WqY0mKKhcrNBbqS9anvT4MjzNnKewoF1VcdbI/uSlMOZtGy+9fr8ETVFI+ivr44QHpvbiZX9dmz2mTCGXw==}
-    engines: {node: '>=16'}
-    peerDependencies:
-      '@solana/web3.js': ^1.77.3
-      react: '*'
-
   '@solana/wallet-adapter-base@0.9.23':
     resolution: {integrity: sha512-apqMuYwFp1jFi55NxDfvXUX2x1T0Zh07MxhZ/nCCTGys5raSfYUh82zen2BLv8BSDj/JxZ2P/s7jrQZGrX8uAw==}
     engines: {node: '>=16'}
@@ -4910,14 +4759,6 @@ packages:
     engines: {node: '>=16'}
     peerDependencies:
       '@solana/web3.js': ^1.77.3
-
-  '@solana/wallet-adapter-react-ui@0.9.35':
-    resolution: {integrity: sha512-SyHUavEAyzBL5zim5xAlYaqP5jF3bOtxi/02wgXzMpKXUYpG4EiXXY3DeGw5eUbcvvej45rQENtTHWEEH9fW+A==}
-    engines: {node: '>=16'}
-    peerDependencies:
-      '@solana/web3.js': ^1.77.3
-      react: '*'
-      react-dom: '*'
 
   '@solana/wallet-adapter-react@0.15.35':
     resolution: {integrity: sha512-i4hc/gNLTYNLMEt2LS+4lrrc0QAwa5SU2PtYMnZ2A3rsoKF5m1bv1h6cjLj2KBry4/zRGEBoqkiMOC5zHkLnRQ==}
@@ -16801,17 +16642,6 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@lingui/conf@4.7.1(typescript@5.6.1-rc)':
-    dependencies:
-      '@babel/runtime': 7.25.0
-      chalk: 4.1.0
-      cosmiconfig: 8.3.6(typescript@5.6.1-rc)
-      jest-validate: 29.7.0
-      jiti: 1.21.6
-      lodash.get: 4.4.2
-    transitivePeerDependencies:
-      - typescript
-
   '@lingui/core@4.7.1':
     dependencies:
       '@babel/runtime': 7.25.0
@@ -16832,18 +16662,6 @@ snapshots:
       '@babel/runtime': 7.25.0
       '@babel/types': 7.25.2
       '@lingui/conf': 4.7.1(typescript@5.5.4)
-      '@lingui/core': 4.7.1
-      '@lingui/message-utils': 4.7.1
-      '@lingui/react': 4.7.1(react@18.2.0)
-      babel-plugin-macros: 3.1.0
-    transitivePeerDependencies:
-      - typescript
-
-  '@lingui/macro@4.7.1(@lingui/react@4.7.1(react@18.2.0))(babel-plugin-macros@3.1.0)(typescript@5.6.1-rc)':
-    dependencies:
-      '@babel/runtime': 7.25.0
-      '@babel/types': 7.25.2
-      '@lingui/conf': 4.7.1(typescript@5.6.1-rc)
       '@lingui/core': 4.7.1
       '@lingui/message-utils': 4.7.1
       '@lingui/react': 4.7.1(react@18.2.0)
@@ -18932,15 +18750,6 @@ snapshots:
       '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/web3.js': 1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
-  '@solana/wallet-adapter-base-ui@0.1.2(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)':
-    dependencies:
-      '@solana/wallet-adapter-react': 0.15.35(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)
-      '@solana/web3.js': 1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      react: 18.2.0
-    transitivePeerDependencies:
-      - bs58
-      - react-native
-
   '@solana/wallet-adapter-base@0.9.23(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
     dependencies:
       '@solana/wallet-standard-features': 1.2.0
@@ -19060,18 +18869,6 @@ snapshots:
     dependencies:
       '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/web3.js': 1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-
-  '@solana/wallet-adapter-react-ui@0.9.35(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)':
-    dependencies:
-      '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))
-      '@solana/wallet-adapter-base-ui': 0.1.2(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)
-      '@solana/wallet-adapter-react': 0.15.35(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)
-      '@solana/web3.js': 1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-    transitivePeerDependencies:
-      - bs58
-      - react-native
 
   '@solana/wallet-adapter-react@0.15.35(@solana/web3.js@1.95.4(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)':
     dependencies:
@@ -22566,15 +22363,6 @@ snapshots:
     optionalDependencies:
       typescript: 5.5.4
 
-  cosmiconfig@8.3.6(typescript@5.6.1-rc):
-    dependencies:
-      import-fresh: 3.3.0
-      js-yaml: 4.1.0
-      parse-json: 5.2.0
-      path-type: 4.0.0
-    optionalDependencies:
-      typescript: 5.6.1-rc
-
   cosmiconfig@9.0.0(typescript@5.5.4):
     dependencies:
       env-paths: 2.2.1
@@ -25187,6 +24975,27 @@ snapshots:
 
   kleur@3.0.3: {}
 
+  knip@5.30.5(@types/node@22.10.0)(typescript@5.6.1-rc):
+    dependencies:
+      '@nodelib/fs.walk': 1.2.8
+      '@snyk/github-codeowners': 1.1.0
+      '@types/node': 22.10.0
+      easy-table: 1.2.0
+      enhanced-resolve: 5.17.1
+      fast-glob: 3.3.2
+      jiti: 1.21.6
+      js-yaml: 4.1.0
+      minimist: 1.2.8
+      picocolors: 1.1.0
+      picomatch: 4.0.2
+      pretty-ms: 9.1.0
+      smol-toml: 1.3.0
+      strip-json-comments: 5.0.1
+      summary: 2.1.0
+      typescript: 5.6.1-rc
+      zod: 3.23.8
+      zod-validation-error: 3.4.0(zod@3.23.8)
+
   knip@5.30.5(@types/node@22.5.5)(typescript@5.5.4):
     dependencies:
       '@nodelib/fs.walk': 1.2.8
@@ -25198,7 +25007,7 @@ snapshots:
       jiti: 1.21.6
       js-yaml: 4.1.0
       minimist: 1.2.8
-      picocolors: 1.0.1
+      picocolors: 1.1.0
       picomatch: 4.0.2
       pretty-ms: 9.1.0
       smol-toml: 1.3.0

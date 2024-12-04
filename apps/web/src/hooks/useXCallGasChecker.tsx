@@ -15,10 +15,6 @@ function useXCallGasChecker(
 
   return useMemo(() => {
     try {
-      if (!inputAmount) {
-        throw new Error('inputAmount is undefined');
-      }
-
       const xChain: XChain = xChainMap[xChainId];
       const nativeCurrency: XToken = xTokenMap[xChainId].find(x => x.isNativeToken)!;
 

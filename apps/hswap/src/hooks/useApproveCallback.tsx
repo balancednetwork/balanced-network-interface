@@ -7,9 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { openToast } from '@/app/components/Toast/transactionToast';
 import { transactionActions } from '@/hooks/useTransactionStore';
 import { TransactionStatus } from '@/store/transactions/hooks';
-import { getXChainType } from '@balancednetwork/xwagmi';
-import { useXAccount, useXPublicClient, useXWalletClient } from '@balancednetwork/xwagmi';
-import { XToken } from '@balancednetwork/xwagmi';
+import { XToken, getXChainType, useXAccount, useXPublicClient, useXWalletClient } from '@balancednetwork/xwagmi';
 
 export const FAST_INTERVAL = 10000;
 

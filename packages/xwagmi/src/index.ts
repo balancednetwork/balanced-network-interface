@@ -21,5 +21,5 @@ export type * from './types';
 export * from './xcall/types';
 export type * from './xcall/types';
 
-export { usePublicClient, useWalletClient, useAccount, useSwitchChain } from 'wagmi';
+export { useAccount, useSwitchChain } from 'wagmi';
 export { useSignTransaction } from '@mysten/dapp-kit';

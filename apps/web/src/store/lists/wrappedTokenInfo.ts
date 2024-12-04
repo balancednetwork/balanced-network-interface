@@ -87,7 +87,9 @@ export class WrappedTokenInfo implements Token {
       this.address === '0x0000000000000000000000000000000000000000' ||
       this.address === 'inj' ||
       this.address === '0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI' ||
-      this.address === 'hx0000000000000000000000000000000000000000'
+      this.address === 'hx0000000000000000000000000000000000000000' ||
+      this.address === '11111111111111111111111111111111' ||
+      this.address === 'CAS3J7GYLGXMF6TDJBBYYSE3HQ6BBSMLNUQ34T6TZMYMW2EVH34XOWMA'
     )
       return true;
     return false;

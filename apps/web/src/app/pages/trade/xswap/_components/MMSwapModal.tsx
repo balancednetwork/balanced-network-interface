@@ -161,8 +161,7 @@ const MMSwapModal = ({
 
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(direction.from);
 
-  const isProcessing =
-    orderStatus === IntentOrderStatus.SigningAndCreating || orderStatus === IntentOrderStatus.Executing;
+  const isProcessing = orderStatus === IntentOrderStatus.Executing;
 
   return (
     <>
@@ -218,13 +217,11 @@ const MMSwapModal = ({
           </Flex>
 
           <Typography textAlign="center">
-            <Trans>Swap fee:</Trans>{' '}
+            <Trans>Swap fee (included):</Trans>{' '}
             <strong>
               {formatBigNumber(new BigNumber(trade?.fee.toFixed() || 0), 'currency')} {trade?.fee.currency.symbol}
             </strong>
           </Typography>
-
-          <Typography textAlign="center">(deducted from receive amount)</Typography>
 
           <AnimatePresence>
             {((!isFilled && isProcessing) || !isProcessing) && (

@@ -51,6 +51,14 @@ export default function MMAdvancedSwapDetails() {
           {trade.fee.toFixed(4)} {trade?.fee.currency.symbol}
         </Typography>
       </Flex>
+
+      <Flex alignItems="center" justifyContent="space-between" mb={2}>
+        <Typography>
+          <Trans>Swap time</Trans>
+        </Typography>
+
+        <Typography textAlign="right">~ 3s</Typography>
+      </Flex>
     </Box>
   );
 }

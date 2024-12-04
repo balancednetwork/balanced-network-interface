@@ -26,6 +26,7 @@ import { useSwapSlippageTolerance, useWalletModalToggle } from '@/store/applicat
 import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatPercent, maxAmountSpend } from '@/utils';
+import { formatSymbol } from '@/utils/formatter';
 import { getXChainType } from '@/xwagmi/actions';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount, useXConnect, useXConnectors } from '@/xwagmi/hooks';
@@ -277,7 +278,7 @@ export default function SwapPanel() {
                         ? currencyBalances[Field.OUTPUT]?.toFixed(4, { groupSeparator: ',' })
                         : 0
                     } 
-                ${currencies[Field.OUTPUT]?.symbol}`
+                ${formatSymbol(currencies[Field.OUTPUT]?.symbol)}`
                   )}
                 </>
               )}
@@ -326,8 +327,8 @@ export default function SwapPanel() {
                   onClick={handleToggleDropdown}
                   text={
                     minimumToReceive
-                      ? `${minimumToReceive?.toFixed(4)} ${minimumToReceive?.currency.symbol}`
-                      : `0 ${currencies[Field.OUTPUT]?.symbol}`
+                      ? `${minimumToReceive?.toFixed(4)} ${formatSymbol(minimumToReceive?.currency.symbol)}`
+                      : `0 ${formatSymbol(currencies[Field.OUTPUT]?.symbol)}`
                   }
                   arrowRef={arrowRef}
                 />

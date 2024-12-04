@@ -14,6 +14,7 @@ import { Typography } from '@/app/theme';
 import { useSetSlippageTolerance, useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
+import { formatSymbol } from '@/utils/formatter';
 import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
 
 export default function AdvancedSwapDetails() {
@@ -120,7 +121,7 @@ function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
   const labelInverted = showInverted ? `${price.baseCurrency?.symbol} ` : `${price.quoteCurrency?.symbol}`;
   const flipPrice = useCallback(() => setShowInverted(!showInverted), [setShowInverted, showInverted]);
 
-  const text = `${'1 ' + labelInverted + ' = ' + formattedPrice ?? '-'} ${label}`;
+  const text = `1 ${labelInverted} = ${formattedPrice} ${label}`;
 
   return (
     <StyledPriceContainer onClick={flipPrice} title={text}>
@@ -136,7 +137,7 @@ function TradeRoute({ route }: { route: Route<Currency, Currency> }) {
     <>
       {route.path.map((token: Token, index: number) => (
         <span key={token.address}>
-          {index > 0 && <ChevronRight size={14} />} {token.symbol}
+          {index > 0 && <ChevronRight size={14} />} {formatSymbol(token.symbol)}
         </span>
       ))}
     </>

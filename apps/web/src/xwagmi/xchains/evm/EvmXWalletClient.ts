@@ -1,20 +1,21 @@
 import { CurrencyAmount, MaxUint256, Percent } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
-import { Address, PublicClient, WalletClient, WriteContractParameters, toHex, erc20Abi, getContract } from 'viem';
+import { Address, PublicClient, WalletClient, WriteContractParameters, erc20Abi, getContract, toHex } from 'viem';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/xwagmi/constants/xChains';
+import { isNativeXToken, xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
+import { XToken } from '@/xwagmi/types';
 import { uintToBytes } from '@/xwagmi/utils';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
+import { isSpokeToken } from '../archway/utils';
 import { EvmXService } from './EvmXService';
 import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
 import { bnUSDContractAbi } from './abis/bnUSDContractAbi';
 import { xCallContractAbi } from './abis/xCallContractAbi';
-import { XToken } from '@/xwagmi/types';
-import { isNativeXToken } from '@/xwagmi/constants/xTokens';
 
 export class EvmXWalletClient extends XWalletClient {
   getXService(): EvmXService {
@@ -103,13 +104,14 @@ export class EvmXWalletClient extends XWalletClient {
     }
 
     const isNative = isNativeXToken(inputAmount.currency);
-    const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
+    const _isSpokeToken = isSpokeToken(inputAmount.currency);
 
     let request: WriteContractParameters;
-    if (isBnUSD) {
+    if (_isSpokeToken) {
+      const tokenAddr = xTokenMap[direction.from].find(token => token.symbol === inputAmount.currency.symbol)?.address;
       const res = await this.getPublicClient().simulateContract({
         account: account as Address,
-        address: xChainMap[direction.from].contracts.bnUSD as Address,
+        address: tokenAddr as Address,
         abi: bnUSDContractAbi,
         functionName: 'crossTransfer',
         args: [destination, amount, data],

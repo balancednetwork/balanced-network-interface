@@ -5,6 +5,7 @@ import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { showMessageOnBeforeUnload, toDec } from '@/xwagmi/utils';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData } from '../../xcall/utils';
+import { isSpokeToken } from '../archway/utils';
 import { IconXService } from './IconXService';
 
 export class IconXWalletClient extends XWalletClient {
@@ -37,9 +38,9 @@ export class IconXWalletClient extends XWalletClient {
       const destination = `${direction.to}/${destinationAddress}`;
 
       let txResult;
-      const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
+      const _isSpokeToken = isSpokeToken(inputAmount.currency);
 
-      if (isBnUSD) {
+      if (_isSpokeToken) {
         const cx = bnJs.inject({ account }).getContract(tokenAddress);
         txResult = await cx.crossTransfer(destination, `${inputAmount.quotient}`, xCallFee.rollback.toString());
       } else {

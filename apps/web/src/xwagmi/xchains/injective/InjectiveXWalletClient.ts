@@ -5,15 +5,15 @@ import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xwagmi/xcall/utils';
 
 import { FROM_SOURCES, TO_SOURCES, injective } from '@/xwagmi/constants/xChains';
+import { isNativeXToken, xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XWalletClient } from '@/xwagmi/core';
+import { XToken } from '@/xwagmi/types';
 import { uintToBytes } from '@/xwagmi/utils';
 import { XTransactionInput, XTransactionType } from '@/xwagmi/xcall/types';
 import { RLP } from '@ethereumjs/rlp';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
-import { isDenomAsset } from '../archway/utils';
+import { isDenomAsset, isSpokeToken } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
-import { isNativeXToken, xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XToken } from '@/xwagmi/types';
 
 export class InjectiveXWalletClient extends XWalletClient {
   getXService(): InjectiveXService {
@@ -62,10 +62,10 @@ export class InjectiveXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
-    const isBnUSD = inputAmount.currency?.symbol === 'bnUSD';
+    const _isSpokeToken = isSpokeToken(inputAmount.currency);
     const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
 
-    if (isBnUSD) {
+    if (_isSpokeToken) {
       const amount = inputAmount.quotient.toString();
       const msg = MsgExecuteContractCompat.fromJSON({
         contractAddress: injective.contracts.bnUSD!,

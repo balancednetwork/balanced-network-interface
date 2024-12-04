@@ -270,19 +270,6 @@ export function useTokenBalances(
       if (tokens.length === 0) return;
 
       const cds: CallData[] = tokens.map(token => {
-        if (isBALN(token))
-          return {
-            target: bnJs.BALN.address,
-            method: 'availableBalanceOf',
-            params: [account],
-          };
-        if (isFIN(token))
-          return {
-            target: token.address,
-            method: 'availableBalanceOf',
-            params: [account],
-          };
-
         return {
           target: token.address,
           method: 'balanceOf',

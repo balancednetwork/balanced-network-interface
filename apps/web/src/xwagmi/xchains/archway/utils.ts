@@ -1,7 +1,7 @@
 import { Token } from '@balancednetwork/sdk-core';
 
-import { StdFee } from '@archwayhq/arch3.js';
 import { XToken } from '@/xwagmi/types';
+import { StdFee } from '@archwayhq/arch3.js';
 
 export function getFeeParam(fee: number): StdFee | 'auto' {
   return 'auto';
@@ -9,4 +9,8 @@ export function getFeeParam(fee: number): StdFee | 'auto' {
 
 export function isDenomAsset(token: XToken | Token): boolean {
   return token.address.startsWith('ibc/');
+}
+
+export function isSpokeToken(token: XToken): boolean {
+  return ['bnUSD', 'sICX', 'BALN'].includes(token.symbol);
 }

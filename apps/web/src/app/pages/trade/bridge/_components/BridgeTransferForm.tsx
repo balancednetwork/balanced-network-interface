@@ -26,6 +26,7 @@ import {
 import { Field } from '@/store/bridge/reducer';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend } from '@/utils';
+import { formatSymbol } from '@/utils/formatter';
 import { getXChainType } from '@/xwagmi/actions';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXAccount, useXConnect, useXConnectors } from '@/xwagmi/hooks';
@@ -82,8 +83,8 @@ export default function BridgeTransferForm({ openModal }) {
     }
   }, [onChangeRecipient, xAccount, manualAddresses[bridgeDirection.to], bridgeDirection.to]);
 
-  const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount } = useDerivedBridgeInfo();
-
+  const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount, stellarValidation } =
+    useDerivedBridgeInfo();
   const xChainType = getXChainType(bridgeDirection.from);
   const xConnectors = useXConnectors(xChainType);
   const xConnect = useXConnect();
@@ -101,7 +102,7 @@ export default function BridgeTransferForm({ openModal }) {
   const { formattedXCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
 
   React.useEffect(() => {
-    setValid(validateAddress(recipient || '', bridgeDirection.to));
+    validateAddress(recipient || '', bridgeDirection.to).then(setValid);
   }, [recipient, bridgeDirection.to]);
 
   const handleMaximumBridgeAmountClick = () => {
@@ -142,7 +143,7 @@ export default function BridgeTransferForm({ openModal }) {
 
           <Typography as="div" mb={-1} textAlign="right" hidden={!account}>
             <Trans>Wallet:</Trans>{' '}
-            {`${selectedTokenWalletBalance?.toFixed(4, { groupSeparator: ',' }) ?? 0} ${currencyToBridge?.symbol}`}
+            {`${selectedTokenWalletBalance?.toFixed(4, { groupSeparator: ',' }) ?? 0} ${formatSymbol(currencyToBridge?.symbol)}`}
           </Typography>
 
           <Flex>
@@ -190,13 +191,22 @@ export default function BridgeTransferForm({ openModal }) {
 
           <Flex alignItems="center" justifyContent="center" mt={4}>
             {account ? (
-              <Button onClick={handleSubmit} disabled={!!errorMessage || !isValid || !canBridge}>
+              <Button
+                onClick={handleSubmit}
+                disabled={!!errorMessage || !isValid || !canBridge || !stellarValidation?.ok}
+              >
                 {errorMessage ? errorMessage : <Trans>Transfer</Trans>}
               </Button>
             ) : (
               <Button onClick={handleSubmit}>{<Trans>Transfer</Trans>}</Button>
             )}
           </Flex>
+
+          {stellarValidation?.ok === false && stellarValidation.error && (
+            <Flex alignItems="center" justifyContent="center" mt={2}>
+              <Typography textAlign="center">{stellarValidation.error}</Typography>
+            </Flex>
+          )}
 
           {!canBridge && maximumBridgeAmount && (
             <BridgeLimitWarning limitAmount={maximumBridgeAmount} onLimitAmountClick={handleMaximumBridgeAmountClick} />

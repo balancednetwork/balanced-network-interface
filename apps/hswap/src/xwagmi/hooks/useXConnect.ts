@@ -5,12 +5,15 @@ import { XConnector } from '../core/XConnector';
 import { useXWagmiStore } from '../useXWagmiStore';
 import { EvmXConnector } from '../xchains/evm';
 import { SuiXConnector } from '../xchains/sui';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { SolanaXConnector } from '../xchains/solana';
 
 export function useXConnect() {
   const setXConnection = useXWagmiStore(state => state.setXConnection);
 
   const { connectAsync: evmConnectAsync } = useConnect();
   const { mutateAsync: suiConnectAsync } = useConnectWallet();
+  const solanaWallet = useWallet();
 
   const connect = useCallback(
     async (xConnector: XConnector) => {
@@ -24,6 +27,13 @@ export function useXConnect() {
         case 'SUI':
           await suiConnectAsync({ wallet: (xConnector as SuiXConnector).wallet });
           break;
+        case 'SOLANA':
+          {
+            const walletName = (xConnector as SolanaXConnector).wallet.adapter.name;
+            await solanaWallet.select(walletName);
+            await solanaWallet.connect();
+          }
+          break;
         default:
           xAccount = await xConnector.connect();
           break;
@@ -36,7 +46,7 @@ export function useXConnect() {
         });
       }
     },
-    [setXConnection, evmConnectAsync, suiConnectAsync],
+    [setXConnection, evmConnectAsync, suiConnectAsync, solanaWallet],
   );
   return connect;
 }

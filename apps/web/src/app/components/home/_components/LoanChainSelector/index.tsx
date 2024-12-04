@@ -1,9 +1,10 @@
 import { StyledArrowDownIcon } from '@/app/components/DropdownText';
 import { DropdownPopper } from '@/app/components/Popover';
-import { SelectorWrap } from '@/app/components/trade/CrossChainOptions';
 import { Typography } from '@/app/theme';
 import { NETWORK_ID } from '@/constants/config';
 import { bnUSD } from '@/constants/tokens';
+import { useSignedInWallets } from '@/hooks/useWallets';
+import { useDerivedCollateralInfo } from '@/store/collateral/hooks';
 import { useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { XChainId } from '@/xwagmi/types';
@@ -12,6 +13,7 @@ import { Trans } from '@lingui/macro';
 import React, { useEffect } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
+import { SelectorWrap } from '../CollateralChainSelector';
 import ChainSelectorLogo from '../CollateralChainSelector/ChainSelectorLogo';
 import ChainList from './ChainList';
 
@@ -22,12 +24,32 @@ const LoanChainSelector = ({
   const [isOpen, setOpen] = React.useState(false);
   const loanRecipientNetwork = useLoanRecipientNetwork();
   const { onAdjust: adjust, setRecipientNetwork } = useLoanActionHandlers();
+  const signedInWallets = useSignedInWallets();
 
-  const xChains = getSupportedXChainForToken(bnUSD[NETWORK_ID]);
+  //temporarily validate stellar account
+  // const xChains = getSupportedXChainForToken(bnUSD[NETWORK_ID]);
+  const { sourceChain } = useDerivedCollateralInfo();
+  const xChains = React.useMemo(() => {
+    if (sourceChain === 'stellar') {
+      return getSupportedXChainForToken(bnUSD[NETWORK_ID]);
+    } else {
+      return getSupportedXChainForToken(bnUSD[NETWORK_ID])?.filter(chain => chain.xChainId !== 'stellar');
+    }
+  }, [sourceChain]);
+  //end of temporary stellar account validation
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
   const arrowRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (
+      loanRecipientNetwork !== sourceChain &&
+      !signedInWallets.find(wallet => wallet.xChainId === loanRecipientNetwork)
+    ) {
+      setRecipientNetwork(sourceChain);
+    }
+  }, [sourceChain, signedInWallets, loanRecipientNetwork, setRecipientNetwork]);
 
   const handleToggle = (e: React.MouseEvent<HTMLElement>) => {
     if (isOpen) {
@@ -67,7 +89,7 @@ const LoanChainSelector = ({
         <div>
           <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }}>
             <Typography fontSize={14} pr="1px" variant="span">
-              <ChainSelectorLogo chain={xChainMap[loanRecipientNetwork]} />
+              <ChainSelectorLogo chain={xChainMap[loanRecipientNetwork]} size={18} />
               {xChainMap[loanRecipientNetwork].name}
             </Typography>
             <div ref={arrowRef} style={{ display: 'inline-block' }}>

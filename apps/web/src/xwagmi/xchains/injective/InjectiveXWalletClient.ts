@@ -3,7 +3,6 @@ import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xwagmi/xcall/utils';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
 
 import { FROM_SOURCES, TO_SOURCES, injective } from '@/xwagmi/constants/xChains';
 import { xTokenMap } from '@/xwagmi/constants/xTokens';
@@ -21,7 +20,9 @@ export class InjectiveXWalletClient extends XWalletClient {
     return InjectiveXService.getInstance();
   }
 
-  async approve(token: XToken, owner: string, spender: string, currencyAmountToApprove: CurrencyAmount<XToken>) {}
+  async approve(amountToApprove, spender, owner) {
+    return Promise.resolve(undefined);
+  }
 
   async executeTransaction(xTransactionInput: XTransactionInput) {
     const { type, direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } =
@@ -149,9 +150,8 @@ export class InjectiveXWalletClient extends XWalletClient {
     }
 
     const data = getBytesFromString(JSON.stringify({}));
-    const isNative = inputAmount.currency.isNativeToken;
 
-    if (isNative) {
+    if (inputAmount.currency.isNativeToken) {
       const msg = MsgExecuteContractCompat.fromJSON({
         contractAddress: injective.contracts.assetManager,
         sender: account,
@@ -278,7 +278,6 @@ export class InjectiveXWalletClient extends XWalletClient {
     const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
 
     const bnUSD = xTokenMap['injective-1'].find(xToken => xToken.symbol === 'bnUSD');
-
     if (!inputAmount || !usedCollateral || !bnUSD) {
       return;
     }

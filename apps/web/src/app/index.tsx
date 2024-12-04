@@ -12,8 +12,8 @@ import TransactionUpdater from '@/store/transactions/updater';
 import { AllTransactionsUpdater } from '@/hooks/useTransactionStore';
 import { Updater as MMUpdater } from '@/store/transactions/useXTransactionStore';
 import { initXWagmiStore, useInitXWagmiStore } from '@/xwagmi/useXWagmiStore';
-import { AllXMessagesUpdater, AllXTransactionsUpdater } from '@/xwagmi/xcall/zustand/useXMessageStore';
-import { AllXChainHeightsUpdater } from '@/xwagmi/xcall/zustand/useXServiceStore';
+import { AllXMessagesUpdater } from '@/xwagmi/xcall/zustand/useXMessageStore';
+import { AllXChainHeightsUpdater } from '@/xwagmi/xcall/zustand/useXChainHeightStore';
 import { xChains } from '../xwagmi/constants/xChains';
 import RootRoutes from './Routes';
 
@@ -25,7 +25,6 @@ function Updaters() {
       <ApplicationUpdater />
       <AllTransactionsUpdater />
       <AllXMessagesUpdater />
-      <AllXTransactionsUpdater />
       <AllXChainHeightsUpdater xChains={xChains} />
     </>
   );

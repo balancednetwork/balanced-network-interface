@@ -1,11 +1,12 @@
 import { Address, PublicClient, WriteContractParameters, erc20Abi, getContract, parseEventLogs, toHex } from 'viem';
 
-import { isNativeCurrency } from '@/constants/tokens';
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xChainMap } from '@/xwagmi/constants/xChains';
+import { isNativeXToken } from '@/xwagmi/constants/xTokens';
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
+import { XChainId, XToken } from '@/xwagmi/types';
 import { getRlpEncodedSwapData } from '@/xwagmi/xcall/utils';
-import { MaxUint256, Percent, XChainId, XToken } from '@balancednetwork/sdk-core';
+import { MaxUint256, Percent } from '@balancednetwork/sdk-core';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import {
   TransactionStatus,
@@ -50,7 +51,7 @@ export class EvmXPublicClient extends XPublicClient {
   async getBalance(address: string | undefined, xToken: XToken) {
     if (!address) return;
 
-    if (xToken.isNativeXToken()) {
+    if (isNativeXToken(xToken)) {
       const balance = await this.getPublicClient().getBalance({ address: address as Address });
       return CurrencyAmount.fromRawAmount(xToken, balance);
     } else {
@@ -62,7 +63,7 @@ export class EvmXPublicClient extends XPublicClient {
     if (!address) return {};
 
     const balancePromises = xTokens
-      .filter(xToken => xToken.isNativeXToken())
+      .filter(xToken => isNativeXToken(xToken))
       .map(async xToken => {
         const balance = await this.getBalance(address, xToken);
         return { symbol: xToken.symbol, address: xToken.address, balance };
@@ -74,7 +75,7 @@ export class EvmXPublicClient extends XPublicClient {
       return map;
     }, {});
 
-    const nonNativeXTokens = xTokens.filter(xToken => !xToken.isNativeXToken());
+    const nonNativeXTokens = xTokens.filter(xToken => !isNativeXToken(xToken));
     const result = await this.getPublicClient().multicall({
       contracts: nonNativeXTokens.map(token => ({
         abi: erc20Abi,
@@ -236,7 +237,7 @@ export class EvmXPublicClient extends XPublicClient {
   }
 
   needsApprovalCheck(xToken: XToken): boolean {
-    if (isNativeCurrency(xToken)) return false;
+    if (isNativeXToken(xToken)) return false;
 
     const isBnUSD = xToken.symbol === 'bnUSD';
     if (isBnUSD) return false;
@@ -296,7 +297,7 @@ export class EvmXPublicClient extends XPublicClient {
     }
 
     // check if the bridge asset is native
-    const isNative = isNativeCurrency(inputAmount.currency);
+    const isNative = isNativeXToken(inputAmount.currency);
     const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
     const publicClient = this.getPublicClient();

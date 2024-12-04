@@ -3,6 +3,7 @@ import { XAccount } from '@/xwagmi/types';
 import { AccountData } from '@keplr-wallet/types';
 import { ArchwayXService } from './ArchwayXService';
 import { XSigningArchwayClient } from './XSigningArchwayClient';
+import KeplrIcon from '@/xwagmi/assets/wallets/keplr.svg?inline';
 
 export class ArchwayXConnector extends XConnector {
   constructor() {
@@ -53,5 +54,9 @@ export class ArchwayXConnector extends XConnector {
 
     // TODO: need to disconnect public client?
     // this.getXService().publicClient?.disconnect();
+  }
+
+  public get icon() {
+    return KeplrIcon;
   }
 }

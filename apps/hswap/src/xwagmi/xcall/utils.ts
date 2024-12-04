@@ -1,11 +1,11 @@
 import rlp from 'rlp';
 
-import { Currency, CurrencyAmount, TradeType, XChainId, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XChain } from '@/xwagmi/types';
+import { XChain, XChainId, XToken } from '@/xwagmi/types';
 import { uintToBytes } from '@/xwagmi/utils';
 import { xChains } from '../constants/xChains';
 
@@ -63,7 +63,9 @@ export function getBytesFromString(str: string) {
 
 export const toICONDecimals = (currencyAmount: CurrencyAmount<Currency>): bigint => {
   const xAmount = BigInt(currencyAmount.quotient.toString());
-  const iconToken = xTokenMap[currencyAmount.currency.wrapped.address];
+  const iconToken = xTokenMap[ICON_XCALL_NETWORK_ID].find(
+    token => token.symbol === currencyAmount.currency.symbol,
+  ) as XToken;
 
   if (iconToken.decimals === currencyAmount.currency.decimals) return xAmount;
 

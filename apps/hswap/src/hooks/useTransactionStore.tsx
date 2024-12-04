@@ -11,10 +11,10 @@ import {
   NotificationSuccess,
 } from '@/app/components/Notification/TransactionNotification';
 import { getXPublicClient } from '@/xwagmi/actions';
-import { XChainId } from '@balancednetwork/sdk-core';
 import { persist } from 'zustand/middleware';
 import { Transaction, TransactionStatus, XTransactionType } from '../xwagmi/xcall/types';
 import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { XChainId } from '@/xwagmi/types';
 
 type TransactionStore = {
   transactions: Transaction[];
@@ -31,7 +31,7 @@ export const useTransactionStore = create<TransactionStore>()(
   ),
 );
 
-const getTrackerLink = (xChainId: XChainId, hash: string, type) => {
+export const getTrackerLink = (xChainId: XChainId, hash: string, type = 'transaction') => {
   // TODO: handle different chain types
   return `https://tracker.icon.foundation/transaction/${hash}?network=${xChainId}`;
 

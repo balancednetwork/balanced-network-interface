@@ -2,6 +2,7 @@ import { fromBase64, toBase64 } from '@injectivelabs/sdk-ts';
 
 import { injective } from '@/xwagmi/constants/xChains';
 import { XPublicClient } from '@/xwagmi/core';
+import { XChainId, XToken } from '@/xwagmi/types';
 import {
   TransactionStatus,
   XCallEvent,
@@ -11,9 +12,9 @@ import {
   XCallMessageSentEvent,
   XTransactionInput,
 } from '@/xwagmi/xcall/types';
-import { CurrencyAmount, XChainId, XToken } from '@balancednetwork/sdk-core';
-import { isDenomAsset } from '../archway/utils';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { InjectiveXService } from './InjectiveXService';
+import { isNativeXToken } from '@/xwagmi/constants/xTokens';
 
 const XCallEventSignatureMap = {
   [XCallEventType.CallMessageSent]: 'wasm-CallMessageSent',
@@ -34,24 +35,13 @@ export class InjectiveXPublicClient extends XPublicClient {
     if (!address) return;
 
     const xService = this.getXService();
-    if (xToken.isNativeXToken() || isDenomAsset(xToken)) {
-      const portfolio = await xService.indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(address);
-      const xTokenAddress = xToken.isNativeXToken() ? 'inj' : xToken.address;
+    const portfolio = await xService.indexerGrpcAccountPortfolioApi.fetchAccountPortfolioBalances(address);
 
-      const balance = portfolio.bankBalancesList.find(_balance => _balance.denom === xTokenAddress);
-      if (balance) {
-        return CurrencyAmount.fromRawAmount(xToken, BigInt(balance.amount));
-      }
-    } else {
-      try {
-        const response: any = await xService.chainGrpcWasmApi.fetchSmartContractState(
-          xToken.address,
-          toBase64({ balance: { address } }),
-        );
+    const xTokenAddress = isNativeXToken(xToken) ? 'inj' : xToken.address;
 
-        const result = fromBase64(response.data);
-        return CurrencyAmount.fromRawAmount(xToken, result.balance);
-      } catch (e) {}
+    const balance = portfolio.bankBalancesList.find(_balance => _balance.denom === xTokenAddress);
+    if (balance) {
+      return CurrencyAmount.fromRawAmount(xToken, BigInt(balance.amount));
     }
   }
 
@@ -96,10 +86,8 @@ export class InjectiveXPublicClient extends XPublicClient {
       if (rawTx.code) {
         return TransactionStatus.failure;
       }
-
       return TransactionStatus.success;
     }
-
     return TransactionStatus.failure;
   }
 

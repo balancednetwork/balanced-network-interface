@@ -1,15 +1,17 @@
-import { XChainType } from '@balancednetwork/sdk-core';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
+import { XChainType } from '../types';
 import { XAccount } from '../types';
 import { useXWagmiStore } from '../useXWagmiStore';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 export function useXAccounts() {
   const xChainTypes = useXWagmiStore(state => Object.keys(state.xServices));
   const xConnections = useXWagmiStore(state => state.xConnections);
   const { address: evmAddress } = useAccount();
   const suiAccount = useCurrentAccount();
+  const solanaWallet = useWallet();
 
   const xAccounts = useMemo(() => {
     const result: Partial<Record<XChainType, XAccount>> = {};
@@ -38,8 +40,15 @@ export function useXAccounts() {
         xChainType: 'SUI',
       };
     }
+    if (solanaWallet.publicKey) {
+      result['SOLANA'] = {
+        address: solanaWallet.publicKey.toString(),
+        xChainType: 'SOLANA',
+      };
+    }
+
     return result;
-  }, [xChainTypes, xConnections, evmAddress, suiAccount]);
+  }, [xChainTypes, xConnections, evmAddress, suiAccount, solanaWallet]);
 
   return xAccounts;
 }

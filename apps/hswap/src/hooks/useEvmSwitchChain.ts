@@ -3,12 +3,12 @@ import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useXService } from '@/xwagmi/hooks';
 import { InjectiveXService } from '@/xwagmi/xchains/injective';
 import { switchEthereumChain } from '@/xwagmi/xchains/injective/utils';
-import { XChainId } from '@balancednetwork/sdk-core';
 import { Wallet } from '@injectivelabs/wallet-ts';
 import { useCallback, useMemo } from 'react';
 import { mainnet } from 'viem/chains';
 import { useAccount, useSwitchChain } from 'wagmi';
 import useEthereumChainId from './useEthereumChainId';
+import { XChainId } from '@/xwagmi/types';
 
 export const useEvmSwitchChain = (expectedXChainId: XChainId) => {
   const xChainType = getXChainType(expectedXChainId);

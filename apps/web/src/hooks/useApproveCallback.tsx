@@ -199,7 +199,7 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
   );
 
   const approveArchway = useCallback(async () => {
-    if (!token) {
+    if (!token || !amountToApprove || !spender || !account) {
       // toastError(t('Error'), t('No token'));
       console.error('no token');
       return undefined;
@@ -225,7 +225,7 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
     }
 
     try {
-      const hash = await xWalletClient.approve(token, account as `0x${string}`, spender, amountToApprove);
+      const hash = await xWalletClient.approve(amountToApprove, spender, account);
 
       setPending(true);
 

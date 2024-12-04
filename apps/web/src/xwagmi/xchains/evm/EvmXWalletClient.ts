@@ -1,11 +1,13 @@
-import { Percent } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, MaxUint256, Percent } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
-import { Address, PublicClient, WalletClient, WriteContractParameters, toHex } from 'viem';
+import { Address, PublicClient, WalletClient, WriteContractParameters, erc20Abi, getContract, toHex } from 'viem';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/xwagmi/constants/xChains';
+import { isNativeXToken } from '@/xwagmi/constants/xTokens';
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
+import { XToken } from '@/xwagmi/types';
 import { uintToBytes } from '@/xwagmi/utils';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
@@ -40,7 +42,26 @@ export class EvmXWalletClient extends XWalletClient {
     return walletClient;
   }
 
-  async approve(token, owner, spender, currencyAmountToApprove) {}
+  async approve(amountToApprove: CurrencyAmount<XToken>, spender: string, owner: string) {
+    const xToken = amountToApprove.currency;
+
+    const publicClient = await this.getPublicClient();
+    const walletClient = await this.getWalletClient();
+
+    const tokenContract = getContract({
+      abi: erc20Abi,
+      address: xToken.address as Address,
+      client: { public: publicClient, wallet: walletClient },
+    });
+    const account = owner as Address;
+    const { request } = await tokenContract.simulate.approve(
+      [spender as `0x${string}`, amountToApprove?.quotient ? BigInt(amountToApprove.quotient.toString()) : MaxUint256],
+      { account },
+    );
+
+    const hash = await walletClient.writeContract({ ...request, account });
+    return hash;
+  }
 
   async executeTransaction(xTransactionInput: XTransactionInput) {
     const { type, direction, inputAmount, recipient, account, xCallFee, executionTrade, slippageTolerance } =

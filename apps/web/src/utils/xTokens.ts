@@ -5,7 +5,7 @@ import { xTokenMap } from '@/xwagmi/constants/xTokens';
 import { XChain, XChainId, XToken } from '@/xwagmi/types';
 
 export const getNetworkDisplayName = (chain: XChainId) => {
-  return xChainMap[chain].name;
+  return xChainMap?.[chain]?.name || 'unknown';
 };
 
 export const getXTokenAddress = (chain: XChainId, tokenSymbol?: string): string | undefined => {

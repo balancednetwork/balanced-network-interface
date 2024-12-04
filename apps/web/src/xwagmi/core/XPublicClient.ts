@@ -4,6 +4,7 @@ import {
   XCallEvent,
   XCallEventType,
   XCallMessageSentEvent,
+  XTransactionInput,
 } from '@/xwagmi/xcall/types';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { XChainId, XToken } from '../types';
@@ -13,6 +14,7 @@ export interface IXPublicClient {
   getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean, sources?: string[]): Promise<bigint>;
   getBlockHeight(): Promise<bigint>;
   getTxReceipt(txHash): Promise<any>;
+  waitForTxReceipt(txHash): Promise<any>;
   getTxEventLogs(rawTx): any[];
   deriveTxStatus(rawTx): TransactionStatus;
 
@@ -30,6 +32,21 @@ export interface IXPublicClient {
 
   getBalance(address: string | undefined, xToken: XToken): Promise<CurrencyAmount<Currency> | undefined>;
   getBalances(address: string | undefined, xTokens: XToken[]): Promise<Record<string, CurrencyAmount<Currency>>>;
+
+  estimateApproveGas(
+    amountToApprove: CurrencyAmount<XToken>,
+    spender: string,
+    owner: string,
+  ): Promise<bigint | undefined>;
+  estimateSwapGas(xTransactionInput: XTransactionInput): Promise<bigint | undefined>;
+
+  getTokenAllowance(
+    owner: string | null | undefined,
+    spender: string | undefined,
+    xToken: XToken | undefined,
+  ): Promise<bigint | undefined>;
+
+  needsApprovalCheck(xToken: XToken): boolean;
 }
 
 export abstract class XPublicClient implements IXPublicClient {
@@ -46,8 +63,8 @@ export abstract class XPublicClient implements IXPublicClient {
   abstract deriveTxStatus(rawTx): TransactionStatus;
   abstract getPublicClient();
 
-  abstract getBalance(address: string | undefined, xToken: XToken): Promise<CurrencyAmount<Currency> | undefined>;
-  async getBalances(address: string | undefined, xTokens: XToken[]) {
+  abstract getBalance(address: string | undefined, xToken: XToken): Promise<CurrencyAmount<XToken> | undefined>;
+  async getBalances(address: string | undefined, xTokens: XToken[]): Promise<Record<string, CurrencyAmount<XToken>>> {
     if (!address) return {};
 
     const balancePromises = xTokens.map(async xToken => {
@@ -105,5 +122,54 @@ export abstract class XPublicClient implements IXPublicClient {
       console.log(e);
     }
     return null;
+  }
+
+  abstract estimateApproveGas(
+    amountToApprove: CurrencyAmount<XToken>,
+    spender: string,
+    owner: string,
+  ): Promise<bigint | undefined>;
+  abstract estimateSwapGas(xTransactionInput: XTransactionInput): Promise<bigint | undefined>;
+
+  // TODO: make this abstract?
+  async getTokenAllowance(
+    owner: string | null | undefined,
+    spender: string | undefined,
+    xToken: XToken | undefined,
+  ): Promise<bigint | undefined> {
+    return 0n;
+  }
+
+  abstract needsApprovalCheck(xToken: XToken): boolean;
+
+  async waitForTxReceipt(txHash: string, timeout: number = 60000, interval: number = 500): Promise<any> {
+    const startTime = Date.now();
+
+    while (true) {
+      try {
+        // Attempt to fetch the transaction receipt
+        const rawTx = await this.getTxReceipt(txHash);
+
+        if (rawTx) {
+          const status = this.deriveTxStatus(rawTx);
+          console.log('loop', txHash, status);
+
+          if (status !== TransactionStatus.pending) {
+            return rawTx;
+          }
+        }
+      } catch (error) {
+        // Handle the error (log it, continue, or throw a custom error)
+        console.error(`Error fetching transaction receipt for ${txHash}:`, error);
+      }
+
+      // Check for timeout
+      if (Date.now() - startTime > timeout) {
+        throw new Error(`Transaction not found within timeout: ${txHash}`);
+      }
+
+      // Wait for the specified interval before retrying
+      await new Promise(resolve => setTimeout(resolve, interval));
+    }
   }
 }

@@ -12,9 +12,11 @@ export type XChainId =
   | '0xa4b1.arbitrum'
   | '0x2105.base'
   | 'injective-1'
-  | 'sui';
+  | 'sui'
+  | 'stellar'
+  | 'solana';
 
-export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH' | 'INJECTIVE' | 'SUI';
+export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH' | 'INJECTIVE' | 'SUI' | 'STELLAR' | 'SOLANA';
 
 export class XToken extends Token {
   xChainId: XChainId;

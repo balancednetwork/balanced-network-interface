@@ -2,21 +2,21 @@ import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
-
 import { XWalletClient } from '@/xwagmi/core/XWalletClient';
 import { showMessageOnBeforeUnload, toDec } from '@/xwagmi/utils';
 import { toHex } from 'viem';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData } from '../../xcall/utils';
 import { HavahXService } from './HavahXService';
-import { havahJs } from './havahJs';
 
 export class HavahXWalletClient extends XWalletClient {
   getXService(): HavahXService {
     return HavahXService.getInstance();
   }
 
-  async approve(token, owner, spender, currencyAmountToApprove) {}
+  async approve(amountToApprove, spender, owner) {
+    return Promise.resolve(undefined);
+  }
 
   async executeTransaction(xTransactionInput: XTransactionInput) {
     const { type, executionTrade, account, direction, inputAmount, recipient, slippageTolerance, xCallFee } =
@@ -34,18 +34,6 @@ export class HavahXWalletClient extends XWalletClient {
       }
 
       const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-
-      // data = toHex(
-      //   JSON.stringify({
-      //     method: '_swap',
-      //     params: {
-      //       path: executionTrade.route.pathForSwap,
-      //       receiver: receiver,
-      //       minimumReceive: minReceived.quotient.toString(),
-      //     },
-      //   }),
-      // );
-
       const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived).toString('hex');
       data = `0x${rlpEncodedData}`;
     } else if (type === XTransactionType.BRIDGE) {
@@ -69,16 +57,16 @@ export class HavahXWalletClient extends XWalletClient {
 
     let txResult;
     if (isBnUSD) {
-      txResult = await havahJs
-        .inject({ account })
+      txResult = await this.getXService()
+        .walletClient.inject({ account })
         .bnUSD['crossTransferV2'](destination, toDec(inputAmount), data, xCallFee.rollback.toString());
     } else {
       if (!isNative) {
         throw new Error('Only native token and bnUSD are supported');
       } else {
         console.log('isNative');
-        txResult = await havahJs
-          .inject({ account })
+        txResult = await this.getXService()
+          .walletClient.inject({ account })
           .AssetManager['deposit'](parseFloat(inputAmount.toExact()), destination, data, xCallFee.rollback.toString());
       }
     }
@@ -102,8 +90,8 @@ export class HavahXWalletClient extends XWalletClient {
       JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
     );
 
-    const txResult = await havahJs
-      .inject({ account })
+    const txResult = await this.getXService()
+      .walletClient.inject({ account })
       .bnUSD['crossTransferV2'](destination, amount, data, xCallFee.rollback.toString());
 
     // @ts-ignore

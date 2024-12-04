@@ -3,7 +3,7 @@ import { ArchwayClient } from '@archwayhq/arch3.js';
 import { archway } from '@/xwagmi/constants/xChains';
 
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
-import { XChainId, XToken } from '@balancednetwork/sdk-core';
+import { XChainId, XToken } from '@/xwagmi/types';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import {
   TransactionStatus,
@@ -17,7 +17,7 @@ import {
 import { ArchwayXService } from './ArchwayXService';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from './constants';
 import { isDenomAsset } from './utils';
-import { isNativeCurrency } from '@/constants/tokens';
+import { isNativeXToken } from '@/xwagmi/constants/xTokens';
 
 const XCallEventSignatureMap = {
   [XCallEventType.CallMessageSent]: 'wasm-CallMessageSent',
@@ -41,7 +41,7 @@ export class ArchwayXPublicClient extends XPublicClient {
   async getBalance(address: string | undefined, xToken: XToken) {
     if (!address) return;
 
-    if (xToken.isNativeXToken()) {
+    if (isNativeXToken(xToken)) {
       const archTokenBalance = await this.getPublicClient().getBalance(address, ARCHWAY_FEE_TOKEN_SYMBOL);
       return CurrencyAmount.fromRawAmount(xToken, archTokenBalance.amount || 0);
     } else if (isDenomAsset(xToken)) {
@@ -193,7 +193,7 @@ export class ArchwayXPublicClient extends XPublicClient {
   }
 
   needsApprovalCheck(xToken: XToken): boolean {
-    if (isNativeCurrency(xToken)) return false;
+    if (isNativeXToken(xToken)) return false;
 
     const isBnUSD = xToken.symbol === 'bnUSD';
     const isDenom = isDenomAsset(xToken);

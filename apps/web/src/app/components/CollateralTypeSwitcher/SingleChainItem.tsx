@@ -1,6 +1,7 @@
 import { Typography } from '@/app/theme';
 import { useICX } from '@/constants/tokens';
-import { useIcxDisplayType } from '@/store/collateral/hooks';
+import { useCollateralChangeIcxDisplayType, useIcxDisplayType } from '@/store/collateral/hooks';
+import { useIsPositionLocked } from '@/store/loan/hooks';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { toFraction } from '@/utils';
 import { formatSymbol, formatValue } from '@/utils/formatter';
@@ -35,46 +36,71 @@ const SingleChainItem = ({
   const { currency } = collateral || {};
   const { symbol } = currency || {};
   const theme = useTheme();
-  const ICX = useICX();
+  const collateralChangeIcxDisplayType = useCollateralChangeIcxDisplayType();
   const icxDisplayType = useIcxDisplayType();
+  const ICX = useICX();
 
   const price = React.useMemo(() => {
     if (!prices || (symbol && !prices[symbol])) return;
     return toFraction(prices[symbol!]);
   }, [prices, symbol]);
 
+  const shouldShowWarning = useIsPositionLocked(collateral, loan);
+
+  const handleItemClick = (symbol: string, chainId: XChainId, isPotential: boolean) => {
+    onSelect(symbol === 'ICX' ? 'sICX' : symbol, chainId);
+    if (symbol === 'sICX' || symbol === 'ICX') {
+      isPotential && collateralChangeIcxDisplayType(symbol);
+    }
+  };
+
   return (
-    <>
-      <StyledListItem $border={!isNested && !isLast} onClick={() => onSelect(baseToken.symbol, xChainId as XChainId)}>
-        <AssetSymbol>
-          <CurrencyLogoWithNetwork
-            currency={baseToken.symbol === 'sICX' && icxDisplayType === 'ICX' ? ICX : baseToken}
-            chainId={xChainId as XChainId}
-            bgColor={isNested ? theme.colors.bg3 : theme.colors.bg4}
-            size={isNested ? '20px' : '24px'}
-          />
-          <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>
-            {isNested ? xChainMap[xChainId].name : symbol === 'sICX' ? icxDisplayType : formatSymbol(symbol)}
-          </Typography>
-        </AssetSymbol>
-        <BalanceAndValueWrap>
-          {collateral && collateral.greaterThan(0) && (
-            <DataText
-              as="div"
-              $fSize={isPotential ? '12px' : '14px'}
-              style={{ opacity: isPotential ? 0.75 : 1, whiteSpace: 'nowrap' }}
-            >
-              {price && formatValue(collateral?.multiply(price || 1).toFixed())}
-              {isPotential && ' ' + t`available`}
-            </DataText>
-          )}
+    <StyledListItem
+      $border={!isNested && !isLast}
+      onClick={() => handleItemClick(baseToken.symbol, xChainId as XChainId, !!isPotential)}
+    >
+      <AssetSymbol>
+        <CurrencyLogoWithNetwork
+          currency={
+            isPotential
+              ? baseToken
+              : baseToken.symbol === 'sICX'
+                ? icxDisplayType === 'ICX'
+                  ? ICX
+                  : baseToken
+                : baseToken
+          }
+          chainId={xChainId as XChainId}
+          bgColor={isNested ? theme.colors.bg3 : theme.colors.bg4}
+          size={isNested ? '20px' : '24px'}
+        />
+        <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>
+          {isNested
+            ? xChainMap[xChainId].name
+            : symbol === 'sICX'
+              ? isPotential
+                ? symbol
+                : icxDisplayType
+              : formatSymbol(symbol)}
+        </Typography>
+      </AssetSymbol>
+      <BalanceAndValueWrap $warning={!isPotential && !!shouldShowWarning}>
+        {collateral && collateral.greaterThan(0) && (
+          <DataText
+            as="div"
+            $fSize={isPotential ? '12px' : '14px'}
+            style={{ opacity: isPotential ? 0.75 : 1, whiteSpace: 'nowrap', alignSelf: 'center' }}
+          >
+            {price && formatValue(collateral?.multiply(price || 1).toFixed())}
+            {isPotential && ' ' + t`available`}
+          </DataText>
+        )}
 
-          {!collateral?.greaterThan(0) && <DataText as="div">-</DataText>}
+        {!collateral?.greaterThan(0) && <DataText as="div">-</DataText>}
 
-          <DataText as="div">{!loan || loan.isEqualTo(0) ? '-' : formatValue(loan.toFixed())}</DataText>
-        </BalanceAndValueWrap>
-      </StyledListItem>
-    </>
+        <DataText as="div">{!loan || loan.isEqualTo(0) ? '-' : formatValue(loan.toFixed())}</DataText>
+      </BalanceAndValueWrap>
+    </StyledListItem>
   );
 };
 

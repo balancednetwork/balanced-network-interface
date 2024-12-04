@@ -346,14 +346,15 @@ msgstr "Past week"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
-msgid "{0} {collateralType} added to your wallet."
-msgstr "{0} {collateralType} added to your wallet."
+#~ msgid "{0} {collateralType} added to your wallet."
+#~ msgstr "{0} {collateralType} added to your wallet."
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "No assets found."
 msgstr "No assets found."
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+#: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Swap fee"
 msgstr "Swap fee"
 
@@ -549,6 +550,10 @@ msgstr "Sending"
 #: src/app/components/home/Savings/index.tsx
 msgid "Deposit bnUSD?"
 msgstr "Deposit bnUSD?"
+
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Receive sICX, which you can trade or unstake from the wallet section later."
+msgstr "Receive sICX, which you can trade or unstake from the wallet section later."
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Requesting cross-chain swap..."
@@ -782,9 +787,10 @@ msgstr "Locked"
 msgid "Search assets and blockchains..."
 msgstr "Search assets and blockchains..."
 
+#: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
-#~ msgid "Transfer fee: <0>{formattedXCallFee}</0>"
-#~ msgstr "Transfer fee: <0>{formattedXCallFee}</0>"
+msgid "Transfer fee: <0>{formattedXCallFee}</0>"
+msgstr "Transfer fee: <0>{formattedXCallFee}</0>"
 
 #: src/app/pages/vote/_components/BribesPanel/index.tsx
 msgid "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
@@ -810,6 +816,10 @@ msgstr "For every bnUSD they redeem, they'll receive ${redeemLimit} of collatera
 #: src/app/components/home/Savings/index.tsx
 msgid "Withdrew {0} bnUSD."
 msgstr "Withdrew {0} bnUSD."
+
+#: src/app/pages/trade/xswap/_components/MMSwapInfo.tsx
+msgid "Minimum to receive(Intent)"
+msgstr "Minimum to receive(Intent)"
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "sign in"
@@ -906,6 +916,7 @@ msgstr "{0}"
 msgid "Bridge"
 msgstr "Bridge"
 
+#: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
 #: src/store/bridge/hooks.tsx
 #: src/store/bridge/hooks.tsx
 #: src/store/mint/hooks.tsx
@@ -915,8 +926,8 @@ msgid "Enter amount"
 msgstr "Enter amount"
 
 #: src/app/components/home/CollateralPanel.tsx
-msgid "sign in with"
-msgstr "sign in with"
+#~ msgid "sign in with"
+#~ msgstr "sign in with"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Supplied {pair} liquidity."
@@ -959,8 +970,8 @@ msgid "Manage wallets"
 msgstr "Manage wallets"
 
 #: src/app/components/home/CollateralPanel.tsx
-msgid "Recieve sICX, which you can trade or unstake from the wallet section later."
-msgstr "Recieve sICX, which you can trade or unstake from the wallet section later."
+#~ msgid "Recieve sICX, which you can trade or unstake from the wallet section later."
+#~ msgstr "Recieve sICX, which you can trade or unstake from the wallet section later."
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 msgid "Liquidity incentives"
@@ -1054,6 +1065,10 @@ msgstr "Swap {0} for {1}?"
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 #~ msgid "Claimed Balanced incentives."
 #~ msgstr "Claimed Balanced incentives."
+
+#: src/app/components/home/CollateralPanel.tsx
+#~ msgid "Add {collateralType} to your {0} wallet."
+#~ msgstr "Add {collateralType} to your {0} wallet."
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x."
@@ -1223,8 +1238,8 @@ msgstr "Fee"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
-msgid "Cross-chain fee: <0>{formattedXCallFee}</0>"
-msgstr "Cross-chain fee: <0>{formattedXCallFee}</0>"
+#~ msgid "Cross-chain fee: <0>{formattedXCallFee}</0>"
+#~ msgstr "Cross-chain fee: <0>{formattedXCallFee}</0>"
 
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
@@ -1239,6 +1254,11 @@ msgstr "Depositing bnUSD..."
 #: src/utils/timeformat.ts
 msgid "less then a minute"
 msgstr "less then a minute"
+
+#: src/store/bridge/hooks.tsx
+#: src/store/swap/hooks.ts
+msgid "Validating Stellar account"
+msgstr "Validating Stellar account"
 
 #: src/btp/src/connectors/helper.ts
 msgid "Couldn't transfer {0} to {1}. Try again."
@@ -1444,6 +1464,7 @@ msgstr "Repaying"
 msgid "Transfer {inputCurrency} to {network}..."
 msgstr "Transfer {inputCurrency} to {network}..."
 
+#: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
 #: src/store/bridge/hooks.tsx
 #: src/store/swap/hooks.ts
 msgid "Insufficient {0}"
@@ -1656,7 +1677,7 @@ msgstr "Transferring"
 #~ msgid "Transfer in progress"
 #~ msgstr "Transfer in progress"
 
-#: src/app/pages/trade/xswap/_components/SwapMMCommitButton.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
 #: src/store/swap/hooks.ts
 msgid "Choose address"
 msgstr "Choose address"
@@ -1971,6 +1992,7 @@ msgstr "Claim"
 msgid "Home"
 msgstr "Home"
 
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap fee (included):"
 msgstr "Swap fee (included):"
@@ -2149,6 +2171,11 @@ msgstr "Swap fee (included): <0>{0} {1}</0>"
 msgid "The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset."
 msgstr "The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset."
 
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/CollateralPanel.tsx
+msgid "{0} {1} added to your wallet."
+msgstr "{0} {1} added to your wallet."
+
 #: src/btp/src/connectors/helper.ts
 msgid "Sent {0} to the bridge contract."
 msgstr "Sent {0} to the bridge contract."
@@ -2256,6 +2283,10 @@ msgstr "{title}"
 msgid "Enter address"
 msgstr "Enter address"
 
+#: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
+msgid "Swap time"
+msgstr "Swap time"
+
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Add token list"
 msgstr "Add token list"
@@ -2310,6 +2341,10 @@ msgstr "{0} BALN locked until {1}."
 msgid "{0} {1} added to your wallet"
 msgstr "{0} {1} added to your wallet"
 
+#: src/app/components/home/CollateralPanel.tsx
+msgid "sign in on"
+msgstr "sign in on"
+
 #: src/app/components/home/LoanPanel.tsx
 msgid "Repaid {0} bnUSD."
 msgstr "Repaid {0} bnUSD."
@@ -2362,6 +2397,7 @@ msgid "APY"
 msgstr "APY"
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+#: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Route"
 msgstr "Route"
 
@@ -2378,6 +2414,12 @@ msgstr "Deposit {0} collateral?"
 msgid "Allocating bBALN..."
 msgstr "Allocating bBALN..."
 
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Add {0} to your {1} wallet."
+msgstr "Add {0} to your {1} wallet."
+
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
@@ -2423,6 +2465,7 @@ msgstr "You rejected"
 #~ msgstr "for"
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+#: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Exchange rate"
 msgstr "Exchange rate"
 
@@ -2525,10 +2568,10 @@ msgid "Learn how to resolve common transaction errors."
 msgstr "Learn how to resolve common transaction errors."
 
 #: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
-#: src/app/pages/trade/xswap/_components/SwapMMCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
@@ -2703,6 +2746,10 @@ msgstr "The current {0} price is"
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
 msgstr "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
+
+#: src/xwagmi/xchains/stellar/utils.ts
+msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."
+msgstr "Stellar wallet inactive. Add at least 1 XLM from an external source."
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx

@@ -48,6 +48,7 @@ export default function SwapPanel() {
     formattedAmounts,
     maximumBridgeAmount,
     canBridge,
+    stellarValidation,
   } = useDerivedSwapInfo();
   const mmTrade = useDerivedMMTradeInfo(trade);
 
@@ -239,6 +240,12 @@ export default function SwapPanel() {
               direction={direction}
             />
           </Flex>
+
+          {stellarValidation?.ok === false && stellarValidation.error && (
+            <Flex alignItems="center" justifyContent="center" mt={2}>
+              <Typography textAlign="center">{stellarValidation.error}</Typography>
+            </Flex>
+          )}
 
           {!canBridge && maximumBridgeAmount && (
             <BridgeLimitWarning limitAmount={maximumBridgeAmount} onLimitAmountClick={handleMaxBridgeAmountClick} />

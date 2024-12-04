@@ -2,6 +2,7 @@ import { ArchwayClient } from '@archwayhq/arch3.js';
 
 import { archway } from '@/xwagmi/constants/xChains';
 
+import { isNativeXToken } from '@/xwagmi/constants/xTokens';
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
 import { XChainId, XToken } from '@/xwagmi/types';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
@@ -12,6 +13,7 @@ import {
   XCallExecutedEvent,
   XCallMessageEvent,
   XCallMessageSentEvent,
+  XTransactionInput,
 } from '../../xcall/types';
 import { ArchwayXService } from './ArchwayXService';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from './constants';
@@ -178,5 +180,50 @@ export class ArchwayXPublicClient extends XPublicClient {
       code: parseInt(eventLog.attributes.find(attr => attr.key === 'code')?.value),
       msg: eventLog.attributes.find(attr => attr.key === 'msg')?.value,
     };
+  }
+
+  async getTokenAllowance(owner: string | null | undefined, spender: string | undefined, xToken: XToken | undefined) {
+    if (!owner || !spender || !xToken) return;
+
+    const res = await this.getPublicClient().queryContractSmart(xToken.address, {
+      allowance: { owner, spender },
+    });
+
+    return res.allowance;
+  }
+
+  needsApprovalCheck(xToken: XToken): boolean {
+    if (isNativeXToken(xToken)) return false;
+
+    const isBnUSD = xToken.symbol === 'bnUSD';
+    const isDenom = isDenomAsset(xToken);
+    if (isDenom || isBnUSD) return false;
+
+    return true;
+  }
+
+  async estimateApproveGas(amountToApprove: CurrencyAmount<XToken>, spender: string, owner: string) {
+    const publicClient = this.getPublicClient();
+    try {
+      const res = await publicClient.getEstimateTxFees(400_000);
+
+      const fee = res.estimatedFee?.amount[0].amount.toString();
+
+      return BigInt(fee || 0n);
+    } catch (e) {}
+    return 0n;
+  }
+
+  async estimateSwapGas(xTransactionInput: XTransactionInput) {
+    const publicClient = this.getPublicClient();
+    try {
+      const res = await publicClient.getEstimateTxFees(2_000_000);
+
+      const fee = res.estimatedFee?.amount[0].amount.toString();
+      console.log('estimateSwapGas', fee);
+
+      return BigInt(fee || 0n);
+    } catch (e) {}
+    return 0n;
   }
 }

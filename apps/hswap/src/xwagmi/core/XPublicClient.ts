@@ -6,13 +6,15 @@ import {
   XCallMessageSentEvent,
   XTransactionInput,
 } from '@/xwagmi/xcall/types';
-import { Currency, CurrencyAmount, XChainId, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XChainId, XToken } from '../types';
 
 export interface IXPublicClient {
   // getBlock(blockHeight);
   getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean, sources?: string[]): Promise<bigint>;
   getBlockHeight(): Promise<bigint>;
   getTxReceipt(txHash): Promise<any>;
+  waitForTxReceipt(txHash): Promise<any>;
   getTxEventLogs(rawTx): any[];
   deriveTxStatus(rawTx): TransactionStatus;
 
@@ -139,4 +141,35 @@ export abstract class XPublicClient implements IXPublicClient {
   }
 
   abstract needsApprovalCheck(xToken: XToken): boolean;
+
+  async waitForTxReceipt(txHash: string, timeout: number = 60000, interval: number = 500): Promise<any> {
+    const startTime = Date.now();
+
+    while (true) {
+      try {
+        // Attempt to fetch the transaction receipt
+        const rawTx = await this.getTxReceipt(txHash);
+
+        if (rawTx) {
+          const status = this.deriveTxStatus(rawTx);
+          console.log('loop', txHash, status);
+
+          if (status !== TransactionStatus.pending) {
+            return rawTx;
+          }
+        }
+      } catch (error) {
+        // Handle the error (log it, continue, or throw a custom error)
+        console.error(`Error fetching transaction receipt for ${txHash}:`, error);
+      }
+
+      // Check for timeout
+      if (Date.now() - startTime > timeout) {
+        throw new Error(`Transaction not found within timeout: ${txHash}`);
+      }
+
+      // Wait for the specified interval before retrying
+      await new Promise(resolve => setTimeout(resolve, interval));
+    }
+  }
 }

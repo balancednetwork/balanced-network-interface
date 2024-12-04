@@ -1,7 +1,7 @@
 import { XPublicClient } from '@/xwagmi/core/XPublicClient';
 import { XChainId, XToken } from '@/xwagmi/types';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import { TransactionStatus, XCallEvent } from '../../xcall/types';
+import { TransactionStatus, XCallEvent, XTransactionInput } from '../../xcall/types';
 import { SuiXService } from './SuiXService';
 
 export class SuiXPublicClient extends XPublicClient {
@@ -98,5 +98,18 @@ export class SuiXPublicClient extends XPublicClient {
 
   parseEventLogs(eventLogs: any[]): XCallEvent[] {
     return []; // not used
+  }
+
+  needsApprovalCheck(xToken: XToken): boolean {
+    return false;
+  }
+
+  async estimateApproveGas(amountToApprove: CurrencyAmount<XToken>, spender: string, owner: string) {
+    return 0n;
+  }
+
+  async estimateSwapGas(xTransactionInput: XTransactionInput) {
+    // TODO: implement
+    return 0n;
   }
 }

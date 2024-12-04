@@ -17,8 +17,10 @@ import ArchWalletIcon from '@/assets/icons/chains/archway.svg';
 import ETHIcon from '@/assets/icons/chains/eth.svg';
 import HavahWalletIcon from '@/assets/icons/chains/havah.svg';
 import InjectiveWalletIcon from '@/assets/icons/chains/injective.svg';
+import StellarWalletIcon from '@/assets/icons/chains/stellar.svg';
 import SuiWalletIcon from '@/assets/icons/chains/sui.svg';
 import IconWalletIcon from '@/assets/icons/wallets/iconex.svg';
+import SolanaWalletIcon from '@/assets/icons/chains/solana.svg';
 
 import { LOCALE_LABEL, SUPPORTED_LOCALES, SupportedLocale } from '@/constants/locales';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
@@ -36,9 +38,11 @@ import Divider from '../Divider';
 import { DropdownPopper } from '../Popover';
 import { EVMWalletModal } from './EVMWalletModal';
 import { InjectiveWalletOptionsModal } from './InjectiveWalletOptionsModal';
+import { StellarWalletOptionsModal } from './StellarWalletOptionsModal';
 import { SuiWalletOptionsModal } from './SuiWalletOptionsModal';
 import WalletItem, { WalletItemProps } from './WalletItem';
 import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
+import { SolanaWalletOptionsModal } from './SolanaWalletOptionsModal';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {
@@ -125,7 +129,6 @@ export default function WalletModal() {
             .filter(xChain => getXChainType(xChain.xChainId) === 'EVM' && !xChain.testnet)
             .sort((a, b) => a.name.localeCompare(b.name)),
           switchChain: switchChain,
-          walletOptionsModalId: MODAL_ID.EVM_WALLET_OPTIONS_MODAL,
         },
         {
           name: 'Havah',
@@ -147,7 +150,13 @@ export default function WalletModal() {
           logo: <InjectiveWalletIcon width="40" height="40" />,
           description: t`Borrow, swap, & transfer cross-chain.`,
           keyWords: ['injective', 'cosmos', 'keplr', 'leap'],
-          walletOptionsModalId: MODAL_ID.INJECTIVE_WALLET_OPTIONS_MODAL,
+        },
+        {
+          name: 'Stellar',
+          xChainType: 'STELLAR',
+          logo: <StellarWalletIcon width="40" height="40" />,
+          description: t`Borrow, swap, & transfer cross-chain.`,
+          keyWords: ['stellar', 'lumens', 'xlm'],
         },
         {
           name: 'Sui',
@@ -155,6 +164,13 @@ export default function WalletModal() {
           logo: <SuiWalletIcon width="40" height="40" />,
           description: t`Borrow, swap, & transfer cross-chain.`,
           keyWords: ['sui'],
+        },
+        {
+          name: 'Solana',
+          xChainType: 'SOLANA',
+          logo: <SolanaWalletIcon width="40" height="40" style={{ color: '#000' }} />,
+          description: t`Borrow, swap, & transfer cross-chain.`,
+          keyWords: ['solana'],
         },
       ].sort((a, b) => a.name.localeCompare(b.name)),
     ] as WalletItemProps[];
@@ -277,6 +293,8 @@ export default function WalletModal() {
       <EVMWalletModal />
       <InjectiveWalletOptionsModal />
       <SuiWalletOptionsModal />
+      <StellarWalletOptionsModal />
+      <SolanaWalletOptionsModal />
     </>
   );
 }

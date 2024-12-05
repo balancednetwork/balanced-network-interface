@@ -10,7 +10,7 @@ import { SUPPORTED_TOKENS_MAP_BY_ADDRESS, bnUSD } from '@/constants/tokens';
 import { useTokenPrices } from '@/queries/backendv2';
 import { useSupportedCollateralTokens } from '@/store/collateral/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { NETWORK_ID } from '@/constants/config';
 import { AppState } from '..';

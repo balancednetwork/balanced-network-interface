@@ -1,10 +1,10 @@
 import { Typography } from '@/app/theme';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatSymbol, formatValue } from '@/utils/formatter';
-import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@/xwagmi/types';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import React from 'react';
 import { useTheme } from 'styled-components';

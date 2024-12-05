@@ -14,7 +14,7 @@ import { Typography } from '@/app/theme';
 import { useSetSlippageTolerance, useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
-import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
+import { useXCallFee } from '@balancednetwork/xwagmi';
 
 export default function AdvancedSwapDetails() {
   const { trade, currencies, direction } = useDerivedSwapInfo();

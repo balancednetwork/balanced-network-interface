@@ -13,9 +13,9 @@ import { useCollateralAmounts, useCollateralType } from '@/store/collateral/hook
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatValue } from '@/utils/formatter';
-import { xChains } from '@/xwagmi/constants/xChains';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XChain, XChainId } from '@/xwagmi/types';
+import { xChains } from '@balancednetwork/xwagmi';
+import { xTokenMap } from '@balancednetwork/xwagmi';
+import { XChain, XChainId } from '@balancednetwork/xwagmi';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';

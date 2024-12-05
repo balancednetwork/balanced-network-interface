@@ -17,10 +17,10 @@ import ArchWalletIcon from '@/assets/icons/chains/archway.svg';
 import ETHIcon from '@/assets/icons/chains/eth.svg';
 import HavahWalletIcon from '@/assets/icons/chains/havah.svg';
 import InjectiveWalletIcon from '@/assets/icons/chains/injective.svg';
+import SolanaWalletIcon from '@/assets/icons/chains/solana.svg';
 import StellarWalletIcon from '@/assets/icons/chains/stellar.svg';
 import SuiWalletIcon from '@/assets/icons/chains/sui.svg';
 import IconWalletIcon from '@/assets/icons/wallets/iconex.svg';
-import SolanaWalletIcon from '@/assets/icons/chains/solana.svg';
 
 import { LOCALE_LABEL, SUPPORTED_LOCALES, SupportedLocale } from '@/constants/locales';
 import { useActiveLocale } from '@/hooks/useActiveLocale';
@@ -28,21 +28,17 @@ import { useModalOpen, useWalletModalToggle } from '@/store/application/hooks';
 import { ApplicationModal } from '@/store/application/reducer';
 
 import useDebounce from '@/hooks/useDebounce';
-import { MODAL_ID } from '@/hooks/useModalStore';
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { getXChainType } from '@/xwagmi/actions';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { useXDisconnectAll } from '@/xwagmi/hooks';
-import { useSwitchChain } from 'wagmi';
+import { getXChainType, useSwitchChain, useXDisconnectAll, xChainMap } from '@balancednetwork/xwagmi';
 import Divider from '../Divider';
 import { DropdownPopper } from '../Popover';
 import { EVMWalletModal } from './EVMWalletModal';
 import { InjectiveWalletOptionsModal } from './InjectiveWalletOptionsModal';
+import { SolanaWalletOptionsModal } from './SolanaWalletOptionsModal';
 import { StellarWalletOptionsModal } from './StellarWalletOptionsModal';
 import { SuiWalletOptionsModal } from './SuiWalletOptionsModal';
 import WalletItem, { WalletItemProps } from './WalletItem';
 import { SignInOptionsWrap, StyledSearchInput, Wrapper } from './styled';
-import { SolanaWalletOptionsModal } from './SolanaWalletOptionsModal';
 
 const StyledModal = styled(({ mobile, ...rest }: ModalProps & { mobile?: boolean }) => <Modal {...rest} />)`
   &[data-reach-dialog-content] {

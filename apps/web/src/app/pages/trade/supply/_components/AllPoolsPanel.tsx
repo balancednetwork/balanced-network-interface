@@ -20,7 +20,7 @@ import { HeaderText } from '@/app/components/SearchModal/styleds';
 import Skeleton from '@/app/components/Skeleton';
 import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
 import { PairInfo } from '@/types';
-import { xChainMap } from '@/xwagmi/constants/xChains';
+import { xChainMap } from '@balancednetwork/xwagmi';
 import { useMedia } from 'react-use';
 
 const COMPACT_ITEM_COUNT = 8;

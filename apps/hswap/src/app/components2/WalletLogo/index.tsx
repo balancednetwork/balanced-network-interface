@@ -1,13 +1,21 @@
-import React from 'react';
 import { cn } from '@/lib/utils';
+import React from 'react';
 
-import HanaIcon from '@/xwagmi/assets/wallets/hana.svg?inline';
-import KeplrIcon from '@/xwagmi/assets/wallets/keplr.svg?inline';
-import MetaMaskIcon from '@/xwagmi/assets/wallets/metamask.svg?inline';
-import HavahIcon from '@/xwagmi/assets/wallets/havah.svg?inline';
-import PhantomIcon from '@/xwagmi/assets/wallets/phantom.svg?inline';
-import SuiIcon from '@/xwagmi/assets/wallets/sui.svg?inline';
-import { WalletId } from '@/xwagmi/types';
+// import HanaIcon from '@balancednetwork/xwagmi';
+// import HavahIcon from '@balancednetwork/xwagmi';
+// import KeplrIcon from '@balancednetwork/xwagmi';
+// import MetaMaskIcon from '@balancednetwork/xwagmi';
+// import PhantomIcon from '@balancednetwork/xwagmi';
+// import SuiIcon from '@balancednetwork/xwagmi';
+
+import { WalletId } from '@balancednetwork/xwagmi';
+
+const HanaIcon = 'https://cdn.iconscout.com/icon/free/png-256/hana-1-555308.png';
+const HavahIcon = 'https://cdn.iconscout.com/icon/free/png-256/havah-1-555309.png';
+const KeplrIcon = 'https://cdn.iconscout.com/icon/free/png-256/keplr-1-555310.png';
+const MetaMaskIcon = 'https://cdn.iconscout.com/icon/free/png-256/metamask-1-555311.png';
+const PhantomIcon = 'https://cdn.iconscout.com/icon/free/png-256/phantom-1-555312.png';
+const SuiIcon = 'https://cdn.iconscout.com/icon/free/png-256/sui-1-555313.png';
 
 const walletIcons: Record<WalletId, any> = {
   [WalletId.METAMASK]: MetaMaskIcon,

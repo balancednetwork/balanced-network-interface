@@ -19,7 +19,7 @@ import { useBBalnAmount, useFetchBBalnInfo, useTotalSupply } from '@/store/bbaln
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX, useWalletFetchBalances } from '@/store/wallet/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import ArbitraryCallsForm from './_components/ArbitraryCalls/ArbitraryCallsForm';
 import { getTransactionsString } from './_components/ArbitraryCalls/utils';

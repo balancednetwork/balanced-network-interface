@@ -15,11 +15,11 @@ import useSortXChains from '@/hooks/useSortXChains';
 import { useHasSignedIn, useSignedInWallets } from '@/hooks/useWallets';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatBalance } from '@/utils/formatter';
-import { getXChainType } from '@/xwagmi/actions';
-import { xChains } from '@/xwagmi/constants/xChains';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
-import { useXConnect, useXConnectors } from '@/xwagmi/hooks';
-import { XChain, XChainId } from '@/xwagmi/types';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { xChains } from '@balancednetwork/xwagmi';
+import { xTokenMap } from '@balancednetwork/xwagmi';
+import { useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
+import { XChain, XChainId } from '@balancednetwork/xwagmi';
 import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from './styledComponents';
 
 type ChainListProps = {

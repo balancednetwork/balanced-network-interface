@@ -343,8 +343,8 @@ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
-msgid "{0} {collateralType} added to your wallet."
-msgstr ""
+#~ msgid "{0} {collateralType} added to your wallet."
+#~ msgstr ""
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "No assets found."
@@ -1045,8 +1045,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
-msgid "Add {collateralType} to your {0} wallet."
-msgstr ""
+#~ msgid "Add {collateralType} to your {0} wallet."
+#~ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x."
@@ -2141,6 +2141,11 @@ msgstr ""
 msgid "The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset."
 msgstr ""
 
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/CollateralPanel.tsx
+msgid "{0} {1} added to your wallet."
+msgstr ""
+
 #: src/btp/src/connectors/helper.ts
 msgid "Sent {0} to the bridge contract."
 msgstr ""
@@ -2369,6 +2374,10 @@ msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Allocating bBALN..."
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Add {0} to your {1} wallet."
 msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
@@ -2698,8 +2707,8 @@ msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}
 msgstr ""
 
 #: src/xwagmi/xchains/stellar/utils.ts
-msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."
-msgstr ""
+#~ msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."
+#~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx

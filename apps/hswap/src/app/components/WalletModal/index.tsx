@@ -20,7 +20,7 @@ import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetDescription } from '@/components/ui/sheet';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
-import { useXDisconnectAll } from '@/xwagmi/hooks';
+import { useXDisconnectAll } from '@balancednetwork/xwagmi';
 import WalletItem, { WalletItemProps } from '../WalletConnectModal/WalletItem';
 import HistoryItemList from './HistoryItemList';
 import { IconWithConfirmTextButton } from './IconWithConfirmTextButton';

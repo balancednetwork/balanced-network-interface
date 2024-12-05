@@ -345,8 +345,8 @@ msgstr "Past week"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
-msgid "{0} {collateralType} added to your wallet."
-msgstr "{0} {collateralType} added to your wallet."
+#~ msgid "{0} {collateralType} added to your wallet."
+#~ msgstr "{0} {collateralType} added to your wallet."
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "No assets found."
@@ -1049,8 +1049,8 @@ msgstr "Swap {0} for {1}?"
 #~ msgstr "Claimed Balanced incentives."
 
 #: src/app/components/home/CollateralPanel.tsx
-msgid "Add {collateralType} to your {0} wallet."
-msgstr "Add {collateralType} to your {0} wallet."
+#~ msgid "Add {collateralType} to your {0} wallet."
+#~ msgstr "Add {collateralType} to your {0} wallet."
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x."
@@ -2149,6 +2149,11 @@ msgstr "Swap fee (included): <0>{0} {1}</0>"
 msgid "The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset."
 msgstr "The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset."
 
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/CollateralPanel.tsx
+msgid "{0} {1} added to your wallet."
+msgstr "{0} {1} added to your wallet."
+
 #: src/btp/src/connectors/helper.ts
 msgid "Sent {0} to the bridge contract."
 msgstr "Sent {0} to the bridge contract."
@@ -2378,6 +2383,10 @@ msgstr "Deposit {0} collateral?"
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Allocating bBALN..."
 msgstr "Allocating bBALN..."
+
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Add {0} to your {1} wallet."
+msgstr "Add {0} to your {1} wallet."
 
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
@@ -2706,8 +2715,8 @@ msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}
 msgstr "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
 
 #: src/xwagmi/xchains/stellar/utils.ts
-msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."
-msgstr "Stellar wallet inactive. Add at least 1 XLM from an external source."
+#~ msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."
+#~ msgstr "Stellar wallet inactive. Add at least 1 XLM from an external source."
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx

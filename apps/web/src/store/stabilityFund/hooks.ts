@@ -8,7 +8,7 @@ import useInterval from '@/hooks/useInterval';
 import { useBnJsContractQuery } from '@/queries/utils';
 import { AppState } from '@/store';
 import { formatUnits } from '@/utils';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { setBalances } from './reducer';
 

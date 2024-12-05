@@ -48,4 +48,16 @@ export class Token extends BaseCurrency {
   public get wrapped(): Token {
     return this;
   }
+
+  public get isNativeToken() {
+    const nativeAddresses = [
+      'cx0000000000000000000000000000000000000000',
+      '0x0000000000000000000000000000000000000000',
+      'inj',
+      '0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI',
+      'hx0000000000000000000000000000000000000000',
+    ];
+
+    return nativeAddresses.includes(this.address);
+  }
 }

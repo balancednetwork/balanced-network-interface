@@ -1,8 +1,8 @@
 import { useWalletBalances } from '@/store/wallet/hooks';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChain, XToken } from '@/xwagmi/types';
-import { formatBigNumber, getNetworkDisplayName } from '@/xwagmi/utils';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { XChain, XToken } from '@balancednetwork/xwagmi';
+import { formatBigNumber, getNetworkDisplayName } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { useMemo } from 'react';
 

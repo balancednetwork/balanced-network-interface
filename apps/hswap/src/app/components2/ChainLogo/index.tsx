@@ -1,6 +1,6 @@
-import React from 'react';
-import { XChain } from '@/xwagmi/types';
 import { cn } from '@/lib/utils';
+import { XChain } from '@balancednetwork/xwagmi';
+import React from 'react';
 
 export const ChainLogo = ({ chain, className }: { chain: XChain; className?: string }) => {
   return (

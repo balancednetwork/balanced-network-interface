@@ -2,7 +2,7 @@ import { Typography } from '@/app/theme';
 import { useXService } from '@/xwagmi/hooks';
 import { StellarXService } from '@/xwagmi/xchains/stellar';
 import { Trans } from '@lingui/macro';
-import { BASE_FEE, Networks, TransactionBuilder } from '@stellar/stellar-sdk';
+import { BASE_FEE, Keypair, Networks, TransactionBuilder } from '@stellar/stellar-sdk';
 import axios from 'axios';
 import React from 'react';
 import { useTheme } from 'styled-components';
@@ -38,43 +38,27 @@ const StellarSponsorshipModal = ({ text, address }: StellarSponsorshipModalProps
       return;
     }
     try {
+      const client = axios.create({
+        baseURL: SPONSOR_URL,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
       setLoading(true);
-
-      // First request to get transaction data
-      const response = await fetch(SPONSOR_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ address }),
+      const response = await client.post('/', {
+        address,
       });
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+      const transaction = TransactionBuilder.fromXDR(response.data, Networks.PUBLIC);
+      const { signedTxXdr: signedXDR } = await stellarXService.walletsKit.signTransaction(transaction.toXDR());
 
-      const responseData = await response.json();
-      console.log('STELLAR SPONSOR - Transaction data:', responseData);
-
-      const transaction = TransactionBuilder.fromXDR(responseData, Networks.PUBLIC);
-      const { signedTxXdr: signedTxXDR } = await stellarXService.walletsKit.signTransaction(transaction.toXDR());
-      console.log('STELLAR SPONSOR - Signed tx XDR', signedTxXDR);
-
-      // Second request to send signed transaction
-      const sponsorResponse = await fetch(SPONSOR_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ data: signedTxXDR }),
-      });
-
-      if (!sponsorResponse.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const sponsorResult = await sponsorResponse.json();
+      const sponsorResult = await client.post('/', { data: signedXDR });
       console.log('STELLAR SPONSOR - Sponsor result:', sponsorResult);
+
+      if (sponsorResult.statusText === 'OK' && sponsorResult.data) {
+        console.log('done, proceed with swap');
+      }
     } catch (error) {
       console.error('Error fetching Stellar sponsor transaction:', error);
       throw error;

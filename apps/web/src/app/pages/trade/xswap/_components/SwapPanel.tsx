@@ -193,7 +193,9 @@ export default function SwapPanel() {
           <Flex>
             <CurrencyInputPanel
               account={account}
-              value={formattedAmounts[Field.OUTPUT]}
+              value={
+                mmTrade.isMMBetter ? mmTrade.trade?.outputAmount.toSignificant() ?? '' : formattedAmounts[Field.OUTPUT]
+              }
               currency={currencies[Field.OUTPUT]}
               onUserInput={handleOutputType}
               onCurrencySelect={handleOutputSelect}

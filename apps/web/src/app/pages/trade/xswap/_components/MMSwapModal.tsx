@@ -9,6 +9,8 @@ import { StyledButton } from '@/app/components/Button/StyledButton';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
+import CrossIcon from '@/assets/icons/failure.svg';
+import TickIcon from '@/assets/icons/tick.svg';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
@@ -255,7 +257,54 @@ const MMSwapModal = ({
             )}
           </AnimatePresence>
 
-          {!isProcessing && !gasChecker.hasEnoughGas && (
+          <AnimatePresence>
+            {orderStatus === IntentOrderStatus.Filled && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+              >
+                <Box pt={3}>
+                  <Flex
+                    pt={3}
+                    alignItems="center"
+                    justifyContent="center"
+                    flexDirection="column"
+                    className="border-top"
+                  >
+                    <Typography mb={4}>
+                      <Trans>Completed</Trans>
+                    </Typography>
+                    <TickIcon width={20} height={20} />
+                  </Flex>
+                </Box>
+              </motion.div>
+            )}
+            {orderStatus === IntentOrderStatus.Failure && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+              >
+                <Box pt={3}>
+                  <Flex
+                    pt={3}
+                    alignItems="center"
+                    justifyContent="center"
+                    flexDirection="column"
+                    className="border-top"
+                  >
+                    <Typography mb={4}>
+                      <Trans>Failed</Trans>
+                    </Typography>
+                    <CrossIcon width={20} height={20} />
+                  </Flex>
+                </Box>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {orderStatus === IntentOrderStatus.None && !gasChecker.hasEnoughGas && (
             <Flex justifyContent="center" paddingY={2}>
               <Typography maxWidth="320px" color="alert" textAlign="center">
                 {gasChecker.errorMessage}

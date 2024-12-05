@@ -5,7 +5,6 @@ import { Box, Flex } from 'rebass/styled-components';
 
 import { Typography } from '@/app/theme';
 import { useDerivedMMTradeInfo, useDerivedSwapInfo } from '@/store/swap/hooks';
-import { ChevronRight } from 'react-feather';
 import TradePrice from './TradePrice';
 
 export default function MMAdvancedSwapDetails() {
@@ -33,13 +32,9 @@ export default function MMAdvancedSwapDetails() {
           <Trans>Route</Trans>
         </Typography>
 
-        {trade && (
-          <Typography textAlign="right" maxWidth="200px">
-            <span>
-              {trade.inputAmount.currency.symbol} <ChevronRight size={14} /> {trade.outputAmount.currency.symbol}
-            </span>
-          </Typography>
-        )}
+        <Typography textAlign="right">
+          <Trans>Balanced Intent</Trans>
+        </Typography>
       </Flex>
 
       <Flex alignItems="center" justifyContent="space-between" mb={2}>

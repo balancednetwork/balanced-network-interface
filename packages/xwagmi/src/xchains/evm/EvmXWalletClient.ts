@@ -30,7 +30,7 @@ export class EvmXWalletClient extends XWalletClient {
     if (!publicClient) {
       throw new Error('EvmXPublicClient: publicClient is not initialized yet');
     }
-    return publicClient;
+    return publicClient as PublicClient;
   }
 
   async getWalletClient(): Promise<WalletClient> {

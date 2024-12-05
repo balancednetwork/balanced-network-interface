@@ -44,7 +44,6 @@
     "@solana/web3.js": "1.95.4",
     "@stellar/stellar-sdk": "12.3.0",
     "@tanstack/react-query": "5.29.2",
-    "@wagmi/core": "2.9.0",
     "axios": "0.21.3",
     "bech32": "2.0.0",
     "bignumber.js": "9.0.1",

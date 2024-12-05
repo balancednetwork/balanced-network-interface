@@ -1,4 +1,7 @@
+import { allXTokens } from '@/xwagmi/constants/xTokens';
+import { XToken } from '@/xwagmi/types';
 import { IntentService, IntentStatusCode } from '@balancednetwork/intents-sdk';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { useQuery } from '@tanstack/react-query';
 import React, { useMemo } from 'react';
 
@@ -10,11 +13,16 @@ export enum MMTransactionStatus {
   pending = 'pending',
   success = 'success',
   failure = 'failure',
+  cancelled = 'cancelled',
 }
 
 export type MMTransaction = {
   id: string;
+  orderId: bigint;
+  taskId: string;
   status: MMTransactionStatus;
+  fromAmount: CurrencyAmount<XToken>;
+  toAmount: CurrencyAmount<XToken>;
 };
 
 type MMTransactionStore = {
@@ -23,26 +31,48 @@ type MMTransactionStore = {
   add: (transaction: MMTransaction) => void;
   success: (id: string) => void;
   fail: (id: string) => void;
+  cancel: (id: string) => void;
+  setTaskId: (id: string, taskId: string) => void;
   getPendingTransactions: () => MMTransaction[];
   remove: (id: string) => void;
 };
 
-const jsonStorageOptions = {
-  reviver: (_key: unknown, value: unknown) => {
+const jsonStorageOptions: {
+  reviver?: (key: string, value: unknown) => unknown;
+  replacer?: (key: string, value: unknown) => unknown;
+} = {
+  reviver: (_key: string, value: unknown) => {
     if (!value) return value;
 
-    if (typeof value === 'string' && value.startsWith('BIGINT::')) {
-      return BigInt(value.substring(8));
+    // @ts-ignore
+    if (value && value.type === 'bigint') {
+      // @ts-ignore
+      return BigInt(value.value);
     }
 
+    // @ts-ignore
+    if (value && value.type === 'CurrencyAmount') {
+      // @ts-ignore
+      return CurrencyAmount.fromRawAmount(allXTokens.find(t => t.id === value.value.tokenId)!, value.value.quotient);
+    }
     return value;
   },
   replacer: (_key: unknown, value: unknown) => {
     if (typeof value === 'bigint') {
-      return `BIGINT::${value}`;
-    } else {
-      return value;
+      return { type: 'bigint', value: value.toString() };
     }
+
+    if (value instanceof CurrencyAmount) {
+      return {
+        type: 'CurrencyAmount',
+        value: {
+          tokenId: value.currency.id,
+          quotient: value.quotient.toString(),
+        },
+      };
+    }
+
+    return value;
   },
 };
 
@@ -70,6 +100,18 @@ export const useMMTransactionStore = create<MMTransactionStore>()(
       fail: (id: string) => {
         set(state => {
           state.transactions[id].status = MMTransactionStatus.failure;
+        });
+      },
+
+      cancel: (id: string) => {
+        set(state => {
+          state.transactions[id].status = MMTransactionStatus.cancelled;
+        });
+      },
+
+      setTaskId: (id: string, taskId: string) => {
+        set(state => {
+          state.transactions[id].taskId = taskId;
         });
       },
 
@@ -123,6 +165,14 @@ export const MMTransactionActions = {
     useMMTransactionStore.getState().fail(id);
   },
 
+  cancel: (id: string) => {
+    useMMTransactionStore.getState().cancel(id);
+  },
+
+  setTaskId: (id: string, taskId: string) => {
+    useMMTransactionStore.getState().setTaskId(id, taskId);
+  },
+
   remove: (id: string) => {
     useMMTransactionStore.getState().remove(id);
   },
@@ -133,25 +183,25 @@ export const MMTransactionActions = {
 export const Updater = () => {
   const { transactions } = useMMTransactionStore();
 
-  const pendingTxs = useMemo(() => {
-    return Object.keys(transactions).filter(id => transactions[id].status === MMTransactionStatus.pending);
+  const pendingIntents = useMemo(() => {
+    return Object.values(transactions).filter(tx => tx.status === MMTransactionStatus.pending);
   }, [transactions]);
 
   useQuery({
     queryKey: ['checkMMTransactions'],
     queryFn: async () => {
       return Promise.all(
-        pendingTxs.map(async id => {
-          const intentStatus = await IntentService.getStatus({ task_id: id });
+        pendingIntents.map(async t => {
+          const intentStatus = await IntentService.getStatus({ task_id: t.taskId });
 
           if (intentStatus.ok && intentStatus.value.status === IntentStatusCode.SOLVED) {
-            MMTransactionActions.success(id);
+            MMTransactionActions.success(t.id);
           }
         }),
       );
     },
-    refetchInterval: 5_000,
-    enabled: pendingTxs.length > 0,
+    refetchInterval: 2_000,
+    enabled: pendingIntents.length > 0,
   });
 
   return null;

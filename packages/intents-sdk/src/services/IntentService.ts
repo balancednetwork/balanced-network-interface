@@ -180,7 +180,7 @@ export class IntentService {
     }
   }
 
-  private static async createIntentOrder<T extends CreateIntentOrderPayload>(
+  public static async createIntentOrder<T extends CreateIntentOrderPayload>(
     payload: T,
     provider: GetChainProviderType<T['fromChain']>,
   ): Promise<Result<Hash | string>> {
@@ -275,9 +275,11 @@ export class IntentService {
    */
   static async getOrder<T extends ChainConfig>(
     txHash: string,
-    chainConfig: T,
+    chain: ChainName,
     provider: ChainProvider<T['chain']['type']>,
   ): Promise<Result<SwapOrder>> {
+    const chainConfig = IntentService.getChainConfig(chain);
+
     if (provider instanceof EvmProvider && isEvmChainConfig(chainConfig)) {
       return EvmIntentService.getOrder(txHash as Address, chainConfig, provider);
     } else if (provider instanceof SuiProvider && isSuiChainConfig(chainConfig)) {

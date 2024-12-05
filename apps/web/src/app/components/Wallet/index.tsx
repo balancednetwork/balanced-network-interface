@@ -163,9 +163,9 @@ const Wallet = ({ close }: WalletProps) => {
               />
             ),
           )}
-          {sortedFilteredBalances.length === 0 && searchQuery !== '' && (
-            <Typography padding={'30px 0 15px 0'} textAlign={'center'}>
-              No assets found
+          {sortedFilteredBalances.length === 0 && (
+            <Typography padding={'20px 0 0 0'} textAlign={'center'}>
+              No assets found.
             </Typography>
           )}
         </List>

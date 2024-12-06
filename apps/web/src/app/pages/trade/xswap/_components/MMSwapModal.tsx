@@ -30,8 +30,15 @@ import {
   SolverApiService,
   SuiProvider,
 } from '@balancednetwork/intents-sdk';
-import { EvmXService, XToken, useXService, xChainMap } from '@balancednetwork/xwagmi';
-import { useCurrentAccount, useCurrentWallet, useSuiClient } from '@mysten/dapp-kit';
+import {
+  EvmXService,
+  XToken,
+  useCurrentAccount,
+  useCurrentWallet,
+  useSuiClient,
+  useXService,
+  xChainMap,
+} from '@balancednetwork/xwagmi';
 import { AnimatePresence, motion } from 'framer-motion';
 import { WriteContractErrorType } from 'viem';
 import MMPendingIntents from './MMPendingIntents';

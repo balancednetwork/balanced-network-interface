@@ -469,12 +469,6 @@ importers:
       '@lingui/react':
         specifier: 4.7.1
         version: 4.7.1(react@18.2.0)
-      '@mysten/dapp-kit':
-        specifier: 0.14.39
-        version: 0.14.39(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react-dom@18.2.22)(@types/react@18.2.67)(babel-plugin-macros@3.1.0)(immer@10.1.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.5.4)
-      '@mysten/sui':
-        specifier: 1.15.1
-        version: 1.15.1(typescript@5.5.4)
       '@popperjs/core':
         specifier: 2.8.4
         version: 2.8.4
@@ -749,7 +743,7 @@ importers:
     devDependencies:
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.4.8(@swc/helpers@0.5.12))(postcss@8.4.41)(typescript@5.7.2)
+        version: 8.0.2(@swc/core@1.4.8)(postcss@8.4.41)(typescript@5.7.2)
 
   packages/intents-sdk:
     dependencies:
@@ -811,7 +805,7 @@ importers:
         version: 6.2.2
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.4.8(@swc/helpers@0.5.12))(postcss@8.4.41)(typescript@5.7.2)
+        version: 8.0.2(@swc/core@1.4.8)(postcss@8.4.41)(typescript@5.7.2)
 
   packages/v1-sdk:
     dependencies:
@@ -833,7 +827,7 @@ importers:
     devDependencies:
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.4.8(@swc/helpers@0.5.12))(postcss@8.4.41)(typescript@5.7.2)
+        version: 8.0.2(@swc/core@1.4.8)(postcss@8.4.41)(typescript@5.7.2)
 
   packages/xwagmi:
     dependencies:
@@ -3503,18 +3497,8 @@ packages:
       '@tanstack/react-query': ^5.0.0
       react: '*'
 
-  '@mysten/dapp-kit@0.14.39':
-    resolution: {integrity: sha512-GcY68M6P+jvjALqy7U9onrCA25ETNlSlRpfsg5AnPpR0PBymnuVP9yYQMYk1aijFchYWNM4kALlazeLQiV2ldQ==}
-    peerDependencies:
-      '@tanstack/react-query': ^5.0.0
-      react: '*'
-
   '@mysten/sui@1.15.0':
     resolution: {integrity: sha512-vuyKtb3dY3X6HYzSz/DjoNMQs0zqIWscR2W0lbcYyPOFQZ4lHpzLZszgQor+OGb6uMr7M4COIWKVaIJ82Bbt8w==}
-    engines: {node: '>=18'}
-
-  '@mysten/sui@1.15.1':
-    resolution: {integrity: sha512-q8m+xtuh//rHEwEmk6pr7Dguw6/2ySNye2Oy1w6ivbkeRFgqoEE64+fYuMK+lX/SEPhOTEZtN7fp/Trno0KMnw==}
     engines: {node: '>=18'}
 
   '@mysten/sui@1.16.0':
@@ -3525,9 +3509,6 @@ packages:
     resolution: {integrity: sha512-iL7yztpePS/GWFZ7yiD/Pl7ciuOD2ySyogJZmLFu4WxZfiIcXJX+U/U+Egq9VHvELk8+m+Z1OvvPlNQfuowMIg==}
     engines: {node: '>=18'}
 
-  '@mysten/wallet-standard@0.13.15':
-    resolution: {integrity: sha512-kTgwT6a5WolSnaz9r6/B5bvruuWUO8fmnHB9lgITkIraildVpK7NQIYHik2kd4OaAl118tmch0NPW/qoJFT35g==}
-
   '@mysten/wallet-standard@0.13.16':
     resolution: {integrity: sha512-0UEsEmQ/JzYFfba4enKyzv4VOqFSZx6XJmmPrQZxPNqShDq0EI60q5K7P91gWMmMlK3Dxq7nOUJASWZL12Yb4g==}
 
@@ -3536,9 +3517,6 @@ packages:
 
   '@mysten/zksend@0.11.0':
     resolution: {integrity: sha512-Q44ljYpH2Om8kOu/P+gxhZjFh8HgGXM3fdvpv3u0Fh+IbZW0ypv6G2RGDwldWBXY+pYO4xVpxres8QfC4CzALQ==}
-
-  '@mysten/zksend@0.12.5':
-    resolution: {integrity: sha512-Ghl8CDGDg7fKEIifcRczJUSX/IJzpDHmozp6sTXFVwIiLZTRan9A/uJnDj6oeyBkoEvUxNd17wgm3UO66in/dw==}
 
   '@ngneat/elf-devtools@1.3.0':
     resolution: {integrity: sha512-J9+4Vk/S/nKFGnXGZUDYrIx/K8Jfv4TLpzR3voBSOtSeq+c8Q0hdmo8iW7oaK6y5FWFDk0VJktlEh9cjylYxFg==}
@@ -17850,54 +17828,10 @@ snapshots:
       - react-dom
       - typescript
 
-  '@mysten/dapp-kit@0.14.39(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react-dom@18.2.22)(@types/react@18.2.67)(babel-plugin-macros@3.1.0)(immer@10.1.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.5.4)':
-    dependencies:
-      '@mysten/sui': 1.15.1(typescript@5.5.4)
-      '@mysten/wallet-standard': 0.13.15(typescript@5.5.4)
-      '@mysten/zksend': 0.12.5(typescript@5.5.4)
-      '@radix-ui/react-dialog': 1.1.1(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-dropdown-menu': 2.1.1(@types/react-dom@18.2.22)(@types/react@18.2.67)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-slot': 1.1.0(@types/react@18.2.67)(react@18.2.0)
-      '@tanstack/react-query': 5.29.2(react@18.2.0)
-      '@vanilla-extract/css': 1.15.5(babel-plugin-macros@3.1.0)
-      '@vanilla-extract/dynamic': 2.1.2
-      '@vanilla-extract/recipes': 0.5.5(@vanilla-extract/css@1.15.5(babel-plugin-macros@3.1.0))
-      clsx: 2.1.1
-      react: 18.2.0
-      zustand: 4.5.5(@types/react@18.2.67)(immer@10.1.1)(react@18.2.0)
-    transitivePeerDependencies:
-      - '@gql.tada/svelte-support'
-      - '@gql.tada/vue-support'
-      - '@types/react'
-      - '@types/react-dom'
-      - babel-plugin-macros
-      - immer
-      - react-dom
-      - typescript
-
   '@mysten/sui@1.15.0(typescript@5.5.4)':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.9.0)
       '@mysten/bcs': 1.1.0
-      '@noble/curves': 1.6.0
-      '@noble/hashes': 1.5.0
-      '@scure/bip32': 1.5.0
-      '@scure/bip39': 1.4.0
-      '@suchipi/femver': 1.0.0
-      bech32: 2.0.0
-      gql.tada: 1.8.6(graphql@16.9.0)(typescript@5.5.4)
-      graphql: 16.9.0
-      tweetnacl: 1.0.3
-      valibot: 0.36.0
-    transitivePeerDependencies:
-      - '@gql.tada/svelte-support'
-      - '@gql.tada/vue-support'
-      - typescript
-
-  '@mysten/sui@1.15.1(typescript@5.5.4)':
-    dependencies:
-      '@graphql-typed-document-node/core': 3.2.0(graphql@16.9.0)
-      '@mysten/bcs': 1.1.1
       '@noble/curves': 1.6.0
       '@noble/hashes': 1.5.0
       '@scure/bip32': 1.5.0
@@ -17953,15 +17887,6 @@ snapshots:
       - '@gql.tada/vue-support'
       - typescript
 
-  '@mysten/wallet-standard@0.13.15(typescript@5.5.4)':
-    dependencies:
-      '@mysten/sui': 1.15.1(typescript@5.5.4)
-      '@wallet-standard/core': 1.0.3
-    transitivePeerDependencies:
-      - '@gql.tada/svelte-support'
-      - '@gql.tada/vue-support'
-      - typescript
-
   '@mysten/wallet-standard@0.13.16(typescript@5.5.4)':
     dependencies:
       '@mysten/sui': 1.16.0(typescript@5.5.4)
@@ -17984,18 +17909,6 @@ snapshots:
     dependencies:
       '@mysten/sui': 1.8.0(typescript@5.5.4)
       '@mysten/wallet-standard': 0.13.3(typescript@5.5.4)
-      mitt: 3.0.1
-      nanostores: 0.10.3
-      valibot: 0.36.0
-    transitivePeerDependencies:
-      - '@gql.tada/svelte-support'
-      - '@gql.tada/vue-support'
-      - typescript
-
-  '@mysten/zksend@0.12.5(typescript@5.5.4)':
-    dependencies:
-      '@mysten/sui': 1.15.1(typescript@5.5.4)
-      '@mysten/wallet-standard': 0.13.15(typescript@5.5.4)
       mitt: 3.0.1
       nanostores: 0.10.3
       valibot: 0.36.0
@@ -29571,30 +29484,6 @@ snapshots:
 
   tslib@2.6.2: {}
 
-  tsup@8.0.2(@swc/core@1.4.8(@swc/helpers@0.5.12))(postcss@8.4.41)(typescript@5.7.2):
-    dependencies:
-      bundle-require: 4.0.2(esbuild@0.19.12)
-      cac: 6.7.14
-      chokidar: 3.6.0
-      debug: 4.3.4
-      esbuild: 0.19.12
-      execa: 5.1.1
-      globby: 11.1.0
-      joycon: 3.1.1
-      postcss-load-config: 4.0.2(postcss@8.4.41)
-      resolve-from: 5.0.0
-      rollup: 4.13.0
-      source-map: 0.8.0-beta.0
-      sucrase: 3.35.0
-      tree-kill: 1.2.2
-    optionalDependencies:
-      '@swc/core': 1.4.8(@swc/helpers@0.5.12)
-      postcss: 8.4.41
-      typescript: 5.7.2
-    transitivePeerDependencies:
-      - supports-color
-      - ts-node
-
   tsup@8.0.2(@swc/core@1.4.8)(postcss@8.4.41)(typescript@5.5.4):
     dependencies:
       bundle-require: 4.0.2(esbuild@0.19.12)
@@ -29615,6 +29504,30 @@ snapshots:
       '@swc/core': 1.4.8(@swc/helpers@0.5.12)
       postcss: 8.4.41
       typescript: 5.5.4
+    transitivePeerDependencies:
+      - supports-color
+      - ts-node
+
+  tsup@8.0.2(@swc/core@1.4.8)(postcss@8.4.41)(typescript@5.7.2):
+    dependencies:
+      bundle-require: 4.0.2(esbuild@0.19.12)
+      cac: 6.7.14
+      chokidar: 3.6.0
+      debug: 4.3.4
+      esbuild: 0.19.12
+      execa: 5.1.1
+      globby: 11.1.0
+      joycon: 3.1.1
+      postcss-load-config: 4.0.2(postcss@8.4.41)
+      resolve-from: 5.0.0
+      rollup: 4.13.0
+      source-map: 0.8.0-beta.0
+      sucrase: 3.35.0
+      tree-kill: 1.2.2
+    optionalDependencies:
+      '@swc/core': 1.4.8(@swc/helpers@0.5.12)
+      postcss: 8.4.41
+      typescript: 5.7.2
     transitivePeerDependencies:
       - supports-color
       - ts-node

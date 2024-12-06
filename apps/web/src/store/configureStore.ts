@@ -15,7 +15,6 @@ import lists from './lists/reducer';
 import liveVoting from './liveVoting/reducer';
 import loan from './loan/reducer';
 import mint from './mint/reducer';
-import oracle from './oracle/reducer';
 import ratio from './ratio/reducer';
 import reward from './reward/reducer';
 import savings from './savings/reducer';
@@ -45,7 +44,6 @@ export function configureAppStore() {
       stakedLP,
       user,
       fees,
-      oracle,
       lists,
       liveVoting,
       arbitraryCalls,

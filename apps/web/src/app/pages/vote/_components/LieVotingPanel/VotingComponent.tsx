@@ -26,7 +26,7 @@ import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { ONE_DAY_DURATION, escapeRegExp } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { AllocationInput, RespoLabel, StyledQuestionIcon, VotingButtons } from '../styledComponents';
 import { formatFraction, formatTimeLeft, formatVoteWeight, getUserCurrentAllocationFormatted } from '../utils';

@@ -1,6 +1,7 @@
-import { getXTokenBySymbol } from '@/utils/xTokens';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XChainId, XToken } from '@/xwagmi/types';
+import { getXTokenBySymbol, isXToken } from '@/utils/xTokens';
+import { Currency } from '@balancednetwork/sdk-core';
+import { DEFAULT_TOKEN_CHAIN, XToken, xTokenMap } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
 import { createSlice } from '@reduxjs/toolkit';
 
 // !TODO: use one Field for swap and bridge panel

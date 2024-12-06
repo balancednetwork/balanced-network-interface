@@ -10,9 +10,9 @@ import { useAllCollateralData, useCollateralActionHandlers, useUserPositionsData
 import { useLoanActionHandlers } from '@/store/loan/hooks';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { getSpokeVersions } from '@/utils/xTokens';
-import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@/xwagmi/types';
+import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
 import { Trans } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Box } from 'rebass';

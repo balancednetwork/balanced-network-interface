@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { XTransaction, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
-import { CheckIcon, ExternalLink, Loader2Icon, XIcon } from 'lucide-react';
-import { getNetworkDisplayName } from '@/xwagmi/utils';
-import { formatBalance } from '@/utils/formatter';
-import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
-import { getTrackerLink } from '@/hooks/useTransactionStore';
+import { ExclamationIcon } from '@/app/components2/Icons';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import { ExclamationIcon } from '@/app/components2/Icons';
+import { formatBalance } from '@/utils/formatter';
+import { getNetworkDisplayName, getTrackerLink } from '@balancednetwork/xwagmi';
+import { XTransaction, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
+import { xMessageActions } from '@balancednetwork/xwagmi';
+import { CheckIcon, ExternalLink, Loader2Icon, XIcon } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 interface HistoryItemProps {
   xTransaction: XTransaction;

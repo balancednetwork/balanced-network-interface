@@ -8,10 +8,10 @@ import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { MMTrade, useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
-import { getXChainType } from '@/xwagmi/actions';
-import { useXConnect, useXConnectors } from '@/xwagmi/hooks';
-import { XChainId } from '@/xwagmi/types';
-import { XToken } from '@/xwagmi/types/xToken';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
+import { XToken } from '@balancednetwork/xwagmi';
 import MMSwapModal from './MMSwapModal';
 
 interface MMSwapCommitButtonProps {

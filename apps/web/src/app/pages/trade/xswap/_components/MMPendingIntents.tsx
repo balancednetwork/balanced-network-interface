@@ -1,5 +1,8 @@
 import React, { useMemo } from 'react';
 
+import { EvmProvider, IntentService, SuiProvider } from '@balancednetwork/intents-sdk';
+import { EvmXService, useXService } from '@balancednetwork/xwagmi';
+import { useCurrentAccount, useCurrentWallet, useSuiClient } from '@mysten/dapp-kit';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
 
@@ -11,10 +14,6 @@ import {
   MMTransactionStatus,
   useMMTransactionStore,
 } from '@/store/transactions/useMMTransactionStore';
-import { useXService } from '@/xwagmi/hooks';
-import { EvmXService } from '@/xwagmi/xchains/evm';
-import { EvmProvider, IntentService, SuiProvider } from '@balancednetwork/intents-sdk';
-import { useCurrentAccount, useCurrentWallet, useSuiClient } from '@mysten/dapp-kit';
 
 export default function MMPendingIntents({ intentId }: { intentId: string | null }) {
   const { transactions } = useMMTransactionStore();
@@ -63,7 +62,7 @@ enum TransactionStatus {
 function PendingIntent({ transaction }: { transaction: MMTransaction }) {
   const [status, setStatus] = React.useState<TransactionStatus>(TransactionStatus.None);
   // arb part
-  const xService = useXService('EVM') as EvmXService;
+  const xService = useXService('EVM') as unknown as EvmXService;
   // end arb part
 
   // sui part

@@ -1,9 +1,9 @@
-import { allXTokens } from '@/xwagmi/constants/xTokens';
-import { XToken } from '@/xwagmi/types';
+import React, { useMemo } from 'react';
+
 import { IntentService, IntentStatusCode } from '@balancednetwork/intents-sdk';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XToken, allXTokens } from '@balancednetwork/xwagmi';
 import { useQuery } from '@tanstack/react-query';
-import React, { useMemo } from 'react';
 
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';

@@ -1,9 +1,9 @@
-import React, { useCallback } from 'react';
 import { Modal } from '@/app/components2/Modal';
-import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
-import { XConnector } from '@/xwagmi/core';
-import { useXConnect, useXConnectors } from '@/xwagmi/hooks';
 import { WalletLogo } from '@/app/components2/WalletLogo';
+import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
+import { XConnector } from '@balancednetwork/xwagmi';
+import { useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
+import React, { useCallback } from 'react';
 
 export const EVMWalletModal = ({ id = MODAL_ID.EVM_WALLET_OPTIONS_MODAL }) => {
   const modalOpen = useModalOpen(id);

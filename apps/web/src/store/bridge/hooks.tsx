@@ -12,11 +12,11 @@ import { AppState } from '@/store';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatSymbol } from '@/utils/formatter';
 import { getXTokenBySymbol } from '@/utils/xTokens';
-import { getXChainType } from '@/xwagmi/actions';
-import { useXAccount } from '@/xwagmi/hooks';
-import { XChainId, XToken } from '@/xwagmi/types';
-import { isDenomAsset } from '@/xwagmi/xchains/archway/utils';
-import { useValidateStellarAccount } from '@/xwagmi/xchains/stellar/utils';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { useXAccount } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
+import { isDenomAsset } from '@balancednetwork/xwagmi';
+import { useValidateStellarAccount } from '@balancednetwork/xwagmi';
 import {
   Field,
   selectChain,

@@ -1,12 +1,13 @@
-import { UnderlineText } from '@/app/components/DropdownText';
-import { Typography } from '@/app/theme';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XToken } from '@/xwagmi/types';
+import React from 'react';
+
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XToken, xChainMap } from '@balancednetwork/xwagmi';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import React from 'react';
 import { Flex } from 'rebass/styled-components';
+
+import { UnderlineText } from '@/app/components/DropdownText';
+import { Typography } from '@/app/theme';
 
 interface BridgeLimitWarningProps {
   limitAmount: CurrencyAmount<XToken>;

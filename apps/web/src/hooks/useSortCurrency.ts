@@ -2,9 +2,9 @@ import { useSignedInWallets } from '@/hooks/useWallets';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { WalletState } from '@/store/wallet/reducer';
 import { getXTokenAddress, isXToken } from '@/utils/xTokens';
-import { SUPPORTED_XCALL_CHAINS } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@/xwagmi/types';
 import { Currency } from '@balancednetwork/sdk-core';
+import { SUPPORTED_XCALL_CHAINS } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useState } from 'react';
 

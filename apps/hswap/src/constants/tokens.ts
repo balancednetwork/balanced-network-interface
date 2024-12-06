@@ -3,13 +3,13 @@ import { Currency, Token } from '@balancednetwork/sdk-core';
 
 import { TRANSFORMED_COMBINED_TOKEN_LIST, TRANSFORMED_DEFAULT_TOKEN_LIST } from '@/store/lists/hooks';
 
+import { XToken } from '@balancednetwork/xwagmi';
 import { NETWORK_ID } from './config';
-import { XToken } from '@/xwagmi/types';
 
 export const NULL_CONTRACT_ADDRESS = '0x1.icon-native';
 
 export const isNativeCurrency = (token?: Currency | XToken): boolean => {
-  return !!token && token.wrapped?.address.includes('native');
+  return !!token && token.wrapped?.address?.includes('native');
 };
 
 export const isBALN = (token?: Token): boolean => {

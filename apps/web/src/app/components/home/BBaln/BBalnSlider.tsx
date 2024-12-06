@@ -44,7 +44,7 @@ import { useBALNDetails, useHasEnoughICX } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { getFormattedNumber } from '@/utils/formatter';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { DropdownPopper } from '@/app/components/Popover';
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';

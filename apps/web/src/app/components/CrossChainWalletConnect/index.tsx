@@ -2,12 +2,12 @@ import React from 'react';
 
 import { Typography } from '@/app/theme';
 import { shortenAddress } from '@/utils';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId } from '@balancednetwork/xwagmi';
 
 import { useSwapState } from '@/store/swap/hooks';
-import { getXChainType } from '@/xwagmi/actions';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { useXAccount, useXConnect, useXConnectors } from '@/xwagmi/hooks';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { useXAccount, useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
 import { Trans } from '@lingui/macro';
 import { UnderlineText } from '../DropdownText';
 import Modal from '../Modal';

@@ -1,9 +1,13 @@
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XChain, XChainId, XToken } from '@/xwagmi/types';
-import { formatBigNumber, getNetworkDisplayName } from '@/xwagmi/utils';
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
+import {
+  XChain,
+  XChainId,
+  formatBigNumber,
+  getNetworkDisplayName,
+  xChainMap,
+  xTokenMap,
+} from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { useMemo } from 'react';
 
@@ -15,8 +19,12 @@ function useXCallGasChecker(
 
   return useMemo(() => {
     try {
+      // if (!inputAmount) {
+      //   throw new Error('inputAmount is undefined');
+      // }
+
       const xChain: XChain = xChainMap[xChainId];
-      const nativeCurrency: XToken = xTokenMap[xChainId].find(x => x.isNativeToken)!;
+      const nativeCurrency: XToken = xTokenMap[xChainId].find(x => x.isNativeToken);
 
       const gasThreshold = inputAmount?.currency.isNativeToken
         ? xChain.gasThreshold + Number(inputAmount.toFixed())
@@ -36,7 +44,7 @@ function useXCallGasChecker(
 
       return { hasEnoughGas: !!hasEnoughGas, errorMessage };
     } catch (e) {
-      // console.log(e);
+      console.log(e);
     }
 
     return { hasEnoughGas: false, errorMessage: 'Unknown' };

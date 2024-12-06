@@ -1,4 +1,4 @@
-import { XChainId } from '@/xwagmi/types';
+import { XChainId } from '@balancednetwork/xwagmi';
 import { createSlice } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 

@@ -7,9 +7,7 @@ import { BASES_TO_CHECK_TRADES_AGAINST } from '@/constants/routing';
 import { TokenAddressMap, useCombinedActiveList } from '@/store/lists/hooks';
 import { useUserAddedTokens } from '@/store/user/hooks';
 import { isAddress } from '@/utils';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XToken } from '@/xwagmi/types';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { XToken, bnJs, xTokenMap } from '@balancednetwork/xwagmi';
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
 function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {

@@ -1,8 +1,8 @@
 import { Currency } from '@balancednetwork/sdk-core';
 
-import { xChainMap, xChains } from '@/xwagmi/constants/xChains';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XChain, XChainId, XToken } from '@/xwagmi/types';
+import { xChainMap, xChains } from '@balancednetwork/xwagmi';
+import { xTokenMap } from '@balancednetwork/xwagmi';
+import { XChain, XChainId, XToken } from '@balancednetwork/xwagmi';
 
 export const getNetworkDisplayName = (chain: XChainId) => {
   return xChainMap?.[chain]?.name || 'unknown';

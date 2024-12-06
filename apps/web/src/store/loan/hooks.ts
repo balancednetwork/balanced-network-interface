@@ -26,12 +26,12 @@ import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatUnits, toBigNumber } from '@/utils';
 import { getXTokenAddress } from '@/utils/xTokens';
-import { getXChainType } from '@/xwagmi/actions';
-import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
-import { useXAccount } from '@/xwagmi/hooks';
-import { XChainId, XToken } from '@/xwagmi/types';
-import { useXTransactionStore } from '@/xwagmi/xcall/zustand/useXTransactionStore';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
+import { useXAccount } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
+import { useXTransactionStore } from '@balancednetwork/xwagmi';
+import { bnJs } from '@balancednetwork/xwagmi';
 import { AppState } from '..';
 import {
   Field,

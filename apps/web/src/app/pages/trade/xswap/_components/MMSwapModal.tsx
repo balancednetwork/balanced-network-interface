@@ -23,10 +23,6 @@ import {
 } from '@/store/transactions/useMMTransactionStore';
 import { formatBigNumber, shortenAddress } from '@/utils';
 import { getNetworkDisplayName } from '@/utils/xTokens';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { useXService } from '@/xwagmi/hooks';
-import { XToken } from '@/xwagmi/types';
-import { EvmXService } from '@/xwagmi/xchains/evm';
 import {
   CreateIntentOrderPayload,
   EvmProvider,
@@ -34,6 +30,7 @@ import {
   SolverApiService,
   SuiProvider,
 } from '@balancednetwork/intents-sdk';
+import { EvmXService, XToken, useXService, xChainMap } from '@balancednetwork/xwagmi';
 import { useCurrentAccount, useCurrentWallet, useSuiClient } from '@mysten/dapp-kit';
 import { AnimatePresence, motion } from 'framer-motion';
 import MMPendingIntents from './MMPendingIntents';
@@ -104,7 +101,7 @@ const MMSwapModal = ({
   }, [isFilled, slowDismiss]);
 
   // arb part
-  const xService = useXService('EVM') as EvmXService;
+  const xService = useXService('EVM') as unknown as EvmXService;
   // end arb part
 
   // sui part

@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import BigNumber from 'bignumber.js';
 
 import { CurrencyKey, IcxDisplayType } from '@/types';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId } from '@balancednetwork/xwagmi';
 
 export enum Field {
   LEFT = 'LEFT',

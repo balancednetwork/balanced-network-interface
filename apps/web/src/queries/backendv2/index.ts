@@ -8,7 +8,7 @@ import { API_ENDPOINT } from '@/queries/constants';
 import { useIncentivisedPairs } from '@/queries/reward';
 import { useEmissions } from '@/store/reward/hooks';
 import { PairInfo } from '@/types';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 export type ContractMethodsDataType = {
   address: string;

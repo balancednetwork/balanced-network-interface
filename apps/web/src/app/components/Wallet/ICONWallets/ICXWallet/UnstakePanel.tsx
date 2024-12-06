@@ -15,7 +15,7 @@ import { useBlockNumber, useICXUnstakingTime } from '@/store/application/hooks';
 import { useAllTransactions, useTransactionAdder } from '@/store/transactions/hooks';
 import { useICONWalletBalances } from '@/store/wallet/hooks';
 import { toCurrencyAmount } from '@/utils';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 interface UnstakePanelProps {
   claimableICX: BigNumber;

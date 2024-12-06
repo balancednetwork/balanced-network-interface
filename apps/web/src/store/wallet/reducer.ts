@@ -1,7 +1,7 @@
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
 
-import { XChainId, XToken } from '@/xwagmi/types';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
 
 export type WalletState = {
   [key in XChainId]?: { [address: string]: CurrencyAmount<XToken> };

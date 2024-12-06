@@ -1,8 +1,8 @@
-import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XChainId, XToken } from '@/xwagmi/types';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
+import { xTokenMap } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
+import { bnJs } from '@balancednetwork/xwagmi';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 

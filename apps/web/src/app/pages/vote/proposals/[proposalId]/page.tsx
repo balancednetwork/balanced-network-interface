@@ -34,7 +34,7 @@ import { useFetchBBalnInfo } from '@/store/bbaln/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from '@/store/transactions/hooks';
 import { useWalletFetchBalances } from '@/store/wallet/hooks';
 import { formatTimeStr } from '@/utils/timeformat';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 dayjs.extend(duration);
 

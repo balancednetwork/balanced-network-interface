@@ -25,9 +25,9 @@ import {
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
 import { formatBalance } from '@/utils/formatter';
-import { getXChainType } from '@/xwagmi/actions';
-import { useXAccount } from '@/xwagmi/hooks';
-import { XChainId, XToken } from '@/xwagmi/types';
+import { XToken, getXChainType } from '@balancednetwork/xwagmi';
+import { useXAccount } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
 import MMSwapCommitButton from './MMSwapCommitButton';
 import MMSwapInfo from './MMSwapInfo';
 import PriceImpact from './PriceImpact';

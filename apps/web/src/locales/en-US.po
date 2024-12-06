@@ -93,7 +93,6 @@ msgstr "Your transaction has failed. Please go back and try again."
 
 #: src/hooks/useApproveCallback.tsx
 #: src/hooks/useApproveCallback.tsx
-#: src/hooks/useApproveCallback.tsx
 msgid "{0} transfer approval failed."
 msgstr "{0} transfer approval failed."
 
@@ -416,6 +415,10 @@ msgstr "Transfer {0} to ICON."
 msgid "Bribe available in"
 msgstr "Bribe available in"
 
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+msgid "Failed"
+msgstr "Failed"
+
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 msgid "Send max"
 msgstr "Send max"
@@ -447,7 +450,6 @@ msgstr "Approved"
 msgid "Review the community token list on GitHub."
 msgstr "Review the community token list on GitHub."
 
-#: src/hooks/useApproveCallback.tsx
 #: src/hooks/useApproveCallback.tsx
 msgid "Approving {0} for cross-chain transfer..."
 msgstr "Approving {0} for cross-chain transfer..."
@@ -721,6 +723,10 @@ msgstr "Deposited {0} {collateralType} as collateral."
 msgid "100 bnUSD"
 msgstr "100 bnUSD"
 
+#: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
+msgid "Balanced Intent"
+msgstr "Balanced Intent"
+
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #~ msgid "Awaiting archway manager message"
 #~ msgstr "Awaiting archway manager message"
@@ -755,14 +761,13 @@ msgid "Before"
 msgstr "Before"
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-msgid "Order type"
-msgstr "Order type"
+#~ msgid "Order type"
+#~ msgstr "Order type"
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Active"
 msgstr "Active"
 
-#: src/hooks/useApproveCallback.tsx
 #: src/hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
 msgstr "{0} approved for cross-chain transfer."
@@ -818,8 +823,8 @@ msgid "Withdrew {0} bnUSD."
 msgstr "Withdrew {0} bnUSD."
 
 #: src/app/pages/trade/xswap/_components/MMSwapInfo.tsx
-msgid "Minimum to receive(Intent)"
-msgstr "Minimum to receive(Intent)"
+#~ msgid "Minimum to receive(Intent)"
+#~ msgstr "Minimum to receive(Intent)"
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "sign in"
@@ -1540,6 +1545,7 @@ msgstr "Approving {0} for cross-chain transfers..."
 msgid "Future incentives"
 msgstr "Future incentives"
 
+#: src/app/pages/trade/xswap/_components/MMSwapInfo.tsx
 #: src/app/pages/trade/xswap/_components/SwapInfo.tsx
 msgid "Minimum to receive"
 msgstr "Minimum to receive"
@@ -1626,7 +1632,6 @@ msgid "Approve"
 msgstr "Approve"
 
 #: src/btp/src/connectors/helper.ts
-#: src/hooks/useTransactionStore.tsx
 #: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
 msgstr "Processing transaction..."
@@ -2361,6 +2366,10 @@ msgstr "Transfer {inputAmount} {inputCurrency} to {network} with {address}."
 msgid "Voting ends in {endTimeStr}"
 msgstr "Voting ends in {endTimeStr}"
 
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+msgid "Completed"
+msgstr "Completed"
+
 #: src/app/components/Notification/TransactionNotification.tsx
 msgid "Contract calls verified."
 msgstr "Contract calls verified."
@@ -2748,8 +2757,8 @@ msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}
 msgstr "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
 
 #: src/xwagmi/xchains/stellar/utils.ts
-msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."
-msgstr "Stellar wallet inactive. Add at least 1 XLM from an external source."
+#~ msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."
+#~ msgstr "Stellar wallet inactive. Add at least 1 XLM from an external source."
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx

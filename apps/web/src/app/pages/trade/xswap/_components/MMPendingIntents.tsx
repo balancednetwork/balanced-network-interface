@@ -18,13 +18,13 @@ import {
 export default function MMPendingIntents({ intentId }: { intentId: string | null }) {
   const { transactions } = useMMTransactionStore();
 
-  const pendingTxs = useMemo(() => {
+  const pendingIntents = useMemo(() => {
     return Object.values(transactions)
       .filter(t => t.status === MMTransactionStatus.pending)
       .filter(t => t.id !== intentId);
   }, [transactions, intentId]);
 
-  if (pendingTxs.length === 0) return null;
+  if (pendingIntents.length === 0) return null;
 
   return (
     <Flex justifyContent="center" flexDirection="column" paddingY={2} className="border-top" mt={3}>
@@ -32,7 +32,7 @@ export default function MMPendingIntents({ intentId }: { intentId: string | null
         Pending transactions
       </Typography>
 
-      {Object.values(pendingTxs).map(t => (
+      {pendingIntents.map(t => (
         <PendingIntent key={t.id} transaction={t} />
       ))}
     </Flex>

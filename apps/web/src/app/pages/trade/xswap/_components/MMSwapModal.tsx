@@ -185,7 +185,6 @@ const MMSwapModal = ({
 
       if (executionResult.ok) {
         MMTransactionActions.setTaskId(intentHash.value, executionResult.value.task_id);
-        // an intent order was successfully created on the source chain.
       } else {
         setError(executionResult.error?.detail?.message);
         console.error('IntentService.executeIntentOrder error', executionResult.error);

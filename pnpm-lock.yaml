@@ -673,9 +673,6 @@ importers:
       viem:
         specifier: ^2.21.35
         version: 2.21.50(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
-      wagmi:
-        specifier: 2.13.2
-        version: 2.13.2(@react-native-async-storage/async-storage@1.23.1(react-native@0.73.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(@tanstack/query-core@5.29.0)(@tanstack/react-query@5.29.2(react@18.2.0))(@types/react@18.2.67)(bufferutil@4.0.8)(immer@10.1.1)(react@18.2.0)(typescript@5.5.4)(utf-8-validate@5.0.10)(viem@2.21.50(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
       zustand:
         specifier: 4.5.2
         version: 4.5.2(@types/react@18.2.67)(immer@10.1.1)(react@18.2.0)
@@ -752,7 +749,7 @@ importers:
     devDependencies:
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.4.8)(postcss@8.4.41)(typescript@5.7.2)
+        version: 8.0.2(@swc/core@1.4.8(@swc/helpers@0.5.12))(postcss@8.4.41)(typescript@5.7.2)
 
   packages/intents-sdk:
     dependencies:
@@ -814,7 +811,7 @@ importers:
         version: 6.2.2
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.4.8)(postcss@8.4.41)(typescript@5.7.2)
+        version: 8.0.2(@swc/core@1.4.8(@swc/helpers@0.5.12))(postcss@8.4.41)(typescript@5.7.2)
 
   packages/v1-sdk:
     dependencies:
@@ -836,7 +833,7 @@ importers:
     devDependencies:
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(@swc/core@1.4.8)(postcss@8.4.41)(typescript@5.7.2)
+        version: 8.0.2(@swc/core@1.4.8(@swc/helpers@0.5.12))(postcss@8.4.41)(typescript@5.7.2)
 
   packages/xwagmi:
     dependencies:
@@ -29574,6 +29571,30 @@ snapshots:
 
   tslib@2.6.2: {}
 
+  tsup@8.0.2(@swc/core@1.4.8(@swc/helpers@0.5.12))(postcss@8.4.41)(typescript@5.7.2):
+    dependencies:
+      bundle-require: 4.0.2(esbuild@0.19.12)
+      cac: 6.7.14
+      chokidar: 3.6.0
+      debug: 4.3.4
+      esbuild: 0.19.12
+      execa: 5.1.1
+      globby: 11.1.0
+      joycon: 3.1.1
+      postcss-load-config: 4.0.2(postcss@8.4.41)
+      resolve-from: 5.0.0
+      rollup: 4.13.0
+      source-map: 0.8.0-beta.0
+      sucrase: 3.35.0
+      tree-kill: 1.2.2
+    optionalDependencies:
+      '@swc/core': 1.4.8(@swc/helpers@0.5.12)
+      postcss: 8.4.41
+      typescript: 5.7.2
+    transitivePeerDependencies:
+      - supports-color
+      - ts-node
+
   tsup@8.0.2(@swc/core@1.4.8)(postcss@8.4.41)(typescript@5.5.4):
     dependencies:
       bundle-require: 4.0.2(esbuild@0.19.12)
@@ -29594,30 +29615,6 @@ snapshots:
       '@swc/core': 1.4.8(@swc/helpers@0.5.12)
       postcss: 8.4.41
       typescript: 5.5.4
-    transitivePeerDependencies:
-      - supports-color
-      - ts-node
-
-  tsup@8.0.2(@swc/core@1.4.8)(postcss@8.4.41)(typescript@5.7.2):
-    dependencies:
-      bundle-require: 4.0.2(esbuild@0.19.12)
-      cac: 6.7.14
-      chokidar: 3.6.0
-      debug: 4.3.4
-      esbuild: 0.19.12
-      execa: 5.1.1
-      globby: 11.1.0
-      joycon: 3.1.1
-      postcss-load-config: 4.0.2(postcss@8.4.41)
-      resolve-from: 5.0.0
-      rollup: 4.13.0
-      source-map: 0.8.0-beta.0
-      sucrase: 3.35.0
-      tree-kill: 1.2.2
-    optionalDependencies:
-      '@swc/core': 1.4.8(@swc/helpers@0.5.12)
-      postcss: 8.4.41
-      typescript: 5.7.2
     transitivePeerDependencies:
       - supports-color
       - ts-node

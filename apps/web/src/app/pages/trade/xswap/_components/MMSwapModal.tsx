@@ -33,6 +33,7 @@ import {
 import { EvmXService, XToken, useXService, xChainMap } from '@balancednetwork/xwagmi';
 import { useCurrentAccount, useCurrentWallet, useSuiClient } from '@mysten/dapp-kit';
 import { AnimatePresence, motion } from 'framer-motion';
+import { WriteContractErrorType } from 'viem';
 import MMPendingIntents from './MMPendingIntents';
 
 type MMSwapModalProps = {
@@ -144,6 +145,13 @@ const MMSwapModal = ({
       setOrderStatus(IntentOrderStatus.Executing);
 
       if (!intentHash.ok) {
+        const e = intentHash.error as WriteContractErrorType;
+
+        if (e.name === 'ContractFunctionExecutionError' && e.details === 'User rejected the request.') {
+          setOrderStatus(IntentOrderStatus.None);
+          return;
+        }
+
         // @ts-ignore
         setError(intentHash?.error?.shortMessage || 'Error creating intent order');
         setOrderStatus(IntentOrderStatus.Failure);

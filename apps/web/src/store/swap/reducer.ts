@@ -1,4 +1,4 @@
-import { getXTokenBySymbol, isXToken } from '@/utils/xTokens';
+import { getXTokenBySymbol } from '@/utils/xTokens';
 import { XToken, xTokenMap } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import { createSlice } from '@reduxjs/toolkit';
@@ -26,8 +26,8 @@ export interface SwapState {
 }
 
 export const INITIAL_SWAP = {
-  base: xTokenMap['0xa4b1.arbitrum'][0],
-  quote: xTokenMap['sui'][0],
+  base: xTokenMap['sui'][0],
+  quote: xTokenMap['0x2105.base'][1],
 };
 
 const initialState: SwapState = {

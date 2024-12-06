@@ -1,6 +1,5 @@
 import { getXTokenBySymbol, isXToken } from '@/utils/xTokens';
-import { Currency } from '@balancednetwork/sdk-core';
-import { DEFAULT_TOKEN_CHAIN, XToken, xTokenMap } from '@balancednetwork/xwagmi';
+import { XToken, xTokenMap } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import { createSlice } from '@reduxjs/toolkit';
 

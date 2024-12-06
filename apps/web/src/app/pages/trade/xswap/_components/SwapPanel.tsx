@@ -347,7 +347,7 @@ export default function SwapPanel() {
           {stellarValidation?.ok === false && stellarValidation.error && recipient && (
             <Flex alignItems="center" justifyContent="center" mt={2} flexDirection="column">
               <Typography textAlign="center">{stellarValidation.error}</Typography>
-              <StellarSponsorshipModal text={'Request activation'} address={recipient} />
+              <StellarSponsorshipModal text={'request activation.'} address={recipient} />
             </Flex>
           )}
 

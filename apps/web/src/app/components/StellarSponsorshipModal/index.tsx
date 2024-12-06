@@ -7,7 +7,8 @@ import axios from 'axios';
 import React from 'react';
 import { Box, Flex } from 'rebass';
 import { useTheme } from 'styled-components';
-import { Button } from '../Button';
+import { Button, TextButton } from '../Button';
+import { StyledButton } from '../Button/StyledButton';
 import { UnderlineText } from '../DropdownText';
 import Modal from '../Modal';
 import ModalContent from '../ModalContent';
@@ -39,8 +40,6 @@ const StellarSponsorshipModal = ({ text, address }: StellarSponsorshipModalProps
       return;
     }
     try {
-      setLoading(true);
-
       const client = axios.create({
         baseURL: SPONSOR_URL,
         headers: {
@@ -77,17 +76,19 @@ const StellarSponsorshipModal = ({ text, address }: StellarSponsorshipModalProps
         .build();
 
       const { signedTxXdr: signedTx } = await stellarXService.walletsKit.signTransaction(transaction.toXDR());
+
+      setLoading(true);
       const response = await client.post('/', { data: signedTx });
 
       if (response.statusText === 'OK' && response.data) {
         console.log('sponsoring done');
+        handleDismiss();
       }
     } catch (error) {
       console.error('Error fetching Stellar sponsor transaction:', error);
       throw error;
     } finally {
       setLoading(false);
-      handleDismiss();
     }
   };
 
@@ -98,11 +99,20 @@ const StellarSponsorshipModal = ({ text, address }: StellarSponsorshipModalProps
       </Typography>
       <Modal isOpen={isOpen} onDismiss={handleDismiss}>
         <ModalContent noMessages>
-          <Typography textAlign="center">Stellar Sponsorship</Typography>
-          <Flex pt={'20px'} justifyContent="center">
-            <Button onClick={requestSponsorship}>
-              <Trans>Request sponsorship</Trans>
-            </Button>
+          <Typography textAlign="center" color={'text'}>
+            <Trans>Activate your Stellar account?</Trans>
+          </Typography>
+
+          <Typography pt={3} color={'text1'} textAlign="center">
+            <Trans>Balanced activates your Stellar account for you with feeless transaction.</Trans>
+          </Typography>
+
+          <Flex justifyContent="center" mt="20px" pt="20px" className="border-top">
+            <TextButton onClick={handleDismiss}>{isLoading ? <Trans>Close</Trans> : <Trans>Cancel</Trans>}</TextButton>
+
+            <StyledButton disabled={isLoading} $loading={isLoading} onClick={requestSponsorship}>
+              {isLoading ? <Trans>Activating</Trans> : <Trans>Activate</Trans>}
+            </StyledButton>
           </Flex>
         </ModalContent>
       </Modal>

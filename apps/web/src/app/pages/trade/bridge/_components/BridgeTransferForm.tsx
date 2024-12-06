@@ -12,6 +12,7 @@ import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { UnderlineText } from '@/app/components/DropdownText';
 import { BrightPanel } from '@/app/components/Panel';
 import { CurrencySelectionType, SelectorType } from '@/app/components/SearchModal/CurrencySearch';
+import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
 import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
@@ -203,9 +204,10 @@ export default function BridgeTransferForm({ openModal }) {
             )}
           </Flex>
 
-          {stellarValidation?.ok === false && stellarValidation.error && (
-            <Flex alignItems="center" justifyContent="center" mt={2}>
+          {stellarValidation?.ok === false && stellarValidation.error && recipient && (
+            <Flex alignItems="center" justifyContent="center" mt={2} flexDirection="column">
               <Typography textAlign="center">{stellarValidation.error}</Typography>
+              <StellarSponsorshipModal text={'request activation.'} address={recipient} />
             </Flex>
           )}
 

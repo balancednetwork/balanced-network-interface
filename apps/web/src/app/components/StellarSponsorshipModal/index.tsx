@@ -2,7 +2,7 @@ import { Typography } from '@/app/theme';
 import { useXService } from '@/xwagmi/hooks';
 import { StellarXService } from '@/xwagmi/xchains/stellar';
 import { Trans } from '@lingui/macro';
-import { BASE_FEE, Keypair, Networks, TransactionBuilder } from '@stellar/stellar-sdk';
+import { BASE_FEE, Keypair, Networks, Operation, TransactionBuilder } from '@stellar/stellar-sdk';
 import axios from 'axios';
 import React from 'react';
 import { useTheme } from 'styled-components';
@@ -38,6 +38,8 @@ const StellarSponsorshipModal = ({ text, address }: StellarSponsorshipModalProps
       return;
     }
     try {
+      setLoading(true);
+
       const client = axios.create({
         baseURL: SPONSOR_URL,
         headers: {
@@ -45,19 +47,39 @@ const StellarSponsorshipModal = ({ text, address }: StellarSponsorshipModalProps
         },
       });
 
-      setLoading(true);
-      const response = await client.post('/', {
-        address,
-      });
+      //Sponsoring account
+      const sourceAccount = await stellarXService.server.loadAccount(SPONSORING_ADDRESS);
 
-      const transaction = TransactionBuilder.fromXDR(response.data, Networks.PUBLIC);
-      const { signedTxXdr: signedXDR } = await stellarXService.walletsKit.signTransaction(transaction.toXDR());
+      //Create the transaction to sponsor the user account creation
+      const transaction = new TransactionBuilder(sourceAccount, {
+        fee: BASE_FEE,
+        networkPassphrase: Networks.PUBLIC,
+      })
+        .addOperation(
+          Operation.beginSponsoringFutureReserves({
+            source: SPONSORING_ADDRESS,
+            sponsoredId: address,
+          }),
+        )
+        .addOperation(
+          Operation.createAccount({
+            destination: address,
+            startingBalance: '0',
+          }),
+        )
+        .addOperation(
+          Operation.endSponsoringFutureReserves({
+            source: address,
+          }),
+        )
+        .setTimeout(180)
+        .build();
 
-      const sponsorResult = await client.post('/', { data: signedXDR });
-      console.log('STELLAR SPONSOR - Sponsor result:', sponsorResult);
+      const { signedTxXdr: signedTx } = await stellarXService.walletsKit.signTransaction(transaction.toXDR());
+      const response = await client.post('/', { data: signedTx });
 
-      if (sponsorResult.statusText === 'OK' && sponsorResult.data) {
-        console.log('done, proceed with swap');
+      if (response.statusText === 'OK' && response.data) {
+        console.log('sponsoring done');
       }
     } catch (error) {
       console.error('Error fetching Stellar sponsor transaction:', error);

@@ -5,6 +5,7 @@ import { Trans } from '@lingui/macro';
 import { BASE_FEE, Keypair, Networks, Operation, TransactionBuilder } from '@stellar/stellar-sdk';
 import axios from 'axios';
 import React from 'react';
+import { Box, Flex } from 'rebass';
 import { useTheme } from 'styled-components';
 import { Button } from '../Button';
 import { UnderlineText } from '../DropdownText';
@@ -96,11 +97,13 @@ const StellarSponsorshipModal = ({ text, address }: StellarSponsorshipModalProps
         <UnderlineText>{text}</UnderlineText>
       </Typography>
       <Modal isOpen={isOpen} onDismiss={handleDismiss}>
-        <ModalContent>
+        <ModalContent noMessages>
           <Typography textAlign="center">Stellar Sponsorship</Typography>
-          <Button onClick={requestSponsorship}>
-            <Trans>Request sponsorship</Trans>
-          </Button>
+          <Flex pt={'20px'} justifyContent="center">
+            <Button onClick={requestSponsorship}>
+              <Trans>Request sponsorship</Trans>
+            </Button>
+          </Flex>
         </ModalContent>
       </Modal>
     </>

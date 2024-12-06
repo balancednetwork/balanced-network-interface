@@ -27,10 +27,7 @@ const columns: ColumnDef<any>[] = [
     header: 'Asset',
     filterFn: (row, columnId, filterValue) => {
       const xTokens = row.original as XToken[];
-      return (
-        xTokens[0].symbol.toLowerCase().includes(filterValue.toLowerCase()) ||
-        xTokens.some(xToken => xChainMap[xToken.xChainId].name.toLowerCase().includes(filterValue.toLowerCase()))
-      );
+      return xTokens[0].symbol.toLowerCase().includes(filterValue.toLowerCase());
     },
   },
   {

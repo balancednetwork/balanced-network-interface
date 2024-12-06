@@ -10,13 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { MINIMUM_ICX_FOR_TX } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
-import {
-  NULL_CONTRACT_ADDRESS,
-  SUPPORTED_TOKENS_MAP_BY_ADDRESS,
-  isBALN,
-  isFIN,
-  isNativeCurrency,
-} from '@/constants/tokens';
+import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_MAP_BY_ADDRESS, isBALN, isFIN } from '@/constants/tokens';
 import { isXToken } from '@/utils/xTokens';
 import { bnJs } from '@balancednetwork/xwagmi';
 
@@ -313,7 +307,7 @@ export function useCurrencyBalances(
   const tokens = useMemo(
     () =>
       (currencies?.filter((currency): currency is Token => currency?.isToken ?? false) ?? []).filter(
-        (token: Token) => !isNativeCurrency(token),
+        (token: Token) => !token.isNativeToken,
       ),
     [currencies],
   );
@@ -321,7 +315,7 @@ export function useCurrencyBalances(
   const tokenBalances = useTokenBalances(account, tokens);
 
   const containsICX: boolean = useMemo(
-    () => currencies?.some(currency => isNativeCurrency(currency)) ?? false,
+    () => currencies?.some(currency => currency?.isNativeToken) ?? false,
     [currencies],
   );
 
@@ -332,7 +326,7 @@ export function useCurrencyBalances(
     () =>
       currencies.map(currency => {
         if (!account || !currency) return undefined;
-        if (isNativeCurrency(currency)) return icxBalance[account];
+        if (currency.isNativeToken) return icxBalance[account];
         if (currency.isToken) return tokenBalances[currency.address];
         return undefined;
       }),

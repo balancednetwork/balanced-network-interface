@@ -7,7 +7,7 @@ import { ONE } from '@/constants';
 import { NETWORK_ID } from '@/constants/config';
 import { canBeQueue } from '@/constants/currency';
 import { BIGINT_ZERO } from '@/constants/misc';
-import { COMBINED_TOKENS_LIST, isNativeCurrency } from '@/constants/tokens';
+import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
 import { PairData, PairState } from '@/hooks/useV2Pairs';
 import { Field } from '@/store/swap/reducer';
 import { PairInfo } from '@/types';
@@ -99,7 +99,7 @@ export function maxAmountSpend(
   if (
     (xChainId === '0x1.icon' && currencyAmount.currency.symbol === 'ICX') ||
     (xChainId === 'archway-1' && currencyAmount.currency.symbol === 'ARCH') ||
-    isNativeCurrency(currencyAmount.currency)
+    currencyAmount.currency.isNativeToken
   ) {
     minCurrencyGas = CurrencyAmount.fromRawAmount(
       currencyAmount.currency,

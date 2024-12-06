@@ -1,6 +1,6 @@
-import { type Address, type Hash, parseEventLogs, stringToBytes, type TransactionReceipt } from 'viem';
+import { type Address, type Hash, type TransactionReceipt, parseEventLogs, stringToBytes } from 'viem';
 import { erc20Abi, intentAbi } from '../abis/index.js';
-import { SwapOrder, EvmProvider } from '../entities/index.js';
+import { EvmProvider, SwapOrder } from '../entities/index.js';
 import type { ChainConfig, CreateIntentOrderPayload, EvmChainConfig, Result } from '../types.js';
 
 export class EvmIntentService {
@@ -171,7 +171,7 @@ export class EvmIntentService {
    */
   static async getOrder(txHash: Hash, chainConfig: EvmChainConfig, provider: EvmProvider): Promise<Result<SwapOrder>> {
     try {
-      const receipt = await provider.publicClient.getTransactionReceipt({ hash: txHash });
+      const receipt = await provider.publicClient.waitForTransactionReceipt({ hash: txHash });
       const logs = parseEventLogs({
         abi: intentAbi,
         eventName: 'SwapIntent',

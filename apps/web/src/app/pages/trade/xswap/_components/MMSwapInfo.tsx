@@ -32,7 +32,7 @@ const MMSwapInfo: React.FC<SwapInfoProps> = ({ trade }) => {
   return (
     <Flex alignItems="center" justifyContent="space-between">
       <Typography>
-        <Trans>Minimum to receive(Intent)</Trans>
+        <Trans>Minimum to receive</Trans>
       </Typography>
 
       <ClickAwayListener onClickAway={closeDropdown}>

@@ -52,7 +52,7 @@ export default function MMAdvancedSwapDetails() {
           <Trans>Swap time</Trans>
         </Typography>
 
-        <Typography textAlign="right">~ 3s</Typography>
+        <Typography textAlign="right">~ 5s</Typography>
       </Flex>
     </Box>
   );

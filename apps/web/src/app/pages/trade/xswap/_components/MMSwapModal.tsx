@@ -145,10 +145,10 @@ const MMSwapModal = ({
       const intentHash = await IntentService.createIntentOrder(order, provider);
 
       setOrderStatus(IntentOrderStatus.Executing);
-      console.log('intentHash', intentHash);
+
       if (!intentHash.ok) {
         // @ts-ignore
-        setError(intentHash?.error?.message);
+        setError(intentHash?.error?.shortMessage || 'Error creating intent order');
         setOrderStatus(IntentOrderStatus.Failure);
         return;
       }
@@ -159,7 +159,6 @@ const MMSwapModal = ({
         provider,
       );
 
-      console.log('intentResult', intentResult);
       if (!intentResult.ok) {
         return;
       }
@@ -263,7 +262,7 @@ const MMSwapModal = ({
         </Typography>
 
         <AnimatePresence>
-          {((!isFilled && isProcessing) || !isProcessing) && (
+          {orderStatus !== IntentOrderStatus.Filled && (
             <motion.div
               key={'tx-actions'}
               initial={{ opacity: 0, height: 0 }}

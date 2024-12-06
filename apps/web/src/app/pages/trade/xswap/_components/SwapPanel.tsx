@@ -210,37 +210,30 @@ export default function SwapPanel() {
         </AutoColumn>
 
         <AutoColumn gap="5px" mt={5}>
-          <Flex alignItems="center" justifyContent="space-between">
-            <Typography>
-              <Trans>Order type</Trans>
-            </Typography>
-
-            <Typography>{mmTrade.isMMBetter ? 'Intent' : 'Normal'}</Typography>
-          </Flex>
-
           <PriceImpact trade={trade} />
 
-          <SwapInfo trade={trade} />
-          <MMSwapInfo trade={mmTrade.trade} />
+          {mmTrade.isMMBetter ? <MMSwapInfo trade={mmTrade.trade} /> : <SwapInfo trade={trade} />}
 
           <Flex justifyContent="center" mt={4}>
-            <SwapCommitButton
-              trade={trade}
-              error={inputError}
-              currencies={currencies}
-              canBridge={canBridge}
-              account={account}
-              recipient={recipient}
-              direction={direction}
-            />
-
-            <MMSwapCommitButton
-              currencies={currencies}
-              account={account}
-              recipient={recipient}
-              trade={mmTrade.trade}
-              direction={direction}
-            />
+            {mmTrade.isMMBetter ? (
+              <MMSwapCommitButton
+                currencies={currencies}
+                account={account}
+                recipient={recipient}
+                trade={mmTrade.trade}
+                direction={direction}
+              />
+            ) : (
+              <SwapCommitButton
+                trade={trade}
+                error={inputError}
+                currencies={currencies}
+                canBridge={canBridge}
+                account={account}
+                recipient={recipient}
+                direction={direction}
+              />
+            )}
           </Flex>
 
           {stellarValidation?.ok === false && stellarValidation.error && (

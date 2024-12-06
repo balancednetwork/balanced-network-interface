@@ -211,7 +211,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     ),
   ],
   stellar: [
-    new XToken('stellar', 'stellar', '0x0000000000000000000000000000000000000000', 7, 'XLM', 'XLM'),
+    new XToken('stellar', 'stellar', 'CAS3J7GYLGXMF6TDJBBYYSE3HQ6BBSMLNUQ34T6TZMYMW2EVH34XOWMA', 7, 'XLM', 'XLM'),
     new XToken(
       'stellar',
       'stellar',
@@ -272,7 +272,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     ),
   ],
   solana: [
-    new XToken('solana', 'solana', '0x0000000000000000000000000000000000000000', 9, 'SOL', 'SOL'),
+    new XToken('solana', 'solana', '11111111111111111111111111111111', 9, 'SOL', 'SOL'),
     new XToken('solana', 'solana', '2yN29zk8jgRTW7GUF9WwYAEz8vvABVnvbfQc5DpGi9CJ', 9, 'bnUSD', 'Balanced Dollar'),
     new XToken('solana', 'solana', 'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn', 9, 'JITOSOL', 'Jito Staked SOL'),
   ],

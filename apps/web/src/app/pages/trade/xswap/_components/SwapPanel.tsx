@@ -15,6 +15,7 @@ import { UnderlineText, UnderlineTextWithArrow } from '@/app/components/Dropdown
 import { BrightPanel } from '@/app/components/Panel';
 import { DropdownPopper } from '@/app/components/Popover';
 import { SelectorType } from '@/app/components/SearchModal/CurrencySearch';
+import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
 import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
@@ -343,9 +344,10 @@ export default function SwapPanel() {
             {swapButton}
           </Flex>
 
-          {stellarValidation?.ok === false && stellarValidation.error && (
-            <Flex alignItems="center" justifyContent="center" mt={2}>
+          {stellarValidation?.ok === false && stellarValidation.error && recipient && (
+            <Flex alignItems="center" justifyContent="center" mt={2} flexDirection="column">
               <Typography textAlign="center">{stellarValidation.error}</Typography>
+              <StellarSponsorshipModal text={'Request activation'} address={recipient} />
             </Flex>
           )}
 

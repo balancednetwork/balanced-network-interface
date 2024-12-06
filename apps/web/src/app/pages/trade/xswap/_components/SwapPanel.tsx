@@ -210,7 +210,7 @@ export default function SwapPanel() {
         </AutoColumn>
 
         <AutoColumn gap="5px" mt={5}>
-          <PriceImpact trade={trade} />
+          <PriceImpact trade={mmTrade?.isMMBetter ? undefined : trade} />
 
           {mmTrade.isMMBetter ? <MMSwapInfo trade={mmTrade.trade} /> : <SwapInfo trade={trade} />}
 

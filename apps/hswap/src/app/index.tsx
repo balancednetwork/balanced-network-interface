@@ -42,7 +42,7 @@ export function App() {
 
       <WalletConnectModal />
 
-      <Helmet titleTemplate="%s | Balanced" defaultTitle="Balanced" htmlAttributes={{ lang: i18n.language }} />
+      <Helmet titleTemplate="%s | Hana Swap" defaultTitle="Hana Swap" htmlAttributes={{ lang: i18n.language }} />
       <RootRoutes />
     </>
   );

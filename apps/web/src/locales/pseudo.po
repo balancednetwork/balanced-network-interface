@@ -343,8 +343,8 @@ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
-msgid "{0} {collateralType} added to your wallet."
-msgstr ""
+#~ msgid "{0} {collateralType} added to your wallet."
+#~ msgstr ""
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "No assets found."
@@ -754,6 +754,10 @@ msgstr ""
 msgid "Active"
 msgstr ""
 
+#: src/app/components/StellarSponsorshipModal/index.tsx
+msgid "Activate"
+msgstr ""
+
 #: src/hooks/useApproveCallback.tsx
 #: src/hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
@@ -913,6 +917,10 @@ msgstr ""
 msgid "Supplied {pair} liquidity."
 msgstr ""
 
+#: src/app/components/StellarSponsorshipModal/index.tsx
+msgid "Balanced activates your Stellar account for you with feeless transaction."
+msgstr ""
+
 #: src/app/components/AppBar/index.tsx
 #: src/app/Routes.tsx
 msgid "Trade"
@@ -1045,8 +1053,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
-msgid "Add {collateralType} to your {0} wallet."
-msgstr ""
+#~ msgid "Add {collateralType} to your {0} wallet."
+#~ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x."
@@ -1503,6 +1511,10 @@ msgstr ""
 msgid "Borrow Balanced Dollars?"
 msgstr ""
 
+#: src/app/components/StellarSponsorshipModal/index.tsx
+msgid "Activating"
+msgstr ""
+
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
 msgid "Contract doesn't exist on this network."
 msgstr ""
@@ -1575,6 +1587,10 @@ msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/PowerLeftComponent.tsx
 msgid "Voting power available: {0}"
+msgstr ""
+
+#: src/xwagmi/xchains/stellar/utils.ts
+msgid "Stellar wallet inactive. Add at least 1 XLM from an external source or"
 msgstr ""
 
 #: src/app/pages/trade/bridge/_components/XChainList.tsx
@@ -1775,6 +1791,7 @@ msgstr ""
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/Savings/index.tsx
 #: src/app/components/ProposalModal/index.tsx
+#: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
@@ -1846,6 +1863,10 @@ msgstr ""
 #: src/app/components/CollateralTypeSwitcher/CollateralTypeList.tsx
 #~ msgid "No positions found"
 #~ msgstr ""
+
+#: src/app/components/StellarSponsorshipModal/index.tsx
+msgid "Activate your Stellar account?"
+msgstr ""
 
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "Total supply"
@@ -2141,6 +2162,11 @@ msgstr ""
 msgid "The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset."
 msgstr ""
 
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/CollateralPanel.tsx
+msgid "{0} {1} added to your wallet."
+msgstr ""
+
 #: src/btp/src/connectors/helper.ts
 msgid "Sent {0} to the bridge contract."
 msgstr ""
@@ -2369,6 +2395,10 @@ msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Allocating bBALN..."
+msgstr ""
+
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Add {0} to your {1} wallet."
 msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
@@ -2685,6 +2715,7 @@ msgstr ""
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 msgid "Close"
 msgstr ""
@@ -2698,8 +2729,8 @@ msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}
 msgstr ""
 
 #: src/xwagmi/xchains/stellar/utils.ts
-msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."
-msgstr ""
+#~ msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."
+#~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx

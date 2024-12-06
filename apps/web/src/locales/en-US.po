@@ -345,8 +345,8 @@ msgstr "Past week"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
-msgid "{0} {collateralType} added to your wallet."
-msgstr "{0} {collateralType} added to your wallet."
+#~ msgid "{0} {collateralType} added to your wallet."
+#~ msgstr "{0} {collateralType} added to your wallet."
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "No assets found."
@@ -756,6 +756,10 @@ msgstr "Before"
 msgid "Active"
 msgstr "Active"
 
+#: src/app/components/StellarSponsorshipModal/index.tsx
+msgid "Activate"
+msgstr "Activate"
+
 #: src/hooks/useApproveCallback.tsx
 #: src/hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
@@ -917,6 +921,10 @@ msgstr "Enter amount"
 msgid "Supplied {pair} liquidity."
 msgstr "Supplied {pair} liquidity."
 
+#: src/app/components/StellarSponsorshipModal/index.tsx
+msgid "Balanced activates your Stellar account for you with feeless transaction."
+msgstr "Balanced activates your Stellar account for you with feeless transaction."
+
 #: src/app/components/AppBar/index.tsx
 #: src/app/Routes.tsx
 msgid "Trade"
@@ -1049,8 +1057,8 @@ msgstr "Swap {0} for {1}?"
 #~ msgstr "Claimed Balanced incentives."
 
 #: src/app/components/home/CollateralPanel.tsx
-msgid "Add {collateralType} to your {0} wallet."
-msgstr "Add {collateralType} to your {0} wallet."
+#~ msgid "Add {collateralType} to your {0} wallet."
+#~ msgstr "Add {collateralType} to your {0} wallet."
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Lock up BALN to hold voting power and boost your earning potential by up to 2.5 x."
@@ -1507,6 +1515,10 @@ msgstr "Multi-chain wallet"
 msgid "Borrow Balanced Dollars?"
 msgstr "Borrow Balanced Dollars?"
 
+#: src/app/components/StellarSponsorshipModal/index.tsx
+msgid "Activating"
+msgstr "Activating"
+
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
 msgid "Contract doesn't exist on this network."
 msgstr "Contract doesn't exist on this network."
@@ -1580,6 +1592,10 @@ msgstr "For"
 #: src/app/pages/vote/_components/LieVotingPanel/PowerLeftComponent.tsx
 msgid "Voting power available: {0}"
 msgstr "Voting power available: {0}"
+
+#: src/xwagmi/xchains/stellar/utils.ts
+msgid "Stellar wallet inactive. Add at least 1 XLM from an external source or"
+msgstr "Stellar wallet inactive. Add at least 1 XLM from an external source or"
 
 #: src/app/pages/trade/bridge/_components/XChainList.tsx
 #~ msgid "Search for blockchains..."
@@ -1781,6 +1797,7 @@ msgstr "BALN staking has been upgraded to a lock-up model called Boosted BALN."
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/Savings/index.tsx
 #: src/app/components/ProposalModal/index.tsx
+#: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
@@ -1852,6 +1869,10 @@ msgstr "Your position requires"
 #: src/app/components/CollateralTypeSwitcher/CollateralTypeList.tsx
 #~ msgid "No positions found"
 #~ msgstr "No positions found"
+
+#: src/app/components/StellarSponsorshipModal/index.tsx
+msgid "Activate your Stellar account?"
+msgstr "Activate your Stellar account?"
 
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "Total supply"
@@ -2149,6 +2170,11 @@ msgstr "Swap fee (included): <0>{0} {1}</0>"
 msgid "The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset."
 msgstr "The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset."
 
+#: src/app/components/home/CollateralPanel.tsx
+#: src/app/components/home/CollateralPanel.tsx
+msgid "{0} {1} added to your wallet."
+msgstr "{0} {1} added to your wallet."
+
 #: src/btp/src/connectors/helper.ts
 msgid "Sent {0} to the bridge contract."
 msgstr "Sent {0} to the bridge contract."
@@ -2378,6 +2404,10 @@ msgstr "Deposit {0} collateral?"
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Allocating bBALN..."
 msgstr "Allocating bBALN..."
+
+#: src/app/components/home/CollateralPanel.tsx
+msgid "Add {0} to your {1} wallet."
+msgstr "Add {0} to your {1} wallet."
 
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
@@ -2693,6 +2723,7 @@ msgstr "Network fees"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 msgid "Close"
 msgstr "Close"
@@ -2706,8 +2737,8 @@ msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}
 msgstr "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
 
 #: src/xwagmi/xchains/stellar/utils.ts
-msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."
-msgstr "Stellar wallet inactive. Add at least 1 XLM from an external source."
+#~ msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."
+#~ msgstr "Stellar wallet inactive. Add at least 1 XLM from an external source."
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx

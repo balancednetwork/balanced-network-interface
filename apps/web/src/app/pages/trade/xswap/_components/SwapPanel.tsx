@@ -85,7 +85,7 @@ export default function SwapPanel() {
     } else {
       onChangeRecipient(null);
     }
-  }, [onChangeRecipient, outputAccount, manualAddresses[direction.to], direction.to]);
+  }, [onChangeRecipient, outputAccount.address, manualAddresses[direction.to], direction.to]);
 
   const handleInputType = useCallback(
     (value: string) => {

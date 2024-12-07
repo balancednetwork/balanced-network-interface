@@ -111,7 +111,7 @@ export class SuiIntentService {
 
       tx.moveCall({
         target: `${chainConfig.packageId}::main::cancel`,
-        arguments: [tx.object(chainConfig.storageId), tx.pure.string(orderId.toString())],
+        arguments: [tx.object(chainConfig.storageId), tx.pure(bcs.u128().serialize(orderId))],
       });
 
       const signerAccount = provider.account;

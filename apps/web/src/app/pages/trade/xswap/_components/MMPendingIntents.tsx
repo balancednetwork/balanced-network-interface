@@ -89,16 +89,29 @@ function PendingIntent({ transaction }: { transaction: MMTransaction }) {
       if (result.ok) {
         setStatus(TransactionStatus.AwaitingConfirmation);
 
+        const waitForTransaction = async () => {
+          if (transaction.fromAmount.currency.xChainId === '0xa4b1.arbitrum') {
+            return publicClient.waitForTransactionReceipt({ hash: result.value as `0x${string}` });
+          } else {
+            return suiClient.waitForTransaction({
+              digest: result.value,
+              options: {
+                showEffects: false,
+                showEvents: true,
+              },
+            });
+          }
+        };
+
+        await waitForTransaction();
         // await settlement
         MMTransactionActions.cancel(transaction.id);
         setStatus(TransactionStatus.Success);
       } else {
-        console.log('failed', result.error);
         setStatus(TransactionStatus.None);
       }
     } catch (e) {
       console.error(e);
-      setStatus(TransactionStatus.Failed);
     }
   };
 

@@ -44,6 +44,10 @@ const jsonStorageOptions: {
   reviver: (_key: string, value: unknown) => {
     if (!value) return value;
 
+    if (typeof value === 'string' && value.startsWith('BIGINT::')) {
+      return BigInt(value.substring(8));
+    }
+
     // @ts-ignore
     if (value && value.type === 'bigint') {
       // @ts-ignore

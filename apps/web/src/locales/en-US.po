@@ -58,6 +58,10 @@ msgstr "then create the pool."
 msgid "Only"
 msgstr "Only"
 
+#: src/xwagmi/xchains/stellar/utils.ts
+msgid "Stellar wallet inactive. Add at least 1 XLM from an external source"
+msgstr "Stellar wallet inactive. Add at least 1 XLM from an external source"
+
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX is staked (sICX). Choose what to do with it:"
 msgstr "Your ICX is staked (sICX). Choose what to do with it:"
@@ -1594,8 +1598,8 @@ msgid "Voting power available: {0}"
 msgstr "Voting power available: {0}"
 
 #: src/xwagmi/xchains/stellar/utils.ts
-msgid "Stellar wallet inactive. Add at least 1 XLM from an external source or"
-msgstr "Stellar wallet inactive. Add at least 1 XLM from an external source or"
+#~ msgid "Stellar wallet inactive. Add at least 1 XLM from an external source or"
+#~ msgstr "Stellar wallet inactive. Add at least 1 XLM from an external source or"
 
 #: src/app/pages/trade/bridge/_components/XChainList.tsx
 #~ msgid "Search for blockchains..."

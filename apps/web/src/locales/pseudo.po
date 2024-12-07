@@ -58,6 +58,10 @@ msgstr ""
 msgid "Only"
 msgstr ""
 
+#: src/xwagmi/xchains/stellar/utils.ts
+msgid "Stellar wallet inactive. Add at least 1 XLM from an external source"
+msgstr ""
+
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX is staked (sICX). Choose what to do with it:"
 msgstr ""
@@ -1590,8 +1594,8 @@ msgid "Voting power available: {0}"
 msgstr ""
 
 #: src/xwagmi/xchains/stellar/utils.ts
-msgid "Stellar wallet inactive. Add at least 1 XLM from an external source or"
-msgstr ""
+#~ msgid "Stellar wallet inactive. Add at least 1 XLM from an external source or"
+#~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/XChainList.tsx
 #~ msgid "Search for blockchains..."

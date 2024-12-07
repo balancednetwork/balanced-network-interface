@@ -100,18 +100,17 @@ const StellarSponsorshipModal = ({ text, address }: StellarSponsorshipModalProps
       <Modal isOpen={isOpen} onDismiss={handleDismiss}>
         <ModalContent noMessages>
           <Typography textAlign="center" color={'text'}>
-            <Trans>Activate your Stellar account?</Trans>
+            <Trans>Activate Stellar wallet?</Trans>
           </Typography>
 
           <Typography pt={3} color={'text1'} textAlign="center">
-            <Trans>Balanced activates your Stellar account for you with feeless transaction.</Trans>
+            <Trans>Sign a transaction to activate your wallet for free.</Trans>
           </Typography>
 
           <Flex justifyContent="center" mt="20px" pt="20px" className="border-top">
             <TextButton onClick={handleDismiss}>{isLoading ? <Trans>Close</Trans> : <Trans>Cancel</Trans>}</TextButton>
-
             <StyledButton disabled={isLoading} $loading={isLoading} onClick={requestSponsorship}>
-              {isLoading ? <Trans>Activating</Trans> : <Trans>Activate</Trans>}
+              {isLoading ? <Trans>Activating</Trans> : <Trans>Activate wallet</Trans>}
             </StyledButton>
           </Flex>
         </ModalContent>

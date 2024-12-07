@@ -124,7 +124,7 @@ export function useValidateStellarAccount(address?: string | null): UseQueryResu
         await stellarService.server.loadAccount(address);
         return { ok: true };
       } catch (e) {
-        return { ok: false, error: t`Stellar wallet inactive. Add at least 1 XLM from an external source or ` };
+        return { ok: false, error: t`Stellar wallet inactive. Add at least 1 XLM from an external source` };
       }
     },
   });

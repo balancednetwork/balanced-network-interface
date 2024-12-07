@@ -206,8 +206,7 @@ export default function BridgeTransferForm({ openModal }) {
 
           {stellarValidation?.ok === false && stellarValidation.error && recipient && (
             <Flex alignItems="center" justifyContent="center" mt={2} flexDirection="column">
-              <Typography textAlign="center">{stellarValidation.error}</Typography>
-              <StellarSponsorshipModal text={'request activation.'} address={recipient} />
+              <StellarSponsorshipModal text={'Activate your Stellar wallet.'} address={recipient} />
             </Flex>
           )}
 

@@ -1,6 +1,6 @@
 import { useWalletBalances } from '@/store/wallet/hooks';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import { xChainMap } from '@balancednetwork/xwagmi';
+import { xChainMap, xTokenMap } from '@balancednetwork/xwagmi';
 import { XChain, XToken } from '@balancednetwork/xwagmi';
 import { formatBigNumber, getNetworkDisplayName } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
@@ -18,14 +18,13 @@ function useXCallGasChecker(inputAmount: CurrencyAmount<XToken> | undefined): {
       if (!xChainId) return { hasEnoughGas: false, errorMessage: 'Unknown' };
 
       const xChain: XChain = xChainMap[xChainId];
-      const nativeCurrency = xChain?.nativeCurrency;
+      const nativeCurrency: XToken = xTokenMap[xChainId].find(x => x.isNativeToken);
 
-      const gasThreshold =
-        `${xChainId}-native` === inputAmount?.currency.wrapped.address
-          ? xChain.gasThreshold + Number(inputAmount.toFixed())
-          : xChain.gasThreshold;
+      const gasThreshold = inputAmount?.currency.isNativeToken
+        ? xChain.gasThreshold + Number(inputAmount.toFixed())
+        : xChain.gasThreshold;
 
-      const hasEnoughGas = walletBalances?.[`${xChainId}-native`].greaterThan(
+      const hasEnoughGas = walletBalances?.[nativeCurrency.id].greaterThan(
         Math.round(gasThreshold * 10 ** nativeCurrency.decimals),
       );
 

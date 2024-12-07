@@ -207,12 +207,6 @@ export function useWalletFetchBalances() {
   }, [solanaBalances, dispatch, accountSolana]);
 }
 
-export const useHasEnoughICX = () => {
-  const balances = useWalletBalances();
-  const icxAddress = bnJs.ICX.address;
-  return balances[icxAddress] && balances[icxAddress].greaterThan(MINIMUM_ICX_FOR_TX);
-};
-
 export function useTokenBalances(
   account: string | undefined,
   tokens: Token[],

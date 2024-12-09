@@ -41,7 +41,6 @@ import {
 } from '@balancednetwork/xwagmi';
 import { AnimatePresence, motion } from 'framer-motion';
 import { WriteContractErrorType } from 'viem';
-import MMPendingIntents from './MMPendingIntents';
 
 type MMSwapModalProps = {
   modalId?: MODAL_ID;
@@ -84,7 +83,6 @@ const MMSwapModal = ({
     }
   }, [currentMMTransaction]);
 
-  // const isProcessing: boolean = currentId !== null;
   const isFilled = orderStatus === IntentOrderStatus.Filled;
 
   const handleDismiss = useCallback(() => {
@@ -92,6 +90,7 @@ const MMSwapModal = ({
     setTimeout(() => {
       setIntentId(null);
       setOrderStatus(IntentOrderStatus.None);
+      setError(null);
     }, 500);
   }, [modalId]);
 

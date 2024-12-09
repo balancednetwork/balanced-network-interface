@@ -17,7 +17,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Sheet, SheetContent, SheetDescription } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
 import { useXDisconnectAll } from '@balancednetwork/xwagmi';
@@ -161,6 +161,7 @@ const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
         )}
       >
         <VisuallyHidden.Root>
+          <SheetTitle>Wallet Modal</SheetTitle>
           <SheetDescription>Wallet Modal</SheetDescription>
         </VisuallyHidden.Root>
         <WalletModalContent onDismiss={onDismiss} />

@@ -28,6 +28,7 @@ import { formatBalance } from '@/utils/formatter';
 import { XToken, getXChainType } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
+import MMPendingIntents from './MMPendingIntents';
 import MMSwapCommitButton from './MMSwapCommitButton';
 import MMSwapInfo from './MMSwapInfo';
 import PriceImpact from './PriceImpact';
@@ -245,6 +246,8 @@ export default function SwapPanel() {
           {!canBridge && maximumBridgeAmount && (
             <BridgeLimitWarning limitAmount={maximumBridgeAmount} onLimitAmountClick={handleMaxBridgeAmountClick} />
           )}
+
+          <MMPendingIntents />
         </AutoColumn>
       </BrightPanel>
     </>

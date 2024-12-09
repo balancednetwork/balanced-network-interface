@@ -14,14 +14,12 @@ import {
   useMMTransactionStore,
 } from '@/store/transactions/useMMTransactionStore';
 
-export default function MMPendingIntents({ intentId }: { intentId: string | null }) {
+export default function MMPendingIntents() {
   const { transactions } = useMMTransactionStore();
 
   const pendingIntents = useMemo(() => {
-    return Object.values(transactions)
-      .filter(t => t.status === MMTransactionStatus.pending)
-      .filter(t => t.id !== intentId);
-  }, [transactions, intentId]);
+    return Object.values(transactions).filter(t => t.status === MMTransactionStatus.pending);
+  }, [transactions]);
 
   if (pendingIntents.length === 0) return null;
 

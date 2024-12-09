@@ -354,8 +354,6 @@ const MMSwapModal = ({
             </Typography>
           </Flex>
         )}
-
-        <MMPendingIntents intentId={intentId} />
       </ModalContent>
     </Modal>
   );

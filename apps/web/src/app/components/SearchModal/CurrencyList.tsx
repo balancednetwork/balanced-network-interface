@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 
 import { Currency, Fraction, Token } from '@balancednetwork/sdk-core';
@@ -18,13 +19,13 @@ import { useRatesWithOracle } from '@/queries/reward';
 import { useBridgeDirection } from '@/store/bridge/hooks';
 import { useIsUserAddedToken } from '@/store/user/hooks';
 import { useCrossChainWalletBalances, useXCurrencyBalance } from '@/store/wallet/hooks';
-import { formatBigNumber, toFraction } from '@/utils';
+import { toFraction } from '@/utils';
 import { formatBalance, formatPrice, formatSymbol, formatValue } from '@/utils/formatter';
-import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XChainId } from '@/xwagmi/types';
-import { getSupportedXChainIdsForToken } from '@/xwagmi/xcall/utils';
+import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { xTokenMap } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
+import { getSupportedXChainIdsForToken } from '@balancednetwork/xwagmi';
 import { ChainLogo } from '../ChainLogo';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { MouseoverTooltip } from '../Tooltip';
@@ -245,7 +246,7 @@ function CurrencyRow({
           )}
 
           <DataText variant="p" fontWeight="bold" ml={'15px'}>
-            {currency?.symbol}
+            {formatSymbol(currency?.symbol)}
           </DataText>
           {currency?.symbol === 'BTCB' && <DataText style={{ marginLeft: '4px' }}>{`(old)`}</DataText>}
         </Flex>

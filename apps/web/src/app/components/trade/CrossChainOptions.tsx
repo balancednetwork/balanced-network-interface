@@ -8,9 +8,9 @@ import { Typography } from '@/app/theme';
 
 import XChainList from '@/app/pages/trade/bridge/_components/XChainList';
 import useWidth from '@/hooks/useWidth';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChain, XChainId } from '@/xwagmi/types';
 import { Currency } from '@balancednetwork/sdk-core';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { XChain, XChainId } from '@balancednetwork/xwagmi';
 import { isMobile } from 'react-device-detect';
 import CrossChainWalletConnect from '../CrossChainWalletConnect';
 import { StyledArrowDownIcon, UnderlineText } from '../DropdownText';

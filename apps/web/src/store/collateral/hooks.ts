@@ -21,15 +21,15 @@ import { useCrossChainWalletBalances, useICONWalletBalances } from '@/store/wall
 import { CurrencyKey, IcxDisplayType } from '@/types';
 import { formatUnits, maxAmountSpend, toBigNumber } from '@/utils';
 import { getBalanceDecimals } from '@/utils/formatter';
-import { getXChainType } from '@/xwagmi/actions';
-import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
-import { SUPPORTED_XCALL_CHAINS } from '@/xwagmi/constants/xChains';
-import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/xwagmi/constants/xTokens';
-import { useXAccount } from '@/xwagmi/hooks';
-import { Position, XPositions, XPositionsRecord, XToken } from '@/xwagmi/types';
-import { XChainId } from '@/xwagmi/types';
-import { useXTransactionStore } from '@/xwagmi/xcall/zustand/useXTransactionStore';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
+import { SUPPORTED_XCALL_CHAINS } from '@balancednetwork/xwagmi';
+import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@balancednetwork/xwagmi';
+import { useXAccount } from '@balancednetwork/xwagmi';
+import { Position, XPositions, XPositionsRecord, XToken } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
+import { useXTransactionStore } from '@balancednetwork/xwagmi';
+import { bnJs } from '@balancednetwork/xwagmi';
 import { AppState } from '../index';
 import {
   Field,

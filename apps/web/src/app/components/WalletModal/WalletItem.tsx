@@ -6,9 +6,9 @@ import { Typography } from '@/app/theme';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
-import { XConnector } from '@/xwagmi/core';
-import { useXAccount, useXConnect, useXConnectors, useXDisconnect } from '@/xwagmi/hooks';
-import { XChain, XChainType } from '@/xwagmi/types';
+import { XConnector } from '@balancednetwork/xwagmi';
+import { useXAccount, useXConnect, useXConnectors, useXDisconnect } from '@balancednetwork/xwagmi';
+import { XChain, XChainType } from '@balancednetwork/xwagmi';
 import { t } from '@lingui/macro';
 import { UnderlineText } from '../DropdownText';
 import { CopyableAddress } from '../Header';

@@ -12,7 +12,7 @@ import { useRebalancingStatusQuery } from '@/queries/rebalancing';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 export default function RebalanceButton() {
   const { data: isAvailableToRebalance } = useRebalancingStatusQuery();

@@ -13,7 +13,7 @@ import { useLockedAmount, useUnclaimedRewards } from '@/store/savings/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import RewardsGrid from './RewardsGrid';
 

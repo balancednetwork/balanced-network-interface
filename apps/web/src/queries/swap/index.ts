@@ -6,7 +6,7 @@ import { CHART_PERIODS } from '@/app/components/TradingViewChart';
 import { ONE } from '@/constants/index';
 import QUERY_KEYS from '@/queries/queryKeys';
 import { Field } from '@/store/swap/reducer';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { API_ENDPOINT } from '../constants';
 

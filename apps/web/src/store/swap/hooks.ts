@@ -15,11 +15,11 @@ import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
-import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
-import { getXChainType } from '@/xwagmi/actions';
-import { useXAccount } from '@/xwagmi/hooks';
-import { XChainId, XToken } from '@/xwagmi/types';
-import { StellarAccountValidation, useValidateStellarAccount } from '@/xwagmi/xchains/stellar/utils';
+import { getXTokenBySymbol } from '@/utils/xTokens';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { useXAccount } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
+import { StellarAccountValidation, useValidateStellarAccount } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
 import {
@@ -282,7 +282,7 @@ export function useDerivedSwapInfo(): {
 
   const maximumBridgeAmount = useMemo(() => {
     if (currencies[Field.OUTPUT] instanceof XToken) {
-      return assetManager?.[getXAddress(currencies[Field.OUTPUT]) ?? '']?.depositedAmount;
+      return assetManager?.[currencies[Field.OUTPUT].id ?? '']?.depositedAmount;
     }
   }, [assetManager, currencies[Field.OUTPUT]]);
 

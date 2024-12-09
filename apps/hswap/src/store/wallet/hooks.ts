@@ -10,25 +10,19 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { MINIMUM_ICX_FOR_TX } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
-import {
-  NULL_CONTRACT_ADDRESS,
-  SUPPORTED_TOKENS_MAP_BY_ADDRESS,
-  isBALN,
-  isFIN,
-  isNativeCurrency,
-} from '@/constants/tokens';
+import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_MAP_BY_ADDRESS, isBALN, isFIN } from '@/constants/tokens';
 import { isXToken } from '@/utils/xTokens';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
 import { TokenAmountMap, changeBalances } from './reducer';
 
-import { useXBalances } from '@/xwagmi/hooks/useXBalances';
+import { useXBalances } from '@balancednetwork/xwagmi';
 
 import useXTokens from '@/hooks/useXTokens';
-import { useXAccount } from '@/xwagmi/hooks';
-import { XToken, XChainId } from '@/xwagmi/types';
+import { useXAccount } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
 
 export function useWalletBalances() {
   const wallet = useSelector((state: AppState) => state.wallet);
@@ -213,12 +207,6 @@ export function useWalletFetchBalances() {
   }, [solanaBalances, dispatch, accountSolana]);
 }
 
-export const useHasEnoughICX = () => {
-  const balances = useWalletBalances();
-  const icxAddress = bnJs.ICX.address;
-  return balances[icxAddress] && balances[icxAddress].greaterThan(MINIMUM_ICX_FOR_TX);
-};
-
 export function useTokenBalances(
   account: string | undefined,
   tokens: Token[],
@@ -313,7 +301,7 @@ export function useCurrencyBalances(
   const tokens = useMemo(
     () =>
       (currencies?.filter((currency): currency is Token => currency?.isToken ?? false) ?? []).filter(
-        (token: Token) => !isNativeCurrency(token),
+        (token: Token) => !token.isNativeToken,
       ),
     [currencies],
   );
@@ -321,7 +309,7 @@ export function useCurrencyBalances(
   const tokenBalances = useTokenBalances(account, tokens);
 
   const containsICX: boolean = useMemo(
-    () => currencies?.some(currency => isNativeCurrency(currency)) ?? false,
+    () => currencies?.some(currency => currency?.isNativeToken) ?? false,
     [currencies],
   );
 
@@ -332,7 +320,7 @@ export function useCurrencyBalances(
     () =>
       currencies.map(currency => {
         if (!account || !currency) return undefined;
-        if (isNativeCurrency(currency)) return icxBalance[account];
+        if (currency.isNativeToken) return icxBalance[account];
         if (currency.isToken) return tokenBalances[currency.address];
         return undefined;
       }),

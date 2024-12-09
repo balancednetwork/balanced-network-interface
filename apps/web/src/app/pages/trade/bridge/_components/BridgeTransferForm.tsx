@@ -28,11 +28,11 @@ import { Field } from '@/store/bridge/reducer';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
-import { getXChainType } from '@/xwagmi/actions';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { useXAccount, useXConnect, useXConnectors } from '@/xwagmi/hooks';
-import { validateAddress } from '@/xwagmi/utils';
-import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { useXAccount, useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
+import { validateAddress } from '@balancednetwork/xwagmi';
+import { useXCallFee } from '@balancednetwork/xwagmi';
 import XChainSelector from './XChainSelector';
 
 export default function BridgeTransferForm({ openModal }) {
@@ -217,13 +217,13 @@ export default function BridgeTransferForm({ openModal }) {
                     <Trans>Only</Trans>{' '}
                     <UnderlineText onClick={handleMaximumBridgeAmountClick}>
                       <Typography color="primaryBright" as="a">
-                        {maximumBridgeAmount?.toFixed(4)} {maximumBridgeAmount?.currency?.symbol}
+                        {maximumBridgeAmount?.toFixed(4)} {formatSymbol(maximumBridgeAmount?.currency?.symbol)}
                       </Typography>
                     </UnderlineText>{' '}
                   </>
                 ) : (
                   <>
-                    <Trans>0 {maximumBridgeAmount?.currency?.symbol}</Trans>{' '}
+                    <Trans>0 {formatSymbol(maximumBridgeAmount?.currency?.symbol)}</Trans>{' '}
                   </>
                 )}
 

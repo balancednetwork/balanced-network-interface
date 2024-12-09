@@ -20,8 +20,8 @@ import { useAllTransactions } from '@/store/transactions/hooks';
 import { shortenAddress } from '@/utils';
 
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { bnJs } from '@balancednetwork/xwagmi';
 import { Placement } from '@popperjs/core';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { MouseoverTooltip } from '../Tooltip';

@@ -9,8 +9,8 @@ import { ModalContentWrapper } from '@/app/components/ModalContent';
 import { UnbreakableText, WalletOption } from '@/app/components/WalletModal/shared';
 
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
-import { XConnector } from '@/xwagmi/core';
-import { useXConnect, useXConnectors } from '@/xwagmi/hooks';
+import { XConnector } from '@balancednetwork/xwagmi';
+import { useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
 
 type InjectiveWalletOptionsModalProps = {
   id?: MODAL_ID;

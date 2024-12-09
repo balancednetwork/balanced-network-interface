@@ -1,12 +1,12 @@
 import { Typography } from '@/app/theme';
-import { Position, XChainId } from '@/xwagmi/types';
+import { formatSymbol } from '@/utils/formatter';
 import { Token } from '@balancednetwork/sdk-core';
+import { Position, XChainId } from '@balancednetwork/xwagmi';
 import React from 'react';
 import styled from 'styled-components';
 import CurrencyLogo from '../CurrencyLogo';
 import { AssetSymbol, BalanceAndValueWrap, BalanceBreakdown, ListItem } from '../Wallet/styledComponents';
 import SingleChainItem from './SingleChainItem';
-import { formatSymbol } from '@/utils/formatter';
 
 type MultiChainItemProps = {
   baseToken: Token;

@@ -25,22 +25,21 @@ import { useTokenListConfig } from '@/store/lists/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useUserAddedTokens } from '@/store/user/hooks';
 import { getXTokenAddress, isXToken } from '@/utils/xTokens';
-import { XToken, XWalletAssetRecord } from '@/xwagmi/types';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { XToken, XWalletAssetRecord } from '@balancednetwork/xwagmi';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
 import { changeBalances, changeICONBalances } from './reducer';
 
-import { useXBalances } from '@/xwagmi/hooks/useXBalances';
-import { XChainId } from '@/xwagmi/types';
+import { useXBalances } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
 
 import { useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
 import { useRatesWithOracle } from '@/queries/reward';
-import { NATIVE_ADDRESS } from '@/xwagmi/constants';
-import { SUPPORTED_XCALL_CHAINS, stellar } from '@/xwagmi/constants/xChains';
-import { useXAccount } from '@/xwagmi/hooks';
+import { SUPPORTED_XCALL_CHAINS, stellar } from '@balancednetwork/xwagmi';
+import { useXAccount } from '@balancednetwork/xwagmi';
 
 export function useCrossChainWalletBalances(): AppState['wallet'] {
   const signedInWallets = useSignedInWallets();
@@ -123,7 +122,7 @@ export function useWalletFetchBalances() {
   const tokensArch = useXTokens('archway-1') || [];
   const { data: balancesArch } = useXBalances({
     xChainId: 'archway-1',
-    xTokens: [...tokensArch, new XToken('archway-1', 'archway-1', NATIVE_ADDRESS, 18, 'aARCH', 'Arch')],
+    xTokens: [...tokensArch, new XToken('archway-1', 'archway-1', 'arch', 18, 'aARCH', 'Arch')],
     address: accountArch,
   });
 

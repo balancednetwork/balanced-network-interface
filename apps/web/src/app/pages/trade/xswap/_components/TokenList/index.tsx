@@ -17,7 +17,7 @@ import useSort from '@/hooks/useSort';
 import { TokenStats, useAllTokensByAddress } from '@/queries/backendv2';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useTokenListConfig } from '@/store/lists/hooks';
-import { getSupportedXChainForToken } from '@/xwagmi/xcall/utils';
+import { getSupportedXChainForToken } from '@balancednetwork/xwagmi';
 import SkeletonTokenPlaceholder from './SkeletonTokenPlaceholder';
 import TokenItem from './TokenItem';
 

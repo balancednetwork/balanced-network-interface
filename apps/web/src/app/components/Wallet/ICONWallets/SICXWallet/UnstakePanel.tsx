@@ -17,7 +17,7 @@ import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
 import { isZeroCA, multiplyCABN, toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 export default function UnstakePanel() {
   const [portion, setPortion] = React.useState<number>(0);

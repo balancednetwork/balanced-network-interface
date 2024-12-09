@@ -16,7 +16,7 @@ import { useHasNetworkFees } from '@/store/reward/hooks';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from '@/store/transactions/hooks';
 import { shortenAddress } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 import '@/styles/airdrip.css';
 
 const Container = styled(Box)`

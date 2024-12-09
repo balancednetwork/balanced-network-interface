@@ -1,20 +1,20 @@
-import { getXChainType } from '@/xwagmi/actions';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { useXService } from '@/xwagmi/hooks';
-import { InjectiveXService } from '@/xwagmi/xchains/injective';
-import { switchEthereumChain } from '@/xwagmi/xchains/injective/utils';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { useXService } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
+import { InjectiveXService } from '@balancednetwork/xwagmi';
+import { switchEthereumChain } from '@balancednetwork/xwagmi';
 import { Wallet } from '@injectivelabs/wallet-ts';
 import { useCallback, useMemo } from 'react';
 import { mainnet } from 'viem/chains';
 import { useAccount, useSwitchChain } from 'wagmi';
 import useEthereumChainId from './useEthereumChainId';
-import { XChainId } from '@/xwagmi/types';
 
 export const useEvmSwitchChain = (expectedXChainId: XChainId) => {
   const xChainType = getXChainType(expectedXChainId);
   const expectedChainId = xChainMap[expectedXChainId].id as number;
 
-  const injectiveXService = useXService('INJECTIVE') as InjectiveXService;
+  const injectiveXService = useXService('INJECTIVE') as unknown as InjectiveXService;
   const ethereumChainId = useEthereumChainId();
 
   const { chainId } = useAccount();

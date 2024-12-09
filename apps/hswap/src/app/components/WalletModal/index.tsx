@@ -133,8 +133,8 @@ const WalletModalContent = ({ onDismiss }) => {
 
               {xChainTypes.map(wallet => (
                 <>
-                  <WalletItem key={wallet.xChainType} {...wallet} />
-                  <Separator key={wallet.xChainType + '_separator'} className="h-1 bg-[#ffffff59]" />
+                  <WalletItem key={'wallet_' + wallet.xChainType} {...wallet} />
+                  <Separator key={'wallet_' + wallet.xChainType + '_separator'} className="h-1 bg-[#ffffff59]" />
                 </>
               ))}
             </div>

@@ -121,6 +121,7 @@ export default function CurrencyInputPanel({
           </Button>
           {onCurrencySelect && (
             <TokenSelectModal
+              key={type}
               open={open}
               onDismiss={() => {
                 setOpen(false);

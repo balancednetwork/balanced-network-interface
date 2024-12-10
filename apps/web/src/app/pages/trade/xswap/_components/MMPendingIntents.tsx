@@ -7,6 +7,7 @@ import styled from 'styled-components';
 
 import { UnderlineText } from '@/app/components/DropdownText';
 import { Typography } from '@/app/theme';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
 import {
   MMTransaction,
@@ -18,10 +19,13 @@ import { formatBalance } from '@/utils/formatter';
 
 export default function MMPendingIntents() {
   const { transactions } = useMMTransactionStore();
+  const signedWallets = useSignedInWallets();
 
   const pendingIntents = useMemo(() => {
-    return Object.values(transactions).filter(t => t.status === MMTransactionStatus.pending);
-  }, [transactions]);
+    return Object.values(transactions)
+      .filter(t => t.status === MMTransactionStatus.pending)
+      .filter(t => !t.executor || !!signedWallets.find(w => w.address.toLowerCase() === t.executor.toLowerCase()));
+  }, [transactions, signedWallets]);
 
   if (pendingIntents.length === 0) return null;
 

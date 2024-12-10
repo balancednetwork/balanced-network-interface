@@ -18,6 +18,7 @@ export enum MMTransactionStatus {
 
 export type MMTransaction = {
   id: string;
+  executor: string;
   orderId: bigint;
   taskId: string;
   status: MMTransactionStatus;

@@ -176,6 +176,7 @@ const MMSwapModal = ({
 
       MMTransactionActions.add({
         id: intentHash.value,
+        executor: account,
         status: MMTransactionStatus.pending,
         fromAmount: trade.inputAmount,
         toAmount: trade.outputAmount,

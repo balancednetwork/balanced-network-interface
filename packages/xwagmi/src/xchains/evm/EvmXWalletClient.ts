@@ -3,13 +3,14 @@ import { RLP } from '@ethereumjs/rlp';
 import { Address, PublicClient, WalletClient, WriteContractParameters, erc20Abi, getContract, toHex } from 'viem';
 import bnJs from '../icon/bnJs';
 
-import { ICON_XCALL_NETWORK_ID } from '@/constants';
+import { ICON_XCALL_NETWORK_ID, xTokenMap } from '@/constants';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/constants/xChains';
 import { XWalletClient } from '@/core/XWalletClient';
 import { XToken } from '@/types';
 import { uintToBytes } from '@/utils';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
+import { isSpokeToken } from '../archway/utils';
 import { EvmXService } from './EvmXService';
 import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
 import { bnUSDContractAbi } from './abis/bnUSDContractAbi';
@@ -101,14 +102,15 @@ export class EvmXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
+    const _isSpokeToken = isSpokeToken(inputAmount.currency);
     const isNative = inputAmount.currency.isNativeToken;
-    const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
 
     let request: WriteContractParameters;
-    if (isBnUSD) {
+    if (_isSpokeToken) {
+      const tokenAddr = xTokenMap[direction.from].find(token => token.symbol === inputAmount.currency.symbol)?.address;
       const res = await this.getPublicClient().simulateContract({
         account: account as Address,
-        address: xChainMap[direction.from].contracts.bnUSD as Address,
+        address: tokenAddr as Address,
         abi: bnUSDContractAbi,
         functionName: 'crossTransfer',
         args: [destination, amount, data],

@@ -95,7 +95,6 @@ msgstr ""
 
 #: src/hooks/useApproveCallback.tsx
 #: src/hooks/useApproveCallback.tsx
-#: src/hooks/useApproveCallback.tsx
 msgid "{0} transfer approval failed."
 msgstr ""
 
@@ -459,7 +458,6 @@ msgid "Review the community token list on GitHub."
 msgstr ""
 
 #: src/hooks/useApproveCallback.tsx
-#: src/hooks/useApproveCallback.tsx
 msgid "Approving {0} for cross-chain transfer..."
 msgstr ""
 
@@ -789,7 +787,6 @@ msgstr "Antes"
 msgid "Active"
 msgstr "Activo"
 
-#: src/hooks/useApproveCallback.tsx
 #: src/hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
 msgstr ""
@@ -1662,7 +1659,6 @@ msgid "Approve"
 msgstr "Aceptar"
 
 #: src/btp/src/connectors/helper.ts
-#: src/hooks/useTransactionStore.tsx
 #: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
 msgstr "Procesando la transacción..."

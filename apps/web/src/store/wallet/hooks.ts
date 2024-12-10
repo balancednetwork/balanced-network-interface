@@ -122,7 +122,7 @@ export function useWalletFetchBalances() {
   const tokensArch = useXTokens('archway-1') || [];
   const { data: balancesArch } = useXBalances({
     xChainId: 'archway-1',
-    xTokens: [...tokensArch, new XToken('archway-1', 'archway-1', 'arch', 18, 'aARCH', 'Arch')],
+    xTokens: tokensArch,
     address: accountArch,
   });
 

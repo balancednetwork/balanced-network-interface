@@ -1,32 +1,19 @@
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
 
-import { ZERO } from '@/constants/index';
-import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
-import { XChainId } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
 
 export type WalletState = {
-  [key in XChainId]?: { [address: string]: CurrencyAmount<Currency> };
+  [key in XChainId]?: { [address: string]: CurrencyAmount<XToken> };
 };
 
-const initialState: WalletState = {
-  '0x1.icon': SUPPORTED_TOKENS_LIST.reduce((p, t) => {
-    p[t?.symbol!] = ZERO;
-    return p;
-  }, {}),
-  'archway-1': {},
-  '0x100.icon': {},
-};
+const initialState: WalletState = {};
 
 const walletSlice = createSlice({
   name: 'wallet',
   initialState,
   reducers: create => ({
-    changeICONBalances: create.reducer<{ [key: string]: CurrencyAmount<Currency> }>((state, { payload }) => {
-      state['0x1.icon'] = payload;
-    }),
-
-    changeBalances: create.reducer<{ xChainId: XChainId; balances: { [key: string]: CurrencyAmount<Currency> } }>(
+    changeBalances: create.reducer<{ xChainId: XChainId; balances: { [key: string]: CurrencyAmount<XToken> } }>(
       (state, { payload }) => {
         state[payload.xChainId] = payload.balances;
       },
@@ -37,6 +24,6 @@ const walletSlice = createSlice({
   }),
 });
 
-export const { changeICONBalances, resetBalances, changeBalances } = walletSlice.actions;
+export const { resetBalances, changeBalances } = walletSlice.actions;
 
 export default walletSlice.reducer;

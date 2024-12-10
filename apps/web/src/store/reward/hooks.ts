@@ -188,21 +188,6 @@ export function useFlattenedRewardsDistribution(): UseQueryResult<Map<string, Fr
   });
 }
 
-export function useEarnedPastMonth(): UseQueryResult<BigNumber | undefined> {
-  const { account } = useIconReact();
-  const { data: prices } = useTokenPrices();
-
-  return useQuery({
-    queryKey: [`earnedPastMonth`, account, prices ? Object.keys(prices).length : '0'],
-    queryFn: async () => {
-      //todo: after endpoint is ready, fetch the data from there
-      return new BigNumber(23.9);
-    },
-    enabled: !!account,
-    placeholderData: keepPreviousData,
-  });
-}
-
 export function useHasAnyKindOfRewards() {
   const dynamicBBalnAmount = useDynamicBBalnAmount();
   const bnUSDDeposit = useLockedAmount();

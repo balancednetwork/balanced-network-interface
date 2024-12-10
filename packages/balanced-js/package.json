@@ -28,12 +28,6 @@
   "engines": {
     "node": ">=14.0.0"
   },
-  "prettier": {
-    "printWidth": 120,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "all"
-  },
   "exports": {
     "./package.json": "./package.json",
     ".": {

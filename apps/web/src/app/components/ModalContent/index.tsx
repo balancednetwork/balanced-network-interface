@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { FlexProps, Flex } from 'rebass/styled-components';
+import { Flex, FlexProps } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { useHasEnoughICX } from '@/store/wallet/hooks';
@@ -20,13 +20,12 @@ export const ModalContentWrapper = styled(Flex)`
 
 export default function ModalContent(props: Props) {
   const hasEnoughICX = useHasEnoughICX();
+  const { noCurrencyBalanceErrorMessage, noMessages, children, ...rest } = props;
 
   return (
-    <ModalContentWrapper {...props}>
-      {props.children}
-      {!props.noMessages && !hasEnoughICX && !props.noCurrencyBalanceErrorMessage && (
-        <CurrencyBalanceErrorMessage mt={3} />
-      )}
+    <ModalContentWrapper {...rest}>
+      {children}
+      {!noMessages && !hasEnoughICX && !noCurrencyBalanceErrorMessage && <CurrencyBalanceErrorMessage mt={3} />}
     </ModalContentWrapper>
   );
 }

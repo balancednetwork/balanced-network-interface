@@ -70,13 +70,21 @@ export const useLPReward = () => {
   const { account } = useIconReact();
   const blockNumber = useBlockNumber();
 
-  return useQuery<CurrencyAmount<Token> | undefined>({
+  return useQuery<CurrencyAmount<Token>[] | undefined>({
     queryKey: [QUERY_KEYS.Reward.UserReward(account ?? ''), blockNumber],
     queryFn: async () => {
       if (!account) return;
 
-      const res = await bnJs.Rewards.getBalnHolding(account);
-      return CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.BALN.address], res);
+      try {
+        const res = await bnJs.Rewards.getRewards(account);
+
+        return Object.entries(res).map(([address, amount]) => {
+          const currency = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address];
+          return CurrencyAmount.fromRawAmount(currency, amount as string);
+        });
+      } catch (e) {
+        console.error('Error while fetching rewards', e);
+      }
     },
     placeholderData: keepPreviousData,
     enabled: !!account,

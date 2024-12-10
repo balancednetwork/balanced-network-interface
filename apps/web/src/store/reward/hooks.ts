@@ -208,7 +208,7 @@ export function useHasAnyKindOfRewards() {
   const bnUSDDeposit = useLockedAmount();
   const sources = useSources();
   const hasUnclaimedFees = useHasUnclaimedFees();
-  const { data: reward } = useLPReward();
+  const { data: rewards } = useLPReward();
   const { data: savingsRewards } = useUnclaimedRewards();
 
   const numberOfPositions = React.useMemo(
@@ -218,7 +218,7 @@ export function useHasAnyKindOfRewards() {
 
   return (
     hasUnclaimedFees ||
-    reward?.greaterThan(0) ||
+    rewards?.some(reward => reward.greaterThan(0)) ||
     savingsRewards?.some(reward => reward.greaterThan(0)) ||
     dynamicBBalnAmount.isGreaterThan(0) ||
     bnUSDDeposit?.greaterThan(0) ||

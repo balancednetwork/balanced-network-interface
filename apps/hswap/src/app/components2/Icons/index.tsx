@@ -21,8 +21,8 @@ const SubtractIcon: React.FC<React.ComponentProps<'svg'>> = props => {
     // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
     <svg xmlns="http://www.w3.org/2000/svg" width="64" height="16" viewBox="0 0 64 16" {...props}>
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M32 0C32 0 29.7393 -4.88757e-05 29.3333 0.999997C25.3389 10.8402 14.4264 16 0 16H64C49.5736 16 38.6611 10.8402 34.6667 0.999997C34.2607 -4.88757e-05 32 0 32 0Z"
       />
     </svg>

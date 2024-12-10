@@ -122,7 +122,7 @@ export function useWalletFetchBalances() {
   const tokensArch = useXTokens('archway-1') || [];
   const { data: balancesArch } = useXBalances({
     xChainId: 'archway-1',
-    xTokens: [...tokensArch, new XToken('archway-1', 'archway-1', 'arch', 18, 'aARCH', 'Arch')],
+    xTokens: tokensArch,
     address: accountArch,
   });
 
@@ -233,16 +233,11 @@ export const useBALNDetails = (): { [key in string]?: BigNumber } => {
   React.useEffect(() => {
     const fetchDetails = async () => {
       if (account) {
-        const result = await bnJs.BALN.detailsBalanceOf(account);
-
-        const temp = {};
-
-        forEach(result, (value, key) => {
-          if (key === 'Unstaking time (in microseconds)') temp[key] = new BigNumber(value);
-          else temp[key] = BalancedJs.utils.toIcx(value);
+        const result = await bnJs.BALN.balanceOf(account);
+        setDetails({
+          'Staked balance': new BigNumber(0),
+          'Available balance': BalancedJs.utils.toIcx(result),
         });
-
-        setDetails(temp);
       }
     };
 

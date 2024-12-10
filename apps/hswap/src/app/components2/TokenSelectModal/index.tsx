@@ -38,6 +38,8 @@ const columns: ColumnDef<any>[] = [
 
 const DEFAULT_XCHAIN_ID = 'all';
 
+export const UNTRADEABLE_TOKENS = ['tBTC', 'weETH', 'wstETH', 'HASUI', 'AFSUI', 'VSUI', 'JITOSOL', 'aARCH'];
+
 export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, selectedCurrency }) {
   const [xChainId, setXChainId] = useState<XChainId | 'all'>(DEFAULT_XCHAIN_ID);
 
@@ -46,7 +48,7 @@ export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, s
   // TODO: hide aARCH token temporarily
   const filteredXTokens = useMemo(() => {
     if (xChainId === 'all') {
-      return allXTokens.filter(x => x.symbol !== 'aARCH');
+      return allXTokens.filter(x => !UNTRADEABLE_TOKENS.includes(x.symbol));
     }
 
     return allXTokens.filter(x => x.symbol !== 'aARCH' && x.xChainId === xChainId);

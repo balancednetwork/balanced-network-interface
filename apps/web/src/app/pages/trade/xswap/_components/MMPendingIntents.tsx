@@ -7,12 +7,14 @@ import styled from 'styled-components';
 
 import { UnderlineText } from '@/app/components/DropdownText';
 import { Typography } from '@/app/theme';
+import { useRatesWithOracle } from '@/queries/reward';
 import {
   MMTransaction,
   MMTransactionActions,
   MMTransactionStatus,
   useMMTransactionStore,
 } from '@/store/transactions/useMMTransactionStore';
+import { formatBalance } from '@/utils/formatter';
 
 export default function MMPendingIntents() {
   const { transactions } = useMMTransactionStore();
@@ -53,6 +55,8 @@ enum TransactionStatus {
 }
 
 function PendingIntent({ transaction }: { transaction: MMTransaction }) {
+  const rates = useRatesWithOracle();
+
   const [status, setStatus] = React.useState<TransactionStatus>(TransactionStatus.None);
   // arb part
   const xService = useXService('EVM') as unknown as EvmXService;
@@ -113,11 +117,13 @@ function PendingIntent({ transaction }: { transaction: MMTransaction }) {
     <Flex justifyContent="center" alignItems="center" my={1}>
       <Typography textAlign="center">
         <strong>
-          {transaction.fromAmount.toSignificant(6)} {transaction.fromAmount.currency.symbol}
+          {formatBalance(transaction.fromAmount.toFixed(), rates?.[transaction.fromAmount.currency.symbol].toFixed())}{' '}
+          {transaction.fromAmount.currency.symbol}
         </strong>{' '}
         for{' '}
         <strong>
-          {transaction.toAmount.toSignificant(6)} {transaction.toAmount.currency.symbol}
+          {formatBalance(transaction.toAmount.toFixed(), rates?.[transaction.toAmount.currency.symbol].toFixed())}{' '}
+          {transaction.toAmount.currency.symbol}
         </strong>
       </Typography>{' '}
       |{' '}

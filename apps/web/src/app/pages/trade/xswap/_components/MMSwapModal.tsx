@@ -272,6 +272,31 @@ const MMSwapModal = ({
         </Typography>
 
         <AnimatePresence>
+          {orderStatus === IntentOrderStatus.Failure && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+            >
+              <Box pt={3}>
+                <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
+                  <Typography mb={4}>
+                    <Trans>Swap failed</Trans>
+                  </Typography>
+                  {error ? (
+                    <Typography maxWidth="320px" color="alert" textAlign="center">
+                      {error}
+                    </Typography>
+                  ) : (
+                    <CrossIcon width={20} height={20} />
+                  )}
+                </Flex>
+              </Box>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
           {orderStatus !== IntentOrderStatus.Filled && (
             <motion.div
               key={'tx-actions'}
@@ -285,19 +310,20 @@ const MMSwapModal = ({
                   <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
                 </TextButton>
 
-                {isWrongChain ? (
-                  <StyledButton onClick={handleSwitchChain}>
-                    <Trans>Switch to {xChainMap[direction.from].name}</Trans>
-                  </StyledButton>
-                ) : isProcessing ? (
-                  <StyledButton disabled $loading>
-                    <Trans>Swapping</Trans>
-                  </StyledButton>
-                ) : (
-                  <StyledButton onClick={handleMMSwap} disabled={!gasChecker.hasEnoughGas}>
-                    <Trans>Swap</Trans>
-                  </StyledButton>
-                )}
+                {orderStatus !== IntentOrderStatus.Failure &&
+                  (isWrongChain ? (
+                    <StyledButton onClick={handleSwitchChain}>
+                      <Trans>Switch to {xChainMap[direction.from].name}</Trans>
+                    </StyledButton>
+                  ) : isProcessing ? (
+                    <StyledButton disabled $loading>
+                      <Trans>Swapping</Trans>
+                    </StyledButton>
+                  ) : (
+                    <StyledButton onClick={handleMMSwap} disabled={!gasChecker.hasEnoughGas}>
+                      <Trans>Swap</Trans>
+                    </StyledButton>
+                  ))}
               </Flex>
             </motion.div>
           )}
@@ -320,36 +346,12 @@ const MMSwapModal = ({
               </Box>
             </motion.div>
           )}
-          {orderStatus === IntentOrderStatus.Failure && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-            >
-              <Box pt={3}>
-                <Flex pt={3} alignItems="center" justifyContent="center" flexDirection="column" className="border-top">
-                  <Typography mb={4}>
-                    <Trans>Failed</Trans>
-                  </Typography>
-                  <CrossIcon width={20} height={20} />
-                </Flex>
-              </Box>
-            </motion.div>
-          )}
         </AnimatePresence>
 
         {orderStatus === IntentOrderStatus.None && !gasChecker.hasEnoughGas && (
           <Flex justifyContent="center" paddingY={2}>
             <Typography maxWidth="320px" color="alert" textAlign="center">
               {gasChecker.errorMessage}
-            </Typography>
-          </Flex>
-        )}
-
-        {orderStatus === IntentOrderStatus.Failure && error && (
-          <Flex justifyContent="center" paddingY={2}>
-            <Typography maxWidth="320px" color="alert" textAlign="center">
-              {error}
             </Typography>
           </Flex>
         )}

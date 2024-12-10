@@ -18,6 +18,8 @@ export enum IntentStatusCode {
   NOT_STARTED_YET = 1, // It's in the task pool, but not started yet
   STARTED_NOT_FINISHED = 2,
   SOLVED = 3,
+  SOLVED_REBALANCING_FAILED = 4,
+  NOT_SOLVED_FAILED = 5,
 }
 
 export enum IntentErrorCode {

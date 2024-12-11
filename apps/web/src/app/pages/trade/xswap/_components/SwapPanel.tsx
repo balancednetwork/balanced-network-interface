@@ -236,6 +236,13 @@ export default function SwapPanel() {
               />
             )}
           </Flex>
+          <MMSwapCommitButton
+            currencies={currencies}
+            account={account}
+            recipient={recipient}
+            trade={mmTrade.trade}
+            direction={direction}
+          />
 
           {stellarValidation?.ok === false && stellarValidation.error && (
             <Flex alignItems="center" justifyContent="center" mt={2}>

@@ -11,7 +11,6 @@ import { useFetchBBalnInfo, useFetchBBalnSources } from '@/store/bbaln/hooks';
 import { useCollateralFetchInfo } from '@/store/collateral/hooks';
 import { useFetchUserVoteData } from '@/store/liveVoting/hooks';
 import { useLoanFetchInfo } from '@/store/loan/hooks';
-import { useFetchOraclePrices } from '@/store/oracle/hooks';
 import { useFetchPrice } from '@/store/ratio/hooks';
 import { useFetchRewardsInfo } from '@/store/reward/hooks';
 import { useFetchSavingsInfo } from '@/store/savings/hooks';
@@ -35,7 +34,6 @@ export function HomePage() {
   const { account } = useIconReact();
 
   useFetchPrice();
-  useFetchOraclePrices();
   useFetchBBalnSources();
   useFetchBBalnInfo(account);
   useFetchSavingsInfo(account);

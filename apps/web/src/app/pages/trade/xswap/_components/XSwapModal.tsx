@@ -43,12 +43,6 @@ type XSwapModalProps = {
   recipient?: string | null;
 };
 
-export const presenceVariants = {
-  initial: { opacity: 0, height: 0 },
-  animate: { opacity: 1, height: 'auto' },
-  exit: { opacity: 0, height: 0 },
-};
-
 const XSwapModal = ({
   modalId = MODAL_ID.XSWAP_CONFIRM_MODAL,
   account,

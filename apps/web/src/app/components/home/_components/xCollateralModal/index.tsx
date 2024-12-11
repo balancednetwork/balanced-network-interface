@@ -43,12 +43,6 @@ type XCollateralModalProps = {
   currencyAmount?: CurrencyAmount<XToken>;
 };
 
-export const presenceVariants = {
-  initial: { opacity: 0, height: 0 },
-  animate: { opacity: 1, height: 'auto' },
-  exit: { opacity: 0, height: 0 },
-};
-
 const XCollateralModal = ({
   modalId = MODAL_ID.XCOLLATERAL_CONFIRM_MODAL,
   account,

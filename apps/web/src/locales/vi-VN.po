@@ -56,8 +56,7 @@ msgstr ""
 msgid "then create the pool."
 msgstr "sau đó tạo hồ thanh khoản."
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/components/BridgeLimitWarning/index.tsx
 msgid "Only"
 msgstr ""
 
@@ -124,6 +123,7 @@ msgstr "15 phút"
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Switch to {0}"
 msgstr ""
@@ -265,6 +265,7 @@ msgstr ""
 #~ msgid "Rewards"
 #~ msgstr "Phần thưởng"
 
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Pay"
@@ -361,6 +362,7 @@ msgid "No assets found."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+#: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Swap fee"
 msgstr ""
 
@@ -420,6 +422,10 @@ msgstr ""
 
 #: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "Bribe available in"
+msgstr ""
+
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+msgid "Failed"
 msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
@@ -750,6 +756,10 @@ msgstr ""
 msgid "100 bnUSD"
 msgstr "100 bnUSD"
 
+#: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
+msgid "Balanced Intent"
+msgstr ""
+
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #~ msgid "Awaiting archway manager message"
 #~ msgstr ""
@@ -782,6 +792,10 @@ msgstr ""
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 msgid "Before"
 msgstr "Trước"
+
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#~ msgid "Order type"
+#~ msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Active"
@@ -842,6 +856,10 @@ msgstr ""
 #: src/app/components/home/Savings/index.tsx
 msgid "Withdrew {0} bnUSD."
 msgstr ""
+
+#: src/app/pages/trade/xswap/_components/MMSwapInfo.tsx
+#~ msgid "Minimum to receive(Intent)"
+#~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "sign in"
@@ -927,6 +945,11 @@ msgstr ""
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
@@ -941,6 +964,7 @@ msgstr "{0}"
 msgid "Bridge"
 msgstr ""
 
+#: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
 #: src/store/bridge/hooks.tsx
 #: src/store/bridge/hooks.tsx
 #: src/store/mint/hooks.tsx
@@ -968,6 +992,7 @@ msgstr "Giao dịch"
 #~ msgid "Confirm the transaction on your Ledger."
 #~ msgstr "Xác nhận giao dịch trên thiết bị Ledger."
 
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swapping"
 msgstr ""
@@ -1079,6 +1104,7 @@ msgstr ""
 msgid "Title"
 msgstr "Tiêu đề"
 
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap {0} for {1}?"
@@ -1449,6 +1475,7 @@ msgstr ""
 msgid "There's no ICX unstaking."
 msgstr "Hiện tại ko có ICX nào đang được gỡ ra."
 
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
@@ -1490,6 +1517,7 @@ msgstr ""
 msgid "Transfer {inputCurrency} to {network}..."
 msgstr ""
 
+#: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
 #: src/store/bridge/hooks.tsx
 #: src/store/swap/hooks.ts
 msgid "Insufficient {0}"
@@ -1565,7 +1593,8 @@ msgstr ""
 msgid "Future incentives"
 msgstr ""
 
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapInfo.tsx
+#: src/app/pages/trade/xswap/_components/SwapInfo.tsx
 msgid "Minimum to receive"
 msgstr "Nhận được tối thiểu"
 
@@ -1713,6 +1742,7 @@ msgstr ""
 #~ msgid "Transfer in progress"
 #~ msgstr ""
 
+#: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
 #: src/store/swap/hooks.ts
 msgid "Choose address"
 msgstr ""
@@ -1878,8 +1908,7 @@ msgstr ""
 msgid "Claiming bribe..."
 msgstr ""
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/components/BridgeLimitWarning/index.tsx
 msgid "0 {0}"
 msgstr ""
 
@@ -2030,6 +2059,7 @@ msgstr "Nhận"
 msgid "Home"
 msgstr "Trang chủ"
 
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap fee (included):"
 msgstr ""
@@ -2099,7 +2129,7 @@ msgstr ""
 msgid "Claim network fees?"
 msgstr "Nhận phí hoạt động từ balanced?"
 
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/PriceImpact.tsx
 msgid "Price impact"
 msgstr "Tác động Giá"
 
@@ -2147,6 +2177,7 @@ msgstr ""
 msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
 msgstr ""
 
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Receive"
@@ -2253,8 +2284,7 @@ msgstr ""
 msgid "Takes up to {0} days. When it's ready, you can claim your ICX from the wallet section."
 msgstr ""
 
-#: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/components/BridgeLimitWarning/index.tsx
 msgid "available on {0}."
 msgstr ""
 
@@ -2302,6 +2332,10 @@ msgstr "Pool"
 #~ msgid "1 {sendSymbol} per {0}"
 #~ msgstr ""
 
+#: src/app/pages/trade/xswap/_components/SwapMMCommitButton.tsx
+#~ msgid "MM Swap"
+#~ msgstr ""
+
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "Your supply"
@@ -2318,6 +2352,10 @@ msgstr ""
 
 #: src/store/bridge/hooks.tsx
 msgid "Enter address"
+msgstr ""
+
+#: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
+msgid "Swap time"
 msgstr ""
 
 #: src/app/components/CommunityListToggle/index.tsx
@@ -2394,6 +2432,10 @@ msgstr ""
 msgid "Voting ends in {endTimeStr}"
 msgstr "Bỏ phiếu kết thúc trong {endTimeStr}"
 
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+msgid "Completed"
+msgstr ""
+
 #: src/app/components/Notification/TransactionNotification.tsx
 msgid "Contract calls verified."
 msgstr ""
@@ -2430,6 +2472,7 @@ msgid "APY"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+#: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Route"
 msgstr "Tuyến đường"
 
@@ -2497,6 +2540,7 @@ msgstr "Bạn đã phản đối"
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+#: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Exchange rate"
 msgstr "Tỷ giá"
 
@@ -2599,9 +2643,11 @@ msgid "Learn how to resolve common transaction errors."
 msgstr ""
 
 #: src/app/pages/trade/layout.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
+#: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap"

@@ -18,7 +18,7 @@ import { useLoanInputAmount } from '@/store/loan/hooks';
 import { useOraclePrice } from '@/store/oracle/hooks';
 import { useLockedAmount, useUnclaimedRewards } from '@/store/savings/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { AppState } from '..';
 import { setReward } from './reducer';

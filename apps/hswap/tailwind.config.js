@@ -5,7 +5,7 @@ module.exports = {
   prefix: '',
   theme: {
     container: {
-      center: true,
+      center: 'true',
       padding: '2rem',
       screens: {
         '2xl': '1400px',
@@ -48,6 +48,16 @@ module.exports = {
         },
         warning: 'hsl(var(--warning))',
         'light-purple': '#D4C5F9',
+        sidebar: {
+          DEFAULT: 'hsl(var(--sidebar-background))',
+          foreground: 'hsl(var(--sidebar-foreground))',
+          primary: 'hsl(var(--sidebar-primary))',
+          'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+          accent: 'hsl(var(--sidebar-accent))',
+          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+          border: 'hsl(var(--sidebar-border))',
+          ring: 'hsl(var(--sidebar-ring))',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -56,21 +66,43 @@ module.exports = {
       },
       keyframes: {
         'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' },
+          from: {
+            height: '0',
+          },
+          to: {
+            height: 'var(--radix-accordion-content-height)',
+          },
         },
         'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' },
+          from: {
+            height: 'var(--radix-accordion-content-height)',
+          },
+          to: {
+            height: '0',
+          },
         },
         wiggle: {
-          '0%': { transform: 'translate3d(0, 0, 0)' },
-          '10%': { transform: 'translate3d(-3px, 0, 0)' },
-          '30%': { transform: 'translate3d(3px, 0, 0)' },
-          '50%': { transform: 'translate3d(-2px, 0, 0)' },
-          '70%': { transform: 'translate3d(2px, 0, 0)' },
-          '90%': { transform: 'translate3d(-1px, 0, 0)' },
-          '100%': { transform: 'translate3d(0, 0, 0)' },
+          '0%': {
+            transform: 'translate3d(0, 0, 0)',
+          },
+          '10%': {
+            transform: 'translate3d(-3px, 0, 0)',
+          },
+          '30%': {
+            transform: 'translate3d(3px, 0, 0)',
+          },
+          '50%': {
+            transform: 'translate3d(-2px, 0, 0)',
+          },
+          '70%': {
+            transform: 'translate3d(2px, 0, 0)',
+          },
+          '90%': {
+            transform: 'translate3d(-1px, 0, 0)',
+          },
+          '100%': {
+            transform: 'translate3d(0, 0, 0)',
+          },
         },
       },
       animation: {

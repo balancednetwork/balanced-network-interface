@@ -15,11 +15,11 @@ import {
   useBridgeState,
   useDerivedBridgeInfo,
 } from '@/store/bridge/hooks';
-import { archway } from '@/xwagmi/constants/xChains';
-import { sARCHOnArchway } from '@/xwagmi/constants/xTokens';
-import { useXService } from '@/xwagmi/hooks';
-import { XChainId } from '@/xwagmi/types';
-import { ArchwayXService } from '@/xwagmi/xchains/archway';
+import { archway } from '@balancednetwork/xwagmi';
+import { sARCHOnArchway } from '@balancednetwork/xwagmi';
+import { useXService } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
+import { ArchwayXService } from '@balancednetwork/xwagmi';
 
 const WithdrawOption = styled.button<{ active: boolean }>`
   text-align: center;
@@ -54,7 +54,7 @@ export function useWithdrawableNativeAmount(
     }
   | undefined
 > {
-  const archwayXService: ArchwayXService = useXService('ARCHWAY') as ArchwayXService;
+  const archwayXService: ArchwayXService = useXService('ARCHWAY') as unknown as ArchwayXService;
   const client = archwayXService.publicClient;
 
   const { isLiquidsARCH } = useDerivedBridgeInfo();

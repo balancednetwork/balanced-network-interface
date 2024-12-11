@@ -1,7 +1,7 @@
-import { isNativeCurrency } from '@/constants/tokens';
-import { allXTokens, xTokenMap } from '@/xwagmi/constants/xTokens';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
-import { CurrencyAmount, XChainId, XToken } from '@balancednetwork/sdk-core';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { xTokenMap } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
+import { bnJs } from '@balancednetwork/xwagmi';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 
@@ -17,7 +17,7 @@ type ResultMap = {
 };
 
 const getXChainDecimalDifference = (xToken: XToken) => {
-  const iconToken = Object.values(xTokenMap)?.find(t => t.symbol === xToken.symbol && t.xChainId === '0x1.icon');
+  const iconToken = xTokenMap['0x1.icon'].find(t => t.symbol === xToken.symbol);
   if (iconToken) {
     return iconToken.decimals - xToken.decimals;
   }
@@ -34,11 +34,8 @@ const fixDecimalDifference = (amount: string, decimalsDifference: number) => {
 };
 
 export function useAssetManagerTokens(): UseQueryResult<ResultMap> {
-  const oneMinPeriod = 1000 * 60;
-  const now = Math.floor(new Date().getTime() / oneMinPeriod) * oneMinPeriod;
-
   return useQuery({
-    queryKey: ['assetManagerStatus', now],
+    queryKey: ['assetManagerState'],
     queryFn: async () => {
       const tokensMap: { [xAddress: XAddress]: Address } = await bnJs.AssetManager.getAssets();
 
@@ -55,21 +52,20 @@ export function useAssetManagerTokens(): UseQueryResult<ResultMap> {
       Object.keys(tokensMap).forEach((xAddress: XAddress, index) => {
         const [amount, limit] = res[index];
         const xChainId = xAddress.split(/\/(.*)/s)[0] as XChainId;
-        const address = xAddress.split(/\/(.*)/s)[1];
+        let address = xAddress.split(/\/(.*)/s)[1];
+        if (xChainId === 'sui') {
+          address = '0x' + address;
+        }
 
-        const token = allXTokens?.find(
-          t =>
-            (address === '0x0000000000000000000000000000000000000000'
-              ? isNativeCurrency(t)
-              : t.address.toLowerCase() === address.toLowerCase()) && t.xChainId === xChainId,
-        );
+        const token = xTokenMap[xChainId]?.find(t => t.address.toLowerCase() === address.toLowerCase());
 
         if (!token) return;
 
         const decimalsDifference = getXChainDecimalDifference(token);
 
-        result[xAddress] = {
-          address: tokensMap[xAddress],
+        const _xAddress = token.id;
+        result[_xAddress] = {
+          address: tokensMap[_xAddress],
           depositedAmount: CurrencyAmount.fromRawAmount(
             token,
             !!decimalsDifference ? fixDecimalDifference(amount, decimalsDifference) : amount,
@@ -80,5 +76,6 @@ export function useAssetManagerTokens(): UseQueryResult<ResultMap> {
 
       return result;
     },
+    refetchInterval: 1000 * 60,
   });
 }

@@ -1,4 +1,5 @@
-import { CurrencyAmount, XChainType, XToken } from '@balancednetwork/sdk-core';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XChainType, XToken } from '@balancednetwork/xwagmi';
 import { createSlice } from '@reduxjs/toolkit';
 
 /**
@@ -36,7 +37,7 @@ const walletSlice = createSlice({
           for (const tokenAddress in balances) {
             const balance = balances[tokenAddress];
             if (!state.balances[account]) state.balances[account] = {};
-            state.balances[account][tokenAddress] = balance;
+            state.balances[account][balance.currency.id] = balance;
           }
         } else {
           const _account = state.accounts[xChainType];

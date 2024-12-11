@@ -3,10 +3,10 @@ import { useICX } from '@/constants/tokens';
 import { useIcxDisplayType } from '@/store/collateral/hooks';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { toFraction } from '@/utils';
-import { formatValue } from '@/utils/formatter';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { Position, XChainId } from '@/xwagmi/types';
+import { formatSymbol, formatValue } from '@/utils/formatter';
 import { Token } from '@balancednetwork/sdk-core';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { Position, XChainId } from '@balancednetwork/xwagmi';
 import React from 'react';
 import { useTheme } from 'styled-components';
 import CurrencyLogo from '../CurrencyLogo';
@@ -67,7 +67,7 @@ const SingleChainItemOverview = ({
           )}
 
           <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>
-            {isNested ? xChainMap[xChainId].name : symbol === 'sICX' ? icxDisplayType : symbol}
+            {isNested ? xChainMap[xChainId].name : symbol === 'sICX' ? icxDisplayType : formatSymbol(symbol)}
           </Typography>
         </AssetSymbol>
         <BalanceAndValueWrap>

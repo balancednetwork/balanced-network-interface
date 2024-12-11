@@ -156,6 +156,7 @@ export const FixedGlobalStyle = createGlobalStyle`
     url(${texGyeAdventorRegularWoff}) format('woff');
     font-weight: normal;
     font-style: normal;
+    font-display: swap
   }
 
   @font-face {
@@ -164,6 +165,7 @@ export const FixedGlobalStyle = createGlobalStyle`
     url(${texGyeAdventorBoldWoff}) format('woff');
     font-weight: bold;
     font-style: normal;
+    font-display: swap
   }
 
   html,

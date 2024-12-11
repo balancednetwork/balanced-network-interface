@@ -1,17 +1,21 @@
+import CurrencyLogoWithNumber from '@/app/components2/CurrencyLogoWithNumber';
+import { ChevronDownIcon, ChevronUpIcon, SubtractIcon } from '@/app/components2/Icons';
+import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';
-import { XToken } from '@balancednetwork/sdk-core';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XToken } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
-import React from 'react';
+import React, { useState } from 'react';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
-import CurrencyLogo from '@/app/components2/CurrencyLogo';
 
 type MultiChainBalanceItemProps = {
   balances: CurrencyAmount<XToken>[];
 };
 
 const MultiChainBalanceItem = ({ balances }: MultiChainBalanceItemProps) => {
+  const [open, setOpen] = useState(false);
+
   const currency = balances[0].currency;
   const rates = useRatesWithOracle();
 
@@ -20,19 +24,42 @@ const MultiChainBalanceItem = ({ balances }: MultiChainBalanceItemProps) => {
 
   return (
     <>
-      <div className="font-medium flex items-center gap-2">
-        <CurrencyLogo currency={currency} />
-        <div>{currency.symbol}</div>
-      </div>
-      <div className="text-right">{formatBalance(total?.toFixed(), rates?.[currency.symbol]?.toFixed())}</div>
-      <div className="text-right">{!value ? '-' : formatValue(value.toFixed())}</div>
+      <Collapsible open={open} onOpenChange={setOpen} asChild>
+        <div>
+          <div className="grid grid-cols-4 items-center cursor-pointer rounded-xl px-10" onClick={() => setOpen(!open)}>
+            <div className="col-span-2 font-medium flex items-center gap-2 cursor-pointer">
+              <CurrencyLogoWithNumber currency={currency} amount={balances.length} />
+              <div className="text-[#0d0229] text-sm font-bold hover:text-title-gradient leading-tight">
+                {currency.symbol}
+              </div>
+              <span className="">{open ? <ChevronUpIcon /> : <ChevronDownIcon />}</span>
+            </div>
+            <div className="text-right text-[#0d0229] text-sm font-bold leading-tight">
+              {formatBalance(total?.toFixed(), rates?.[currency.symbol]?.toFixed())}
+            </div>
+            <div className="text-right text-[#685682] text-sm font-medium leading-tight">
+              {!value ? '-' : formatValue(value.toFixed())}
+            </div>
+          </div>
 
-      <div className="relative col-span-3 grid grid-cols-3 gap-4 bg-[#221542] p-3 rounded-xl">
-        {balances.map(balance => (
-          <SingleChainBalanceItem key={balance.currency.address} balance={balance} isNested={true} />
-        ))}
-        <div className="absolute left-[48px] transform -translate-x-1/2 top-[-10px] w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[10px] border-[#221542]"></div>
-      </div>
+          <CollapsibleContent asChild>
+            <div className="relative mt-4 mx-6 rounded-3xl bg-[#ffffff4a] flex flex-col gap-4 py-4">
+              {balances.map(balance => (
+                <SingleChainBalanceItem
+                  key={balance.currency.address}
+                  balance={balance}
+                  isNested={true}
+                  className="px-4"
+                />
+              ))}
+
+              <div className="absolute top-[-16px] left-[48px]">
+                <SubtractIcon className="fill-[#ffffff4a]" />
+              </div>
+            </div>
+          </CollapsibleContent>
+        </div>
+      </Collapsible>
     </>
   );
 };

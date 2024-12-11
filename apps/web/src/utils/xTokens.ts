@@ -1,12 +1,11 @@
 import { Currency } from '@balancednetwork/sdk-core';
 
-import { NATIVE_ADDRESS } from '@/xwagmi/constants';
-import { xChainMap, xChains } from '@/xwagmi/constants/xChains';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XChain, XChainId, XToken } from '@/xwagmi/types';
+import { xChainMap, xChains } from '@balancednetwork/xwagmi';
+import { xTokenMap } from '@balancednetwork/xwagmi';
+import { XChain, XChainId, XToken } from '@balancednetwork/xwagmi';
 
 export const getNetworkDisplayName = (chain: XChainId) => {
-  return xChainMap[chain].name;
+  return xChainMap?.[chain]?.name || 'unknown';
 };
 
 export const getXTokenAddress = (chain: XChainId, tokenSymbol?: string): string | undefined => {
@@ -37,16 +36,6 @@ export const getAvailableXChains = (currency?: Currency | XToken | null): XChain
   const xChainIds = allXTokens.filter(t => t.symbol === currency.symbol).map(t => t.xChainId);
 
   return xChains.filter(x => xChainIds.includes(x.xChainId));
-};
-
-export const getXAddress = (xToken: XToken | undefined) => {
-  if (!xToken) return undefined;
-
-  return (
-    xToken.xChainId +
-    '/' +
-    (xToken.address === NATIVE_ADDRESS ? '0x0000000000000000000000000000000000000000' : xToken.address)
-  );
 };
 
 export const getSpokeVersions = (symbol: string): string[] => {

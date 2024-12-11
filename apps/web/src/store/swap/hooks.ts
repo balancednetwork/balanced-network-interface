@@ -14,10 +14,12 @@ import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
-import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
-import { getXChainType } from '@/xwagmi/actions';
-import { useXAccount } from '@/xwagmi/hooks';
-import { XChainId, XToken } from '@/xwagmi/types';
+import { formatSymbol } from '@/utils/formatter';
+import { getXTokenBySymbol } from '@/utils/xTokens';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { useXAccount } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
+import { StellarAccountValidation, useValidateStellarAccount } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
 import {
@@ -146,6 +148,7 @@ export function useDerivedSwapInfo(): {
   };
   canBridge: boolean;
   maximumBridgeAmount: CurrencyAmount<XToken> | undefined;
+  stellarValidation?: StellarAccountValidation;
 } {
   const {
     independentField,
@@ -228,8 +231,11 @@ export function useDerivedSwapInfo(): {
   const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], trade?.inputAmount];
 
   // decimal scales are different for different chains for the same token
-  if (balanceIn && amountIn && new BigNumber(balanceIn.toFixed()).isLessThan(amountIn.toFixed())) {
-    inputError = t`Insufficient ${currencies[Field.INPUT]?.symbol}`;
+  if (
+    (account && !balanceIn && amountIn?.greaterThan(0)) ||
+    (balanceIn && amountIn && new BigNumber(balanceIn.toFixed()).isLessThan(amountIn.toFixed()))
+  ) {
+    inputError = t`Insufficient ${formatSymbol(currencies[Field.INPUT]?.symbol)}`;
   }
 
   //
@@ -276,7 +282,7 @@ export function useDerivedSwapInfo(): {
 
   const maximumBridgeAmount = useMemo(() => {
     if (currencies[Field.OUTPUT] instanceof XToken) {
-      return assetManager?.[getXAddress(currencies[Field.OUTPUT]) ?? '']?.depositedAmount;
+      return assetManager?.[currencies[Field.OUTPUT].id ?? '']?.depositedAmount;
     }
   }, [assetManager, currencies[Field.OUTPUT]]);
 
@@ -293,6 +299,14 @@ export function useDerivedSwapInfo(): {
   const canBridge = useMemo(() => {
     return maximumBridgeAmount && outputCurrencyAmount ? !maximumBridgeAmount.lessThan(outputCurrencyAmount) : true;
   }, [maximumBridgeAmount, outputCurrencyAmount]);
+
+  //temporary check for valid stellar account
+  const stellarValidationQuery = useValidateStellarAccount(direction.to === 'stellar' ? recipient : undefined);
+  const { data: stellarValidation } = stellarValidationQuery;
+
+  if (stellarValidationQuery.isLoading) {
+    inputError = t`Validating Stellar account`;
+  }
 
   return {
     account,
@@ -311,6 +325,7 @@ export function useDerivedSwapInfo(): {
     formattedAmounts,
     canBridge,
     maximumBridgeAmount,
+    stellarValidation,
   };
 }
 

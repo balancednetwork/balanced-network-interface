@@ -1,10 +1,10 @@
 import { Typography } from '@/app/theme';
 import { useRatesWithOracle } from '@/queries/reward';
-import { formatBalance, formatValue } from '@/utils/formatter';
-import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@/xwagmi/types';
+import { formatBalance, formatSymbol, formatValue } from '@/utils/formatter';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import React from 'react';
 import { useTheme } from 'styled-components';
@@ -25,7 +25,6 @@ const SingleChainBalanceItem = ({
   baseToken,
   networkBalance,
   value,
-  isLast = false,
   isNested = false,
 }: SingleChainBalanceItemProps) => {
   const [xChainId, balance] = Object.entries(networkBalance)[0];
@@ -50,7 +49,7 @@ const SingleChainBalanceItem = ({
 
   return (
     <>
-      <ListItem $border={!isNested && !isLast} onClick={handleModalOpen} className={isICONAsset ? 'has-modal' : ''}>
+      <ListItem $border={!isNested} onClick={handleModalOpen} className={isICONAsset ? 'has-modal' : 'no-pointer'}>
         <AssetSymbol $hasNotification={hasNotification}>
           <CurrencyLogoWithNetwork
             currency={baseToken}
@@ -59,7 +58,7 @@ const SingleChainBalanceItem = ({
             size={isNested ? '20px' : '24px'}
           />
           <Typography fontSize={isNested ? 14 : 16} fontWeight={isNested ? 'normal' : 'bold'} pl={isNested ? '5px' : 0}>
-            {isNested ? xChainMap[xChainId].name : symbol}
+            {isNested ? xChainMap[xChainId].name : formatSymbol(symbol)}
             {isICONAsset && <Chevron $isNested={isNested} />}
           </Typography>
         </AssetSymbol>

@@ -243,6 +243,14 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sui.png"
     },
     {
+      "address": "cx518f64edcd35db9044a2de63fdc10abfd5f7d611",
+      "chainId": 1,
+      "name": "XLM",
+      "symbol": "XLM",
+      "decimals": 7,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/xlm.png"
+    },
+    {
       "address": "cx15ddac8c2663bd7e71ca1688dffa426070752fbd",
       "chainId": 1,
       "name": "Threshold BTC",
@@ -265,6 +273,46 @@
       "symbol": "weETH",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/weeth.png"
+    },
+    {
+      "address": "cx65c9e3d4fea842e00add0d32a5b4c5e4e04c7a6b",
+      "chainId": 1,
+      "name": "SOL",
+      "symbol": "SOL",
+      "decimals": 9,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/sol.png"
+    },
+    {
+      "address": "cx4b48a4789636aa737285feec8908c765d8bc8042",
+      "chainId": 1,
+      "name": "Jito Staked SOL",
+      "symbol": "JITOSOL",
+      "decimals": 9,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/jitosol.png"
+    },
+    {
+      "address": "cxb9d0727849a6ce6453f8c9dda2dec2fd543075d4",
+      "chainId": 1,
+      "name": "Volo Staked SUI",
+      "symbol": "VSUI",
+      "decimals": 9,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/vsui.png"
+    },
+    {
+      "address": "cx0664cceb34d391ba78a897200fab94b9b49443d0",
+      "chainId": 1,
+      "name": "Haedal Staked SUI",
+      "symbol": "HASUI",
+      "decimals": 9,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/hasui.png"
+    },
+    {
+      "address": "cx27fa4bdb0522e3be5a51daab06eb39889fb4c8da",
+      "chainId": 1,
+      "name": "Aftermath Staked SUI",
+      "symbol": "AFSUI",
+      "decimals": 9,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/afsui.png"
     }
   ]
 }

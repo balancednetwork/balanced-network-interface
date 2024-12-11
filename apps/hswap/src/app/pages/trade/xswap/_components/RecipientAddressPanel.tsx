@@ -1,14 +1,24 @@
 import { handleConnectWallet } from '@/app/components/WalletConnectModal/WalletItem';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
-import { getXChainType } from '@/xwagmi/actions';
-import { useXAccount, useXConnect, useXConnectors } from '@/xwagmi/hooks';
-import { validateAddress } from '@/xwagmi/utils';
-import { XChainId } from '@balancednetwork/sdk-core';
+import { shortenAddress } from '@/utils';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { useXAccount, useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
+import { validateAddress } from '@balancednetwork/xwagmi';
 import { X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+
+const getChainName = (xChainId?: XChainId) => {
+  if (!xChainId) return '';
+
+  return xChainMap[xChainId].name;
+};
 
 export default function RecipientAddressPanel() {
   const { recipient } = useSwapState();
@@ -33,6 +43,7 @@ export default function RecipientAddressPanel() {
 
   const handleFillAddress = () => {
     if (outputAccount.address) {
+      setEditable(false);
       onChangeRecipient(outputAccount.address);
     } else {
       handleConnectWallet(xChainType, xConnectors, xConnect);
@@ -46,18 +57,16 @@ export default function RecipientAddressPanel() {
   const [editable, setEditable] = useState(true);
 
   useEffect(() => {
-    const _isSame = inputXChainType === outputXChainType;
-
-    if (_isSame) {
+    if (outputAccount.address) {
       setChecked(false);
-      onChangeRecipient(inputAccount.address || '');
+      onChangeRecipient(outputAccount.address || '');
       setEditable(false);
     } else {
-      setChecked(true);
+      setChecked(false);
       onChangeRecipient('');
       setEditable(true);
     }
-  }, [inputXChainType, outputXChainType, inputAccount.address, onChangeRecipient]);
+  }, [onChangeRecipient, outputAccount.address]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -65,30 +74,31 @@ export default function RecipientAddressPanel() {
   }, [checked]);
 
   return (
-    <div className="rounded-xl w-full bg-card p-4 flex flex-col gap-2">
-      <div className="flex items-center space-x-2 mb-1">
+    <div className="w-full flex flex-col gap-2">
+      <div className="flex items-center justify-center gap-3 mb-1">
+        <label
+          htmlFor="send-to-another-address"
+          className="text-[#695682] text-sm font-medium select-none cursor-pointer"
+        >
+          Send to another address
+        </label>
         <Checkbox
-          id="xyz"
-          checked={enabled}
-          disabled={!isSameChainType}
+          id="send-to-another-address"
+          checked={checked}
           onCheckedChange={_checked => {
             if (_checked !== 'indeterminate') {
               setChecked(_checked);
               if (_checked) {
                 onChangeRecipient('');
               } else {
-                onChangeRecipient(inputAccount.address || '');
+                onChangeRecipient(outputAccount.address || '');
               }
             }
           }}
-          className="border-light-purple data-[state=checked]:bg-light-purple data-[state=checked]:text-primary"
+          className="border-light-purple data-[state=checked]:bg-light-purple data-[state=checked]:text-primary rounded-full border-2"
         />
-        <label htmlFor="xyz" className="text-secondary-foreground text-subtitle font-bold select-none cursor-pointer">
-          Trade and send to another address
-        </label>
       </div>
-
-      {enabled && currencies[Field.OUTPUT]?.xChainId && (
+      {checked && currencies[Field.OUTPUT]?.xChainId && (
         <AddressInputForm
           xChainId={currencies[Field.OUTPUT]?.xChainId}
           value={recipient || ''}
@@ -97,6 +107,15 @@ export default function RecipientAddressPanel() {
           editable={editable}
           onEditableChange={setEditable}
         />
+      )}
+
+      {!outputAccount.address && !checked && (
+        <Button
+          className="group bg-[#695682]/30 hover:bg-[#695682]/50 rounded-full w-fit self-center h-[37px]"
+          onClick={handleFillAddress}
+        >
+          <span className="text-[#E6E0F7] group-hover:text-title-gradient font-bold text-sm">Or connect a wallet</span>
+        </Button>
       )}
     </div>
   );
@@ -119,14 +138,14 @@ function AddressInputForm({
 }) {
   // validate address
   const isValidAddress = value.length > 0 && validateAddress(value, xChainId);
+  const outputAccount = useXAccount(getXChainType(xChainId));
 
   return (
     <>
-      <div className="relative bg-background rounded-sm">
+      <div className="relative border-4 border-[#695682]/30 rounded-full h-[37px]">
         <Input
           id="recipient-address-input"
-          placeholder={`Type/Paste ${xChainId} address`}
-          // disabled={!editable}
+          placeholder={`Add ${getChainName(xChainId)} address`}
           value={value}
           onChange={e => {
             onChange(e.target.value);
@@ -137,25 +156,27 @@ function AddressInputForm({
             }
           }}
           autoFocus
-          className="rounded-lg border-none bg-transparent px-2 focus-visible:ring-0 focus-visible:ring-offset-0"
-          hidden={!editable}
+          className={cn(
+            'py-0 h-7 rounded-full bg-transparent border-none px-2 focus-visible:ring-0 focus-visible:ring-offset-0 font-medium text-sm text-center',
+            editable ? 'w-full' : 'w-0',
+          )}
+          autoComplete="off"
         />
 
         {!editable && (
           <button
             type="button"
-            className="bg-card absolute left-1 rounded-sm top-1/2 -translate-y-1/2 text-body px-1 py-0.5 flex items-center"
+            className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 text-sm px-1 py-0.5 flex items-center"
             onClick={() => {
               // make the input focused
               document.getElementById('recipient-address-input')?.focus();
-              console.log(document.getElementById('recipient-address-input'));
               onEditableChange(true);
             }}
           >
-            {value}
+            {shortenAddress(value)}
             <button
               type="button"
-              className=""
+              className="ml-1"
               onClick={e => {
                 e.stopPropagation();
                 onEditableChange(true);
@@ -164,21 +185,14 @@ function AddressInputForm({
                 document.getElementById('recipient-address-input')?.focus();
               }}
             >
-              <X width={20} height={20} />
+              <X width={14} height={14} />
             </button>
           </button>
         )}
       </div>
 
-      {value.length === 0 ? (
-        <div className="text-base">
-          <span className="font-bold text-light-purple cursor-pointer select-none" onClick={onConnect}>
-            Connect
-          </span>
-          <span className="text-body text-secondary-foreground"> or Paste recipient address</span>
-        </div>
-      ) : isValidAddress ? null : (
-        <div className="text-body text-warning">Invalid {xChainId} address</div>
+      {!(value.length === 0 || isValidAddress) && (
+        <div className="font-bold text-sm text-warning text-center">Invalid {getChainName(xChainId)} address</div>
       )}
     </>
   );

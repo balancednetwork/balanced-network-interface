@@ -5,15 +5,17 @@ import { Box, Flex } from 'rebass';
 import { ChainLogo } from '@/app/components/ChainLogo';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { HeaderText } from '@/app/components/Wallet/styledComponents';
+import { StyledHeaderText } from '@/app/pages/trade/bridge/_components/XChainList';
 import { Typography } from '@/app/theme';
-import { useSignedInWallets } from '@/hooks/useWallets';
+import useSortXPositions from '@/hooks/useSortXPositions';
+import { useHasSignedIn, useSignedInWallets } from '@/hooks/useWallets';
 import { useCollateralAmounts, useCollateralType } from '@/store/collateral/hooks';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatValue } from '@/utils/formatter';
-import { xChains } from '@/xwagmi/constants/xChains';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XChain, XChainId } from '@/xwagmi/types';
+import { xChains } from '@balancednetwork/xwagmi';
+import { xTokenMap } from '@balancednetwork/xwagmi';
+import { XChain, XChainId } from '@balancednetwork/xwagmi';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
@@ -98,6 +100,12 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
 const ChainList = ({ chainId, setChainId, chains, width }: ChainListProps) => {
   const relevantChains = chains || xChains;
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const collateralType = useCollateralType();
+  const hasSignedIn = useHasSignedIn();
+  const { sortBy, handleSortSelect, sortData } = useSortXPositions(
+    hasSignedIn ? { key: 'value', order: 'DESC' } : { key: 'symbol', order: 'ASC' },
+    collateralType,
+  );
 
   const filteredChains = React.useMemo(() => {
     if (searchQuery === '') return relevantChains;
@@ -110,12 +118,8 @@ const ChainList = ({ chainId, setChainId, chains, width }: ChainListProps) => {
   }, [relevantChains, searchQuery]);
 
   const sortedFilteredChains = React.useMemo(() => {
-    return filteredChains.sort((a, b) => {
-      if (a.name < b.name) return -1;
-      if (a.name > b.name) return 1;
-      return 0;
-    });
-  }, [filteredChains]);
+    return sortData(filteredChains, collateralType);
+  }, [filteredChains, sortData, collateralType]);
 
   return (
     <SelectorWrap $width={width}>
@@ -130,16 +134,36 @@ const ChainList = ({ chainId, setChainId, chains, width }: ChainListProps) => {
         }}
       />
       <ScrollHelper>
-        <Grid mb="-10px" style={{ pointerEvents: 'none' }}>
-          <HeaderText>
-            <Trans>Blockchain</Trans>
-          </HeaderText>
-          <HeaderText>
-            <Trans>Collateral</Trans>
-          </HeaderText>
-        </Grid>
+        <Flex width="100%" justifyContent="space-between">
+          <StyledHeaderText
+            role="button"
+            className={sortBy.key === 'name' ? sortBy.order : ''}
+            onClick={() =>
+              handleSortSelect({
+                key: 'name',
+              })
+            }
+          >
+            <span>
+              <Trans>Blockchain</Trans>
+            </span>
+          </StyledHeaderText>
+          <StyledHeaderText
+            role="button"
+            className={sortBy.key === 'position' ? sortBy.order : ''}
+            onClick={() =>
+              handleSortSelect({
+                key: 'position',
+              })
+            }
+          >
+            <span>
+              <Trans>Collateral</Trans>
+            </span>
+          </StyledHeaderText>
+        </Flex>
         {sortedFilteredChains.map((chainItem, index) => (
-          <Box key={index}>
+          <Box key={chainItem.xChainId}>
             <ChainItem
               chain={chainItem}
               isActive={chainId === chainItem.xChainId}

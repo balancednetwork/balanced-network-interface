@@ -8,7 +8,7 @@ import { NETWORK_ID } from '@/constants/config';
 import useInterval from '@/hooks/useInterval';
 import { useCollateralType, useSupportedCollateralTokens } from '@/store/collateral/hooks';
 import { formatUnits } from '@/utils';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { ORACLE_PRICED_TOKENS } from '@/constants/tokens';
 import { AppState } from '..';
@@ -18,13 +18,13 @@ export function useOraclePrices(): AppState['oracle']['prices'] {
   return useSelector((state: AppState) => state.oracle.prices);
 }
 
-export function useOraclePrice(): BigNumber | undefined {
+export function useOraclePrice(symbol?: string): BigNumber | undefined {
   const oraclePrices = useOraclePrices();
   const collateralType = useCollateralType();
 
   return useMemo(() => {
-    if (oraclePrices) return oraclePrices[collateralType];
-  }, [oraclePrices, collateralType]);
+    if (oraclePrices) return oraclePrices[symbol || collateralType];
+  }, [oraclePrices, collateralType, symbol]);
 }
 
 // fetch price data every 5 secs

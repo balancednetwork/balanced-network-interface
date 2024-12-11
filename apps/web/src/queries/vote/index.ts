@@ -9,7 +9,7 @@ import QUERY_KEYS from '@/queries/queryKeys';
 import { usePlatformDayQuery } from '@/queries/reward';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { ProposalInterface } from '@/types';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 export const useProposalInfoQuery = (pId: number) => {
   return useQuery<ProposalInterface | undefined>({

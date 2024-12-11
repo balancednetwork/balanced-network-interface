@@ -227,3 +227,16 @@ export const formatPriceChange = (percent: number) => {
   if (percent === 0) return '0%';
   return `${percent >= 0 ? '+' : '-'}${getFormattedNumber(Math.abs(percent) / 100, 'percent2')}`;
 };
+
+export const formatSymbol = (symbol: string | undefined) => {
+  const mapping = {
+    AFSUI: 'afSUI',
+    HASUI: 'haSUI',
+    VSUI: 'vSUI',
+    JITOSOL: 'JitoSOL',
+  };
+  if (symbol && mapping[symbol]) {
+    return mapping[symbol];
+  }
+  return symbol;
+};

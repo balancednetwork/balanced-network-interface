@@ -10,7 +10,7 @@ import { AppState } from '@/store';
 import { useRewardsPercentDistribution } from '@/store/reward/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { ONE_DAY_DURATION } from '@/utils';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { getClosestUnixWeekStart } from '@/app/components/home/BBaln/utils';
 import { changeEditing, changeInputValue, changePowerLeft, changeShowConfirmation, changeUserData } from './reducer';

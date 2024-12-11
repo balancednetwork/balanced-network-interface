@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Currency, CurrencyAmount, Price, Token, TradeType, XChainId, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Price, Token, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { t } from '@lingui/macro';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,15 +11,15 @@ import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
-import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useWalletBalances } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
-import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
-import { getXChainType } from '@/xwagmi/actions';
-import { allXTokens } from '@/xwagmi/constants/xTokens';
-import { useXAccount } from '@/xwagmi/hooks';
-import { validateAddress } from '@/xwagmi/utils';
-import { XTransactionType } from '@/xwagmi/xcall/types';
+import { getXTokenBySymbol } from '@/utils/xTokens';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { allXTokens } from '@balancednetwork/xwagmi';
+import { useXAccount } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
+import { validateAddress } from '@balancednetwork/xwagmi';
+import { XTransactionType } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
 import { Field, selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput } from './reducer';
@@ -114,18 +114,16 @@ function tryParseAmount(value?: string, currency?: XToken): CurrencyAmount<XToke
 
 // from the current swap inputs, compute the best trade and return it.
 export function useDerivedSwapInfo(): {
-  account: string | undefined;
+  accounts: { [field in Field]?: string | undefined };
   trade: Trade<Currency, Currency, TradeType> | undefined;
   currencies: { [field in Field]?: XToken };
   percents: { [field in Field]?: number };
   currencyBalances: { [field in Field]?: CurrencyAmount<XToken> | undefined };
-  parsedAmount: CurrencyAmount<XToken> | undefined;
+  currencyAmounts: { [field in Field]?: CurrencyAmount<XToken> | undefined };
+  formattedAmounts: { [field in Field]: string };
   inputError?: string;
-  allowedSlippage: number;
   price: Price<Token, Token> | undefined;
   direction: { from: XChainId; to: XChainId };
-  dependentField: Field;
-  formattedAmounts: { [field in Field]: string };
   canBridge: boolean;
   maximumBridgeAmount: CurrencyAmount<XToken> | undefined;
   xTransactionType?: XTransactionType;
@@ -144,8 +142,15 @@ export function useDerivedSwapInfo(): {
     return calculateXTransactionType(inputCurrency, outputCurrency);
   }, [inputCurrency, outputCurrency]);
 
-  const xAccount = useXAccount(getXChainType(inputXChainId));
-  const account = xAccount.address;
+  const inputAccount = useXAccount(getXChainType(inputXChainId));
+  const outputAccount = useXAccount(getXChainType(outputXChainId));
+  const accounts = useMemo(
+    () => ({
+      [Field.INPUT]: inputAccount.address,
+      [Field.OUTPUT]: outputAccount.address,
+    }),
+    [inputAccount, outputAccount],
+  );
 
   const walletBalances = useWalletBalances();
 
@@ -153,8 +158,8 @@ export function useDerivedSwapInfo(): {
   const parsedAmount = tryParseAmount(typedValue, (_isExactIn ? inputCurrency : outputCurrency) ?? undefined);
   const currencyBalances: { [field in Field]?: CurrencyAmount<XToken> } = useMemo(
     () => ({
-      [Field.INPUT]: inputCurrency ? walletBalances?.[inputCurrency?.wrapped.address] : undefined,
-      [Field.OUTPUT]: outputCurrency ? walletBalances?.[outputCurrency?.wrapped.address] : undefined,
+      [Field.INPUT]: inputCurrency ? walletBalances?.[inputCurrency?.id] : undefined,
+      [Field.OUTPUT]: outputCurrency ? walletBalances?.[outputCurrency?.id] : undefined,
     }),
     [walletBalances, inputCurrency, outputCurrency],
   );
@@ -186,24 +191,70 @@ export function useDerivedSwapInfo(): {
     return _isExactIn ? _trade1 : _trade2;
   }, [_isExactIn, _trade1, _trade2, xTransactionType]);
 
-  const allowedSlippage = useSwapSlippageTolerance();
+  const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 
-  const gasChecker = useXCallGasChecker(parsedAmount);
+  const parsedAmounts = useMemo(() => {
+    if (xTransactionType === XTransactionType.BRIDGE) {
+      return { [Field.INPUT]: parsedAmount, [Field.OUTPUT]: parsedAmount };
+    }
+
+    return {
+      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
+      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+    };
+  }, [independentField, parsedAmount, trade, xTransactionType]);
+
+  const formattedAmounts = useMemo(() => {
+    return {
+      [independentField]: typedValue,
+      [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
+    } as { [field in Field]: string };
+  }, [dependentField, independentField, parsedAmounts, typedValue]);
+
+  const inputCurrencyAmount = useMemo(() => {
+    if (inputCurrency && formattedAmounts[Field.INPUT] && !Number.isNaN(parseFloat(formattedAmounts[Field.INPUT]))) {
+      return CurrencyAmount.fromRawAmount(
+        inputCurrency,
+        new BigNumber(formattedAmounts[Field.INPUT]).times(10 ** inputCurrency.wrapped.decimals).toFixed(0),
+      );
+    }
+    return undefined;
+  }, [formattedAmounts[Field.INPUT], inputCurrency]);
+
+  const outputCurrencyAmount = useMemo(() => {
+    if (outputCurrency && formattedAmounts[Field.OUTPUT] && !Number.isNaN(parseFloat(formattedAmounts[Field.OUTPUT]))) {
+      return CurrencyAmount.fromRawAmount(
+        outputCurrency,
+        new BigNumber(formattedAmounts[Field.OUTPUT]).times(10 ** outputCurrency.wrapped.decimals).toFixed(0),
+      );
+    }
+    return undefined;
+  }, [formattedAmounts[Field.OUTPUT], outputCurrency]);
+
+  const currencyAmounts = useMemo(() => {
+    return { [Field.INPUT]: inputCurrencyAmount, [Field.OUTPUT]: outputCurrencyAmount };
+  }, [inputCurrencyAmount, outputCurrencyAmount]);
+
+  const gasChecker = useXCallGasChecker(currencyAmounts[Field.INPUT]);
 
   const inputError = useMemo(() => {
     const swapDisabled = trade?.priceImpact.greaterThan(SLIPPAGE_SWAP_DISABLED_THRESHOLD);
 
     let error: string | undefined;
 
-    if (account) {
+    if (accounts[Field.INPUT]) {
       if (!recipient) {
-        error = t`Input address`;
+        if (accounts[Field.OUTPUT]) {
+          error = error ?? t`Type an address`;
+        } else {
+          error = error ?? t`Connect or add address`;
+        }
       } else if (outputXChainId && !validateAddress(recipient, outputXChainId)) {
-        error = t`Invalid address`;
+        error = error ?? t`Invalid address`;
       } else if (!parsedAmount) {
-        error = t`Enter amount`;
+        error = error ?? t`Enter amount`;
       } else if (swapDisabled) {
-        error = t`Reduce price impact`;
+        error = error ?? t`Reduce price impact`;
       }
     }
 
@@ -215,13 +266,13 @@ export function useDerivedSwapInfo(): {
       const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], parsedAmount];
 
       if (balanceIn && amountIn && new BigNumber(balanceIn.toFixed()).isLessThan(amountIn.toFixed())) {
-        error = t`Insufficient ${currencies[Field.INPUT]?.symbol}`;
+        error = error ?? t`Insufficient ${currencies[Field.INPUT]?.symbol}`;
       }
     } else {
       const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], trade?.inputAmount];
 
       if (balanceIn && amountIn && new BigNumber(balanceIn.toFixed()).isLessThan(amountIn.toFixed())) {
-        error = t`Insufficient ${currencies[Field.INPUT]?.symbol}`;
+        error = error ?? t`Insufficient ${currencies[Field.INPUT]?.symbol}`;
       }
 
       const userHasSpecifiedInputOutput = Boolean(
@@ -229,17 +280,17 @@ export function useDerivedSwapInfo(): {
       );
 
       if (userHasSpecifiedInputOutput && !trade) {
-        error = t`Insufficient liquidity`;
+        error = error ?? t`Insufficient liquidity`;
       }
     }
 
     if (!gasChecker.hasEnoughGas) {
-      error = t`Insufficient gas`;
+      error = error ?? t`Insufficient gas`;
     }
 
     return error;
   }, [
-    account,
+    accounts,
     recipient,
     parsedAmount,
     currencies,
@@ -268,64 +319,32 @@ export function useDerivedSwapInfo(): {
     [inputXChainId, outputXChainId],
   );
 
-  const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
-
-  const parsedAmounts = useMemo(() => {
-    if (xTransactionType === XTransactionType.BRIDGE) {
-      return { [Field.INPUT]: parsedAmount, [Field.OUTPUT]: parsedAmount };
-    }
-
-    return {
-      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
-    };
-  }, [independentField, parsedAmount, trade, xTransactionType]);
-
-  const formattedAmounts = useMemo(() => {
-    return {
-      [independentField]: typedValue,
-      [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
-    } as { [field in Field]: string };
-  }, [dependentField, independentField, parsedAmounts, typedValue]);
-
   const { data: assetManager } = useAssetManagerTokens();
 
   const maximumBridgeAmount = useMemo(() => {
     if (currencies[Field.OUTPUT] instanceof XToken) {
-      return assetManager?.[getXAddress(currencies[Field.OUTPUT]) ?? '']?.depositedAmount;
+      return assetManager?.[currencies[Field.OUTPUT].id ?? '']?.depositedAmount;
     }
   }, [assetManager, currencies[Field.OUTPUT]]);
-
-  const outputCurrencyAmount = useMemo(() => {
-    if (outputCurrency && formattedAmounts[Field.OUTPUT] && !Number.isNaN(parseFloat(formattedAmounts[Field.OUTPUT]))) {
-      return CurrencyAmount.fromRawAmount(
-        outputCurrency,
-        new BigNumber(formattedAmounts[Field.OUTPUT]).times(10 ** outputCurrency.wrapped.decimals).toFixed(0),
-      );
-    }
-    return undefined;
-  }, [formattedAmounts[Field.OUTPUT], outputCurrency]);
 
   const canBridge = useMemo(() => {
     return maximumBridgeAmount && outputCurrencyAmount ? maximumBridgeAmount?.greaterThan(outputCurrencyAmount) : true;
   }, [maximumBridgeAmount, outputCurrencyAmount]);
 
   return {
-    account,
+    accounts,
     trade,
     currencies,
     currencyBalances,
-    parsedAmount,
     inputError,
-    allowedSlippage,
     percents,
     price,
     direction,
-    dependentField,
     formattedAmounts,
     canBridge,
     maximumBridgeAmount,
     xTransactionType,
+    currencyAmounts,
   };
 }
 

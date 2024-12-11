@@ -18,8 +18,8 @@ import useClaimableICX from './useClaimableICX';
 
 import { Typography } from '@/app/theme';
 import { useRatesWithOracle } from '@/queries/reward';
-import { formatBalance } from '@/utils/formatter';
-import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
+import { formatBalance, formatSymbol } from '@/utils/formatter';
+import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
 import { useTheme } from 'styled-components';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import ICXWallet from './ICONWallets/ICXWallet';
@@ -74,7 +74,7 @@ const ICONAssetModal = ({ token, balance, value, isOpen, close }) => {
               size={'24px'}
             />
             <Typography fontSize={16} fontWeight={'bold'}>
-              {token.symbol}
+              {formatSymbol(token.symbol)}
             </Typography>
           </AssetSymbol>
           <BalanceAndValueWrap>

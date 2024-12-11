@@ -1,6 +1,7 @@
 import { Typography } from '@/app/theme';
-import { Position, XChainId } from '@/xwagmi/types';
+import { formatSymbol } from '@/utils/formatter';
 import { Token } from '@balancednetwork/sdk-core';
+import { Position, XChainId } from '@balancednetwork/xwagmi';
 import React from 'react';
 import styled from 'styled-components';
 import CurrencyLogo from '../CurrencyLogo';
@@ -15,7 +16,7 @@ type MultiChainItemProps = {
 
 export const StyledListItem = styled(ListItem)`
   transition: color ease 0.3s;
-  align-items: baseline;
+  align-items: center;
   
   &:hover {
     color: ${({ theme }) => theme.colors.primaryBright};
@@ -29,7 +30,15 @@ const MultiChainItem = ({ baseToken, positions, onSelect }: MultiChainItemProps)
   const sortedEntries = React.useMemo(() => {
     return Object.entries(positions).sort(([, positionA], [, positionB]) => {
       if (positionA.collateral && positionB.collateral) {
-        return positionB.collateral.lessThan(positionA.collateral) ? -1 : 1;
+        if (positionA.isPotential && positionB.isPotential) {
+          return positionA.collateral.greaterThan(positionB.collateral) ? 1 : -1;
+        } else if (positionA.isPotential && !positionB.isPotential) {
+          return 1;
+        } else if (!positionA.isPotential && positionB.isPotential) {
+          return -1;
+        } else {
+          return positionA.collateral.greaterThan(positionB.collateral) ? -1 : 1;
+        }
       }
       return positionA ? -1 : 1;
     });
@@ -42,7 +51,7 @@ const MultiChainItem = ({ baseToken, positions, onSelect }: MultiChainItemProps)
           <CurrencyLogo currency={baseToken} />
           <Typography fontSize={16} fontWeight="bold">
             <span ref={arrowRef} style={{ display: 'inline-block' }}>
-              {symbol}
+              {formatSymbol(symbol)}
             </span>
           </Typography>
         </AssetSymbol>

@@ -308,7 +308,7 @@ const MMSwapModal = ({
             >
               <Flex justifyContent="center" mt={4} pt={4} className="border-top">
                 <TextButton onClick={handleDismiss}>
-                  <Trans>{isProcessing ? 'Close' : 'Cancel'}</Trans>
+                  <Trans>{isProcessing || orderStatus === IntentOrderStatus.Failure ? 'Close' : 'Cancel'}</Trans>
                 </TextButton>
 
                 {orderStatus !== IntentOrderStatus.Failure &&

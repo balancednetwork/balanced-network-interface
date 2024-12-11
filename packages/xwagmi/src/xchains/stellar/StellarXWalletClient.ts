@@ -4,14 +4,13 @@ import bnJs from '../icon/bnJs';
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { FROM_SOURCES, TO_SOURCES, stellar } from '@/constants/xChains';
 import { XWalletClient } from '@/core';
-import { XToken } from '@/types';
 import { uintToBytes } from '@/utils';
 import { XTransactionInput, XTransactionType } from '@/xcall/types';
 import { getRlpEncodedSwapData, toICONDecimals } from '@/xcall/utils';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { StellarWalletsKit } from '@creit.tech/stellar-wallets-kit';
 import { RLP } from '@ethereumjs/rlp';
 import { BASE_FEE, Networks, TransactionBuilder, nativeToScVal } from '@stellar/stellar-sdk';
+import { isSpokeToken } from '../archway/utils';
 import CustomSorobanServer from './CustomSorobanServer';
 import { StellarXService } from './StellarXService';
 import {
@@ -94,7 +93,10 @@ export class StellarXWalletClient extends XWalletClient {
     const encoder = new TextEncoder();
     const uint8Array = encoder.encode(JSON.stringify(dataObj));
 
-    if (inputAmount.currency.symbol === 'XLM') {
+    const isNative = inputAmount.currency.symbol === 'XLM';
+    const _isSpokeToken = isSpokeToken(inputAmount.currency);
+
+    if (isNative) {
       //deposit(from: address, token: address, amount: u128, to: option<string>, data: option<bytes>)
       const params = [
         accountToScVal(account),
@@ -106,7 +108,7 @@ export class StellarXWalletClient extends XWalletClient {
 
       const hash = await sendTX(stellar.contracts.assetManager, 'deposit', params, txBuilder, server, kit);
       return hash;
-    } else if (inputAmount.currency.symbol === 'bnUSD') {
+    } else if (_isSpokeToken) {
       //cross_transfer(from: address, amount: u128, to: string, data: option<bytes>)
       const params = [
         accountToScVal(account),
@@ -115,7 +117,7 @@ export class StellarXWalletClient extends XWalletClient {
         nativeToScVal(uint8Array, { type: 'bytes' }),
       ];
 
-      const hash = await sendTX(stellar.contracts.bnUSD!, 'cross_transfer', params, txBuilder, server, kit);
+      const hash = await sendTX(inputAmount.currency.wrapped.address, 'cross_transfer', params, txBuilder, server, kit);
       return hash;
     } else {
       throw new Error('Invalid currency for Stellar bridge');
@@ -140,7 +142,10 @@ export class StellarXWalletClient extends XWalletClient {
     const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived);
     const uint8Array = new Uint8Array(rlpEncodedData);
 
-    if (inputAmount.currency.symbol === 'XLM') {
+    const isNative = inputAmount.currency.symbol === 'XLM';
+    const _isSpokeToken = isSpokeToken(inputAmount.currency);
+
+    if (isNative) {
       //deposit(from: address, token: address, amount: u128, to: option<string>, data: option<bytes>)
       const params = [
         accountToScVal(account),
@@ -152,7 +157,7 @@ export class StellarXWalletClient extends XWalletClient {
 
       const hash = await sendTX(stellar.contracts.assetManager, 'deposit', params, txBuilder, server, kit);
       return hash;
-    } else if (inputAmount.currency.symbol === 'bnUSD') {
+    } else if (_isSpokeToken) {
       //cross_transfer(from: address, amount: u128, to: string, data: option<bytes>)
       const params = [
         accountToScVal(account),

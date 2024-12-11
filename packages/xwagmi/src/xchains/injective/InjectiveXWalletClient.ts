@@ -12,7 +12,7 @@ import { uintToBytes } from '@/utils';
 import { XTransactionInput, XTransactionType } from '@/xcall/types';
 import { RLP } from '@ethereumjs/rlp';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
-import { isDenomAsset } from '../archway/utils';
+import { isDenomAsset, isSpokeToken } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
 
 export class InjectiveXWalletClient extends XWalletClient {
@@ -62,10 +62,10 @@ export class InjectiveXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
-    const isBnUSD = inputAmount.currency?.symbol === 'bnUSD';
+    const _isSpokeToken = isSpokeToken(inputAmount.currency);
     const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
 
-    if (isBnUSD) {
+    if (_isSpokeToken) {
       const amount = inputAmount.quotient.toString();
       const msg = MsgExecuteContractCompat.fromJSON({
         contractAddress: injective.contracts.bnUSD!,

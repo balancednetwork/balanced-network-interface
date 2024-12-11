@@ -26,10 +26,11 @@ interface SwapCommitButtonProps {
     to: XChainId;
   };
   canBridge: boolean;
+  hidden: boolean;
 }
 
 const SwapCommitButton: React.FC<SwapCommitButtonProps> = memo(props => {
-  const { trade, currencies, error, account, direction, canBridge, recipient } = props;
+  const { trade, currencies, error, account, direction, canBridge, recipient, hidden } = props;
 
   const isValid = !error && canBridge;
 
@@ -93,11 +94,11 @@ const SwapCommitButton: React.FC<SwapCommitButtonProps> = memo(props => {
   return (
     <>
       {isValid ? (
-        <Button color="primary" onClick={handleSwap}>
+        <Button color="primary" onClick={handleSwap} hidden={hidden}>
           <Trans>Swap</Trans>
         </Button>
       ) : (
-        <Button disabled={!account || !!error || !canBridge} color="primary" onClick={handleSwap}>
+        <Button disabled={!account || !!error || !canBridge} color="primary" onClick={handleSwap} hidden={hidden}>
           {error || t`Swap`}
         </Button>
       )}

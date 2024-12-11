@@ -26,6 +26,7 @@ interface MMSwapCommitButtonProps {
     from: XChainId;
     to: XChainId;
   };
+  hidden: boolean;
 }
 
 const UseMMDerivedInfo = (
@@ -59,7 +60,7 @@ const UseMMDerivedInfo = (
 };
 
 const MMSwapCommitButton: React.FC<MMSwapCommitButtonProps> = props => {
-  const { trade, currencies, account, recipient, direction } = props;
+  const { trade, currencies, account, recipient, direction, hidden } = props;
   const { error } = UseMMDerivedInfo(trade, account, recipient, currencies);
 
   const toggleWalletModal = useWalletModalToggle();
@@ -83,7 +84,7 @@ const MMSwapCommitButton: React.FC<MMSwapCommitButtonProps> = props => {
 
   return (
     <>
-      <Button disabled={!!error} color="primary" onClick={handleSwap}>
+      <Button disabled={!!error} color="primary" onClick={handleSwap} hidden={hidden}>
         {error || t`Swap`}
       </Button>
 

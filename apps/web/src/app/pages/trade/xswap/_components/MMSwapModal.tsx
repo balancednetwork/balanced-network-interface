@@ -361,4 +361,4 @@ const MMSwapModal = ({
   );
 };
 
-export default memo(MMSwapModal);
+export default MMSwapModal;

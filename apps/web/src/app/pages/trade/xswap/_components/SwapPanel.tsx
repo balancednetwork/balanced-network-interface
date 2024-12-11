@@ -216,25 +216,24 @@ export default function SwapPanel() {
           {mmTrade.isMMBetter ? <MMSwapInfo trade={mmTrade.trade} /> : <SwapInfo trade={trade} />}
 
           <Flex justifyContent="center" mt={4}>
-            {mmTrade.isMMBetter ? (
-              <MMSwapCommitButton
-                currencies={currencies}
-                account={account}
-                recipient={recipient}
-                trade={mmTrade.trade}
-                direction={direction}
-              />
-            ) : (
-              <SwapCommitButton
-                trade={trade}
-                error={inputError}
-                currencies={currencies}
-                canBridge={canBridge}
-                account={account}
-                recipient={recipient}
-                direction={direction}
-              />
-            )}
+            <MMSwapCommitButton
+              hidden={!mmTrade.isMMBetter}
+              currencies={currencies}
+              account={account}
+              recipient={recipient}
+              trade={mmTrade.trade}
+              direction={direction}
+            />
+            <SwapCommitButton
+              hidden={!!mmTrade.isMMBetter}
+              trade={trade}
+              error={inputError}
+              currencies={currencies}
+              canBridge={canBridge}
+              account={account}
+              recipient={recipient}
+              direction={direction}
+            />
           </Flex>
 
           {stellarValidation?.ok === false && stellarValidation.error && (

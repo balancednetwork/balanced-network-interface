@@ -297,7 +297,7 @@ export function useDerivedSwapInfo(): {
   }, [formattedAmounts[Field.OUTPUT], outputCurrency]);
 
   const canBridge = useMemo(() => {
-    return maximumBridgeAmount && outputCurrencyAmount ? maximumBridgeAmount?.greaterThan(outputCurrencyAmount) : true;
+    return maximumBridgeAmount && outputCurrencyAmount ? !maximumBridgeAmount.lessThan(outputCurrencyAmount) : true;
   }, [maximumBridgeAmount, outputCurrencyAmount]);
 
   //temporary check for valid stellar account

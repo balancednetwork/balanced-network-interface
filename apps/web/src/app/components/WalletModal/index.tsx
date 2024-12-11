@@ -118,6 +118,7 @@ export default function WalletModal() {
             'bsc',
             'arb',
             'arbitrum',
+            'optimism',
             'binance',
             'base',
           ],

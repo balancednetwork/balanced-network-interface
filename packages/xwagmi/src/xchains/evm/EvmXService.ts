@@ -1,5 +1,5 @@
 import { XService } from '@/core/XService';
-import { PublicClient } from 'viem';
+import { PublicClient, WalletClient } from 'viem';
 import { getConnectors, getPublicClient, getWalletClient } from 'wagmi/actions';
 import { EvmXConnector } from './EvmXConnector';
 import { wagmiConfig } from './wagmiConfig';
@@ -23,7 +23,7 @@ export class EvmXService extends XService {
     return getPublicClient(wagmiConfig, { chainId });
   }
 
-  public async getWalletClient(chainId) {
+  public async getWalletClient(chainId): Promise<WalletClient> {
     //@ts-ignore
     return await getWalletClient(wagmiConfig, { chainId });
   }

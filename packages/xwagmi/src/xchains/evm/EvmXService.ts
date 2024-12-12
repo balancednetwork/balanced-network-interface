@@ -12,7 +12,6 @@ export class EvmXService extends XService {
   }
 
   getXConnectors() {
-    //@ts-ignore
     const connectors = getConnectors(wagmiConfig);
 
     return connectors.map((connector: any) => new EvmXConnector(connector));

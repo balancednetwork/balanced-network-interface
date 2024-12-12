@@ -6,6 +6,7 @@
     "@balancednetwork/balanced-js": "workspace:*",
     "@balancednetwork/sdk-core": "workspace:*",
     "@balancednetwork/v1-sdk": "workspace:*",
+    "@balancednetwork/intents-sdk": "workspace:*",
     "@balancednetwork/xwagmi": "workspace:*",
     "@chain-registry/types": "0.16.0",
     "@ethersproject/address": "5.4.0",
@@ -80,8 +81,7 @@
     "tiny-invariant": "1.1.0",
     "toformat": "2.0.0",
     "uuid": "9.0.0",
-    "viem": "2.x",
-    "wagmi": "2.5.20",
+    "viem": "^2.21.35",
     "zustand": "4.5.2"
   },
   "scripts": {

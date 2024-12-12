@@ -30,7 +30,7 @@ import { bnJs } from '@balancednetwork/xwagmi';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
-import { changeBalances, changeICONBalances } from './reducer';
+import { changeBalances } from './reducer';
 
 import { useXBalances } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
@@ -59,7 +59,7 @@ export function useCrossChainWalletBalances(): AppState['wallet'] {
 }
 
 export function useICONWalletBalances(): { [address: string]: CurrencyAmount<Currency> } {
-  return useSelector((state: AppState) => state.wallet['0x1.icon']!);
+  return useSelector((state: AppState) => state.wallet['0x1.icon'] || {});
 }
 
 export function useWalletBalances(xChainId: XChainId): { [address: string]: CurrencyAmount<Currency> } | undefined {
@@ -101,9 +101,30 @@ export function useWalletFetchBalances() {
   // fetch balances on icon
   const { account } = useIconReact();
   const balances = useAvailableBalances(account || undefined, tokens);
+  //convert balances to {[key: string]: CurrencyAmount<XToken>}
+  const xBalances = React.useMemo(() => {
+    return Object.entries(balances).reduce(
+      (acc, [address, balance]) => {
+        const currency = balance.currency as Token;
+        acc[address] = CurrencyAmount.fromRawAmount(
+          new XToken(
+            '0x1.icon',
+            currency.chainId,
+            currency.address,
+            balance.currency.decimals,
+            balance.currency.symbol,
+          ),
+          balance.quotient.toString(),
+        );
+        return acc;
+      },
+      {} as { [key: string]: CurrencyAmount<XToken> },
+    );
+  }, [balances]);
+
   React.useEffect(() => {
-    dispatch(changeICONBalances(balances));
-  }, [balances, dispatch]);
+    dispatch(changeBalances({ xChainId: '0x1.icon', balances: xBalances }));
+  }, [xBalances, dispatch]);
 
   // fetch balances on havah
   const { address: accountHavah } = useXAccount('HAVAH');

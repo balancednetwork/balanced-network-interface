@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { Currency, CurrencyAmount, Price, Token, TradeType } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Fraction, Price, Token, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { t } from '@lingui/macro';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,10 +8,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { canBeQueue } from '@/constants/currency';
 import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
-import { useAllTokens } from '@/hooks/Tokens';
+import { useAllXTokens } from '@/hooks/Tokens';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
-import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
@@ -28,7 +27,6 @@ import {
   selectCurrency,
   selectPercent,
   setRecipient,
-  switchChain,
   switchCurrencies,
   typeInput,
 } from './reducer';
@@ -46,7 +44,7 @@ export function useSwapActionHandlers() {
       dispatch(
         selectCurrency({
           field,
-          currency: currency,
+          currency: currency instanceof XToken ? currency : XToken.getXToken('0x1.icon', currency.wrapped),
         }),
       );
     },
@@ -64,10 +62,6 @@ export function useSwapActionHandlers() {
     },
     [dispatch],
   );
-
-  const onSwitchChain = useCallback(() => {
-    dispatch(switchChain());
-  }, [dispatch]);
 
   const onPercentSelection = useCallback(
     (field: Field, percent: number, value: string) => {
@@ -101,12 +95,11 @@ export function useSwapActionHandlers() {
     onChangeRecipient,
     onPercentSelection,
     onChainSelection,
-    onSwitchChain,
   };
 }
 
 // try to parse a user entered amount for a given token
-export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmount<Currency> | undefined {
+export function tryParseAmount<T extends Currency>(value?: string, currency?: T): CurrencyAmount<T> | undefined {
   if (!value || !currency) {
     return undefined;
   }
@@ -127,21 +120,17 @@ export function tryParseAmount(value?: string, currency?: Currency): CurrencyAmo
 export function useDerivedSwapInfo(): {
   account: string | undefined;
   trade: Trade<Currency, Currency, TradeType> | undefined;
-  currencies: { [field in Field]?: Currency };
+  currencies: { [field in Field]?: XToken };
   _currencies: { [field in Field]?: Currency };
   percents: { [field in Field]?: number };
-  currencyBalances: { [field in Field]?: CurrencyAmount<Currency> | undefined };
-  parsedAmount: CurrencyAmount<Currency> | undefined;
+  currencyBalances: { [field in Field]?: CurrencyAmount<XToken> | undefined };
+  parsedAmount: CurrencyAmount<XToken> | undefined;
   inputError?: string;
-  allowedSlippage: number;
   price: Price<Token, Token> | undefined;
-  direction: {
-    from: XChainId;
-    to: XChainId;
-  };
+  direction: { from: XChainId; to: XChainId };
   dependentField: Field;
   parsedAmounts: {
-    [field in Field]: CurrencyAmount<Currency> | undefined;
+    [field in Field]: CurrencyAmount<XToken> | undefined;
   };
   formattedAmounts: {
     [field in Field]: string;
@@ -154,25 +143,28 @@ export function useDerivedSwapInfo(): {
     independentField,
     typedValue,
     recipient,
-    [Field.INPUT]: { currency: inputCurrency, percent: inputPercent, xChainId: inputXChainId },
-    [Field.OUTPUT]: { currency: outputCurrency, xChainId: outputXChainId },
+    [Field.INPUT]: { currency: inputCurrency, percent: inputPercent },
+    [Field.OUTPUT]: { currency: outputCurrency },
   } = useSwapState();
 
-  const xAccount = useXAccount(getXChainType(inputXChainId));
-  const account = xAccount.address;
+  const account = useXAccount(getXChainType(inputCurrency?.xChainId)).address;
 
   const crossChainWallet = useCrossChainWalletBalances();
 
   const isExactIn: boolean = independentField === Field.INPUT;
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
-  const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(() => {
+  const currencyBalances: { [field in Field]?: CurrencyAmount<XToken> } = React.useMemo(() => {
     return {
-      [Field.INPUT]: inputCurrency ? crossChainWallet[inputXChainId]?.[inputCurrency?.wrapped.address] : undefined,
-      [Field.OUTPUT]: outputCurrency ? crossChainWallet[outputXChainId]?.[outputCurrency?.wrapped.address] : undefined,
+      [Field.INPUT]: inputCurrency
+        ? crossChainWallet[inputCurrency.xChainId]?.[inputCurrency?.wrapped.address]
+        : undefined,
+      [Field.OUTPUT]: outputCurrency
+        ? crossChainWallet[outputCurrency.xChainId]?.[outputCurrency?.wrapped.address]
+        : undefined,
     };
-  }, [inputXChainId, outputXChainId, crossChainWallet, inputCurrency, outputCurrency]);
+  }, [crossChainWallet, inputCurrency, outputCurrency]);
 
-  const currencies: { [field in Field]?: Currency } = useMemo(() => {
+  const currencies: { [field in Field]?: XToken } = useMemo(() => {
     return {
       [Field.INPUT]: inputCurrency ?? undefined,
       [Field.OUTPUT]: outputCurrency ?? undefined,
@@ -186,23 +178,26 @@ export function useDerivedSwapInfo(): {
     [inputPercent],
   );
 
-  const _inputCurrency =
-    inputXChainId === '0x1.icon' ? inputCurrency : getXTokenBySymbol('0x1.icon', inputCurrency?.symbol);
-  const _outputCurrency =
-    outputXChainId === '0x1.icon' ? outputCurrency : getXTokenBySymbol('0x1.icon', outputCurrency?.symbol);
   const _currencies: { [field in Field]?: Currency } = useMemo(() => {
     return {
-      [Field.INPUT]: _inputCurrency ?? undefined,
-      [Field.OUTPUT]: _outputCurrency ?? undefined,
+      [Field.INPUT]:
+        inputCurrency?.xChainId === '0x1.icon' ? inputCurrency : getXTokenBySymbol('0x1.icon', inputCurrency?.symbol),
+      [Field.OUTPUT]:
+        outputCurrency?.xChainId === '0x1.icon'
+          ? outputCurrency
+          : getXTokenBySymbol('0x1.icon', outputCurrency?.symbol),
     };
-  }, [_inputCurrency, _outputCurrency]);
-  const _parsedAmount = tryParseAmount(typedValue, (isExactIn ? _inputCurrency : _outputCurrency) ?? undefined);
+  }, [inputCurrency, outputCurrency]);
+  const _parsedAmount = tryParseAmount(
+    typedValue,
+    (isExactIn ? _currencies[Field.INPUT] : _currencies[Field.OUTPUT]) ?? undefined,
+  );
   // cannot call `useTradeExactIn` or `useTradeExactOut` conditionally because they are hooks
-  const queue = canBeQueue(_inputCurrency, _outputCurrency);
-  const trade1 = useTradeExactIn(isExactIn ? _parsedAmount : undefined, _outputCurrency, {
+  const queue = canBeQueue(_currencies[Field.INPUT], _currencies[Field.OUTPUT]);
+  const trade1 = useTradeExactIn(isExactIn ? _parsedAmount : undefined, _currencies[Field.OUTPUT], {
     maxHops: queue ? 1 : undefined,
   });
-  const trade2 = useTradeExactOut(_inputCurrency, !isExactIn ? _parsedAmount : undefined, {
+  const trade2 = useTradeExactOut(_currencies[Field.INPUT], !isExactIn ? _parsedAmount : undefined, {
     maxHops: queue ? 1 : undefined,
   });
   const trade = isExactIn ? trade1 : trade2;
@@ -225,9 +220,6 @@ export function useDerivedSwapInfo(): {
     inputError = inputError ?? t`Select a token`;
   }
 
-  // compare input balance to max input based on version
-  const allowedSlippage = useSwapSlippageTolerance();
-
   const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], trade?.inputAmount];
 
   // decimal scales are different for different chains for the same token
@@ -245,38 +237,45 @@ export function useDerivedSwapInfo(): {
 
   if (userHasSpecifiedInputOutput && !trade) inputError = t`Insufficient liquidity`;
 
-  const [pairState, pair] = useV2Pair(_inputCurrency, _outputCurrency);
+  const [pairState, pair] = useV2Pair(_currencies[Field.INPUT], _currencies[Field.OUTPUT]);
 
   let price: Price<Token, Token> | undefined;
-  if (pair && pairState === PairState.EXISTS && _inputCurrency) {
-    if (pair.involvesToken(_inputCurrency.wrapped)) price = pair.priceOf(_inputCurrency.wrapped);
+  if (pair && pairState === PairState.EXISTS && _currencies[Field.INPUT]) {
+    if (pair.involvesToken(_currencies[Field.INPUT].wrapped)) price = pair.priceOf(_currencies[Field.INPUT].wrapped);
     else price = pair.token0Price; // pair not ready, just set dummy price
   }
 
-  const direction = useMemo(
-    () => ({
-      from: inputXChainId,
-      to: outputXChainId,
-    }),
-    [inputXChainId, outputXChainId],
-  );
-
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 
-  const parsedAmounts = React.useMemo(
+  const _parsedAmounts = React.useMemo(
     () => ({
-      [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-      [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+      [Field.INPUT]: independentField === Field.INPUT ? _parsedAmount : trade?.inputAmount,
+      [Field.OUTPUT]: independentField === Field.OUTPUT ? _parsedAmount : trade?.outputAmount,
     }),
-    [independentField, parsedAmount, trade],
+    [independentField, _parsedAmount, trade],
   );
 
   const formattedAmounts = React.useMemo(() => {
     return {
       [independentField]: typedValue,
-      [dependentField]: parsedAmounts[dependentField]?.toSignificant(6) ?? '',
+      [dependentField]: _parsedAmounts[dependentField]?.toSignificant(6) ?? '',
     } as { [field in Field]: string };
-  }, [dependentField, independentField, parsedAmounts, typedValue]);
+  }, [dependentField, independentField, _parsedAmounts, typedValue]);
+
+  const parsedAmounts = React.useMemo(() => {
+    return {
+      [independentField]: parsedAmount,
+      [dependentField]:
+        currencies[dependentField] && formattedAmounts[dependentField]
+          ? CurrencyAmount.fromRawAmount(
+              currencies[dependentField],
+              new BigNumber(formattedAmounts[dependentField])
+                .times(10 ** currencies[dependentField].wrapped.decimals)
+                .toFixed(0),
+            )
+          : undefined,
+    } as { [field in Field]: CurrencyAmount<XToken> | undefined };
+  }, [parsedAmount, currencies, dependentField, formattedAmounts, independentField]);
 
   const { data: assetManager } = useAssetManagerTokens();
 
@@ -286,19 +285,16 @@ export function useDerivedSwapInfo(): {
     }
   }, [assetManager, currencies[Field.OUTPUT]]);
 
-  const outputCurrencyAmount = useMemo(() => {
-    if (outputCurrency && formattedAmounts[Field.OUTPUT] && !Number.isNaN(parseFloat(formattedAmounts[Field.OUTPUT]))) {
-      return CurrencyAmount.fromRawAmount(
-        outputCurrency,
-        new BigNumber(formattedAmounts[Field.OUTPUT]).times(10 ** outputCurrency.wrapped.decimals).toFixed(0),
-      );
-    }
-    return undefined;
-  }, [formattedAmounts[Field.OUTPUT], outputCurrency]);
+  const outputCurrencyAmount = parsedAmounts[Field.OUTPUT];
 
   const canBridge = useMemo(() => {
     return maximumBridgeAmount && outputCurrencyAmount ? !maximumBridgeAmount.lessThan(outputCurrencyAmount) : true;
   }, [maximumBridgeAmount, outputCurrencyAmount]);
+
+  const direction = {
+    from: currencies[Field.INPUT]?.xChainId || '0x1.icon',
+    to: currencies[Field.OUTPUT]?.xChainId || '0x1.icon',
+  };
 
   //temporary check for valid stellar account
   const stellarValidationQuery = useValidateStellarAccount(direction.to === 'stellar' ? recipient : undefined);
@@ -316,7 +312,6 @@ export function useDerivedSwapInfo(): {
     currencyBalances,
     parsedAmount,
     inputError,
-    allowedSlippage,
     percents,
     price,
     direction,
@@ -332,37 +327,34 @@ export function useDerivedSwapInfo(): {
 export function useInitialSwapLoad(): void {
   const [firstLoad, setFirstLoad] = React.useState<boolean>(true);
   const navigate = useNavigate();
-  const tokens = useAllTokens();
+  const tokens = useAllXTokens();
   const { pair = '' } = useParams<{ pair: string }>();
-  const { onCurrencySelection, onChainSelection } = useSwapActionHandlers();
+  const { onCurrencySelection } = useSwapActionHandlers();
   const { currencies } = useDerivedSwapInfo();
 
   useEffect(() => {
     if (firstLoad && Object.values(tokens).length > 0) {
       const tokensArray = Object.values(tokens);
 
-      const inputToken = pair.split('_')[0];
+      const inputToken = pair.split('_')[0] || '';
       const outputToken = pair.split('_')[1] || '';
       const [currentBase, currentBaseXChainId] = inputToken.split(':');
       const [currentQuote, currentQuoteXChainId] = outputToken.split(':');
 
-      const quote =
-        currentQuote && tokensArray.find(token => token.symbol?.toLowerCase() === currentQuote?.toLocaleLowerCase());
-      const base = currentBase && tokensArray.find(token => token.symbol?.toLowerCase() === currentBase?.toLowerCase());
+      const quote = tokensArray.find(
+        x => x.symbol.toLowerCase() === currentQuote.toLowerCase() && x.xChainId === currentQuoteXChainId,
+      );
+      const base = tokensArray.find(
+        x => x.symbol.toLowerCase() === currentBase.toLowerCase() && x.xChainId === currentBaseXChainId,
+      );
+
       if (quote && base) {
         onCurrencySelection(Field.INPUT, base);
         onCurrencySelection(Field.OUTPUT, quote);
-
-        if (currentBaseXChainId) {
-          onChainSelection(Field.INPUT, currentBaseXChainId as XChainId);
-        }
-        if (currentQuoteXChainId) {
-          onChainSelection(Field.OUTPUT, currentQuoteXChainId as XChainId);
-        }
       }
       setFirstLoad(false);
     }
-  }, [firstLoad, tokens, onCurrencySelection, onChainSelection, pair]);
+  }, [firstLoad, tokens, onCurrencySelection, pair]);
 
   useEffect(() => {
     if (!firstLoad && currencies.INPUT && currencies.OUTPUT) {
@@ -378,4 +370,100 @@ export function useInitialSwapLoad(): void {
       }
     }
   }, [currencies, pair, navigate, firstLoad]);
+}
+
+import { IntentService } from '@balancednetwork/intents-sdk';
+import { useQuery } from '@tanstack/react-query';
+
+export interface MMTrade {
+  inputAmount: CurrencyAmount<XToken>;
+  outputAmount: CurrencyAmount<XToken>;
+  fee: CurrencyAmount<XToken>;
+  executionPrice: Price<Token, Token>;
+  uuid: string;
+}
+
+export function useMMTrade(inputAmount: CurrencyAmount<XToken> | undefined, outputCurrency: XToken | undefined) {
+  const isMMTrade =
+    inputAmount?.currency &&
+    outputCurrency &&
+    ((inputAmount.currency.xChainId === '0xa4b1.arbitrum' &&
+      inputAmount.currency.isNativeToken &&
+      outputCurrency.xChainId === 'sui' &&
+      outputCurrency.isNativeToken) ||
+      (inputAmount.currency.xChainId === 'sui' &&
+        inputAmount.currency.isNativeToken &&
+        outputCurrency.xChainId === '0xa4b1.arbitrum' &&
+        outputCurrency.isNativeToken));
+
+  return useQuery<MMTrade | undefined>({
+    queryKey: ['quote', inputAmount, outputCurrency],
+    queryFn: async () => {
+      if (!inputAmount || !outputCurrency) {
+        return;
+      }
+
+      const res = await IntentService.getQuote({
+        token_src: inputAmount.currency.address,
+        token_src_blockchain_id: inputAmount.currency.xChainId,
+        token_dst: outputCurrency.address,
+        token_dst_blockchain_id: outputCurrency.xChainId,
+        src_amount: inputAmount.quotient,
+      });
+
+      if (res.ok) {
+        const outputAmount = CurrencyAmount.fromRawAmount(
+          outputCurrency,
+          BigInt(res.value.output.expected_output ?? 0),
+        );
+
+        return {
+          inputAmount: inputAmount,
+          outputAmount: outputAmount,
+          executionPrice: new Price({ baseAmount: inputAmount, quoteAmount: outputAmount }),
+          uuid: res.value.output.uuid,
+          fee: outputAmount.multiply(new Fraction(3, 1_000)),
+        };
+      }
+
+      return;
+    },
+    refetchInterval: 10_000,
+    enabled: !!inputAmount && !!outputCurrency && isMMTrade,
+  });
+}
+
+const convert = (currency: XToken | undefined, amount: CurrencyAmount<Currency> | undefined) => {
+  if (!currency || !amount) {
+    return;
+  }
+  return CurrencyAmount.fromRawAmount(
+    currency,
+    new BigNumber(amount.toFixed()).times(10 ** currency.wrapped.decimals).toFixed(0),
+  );
+};
+
+export function useDerivedMMTradeInfo(trade: Trade<Currency, Currency, TradeType> | undefined) {
+  const {
+    [Field.INPUT]: { currency: inputCurrency },
+    [Field.OUTPUT]: { currency: outputCurrency },
+    independentField,
+    typedValue,
+  } = useSwapState();
+
+  // assume independentField is Field.Input
+  const mmTradeQuery = useMMTrade(
+    independentField === Field.INPUT ? tryParseAmount(typedValue, inputCurrency) : undefined,
+    outputCurrency,
+  );
+
+  // compare mmTradeQuery result and trade
+  const mmTrade = mmTradeQuery.data;
+
+  const swapOutput = convert(outputCurrency, trade?.outputAmount);
+
+  return {
+    isMMBetter: mmTrade?.outputAmount && swapOutput && mmTrade.outputAmount.greaterThan(swapOutput),
+    trade: mmTrade,
+  };
 }

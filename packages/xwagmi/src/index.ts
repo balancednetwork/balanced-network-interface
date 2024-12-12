@@ -22,4 +22,4 @@ export * from './xcall/types';
 export type * from './xcall/types';
 
 export { useAccount, useSwitchChain } from 'wagmi';
-export { useSignTransaction } from '@mysten/dapp-kit';
+export { useSignTransaction, useCurrentAccount, useCurrentWallet, useSuiClient } from '@mysten/dapp-kit';

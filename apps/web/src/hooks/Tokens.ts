@@ -7,7 +7,7 @@ import { BASES_TO_CHECK_TRADES_AGAINST } from '@/constants/routing';
 import { TokenAddressMap, useCombinedActiveList } from '@/store/lists/hooks';
 import { useUserAddedTokens } from '@/store/user/hooks';
 import { isAddress } from '@/utils';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { XToken, bnJs, xTokenMap } from '@balancednetwork/xwagmi';
 
 // reduce token map into standard address <-> Token mapping, optionally include user added tokens
 function useTokensFromMap(tokenMap: TokenAddressMap, includeUserAdded: boolean): { [address: string]: Token } {
@@ -137,4 +137,22 @@ export function useIsTokenActive(token: Token | undefined | null): boolean {
   }
 
   return !!activeTokens[token.address];
+}
+
+export function useAllXTokens(): { [address: string]: XToken } {
+  const allTokens = useAllTokens();
+
+  return useMemo(() => {
+    const t = Object.values(allTokens)
+      .map(token => {
+        return XToken.getXToken('0x1.icon', token);
+      })
+      .concat(Object.values(xTokenMap).flat());
+
+    //convert to map
+    return t.reduce<{ [id: string]: XToken }>((newMap, token) => {
+      newMap[token.id] = token;
+      return newMap;
+    }, {});
+  }, [allTokens]);
 }

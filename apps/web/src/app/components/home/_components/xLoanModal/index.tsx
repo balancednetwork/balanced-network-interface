@@ -46,12 +46,6 @@ type XLoanModalProps = {
   interestRate?: BigNumber;
 };
 
-export const presenceVariants = {
-  initial: { opacity: 0, height: 0 },
-  animate: { opacity: 1, height: 'auto' },
-  exit: { opacity: 0, height: 0 },
-};
-
 const XLoanModal = ({
   modalId = MODAL_ID.XLOAN_CONFIRM_MODAL,
   collateralAccount,

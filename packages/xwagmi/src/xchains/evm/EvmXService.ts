@@ -12,7 +12,6 @@ export class EvmXService extends XService {
   }
 
   getXConnectors() {
-    //@ts-ignore
     const connectors = getConnectors(wagmiConfig);
 
     return connectors.map((connector: any) => new EvmXConnector(connector));
@@ -24,7 +23,6 @@ export class EvmXService extends XService {
   }
 
   public async getWalletClient(chainId) {
-    //@ts-ignore
     return await getWalletClient(wagmiConfig, { chainId });
   }
 

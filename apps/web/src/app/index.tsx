@@ -9,6 +9,7 @@ import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from '@/app/theme'
 import ApplicationUpdater from '@/store/application/updater';
 import TransactionUpdater from '@/store/transactions/updater';
 
+import { Updater as MMUpdater } from '@/store/transactions/useMMTransactionStore';
 import {
   AllTransactionsUpdater,
   AllXChainHeightsUpdater,
@@ -22,6 +23,7 @@ import RootRoutes from './Routes';
 function Updaters() {
   return (
     <>
+      <MMUpdater />
       <TransactionUpdater />
       <ApplicationUpdater />
       <AllTransactionsUpdater />

@@ -75,6 +75,7 @@ const xChainIdMap: Record<XChainId, string> = {
   '0x38.bsc': 'bsc',
   '0xa4b1.arbitrum': 'arbitrum',
   '0x2105.base': 'base',
+  '0xa.optimism': 'optimism',
   'injective-1': 'ibc_injective',
   sui: 'sui',
   stellar: 'stellar',

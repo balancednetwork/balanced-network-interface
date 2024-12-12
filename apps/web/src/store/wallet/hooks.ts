@@ -185,6 +185,17 @@ export function useWalletFetchBalances() {
     arbBalances && dispatch(changeBalances({ xChainId: '0xa4b1.arbitrum', balances: arbBalances }));
   }, [arbBalances, dispatch]);
 
+  // fetch balances on op
+  const optTokens = useXTokens('0xa.optimism');
+  const { data: optBalances } = useXBalances({
+    xChainId: '0xa.optimism',
+    xTokens: optTokens,
+    address,
+  });
+  React.useEffect(() => {
+    optBalances && dispatch(changeBalances({ xChainId: '0xa.optimism', balances: optBalances }));
+  }, [optBalances, dispatch]);
+
   // fetch balances on base
   const baseTokens = useXTokens('0x2105.base');
   const { data: baseBalances } = useXBalances({

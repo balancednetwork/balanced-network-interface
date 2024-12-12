@@ -19,6 +19,7 @@ export function useXBalances({
       }
 
       const balances = await xPublicClient.getBalances(address, xTokens);
+
       return balances;
     },
     enabled: !!xPublicClient,

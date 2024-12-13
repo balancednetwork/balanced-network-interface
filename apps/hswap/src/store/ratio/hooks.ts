@@ -4,7 +4,7 @@ import { BalancedJs } from '@balancednetwork/balanced-js';
 import { useDispatch, useSelector } from 'react-redux';
 
 import useInterval from '@/hooks/useInterval';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { AppState } from '..';
 import { changeRatioValue } from './reducer';

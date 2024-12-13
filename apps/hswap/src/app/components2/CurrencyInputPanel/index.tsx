@@ -5,8 +5,8 @@ import { Input } from '@/components/ui/input';
 import useAmountInUSD from '@/hooks/useAmountInUSD';
 import { cn } from '@/lib/utils';
 import { escapeRegExp, toFraction } from '@/utils';
-import { XToken } from '@/xwagmi/types';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XToken } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { ChevronDownIcon } from 'lucide-react';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
@@ -121,6 +121,7 @@ export default function CurrencyInputPanel({
           </Button>
           {onCurrencySelect && (
             <TokenSelectModal
+              key={type}
               open={open}
               onDismiss={() => {
                 setOpen(false);

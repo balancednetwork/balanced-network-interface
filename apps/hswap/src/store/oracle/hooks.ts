@@ -8,7 +8,7 @@ import { NETWORK_ID } from '@/constants/config';
 import useInterval from '@/hooks/useInterval';
 import { useSupportedCollateralTokens } from '@/store/collateral/hooks';
 import { formatUnits } from '@/utils';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { ORACLE_PRICED_TOKENS } from '@/constants/tokens';
 import { AppState } from '..';

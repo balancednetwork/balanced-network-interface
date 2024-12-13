@@ -1,8 +1,6 @@
-import { allXTokens } from '@/xwagmi/constants/xTokens';
-import { XToken } from '@/xwagmi/types';
+import { XToken, xTokenMap } from '@balancednetwork/xwagmi';
 import { createSlice } from '@reduxjs/toolkit';
 
-// !TODO: use one Field for swap and bridge panel
 export enum Field {
   INPUT = 'INPUT',
   OUTPUT = 'OUTPUT',
@@ -25,8 +23,8 @@ export interface SwapState {
 }
 
 export const INITIAL_SWAP = {
-  base: allXTokens[9],
-  quote: allXTokens[0],
+  base: xTokenMap['sui'][0], // SUI on Sui
+  quote: xTokenMap['0x2105.base'][1], // bnUSD on Base
 };
 
 const initialState: SwapState = {

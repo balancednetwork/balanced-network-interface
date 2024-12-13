@@ -1,5 +1,12 @@
-import * as React from 'react';
-import { useMemo, useState } from 'react';
+import { Modal } from '@/app/components2/Modal';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
+import { useRatesWithOracle } from '@/queries/reward';
+import { formatPrice } from '@/utils/formatter';
+import { xChainMap, xChains } from '@balancednetwork/xwagmi';
+import { allXTokens } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -7,19 +14,12 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Modal } from '@/app/components2/Modal';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { allXTokens } from '@/xwagmi/constants/xTokens';
-import CurrencyLogo from '../CurrencyLogo';
+import * as React from 'react';
+import { useMemo, useState } from 'react';
 import { ChainLogo } from '../ChainLogo';
-import { xChainMap, xChains } from '@/xwagmi/constants/xChains';
-import { Input } from '@/components/ui/input';
-import { useRatesWithOracle } from '@/queries/reward';
-import { formatPrice } from '@/utils/formatter';
-import { XChainId, XToken } from '@/xwagmi/types';
-import XChainSelect from '../XChainSelect';
-import { cn } from '@/lib/utils';
+import CurrencyLogo from '../CurrencyLogo';
 import { SearchGradientIcon, SubtractIcon } from '../Icons';
+import XChainSelect from '../XChainSelect';
 
 const columns: ColumnDef<any>[] = [
   {
@@ -27,10 +27,7 @@ const columns: ColumnDef<any>[] = [
     header: 'Asset',
     filterFn: (row, columnId, filterValue) => {
       const xTokens = row.original as XToken[];
-      return (
-        xTokens[0].symbol.toLowerCase().includes(filterValue.toLowerCase()) ||
-        xTokens.some(xToken => xChainMap[xToken.xChainId].name.toLowerCase().includes(filterValue.toLowerCase()))
-      );
+      return xTokens[0].symbol.toLowerCase().includes(filterValue.toLowerCase());
     },
   },
   {
@@ -41,6 +38,8 @@ const columns: ColumnDef<any>[] = [
 
 const DEFAULT_XCHAIN_ID = 'all';
 
+export const UNTRADEABLE_TOKENS = ['tBTC', 'weETH', 'wstETH', 'HASUI', 'AFSUI', 'VSUI', 'JITOSOL', 'aARCH'];
+
 export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, selectedCurrency }) {
   const [xChainId, setXChainId] = useState<XChainId | 'all'>(DEFAULT_XCHAIN_ID);
 
@@ -49,7 +48,7 @@ export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, s
   // TODO: hide aARCH token temporarily
   const filteredXTokens = useMemo(() => {
     if (xChainId === 'all') {
-      return allXTokens.filter(x => x.symbol !== 'aARCH');
+      return allXTokens.filter(x => !UNTRADEABLE_TOKENS.includes(x.symbol));
     }
 
     return allXTokens.filter(x => x.symbol !== 'aARCH' && x.xChainId === xChainId);

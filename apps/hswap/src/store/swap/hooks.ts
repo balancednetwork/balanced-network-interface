@@ -13,13 +13,13 @@ import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useWalletBalances } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
-import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
-import { getXChainType } from '@/xwagmi/actions';
-import { allXTokens } from '@/xwagmi/constants/xTokens';
-import { useXAccount } from '@/xwagmi/hooks';
-import { XChainId, XToken } from '@/xwagmi/types';
-import { validateAddress } from '@/xwagmi/utils';
-import { XTransactionType } from '@/xwagmi/xcall/types';
+import { getXTokenBySymbol } from '@/utils/xTokens';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { allXTokens } from '@balancednetwork/xwagmi';
+import { useXAccount } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
+import { validateAddress } from '@balancednetwork/xwagmi';
+import { XTransactionType } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { AppDispatch, AppState } from '../index';
 import { Field, selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput } from './reducer';
@@ -158,8 +158,8 @@ export function useDerivedSwapInfo(): {
   const parsedAmount = tryParseAmount(typedValue, (_isExactIn ? inputCurrency : outputCurrency) ?? undefined);
   const currencyBalances: { [field in Field]?: CurrencyAmount<XToken> } = useMemo(
     () => ({
-      [Field.INPUT]: inputCurrency ? walletBalances?.[inputCurrency?.wrapped.address] : undefined,
-      [Field.OUTPUT]: outputCurrency ? walletBalances?.[outputCurrency?.wrapped.address] : undefined,
+      [Field.INPUT]: inputCurrency ? walletBalances?.[inputCurrency?.id] : undefined,
+      [Field.OUTPUT]: outputCurrency ? walletBalances?.[outputCurrency?.id] : undefined,
     }),
     [walletBalances, inputCurrency, outputCurrency],
   );
@@ -323,7 +323,7 @@ export function useDerivedSwapInfo(): {
 
   const maximumBridgeAmount = useMemo(() => {
     if (currencies[Field.OUTPUT] instanceof XToken) {
-      return assetManager?.[getXAddress(currencies[Field.OUTPUT]) ?? '']?.depositedAmount;
+      return assetManager?.[currencies[Field.OUTPUT].id ?? '']?.depositedAmount;
     }
   }, [assetManager, currencies[Field.OUTPUT]]);
 

@@ -1,13 +1,13 @@
-import { Typography } from '@/app/theme';
-import { useXService } from '@/xwagmi/hooks';
-import { StellarXService } from '@/xwagmi/xchains/stellar';
-import { Trans } from '@lingui/macro';
-import { BASE_FEE, Keypair, Networks, Operation, TransactionBuilder } from '@stellar/stellar-sdk';
-import axios from 'axios';
 import React from 'react';
-import { Box, Flex } from 'rebass';
-import { useTheme } from 'styled-components';
-import { Button, TextButton } from '../Button';
+
+import { StellarXService, useXService } from '@balancednetwork/xwagmi';
+import { BASE_FEE, Networks, Operation, TransactionBuilder } from '@balancednetwork/xwagmi';
+import { Trans } from '@lingui/macro';
+import axios from 'axios';
+import { Flex } from 'rebass';
+
+import { Typography } from '@/app/theme';
+import { TextButton } from '../Button';
 import { StyledButton } from '../Button/StyledButton';
 import { UnderlineText } from '../DropdownText';
 import Modal from '../Modal';
@@ -22,7 +22,7 @@ type StellarSponsorshipModalProps = {
 };
 
 const StellarSponsorshipModal = ({ text, address }: StellarSponsorshipModalProps) => {
-  const stellarXService = useXService('STELLAR') as StellarXService;
+  const stellarXService = useXService('STELLAR') as unknown as StellarXService;
   const [isLoading, setLoading] = React.useState(false);
   const [isOpen, setOpen] = React.useState(false);
 

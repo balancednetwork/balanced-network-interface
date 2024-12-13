@@ -9,16 +9,21 @@ import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from '@/app/theme'
 import ApplicationUpdater from '@/store/application/updater';
 import TransactionUpdater from '@/store/transactions/updater';
 
-import { AllTransactionsUpdater } from '@/hooks/useTransactionStore';
-import { initXWagmiStore, useInitXWagmiStore } from '@/xwagmi/useXWagmiStore';
-import { AllXMessagesUpdater } from '@/xwagmi/xcall/zustand/useXMessageStore';
-import { AllXChainHeightsUpdater } from '@/xwagmi/xcall/zustand/useXChainHeightStore';
-import { xChains } from '../xwagmi/constants/xChains';
+import { Updater as MMUpdater } from '@/store/transactions/useMMTransactionStore';
+import {
+  AllTransactionsUpdater,
+  AllXChainHeightsUpdater,
+  AllXMessagesUpdater,
+  initXWagmiStore,
+  useInitXWagmiStore,
+  xChains,
+} from '@balancednetwork/xwagmi';
 import RootRoutes from './Routes';
 
 function Updaters() {
   return (
     <>
+      <MMUpdater />
       <TransactionUpdater />
       <ApplicationUpdater />
       <AllTransactionsUpdater />

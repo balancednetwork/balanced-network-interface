@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -8,7 +10,7 @@ import { API_ENDPOINT } from '@/queries/constants';
 import { useIncentivisedPairs } from '@/queries/reward';
 import { useEmissions } from '@/store/reward/hooks';
 import { PairInfo } from '@/types';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 export type ContractMethodsDataType = {
   address: string;
@@ -97,22 +99,21 @@ export function useAllTokens() {
 }
 
 export function useAllTokensByAddress() {
-  const { data: allTokens, isSuccess: allTokensSuccess } = useAllTokens();
+  const { data: allTokens, isSuccess } = useAllTokens();
 
-  return useQuery({
-    queryKey: [`allTokensByAddress`],
-    queryFn: () => {
-      return allTokens?.reduce(
+  return useMemo(
+    () => ({
+      isSuccess,
+      data: allTokens?.reduce(
         (tokens, item) => {
           tokens[item.address] = item;
           return tokens;
         },
         {} as { [TokenAddress in string]: TokenStats },
-      );
-    },
-    placeholderData: keepPreviousData,
-    enabled: allTokensSuccess,
-  });
+      ),
+    }),
+    [allTokens, isSuccess],
+  );
 }
 
 export type TokenStats = {
@@ -297,21 +298,19 @@ export function useNOLPools(): UseQueryResult<number[] | undefined> {
 }
 
 export function useTokenPrices() {
-  const { data: allTokens, isSuccess: allTokensSuccess } = useAllTokens();
+  const { data: allTokens } = useAllTokens();
 
-  return useQuery<{ [key in string]: BigNumber }>({
-    queryKey: [`tokenPrices`, allTokens],
-    queryFn: () => {
-      return (
-        allTokens?.reduce((tokens, item) => {
+  return useMemo(() => {
+    return {
+      data: allTokens?.reduce(
+        (tokens, item) => {
           tokens[item['symbol']] = new BigNumber(item.price);
           return tokens;
-        }, {}) || {}
-      );
-    },
-    placeholderData: keepPreviousData,
-    enabled: allTokensSuccess,
-  });
+        },
+        {} as { [key in string]: BigNumber },
+      ),
+    };
+  }, [allTokens]);
 }
 
 export function useTokenTrendData(tokenSymbol, start, end) {

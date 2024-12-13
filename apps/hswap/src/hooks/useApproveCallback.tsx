@@ -5,11 +5,15 @@ import { t } from '@lingui/macro';
 import { useQuery } from '@tanstack/react-query';
 
 import { openToast } from '@/app/components/Toast/transactionToast';
-import { transactionActions } from '@/hooks/useTransactionStore';
 import { TransactionStatus } from '@/store/transactions/hooks';
-import { getXChainType } from '@/xwagmi/actions/getXChainType';
-import { useXAccount, useXPublicClient, useXWalletClient } from '@/xwagmi/hooks';
-import { XToken } from '@/xwagmi/types';
+import {
+  XToken,
+  getXChainType,
+  transactionActions,
+  useXAccount,
+  useXPublicClient,
+  useXWalletClient,
+} from '@balancednetwork/xwagmi';
 
 export const FAST_INTERVAL = 10000;
 

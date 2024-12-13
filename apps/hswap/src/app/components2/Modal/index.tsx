@@ -1,10 +1,18 @@
 import * as React from 'react';
 
-import { Dialog, DialogClose, DialogContent, DialogHeader } from '@/components/ui/dialog';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import { XIcon } from 'lucide-react';
 import { isMobile } from 'react-device-detect';
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 
 //ModalProps
 interface ModalProps {
@@ -43,8 +51,16 @@ export function Modal({
               </div>
             </DialogClose>
           )}
-          {title && <div className="text-subtitle">{title}</div>}
-
+          <DialogHeader>
+            {title ? (
+              <DialogTitle className="text-subtitle">{title}</DialogTitle>
+            ) : (
+              <VisuallyHidden.Root>
+                <DialogTitle className="text-subtitle">{title}</DialogTitle>
+              </VisuallyHidden.Root>
+            )}
+            <DialogDescription />
+          </DialogHeader>
           {children}
         </DialogContent>
       </Dialog>
@@ -54,7 +70,16 @@ export function Modal({
   return (
     <Sheet open={open} onOpenChange={_ => onDismiss()}>
       <SheetContent className={cn('p-4 border-border', className)} side={'bottom'}>
-        <SheetHeader className="text-left px-0">{title && <SheetTitle>{title}</SheetTitle>}</SheetHeader>
+        <SheetHeader className="text-left px-0">
+          {title ? (
+            <SheetTitle>{title}</SheetTitle>
+          ) : (
+            <VisuallyHidden.Root>
+              <SheetTitle>{title}</SheetTitle>
+            </VisuallyHidden.Root>
+          )}
+          <SheetDescription />
+        </SheetHeader>
         {children}
       </SheetContent>
     </Sheet>

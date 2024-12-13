@@ -11,12 +11,12 @@ import { useSignedInWallets } from '@/hooks/useWallets';
 import { AppState } from '@/store';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatSymbol } from '@/utils/formatter';
-import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
-import { getXChainType } from '@/xwagmi/actions';
-import { useXAccount } from '@/xwagmi/hooks';
-import { XChainId, XToken } from '@/xwagmi/types';
-import { isDenomAsset } from '@/xwagmi/xchains/archway/utils';
-import { useValidateStellarAccount } from '@/xwagmi/xchains/stellar/utils';
+import { getXTokenBySymbol } from '@/utils/xTokens';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { useXAccount } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
+import { isDenomAsset } from '@balancednetwork/xwagmi';
+import { useValidateStellarAccount } from '@balancednetwork/xwagmi';
 import {
   Field,
   selectChain,
@@ -205,7 +205,7 @@ export function useDerivedBridgeInfo() {
   const { data: assetManager } = useAssetManagerTokens();
 
   const maximumBridgeAmount = useMemo(() => {
-    return assetManager?.[getXAddress(outputCurrency) ?? '']?.depositedAmount;
+    return assetManager?.[outputCurrency?.id ?? '']?.depositedAmount;
   }, [assetManager, outputCurrency]);
 
   const canBridge = useMemo(() => {

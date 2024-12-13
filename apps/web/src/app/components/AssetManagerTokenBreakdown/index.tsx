@@ -1,8 +1,8 @@
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance } from '@/utils/formatter';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XToken } from '@/xwagmi/types';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { XToken } from '@balancednetwork/xwagmi';
 import React, { Fragment } from 'react';
 import { Box } from 'rebass';
 import styled from 'styled-components';

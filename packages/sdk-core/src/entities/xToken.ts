@@ -11,6 +11,7 @@ export type XChainId =
   | '0x38.bsc'
   | '0xa4b1.arbitrum'
   | '0x2105.base'
+  | '0xa.optimism'
   | 'injective-1'
   | 'sui'
   | 'stellar'

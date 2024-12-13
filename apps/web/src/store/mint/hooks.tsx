@@ -16,8 +16,8 @@ import { tryParseAmount } from '@/store/swap/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCurrencyBalances } from '@/store/wallet/hooks';
 import { formatSymbol } from '@/utils/formatter';
-import { XChainId } from '@/xwagmi/types';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { XChainId } from '@balancednetwork/xwagmi';
+import { bnJs } from '@balancednetwork/xwagmi';
 import { AppDispatch, AppState } from '../index';
 import { Field, INITIAL_MINT, InputType, selectCurrency, typeInput } from './reducer';
 

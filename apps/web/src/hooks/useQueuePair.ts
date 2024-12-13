@@ -4,7 +4,7 @@ import { BalancedJs } from '@balancednetwork/balanced-js';
 
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
 import { getQueuePair } from '@/utils';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import useLastCount from './useLastCount';
 import { PairData, PairState } from './useV2Pairs';

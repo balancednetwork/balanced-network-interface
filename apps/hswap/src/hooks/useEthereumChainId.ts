@@ -1,11 +1,11 @@
-import { useXService } from '@/xwagmi/hooks';
-import { InjectiveXService } from '@/xwagmi/xchains/injective';
+import { useXService } from '@balancednetwork/xwagmi';
+import { InjectiveXService } from '@balancednetwork/xwagmi';
 import { Wallet } from '@injectivelabs/wallet-ts';
 import React from 'react';
 import { useEffect } from 'react';
 
 export default function useEthereumChainId(): number | null {
-  const injectiveXService = useXService('INJECTIVE') as InjectiveXService;
+  const injectiveXService = useXService('INJECTIVE') as unknown as InjectiveXService;
   const [ethereumChainId, setEthereumChainId] = React.useState<number | null>(null);
   useEffect(() => {
     if (!injectiveXService) {

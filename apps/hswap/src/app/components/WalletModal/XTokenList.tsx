@@ -1,13 +1,13 @@
+import { Separator } from '@/components/ui/separator';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useWalletBalances } from '@/store/wallet/hooks';
 import { formatValue } from '@/utils/formatter';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XToken } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import React, { useMemo } from 'react';
 import MultiChainBalanceItem from './MultiChainBalanceItem';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
-import { Separator } from '@/components/ui/separator';
-import { XToken } from '@/xwagmi/types';
 
 const XTokenList = () => {
   const _balances = useWalletBalances();
@@ -38,13 +38,13 @@ const XTokenList = () => {
           {Object.values(sortedFilteredBalances).map((balances, index) =>
             balances.length === 1 ? (
               <>
-                <SingleChainBalanceItem key={index} balance={balances[0]} />
-                <Separator key={index + '_separator'} className="h-1 bg-[#ffffff59]" />
+                <SingleChainBalanceItem key={balances[0].currency.symbol} balance={balances[0]} />
+                <Separator key={balances[0].currency.symbol + '_separator'} className="h-1 bg-[#ffffff59]" />
               </>
             ) : (
               <>
-                <MultiChainBalanceItem key={index} balances={balances} />
-                <Separator key={index + '_separator'} className="h-1 bg-[#ffffff59]" />
+                <MultiChainBalanceItem key={balances[0].currency.symbol} balances={balances} />
+                <Separator key={balances[0].currency.symbol + '_separator'} className="h-1 bg-[#ffffff59]" />
               </>
             ),
           )}

@@ -17,10 +17,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Sheet, SheetContent, SheetDescription } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
-import { useXDisconnectAll } from '@/xwagmi/hooks';
+import { useXDisconnectAll } from '@balancednetwork/xwagmi';
 import WalletItem, { WalletItemProps } from '../WalletConnectModal/WalletItem';
 import HistoryItemList from './HistoryItemList';
 import { IconWithConfirmTextButton } from './IconWithConfirmTextButton';
@@ -133,8 +133,8 @@ const WalletModalContent = ({ onDismiss }) => {
 
               {xChainTypes.map(wallet => (
                 <>
-                  <WalletItem key={wallet.xChainType} {...wallet} />
-                  <Separator key={wallet.xChainType + '_separator'} className="h-1 bg-[#ffffff59]" />
+                  <WalletItem key={'wallet_' + wallet.xChainType} {...wallet} />
+                  <Separator key={'wallet_' + wallet.xChainType + '_separator'} className="h-1 bg-[#ffffff59]" />
                 </>
               ))}
             </div>
@@ -161,6 +161,7 @@ const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
         )}
       >
         <VisuallyHidden.Root>
+          <SheetTitle>Wallet Modal</SheetTitle>
           <SheetDescription>Wallet Modal</SheetDescription>
         </VisuallyHidden.Root>
         <WalletModalContent onDismiss={onDismiss} />

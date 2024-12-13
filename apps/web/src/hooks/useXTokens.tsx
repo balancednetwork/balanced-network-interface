@@ -1,5 +1,5 @@
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XChainId } from '@/xwagmi/types';
+import { xTokenMap } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
 
 const useXTokens = (from: XChainId, to?: XChainId) => {
   if (to) {

@@ -109,6 +109,7 @@ interface CurrencyInputPanelProps {
   showCommunityListControl?: boolean;
   selectorType?: SelectorType;
   showDollarValue?: boolean;
+  showWarning?: boolean;
 
   // cross chain stuff
   xChainId?: XChainId;
@@ -136,6 +137,7 @@ export default function CurrencyInputPanel({
   showCommunityListControl = true,
   selectorType,
   showDollarValue = true,
+  showWarning = false,
 
   // cross chain stuff
   xChainId = '0x1.icon',
@@ -273,9 +275,7 @@ export default function CurrencyInputPanel({
           $active={(onPercentSelect && isActive) || !!showCrossChainOptions}
           $showDollarValue={showDollarValue}
         />
-        {showDollarValue && (
-          <DollarValue amount={value} price={price} showWarning={selectorType === SelectorType.SWAP_OUT} />
-        )}
+        {showDollarValue && <DollarValue amount={value} price={price} showWarning={showWarning} />}
 
         {onPercentSelect && (
           <SelectorPopover show={isActive} anchorEl={ref.current} placement="bottom-end">

@@ -4,7 +4,6 @@ import { Currency, Fraction, Percent, Price, Token } from '@balancednetwork/sdk-
 import { Route } from '@balancednetwork/v1-sdk';
 import { Trans, t } from '@lingui/macro';
 
-import QuestionHelper from '@/app/components/QuestionHelper';
 import SlippageSetting from '@/app/components/SlippageSetting';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';

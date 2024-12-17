@@ -12,6 +12,7 @@ import { BrightPanel } from '@/app/components/Panel';
 import { SelectorType } from '@/app/components/SearchModal/CurrencySearch';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
+import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
 import useManualAddresses from '@/hooks/useManualAddresses';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
@@ -135,6 +136,8 @@ export default function SwapPanel() {
 
   const rates = useRatesWithOracle();
 
+  const showWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
+
   return (
     <>
       <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
@@ -206,6 +209,7 @@ export default function SwapPanel() {
               addressEditable
               selectorType={SelectorType.SWAP_OUT}
               setManualAddress={setManualAddress}
+              showWarning={mmTrade.isMMBetter ? false : showWarning}
             />
           </Flex>
         </AutoColumn>

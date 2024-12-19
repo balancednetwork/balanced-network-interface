@@ -51,7 +51,7 @@ const swapSlice = createSlice({
       (state, { payload: { currency, field } }) => {
         const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 
-        if (currency?.address === state[otherField].currency?.address) {
+        if (currency?.symbol === state[otherField].currency?.symbol) {
           // the case where we have to swap the order
           return {
             ...state,

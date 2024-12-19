@@ -157,7 +157,7 @@ function AddressInputForm({
           }}
           autoFocus
           className={cn(
-            'py-0 h-7 rounded-full bg-transparent border-none px-2 focus-visible:ring-0 focus-visible:ring-offset-0 font-medium text-sm text-center',
+            'py-0 h-7 rounded-full bg-transparent border-none px-2 focus-visible:ring-0 focus-visible:ring-offset-0 font-medium text-sm text-center placeholder:text-[#695682]',
             editable ? 'w-full' : 'w-0',
           )}
           autoComplete="off"

@@ -12,7 +12,7 @@ import { BrightPanel } from '@/app/components/Panel';
 import { SelectorType } from '@/app/components/SearchModal/CurrencySearch';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
-import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
+import { PRICE_IMPACT_WARNING_THRESHOLD } from '@/constants/misc';
 import useManualAddresses from '@/hooks/useManualAddresses';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
@@ -136,7 +136,7 @@ export default function SwapPanel() {
 
   const rates = useRatesWithOracle();
 
-  const showWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
+  const showWarning = trade?.priceImpact.greaterThan(PRICE_IMPACT_WARNING_THRESHOLD);
 
   return (
     <>

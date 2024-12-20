@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { canBeQueue } from '@/constants/currency';
-import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
+import { PRICE_IMPACT_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
@@ -238,7 +238,7 @@ export function useDerivedSwapInfo(): {
   const gasChecker = useXCallGasChecker(currencyAmounts[Field.INPUT]);
 
   const inputError = useMemo(() => {
-    const swapDisabled = trade?.priceImpact.greaterThan(SLIPPAGE_SWAP_DISABLED_THRESHOLD);
+    const swapDisabled = trade?.priceImpact.greaterThan(PRICE_IMPACT_SWAP_DISABLED_THRESHOLD);
 
     let error: string | undefined;
 

@@ -6,7 +6,7 @@ import { Trans, t } from '@lingui/macro';
 
 import SlippageSetting from '@/app/components/SlippageSetting';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
+import { PRICE_IMPACT_WARNING_THRESHOLD } from '@/constants/misc';
 import { useSetSlippageTolerance, useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
@@ -43,7 +43,7 @@ export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactio
   const setSlippageTolerance = useSetSlippageTolerance();
   const minimumToReceive = trade?.minimumAmountOut(new Percent(slippageTolerance, 10_000));
   const priceImpact = formatPercent(new BigNumber(trade?.priceImpact.toFixed() || 0));
-  const showSlippageWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
+  const showSlippageWarning = trade?.priceImpact.greaterThan(PRICE_IMPACT_WARNING_THRESHOLD);
 
   const { formattedXCallFee } = useXCallFee(direction.from, direction.to);
 

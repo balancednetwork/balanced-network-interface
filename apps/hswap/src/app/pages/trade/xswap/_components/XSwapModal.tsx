@@ -209,7 +209,7 @@ const XSwapModal = ({
               <div key={step} className="flex gap-2 items-center justify-between">
                 {step === ConfirmModalState.APPROVING_TOKEN && (
                   <>
-                    <div className="flex flex-col gap-2 items-center items-center">
+                    <div className="flex flex-col gap-2 items-center">
                       {approvalState === ApprovalState.NOT_APPROVED && (
                         <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
                           {currencies[Field.INPUT] && <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} />}

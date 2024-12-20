@@ -87,7 +87,6 @@ const calculateXTransactionType = (
   if (token1.xChainId === token2.xChainId && token2.xChainId === '0x1.icon') {
     return XTransactionType.SWAP_ON_ICON;
   } else if (token1.symbol === token2.symbol) {
-    // TODO: check if this check is correct
     return XTransactionType.BRIDGE;
   } else {
     return XTransactionType.SWAP;

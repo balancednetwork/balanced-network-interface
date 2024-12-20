@@ -1,8 +1,10 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
-import { Currency, Fraction, Percent, Price, Token } from '@balancednetwork/sdk-core';
-import { Route } from '@balancednetwork/v1-sdk';
-import { Trans, t } from '@lingui/macro';
+import { Percent } from '@balancednetwork/sdk-core';
+import { useXCallFee } from '@balancednetwork/xwagmi';
+import { XTransactionType } from '@balancednetwork/xwagmi';
+import { Trans } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 
 import SlippageSetting from '@/app/components/SlippageSetting';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -11,32 +13,18 @@ import { useSetSlippageTolerance, useSwapSlippageTolerance } from '@/store/appli
 import { useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatPercent } from '@/utils';
-import { useXCallFee } from '@balancednetwork/xwagmi';
-import BigNumber from 'bignumber.js';
 
-import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
 import { ChevronDownGradientIcon, ChevronUpGradientIcon } from '@/app/components2/Icons';
 import { cn } from '@/lib/utils';
-import { XToken } from '@balancednetwork/xwagmi';
 // import { xChainMap } from '@balancednetwork/xwagmi';
 // import { useXEstimateApproveGas } from '@balancednetwork/xwagmi';
 // import { useXEstimateSwapGas } from '@balancednetwork/xwagmi';
-import { XTransactionInput, XTransactionType } from '@balancednetwork/xwagmi';
+import TradePrice from './TradePrice';
 
-export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactionInput?: XTransactionInput }) {
-  const {
-    account,
-    type: xTransactionType,
-    inputAmount,
-    executionTrade: trade,
-    direction,
-  } = xTransactionInput || {
-    direction: { from: '0x1.icon', to: '0x1.icon' }, // TODO: temporary fix for type error
-  };
+export default function AdvancedSwapDetails() {
+  const { trade, currencies, direction, xTransactionType } = useDerivedSwapInfo();
 
   const [open, setOpen] = useState(false);
-
-  const { currencies } = useDerivedSwapInfo();
 
   const [showInverted, setShowInverted] = useState<boolean>(false);
   const slippageTolerance = useSwapSlippageTolerance();
@@ -155,62 +143,6 @@ export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactio
           </div> */}
         </CollapsibleContent>
       </Collapsible>
-    </div>
-  );
-}
-
-interface TradePriceProps {
-  price: Price<Currency, Currency>;
-  showInverted: boolean;
-  setShowInverted: (showInverted: boolean) => void;
-}
-
-function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
-  let formattedPrice: string;
-  try {
-    formattedPrice = showInverted ? price.toSignificant(4) : price.invert()?.toSignificant(4);
-  } catch (error) {
-    formattedPrice = '0';
-  }
-
-  const label = showInverted ? `${price.quoteCurrency?.symbol}` : `${price.baseCurrency?.symbol} `;
-  const labelInverted = showInverted ? `${price.baseCurrency?.symbol} ` : `${price.quoteCurrency?.symbol}`;
-  const flipPrice: React.MouseEventHandler<HTMLDivElement> = useCallback(
-    e => {
-      e.stopPropagation();
-      setShowInverted(!showInverted);
-    },
-    [setShowInverted, showInverted],
-  );
-
-  const text = `${'1 ' + labelInverted + ' = ' + formattedPrice ?? '-'} ${label}`;
-
-  return (
-    <div onClick={flipPrice} title={text}>
-      <div className="text-sm font-medium text-title-gradient">{text}</div>
-    </div>
-  );
-}
-
-export function TradeRoute({
-  route,
-  currencies,
-}: {
-  route: Route<Currency, Currency>;
-  currencies: { [field in Field]?: XToken };
-}) {
-  return (
-    <div className="flex gap-2">
-      {currencies[Field.INPUT] && currencies[Field.INPUT].xChainId !== '0x1.icon' && (
-        <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} />
-      )}
-      {route.path.map((token: Token, index: number) => {
-        const xtoken = XToken.getXToken('0x1.icon', token);
-        return <CurrencyLogoWithNetwork key={xtoken.address} currency={xtoken} />;
-      })}
-      {currencies[Field.OUTPUT] && currencies[Field.OUTPUT].xChainId !== '0x1.icon' && (
-        <CurrencyLogoWithNetwork currency={currencies[Field.OUTPUT]} />
-      )}
     </div>
   );
 }

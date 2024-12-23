@@ -6,12 +6,20 @@ import { XTransactionType } from '@balancednetwork/xwagmi';
 import CurrencyInputPanel, { CurrencyInputPanelType } from '@/app/components2/CurrencyInputPanel';
 import { SwitchGradientIcon } from '@/app/components2/Icons';
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { useDerivedSwapInfo, useInitialSwapLoad, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
+import {
+  useDerivedMMTradeInfo,
+  useDerivedSwapInfo,
+  useInitialSwapLoad,
+  useSwapActionHandlers,
+  useSwapState,
+} from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
 import { Percent } from '@balancednetwork/sdk-core';
 import AdvancedSwapDetails from './AdvancedSwapDetails';
 import BridgeLimitWarning from './BridgeLimitWarning';
+import MMAdvancedSwapDetails from './MMAdvancedSwapDetails';
+import MMSwapCommitButton from './MMSwapCommitButton';
 import RecipientAddressPanel from './RecipientAddressPanel';
 import SwapCommitButton from './SwapCommitButton';
 
@@ -27,8 +35,13 @@ export default function SwapPanel() {
     canBridge,
     xTransactionType,
     direction,
+    trade,
+    inputError,
   } = useDerivedSwapInfo();
+  const mmTrade = useDerivedMMTradeInfo(trade);
+
   const account = accounts[Field.INPUT];
+  const { recipient } = useSwapState();
 
   const signedInWallets = useSignedInWallets();
 
@@ -47,6 +60,7 @@ export default function SwapPanel() {
     },
     [onUserInput],
   );
+
   const maxInputAmount = useMemo(
     () => maxAmountSpend(currencyBalances[Field.INPUT], direction.from),
     [currencyBalances, direction.from],
@@ -121,8 +135,17 @@ export default function SwapPanel() {
           </div>
         </div>
 
-        <div className="flex justify-center">
+        <div className="flex flex-col justify-center">
           <SwapCommitButton />
+          <MMSwapCommitButton
+            hidden={false}
+            currencies={currencies}
+            account={account}
+            recipient={recipient}
+            trade={mmTrade.trade}
+            direction={direction}
+            inputError={inputError}
+          />
         </div>
 
         {!canBridge && maximumBridgeAmount && (
@@ -130,7 +153,9 @@ export default function SwapPanel() {
         )}
       </div>
 
-      {xTransactionType && xTransactionType !== XTransactionType.BRIDGE && <AdvancedSwapDetails />}
+      {xTransactionType &&
+        xTransactionType !== XTransactionType.BRIDGE &&
+        (mmTrade.isMMBetter ? <MMAdvancedSwapDetails /> : <AdvancedSwapDetails />)}
     </div>
   );
 }

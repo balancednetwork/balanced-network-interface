@@ -36,14 +36,24 @@ function SwapCommitButton() {
 
   const { recipient } = useSwapState();
 
-  const { trade, currencies, inputError, accounts, direction, canBridge, xTransactionType, currencyAmounts } =
-    useDerivedSwapInfo();
+  const {
+    trade,
+    currencies,
+    inputError,
+    outputError,
+    accounts,
+    direction,
+    canBridge,
+    xTransactionType,
+    currencyAmounts,
+  } = useDerivedSwapInfo();
   const account = accounts[Field.INPUT];
   const inputAmount = currencyAmounts[Field.INPUT];
 
   const { xCallFee } = useXCallFee(direction.from, direction.to);
   const slippageTolerance = useSwapSlippageTolerance();
-  const isValid = !inputError && canBridge;
+  const error = inputError || outputError;
+  const isValid = !error && canBridge;
 
   const { onUserInput } = useSwapActionHandlers();
 
@@ -204,8 +214,8 @@ function SwapCommitButton() {
           )}
         </BlueButton>
       ) : (
-        <BlueButton disabled={!account || !!inputError || !canBridge} onClick={handleOpenXSwapModal}>
-          {inputError || t`Swap`}
+        <BlueButton disabled={!account || !!error || !canBridge} onClick={handleOpenXSwapModal}>
+          {error || t`Swap`}
         </BlueButton>
       )}
       {executionXTransactionInput && (

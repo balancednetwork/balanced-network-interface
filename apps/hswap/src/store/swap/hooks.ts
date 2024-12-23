@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Currency, CurrencyAmount, Price, Token, TradeType } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Fraction, Price, Token, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { t } from '@lingui/macro';
 import { useDispatch, useSelector } from 'react-redux';
@@ -118,9 +118,11 @@ export function useDerivedSwapInfo(): {
   currencies: { [field in Field]?: XToken };
   percents: { [field in Field]?: number };
   currencyBalances: { [field in Field]?: CurrencyAmount<XToken> | undefined };
+  parsedAmount: CurrencyAmount<XToken> | undefined;
   currencyAmounts: { [field in Field]?: CurrencyAmount<XToken> | undefined };
   formattedAmounts: { [field in Field]: string };
   inputError?: string;
+  outputError?: string;
   price: Price<Token, Token> | undefined;
   direction: { from: XChainId; to: XChainId };
   canBridge: boolean;
@@ -237,8 +239,6 @@ export function useDerivedSwapInfo(): {
   const gasChecker = useXCallGasChecker(currencyAmounts[Field.INPUT]);
 
   const inputError = useMemo(() => {
-    const swapDisabled = trade?.priceImpact.greaterThan(PRICE_IMPACT_SWAP_DISABLED_THRESHOLD);
-
     let error: string | undefined;
 
     if (accounts[Field.INPUT]) {
@@ -252,8 +252,6 @@ export function useDerivedSwapInfo(): {
         error = error ?? t`Invalid address`;
       } else if (!parsedAmount) {
         error = error ?? t`Enter amount`;
-      } else if (swapDisabled) {
-        error = error ?? t`Reduce price impact`;
       }
     }
 
@@ -273,14 +271,6 @@ export function useDerivedSwapInfo(): {
       if (balanceIn && amountIn && new BigNumber(balanceIn.toFixed()).isLessThan(amountIn.toFixed())) {
         error = error ?? t`Insufficient ${currencies[Field.INPUT]?.symbol}`;
       }
-
-      const userHasSpecifiedInputOutput = Boolean(
-        currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmount?.greaterThan(0),
-      );
-
-      if (userHasSpecifiedInputOutput && !trade) {
-        error = error ?? t`Insufficient liquidity`;
-      }
     }
 
     if (!gasChecker.hasEnoughGas) {
@@ -299,6 +289,24 @@ export function useDerivedSwapInfo(): {
     gasChecker,
     outputXChainId,
   ]);
+
+  const outputError = useMemo(() => {
+    let error: string | undefined;
+
+    if (trade?.priceImpact.greaterThan(PRICE_IMPACT_SWAP_DISABLED_THRESHOLD)) {
+      error = error ?? t`Reduce price impact`;
+    }
+
+    const userHasSpecifiedInputOutput = Boolean(
+      currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmount?.greaterThan(0),
+    );
+
+    if (userHasSpecifiedInputOutput && !trade) {
+      error = error ?? t`Insufficient liquidity`;
+    }
+
+    return error;
+  }, [trade, currencies, parsedAmount]);
 
   const [_pairState, _pair] = useV2Pair(_inputCurrencyOnIcon, _outputCurrencyOnIcon);
   const price = useMemo(() => {
@@ -335,7 +343,9 @@ export function useDerivedSwapInfo(): {
     trade,
     currencies,
     currencyBalances,
+    parsedAmount,
     inputError,
+    outputError,
     percents,
     price,
     direction,
@@ -392,4 +402,100 @@ export function useInitialSwapLoad(): void {
       }
     }
   }, [currencies, pair, navigate, firstLoad]);
+}
+
+import { IntentService } from '@balancednetwork/intents-sdk';
+import { useQuery } from '@tanstack/react-query';
+
+export interface MMTrade {
+  inputAmount: CurrencyAmount<XToken>;
+  outputAmount: CurrencyAmount<XToken>;
+  fee: CurrencyAmount<XToken>;
+  executionPrice: Price<Token, Token>;
+  uuid: string;
+}
+
+export function useMMTrade(inputAmount: CurrencyAmount<XToken> | undefined, outputCurrency: XToken | undefined) {
+  const isMMTrade =
+    inputAmount?.currency &&
+    outputCurrency &&
+    ((inputAmount.currency.xChainId === '0xa4b1.arbitrum' &&
+      inputAmount.currency.isNativeToken &&
+      outputCurrency.xChainId === 'sui' &&
+      outputCurrency.isNativeToken) ||
+      (inputAmount.currency.xChainId === 'sui' &&
+        inputAmount.currency.isNativeToken &&
+        outputCurrency.xChainId === '0xa4b1.arbitrum' &&
+        outputCurrency.isNativeToken));
+
+  return useQuery<MMTrade | undefined>({
+    queryKey: ['quote', inputAmount, outputCurrency],
+    queryFn: async () => {
+      if (!inputAmount || !outputCurrency) {
+        return;
+      }
+
+      const res = await IntentService.getQuote({
+        token_src: inputAmount.currency.address,
+        token_src_blockchain_id: inputAmount.currency.xChainId,
+        token_dst: outputCurrency.address,
+        token_dst_blockchain_id: outputCurrency.xChainId,
+        src_amount: inputAmount.quotient,
+      });
+
+      if (res.ok) {
+        const outputAmount = CurrencyAmount.fromRawAmount(
+          outputCurrency,
+          BigInt(res.value.output.expected_output ?? 0),
+        );
+
+        return {
+          inputAmount: inputAmount,
+          outputAmount: outputAmount,
+          executionPrice: new Price({ baseAmount: inputAmount, quoteAmount: outputAmount }),
+          uuid: res.value.output.uuid,
+          fee: outputAmount.multiply(new Fraction(3, 1_000)),
+        };
+      }
+
+      return;
+    },
+    refetchInterval: 10_000,
+    enabled: !!inputAmount && !!outputCurrency && isMMTrade,
+  });
+}
+
+const convert = (currency: XToken | undefined, amount: CurrencyAmount<Currency> | undefined) => {
+  if (!currency || !amount) {
+    return;
+  }
+  return CurrencyAmount.fromRawAmount(
+    currency,
+    new BigNumber(amount.toFixed()).times(10 ** currency.wrapped.decimals).toFixed(0),
+  );
+};
+
+export function useDerivedMMTradeInfo(trade: Trade<Currency, Currency, TradeType> | undefined) {
+  const {
+    [Field.INPUT]: { currency: inputCurrency },
+    [Field.OUTPUT]: { currency: outputCurrency },
+    independentField,
+    typedValue,
+  } = useSwapState();
+
+  // assume independentField is Field.Input
+  const mmTradeQuery = useMMTrade(
+    independentField === Field.INPUT ? tryParseAmount(typedValue, inputCurrency) : undefined,
+    outputCurrency,
+  );
+
+  // compare mmTradeQuery result and trade
+  const mmTrade = mmTradeQuery.data;
+
+  const swapOutput = convert(outputCurrency, trade?.outputAmount);
+
+  return {
+    isMMBetter: mmTrade?.outputAmount && swapOutput && mmTrade.outputAmount.greaterThan(swapOutput),
+    trade: mmTrade,
+  };
 }

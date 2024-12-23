@@ -64,11 +64,11 @@ const MMSwapCommitButton: React.FC<MMSwapCommitButtonProps> = props => {
     <>
       {!account ? (
         <BlueButton onClick={handleSwap}>
-          <Trans>Sign in</Trans>
+          <Trans>Sign in(MM)</Trans>
         </BlueButton>
       ) : (
         <BlueButton disabled={!account || !!error} onClick={handleSwap}>
-          {error || btnText}
+          {error || btnText}(MM)
         </BlueButton>
       )}
 

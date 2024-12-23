@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "bignumber.js": "9.0.1",
-    "icon-sdk-js": "^1.2.1"
+    "icon-sdk-js": "1.5.3"
   },
   "devDependencies": {
     "tsup": "^8.0.2"

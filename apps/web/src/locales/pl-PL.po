@@ -425,8 +425,8 @@ msgid "Bribe available in"
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
-msgid "Failed"
-msgstr ""
+#~ msgid "Failed"
+#~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 msgid "Send max"
@@ -690,6 +690,10 @@ msgstr "Wróć"
 
 #: src/app/pages/vote/_components/VotingPowerPanel/index.tsx
 msgid "Average lock-up time"
+msgstr ""
+
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+msgid "Swap failed"
 msgstr ""
 
 #: src/app/components/CurrencyBalanceErrorMessage/index.tsx

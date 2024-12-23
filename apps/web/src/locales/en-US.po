@@ -416,8 +416,8 @@ msgid "Bribe available in"
 msgstr "Bribe available in"
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
-msgid "Failed"
-msgstr "Failed"
+#~ msgid "Failed"
+#~ msgstr "Failed"
 
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 msgid "Send max"
@@ -658,6 +658,10 @@ msgstr "Go back"
 #: src/app/pages/vote/_components/VotingPowerPanel/index.tsx
 msgid "Average lock-up time"
 msgstr "Average lock-up time"
+
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+msgid "Swap failed"
+msgstr "Swap failed"
 
 #: src/app/components/CurrencyBalanceErrorMessage/index.tsx
 msgid "You need at least {MINIMUM_ICX_FOR_TX} ICX in your wallet to complete this transaction."

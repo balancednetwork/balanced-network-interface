@@ -204,3 +204,26 @@ export async function validateAddress(address: string, chainId: XChainId): Promi
       return await isSolanaWalletAddress(address);
   }
 }
+
+export const getTrackerLink = (
+  xChainId: XChainId,
+  data: string,
+  type: 'transaction' | 'address' | 'block' | 'contract' = 'transaction',
+) => {
+  const tracker = xChainMap[xChainId].tracker;
+
+  switch (type) {
+    case 'transaction': {
+      return `${tracker.tx}/${data}`;
+    }
+    case 'address': {
+      return ``;
+    }
+    case 'block': {
+      return ``;
+    }
+    default: {
+      return ``;
+    }
+  }
+};

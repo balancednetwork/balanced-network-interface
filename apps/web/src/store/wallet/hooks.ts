@@ -287,15 +287,27 @@ export const useXCurrencyBalance = (
   }, [xBalances, currency, selectedChainId]);
 };
 
+export function useXTokenBalances(xTokens: (XToken | undefined)[]): (CurrencyAmount<XToken> | undefined)[] {
+  const walletState = useSelector((state: AppState) => state.wallet);
+
+  return useMemo(() => {
+    return xTokens.map(xToken => {
+      if (!xToken) return undefined;
+      return walletState[xToken.xChainId]?.[xToken.address];
+    });
+  }, [xTokens, walletState]);
+}
+
+// TODO: deprecate
 export function useCurrencyBalances(currencies: (Currency | undefined)[]): (CurrencyAmount<XToken> | undefined)[] {
-  const crossChainBalances = useCrossChainWalletBalances();
+  const walletState = useSelector((state: AppState) => state.wallet);
 
   return useMemo(() => {
     return currencies.map(currency => {
       if (!currency) return undefined;
-      return crossChainBalances['0x1.icon']?.[currency.address];
+      return walletState['0x1.icon']?.[currency.address];
     });
-  }, [crossChainBalances, currencies]);
+  }, [walletState, currencies]);
 }
 
 export function useLiquidityTokenBalance(account: string | undefined | null, pair: Pair | undefined | null) {

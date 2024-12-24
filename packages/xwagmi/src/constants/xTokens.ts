@@ -311,6 +311,25 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
   ],
 };
 
+type XTokenMapBySymbol = {
+  [key in XChainId]: {
+    [symbol: string]: XToken;
+  };
+};
+
+export const xTokenMapBySymbol: XTokenMapBySymbol = Object.fromEntries(
+  Object.entries(xTokenMap).map(([chainId, tokens]) => [
+    chainId,
+    tokens.reduce(
+      (acc, token) => {
+        acc[token.symbol] = token;
+        return acc;
+      },
+      {} as { [symbol: string]: XToken },
+    ),
+  ]),
+) as XTokenMapBySymbol;
+
 export const allXTokens = Object.values(xTokenMap).reduce((acc, xTokens) => {
   return acc.concat(xTokens);
 }, []);

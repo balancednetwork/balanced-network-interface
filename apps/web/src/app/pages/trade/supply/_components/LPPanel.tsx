@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
 import Nouislider from '@/packages/nouislider-react';
@@ -134,8 +134,10 @@ export default function LPPanel() {
     pairState,
     liquidityMinted,
     mintableLiquidity,
+    lpXChainId,
   } = useDerivedMintInfo(crossChainCurrencyA, crossChainCurrencyB);
-  const { onFieldAInput, onFieldBInput, onSlide, onCurrencySelection } = useMintActionHandlers(noLiquidity);
+  const { onFieldAInput, onFieldBInput, onSlide, onCurrencySelection, onChainSelection } =
+    useMintActionHandlers(noLiquidity);
 
   const sliderInstance = React.useRef<any>(null);
 
@@ -177,7 +179,8 @@ export default function LPPanel() {
       if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
         const p = new Percent(Math.floor(percent * 100), 10_000);
 
-        if (isNativeCurrency(currencies[Field.CURRENCY_A])) {
+        if (currencies[Field.CURRENCY_A]?.isNativeToken) {
+          // TODO: is ICX?
           onSlide(Field.CURRENCY_A, percent !== 0 ? balanceA.multiply(p).toFixed() : '');
         } else {
           const field = balanceA.multiply(pair?.reserve1).lessThan(balanceB.multiply(pair?.reserve0))
@@ -213,7 +216,7 @@ export default function LPPanel() {
     (accumulator, field) => {
       return {
         ...accumulator,
-        [field]: maxAmountSpend(currencyBalances[field]),
+        [field]: maxAmountSpend(currencyBalances[field], lpXChainId),
       };
     },
     {},
@@ -244,6 +247,13 @@ export default function LPPanel() {
 
   const isQueue = isNativeCurrency(currencies[Field.CURRENCY_A]);
 
+  const handleLPChainSelection = useCallback(
+    (xChainId: XChainId) => {
+      onChainSelection(Field.CURRENCY_A, xChainId);
+    },
+    [onChainSelection],
+  );
+
   return (
     <>
       <SectionPanel bg="bg2">
@@ -272,9 +282,10 @@ export default function LPPanel() {
                   onUserInput={handleTypeAInput}
                   onCurrencySelect={handleCurrencyASelect}
                   onPercentSelect={handlePercentSelect(Field.CURRENCY_A)}
-                  xChainId={'0x1.icon'}
+                  xChainId={currencies[Field.CURRENCY_A]?.xChainId}
+                  onChainSelect={handleLPChainSelection}
                   showCrossChainOptions={true}
-                  showCrossChainBreakdown={false}
+                  showCrossChainBreakdown={true}
                   selectorType={SelectorType.SUPPLY_BASE}
                 />
               </Flex>
@@ -290,7 +301,7 @@ export default function LPPanel() {
                   onUserInput={handleTypeBInput}
                   onCurrencySelect={handleCurrencyBSelect}
                   onPercentSelect={handlePercentSelect(Field.CURRENCY_B)}
-                  xChainId={'0x1.icon'}
+                  xChainId={currencies[Field.CURRENCY_B]?.xChainId}
                   showCrossChainOptions={true}
                   showCrossChainBreakdown={false}
                   selectorType={SelectorType.SUPPLY_QUOTE}

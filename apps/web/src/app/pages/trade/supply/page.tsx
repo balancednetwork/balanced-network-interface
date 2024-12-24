@@ -3,11 +3,11 @@ import React, { useMemo } from 'react';
 import { useIconReact } from '@/packages/icon-react';
 
 import LPPanel from './_components/LPPanel';
-import { PoolPanelContext } from './_components/PoolPanelContext';
 import LiquidityPoolsPanel from './_components/LiquidityPoolsPanel';
+import { PoolPanelContext } from './_components/PoolPanelContext';
 
-import { useTrackedTokenPairs } from '@/store/user/hooks';
 import { useAvailablePairs, useBalances } from '@/hooks/useV2Pairs';
+import { useTrackedTokenPairs } from '@/store/user/hooks';
 
 export function SupplyPage() {
   const { account } = useIconReact();

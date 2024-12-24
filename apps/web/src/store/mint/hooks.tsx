@@ -1,4 +1,4 @@
-import React, { useCallback, ReactNode } from 'react';
+import React, { useCallback, ReactNode, useEffect, useMemo } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
 import { Currency, CurrencyAmount, Percent, Price, Token } from '@balancednetwork/sdk-core';
@@ -8,18 +8,18 @@ import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { isNativeCurrency, useICX } from '@/constants/tokens';
+import { useICX } from '@/constants/tokens';
 import { useAllTokens, useCommonBases } from '@/hooks/Tokens';
 import { useQueuePair } from '@/hooks/useQueuePair';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { tryParseAmount } from '@/store/swap/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
-import { useCurrencyBalances } from '@/store/wallet/hooks';
+import { useXTokenBalances } from '@/store/wallet/hooks';
 import { formatSymbol } from '@/utils/formatter';
-import { XChainId } from '@balancednetwork/xwagmi';
+import { XChainId, XToken, xTokenMap, xTokenMapBySymbol } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
 import { AppDispatch, AppState } from '../index';
-import { Field, INITIAL_MINT, InputType, selectCurrency, typeInput } from './reducer';
+import { Field, INITIAL_MINT, InputType, selectChain, selectCurrency, typeInput } from './reducer';
 
 export function useMintState(): AppState['mint'] {
   return useSelector<AppState, AppState['mint']>(state => state.mint);
@@ -30,37 +30,20 @@ export function useMintActionHandlers(noLiquidity: boolean | undefined): {
   onFieldAInput: (typedValue: string) => void;
   onFieldBInput: (typedValue: string) => void;
   onSlide: (field: Field, typedValue: string) => void;
+  onChainSelection: (field: Field, xChainId: XChainId) => void;
 } {
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
-  const { pair = '' } = useParams<{ pair: string }>();
 
   const onCurrencySelection = useCallback(
     (field: Field, currency: Currency) => {
       dispatch(
         selectCurrency({
           field,
-          currency: currency,
+          currency: currency instanceof XToken ? currency : xTokenMapBySymbol['0x1.icon'][currency.symbol],
         }),
       );
-
-      if (field === Field.CURRENCY_A) {
-        if (currency.symbol === 'ICX') {
-          // history.replace(`/trade/supply/${currency.symbol}`);
-          navigate(`/trade/supply/${currency.symbol}`, { replace: true });
-        } else {
-          const currentQuote = pair.split('_')[1];
-          // history.replace(`/trade/supply/${currency.symbol}` + (currentQuote ? `_${currentQuote}` : ''));
-          navigate(`/trade/supply/${currency.symbol}` + (currentQuote ? `_${currentQuote}` : ''), { replace: true });
-        }
-      }
-      if (field === Field.CURRENCY_B) {
-        const currentBase = pair.split('_')[0];
-        // history.replace(`/trade/supply/${currentBase}_${currency.symbol}`);
-        navigate(`/trade/supply/${currentBase}_${currency.symbol}`, { replace: true });
-      }
     },
-    [dispatch, pair, navigate],
+    [dispatch],
   );
 
   const onFieldAInput = useCallback(
@@ -98,11 +81,24 @@ export function useMintActionHandlers(noLiquidity: boolean | undefined): {
     [dispatch, noLiquidity],
   );
 
+  const onChainSelection = useCallback(
+    (field: Field, xChainId: XChainId) => {
+      dispatch(
+        selectChain({
+          field,
+          xChainId,
+        }),
+      );
+    },
+    [dispatch],
+  );
+
   return {
     onCurrencySelection,
     onFieldAInput,
     onFieldBInput,
     onSlide,
+    onChainSelection,
   };
 }
 
@@ -136,7 +132,7 @@ export function useDerivedMintInfo(
   BChain: XChainId = '0x1.icon',
 ): {
   dependentField: Field;
-  currencies: { [field in Field]?: Currency };
+  currencies: { [field in Field]?: XToken };
   pair?: Pair | null;
   pairState: PairState;
   currencyBalances: { [field in Field]?: CurrencyAmount<Currency> };
@@ -149,6 +145,7 @@ export function useDerivedMintInfo(
   poolTokenPercentage?: Percent;
   error?: ReactNode;
   minQuoteTokenAmount?: BigNumber | null;
+  lpXChainId: XChainId;
 } {
   const { account } = useIconReact();
 
@@ -162,7 +159,7 @@ export function useDerivedMintInfo(
   const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
 
   // tokens
-  const currencies: { [field in Field]?: Currency } = React.useMemo(
+  const currencies: { [field in Field]?: XToken } = React.useMemo(
     () => ({
       [Field.CURRENCY_A]: currencyA ?? undefined,
       [Field.CURRENCY_B]: currencyB ?? undefined,
@@ -170,12 +167,27 @@ export function useDerivedMintInfo(
     [currencyA, currencyB],
   );
 
+  const currencyAOnIcon = useMemo(() => {
+    return currencyA ? xTokenMapBySymbol['0x1.icon'][currencyA.symbol] : undefined;
+  }, [currencyA]);
+
+  const currencyBOnIcon = useMemo(() => {
+    return currencyB ? xTokenMapBySymbol['0x1.icon'][currencyB.symbol] : undefined;
+  }, [currencyB]);
+
+  const currenciesOnIcon: { [field in Field]?: XToken } = React.useMemo(() => {
+    return {
+      [Field.CURRENCY_A]: currencyAOnIcon ?? undefined,
+      [Field.CURRENCY_B]: currencyBOnIcon ?? undefined,
+    };
+  }, [currencyAOnIcon, currencyBOnIcon]);
+
   // pair
-  const isQueue = isNativeCurrency(currencies[Field.CURRENCY_A]);
+  const isQueue = currencies[Field.CURRENCY_A]?.isNativeToken && currencies[Field.CURRENCY_A]?.xChainId === '0x1.icon';
 
   // For queue, currencies[Field.CURRENCY_A] = ICX and currencies[Field.CURRENCY_B] = undefined
   // so used `useQueuePair` in addition to `useV2Pair`.
-  const [pairState1, pair1] = useV2Pair(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]);
+  const [pairState1, pair1] = useV2Pair(currencyAOnIcon, currencyBOnIcon);
   const [pairState2, pair2] = useQueuePair();
   const [pairState, pair] = isQueue ? [pairState2, pair2] : [pairState1, pair1];
 
@@ -189,8 +201,13 @@ export function useDerivedMintInfo(
 
   // balances
   const currencyArr = React.useMemo(() => [currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]], [currencies]);
-  const balances = useCurrencyBalances(currencyArr);
-  const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(() => {
+
+  const lpXChainId = useMemo(() => {
+    return currencies[Field.CURRENCY_A]?.xChainId || '0x1.icon';
+  }, [currencies]);
+
+  const balances = useXTokenBalances(currencyArr);
+  const currencyBalances: { [field in Field]?: CurrencyAmount<XToken> } = React.useMemo(() => {
     const currencyABalance = balances[0];
     const currencyBBalance = balances[1];
     return {
@@ -200,8 +217,8 @@ export function useDerivedMintInfo(
   }, [balances]);
 
   // deposits
-  const depositA = useCurrencyDeposit(account ?? undefined, currencyA);
-  const depositB = useCurrencyDeposit(account ?? undefined, currencyB);
+  const depositA = useCurrencyDeposit(account ?? undefined, currencyAOnIcon);
+  const depositB = useCurrencyDeposit(account ?? undefined, currencyBOnIcon);
   const currencyDeposits: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(
     () => ({
       [Field.CURRENCY_A]: depositA,
@@ -213,29 +230,27 @@ export function useDerivedMintInfo(
   // amounts
   const independentAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(
     typedValue,
-    currencies[independentField],
+    currenciesOnIcon[independentField],
   );
   const dependentAmount: CurrencyAmount<Currency> | undefined = React.useMemo(() => {
     if (noLiquidity) {
-      if (otherTypedValue && currencies[dependentField]) {
-        return tryParseAmount(otherTypedValue, currencies[dependentField]);
+      if (otherTypedValue && currenciesOnIcon[dependentField]) {
+        return tryParseAmount(otherTypedValue, currenciesOnIcon[dependentField]);
       }
       return undefined;
     } else if (independentAmount) {
-      // we wrap the currencies just to get the price in terms of the other token
-      const wrappedIndependentAmount = independentAmount?.wrapped;
-      const [tokenA, tokenB] = [currencyA?.wrapped, currencyB?.wrapped];
-      if (tokenA && tokenB && wrappedIndependentAmount && pair) {
-        const dependentCurrency = dependentField === Field.CURRENCY_B ? currencyB : currencyA;
+      if (currencyAOnIcon && currencyBOnIcon && independentAmount && pair) {
+        const dependentCurrency = dependentField === Field.CURRENCY_B ? currencyBOnIcon : currencyAOnIcon;
         const dependentTokenAmount =
           dependentField === Field.CURRENCY_B
-            ? pair.involvesToken(tokenA)
-              ? pair.priceOf(tokenA).quote(wrappedIndependentAmount)
-              : CurrencyAmount.fromRawAmount(tokenB, 0)
-            : pair.involvesToken(tokenB)
-              ? pair.priceOf(tokenB).quote(wrappedIndependentAmount)
-              : CurrencyAmount.fromRawAmount(tokenA, 0);
-        return dependentCurrency?.isNative
+            ? pair.involvesToken(currencyAOnIcon)
+              ? pair.priceOf(currencyAOnIcon).quote(independentAmount)
+              : CurrencyAmount.fromRawAmount(currencyBOnIcon, 0)
+            : pair.involvesToken(currencyBOnIcon)
+              ? pair.priceOf(currencyBOnIcon).quote(independentAmount)
+              : CurrencyAmount.fromRawAmount(currencyAOnIcon, 0);
+
+        return dependentCurrency.isNativeToken
           ? CurrencyAmount.fromRawAmount(dependentCurrency, dependentTokenAmount.quotient)
           : dependentTokenAmount;
       }
@@ -243,7 +258,16 @@ export function useDerivedMintInfo(
     } else {
       return undefined;
     }
-  }, [noLiquidity, otherTypedValue, currencies, dependentField, independentAmount, currencyA, currencyB, pair]);
+  }, [
+    noLiquidity,
+    otherTypedValue,
+    dependentField,
+    independentAmount,
+    pair,
+    currenciesOnIcon,
+    currencyAOnIcon,
+    currencyBOnIcon,
+  ]);
 
   const parsedAmounts: { [field in Field]: CurrencyAmount<Currency> | undefined } = React.useMemo(() => {
     return {
@@ -261,12 +285,9 @@ export function useDerivedMintInfo(
       }
       return undefined;
     } else {
-      const wrappedCurrencyA = currencyA?.wrapped;
-      return pair && wrappedCurrencyA && pair.involvesToken(wrappedCurrencyA)
-        ? pair.priceOf(wrappedCurrencyA)
-        : undefined;
+      return pair && currencyAOnIcon && pair.involvesToken(currencyAOnIcon) ? pair.priceOf(currencyAOnIcon) : undefined;
     }
-  }, [currencyA, noLiquidity, pair, parsedAmounts]);
+  }, [currencyAOnIcon, noLiquidity, pair, parsedAmounts]);
 
   // liquidity minted
   const liquidityMinted = React.useMemo(() => {
@@ -298,15 +319,22 @@ export function useDerivedMintInfo(
 
   // mintable liquidity by using balances
   const mintableLiquidity = React.useMemo(() => {
-    const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = currencyBalances;
+    const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = {
+      [Field.CURRENCY_A]: currencyBalances[Field.CURRENCY_A]
+        ? CurrencyAmount.fromRawAmount(currencyAOnIcon, currencyBalances[Field.CURRENCY_A]?.quotient)
+        : undefined,
+      [Field.CURRENCY_B]: currencyBalances[Field.CURRENCY_B]
+        ? CurrencyAmount.fromRawAmount(currencyBOnIcon, currencyBalances[Field.CURRENCY_B]?.quotient)
+        : undefined,
+    };
+
     const [tokenAmountA, tokenAmountB] = [currencyAAmount?.wrapped, currencyBAmount?.wrapped];
     if (
       pair &&
       totalSupply &&
       tokenAmountA &&
       tokenAmountB &&
-      ((pair.token0.symbol as string) === (tokenAmountA.currency.symbol as string) ||
-        (pair.token1.symbol as string) === (tokenAmountA.currency.symbol as string)) &&
+      pair.involvesToken(tokenAmountA.currency) &&
       pair.involvesToken(tokenAmountB.currency) &&
       !tokenAmountA.currency.equals(tokenAmountB.currency)
     ) {
@@ -323,7 +351,7 @@ export function useDerivedMintInfo(
     } else {
       return undefined;
     }
-  }, [currencyBalances, pair, totalSupply]);
+  }, [currencyBalances, pair, totalSupply, currencyAOnIcon, currencyBOnIcon]);
 
   const poolTokenPercentage = React.useMemo(() => {
     if (liquidityMinted && totalSupply) {
@@ -382,6 +410,7 @@ export function useDerivedMintInfo(
     mintableLiquidity,
     poolTokenPercentage,
     error,
+    lpXChainId,
   };
 }
 
@@ -399,26 +428,34 @@ export function useInitialSupplyLoad(): void {
     if (firstLoad && Object.values(tokens).length > 0 && Object.values(bases).length > 0) {
       const tokensArray = Object.values(tokens);
       const basesArray = Object.values(bases);
-      const currentCurrA = pair.split('_')[0];
+
+      const validXChainIds = Object.keys(xTokenMap);
+
+      const [currentCurrA, xChainIdStr] = pair.split('_')[0].split(':');
+      const xChainId: XChainId = validXChainIds.includes(xChainIdStr) ? (xChainIdStr as XChainId) : '0x1.icon';
       const currentCurrB = pair.split('_')[1];
       const currencyB =
         currentCurrB && basesArray.find(token => token.symbol?.toLowerCase() === currentCurrB?.toLocaleLowerCase());
       const currencyA =
         currentCurrA && tokensArray.find(token => token.symbol?.toLowerCase() === currentCurrA?.toLowerCase());
       if (currencyB && currencyA) {
-        onCurrencySelection(Field.CURRENCY_A, currencyA);
-        onCurrencySelection(Field.CURRENCY_B, currencyB);
+        onCurrencySelection(Field.CURRENCY_A, xTokenMapBySymbol[xChainId][currencyA.symbol]);
+        onCurrencySelection(Field.CURRENCY_B, xTokenMapBySymbol[xChainId][currencyB.symbol]);
       } else if (currentCurrA?.toLowerCase() === 'icx') {
-        ICX && onCurrencySelection(Field.CURRENCY_A, ICX);
+        ICX && onCurrencySelection(Field.CURRENCY_A, xTokenMapBySymbol[xChainId][ICX.symbol]);
       } else {
         if (currencies.CURRENCY_A && currencies.CURRENCY_B) {
-          // history.replace(`/trade/supply/${currencies.CURRENCY_A.symbol}_${currencies.CURRENCY_B.symbol}`);
-          navigate(`/trade/supply/${currencies.CURRENCY_A.symbol}_${currencies.CURRENCY_B.symbol}`, { replace: true });
+          navigate(
+            `/trade/supply/${currencies.CURRENCY_A.symbol}:${currencies.CURRENCY_A.xChainId}_${currencies.CURRENCY_B.symbol}`,
+            { replace: true },
+          );
         } else {
-          // history.replace(`/trade/supply/${INITIAL_MINT.currencyA.symbol}_${INITIAL_MINT.currencyB.symbol}`);
-          navigate(`/trade/supply/${INITIAL_MINT.currencyA.symbol}_${INITIAL_MINT.currencyB.symbol}`, {
-            replace: true,
-          });
+          navigate(
+            `/trade/supply/${INITIAL_MINT.currencyA.symbol}:${INITIAL_MINT.currencyA.xChainId}_${INITIAL_MINT.currencyB.symbol}`,
+            {
+              replace: true,
+            },
+          );
         }
       }
       setFirstLoad(false);

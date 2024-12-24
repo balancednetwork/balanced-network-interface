@@ -1,8 +1,8 @@
-import { Currency } from '@balancednetwork/sdk-core';
+import { XChainId } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
 
-import { NETWORK_ID } from '@/constants/config';
-import { bnUSD, sICX } from '@/constants/tokens';
+import { getXTokenBySymbol } from '@/utils/xTokens';
+import { XToken, xTokenMapBySymbol } from '@balancednetwork/xwagmi';
 
 export enum Field {
   CURRENCY_A = 'CURRENCY_A',
@@ -20,17 +20,17 @@ export interface MintState {
   readonly otherTypedValue: string;
   readonly inputType: InputType;
   readonly [Field.CURRENCY_A]: {
-    readonly currency: Currency | undefined;
+    readonly currency: XToken | undefined;
     readonly percent: number;
   };
   readonly [Field.CURRENCY_B]: {
-    readonly currency: Currency | undefined;
+    readonly currency: XToken | undefined;
   };
 }
 
 export const INITIAL_MINT = {
-  currencyA: sICX[NETWORK_ID],
-  currencyB: bnUSD[NETWORK_ID],
+  currencyA: xTokenMapBySymbol['0x1.icon']['sICX'],
+  currencyB: xTokenMapBySymbol['0x1.icon']['bnUSD'],
 };
 
 const initialState: MintState = {
@@ -85,28 +85,27 @@ const mintSlice = createSlice({
         }
       },
     ),
-    selectCurrency: create.reducer<{ currency: Currency; field: Field }>((state, { payload: { currency, field } }) => {
-      // const otherField = field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
-
-      // if (currency === state[otherField].currency) {
-      //   // the case where we have to swap the order
-      //   return {
-      //     ...state,
-      //     independentField: state.independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A,
-      //     [field]: { ...state[field], currency: currency, percent: 0 },
-      //     [otherField]: { ...state[otherField], currency: state[field].currency, percent: 0 },
-      //   };
-      // } else {
-      // the normal case
+    selectCurrency: create.reducer<{ currency: XToken; field: Field }>((state, { payload: { currency, field } }) => {
       return {
         ...state,
         [field]: { ...state[field], currency: currency, percent: 0 },
       };
-      // }
+    }),
+
+    selectChain: create.reducer<{ field: Field; xChainId: XChainId }>((state, { payload: { field, xChainId } }) => {
+      const updatedCurrencyA = getXTokenBySymbol(xChainId, state[Field.CURRENCY_A].currency?.symbol);
+      if (updatedCurrencyA) {
+        state[Field.CURRENCY_A].currency = updatedCurrencyA;
+
+        const updatedCurrencyB = getXTokenBySymbol(xChainId, state[Field.CURRENCY_B].currency?.symbol);
+        if (updatedCurrencyB.xChainId !== state[Field.CURRENCY_B].currency?.xChainId) {
+          state[Field.CURRENCY_B].currency = updatedCurrencyB;
+        }
+      }
     }),
   }),
 });
 
-export const { resetMintState, typeInput, selectCurrency } = mintSlice.actions;
+export const { resetMintState, typeInput, selectCurrency, selectChain } = mintSlice.actions;
 
 export default mintSlice.reducer;

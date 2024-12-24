@@ -18,7 +18,7 @@ import { useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedMintInfo, useInitialSupplyLoad, useMintActionHandlers, useMintState } from '@/store/mint/hooks';
 import { Field, InputType } from '@/store/mint/reducer';
 import { formatBigNumber, maxAmountSpend } from '@/utils';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId } from '@balancednetwork/xwagmi';
 
 import { AutoColumn } from '@/app/components/Column';
 import { BrightPanel, SectionPanel } from '@/app/components/Panel';

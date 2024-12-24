@@ -10,11 +10,13 @@ import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { AppState } from '@/store';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { getXAddress, getXTokenBySymbol } from '@/utils/xTokens';
-import { getXChainType } from '@/xwagmi/actions';
-import { useXAccount } from '@/xwagmi/hooks';
-import { XChainId, XToken } from '@/xwagmi/types';
-import { isDenomAsset } from '@/xwagmi/xchains/archway/utils';
+import { formatSymbol } from '@/utils/formatter';
+import { getXTokenBySymbol } from '@/utils/xTokens';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { useXAccount } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
+import { isDenomAsset } from '@balancednetwork/xwagmi';
+import { useValidateStellarAccount } from '@balancednetwork/xwagmi';
 import {
   Field,
   selectChain,
@@ -130,6 +132,10 @@ export function useDerivedBridgeInfo() {
   const xAccount = useXAccount(getXChainType(bridgeDirection.from));
   const account = xAccount.address;
 
+  //temporary check for valid stellar account
+  const stellarValidationQuery = useValidateStellarAccount(bridgeDirection.to === 'stellar' ? recipient : undefined);
+  const { data: stellarValidation } = stellarValidationQuery;
+
   const errorMessage = useMemo(() => {
     if (!account) return t`Connect wallet`;
 
@@ -150,12 +156,23 @@ export function useDerivedBridgeInfo() {
               )),
         )
       ) {
-        return t`Insufficient ${currencyAmountToBridge.currency.symbol}`;
+        return t`Insufficient ${formatSymbol(currencyAmountToBridge.currency.symbol)}`;
       } else {
+        if (stellarValidationQuery.isLoading) {
+          return t`Validating Stellar account`;
+        }
         return undefined;
       }
     }
-  }, [bridgeDirection.from, crossChainWallet, currencyAmountToBridge, signedInWallets, account, recipient]);
+  }, [
+    bridgeDirection.from,
+    crossChainWallet,
+    currencyAmountToBridge,
+    signedInWallets,
+    account,
+    recipient,
+    stellarValidationQuery,
+  ]);
 
   const selectedTokenWalletBalance = React.useMemo(() => {
     if (currencyToBridge) {
@@ -188,7 +205,7 @@ export function useDerivedBridgeInfo() {
   const { data: assetManager } = useAssetManagerTokens();
 
   const maximumBridgeAmount = useMemo(() => {
-    return assetManager?.[getXAddress(outputCurrency) ?? '']?.depositedAmount;
+    return assetManager?.[outputCurrency?.id ?? '']?.depositedAmount;
   }, [assetManager, outputCurrency]);
 
   const canBridge = useMemo(() => {
@@ -204,5 +221,6 @@ export function useDerivedBridgeInfo() {
     isLiquidsARCH,
     canBridge,
     maximumBridgeAmount,
+    stellarValidation,
   };
 }

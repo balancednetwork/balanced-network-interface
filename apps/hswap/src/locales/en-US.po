@@ -108,8 +108,8 @@ msgstr "{0} transfer approval failed."
 #~ msgstr "Collateral action"
 
 #: src/app/components/WalletModal/index.tsx
-msgid "History"
-msgstr "History"
+#~ msgid "History"
+#~ msgstr "History"
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #~ msgid "{0} ICX"
@@ -319,7 +319,6 @@ msgstr "Bridge Fee"
 #~ msgid "Add a contract call"
 #~ msgstr "Add a contract call"
 
-#: src/app/components/Header/index.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "Sign in"
 msgstr "Sign in"
@@ -364,10 +363,10 @@ msgstr "Sign in"
 #~ msgstr "Transfer fee"
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Tokens"
-msgstr "Tokens"
+#~ msgid "Tokens"
+#~ msgstr "Tokens"
 
-#: src/app/components/Header/index.tsx
+#: src/app/components2/CopyableAddress/index.tsx
 msgid "Copied"
 msgstr "Copied"
 
@@ -600,6 +599,10 @@ msgstr "is available on {0}."
 #~ msgid "Lock up BALN and vote for this pool to receive bribes."
 #~ msgstr "Lock up BALN and vote for this pool to receive bribes."
 
+#: src/store/swap/hooks.ts
+msgid "Type an address"
+msgstr "Type an address"
+
 #: src/app/components/CommunityListToggle/index.tsx
 #~ msgid "Remove community token list"
 #~ msgstr "Remove community token list"
@@ -662,8 +665,8 @@ msgstr "is available on {0}."
 #~ msgstr "Connect Wallet"
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "The impact your trade has on the market price of this pool."
-msgstr "The impact your trade has on the market price of this pool."
+#~ msgid "The impact your trade has on the market price of this pool."
+#~ msgstr "The impact your trade has on the market price of this pool."
 
 #: src/app/pages/trade/supply/_components/LiquidityPoolsPanel.tsx
 #~ msgid "Liquidity pools"
@@ -722,6 +725,10 @@ msgstr "The impact your trade has on the market price of this pool."
 #~ msgid "bBALN holders received"
 #~ msgstr "bBALN holders received"
 
+#: src/app/pages/NewFeaturePage.tsx
+msgid "Follow us now"
+msgstr "Follow us now"
+
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 #~ msgid "Unstaking BALN..."
 #~ msgstr "Unstaking BALN..."
@@ -750,8 +757,8 @@ msgid "{0} approved for cross-chain transfer."
 msgstr "{0} approved for cross-chain transfer."
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "The maximum price movement before your transaction will revert."
-msgstr "The maximum price movement before your transaction will revert."
+#~ msgid "The maximum price movement before your transaction will revert."
+#~ msgstr "The maximum price movement before your transaction will revert."
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 msgid "Receive at least"
@@ -782,8 +789,8 @@ msgstr "Receive at least"
 #~ msgstr "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Slippage tolerance"
-msgstr "Slippage tolerance"
+#~ msgid "Slippage tolerance"
+#~ msgstr "Slippage tolerance"
 
 #: src/app/components/home/PositionDetailPanel.tsx
 #~ msgid "For every bnUSD they redeem, they'll receive ${redeemLimit} of collateral. The bnUSD is burned, and {redeemRepaidAmt} bnUSD of borrower debt repaid."
@@ -925,8 +932,8 @@ msgstr "Trade"
 #~ msgstr "Your pools"
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Manage wallets"
-msgstr "Manage wallets"
+#~ msgid "Manage wallets"
+#~ msgstr "Manage wallets"
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "Recieve sICX, which you can trade or unstake from the wallet section later."
@@ -959,6 +966,10 @@ msgstr "Manage wallets"
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #~ msgid "Withdrawing..."
 #~ msgstr "Withdrawing..."
+
+#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+msgid "Max. slippage"
+msgstr "Max. slippage"
 
 #: src/store/swap/hooks.ts
 msgid "Invalid address"
@@ -994,8 +1005,8 @@ msgstr "Invalid address"
 #~ msgstr "Do not send sICX to an exchange."
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Network cost is paid in ETH on the ARBITRUM network in order to transact."
-msgstr "Network cost is paid in ETH on the ARBITRUM network in order to transact."
+#~ msgid "Network cost is paid in ETH on the ARBITRUM network in order to transact."
+#~ msgstr "Network cost is paid in ETH on the ARBITRUM network in order to transact."
 
 #: src/app/components/home/Savings/index.tsx
 #~ msgid "Withdrawing bnUSD..."
@@ -1419,8 +1430,8 @@ msgstr "Insufficient {0}"
 #~ msgstr "Search name or contract"
 
 #: src/store/swap/hooks.ts
-msgid "Input address"
-msgstr "Input address"
+#~ msgid "Input address"
+#~ msgstr "Input address"
 
 #: src/store/bridge/hooks.tsx
 #~ msgid "Connect wallet"
@@ -1539,6 +1550,10 @@ msgstr "Input address"
 #~ msgid "Search for blockchains..."
 #~ msgstr "Search for blockchains..."
 
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "Swap to address"
+msgstr "Swap to address"
+
 #: src/app/components/CommunityListToggle/index.tsx
 #~ msgid "You'll only be able to interact with the default assets listed on Balanced."
 #~ msgstr "You'll only be able to interact with the default assets listed on Balanced."
@@ -1648,8 +1663,8 @@ msgstr "Processing transaction..."
 #~ msgstr "Asset"
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Network cost"
-msgstr "Network cost"
+#~ msgid "Network cost"
+#~ msgstr "Network cost"
 
 #: src/app/components/home/LoanPanel.tsx
 #~ msgid "Borrowing bnUSD..."
@@ -1768,8 +1783,8 @@ msgstr "0 {0}"
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "If the price slips by more than this amount, your swap will fail."
-msgstr "If the price slips by more than this amount, your swap will fail."
+#~ msgid "If the price slips by more than this amount, your swap will fail."
+#~ msgstr "If the price slips by more than this amount, your swap will fail."
 
 #: src/app/components/ProposalModal/index.tsx
 #~ msgid "Voting weight"
@@ -1806,6 +1821,14 @@ msgstr "If the price slips by more than this amount, your swap will fail."
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 #~ msgid "Includes a fee of"
 #~ msgstr "Includes a fee of"
+
+#: src/app/components/WalletModal/index.tsx
+#~ msgid "Wallets"
+#~ msgstr "Wallets"
+
+#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+msgid "Swap to my wallet"
+msgstr "Swap to my wallet"
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "To deposit {collateralType}"
@@ -1880,7 +1903,7 @@ msgstr "If the price slips by more than this amount, your swap will fail."
 #~ msgid "You must have at least {0} bBALN to propose a change."
 #~ msgstr "You must have at least {0} bBALN to propose a change."
 
-#: src/app/components/Header/index.tsx
+#: src/app/components2/CopyableAddress/index.tsx
 msgid "Copy"
 msgstr "Copy"
 
@@ -1960,6 +1983,10 @@ msgstr "Home"
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #~ msgid "Current unlock date"
 #~ msgstr "Current unlock date"
+
+#: src/store/swap/hooks.ts
+msgid "Connect or add address"
+msgstr "Connect or add address"
 
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #~ msgid "Claim network fees?"
@@ -2113,8 +2140,8 @@ msgstr "Vote"
 #~ msgstr "Connected to {numberOfConnectedWallets} blockchains"
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid "Order routing"
-msgstr "Order routing"
+#~ msgid "Order routing"
+#~ msgstr "Order routing"
 
 #: src/app/pages/trade/xswap/_components/utils.tsx
 #~ msgid "Couldn't send {currency} to the {pair} pool. Try again."
@@ -2417,8 +2444,8 @@ msgstr "Contract calls verified."
 #~ msgstr "<0>{0}</0> {1}."
 
 #: src/app/pages/trade/layout.tsx
-msgid "DCA"
-msgstr "DCA"
+#~ msgid "DCA"
+#~ msgstr "DCA"
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
@@ -2430,8 +2457,6 @@ msgstr "DCA"
 msgid "Learn how to resolve common transaction errors."
 msgstr "Learn how to resolve common transaction errors."
 
-#: src/app/pages/trade/layout.tsx
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "Swap"
 msgstr "Swap"
@@ -2538,12 +2563,12 @@ msgstr "Swap"
 #~ msgstr "The fee APR is calculated from the swap fees earned by a pool over the last 30 days."
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-msgid ""
-"If the price moves so that you will receive less than \n"
-"{0}, your transaction will revert."
-msgstr ""
-"If the price moves so that you will receive less than \n"
-"{0}, your transaction will revert."
+#~ msgid ""
+#~ "If the price moves so that you will receive less than \n"
+#~ "{0}, your transaction will revert."
+#~ msgstr ""
+#~ "If the price moves so that you will receive less than \n"
+#~ "{0}, your transaction will revert."
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 #~ msgid "{0} ICX is ready to claim"
@@ -2566,8 +2591,8 @@ msgstr ""
 #~ msgstr "VOLUME (24H)"
 
 #: src/app/pages/trade/layout.tsx
-msgid "Limit"
-msgstr "Limit"
+#~ msgid "Limit"
+#~ msgstr "Limit"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #~ msgid "Sign in on ICON, then lock up BALN to boost your rewards."

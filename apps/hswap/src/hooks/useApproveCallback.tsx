@@ -1,14 +1,19 @@
 import { useCallback, useMemo, useState } from 'react';
 
-import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { t } from '@lingui/macro';
 import { useQuery } from '@tanstack/react-query';
 
 import { openToast } from '@/app/components/Toast/transactionToast';
-import { transactionActions } from '@/hooks/useTransactionStore';
 import { TransactionStatus } from '@/store/transactions/hooks';
-import { getXChainType } from '@/xwagmi/actions/getXChainType';
-import { useXAccount, useXPublicClient, useXWalletClient } from '@/xwagmi/hooks';
+import {
+  XToken,
+  getXChainType,
+  transactionActions,
+  useXAccount,
+  useXPublicClient,
+  useXWalletClient,
+} from '@balancednetwork/xwagmi';
 
 export const FAST_INTERVAL = 10000;
 
@@ -63,26 +68,32 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
       setPending(true);
 
       if (hash) {
+        await xPublicClient?.waitForTxReceipt(hash);
+        await refetch();
+        setPending(false);
+
         transactionActions.add(xChainId, {
           hash: hash,
           pendingMessage: t`Approving ${token.symbol} for cross-chain transfer...`,
           successMessage: t`${token.symbol} approved for cross-chain transfer.`,
           errorMessage: t`${token.symbol} transfer approval failed.`,
           onSuccess: async () => {
-            await refetch();
-            setPending(false);
+            // await refetch();
+            // setPending(false);
           },
         });
       } else {
         throw new Error('Approval failed');
       }
     } catch (e) {
+      setPending(false);
       openToast({
         message: t`${token.symbol} transfer approval failed.`,
         transactionStatus: TransactionStatus.failure,
       });
+      throw e;
     }
-  }, [spender, token, account, amountToApprove, refetch, xWalletClient, xChainId]);
+  }, [spender, token, account, amountToApprove, refetch, xWalletClient, xPublicClient, xChainId]);
 
   // TODO: implement revokeCallback
   const revokeCallback = useCallback(() => {

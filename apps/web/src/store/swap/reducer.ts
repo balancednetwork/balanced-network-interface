@@ -1,9 +1,9 @@
 import { NETWORK_ID } from '@/constants/config';
-import { ICX, wICX } from '@/constants/tokens';
-import { getXTokenBySymbol, isXToken } from '@/utils/xTokens';
-import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XChainId } from '@/xwagmi/types';
-import { Currency } from '@balancednetwork/sdk-core';
+import { ICX } from '@/constants/tokens';
+import { getXTokenBySymbol } from '@/utils/xTokens';
+import { XToken, xTokenMap } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
+import { wICX } from '@balancednetwork/xwagmi/src/constants/xTokens';
 import { createSlice } from '@reduxjs/toolkit';
 
 // !TODO: use one Field for swap and bridge panel
@@ -18,36 +18,29 @@ export interface SwapState {
   readonly independentField: Field;
   readonly typedValue: string;
   readonly [Field.INPUT]: {
-    readonly xChainId: XChainId;
-    readonly currency: Currency | undefined;
+    readonly currency: XToken | undefined;
     readonly percent: number;
   };
   readonly [Field.OUTPUT]: {
-    readonly xChainId: XChainId;
-    readonly currency: Currency | undefined;
+    readonly currency: XToken | undefined;
   };
   // the typed recipient address or ENS name, or null if swap should go to sender
   readonly recipient: string | null;
 }
 
-const Sui_Sui = xTokenMap['sui'][0];
-const BNUSD_BASE = xTokenMap['0x2105.base'][1];
-
 export const INITIAL_SWAP = {
-  base: Sui_Sui,
-  quote: BNUSD_BASE,
+  base: xTokenMap['sui'][0],
+  quote: xTokenMap['0x2105.base'][1],
 };
 
 const initialState: SwapState = {
   independentField: Field.INPUT,
   typedValue: '',
   [Field.INPUT]: {
-    xChainId: 'sui',
     currency: INITIAL_SWAP.base,
     percent: 0,
   },
   [Field.OUTPUT]: {
-    xChainId: '0x2105.base',
     currency: INITIAL_SWAP.quote,
   },
   recipient: null,
@@ -57,7 +50,7 @@ const swapSlice = createSlice({
   name: 'swap',
   initialState,
   reducers: create => ({
-    selectCurrency: create.reducer<{ currency: Currency | undefined; field: Field }>(
+    selectCurrency: create.reducer<{ currency: XToken | undefined; field: Field }>(
       (state, { payload: { currency, field } }) => {
         const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
         // the case where we have to swap the order
@@ -86,12 +79,9 @@ const swapSlice = createSlice({
           };
         } else {
           // the normal case
-          const xChainId: XChainId =
-            currency && isXToken(currency) ? DEFAULT_TOKEN_CHAIN[currency.symbol] ?? '0x1.icon' : '0x1.icon';
-          const _currency = currency && isXToken(currency) ? getXTokenBySymbol(xChainId, currency.symbol) : currency;
           return {
             ...state,
-            [field]: { ...state[field], currency: _currency, percent: 0, xChainId },
+            [field]: { ...state[field], currency, percent: 0 },
           };
         }
       },
@@ -107,10 +97,9 @@ const swapSlice = createSlice({
       },
     ),
     switchCurrencies: create.reducer<void>(state => {
-      const inputCurrency =
-        state[Field.INPUT].currency?.symbol === 'ICX' ? wICX[NETWORK_ID] : state[Field.INPUT].currency;
+      const inputCurrency = state[Field.INPUT].currency?.symbol === 'ICX' ? wICX : state[Field.INPUT].currency;
       const outputCurrency =
-        state[Field.OUTPUT].currency?.symbol === 'wICX' ? ICX[NETWORK_ID] : state[Field.OUTPUT].currency;
+        state[Field.OUTPUT].currency?.symbol === 'wICX' ? xTokenMap['0x1.icon'][0] : state[Field.OUTPUT].currency;
 
       return {
         ...state,
@@ -122,19 +111,10 @@ const swapSlice = createSlice({
     selectChain: create.reducer<{ field: Field; xChainId: XChainId }>((state, { payload: { field, xChainId } }) => {
       const updatedCurrency = getXTokenBySymbol(xChainId, state[field].currency?.symbol);
       if (updatedCurrency) {
-        state[field].xChainId = xChainId;
         state[field].currency = updatedCurrency;
       }
     }),
-    switchChain: create.reducer<void>(state => {
-      const fromChain = state[Field.INPUT].xChainId;
-      state[Field.INPUT].xChainId = state[Field.OUTPUT].xChainId;
-      state[Field.OUTPUT].xChainId = fromChain;
 
-      const fromCurrency = state[Field.INPUT].currency;
-      state[Field.INPUT].currency = state[Field.OUTPUT].currency;
-      state[Field.OUTPUT].currency = fromCurrency;
-    }),
     typeInput: create.reducer<{ field: Field; typedValue: string }>((state, { payload: { field, typedValue } }) => {
       const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
 
@@ -152,7 +132,7 @@ const swapSlice = createSlice({
   }),
 });
 
-export const { selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput, switchChain, selectChain } =
+export const { selectCurrency, selectPercent, setRecipient, switchCurrencies, typeInput, selectChain } =
   swapSlice.actions;
 
 export default swapSlice.reducer;

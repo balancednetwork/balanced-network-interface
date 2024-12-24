@@ -20,8 +20,8 @@ import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { toDec } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { XChainId } from '@/xwagmi/types';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { XChainId } from '@balancednetwork/xwagmi';
+import { bnJs } from '@balancednetwork/xwagmi';
 import { depositMessage, supplyMessage } from './utils';
 
 interface ModalProps {

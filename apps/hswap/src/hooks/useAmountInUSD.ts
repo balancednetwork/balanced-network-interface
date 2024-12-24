@@ -1,7 +1,8 @@
 import { useRatesWithOracle } from '@/queries/reward';
 import { toFraction } from '@/utils';
 import { formatPrice } from '@/utils/formatter';
-import { Currency, CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XToken } from '@balancednetwork/xwagmi';
 import { useMemo } from 'react';
 
 export default function (currencyAmount: CurrencyAmount<XToken | Currency> | undefined): string {

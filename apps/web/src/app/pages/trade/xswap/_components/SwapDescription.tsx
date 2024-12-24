@@ -23,7 +23,7 @@ import { useDerivedSwapInfo, useSwapActionHandlers } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { generateChartData, toFraction } from '@/utils';
 import { formatSymbol, formatUnitPrice } from '@/utils/formatter';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 const CHART_TYPES_LABELS = {
   [CHART_TYPES.AREA]: defineMessage({ message: 'Line' }),

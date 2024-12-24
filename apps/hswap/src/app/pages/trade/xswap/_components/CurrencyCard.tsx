@@ -1,9 +1,8 @@
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
-import { Card } from '@/components/ui/card';
 import useAmountInUSD from '@/hooks/useAmountInUSD';
-import { Field } from '@/store/swap/reducer';
 import { formatBigNumber } from '@/utils';
-import { Currency, CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XToken } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import React from 'react';
 
@@ -16,13 +15,18 @@ const CurrencyCard: React.FC<CurrencyCardProps> = ({ currency, currencyAmount })
   const amountInUSD = useAmountInUSD(currencyAmount);
 
   return (
-    <Card className="flex flex-col items-center gap-4 p-6 my-1 border-none w-1/2 rounded-xl">
-      <div>{currency && <CurrencyLogoWithNetwork currency={currency} size="48px" />}</div>
-      <div className="text-primary-foreground text-base font-bold">
-        {formatBigNumber(new BigNumber(currencyAmount?.toFixed() || 0), 'currency')} {currency?.symbol}
+    <div className="flex flex-col items-center gap-2">
+      <div className="w-[131px] h-[131px] px-[31px] py-4 bg-[#bbadde] rounded-3xl inline-flex justify-center items-end gap-0">
+        <div className="flex flex-col items-center">
+          <div>{currency && <CurrencyLogoWithNetwork currency={currency} />}</div>
+          <div className="text-title-gradient text-lg font-extrabold leading-tight">
+            {formatBigNumber(new BigNumber(currencyAmount?.toFixed() || 0), 'currency')}
+          </div>
+          <div className="text-[#0d0229] text-[10px] font-medium leading-3">{currency?.symbol}</div>
+        </div>
       </div>
-      <div className="text-secondary-foreground text-body">{amountInUSD}</div>
-    </Card>
+      <div className="text-white text-sm font-bold leading-tight">{amountInUSD}</div>
+    </div>
   );
 };
 

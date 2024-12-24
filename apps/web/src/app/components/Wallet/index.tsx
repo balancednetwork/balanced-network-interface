@@ -3,8 +3,8 @@ import useKeyPress from '@/hooks/useKeyPress';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useXBalancesByToken } from '@/store/wallet/hooks';
 import { formatValue } from '@/utils/formatter';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { useXDisconnectAll } from '@/xwagmi/hooks';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { useXDisconnectAll } from '@balancednetwork/xwagmi';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import React, { RefObject, useEffect, useRef, useState } from 'react';
@@ -163,15 +163,15 @@ const Wallet = ({ close }: WalletProps) => {
               />
             ),
           )}
-          {sortedFilteredBalances.length === 0 && searchQuery !== '' && (
-            <Typography padding={'30px 0 15px 0'} textAlign={'center'}>
-              No assets found
+          {sortedFilteredBalances.length === 0 && (
+            <Typography padding={'20px 0 0 0'} textAlign={'center'}>
+              No assets found.
             </Typography>
           )}
         </List>
         {sortedFilteredBalances.length > 0 && (
           <Box px="25px">
-            <Flex className="border-top" pt="25px" justifyContent="space-between">
+            <Flex pt="25px" justifyContent="space-between">
               <HeaderText>Total</HeaderText>
               <Typography fontWeight="bold" color="text">
                 {formatValue(walletTotal.toFixed())}

@@ -15,8 +15,9 @@ import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { tryParseAmount } from '@/store/swap/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCurrencyBalances } from '@/store/wallet/hooks';
-import { XChainId } from '@/xwagmi/types';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { formatSymbol } from '@/utils/formatter';
+import { XChainId } from '@balancednetwork/xwagmi';
+import { bnJs } from '@balancednetwork/xwagmi';
 import { AppDispatch, AppState } from '../index';
 import { Field, INITIAL_MINT, InputType, selectCurrency, typeInput } from './reducer';
 
@@ -349,7 +350,7 @@ export function useDerivedMintInfo(
     const { [Field.CURRENCY_A]: currencyAAmount } = parsedAmounts;
 
     if (currencyAAmount && currencyBalances?.[Field.CURRENCY_A]?.lessThan(currencyAAmount)) {
-      error = <>Insufficient {currencies[Field.CURRENCY_A]?.symbol} balance</>;
+      error = <>Insufficient {formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} balance</>;
     }
   } else {
     if (!parsedAmounts[Field.CURRENCY_A] || !parsedAmounts[Field.CURRENCY_B]) {
@@ -359,11 +360,11 @@ export function useDerivedMintInfo(
     const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
 
     if (currencyAAmount && currencyBalances?.[Field.CURRENCY_A]?.lessThan(currencyAAmount)) {
-      error = <Trans>Insufficient {currencies[Field.CURRENCY_A]?.symbol} balance</Trans>;
+      error = <Trans>Insufficient {formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} balance</Trans>;
     }
 
     if (currencyBAmount && currencyBalances?.[Field.CURRENCY_B]?.lessThan(currencyBAmount)) {
-      error = <Trans>Insufficient {currencies[Field.CURRENCY_B]?.symbol} balance</Trans>;
+      error = <Trans>Insufficient {formatSymbol(currencies[Field.CURRENCY_B]?.symbol)} balance</Trans>;
     }
   }
 

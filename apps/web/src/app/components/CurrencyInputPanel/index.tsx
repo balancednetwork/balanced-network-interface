@@ -13,28 +13,30 @@ import { useRatesWithOracle } from '@/queries/reward';
 import { COMMON_PERCENTS } from '@/store/swap/reducer';
 import { escapeRegExp } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
-import { DEFAULT_TOKEN_CHAIN } from '@/xwagmi/constants/xTokens';
-import { XChainId } from '@/xwagmi/types';
-import { getSupportedXChainForToken } from '@/xwagmi/xcall/utils';
+import { DEFAULT_TOKEN_CHAIN } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
+import { getSupportedXChainForToken } from '@balancednetwork/xwagmi';
 import { isMobile } from 'react-device-detect';
 import { HorizontalList, Option } from '../List';
 import { CurrencySelectionType, SelectorType } from '../SearchModal/CurrencySearch';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 import CrossChainOptions from '../trade/CrossChainOptions';
+import DollarValue from './DollarValue';
 
 const InputContainer = styled.div`
   display: inline-flex;
   width: 100%;
+  position: relative;
 `;
 
-const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean; $active: boolean }>`
+const CurrencySelect = styled.button<{ bg?: string; disabled?: boolean; $active: boolean; $showDollarValue: boolean }>`
   border: ${({ theme, bg = 'bg2' }) => `2px solid ${theme.colors[bg]}`};
   background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
   border-right: ${({ theme }) => `1px solid ${theme.colors.divider}`};
   display: flex;
   align-items: center;
   min-width: 128px;
-  height: 43px;
+  height: ${({ $showDollarValue }) => ($showDollarValue ? '50px' : '43px')};
   padding: 4px 15px;
   color: #ffffff;
   border-radius: 10px 0 0 10px;
@@ -58,22 +60,22 @@ const StyledTokenName = styled.span`
   font-weight: bold;
 `;
 
-const NumberInput = styled.input<{ bg?: string; $active?: boolean }>`
+const NumberInput = styled.input<{ bg?: string; $active?: boolean; $showDollarValue: boolean }>`
   flex: 1;
   width: 100%;
-  height: 43px;
+  height: ${({ $showDollarValue }) => ($showDollarValue ? '50px' : '43px')};
   text-align: right;
   border-radius: 0 10px 10px 0;
   border: ${({ theme, bg = 'bg2' }) => `2px solid ${theme.colors[bg]}`};
   background-color: ${({ theme, bg = 'bg2' }) => `${theme.colors[bg]}`};
   color: #ffffff;
-  padding: 7px 15px;
+  padding: ${({ $showDollarValue }) => ($showDollarValue ? '1px 15px 20px' : '7px 15px')}; 
   outline: none;
   transition: all 0.3s ease;
   overflow: visible;
   font-family: inherit;
   font-size: 100%;
-  line-height: 1.15;
+  line-height: normal;
   margin: 0;
 
   &:hover,
@@ -106,6 +108,8 @@ interface CurrencyInputPanelProps {
   account?: string | null;
   showCommunityListControl?: boolean;
   selectorType?: SelectorType;
+  showDollarValue?: boolean;
+  showWarning?: boolean;
 
   // cross chain stuff
   xChainId?: XChainId;
@@ -132,6 +136,8 @@ export default function CurrencyInputPanel({
   account,
   showCommunityListControl = true,
   selectorType,
+  showDollarValue = true,
+  showWarning = false,
 
   // cross chain stuff
   xChainId = '0x1.icon',
@@ -205,7 +211,13 @@ export default function CurrencyInputPanel({
       <InputContainer ref={ref} className={className}>
         <ClickAwayListener onClickAway={() => setOpen(false)}>
           <div>
-            <CurrencySelect onClick={toggleOpen} bg={bg} disabled={!onCurrencySelect} $active={!!showCrossChainOptions}>
+            <CurrencySelect
+              onClick={toggleOpen}
+              bg={bg}
+              disabled={!onCurrencySelect}
+              $active={!!showCrossChainOptions}
+              $showDollarValue={showDollarValue}
+            >
               {currency ? (
                 <>
                   <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
@@ -261,7 +273,9 @@ export default function CurrencyInputPanel({
           //style
           bg={bg}
           $active={(onPercentSelect && isActive) || !!showCrossChainOptions}
+          $showDollarValue={showDollarValue}
         />
+        {showDollarValue && <DollarValue amount={value} price={price} showWarning={showWarning} />}
 
         {onPercentSelect && (
           <SelectorPopover show={isActive} anchorEl={ref.current} placement="bottom-end">

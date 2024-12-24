@@ -9,8 +9,8 @@ import WalletConnectIcon from '@/assets/icons/wallets/walletconnect.svg?inline';
 import { ModalContentWrapper } from '../ModalContent';
 
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
-import { XConnector } from '@/xwagmi/core';
-import { useXConnect, useXConnectors } from '@/xwagmi/hooks';
+import { XConnector } from '@balancednetwork/xwagmi';
+import { useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
 import { UnderlineText } from '../DropdownText';
 import { UnbreakableText, WalletOption } from './shared';
 
@@ -20,7 +20,6 @@ const icons = {
 
 export const SuiWalletOptionsModal = ({ id = MODAL_ID.SUI_WALLET_OPTIONS_MODAL }: { id?: MODAL_ID }) => {
   const modalOpen = useModalOpen(id);
-
   const xConnectors = useXConnectors('SUI');
   const xConnect = useXConnect();
 

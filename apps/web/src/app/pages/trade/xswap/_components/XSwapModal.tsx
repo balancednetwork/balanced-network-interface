@@ -24,11 +24,11 @@ import { formatBigNumber, shortenAddress } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { getNetworkDisplayName } from '@/utils/xTokens';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId, XToken } from '@/xwagmi/types';
-import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
-import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
-import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
+import { useXCallFee } from '@balancednetwork/xwagmi';
+import { XTransactionInput, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
+import { xTransactionActions } from '@balancednetwork/xwagmi';
 import { AnimatePresence, motion } from 'framer-motion';
 
 type XSwapModalProps = {
@@ -42,12 +42,6 @@ type XSwapModalProps = {
     to: XChainId;
   };
   recipient?: string | null;
-};
-
-export const presenceVariants = {
-  initial: { opacity: 0, height: 0 },
-  animate: { opacity: 1, height: 'auto' },
-  exit: { opacity: 0, height: 0 },
 };
 
 const XSwapModal = ({

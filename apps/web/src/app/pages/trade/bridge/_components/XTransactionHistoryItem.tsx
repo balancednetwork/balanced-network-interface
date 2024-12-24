@@ -8,9 +8,9 @@ import { Typography } from '@/app/theme';
 import ArrowIcon from '@/assets/icons/arrow-white.svg';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 
-import { XTransaction, XTransactionStatus } from '@/xwagmi/xcall/types';
-import { useXMessageStore, xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
-import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { XTransaction, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
+import { useXMessageStore, xMessageActions } from '@balancednetwork/xwagmi';
+import { xTransactionActions } from '@balancednetwork/xwagmi';
 
 const Wrap = styled(Box)`
   display: grid;
@@ -109,7 +109,9 @@ const XTransactionHistoryItem = ({ xTransaction }: { xTransaction: XTransaction 
         <Flex alignItems="center">
           {getNetworkDisplayName(sourceChainId)}
           <ArrowIcon width="13px" style={{ margin: '0 7px' }} />
-          {getNetworkDisplayName(finalDestinationChainId)}
+          {xTransaction.type === XTransactionType.REPAY
+            ? getNetworkDisplayName(xTransaction.attributes?.collateralChainId || finalDestinationChainId)
+            : getNetworkDisplayName(finalDestinationChainId)}
         </Flex>
         <Flex justifyContent="center" flexDirection="column">
           <Typography fontWeight={700} color="text">

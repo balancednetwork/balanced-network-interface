@@ -2,12 +2,12 @@ import React from 'react';
 
 import { Typography } from '@/app/theme';
 import { shortenAddress } from '@/utils';
-import { XChainId } from '@/xwagmi/types';
+import { XChainId } from '@balancednetwork/xwagmi';
 
 import { useSwapState } from '@/store/swap/hooks';
-import { getXChainType } from '@/xwagmi/actions';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { useXAccount, useXConnect, useXConnectors } from '@/xwagmi/hooks';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { useXAccount, useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
 import { Trans } from '@lingui/macro';
 import { UnderlineText } from '../DropdownText';
 import Modal from '../Modal';
@@ -51,7 +51,7 @@ const CrossChainWalletConnect = ({
   return !editable ? (
     <Typography onClick={handleConnect} color="primaryBright">
       {address ? (
-        <UnderlineText>{shortenAddress(address || '', 5)}</UnderlineText>
+        <UnderlineText>{shortenAddress(address || '', 4)}</UnderlineText>
       ) : (
         <UnderlineText>Connect wallet</UnderlineText>
       )}
@@ -60,7 +60,7 @@ const CrossChainWalletConnect = ({
     <>
       <Typography onClick={openModal} color="primaryBright">
         {recipient ? (
-          <UnderlineText>{shortenAddress(recipient, 5)}</UnderlineText>
+          <UnderlineText>{shortenAddress(recipient, 4)}</UnderlineText>
         ) : (
           <UnderlineText>Choose address</UnderlineText>
         )}

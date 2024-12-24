@@ -16,14 +16,14 @@ import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useCollateralActionHandlers, useDerivedCollateralInfo } from '@/store/collateral/hooks';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId, XToken } from '@/xwagmi/types';
-import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
-import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
-import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { formatSymbol } from '@/utils/formatter';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
+import { useXCallFee } from '@balancednetwork/xwagmi';
+import { XTransactionInput, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
+import { xTransactionActions } from '@balancednetwork/xwagmi';
 import { AnimatePresence, motion } from 'framer-motion';
 import useLoanWalletServiceHandler from '../../useLoanWalletServiceHandler';
-import { formatSymbol } from '@/utils/formatter';
 
 export enum XCollateralAction {
   DEPOSIT = 'DEPOSIT',
@@ -41,12 +41,6 @@ type XCollateralModalProps = {
     action: XCollateralAction;
   };
   currencyAmount?: CurrencyAmount<XToken>;
-};
-
-export const presenceVariants = {
-  initial: { opacity: 0, height: 0 },
-  animate: { opacity: 1, height: 'auto' },
-  exit: { opacity: 0, height: 0 },
 };
 
 const XCollateralModal = ({
@@ -175,7 +169,7 @@ const XCollateralModal = ({
 
           <Typography textAlign="center">
             <Trans>
-              Cross-chain fee: <strong>{formattedXCallFee}</strong>
+              Transfer fee: <strong>{formattedXCallFee}</strong>
             </Trans>
           </Typography>
 

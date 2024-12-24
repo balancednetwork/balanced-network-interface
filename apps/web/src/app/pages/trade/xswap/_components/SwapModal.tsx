@@ -19,8 +19,8 @@ import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { formatBigNumber, shortenAddress, toDec } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
-import { getRlpEncodedSwapData } from '@/xwagmi/xcall/utils';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { getRlpEncodedSwapData } from '@balancednetwork/xwagmi';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 type SwapModalProps = {
   isOpen: boolean;

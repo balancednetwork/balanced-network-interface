@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { NETWORK_ID } from '@/constants/config';
 import { MINIMUM_ICX_FOR_ACTION } from '@/constants/index';
-import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
+import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useBorrowedAmounts } from '@/store/loan/hooks';
@@ -21,15 +21,15 @@ import { useCrossChainWalletBalances, useICONWalletBalances } from '@/store/wall
 import { CurrencyKey, IcxDisplayType } from '@/types';
 import { formatUnits, maxAmountSpend, toBigNumber } from '@/utils';
 import { getBalanceDecimals } from '@/utils/formatter';
-import { getXChainType } from '@/xwagmi/actions';
-import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
-import { SUPPORTED_XCALL_CHAINS } from '@/xwagmi/constants/xChains';
-import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@/xwagmi/constants/xTokens';
-import { useXAccount } from '@/xwagmi/hooks';
-import { Position, XPositions, XPositionsRecord, XToken } from '@/xwagmi/types';
-import { XChainId } from '@/xwagmi/types';
-import { useXTransactionStore } from '@/xwagmi/xcall/zustand/useXTransactionStore';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
+import { SUPPORTED_XCALL_CHAINS } from '@balancednetwork/xwagmi';
+import { DEFAULT_TOKEN_CHAIN, xTokenMap } from '@balancednetwork/xwagmi';
+import { useXAccount } from '@balancednetwork/xwagmi';
+import { Position, XPositions, XPositionsRecord, XToken } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
+import { useXTransactionStore } from '@balancednetwork/xwagmi';
+import { bnJs } from '@balancednetwork/xwagmi';
 import { AppState } from '../index';
 import {
   Field,
@@ -502,6 +502,7 @@ export function useDerivedCollateralInfo(): {
   collateralTotal: BigNumber;
   collateralDecimalPlaces: number;
   differenceAmount: BigNumber;
+  isSliderStateChanged: boolean;
   xTokenAmount: CurrencyAmount<XToken> | undefined;
   formattedAmounts: {
     [x: string]: string;
@@ -554,6 +555,7 @@ export function useDerivedCollateralInfo(): {
   }, [independentField, dependentField, typedValue, parsedAmount, collateralDecimalPlaces]);
 
   const differenceAmount = parsedAmount[Field.LEFT].minus(collateralDeposit);
+  const isSliderStateChanged = !parsedAmount[Field.LEFT].isEqualTo(collateralDeposit.dp(collateralDecimalPlaces));
 
   const xToken = xTokenMap[sourceChain].find(t => t.symbol === collateralType);
   const xTokenAmount =
@@ -572,6 +574,8 @@ export function useDerivedCollateralInfo(): {
     parsedAmount,
     collateralDecimalPlaces,
     differenceAmount,
+
+    isSliderStateChanged,
     xTokenAmount,
   };
 }
@@ -639,6 +643,14 @@ export function useUserPositionsData(): UseQueryResult<XPositionsRecord[]> {
                   if (depositAmount.greaterThan(0)) {
                     updateAccumulator(acc, symbol, xChainId, depositAmount, loanAmount);
                   } else {
+                    //if there is no sICX position and user holds ICX, show it as potential position
+                    if (symbol === 'sICX') {
+                      const icxAmount = xWallet[xChainId]?.[NULL_CONTRACT_ADDRESS];
+                      const icxValue = prices?.['ICX'].times(icxAmount?.toFixed() || 0);
+                      if (icxAmount && icxValue?.isGreaterThan(MIN_VALUE_TO_SHOW_POTENTIAL_POSITION)) {
+                        updateAccumulator(acc, 'ICX', xChainId, icxAmount, new BigNumber(0), true);
+                      }
+                    }
                     if (availableAmount && availableValue?.isGreaterThan(MIN_VALUE_TO_SHOW_POTENTIAL_POSITION)) {
                       updateAccumulator(acc, symbol, xChainId, availableAmount, new BigNumber(0), true);
                     }

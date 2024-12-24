@@ -13,7 +13,7 @@ import { PairData, useTokenPrices } from '@/queries/backendv2';
 import { useBlockDetails } from '@/store/application/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { formatUnits } from '@/utils';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { LockedPeriod } from '@/app/components/home/BBaln/types';
 import { EXA, WEIGHT, getBbalnAmount } from '@/app/components/home/BBaln/utils';

@@ -3,7 +3,7 @@ import { Token } from '@balancednetwork/sdk-core';
 
 import { SUPPORTED_PAIRS } from '@/constants/pairs';
 import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { defaultConfig } from '.';
 

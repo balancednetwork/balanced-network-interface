@@ -19,7 +19,7 @@ import useClaimableICX from './useClaimableICX';
 import { Typography } from '@/app/theme';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
-import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
+import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
 import { useTheme } from 'styled-components';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import ICXWallet from './ICONWallets/ICXWallet';

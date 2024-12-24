@@ -12,7 +12,7 @@ import { BIGINT_ZERO, FRACTION_ZERO } from '@/constants/misc';
 import { bnUSD } from '@/constants/tokens';
 import { fetchStabilityFundBalances, getAcceptedTokens } from '@/store/stabilityFund/hooks';
 import { getPair } from '@/utils';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { NETWORK_ID } from '@/constants/config';
 import useLastCount from './useLastCount';

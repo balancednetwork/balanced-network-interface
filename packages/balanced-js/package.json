@@ -20,19 +20,13 @@
   },
   "dependencies": {
     "bignumber.js": "9.0.1",
-    "icon-sdk-js": "^1.2.1"
+    "icon-sdk-js": "1.5.3"
   },
   "devDependencies": {
     "tsup": "^8.0.2"
   },
   "engines": {
     "node": ">=14.0.0"
-  },
-  "prettier": {
-    "printWidth": 120,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "all"
   },
   "exports": {
     "./package.json": "./package.json",

@@ -72,15 +72,15 @@ export default function Popover({
           {...attributes.popper}
         >
           {/* content */}
-          <div className="bg-background border-[1px] border-border rounded-lg overflow-hidden">{content}</div>
+          <div className="bg-background border-[1px] rounded-lg overflow-hidden">{content}</div>
           {/* arrow */}
           <div
-            className={`absolute w-3 h-3 z-[-1] ${attributes.popper?.['data-popper-placement']?.startsWith('top') ? 'bottom-[-6px]' : ''} ${attributes.popper?.['data-popper-placement']?.startsWith('bottom') ? 'top-[-6px]' : ''} ${attributes.popper?.['data-popper-placement']?.startsWith('left') ? 'right-[-6px]' : ''} ${attributes.popper?.['data-popper-placement']?.startsWith('right') ? 'left-[-6px]' : ''}`}
+            className={`absolute w-3 h-3 ${attributes.popper?.['data-popper-placement']?.startsWith('top') ? 'bottom-[-6px]' : ''} ${attributes.popper?.['data-popper-placement']?.startsWith('bottom') ? 'top-[-6px]' : ''} ${attributes.popper?.['data-popper-placement']?.startsWith('left') ? 'right-[-6px]' : ''} ${attributes.popper?.['data-popper-placement']?.startsWith('right') ? 'left-[-6px]' : ''}`}
             ref={setArrowElement as any}
             style={styles.arrow}
             {...attributes.arrow}
           >
-            <div className="absolute w-3 h-3 z-[-1] transform rotate-45 bg-background border-[1px] border-border"></div>
+            <div className="absolute w-3 h-3 transform rotate-45 bg-background border-[1px] border-l-0 border-t-0"></div>
           </div>
         </div>
       </Portal>
@@ -169,14 +169,14 @@ export function DropdownPopper({
         style={styles.popper}
         {...attributes.popper}
       >
-        <div className="bg-background border-[1px] border-border rounded-lg overflow-hidden">{children}</div>
+        <div className="bg-background border-[1px] rounded-lg overflow-hidden">{children}</div>
         <div
           className={`absolute w-3 h-3 z-[-1] ${attributes.popper?.['data-popper-placement']?.startsWith('top') ? 'bottom-[-6px]' : ''} ${attributes.popper?.['data-popper-placement']?.startsWith('bottom') ? 'top-[-6px]' : ''} ${attributes.popper?.['data-popper-placement']?.startsWith('left') ? 'right-[-6px]' : ''} ${attributes.popper?.['data-popper-placement']?.startsWith('right') ? 'left-[-6px]' : ''}`}
           ref={setArrowElement as any}
           style={styles.arrow}
           {...attributes.arrow}
         >
-          <div className="absolute w-3 h-3 z-[-1] transform rotate-45 border-[1px] border-border bg-background"></div>
+          <div className="absolute w-3 h-3 z-[-1] transform rotate-45 border-[1px] bg-background"></div>
         </div>
       </div>
     </Portal>

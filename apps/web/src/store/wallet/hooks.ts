@@ -26,23 +26,22 @@ import { useTokenListConfig } from '@/store/lists/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useUserAddedTokens } from '@/store/user/hooks';
 import { getXTokenAddress, isXToken } from '@/utils/xTokens';
-import { XToken, XWalletAssetRecord } from '@/xwagmi/types';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { XToken, XWalletAssetRecord } from '@balancednetwork/xwagmi';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
-import { changeBalances, changeICONBalances } from './reducer';
+import { changeBalances } from './reducer';
 
-import { useXBalances } from '@/xwagmi/hooks/useXBalances';
-import { XChainId } from '@/xwagmi/types';
+import { useXBalances } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
 
 import { NETWORK_ID } from '@/constants/config';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
 import { useRatesWithOracle } from '@/queries/reward';
-import { NATIVE_ADDRESS } from '@/xwagmi/constants';
-import { SUPPORTED_XCALL_CHAINS } from '@/xwagmi/constants/xChains';
-import { useXAccount } from '@/xwagmi/hooks';
+import { SUPPORTED_XCALL_CHAINS, stellar } from '@balancednetwork/xwagmi';
+import { useXAccount } from '@balancednetwork/xwagmi';
 
 export function useCrossChainWalletBalances(): AppState['wallet'] {
   const signedInWallets = useSignedInWallets();
@@ -62,7 +61,7 @@ export function useCrossChainWalletBalances(): AppState['wallet'] {
 }
 
 export function useICONWalletBalances(): { [address: string]: CurrencyAmount<Currency> } {
-  return useSelector((state: AppState) => state.wallet['0x1.icon']!);
+  return useSelector((state: AppState) => state.wallet['0x1.icon'] || {});
 }
 
 export function useWalletBalances(xChainId: XChainId): { [address: string]: CurrencyAmount<Currency> } | undefined {
@@ -109,9 +108,30 @@ export function useWalletFetchBalances() {
   // fetch balances on icon
   const { account } = useIconReact();
   const balances = useAvailableBalances(account || undefined, tokens);
+  //convert balances to {[key: string]: CurrencyAmount<XToken>}
+  const xBalances = React.useMemo(() => {
+    return Object.entries(balances).reduce(
+      (acc, [address, balance]) => {
+        const currency = balance.currency as Token;
+        acc[address] = CurrencyAmount.fromRawAmount(
+          new XToken(
+            '0x1.icon',
+            currency.chainId,
+            currency.address,
+            balance.currency.decimals,
+            balance.currency.symbol,
+          ),
+          balance.quotient.toString(),
+        );
+        return acc;
+      },
+      {} as { [key: string]: CurrencyAmount<XToken> },
+    );
+  }, [balances]);
+
   React.useEffect(() => {
-    dispatch(changeICONBalances(balances));
-  }, [balances, dispatch]);
+    dispatch(changeBalances({ xChainId: '0x1.icon', balances: xBalances }));
+  }, [xBalances, dispatch]);
 
   // fetch balances on havah
   const { address: accountHavah } = useXAccount('HAVAH');
@@ -130,7 +150,7 @@ export function useWalletFetchBalances() {
   const tokensArch = useXTokens('archway-1') || [];
   const { data: balancesArch } = useXBalances({
     xChainId: 'archway-1',
-    xTokens: [...tokensArch, new XToken('archway-1', 'archway-1', NATIVE_ADDRESS, 18, 'aARCH', 'Arch')],
+    xTokens: tokensArch,
     address: accountArch,
   });
 
@@ -172,6 +192,17 @@ export function useWalletFetchBalances() {
     arbBalances && dispatch(changeBalances({ xChainId: '0xa4b1.arbitrum', balances: arbBalances }));
   }, [arbBalances, dispatch]);
 
+  // fetch balances on op
+  const optTokens = useXTokens('0xa.optimism');
+  const { data: optBalances } = useXBalances({
+    xChainId: '0xa.optimism',
+    xTokens: optTokens,
+    address,
+  });
+  React.useEffect(() => {
+    optBalances && dispatch(changeBalances({ xChainId: '0xa.optimism', balances: optBalances }));
+  }, [optBalances, dispatch]);
+
   // fetch balances on base
   const baseTokens = useXTokens('0x2105.base');
   const { data: baseBalances } = useXBalances({
@@ -195,6 +226,19 @@ export function useWalletFetchBalances() {
     injectiveBalances && dispatch(changeBalances({ xChainId: 'injective-1', balances: injectiveBalances }));
   }, [injectiveBalances, dispatch]);
 
+  // fetch balances on stellar
+  const { address: accountStellar } = useXAccount('STELLAR');
+  const stellarTokens = useXTokens(stellar.xChainId);
+  const { data: stellarBalances } = useXBalances({
+    xChainId: stellar.xChainId,
+    xTokens: stellarTokens,
+    address: accountStellar,
+  });
+  React.useEffect(() => {
+    stellarBalances && dispatch(changeBalances({ xChainId: stellar.xChainId, balances: stellarBalances }));
+  }, [stellarBalances, dispatch]);
+
+  //fetch balances on sui
   const { address: accountSui } = useXAccount('SUI');
   const suiTokens = useXTokens('sui');
   const { data: suiBalances } = useXBalances({
@@ -205,6 +249,18 @@ export function useWalletFetchBalances() {
   React.useEffect(() => {
     suiBalances && dispatch(changeBalances({ xChainId: 'sui', balances: suiBalances }));
   }, [suiBalances, dispatch]);
+
+  // fetch balances on solana
+  const { address: accountSolana } = useXAccount('SOLANA');
+  const solanaTokens = useXTokens('solana');
+  const { data: solanaBalances } = useXBalances({
+    xChainId: 'solana',
+    xTokens: solanaTokens,
+    address: accountSolana,
+  });
+  React.useEffect(() => {
+    solanaBalances && dispatch(changeBalances({ xChainId: 'solana', balances: solanaBalances }));
+  }, [solanaBalances, dispatch]);
 }
 
 export const useBALNDetails = (): { [key in string]?: BigNumber } => {
@@ -216,16 +272,11 @@ export const useBALNDetails = (): { [key in string]?: BigNumber } => {
   React.useEffect(() => {
     const fetchDetails = async () => {
       if (account) {
-        const result = await bnJs.BALN.detailsBalanceOf(account);
-
-        const temp = {};
-
-        forEach(result, (value, key) => {
-          if (key === 'Unstaking time (in microseconds)') temp[key] = new BigNumber(value);
-          else temp[key] = BalancedJs.utils.toIcx(value);
+        const result = await bnJs.BALN.balanceOf(account);
+        setDetails({
+          'Staked balance': new BigNumber(0),
+          'Available balance': BalancedJs.utils.toIcx(result),
         });
-
-        setDetails(temp);
       }
     };
 
@@ -252,19 +303,6 @@ export function useTokenBalances(
       if (tokens.length === 0) return;
 
       const cds: CallData[] = tokens.map(token => {
-        if (isBALN(token))
-          return {
-            target: bnJs.BALN.address,
-            method: 'availableBalanceOf',
-            params: [account],
-          };
-        if (isFIN(token))
-          return {
-            target: token.address,
-            method: 'availableBalanceOf',
-            params: [account],
-          };
-
         return {
           target: token.address,
           method: 'balanceOf',
@@ -443,8 +481,7 @@ export function useXBalancesByToken(): XWalletAssetRecord[] {
               if (
                 balance.currency &&
                 balance?.greaterThan(0) &&
-                price &&
-                price.times(balance.toFixed()).isGreaterThan(MIN_VALUE_TO_DISPLAY)
+                (price.isZero() || price.times(balance.toFixed()).isGreaterThan(MIN_VALUE_TO_DISPLAY))
               ) {
                 acc[balance.currency.symbol] = {
                   ...acc[balance.currency.symbol],

@@ -48,4 +48,18 @@ export class Token extends BaseCurrency {
   public get wrapped(): Token {
     return this;
   }
+
+  public get isNativeToken() {
+    const nativeAddresses = [
+      'cx0000000000000000000000000000000000000000',
+      '0x0000000000000000000000000000000000000000',
+      'inj',
+      '0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI',
+      'hx0000000000000000000000000000000000000000',
+      '11111111111111111111111111111111', // solana
+      'CAS3J7GYLGXMF6TDJBBYYSE3HQ6BBSMLNUQ34T6TZMYMW2EVH34XOWMA', // stellar,
+    ];
+
+    return nativeAddresses.includes(this.address);
+  }
 }

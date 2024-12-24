@@ -1,5 +1,5 @@
 import { BalancedJs, CHAIN_INFO, LOOP, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
-import { Currency, CurrencyAmount, Fraction, Token, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 
@@ -7,12 +7,12 @@ import { ONE } from '@/constants';
 import { NETWORK_ID } from '@/constants/config';
 import { canBeQueue } from '@/constants/currency';
 import { BIGINT_ZERO } from '@/constants/misc';
-import { COMBINED_TOKENS_LIST, isNativeCurrency } from '@/constants/tokens';
+import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
 import { PairData, PairState } from '@/hooks/useV2Pairs';
 import { Field } from '@/store/swap/reducer';
 import { PairInfo } from '@/types';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@balancednetwork/sdk-core';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import { Validator } from 'icon-sdk-js';
 
 const { isScoreAddress } = Validator;
@@ -99,7 +99,7 @@ export function maxAmountSpend(
   if (
     (xChainId === '0x1.icon' && currencyAmount.currency.symbol === 'ICX') ||
     (xChainId === 'archway-1' && currencyAmount.currency.symbol === 'ARCH') ||
-    isNativeCurrency(currencyAmount.currency)
+    currencyAmount.currency.isNativeToken
   ) {
     minCurrencyGas = CurrencyAmount.fromRawAmount(
       currencyAmount.currency,

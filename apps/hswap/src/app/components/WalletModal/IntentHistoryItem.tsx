@@ -9,6 +9,7 @@ import { formatElapsedTime } from '@/utils';
 import { formatBalance } from '@/utils/formatter';
 import { getNetworkDisplayName, getTrackerLink } from '@balancednetwork/xwagmi';
 import { CheckIcon, ExternalLink, Loader2Icon } from 'lucide-react';
+import CancelIntent from './CancelIntent';
 
 interface IntentHistoryItemProps {
   transaction: MMTransaction;
@@ -75,6 +76,8 @@ const IntentHistoryItem = ({ transaction }: IntentHistoryItemProps) => {
           </a>
         </div>
         <div className="mt-1 px-8 flex justify-end items-center gap-2">
+          {transaction.status === MMTransactionStatus.pending && <CancelIntent transaction={transaction} />}
+
           <div className="text-[#0d0229] text-[10px] font-bold uppercase">
             {transaction.status === MMTransactionStatus.pending
               ? 'Swapping'
@@ -96,6 +99,11 @@ const IntentHistoryItem = ({ transaction }: IntentHistoryItemProps) => {
             </div>
           )}
           {transaction.status === MMTransactionStatus.failure && (
+            <div className={cn('w-4 h-4 rounded-full border-[#E6E0F7] border-[2px]')}>
+              <ExclamationIcon />
+            </div>
+          )}
+          {transaction.status === MMTransactionStatus.cancelled && (
             <div className={cn('w-4 h-4 rounded-full border-[#E6E0F7] border-[2px]')}>
               <ExclamationIcon />
             </div>

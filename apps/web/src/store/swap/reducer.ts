@@ -3,7 +3,7 @@ import { ICX } from '@/constants/tokens';
 import { getXTokenBySymbol } from '@/utils/xTokens';
 import { XToken, xTokenMap } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
-import { wICX } from '@balancednetwork/xwagmi/src/constants/xTokens';
+import { wICX } from '@balancednetwork/xwagmi';
 import { createSlice } from '@reduxjs/toolkit';
 
 // !TODO: use one Field for swap and bridge panel

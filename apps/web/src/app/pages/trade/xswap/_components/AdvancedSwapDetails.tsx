@@ -10,7 +10,6 @@ import { Typography } from '@/app/theme';
 import { useSetSlippageTolerance, useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
-import { formatSymbol } from '@/utils/formatter';
 import { useXCallFee } from '@balancednetwork/xwagmi';
 import TradePrice from './TradePrice';
 import TradeRoute from './TradeRoute';

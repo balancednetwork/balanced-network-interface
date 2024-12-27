@@ -108,7 +108,7 @@ export default function SwapPanel() {
   const handleInputPercentSelect = useCallback(
     (percent: number) => {
       maxInputAmount &&
-        onPercentSelection(Field.INPUT, percent, maxInputAmount.multiply(new Percent(percent, 100)).toFixed());
+        onPercentSelection(Field.INPUT, percent, maxInputAmount.multiply(new Percent(percent, 100)).toFixed(4));
     },
     [onPercentSelection, maxInputAmount],
   );

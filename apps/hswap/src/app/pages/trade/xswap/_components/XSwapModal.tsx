@@ -231,16 +231,21 @@ const XSwapModal = ({
                   <>
                     <div className="flex flex-col gap-2 justify-center items-center">
                       {!xTransactionId && (
-                        <div className="bg-[#e6e0f7] w-[40px] h-[40px] rounded-full flex items-center justify-center">
-                          <TimeGradientIcon />
-                        </div>
+                        <>
+                          <div className="bg-[#e6e0f7] w-[40px] h-[40px] rounded-full flex items-center justify-center">
+                            <TimeGradientIcon />
+                          </div>
+                          <div className="text-[#e6e0f7] text-sm font-bold">Confirm swap in wallet</div>
+                        </>
                       )}
                       {xTransactionId && !swapConfirmed && (
-                        <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
-                          <Loader2 className="animate-spin" />
-                        </div>
+                        <>
+                          <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
+                            <Loader2 className="animate-spin" />
+                          </div>
+                          <div className="text-[#e6e0f7] text-sm font-bold">Ready in 1m 10s</div>
+                        </>
                       )}
-                      <div className="text-[#e6e0f7] text-sm font-bold">Confirm swap in wallet</div>
                     </div>
                   </>
                 )}

@@ -136,9 +136,9 @@ export default function SwapPanel() {
         </div>
 
         <div className="flex flex-col justify-center">
-          <SwapCommitButton />
+          {!mmTrade.isMMBetter && <SwapCommitButton />}
           <MMSwapCommitButton
-            hidden={false}
+            hidden={!mmTrade.isMMBetter}
             currencies={currencies}
             account={account}
             recipient={recipient}

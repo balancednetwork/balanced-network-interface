@@ -62,15 +62,16 @@ const MMSwapCommitButton: React.FC<MMSwapCommitButtonProps> = props => {
 
   return (
     <>
-      {!account ? (
-        <BlueButton onClick={handleSwap}>
-          <Trans>Sign in(MM)</Trans>
-        </BlueButton>
-      ) : (
-        <BlueButton disabled={!account || !!error} onClick={handleSwap}>
-          {error || btnText}(MM)
-        </BlueButton>
-      )}
+      {!hidden &&
+        (!account ? (
+          <BlueButton onClick={handleSwap}>
+            <Trans>Sign in</Trans>
+          </BlueButton>
+        ) : (
+          <BlueButton disabled={!account || !!error} onClick={handleSwap}>
+            {error || btnText}
+          </BlueButton>
+        ))}
 
       <MMSwapModal currencies={currencies} account={account} recipient={recipient} trade={executionTrade} />
     </>

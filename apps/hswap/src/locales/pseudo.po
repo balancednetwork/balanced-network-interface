@@ -54,8 +54,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-msgid "Only"
-msgstr ""
+#~ msgid "Only"
+#~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "Your ICX is staked (sICX). Choose what to do with it:"
@@ -121,6 +121,7 @@ msgstr ""
 #~ msgid "15m"
 #~ msgstr ""
 
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Switch to {0}"
 msgstr ""
@@ -317,7 +318,8 @@ msgstr ""
 #~ msgid "Add a contract call"
 #~ msgstr ""
 
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
+#: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
 msgid "Sign in"
 msgstr ""
 
@@ -514,6 +516,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+#: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Swap Fee"
 msgstr ""
 
@@ -574,8 +577,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-msgid "is available on {0}."
-msgstr ""
+#~ msgid "is available on {0}."
+#~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/DepositPanel.tsx
 #~ msgid "Add your sICX to the collateral pool."
@@ -640,6 +643,10 @@ msgstr ""
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
 #~ msgid "Supply liquidity"
 #~ msgstr ""
+
+#: src/app/pages/trade/xswap/_components/BridgeLimitWarning.tsx
+msgid "Max"
+msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 #: src/app/pages/vote/proposals/new/page.tsx
@@ -879,8 +886,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
-msgid "{0}"
-msgstr ""
+#~ msgid "{0}"
+#~ msgstr ""
 
 #: src/app/pages/trade/layout.tsx
 #~ msgid "Bridge"
@@ -908,9 +915,9 @@ msgstr ""
 #~ msgid "Confirm the transaction on your Ledger."
 #~ msgstr ""
 
-#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
-#~ msgid "Swapping"
-#~ msgstr ""
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+msgid "Swapping"
+msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 #~ msgid "Incentives are recalculated every week. You can adjust your allocation once every 10 days."
@@ -1546,7 +1553,7 @@ msgstr ""
 #~ msgid "Search for blockchains..."
 #~ msgstr ""
 
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
 msgid "Swap to address"
 msgstr ""
 
@@ -1562,15 +1569,10 @@ msgstr ""
 #~ msgid "from network fees over the last 30 days."
 #~ msgstr ""
 
-#: src/app/components/ProposalModal/index.tsx
-#: src/app/pages/vote/proposals/[proposalId]/page.tsx
-#: src/app/pages/vote/proposals/[proposalId]/page.tsx
-#: src/app/pages/vote/proposals/[proposalId]/page.tsx
-#: src/app/pages/vote/proposals/[proposalId]/page.tsx
-#~ msgid "Approve"
-#~ msgstr ""
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+msgid "Approve"
+msgstr ""
 
-#: src/hooks/useTransactionStore.tsx
 #: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
 msgstr ""
@@ -1764,8 +1766,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
-msgid "0 {0}"
-msgstr ""
+#~ msgid "0 {0}"
+#~ msgstr ""
 
 #: src/app/components/CollateralTypeSwitcher/SingleChainItem.tsx
 #~ msgid "available"
@@ -1820,7 +1822,8 @@ msgstr ""
 #~ msgid "Wallets"
 #~ msgstr ""
 
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
+#: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
 msgid "Swap to my wallet"
 msgstr ""
 
@@ -1985,6 +1988,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
+#: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
 msgid "Price impact"
 msgstr ""
 
@@ -2024,9 +2028,9 @@ msgstr ""
 #~ msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
 #~ msgstr ""
 
-#: src/app/pages/trade/xswap/_components/SwapModal.tsx
-#~ msgid "Receive"
-#~ msgstr ""
+#: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
+msgid "Receive"
+msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
@@ -2180,6 +2184,10 @@ msgstr ""
 #~ msgid "Enter address"
 #~ msgstr ""
 
+#: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
+msgid "Swap time"
+msgstr ""
+
 #: src/app/components/CommunityListToggle/index.tsx
 #~ msgid "Add token list"
 #~ msgstr ""
@@ -2285,9 +2293,9 @@ msgstr ""
 #~ msgid "APY"
 #~ msgstr ""
 
-#: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
-#~ msgid "Route"
-#~ msgstr ""
+#: src/app/pages/trade/xswap/_components/MMAdvancedSwapDetails.tsx
+msgid "Route"
+msgstr ""
 
 #: src/app/pages/claim-legacy-fees/page.tsx
 #~ msgid "All fees claimed"
@@ -2383,6 +2391,10 @@ msgstr ""
 #~ msgid "FEES (24H)"
 #~ msgstr ""
 
+#: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
+msgid "Sign in(MM)"
+msgstr ""
+
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #~ msgid "Switch to"
 #~ msgstr ""
@@ -2449,7 +2461,9 @@ msgstr ""
 msgid "Learn how to resolve common transaction errors."
 msgstr ""
 
-#: src/app/pages/trade/xswap/_components/SwapPanel.tsx
+#: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
+#: src/app/pages/trade/xswap/_components/SwapCommitButton.tsx
+#: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Swap"
 msgstr ""
 

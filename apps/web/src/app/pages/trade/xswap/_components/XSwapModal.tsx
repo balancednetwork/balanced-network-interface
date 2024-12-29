@@ -21,6 +21,7 @@ import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatBigNumber, shortenAddress } from '@/utils';
+import { formatSymbol } from '@/utils/formatter';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 import { xChainMap } from '@balancednetwork/xwagmi';
@@ -144,16 +145,16 @@ const XSwapModal = ({
         <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
           <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
             <Trans>
-              Swap {currencies[Field.INPUT]?.symbol} for {currencies[Field.OUTPUT]?.symbol}?
+              Swap {formatSymbol(currencies[Field.INPUT]?.symbol)} for {formatSymbol(currencies[Field.OUTPUT]?.symbol)}?
             </Trans>
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center" color={showWarning ? 'alert' : 'text'}>
             <Trans>
-              {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
-                executionTrade?.executionPrice.quoteCurrency.symbol
-              } 
-              per ${executionTrade?.executionPrice.baseCurrency.symbol}`}
+              {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${formatSymbol(
+                executionTrade?.executionPrice.quoteCurrency.symbol,
+              )} 
+              per ${formatSymbol(executionTrade?.executionPrice.baseCurrency.symbol)}`}
             </Trans>
           </Typography>
 
@@ -164,7 +165,7 @@ const XSwapModal = ({
               </Typography>
               <Typography variant="p" textAlign="center" py="5px">
                 {formatBigNumber(new BigNumber(executionTrade?.inputAmount.toFixed() || 0), 'currency')}{' '}
-                {currencies[Field.INPUT]?.symbol}
+                {formatSymbol(currencies[Field.INPUT]?.symbol)}
               </Typography>
               <Typography textAlign="center">
                 <Trans>{getNetworkDisplayName(direction.from)}</Trans>
@@ -180,7 +181,7 @@ const XSwapModal = ({
               </Typography>
               <Typography variant="p" textAlign="center" py="5px">
                 {formatBigNumber(new BigNumber(executionTrade?.outputAmount.toFixed() || 0), 'currency')}{' '}
-                {currencies[Field.OUTPUT]?.symbol}
+                {formatSymbol(currencies[Field.OUTPUT]?.symbol)}
               </Typography>
               <Typography textAlign="center">
                 <Trans>{getNetworkDisplayName(direction.to)}</Trans>

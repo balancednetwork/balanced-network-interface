@@ -102,8 +102,8 @@ msgid "4H"
 msgstr "4시간"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Supplying {pair} liquidity..."
-msgstr "{pair} 유동성을 제공하는 중..."
+#~ msgid "Supplying {pair} liquidity..."
+#~ msgstr "{pair} 유동성을 제공하는 중..."
 
 #: src/app/pages/home/_components/xCollateralModal/index.tsx
 #~ msgid "Collateral action"
@@ -188,6 +188,10 @@ msgstr "거부하다"
 msgid "Your allocation"
 msgstr ""
 
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Swapping {0} for {1}..."
+msgstr ""
+
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
@@ -214,6 +218,10 @@ msgstr ""
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Assets to send"
 msgstr "송금할 자산"
+
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "{0} sent to the {1} pool."
+msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #~ msgid "Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity pools."
@@ -644,8 +652,8 @@ msgid "Remove community token list"
 msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
-msgstr "{inputCurrency} / {outputCurrency} 유동성 공급을 해제할 수 없습니다. 다시 시도하십시오."
+#~ msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
+#~ msgstr "{inputCurrency} / {outputCurrency} 유동성 공급을 해제할 수 없습니다. 다시 시도하십시오."
 
 #: src/app/pages/home/BBaln/BBalnPanel.tsx
 #~ msgid "${0} was distributed over the last 30 days"
@@ -713,8 +721,8 @@ msgid "Liquidity pools"
 msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Swapping {inputCurrency} for {outputCurrency}..."
-msgstr "{inputCurrency} 을 {outputCurrency} 으로 스왑하는 중..."
+#~ msgid "Swapping {inputCurrency} for {outputCurrency}..."
+#~ msgstr "{inputCurrency} 을 {outputCurrency} 으로 스왑하는 중..."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #~ msgid "Liquidity supplied."
@@ -754,6 +762,10 @@ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Deposited {0} {collateralType} as collateral."
+msgstr ""
+
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Supplying {0} liquidity..."
 msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
@@ -804,6 +816,14 @@ msgstr "적용 전"
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Active"
 msgstr "활성화"
+
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Withdrawing {0} / {1} liquidity..."
+msgstr ""
+
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Sending {0} to the {1} pool..."
+msgstr ""
 
 #: src/hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
@@ -870,8 +890,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
-msgstr "{inputAmount} {inputCurrency} 및 {outputAmount} {outputCurrency} 가 지갑에 추가되었습니다."
+#~ msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
+#~ msgstr "{inputAmount} {inputCurrency} 및 {outputAmount} {outputCurrency} 가 지갑에 추가되었습니다."
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Change vote?"
@@ -982,8 +1002,8 @@ msgstr "수량을 입력하세요."
 #~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Supplied {pair} liquidity."
-msgstr "{pair} 공급된 유동성."
+#~ msgid "Supplied {pair} liquidity."
+#~ msgstr "{pair} 공급된 유동성."
 
 #: src/app/components/AppBar/index.tsx
 #: src/app/Routes.tsx
@@ -1187,8 +1207,8 @@ msgid "Description"
 msgstr "설명"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Couldn't supply {pair} liquidity. Try again."
-msgstr "{pair} 에 유동성 물량을 공급할 수 없습니다. 다시 시도하십시오."
+#~ msgid "Couldn't supply {pair} liquidity. Try again."
+#~ msgstr "{pair} 에 유동성 물량을 공급할 수 없습니다. 다시 시도하십시오."
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Add community token list"
@@ -1393,6 +1413,10 @@ msgstr "지갑: {0} {1}"
 msgid "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
 msgstr ""
 
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Couldn't supply {0} liquidity. Try again."
+msgstr ""
+
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Forum link"
 msgstr "포럼 링크"
@@ -1426,6 +1450,10 @@ msgstr ""
 
 #: src/app/components/home/Savings/index.tsx
 msgid "Withdraw bnUSD?"
+msgstr ""
+
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Couldn't send {0} to the {1} pool. Try again."
 msgstr ""
 
 #: src/store/swap/hooks.ts
@@ -1494,6 +1522,10 @@ msgstr ""
 #: src/app/components/ProposalInfo/components.tsx
 msgid "{value}% voted"
 msgstr "{value}% 투표됨"
+
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Couldn't withdraw {0} / {1} liquidity. Try again."
+msgstr ""
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -1656,8 +1688,8 @@ msgid "Withdrawing sICX..."
 msgstr "sICX 회수하는 중..."
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "{currency} sent to the {pair} pool."
-msgstr "{currency} 를 {pair} 풀로 보냈습니다."
+#~ msgid "{currency} sent to the {pair} pool."
+#~ msgstr "{currency} 를 {pair} 풀로 보냈습니다."
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "For"
@@ -1936,6 +1968,10 @@ msgstr "이 금액보다 가격이 차이가 많이 나는 경우 스왑이 실�
 msgid "Voting weight"
 msgstr "투표 가중치"
 
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Supplied {0} liquidity."
+msgstr ""
+
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 msgid "Your position requires"
 msgstr ""
@@ -2108,6 +2144,10 @@ msgstr ""
 #: src/app/components/WalletModal/IconWalletModal.tsx
 #~ msgid "Choose a wallet from your Ledger:"
 #~ msgstr "Ledger에서 지갑 선택:"
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+msgid "ICX queue"
+msgstr ""
 
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
 #~ msgid "Revert"
@@ -2301,16 +2341,16 @@ msgid "Loan interest"
 msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
-msgstr "{inputCurrency} / {outputCurrency} 유동성 물량 회수 중..."
+#~ msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
+#~ msgstr "{inputCurrency} / {outputCurrency} 유동성 물량 회수 중..."
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Connected to {numberOfConnectedWallets} blockchains"
 msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Couldn't send {currency} to the {pair} pool. Try again."
-msgstr "{pair} 풀에 {currency} 를 보낼 수 없습니다. 다시 시도하십시오."
+#~ msgid "Couldn't send {currency} to the {pair} pool. Try again."
+#~ msgstr "{pair} 풀에 {currency} 를 보낼 수 없습니다. 다시 시도하십시오."
 
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "Total daily rewards"
@@ -2624,6 +2664,10 @@ msgstr ""
 msgid "Receive / repay on:"
 msgstr ""
 
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "{inputAmount} {0} and {outputAmount} {1} added to your wallet."
+msgstr ""
+
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "There are no pending cross-chain transactions."
 msgstr ""
@@ -2776,8 +2820,12 @@ msgid "Pay a {0} BALN fee to unlock early."
 msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Sending {currency} to the {pair} pool..."
-msgstr "{pair} 풀로 {currency} 를 보내는 중..."
+#~ msgid "Sending {currency} to the {pair} pool..."
+#~ msgstr "{pair} 풀로 {currency} 를 보내는 중..."
+
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Swapped {inputAmount} {0} for {outputAmount} {1}."
+msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 msgid "Preparing to unstake sICX..."
@@ -2827,8 +2875,8 @@ msgid "The current {0} price is"
 msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
-msgstr "{inputAmount} {inputCurrency} 을 {outputAmount} {outputCurrency} 으로 스왑했습니다."
+#~ msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
+#~ msgstr "{inputAmount} {inputCurrency} 을 {outputAmount} {outputCurrency} 으로 스왑했습니다."
 
 #: src/xwagmi/xchains/stellar/utils.ts
 #~ msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."

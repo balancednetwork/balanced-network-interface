@@ -1,6 +1,7 @@
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { WalletState } from '@/store/wallet/reducer';
+import { formatSymbol } from '@/utils/formatter';
 import { getXTokenAddress, isXToken } from '@/utils/xTokens';
 import { Currency } from '@balancednetwork/sdk-core';
 import { SUPPORTED_XCALL_CHAINS } from '@balancednetwork/xwagmi';
@@ -75,7 +76,9 @@ export default function useSortCurrency(initialState: SortingType, selectedChain
 
       if (sortBy.key === 'symbol') {
         dataToSort.sort((a, b) => {
-          return a.symbol.toUpperCase() > b.symbol.toUpperCase() ? -1 * direction : 1 * direction;
+          return formatSymbol(a.symbol).toUpperCase() > formatSymbol(b.symbol).toUpperCase()
+            ? -1 * direction
+            : 1 * direction;
         });
       }
 

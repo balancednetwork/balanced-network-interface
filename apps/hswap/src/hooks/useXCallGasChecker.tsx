@@ -18,7 +18,7 @@ function useXCallGasChecker(inputAmount: CurrencyAmount<XToken> | undefined): {
       if (!xChainId) return { hasEnoughGas: false, errorMessage: 'Unknown' };
 
       const xChain: XChain = xChainMap[xChainId];
-      const nativeCurrency: XToken = xTokenMap[xChainId].find(x => x.isNativeToken);
+      const nativeCurrency: XToken = xTokenMap[xChainId].find(x => x.isNativeToken)!;
 
       const gasThreshold = inputAmount?.currency.isNativeToken
         ? xChain.gasThreshold + Number(inputAmount.toFixed())

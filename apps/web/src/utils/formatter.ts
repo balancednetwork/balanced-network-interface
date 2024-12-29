@@ -234,6 +234,7 @@ export const formatSymbol = (symbol: string | undefined) => {
     HASUI: 'haSUI',
     VSUI: 'vSUI',
     JITOSOL: 'JitoSOL',
+    wICX: 'ICX',
   };
   if (symbol && mapping[symbol]) {
     return mapping[symbol];

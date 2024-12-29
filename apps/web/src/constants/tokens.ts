@@ -43,6 +43,14 @@ export const sICX: TokenMap = {
   [ChainId.LISBON]: new Token(ChainId.LISBON, addresses[ChainId.LISBON].sicx, 18, 'sICX', 'Staked ICX'),
 };
 
+export const wICX: TokenMap = {
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].wicx, 18, 'wICX', 'Wrapped ICX'),
+  [ChainId.SEJONG]: new Token(ChainId.SEJONG, addresses[ChainId.SEJONG].wicx, 18, 'wICX', 'Wrapped ICX'),
+  [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, addresses[ChainId.YEOUIDO].wicx, 18, 'wICX', 'Wrapped ICX'),
+  [ChainId.BERLIN]: new Token(ChainId.BERLIN, addresses[ChainId.BERLIN].wicx, 18, 'wICX', 'Wrapped ICX'),
+  [ChainId.LISBON]: new Token(ChainId.LISBON, addresses[ChainId.LISBON].wicx, 18, 'wICX', 'Wrapped ICX'),
+};
+
 export const bnUSD: TokenMap = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, addresses[ChainId.MAINNET].bnusd, 18, 'bnUSD', 'Balanced Dollar'),
   [ChainId.SEJONG]: new Token(ChainId.SEJONG, addresses[ChainId.SEJONG].bnusd, 18, 'bnUSD', 'Balanced Dollar'),

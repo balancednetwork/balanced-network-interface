@@ -126,6 +126,15 @@ export default class Rewards extends Contract {
     return this.call(payload);
   }
 
+  getDataSources(blockHeight?: number) {
+    const payload = this.paramsBuilder({
+      method: `getDataSources`,
+      blockHeight: blockHeight,
+    });
+
+    return this.call(payload);
+  }
+
   voteForSource(name: string, userWeight: number) {
     const payload = this.transactionParamsBuilder({
       method: 'voteForSource',

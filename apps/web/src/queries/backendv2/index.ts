@@ -1,8 +1,10 @@
-import { CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
 
+import { getRewardApr } from '@/app/pages/trade/supply/_components/utils';
+import { NETWORK_ID } from '@/constants/config';
 import { NULL_CONTRACT_ADDRESS } from '@/constants/tokens';
 import { API_ENDPOINT } from '@/queries/constants';
 import { useIncentivisedPairs } from '@/queries/reward';
@@ -58,7 +60,6 @@ export function useAllTokens() {
     queryKey: [`allTokens`],
     queryFn: async () => {
       const response = await axios.get<TokenStats[]>(`${API_ENDPOINT}/tokens`);
-
       if (response.status === 200) {
         const tokens = response.data
           .map(item => {
@@ -73,23 +74,25 @@ export function useAllTokens() {
             );
           });
 
-        const tokensWithStabilityFundLiquidity = await Promise.all(
-          tokens.map(async token => {
-            if (token['in_stability_fund']) {
-              const cx = bnJs.getContract(token.address);
-              const decimals = await cx.decimals();
-              const amount = await cx.balanceOf(bnJs.StabilityFund.address);
-              const balance = new BigNumber(amount).div(10 ** parseInt(decimals, 16)).toNumber();
+        if (NETWORK_ID === 1) {
+          const tokensWithStabilityFundLiquidity = await Promise.all(
+            tokens.map(async token => {
+              if (token['in_stability_fund']) {
+                const cx = bnJs.getContract(token.address);
+                const decimals = await cx.decimals();
+                const amount = await cx.balanceOf(bnJs.StabilityFund.address);
+                const balance = new BigNumber(amount).div(10 ** parseInt(decimals, 16)).toNumber();
 
-              if (balance > 0) {
-                token.liquidity = balance;
+                if (balance > 0) {
+                  token.liquidity = balance;
+                }
               }
-            }
-            return token;
-          }),
-        );
-
-        return tokensWithStabilityFundLiquidity;
+              return token;
+            }),
+          );
+          return tokensWithStabilityFundLiquidity;
+        }
+        return tokens;
       }
     },
     placeholderData: keepPreviousData,
@@ -143,12 +146,13 @@ export type PairData = {
   totalQuote: CurrencyAmount<Token>;
   totalSupply: BigNumber;
   stakedRatio: Fraction;
+  externalRewards?: CurrencyAmount<Currency>[];
 };
 
 export const MIN_LIQUIDITY_TO_INCLUDE = 1000;
 
 export function useAllPairs() {
-  const { data: allTokens, isSuccess: allTokensSuccess } = useAllTokensByAddress();
+  const { data: allTokens, isSuccess: allTokensSuccess } = useAllTokens();
   const { data: incentivisedPairs, isSuccess: incentivisedPairsSuccess } = useIncentivisedPairs();
   const { data: dailyDistribution, isSuccess: dailyDistributionSuccess } = useEmissions();
 
@@ -158,91 +162,108 @@ export function useAllPairs() {
       const response = await axios.get(`${API_ENDPOINT}/pools`);
 
       if (response.status === 200 && incentivisedPairs && dailyDistribution && allTokens) {
-        const balnPrice: number = allTokens[bnJs.BALN.address].price;
+        const balnPrice = allTokens.find(token => token.symbol === 'BALN')?.price || 0;
 
         const pairs = response.data.map(item => {
-          const liquidity = item['base_supply'] * item['base_price'] + item['quote_supply'] * item['quote_price'];
-          const fees24hProviders =
-            item['base_lp_fees_24h'] * item['base_price'] + item['quote_lp_fees_24h'] * item['quote_price'];
-          const fees24hBaln =
-            item['base_baln_fees_24h'] * item['base_price'] + item['quote_baln_fees_24h'] * item['quote_price'];
-          const fees30dProviders =
-            item['base_lp_fees_30d'] * item['base_price'] + item['quote_lp_fees_30d'] * item['quote_price'];
-          const fees30dBaln =
-            item['base_baln_fees_30d'] * item['base_price'] + item['quote_baln_fees_30d'] * item['quote_price'];
-          const volume24h =
-            item['base_volume_24h'] * item['base_price'] + item['quote_volume_24h'] * item['quote_price'];
-          const volume30d =
-            item['base_volume_30d'] * item['base_price'] + item['quote_volume_30d'] * item['quote_price'];
+          try {
+            const liquidity = item['base_supply'] * item['base_price'] + item['quote_supply'] * item['quote_price'];
+            const fees24hProviders =
+              item['base_lp_fees_24h'] * item['base_price'] + item['quote_lp_fees_24h'] * item['quote_price'];
+            const fees24hBaln =
+              item['base_baln_fees_24h'] * item['base_price'] + item['quote_baln_fees_24h'] * item['quote_price'];
+            const fees30dProviders =
+              item['base_lp_fees_30d'] * item['base_price'] + item['quote_lp_fees_30d'] * item['quote_price'];
+            const fees30dBaln =
+              item['base_baln_fees_30d'] * item['base_price'] + item['quote_baln_fees_30d'] * item['quote_price'];
+            const volume24h =
+              item['base_volume_24h'] * item['base_price'] + item['quote_volume_24h'] * item['quote_price'];
+            const volume30d =
+              item['base_volume_30d'] * item['base_price'] + item['quote_volume_30d'] * item['quote_price'];
 
-          const fees24h = fees24hProviders + fees24hBaln;
-          const fees30d = fees30dProviders + fees30dBaln;
-          const feesApy = liquidity > 0 ? (fees30dProviders * 12) / liquidity : 0;
+            const fees24h = fees24hProviders + fees24hBaln;
+            const fees30d = fees30dProviders + fees30dBaln;
+            const feesApy = liquidity > 0 ? (fees30dProviders * 12) / liquidity : 0;
 
-          const incentivisedPair = incentivisedPairs.find(incentivisedPair => incentivisedPair.id === item.pool_id);
+            const incentivisedPair = incentivisedPairs.find(incentivisedPair => incentivisedPair.id === item.pool_id);
 
-          const baseToken = new Token(
-            item['chain_id'],
-            item['base_address'] === 'ICX' ? NULL_CONTRACT_ADDRESS : item['base_address'],
-            item['base_decimals'],
-            item['base_symbol'],
-          );
+            const baseToken = new Token(
+              item['chain_id'],
+              item['base_address'] === 'ICX' ? NULL_CONTRACT_ADDRESS : item['base_address'],
+              item['base_decimals'],
+              item['base_symbol'],
+            );
 
-          const quoteToken = new Token(
-            item['chain_id'],
-            item['quote_address'] === 'ICX' ? NULL_CONTRACT_ADDRESS : item['quote_address'],
-            item['quote_decimals'],
-            item['quote_symbol'],
-          );
+            const quoteToken = new Token(
+              item['chain_id'],
+              item['quote_address'] === 'ICX' ? NULL_CONTRACT_ADDRESS : item['quote_address'],
+              item['quote_decimals'],
+              item['quote_symbol'],
+            );
 
-          const pair: PairData = {
-            info: {
-              chainId: item['chain_id'],
-              id: item['pool_id'],
+            const pair: PairData = {
+              info: {
+                chainId: item['chain_id'],
+                id: item['pool_id'],
+                name: item['name'],
+                baseCurrencyKey: item['base_symbol'],
+                quoteCurrencyKey: item['quote_symbol'],
+                baseToken: baseToken,
+                quoteToken: quoteToken,
+              },
               name: item['name'],
-              baseCurrencyKey: item['base_symbol'],
-              quoteCurrencyKey: item['quote_symbol'],
-              baseToken: baseToken,
-              quoteToken: quoteToken,
-            },
-            name: item['name'],
-            liquidity,
-            fees24h: fees24h || 0,
-            fees30d: fees30d || 0,
-            volume24h,
-            volume30d,
-            feesApy: feesApy || 0,
-            balnApy: 0,
-            totalSupply: new BigNumber(item['total_supply']),
-            totalBase: CurrencyAmount.fromRawAmount(
-              baseToken,
-              parseInt(new BigNumber(item['base_supply'] * 10 ** item['base_decimals']).toFixed(0)),
-            ),
-            totalQuote: CurrencyAmount.fromRawAmount(
-              quoteToken,
-              parseInt(new BigNumber(item['quote_supply'] * 10 ** item['quote_decimals']).toFixed(0)),
-            ),
-            stakedRatio: new Fraction(1),
-          };
+              liquidity,
+              fees24h: fees24h || 0,
+              fees30d: fees30d || 0,
+              volume24h,
+              volume30d,
+              feesApy: feesApy || 0,
+              balnApy: 0,
+              totalSupply: new BigNumber(item['total_supply']),
+              totalBase: CurrencyAmount.fromRawAmount(
+                baseToken,
+                parseInt(new BigNumber(item['base_supply'] * 10 ** item['base_decimals']).toFixed(0)),
+              ),
+              totalQuote: CurrencyAmount.fromRawAmount(
+                quoteToken,
+                parseInt(new BigNumber(item['quote_supply'] * 10 ** item['quote_decimals']).toFixed(0)),
+              ),
+              stakedRatio: new Fraction(1),
+            };
 
-          if (incentivisedPair) {
-            const stakedRatio =
-              incentivisedPair.id !== 1
-                ? new Fraction(incentivisedPair.totalStaked, item['total_supply'])
-                : new Fraction(1);
-            pair['balnApy'] = dailyDistribution
-              .times(new BigNumber(incentivisedPair.rewards.toFixed(4)))
-              .times(365)
-              .times(balnPrice)
-              .div(new BigNumber(stakedRatio.toFixed(18)).times(liquidity))
-              .toNumber();
-            pair['stakedRatio'] = stakedRatio;
+            if (incentivisedPair) {
+              const stakedRatio =
+                incentivisedPair.id !== 1
+                  ? new Fraction(incentivisedPair.totalStaked, item['total_supply'])
+                  : new Fraction(1);
+              pair['balnApy'] = dailyDistribution
+                .times(new BigNumber(incentivisedPair.rewards?.toFixed(4) || 0))
+                .times(365)
+                .times(balnPrice)
+                .div(new BigNumber(stakedRatio.toFixed(18)).times(liquidity))
+                .toNumber();
+              pair['externalRewards'] = incentivisedPair.externalRewards;
+              pair['stakedRatio'] = stakedRatio;
+
+              const totalExternalRewardApr = incentivisedPair.externalRewards?.reduce((acc, reward) => {
+                const rewardApr = getRewardApr(
+                  reward,
+                  pair,
+                  allTokens.find(token => token.symbol === reward.currency.symbol)?.price || 0,
+                );
+
+                return acc + rewardApr.toNumber();
+              }, 0);
+
+              pair['externalRewardsTotalAPR'] = totalExternalRewardApr || 0;
+            }
+
+            return pair;
+          } catch (error) {
+            console.error('Error parsing pair data', error);
           }
-
-          return pair;
         });
 
-        return pairs.filter(item => item.liquidity >= MIN_LIQUIDITY_TO_INCLUDE || item.name === 'sICX/ICX');
+        return pairs.filter(item => item && (item.liquidity >= MIN_LIQUIDITY_TO_INCLUDE || item.name === 'sICX/ICX'));
       }
     },
     placeholderData: keepPreviousData,

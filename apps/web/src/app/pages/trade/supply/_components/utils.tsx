@@ -3,6 +3,7 @@ import { t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
 import { ZERO } from '@/constants/misc';
+import { PairData } from '@/queries/backendv2';
 import { formatBigNumber } from '@/utils';
 
 export function swapMessage(inputAmount: string, inputCurrency: string, outputAmount: string, outputCurrency: string) {
@@ -59,4 +60,12 @@ export const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue
 
 export const getFormattedRewards = (reward: BigNumber): string => {
   return reward?.isEqualTo(ZERO) ? 'N/A' : `~ ${formatBigNumber(reward, 'currency')} BALN`;
+};
+
+export const getRewardApr = (reward: CurrencyAmount<Currency>, pair: PairData, price: number): BigNumber => {
+  const apr = new BigNumber(reward.toFixed())
+    .times(365 * price)
+    .div(new BigNumber(pair.stakedRatio.toFixed(18)).times(pair.liquidity));
+
+  return apr;
 };

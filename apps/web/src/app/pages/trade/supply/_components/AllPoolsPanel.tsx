@@ -19,9 +19,12 @@ import DropdownLink from '@/app/components/DropdownLink';
 import { HeaderText } from '@/app/components/SearchModal/styleds';
 import Skeleton from '@/app/components/Skeleton';
 import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
+import { NETWORK_ID } from '@/constants/config';
+import { useRatesWithOracle } from '@/queries/reward';
 import { PairInfo } from '@/types';
 import { xChainMap } from '@/xwagmi/constants/xChains';
 import { useMedia } from 'react-use';
+import { getRewardApr } from './utils';
 
 const COMPACT_ITEM_COUNT = 8;
 
@@ -135,54 +138,68 @@ type PairItemProps = {
   isLast: boolean;
 };
 
-const PairItem = ({ pair, onClick, isLast }: PairItemProps) => (
-  <>
-    <PairGrid my={2} onClick={() => onClick(pair.info)}>
-      <DataText>
-        <Flex alignItems="center">
-          <Box sx={{ minWidth: '95px' }}>
-            <PoolLogo baseCurrency={pair.info.baseToken} quoteCurrency={pair.info.quoteToken} />
-          </Box>
-          <Text ml={2}>{`${pair.info.baseCurrencyKey} / ${pair.info.quoteCurrencyKey}`}</Text>
-        </Flex>
-      </DataText>
-      <DataText>
-        <Flex flexDirection="column" py={2} alignItems="flex-end">
-          {pair.liquidity > MIN_LIQUIDITY_TO_INCLUDE ? (
-            <>
-              {pair.balnApy ? (
-                <APYItem>
-                  <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                    BALN:
-                  </Typography>
-                  {`${getFormattedNumber(pair.balnApy, 'percent2')} - ${getFormattedNumber(
-                    MAX_BOOST.times(pair.balnApy).toNumber(),
-                    'percent2',
-                  )}`}
-                </APYItem>
-              ) : null}
-              {pair.feesApy !== 0 ? (
-                <APYItem>
-                  <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                    <Trans>Fees:</Trans>
-                  </Typography>
-                  {getFormattedNumber(pair.feesApy, 'percent2')}
-                </APYItem>
-              ) : null}
-            </>
-          ) : (
-            '-'
-          )}
-          {!pair.feesApy && !pair.balnApy && '-'}
-        </Flex>
-      </DataText>
-      <DataText>{getFormattedNumber(pair.liquidity, 'currency0')}</DataText>
-      <DataText>{pair.volume24h ? getFormattedNumber(pair.volume24h, 'currency0') : '-'}</DataText>
-      <DataText>{pair.fees24h ? getFormattedNumber(pair.fees24h, 'currency0') : '-'}</DataText>
-    </PairGrid>
-    {!isLast && <Divider />}
-  </>
-);
+const PairItem = ({ pair, onClick, isLast }: PairItemProps) => {
+  const prices = useRatesWithOracle();
+
+  return (
+    <>
+      <PairGrid my={2} onClick={() => onClick(pair.info)}>
+        <DataText>
+          <Flex alignItems="center">
+            <Box sx={{ minWidth: '95px' }}>
+              <PoolLogo baseCurrency={pair.info.baseToken} quoteCurrency={pair.info.quoteToken} />
+            </Box>
+            <Text ml={2}>{`${pair.info.baseCurrencyKey} / ${pair.info.quoteCurrencyKey}`}</Text>
+          </Flex>
+        </DataText>
+        <DataText>
+          <Flex flexDirection="column" py={2} alignItems="flex-end">
+            {pair.liquidity > MIN_LIQUIDITY_TO_INCLUDE ? (
+              <>
+                {pair.balnApy ? (
+                  <APYItem>
+                    <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                      BALN:
+                    </Typography>
+                    {`${getFormattedNumber(pair.balnApy, 'percent2')} - ${getFormattedNumber(
+                      MAX_BOOST.times(pair.balnApy).toNumber(),
+                      'percent2',
+                    )}`}
+                  </APYItem>
+                ) : null}
+                {pair.externalRewards?.map(reward => {
+                  return prices?.[reward.currency.wrapped.symbol] ? (
+                    <APYItem key={reward.currency.wrapped.symbol}>
+                      <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                        {reward.currency.symbol}:
+                      </Typography>
+                      {`${getRewardApr(reward, pair, prices[reward.currency.symbol].toNumber()).toFormat(2)}%`}
+                    </APYItem>
+                  ) : null;
+                })}
+                {pair.feesApy !== 0 ? (
+                  <APYItem>
+                    <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                      <Trans>Fees:</Trans>
+                    </Typography>
+                    {getFormattedNumber(pair.feesApy, 'percent2')}
+                  </APYItem>
+                ) : null}
+              </>
+            ) : (
+              '-'
+            )}
+            {!pair.feesApy && !pair.balnApy && '-'}
+          </Flex>
+        </DataText>
+        <DataText>{getFormattedNumber(pair.liquidity, 'currency0')}</DataText>
+        <DataText>{pair.volume24h ? getFormattedNumber(pair.volume24h, 'currency0') : '-'}</DataText>
+        <DataText>{pair.fees24h ? getFormattedNumber(pair.fees24h, 'currency0') : '-'}</DataText>
+      </PairGrid>
+      {!isLast && <Divider />}
+    </>
+  );
+};
 
 export default function AllPoolsPanel({ query }: { query: string }) {
   const { data: allPairs } = useAllPairsById();
@@ -204,6 +221,10 @@ export default function AllPoolsPanel({ query }: { query: string }) {
 
   //show only incentivised, cross native or NOL pairs
   const relevantPairs = useMemo(() => {
+    //TEMPORARY LISBON
+    if (allPairs && NETWORK_ID !== 1) return Object.values(allPairs);
+    //END OF TEMPORARY LISBON
+
     if (!allPairs || !nolPairs) return [];
     const nativeSymbols = Object.values(xChainMap).map(chain => chain.nativeCurrency.symbol);
 

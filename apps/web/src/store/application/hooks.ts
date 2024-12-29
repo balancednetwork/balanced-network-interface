@@ -57,6 +57,12 @@ export function useSetSlippageTolerance() {
   );
 }
 
+export const getTimestampFrom = (from: number = 0): number => {
+  const fiveMinPeriod = 1000 * 300;
+  const now = new Date(Math.floor(new Date().getTime() / fiveMinPeriod) * fiveMinPeriod);
+  return now.setDate(now.getDate() - from);
+};
+
 export const useBlockDetails = (timestamp: number) => {
   const getBlock = async (): Promise<BlockDetails> => {
     const { data } = await axios.get(`${CHAIN_INFO[NETWORK_ID].tracker}/api/v1/blocks/timestamp/${timestamp * 1000}`);

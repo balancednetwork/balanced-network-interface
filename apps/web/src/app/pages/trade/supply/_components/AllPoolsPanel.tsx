@@ -22,7 +22,7 @@ import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
 import { NETWORK_ID } from '@/constants/config';
 import { useRatesWithOracle } from '@/queries/reward';
 import { PairInfo } from '@/types';
-import { xChainMap } from '@/xwagmi/constants/xChains';
+import { xChainMap } from '@balancednetwork/xwagmi';
 import { useMedia } from 'react-use';
 import { getRewardApr } from './utils';
 

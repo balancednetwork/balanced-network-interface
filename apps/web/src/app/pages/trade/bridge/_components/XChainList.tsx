@@ -13,10 +13,10 @@ import { useHasSignedIn } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatValue } from '@/utils/formatter';
-import { xChains } from '@/xwagmi/constants/xChains';
-import { xTokenMap } from '@/xwagmi/constants/xTokens';
-import { XChain, XChainId } from '@/xwagmi/types';
 import { Currency } from '@balancednetwork/sdk-core';
+import { xChains } from '@balancednetwork/xwagmi';
+import { xTokenMap } from '@balancednetwork/xwagmi';
+import { XChain, XChainId } from '@balancednetwork/xwagmi';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
@@ -39,7 +39,7 @@ type XChainItemProps = {
   showTotalXWalletValue?: boolean;
 };
 
-const StyledHeaderText = styled(HeaderText)`
+export const StyledHeaderText = styled(HeaderText)`
   font-size: 12px;
 `;
 

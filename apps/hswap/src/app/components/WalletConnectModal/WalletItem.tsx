@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { Button } from '@/components/ui/button';
+import CopyableAddress from '@/app/components2/CopyableAddress';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
-import { XConnector } from '@/xwagmi/core';
-import { useXAccount, useXConnect, useXConnection, useXConnectors, useXDisconnect } from '@/xwagmi/hooks';
-import { XChainType } from '@balancednetwork/sdk-core';
-import { CopyableAddress } from '../Header';
+import { XConnector } from '@balancednetwork/xwagmi';
+import { useXAccount, useXConnect, useXConnection, useXConnectors, useXDisconnect } from '@balancednetwork/xwagmi';
+import { XChainType } from '@balancednetwork/xwagmi';
+import { XIcon } from 'lucide-react';
 
 export type WalletItemProps = {
   name: string;
@@ -60,40 +60,37 @@ const WalletItem = ({ name, xChainType }: WalletItemProps) => {
     if (!hanaWallet) return xConnectors;
 
     const filteredConnectors = xConnectors.filter(connector => connector.name !== 'Hana Wallet');
-    return xChainType === 'SUI' ? filteredConnectors : [hanaWallet, ...filteredConnectors];
-  }, [xConnectors, xChainType]);
+    return [hanaWallet, ...filteredConnectors];
+  }, [xConnectors]);
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex justify-between gap-4">
-        <div className="text-base">{name}</div>
-        {address && (
-          <div className="text-body cursor-pointer text-light-purple" onClick={handleDisconnect}>
-            disconnect
-          </div>
-        )}
-      </div>
-      <div className="flex flex-wrap justify-between gap-4">
+    <div className="flex items-center gap-6 px-8 text-[#0d0229]">
+      <div className="w-[76px] text-right text-black text-xs font-bold leading-none">{name}</div>
+
+      <div className="flex flex-wrap justify-start gap-2 grow">
         {address ? (
-          <div className="p-4 flex justify-between items-center bg-[#221542] h-[48px] rounded-full w-full">
-            <div className="flex gap-3 justify-start">
-              <img width={28} height={28} src={activeXConnector?.icon} />
-              {activeXConnector?.name}
+          <div className="flex justify-between items-center w-full">
+            <div className="cursor-pointer w-10 h-10 p-1 bg-white rounded-[11px] justify-center items-center inline-flex">
+              <img src={activeXConnector?.icon} className="w-full h-full rounded-lg" />
             </div>
-            <CopyableAddress account={address} copyIcon placement="right" />
+            <div className="flex gap-1 lowercase">
+              <CopyableAddress account={address} />
+              <div className="text-body cursor-pointer" onClick={handleDisconnect}>
+                <XIcon />
+              </div>
+            </div>
           </div>
         ) : (
           <>
             {sortedXConnectors.map(xConnector => {
               return (
-                <Button
+                <div
                   key={`${xChainType}-${xConnector.name}`}
-                  className="flex gap-3 justify-start bg-[#221542] h-[48px] rounded-full w-[calc(50%-8px)]"
+                  className="cursor-pointer w-10 h-10 p-1 bg-[#d4c5f9] rounded-[11px] justify-center items-center inline-flex"
                   onClick={() => handleConnect(xConnector)}
                 >
-                  <img width={28} height={28} src={xConnector.icon} />
-                  {xConnector.name}
-                </Button>
+                  <img src={xConnector.icon} className="w-full h-full rounded-lg" />
+                </div>
               );
             })}
           </>

@@ -19,7 +19,7 @@ import { useBBalnAmount, useDynamicBBalnAmount, useSources, useTotalSupply } fro
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import PositionRewardsInfo from './PositionRewardsInfo';
 import RewardsGrid from './RewardsGrid';

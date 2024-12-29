@@ -1,8 +1,8 @@
 import { useWalletBalances } from '@/store/wallet/hooks';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChain } from '@/xwagmi/types';
-import { formatBigNumber, getNetworkDisplayName } from '@/xwagmi/utils';
-import { CurrencyAmount, XChainId, XToken } from '@balancednetwork/sdk-core';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { xChainMap, xTokenMap } from '@balancednetwork/xwagmi';
+import { XChain, XToken } from '@balancednetwork/xwagmi';
+import { formatBigNumber, getNetworkDisplayName } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { useMemo } from 'react';
 
@@ -10,22 +10,21 @@ function useXCallGasChecker(inputAmount: CurrencyAmount<XToken> | undefined): {
   hasEnoughGas: boolean;
   errorMessage: string;
 } {
-  // TODO: || '0x1.icon' is a temporary fix for type checking
-  const xChainId = inputAmount?.currency.xChainId || '0x1.icon';
-
   const walletBalances = useWalletBalances();
 
   return useMemo(() => {
     try {
+      const xChainId = inputAmount?.currency.xChainId;
+      if (!xChainId) return { hasEnoughGas: false, errorMessage: 'Unknown' };
+
       const xChain: XChain = xChainMap[xChainId];
-      const nativeCurrency = xChain?.nativeCurrency;
+      const nativeCurrency: XToken = xTokenMap[xChainId].find(x => x.isNativeToken);
 
-      const gasThreshold =
-        `${xChainId}-native` === inputAmount?.currency.wrapped.address
-          ? xChain.gasThreshold + Number(inputAmount.toFixed())
-          : xChain.gasThreshold;
+      const gasThreshold = inputAmount?.currency.isNativeToken
+        ? xChain.gasThreshold + Number(inputAmount.toFixed())
+        : xChain.gasThreshold;
 
-      const hasEnoughGas = walletBalances?.[`${xChainId}-native`].greaterThan(
+      const hasEnoughGas = walletBalances?.[nativeCurrency.id].greaterThan(
         Math.round(gasThreshold * 10 ** nativeCurrency.decimals),
       );
 
@@ -41,7 +40,7 @@ function useXCallGasChecker(inputAmount: CurrencyAmount<XToken> | undefined): {
     }
 
     return { hasEnoughGas: false, errorMessage: 'Unknown' };
-  }, [walletBalances, xChainId, inputAmount]);
+  }, [walletBalances, inputAmount]);
 }
 
 export default useXCallGasChecker;

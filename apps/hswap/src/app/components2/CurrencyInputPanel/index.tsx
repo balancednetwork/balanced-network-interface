@@ -1,12 +1,14 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import useAmountInUSD from '@/hooks/useAmountInUSD';
+import { cn } from '@/lib/utils';
 import { escapeRegExp, toFraction } from '@/utils';
-import { CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XToken } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
-import { ChevronDown } from 'react-feather';
+import { ChevronDownIcon } from 'lucide-react';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { TokenSelectModal } from '../TokenSelectModal';
 
@@ -28,6 +30,7 @@ interface CurrencyInputPanelProps {
   account?: string | null;
   balance?: CurrencyAmount<XToken> | undefined;
   type: CurrencyInputPanelType;
+  showWarning?: boolean;
 }
 
 const inputRegex = /^\d*(?:\\[.])?\d*$/; // match escaped "." characters via in a non-capturing group
@@ -44,6 +47,7 @@ export default function CurrencyInputPanel({
   account,
   balance,
   type,
+  showWarning,
 }: CurrencyInputPanelProps) {
   const [open, setOpen] = React.useState(false);
   const [isActive, setIsActive] = React.useState(false);
@@ -69,12 +73,8 @@ export default function CurrencyInputPanel({
   const valueInUSD = useAmountInUSD(currencyAmount);
 
   return (
-    <div className="rounded-xl w-full bg-card p-4 flex flex-col gap-2">
-      <span className="text-secondary-foreground text-subtitle font-bold">
-        {type === CurrencyInputPanelType.INPUT && 'You pay'}
-        {type === CurrencyInputPanelType.OUTPUT && 'You receive'}
-      </span>
-      <div className="inline-flex w-full items-center">
+    <div className={cn('rounded-xl w-full flex flex-col gap-1 items-center')}>
+      <div className="flex flex-col justify-center items-center gap-1">
         <Input
           placeholder={placeholder}
           value={value}
@@ -94,16 +94,26 @@ export default function CurrencyInputPanel({
           minLength={1}
           maxLength={79}
           spellCheck="false"
-          className="p-0 text-title text-[1.5rem] font-bold bg-transparent border-none focus:border-none text-primary-foreground focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+          className={cn(
+            'p-0 text-center text-4xl font-extrabold leading-10 text-title-gradient bg-transparent border-none focus:border-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0',
+            showWarning && 'text-warning',
+          )}
         />
-
         <div>
-          <Button onClick={toggleOpen} disabled={!onCurrencySelect} className="bg-background h-[56px] rounded-full">
+          <Button
+            onClick={toggleOpen}
+            disabled={!onCurrencySelect}
+            className="h-12 pl-1 pr-4 py-1 bg-transparent hover:bg-transparent rounded-full border-4 border-[#685682]/30"
+          >
             {currency ? (
-              <div className="flex gap-2 items-center justify-center">
-                <CurrencyLogoWithNetwork currency={currency} size="40px" />
-                <div className="token-symbol-container text-title">{currency.symbol}</div>
-                <ChevronDown />
+              <div className="flex gap-2 items-center justify-between">
+                <CurrencyLogoWithNetwork
+                  currency={currency}
+                  className="p-[2.5px] h-8 w-8"
+                  chainLogoClassName="p-[1.5px]"
+                />
+                <div className="token-symbol-container text-[#E6E0F7] text-sm font-bold">{currency.symbol}</div>
+                <ChevronDownIcon />
               </div>
             ) : (
               <div>Choose a token</div>
@@ -111,6 +121,7 @@ export default function CurrencyInputPanel({
           </Button>
           {onCurrencySelect && (
             <TokenSelectModal
+              key={type}
               open={open}
               onDismiss={() => {
                 setOpen(false);
@@ -122,16 +133,18 @@ export default function CurrencyInputPanel({
           )}
         </div>
       </div>
-      <div className="flex justify-between items-center">
-        <span className="text-secondary-foreground text-body h-[15px] flex items-center">{valueInUSD}</span>
+      <div className="flex flex-col justify-between items-center gap-4">
+        <span className="text-[#d4c5f9] text-[12px] font-semibold uppercase cursor-default min-h-[18px]">
+          {valueInUSD}
+        </span>
         <div className="flex gap-2 items-center">
           {type === CurrencyInputPanelType.INPUT && (
             <>
-              <span className="text-secondary-foreground text-body cursor-default">
+              <span className="text-[#685682] text-[12px] font-medium leading-3 cursor-default">
                 {`${balance ? balance.toFixed(4, { groupSeparator: ',' }) : 0} ${currency?.symbol}`}
               </span>
               <span
-                className="text-base font-extrabold cursor-pointer text-light-purple"
+                className="px-2 py-0.5 bg-[#685682] rounded-full cursor-pointer text-[#0d0229] text-[12px] font-medium leading-3 uppercase"
                 onClick={() => onPercentSelect?.(100)}
               >
                 Max

@@ -6,9 +6,9 @@ import { Box, Flex } from 'rebass';
 
 import Spinner from '@/app/components/Spinner';
 import { Typography } from '@/app/theme';
-import { XMessage, XMessageStatus, XTransaction, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
-import { xMessageActions } from '@/xwagmi/xcall/zustand/useXMessageStore';
-import { getNetworkDisplayName } from '@/xwagmi/utils';
+import { getNetworkDisplayName } from '@balancednetwork/xwagmi';
+import { XMessage, XMessageStatus, XTransaction, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
+import { xMessageActions } from '@balancednetwork/xwagmi';
 
 const getDescription = (xMessage: XMessage | undefined, xTransactionType: XTransactionType) => {
   if (!xMessage) return '';
@@ -18,7 +18,7 @@ const getDescription = (xMessage: XMessage | undefined, xTransactionType: XTrans
       case XMessageStatus.FAILED:
         return 'Transfer failed.';
       case XMessageStatus.ROLLBACKED:
-        return 'Transfer rollbacked.';
+        return 'Transaction reverted.';
       case XMessageStatus.REQUESTED:
       case XMessageStatus.AWAITING_CALL_MESSAGE_SENT:
         return `Confirming transaction on ${getNetworkDisplayName(xMessage.sourceChainId)}...`;
@@ -35,7 +35,7 @@ const getDescription = (xMessage: XMessage | undefined, xTransactionType: XTrans
       case XMessageStatus.FAILED:
         return 'Transfer failed.';
       case XMessageStatus.ROLLBACKED:
-        return 'Transfer rollbacked.';
+        return 'Transaction reverted.';
       case XMessageStatus.REQUESTED:
       case XMessageStatus.AWAITING_CALL_MESSAGE_SENT:
       case XMessageStatus.CALL_MESSAGE_SENT:
@@ -62,7 +62,7 @@ const XTransactionState = ({ xTransaction }: { xTransaction: XTransaction }) => 
             description = 'Transfer failed.';
             break;
           case XMessageStatus.ROLLBACKED:
-            description = 'Transfer rollbacked.';
+            description = 'Transaction reverted.';
             break;
           case XMessageStatus.REQUESTED:
           case XMessageStatus.AWAITING_CALL_MESSAGE_SENT:
@@ -82,7 +82,7 @@ const XTransactionState = ({ xTransaction }: { xTransaction: XTransaction }) => 
             description = 'Transfer failed.';
             break;
           case XMessageStatus.ROLLBACKED:
-            description = 'Transfer rollbacked.';
+            description = 'Transaction reverted.';
             break;
           case XMessageStatus.REQUESTED:
           case XMessageStatus.AWAITING_CALL_MESSAGE_SENT:

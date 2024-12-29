@@ -6,9 +6,9 @@ import { Box, Flex } from 'rebass';
 
 import { Typography } from '@/app/theme';
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { useXCallStats } from '@/xwagmi/xcall/hooks/useXCallStats';
-import { useXMessageStore } from '@/xwagmi/xcall/zustand/useXMessageStore';
-import { useXTransactionStore } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { useXCallStats } from '@balancednetwork/xwagmi';
+import { useXMessageStore } from '@balancednetwork/xwagmi';
+import { useXTransactionStore } from '@balancednetwork/xwagmi';
 import Spinner from '../../../../components/Spinner';
 import ActivityBarChart from './ActivityBarChart';
 import XTransactionHistoryItem from './XTransactionHistoryItem';

@@ -7,11 +7,14 @@ import WalletConnectModal from '@/app/components/WalletConnectModal';
 import ApplicationUpdater from '@/store/application/updater';
 import TransactionUpdater from '@/store/transactions/updater';
 
-import { AllTransactionsUpdater } from '@/hooks/useTransactionStore';
-import { initXWagmiStore, useInitXWagmiStore } from '@/xwagmi/useXWagmiStore';
-import { AllXMessagesUpdater } from '@/xwagmi/xcall/zustand/useXMessageStore';
-import { AllXChainHeightsUpdater } from '@/xwagmi/xcall/zustand/useXServiceStore';
-import { xChains } from '../xwagmi/constants/xChains';
+import {
+  AllTransactionsUpdater,
+  AllXChainHeightsUpdater,
+  AllXMessagesUpdater,
+  initXWagmiStore,
+  useInitXWagmiStore,
+  xChains,
+} from '@balancednetwork/xwagmi';
 import RootRoutes from './Routes';
 
 function Updaters() {
@@ -39,7 +42,7 @@ export function App() {
 
       <WalletConnectModal />
 
-      <Helmet titleTemplate="%s | Balanced" defaultTitle="Balanced" htmlAttributes={{ lang: i18n.language }} />
+      <Helmet titleTemplate="%s | Hana Swap" defaultTitle="Hana Swap" htmlAttributes={{ lang: i18n.language }} />
       <RootRoutes />
     </>
   );

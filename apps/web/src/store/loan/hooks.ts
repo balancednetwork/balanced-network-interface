@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { BalancedJs, CallData, addresses } from '@balancednetwork/balanced-js';
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,12 +26,12 @@ import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatUnits, toBigNumber } from '@/utils';
 import { getXTokenAddress } from '@/utils/xTokens';
-import { getXChainType } from '@/xwagmi/actions';
-import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
-import { useXAccount } from '@/xwagmi/hooks';
-import { XChainId } from '@/xwagmi/types';
-import { useXTransactionStore } from '@/xwagmi/xcall/zustand/useXTransactionStore';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
+import { useXAccount } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
+import { useXTransactionStore } from '@balancednetwork/xwagmi';
+import { bnJs } from '@balancednetwork/xwagmi';
 import { AppState } from '..';
 import {
   Field,
@@ -421,6 +421,28 @@ export function useLoanParameters() {
   }
 }
 
+export const useIsPositionLocked = (collateral?: CurrencyAmount<Currency>, loan?: BigNumber) => {
+  const collateralType = collateral?.currency.symbol;
+  const price = useOraclePrice(collateralType) || new BigNumber(0);
+  const ratios = useLockingRatios();
+  const ratio = ratios && ratios[collateralType || ''];
+  const { originationFee = 0 } = useLoanParameters() || {};
+
+  const lockThresholdPrice = loan?.div(new BigNumber(collateral?.toFixed() || 0)).times(ratio ?? 0);
+  const totalBorrowableAmount = new BigNumber(collateral?.toFixed() || 0).multipliedBy(price).div(ratio);
+
+  const borrowableAmountWithReserve = BigNumber.max(
+    totalBorrowableAmount.dividedBy(1 + originationFee),
+    loan || new BigNumber(0),
+  );
+
+  const availableLoan = borrowableAmountWithReserve.minus(loan || new BigNumber(0));
+
+  if (price.isZero()) return false;
+
+  return !availableLoan.isGreaterThan(0.01) || lockThresholdPrice?.isGreaterThan(price);
+};
+
 export const useThresholdPrices = (): [BigNumber, BigNumber] => {
   const collateralInputAmount = useCollateralInputAmountAbsolute();
   const loanInputAmount = useLoanInputAmount();
@@ -526,10 +548,11 @@ export function useDerivedLoanInfo(): {
   account: string | undefined;
   receiver: string | undefined;
   differenceAmount: BigNumber;
+  isSliderStateChanged: boolean;
   borrowedAmount: BigNumber;
   borrowableAmountWithReserve: BigNumber;
   totalBorrowableAmount: BigNumber;
-  bnUSDAmount: CurrencyAmount<Token> | undefined;
+  bnUSDAmount: CurrencyAmount<XToken> | undefined;
   direction: {
     from: XChainId;
     to: XChainId;
@@ -568,10 +591,13 @@ export function useDerivedLoanInfo(): {
   };
 
   const differenceAmount = parsedAmount[Field.LEFT].minus(borrowedAmount);
+  const isSliderStateChanged = !parsedAmount[Field.LEFT].isEqualTo(
+    borrowedAmount.dp(2) < new BigNumber(0.01) ? borrowedAmount : borrowedAmount.dp(2),
+  );
 
   const bnUSDAmount = differenceAmount
     ? CurrencyAmount.fromRawAmount(
-        bnUSD[NETWORK_ID],
+        XToken.getXToken(ICON_XCALL_NETWORK_ID, bnUSD[NETWORK_ID]),
         differenceAmount.times(10 ** bnUSD[NETWORK_ID].decimals).toFixed(0),
       )
     : undefined;
@@ -595,6 +621,7 @@ export function useDerivedLoanInfo(): {
     borrowableAmountWithReserve,
     totalBorrowableAmount,
     differenceAmount,
+    isSliderStateChanged,
     bnUSDAmount,
     direction,
   };

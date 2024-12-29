@@ -8,7 +8,7 @@ import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-quer
 import { NETWORK_ID } from '@/constants/config';
 import { useCombinedVoteData } from '@/store/liveVoting/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { WEEK_IN_MS, getClosestUnixWeekStart } from '@/app/components/home/BBaln/utils';
 import { Bribe, BribeToken, SourceName } from './types';

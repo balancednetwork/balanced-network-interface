@@ -2,14 +2,13 @@ import React, { useCallback } from 'react';
 
 import { Percent } from '@balancednetwork/sdk-core';
 import { Trans } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass/styled-components';
 
 import AddressInputPanel from '@/app/components/AddressInputPanel';
+import BridgeLimitWarning from '@/app/components/BridgeLimitWarning';
 import { Button } from '@/app/components/Button';
 import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
-import { UnderlineText } from '@/app/components/DropdownText';
 import { BrightPanel } from '@/app/components/Panel';
 import { CurrencySelectionType, SelectorType } from '@/app/components/SearchModal/CurrencySearch';
 import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
@@ -27,11 +26,12 @@ import {
 import { Field } from '@/store/bridge/reducer';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { maxAmountSpend } from '@/utils';
-import { getXChainType } from '@/xwagmi/actions';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { useXAccount, useXConnect, useXConnectors } from '@/xwagmi/hooks';
-import { validateAddress } from '@/xwagmi/utils';
-import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
+import { formatSymbol } from '@/utils/formatter';
+import { getXChainType } from '@balancednetwork/xwagmi';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { useXAccount, useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
+import { validateAddress } from '@balancednetwork/xwagmi';
+import { useXCallFee } from '@balancednetwork/xwagmi';
 import XChainSelector from './XChainSelector';
 
 export default function BridgeTransferForm({ openModal }) {
@@ -83,8 +83,8 @@ export default function BridgeTransferForm({ openModal }) {
     }
   }, [onChangeRecipient, xAccount, manualAddresses[bridgeDirection.to], bridgeDirection.to]);
 
-  const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount } = useDerivedBridgeInfo();
-
+  const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount, stellarValidation } =
+    useDerivedBridgeInfo();
   const xChainType = getXChainType(bridgeDirection.from);
   const xConnectors = useXConnectors(xChainType);
   const xConnect = useXConnect();
@@ -102,7 +102,7 @@ export default function BridgeTransferForm({ openModal }) {
   const { formattedXCallFee } = useXCallFee(bridgeDirection.from, bridgeDirection.to);
 
   React.useEffect(() => {
-    setValid(validateAddress(recipient || '', bridgeDirection.to));
+    validateAddress(recipient || '', bridgeDirection.to).then(setValid);
   }, [recipient, bridgeDirection.to]);
 
   const handleMaximumBridgeAmountClick = () => {
@@ -143,7 +143,7 @@ export default function BridgeTransferForm({ openModal }) {
 
           <Typography as="div" mb={-1} textAlign="right" hidden={!account}>
             <Trans>Wallet:</Trans>{' '}
-            {`${selectedTokenWalletBalance?.toFixed(4, { groupSeparator: ',' }) ?? 0} ${currencyToBridge?.symbol}`}
+            {`${selectedTokenWalletBalance?.toFixed(4, { groupSeparator: ',' }) ?? 0} ${formatSymbol(currencyToBridge?.symbol)}`}
           </Typography>
 
           <Flex>
@@ -191,7 +191,10 @@ export default function BridgeTransferForm({ openModal }) {
 
           <Flex alignItems="center" justifyContent="center" mt={4}>
             {account ? (
-              <Button onClick={handleSubmit} disabled={!!errorMessage || !isValid || !canBridge}>
+              <Button
+                onClick={handleSubmit}
+                disabled={!!errorMessage || !isValid || !canBridge || !stellarValidation?.ok}
+              >
                 {errorMessage ? errorMessage : <Trans>Transfer</Trans>}
               </Button>
             ) : (
@@ -199,27 +202,14 @@ export default function BridgeTransferForm({ openModal }) {
             )}
           </Flex>
 
-          {!canBridge && maximumBridgeAmount && (
+          {stellarValidation?.ok === false && stellarValidation.error && (
             <Flex alignItems="center" justifyContent="center" mt={2}>
-              <Typography textAlign="center">
-                {new BigNumber(maximumBridgeAmount.toFixed()).isGreaterThanOrEqualTo(0.0001) ? (
-                  <>
-                    <Trans>Only</Trans>{' '}
-                    <UnderlineText onClick={handleMaximumBridgeAmountClick}>
-                      <Typography color="primaryBright" as="a">
-                        {maximumBridgeAmount?.toFixed(4)} {maximumBridgeAmount?.currency?.symbol}
-                      </Typography>
-                    </UnderlineText>{' '}
-                  </>
-                ) : (
-                  <>
-                    <Trans>0 {maximumBridgeAmount?.currency?.symbol}</Trans>{' '}
-                  </>
-                )}
-
-                <Trans>available on {xChainMap[bridgeDirection?.to].name}.</Trans>
-              </Typography>
+              <Typography textAlign="center">{stellarValidation.error}</Typography>
             </Flex>
+          )}
+
+          {!canBridge && maximumBridgeAmount && (
+            <BridgeLimitWarning limitAmount={maximumBridgeAmount} onLimitAmountClick={handleMaximumBridgeAmountClick} />
           )}
         </AutoColumn>
       </BrightPanel>

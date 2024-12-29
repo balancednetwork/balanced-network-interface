@@ -11,9 +11,8 @@ import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
 import { PairData, PairState } from '@/hooks/useV2Pairs';
 import { Field } from '@/store/swap/reducer';
 import { PairInfo } from '@/types';
-import { NATIVE_ADDRESS } from '@/xwagmi/constants';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@/xwagmi/types';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
 import { Validator } from 'icon-sdk-js';
 
 const { isScoreAddress } = Validator;
@@ -100,7 +99,7 @@ export function maxAmountSpend(
   if (
     (xChainId === '0x1.icon' && currencyAmount.currency.symbol === 'ICX') ||
     (xChainId === 'archway-1' && currencyAmount.currency.symbol === 'ARCH') ||
-    currencyAmount.currency.wrapped.address === NATIVE_ADDRESS
+    currencyAmount.currency.isNativeToken
   ) {
     minCurrencyGas = CurrencyAmount.fromRawAmount(
       currencyAmount.currency,

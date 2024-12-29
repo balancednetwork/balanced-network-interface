@@ -17,12 +17,12 @@ import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useCollateralType } from '@/store/collateral/hooks';
 import { useDerivedLoanInfo, useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
-import { ICON_XCALL_NETWORK_ID } from '@/xwagmi/constants';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@/xwagmi/types';
-import useXCallFee from '@/xwagmi/xcall/hooks/useXCallFee';
-import { XTransactionInput, XTransactionStatus, XTransactionType } from '@/xwagmi/xcall/types';
-import { xTransactionActions } from '@/xwagmi/xcall/zustand/useXTransactionStore';
+import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
+import { useXCallFee } from '@balancednetwork/xwagmi';
+import { XTransactionInput, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
+import { xTransactionActions } from '@balancednetwork/xwagmi';
 import { AnimatePresence, motion } from 'framer-motion';
 import useLoanWalletServiceHandler from '../../useLoanWalletServiceHandler';
 
@@ -35,21 +35,15 @@ type XLoanModalProps = {
   modalId?: MODAL_ID;
   collateralAccount: string | undefined;
   sourceChain: XChainId;
-  originationFee: BigNumber;
   storedModalValues: {
     amount: string;
     before: string;
     after: string;
     action: XLoanAction;
+    originationFee: BigNumber;
   };
-  bnUSDAmount?: CurrencyAmount<Token>;
+  bnUSDAmount?: CurrencyAmount<XToken>;
   interestRate?: BigNumber;
-};
-
-export const presenceVariants = {
-  initial: { opacity: 0, height: 0 },
-  animate: { opacity: 1, height: 'auto' },
-  exit: { opacity: 0, height: 0 },
 };
 
 const XLoanModal = ({
@@ -57,7 +51,6 @@ const XLoanModal = ({
   collateralAccount,
   bnUSDAmount,
   sourceChain,
-  originationFee,
   interestRate,
   storedModalValues,
 }: XLoanModalProps) => {
@@ -179,13 +172,13 @@ const XLoanModal = ({
           {storedModalValues.action === XLoanAction.BORROW && (
             <Typography textAlign="center">
               <Trans>Borrow fee:</Trans>
-              <strong> {originationFee.dp(2).toFormat()} bnUSD</strong>
+              <strong> {storedModalValues.originationFee.dp(2).toFormat()} bnUSD</strong>
             </Typography>
           )}
 
           <Typography textAlign="center">
             <Trans>
-              Cross-chain fee: <strong>{formattedXCallFee}</strong>
+              Transfer fee: <strong>{formattedXCallFee}</strong>
             </Trans>
           </Typography>
 
@@ -198,7 +191,7 @@ const XLoanModal = ({
             </Typography>
           )}
 
-          {receiver && storedModalValues.action === XLoanAction.BORROW && (
+          {receiver && loanNetwork !== sourceChain && storedModalValues.action === XLoanAction.BORROW && (
             <Box className="border-top" mt={3} pt={3}>
               <Typography color="text1" textAlign="center">
                 {xChainMap[loanNetwork].name} address

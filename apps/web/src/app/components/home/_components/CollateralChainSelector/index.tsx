@@ -4,9 +4,9 @@ import { Typography } from '@/app/theme';
 import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
 import { useCollateralActionHandlers, useCollateralType, useCollateralXChain } from '@/store/collateral/hooks';
 import { useLoanActionHandlers } from '@/store/loan/hooks';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@/xwagmi/types';
-import { getSupportedXChainForToken } from '@/xwagmi/xcall/utils';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
+import { getSupportedXChainForToken } from '@balancednetwork/xwagmi';
 import React, { useEffect, useMemo } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
@@ -19,6 +19,16 @@ export const SelectorWrap = styled.div`
   cursor: pointer;
   font-size: 16px;
   color: ${({ theme }) => theme.colors.primaryBright};
+
+  @-moz-document url-prefix() {
+    img {
+      transform: translate3d(0, -3px, 0)
+    }
+    svg {
+      position: relative;
+      top: -3px;
+    }
+  }
 `;
 
 const CollateralChainSelector = ({
@@ -83,7 +93,7 @@ const CollateralChainSelector = ({
           <div>
             <SelectorWrap onClick={handleToggle} style={{ position: 'relative' }}>
               <Typography fontSize={14} pr="1px" variant="span">
-                <ChainSelectorLogo chain={xChainMap[collateralXChain]} />
+                <ChainSelectorLogo chain={xChainMap[collateralXChain]} size={18} />
                 {xChainMap[collateralXChain].name}
               </Typography>
               <div ref={arrowRef} style={{ display: 'inline-block' }}>

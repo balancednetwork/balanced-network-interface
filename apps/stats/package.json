@@ -12,7 +12,7 @@
     "axios": "0.21.3",
     "bignumber.js": "9.0.1",
     "dayjs": "1.10.7",
-    "icon-sdk-js": "1.5.1",
+    "icon-sdk-js": "1.5.3",
     "lightweight-charts": "3.2.0",
     "numbro": "^2.5.0",
     "polished": "4.0.5",
@@ -75,7 +75,7 @@
   "devDependencies": {
     "@babel/runtime": "^7.25.0",
     "@types/lodash": "4.14.168",
-    "@types/node": "^22.1.0",
+    "@types/node": "^22.9.3",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.0.6",
     "@types/react-helmet": "6.1.6",

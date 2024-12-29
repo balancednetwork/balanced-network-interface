@@ -1,23 +1,67 @@
-import { Modal } from '@/app/components2/Modal';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
+import React, { useCallback, useState } from 'react';
+import { isMobile } from 'react-device-detect';
+
+import { AnimateButton } from '@/app/components2/Button/AnimateButton';
+import {
+  HeartGradientIcon,
+  HeartIcon,
+  HideIcon,
+  LogsGradientIcon,
+  LogsIcon,
+  ShutdownGradientIcon,
+  ShutdownIcon,
+  WalletGradientIcon,
+  WalletIcon,
+} from '@/app/components2/Icons';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
-import { useXDisconnectAll } from '@/xwagmi/hooks';
-import { Trans } from '@lingui/macro';
-import { PowerIcon } from 'lucide-react';
-import React, { useCallback } from 'react';
+import { cn } from '@/lib/utils';
+import { useXDisconnectAll } from '@balancednetwork/xwagmi';
+import WalletItem, { WalletItemProps } from '../WalletConnectModal/WalletItem';
 import HistoryItemList from './HistoryItemList';
+import { IconWithConfirmTextButton } from './IconWithConfirmTextButton';
 import XTokenList from './XTokenList';
 
-const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
-  const open = useModalOpen(modalId);
-  const onDismiss = useCallback(() => {
-    modalActions.closeModal(modalId);
-  }, [modalId]);
+export const xChainTypes: WalletItemProps[] = [
+  {
+    name: 'EVM',
+    xChainType: 'EVM',
+  },
+  {
+    name: 'Solana',
+    xChainType: 'SOLANA',
+  },
+  {
+    name: 'Sui',
+    xChainType: 'SUI',
+  },
+  {
+    name: 'Injective',
+    xChainType: 'INJECTIVE',
+  },
+  {
+    name: 'Stellar',
+    xChainType: 'STELLAR',
+  },
+  {
+    name: 'ICON',
+    xChainType: 'ICON',
+  },
+  {
+    name: 'Archway',
+    xChainType: 'ARCHWAY',
+  },
+  {
+    name: 'Havah',
+    xChainType: 'HAVAH',
+  },
+];
 
-  const handleChangeWallet = () => {
-    modalActions.openModal(MODAL_ID.WALLET_CONNECT_MODAL);
-  };
-
+const WalletModalContent = ({ onDismiss }) => {
   const xDisconnectAll = useXDisconnectAll();
 
   const handleDisconnectWallet = async () => {
@@ -25,47 +69,104 @@ const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
     await xDisconnectAll();
   };
 
+  const [step, setStep] = useState(1);
+
+  const [showText, setShowText] = useState(false);
+
   return (
-    <Modal open={open} onDismiss={onDismiss} title="" dialogClassName="max-w-[450px]" hideCloseIcon={true}>
-      <div className="flex items-center justify-end gap-2">
-        <div className="cursor-pointer text-light-purple text-body" onClick={handleChangeWallet}>
-          <Trans>Manage wallets</Trans>
-        </div>
-        <div className="cursor-pointer" onClick={handleDisconnectWallet}>
-          <PowerIcon className="w-6 h-6" />
-        </div>
+    <>
+      <div className="flex items-center justify-between mt-[60px] mb-[44px] px-12">
+        <Button variant="ghost" size="icon" onClick={onDismiss}>
+          <HideIcon />
+        </Button>
+        <IconWithConfirmTextButton
+          Icon={showText ? <ShutdownGradientIcon /> : <ShutdownIcon />}
+          text="Disconnect"
+          dismissOnHoverOut={true}
+          onConfirm={handleDisconnectWallet}
+          onShowConfirm={setShowText}
+        />
       </div>
-      <Tabs defaultValue="tokens">
-        <TabsList className="gap-2">
-          <TabsTrigger
-            value="tokens"
-            className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex"
-          >
-            <div className="text-base font-bold font-['Montserrat']">
-              <Trans>Tokens</Trans>
-            </div>
-          </TabsTrigger>
-          <TabsTrigger
-            value="history"
-            className="h-9 px-3 py-2 rounded-full justify-center items-center gap-2 inline-flex"
-          >
-            <div className="text-base font-bold font-['Montserrat']">
-              <Trans>History</Trans>
-            </div>
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="tokens" className="mt-4">
-          <div className="h-[500px] flex flex-col justify-between">
+
+      <div className="flex gap-2 justify-center mb-[66px]">
+        <AnimateButton
+          Icon={step === 1 ? <HeartGradientIcon /> : <HeartIcon />}
+          text="Tokens"
+          showText={step === 1}
+          onClick={() => setStep(1)}
+        />
+        <AnimateButton
+          Icon={step === 2 ? <LogsGradientIcon /> : <LogsIcon />}
+          text="History"
+          showText={step === 2}
+          onClick={() => setStep(2)}
+        />
+        <AnimateButton
+          Icon={step === 3 ? <WalletGradientIcon /> : <WalletIcon />}
+          text="Wallets"
+          showText={step === 3}
+          onClick={() => setStep(3)}
+        />
+      </div>
+
+      {step === 1 && (
+        <div className={cn('flex flex-col justify-between', isMobile ? 'h-[500px]' : 'h-[calc(100vh-290px)]')}>
+          <ScrollArea>
             <XTokenList />
-          </div>
-        </TabsContent>
-        <TabsContent value="history" className="mt-4">
-          <div className="h-[500px] flex flex-col">
+          </ScrollArea>
+        </div>
+      )}
+
+      {step === 2 && (
+        <div className={cn('flex flex-col justify-between', isMobile ? 'h-[500px]' : 'h-[calc(100vh-290px)]')}>
+          <ScrollArea>
             <HistoryItemList />
-          </div>
-        </TabsContent>
-      </Tabs>
-    </Modal>
+          </ScrollArea>
+        </div>
+      )}
+
+      {step === 3 && (
+        <div className={cn('flex flex-col justify-between', isMobile ? 'h-[500px]' : 'h-[calc(100vh-290px)]')}>
+          <ScrollArea className="h-full">
+            <div className="w-full flex flex-col gap-4 mt-2">
+              <Separator className="h-1 bg-[#ffffff59]" />
+
+              {xChainTypes.map(wallet => (
+                <>
+                  <WalletItem key={'wallet_' + wallet.xChainType} {...wallet} />
+                  <Separator key={'wallet_' + wallet.xChainType + '_separator'} className="h-1 bg-[#ffffff59]" />
+                </>
+              ))}
+            </div>
+          </ScrollArea>
+        </div>
+      )}
+    </>
+  );
+};
+
+const WalletModal = ({ modalId = MODAL_ID.WALLET_MODAL }) => {
+  const open = useModalOpen(modalId);
+  const onDismiss = useCallback(() => {
+    modalActions.closeModal(modalId);
+  }, [modalId]);
+
+  return (
+    <Sheet open={open} onOpenChange={_ => isMobile && onDismiss()} modal={isMobile}>
+      <SheetContent
+        side={isMobile ? 'bottom' : 'right'}
+        className={cn(
+          'flex flex-col gap-2 px-0 py-4 w-96 bg-gradient-to-b from-[#f5e7f5] via-[#d29fff] to-[#a079fd] ',
+          isMobile ? 'w-full' : 'rounded-tl-3xl rounded-bl-3xl',
+        )}
+      >
+        <VisuallyHidden.Root>
+          <SheetTitle>Wallet Modal</SheetTitle>
+          <SheetDescription>Wallet Modal</SheetDescription>
+        </VisuallyHidden.Root>
+        <WalletModalContent onDismiss={onDismiss} />
+      </SheetContent>
+    </Sheet>
   );
 };
 

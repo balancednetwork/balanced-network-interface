@@ -18,7 +18,7 @@ import { useLoanInputAmount } from '@/store/loan/hooks';
 import { useOraclePrice } from '@/store/oracle/hooks';
 import { useLockedAmount, useUnclaimedRewards } from '@/store/savings/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { AppState } from '..';
 import { setReward } from './reducer';
@@ -184,21 +184,6 @@ export function useFlattenedRewardsDistribution(): UseQueryResult<Map<string, Fr
       }, {});
     },
     enabled: !!distribution,
-    placeholderData: keepPreviousData,
-  });
-}
-
-export function useEarnedPastMonth(): UseQueryResult<BigNumber | undefined> {
-  const { account } = useIconReact();
-  const { data: prices } = useTokenPrices();
-
-  return useQuery({
-    queryKey: [`earnedPastMonth`, account, prices ? Object.keys(prices).length : '0'],
-    queryFn: async () => {
-      //todo: after endpoint is ready, fetch the data from there
-      return new BigNumber(23.9);
-    },
-    enabled: !!account,
     placeholderData: keepPreviousData,
   });
 }

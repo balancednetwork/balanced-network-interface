@@ -12,10 +12,10 @@ import useWidth from '@/hooks/useWidth';
 import { useRatesWithOracle } from '@/queries/reward';
 import { COMMON_PERCENTS } from '@/store/swap/reducer';
 import { escapeRegExp } from '@/utils';
-import { formatBalance } from '@/utils/formatter';
-import { DEFAULT_TOKEN_CHAIN } from '@/xwagmi/constants/xTokens';
-import { XChainId } from '@/xwagmi/types';
-import { getSupportedXChainForToken } from '@/xwagmi/xcall/utils';
+import { formatBalance, formatSymbol } from '@/utils/formatter';
+import { DEFAULT_TOKEN_CHAIN } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
+import { getSupportedXChainForToken } from '@balancednetwork/xwagmi';
 import { isMobile } from 'react-device-detect';
 import { HorizontalList, Option } from '../List';
 import { CurrencySelectionType, SelectorType } from '../SearchModal/CurrencySearch';
@@ -109,6 +109,7 @@ interface CurrencyInputPanelProps {
   showCommunityListControl?: boolean;
   selectorType?: SelectorType;
   showDollarValue?: boolean;
+  showWarning?: boolean;
 
   // cross chain stuff
   xChainId?: XChainId;
@@ -136,6 +137,7 @@ export default function CurrencyInputPanel({
   showCommunityListControl = true,
   selectorType,
   showDollarValue = true,
+  showWarning = false,
 
   // cross chain stuff
   xChainId = '0x1.icon',
@@ -219,7 +221,7 @@ export default function CurrencyInputPanel({
               {currency ? (
                 <>
                   <CurrencyLogo currency={currency} style={{ marginRight: 8 }} />
-                  <StyledTokenName className="token-symbol-container">{currency.symbol}</StyledTokenName>
+                  <StyledTokenName className="token-symbol-container">{formatSymbol(currency.symbol)}</StyledTokenName>
                   {currency.symbol === 'BTCB' && <div style={{ marginLeft: 5, marginRight: 5 }}>(old)</div>}
                 </>
               ) : (
@@ -273,9 +275,7 @@ export default function CurrencyInputPanel({
           $active={(onPercentSelect && isActive) || !!showCrossChainOptions}
           $showDollarValue={showDollarValue}
         />
-        {showDollarValue && (
-          <DollarValue amount={value} price={price} showWarning={selectorType === SelectorType.SWAP_OUT} />
-        )}
+        {showDollarValue && <DollarValue amount={value} price={price} showWarning={showWarning} />}
 
         {onPercentSelect && (
           <SelectorPopover show={isActive} anchorEl={ref.current} placement="bottom-end">

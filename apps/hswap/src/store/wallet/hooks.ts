@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
 import { CallData } from '@balancednetwork/balanced-js';
-import { Currency, CurrencyAmount, Token, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
@@ -10,29 +10,19 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { MINIMUM_ICX_FOR_TX } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
-import {
-  COMBINED_TOKENS_LIST,
-  NULL_CONTRACT_ADDRESS,
-  SUPPORTED_TOKENS_LIST,
-  SUPPORTED_TOKENS_MAP_BY_ADDRESS,
-  isBALN,
-  isFIN,
-  isNativeCurrency,
-} from '@/constants/tokens';
-import { useTokenListConfig } from '@/store/lists/hooks';
-import { useUserAddedTokens } from '@/store/user/hooks';
+import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_MAP_BY_ADDRESS, isBALN, isFIN } from '@/constants/tokens';
 import { isXToken } from '@/utils/xTokens';
-import bnJs from '@/xwagmi/xchains/icon/bnJs';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { AppState } from '..';
 import { useAllTokens } from '../../hooks/Tokens';
 import { TokenAmountMap, changeBalances } from './reducer';
 
-import { useXBalances } from '@/xwagmi/hooks/useXBalances';
-import { XChainId } from '@balancednetwork/sdk-core';
+import { useXBalances } from '@balancednetwork/xwagmi';
 
 import useXTokens from '@/hooks/useXTokens';
-import { useXAccount } from '@/xwagmi/hooks';
+import { useXAccount } from '@balancednetwork/xwagmi';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
 
 export function useWalletBalances() {
   const wallet = useSelector((state: AppState) => state.wallet);
@@ -66,17 +56,10 @@ export function useAvailableBalances(
 
 export function useWalletFetchBalances() {
   const dispatch = useDispatch();
-  const tokenListConfig = useTokenListConfig();
-  const userAddedTokens = useUserAddedTokens();
-
-  const tokens = useMemo(() => {
-    return tokenListConfig.community
-      ? [...COMBINED_TOKENS_LIST, ...userAddedTokens]
-      : [...SUPPORTED_TOKENS_LIST, ...userAddedTokens];
-  }, [userAddedTokens, tokenListConfig]);
 
   // fetch balances on icon
   const { account } = useIconReact();
+  const tokens = useXTokens('0x1.icon') || [];
   const balances = useAvailableBalances(account || undefined, tokens);
   //convert balances to {[key: string]: CurrencyAmount<XToken>}
   const xBalances = React.useMemo(() => {
@@ -196,13 +179,33 @@ export function useWalletFetchBalances() {
   React.useEffect(() => {
     suiBalances && dispatch(changeBalances({ xChainType: 'SUI', account: accountSui, balances: suiBalances }));
   }, [suiBalances, dispatch, accountSui]);
-}
 
-export const useHasEnoughICX = () => {
-  const balances = useWalletBalances();
-  const icxAddress = bnJs.ICX.address;
-  return balances[icxAddress] && balances[icxAddress].greaterThan(MINIMUM_ICX_FOR_TX);
-};
+  // fetch balances on stellar
+  const { address: accountStellar } = useXAccount('STELLAR');
+  const stellarTokens = useXTokens('stellar');
+  const { data: stellarBalances } = useXBalances({
+    xChainId: 'stellar',
+    xTokens: stellarTokens,
+    address: accountStellar,
+  });
+  React.useEffect(() => {
+    stellarBalances &&
+      dispatch(changeBalances({ xChainType: 'STELLAR', account: accountStellar, balances: stellarBalances }));
+  }, [stellarBalances, dispatch, accountStellar]);
+
+  // fetch balances on solanax
+  const { address: accountSolana } = useXAccount('SOLANA');
+  const solanaTokens = useXTokens('solana');
+  const { data: solanaBalances } = useXBalances({
+    xChainId: 'solana',
+    xTokens: solanaTokens,
+    address: accountSolana,
+  });
+  React.useEffect(() => {
+    solanaBalances &&
+      dispatch(changeBalances({ xChainType: 'SOLANA', account: accountSolana, balances: solanaBalances }));
+  }, [solanaBalances, dispatch, accountSolana]);
+}
 
 export function useTokenBalances(
   account: string | undefined,
@@ -298,7 +301,7 @@ export function useCurrencyBalances(
   const tokens = useMemo(
     () =>
       (currencies?.filter((currency): currency is Token => currency?.isToken ?? false) ?? []).filter(
-        (token: Token) => !isNativeCurrency(token),
+        (token: Token) => !token.isNativeToken,
       ),
     [currencies],
   );
@@ -306,7 +309,7 @@ export function useCurrencyBalances(
   const tokenBalances = useTokenBalances(account, tokens);
 
   const containsICX: boolean = useMemo(
-    () => currencies?.some(currency => isNativeCurrency(currency)) ?? false,
+    () => currencies?.some(currency => currency?.isNativeToken) ?? false,
     [currencies],
   );
 
@@ -317,7 +320,7 @@ export function useCurrencyBalances(
     () =>
       currencies.map(currency => {
         if (!account || !currency) return undefined;
-        if (isNativeCurrency(currency)) return icxBalance[account];
+        if (currency.isNativeToken) return icxBalance[account];
         if (currency.isToken) return tokenBalances[currency.address];
         return undefined;
       }),

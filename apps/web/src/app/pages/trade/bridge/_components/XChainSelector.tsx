@@ -6,9 +6,9 @@ import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
 import useWidth from '@/hooks/useWidth';
-import { xChainMap } from '@/xwagmi/constants/xChains';
-import { XChainId } from '@/xwagmi/types';
 import { Currency } from '@balancednetwork/sdk-core';
+import { xChainMap } from '@balancednetwork/xwagmi';
+import { XChainId } from '@balancednetwork/xwagmi';
 import { isMobile } from 'react-device-detect';
 import { StyledArrowDownIcon, UnderlineText } from '../../../../components/DropdownText';
 import { DropdownPopper } from '../../../../components/Popover';
@@ -29,6 +29,14 @@ const Wrap = styled.div`
   cursor: pointer;
   font-size: 16px;
   color: ${({ theme }) => theme.colors.primaryBright};
+
+
+  @-moz-document url-prefix() {
+    svg {
+      position: relative;
+      top: -2px;
+    }
+  }
 `;
 
 const XChainSelector = ({ chainId, setChainId, label, currency, width, containerRef }: ChainSelectorProps) => {

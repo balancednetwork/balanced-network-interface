@@ -29,13 +29,27 @@ export const chainConfig: Record<ChainName, ChainConfig> = {
     supportedTokens: [
       {
         symbol: 'ETH',
+        name: 'Ethereum',
         decimals: 18,
         address: '0x0000000000000000000000000000000000000000',
       },
       {
         symbol: 'WETH',
+        name: 'Wrapped Ether',
         decimals: 18,
         address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+      },
+      {
+        symbol: 'wstETH',
+        name: 'Wrapped stETH',
+        decimals: 18,
+        address: '0x5979D7b546E38E414F7E9822514be443A4800529',
+      },
+      {
+        symbol: 'weETH',
+        name: 'Wrapped eETH',
+        decimals: 18,
+        address: '0x35751007a407ca6FEFfE80b3cB397736D2cf4dbe',
       },
     ],
   } satisfies EvmChainConfig,
@@ -51,8 +65,33 @@ export const chainConfig: Record<ChainName, ChainConfig> = {
     supportedTokens: [
       {
         symbol: 'SUI',
+        name: 'SUI',
         decimals: 9,
         address: '0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI',
+      },
+      {
+        symbol: 'AFSUI',
+        name: 'Aftermath Staked SUI',
+        decimals: 9,
+        address: '0xf325ce1300e8dac124071d3152c5c5ee6174914f8bc2161e88329cf579246efc::afsui::AFSUI',
+      },
+      {
+        symbol: 'HASUI',
+        name: 'Haedal Staked SUI',
+        decimals: 9,
+        address: '0xbde4ba4c2e274a60ce15c1cfff9e5c42e41654ac8b6d906a57efa4bd3c29f47d::hasui::HASUI',
+      },
+      {
+        symbol: 'VSUI',
+        name: 'Volo Staked SUI',
+        decimals: 9,
+        address: '0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT',
+      },
+      {
+        symbol: 'MSUI',
+        name: 'Mirai Staked SUI',
+        decimals: 9,
+        address: '0x922d15d7f55c13fd790f6e54397470ec592caa2b508df292a2e8553f3d3b274f::msui::MSUI',
       },
     ],
   } satisfies SuiChainConfig,

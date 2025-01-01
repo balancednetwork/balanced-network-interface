@@ -51,6 +51,12 @@ export const chainConfig: Record<ChainName, ChainConfig> = {
         decimals: 18,
         address: '0x35751007a407ca6FEFfE80b3cB397736D2cf4dbe',
       },
+      {
+        symbol: 'tBTC',
+        name: 'Arbitrum tBTC v2',
+        decimals: 18,
+        address: '0x6c84a8f1c29108F47a79964b5Fe888D4f4D0dE40',
+      },
     ],
   } satisfies EvmChainConfig,
   ['sui']: {

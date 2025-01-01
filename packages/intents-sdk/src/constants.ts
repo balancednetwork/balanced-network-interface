@@ -93,12 +93,6 @@ export const chainConfig: Record<ChainName, ChainConfig> = {
         decimals: 9,
         address: '0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT',
       },
-      {
-        symbol: 'MSUI',
-        name: 'Mirai Staked SUI',
-        decimals: 9,
-        address: '0x922d15d7f55c13fd790f6e54397470ec592caa2b508df292a2e8553f3d3b274f::msui::MSUI',
-      },
     ],
   } satisfies SuiChainConfig,
 } as const;

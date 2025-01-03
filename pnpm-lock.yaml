@@ -29,6 +29,9 @@ importers:
       '@balancednetwork/balanced-js':
         specifier: workspace:*
         version: link:../../packages/balanced-js
+      '@balancednetwork/intents-sdk':
+        specifier: workspace:*
+        version: link:../../packages/intents-sdk
       '@balancednetwork/sdk-core':
         specifier: workspace:*
         version: link:../../packages/sdk-core

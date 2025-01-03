@@ -6,6 +6,7 @@
     "@balancednetwork/balanced-js": "workspace:*",
     "@balancednetwork/sdk-core": "workspace:*",
     "@balancednetwork/v1-sdk": "workspace:*",
+    "@balancednetwork/intents-sdk": "workspace:*",
     "@balancednetwork/xwagmi": "workspace:*",
     "@injectivelabs/wallet-ts": "1.14.13",
     "@lingui/conf": "4.7.1",

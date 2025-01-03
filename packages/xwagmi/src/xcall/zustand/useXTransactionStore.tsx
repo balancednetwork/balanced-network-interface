@@ -1,19 +1,16 @@
-import React from 'react';
-
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { XChainId } from '@/types';
 import { XTransaction, XTransactionStatus } from '../types';
-import { xMessageActions } from './useXMessageStore';
 
 type XTransactionStore = {
   transactions: Record<string, XTransaction>;
   get: (id: string | null) => XTransaction | undefined;
   add: (transaction: XTransaction) => void;
-  success: (id) => void;
-  fail: (id) => void;
+  success: (id: string) => void;
+  fail: (id: string) => void;
   getTransactions: () => XTransaction[];
   getPendingTransactions: (signedWallets: { xChainId: XChainId | undefined; address: string }[]) => XTransaction[];
   remove: (id: string) => void;

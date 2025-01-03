@@ -13,7 +13,9 @@ export type Chain = {
     http: string;
     ws?: string;
   };
-  tracker: string;
+  tracker: {
+    tx: string;
+  };
   testnet: boolean;
 };
 

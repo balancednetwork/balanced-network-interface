@@ -305,3 +305,23 @@ export function getAccumulatedInterest(principal: BigNumber, rate: BigNumber, da
   const accumulatedInterest = principal.times(dailyRate.plus(1).pow(days)).minus(principal);
   return accumulatedInterest;
 }
+
+export function formatElapsedTime(timestamp: number): string {
+  const secondsInMinute = 60;
+  const secondsInHour = 3600;
+  const secondsInDay = 86400;
+
+  const days = Math.floor(timestamp / secondsInDay);
+  const hours = Math.floor((timestamp % secondsInDay) / secondsInHour);
+  const minutes = Math.floor((timestamp % secondsInHour) / secondsInMinute);
+
+  if (days > 0) {
+    return `${days} days ago`;
+  } else if (hours > 0) {
+    return `${hours} hours ago`;
+  } else if (minutes > 0) {
+    return `${minutes} mins ago`;
+  } else {
+    return `just now`;
+  }
+}

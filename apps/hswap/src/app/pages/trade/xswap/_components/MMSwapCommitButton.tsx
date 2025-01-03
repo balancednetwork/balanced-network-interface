@@ -6,8 +6,8 @@ import { XChainId } from '@balancednetwork/xwagmi';
 import { XToken } from '@balancednetwork/xwagmi';
 import { Trans, t } from '@lingui/macro';
 
+import { BlueButton } from '@/app/components/Button';
 import { handleConnectWallet } from '@/app/components/WalletConnectModal/WalletItem';
-import { BlueButton } from '@/app/components2/Button';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { MMTrade } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';

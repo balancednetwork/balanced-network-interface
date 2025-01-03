@@ -21,9 +21,9 @@ import BigNumber from 'bignumber.js';
 import { CheckIcon } from 'lucide-react';
 import { WriteContractErrorType } from 'viem';
 
-import { WhiteButton } from '@/app/components2/Button';
-import { ArrowGradientIcon } from '@/app/components2/Icons';
-import { Modal } from '@/app/components2/Modal';
+import { WhiteButton } from '@/app/components/Button';
+import { ArrowGradientIcon } from '@/app/components/Icons';
+import { Modal } from '@/app/components/Modal';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';

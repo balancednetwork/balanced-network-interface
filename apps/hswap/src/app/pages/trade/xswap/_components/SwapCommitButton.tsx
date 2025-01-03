@@ -7,7 +7,7 @@ import { useXCallFee } from '@balancednetwork/xwagmi';
 import { XTransactionInput, XTransactionType } from '@balancednetwork/xwagmi';
 import { Trans, t } from '@lingui/macro';
 
-import { BlueButton } from '@/app/components2/Button';
+import { BlueButton } from '@/app/components/Button';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSendXTransaction } from '@/hooks/useSendXTransaction';

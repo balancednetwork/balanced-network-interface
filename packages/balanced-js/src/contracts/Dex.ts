@@ -126,6 +126,17 @@ export default class Dex extends Contract {
 
     return this.call(callParams);
   }
+  getDepositV2(tokenAddress: string, user: string) {
+    const callParams = this.paramsBuilder({
+      method: 'getDepositV2',
+      params: {
+        _tokenAddress: tokenAddress,
+        _user: user,
+      },
+    });
+
+    return this.call(callParams);
+  }
 
   transferICX(value: string) {
     const payload = this.transferICXParamsBuilder({

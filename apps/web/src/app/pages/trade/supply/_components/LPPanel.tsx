@@ -387,8 +387,6 @@ export default function LPPanel() {
         onClose={handleSupplyConfirmDismiss}
         parsedAmounts={amounts}
         currencies={currencies}
-        AChain={crossChainCurrencyA}
-        BChain={crossChainCurrencyB}
       />
     </>
   );

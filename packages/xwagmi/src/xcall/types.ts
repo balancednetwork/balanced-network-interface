@@ -38,6 +38,14 @@ export enum XTransactionType {
   BORROW = 'borrow',
   REPAY = 'repay',
   SWAP_ON_ICON = 'swap_on_icon',
+  //liquidity
+  LP_DEPOSIT_XTOKEN = 'lp_deposit_xtoken',
+  LP_WITHDRAW_XTOKEN = 'lp_withdraw_xtoken',
+  LP_ADD_LIQUIDITY = 'lp_add_liquidity',
+  LP_REMOVE_LIQUIDITY = 'lp_remove_liquidity',
+  LP_STAKE = 'lp_stake',
+  LP_UNSTAKE = 'lp_unstake',
+  LP_CLAIM_REWARDS = 'lp_claim_rewards',
 }
 
 export enum XMessageStatus {
@@ -59,6 +67,7 @@ export type XTransactionInput = {
   };
   type: XTransactionType;
   inputAmount: CurrencyAmount<XToken>;
+  outputAmount?: CurrencyAmount<XToken>; // quote token for liquidity
   account: string;
   xCallFee: IXCallFee;
   callback?: () => void;

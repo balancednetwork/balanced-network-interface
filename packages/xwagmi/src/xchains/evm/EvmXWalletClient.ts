@@ -11,12 +11,15 @@ import { uintToBytes } from '@/utils';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
 import { isSpokeToken } from '../archway/utils';
+import { EvmXLiquidityService } from './EvmXLiquidityService';
 import { EvmXService } from './EvmXService';
 import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
 import { bnUSDContractAbi } from './abis/bnUSDContractAbi';
 import { xCallContractAbi } from './abis/xCallContractAbi';
 
 export class EvmXWalletClient extends XWalletClient {
+  private liquidityService = new EvmXLiquidityService(this);
+
   getXService(): EvmXService {
     return EvmXService.getInstance();
   }
@@ -45,7 +48,7 @@ export class EvmXWalletClient extends XWalletClient {
   async approve(amountToApprove: CurrencyAmount<XToken>, spender: string, owner: string) {
     const xToken = amountToApprove.currency;
 
-    const publicClient = await this.getPublicClient();
+    const publicClient = this.getPublicClient();
     const walletClient = await this.getWalletClient();
 
     const tokenContract = getContract({
@@ -67,40 +70,65 @@ export class EvmXWalletClient extends XWalletClient {
     const { type, direction, inputAmount, recipient, account, xCallFee, executionTrade, slippageTolerance } =
       xTransactionInput;
 
+    console.log('type', type);
+
     const receiver = `${direction.to}/${recipient}`;
     const tokenAddress = inputAmount.wrapped.currency.address;
     const amount = BigInt(inputAmount.quotient.toString());
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
 
     let data: Address;
-    if (type === XTransactionType.SWAP) {
-      if (!executionTrade || !slippageTolerance) {
-        return;
+    switch (type) {
+      case XTransactionType.SWAP: {
+        if (!executionTrade || !slippageTolerance) {
+          return;
+        }
+        const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
+        const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived).toString('hex');
+        data = `0x${rlpEncodedData}`;
+        break;
       }
-      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived).toString('hex');
-      data = `0x${rlpEncodedData}`;
-    } else if (type === XTransactionType.BRIDGE) {
-      data = toHex(
-        JSON.stringify({
-          method: '_swap',
-          params: {
-            path: [],
-            receiver: receiver,
-          },
-        }),
-      );
-    } else if (type === XTransactionType.DEPOSIT) {
-      return await this.executeDepositCollateral(xTransactionInput);
-    } else if (type === XTransactionType.WITHDRAW) {
-      return await this.executeWithdrawCollateral(xTransactionInput);
-    } else if (type === XTransactionType.BORROW) {
-      return await this.executeBorrow(xTransactionInput);
-    } else if (type === XTransactionType.REPAY) {
-      return await this.executeRepay(xTransactionInput);
-    } else {
-      throw new Error('Invalid XTransactionType');
+      case XTransactionType.BRIDGE:
+        data = toHex(
+          JSON.stringify({
+            method: '_swap',
+            params: {
+              path: [],
+              receiver: receiver,
+            },
+          }),
+        );
+        break;
+      case XTransactionType.DEPOSIT:
+        return await this.executeDepositCollateral(xTransactionInput);
+      case XTransactionType.WITHDRAW:
+        return await this.executeWithdrawCollateral(xTransactionInput);
+      case XTransactionType.BORROW:
+        return await this.executeBorrow(xTransactionInput);
+      case XTransactionType.REPAY:
+        return await this.executeRepay(xTransactionInput);
+
+      case XTransactionType.LP_DEPOSIT_XTOKEN:
+        return await this.liquidityService.depositXToken(xTransactionInput);
+      case XTransactionType.LP_WITHDRAW_XTOKEN:
+        return await this.liquidityService.withdrawXToken(xTransactionInput);
+      case XTransactionType.LP_ADD_LIQUIDITY:
+        return await this.liquidityService.addLiquidity(xTransactionInput);
+      case XTransactionType.LP_REMOVE_LIQUIDITY:
+        return await this.liquidityService.removeLiquidity(xTransactionInput);
+      case XTransactionType.LP_STAKE:
+        return await this.liquidityService.stake(xTransactionInput);
+      case XTransactionType.LP_UNSTAKE:
+        return await this.liquidityService.unstake(xTransactionInput);
+      case XTransactionType.LP_CLAIM_REWARDS:
+        return await this.liquidityService.claimRewards(xTransactionInput);
+
+      default:
+        throw new Error('Invalid XTransactionType');
     }
+
+    const publicClient = this.getPublicClient();
+    const walletClient = await this.getWalletClient();
 
     const _isSpokeToken = isSpokeToken(inputAmount.currency);
     const isNative = inputAmount.currency.isNativeToken;
@@ -141,7 +169,6 @@ export class EvmXWalletClient extends XWalletClient {
       }
     }
 
-    const walletClient = await this.getWalletClient();
     const hash = await walletClient.writeContract(request);
 
     if (hash) {

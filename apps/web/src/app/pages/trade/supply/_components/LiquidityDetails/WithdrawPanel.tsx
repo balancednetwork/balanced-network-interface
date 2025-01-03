@@ -107,10 +107,7 @@ export function getShareReward(
 
 export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: BalanceData; poolId: number }) => {
   const { account } = useIconReact();
-  const balances = useCurrencyBalances(
-    account ?? undefined,
-    useMemo(() => [pair.token0, pair.token1], [pair]),
-  );
+  const balances = useCurrencyBalances(useMemo(() => [pair.token0, pair.token1], [pair]));
   const onChangeWithdrawnValue = useChangeWithdrawnValue();
 
   const [{ typedValue, independentField, inputType, portion }, setState] = React.useState<{

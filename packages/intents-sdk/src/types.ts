@@ -9,6 +9,7 @@ export type ChainInfo<T extends ChainType> = {
 
 export type Token = {
   symbol: string;
+  name: string;
   decimals: number;
   address: string;
 };

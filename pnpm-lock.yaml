@@ -182,18 +182,12 @@ importers:
       react-use:
         specifier: 17.5.0
         version: 17.5.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      rebass:
-        specifier: 4.0.7
-        version: 4.0.7(react@18.2.0)
       redux-localstorage-simple:
         specifier: 2.4.0
         version: 2.4.0
       serve:
         specifier: 11.3.2
         version: 11.3.2
-      styled-components:
-        specifier: 6.1.8
-        version: 6.1.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       tailwind-merge:
         specifier: 2.5.2
         version: 2.5.2
@@ -237,9 +231,6 @@ importers:
       '@types/react-router-dom':
         specifier: ^5
         version: 5.3.3
-      '@types/rebass':
-        specifier: 4.0.7
-        version: 4.0.7(@babel/core@7.24.0)(@babel/preset-env@7.24.4(@babel/core@7.24.0))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)
       autoprefixer:
         specifier: 10.4.20
         version: 10.4.20(postcss@8.4.41)

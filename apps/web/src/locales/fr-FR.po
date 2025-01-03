@@ -60,6 +60,10 @@ msgstr "puis créer le pool."
 msgid "Only"
 msgstr ""
 
+#: src/xwagmi/xchains/stellar/utils.ts
+#~ msgid "Stellar wallet inactive. Add at least 1 XLM from an external source"
+#~ msgstr ""
+
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX is staked (sICX). Choose what to do with it:"
 msgstr ""
@@ -786,6 +790,10 @@ msgstr ""
 msgid "Lock up BALN"
 msgstr ""
 
+#: src/app/components/StellarSponsorshipModal/index.tsx
+msgid "Activate wallet"
+msgstr ""
+
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
@@ -804,6 +812,10 @@ msgstr "Avant"
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Active"
 msgstr "Actif"
+
+#: src/app/components/StellarSponsorshipModal/index.tsx
+#~ msgid "Activate"
+#~ msgstr ""
 
 #: src/hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
@@ -984,6 +996,10 @@ msgstr "Entrer le montant"
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Supplied {pair} liquidity."
 msgstr "Liquidité {pair} fournie."
+
+#: src/app/components/StellarSponsorshipModal/index.tsx
+#~ msgid "Balanced activates your Stellar account for you with feeless transaction."
+#~ msgstr ""
 
 #: src/app/components/AppBar/index.tsx
 #: src/app/Routes.tsx
@@ -1584,6 +1600,10 @@ msgstr ""
 msgid "Borrow Balanced Dollars?"
 msgstr "Emprunter Balanced Dollar ?"
 
+#: src/app/components/StellarSponsorshipModal/index.tsx
+msgid "Activating"
+msgstr ""
+
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
 msgid "Contract doesn't exist on this network."
 msgstr ""
@@ -1666,6 +1686,10 @@ msgstr "Contre"
 #: src/app/pages/vote/_components/LieVotingPanel/PowerLeftComponent.tsx
 msgid "Voting power available: {0}"
 msgstr ""
+
+#: src/xwagmi/xchains/stellar/utils.ts
+#~ msgid "Stellar wallet inactive. Add at least 1 XLM from an external source or"
+#~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/XChainList.tsx
 #~ msgid "Search for blockchains..."
@@ -1873,6 +1897,7 @@ msgstr ""
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/Savings/index.tsx
 #: src/app/components/ProposalModal/index.tsx
+#: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
@@ -1942,6 +1967,10 @@ msgstr ""
 
 #: src/app/components/CollateralTypeSwitcher/CollateralTypeList.tsx
 #~ msgid "No positions found"
+#~ msgstr ""
+
+#: src/app/components/StellarSponsorshipModal/index.tsx
+#~ msgid "Activate your Stellar account?"
 #~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
@@ -2290,6 +2319,10 @@ msgstr ""
 msgid "available on {0}."
 msgstr ""
 
+#: src/app/components/StellarSponsorshipModal/index.tsx
+msgid "Activate Stellar wallet?"
+msgstr ""
+
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "and ends after {duration} days."
 msgstr ""
@@ -2413,6 +2446,10 @@ msgstr ""
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "{0} {1} added to your wallet"
 msgstr "{0} {1} ajouté à votre portefeuille"
+
+#: src/app/components/StellarSponsorshipModal/index.tsx
+msgid "Sign a transaction to activate your wallet for free."
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "sign in on"
@@ -2816,6 +2853,7 @@ msgstr "Frais de réseau"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 msgid "Close"
 msgstr ""

@@ -1,5 +1,5 @@
-import { Modal } from '@/app/components2/Modal';
-import { WalletLogo } from '@/app/components2/WalletLogo';
+import { Modal } from '@/app/components/Modal';
+import { WalletLogo } from '@/app/components/WalletLogo';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { XConnector } from '@balancednetwork/xwagmi';
 import { useXConnect, useXConnectors } from '@balancednetwork/xwagmi';

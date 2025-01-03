@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
-import { ExclamationIcon } from '@/app/components2/Icons';
+import CurrencyLogoWithNetwork from '@/app/components/CurrencyLogoWithNetwork';
+import { ExclamationIcon } from '@/app/components/Icons';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { MMTransaction, MMTransactionStatus } from '@/store/transactions/useMMTransactionStore';

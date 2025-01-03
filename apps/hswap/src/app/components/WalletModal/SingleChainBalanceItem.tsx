@@ -1,4 +1,4 @@
-import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
+import CurrencyLogoWithNetwork from '@/app/components/CurrencyLogoWithNetwork';
 import { cn } from '@/lib/utils';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useSwapActionHandlers } from '@/store/swap/hooks';

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 
-import CopyableAddress from '@/app/components2/CopyableAddress';
+import CopyableAddress from '@/app/components/CopyableAddress';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { XConnector } from '@balancednetwork/xwagmi';
 import { useXAccount, useXConnect, useXConnection, useXConnectors, useXDisconnect } from '@balancednetwork/xwagmi';

@@ -3,8 +3,8 @@ import React, { useCallback, useMemo } from 'react';
 import { XToken } from '@balancednetwork/xwagmi';
 import { XTransactionType } from '@balancednetwork/xwagmi';
 
-import CurrencyInputPanel, { CurrencyInputPanelType } from '@/app/components2/CurrencyInputPanel';
-import { SwitchGradientIcon } from '@/app/components2/Icons';
+import CurrencyInputPanel, { CurrencyInputPanelType } from '@/app/components/CurrencyInputPanel';
+import { SwitchGradientIcon } from '@/app/components/Icons';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import {
   useDerivedMMTradeInfo,

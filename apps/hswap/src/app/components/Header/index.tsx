@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 
-import Logo from '@/app/components2/Logo';
+import { WhiteButton } from '@/app/components/Button';
+import { ArrowIcon, ShowIcon } from '@/app/components/Icons';
+import Logo from '@/app/components/Logo';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import WalletModal from '../WalletModal';
-import { WhiteButton } from '@/app/components2/Button';
-import { ArrowIcon, ShowIcon } from '@/app/components2/Icons';
 
 export default function Header(props: { className?: string }) {
   const { className } = props;

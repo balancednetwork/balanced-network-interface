@@ -1,5 +1,5 @@
-import CurrencyLogoWithNumber from '@/app/components2/CurrencyLogoWithNumber';
-import { ChevronDownIcon, ChevronUpIcon, SubtractIcon } from '@/app/components2/Icons';
+import CurrencyLogoWithNumber from '@/app/components/CurrencyLogoWithNumber';
+import { ChevronDownIcon, ChevronUpIcon, SubtractIcon } from '@/app/components/Icons';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance, formatValue } from '@/utils/formatter';

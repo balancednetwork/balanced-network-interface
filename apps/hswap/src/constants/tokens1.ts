@@ -29,13 +29,3 @@ export const sARCH: TokenMap = {
     'Staked Archway',
   ),
 };
-
-export const ArchwayToken: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'native', 18, 'ARCH', 'Archway'),
-  [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'native', 18, 'ARCH', 'Archway'),
-  [ChainId.LISBON]: new Token(ChainId.LISBON, 'native', 18, 'ARCH', 'Archway'),
-};
-
-export const useARCH = () => {
-  return ArchwayToken[NETWORK_ID];
-};

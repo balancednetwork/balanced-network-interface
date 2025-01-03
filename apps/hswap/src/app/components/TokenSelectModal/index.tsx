@@ -1,4 +1,4 @@
-import { Modal } from '@/app/components2/Modal';
+import { Modal } from '@/app/components/Modal';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';

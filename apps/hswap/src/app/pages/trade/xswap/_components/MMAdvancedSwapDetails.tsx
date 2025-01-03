@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { Trans } from '@lingui/macro';
 
-import { ChevronDownGradientIcon, ChevronUpGradientIcon } from '@/app/components2/Icons';
+import { ChevronDownGradientIcon, ChevronUpGradientIcon } from '@/app/components/Icons';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
 import { useDerivedMMTradeInfo, useDerivedSwapInfo } from '@/store/swap/hooks';

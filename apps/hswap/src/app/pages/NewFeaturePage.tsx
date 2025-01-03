@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { BlueButton } from '@/app/components2/Button';
+import { BlueButton } from '@/app/components/Button';
 import { Trans, t } from '@lingui/macro';
 
 export default function NewFeaturePage() {

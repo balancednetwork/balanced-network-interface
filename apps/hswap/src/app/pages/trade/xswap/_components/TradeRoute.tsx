@@ -1,4 +1,4 @@
-import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
+import CurrencyLogoWithNetwork from '@/app/components/CurrencyLogoWithNetwork';
 import { Field } from '@/store/swap/reducer';
 import { Currency, Token } from '@balancednetwork/sdk-core';
 import { Route } from '@balancednetwork/v1-sdk';

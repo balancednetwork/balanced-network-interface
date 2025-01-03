@@ -1,4 +1,4 @@
-import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
+import CurrencyLogoWithNetwork from '@/app/components/CurrencyLogoWithNetwork';
 import useAmountInUSD from '@/hooks/useAmountInUSD';
 import { formatBigNumber } from '@/utils';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';

@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { ArrowIcon, SubtractIcon } from '@/app/components2/Icons';
-import { Modal } from '@/app/components2/Modal';
-import { WalletLogo } from '@/app/components2/WalletLogo';
+import { ArrowIcon, SubtractIcon } from '@/app/components/Icons';
+import { Modal } from '@/app/components/Modal';
+import { WalletLogo } from '@/app/components/WalletLogo';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import { cn } from '@/lib/utils';
 import { useXConnectAllChains } from '@balancednetwork/xwagmi';

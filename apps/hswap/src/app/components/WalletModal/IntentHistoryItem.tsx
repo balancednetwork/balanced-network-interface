@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import CurrencyLogoWithNetwork from '@/app/components/CurrencyLogoWithNetwork';
 import { ExclamationIcon } from '@/app/components/Icons';
 import { Separator } from '@/components/ui/separator';
+import useElapsedTime from '@/hooks/useElapsedTime';
 import { cn } from '@/lib/utils';
 import { MMTransaction, MMTransactionStatus } from '@/store/transactions/useMMTransactionStore';
 import { formatElapsedTime } from '@/utils';
@@ -18,26 +19,7 @@ interface IntentHistoryItemProps {
 const IntentHistoryItem = ({ transaction }: IntentHistoryItemProps) => {
   const { fromAmount, toAmount } = transaction;
 
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const timestamp = transaction.createdAt;
-  useEffect(() => {
-    if (timestamp) {
-      const updateElapsedTime = () => {
-        setElapsedTime(Math.floor((Date.now() - timestamp) / 1000));
-      };
-
-      updateElapsedTime(); // Update immediately
-
-      const interval = setInterval(
-        () => {
-          updateElapsedTime();
-        },
-        Date.now() - timestamp > 600000 ? 60000 : 1000,
-      ); // 600000 ms = 10 minutes
-
-      return () => clearInterval(interval);
-    }
-  }, [timestamp]);
+  const elapsedTime = useElapsedTime(transaction.createdAt);
 
   return (
     <>

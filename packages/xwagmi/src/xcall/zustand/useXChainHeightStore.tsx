@@ -6,31 +6,13 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
 import { XChain, XChainId } from '@/types';
+import { jsonStorageOptions } from '@/utils';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 type XChainHeightStore = {
   xChainHeights: Partial<Record<XChainId, bigint>>;
   getXChainHeight: (xChainId: XChainId) => bigint;
   setXChainHeight: (xChainId: XChainId, height: bigint) => void;
-};
-
-const jsonStorageOptions = {
-  reviver: (key, value: any) => {
-    if (!value) return value;
-
-    if (typeof value === 'string' && value.startsWith('BIGINT::')) {
-      return BigInt(value.substring(8));
-    }
-
-    return value;
-  },
-  replacer: (key, value) => {
-    if (typeof value === 'bigint') {
-      return `BIGINT::${value}`;
-    } else {
-      return value;
-    }
-  },
 };
 
 export const useXChainHeightStore = create<XChainHeightStore>()(

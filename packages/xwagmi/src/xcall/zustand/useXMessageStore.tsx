@@ -8,31 +8,13 @@ import { immer } from 'zustand/middleware/immer';
 
 import { getXPublicClient } from '@/actions';
 import { xChainMap } from '@/constants/xChains';
-import { XCallEventType, XTransaction, XTransactionStatus } from '../types';
+import { jsonStorageOptions } from '@/utils';
+import { XCallEventType, XTransaction } from '../types';
 import { TransactionStatus, XCallEventMap, XMessage, XMessageStatus } from '../types';
 import { transactionActions } from './useTransactionStore';
 import { useXCallEventScanner, xCallEventActions } from './useXCallEventStore';
 import { useXCallScannerStore, useXCallScannerSubscription } from './useXCallScannerStore';
-import { useXTransactionStore, xTransactionActions } from './useXTransactionStore';
-
-const jsonStorageOptions = {
-  reviver: (key, value: any) => {
-    if (!value) return value;
-
-    if (typeof value === 'string' && value.startsWith('BIGINT::')) {
-      return BigInt(value.substring(8));
-    }
-
-    return value;
-  },
-  replacer: (key, value) => {
-    if (typeof value === 'bigint') {
-      return `BIGINT::${value}`;
-    } else {
-      return value;
-    }
-  },
-};
+import { xTransactionActions } from './useXTransactionStore';
 
 // TODO: review logic
 export const deriveStatus = (events: XCallEventMap): XMessageStatus => {
@@ -282,8 +264,6 @@ export const useXMessageStore = create<XMessageStore>()(
       },
     },
   ),
-  //   { name: 'XMessageStore' },
-  // ),
 );
 
 export const xMessageActions = {

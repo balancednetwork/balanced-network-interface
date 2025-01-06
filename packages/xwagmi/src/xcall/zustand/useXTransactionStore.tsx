@@ -3,6 +3,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { XChainId } from '@/types';
+import { jsonStorageOptions } from '@/utils';
 import { XTransaction, XTransactionStatus } from '../types';
 
 type XTransactionStore = {
@@ -14,25 +15,6 @@ type XTransactionStore = {
   getTransactions: () => XTransaction[];
   getPendingTransactions: (signedWallets: { xChainId: XChainId | undefined; address: string }[]) => XTransaction[];
   remove: (id: string) => void;
-};
-
-const jsonStorageOptions = {
-  reviver: (key, value: any) => {
-    if (!value) return value;
-
-    if (typeof value === 'string' && value.startsWith('BIGINT::')) {
-      return BigInt(value.substring(8));
-    }
-
-    return value;
-  },
-  replacer: (key, value) => {
-    if (typeof value === 'bigint') {
-      return `BIGINT::${value}`;
-    } else {
-      return value;
-    }
-  },
 };
 
 export const useXTransactionStore = create<XTransactionStore>()(

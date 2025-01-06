@@ -127,10 +127,10 @@ const XSwapModal = ({
       inputAmount: _inputAmount,
       slippageTolerance,
       xCallFee,
-      callback: cleanupSwap,
     };
 
     const xTransactionId = await sendXTransaction(xTransactionInput);
+    cleanupSwap();
     setCurrentId(xTransactionId || null);
   };
 

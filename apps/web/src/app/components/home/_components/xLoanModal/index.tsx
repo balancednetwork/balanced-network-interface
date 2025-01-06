@@ -126,10 +126,10 @@ const XLoanModal = ({
       usedCollateral: collateralType,
       recipient: storedModalValues.action === XLoanAction.BORROW ? receiver : collateralNetworkAddress,
       xCallFee,
-      callback: cancelAdjusting,
     };
 
     const xTransactionId = await sendXTransaction(xTransactionInput);
+    cancelAdjusting();
     setCurrentId(xTransactionId || null);
   };
 

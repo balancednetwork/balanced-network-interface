@@ -95,7 +95,6 @@ function SwapCommitButton() {
         recipient,
         xCallFee: { rollback: 0n, noRollback: 0n }, // not used, just for type checking
         inputAmount: inputAmount,
-        callback: cleanupSwap,
         slippageTolerance,
       };
     } else if (xTransactionType === XTransactionType.BRIDGE || xTransactionType === XTransactionType.SWAP) {
@@ -109,12 +108,11 @@ function SwapCommitButton() {
         recipient,
         inputAmount: inputAmount,
         xCallFee,
-        callback: cleanupSwap,
         slippageTolerance,
       };
     }
     return _xTransactionInput;
-  }, [account, recipient, xTransactionType, direction, trade, inputAmount, xCallFee, cleanupSwap, slippageTolerance]);
+  }, [account, recipient, xTransactionType, direction, trade, inputAmount, xCallFee, slippageTolerance]);
 
   const handleOpenXSwapModal = useCallback(() => {
     if (!xTransactionInput) return;
@@ -178,7 +176,7 @@ function SwapCommitButton() {
 
     try {
       const xTransactionId = await sendXTransaction(executionXTransactionInput);
-
+      cleanupSwap();
       if (!xTransactionId) {
         throw new Error('xTransactionId is undefined');
       }
@@ -193,7 +191,7 @@ function SwapCommitButton() {
       console.log(e);
       setXSwapModalState(DEFAULT_XSWAP_MODAL_STATE);
     }
-  }, [sendXTransaction, executionXTransactionInput]);
+  }, [sendXTransaction, executionXTransactionInput, cleanupSwap]);
 
   return (
     <>

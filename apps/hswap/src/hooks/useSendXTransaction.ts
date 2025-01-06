@@ -70,8 +70,6 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
   } else if (xTransactionInput.type === XTransactionType.REPAY) {
   }
 
-  xTransactionInput?.callback?.();
-
   const sourceTransaction = transactionActions.add(sourceChainId, {
     hash: sourceTransactionHash,
   });

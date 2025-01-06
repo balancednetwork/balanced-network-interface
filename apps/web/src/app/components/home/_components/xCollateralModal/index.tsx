@@ -118,10 +118,10 @@ const XCollateralModal = ({
       inputAmount: _inputAmount,
       xCallFee,
       usedCollateral: collateralType,
-      callback: cancelAdjusting,
     };
 
     const xTransactionId = await sendXTransaction(xTransactionInput);
+    cancelAdjusting();
     setCurrentId(xTransactionId || null);
   };
 

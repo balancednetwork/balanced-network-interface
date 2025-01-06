@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import BigNumber from 'bignumber.js';
 
 import { formatBigNumber } from '@/utils';
@@ -18,7 +20,6 @@ import {
   xMessageActions,
   xTransactionActions,
 } from '@balancednetwork/xwagmi';
-import { useMemo } from 'react';
 
 const iconChainId: XChainId = '0x1.icon';
 
@@ -102,9 +103,8 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
       collateralChainId: xTransactionInput.recipient?.split('/')?.[0],
     };
   }
-  xTransactionInput?.callback?.();
 
-  const sourceTransaction = transactionActions.add(sourceChainId, {
+  transactionActions.add(sourceChainId, {
     hash: sourceTransactionHash,
   });
 

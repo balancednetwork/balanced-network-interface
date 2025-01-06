@@ -95,7 +95,7 @@ export default function RecipientAddressPanel() {
               }
             }
           }}
-          className="border-light-purple data-[state=checked]:bg-light-purple data-[state=checked]:text-primary rounded-full border-2"
+          className="border-[#695682] data-[state=checked]:border-light-purple data-[state=checked]:bg-light-purple data-[state=checked]:text-primary rounded-full border-2"
         />
       </div>
       {checked && currencies[Field.OUTPUT]?.xChainId && (

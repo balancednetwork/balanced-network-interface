@@ -62,6 +62,13 @@ export const getFormattedRewards = (reward: BigNumber): string => {
   return reward?.isEqualTo(ZERO) ? 'N/A' : `~ ${formatBigNumber(reward, 'currency')} BALN`;
 };
 
+export const getFormattedExternalRewards = (reward: CurrencyAmount<Currency>): string => {
+  const rewardAmount = new BigNumber(reward.toFixed());
+  return rewardAmount?.isEqualTo(ZERO)
+    ? 'N/A'
+    : `~ ${formatBigNumber(rewardAmount, 'currency')} ${reward.currency.symbol}`;
+};
+
 export const getRewardApr = (reward: CurrencyAmount<Currency>, pair: PairData, price: number): BigNumber => {
   const apr = new BigNumber(reward.toFixed())
     .times(365 * price)

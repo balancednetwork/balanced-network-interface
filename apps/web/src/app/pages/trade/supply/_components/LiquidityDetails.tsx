@@ -29,16 +29,24 @@ import { QuestionWrapper } from '@/app/components/QuestionHelper';
 import Skeleton from '@/app/components/Skeleton';
 import { MouseoverTooltip } from '@/app/components/Tooltip';
 import QuestionIcon from '@/assets/icons/question.svg';
+import { useRatesWithOracle } from '@/queries/reward';
 import { formatBigNumber } from '@/utils';
 import { getFormattedNumber } from '@/utils/formatter';
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Banner } from '../../../../components/Banner';
 import Spinner from '../../../../components/Spinner';
 import { StyledAccordionButton, StyledAccordionItem, StyledAccordionPanel } from './LiquidityDetails/Accordion';
 import StakeLPPanel from './LiquidityDetails/StakeLPPanel';
-import { WithdrawPanel, WithdrawPanelQ, getABBalance, getShareReward } from './LiquidityDetails/WithdrawPanel';
+import {
+  WithdrawPanel,
+  WithdrawPanelQ,
+  getABBalance,
+  getExternalShareReward,
+  getShareReward,
+} from './LiquidityDetails/WithdrawPanel';
 import { StyledBoxPanel } from './LiquidityDetails/shared';
 import { usePoolPanelContext } from './PoolPanelContext';
-import { getFormattedRewards, stakedFraction, totalSupply } from './utils';
+import { getFormattedExternalRewards, getFormattedRewards, getRewardApr, stakedFraction, totalSupply } from './utils';
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
@@ -185,10 +193,13 @@ export default function LiquidityDetails() {
                       pair={sortedPairs[poolId]}
                       pairData={allPairs && allPairs[poolId]}
                       //hotfix due to the fact that sICX/BTCB pair has wrong name on contract side
-                      totalReward={
+                      balnReward={
                         allPairs && allPairs[poolId]
                           ? rewards[allPairs[poolId].name === 'sICX/BTCB' ? 'BTCB/sICX' : allPairs[poolId].name]
                           : new BigNumber(0)
+                      }
+                      externalRewards={
+                        allPairs && allPairs[parseInt(poolId)] ? allPairs[parseInt(poolId)].externalRewards : []
                       }
                       boostData={sources}
                       apy={allPairs && allPairs[parseInt(poolId)] ? allPairs[parseInt(poolId)].balnApy : 0}
@@ -282,7 +293,8 @@ const PoolRecord = ({
   pair,
   pairData,
   balance,
-  totalReward,
+  balnReward,
+  externalRewards,
   boostData,
   apy,
 }: {
@@ -290,11 +302,13 @@ const PoolRecord = ({
   pairData?: PairData;
   balance: BalanceData;
   poolId: number;
-  totalReward: BigNumber;
+  balnReward: BigNumber;
+  externalRewards: CurrencyAmount<Token>[] | undefined;
   boostData: { [key in string]: Source } | undefined;
   apy: number | null;
 }) => {
   const upSmall = useMedia('(min-width: 800px)');
+  const prices = useRatesWithOracle();
   const stakedLPPercent = useStakedLPPercent(poolId);
   const [aBalance, bBalance] = getABBalance(pair, balance);
   const pairName = `${aBalance.currency.symbol || '...'}/${bBalance.currency.symbol || '...'}`;
@@ -305,7 +319,7 @@ const PoolRecord = ({
   const totalbBaln = useTotalSupply();
   const userBbaln = useBBalnAmount();
   const reward = getShareReward(
-    totalReward,
+    balnReward,
     boostData && boostData[sourceName],
     balances,
     stakedFractionValue,
@@ -378,6 +392,19 @@ const PoolRecord = ({
                     %
                   </APYItem>
 
+                  {externalRewards?.map(reward => {
+                    const rewardPrice = prices?.[reward.currency.wrapped.symbol];
+
+                    return pairData && rewardPrice ? (
+                      <APYItem key={reward.currency.wrapped.symbol}>
+                        <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                          {reward.currency.symbol}:
+                        </Typography>
+                        {`${getRewardApr(reward, pairData, rewardPrice.toNumber()).toFormat(2)}%`}
+                      </APYItem>
+                    ) : null;
+                  })}
+
                   {pairData?.feesApy && (
                     <APYItem>
                       <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
@@ -397,7 +424,22 @@ const PoolRecord = ({
         )}
         {upSmall && (
           //hotfix pairName due to wrong source name on contract side
-          <DataText>{getFormattedRewards(reward)}</DataText>
+          <DataText>
+            <Typography fontSize={16}>{getFormattedRewards(reward)}</Typography>
+            {externalRewards ? (
+              externalRewards.map(reward => {
+                const rewardShare = getExternalShareReward(reward, balances, stakedFractionValue);
+                console.log('rewardShare', rewardShare.toFixed());
+                return (
+                  <Typography key={reward.currency.symbol} fontSize={16}>
+                    {getFormattedExternalRewards(rewardShare)}
+                  </Typography>
+                );
+              })
+            ) : (
+              <Skeleton width={100}></Skeleton>
+            )}
+          </DataText>
         )}
       </ListItem>
     </>

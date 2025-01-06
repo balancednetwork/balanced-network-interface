@@ -120,10 +120,10 @@ export const useIncentivisedPairs = (): UseQueryResult<
   Error
 > => {
   const { data: rewards } = useFlattenedRewardsDistribution();
+  //add supported rewards tokens here
   const additionalRewardTokens = [sICX[NETWORK_ID]];
-  //todo: change getTimestampFrom(6) to getTimestampFrom(1)
-  //when using mainnet, timestamp should be taken from 1 day old block
-  const { data: block } = useBlockDetails(getTimestampFrom(6));
+  //timestamp for PoL should be taken from 1 day old block
+  const { data: block } = useBlockDetails(getTimestampFrom(7));
 
   return useQuery({
     queryKey: ['incentivisedPairs', rewards, block?.number],

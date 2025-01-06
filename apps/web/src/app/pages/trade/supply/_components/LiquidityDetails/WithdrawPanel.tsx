@@ -77,7 +77,7 @@ export function getShareReward(
 ): BigNumber {
   //handle icx queue
   if (!stakedRatio && boostData) {
-    return totalReward.times(boostData.workingBalance.div(boostData.workingSupply));
+    return totalReward?.times(boostData.workingBalance.div(boostData.workingSupply));
   }
 
   //handle standard LPs
@@ -103,6 +103,32 @@ export function getShareReward(
   }
 
   return new BigNumber(0);
+}
+
+export function getExternalShareReward(
+  totalReward: CurrencyAmount<Currency>,
+  userBalances?: BalanceData,
+  stakedRatio?: Fraction,
+): CurrencyAmount<Currency> {
+  if (!userBalances || !stakedRatio) {
+    return CurrencyAmount.fromRawAmount(totalReward.currency, 0);
+  }
+
+  const stakedFractionNumber = new BigNumber(stakedRatio.toFixed(8)).div(100);
+  if (stakedFractionNumber.isEqualTo(0)) {
+    return CurrencyAmount.fromRawAmount(totalReward.currency, 0);
+  }
+
+  // Calculate user's share based on their balance and staked ratio
+  const totalUserBalance = new BigNumber(userBalances.balance.toExact()).times(
+    10 ** userBalances.balance.currency.decimals,
+  );
+
+  const userShare = new Fraction(totalUserBalance.toString()).multiply(stakedRatio);
+  const totalBalanceFraction = new Fraction(totalUserBalance.toString());
+
+  // Calculate reward based on user's share and staked ratio
+  return totalReward.multiply(userShare.multiply(stakedRatio).divide(totalBalanceFraction));
 }
 
 export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: BalanceData; poolId: number }) => {

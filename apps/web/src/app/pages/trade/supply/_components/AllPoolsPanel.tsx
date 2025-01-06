@@ -39,7 +39,7 @@ const DashGrid = styled(Box)`
   gap: 1em;
   align-items: center;
   grid-template-columns: 1.8fr 1.3fr 1fr 1.1fr 0.9fr;
-  
+
   > * {
     justify-content: flex-end;
     &:first-child {
@@ -234,7 +234,10 @@ export default function AllPoolsPanel({ query }: { query: string }) {
       );
       return (
         !isTokenBlacklisted &&
-        (pair.balnApy || nolPairs.includes(pair.info.id) || nativeSymbols.includes(pair.info.baseCurrencyKey))
+        (pair.balnApy ||
+          pair.externalRewards?.length ||
+          nolPairs.includes(pair.info.id) ||
+          nativeSymbols.includes(pair.info.baseCurrencyKey))
       );
     });
   }, [allPairs, nolPairs]);

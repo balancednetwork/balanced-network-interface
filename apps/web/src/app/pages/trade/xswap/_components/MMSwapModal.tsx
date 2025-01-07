@@ -11,6 +11,7 @@ import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import CrossIcon from '@/assets/icons/failure.svg';
 import TickIcon from '@/assets/icons/tick.svg';
+import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
@@ -111,6 +112,14 @@ const MMSwapModal = ({
   const { currentWallet: suiWallet } = useCurrentWallet();
   const suiAccount = useCurrentAccount();
   // end sui part
+
+  const { approvalState, approveCallback } = useApproveCallback(
+    trade?.inputAmount,
+    trade?.inputAmount.currency.xChainId === '0xa4b1.arbitrum'
+      ? intentService.getChainConfig('arb').intentContract
+      : // sui doesn't need approval. '0x' is a dummy address to pass the check
+        '0x',
+  );
 
   const handleMMSwap = async () => {
     if (!account || !recipient || !currencies[Field.INPUT] || !currencies[Field.OUTPUT] || !trade) {
@@ -319,9 +328,17 @@ const MMSwapModal = ({
                       <Trans>Swapping</Trans>
                     </StyledButton>
                   ) : (
-                    <StyledButton onClick={handleMMSwap} disabled={!gasChecker.hasEnoughGas}>
-                      <Trans>Swap</Trans>
-                    </StyledButton>
+                    <>
+                      {approvalState !== ApprovalState.APPROVED ? (
+                        <StyledButton onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
+                          {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
+                        </StyledButton>
+                      ) : (
+                        <StyledButton onClick={handleMMSwap} disabled={!gasChecker.hasEnoughGas}>
+                          <Trans>Swap</Trans>
+                        </StyledButton>
+                      )}
+                    </>
                   ))}
               </Flex>
             </motion.div>

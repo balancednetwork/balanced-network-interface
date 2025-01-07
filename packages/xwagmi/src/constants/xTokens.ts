@@ -156,6 +156,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
   ],
   '0xa4b1.arbitrum': [
     new XToken('0xa4b1.arbitrum', 42161, '0x0000000000000000000000000000000000000000', 18, 'ETH', 'ETH'),
+    new XToken('0xa4b1.arbitrum', 42161, '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1', 18, 'WETH', 'Wrapped Ether'),
     new XToken('0xa4b1.arbitrum', 42161, '0xA67f4b09Eed22f8201Ee0637CbE9d654E63F946e', 18, 'bnUSD', 'Balanced Dollar'),
     new XToken('0xa4b1.arbitrum', 42161, '0x35751007a407ca6feffe80b3cb397736d2cf4dbe', 18, 'weETH', 'Wrapped eETH'),
     new XToken('0xa4b1.arbitrum', 42161, '0x5979D7b546E38E414F7E9822514be443A4800529', 18, 'wstETH', 'Wrapped stETH'),

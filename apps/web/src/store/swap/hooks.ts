@@ -204,7 +204,6 @@ export function useDerivedSwapInfo(): {
   });
   let trade = isExactIn ? trade1 : trade2;
 
-  console.log('current route', trade?.route.routeActionPath);
   //TODO: Remove this when the queue is emptied
   //temporary solution for determining better trade between using wICX and queue pairs
   const ICX = useICX();

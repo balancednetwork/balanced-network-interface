@@ -12,7 +12,7 @@ export function useXBalances({
 }> {
   const xPublicClient = useXPublicClient(xChainId);
   return useQuery({
-    queryKey: [`xBalances`, xChainId, xTokens, address],
+    queryKey: [`xBalances`, xChainId, xTokens.map(x => x.symbol), address],
     queryFn: async () => {
       if (!xPublicClient) {
         return {};

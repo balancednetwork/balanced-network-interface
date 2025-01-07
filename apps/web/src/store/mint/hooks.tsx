@@ -189,7 +189,7 @@ export function useDerivedMintInfo(
 
   // balances
   const currencyArr = React.useMemo(() => [currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]], [currencies]);
-  const balances = useCurrencyBalances(account ?? undefined, currencyArr);
+  const balances = useCurrencyBalances(currencyArr);
   const currencyBalances: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(() => {
     const currencyABalance = balances[0];
     const currencyBBalance = balances[1];

@@ -14,7 +14,7 @@ import { useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatPercent } from '@/utils';
 
-import { ChevronDownGradientIcon, ChevronUpGradientIcon } from '@/app/components2/Icons';
+import { ChevronDownGradientIcon, ChevronUpGradientIcon } from '@/app/components/Icons';
 import { cn } from '@/lib/utils';
 // import { xChainMap } from '@balancednetwork/xwagmi';
 // import { useXEstimateApproveGas } from '@balancednetwork/xwagmi';

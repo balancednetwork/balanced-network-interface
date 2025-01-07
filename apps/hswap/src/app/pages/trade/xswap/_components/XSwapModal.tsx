@@ -3,10 +3,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
-import { WhiteButton } from '@/app/components2/Button';
-import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
-import { ArrowGradientIcon, TimeGradientIcon } from '@/app/components2/Icons';
-import { Modal } from '@/app/components2/Modal';
+import { WhiteButton } from '@/app/components/Button';
+import CurrencyLogoWithNetwork from '@/app/components/CurrencyLogoWithNetwork';
+import { ArrowGradientIcon, TimeGradientIcon } from '@/app/components/Icons';
+import { Modal } from '@/app/components/Modal';
 import { ApprovalState } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { Field } from '@/store/swap/reducer';

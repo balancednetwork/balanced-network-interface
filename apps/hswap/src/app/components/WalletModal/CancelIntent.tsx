@@ -1,8 +1,9 @@
 import React from 'react';
 
-import { EvmProvider, IntentService, SuiProvider } from '@balancednetwork/intents-sdk';
+import { EvmProvider, SuiProvider } from '@balancednetwork/intents-sdk';
 import { EvmXService, useCurrentAccount, useCurrentWallet, useSuiClient, useXService } from '@balancednetwork/xwagmi';
 
+import { intentService } from '@/lib/intent';
 import { MMTransaction, MMTransactionActions } from '@/store/transactions/useMMTransactionStore';
 
 enum TransactionStatus {
@@ -32,7 +33,7 @@ function CancelIntent({ transaction }: { transaction: MMTransaction }) {
 
     setStatus(TransactionStatus.Signing);
     try {
-      const result = await IntentService.cancelIntentOrder(
+      const result = await intentService.cancelIntentOrder(
         transaction.orderId,
         transaction.fromAmount.currency.xChainId === '0xa4b1.arbitrum' ? 'arb' : 'sui',
         transaction.fromAmount.currency.xChainId === '0xa4b1.arbitrum'

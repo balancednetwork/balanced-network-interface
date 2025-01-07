@@ -38,7 +38,7 @@ const columns: ColumnDef<any>[] = [
 
 const DEFAULT_XCHAIN_ID = 'all';
 
-export const UNTRADEABLE_TOKENS = ['tBTC', 'weETH', 'wstETH', 'HASUI', 'AFSUI', 'VSUI', 'JITOSOL', 'aARCH'];
+export const UNTRADEABLE_TOKENS = ['tBTC', 'weETH', 'wstETH', 'JITOSOL', 'aARCH'];
 
 export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, selectedCurrency }) {
   const [xChainId, setXChainId] = useState<XChainId | 'all'>(DEFAULT_XCHAIN_ID);

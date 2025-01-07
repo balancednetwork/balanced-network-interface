@@ -222,7 +222,6 @@ export function useDerivedSwapInfo(): {
 
   //if output is wICX, set the trade to the one with the better execution amount
   if (_currencies[Field.OUTPUT]?.symbol === 'wICX') {
-    console.log('trades - default | tradeICX: ', trade?.executionPrice.toFixed(), tradeICX?.executionPrice.toFixed());
     // Pick the trade with the better execution amount
     if (tradeICX && (!trade || tradeICX.executionPrice.greaterThan(trade.executionPrice))) {
       trade = tradeICX;
@@ -242,11 +241,6 @@ export function useDerivedSwapInfo(): {
 
   //if input is ICX, set the trade to the one with the better execution amount
   if (_currencies[Field.INPUT]?.symbol === 'ICX') {
-    console.log(
-      'NEW trades - default | tradeICX: ',
-      trade?.executionPrice.toFixed(),
-      tradeWICX?.executionPrice.toFixed(),
-    );
     // Pick the trade with the better execution amount
     if (tradeWICX && (!trade || tradeWICX.executionPrice.greaterThan(trade.executionPrice))) {
       trade = tradeWICX;

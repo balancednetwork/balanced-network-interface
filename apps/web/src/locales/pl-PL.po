@@ -2101,6 +2101,10 @@ msgstr ""
 msgid "Executed."
 msgstr ""
 
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+msgid "Approving"
+msgstr ""
+
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Unlocked {0} BALN."
 msgstr ""
@@ -2579,6 +2583,10 @@ msgstr ""
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Submit proposal"
 msgstr "Zgłoś propozycję"
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+msgid "Approve transfer"
+msgstr ""
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 msgid "FEES (24H)"

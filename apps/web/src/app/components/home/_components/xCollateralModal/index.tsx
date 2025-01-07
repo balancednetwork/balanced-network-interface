@@ -209,7 +209,11 @@ const XCollateralModal = ({
                       <>
                         {approvalState !== ApprovalState.APPROVED ? (
                           <Button onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
-                            {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
+                            {approvalState === ApprovalState.PENDING ? (
+                              <Trans>Approving</Trans>
+                            ) : (
+                              <Trans>Approve transfer</Trans>
+                            )}
                           </Button>
                         ) : (
                           <StyledButton onClick={handleXCollateralAction} disabled={!gasChecker.hasEnoughGas}>

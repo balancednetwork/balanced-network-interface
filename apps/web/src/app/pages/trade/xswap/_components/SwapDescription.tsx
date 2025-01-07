@@ -125,7 +125,7 @@ export default function SwapDescription() {
               <Typography variant="p">
                 <Trans>
                   {`${price ? formatUnitPrice(price.toFixed(10)) : '...'} 
-                    ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
+                    ${formatSymbol(currencies[Field.OUTPUT]?.symbol)} per ${formatSymbol(currencies[Field.INPUT]?.symbol)} `}
                 </Trans>
               </Typography>
             </>

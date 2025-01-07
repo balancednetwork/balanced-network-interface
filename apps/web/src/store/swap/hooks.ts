@@ -220,15 +220,6 @@ export function useDerivedSwapInfo(): {
   });
   const tradeICX = isExactIn ? trade1TMP : trade2TMP;
 
-  //check trade setup for wICX input
-  const parsedAmountTMP2 = tryParseAmount(
-    typedValue,
-    (isExactIn ? wICX[NETWORK_ID] : _currencies[Field.OUTPUT]) ?? undefined,
-  );
-  const trade1TMP2 = useTradeExactIn(isExactIn ? parsedAmountTMP2 : undefined, _currencies[Field.OUTPUT]);
-  const trade2TMP2 = useTradeExactOut(wICX[NETWORK_ID], !isExactIn ? parsedAmountTMP2 : undefined);
-  const tradeWICX = isExactIn ? trade1TMP2 : trade2TMP2;
-
   //if output is wICX, set the trade to the one with the better execution amount
   if (_currencies[Field.OUTPUT]?.symbol === 'wICX') {
     console.log('trades - default | tradeICX: ', trade?.executionPrice.toFixed(), tradeICX?.executionPrice.toFixed());
@@ -237,6 +228,17 @@ export function useDerivedSwapInfo(): {
       trade = tradeICX;
     }
   }
+  //TODO: end of temporary solution
+
+  //check trade setup for wICX input
+  //compares trades starting with ICX token and picks better route between staking first or using wICX pool
+  const parsedAmountTMP2 = tryParseAmount(
+    typedValue,
+    (isExactIn ? wICX[NETWORK_ID] : _currencies[Field.OUTPUT]) ?? undefined,
+  );
+  const trade1TMP2 = useTradeExactIn(isExactIn ? parsedAmountTMP2 : undefined, _currencies[Field.OUTPUT]);
+  const trade2TMP2 = useTradeExactOut(wICX[NETWORK_ID], !isExactIn ? parsedAmountTMP2 : undefined);
+  const tradeWICX = isExactIn ? trade1TMP2 : trade2TMP2;
 
   //if input is ICX, set the trade to the one with the better execution amount
   if (_currencies[Field.INPUT]?.symbol === 'ICX') {
@@ -250,7 +252,6 @@ export function useDerivedSwapInfo(): {
       trade = tradeWICX;
     }
   }
-  //TODO: end of temporary solution
 
   const swapDisabled = trade?.priceImpact.greaterThan(PRICE_IMPACT_SWAP_DISABLED_THRESHOLD);
 

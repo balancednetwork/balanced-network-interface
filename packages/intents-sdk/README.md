@@ -38,6 +38,14 @@ How to setup local development
    2. Always import files using `.js` postfix.
 5. Before commiting execute `npm run prepublishOnly` in order to verify build, format and exports.
 
+## Intent Solver Endpoints
+
+Current Intent Solver API endpoints:
+- **Production (mainnet)**: "https://solver.iconblockchain.xyz"
+- **Staging** (mainnet): "https://staging-solver.iconblockchain.xyz"
+
+**Note** Staging endpoint contains features to be potentially released and is subject to frequent change!
+
 ## Load SDK Config
 
 SDK includes predefined configurations of supported chains, tokens and other relevant information for the client to consume.
@@ -45,23 +53,28 @@ SDK includes predefined configurations of supported chains, tokens and other rel
 ```typescript
 import { ChainName, ChainConfig, chainConfig, Token, IntentService } from "@balancednetwork/intents-sdk"
 
+// instantiate intent service with config
+const intentService = new IntentService({
+  solverApiEndpoint: "https://solver.iconblockchain.xyz",
+})
+
 // all supported Intent chains
-const supportedChains: ChainName[] = IntentService.getSupportedChains()
+const supportedChains: ChainName[] = intentService.getSupportedChains()
 
 // retrieve arbitrum chain config
-const arbChainConfig: EvmChainConfig = IntentService.getChainConfig("arb")
+const arbChainConfig: EvmChainConfig = intentService.getChainConfig("arb")
 
 // example of how to construct token per chain map using supported chains array
 const supportedTokensPerChain: Map<ChainName, Token[]> = new Map(
   supportedChains.map((chain) => {
-    return [chain, IntentService.getChainConfig(chain).supportedTokens]
+    return [chain, intentService.getChainConfig(chain).supportedTokens]
   }),
 )
 
 // example of how to construct chain name to chain config map
 const chainConfigs: Map<ChainName, ChainConfig> = new Map(
   supportedChains.map((chain) => {
-    return [chain, IntentService.getChainConfig(chain)]
+    return [chain, intentService.getChainConfig(chain)]
   }),
 )
 ```
@@ -74,7 +87,11 @@ All the required configurations (chain id [nid], token decimals and address) sho
 ```typescript
 import { IntentService } from "@balancednetwork/intents-sdk"
 
-const quoteResult = await IntentService.getQuote({
+const intentService = new IntentService({
+  solverApiEndpoint: "https://solver.iconblockchain.xyz",
+})
+
+const quoteResult = await intentService.getQuote({
   token_src: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
   token_src_blockchain_id: "0xa4b1.arbitrum",
   token_dst: "0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI",
@@ -147,6 +164,11 @@ Example for ARB -> SUI Intent Order:
 ```typescript
 import { IntentService, EvmProvider, CreateIntentOrderPayload, IntentStatusCode } from "@balancednetwork/intents-sdk"
 
+// instantiate intent service with config
+const intentService = new IntentService({
+  solverApiEndpoint: "https://solver.iconblockchain.xyz",
+})
+
 // create EVM provider because "arb" is of ChainType "evm" (defined in ChainConfig type - see section Load SDK Config)
 // NOTE: window can only be accessed client side (browser)
 const evmProvider = new EvmProvider({
@@ -168,23 +190,23 @@ const intentOrderPayload: CreateIntentOrderPayload = {
 } as const
 
 // checks if token transfer amount is approved (required for EVM, can be skipped for SUI as it defaults to true)
-const isAllowanceValid = await IntentService.isAllowanceValid(intentOrderPayload, evmProvider)
+const isAllowanceValid = await intentService.isAllowanceValid(intentOrderPayload, evmProvider)
 
 if (isAllowanceValid.ok) {
   if (!isAllowanceValid.value) {
     // allowance invalid, prompt approval
-    const approvalResult = await IntentService.approve(
+    const approvalResult = await intentService.approve(
       "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
       BigInt("100000000000000000"),
-      IntentService.getChainConfig("arb").intentContract,
+      intentService.getChainConfig("arb").intentContract,
       evmProvider,
     )
 
     if (approvalResult.ok) {
-      const executionResult = await IntentService.executeIntentOrder(intentOrderPayload, evmProvider)
+      const executionResult = await intentService.executeIntentOrder(intentOrderPayload, evmProvider)
 
       if (executionResult.ok) {
-        const intentStatus = await IntentService.getStatus({
+        const intentStatus = await intentService.getStatus({
           task_id: executionResult.value.task_id,
         })
 
@@ -215,7 +237,7 @@ if (isAllowanceValid.ok) {
   } else {
     // allowance is valid
 
-    const executionResult = await IntentService.executeIntentOrder(intentOrderPayload, evmProvider)
+    const executionResult = await intentService.executeIntentOrder(intentOrderPayload, evmProvider)
     // ...rest of result check and status check logic as above
   }
 } else {
@@ -232,19 +254,24 @@ Example cancel order:
 ```typescript
 import { IntentService, SwapOrder, EvmProvider } from "@balancednetwork/intents-sdk"
 
+// instantiate intent service with config
+const intentService = new IntentService({
+  solverApiEndpoint: "https://solver.iconblockchain.xyz",
+})
+
 const evmProvider = new EvmProvider({
    userAddress: "0x601020c5797Cdd34f64476b9bf887a353150Cb9a",
    chain: "arb",
    provider: (window as any).ethereum
 })
-const intentOrder: Result<SwapOrder> = await IntentService.getOrder(
+const intentOrder: Result<SwapOrder> = await intentService.getOrder(
   "0xabcdefasdasdsafssadasdsadsadasdsadasdsadsa",
-  IntentService.getChainConfig("arb").intentContract,
+  intentService.getChainConfig("arb").intentContract,
   evmProvider,
 )
 
 if (intentOrder.ok) {
-   const cancelResult: Result<string> = await IntentService.cancelIntentOrder(
+   const cancelResult: Result<string> = await intentService.cancelIntentOrder(
       intentOrder.value.id,
       "arb",
       evmProvider,
@@ -267,21 +294,26 @@ if (intentOrder.ok) {
 
 After the Intent order is created (`executeIntentOrder`), the resulting `txHash` can be used to query created on-chain order data.
 Intent order id is assigned as a part of tx execution, thus if you want to grab an actual order id to be potentially canceled in future
-you should invoke `IntentService.getOrder(..)` function.
+you should invoke `intentService.getOrder(..)` function.
 
 Example get order:
 
 ```typescript
 import { IntentService, SwapOrder, EvmProvider } from "@balancednetwork/intents-sdk"
 
+// instantiate intent service with config
+const intentService = new IntentService({
+  solverApiEndpoint: "https://solver.iconblockchain.xyz",
+})
+
 const evmProvider = new EvmProvider({
   userAddress: "0x601020c5797Cdd34f64476b9bf887a353150Cb9a",
   chain: "arb",
   provider: (window as any).ethereum,
 })
-const intentOrder: Result<SwapOrder> = await IntentService.getOrder(
+const intentOrder: Result<SwapOrder> = await intentService.getOrder(
   "0xabcdefasdasdsafssadasdsadsadasdsadasdsadsa",
-  IntentService.getChainConfig("arb").intentContract,
+  intentService.getChainConfig("arb").intentContract,
   evmProvider,
 )
 ```
@@ -295,7 +327,12 @@ Example status check:
 ```typescript
 import { IntentService } from "@balancednetwork/intents-sdk"
 
-const intentStatus = await IntentService.getStatus({
+// instantiate intent service with config
+const intentService = new IntentService({
+  solverApiEndpoint: "https://solver.iconblockchain.xyz",
+})
+
+const intentStatus = await intentService.getStatus({
   task_id: "a0dd7652-b360-4123-ab2d-78cfbcd20c6b",
 })
 

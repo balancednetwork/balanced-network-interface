@@ -4,7 +4,6 @@ import type { ChainConfig, ChainName, EvmChainConfig, SuiChainConfig } from './t
 
 export const DEFAULT_MAX_RETRY = 3;
 export const DEFAULT_RETRY_DELAY_MS = 2000;
-export const SOLVER_API_ENDPOINT = 'https://solver.iconblockchain.xyz'; // TODO - replace with the production one
 
 export const supportedChains: ChainName[] = ['arb', 'sui'];
 

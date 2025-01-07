@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -14,6 +14,7 @@ import TickIcon from '@/assets/icons/tick.svg';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
+import { intentService, intentServiceConfig } from '@/lib/intent';
 import { MMTrade } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import {
@@ -23,13 +24,7 @@ import {
 } from '@/store/transactions/useMMTransactionStore';
 import { formatBigNumber, shortenAddress } from '@/utils';
 import { getNetworkDisplayName } from '@/utils/xTokens';
-import {
-  CreateIntentOrderPayload,
-  EvmProvider,
-  IntentService,
-  SolverApiService,
-  SuiProvider,
-} from '@balancednetwork/intents-sdk';
+import { CreateIntentOrderPayload, EvmProvider, SolverApiService, SuiProvider } from '@balancednetwork/intents-sdk';
 import {
   EvmXService,
   XToken,
@@ -146,7 +141,7 @@ const MMSwapModal = ({
           : // @ts-ignore
             new SuiProvider({ client: suiClient, wallet: suiWallet, account: suiAccount });
 
-      const intentHash = await IntentService.createIntentOrder(order, provider);
+      const intentHash = await intentService.createIntentOrder(order, provider);
 
       setOrderStatus(IntentOrderStatus.Executing);
 
@@ -164,7 +159,7 @@ const MMSwapModal = ({
         return;
       }
 
-      const intentResult = await IntentService.getOrder(
+      const intentResult = await intentService.getOrder(
         intentHash.value,
         currencies[Field.INPUT].xChainId === '0xa4b1.arbitrum' ? 'arb' : 'sui',
         provider,
@@ -185,10 +180,13 @@ const MMSwapModal = ({
       });
       setIntentId(intentHash.value);
 
-      const executionResult = await SolverApiService.postExecution({
-        intent_tx_hash: intentHash.value,
-        quote_uuid: trade.uuid,
-      });
+      const executionResult = await SolverApiService.postExecution(
+        {
+          intent_tx_hash: intentHash.value,
+          quote_uuid: trade.uuid,
+        },
+        intentServiceConfig,
+      );
 
       if (executionResult.ok) {
         MMTransactionActions.setTaskId(intentHash.value, executionResult.value.task_id);

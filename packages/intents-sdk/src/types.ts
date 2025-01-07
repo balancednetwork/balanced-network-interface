@@ -121,3 +121,7 @@ export type CreateIntentOrderPayload = {
   toToken: string;
   toAmount: bigint; // amount in token decimal scale
 };
+
+export type IntentServiceConfig = {
+  solverApiEndpoint: string;
+};

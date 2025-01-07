@@ -1,12 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import {
-  CreateIntentOrderPayload,
-  EvmProvider,
-  IntentService,
-  SolverApiService,
-  SuiProvider,
-} from '@balancednetwork/intents-sdk';
+import { CreateIntentOrderPayload, EvmProvider, SolverApiService, SuiProvider } from '@balancednetwork/intents-sdk';
 import {
   EvmXService,
   XToken,
@@ -27,6 +21,7 @@ import { Modal } from '@/app/components/Modal';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
+import { intentService, intentServiceConfig } from '@/lib/intent';
 import { MMTrade } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import {
@@ -141,7 +136,7 @@ const MMSwapModal = ({
           : // @ts-ignore
             new SuiProvider({ client: suiClient, wallet: suiWallet, account: suiAccount });
 
-      const intentHash = await IntentService.createIntentOrder(order, provider);
+      const intentHash = await intentService.createIntentOrder(order, provider);
 
       setOrderStatus(IntentOrderStatus.Executing);
 
@@ -159,7 +154,7 @@ const MMSwapModal = ({
         return;
       }
 
-      const intentResult = await IntentService.getOrder(
+      const intentResult = await intentService.getOrder(
         intentHash.value,
         currencies[Field.INPUT].xChainId === '0xa4b1.arbitrum' ? 'arb' : 'sui',
         provider,
@@ -181,10 +176,13 @@ const MMSwapModal = ({
       });
       setIntentId(intentHash.value);
 
-      const executionResult = await SolverApiService.postExecution({
-        intent_tx_hash: intentHash.value,
-        quote_uuid: trade.uuid,
-      });
+      const executionResult = await SolverApiService.postExecution(
+        {
+          intent_tx_hash: intentHash.value,
+          quote_uuid: trade.uuid,
+        },
+        intentServiceConfig,
+      );
 
       if (executionResult.ok) {
         MMTransactionActions.setTaskId(intentHash.value, executionResult.value.task_id);

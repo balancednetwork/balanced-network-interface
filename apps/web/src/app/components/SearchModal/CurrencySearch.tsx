@@ -2,7 +2,6 @@ import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } f
 
 import { Currency, Token } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';

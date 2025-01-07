@@ -4,24 +4,22 @@ import CurrencyLogoWithNetwork from '@/app/components/CurrencyLogoWithNetwork';
 import { ExclamationIcon } from '@/app/components/Icons';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { MMTransaction, MMTransactionStatus } from '@/store/transactions/useMMTransactionStore';
 import { formatElapsedTime } from '@/utils';
 import { formatBalance } from '@/utils/formatter';
 import { getNetworkDisplayName, getTrackerLink } from '@balancednetwork/xwagmi';
-import { XTransaction, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
-import { xMessageActions } from '@balancednetwork/xwagmi';
 import { CheckIcon, ExternalLink, Loader2Icon } from 'lucide-react';
+import CancelIntent from './CancelIntent';
 
-interface HistoryItemProps {
-  xTransaction: XTransaction;
+interface IntentHistoryItemProps {
+  transaction: MMTransaction;
 }
 
-const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
-  const { inputXToken, outputXToken, inputAmount, outputAmount } = xTransaction.attributes;
-
-  const primaryMessage = xMessageActions.getOf(xTransaction.id, true);
+const IntentHistoryItem = ({ transaction }: IntentHistoryItemProps) => {
+  const { fromAmount, toAmount } = transaction;
 
   const [elapsedTime, setElapsedTime] = useState(0);
-  const timestamp = xTransaction.createdAt;
+  const timestamp = transaction.createdAt;
   useEffect(() => {
     if (timestamp) {
       const updateElapsedTime = () => {
@@ -47,33 +45,29 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
         <div className="relative px-8 rounded-xl flex justify-between items-start gap-0">
           <div className="flex gap-6 items-center">
             <div className="flex items-center">
-              <CurrencyLogoWithNetwork currency={inputXToken} />
-              <CurrencyLogoWithNetwork currency={outputXToken} className="mx-[-8px]" />
+              <CurrencyLogoWithNetwork currency={fromAmount.currency} />
+              <CurrencyLogoWithNetwork currency={toAmount.currency} className="mx-[-8px]" />
             </div>
 
             <div className="flex flex-col gap-1">
               <div className="text-[#0d0229] text-xs leading-none">
                 From{' '}
                 <strong>
-                  {formatBalance(inputAmount, undefined)} {inputXToken.symbol}
+                  {formatBalance(fromAmount.toFixed(), undefined)} {fromAmount.currency.symbol}
                 </strong>{' '}
-                on {getNetworkDisplayName(inputXToken.xChainId)}
+                on {getNetworkDisplayName(fromAmount.currency.xChainId)}
               </div>
               <div className="text-[#0d0229] text-xs leading-none">
                 to{' '}
                 <strong>
-                  {formatBalance(outputAmount, undefined)} {outputXToken.symbol}
+                  {formatBalance(toAmount.toFixed(), undefined)} {toAmount.currency.symbol}
                 </strong>{' '}
-                on {getNetworkDisplayName(outputXToken.xChainId)}
+                on {getNetworkDisplayName(toAmount.currency.xChainId)}
               </div>
             </div>
           </div>
           <a
-            href={
-              xTransaction.type === XTransactionType.SWAP_ON_ICON
-                ? getTrackerLink('0x1.icon', xTransaction.id.split('/')[1])
-                : `https://xcallscan.xyz/messages/search?value=${primaryMessage?.destinationTransactionHash || primaryMessage?.sourceTransactionHash}`
-            }
+            href={getTrackerLink(fromAmount.currency.xChainId, transaction.id)}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-[3px]"
@@ -82,27 +76,34 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
           </a>
         </div>
         <div className="mt-1 px-8 flex justify-end items-center gap-2">
+          {transaction.status === MMTransactionStatus.pending && <CancelIntent transaction={transaction} />}
+
           <div className="text-[#0d0229] text-[10px] font-bold uppercase">
-            {xTransaction.status === XTransactionStatus.pending
+            {transaction.status === MMTransactionStatus.pending
               ? 'Swapping'
               : elapsedTime
                 ? formatElapsedTime(elapsedTime)
                 : '...'}
           </div>
 
-          {xTransaction.status === XTransactionStatus.pending && (
+          {transaction.status === MMTransactionStatus.pending && (
             <div className={cn('w-4 h-4 rounded-full bg-[#d4c5f9] p-[2px]')}>
               <Loader2Icon className="text-[#695682] animate-spin w-3 h-3" />
             </div>
           )}
-          {xTransaction.status === XTransactionStatus.success && (
+          {transaction.status === MMTransactionStatus.success && (
             <div className={cn('w-4 h-4 rounded-full border-[#E6E0F7] border-[2px]')}>
               <div className="bg-title-gradient rounded-full w-full h-full flex justify-center items-center">
                 <CheckIcon className="w-2 h-2" />
               </div>
             </div>
           )}
-          {xTransaction.status === XTransactionStatus.failure && (
+          {transaction.status === MMTransactionStatus.failure && (
+            <div className={cn('w-4 h-4 rounded-full border-[#E6E0F7] border-[2px]')}>
+              <ExclamationIcon />
+            </div>
+          )}
+          {transaction.status === MMTransactionStatus.cancelled && (
             <div className={cn('w-4 h-4 rounded-full border-[#E6E0F7] border-[2px]')}>
               <ExclamationIcon />
             </div>
@@ -114,4 +115,4 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
   );
 };
 
-export default HistoryItem;
+export default IntentHistoryItem;

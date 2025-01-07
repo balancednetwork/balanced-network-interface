@@ -8,7 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { NETWORK_ID } from '@/constants/config';
 import { canBeQueue } from '@/constants/currency';
-import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
+import { PRICE_IMPACT_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
 import { useICX, wICX } from '@/constants/tokens';
 import { useAllXTokens } from '@/hooks/Tokens';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
@@ -252,7 +252,7 @@ export function useDerivedSwapInfo(): {
   }
   //TODO: end of temporary solution
 
-  const swapDisabled = trade?.priceImpact.greaterThan(SLIPPAGE_SWAP_DISABLED_THRESHOLD);
+  const swapDisabled = trade?.priceImpact.greaterThan(PRICE_IMPACT_SWAP_DISABLED_THRESHOLD);
 
   let inputError: string | undefined;
   if (account && !recipient) {
@@ -423,7 +423,7 @@ export function useInitialSwapLoad(): void {
   }, [currencies, pair, navigate, firstLoad]);
 }
 
-import { IntentService } from '@balancednetwork/intents-sdk';
+import { intentService } from '@/lib/intent';
 import { useQuery } from '@tanstack/react-query';
 
 export interface MMTrade {
@@ -454,7 +454,7 @@ export function useMMTrade(inputAmount: CurrencyAmount<XToken> | undefined, outp
         return;
       }
 
-      const res = await IntentService.getQuote({
+      const res = await intentService.getQuote({
         token_src: inputAmount.currency.address,
         token_src_blockchain_id: inputAmount.currency.xChainId,
         token_dst: outputCurrency.address,

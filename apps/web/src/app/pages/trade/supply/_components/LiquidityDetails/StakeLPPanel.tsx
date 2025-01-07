@@ -97,7 +97,7 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
   const handleConfirm = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
-    const decimals = (pair.token0.decimals + pair.token1.decimals) / 2;
+    const decimals = Math.ceil((pair.token0.decimals + pair.token1.decimals) / 2);
     if (shouldStake) {
       bnJs
         .inject({ account: account })

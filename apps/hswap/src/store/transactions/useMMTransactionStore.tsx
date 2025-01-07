@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { IntentStatusCode } from '@balancednetwork/intents-sdk';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
@@ -25,6 +25,7 @@ export type MMTransaction = {
   status: MMTransactionStatus;
   fromAmount: CurrencyAmount<XToken>;
   toAmount: CurrencyAmount<XToken>;
+  createdAt: number;
 };
 
 type MMTransactionStore = {
@@ -37,6 +38,7 @@ type MMTransactionStore = {
   setTaskId: (id: string, taskId: string) => void;
   getPendingTransactions: () => MMTransaction[];
   remove: (id: string) => void;
+  getTransactions: () => MMTransaction[];
 };
 
 export const useMMTransactionStore = create<MMTransactionStore>()(
@@ -64,6 +66,12 @@ export const useMMTransactionStore = create<MMTransactionStore>()(
         set(state => {
           state.transactions[id].status = MMTransactionStatus.failure;
         });
+      },
+
+      getTransactions: () => {
+        return Object.values(get().transactions).sort(
+          (a: MMTransaction, b: MMTransaction) => b.createdAt - a.createdAt,
+        );
       },
 
       cancel: (id: string) => {

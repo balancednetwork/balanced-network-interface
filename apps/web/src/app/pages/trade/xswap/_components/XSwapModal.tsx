@@ -12,7 +12,7 @@ import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
-import { SLIPPAGE_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
+import { PRICE_IMPACT_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
@@ -63,7 +63,7 @@ const XSwapModal = ({
     currentXTransaction?.status === XTransactionStatus.failure;
 
   const slippageTolerance = useSwapSlippageTolerance();
-  const showWarning = executionTrade?.priceImpact.greaterThan(SLIPPAGE_MODAL_WARNING_THRESHOLD);
+  const showWarning = executionTrade?.priceImpact.greaterThan(PRICE_IMPACT_MODAL_WARNING_THRESHOLD);
 
   const { xCallFee, formattedXCallFee } = useXCallFee(direction.from, direction.to);
 

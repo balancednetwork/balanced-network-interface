@@ -59,11 +59,11 @@ export default function RecipientAddressPanel() {
   useEffect(() => {
     if (outputAccount.address) {
       setChecked(false);
-      onChangeRecipient(outputAccount.address || '');
+      onChangeRecipient(outputAccount.address);
       setEditable(false);
     } else {
       setChecked(false);
-      onChangeRecipient('');
+      onChangeRecipient(null);
       setEditable(true);
     }
   }, [onChangeRecipient, outputAccount.address]);
@@ -89,7 +89,7 @@ export default function RecipientAddressPanel() {
             if (_checked !== 'indeterminate') {
               setChecked(_checked);
               if (_checked) {
-                onChangeRecipient('');
+                onChangeRecipient(null);
               } else {
                 onChangeRecipient(outputAccount.address || '');
               }

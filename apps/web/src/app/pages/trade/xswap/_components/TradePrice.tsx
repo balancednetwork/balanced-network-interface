@@ -5,6 +5,7 @@ import { Box } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
+import { formatSymbol } from '@/utils/formatter';
 
 interface TradePriceProps {
   price: Price<Currency, Currency>;
@@ -30,7 +31,9 @@ function TradePrice({ price, showInverted, setShowInverted }: TradePriceProps) {
     formattedPrice = '0';
   }
 
-  const label = showInverted ? `${price.quoteCurrency?.symbol}` : `${price.baseCurrency?.symbol} `;
+  const label = showInverted
+    ? `${formatSymbol(price.quoteCurrency?.symbol)}`
+    : `${formatSymbol(price.baseCurrency?.symbol)}`;
   const labelInverted = showInverted ? `${price.baseCurrency?.symbol} ` : `${price.quoteCurrency?.symbol}`;
   const flipPrice = useCallback(() => setShowInverted(!showInverted), [setShowInverted, showInverted]);
 

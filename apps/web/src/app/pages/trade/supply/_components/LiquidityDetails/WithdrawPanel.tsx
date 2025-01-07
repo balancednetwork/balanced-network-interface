@@ -376,12 +376,12 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
             {formatBigNumber(new BigNumber(parsedAmount[Field.CURRENCY_A]?.toFixed() || 0), 'currency')}{' '}
-            {parsedAmount[Field.CURRENCY_A]?.currency.symbol || '...'}
+            {formatSymbol(parsedAmount[Field.CURRENCY_A]?.currency.symbol) || '...'}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
             {formatBigNumber(new BigNumber(parsedAmount[Field.CURRENCY_B]?.toFixed() || 0), 'currency')}{' '}
-            {parsedAmount[Field.CURRENCY_B]?.currency.symbol || '...'}
+            {formatSymbol(parsedAmount[Field.CURRENCY_B]?.currency.symbol) || '...'}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

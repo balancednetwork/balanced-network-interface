@@ -7,11 +7,13 @@ import axios from 'axios';
 import { Flex } from 'rebass';
 
 import { Typography } from '@/app/theme';
+import { AnimatePresence, motion } from 'framer-motion';
 import { TextButton } from '../Button';
 import { StyledButton } from '../Button/StyledButton';
 import { UnderlineText } from '../DropdownText';
 import Modal from '../Modal';
 import ModalContent from '../ModalContent';
+import Spinner from '../Spinner';
 
 const SPONSOR_URL = 'https://ciihnqaqiomjdoicuy5rgwmy5m0vxanz.lambda-url.us-east-1.on.aws';
 const SPONSORING_ADDRESS = 'GCV5PJ4H57MZFRH5GM3E3CNFLWQURNFNIHQOYGRQ7JHGWJLAR2SFVZO6';
@@ -25,7 +27,8 @@ const StellarSponsorshipModal = ({ text, address }: StellarSponsorshipModalProps
   const stellarXService = useXService('STELLAR') as unknown as StellarXService;
   const [isLoading, setLoading] = React.useState(false);
   const [isOpen, setOpen] = React.useState(false);
-
+  const [initiated, setInitiated] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
   const handleDismiss = () => {
     setOpen(false);
   };
@@ -78,11 +81,14 @@ const StellarSponsorshipModal = ({ text, address }: StellarSponsorshipModalProps
       const { signedTxXdr: signedTx } = await stellarXService.walletsKit.signTransaction(transaction.toXDR());
 
       setLoading(true);
+      setInitiated(true);
       const response = await client.post('/', { data: signedTx });
 
       if (response.statusText === 'OK' && response.data) {
-        console.log('sponsoring done');
-        handleDismiss();
+        setSuccess(true);
+        setTimeout(() => {
+          handleDismiss();
+        }, 2000);
       }
     } catch (error) {
       console.error('Error fetching Stellar sponsor transaction:', error);
@@ -107,12 +113,38 @@ const StellarSponsorshipModal = ({ text, address }: StellarSponsorshipModalProps
             <Trans>Sign a transaction to activate your wallet for free.</Trans>
           </Typography>
 
-          <Flex justifyContent="center" mt="20px" pt="20px" className="border-top">
-            <TextButton onClick={handleDismiss}>{isLoading ? <Trans>Close</Trans> : <Trans>Cancel</Trans>}</TextButton>
-            <StyledButton disabled={isLoading} $loading={isLoading} onClick={requestSponsorship}>
-              {isLoading ? <Trans>Activating</Trans> : <Trans>Activate wallet</Trans>}
-            </StyledButton>
-          </Flex>
+          <AnimatePresence>
+            {initiated && (
+              <motion.div
+                style={{ transform: 'translateY(8px)' }}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 40 }}
+              >
+                <Spinner $centered success={success} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {!success && (
+              <motion.div
+                key={'sponsorship-ctas'}
+                style={{ overflow: 'hidden' }}
+                initial={{ opacity: 1, height: 'auto' }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+              >
+                <Flex justifyContent="center" mt="20px" pt="20px" className="border-top">
+                  <TextButton onClick={handleDismiss}>
+                    {isLoading ? <Trans>Close</Trans> : <Trans>Cancel</Trans>}
+                  </TextButton>
+                  <StyledButton disabled={isLoading} $loading={isLoading} onClick={requestSponsorship}>
+                    {isLoading ? <Trans>Activating</Trans> : <Trans>Activate wallet</Trans>}
+                  </StyledButton>
+                </Flex>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </ModalContent>
       </Modal>
     </>

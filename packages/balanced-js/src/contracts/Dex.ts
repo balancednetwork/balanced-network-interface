@@ -58,6 +58,17 @@ export default class Dex extends Contract {
     });
     return this.call(callParams);
   }
+  xBalanceOf(owner: string, id: number, blockHeight?: number) {
+    const callParams = this.paramsBuilder({
+      method: 'xBalanceOf',
+      blockHeight: blockHeight,
+      params: {
+        _owner: owner,
+        _id: IconConverter.toHex(id),
+      },
+    });
+    return this.call(callParams);
+  }
 
   totalSupply(id: number) {
     const callParams = this.paramsBuilder({

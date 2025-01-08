@@ -17,16 +17,16 @@ import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from '@/constants/misc';
-import { BalanceData } from '@/hooks/useV2Pairs';
+import { BalanceData, Pool, usePoolTokenAmounts } from '@/hooks/useV2Pairs';
 import { Source } from '@/store/bbaln/hooks';
 import { Field } from '@/store/mint/reducer';
 import { useChangeWithdrawnValue, useStakedLPPercent } from '@/store/stakedLP/hooks';
 import { tryParseAmount } from '@/store/swap/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
-import { useCurrencyBalances, useHasEnoughICX } from '@/store/wallet/hooks';
+import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { formatBigNumber, multiplyCABN, toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { bnJs, getXChainType, useXAccount, useXRemoveLiquidity } from '@balancednetwork/xwagmi';
 
 import { EXA, WEIGHT } from '@/app/components/home/BBaln/utils';
 import { withdrawMessage } from '../utils';
@@ -105,9 +105,8 @@ export function getShareReward(
   return new BigNumber(0);
 }
 
-export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: BalanceData; poolId: number }) => {
+export const WithdrawPanel = ({ pair, pool, poolId }: { pair: Pair; pool: Pool; poolId: number }) => {
   const { account } = useIconReact();
-  const balances = useCurrencyBalances(useMemo(() => [pair.token0, pair.token1], [pair]));
   const onChangeWithdrawnValue = useChangeWithdrawnValue();
 
   const [{ typedValue, independentField, inputType, portion }, setState] = React.useState<{
@@ -130,7 +129,7 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
 
   const percent = useMemo(() => new Percent(Math.floor(portion * 100), 10_000), [portion]);
   const stakedLPPercent = useStakedLPPercent(poolId);
-  const [aBalance, bBalance] = getABBalance(pair, balance);
+  const [aBalance, bBalance] = usePoolTokenAmounts(pool);
   const availablePercent = new BigNumber(100).minus(stakedLPPercent).abs();
   const availableBase = aBalance.multiply(availablePercent.toFixed(0)).divide(100);
   const availableQuote = bBalance.multiply(availablePercent.toFixed(0)).divide(100);
@@ -229,47 +228,53 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
     setState({ typedValue, independentField, inputType: 'slider', portion: 0 });
   };
 
-  const handleWithdraw = () => {
-    if (!account) return;
+  const xAccount = useXAccount(getXChainType(pool.xChainId));
+  const xRemoveLiquidity = useXRemoveLiquidity();
+  const handleWithdraw = async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     const numPortion = new BigNumber(portion / 100);
+    const withdrawAmount = multiplyCABN(pool.balance, numPortion);
+    await xRemoveLiquidity(xAccount.address, poolId, pool.xChainId, withdrawAmount);
 
-    const t = multiplyCABN(balance.balance, numPortion);
+    window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
 
-    const aT = multiplyCABN(availableBase, numPortion);
-    const bT = multiplyCABN(availableQuote, numPortion);
-
-    bnJs
-      .inject({ account })
-      .Dex.remove(poolId, toDec(t))
-      .then(result => {
-        addTransaction(
-          { hash: result.result },
-          {
-            pending: withdrawMessage(
-              aT.toFixed(2, { groupSeparator: ',' }),
-              aT.currency.symbol ?? '',
-              bT.toFixed(2, { groupSeparator: ',' }),
-              bT.currency.symbol ?? '',
-            ).pendingMessage,
-            summary: withdrawMessage(
-              aT.toFixed(2, { groupSeparator: ',' }),
-              aT.currency.symbol ?? '',
-              bT.toFixed(2, { groupSeparator: ',' }),
-              bT.currency.symbol ?? '',
-            ).successMessage,
-          },
-        );
-        toggleOpen();
-      })
-      .catch(e => {
-        console.error('error', e);
-      })
-      .finally(() => {
-        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-        resetValue();
-      });
+    // if (!account) return;
+    // window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+    // const numPortion = new BigNumber(portion / 100);
+    // const t = multiplyCABN(pool.balance, numPortion);
+    // const aT = multiplyCABN(availableBase, numPortion);
+    // const bT = multiplyCABN(availableQuote, numPortion);
+    // bnJs
+    //   .inject({ account })
+    //   .Dex.remove(poolId, toDec(t))
+    //   .then(result => {
+    //     addTransaction(
+    //       { hash: result.result },
+    //       {
+    //         pending: withdrawMessage(
+    //           aT.toFixed(2, { groupSeparator: ',' }),
+    //           aT.currency.symbol ?? '',
+    //           bT.toFixed(2, { groupSeparator: ',' }),
+    //           bT.currency.symbol ?? '',
+    //         ).pendingMessage,
+    //         summary: withdrawMessage(
+    //           aT.toFixed(2, { groupSeparator: ',' }),
+    //           aT.currency.symbol ?? '',
+    //           bT.toFixed(2, { groupSeparator: ',' }),
+    //           bT.currency.symbol ?? '',
+    //         ).successMessage,
+    //       },
+    //     );
+    //     toggleOpen();
+    //   })
+    //   .catch(e => {
+    //     console.error('error', e);
+    //   })
+    //   .finally(() => {
+    //     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+    //     resetValue();
+    //   });
   };
 
   const handleShowConfirm = () => {
@@ -277,10 +282,6 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
   };
 
   const hasEnoughICX = useHasEnoughICX();
-
-  const availableCurrency = (stakedValue, suppliedValue) =>
-    (!!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue)?.toFixed(2, { groupSeparator: ',' }) ||
-    '...';
 
   const isValid =
     formattedAmounts[Field.CURRENCY_A] &&
@@ -324,7 +325,7 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
                 : availableBase?.toFixed() || 0,
             ),
             'currency',
-          )} ${balances[0]?.currency.symbol || '...'} /
+          )} ${pair.token0.symbol || '...'} /
           ${formatBigNumber(
             new BigNumber(
               parsedAmount[Field.CURRENCY_B]
@@ -332,7 +333,7 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
                 : availableQuote?.toFixed() || 0,
             ),
             'currency',
-          )} ${balances[1]?.currency.symbol || '...'}`}
+          )} ${pair.token1.symbol || '...'}`}
         </Typography>
         <Box mb={5}>
           {hasUnstakedLP && (

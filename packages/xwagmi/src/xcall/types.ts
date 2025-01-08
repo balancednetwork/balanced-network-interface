@@ -68,6 +68,7 @@ export type XTransactionInput = {
   type: XTransactionType;
   inputAmount: CurrencyAmount<XToken>;
   outputAmount?: CurrencyAmount<XToken>; // quote token for liquidity
+  poolId?: number; // liquidity pool id
   account: string;
   xCallFee: IXCallFee;
   callback?: () => void;

@@ -14,6 +14,7 @@ import { XTransactionInput } from '@/xcall/types';
 import { RLP } from '@ethereumjs/rlp';
 import { Address, toHex } from 'viem';
 import { EvmXWalletClient } from './EvmXWalletClient';
+import { getXRemoveData } from './utils';
 
 export class EvmXLiquidityService {
   constructor(private client: EvmXWalletClient) {}
@@ -158,7 +159,41 @@ export class EvmXLiquidityService {
     return hash;
   }
 
-  async removeLiquidity(xTransactionInput: XTransactionInput) {}
+  async removeLiquidity(xTransactionInput: XTransactionInput) {
+    const { account, inputAmount, poolId, xCallFee } = xTransactionInput;
+
+    if (!poolId) {
+      throw new Error('poolId is required');
+    }
+
+    const publicClient = this.client.getPublicClient();
+    const walletClient = await this.client.getWalletClient();
+
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
+    const amount = BigInt(inputAmount.quotient.toString());
+    const data = toHex(getXRemoveData(poolId, amount, true));
+
+    const envelope = toHex(
+      RLP.encode([
+        Buffer.from([0]),
+        data,
+        FROM_SOURCES[this.client.xChainId]?.map(Buffer.from),
+        TO_SOURCES[this.client.xChainId]?.map(Buffer.from),
+      ]),
+    );
+
+    const res = await publicClient.simulateContract({
+      account: account as Address,
+      address: xChainMap[this.client.xChainId].contracts.xCall as Address,
+      abi: xCallContractAbi,
+      functionName: 'sendCall',
+      args: [destination, envelope],
+      value: xCallFee.rollback,
+    });
+
+    const hash = await walletClient.writeContract(res.request);
+    return hash;
+  }
   async stake(xTransactionInput: XTransactionInput) {}
   async unstake(xTransactionInput: XTransactionInput) {}
   async claimRewards(xTransactionInput: XTransactionInput) {}

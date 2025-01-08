@@ -54,8 +54,8 @@ export const stakedFraction = stakedLPPercent => {
   return stakedFraction;
 };
 
-export const totalSupply = (stakedValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
-  !!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue;
+export const totalSupply = (withdrawValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
+  !!withdrawValue ? suppliedValue?.subtract(withdrawValue) : suppliedValue;
 
 export const getFormattedRewards = (reward: BigNumber): string => {
   return reward?.isEqualTo(ZERO) ? 'N/A' : `~ ${formatBigNumber(reward, 'currency')} BALN`;

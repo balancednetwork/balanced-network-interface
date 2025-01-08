@@ -200,12 +200,8 @@ export default function LiquidityDetails() {
                   </StyledAccordionButton>
                   <StyledAccordionPanel hidden={isHided}>
                     <StyledBoxPanel bg="bg3">
-                      <StakeLPPanel pair={pairs[poolId]} />
-                      <WithdrawPanel
-                        poolId={poolId}
-                        pool={userPools.find(x => x.poolId === poolId)!}
-                        pair={pairs[poolId]}
-                      />
+                      <StakeLPPanel pool={userPools.find(x => x.poolId === poolId)!} />
+                      <WithdrawPanel pool={userPools.find(x => x.poolId === poolId)!} />
                     </StyledBoxPanel>
                   </StyledAccordionPanel>
                 </StyledAccordionItem>

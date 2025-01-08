@@ -105,8 +105,8 @@ export function getShareReward(
   return new BigNumber(0);
 }
 
-export const WithdrawPanel = ({ pair, pool, poolId }: { pair: Pair; pool: Pool; poolId: number }) => {
-  const { account } = useIconReact();
+export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
+  const { pair, poolId } = pool;
   const onChangeWithdrawnValue = useChangeWithdrawnValue();
 
   const [{ typedValue, independentField, inputType, portion }, setState] = React.useState<{

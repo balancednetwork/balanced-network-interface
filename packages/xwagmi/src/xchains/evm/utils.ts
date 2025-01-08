@@ -23,8 +23,8 @@ import { RLP } from '@ethereumjs/rlp';
 // }
 
 // stake
-export function getStakeData(to: string, amount: bigint, poolId: number): Uint8Array {
-  return RLP.encode(['xhubtransfer', Buffer.from(to, 'utf-8'), amount, poolId, Buffer.alloc(0)]);
+export function getStakeData(to: string, poolId: number, amount: bigint): Uint8Array {
+  return RLP.encode(['xhubtransfer', Buffer.from(to, 'utf-8'), uintToBytes(amount), poolId, Buffer.alloc(0)]);
 }
 
 // // claim rewards
@@ -34,13 +34,13 @@ export function getStakeData(to: string, amount: bigint, poolId: number): Uint8A
 // }
 
 // unstake
-export function getUnStakeData(poolId: number, amount: number): Uint8Array {
-  return RLP.encode(['xunstake', poolId, amount]);
+export function getUnStakeData(poolId: number, amount: bigint): Uint8Array {
+  return RLP.encode(['xunstake', poolId, uintToBytes(amount)]);
 }
 
 // remove liquidity
 export function getXRemoveData(poolId: number, lpTokenBalance: bigint, withdraw: boolean): Uint8Array {
-  return RLP.encode(['xRemove', poolId, uintToBytes(lpTokenBalance), withdraw ? uintToBytes(1n) : uintToBytes(0n)]);
+  return RLP.encode(['xremove', poolId, uintToBytes(lpTokenBalance), withdraw ? uintToBytes(1n) : uintToBytes(0n)]);
 }
 
 // // withdraw the deposited amount

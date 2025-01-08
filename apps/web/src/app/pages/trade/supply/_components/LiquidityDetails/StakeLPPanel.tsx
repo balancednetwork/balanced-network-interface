@@ -2,7 +2,6 @@ import React, { useEffect, useCallback, useMemo } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
 import Nouislider from '@/packages/nouislider-react';
-import { Pair } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useMedia } from 'react-use';
@@ -14,36 +13,32 @@ import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from '@/constants/index';
-import { useBalance } from '@/hooks/useV2Pairs';
+import { Pool, usePoolTokenAmounts } from '@/hooks/useV2Pairs';
 import { useAllPairsById } from '@/queries/backendv2';
 import { useIncentivisedPairs } from '@/queries/reward';
 import { useBBalnAmount, useSources, useTotalSupply } from '@/store/bbaln/hooks';
 import { useRewards } from '@/store/reward/hooks';
-import { useChangeStakedLPPercent, useStakedLPPercent, useTotalStaked } from '@/store/stakedLP/hooks';
+import { useChangeStakedLPPercent, useStakedLPPercent } from '@/store/stakedLP/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { formatBigNumber, parseUnits } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { getXChainType, useXAccount, useXStakeLPToken, useXUnstakeLPToken } from '@balancednetwork/xwagmi';
 
 import Skeleton from '@/app/components/Skeleton';
 import { getFormattedRewards, stakedFraction } from '../utils';
-import { getABBalance, getShareReward } from './WithdrawPanel';
+import { getShareReward } from './WithdrawPanel';
 
-export default function StakeLPPanel({ pair }: { pair: Pair }) {
-  const { account } = useIconReact();
-  const poolId = pair.poolId!;
+export default function StakeLPPanel({ pool }: { pool: Pool }) {
+  const { poolId, pair, balance: lpBalance, stakedLPBalance } = pool;
   const sources = useSources();
   const { data: allPairs } = useAllPairsById();
   const { data: incentivisedPairs } = useIncentivisedPairs();
 
-  const balance = useBalance(poolId);
-  const stakedBalance = useMemo(
-    () => new BigNumber(balance?.stakedLPBalance?.toFixed() || 0),
-    [balance?.stakedLPBalance],
-  );
+  const stakedBalance = useMemo(() => new BigNumber(stakedLPBalance?.toFixed() || 0), [stakedLPBalance]);
 
-  const totalStaked = useTotalStaked(poolId);
+  // TODO: rename to totalLPBalance
+  const totalStaked = new BigNumber(stakedBalance.toFixed()).plus(lpBalance.toFixed());
 
   const onStakedLPPercentSelected = useChangeStakedLPPercent();
   const stakedPercent = useStakedLPPercent(poolId);
@@ -94,57 +89,78 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
 
   const addTransaction = useTransactionAdder();
 
-  const handleConfirm = () => {
+  const xStakeLPToken = useXStakeLPToken();
+  const xUnstakeLPToken = useXUnstakeLPToken();
+  const xAccount = useXAccount(getXChainType(pool.xChainId));
+
+  const handleConfirm = async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
-    const decimals = Math.ceil((pair.token0.decimals + pair.token1.decimals) / 2);
-    if (shouldStake) {
-      bnJs
-        .inject({ account: account })
-        .Dex.stake(poolId, parseUnits(differenceAmount.toFixed(), decimals))
-        .then(res => {
-          if (res.result) {
-            addTransaction(
-              { hash: res.result },
-              {
-                pending: 'Staking LP tokens...',
-                summary: `Staked ${differenceAmount.abs().dp(2).toFormat()} LP tokens.`,
-              },
-            );
+    try {
+      const decimals = Math.ceil((pair.token0.decimals + pair.token1.decimals) / 2);
+      if (shouldStake) {
+        await xStakeLPToken(xAccount.address, poolId, pool.xChainId, differenceAmount.toFixed(), decimals);
+      } else {
+        console.log('differenceAmount.toFixed()', differenceAmount.toFixed());
+        await xUnstakeLPToken(xAccount.address, poolId, pool.xChainId, differenceAmount.abs().toFixed(), decimals);
+      }
 
-            toggleOpen();
-            handleCancel();
-          } else {
-            console.error(res);
-          }
-        })
-        .finally(() => {
-          window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-        });
-    } else {
-      bnJs
-        .inject({ account: account })
-        .StakedLP.unstake(poolId, parseUnits(differenceAmount.abs().toFixed(), decimals))
-        .then(res => {
-          if (res.result) {
-            addTransaction(
-              { hash: res.result },
-              {
-                pending: 'Unstaking LP tokens...',
-                summary: `Unstaked ${differenceAmount.abs().dp(2).toFormat()} LP tokens.`,
-              },
-            );
-
-            toggleOpen();
-            handleCancel();
-          } else {
-            console.error(res);
-          }
-        })
-        .finally(() => {
-          window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-        });
+      toggleOpen();
+      handleCancel();
+    } catch (e) {
+      console.error(e);
     }
+
+    window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+
+    // const decimals = Math.ceil((pair.token0.decimals + pair.token1.decimals) / 2);
+    // if (shouldStake) {
+    //   bnJs
+    //     .inject({ account: account })
+    //     .Dex.stake(poolId, parseUnits(differenceAmount.toFixed(), decimals))
+    //     .then(res => {
+    //       if (res.result) {
+    //         addTransaction(
+    //           { hash: res.result },
+    //           {
+    //             pending: 'Staking LP tokens...',
+    //             summary: `Staked ${differenceAmount.abs().dp(2).toFormat()} LP tokens.`,
+    //           },
+    //         );
+
+    //         toggleOpen();
+    //         handleCancel();
+    //       } else {
+    //         console.error(res);
+    //       }
+    //     })
+    //     .finally(() => {
+    //       window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+    //     });
+    // } else {
+    //   bnJs
+    //     .inject({ account: account })
+    //     .StakedLP.unstake(poolId, parseUnits(differenceAmount.abs().toFixed(), decimals))
+    //     .then(res => {
+    //       if (res.result) {
+    //         addTransaction(
+    //           { hash: res.result },
+    //           {
+    //             pending: 'Unstaking LP tokens...',
+    //             summary: `Unstaked ${differenceAmount.abs().dp(2).toFormat()} LP tokens.`,
+    //           },
+    //         );
+
+    //         toggleOpen();
+    //         handleCancel();
+    //       } else {
+    //         console.error(res);
+    //       }
+    //     })
+    //     .finally(() => {
+    //       window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+    //     });
+    // }
   };
 
   const description = shouldStake ? "You'll earn BALN until you unstake them." : "You'll stop earning BALN from them.";
@@ -154,17 +170,19 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
   const upSmall = useMedia('(min-width: 800px)');
 
   const rewards = useRewards();
-  const [aBalance, bBalance] = getABBalance(pair, balance);
+  const [aBalance, bBalance] = usePoolTokenAmounts(pool);
   const pairName = `${aBalance.currency.symbol || '...'}/${bBalance.currency.symbol || '...'}`;
   const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
   const totalReward = rewards[sourceName];
   const stakedFractionValue = stakedFraction(stakedPercent);
   const totalBbaln = useTotalSupply();
   const userBbaln = useBBalnAmount();
+
+  // TODO: understand and rewrite to support crosschain
   const reward = getShareReward(
     totalReward,
     sources && sources[sourceName],
-    balance,
+    pool,
     stakedFractionValue,
     totalBbaln,
     userBbaln,

@@ -32,6 +32,7 @@ const MAINNET_ADDRESSES = {
   trickler: 'cx9345f80d6c98357ccbb70392b14162199c2c5f66',
   nol: 'cx4cdfb47cc8a4e39a72220bcd74dc752a30af8b74',
   icxBurner: 'cxdc30a0d3a1f131565c071272a20bc0b06fd4c17b',
+  wicx: 'cx3975b43d260fb8ec802cef6e60c2f4d07486f11d',
 };
 
 const YEOUIDO_ADDRESSES = {
@@ -66,6 +67,7 @@ const YEOUIDO_ADDRESSES = {
   trickler: '',
   nol: '',
   icxBurner: '',
+  wicx: '',
 };
 
 const SEJONG_ADDRESSES = {
@@ -100,6 +102,7 @@ const SEJONG_ADDRESSES = {
   trickler: '',
   nol: '',
   icxBurner: '',
+  wicx: '',
 };
 
 const BERLIN_ADDRESSES = {
@@ -134,6 +137,7 @@ const BERLIN_ADDRESSES = {
   trickler: '',
   nol: '',
   icxBurner: '',
+  wicx: '',
 };
 
 const LISBON_ADDRESSES = {
@@ -168,6 +172,7 @@ const LISBON_ADDRESSES = {
   trickler: 'cx223bb0520fb6ac4faca4a59d4cca77fbe3ebe3c1',
   nol: '',
   icxBurner: '',
+  wicx: '',
 };
 
 const HAVAH_ADDRESSES = {
@@ -202,6 +207,7 @@ const HAVAH_ADDRESSES = {
   trickler: '',
   nol: '',
   icxBurner: '',
+  wicx: '',
 };
 
 const addresses = {

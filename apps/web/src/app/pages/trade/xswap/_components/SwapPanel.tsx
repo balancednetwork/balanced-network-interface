@@ -25,7 +25,7 @@ import {
 } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
-import { formatBalance } from '@/utils/formatter';
+import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { XToken, getXChainType } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
@@ -187,7 +187,7 @@ export default function SwapPanel() {
                   {isRecipientCustom ? (
                     <Trans>Custom</Trans>
                   ) : (
-                    `${currencyBalances[Field.OUTPUT] ? formatBalance(currencyBalances[Field.OUTPUT]?.toFixed(), rates?.[currencyBalances[Field.OUTPUT]?.currency.symbol]?.toFixed()) : '0'} ${currencies[Field.OUTPUT]?.symbol}`
+                    `${currencyBalances[Field.OUTPUT] ? formatBalance(currencyBalances[Field.OUTPUT]?.toFixed(), rates?.[currencyBalances[Field.OUTPUT]?.currency.symbol]?.toFixed()) : '0'} ${formatSymbol(currencies[Field.OUTPUT]?.symbol)}`
                   )}
                 </>
               )}

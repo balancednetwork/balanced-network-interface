@@ -29,7 +29,6 @@ import { SolverApiService } from './SolverApiService.js';
 import { SuiIntentService } from './SuiIntentService.js';
 
 export class IntentService {
-
   private readonly config: IntentServiceConfig;
 
   public constructor(config: IntentServiceConfig) {

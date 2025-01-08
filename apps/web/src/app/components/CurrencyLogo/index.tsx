@@ -55,7 +55,7 @@ export default function CurrencyLogo({
     return [];
   }, [uriLocation, currency]);
 
-  if (currency?.isNative || currency?.symbol === 'ICX') {
+  if (currency?.isNative || currency?.symbol === 'ICX' || currency?.symbol === 'wICX') {
     return <StyledICONLogo src={ICONLogo} alt="icon logo" size={size} style={style} {...rest} />;
   }
 

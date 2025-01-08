@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
 import { t } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -8,7 +7,6 @@ import styled from 'styled-components';
 import { Button } from '@/app/components/Button';
 import { Typography } from '@/app/theme';
 import CheckIcon from '@/assets/icons/tick.svg';
-import { useEditState } from '@/store/liveVoting/hooks';
 import { Field } from '@/store/mint/reducer';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import {
@@ -21,6 +19,7 @@ import {
   useXTokenDepositAmount,
   useXTransactionStore,
 } from '@balancednetwork/xwagmi';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface SendRemoveXTokenProps {
   field: Field;
@@ -29,6 +28,7 @@ interface SendRemoveXTokenProps {
 }
 
 export function SendRemoveXToken({ field, currencies, parsedAmounts }: SendRemoveXTokenProps) {
+  const queryClient = useQueryClient();
   const [isPending, setIsPending] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
 
@@ -39,22 +39,17 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts }: SendRemov
       currentXTransaction?.status === XTransactionStatus.success ||
       currentXTransaction?.status === XTransactionStatus.failure
     ) {
-      refetchDepositAmount()
-        .then(() => {
-          setIsPending(false);
-        })
-        .catch(() => {
-          setIsPending(false);
-        });
+      queryClient.invalidateQueries({ queryKey: ['XTokenDepositAmount'] });
+      setIsPending(false);
     }
-  }, [currentXTransaction]);
+  }, [currentXTransaction, queryClient]);
 
   const xToken = currencies[field];
   const parsedAmount = parsedAmounts[field];
 
   const xAccount = useXAccount(getXChainType(xToken?.xChainId));
 
-  const { depositAmount, refetchDepositAmount } = useXTokenDepositAmount(xAccount.address, xToken);
+  const { data: depositAmount } = useXTokenDepositAmount(xAccount.address, xToken);
 
   const depositXToken = useDepositXToken();
   const withdrawXToken = useWithdrawXToken();
@@ -82,14 +77,14 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts }: SendRemov
 
   const handleRemove = async () => {
     console.log('remove');
-    if (!parsedAmount || !xToken || !xAccount) {
+    if (!depositAmount || !xToken || !xAccount) {
       return;
     }
 
     setIsPending(true);
 
     try {
-      const txHash = await withdrawXToken(xAccount.address, parsedAmount, xToken);
+      const txHash = await withdrawXToken(xAccount.address, depositAmount);
       if (txHash) setPendingTx(txHash);
       else setIsPending(false);
     } catch (error) {

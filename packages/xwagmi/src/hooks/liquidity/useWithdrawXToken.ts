@@ -9,18 +9,14 @@ export const useWithdrawXToken = () => {
   const { sendXTransaction } = useSendXTransaction();
 
   const withdrawXToken = useMemo(
-    () => async (account, currencyAmount: CurrencyAmount<Token>, xToken: XToken) => {
-      const inputAmount = CurrencyAmount.fromRawAmount(
-        xToken,
-        new BigNumber(currencyAmount.toFixed()).times((10n ** BigInt(xToken.decimals)).toString()).toFixed(0),
-      );
+    () => async (account, currencyAmount: CurrencyAmount<XToken>) => {
       const xTransactionInput: XTransactionInput = {
         type: XTransactionType.LP_WITHDRAW_XTOKEN,
         account: account,
-        inputAmount: inputAmount,
+        inputAmount: currencyAmount,
         xCallFee: { rollback: 60000000000000n, noRollback: 0n },
         direction: {
-          from: xToken.xChainId,
+          from: currencyAmount.currency.xChainId,
           to: '0x1.icon',
         },
       };

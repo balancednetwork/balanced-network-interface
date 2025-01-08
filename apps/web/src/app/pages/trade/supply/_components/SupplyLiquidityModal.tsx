@@ -48,8 +48,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
   const [confirmTx, setConfirmTx] = React.useState('');
 
   const xAccount = useXAccount(getXChainType(currencies[Field.CURRENCY_A]?.xChainId));
-  const { depositAmount: depositAmountA } = useXTokenDepositAmount(xAccount.address, currencies[Field.CURRENCY_A]);
-  const { depositAmount: depositAmountB } = useXTokenDepositAmount(xAccount.address, currencies[Field.CURRENCY_B]);
+  const { data: depositAmountA } = useXTokenDepositAmount(xAccount.address, currencies[Field.CURRENCY_A]);
+  const { data: depositAmountB } = useXTokenDepositAmount(xAccount.address, currencies[Field.CURRENCY_B]);
 
   const xAddLiquidity = useXAddLiquidity();
 

@@ -81,7 +81,15 @@ export function useAllTokens() {
       const response = await axios.get(`${API_ENDPOINT}tokens`);
 
       if (response.status === 200) {
-        return response.data
+        const rawData = response.data;
+        const wICXToken = rawData.find(item => item.symbol === 'wICX');
+        const ICXToken = rawData.find(item => item.symbol === 'ICX');
+
+        if (wICXToken && ICXToken) {
+          ICXToken.liquidity += wICXToken.liquidity;
+        }
+
+        return rawData
           .map(item => {
             item['market_cap'] = item.total_supply * item.price;
             item['price_24h_change'] = ((item.price - item.price_24h) / item.price_24h) * 100;

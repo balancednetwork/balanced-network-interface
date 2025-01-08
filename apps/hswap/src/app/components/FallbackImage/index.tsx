@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 
-import { ImageProps } from 'rebass';
-
 import DefaultImg from '@/assets/images/default.png';
 
 const BAD_SRCS: { [tokenAddress: string]: true } = {};
 
-interface FallbackImageProps extends Pick<ImageProps, 'style' | 'alt' | 'className'> {
+interface FallbackImageProps extends Pick<React.ImgHTMLAttributes<HTMLImageElement>, 'style' | 'alt' | 'className'> {
   srcs: string[];
 }
 

@@ -6,7 +6,7 @@ import { CHART_PERIODS } from '@/app/components/TradingViewChart';
 import { ONE } from '@/constants/index';
 import QUERY_KEYS from '@/queries/queryKeys';
 import { Field } from '@/store/swap/reducer';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { bnJs, wICX } from '@balancednetwork/xwagmi';
 
 import { API_ENDPOINT } from '../constants';
 
@@ -52,13 +52,15 @@ export const usePriceChartDataQuery = (currencies: { [field in Field]?: Currency
   return useQuery<BarType[]>({
     queryKey: QUERY_KEYS.Swap.PriceChart(currencies, period),
     queryFn: async () => {
+      const currencyInput = currencies[Field.INPUT]?.symbol === 'ICX' ? wICX : currencies[Field.INPUT];
+
       const data = await bnJs.Dex.getPoolStatsForPair(
-        (currencies[Field.INPUT] as Token)?.address,
+        currencyInput?.address,
         (currencies[Field.OUTPUT] as Token)?.address,
       );
 
       const pairId = parseInt(data.id);
-      const inverse = data.base_token !== (currencies[Field.INPUT] as Token)?.address;
+      const inverse = data.base_token !== (currencyInput as Token)?.address;
 
       // the first pair is sICX/ICX pair
       if (data && data.id > 1) {
@@ -70,8 +72,8 @@ export const usePriceChartDataQuery = (currencies: { [field in Field]?: Currency
           data: BarTypeRaw[];
         } = await axios.get(`${API_ENDPOINT}/pools/series/${pairId}/${period.toLowerCase()}/${start}/${now}`);
 
-        const baseToken = inverse ? currencies[Field.OUTPUT] : currencies[Field.INPUT];
-        const quoteToken = inverse ? currencies[Field.INPUT] : currencies[Field.OUTPUT];
+        const baseToken = inverse ? currencies[Field.OUTPUT] : currencyInput;
+        const quoteToken = inverse ? currencyInput : currencies[Field.OUTPUT];
 
         const decimal = (quoteToken?.decimals ?? 0) - (baseToken?.decimals ?? 0) + 18;
 

@@ -13,6 +13,7 @@ import { SelectorType } from '@/app/components/SearchModal/CurrencySearch';
 import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
+import { PRICE_IMPACT_WARNING_THRESHOLD } from '@/constants/misc';
 import useManualAddresses from '@/hooks/useManualAddresses';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
@@ -25,7 +26,7 @@ import {
 } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
-import { formatBalance } from '@/utils/formatter';
+import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { XToken, getXChainType } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
@@ -136,6 +137,8 @@ export default function SwapPanel() {
 
   const rates = useRatesWithOracle();
 
+  const showWarning = trade?.priceImpact.greaterThan(PRICE_IMPACT_WARNING_THRESHOLD);
+
   return (
     <>
       <BrightPanel bg="bg3" p={[3, 7]} flexDirection="column" alignItems="stretch" flex={1}>
@@ -185,7 +188,7 @@ export default function SwapPanel() {
                   {isRecipientCustom ? (
                     <Trans>Custom</Trans>
                   ) : (
-                    `${currencyBalances[Field.OUTPUT] ? formatBalance(currencyBalances[Field.OUTPUT]?.toFixed(), rates?.[currencyBalances[Field.OUTPUT]?.currency.symbol]?.toFixed()) : '0'} ${currencies[Field.OUTPUT]?.symbol}`
+                    `${currencyBalances[Field.OUTPUT] ? formatBalance(currencyBalances[Field.OUTPUT]?.toFixed(), rates?.[currencyBalances[Field.OUTPUT]?.currency.symbol]?.toFixed()) : '0'} ${formatSymbol(currencies[Field.OUTPUT]?.symbol)}`
                   )}
                 </>
               )}
@@ -207,6 +210,7 @@ export default function SwapPanel() {
               addressEditable
               selectorType={SelectorType.SWAP_OUT}
               setManualAddress={setManualAddress}
+              showWarning={mmTrade.isMMBetter ? false : showWarning}
             />
           </Flex>
         </AutoColumn>

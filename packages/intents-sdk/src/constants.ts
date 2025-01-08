@@ -4,7 +4,6 @@ import type { ChainConfig, ChainName, EvmChainConfig, SuiChainConfig } from './t
 
 export const DEFAULT_MAX_RETRY = 3;
 export const DEFAULT_RETRY_DELAY_MS = 2000;
-export const SOLVER_API_ENDPOINT = 'https://solver.iconblockchain.xyz'; // TODO - replace with the production one
 
 export const supportedChains: ChainName[] = ['arb', 'sui'];
 
@@ -29,13 +28,33 @@ export const chainConfig: Record<ChainName, ChainConfig> = {
     supportedTokens: [
       {
         symbol: 'ETH',
+        name: 'Ethereum',
         decimals: 18,
         address: '0x0000000000000000000000000000000000000000',
       },
       {
         symbol: 'WETH',
+        name: 'Wrapped Ether',
         decimals: 18,
         address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+      },
+      {
+        symbol: 'wstETH',
+        name: 'Wrapped stETH',
+        decimals: 18,
+        address: '0x5979D7b546E38E414F7E9822514be443A4800529',
+      },
+      {
+        symbol: 'weETH',
+        name: 'Wrapped eETH',
+        decimals: 18,
+        address: '0x35751007a407ca6FEFfE80b3cB397736D2cf4dbe',
+      },
+      {
+        symbol: 'tBTC',
+        name: 'Arbitrum tBTC v2',
+        decimals: 18,
+        address: '0x6c84a8f1c29108F47a79964b5Fe888D4f4D0dE40',
       },
     ],
   } satisfies EvmChainConfig,
@@ -51,8 +70,27 @@ export const chainConfig: Record<ChainName, ChainConfig> = {
     supportedTokens: [
       {
         symbol: 'SUI',
+        name: 'SUI',
         decimals: 9,
         address: '0x0000000000000000000000000000000000000000000000000000000000000002::sui::SUI',
+      },
+      {
+        symbol: 'AFSUI',
+        name: 'Aftermath Staked SUI',
+        decimals: 9,
+        address: '0xf325ce1300e8dac124071d3152c5c5ee6174914f8bc2161e88329cf579246efc::afsui::AFSUI',
+      },
+      {
+        symbol: 'HASUI',
+        name: 'Haedal Staked SUI',
+        decimals: 9,
+        address: '0xbde4ba4c2e274a60ce15c1cfff9e5c42e41654ac8b6d906a57efa4bd3c29f47d::hasui::HASUI',
+      },
+      {
+        symbol: 'VSUI',
+        name: 'Volo Staked SUI',
+        decimals: 9,
+        address: '0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT',
       },
     ],
   } satisfies SuiChainConfig,

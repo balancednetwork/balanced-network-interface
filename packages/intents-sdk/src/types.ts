@@ -9,6 +9,7 @@ export type ChainInfo<T extends ChainType> = {
 
 export type Token = {
   symbol: string;
+  name: string;
   decimals: number;
   address: string;
 };
@@ -119,4 +120,8 @@ export type CreateIntentOrderPayload = {
   amount: bigint; // amount in token decimal scale
   toToken: string;
   toAmount: bigint; // amount in token decimal scale
+};
+
+export type IntentServiceConfig = {
+  solverApiEndpoint: string;
 };

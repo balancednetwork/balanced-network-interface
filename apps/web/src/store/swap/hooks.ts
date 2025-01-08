@@ -6,8 +6,10 @@ import { t } from '@lingui/macro';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { NETWORK_ID } from '@/constants/config';
 import { canBeQueue } from '@/constants/currency';
-import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
+import { PRICE_IMPACT_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
+import { useICX, wICX } from '@/constants/tokens';
 import { useAllXTokens } from '@/hooks/Tokens';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
@@ -200,8 +202,51 @@ export function useDerivedSwapInfo(): {
   const trade2 = useTradeExactOut(_currencies[Field.INPUT], !isExactIn ? _parsedAmount : undefined, {
     maxHops: queue ? 1 : undefined,
   });
-  const trade = isExactIn ? trade1 : trade2;
-  const swapDisabled = trade?.priceImpact.greaterThan(SLIPPAGE_SWAP_DISABLED_THRESHOLD);
+  let trade = isExactIn ? trade1 : trade2;
+
+  //TODO: Remove this when the queue is emptied
+  //temporary solution for determining better trade between using wICX and queue pairs
+  const ICX = useICX();
+
+  //check trade setup for ICX output
+  const parsedAmountTMP1 = tryParseAmount(typedValue, (isExactIn ? _currencies[Field.INPUT] : ICX) ?? undefined);
+  const queueTMP = canBeQueue(_currencies[Field.INPUT], ICX);
+  const trade1TMP = useTradeExactIn(isExactIn ? parsedAmountTMP1 : undefined, ICX, {
+    maxHops: queueTMP ? 1 : undefined,
+  });
+  const trade2TMP = useTradeExactOut(_currencies[Field.INPUT], !isExactIn ? parsedAmountTMP1 : undefined, {
+    maxHops: queueTMP ? 1 : undefined,
+  });
+  const tradeICX = isExactIn ? trade1TMP : trade2TMP;
+
+  //if output is wICX, set the trade to the one with the better execution amount
+  if (_currencies[Field.OUTPUT]?.symbol === 'wICX') {
+    // Pick the trade with the better execution amount
+    if (tradeICX && (!trade || tradeICX.executionPrice.greaterThan(trade.executionPrice))) {
+      trade = tradeICX;
+    }
+  }
+  //TODO: end of temporary solution
+
+  //check trade setup for wICX input
+  //compares trades starting with ICX token and picks better route between staking first or using wICX pool
+  const parsedAmountTMP2 = tryParseAmount(
+    typedValue,
+    (isExactIn ? wICX[NETWORK_ID] : _currencies[Field.OUTPUT]) ?? undefined,
+  );
+  const trade1TMP2 = useTradeExactIn(isExactIn ? parsedAmountTMP2 : undefined, _currencies[Field.OUTPUT]);
+  const trade2TMP2 = useTradeExactOut(wICX[NETWORK_ID], !isExactIn ? parsedAmountTMP2 : undefined);
+  const tradeWICX = isExactIn ? trade1TMP2 : trade2TMP2;
+
+  //if input is ICX, set the trade to the one with the better execution amount
+  if (_currencies[Field.INPUT]?.symbol === 'ICX') {
+    // Pick the trade with the better execution amount
+    if (tradeWICX && (!trade || tradeWICX.executionPrice.greaterThan(trade.executionPrice))) {
+      trade = tradeWICX;
+    }
+  }
+
+  const swapDisabled = trade?.priceImpact.greaterThan(PRICE_IMPACT_SWAP_DISABLED_THRESHOLD);
 
   let inputError: string | undefined;
   if (account && !recipient) {
@@ -372,7 +417,7 @@ export function useInitialSwapLoad(): void {
   }, [currencies, pair, navigate, firstLoad]);
 }
 
-import { IntentService } from '@balancednetwork/intents-sdk';
+import { intentService } from '@/lib/intent';
 import { useQuery } from '@tanstack/react-query';
 
 export interface MMTrade {
@@ -403,7 +448,7 @@ export function useMMTrade(inputAmount: CurrencyAmount<XToken> | undefined, outp
         return;
       }
 
-      const res = await IntentService.getQuote({
+      const res = await intentService.getQuote({
         token_src: inputAmount.currency.address,
         token_src_blockchain_id: inputAmount.currency.xChainId,
         token_dst: outputCurrency.address,

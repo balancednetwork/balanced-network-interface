@@ -1,10 +1,10 @@
-import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
-import { useDerivedSwapInfo } from '@/store/swap/hooks';
-import { formatValue } from '@/utils/formatter';
+import React, { useEffect, useState } from 'react';
+
 import BigNumber from 'bignumber.js';
 import { motion } from 'framer-motion';
-import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+
+import { formatValue } from '@/utils/formatter';
 
 interface DollarValueProps {
   amount: string;
@@ -27,9 +27,6 @@ const DollarValueWrap = styled.div<{ $warn: boolean }>`
 const DollarValue: React.FC<DollarValueProps> = ({ amount, price, showWarning }) => {
   const [dollarValue, setDollarValue] = useState('$0');
   const [animationIntensity, setAnimationIntensity] = useState(0);
-  const { trade } = useDerivedSwapInfo();
-
-  const showSlippageWarning = showWarning && trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
 
   useEffect(() => {
     if (price && amount && amount !== '0' && amount !== '.') {
@@ -55,7 +52,7 @@ const DollarValue: React.FC<DollarValueProps> = ({ amount, price, showWarning })
       animate={{ opacity: 1, y: 0, x: 0, scale: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <DollarValueWrap $warn={!!showSlippageWarning}>{dollarValue}</DollarValueWrap>
+      <DollarValueWrap $warn={!!showWarning}>{dollarValue}</DollarValueWrap>
     </motion.div>
   );
 };

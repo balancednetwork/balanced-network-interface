@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
-import { DarkAnimateButton } from '@/app/components2/Button/DarkAnimateButton';
+import { DarkAnimateButton } from '@/app/components/Button/DarkAnimateButton';
 import {
   DCAGradientIcon,
   DCAIcon,
@@ -11,7 +11,7 @@ import {
   SubtractIcon,
   SwapGradientIcon,
   SwapIcon,
-} from '@/app/components2/Icons';
+} from '@/app/components/Icons';
 import { useFetchOraclePrices } from '@/store/oracle/hooks';
 import { useFetchPrice } from '@/store/ratio/hooks';
 import { useFetchStabilityFundBalances } from '@/store/stabilityFund/hooks';

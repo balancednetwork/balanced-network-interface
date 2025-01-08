@@ -146,7 +146,7 @@ const PairItem = ({
           <Box sx={{ minWidth: '95px' }}>
             <PoolLogo baseCurrency={baseAddress} quoteCurrency={quoteAddress} />
           </Box>
-          <Text ml={2}>{name.replace('/', ' / ')}</Text>
+          <Text ml={2}>{name.replace('wICX', 'ICX').replace('/', ' / ')}</Text>
         </Flex>
       </DataText>
       <DataText className="apy-column">

@@ -60,10 +60,6 @@ msgstr "puis créer le pool."
 msgid "Only"
 msgstr ""
 
-#: src/xwagmi/xchains/stellar/utils.ts
-#~ msgid "Stellar wallet inactive. Add at least 1 XLM from an external source"
-#~ msgstr ""
-
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Your ICX is staked (sICX). Choose what to do with it:"
 msgstr ""
@@ -106,8 +102,8 @@ msgid "4H"
 msgstr "4H"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Supplying {pair} liquidity..."
-msgstr "Apport de liquidité {pair}..."
+#~ msgid "Supplying {pair} liquidity..."
+#~ msgstr "Apport de liquidité {pair}..."
 
 #: src/app/pages/home/_components/xCollateralModal/index.tsx
 #~ msgid "Collateral action"
@@ -192,6 +188,10 @@ msgstr "Refuser"
 msgid "Your allocation"
 msgstr ""
 
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Swapping {0} for {1}..."
+msgstr ""
+
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
@@ -218,6 +218,10 @@ msgstr ""
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Assets to send"
 msgstr "Actifs à envoyer"
+
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "{0} sent to the {1} pool."
+msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #~ msgid "Lock up BALN to hold bBALN, which earns network fees and boosts your BALN incentives for loans and liquidity pools."
@@ -648,8 +652,8 @@ msgid "Remove community token list"
 msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
-msgstr "Impossible de retirer la liquidité {inputCurrency} / {outputCurrency}. Réessayez."
+#~ msgid "Couldn't withdraw {inputCurrency} / {outputCurrency} liquidity. Try again."
+#~ msgstr "Impossible de retirer la liquidité {inputCurrency} / {outputCurrency}. Réessayez."
 
 #: src/app/pages/home/BBaln/BBalnPanel.tsx
 #~ msgid "${0} was distributed over the last 30 days"
@@ -717,8 +721,8 @@ msgid "Liquidity pools"
 msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Swapping {inputCurrency} for {outputCurrency}..."
-msgstr "Échange de {inputCurrency} contre {outputCurrency}..."
+#~ msgid "Swapping {inputCurrency} for {outputCurrency}..."
+#~ msgstr "Échange de {inputCurrency} contre {outputCurrency}..."
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #~ msgid "Liquidity supplied."
@@ -760,6 +764,10 @@ msgstr ""
 msgid "Deposited {0} {collateralType} as collateral."
 msgstr ""
 
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Supplying {0} liquidity..."
+msgstr ""
+
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "100 bnUSD"
 msgstr "100 bnUSD"
@@ -790,10 +798,6 @@ msgstr ""
 msgid "Lock up BALN"
 msgstr ""
 
-#: src/app/components/StellarSponsorshipModal/index.tsx
-msgid "Activate wallet"
-msgstr ""
-
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
@@ -813,9 +817,13 @@ msgstr "Avant"
 msgid "Active"
 msgstr "Actif"
 
-#: src/app/components/StellarSponsorshipModal/index.tsx
-#~ msgid "Activate"
-#~ msgstr ""
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Withdrawing {0} / {1} liquidity..."
+msgstr ""
+
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Sending {0} to the {1} pool..."
+msgstr ""
 
 #: src/hooks/useApproveCallback.tsx
 msgid "{0} approved for cross-chain transfer."
@@ -882,8 +890,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
-msgstr "{inputAmount} {inputCurrency} et {outputAmount} {outputCurrency} ajouté à votre portefeuille."
+#~ msgid "{inputAmount} {inputCurrency} and {outputAmount} {outputCurrency} added to your wallet."
+#~ msgstr "{inputAmount} {inputCurrency} et {outputAmount} {outputCurrency} ajouté à votre portefeuille."
 
 #: src/app/components/ProposalModal/index.tsx
 msgid "Change vote?"
@@ -994,12 +1002,8 @@ msgstr "Entrer le montant"
 #~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Supplied {pair} liquidity."
-msgstr "Liquidité {pair} fournie."
-
-#: src/app/components/StellarSponsorshipModal/index.tsx
-#~ msgid "Balanced activates your Stellar account for you with feeless transaction."
-#~ msgstr ""
+#~ msgid "Supplied {pair} liquidity."
+#~ msgstr "Liquidité {pair} fournie."
 
 #: src/app/components/AppBar/index.tsx
 #: src/app/Routes.tsx
@@ -1203,8 +1207,8 @@ msgid "Description"
 msgstr "Description"
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Couldn't supply {pair} liquidity. Try again."
-msgstr "Impossible de fournir la liquidité {pair}. Réessayez."
+#~ msgid "Couldn't supply {pair} liquidity. Try again."
+#~ msgstr "Impossible de fournir la liquidité {pair}. Réessayez."
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Add community token list"
@@ -1409,6 +1413,10 @@ msgstr "Portefeuille : {0} {1}"
 msgid "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
 msgstr ""
 
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Couldn't supply {0} liquidity. Try again."
+msgstr ""
+
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Forum link"
 msgstr "Lien du forum"
@@ -1442,6 +1450,10 @@ msgstr ""
 
 #: src/app/components/home/Savings/index.tsx
 msgid "Withdraw bnUSD?"
+msgstr ""
+
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Couldn't send {0} to the {1} pool. Try again."
 msgstr ""
 
 #: src/store/swap/hooks.ts
@@ -1510,6 +1522,10 @@ msgstr ""
 #: src/app/components/ProposalInfo/components.tsx
 msgid "{value}% voted"
 msgstr "{value}% de votes"
+
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Couldn't withdraw {0} / {1} liquidity. Try again."
+msgstr ""
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/home/LoanPanel.tsx
@@ -1600,10 +1616,6 @@ msgstr ""
 msgid "Borrow Balanced Dollars?"
 msgstr "Emprunter Balanced Dollar ?"
 
-#: src/app/components/StellarSponsorshipModal/index.tsx
-msgid "Activating"
-msgstr ""
-
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
 msgid "Contract doesn't exist on this network."
 msgstr ""
@@ -1676,8 +1688,8 @@ msgid "Withdrawing sICX..."
 msgstr "Retrait de sICX..."
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "{currency} sent to the {pair} pool."
-msgstr "{currency} envoyé au pool {pair}."
+#~ msgid "{currency} sent to the {pair} pool."
+#~ msgstr "{currency} envoyé au pool {pair}."
 
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 msgid "For"
@@ -1686,10 +1698,6 @@ msgstr "Contre"
 #: src/app/pages/vote/_components/LieVotingPanel/PowerLeftComponent.tsx
 msgid "Voting power available: {0}"
 msgstr ""
-
-#: src/xwagmi/xchains/stellar/utils.ts
-#~ msgid "Stellar wallet inactive. Add at least 1 XLM from an external source or"
-#~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/XChainList.tsx
 #~ msgid "Search for blockchains..."
@@ -1897,7 +1905,6 @@ msgstr ""
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/Savings/index.tsx
 #: src/app/components/ProposalModal/index.tsx
-#: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
@@ -1961,16 +1968,16 @@ msgstr "Si le prix baisse plus que ce montant, votre échange échouera."
 msgid "Voting weight"
 msgstr "Poids du vote"
 
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Supplied {0} liquidity."
+msgstr ""
+
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 msgid "Your position requires"
 msgstr ""
 
 #: src/app/components/CollateralTypeSwitcher/CollateralTypeList.tsx
 #~ msgid "No positions found"
-#~ msgstr ""
-
-#: src/app/components/StellarSponsorshipModal/index.tsx
-#~ msgid "Activate your Stellar account?"
 #~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
@@ -2135,6 +2142,10 @@ msgstr ""
 #: src/app/components/WalletModal/IconWalletModal.tsx
 #~ msgid "Choose a wallet from your Ledger:"
 #~ msgstr "Choisissez un portefeuille de votre Ledger :"
+
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+msgid "ICX queue"
+msgstr ""
 
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
 #~ msgid "Revert"
@@ -2319,10 +2330,6 @@ msgstr ""
 msgid "available on {0}."
 msgstr ""
 
-#: src/app/components/StellarSponsorshipModal/index.tsx
-msgid "Activate Stellar wallet?"
-msgstr ""
-
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "and ends after {duration} days."
 msgstr ""
@@ -2332,16 +2339,16 @@ msgid "Loan interest"
 msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
-msgstr "Retrait de la liquidité {inputCurrency} / {outputCurrency}..."
+#~ msgid "Withdrawing {inputCurrency} / {outputCurrency} liquidity..."
+#~ msgstr "Retrait de la liquidité {inputCurrency} / {outputCurrency}..."
 
 #: src/app/components/WalletModal/index.tsx
 msgid "Connected to {numberOfConnectedWallets} blockchains"
 msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Couldn't send {currency} to the {pair} pool. Try again."
-msgstr "Impossible d'envoyer {currency} à la pool {pair}. Réessayez."
+#~ msgid "Couldn't send {currency} to the {pair} pool. Try again."
+#~ msgstr "Impossible d'envoyer {currency} à la pool {pair}. Réessayez."
 
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
 msgid "Total daily rewards"
@@ -2446,10 +2453,6 @@ msgstr ""
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "{0} {1} added to your wallet"
 msgstr "{0} {1} ajouté à votre portefeuille"
-
-#: src/app/components/StellarSponsorshipModal/index.tsx
-msgid "Sign a transaction to activate your wallet for free."
-msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "sign in on"
@@ -2659,6 +2662,10 @@ msgstr ""
 msgid "Receive / repay on:"
 msgstr ""
 
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "{inputAmount} {0} and {outputAmount} {1} added to your wallet."
+msgstr ""
+
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
 msgid "There are no pending cross-chain transactions."
 msgstr ""
@@ -2811,8 +2818,12 @@ msgid "Pay a {0} BALN fee to unlock early."
 msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Sending {currency} to the {pair} pool..."
-msgstr "Envoi de {currency} dans le pool {pair}..."
+#~ msgid "Sending {currency} to the {pair} pool..."
+#~ msgstr "Envoi de {currency} dans le pool {pair}..."
+
+#: src/app/pages/trade/supply/_components/utils.tsx
+msgid "Swapped {inputAmount} {0} for {outputAmount} {1}."
+msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 msgid "Preparing to unstake sICX..."
@@ -2853,7 +2864,6 @@ msgstr "Frais de réseau"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
-#: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 msgid "Close"
 msgstr ""
@@ -2863,8 +2873,8 @@ msgid "The current {0} price is"
 msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
-msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
-msgstr "{inputAmount} {inputCurrency} échangé contre {outputAmount} {outputCurrency}"
+#~ msgid "Swapped {inputAmount} {inputCurrency} for {outputAmount} {outputCurrency}."
+#~ msgstr "{inputAmount} {inputCurrency} échangé contre {outputAmount} {outputCurrency}"
 
 #: src/xwagmi/xchains/stellar/utils.ts
 #~ msgid "Stellar wallet inactive. Add at least 1 XLM from an external source."

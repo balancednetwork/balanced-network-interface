@@ -444,6 +444,7 @@ export function useInitialSupplyLoad(): void {
       } else if (currentCurrA?.toLowerCase() === 'icx') {
         ICX && onCurrencySelection(Field.CURRENCY_A, xTokenMapBySymbol[xChainId][ICX.symbol]);
       } else {
+        // TODO: is this necessary?
         if (currencies.CURRENCY_A && currencies.CURRENCY_B) {
           navigate(
             `/trade/supply/${currencies.CURRENCY_A.symbol}:${currencies.CURRENCY_A.xChainId}_${currencies.CURRENCY_B.symbol}`,
@@ -471,4 +472,18 @@ export function useInitialSupplyLoad(): void {
     pair,
     navigate,
   ]);
+
+  useEffect(() => {
+    if (!firstLoad && currencies && currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B]) {
+      const xChainId = currencies[Field.CURRENCY_A]?.xChainId;
+
+      const inputCurrency = `${currencies[Field.CURRENCY_A].symbol}${xChainId ? `:${xChainId}` : ''}`;
+      const outputCurrency = `${currencies[Field.CURRENCY_B].symbol}`;
+      const newPair = `${inputCurrency}_${outputCurrency}`;
+
+      if (pair !== newPair) {
+        navigate(`/trade/supply/${newPair}`, { replace: true });
+      }
+    }
+  }, [currencies, pair, navigate, firstLoad]);
 }

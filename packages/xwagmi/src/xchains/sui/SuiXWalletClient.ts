@@ -162,10 +162,6 @@ export class SuiXWalletClient extends XWalletClient {
           showRawEffects: true,
         },
       });
-
-      // Always report transaction effects to the wallet after execution
-      // @ts-ignore
-      reportTransactionEffects(txResult.rawEffects!);
     } else {
       // USDC
       const coins = (
@@ -269,10 +265,6 @@ export class SuiXWalletClient extends XWalletClient {
           showRawEffects: true,
         },
       });
-
-      // Always report transaction effects to the wallet after execution
-      // @ts-ignore
-      reportTransactionEffects(txResult.rawEffects!);
     } else {
       // VSUI, HASUI, AFSUI
       const coins = (
@@ -381,10 +373,6 @@ export class SuiXWalletClient extends XWalletClient {
         showRawEffects: true,
       },
     });
-
-    // Always report transaction effects to the wallet after execution
-    // @ts-ignore
-    reportTransactionEffects(txResult.rawEffects!);
 
     const { digest: hash } = txResult || {};
 

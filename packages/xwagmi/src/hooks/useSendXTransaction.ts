@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import { getXWalletClient } from '@/actions';
 import { xChainMap } from '@/constants';
 import { XChainId } from '@/types';

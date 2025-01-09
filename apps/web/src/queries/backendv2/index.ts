@@ -264,7 +264,7 @@ export function useAllPairs() {
           }
         });
 
-        return pairs.filter(item => item && (item.liquidity >= MIN_LIQUIDITY_TO_INCLUDE || item.name === 'sICX/ICX'));
+        return pairs.filter(item => item && (item.liquidity >= MIN_LIQUIDITY_TO_INCLUDE || item.name === 'wICX/ICX'));
       }
     },
     placeholderData: keepPreviousData,

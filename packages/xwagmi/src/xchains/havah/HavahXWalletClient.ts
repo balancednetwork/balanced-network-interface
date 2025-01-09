@@ -18,7 +18,7 @@ export class HavahXWalletClient extends XWalletClient {
     return Promise.resolve(undefined);
   }
 
-  async executeTransaction(xTransactionInput: XTransactionInput) {
+  async executeSwapOrBridge(xTransactionInput: XTransactionInput) {
     const { type, executionTrade, account, direction, inputAmount, recipient, slippageTolerance, xCallFee } =
       xTransactionInput;
 
@@ -46,8 +46,6 @@ export class HavahXWalletClient extends XWalletClient {
           },
         }),
       );
-    } else if (type === XTransactionType.REPAY) {
-      return await this._executeRepay(xTransactionInput);
     } else {
       throw new Error('Invalid XTransactionType');
     }
@@ -77,7 +75,19 @@ export class HavahXWalletClient extends XWalletClient {
     }
   }
 
-  async _executeRepay(xTransactionInput: XTransactionInput) {
+  async executeDepositCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+
+  async executeWithdrawCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+
+  async executeBorrow(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+
+  async executeRepay(xTransactionInput: XTransactionInput) {
     const { account, inputAmount, recipient, xCallFee, usedCollateral } = xTransactionInput;
 
     if (!inputAmount || !usedCollateral) {
@@ -100,5 +110,27 @@ export class HavahXWalletClient extends XWalletClient {
     if (hash) {
       return hash;
     }
+  }
+
+  async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async withdrawXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async addLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async removeLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async stake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async unstake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
   }
 }

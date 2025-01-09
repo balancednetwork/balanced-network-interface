@@ -24,7 +24,7 @@ export class InjectiveXWalletClient extends XWalletClient {
     return Promise.resolve(undefined);
   }
 
-  async executeTransaction(xTransactionInput: XTransactionInput) {
+  async executeSwapOrBridge(xTransactionInput: XTransactionInput) {
     const { type, direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } =
       xTransactionInput;
 
@@ -50,14 +50,6 @@ export class InjectiveXWalletClient extends XWalletClient {
           },
         }),
       );
-    } else if (type === XTransactionType.DEPOSIT) {
-      return await this.executeDepositCollateral(xTransactionInput);
-    } else if (type === XTransactionType.WITHDRAW) {
-      return await this.executeWithdrawCollateral(xTransactionInput);
-    } else if (type === XTransactionType.BORROW) {
-      return await this.executeBorrow(xTransactionInput);
-    } else if (type === XTransactionType.REPAY) {
-      return await this.executeRepay(xTransactionInput);
     } else {
       throw new Error('Invalid XTransactionType');
     }
@@ -313,5 +305,27 @@ export class InjectiveXWalletClient extends XWalletClient {
     });
 
     return txResult.txHash;
+  }
+
+  async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async withdrawXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async addLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async removeLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async stake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async unstake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
   }
 }

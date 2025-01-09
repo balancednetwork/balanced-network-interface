@@ -306,4 +306,46 @@ export class StellarXWalletClient extends XWalletClient {
       throw new Error('Invalid currency for Stellar repay loan');
     }
   }
+
+  async executeSwapOrBridge(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+
+  async executeDepositCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+
+  async executeWithdrawCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+
+  async executeBorrow(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+
+  async executeRepay(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+
+  async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async withdrawXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async addLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async removeLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async stake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async unstake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
 }

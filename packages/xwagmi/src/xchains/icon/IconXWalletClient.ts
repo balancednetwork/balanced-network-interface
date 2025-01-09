@@ -98,29 +98,6 @@ export class IconXWalletClient extends XWalletClient {
     }
   }
 
-  async _executeBorrow(xTransactionInput: XTransactionInput) {
-    const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
-
-    if (!inputAmount || !usedCollateral) {
-      return;
-    }
-
-    if (account && xCallFee) {
-      window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-      const txResult = await bnJs
-        .inject({ account: account })
-        .Loans.borrow(inputAmount.quotient.toString(), usedCollateral, 'bnUSD', recipient);
-
-      const { result: hash } = txResult || {};
-
-      if (hash) {
-        return hash;
-      }
-    }
-    return undefined;
-  }
-
   async _executeSwapOnIcon(xTransactionInput: XTransactionInput) {
     const { executionTrade, account, direction, recipient, slippageTolerance } = xTransactionInput;
     if (!executionTrade || !slippageTolerance) {
@@ -153,7 +130,7 @@ export class IconXWalletClient extends XWalletClient {
     }
   }
 
-  async executeTransaction(xTransactionInput: XTransactionInput) {
+  async executeSwapOrBridge(xTransactionInput: XTransactionInput) {
     const { type } = xTransactionInput;
 
     if (type === XTransactionType.SWAP_ON_ICON) {
@@ -162,10 +139,65 @@ export class IconXWalletClient extends XWalletClient {
       return this._executeSwap(xTransactionInput);
     } else if (type === XTransactionType.BRIDGE) {
       return this._executeBridge(xTransactionInput);
-    } else if (type === XTransactionType.BORROW) {
-      return this._executeBorrow(xTransactionInput);
     } else {
       throw new Error('Invalid XTransactionType');
     }
+  }
+
+  async executeDepositCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+
+  async executeWithdrawCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+
+  async executeBorrow(xTransactionInput: XTransactionInput) {
+    const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
+
+    if (!inputAmount || !usedCollateral) {
+      return;
+    }
+
+    if (account && xCallFee) {
+      window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
+      const txResult = await bnJs
+        .inject({ account: account })
+        .Loans.borrow(inputAmount.quotient.toString(), usedCollateral, 'bnUSD', recipient);
+
+      const { result: hash } = txResult || {};
+
+      if (hash) {
+        return hash;
+      }
+    }
+    return undefined;
+  }
+
+  async executeRepay(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+
+  async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async withdrawXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async addLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async removeLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async stake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async unstake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
   }
 }

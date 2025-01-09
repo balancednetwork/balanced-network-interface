@@ -9,6 +9,7 @@ import { uintToBytes } from '@/utils';
 import { RLP } from '@ethereumjs/rlp';
 import { bcs } from '@mysten/sui/bcs';
 import { Transaction } from '@mysten/sui/transactions';
+import { signTransaction } from '@mysten/wallet-standard';
 import { toBytes, toHex } from 'viem';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
@@ -37,8 +38,7 @@ export class SuiXWalletClient extends XWalletClient {
     return Promise.resolve(undefined);
   }
 
-  async executeTransaction(xTransactionInput: XTransactionInput, options) {
-    const { signTransaction } = options;
+  async executeSwapOrBridge(xTransactionInput: XTransactionInput) {
     if (!signTransaction) {
       throw new Error('signTransaction is required');
     }
@@ -69,14 +69,6 @@ export class SuiXWalletClient extends XWalletClient {
           },
         }),
       );
-    } else if (type === XTransactionType.DEPOSIT) {
-      return await this.executeDepositCollateral(xTransactionInput, options);
-    } else if (type === XTransactionType.WITHDRAW) {
-      return await this.executeWithdrawCollateral(xTransactionInput, options);
-    } else if (type === XTransactionType.BORROW) {
-      return await this.executeBorrow(xTransactionInput, options);
-    } else if (type === XTransactionType.REPAY) {
-      return await this.executeRepay(xTransactionInput, options);
     } else {
       throw new Error('Invalid XTransactionType');
     }
@@ -104,8 +96,10 @@ export class SuiXWalletClient extends XWalletClient {
         typeArguments: ['0x2::sui::SUI'],
       });
 
-      const { bytes, signature, reportTransactionEffects } = await signTransaction({
+      const { bytes, signature } = await signTransaction(this.getXService().suiWallet, {
         transaction: txb,
+        account: this.getXService().suiAccount,
+        chain: this.getXService().suiAccount.chains[0],
       });
 
       txResult = await this.getXService().suiClient.executeTransactionBlock({
@@ -115,10 +109,6 @@ export class SuiXWalletClient extends XWalletClient {
           showRawEffects: true,
         },
       });
-
-      // Always report transaction effects to the wallet after execution
-      // @ts-ignore
-      reportTransactionEffects(txResult.rawEffects!);
     } else if (isBnUSD) {
       const coins = (
         await this.getXService().suiClient.getCoins({
@@ -155,8 +145,10 @@ export class SuiXWalletClient extends XWalletClient {
         // typeArguments: [],
       });
 
-      const { bytes, signature, reportTransactionEffects } = await signTransaction({
+      const { bytes, signature } = await signTransaction(this.getXService().suiWallet, {
         transaction: txb,
+        account: this.getXService().suiAccount,
+        chain: this.getXService().suiAccount.chains[0],
       });
 
       txResult = await this.getXService().suiClient.executeTransactionBlock({
@@ -166,10 +158,6 @@ export class SuiXWalletClient extends XWalletClient {
           showRawEffects: true,
         },
       });
-
-      // Always report transaction effects to the wallet after execution
-      // @ts-ignore
-      reportTransactionEffects(txResult.rawEffects!);
     } else {
       // USDC
       const coins = (
@@ -207,8 +195,10 @@ export class SuiXWalletClient extends XWalletClient {
         typeArguments: [inputAmount.currency.wrapped.address],
       });
 
-      const { bytes, signature, reportTransactionEffects } = await signTransaction({
+      const { bytes, signature } = await signTransaction(this.getXService().suiWallet, {
         transaction: txb,
+        account: this.getXService().suiAccount,
+        chain: this.getXService().suiAccount.chains[0],
       });
 
       txResult = await this.getXService().suiClient.executeTransactionBlock({
@@ -218,10 +208,6 @@ export class SuiXWalletClient extends XWalletClient {
           showRawEffects: true,
         },
       });
-
-      // Always report transaction effects to the wallet after execution
-      // @ts-ignore
-      reportTransactionEffects(txResult.rawEffects!);
     }
 
     const { digest: hash } = txResult || {};
@@ -231,8 +217,7 @@ export class SuiXWalletClient extends XWalletClient {
     }
   }
 
-  async executeDepositCollateral(xTransactionInput: XTransactionInput, options) {
-    const { signTransaction } = options;
+  async executeDepositCollateral(xTransactionInput: XTransactionInput) {
     const { inputAmount, account, xCallFee } = xTransactionInput;
 
     if (!inputAmount) {
@@ -263,8 +248,10 @@ export class SuiXWalletClient extends XWalletClient {
         typeArguments: ['0x2::sui::SUI'],
       });
 
-      const { bytes, signature, reportTransactionEffects } = await signTransaction({
+      const { bytes, signature } = await signTransaction(this.getXService().suiWallet, {
         transaction: txb,
+        account: this.getXService().suiAccount,
+        chain: this.getXService().suiAccount.chains[0],
       });
 
       txResult = await this.getXService().suiClient.executeTransactionBlock({
@@ -314,8 +301,10 @@ export class SuiXWalletClient extends XWalletClient {
         typeArguments: [inputAmount.currency.wrapped.address],
       });
 
-      const { bytes, signature, reportTransactionEffects } = await signTransaction({
+      const { bytes, signature } = await signTransaction(this.getXService().suiWallet, {
         transaction: txb,
+        account: this.getXService().suiAccount,
+        chain: this.getXService().suiAccount.chains[0],
       });
 
       txResult = await this.getXService().suiClient.executeTransactionBlock({
@@ -338,8 +327,7 @@ export class SuiXWalletClient extends XWalletClient {
     }
   }
 
-  async executeWithdrawCollateral(xTransactionInput: XTransactionInput, options) {
-    const { signTransaction } = options;
+  async executeWithdrawCollateral(xTransactionInput: XTransactionInput) {
     const { inputAmount, account, xCallFee, usedCollateral, direction } = xTransactionInput;
 
     if (!inputAmount || !usedCollateral) {
@@ -376,8 +364,10 @@ export class SuiXWalletClient extends XWalletClient {
       // typeArguments: ['0x2::sui::SUI'],
     });
 
-    const { bytes, signature, reportTransactionEffects } = await signTransaction({
+    const { bytes, signature } = await signTransaction(this.getXService().suiWallet, {
       transaction: txb,
+      account: this.getXService().suiAccount,
+      chain: this.getXService().suiAccount.chains[0],
     });
 
     const txResult = await this.getXService().suiClient.executeTransactionBlock({
@@ -388,10 +378,6 @@ export class SuiXWalletClient extends XWalletClient {
       },
     });
 
-    // Always report transaction effects to the wallet after execution
-    // @ts-ignore
-    reportTransactionEffects(txResult.rawEffects!);
-
     const { digest: hash } = txResult || {};
 
     if (hash) {
@@ -399,9 +385,7 @@ export class SuiXWalletClient extends XWalletClient {
     }
   }
 
-  async executeBorrow(xTransactionInput: XTransactionInput, options) {
-    const { signTransaction } = options;
-
+  async executeBorrow(xTransactionInput: XTransactionInput) {
     const { inputAmount, account, xCallFee, usedCollateral, recipient, direction } = xTransactionInput;
 
     if (!inputAmount || !usedCollateral) {
@@ -444,8 +428,10 @@ export class SuiXWalletClient extends XWalletClient {
       // typeArguments: ['0x2::sui::SUI'],
     });
 
-    const { bytes, signature, reportTransactionEffects } = await signTransaction({
+    const { bytes, signature } = await signTransaction(this.getXService().suiWallet, {
       transaction: txb,
+      account: this.getXService().suiAccount,
+      chain: this.getXService().suiAccount.chains[0],
     });
 
     const txResult = await this.getXService().suiClient.executeTransactionBlock({
@@ -456,19 +442,13 @@ export class SuiXWalletClient extends XWalletClient {
       },
     });
 
-    // Always report transaction effects to the wallet after execution
-    // @ts-ignore
-    reportTransactionEffects(txResult.rawEffects!);
-
     const { digest: hash } = txResult || {};
 
     if (hash) {
       return hash;
     }
   }
-  async executeRepay(xTransactionInput: XTransactionInput, options) {
-    const { signTransaction } = options;
-
+  async executeRepay(xTransactionInput: XTransactionInput) {
     const { inputAmount, account, xCallFee, usedCollateral, recipient, direction } = xTransactionInput;
 
     if (!inputAmount || !usedCollateral) {
@@ -527,8 +507,10 @@ export class SuiXWalletClient extends XWalletClient {
       // typeArguments: [],
     });
 
-    const { bytes, signature, reportTransactionEffects } = await signTransaction({
+    const { bytes, signature } = await signTransaction(this.getXService().suiWallet, {
       transaction: txb,
+      account: this.getXService().suiAccount,
+      chain: this.getXService().suiAccount.chains[0],
     });
 
     const txResult = await this.getXService().suiClient.executeTransactionBlock({
@@ -539,14 +521,32 @@ export class SuiXWalletClient extends XWalletClient {
       },
     });
 
-    // Always report transaction effects to the wallet after execution
-    // @ts-ignore
-    reportTransactionEffects(txResult.rawEffects!);
-
     const { digest: hash } = txResult || {};
 
     if (hash) {
       return hash;
     }
+  }
+
+  async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async withdrawXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async addLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async removeLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async stake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async unstake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
   }
 }

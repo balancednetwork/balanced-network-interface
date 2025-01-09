@@ -45,7 +45,7 @@ export class SolanaXWalletClient extends XWalletClient {
     return Promise.resolve(undefined);
   }
 
-  async executeTransaction(xTransactionInput: XTransactionInput) {
+  async executeSwapOrBridge(xTransactionInput: XTransactionInput) {
     const wallet = this.getXService().wallet;
     const connection = this.getXService().connection;
     const provider = this.getXService().provider;
@@ -76,14 +76,6 @@ export class SolanaXWalletClient extends XWalletClient {
           },
         }),
       );
-    } else if (type === XTransactionType.DEPOSIT) {
-      return await this._executeDepositCollateral(xTransactionInput);
-    } else if (type === XTransactionType.WITHDRAW) {
-      return await this._executeWithdrawCollateral(xTransactionInput);
-    } else if (type === XTransactionType.BORROW) {
-      return await this._executeBorrow(xTransactionInput);
-    } else if (type === XTransactionType.REPAY) {
-      return await this._executeRepay(xTransactionInput);
     } else {
       throw new Error('Invalid XTransactionType');
     }
@@ -253,7 +245,7 @@ export class SolanaXWalletClient extends XWalletClient {
     }
   }
 
-  async _executeDepositCollateral(xTransactionInput: XTransactionInput) {
+  async executeDepositCollateral(xTransactionInput: XTransactionInput) {
     const wallet = this.getXService().wallet;
     const connection = this.getXService().connection;
     const provider = this.getXService().provider;
@@ -387,7 +379,7 @@ export class SolanaXWalletClient extends XWalletClient {
     }
   }
 
-  async _executeWithdrawCollateral(xTransactionInput: XTransactionInput) {
+  async executeWithdrawCollateral(xTransactionInput: XTransactionInput) {
     const wallet = this.getXService().wallet;
     const connection = this.getXService().connection;
     const provider = this.getXService().provider;
@@ -445,7 +437,7 @@ export class SolanaXWalletClient extends XWalletClient {
     }
   }
 
-  async _executeBorrow(xTransactionInput: XTransactionInput) {
+  async executeBorrow(xTransactionInput: XTransactionInput) {
     const wallet = this.getXService().wallet;
     const connection = this.getXService().connection;
     const provider = this.getXService().provider;
@@ -507,7 +499,7 @@ export class SolanaXWalletClient extends XWalletClient {
     }
   }
 
-  async _executeRepay(xTransactionInput: XTransactionInput) {
+  async executeRepay(xTransactionInput: XTransactionInput) {
     const wallet = this.getXService().wallet;
     const connection = this.getXService().connection;
     const provider = this.getXService().provider;
@@ -571,5 +563,27 @@ export class SolanaXWalletClient extends XWalletClient {
     if (txSignature) {
       return txSignature;
     }
+  }
+
+  async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async withdrawXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async addLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async removeLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async stake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async unstake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
   }
 }

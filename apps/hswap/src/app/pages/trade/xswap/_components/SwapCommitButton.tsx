@@ -145,7 +145,7 @@ function SwapCommitButton() {
     setOpen(true);
   }, [xTransactionInput, trade]);
 
-  const { sendXTransaction } = useSendXTransaction();
+  const sendXTransaction = useSendXTransaction();
 
   const outputAccount = useXAccount(getXChainType(currencies[Field.OUTPUT]?.xChainId));
 

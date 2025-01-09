@@ -79,7 +79,7 @@ function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
     }
   }, [currentXTransaction, slowDismiss]);
 
-  const { sendXTransaction } = useSendXTransaction();
+  const sendXTransaction = useSendXTransaction();
   const handleTransfer = async () => {
     if (currencyAmountToBridge && recipient && account && xCallFee) {
       const bridgeInfo: XTransactionInput = {

@@ -96,7 +96,7 @@ const XCollateralModal = ({
     }
   }, [currentXTransaction, slowDismiss]);
 
-  const { sendXTransaction } = useSendXTransaction();
+  const sendXTransaction = useSendXTransaction();
   const handleXCollateralAction = async () => {
     if (!account) return;
     if (!xCallFee) return;

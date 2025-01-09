@@ -108,7 +108,7 @@ const XLoanModal = ({
     }
   }, [currentXTransaction, slowDismiss]);
 
-  const { sendXTransaction } = useSendXTransaction();
+  const sendXTransaction = useSendXTransaction();
   const handleXLoanAction = async () => {
     if (!collateralAccount) return;
     if (!loanNetworkAddress) return;

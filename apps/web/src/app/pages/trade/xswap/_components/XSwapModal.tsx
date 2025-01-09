@@ -109,7 +109,7 @@ const XSwapModal = ({
     }
   }, [currentXTransaction, slowDismiss]);
 
-  const { sendXTransaction } = useSendXTransaction();
+  const sendXTransaction = useSendXTransaction();
   const handleXCallSwap = async () => {
     if (!executionTrade) return;
     if (!account) return;

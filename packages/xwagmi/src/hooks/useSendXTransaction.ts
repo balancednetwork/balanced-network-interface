@@ -5,11 +5,10 @@ import { xChainMap } from '@/constants';
 import { XChainId } from '@/types';
 import { transactionActions, xChainHeightActions, xMessageActions, xTransactionActions } from '@/xcall';
 import { XMessage, XMessageStatus, XTransaction, XTransactionInput, XTransactionStatus } from '@/xcall/types';
-import { useSignTransaction } from '@mysten/dapp-kit';
 
 const iconChainId: XChainId = '0x1.icon';
 
-const sendXTransaction = async (xTransactionInput: XTransactionInput, options: any) => {
+const sendXTransaction = async (xTransactionInput: XTransactionInput) => {
   const { direction } = xTransactionInput;
   const sourceChainId = direction.from;
 
@@ -18,7 +17,7 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
     throw new Error('WalletXService for source chain is not found');
   }
 
-  const sourceTransactionHash = await srcXWalletClient.executeTransaction(xTransactionInput, options);
+  const sourceTransactionHash = await srcXWalletClient.executeTransaction(xTransactionInput);
   if (!sourceTransactionHash) {
     return;
   }
@@ -68,13 +67,5 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
 };
 
 export const useSendXTransaction = () => {
-  const { mutateAsync: signTransaction } = useSignTransaction();
-
-  return useMemo(
-    () => ({
-      sendXTransaction: (xTransactionInput: XTransactionInput) =>
-        sendXTransaction(xTransactionInput, { signTransaction }),
-    }),
-    [signTransaction],
-  );
+  return sendXTransaction;
 };

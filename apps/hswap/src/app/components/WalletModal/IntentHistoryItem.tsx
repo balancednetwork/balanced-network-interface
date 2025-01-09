@@ -6,7 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import useElapsedTime from '@/hooks/useElapsedTime';
 import { cn } from '@/lib/utils';
 import { MMTransaction, MMTransactionStatus } from '@/store/transactions/useMMTransactionStore';
-import { formatElapsedTime } from '@/utils';
+import { formatRelativeTime } from '@/utils';
 import { formatBalance } from '@/utils/formatter';
 import { getNetworkDisplayName, getTrackerLink } from '@balancednetwork/xwagmi';
 import { CheckIcon, ExternalLink, Loader2Icon } from 'lucide-react';
@@ -64,7 +64,7 @@ const IntentHistoryItem = ({ transaction }: IntentHistoryItemProps) => {
             {transaction.status === MMTransactionStatus.pending
               ? 'Swapping'
               : elapsedTime
-                ? formatElapsedTime(elapsedTime)
+                ? formatRelativeTime(elapsedTime)
                 : '...'}
           </div>
 

@@ -8,9 +8,10 @@ import CurrencyLogoWithNetwork from '@/app/components/CurrencyLogoWithNetwork';
 import { ArrowGradientIcon, TimeGradientIcon } from '@/app/components/Icons';
 import { Modal } from '@/app/components/Modal';
 import { ApprovalState } from '@/hooks/useApproveCallback';
+import useElapsedTime from '@/hooks/useElapsedTime';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { Field } from '@/store/swap/reducer';
-import { formatBigNumber } from '@/utils';
+import { formatBigNumber, formatElapsedTime } from '@/utils';
 import { Currency, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { xChainMap } from '@balancednetwork/xwagmi';
@@ -70,6 +71,7 @@ const XSwapModal = ({
   const [swapConfirmed, setSwapConfirmed] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const currentXTransaction = xTransactionActions.get(xTransactionId || null);
+  const elapsedTime = useElapsedTime(currentXTransaction?.createdAt);
 
   useEffect(() => {
     if (currentXTransaction) {
@@ -241,7 +243,9 @@ const XSwapModal = ({
                           <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
                             <Loader2 className="animate-spin" />
                           </div>
-                          <div className="text-[#e6e0f7] text-sm font-bold">Ready in 1m 10s</div>
+                          <div className="text-[#e6e0f7] text-sm font-bold">
+                            Swapping: {formatElapsedTime(elapsedTime)}
+                          </div>
                         </>
                       )}
                     </div>

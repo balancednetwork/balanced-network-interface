@@ -5,7 +5,7 @@ import { ExclamationIcon } from '@/app/components/Icons';
 import { Separator } from '@/components/ui/separator';
 import useElapsedTime from '@/hooks/useElapsedTime';
 import { cn } from '@/lib/utils';
-import { formatElapsedTime } from '@/utils';
+import { formatRelativeTime } from '@/utils';
 import { formatBalance } from '@/utils/formatter';
 import { getNetworkDisplayName, getTrackerLink } from '@balancednetwork/xwagmi';
 import { XTransaction, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
@@ -70,7 +70,7 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
             {xTransaction.status === XTransactionStatus.pending
               ? 'Swapping'
               : elapsedTime
-                ? formatElapsedTime(elapsedTime)
+                ? formatRelativeTime(elapsedTime)
                 : '...'}
           </div>
 

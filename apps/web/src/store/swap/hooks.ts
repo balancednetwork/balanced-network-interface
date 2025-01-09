@@ -14,8 +14,7 @@ import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
-import { getXTokenBySymbol } from '@/utils/xTokens';
-import { getXChainType } from '@balancednetwork/xwagmi';
+import { convertCurrency, getXChainType } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import { StellarAccountValidation, useValidateStellarAccount } from '@balancednetwork/xwagmi';
@@ -181,11 +180,9 @@ export function useDerivedSwapInfo(): {
   const _currencies: { [field in Field]?: Currency } = useMemo(() => {
     return {
       [Field.INPUT]:
-        inputCurrency?.xChainId === '0x1.icon' ? inputCurrency : getXTokenBySymbol('0x1.icon', inputCurrency?.symbol),
+        inputCurrency?.xChainId === '0x1.icon' ? inputCurrency : convertCurrency('0x1.icon', inputCurrency),
       [Field.OUTPUT]:
-        outputCurrency?.xChainId === '0x1.icon'
-          ? outputCurrency
-          : getXTokenBySymbol('0x1.icon', outputCurrency?.symbol),
+        outputCurrency?.xChainId === '0x1.icon' ? outputCurrency : convertCurrency('0x1.icon', outputCurrency),
     };
   }, [inputCurrency, outputCurrency]);
   const _parsedAmount = tryParseAmount(

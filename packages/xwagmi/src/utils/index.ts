@@ -171,7 +171,9 @@ export const convertCurrencyAmount = (
   );
 };
 
-export const convertCurrency = (xChainId: XChainId, currency: Currency | XToken): XToken => {
+export const convertCurrency = (xChainId: XChainId, currency: Currency | XToken | undefined): XToken | undefined => {
+  if (!currency) return undefined;
+
   const token = xTokenMap[xChainId].find(t => t.symbol === currency.symbol)!;
 
   return token;

@@ -84,10 +84,12 @@ function SwapCommitButton() {
   const { approvalState, approveCallback } = useApproveCallback(inputAmount, sourceXChain.contracts.assetManager);
 
   const xTransactionInput = useMemo(() => {
-    if (!account || !recipient || !inputAmount || !trade) return;
+    if (!account || !recipient || !inputAmount) return;
 
     let _xTransactionInput: XTransactionInput | undefined;
     if (xTransactionType === XTransactionType.SWAP_ON_ICON) {
+      if (!trade) return;
+
       _xTransactionInput = {
         type: XTransactionType.SWAP_ON_ICON,
         direction,
@@ -102,8 +104,8 @@ function SwapCommitButton() {
         xCallFee: { rollback: 0n, noRollback: 0n },
         path: trade.route.routeActionPath,
       };
-    } else if (xTransactionType === XTransactionType.BRIDGE || xTransactionType === XTransactionType.SWAP) {
-      if (!xCallFee) return;
+    } else if (xTransactionType === XTransactionType.SWAP) {
+      if (!xCallFee || !trade) return;
 
       _xTransactionInput = {
         type: xTransactionType,
@@ -118,6 +120,18 @@ function SwapCommitButton() {
         ),
         xCallFee,
         path: trade.route.routeActionPath,
+      };
+    } else if (xTransactionType === XTransactionType.BRIDGE) {
+      if (!xCallFee) return;
+      _xTransactionInput = {
+        type: xTransactionType,
+        direction,
+        account,
+        recipient,
+        inputAmount,
+        outputAmount: convertCurrencyAmount(direction.to, inputAmount),
+        minReceived: convertCurrencyAmount(direction.to, inputAmount),
+        xCallFee,
       };
     }
     return _xTransactionInput;

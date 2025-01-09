@@ -9,7 +9,7 @@ import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Typography } from '@/app/theme';
-import { PairState, useBalance, useSuppliedTokens } from '@/hooks/useV2Pairs';
+import { PairState, useBalance, usePool, usePoolTokenAmounts, useSuppliedTokens } from '@/hooks/useV2Pairs';
 import { useAllPairsByName } from '@/queries/backendv2';
 import { useICXConversionFee, useRatesWithOracle } from '@/queries/reward';
 import { useBBalnAmount, useResponsivePoolRewardShare, useSources } from '@/store/bbaln/hooks';
@@ -24,16 +24,20 @@ import { formatBigNumber } from '@/utils';
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
 import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
 import { formatBalance } from '@/utils/formatter';
+import { getXChainType, useXAccount } from '@balancednetwork/xwagmi';
 
 export default function LPDescription() {
-  const { currencies, pair, pairState, dependentField, noLiquidity, parsedAmounts } = useDerivedMintInfo();
+  const { currencies, pair, pairState, dependentField, noLiquidity, parsedAmounts, lpXChainId } = useDerivedMintInfo();
+  const xAccount = useXAccount(getXChainType(lpXChainId));
+  const pool = usePool(pair?.poolId, `${lpXChainId}/${xAccount?.address}`);
+
   const { independentField, typedValue, otherTypedValue } = useMintState();
   const sources = useSources();
   const getResponsiveRewardShare = useResponsivePoolRewardShare();
   const { account } = useIconReact();
   const upSmall = useMedia('(min-width: 600px)');
   const { data: icxConversionFee } = useICXConversionFee();
-  const userPoolBalance = useLiquidityTokenBalance(account, pair);
+  const userPoolBalance = useLiquidityTokenBalance(`${lpXChainId}/${xAccount?.address}`, pair);
   const totalPoolTokens = pair?.totalSupply;
   const token0Deposited =
     !!pair &&
@@ -65,6 +69,7 @@ export default function LPDescription() {
     currencies[Field.CURRENCY_A],
     pair?.isQueue ? pair?.token1 : currencies[Field.CURRENCY_B],
   );
+  const [baseAmount, quoteAmount] = usePoolTokenAmounts(pool);
 
   const userPoolBalances = useBalance(pair?.poolId || -1);
 
@@ -105,10 +110,10 @@ export default function LPDescription() {
   }, []);
 
   const baseCurrencyTotalSupply = useMemo(
-    () => new BigNumber(totalSupply(baseValue, balances?.base)?.toFixed() || '0'),
-    [totalSupply, baseValue, balances?.base],
+    () => new BigNumber(totalSupply(baseValue, baseAmount)?.toFixed() || '0'),
+    [totalSupply, baseValue, baseAmount],
   );
-  const quoteCurrencyTotalSupply = new BigNumber(totalSupply(quoteValue, balances?.quote)?.toFixed() || '0');
+  const quoteCurrencyTotalSupply = new BigNumber(totalSupply(quoteValue, quoteAmount)?.toFixed() || '0');
 
   const responsiveRewardShare = useMemo(
     () =>

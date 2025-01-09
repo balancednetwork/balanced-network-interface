@@ -367,8 +367,6 @@ export function usePools(pairs: { [poolId: number]: Pair }, accounts: string[]):
           },
         ]);
       });
-      // const data: any[] = await bnJs.Multicall.getAggregateData(cds.slice(0, 100));
-      // console.log('data', data);
 
       const chunks = chunkArray(cds, MULTI_CALL_BATCH_SIZE);
       const chunkedData = await Promise.all(chunks.map(async chunk => await bnJs.Multicall.getAggregateData(chunk)));
@@ -413,20 +411,28 @@ export function usePools(pairs: { [poolId: number]: Pair }, accounts: string[]):
   return balances;
 }
 
-export const usePoolTokenAmounts = (pool: Pool) => {
-  const { balance, stakedLPBalance, pair } = pool;
+export const usePoolTokenAmounts = (pool?: Pool) => {
+  const { balance, stakedLPBalance, pair } = pool || {};
 
   const rate = useMemo(() => {
-    if (pair.totalSupply && pair.totalSupply.quotient > BIGINT_ZERO) {
-      const amount = (stakedLPBalance ? balance.add(stakedLPBalance) : balance).divide(pair.totalSupply);
+    if (pair?.totalSupply && pair.totalSupply.quotient > BIGINT_ZERO) {
+      const amount = (stakedLPBalance ? balance!.add(stakedLPBalance) : balance!).divide(pair.totalSupply);
       return new Fraction(amount.numerator, amount.denominator);
     }
     return FRACTION_ZERO;
   }, [balance, pair, stakedLPBalance]);
 
   const [base, quote] = useMemo(() => {
-    return [pair.reserve0.multiply(rate), pair.reserve1.multiply(rate)];
+    if (pair) {
+      return [pair.reserve0.multiply(rate), pair.reserve1.multiply(rate)];
+    }
+    return [CurrencyAmount.fromRawAmount(bnUSD[NETWORK_ID], '0'), CurrencyAmount.fromRawAmount(bnUSD[NETWORK_ID], '0')];
   }, [pair, rate]);
 
   return [base, quote];
+};
+
+export const usePool = (poolId: number | undefined, account: string): Pool | undefined => {
+  const { pools } = usePoolPanelContext();
+  return pools.find(pool => pool.poolId === poolId && pool.account === account);
 };

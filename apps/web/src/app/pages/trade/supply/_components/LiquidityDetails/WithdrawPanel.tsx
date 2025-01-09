@@ -236,6 +236,8 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
     const numPortion = new BigNumber(portion / 100);
     const withdrawAmount = multiplyCABN(pool.balance, numPortion);
     await xRemoveLiquidity(xAccount.address, poolId, pool.xChainId, withdrawAmount);
+    toggleOpen();
+    resetValue();
 
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
 

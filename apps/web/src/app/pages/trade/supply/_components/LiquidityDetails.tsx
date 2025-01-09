@@ -42,7 +42,7 @@ export default function LiquidityDetails() {
   const { data: allPairs } = useAllPairsById();
   const sources = useSources();
 
-  const { pairs, balances } = usePoolPanelContext();
+  const { pairs, balances, pools } = usePoolPanelContext();
 
   const rewards = useRewards();
 
@@ -61,11 +61,6 @@ export default function LiquidityDetails() {
 
   const pairsWithoutQ = omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
   const balancesWithoutQ = omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
-
-  const pools = usePools(pairs, [
-    `0x1.icon/hxe25ae17a21883803185291baddac0120493ff706`,
-    `0xa4b1.arbitrum/0x6C5F91FD68Dd7b3A1aedB0F09946659272f523a4`,
-  ]);
 
   const userPools = pools?.filter(x => x.balance.greaterThan(0) || x.stakedLPBalance?.greaterThan(0)) || [];
 

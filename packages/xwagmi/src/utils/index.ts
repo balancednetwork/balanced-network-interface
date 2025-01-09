@@ -1,9 +1,9 @@
 import { xChainMap } from '@/constants/xChains';
-import { allXTokens } from '@/constants/xTokens';
+import { allXTokens, xTokenMap } from '@/constants/xTokens';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
 import BigNumber from 'bignumber.js';
-import { XChainId } from '../types';
+import { XChainId, XToken } from '../types';
 export * from './address';
 
 // Function to get the last i bytes of an integer
@@ -157,4 +157,22 @@ export const jsonStorageOptions: {
 
     return value;
   },
+};
+
+export const convertCurrencyAmount = (
+  xChainId: XChainId,
+  amount: CurrencyAmount<Currency | XToken>,
+): CurrencyAmount<XToken> => {
+  const token = xTokenMap[xChainId].find(t => t.symbol === amount.currency.symbol)!;
+
+  return CurrencyAmount.fromRawAmount(
+    token,
+    new BigNumber(amount.toFixed()).times((10n ** BigInt(token.decimals)).toString()).toFixed(0),
+  );
+};
+
+export const convertCurrency = (xChainId: XChainId, currency: Currency | XToken): XToken => {
+  const token = xTokenMap[xChainId].find(t => t.symbol === currency.symbol)!;
+
+  return token;
 };

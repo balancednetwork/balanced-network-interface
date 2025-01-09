@@ -17,8 +17,10 @@ interface HistoryItemProps {
 }
 
 const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
-  const { inputXToken, outputXToken, inputAmount, outputAmount } = xTransaction.attributes;
-
+  const inputXToken = xTransaction.input.inputAmount.currency;
+  const outputXToken = xTransaction.input?.outputAmount!.currency;
+  const inputAmount = xTransaction.input.inputAmount.toFixed();
+  const outputAmount = xTransaction.input?.outputAmount!.toFixed();
   const primaryMessage = xMessageActions.getOf(xTransaction.id, true);
 
   const elapsedTime = useElapsedTime(xTransaction.createdAt);

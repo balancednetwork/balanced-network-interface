@@ -11,6 +11,8 @@ import { ApprovalState } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { Field } from '@/store/swap/reducer';
 import { formatBigNumber } from '@/utils';
+import { Currency, TradeType } from '@balancednetwork/sdk-core';
+import { Trade } from '@balancednetwork/v1-sdk';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { XToken } from '@balancednetwork/xwagmi';
 import { useXCallFee } from '@balancednetwork/xwagmi';
@@ -31,7 +33,7 @@ type XSwapModalProps = {
   open: boolean;
   currencies: { [field in Field]?: XToken };
   executionXTransactionInput: XTransactionInput;
-
+  executionTrade: Trade<Currency, Currency, TradeType> | undefined;
   //
   confirmModalState: ConfirmModalState;
   xSwapErrorMessage: string | undefined;
@@ -49,6 +51,7 @@ const XSwapModal = ({
   open,
   currencies,
   executionXTransactionInput,
+  executionTrade,
   //
   confirmModalState,
   xSwapErrorMessage,
@@ -61,12 +64,7 @@ const XSwapModal = ({
   onConfirm,
   onDismiss,
 }: XSwapModalProps) => {
-  const {
-    executionTrade,
-    direction,
-    inputAmount: executionInputAmount,
-    type: xTransactionType,
-  } = executionXTransactionInput;
+  const { direction, inputAmount: executionInputAmount, type: xTransactionType } = executionXTransactionInput;
 
   const { formattedXCallFee } = useXCallFee(direction.from, direction.to);
   const [swapConfirmed, setSwapConfirmed] = useState(false);

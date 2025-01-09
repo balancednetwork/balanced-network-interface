@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useMemo } from 'react';
 
-import { getXChainType } from '@balancednetwork/xwagmi';
+import { convertCurrencyAmount, getXChainType, useSendXTransaction } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { useXCallFee } from '@balancednetwork/xwagmi';
@@ -10,10 +10,11 @@ import { Trans, t } from '@lingui/macro';
 import { BlueButton } from '@/app/components/Button';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
-import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
+import { Currency, Percent, TradeType } from '@balancednetwork/sdk-core';
+import { Trade } from '@balancednetwork/v1-sdk';
 import XSwapModal, { ConfirmModalState, PendingConfirmModalState } from './XSwapModal';
 
 interface XSwapModalState {
@@ -83,19 +84,23 @@ function SwapCommitButton() {
   const { approvalState, approveCallback } = useApproveCallback(inputAmount, sourceXChain.contracts.assetManager);
 
   const xTransactionInput = useMemo(() => {
-    if (!account || !recipient || !inputAmount) return;
+    if (!account || !recipient || !inputAmount || !trade) return;
 
     let _xTransactionInput: XTransactionInput | undefined;
     if (xTransactionType === XTransactionType.SWAP_ON_ICON) {
       _xTransactionInput = {
         type: XTransactionType.SWAP_ON_ICON,
         direction,
-        executionTrade: trade,
         account,
         recipient,
-        xCallFee: { rollback: 0n, noRollback: 0n }, // not used, just for type checking
-        inputAmount: inputAmount,
-        slippageTolerance,
+        inputAmount,
+        outputAmount: convertCurrencyAmount(direction.to, trade.outputAmount),
+        minReceived: convertCurrencyAmount(
+          direction.to,
+          trade.minimumAmountOut(new Percent(slippageTolerance, 10_000)),
+        ),
+        xCallFee: { rollback: 0n, noRollback: 0n },
+        path: trade.route.routeActionPath,
       };
     } else if (xTransactionType === XTransactionType.BRIDGE || xTransactionType === XTransactionType.SWAP) {
       if (!xCallFee) return;
@@ -103,12 +108,16 @@ function SwapCommitButton() {
       _xTransactionInput = {
         type: xTransactionType,
         direction,
-        executionTrade: trade,
         account,
         recipient,
-        inputAmount: inputAmount,
+        inputAmount,
+        outputAmount: convertCurrencyAmount(direction.to, trade.outputAmount),
+        minReceived: convertCurrencyAmount(
+          direction.to,
+          trade.minimumAmountOut(new Percent(slippageTolerance, 10_000)),
+        ),
         xCallFee,
-        slippageTolerance,
+        path: trade.route.routeActionPath,
       };
     }
     return _xTransactionInput;
@@ -118,8 +127,9 @@ function SwapCommitButton() {
     if (!xTransactionInput) return;
 
     setExecutionXTransactionInput(xTransactionInput);
+    setExecutionTrade(trade);
     setOpen(true);
-  }, [xTransactionInput]);
+  }, [xTransactionInput, trade]);
 
   const { sendXTransaction } = useSendXTransaction();
 
@@ -133,6 +143,7 @@ function SwapCommitButton() {
     }, 500);
   }, []);
 
+  const [executionTrade, setExecutionTrade] = useState<Trade<Currency, Currency, TradeType>>();
   const [executionXTransactionInput, setExecutionXTransactionInput] = useState<XTransactionInput>();
   const [pendingModalSteps, setPendingModalSteps] = useState<PendingConfirmModalState[]>([]);
 
@@ -221,6 +232,7 @@ function SwapCommitButton() {
           open={open}
           currencies={currencies}
           executionXTransactionInput={executionXTransactionInput}
+          executionTrade={executionTrade}
           {...xSwapModalState}
           pendingModalSteps={pendingModalSteps}
           approvalState={approvalState}

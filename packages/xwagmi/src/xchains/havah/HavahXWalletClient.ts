@@ -1,4 +1,3 @@
-import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
@@ -19,8 +18,7 @@ export class HavahXWalletClient extends XWalletClient {
   }
 
   async executeTransaction(xTransactionInput: XTransactionInput) {
-    const { type, executionTrade, account, direction, inputAmount, recipient, slippageTolerance, xCallFee } =
-      xTransactionInput;
+    const { type, account, direction, inputAmount, recipient, xCallFee, minReceived, path } = xTransactionInput;
 
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
     const receiver = `${direction.to}/${recipient}`;
@@ -29,12 +27,11 @@ export class HavahXWalletClient extends XWalletClient {
 
     let data;
     if (type === XTransactionType.SWAP) {
-      if (!executionTrade || !slippageTolerance) {
+      if (!minReceived || !path) {
         return;
       }
 
-      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived).toString('hex');
+      const rlpEncodedData = getRlpEncodedSwapData(path, '_swap', receiver, minReceived).toString('hex');
       data = `0x${rlpEncodedData}`;
     } else if (type === XTransactionType.BRIDGE) {
       data = toHex(

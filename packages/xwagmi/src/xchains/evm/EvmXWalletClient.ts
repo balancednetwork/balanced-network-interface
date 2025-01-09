@@ -1,4 +1,4 @@
-import { CurrencyAmount, MaxUint256, Percent } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
 import { Address, PublicClient, WalletClient, WriteContractParameters, erc20Abi, getContract, toHex } from 'viem';
 import bnJs from '../icon/bnJs';
@@ -64,8 +64,7 @@ export class EvmXWalletClient extends XWalletClient {
   }
 
   async executeTransaction(xTransactionInput: XTransactionInput) {
-    const { type, direction, inputAmount, recipient, account, xCallFee, executionTrade, slippageTolerance } =
-      xTransactionInput;
+    const { type, direction, inputAmount, recipient, account, xCallFee, minReceived, path } = xTransactionInput;
 
     const receiver = `${direction.to}/${recipient}`;
     const tokenAddress = inputAmount.wrapped.currency.address;
@@ -74,11 +73,10 @@ export class EvmXWalletClient extends XWalletClient {
 
     let data: Address;
     if (type === XTransactionType.SWAP) {
-      if (!executionTrade || !slippageTolerance) {
+      if (!minReceived || !path) {
         return;
       }
-      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived).toString('hex');
+      const rlpEncodedData = getRlpEncodedSwapData(path, '_swap', receiver, minReceived).toString('hex');
       data = `0x${rlpEncodedData}`;
     } else if (type === XTransactionType.BRIDGE) {
       data = toHex(

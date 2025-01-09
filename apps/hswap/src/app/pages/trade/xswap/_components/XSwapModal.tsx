@@ -3,10 +3,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
-import { WhiteButton } from '@/app/components2/Button';
-import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
-import { ArrowGradientIcon, TimeGradientIcon } from '@/app/components2/Icons';
-import { Modal } from '@/app/components2/Modal';
+import { WhiteButton } from '@/app/components/Button';
+import CurrencyLogoWithNetwork from '@/app/components/CurrencyLogoWithNetwork';
+import { ArrowGradientIcon, TimeGradientIcon } from '@/app/components/Icons';
+import { Modal } from '@/app/components/Modal';
 import { ApprovalState } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { Field } from '@/store/swap/reducer';
@@ -209,7 +209,7 @@ const XSwapModal = ({
               <div key={step} className="flex gap-2 items-center justify-between">
                 {step === ConfirmModalState.APPROVING_TOKEN && (
                   <>
-                    <div className="flex flex-col gap-2 items-center items-center">
+                    <div className="flex flex-col gap-2 items-center">
                       {approvalState === ApprovalState.NOT_APPROVED && (
                         <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center">
                           {currencies[Field.INPUT] && <CurrencyLogoWithNetwork currency={currencies[Field.INPUT]} />}

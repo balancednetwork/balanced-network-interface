@@ -1,4 +1,3 @@
-import { SOLVER_API_ENDPOINT } from '../constants.js';
 import {
   IntentErrorCode,
   type IntentExecutionRequest,
@@ -10,6 +9,7 @@ import {
   type IntentStatusResponse,
   type Result,
   type IntentQuoteResponseRaw,
+  type IntentServiceConfig,
 } from '../types.js';
 import invariant from 'tiny-invariant';
 import { retry } from '../utils.js';
@@ -17,7 +17,10 @@ import { retry } from '../utils.js';
 export class SolverApiService {
   private constructor() {}
 
-  public static async getQuote(payload: IntentQuoteRequest): Promise<Result<IntentQuoteResponse, IntentErrorResponse>> {
+  public static async getQuote(
+    payload: IntentQuoteRequest,
+    config: IntentServiceConfig,
+  ): Promise<Result<IntentQuoteResponse, IntentErrorResponse>> {
     invariant(payload.token_src.length > 0, 'Empty token_src');
     invariant(payload.token_src_blockchain_id.length > 0, 'Empty token_src_blockchain_id');
     invariant(payload.token_dst.length > 0, 'Empty token_dst');
@@ -25,7 +28,7 @@ export class SolverApiService {
     invariant(payload.src_amount > 0n, 'src_amount must be greater than 0');
 
     try {
-      const response = await fetch(`${SOLVER_API_ENDPOINT}/quote`, {
+      const response = await fetch(`${config.solverApiEndpoint}/quote`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,10 +96,11 @@ export class SolverApiService {
    */
   public static async postExecution(
     intentExecutionRequest: IntentExecutionRequest,
+    config: IntentServiceConfig,
   ): Promise<Result<IntentExecutionResponse, IntentErrorResponse>> {
     try {
       const response = await retry(() =>
-        fetch(`${SOLVER_API_ENDPOINT}/execute`, {
+        fetch(`${config.solverApiEndpoint}/execute`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -132,10 +136,11 @@ export class SolverApiService {
 
   public static async getStatus(
     intentStatusRequest: IntentStatusRequest,
+    config: IntentServiceConfig,
   ): Promise<Result<IntentStatusResponse, IntentErrorResponse>> {
     invariant(intentStatusRequest.task_id.length > 0, 'Empty task_id');
     try {
-      const response = await fetch(`${SOLVER_API_ENDPOINT}/status`, {
+      const response = await fetch(`${config.solverApiEndpoint}/status`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

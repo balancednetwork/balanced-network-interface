@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import { Box, Flex, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -13,7 +13,7 @@ import useSort from '@/hooks/useSort';
 import { MIN_LIQUIDITY_TO_INCLUDE, PairData, TOKEN_BLACKLIST, useAllPairsById, useNOLPools } from '@/queries/backendv2';
 import { useDerivedMintInfo, useMintActionHandlers } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
-import { getFormattedNumber } from '@/utils/formatter';
+import { formatSymbol, getFormattedNumber } from '@/utils/formatter';
 
 import DropdownLink from '@/app/components/DropdownLink';
 import { HeaderText } from '@/app/components/SearchModal/styleds';
@@ -140,6 +140,10 @@ type PairItemProps = {
 
 const PairItem = ({ pair, onClick, isLast }: PairItemProps) => {
   const prices = useRatesWithOracle();
+  const pairName =
+    pair.info.id === 1
+      ? t`ICX queue`
+      : `${formatSymbol(pair.info.baseCurrencyKey)} / ${formatSymbol(pair.info.quoteCurrencyKey)}`;
 
   return (
     <>
@@ -149,7 +153,7 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => {
             <Box sx={{ minWidth: '95px' }}>
               <PoolLogo baseCurrency={pair.info.baseToken} quoteCurrency={pair.info.quoteToken} />
             </Box>
-            <Text ml={2}>{`${pair.info.baseCurrencyKey} / ${pair.info.quoteCurrencyKey}`}</Text>
+            <Text ml={2}>{pairName}</Text>
           </Flex>
         </DataText>
         <DataText>
@@ -227,6 +231,7 @@ export default function AllPoolsPanel({ query }: { query: string }) {
 
     if (!allPairs || !nolPairs) return [];
     const nativeSymbols = Object.values(xChainMap).map(chain => chain.nativeCurrency.symbol);
+    nativeSymbols.push('wICX');
 
     return Object.values(allPairs).filter(pair => {
       const isTokenBlacklisted = TOKEN_BLACKLIST.some(

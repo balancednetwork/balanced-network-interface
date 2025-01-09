@@ -2,7 +2,7 @@ import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import React, { useCallback, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 
-import { AnimateButton } from '@/app/components2/Button/AnimateButton';
+import { AnimateButton } from '@/app/components/Button/AnimateButton';
 import {
   HeartGradientIcon,
   HeartIcon,
@@ -13,7 +13,7 @@ import {
   ShutdownIcon,
   WalletGradientIcon,
   WalletIcon,
-} from '@/app/components2/Icons';
+} from '@/app/components/Icons';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';

@@ -19,6 +19,7 @@ import {
   type IntentExecutionResponse,
   type IntentQuoteRequest,
   type IntentQuoteResponse,
+  type IntentServiceConfig,
   type IntentStatusRequest,
   type IntentStatusResponse,
   type Result,
@@ -28,7 +29,11 @@ import { SolverApiService } from './SolverApiService.js';
 import { SuiIntentService } from './SuiIntentService.js';
 
 export class IntentService {
-  private constructor() {}
+  private readonly config: IntentServiceConfig;
+
+  public constructor(config: IntentServiceConfig) {
+    this.config = config;
+  }
 
   /**
    * Get current best quote for token amount
@@ -53,8 +58,8 @@ export class IntentService {
    *   }
    * }
    */
-  public static async getQuote(payload: IntentQuoteRequest): Promise<Result<IntentQuoteResponse, IntentErrorResponse>> {
-    return SolverApiService.getQuote(payload);
+  public async getQuote(payload: IntentQuoteRequest): Promise<Result<IntentQuoteResponse, IntentErrorResponse>> {
+    return SolverApiService.getQuote(payload, this.config);
   }
 
   /**
@@ -63,7 +68,7 @@ export class IntentService {
    * @param provider - ChainProviderType
    * @return Boolean - valid = true, invalid = false
    */
-  public static async isAllowanceValid<T extends CreateIntentOrderPayload>(
+  public async isAllowanceValid<T extends CreateIntentOrderPayload>(
     payload: CreateIntentOrderPayload,
     provider: GetChainProviderType<T['fromChain']>,
   ): Promise<Result<boolean>> {
@@ -121,7 +126,7 @@ export class IntentService {
    * @param address - Address to approve spending for
    * @param provider - EVM Provider
    */
-  static async approve(
+  public async approve(
     token: Address,
     amount: bigint,
     address: Address,
@@ -157,18 +162,21 @@ export class IntentService {
    *   }
    * }
    */
-  public static async executeIntentOrder<T extends CreateIntentOrderPayload>(
+  public async executeIntentOrder<T extends CreateIntentOrderPayload>(
     payload: CreateIntentOrderPayload,
     provider: GetChainProviderType<T['fromChain']>,
   ): Promise<Result<IntentExecutionResponse, IntentErrorResponse | Error | unknown>> {
     try {
-      const intentOrderResult = await IntentService.createIntentOrder(payload, provider);
+      const intentOrderResult = await this.createIntentOrder(payload, provider);
 
       if (intentOrderResult.ok) {
-        return SolverApiService.postExecution({
-          intent_tx_hash: intentOrderResult.value,
-          quote_uuid: payload.quote_uuid,
-        });
+        return SolverApiService.postExecution(
+          {
+            intent_tx_hash: intentOrderResult.value,
+            quote_uuid: payload.quote_uuid,
+          },
+          this.config,
+        );
       } else {
         return intentOrderResult;
       }
@@ -180,13 +188,13 @@ export class IntentService {
     }
   }
 
-  public static async createIntentOrder<T extends CreateIntentOrderPayload>(
+  public async createIntentOrder<T extends CreateIntentOrderPayload>(
     payload: T,
     provider: GetChainProviderType<T['fromChain']>,
   ): Promise<Result<Hash | string>> {
     try {
-      const fromChainConfig = IntentService.getChainConfig(payload.fromChain);
-      const toChainConfig = IntentService.getChainConfig(payload.toChain);
+      const fromChainConfig = this.getChainConfig(payload.fromChain);
+      const toChainConfig = this.getChainConfig(payload.toChain);
 
       if (isEvmChainConfig(fromChainConfig)) {
         if (provider instanceof EvmProvider) {
@@ -227,13 +235,13 @@ export class IntentService {
    * @param provider - EVM or SUI provider
    * @return string - Transaction Hash
    */
-  public static async cancelIntentOrder(
+  public async cancelIntentOrder(
     orderId: bigint,
     chain: ChainName,
     provider: ChainProviderType,
   ): Promise<Result<string>> {
     try {
-      const chainConfig = IntentService.getChainConfig(chain);
+      const chainConfig = this.getChainConfig(chain);
 
       if (isEvmChainConfig(chainConfig)) {
         if (provider instanceof EvmProvider) {
@@ -270,15 +278,15 @@ export class IntentService {
   /**
    * Retrieve Intent order
    * @param txHash - Transaction hash
-   * @param chainConfig - chain config (EVM or SUI)
+   * @param chain - chain name (sui or arb)
    * @param provider - provider (EVM or SUI)
    */
-  static async getOrder<T extends ChainConfig>(
+  public async getOrder<T extends ChainConfig>(
     txHash: string,
     chain: ChainName,
     provider: ChainProvider<T['chain']['type']>,
   ): Promise<Result<SwapOrder>> {
-    const chainConfig = IntentService.getChainConfig(chain);
+    const chainConfig = this.getChainConfig(chain);
 
     if (provider instanceof EvmProvider && isEvmChainConfig(chainConfig)) {
       return EvmIntentService.getOrder(txHash as Address, chainConfig, provider);
@@ -311,23 +319,23 @@ export class IntentService {
    *   }
    * }
    */
-  public static async getStatus(
+  public async getStatus(
     intentStatusRequest: IntentStatusRequest,
   ): Promise<Result<IntentStatusResponse, IntentErrorResponse>> {
-    return SolverApiService.getStatus(intentStatusRequest);
+    return SolverApiService.getStatus(intentStatusRequest, this.config);
   }
 
   /**
    * Get all available chains supporting intents
    */
-  public static getSupportedChains(): ChainName[] {
+  public getSupportedChains(): ChainName[] {
     return supportedChains;
   }
 
   /**
    * Get config of a specific chain
    */
-  public static getChainConfig<T extends ChainName>(chain: T): GetChainConfigType<T> {
+  public getChainConfig<T extends ChainName>(chain: T): GetChainConfigType<T> {
     const data = chainConfig[chain];
 
     if (!chainConfig) {

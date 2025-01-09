@@ -16,7 +16,8 @@
     "prepublishOnly": "tsup",
     "clean": "rm -rf dist && rm -rf node_modules && rm -rf .turbo",
     "pretty": "biome format . --write",
-    "checkTs": "tsc --noEmit"
+    "checkTs": "tsc --noEmit",
+    "knip": "knip"
   },
   "dependencies": {
     "@archwayhq/arch3.js": "0.7.0",

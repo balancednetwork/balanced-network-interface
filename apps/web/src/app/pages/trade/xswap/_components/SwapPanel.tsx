@@ -10,9 +10,10 @@ import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { BrightPanel } from '@/app/components/Panel';
 import { SelectorType } from '@/app/components/SearchModal/CurrencySearch';
+import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
-import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
+import { PRICE_IMPACT_WARNING_THRESHOLD } from '@/constants/misc';
 import useManualAddresses from '@/hooks/useManualAddresses';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
@@ -25,7 +26,7 @@ import {
 } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
-import { formatBalance } from '@/utils/formatter';
+import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { XToken, getXChainType } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
@@ -136,7 +137,7 @@ export default function SwapPanel() {
 
   const rates = useRatesWithOracle();
 
-  const showWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
+  const showWarning = trade?.priceImpact.greaterThan(PRICE_IMPACT_WARNING_THRESHOLD);
 
   return (
     <>
@@ -187,7 +188,7 @@ export default function SwapPanel() {
                   {isRecipientCustom ? (
                     <Trans>Custom</Trans>
                   ) : (
-                    `${currencyBalances[Field.OUTPUT] ? formatBalance(currencyBalances[Field.OUTPUT]?.toFixed(), rates?.[currencyBalances[Field.OUTPUT]?.currency.symbol]?.toFixed()) : '0'} ${currencies[Field.OUTPUT]?.symbol}`
+                    `${currencyBalances[Field.OUTPUT] ? formatBalance(currencyBalances[Field.OUTPUT]?.toFixed(), rates?.[currencyBalances[Field.OUTPUT]?.currency.symbol]?.toFixed()) : '0'} ${formatSymbol(currencies[Field.OUTPUT]?.symbol)}`
                   )}
                 </>
               )}
@@ -240,9 +241,9 @@ export default function SwapPanel() {
             />
           </Flex>
 
-          {stellarValidation?.ok === false && stellarValidation.error && (
-            <Flex alignItems="center" justifyContent="center" mt={2}>
-              <Typography textAlign="center">{stellarValidation.error}</Typography>
+          {stellarValidation?.ok === false && stellarValidation.error && recipient && (
+            <Flex alignItems="center" justifyContent="center" mt={2} flexDirection="column">
+              <StellarSponsorshipModal text={'Activate your Stellar wallet.'} address={recipient} />
             </Flex>
           )}
 

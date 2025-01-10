@@ -1,8 +1,9 @@
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { Currency, CurrencyAmount, XToken } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import {
   XChain,
   XChainId,
+  XToken,
   formatBigNumber,
   getNetworkDisplayName,
   xChainMap,
@@ -24,7 +25,7 @@ function useXCallGasChecker(
       // }
 
       const xChain: XChain = xChainMap[xChainId];
-      const nativeCurrency: XToken = xTokenMap[xChainId].find(x => x.isNativeToken);
+      const nativeCurrency: XToken = xTokenMap[xChainId].find(x => x.isNativeToken)!;
 
       const gasThreshold = inputAmount?.currency.isNativeToken
         ? xChain.gasThreshold + Number(inputAmount.toFixed())

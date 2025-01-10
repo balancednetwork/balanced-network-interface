@@ -7,7 +7,8 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
-import { FUNDING_TOKENS_LIST, UNTRADEABLE_TOKENS, useICX } from '@/constants/tokens';
+import { NETWORK_ID } from '@/constants/config';
+import { FUNDING_TOKENS_LIST, UNTRADEABLE_TOKENS, useICX, wICX } from '@/constants/tokens';
 import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from '@/hooks/Tokens';
 import useDebounce from '@/hooks/useDebounce';
 import { useOnClickOutside } from '@/hooks/useOnClickOutside';
@@ -181,10 +182,15 @@ export function CurrencySearch({
   const filteredSortedTokensWithICX: Currency[] = useMemo(() => {
     const s = debouncedQuery.toLowerCase().trim();
     if ('0x1.icon'.indexOf(s) >= 0 || 'icx'.indexOf(s) >= 0) {
-      return icx ? [icx, ...filteredSortedTokens] : filteredSortedTokens;
+      if (selectorType === SelectorType.SUPPLY_BASE || selectorType === SelectorType.SWAP_OUT) {
+        //ensure wrapped ICX is used instead of native ICX for trade output and liquidity supplying
+        return [wICX[NETWORK_ID], ...filteredSortedTokens];
+      } else {
+        return icx ? [icx, ...filteredSortedTokens] : filteredSortedTokens;
+      }
     }
     return filteredSortedTokens;
-  }, [debouncedQuery, icx, filteredSortedTokens]);
+  }, [debouncedQuery, icx, filteredSortedTokens, selectorType]);
 
   const handleCurrencySelect = useCallback(
     (currency: Currency, setDefaultChain = true) => {

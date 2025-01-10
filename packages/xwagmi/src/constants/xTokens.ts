@@ -25,6 +25,8 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   JITOSOL: 'solana',
 };
 
+export const wICX = new XToken('0x1.icon', ChainId.MAINNET, addresses[ChainId.MAINNET].wicx, 18, 'wICX', 'Wrapped ICX');
+
 export const xTokenMap: { [key in XChainId]: XToken[] } = {
   '0x1.icon': [
     new XToken('0x1.icon', ChainId.MAINNET, 'cx0000000000000000000000000000000000000000', 18, 'ICX', 'ICX'),

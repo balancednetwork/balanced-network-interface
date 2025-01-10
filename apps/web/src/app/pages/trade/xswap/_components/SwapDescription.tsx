@@ -22,7 +22,7 @@ import { useRatio } from '@/store/ratio/hooks';
 import { useDerivedSwapInfo, useSwapActionHandlers } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { generateChartData, toFraction } from '@/utils';
-import { formatUnitPrice } from '@/utils/formatter';
+import { formatSymbol, formatUnitPrice } from '@/utils/formatter';
 import { bnJs } from '@balancednetwork/xwagmi';
 
 const CHART_TYPES_LABELS = {
@@ -53,33 +53,6 @@ export default function SwapDescription() {
   const isChartLoading = priceChartQuery?.isLoading;
   const data = priceChartQuery.data;
 
-  const ratio = useRatio();
-  const queueData: any = React.useMemo(
-    () => generateChartData(ratio.sICXICXratio, { INPUT: currencies.INPUT, OUTPUT: currencies.OUTPUT }),
-    [ratio.sICXICXratio, currencies.INPUT, currencies.OUTPUT],
-  );
-
-  const qratioFrac = toFraction(ratio.sICXICXratio);
-
-  let priceInICX: Price<Currency, Currency> | undefined;
-
-  if (price && currencies.INPUT && currencies.OUTPUT) {
-    priceInICX =
-      currencies[Field.OUTPUT]?.wrapped.address === bnJs.sICX.address
-        ? new Price(
-            currencies.INPUT,
-            SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address],
-            price.denominator * qratioFrac.denominator,
-            price.numerator * qratioFrac.numerator,
-          )
-        : new Price(
-            SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address],
-            currencies.OUTPUT,
-            price.denominator * qratioFrac.numerator,
-            price.numerator * qratioFrac.denominator,
-          );
-  }
-
   const [, pair] = useV2Pair(currencies[Field.INPUT], currencies[Field.OUTPUT]);
 
   const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -96,12 +69,9 @@ export default function SwapDescription() {
     });
   };
 
-  const hasSICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('sICX');
-  const hasICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('ICX');
-
   const { account } = useIconReact();
   const [activeSymbol, setActiveSymbol] = useState<string | undefined>(undefined);
-  const symbolName = `${currencies[Field.INPUT]?.symbol} / ${currencies[Field.OUTPUT]?.symbol}`;
+  const symbolName = `${formatSymbol(currencies[Field.INPUT]?.symbol)} / ${formatSymbol(currencies[Field.OUTPUT]?.symbol)}`;
   const isSuperSmall = useMedia('(max-width: 359px)');
 
   const hasTradingView = React.useMemo(() => {
@@ -155,18 +125,9 @@ export default function SwapDescription() {
               <Typography variant="p">
                 <Trans>
                   {`${price ? formatUnitPrice(price.toFixed(10)) : '...'} 
-                    ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
+                    ${formatSymbol(currencies[Field.OUTPUT]?.symbol)} per ${formatSymbol(currencies[Field.INPUT]?.symbol)} `}
                 </Trans>
               </Typography>
-              {hasSICX && !hasICX && (
-                <Typography variant="p" fontSize="14px" color="rgba(255,255,255,0.75)">
-                  <Trans>
-                    {`${priceInICX?.toFixed(4) || '...'} 
-                      ${currencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.OUTPUT]?.symbol} 
-                      per ${currencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.INPUT]?.symbol} `}
-                  </Trans>
-                </Typography>
-              )}
             </>
           )}
         </Box>
@@ -217,12 +178,7 @@ export default function SwapDescription() {
               ) : (
                 <>
                   {chartOption.type === CHART_TYPES.AREA && (
-                    <TradingViewChart
-                      data={pair.poolId === 1 ? queueData : data}
-                      volumeData={pair.poolId === 1 ? queueData : data}
-                      width={width}
-                      type={CHART_TYPES.AREA}
-                    />
+                    <TradingViewChart data={data} volumeData={data} width={width} type={CHART_TYPES.AREA} />
                   )}
 
                   {chartOption.type === CHART_TYPES.CANDLE && (

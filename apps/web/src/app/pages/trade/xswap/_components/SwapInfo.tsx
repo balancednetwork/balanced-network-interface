@@ -4,6 +4,7 @@ import { Typography } from '@/app/theme';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
+import { formatSymbol } from '@/utils/formatter';
 import { Currency, Percent, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
@@ -46,8 +47,8 @@ const SwapInfo: React.FC<SwapInfoProps> = ({ trade }) => {
             onClick={ToggleDropdown}
             text={
               minimumToReceive
-                ? `${minimumToReceive?.toFixed(4)} ${minimumToReceive?.currency.symbol}`
-                : `0 ${currencies[Field.OUTPUT]?.symbol}`
+                ? `${minimumToReceive?.toFixed(4)} ${formatSymbol(minimumToReceive?.currency.symbol)}`
+                : `0 ${formatSymbol(currencies[Field.OUTPUT]?.symbol)}`
             }
             arrowRef={arrowRef}
           />

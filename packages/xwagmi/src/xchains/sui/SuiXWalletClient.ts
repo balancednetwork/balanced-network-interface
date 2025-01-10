@@ -1,4 +1,4 @@
-import { Percent, XChainId } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, Percent, XChainId } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID, xTokenMap, xTokenMapBySymbol } from '@/constants';
@@ -61,24 +61,26 @@ export class SuiXWalletClient extends XWalletClient {
   }
 
   private async _deposit({
-    amount,
     account,
-    xToken,
+    inputAmount,
     destination,
     data,
+    fee, // not used, just for compatibility
   }: {
-    amount: bigint;
     account: string;
-    xToken: XToken;
+    inputAmount: CurrencyAmount<XToken>;
     destination: string;
-    data: Uint8Array;
+    data: any;
+    fee: bigint;
   }) {
-    const coinType = xToken.isNativeToken ? '0x2::sui::SUI' : xToken.address;
+    const amount = BigInt(inputAmount.quotient.toString());
+
+    const coinType = inputAmount.currency.isNativeToken ? '0x2::sui::SUI' : inputAmount.currency.address;
 
     const txb = new Transaction();
     let depositCoin, feeCoin;
 
-    if (xToken.isNativeToken) {
+    if (inputAmount.currency.isNativeToken) {
       [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, XCALL_FEE_AMOUNT]);
     } else {
       const coins = (
@@ -118,19 +120,21 @@ export class SuiXWalletClient extends XWalletClient {
   }
 
   private async _crossTransfer({
-    amount,
     account,
-    xToken,
+    inputAmount,
     destination,
     data,
+    fee, // not used, just for compatibility
   }: {
-    amount: bigint;
     account: string;
-    xToken: XToken;
+    inputAmount: CurrencyAmount<XToken>;
     destination: string;
-    data: Uint8Array;
+    data: any;
+    fee: bigint;
   }) {
-    const coinType = xToken.address;
+    const amount = BigInt(inputAmount.quotient.toString());
+
+    const coinType = inputAmount.currency.address;
 
     const coins = (
       await this.getXService().suiClient.getCoins({
@@ -171,13 +175,17 @@ export class SuiXWalletClient extends XWalletClient {
   }
 
   private async _sendCall({
+    account, // not used, just for compatibility
     sourceChainId,
     destination,
     data,
+    fee, // not used, just for compatibility
   }: {
+    account: string;
     sourceChainId: XChainId;
     destination: string;
     data: any;
+    fee: bigint;
   }) {
     const envelope = toBytes(
       toHex(
@@ -242,9 +250,9 @@ export class SuiXWalletClient extends XWalletClient {
     }
 
     if (isSpokeToken(inputAmount.currency)) {
-      return await this._crossTransfer({ amount, account, xToken: inputAmount.currency, destination, data });
+      return await this._crossTransfer({ inputAmount, account, destination, data, fee: 0n });
     } else {
-      return await this._deposit({ amount, account, xToken: inputAmount.currency, destination, data });
+      return await this._deposit({ inputAmount, account, destination, data, fee: 0n });
     }
   }
 
@@ -255,11 +263,10 @@ export class SuiXWalletClient extends XWalletClient {
       return;
     }
 
-    const amount = BigInt(inputAmount.quotient.toString());
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = toBytes(JSON.stringify({}));
 
-    return await this._deposit({ amount, account, xToken: inputAmount.currency, destination, data });
+    return await this._deposit({ inputAmount, account, destination, data, fee: 0n });
   }
 
   async executeWithdrawCollateral(xTransactionInput: XTransactionInput) {
@@ -274,9 +281,11 @@ export class SuiXWalletClient extends XWalletClient {
     const data = toHex(RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]));
 
     return await this._sendCall({
+      account,
       sourceChainId: direction.from,
       destination,
       data,
+      fee: 0n,
     });
   }
 
@@ -298,9 +307,11 @@ export class SuiXWalletClient extends XWalletClient {
     );
 
     return await this._sendCall({
+      account,
       sourceChainId: direction.from,
       destination,
       data,
+      fee: 0n,
     });
   }
 
@@ -368,13 +379,12 @@ export class SuiXWalletClient extends XWalletClient {
   async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
     const { account, inputAmount, xCallFee } = xTransactionInput;
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
-    const amount = BigInt(inputAmount.quotient.toString());
     const data = toBytes(tokenData('_deposit', {}));
 
     if (isSpokeToken(inputAmount.currency)) {
-      return await this._crossTransfer({ amount, account, xToken: inputAmount.currency, destination, data });
+      return await this._crossTransfer({ inputAmount, account, destination, data, fee: 0n });
     } else {
-      return await this._deposit({ amount, account, xToken: inputAmount.currency, destination, data });
+      return await this._deposit({ inputAmount, account, destination, data, fee: 0n });
     }
   }
   async withdrawXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
@@ -385,9 +395,11 @@ export class SuiXWalletClient extends XWalletClient {
     const xTokenOnIcon = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][inputAmount.currency.symbol];
     const data = getWithdrawData(xTokenOnIcon.address, amount);
     return await this._sendCall({
+      account,
       sourceChainId: direction.from,
       destination,
       data,
+      fee: 0n,
     });
   }
   async addLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {

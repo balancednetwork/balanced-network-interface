@@ -62,14 +62,11 @@ export default function LiquidityDetails() {
   const pairsWithoutQ = omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
   const balancesWithoutQ = omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
 
-  const userPools = pools?.filter(x => x.balance.greaterThan(0) || x.stakedLPBalance?.greaterThan(0)) || [];
-
-  // const userPools = Object.keys(pairsWithoutQ).filter(
-  //   poolId =>
-  //     balances[poolId] &&
-  //     (Number(balances[poolId].balance.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL ||
-  //       Number(balances[poolId].stakedLPBalance.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL),
-  // );
+  const userPools = pools.filter(
+    pool =>
+      Number(pool.balance.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL ||
+      Number(pool.stakedLPBalance?.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL,
+  );
 
   // const sortedPairs: { [key: string]: Pair } = userPools
   //   .map(poolId => {
@@ -175,28 +172,30 @@ export default function LiquidityDetails() {
               </StyledAccordionItem>
             )}
             {balancesWithoutQ &&
-              userPools.map(({ poolId }, index) => (
-                <StyledAccordionItem key={poolId} $border={index !== userPools.length - 1}>
+              userPools.map((pool, index) => (
+                <StyledAccordionItem key={pool.poolId} $border={index !== userPools.length - 1}>
                   <StyledAccordionButton onClick={() => setIsHided(false)}>
                     <PoolRecord
-                      poolId={poolId}
-                      pool={userPools.find(x => x.poolId === poolId)!}
-                      pair={pairs[poolId]}
-                      pairData={allPairs && allPairs[poolId]}
+                      poolId={pool.poolId}
+                      pool={pool}
+                      pair={pairs[pool.poolId]}
+                      pairData={allPairs && allPairs[pool.poolId]}
                       //hotfix due to the fact that sICX/BTCB pair has wrong name on contract side
                       totalReward={
-                        allPairs && allPairs[poolId]
-                          ? rewards[allPairs[poolId].name === 'sICX/BTCB' ? 'BTCB/sICX' : allPairs[poolId].name]
+                        allPairs && allPairs[pool.poolId]
+                          ? rewards[
+                              allPairs[pool.poolId].name === 'sICX/BTCB' ? 'BTCB/sICX' : allPairs[pool.poolId].name
+                            ]
                           : new BigNumber(0)
                       }
                       boostData={sources}
-                      apy={allPairs && allPairs[poolId] ? allPairs[poolId].balnApy : 0}
+                      apy={allPairs && allPairs[pool.poolId] ? allPairs[pool.poolId].balnApy : 0}
                     />
                   </StyledAccordionButton>
                   <StyledAccordionPanel hidden={isHided}>
                     <StyledBoxPanel bg="bg3">
-                      <StakeLPPanel pool={userPools.find(x => x.poolId === poolId)!} />
-                      <WithdrawPanel pool={userPools.find(x => x.poolId === poolId)!} />
+                      <StakeLPPanel pool={pool} />
+                      <WithdrawPanel pool={pool} />
                     </StyledBoxPanel>
                   </StyledAccordionPanel>
                 </StyledAccordionItem>

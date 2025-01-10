@@ -65,29 +65,29 @@ export class EvmXWalletClient extends XWalletClient {
   }
 
   private async _deposit({
-    amount,
     account,
-    xToken,
+    inputAmount,
     destination,
     data,
     fee,
   }: {
-    amount: bigint;
     account: string;
-    xToken: XToken;
+    inputAmount: CurrencyAmount<XToken>;
     destination: string;
-    data: `0x${string}`;
+    data: any;
     fee: bigint;
   }) {
     const walletClient = await this.getWalletClient();
 
-    if (!xToken.isNativeToken) {
+    const amount = BigInt(inputAmount.quotient.toString());
+
+    if (!inputAmount.currency.isNativeToken) {
       const res = await this.getPublicClient().simulateContract({
         account: account as Address,
-        address: xChainMap[xToken.xChainId].contracts.assetManager as Address,
+        address: xChainMap[inputAmount.currency.xChainId].contracts.assetManager as Address,
         abi: assetManagerContractAbi,
         functionName: 'deposit',
-        args: [xToken.address as Address, amount, destination, data],
+        args: [inputAmount.currency.address as Address, amount, destination, data],
         value: fee,
       });
       const hash = await walletClient.writeContract(res.request);
@@ -95,7 +95,7 @@ export class EvmXWalletClient extends XWalletClient {
     } else {
       const res = await this.getPublicClient().simulateContract({
         account: account as Address,
-        address: xChainMap[xToken.xChainId].contracts.assetManager as Address,
+        address: xChainMap[inputAmount.currency.xChainId].contracts.assetManager as Address,
         abi: assetManagerContractAbi,
         functionName: 'depositNative',
         args: [amount, destination, data],
@@ -107,25 +107,25 @@ export class EvmXWalletClient extends XWalletClient {
   }
 
   private async _crossTransfer({
-    amount,
     account,
-    xToken,
+    inputAmount,
     destination,
     data,
     fee,
   }: {
-    amount: bigint;
     account: string;
-    xToken: XToken;
+    inputAmount: CurrencyAmount<XToken>;
     destination: string;
-    data: `0x${string}`;
+    data: any;
     fee: bigint;
   }) {
     const walletClient = await this.getWalletClient();
 
+    const amount = BigInt(inputAmount.quotient.toString());
+
     const res = await this.getPublicClient().simulateContract({
       account: account as Address,
-      address: xToken.address as Address,
+      address: inputAmount.currency.address as Address,
       abi: bnUSDContractAbi,
       functionName: 'crossTransfer',
       args: [destination, amount, data],
@@ -176,7 +176,6 @@ export class EvmXWalletClient extends XWalletClient {
       xTransactionInput;
 
     const receiver = `${direction.to}/${recipient}`;
-    const amount = BigInt(inputAmount.quotient.toString());
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
 
     let data: Address;
@@ -207,18 +206,16 @@ export class EvmXWalletClient extends XWalletClient {
 
     if (isSpokeToken(inputAmount.currency)) {
       return await this._crossTransfer({
-        amount,
         account,
-        xToken: inputAmount.currency,
+        inputAmount,
         destination,
         data,
         fee: xCallFee.rollback,
       });
     } else {
       return await this._deposit({
-        amount,
         account,
-        xToken: inputAmount.currency,
+        inputAmount,
         destination,
         data,
         fee: xCallFee.rollback,
@@ -233,14 +230,12 @@ export class EvmXWalletClient extends XWalletClient {
       return;
     }
 
-    const amount = BigInt(inputAmount.quotient.toString());
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = toHex(JSON.stringify({}));
 
     return await this._deposit({
-      amount,
+      inputAmount,
       account,
-      xToken: inputAmount.currency,
       destination,
       data,
       fee: xCallFee.rollback,
@@ -300,16 +295,14 @@ export class EvmXWalletClient extends XWalletClient {
       return;
     }
 
-    const amount = BigInt(inputAmount.multiply(-1).quotient.toString());
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = toHex(
       JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
     );
 
     return await this._crossTransfer({
-      amount,
       account,
-      xToken: inputAmount.currency,
+      inputAmount: inputAmount.multiply(-1),
       destination,
       data,
       fee: xCallFee.rollback,
@@ -321,24 +314,21 @@ export class EvmXWalletClient extends XWalletClient {
     const { account, inputAmount, xCallFee } = xTransactionInput;
 
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
-    const amount = BigInt(inputAmount.quotient.toString());
     const data = toHex(tokenData('_deposit', {}));
 
     let hash;
     if (isSpokeToken(inputAmount.currency)) {
       hash = await this._crossTransfer({
-        amount,
         account,
-        xToken: inputAmount.currency,
+        inputAmount,
         destination,
         data,
         fee: xCallFee.rollback,
       });
     } else {
       hash = await this._deposit({
-        amount,
         account,
-        xToken: inputAmount.currency,
+        inputAmount,
         destination,
         data,
         fee: xCallFee.rollback,

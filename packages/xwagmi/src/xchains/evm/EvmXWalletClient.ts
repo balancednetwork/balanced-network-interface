@@ -1,9 +1,9 @@
-import { CurrencyAmount, MaxUint256, Percent } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, MaxUint256, Percent, XChainId } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
-import { Address, PublicClient, WalletClient, WriteContractParameters, erc20Abi, getContract, toHex } from 'viem';
+import { Address, PublicClient, WalletClient, erc20Abi, getContract, toHex } from 'viem';
 import bnJs from '../icon/bnJs';
 
-import { ICON_XCALL_NETWORK_ID, xTokenMap, xTokenMapBySymbol } from '@/constants';
+import { ICON_XCALL_NETWORK_ID, xTokenMapBySymbol } from '@/constants';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/constants/xChains';
 import { XWalletClient } from '@/core/XWalletClient';
 import { XToken } from '@/types';
@@ -15,7 +15,7 @@ import { EvmXService } from './EvmXService';
 import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
 import { bnUSDContractAbi } from './abis/bnUSDContractAbi';
 import { xCallContractAbi } from './abis/xCallContractAbi';
-import { getStakeData, getUnStakeData, getXRemoveData, tokenData } from './utils';
+import { getAddLPData, getStakeData, getUnStakeData, getWithdrawData, getXRemoveData, tokenData } from './utils';
 
 export class EvmXWalletClient extends XWalletClient {
   getXService(): EvmXService {
@@ -64,14 +64,118 @@ export class EvmXWalletClient extends XWalletClient {
     return hash;
   }
 
+  private async _deposit({
+    amount,
+    account,
+    xToken,
+    destination,
+    data,
+    fee,
+  }: {
+    amount: bigint;
+    account: string;
+    xToken: XToken;
+    destination: string;
+    data: `0x${string}`;
+    fee: bigint;
+  }) {
+    const walletClient = await this.getWalletClient();
+
+    if (!xToken.isNativeToken) {
+      const res = await this.getPublicClient().simulateContract({
+        account: account as Address,
+        address: xChainMap[xToken.xChainId].contracts.assetManager as Address,
+        abi: assetManagerContractAbi,
+        functionName: 'deposit',
+        args: [xToken.address as Address, amount, destination, data],
+        value: fee,
+      });
+      const hash = await walletClient.writeContract(res.request);
+      return hash;
+    } else {
+      const res = await this.getPublicClient().simulateContract({
+        account: account as Address,
+        address: xChainMap[xToken.xChainId].contracts.assetManager as Address,
+        abi: assetManagerContractAbi,
+        functionName: 'depositNative',
+        args: [amount, destination, data],
+        value: fee + amount,
+      });
+      const hash = await walletClient.writeContract(res.request);
+      return hash;
+    }
+  }
+
+  private async _crossTransfer({
+    amount,
+    account,
+    xToken,
+    destination,
+    data,
+    fee,
+  }: {
+    amount: bigint;
+    account: string;
+    xToken: XToken;
+    destination: string;
+    data: `0x${string}`;
+    fee: bigint;
+  }) {
+    const walletClient = await this.getWalletClient();
+
+    const res = await this.getPublicClient().simulateContract({
+      account: account as Address,
+      address: xToken.address as Address,
+      abi: bnUSDContractAbi,
+      functionName: 'crossTransfer',
+      args: [destination, amount, data],
+      value: fee,
+    });
+    const hash = await walletClient.writeContract(res.request);
+    return hash;
+  }
+
+  private async _sendCall({
+    account,
+    sourceChainId,
+    destination,
+    data,
+    fee,
+  }: {
+    account: string;
+    sourceChainId: XChainId;
+    destination: string;
+    data: any;
+    fee: bigint;
+  }) {
+    const envelope = toHex(
+      RLP.encode([
+        Buffer.from([0]),
+        data,
+        FROM_SOURCES[sourceChainId]?.map(Buffer.from),
+        TO_SOURCES[sourceChainId]?.map(Buffer.from),
+      ]),
+    );
+
+    const res = await this.getPublicClient().simulateContract({
+      account: account as Address,
+      address: xChainMap[sourceChainId].contracts.xCall as Address,
+      abi: xCallContractAbi,
+      functionName: 'sendCall',
+      args: [destination, envelope],
+      value: fee,
+    });
+
+    const walletClient = await this.getWalletClient();
+    const hash = await walletClient.writeContract(res.request);
+    return hash;
+  }
+
   async executeSwapOrBridge(xTransactionInput: XTransactionInput) {
     const { type, direction, inputAmount, recipient, account, xCallFee, executionTrade, slippageTolerance } =
       xTransactionInput;
 
-    console.log('type', type);
-
     const receiver = `${direction.to}/${recipient}`;
-    const tokenAddress = inputAmount.wrapped.currency.address;
     const amount = BigInt(inputAmount.quotient.toString());
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
 
@@ -101,54 +205,25 @@ export class EvmXWalletClient extends XWalletClient {
         throw new Error('Invalid XTransactionType');
     }
 
-    const publicClient = this.getPublicClient();
-    const walletClient = await this.getWalletClient();
-
-    const _isSpokeToken = isSpokeToken(inputAmount.currency);
-    const isNative = inputAmount.currency.isNativeToken;
-
-    let request: WriteContractParameters;
-    if (_isSpokeToken) {
-      const tokenAddr = xTokenMap[direction.from].find(token => token.symbol === inputAmount.currency.symbol)?.address;
-      const res = await this.getPublicClient().simulateContract({
-        account: account as Address,
-        address: tokenAddr as Address,
-        abi: bnUSDContractAbi,
-        functionName: 'crossTransfer',
-        args: [destination, amount, data],
-        value: xCallFee.rollback,
+    if (isSpokeToken(inputAmount.currency)) {
+      return await this._crossTransfer({
+        amount,
+        account,
+        xToken: inputAmount.currency,
+        destination,
+        data,
+        fee: xCallFee.rollback,
       });
-      request = res.request;
     } else {
-      if (!isNative) {
-        const res = await this.getPublicClient().simulateContract({
-          account: account as Address,
-          address: xChainMap[direction.from].contracts.assetManager as Address,
-          abi: assetManagerContractAbi,
-          functionName: 'deposit',
-          args: [tokenAddress as Address, amount, destination, data],
-          value: xCallFee.rollback,
-        });
-        request = res.request;
-      } else {
-        const res = await this.getPublicClient().simulateContract({
-          account: account as Address,
-          address: xChainMap[direction.from].contracts.assetManager as Address,
-          abi: assetManagerContractAbi,
-          functionName: 'depositNative',
-          args: [amount, destination, data],
-          value: xCallFee.rollback + amount,
-        });
-        request = res.request;
-      }
+      return await this._deposit({
+        amount,
+        account,
+        xToken: inputAmount.currency,
+        destination,
+        data,
+        fee: xCallFee.rollback,
+      });
     }
-
-    const hash = await walletClient.writeContract(request);
-
-    if (hash) {
-      return hash;
-    }
-    return undefined;
   }
 
   async executeDepositCollateral(xTransactionInput: XTransactionInput) {
@@ -158,43 +233,18 @@ export class EvmXWalletClient extends XWalletClient {
       return;
     }
 
-    const tokenAddress = inputAmount.wrapped.currency.address;
     const amount = BigInt(inputAmount.quotient.toString());
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = toHex(JSON.stringify({}));
 
-    const isNative = inputAmount.currency.isNativeToken;
-
-    let request: WriteContractParameters;
-    if (!isNative) {
-      const res = await this.getPublicClient().simulateContract({
-        account: account as Address,
-        address: xChainMap[direction.from].contracts.assetManager as Address,
-        abi: assetManagerContractAbi,
-        functionName: 'deposit',
-        args: [tokenAddress as Address, amount, destination, data],
-        value: xCallFee.rollback,
-      });
-      request = res.request;
-    } else {
-      const res = await this.getPublicClient().simulateContract({
-        account: account as Address,
-        address: xChainMap[direction.from].contracts.assetManager as Address,
-        abi: assetManagerContractAbi,
-        functionName: 'depositNative',
-        args: [amount, destination, data],
-        value: xCallFee.rollback + amount,
-      });
-      request = res.request;
-    }
-
-    const walletClient = await this.getWalletClient();
-    const hash = await walletClient.writeContract(request);
-
-    if (hash) {
-      return hash;
-    }
-    return undefined;
+    return await this._deposit({
+      amount,
+      account,
+      xToken: inputAmount.currency,
+      destination,
+      data,
+      fee: xCallFee.rollback,
+    });
   }
 
   async executeWithdrawCollateral(xTransactionInput: XTransactionInput) {
@@ -207,35 +257,14 @@ export class EvmXWalletClient extends XWalletClient {
     const amount = toICONDecimals(inputAmount.multiply(-1));
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = toHex(RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]));
-    const envelope = toHex(
-      RLP.encode([
-        Buffer.from([0]),
-        data,
-        FROM_SOURCES[direction.from]?.map(Buffer.from),
-        TO_SOURCES[direction.from]?.map(Buffer.from),
-      ]),
-    );
 
-    const res = await this.getPublicClient().simulateContract({
-      account: account as Address,
-      address: xChainMap[direction.from].contracts.xCall as Address,
-      abi: xCallContractAbi,
-      functionName: 'sendCall',
-      args: [destination, envelope],
-      //todo
-      //? rollback or not
-      value: xCallFee.noRollback,
+    return await this._sendCall({
+      account,
+      sourceChainId: direction.from,
+      destination,
+      data,
+      fee: xCallFee.rollback,
     });
-
-    const request: WriteContractParameters = res.request;
-
-    const walletClient = await this.getWalletClient();
-    const hash = await walletClient.writeContract(request);
-
-    if (hash) {
-      return hash;
-    }
-    return undefined;
   }
 
   async executeBorrow(xTransactionInput: XTransactionInput) {
@@ -254,35 +283,14 @@ export class EvmXWalletClient extends XWalletClient {
           : ['xBorrow', usedCollateral, uintToBytes(amount)],
       ),
     );
-    const envelope = toHex(
-      RLP.encode([
-        Buffer.from([0]),
-        data,
-        FROM_SOURCES[direction.from]?.map(Buffer.from),
-        TO_SOURCES[direction.from]?.map(Buffer.from),
-      ]),
-    );
 
-    const res = await this.getPublicClient().simulateContract({
-      account: account as Address,
-      address: xChainMap[direction.from].contracts.xCall as Address,
-      abi: xCallContractAbi,
-      functionName: 'sendCall',
-      args: [destination, envelope],
-      //todo
-      //? rollback or not
-      value: xCallFee.noRollback,
+    return await this._sendCall({
+      account,
+      sourceChainId: direction.from,
+      destination,
+      data,
+      fee: xCallFee.rollback,
     });
-
-    const request: WriteContractParameters = res.request;
-
-    const walletClient = await this.getWalletClient();
-    const hash = await walletClient.writeContract(request);
-
-    if (hash) {
-      return hash;
-    }
-    return undefined;
   }
 
   async executeRepay(xTransactionInput: XTransactionInput) {
@@ -298,56 +306,43 @@ export class EvmXWalletClient extends XWalletClient {
       JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
     );
 
-    const res = await this.getPublicClient().simulateContract({
-      account: account as Address,
-      address: xChainMap[direction.from].contracts.bnUSD as Address,
-      abi: bnUSDContractAbi,
-      functionName: 'crossTransfer',
-      args: [destination, amount, data],
-      value: xCallFee.rollback,
+    return await this._crossTransfer({
+      amount,
+      account,
+      xToken: inputAmount.currency,
+      destination,
+      data,
+      fee: xCallFee.rollback,
     });
-
-    const request: WriteContractParameters = res.request;
-    const walletClient = await this.getWalletClient();
-    const hash = await walletClient.writeContract(request);
-
-    if (hash) {
-      return hash;
-    }
-    return undefined;
   }
 
   // liquidity related
   async depositXToken(xTransactionInput: XTransactionInput) {
     const { account, inputAmount, xCallFee } = xTransactionInput;
 
-    const publicClient = this.getPublicClient();
-    const walletClient = await this.getWalletClient();
-
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
     const amount = BigInt(inputAmount.quotient.toString());
     const data = toHex(tokenData('_deposit', {}));
 
-    const _isSpokeToken = isSpokeToken(inputAmount.currency);
-    const isNative = inputAmount.currency.isNativeToken;
-
     let hash;
-    if (_isSpokeToken) {
-      const res = await publicClient.simulateContract({
-        account: account as Address,
-        address: xTokenMapBySymbol[this.xChainId][inputAmount.currency.symbol].address as Address,
-        abi: bnUSDContractAbi,
-        functionName: 'crossTransfer',
-        args: [destination, amount, data],
-        value: xCallFee.rollback,
+    if (isSpokeToken(inputAmount.currency)) {
+      hash = await this._crossTransfer({
+        amount,
+        account,
+        xToken: inputAmount.currency,
+        destination,
+        data,
+        fee: xCallFee.rollback,
       });
-      hash = await walletClient.writeContract(res.request);
     } else {
-      if (!isNative) {
-        throw new Error('not implemented');
-      } else {
-        throw new Error('not implemented');
-      }
+      hash = await this._deposit({
+        amount,
+        account,
+        xToken: inputAmount.currency,
+        destination,
+        data,
+        fee: xCallFee.rollback,
+      });
     }
 
     return hash;
@@ -356,40 +351,18 @@ export class EvmXWalletClient extends XWalletClient {
   async withdrawXToken(xTransactionInput: XTransactionInput) {
     const { account, inputAmount, xCallFee } = xTransactionInput;
 
-    const publicClient = this.getPublicClient();
-    const walletClient = await this.getWalletClient();
-
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
     const amount = BigInt(inputAmount.quotient.toString());
     const xTokenOnIcon = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][inputAmount.currency.symbol];
-    const data = toHex(
-      RLP.encode([
-        'xWithdraw',
-        xTokenOnIcon.address, //
-        uintToBytes(amount),
-      ]),
-    );
+    const data = toHex(getWithdrawData(xTokenOnIcon.address, amount));
 
-    const envelope = toHex(
-      RLP.encode([
-        Buffer.from([0]),
-        data,
-        FROM_SOURCES[this.xChainId]?.map(Buffer.from),
-        TO_SOURCES[this.xChainId]?.map(Buffer.from),
-      ]),
-    );
-
-    const res = await publicClient.simulateContract({
-      account: account as Address,
-      address: xChainMap[this.xChainId].contracts.xCall as Address,
-      abi: xCallContractAbi,
-      functionName: 'sendCall',
-      args: [destination, envelope],
-      value: xCallFee.rollback,
+    return await this._sendCall({
+      account,
+      sourceChainId: inputAmount.currency.xChainId,
+      destination,
+      data,
+      fee: xCallFee.rollback,
     });
-    const hash = await walletClient.writeContract(res.request);
-
-    return hash;
   }
 
   async addLiquidity(xTransactionInput: XTransactionInput) {
@@ -399,46 +372,20 @@ export class EvmXWalletClient extends XWalletClient {
       throw new Error('outputAmount is required');
     }
 
-    const publicClient = this.getPublicClient();
-    const walletClient = await this.getWalletClient();
-
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
     const amountA = BigInt(inputAmount.quotient.toString());
     const amountB = BigInt(outputAmount.quotient.toString());
     const xTokenAOnIcon = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][inputAmount.currency.symbol];
     const xTokenBOnIcon = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][outputAmount.currency.symbol];
-    const data = toHex(
-      RLP.encode([
-        'xAdd',
-        xTokenAOnIcon.address,
-        xTokenBOnIcon.address,
-        uintToBytes(amountA),
-        uintToBytes(amountB),
-        uintToBytes(1n),
-        uintToBytes(1_000n),
-      ]),
-    );
+    const data = toHex(getAddLPData(xTokenAOnIcon.address, xTokenBOnIcon.address, amountA, amountB, true, 1_000n));
 
-    const envelope = toHex(
-      RLP.encode([
-        Buffer.from([0]),
-        data,
-        FROM_SOURCES[this.xChainId]?.map(Buffer.from),
-        TO_SOURCES[this.xChainId]?.map(Buffer.from),
-      ]),
-    );
-
-    const res = await publicClient.simulateContract({
-      account: account as Address,
-      address: xChainMap[this.xChainId].contracts.xCall as Address,
-      abi: xCallContractAbi,
-      functionName: 'sendCall',
-      args: [destination, envelope],
-      value: xCallFee.rollback,
+    return await this._sendCall({
+      account,
+      sourceChainId: inputAmount.currency.xChainId,
+      destination,
+      data,
+      fee: xCallFee.rollback,
     });
-
-    const hash = await walletClient.writeContract(res.request);
-    return hash;
   }
 
   async removeLiquidity(xTransactionInput: XTransactionInput) {
@@ -448,33 +395,17 @@ export class EvmXWalletClient extends XWalletClient {
       throw new Error('poolId is required');
     }
 
-    const publicClient = this.getPublicClient();
-    const walletClient = await this.getWalletClient();
-
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
     const amount = BigInt(inputAmount.quotient.toString());
     const data = toHex(getXRemoveData(poolId, amount, true));
 
-    const envelope = toHex(
-      RLP.encode([
-        Buffer.from([0]),
-        data,
-        FROM_SOURCES[this.xChainId]?.map(Buffer.from),
-        TO_SOURCES[this.xChainId]?.map(Buffer.from),
-      ]),
-    );
-
-    const res = await publicClient.simulateContract({
-      account: account as Address,
-      address: xChainMap[this.xChainId].contracts.xCall as Address,
-      abi: xCallContractAbi,
-      functionName: 'sendCall',
-      args: [destination, envelope],
-      value: xCallFee.rollback,
+    return await this._sendCall({
+      account,
+      sourceChainId: inputAmount.currency.xChainId,
+      destination,
+      data,
+      fee: xCallFee.rollback,
     });
-
-    const hash = await walletClient.writeContract(res.request);
-    return hash;
   }
 
   async stake(xTransactionInput: XTransactionInput) {
@@ -484,70 +415,38 @@ export class EvmXWalletClient extends XWalletClient {
       throw new Error('poolId is required');
     }
 
-    const publicClient = this.getPublicClient();
-    const walletClient = await this.getWalletClient();
-
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
     const amount = BigInt(inputAmount.quotient.toString());
 
     const data = toHex(getStakeData(`${ICON_XCALL_NETWORK_ID}/${bnJs.StakedLP.address}`, poolId, amount));
 
-    const envelope = toHex(
-      RLP.encode([
-        Buffer.from([0]),
-        data,
-        FROM_SOURCES[this.xChainId]?.map(Buffer.from),
-        TO_SOURCES[this.xChainId]?.map(Buffer.from),
-      ]),
-    );
-
-    const res = await publicClient.simulateContract({
-      account: account as Address,
-      address: xChainMap[this.xChainId].contracts.xCall as Address,
-      abi: xCallContractAbi,
-      functionName: 'sendCall',
-      args: [destination, envelope],
-      value: xCallFee.rollback,
+    return await this._sendCall({
+      account,
+      sourceChainId: inputAmount.currency.xChainId,
+      destination,
+      data,
+      fee: xCallFee.rollback,
     });
-
-    const hash = await walletClient.writeContract(res.request);
-    return hash;
   }
 
   async unstake(xTransactionInput: XTransactionInput) {
-    const { account, inputAmount, poolId, xCallFee } = xTransactionInput;
+    const { account, inputAmount, poolId, xCallFee, direction } = xTransactionInput;
 
     if (!poolId) {
       throw new Error('poolId is required');
     }
 
-    const publicClient = this.getPublicClient();
-    const walletClient = await this.getWalletClient();
-
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.StakedLP.address}`;
     const amount = BigInt(inputAmount.quotient.toString());
     const data = toHex(getUnStakeData(poolId, amount));
 
-    const envelope = toHex(
-      RLP.encode([
-        Buffer.from([0]),
-        data,
-        FROM_SOURCES[this.xChainId]?.map(Buffer.from),
-        TO_SOURCES[this.xChainId]?.map(Buffer.from),
-      ]),
-    );
-
-    const res = await publicClient.simulateContract({
-      account: account as Address,
-      address: xChainMap[this.xChainId].contracts.xCall as Address,
-      abi: xCallContractAbi,
-      functionName: 'sendCall',
-      args: [destination, envelope],
-      value: xCallFee.rollback,
+    return await this._sendCall({
+      account,
+      sourceChainId: inputAmount.currency.xChainId,
+      destination,
+      data,
+      fee: xCallFee.rollback,
     });
-
-    const hash = await walletClient.writeContract(res.request);
-    return hash;
   }
 
   async claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {

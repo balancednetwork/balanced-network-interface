@@ -10,37 +10,30 @@ export function tokenData(method: string, params: Record<string, any>): string {
   return JSON.stringify(map);
 }
 
-// // add liquidity
-// function getAddLPData(
-//   baseToken: string,
-//   quoteToken: string,
-//   baseValue: number,
-//   quoteValue: number,
-//   withdrawUnused: boolean,
-//   slippagePercentage: number,
-// ): Uint8Array {
-//   let rlpInput: rlp.Input = [
-//     'xAdd',
-//     baseToken,
-//     quoteToken,
-//     baseValue,
-//     quoteValue,
-//     withdrawUnused ? 1 : 0,
-//     slippagePercentage,
-//   ];
-//   return rlp.encode(rlpInput);
-// }
+// add liquidity
+export function getAddLPData(
+  baseToken: string,
+  quoteToken: string,
+  baseValue: bigint,
+  quoteValue: bigint,
+  withdrawUnused: boolean,
+  slippagePercentage: bigint,
+): Uint8Array {
+  return RLP.encode([
+    'xAdd',
+    baseToken,
+    quoteToken,
+    uintToBytes(baseValue),
+    uintToBytes(quoteValue),
+    withdrawUnused ? uintToBytes(1n) : uintToBytes(0n),
+    uintToBytes(slippagePercentage),
+  ]);
+}
 
 // stake
 export function getStakeData(to: string, poolId: number, amount: bigint): Uint8Array {
   return RLP.encode(['xhubtransfer', Buffer.from(to, 'utf-8'), uintToBytes(amount), poolId, Buffer.alloc(0)]);
 }
-
-// // claim rewards
-// function getClaimRewardData(to: string, sources: string[]): Uint8Array {
-//   let rlpInput: rlp.Input = ['xclaimrewards', to, sources];
-//   return rlp.encode(rlpInput);
-// }
 
 // unstake
 export function getUnStakeData(poolId: number, amount: bigint): Uint8Array {
@@ -54,5 +47,11 @@ export function getXRemoveData(poolId: number, lpTokenBalance: bigint, withdraw:
 
 // withdraw the deposited amount
 export function getWithdrawData(token: string, amount: bigint): Uint8Array {
-  return RLP.encode(['xwithdraw', token, amount]);
+  return RLP.encode(['xwithdraw', token, uintToBytes(amount)]);
 }
+
+// // claim rewards
+// function getClaimRewardData(to: string, sources: string[]): Uint8Array {
+//   let rlpInput: rlp.Input = ['xclaimrewards', to, sources];
+//   return rlp.encode(rlpInput);
+// }

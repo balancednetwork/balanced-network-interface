@@ -180,24 +180,74 @@ export class IconXWalletClient extends XWalletClient {
   }
 
   async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
+    const { account, inputAmount } = xTransactionInput;
+
+    const res: any = await bnJs
+      .inject({ account })
+      .getContract(inputAmount.currency.address)
+      .deposit(toDec(inputAmount));
+
+    return res.result;
   }
   async withdrawXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
+    const { account, inputAmount } = xTransactionInput;
+
+    const res: any = await bnJs.inject({ account }).Dex.withdraw(inputAmount.currency.address, toDec(inputAmount));
+
+    return res.result;
   }
   async addLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
+    const DEFAULT_SLIPPAGE_LP = 200;
+    const { account, inputAmount, outputAmount } = xTransactionInput;
+
+    if (!outputAmount) {
+      throw new Error('outputAmount is required');
+    }
+
+    const baseToken = inputAmount.currency;
+    const quoteToken = outputAmount?.currency;
+    const res: any = await bnJs
+      .inject({ account })
+      .Dex.add(baseToken.address, quoteToken.address, toDec(inputAmount), toDec(outputAmount), DEFAULT_SLIPPAGE_LP);
+
+    return res.result;
   }
+
   async removeLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
+    const { account, inputAmount, poolId } = xTransactionInput;
+
+    if (!poolId) {
+      throw new Error('poolId is required');
+    }
+
+    const res: any = await bnJs.inject({ account }).Dex.remove(poolId, toDec(inputAmount));
+
+    return res.result;
   }
+
   async stake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
+    const { account, inputAmount, poolId } = xTransactionInput;
+
+    if (!poolId) {
+      throw new Error('poolId is required');
+    }
+
+    const res: any = await bnJs.inject({ account: account }).Dex.stake(poolId, toDec(inputAmount));
+    return res.result;
   }
   async unstake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
+    const { account, inputAmount, poolId } = xTransactionInput;
+
+    if (!poolId) {
+      throw new Error('poolId is required');
+    }
+
+    const res: any = await bnJs.inject({ account: account }).StakedLP.unstake(poolId, toDec(inputAmount));
+    return res.result;
   }
+
   async claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    // TODO: implement
     throw new Error('Method not implemented.');
   }
 }

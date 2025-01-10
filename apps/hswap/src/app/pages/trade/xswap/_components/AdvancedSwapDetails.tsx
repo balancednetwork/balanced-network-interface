@@ -11,7 +11,7 @@ import { useSetSlippageTolerance, useSwapSlippageTolerance } from '@/store/appli
 import { useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatPercent } from '@/utils';
-import { useXCallFee } from '@balancednetwork/xwagmi';
+import { isIconTransaction, useXCallFee } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 
 import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
@@ -124,7 +124,7 @@ export default function AdvancedSwapDetails({ xTransactionInput }: { xTransactio
             </span>
           </div>
 
-          {xTransactionType !== XTransactionType.SWAP_ON_ICON && (
+          {!isIconTransaction(direction.from, direction.to) && (
             <div className="flex items-center justify-between">
               <span className="text-[#d4c5f9] text-sm font-medium flex items-center gap-1">
                 <Trans>Bridge Fee</Trans>

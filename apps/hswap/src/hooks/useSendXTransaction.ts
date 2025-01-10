@@ -10,6 +10,7 @@ import {
   XTransactionType,
   allXTokens,
   getXWalletClient,
+  isIconTransaction,
   transactionActions,
   useSignTransaction,
   xChainHeightActions,
@@ -98,7 +99,7 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
   };
   xTransactionActions.add(xTransaction);
 
-  if (xTransactionInput.type !== XTransactionType.SWAP_ON_ICON) {
+  if (!isIconTransaction(sourceChainId, finalDestinationChainId)) {
     const xMessage: XMessage = {
       id: `${sourceChainId}/${sourceTransactionHash}`,
       xTransactionId: xTransaction.id,

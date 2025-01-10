@@ -1,5 +1,6 @@
 import { getXWalletClient } from '@/actions';
 import { ICON_XCALL_NETWORK_ID, xChainMap } from '@/constants';
+import { isIconTransaction } from '@/utils';
 import { transactionActions, xChainHeightActions, xMessageActions, xTransactionActions } from '@/xcall';
 import { XMessage, XMessageStatus, XTransaction, XTransactionInput, XTransactionStatus } from '@/xcall/types';
 import { useSignTransaction } from '@mysten/dapp-kit';
@@ -51,20 +52,22 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
   };
   xTransactionActions.add(xTransaction);
 
-  const xMessage: XMessage = {
-    id: `${sourceChainId}/${sourceTransactionHash}`,
-    xTransactionId: xTransaction.id,
-    sourceChainId: sourceChainId,
-    destinationChainId: primaryDestinationChainId,
-    sourceTransactionHash,
-    status: XMessageStatus.REQUESTED,
-    events: {},
-    destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
-    isPrimary: true,
-    createdAt: now,
-    useXCallScanner: xChainMap[primaryDestinationChainId].useXCallScanner || xChainMap[sourceChainId].useXCallScanner,
-  };
-  xMessageActions.add(xMessage);
+  if (!isIconTransaction(sourceChainId, finalDestinationChainId)) {
+    const xMessage: XMessage = {
+      id: `${sourceChainId}/${sourceTransactionHash}`,
+      xTransactionId: xTransaction.id,
+      sourceChainId: sourceChainId,
+      destinationChainId: primaryDestinationChainId,
+      sourceTransactionHash,
+      status: XMessageStatus.REQUESTED,
+      events: {},
+      destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
+      isPrimary: true,
+      createdAt: now,
+      useXCallScanner: xChainMap[primaryDestinationChainId].useXCallScanner || xChainMap[sourceChainId].useXCallScanner,
+    };
+    xMessageActions.add(xMessage);
+  }
 
   return xTransaction.id;
 };

@@ -1,12 +1,14 @@
-import { Percent } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, Percent, XChainId } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { XWalletClient } from '@/core/XWalletClient';
+import { XToken } from '@/types';
 import { showMessageOnBeforeUnload, toDec } from '@/utils';
 import { toHex } from 'viem';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData } from '../../xcall/utils';
+import { isSpokeToken } from '../archway';
 import { HavahXService } from './HavahXService';
 
 export class HavahXWalletClient extends XWalletClient {
@@ -16,6 +18,66 @@ export class HavahXWalletClient extends XWalletClient {
 
   async approve(amountToApprove, spender, owner) {
     return Promise.resolve(undefined);
+  }
+
+  private async _deposit({
+    account,
+    inputAmount,
+    destination,
+    data,
+    fee,
+  }: {
+    account: string;
+    inputAmount: CurrencyAmount<XToken>;
+    destination: string;
+    data: any;
+    fee: bigint;
+  }) {
+    const isNative = inputAmount.currency.isNativeToken;
+    if (!isNative) {
+      throw new Error('Only native token and bnUSD are supported');
+    }
+    const txResult = await this.getXService()
+      .walletClient.inject({ account })
+      .AssetManager['deposit'](parseFloat(inputAmount.toExact()), destination, data, fee.toString());
+    const { txHash: hash } = txResult || {};
+    return hash;
+  }
+
+  private async _crossTransfer({
+    account,
+    inputAmount,
+    destination,
+    data,
+    fee,
+  }: {
+    account: string;
+    inputAmount: CurrencyAmount<XToken>;
+    destination: string;
+    data: any;
+    fee: bigint;
+  }) {
+    const txResult = await this.getXService()
+      .walletClient.inject({ account })
+      .bnUSD['crossTransferV2'](destination, toDec(inputAmount), data, fee);
+    const { txHash: hash } = txResult || {};
+    return hash;
+  }
+
+  private async _sendCall({
+    account,
+    sourceChainId,
+    destination,
+    data,
+    fee,
+  }: {
+    account: string;
+    sourceChainId: XChainId;
+    destination: string;
+    data: any;
+    fee: bigint;
+  }) {
+    throw new Error('Method not implemented.');
   }
 
   async executeSwapOrBridge(xTransactionInput: XTransactionInput) {
@@ -50,28 +112,10 @@ export class HavahXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
-    const isNative = inputAmount.currency.isNativeToken;
-    const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
-
-    let txResult;
-    if (isBnUSD) {
-      txResult = await this.getXService()
-        .walletClient.inject({ account })
-        .bnUSD['crossTransferV2'](destination, toDec(inputAmount), data, xCallFee.rollback.toString());
+    if (isSpokeToken(inputAmount.currency)) {
+      return await this._crossTransfer({ account, inputAmount, destination, data, fee: xCallFee.rollback });
     } else {
-      if (!isNative) {
-        throw new Error('Only native token and bnUSD are supported');
-      } else {
-        console.log('isNative');
-        txResult = await this.getXService()
-          .walletClient.inject({ account })
-          .AssetManager['deposit'](parseFloat(inputAmount.toExact()), destination, data, xCallFee.rollback.toString());
-      }
-    }
-    const { txHash: hash } = txResult || {};
-
-    if (hash) {
-      return hash;
+      return await this._deposit({ account, inputAmount, destination, data, fee: xCallFee.rollback });
     }
   }
 
@@ -94,22 +138,18 @@ export class HavahXWalletClient extends XWalletClient {
       return;
     }
 
-    const amount = toDec(inputAmount.multiply(-1));
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = toHex(
       JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
     );
 
-    const txResult = await this.getXService()
-      .walletClient.inject({ account })
-      .bnUSD['crossTransferV2'](destination, amount, data, xCallFee.rollback.toString());
-
-    // @ts-ignore
-    const { txHash: hash } = txResult || {};
-
-    if (hash) {
-      return hash;
-    }
+    return await this._crossTransfer({
+      account,
+      inputAmount: inputAmount.multiply(-1),
+      destination,
+      data,
+      fee: xCallFee.rollback,
+    });
   }
 
   async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {

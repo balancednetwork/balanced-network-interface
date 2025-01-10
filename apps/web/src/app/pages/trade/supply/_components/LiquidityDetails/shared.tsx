@@ -4,15 +4,13 @@ import ArrowDownIcon from '@/assets/icons/arrow-line.svg';
 import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
 import { BalancedJs } from '@balancednetwork/balanced-js';
-import { omit } from 'lodash-es';
 import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 import { usePoolPanelContext } from '../PoolPanelContext';
 
 export const useHasLiquidity = (): boolean => {
   // fetch the reserves for all V2 pools
-  const { pairs, balances } = usePoolPanelContext();
-
+  const { pairs, balances, pools } = usePoolPanelContext();
   const queuePair = pairs[BalancedJs.utils.POOL_IDS.sICXICX];
   const queueBalance = balances[BalancedJs.utils.POOL_IDS.sICXICX];
 
@@ -22,12 +20,10 @@ export const useHasLiquidity = (): boolean => {
     (queueBalance.balance.quotient > BIGINT_ZERO ||
       (queueBalance.balance1 && queueBalance.balance1.quotient > BIGINT_ZERO));
 
-  const pairsWithoutQ = omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
-  const userPools = Object.keys(pairsWithoutQ).filter(
-    poolId =>
-      balances[poolId] &&
-      (Number(balances[poolId].balance.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL ||
-        Number(balances[poolId].stakedLPBalance.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL),
+  const userPools = pools.filter(
+    pool =>
+      Number(pool.balance.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL ||
+      Number(pool.stakedLPBalance?.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL,
   );
 
   return !!shouldShowQueue || !!userPools.length;

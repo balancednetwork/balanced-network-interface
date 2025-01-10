@@ -15,7 +15,7 @@ import { EvmXService } from './EvmXService';
 import { assetManagerContractAbi } from './abis/assetManagerContractAbi';
 import { bnUSDContractAbi } from './abis/bnUSDContractAbi';
 import { xCallContractAbi } from './abis/xCallContractAbi';
-import { getStakeData, getUnStakeData, getXRemoveData } from './utils';
+import { getStakeData, getUnStakeData, getXRemoveData, tokenData } from './utils';
 
 export class EvmXWalletClient extends XWalletClient {
   getXService(): EvmXService {
@@ -326,12 +326,7 @@ export class EvmXWalletClient extends XWalletClient {
 
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
     const amount = BigInt(inputAmount.quotient.toString());
-    const data = toHex(
-      JSON.stringify({
-        method: '_deposit',
-        params: {},
-      }),
-    );
+    const data = toHex(tokenData('_deposit', {}));
 
     const _isSpokeToken = isSpokeToken(inputAmount.currency);
     const isNative = inputAmount.currency.isNativeToken;

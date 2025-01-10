@@ -3,10 +3,9 @@ import { ICON_XCALL_NETWORK_ID, xChainMap } from '@/constants';
 import { isIconTransaction } from '@/utils';
 import { transactionActions, xChainHeightActions, xMessageActions, xTransactionActions } from '@/xcall';
 import { XMessage, XMessageStatus, XTransaction, XTransactionInput, XTransactionStatus } from '@/xcall/types';
-import { useSignTransaction } from '@mysten/dapp-kit';
 import { useMemo } from 'react';
 
-const sendXTransaction = async (xTransactionInput: XTransactionInput, options: any) => {
+const sendXTransaction = async (xTransactionInput: XTransactionInput) => {
   const { direction } = xTransactionInput;
   const sourceChainId = direction.from;
 
@@ -17,7 +16,7 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
 
   console.log('xTransactionInput', xTransactionInput);
 
-  const sourceTransactionHash = await srcXWalletClient.executeTransaction(xTransactionInput, options);
+  const sourceTransactionHash = await srcXWalletClient.executeTransaction(xTransactionInput);
   if (!sourceTransactionHash) {
     return;
   }
@@ -73,13 +72,5 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput, options: a
 };
 
 export const useSendXTransaction = () => {
-  const { mutateAsync: signTransaction } = useSignTransaction();
-
-  return useMemo(
-    () => ({
-      sendXTransaction: (xTransactionInput: XTransactionInput) =>
-        sendXTransaction(xTransactionInput, { signTransaction }),
-    }),
-    [signTransaction],
-  );
+  return useMemo(() => ({ sendXTransaction }), []);
 };

@@ -206,5 +206,5 @@ export async function validateAddress(address: string, chainId: XChainId): Promi
 }
 
 export function isIconTransaction(from: XChainId | undefined, to: XChainId | undefined): boolean {
-  return from === '0x1.icon' || to === '0x1.icon';
+  return from === '0x1.icon' && to === '0x1.icon';
 }

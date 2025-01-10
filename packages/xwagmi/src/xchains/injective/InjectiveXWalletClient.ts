@@ -1,11 +1,10 @@
-import { Percent } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, Percent, XChainId } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xcall/utils';
 
 import { FROM_SOURCES, TO_SOURCES, injective } from '@/constants/xChains';
-import { xTokenMap } from '@/constants/xTokens';
 import { XWalletClient } from '@/core';
 import { XToken } from '@/types';
 import { uintToBytes } from '@/utils';
@@ -24,11 +23,161 @@ export class InjectiveXWalletClient extends XWalletClient {
     return Promise.resolve(undefined);
   }
 
+  private async _deposit({
+    account,
+    inputAmount,
+    destination,
+    data,
+    fee,
+  }: {
+    account: string;
+    inputAmount: CurrencyAmount<XToken>;
+    destination: string;
+    data: any;
+    fee: bigint;
+  }) {
+    let msg;
+    const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
+    if (isDenom) {
+      msg = MsgExecuteContractCompat.fromJSON({
+        contractAddress: injective.contracts.assetManager,
+        sender: account,
+        msg: {
+          deposit_denom: {
+            denom: inputAmount.currency.address,
+            to: destination,
+            data,
+          },
+        },
+        funds: [
+          {
+            denom: 'inj',
+            amount: BigInt(fee).toString(),
+          },
+          { denom: inputAmount.currency.address, amount: `${inputAmount.quotient}` },
+        ],
+      });
+    } else {
+      msg = MsgExecuteContractCompat.fromJSON({
+        contractAddress: injective.contracts.assetManager,
+        sender: account,
+        msg: {
+          deposit_denom: {
+            denom: 'inj',
+            to: destination,
+            data,
+          },
+        },
+        funds: [
+          {
+            denom: 'inj',
+            amount: BigInt(inputAmount.quotient + fee).toString(),
+          },
+        ],
+      });
+    }
+
+    const txResult = await this.getXService().msgBroadcastClient.broadcastWithFeeDelegation({
+      msgs: msg,
+      injectiveAddress: account,
+    });
+
+    return txResult.txHash;
+  }
+
+  private async _crossTransfer({
+    account,
+    inputAmount,
+    destination,
+    data,
+    fee,
+  }: {
+    account: string;
+    inputAmount: CurrencyAmount<XToken>;
+    destination: string;
+    data: any;
+    fee: bigint;
+  }) {
+    const amount = inputAmount.quotient.toString();
+    const msg = MsgExecuteContractCompat.fromJSON({
+      contractAddress: injective.contracts.bnUSD!,
+      sender: account,
+      msg: {
+        cross_transfer: {
+          amount,
+          to: destination,
+          data,
+        },
+      },
+      funds: [
+        {
+          denom: 'inj',
+          amount: fee.toString(),
+        },
+        { denom: inputAmount.currency.address, amount },
+      ],
+    });
+
+    const txResult = await this.getXService().msgBroadcastClient.broadcastWithFeeDelegation({
+      msgs: msg,
+      injectiveAddress: account,
+    });
+
+    return txResult.txHash;
+  }
+
+  private async _sendCall({
+    account,
+    sourceChainId,
+    destination,
+    data,
+    fee,
+  }: {
+    account: string;
+    sourceChainId: XChainId;
+    destination: string;
+    data: any;
+    fee: bigint;
+  }) {
+    const envelope = {
+      message: {
+        call_message: {
+          data,
+        },
+      },
+      sources: FROM_SOURCES[sourceChainId],
+      destinations: TO_SOURCES[sourceChainId],
+    };
+
+    const msg = MsgExecuteContractCompat.fromJSON({
+      contractAddress: injective.contracts.xCall,
+      sender: account,
+      msg: {
+        send_call: {
+          to: destination,
+          envelope,
+        },
+      },
+      funds: [
+        {
+          denom: 'inj',
+          amount: fee.toString(),
+        },
+      ],
+    });
+
+    const txResult = await this.getXService().msgBroadcastClient.broadcastWithFeeDelegation({
+      msgs: msg,
+      injectiveAddress: account,
+    });
+
+    return txResult.txHash;
+  }
+
   async executeSwapOrBridge(xTransactionInput: XTransactionInput) {
     const { type, direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } =
       xTransactionInput;
 
-    const token = inputAmount.currency.wrapped;
     const receiver = `${direction.to}/${recipient}`;
 
     let data;
@@ -54,83 +203,22 @@ export class InjectiveXWalletClient extends XWalletClient {
       throw new Error('Invalid XTransactionType');
     }
 
-    const _isSpokeToken = isSpokeToken(inputAmount.currency);
-    const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
-
-    if (_isSpokeToken) {
-      const amount = inputAmount.quotient.toString();
-      const msg = MsgExecuteContractCompat.fromJSON({
-        contractAddress: injective.contracts.bnUSD!,
-        sender: account,
-        msg: {
-          cross_transfer: {
-            amount,
-            to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
-            data,
-          },
-        },
-        funds: [
-          {
-            denom: 'inj',
-            amount: xCallFee.rollback.toString(),
-          },
-          { denom: token.address, amount },
-        ],
+    if (isSpokeToken(inputAmount.currency)) {
+      return await this._crossTransfer({
+        account,
+        inputAmount,
+        destination: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
+        data,
+        fee: xCallFee.rollback,
       });
-
-      const txResult = await this.getXService().msgBroadcastClient.broadcastWithFeeDelegation({
-        msgs: msg,
-        injectiveAddress: account,
-      });
-
-      return txResult.txHash;
     } else {
-      let msg;
-      if (isDenom) {
-        msg = MsgExecuteContractCompat.fromJSON({
-          contractAddress: injective.contracts.assetManager,
-          sender: account,
-          msg: {
-            deposit_denom: {
-              denom: token.address,
-              to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
-              data,
-            },
-          },
-          funds: [
-            {
-              denom: 'inj',
-              amount: BigInt(xCallFee.rollback).toString(),
-            },
-            { denom: token.address, amount: `${inputAmount.quotient}` },
-          ],
-        });
-      } else {
-        msg = MsgExecuteContractCompat.fromJSON({
-          contractAddress: injective.contracts.assetManager,
-          sender: account,
-          msg: {
-            deposit_denom: {
-              denom: 'inj',
-              to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
-              data,
-            },
-          },
-          funds: [
-            {
-              denom: 'inj',
-              amount: BigInt(inputAmount.quotient + xCallFee.rollback).toString(),
-            },
-          ],
-        });
-      }
-
-      const txResult = await this.getXService().msgBroadcastClient.broadcastWithFeeDelegation({
-        msgs: msg,
-        injectiveAddress: account,
+      return await this._deposit({
+        account,
+        inputAmount,
+        destination: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
+        data,
+        fee: xCallFee.rollback,
       });
-
-      return txResult.txHash;
     }
   }
 
@@ -143,34 +231,13 @@ export class InjectiveXWalletClient extends XWalletClient {
 
     const data = getBytesFromString(JSON.stringify({}));
 
-    if (inputAmount.currency.isNativeToken) {
-      const msg = MsgExecuteContractCompat.fromJSON({
-        contractAddress: injective.contracts.assetManager,
-        sender: account,
-        msg: {
-          deposit_denom: {
-            denom: 'inj',
-            to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`,
-            data,
-          },
-        },
-        funds: [
-          {
-            denom: 'inj',
-            amount: BigInt(inputAmount.quotient + xCallFee.rollback).toString(),
-          },
-        ],
-      });
-
-      const txResult = await this.getXService().msgBroadcastClient.broadcastWithFeeDelegation({
-        msgs: msg,
-        injectiveAddress: account,
-      });
-
-      return txResult.txHash;
-    } else {
-      throw new Error('Injective tokens not supported yet');
-    }
+    return await this._deposit({
+      account,
+      inputAmount,
+      destination: `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`,
+      data,
+      fee: xCallFee.rollback,
+    });
   }
 
   async executeWithdrawCollateral(xTransactionInput: XTransactionInput) {
@@ -181,40 +248,15 @@ export class InjectiveXWalletClient extends XWalletClient {
     }
 
     const amount = toICONDecimals(inputAmount.multiply(-1));
+    const data = Array.from(RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]));
 
-    const envelope = {
-      message: {
-        call_message: {
-          data: Array.from(RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral])),
-        },
-      },
-      sources: FROM_SOURCES[this.xChainId],
-      destinations: TO_SOURCES[this.xChainId],
-    };
-
-    const msg = MsgExecuteContractCompat.fromJSON({
-      contractAddress: injective.contracts.xCall,
-      sender: account,
-      msg: {
-        send_call: {
-          to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`,
-          envelope,
-        },
-      },
-      funds: [
-        {
-          denom: 'inj',
-          amount: xCallFee.rollback.toString(),
-        },
-      ],
+    return await this._sendCall({
+      account,
+      sourceChainId: this.xChainId,
+      destination: `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`,
+      data,
+      fee: xCallFee.rollback,
     });
-
-    const txResult = await this.getXService().msgBroadcastClient.broadcastWithFeeDelegation({
-      msgs: msg,
-      injectiveAddress: account,
-    });
-
-    return txResult.txHash;
   }
 
   async executeBorrow(xTransactionInput: XTransactionInput) {
@@ -224,53 +266,27 @@ export class InjectiveXWalletClient extends XWalletClient {
       return;
     }
     const amount = BigInt(inputAmount.quotient.toString());
+    const data = Array.from(
+      RLP.encode(
+        recipient
+          ? ['xBorrow', usedCollateral, uintToBytes(amount), Buffer.from(recipient)]
+          : ['xBorrow', usedCollateral, uintToBytes(amount)],
+      ),
+    );
 
-    const envelope = {
-      message: {
-        call_message: {
-          data: Array.from(
-            RLP.encode(
-              recipient
-                ? ['xBorrow', usedCollateral, uintToBytes(amount), Buffer.from(recipient)]
-                : ['xBorrow', usedCollateral, uintToBytes(amount)],
-            ),
-          ),
-        },
-      },
-      sources: FROM_SOURCES[this.xChainId],
-      destinations: TO_SOURCES[this.xChainId],
-    };
-
-    const msg = MsgExecuteContractCompat.fromJSON({
-      contractAddress: injective.contracts.xCall,
-      sender: account,
-      msg: {
-        send_call: {
-          to: `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`,
-          envelope,
-        },
-      },
-      funds: [
-        {
-          denom: 'inj',
-          amount: xCallFee.rollback.toString(),
-        },
-      ],
+    return await this._sendCall({
+      account,
+      sourceChainId: this.xChainId,
+      destination: `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`,
+      data,
+      fee: xCallFee.rollback,
     });
-
-    const txResult = await this.getXService().msgBroadcastClient.broadcastWithFeeDelegation({
-      msgs: msg,
-      injectiveAddress: account,
-    });
-
-    return txResult.txHash;
   }
 
   async executeRepay(xTransactionInput: XTransactionInput) {
     const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
 
-    const bnUSD = xTokenMap['injective-1'].find(xToken => xToken.symbol === 'bnUSD');
-    if (!inputAmount || !usedCollateral || !bnUSD) {
+    if (!inputAmount || !usedCollateral) {
       return;
     }
 
@@ -278,33 +294,14 @@ export class InjectiveXWalletClient extends XWalletClient {
     const data = getBytesFromString(
       JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
     );
-    const amount = inputAmount.multiply(-1).quotient.toString();
 
-    const msg = MsgExecuteContractCompat.fromJSON({
-      contractAddress: injective.contracts.bnUSD!,
-      sender: account,
-      msg: {
-        cross_transfer: {
-          amount,
-          to: destination,
-          data,
-        },
-      },
-      funds: [
-        {
-          denom: 'inj',
-          amount: xCallFee.rollback.toString(),
-        },
-        { denom: bnUSD.address, amount },
-      ],
+    return await this._crossTransfer({
+      account,
+      inputAmount: inputAmount.multiply(-1),
+      destination,
+      data,
+      fee: xCallFee.rollback,
     });
-
-    const txResult = await this.getXService().msgBroadcastClient.broadcastWithFeeDelegation({
-      msgs: msg,
-      injectiveAddress: account,
-    });
-
-    return txResult.txHash;
   }
 
   async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {

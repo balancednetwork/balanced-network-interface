@@ -7,6 +7,7 @@ import LiquidityPoolsPanel from './_components/LiquidityPoolsPanel';
 import { PoolPanelContext } from './_components/PoolPanelContext';
 
 import { useAvailablePairs, useBalances, usePools } from '@/hooks/useV2Pairs';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { useTrackedTokenPairs } from '@/store/user/hooks';
 
 export function SupplyPage() {
@@ -20,10 +21,12 @@ export function SupplyPage() {
   // fetch the user's balances of all tracked V2 LP tokens
   const balances = useBalances(account, pairs);
 
-  const pools = usePools(pairs, [
-    `0x1.icon/hxe25ae17a21883803185291baddac0120493ff706`,
-    `0xa4b1.arbitrum/0x6C5F91FD68Dd7b3A1aedB0F09946659272f523a4`,
-  ]);
+  const signedWallets = useSignedInWallets();
+  const accounts = useMemo(
+    () => signedWallets.filter(wallet => wallet.address).map(wallet => `${wallet.xChainId}/${wallet.address}`),
+    [signedWallets],
+  );
+  const pools = usePools(pairs, accounts);
 
   const data = useMemo(
     () => ({

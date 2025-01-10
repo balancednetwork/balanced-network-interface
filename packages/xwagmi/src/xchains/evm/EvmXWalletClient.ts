@@ -384,27 +384,15 @@ export class EvmXWalletClient extends XWalletClient {
       ]),
     );
 
-    const _isSpokeToken = isSpokeToken(inputAmount.currency);
-    const isNative = inputAmount.currency.isNativeToken;
-
-    let hash;
-    if (_isSpokeToken) {
-      const res = await publicClient.simulateContract({
-        account: account as Address,
-        address: xChainMap[this.xChainId].contracts.xCall as Address,
-        abi: xCallContractAbi,
-        functionName: 'sendCall',
-        args: [destination, envelope],
-        value: xCallFee.rollback,
-      });
-      hash = await walletClient.writeContract(res.request);
-    } else {
-      if (!isNative) {
-        throw new Error('not implemented');
-      } else {
-        throw new Error('not implemented');
-      }
-    }
+    const res = await publicClient.simulateContract({
+      account: account as Address,
+      address: xChainMap[this.xChainId].contracts.xCall as Address,
+      abi: xCallContractAbi,
+      functionName: 'sendCall',
+      args: [destination, envelope],
+      value: xCallFee.rollback,
+    });
+    const hash = await walletClient.writeContract(res.request);
 
     return hash;
   }

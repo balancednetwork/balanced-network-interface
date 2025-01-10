@@ -342,7 +342,7 @@ export interface Pool {
 
 export function usePools(pairs: { [poolId: number]: Pair }, accounts: string[]): Pool[] | undefined {
   const { data: balances } = useQuery<Pool[]>({
-    queryKey: ['lpBalances', pairs, accounts],
+    queryKey: ['pools', pairs, accounts],
     queryFn: async (): Promise<Pool[]> => {
       if (!accounts.length) return [];
 

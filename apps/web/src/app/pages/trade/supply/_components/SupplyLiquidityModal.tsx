@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
@@ -19,12 +19,15 @@ import { toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import {
   XToken,
+  XTransactionStatus,
   bnJs,
   getXChainType,
   useXAccount,
   useXAddLiquidity,
   useXTokenDepositAmount,
+  useXTransactionStore,
 } from '@balancednetwork/xwagmi';
+import { useQueryClient } from '@tanstack/react-query';
 import { SendRemoveXToken } from './SendRemoveXToken';
 import { supplyMessage } from './utils';
 
@@ -41,11 +44,26 @@ const getPairName = (currencies: { [field in Field]?: Currency }) => {
 };
 
 export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, currencies }: ModalProps) {
-  const addTransaction = useTransactionAdder();
-
+  const queryClient = useQueryClient();
   const { pair } = useDerivedMintInfo();
 
-  const [confirmTx, setConfirmTx] = React.useState('');
+  const [isPending, setIsPending] = React.useState(false);
+  const [pendingTx, setPendingTx] = React.useState('');
+  const currentXTransaction = useXTransactionStore(state => state.transactions[pendingTx]);
+
+  useEffect(() => {
+    if (currentXTransaction?.status === XTransactionStatus.success) {
+      onClose();
+      queryClient.invalidateQueries({ queryKey: ['pools'] });
+    }
+
+    if (
+      currentXTransaction?.status === XTransactionStatus.success ||
+      currentXTransaction?.status === XTransactionStatus.failure
+    ) {
+      setIsPending(false);
+    }
+  }, [currentXTransaction, onClose, queryClient]);
 
   const xAccount = useXAccount(getXChainType(currencies[Field.CURRENCY_A]?.xChainId));
   const { data: depositAmountA } = useXTokenDepositAmount(xAccount.address, currencies[Field.CURRENCY_A]);
@@ -56,10 +74,18 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
   const handleSupplyConfirm = async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
-    if (depositAmountA && depositAmountB) {
-      await xAddLiquidity(xAccount.address, depositAmountA, depositAmountB);
-    }
+    try {
+      if (depositAmountA && depositAmountB) {
+        setIsPending(true);
 
+        const txHash = await xAddLiquidity(xAccount.address, depositAmountA, depositAmountB);
+        if (txHash) setPendingTx(txHash);
+        else setIsPending(false);
+      }
+    } catch (error) {
+      console.error('error', error);
+      setIsPending(false);
+    }
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
 
     // {
@@ -94,18 +120,12 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
     // }
   };
 
-  const confirmTxStatus = useTransactionStatus(confirmTx);
-  React.useEffect(() => {
-    if (confirmTx && confirmTxStatus === TransactionStatus.success) {
-      onClose();
-    }
-  }, [confirmTx, confirmTxStatus, onClose]);
-
   // refresh Modal UI
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
     if (!isOpen) {
-      setConfirmTx('');
+      setIsPending(false);
+      setPendingTx('');
       setHasErrorMessage(false);
     }
   }, [isOpen, pair]);
@@ -167,12 +187,12 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
             </TextButton>
 
             {pair ? (
-              <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
-                {confirmTx ? t`Supplying` : t`Supply`}
+              <Button disabled={!isEnabled || !hasEnoughICX || isPending} onClick={handleSupplyConfirm}>
+                {isPending ? t`Supplying` : t`Supply`}
               </Button>
             ) : (
-              <Button disabled={!isEnabled || !hasEnoughICX} onClick={handleSupplyConfirm}>
-                {confirmTx ? t`Creating pool` : t`Create pool`}
+              <Button disabled={!isEnabled || !hasEnoughICX || isPending} onClick={handleSupplyConfirm}>
+                {isPending ? t`Creating pool` : t`Create pool`}
               </Button>
             )}
           </Flex>

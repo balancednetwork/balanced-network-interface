@@ -71,8 +71,6 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts }: SendRemov
       console.error('error', error);
       setIsPending(false);
     }
-
-    // setIsPending(false);
   };
 
   const handleRemove = async () => {

@@ -798,6 +798,10 @@ msgstr ""
 msgid "Lock up BALN"
 msgstr ""
 
+#: src/app/components/StellarSponsorshipModal/index.tsx
+msgid "Activate wallet"
+msgstr ""
+
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
@@ -1509,7 +1513,6 @@ msgstr "Obecnie żadne ICX nie są odstake'owywane."
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
-#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "{0} {1} per {2}"
@@ -1615,6 +1618,10 @@ msgstr ""
 #: src/app/components/home/LoanPanel.tsx
 msgid "Borrow Balanced Dollars?"
 msgstr "Czy chcesz pożyczyć dolary Balanced?"
+
+#: src/app/components/StellarSponsorshipModal/index.tsx
+msgid "Activating"
+msgstr ""
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
 msgid "Contract doesn't exist on this network."
@@ -1905,6 +1912,7 @@ msgstr ""
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/components/home/Savings/index.tsx
 #: src/app/components/ProposalModal/index.tsx
+#: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
@@ -2336,6 +2344,10 @@ msgstr ""
 msgid "available on {0}."
 msgstr ""
 
+#: src/app/components/StellarSponsorshipModal/index.tsx
+msgid "Activate Stellar wallet?"
+msgstr ""
+
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "and ends after {duration} days."
 msgstr ""
@@ -2459,6 +2471,10 @@ msgstr ""
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "{0} {1} added to your wallet"
 msgstr "Dodano {0} {1} do Twojego portfela"
+
+#: src/app/components/StellarSponsorshipModal/index.tsx
+msgid "Sign a transaction to activate your wallet for free."
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "sign in on"
@@ -2874,6 +2890,7 @@ msgstr "Prowizje sieciowe"
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/_components/xLoanModal/index.tsx
+#: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 msgid "Close"
 msgstr ""

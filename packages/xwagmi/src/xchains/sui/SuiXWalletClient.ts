@@ -172,12 +172,10 @@ export class SuiXWalletClient extends XWalletClient {
 
   private async _sendCall({
     sourceChainId,
-    destinationChainId,
     destination,
     data,
   }: {
     sourceChainId: XChainId;
-    destinationChainId: XChainId;
     destination: string;
     data: any;
   }) {
@@ -187,7 +185,7 @@ export class SuiXWalletClient extends XWalletClient {
           Buffer.from([0]),
           data,
           FROM_SOURCES[sourceChainId]?.map(Buffer.from),
-          TO_SOURCES[destinationChainId]?.map(Buffer.from),
+          TO_SOURCES[sourceChainId]?.map(Buffer.from),
         ]),
       ),
     );
@@ -277,7 +275,6 @@ export class SuiXWalletClient extends XWalletClient {
 
     return await this._sendCall({
       sourceChainId: direction.from,
-      destinationChainId: direction.to,
       destination,
       data,
     });
@@ -302,7 +299,6 @@ export class SuiXWalletClient extends XWalletClient {
 
     return await this._sendCall({
       sourceChainId: direction.from,
-      destinationChainId: direction.to,
       destination,
       data,
     });
@@ -390,7 +386,6 @@ export class SuiXWalletClient extends XWalletClient {
     const data = getWithdrawData(xTokenOnIcon.address, amount);
     return await this._sendCall({
       sourceChainId: direction.from,
-      destinationChainId: direction.to,
       destination,
       data,
     });

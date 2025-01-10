@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 import bnJs from '@/bnJs';
 import { predefinedCollateralTypes } from '@/components/CollateralSelector/CollateralTypeList';
 import { TOKEN_BLACKLIST } from '@/constants/tokens';
-import { formatUnits } from '@/utils';
+import { formatUnits, getRewardApr } from '@/utils';
 import { useMemo } from 'react';
 
 export const API_ENDPOINT = 'https://balanced.icon.community/api/v1/';
@@ -224,14 +224,29 @@ export function useAllPairsIncentivised() {
             .times(balnPrice)
             .div(new BigNumber(stakedRatio.toFixed(18)).times(item.liquidity))
             .toNumber();
+          item['externalRewards'] = incentivisedPair.externalRewards;
           item['stakedRatio'] = stakedRatio;
+
+          const totalExternalRewardApr = incentivisedPair.externalRewards?.reduce((acc, reward) => {
+            const rewardPrice =
+              Object.values(allTokens || {}).find(token => token.symbol === reward.currency.symbol)?.price || 0;
+            const rewardApr = getRewardApr(
+              reward,
+              { stakedRatio: stakedRatio, liquidity: item.liquidity },
+              rewardPrice,
+            );
+
+            return acc + rewardApr.toNumber();
+          }, 0);
+
+          item['externalRewardsTotalAPR'] = totalExternalRewardApr || 0;
 
           return item;
         }
         return item;
       });
     }
-  }, [allPairs, incentivisedPairs, dailyDistribution, balnPrice]);
+  }, [allPairs, incentivisedPairs, dailyDistribution, balnPrice, allTokens]);
 }
 
 export function useAllPairsIncentivisedById() {

@@ -1,3 +1,4 @@
+import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
 
@@ -60,3 +61,15 @@ export function formatUnits(value: string, decimals: number = 18, fixed: number 
 
 export const LAUNCH_DAY = 1619366400000;
 export const ONE_DAY_DURATION = 86400000;
+
+export const getRewardApr = (
+  reward: CurrencyAmount<Currency>,
+  pair: { stakedRatio: Fraction; liquidity: number },
+  price: number,
+): BigNumber => {
+  const apr = new BigNumber(reward.toFixed())
+    .times(365 * price)
+    .div(new BigNumber(pair.stakedRatio.toFixed(18)).times(pair.liquidity));
+
+  return apr;
+};

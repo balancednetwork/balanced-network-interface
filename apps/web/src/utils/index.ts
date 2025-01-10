@@ -11,7 +11,7 @@ import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
 import { PairData, PairState } from '@/hooks/useV2Pairs';
 import { Field } from '@/store/swap/reducer';
 import { PairInfo } from '@/types';
-import { xChainMap } from '@balancednetwork/xwagmi';
+import { XToken, xChainMap } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import { Validator } from 'icon-sdk-js';
 
@@ -94,13 +94,12 @@ export function maxAmountSpend(
 ): CurrencyAmount<Currency> | undefined {
   if (!currencyAmount) return undefined;
 
-  let minCurrencyGas: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(currencyAmount?.currency, 0);
+  if (currencyAmount.currency instanceof XToken) {
+    xChainId = currencyAmount.currency.xChainId;
+  }
 
-  if (
-    (xChainId === '0x1.icon' && currencyAmount.currency.symbol === 'ICX') ||
-    (xChainId === 'archway-1' && currencyAmount.currency.symbol === 'ARCH') ||
-    currencyAmount.currency.isNativeToken
-  ) {
+  let minCurrencyGas: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(currencyAmount?.currency, 0);
+  if (currencyAmount.currency.isNativeToken) {
     minCurrencyGas = CurrencyAmount.fromRawAmount(
       currencyAmount.currency,
       new BigNumber(xChainMap[xChainId].gasThreshold)
@@ -109,6 +108,7 @@ export function maxAmountSpend(
         .toString(),
     );
   }
+
   return currencyAmount.subtract(minCurrencyGas).greaterThan(0)
     ? currencyAmount.subtract(minCurrencyGas)
     : CurrencyAmount.fromRawAmount(currencyAmount.currency, 0n);

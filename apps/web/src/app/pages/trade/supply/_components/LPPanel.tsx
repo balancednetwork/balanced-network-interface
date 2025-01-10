@@ -39,7 +39,18 @@ function subtract(
 ): CurrencyAmount<Currency> | undefined {
   if (!amountA) return undefined;
   if (!amountB) return amountA;
-  const diff = new Fraction(`${amountA.quotient}`).subtract(new Fraction(`${amountB.quotient}`));
+
+  let diff;
+  if (amountA.decimalScale !== amountB.decimalScale) {
+    // TODO: use the defined function in utils
+    const amountBConverted = CurrencyAmount.fromRawAmount(
+      amountA.currency,
+      new BigNumber(amountB.toFixed()).times((10n ** BigInt(amountA.currency.decimals)).toString()).toFixed(0),
+    );
+    diff = new Fraction(amountA.numerator).subtract(amountBConverted);
+  } else {
+    diff = new Fraction(`${amountA.quotient}`).subtract(new Fraction(`${amountB.quotient}`));
+  }
   return CurrencyAmount.fromRawAmount(amountA.currency, diff.quotient);
 }
 

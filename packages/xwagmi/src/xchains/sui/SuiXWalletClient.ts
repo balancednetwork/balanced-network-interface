@@ -1,19 +1,13 @@
-import { Percent } from '@balancednetwork/sdk-core';
-import bnJs from '../icon/bnJs';
-
 import { ICON_XCALL_NETWORK_ID, xTokenMap } from '@/constants';
-
 import { FROM_SOURCES, TO_SOURCES, sui } from '@/constants/xChains';
 import { DepositParams, SendCallParams, XWalletClient } from '@/core/XWalletClient';
-import { uintToBytes } from '@/utils';
 import { RLP } from '@ethereumjs/rlp';
 import { bcs } from '@mysten/sui/bcs';
 import { Transaction } from '@mysten/sui/transactions';
 import { signTransaction } from '@mysten/wallet-standard';
 import { toBytes, toHex } from 'viem';
-import { XTransactionInput, XTransactionType } from '../../xcall/types';
-import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
-import { isSpokeToken } from '../archway';
+import { XTransactionInput } from '../../xcall/types';
+import bnJs from '../icon/bnJs';
 import { SuiXService } from './SuiXService';
 
 const addressesMainnet = {
@@ -97,7 +91,7 @@ export class SuiXWalletClient extends XWalletClient {
         feeCoin,
         depositCoin,
         txb.pure(bcs.vector(bcs.string()).serialize([destination])),
-        txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([data])),
+        txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([toBytes(data)])),
       ],
       typeArguments: [coinType],
     });
@@ -140,7 +134,7 @@ export class SuiXWalletClient extends XWalletClient {
         feeCoin,
         depositCoin,
         txb.pure(bcs.string().serialize(destination)),
-        txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([data])),
+        txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([toBytes(data)])),
       ],
       // typeArguments: [],
     });
@@ -153,7 +147,7 @@ export class SuiXWalletClient extends XWalletClient {
       toHex(
         RLP.encode([
           Buffer.from([0]),
-          data,
+          toHex(data),
           FROM_SOURCES[sourceChainId]?.map(Buffer.from),
           TO_SOURCES[sourceChainId]?.map(Buffer.from),
         ]),
@@ -173,91 +167,6 @@ export class SuiXWalletClient extends XWalletClient {
     });
 
     return await this._signAndExecuteTransactionBlock(txb);
-  }
-
-  async executeSwapOrBridge(xTransactionInput: XTransactionInput) {
-    const { type, executionTrade, account, direction, inputAmount, recipient, slippageTolerance, xCallFee } =
-      xTransactionInput;
-
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
-    const receiver = `${direction.to}/${recipient}`;
-
-    let data;
-    if (type === XTransactionType.SWAP) {
-      if (!executionTrade || !slippageTolerance) {
-        return;
-      }
-
-      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived);
-      data = rlpEncodedData;
-    } else if (type === XTransactionType.BRIDGE) {
-      data = toBytes(
-        JSON.stringify({
-          method: '_swap',
-          params: {
-            path: [],
-            receiver: receiver,
-          },
-        }),
-      );
-    } else {
-      throw new Error('Invalid XTransactionType');
-    }
-
-    if (isSpokeToken(inputAmount.currency)) {
-      return await this._crossTransfer({ inputAmount, account, destination, data, fee: 0n });
-    } else {
-      return await this._deposit({ inputAmount, account, destination, data, fee: 0n });
-    }
-  }
-
-  async executeDepositCollateral(xTransactionInput: XTransactionInput) {
-    const { inputAmount, account, xCallFee } = xTransactionInput;
-
-    if (!inputAmount) {
-      return;
-    }
-
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const data = toBytes(JSON.stringify({}));
-
-    return await this._deposit({ inputAmount, account, destination, data, fee: 0n });
-  }
-
-  async executeWithdrawCollateral(xTransactionInput: XTransactionInput) {
-    const { inputAmount, account, xCallFee, usedCollateral, direction } = xTransactionInput;
-
-    if (!inputAmount || !usedCollateral) {
-      return;
-    }
-
-    const amount = toICONDecimals(inputAmount.multiply(-1));
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const data = toHex(RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]));
-
-    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: 0n });
-  }
-
-  async executeBorrow(xTransactionInput: XTransactionInput) {
-    const { inputAmount, account, xCallFee, usedCollateral, recipient, direction } = xTransactionInput;
-
-    if (!inputAmount || !usedCollateral) {
-      return;
-    }
-
-    const amount = BigInt(inputAmount.quotient.toString());
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const data = toHex(
-      RLP.encode(
-        recipient
-          ? ['xBorrow', usedCollateral, uintToBytes(amount), Buffer.from(recipient)]
-          : ['xBorrow', usedCollateral, uintToBytes(amount)],
-      ),
-    );
-
-    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: 0n });
   }
 
   async executeRepay(xTransactionInput: XTransactionInput) {
@@ -321,3 +230,5 @@ export class SuiXWalletClient extends XWalletClient {
     return await this._signAndExecuteTransactionBlock(txb);
   }
 }
+
+// TODO: toBytes vs toHex?

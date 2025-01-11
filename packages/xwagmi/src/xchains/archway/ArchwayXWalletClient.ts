@@ -1,15 +1,11 @@
-import { Percent } from '@balancednetwork/sdk-core';
-import bnJs from '../icon/bnJs';
-
-import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { archway } from '@/constants/xChains';
 import { DepositParams, SendCallParams, XWalletClient } from '@/core/XWalletClient';
 import { XToken } from '@/types';
 import { XSigningArchwayClient } from '@/xchains/archway/XSigningArchwayClient';
-import { getFeeParam, isDenomAsset, isSpokeToken } from '@/xchains/archway/utils';
+import { getFeeParam, isDenomAsset } from '@/xchains/archway/utils';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
-import { XTransactionInput, XTransactionType } from '../../xcall/types';
-import { getBytesFromString, getRlpEncodedSwapData } from '../../xcall/utils';
+import { XTransactionInput } from '../../xcall/types';
+import { getBytesFromString } from '../../xcall/utils';
 import { ArchwayXService } from './ArchwayXService';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from './constants';
 
@@ -51,7 +47,7 @@ export class ArchwayXWalletClient extends XWalletClient {
         deposit_denom: {
           denom: inputAmount.currency.address,
           to: destination,
-          data,
+          data: getBytesFromString(data),
         },
       };
 
@@ -73,7 +69,7 @@ export class ArchwayXWalletClient extends XWalletClient {
           token_address: inputAmount.currency.address,
           amount: inputAmount.quotient.toString(),
           to: destination,
-          data,
+          data: getBytesFromString(data),
         },
       };
 
@@ -94,7 +90,7 @@ export class ArchwayXWalletClient extends XWalletClient {
       cross_transfer: {
         amount: inputAmount.quotient.toString(),
         to: destination,
-        data,
+        data: getBytesFromString(data),
       },
     };
 
@@ -113,84 +109,15 @@ export class ArchwayXWalletClient extends XWalletClient {
     throw new Error('Method not implemented.');
   }
 
-  async executeSwapOrBridge(xTransactionInput: XTransactionInput) {
-    const { type, direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } =
-      xTransactionInput;
-
-    const receiver = `${direction.to}/${recipient}`;
-
-    let data;
-    if (type === XTransactionType.SWAP) {
-      if (!executionTrade || !slippageTolerance) {
-        return;
-      }
-
-      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived);
-      data = Array.from(rlpEncodedData);
-    } else if (type === XTransactionType.BRIDGE) {
-      data = getBytesFromString(
-        JSON.stringify({
-          method: '_swap',
-          params: {
-            path: [],
-            receiver: receiver,
-          },
-        }),
-      );
-    } else {
-      throw new Error('Invalid XTransactionType');
-    }
-
-    if (isSpokeToken(inputAmount.currency)) {
-      return await this._crossTransfer({
-        account,
-        inputAmount,
-        destination: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
-        data,
-        fee: xCallFee.rollback,
-      });
-    } else {
-      return await this._deposit({
-        account,
-        inputAmount,
-        destination: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
-        data,
-        fee: xCallFee.rollback,
-      });
-    }
-  }
-
   async executeDepositCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
+    throw new Error('Not supported.');
   }
 
   async executeWithdrawCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
+    throw new Error('Not supported.');
   }
 
   async executeBorrow(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-
-  async executeRepay(xTransactionInput: XTransactionInput) {
-    const { account, inputAmount, recipient, xCallFee, usedCollateral } = xTransactionInput;
-
-    if (!inputAmount || !usedCollateral) {
-      return;
-    }
-
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const data = getBytesFromString(
-      JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
-    );
-
-    return await this._crossTransfer({
-      account,
-      inputAmount: inputAmount.multiply(-1),
-      destination,
-      data,
-      fee: xCallFee.rollback,
-    });
+    throw new Error('Not supported.');
   }
 }

@@ -1,18 +1,10 @@
-import { Percent } from '@balancednetwork/sdk-core';
-import bnJs from '../icon/bnJs';
-
-import { ICON_XCALL_NETWORK_ID } from '@/constants';
-import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xcall/utils';
-
 import { FROM_SOURCES, TO_SOURCES, injective } from '@/constants/xChains';
 import { XWalletClient } from '@/core';
 import { DepositParams, SendCallParams } from '@/core/XWalletClient';
 import { XToken } from '@/types';
-import { uintToBytes } from '@/utils';
-import { XTransactionInput, XTransactionType } from '@/xcall/types';
-import { RLP } from '@ethereumjs/rlp';
+import { getBytesFromString } from '@/xcall/utils';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
-import { isDenomAsset, isSpokeToken } from '../archway/utils';
+import { isDenomAsset } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
 
 export class InjectiveXWalletClient extends XWalletClient {
@@ -35,7 +27,7 @@ export class InjectiveXWalletClient extends XWalletClient {
           deposit_denom: {
             denom: inputAmount.currency.address,
             to: destination,
-            data,
+            data: getBytesFromString(data),
           },
         },
         funds: [
@@ -54,7 +46,7 @@ export class InjectiveXWalletClient extends XWalletClient {
           deposit_denom: {
             denom: 'inj',
             to: destination,
-            data,
+            data: getBytesFromString(data),
           },
         },
         funds: [
@@ -83,7 +75,7 @@ export class InjectiveXWalletClient extends XWalletClient {
         cross_transfer: {
           amount,
           to: destination,
-          data,
+          data: getBytesFromString(data),
         },
       },
       funds: [
@@ -107,7 +99,7 @@ export class InjectiveXWalletClient extends XWalletClient {
     const envelope = {
       message: {
         call_message: {
-          data,
+          data: getBytesFromString(data),
         },
       },
       sources: FROM_SOURCES[sourceChainId],
@@ -137,110 +129,5 @@ export class InjectiveXWalletClient extends XWalletClient {
     });
 
     return txResult.txHash;
-  }
-
-  async executeSwapOrBridge(xTransactionInput: XTransactionInput) {
-    const { type, direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } =
-      xTransactionInput;
-
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
-    const receiver = `${direction.to}/${recipient}`;
-
-    let data;
-    if (type === XTransactionType.SWAP) {
-      if (!executionTrade || !slippageTolerance) {
-        return;
-      }
-
-      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived);
-      data = Array.from(rlpEncodedData);
-    } else if (type === XTransactionType.BRIDGE) {
-      data = getBytesFromString(
-        JSON.stringify({
-          method: '_swap',
-          params: {
-            path: [],
-            receiver: receiver,
-          },
-        }),
-      );
-    } else {
-      throw new Error('Invalid XTransactionType');
-    }
-
-    if (isSpokeToken(inputAmount.currency)) {
-      return await this._crossTransfer({ account, inputAmount, destination, data, fee: xCallFee.rollback });
-    } else {
-      return await this._deposit({ account, inputAmount, destination, data, fee: xCallFee.rollback });
-    }
-  }
-
-  async executeDepositCollateral(xTransactionInput: XTransactionInput) {
-    const { inputAmount, account, xCallFee } = xTransactionInput;
-
-    if (!inputAmount) {
-      return;
-    }
-
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const data = getBytesFromString(JSON.stringify({}));
-
-    return await this._deposit({ account, inputAmount, destination, data, fee: xCallFee.rollback });
-  }
-
-  async executeWithdrawCollateral(xTransactionInput: XTransactionInput) {
-    const { inputAmount, account, xCallFee, usedCollateral } = xTransactionInput;
-
-    if (!inputAmount || !usedCollateral) {
-      return;
-    }
-
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const amount = toICONDecimals(inputAmount.multiply(-1));
-    const data = Array.from(RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]));
-
-    return await this._sendCall({ account, sourceChainId: this.xChainId, destination, data, fee: xCallFee.rollback });
-  }
-
-  async executeBorrow(xTransactionInput: XTransactionInput) {
-    const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
-
-    if (!inputAmount || !usedCollateral) {
-      return;
-    }
-
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const amount = BigInt(inputAmount.quotient.toString());
-    const data = Array.from(
-      RLP.encode(
-        recipient
-          ? ['xBorrow', usedCollateral, uintToBytes(amount), Buffer.from(recipient)]
-          : ['xBorrow', usedCollateral, uintToBytes(amount)],
-      ),
-    );
-
-    return await this._sendCall({ account, sourceChainId: this.xChainId, destination, data, fee: xCallFee.rollback });
-  }
-
-  async executeRepay(xTransactionInput: XTransactionInput) {
-    const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
-
-    if (!inputAmount || !usedCollateral) {
-      return;
-    }
-
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const data = getBytesFromString(
-      JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
-    );
-
-    return await this._crossTransfer({
-      account,
-      inputAmount: inputAmount.multiply(-1),
-      destination,
-      data,
-      fee: xCallFee.rollback,
-    });
   }
 }

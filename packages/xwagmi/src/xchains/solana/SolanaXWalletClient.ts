@@ -1,8 +1,5 @@
-import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { FROM_SOURCES, TO_SOURCES, solana } from '@/constants/xChains';
 import { DepositParams, SendCallParams, XWalletClient } from '@/core/XWalletClient';
-import { uintToBytes } from '@/utils';
-import { Percent } from '@balancednetwork/sdk-core';
 import { Program } from '@coral-xyz/anchor';
 import * as anchor from '@coral-xyz/anchor';
 import { SYSTEM_PROGRAM_ID } from '@coral-xyz/anchor/dist/cjs/native/system';
@@ -13,12 +10,6 @@ import {
   getAssociatedTokenAddressSync,
 } from '@solana/spl-token';
 import { ComputeBudgetProgram, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
-import * as rlp from 'rlp';
-import { toBytes } from 'viem';
-import { XTransactionInput, XTransactionType } from '../../xcall/types';
-import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
-import { isSpokeToken } from '../archway';
-import bnJs from '../icon/bnJs';
 import { SolanaXService } from './SolanaXService';
 import assetManagerIdl from './idls/assetManager.json';
 import bnUSDIdl from './idls/bnUSD.json';
@@ -267,100 +258,5 @@ export class SolanaXWalletClient extends XWalletClient {
 
     const txSignature = await wallet.sendTransaction(tx, connection);
     return txSignature;
-  }
-
-  async executeSwapOrBridge(xTransactionInput: XTransactionInput) {
-    const { type, executionTrade, account, direction, inputAmount, recipient, slippageTolerance, xCallFee } =
-      xTransactionInput;
-
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
-    const receiver = `${direction.to}/${recipient}`;
-
-    let data;
-    if (type === XTransactionType.SWAP) {
-      if (!executionTrade || !slippageTolerance) {
-        return;
-      }
-
-      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived);
-      data = rlpEncodedData;
-    } else if (type === XTransactionType.BRIDGE) {
-      data = toBytes(
-        JSON.stringify({
-          method: '_swap',
-          params: {
-            path: [],
-            receiver: receiver,
-          },
-        }),
-      );
-    } else {
-      throw new Error('Invalid XTransactionType');
-    }
-
-    if (isSpokeToken(inputAmount.currency)) {
-      return await this._crossTransfer({ account, inputAmount, destination, data, fee: 0n });
-    } else {
-      return await this._deposit({ account, inputAmount, destination, data, fee: 0n });
-    }
-  }
-
-  async executeDepositCollateral(xTransactionInput: XTransactionInput) {
-    const { account, inputAmount } = xTransactionInput;
-
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const data: any = toBytes(JSON.stringify({}));
-
-    return await this._deposit({ account, inputAmount, destination, data, fee: 0n });
-  }
-
-  async executeWithdrawCollateral(xTransactionInput: XTransactionInput) {
-    const { inputAmount, account, usedCollateral, direction } = xTransactionInput;
-
-    if (!inputAmount || !usedCollateral) {
-      return;
-    }
-
-    const amount = toICONDecimals(inputAmount.multiply(-1));
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-
-    const data = rlp.encode(['xWithdraw', uintToBytes(amount), usedCollateral]);
-
-    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: 0n });
-  }
-
-  async executeBorrow(xTransactionInput: XTransactionInput) {
-    const { inputAmount, account, usedCollateral, direction, recipient } = xTransactionInput;
-
-    if (!inputAmount || !usedCollateral) {
-      return;
-    }
-
-    const amount = BigInt(inputAmount.quotient.toString());
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-
-    const data = rlp.encode(
-      recipient
-        ? ['xBorrow', usedCollateral, uintToBytes(amount), Buffer.from(recipient)]
-        : ['xBorrow', usedCollateral, uintToBytes(amount)],
-    );
-
-    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: 0n });
-  }
-
-  async executeRepay(xTransactionInput: XTransactionInput) {
-    const { account, inputAmount, recipient, usedCollateral } = xTransactionInput;
-
-    if (!inputAmount || !usedCollateral) {
-      return;
-    }
-
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const data: any = toBytes(
-      JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
-    );
-    return await this._crossTransfer({ account, inputAmount: inputAmount.multiply(-1), destination, data, fee: 0n });
   }
 }

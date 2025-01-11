@@ -1,13 +1,7 @@
-import { Percent } from '@balancednetwork/sdk-core';
-import bnJs from '../icon/bnJs';
-
-import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { DepositParams, SendCallParams, XWalletClient } from '@/core/XWalletClient';
-import { showMessageOnBeforeUnload, toDec } from '@/utils';
+import { toDec } from '@/utils';
 import { toHex } from 'viem';
-import { XTransactionInput, XTransactionType } from '../../xcall/types';
-import { getRlpEncodedSwapData } from '../../xcall/utils';
-import { isSpokeToken } from '../archway';
+import { XTransactionInput } from '../../xcall/types';
 import { HavahXService } from './HavahXService';
 
 export class HavahXWalletClient extends XWalletClient {
@@ -26,7 +20,7 @@ export class HavahXWalletClient extends XWalletClient {
     }
     const txResult = await this.getXService()
       .walletClient.inject({ account })
-      .AssetManager['deposit'](parseFloat(inputAmount.toExact()), destination, data, fee.toString());
+      .AssetManager['deposit'](parseFloat(inputAmount.toExact()), destination, toHex(data), fee.toString());
     const { txHash: hash } = txResult || {};
     return hash;
   }
@@ -34,7 +28,7 @@ export class HavahXWalletClient extends XWalletClient {
   async _crossTransfer({ account, inputAmount, destination, data, fee }: DepositParams) {
     const txResult = await this.getXService()
       .walletClient.inject({ account })
-      .bnUSD['crossTransferV2'](destination, toDec(inputAmount), data, fee);
+      .bnUSD['crossTransferV2'](destination, toDec(inputAmount), toHex(data), fee);
     const { txHash: hash } = txResult || {};
     return hash;
   }
@@ -43,75 +37,15 @@ export class HavahXWalletClient extends XWalletClient {
     throw new Error('Method not implemented.');
   }
 
-  async executeSwapOrBridge(xTransactionInput: XTransactionInput) {
-    const { type, executionTrade, account, direction, inputAmount, recipient, slippageTolerance, xCallFee } =
-      xTransactionInput;
-
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
-    const receiver = `${direction.to}/${recipient}`;
-
-    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    let data;
-    if (type === XTransactionType.SWAP) {
-      if (!executionTrade || !slippageTolerance) {
-        return;
-      }
-
-      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived).toString('hex');
-      data = `0x${rlpEncodedData}`;
-    } else if (type === XTransactionType.BRIDGE) {
-      data = toHex(
-        JSON.stringify({
-          method: '_swap',
-          params: {
-            path: [],
-            receiver: receiver,
-          },
-        }),
-      );
-    } else {
-      throw new Error('Invalid XTransactionType');
-    }
-
-    if (isSpokeToken(inputAmount.currency)) {
-      return await this._crossTransfer({ account, inputAmount, destination, data, fee: xCallFee.rollback });
-    } else {
-      return await this._deposit({ account, inputAmount, destination, data, fee: xCallFee.rollback });
-    }
-  }
-
   async executeDepositCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
+    throw new Error('Not supported.');
   }
 
   async executeWithdrawCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
+    throw new Error('Not supported.');
   }
 
   async executeBorrow(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-
-  async executeRepay(xTransactionInput: XTransactionInput) {
-    const { account, inputAmount, recipient, xCallFee, usedCollateral } = xTransactionInput;
-
-    if (!inputAmount || !usedCollateral) {
-      return;
-    }
-
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const data = toHex(
-      JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
-    );
-
-    return await this._crossTransfer({
-      account,
-      inputAmount: inputAmount.multiply(-1),
-      destination,
-      data,
-      fee: xCallFee.rollback,
-    });
+    throw new Error('Not supported.');
   }
 }

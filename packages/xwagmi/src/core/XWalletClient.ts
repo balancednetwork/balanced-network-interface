@@ -1,9 +1,8 @@
 import { ICON_XCALL_NETWORK_ID, xTokenMapBySymbol } from '@/constants';
-import { uintToBytes } from '@/utils';
+import { isSpokeToken, uintToBytes } from '@/utils';
 import { getRlpEncodedSwapData, toICONDecimals } from '@/xcall';
 import { XTransactionInput, XTransactionType } from '@/xcall/types';
-import { isSpokeToken } from '@/xchains/archway';
-import { bnJs } from '@/xchains/icon';
+import { bnJs } from '@/xchains/icon/bnJs';
 import { CurrencyAmount, Percent } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
 import { XChainId, XToken } from '../types';

@@ -2,10 +2,10 @@ import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from './bnJs';
 
 import { DepositParams, SendCallParams, XWalletClient } from '@/core/XWalletClient';
+import { isSpokeToken } from '@/utils';
 import { showMessageOnBeforeUnload, toDec } from '@/utils';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData } from '../../xcall/utils';
-import { isSpokeToken } from '../archway/utils';
 import { IconXService } from './IconXService';
 
 export class IconXWalletClient extends XWalletClient {

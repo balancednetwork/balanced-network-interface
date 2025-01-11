@@ -7,7 +7,7 @@ import { bech32 } from 'bech32';
 import BigNumber from 'bignumber.js';
 import { ethers } from 'ethers';
 import { Validator } from 'icon-sdk-js';
-import { XChainId } from '../types';
+import { XChainId, XToken } from '../types';
 import { SolanaXService } from '../xchains/solana';
 import { isStellarAddress } from '../xchains/stellar/utils';
 
@@ -207,4 +207,8 @@ export async function validateAddress(address: string, chainId: XChainId): Promi
 
 export function isIconTransaction(from: XChainId | undefined, to: XChainId | undefined): boolean {
   return from === '0x1.icon' && to === '0x1.icon';
+}
+
+export function isSpokeToken(token: XToken): boolean {
+  return ['bnUSD', 'sICX', 'BALN'].includes(token.symbol);
 }

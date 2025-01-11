@@ -10,7 +10,3 @@ export function getFeeParam(fee: number): StdFee | 'auto' {
 export function isDenomAsset(token: XToken | Token): boolean {
   return token.address.startsWith('ibc/');
 }
-
-export function isSpokeToken(token: XToken): boolean {
-  return ['bnUSD', 'sICX', 'BALN'].includes(token.symbol);
-}

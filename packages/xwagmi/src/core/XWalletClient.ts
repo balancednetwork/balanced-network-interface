@@ -1,6 +1,28 @@
+import { ICON_XCALL_NETWORK_ID, xTokenMapBySymbol } from '@/constants';
+import { uintToBytes } from '@/utils';
+import { getRlpEncodedSwapData, toICONDecimals } from '@/xcall';
 import { XTransactionInput, XTransactionType } from '@/xcall/types';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { isSpokeToken } from '@/xchains/archway';
+import { bnJs } from '@/xchains/icon';
+import { CurrencyAmount, Percent } from '@balancednetwork/sdk-core';
+import { RLP } from '@ethereumjs/rlp';
 import { XChainId, XToken } from '../types';
+import { getAddLPData, getStakeData, getUnStakeData, getWithdrawData, getXRemoveData, tokenData } from './utils';
+
+export interface DepositParams {
+  account: string;
+  inputAmount: CurrencyAmount<XToken>;
+  destination: string;
+  data: any;
+  fee: bigint;
+}
+export interface SendCallParams {
+  account: string;
+  sourceChainId: XChainId;
+  destination: string;
+  data: any;
+  fee: bigint;
+}
 export abstract class XWalletClient {
   public xChainId: XChainId;
 
@@ -13,6 +35,10 @@ export abstract class XWalletClient {
     spender: string,
     owner: string,
   ): Promise<string | undefined>;
+
+  abstract _deposit({ account, inputAmount, destination, data, fee }: DepositParams): Promise<string | undefined>;
+  abstract _crossTransfer({ account, inputAmount, destination, data, fee }: DepositParams): Promise<string | undefined>;
+  abstract _sendCall({ account, sourceChainId, destination, data, fee }: SendCallParams): Promise<string | undefined>;
 
   async executeTransaction(xTransactionInput: XTransactionInput, options?: any): Promise<string | undefined> {
     const { type } = xTransactionInput;
@@ -50,17 +76,188 @@ export abstract class XWalletClient {
     }
   }
 
-  abstract executeSwapOrBridge(xTransactionInput: XTransactionInput): Promise<string | undefined>;
-  abstract executeDepositCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined>;
-  abstract executeWithdrawCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined>;
-  abstract executeBorrow(xTransactionInput: XTransactionInput): Promise<string | undefined>;
-  abstract executeRepay(xTransactionInput: XTransactionInput): Promise<string | undefined>;
+  async executeSwapOrBridge(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { type, direction, inputAmount, recipient, account, xCallFee, executionTrade, slippageTolerance } =
+      xTransactionInput;
 
-  abstract depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined>;
-  abstract withdrawXToken(xTransactionInput: XTransactionInput): Promise<string | undefined>;
-  abstract addLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined>;
-  abstract removeLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined>;
-  abstract stake(xTransactionInput: XTransactionInput): Promise<string | undefined>;
-  abstract unstake(xTransactionInput: XTransactionInput): Promise<string | undefined>;
-  abstract claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined>;
+    const receiver = `${direction.to}/${recipient}`;
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
+
+    let data;
+    if (type === XTransactionType.SWAP) {
+      if (!executionTrade || !slippageTolerance) {
+        throw new Error('executionTrade and slippageTolerance are required');
+      }
+      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
+      data = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived);
+    } else if (type === XTransactionType.BRIDGE) {
+      data = JSON.stringify({
+        method: '_swap',
+        params: {
+          path: [],
+          receiver: receiver,
+        },
+      });
+    } else {
+      throw new Error('Invalid XTransactionType');
+    }
+
+    if (isSpokeToken(inputAmount.currency)) {
+      return await this._crossTransfer({ account, inputAmount, destination, data, fee: xCallFee.rollback });
+    } else {
+      return await this._deposit({ account, inputAmount, destination, data, fee: xCallFee.rollback });
+    }
+  }
+
+  async executeDepositCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { inputAmount, account, xCallFee } = xTransactionInput;
+
+    if (!inputAmount) {
+      throw new Error('inputAmount is required');
+    }
+
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
+    const data = JSON.stringify({});
+
+    return await this._deposit({ inputAmount, account, destination, data, fee: xCallFee.rollback });
+  }
+
+  async executeWithdrawCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { inputAmount, account, xCallFee, usedCollateral, direction } = xTransactionInput;
+
+    if (!inputAmount || !usedCollateral) {
+      throw new Error('inputAmount and usedCollateral are required');
+    }
+
+    const amount = toICONDecimals(inputAmount.multiply(-1));
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
+    const data = RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]);
+
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
+  }
+
+  async executeBorrow(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { inputAmount, account, xCallFee, usedCollateral, recipient, direction } = xTransactionInput;
+
+    if (!inputAmount || !usedCollateral) {
+      throw new Error('inputAmount and usedCollateral are required');
+    }
+
+    const amount = BigInt(inputAmount.quotient.toString());
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
+    const data = RLP.encode(
+      recipient
+        ? ['xBorrow', usedCollateral, uintToBytes(amount), Buffer.from(recipient)]
+        : ['xBorrow', usedCollateral, uintToBytes(amount)],
+    );
+
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
+  }
+
+  async executeRepay(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { inputAmount, account, xCallFee, usedCollateral, recipient, direction } = xTransactionInput;
+
+    if (!inputAmount || !usedCollateral) {
+      throw new Error('inputAmount and usedCollateral are required');
+    }
+
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
+    const data = JSON.stringify(
+      recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral },
+    );
+
+    const _inputAmount = inputAmount.multiply(-1);
+    return await this._crossTransfer({ account, inputAmount: _inputAmount, destination, data, fee: xCallFee.rollback });
+  }
+
+  // liquidity related
+  async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { account, inputAmount, xCallFee } = xTransactionInput;
+
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
+    const data = tokenData('_deposit', {});
+
+    let hash;
+    if (isSpokeToken(inputAmount.currency)) {
+      hash = await this._crossTransfer({ account, inputAmount, destination, data, fee: xCallFee.rollback });
+    } else {
+      hash = await this._deposit({ account, inputAmount, destination, data, fee: xCallFee.rollback });
+    }
+
+    return hash;
+  }
+
+  async withdrawXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { account, inputAmount, xCallFee, direction } = xTransactionInput;
+
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
+    const amount = BigInt(inputAmount.quotient.toString());
+    const xTokenOnIcon = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][inputAmount.currency.symbol];
+    const data = getWithdrawData(xTokenOnIcon.address, amount);
+
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
+  }
+
+  async addLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { account, inputAmount, outputAmount, xCallFee, direction } = xTransactionInput;
+
+    if (!outputAmount) {
+      throw new Error('outputAmount is required');
+    }
+
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
+    const amountA = BigInt(inputAmount.quotient.toString());
+    const amountB = BigInt(outputAmount.quotient.toString());
+    const xTokenAOnIcon = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][inputAmount.currency.symbol];
+    const xTokenBOnIcon = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][outputAmount.currency.symbol];
+    const data = getAddLPData(xTokenAOnIcon.address, xTokenBOnIcon.address, amountA, amountB, true, 1_000n);
+
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
+  }
+
+  async removeLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { account, inputAmount, poolId, xCallFee, direction } = xTransactionInput;
+
+    if (!poolId) {
+      throw new Error('poolId is required');
+    }
+
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
+    const amount = BigInt(inputAmount.quotient.toString());
+    const data = getXRemoveData(poolId, amount, true);
+
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
+  }
+
+  async stake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { account, inputAmount, poolId, xCallFee, direction } = xTransactionInput;
+
+    if (!poolId) {
+      throw new Error('poolId is required');
+    }
+
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
+    const amount = BigInt(inputAmount.quotient.toString());
+    const data = getStakeData(`${ICON_XCALL_NETWORK_ID}/${bnJs.StakedLP.address}`, poolId, amount);
+
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
+  }
+
+  async unstake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { account, inputAmount, poolId, xCallFee, direction } = xTransactionInput;
+
+    if (!poolId) {
+      throw new Error('poolId is required');
+    }
+
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.StakedLP.address}`;
+    const amount = BigInt(inputAmount.quotient.toString());
+    const data = getUnStakeData(poolId, amount);
+
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
+  }
+
+  async claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
 }

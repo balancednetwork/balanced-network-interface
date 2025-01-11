@@ -4,7 +4,7 @@ import bnJs from '../icon/bnJs';
 import { ICON_XCALL_NETWORK_ID, xTokenMap, xTokenMapBySymbol } from '@/constants';
 
 import { FROM_SOURCES, TO_SOURCES, sui } from '@/constants/xChains';
-import { XWalletClient } from '@/core/XWalletClient';
+import { DepositParams, SendCallParams, XWalletClient } from '@/core/XWalletClient';
 import { XToken } from '@/types';
 import { uintToBytes } from '@/utils';
 import { RLP } from '@ethereumjs/rlp';
@@ -12,10 +12,10 @@ import { bcs } from '@mysten/sui/bcs';
 import { Transaction } from '@mysten/sui/transactions';
 import { signTransaction } from '@mysten/wallet-standard';
 import { toBytes, toHex } from 'viem';
+import { getWithdrawData, tokenData } from '../../core/utils';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
 import { isSpokeToken } from '../archway';
-import { getWithdrawData, tokenData } from '../evm/utils';
 import { SuiXService } from './SuiXService';
 
 const addressesMainnet = {
@@ -41,7 +41,7 @@ export class SuiXWalletClient extends XWalletClient {
     return Promise.resolve(undefined);
   }
 
-  private async _signAndExecuteTransactionBlock(txb: Transaction): Promise<string | undefined> {
+  async _signAndExecuteTransactionBlock(txb: Transaction): Promise<string | undefined> {
     const { bytes, signature } = await signTransaction(this.getXService().suiWallet, {
       transaction: txb,
       account: this.getXService().suiAccount,
@@ -60,19 +60,7 @@ export class SuiXWalletClient extends XWalletClient {
     return hash;
   }
 
-  private async _deposit({
-    account,
-    inputAmount,
-    destination,
-    data,
-    fee, // not used, just for compatibility
-  }: {
-    account: string;
-    inputAmount: CurrencyAmount<XToken>;
-    destination: string;
-    data: any;
-    fee: bigint;
-  }) {
+  async _deposit({ account, inputAmount, destination, data, fee }: DepositParams) {
     const amount = BigInt(inputAmount.quotient.toString());
 
     const coinType = inputAmount.currency.isNativeToken ? '0x2::sui::SUI' : inputAmount.currency.address;
@@ -119,19 +107,7 @@ export class SuiXWalletClient extends XWalletClient {
     return await this._signAndExecuteTransactionBlock(txb);
   }
 
-  private async _crossTransfer({
-    account,
-    inputAmount,
-    destination,
-    data,
-    fee, // not used, just for compatibility
-  }: {
-    account: string;
-    inputAmount: CurrencyAmount<XToken>;
-    destination: string;
-    data: any;
-    fee: bigint;
-  }) {
+  async _crossTransfer({ account, inputAmount, destination, data, fee }: DepositParams) {
     const amount = BigInt(inputAmount.quotient.toString());
 
     const coinType = inputAmount.currency.address;
@@ -174,19 +150,7 @@ export class SuiXWalletClient extends XWalletClient {
     return await this._signAndExecuteTransactionBlock(txb);
   }
 
-  private async _sendCall({
-    account, // not used, just for compatibility
-    sourceChainId,
-    destination,
-    data,
-    fee, // not used, just for compatibility
-  }: {
-    account: string;
-    sourceChainId: XChainId;
-    destination: string;
-    data: any;
-    fee: bigint;
-  }) {
+  async _sendCall({ account, sourceChainId, destination, data, fee }: SendCallParams) {
     const envelope = toBytes(
       toHex(
         RLP.encode([
@@ -214,16 +178,11 @@ export class SuiXWalletClient extends XWalletClient {
   }
 
   async executeSwapOrBridge(xTransactionInput: XTransactionInput) {
-    if (!signTransaction) {
-      throw new Error('signTransaction is required');
-    }
-
     const { type, executionTrade, account, direction, inputAmount, recipient, slippageTolerance, xCallFee } =
       xTransactionInput;
 
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
     const receiver = `${direction.to}/${recipient}`;
-    const amount = BigInt(inputAmount.quotient.toString());
 
     let data;
     if (type === XTransactionType.SWAP) {
@@ -362,41 +321,5 @@ export class SuiXWalletClient extends XWalletClient {
     });
 
     return await this._signAndExecuteTransactionBlock(txb);
-  }
-
-  async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    const { account, inputAmount, xCallFee } = xTransactionInput;
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
-    const data = toBytes(tokenData('_deposit', {}));
-
-    if (isSpokeToken(inputAmount.currency)) {
-      return await this._crossTransfer({ inputAmount, account, destination, data, fee: 0n });
-    } else {
-      return await this._deposit({ inputAmount, account, destination, data, fee: 0n });
-    }
-  }
-  async withdrawXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    const { account, inputAmount, xCallFee, direction } = xTransactionInput;
-
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
-    const amount = BigInt(inputAmount.quotient.toString());
-    const xTokenOnIcon = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][inputAmount.currency.symbol];
-    const data = getWithdrawData(xTokenOnIcon.address, amount);
-    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: 0n });
-  }
-  async addLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async removeLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async stake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async unstake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
   }
 }

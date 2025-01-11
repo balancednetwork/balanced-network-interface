@@ -3,7 +3,7 @@ import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { archway } from '@/constants/xChains';
-import { XWalletClient } from '@/core/XWalletClient';
+import { DepositParams, SendCallParams, XWalletClient } from '@/core/XWalletClient';
 import { XToken } from '@/types';
 import { XSigningArchwayClient } from '@/xchains/archway/XSigningArchwayClient';
 import { getFeeParam, isDenomAsset, isSpokeToken } from '@/xchains/archway/utils';
@@ -43,19 +43,7 @@ export class ArchwayXWalletClient extends XWalletClient {
     }
   }
 
-  private async _deposit({
-    account,
-    inputAmount,
-    destination,
-    data,
-    fee,
-  }: {
-    account: string;
-    inputAmount: CurrencyAmount<XToken>;
-    destination: string;
-    data: any;
-    fee: bigint;
-  }) {
+  async _deposit({ account, inputAmount, destination, data, fee }: DepositParams) {
     const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
 
     if (isDenom) {
@@ -101,19 +89,7 @@ export class ArchwayXWalletClient extends XWalletClient {
     }
   }
 
-  private async _crossTransfer({
-    account,
-    inputAmount,
-    destination,
-    data,
-    fee,
-  }: {
-    account: string;
-    inputAmount: CurrencyAmount<XToken>;
-    destination: string;
-    data: any;
-    fee: bigint;
-  }) {
+  async _crossTransfer({ account, inputAmount, destination, data, fee }: DepositParams) {
     const msg = {
       cross_transfer: {
         amount: inputAmount.quotient.toString(),
@@ -133,19 +109,7 @@ export class ArchwayXWalletClient extends XWalletClient {
     return hash;
   }
 
-  private async _sendCall({
-    account,
-    sourceChainId,
-    destination,
-    data,
-    fee,
-  }: {
-    account: string;
-    sourceChainId: XChainId;
-    destination: string;
-    data: any;
-    fee: bigint;
-  }) {
+  async _sendCall({ account, sourceChainId, destination, data, fee }: SendCallParams): Promise<string | undefined> {
     throw new Error('Method not implemented.');
   }
 
@@ -228,27 +192,5 @@ export class ArchwayXWalletClient extends XWalletClient {
       data,
       fee: xCallFee.rollback,
     });
-  }
-
-  async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async withdrawXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async addLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async removeLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async stake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async unstake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
   }
 }

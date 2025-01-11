@@ -1,7 +1,7 @@
 import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from './bnJs';
 
-import { XWalletClient } from '@/core/XWalletClient';
+import { DepositParams, SendCallParams, XWalletClient } from '@/core/XWalletClient';
 import { showMessageOnBeforeUnload, toDec } from '@/utils';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData } from '../../xcall/utils';
@@ -19,6 +19,16 @@ export class IconXWalletClient extends XWalletClient {
 
   async approve(amountToApprove, spender, owner) {
     return Promise.resolve(undefined);
+  }
+
+  async _deposit({ account, inputAmount, destination, data, fee }: DepositParams): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async _crossTransfer({ account, inputAmount, destination, data, fee }: DepositParams): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async _sendCall({ account, sourceChainId, destination, data, fee }: SendCallParams): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
   }
 
   async _executeBridge(xTransactionInput: XTransactionInput) {

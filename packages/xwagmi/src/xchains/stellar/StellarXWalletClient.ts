@@ -1,10 +1,10 @@
-import { CurrencyAmount, Percent, XChainId } from '@balancednetwork/sdk-core';
+import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { FROM_SOURCES, TO_SOURCES, stellar } from '@/constants/xChains';
 import { XWalletClient } from '@/core';
-import { XToken } from '@/types';
+import { DepositParams, SendCallParams } from '@/core/XWalletClient';
 import { uintToBytes } from '@/utils';
 import { XTransactionInput, XTransactionType } from '@/xcall/types';
 import { getRlpEncodedSwapData, toICONDecimals } from '@/xcall/utils';
@@ -30,19 +30,7 @@ export class StellarXWalletClient extends XWalletClient {
     return Promise.resolve(undefined);
   }
 
-  private async _deposit({
-    account,
-    inputAmount,
-    destination,
-    data,
-    fee,
-  }: {
-    account: string;
-    inputAmount: CurrencyAmount<XToken>;
-    destination: string;
-    data: any;
-    fee: bigint;
-  }) {
+  async _deposit({ account, inputAmount, destination, data, fee }: DepositParams) {
     const stellarAccount = await this.getXService().server.loadAccount(account);
     const server = this.getXService().sorobanServer;
     const kit = this.getXService().walletsKit;
@@ -63,19 +51,7 @@ export class StellarXWalletClient extends XWalletClient {
     return hash;
   }
 
-  private async _crossTransfer({
-    account,
-    inputAmount,
-    destination,
-    data,
-    fee,
-  }: {
-    account: string;
-    inputAmount: CurrencyAmount<XToken>;
-    destination: string;
-    data: any;
-    fee: bigint;
-  }) {
+  async _crossTransfer({ account, inputAmount, destination, data, fee }: DepositParams) {
     const stellarAccount = await this.getXService().server.loadAccount(account);
     const server = this.getXService().sorobanServer;
     const kit = this.getXService().walletsKit;
@@ -95,19 +71,7 @@ export class StellarXWalletClient extends XWalletClient {
     return hash;
   }
 
-  private async _sendCall({
-    account,
-    sourceChainId,
-    destination,
-    data,
-    fee,
-  }: {
-    account: string;
-    sourceChainId: XChainId;
-    destination: string;
-    data: any;
-    fee: bigint;
-  }) {
+  async _sendCall({ account, sourceChainId, destination, data, fee }: SendCallParams) {
     const stellarAccount = await this.getXService().server.loadAccount(account);
     const server = this.getXService().sorobanServer;
     const kit = this.getXService().walletsKit;
@@ -144,7 +108,7 @@ export class StellarXWalletClient extends XWalletClient {
     }
   }
 
-  private async handleBridgeTransaction(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+  async handleBridgeTransaction(xTransactionInput: XTransactionInput): Promise<string | undefined> {
     const { account, inputAmount, recipient, direction } = xTransactionInput;
     const receiver = `${direction.to}/${recipient}`;
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
@@ -159,7 +123,7 @@ export class StellarXWalletClient extends XWalletClient {
     }
   }
 
-  private async handleSwapTransaction(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+  async handleSwapTransaction(xTransactionInput: XTransactionInput): Promise<string | undefined> {
     const { inputAmount, executionTrade, account, recipient, direction, slippageTolerance } = xTransactionInput;
     const receiver = `${direction.to}/${recipient}`;
 
@@ -230,27 +194,5 @@ export class StellarXWalletClient extends XWalletClient {
     const encoder = new TextEncoder();
     const data = encoder.encode(JSON.stringify(dataObj));
     return await this._crossTransfer({ account, inputAmount: inputAmount.multiply(-1), destination, data, fee: 0n });
-  }
-
-  async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async withdrawXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async addLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async removeLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async stake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async unstake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
   }
 }

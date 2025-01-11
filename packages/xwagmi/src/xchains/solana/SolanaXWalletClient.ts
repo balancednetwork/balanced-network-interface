@@ -1,6 +1,6 @@
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { FROM_SOURCES, TO_SOURCES, solana } from '@/constants/xChains';
-import { XWalletClient } from '@/core/XWalletClient';
+import { DepositParams, SendCallParams, XWalletClient } from '@/core/XWalletClient';
 import { XToken } from '@/types';
 import { uintToBytes } from '@/utils';
 import { CurrencyAmount, Percent, XChainId } from '@balancednetwork/sdk-core';
@@ -47,19 +47,7 @@ export class SolanaXWalletClient extends XWalletClient {
     return Promise.resolve(undefined);
   }
 
-  private async _deposit({
-    account,
-    inputAmount,
-    destination,
-    data,
-    fee, // not used, just for compatibility
-  }: {
-    account: string;
-    inputAmount: CurrencyAmount<XToken>;
-    destination: string;
-    data: any;
-    fee: bigint;
-  }) {
+  async _deposit({ account, inputAmount, destination, data, fee }: DepositParams) {
     const wallet = this.getXService().wallet;
     const connection = this.getXService().connection;
     const provider = this.getXService().provider;
@@ -184,19 +172,7 @@ export class SolanaXWalletClient extends XWalletClient {
     return txSignature;
   }
 
-  private async _crossTransfer({
-    account,
-    inputAmount,
-    destination,
-    data,
-    fee, // not used, just for compatibility
-  }: {
-    account: string;
-    inputAmount: CurrencyAmount<XToken>;
-    destination: string;
-    data: any;
-    fee: bigint;
-  }) {
+  async _crossTransfer({ account, inputAmount, destination, data, fee }: DepositParams) {
     const wallet = this.getXService().wallet;
     const connection = this.getXService().connection;
     const provider = this.getXService().provider;
@@ -247,19 +223,7 @@ export class SolanaXWalletClient extends XWalletClient {
     return txSignature;
   }
 
-  private async _sendCall({
-    account,
-    sourceChainId,
-    destination,
-    data,
-    fee, // not used, just for compatibility
-  }: {
-    account: string;
-    sourceChainId: XChainId;
-    destination: string;
-    data: any;
-    fee: bigint;
-  }) {
+  async _sendCall({ account, sourceChainId, destination, data, fee }: SendCallParams) {
     const wallet = this.getXService().wallet;
     const connection = this.getXService().connection;
     const provider = this.getXService().provider;
@@ -399,27 +363,5 @@ export class SolanaXWalletClient extends XWalletClient {
       JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
     );
     return await this._crossTransfer({ account, inputAmount: inputAmount.multiply(-1), destination, data, fee: 0n });
-  }
-
-  async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async withdrawXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async addLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async removeLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async stake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async unstake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
   }
 }

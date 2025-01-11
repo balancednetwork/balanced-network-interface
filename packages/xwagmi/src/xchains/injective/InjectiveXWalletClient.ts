@@ -6,6 +6,7 @@ import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xca
 
 import { FROM_SOURCES, TO_SOURCES, injective } from '@/constants/xChains';
 import { XWalletClient } from '@/core';
+import { DepositParams, SendCallParams } from '@/core/XWalletClient';
 import { XToken } from '@/types';
 import { uintToBytes } from '@/utils';
 import { XTransactionInput, XTransactionType } from '@/xcall/types';
@@ -23,19 +24,7 @@ export class InjectiveXWalletClient extends XWalletClient {
     return Promise.resolve(undefined);
   }
 
-  private async _deposit({
-    account,
-    inputAmount,
-    destination,
-    data,
-    fee,
-  }: {
-    account: string;
-    inputAmount: CurrencyAmount<XToken>;
-    destination: string;
-    data: any;
-    fee: bigint;
-  }) {
+  async _deposit({ account, inputAmount, destination, data, fee }: DepositParams) {
     let msg;
     const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
     if (isDenom) {
@@ -85,19 +74,7 @@ export class InjectiveXWalletClient extends XWalletClient {
     return txResult.txHash;
   }
 
-  private async _crossTransfer({
-    account,
-    inputAmount,
-    destination,
-    data,
-    fee,
-  }: {
-    account: string;
-    inputAmount: CurrencyAmount<XToken>;
-    destination: string;
-    data: any;
-    fee: bigint;
-  }) {
+  async _crossTransfer({ account, inputAmount, destination, data, fee }: DepositParams) {
     const amount = inputAmount.quotient.toString();
     const msg = MsgExecuteContractCompat.fromJSON({
       contractAddress: injective.contracts.bnUSD!,
@@ -126,19 +103,7 @@ export class InjectiveXWalletClient extends XWalletClient {
     return txResult.txHash;
   }
 
-  private async _sendCall({
-    account,
-    sourceChainId,
-    destination,
-    data,
-    fee,
-  }: {
-    account: string;
-    sourceChainId: XChainId;
-    destination: string;
-    data: any;
-    fee: bigint;
-  }) {
+  async _sendCall({ account, sourceChainId, destination, data, fee }: SendCallParams) {
     const envelope = {
       message: {
         call_message: {
@@ -277,27 +242,5 @@ export class InjectiveXWalletClient extends XWalletClient {
       data,
       fee: xCallFee.rollback,
     });
-  }
-
-  async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async withdrawXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async addLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async removeLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async stake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async unstake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
-  }
-  async claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
   }
 }

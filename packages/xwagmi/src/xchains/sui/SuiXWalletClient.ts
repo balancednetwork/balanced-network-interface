@@ -1,18 +1,16 @@
-import { CurrencyAmount, Percent, XChainId } from '@balancednetwork/sdk-core';
+import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
-import { ICON_XCALL_NETWORK_ID, xTokenMap, xTokenMapBySymbol } from '@/constants';
+import { ICON_XCALL_NETWORK_ID, xTokenMap } from '@/constants';
 
 import { FROM_SOURCES, TO_SOURCES, sui } from '@/constants/xChains';
 import { DepositParams, SendCallParams, XWalletClient } from '@/core/XWalletClient';
-import { XToken } from '@/types';
 import { uintToBytes } from '@/utils';
 import { RLP } from '@ethereumjs/rlp';
 import { bcs } from '@mysten/sui/bcs';
 import { Transaction } from '@mysten/sui/transactions';
 import { signTransaction } from '@mysten/wallet-standard';
 import { toBytes, toHex } from 'viem';
-import { getWithdrawData, tokenData } from '../../core/utils';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
 import { isSpokeToken } from '../archway';

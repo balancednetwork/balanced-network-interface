@@ -1,9 +1,8 @@
-import { CurrencyAmount, Percent, XChainId } from '@balancednetwork/sdk-core';
+import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { DepositParams, SendCallParams, XWalletClient } from '@/core/XWalletClient';
-import { XToken } from '@/types';
 import { showMessageOnBeforeUnload, toDec } from '@/utils';
 import { toHex } from 'viem';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';

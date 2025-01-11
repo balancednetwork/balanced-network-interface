@@ -1,9 +1,8 @@
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { FROM_SOURCES, TO_SOURCES, solana } from '@/constants/xChains';
 import { DepositParams, SendCallParams, XWalletClient } from '@/core/XWalletClient';
-import { XToken } from '@/types';
 import { uintToBytes } from '@/utils';
-import { CurrencyAmount, Percent, XChainId } from '@balancednetwork/sdk-core';
+import { Percent } from '@balancednetwork/sdk-core';
 import { Program } from '@coral-xyz/anchor';
 import * as anchor from '@coral-xyz/anchor';
 import { SYSTEM_PROGRAM_ID } from '@coral-xyz/anchor/dist/cjs/native/system';

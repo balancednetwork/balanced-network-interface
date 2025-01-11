@@ -205,21 +205,9 @@ export class EvmXWalletClient extends XWalletClient {
     }
 
     if (isSpokeToken(inputAmount.currency)) {
-      return await this._crossTransfer({
-        account,
-        inputAmount,
-        destination,
-        data,
-        fee: xCallFee.rollback,
-      });
+      return await this._crossTransfer({ account, inputAmount, destination, data, fee: xCallFee.rollback });
     } else {
-      return await this._deposit({
-        account,
-        inputAmount,
-        destination,
-        data,
-        fee: xCallFee.rollback,
-      });
+      return await this._deposit({ account, inputAmount, destination, data, fee: xCallFee.rollback });
     }
   }
 
@@ -233,13 +221,7 @@ export class EvmXWalletClient extends XWalletClient {
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = toHex(JSON.stringify({}));
 
-    return await this._deposit({
-      inputAmount,
-      account,
-      destination,
-      data,
-      fee: xCallFee.rollback,
-    });
+    return await this._deposit({ inputAmount, account, destination, data, fee: xCallFee.rollback });
   }
 
   async executeWithdrawCollateral(xTransactionInput: XTransactionInput) {
@@ -253,13 +235,7 @@ export class EvmXWalletClient extends XWalletClient {
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = toHex(RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]));
 
-    return await this._sendCall({
-      account,
-      sourceChainId: direction.from,
-      destination,
-      data,
-      fee: xCallFee.rollback,
-    });
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
   }
 
   async executeBorrow(xTransactionInput: XTransactionInput) {
@@ -279,13 +255,7 @@ export class EvmXWalletClient extends XWalletClient {
       ),
     );
 
-    return await this._sendCall({
-      account,
-      sourceChainId: direction.from,
-      destination,
-      data,
-      fee: xCallFee.rollback,
-    });
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
   }
 
   async executeRepay(xTransactionInput: XTransactionInput) {
@@ -299,14 +269,8 @@ export class EvmXWalletClient extends XWalletClient {
     const data = toHex(
       JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
     );
-
-    return await this._crossTransfer({
-      account,
-      inputAmount: inputAmount.multiply(-1),
-      destination,
-      data,
-      fee: xCallFee.rollback,
-    });
+    const _inputAmount = inputAmount.multiply(-1);
+    return await this._crossTransfer({ account, inputAmount: _inputAmount, destination, data, fee: xCallFee.rollback });
   }
 
   // liquidity related
@@ -318,45 +282,27 @@ export class EvmXWalletClient extends XWalletClient {
 
     let hash;
     if (isSpokeToken(inputAmount.currency)) {
-      hash = await this._crossTransfer({
-        account,
-        inputAmount,
-        destination,
-        data,
-        fee: xCallFee.rollback,
-      });
+      hash = await this._crossTransfer({ account, inputAmount, destination, data, fee: xCallFee.rollback });
     } else {
-      hash = await this._deposit({
-        account,
-        inputAmount,
-        destination,
-        data,
-        fee: xCallFee.rollback,
-      });
+      hash = await this._deposit({ account, inputAmount, destination, data, fee: xCallFee.rollback });
     }
 
     return hash;
   }
 
   async withdrawXToken(xTransactionInput: XTransactionInput) {
-    const { account, inputAmount, xCallFee } = xTransactionInput;
+    const { account, inputAmount, xCallFee, direction } = xTransactionInput;
 
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
     const amount = BigInt(inputAmount.quotient.toString());
     const xTokenOnIcon = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][inputAmount.currency.symbol];
     const data = toHex(getWithdrawData(xTokenOnIcon.address, amount));
 
-    return await this._sendCall({
-      account,
-      sourceChainId: inputAmount.currency.xChainId,
-      destination,
-      data,
-      fee: xCallFee.rollback,
-    });
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
   }
 
   async addLiquidity(xTransactionInput: XTransactionInput) {
-    const { account, inputAmount, outputAmount, xCallFee } = xTransactionInput;
+    const { account, inputAmount, outputAmount, xCallFee, direction } = xTransactionInput;
 
     if (!outputAmount) {
       throw new Error('outputAmount is required');
@@ -369,17 +315,11 @@ export class EvmXWalletClient extends XWalletClient {
     const xTokenBOnIcon = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][outputAmount.currency.symbol];
     const data = toHex(getAddLPData(xTokenAOnIcon.address, xTokenBOnIcon.address, amountA, amountB, true, 1_000n));
 
-    return await this._sendCall({
-      account,
-      sourceChainId: inputAmount.currency.xChainId,
-      destination,
-      data,
-      fee: xCallFee.rollback,
-    });
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
   }
 
   async removeLiquidity(xTransactionInput: XTransactionInput) {
-    const { account, inputAmount, poolId, xCallFee } = xTransactionInput;
+    const { account, inputAmount, poolId, xCallFee, direction } = xTransactionInput;
 
     if (!poolId) {
       throw new Error('poolId is required');
@@ -389,17 +329,11 @@ export class EvmXWalletClient extends XWalletClient {
     const amount = BigInt(inputAmount.quotient.toString());
     const data = toHex(getXRemoveData(poolId, amount, true));
 
-    return await this._sendCall({
-      account,
-      sourceChainId: inputAmount.currency.xChainId,
-      destination,
-      data,
-      fee: xCallFee.rollback,
-    });
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
   }
 
   async stake(xTransactionInput: XTransactionInput) {
-    const { account, inputAmount, poolId, xCallFee } = xTransactionInput;
+    const { account, inputAmount, poolId, xCallFee, direction } = xTransactionInput;
 
     if (!poolId) {
       throw new Error('poolId is required');
@@ -407,16 +341,9 @@ export class EvmXWalletClient extends XWalletClient {
 
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
     const amount = BigInt(inputAmount.quotient.toString());
-
     const data = toHex(getStakeData(`${ICON_XCALL_NETWORK_ID}/${bnJs.StakedLP.address}`, poolId, amount));
 
-    return await this._sendCall({
-      account,
-      sourceChainId: inputAmount.currency.xChainId,
-      destination,
-      data,
-      fee: xCallFee.rollback,
-    });
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
   }
 
   async unstake(xTransactionInput: XTransactionInput) {
@@ -430,13 +357,7 @@ export class EvmXWalletClient extends XWalletClient {
     const amount = BigInt(inputAmount.quotient.toString());
     const data = toHex(getUnStakeData(poolId, amount));
 
-    return await this._sendCall({
-      account,
-      sourceChainId: inputAmount.currency.xChainId,
-      destination,
-      data,
-      fee: xCallFee.rollback,
-    });
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
   }
 
   async claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {

@@ -178,6 +178,7 @@ export class InjectiveXWalletClient extends XWalletClient {
     const { type, direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } =
       xTransactionInput;
 
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
     const receiver = `${direction.to}/${recipient}`;
 
     let data;
@@ -204,21 +205,9 @@ export class InjectiveXWalletClient extends XWalletClient {
     }
 
     if (isSpokeToken(inputAmount.currency)) {
-      return await this._crossTransfer({
-        account,
-        inputAmount,
-        destination: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
-        data,
-        fee: xCallFee.rollback,
-      });
+      return await this._crossTransfer({ account, inputAmount, destination, data, fee: xCallFee.rollback });
     } else {
-      return await this._deposit({
-        account,
-        inputAmount,
-        destination: `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`,
-        data,
-        fee: xCallFee.rollback,
-      });
+      return await this._deposit({ account, inputAmount, destination, data, fee: xCallFee.rollback });
     }
   }
 
@@ -229,15 +218,10 @@ export class InjectiveXWalletClient extends XWalletClient {
       return;
     }
 
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = getBytesFromString(JSON.stringify({}));
 
-    return await this._deposit({
-      account,
-      inputAmount,
-      destination: `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`,
-      data,
-      fee: xCallFee.rollback,
-    });
+    return await this._deposit({ account, inputAmount, destination, data, fee: xCallFee.rollback });
   }
 
   async executeWithdrawCollateral(xTransactionInput: XTransactionInput) {
@@ -247,16 +231,11 @@ export class InjectiveXWalletClient extends XWalletClient {
       return;
     }
 
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const amount = toICONDecimals(inputAmount.multiply(-1));
     const data = Array.from(RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]));
 
-    return await this._sendCall({
-      account,
-      sourceChainId: this.xChainId,
-      destination: `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`,
-      data,
-      fee: xCallFee.rollback,
-    });
+    return await this._sendCall({ account, sourceChainId: this.xChainId, destination, data, fee: xCallFee.rollback });
   }
 
   async executeBorrow(xTransactionInput: XTransactionInput) {
@@ -265,6 +244,8 @@ export class InjectiveXWalletClient extends XWalletClient {
     if (!inputAmount || !usedCollateral) {
       return;
     }
+
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const amount = BigInt(inputAmount.quotient.toString());
     const data = Array.from(
       RLP.encode(
@@ -274,13 +255,7 @@ export class InjectiveXWalletClient extends XWalletClient {
       ),
     );
 
-    return await this._sendCall({
-      account,
-      sourceChainId: this.xChainId,
-      destination: `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`,
-      data,
-      fee: xCallFee.rollback,
-    });
+    return await this._sendCall({ account, sourceChainId: this.xChainId, destination, data, fee: xCallFee.rollback });
   }
 
   async executeRepay(xTransactionInput: XTransactionInput) {

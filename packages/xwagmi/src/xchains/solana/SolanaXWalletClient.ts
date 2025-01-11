@@ -338,21 +338,9 @@ export class SolanaXWalletClient extends XWalletClient {
     }
 
     if (isSpokeToken(inputAmount.currency)) {
-      return await this._crossTransfer({
-        account,
-        inputAmount,
-        destination,
-        data,
-        fee: 0n,
-      });
+      return await this._crossTransfer({ account, inputAmount, destination, data, fee: 0n });
     } else {
-      return await this._deposit({
-        account,
-        inputAmount,
-        destination,
-        data,
-        fee: 0n,
-      });
+      return await this._deposit({ account, inputAmount, destination, data, fee: 0n });
     }
   }
 
@@ -362,13 +350,7 @@ export class SolanaXWalletClient extends XWalletClient {
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data: any = toBytes(JSON.stringify({}));
 
-    return await this._deposit({
-      account,
-      inputAmount,
-      destination,
-      data,
-      fee: 0n,
-    });
+    return await this._deposit({ account, inputAmount, destination, data, fee: 0n });
   }
 
   async executeWithdrawCollateral(xTransactionInput: XTransactionInput) {
@@ -383,13 +365,7 @@ export class SolanaXWalletClient extends XWalletClient {
 
     const data = rlp.encode(['xWithdraw', uintToBytes(amount), usedCollateral]);
 
-    return await this._sendCall({
-      account,
-      sourceChainId: direction.from,
-      destination,
-      data,
-      fee: 0n,
-    });
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: 0n });
   }
 
   async executeBorrow(xTransactionInput: XTransactionInput) {
@@ -408,13 +384,7 @@ export class SolanaXWalletClient extends XWalletClient {
         : ['xBorrow', usedCollateral, uintToBytes(amount)],
     );
 
-    return await this._sendCall({
-      account,
-      sourceChainId: direction.from,
-      destination,
-      data,
-      fee: 0n,
-    });
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: 0n });
   }
 
   async executeRepay(xTransactionInput: XTransactionInput) {
@@ -428,13 +398,7 @@ export class SolanaXWalletClient extends XWalletClient {
     const data: any = toBytes(
       JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
     );
-    return await this._crossTransfer({
-      account,
-      inputAmount: inputAmount.multiply(-1),
-      destination,
-      data,
-      fee: 0n,
-    });
+    return await this._crossTransfer({ account, inputAmount: inputAmount.multiply(-1), destination, data, fee: 0n });
   }
 
   async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {

@@ -280,13 +280,7 @@ export class SuiXWalletClient extends XWalletClient {
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
     const data = toHex(RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]));
 
-    return await this._sendCall({
-      account,
-      sourceChainId: direction.from,
-      destination,
-      data,
-      fee: 0n,
-    });
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: 0n });
   }
 
   async executeBorrow(xTransactionInput: XTransactionInput) {
@@ -306,13 +300,7 @@ export class SuiXWalletClient extends XWalletClient {
       ),
     );
 
-    return await this._sendCall({
-      account,
-      sourceChainId: direction.from,
-      destination,
-      data,
-      fee: 0n,
-    });
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: 0n });
   }
 
   async executeRepay(xTransactionInput: XTransactionInput) {
@@ -394,13 +382,7 @@ export class SuiXWalletClient extends XWalletClient {
     const amount = BigInt(inputAmount.quotient.toString());
     const xTokenOnIcon = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][inputAmount.currency.symbol];
     const data = getWithdrawData(xTokenOnIcon.address, amount);
-    return await this._sendCall({
-      account,
-      sourceChainId: direction.from,
-      destination,
-      data,
-      fee: 0n,
-    });
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: 0n });
   }
   async addLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
     throw new Error('Method not implemented.');

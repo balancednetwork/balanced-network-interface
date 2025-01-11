@@ -53,6 +53,29 @@ export default function SwapDescription() {
   const isChartLoading = priceChartQuery?.isLoading;
   const data = priceChartQuery.data;
 
+  const ratio = useRatio();
+
+  const qratioFrac = toFraction(ratio.sICXICXratio);
+
+  let priceInICX: Price<Currency, Currency> | undefined;
+
+  if (price && currencies.INPUT && currencies.OUTPUT) {
+    priceInICX =
+      currencies[Field.OUTPUT]?.wrapped.address === bnJs.sICX.address
+        ? new Price(
+            currencies.INPUT,
+            SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address],
+            price.denominator * qratioFrac.denominator,
+            price.numerator * qratioFrac.numerator,
+          )
+        : new Price(
+            SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address],
+            currencies.OUTPUT,
+            price.denominator * qratioFrac.numerator,
+            price.numerator * qratioFrac.denominator,
+          );
+  }
+
   const [, pair] = useV2Pair(currencies[Field.INPUT], currencies[Field.OUTPUT]);
 
   const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -61,6 +84,12 @@ export default function SwapDescription() {
       period: event.currentTarget.value as CHART_PERIODS,
     });
   };
+
+  const hasSICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('sICX');
+  const hasICX =
+    [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('ICX') ||
+    [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('wICX');
+  const shouldShowICXPrice = hasSICX && !hasICX;
 
   const handleChartTypeChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setChartOption({
@@ -128,6 +157,15 @@ export default function SwapDescription() {
                     ${formatSymbol(currencies[Field.OUTPUT]?.symbol)} per ${formatSymbol(currencies[Field.INPUT]?.symbol)} `}
                 </Trans>
               </Typography>
+              {shouldShowICXPrice && (
+                <Typography variant="p" fontSize="14px" color="rgba(255,255,255,0.75)">
+                  <Trans>
+                    {`${priceInICX?.toFixed(4) || '...'} 
+                      ${currencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.OUTPUT]?.symbol} 
+                      per ${currencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.INPUT]?.symbol} `}
+                  </Trans>
+                </Typography>
+              )}
             </>
           )}
         </Box>

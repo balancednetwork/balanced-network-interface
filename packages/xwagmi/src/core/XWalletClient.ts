@@ -19,7 +19,7 @@ export interface SendCallParams {
   account: string;
   sourceChainId: XChainId;
   destination: string;
-  data: any;
+  data: Buffer;
   fee: bigint;
 }
 export abstract class XWalletClient {
@@ -132,7 +132,7 @@ export abstract class XWalletClient {
 
     const amount = toICONDecimals(inputAmount.multiply(-1));
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const data = RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]);
+    const data = Buffer.from(RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]));
 
     return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
   }
@@ -146,10 +146,12 @@ export abstract class XWalletClient {
 
     const amount = BigInt(inputAmount.quotient.toString());
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const data = RLP.encode(
-      recipient
-        ? ['xBorrow', usedCollateral, uintToBytes(amount), Buffer.from(recipient)]
-        : ['xBorrow', usedCollateral, uintToBytes(amount)],
+    const data = Buffer.from(
+      RLP.encode(
+        recipient
+          ? ['xBorrow', usedCollateral, uintToBytes(amount), Buffer.from(recipient)]
+          : ['xBorrow', usedCollateral, uintToBytes(amount)],
+      ),
     );
 
     return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
@@ -194,7 +196,7 @@ export abstract class XWalletClient {
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
     const amount = BigInt(inputAmount.quotient.toString());
     const xTokenOnIcon = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][inputAmount.currency.symbol];
-    const data = getWithdrawData(xTokenOnIcon.address, amount);
+    const data = Buffer.from(getWithdrawData(xTokenOnIcon.address, amount));
 
     return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
   }
@@ -211,7 +213,9 @@ export abstract class XWalletClient {
     const amountB = BigInt(outputAmount.quotient.toString());
     const xTokenAOnIcon = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][inputAmount.currency.symbol];
     const xTokenBOnIcon = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][outputAmount.currency.symbol];
-    const data = getAddLPData(xTokenAOnIcon.address, xTokenBOnIcon.address, amountA, amountB, true, 1_000n);
+    const data = Buffer.from(
+      getAddLPData(xTokenAOnIcon.address, xTokenBOnIcon.address, amountA, amountB, true, 1_000n),
+    );
 
     return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
   }
@@ -225,7 +229,7 @@ export abstract class XWalletClient {
 
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
     const amount = BigInt(inputAmount.quotient.toString());
-    const data = getXRemoveData(poolId, amount, true);
+    const data = Buffer.from(getXRemoveData(poolId, amount, true));
 
     return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
   }
@@ -239,7 +243,7 @@ export abstract class XWalletClient {
 
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
     const amount = BigInt(inputAmount.quotient.toString());
-    const data = getStakeData(`${ICON_XCALL_NETWORK_ID}/${bnJs.StakedLP.address}`, poolId, amount);
+    const data = Buffer.from(getStakeData(`${ICON_XCALL_NETWORK_ID}/${bnJs.StakedLP.address}`, poolId, amount));
 
     return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
   }
@@ -253,7 +257,7 @@ export abstract class XWalletClient {
 
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.StakedLP.address}`;
     const amount = BigInt(inputAmount.quotient.toString());
-    const data = getUnStakeData(poolId, amount);
+    const data = Buffer.from(getUnStakeData(poolId, amount));
 
     return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
   }

@@ -53,7 +53,6 @@ export function getRlpEncodedSwapData(
   rlpEncodedDataStr = rlpEncodedDataStr.replaceAll('c30181f8', 'c301f800');
 
   const rlpEncodedDataBuffer = Buffer.from(rlpEncodedDataStr, 'hex');
-
   return rlpEncodedDataBuffer;
 }
 

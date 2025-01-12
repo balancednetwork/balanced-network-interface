@@ -2,7 +2,6 @@ import { FROM_SOURCES, TO_SOURCES, injective } from '@/constants/xChains';
 import { XWalletClient } from '@/core';
 import { DepositParams, SendCallParams } from '@/core/XWalletClient';
 import { XToken } from '@/types';
-import { getBytesFromString } from '@/xcall/utils';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { isDenomAsset } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
@@ -27,7 +26,7 @@ export class InjectiveXWalletClient extends XWalletClient {
           deposit_denom: {
             denom: inputAmount.currency.address,
             to: destination,
-            data: getBytesFromString(data),
+            data: Array.from(data),
           },
         },
         funds: [
@@ -46,7 +45,7 @@ export class InjectiveXWalletClient extends XWalletClient {
           deposit_denom: {
             denom: 'inj',
             to: destination,
-            data: getBytesFromString(data),
+            data: Array.from(data),
           },
         },
         funds: [
@@ -75,7 +74,7 @@ export class InjectiveXWalletClient extends XWalletClient {
         cross_transfer: {
           amount,
           to: destination,
-          data: getBytesFromString(data),
+          data: Array.from(data),
         },
       },
       funds: [
@@ -99,7 +98,7 @@ export class InjectiveXWalletClient extends XWalletClient {
     const envelope = {
       message: {
         call_message: {
-          data: getBytesFromString(data),
+          data: Array.from(data),
         },
       },
       sources: FROM_SOURCES[sourceChainId],

@@ -30,14 +30,12 @@ export class StellarXWalletClient extends XWalletClient {
       networkPassphrase: Networks.PUBLIC,
     });
 
-    const encoder = new TextEncoder();
-
     const params = [
       accountToScVal(account),
       nativeToScVal(XLM_CONTRACT_ADDRESS, { type: 'address' }),
       nativeToScVal(inputAmount.quotient, { type: 'u128' }),
       nativeToScVal(destination),
-      nativeToScVal(encoder.encode(data), { type: 'bytes' }),
+      nativeToScVal(data, { type: 'bytes' }),
     ];
 
     const hash = await sendTX(stellar.contracts.assetManager, 'deposit', params, txBuilder, server, kit);
@@ -53,13 +51,11 @@ export class StellarXWalletClient extends XWalletClient {
       networkPassphrase: Networks.PUBLIC,
     });
 
-    const encoder = new TextEncoder();
-
     const params = [
       accountToScVal(account),
       nativeToScVal(inputAmount.quotient, { type: 'u128' }),
       nativeToScVal(destination),
-      nativeToScVal(encoder.encode(data), { type: 'bytes' }),
+      nativeToScVal(data, { type: 'bytes' }),
     ];
 
     const hash = await sendTX(inputAmount.currency.wrapped.address, 'cross_transfer', params, txBuilder, server, kit);

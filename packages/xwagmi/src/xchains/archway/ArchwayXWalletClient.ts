@@ -5,7 +5,6 @@ import { XSigningArchwayClient } from '@/xchains/archway/XSigningArchwayClient';
 import { getFeeParam, isDenomAsset } from '@/xchains/archway/utils';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
 import { XTransactionInput } from '../../xcall/types';
-import { getBytesFromString } from '../../xcall/utils';
 import { ArchwayXService } from './ArchwayXService';
 import { ARCHWAY_FEE_TOKEN_SYMBOL } from './constants';
 
@@ -47,7 +46,7 @@ export class ArchwayXWalletClient extends XWalletClient {
         deposit_denom: {
           denom: inputAmount.currency.address,
           to: destination,
-          data: getBytesFromString(data),
+          data: Array.from(data),
         },
       };
 
@@ -69,7 +68,7 @@ export class ArchwayXWalletClient extends XWalletClient {
           token_address: inputAmount.currency.address,
           amount: inputAmount.quotient.toString(),
           to: destination,
-          data: getBytesFromString(data),
+          data: Array.from(data),
         },
       };
 
@@ -90,7 +89,7 @@ export class ArchwayXWalletClient extends XWalletClient {
       cross_transfer: {
         amount: inputAmount.quotient.toString(),
         to: destination,
-        data: getBytesFromString(data),
+        data: Array.from(data),
       },
     };
 

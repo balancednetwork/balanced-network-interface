@@ -91,7 +91,7 @@ export class SuiXWalletClient extends XWalletClient {
         feeCoin,
         depositCoin,
         txb.pure(bcs.vector(bcs.string()).serialize([destination])),
-        txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([toBytes(data)])),
+        txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([data])),
       ],
       typeArguments: [coinType],
     });
@@ -134,7 +134,7 @@ export class SuiXWalletClient extends XWalletClient {
         feeCoin,
         depositCoin,
         txb.pure(bcs.string().serialize(destination)),
-        txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([toBytes(data)])),
+        txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([data])),
       ],
       // typeArguments: [],
     });

@@ -42,15 +42,13 @@ export class SolanaXWalletClient extends XWalletClient {
     const connection = this.getXService().connection;
     const provider = this.getXService().provider;
 
-    const isNative = inputAmount.currency.isNativeToken;
-
     let txSignature;
 
     const assetManagerId = new PublicKey(solana.contracts.assetManager);
     const xCallId = new PublicKey(solana.contracts.xCall);
     const xCallManagerId = new PublicKey(solana.contracts.xCallManager!);
 
-    if (isNative) {
+    if (inputAmount.currency.isNativeToken) {
       const amount = inputAmount.quotient.toString();
 
       // @ts-ignore
@@ -70,7 +68,7 @@ export class SolanaXWalletClient extends XWalletClient {
 
       // @ts-ignore
       const instruction = await assetManagerProgram.methods
-        .depositNative(new anchor.BN(amount), destination, Buffer.from(data, 'hex'))
+        .depositNative(new anchor.BN(amount), destination, data)
         .accounts({
           // @ts-ignore
           from: null,
@@ -134,7 +132,7 @@ export class SolanaXWalletClient extends XWalletClient {
 
       // @ts-ignore
       const instruction = await assetManagerProgram.methods
-        .depositToken(new anchor.BN(amount), destination, Buffer.from(data, 'hex'))
+        .depositToken(new anchor.BN(amount), destination, data)
         .accounts({
           from: depositorTokenAccount,
           fromAuthority: new PublicKey(account),
@@ -191,7 +189,7 @@ export class SolanaXWalletClient extends XWalletClient {
     const tx = new Transaction().add(computeBudgetIx);
 
     const crossTransferTx = await bnUSDProgram.methods
-      .crossTransfer(destination, new anchor.BN(amount), Buffer.from(data, 'hex'))
+      .crossTransfer(destination, new anchor.BN(amount), data)
       .accounts({
         from: associatedTokenAcc,
         mint: mintToken,

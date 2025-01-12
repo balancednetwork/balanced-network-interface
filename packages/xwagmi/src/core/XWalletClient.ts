@@ -12,7 +12,7 @@ export interface DepositParams {
   account: string;
   inputAmount: CurrencyAmount<XToken>;
   destination: string;
-  data: any;
+  data: Buffer;
   fee: bigint;
 }
 export interface SendCallParams {
@@ -82,7 +82,7 @@ export abstract class XWalletClient {
     const receiver = `${direction.to}/${recipient}`;
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
 
-    let data;
+    let data: Buffer;
     if (type === XTransactionType.SWAP) {
       if (!executionTrade || !slippageTolerance) {
         throw new Error('executionTrade and slippageTolerance are required');
@@ -90,13 +90,15 @@ export abstract class XWalletClient {
       const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
       data = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived);
     } else if (type === XTransactionType.BRIDGE) {
-      data = JSON.stringify({
-        method: '_swap',
-        params: {
-          path: [],
-          receiver: receiver,
-        },
-      });
+      data = Buffer.from(
+        JSON.stringify({
+          method: '_swap',
+          params: {
+            path: [],
+            receiver: receiver,
+          },
+        }),
+      );
     } else {
       throw new Error('Invalid XTransactionType');
     }
@@ -116,7 +118,7 @@ export abstract class XWalletClient {
     }
 
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const data = JSON.stringify({});
+    const data = Buffer.from(JSON.stringify({}));
 
     return await this._deposit({ inputAmount, account, destination, data, fee: xCallFee.rollback });
   }
@@ -161,8 +163,8 @@ export abstract class XWalletClient {
     }
 
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const data = JSON.stringify(
-      recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral },
+    const data = Buffer.from(
+      JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
     );
 
     const _inputAmount = inputAmount.multiply(-1);
@@ -174,7 +176,7 @@ export abstract class XWalletClient {
     const { account, inputAmount, xCallFee } = xTransactionInput;
 
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
-    const data = tokenData('_deposit', {});
+    const data = Buffer.from(tokenData('_deposit', {}));
 
     let hash;
     if (isSpokeToken(inputAmount.currency)) {

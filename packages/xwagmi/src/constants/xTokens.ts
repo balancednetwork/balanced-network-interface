@@ -18,11 +18,11 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   weETH: '0xa4b1.arbitrum',
   wstETH: '0xa4b1.arbitrum',
   XLM: 'stellar',
-  AFSUI: 'sui',
-  HASUI: 'sui',
-  VSUI: 'sui',
+  afSUI: 'sui',
+  haSUI: 'sui',
+  vSUI: 'sui',
   SOL: 'solana',
-  JITOSOL: 'solana',
+  JitoSOL: 'solana',
 };
 
 export const wICX = new XToken('0x1.icon', ChainId.MAINNET, addresses[ChainId.MAINNET].wicx, 18, 'wICX', 'Wrapped ICX');

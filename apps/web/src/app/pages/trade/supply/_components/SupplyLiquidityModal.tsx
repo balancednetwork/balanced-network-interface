@@ -18,12 +18,14 @@ import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import {
+  ICON_XCALL_NETWORK_ID,
   XToken,
   XTransactionStatus,
   bnJs,
   getXChainType,
   useXAccount,
   useXAddLiquidity,
+  useXCallFee,
   useXTokenDepositAmount,
   useXTransactionStore,
 } from '@balancednetwork/xwagmi';
@@ -45,7 +47,7 @@ const getPairName = (currencies: { [field in Field]?: Currency }) => {
 
 export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, currencies }: ModalProps) {
   const queryClient = useQueryClient();
-  const { pair } = useDerivedMintInfo();
+  const { pair, lpXChainId } = useDerivedMintInfo();
 
   const [isPending, setIsPending] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
@@ -143,6 +145,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
   const hasEnoughICX = useHasEnoughICX();
 
+  const { formattedXCallFee } = useXCallFee(lpXChainId, ICON_XCALL_NETWORK_ID);
+
   return (
     <>
       <Modal isOpen={isOpen} onDismiss={() => undefined}>
@@ -173,9 +177,11 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
           <Typography textAlign="center" as="h3" fontWeight="normal">
             <Trans>Send your liquidity to Balanced, then click Supply.</Trans>
           </Typography>
-          <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-            <Trans>Transfer fee(x3): 0.0006 SOL</Trans>
-          </Typography>
+          {lpXChainId !== ICON_XCALL_NETWORK_ID && (
+            <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
+              <Trans>Transfer fee(x3): {formattedXCallFee}</Trans>
+            </Typography>
+          )}
           {hasErrorMessage && (
             <Typography textAlign="center" color="alert">
               <Trans>Remove your assets to cancel this transaction.</Trans>

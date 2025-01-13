@@ -25,7 +25,7 @@ import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { xTokenMap } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
-import { getSupportedXChainIdsForToken } from '@balancednetwork/xwagmi';
+import { getSupportedXChainIdsForSwapToken } from '@balancednetwork/xwagmi';
 import { ChainLogo } from '../ChainLogo';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { MouseoverTooltip } from '../Tooltip';
@@ -88,7 +88,7 @@ function CurrencyRow({
   selectorType: SelectorType;
   width?: number;
 }) {
-  const currencyXChainIds = useMemo(() => getSupportedXChainIdsForToken(currency), [currency]);
+  const currencyXChainIds = useMemo(() => getSupportedXChainIdsForSwapToken(currency), [currency]);
   const balance = useXCurrencyBalance(currency, selectedChainId);
   const hasSigned = useHasSignedIn();
   const xWallet = useCrossChainWalletBalances();

@@ -13,9 +13,8 @@ import { useRatesWithOracle } from '@/queries/reward';
 import { COMMON_PERCENTS } from '@/store/swap/reducer';
 import { escapeRegExp } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
-import { DEFAULT_TOKEN_CHAIN } from '@balancednetwork/xwagmi';
+import { DEFAULT_TOKEN_CHAIN, getSupportedXChainForSwapToken } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
-import { getSupportedXChainForToken } from '@balancednetwork/xwagmi';
 import { isMobile } from 'react-device-detect';
 import { HorizontalList, Option } from '../List';
 import { CurrencySelectionType, SelectorType } from '../SearchModal/CurrencySearch';
@@ -182,7 +181,7 @@ export default function CurrencyInputPanel({
       currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
       currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE
         ? []
-        : getSupportedXChainForToken(currency),
+        : getSupportedXChainForSwapToken(currency),
     [currency, currencySelectionType],
   );
 
@@ -195,7 +194,7 @@ export default function CurrencyInputPanel({
           currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
           currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE
             ? []
-            : getSupportedXChainForToken(currency);
+            : getSupportedXChainForSwapToken(currency);
         const defaultXChainId = DEFAULT_TOKEN_CHAIN[currency.symbol];
         if (defaultXChainId && (xChains?.length ?? 0) > 1) {
           onChainSelect && onChainSelect(defaultXChainId);

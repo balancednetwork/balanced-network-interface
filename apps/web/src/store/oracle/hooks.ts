@@ -9,6 +9,7 @@ import { NETWORK_ID } from '@/constants/config';
 import { ORACLE_PRICED_TOKENS } from '@/constants/tokens';
 import { useCollateralType, useSupportedCollateralTokens } from '@/store/collateral/hooks';
 import { formatUnits } from '@/utils';
+import { fixWrongSymbol } from '@/utils/formatter';
 
 export function useOraclePrice(symbol?: string): BigNumber | undefined {
   const oraclePrices = useOraclePrices();
@@ -72,7 +73,7 @@ export function useOraclePrices() {
 
       data.forEach((price, index) => {
         if (price != null) {
-          const symbol = index < data.length - 1 ? oracleSymbols[index] : 'ICX';
+          const symbol = index < data.length - 1 ? fixWrongSymbol(oracleSymbols[index]) : 'ICX';
           result[symbol] = new BigNumber(formatUnits(price, 18, 6)).dividedBy(USDloopBN);
         }
       });

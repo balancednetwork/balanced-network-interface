@@ -58,7 +58,7 @@ const CollateralTypeList = ({
   const areOraclePricesLoaded = Object.keys(prices).length > 0;
 
   const { data: userPositionsData } = useUserPositionsData();
-  const { data: allPositionsData } = useAllCollateralData();
+  const allPositionsData = useAllCollateralData();
 
   const handleCollateralTypeChange = useCallback(
     (symbol: string, xChainId?: XChainId) => {
@@ -205,23 +205,6 @@ const CollateralTypeList = ({
                     onSelect={handleCollateralTypeChange}
                   />
                 );
-                // return xCollateral.isCollateralSingleChain ? (
-                //   <SingleChainItemOverview
-                //     baseToken={xCollateral.baseToken}
-                //     key={index}
-                //     networkPosition={{ [ICON_XCALL_NETWORK_ID]: xCollateral.total }}
-                //     isLast={index === length - 1}
-                //     onSelect={handleCollateralTypeChange}
-                //   />
-                // ) : (
-                //   <MultiChainItemOverview
-                //     key={index}
-                //     baseToken={xCollateral.baseToken}
-                //     chains={xCollateral.chains}
-                //     onSelect={handleCollateralTypeChange}
-                //     total={xCollateral.total}
-                //   />
-                // );
               })}
           </motion.div>
         )}

@@ -241,3 +241,18 @@ export const formatSymbol = (symbol: string | undefined) => {
   }
   return symbol;
 };
+
+export const fixWrongSymbol = (symbol: string) => {
+  const mapping = {
+    AFSUI: 'afSUI',
+    HASUI: 'haSUI',
+    VSUI: 'vSUI',
+    JITOSOL: 'JitoSOL',
+  };
+
+  if (symbol && mapping[symbol]) {
+    return mapping[symbol];
+  }
+
+  return symbol;
+};

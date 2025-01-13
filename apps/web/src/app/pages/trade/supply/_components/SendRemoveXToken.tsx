@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { Button } from '@/app/components/Button';
 import { Typography } from '@/app/theme';
 import CheckIcon from '@/assets/icons/tick.svg';
+import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { Field } from '@/store/mint/reducer';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import {
@@ -18,8 +19,10 @@ import {
   useXAccount,
   useXTokenDepositAmount,
   useXTransactionStore,
+  xChainMap,
 } from '@balancednetwork/xwagmi';
 import { useQueryClient } from '@tanstack/react-query';
+import BigNumber from 'bignumber.js';
 
 interface SendRemoveXTokenProps {
   field: Field;
@@ -46,6 +49,19 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts }: SendRemov
 
   const xToken = currencies[field];
   const parsedAmount = parsedAmounts[field];
+
+  const amountToDeposit = React.useMemo(() => {
+    if (!xToken || !parsedAmount) return;
+    return CurrencyAmount.fromRawAmount(
+      xToken,
+      new BigNumber(parsedAmount.toFixed()).times((10n ** BigInt(xToken.decimals)).toString()).toFixed(0),
+    );
+  }, [xToken, parsedAmount]);
+
+  const { approvalState, approveCallback } = useApproveCallback(
+    amountToDeposit,
+    xToken ? xChainMap[xToken.xChainId].contracts.assetManager : undefined,
+  );
 
   const xAccount = useXAccount(getXChainType(xToken?.xChainId));
 
@@ -104,9 +120,15 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts }: SendRemov
                   {parsedAmount?.toSignificant(6)} {xToken?.symbol}
                 </Typography>
 
-                <SupplyButton disabled={isPending} mt={2} onClick={handleAdd}>
-                  {!isPending ? t`Send` : t`Sending`}
-                </SupplyButton>
+                {!isPending && approvalState !== ApprovalState.APPROVED ? (
+                  <SupplyButton disabled={approvalState === ApprovalState.PENDING} mt={2} onClick={approveCallback}>
+                    {approvalState !== ApprovalState.PENDING ? t`Approve` : t`Approving`}
+                  </SupplyButton>
+                ) : (
+                  <SupplyButton disabled={isPending} mt={2} onClick={handleAdd}>
+                    {!isPending ? t`Send` : t`Sending`}
+                  </SupplyButton>
+                )}
               </>
             ) : (
               <CheckIconWrapper>

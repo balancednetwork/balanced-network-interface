@@ -1,4 +1,4 @@
-import { archway } from '@/constants/xChains';
+import { FROM_SOURCES, TO_SOURCES, archway } from '@/constants/xChains';
 import { DepositParams, SendCallParams, XWalletClient } from '@/core/XWalletClient';
 import { XToken } from '@/types';
 import { XSigningArchwayClient } from '@/xchains/archway/XSigningArchwayClient';
@@ -105,7 +105,28 @@ export class ArchwayXWalletClient extends XWalletClient {
   }
 
   async _sendCall({ account, sourceChainId, destination, data, fee }: SendCallParams): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
+    const envelope = {
+      message: {
+        call_message: {
+          data: Array.from(data),
+        },
+      },
+      sources: FROM_SOURCES[sourceChainId],
+      destinations: TO_SOURCES[sourceChainId],
+    };
+
+    const msg = {
+      send_call: {
+        to: destination,
+        envelope,
+      },
+    };
+
+    const hash = await this.getWalletClient().executeSync(account, archway.contracts.xCall, msg, 'auto', undefined, [
+      { amount: fee.toString(), denom: ARCHWAY_FEE_TOKEN_SYMBOL },
+    ]);
+
+    return hash;
   }
 
   async executeDepositCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined> {

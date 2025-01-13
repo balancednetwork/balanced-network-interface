@@ -110,8 +110,9 @@ export function getExternalShareReward(
   totalReward: CurrencyAmount<Currency>,
   userBalances?: BalanceData,
   stakedRatio?: Fraction,
+  totalPoolStakedBalance?: BigNumber,
 ): CurrencyAmount<Currency> {
-  if (!userBalances || !stakedRatio) {
+  if (!userBalances || !stakedRatio || !totalPoolStakedBalance) {
     return CurrencyAmount.fromRawAmount(totalReward.currency, 0);
   }
 
@@ -121,15 +122,22 @@ export function getExternalShareReward(
   }
 
   // Calculate user's share based on their balance and staked ratio
-  const totalUserBalance = new BigNumber(userBalances.balance.toExact()).times(
-    10 ** userBalances.balance.currency.decimals,
+  const totalUserBalance = new BigNumber(userBalances.balance.toExact() || 0)
+    .plus(new BigNumber(userBalances.stakedLPBalance?.toExact() || 0))
+    .times(10 ** userBalances.balance.currency.decimals);
+
+  const userDynamicStakedLP = totalUserBalance.times(stakedFractionNumber);
+
+  const userShare = userDynamicStakedLP.div(
+    totalPoolStakedBalance.plus(new BigNumber(userBalances.balance.toExact() || 0)),
   );
 
-  const userShare = new Fraction(totalUserBalance.toString()).multiply(stakedRatio);
-  const totalBalanceFraction = new Fraction(totalUserBalance.toString());
+  const rewardAmount = userShare.times(new BigNumber(totalReward.toFixed()));
 
-  // Calculate reward based on user's share and staked ratio
-  return totalReward.multiply(userShare.multiply(stakedRatio).divide(totalBalanceFraction));
+  return CurrencyAmount.fromRawAmount(
+    totalReward.currency,
+    new BigNumber(rewardAmount.times(10 ** totalReward.currency.decimals)).toFixed(0),
+  );
 }
 
 export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: BalanceData; poolId: number }) => {
@@ -325,13 +333,9 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
       <Wrapper>
         <Typography variant="h3" mb={3}>
           <Trans>Withdraw:</Trans>&nbsp;
-          <Typography
-            as="span"
-            fontSize="16px"
-            fontWeight="normal"
-          >{`${formatSymbol(aBalance.currency.symbol) || '...'} / ${
-            formatSymbol(bBalance.currency.symbol) || '...'
-          }`}</Typography>
+          <Typography as="span" fontSize="16px" fontWeight="normal">{`${
+            formatSymbol(aBalance.currency.symbol) || '...'
+          } / ${formatSymbol(bBalance.currency.symbol) || '...'}`}</Typography>
         </Typography>
         <Box mb={3}>
           <CurrencyInputPanel

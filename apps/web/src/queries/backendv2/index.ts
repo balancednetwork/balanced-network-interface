@@ -147,7 +147,9 @@ export type PairData = {
   totalQuote: CurrencyAmount<Token>;
   totalSupply: BigNumber;
   stakedRatio: Fraction;
+  stakedLP: BigNumber;
   externalRewards?: CurrencyAmount<Currency>[];
+  externalRewardsTotalAPR: number;
 };
 
 export const MIN_LIQUIDITY_TO_INCLUDE = 1000;
@@ -229,6 +231,8 @@ export function useAllPairs() {
                 parseInt(new BigNumber(item['quote_supply'] * 10 ** item['quote_decimals']).toFixed(0)),
               ),
               stakedRatio: new Fraction(1),
+              stakedLP: new BigNumber(0),
+              externalRewardsTotalAPR: 0,
             };
 
             if (incentivisedPair) {
@@ -256,6 +260,7 @@ export function useAllPairs() {
               }, 0);
 
               pair['externalRewardsTotalAPR'] = totalExternalRewardApr || 0;
+              pair['stakedLP'] = new BigNumber(incentivisedPair.totalStaked);
             }
 
             return pair;

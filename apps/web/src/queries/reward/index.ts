@@ -123,7 +123,7 @@ export const useIncentivisedPairs = (): UseQueryResult<
   //add supported rewards tokens here
   const additionalRewardTokens = [sICX[NETWORK_ID]];
   //timestamp for PoL should be taken from 1 day old block
-  const { data: block } = useBlockDetails(getTimestampFrom(7));
+  const { data: block } = useBlockDetails(getTimestampFrom(0));
 
   return useQuery({
     queryKey: ['incentivisedPairs', rewards, block?.number],
@@ -140,7 +140,9 @@ export const useIncentivisedPairs = (): UseQueryResult<
           if (sourceData[token.address]) {
             acc[sourceName] = {
               ...acc[sourceName],
-              [token.address]: CurrencyAmount.fromRawAmount(token, sourceData[token.address].external_dist),
+              // [token.address]: CurrencyAmount.fromRawAmount(token, sourceData[token.address].external_dist),
+              //use temporary dummy rewards
+              [token.address]: CurrencyAmount.fromRawAmount(token, '0x8AC7230489E80000'),
             };
           }
         });

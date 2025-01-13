@@ -31,7 +31,7 @@ import { MouseoverTooltip } from '@/app/components/Tooltip';
 import QuestionIcon from '@/assets/icons/question.svg';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBigNumber } from '@/utils';
-import { formatSymbol, getFormattedNumber } from '@/utils/formatter';
+import { formatSymbol, formatValue, getFormattedNumber } from '@/utils/formatter';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Banner } from '../../../../components/Banner';
 import Spinner from '../../../../components/Spinner';
@@ -393,48 +393,45 @@ const PoolRecord = ({
                       .toFormat(2)}
                     %
                   </APYItem>
-
-                  {externalRewards?.map(reward => {
-                    const rewardPrice = prices?.[reward.currency.wrapped.symbol];
-
-                    return pairData && rewardPrice ? (
-                      <APYItem key={reward.currency.wrapped.symbol}>
-                        <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                          {reward.currency.symbol}:
-                        </Typography>
-                        {`${getRewardApr(reward, pairData, rewardPrice.toNumber()).toFormat(2)}%`}
-                      </APYItem>
-                    ) : null;
-                  })}
-
-                  {pairData?.feesApy && (
-                    <APYItem>
-                      <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                        <Trans>Fees:</Trans>
-                      </Typography>
-                      {getFormattedNumber(pairData.feesApy, 'percent2')}
-                    </APYItem>
-                  )}
                 </>
-              ) : (
-                '-'
-              )
-            ) : (
-              <Skeleton width={100}></Skeleton>
+              ) : null
+            ) : null}
+
+            {externalRewards?.map(reward => {
+              const rewardPrice = prices?.[reward.currency.wrapped.symbol];
+              return pairData && rewardPrice ? (
+                <APYItem key={reward.currency.wrapped.symbol}>
+                  <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                    {reward.currency.symbol}:
+                  </Typography>
+                  {`${formatValue(getRewardApr(reward, pairData, rewardPrice.toNumber()).toFixed()).replace('$', '')}%`}
+                </APYItem>
+              ) : null;
+            })}
+
+            {pairData?.feesApy && (
+              <APYItem>
+                <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                  <Trans>Fees:</Trans>
+                </Typography>
+                {getFormattedNumber(pairData.feesApy, 'percent2')}
+              </APYItem>
             )}
           </DataText>
         )}
         {upSmall && (
           //hotfix pairName due to wrong source name on contract side
           <DataText>
-            <Typography fontSize={16}>{getFormattedRewards(reward)}</Typography>
+            <Typography fontSize={16}>
+              {getFormattedRewards(reward, !externalRewards || externalRewards.length === 0)}
+            </Typography>
             {externalRewards ? (
               externalRewards.map(reward => {
-                const rewardShare = getExternalShareReward(reward, balances, stakedFractionValue);
-                console.log('rewardShare', rewardShare.toFixed());
+                const rewardPrice = prices?.[reward.currency.wrapped.symbol];
+                const rewardShare = getExternalShareReward(reward, balances, stakedFractionValue, pairData?.stakedLP);
                 return (
                   <Typography key={reward.currency.symbol} fontSize={16}>
-                    {getFormattedExternalRewards(rewardShare)}
+                    {getFormattedExternalRewards(rewardShare, rewardPrice?.toFixed())}
                   </Typography>
                 );
               })
@@ -493,9 +490,14 @@ const PoolRecordQ = ({
             ? new BigNumber(apy)
                 .times(100)
                 .times(source.workingBalance.div(source.balance) || 1)
-                .toFormat(2)
+                .isNaN()
+              ? '-'
+              : new BigNumber(apy)
+                  .times(100)
+                  .times(source.workingBalance.div(source.balance) || 1)
+                  .toFormat(2) + '%'
             : '-'
-        }%`}</DataText>
+        }`}</DataText>
       )}
       {upSmall && <DataText>{`~ ${reward.toFormat(2, BigNumber.ROUND_HALF_UP) || '-'} BALN`}</DataText>}
     </ListItem>

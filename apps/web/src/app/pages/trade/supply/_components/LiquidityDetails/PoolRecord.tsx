@@ -16,6 +16,7 @@ import { useMintActionHandlers } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
 import { useStakedLPPercent, useWithdrawnPercent } from '@/store/stakedLP/hooks';
 
+import PoolLogoWithNetwork from '@/app/components/PoolLogoWithNetwork';
 import Skeleton from '@/app/components/Skeleton';
 import { formatBigNumber } from '@/utils';
 import { getFormattedNumber } from '@/utils/formatter';
@@ -64,7 +65,6 @@ const DataText = styled(Flex)`
 const StyledArrowDownIcon = styled(ArrowDownIcon)`
   width: 10px;
   margin-left: 10px;
-  margin-top: 10px;
   transition: transform 0.3s ease;
 `;
 
@@ -135,12 +135,16 @@ export const PoolRecord = ({
   return (
     <>
       <ListItem onClick={handlePoolClick}>
-        <StyledDataText>
+        <Flex alignItems={'center'}>
           <DataText>
-            {poolId}-{xChainId}-{pairName}
+            <PoolLogoWithNetwork
+              chainId={xChainId}
+              baseCurrency={baseAmount.currency}
+              quoteCurrency={quoteAmount.currency}
+            />
           </DataText>
           <StyledArrowDownIcon />
-        </StyledDataText>
+        </Flex>
         <DataText>
           {baseSupplyAmount ? (
             <Typography fontSize={16}>{`${formatBigNumber(

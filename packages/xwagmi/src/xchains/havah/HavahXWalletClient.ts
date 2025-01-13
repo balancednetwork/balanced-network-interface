@@ -1,5 +1,7 @@
+import { FROM_SOURCES, TO_SOURCES } from '@/constants';
 import { DepositParams, SendCallParams, XWalletClient } from '@/core/XWalletClient';
 import { toDec } from '@/utils';
+import { RLP } from '@ethereumjs/rlp';
 import { toHex } from 'viem';
 import { XTransactionInput } from '../../xcall/types';
 import { HavahXService } from './HavahXService';
@@ -34,7 +36,18 @@ export class HavahXWalletClient extends XWalletClient {
   }
 
   async _sendCall({ account, sourceChainId, destination, data, fee }: SendCallParams): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
+    const envelope = toHex(
+      RLP.encode([
+        Buffer.from([0]),
+        toHex(data),
+        FROM_SOURCES[sourceChainId]?.map(Buffer.from),
+        TO_SOURCES[sourceChainId]?.map(Buffer.from),
+      ]),
+    );
+
+    const txResult = await this.getXService().walletClient.inject({ account }).XCall['sendCall'](destination, envelope);
+    const { txHash: hash } = txResult || {};
+    return hash;
   }
 
   async executeDepositCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined> {

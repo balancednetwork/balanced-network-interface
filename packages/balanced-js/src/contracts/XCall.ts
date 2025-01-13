@@ -1,4 +1,5 @@
 import addresses from '../addresses';
+import { SupportedChainId } from '../chain';
 import ContractSettings from '../contractSettings';
 import { Contract } from './contract';
 
@@ -45,6 +46,25 @@ export default class XCall extends Contract {
       },
     });
     return this.call(callParams);
+  }
+
+  sendCall(_to: string, _data: string) {
+    let payload;
+    if (this.nid === SupportedChainId.HAVAH) {
+      payload = {
+        to: this.address,
+        method: 'sendCall',
+        params: {
+          _to,
+          _data,
+        },
+      };
+      console.log('payload', payload);
+    } else {
+      throw new Error('sendCall not supported on this network');
+    }
+
+    return this.callICONPlugins(payload);
   }
 
   sendCallMessage(_to: string, _data: string, _rollback?: string, sources?: string[], destinations?: string[]) {

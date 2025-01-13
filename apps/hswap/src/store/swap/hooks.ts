@@ -416,12 +416,6 @@ export interface MMTrade {
 }
 
 export function useMMTrade(inputAmount: CurrencyAmount<XToken> | undefined, outputCurrency: XToken | undefined) {
-  const isMMTrade =
-    inputAmount?.currency &&
-    outputCurrency &&
-    ((inputAmount.currency.xChainId === '0xa4b1.arbitrum' && outputCurrency.xChainId === 'sui') ||
-      (inputAmount.currency.xChainId === 'sui' && outputCurrency.xChainId === '0xa4b1.arbitrum'));
-
   return useQuery<MMTrade | undefined>({
     queryKey: ['quote', inputAmount, outputCurrency],
     queryFn: async () => {
@@ -455,7 +449,7 @@ export function useMMTrade(inputAmount: CurrencyAmount<XToken> | undefined, outp
       return;
     },
     refetchInterval: 10_000,
-    enabled: !!inputAmount && !!outputCurrency && isMMTrade,
+    enabled: !!inputAmount && !!outputCurrency,
   });
 }
 

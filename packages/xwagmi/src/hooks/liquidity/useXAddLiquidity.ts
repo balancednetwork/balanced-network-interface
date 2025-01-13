@@ -1,7 +1,8 @@
+import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { XToken } from '@/types';
+import { getXCallFee } from '@/xcall';
 import { XTransactionInput, XTransactionType } from '@/xcall/types';
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import BigNumber from 'bignumber.js';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { useMemo } from 'react';
 import { useSendXTransaction } from '../useSendXTransaction';
 
@@ -10,16 +11,14 @@ export const useXAddLiquidity = () => {
 
   const xAddLiquidity = useMemo(
     () => async (account, inputAmount: CurrencyAmount<XToken>, outputAmount: CurrencyAmount<XToken>) => {
+      const direction = { from: inputAmount.currency.xChainId, to: ICON_XCALL_NETWORK_ID };
       const xTransactionInput: XTransactionInput = {
         type: XTransactionType.LP_ADD_LIQUIDITY,
         account: account,
         inputAmount,
         outputAmount,
-        xCallFee: { rollback: 60000000000000n, noRollback: 0n },
-        direction: {
-          from: inputAmount.currency.xChainId,
-          to: '0x1.icon',
-        },
+        xCallFee: await getXCallFee(direction.from, direction.to),
+        direction,
       };
 
       return await sendXTransaction(xTransactionInput);

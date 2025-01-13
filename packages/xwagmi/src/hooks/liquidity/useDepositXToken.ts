@@ -1,4 +1,6 @@
+import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { XToken } from '@/types';
+import { getXCallFee } from '@/xcall';
 import { XTransactionInput, XTransactionType } from '@/xcall/types';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
@@ -14,15 +16,14 @@ export const useDepositXToken = () => {
         xToken,
         new BigNumber(currencyAmount.toFixed()).times((10n ** BigInt(xToken.decimals)).toString()).toFixed(0),
       );
+
+      const direction = { from: xToken.xChainId, to: ICON_XCALL_NETWORK_ID };
       const xTransactionInput: XTransactionInput = {
         type: XTransactionType.LP_DEPOSIT_XTOKEN,
         account: account,
         inputAmount: inputAmount,
-        xCallFee: { rollback: 60000000000000n, noRollback: 0n },
-        direction: {
-          from: xToken.xChainId,
-          to: '0x1.icon',
-        },
+        xCallFee: await getXCallFee(direction.from, direction.to),
+        direction,
       };
 
       return await sendXTransaction(xTransactionInput);

@@ -1,4 +1,5 @@
-import { xTokenMapBySymbol } from '@/constants';
+import { ICON_XCALL_NETWORK_ID, xTokenMapBySymbol } from '@/constants';
+import { getXCallFee } from '@/xcall';
 import { XTransactionInput, XTransactionType } from '@/xcall/types';
 import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
@@ -15,17 +16,14 @@ export const useXStakeLPToken = () => {
         BALN,
         new BigNumber(rawStakeAmount).times((10n ** BigInt(decimals)).toString()).toFixed(0),
       );
-
+      const direction = { from: xChainId, to: ICON_XCALL_NETWORK_ID };
       const xTransactionInput: XTransactionInput = {
         type: XTransactionType.LP_STAKE,
         account: account,
         inputAmount,
         poolId,
-        xCallFee: { rollback: 60000000000000n, noRollback: 0n },
-        direction: {
-          from: xChainId,
-          to: '0x1.icon',
-        },
+        xCallFee: await getXCallFee(direction.from, direction.to),
+        direction,
       };
 
       return await sendXTransaction(xTransactionInput);

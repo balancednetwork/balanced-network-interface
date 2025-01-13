@@ -173,7 +173,7 @@ export default function LiquidityDetails() {
             )}
             {balancesWithoutQ &&
               userPools.map((pool, index) => (
-                <StyledAccordionItem key={pool.poolId} $border={index !== userPools.length - 1}>
+                <StyledAccordionItem key={`${pool.poolId}-${pool.xChainId}`} $border={index !== userPools.length - 1}>
                   <StyledAccordionButton onClick={() => setIsHided(false)}>
                     <PoolRecord
                       poolId={pool.poolId}

@@ -123,7 +123,7 @@ export const useIncentivisedPairs = (): UseQueryResult<
   //add supported rewards tokens here
   const additionalRewardTokens = [sICX[NETWORK_ID]];
   //timestamp for PoL should be taken from 1 day old block
-  const { data: block } = useBlockDetails(getTimestampFrom(0));
+  const { data: block } = useBlockDetails(getTimestampFrom(1));
 
   return useQuery({
     queryKey: ['incentivisedPairs', rewards, block?.number],

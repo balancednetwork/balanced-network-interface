@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
@@ -351,6 +351,48 @@ export function useResponsivePoolRewardShare() {
       return new BigNumber(0);
     },
     [totalSupplyBBaln, bBalnAmount],
+  );
+}
+
+function getLPFromAddedBalances(A?: CurrencyAmount<Token>, B?: CurrencyAmount<Token>): BigNumber {
+  if (!A || !B) return new BigNumber(0);
+
+  const AAmount = new BigNumber(A.toExact()).times(10 ** A.currency.decimals);
+  const BAmount = new BigNumber(B.toExact()).times(10 ** B.currency.decimals);
+
+  return AAmount.plus(BAmount).div(2).dp(0);
+}
+
+export function useExternalPoolRewardShare() {
+  return useCallback(
+    (
+      totalReward: CurrencyAmount<Token>,
+      userBalances?: BalanceData,
+      addedBalanceA?: CurrencyAmount<Token>,
+      addedBalanceB?: CurrencyAmount<Token>,
+      totalPoolStakedBalance?: BigNumber,
+    ): CurrencyAmount<Currency> => {
+      if (!userBalances || !totalPoolStakedBalance) {
+        return CurrencyAmount.fromRawAmount(totalReward.currency, 0);
+      }
+
+      // Calculate user's total balance including staked and unstaked LP tokens
+      const totalUserBalance = new BigNumber(userBalances.balance.toExact() || 0)
+        .plus(new BigNumber(userBalances.stakedLPBalance?.toExact() || 0))
+        .times(10 ** userBalances.balance.currency.decimals);
+
+      const addedLP = getLPFromAddedBalances(addedBalanceA, addedBalanceB);
+
+      const share = totalUserBalance.plus(addedLP).div(totalPoolStakedBalance.plus(addedLP));
+      // Calculate reward amount based on user's share
+      const rewardAmount = share.times(new BigNumber(totalReward.toFixed()));
+
+      return CurrencyAmount.fromRawAmount(
+        totalReward.currency,
+        new BigNumber(rewardAmount.times(10 ** totalReward.currency.decimals)).toFixed(0),
+      );
+    },
+    [],
   );
 }
 

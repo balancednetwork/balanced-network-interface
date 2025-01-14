@@ -13,7 +13,7 @@ import useSort from '@/hooks/useSort';
 import { MIN_LIQUIDITY_TO_INCLUDE, PairData, TOKEN_BLACKLIST, useAllPairsById, useNOLPools } from '@/queries/backendv2';
 import { useDerivedMintInfo, useMintActionHandlers } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
-import { formatSymbol, getFormattedNumber } from '@/utils/formatter';
+import { formatSymbol, formatValue, getFormattedNumber } from '@/utils/formatter';
 
 import DropdownLink from '@/app/components/DropdownLink';
 import { HeaderText } from '@/app/components/SearchModal/styleds';
@@ -177,7 +177,9 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => {
                       <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
                         {reward.currency.symbol}:
                       </Typography>
-                      {`${getRewardApr(reward, pair, prices[reward.currency.symbol].toNumber()).toFormat(2)}%`}
+                      {`${formatValue(
+                        getRewardApr(reward, pair, prices[reward.currency.symbol].toNumber()).toFixed(),
+                      ).replace('$', '')}%`}
                     </APYItem>
                   ) : null;
                 })}

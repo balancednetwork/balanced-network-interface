@@ -307,6 +307,22 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'USDC',
       'USD Coin',
     ),
+    new XToken(
+      'sui',
+      'sui',
+      '0x84bf1838f4fb91b22fe12af02658c27f53f89c36f2ea6c8b6a878f0e48ec1b4e::sicx::SICX',
+      9,
+      'sICX',
+      'Staked ICX',
+    ),
+    new XToken(
+      'sui',
+      'sui',
+      '0x3ae6be8e58c0e0715764971b750709e67c6de33e38bbecafe25b5f3dd5080a39::balanced_token::BALANCED_TOKEN',
+      9,
+      'BALN',
+      'Balance Token',
+    ),
   ],
   solana: [
     new XToken('solana', 'solana', '11111111111111111111111111111111', 9, 'SOL', 'SOL'),

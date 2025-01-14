@@ -140,9 +140,7 @@ export const useIncentivisedPairs = (): UseQueryResult<
           if (sourceData[token.address]) {
             acc[sourceName] = {
               ...acc[sourceName],
-              // [token.address]: CurrencyAmount.fromRawAmount(token, sourceData[token.address].external_dist),
-              //use temporary dummy rewards
-              [token.address]: CurrencyAmount.fromRawAmount(token, '0x8AC7230489E80000'),
+              [token.address]: CurrencyAmount.fromRawAmount(token, sourceData[token.address].external_dist),
             };
           }
         });

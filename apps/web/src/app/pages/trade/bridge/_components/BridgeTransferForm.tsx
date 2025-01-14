@@ -194,7 +194,9 @@ export default function BridgeTransferForm({ openModal }) {
             {account ? (
               <Button
                 onClick={handleSubmit}
-                disabled={!!errorMessage || !isValid || !canBridge || !stellarValidation?.ok}
+                disabled={
+                  !!errorMessage || !isValid || !canBridge || (stellarValidation ? !stellarValidation?.ok : false)
+                }
               >
                 {errorMessage ? errorMessage : <Trans>Transfer</Trans>}
               </Button>

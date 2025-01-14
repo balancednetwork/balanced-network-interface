@@ -6,8 +6,6 @@ import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
 import { XChain, XChainId } from '@/types';
-import { jsonStorageOptions } from '@/utils';
-import { createJSONStorage, persist } from 'zustand/middleware';
 
 type XChainHeightStore = {
   xChainHeights: Partial<Record<XChainId, bigint>>;
@@ -16,25 +14,19 @@ type XChainHeightStore = {
 };
 
 export const useXChainHeightStore = create<XChainHeightStore>()(
-  persist(
-    immer((set, get) => ({
-      xChainHeights: {},
+  immer((set, get) => ({
+    xChainHeights: {},
 
-      getXChainHeight: (xChainId: XChainId) => {
-        const height = get().xChainHeights?.[xChainId];
-        return height ? BigInt(height) : BigInt(0);
-      },
-      setXChainHeight: (xChainId: XChainId, height: bigint) => {
-        set(state => {
-          state.xChainHeights[xChainId] = height;
-        });
-      },
-    })),
-    {
-      name: 'xChainHeight-store',
-      storage: createJSONStorage(() => localStorage, jsonStorageOptions),
+    getXChainHeight: (xChainId: XChainId) => {
+      const height = get().xChainHeights?.[xChainId];
+      return height ? BigInt(height) : BigInt(0);
     },
-  ),
+    setXChainHeight: (xChainId: XChainId, height: bigint) => {
+      set(state => {
+        state.xChainHeights[xChainId] = height;
+      });
+    },
+  })),
 );
 
 export const xChainHeightActions = {

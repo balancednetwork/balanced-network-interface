@@ -68,7 +68,7 @@ export class InjectiveXWalletClient extends XWalletClient {
     if (_isSpokeToken) {
       const amount = inputAmount.quotient.toString();
       const msg = MsgExecuteContractCompat.fromJSON({
-        contractAddress: injective.contracts.bnUSD!,
+        contractAddress: inputAmount.currency.address,
         sender: account,
         msg: {
           cross_transfer: {

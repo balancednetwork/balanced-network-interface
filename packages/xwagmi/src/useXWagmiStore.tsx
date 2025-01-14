@@ -204,18 +204,6 @@ export const useInitXWagmiStore = () => {
       suiXService.suiClient = suiClient;
     }
   }, [suiClient]);
-  const { currentWallet: suiWallet } = useCurrentWallet();
-  useEffect(() => {
-    if (suiWallet) {
-      suiXService.suiWallet = suiWallet;
-    }
-  }, [suiWallet]);
-  const suiAccount = useCurrentAccount();
-  useEffect(() => {
-    if (suiAccount) {
-      suiXService.suiAccount = suiAccount;
-    }
-  }, [suiAccount]);
 
   const { connection: solanaConnection } = useConnection();
   const solanaWallet = useWallet();
@@ -235,6 +223,19 @@ export const useInitXWagmiStore = () => {
       solanaXService.provider = solanaProvider;
     }
   }, [solanaProvider]);
+
+  const { currentWallet: suiWallet } = useCurrentWallet();
+  useEffect(() => {
+    if (suiWallet) {
+      suiXService.suiWallet = suiWallet;
+    }
+  }, [suiWallet]);
+  const suiAccount = useCurrentAccount();
+  useEffect(() => {
+    if (suiAccount) {
+      suiXService.suiAccount = suiAccount;
+    }
+  }, [suiAccount]);
 
   const havahXConnection = useXConnection('HAVAH');
   useEffect(() => {

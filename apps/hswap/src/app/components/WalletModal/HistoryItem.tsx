@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { formatRelativeTime } from '@/utils';
 import { formatBalance } from '@/utils/formatter';
 import { getNetworkDisplayName, getTrackerLink, isIconTransaction } from '@balancednetwork/xwagmi';
-import { XTransaction, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
+import { XTransaction, XTransactionStatus } from '@balancednetwork/xwagmi';
 import { xMessageActions } from '@balancednetwork/xwagmi';
 import { CheckIcon, ExternalLink, Loader2Icon } from 'lucide-react';
 

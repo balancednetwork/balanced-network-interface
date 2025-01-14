@@ -1,7 +1,6 @@
 import { NETWORK_ID } from '@/constants/config';
 import { ICX } from '@/constants/tokens';
-import { getXTokenBySymbol } from '@/utils/xTokens';
-import { XToken, xTokenMap } from '@balancednetwork/xwagmi';
+import { XToken, convertCurrency, xTokenMap } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import { wICX } from '@balancednetwork/xwagmi';
 import { createSlice } from '@reduxjs/toolkit';
@@ -109,7 +108,7 @@ const swapSlice = createSlice({
       };
     }),
     selectChain: create.reducer<{ field: Field; xChainId: XChainId }>((state, { payload: { field, xChainId } }) => {
-      const updatedCurrency = getXTokenBySymbol(xChainId, state[field].currency?.symbol);
+      const updatedCurrency = convertCurrency(xChainId, state[field].currency);
       if (updatedCurrency) {
         state[field].currency = updatedCurrency;
       }

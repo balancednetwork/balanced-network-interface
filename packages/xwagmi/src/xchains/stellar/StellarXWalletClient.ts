@@ -1,4 +1,3 @@
-import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
@@ -130,16 +129,15 @@ export class StellarXWalletClient extends XWalletClient {
     server: CustomSorobanServer,
     kit: StellarWalletsKit,
   ): Promise<string | undefined> {
-    const { inputAmount, executionTrade, account, recipient, direction, slippageTolerance } = xTransactionInput;
+    const { inputAmount, account, recipient, direction, path, minReceived } = xTransactionInput;
     const receiver = `${direction.to}/${recipient}`;
 
-    if (!executionTrade || !slippageTolerance) {
+    if (!minReceived || !path) {
       return;
     }
 
-    const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
-    const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived);
+    const rlpEncodedData = getRlpEncodedSwapData(path, '_swap', receiver, minReceived);
     const uint8Array = new Uint8Array(rlpEncodedData);
 
     const isNative = inputAmount.currency.symbol === 'XLM';

@@ -1,4 +1,3 @@
-import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
@@ -25,20 +24,18 @@ export class InjectiveXWalletClient extends XWalletClient {
   }
 
   async executeTransaction(xTransactionInput: XTransactionInput) {
-    const { type, direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } =
-      xTransactionInput;
+    const { type, direction, inputAmount, account, recipient, xCallFee, minReceived, path } = xTransactionInput;
 
     const token = inputAmount.currency.wrapped;
     const receiver = `${direction.to}/${recipient}`;
 
     let data;
     if (type === XTransactionType.SWAP) {
-      if (!executionTrade || !slippageTolerance) {
+      if (!minReceived || !path) {
         return;
       }
 
-      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived);
+      const rlpEncodedData = getRlpEncodedSwapData(path, '_swap', receiver, minReceived);
       data = Array.from(rlpEncodedData);
     } else if (type === XTransactionType.BRIDGE) {
       data = getBytesFromString(

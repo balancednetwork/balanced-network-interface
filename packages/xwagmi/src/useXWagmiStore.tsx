@@ -1,7 +1,7 @@
 import { xChains } from '@/constants/xChains';
 import { XChainId, XChainType } from '@/types';
 import { BalancedJs } from '@balancednetwork/balanced-js';
-import { useSuiClient } from '@mysten/dapp-kit';
+import { useCurrentAccount, useCurrentWallet, useSuiClient } from '@mysten/dapp-kit';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useEffect } from 'react';
 import { create } from 'zustand';
@@ -223,6 +223,19 @@ export const useInitXWagmiStore = () => {
       solanaXService.provider = solanaProvider;
     }
   }, [solanaProvider]);
+
+  const { currentWallet: suiWallet } = useCurrentWallet();
+  useEffect(() => {
+    if (suiWallet) {
+      suiXService.suiWallet = suiWallet;
+    }
+  }, [suiWallet]);
+  const suiAccount = useCurrentAccount();
+  useEffect(() => {
+    if (suiAccount) {
+      suiXService.suiAccount = suiAccount;
+    }
+  }, [suiAccount]);
 
   const havahXConnection = useXConnection('HAVAH');
   useEffect(() => {

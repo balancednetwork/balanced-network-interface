@@ -52,8 +52,8 @@ export default function useSort(initialState: SortingType) {
     } else {
       if (sortBy.key === 'apyTotal') {
         dataToSort.sort((a, b) => {
-          const aTotalApy = a['feesApy'] + (a['balnApy'] || 0) * 2.5 + (a['externalRewardsTotalAPR'] || 0);
-          const bTotalApy = b['feesApy'] + (b['balnApy'] || 0) * 2.5 + (b['externalRewardsTotalAPR'] || 0);
+          const aTotalApy = a['feesApy'] + (a['balnApy'] || 0) * 2.5 + (a['externalRewardsTotalAPR'] / 100 || 0);
+          const bTotalApy = b['feesApy'] + (b['balnApy'] || 0) * 2.5 + (b['externalRewardsTotalAPR'] / 100 || 0);
           if (aTotalApy < bTotalApy) return -1;
           if (aTotalApy > bTotalApy) return 1;
           return 0;

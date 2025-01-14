@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
-import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -9,9 +8,9 @@ import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Typography } from '@/app/theme';
-import { PairState, useBalance, usePool, usePoolTokenAmounts, useSuppliedTokens } from '@/hooks/useV2Pairs';
+import { PairState, useBalance, usePool, usePoolTokenAmounts } from '@/hooks/useV2Pairs';
 import { useAllPairsByName } from '@/queries/backendv2';
-import { useICXConversionFee, useRatesWithOracle } from '@/queries/reward';
+import { useRatesWithOracle } from '@/queries/reward';
 import { useBBalnAmount, useResponsivePoolRewardShare, useSources } from '@/store/bbaln/hooks';
 import { useDerivedMintInfo, useMintState } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
@@ -21,7 +20,6 @@ import { tryParseAmount } from '@/store/swap/hooks';
 import { useLiquidityTokenBalance } from '@/store/wallet/hooks';
 import { formatBigNumber } from '@/utils';
 
-import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
 import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { getXChainType, useXAccount } from '@balancednetwork/xwagmi';
@@ -36,26 +34,12 @@ export default function LPDescription() {
   const getResponsiveRewardShare = useResponsivePoolRewardShare();
   const { account } = useIconReact();
   const upSmall = useMedia('(min-width: 600px)');
-  const { data: icxConversionFee } = useICXConversionFee();
   const userPoolBalance = useLiquidityTokenBalance(`${lpXChainId}/${xAccount?.address}`, pair);
   const totalPoolTokens = pair?.totalSupply;
-  const token0Deposited =
-    !!pair &&
-    !!totalPoolTokens &&
-    !!userPoolBalance &&
-    // this condition is a short-circuit in the case where useTokenBalance updates sooner than useTotalSupply
-    totalPoolTokens.quotient >= userPoolBalance.quotient &&
-    totalPoolTokens.greaterThan(0)
-      ? pair.getLiquidityValue(pair.token0, totalPoolTokens, userPoolBalance, false)
-      : undefined;
   const pairName = useMemo(() => {
-    if (currencies && currencies.CURRENCY_A && currencies.CURRENCY_B) {
-      const name = `${currencies.CURRENCY_A.symbol}/${currencies.CURRENCY_B.symbol}`;
-      return name.startsWith('ICX/') ? 'sICX/ICX' : name;
-    } else {
-      return '';
-    }
-  }, [currencies]);
+    if (!pair) return '';
+    return `${pair.token0.symbol}/${pair.token1.symbol}`;
+  }, [pair]);
   const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
 
   const { data: allPairs } = useAllPairsByName();
@@ -64,11 +48,6 @@ export default function LPDescription() {
     [allPairs, pairName],
   );
 
-  const balances = useSuppliedTokens(
-    pair?.poolId ?? -1,
-    currencies[Field.CURRENCY_A],
-    pair?.isQueue ? pair?.token1 : currencies[Field.CURRENCY_B],
-  );
   const [baseAmount, quoteAmount] = usePoolTokenAmounts(pool);
 
   const userPoolBalances = useBalance(pair?.poolId || -1);
@@ -164,10 +143,8 @@ export default function LPDescription() {
           <Box flex={1} padding={[5, 7]}>
             {poolRewards ? (
               <Typography variant="h3" mb={2} marginBottom={40}>
-                {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-                  ? t`${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} / ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}
-                    liquidity pool${upSmall ? ': ' : ''}`
-                  : t`${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} queue${upSmall ? ': ' : ''}`}{' '}
+                {t`${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} / ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}
+                    liquidity pool${upSmall ? ': ' : ''}`}{' '}
                 <Typography fontWeight="normal" fontSize={16} as={upSmall ? 'span' : 'p'}>
                   {apy && allPairs
                     ? `${apy
@@ -182,32 +159,11 @@ export default function LPDescription() {
                         .toFixed()}%`
                     : '-'}
                   {' APR'}
-                  {pair?.poolId === BalancedJs.utils.POOL_IDS.sICXICX && (
-                    <QuestionWrapper style={{ marginLeft: '3px' }}>
-                      <QuestionHelper
-                        width={350}
-                        text={
-                          <>
-                            <Typography mb={3}>The ICX queue facilitates "instant unstaking".</Typography>
-                            <Typography mb={3}>
-                              You'll earn BALN while your ICX is in the queue. When you get to the front, your ICX will
-                              be exchanged for sICX, plus an extra {`${icxConversionFee?.toSignificant(3) || '...'}%`}.
-                            </Typography>
-                            <Typography>
-                              You'll need to claim and unstake your sICX before you can supply it again.
-                            </Typography>
-                          </>
-                        }
-                      ></QuestionHelper>
-                    </QuestionWrapper>
-                  )}
                 </Typography>
               </Typography>
             ) : (
               <Typography variant="h3" mb={2} marginBottom={40}>
-                {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-                  ? t`${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} / ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)} liquidity pool`
-                  : t`${currencies[Field.CURRENCY_A]?.symbol} queue`}
+                {t`${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} / ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)} liquidity pool`}
               </Typography>
             )}
             <Flex flexWrap="wrap">
@@ -234,39 +190,24 @@ export default function LPDescription() {
                       </Typography>
 
                       <Typography textAlign="center" variant="p">
-                        {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
-                          <>
-                            {formatBigNumber(
-                              baseCurrencyTotalSupply.plus(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0),
-                              'currency',
-                            )}{' '}
-                            {formatSymbol(pair?.reserve0.currency?.symbol)}
-                            <br />
-                            {formatBigNumber(
-                              quoteCurrencyTotalSupply.plus(formattedAmounts[Field.CURRENCY_B]?.toFixed() || 0),
-                              'currency',
-                            )}{' '}
-                            {formatSymbol(pair?.reserve1.currency?.symbol)}
-                          </>
-                        ) : (
-                          `${formatBigNumber(
-                            new BigNumber(token0Deposited?.toFixed() || 0).plus(
-                              formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0,
-                            ),
-                            'currency',
-                          )} ${pair?.reserve0.currency?.symbol}`
-                        )}
+                        {formatBigNumber(
+                          baseCurrencyTotalSupply.plus(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0),
+                          'currency',
+                        )}{' '}
+                        {formatSymbol(pair?.reserve0.currency?.symbol)}
+                        <br />
+                        {formatBigNumber(
+                          quoteCurrencyTotalSupply.plus(formattedAmounts[Field.CURRENCY_B]?.toFixed() || 0),
+                          'currency',
+                        )}{' '}
+                        {formatSymbol(pair?.reserve1.currency?.symbol)}
                       </Typography>
                     </Box>
 
                     {userRewards && (
                       <Box sx={{ margin: '15px 0 25px 0' }}>
                         <Typography textAlign="center" marginBottom="5px" color="text1">
-                          <Trans>
-                            {pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX
-                              ? 'Your daily rewards'
-                              : 'Your potential rewards'}
-                          </Trans>
+                          <Trans>Your potential rewards</Trans>
                         </Typography>
 
                         <Typography textAlign="center" variant="p">
@@ -295,17 +236,11 @@ export default function LPDescription() {
                   </Typography>
                   {pair && (
                     <Typography textAlign="center" variant="p">
-                      {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
-                        <>
-                          {formatBalance(pair?.reserve0.toFixed(), rates?.[pair.reserve0.currency?.symbol]?.toFixed())}{' '}
-                          {formatSymbol(pair?.reserve0.currency?.symbol)}
-                          <br />
-                          {formatBalance(pair?.reserve1.toFixed(), rates?.[pair.reserve1.currency?.symbol]?.toFixed())}{' '}
-                          {formatSymbol(pair?.reserve1.currency?.symbol)}
-                        </>
-                      ) : (
-                        `${pair?.reserve0.toFixed(0, { groupSeparator: ',' })} ${pair?.reserve0.currency?.symbol}`
-                      )}
+                      {formatBalance(pair?.reserve0.toFixed(), rates?.[pair.reserve0.currency?.symbol]?.toFixed())}{' '}
+                      {formatSymbol(pair?.reserve0.currency?.symbol)}
+                      <br />
+                      {formatBalance(pair?.reserve1.toFixed(), rates?.[pair.reserve1.currency?.symbol]?.toFixed())}{' '}
+                      {formatSymbol(pair?.reserve1.currency?.symbol)}
                     </Typography>
                   )}
                 </Box>

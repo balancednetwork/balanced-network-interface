@@ -7,6 +7,16 @@ export class XToken extends Token {
   identifier: string;
   spokeVersion?: string;
 
+  static wICX = new XToken(
+    '0x1.icon',
+    1,
+    'cx3975b43d260fb8ec802cef6e60c2f4d07486f11d',
+    18,
+    'wICX',
+    'Wrapped ICX',
+    'wICX',
+  );
+
   public constructor(
     xChainId: XChainId,
     chainId: number | string,
@@ -23,12 +33,21 @@ export class XToken extends Token {
     this.spokeVersion = spokeVersion;
   }
 
+  // TODO: deprecate
   static getXToken(xChainId: XChainId, token: Token) {
     return new XToken(xChainId, token.chainId, token.address, token.decimals, token.symbol, token.name);
   }
 
   get id(): string {
     return `${this.xChainId}/${this.address}`;
+  }
+
+  /**
+   * Return this token, which does not need to be wrapped
+   */
+  public get wrapped(): XToken {
+    if (this.symbol === 'ICX') return XToken.wICX;
+    else return this;
   }
 }
 

@@ -1,5 +1,5 @@
 import { xChainMap } from '@/constants/xChains';
-import { allXTokens, xTokenMap, xTokenMapBySymbol } from '@/constants/xTokens';
+import { allXTokens, wICX, xTokenMapBySymbol } from '@/constants/xTokens';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
 import BigNumber from 'bignumber.js';
@@ -177,6 +177,8 @@ export const convertCurrencyAmount = (
 
 export const convertCurrency = (xChainId: XChainId, currency: Currency | XToken | undefined): XToken | undefined => {
   if (!currency) return undefined;
+
+  if (currency.symbol === 'wICX') return wICX;
 
   const token = xTokenMapBySymbol[xChainId][currency.symbol];
 

@@ -47,7 +47,7 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts }: SendRemov
     }
   }, [currentXTransaction, queryClient]);
 
-  const xToken = currencies[field];
+  const xToken: XToken | undefined = React.useMemo(() => currencies[field]?.wrapped, [currencies, field]);
   const parsedAmount = parsedAmounts[field];
 
   const amountToDeposit = React.useMemo(() => {
@@ -73,14 +73,14 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts }: SendRemov
   const handleAdd = async () => {
     console.log('add');
 
-    if (!parsedAmount || !xToken || !xAccount) {
+    if (!parsedAmount || !xToken || !xAccount || !amountToDeposit) {
       return;
     }
 
     setIsPending(true);
 
     try {
-      const txHash = await depositXToken(xAccount.address, parsedAmount, xToken);
+      const txHash = await depositXToken(xAccount.address, amountToDeposit);
       if (txHash) setPendingTx(txHash);
       else setIsPending(false);
     } catch (error) {

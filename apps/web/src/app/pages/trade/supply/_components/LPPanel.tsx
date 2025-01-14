@@ -12,7 +12,6 @@ import { Button } from '@/app/components/Button';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { Typography } from '@/app/theme';
 import { BIGINT_ZERO } from '@/constants/misc';
-import { isNativeCurrency } from '@/constants/tokens';
 import { PairState } from '@/hooks/useV2Pairs';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedMintInfo, useInitialSupplyLoad, useMintActionHandlers, useMintState } from '@/store/mint/hooks';
@@ -82,25 +81,14 @@ function WalletSection({ AChain, BChain }: { AChain?: XChainId; BChain?: XChainI
   if (!account) {
     return null;
   }
-
-  if (isNativeCurrency(currencies[Field.CURRENCY_A])) {
-    return (
-      <Flex flexDirection="row" justifyContent="center" alignItems="center">
-        <Typography>
-          {t`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${currencies[Field.CURRENCY_A]?.symbol}`}
-        </Typography>
-      </Flex>
-    );
-  } else {
-    return (
-      <Flex flexDirection="row" justifyContent="center" alignItems="center">
-        <Typography sx={{ whiteSpace: 'nowrap' }}>
-          {t`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} /
+  return (
+    <Flex flexDirection="row" justifyContent="center" alignItems="center">
+      <Typography sx={{ whiteSpace: 'nowrap' }}>
+        {t`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} /
                       ${formattedRemains[Field.CURRENCY_B]} ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}`}
-        </Typography>
-      </Flex>
-    );
-  }
+      </Typography>
+    </Flex>
+  );
 }
 
 export default function LPPanel() {
@@ -257,8 +245,6 @@ export default function LPPanel() {
       : onFieldBInput(maxAmounts[Field.CURRENCY_B]?.multiply(percent).divide(100)?.toExact() ?? '');
   };
 
-  const isQueue = isNativeCurrency(currencies[Field.CURRENCY_A]);
-
   const handleLPChainSelection = useCallback(
     (xChainId: XChainId) => {
       onChainSelection(Field.CURRENCY_A, xChainId);
@@ -303,7 +289,7 @@ export default function LPPanel() {
               </Flex>
             </AutoColumn>
 
-            <AutoColumn gap="md" hidden={isQueue}>
+            <AutoColumn gap="md">
               <Flex>
                 <CurrencyInputPanel
                   account={account}
@@ -324,38 +310,33 @@ export default function LPPanel() {
           <Flex mt={3} justifyContent="flex-end">
             <WalletSection AChain={crossChainCurrencyA} BChain={crossChainCurrencyB} />
           </Flex>
-          {currencies[Field.CURRENCY_A] &&
-            currencies[Field.CURRENCY_B] &&
-            !isQueue &&
-            pairState === PairState.NOT_EXISTS && (
-              <PoolPriceBar>
-                <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
-                  <Typography>
-                    <Typography color="white" as="span">
-                      {price?.toSignificant(6) ?? '-'}
-                    </Typography>{' '}
-                    {formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}
-                  </Typography>
-                  <Typography pt={1}>per {formatSymbol(currencies[Field.CURRENCY_A]?.symbol)}</Typography>
-                </Flex>
-                <VerticalDivider />
-                <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
-                  <Typography>
-                    <Typography color="white" as="span">
-                      {price?.invert()?.toSignificant(6) ?? '-'}
-                    </Typography>{' '}
-                    {formatSymbol(currencies[Field.CURRENCY_A]?.symbol)}
-                  </Typography>
-                  <Typography pt={1}>per {formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}</Typography>
-                </Flex>
-              </PoolPriceBar>
-            )}
+          {currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B] && pairState === PairState.NOT_EXISTS && (
+            <PoolPriceBar>
+              <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
+                <Typography>
+                  <Typography color="white" as="span">
+                    {price?.toSignificant(6) ?? '-'}
+                  </Typography>{' '}
+                  {formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}
+                </Typography>
+                <Typography pt={1}>per {formatSymbol(currencies[Field.CURRENCY_A]?.symbol)}</Typography>
+              </Flex>
+              <VerticalDivider />
+              <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
+                <Typography>
+                  <Typography color="white" as="span">
+                    {price?.invert()?.toSignificant(6) ?? '-'}
+                  </Typography>{' '}
+                  {formatSymbol(currencies[Field.CURRENCY_A]?.symbol)}
+                </Typography>
+                <Typography pt={1}>per {formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}</Typography>
+              </Flex>
+            </PoolPriceBar>
+          )}
           {pairState === PairState.EXISTS &&
             account &&
-            ((currencyBalances[Field.CURRENCY_A]?.currency.symbol === 'ICX' &&
-              maxAmountSpend(currencyBalances[Field.CURRENCY_A])?.greaterThan(BIGINT_ZERO)) ||
-              (maxAmountSpend(currencyBalances[Field.CURRENCY_A])?.greaterThan(BIGINT_ZERO) &&
-                maxAmountSpend(currencyBalances[Field.CURRENCY_B])?.greaterThan(BIGINT_ZERO))) && (
+            maxAmountSpend(currencyBalances[Field.CURRENCY_A])?.greaterThan(BIGINT_ZERO) &&
+            maxAmountSpend(currencyBalances[Field.CURRENCY_B])?.greaterThan(BIGINT_ZERO) && (
               <Slider mt={5}>
                 <Nouislider
                   start={[0]}

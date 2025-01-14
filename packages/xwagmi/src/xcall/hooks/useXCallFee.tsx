@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 import { getXPublicClient } from '@/actions';
+import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/constants/xChains';
 import { XPublicClient } from '@/core';
 import { useXPublicClient } from '@/hooks';
@@ -10,6 +11,12 @@ import { formatUnits } from 'viem';
 import { IXCallFee } from '../types';
 
 export const getXCallFee = async (from: XChainId, to: XChainId, sourceXPublicClient?: XPublicClient) => {
+  if (from === ICON_XCALL_NETWORK_ID && from === to) {
+    return {
+      rollback: 0n,
+      noRollback: 0n,
+    };
+  }
   if (!sourceXPublicClient) {
     sourceXPublicClient = getXPublicClient(from);
   }

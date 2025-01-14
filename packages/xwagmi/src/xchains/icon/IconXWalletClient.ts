@@ -187,12 +187,16 @@ export class IconXWalletClient extends XWalletClient {
   async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
     const { account, inputAmount } = xTransactionInput;
 
-    const res: any = await bnJs
-      .inject({ account })
-      .getContract(inputAmount.currency.address)
-      .deposit(toDec(inputAmount));
-
-    return res.result;
+    if (inputAmount.currency.symbol === 'wICX') {
+      const res: any = await bnJs.wICX.inject({ account }).deposit(toDec(inputAmount));
+      return res.result;
+    } else {
+      const res: any = await bnJs
+        .inject({ account })
+        .getContract(inputAmount.currency.address)
+        .deposit(toDec(inputAmount));
+      return res.result;
+    }
   }
   async withdrawXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
     const { account, inputAmount } = xTransactionInput;

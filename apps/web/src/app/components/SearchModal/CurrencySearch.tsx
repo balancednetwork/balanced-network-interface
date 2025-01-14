@@ -182,7 +182,7 @@ export function CurrencySearch({
   const filteredSortedTokensWithICX: Currency[] = useMemo(() => {
     const s = debouncedQuery.toLowerCase().trim();
     if ('0x1.icon'.indexOf(s) >= 0 || 'icx'.indexOf(s) >= 0) {
-      if (selectorType === SelectorType.SUPPLY_BASE || selectorType === SelectorType.SWAP_OUT) {
+      if (selectorType === SelectorType.SWAP_OUT) {
         //ensure wrapped ICX is used instead of native ICX for trade output and liquidity supplying
         return [wICX[NETWORK_ID], ...filteredSortedTokens];
       } else {

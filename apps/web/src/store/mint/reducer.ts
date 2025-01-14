@@ -28,7 +28,7 @@ export interface MintState {
 }
 
 export const INITIAL_MINT = {
-  currencyA: xTokenMapBySymbol[ICON_XCALL_NETWORK_ID]['wICX'],
+  currencyA: xTokenMapBySymbol[ICON_XCALL_NETWORK_ID]['ICX'],
   currencyB: xTokenMapBySymbol[ICON_XCALL_NETWORK_ID]['sICX'],
 };
 

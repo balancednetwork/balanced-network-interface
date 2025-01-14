@@ -11,9 +11,10 @@ import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
 import { PairData, PairState } from '@/hooks/useV2Pairs';
 import { Field } from '@/store/swap/reducer';
 import { PairInfo } from '@/types';
-import { XToken, xChainMap } from '@balancednetwork/xwagmi';
+import { XToken, XTransactionInput, XTransactionType, xChainMap } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import { Validator } from 'icon-sdk-js';
+import { formatSymbol } from './formatter';
 
 const { isScoreAddress } = Validator;
 
@@ -307,4 +308,66 @@ export function getAccumulatedInterest(principal: BigNumber, rate: BigNumber, da
   const dailyRate = rate.div(365);
   const accumulatedInterest = principal.times(dailyRate.plus(1).pow(days)).minus(principal);
   return accumulatedInterest;
+}
+
+export function getTransactionText(xTransactionInput: XTransactionInput) {
+  let descriptionAction: string, descriptionAmount: string;
+  let attributes;
+
+  if (xTransactionInput.type === XTransactionType.BRIDGE) {
+    const _tokenSymbol = formatSymbol(xTransactionInput.inputAmount.currency.symbol);
+    const _formattedAmount = formatBigNumber(new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0), 'currency');
+    descriptionAction = `Transfer ${_tokenSymbol}`;
+    descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+
+    attributes = { descriptionAction, descriptionAmount };
+  } else if (xTransactionInput.type === XTransactionType.SWAP) {
+    const { inputAmount, outputAmount } = xTransactionInput;
+    const _inputTokenSymbol = formatSymbol(inputAmount.currency.symbol) || '';
+    const _outputTokenSymbol = formatSymbol(outputAmount?.currency.symbol) || '';
+    const _inputAmount = formatBigNumber(new BigNumber(inputAmount.toFixed() || 0), 'currency');
+    const _outputAmount = formatBigNumber(new BigNumber(outputAmount?.toFixed() || 0), 'currency');
+
+    descriptionAction = `Swap ${_inputTokenSymbol} for ${_outputTokenSymbol}`;
+    descriptionAmount = `${_inputAmount} ${_inputTokenSymbol} for ${_outputAmount} ${_outputTokenSymbol}`;
+    attributes = { descriptionAction, descriptionAmount };
+  } else if (xTransactionInput.type === XTransactionType.DEPOSIT) {
+    const _tokenSymbol = formatSymbol(xTransactionInput.inputAmount.currency.symbol);
+    const _formattedAmount = formatBigNumber(new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0), 'currency');
+
+    descriptionAction = `Deposit ${_tokenSymbol} as collateral`;
+    descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+
+    attributes = { descriptionAction, descriptionAmount };
+  } else if (xTransactionInput.type === XTransactionType.WITHDRAW) {
+    const _tokenSymbol = formatSymbol(xTransactionInput.inputAmount.currency.symbol);
+    const _formattedAmount = formatBigNumber(
+      new BigNumber(xTransactionInput?.inputAmount.multiply(-1).toFixed() || 0),
+      'currency',
+    );
+
+    descriptionAction = `Withdraw ${_tokenSymbol} collateral`;
+    descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+
+    attributes = { descriptionAction, descriptionAmount };
+  } else if (xTransactionInput.type === XTransactionType.BORROW) {
+    const _formattedAmount = formatBigNumber(new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0), 'currency');
+
+    descriptionAction = `Borrow bnUSD`;
+    descriptionAmount = `${_formattedAmount} bnUSD`;
+
+    attributes = { descriptionAction, descriptionAmount };
+  } else if (xTransactionInput.type === XTransactionType.REPAY) {
+    const _formattedAmount = formatBigNumber(
+      new BigNumber(xTransactionInput?.inputAmount.multiply(-1).toFixed() || 0),
+      'currency',
+    );
+
+    descriptionAction = `Repay bnUSD`;
+    descriptionAmount = `${_formattedAmount} bnUSD`;
+
+    attributes = { descriptionAction, descriptionAmount };
+  }
+
+  return attributes;
 }

@@ -1,8 +1,7 @@
 import { XChainId } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
 
-import { getXTokenBySymbol } from '@/utils/xTokens';
-import { XToken, xTokenMapBySymbol } from '@balancednetwork/xwagmi';
+import { ICON_XCALL_NETWORK_ID, XToken, convertCurrency, xTokenMapBySymbol } from '@balancednetwork/xwagmi';
 
 export enum Field {
   CURRENCY_A = 'CURRENCY_A',
@@ -29,8 +28,8 @@ export interface MintState {
 }
 
 export const INITIAL_MINT = {
-  currencyA: xTokenMapBySymbol['0x1.icon']['sICX'],
-  currencyB: xTokenMapBySymbol['0x1.icon']['bnUSD'],
+  currencyA: xTokenMapBySymbol[ICON_XCALL_NETWORK_ID]['wICX'],
+  currencyB: xTokenMapBySymbol[ICON_XCALL_NETWORK_ID]['sICX'],
 };
 
 const initialState: MintState = {
@@ -93,11 +92,11 @@ const mintSlice = createSlice({
     }),
 
     selectChain: create.reducer<{ field: Field; xChainId: XChainId }>((state, { payload: { field, xChainId } }) => {
-      const updatedCurrencyA = getXTokenBySymbol(xChainId, state[Field.CURRENCY_A].currency?.symbol);
+      const updatedCurrencyA = convertCurrency(xChainId, state[Field.CURRENCY_A].currency);
       if (updatedCurrencyA) {
         state[Field.CURRENCY_A].currency = updatedCurrencyA;
 
-        const updatedCurrencyB = getXTokenBySymbol(xChainId, state[Field.CURRENCY_B].currency?.symbol);
+        const updatedCurrencyB = convertCurrency(xChainId, state[Field.CURRENCY_B].currency)!;
         if (updatedCurrencyB.xChainId !== state[Field.CURRENCY_B].currency?.xChainId) {
           state[Field.CURRENCY_B].currency = updatedCurrencyB;
         }

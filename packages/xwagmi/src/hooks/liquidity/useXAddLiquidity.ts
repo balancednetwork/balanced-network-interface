@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { useSendXTransaction } from '../useSendXTransaction';
 
 export const useXAddLiquidity = () => {
-  const { sendXTransaction } = useSendXTransaction();
+  const sendXTransaction = useSendXTransaction();
 
   const xAddLiquidity = useMemo(
     () => async (account, inputAmount: CurrencyAmount<XToken>, outputAmount: CurrencyAmount<XToken>) => {

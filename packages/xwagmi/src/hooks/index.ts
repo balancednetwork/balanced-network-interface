@@ -15,3 +15,4 @@ export { useXService } from './useXService';
 export { useXWalletClient } from './useXWalletClient';
 
 export * from './liquidity';
+export { useSendXTransaction } from './useSendXTransaction';

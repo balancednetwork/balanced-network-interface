@@ -16,6 +16,7 @@ import { Field } from '@/store/mint/reducer';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { toDec } from '@/utils';
+import { formatSymbol } from '@/utils/formatter';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import {
   ICON_XCALL_NETWORK_ID,

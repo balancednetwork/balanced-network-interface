@@ -5,7 +5,7 @@ import { defineMessage } from '@lingui/macro';
 import { Helmet } from 'react-helmet-async';
 import { Route, Routes, useLocation } from 'react-router-dom';
 
-import { DefaultLayout } from '@/app/components2/Layout';
+import { DefaultLayout } from '@/app/components/Layout';
 import NewFeaturePage from './pages/NewFeaturePage';
 import { TradePageLayout } from './pages/trade/layout';
 import { TradePage } from './pages/trade/xswap/page';

@@ -29,6 +29,7 @@ import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { bnJs, getXChainType, useXAccount, useXRemoveLiquidity } from '@balancednetwork/xwagmi';
 
 import { EXA, WEIGHT } from '@/app/components/home/BBaln/utils';
+import { formatSymbol } from '@/utils/formatter';
 import { withdrawMessage } from '../utils';
 
 const Wrapper = styled(Flex)`
@@ -298,8 +299,12 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
       <Wrapper>
         <Typography variant="h3" mb={3}>
           <Trans>Withdraw:</Trans>&nbsp;
-          <Typography as="span" fontSize="16px" fontWeight="normal">{`${aBalance.currency.symbol || '...'} / ${
-            bBalance.currency.symbol || '...'
+          <Typography
+            as="span"
+            fontSize="16px"
+            fontWeight="normal"
+          >{`${formatSymbol(aBalance.currency.symbol) || '...'} / ${
+            formatSymbol(bBalance.currency.symbol) || '...'
           }`}</Typography>
         </Typography>
         <Box mb={3}>
@@ -327,7 +332,7 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
                 : availableBase?.toFixed() || 0,
             ),
             'currency',
-          )} ${pair.token0.symbol || '...'} /
+          )} ${formatSymbol(pair.token0.symbol) || '...'} /
           ${formatBigNumber(
             new BigNumber(
               parsedAmount[Field.CURRENCY_B]
@@ -335,7 +340,7 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
                 : availableQuote?.toFixed() || 0,
             ),
             'currency',
-          )} ${pair.token1.symbol || '...'}`}
+          )} ${formatSymbol(pair.token1.symbol) || '...'}`}
         </Typography>
         <Box mb={5}>
           {hasUnstakedLP && (
@@ -371,12 +376,12 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
             {formatBigNumber(new BigNumber(parsedAmount[Field.CURRENCY_A]?.toFixed() || 0), 'currency')}{' '}
-            {parsedAmount[Field.CURRENCY_A]?.currency.symbol || '...'}
+            {formatSymbol(parsedAmount[Field.CURRENCY_A]?.currency.symbol) || '...'}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
             {formatBigNumber(new BigNumber(parsedAmount[Field.CURRENCY_B]?.toFixed() || 0), 'currency')}{' '}
-            {parsedAmount[Field.CURRENCY_B]?.currency.symbol || '...'}
+            {formatSymbol(parsedAmount[Field.CURRENCY_B]?.currency.symbol) || '...'}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

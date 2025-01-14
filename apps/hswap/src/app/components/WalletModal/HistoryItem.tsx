@@ -1,64 +1,29 @@
-import CurrencyLogoWithNetwork from '@/app/components2/CurrencyLogoWithNetwork';
-import { ExclamationIcon } from '@/app/components2/Icons';
+import React from 'react';
+
+import CurrencyLogoWithNetwork from '@/app/components/CurrencyLogoWithNetwork';
+import { ExclamationIcon } from '@/app/components/Icons';
 import { Separator } from '@/components/ui/separator';
+import useElapsedTime from '@/hooks/useElapsedTime';
 import { cn } from '@/lib/utils';
+import { formatRelativeTime } from '@/utils';
 import { formatBalance } from '@/utils/formatter';
 import { getNetworkDisplayName, getTrackerLink, isIconTransaction } from '@balancednetwork/xwagmi';
 import { XTransaction, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
 import { xMessageActions } from '@balancednetwork/xwagmi';
-import { CheckIcon, ExternalLink, Loader2Icon, XIcon } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { CheckIcon, ExternalLink, Loader2Icon } from 'lucide-react';
 
 interface HistoryItemProps {
   xTransaction: XTransaction;
 }
 
-function formatElapsedTime(elapsedTime: number): string {
-  const secondsInMinute = 60;
-  const secondsInHour = 3600;
-  const secondsInDay = 86400;
-
-  const days = Math.floor(elapsedTime / secondsInDay);
-  const hours = Math.floor((elapsedTime % secondsInDay) / secondsInHour);
-  const minutes = Math.floor((elapsedTime % secondsInHour) / secondsInMinute);
-  const seconds = elapsedTime % secondsInMinute;
-
-  if (days > 0) {
-    return `${days} days ago`;
-  } else if (hours > 0) {
-    return `${hours} hours ago`;
-  } else if (minutes > 0) {
-    return `${minutes} mins ago`;
-  } else {
-    return `just now`;
-  }
-}
-
 const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
-  const { inputXToken, outputXToken, inputAmount, outputAmount } = xTransaction.attributes;
-
+  const inputXToken = xTransaction.input.inputAmount.currency;
+  const outputXToken = xTransaction.input?.outputAmount!.currency;
+  const inputAmount = xTransaction.input.inputAmount.toFixed();
+  const outputAmount = xTransaction.input?.outputAmount!.toFixed();
   const primaryMessage = xMessageActions.getOf(xTransaction.id, true);
 
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const timestamp = xTransaction.createdAt;
-  useEffect(() => {
-    if (timestamp) {
-      const updateElapsedTime = () => {
-        setElapsedTime(Math.floor((Date.now() - timestamp) / 1000));
-      };
-
-      updateElapsedTime(); // Update immediately
-
-      const interval = setInterval(
-        () => {
-          updateElapsedTime();
-        },
-        Date.now() - timestamp > 600000 ? 60000 : 1000,
-      ); // 600000 ms = 10 minutes
-
-      return () => clearInterval(interval);
-    }
-  }, [timestamp]);
+  const elapsedTime = useElapsedTime(xTransaction.createdAt);
 
   return (
     <>
@@ -105,7 +70,7 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
             {xTransaction.status === XTransactionStatus.pending
               ? 'Swapping'
               : elapsedTime
-                ? formatElapsedTime(elapsedTime)
+                ? formatRelativeTime(elapsedTime)
                 : '...'}
           </div>
 

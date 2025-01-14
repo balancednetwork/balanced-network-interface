@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { useSendXTransaction } from '../useSendXTransaction';
 
 export const useXRemoveLiquidity = () => {
-  const { sendXTransaction } = useSendXTransaction();
+  const sendXTransaction = useSendXTransaction();
 
   const xRemoveLiquidity = useMemo(
     () => async (account, poolId: number, xChainId: XChainId, withdrawAmount: CurrencyAmount<Token>) => {

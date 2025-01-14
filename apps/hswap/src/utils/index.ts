@@ -305,3 +305,63 @@ export function getAccumulatedInterest(principal: BigNumber, rate: BigNumber, da
   const accumulatedInterest = principal.times(dailyRate.plus(1).pow(days)).minus(principal);
   return accumulatedInterest;
 }
+
+/**
+ * Formats a given time difference in seconds into a human-readable relative time string.
+ *
+ * @param difference - The difference in seconds between two Unix timestamps.
+ * @returns A string representing the relative time, such as "x days ago", "x hours ago", "x mins ago", or "just now".
+ */
+export function formatRelativeTime(difference: number): string {
+  const secondsInMinute = 60;
+  const secondsInHour = 3600;
+  const secondsInDay = 86400;
+
+  const days = Math.floor(difference / secondsInDay);
+  const hours = Math.floor((difference % secondsInDay) / secondsInHour);
+  const minutes = Math.floor((difference % secondsInHour) / secondsInMinute);
+
+  if (days > 0) {
+    return `${days} days ago`;
+  } else if (hours > 0) {
+    return `${hours} hours ago`;
+  } else if (minutes > 0) {
+    return `${minutes} mins ago`;
+  } else {
+    return `just now`;
+  }
+}
+
+/**
+ * Format a given time difference in seconds into a human-readable elapsed time string.
+ * i.e. "1s, 40s, 1m 30s, 1h 20m 30s, 1d 2h 30m 40s"
+ *
+ * @param difference - The difference in seconds between two Unix timestamps.
+ * @returns A string representing the elapsed time in a human-readable format.
+ */
+export function formatElapsedTime(difference: number): string {
+  const secondsInMinute = 60;
+  const secondsInHour = 3600;
+  const secondsInDay = 86400;
+
+  const days = Math.floor(difference / secondsInDay);
+  const hours = Math.floor((difference % secondsInDay) / secondsInHour);
+  const minutes = Math.floor((difference % secondsInHour) / secondsInMinute);
+  const seconds = difference % secondsInMinute;
+
+  let result = '';
+  if (days > 0) {
+    result += `${days}d `;
+  }
+  if (hours > 0) {
+    result += `${hours}h `;
+  }
+  if (minutes > 0) {
+    result += `${minutes}m `;
+  }
+  if (seconds > 0 || result === '') {
+    result += `${seconds}s`;
+  }
+
+  return result.trim();
+}

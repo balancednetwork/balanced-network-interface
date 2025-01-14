@@ -11,6 +11,7 @@ import { getXChainType } from './actions';
 import { XPublicClient, XService, XWalletClient } from './core';
 import { useXConnection } from './hooks';
 import { XConnection } from './types';
+import { jsonStorageOptions } from './utils';
 import { ArchwayXConnector, ArchwayXPublicClient, ArchwayXService, ArchwayXWalletClient } from './xchains/archway';
 import { EvmXPublicClient, EvmXService, EvmXWalletClient } from './xchains/evm';
 import {
@@ -80,25 +81,6 @@ type XWagmiStore = {
 
   setXConnection: (xChainType: XChainType, xConnection: XConnection) => void;
   unsetXConnection: (xChainType: XChainType) => void;
-};
-
-const jsonStorageOptions = {
-  reviver: (key, value: any) => {
-    if (!value) return value;
-
-    if (typeof value === 'string' && value.startsWith('BIGINT::')) {
-      return BigInt(value.substring(8));
-    }
-
-    return value;
-  },
-  replacer: (key, value) => {
-    if (typeof value === 'bigint') {
-      return `BIGINT::${value}`;
-    } else {
-      return value;
-    }
-  },
 };
 
 export const useXWagmiStore = create<XWagmiStore>()(

@@ -10,7 +10,7 @@ export const archway: XChain = {
     name: 'Archway',
     symbol: 'ARCH',
   },
-  tracker: 'https://www.mintscan.io/archway/tx/',
+  tracker: { tx: 'https://www.mintscan.io/archway/tx' },
   rpc: {
     http: 'https://rpc.mainnet.archway.io',
     ws: 'wss://rpc.mainnet.archway.io:443/websocket',
@@ -37,7 +37,7 @@ export const archwayTestnet: XChain = {
     name: 'Archway',
     symbol: 'ARCH',
   },
-  tracker: 'https://www.mintscan.io/archway/tx/',
+  tracker: { tx: 'https://www.mintscan.io/archway/tx' },
   rpc: {
     http: 'https://rpc.mainnet.archway.io',
     ws: 'wss://rpc.mainnet.archway.io:443/websocket',
@@ -59,7 +59,7 @@ export const icon: XChain = {
   name: 'ICON',
   xChainId: '0x1.icon',
   xChainType: 'ICON',
-  tracker: '',
+  tracker: { tx: 'https://tracker.icon.community/transaction' },
   nativeCurrency: {
     decimals: 18,
     name: 'ICON',
@@ -86,7 +86,7 @@ export const lisbon: XChain = {
   name: 'Lisbon Testnet',
   xChainId: '0x2.icon',
   xChainType: 'ICON',
-  tracker: '',
+  tracker: { tx: '' },
   nativeCurrency: {
     decimals: 18,
     name: 'ICON',
@@ -113,7 +113,7 @@ export const avalanche: XChain = {
   name: 'Avalanche',
   xChainId: '0xa86a.avax',
   xChainType: 'EVM',
-  tracker: 'https://snowscan.xyz',
+  tracker: { tx: 'https://snowscan.xyz/tx' },
   nativeCurrency: {
     decimals: 18,
     name: 'Avalanche',
@@ -138,7 +138,7 @@ export const fuji: XChain = {
   name: 'Fuji Testnet',
   xChainId: '0xa869.fuji',
   xChainType: 'EVM',
-  tracker: 'https://snowscan.xyz',
+  tracker: { tx: 'https://snowscan.xyz' },
   nativeCurrency: {
     decimals: 18,
     name: 'Avalanche',
@@ -163,7 +163,7 @@ export const havah: XChain = {
   name: 'Havah',
   xChainId: '0x100.icon',
   xChainType: 'HAVAH',
-  tracker: 'https://scan.havah.io',
+  tracker: { tx: 'https://scan.havah.io/txn' },
   nativeCurrency: {
     decimals: 18,
     name: 'Havah',
@@ -189,7 +189,7 @@ export const bsc: XChain = {
   name: 'BNB Chain',
   xChainId: '0x38.bsc',
   xChainType: 'EVM',
-  tracker: 'https://bscscan.com/',
+  tracker: { tx: 'https://bscscan.com/tx' },
   nativeCurrency: {
     decimals: 18,
     name: 'BNB',
@@ -214,7 +214,7 @@ export const arbitrum: XChain = {
   name: 'Arbitrum',
   xChainId: '0xa4b1.arbitrum',
   xChainType: 'EVM',
-  tracker: 'https://arbiscan.io/',
+  tracker: { tx: 'https://arbiscan.io/tx' },
   nativeCurrency: {
     decimals: 18,
     name: 'ETH',
@@ -239,7 +239,7 @@ export const base: XChain = {
   name: 'Base',
   xChainId: '0x2105.base',
   xChainType: 'EVM',
-  tracker: 'https://basescan.org/',
+  tracker: { tx: 'https://basescan.org/tx' },
   nativeCurrency: {
     decimals: 18,
     name: 'ETH',
@@ -264,7 +264,7 @@ export const injective: XChain = {
   name: 'Injective',
   xChainId: 'injective-1',
   xChainType: 'INJECTIVE',
-  tracker: 'https://explorer.injective.network/',
+  tracker: { tx: 'https://explorer.injective.network/transaction' },
   nativeCurrency: {
     decimals: 18,
     name: 'INJ',
@@ -289,7 +289,7 @@ export const stellar: XChain = {
   name: 'Stellar',
   xChainId: 'stellar',
   xChainType: 'STELLAR',
-  tracker: 'https://stellar.expert/explorer/public/',
+  tracker: { tx: 'https://stellar.expert/explorer/public/tx' },
   nativeCurrency: {
     decimals: 7,
     name: 'XLM',
@@ -315,7 +315,7 @@ export const sui: XChain = {
   name: 'Sui',
   xChainId: 'sui',
   xChainType: 'SUI',
-  tracker: 'https://suiscan.xyz/mainnet/',
+  tracker: { tx: 'https://suiscan.xyz/mainnet/tx' },
   nativeCurrency: {
     decimals: 9,
     name: 'SUI',
@@ -341,7 +341,7 @@ export const solana: XChain = {
   name: 'Solana',
   xChainId: 'solana',
   xChainType: 'SOLANA',
-  tracker: 'https://solscan.io/',
+  tracker: { tx: 'https://solscan.io/tx' },
   nativeCurrency: {
     decimals: 9,
     name: 'SOL',
@@ -367,7 +367,7 @@ export const optimism: XChain = {
   name: 'Optimism',
   xChainId: '0xa.optimism',
   xChainType: 'EVM',
-  tracker: 'https://optimistic.etherscan.io',
+  tracker: { tx: 'https://optimistic.etherscan.io/tx' },
   nativeCurrency: {
     decimals: 18,
     name: 'ETH',

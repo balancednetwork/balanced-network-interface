@@ -1,6 +1,6 @@
 'use client';
 
-import { ChainLogo } from '@/app/components2/ChainLogo';
+import { ChainLogo } from '@/app/components/ChainLogo';
 import { Select, SelectContent, SelectItem } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';

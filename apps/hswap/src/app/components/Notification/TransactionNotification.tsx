@@ -3,9 +3,6 @@ import React from 'react';
 import { Trans } from '@lingui/macro';
 import { useNavigate } from 'react-router-dom';
 
-import { Flex } from 'rebass/styled-components';
-import styled from 'styled-components';
-
 import ExternalIcon from '@/assets/icons/external.svg';
 import FailureIcon from '@/assets/icons/failure.svg';
 import PendingIcon from '@/assets/icons/pending.svg';
@@ -22,15 +19,15 @@ type NotificationProps = {
 
 const NotificationPending = ({ summary }: NotificationProps) => {
   return (
-    <NotificationContainer>
-      <TransactionStatus>
+    <div className="flex items-start">
+      <div className="-mt-1 mr-2">
         <PendingIcon width={20} height={20} />
-      </TransactionStatus>
+      </div>
 
-      <TransactionInfo>
+      <div className="flex flex-col">
         <span className="font-[500]">{summary}</span>
-      </TransactionInfo>
-    </NotificationContainer>
+      </div>
+    </div>
   );
 };
 
@@ -39,35 +36,37 @@ const NotificationSuccess = ({ summary, redirectOnSuccess }: NotificationProps) 
   redirectOnSuccess && navigate(redirectOnSuccess);
 
   return (
-    <NotificationContainer>
-      <TransactionStatus>
+    <div className="flex items-start">
+      <div className="-mt-1 mr-2">
         <SuccessIcon width={20} height={20} />
-      </TransactionStatus>
-      <TransactionInfo>
+      </div>
+
+      <div className="flex flex-col">
         <span className="font-[500]">{summary}</span>
-      </TransactionInfo>
-    </NotificationContainer>
+      </div>
+    </div>
   );
 };
 
 const NotificationError = ({ failureReason, generic, title }: NotificationProps) => {
   const arbitraryCallsTestExecutionPassed = failureReason && failureReason.indexOf('everted(20)') >= 0;
   return (
-    <NotificationContainer
+    <div
+      className="flex items-start"
       onClick={() => {
         if (generic) window.open('https://docs.balanced.network/troubleshooting#transaction-error', '_blank');
       }}
     >
-      <TransactionStatus>
+      <div className="-mt-1 mr-2">
         {arbitraryCallsTestExecutionPassed ? (
           <SuccessIcon width={20} height={20} />
         ) : (
           <FailureIcon width={20} height={20} />
         )}
-      </TransactionStatus>
+      </div>
 
-      <TransactionInfo flexDirection="column">
-        <TransactionInfoBody>
+      <div className="flex flex-col">
+        <div>
           <span className="font-[500]">
             {title ? (
               <Trans>{title}</Trans>
@@ -77,29 +76,16 @@ const NotificationError = ({ failureReason, generic, title }: NotificationProps)
               <Trans>Couldn't complete your transaction.</Trans>
             )}
           </span>
-        </TransactionInfoBody>
-        <TransactionInfoBody>
+        </div>
+        <div>
           <span className="font-[500]" color={generic ? 'primaryBright' : 'alert'}>
             {failureReason && !arbitraryCallsTestExecutionPassed && failureReason}
             {generic && <ExternalIcon width="15" height="15" style={{ marginLeft: 7, marginTop: -3 }} />}
           </span>
-        </TransactionInfoBody>
-      </TransactionInfo>
-    </NotificationContainer>
+        </div>
+      </div>
+    </div>
   );
 };
-
-const NotificationContainer = styled(Flex)`
-  align-items: flex-start;
-`;
-
-const TransactionStatus = styled.div`
-  margin-top: -3px;
-  margin-right: 6px;
-`;
-
-const TransactionInfo = styled(Flex)``;
-
-const TransactionInfoBody = styled.div``;
 
 export { NotificationPending, NotificationSuccess, NotificationError };

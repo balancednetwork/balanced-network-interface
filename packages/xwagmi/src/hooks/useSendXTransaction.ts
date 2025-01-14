@@ -3,7 +3,6 @@ import { ICON_XCALL_NETWORK_ID, xChainMap } from '@/constants';
 import { isIconTransaction } from '@/utils';
 import { transactionActions, xChainHeightActions, xMessageActions, xTransactionActions } from '@/xcall';
 import { XMessage, XMessageStatus, XTransaction, XTransactionInput, XTransactionStatus } from '@/xcall/types';
-import { useMemo } from 'react';
 
 const sendXTransaction = async (xTransactionInput: XTransactionInput) => {
   const { direction } = xTransactionInput;
@@ -14,17 +13,12 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput) => {
     throw new Error('WalletXService for source chain is not found');
   }
 
-  console.log('xTransactionInput', xTransactionInput);
-
   const sourceTransactionHash = await srcXWalletClient.executeTransaction(xTransactionInput);
   if (!sourceTransactionHash) {
     return;
   }
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  xTransactionInput?.callback?.();
-
-  const sourceTransaction = transactionActions.add(sourceChainId, {
+  transactionActions.add(sourceChainId, {
     hash: sourceTransactionHash,
   });
 
@@ -46,8 +40,8 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput) => {
     sourceChainId: sourceChainId,
     finalDestinationChainId: finalDestinationChainId,
     finalDestinationChainInitialBlockHeight,
-    attributes: {},
     createdAt: now,
+    input: xTransactionInput,
   };
   xTransactionActions.add(xTransaction);
 
@@ -55,7 +49,7 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput) => {
     const xMessage: XMessage = {
       id: `${sourceChainId}/${sourceTransactionHash}`,
       xTransactionId: xTransaction.id,
-      sourceChainId: sourceChainId,
+      sourceChainId,
       destinationChainId: primaryDestinationChainId,
       sourceTransactionHash,
       status: XMessageStatus.REQUESTED,
@@ -72,5 +66,5 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput) => {
 };
 
 export const useSendXTransaction = () => {
-  return useMemo(() => ({ sendXTransaction }), []);
+  return sendXTransaction;
 };

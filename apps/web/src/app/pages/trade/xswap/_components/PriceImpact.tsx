@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 import { Flex } from 'rebass/styled-components';
 
 import { Typography } from '@/app/theme';
-import { SLIPPAGE_WARNING_THRESHOLD } from '@/constants/misc';
+import { PRICE_IMPACT_WARNING_THRESHOLD } from '@/constants/misc';
 import { formatPercent } from '@/utils';
 
 interface PriceImpactProps {
@@ -15,7 +15,7 @@ interface PriceImpactProps {
 }
 
 const PriceImpact: React.FC<PriceImpactProps> = memo(({ trade }) => {
-  const showWarning = trade?.priceImpact.greaterThan(SLIPPAGE_WARNING_THRESHOLD);
+  const showWarning = trade?.priceImpact.greaterThan(PRICE_IMPACT_WARNING_THRESHOLD);
   const priceImpact = formatPercent(new BigNumber(trade?.priceImpact.toFixed() || 0));
 
   return (

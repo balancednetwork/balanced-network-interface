@@ -25,7 +25,7 @@ function useXCallGasChecker(
       // }
 
       const xChain: XChain = xChainMap[xChainId];
-      const nativeCurrency: XToken = xTokenMap[xChainId].find(x => x.isNativeToken);
+      const nativeCurrency: XToken = xTokenMap[xChainId].find(x => x.isNativeToken)!;
 
       const gasThreshold = inputAmount?.currency.isNativeToken
         ? xChain.gasThreshold + Number(inputAmount.toFixed())

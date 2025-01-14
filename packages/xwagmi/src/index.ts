@@ -24,3 +24,5 @@ export type * from './xcall/types';
 export { useAccount, useSwitchChain } from 'wagmi';
 export { useSignTransaction, useCurrentAccount, useCurrentWallet, useSuiClient } from '@mysten/dapp-kit';
 export { RLP } from '@ethereumjs/rlp';
+
+export { BASE_FEE, Networks, Operation, TransactionBuilder } from '@stellar/stellar-sdk';

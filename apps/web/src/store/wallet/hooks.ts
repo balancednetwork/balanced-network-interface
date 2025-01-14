@@ -25,6 +25,7 @@ import { changeBalances } from './reducer';
 import { useXBalances } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 
+import { NETWORK_ID } from '@/constants/config';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
 import { useRatesWithOracle } from '@/queries/reward';

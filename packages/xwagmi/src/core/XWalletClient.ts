@@ -1,9 +1,9 @@
-import { ICON_XCALL_NETWORK_ID, xTokenMapBySymbol } from '@/constants';
-import { isSpokeToken, uintToBytes } from '@/utils';
+import { ICON_XCALL_NETWORK_ID } from '@/constants';
+import { convertCurrency, isSpokeToken, uintToBytes } from '@/utils';
 import { getRlpEncodedSwapData, toICONDecimals } from '@/xcall';
 import { XTransactionInput, XTransactionType } from '@/xcall/types';
 import { bnJs } from '@/xchains/icon/bnJs';
-import { CurrencyAmount, Percent } from '@balancednetwork/sdk-core';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
 import { XChainId, XToken } from '../types';
 import { getAddLPData, getStakeData, getUnStakeData, getWithdrawData, getXRemoveData, tokenData } from './utils';
@@ -76,19 +76,17 @@ export abstract class XWalletClient {
   }
 
   async executeSwapOrBridge(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    const { type, direction, inputAmount, recipient, account, xCallFee, executionTrade, slippageTolerance } =
-      xTransactionInput;
+    const { type, direction, inputAmount, recipient, account, xCallFee, minReceived, path } = xTransactionInput;
 
     const receiver = `${direction.to}/${recipient}`;
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
 
     let data: Buffer;
     if (type === XTransactionType.SWAP) {
-      if (!executionTrade || !slippageTolerance) {
-        throw new Error('executionTrade and slippageTolerance are required');
+      if (!minReceived || !path) {
+        throw new Error('minReceived and path are required');
       }
-      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-      data = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived);
+      data = getRlpEncodedSwapData(path, '_swap', receiver, minReceived);
     } else if (type === XTransactionType.BRIDGE) {
       data = Buffer.from(
         JSON.stringify({
@@ -195,7 +193,7 @@ export abstract class XWalletClient {
 
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
     const amount = BigInt(inputAmount.quotient.toString());
-    const xTokenOnIcon = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][inputAmount.currency.symbol];
+    const xTokenOnIcon = convertCurrency(ICON_XCALL_NETWORK_ID, inputAmount.currency)!;
     const data = Buffer.from(getWithdrawData(xTokenOnIcon.address, amount));
 
     return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
@@ -211,8 +209,8 @@ export abstract class XWalletClient {
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
     const amountA = BigInt(inputAmount.quotient.toString());
     const amountB = BigInt(outputAmount.quotient.toString());
-    const xTokenAOnIcon = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][inputAmount.currency.symbol];
-    const xTokenBOnIcon = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][outputAmount.currency.symbol];
+    const xTokenAOnIcon = convertCurrency(ICON_XCALL_NETWORK_ID, inputAmount.currency)!;
+    const xTokenBOnIcon = convertCurrency(ICON_XCALL_NETWORK_ID, outputAmount.currency)!;
     const data = Buffer.from(
       getAddLPData(xTokenAOnIcon.address, xTokenBOnIcon.address, amountA, amountB, true, 1_000n),
     );

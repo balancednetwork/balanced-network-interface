@@ -1,34 +1,10 @@
 import { xChainMap } from '@/constants/xChains';
+import { allXTokens, xTokenMap, xTokenMapBySymbol } from '@/constants/xTokens';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { PublicKey } from '@solana/web3.js';
-import { bech32 } from 'bech32';
 import BigNumber from 'bignumber.js';
-import { ethers } from 'ethers';
-import { Validator } from 'icon-sdk-js';
 import { XChainId, XToken } from '../types';
-import { SolanaXService } from '../xchains/solana';
-import { isStellarAddress } from '../xchains/stellar/utils';
-
-const { isEoaAddress, isScoreAddress } = Validator;
-
-const isBech32 = (string: string) => {
-  try {
-    bech32.decode(string);
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
-
-const isArchEoaAddress = (address: string) => {
-  return isBech32(address) && address.startsWith('archway');
-};
-
-const isInjectiveAddress = (address: string) => {
-  return isBech32(address) && address.startsWith('inj');
-};
+export * from './address';
 
 // Function to get the last i bytes of an integer
 function lastBytesOf(x: bigint, i: number): Uint8Array {
@@ -117,93 +93,99 @@ export const showMessageOnBeforeUnload = e => {
   return e.returnValue;
 };
 
-function isSuiAddress(address: string) {
-  // Check if the address starts with '0x'
-  if (typeof address !== 'string' || !address.startsWith('0x')) {
-    return false;
+export const getTrackerLink = (
+  xChainId: XChainId,
+  data: string,
+  type: 'transaction' | 'address' | 'block' | 'contract' = 'transaction',
+) => {
+  const tracker = xChainMap[xChainId].tracker;
+
+  switch (type) {
+    case 'transaction': {
+      return `${tracker.tx}/${data}`;
+    }
+    case 'address': {
+      return ``;
+    }
+    case 'block': {
+      return ``;
+    }
+    default: {
+      return ``;
+    }
   }
+};
 
-  // Remove the '0x' prefix
-  const hexPart = address.slice(2);
+export const jsonStorageOptions: {
+  reviver?: (key: string, value: unknown) => unknown;
+  replacer?: (key: string, value: unknown) => unknown;
+} = {
+  reviver: (_key: string, value: unknown) => {
+    if (!value) return value;
 
-  // Check if the length is exactly 64 characters (32 bytes in hex)
-  if (hexPart.length !== 64) {
-    return false;
-  }
-
-  // Check if all characters are valid hexadecimal digits
-  const hexRegex = /^[0-9a-fA-F]+$/;
-  if (!hexRegex.test(hexPart)) {
-    return false;
-  }
-
-  return true;
-}
-
-function isSolanaAddress(address) {
-  try {
-    const publicKey = new PublicKey(address);
-    return PublicKey.isOnCurve(publicKey);
-  } catch (error) {
-    return false;
-  }
-}
-
-async function isSolanaWalletAddress(address) {
-  try {
-    const solanaXService = SolanaXService.getInstance();
-    // Validate the address
-    const publicKey = new PublicKey(address);
-
-    // Check if the address is on-curve
-    const isOnCurve = PublicKey.isOnCurve(publicKey.toBytes());
-    if (!isOnCurve) {
-      return false; // Off-curve addresses cannot be wallet addresses
+    if (typeof value === 'string' && value.startsWith('BIGINT::')) {
+      return BigInt(value.substring(8));
     }
 
-    // Establish a connection to the Solana cluster
-    const connection = solanaXService.connection;
-
-    // Fetch account information
-    const accountInfo = await connection.getAccountInfo(publicKey);
-
-    if (accountInfo === null) {
-      // If the account doesn't exist but is on-curve, it's likely a wallet address
-      return true;
-    } else {
-      // Check if the account is owned by the Token Program
-      if (accountInfo.owner.equals(TOKEN_PROGRAM_ID)) {
-        return false; // It's a token account
-      } else {
-        return true; // It's a wallet address
-      }
+    // @ts-ignore
+    if (value && value.type === 'bigint') {
+      // @ts-ignore
+      return BigInt(value.value);
     }
-  } catch (error) {
-    // If an error occurs (e.g., invalid address), return false
-    console.error('Error checking address:', error);
-    return false;
-  }
-}
 
-export async function validateAddress(address: string, chainId: XChainId): Promise<boolean> {
-  switch (xChainMap[chainId].xChainType) {
-    case 'ICON':
-    case 'HAVAH':
-      return isScoreAddress(address) || isEoaAddress(address);
-    case 'EVM':
-      return ethers.utils.isAddress(address);
-    case 'ARCHWAY':
-      return isArchEoaAddress(address);
-    case 'INJECTIVE':
-      return isInjectiveAddress(address);
-    case 'STELLAR':
-      return isStellarAddress(address);
-    case 'SUI':
-      return isSuiAddress(address);
-    case 'SOLANA':
-      return await isSolanaWalletAddress(address);
+    // @ts-ignore
+    if (value && value.type === 'CurrencyAmount') {
+      // @ts-ignore
+      return CurrencyAmount.fromRawAmount(allXTokens.find(t => t.id === value.value.tokenId)!, value.value.quotient);
+    }
+    return value;
+  },
+  replacer: (_key: unknown, value: unknown) => {
+    if (typeof value === 'bigint') {
+      return { type: 'bigint', value: value.toString() };
+    }
+
+    if (value instanceof CurrencyAmount) {
+      return {
+        type: 'CurrencyAmount',
+        value: {
+          tokenId: value.currency.id,
+          quotient: value.quotient.toString(),
+        },
+      };
+    }
+
+    return value;
+  },
+};
+
+export const convertCurrencyAmount = (
+  xChainId: XChainId,
+  amount: CurrencyAmount<Currency | XToken>,
+): CurrencyAmount<XToken> => {
+  const token = xTokenMapBySymbol[xChainId][amount.currency.symbol]!;
+
+  if (!token) {
+    throw new Error(`XToken ${amount.currency.symbol} is not supported on ${xChainId}`);
   }
-}
+
+  return CurrencyAmount.fromRawAmount(
+    token,
+    new BigNumber(amount.toFixed()).times((10n ** BigInt(token.decimals)).toString()).toFixed(0),
+  );
+};
+
+export const convertCurrency = (xChainId: XChainId, currency: Currency | XToken | undefined): XToken | undefined => {
+  if (!currency) return undefined;
+
+  const token = xTokenMapBySymbol[xChainId][currency.symbol];
+
+  if (!token) {
+    throw new Error(`XToken ${currency.symbol} is not supported on ${xChainId}`);
+  }
+
+  return token;
+};
 
 export function isIconTransaction(from: XChainId | undefined, to: XChainId | undefined): boolean {
   return from === '0x1.icon' && to === '0x1.icon';

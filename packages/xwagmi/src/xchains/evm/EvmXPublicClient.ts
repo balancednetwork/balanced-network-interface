@@ -1,11 +1,11 @@
-import { Address, PublicClient, WriteContractParameters, erc20Abi, getContract, parseEventLogs, toHex } from 'viem';
+import { Address, PublicClient, erc20Abi, getContract, parseEventLogs, toHex } from 'viem';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { xChainMap } from '@/constants/xChains';
 import { XPublicClient } from '@/core/XPublicClient';
 import { XChainId, XToken } from '@/types';
 import { getRlpEncodedSwapData } from '@/xcall/utils';
-import { MaxUint256, Percent } from '@balancednetwork/sdk-core';
+import { MaxUint256 } from '@balancednetwork/sdk-core';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import {
   TransactionStatus,
@@ -265,8 +265,7 @@ export class EvmXPublicClient extends XPublicClient {
   }
 
   async estimateSwapGas(xTransactionInput: XTransactionInput) {
-    const { type, direction, inputAmount, recipient, account, xCallFee, executionTrade, slippageTolerance } =
-      xTransactionInput;
+    const { type, direction, inputAmount, recipient, account, xCallFee, minReceived, path } = xTransactionInput;
 
     const receiver = `${direction.to}/${recipient}`;
     const tokenAddress = inputAmount.wrapped.currency.address;
@@ -275,11 +274,10 @@ export class EvmXPublicClient extends XPublicClient {
 
     let data: Address;
     if (type === XTransactionType.SWAP) {
-      if (!executionTrade || !slippageTolerance) {
+      if (!minReceived || !path) {
         return;
       }
-      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived).toString('hex');
+      const rlpEncodedData = getRlpEncodedSwapData(path, '_swap', receiver, minReceived).toString('hex');
       data = `0x${rlpEncodedData}`;
     } else if (type === XTransactionType.BRIDGE) {
       data = toHex(

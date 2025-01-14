@@ -12,6 +12,7 @@ import { getXPublicClient } from '@/actions';
 // } from '@/app/components/Notification/TransactionNotification';
 import { XChainId } from '@/types';
 import { isIconTransaction } from '@/utils';
+import { getTrackerLink } from '@/utils';
 import { Transaction, TransactionStatus, XTransactionType } from '@/xcall/types';
 import { persist } from 'zustand/middleware';
 import { xTransactionActions } from './useXTransactionStore';
@@ -30,14 +31,6 @@ export const useTransactionStore = create<TransactionStore>()(
     },
   ),
 );
-
-export const getTrackerLink = (xChainId: XChainId, hash: string, type = 'transaction') => {
-  // TODO: handle different chain types
-  return `https://tracker.icon.foundation/transaction/${hash}?network=${xChainId}`;
-
-  // archway
-  // window.open(`${archway.tracker}/${tx.transactionHash}`, '_blank');
-};
 
 export const NotificationPending = ({ summary }) => <div>{summary}</div>;
 export const NotificationSuccess = ({ summary, redirectOnSuccess }) => <div>{summary}</div>;

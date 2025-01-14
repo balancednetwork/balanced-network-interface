@@ -1,10 +1,11 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
-import { IntentService, IntentStatusCode } from '@balancednetwork/intents-sdk';
+import { IntentStatusCode } from '@balancednetwork/intents-sdk';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import { XToken, allXTokens } from '@balancednetwork/xwagmi';
+import { XToken, jsonStorageOptions } from '@balancednetwork/xwagmi';
 import { useQuery } from '@tanstack/react-query';
 
+import { intentService } from '@/lib/intent';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -36,49 +37,6 @@ type MMTransactionStore = {
   setTaskId: (id: string, taskId: string) => void;
   getPendingTransactions: () => MMTransaction[];
   remove: (id: string) => void;
-};
-
-const jsonStorageOptions: {
-  reviver?: (key: string, value: unknown) => unknown;
-  replacer?: (key: string, value: unknown) => unknown;
-} = {
-  reviver: (_key: string, value: unknown) => {
-    if (!value) return value;
-
-    if (typeof value === 'string' && value.startsWith('BIGINT::')) {
-      return BigInt(value.substring(8));
-    }
-
-    // @ts-ignore
-    if (value && value.type === 'bigint') {
-      // @ts-ignore
-      return BigInt(value.value);
-    }
-
-    // @ts-ignore
-    if (value && value.type === 'CurrencyAmount') {
-      // @ts-ignore
-      return CurrencyAmount.fromRawAmount(allXTokens.find(t => t.id === value.value.tokenId)!, value.value.quotient);
-    }
-    return value;
-  },
-  replacer: (_key: unknown, value: unknown) => {
-    if (typeof value === 'bigint') {
-      return { type: 'bigint', value: value.toString() };
-    }
-
-    if (value instanceof CurrencyAmount) {
-      return {
-        type: 'CurrencyAmount',
-        value: {
-          tokenId: value.currency.id,
-          quotient: value.quotient.toString(),
-        },
-      };
-    }
-
-    return value;
-  },
 };
 
 export const useMMTransactionStore = create<MMTransactionStore>()(
@@ -197,7 +155,7 @@ export const Updater = () => {
     queryFn: async () => {
       return Promise.all(
         pendingIntents.map(async t => {
-          const intentStatus = await IntentService.getStatus({ task_id: t.taskId });
+          const intentStatus = await intentService.getStatus({ task_id: t.taskId });
 
           if (
             intentStatus.ok &&

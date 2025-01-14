@@ -23,7 +23,7 @@ import { formatBigNumber } from '@/utils';
 
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
 import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
-import { formatBalance } from '@/utils/formatter';
+import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { getXChainType, useXAccount } from '@balancednetwork/xwagmi';
 
 export default function LPDescription() {
@@ -146,7 +146,7 @@ export default function LPDescription() {
         {pairState === PairState.NOT_EXISTS && (
           <Flex flex={1} padding={[5, 7]} flexDirection="column">
             <Typography variant="h3" mb={2} marginBottom={40}>
-              {`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}`}{' '}
+              {`${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} / ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}`}{' '}
               <Trans>liquidity pool</Trans>
             </Typography>
 
@@ -165,9 +165,9 @@ export default function LPDescription() {
             {poolRewards ? (
               <Typography variant="h3" mb={2} marginBottom={40}>
                 {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-                  ? t`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}
+                  ? t`${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} / ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}
                     liquidity pool${upSmall ? ': ' : ''}`
-                  : t`${currencies[Field.CURRENCY_A]?.symbol} queue${upSmall ? ': ' : ''}`}{' '}
+                  : t`${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} queue${upSmall ? ': ' : ''}`}{' '}
                 <Typography fontWeight="normal" fontSize={16} as={upSmall ? 'span' : 'p'}>
                   {apy && allPairs
                     ? `${apy
@@ -206,11 +206,10 @@ export default function LPDescription() {
             ) : (
               <Typography variant="h3" mb={2} marginBottom={40}>
                 {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX
-                  ? t`${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol} liquidity pool`
+                  ? t`${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} / ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)} liquidity pool`
                   : t`${currencies[Field.CURRENCY_A]?.symbol} queue`}
               </Typography>
             )}
-
             <Flex flexWrap="wrap">
               <Box
                 width={[1, 1 / 2]} //
@@ -241,13 +240,13 @@ export default function LPDescription() {
                               baseCurrencyTotalSupply.plus(formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0),
                               'currency',
                             )}{' '}
-                            {pair?.reserve0.currency?.symbol}
+                            {formatSymbol(pair?.reserve0.currency?.symbol)}
                             <br />
                             {formatBigNumber(
                               quoteCurrencyTotalSupply.plus(formattedAmounts[Field.CURRENCY_B]?.toFixed() || 0),
                               'currency',
                             )}{' '}
-                            {pair?.reserve1.currency?.symbol}
+                            {formatSymbol(pair?.reserve1.currency?.symbol)}
                           </>
                         ) : (
                           `${formatBigNumber(
@@ -299,10 +298,10 @@ export default function LPDescription() {
                       {pair?.poolId !== BalancedJs.utils.POOL_IDS.sICXICX ? (
                         <>
                           {formatBalance(pair?.reserve0.toFixed(), rates?.[pair.reserve0.currency?.symbol]?.toFixed())}{' '}
-                          {pair?.reserve0.currency?.symbol}
+                          {formatSymbol(pair?.reserve0.currency?.symbol)}
                           <br />
                           {formatBalance(pair?.reserve1.toFixed(), rates?.[pair.reserve1.currency?.symbol]?.toFixed())}{' '}
-                          {pair?.reserve1.currency?.symbol}
+                          {formatSymbol(pair?.reserve1.currency?.symbol)}
                         </>
                       ) : (
                         `${pair?.reserve0.toFixed(0, { groupSeparator: ',' })} ${pair?.reserve0.currency?.symbol}`

@@ -8,7 +8,6 @@ import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { MINIMUM_ICX_FOR_TX } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
 import { NULL_CONTRACT_ADDRESS, SUPPORTED_TOKENS_MAP_BY_ADDRESS, isBALN, isFIN } from '@/constants/tokens';
 import { isXToken } from '@/utils/xTokens';

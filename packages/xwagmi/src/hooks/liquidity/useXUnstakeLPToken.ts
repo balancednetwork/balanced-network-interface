@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { useSendXTransaction } from '../useSendXTransaction';
 
 export const useXUnstakeLPToken = () => {
-  const { sendXTransaction } = useSendXTransaction();
+  const sendXTransaction = useSendXTransaction();
 
   const xUnstakeLPToken = useMemo(
     () => async (account, poolId: number, xChainId: XChainId, rawUnstakeAmount: string, decimals: number) => {

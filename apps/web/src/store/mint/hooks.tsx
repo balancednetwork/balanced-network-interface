@@ -16,7 +16,7 @@ import { tryParseAmount } from '@/store/swap/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useXTokenBalances } from '@/store/wallet/hooks';
 import { formatSymbol } from '@/utils/formatter';
-import { XChainId, XToken, xTokenMap, xTokenMapBySymbol } from '@balancednetwork/xwagmi';
+import { ICON_XCALL_NETWORK_ID, XChainId, XToken, convertCurrency, xTokenMap } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
 import { AppDispatch, AppState } from '../index';
 import { Field, INITIAL_MINT, InputType, selectChain, selectCurrency, typeInput } from './reducer';
@@ -39,7 +39,7 @@ export function useMintActionHandlers(noLiquidity: boolean | undefined): {
       dispatch(
         selectCurrency({
           field,
-          currency: currency instanceof XToken ? currency : xTokenMapBySymbol['0x1.icon'][currency.symbol],
+          currency: currency instanceof XToken ? currency : convertCurrency(ICON_XCALL_NETWORK_ID, currency)!,
         }),
       );
     },
@@ -168,11 +168,11 @@ export function useDerivedMintInfo(
   );
 
   const currencyAOnIcon = useMemo(() => {
-    return currencyA ? xTokenMapBySymbol['0x1.icon'][currencyA.symbol] : undefined;
+    return convertCurrency(ICON_XCALL_NETWORK_ID, currencyA);
   }, [currencyA]);
 
   const currencyBOnIcon = useMemo(() => {
-    return currencyB ? xTokenMapBySymbol['0x1.icon'][currencyB.symbol] : undefined;
+    return convertCurrency(ICON_XCALL_NETWORK_ID, currencyB);
   }, [currencyB]);
 
   const currenciesOnIcon: { [field in Field]?: XToken } = React.useMemo(() => {
@@ -321,10 +321,10 @@ export function useDerivedMintInfo(
   const mintableLiquidity = React.useMemo(() => {
     const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = {
       [Field.CURRENCY_A]: currencyBalances[Field.CURRENCY_A]
-        ? CurrencyAmount.fromRawAmount(currencyAOnIcon, currencyBalances[Field.CURRENCY_A]?.quotient)
+        ? CurrencyAmount.fromRawAmount(currencyAOnIcon!, currencyBalances[Field.CURRENCY_A]?.quotient)
         : undefined,
       [Field.CURRENCY_B]: currencyBalances[Field.CURRENCY_B]
-        ? CurrencyAmount.fromRawAmount(currencyBOnIcon, currencyBalances[Field.CURRENCY_B]?.quotient)
+        ? CurrencyAmount.fromRawAmount(currencyBOnIcon!, currencyBalances[Field.CURRENCY_B]?.quotient)
         : undefined,
     };
 
@@ -439,10 +439,10 @@ export function useInitialSupplyLoad(): void {
       const currencyA =
         currentCurrA && tokensArray.find(token => token.symbol?.toLowerCase() === currentCurrA?.toLowerCase());
       if (currencyB && currencyA) {
-        onCurrencySelection(Field.CURRENCY_A, xTokenMapBySymbol[xChainId][currencyA.symbol]);
-        onCurrencySelection(Field.CURRENCY_B, xTokenMapBySymbol[xChainId][currencyB.symbol]);
+        onCurrencySelection(Field.CURRENCY_A, convertCurrency(xChainId, currencyA)!);
+        onCurrencySelection(Field.CURRENCY_B, convertCurrency(xChainId, currencyB)!);
       } else if (currentCurrA?.toLowerCase() === 'icx') {
-        ICX && onCurrencySelection(Field.CURRENCY_A, xTokenMapBySymbol[xChainId][ICX.symbol]);
+        ICX && onCurrencySelection(Field.CURRENCY_A, convertCurrency(xChainId, ICX)!);
       } else {
         // TODO: is this necessary?
         if (currencies.CURRENCY_A && currencies.CURRENCY_B) {

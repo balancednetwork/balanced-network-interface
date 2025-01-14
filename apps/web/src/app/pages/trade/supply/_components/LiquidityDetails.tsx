@@ -84,8 +84,8 @@ export default function LiquidityDetails() {
   //     return acc;
   //   }, {});
 
-  const hasLiquidity = shouldShowQueue || !!userPools.length;
-  const isLiquidityInfoLoading = shouldShowQueue === undefined;
+  const hasLiquidity = shouldShowQueue || userPools.length;
+  const isLiquidityInfoLoading = shouldShowQueue === undefined && userPools.length === 0;
 
   return (
     <>
@@ -302,9 +302,7 @@ const PoolRecordQ = ({
   return (
     <ListItem onClick={handlePoolClick}>
       <StyledDataText>
-        <DataText>{`${balance.balance.currency.symbol || '...'}/${
-          balance.balance1?.currency.symbol || '...'
-        }`}</DataText>
+        <DataText>ICX queue</DataText>
         <StyledArrowDownIcon />
       </StyledDataText>
 

@@ -1,5 +1,5 @@
 import { useBnJsContractQuery, useIncentivisedPairs } from '@/queries';
-import { Fraction } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
@@ -138,6 +138,9 @@ export type Pair = {
   feesApy: number;
   balnApy?: number;
   totalSupply: number;
+  externalRewards?: CurrencyAmount<Currency>[];
+  externalRewardsTotalAPR?: number;
+  stakedRatio?: Fraction;
 };
 
 export function useAllPairs() {

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { Pair, useAllPairsIncentivisedById, useAllPairsTotal } from '@/queries/backendv2';
+import { Pair, useAllPairsIncentivisedById, useAllPairsTotal, useTokenPrices } from '@/queries/backendv2';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
 import { Box, Flex, Text } from 'rebass/styled-components';
@@ -19,6 +19,7 @@ import { Typography } from '@/theme';
 import { getFormattedNumber } from '@/utils/formatter';
 
 import { TOKEN_BLACKLIST } from '@/constants/tokens';
+import { formatValue, getRewardApr } from '@/utils';
 import { COMPACT_ITEM_COUNT, HeaderText, StyledSkeleton as Skeleton } from './TokenSection';
 
 export const MAX_BOOST = 2.5;
@@ -133,54 +134,84 @@ const SkeletonPairPlaceholder = () => {
 };
 
 const PairItem = ({
-  pair: { id, name, baseAddress, quoteAddress, liquidity, fees24h, fees30d, volume24h, volume30d, feesApy, balnApy },
+  pair: {
+    id,
+    name,
+    baseAddress,
+    quoteAddress,
+    liquidity,
+    fees24h,
+    fees30d,
+    volume24h,
+    volume30d,
+    feesApy,
+    balnApy,
+    externalRewards,
+    stakedRatio,
+  },
   isLast,
 }: {
   pair: Pair;
   isLast: boolean;
-}) => (
-  <>
-    <DashGrid my={2}>
-      <DataText minWidth={'220px'}>
-        <Flex alignItems="center">
-          <Box sx={{ minWidth: '95px' }}>
-            <PoolLogo baseCurrency={baseAddress} quoteCurrency={quoteAddress} />
-          </Box>
-          <Text ml={2}>{name.replace('wICX', 'ICX').replace('/', ' / ')}</Text>
-        </Flex>
-      </DataText>
-      <DataText className="apy-column">
-        {' '}
-        {balnApy ? (
-          liquidity < 1000 ? null : (
-            <APYItem>
-              <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                BALN:
-              </Typography>
-              {`${getFormattedNumber(balnApy, 'percent2')} - ${getFormattedNumber(balnApy * MAX_BOOST, 'percent2')}`}
-            </APYItem>
-          )
-        ) : null}
-        {feesApy !== 0 ? (
-          liquidity < 1000 ? (
-            '–'
-          ) : (
-            <APYItem>
-              <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                Fees:
-              </Typography>
-              {getFormattedNumber(feesApy, 'percent2')}
-            </APYItem>
-          )
-        ) : null}
-      </DataText>
-      <DataText>{getFormattedNumber(liquidity, 'currency0')}</DataText>
-      <DataText>{volume24h ? getFormattedNumber(volume24h, 'currency0') : '-'}</DataText>
-      <DataText>{fees24h ? getFormattedNumber(fees24h, 'currency0') : '-'}</DataText>
-    </DashGrid>
-    <Divider />
-  </>
-);
+}) => {
+  const { data: prices } = useTokenPrices();
+
+  return (
+    <>
+      <DashGrid my={2}>
+        <DataText minWidth={'220px'}>
+          <Flex alignItems="center">
+            <Box sx={{ minWidth: '95px' }}>
+              <PoolLogo baseCurrency={baseAddress} quoteCurrency={quoteAddress} />
+            </Box>
+            <Text ml={2}>{name.replace('wICX', 'ICX').replace('/', ' / ')}</Text>
+          </Flex>
+        </DataText>
+        <DataText className="apy-column">
+          {' '}
+          {balnApy ? (
+            liquidity < 1000 ? null : (
+              <APYItem>
+                <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                  BALN:
+                </Typography>
+                {`${getFormattedNumber(balnApy, 'percent2')} - ${getFormattedNumber(balnApy * MAX_BOOST, 'percent2')}`}
+              </APYItem>
+            )
+          ) : null}
+          {externalRewards?.map(reward => {
+            return prices?.[reward.currency.wrapped.symbol] ? (
+              <APYItem key={reward.currency.wrapped.symbol}>
+                <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                  {reward.currency.symbol}:
+                </Typography>
+                {`${formatValue(
+                  getRewardApr(reward, { stakedRatio, liquidity }, prices[reward.currency.symbol].toNumber()).toFixed(),
+                ).replace('$', '')}%`}
+              </APYItem>
+            ) : null;
+          })}
+          {feesApy !== 0 ? (
+            liquidity < 1000 ? (
+              '–'
+            ) : (
+              <APYItem>
+                <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                  Fees:
+                </Typography>
+                {getFormattedNumber(feesApy, 'percent2')}
+              </APYItem>
+            )
+          ) : null}
+        </DataText>
+        <DataText>{getFormattedNumber(liquidity, 'currency0')}</DataText>
+        <DataText>{volume24h ? getFormattedNumber(volume24h, 'currency0') : '-'}</DataText>
+        <DataText>{fees24h ? getFormattedNumber(fees24h, 'currency0') : '-'}</DataText>
+      </DashGrid>
+      <Divider />
+    </>
+  );
+};
 
 export default function PairSection() {
   const { data: allPairs } = useAllPairsIncentivisedById();

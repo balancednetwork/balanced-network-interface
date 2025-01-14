@@ -1,17 +1,14 @@
-import bnJs from '../icon/bnJs';
-
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
-import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xcall/utils';
-
 import { FROM_SOURCES, TO_SOURCES, injective } from '@/constants/xChains';
 import { xTokenMap } from '@/constants/xTokens';
 import { XWalletClient } from '@/core';
-import { XToken } from '@/types';
 import { uintToBytes } from '@/utils';
 import { XTransactionInput, XTransactionType } from '@/xcall/types';
+import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xcall/utils';
 import { RLP } from '@ethereumjs/rlp';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { isDenomAsset, isSpokeToken } from '../archway/utils';
+import bnJs from '../icon/bnJs';
 import { InjectiveXService } from './InjectiveXService';
 
 export class InjectiveXWalletClient extends XWalletClient {
@@ -60,12 +57,12 @@ export class InjectiveXWalletClient extends XWalletClient {
     }
 
     const _isSpokeToken = isSpokeToken(inputAmount.currency);
-    const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
+    const isDenom = isDenomAsset(inputAmount.currency);
 
     if (_isSpokeToken) {
       const amount = inputAmount.quotient.toString();
       const msg = MsgExecuteContractCompat.fromJSON({
-        contractAddress: inputAmount.currency.address,
+        contractAddress: token.address.replace('factory/inj14ejqjyq8um4p3xfqj74yld5waqljf88f9eneuk/', ''),
         sender: account,
         msg: {
           cross_transfer: {

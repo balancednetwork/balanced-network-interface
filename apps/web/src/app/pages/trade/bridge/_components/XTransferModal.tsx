@@ -14,13 +14,12 @@ import { Typography } from '@/app/theme';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
-import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useBridgeDirection, useBridgeState, useDerivedBridgeInfo } from '@/store/bridge/hooks';
 import { formatBigNumber } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
 import { getNetworkDisplayName } from '@/utils/xTokens';
-import { xChainMap } from '@balancednetwork/xwagmi';
+import { useSendXTransaction, xChainMap } from '@balancednetwork/xwagmi';
 import { useXCallFee } from '@balancednetwork/xwagmi';
 import { XTransactionInput, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
 import { xTransactionActions } from '@balancednetwork/xwagmi';
@@ -80,7 +79,7 @@ function XTransferModal({ modalId = MODAL_ID.XTRANSFER_CONFIRM_MODAL }) {
     }
   }, [currentXTransaction, slowDismiss]);
 
-  const { sendXTransaction } = useSendXTransaction();
+  const sendXTransaction = useSendXTransaction();
   const handleTransfer = async () => {
     if (currencyAmountToBridge && recipient && account && xCallFee) {
       const bridgeInfo: XTransactionInput = {

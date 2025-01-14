@@ -38,6 +38,7 @@
     "@keplr-wallet/types": "0.12.18",
     "@mysten/dapp-kit": "0.14.18",
     "@mysten/sui": "1.8.0",
+    "@mysten/wallet-standard": "^0.13.20",
     "@solana/spl-token": "0.4.9",
     "@solana/wallet-adapter-base": "0.9.23",
     "@solana/wallet-adapter-react": "0.15.35",

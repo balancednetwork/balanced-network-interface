@@ -14,12 +14,6 @@ export const getXTokenAddress = (chain: XChainId, tokenSymbol?: string): string 
   return xTokenMap[chain].find(t => t.symbol === tokenSymbol)?.address;
 };
 
-export const getXTokenBySymbol = (xChainId: XChainId, symbol?: string) => {
-  if (!symbol) return;
-
-  return Object.values(xTokenMap[xChainId]).find(t => t.symbol === symbol);
-};
-
 export const isXToken = (token?: Currency) => {
   if (!token) return false;
 

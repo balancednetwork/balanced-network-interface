@@ -84,7 +84,7 @@ const StellarSponsorshipModal = ({ text, address }: StellarSponsorshipModalProps
       setInitiated(true);
       const response = await client.post('/', { data: signedTx });
 
-      if (response.statusText === 'OK' && response.data) {
+      if (response.statusText === 'OK') {
         setSuccess(true);
         setTimeout(() => {
           handleDismiss();

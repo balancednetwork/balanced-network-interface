@@ -301,12 +301,12 @@ export function useDerivedSwapInfo(): {
       currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmount?.greaterThan(0),
     );
 
-    if (userHasSpecifiedInputOutput && !trade) {
+    if (userHasSpecifiedInputOutput && !trade && xTransactionType === XTransactionType.SWAP) {
       error = error ?? t`Insufficient liquidity`;
     }
 
     return error;
-  }, [trade, currencies, parsedAmount]);
+  }, [trade, currencies, parsedAmount, xTransactionType]);
 
   const [_pairState, _pair] = useV2Pair(_inputCurrencyOnIcon, _outputCurrencyOnIcon);
   const price = useMemo(() => {

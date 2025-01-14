@@ -57,7 +57,7 @@ const SwapModal = (props: SwapModalProps) => {
     const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
 
     if (executionTrade.inputAmount.currency.symbol === 'ICX') {
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade).toString('hex');
+      const rlpEncodedData = getRlpEncodedSwapData(executionTrade.route.routeActionPath).toString('hex');
 
       bnJs
         .inject({ account })
@@ -80,7 +80,14 @@ const SwapModal = (props: SwapModalProps) => {
         });
     } else {
       const token = executionTrade.inputAmount.currency as Token;
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', recipient, minReceived).toString('hex');
+      const outputToken = executionTrade.outputAmount.currency as Token;
+
+      const rlpEncodedData = getRlpEncodedSwapData(
+        executionTrade.route.routeActionPath,
+        '_swap',
+        recipient,
+        minReceived,
+      ).toString('hex');
       const contract = token.symbol === 'wICX' ? bnJs.wICX : bnJs.getContract(token.address);
 
       contract

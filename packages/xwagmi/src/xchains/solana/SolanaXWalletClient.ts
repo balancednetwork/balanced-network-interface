@@ -2,7 +2,6 @@ import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { FROM_SOURCES, TO_SOURCES, solana } from '@/constants/xChains';
 import { XWalletClient } from '@/core/XWalletClient';
 import { uintToBytes } from '@/utils';
-import { Percent } from '@balancednetwork/sdk-core';
 import { Program } from '@coral-xyz/anchor';
 import * as anchor from '@coral-xyz/anchor';
 import { SYSTEM_PROGRAM_ID } from '@coral-xyz/anchor/dist/cjs/native/system';
@@ -50,21 +49,18 @@ export class SolanaXWalletClient extends XWalletClient {
     const connection = this.getXService().connection;
     const provider = this.getXService().provider;
 
-    const { type, executionTrade, account, direction, inputAmount, recipient, slippageTolerance, xCallFee } =
-      xTransactionInput;
+    const { type, account, direction, inputAmount, recipient, minReceived, path } = xTransactionInput;
 
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
     const receiver = `${direction.to}/${recipient}`;
 
     let data;
     if (type === XTransactionType.SWAP) {
-      if (!executionTrade || !slippageTolerance) {
+      if (!minReceived || !path) {
         return;
       }
 
-      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived);
+      const rlpEncodedData = getRlpEncodedSwapData(path, '_swap', receiver, minReceived);
       data = rlpEncodedData;
     } else if (type === XTransactionType.BRIDGE) {
       data = toBytes(

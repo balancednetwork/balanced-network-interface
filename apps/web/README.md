@@ -9,7 +9,7 @@ An open-source interface for Balanced: a decentralised exchange and stablecoin p
 - Blog: [blog.balanced.network](https://blog.balanced.network/)
 - White paper: [Link](https://docs.balanced.network/technical/white-paper)
 
-- Twitter: [@BalancedDAO](https://twitter.com/BalancedDAO)
+- Twitter: [@BalancedDeFi](https://x.com/BalancedDeFi)
 - Discord: [Link](https://discord.com/invite/7nBMr963SU)
 
 ---

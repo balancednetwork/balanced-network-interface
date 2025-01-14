@@ -22,7 +22,7 @@ import { useRatio } from '@/store/ratio/hooks';
 import { useDerivedSwapInfo, useSwapActionHandlers } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { generateChartData, toFraction } from '@/utils';
-import { formatUnitPrice } from '@/utils/formatter';
+import { formatSymbol, formatUnitPrice } from '@/utils/formatter';
 import { bnJs } from '@balancednetwork/xwagmi';
 
 const CHART_TYPES_LABELS = {
@@ -54,10 +54,6 @@ export default function SwapDescription() {
   const data = priceChartQuery.data;
 
   const ratio = useRatio();
-  const queueData: any = React.useMemo(
-    () => generateChartData(ratio.sICXICXratio, { INPUT: currencies.INPUT, OUTPUT: currencies.OUTPUT }),
-    [ratio.sICXICXratio, currencies.INPUT, currencies.OUTPUT],
-  );
 
   const qratioFrac = toFraction(ratio.sICXICXratio);
 
@@ -89,6 +85,12 @@ export default function SwapDescription() {
     });
   };
 
+  const hasSICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('sICX');
+  const hasICX =
+    [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('ICX') ||
+    [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('wICX');
+  const shouldShowICXPrice = hasSICX && !hasICX;
+
   const handleChartTypeChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setChartOption({
       ...chartOption,
@@ -96,12 +98,9 @@ export default function SwapDescription() {
     });
   };
 
-  const hasSICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('sICX');
-  const hasICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('ICX');
-
   const { account } = useIconReact();
   const [activeSymbol, setActiveSymbol] = useState<string | undefined>(undefined);
-  const symbolName = `${currencies[Field.INPUT]?.symbol} / ${currencies[Field.OUTPUT]?.symbol}`;
+  const symbolName = `${formatSymbol(currencies[Field.INPUT]?.symbol)} / ${formatSymbol(currencies[Field.OUTPUT]?.symbol)}`;
   const isSuperSmall = useMedia('(max-width: 359px)');
 
   const hasTradingView = React.useMemo(() => {
@@ -155,10 +154,10 @@ export default function SwapDescription() {
               <Typography variant="p">
                 <Trans>
                   {`${price ? formatUnitPrice(price.toFixed(10)) : '...'} 
-                    ${currencies[Field.OUTPUT]?.symbol} per ${currencies[Field.INPUT]?.symbol} `}
+                    ${formatSymbol(currencies[Field.OUTPUT]?.symbol)} per ${formatSymbol(currencies[Field.INPUT]?.symbol)} `}
                 </Trans>
               </Typography>
-              {hasSICX && !hasICX && (
+              {shouldShowICXPrice && (
                 <Typography variant="p" fontSize="14px" color="rgba(255,255,255,0.75)">
                   <Trans>
                     {`${priceInICX?.toFixed(4) || '...'} 
@@ -217,12 +216,7 @@ export default function SwapDescription() {
               ) : (
                 <>
                   {chartOption.type === CHART_TYPES.AREA && (
-                    <TradingViewChart
-                      data={pair.poolId === 1 ? queueData : data}
-                      volumeData={pair.poolId === 1 ? queueData : data}
-                      width={width}
-                      type={CHART_TYPES.AREA}
-                    />
+                    <TradingViewChart data={data} volumeData={data} width={width} type={CHART_TYPES.AREA} />
                   )}
 
                   {chartOption.type === CHART_TYPES.CANDLE && (

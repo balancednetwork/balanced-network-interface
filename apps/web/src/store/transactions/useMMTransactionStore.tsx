@@ -1,10 +1,11 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
-import { IntentService, IntentStatusCode } from '@balancednetwork/intents-sdk';
+import { IntentStatusCode } from '@balancednetwork/intents-sdk';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { XToken, jsonStorageOptions } from '@balancednetwork/xwagmi';
 import { useQuery } from '@tanstack/react-query';
 
+import { intentService } from '@/lib/intent';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -154,7 +155,7 @@ export const Updater = () => {
     queryFn: async () => {
       return Promise.all(
         pendingIntents.map(async t => {
-          const intentStatus = await IntentService.getStatus({ task_id: t.taskId });
+          const intentStatus = await intentService.getStatus({ task_id: t.taskId });
 
           if (
             intentStatus.ok &&

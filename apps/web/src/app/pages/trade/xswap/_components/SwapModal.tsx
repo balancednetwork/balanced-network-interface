@@ -18,6 +18,7 @@ import { Field } from '@/store/swap/reducer';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { formatBigNumber, shortenAddress, toDec } from '@/utils';
+import { formatSymbol } from '@/utils/formatter';
 import { getRlpEncodedSwapData } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
 
@@ -87,10 +88,10 @@ const SwapModal = (props: SwapModalProps) => {
         recipient,
         minReceived,
       ).toString('hex');
+      const contract = token.symbol === 'wICX' ? bnJs.wICX : bnJs.getContract(token.address);
 
-      bnJs
+      contract
         .inject({ account })
-        .getContract(token.address)
         .swapUsingRouteV2(toDec(executionTrade.inputAmount), rlpEncodedData)
         .then((res: any) => {
           addTransaction(
@@ -118,16 +119,16 @@ const SwapModal = (props: SwapModalProps) => {
       <ModalContent>
         <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
           <Trans>
-            Swap {currencies[Field.INPUT]?.symbol} for {currencies[Field.OUTPUT]?.symbol}?
+            Swap {formatSymbol(currencies[Field.INPUT]?.symbol)} for {formatSymbol(currencies[Field.OUTPUT]?.symbol)}?
           </Trans>
         </Typography>
 
         <Typography variant="p" fontWeight="bold" textAlign="center" color={showWarning ? 'alert' : 'text'}>
           <Trans>
-            {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${
-              executionTrade?.executionPrice.quoteCurrency.symbol
-            } 
-          per ${executionTrade?.executionPrice.baseCurrency.symbol}`}
+            {`${formatBigNumber(new BigNumber(executionTrade?.executionPrice.toFixed() || 0), 'ratio')} ${formatSymbol(
+              executionTrade?.executionPrice.quoteCurrency.symbol,
+            )} 
+          per ${formatSymbol(executionTrade?.executionPrice.baseCurrency.symbol)}`}
           </Trans>
         </Typography>
 
@@ -138,7 +139,7 @@ const SwapModal = (props: SwapModalProps) => {
             </Typography>
             <Typography variant="p" textAlign="center" py="5px">
               {formatBigNumber(new BigNumber(executionTrade?.inputAmount.toFixed() || 0), 'currency')}{' '}
-              {currencies[Field.INPUT]?.symbol}
+              {formatSymbol(currencies[Field.INPUT]?.symbol)}
             </Typography>
             {account !== recipient && (
               <>
@@ -158,7 +159,7 @@ const SwapModal = (props: SwapModalProps) => {
             </Typography>
             <Typography variant="p" textAlign="center" py="5px">
               {formatBigNumber(new BigNumber(executionTrade?.outputAmount.toFixed() || 0), 'currency')}{' '}
-              {currencies[Field.OUTPUT]?.symbol}
+              {formatSymbol(currencies[Field.OUTPUT]?.symbol)}
             </Typography>
             {account !== recipient && (
               <>

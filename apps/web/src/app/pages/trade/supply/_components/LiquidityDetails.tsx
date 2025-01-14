@@ -30,7 +30,7 @@ import Skeleton from '@/app/components/Skeleton';
 import { MouseoverTooltip } from '@/app/components/Tooltip';
 import QuestionIcon from '@/assets/icons/question.svg';
 import { formatBigNumber } from '@/utils';
-import { getFormattedNumber } from '@/utils/formatter';
+import { formatSymbol, getFormattedNumber } from '@/utils/formatter';
 import { Banner } from '../../../../components/Banner';
 import Spinner from '../../../../components/Spinner';
 import { StyledAccordionButton, StyledAccordionItem, StyledAccordionPanel } from './LiquidityDetails/Accordion';
@@ -89,7 +89,7 @@ export default function LiquidityDetails() {
     }, {});
 
   const hasLiquidity = shouldShowQueue || userPools.length;
-  const isLiquidityInfoLoading = shouldShowQueue === undefined;
+  const isLiquidityInfoLoading = shouldShowQueue === undefined && userPools.length === 0;
 
   return (
     <>
@@ -297,7 +297,7 @@ const PoolRecord = ({
   const upSmall = useMedia('(min-width: 800px)');
   const stakedLPPercent = useStakedLPPercent(poolId);
   const [aBalance, bBalance] = getABBalance(pair, balance);
-  const pairName = `${aBalance.currency.symbol || '...'}/${bBalance.currency.symbol || '...'}`;
+  const pairName = `${formatSymbol(aBalance.currency.symbol) || '...'}/${formatSymbol(bBalance.currency.symbol) || '...'}`;
   const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
   const { baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
   const balances = useBalance(poolId);
@@ -341,7 +341,7 @@ const PoolRecord = ({
             <Typography fontSize={16}>{`${formatBigNumber(
               new BigNumber(baseCurrencyTotalSupply?.toFixed() || 0),
               'currency',
-            )} ${aBalance.currency.symbol}`}</Typography>
+            )} ${formatSymbol(aBalance.currency.symbol)}`}</Typography>
           ) : (
             <Skeleton width={100}></Skeleton>
           )}
@@ -349,7 +349,7 @@ const PoolRecord = ({
             <Typography fontSize={16}>{`${formatBigNumber(
               new BigNumber(quoteCurrencyTotalSupply?.toFixed() || 0),
               'currency',
-            )} ${bBalance.currency.symbol}`}</Typography>
+            )} ${formatSymbol(bBalance.currency.symbol)}`}</Typography>
           ) : (
             <Skeleton width={100}></Skeleton>
           )}
@@ -431,9 +431,7 @@ const PoolRecordQ = ({
   return (
     <ListItem onClick={handlePoolClick}>
       <StyledDataText>
-        <DataText>{`${balance.balance.currency.symbol || '...'}/${
-          balance.balance1?.currency.symbol || '...'
-        }`}</DataText>
+        <DataText>ICX queue</DataText>
         <StyledArrowDownIcon />
       </StyledDataText>
 

@@ -4,10 +4,11 @@ import BigNumber from 'bignumber.js';
 
 import { ZERO } from '@/constants/misc';
 import { formatBigNumber } from '@/utils';
+import { formatSymbol } from '@/utils/formatter';
 
 export function swapMessage(inputAmount: string, inputCurrency: string, outputAmount: string, outputCurrency: string) {
-  const pendingMessage = t`Swapping ${inputCurrency} for ${outputCurrency}...`;
-  const successMessage = t`Swapped ${inputAmount} ${inputCurrency} for ${outputAmount} ${outputCurrency}.`;
+  const pendingMessage = t`Swapping ${formatSymbol(inputCurrency)} for ${formatSymbol(outputCurrency)}...`;
+  const successMessage = t`Swapped ${inputAmount} ${formatSymbol(inputCurrency)} for ${outputAmount} ${formatSymbol(outputCurrency)}.`;
   const failureMessage = t`Couldn't swap ${inputCurrency} for ${outputCurrency}. Try again.`;
   return { pendingMessage, successMessage, failureMessage };
 }
@@ -20,16 +21,16 @@ export function transferAssetMessage(inputAmount: string, inputCurrency: string,
 }
 
 export function depositMessage(currency: string, pair: string) {
-  const pendingMessage = t`Sending ${currency} to the ${pair} pool...`;
-  const successMessage = t`${currency} sent to the ${pair} pool.`;
-  const failureMessage = t`Couldn't send ${currency} to the ${pair} pool. Try again.`;
+  const pendingMessage = t`Sending ${formatSymbol(currency)} to the ${pair.replace('wICX', 'ICX')} pool...`;
+  const successMessage = t`${formatSymbol(currency)} sent to the ${pair.replace('wICX', 'ICX')} pool.`;
+  const failureMessage = t`Couldn't send ${formatSymbol(currency)} to the ${pair.replace('wICX', 'ICX')} pool. Try again.`;
   return { pendingMessage, successMessage, failureMessage };
 }
 
 export function supplyMessage(pair: string) {
-  const pendingMessage = t`Supplying ${pair} liquidity...`;
-  const successMessage = t`Supplied ${pair} liquidity.`;
-  const failureMessage = t`Couldn't supply ${pair} liquidity. Try again.`;
+  const pendingMessage = t`Supplying ${pair.replace('wICX', 'ICX')} liquidity...`;
+  const successMessage = t`Supplied ${pair.replace('wICX', 'ICX')} liquidity.`;
+  const failureMessage = t`Couldn't supply ${pair.replace('wICX', 'ICX')} liquidity. Try again.`;
   return { pendingMessage, successMessage, failureMessage };
 }
 
@@ -39,12 +40,12 @@ export function withdrawMessage(
   outputAmount: string,
   outputCurrency: string,
 ) {
-  const pendingMessage = t`Withdrawing ${inputCurrency} / ${outputCurrency} liquidity...`;
+  const pendingMessage = t`Withdrawing ${formatSymbol(inputCurrency)} / ${formatSymbol(outputCurrency)} liquidity...`;
   const successMessage =
     outputCurrency.toLowerCase() === 'icx'
       ? t`${outputAmount} ${outputCurrency} added to your wallet.`
-      : t`${inputAmount} ${inputCurrency} and ${outputAmount} ${outputCurrency} added to your wallet.`;
-  const failureMessage = t`Couldn't withdraw ${inputCurrency} / ${outputCurrency} liquidity. Try again.`;
+      : t`${inputAmount} ${formatSymbol(inputCurrency)} and ${outputAmount} ${formatSymbol(outputCurrency)} added to your wallet.`;
+  const failureMessage = t`Couldn't withdraw ${formatSymbol(inputCurrency)} / ${formatSymbol(outputCurrency)} liquidity. Try again.`;
   return { pendingMessage, successMessage, failureMessage };
 }
 

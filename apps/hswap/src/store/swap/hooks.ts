@@ -404,7 +404,7 @@ export function useInitialSwapLoad(): void {
   }, [currencies, pair, navigate, firstLoad]);
 }
 
-import { IntentService } from '@balancednetwork/intents-sdk';
+import { intentService } from '@/lib/intent';
 import { useQuery } from '@tanstack/react-query';
 
 export interface MMTrade {
@@ -435,7 +435,7 @@ export function useMMTrade(inputAmount: CurrencyAmount<XToken> | undefined, outp
         return;
       }
 
-      const res = await IntentService.getQuote({
+      const res = await intentService.getQuote({
         token_src: inputAmount.currency.address,
         token_src_blockchain_id: inputAmount.currency.xChainId,
         token_dst: outputCurrency.address,

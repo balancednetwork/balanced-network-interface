@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { EvmProvider, IntentService, SuiProvider } from '@balancednetwork/intents-sdk';
+import { EvmProvider, SuiProvider } from '@balancednetwork/intents-sdk';
 import { EvmXService, useCurrentAccount, useCurrentWallet, useSuiClient, useXService } from '@balancednetwork/xwagmi';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import { UnderlineText } from '@/app/components/DropdownText';
 import { Typography } from '@/app/theme';
 import { useSignedInWallets } from '@/hooks/useWallets';
+import { intentService } from '@/lib/intent';
 import { useRatesWithOracle } from '@/queries/reward';
 import {
   MMTransaction,
@@ -78,7 +79,7 @@ function PendingIntent({ transaction }: { transaction: MMTransaction }) {
 
     setStatus(TransactionStatus.Signing);
     try {
-      const result = await IntentService.cancelIntentOrder(
+      const result = await intentService.cancelIntentOrder(
         transaction.orderId,
         transaction.fromAmount.currency.xChainId === '0xa4b1.arbitrum' ? 'arb' : 'sui',
         transaction.fromAmount.currency.xChainId === '0xa4b1.arbitrum'

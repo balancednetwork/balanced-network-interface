@@ -82,11 +82,11 @@ export class IconXWalletClient extends XWalletClient {
     } else {
       const inputToken = inputAmount.currency.wrapped;
 
-      const cx = bnJs.inject({ account }).getContract(inputToken.address);
+      const cx = inputToken.symbol === 'wICX' ? bnJs.wICX : bnJs.getContract(inputToken.address);
 
       const rlpEncodedData = getRlpEncodedSwapData(path, '_swap', receiver, minReceived).toString('hex');
 
-      txResult = await cx.swapUsingRouteV2(toDec(inputAmount), rlpEncodedData);
+      txResult = await cx.inject({ account }).swapUsingRouteV2(toDec(inputAmount), rlpEncodedData);
     }
 
     const { result: hash } = txResult || {};

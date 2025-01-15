@@ -396,7 +396,7 @@ export default function BBalnSlider({
         <Typography color="text1" mb={account ? 3 : 0}>
           <Trans>
             Lock up BALN to hold bBALN, a non-transferable token that earns network fees and boosts your BALN liquidity
-            incentives.
+            rewards.
           </Trans>
         </Typography>
       )}
@@ -805,7 +805,7 @@ export default function BBalnSlider({
           {shouldNotifyOfVotingPower && (
             <Typography textAlign="center" mt="15px">
               <Trans>
-                To apply your increased voting power to liquidity incentives, update your allocation for each pool.
+                To apply your increased voting power to liquidity rewards, update your allocation for each pool.
               </Trans>
             </Typography>
           )}

@@ -45,7 +45,7 @@ export async function findPda(seeds, programId) {
   return pda;
 }
 
-export async function initializeProgram(programId, provider) {
+export async function initializeProgram(programId: anchor.Address, provider: anchor.Provider) {
   const idl = await anchor.Program.fetchIdl(programId, provider);
   if (!idl) {
     throw new Error('Failed to fetch IDL for the program.');
@@ -68,14 +68,19 @@ export async function fetchXCallConfig(programId, provider) {
   }
 }
 
-export async function fetchMintToken(programId, provider) {
+export async function fetchMintToken(programId: anchor.Address, provider: anchor.Provider) {
   try {
     const program = await initializeProgram(programId, provider);
     const statePda = await findPda(['state'], programId);
 
     // @ts-ignore
     const state = await program.account.state.fetch(statePda);
-    return state.bnUsdToken;
+
+    if (programId === '3JfaNQh3zRyBQ3spQJJWKmgRcXuQrcNrpLH5pDvaX2gG') {
+      return state.bnUSDToken;
+    } else {
+      return state.spokeTokenAddr;
+    }
   } catch (error) {
     // @ts-ignore
     console.error('Error fetching mintToken:', error.message);
@@ -114,18 +119,6 @@ export async function getXCallAccounts(xcallProgramId, provider) {
   ];
 
   return xcallAccounts;
-}
-
-async function fetchCentralizedContracts(xcallManagerId, provider) {
-  try {
-    const program = await initializeProgram(xcallManagerId, provider);
-    const xcall_manager_state = await findPda(['state'], xcallManagerId);
-
-    // @ts-ignore
-    const config = await program.account.xmState.fetch(xcall_manager_state);
-    console.log('fetchCentralizedContracts config', config);
-    return config.sources;
-  } catch (error) {}
 }
 
 export async function getConnectionAccounts(nid, xcallManagerId, provider) {

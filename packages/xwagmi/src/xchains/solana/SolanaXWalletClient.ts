@@ -1,6 +1,7 @@
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { FROM_SOURCES, TO_SOURCES, solana } from '@/constants/xChains';
 import { XWalletClient } from '@/core/XWalletClient';
+import { isSpokeToken } from '@/index';
 import { uintToBytes } from '@/utils';
 import { Program } from '@coral-xyz/anchor';
 import * as anchor from '@coral-xyz/anchor';
@@ -18,8 +19,10 @@ import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
 import bnJs from '../icon/bnJs';
 import { SolanaXService } from './SolanaXService';
+import BALNIdl from './idls/BALN.json';
 import assetManagerIdl from './idls/assetManager.json';
 import bnUSDIdl from './idls/bnUSD.json';
+import sICXIdl from './idls/sICX.json';
 import xCallIdl from './idls/xCall.json';
 import { CallMessage, Envelope, MessageType } from './types';
 import {
@@ -34,6 +37,21 @@ import {
 const SYSVAR_INSTRUCTIONS_ID = new PublicKey('Sysvar1nstructions1111111111111111111111111');
 
 const COMPUTE_UNIT_LIMIT = 1_000_000;
+
+const TokenProgramMap = {
+  bnUSD: {
+    programId: '3JfaNQh3zRyBQ3spQJJWKmgRcXuQrcNrpLH5pDvaX2gG',
+    IDL: bnUSDIdl,
+  },
+  sICX: {
+    programId: 'FdgRnNYHH8VGUFdCwSDR4scKMUfM5rcRSwSeG4g3vZe5',
+    IDL: sICXIdl,
+  },
+  BALN: {
+    programId: '2mNamZY5bmHCdeogxjSdU5ZXo2KiYanjuxebLaUb7aa7',
+    IDL: BALNIdl,
+  },
+};
 
 export class SolanaXWalletClient extends XWalletClient {
   getXService(): SolanaXService {
@@ -85,14 +103,13 @@ export class SolanaXWalletClient extends XWalletClient {
     }
 
     const isNative = inputAmount.currency.isNativeToken;
-    const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
+    const _isSpokeToken = isSpokeToken(inputAmount.currency);
 
     let txSignature;
 
     const assetManagerId = new PublicKey(solana.contracts.assetManager);
     const xCallId = new PublicKey(solana.contracts.xCall);
     const xCallManagerId = new PublicKey(solana.contracts.xCallManager!);
-    const bnUSDId = new PublicKey(solana.contracts.bnUSD!);
 
     if (isNative) {
       const amount = inputAmount.quotient.toString();
@@ -140,18 +157,19 @@ export class SolanaXWalletClient extends XWalletClient {
       tx.add(instruction);
 
       txSignature = await wallet.sendTransaction(tx, connection);
-    } else if (isBnUSD) {
+    } else if (_isSpokeToken) {
       const amount = inputAmount.quotient * 1_000_000_000n + '';
 
-      // @ts-ignore
-      const bnUSDProgram = new Program(bnUSDIdl, provider);
+      const tokenProgram = new Program(TokenProgramMap[inputAmount.currency.symbol].IDL, provider);
 
-      const mintToken = await fetchMintToken(bnUSDId, provider);
+      const tokenId = new PublicKey(TokenProgramMap[inputAmount.currency.symbol].programId);
 
-      const statePda = await findPda(['state'], bnUSDId);
+      const mintToken = await fetchMintToken(tokenId, provider);
+
+      const statePda = await findPda(['state'], tokenId);
       const xcallManagerStatePda = await findPda(['state'], xCallManagerId);
       const xcallConfigPda = await findPda(['config'], xCallId);
-      const xcallAuthorityPda = await findPda(['dapp_authority'], bnUSDId);
+      const xcallAuthorityPda = await findPda(['dapp_authority'], tokenId);
 
       const xCallAccounts = await getXCallAccounts(xCallId, provider);
       const connectionAccounts = await getConnectionAccounts('0x1.icon', xCallManagerId, provider);
@@ -161,7 +179,7 @@ export class SolanaXWalletClient extends XWalletClient {
       const computeBudgetIx = ComputeBudgetProgram.setComputeUnitLimit({ units: COMPUTE_UNIT_LIMIT });
       const tx = new Transaction().add(computeBudgetIx);
 
-      const crossTransferTx = await bnUSDProgram.methods
+      const crossTransferTx = await tokenProgram.methods
         .crossTransfer(destination, new anchor.BN(amount), Buffer.from(data, 'hex'))
         .accounts({
           from: associatedTokenAcc,

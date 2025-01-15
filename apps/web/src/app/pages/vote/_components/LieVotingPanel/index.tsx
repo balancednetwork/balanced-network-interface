@@ -149,7 +149,7 @@ export default function LiveVotingPanel() {
       <Flex justifyContent="space-between" mb={5} flexWrap="wrap">
         <Flex alignItems="center" mr={3}>
           <Typography variant="h2" mr={1}>
-            <Trans>Liquidity incentives</Trans>
+            <Trans>Liquidity rewards</Trans>
           </Typography>
           <Box marginTop="9px">
             <QuestionHelper

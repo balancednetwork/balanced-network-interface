@@ -219,7 +219,7 @@ export function useAllPairsIncentivised() {
               ? new Fraction(incentivisedPair.totalStaked, item['totalSupply'])
               : new Fraction(1);
           item['balnApy'] = dailyDistribution
-            .times(new BigNumber(incentivisedPair.rewards.toFixed(4)))
+            .times(new BigNumber(incentivisedPair.rewards?.toFixed(4)))
             .times(365)
             .times(balnPrice)
             .div(new BigNumber(stakedRatio.toFixed(18)).times(item.liquidity))

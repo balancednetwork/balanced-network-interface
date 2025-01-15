@@ -62,8 +62,8 @@ msgid "Your ICX is staked (sICX). Choose what to do with it:"
 msgstr "Your ICX is staked (sICX). Choose what to do with it:"
 
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
-msgid "{0} queue{1}"
-msgstr "{0} queue{1}"
+#~ msgid "{0} queue{1}"
+#~ msgstr "{0} queue{1}"
 
 #: src/app/components/AddressInputPanel/index.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
@@ -590,8 +590,8 @@ msgid "Withdraw sICX?"
 msgstr "Withdraw sICX?"
 
 #: src/app/pages/trade/supply/_components/LPDescription.tsx
-msgid "{0} queue"
-msgstr "{0} queue"
+#~ msgid "{0} queue"
+#~ msgstr "{0} queue"
 
 #: src/btp/src/connectors/MetaMask/index.ts
 msgid "Transaction failed!"
@@ -937,7 +937,6 @@ msgstr "Lock up Balance Tokens?"
 
 #: src/app/components/home/LoanPanel.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
-#: src/app/pages/trade/supply/_components/LPDescription.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
@@ -960,7 +959,6 @@ msgstr "Bridge"
 #: src/app/pages/trade/xswap/_components/MMSwapCommitButton.tsx
 #: src/store/bridge/hooks.tsx
 #: src/store/bridge/hooks.tsx
-#: src/store/mint/hooks.tsx
 #: src/store/mint/hooks.tsx
 #: src/store/swap/hooks.ts
 msgid "Enter amount"
@@ -1370,8 +1368,8 @@ msgstr "If bnUSD ever falls below ${redeemLimit}, traders can use the smart cont
 #~ msgstr "Claim Balanced incentives?"
 
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
-msgid "Wallet: {0} {1}"
-msgstr "Wallet: {0} {1}"
+#~ msgid "Wallet: {0} {1}"
+#~ msgstr "Wallet: {0} {1}"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
@@ -1394,6 +1392,10 @@ msgstr "Forum link"
 #: src/app/pages/trade/xswap/_components/XCallSwapModal.tsx
 #~ msgid "Not enough gas to complete the swap."
 #~ msgstr "Not enough gas to complete the swap."
+
+#: src/app/pages/trade/supply/_components/LPDescription.tsx
+msgid "Your potential rewards"
+msgstr "Your potential rewards"
 
 #: src/app/components/XCallDescription/index.tsx
 #~ msgid "<0>xCall</0> is a cross-chain messaging service that can interact with smart contracts on other blockchains."

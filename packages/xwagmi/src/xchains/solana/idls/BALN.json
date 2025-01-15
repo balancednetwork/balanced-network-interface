@@ -1,0 +1,200 @@
+{
+  "address": "2mNamZY5bmHCdeogxjSdU5ZXo2KiYanjuxebLaUb7aa7",
+  "metadata": { "name": "spoke_token", "version": "0.1.0", "spec": "0.1.0" },
+  "instructions": [
+    {
+      "name": "cross_transfer",
+      "discriminator": [126, 93, 98, 139, 110, 193, 100, 50],
+      "accounts": [
+        { "name": "from", "writable": true },
+        { "name": "from_authority", "writable": true, "signer": true },
+        { "name": "state", "writable": true },
+        { "name": "mint", "writable": true },
+        { "name": "xcall_manager_state" },
+        { "name": "xcall_config", "writable": true },
+        { "name": "xcall_authority", "writable": true },
+        { "name": "xcall" },
+        { "name": "token_program" },
+        { "name": "system_program" }
+      ],
+      "args": [
+        { "name": "to", "type": "string" },
+        { "name": "icon_bnusd_value", "type": "u128" },
+        { "name": "data", "type": { "option": "bytes" } }
+      ],
+      "returns": "u128"
+    },
+    {
+      "name": "force_rollback",
+      "discriminator": [33, 71, 170, 56, 159, 152, 4, 33],
+      "accounts": [
+        { "name": "state" },
+        { "name": "signer", "writable": true, "signer": true },
+        { "name": "xcall" },
+        { "name": "xcall_authority", "writable": true },
+        { "name": "system_program" }
+      ],
+      "args": [
+        { "name": "request_id", "type": "u128" },
+        { "name": "source_nid", "type": "string" },
+        { "name": "connection_sn", "type": "u128" },
+        { "name": "dst_program_id", "type": "pubkey" }
+      ]
+    },
+    {
+      "name": "handle_call_message",
+      "discriminator": [70, 67, 201, 55, 42, 121, 72, 196],
+      "accounts": [
+        { "name": "signer", "writable": true, "signer": true },
+        { "name": "xcall_singer", "signer": true },
+        { "name": "state", "writable": true },
+        { "name": "to", "writable": true },
+        { "name": "to_authority" },
+        { "name": "mint", "writable": true },
+        {
+          "name": "mint_authority",
+          "docs": ["no additional validation is required as mint is already validated separately"]
+        },
+        { "name": "token_program" },
+        { "name": "associated_token_program" },
+        { "name": "xcall_manager" },
+        { "name": "xcall" },
+        { "name": "xcall_manager_state" },
+        { "name": "system_program" }
+      ],
+      "args": [
+        { "name": "from", "type": "string" },
+        { "name": "data", "type": "bytes" },
+        { "name": "protocols", "type": { "vec": "string" } }
+      ],
+      "returns": { "defined": { "name": "HandleCallMessageResponse" } }
+    },
+    {
+      "name": "initialize",
+      "discriminator": [175, 175, 109, 31, 13, 152, 155, 237],
+      "accounts": [
+        { "name": "state", "writable": true },
+        { "name": "admin", "writable": true, "signer": true },
+        { "name": "system_program" }
+      ],
+      "args": [
+        { "name": "xcall", "type": "pubkey" },
+        { "name": "icon_hub_addr", "type": "string" },
+        { "name": "xcall_manager", "type": "pubkey" },
+        { "name": "spoke_token_addr", "type": "pubkey" },
+        { "name": "xcall_manager_state", "type": "pubkey" }
+      ]
+    },
+    {
+      "name": "query_handle_call_message_accounts",
+      "discriminator": [7, 131, 192, 232, 124, 51, 47, 101],
+      "accounts": [{ "name": "state" }],
+      "args": [
+        { "name": "_from", "type": "string" },
+        { "name": "data", "type": "bytes" },
+        { "name": "_protocols", "type": { "vec": "string" } }
+      ],
+      "returns": { "defined": { "name": "ParamAccounts" } }
+    },
+    {
+      "name": "set_admin",
+      "discriminator": [251, 163, 0, 52, 91, 194, 187, 92],
+      "accounts": [{ "name": "state", "writable": true }, { "name": "admin", "signer": true }],
+      "args": [{ "name": "admin", "type": "pubkey" }]
+    }
+  ],
+  "accounts": [
+    { "name": "Authority", "discriminator": [36, 108, 254, 18, 167, 144, 27, 36] },
+    { "name": "Config", "discriminator": [155, 12, 170, 224, 30, 250, 204, 130] },
+    { "name": "State", "discriminator": [216, 146, 107, 94, 104, 75, 182, 177] },
+    { "name": "XmState", "discriminator": [90, 244, 152, 182, 246, 152, 23, 158] }
+  ],
+  "errors": [
+    { "code": 6000, "name": "InvalidAmount", "msg": "Invalid amount" },
+    { "code": 6001, "name": "InvalidProtocols", "msg": "Invalid protocols" },
+    { "code": 6002, "name": "InvalidSender", "msg": "Invalid sender" },
+    { "code": 6003, "name": "UnknownMessageType", "msg": "Unknown message type" },
+    { "code": 6004, "name": "DecoderError", "msg": "Method Decode Error" },
+    { "code": 6005, "name": "NotSpokeToken", "msg": "Not Spoke Token" },
+    { "code": 6006, "name": "NotXcall", "msg": "Not the xcall program" },
+    { "code": 6007, "name": "InsufficientBalance", "msg": "Insufficient Balance" },
+    { "code": 6008, "name": "NotAnAddress", "msg": "Not an address" },
+    { "code": 6009, "name": "InvalidNetworkAddress", "msg": "Invalid Network Address" },
+    { "code": 6010, "name": "OnlyXcall", "msg": "Only Xcall" },
+    { "code": 6011, "name": "OnlyAdmin", "msg": "Only Admin" },
+    { "code": 6012, "name": "InvalidXcallManagerState", "msg": "Invalid xcall manager state" },
+    { "code": 6013, "name": "InvalidToAddress", "msg": "Invalid to address" }
+  ],
+  "types": [
+    { "name": "Authority", "type": { "kind": "struct", "fields": [{ "name": "bump", "type": "u8" }] } },
+    {
+      "name": "Config",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "admin", "type": "pubkey" },
+          { "name": "fee_handler", "type": "pubkey" },
+          { "name": "network_id", "type": "string" },
+          { "name": "protocol_fee", "type": "u64" },
+          { "name": "sequence_no", "type": "u128" },
+          { "name": "last_req_id", "type": "u128" },
+          { "name": "bump", "type": "u8" }
+        ]
+      }
+    },
+    {
+      "name": "HandleCallMessageResponse",
+      "type": {
+        "kind": "struct",
+        "fields": [{ "name": "success", "type": "bool" }, { "name": "message", "type": "string" }]
+      }
+    },
+    {
+      "name": "ParamAccountProps",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "pubkey", "type": "pubkey" },
+          { "name": "is_writable", "type": "bool" },
+          { "name": "is_signer", "type": "bool" }
+        ]
+      }
+    },
+    {
+      "name": "ParamAccounts",
+      "type": {
+        "kind": "struct",
+        "fields": [{ "name": "accounts", "type": { "vec": { "defined": { "name": "ParamAccountProps" } } } }]
+      }
+    },
+    {
+      "name": "State",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "xcall", "type": "pubkey" },
+          { "name": "admin", "type": "pubkey" },
+          { "name": "icon_hub_addr", "type": "string" },
+          { "name": "xcall_manager", "type": "pubkey" },
+          { "name": "spoke_token_addr", "type": "pubkey" },
+          { "name": "xcall_manager_state", "type": "pubkey" }
+        ]
+      }
+    },
+    {
+      "name": "XmState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "admin", "type": "pubkey" },
+          { "name": "xcall", "type": "pubkey" },
+          { "name": "icon_governance", "type": "string" },
+          { "name": "sources", "type": { "vec": "string" } },
+          { "name": "destinations", "type": { "vec": "string" } },
+          { "name": "whitelisted_actions", "type": { "vec": "bytes" } },
+          { "name": "proposed_protocol_to_remove", "type": "string" }
+        ]
+      }
+    }
+  ]
+}

@@ -303,14 +303,12 @@ export default function AllPoolsPanel({ query }: { query: string }) {
                   text={
                     <>
                       <Trans>
-                        The BALN APR is calculated from the USD value of BALN rewards allocated to a pool. Your rate
-                        will vary based on the amount of bBALN you hold.
+                        The rewards APR represents the USD value of rewards allocated to a pool, claimable from the Home
+                        page.
                       </Trans>
                       <br />
                       <br />
-                      <Trans>
-                        The fee APR is calculated from the swap fees earned by a pool over the last 30 days.
-                      </Trans>
+                      <Trans>The fee APR represents swap fees earned by a pool over the past 30 days.</Trans>
                     </>
                   }
                   placement="top"

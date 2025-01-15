@@ -25,14 +25,7 @@ import bnUSDIdl from './idls/bnUSD.json';
 import sICXIdl from './idls/sICX.json';
 import xCallIdl from './idls/xCall.json';
 import { CallMessage, Envelope, MessageType } from './types';
-import {
-  checkIfAccountInitialized,
-  fetchMintToken,
-  fetchXCallConfig,
-  findPda,
-  getConnectionAccounts,
-  getXCallAccounts,
-} from './utils';
+import { checkIfAccountInitialized, fetchXCallConfig, findPda, getConnectionAccounts, getXCallAccounts } from './utils';
 
 const SYSVAR_INSTRUCTIONS_ID = new PublicKey('Sysvar1nstructions1111111111111111111111111');
 
@@ -117,14 +110,14 @@ export class SolanaXWalletClient extends XWalletClient {
       // @ts-ignore
       const assetManagerProgram = new Program(assetManagerIdl, provider);
 
-      const vaultNativePda = await findPda(['vault_native'], assetManagerId);
-      const statePda = await findPda(['state'], assetManagerId);
-      const xCallManagerStatePda = await findPda(['state'], xCallManagerId);
-      const xCallConfigPda = await findPda(['config'], xCallId);
-      const xCallAuthorityPda = await findPda(['dapp_authority'], assetManagerId);
+      const vaultNativePda = findPda(['vault_native'], assetManagerId);
+      const statePda = findPda(['state'], assetManagerId);
+      const xCallManagerStatePda = findPda(['state'], xCallManagerId);
+      const xCallConfigPda = findPda(['config'], xCallId);
+      const xCallAuthorityPda = findPda(['dapp_authority'], assetManagerId);
 
       const xCallAccounts = await getXCallAccounts(xCallId, provider);
-      const connectionAccounts = await getConnectionAccounts('0x1.icon', xCallManagerId, provider);
+      const connectionAccounts = getConnectionAccounts('0x1.icon', xCallManagerId, provider);
 
       const computeBudgetIx = ComputeBudgetProgram.setComputeUnitLimit({ units: COMPUTE_UNIT_LIMIT });
       const tx = new Transaction().add(computeBudgetIx);
@@ -162,17 +155,16 @@ export class SolanaXWalletClient extends XWalletClient {
 
       const tokenProgram = new Program(TokenProgramMap[inputAmount.currency.symbol].IDL, provider);
 
-      const tokenId = new PublicKey(TokenProgramMap[inputAmount.currency.symbol].programId);
+      const tokenProgramId = new PublicKey(TokenProgramMap[inputAmount.currency.symbol].programId);
+      const mintToken = new PublicKey(inputAmount.currency.address);
 
-      const mintToken = await fetchMintToken(tokenId, provider);
-
-      const statePda = await findPda(['state'], tokenId);
-      const xcallManagerStatePda = await findPda(['state'], xCallManagerId);
-      const xcallConfigPda = await findPda(['config'], xCallId);
-      const xcallAuthorityPda = await findPda(['dapp_authority'], tokenId);
+      const statePda = findPda(['state'], tokenProgramId);
+      const xcallManagerStatePda = findPda(['state'], xCallManagerId);
+      const xcallConfigPda = findPda(['config'], xCallId);
+      const xcallAuthorityPda = findPda(['dapp_authority'], tokenProgramId);
 
       const xCallAccounts = await getXCallAccounts(xCallId, provider);
-      const connectionAccounts = await getConnectionAccounts('0x1.icon', xCallManagerId, provider);
+      const connectionAccounts = getConnectionAccounts('0x1.icon', xCallManagerId, provider);
 
       const associatedTokenAcc = getAssociatedTokenAddressSync(mintToken, new PublicKey(account));
 
@@ -207,14 +199,14 @@ export class SolanaXWalletClient extends XWalletClient {
       // @ts-ignore
       const assetManagerProgram = new Program(assetManagerIdl, provider);
 
-      const vaultPda = await findPda(['vault', assetToken], assetManagerId);
-      const statePda = await findPda(['state'], assetManagerId);
-      const xCallManagerStatePda = await findPda(['state'], xCallManagerId);
-      const xCallConfigPda = await findPda(['config'], xCallId);
-      const xCallAuthorityPda = await findPda(['dapp_authority'], assetManagerId);
+      const vaultPda = findPda(['vault', assetToken], assetManagerId);
+      const statePda = findPda(['state'], assetManagerId);
+      const xCallManagerStatePda = findPda(['state'], xCallManagerId);
+      const xCallConfigPda = findPda(['config'], xCallId);
+      const xCallAuthorityPda = findPda(['dapp_authority'], assetManagerId);
 
       const xCallAccounts = await getXCallAccounts(xCallId, provider);
-      const connectionAccounts = await getConnectionAccounts('0x1.icon', xCallManagerId, provider);
+      const connectionAccounts = getConnectionAccounts('0x1.icon', xCallManagerId, provider);
 
       const depositorTokenAccount = getAssociatedTokenAddressSync(assetToken, new PublicKey(account), true);
       const vaultTokenAccount = getAssociatedTokenAddressSync(assetToken, vaultPda, true);
@@ -292,14 +284,14 @@ export class SolanaXWalletClient extends XWalletClient {
       // @ts-ignore
       const assetManagerProgram = new Program(assetManagerIdl, provider);
 
-      const vaultNativePda = await findPda(['vault_native'], assetManagerId);
-      const statePda = await findPda(['state'], assetManagerId);
-      const xCallManagerStatePda = await findPda(['state'], xCallManagerId);
-      const xCallConfigPda = await findPda(['config'], xCallId);
-      const xCallAuthorityPda = await findPda(['dapp_authority'], assetManagerId);
+      const vaultNativePda = findPda(['vault_native'], assetManagerId);
+      const statePda = findPda(['state'], assetManagerId);
+      const xCallManagerStatePda = findPda(['state'], xCallManagerId);
+      const xCallConfigPda = findPda(['config'], xCallId);
+      const xCallAuthorityPda = findPda(['dapp_authority'], assetManagerId);
 
       const xCallAccounts = await getXCallAccounts(xCallId, provider);
-      const connectionAccounts = await getConnectionAccounts('0x1.icon', xCallManagerId, provider);
+      const connectionAccounts = getConnectionAccounts('0x1.icon', xCallManagerId, provider);
 
       const computeBudgetIx = ComputeBudgetProgram.setComputeUnitLimit({ units: COMPUTE_UNIT_LIMIT });
       const tx = new Transaction().add(computeBudgetIx);
@@ -341,14 +333,14 @@ export class SolanaXWalletClient extends XWalletClient {
       // @ts-ignore
       const assetManagerProgram = new Program(assetManagerIdl, provider);
 
-      const vaultPda = await findPda(['vault', assetToken], assetManagerId);
-      const statePda = await findPda(['state'], assetManagerId);
-      const xCallManagerStatePda = await findPda(['state'], xCallManagerId);
-      const xCallConfigPda = await findPda(['config'], xCallId);
-      const xCallAuthorityPda = await findPda(['dapp_authority'], assetManagerId);
+      const vaultPda = findPda(['vault', assetToken], assetManagerId);
+      const statePda = findPda(['state'], assetManagerId);
+      const xCallManagerStatePda = findPda(['state'], xCallManagerId);
+      const xCallConfigPda = findPda(['config'], xCallId);
+      const xCallAuthorityPda = findPda(['dapp_authority'], assetManagerId);
 
       const xCallAccounts = await getXCallAccounts(xCallId, provider);
-      const connectionAccounts = await getConnectionAccounts('0x1.icon', xCallManagerId, provider);
+      const connectionAccounts = getConnectionAccounts('0x1.icon', xCallManagerId, provider);
 
       const depositorTokenAccount = getAssociatedTokenAddressSync(assetToken, new PublicKey(account), true);
       const vaultTokenAccount = getAssociatedTokenAddressSync(assetToken, vaultPda, true);
@@ -428,9 +420,9 @@ export class SolanaXWalletClient extends XWalletClient {
     // @ts-ignore
     const xCallProgram = new Program(xCallIdl, provider);
 
-    const xCallConfigPda = await findPda(['config'], xCallId);
+    const xCallConfigPda = findPda(['config'], xCallId);
     const xCallConfigAccount = await fetchXCallConfig(xCallId, provider);
-    const connectionAccounts = await getConnectionAccounts('0x1.icon', xCallManagerId, provider);
+    const connectionAccounts = getConnectionAccounts('0x1.icon', xCallManagerId, provider);
 
     const computeBudgetIx = ComputeBudgetProgram.setComputeUnitLimit({ units: COMPUTE_UNIT_LIMIT });
     const tx = new Transaction().add(computeBudgetIx);
@@ -490,9 +482,9 @@ export class SolanaXWalletClient extends XWalletClient {
     // @ts-ignore
     const xCallProgram = new Program(xCallIdl, provider);
 
-    const xCallConfigPda = await findPda(['config'], xCallId);
+    const xCallConfigPda = findPda(['config'], xCallId);
     const xCallConfigAccount = await fetchXCallConfig(xCallId, provider);
-    const connectionAccounts = await getConnectionAccounts('0x1.icon', xCallManagerId, provider);
+    const connectionAccounts = getConnectionAccounts('0x1.icon', xCallManagerId, provider);
 
     const computeBudgetIx = ComputeBudgetProgram.setComputeUnitLimit({ units: COMPUTE_UNIT_LIMIT });
     const tx = new Transaction().add(computeBudgetIx);
@@ -545,16 +537,15 @@ export class SolanaXWalletClient extends XWalletClient {
 
     // @ts-ignore
     const bnUSDProgram = new Program(bnUSDIdl, provider);
+    const mintToken = new PublicKey(inputAmount.currency.address);
 
-    const mintToken = await fetchMintToken(bnUSDId, provider);
-
-    const statePda = await findPda(['state'], bnUSDId);
-    const xcallManagerStatePda = await findPda(['state'], xCallManagerId);
-    const xcallConfigPda = await findPda(['config'], xCallId);
-    const xcallAuthorityPda = await findPda(['dapp_authority'], bnUSDId);
+    const statePda = findPda(['state'], bnUSDId);
+    const xcallManagerStatePda = findPda(['state'], xCallManagerId);
+    const xcallConfigPda = findPda(['config'], xCallId);
+    const xcallAuthorityPda = findPda(['dapp_authority'], bnUSDId);
 
     const xCallAccounts = await getXCallAccounts(xCallId, provider);
-    const connectionAccounts = await getConnectionAccounts('0x1.icon', xCallManagerId, provider);
+    const connectionAccounts = getConnectionAccounts('0x1.icon', xCallManagerId, provider);
 
     const associatedTokenAcc = getAssociatedTokenAddressSync(mintToken, new PublicKey(account));
 

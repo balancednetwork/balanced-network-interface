@@ -7,8 +7,7 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
-import { NETWORK_ID } from '@/constants/config';
-import { FUNDING_TOKENS_LIST, UNTRADEABLE_TOKENS, useICX, wICX } from '@/constants/tokens';
+import { FUNDING_TOKENS_LIST, UNTRADEABLE_TOKENS } from '@/constants/tokens';
 import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from '@/hooks/Tokens';
 import useDebounce from '@/hooks/useDebounce';
 import { useOnClickOutside } from '@/hooks/useOnClickOutside';
@@ -29,7 +28,8 @@ import { filterTokens, useSortedTokensByQuery } from './filtering';
 import { useTokenComparator } from './sorting';
 
 export enum CurrencySelectionType {
-  NORMAL,
+  TRADE_IN,
+  TRADE_OUT,
   TRADE_MINT_BASE,
   TRADE_MINT_QUOTE,
   VOTE_FUNDING,
@@ -39,15 +39,6 @@ export enum CurrencySelectionType {
 export enum AssetsTab {
   ALL = 'all',
   YOUR = 'your',
-}
-
-export enum SelectorType {
-  SWAP_IN,
-  SWAP_OUT,
-  SUPPLY_QUOTE,
-  SUPPLY_BASE,
-  BRIDGE,
-  OTHER,
 }
 
 const removeBnUSD = (tokens: { [address: string]: Token }) => {
@@ -85,7 +76,6 @@ interface CurrencySearchProps {
   showCommunityListControl?: boolean;
   xChainId: XChainId;
   showCrossChainBreakdown: boolean;
-  selectorType?: SelectorType;
 }
 
 export function CurrencySearch({
@@ -105,7 +95,6 @@ export function CurrencySearch({
   width,
   showCommunityListControl,
   xChainId,
-  selectorType = SelectorType.OTHER,
 }: CurrencySearchProps) {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const debouncedQuery = useDebounce(searchQuery, 200);
@@ -126,19 +115,20 @@ export function CurrencySearch({
   }, [hasSignedIn, assetsTab]);
 
   useEffect(() => {
-    if (hasSignedIn && selectorType === SelectorType.SWAP_IN) {
+    if (hasSignedIn && currencySelectionType === CurrencySelectionType.TRADE_IN) {
       setAssetsTab(AssetsTab.YOUR);
     }
-  }, [hasSignedIn, selectorType]);
+  }, [hasSignedIn, currencySelectionType]);
 
   const bridgeDirection = useBridgeDirection();
   const xTokens = useXTokens(bridgeDirection.from, bridgeDirection.to);
 
   const allTokens: { [address: string]: Token } = useMemo(() => {
     switch (currencySelectionType) {
-      case CurrencySelectionType.NORMAL: {
+      case CurrencySelectionType.TRADE_IN:
         return filterUntradeableTokens(tokens);
-      }
+      case CurrencySelectionType.TRADE_OUT:
+        return filterUntradeableTokens(tokens);
       case CurrencySelectionType.TRADE_MINT_BASE:
         return removeBnUSD(filterUntradeableTokens(tokens));
       case CurrencySelectionType.TRADE_MINT_QUOTE:
@@ -176,21 +166,6 @@ export function CurrencySearch({
   }, [filteredTokens, tokenComparator]);
 
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery, assetsTab === AssetsTab.YOUR);
-
-  const icx = useICX();
-
-  const filteredSortedTokensWithICX: Currency[] = useMemo(() => {
-    const s = debouncedQuery.toLowerCase().trim();
-    if ('0x1.icon'.indexOf(s) >= 0 || 'icx'.indexOf(s) >= 0) {
-      if (selectorType === SelectorType.SWAP_OUT) {
-        //ensure wrapped ICX is used instead of native ICX for trade output and liquidity supplying
-        return [wICX[NETWORK_ID], ...filteredSortedTokens];
-      } else {
-        return icx ? [icx, ...filteredSortedTokens] : filteredSortedTokens;
-      }
-    }
-    return filteredSortedTokens;
-  }, [debouncedQuery, icx, filteredSortedTokens, selectorType]);
 
   const handleCurrencySelect = useCallback(
     (currency: Currency, setDefaultChain = true) => {
@@ -231,25 +206,18 @@ export function CurrencySearch({
   const node = useRef<HTMLDivElement>();
   useOnClickOutside(node, open ? toggle : undefined);
 
-  const filterCurrencies = useMemo(() => {
-    const currencies =
-      currencySelectionType === CurrencySelectionType.NORMAL ||
-      currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
-        ? filteredSortedTokensWithICX
-        : filteredSortedTokens;
-
-    return currencies;
-  }, [currencySelectionType, filteredSortedTokens, filteredSortedTokensWithICX]);
-
   const selectedChainId = useMemo(() => {
-    return currencySelectionType === CurrencySelectionType.NORMAL ? undefined : xChainId;
+    return currencySelectionType === CurrencySelectionType.TRADE_IN ||
+      currencySelectionType === CurrencySelectionType.TRADE_OUT
+      ? undefined
+      : xChainId;
   }, [currencySelectionType, xChainId]);
 
   const shouldShowCurrencyList = useMemo(() => {
     if (assetsTab === AssetsTab.ALL) {
       return true;
     }
-    return filteredSortedTokensWithICX.some(
+    return filteredSortedTokens.some(
       token =>
         xWallet &&
         Object.values(xWallet).filter(wallet =>
@@ -258,7 +226,7 @@ export function CurrencySearch({
           ),
         ).length > 0,
     );
-  }, [assetsTab, filteredSortedTokensWithICX, xWallet]);
+  }, [assetsTab, filteredSortedTokens, xWallet]);
 
   return (
     <Wrapper width={width}>
@@ -274,7 +242,9 @@ export function CurrencySearch({
           onChange={handleInput}
         />
       </Flex>
-      {hasSignedIn && (selectorType === SelectorType.SWAP_IN || selectorType === SelectorType.SWAP_OUT) ? (
+      {hasSignedIn &&
+      (currencySelectionType === CurrencySelectionType.TRADE_IN ||
+        currencySelectionType === CurrencySelectionType.TRADE_OUT) ? (
         <Flex justifyContent="center" mt={3}>
           <AssetsTabButton $active={assetsTab === AssetsTab.YOUR} mr={2} onClick={() => setAssetsTab(AssetsTab.YOUR)}>
             <Trans>Your assets</Trans>
@@ -288,9 +258,9 @@ export function CurrencySearch({
         <Column style={{ padding: '20px 0', height: '100%' }}>
           <ImportRow token={searchToken} showImportView={showImportView} setImportToken={setImportToken} />
         </Column>
-      ) : filteredSortedTokensWithICX?.length > 0 && shouldShowCurrencyList ? (
+      ) : filteredSortedTokens?.length > 0 && shouldShowCurrencyList ? (
         <CurrencyList
-          currencies={filterCurrencies}
+          currencies={filteredSortedTokens}
           onCurrencySelect={handleCurrencySelect}
           onChainSelect={onChainSelect}
           showRemoveView={showRemoveView}
@@ -300,8 +270,8 @@ export function CurrencySearch({
           selectedChainId={selectedChainId}
           showCrossChainBreakdown={showCrossChainBreakdown}
           basedOnWallet={assetsTab === AssetsTab.YOUR}
-          selectorType={selectorType}
           width={width}
+          currencySelectionType={currencySelectionType}
         />
       ) : (
         <Column style={{ padding: '20px 20px 0 20px' }} mb={showCommunityListControl ? -4 : 0}>

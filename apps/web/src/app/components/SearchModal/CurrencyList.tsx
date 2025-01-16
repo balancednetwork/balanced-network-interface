@@ -30,7 +30,7 @@ import { ChainLogo } from '../ChainLogo';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { MouseoverTooltip } from '../Tooltip';
 import { BalanceBreakdown } from '../Wallet/styledComponents';
-import { SelectorType } from './CurrencySearch';
+import { CurrencySelectionType } from './CurrencySearch';
 import CurrencyXChainItem from './CurrencyXChainItem';
 import { HeaderText, XChainLogoList } from './styleds';
 
@@ -74,8 +74,8 @@ function CurrencyRow({
   selectedChainId,
   showCrossChainBreakdown,
   basedOnWallet,
-  selectorType,
   width,
+  currencySelectionType,
 }: {
   currency: Currency;
   showCrossChainBreakdown: boolean;
@@ -85,14 +85,16 @@ function CurrencyRow({
   rateFracs: { [key in string]: Fraction } | undefined;
   selectedChainId: XChainId | undefined;
   basedOnWallet: boolean;
-  selectorType: SelectorType;
   width?: number;
+  currencySelectionType: CurrencySelectionType;
 }) {
   const currencyXChainIds = useMemo(() => getSupportedXChainIdsForToken(currency), [currency]);
   const balance = useXCurrencyBalance(currency, selectedChainId);
   const hasSigned = useHasSignedIn();
   const xWallet = useCrossChainWalletBalances();
-  const isSwapSelector = selectorType === SelectorType.SWAP_IN || selectorType === SelectorType.SWAP_OUT;
+  const isSwapSelector =
+    currencySelectionType === CurrencySelectionType.TRADE_IN ||
+    currencySelectionType === CurrencySelectionType.TRADE_OUT;
 
   const sortedXChains = useMemo(() => {
     return basedOnWallet
@@ -138,25 +140,27 @@ function CurrencyRow({
   const hideBecauseOfLowValue =
     basedOnWallet &&
     (price && !price.isNaN() ? basedOnWallet && balance?.times(price).isLessThan(0.01) : balance?.isLessThan(0.01));
-
   const shouldForceNetworkIcon =
-    selectorType === SelectorType.SUPPLY_BASE || selectorType === SelectorType.SUPPLY_QUOTE || SelectorType.BRIDGE;
+    currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
+    currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE ||
+    currencySelectionType === CurrencySelectionType.BRIDGE;
 
   const bridgeDirection = useBridgeDirection();
   const finalXChainIds = useMemo(() => {
     if (
       shouldForceNetworkIcon &&
-      (selectorType === SelectorType.SUPPLY_BASE || selectorType === SelectorType.SUPPLY_QUOTE)
+      (currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
+        currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE)
     ) {
       return [ICON_XCALL_NETWORK_ID];
     }
 
-    if (shouldForceNetworkIcon && selectorType === SelectorType.BRIDGE) {
+    if (shouldForceNetworkIcon && currencySelectionType === CurrencySelectionType.BRIDGE) {
       return [bridgeDirection.from];
     }
 
     return sortedXChains;
-  }, [sortedXChains, shouldForceNetworkIcon, selectorType, bridgeDirection.from]);
+  }, [sortedXChains, shouldForceNetworkIcon, currencySelectionType, bridgeDirection.from]);
 
   const RowContentSignedIn = () => {
     return (
@@ -294,6 +298,7 @@ function CurrencyRow({
   const itemSwapContent = hasSigned && basedOnWallet ? <RowContentSignedIn /> : <RowContentNotSignedIn />;
 
   if (hideBecauseOfLowValue) return null;
+
   return (
     <>
       <ListItem
@@ -362,8 +367,8 @@ export default function CurrencyList({
   onDismiss,
   selectedChainId,
   basedOnWallet,
-  selectorType,
   width,
+  currencySelectionType,
 }: {
   currencies: Currency[];
   showCrossChainBreakdown: boolean;
@@ -375,12 +380,14 @@ export default function CurrencyList({
   onDismiss: () => void;
   selectedChainId: XChainId | undefined;
   basedOnWallet: boolean;
-  selectorType: SelectorType;
   width?: number;
+  currencySelectionType: CurrencySelectionType;
 }) {
   const handleEscape = useKeyPress('Escape');
   const hasSignedIn = useHasSignedIn();
-  const isSwapSelector = selectorType === SelectorType.SWAP_IN || selectorType === SelectorType.SWAP_OUT;
+  const isSwapSelector =
+    currencySelectionType === CurrencySelectionType.TRADE_IN ||
+    currencySelectionType === CurrencySelectionType.TRADE_OUT;
 
   const rates = useRatesWithOracle();
   const rateFracs = React.useMemo(() => {
@@ -464,7 +471,7 @@ export default function CurrencyList({
           selectedChainId={selectedChainId}
           showCrossChainBreakdown={showCrossChainBreakdown}
           basedOnWallet={basedOnWallet}
-          selectorType={selectorType}
+          currencySelectionType={currencySelectionType}
           width={width}
         />
       ))}

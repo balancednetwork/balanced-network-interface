@@ -7,7 +7,7 @@ import useLast from '@/hooks/useLast';
 import { XChainId } from '@balancednetwork/xwagmi';
 import Modal from '../Modal';
 import { PopperWithoutArrow } from '../Popover';
-import { CurrencySearch, CurrencySelectionType, SelectorType } from './CurrencySearch';
+import { CurrencySearch, CurrencySelectionType } from './CurrencySearch';
 import { ImportToken } from './ImportToken';
 import { RemoveToken } from './RemoveToken';
 
@@ -25,7 +25,6 @@ interface CurrencySearchModalProps {
   anchorEl?: any;
   showCommunityListControl: boolean;
   xChainId: XChainId;
-  selectorType?: SelectorType;
 }
 
 export enum CurrencyModalView {
@@ -43,14 +42,13 @@ export default function CurrencySearchModal({
   onCurrencySelect,
   onChainSelect,
   selectedCurrency,
-  currencySelectionType = CurrencySelectionType.NORMAL,
+  currencySelectionType = CurrencySelectionType.TRADE_IN,
   showCurrencyAmount = true,
   width,
   anchorEl,
   showCommunityListControl,
   showCrossChainBreakdown,
   xChainId,
-  selectorType,
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage);
   const lastOpen = useLast(isOpen);
@@ -100,10 +98,10 @@ export default function CurrencySearchModal({
         placement="bottom"
         forcePlacement={true}
         offset={
-          selectorType === SelectorType.SWAP_IN ||
-          selectorType === SelectorType.SWAP_OUT ||
-          selectorType === SelectorType.SUPPLY_QUOTE ||
-          selectorType === SelectorType.SUPPLY_BASE
+          currencySelectionType === CurrencySelectionType.TRADE_IN ||
+          currencySelectionType === CurrencySelectionType.TRADE_OUT ||
+          currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
+          currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE
             ? [0, 35]
             : [0, 10]
         }
@@ -125,7 +123,6 @@ export default function CurrencySearchModal({
           showCommunityListControl={showCommunityListControl}
           xChainId={xChainId}
           showCrossChainBreakdown={showCrossChainBreakdown}
-          selectorType={selectorType}
         />
       </PopperWithoutArrow>
 

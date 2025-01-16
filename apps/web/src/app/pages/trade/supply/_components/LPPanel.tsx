@@ -21,7 +21,7 @@ import { XChainId } from '@balancednetwork/xwagmi';
 
 import { AutoColumn } from '@/app/components/Column';
 import { BrightPanel, SectionPanel } from '@/app/components/Panel';
-import { CurrencySelectionType, SelectorType } from '@/app/components/SearchModal/CurrencySearch';
+import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import { formatSymbol } from '@/utils/formatter';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
@@ -284,7 +284,6 @@ export default function LPPanel() {
                   onChainSelect={handleLPChainSelection}
                   showCrossChainOptions={true}
                   showCrossChainBreakdown={true}
-                  selectorType={SelectorType.SUPPLY_BASE}
                 />
               </Flex>
             </AutoColumn>
@@ -302,7 +301,6 @@ export default function LPPanel() {
                   xChainId={currencies[Field.CURRENCY_B]?.xChainId}
                   showCrossChainOptions={true}
                   showCrossChainBreakdown={false}
-                  selectorType={SelectorType.SUPPLY_QUOTE}
                 />
               </Flex>
             </AutoColumn>

@@ -18,7 +18,7 @@ import { XChainId } from '@balancednetwork/xwagmi';
 import { getSupportedXChainForToken } from '@balancednetwork/xwagmi';
 import { isMobile } from 'react-device-detect';
 import { HorizontalList, Option } from '../List';
-import { CurrencySelectionType, SelectorType } from '../SearchModal/CurrencySearch';
+import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 import CrossChainOptions from '../trade/CrossChainOptions';
 import DollarValue from './DollarValue';
@@ -107,7 +107,6 @@ interface CurrencyInputPanelProps {
   className?: string;
   account?: string | null;
   showCommunityListControl?: boolean;
-  selectorType?: SelectorType;
   showDollarValue?: boolean;
   showWarning?: boolean;
 
@@ -135,7 +134,6 @@ export default function CurrencyInputPanel({
   className,
   account,
   showCommunityListControl = true,
-  selectorType,
   showDollarValue = true,
   showWarning = false,
 
@@ -239,7 +237,6 @@ export default function CurrencyInputPanel({
                 showCommunityListControl={showCommunityListControl}
                 xChainId={xChainId}
                 showCrossChainBreakdown={showCrossChainBreakdown}
-                selectorType={selectorType}
               />
             )}
           </div>

@@ -10,7 +10,7 @@ import { Button } from '@/app/components/Button';
 import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { BrightPanel } from '@/app/components/Panel';
-import { CurrencySelectionType, SelectorType } from '@/app/components/SearchModal/CurrencySearch';
+import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
 import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
 import { Typography } from '@/app/theme';
@@ -159,7 +159,6 @@ export default function BridgeTransferForm({ openModal }) {
               showCommunityListControl={false}
               xChainId={bridgeDirection.from}
               showCrossChainBreakdown={false}
-              selectorType={SelectorType.BRIDGE}
             />
           </Flex>
 

@@ -9,7 +9,7 @@ import BridgeLimitWarning from '@/app/components/BridgeLimitWarning';
 import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { BrightPanel } from '@/app/components/Panel';
-import { SelectorType } from '@/app/components/SearchModal/CurrencySearch';
+import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
@@ -167,7 +167,7 @@ export default function SwapPanel() {
               xChainId={direction.from}
               onChainSelect={handleInputChainSelection}
               showCrossChainOptions={true}
-              selectorType={SelectorType.SWAP_IN}
+              currencySelectionType={CurrencySelectionType.TRADE_IN}
             />
           </Flex>
 
@@ -208,9 +208,9 @@ export default function SwapPanel() {
               onChainSelect={handleOutputChainSelection}
               showCrossChainOptions={true}
               addressEditable
-              selectorType={SelectorType.SWAP_OUT}
               setManualAddress={setManualAddress}
               showWarning={mmTrade.isMMBetter ? false : showWarning}
+              currencySelectionType={CurrencySelectionType.TRADE_OUT}
             />
           </Flex>
         </AutoColumn>

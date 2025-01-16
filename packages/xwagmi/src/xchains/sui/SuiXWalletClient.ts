@@ -5,6 +5,7 @@ import { signTransaction } from '@mysten/wallet-standard';
 import { ICON_XCALL_NETWORK_ID, xTokenMap } from '@/constants';
 import { FROM_SOURCES, TO_SOURCES, sui } from '@/constants/xChains';
 import { XWalletClient } from '@/core/XWalletClient';
+import { isSpokeToken } from '@/index';
 import { uintToBytes } from '@/utils';
 import { RLP } from '@ethereumjs/rlp';
 import { bcs } from '@mysten/sui/bcs';
@@ -24,6 +25,24 @@ const addressesMainnet = {
   'Asset Manager Storage': '0x25c200a947fd16903d9daea8e4c4b96468cf08d002394b7f1933b636e0a0d500',
   'bnUSD Id': '0xa2d713bd53ccb8855f9d5ac8f174e07450f2ff18e9bbfaa4e17f90f28b919230',
   'bnUSD Storage': '0xd28c9da258f082d5a98556fc08760ec321451216087609acd2ff654d9827c5b5',
+};
+
+const TokenModuleMap = {
+  bnUSD: {
+    packageId: '0xede387fa2f3789f2e64d46744741d317b21f3022488d8f8ef850b3855ae37919',
+    name: 'balanced_dollar_crosschain',
+    storage: '0xd28c9da258f082d5a98556fc08760ec321451216087609acd2ff654d9827c5b5',
+  },
+  sICX: {
+    packageId: '0x0420fdd0afe2f06f2ecac4395503565dcb6abaf4b5310298d4abe5f2667911ad',
+    name: 'sicx_crosschain',
+    storage: '0x7dbf97c738741bc26fa62b1eb8fc18e5d39f551337261d45b7d75c21186fada1',
+  },
+  BALN: {
+    packageId: '0x0420fdd0afe2f06f2ecac4395503565dcb6abaf4b5310298d4abe5f2667911ad',
+    name: 'balanced_token_crosschain',
+    storage: '0x1c2bdf16b54bf2f51b4861e3b987ed8d50b5321e775682ab001e7cb0a27e57ca',
+  },
 };
 
 const XCALL_FEE_AMOUNT = BigInt(sui.gasThreshold * 10 ** sui.nativeCurrency.decimals);
@@ -78,7 +97,7 @@ export class SuiXWalletClient extends XWalletClient {
     }
 
     const isNative = inputAmount.currency.isNativeToken;
-    const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
+    const _isSpokeToken = isSpokeToken(inputAmount.currency);
     const amount = BigInt(inputAmount.quotient.toString());
 
     let txResult;
@@ -113,7 +132,7 @@ export class SuiXWalletClient extends XWalletClient {
           showRawEffects: true,
         },
       });
-    } else if (isBnUSD) {
+    } else if (_isSpokeToken) {
       const coins = (
         await this.getXService().suiClient.getCoins({
           owner: account,
@@ -136,9 +155,9 @@ export class SuiXWalletClient extends XWalletClient {
       const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
 
       txb.moveCall({
-        target: `${addressesMainnet['Balanced Package Id']}::balanced_dollar_crosschain::cross_transfer`,
+        target: `${TokenModuleMap[inputAmount.currency.symbol].packageId}::${TokenModuleMap[inputAmount.currency.symbol].name}::cross_transfer`,
         arguments: [
-          txb.object(addressesMainnet['bnUSD Storage']),
+          txb.object(TokenModuleMap[inputAmount.currency.symbol].storage),
           txb.object(addressesMainnet['xCall Storage']),
           txb.object(addressesMainnet['xCall Manager Storage']),
           feeCoin,

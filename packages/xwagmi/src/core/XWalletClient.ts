@@ -47,7 +47,7 @@ export abstract class XWalletClient {
   abstract _crossTransfer({ account, inputAmount, destination, data, fee }: DepositParams): Promise<string | undefined>;
   abstract _sendCall({ account, sourceChainId, destination, data, fee }: SendCallParams): Promise<string | undefined>;
 
-  async executeTransaction(xTransactionInput: XTransactionInput, options?: any): Promise<string | undefined> {
+  async executeTransaction(xTransactionInput: XTransactionInput): Promise<string | undefined> {
     const { type } = xTransactionInput;
     switch (type) {
       case XTransactionType.SWAP:

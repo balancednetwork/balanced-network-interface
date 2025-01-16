@@ -58,6 +58,7 @@ export default class Dex extends Contract {
     });
     return this.call(callParams);
   }
+
   xBalanceOf(owner: string, id: number, blockHeight?: number) {
     const callParams = this.paramsBuilder({
       method: 'xBalanceOf',
@@ -137,6 +138,7 @@ export default class Dex extends Contract {
 
     return this.call(callParams);
   }
+
   getDepositV2(tokenAddress: string, user: string) {
     const callParams = this.paramsBuilder({
       method: 'getDepositV2',

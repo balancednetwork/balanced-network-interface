@@ -22,6 +22,7 @@ export default class StakedLP extends Contract {
 
     return this.call(callParams);
   }
+
   xBalanceOf(owner: string, poolId: number, blockHeight?: number) {
     const callParams = this.paramsBuilder({
       method: 'xBalanceOf',

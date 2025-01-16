@@ -1,7 +1,6 @@
 import { FROM_SOURCES, TO_SOURCES, injective } from '@/constants/xChains';
 import { XWalletClient } from '@/core';
 import { DepositParams, SendCallParams } from '@/core/XWalletClient';
-import { XToken } from '@/types';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { isDenomAsset } from '../archway/utils';
 import { InjectiveXService } from './InjectiveXService';
@@ -17,7 +16,7 @@ export class InjectiveXWalletClient extends XWalletClient {
 
   async _deposit({ account, inputAmount, destination, data, fee }: DepositParams) {
     let msg;
-    const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
+    const isDenom = isDenomAsset(inputAmount.currency);
     if (isDenom) {
       msg = MsgExecuteContractCompat.fromJSON({
         contractAddress: injective.contracts.assetManager,
@@ -68,7 +67,7 @@ export class InjectiveXWalletClient extends XWalletClient {
   async _crossTransfer({ account, inputAmount, destination, data, fee }: DepositParams) {
     const amount = inputAmount.quotient.toString();
     const msg = MsgExecuteContractCompat.fromJSON({
-      contractAddress: injective.contracts.bnUSD!,
+      contractAddress: inputAmount.currency.address.replace('factory/inj14ejqjyq8um4p3xfqj74yld5waqljf88f9eneuk/', ''),
       sender: account,
       msg: {
         cross_transfer: {

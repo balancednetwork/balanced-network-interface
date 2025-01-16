@@ -59,7 +59,6 @@ export default class XCall extends Contract {
           _data,
         },
       };
-      console.log('payload', payload);
     } else {
       throw new Error('sendCall not supported on this network');
     }

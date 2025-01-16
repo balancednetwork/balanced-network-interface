@@ -1,5 +1,5 @@
 export const SOCIAL_LINKS = {
-  twitter: 'https://x.com/BalancedDAO',
+  twitter: 'https://x.com/BalancedDeFi',
   telegram: 'https://t.me/balanced_official',
   reddit: 'https://www.reddit.com/r/BalancedNetwork/',
   medium: 'https://medium.com/@BalancedDAO',

@@ -2,8 +2,7 @@ import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { XToken } from '@/types';
 import { getXCallFee } from '@/xcall';
 import { XTransactionInput, XTransactionType } from '@/xcall/types';
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import BigNumber from 'bignumber.js';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { useMemo } from 'react';
 import { useSendXTransaction } from '../useSendXTransaction';
 

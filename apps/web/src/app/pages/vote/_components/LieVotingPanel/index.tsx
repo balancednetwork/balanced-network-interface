@@ -11,7 +11,7 @@ import { BoxPanel } from '@/app/components/Panel';
 import PoolLogo from '@/app/components/PoolLogo';
 import QuestionHelper from '@/app/components/QuestionHelper';
 import { Typography } from '@/app/theme';
-import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
+import { COMBINED_TOKENS_LIST, useICX } from '@/constants/tokens';
 import { useBBalnAmount } from '@/store/bbaln/hooks';
 import { useCombinedVoteData, useNextUpdateDate, useUserVoteData } from '@/store/liveVoting/hooks';
 import { VoteSource } from '@/store/liveVoting/types';
@@ -47,11 +47,14 @@ export default function LiveVotingPanel() {
   }) => {
     const { weight, currentWeight } = source;
     const tokens = name.split('/');
+    const ICX = useICX();
 
-    const baseCurrency = useMemo(
-      () => (tokens.length === 2 ? COMBINED_TOKENS_LIST.find(token => token.symbol === tokens[0]) : undefined),
-      [tokens],
-    );
+    const baseCurrency = useMemo(() => {
+      if (tokens[0] === 'wICX') {
+        return ICX;
+      }
+      return tokens.length === 2 ? COMBINED_TOKENS_LIST.find(token => token.symbol === tokens[0]) : undefined;
+    }, [tokens, ICX]);
 
     const quoteCurrency = useMemo(
       () => (tokens.length === 2 ? COMBINED_TOKENS_LIST.find(token => token.symbol === tokens[1]) : undefined),
@@ -72,13 +75,9 @@ export default function LiveVotingPanel() {
                 {baseCurrency && quoteCurrency ? (
                   <Flex alignItems="center">
                     <PoolLogo baseCurrency={baseCurrency} quoteCurrency={quoteCurrency} respoVersion={false} />
-                    <Typography
-                      color="text"
-                      fontSize={16}
-                      fontWeight="bold"
-                      style={{ whiteSpace: 'nowrap' }}
-                      ml={2}
-                    >{`${baseCurrency.symbol} / ${quoteCurrency.symbol}`}</Typography>
+                    <Typography color="text" fontSize={16} fontWeight="bold" style={{ whiteSpace: 'nowrap' }} ml={2}>
+                      {`${baseCurrency.symbol} / ${quoteCurrency.symbol}`.replace('sICX / ICX', 'ICX queue')}
+                    </Typography>
                   </Flex>
                 ) : (
                   <Typography color="text" fontSize={16} fontWeight="bold">

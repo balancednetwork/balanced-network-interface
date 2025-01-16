@@ -66,12 +66,6 @@ export class ArchwayXPublicClient extends XPublicClient {
     return BigInt(height);
   }
 
-  // TODO: is it being used?
-  // async getBlock(blockHeight: bigint) {
-  //   const block = await this.getPublicClient().getBlock(Number(blockHeight));
-  //   return block;
-  // }
-
   async getTxReceipt(txHash) {
     const tx = await this.getPublicClient().getTx(txHash);
     return tx;

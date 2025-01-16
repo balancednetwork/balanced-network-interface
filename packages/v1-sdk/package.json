@@ -6,7 +6,10 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "files": ["dist", "src"],
-  "repository": "https://github.com/balancednetwork/v1-sdk.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/balancednetwork/balanced-network-interface"
+  },
   "scripts": {
     "lint": "tsup lint src",
     "build": "tsup",

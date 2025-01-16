@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/balancednetwork/balanced-network-interface"
+    "url": "https://github.com/balancednetwork/balanced-network-interface"
   },
   "main": "dist/index.js",
   "scripts": {

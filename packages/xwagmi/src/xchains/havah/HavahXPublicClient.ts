@@ -17,26 +17,16 @@ import { ICONTxResultType } from '../icon/types';
 import { HavahXService } from './HavahXService';
 import { havahJs } from './havahJs';
 
-export const getICONEventSignature = (eventName: XCallEventType) => {
-  switch (eventName) {
-    case XCallEventType.CallMessage: {
-      return 'CallMessage(str,str,int,int,bytes)';
-    }
-    case XCallEventType.CallExecuted: {
-      return 'CallExecuted(int,int,str)';
-    }
-    case XCallEventType.CallMessageSent: {
-      return 'CallMessageSent(Address,str,int)';
-    }
-    case XCallEventType.ResponseMessage: {
-      return 'ResponseMessage(int,int,str)';
-    }
-    case XCallEventType.RollbackMessage: {
-      return 'RollbackMessage(int)';
-    }
-    default:
-      return 'none';
-  }
+const getICONEventSignature = (eventName: XCallEventType): string => {
+  const signatures = {
+    [XCallEventType.CallMessage]: 'CallMessage(str,str,int,int,bytes)',
+    [XCallEventType.CallExecuted]: 'CallExecuted(int,int,str)',
+    [XCallEventType.CallMessageSent]: 'CallMessageSent(Address,str,int)',
+    [XCallEventType.ResponseMessage]: 'ResponseMessage(int,int,str)',
+    [XCallEventType.RollbackMessage]: 'RollbackMessage(int)',
+  };
+
+  return signatures[eventName] || 'none';
 };
 
 export class HavahXPublicClient extends XPublicClient {
@@ -103,6 +93,7 @@ export class HavahXPublicClient extends XPublicClient {
     }
     return TransactionStatus.pending;
   }
+
   // didn't find rpc method to get event logs for a block, used getBlock and getTxReceipt instead
   async getBlockEventLogs(blockHeight: bigint) {
     const events: any = [];
@@ -145,12 +136,6 @@ export class HavahXPublicClient extends XPublicClient {
     return events;
   }
 
-  // _filterEventLogs(eventLogs, sig, address = null) {
-  //   return eventLogs.filter(event => {
-  //     return event.indexed && event.indexed[0] === sig && (!address || address === event.scoreAddress);
-  //   });
-  // }
-
   _filterEventLogs(eventLogs, eventType: XCallEventType) {
     const signature = getICONEventSignature(eventType);
 
@@ -187,6 +172,7 @@ export class HavahXPublicClient extends XPublicClient {
       sn: BigInt(parseInt(indexed[3], 16)),
     };
   }
+
   _parseCallMessageEventLog(eventLog, txHash: string): XCallMessageEvent {
     const indexed = eventLog.indexed || [];
     const data = eventLog.data || [];
@@ -201,6 +187,7 @@ export class HavahXPublicClient extends XPublicClient {
       data: data[1],
     };
   }
+
   _parseCallExecutedEventLog(eventLog, txHash: string): XCallExecutedEvent {
     const indexed = eventLog.indexed || [];
     const data = eventLog.data || [];

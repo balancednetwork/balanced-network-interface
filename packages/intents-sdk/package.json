@@ -1,6 +1,6 @@
 {
   "name": "@balancednetwork/intents-sdk",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "license": "MIT",
   "description": "Balanced Network Intents SDK",
   "keywords": ["intents-sdk"],

@@ -629,10 +629,11 @@ export function useDebtDataFor(daysBack: number) {
 }
 
 export function useTokenTrendData(tokenSymbol: string, start: number, end: number) {
+  const symbol = tokenSymbol === 'XLM' ? 'XML' : tokenSymbol;
   return useQuery({
-    queryKey: [`trend`, tokenSymbol, start, end],
+    queryKey: [`trend`, symbol, start, end],
     queryFn: async () => {
-      const { data } = await axios.get(`${API_ENDPOINT}tokens/series/1h/${start}/${end}?symbol=${tokenSymbol}`);
+      const { data } = await axios.get(`${API_ENDPOINT}tokens/series/1h/${start}/${end}?symbol=${symbol}`);
       return data;
     },
     placeholderData: keepPreviousData,

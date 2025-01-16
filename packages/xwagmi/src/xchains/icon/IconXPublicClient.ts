@@ -19,26 +19,16 @@ import {
 import { IconXService } from './IconXService';
 import { ICONTxResultType } from './types';
 
-export const getICONEventSignature = (eventName: XCallEventType) => {
-  switch (eventName) {
-    case XCallEventType.CallMessage: {
-      return 'CallMessage(str,str,int,int,bytes)';
-    }
-    case XCallEventType.CallExecuted: {
-      return 'CallExecuted(int,int,str)';
-    }
-    case XCallEventType.CallMessageSent: {
-      return 'CallMessageSent(Address,str,int)';
-    }
-    case XCallEventType.ResponseMessage: {
-      return 'ResponseMessage(int,int,str)';
-    }
-    case XCallEventType.RollbackMessage: {
-      return 'RollbackMessage(int)';
-    }
-    default:
-      return 'none';
-  }
+const getICONEventSignature = (eventName: XCallEventType): string => {
+  const signatures = {
+    [XCallEventType.CallMessage]: 'CallMessage(str,str,int,int,bytes)',
+    [XCallEventType.CallExecuted]: 'CallExecuted(int,int,str)',
+    [XCallEventType.CallMessageSent]: 'CallMessageSent(Address,str,int)',
+    [XCallEventType.ResponseMessage]: 'ResponseMessage(int,int,str)',
+    [XCallEventType.RollbackMessage]: 'RollbackMessage(int)',
+  };
+
+  return signatures[eventName] || 'none';
 };
 
 export class IconXPublicClient extends XPublicClient {
@@ -131,6 +121,7 @@ export class IconXPublicClient extends XPublicClient {
     }
     return TransactionStatus.pending;
   }
+
   // didn't find rpc method to get event logs for a block, used getBlock and getTxReceipt instead
   async getBlockEventLogs(blockHeight: bigint) {
     const events: any = [];
@@ -154,7 +145,6 @@ export class IconXPublicClient extends XPublicClient {
     xChainId: XChainId,
     { startBlockHeight, endBlockHeight }: { startBlockHeight: bigint; endBlockHeight: bigint },
   ) {
-    // https://tracker.icon.community/api/v1/logs?block_start=83073062&address=cxa07f426062a1384bdd762afa6a87d123fbc81c75
     const url = `https://tracker.icon.community/api/v1/logs?block_start=${startBlockHeight}&block_end=${endBlockHeight}&address=${'cxa07f426062a1384bdd762afa6a87d123fbc81c75'}`;
     const res = await axios.get(url);
 
@@ -184,12 +174,6 @@ export class IconXPublicClient extends XPublicClient {
     return events;
   }
 
-  // _filterEventLogs(eventLogs, sig, address = null) {
-  //   return eventLogs.filter(event => {
-  //     return event.indexed && event.indexed[0] === sig && (!address || address === event.scoreAddress);
-  //   });
-  // }
-
   _filterEventLogs(eventLogs, eventType: XCallEventType) {
     const signature = getICONEventSignature(eventType);
 
@@ -216,18 +200,16 @@ export class IconXPublicClient extends XPublicClient {
 
   _parseCallMessageSentEventLog(eventLog, txHash: string): XCallMessageSentEvent {
     const indexed = eventLog.indexed || [];
-    // const data = eventLog.data || [];
 
     return {
       eventType: XCallEventType.CallMessageSent,
-      // xChainId: this.xChainId,
       txHash,
-      // rawEventData: eventLog,
       from: indexed[1],
       to: indexed[2],
       sn: BigInt(parseInt(indexed[3], 16)),
     };
   }
+
   _parseCallMessageEventLog(eventLog, txHash: string): XCallMessageEvent {
     const indexed = eventLog.indexed || [];
     const data = eventLog.data || [];
@@ -242,6 +224,7 @@ export class IconXPublicClient extends XPublicClient {
       data: data[1],
     };
   }
+
   _parseCallExecutedEventLog(eventLog, txHash: string): XCallExecutedEvent {
     const indexed = eventLog.indexed || [];
     const data = eventLog.data || [];

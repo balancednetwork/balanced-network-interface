@@ -1,6 +1,6 @@
 {
   "name": "@balancednetwork/intents-sdk",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "license": "MIT",
   "description": "Balanced Network Intents SDK",
   "keywords": ["intents-sdk"],
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/balancednetwork/balanced-network-interface"
+    "url": "https://github.com/balancednetwork/balanced-network-interface"
   },
   "main": "dist/index.js",
   "scripts": {

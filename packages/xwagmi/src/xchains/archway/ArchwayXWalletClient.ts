@@ -2,7 +2,7 @@ import { FROM_SOURCES, TO_SOURCES, archway } from '@/constants/xChains';
 import { DepositParams, SendCallParams, XWalletClient } from '@/core/XWalletClient';
 import { XToken } from '@/types';
 import { XSigningArchwayClient } from '@/xchains/archway/XSigningArchwayClient';
-import { getFeeParam, isDenomAsset } from '@/xchains/archway/utils';
+import { isDenomAsset } from '@/xchains/archway/utils';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
 import { XTransactionInput } from '../../xcall/types';
 import { ArchwayXService } from './ArchwayXService';
@@ -31,7 +31,7 @@ export class ArchwayXWalletClient extends XWalletClient {
       },
     };
 
-    const hash = await this.getWalletClient().executeSync(owner, xToken.address, msg, getFeeParam(400000));
+    const hash = await this.getWalletClient().executeSync(owner, xToken.address, msg, 'auto');
 
     if (hash) {
       return hash;
@@ -54,7 +54,7 @@ export class ArchwayXWalletClient extends XWalletClient {
         account,
         archway.contracts.assetManager,
         msg,
-        getFeeParam(1200000),
+        'auto',
         undefined,
         [
           { amount: fee.toString(), denom: ARCHWAY_FEE_TOKEN_SYMBOL },

@@ -65,14 +65,7 @@ export class InjectiveXPublicClient extends XPublicClient {
     return BigInt(lastBlock.height);
   }
 
-  // TODO: is it being used?
-  // async getBlock(blockHeight: bigint) {
-  //   const block = await this.getXService().indexerGrpcExplorerApi.fetchBlock(blockHeight.toString());
-  //   return block;
-  // }
-
   async getTxReceipt(txHash) {
-    // const tx = await this.indexerGrpcExplorerApi.fetchTxByHash(txHash);
     const tx = await this.getXService().indexerRestExplorerApi.fetchTransaction(txHash);
 
     return tx;
@@ -167,6 +160,7 @@ export class InjectiveXPublicClient extends XPublicClient {
       sn: BigInt(eventLog.attributes.find(attr => attr.key === 'sn')?.value),
     };
   }
+
   _parseCallMessageEventLog(eventLog, txHash: string): XCallMessageEvent {
     return {
       eventType: XCallEventType.CallMessage,
@@ -178,6 +172,7 @@ export class InjectiveXPublicClient extends XPublicClient {
       data: eventLog.attributes.find(attr => attr.key === 'data')?.value,
     };
   }
+
   _parseCallExecutedEventLog(eventLog, txHash: string): XCallExecutedEvent {
     const reqId = eventLog.attributes.find(a => a.key === 'reqId')?.value;
 

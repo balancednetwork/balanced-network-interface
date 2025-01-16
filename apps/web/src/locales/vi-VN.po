@@ -346,6 +346,7 @@ msgstr "Phần thưởng mỗi ngày"
 
 #: src/app/components/CollateralTypeSwitcher/CollateralTypeList.tsx
 #: src/app/components/home/_components/CollateralChainSelector/ChainList.tsx
+#: src/app/components/home/_components/SavingsChainSelector/ChainList.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
@@ -481,6 +482,7 @@ msgstr ""
 
 #: src/app/components/home/_components/CollateralChainSelector/ChainList.tsx
 #: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
+#: src/app/components/home/_components/SavingsChainSelector/ChainList.tsx
 #: src/app/pages/trade/bridge/_components/XChainList.tsx
 msgid "Blockchain"
 msgstr ""
@@ -848,8 +850,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
-msgid "Claimed liquidity incentives."
-msgstr ""
+#~ msgid "Claimed liquidity incentives."
+#~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Locked"
@@ -1361,6 +1363,7 @@ msgstr ""
 
 #: src/app/components/home/_components/CollateralChainSelector/ChainList.tsx
 #: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
+#: src/app/components/home/_components/SavingsChainSelector/ChainList.tsx
 #: src/app/pages/trade/bridge/_components/XChainList.tsx
 msgid "Search blockchains..."
 msgstr ""
@@ -1973,8 +1976,8 @@ msgid "0 {0}"
 msgstr ""
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
-msgid "Claiming liquidity incentives..."
-msgstr ""
+#~ msgid "Claiming liquidity incentives..."
+#~ msgstr ""
 
 #: src/app/components/CollateralTypeSwitcher/SingleChainItem.tsx
 msgid "available"

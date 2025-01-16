@@ -337,6 +337,7 @@ msgstr "Daily rewards"
 
 #: src/app/components/CollateralTypeSwitcher/CollateralTypeList.tsx
 #: src/app/components/home/_components/CollateralChainSelector/ChainList.tsx
+#: src/app/components/home/_components/SavingsChainSelector/ChainList.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
 #: src/app/components/home/PositionDetailPanel.tsx
@@ -468,6 +469,7 @@ msgstr "Approving {0} for cross-chain transfer..."
 
 #: src/app/components/home/_components/CollateralChainSelector/ChainList.tsx
 #: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
+#: src/app/components/home/_components/SavingsChainSelector/ChainList.tsx
 #: src/app/pages/trade/bridge/_components/XChainList.tsx
 msgid "Blockchain"
 msgstr "Blockchain"
@@ -817,8 +819,8 @@ msgstr "{0} approved for cross-chain transfer."
 #~ "liquidated."
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
-msgid "Claimed liquidity incentives."
-msgstr "Claimed liquidity incentives."
+#~ msgid "Claimed liquidity incentives."
+#~ msgstr "Claimed liquidity incentives."
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Locked"
@@ -1318,6 +1320,7 @@ msgstr "Withdrawing"
 
 #: src/app/components/home/_components/CollateralChainSelector/ChainList.tsx
 #: src/app/components/home/_components/LoanChainSelector/ChainList.tsx
+#: src/app/components/home/_components/SavingsChainSelector/ChainList.tsx
 #: src/app/pages/trade/bridge/_components/XChainList.tsx
 msgid "Search blockchains..."
 msgstr "Search blockchains..."
@@ -1911,8 +1914,8 @@ msgid "0 {0}"
 msgstr "0 {0}"
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
-msgid "Claiming liquidity incentives..."
-msgstr "Claiming liquidity incentives..."
+#~ msgid "Claiming liquidity incentives..."
+#~ msgstr "Claiming liquidity incentives..."
 
 #: src/app/components/CollateralTypeSwitcher/SingleChainItem.tsx
 msgid "available"

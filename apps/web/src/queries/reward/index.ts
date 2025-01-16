@@ -133,14 +133,16 @@ export const useIncentivisedPairs = (): UseQueryResult<
       const lpData = await bnJs.StakedLP.getDataSources();
       const lpSources: string[] = ['sICX/ICX', ...lpData];
       const dataSources: Map<string, { [key in string]: { external_dist: string } }> =
-        await bnJs.Rewards.getDataSources(block?.number);
+        await bnJs.Rewards.getDataSources();
+      // await bnJs.Rewards.getDataSources(block?.number);
 
       const externalIncentives = Object.entries(dataSources).reduce((acc, [sourceName, sourceData]) => {
         additionalRewardTokens.forEach(token => {
           if (sourceData[token.address]) {
             acc[sourceName] = {
               ...acc[sourceName],
-              [token.address]: CurrencyAmount.fromRawAmount(token, sourceData[token.address].external_dist),
+              // [token.address]: CurrencyAmount.fromRawAmount(token, sourceData[token.address].external_dist),
+              [token.address]: CurrencyAmount.fromRawAmount(token, '100000000000000000000'),
             };
           }
         });

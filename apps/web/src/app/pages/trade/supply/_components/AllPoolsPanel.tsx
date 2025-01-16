@@ -16,6 +16,7 @@ import { Field } from '@/store/mint/reducer';
 import { formatSymbol, formatValue, getFormattedNumber } from '@/utils/formatter';
 
 import DropdownLink from '@/app/components/DropdownLink';
+import RewardsDisplay from '@/app/components/RewardsDisplay/RewardsDisplay';
 import { HeaderText } from '@/app/components/SearchModal/styleds';
 import Skeleton from '@/app/components/Skeleton';
 import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
@@ -59,6 +60,7 @@ const DataText = styled(Flex)`
 
 const PairGrid = styled(DashGrid)`
   cursor: pointer;
+  grid-template-columns: 1.6fr 1.6fr 1fr 1.1fr 0.9fr;
   &:hover {
     & > div {
       p,
@@ -88,7 +90,7 @@ const StyledSkeleton = styled(Skeleton)`
   }
 `;
 
-const APYItem = styled(Flex)`
+export const APYItem = styled(Flex)`
   align-items: flex-end;
   line-height: 25px;
 `;
@@ -158,43 +160,15 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => {
         </DataText>
         <DataText>
           <Flex flexDirection="column" py={2} alignItems="flex-end">
-            {pair.liquidity > MIN_LIQUIDITY_TO_INCLUDE ? (
-              <>
-                {pair.balnApy ? (
-                  <APYItem>
-                    <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                      BALN:
-                    </Typography>
-                    {`${getFormattedNumber(pair.balnApy, 'percent2')} - ${getFormattedNumber(
-                      MAX_BOOST.times(pair.balnApy).toNumber(),
-                      'percent2',
-                    )}`}
-                  </APYItem>
-                ) : null}
-                {pair.externalRewards?.map(reward => {
-                  return prices?.[reward.currency.wrapped.symbol] ? (
-                    <APYItem key={reward.currency.wrapped.symbol}>
-                      <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                        {reward.currency.symbol}:
-                      </Typography>
-                      {`${formatValue(
-                        getRewardApr(reward, pair, prices[reward.currency.symbol].toNumber()).toFixed(),
-                      ).replace('$', '')}%`}
-                    </APYItem>
-                  ) : null;
-                })}
-                {pair.feesApy !== 0 ? (
-                  <APYItem>
-                    <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                      <Trans>Fees:</Trans>
-                    </Typography>
-                    {getFormattedNumber(pair.feesApy, 'percent2')}
-                  </APYItem>
-                ) : null}
-              </>
-            ) : (
-              '-'
-            )}
+            <RewardsDisplay pair={pair} />
+            {pair.feesApy !== 0 ? (
+              <APYItem>
+                <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                  <Trans>Fees:</Trans>
+                </Typography>
+                {getFormattedNumber(pair.feesApy, 'percent2')}
+              </APYItem>
+            ) : null}
             {!pair.feesApy && !pair.balnApy && '-'}
           </Flex>
         </DataText>

@@ -26,6 +26,7 @@ import { useRewards } from '@/store/reward/hooks';
 import { useStakedLPPercent, useWithdrawnPercent } from '@/store/stakedLP/hooks';
 
 import { QuestionWrapper } from '@/app/components/QuestionHelper';
+import RewardsDisplay from '@/app/components/RewardsDisplay/RewardsDisplay';
 import Skeleton from '@/app/components/Skeleton';
 import { MouseoverTooltip } from '@/app/components/Tooltip';
 import QuestionIcon from '@/assets/icons/question.svg';
@@ -371,41 +372,7 @@ const PoolRecord = ({
 
         {upSmall && (
           <DataText>
-            {boostData ? (
-              apy &&
-              boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName] &&
-              boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].balance.isGreaterThan(0) ? (
-                <>
-                  <APYItem>
-                    <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                      BALN:
-                    </Typography>
-                    {new BigNumber(apy)
-                      .times(
-                        //hotfix pairName due to wrong source name on contract side
-                        boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].workingBalance.dividedBy(
-                          boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].balance,
-                        ),
-                      )
-                      .times(100)
-                      .toFormat(2)}
-                    %
-                  </APYItem>
-                </>
-              ) : null
-            ) : null}
-
-            {externalRewards?.map(reward => {
-              const rewardPrice = prices?.[reward.currency.wrapped.symbol];
-              return pairData && rewardPrice ? (
-                <APYItem key={reward.currency.wrapped.symbol}>
-                  <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                    {reward.currency.symbol}:
-                  </Typography>
-                  {`${formatValue(getRewardApr(reward, pairData, rewardPrice.toNumber()).toFixed()).replace('$', '')}%`}
-                </APYItem>
-              ) : null;
-            })}
+            {pairData && <RewardsDisplay pair={pairData} boost={boostData} />}
 
             {pairData?.feesApy && (
               <APYItem>

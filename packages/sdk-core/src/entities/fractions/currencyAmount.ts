@@ -2,7 +2,7 @@ import _Big from 'big.js';
 import invariant from 'tiny-invariant';
 import toFormat from 'toformat';
 
-import { BigintIsh, Rounding, MaxUint256 } from '../../constants';
+import { BigintIsh, MaxUint256, Rounding } from '../../constants';
 import { Currency } from '../currency';
 import { Token } from '../token';
 import { Fraction } from './fraction';
@@ -90,5 +90,36 @@ export class CurrencyAmount<T extends Currency> extends Fraction {
   public get wrapped(): CurrencyAmount<Token> {
     if (this.currency.isToken) return this as CurrencyAmount<Token>;
     return CurrencyAmount.fromFractionalAmount(this.currency.wrapped, this.numerator, this.denominator);
+  }
+
+  //override the following methods from Fraction
+  public lessThan(other: Fraction | BigintIsh): boolean {
+    if (other instanceof CurrencyAmount) {
+      const thisFraction = new Fraction(this.numerator, this.denominator).divide(this.decimalScale);
+      const otherFraction = new Fraction(other.numerator, other.denominator).divide(other.decimalScale);
+      return thisFraction.lessThan(otherFraction);
+    } else {
+      return super.lessThan(other);
+    }
+  }
+
+  public equalTo(other: Fraction | BigintIsh): boolean {
+    if (other instanceof CurrencyAmount) {
+      const thisFraction = new Fraction(this.numerator, this.denominator).divide(this.decimalScale);
+      const otherFraction = new Fraction(other.numerator, other.denominator).divide(other.decimalScale);
+      return thisFraction.equalTo(otherFraction);
+    } else {
+      return super.equalTo(other);
+    }
+  }
+
+  public greaterThan(other: Fraction | BigintIsh): boolean {
+    if (other instanceof CurrencyAmount) {
+      const thisFraction = new Fraction(this.numerator, this.denominator).divide(this.decimalScale);
+      const otherFraction = new Fraction(other.numerator, other.denominator).divide(other.decimalScale);
+      return thisFraction.greaterThan(otherFraction);
+    } else {
+      return super.greaterThan(other);
+    }
   }
 }

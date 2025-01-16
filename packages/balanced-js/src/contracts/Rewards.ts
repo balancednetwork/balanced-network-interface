@@ -136,4 +136,15 @@ export default class Rewards extends Contract {
 
     return this.call(payload);
   }
+
+  getRewards(_holder: string) {
+    const payload = this.paramsBuilder({
+      method: 'getRewards',
+      params: {
+        _holder,
+      },
+    });
+
+    return this.call(payload);
+  }
 }

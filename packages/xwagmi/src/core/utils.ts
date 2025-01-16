@@ -50,8 +50,7 @@ export function getWithdrawData(token: string, amount: bigint): Uint8Array {
   return RLP.encode(['xwithdraw', token, uintToBytes(amount)]);
 }
 
-// // claim rewards
-// function getClaimRewardData(to: string, sources: string[]): Uint8Array {
-//   let rlpInput: rlp.Input = ['xclaimrewards', to, sources];
-//   return rlp.encode(rlpInput);
-// }
+// claim rewards
+export function getClaimRewardData(to: string, sources: string[]): Uint8Array {
+  return RLP.encode(['xclaimrewards', to, sources]);
+}

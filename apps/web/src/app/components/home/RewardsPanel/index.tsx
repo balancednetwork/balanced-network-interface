@@ -11,8 +11,10 @@ import { BoxPanel } from '@/app/components/Panel';
 import { Typography } from '@/app/theme';
 import { useHasAnyKindOfRewards } from '@/store/reward/hooks';
 
+import useWidth from '@/hooks/useWidth';
 import BBalnSlider from '../BBaln/BBalnSlider';
 import Savings from '../Savings';
+import SavingsChainSelector from '../_components/SavingsChainSelector';
 import LPRewards from './LPRewards';
 import NetworkFeesReward from './NetworkFeesRewards';
 import SavingsRewards from './SavingsRewards';
@@ -43,12 +45,22 @@ const RewardsPanel = () => {
     setGlobalTooltip(shouldShow);
   }, []);
 
+  const [rewardsHeaderRef, rewardsHeaderWidth] = useWidth();
+
   return (
     <StyledBoxPanel bg="bg3">
-      <Flex mb="30px" alignItems="center" flexWrap="wrap" justifyContent="space-between">
+      <Flex
+        mb="30px"
+        width={'400px'}
+        alignItems="center"
+        flexWrap="wrap"
+        justifyContent="justify-start"
+        ref={rewardsHeaderRef}
+      >
         <Typography variant="h2" mr={6}>
           Rewards
         </Typography>
+        <SavingsChainSelector width={rewardsHeaderWidth} containerRef={rewardsHeaderRef.current} />
       </Flex>
       <Flex flexDirection={isMedium ? 'column' : 'row'}>
         <SliderWrap>

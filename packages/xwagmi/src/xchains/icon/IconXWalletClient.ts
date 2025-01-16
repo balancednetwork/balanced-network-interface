@@ -256,7 +256,10 @@ export class IconXWalletClient extends XWalletClient {
   }
 
   async claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    // TODO: implement
-    throw new Error('Method not implemented.');
+    const { account } = xTransactionInput;
+
+    const res: any = await bnJs.inject({ account }).Rewards.claimRewards();
+
+    return res.result;
   }
 }

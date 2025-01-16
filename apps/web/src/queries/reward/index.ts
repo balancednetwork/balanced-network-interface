@@ -4,20 +4,15 @@ import { useIconReact } from '@/packages/icon-react';
 import { BalancedJs, CallData, addresses } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
-import BigNumber from 'bignumber.js';
 
 import { NETWORK_ID } from '@/constants/config';
-import {
-  COMBINED_TOKENS_MAP_BY_ADDRESS,
-  ORACLE_PRICED_TOKENS,
-  SUPPORTED_TOKENS_MAP_BY_ADDRESS,
-} from '@/constants/tokens';
+import { COMBINED_TOKENS_MAP_BY_ADDRESS, ORACLE_PRICED_TOKENS } from '@/constants/tokens';
 import { useTokenPrices } from '@/queries/backendv2';
 import QUERY_KEYS from '@/queries/queryKeys';
 import { useBlockNumber } from '@/store/application/hooks';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { useFlattenedRewardsDistribution } from '@/store/reward/hooks';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { ICON_XCALL_NETWORK_ID, bnJs, xTokenMapBySymbol } from '@balancednetwork/xwagmi';
 
 export const BATCH_SIZE = 10;
 
@@ -66,8 +61,7 @@ export const usePlatformDayQuery = () => {
   });
 };
 
-export const useLPReward = () => {
-  const { account } = useIconReact();
+export const useLPReward = account => {
   const blockNumber = useBlockNumber();
 
   return useQuery<CurrencyAmount<Token> | undefined>({
@@ -75,8 +69,9 @@ export const useLPReward = () => {
     queryFn: async () => {
       if (!account) return;
 
-      const res = await bnJs.Rewards.getBalnHolding(account);
-      return CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.BALN.address], res);
+      const res = await bnJs.Rewards.getRewards(account);
+      const BALN = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID]['BALN'];
+      return CurrencyAmount.fromRawAmount(BALN, res[BALN.address]);
     },
     placeholderData: keepPreviousData,
     enabled: !!account,

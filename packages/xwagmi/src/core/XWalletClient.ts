@@ -6,7 +6,15 @@ import { bnJs } from '@/xchains/icon/bnJs';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
 import { XChainId, XToken } from '../types';
-import { getAddLPData, getStakeData, getUnStakeData, getWithdrawData, getXRemoveData, tokenData } from './utils';
+import {
+  getAddLPData,
+  getClaimRewardData,
+  getStakeData,
+  getUnStakeData,
+  getWithdrawData,
+  getXRemoveData,
+  tokenData,
+} from './utils';
 
 export interface DepositParams {
   account: string;
@@ -261,6 +269,11 @@ export abstract class XWalletClient {
   }
 
   async claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Method not implemented.');
+    const { account, xCallFee, direction } = xTransactionInput;
+
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Rewards.address}`;
+    const data = Buffer.from(getClaimRewardData('', []));
+
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
   }
 }

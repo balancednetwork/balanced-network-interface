@@ -193,7 +193,8 @@ export function useHasAnyKindOfRewards() {
   const bnUSDDeposit = useLockedAmount();
   const sources = useSources();
   const hasUnclaimedFees = useHasUnclaimedFees();
-  const { data: reward } = useLPReward();
+  const { account } = useIconReact();
+  const { data: reward } = useLPReward(`0x1.icon/${account}`);
   const { data: savingsRewards } = useUnclaimedRewards();
 
   const numberOfPositions = React.useMemo(

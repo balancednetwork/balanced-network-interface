@@ -19,14 +19,21 @@ import { useBBalnAmount, useDynamicBBalnAmount, useSources, useTotalSupply } fro
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { bnJs, getXChainType, useXAccount, useXClaimRewards } from '@balancednetwork/xwagmi';
 
+import { useSavingsXChainId } from '@/store/savings/hooks';
+import { formatBalance } from '@/utils/formatter';
 import PositionRewardsInfo from './PositionRewardsInfo';
 import RewardsGrid from './RewardsGrid';
 
 const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
-  const { data: reward } = useLPReward();
+  const savingsXChainId = useSavingsXChainId();
+  const xAccount = useXAccount(getXChainType(savingsXChainId));
+
+  const { data: reward } = useLPReward(`${savingsXChainId}/${xAccount?.address}`);
+
   const [isOpen, setOpen] = React.useState(false);
+
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
   const sources = useSources();
@@ -77,29 +84,17 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   );
 
   const balnBalance = balances?.[bnJs.BALN.address];
+  const xClaimRewards = useXClaimRewards();
 
-  const handleClaim = () => {
+  const handleClaim = async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+    try {
+      const txHash = await xClaimRewards(xAccount.address, savingsXChainId);
+    } catch (error) {
+      console.error('error', error);
+    }
 
-    bnJs
-      .inject({ account })
-      .Rewards.claimRewards()
-      .then(res => {
-        addTransaction(
-          { hash: res.result },
-          {
-            summary: t`Claimed liquidity incentives.`,
-            pending: t`Claiming liquidity incentives...`,
-          },
-        );
-        toggleOpen();
-      })
-      .catch(e => {
-        console.error('error', e);
-      })
-      .finally(() => {
-        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-      });
+    window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
   };
 
   return (

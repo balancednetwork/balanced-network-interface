@@ -13,7 +13,7 @@ const RewardTokenItem = ({ reward }: { reward: CurrencyAmount<Token> }) => {
   return (
     <>
       <Typography color="text1" textAlign="right">
-        {reward.toFixed(2, { groupSeparator: ',' })}
+        {reward.toFixed(6, { groupSeparator: ',' })}
       </Typography>
       <Typography color="text2">{reward.currency.symbol}</Typography>
       <Typography color="text1" textAlign="right">

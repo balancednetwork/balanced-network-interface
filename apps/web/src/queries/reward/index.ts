@@ -141,8 +141,7 @@ export const useIncentivisedPairs = (): UseQueryResult<
           if (sourceData[token.address]) {
             acc[sourceName] = {
               ...acc[sourceName],
-              // [token.address]: CurrencyAmount.fromRawAmount(token, sourceData[token.address].external_dist),
-              [token.address]: CurrencyAmount.fromRawAmount(token, '100000000000000000000'),
+              [token.address]: CurrencyAmount.fromRawAmount(token, sourceData[token.address].external_dist),
             };
           }
         });

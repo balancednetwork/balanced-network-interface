@@ -128,13 +128,12 @@ export const useIncentivisedPairs = (): UseQueryResult<
   return useQuery({
     queryKey: ['incentivisedPairs', rewards, block?.number],
     queryFn: async () => {
-      if (!rewards) return;
+      if (!rewards || !block?.number) return;
 
       const lpData = await bnJs.StakedLP.getDataSources();
       const lpSources: string[] = ['sICX/ICX', ...lpData];
       const dataSources: Map<string, { [key in string]: { external_dist: string } }> =
-        await bnJs.Rewards.getDataSources();
-      // await bnJs.Rewards.getDataSources(block?.number);
+        await bnJs.Rewards.getDataSources(block.number);
 
       const externalIncentives = Object.entries(dataSources).reduce((acc, [sourceName, sourceData]) => {
         additionalRewardTokens.forEach(token => {
@@ -172,7 +171,7 @@ export const useIncentivisedPairs = (): UseQueryResult<
         };
       });
     },
-    enabled: !!rewards,
+    enabled: !!rewards && !!block?.number,
     placeholderData: keepPreviousData,
   });
 };

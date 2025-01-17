@@ -128,9 +128,9 @@ export const formatUnitPrice = (price: string | number) => {
   });
 };
 
-export const formatValue = (value: string | number) => {
+export const formatValue = (value: string | number, showDollarSign: boolean = true) => {
   if (value !== 0 && !value) {
-    return '$-.--';
+    return showDollarSign ? '$-.--' : '-.--';
   }
 
   const number = toBigNumber(value);
@@ -143,14 +143,12 @@ export const formatValue = (value: string | number) => {
     decimals = 2;
   }
 
-  // always use dollars for now
-  return (
-    '$' +
-    numbro(value).format({
-      thousandSeparated: true,
-      mantissa: Number.isInteger(value) ? 0 : decimals,
-    })
-  );
+  const formattedValue = numbro(value).format({
+    thousandSeparated: true,
+    mantissa: Number.isInteger(value) ? 0 : decimals,
+  });
+
+  return showDollarSign ? '$' + formattedValue : formattedValue;
 };
 
 export const getFormattedNumber = (num: number | null, numFormat: NumberStyle) => {

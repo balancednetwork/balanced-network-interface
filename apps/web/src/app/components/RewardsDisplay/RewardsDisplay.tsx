@@ -43,10 +43,7 @@ const TooltipContent = ({
           {/* Show BALN range only if there are external rewards, as well */}
           <span style={{ opacity: 0.75 }}>
             {' ('}
-            {`${formatValue(balnApy.toFixed(4)).replace('$', '')}% - ${formatValue((balnApy * 2.5).toFixed(4)).replace(
-              '$',
-              '',
-            )}%`}
+            {`${formatValue(balnApy.toFixed(4), false)}% - ${formatValue((balnApy * 2.5).toFixed(4), false)}%`}
             {')'}
           </span>
           <span> {`and `}</span>
@@ -58,7 +55,8 @@ const TooltipContent = ({
                 (
                 {formatValue(
                   getRewardApr(reward, pair, prices?.[reward.currency.symbol]?.toNumber() || 0).toFixed(),
-                ).replace('$', '')}
+                  false,
+                )}
                 %)
               </span>
             </Fragment>
@@ -111,7 +109,8 @@ const RewardsDisplay: React.FC<RewardsDisplayProps> = ({ pair, boost }) => {
             </Typography>
             {formatValue(
               getRewardApr(reward, pair, prices?.[reward.currency.symbol]?.toNumber() || 0).toFixed(),
-            ).replace('$', '')}
+              false,
+            )}
             %
           </APYItem>
         ))}
@@ -128,10 +127,11 @@ const RewardsDisplay: React.FC<RewardsDisplayProps> = ({ pair, boost }) => {
             <Trans>BALN:</Trans>
           </Typography>
           {pairBoost
-            ? `${formatValue((balnApy * pairBoost + externalApy).toFixed(4)).replace('$', '')}%`
-            : `${formatValue((balnApy + externalApy).toFixed(4)).replace('$', '')}% - ${formatValue(
+            ? `${formatValue((balnApy * pairBoost + externalApy).toFixed(4), false)}%`
+            : `${formatValue((balnApy + externalApy).toFixed(4), false)}% - ${formatValue(
                 (balnApy * 2.5 + externalApy).toFixed(4),
-              ).replace('$', '')}%`}
+                false,
+              )}%`}
         </APYItem>
       </Wrapper>
     );
@@ -153,10 +153,11 @@ const RewardsDisplay: React.FC<RewardsDisplayProps> = ({ pair, boost }) => {
         </Typography>
         {/* Show boosted value instead of a range if user has a position */}
         {pairBoost
-          ? `${formatValue((balnApy * pairBoost + externalApy).toFixed(4)).replace('$', '')}%`
-          : `${formatValue((balnApy + externalApy).toFixed(4)).replace('$', '')}% - ${formatValue(
+          ? `${formatValue((balnApy * pairBoost + externalApy).toFixed(4), false)}%`
+          : `${formatValue((balnApy + externalApy).toFixed(4), false)}% - ${formatValue(
               (balnApy * 2.5 + externalApy).toFixed(4),
-            ).replace('$', '')}%`}
+              false,
+            )}%`}
       </APYItem>
     </Wrapper>
   );

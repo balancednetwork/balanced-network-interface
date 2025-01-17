@@ -81,9 +81,9 @@ export const getRewardApr = (
   return apr;
 };
 
-export const formatValue = (value: string | number) => {
+export const formatValue = (value: string | number, showDollarSign: boolean = true) => {
   if (value !== 0 && !value) {
-    return '$-.--';
+    return showDollarSign ? '$-.--' : '-.--';
   }
 
   const number = toBigNumber(value);
@@ -96,12 +96,11 @@ export const formatValue = (value: string | number) => {
     decimals = 2;
   }
 
+  const formattedValue = numbro(value).format({
+    thousandSeparated: true,
+    mantissa: Number.isInteger(value) ? 0 : decimals,
+  });
+
   // always use dollars for now
-  return (
-    '$' +
-    numbro(value).format({
-      thousandSeparated: true,
-      mantissa: Number.isInteger(value) ? 0 : decimals,
-    })
-  );
+  return showDollarSign ? '$' + formattedValue : formattedValue;
 };

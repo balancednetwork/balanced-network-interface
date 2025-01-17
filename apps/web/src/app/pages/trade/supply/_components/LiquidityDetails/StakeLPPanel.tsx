@@ -241,7 +241,7 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
             {!allPairs || !sources ? (
               <Skeleton width={100}></Skeleton>
             ) : sources[sourceName] ? (
-              `${formatValue(totalAPR.toFixed(2)).replace('$', '')}%`
+              `${formatValue(totalAPR.toFixed(2), false)}%`
             ) : (
               '-'
             )}

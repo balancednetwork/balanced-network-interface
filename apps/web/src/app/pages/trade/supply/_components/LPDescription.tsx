@@ -152,7 +152,8 @@ export default function LPDescription() {
             .times(100)
             .dp(2, BigNumber.ROUND_HALF_UP)
             .toFixed(),
-        ).replace('$', '')}% - ${formatValue(
+          false,
+        )}% - ${formatValue(
           apy
             .times(MAX_BOOST)
             .plus(allPairs[pairName].feesApy)
@@ -160,7 +161,8 @@ export default function LPDescription() {
             .times(100)
             .dp(2)
             .toFixed(),
-        ).replace('$', '')}% APR`
+          false,
+        )}% APR`
       : '-';
   }
 
@@ -314,7 +316,8 @@ export default function LPDescription() {
                                   formattedAmounts[Field.CURRENCY_B],
                                   pairData?.stakedLP,
                                 ).toFixed(),
-                              ).replace('$', '')} ${item.currency.symbol}`}
+                                false,
+                              )} ${item.currency.symbol}`}
                             </Typography>
                           );
                         })}
@@ -353,13 +356,13 @@ export default function LPDescription() {
                     </Typography>
                     {poolRewards && (
                       <Typography textAlign="center" variant="p">
-                        {formatValue(poolRewards.toFixed()).replace('$', '')} BALN
+                        {formatValue(poolRewards.toFixed(), false)} BALN
                       </Typography>
                     )}
                     {poolExternalRewards?.map(item => {
                       return (
                         <Typography key={item.currency.symbol} textAlign="center" variant="p">
-                          {`${formatValue(item.toFixed()).replace('$', '')} ${item.currency.symbol}`}
+                          {`${formatValue(item.toFixed(), false)} ${item.currency.symbol}`}
                         </Typography>
                       );
                     })}

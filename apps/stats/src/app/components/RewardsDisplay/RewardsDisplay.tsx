@@ -40,10 +40,7 @@ const TooltipContent = ({
           {/* Show BALN range only if there are external rewards, as well */}
           <span style={{ opacity: 0.75 }}>
             {' ('}
-            {`${formatValue(balnApy.toFixed(4)).replace('$', '')}% - ${formatValue((balnApy * 2.5).toFixed(4)).replace(
-              '$',
-              '',
-            )}%`}
+            {`${formatValue(balnApy.toFixed(4), false)}% - ${formatValue((balnApy * 2.5).toFixed(4), false)}%`}
             {')'}
           </span>
           <span> {`and `}</span>
@@ -55,7 +52,8 @@ const TooltipContent = ({
                 (
                 {formatValue(
                   getRewardApr(reward, pair, prices?.[reward.currency.symbol]?.toNumber() || 0).toFixed(),
-                ).replace('$', '')}
+                  false,
+                )}
                 %)
               </span>
             </Fragment>
@@ -97,7 +95,8 @@ const RewardsDisplay: React.FC<RewardsDisplayProps> = ({ pair }) => {
             </Typography>
             {formatValue(
               getRewardApr(reward, pair, prices?.[reward.currency.symbol]?.toNumber() || 0).toFixed(),
-            ).replace('$', '')}
+              false,
+            )}
             %
           </APYItem>
         ))}
@@ -113,9 +112,10 @@ const RewardsDisplay: React.FC<RewardsDisplayProps> = ({ pair }) => {
           <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
             BALN:
           </Typography>
-          {`${formatValue((balnApy + externalApy).toFixed(4)).replace('$', '')}% - ${formatValue(
+          {`${formatValue((balnApy + externalApy).toFixed(4), false)}% - ${formatValue(
             (balnApy * 2.5 + externalApy).toFixed(4),
-          ).replace('$', '')}%`}
+            false,
+          )}%`}
         </APYItem>
       </Wrapper>
     );
@@ -135,9 +135,10 @@ const RewardsDisplay: React.FC<RewardsDisplayProps> = ({ pair }) => {
         <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
           Rewards:
         </Typography>
-        {`${formatValue((balnApy + externalApy).toFixed(4)).replace('$', '')}% - ${formatValue(
+        {`${formatValue((balnApy + externalApy).toFixed(4), false)}% - ${formatValue(
           (balnApy * 2.5 + externalApy).toFixed(4),
-        ).replace('$', '')}%`}
+          false,
+        )}%`}
       </APYItem>
     </Wrapper>
   );

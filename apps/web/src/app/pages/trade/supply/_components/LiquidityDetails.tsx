@@ -32,7 +32,7 @@ import { MouseoverTooltip } from '@/app/components/Tooltip';
 import QuestionIcon from '@/assets/icons/question.svg';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBigNumber } from '@/utils';
-import { formatSymbol, formatValue, getFormattedNumber } from '@/utils/formatter';
+import { formatSymbol, getFormattedNumber } from '@/utils/formatter';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Banner } from '../../../../components/Banner';
 import Spinner from '../../../../components/Spinner';
@@ -47,7 +47,7 @@ import {
 } from './LiquidityDetails/WithdrawPanel';
 import { StyledBoxPanel } from './LiquidityDetails/shared';
 import { usePoolPanelContext } from './PoolPanelContext';
-import { getFormattedExternalRewards, getFormattedRewards, getRewardApr, stakedFraction, totalSupply } from './utils';
+import { getFormattedExternalRewards, getFormattedRewards, stakedFraction, totalSupply } from './utils';
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');

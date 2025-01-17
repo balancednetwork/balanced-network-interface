@@ -101,6 +101,5 @@ export const formatValue = (value: string | number, showDollarSign: boolean = tr
     mantissa: Number.isInteger(value) ? 0 : decimals,
   });
 
-  // always use dollars for now
   return showDollarSign ? '$' + formattedValue : formattedValue;
 };

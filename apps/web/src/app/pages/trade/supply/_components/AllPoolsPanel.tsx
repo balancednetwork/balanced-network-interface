@@ -10,22 +10,19 @@ import { MouseoverTooltip } from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import QuestionIcon from '@/assets/icons/question.svg';
 import useSort from '@/hooks/useSort';
-import { MIN_LIQUIDITY_TO_INCLUDE, PairData, TOKEN_BLACKLIST, useAllPairsById, useNOLPools } from '@/queries/backendv2';
+import { PairData, TOKEN_BLACKLIST, useAllPairsById, useNOLPools } from '@/queries/backendv2';
 import { useDerivedMintInfo, useMintActionHandlers } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
-import { formatSymbol, formatValue, getFormattedNumber } from '@/utils/formatter';
+import { formatSymbol, getFormattedNumber } from '@/utils/formatter';
 
 import DropdownLink from '@/app/components/DropdownLink';
 import RewardsDisplay from '@/app/components/RewardsDisplay/RewardsDisplay';
 import { HeaderText } from '@/app/components/SearchModal/styleds';
 import Skeleton from '@/app/components/Skeleton';
-import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
-import { NETWORK_ID } from '@/constants/config';
 import { useRatesWithOracle } from '@/queries/reward';
 import { PairInfo } from '@/types';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { useMedia } from 'react-use';
-import { getRewardApr } from './utils';
 
 const COMPACT_ITEM_COUNT = 8;
 
@@ -201,10 +198,6 @@ export default function AllPoolsPanel({ query }: { query: string }) {
 
   //show only incentivised, cross native or NOL pairs
   const relevantPairs = useMemo(() => {
-    //TEMPORARY LISBON
-    if (allPairs && NETWORK_ID !== 1) return Object.values(allPairs);
-    //END OF TEMPORARY LISBON
-
     if (!allPairs || !nolPairs) return [];
     const nativeSymbols = Object.values(xChainMap).map(chain => chain.nativeCurrency.symbol);
     nativeSymbols.push('wICX');

@@ -6,7 +6,7 @@ import QuestionIcon from '@/assets/icons/question.svg';
 import { PairData } from '@/queries/backendv2';
 import { useRatesWithOracle } from '@/queries/reward';
 import { Source } from '@/store/bbaln/hooks';
-import { formatSymbol, formatValue, getFormattedNumber } from '@/utils/formatter';
+import { formatValue } from '@/utils/formatter';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import React, { Fragment, useMemo } from 'react';
@@ -119,23 +119,23 @@ const RewardsDisplay: React.FC<RewardsDisplayProps> = ({ pair, boost }) => {
     );
   }
 
-  // //if there is only baln APR, show the BALN APR and no tooltip
-  // if (!pair.externalRewards || pair.externalRewards.length === 0) {
-  //   return (
-  //     <Wrapper>
-  //       <APYItem ml="7px">
-  //         <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-  //           <Trans>BALN:</Trans>
-  //         </Typography>
-  //         {pairBoost
-  //           ? `${formatValue((balnApy * pairBoost + externalApy).toFixed(4)).replace('$', '')}%`
-  //           : `${formatValue((balnApy + externalApy).toFixed(4)).replace('$', '')}% - ${formatValue(
-  //               (balnApy * 2.5 + externalApy).toFixed(4),
-  //             ).replace('$', '')}%`}
-  //       </APYItem>
-  //     </Wrapper>
-  //   );
-  // }
+  //if there is only baln APR, show the BALN APR and no tooltip
+  if (!pair.externalRewards || pair.externalRewards.length === 0) {
+    return (
+      <Wrapper>
+        <APYItem ml="7px">
+          <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+            <Trans>BALN:</Trans>
+          </Typography>
+          {pairBoost
+            ? `${formatValue((balnApy * pairBoost + externalApy).toFixed(4)).replace('$', '')}%`
+            : `${formatValue((balnApy + externalApy).toFixed(4)).replace('$', '')}% - ${formatValue(
+                (balnApy * 2.5 + externalApy).toFixed(4),
+              ).replace('$', '')}%`}
+        </APYItem>
+      </Wrapper>
+    );
+  }
 
   // If there are external rewards, show the BALN APR and the external rewards
   return (

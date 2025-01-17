@@ -299,11 +299,11 @@ export default function PairSection() {
                     text={
                       <>
                         <Typography>
-                          The rewards APR represents the USD value of rewards allocated to a pool, claimable from the
-                          Home page.
+                          Based on the USD value of liquidity rewards (claimable from the Home page) and fees earned by
+                          a pool over the past 30 days.
                         </Typography>
                         <Typography marginTop={'20px'}>
-                          The fee APR represents swap fees earned by a pool over the past 30 days.
+                          BALN rewards depend on your position size and bBALN holdings.
                         </Typography>
                       </>
                     }

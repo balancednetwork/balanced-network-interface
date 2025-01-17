@@ -277,12 +277,12 @@ export default function AllPoolsPanel({ query }: { query: string }) {
                   text={
                     <>
                       <Trans>
-                        The rewards APR represents the USD value of rewards allocated to a pool, claimable from the Home
-                        page.
+                        Based on the USD value of liquidity rewards (claimable from the Home page) and fees earned by a
+                        pool over the past 30 days.
                       </Trans>
                       <br />
                       <br />
-                      <Trans>The fee APR represents swap fees earned by a pool over the past 30 days.</Trans>
+                      <Trans>BALN rewards depend on your position size and bBALN holdings.</Trans>
                     </>
                   }
                   placement="top"

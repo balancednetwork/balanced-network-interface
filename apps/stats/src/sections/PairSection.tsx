@@ -18,8 +18,8 @@ import useSort from '@/hooks/useSort';
 import { Typography } from '@/theme';
 import { getFormattedNumber } from '@/utils/formatter';
 
+import RewardsDisplay from '@/app/components/RewardsDisplay/RewardsDisplay';
 import { TOKEN_BLACKLIST } from '@/constants/tokens';
-import { formatValue, getRewardApr } from '@/utils';
 import { COMPACT_ITEM_COUNT, HeaderText, StyledSkeleton as Skeleton } from './TokenSection';
 
 export const MAX_BOOST = 2.5;
@@ -34,9 +34,9 @@ const DashGrid = styled(Box)`
   display: grid;
   gap: 1em;
   align-items: center;
-  grid-template-columns: 2fr repeat(4, 1fr);
+  grid-template-columns: 1.6fr 1.4fr repeat(3, 1fr);
   ${({ theme }) => theme.mediaWidth.upToLarge`
-    grid-template-columns: 1.2fr 0.5fr repeat(3, 1fr);
+    grid-template-columns: 1.2fr 1.3fr repeat(3, 1fr);
   `}
   > * {
     justify-content: flex-end;
@@ -134,6 +134,7 @@ const SkeletonPairPlaceholder = () => {
 };
 
 const PairItem = ({
+  pair,
   pair: {
     id,
     name,
@@ -168,29 +169,7 @@ const PairItem = ({
           </Flex>
         </DataText>
         <DataText className="apy-column">
-          {' '}
-          {balnApy ? (
-            liquidity < 1000 ? null : (
-              <APYItem>
-                <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                  BALN:
-                </Typography>
-                {`${getFormattedNumber(balnApy, 'percent2')} - ${getFormattedNumber(balnApy * MAX_BOOST, 'percent2')}`}
-              </APYItem>
-            )
-          ) : null}
-          {externalRewards?.map(reward => {
-            return prices?.[reward.currency.wrapped.symbol] ? (
-              <APYItem key={reward.currency.wrapped.symbol}>
-                <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                  {reward.currency.symbol}:
-                </Typography>
-                {`${formatValue(
-                  getRewardApr(reward, { stakedRatio, liquidity }, prices[reward.currency.symbol].toNumber()).toFixed(),
-                ).replace('$', '')}%`}
-              </APYItem>
-            ) : null;
-          })}
+          <RewardsDisplay pair={pair} />
           {feesApy !== 0 ? (
             liquidity < 1000 ? (
               '–'

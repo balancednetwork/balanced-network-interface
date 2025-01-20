@@ -143,10 +143,12 @@ export const formatValue = (value: string | number, showDollarSign: boolean = tr
     decimals = 2;
   }
 
-  const formattedValue = numbro(value).format({
-    thousandSeparated: true,
-    mantissa: Number.isInteger(value) ? 0 : decimals,
-  });
+  const formattedValue = numbro(value)
+    .format({
+      thousandSeparated: true,
+      mantissa: Number.isInteger(value) ? 0 : decimals,
+    })
+    .replace(/\.0000$/, '');
 
   return showDollarSign ? '$' + formattedValue : formattedValue;
 };

@@ -7,7 +7,7 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
-import { FUNDING_TOKENS_LIST, UNTRADEABLE_TOKENS } from '@/constants/tokens';
+import { FUNDING_TOKENS_LIST, STABLE_TOKENS, UNTRADEABLE_TOKENS } from '@/constants/tokens';
 import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from '@/hooks/Tokens';
 import useDebounce from '@/hooks/useDebounce';
 import { useOnClickOutside } from '@/hooks/useOnClickOutside';
@@ -41,9 +41,9 @@ export enum AssetsTab {
   YOUR = 'your',
 }
 
-const removeBnUSD = (tokens: { [address: string]: Token }) => {
+const removeStableTokens = (tokens: { [address: string]: Token }) => {
   return Object.values(tokens)
-    .filter(token => token.symbol !== 'bnUSD')
+    .filter(token => !STABLE_TOKENS.includes(token.symbol))
     .reduce((tokenMap, token) => {
       tokenMap[token.address] = token;
       return tokenMap;
@@ -130,7 +130,7 @@ export function CurrencySearch({
       case CurrencySelectionType.TRADE_OUT:
         return filterUntradeableTokens(tokens);
       case CurrencySelectionType.TRADE_MINT_BASE:
-        return removeBnUSD(filterUntradeableTokens(tokens));
+        return removeStableTokens(filterUntradeableTokens(tokens));
       case CurrencySelectionType.TRADE_MINT_QUOTE:
         return bases;
       case CurrencySelectionType.VOTE_FUNDING:

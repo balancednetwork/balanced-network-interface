@@ -208,7 +208,8 @@ export function CurrencySearch({
 
   const selectedChainId = useMemo(() => {
     return currencySelectionType === CurrencySelectionType.TRADE_IN ||
-      currencySelectionType === CurrencySelectionType.TRADE_OUT
+      currencySelectionType === CurrencySelectionType.TRADE_OUT ||
+      currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
       ? undefined
       : xChainId;
   }, [currencySelectionType, xChainId]);

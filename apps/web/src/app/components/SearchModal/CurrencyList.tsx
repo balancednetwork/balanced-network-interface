@@ -141,7 +141,6 @@ function CurrencyRow({
     basedOnWallet &&
     (price && !price.isNaN() ? basedOnWallet && balance?.times(price).isLessThan(0.01) : balance?.isLessThan(0.01));
   const shouldForceNetworkIcon =
-    currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
     currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE ||
     currencySelectionType === CurrencySelectionType.BRIDGE;
 

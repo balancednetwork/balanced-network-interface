@@ -280,7 +280,7 @@ export function useDerivedSwapInfo(): {
     currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmount?.greaterThan(0),
   );
 
-  if (userHasSpecifiedInputOutput && !trade) inputError = t`Insufficient liquidity`;
+  if (userHasSpecifiedInputOutput && !trade) inputError = t`Swap not supported`;
 
   const [pairState, pair] = useV2Pair(_currencies[Field.INPUT], _currencies[Field.OUTPUT]);
 

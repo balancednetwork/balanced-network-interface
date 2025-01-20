@@ -825,6 +825,10 @@ msgstr "Search assets and blockchains..."
 msgid "Transfer fee: <0>{formattedXCallFee}</0>"
 msgstr "Transfer fee: <0>{formattedXCallFee}</0>"
 
+#: src/store/swap/hooks.ts
+msgid "Swap not supported"
+msgstr "Swap not supported"
+
 #: src/app/pages/vote/_components/BribesPanel/index.tsx
 msgid "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
 msgstr "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
@@ -1875,8 +1879,8 @@ msgid "Voting has ended"
 msgstr "Voting has ended"
 
 #: src/store/swap/hooks.ts
-msgid "Insufficient liquidity"
-msgstr "Insufficient liquidity"
+#~ msgid "Insufficient liquidity"
+#~ msgstr "Insufficient liquidity"
 
 #: src/store/swap/hooks.ts
 msgid "Reduce price impact"

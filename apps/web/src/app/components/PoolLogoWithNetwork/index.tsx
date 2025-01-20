@@ -51,7 +51,7 @@ const NetworkWrap = styled.div`
   margin-left: -7px;
 
   background: #0c2a4d;
-  outline: 5px solid #0c2a4d;
+  outline: 5px solid #0f395a;
 
   img {
     position: absolute;

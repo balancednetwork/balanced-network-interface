@@ -18,7 +18,7 @@ const SourceInfo = ({ name, boost, apy }: { name: string; boost?: BigNumber; apy
   if (!boost || !apy) return null;
   return (
     <Wrap>
-      {`${name}:`}{' '}
+      {`${name?.replace('wICX', 'ICX')}:`}{' '}
       <strong>{`${apy
         .times(100)
         .times(boost)

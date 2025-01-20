@@ -61,15 +61,14 @@ const PositionRewardsInfo = () => {
           Object.keys(boostedLPs).map(boostedLP => {
             const apy = allPairs?.find(pair => pair.name === boostedLP)?.balnApy;
             return (
-              <li key={boostedLP}>
-                <SourceInfo
-                  name={boostedLP}
-                  boost={getWorkingBalance(boostedLPs[boostedLP].balance, boostedLPs[boostedLP].supply).dividedBy(
-                    boostedLPs[boostedLP].balance,
-                  )}
-                  apy={new BigNumber(apy ?? 0)}
-                />
-              </li>
+              <SourceInfo
+                key={boostedLP}
+                name={boostedLP}
+                boost={getWorkingBalance(boostedLPs[boostedLP].balance, boostedLPs[boostedLP].supply).dividedBy(
+                  boostedLPs[boostedLP].balance,
+                )}
+                apy={new BigNumber(apy ?? 0)}
+              />
             );
           })}
       </ul>

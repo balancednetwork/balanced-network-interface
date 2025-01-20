@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
 import { BalancedJs, CallData, addresses } from '@balancednetwork/balanced-js';
-import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Fraction, Token, XChainId } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { NETWORK_ID } from '@/constants/config';
@@ -12,7 +12,7 @@ import QUERY_KEYS from '@/queries/queryKeys';
 import { useBlockNumber } from '@/store/application/hooks';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { useFlattenedRewardsDistribution } from '@/store/reward/hooks';
-import { ICON_XCALL_NETWORK_ID, bnJs, xTokenMapBySymbol } from '@balancednetwork/xwagmi';
+import { ICON_XCALL_NETWORK_ID, XToken, bnJs, xTokenMapBySymbol } from '@balancednetwork/xwagmi';
 
 export const BATCH_SIZE = 10;
 
@@ -75,6 +75,38 @@ export const useLPReward = account => {
     },
     placeholderData: keepPreviousData,
     enabled: !!account,
+  });
+};
+
+export type LPRewards = {
+  [chainId in XChainId]?: CurrencyAmount<XToken>;
+};
+
+export const useLPRewards = (accounts): UseQueryResult<LPRewards | undefined> => {
+  return useQuery<LPRewards | undefined>({
+    queryKey: ['rewards', accounts],
+    queryFn: async () => {
+      if (!accounts || accounts.length === 0) return {};
+
+      const cds = accounts.map(account => {
+        return {
+          target: bnJs.Rewards.address,
+          method: 'getRewards',
+          params: [account],
+        };
+      });
+
+      const rawRewards = await bnJs.Multicall.getAggregateData(cds);
+
+      return rawRewards.reduce((acc, reward, index) => {
+        const xChainId = accounts[index].split('/')[0];
+        const BALN = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID]['BALN'];
+        acc[xChainId] = CurrencyAmount.fromRawAmount(BALN, reward[BALN.address]);
+        return acc;
+      }, {});
+    },
+    refetchInterval: 10_000,
+    placeholderData: keepPreviousData,
   });
 };
 

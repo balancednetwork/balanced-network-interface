@@ -1,32 +1,29 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
 import { Box, Flex } from 'rebass';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
-import { HeaderText } from '@/app/components/Wallet/styledComponents';
 import { StyledHeaderText } from '@/app/pages/trade/bridge/_components/XChainList';
 import { Typography } from '@/app/theme';
 import useSortXPositions from '@/hooks/useSortXPositions';
 import { useHasSignedIn, useSignedInWallets } from '@/hooks/useWallets';
-import { useCollateralAmounts, useCollateralType } from '@/store/collateral/hooks';
-import { useOraclePrices } from '@/store/oracle/hooks';
-import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
-import { formatValue } from '@/utils/formatter';
-import { xChains } from '@balancednetwork/xwagmi';
-import { xTokenMap } from '@balancednetwork/xwagmi';
+import { useCollateralType } from '@/store/collateral/hooks';
+import { xChains, XToken } from '@balancednetwork/xwagmi';
 import { XChain, XChainId } from '@balancednetwork/xwagmi';
 import { Trans, t } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
 import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from '../LoanChainSelector/styledComponents';
+import { LPRewards } from '@/queries/reward';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 
 type ChainListProps = {
   chainId: XChainId;
   setChainId: (chain: XChainId) => void;
   chains?: XChain[];
   width: number | undefined;
+  lpRewards: LPRewards;
 };
 
 type ChainItemProps = {
@@ -34,39 +31,13 @@ type ChainItemProps = {
   isActive: boolean;
   isLast: boolean;
   setChainId: (chain: XChainId) => void;
+  rewardAmount: CurrencyAmount<XToken> | undefined;
 };
 
-const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
+const ChainItem = ({ chain, setChainId, isLast, rewardAmount }: ChainItemProps) => {
   const signedInWallets = useSignedInWallets();
   const isSignedIn = signedInWallets.some(wallet => wallet.xChainId === chain.xChainId);
-  const crossChainBalances = useCrossChainWalletBalances();
-  const collateralType = useCollateralType();
-  const xToken = xTokenMap[chain.xChainId].find(xToken => xToken.symbol === collateralType);
-  const depositedAmounts = useCollateralAmounts(chain.xChainId);
-  const existingPosition = depositedAmounts[collateralType];
-  const prices = useOraclePrices();
-  const xTokenPrice = prices?.[xToken?.symbol || ''];
-  const selectedCollateralType = useCollateralType();
   const isSmall = useMedia('(max-width: 440px)');
-
-  const formattedWalletBalance = useMemo(() => {
-    if (existingPosition?.isGreaterThan(0) || !xToken) return;
-    const balance = crossChainBalances[chain.xChainId]?.[xToken.address];
-    if (!balance || !balance.greaterThan(0)) return `-`;
-
-    return xTokenPrice
-      ? `${formatValue(new BigNumber(balance.toFixed()).times(xTokenPrice).toFixed())} available`
-      : '-';
-  }, [existingPosition, xToken, crossChainBalances, chain.xChainId, xTokenPrice]);
-
-  const formattedDeposit = useMemo(() => {
-    if (!existingPosition || existingPosition?.isLessThanOrEqualTo(0)) return;
-    return xTokenPrice ? formatValue(existingPosition.times(xTokenPrice).toFixed()) : '-';
-  }, [existingPosition, xTokenPrice]);
-
-  const spokeAssetVersion = xTokenMap[chain.xChainId].find(
-    xToken => xToken.symbol === selectedCollateralType,
-  )?.spokeVersion;
 
   return (
     <Grid $isSignedIn={isSignedIn} className={isLast ? '' : 'border-bottom'} onClick={e => setChainId(chain.xChainId)}>
@@ -79,16 +50,15 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
             {chain.name}
             <span style={{ fontWeight: 'normal' }}></span>
           </Typography>
-          {spokeAssetVersion && <Typography>{` (${spokeAssetVersion})`}</Typography>}
         </Flex>
       </ChainItemWrap>
-      {isSignedIn ? (
+      {rewardAmount && rewardAmount.greaterThan(0) ? (
         <Typography
           color="inherit"
-          style={{ transition: 'all ease 0.3s', opacity: existingPosition?.isGreaterThan(0) ? 1 : 0.75 }}
-          fontSize={existingPosition?.isGreaterThan(0) ? 14 : 12}
+          style={{ transition: 'all ease 0.3s', opacity: rewardAmount.greaterThan(0) ? 1 : 0.75 }}
+          fontSize={rewardAmount.greaterThan(0) ? 14 : 12}
         >
-          {existingPosition?.isGreaterThan(0) ? formattedDeposit : formattedWalletBalance}
+          {rewardAmount.greaterThan(0) ? rewardAmount.toSignificant(2) : '-'}
         </Typography>
       ) : (
         <Typography>-</Typography>
@@ -97,7 +67,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   );
 };
 
-const ChainList = ({ chainId, setChainId, chains, width }: ChainListProps) => {
+const ChainList = ({ chainId, setChainId, chains, width, lpRewards }: ChainListProps) => {
   const relevantChains = chains || xChains;
   const [searchQuery, setSearchQuery] = useState<string>('');
   const collateralType = useCollateralType();
@@ -158,7 +128,7 @@ const ChainList = ({ chainId, setChainId, chains, width }: ChainListProps) => {
             }
           >
             <span>
-              <Trans>Collateral</Trans>
+              <Trans>Rewards</Trans>
             </span>
           </StyledHeaderText>
         </Flex>
@@ -169,6 +139,7 @@ const ChainList = ({ chainId, setChainId, chains, width }: ChainListProps) => {
               isActive={chainId === chainItem.xChainId}
               isLast={sortedFilteredChains.length === index + 1}
               setChainId={setChainId}
+              rewardAmount={lpRewards[chainItem.xChainId]}
             />
           </Box>
         ))}

@@ -1,10 +1,12 @@
 import { StyledArrowDownIcon } from '@/app/components/DropdownText';
 import { DropdownPopper } from '@/app/components/Popover';
 import { Typography } from '@/app/theme';
+import { useSignedInWallets } from '@/hooks/useWallets';
+import { useLPRewards } from '@/queries/reward';
 import { useSavingsActionHandlers, useSavingsXChainId } from '@/store/savings/hooks';
-import { xChainMap, xChains } from '@balancednetwork/xwagmi';
+import { XChain, xChainMap, xChains } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
@@ -35,6 +37,26 @@ const SavingsChainSelector = ({
   const [isOpen, setOpen] = React.useState(false);
   const savingsXChainId = useSavingsXChainId();
   const { onSavingsXChainSelection } = useSavingsActionHandlers();
+
+  const signedWallets = useSignedInWallets();
+  const accounts = useMemo(
+    () => signedWallets.filter(wallet => wallet.address).map(wallet => `${wallet.xChainId}/${wallet.address}`),
+    [signedWallets],
+  );
+
+  const { data: lpRewards } = useLPRewards(accounts);
+
+  const sortedChains = useMemo(() => {
+    if (!lpRewards) return xChains;
+
+    return xChains.sort((a: XChain, b: XChain) => {
+      const aRewardAmount = lpRewards[a.xChainId]?.quotient || 0n;
+      const bRewardAmount = lpRewards[b.xChainId]?.quotient || 0n;
+
+      if (aRewardAmount === bRewardAmount) return 0;
+      return bRewardAmount > aRewardAmount ? 1 : -1;
+    });
+  }, [lpRewards]);
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
@@ -92,7 +114,13 @@ const SavingsChainSelector = ({
             containerOffset={containerRef ? containerRef.getBoundingClientRect().x + 2 : 0}
             strategy="absolute"
           >
-            <ChainList setChainId={setChainWrap} chainId={savingsXChainId} chains={xChains} width={width} />
+            <ChainList
+              setChainId={setChainWrap}
+              chainId={savingsXChainId}
+              chains={sortedChains}
+              width={width}
+              lpRewards={lpRewards || {}}
+            />
           </DropdownPopper>
         </div>
       </ClickAwayListener>

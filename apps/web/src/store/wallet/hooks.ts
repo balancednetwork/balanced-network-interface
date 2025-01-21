@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
-import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
+import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
@@ -25,7 +25,6 @@ import { changeBalances } from './reducer';
 import { useXBalances } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 
-import { NETWORK_ID } from '@/constants/config';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
 import { useRatesWithOracle } from '@/queries/reward';

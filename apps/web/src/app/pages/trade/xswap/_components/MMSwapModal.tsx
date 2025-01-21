@@ -231,9 +231,7 @@ const MMSwapModal = ({
 
         <Typography variant="p" fontWeight="bold" textAlign="center" color="text">
           <Trans>
-            {`${formatBigNumber(new BigNumber(trade?.executionPrice.toFixed() || 0), 'ratio')} ${
-              trade?.executionPrice.quoteCurrency.symbol
-            } 
+            {`${trade?.executionPrice.toSignificant(6)} ${trade?.executionPrice.quoteCurrency.symbol} 
               per ${trade?.executionPrice.baseCurrency.symbol}`}
           </Trans>
         </Typography>

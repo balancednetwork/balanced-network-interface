@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
-import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
 import useInterval from '@/hooks/useInterval';
 import { BalanceData } from '@/hooks/useV2Pairs';
-import { PairData, useTokenPrices } from '@/queries/backendv2';
+import { PairData, useAllPairs, useTokenPrices } from '@/queries/backendv2';
 import { useBlockDetails } from '@/store/application/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { formatUnits } from '@/utils';
@@ -17,6 +17,7 @@ import { bnJs } from '@balancednetwork/xwagmi';
 
 import { LockedPeriod } from '@/app/components/home/BBaln/types';
 import { EXA, WEIGHT, getBbalnAmount } from '@/app/components/home/BBaln/utils';
+import { useIncentivisedPairs } from '@/queries/reward';
 import { AppState } from '..';
 import { Field } from '../loan/reducer';
 import { adjust, cancel, changeData, changePeriod, changeSources, changeTotalSupply, type } from './reducer';
@@ -499,4 +500,30 @@ export function useBBalnApr(): UseQueryResult<BigNumber | undefined> {
     enabled: !!pastMonthDistributed && !!prices && !!bBALNSupply,
     placeholderData: keepPreviousData,
   });
+}
+
+export function useIncentivisedSources() {
+  const sources = useSources();
+  const { data: incentivisedPairs } = useIncentivisedPairs();
+  const { data: allPairs } = useAllPairs();
+
+  return useMemo(() => {
+    if (!sources || !incentivisedPairs || !allPairs) return {};
+
+    const pairNamesSet = new Set(incentivisedPairs.map(pair => pair.name));
+
+    return Object.entries(sources).reduce(
+      (LPs, [sourceName, source]) => {
+        const pair = allPairs.find(pair => pair.name === sourceName);
+        const apr = pair?.balnApy || 0;
+
+        if (apr > 0 && pairNamesSet.has(sourceName) && source.balance.isGreaterThan(0)) {
+          LPs[sourceName] = { ...source };
+        }
+
+        return LPs;
+      },
+      {} as Record<string, Source>,
+    );
+  }, [sources, incentivisedPairs, allPairs]);
 }

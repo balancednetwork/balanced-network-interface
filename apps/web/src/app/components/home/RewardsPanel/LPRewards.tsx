@@ -15,9 +15,9 @@ import Tooltip from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import QuestionIcon from '@/assets/icons/question.svg';
 import { useLPReward } from '@/queries/reward';
-import { useBBalnAmount, useDynamicBBalnAmount, useSources, useTotalSupply } from '@/store/bbaln/hooks';
+import { useBBalnAmount, useDynamicBBalnAmount, useIncentivisedSources, useTotalSupply } from '@/store/bbaln/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
-import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
+import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { bnJs } from '@balancednetwork/xwagmi';
 
@@ -29,7 +29,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   const [isOpen, setOpen] = React.useState(false);
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
-  const sources = useSources();
+  const sources = useIncentivisedSources();
   const totalSupplyBBaln = useTotalSupply();
   const dynamicBBalnAmount = useDynamicBBalnAmount();
   const bBalnAmount = useBBalnAmount();

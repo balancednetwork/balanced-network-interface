@@ -85,7 +85,9 @@ const RewardsDisplay: React.FC<RewardsDisplayProps> = ({ pair, boost }) => {
   const pairBoost = useMemo(() => {
     if (boost) {
       const pairBoostData = boost[pairName];
-      return pairBoostData ? pairBoostData.workingBalance.dividedBy(pairBoostData.balance).toNumber() : undefined;
+      return pairBoostData && pairBoostData.balance.isGreaterThan(0)
+        ? pairBoostData.workingBalance.dividedBy(pairBoostData.balance).toNumber()
+        : undefined;
     }
   }, [boost, pairName]);
 

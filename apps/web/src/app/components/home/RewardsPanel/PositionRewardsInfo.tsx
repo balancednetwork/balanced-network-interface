@@ -5,9 +5,7 @@ import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
 import { useAllPairs } from '@/queries/backendv2';
-import { useIncentivisedPairs } from '@/queries/reward';
-import { Source, useSources, useWorkingBalance } from '@/store/bbaln/hooks';
-import { useLoanAPY } from '@/store/loan/hooks';
+import { useIncentivisedSources, useWorkingBalance } from '@/store/bbaln/hooks';
 
 import SourceInfo from './SourceInfo';
 
@@ -23,24 +21,8 @@ const Wrap = styled.div`
 
 const PositionRewardsInfo = () => {
   const getWorkingBalance = useWorkingBalance();
-  const sources = useSources();
-  const { data: incentivisedPairs } = useIncentivisedPairs();
   const { data: allPairs } = useAllPairs();
-
-  const boostedLPs = React.useMemo(() => {
-    if (sources && incentivisedPairs) {
-      const pairNames = incentivisedPairs.map(pair => pair.name);
-      return Object.keys(sources).reduce(
-        (LPs, sourceName) => {
-          if (pairNames.indexOf(sourceName) >= 0 && sources[sourceName].balance.isGreaterThan(0)) {
-            LPs[sourceName] = { ...sources[sourceName] };
-          }
-          return LPs;
-        },
-        {} as { [key in string]: Source },
-      );
-    }
-  }, [sources, incentivisedPairs]);
+  const boostedLPs = useIncentivisedSources();
 
   const boostedLPNumbers = React.useMemo(
     () =>

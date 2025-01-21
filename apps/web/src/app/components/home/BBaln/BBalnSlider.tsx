@@ -29,11 +29,11 @@ import {
   useBBalnSliderState,
   useDynamicBBalnAmount,
   useHasLockExpired,
+  useIncentivisedSources,
   useLockedBaln,
   useLockedUntil,
   usePastMonthFeesDistributed,
   useSelectedPeriod,
-  useSources,
   useTimeRemaining,
   useTotalSupply,
 } from '@/store/bbaln/hooks';
@@ -100,7 +100,7 @@ export default function BBalnSlider({
   const totalSupplyBBaln = useTotalSupply();
   const dynamicBBalnAmount = useDynamicBBalnAmount();
   const powerLeft = usePowerLeft();
-  const sources = useSources();
+  const sources = useIncentivisedSources();
   const { data: hasLockExpired } = useHasLockExpired();
   const { typedValue, isAdjusting, inputType } = useBBalnSliderState();
   const { onFieldAInput, onSlide, onAdjust: adjust } = useBBalnSliderActionHandlers();

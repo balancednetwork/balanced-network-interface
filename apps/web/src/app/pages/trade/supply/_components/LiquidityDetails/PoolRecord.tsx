@@ -136,13 +136,12 @@ export const PoolRecord = ({
     <>
       <ListItem onClick={handlePoolClick}>
         <Flex alignItems={'center'}>
-          <DataText>
-            <PoolLogoWithNetwork
-              chainId={xChainId}
-              baseCurrency={baseAmount.currency}
-              quoteCurrency={quoteAmount.currency}
-            />
-          </DataText>
+          <PoolLogoWithNetwork
+            chainId={xChainId}
+            baseCurrency={baseAmount.currency}
+            quoteCurrency={quoteAmount.currency}
+          />
+          <DataText ml={2}>{pairName}</DataText>
           <StyledArrowDownIcon />
         </Flex>
         <DataText>

@@ -78,7 +78,7 @@ export type ChainProvider<T extends ChainType | undefined = undefined> = T exten
     ? SuiProvider
     : ChainProviderType;
 
-export type GetChainProviderType<T extends ChainName> = T extends 'arb'
+export type GetChainProviderType<T extends ChainName> = T extends 'arb' | 'pol'
   ? ChainProvider<'evm'>
   : T extends 'sui'
     ? ChainProvider<'sui'>

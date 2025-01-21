@@ -121,9 +121,12 @@ export default function CurrencyRow({
       return [bridgeDirection.from];
     }
 
+    if (shouldForceNetworkIcon && currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE) {
+      return [selectedChainId];
+    }
     return sortedXChains;
-  }, [sortedXChains, shouldForceNetworkIcon, currencySelectionType, bridgeDirection.from]);
-  console.log('cool', shouldForceNetworkIcon, currencySelectionType, bridgeDirection, finalXChainIds);
+  }, [sortedXChains, shouldForceNetworkIcon, currencySelectionType, bridgeDirection.from, selectedChainId]);
+
   const RowContentSignedIn = () => {
     return (
       <>

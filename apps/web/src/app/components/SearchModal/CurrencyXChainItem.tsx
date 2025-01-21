@@ -58,4 +58,4 @@ const CurrencyXChainItem = ({
   );
 };
 
-export default CurrencyXChainItem;
+export default React.memo(CurrencyXChainItem);

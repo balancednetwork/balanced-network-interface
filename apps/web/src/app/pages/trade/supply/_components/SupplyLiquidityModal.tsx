@@ -155,33 +155,48 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
           <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
             {pair ? t`Supply liquidity?` : t`Create liquidity pool?`}
           </Typography>
-          <Flex alignItems="center" mb={1} hidden={false}>
-            <Box width={1 / 2}>
-              <StyledDL>
-                <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                  <Trans>Assets to send</Trans>
-                </Typography>
-              </StyledDL>
-            </Box>
-            <Box width={1 / 2}>
-              <StyledDL>
-                <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-                  <Trans>Assets on Balanced</Trans>
-                </Typography>
-              </StyledDL>
-            </Box>
-          </Flex>
+          <div style={{ position: 'relative' }}>
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: 0,
+                bottom: 0,
+                width: '1px',
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                transform: 'translateX(-50%)',
+              }}
+            />
+            <Flex alignItems="center" mb={1} hidden={false}>
+              <Box width={1 / 2}>
+                <StyledDL>
+                  <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
+                    <Trans>Assets to send</Trans>
+                  </Typography>
+                </StyledDL>
+              </Box>
+              <Box width={1 / 2}>
+                <StyledDL>
+                  <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
+                    <Trans>Assets on Balanced</Trans>
+                  </Typography>
+                </StyledDL>
+              </Box>
+            </Flex>
 
-          <SendRemoveXToken field={Field.CURRENCY_A} currencies={currencies} parsedAmounts={parsedAmounts} />
-          <SendRemoveXToken field={Field.CURRENCY_B} currencies={currencies} parsedAmounts={parsedAmounts} />
-
+            <SendRemoveXToken field={Field.CURRENCY_A} currencies={currencies} parsedAmounts={parsedAmounts} />
+            <SendRemoveXToken field={Field.CURRENCY_B} currencies={currencies} parsedAmounts={parsedAmounts} />
+          </div>
           <Typography textAlign="center" as="h3" fontWeight="normal">
             <Trans>Send your liquidity to Balanced, then click Supply.</Trans>
           </Typography>
           {lpXChainId !== ICON_XCALL_NETWORK_ID && (
-            <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
-              <Trans>Transfer fee(x3): {formattedXCallFee}</Trans>
-            </Typography>
+            <Flex justifyContent="center" alignItems="center" mt={2}>
+              <Typography textAlign="center" as="h3" fontWeight="normal">
+                <Trans>Transfer fee (x3): </Trans>
+              </Typography>
+              <Typography fontWeight="bold">{formattedXCallFee}</Typography>
+            </Flex>
           )}
           {hasErrorMessage && (
             <Typography textAlign="center" color="alert">

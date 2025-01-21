@@ -117,6 +117,10 @@ msgstr "{0} ICX"
 msgid "Withdraw Balance Tokens"
 msgstr ""
 
+#: src/app/components/RewardsDisplay/RewardsDisplay.tsx
+msgid "Rewards:"
+msgstr ""
+
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 msgid "15m"
 msgstr "15분"
@@ -204,8 +208,8 @@ msgid "h"
 msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
-msgid ", the current incentives will be adjusted to reflect this allocation."
-msgstr ", 현재 인센티브는 이 할당을 반영하도록 조정될 것이다."
+#~ msgid ", the current incentives will be adjusted to reflect this allocation."
+#~ msgstr ", 현재 인센티브는 이 할당을 반영하도록 조정될 것이다."
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
 msgid "Borrowing"
@@ -229,6 +233,11 @@ msgstr ""
 
 #: src/app/pages/vote/_components/VotingPowerPanel/index.tsx
 msgid "Total voting power"
+msgstr ""
+
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+msgid "Current rewards"
 msgstr ""
 
 #: src/app/components/home/_components/xLoanModal/index.tsx
@@ -297,8 +306,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
-msgid "Incentives will be updated in"
-msgstr ""
+#~ msgid "Incentives will be updated in"
+#~ msgstr ""
 
 #: src/app/pages/vote/_components/BribesPanel/BribedSource.tsx
 msgid "{0} {1} available"
@@ -313,6 +322,10 @@ msgstr ""
 #: src/app/pages/vote/proposals/page.tsx
 msgid "New proposal"
 msgstr "새로운 제안"
+
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+msgid "Liquidity rewards"
+msgstr ""
 
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
 #~ msgid "Awaiting execution on ICON."
@@ -467,6 +480,11 @@ msgstr "확인"
 msgid "Approved"
 msgstr "승인됨"
 
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+msgid "Based on the USD value of liquidity rewards (claimable from the Home page) and fees earned by a pool over the past 30 days."
+msgstr ""
+
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Review the community token list on GitHub."
 msgstr ""
@@ -540,6 +558,10 @@ msgstr ""
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCallsForm.tsx
 msgid "Verify contract calls"
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+msgid "To apply your increased voting power to liquidity rewards, update your allocation for each pool."
 msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
@@ -643,9 +665,18 @@ msgstr "1일"
 msgid "Lock up BALN and vote for this pool to receive bribes."
 msgstr ""
 
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+msgid "Future rewards"
+msgstr ""
+
 #: src/app/pages/home/RewardsPanel.tsx
 #~ msgid "To earn Balanced rewards, take out a loan or supply liquidity on the Trade page."
 #~ msgstr "Balanced 보상을 받으려면 거래 페이지에서 대출을 받거나 유동성을 공급하십시오."
+
+#: src/app/components/RewardsDisplay/RewardsDisplay.tsx
+msgid "Your rate depends on your position size and the amount of bBALN you hold."
+msgstr ""
 
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Remove community token list"
@@ -840,8 +871,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
-msgid "Claimed liquidity incentives."
-msgstr ""
+#~ msgid "Claimed liquidity incentives."
+#~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 msgid "Locked"
@@ -1030,8 +1061,8 @@ msgid "Swapping"
 msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
-msgid "Incentives are recalculated every week. You can adjust your allocation once every 10 days."
-msgstr ""
+#~ msgid "Incentives are recalculated every week. You can adjust your allocation once every 10 days."
+#~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/index.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
@@ -1054,8 +1085,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
-msgid "Liquidity incentives"
-msgstr ""
+#~ msgid "Liquidity incentives"
+#~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/AdvancedSwapDetails.tsx
@@ -1167,8 +1198,8 @@ msgid "To earn rewards: supply liquidity, deposit bnUSD into the savings rate, o
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
-msgid "Lock up BALN to hold bBALN, a non-transferable token that earns network fees and boosts your BALN liquidity incentives."
-msgstr ""
+#~ msgid "Lock up BALN to hold bBALN, a non-transferable token that earns network fees and boosts your BALN liquidity incentives."
+#~ msgstr ""
 
 #: src/app/components/ProposalStatusIcon/index.tsx
 msgid "Failed to enact"
@@ -1189,6 +1220,10 @@ msgstr ""
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Risk ratio"
 msgstr "위험율"
+
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+msgid "Claimed liquidity rewards."
+msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Voting will begin at 5pm UTC,"
@@ -1517,6 +1552,7 @@ msgstr "스테이킹 해제 중인 ICX는 없습니다."
 
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
+#: src/app/pages/trade/xswap/_components/SwapDescription.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "{0} {1} per {2}"
@@ -1594,6 +1630,10 @@ msgstr ""
 msgid "Withdrawing collateral..."
 msgstr "담보를 회수 중"
 
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+msgid "Claim liquidity rewards?"
+msgstr ""
+
 #: src/app/pages/claim-legacy-fees/page.tsx
 msgid "No fees to claim"
 msgstr ""
@@ -1627,6 +1667,11 @@ msgstr "Balanced 달러를 대출 하겠습니까?"
 msgid "Activating"
 msgstr ""
 
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+msgid "BALN rewards depend on your position size and bBALN holdings."
+msgstr ""
+
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
 msgid "Contract doesn't exist on this network."
 msgstr ""
@@ -1637,8 +1682,8 @@ msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
-msgid "Future incentives"
-msgstr ""
+#~ msgid "Future incentives"
+#~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/MMSwapInfo.tsx
 #: src/app/pages/trade/xswap/_components/SwapInfo.tsx
@@ -1671,6 +1716,10 @@ msgstr "유동성 풀을 만드시겠습니까?"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Locked until"
+msgstr ""
+
+#: src/app/components/RewardsDisplay/RewardsDisplay.tsx
+msgid "Your BALN rate depends on your position size and the amount of bBALN you hold."
 msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeActivity.tsx
@@ -1874,8 +1923,8 @@ msgstr ""
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
-msgid "The BALN APR is calculated from the USD value of BALN rewards allocated to a pool. Your rate will vary based on the amount of bBALN you hold."
-msgstr ""
+#~ msgid "The BALN APR is calculated from the USD value of BALN rewards allocated to a pool. Your rate will vary based on the amount of bBALN you hold."
+#~ msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 #~ msgid "47% of the daily BALN inflation is used to incentivise liquidity. bBALN holders can adjust the amount allocated to each liquidity pool via \"live\" voting."
@@ -1929,8 +1978,8 @@ msgstr "취소"
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
-msgid "Current incentives"
-msgstr ""
+#~ msgid "Current incentives"
+#~ msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "It costs 100 bnUSD to submit a proposal."
@@ -1961,8 +2010,8 @@ msgid "0 {0}"
 msgstr ""
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
-msgid "Claiming liquidity incentives..."
-msgstr ""
+#~ msgid "Claiming liquidity incentives..."
+#~ msgstr ""
 
 #: src/app/components/CollateralTypeSwitcher/SingleChainItem.tsx
 msgid "available"
@@ -2170,8 +2219,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
-msgid "To apply your increased voting power to liquidity incentives, update your allocation for each pool."
-msgstr ""
+#~ msgid "To apply your increased voting power to liquidity incentives, update your allocation for each pool."
+#~ msgstr ""
 
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "Unstake your BALN, then lock it up for 1 week – 4 years. You'll receive bBALN, which determines your voting power, network fee earnings, and BALN rewards."
@@ -2298,6 +2347,10 @@ msgstr "풀 생성 중"
 msgid "Swap fee (included): <0>{0} {1}</0>"
 msgstr ""
 
+#: src/app/components/RewardsDisplay/RewardsDisplay.tsx
+msgid "BALN:"
+msgstr ""
+
 #: src/app/components/ICXDisplayTypeSwitcher/index.tsx
 msgid "The ICX/sICX Deposited value is the same. The Wallet value is your available balance for that asset."
 msgstr ""
@@ -2368,6 +2421,10 @@ msgstr ""
 msgid "Connected to {numberOfConnectedWallets} blockchains"
 msgstr ""
 
+#: src/app/components/home/RewardsPanel/LPRewards.tsx
+msgid "Claiming liquidity rewards..."
+msgstr ""
+
 #: src/app/pages/trade/supply/_components/utils.tsx
 #~ msgid "Couldn't send {currency} to the {pair} pool. Try again."
 #~ msgstr "{pair} 풀에 {currency} 를 보낼 수 없습니다. 다시 시도하십시오."
@@ -2422,6 +2479,10 @@ msgstr ""
 msgid "Swap time"
 msgstr ""
 
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+msgid "Rewards are recalculated every week. You can adjust your allocation once every 10 days."
+msgstr ""
+
 #: src/app/components/CommunityListToggle/index.tsx
 msgid "Add token list"
 msgstr "Add token list"
@@ -2465,6 +2526,10 @@ msgstr ""
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this happens."
+msgstr ""
+
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+msgid "Rewards will be updated in"
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
@@ -2525,6 +2590,10 @@ msgstr "수수료 승인 중..."
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "You need"
+msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+msgid "Lock up BALN to hold bBALN, a non-transferable token that earns network fees and boosts your BALN liquidity rewards."
 msgstr ""
 
 #: src/app/pages/trade/xswap/_components/SwapDescription.tsx
@@ -2618,6 +2687,10 @@ msgstr "거래 비율"
 #: src/app/pages/trade/bridge/_components/XChainList.tsx
 msgid "Wallet"
 msgstr "지갑"
+
+#: src/app/pages/vote/_components/LieVotingPanel/index.tsx
+msgid ", the current rewards will be adjusted to reflect this allocation."
+msgstr ""
 
 #: src/app/components/trade/SupplyLiquidityModal.tsx
 #~ msgid "Requesting cross-chain supply..."
@@ -2774,8 +2847,8 @@ msgid "Test your contract calls before you submit the proposal."
 msgstr ""
 
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
-msgid "Claim liquidity incentives?"
-msgstr ""
+#~ msgid "Claim liquidity incentives?"
+#~ msgstr ""
 
 #: src/app/components/Wallet/ICONAssetModal.tsx
 #: src/app/components/Wallet/index.tsx
@@ -2836,8 +2909,8 @@ msgstr ""
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
-msgid "The fee APR is calculated from the swap fees earned by a pool over the last 30 days."
-msgstr ""
+#~ msgid "The fee APR is calculated from the swap fees earned by a pool over the last 30 days."
+#~ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX is ready to claim"

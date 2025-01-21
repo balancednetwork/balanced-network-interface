@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
 import useInterval from '@/hooks/useInterval';
 import { BalanceData } from '@/hooks/useV2Pairs';
-import { PairData, useTokenPrices } from '@/queries/backendv2';
+import { PairData, useAllPairs, useTokenPrices } from '@/queries/backendv2';
 import { useBlockDetails } from '@/store/application/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { formatUnits } from '@/utils';
@@ -17,6 +17,7 @@ import { bnJs } from '@balancednetwork/xwagmi';
 
 import { LockedPeriod } from '@/app/components/home/BBaln/types';
 import { EXA, WEIGHT, getBbalnAmount } from '@/app/components/home/BBaln/utils';
+import { useIncentivisedPairs } from '@/queries/reward';
 import { AppState } from '..';
 import { Field } from '../loan/reducer';
 import { adjust, cancel, changeData, changePeriod, changeSources, changeTotalSupply, type } from './reducer';
@@ -354,6 +355,48 @@ export function useResponsivePoolRewardShare() {
   );
 }
 
+function getLPFromAddedBalances(A?: CurrencyAmount<Token>, B?: CurrencyAmount<Token>): BigNumber {
+  if (!A || !B) return new BigNumber(0);
+
+  const AAmount = new BigNumber(A.toExact()).times(10 ** A.currency.decimals);
+  const BAmount = new BigNumber(B.toExact()).times(10 ** B.currency.decimals);
+
+  return AAmount.plus(BAmount).div(2).dp(0);
+}
+
+export function useExternalPoolRewardShare() {
+  return useCallback(
+    (
+      totalReward: CurrencyAmount<Token>,
+      userBalances?: BalanceData,
+      addedBalanceA?: CurrencyAmount<Token>,
+      addedBalanceB?: CurrencyAmount<Token>,
+      totalPoolStakedBalance?: BigNumber,
+    ): CurrencyAmount<Currency> => {
+      if (!userBalances || !totalPoolStakedBalance) {
+        return CurrencyAmount.fromRawAmount(totalReward.currency, 0);
+      }
+
+      // Calculate user's total balance including staked and unstaked LP tokens
+      const totalUserBalance = new BigNumber(userBalances.balance.toExact() || 0)
+        .plus(new BigNumber(userBalances.stakedLPBalance?.toExact() || 0))
+        .times(10 ** userBalances.balance.currency.decimals);
+
+      const addedLP = getLPFromAddedBalances(addedBalanceA, addedBalanceB);
+
+      const share = totalUserBalance.plus(addedLP).div(totalPoolStakedBalance.plus(addedLP));
+      // Calculate reward amount based on user's share
+      const rewardAmount = share.times(new BigNumber(totalReward.toFixed()));
+
+      return CurrencyAmount.fromRawAmount(
+        totalReward.currency,
+        new BigNumber(rewardAmount.times(10 ** totalReward.currency.decimals)).toFixed(0),
+      );
+    },
+    [],
+  );
+}
+
 export const usePastMonthFeesDistributed = () => {
   const fiveMinPeriod = 1000 * 300;
   const now = Math.floor(new Date().getTime() / fiveMinPeriod) * fiveMinPeriod;
@@ -457,4 +500,30 @@ export function useBBalnApr(): UseQueryResult<BigNumber | undefined> {
     enabled: !!pastMonthDistributed && !!prices && !!bBALNSupply,
     placeholderData: keepPreviousData,
   });
+}
+
+export function useIncentivisedSources() {
+  const sources = useSources();
+  const { data: incentivisedPairs } = useIncentivisedPairs();
+  const { data: allPairs } = useAllPairs();
+
+  return useMemo(() => {
+    if (!sources || !incentivisedPairs || !allPairs) return {};
+
+    const pairNamesSet = new Set(incentivisedPairs.map(pair => pair.name));
+
+    return Object.entries(sources).reduce(
+      (LPs, [sourceName, source]) => {
+        const pair = allPairs.find(pair => pair.name === sourceName);
+        const apr = pair?.balnApy || 0;
+
+        if (apr > 0 && pairNamesSet.has(sourceName) && source.balance.isGreaterThan(0)) {
+          LPs[sourceName] = { ...source };
+        }
+
+        return LPs;
+      },
+      {} as Record<string, Source>,
+    );
+  }, [sources, incentivisedPairs, allPairs]);
 }

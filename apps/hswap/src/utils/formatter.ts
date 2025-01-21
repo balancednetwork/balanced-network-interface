@@ -116,7 +116,6 @@ export const formatValue = (value: string | number) => {
     decimals = 0;
   }
 
-  // always use dollars for now
   return (
     '$' +
     numbro(value).format({

@@ -92,7 +92,7 @@ export default function LiveVotingPanel() {
             <Flex alignItems={isRespoLayout ? 'center' : 'end'} mb={isRespoLayout ? 4 : 0}>
               {isRespoLayout && (
                 <RespoLabel>
-                  <Trans>Future incentives</Trans>
+                  <Trans>Future rewards</Trans>
                 </RespoLabel>
               )}
               <Flex
@@ -120,7 +120,7 @@ export default function LiveVotingPanel() {
             <Flex alignItems={isRespoLayout ? 'center' : 'end'}>
               {isRespoLayout && (
                 <RespoLabel>
-                  <Trans>Current incentives</Trans>
+                  <Trans>Current rewards</Trans>
                 </RespoLabel>
               )}
               <Flex
@@ -149,7 +149,7 @@ export default function LiveVotingPanel() {
       <Flex justifyContent="space-between" mb={5} flexWrap="wrap">
         <Flex alignItems="center" mr={3}>
           <Typography variant="h2" mr={1}>
-            <Trans>Liquidity incentives</Trans>
+            <Trans>Liquidity rewards</Trans>
           </Typography>
           <Box marginTop="9px">
             <QuestionHelper
@@ -165,7 +165,7 @@ export default function LiveVotingPanel() {
                   </Typography>
                   <Typography mt={3}>
                     <Trans>
-                      Incentives are recalculated every week. You can adjust your allocation once every 10 days.
+                      Rewards are recalculated every week. You can adjust your allocation once every 10 days.
                     </Trans>
                   </Typography>
                 </>
@@ -177,7 +177,7 @@ export default function LiveVotingPanel() {
       </Flex>
       {isRespoLayout && (
         <Typography fontSize={14} mt={-2} mb={3}>
-          <Trans>Incentives will be updated in </Trans>{' '}
+          <Trans>Rewards will be updated in </Trans>{' '}
           <strong style={{ whiteSpace: 'nowrap' }}>{formatTimeLeft(nextUpdateDate)}</strong>.
         </Typography>
       )}
@@ -191,7 +191,7 @@ export default function LiveVotingPanel() {
           )}
           <Flex width="100%" style={{ transform: 'translateX(20px)' }}>
             <GirdHeaderItem ml="auto" textAlign="right">
-              <Trans>Future incentives</Trans>
+              <Trans>Future rewards</Trans>
             </GirdHeaderItem>
             <QuestionHelper
               width={300}
@@ -203,14 +203,14 @@ export default function LiveVotingPanel() {
                   </Typography>
                   <Typography mt={3}>
                     <Trans>In</Trans> <strong>{formatTimeLeft(nextUpdateDate)}</strong>
-                    <Trans>, the current incentives will be adjusted to reflect this allocation.</Trans>
+                    <Trans>, the current rewards will be adjusted to reflect this allocation.</Trans>
                   </Typography>
                 </>
               }
             />
           </Flex>
           <GirdHeaderItem style={{ justifyContent: 'end' }}>
-            <Trans>Current incentives</Trans>
+            <Trans>Current rewards</Trans>
           </GirdHeaderItem>
         </VotingGrid>
       )}

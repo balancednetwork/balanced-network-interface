@@ -11,8 +11,7 @@ import { useSignedInWallets } from '@/hooks/useWallets';
 import { AppState } from '@/store';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatSymbol } from '@/utils/formatter';
-import { getXTokenBySymbol } from '@/utils/xTokens';
-import { getXChainType } from '@balancednetwork/xwagmi';
+import { convertCurrency, getXChainType } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import { isDenomAsset } from '@balancednetwork/xwagmi';
@@ -187,7 +186,7 @@ export function useDerivedBridgeInfo() {
   // get output currency
   const outputCurrency = useMemo(() => {
     if (currencyToBridge) {
-      return getXTokenBySymbol(bridgeDirection.to, currencyToBridge.symbol);
+      return convertCurrency(bridgeDirection.to, currencyToBridge);
     }
   }, [bridgeDirection.to, currencyToBridge]);
 

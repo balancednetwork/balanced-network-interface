@@ -1,6 +1,7 @@
 import { FROM_SOURCES } from '@/constants/xChains';
 import * as anchor from '@coral-xyz/anchor';
 import { PublicKey } from '@solana/web3.js';
+import xCallIdl from './idls/xCall.json';
 
 /**
  * Converts a number to a 128-bit unsigned integer array (Big Endian).
@@ -23,7 +24,7 @@ export function uint128ToArray(num) {
   return new Uint8Array(buffer);
 }
 
-export async function findPda(seeds, programId) {
+export function findPda(seeds, programId: PublicKey) {
   // Convert all seeds to buffers
   const buffers = seeds.map(seed => {
     if (typeof seed === 'string') {
@@ -45,19 +46,11 @@ export async function findPda(seeds, programId) {
   return pda;
 }
 
-export async function initializeProgram(programId, provider) {
-  const idl = await anchor.Program.fetchIdl(programId, provider);
-  if (!idl) {
-    throw new Error('Failed to fetch IDL for the program.');
-  }
-  const program = new anchor.Program(idl, provider);
-  return program;
-}
-
 export async function fetchXCallConfig(programId, provider) {
   try {
-    const program = await initializeProgram(programId, provider);
-    const configPda = await findPda(['config'], programId);
+    // @ts-ignore
+    const program = new anchor.Program(xCallIdl, provider);
+    const configPda = findPda(['config'], programId);
 
     // @ts-ignore
     const config = await program.account.config.fetch(configPda);
@@ -68,24 +61,10 @@ export async function fetchXCallConfig(programId, provider) {
   }
 }
 
-export async function fetchMintToken(programId, provider) {
-  try {
-    const program = await initializeProgram(programId, provider);
-    const statePda = await findPda(['state'], programId);
-
-    // @ts-ignore
-    const state = await program.account.state.fetch(statePda);
-    return state.bnUsdToken;
-  } catch (error) {
-    // @ts-ignore
-    console.error('Error fetching mintToken:', error.message);
-  }
-}
-
 export async function getXCallAccounts(xcallProgramId, provider) {
-  const xcallConfigPda = await findPda(['config'], xcallProgramId);
+  const xcallConfigPda = findPda(['config'], xcallProgramId);
   const xcallConfigAccount = await fetchXCallConfig(xcallProgramId, provider);
-  const rollbackPda = await findPda(
+  const rollbackPda = findPda(
     ['rollback', uint128ToArray(xcallConfigAccount.sequenceNo.toNumber() + 1)],
     xcallProgramId,
   );
@@ -116,42 +95,29 @@ export async function getXCallAccounts(xcallProgramId, provider) {
   return xcallAccounts;
 }
 
-async function fetchCentralizedContracts(xcallManagerId, provider) {
-  try {
-    const program = await initializeProgram(xcallManagerId, provider);
-    const xcall_manager_state = await findPda(['state'], xcallManagerId);
-
-    // @ts-ignore
-    const config = await program.account.xmState.fetch(xcall_manager_state);
-    console.log('fetchCentralizedContracts config', config);
-    return config.sources;
-  } catch (error) {}
-}
-
-export async function getConnectionAccounts(nid, xcallManagerId, provider) {
+export function getConnectionAccounts(nid, xcallManagerId, provider) {
   const centralizedContracts: string[] = FROM_SOURCES['solana'] || [];
 
-  let connectionAccounts: any[] = await Promise.all(
-    centralizedContracts.map(async contractPubkeyStr => [
+  let connectionAccounts: any[] = centralizedContracts.map(contractPubkeyStr => [
+    {
+      pubkey: new PublicKey(contractPubkeyStr),
+      isSigner: false,
+      isWritable: true,
+    },
+    ...[
       {
-        pubkey: new PublicKey(contractPubkeyStr),
+        pubkey: findPda(['config'], new PublicKey(contractPubkeyStr)),
         isSigner: false,
         isWritable: true,
       },
-      ...[
-        {
-          pubkey: await findPda(['config'], new PublicKey(contractPubkeyStr)),
-          isSigner: false,
-          isWritable: true,
-        },
-        {
-          pubkey: await findPda(['fee', nid], new PublicKey(contractPubkeyStr)),
-          isSigner: false,
-          isWritable: true,
-        },
-      ],
-    ]),
-  );
+      {
+        pubkey: findPda(['fee', nid], new PublicKey(contractPubkeyStr)),
+        isSigner: false,
+        isWritable: true,
+      },
+    ],
+  ]);
+
   connectionAccounts = [].concat(...connectionAccounts);
 
   return connectionAccounts;

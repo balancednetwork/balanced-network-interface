@@ -15,26 +15,31 @@ const Wrap = styled.span`
 `;
 
 const SourceInfo = ({ name, boost, apy }: { name: string; boost?: BigNumber; apy?: BigNumber }) => {
-  if (!boost || !apy) return null;
+  if (!boost || !apy || apy.isZero()) return null;
   return (
-    <Wrap>
-      {`${name}:`}{' '}
-      <strong>{`${apy
-        .times(100)
-        .times(boost)
-        .toFormat(apy.times(100).times(boost).isGreaterThan(100) ? 0 : 2, BigNumber.ROUND_HALF_UP)}%`}</strong>{' '}
-      {boost.isLessThan(2.5) && (
-        <>
-          <span>{`(potential: `}</span>
-          <strong>{`${apy
-            .times(100)
-            .times(MAX_BOOST)
-            .dp(2)
-            .toFormat(apy.times(100).times(MAX_BOOST).isGreaterThan(100) ? 0 : 2, BigNumber.ROUND_HALF_UP)}%`}</strong>
-          <span>{`)`}</span>
-        </>
-      )}
-    </Wrap>
+    <li>
+      <Wrap>
+        {`${name?.replace('wICX', 'ICX')}:`}{' '}
+        <strong>{`${apy
+          .times(100)
+          .times(boost)
+          .toFormat(apy.times(100).times(boost).isGreaterThan(100) ? 0 : 2, BigNumber.ROUND_HALF_UP)}%`}</strong>{' '}
+        {boost.isLessThan(2.5) && (
+          <>
+            <span>{`(potential: `}</span>
+            <strong>{`${apy
+              .times(100)
+              .times(MAX_BOOST)
+              .dp(2)
+              .toFormat(
+                apy.times(100).times(MAX_BOOST).isGreaterThan(100) ? 0 : 2,
+                BigNumber.ROUND_HALF_UP,
+              )}%`}</strong>
+            <span>{`)`}</span>
+          </>
+        )}
+      </Wrap>
+    </li>
   );
 };
 

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import CurrencyLogoWithNetwork from '@/app/components/CurrencyLogoWithNetwork';
 import { ExclamationIcon } from '@/app/components/Icons';
 import { Separator } from '@/components/ui/separator';
+import useElapsedTime from '@/hooks/useElapsedTime';
 import { cn } from '@/lib/utils';
-import { formatElapsedTime } from '@/utils';
+import { formatRelativeTime } from '@/utils';
 import { formatBalance } from '@/utils/formatter';
 import { getNetworkDisplayName, getTrackerLink } from '@balancednetwork/xwagmi';
 import { XTransaction, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
@@ -16,30 +17,13 @@ interface HistoryItemProps {
 }
 
 const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
-  const { inputXToken, outputXToken, inputAmount, outputAmount } = xTransaction.attributes;
-
+  const inputXToken = xTransaction.input.inputAmount.currency;
+  const outputXToken = xTransaction.input?.outputAmount!.currency;
+  const inputAmount = xTransaction.input.inputAmount.toFixed();
+  const outputAmount = xTransaction.input?.outputAmount!.toFixed();
   const primaryMessage = xMessageActions.getOf(xTransaction.id, true);
 
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const timestamp = xTransaction.createdAt;
-  useEffect(() => {
-    if (timestamp) {
-      const updateElapsedTime = () => {
-        setElapsedTime(Math.floor((Date.now() - timestamp) / 1000));
-      };
-
-      updateElapsedTime(); // Update immediately
-
-      const interval = setInterval(
-        () => {
-          updateElapsedTime();
-        },
-        Date.now() - timestamp > 600000 ? 60000 : 1000,
-      ); // 600000 ms = 10 minutes
-
-      return () => clearInterval(interval);
-    }
-  }, [timestamp]);
+  const elapsedTime = useElapsedTime(xTransaction.createdAt);
 
   return (
     <>
@@ -86,7 +70,7 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
             {xTransaction.status === XTransactionStatus.pending
               ? 'Swapping'
               : elapsedTime
-                ? formatElapsedTime(elapsedTime)
+                ? formatRelativeTime(elapsedTime)
                 : '...'}
           </div>
 

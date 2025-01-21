@@ -13,3 +13,4 @@ export { useXEstimateSwapGas } from './useXEstimateSwapGas';
 export { useXPublicClient } from './useXPublicClient';
 export { useXService } from './useXService';
 export { useXWalletClient } from './useXWalletClient';
+export { useSendXTransaction } from './useSendXTransaction';

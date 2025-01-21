@@ -1,18 +1,21 @@
 {
   "name": "@balancednetwork/sdk-core",
   "license": "MIT",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "⚒️ An SDK for building applications on top of BalancedNetwork V1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.mjs",
   "files": ["dist", "src"],
-  "repository": "https://github.com/balancednetwork/sdk-core.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/balancednetwork/balanced-network-interface"
+  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "tsup test",
-    "prepublishOnly": "tsup build",
+    "prepublishOnly": "pnpm run build",
     "clean": "rm -rf dist && rm -rf node_modules && rm -rf .turbo",
     "pretty": "biome format . --write",
     "checkTs": "tsc --noEmit"

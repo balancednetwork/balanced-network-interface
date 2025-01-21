@@ -15,6 +15,7 @@ import {
   xdr,
 } from '@stellar/stellar-sdk';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import CustomSorobanServer from './CustomSorobanServer';
 import { StellarXService } from './StellarXService';
 
@@ -111,20 +112,24 @@ export type StellarAccountValidation = { ok: true } | { ok: false; error: string
 
 export function useValidateStellarAccount(address?: string | null): UseQueryResult<StellarAccountValidation> {
   const stellarService = useXService('STELLAR') as StellarXService;
+  const [verifiedAddresses, setVerifiedAddresses] = useState<{ [key: string]: boolean }>({});
 
   return useQuery({
     queryKey: [`stellarAccountValidation`, stellarService, address],
     queryFn: async () => {
-      if (!address) {
+      if (typeof address !== 'string') {
         return { ok: true };
       }
 
       try {
         await stellarService.server.loadAccount(address);
+        setVerifiedAddresses(prev => ({ ...prev, [address]: true }));
         return { ok: true };
       } catch (e) {
         return { ok: false, error: `Stellar wallet inactive. Add at least 1 XLM from an external source` };
       }
     },
+    enabled: typeof address === 'string' && !verifiedAddresses[address],
+    refetchInterval: 5000,
   });
 }

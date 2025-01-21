@@ -15,9 +15,9 @@ import Tooltip from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import QuestionIcon from '@/assets/icons/question.svg';
 import { useLPReward } from '@/queries/reward';
-import { useBBalnAmount, useDynamicBBalnAmount, useSources, useTotalSupply } from '@/store/bbaln/hooks';
+import { useBBalnAmount, useDynamicBBalnAmount, useIncentivisedSources, useTotalSupply } from '@/store/bbaln/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
-import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
+import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { bnJs } from '@balancednetwork/xwagmi';
 
@@ -25,16 +25,15 @@ import PositionRewardsInfo from './PositionRewardsInfo';
 import RewardsGrid from './RewardsGrid';
 
 const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
-  const { data: reward } = useLPReward();
+  const { data: rewards } = useLPReward();
   const [isOpen, setOpen] = React.useState(false);
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
-  const sources = useSources();
+  const sources = useIncentivisedSources();
   const totalSupplyBBaln = useTotalSupply();
   const dynamicBBalnAmount = useDynamicBBalnAmount();
   const bBalnAmount = useBBalnAmount();
   const hasEnoughICX = useHasEnoughICX();
-  const balances = useICONWalletBalances();
   const isSmall = useMedia('(max-width: 1050px)');
   const isExtraSmall = useMedia('(max-width: 800px)');
   const [tooltipHovered, setTooltipHovered] = React.useState(false);
@@ -76,8 +75,6 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
     <Trans>You receive maximum rewards for your position.</Trans>
   );
 
-  const balnBalance = balances?.[bnJs.BALN.address];
-
   const handleClaim = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
@@ -88,8 +85,8 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
         addTransaction(
           { hash: res.result },
           {
-            summary: t`Claimed liquidity incentives.`,
-            pending: t`Claiming liquidity incentives...`,
+            summary: t`Claimed liquidity rewards.`,
+            pending: t`Claiming liquidity rewards...`,
           },
         );
         toggleOpen();
@@ -131,7 +128,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
                 width={330}
                 offset={[0, 19]}
               >
-                Liquidity incentives
+                Liquidity rewards
                 {isExtraSmall && account && !!numberOfPositions && (
                   <QuestionWrapper
                     style={{ transform: 'translateY(1px)', marginLeft: '8px' }}
@@ -146,7 +143,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
               </Tooltip>
             </Typography>
           </Flex>
-          {reward?.greaterThan(0) && (
+          {rewards?.some(reward => reward.greaterThan(0)) && (
             <UnderlineText>
               <Typography color="primaryBright" onClick={toggleOpen}>
                 <Trans>Claim</Trans>
@@ -154,11 +151,11 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
             </UnderlineText>
           )}
         </Flex>
-        {reward?.greaterThan(0) ? (
-          <RewardsGrid rewards={[reward]} />
+        {rewards?.some(reward => reward.greaterThan(0)) ? (
+          <RewardsGrid rewards={rewards} />
         ) : (
           <Typography fontSize={14} opacity={0.75} mb={5}>
-            Supply liquidity on the Trade page to earn BALN incentives.
+            Supply liquidity on the Trade page to earn BALN rewards.
           </Typography>
         )}
       </Box>
@@ -166,37 +163,21 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
       <Modal isOpen={isOpen} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb={1}>
-            <Trans>Claim liquidity incentives?</Trans>
+            <Trans>Claim liquidity rewards?</Trans>
           </Typography>
 
           <Flex flexDirection="column" alignItems="center" mt={2}>
-            {reward && (
-              <Typography variant="p">
+            {rewards?.map((reward, index) => (
+              <Typography key={index} variant="p">
                 {`${reward.toFixed(2, { groupSeparator: ',' })}`}{' '}
                 <Typography as="span" color="text1">
                   {reward.currency.symbol}
                 </Typography>
               </Typography>
-            )}
+            ))}
           </Flex>
 
-          <Flex my={'25px'}>
-            <Box width={1 / 2} className="border-right">
-              <Typography textAlign="center">Before</Typography>
-              <Typography variant="p" textAlign="center">
-                {balnBalance?.toFixed(2, { groupSeparator: ',' }) || 0} BALN
-              </Typography>
-            </Box>
-
-            <Box width={1 / 2}>
-              <Typography textAlign="center">After</Typography>
-              <Typography variant="p" textAlign="center">
-                {reward && `${balnBalance?.add(reward).toFixed(2, { groupSeparator: ',' })} BALN`}
-              </Typography>
-            </Box>
-          </Flex>
-
-          <Flex justifyContent="center" pt={4} className="border-top">
+          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen} fontSize={14}>
               <Trans>Not now</Trans>
             </TextButton>

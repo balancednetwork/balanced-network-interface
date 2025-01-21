@@ -228,6 +228,7 @@ export default function SwapPanel() {
               recipient={recipient}
               trade={mmTrade.trade}
               direction={direction}
+              stellarValidation={stellarValidation}
             />
             <SwapCommitButton
               hidden={!!mmTrade.isMMBetter}
@@ -238,6 +239,7 @@ export default function SwapPanel() {
               account={account}
               recipient={recipient}
               direction={direction}
+              stellarValidation={stellarValidation}
             />
           </Flex>
 

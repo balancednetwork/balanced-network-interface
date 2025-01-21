@@ -11,10 +11,11 @@ import {
   COMBINED_TOKENS_MAP_BY_ADDRESS,
   ORACLE_PRICED_TOKENS,
   SUPPORTED_TOKENS_MAP_BY_ADDRESS,
+  sICX,
 } from '@/constants/tokens';
 import { useTokenPrices } from '@/queries/backendv2';
 import QUERY_KEYS from '@/queries/queryKeys';
-import { useBlockNumber } from '@/store/application/hooks';
+import { getTimestampFrom, useBlockDetails, useBlockNumber } from '@/store/application/hooks';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { useFlattenedRewardsDistribution } from '@/store/reward/hooks';
 import { bnJs } from '@balancednetwork/xwagmi';
@@ -70,13 +71,21 @@ export const useLPReward = () => {
   const { account } = useIconReact();
   const blockNumber = useBlockNumber();
 
-  return useQuery<CurrencyAmount<Token> | undefined>({
+  return useQuery<CurrencyAmount<Token>[] | undefined>({
     queryKey: [QUERY_KEYS.Reward.UserReward(account ?? ''), blockNumber],
     queryFn: async () => {
       if (!account) return;
 
-      const res = await bnJs.Rewards.getBalnHolding(account);
-      return CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.BALN.address], res);
+      try {
+        const res = await bnJs.Rewards.getRewards(account);
+
+        return Object.entries(res).map(([address, amount]) => {
+          const currency = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address];
+          return CurrencyAmount.fromRawAmount(currency, amount as string);
+        });
+      } catch (e) {
+        console.error('Error while fetching rewards', e);
+      }
     },
     placeholderData: keepPreviousData,
     enabled: !!account,
@@ -107,18 +116,36 @@ export const useRatesWithOracle = () => {
 };
 
 export const useIncentivisedPairs = (): UseQueryResult<
-  { name: string; id: number; rewards: Fraction; totalStaked: number }[],
+  { name: string; id: number; rewards: Fraction; totalStaked: number; externalRewards?: CurrencyAmount<Currency>[] }[],
   Error
 > => {
   const { data: rewards } = useFlattenedRewardsDistribution();
+  //add supported rewards tokens here
+  const additionalRewardTokens = [sICX[NETWORK_ID]];
+  //timestamp for PoL should be taken from 1 day old block
+  const { data: block } = useBlockDetails(getTimestampFrom(1));
 
   return useQuery({
-    queryKey: ['incentivisedPairs', rewards],
+    queryKey: ['incentivisedPairs', rewards, block?.number],
     queryFn: async () => {
-      if (!rewards) return;
+      if (!rewards || !block?.number) return;
 
       const lpData = await bnJs.StakedLP.getDataSources();
       const lpSources: string[] = ['sICX/ICX', ...lpData];
+      const dataSources: Map<string, { [key in string]: { external_dist: string } }> =
+        await bnJs.Rewards.getDataSources(block.number);
+
+      const externalIncentives = Object.entries(dataSources).reduce((acc, [sourceName, sourceData]) => {
+        additionalRewardTokens.forEach(token => {
+          if (sourceData[token.address]) {
+            acc[sourceName] = {
+              ...acc[sourceName],
+              [token.address]: CurrencyAmount.fromRawAmount(token, sourceData[token.address].external_dist),
+            };
+          }
+        });
+        return acc;
+      }, {});
 
       const cds: CallData[] = lpSources.map(source => ({
         target: addresses[NETWORK_ID].stakedLp,
@@ -132,14 +159,19 @@ export const useIncentivisedPairs = (): UseQueryResult<
         sourceIDs.map(async (source, index) => await bnJs.StakedLP.totalStaked(index === 0 ? 1 : parseInt(source, 16))),
       );
 
-      return lpSources.map((source, index) => ({
-        name: source,
-        id: index === 0 ? 1 : parseInt(sourceIDs[index], 16),
-        rewards: rewards[source],
-        totalStaked: parseInt((sourcesTotalStaked[index] as string) ?? '0x0', 16),
-      }));
+      return lpSources.map((source, index) => {
+        const externalRewards = Object.values(externalIncentives[source] || {});
+
+        return {
+          name: source,
+          id: index === 0 ? 1 : parseInt(sourceIDs[index], 16),
+          rewards: rewards[source],
+          externalRewards,
+          totalStaked: parseInt((sourcesTotalStaked[index] as string) ?? '0x0', 16),
+        };
+      });
     },
-    enabled: !!rewards,
+    enabled: !!rewards && !!block?.number,
     placeholderData: keepPreviousData,
   });
 };

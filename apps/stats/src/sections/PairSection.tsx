@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { Pair, useAllPairsIncentivisedById, useAllPairsTotal } from '@/queries/backendv2';
+import { Pair, useAllPairsIncentivisedById, useAllPairsTotal, useTokenPrices } from '@/queries/backendv2';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
 import { Box, Flex, Text } from 'rebass/styled-components';
@@ -18,6 +18,7 @@ import useSort from '@/hooks/useSort';
 import { Typography } from '@/theme';
 import { getFormattedNumber } from '@/utils/formatter';
 
+import RewardsDisplay from '@/app/components/RewardsDisplay/RewardsDisplay';
 import { TOKEN_BLACKLIST } from '@/constants/tokens';
 import { COMPACT_ITEM_COUNT, HeaderText, StyledSkeleton as Skeleton } from './TokenSection';
 
@@ -33,9 +34,9 @@ const DashGrid = styled(Box)`
   display: grid;
   gap: 1em;
   align-items: center;
-  grid-template-columns: 2fr repeat(4, 1fr);
+  grid-template-columns: 1.6fr 1.4fr repeat(3, 1fr);
   ${({ theme }) => theme.mediaWidth.upToLarge`
-    grid-template-columns: 1.2fr 0.5fr repeat(3, 1fr);
+    grid-template-columns: 1.2fr 1.3fr repeat(3, 1fr);
   `}
   > * {
     justify-content: flex-end;
@@ -133,54 +134,63 @@ const SkeletonPairPlaceholder = () => {
 };
 
 const PairItem = ({
-  pair: { id, name, baseAddress, quoteAddress, liquidity, fees24h, fees30d, volume24h, volume30d, feesApy, balnApy },
+  pair,
+  pair: {
+    id,
+    name,
+    baseAddress,
+    quoteAddress,
+    liquidity,
+    fees24h,
+    fees30d,
+    volume24h,
+    volume30d,
+    feesApy,
+    balnApy,
+    externalRewards,
+    stakedRatio,
+  },
   isLast,
 }: {
   pair: Pair;
   isLast: boolean;
-}) => (
-  <>
-    <DashGrid my={2}>
-      <DataText minWidth={'220px'}>
-        <Flex alignItems="center">
-          <Box sx={{ minWidth: '95px' }}>
-            <PoolLogo baseCurrency={baseAddress} quoteCurrency={quoteAddress} />
-          </Box>
-          <Text ml={2}>{name.replace('wICX', 'ICX').replace('/', ' / ')}</Text>
-        </Flex>
-      </DataText>
-      <DataText className="apy-column">
-        {' '}
-        {balnApy ? (
-          liquidity < 1000 ? null : (
-            <APYItem>
-              <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                BALN:
-              </Typography>
-              {`${getFormattedNumber(balnApy, 'percent2')} - ${getFormattedNumber(balnApy * MAX_BOOST, 'percent2')}`}
-            </APYItem>
-          )
-        ) : null}
-        {feesApy !== 0 ? (
-          liquidity < 1000 ? (
-            '–'
-          ) : (
-            <APYItem>
-              <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                Fees:
-              </Typography>
-              {getFormattedNumber(feesApy, 'percent2')}
-            </APYItem>
-          )
-        ) : null}
-      </DataText>
-      <DataText>{getFormattedNumber(liquidity, 'currency0')}</DataText>
-      <DataText>{volume24h ? getFormattedNumber(volume24h, 'currency0') : '-'}</DataText>
-      <DataText>{fees24h ? getFormattedNumber(fees24h, 'currency0') : '-'}</DataText>
-    </DashGrid>
-    <Divider />
-  </>
-);
+}) => {
+  const { data: prices } = useTokenPrices();
+
+  return (
+    <>
+      <DashGrid my={2}>
+        <DataText minWidth={'220px'}>
+          <Flex alignItems="center">
+            <Box sx={{ minWidth: '95px' }}>
+              <PoolLogo baseCurrency={baseAddress} quoteCurrency={quoteAddress} />
+            </Box>
+            <Text ml={2}>{name.replace('sICX/ICX', 'ICX queue').replace('wICX', 'ICX').replace('/', ' / ')}</Text>
+          </Flex>
+        </DataText>
+        <DataText className="apy-column">
+          <RewardsDisplay pair={pair} />
+          {feesApy !== 0 ? (
+            liquidity < 1000 ? (
+              '–'
+            ) : (
+              <APYItem>
+                <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                  Fees:
+                </Typography>
+                {getFormattedNumber(feesApy, 'percent2')}
+              </APYItem>
+            )
+          ) : null}
+        </DataText>
+        <DataText>{getFormattedNumber(liquidity, 'currency0')}</DataText>
+        <DataText>{volume24h ? getFormattedNumber(volume24h, 'currency0') : '-'}</DataText>
+        <DataText>{fees24h ? getFormattedNumber(fees24h, 'currency0') : '-'}</DataText>
+      </DashGrid>
+      <Divider />
+    </>
+  );
+};
 
 export default function PairSection() {
   const { data: allPairs } = useAllPairsIncentivisedById();
@@ -268,11 +278,11 @@ export default function PairSection() {
                     text={
                       <>
                         <Typography>
-                          The BALN APR is calculated from the USD value of BALN rewards allocated to a pool. Your rate
-                          will vary based on the amount of bBALN you hold.
+                          Based on the USD value of liquidity rewards (claimable from the Home page) and fees earned by
+                          a pool over the past 30 days.
                         </Typography>
                         <Typography marginTop={'20px'}>
-                          The fee APR is calculated from the swap fees earned by a pool in the last 30 days.
+                          BALN rewards depend on your position size and bBALN holdings.
                         </Typography>
                       </>
                     }

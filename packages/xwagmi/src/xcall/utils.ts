@@ -1,7 +1,7 @@
 import rlp from 'rlp';
 
-import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
-import { Trade } from '@balancednetwork/v1-sdk';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { RouteAction } from '@balancednetwork/v1-sdk';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { xTokenMap } from '@/constants/xTokens';
@@ -26,7 +26,7 @@ export function getRlpEncodedMsg(msg: string | any[]) {
 }
 
 export function getRlpEncodedSwapData(
-  executionTrade: Trade<Currency, Currency, TradeType>,
+  path: RouteAction[],
   method?: string,
   receiver?: string,
   minReceived?: CurrencyAmount<Currency>,
@@ -42,7 +42,7 @@ export function getRlpEncodedSwapData(
     encodedComponents.push(uintToBytes(minReceived.quotient));
   }
 
-  const routeActionPathEncoding = executionTrade.route.routeActionPath.map(action => [
+  const routeActionPathEncoding = path.map(action => [
     getBytesFromNumber(action.type),
     getBytesFromAddress(action.address),
   ]);

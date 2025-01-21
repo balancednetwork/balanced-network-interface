@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Percent, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -16,7 +16,6 @@ import { PRICE_IMPACT_MODAL_WARNING_THRESHOLD } from '@/constants/misc';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
-import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useSwapSlippageTolerance } from '@/store/application/hooks';
 import { Field } from '@/store/swap/reducer';
@@ -24,7 +23,7 @@ import { formatBigNumber, shortenAddress } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { getNetworkDisplayName } from '@/utils/xTokens';
-import { xChainMap } from '@balancednetwork/xwagmi';
+import { convertCurrencyAmount, useSendXTransaction, xChainMap } from '@balancednetwork/xwagmi';
 import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import { useXCallFee } from '@balancednetwork/xwagmi';
 import { XTransactionInput, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
@@ -111,7 +110,7 @@ const XSwapModal = ({
     }
   }, [currentXTransaction, slowDismiss]);
 
-  const { sendXTransaction } = useSendXTransaction();
+  const sendXTransaction = useSendXTransaction();
   const handleXCallSwap = async () => {
     if (!executionTrade) return;
     if (!account) return;
@@ -122,16 +121,20 @@ const XSwapModal = ({
     const xTransactionInput: XTransactionInput = {
       type: XTransactionType.SWAP,
       direction,
-      executionTrade,
       account,
       recipient,
       inputAmount: _inputAmount,
-      slippageTolerance,
       xCallFee,
-      callback: cleanupSwap,
+      outputAmount: convertCurrencyAmount(direction.to, executionTrade.outputAmount),
+      minReceived: convertCurrencyAmount(
+        direction.to,
+        executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000)),
+      ),
+      path: executionTrade.route.routeActionPath,
     };
 
     const xTransactionId = await sendXTransaction(xTransactionInput);
+    cleanupSwap();
     setCurrentId(xTransactionId || null);
   };
 

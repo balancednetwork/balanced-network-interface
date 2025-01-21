@@ -229,6 +229,22 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'USDC',
       'USD Coin',
     ),
+    new XToken(
+      'injective-1',
+      'injective-1',
+      'factory/inj14ejqjyq8um4p3xfqj74yld5waqljf88f9eneuk/inj1lhv6q3w9akshmrrnw3vzuvcteh9ca8xwpwlfy3',
+      18,
+      'sICX',
+      'Staked ICX',
+    ),
+    new XToken(
+      'injective-1',
+      'injective-1',
+      'factory/inj14ejqjyq8um4p3xfqj74yld5waqljf88f9eneuk/inj10207z3hn49q2w59tl8e3ctwhet7wqg9neey0nj',
+      18,
+      'BALN',
+      'Balance Token',
+    ),
   ],
   stellar: [
     new XToken('stellar', 'stellar', 'CAS3J7GYLGXMF6TDJBBYYSE3HQ6BBSMLNUQ34T6TZMYMW2EVH34XOWMA', 7, 'XLM', 'XLM'),
@@ -306,11 +322,29 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'USDC',
       'USD Coin',
     ),
+    new XToken(
+      'sui',
+      'sui',
+      '0x84bf1838f4fb91b22fe12af02658c27f53f89c36f2ea6c8b6a878f0e48ec1b4e::sicx::SICX',
+      9,
+      'sICX',
+      'Staked ICX',
+    ),
+    new XToken(
+      'sui',
+      'sui',
+      '0x3ae6be8e58c0e0715764971b750709e67c6de33e38bbecafe25b5f3dd5080a39::balanced_token::BALANCED_TOKEN',
+      9,
+      'BALN',
+      'Balance Token',
+    ),
   ],
   solana: [
     new XToken('solana', 'solana', '11111111111111111111111111111111', 9, 'SOL', 'SOL'),
     new XToken('solana', 'solana', '2yN29zk8jgRTW7GUF9WwYAEz8vvABVnvbfQc5DpGi9CJ', 9, 'bnUSD', 'Balanced Dollar'),
     new XToken('solana', 'solana', 'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn', 9, 'JitoSOL', 'Jito Staked SOL'),
+    new XToken('solana', 'solana', '5N43m6JGxrZ6fW7MrwdbjgY93yjCj7krkcaTA7oRknj6', 9, 'sICX', 'Staked ICX'),
+    new XToken('solana', 'solana', 'BH4TZqN9TXnkjiLEQZ9xuXo85YaGoonM4PHpcjHEoTAx', 9, 'BALN', 'Balance Token'),
   ],
 };
 

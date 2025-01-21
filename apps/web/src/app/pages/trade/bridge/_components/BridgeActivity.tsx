@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Trans } from '@lingui/macro';
 import { useMedia } from 'react-use';
@@ -6,7 +6,7 @@ import { Box, Flex } from 'rebass';
 
 import { Typography } from '@/app/theme';
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { useXCallStats } from '@balancednetwork/xwagmi';
+import { isIconTransaction, useXCallStats } from '@balancednetwork/xwagmi';
 import { useXMessageStore } from '@balancednetwork/xwagmi';
 import { useXTransactionStore } from '@balancednetwork/xwagmi';
 import Spinner from '../../../../components/Spinner';
@@ -21,7 +21,13 @@ export default function BridgeActivity() {
 
   useXMessageStore();
   const { getPendingTransactions } = useXTransactionStore();
-  const pendingTransactions = getPendingTransactions(signedInWallets);
+  const pendingTransactions = useMemo(
+    () =>
+      getPendingTransactions(signedInWallets).filter(
+        x => !isIconTransaction(x.sourceChainId, x.finalDestinationChainId),
+      ),
+    [signedInWallets, getPendingTransactions],
+  );
 
   return (
     <Box bg="bg2" flex={1} p={['25px', '35px']}>

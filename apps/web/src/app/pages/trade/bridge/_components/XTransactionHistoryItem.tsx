@@ -108,9 +108,15 @@ const XTransactionHistoryItem = ({ xTransaction }: { xTransaction: XTransaction 
         }}
       >
         <Flex alignItems="center">
-          {getNetworkDisplayName(sourceChainId)}
-          <ArrowIcon width="13px" style={{ margin: '0 7px' }} />
-          {getNetworkDisplayName(finalDestinationChainId)}
+          {sourceChainId === finalDestinationChainId ? (
+            getNetworkDisplayName(sourceChainId)
+          ) : (
+            <>
+              {getNetworkDisplayName(sourceChainId)}
+              <ArrowIcon width="13px" style={{ margin: '0 7px' }} />
+              {getNetworkDisplayName(finalDestinationChainId)}
+            </>
+          )}
         </Flex>
         <Flex justifyContent="center" flexDirection="column">
           <Typography fontWeight={700} color="text">

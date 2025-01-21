@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
@@ -11,20 +10,16 @@ import { UnderlineText } from '@/app/components/DropdownText';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
-import { DEFAULT_SLIPPAGE_LP } from '@/constants/index';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { useDerivedMintInfo } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
-import { TransactionStatus, useTransactionAdder, useTransactionStatus } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
-import { toDec } from '@/utils';
-import { formatSymbol } from '@/utils/formatter';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import {
   ICON_XCALL_NETWORK_ID,
   XToken,
   XTransactionStatus,
-  bnJs,
+  getNetworkDisplayName,
   getXChainType,
   useXAccount,
   useXAddLiquidity,
@@ -34,7 +29,6 @@ import {
 } from '@balancednetwork/xwagmi';
 import { useQueryClient } from '@tanstack/react-query';
 import { SendRemoveXToken } from './SendRemoveXToken';
-import { supplyMessage } from './utils';
 
 interface ModalProps {
   isOpen: boolean;
@@ -227,7 +221,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
             >
               <UnderlineText>
                 <Typography color="primaryBright" onClick={handleSwitchChain}>
-                  Switch to {'Arbitrum'}
+                  Switch to {getNetworkDisplayName(lpXChainId)}
                 </Typography>
               </UnderlineText>
               <Typography textAlign="center" mt={'1px'}>

@@ -19,7 +19,7 @@ import { useStakedLPPercent, useWithdrawnPercent } from '@/store/stakedLP/hooks'
 import PoolLogoWithNetwork from '@/app/components/PoolLogoWithNetwork';
 import Skeleton from '@/app/components/Skeleton';
 import { formatBigNumber } from '@/utils';
-import { getFormattedNumber } from '@/utils/formatter';
+import { formatSymbol, getFormattedNumber } from '@/utils/formatter';
 import { getFormattedRewards, stakedFraction, totalSupply } from '../utils';
 import { getShareReward } from './WithdrawPanel';
 
@@ -104,7 +104,7 @@ export const PoolRecord = ({
 
   const upSmall = useMedia('(min-width: 800px)');
   const stakedLPPercent = useStakedLPPercent(poolId); // TODO
-  const pairName = `${baseAmount.currency.symbol || '...'}/${quoteAmount.currency.symbol || '...'}`;
+  const pairName = `${formatSymbol(baseAmount.currency.symbol) || '...'}/${formatSymbol(quoteAmount.currency.symbol) || '...'}`;
   const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
 
   const { baseValue: baseWithdrawValue, quoteValue: quoteWithdrawValue } = useWithdrawnPercent(poolId) || {};
@@ -149,7 +149,7 @@ export const PoolRecord = ({
             <Typography fontSize={16}>{`${formatBigNumber(
               new BigNumber(baseSupplyAmount?.toFixed() || 0),
               'currency',
-            )} ${baseAmount.currency.symbol}`}</Typography>
+            )} ${formatSymbol(baseAmount.currency.symbol)}`}</Typography>
           ) : (
             <Skeleton width={100}></Skeleton>
           )}
@@ -157,7 +157,7 @@ export const PoolRecord = ({
             <Typography fontSize={16}>{`${formatBigNumber(
               new BigNumber(quoteSupplyAmount?.toFixed() || 0),
               'currency',
-            )} ${quoteAmount.currency.symbol}`}</Typography>
+            )} ${formatSymbol(quoteAmount.currency.symbol)}`}</Typography>
           ) : (
             <Skeleton width={100}></Skeleton>
           )}

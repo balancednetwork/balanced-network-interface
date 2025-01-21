@@ -81,6 +81,10 @@ export class WrappedTokenInfo implements Token {
     return this;
   }
 
+  public get unwrapped(): Token {
+    return this;
+  }
+
   public get isNativeToken() {
     const nativeAddresses = [
       'cx0000000000000000000000000000000000000000',

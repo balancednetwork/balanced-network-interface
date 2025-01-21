@@ -36,10 +36,11 @@ export function useMintActionHandlers(noLiquidity: boolean | undefined): {
 
   const onCurrencySelection = useCallback(
     (field: Field, currency: Currency) => {
+      const _currency = currency instanceof XToken ? currency : convertCurrency(ICON_XCALL_NETWORK_ID, currency)!;
       dispatch(
         selectCurrency({
           field,
-          currency: currency instanceof XToken ? currency : convertCurrency(ICON_XCALL_NETWORK_ID, currency)!,
+          currency: _currency.unwrapped,
         }),
       );
     },

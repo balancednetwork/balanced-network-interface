@@ -129,7 +129,6 @@ export function useWithdrawalsFloorDEXData(): UseQueryResult<WithdrawalFloorData
 
   const fetchWithdrawalData = async () => {
     if (!allTokens) return;
-
     const tokenAddresses = SUPPORTED_TOKENS_LIST.map(token => token.address);
     const cdsArray: CallData[][] = tokenAddresses.map(address => [
       { target: bnJs.Dex.address, method: 'getCurrentFloor', params: [address] },
@@ -138,9 +137,10 @@ export function useWithdrawalsFloorDEXData(): UseQueryResult<WithdrawalFloorData
 
     const data = await Promise.all(cdsArray.map(cds => bnJs.Multicall.getAggregateData(cds)));
 
-    return data
-      .map((assetDataSet, index) => {
+    const limits = data.map((assetDataSet, index) => {
+      try {
         const token = SUPPORTED_TOKENS_LIST.find(token => token.address === tokenAddresses[index]);
+
         if (!token) return null;
 
         const floor = new BigNumber(assetDataSet[0]);
@@ -153,8 +153,13 @@ export function useWithdrawalsFloorDEXData(): UseQueryResult<WithdrawalFloorData
           current,
           available,
         };
-      })
-      .filter(item => item && item.floor.isGreaterThan(0));
+      } catch (error) {
+        console.error('Error fetching DEX withdrawal limits:', error);
+        return null;
+      }
+    });
+
+    return limits.filter(item => item && item.floor.isGreaterThan(0));
   };
 
   return useQuery({
@@ -187,6 +192,8 @@ export function useDerivedSwapInfo(): {
   };
   canBridge: boolean;
   maximumBridgeAmount: CurrencyAmount<XToken> | undefined;
+  canSwap: boolean;
+  maximumOutputAmount: CurrencyAmount<Currency> | undefined;
   stellarValidation?: StellarAccountValidation;
 } {
   const {
@@ -202,10 +209,6 @@ export function useDerivedSwapInfo(): {
   const crossChainWallet = useCrossChainWalletBalances();
 
   const { data: withdrawalsFloorData } = useWithdrawalsFloorDEXData();
-  console.log(
-    'withdrawalsFloorData',
-    withdrawalsFloorData?.map(item => `${item.token.symbol}: ${item.available.toFixed()}`),
-  );
 
   const isExactIn: boolean = independentField === Field.INPUT;
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
@@ -393,6 +396,20 @@ export function useDerivedSwapInfo(): {
     to: currencies[Field.OUTPUT]?.xChainId || '0x1.icon',
   };
 
+  //check for the maximum output amount against the withdrawal limit
+  const maximumOutputAmount = useMemo(() => {
+    if (withdrawalsFloorData) {
+      const limit = withdrawalsFloorData.find(item => item?.token.symbol === currencies[Field.OUTPUT]?.symbol);
+      if (limit) {
+        return limit.available;
+      }
+    }
+  }, [withdrawalsFloorData, currencies[Field.OUTPUT]]);
+
+  const canSwap = useMemo(() => {
+    return maximumOutputAmount && outputCurrencyAmount ? !maximumOutputAmount.lessThan(outputCurrencyAmount) : true;
+  }, [maximumOutputAmount, outputCurrencyAmount]);
+
   //temporary check for valid stellar account
   const stellarValidationQuery = useValidateStellarAccount(direction.to === 'stellar' ? recipient : undefined);
   const { data: stellarValidation } = stellarValidationQuery;
@@ -418,6 +435,8 @@ export function useDerivedSwapInfo(): {
     canBridge,
     maximumBridgeAmount,
     stellarValidation,
+    maximumOutputAmount,
+    canSwap,
   };
 }
 

@@ -9,14 +9,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { NETWORK_ID } from '@/constants/config';
 import { canBeQueue } from '@/constants/currency';
 import { PRICE_IMPACT_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
-import { useICX, wICX } from '@/constants/tokens';
+import { SUPPORTED_TOKENS_LIST, useICX, wICX } from '@/constants/tokens';
 import { useAllXTokens } from '@/hooks/Tokens';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
-import { convertCurrency, getXChainType } from '@balancednetwork/xwagmi';
+import { bnJs, convertCurrency, getXChainType } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import { StellarAccountValidation, useValidateStellarAccount } from '@balancednetwork/xwagmi';
@@ -32,6 +32,12 @@ import {
   typeInput,
 } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
+
+import { intentService } from '@/lib/intent';
+import { useAllTokensByAddress } from '@/queries/backendv2';
+import { WithdrawalFloorDataType } from '@/types';
+import { CallData } from '@balancednetwork/balanced-js';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);
@@ -117,6 +123,49 @@ export function tryParseAmount<T extends Currency>(value?: string, currency?: T)
   return undefined;
 }
 
+// Fetch limits for exchange withdrawals
+export function useWithdrawalsFloorDEXData(): UseQueryResult<WithdrawalFloorDataType[]> {
+  const { data: allTokens, isSuccess: tokensSuccess } = useAllTokensByAddress();
+
+  const fetchWithdrawalData = async () => {
+    if (!allTokens) return;
+
+    const tokenAddresses = SUPPORTED_TOKENS_LIST.map(token => token.address);
+    const cdsArray: CallData[][] = tokenAddresses.map(address => [
+      { target: bnJs.Dex.address, method: 'getCurrentFloor', params: [address] },
+      { target: address, method: 'balanceOf', params: [bnJs.Dex.address] },
+    ]);
+
+    const data = await Promise.all(cdsArray.map(cds => bnJs.Multicall.getAggregateData(cds)));
+
+    return data
+      .map((assetDataSet, index) => {
+        const token = SUPPORTED_TOKENS_LIST.find(token => token.address === tokenAddresses[index]);
+        if (!token) return null;
+
+        const floor = new BigNumber(assetDataSet[0]);
+        const current = new BigNumber(assetDataSet[1]);
+        const available = CurrencyAmount.fromRawAmount(token, current.minus(floor).toFixed(0));
+
+        return {
+          token,
+          floor,
+          current,
+          available,
+        };
+      })
+      .filter(item => item && item.floor.isGreaterThan(0));
+  };
+
+  return useQuery({
+    queryKey: [`withdrawalsFloorDEXData-${tokensSuccess ? 'tokens' : ''}`],
+    queryFn: fetchWithdrawalData,
+    placeholderData: keepPreviousData,
+    refetchInterval: 5000,
+    enabled: tokensSuccess,
+  });
+}
+
 // from the current swap inputs, compute the best trade and return it.
 export function useDerivedSwapInfo(): {
   account: string | undefined;
@@ -151,6 +200,12 @@ export function useDerivedSwapInfo(): {
   const account = useXAccount(getXChainType(inputCurrency?.xChainId)).address;
 
   const crossChainWallet = useCrossChainWalletBalances();
+
+  const { data: withdrawalsFloorData } = useWithdrawalsFloorDEXData();
+  console.log(
+    'withdrawalsFloorData',
+    withdrawalsFloorData?.map(item => `${item.token.symbol}: ${item.available.toFixed()}`),
+  );
 
   const isExactIn: boolean = independentField === Field.INPUT;
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
@@ -413,9 +468,6 @@ export function useInitialSwapLoad(): void {
     }
   }, [currencies, pair, navigate, firstLoad]);
 }
-
-import { intentService } from '@/lib/intent';
-import { useQuery } from '@tanstack/react-query';
 
 export interface MMTrade {
   inputAmount: CurrencyAmount<XToken>;

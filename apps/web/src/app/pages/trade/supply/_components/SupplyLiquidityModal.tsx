@@ -184,8 +184,18 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
               </Box>
             </Flex>
 
-            <SendRemoveXToken field={Field.CURRENCY_A} currencies={currencies} parsedAmounts={parsedAmounts} />
-            <SendRemoveXToken field={Field.CURRENCY_B} currencies={currencies} parsedAmounts={parsedAmounts} />
+            <SendRemoveXToken
+              field={Field.CURRENCY_A}
+              currencies={currencies}
+              parsedAmounts={parsedAmounts}
+              onResetError={() => setHasErrorMessage(false)}
+            />
+            <SendRemoveXToken
+              field={Field.CURRENCY_B}
+              currencies={currencies}
+              parsedAmounts={parsedAmounts}
+              onResetError={() => setHasErrorMessage(false)}
+            />
           </div>
           <Typography textAlign="center" as="h3" fontWeight="normal">
             <Trans>Send your liquidity to Balanced, then click Supply.</Trans>

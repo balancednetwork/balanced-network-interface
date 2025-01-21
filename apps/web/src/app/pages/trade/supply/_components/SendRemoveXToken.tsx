@@ -28,9 +28,10 @@ interface SendRemoveXTokenProps {
   field: Field;
   parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> };
   currencies: { [field in Field]?: XToken };
+  onResetError: () => void;
 }
 
-export function SendRemoveXToken({ field, currencies, parsedAmounts }: SendRemoveXTokenProps) {
+export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetError }: SendRemoveXTokenProps) {
   const queryClient = useQueryClient();
   const [isPending, setIsPending] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
@@ -76,7 +77,7 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts }: SendRemov
     if (!parsedAmount || !xToken || !xAccount || !amountToDeposit) {
       return;
     }
-
+    onResetError();
     setIsPending(true);
 
     try {
@@ -94,7 +95,7 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts }: SendRemov
     if (!depositAmount || !xToken || !xAccount) {
       return;
     }
-
+    onResetError();
     setIsPending(true);
 
     try {

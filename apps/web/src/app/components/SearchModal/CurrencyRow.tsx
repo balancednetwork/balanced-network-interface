@@ -117,15 +117,16 @@ export default function CurrencyRow({
 
   const bridgeDirection = useBridgeDirection();
   const finalXChainIds = useMemo(() => {
-    if (shouldForceNetworkIcon && currencySelectionType === CurrencySelectionType.BRIDGE) {
+    if (currencySelectionType === CurrencySelectionType.BRIDGE) {
       return [bridgeDirection.from];
     }
 
-    if (shouldForceNetworkIcon && currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE) {
+    if (currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE) {
       return [selectedChainId];
     }
+
     return sortedXChains;
-  }, [sortedXChains, shouldForceNetworkIcon, currencySelectionType, bridgeDirection.from, selectedChainId]);
+  }, [sortedXChains, currencySelectionType, bridgeDirection.from, selectedChainId]);
 
   const RowContentSignedIn = () => {
     return (

@@ -254,8 +254,10 @@ export default function CurrencyRow({
   const handleClick = (currency: Currency, XChainIds: XChainId[]) => {
     if (basedOnWallet && XChainIds.length === 1) {
       handleXChainCurrencySelect(currency, XChainIds[0]);
+    } else if (currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE) {
+      handleXChainCurrencySelect(currency, XChainIds[0]);
     } else {
-      onSelect(currency);
+      onSelect(currency, false);
     }
   };
 

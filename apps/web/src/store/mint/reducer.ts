@@ -85,6 +85,26 @@ const mintSlice = createSlice({
       },
     ),
     selectCurrency: create.reducer<{ currency: XToken; field: Field }>((state, { payload: { currency, field } }) => {
+      const currencyA = state[Field.CURRENCY_A].currency;
+      const currencyB = state[Field.CURRENCY_B].currency;
+
+      const sICX = xTokenMapBySymbol[currency.xChainId]['sICX'];
+      const bnUSD = xTokenMapBySymbol[currency.xChainId]['bnUSD'];
+
+      if (field === Field.CURRENCY_A && currency.symbol === currencyB?.symbol) {
+        return {
+          ...state,
+          [Field.CURRENCY_A]: { currency: currency, percent: 0 },
+          [Field.CURRENCY_B]: { currency: currency.symbol === sICX.symbol ? bnUSD : sICX, percent: 0 },
+        };
+      }
+      if (field === Field.CURRENCY_B && currency.symbol === currencyA?.symbol) {
+        return {
+          ...state,
+          [Field.CURRENCY_A]: { currency: currency.symbol === sICX.symbol ? bnUSD : sICX, percent: 0 },
+          [Field.CURRENCY_B]: { currency: currency, percent: 0 },
+        };
+      }
       return {
         ...state,
         [field]: { ...state[field], currency: currency, percent: 0 },

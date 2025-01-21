@@ -7,10 +7,12 @@ import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button, TextButton } from '@/app/components/Button';
+import { UnderlineText } from '@/app/components/DropdownText';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import { DEFAULT_SLIPPAGE_LP } from '@/constants/index';
+import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { useDerivedMintInfo } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
 import { TransactionStatus, useTransactionAdder, useTransactionStatus } from '@/store/transactions/hooks';
@@ -147,6 +149,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
   const hasEnoughICX = useHasEnoughICX();
 
   const { formattedXCallFee } = useXCallFee(lpXChainId, ICON_XCALL_NETWORK_ID);
+  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(lpXChainId);
 
   return (
     <>
@@ -201,7 +204,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
             <Trans>Send your liquidity to Balanced, then click Supply.</Trans>
           </Typography>
           {lpXChainId !== ICON_XCALL_NETWORK_ID && (
-            <Flex justifyContent="center" alignItems="center" mt={2}>
+            <Flex justifyContent="center" alignItems="center" mt={2} style={{ gap: 4 }}>
               <Typography textAlign="center" as="h3" fontWeight="normal">
                 <Trans>Transfer fee (x3): </Trans>
               </Typography>
@@ -213,17 +216,36 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
               <Trans>Remove your assets to cancel this transaction.</Trans>
             </Typography>
           )}
+          {isWrongChain && (
+            <Flex
+              justifyContent="center"
+              alignItems="center"
+              mt={2}
+              pt={2}
+              pb={3}
+              style={{ gap: 4, backgroundColor: '#0b385c', borderRadius: '10px' }}
+            >
+              <UnderlineText>
+                <Typography color="primaryBright" onClick={handleSwitchChain}>
+                  Switch to {'Arbitrum'}
+                </Typography>
+              </UnderlineText>
+              <Typography textAlign="center" mt={'1px'}>
+                <Trans> to make this transaction.</Trans>
+              </Typography>
+            </Flex>
+          )}
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={handleCancelSupply}>
               <Trans>Cancel</Trans>
             </TextButton>
 
             {pair ? (
-              <Button disabled={!isEnabled || !hasEnoughICX || isPending} onClick={handleSupplyConfirm}>
+              <Button disabled={!isEnabled || !hasEnoughICX || isPending || isWrongChain} onClick={handleSupplyConfirm}>
                 {isPending ? t`Supplying` : t`Supply`}
               </Button>
             ) : (
-              <Button disabled={!isEnabled || !hasEnoughICX || isPending} onClick={handleSupplyConfirm}>
+              <Button disabled={!isEnabled || !hasEnoughICX || isPending || isWrongChain} onClick={handleSupplyConfirm}>
                 {isPending ? t`Creating pool` : t`Create pool`}
               </Button>
             )}

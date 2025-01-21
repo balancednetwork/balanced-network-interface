@@ -8,6 +8,8 @@ import { Button } from '@/app/components/Button';
 import { Typography } from '@/app/theme';
 import CheckIcon from '@/assets/icons/tick.svg';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
+import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
+import { useDerivedMintInfo } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import {
@@ -33,6 +35,8 @@ interface SendRemoveXTokenProps {
 
 export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetError }: SendRemoveXTokenProps) {
   const queryClient = useQueryClient();
+  const { lpXChainId } = useDerivedMintInfo();
+
   const [isPending, setIsPending] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
 
@@ -109,6 +113,7 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
   };
 
   const isDeposited = depositAmount && depositAmount.greaterThan(0);
+  const { isWrongChain } = useEvmSwitchChain(lpXChainId);
 
   return (
     <Flex alignItems="center" mb={1} hidden={false}>
@@ -122,11 +127,15 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
                 </Typography>
 
                 {!isPending && approvalState !== ApprovalState.APPROVED ? (
-                  <SupplyButton disabled={approvalState === ApprovalState.PENDING} mt={2} onClick={approveCallback}>
+                  <SupplyButton
+                    disabled={approvalState === ApprovalState.PENDING || isWrongChain}
+                    mt={2}
+                    onClick={approveCallback}
+                  >
                     {approvalState !== ApprovalState.PENDING ? t`Approve` : t`Approving`}
                   </SupplyButton>
                 ) : (
-                  <SupplyButton disabled={isPending} mt={2} onClick={handleAdd}>
+                  <SupplyButton disabled={isPending || isWrongChain} mt={2} onClick={handleAdd}>
                     {!isPending ? t`Send` : t`Sending`}
                   </SupplyButton>
                 )}
@@ -152,7 +161,7 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
                   {depositAmount?.toSignificant(6)} {xToken?.symbol}
                 </Typography>
 
-                <RemoveButton disabled={isPending} mt={2} onClick={handleRemove}>
+                <RemoveButton disabled={isPending || isWrongChain} mt={2} onClick={handleRemove}>
                   {!isPending ? t`Remove` : t`Removing`}
                 </RemoveButton>
               </>

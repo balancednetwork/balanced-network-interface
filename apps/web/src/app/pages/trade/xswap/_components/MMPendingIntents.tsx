@@ -122,12 +122,12 @@ function PendingIntent({ transaction }: { transaction: MMTransaction }) {
     <Flex justifyContent="center" alignItems="center" my={1}>
       <Typography textAlign="center">
         <strong>
-          {formatBalance(transaction.fromAmount.toFixed(), rates?.[transaction.fromAmount.currency.symbol].toFixed())}{' '}
+          {formatBalance(transaction.fromAmount.toFixed(), rates?.[transaction.fromAmount.currency.symbol]?.toFixed())}{' '}
           {transaction.fromAmount.currency.symbol}
         </strong>{' '}
         for{' '}
         <strong>
-          {formatBalance(transaction.toAmount.toFixed(), rates?.[transaction.toAmount.currency.symbol].toFixed())}{' '}
+          {formatBalance(transaction.toAmount.toFixed(), rates?.[transaction.toAmount.currency.symbol]?.toFixed())}{' '}
           {transaction.toAmount.currency.symbol}
         </strong>
       </Typography>{' '}

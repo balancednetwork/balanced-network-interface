@@ -11,6 +11,7 @@ import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { BrightPanel } from '@/app/components/Panel';
 import { SelectorType } from '@/app/components/SearchModal/CurrencySearch';
 import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
+import WithdrawalLimitWarning from '@/app/components/WithdrawalLimitWarning';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
 import { PRICE_IMPACT_WARNING_THRESHOLD } from '@/constants/misc';
@@ -52,6 +53,8 @@ export default function SwapPanel() {
     maximumBridgeAmount,
     canBridge,
     stellarValidation,
+    canSwap,
+    maximumOutputAmount,
   } = useDerivedSwapInfo();
   const mmTrade = useDerivedMMTradeInfo(trade);
 
@@ -132,6 +135,10 @@ export default function SwapPanel() {
   );
 
   const handleMaxBridgeAmountClick = (amount: CurrencyAmount<XToken>) => {
+    onUserInput(Field.OUTPUT, amount?.toFixed(4));
+  };
+
+  const handleMaxWithdrawAmountClick = (amount: CurrencyAmount<Currency>) => {
     onUserInput(Field.OUTPUT, amount?.toFixed(4));
   };
 
@@ -251,6 +258,13 @@ export default function SwapPanel() {
 
           {!canBridge && maximumBridgeAmount && (
             <BridgeLimitWarning limitAmount={maximumBridgeAmount} onLimitAmountClick={handleMaxBridgeAmountClick} />
+          )}
+
+          {!canSwap && maximumOutputAmount && (
+            <WithdrawalLimitWarning
+              limitAmount={maximumOutputAmount}
+              onLimitAmountClick={handleMaxWithdrawAmountClick}
+            />
           )}
 
           <MMPendingIntents />

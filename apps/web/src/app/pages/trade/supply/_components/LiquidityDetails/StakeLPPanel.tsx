@@ -13,7 +13,7 @@ import { Typography } from '@/app/theme';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from '@/constants/index';
 import { Pool, usePoolTokenAmounts } from '@/hooks/useV2Pairs';
 import { useAllPairsById } from '@/queries/backendv2';
-import { useIncentivisedPairs } from '@/queries/reward';
+import { useIncentivisedPairs, useRatesWithOracle } from '@/queries/reward';
 import { useBBalnAmount, useSources, useTotalSupply } from '@/store/bbaln/hooks';
 import { useRewards } from '@/store/reward/hooks';
 import { useChangeStakedLPPercent, useStakedLPPercent } from '@/store/stakedLP/hooks';
@@ -30,8 +30,10 @@ import {
 import Skeleton from '@/app/components/Skeleton';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
-import { getFormattedRewards, stakedFraction } from '../utils';
-import { getShareReward } from './WithdrawPanel';
+import { formatValue } from '@/utils/formatter';
+import { Fraction } from '@balancednetwork/sdk-core';
+import { getFormattedExternalRewards, getFormattedRewards, stakedFraction } from '../utils';
+import { getExternalShareReward, getShareReward } from './WithdrawPanel';
 
 export default function StakeLPPanel({ pool }: { pool: Pool }) {
   const { poolId, pair, balance: lpBalance, stakedLPBalance } = pool;
@@ -119,7 +121,7 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
   const description = shouldStake ? "You'll earn BALN until you unstake them." : "You'll stop earning BALN from them.";
 
   const upSmall = useMedia('(min-width: 800px)');
-
+  const prices = useRatesWithOracle();
   const rewards = useRewards();
   const [aBalance, bBalance] = usePoolTokenAmounts(pool);
   const pairName = `${aBalance.currency.symbol || '...'}/${bBalance.currency.symbol || '...'}`;
@@ -146,7 +148,36 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
     [incentivisedPairs, pairName],
   );
 
+  const pairData = useMemo(() => {
+    return allPairs?.[pair.poolId!];
+  }, [allPairs, pair.poolId]);
+
+  const externalRewards = useMemo(() => {
+    if (!isIncentivised || !pairData) {
+      return [];
+    }
+    return pairData.externalRewards || [];
+  }, [isIncentivised, pairData]);
+
   const RespoRewardsInfo = () => {
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+    const totalAPR = useMemo(() => {
+      let balnAndFeesAPR = new BigNumber(0);
+      if (allPairs && sources) {
+        balnAndFeesAPR = new BigNumber(allPairs[pair.poolId!].balnApy)
+          .times(sources[sourceName].workingBalance.dividedBy(sources[sourceName].balance))
+          .plus(allPairs[poolId].feesApy)
+          .times(100);
+      }
+
+      let totalAPR = balnAndFeesAPR;
+      if (externalRewards.length > 0 && allPairs && allPairs[poolId]?.externalRewardsTotalAPR) {
+        totalAPR = totalAPR.plus(allPairs[poolId]?.externalRewardsTotalAPR);
+      }
+
+      return totalAPR;
+    }, [pair, allPairs, sources, sourceName, poolId]);
+
     return (
       <Flex
         marginBottom={4}
@@ -159,8 +190,17 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
             <Trans>Daily rewards</Trans>
           </Typography>
           <Typography color="text" fontSize={16}>
-            {getFormattedRewards(reward)}
+            {getFormattedRewards(reward, externalRewards.length === 0)}
           </Typography>
+          {externalRewards.map(reward => {
+            const rewardPrice = prices?.[reward.currency.wrapped.symbol];
+            const rewardShare = getExternalShareReward(reward, pool, stakedFractionValue, pairData?.stakedLP);
+            return (
+              <Typography key={reward.currency.symbol} color="text" fontSize={16}>
+                {getFormattedExternalRewards(rewardShare, rewardPrice?.toFixed())}
+              </Typography>
+            );
+          })}
         </Box>
 
         <Box sx={{ textAlign: 'right' }}>
@@ -171,11 +211,7 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
             {!allPairs || !sources ? (
               <Skeleton width={100}></Skeleton>
             ) : sources[sourceName] ? (
-              `${new BigNumber(allPairs[pair.poolId!].balnApy)
-                .times(sources[sourceName].workingBalance.dividedBy(sources[sourceName].balance))
-                .plus(allPairs[poolId].feesApy)
-                .times(100)
-                .toFormat(2)}%`
+              `${formatValue(totalAPR.toFixed(2), false)}%`
             ) : (
               '-'
             )}

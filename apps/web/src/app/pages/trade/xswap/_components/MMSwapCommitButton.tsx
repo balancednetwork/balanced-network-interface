@@ -8,7 +8,7 @@ import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { MMTrade, useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
-import { getXChainType } from '@balancednetwork/xwagmi';
+import { StellarAccountValidation, getXChainType } from '@balancednetwork/xwagmi';
 import { useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import { XToken } from '@balancednetwork/xwagmi';
@@ -27,6 +27,7 @@ interface MMSwapCommitButtonProps {
     to: XChainId;
   };
   hidden: boolean;
+  stellarValidation?: StellarAccountValidation;
 }
 
 const UseMMDerivedInfo = (
@@ -60,7 +61,7 @@ const UseMMDerivedInfo = (
 };
 
 const MMSwapCommitButton: React.FC<MMSwapCommitButtonProps> = props => {
-  const { trade, currencies, account, recipient, direction, hidden } = props;
+  const { trade, currencies, account, recipient, direction, hidden, stellarValidation } = props;
   const { error } = UseMMDerivedInfo(trade, account, recipient, currencies);
 
   const toggleWalletModal = useWalletModalToggle();
@@ -84,7 +85,12 @@ const MMSwapCommitButton: React.FC<MMSwapCommitButtonProps> = props => {
 
   return (
     <>
-      <Button disabled={!!error} color="primary" onClick={handleSwap} hidden={hidden}>
+      <Button
+        disabled={!!error || stellarValidation?.ok === false}
+        color="primary"
+        onClick={handleSwap}
+        hidden={hidden}
+      >
         {error || t`Swap`}
       </Button>
 

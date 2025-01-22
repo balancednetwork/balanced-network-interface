@@ -20,6 +20,7 @@ import PoolLogoWithNetwork from '@/app/components/PoolLogoWithNetwork';
 import Skeleton from '@/app/components/Skeleton';
 import { formatBigNumber } from '@/utils';
 import { formatSymbol, getFormattedNumber } from '@/utils/formatter';
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { getFormattedRewards, stakedFraction, totalSupply } from '../utils';
 import { getShareReward } from './WithdrawPanel';
 
@@ -96,6 +97,7 @@ export const PoolRecord = ({
   pairData?: PairData;
   poolId: number;
   totalReward: BigNumber;
+  externalRewards: CurrencyAmount<Token>[] | undefined;
   boostData: { [key in string]: Source } | undefined;
   apy: number | null;
 }) => {

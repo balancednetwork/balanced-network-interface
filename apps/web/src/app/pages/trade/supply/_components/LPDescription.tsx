@@ -10,10 +10,15 @@ import { Typography } from '@/app/theme';
 import { PairState, useBalance, usePool, usePoolTokenAmounts } from '@/hooks/useV2Pairs';
 import { useAllPairsByName } from '@/queries/backendv2';
 import { useRatesWithOracle } from '@/queries/reward';
-import { useBBalnAmount, useResponsivePoolRewardShare, useSources } from '@/store/bbaln/hooks';
+import {
+  useBBalnAmount,
+  useExternalPoolRewardShare,
+  useResponsivePoolRewardShare,
+  useSources,
+} from '@/store/bbaln/hooks';
 import { useDerivedMintInfo, useMintState } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
-import { useReward } from '@/store/reward/hooks';
+import { useExternalRewards, useReward } from '@/store/reward/hooks';
 import { useWithdrawnPercent } from '@/store/stakedLP/hooks';
 import { tryParseAmount } from '@/store/swap/hooks';
 import { useLiquidityTokenBalance } from '@/store/wallet/hooks';
@@ -21,7 +26,7 @@ import { formatBigNumber } from '@/utils';
 
 import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { formatBalance, formatSymbol } from '@/utils/formatter';
+import { formatBalance, formatSymbol, formatValue } from '@/utils/formatter';
 import { getXChainType, useXAccount } from '@balancednetwork/xwagmi';
 
 export default function LPDescription() {
@@ -35,6 +40,7 @@ export default function LPDescription() {
   const signedInWallets = useSignedInWallets();
   const signedIn = useMemo(() => signedInWallets.length > 0, [signedInWallets]);
 
+  const getResponsiveExternalRewardShare = useExternalPoolRewardShare();
   const upSmall = useMedia('(min-width: 600px)');
   const userPoolBalance = useLiquidityTokenBalance(`${lpXChainId}/${xAccount?.address}`, pair);
   const totalPoolTokens = pair?.totalSupply;
@@ -45,10 +51,10 @@ export default function LPDescription() {
   const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
 
   const { data: allPairs } = useAllPairsByName();
-  const apy = useMemo(
-    () => allPairs && allPairs[pairName] && new BigNumber(allPairs[pairName].balnApy),
-    [allPairs, pairName],
-  );
+
+  const pairData = useMemo(() => (allPairs ? allPairs[pairName] : undefined), [allPairs, pairName]);
+
+  const apy = useMemo(() => pairData && new BigNumber(pairData.balnApy), [pairData]);
 
   const [baseAmount, quoteAmount] = usePoolTokenAmounts(pool);
 
@@ -66,6 +72,8 @@ export default function LPDescription() {
   );
 
   const poolRewards = useReward(pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName);
+  const poolExternalRewards = useExternalRewards(pairName);
+
   const tempTotalPoolTokens = new BigNumber(totalPoolTokens?.toFixed() || 0).plus(
     formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0,
   );
@@ -121,13 +129,38 @@ export default function LPDescription() {
 
   const rates = useRatesWithOracle();
 
+  function getApyRange(apy: BigNumber | undefined, allPairs: any, pairName: string) {
+    return apy && allPairs
+      ? `${formatValue(
+          apy
+            .plus(allPairs[pairName].feesApy)
+            .plus(allPairs[pairName].externalRewardsTotalAPR / 100)
+            .times(100)
+            .dp(2, BigNumber.ROUND_HALF_UP)
+            .toFixed(),
+          false,
+        )}% - ${formatValue(
+          apy
+            .times(MAX_BOOST)
+            .plus(allPairs[pairName].feesApy)
+            .plus(allPairs[pairName].externalRewardsTotalAPR / 100)
+            .times(100)
+            .dp(2)
+            .toFixed(),
+          false,
+        )}% APR`
+      : '-';
+  }
+
   return (
     <>
       <Flex bg="bg2" flex={1} flexDirection="column" minHeight={signedIn ? [505, 350] : [355, 320]}>
         {pairState === PairState.NOT_EXISTS && (
           <Flex flex={1} padding={[5, 7]} flexDirection="column">
             <Typography variant="h3" mb={2} marginBottom={40}>
-              {`${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} / ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}`}{' '}
+              {`${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} / ${formatSymbol(
+                currencies[Field.CURRENCY_B]?.symbol,
+              )}`}{' '}
               <Trans>liquidity pool</Trans>
             </Typography>
 
@@ -143,7 +176,7 @@ export default function LPDescription() {
 
         {pairState === PairState.EXISTS && (
           <Box flex={1} padding={[5, 7]}>
-            {poolRewards ? (
+            {poolRewards || poolExternalRewards ? (
               <Typography variant="h3" mb={2} marginBottom={40}>
                 {t`${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} / ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}
                     liquidity pool${upSmall ? ': ' : ''}`}{' '}
@@ -206,25 +239,44 @@ export default function LPDescription() {
                       </Typography>
                     </Box>
 
-                    {userRewards && (
+                    {(userRewards || poolExternalRewards) && (
                       <Box sx={{ margin: '15px 0 25px 0' }}>
                         <Typography textAlign="center" marginBottom="5px" color="text1">
                           <Trans>Your potential rewards</Trans>
                         </Typography>
 
-                        <Typography textAlign="center" variant="p">
-                          {poolRewards
-                            ? isInitialSupply
-                              ? `${formatBigNumber(
-                                  poolRewards.times(responsiveRewardShare),
-                                  'currency',
-                                )} - ${formatBigNumber(
-                                  poolRewards.times(responsiveRewardShare).times(2.5),
-                                  'currency',
-                                )} BALN`
-                              : `${formatBigNumber(poolRewards.times(responsiveRewardShare), 'currency')} BALN`
-                            : 'N/A'}
-                        </Typography>
+                        {userRewards && (
+                          <Typography textAlign="center" variant="p">
+                            {poolRewards
+                              ? isInitialSupply
+                                ? `${formatBigNumber(
+                                    poolRewards.times(responsiveRewardShare),
+                                    'currency',
+                                  )} - ${formatBigNumber(
+                                    poolRewards.times(responsiveRewardShare).times(2.5),
+                                    'currency',
+                                  )} BALN`
+                                : `${formatBigNumber(poolRewards.times(responsiveRewardShare), 'currency')} BALN`
+                              : 'N/A'}
+                          </Typography>
+                        )}
+
+                        {poolExternalRewards?.map(item => {
+                          return (
+                            <Typography key={item.currency.symbol} textAlign="center" variant="p">
+                              {`${formatValue(
+                                getResponsiveExternalRewardShare(
+                                  item,
+                                  userPoolBalances,
+                                  formattedAmounts[Field.CURRENCY_A],
+                                  formattedAmounts[Field.CURRENCY_B],
+                                  pairData?.stakedLP,
+                                ).toFixed(),
+                                false,
+                              )} ${item.currency.symbol}`}
+                            </Typography>
+                          );
+                        })}
                       </Box>
                     )}
                   </>
@@ -247,14 +299,23 @@ export default function LPDescription() {
                   )}
                 </Box>
 
-                {poolRewards && (
+                {(poolRewards || poolExternalRewards) && (
                   <Box sx={{ margin: '15px 0 25px 0' }}>
                     <Typography textAlign="center" marginBottom="5px" color="text1">
                       <Trans>Total daily rewards</Trans>
                     </Typography>
-                    <Typography textAlign="center" variant="p">
-                      {formatBigNumber(poolRewards, 'currency')} BALN
-                    </Typography>
+                    {poolRewards && (
+                      <Typography textAlign="center" variant="p">
+                        {formatValue(poolRewards.toFixed(), false)} BALN
+                      </Typography>
+                    )}
+                    {poolExternalRewards?.map(item => {
+                      return (
+                        <Typography key={item.currency.symbol} textAlign="center" variant="p">
+                          {`${formatValue(item.toFixed(), false)} ${item.currency.symbol}`}
+                        </Typography>
+                      );
+                    })}
                   </Box>
                 )}
               </Box>

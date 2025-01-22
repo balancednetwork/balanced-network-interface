@@ -16,7 +16,7 @@ import { Typography } from '@/app/theme';
 import ArrowDownIcon from '@/assets/icons/arrow-line.svg';
 import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
-import { BalanceData, usePools } from '@/hooks/useV2Pairs';
+import { BalanceData } from '@/hooks/useV2Pairs';
 import { useAllPairsById } from '@/queries/backendv2';
 import { Source, useSources } from '@/store/bbaln/hooks';
 import { useTokenListConfig } from '@/store/lists/hooks';
@@ -117,14 +117,12 @@ export default function LiquidityDetails() {
                   text={
                     <>
                       <Trans>
-                        The BALN APR is calculated from the USD value of BALN rewards allocated to a pool. Your rate
-                        will vary based on the amount of bBALN you hold.
+                        Based on the USD value of liquidity rewards (claimable from the Home page) and fees earned by a
+                        pool over the past 30 days.
                       </Trans>
                       <br />
                       <br />
-                      <Trans>
-                        The fee APR is calculated from the swap fees earned by a pool over the last 30 days.
-                      </Trans>
+                      <Trans>BALN rewards depend on your position size and bBALN holdings.</Trans>
                     </>
                   }
                   placement="top"
@@ -188,6 +186,7 @@ export default function LiquidityDetails() {
                             ]
                           : new BigNumber(0)
                       }
+                      externalRewards={allPairs && allPairs[pool.poolId] ? allPairs[pool.poolId].externalRewards : []}
                       boostData={sources}
                       apy={allPairs && allPairs[pool.poolId] ? allPairs[pool.poolId].balnApy : 0}
                     />
@@ -320,9 +319,14 @@ const PoolRecordQ = ({
             ? new BigNumber(apy)
                 .times(100)
                 .times(source.workingBalance.div(source.balance) || 1)
-                .toFormat(2)
+                .isNaN()
+              ? '-'
+              : new BigNumber(apy)
+                  .times(100)
+                  .times(source.workingBalance.div(source.balance) || 1)
+                  .toFormat(2) + '%'
             : '-'
-        }%`}</DataText>
+        }`}</DataText>
       )}
       {upSmall && <DataText>{`~ ${reward.toFormat(2, BigNumber.ROUND_HALF_UP) || '-'} BALN`}</DataText>}
     </ListItem>

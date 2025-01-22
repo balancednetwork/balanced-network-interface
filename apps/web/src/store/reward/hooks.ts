@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
-import { Fraction } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { PLUS_INFINITY } from '@/constants/index';
-import { useTokenPrices } from '@/queries/backendv2';
-import { useLPReward } from '@/queries/reward';
+import { useAllPairs } from '@/queries/backendv2';
+import { useLPRewards } from '@/queries/reward';
 import { useBBalnAmount, useDynamicBBalnAmount, useSources } from '@/store/bbaln/hooks';
 import { useCollateralInputAmountAbsolute } from '@/store/collateral/hooks';
 import { useHasUnclaimedFees } from '@/store/fees/hooks';
@@ -47,6 +47,12 @@ export function useReward(rewardName: string): BigNumber | undefined {
   if (rewardName && rewards[rewardName] && rewards[rewardName].isGreaterThan(0)) {
     return rewards[rewardName];
   }
+}
+
+export function useExternalRewards(rewardName: string): CurrencyAmount<Token>[] | undefined {
+  const { data: allPairs } = useAllPairs();
+
+  return allPairs?.find(pair => pair.name === rewardName)?.externalRewards;
 }
 
 export function useChangeReward(): (poolId: string, reward: BigNumber) => void {
@@ -193,8 +199,7 @@ export function useHasAnyKindOfRewards() {
   const bnUSDDeposit = useLockedAmount();
   const sources = useSources();
   const hasUnclaimedFees = useHasUnclaimedFees();
-  const { account } = useIconReact();
-  const { data: reward } = useLPReward(`0x1.icon/${account}`);
+  const { data: lpRewards } = useLPRewards();
   const { data: savingsRewards } = useUnclaimedRewards();
 
   const numberOfPositions = React.useMemo(
@@ -204,7 +209,7 @@ export function useHasAnyKindOfRewards() {
 
   return (
     hasUnclaimedFees ||
-    reward?.greaterThan(0) ||
+    Object.values(lpRewards || {}).some(({ totalValueInUSD }) => totalValueInUSD > new BigNumber(0)) ||
     savingsRewards?.some(reward => reward.greaterThan(0)) ||
     dynamicBBalnAmount.isGreaterThan(0) ||
     bnUSDDeposit?.greaterThan(0) ||

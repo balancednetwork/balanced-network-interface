@@ -1,7 +1,6 @@
 import { StyledArrowDownIcon } from '@/app/components/DropdownText';
 import { DropdownPopper } from '@/app/components/Popover';
 import { Typography } from '@/app/theme';
-import { useSignedInWallets } from '@/hooks/useWallets';
 import { useLPRewards } from '@/queries/reward';
 import { useSavingsActionHandlers, useSavingsXChainId } from '@/store/savings/hooks';
 import { XChain, xChainMap, xChains } from '@balancednetwork/xwagmi';
@@ -38,20 +37,14 @@ const SavingsChainSelector = ({
   const savingsXChainId = useSavingsXChainId();
   const { onSavingsXChainSelection } = useSavingsActionHandlers();
 
-  const signedWallets = useSignedInWallets();
-  const accounts = useMemo(
-    () => signedWallets.filter(wallet => wallet.address).map(wallet => `${wallet.xChainId}/${wallet.address}`),
-    [signedWallets],
-  );
-
-  const { data: lpRewards } = useLPRewards(accounts);
+  const { data: lpRewards } = useLPRewards();
 
   const sortedChains = useMemo(() => {
     if (!lpRewards) return xChains;
 
     return xChains.sort((a: XChain, b: XChain) => {
-      const aRewardAmount = lpRewards[a.xChainId]?.quotient || 0n;
-      const bRewardAmount = lpRewards[b.xChainId]?.quotient || 0n;
+      const aRewardAmount = lpRewards[a.xChainId]?.totalValueInUSD || 0;
+      const bRewardAmount = lpRewards[b.xChainId]?.totalValueInUSD || 0;
 
       if (aRewardAmount === bRewardAmount) return 0;
       return bRewardAmount > aRewardAmount ? 1 : -1;

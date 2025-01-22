@@ -3,12 +3,15 @@ import { t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 
 import { ZERO } from '@/constants/misc';
+import { PairData } from '@/queries/backendv2';
 import { formatBigNumber } from '@/utils';
-import { formatSymbol } from '@/utils/formatter';
+import { formatBalance, formatSymbol, formatValue } from '@/utils/formatter';
 
 export function swapMessage(inputAmount: string, inputCurrency: string, outputAmount: string, outputCurrency: string) {
   const pendingMessage = t`Swapping ${formatSymbol(inputCurrency)} for ${formatSymbol(outputCurrency)}...`;
-  const successMessage = t`Swapped ${inputAmount} ${formatSymbol(inputCurrency)} for ${outputAmount} ${formatSymbol(outputCurrency)}.`;
+  const successMessage = t`Swapped ${inputAmount} ${formatSymbol(inputCurrency)} for ${outputAmount} ${formatSymbol(
+    outputCurrency,
+  )}.`;
   const failureMessage = t`Couldn't swap ${inputCurrency} for ${outputCurrency}. Try again.`;
   return { pendingMessage, successMessage, failureMessage };
 }
@@ -23,7 +26,10 @@ export function transferAssetMessage(inputAmount: string, inputCurrency: string,
 export function depositMessage(currency: string, pair: string) {
   const pendingMessage = t`Sending ${formatSymbol(currency)} to the ${pair.replace('wICX', 'ICX')} pool...`;
   const successMessage = t`${formatSymbol(currency)} sent to the ${pair.replace('wICX', 'ICX')} pool.`;
-  const failureMessage = t`Couldn't send ${formatSymbol(currency)} to the ${pair.replace('wICX', 'ICX')} pool. Try again.`;
+  const failureMessage = t`Couldn't send ${formatSymbol(currency)} to the ${pair.replace(
+    'wICX',
+    'ICX',
+  )} pool. Try again.`;
   return { pendingMessage, successMessage, failureMessage };
 }
 
@@ -44,8 +50,12 @@ export function withdrawMessage(
   const successMessage =
     outputCurrency.toLowerCase() === 'icx'
       ? t`${outputAmount} ${outputCurrency} added to your wallet.`
-      : t`${inputAmount} ${formatSymbol(inputCurrency)} and ${outputAmount} ${formatSymbol(outputCurrency)} added to your wallet.`;
-  const failureMessage = t`Couldn't withdraw ${formatSymbol(inputCurrency)} / ${formatSymbol(outputCurrency)} liquidity. Try again.`;
+      : t`${inputAmount} ${formatSymbol(inputCurrency)} and ${outputAmount} ${formatSymbol(
+          outputCurrency,
+        )} added to your wallet.`;
+  const failureMessage = t`Couldn't withdraw ${formatSymbol(inputCurrency)} / ${formatSymbol(
+    outputCurrency,
+  )} liquidity. Try again.`;
   return { pendingMessage, successMessage, failureMessage };
 }
 
@@ -58,6 +68,22 @@ export const stakedFraction = stakedLPPercent => {
 export const totalSupply = (withdrawValue: CurrencyAmount<Currency>, suppliedValue?: CurrencyAmount<Currency>) =>
   !!withdrawValue ? suppliedValue?.subtract(withdrawValue) : suppliedValue;
 
-export const getFormattedRewards = (reward: BigNumber): string => {
-  return reward?.isEqualTo(ZERO) ? 'N/A' : `~ ${formatBigNumber(reward, 'currency')} BALN`;
+export const getFormattedRewards = (reward: BigNumber, isOnlyReward = true): string => {
+  return reward?.isEqualTo(ZERO) ? (isOnlyReward ? 'N/A' : '') : `~ ${formatBigNumber(reward, 'currency')} BALN`;
+};
+
+export const getFormattedExternalRewards = (reward: CurrencyAmount<Currency>, price?: string): string => {
+  const rewardAmount = new BigNumber(reward.toFixed());
+  return rewardAmount?.isEqualTo(ZERO)
+    ? 'N/A'
+    : `~ ${formatBalance(rewardAmount.toFixed(), price)} ${reward.currency.symbol}`;
+};
+
+export const getRewardApr = (reward: CurrencyAmount<Currency>, pair: PairData, price: number): BigNumber => {
+  const apr = new BigNumber(reward.toFixed())
+    .times(365 * price)
+    .div(new BigNumber(pair.stakedRatio.toFixed(18)).times(pair.liquidity))
+    .times(100);
+
+  return apr;
 };

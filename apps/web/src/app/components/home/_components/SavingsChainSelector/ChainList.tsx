@@ -8,15 +8,16 @@ import { StyledHeaderText } from '@/app/pages/trade/bridge/_components/XChainLis
 import { Typography } from '@/app/theme';
 import useSortXPositions from '@/hooks/useSortXPositions';
 import { useHasSignedIn, useSignedInWallets } from '@/hooks/useWallets';
+import { LPRewards } from '@/queries/reward';
 import { useCollateralType } from '@/store/collateral/hooks';
-import { xChains, XToken } from '@balancednetwork/xwagmi';
+import { formatPrice } from '@/utils/formatter';
+import { xChains } from '@balancednetwork/xwagmi';
 import { XChain, XChainId } from '@balancednetwork/xwagmi';
 import { Trans, t } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
 import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from '../LoanChainSelector/styledComponents';
-import { LPRewards } from '@/queries/reward';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
 
 type ChainListProps = {
   chainId: XChainId;
@@ -31,7 +32,7 @@ type ChainItemProps = {
   isActive: boolean;
   isLast: boolean;
   setChainId: (chain: XChainId) => void;
-  rewardAmount: CurrencyAmount<XToken> | undefined;
+  rewardAmount: BigNumber;
 };
 
 const ChainItem = ({ chain, setChainId, isLast, rewardAmount }: ChainItemProps) => {
@@ -52,13 +53,13 @@ const ChainItem = ({ chain, setChainId, isLast, rewardAmount }: ChainItemProps) 
           </Typography>
         </Flex>
       </ChainItemWrap>
-      {rewardAmount && rewardAmount.greaterThan(0) ? (
+      {rewardAmount.gt(0) ? (
         <Typography
           color="inherit"
-          style={{ transition: 'all ease 0.3s', opacity: rewardAmount.greaterThan(0) ? 1 : 0.75 }}
-          fontSize={rewardAmount.greaterThan(0) ? 14 : 12}
+          style={{ transition: 'all ease 0.3s', opacity: rewardAmount.gt(0) ? 1 : 0.75 }}
+          fontSize={rewardAmount.gt(0) ? 14 : 12}
         >
-          {rewardAmount.greaterThan(0) ? rewardAmount.toSignificant(2) : '-'}
+          {rewardAmount.gt(0) ? formatPrice(rewardAmount.toString()) : '-'}
         </Typography>
       ) : (
         <Typography>-</Typography>
@@ -139,7 +140,7 @@ const ChainList = ({ chainId, setChainId, chains, width, lpRewards }: ChainListP
               isActive={chainId === chainItem.xChainId}
               isLast={sortedFilteredChains.length === index + 1}
               setChainId={setChainId}
-              rewardAmount={lpRewards[chainItem.xChainId]}
+              rewardAmount={lpRewards[chainItem.xChainId]?.totalValueInUSD || new BigNumber(0)}
             />
           </Box>
         ))}

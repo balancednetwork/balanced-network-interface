@@ -1,6 +1,5 @@
 import React, { useCallback, ReactNode, useEffect, useMemo } from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
 import { Currency, CurrencyAmount, Percent, Price, Token } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
@@ -10,13 +9,20 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { useICX } from '@/constants/tokens';
 import { useAllTokens, useCommonBases } from '@/hooks/Tokens';
-import { useQueuePair } from '@/hooks/useQueuePair';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { tryParseAmount } from '@/store/swap/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useXTokenBalances } from '@/store/wallet/hooks';
 import { formatSymbol } from '@/utils/formatter';
-import { ICON_XCALL_NETWORK_ID, XChainId, XToken, convertCurrency, xTokenMap } from '@balancednetwork/xwagmi';
+import {
+  ICON_XCALL_NETWORK_ID,
+  XChainId,
+  XToken,
+  convertCurrency,
+  getXChainType,
+  useXAccount,
+  xTokenMap,
+} from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
 import { AppDispatch, AppState } from '../index';
 import { Field, INITIAL_MINT, InputType, selectChain, selectCurrency, typeInput } from './reducer';
@@ -147,9 +153,8 @@ export function useDerivedMintInfo(
   error?: ReactNode;
   minQuoteTokenAmount?: BigNumber | null;
   lpXChainId: XChainId;
+  account: string | undefined;
 } {
-  const { account } = useIconReact();
-
   const {
     independentField,
     typedValue,
@@ -167,6 +172,12 @@ export function useDerivedMintInfo(
     }),
     [currencyA, currencyB],
   );
+
+  const lpXChainId = useMemo(() => {
+    return currencies[Field.CURRENCY_A]?.xChainId || '0x1.icon';
+  }, [currencies]);
+
+  const account = useXAccount(getXChainType(lpXChainId)).address;
 
   const currencyAOnIcon = useMemo(() => {
     return convertCurrency(ICON_XCALL_NETWORK_ID, currencyA?.wrapped);
@@ -198,10 +209,6 @@ export function useDerivedMintInfo(
 
   // balances
   const currencyArr = React.useMemo(() => [currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]], [currencies]);
-
-  const lpXChainId = useMemo(() => {
-    return currencies[Field.CURRENCY_A]?.xChainId || '0x1.icon';
-  }, [currencies]);
 
   const balances = useXTokenBalances(currencyArr);
   const currencyBalances: { [field in Field]?: CurrencyAmount<XToken> } = React.useMemo(() => {
@@ -396,6 +403,7 @@ export function useDerivedMintInfo(
     poolTokenPercentage,
     error,
     lpXChainId,
+    account,
   };
 }
 

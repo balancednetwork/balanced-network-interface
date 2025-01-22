@@ -93,7 +93,6 @@ function WalletSection({ AChain, BChain }: { AChain?: XChainId; BChain?: XChainI
 
 export default function LPPanel() {
   useInitialSupplyLoad();
-  const { account } = useIconReact();
   const toggleWalletModal = useWalletModalToggle();
 
   // modal
@@ -135,6 +134,7 @@ export default function LPPanel() {
     liquidityMinted,
     mintableLiquidity,
     lpXChainId,
+    account,
   } = useDerivedMintInfo(crossChainCurrencyA, crossChainCurrencyB);
   const { onFieldAInput, onFieldBInput, onSlide, onCurrencySelection, onChainSelection } =
     useMintActionHandlers(noLiquidity);

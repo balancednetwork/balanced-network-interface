@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
@@ -11,17 +11,15 @@ import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
+import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useDerivedMintInfo } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
-import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import {
   ICON_XCALL_NETWORK_ID,
   XToken,
   XTransactionStatus,
   getNetworkDisplayName,
-  getXChainType,
-  useXAccount,
   useXAddLiquidity,
   useXCallFee,
   useXTokenDepositAmount,
@@ -38,13 +36,9 @@ interface ModalProps {
   currencies: { [field in Field]?: XToken };
 }
 
-const getPairName = (currencies: { [field in Field]?: Currency }) => {
-  return `${currencies[Field.CURRENCY_A]?.symbol} / ${currencies[Field.CURRENCY_B]?.symbol}`;
-};
-
 export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, currencies }: ModalProps) {
   const queryClient = useQueryClient();
-  const { pair, lpXChainId } = useDerivedMintInfo();
+  const { account, pair, lpXChainId } = useDerivedMintInfo();
 
   const [isPending, setIsPending] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
@@ -64,9 +58,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
     }
   }, [currentXTransaction, onClose, queryClient]);
 
-  const xAccount = useXAccount(getXChainType(currencies[Field.CURRENCY_A]?.xChainId));
-  const { data: depositAmountA } = useXTokenDepositAmount(xAccount.address, currencies[Field.CURRENCY_A]?.wrapped);
-  const { data: depositAmountB } = useXTokenDepositAmount(xAccount.address, currencies[Field.CURRENCY_B]?.wrapped);
+  const { data: depositAmountA } = useXTokenDepositAmount(account, currencies[Field.CURRENCY_A]?.wrapped);
+  const { data: depositAmountB } = useXTokenDepositAmount(account, currencies[Field.CURRENCY_B]?.wrapped);
 
   const xAddLiquidity = useXAddLiquidity();
 
@@ -77,7 +70,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
       if (depositAmountA && depositAmountB) {
         setIsPending(true);
 
-        const txHash = await xAddLiquidity(xAccount.address, depositAmountA, depositAmountB);
+        const txHash = await xAddLiquidity(account, depositAmountA, depositAmountB);
         if (txHash) setPendingTx(txHash);
         else setIsPending(false);
       }
@@ -86,37 +79,6 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
       setIsPending(false);
     }
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    // {
-    //   const baseToken = currencies[Field.CURRENCY_A] as Token;
-    //   const quoteToken = currencies[Field.CURRENCY_B] as Token;
-    //   bnJs
-    //     .inject({ account })
-    //     .Dex.add(
-    //       baseToken.address,
-    //       quoteToken.address,
-    //       toDec(currencyDeposits[Field.CURRENCY_A]),
-    //       toDec(currencyDeposits[Field.CURRENCY_B]),
-    //       DEFAULT_SLIPPAGE_LP,
-    //     )
-    //     .then((res: any) => {
-    //       addTransaction(
-    //         { hash: res.result },
-    //         {
-    //           pending: supplyMessage(getPairName(currencies)).pendingMessage,
-    //           summary: supplyMessage(getPairName(currencies)).successMessage,
-    //         },
-    //       );
-
-    //       setConfirmTx(res.result);
-    //     })
-    //     .catch(e => {
-    //       console.error('error', e);
-    //     })
-    //     .finally(() => {
-    //       window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-    //     });
-    // }
   };
 
   // refresh Modal UI
@@ -140,15 +102,13 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
     }
   };
 
-  const hasEnoughICX = useHasEnoughICX();
-
   const { formattedXCallFee } = useXCallFee(lpXChainId, ICON_XCALL_NETWORK_ID);
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(lpXChainId);
-
+  const gasChecker = useXCallGasChecker(lpXChainId, undefined);
   return (
     <>
       <Modal isOpen={isOpen} onDismiss={() => undefined}>
-        <ModalContent>
+        <ModalContent noMessages>
           <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
             {pair ? t`Supply liquidity?` : t`Create liquidity pool?`}
           </Typography>
@@ -235,15 +195,29 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
             </TextButton>
 
             {pair ? (
-              <Button disabled={!isEnabled || !hasEnoughICX || isPending || isWrongChain} onClick={handleSupplyConfirm}>
+              <Button
+                disabled={!isEnabled || !gasChecker.hasEnoughGas || isPending || isWrongChain}
+                onClick={handleSupplyConfirm}
+              >
                 {isPending ? t`Supplying` : t`Supply`}
               </Button>
             ) : (
-              <Button disabled={!isEnabled || !hasEnoughICX || isPending || isWrongChain} onClick={handleSupplyConfirm}>
+              <Button
+                disabled={!isEnabled || !gasChecker.hasEnoughGas || isPending || isWrongChain}
+                onClick={handleSupplyConfirm}
+              >
                 {isPending ? t`Creating pool` : t`Create pool`}
               </Button>
             )}
           </Flex>
+
+          {!isPending && !gasChecker.hasEnoughGas && (
+            <Flex justifyContent="center" paddingY={2}>
+              <Typography maxWidth="320px" color="alert" textAlign="center">
+                {gasChecker.errorMessage}
+              </Typography>
+            </Flex>
+          )}
         </ModalContent>
       </Modal>
     </>

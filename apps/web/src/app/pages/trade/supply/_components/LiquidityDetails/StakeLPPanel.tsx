@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
 import Nouislider from '@/packages/nouislider-react';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -8,7 +7,6 @@ import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from '@/app/components/Button';
-import CurrencyBalanceErrorMessage from '@/app/components/CurrencyBalanceErrorMessage';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
@@ -19,13 +17,19 @@ import { useIncentivisedPairs } from '@/queries/reward';
 import { useBBalnAmount, useSources, useTotalSupply } from '@/store/bbaln/hooks';
 import { useRewards } from '@/store/reward/hooks';
 import { useChangeStakedLPPercent, useStakedLPPercent } from '@/store/stakedLP/hooks';
-import { useTransactionAdder } from '@/store/transactions/hooks';
-import { useHasEnoughICX } from '@/store/wallet/hooks';
-import { formatBigNumber, parseUnits } from '@/utils';
+import { formatBigNumber } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { getXChainType, useXAccount, useXStakeLPToken, useXUnstakeLPToken } from '@balancednetwork/xwagmi';
+import {
+  getNetworkDisplayName,
+  getXChainType,
+  useXAccount,
+  useXStakeLPToken,
+  useXUnstakeLPToken,
+} from '@balancednetwork/xwagmi';
 
 import Skeleton from '@/app/components/Skeleton';
+import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
+import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { getFormattedRewards, stakedFraction } from '../utils';
 import { getShareReward } from './WithdrawPanel';
 
@@ -87,8 +91,6 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
   const differenceAmount = afterAmount.minus(beforeAmount?.toFixed() || ZERO);
   const shouldStake = differenceAmount.isPositive();
 
-  const addTransaction = useTransactionAdder();
-
   const xStakeLPToken = useXStakeLPToken();
   const xUnstakeLPToken = useXUnstakeLPToken();
   const xAccount = useXAccount(getXChainType(pool.xChainId));
@@ -112,60 +114,9 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
     }
 
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    // const decimals = Math.ceil((pair.token0.decimals + pair.token1.decimals) / 2);
-    // if (shouldStake) {
-    //   bnJs
-    //     .inject({ account: account })
-    //     .Dex.stake(poolId, parseUnits(differenceAmount.toFixed(), decimals))
-    //     .then(res => {
-    //       if (res.result) {
-    //         addTransaction(
-    //           { hash: res.result },
-    //           {
-    //             pending: 'Staking LP tokens...',
-    //             summary: `Staked ${differenceAmount.abs().dp(2).toFormat()} LP tokens.`,
-    //           },
-    //         );
-
-    //         toggleOpen();
-    //         handleCancel();
-    //       } else {
-    //         console.error(res);
-    //       }
-    //     })
-    //     .finally(() => {
-    //       window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-    //     });
-    // } else {
-    //   bnJs
-    //     .inject({ account: account })
-    //     .StakedLP.unstake(poolId, parseUnits(differenceAmount.abs().toFixed(), decimals))
-    //     .then(res => {
-    //       if (res.result) {
-    //         addTransaction(
-    //           { hash: res.result },
-    //           {
-    //             pending: 'Unstaking LP tokens...',
-    //             summary: `Unstaked ${differenceAmount.abs().dp(2).toFormat()} LP tokens.`,
-    //           },
-    //         );
-
-    //         toggleOpen();
-    //         handleCancel();
-    //       } else {
-    //         console.error(res);
-    //       }
-    //     })
-    //     .finally(() => {
-    //       window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-    //     });
-    // }
   };
 
   const description = shouldStake ? "You'll earn BALN until you unstake them." : "You'll stop earning BALN from them.";
-
-  const hasEnoughICX = useHasEnoughICX();
 
   const upSmall = useMedia('(min-width: 800px)');
 
@@ -234,6 +185,9 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
     );
   };
 
+  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(pool.xChainId);
+  const gasChecker = useXCallGasChecker(pool.xChainId, undefined);
+
   return (
     <Box width={upSmall ? 1 / 2 : 1}>
       {!upSmall && <RespoRewardsInfo />}
@@ -278,15 +232,13 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
           </Flex>
 
           <Modal isOpen={open} onDismiss={toggleOpen}>
-            <ModalContent>
+            <ModalContent noMessages>
               <Typography textAlign="center" mb="5px">
                 {shouldStake ? 'Stake LP tokens?' : 'Unstake LP tokens?'}
               </Typography>
-
               <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
                 {differenceAmount.abs().dp(2).toFormat()}
               </Typography>
-
               <Flex my={5}>
                 <Box width={1 / 2} className="border-right">
                   <Typography textAlign="center">Before</Typography>
@@ -302,19 +254,29 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
                   </Typography>
                 </Box>
               </Flex>
-
               <Typography textAlign="center">{description}</Typography>
-
               <Flex justifyContent="center" mt={4} pt={4} className="border-top">
                 <TextButton onClick={toggleOpen} fontSize={14}>
                   Cancel
                 </TextButton>
-                <Button onClick={handleConfirm} fontSize={14} disabled={!hasEnoughICX}>
-                  {shouldStake ? 'Stake' : 'Unstake'}
-                </Button>
+                {isWrongChain ? (
+                  <Button onClick={handleSwitchChain} fontSize={14}>
+                    <Trans>Switch to</Trans>
+                    {` ${getNetworkDisplayName(pool.xChainId)}`}
+                  </Button>
+                ) : (
+                  <Button onClick={handleConfirm} fontSize={14} disabled={!gasChecker.hasEnoughGas}>
+                    {shouldStake ? 'Stake' : 'Unstake'}
+                  </Button>
+                )}
               </Flex>
-
-              {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
+              {!gasChecker.hasEnoughGas && (
+                <Flex justifyContent="center" paddingY={2}>
+                  <Typography maxWidth="320px" color="alert" textAlign="center">
+                    {gasChecker.errorMessage}
+                  </Typography>
+                </Flex>
+              )}
             </ModalContent>
           </Modal>
         </>

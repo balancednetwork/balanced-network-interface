@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -21,6 +20,7 @@ import { useLiquidityTokenBalance } from '@/store/wallet/hooks';
 import { formatBigNumber } from '@/utils';
 
 import { MAX_BOOST } from '@/app/components/home/BBaln/utils';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { getXChainType, useXAccount } from '@balancednetwork/xwagmi';
 
@@ -32,7 +32,9 @@ export default function LPDescription() {
   const { independentField, typedValue, otherTypedValue } = useMintState();
   const sources = useSources();
   const getResponsiveRewardShare = useResponsivePoolRewardShare();
-  const { account } = useIconReact();
+  const signedInWallets = useSignedInWallets();
+  const signedIn = useMemo(() => signedInWallets.length > 0, [signedInWallets]);
+
   const upSmall = useMedia('(min-width: 600px)');
   const userPoolBalance = useLiquidityTokenBalance(`${lpXChainId}/${xAccount?.address}`, pair);
   const totalPoolTokens = pair?.totalSupply;
@@ -121,7 +123,7 @@ export default function LPDescription() {
 
   return (
     <>
-      <Flex bg="bg2" flex={1} flexDirection="column" minHeight={account ? [505, 350] : [355, 320]}>
+      <Flex bg="bg2" flex={1} flexDirection="column" minHeight={signedIn ? [505, 350] : [355, 320]}>
         {pairState === PairState.NOT_EXISTS && (
           <Flex flex={1} padding={[5, 7]} flexDirection="column">
             <Typography variant="h3" mb={2} marginBottom={40}>
@@ -174,7 +176,7 @@ export default function LPDescription() {
                   borderRight: [0, '1px solid rgba(255, 255, 255, 0.15)'],
                 }}
               >
-                {pair && !account && (
+                {pair && !signedIn && (
                   <Flex alignItems="center" justifyContent="center" height="100%">
                     <Typography textAlign="center" marginBottom="5px" color="text1">
                       <Trans>Sign in to view your liquidity details.</Trans>
@@ -182,7 +184,7 @@ export default function LPDescription() {
                   </Flex>
                 )}
 
-                {pair && account && (
+                {pair && signedIn && (
                   <>
                     <Box sx={{ margin: '15px 0 25px 0' }}>
                       <Typography textAlign="center" marginBottom="5px" color="text1">

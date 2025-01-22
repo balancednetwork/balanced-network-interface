@@ -33,12 +33,11 @@ const Wrapper = styled(Flex)`
 `;
 
 export default function LiquidityPoolsPanel() {
-  const signedInWallets = useSignedInWallets();
   const [panelType, setPanelType] = useState<PanelType>(PanelType.AllPools);
   const theme = useTheme();
   const isSmallScreen = useMedia(`(minWidth: ${theme.mediaWidth.upSmall})`);
   const [query, setQuery] = React.useState('');
-
+  const signedInWallets = useSignedInWallets();
   const signedIn = useMemo(() => signedInWallets.length > 0, [signedInWallets]);
 
   const handleSwitch = (v: PanelType) => {

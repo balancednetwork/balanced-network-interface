@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useMedia } from 'react-use';
@@ -16,26 +15,25 @@ import { Typography } from '@/app/theme';
 import QuestionIcon from '@/assets/icons/question.svg';
 import { useLPReward } from '@/queries/reward';
 import { useBBalnAmount, useDynamicBBalnAmount, useSources, useTotalSupply } from '@/store/bbaln/hooks';
-import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { bnJs, getXChainType, useXAccount, useXClaimRewards } from '@balancednetwork/xwagmi';
+import { bnJs, getNetworkDisplayName, getXChainType, useXAccount, useXClaimRewards } from '@balancednetwork/xwagmi';
 
+import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
+import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useSavingsXChainId } from '@/store/savings/hooks';
-import { formatBalance } from '@/utils/formatter';
 import PositionRewardsInfo from './PositionRewardsInfo';
 import RewardsGrid from './RewardsGrid';
 
 const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   const savingsXChainId = useSavingsXChainId();
   const xAccount = useXAccount(getXChainType(savingsXChainId));
+  const account = xAccount?.address;
 
-  const { data: reward } = useLPReward(`${savingsXChainId}/${xAccount?.address}`);
+  const { data: reward } = useLPReward(`${savingsXChainId}/${account}`);
 
   const [isOpen, setOpen] = React.useState(false);
 
-  const { account } = useIconReact();
-  const addTransaction = useTransactionAdder();
   const sources = useSources();
   const totalSupplyBBaln = useTotalSupply();
   const dynamicBBalnAmount = useDynamicBBalnAmount();
@@ -96,6 +94,9 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
 
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
   };
+
+  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(savingsXChainId);
+  const gasChecker = useXCallGasChecker(savingsXChainId, undefined);
 
   return (
     <>
@@ -159,7 +160,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
       </Box>
 
       <Modal isOpen={isOpen} onDismiss={toggleOpen}>
-        <ModalContent>
+        <ModalContent noMessages>
           <Typography textAlign="center" mb={1}>
             <Trans>Claim liquidity incentives?</Trans>
           </Typography>
@@ -195,10 +196,24 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
             <TextButton onClick={toggleOpen} fontSize={14}>
               <Trans>Not now</Trans>
             </TextButton>
-            <Button onClick={handleClaim} fontSize={14} disabled={!hasEnoughICX}>
-              <Trans>Claim</Trans>
-            </Button>
+            {isWrongChain ? (
+              <Button onClick={handleSwitchChain} fontSize={14}>
+                <Trans>Switch to</Trans>
+                {` ${getNetworkDisplayName(savingsXChainId)}`}
+              </Button>
+            ) : (
+              <Button onClick={handleClaim} fontSize={14} disabled={!hasEnoughICX}>
+                <Trans>Claim</Trans>
+              </Button>
+            )}
           </Flex>
+          {!gasChecker.hasEnoughGas && (
+            <Flex justifyContent="center" paddingY={2}>
+              <Typography maxWidth="320px" color="alert" textAlign="center">
+                {gasChecker.errorMessage}
+              </Typography>
+            </Flex>
+          )}
         </ModalContent>
       </Modal>
     </>

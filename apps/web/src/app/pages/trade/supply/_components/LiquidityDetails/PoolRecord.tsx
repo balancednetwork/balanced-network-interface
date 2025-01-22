@@ -141,7 +141,9 @@ export const PoolRecord = ({
             baseCurrency={baseAmount.currency}
             quoteCurrency={quoteAmount.currency}
           />
-          <DataText ml={2}>{pairName}</DataText>
+          <DataText ml={2}>
+            {pairName}-{pool.poolId}
+          </DataText>
           <StyledArrowDownIcon />
         </Flex>
         <DataText>

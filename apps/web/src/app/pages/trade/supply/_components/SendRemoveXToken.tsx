@@ -33,54 +33,15 @@ interface SendRemoveXTokenProps {
   onResetError: () => void;
 }
 
-enum SendState {
-  NONE,
-  SIGNING,
-  SENDING,
-  SENT_SUCCESS,
-  SENT_FAILURE,
-}
-
-enum RemoveState {
-  NONE,
-  SIGNING,
-  SENDING,
-  SENT_SUCCESS,
-  SENT_FAILURE,
-}
-
 export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetError }: SendRemoveXTokenProps) {
   const queryClient = useQueryClient();
   const { lpXChainId } = useDerivedMintInfo();
 
+  const [isPending, setIsPending] = React.useState(false);
+  const [isSigning, setIsSigning] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
-  const [sendState, setSendState] = React.useState<SendState>(SendState.NONE);
-  const [removeState, setRemoveState] = React.useState<RemoveState>(RemoveState.NONE);
+
   const currentXTransaction = useXTransactionStore(state => state.transactions[pendingTx]);
-
-  useEffect(() => {
-    if (
-      currentXTransaction?.status === XTransactionStatus.success ||
-      currentXTransaction?.status === XTransactionStatus.failure
-    ) {
-      queryClient.invalidateQueries({ queryKey: ['XTokenDepositAmount'] });
-      if (sendState === SendState.SENDING) {
-        setSendState(
-          currentXTransaction?.status === XTransactionStatus.success ? SendState.SENT_SUCCESS : SendState.SENT_FAILURE,
-        );
-        setRemoveState(RemoveState.NONE);
-      }
-
-      if (removeState === RemoveState.SENDING) {
-        setRemoveState(
-          currentXTransaction?.status === XTransactionStatus.success
-            ? RemoveState.SENT_SUCCESS
-            : RemoveState.SENT_FAILURE,
-        );
-        setSendState(SendState.NONE);
-      }
-    }
-  }, [currentXTransaction, queryClient, removeState, sendState]);
 
   const xToken: XToken | undefined = React.useMemo(() => currencies[field]?.wrapped, [currencies, field]);
   const parsedAmount = parsedAmounts[field];
@@ -102,26 +63,47 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
 
   const { data: depositAmount } = useXTokenDepositAmount(xAccount.address, xToken);
 
+  useEffect(() => {
+    const invalidateAndClear = async () => {
+      if (currentXTransaction?.status === XTransactionStatus.success) {
+        await queryClient.invalidateQueries({ queryKey: ['XTokenDepositAmount'] });
+        setIsPending(false);
+        setPendingTx('');
+      }
+    };
+
+    invalidateAndClear();
+  }, [currentXTransaction, queryClient]);
+
+  useEffect(() => {
+    if (currentXTransaction?.status === XTransactionStatus.failure) {
+      setIsPending(false);
+      setPendingTx('');
+    }
+  }, [currentXTransaction]);
+
   const depositXToken = useDepositXToken();
   const withdrawXToken = useWithdrawXToken();
 
   const handleAdd = async () => {
+    console.log('add');
+
     if (!parsedAmount || !xToken || !xAccount || !amountToDeposit) {
       return;
     }
     onResetError();
-    setSendState(SendState.SIGNING);
+    setIsPending(true);
+
     try {
+      setIsSigning(true);
       const txHash = await depositXToken(xAccount.address, amountToDeposit);
-      if (txHash) {
-        setPendingTx(txHash);
-        setSendState(SendState.SENDING);
-      } else {
-        setSendState(SendState.NONE);
-      }
+      setIsSigning(false);
+
+      if (txHash) setPendingTx(txHash);
+      else setIsPending(false);
     } catch (error) {
       console.error('error', error);
-      setSendState(SendState.NONE);
+      setIsPending(false);
     }
   };
 
@@ -131,26 +113,23 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
       return;
     }
     onResetError();
-    setRemoveState(RemoveState.SIGNING);
+    setIsPending(true);
+
     try {
+      setIsSigning(true);
       const txHash = await withdrawXToken(xAccount.address, depositAmount);
-      if (txHash) {
-        setPendingTx(txHash);
-        setRemoveState(RemoveState.SENDING);
-      } else {
-        setRemoveState(RemoveState.NONE);
-      }
+      setIsSigning(false);
+
+      if (txHash) setPendingTx(txHash);
+      else setIsPending(false);
     } catch (error) {
       console.error('error', error);
-      setRemoveState(RemoveState.NONE);
+      setIsPending(false);
     }
   };
 
   const isDeposited = depositAmount && depositAmount.greaterThan(0);
   const { isWrongChain } = useEvmSwitchChain(lpXChainId);
-
-  const isSendPending = sendState === SendState.SIGNING || sendState === SendState.SENDING;
-  const isRemovePending = removeState === RemoveState.SIGNING || removeState === RemoveState.SENDING;
 
   return (
     <Flex alignItems="center" mb={1} hidden={false}>
@@ -163,7 +142,7 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
                   {parsedAmount?.toSignificant(6)} {xToken?.symbol}
                 </Typography>
 
-                {!isSendPending && approvalState !== ApprovalState.APPROVED ? (
+                {!isPending && approvalState !== ApprovalState.APPROVED ? (
                   <SupplyButton
                     disabled={approvalState === ApprovalState.PENDING || isWrongChain}
                     mt={2}
@@ -172,9 +151,10 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
                     {approvalState !== ApprovalState.PENDING ? t`Approve` : t`Approving`}
                   </SupplyButton>
                 ) : (
-                  <SupplyButton disabled={isSendPending || isWrongChain} mt={2} onClick={handleAdd}>
-                    {(sendState === SendState.NONE || sendState === SendState.SIGNING) && t`Send`}
-                    {sendState === SendState.SENDING && t`Sending`}
+                  <SupplyButton disabled={isPending || isWrongChain} mt={2} onClick={handleAdd}>
+                    {!isPending && 'Send'}
+                    {isPending && isSigning && 'Send'}
+                    {isPending && !isSigning && 'Sending'}
                   </SupplyButton>
                 )}
               </>
@@ -199,9 +179,10 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
                   {depositAmount?.toSignificant(6)} {xToken?.symbol}
                 </Typography>
 
-                <RemoveButton disabled={isRemovePending || isWrongChain} mt={2} onClick={handleRemove}>
-                  {(removeState === RemoveState.NONE || removeState === RemoveState.SIGNING) && t`Remove`}
-                  {removeState === RemoveState.SENDING && t`Removing`}
+                <RemoveButton disabled={isPending || isWrongChain} mt={2} onClick={handleRemove}>
+                  {!isPending && 'Remove'}
+                  {isPending && isSigning && 'Remove'}
+                  {isPending && !isSigning && 'Removing'}
                 </RemoveButton>
               </>
             )}

@@ -26,11 +26,12 @@ import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { formatBigNumber, multiplyCABN, toDec } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { bnJs, getXChainType, useXAccount, useXRemoveLiquidity } from '@balancednetwork/xwagmi';
+import { bnJs, getNetworkDisplayName, getXChainType, useXAccount, useXRemoveLiquidity } from '@balancednetwork/xwagmi';
 
 import { EXA, WEIGHT } from '@/app/components/home/BBaln/utils';
+import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
+import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { formatSymbol } from '@/utils/formatter';
-import { withdrawMessage } from '../utils';
 
 const Wrapper = styled(Flex)`
   padding-left: 0;
@@ -222,8 +223,6 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
     setOpen(!open);
   };
 
-  const addTransaction = useTransactionAdder();
-
   const resetValue = () => {
     sliderInstance.current?.noUiSlider.set(0);
     setState({ typedValue, independentField, inputType: 'slider', portion: 0 });
@@ -241,50 +240,11 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
     resetValue();
 
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    // if (!account) return;
-    // window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-    // const numPortion = new BigNumber(portion / 100);
-    // const t = multiplyCABN(pool.balance, numPortion);
-    // const aT = multiplyCABN(availableBase, numPortion);
-    // const bT = multiplyCABN(availableQuote, numPortion);
-    // bnJs
-    //   .inject({ account })
-    //   .Dex.remove(poolId, toDec(t))
-    //   .then(result => {
-    //     addTransaction(
-    //       { hash: result.result },
-    //       {
-    //         pending: withdrawMessage(
-    //           aT.toFixed(2, { groupSeparator: ',' }),
-    //           aT.currency.symbol ?? '',
-    //           bT.toFixed(2, { groupSeparator: ',' }),
-    //           bT.currency.symbol ?? '',
-    //         ).pendingMessage,
-    //         summary: withdrawMessage(
-    //           aT.toFixed(2, { groupSeparator: ',' }),
-    //           aT.currency.symbol ?? '',
-    //           bT.toFixed(2, { groupSeparator: ',' }),
-    //           bT.currency.symbol ?? '',
-    //         ).successMessage,
-    //       },
-    //     );
-    //     toggleOpen();
-    //   })
-    //   .catch(e => {
-    //     console.error('error', e);
-    //   })
-    //   .finally(() => {
-    //     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-    //     resetValue();
-    //   });
   };
 
   const handleShowConfirm = () => {
     toggleOpen();
   };
-
-  const hasEnoughICX = useHasEnoughICX();
 
   const isValid =
     formattedAmounts[Field.CURRENCY_A] &&
@@ -293,6 +253,9 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
     formattedAmounts[Field.CURRENCY_B] !== '0';
 
   const hasUnstakedLP = availableBase?.greaterThan(0) && availableQuote?.greaterThan(0);
+
+  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(pool.xChainId);
+  const gasChecker = useXCallGasChecker(pool.xChainId, undefined);
 
   return (
     <>
@@ -369,7 +332,7 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
       </Wrapper>
 
       <Modal isOpen={open} onDismiss={toggleOpen}>
-        <ModalContent>
+        <ModalContent noMessages>
           <Typography textAlign="center" mb={3} as="h3" fontWeight="normal">
             <Trans>Withdraw liquidity?</Trans>
           </Typography>
@@ -388,10 +351,25 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
             <TextButton onClick={toggleOpen}>
               <Trans>Cancel</Trans>
             </TextButton>
-            <Button onClick={handleWithdraw} disabled={!hasEnoughICX}>
-              <Trans>Withdraw</Trans>
-            </Button>
+
+            {isWrongChain ? (
+              <Button onClick={handleSwitchChain} fontSize={14}>
+                <Trans>Switch to</Trans>
+                {` ${getNetworkDisplayName(pool.xChainId)}`}
+              </Button>
+            ) : (
+              <Button onClick={handleWithdraw} disabled={!gasChecker.hasEnoughGas}>
+                <Trans>Withdraw</Trans>
+              </Button>
+            )}
           </Flex>
+          {!gasChecker.hasEnoughGas && (
+            <Flex justifyContent="center" paddingY={2}>
+              <Typography maxWidth="320px" color="alert" textAlign="center">
+                {gasChecker.errorMessage}
+              </Typography>
+            </Flex>
+          )}
         </ModalContent>
       </Modal>
     </>

@@ -31,7 +31,7 @@ export default function MMPendingIntents() {
   if (pendingIntents.length === 0) return null;
 
   return (
-    <Flex justifyContent="center" flexDirection="column" paddingY={2}>
+    <Flex justifyContent="center" flexDirection="column" paddingY={2} marginX={-3}>
       {pendingIntents.map(t => (
         <PendingIntent key={t.id} transaction={t} />
       ))}
@@ -133,8 +133,8 @@ function PendingIntent({ transaction }: { transaction: MMTransaction }) {
       </Typography>{' '}
       |{' '}
       {status === TransactionStatus.None && <WarningUnderlineText onClick={handleCancel}>Cancel</WarningUnderlineText>}
-      {status === TransactionStatus.Signing && <Typography>Signing...</Typography>}
-      {status === TransactionStatus.AwaitingConfirmation && <Typography>Canceling...</Typography>}
+      {status === TransactionStatus.Signing && <Typography>Signing</Typography>}
+      {status === TransactionStatus.AwaitingConfirmation && <Typography>Canceling</Typography>}
       {status === TransactionStatus.Success && <Typography>Done</Typography>}
     </Flex>
   );

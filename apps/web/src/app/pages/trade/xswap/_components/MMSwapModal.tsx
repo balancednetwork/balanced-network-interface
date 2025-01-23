@@ -104,7 +104,7 @@ const MMSwapModal = ({
   }, [isFilled, slowDismiss]);
 
   // arb part
-  const xService = useXService('EVM') as unknown as EvmXService;
+  const evmXService = useXService('EVM') as unknown as EvmXService;
   // end arb part
 
   // sui part
@@ -126,8 +126,8 @@ const MMSwapModal = ({
       return;
     }
     setOrderStatus(IntentOrderStatus.SigningAndCreating);
-    const walletClient = await xService.getWalletClient(xChainMap[currencies[Field.INPUT]?.chainId]);
-    const publicClient = xService.getPublicClient(xChainMap[currencies[Field.INPUT]?.chainId]);
+
+    const isFromArbitrum = currencies[Field.INPUT].xChainId === '0xa4b1.arbitrum';
 
     const order: CreateIntentOrderPayload = {
       quote_uuid: trade.uuid,
@@ -135,21 +135,26 @@ const MMSwapModal = ({
       toAddress: recipient, // destination address where funds are transfered to (toChain)
       // fromChain: currencies[Field.INPUT]?.xChainId, // ChainName
       // toChain: currencies[Field.OUTPUT]?.xChainId, // ChainName
-      fromChain: currencies[Field.INPUT].xChainId === '0xa4b1.arbitrum' ? 'arb' : 'sui',
+      fromChain: isFromArbitrum ? 'arb' : 'sui',
       toChain: currencies[Field.OUTPUT].xChainId === 'sui' ? 'sui' : 'arb',
       token: currencies[Field.INPUT]?.address,
       toToken: currencies[Field.OUTPUT]?.address,
       amount: trade.inputAmount.quotient,
       toAmount: trade.outputAmount.quotient,
     };
-    try {
-      const provider =
-        currencies[Field.INPUT].xChainId === '0xa4b1.arbitrum'
-          ? // @ts-ignore
-            new EvmProvider({ walletClient: walletClient, publicClient: publicClient })
-          : // @ts-ignore
-            new SuiProvider({ client: suiClient, wallet: suiWallet, account: suiAccount });
 
+    try {
+      let provider;
+      if (isFromArbitrum) {
+        const evmWalletClient = await evmXService.getWalletClient(xChainMap[currencies[Field.INPUT]?.chainId]);
+        const evmPublicClient = evmXService.getPublicClient(xChainMap[currencies[Field.INPUT]?.chainId]);
+
+        // @ts-ignore
+        provider = new EvmProvider({ walletClient: evmWalletClient, publicClient: evmPublicClient });
+      } else {
+        // @ts-ignore
+        provider = new SuiProvider({ client: suiClient, wallet: suiWallet, account: suiAccount });
+      }
       const intentHash = await intentService.createIntentOrder(order, provider);
 
       setOrderStatus(IntentOrderStatus.Executing);
@@ -168,11 +173,7 @@ const MMSwapModal = ({
         return;
       }
 
-      const intentResult = await intentService.getOrder(
-        intentHash.value,
-        currencies[Field.INPUT].xChainId === '0xa4b1.arbitrum' ? 'arb' : 'sui',
-        provider,
-      );
+      const intentResult = await intentService.getOrder(intentHash.value, isFromArbitrum ? 'arb' : 'sui', provider);
 
       if (!intentResult.ok) {
         return;

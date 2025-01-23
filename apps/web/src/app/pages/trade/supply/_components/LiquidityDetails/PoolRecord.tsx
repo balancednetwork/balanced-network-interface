@@ -17,12 +17,14 @@ import { Field } from '@/store/mint/reducer';
 import { useStakedLPPercent, useWithdrawnPercent } from '@/store/stakedLP/hooks';
 
 import PoolLogoWithNetwork from '@/app/components/PoolLogoWithNetwork';
+import RewardsDisplay from '@/app/components/RewardsDisplay/RewardsDisplay';
 import Skeleton from '@/app/components/Skeleton';
+import { useRatesWithOracle } from '@/queries/reward';
 import { formatBigNumber } from '@/utils';
 import { formatSymbol, getFormattedNumber } from '@/utils/formatter';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { getFormattedRewards, stakedFraction, totalSupply } from '../utils';
-import { getShareReward } from './WithdrawPanel';
+import { getFormattedExternalRewards, getFormattedRewards, stakedFraction, totalSupply } from '../utils';
+import { getExternalShareReward, getShareReward } from './WithdrawPanel';
 
 const DashGrid = styled.div`
   display: grid;
@@ -88,15 +90,15 @@ export const PoolRecord = ({
   pool,
   pair,
   pairData,
-  totalReward,
+  balnReward,
   boostData,
-  apy,
+  externalRewards,
 }: {
   pool: Pool;
   pair: Pair;
   pairData?: PairData;
   poolId: number;
-  totalReward: BigNumber;
+  balnReward: BigNumber;
   externalRewards: CurrencyAmount<Token>[] | undefined;
   boostData: { [key in string]: Source } | undefined;
   apy: number | null;
@@ -105,6 +107,7 @@ export const PoolRecord = ({
   const [baseAmount, quoteAmount] = usePoolTokenAmounts(pool);
 
   const upSmall = useMedia('(min-width: 800px)');
+  const prices = useRatesWithOracle();
   const stakedLPPercent = useStakedLPPercent(poolId); // TODO
   const pairName = `${formatSymbol(baseAmount.currency.symbol) || '...'}/${formatSymbol(quoteAmount.currency.symbol) || '...'}`;
   const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
@@ -115,7 +118,7 @@ export const PoolRecord = ({
   const totalbBaln = useTotalSupply();
   const userBbaln = useBBalnAmount();
   const reward = getShareReward(
-    totalReward,
+    balnReward,
     boostData && boostData[sourceName],
     balances,
     stakedFractionValue,
@@ -167,47 +170,39 @@ export const PoolRecord = ({
 
         {upSmall && (
           <DataText>
-            {boostData ? (
-              apy &&
-              boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName] &&
-              boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].balance.isGreaterThan(0) ? (
-                <>
-                  <APYItem>
-                    <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                      BALN:
-                    </Typography>
-                    {new BigNumber(apy)
-                      .times(
-                        //hotfix pairName due to wrong source name on contract side
-                        boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].workingBalance.dividedBy(
-                          boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].balance,
-                        ),
-                      )
-                      .times(100)
-                      .toFormat(2)}
-                    %
-                  </APYItem>
+            <DataText>
+              {pairData && <RewardsDisplay pair={pairData} boost={boostData} />}
 
-                  {pairData?.feesApy && (
-                    <APYItem>
-                      <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                        <Trans>Fees:</Trans>
-                      </Typography>
-                      {getFormattedNumber(pairData.feesApy, 'percent2')}
-                    </APYItem>
-                  )}
-                </>
-              ) : (
-                '-'
-              )
+              {pairData?.feesApy && (
+                <APYItem>
+                  <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                    <Trans>Fees:</Trans>
+                  </Typography>
+                  {getFormattedNumber(pairData.feesApy, 'percent2')}
+                </APYItem>
+              )}
+            </DataText>
+          </DataText>
+        )}
+        {upSmall && (
+          <DataText>
+            <Typography fontSize={16}>
+              {getFormattedRewards(reward, !externalRewards || externalRewards.length === 0)}
+            </Typography>
+            {externalRewards ? (
+              externalRewards.map(reward => {
+                const rewardPrice = prices?.[reward.currency.wrapped.symbol];
+                const rewardShare = getExternalShareReward(reward, balances, stakedFractionValue, pairData?.stakedLP);
+                return (
+                  <Typography key={reward.currency.symbol} fontSize={16}>
+                    {getFormattedExternalRewards(rewardShare, rewardPrice?.toFixed())}
+                  </Typography>
+                );
+              })
             ) : (
               <Skeleton width={100}></Skeleton>
             )}
           </DataText>
-        )}
-        {upSmall && (
-          //hotfix pairName due to wrong source name on contract side
-          <DataText>{getFormattedRewards(reward)}</DataText>
         )}
       </ListItem>
     </>

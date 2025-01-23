@@ -179,7 +179,7 @@ export default function LiquidityDetails() {
                       pair={pairs[pool.poolId]}
                       pairData={allPairs && allPairs[pool.poolId]}
                       //hotfix due to the fact that sICX/BTCB pair has wrong name on contract side
-                      totalReward={
+                      balnReward={
                         allPairs && allPairs[pool.poolId]
                           ? rewards[
                               allPairs[pool.poolId].name === 'sICX/BTCB' ? 'BTCB/sICX' : allPairs[pool.poolId].name

@@ -181,19 +181,7 @@ export default function LPDescription() {
                 {t`${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} / ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}
                     liquidity pool${upSmall ? ': ' : ''}`}{' '}
                 <Typography fontWeight="normal" fontSize={16} as={upSmall ? 'span' : 'p'}>
-                  {apy && allPairs
-                    ? `${apy
-                        .plus(allPairs[pairName].feesApy)
-                        .times(100)
-                        .dp(2, BigNumber.ROUND_HALF_UP)
-                        .toFixed()}% - ${apy
-                        .times(MAX_BOOST)
-                        .plus(allPairs[pairName].feesApy)
-                        .times(100)
-                        .dp(2)
-                        .toFixed()}%`
-                    : '-'}
-                  {' APR'}
+                  {getApyRange(apy, allPairs, pairName)}
                 </Typography>
               </Typography>
             ) : (

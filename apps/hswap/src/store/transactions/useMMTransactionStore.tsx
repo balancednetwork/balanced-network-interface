@@ -165,11 +165,7 @@ export const Updater = () => {
         pendingIntents.map(async t => {
           const intentStatus = await intentService.getStatus({ task_id: t.taskId });
 
-          if (
-            intentStatus.ok &&
-            (intentStatus.value.status === IntentStatusCode.SOLVED ||
-              intentStatus.value.status === IntentStatusCode.SOLVED_REBALANCING_FAILED)
-          ) {
+          if (intentStatus.ok && intentStatus.value.status === IntentStatusCode.SOLVED) {
             MMTransactionActions.success(t.id);
           }
         }),

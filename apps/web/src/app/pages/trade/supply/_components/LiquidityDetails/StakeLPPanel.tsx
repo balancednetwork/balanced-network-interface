@@ -163,11 +163,13 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     const totalAPR = useMemo(() => {
       let balnAndFeesAPR = new BigNumber(0);
-      if (allPairs && sources) {
+      if (allPairs && sources && sources[sourceName].balance.isGreaterThan(0)) {
         balnAndFeesAPR = new BigNumber(allPairs[pair.poolId!].balnApy)
           .times(sources[sourceName].workingBalance.dividedBy(sources[sourceName].balance))
           .plus(allPairs[poolId].feesApy)
           .times(100);
+      } else if (allPairs && allPairs[poolId].feesApy) {
+        balnAndFeesAPR = new BigNumber(allPairs[poolId].feesApy).times(100);
       }
 
       let totalAPR = balnAndFeesAPR;

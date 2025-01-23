@@ -119,7 +119,7 @@ function PendingIntent({ transaction }: { transaction: MMTransaction }) {
   };
 
   return (
-    <Flex justifyContent="center" alignItems="center" my={1}>
+    <Flex justifyContent="center" alignItems="center" my={1} as="p">
       <Typography textAlign="center">
         <strong>
           {formatBalance(transaction.fromAmount.toFixed(), rates?.[transaction.fromAmount.currency.symbol]?.toFixed())}{' '}

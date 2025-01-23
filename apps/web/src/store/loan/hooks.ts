@@ -25,6 +25,7 @@ import { useRewards } from '@/store/reward/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatUnits, toBigNumber } from '@/utils';
+import { fixWrongSymbol, useWrongSymbol } from '@/utils/formatter';
 import { getXTokenAddress } from '@/utils/xTokens';
 import { getXChainType } from '@balancednetwork/xwagmi';
 import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
@@ -115,7 +116,7 @@ export function useLoanFetchInfo(account?: string | null) {
             resultDebt.holdings &&
               Object.keys(resultDebt.holdings).forEach(token => {
                 const depositedAmount = new BigNumber(formatUnits(resultDebt.holdings[token]['bnUSD'] || 0, 18, 18));
-                changeBorrowedAmount(depositedAmount, address, token);
+                changeBorrowedAmount(depositedAmount, address, fixWrongSymbol(token));
               });
 
             changeBadDebt(bnUSDbadDebt);
@@ -123,7 +124,9 @@ export function useLoanFetchInfo(account?: string | null) {
           })
           .catch(e => {
             if (e.toString().indexOf('does not have a position')) {
-              supportedSymbols?.forEach(token => changeBorrowedAmount(new BigNumber(0), address, token));
+              supportedSymbols?.forEach(token =>
+                changeBorrowedAmount(new BigNumber(0), address, fixWrongSymbol(token)),
+              );
             }
           });
       }
@@ -161,7 +164,7 @@ export function useLoanFetchInfo(account?: string | null) {
             dispatch(
               setLockingRatio({
                 lockingRatio: Number(formatUnits(ratio, 4, 6)),
-                collateralType: supportedSymbols[index],
+                collateralType: fixWrongSymbol(supportedSymbols[index]),
               }),
             );
         });
@@ -394,7 +397,7 @@ function useLiquidationRatioRaw() {
   return useQuery({
     queryKey: [collateralType, `LiquidationRatio`],
     queryFn: async () => {
-      const data = await bnJs.Loans.getLiquidationRatio(collateralType);
+      const data = await bnJs.Loans.getLiquidationRatio(useWrongSymbol(collateralType));
       return data;
     },
   });

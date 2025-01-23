@@ -256,3 +256,14 @@ export const fixWrongSymbol = (symbol: string) => {
 
   return symbol;
 };
+
+export const useWrongSymbol = (symbol: string) => {
+  const mapping = {
+    afSUI: 'AFSUI',
+    haSUI: 'HASUI',
+    vSUI: 'VSUI',
+    JitoSOL: 'JITOSOL',
+  };
+
+  return mapping[symbol] || symbol;
+};

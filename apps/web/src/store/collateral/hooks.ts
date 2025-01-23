@@ -20,7 +20,7 @@ import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCrossChainWalletBalances, useICONWalletBalances } from '@/store/wallet/hooks';
 import { CurrencyKey, IcxDisplayType } from '@/types';
 import { formatUnits, maxAmountSpend, toBigNumber } from '@/utils';
-import { getBalanceDecimals } from '@/utils/formatter';
+import { formatSymbol, getBalanceDecimals } from '@/utils/formatter';
 import { getXChainType } from '@balancednetwork/xwagmi';
 import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
 import { SUPPORTED_XCALL_CHAINS } from '@balancednetwork/xwagmi';
@@ -171,7 +171,7 @@ export function useCollateralFetchInfo(account?: string | null) {
   const allWallets = useSignedInWallets();
   const { getPendingTransactions } = useXTransactionStore();
   const pendingTxs = getPendingTransactions(allWallets);
-  console.log('supported tokens', supportedCollateralTokens);
+
   const isSupported = React.useCallback(
     (symbol: string) => {
       return (
@@ -193,41 +193,30 @@ export function useCollateralFetchInfo(account?: string | null) {
         wallet.xChainId === '0x1.icon' || wallet.xChainId === '0x2.icon'
           ? wallet.address
           : `${wallet.xChainId}/${wallet.address}`;
-      try {
-        const res = await bnJs.Loans.getAccountPositions(address);
-
-        if (supportedCollateralTokens && res.holdings) {
-          for (const symbol of Object.keys(res.holdings)) {
-            if (isSupported(symbol)) {
-              const token = xTokenMap['0x1.icon'].find(
-                t => t.address.toLowerCase() === supportedCollateralTokens[symbol].toLowerCase(),
-              )!;
-              if (!token) return;
-
-              const depositedAmount = new BigNumber(
-                formatUnits(res.holdings[symbol][symbol] || 0, Number(token.decimals), 18),
-              );
-              changeDepositedAmount(depositedAmount, token.symbol, wallet.xChainId);
-            }
-          }
-        }
-      } catch (e: any) {
-        if (e.toString().indexOf('does not have a position')) {
-          if (supportedCollateralTokens) {
-            for (const symbol of Object.keys(supportedCollateralTokens)) {
+      bnJs.Loans.getAccountPositions(address)
+        .then(res => {
+          supportedCollateralTokens &&
+            res.holdings &&
+            Object.keys(res.holdings).forEach(async symbol => {
               if (isSupported(symbol)) {
-                const token = xTokenMap['0x1.icon'].find(
-                  t => t.address.toLowerCase() === supportedCollateralTokens[symbol].toLowerCase(),
-                )!;
-                if (!token) return;
-                changeDepositedAmount(new BigNumber(0), token.symbol, wallet.xChainId);
+                const decimals: string = await bnJs.getContract(supportedCollateralTokens[symbol]).decimals();
+                const depositedAmount = new BigNumber(
+                  formatUnits(res.holdings[symbol][symbol] || 0, Number(decimals), 18),
+                );
+                changeDepositedAmount(depositedAmount, formatSymbol(symbol), wallet.xChainId);
               }
-            }
+            });
+        })
+        .catch(e => {
+          if (e.toString().indexOf('does not have a position')) {
+            supportedCollateralTokens &&
+              Object.keys(supportedCollateralTokens).forEach(symbol => {
+                if (isSupported(symbol)) {
+                  changeDepositedAmount(new BigNumber(0), formatSymbol(symbol), wallet.xChainId);
+                }
+              });
           }
-        } else {
-          console.error(e);
-        }
-      }
+        });
     },
     [changeDepositedAmount, supportedCollateralTokens, isSupported],
   );

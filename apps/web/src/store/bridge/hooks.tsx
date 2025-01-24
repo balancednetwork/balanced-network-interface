@@ -5,6 +5,7 @@ import { t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { useCheckSolanaAccount } from '@/app/components/SolanaAccountExistenceWarning';
 import { sARCH } from '@/constants/tokens1';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { useSignedInWallets } from '@/hooks/useWallets';
@@ -135,6 +136,8 @@ export function useDerivedBridgeInfo() {
   const stellarValidationQuery = useValidateStellarAccount(bridgeDirection.to === 'stellar' ? recipient : undefined);
   const { data: stellarValidation } = stellarValidationQuery;
 
+  const isSolanaAccountActive = useCheckSolanaAccount(bridgeDirection.to, currencyAmountToBridge);
+
   const errorMessage = useMemo(() => {
     if (!account) return t`Connect wallet`;
 
@@ -160,6 +163,9 @@ export function useDerivedBridgeInfo() {
         if (stellarValidationQuery.isLoading) {
           return t`Validating Stellar account`;
         }
+        if (!isSolanaAccountActive) {
+          return t`Solana wallet inactive`;
+        }
         return undefined;
       }
     }
@@ -171,6 +177,7 @@ export function useDerivedBridgeInfo() {
     account,
     recipient,
     stellarValidationQuery,
+    isSolanaAccountActive,
   ]);
 
   const selectedTokenWalletBalance = React.useMemo(() => {

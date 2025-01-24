@@ -11,6 +11,7 @@ import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { BrightPanel } from '@/app/components/Panel';
 import { CurrencySelectionType, SelectorType } from '@/app/components/SearchModal/CurrencySearch';
+import SolanaAccountExistenceWarning from '@/app/components/SolanaAccountExistenceWarning';
 import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
 import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
 import { Typography } from '@/app/theme';
@@ -84,8 +85,15 @@ export default function BridgeTransferForm({ openModal }) {
     }
   }, [onChangeRecipient, xAccount, manualAddresses[bridgeDirection.to], bridgeDirection.to]);
 
-  const { errorMessage, selectedTokenWalletBalance, account, canBridge, maximumBridgeAmount, stellarValidation } =
-    useDerivedBridgeInfo();
+  const {
+    errorMessage,
+    selectedTokenWalletBalance,
+    account,
+    canBridge,
+    maximumBridgeAmount,
+    stellarValidation,
+    currencyAmountToBridge,
+  } = useDerivedBridgeInfo();
   const xChainType = getXChainType(bridgeDirection.from);
   const xConnectors = useXConnectors(xChainType);
   const xConnect = useXConnect();
@@ -144,7 +152,9 @@ export default function BridgeTransferForm({ openModal }) {
 
           <Typography as="div" mb={-1} textAlign="right" hidden={!account}>
             <Trans>Wallet:</Trans>{' '}
-            {`${selectedTokenWalletBalance?.toFixed(4, { groupSeparator: ',' }) ?? 0} ${formatSymbol(currencyToBridge?.symbol)}`}
+            {`${selectedTokenWalletBalance?.toFixed(4, { groupSeparator: ',' }) ?? 0} ${formatSymbol(
+              currencyToBridge?.symbol,
+            )}`}
           </Typography>
 
           <Flex>
@@ -214,6 +224,14 @@ export default function BridgeTransferForm({ openModal }) {
           {!canBridge && maximumBridgeAmount && (
             <BridgeLimitWarning limitAmount={maximumBridgeAmount} onLimitAmountClick={handleMaximumBridgeAmountClick} />
           )}
+
+          <SolanaAccountExistenceWarning
+            destinationChainId={bridgeDirection.to}
+            currencyAmount={currencyAmountToBridge}
+            // onActivate={() => {
+            //   handleOutputType('0.002');
+            // }}
+          />
         </AutoColumn>
       </BrightPanel>
     </>

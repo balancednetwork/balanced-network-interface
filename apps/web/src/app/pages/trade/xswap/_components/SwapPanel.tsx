@@ -247,6 +247,7 @@ export default function SwapPanel() {
               recipient={recipient}
               direction={direction}
               stellarValidation={stellarValidation}
+              canSwap={canSwap}
             />
           </Flex>
 

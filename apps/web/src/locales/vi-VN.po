@@ -891,6 +891,10 @@ msgstr ""
 msgid "Transfer fee: <0>{formattedXCallFee}</0>"
 msgstr ""
 
+#: src/store/swap/hooks.ts
+msgid "Swap not supported"
+msgstr ""
+
 #: src/app/pages/vote/_components/BribesPanel/index.tsx
 msgid "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
 msgstr ""
@@ -1986,8 +1990,8 @@ msgid "Voting has ended"
 msgstr "Bỏ phiếu đã kết thúc"
 
 #: src/store/swap/hooks.ts
-msgid "Insufficient liquidity"
-msgstr "Không đủ thanh khoản (liquidity)"
+#~ msgid "Insufficient liquidity"
+#~ msgstr "Không đủ thanh khoản (liquidity)"
 
 #: src/store/swap/hooks.ts
 msgid "Reduce price impact"
@@ -2192,6 +2196,10 @@ msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Executed."
+msgstr ""
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+msgid "Approving"
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
@@ -2708,6 +2716,10 @@ msgstr ""
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Submit proposal"
 msgstr "Gửi đề xuất"
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+msgid "Approve transfer"
+msgstr ""
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 msgid "FEES (24H)"

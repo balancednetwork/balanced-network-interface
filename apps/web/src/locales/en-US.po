@@ -856,6 +856,10 @@ msgstr "Search assets and blockchains..."
 msgid "Transfer fee: <0>{formattedXCallFee}</0>"
 msgstr "Transfer fee: <0>{formattedXCallFee}</0>"
 
+#: src/store/swap/hooks.ts
+msgid "Swap not supported"
+msgstr "Swap not supported"
+
 #: src/app/pages/vote/_components/BribesPanel/index.tsx
 msgid "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
 msgstr "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
@@ -1924,8 +1928,8 @@ msgid "Voting has ended"
 msgstr "Voting has ended"
 
 #: src/store/swap/hooks.ts
-msgid "Insufficient liquidity"
-msgstr "Insufficient liquidity"
+#~ msgid "Insufficient liquidity"
+#~ msgstr "Insufficient liquidity"
 
 #: src/store/swap/hooks.ts
 msgid "Reduce price impact"
@@ -2131,6 +2135,10 @@ msgstr ""
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Executed."
 msgstr "Executed."
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+msgid "Approving"
+msgstr "Approving"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Unlocked {0} BALN."
@@ -2642,6 +2650,10 @@ msgstr "Voting weight: {0} bBALN"
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Submit proposal"
 msgstr "Submit proposal"
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+msgid "Approve transfer"
+msgstr "Approve transfer"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 msgid "FEES (24H)"

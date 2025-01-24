@@ -11,6 +11,7 @@ import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import CrossIcon from '@/assets/icons/failure.svg';
 import TickIcon from '@/assets/icons/tick.svg';
+import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
@@ -103,7 +104,7 @@ const MMSwapModal = ({
   }, [isFilled, slowDismiss]);
 
   // arb part
-  const xService = useXService('EVM') as unknown as EvmXService;
+  const evmXService = useXService('EVM') as unknown as EvmXService;
   // end arb part
 
   // sui part
@@ -112,13 +113,21 @@ const MMSwapModal = ({
   const suiAccount = useCurrentAccount();
   // end sui part
 
+  const { approvalState, approveCallback } = useApproveCallback(
+    trade?.inputAmount,
+    trade?.inputAmount.currency.xChainId === '0xa4b1.arbitrum'
+      ? intentService.getChainConfig('arb').intentContract
+      : // sui doesn't need approval. '0x' is a dummy address to pass the check
+        '0x',
+  );
+
   const handleMMSwap = async () => {
     if (!account || !recipient || !currencies[Field.INPUT] || !currencies[Field.OUTPUT] || !trade) {
       return;
     }
     setOrderStatus(IntentOrderStatus.SigningAndCreating);
-    const walletClient = await xService.getWalletClient(xChainMap[currencies[Field.INPUT]?.chainId]);
-    const publicClient = xService.getPublicClient(xChainMap[currencies[Field.INPUT]?.chainId]);
+
+    const isFromArbitrum = currencies[Field.INPUT].xChainId === '0xa4b1.arbitrum';
 
     const order: CreateIntentOrderPayload = {
       quote_uuid: trade.uuid,
@@ -126,21 +135,26 @@ const MMSwapModal = ({
       toAddress: recipient, // destination address where funds are transfered to (toChain)
       // fromChain: currencies[Field.INPUT]?.xChainId, // ChainName
       // toChain: currencies[Field.OUTPUT]?.xChainId, // ChainName
-      fromChain: currencies[Field.INPUT].xChainId === '0xa4b1.arbitrum' ? 'arb' : 'sui',
+      fromChain: isFromArbitrum ? 'arb' : 'sui',
       toChain: currencies[Field.OUTPUT].xChainId === 'sui' ? 'sui' : 'arb',
       token: currencies[Field.INPUT]?.address,
       toToken: currencies[Field.OUTPUT]?.address,
       amount: trade.inputAmount.quotient,
       toAmount: trade.outputAmount.quotient,
     };
-    try {
-      const provider =
-        currencies[Field.INPUT].xChainId === '0xa4b1.arbitrum'
-          ? // @ts-ignore
-            new EvmProvider({ walletClient: walletClient, publicClient: publicClient })
-          : // @ts-ignore
-            new SuiProvider({ client: suiClient, wallet: suiWallet, account: suiAccount });
 
+    try {
+      let provider;
+      if (isFromArbitrum) {
+        const evmWalletClient = await evmXService.getWalletClient(xChainMap[currencies[Field.INPUT]?.chainId]);
+        const evmPublicClient = evmXService.getPublicClient(xChainMap[currencies[Field.INPUT]?.chainId]);
+
+        // @ts-ignore
+        provider = new EvmProvider({ walletClient: evmWalletClient, publicClient: evmPublicClient });
+      } else {
+        // @ts-ignore
+        provider = new SuiProvider({ client: suiClient, wallet: suiWallet, account: suiAccount });
+      }
       const intentHash = await intentService.createIntentOrder(order, provider);
 
       setOrderStatus(IntentOrderStatus.Executing);
@@ -159,11 +173,7 @@ const MMSwapModal = ({
         return;
       }
 
-      const intentResult = await intentService.getOrder(
-        intentHash.value,
-        currencies[Field.INPUT].xChainId === '0xa4b1.arbitrum' ? 'arb' : 'sui',
-        provider,
-      );
+      const intentResult = await intentService.getOrder(intentHash.value, isFromArbitrum ? 'arb' : 'sui', provider);
 
       if (!intentResult.ok) {
         return;
@@ -222,9 +232,7 @@ const MMSwapModal = ({
 
         <Typography variant="p" fontWeight="bold" textAlign="center" color="text">
           <Trans>
-            {`${formatBigNumber(new BigNumber(trade?.executionPrice.toFixed() || 0), 'ratio')} ${
-              trade?.executionPrice.quoteCurrency.symbol
-            } 
+            {`${trade?.executionPrice.toSignificant(6)} ${trade?.executionPrice.quoteCurrency.symbol} 
               per ${trade?.executionPrice.baseCurrency.symbol}`}
           </Trans>
         </Typography>
@@ -319,9 +327,17 @@ const MMSwapModal = ({
                       <Trans>Swapping</Trans>
                     </StyledButton>
                   ) : (
-                    <StyledButton onClick={handleMMSwap} disabled={!gasChecker.hasEnoughGas}>
-                      <Trans>Swap</Trans>
-                    </StyledButton>
+                    <>
+                      {approvalState !== ApprovalState.APPROVED ? (
+                        <StyledButton onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
+                          {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
+                        </StyledButton>
+                      ) : (
+                        <StyledButton onClick={handleMMSwap} disabled={!gasChecker.hasEnoughGas}>
+                          <Trans>Swap</Trans>
+                        </StyledButton>
+                      )}
+                    </>
                   ))}
               </Flex>
             </motion.div>

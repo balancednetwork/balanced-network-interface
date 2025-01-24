@@ -891,6 +891,10 @@ msgstr ""
 msgid "Transfer fee: <0>{formattedXCallFee}</0>"
 msgstr ""
 
+#: src/store/swap/hooks.ts
+msgid "Swap not supported"
+msgstr ""
+
 #: src/app/pages/vote/_components/BribesPanel/index.tsx
 msgid "APR = (Average bribe (USD) x 52) ÷ (bBALN votes x BALN price)"
 msgstr ""
@@ -1986,8 +1990,8 @@ msgid "Voting has ended"
 msgstr ""
 
 #: src/store/swap/hooks.ts
-msgid "Insufficient liquidity"
-msgstr "유동성 물량 부족"
+#~ msgid "Insufficient liquidity"
+#~ msgstr "유동성 물량 부족"
 
 #: src/store/swap/hooks.ts
 msgid "Reduce price impact"
@@ -2192,6 +2196,10 @@ msgstr ""
 
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Executed."
+msgstr ""
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+msgid "Approving"
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
@@ -2708,6 +2716,10 @@ msgstr ""
 #: src/app/pages/vote/proposals/new/page.tsx
 msgid "Submit proposal"
 msgstr "제안 제출"
+
+#: src/app/components/home/_components/xCollateralModal/index.tsx
+msgid "Approve transfer"
+msgstr ""
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 msgid "FEES (24H)"

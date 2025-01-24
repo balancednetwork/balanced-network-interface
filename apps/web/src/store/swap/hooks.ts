@@ -347,7 +347,7 @@ export function useDerivedSwapInfo(): {
     inputError = t`Validating Stellar account`;
   }
 
-  const isSolanaAccountActive = useCheckSolanaAccount(direction.to, parsedAmounts[Field.OUTPUT]);
+  const isSolanaAccountActive = useCheckSolanaAccount(direction.to, parsedAmounts[Field.OUTPUT], recipient ?? '');
   if (!isSolanaAccountActive) {
     inputError = t`Solana wallet inactive`;
   }

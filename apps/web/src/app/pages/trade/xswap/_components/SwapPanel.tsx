@@ -268,6 +268,7 @@ export default function SwapPanel() {
           <SolanaAccountExistenceWarning
             destinationChainId={direction.to}
             currencyAmount={parsedAmounts[Field.OUTPUT]}
+            recipient={recipient ?? ''}
             onActivate={() => {
               handleOutputType('0.002');
             }}

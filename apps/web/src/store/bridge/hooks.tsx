@@ -136,7 +136,7 @@ export function useDerivedBridgeInfo() {
   const stellarValidationQuery = useValidateStellarAccount(bridgeDirection.to === 'stellar' ? recipient : undefined);
   const { data: stellarValidation } = stellarValidationQuery;
 
-  const isSolanaAccountActive = useCheckSolanaAccount(bridgeDirection.to, currencyAmountToBridge);
+  const isSolanaAccountActive = useCheckSolanaAccount(bridgeDirection.to, currencyAmountToBridge, recipient ?? '');
 
   const errorMessage = useMemo(() => {
     if (!account) return t`Connect wallet`;

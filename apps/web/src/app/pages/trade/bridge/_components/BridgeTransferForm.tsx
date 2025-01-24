@@ -228,6 +228,7 @@ export default function BridgeTransferForm({ openModal }) {
           <SolanaAccountExistenceWarning
             destinationChainId={bridgeDirection.to}
             currencyAmount={currencyAmountToBridge}
+            recipient={recipient ?? ''}
             // onActivate={() => {
             //   handleOutputType('0.002');
             // }}

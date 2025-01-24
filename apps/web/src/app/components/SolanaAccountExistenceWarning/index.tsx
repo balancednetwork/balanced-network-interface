@@ -12,14 +12,14 @@ const SOL_MINIMUM_AMOUNT = 2000000; // 0.002 * 10^9
 export const useCheckSolanaAccount = (
   destinationChainId: XChainId,
   currencyAmount: CurrencyAmount<XToken> | undefined,
+  recipient: string,
 ) => {
   const [isActive, setIsActive] = useState(true);
-  const xAccount = useXAccount('SOLANA');
 
   useEffect(() => {
     const checkAccount = async () => {
-      if (destinationChainId === 'solana' && xAccount.address && currencyAmount?.currency.symbol === 'SOL') {
-        if ((await isAccountNonExistent(xAccount.address)) && currencyAmount.lessThan(SOL_MINIMUM_AMOUNT)) {
+      if (destinationChainId === 'solana' && recipient && currencyAmount?.currency.symbol === 'SOL') {
+        if ((await isAccountNonExistent(recipient)) && currencyAmount.lessThan(SOL_MINIMUM_AMOUNT)) {
           setIsActive(false);
         } else {
           setIsActive(true);
@@ -28,7 +28,7 @@ export const useCheckSolanaAccount = (
     };
 
     checkAccount();
-  }, [destinationChainId, currencyAmount, xAccount]);
+  }, [destinationChainId, currencyAmount, recipient]);
 
   return isActive;
 };
@@ -36,13 +36,15 @@ export const useCheckSolanaAccount = (
 const SolanaAccountExistenceWarning = ({
   destinationChainId,
   currencyAmount,
+  recipient,
   onActivate,
 }: {
   destinationChainId: XChainId;
   currencyAmount: CurrencyAmount<XToken> | undefined;
+  recipient: string;
   onActivate?: () => void;
 }) => {
-  const isActive = useCheckSolanaAccount(destinationChainId, currencyAmount);
+  const isActive = useCheckSolanaAccount(destinationChainId, currencyAmount, recipient);
 
   if (isActive) {
     return <></>;

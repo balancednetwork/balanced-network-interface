@@ -25,7 +25,7 @@ const COMPACT_ITEM_COUNT = 8;
 
 const List = styled.div`
   -webkit-overflow-scrolling: touch;
-  min-width: 840px;
+  min-width: 915px;
   overflow: hidden;
 `;
 
@@ -34,9 +34,9 @@ export const Grid = styled.div`
   margin: 20px 0;
   gap: 1em;
   align-items: center;
-  grid-template-columns: 6fr 5fr 6fr 5fr 7fr;
+  grid-template-columns: 12fr 10fr 12fr 12fr 13fr;
   ${({ theme }) => theme.mediaWidth.upLarge`
-    grid-template-columns: 25fr 14fr 15fr 14fr 15fr;
+    grid-template-columns: 22fr 14fr 15fr 16fr 15fr;
   `}
 
   > *, ${HeaderText} {

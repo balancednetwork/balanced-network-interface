@@ -32,6 +32,8 @@ export type InterestPeriod = { display: string; days: number };
 export type WithdrawalFloorDataType = {
   floor: BigNumber;
   current: BigNumber;
+  percentageFloor: BigNumber;
+  floorTimeDecayInHours: BigNumber;
   available: CurrencyAmount<Currency>;
   token: TokenStats;
 };

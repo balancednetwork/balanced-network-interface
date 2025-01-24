@@ -149,7 +149,10 @@ export function useWithdrawalsFloorDEXData(): UseQueryResult<WithdrawalFloorData
         const current = new BigNumber(assetDataSet[1]);
         const percentageFloor = new BigNumber(assetDataSet[2]).div(10000);
         const floorTimeDecayInHours = new BigNumber(assetDataSet[3]).div(1000 * 1000 * 60 * 60);
-        const available = CurrencyAmount.fromRawAmount(token, current.minus(floor).toFixed(0));
+        const available = CurrencyAmount.fromRawAmount(
+          token,
+          current.minus(floor).isNaN() ? 0 : current.minus(floor).toFixed(0),
+        );
 
         return {
           token,

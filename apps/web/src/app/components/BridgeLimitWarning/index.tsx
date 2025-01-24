@@ -25,7 +25,7 @@ const BridgeLimitWarning: React.FC<BridgeLimitWarningProps> = props => {
             <Trans>Only</Trans>{' '}
             <UnderlineText onClick={() => onLimitAmountClick(limitAmount)}>
               <Typography color="primaryBright" as="a">
-                {limitAmount?.toFixed(4)} {limitAmount?.currency?.symbol}
+                {limitAmount?.toFixed(4, { groupSeparator: ',' })} {limitAmount?.currency?.symbol}
               </Typography>
             </UnderlineText>{' '}
           </>

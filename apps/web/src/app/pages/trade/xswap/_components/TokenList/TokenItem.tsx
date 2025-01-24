@@ -12,6 +12,7 @@ import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import useTimestampRounded from '@/hooks/useTimestampRounded';
 import { TokenStats, useTokenTrendData } from '@/queries/backendv2';
 import { useRatesWithOracle } from '@/queries/reward';
+import { useWithdrawalsFloorDEXData } from '@/store/swap/hooks';
 import { formatPrice, formatPriceChange, getFormattedNumber } from '@/utils/formatter';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
@@ -20,7 +21,7 @@ import { xTokenMap } from '@balancednetwork/xwagmi';
 import { XToken } from '@balancednetwork/xwagmi';
 import { getSupportedXChainIdsForToken } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
@@ -50,6 +51,7 @@ const TokenItem = ({ token, price, isLast }: TokenItemProps) => {
   const { data: trendData } = useTokenTrendData(token.symbol, start, end);
   const { data: assetManagerTokensBreakdown } = useAssetManagerTokens();
   const isSmall = !useMedia(`(min-width: ${sizes.upLarge}px)`);
+  const { data: withdrawalLimits } = useWithdrawalsFloorDEXData();
 
   const currency = React.useMemo(
     () => (token.symbol === 'ICX' ? ICX : COMBINED_TOKENS_MAP_BY_ADDRESS[token.address]),
@@ -72,6 +74,18 @@ const TokenItem = ({ token, price, isLast }: TokenItemProps) => {
       return breakdown;
     }, [] as CurrencyAmount<XToken>[]);
   }, [assetManagerTokensBreakdown, token]);
+
+  const limit = useMemo(() => {
+    const limitData = withdrawalLimits?.find(limit => limit.token.symbol === token.symbol);
+    return limitData;
+  }, [withdrawalLimits, token]);
+
+  const showWarning = useMemo(() => {
+    if (!limit) return false;
+    const availableRatio = limit.current.minus(limit.floor).div(limit.current);
+
+    return limit.percentageFloor.div(2).isGreaterThanOrEqualTo(availableRatio);
+  }, [limit]);
 
   const isOraclePriced = ORACLE_PRICED_TOKENS.includes(token.symbol);
 
@@ -146,11 +160,13 @@ const TokenItem = ({ token, price, isLast }: TokenItemProps) => {
           <Flex alignItems="flex-end" flexDirection="column" pl={2}>
             <Typography variant="p">{`$${getFormattedNumber(token.liquidity, 'number')}`}</Typography>
             <Flex>
-              <Box marginRight={1}>
-                <WithdrawalLimitInfo symbol={token.symbol} spacing={{ x: 0, y: 1 }} />
-              </Box>
+              {limit && (
+                <Box marginRight={1}>
+                  <WithdrawalLimitInfo symbol={token.symbol} spacing={{ x: 0, y: 1 }} />
+                </Box>
+              )}
               {token.price > 0 && (
-                <Typography variant="p" color="text1">
+                <Typography variant="p" color={showWarning ? 'alert' : 'text1'}>
                   {getFormattedNumber(token.liquidity / token.price, token.price > 1000 ? 'number2' : 'number')}{' '}
                   {token.symbol}
                 </Typography>

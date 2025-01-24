@@ -8,18 +8,18 @@ import { Box } from 'rebass';
 import styled from 'styled-components';
 import QuestionHelper, { QuestionWrapper } from '../QuestionHelper';
 
-const Grid = styled(Box)`
+export const Grid = styled(Box)`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: auto auto;
   row-gap: 6px;
   column-gap: 5px;
 `;
 
-const NetworkName = styled(Box)`
+export const NetworkName = styled(Box)`
   ${({ theme }) => `color: ${theme.colors.text1};`};
 `;
 
-const Amount = styled(Box)`
+export const Amount = styled(Box)`
   text-align: right;
 `;
 

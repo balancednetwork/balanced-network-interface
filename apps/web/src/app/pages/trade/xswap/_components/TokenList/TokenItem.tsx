@@ -4,6 +4,7 @@ import CurrencyLogo from '@/app/components/CurrencyLogo';
 import Divider from '@/app/components/Divider';
 import { DataText } from '@/app/components/List';
 import { MouseoverTooltip } from '@/app/components/Tooltip';
+import WithdrawalLimitInfo from '@/app/components/WithdrawalLimitInfo';
 import { LoaderComponent } from '@/app/pages/vote/_components/styledComponents';
 import { Typography, sizes } from '@/app/theme';
 import { COMBINED_TOKENS_MAP_BY_ADDRESS, ORACLE_PRICED_TOKENS, useICX } from '@/constants/tokens';
@@ -144,12 +145,17 @@ const TokenItem = ({ token, price, isLast }: TokenItemProps) => {
         <DataText>
           <Flex alignItems="flex-end" flexDirection="column" pl={2}>
             <Typography variant="p">{`$${getFormattedNumber(token.liquidity, 'number')}`}</Typography>
-            {token.price > 0 && (
-              <Typography variant="p" color="text1">
-                {getFormattedNumber(token.liquidity / token.price, token.price > 1000 ? 'number2' : 'number')}{' '}
-                {token.symbol}
-              </Typography>
-            )}
+            <Flex>
+              <Box marginRight={1}>
+                <WithdrawalLimitInfo symbol={token.symbol} spacing={{ x: 0, y: 1 }} />
+              </Box>
+              {token.price > 0 && (
+                <Typography variant="p" color="text1">
+                  {getFormattedNumber(token.liquidity / token.price, token.price > 1000 ? 'number2' : 'number')}{' '}
+                  {token.symbol}
+                </Typography>
+              )}
+            </Flex>
           </Flex>
         </DataText>
         <DataText>{trendData ? <Sparkline data={trendData} /> : <LoaderComponent />}</DataText>

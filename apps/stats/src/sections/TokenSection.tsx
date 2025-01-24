@@ -370,18 +370,7 @@ export default React.memo(function TokenSection() {
               >
                 Available
               </HeaderText>
-              <HeaderText
-                style={{ cursor: 'default' }}
-                // role="button"
-                // className={sortBy.key === 'holders' ? sortBy.order : ''}
-                // onClick={() =>
-                //   handleSortSelect({
-                //     key: 'holders',
-                //   })
-                // }
-              >
-                7d trend
-              </HeaderText>
+              <HeaderText style={{ cursor: 'default' }}>7d trend</HeaderText>
             </DashGrid>
           )}
 

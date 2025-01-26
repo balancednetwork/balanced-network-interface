@@ -11,7 +11,6 @@ import { COMBINED_TOKENS_MAP_BY_ADDRESS, ORACLE_PRICED_TOKENS, useICX } from '@/
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import useTimestampRounded from '@/hooks/useTimestampRounded';
 import { TokenStats, useTokenTrendData } from '@/queries/backendv2';
-import { useRatesWithOracle } from '@/queries/reward';
 import { useWithdrawalsFloorDEXData } from '@/store/swap/hooks';
 import { formatPrice, formatPriceChange, getFormattedNumber } from '@/utils/formatter';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';

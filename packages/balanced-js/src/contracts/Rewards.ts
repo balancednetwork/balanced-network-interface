@@ -18,6 +18,18 @@ export default class Rewards extends Contract {
     return this.callICONPlugins(payload);
   }
 
+  getRewards(holder: string) {
+    const payload = this.paramsBuilder({
+      method: 'getRewards',
+      params: {
+        _holder: holder,
+      },
+    });
+
+    return this.call(payload);
+  }
+
+  //todo: remove
   getBalnHolding(holder: string) {
     const payload = this.paramsBuilder({
       method: 'getBalnHolding',
@@ -109,6 +121,15 @@ export default class Rewards extends Contract {
       params: {
         user,
       },
+    });
+
+    return this.call(payload);
+  }
+
+  getDataSources(blockHeight?: number) {
+    const payload = this.paramsBuilder({
+      method: `getDataSources`,
+      blockHeight: blockHeight,
     });
 
     return this.call(payload);

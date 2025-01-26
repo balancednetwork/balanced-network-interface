@@ -128,9 +128,9 @@ export const formatUnitPrice = (price: string | number) => {
   });
 };
 
-export const formatValue = (value: string | number) => {
+export const formatValue = (value: string | number, showDollarSign: boolean = true) => {
   if (value !== 0 && !value) {
-    return '$-.--';
+    return showDollarSign ? '$-.--' : '-.--';
   }
 
   const number = toBigNumber(value);
@@ -143,14 +143,14 @@ export const formatValue = (value: string | number) => {
     decimals = 2;
   }
 
-  // always use dollars for now
-  return (
-    '$' +
-    numbro(value).format({
+  const formattedValue = numbro(value)
+    .format({
       thousandSeparated: true,
       mantissa: Number.isInteger(value) ? 0 : decimals,
     })
-  );
+    .replace(/\.0000$/, '');
+
+  return showDollarSign ? '$' + formattedValue : formattedValue;
 };
 
 export const getFormattedNumber = (num: number | null, numFormat: NumberStyle) => {
@@ -240,4 +240,30 @@ export const formatSymbol = (symbol: string | undefined) => {
     return mapping[symbol];
   }
   return symbol;
+};
+
+export const fixWrongSymbol = (symbol: string) => {
+  const mapping = {
+    AFSUI: 'afSUI',
+    HASUI: 'haSUI',
+    VSUI: 'vSUI',
+    JITOSOL: 'JitoSOL',
+  };
+
+  if (symbol && mapping[symbol]) {
+    return mapping[symbol];
+  }
+
+  return symbol;
+};
+
+export const useWrongSymbol = (symbol: string) => {
+  const mapping = {
+    afSUI: 'AFSUI',
+    haSUI: 'HASUI',
+    vSUI: 'VSUI',
+    JitoSOL: 'JITOSOL',
+  };
+
+  return mapping[symbol] || symbol;
 };

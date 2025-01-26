@@ -344,7 +344,7 @@ export function useDerivedSwapInfo(): {
     currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmount?.greaterThan(0),
   );
 
-  if (userHasSpecifiedInputOutput && !trade) inputError = t`Insufficient liquidity`;
+  if (userHasSpecifiedInputOutput && !trade) inputError = t`Swap not supported`;
 
   const [pairState, pair] = useV2Pair(_currencies[Field.INPUT], _currencies[Field.OUTPUT]);
 
@@ -506,18 +506,6 @@ export interface MMTrade {
 }
 
 export function useMMTrade(inputAmount: CurrencyAmount<XToken> | undefined, outputCurrency: XToken | undefined) {
-  const isMMTrade =
-    inputAmount?.currency &&
-    outputCurrency &&
-    ((inputAmount.currency.xChainId === '0xa4b1.arbitrum' &&
-      inputAmount.currency.isNativeToken &&
-      outputCurrency.xChainId === 'sui' &&
-      outputCurrency.isNativeToken) ||
-      (inputAmount.currency.xChainId === 'sui' &&
-        inputAmount.currency.isNativeToken &&
-        outputCurrency.xChainId === '0xa4b1.arbitrum' &&
-        outputCurrency.isNativeToken));
-
   return useQuery<MMTrade | undefined>({
     queryKey: ['quote', inputAmount, outputCurrency],
     queryFn: async () => {
@@ -551,7 +539,7 @@ export function useMMTrade(inputAmount: CurrencyAmount<XToken> | undefined, outp
       return;
     },
     refetchInterval: 10_000,
-    enabled: !!inputAmount && !!outputCurrency && isMMTrade,
+    enabled: !!inputAmount && !!outputCurrency,
   });
 }
 
@@ -585,7 +573,7 @@ export function useDerivedMMTradeInfo(trade: Trade<Currency, Currency, TradeType
   const swapOutput = convert(outputCurrency, trade?.outputAmount);
 
   return {
-    isMMBetter: mmTrade?.outputAmount && swapOutput && mmTrade.outputAmount.greaterThan(swapOutput),
+    isMMBetter: mmTrade?.outputAmount && (swapOutput ? mmTrade.outputAmount.greaterThan(swapOutput) : true),
     trade: mmTrade,
   };
 }

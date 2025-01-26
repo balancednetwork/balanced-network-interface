@@ -1,12 +1,12 @@
 import { BalancedJs, CallData, addresses } from '@balancednetwork/balanced-js';
-import { CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 
 import bnJs from '@/bnJs';
 import { SUPPORTED_PAIRS } from '@/constants/pairs';
 import QUERY_KEYS from '@/constants/queryKeys';
-import { SUPPORTED_TOKENS_LIST, SUPPORTED_TOKENS_MAP_BY_ADDRESS } from '@/constants/tokens';
+import { SUPPORTED_TOKENS_LIST, SUPPORTED_TOKENS_MAP_BY_ADDRESS, sICX } from '@/constants/tokens';
 import { getTimestampFrom } from '@/pages/PerformanceDetails/utils';
 import { useSupportedCollateralTokens } from '@/store/collateral/hooks';
 import { formatUnits } from '@/utils';
@@ -666,17 +666,35 @@ export function useFlattenedRewardsDistribution(): UseQueryResult<Map<string, Fr
 }
 
 export const useIncentivisedPairs = (): UseQueryResult<
-  { name: string; id: number; rewards: Fraction; totalStaked: number }[],
+  { name: string; id: number; rewards: Fraction; totalStaked: number; externalRewards?: CurrencyAmount<Currency>[] }[],
   Error
 > => {
   const { data: rewards } = useFlattenedRewardsDistribution();
+  //add supported rewards tokens here
+  const additionalRewardTokens = [sICX];
+  //timestamp for PoL should be taken from 1 day old block
+  const { data: block } = useBlockDetails(getTimestampFrom(1));
 
   return useQuery({
     queryKey: ['incentivisedPairs', rewards],
     queryFn: async () => {
-      if (rewards) {
+      if (rewards && block?.number) {
         const lpData = await bnJs.StakedLP.getDataSources();
         const lpSources: string[] = ['sICX/ICX', ...lpData];
+        const dataSources: Map<string, { [key in string]: { external_dist: string } }> =
+          await bnJs.Rewards.getDataSources(block.number);
+
+        const externalIncentives = Object.entries(dataSources).reduce((acc, [sourceName, sourceData]) => {
+          additionalRewardTokens.forEach(token => {
+            if (sourceData[token.address]) {
+              acc[sourceName] = {
+                ...acc[sourceName],
+                [token.address]: CurrencyAmount.fromRawAmount(token, sourceData[token.address].external_dist),
+              };
+            }
+          });
+          return acc;
+        }, {});
 
         const cds: CallData[] = lpSources.map(source => ({
           target: addresses[1].stakedLp,
@@ -692,14 +710,20 @@ export const useIncentivisedPairs = (): UseQueryResult<
           ),
         );
 
-        return lpSources.map((source, index) => ({
-          name: source,
-          id: index === 0 ? 1 : parseInt(sourceIDs[index], 16),
-          rewards: rewards[source],
-          totalStaked: parseInt((sourcesTotalStaked[index] as string) ?? '0x0', 16),
-        }));
+        return lpSources.map((source, index) => {
+          const externalRewards = Object.values(externalIncentives[source] || {});
+
+          return {
+            name: source,
+            id: index === 0 ? 1 : parseInt(sourceIDs[index], 16),
+            rewards: rewards[source],
+            externalRewards,
+            totalStaked: parseInt((sourcesTotalStaked[index] as string) ?? '0x0', 16),
+          };
+        });
       }
     },
+    enabled: !!rewards && !!block,
     placeholderData: keepPreviousData,
   });
 };

@@ -18,6 +18,7 @@ import { WriteContractErrorType } from 'viem';
 import { WhiteButton } from '@/app/components/Button';
 import { ArrowGradientIcon } from '@/app/components/Icons';
 import { Modal } from '@/app/components/Modal';
+import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
@@ -106,6 +107,14 @@ const MMSwapModal = ({
   const { currentWallet: suiWallet } = useCurrentWallet();
   const suiAccount = useCurrentAccount();
   // end sui part
+
+  const { approvalState, approveCallback } = useApproveCallback(
+    trade?.inputAmount,
+    trade?.inputAmount.currency.xChainId === '0xa4b1.arbitrum'
+      ? intentService.getChainConfig('arb').intentContract
+      : // sui doesn't need approval. '0x' is a dummy address to pass the check
+        '0x',
+  );
 
   const handleMMSwap = async () => {
     if (!account || !recipient || !currencies[Field.INPUT] || !currencies[Field.OUTPUT] || !trade) {
@@ -269,10 +278,23 @@ const MMSwapModal = ({
               <ArrowGradientIcon />
             </WhiteButton>
           ) : (
-            <WhiteButton onClick={handleMMSwap} className="h-[48px] text-base rounded-full">
-              <Trans>Swap</Trans>
-              <ArrowGradientIcon />
-            </WhiteButton>
+            <>
+              {approvalState !== ApprovalState.APPROVED ? (
+                <WhiteButton
+                  onClick={approveCallback}
+                  className="h-[48px] text-base rounded-full"
+                  disabled={approvalState === ApprovalState.PENDING}
+                >
+                  {approvalState === ApprovalState.PENDING ? <Trans>Approving</Trans> : <Trans>Approve</Trans>}
+                  <ArrowGradientIcon />
+                </WhiteButton>
+              ) : (
+                <WhiteButton onClick={handleMMSwap} className="h-[48px] text-base rounded-full">
+                  <Trans>Swap</Trans>
+                  <ArrowGradientIcon />
+                </WhiteButton>
+              )}
+            </>
           ))}
 
         {orderStatus === IntentOrderStatus.Filled && (

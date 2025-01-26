@@ -20,7 +20,7 @@ import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCrossChainWalletBalances, useICONWalletBalances } from '@/store/wallet/hooks';
 import { CurrencyKey, IcxDisplayType } from '@/types';
 import { formatUnits, maxAmountSpend, toBigNumber } from '@/utils';
-import { getBalanceDecimals } from '@/utils/formatter';
+import { formatSymbol, getBalanceDecimals } from '@/utils/formatter';
 import { getXChainType } from '@balancednetwork/xwagmi';
 import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
 import { SUPPORTED_XCALL_CHAINS } from '@balancednetwork/xwagmi';
@@ -86,39 +86,35 @@ export function useCollateralAmounts(xChainId?: XChainId): { [key in string]: Bi
   return useSelector((state: AppState) => state.collateral.depositedAmounts[xChainId || collateralXChain] || {});
 }
 
-export function useAllCollateralData(): UseQueryResult<XPositionsRecord[]> {
+export function useAllCollateralData(): XPositionsRecord[] | undefined {
   const { data: totalCollateralData } = useTotalCollateralData();
 
-  return useQuery({
-    queryKey: ['getCollateralSelectorData', totalCollateralData],
-    queryFn: () => {
-      if (!totalCollateralData) return;
-      return Object.keys(totalCollateralData)
-        .filter(symbol => symbol !== 'BTCB')
-        .map(symbol => {
-          const baseToken = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
-          const positions = SUPPORTED_XCALL_CHAINS.reduce(
-            (acc, xChainId) => {
-              const xToken = xTokenMap[xChainId].find(t => t.symbol === symbol);
-              if (xToken || xChainId === ICON_XCALL_NETWORK_ID) {
-                acc[xChainId] = undefined;
-              }
-              return acc;
-            },
-            {} as Partial<{ [key in XChainId]: {} }>,
-          );
-          return {
-            baseToken,
-            positions,
-            isSingleChain: Object.keys(positions).length === 1,
-            total: totalCollateralData[symbol],
-          };
-        })
-        .sort((a, b) => (a.baseToken && b.baseToken ? a.baseToken.symbol.localeCompare(b.baseToken?.symbol) : 0));
-    },
-    enabled: !!totalCollateralData,
-    placeholderData: keepPreviousData,
-  });
+  return useMemo(() => {
+    if (!totalCollateralData) return [];
+
+    return Object.keys(totalCollateralData)
+      .filter(symbol => symbol !== 'BTCB')
+      .map(symbol => {
+        const baseToken = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
+        const positions = SUPPORTED_XCALL_CHAINS.reduce(
+          (acc, xChainId) => {
+            const xToken = xTokenMap[xChainId].find(t => t.symbol === symbol);
+            if (xToken || xChainId === ICON_XCALL_NETWORK_ID) {
+              acc[xChainId] = undefined;
+            }
+            return acc;
+          },
+          {} as Partial<{ [key in XChainId]: {} }>,
+        );
+        return {
+          baseToken,
+          positions,
+          isSingleChain: Object.keys(positions).length === 1,
+          total: totalCollateralData[symbol],
+        } as XPositionsRecord;
+      })
+      .sort((a, b) => (a.baseToken && b.baseToken ? a.baseToken.symbol.localeCompare(b.baseToken?.symbol) : 0));
+  }, [totalCollateralData]);
 }
 
 export function useTotalCollateralData(): UseQueryResult<{ [key in string]: Position }> {
@@ -128,46 +124,40 @@ export function useTotalCollateralData(): UseQueryResult<{ [key in string]: Posi
     queryKey: ['totalCollateralData', supportedTokens],
     queryFn: async () => {
       if (!supportedTokens) return;
-      try {
-        const totalData = await Promise.all(
-          Object.entries(supportedTokens).map(async ([symbol, address]) => {
-            const baseToken = SUPPORTED_TOKENS_LIST.find(token => token.symbol === symbol);
-            if (!baseToken) return;
 
-            const cds: CallData[] = [
-              {
-                target: address,
-                method: 'balanceOf',
-                params: [addresses[NETWORK_ID].loans],
-              },
-              {
-                target: addresses[NETWORK_ID].loans,
-                method: 'getTotalCollateralDebt',
-                params: [symbol, 'bnUSD'],
-              },
-            ];
+      const cds: CallData[] = Object.entries(supportedTokens).flatMap(([symbol, address]) => [
+        {
+          target: address,
+          method: 'balanceOf',
+          params: [addresses[NETWORK_ID].loans],
+        },
+        {
+          target: addresses[NETWORK_ID].loans,
+          method: 'getTotalCollateralDebt',
+          params: [symbol, 'bnUSD'],
+        },
+      ]);
 
-            const data = await bnJs.Multicall.getAggregateData(cds);
+      const data = await bnJs.Multicall.getAggregateData(cds);
 
-            return {
-              collateral: CurrencyAmount.fromRawAmount(baseToken, data[0]),
-              loan: new BigNumber(data[1]).div(10 ** 18),
-            } as Position;
-          }),
-        );
-        return totalData
-          .filter((item: any): item is Position => {
-            return typeof item === 'object' && 'collateral' in item && 'loan' in item;
-          })
-          .reduce((acc, { collateral, loan }) => {
-            if (!collateral || !loan) return acc;
-            acc[collateral.currency.symbol] = { collateral, loan };
-            return acc;
-          }, {});
-      } catch (e) {
-        console.error(e);
-        return;
-      }
+      const totalData = Object.entries(supportedTokens)
+        .map(([, address], index) => {
+          const baseToken = xTokenMap['0x1.icon'].find(token => token.address.toLowerCase() === address.toLowerCase());
+
+          if (!baseToken) return;
+
+          const collateral = CurrencyAmount.fromRawAmount(baseToken, data[index * 2]);
+          const loan = new BigNumber(data[index * 2 + 1]).div(10 ** 18);
+
+          return { collateral, loan } as Position;
+        })
+        .filter(item => !!item);
+
+      return totalData.reduce((acc, { collateral, loan }) => {
+        if (!collateral || !loan) return acc;
+        acc[collateral.currency.symbol] = { collateral, loan };
+        return acc;
+      }, {});
     },
     enabled: !!supportedTokens,
     placeholderData: keepPreviousData,
@@ -213,7 +203,7 @@ export function useCollateralFetchInfo(account?: string | null) {
                 const depositedAmount = new BigNumber(
                   formatUnits(res.holdings[symbol][symbol] || 0, Number(decimals), 18),
                 );
-                changeDepositedAmount(depositedAmount, symbol, wallet.xChainId);
+                changeDepositedAmount(depositedAmount, formatSymbol(symbol), wallet.xChainId);
               }
             });
         })
@@ -222,7 +212,7 @@ export function useCollateralFetchInfo(account?: string | null) {
             supportedCollateralTokens &&
               Object.keys(supportedCollateralTokens).forEach(symbol => {
                 if (isSupported(symbol)) {
-                  changeDepositedAmount(new BigNumber(0), symbol, wallet.xChainId);
+                  changeDepositedAmount(new BigNumber(0), formatSymbol(symbol), wallet.xChainId);
                 }
               });
           }
@@ -392,14 +382,6 @@ export function useCollateralInputAmountInUSD() {
     if (oraclePrice && collateralInputAmount) return collateralInputAmount.multipliedBy(oraclePrice);
   }, [collateralInputAmount, oraclePrice]);
 }
-
-type CollateralInfo = {
-  symbol: string;
-  name: string;
-  displayName?: string;
-  collateralDeposit: BigNumber;
-  collateralAvailable: BigNumber;
-};
 
 export function useSupportedCollateralTokens(): UseQueryResult<{ [key in string]: string }> {
   return useQuery({

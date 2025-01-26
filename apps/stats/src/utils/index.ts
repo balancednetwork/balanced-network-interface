@@ -1,5 +1,8 @@
+import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
 import { Validator } from 'icon-sdk-js';
+import numbro from 'numbro';
+import { toBigNumber } from './formatter';
 
 const { isEoaAddress } = Validator;
 
@@ -60,3 +63,43 @@ export function formatUnits(value: string, decimals: number = 18, fixed: number 
 
 export const LAUNCH_DAY = 1619366400000;
 export const ONE_DAY_DURATION = 86400000;
+
+export const getRewardApr = (
+  reward: CurrencyAmount<Currency>,
+  pair: { stakedRatio?: Fraction; liquidity: number },
+  price: number,
+): BigNumber => {
+  if (!pair.stakedRatio) {
+    return new BigNumber(0);
+  }
+
+  const apr = new BigNumber(reward.toFixed())
+    .times(365 * price)
+    .div(new BigNumber(pair.stakedRatio.toFixed(18)).times(pair.liquidity))
+    .times(100);
+
+  return apr;
+};
+
+export const formatValue = (value: string | number, showDollarSign: boolean = true) => {
+  if (value !== 0 && !value) {
+    return showDollarSign ? '$-.--' : '-.--';
+  }
+
+  const number = toBigNumber(value);
+
+  let decimals = 0;
+
+  if (number.isLessThan(0.01)) {
+    decimals = 4;
+  } else if (number.isLessThan(100)) {
+    decimals = 2;
+  }
+
+  const formattedValue = numbro(value).format({
+    thousandSeparated: true,
+    mantissa: Number.isInteger(value) ? 0 : decimals,
+  });
+
+  return showDollarSign ? '$' + formattedValue : formattedValue;
+};

@@ -18,7 +18,7 @@ interface WithdrawalLimitWarningProps {
   onLimitAmountClick: (amount: CurrencyAmount<Currency>) => void;
 }
 
-const BridgeLimitWarning: React.FC<WithdrawalLimitWarningProps> = props => {
+const WithdrawalLimitWarning: React.FC<WithdrawalLimitWarningProps> = props => {
   const { limitAmount, onLimitAmountClick } = props;
   const prices = useOraclePrices();
   const price = prices[limitAmount.currency.symbol];
@@ -54,7 +54,7 @@ const BridgeLimitWarning: React.FC<WithdrawalLimitWarningProps> = props => {
         <MouseoverTooltip
           placement="bottom"
           width={300}
-          text={t`Only ${limitData?.percentageFloor.times(100).toFixed(2).replace('.00', '')}% can be withdrawn at a time. Limit will be increased gradually over the next ${limitData?.floorTimeDecayInHours.toFixed(0)} hours.`}
+          text={t`Only ${limitData?.percentageFloor.times(100).toFixed(2).replace('.00', '')}% can be withdrawn at a time. Limit will reset gradually over the next ${limitData?.floorTimeDecayInHours.toFixed(0)} hours.`}
         >
           <QuestionIcon width={14} style={{ cursor: 'help', marginTop: -2 }} />
         </MouseoverTooltip>
@@ -63,4 +63,4 @@ const BridgeLimitWarning: React.FC<WithdrawalLimitWarningProps> = props => {
   );
 };
 
-export default BridgeLimitWarning;
+export default WithdrawalLimitWarning;

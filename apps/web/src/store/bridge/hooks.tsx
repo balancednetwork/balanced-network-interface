@@ -16,6 +16,7 @@ import { useXAccount } from '@balancednetwork/xwagmi';
 import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import { isDenomAsset } from '@balancednetwork/xwagmi';
 import { useValidateStellarAccount } from '@balancednetwork/xwagmi';
+import { useWithdrawalsFloorDEXData } from '../swap/hooks';
 import {
   Field,
   selectChain,
@@ -113,6 +114,7 @@ export function useBridgeActionHandlers() {
 export function useDerivedBridgeInfo() {
   const state = useBridgeState();
   const bridgeDirection = useBridgeDirection();
+  const { data: withdrawalsFloorData } = useWithdrawalsFloorDEXData();
   const { typedValue, currency: currencyToBridge, recipient } = state;
 
   const currencyAmountToBridge = React.useMemo(() => {
@@ -211,6 +213,20 @@ export function useDerivedBridgeInfo() {
     return maximumBridgeAmount && outputCurrencyAmount ? maximumBridgeAmount?.greaterThan(outputCurrencyAmount) : true;
   }, [maximumBridgeAmount, outputCurrencyAmount]);
 
+  //check for the maximum output amount against the withdrawal limit
+  const maximumTransferAmount = useMemo(() => {
+    if (withdrawalsFloorData) {
+      const limit = withdrawalsFloorData.find(item => item?.token.symbol === currencyToBridge?.symbol);
+      if (limit) {
+        return limit.available;
+      }
+    }
+  }, [withdrawalsFloorData, currencyToBridge]);
+
+  const canTransfer = useMemo(() => {
+    return maximumTransferAmount && outputCurrencyAmount ? !maximumTransferAmount.lessThan(outputCurrencyAmount) : true;
+  }, [maximumTransferAmount, outputCurrencyAmount]);
+
   return {
     errorMessage,
     currencyAmountToBridge,
@@ -221,5 +237,7 @@ export function useDerivedBridgeInfo() {
     canBridge,
     maximumBridgeAmount,
     stellarValidation,
+    canTransfer,
+    maximumTransferAmount,
   };
 }

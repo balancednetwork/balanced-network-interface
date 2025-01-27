@@ -42,7 +42,7 @@ const SavingsChainSelector = ({
   const sortedChains = useMemo(() => {
     if (!lpRewards) return xChains;
 
-    return xChains.sort((a: XChain, b: XChain) => {
+    return [...xChains].sort((a: XChain, b: XChain) => {
       const aRewardAmount = lpRewards[a.xChainId]?.totalValueInUSD || 0;
       const bRewardAmount = lpRewards[b.xChainId]?.totalValueInUSD || 0;
 

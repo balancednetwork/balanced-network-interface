@@ -15,7 +15,7 @@ import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useCollateralActionHandlers, useDerivedCollateralInfo } from '@/store/collateral/hooks';
-import { formatSymbol } from '@/utils/formatter';
+import { formatSymbol, useWrongSymbol } from '@/utils/formatter';
 import { useSendXTransaction, xChainMap } from '@balancednetwork/xwagmi';
 import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import { useXCallFee } from '@balancednetwork/xwagmi';
@@ -116,7 +116,7 @@ const XCollateralModal = ({
       account,
       inputAmount: _inputAmount,
       xCallFee,
-      usedCollateral: collateralType,
+      usedCollateral: useWrongSymbol(collateralType),
     };
 
     const xTransactionId = await sendXTransaction(xTransactionInput);

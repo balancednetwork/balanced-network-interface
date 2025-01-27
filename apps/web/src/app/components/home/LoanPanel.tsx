@@ -36,6 +36,7 @@ import ModalContent from '@/app/components/ModalContent';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import useWidth from '@/hooks/useWidth';
 import { useIconReact } from '@/packages/icon-react';
+import { useWrongSymbol } from '@/utils/formatter';
 import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { PanelInfoItem, PanelInfoWrap, UnderPanel } from './CollateralPanel';
@@ -144,7 +145,7 @@ const LoanPanel = () => {
     if (shouldBorrow) {
       bnJs
         .inject({ account: iconAccount })
-        .Loans.borrow(parseUnits(differenceAmount.toFixed()), collateralType)
+        .Loans.borrow(parseUnits(differenceAmount.toFixed()), useWrongSymbol(collateralType))
         .then((res: any) => {
           addTransaction(
             { hash: res.result },
@@ -171,7 +172,12 @@ const LoanPanel = () => {
 
       bnJs
         .inject({ account: iconAccount })
-        .Loans.returnAsset('bnUSD', parseUnits(repayAmount.toFixed()), collateralType, collateralAddress)
+        .Loans.returnAsset(
+          'bnUSD',
+          parseUnits(repayAmount.toFixed()),
+          useWrongSymbol(collateralType),
+          collateralAddress,
+        )
         .then(res => {
           addTransaction(
             { hash: res.result },

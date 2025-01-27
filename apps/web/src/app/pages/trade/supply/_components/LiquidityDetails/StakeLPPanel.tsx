@@ -253,7 +253,6 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
 
   return (
     <Box width={upSmall ? 1 / 2 : 1}>
-      {!upSmall && <RespoRewardsInfo />}
       <Typography variant="h3" marginBottom="15px">
         Stake LP tokens
       </Typography>

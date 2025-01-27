@@ -52,12 +52,12 @@ const RewardsPanel = () => {
       <Flex
         mb="30px"
         width={'400px'}
-        alignItems="center"
+        alignItems="flex-end"
         flexWrap="wrap"
         justifyContent="justify-start"
         ref={rewardsHeaderRef}
       >
-        <Typography variant="h2" mr={6}>
+        <Typography variant="h2" mr={1} lineHeight={1.2}>
           Rewards
         </Typography>
         <SavingsChainSelector width={rewardsHeaderWidth} containerRef={rewardsHeaderRef.current} />

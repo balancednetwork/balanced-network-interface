@@ -24,6 +24,8 @@ export const useCheckSolanaAccount = (
         } else {
           setIsActive(true);
         }
+      } else {
+        setIsActive(true);
       }
     };
 

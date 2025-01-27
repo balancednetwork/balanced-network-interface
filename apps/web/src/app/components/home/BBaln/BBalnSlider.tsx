@@ -49,6 +49,7 @@ import { bnJs } from '@balancednetwork/xwagmi';
 import { DropdownPopper } from '@/app/components/Popover';
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
 import { useSignedInWallets } from '@/hooks/useWallets';
+import { useSavingsXChainId } from '@/store/savings/hooks';
 import { MetaData } from '../PositionDetailPanel';
 import UnstakePrompt from './UnstakePrompt';
 import { BalnPreviewInput, ButtonsWrap, SliderWrap, Threshold } from './styledComponents';
@@ -119,6 +120,7 @@ export default function BBalnSlider({
   const signedInWallets = useSignedInWallets();
   const { data: pastMonthFees } = usePastMonthFeesDistributed();
   const hasAnyKindOfRewards = useHasAnyKindOfRewards();
+  const savingsXChainId = useSavingsXChainId();
 
   const balnBalanceAvailable = useMemo(
     () => (balnDetails && balnDetails['Available balance'] ? balnDetails['Available balance']! : new BigNumber(0)),
@@ -453,6 +455,7 @@ export default function BBalnSlider({
   return (
     <>
       {account &&
+      savingsXChainId === '0x1.icon' &&
       (balnBalanceAvailable.isGreaterThan(0) ||
         bBalnAmount.isGreaterThan(0) ||
         lockedBalnAmount?.greaterThan(0) ||
@@ -744,7 +747,7 @@ export default function BBalnSlider({
             )}
           </Typography>
           {simple ? (
-            !account && signedInWallets.length > 0 ? (
+            (!account && signedInWallets.length > 0) || savingsXChainId !== '0x1.icon' ? (
               <Typography fontSize={14} opacity={0.75} mb={5}>
                 <Trans>Sign in on ICON, then lock up BALN to boost your rewards.</Trans>
               </Typography>

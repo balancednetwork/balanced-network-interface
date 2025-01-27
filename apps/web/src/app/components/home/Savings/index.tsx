@@ -19,6 +19,7 @@ import {
   useSavingsRatePastMonthPayout,
   useSavingsSliderActionHandlers,
   useSavingsSliderState,
+  useSavingsXChainId,
 } from '@/store/savings/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
@@ -46,6 +47,7 @@ const Savings = () => {
   const { data: savingsRate } = useSavingsRateInfo();
   const { data: savingsPastMonthPayout } = useSavingsRatePastMonthPayout();
   const signedInWallet = useSignedInWallets();
+  const savingsXChainId = useSavingsXChainId();
 
   const toggleOpen = React.useCallback(() => {
     setOpen(!isOpen);
@@ -201,7 +203,7 @@ const Savings = () => {
               </QuestionWrapper>
             </Flex>
           </Flex>
-          {account && bnUSDCombinedTotal > 0 && (
+          {savingsXChainId === '0x1.icon' && account && bnUSDCombinedTotal > 0 && (
             <Flex>
               {isAdjusting && <TextButton onClick={handleCancel}>{t`Cancel`}</TextButton>}
               <Button
@@ -220,7 +222,7 @@ const Savings = () => {
             </Flex>
           )}
         </Flex>
-        {account && bnUSDCombinedTotal > 0 ? (
+        {savingsXChainId === '0x1.icon' && account && bnUSDCombinedTotal > 0 ? (
           <>
             <Box margin="25px 0 10px">
               <Nouislider
@@ -264,7 +266,7 @@ const Savings = () => {
               )}
             </Flex>
           </>
-        ) : !account && signedInWallet.length > 0 ? (
+        ) : (!account && signedInWallet.length > 0) || savingsXChainId !== '0x1.icon' ? (
           <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>
             <Trans>Sign in on ICON, then deposit bnUSD to earn rewards.</Trans>
           </Typography>

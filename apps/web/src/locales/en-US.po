@@ -1584,8 +1584,8 @@ msgstr "Total locked"
 #~ msgstr "Search name or contract"
 
 #: src/store/bridge/hooks.tsx
-msgid "Connect wallet"
-msgstr "Connect wallet"
+#~ msgid "Connect wallet"
+#~ msgstr "Connect wallet"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -1632,8 +1632,8 @@ msgstr "Activating"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
-msgid "BALN rewards depend on your position size and bBALN holdings."
-msgstr "BALN rewards depend on your position size and bBALN holdings."
+#~ msgid "BALN rewards depend on your position size and bBALN holdings."
+#~ msgstr "BALN rewards depend on your position size and bBALN holdings."
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
 msgid "Contract doesn't exist on this network."
@@ -2136,7 +2136,7 @@ msgstr "Swap fee (included):"
 #~ msgid "Execution failed."
 #~ msgstr "Execution failed."
 
-#: src/app/pages/trade/supply/_components/LPPanel.tsx
+#: src/app/pages/trade/supply/_components/WalletSection.tsx
 msgid ""
 "Wallet: {0} {1} /\n"
 "{2} {3}"
@@ -2539,6 +2539,11 @@ msgstr "Adjust"
 #~ msgid "none"
 #~ msgstr "none"
 
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+msgid "BALN rewards depend on your position size and bBALN holdings (boost available on ICON only)."
+msgstr "BALN rewards depend on your position size and bBALN holdings (boost available on ICON only)."
+
 #: src/app/pages/claim-legacy-fees/page.tsx
 msgid "Claiming fees..."
 msgstr "Claiming fees..."
@@ -2757,6 +2762,7 @@ msgstr "Learn how to resolve common transaction errors."
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+#: src/store/swap/hooks.ts
 msgid "Swap"
 msgstr "Swap"
 
@@ -2942,6 +2948,7 @@ msgstr "The current {0} price is"
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/store/bridge/hooks.tsx
 msgid "Transfer"
 msgstr "Transfer"
 

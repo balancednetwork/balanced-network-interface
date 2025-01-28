@@ -1628,8 +1628,8 @@ msgstr ""
 #~ msgstr "Szukaj nazwy lub kontraktu"
 
 #: src/store/bridge/hooks.tsx
-msgid "Connect wallet"
-msgstr ""
+#~ msgid "Connect wallet"
+#~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -1676,8 +1676,8 @@ msgstr ""
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
-msgid "BALN rewards depend on your position size and bBALN holdings."
-msgstr ""
+#~ msgid "BALN rewards depend on your position size and bBALN holdings."
+#~ msgstr ""
 
 #: src/app/pages/vote/proposals/new/_components/ArbitraryCalls/ArbitraryCall.tsx
 msgid "Contract doesn't exist on this network."
@@ -2194,7 +2194,7 @@ msgstr ""
 #~ msgid "Execution failed."
 #~ msgstr ""
 
-#: src/app/pages/trade/supply/_components/LPPanel.tsx
+#: src/app/pages/trade/supply/_components/WalletSection.tsx
 msgid ""
 "Wallet: {0} {1} /\n"
 "{2} {3}"
@@ -2601,6 +2601,11 @@ msgstr "Dostosuj"
 #~ msgid "none"
 #~ msgstr ""
 
+#: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
+msgid "BALN rewards depend on your position size and bBALN holdings (boost available on ICON only)."
+msgstr ""
+
 #: src/app/pages/claim-legacy-fees/page.tsx
 msgid "Claiming fees..."
 msgstr "Odbieranie prowizji..."
@@ -2819,6 +2824,7 @@ msgstr ""
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+#: src/store/swap/hooks.ts
 msgid "Swap"
 msgstr "Wymiana"
 
@@ -3008,6 +3014,7 @@ msgstr ""
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/store/bridge/hooks.tsx
 msgid "Transfer"
 msgstr ""
 

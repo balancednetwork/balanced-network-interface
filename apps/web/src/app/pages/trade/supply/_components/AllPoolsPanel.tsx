@@ -275,7 +275,9 @@ export default function AllPoolsPanel({ query }: { query: string }) {
                       </Trans>
                       <br />
                       <br />
-                      <Trans>BALN rewards depend on your position size and bBALN holdings.</Trans>
+                      <Trans>
+                        BALN rewards depend on your position size and bBALN holdings (boost available on ICON only).
+                      </Trans>
                     </>
                   }
                   placement="top"

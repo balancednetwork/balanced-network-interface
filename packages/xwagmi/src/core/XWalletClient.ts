@@ -184,7 +184,7 @@ export abstract class XWalletClient {
     const { account, inputAmount, xCallFee } = xTransactionInput;
 
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
-    const data = Buffer.from(tokenData('_deposit', {}));
+    const data = Buffer.from(tokenData('_deposit', { address: `${inputAmount.currency.xChainId}/${account}` }));
 
     let hash;
     if (isSpokeToken(inputAmount.currency)) {

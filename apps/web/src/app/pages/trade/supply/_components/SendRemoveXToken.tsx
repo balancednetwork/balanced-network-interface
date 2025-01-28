@@ -34,7 +34,6 @@ interface SendRemoveXTokenProps {
 }
 
 export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetError }: SendRemoveXTokenProps) {
-  const queryClient = useQueryClient();
   const { lpXChainId } = useDerivedMintInfo();
 
   const [isPending, setIsPending] = React.useState(false);
@@ -61,19 +60,19 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
 
   const xAccount = useXAccount(getXChainType(xToken?.xChainId));
 
-  const { data: depositAmount } = useXTokenDepositAmount(xAccount.address, xToken);
+  const { data: depositAmount, refetch } = useXTokenDepositAmount(xAccount.address, xToken);
 
   useEffect(() => {
     const invalidateAndClear = async () => {
       if (currentXTransaction?.status === XTransactionStatus.success) {
-        await queryClient.invalidateQueries({ queryKey: ['XTokenDepositAmount'] });
+        await refetch();
         setIsPending(false);
         setPendingTx('');
       }
     };
 
     invalidateAndClear();
-  }, [currentXTransaction, queryClient]);
+  }, [currentXTransaction, refetch]);
 
   useEffect(() => {
     if (currentXTransaction?.status === XTransactionStatus.failure) {

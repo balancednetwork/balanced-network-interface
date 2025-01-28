@@ -120,7 +120,7 @@ export const convertCurrencyAmount = (
   xChainId: XChainId,
   amount: CurrencyAmount<Currency | XToken>,
 ): CurrencyAmount<XToken> => {
-  const token = xTokenMapBySymbol[xChainId][amount.currency.symbol]!;
+  const token = convertCurrency(xChainId, amount.currency);
 
   if (!token) {
     throw new Error(`XToken ${amount.currency.symbol} is not supported on ${xChainId}`);

@@ -171,7 +171,7 @@ export const PoolRecord = ({
         {upSmall && (
           <DataText>
             <DataText>
-              {pairData && <RewardsDisplay pair={pairData} boost={boostData} />}
+              {pairData && <RewardsDisplay pair={pairData} boost={boostData} xChainId={xChainId} />}
 
               {pairData?.feesApy && (
                 <APYItem>

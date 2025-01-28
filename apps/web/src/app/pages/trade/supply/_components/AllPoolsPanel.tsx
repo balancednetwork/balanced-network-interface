@@ -19,7 +19,6 @@ import DropdownLink from '@/app/components/DropdownLink';
 import RewardsDisplay from '@/app/components/RewardsDisplay/RewardsDisplay';
 import { HeaderText } from '@/app/components/SearchModal/styleds';
 import Skeleton from '@/app/components/Skeleton';
-import { useRatesWithOracle } from '@/queries/reward';
 import { PairInfo } from '@/types';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { useMedia } from 'react-use';
@@ -138,7 +137,6 @@ type PairItemProps = {
 };
 
 const PairItem = ({ pair, onClick, isLast }: PairItemProps) => {
-  const prices = useRatesWithOracle();
   const pairName =
     pair.info.id === 1
       ? t`ICX queue`

@@ -39,7 +39,7 @@ import { useRatio } from '@/store/ratio/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
-import { formatSymbol } from '@/utils/formatter';
+import { formatSymbol, useWrongSymbol } from '@/utils/formatter';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { getXChainType } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
@@ -278,7 +278,10 @@ const CollateralPanel = () => {
           } else {
             const { result: hash } = await bnJs
               .inject({ account })
-              .Loans.withdrawCollateral(parseUnits(collateralDifferenceInSICX.toFixed()), collateralType);
+              .Loans.withdrawCollateral(
+                parseUnits(collateralDifferenceInSICX.toFixed()),
+                useWrongSymbol(collateralType),
+              );
 
             addTransaction(
               { hash },
@@ -293,7 +296,10 @@ const CollateralPanel = () => {
         } else {
           const { result: hash } = await bnJs
             .inject({ account })
-            .Loans.withdrawCollateral(parseUnits(collateralDifference.toFixed(), Number(decimals)), collateralType);
+            .Loans.withdrawCollateral(
+              parseUnits(collateralDifference.toFixed(), Number(decimals)),
+              useWrongSymbol(collateralType),
+            );
 
           addTransaction(
             { hash },

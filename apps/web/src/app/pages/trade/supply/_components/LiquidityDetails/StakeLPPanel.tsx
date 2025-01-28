@@ -194,10 +194,12 @@ export default function StakeLPPanel({ pair }: { pair: Pair }) {
     const totalAPR = useMemo(() => {
       let balnAndFeesAPR = new BigNumber(0);
       if (allPairs && sources) {
-        balnAndFeesAPR = new BigNumber(allPairs[pair.poolId!].balnApy)
-          .times(sources[sourceName].workingBalance.dividedBy(sources[sourceName].balance))
-          .plus(allPairs[poolId].feesApy)
-          .times(100);
+        balnAndFeesAPR = sources[sourceName].balance.isZero()
+          ? new BigNumber(allPairs[poolId].feesApy).times(100)
+          : new BigNumber(allPairs[pair.poolId!].balnApy)
+              .times(sources[sourceName].workingBalance.dividedBy(sources[sourceName].balance))
+              .plus(allPairs[poolId].feesApy)
+              .times(100);
       }
 
       let totalAPR = balnAndFeesAPR;

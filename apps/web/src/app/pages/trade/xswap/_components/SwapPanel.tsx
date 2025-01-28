@@ -10,6 +10,7 @@ import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { BrightPanel } from '@/app/components/Panel';
 import { SelectorType } from '@/app/components/SearchModal/CurrencySearch';
+import SolanaAccountExistenceWarning from '@/app/components/SolanaAccountExistenceWarning';
 import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
 import WithdrawalLimitWarning from '@/app/components/WithdrawalLimitWarning';
 import { Typography } from '@/app/theme';
@@ -55,6 +56,7 @@ export default function SwapPanel() {
     stellarValidation,
     canSwap,
     maximumOutputAmount,
+    parsedAmounts,
   } = useDerivedSwapInfo();
   const mmTrade = useDerivedMMTradeInfo(trade);
 
@@ -157,7 +159,10 @@ export default function SwapPanel() {
             {account && currencyBalances[Field.INPUT] && (
               <Typography as="div" hidden={!account}>
                 <Trans>Wallet:</Trans>{' '}
-                {`${formatBalance(currencyBalances[Field.INPUT]?.toFixed(), rates?.[currencyBalances[Field.INPUT]?.currency.symbol]?.toFixed())} ${currencies[Field.INPUT]?.symbol}`}
+                {`${formatBalance(
+                  currencyBalances[Field.INPUT]?.toFixed(),
+                  rates?.[currencyBalances[Field.INPUT]?.currency.symbol]?.toFixed(),
+                )} ${currencies[Field.INPUT]?.symbol}`}
               </Typography>
             )}
           </Flex>
@@ -195,7 +200,14 @@ export default function SwapPanel() {
                   {isRecipientCustom ? (
                     <Trans>Custom</Trans>
                   ) : (
-                    `${currencyBalances[Field.OUTPUT] ? formatBalance(currencyBalances[Field.OUTPUT]?.toFixed(), rates?.[currencyBalances[Field.OUTPUT]?.currency.symbol]?.toFixed()) : '0'} ${formatSymbol(currencies[Field.OUTPUT]?.symbol)}`
+                    `${
+                      currencyBalances[Field.OUTPUT]
+                        ? formatBalance(
+                            currencyBalances[Field.OUTPUT]?.toFixed(),
+                            rates?.[currencyBalances[Field.OUTPUT]?.currency.symbol]?.toFixed(),
+                          )
+                        : '0'
+                    } ${formatSymbol(currencies[Field.OUTPUT]?.symbol)}`
                   )}
                 </>
               )}
@@ -267,6 +279,15 @@ export default function SwapPanel() {
               onLimitAmountClick={handleMaxWithdrawAmountClick}
             />
           )}
+
+          <SolanaAccountExistenceWarning
+            destinationChainId={direction.to}
+            currencyAmount={parsedAmounts[Field.OUTPUT]}
+            recipient={recipient ?? ''}
+            onActivate={() => {
+              handleOutputType('0.002');
+            }}
+          />
 
           <MMPendingIntents />
         </AutoColumn>

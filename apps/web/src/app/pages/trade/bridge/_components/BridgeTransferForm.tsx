@@ -11,6 +11,7 @@ import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { BrightPanel } from '@/app/components/Panel';
 import { CurrencySelectionType, SelectorType } from '@/app/components/SearchModal/CurrencySearch';
+import SolanaAccountExistenceWarning from '@/app/components/SolanaAccountExistenceWarning';
 import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
 import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
 import WithdrawalLimitWarning from '@/app/components/WithdrawalLimitWarning';
@@ -94,6 +95,7 @@ export default function BridgeTransferForm({ openModal }) {
     stellarValidation,
     canTransfer,
     maximumTransferAmount,
+    currencyAmountToBridge,
   } = useDerivedBridgeInfo();
   const xChainType = getXChainType(bridgeDirection.from);
   const xConnectors = useXConnectors(xChainType);
@@ -161,7 +163,9 @@ export default function BridgeTransferForm({ openModal }) {
 
           <Typography as="div" mb={-1} textAlign="right" hidden={!account}>
             <Trans>Wallet:</Trans>{' '}
-            {`${selectedTokenWalletBalance?.toFixed(4, { groupSeparator: ',' }) ?? 0} ${formatSymbol(currencyToBridge?.symbol)}`}
+            {`${selectedTokenWalletBalance?.toFixed(4, { groupSeparator: ',' }) ?? 0} ${formatSymbol(
+              currencyToBridge?.symbol,
+            )}`}
           </Typography>
 
           <Flex>
@@ -208,7 +212,7 @@ export default function BridgeTransferForm({ openModal }) {
           </Flex>
 
           <Flex alignItems="center" justifyContent="center" mt={4}>
-            {account ? (
+            {errorMessage ? (
               <Button
                 onClick={handleSubmit}
                 disabled={
@@ -242,6 +246,14 @@ export default function BridgeTransferForm({ openModal }) {
               onLimitAmountClick={handleMaximumTransferAmountClick}
             />
           )}
+          <SolanaAccountExistenceWarning
+            destinationChainId={bridgeDirection.to}
+            currencyAmount={currencyAmountToBridge}
+            recipient={recipient ?? ''}
+            onActivate={() => {
+              onUserInput('0.002');
+            }}
+          />
         </AutoColumn>
       </BrightPanel>
     </>

@@ -6,6 +6,7 @@ import { t } from '@lingui/macro';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { useCheckSolanaAccount } from '@/app/components/SolanaAccountExistenceWarning';
 import { NETWORK_ID } from '@/constants/config';
 import { canBeQueue } from '@/constants/currency';
 import { PRICE_IMPACT_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
@@ -425,6 +426,11 @@ export function useDerivedSwapInfo(): {
 
   if (stellarValidationQuery.isLoading) {
     inputError = t`Validating Stellar account`;
+  }
+
+  const isSolanaAccountActive = useCheckSolanaAccount(direction.to, parsedAmounts[Field.OUTPUT], recipient ?? '');
+  if (!isSolanaAccountActive) {
+    inputError = t`Swap`;
   }
 
   return {

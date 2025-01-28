@@ -185,10 +185,6 @@ export default function CurrencyInputPanel({
       onCurrencySelect && onCurrencySelect(currency);
 
       if (setDefaultChain && currency?.symbol) {
-        const xChains =
-          currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE
-            ? []
-            : getSupportedXChainForSwapToken(currency);
         const defaultXChainId = DEFAULT_TOKEN_CHAIN[currency.symbol];
         if (defaultXChainId && (xChains?.length ?? 0) > 1) {
           onChainSelect && onChainSelect(defaultXChainId);
@@ -196,7 +192,7 @@ export default function CurrencyInputPanel({
         }
       }
     },
-    [onCurrencySelect, onChainSelect, currencySelectionType],
+    [onCurrencySelect, onChainSelect, xChains],
   );
 
   return (
@@ -296,6 +292,7 @@ export default function CurrencyInputPanel({
           width={width ? width + (!isMobile ? 40 : 0) : undefined}
           containerRef={ref.current}
           setManualAddress={setManualAddress}
+          showAddress={currencySelectionType !== CurrencySelectionType.TRADE_MINT_QUOTE}
         />
       )}
     </Box>

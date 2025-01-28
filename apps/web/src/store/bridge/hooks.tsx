@@ -139,8 +139,6 @@ export function useDerivedBridgeInfo() {
   const isSolanaAccountActive = useCheckSolanaAccount(bridgeDirection.to, currencyAmountToBridge, recipient ?? '');
 
   const errorMessage = useMemo(() => {
-    if (!account) return t`Connect wallet`;
-
     if (!currencyAmountToBridge) return t`Enter amount`;
 
     if (!recipient) return t`Enter address`;
@@ -174,7 +172,6 @@ export function useDerivedBridgeInfo() {
     crossChainWallet,
     currencyAmountToBridge,
     signedInWallets,
-    account,
     recipient,
     stellarValidationQuery,
     isSolanaAccountActive,

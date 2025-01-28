@@ -201,7 +201,7 @@ export default function BridgeTransferForm({ openModal }) {
           </Flex>
 
           <Flex alignItems="center" justifyContent="center" mt={4}>
-            {account ? (
+            {errorMessage ? (
               <Button
                 onClick={handleSubmit}
                 disabled={

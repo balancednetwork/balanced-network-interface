@@ -54,9 +54,7 @@ const SolanaAccountExistenceWarning = ({
 
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="center" mt={2}>
-      {/* <Typography textAlign="center">Solana wallet inactive. Send at least</Typography> */}
       <Typography textAlign="center">
-        Send at least{' '}
         {onActivate ? (
           <UnderlineText onClick={onActivate}>
             <Typography color="primaryBright" as="a">
@@ -66,7 +64,7 @@ const SolanaAccountExistenceWarning = ({
         ) : (
           <Typography as="span">0.002 SOL</Typography>
         )}{' '}
-        to activate it.
+        required for new Solana wallets.
       </Typography>
     </Flex>
   );

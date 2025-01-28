@@ -164,7 +164,7 @@ export function useDerivedBridgeInfo() {
           return t`Validating Stellar account`;
         }
         if (!isSolanaAccountActive) {
-          return t`Solana wallet inactive`;
+          return t`Transfer`;
         }
         return undefined;
       }

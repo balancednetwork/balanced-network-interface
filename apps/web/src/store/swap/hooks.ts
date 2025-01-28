@@ -349,7 +349,7 @@ export function useDerivedSwapInfo(): {
 
   const isSolanaAccountActive = useCheckSolanaAccount(direction.to, parsedAmounts[Field.OUTPUT], recipient ?? '');
   if (!isSolanaAccountActive) {
-    inputError = t`Solana wallet inactive`;
+    inputError = t`Swap`;
   }
 
   return {

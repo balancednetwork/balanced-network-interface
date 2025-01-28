@@ -1,30 +1,29 @@
 import React, { useCallback } from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
 import Nouislider from '@/packages/nouislider-react';
-import { Currency, CurrencyAmount, Fraction, Percent } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Percent } from '@balancednetwork/sdk-core';
+import { XChainId } from '@balancednetwork/xwagmi';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button } from '@/app/components/Button';
+import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
+import { BrightPanel, SectionPanel } from '@/app/components/Panel';
+import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import { Typography } from '@/app/theme';
 import { BIGINT_ZERO } from '@/constants/misc';
 import { PairState } from '@/hooks/useV2Pairs';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedMintInfo, useInitialSupplyLoad, useMintActionHandlers, useMintState } from '@/store/mint/hooks';
 import { Field, InputType } from '@/store/mint/reducer';
-import { formatBigNumber, maxAmountSpend } from '@/utils';
-import { XChainId } from '@balancednetwork/xwagmi';
-
-import { AutoColumn } from '@/app/components/Column';
-import { BrightPanel, SectionPanel } from '@/app/components/Panel';
-import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
+import { maxAmountSpend } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
+import WalletSection from './WalletSection';
 
 const Slider = styled(Box)`
   margin-top: 40px;
@@ -32,64 +31,6 @@ const Slider = styled(Box)`
      margin-top: 25px;
   `}
 `;
-
-function subtract(
-  amountA: CurrencyAmount<Currency> | undefined,
-  amountB: CurrencyAmount<Currency> | undefined,
-): CurrencyAmount<Currency> | undefined {
-  if (!amountA) return undefined;
-  if (!amountB) return amountA;
-
-  let diff;
-  if (amountA.decimalScale !== amountB.decimalScale) {
-    // TODO: use the defined function in utils
-    const amountBConverted = CurrencyAmount.fromRawAmount(
-      amountA.currency,
-      new BigNumber(amountB.toFixed()).times((10n ** BigInt(amountA.currency.decimals)).toString()).toFixed(0),
-    );
-    diff = new Fraction(amountA.numerator).subtract(amountBConverted);
-  } else {
-    diff = new Fraction(`${amountA.quotient}`).subtract(new Fraction(`${amountB.quotient}`));
-  }
-  return CurrencyAmount.fromRawAmount(amountA.currency, diff.quotient);
-}
-
-function WalletSection({ AChain, BChain }: { AChain?: XChainId; BChain?: XChainId }) {
-  const { account } = useIconReact();
-  const { currencies, currencyBalances, parsedAmounts } = useDerivedMintInfo(AChain, BChain);
-
-  const remains: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(
-    () => ({
-      [Field.CURRENCY_A]: subtract(currencyBalances[Field.CURRENCY_A], parsedAmounts[Field.CURRENCY_A]),
-      [Field.CURRENCY_B]: subtract(currencyBalances[Field.CURRENCY_B], parsedAmounts[Field.CURRENCY_B]),
-    }),
-    [currencyBalances, parsedAmounts],
-  );
-
-  const formattedRemains: { [field in Field]?: string } = React.useMemo(
-    () => ({
-      [Field.CURRENCY_A]: remains[Field.CURRENCY_A]?.lessThan(BIGINT_ZERO)
-        ? '0'
-        : formatBigNumber(new BigNumber(remains[Field.CURRENCY_A]?.toFixed() || 0), 'currency'),
-      [Field.CURRENCY_B]: remains[Field.CURRENCY_B]?.lessThan(BIGINT_ZERO)
-        ? '0'
-        : formatBigNumber(new BigNumber(remains[Field.CURRENCY_B]?.toFixed() || 0), 'currency'),
-    }),
-    [remains],
-  );
-
-  if (!account) {
-    return null;
-  }
-  return (
-    <Flex flexDirection="row" justifyContent="center" alignItems="center">
-      <Typography sx={{ whiteSpace: 'nowrap' }}>
-        {t`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} /
-                      ${formattedRemains[Field.CURRENCY_B]} ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}`}
-      </Typography>
-    </Flex>
-  );
-}
 
 export default function LPPanel() {
   useInitialSupplyLoad();
@@ -135,7 +76,7 @@ export default function LPPanel() {
     mintableLiquidity,
     lpXChainId,
     account,
-  } = useDerivedMintInfo(crossChainCurrencyA, crossChainCurrencyB);
+  } = useDerivedMintInfo();
   const { onFieldAInput, onFieldBInput, onSlide, onCurrencySelection, onChainSelection } =
     useMintActionHandlers(noLiquidity);
 
@@ -307,7 +248,7 @@ export default function LPPanel() {
             </AutoColumn>
           </AutoColumn>
           <Flex mt={3} justifyContent="flex-end">
-            <WalletSection AChain={crossChainCurrencyA} BChain={crossChainCurrencyB} />
+            <WalletSection />
           </Flex>
           {currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B] && pairState === PairState.NOT_EXISTS && (
             <PoolPriceBar>

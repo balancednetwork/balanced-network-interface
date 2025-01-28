@@ -134,10 +134,7 @@ const useCurrencyDeposit = (
   return token && result ? CurrencyAmount.fromRawAmount<Currency>(token, BigInt(result)) : undefined;
 };
 
-export function useDerivedMintInfo(
-  AChain: XChainId = '0x1.icon',
-  BChain: XChainId = '0x1.icon',
-): {
+export function useDerivedMintInfo(): {
   dependentField: Field;
   currencies: { [field in Field]?: XToken };
   pair?: Pair | null;

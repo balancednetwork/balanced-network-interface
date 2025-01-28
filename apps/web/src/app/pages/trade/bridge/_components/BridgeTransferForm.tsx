@@ -229,9 +229,9 @@ export default function BridgeTransferForm({ openModal }) {
             destinationChainId={bridgeDirection.to}
             currencyAmount={currencyAmountToBridge}
             recipient={recipient ?? ''}
-            // onActivate={() => {
-            //   handleOutputType('0.002');
-            // }}
+            onActivate={() => {
+              onUserInput('0.002');
+            }}
           />
         </AutoColumn>
       </BrightPanel>

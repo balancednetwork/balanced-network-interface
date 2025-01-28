@@ -6,6 +6,7 @@ import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button, TextButton } from '@/app/components/Button';
+import { StyledButton } from '@/app/components/Button/StyledButton';
 import { UnderlineText } from '@/app/components/DropdownText';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
@@ -195,19 +196,21 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
             </TextButton>
 
             {pair ? (
-              <Button
+              <StyledButton
                 disabled={!isEnabled || !gasChecker.hasEnoughGas || isPending || isWrongChain}
                 onClick={handleSupplyConfirm}
+                $loading={isPending}
               >
                 {isPending ? t`Supplying` : t`Supply`}
-              </Button>
+              </StyledButton>
             ) : (
-              <Button
+              <StyledButton
                 disabled={!isEnabled || !gasChecker.hasEnoughGas || isPending || isWrongChain}
                 onClick={handleSupplyConfirm}
+                $loading={isPending}
               >
                 {isPending ? t`Creating pool` : t`Create pool`}
-              </Button>
+              </StyledButton>
             )}
           </Flex>
 

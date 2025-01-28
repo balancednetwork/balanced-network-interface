@@ -113,14 +113,9 @@ const mintSlice = createSlice({
 
     selectChain: create.reducer<{ field: Field; xChainId: XChainId }>((state, { payload: { field, xChainId } }) => {
       const updatedCurrencyA = convertCurrency(xChainId, state[Field.CURRENCY_A].currency);
-      if (updatedCurrencyA) {
-        state[Field.CURRENCY_A].currency = updatedCurrencyA;
-
-        const updatedCurrencyB = convertCurrency(xChainId, state[Field.CURRENCY_B].currency)!;
-        if (updatedCurrencyB.xChainId !== state[Field.CURRENCY_B].currency?.xChainId) {
-          state[Field.CURRENCY_B].currency = updatedCurrencyB;
-        }
-      }
+      const updatedCurrencyB = convertCurrency(xChainId, state[Field.CURRENCY_B].currency);
+      state[Field.CURRENCY_A].currency = updatedCurrencyA;
+      state[Field.CURRENCY_B].currency = updatedCurrencyB;
     }),
   }),
 });

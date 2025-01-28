@@ -60,8 +60,6 @@ export default function LPPanel() {
   };
 
   const { independentField, typedValue, otherTypedValue, inputType } = useMintState();
-  const [crossChainCurrencyA] = React.useState<XChainId>('0x1.icon');
-  const [crossChainCurrencyB] = React.useState<XChainId>('0x1.icon');
   const {
     dependentField,
     parsedAmounts,

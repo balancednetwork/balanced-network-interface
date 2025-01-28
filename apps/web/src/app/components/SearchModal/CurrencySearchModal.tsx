@@ -79,7 +79,6 @@ export default function CurrencySearchModal({
   const closeRemoveView = useCallback(() => {
     setModalView(CurrencyModalView.search);
   }, []);
-  const showManageView = useCallback(() => setModalView(CurrencyModalView.manage), []);
 
   const handleCurrencySelect = useCallback(
     (currency: Currency, setDefaultChain = true) => {

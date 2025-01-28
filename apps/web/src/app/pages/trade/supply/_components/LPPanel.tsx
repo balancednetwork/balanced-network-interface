@@ -120,18 +120,13 @@ export default function LPPanel() {
       if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
         const p = new Percent(Math.floor(percent * 100), 10_000);
 
-        if (currencies[Field.CURRENCY_A]?.isNativeToken) {
-          // TODO: is ICX?
-          onSlide(Field.CURRENCY_A, percent !== 0 ? balanceA.multiply(p).toFixed() : '');
-        } else {
-          const field = balanceA.multiply(pair?.reserve1).lessThan(balanceB.multiply(pair?.reserve0))
-            ? Field.CURRENCY_A
-            : Field.CURRENCY_B;
-          onSlide(field, percent !== 0 ? currencyBalances[field]!.multiply(p).toFixed() : '');
-        }
+        const field = balanceA.multiply(pair?.reserve1).lessThan(balanceB.multiply(pair?.reserve0))
+          ? Field.CURRENCY_A
+          : Field.CURRENCY_B;
+        onSlide(field, percent !== 0 ? currencyBalances[field]!.multiply(p).toFixed() : '');
       }
     }
-  }, [percent, needUpdate, currencyBalances, onSlide, pair, currencies]);
+  }, [percent, needUpdate, currencyBalances, onSlide, pair]);
 
   // get formatted amounts
   const formattedAmounts = {

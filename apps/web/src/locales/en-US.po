@@ -54,6 +54,7 @@ msgid "then create the pool."
 msgstr "then create the pool."
 
 #: src/app/components/BridgeLimitWarning/index.tsx
+#: src/app/components/WithdrawalLimitWarning/index.tsx
 msgid "Only"
 msgstr "Only"
 
@@ -783,6 +784,10 @@ msgstr "Balanced Intent"
 msgid "bBALN holders received"
 msgstr "bBALN holders received"
 
+#: src/app/components/WithdrawalLimitWarning/index.tsx
+msgid "Only {0}% can be withdrawn at a time. Limit will reset gradually over the next {1} hours."
+msgstr "Only {0}% can be withdrawn at a time. Limit will reset gradually over the next {1} hours."
+
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "Unstaking BALN..."
 msgstr "Unstaking BALN..."
@@ -1040,6 +1045,10 @@ msgstr "Manage wallets"
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "Recieve sICX, which you can trade or unstake from the wallet section later."
 #~ msgstr "Recieve sICX, which you can trade or unstake from the wallet section later."
+
+#: src/app/components/WithdrawalLimitInfo/index.tsx
+msgid "{0}h withdrawal limit:"
+msgstr "{0}h withdrawal limit:"
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 #~ msgid "Liquidity incentives"
@@ -1573,8 +1582,8 @@ msgstr "Total locked"
 #~ msgstr "Search name or contract"
 
 #: src/store/bridge/hooks.tsx
-msgid "Connect wallet"
-msgstr "Connect wallet"
+#~ msgid "Connect wallet"
+#~ msgstr "Connect wallet"
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -2112,6 +2121,10 @@ msgstr "Swap fee (included):"
 #~ msgid "Enter an amount"
 #~ msgstr "Enter an amount"
 
+#: src/app/components/WithdrawalLimitWarning/index.tsx
+msgid "available."
+msgstr "available."
+
 #: src/app/pages/trade/bridge/_components/XCallItem.tsx
 #~ msgid "Execution failed."
 #~ msgstr "Execution failed."
@@ -2602,6 +2615,10 @@ msgstr "Candles"
 msgid "Past month"
 msgstr "Past month"
 
+#: src/app/components/WithdrawalLimitInfo/index.tsx
+msgid "Available to trade:"
+msgstr "Available to trade:"
+
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "You rejected"
 msgstr "You rejected"
@@ -2733,6 +2750,7 @@ msgstr "Learn how to resolve common transaction errors."
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+#: src/store/swap/hooks.ts
 msgid "Swap"
 msgstr "Swap"
 
@@ -2918,6 +2936,7 @@ msgstr "The current {0} price is"
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/store/bridge/hooks.tsx
 msgid "Transfer"
 msgstr "Transfer"
 

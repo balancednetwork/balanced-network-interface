@@ -246,6 +246,7 @@ export default function BridgeTransferForm({ openModal }) {
               onLimitAmountClick={handleMaximumTransferAmountClick}
             />
           )}
+
           <SolanaAccountExistenceWarning
             destinationChainId={bridgeDirection.to}
             currencyAmount={currencyAmountToBridge}

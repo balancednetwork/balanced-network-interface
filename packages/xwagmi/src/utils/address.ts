@@ -86,6 +86,19 @@ async function isSolanaWalletAddress(address) {
   }
 }
 
+export async function isAccountNonExistent(address) {
+  try {
+    const solanaXService = SolanaXService.getInstance();
+    const publicKey = new PublicKey(address);
+    const connection = solanaXService.connection;
+    const accountInfo = await connection.getAccountInfo(publicKey);
+    return accountInfo === null;
+  } catch (error) {
+    console.error('Error checking account existence:', error);
+    return false;
+  }
+}
+
 export async function validateAddress(address: string, chainId: XChainId): Promise<boolean> {
   switch (xChainMap[chainId].xChainType) {
     case 'ICON':

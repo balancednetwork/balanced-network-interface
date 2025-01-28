@@ -31,7 +31,7 @@ export default function MMPendingIntents() {
   if (pendingIntents.length === 0) return null;
 
   return (
-    <Flex justifyContent="center" flexDirection="column" paddingY={2}>
+    <Flex justifyContent="center" flexDirection="column" paddingY={2} marginX={-3}>
       {pendingIntents.map(t => (
         <PendingIntent key={t.id} transaction={t} />
       ))}
@@ -64,7 +64,7 @@ function PendingIntent({ transaction }: { transaction: MMTransaction }) {
 
   const [status, setStatus] = React.useState<TransactionStatus>(TransactionStatus.None);
   // arb part
-  const xService = useXService('EVM') as unknown as EvmXService;
+  const evmXService = useXService('EVM') as unknown as EvmXService;
   // end arb part
 
   // sui part
@@ -74,27 +74,29 @@ function PendingIntent({ transaction }: { transaction: MMTransaction }) {
   // end sui part
 
   const handleCancel = async () => {
-    const walletClient = await xService.getWalletClient(transaction.fromAmount.currency.chainId);
-    const publicClient = xService.getPublicClient(transaction.fromAmount.currency.chainId);
+    const evmPublicClient = evmXService.getPublicClient(transaction.fromAmount.currency.chainId);
 
     setStatus(TransactionStatus.Signing);
     try {
-      const result = await intentService.cancelIntentOrder(
-        transaction.orderId,
-        transaction.fromAmount.currency.xChainId === '0xa4b1.arbitrum' ? 'arb' : 'sui',
-        transaction.fromAmount.currency.xChainId === '0xa4b1.arbitrum'
-          ? // @ts-ignore
-            new EvmProvider({ walletClient: walletClient, publicClient: publicClient })
-          : // @ts-ignore
-            new SuiProvider({ client: suiClient, wallet: suiWallet, account: suiAccount }),
-      );
+      const isArbitrum = transaction.fromAmount.currency.xChainId === '0xa4b1.arbitrum';
+      let provider;
+      if (isArbitrum) {
+        const evmWalletClient = await evmXService.getWalletClient(transaction.fromAmount.currency.chainId);
+        // @ts-ignore
+        provider = new EvmProvider({ walletClient: evmWalletClient, publicClient: evmPublicClient });
+      } else {
+        // @ts-ignore
+        provider = new SuiProvider({ client: suiClient, wallet: suiWallet, account: suiAccount });
+      }
+
+      const result = await intentService.cancelIntentOrder(transaction.orderId, isArbitrum ? 'arb' : 'sui', provider);
 
       if (result.ok) {
         setStatus(TransactionStatus.AwaitingConfirmation);
 
         const waitForTransaction = async () => {
-          if (transaction.fromAmount.currency.xChainId === '0xa4b1.arbitrum') {
-            return publicClient.waitForTransactionReceipt({ hash: result.value as `0x${string}` });
+          if (isArbitrum) {
+            return evmPublicClient.waitForTransactionReceipt({ hash: result.value as `0x${string}` });
           } else {
             return suiClient.waitForTransaction({
               digest: result.value,
@@ -119,22 +121,22 @@ function PendingIntent({ transaction }: { transaction: MMTransaction }) {
   };
 
   return (
-    <Flex justifyContent="center" alignItems="center" my={1}>
+    <Flex justifyContent="center" alignItems="center" my={1} as="p">
       <Typography textAlign="center">
         <strong>
-          {formatBalance(transaction.fromAmount.toFixed(), rates?.[transaction.fromAmount.currency.symbol].toFixed())}{' '}
+          {formatBalance(transaction.fromAmount.toFixed(), rates?.[transaction.fromAmount.currency.symbol]?.toFixed())}{' '}
           {transaction.fromAmount.currency.symbol}
         </strong>{' '}
         for{' '}
         <strong>
-          {formatBalance(transaction.toAmount.toFixed(), rates?.[transaction.toAmount.currency.symbol].toFixed())}{' '}
+          {formatBalance(transaction.toAmount.toFixed(), rates?.[transaction.toAmount.currency.symbol]?.toFixed())}{' '}
           {transaction.toAmount.currency.symbol}
         </strong>
       </Typography>{' '}
       |{' '}
       {status === TransactionStatus.None && <WarningUnderlineText onClick={handleCancel}>Cancel</WarningUnderlineText>}
-      {status === TransactionStatus.Signing && <Typography>Signing...</Typography>}
-      {status === TransactionStatus.AwaitingConfirmation && <Typography>Canceling...</Typography>}
+      {status === TransactionStatus.Signing && <Typography>Signing</Typography>}
+      {status === TransactionStatus.AwaitingConfirmation && <Typography>Canceling</Typography>}
       {status === TransactionStatus.Success && <Typography>Done</Typography>}
     </Flex>
   );

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
@@ -16,6 +16,7 @@ import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useCollateralType } from '@/store/collateral/hooks';
 import { useDerivedLoanInfo, useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
+import { useWrongSymbol } from '@/utils/formatter';
 import { ICON_XCALL_NETWORK_ID, useSendXTransaction } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { XChainId, XToken } from '@balancednetwork/xwagmi';
@@ -122,7 +123,7 @@ const XLoanModal = ({
         storedModalValues.action === XLoanAction.BORROW ? direction : { from: loanNetwork, to: ICON_XCALL_NETWORK_ID },
       account: storedModalValues.action === XLoanAction.BORROW ? collateralAccount : receiver.split('/')[1],
       inputAmount: _inputAmount,
-      usedCollateral: collateralType,
+      usedCollateral: useWrongSymbol(collateralType),
       recipient: storedModalValues.action === XLoanAction.BORROW ? receiver : collateralNetworkAddress,
       xCallFee,
     };

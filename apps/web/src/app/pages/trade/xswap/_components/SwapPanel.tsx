@@ -249,7 +249,7 @@ export default function SwapPanel() {
             </Flex>
           )}
 
-          {!canBridge && maximumBridgeAmount && (
+          {!canBridge && maximumBridgeAmount && trade && (
             <BridgeLimitWarning limitAmount={maximumBridgeAmount} onLimitAmountClick={handleMaxBridgeAmountClick} />
           )}
 

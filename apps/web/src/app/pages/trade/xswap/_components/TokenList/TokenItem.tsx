@@ -10,14 +10,12 @@ import { COMBINED_TOKENS_MAP_BY_ADDRESS, ORACLE_PRICED_TOKENS, useICX } from '@/
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import useTimestampRounded from '@/hooks/useTimestampRounded';
 import { TokenStats, useTokenTrendData } from '@/queries/backendv2';
-import { useRatesWithOracle } from '@/queries/reward';
 import { formatPrice, formatPriceChange, getFormattedNumber } from '@/utils/formatter';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
+import { ICON_XCALL_NETWORK_ID, getSupportedXChainIdsForSwapToken } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { xTokenMap } from '@balancednetwork/xwagmi';
 import { XToken } from '@balancednetwork/xwagmi';
-import { getSupportedXChainIdsForToken } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import React from 'react';
 import { useMedia } from 'react-use';
@@ -56,7 +54,7 @@ const TokenItem = ({ token, price, isLast }: TokenItemProps) => {
   );
 
   const xChainIds = React.useMemo(() => {
-    const currencyXChainIds = getSupportedXChainIdsForToken(currency);
+    const currencyXChainIds = getSupportedXChainIdsForSwapToken(currency);
     return currencyXChainIds.length
       ? currencyXChainIds.sort((a, b) => xChainMap[a].name.localeCompare(xChainMap[b].name))
       : [ICON_XCALL_NETWORK_ID];

@@ -18,11 +18,11 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   weETH: '0xa4b1.arbitrum',
   wstETH: '0xa4b1.arbitrum',
   XLM: 'stellar',
-  AFSUI: 'sui',
-  HASUI: 'sui',
-  VSUI: 'sui',
+  afSUI: 'sui',
+  haSUI: 'sui',
+  vSUI: 'sui',
   SOL: 'solana',
-  JITOSOL: 'solana',
+  JitoSOL: 'solana',
 };
 
 export const wICX = XToken.wICX;
@@ -80,16 +80,16 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       ChainId.MAINNET,
       'cx4b48a4789636aa737285feec8908c765d8bc8042',
       9,
-      'JITOSOL',
+      'JitoSOL',
       'Jito Staked SOL',
     ),
-    new XToken('0x1.icon', ChainId.MAINNET, 'cxb9d0727849a6ce6453f8c9dda2dec2fd543075d4', 9, 'VSUI', 'Volo Staked SUI'),
+    new XToken('0x1.icon', ChainId.MAINNET, 'cxb9d0727849a6ce6453f8c9dda2dec2fd543075d4', 9, 'vSUI', 'Volo Staked SUI'),
     new XToken(
       '0x1.icon',
       ChainId.MAINNET,
       'cx0664cceb34d391ba78a897200fab94b9b49443d0',
       9,
-      'HASUI',
+      'haSUI',
       'Haedal Staked SUI',
     ),
     new XToken(
@@ -97,7 +97,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       ChainId.MAINNET,
       'cx27fa4bdb0522e3be5a51daab06eb39889fb4c8da',
       9,
-      'AFSUI',
+      'afSUI',
       'Aftermath Staked SUI',
     ),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx2609b924e33ef00b648a409245c7ea394c467824', 18, 'sICX', 'Staked ICX'),
@@ -158,6 +158,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
   ],
   '0xa4b1.arbitrum': [
     new XToken('0xa4b1.arbitrum', 42161, '0x0000000000000000000000000000000000000000', 18, 'ETH', 'ETH'),
+    new XToken('0xa4b1.arbitrum', 42161, '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1', 18, 'WETH', 'Wrapped Ether'),
     new XToken('0xa4b1.arbitrum', 42161, '0xA67f4b09Eed22f8201Ee0637CbE9d654E63F946e', 18, 'bnUSD', 'Balanced Dollar'),
     new XToken('0xa4b1.arbitrum', 42161, '0x35751007a407ca6feffe80b3cb397736d2cf4dbe', 18, 'weETH', 'Wrapped eETH'),
     new XToken('0xa4b1.arbitrum', 42161, '0x5979D7b546E38E414F7E9822514be443A4800529', 18, 'wstETH', 'Wrapped stETH'),
@@ -286,7 +287,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'sui',
       '0x549e8b69270defbfafd4f94e17ec44cdbdd99820b33bda2278dea3b9a32d3f55::cert::CERT',
       9,
-      'VSUI',
+      'vSUI',
       'Volo Staked SUI',
     ),
     new XToken(
@@ -294,7 +295,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'sui',
       '0xbde4ba4c2e274a60ce15c1cfff9e5c42e41654ac8b6d906a57efa4bd3c29f47d::hasui::HASUI',
       9,
-      'HASUI',
+      'haSUI',
       'Haedal Staked SUI',
     ),
     new XToken(
@@ -302,7 +303,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'sui',
       '0xf325ce1300e8dac124071d3152c5c5ee6174914f8bc2161e88329cf579246efc::afsui::AFSUI',
       9,
-      'AFSUI',
+      'afSUI',
       'Aftermath Staked SUI',
     ),
     new XToken(
@@ -341,7 +342,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
   solana: [
     new XToken('solana', 'solana', '11111111111111111111111111111111', 9, 'SOL', 'SOL'),
     new XToken('solana', 'solana', '2yN29zk8jgRTW7GUF9WwYAEz8vvABVnvbfQc5DpGi9CJ', 9, 'bnUSD', 'Balanced Dollar'),
-    new XToken('solana', 'solana', 'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn', 9, 'JITOSOL', 'Jito Staked SOL'),
+    new XToken('solana', 'solana', 'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn', 9, 'JitoSOL', 'Jito Staked SOL'),
     new XToken('solana', 'solana', '5N43m6JGxrZ6fW7MrwdbjgY93yjCj7krkcaTA7oRknj6', 9, 'sICX', 'Staked ICX'),
     new XToken('solana', 'solana', 'BH4TZqN9TXnkjiLEQZ9xuXo85YaGoonM4PHpcjHEoTAx', 9, 'BALN', 'Balance Token'),
   ],

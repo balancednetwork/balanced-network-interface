@@ -64,7 +64,7 @@ const collateralSlice = createSlice({
         if (!state.depositedAmounts[xChain]) {
           state.depositedAmounts[xChain] = {};
         }
-        state.depositedAmounts[xChain]![token] = depositedAmount;
+        state.depositedAmounts[xChain][token] = depositedAmount;
       },
     ),
     changeCollateralType: create.reducer<{ collateralType: CurrencyKey }>((state, { payload: { collateralType } }) => {

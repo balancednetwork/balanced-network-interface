@@ -73,6 +73,7 @@ export default function LPDescription() {
 
   const poolRewards = useReward(pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName);
   const poolExternalRewards = useExternalRewards(pairName);
+  const hasExternalRewards = poolExternalRewards && poolExternalRewards.length > 0;
 
   const tempTotalPoolTokens = new BigNumber(totalPoolTokens?.toFixed() || 0).plus(
     formattedAmounts[Field.CURRENCY_A]?.toFixed() || 0,
@@ -176,7 +177,7 @@ export default function LPDescription() {
 
         {pairState === PairState.EXISTS && (
           <Box flex={1} padding={[5, 7]}>
-            {poolRewards || poolExternalRewards ? (
+            {poolRewards || hasExternalRewards ? (
               <Typography variant="h3" mb={2} marginBottom={40}>
                 {t`${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} / ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}
                     liquidity pool${upSmall ? ': ' : ''}`}{' '}
@@ -227,7 +228,7 @@ export default function LPDescription() {
                       </Typography>
                     </Box>
 
-                    {(userRewards || poolExternalRewards) && (
+                    {(userRewards || hasExternalRewards) && (
                       <Box sx={{ margin: '15px 0 25px 0' }}>
                         <Typography textAlign="center" marginBottom="5px" color="text1">
                           <Trans>Your potential rewards</Trans>
@@ -287,7 +288,7 @@ export default function LPDescription() {
                   )}
                 </Box>
 
-                {(poolRewards || poolExternalRewards) && (
+                {(poolRewards || hasExternalRewards) && (
                   <Box sx={{ margin: '15px 0 25px 0' }}>
                     <Typography textAlign="center" marginBottom="5px" color="text1">
                       <Trans>Total daily rewards</Trans>

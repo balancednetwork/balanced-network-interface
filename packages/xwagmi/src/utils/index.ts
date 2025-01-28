@@ -1,10 +1,10 @@
-import { xChainMap } from '@/constants/xChains';
-import { allXTokens, wICX, xTokenMapBySymbol } from '@/constants/xTokens';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
 import BigNumber from 'bignumber.js';
+
+import { xChainMap } from '@/constants/xChains';
+import { wICX, xTokenMapBySymbol } from '@/constants/xTokens';
 import { XChainId, XToken } from '../types';
-export * from './address';
 
 // Function to get the last i bytes of an integer
 function lastBytesOf(x: bigint, i: number): Uint8Array {
@@ -114,49 +114,6 @@ export const getTrackerLink = (
       return ``;
     }
   }
-};
-
-export const jsonStorageOptions: {
-  reviver?: (key: string, value: unknown) => unknown;
-  replacer?: (key: string, value: unknown) => unknown;
-} = {
-  reviver: (_key: string, value: unknown) => {
-    if (!value) return value;
-
-    if (typeof value === 'string' && value.startsWith('BIGINT::')) {
-      return BigInt(value.substring(8));
-    }
-
-    // @ts-ignore
-    if (value && value.type === 'bigint') {
-      // @ts-ignore
-      return BigInt(value.value);
-    }
-
-    // @ts-ignore
-    if (value && value.type === 'CurrencyAmount') {
-      // @ts-ignore
-      return CurrencyAmount.fromRawAmount(allXTokens.find(t => t.id === value.value.tokenId)!, value.value.quotient);
-    }
-    return value;
-  },
-  replacer: (_key: unknown, value: unknown) => {
-    if (typeof value === 'bigint') {
-      return { type: 'bigint', value: value.toString() };
-    }
-
-    if (value instanceof CurrencyAmount) {
-      return {
-        type: 'CurrencyAmount',
-        value: {
-          tokenId: value.currency.id,
-          quotient: value.quotient.toString(),
-        },
-      };
-    }
-
-    return value;
-  },
 };
 
 export const convertCurrencyAmount = (

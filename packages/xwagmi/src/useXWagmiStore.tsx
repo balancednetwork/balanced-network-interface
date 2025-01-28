@@ -11,7 +11,7 @@ import { getXChainType } from './actions';
 import { XPublicClient, XService, XWalletClient } from './core';
 import { useXConnection } from './hooks';
 import { XConnection } from './types';
-import { jsonStorageOptions } from './utils';
+import { jsonStorageOptions } from './utils/zustand';
 import { ArchwayXConnector, ArchwayXPublicClient, ArchwayXService, ArchwayXWalletClient } from './xchains/archway';
 import { EvmXPublicClient, EvmXService, EvmXWalletClient } from './xchains/evm';
 import {

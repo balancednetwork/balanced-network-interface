@@ -8,7 +8,7 @@ import { immer } from 'zustand/middleware/immer';
 
 import { getXPublicClient } from '@/actions';
 import { xChainMap } from '@/constants/xChains';
-import { jsonStorageOptions } from '@/utils';
+import { jsonStorageOptions } from '@/utils/zustand';
 import { XCallEventType, XTransaction } from '../types';
 import { TransactionStatus, XCallEventMap, XMessage, XMessageStatus } from '../types';
 import { transactionActions } from './useTransactionStore';

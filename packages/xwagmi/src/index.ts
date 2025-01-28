@@ -1,7 +1,11 @@
 export * from './actions';
 export * from './constants';
 export * from './core';
+
 export * from './utils';
+export * from './utils/address';
+export * from './utils/zustand';
+
 export * from './xchains/archway';
 export * from './xchains/evm';
 export * from './xchains/havah';

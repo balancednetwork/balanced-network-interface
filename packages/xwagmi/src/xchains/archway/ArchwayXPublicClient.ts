@@ -1,10 +1,10 @@
 import { ArchwayClient } from '@archwayhq/arch3.js';
 
-import { archway } from '@/constants/xChains';
+import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
 
+import { archway } from '@/constants/xChains';
 import { XPublicClient } from '@/core/XPublicClient';
-import { XChainId, XToken } from '@/types';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XToken } from '@/types';
 import {
   TransactionStatus,
   XCallEvent,

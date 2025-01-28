@@ -1,11 +1,12 @@
+import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
+import { RLP } from '@ethereumjs/rlp';
+
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { convertCurrency, isSpokeToken, uintToBytes } from '@/utils';
 import { getRlpEncodedSwapData, toICONDecimals } from '@/xcall';
 import { XTransactionInput, XTransactionType } from '@/xcall/types';
 import { bnJs } from '@/xchains/icon/bnJs';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import { RLP } from '@ethereumjs/rlp';
-import { XChainId, XToken } from '../types';
+import { XToken } from '../types';
 import {
   getAddLPData,
   getClaimRewardData,

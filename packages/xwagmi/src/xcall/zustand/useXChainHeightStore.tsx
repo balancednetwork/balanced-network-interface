@@ -1,11 +1,12 @@
 import axios from 'axios';
 import { useEffect } from 'react';
 
+import { XChainId } from '@balancednetwork/sdk-core';
 import { useQuery } from '@tanstack/react-query';
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 
-import { XChain, XChainId } from '@/types';
+import { XChain } from '@/types';
 
 type XChainHeightStore = {
   xChainHeights: Partial<Record<XChainId, bigint>>;

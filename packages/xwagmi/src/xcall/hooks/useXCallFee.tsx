@@ -1,12 +1,13 @@
-import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+
+import { XChainId } from '@balancednetwork/sdk-core';
+import { useQuery } from '@tanstack/react-query';
 
 import { getXPublicClient } from '@/actions';
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { FROM_SOURCES, TO_SOURCES, xChainMap } from '@/constants/xChains';
 import { XPublicClient } from '@/core';
 import { useXPublicClient } from '@/hooks';
-import { XChainId } from '@/types';
 import { formatUnits } from 'viem';
 import { IXCallFee } from '../types';
 

@@ -130,7 +130,10 @@ export function useWithdrawalsFloorDEXData(): UseQueryResult<WithdrawalFloorData
 
   const fetchWithdrawalData = async () => {
     if (!allTokens) return;
+    const USDC = SUPPORTED_TOKENS_LIST.find(token => token.symbol === 'USDC');
+    const stabilityFundTokens = [USDC];
     const tokenAddresses = SUPPORTED_TOKENS_LIST.map(token => token.address);
+
     const cdsArray: CallData[][] = tokenAddresses.map(address => [
       { target: bnJs.Dex.address, method: 'getCurrentFloor', params: [address] },
       { target: address, method: 'balanceOf', params: [bnJs.Dex.address] },
@@ -138,7 +141,20 @@ export function useWithdrawalsFloorDEXData(): UseQueryResult<WithdrawalFloorData
       { target: bnJs.Dex.address, method: 'getTimeDelayMicroSeconds', params: [address] },
     ]);
 
+    const stabilityFundTokensCds = stabilityFundTokens.map(
+      token =>
+        token && [
+          { target: bnJs.StabilityFund.address, method: 'getCurrentFloor', params: [token.address] },
+          { target: token.address, method: 'balanceOf', params: [bnJs.StabilityFund.address] },
+          { target: bnJs.StabilityFund.address, method: 'getFloorPercentage', params: [] },
+          { target: bnJs.StabilityFund.address, method: 'getTimeDelayMicroSeconds', params: [] },
+        ],
+    );
+
     const data = await Promise.all(cdsArray.map(cds => bnJs.Multicall.getAggregateData(cds)));
+    const stabilityFundData = await Promise.all(
+      stabilityFundTokensCds.map(cds => cds && bnJs.Multicall.getAggregateData(cds)),
+    );
 
     const limits = data.map((assetDataSet, index) => {
       try {
@@ -169,7 +185,34 @@ export function useWithdrawalsFloorDEXData(): UseQueryResult<WithdrawalFloorData
       }
     });
 
-    return limits.filter(item => item && item.floor.isGreaterThan(0));
+    const stabilityFundLimits = stabilityFundData.map((assetDataSet, index) => {
+      try {
+        const token = stabilityFundTokens[index];
+        if (!token) return null;
+
+        const floor = new BigNumber(assetDataSet[0]);
+        const current = new BigNumber(assetDataSet[1]);
+        const percentageFloor = new BigNumber(assetDataSet[2]).div(10000);
+        const floorTimeDecayInHours = new BigNumber(assetDataSet[3]).div(1000 * 1000 * 60 * 60);
+        const available = CurrencyAmount.fromRawAmount(
+          token,
+          current.minus(floor).isNaN() ? 0 : current.minus(floor).toFixed(0),
+        );
+        return {
+          token,
+          floor,
+          current,
+          available,
+          percentageFloor,
+          floorTimeDecayInHours,
+        };
+      } catch (error) {
+        console.error('Error fetching Stability Fund withdrawal limits:', error);
+        return null;
+      }
+    });
+
+    return [...limits, ...stabilityFundLimits].filter(item => item && item.floor.isGreaterThan(0));
   };
 
   return useQuery({

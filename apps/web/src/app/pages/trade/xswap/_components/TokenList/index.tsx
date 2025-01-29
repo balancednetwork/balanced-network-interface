@@ -36,7 +36,7 @@ export const Grid = styled.div`
   align-items: center;
   grid-template-columns: 12fr 10fr 12fr 12fr 13fr;
   ${({ theme }) => theme.mediaWidth.upLarge`
-    grid-template-columns: 22fr 14fr 15fr 16fr 15fr;
+    grid-template-columns: 24fr 14fr 15fr 14fr 15fr;
   `}
 
   > *, ${HeaderText} {

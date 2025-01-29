@@ -8,10 +8,8 @@ import { UnderlineText } from '@/app/components/DropdownText';
 import { Typography } from '@/app/theme';
 import { useOraclePrices } from '@/store/oracle/hooks';
 
-import QuestionIcon from '@/assets/icons/question.svg';
 import { useWithdrawalsFloorDEXData } from '@/store/swap/hooks';
 import BigNumber from 'bignumber.js';
-import { MouseoverTooltip } from '../Tooltip';
 
 interface WithdrawalLimitWarningProps {
   limitAmount: CurrencyAmount<Currency>;
@@ -50,14 +48,7 @@ const WithdrawalLimitWarning: React.FC<WithdrawalLimitWarningProps> = props => {
             </UnderlineText>{' '}
           </>
         }
-        <Trans>available. </Trans>{' '}
-        <MouseoverTooltip
-          placement="bottom"
-          width={300}
-          text={t`Only ${limitData?.percentageFloor.times(100).toFixed(2).replace('.00', '')}% can be withdrawn at a time. Limit will reset gradually over the next ${limitData?.floorTimeDecayInHours.toFixed(0)} hours.`}
-        >
-          <QuestionIcon width={14} style={{ cursor: 'help', marginTop: -2 }} />
-        </MouseoverTooltip>
+        <Trans>available.</Trans>
       </Typography>
     </Flex>
   );

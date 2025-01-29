@@ -1,8 +1,10 @@
+import { Typography } from '@/app/theme';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance } from '@/utils/formatter';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { XToken } from '@balancednetwork/xwagmi';
+import { Trans } from '@lingui/macro';
 import React, { Fragment } from 'react';
 import { Box } from 'rebass';
 import styled from 'styled-components';
@@ -35,17 +37,23 @@ const AssetManagerTokenBreakdown = ({
   return (
     <QuestionWrapper style={{ marginLeft: `${spacing.x}px`, transform: `translateY(${spacing.y}px)` }}>
       <QuestionHelper
+        width={280}
         text={
-          <Grid>
-            {amounts.map((currencyAmount, i) => (
-              <Fragment key={i}>
-                <NetworkName>{xChainMap[currencyAmount.currency.xChainId].name}:</NetworkName>
-                <Amount>
-                  {`${formatBalance(currencyAmount.toExact(), prices?.[currencyAmount.currency.symbol].toFixed())} ${currencyAmount.currency.symbol}`}
-                </Amount>
-              </Fragment>
-            ))}
-          </Grid>
+          <>
+            <Typography mb="15px" color="text1">
+              <Trans>Liquidity is held on ICON, with varied availability on other blockchains:</Trans>
+            </Typography>
+            <Grid>
+              {amounts.map((currencyAmount, i) => (
+                <Fragment key={i}>
+                  <NetworkName>{xChainMap[currencyAmount.currency.xChainId].name}:</NetworkName>
+                  <Amount>
+                    {`${formatBalance(currencyAmount.toExact(), prices?.[currencyAmount.currency.symbol].toFixed())} ${currencyAmount.currency.symbol}`}
+                  </Amount>
+                </Fragment>
+              ))}
+            </Grid>
+          </>
         }
       />
     </QuestionWrapper>

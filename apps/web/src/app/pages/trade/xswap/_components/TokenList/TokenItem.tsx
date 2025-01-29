@@ -12,7 +12,7 @@ import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import useTimestampRounded from '@/hooks/useTimestampRounded';
 import { TokenStats, useTokenTrendData } from '@/queries/backendv2';
 import { useWithdrawalsFloorDEXData } from '@/store/swap/hooks';
-import { formatPrice, formatPriceChange, getFormattedNumber } from '@/utils/formatter';
+import { formatBalance, formatPrice, formatPriceChange, getFormattedNumber } from '@/utils/formatter';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { ICON_XCALL_NETWORK_ID, getSupportedXChainIdsForSwapToken } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
@@ -141,26 +141,11 @@ const TokenItem = ({ token, price, isLast }: TokenItemProps) => {
         </DataText>
         <DataText>
           <Flex alignItems="flex-end" flexDirection="column" pl={2}>
-            <Typography variant="p">{getFormattedNumber(token.market_cap, 'currency0')}</Typography>
+            <Typography variant="p">{`$${getFormattedNumber(token.liquidity, 'number')}`}</Typography>
             <Flex>
               {amounts && amounts.length > 1 && (
                 <Box marginRight={1}>
                   <AssetManagerTokenBreakdown amounts={amounts} spacing={{ x: 0, y: 1 }} />
-                </Box>
-              )}
-              <Typography variant="p" color="text1" style={{ whiteSpace: isSmall ? 'initial' : 'nowrap' }}>
-                {getFormattedNumber(token.total_supply, token.price > 1000 ? 'number2' : 'number')} {token.symbol}
-              </Typography>
-            </Flex>
-          </Flex>
-        </DataText>
-        <DataText>
-          <Flex alignItems="flex-end" flexDirection="column" pl={2}>
-            <Typography variant="p">{`$${getFormattedNumber(token.liquidity, 'number')}`}</Typography>
-            <Flex>
-              {limit && (
-                <Box marginRight={1}>
-                  <WithdrawalLimitInfo symbol={token.symbol} spacing={{ x: 0, y: 1 }} />
                 </Box>
               )}
               {token.price > 0 && (
@@ -170,6 +155,26 @@ const TokenItem = ({ token, price, isLast }: TokenItemProps) => {
                 </Typography>
               )}
             </Flex>
+          </Flex>
+        </DataText>
+        <DataText>
+          <Flex alignItems="flex-end" flexDirection="column" pl={2}>
+            {limit ? (
+              <>
+                <Typography variant="p">{`$${getFormattedNumber(new BigNumber(limit.available.toFixed()).times(price || 1).toNumber(), 'number')}`}</Typography>
+                <Typography variant="p" color="text1">
+                  {formatBalance(limit.available.toFixed(), price?.toFixed() || 1)} {token.symbol}
+                </Typography>
+              </>
+            ) : (
+              <>
+                <Typography variant="p">{`$${getFormattedNumber(token.liquidity, 'number')}`}</Typography>
+                <Typography variant="p" color={showWarning ? 'alert' : 'text1'}>
+                  {getFormattedNumber(token.liquidity / token.price, token.price > 1000 ? 'number2' : 'number')}{' '}
+                  {token.symbol}
+                </Typography>
+              </>
+            )}
           </Flex>
         </DataText>
         <DataText>{trendData ? <Sparkline data={trendData} /> : <LoaderComponent />}</DataText>

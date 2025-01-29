@@ -143,27 +143,29 @@ const TokenList = () => {
                 </QuestionWrapper>
                 <HeaderText
                   role="button"
-                  className={sortBy.key === 'market_cap' ? sortBy.order : ''}
+                  className={sortBy.key === 'liquidity' ? sortBy.order : ''}
                   onClick={() =>
                     handleSortSelect({
-                      key: 'market_cap',
+                      key: 'liquidity',
                     })
                   }
                 >
-                  MARKET CAP
+                  Liquidity
                 </HeaderText>
               </Flex>
-              <HeaderText
-                role="button"
-                className={sortBy.key === 'liquidity' ? sortBy.order : ''}
-                onClick={() =>
-                  handleSortSelect({
-                    key: 'liquidity',
-                  })
-                }
-              >
-                Available
-              </HeaderText>
+              <Flex>
+                <QuestionWrapper style={{ transform: 'translate3d(-5px, 1px, 0)' }}>
+                  <QuestionHelper
+                    width={290}
+                    text={
+                      <Typography color="text1">
+                        <Trans>Many assets include a 15% withdrawal limit, which resets over 24 hours.</Trans>
+                      </Typography>
+                    }
+                  />
+                </QuestionWrapper>
+                <HeaderText style={{ cursor: 'default' }}>Available</HeaderText>
+              </Flex>
               <HeaderText style={{ cursor: 'default' }}>7d trend</HeaderText>
             </Grid>
           )}

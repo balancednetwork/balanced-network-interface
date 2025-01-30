@@ -5,7 +5,8 @@ import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { XToken } from '@balancednetwork/xwagmi';
 import { Trans } from '@lingui/macro';
-import React, { Fragment } from 'react';
+import BigNumber from 'bignumber.js';
+import React, { Fragment, useMemo } from 'react';
 import { Box } from 'rebass';
 import styled from 'styled-components';
 import QuestionHelper, { QuestionWrapper } from '../QuestionHelper';
@@ -34,6 +35,14 @@ const AssetManagerTokenBreakdown = ({
 }) => {
   const prices = useRatesWithOracle();
 
+  const sortedAmounts = useMemo(() => {
+    return amounts.sort((a, b) => {
+      const aAmount = new BigNumber(a.toFixed()).toNumber();
+      const bAmount = new BigNumber(b.toFixed()).toNumber();
+      return bAmount - aAmount;
+    });
+  }, [amounts]);
+
   return (
     <QuestionWrapper style={{ marginLeft: `${spacing.x}px`, transform: `translateY(${spacing.y}px)` }}>
       <QuestionHelper
@@ -44,7 +53,7 @@ const AssetManagerTokenBreakdown = ({
               <Trans>Liquidity is held on ICON, with varied availability on other blockchains:</Trans>
             </Typography>
             <Grid>
-              {amounts.map((currencyAmount, i) => (
+              {sortedAmounts.map((currencyAmount, i) => (
                 <Fragment key={i}>
                   <NetworkName>{xChainMap[currencyAmount.currency.xChainId].name}:</NetworkName>
                   <Amount>

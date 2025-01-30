@@ -2,7 +2,7 @@ import { Typography } from '@/app/theme';
 import { useRatesWithOracle } from '@/queries/reward';
 import { formatBalance } from '@/utils/formatter';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import { xChainMap } from '@balancednetwork/xwagmi';
+import { xChainMap, xTokenMap } from '@balancednetwork/xwagmi';
 import { XToken } from '@balancednetwork/xwagmi';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -13,9 +13,9 @@ import QuestionHelper, { QuestionWrapper } from '../QuestionHelper';
 
 export const Grid = styled(Box)`
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: 1fr auto auto;
   row-gap: 6px;
-  column-gap: 5px;
+  column-gap: 6px;
 `;
 
 export const NetworkName = styled(Box)`
@@ -24,6 +24,11 @@ export const NetworkName = styled(Box)`
 
 export const Amount = styled(Box)`
   text-align: right;
+`;
+
+export const TokenSymbol = styled(Box)`
+  text-align: left;
+  opacity: 0.85;
 `;
 
 const AssetManagerTokenBreakdown = ({
@@ -53,14 +58,21 @@ const AssetManagerTokenBreakdown = ({
               <Trans>Liquidity is held on ICON, with varied availability on other blockchains:</Trans>
             </Typography>
             <Grid>
-              {sortedAmounts.map((currencyAmount, i) => (
-                <Fragment key={i}>
-                  <NetworkName>{xChainMap[currencyAmount.currency.xChainId].name}:</NetworkName>
-                  <Amount>
-                    {`${formatBalance(currencyAmount.toExact(), prices?.[currencyAmount.currency.symbol].toFixed())} ${currencyAmount.currency.symbol}`}
-                  </Amount>
-                </Fragment>
-              ))}
+              {sortedAmounts.map((currencyAmount, i) => {
+                const spokeAssetVersion: string | undefined = xTokenMap[currencyAmount.currency.xChainId].find(
+                  xToken => xToken.symbol === currencyAmount.currency.symbol,
+                )?.spokeVersion;
+
+                return (
+                  <Fragment key={i}>
+                    <NetworkName>{xChainMap[currencyAmount.currency.xChainId].name}:</NetworkName>
+                    <Amount>
+                      {`${formatBalance(currencyAmount.toExact(), prices?.[currencyAmount.currency.symbol].toFixed())}`}
+                    </Amount>
+                    <TokenSymbol>{spokeAssetVersion || currencyAmount.currency.symbol}</TokenSymbol>
+                  </Fragment>
+                );
+              })}
             </Grid>
           </>
         }

@@ -123,36 +123,17 @@ const TokenList = () => {
               >
                 PRICE (24H)
               </HeaderText>
-              <Flex>
-                <QuestionWrapper style={{ transform: 'translate3d(-5px, 1px, 0)' }}>
-                  <QuestionHelper
-                    width={275}
-                    text={
-                      <>
-                        <Typography color="text1">
-                          <Trans>
-                            Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain.
-                          </Trans>
-                        </Typography>
-                        <Typography color="text1" mt={2}>
-                          <Trans>It does not reflect the total market cap for multi-chain assets.</Trans>
-                        </Typography>
-                      </>
-                    }
-                  />
-                </QuestionWrapper>
-                <HeaderText
-                  role="button"
-                  className={sortBy.key === 'liquidity' ? sortBy.order : ''}
-                  onClick={() =>
-                    handleSortSelect({
-                      key: 'liquidity',
-                    })
-                  }
-                >
-                  Liquidity
-                </HeaderText>
-              </Flex>
+              <HeaderText
+                role="button"
+                className={sortBy.key === 'liquidity' ? sortBy.order : ''}
+                onClick={() =>
+                  handleSortSelect({
+                    key: 'liquidity',
+                  })
+                }
+              >
+                Liquidity
+              </HeaderText>
               <Flex>
                 <QuestionWrapper style={{ transform: 'translate3d(-5px, 1px, 0)' }}>
                   <QuestionHelper

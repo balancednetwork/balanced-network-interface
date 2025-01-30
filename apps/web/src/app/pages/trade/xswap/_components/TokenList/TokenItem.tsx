@@ -4,7 +4,6 @@ import CurrencyLogo from '@/app/components/CurrencyLogo';
 import Divider from '@/app/components/Divider';
 import { DataText } from '@/app/components/List';
 import { MouseoverTooltip } from '@/app/components/Tooltip';
-import WithdrawalLimitInfo from '@/app/components/WithdrawalLimitInfo';
 import { LoaderComponent } from '@/app/pages/vote/_components/styledComponents';
 import { Typography, sizes } from '@/app/theme';
 import { COMBINED_TOKENS_MAP_BY_ADDRESS, ORACLE_PRICED_TOKENS, useICX } from '@/constants/tokens';
@@ -78,12 +77,15 @@ const TokenItem = ({ token, price, isLast }: TokenItemProps) => {
     return limitData;
   }, [withdrawalLimits, token]);
 
+  const availableRatio = useMemo(() => {
+    return limit?.current.minus(limit?.floor).div(limit?.current);
+  }, [limit]);
+
   const showWarning = useMemo(() => {
-    if (!limit) return false;
-    const availableRatio = limit.current.minus(limit.floor).div(limit.current);
+    if (!limit || !availableRatio) return false;
 
     return limit.percentageFloor.div(2).isGreaterThanOrEqualTo(availableRatio);
-  }, [limit]);
+  }, [limit, availableRatio]);
 
   const isOraclePriced = ORACLE_PRICED_TOKENS.includes(token.symbol);
 
@@ -149,7 +151,7 @@ const TokenItem = ({ token, price, isLast }: TokenItemProps) => {
                 </Box>
               )}
               {token.price > 0 && (
-                <Typography variant="p" color={showWarning ? 'alert' : 'text1'}>
+                <Typography variant="p" color="text1">
                   {getFormattedNumber(token.liquidity / token.price, token.price > 1000 ? 'number2' : 'number')}{' '}
                   {token.symbol}
                 </Typography>
@@ -161,7 +163,16 @@ const TokenItem = ({ token, price, isLast }: TokenItemProps) => {
           <Flex alignItems="flex-end" flexDirection="column" pl={2}>
             {limit ? (
               <>
-                <Typography variant="p">{`$${getFormattedNumber(new BigNumber(limit.available.toFixed()).times(price || 1).toNumber(), 'number')}`}</Typography>
+                <Flex>
+                  <Typography variant="p">
+                    {`$${getFormattedNumber(new BigNumber(limit.available.toFixed()).times(price || 1).toNumber(), 'number')}`}
+                  </Typography>
+                  {availableRatio && (
+                    <Typography ml={1} color={showWarning ? 'alert' : 'primary'}>
+                      {`(~${getFormattedNumber(availableRatio.toNumber(), 'percent0')})`}
+                    </Typography>
+                  )}
+                </Flex>
                 <Typography variant="p" color="text1">
                   {formatBalance(limit.available.toFixed(), price?.toFixed() || 1)} {token.symbol}
                 </Typography>
@@ -169,7 +180,7 @@ const TokenItem = ({ token, price, isLast }: TokenItemProps) => {
             ) : (
               <>
                 <Typography variant="p">{`$${getFormattedNumber(token.liquidity, 'number')}`}</Typography>
-                <Typography variant="p" color={showWarning ? 'alert' : 'text1'}>
+                <Typography variant="p" color="text1">
                   {getFormattedNumber(token.liquidity / token.price, token.price > 1000 ? 'number2' : 'number')}{' '}
                   {token.symbol}
                 </Typography>

@@ -135,11 +135,10 @@ export function useTokenPrices() {
 }
 
 export function useTokenTrendData(tokenSymbol, start, end) {
-  const symbol = tokenSymbol === 'XLM' ? 'XML' : tokenSymbol;
   return useQuery({
-    queryKey: [`trend`, symbol, start, end],
+    queryKey: [`trend`, tokenSymbol, start, end],
     queryFn: async () => {
-      const { data } = await axios.get(`${API_ENDPOINT}/tokens/series/1h/${start}/${end}?symbol=${symbol}`);
+      const { data } = await axios.get(`${API_ENDPOINT}/tokens/series/1h/${start}/${end}?symbol=${tokenSymbol}`);
       return data;
     },
     placeholderData: keepPreviousData,

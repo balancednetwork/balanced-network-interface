@@ -140,7 +140,9 @@ const TokenList = () => {
                     width={290}
                     text={
                       <Typography color="text1">
-                        <Trans>Many assets include a 15% withdrawal limit, which resets over 24 hours.</Trans>
+                        <Trans>
+                          To protect liquidity, many assets include a withdrawal limit that resets over 24 hours.
+                        </Trans>
                       </Typography>
                     }
                   />

@@ -68,7 +68,7 @@ const TokenList = () => {
   const tokens = React.useMemo(() => {
     if (!allTokens) return [];
     const filteredTokens = Object.values(allTokens).filter((token: TokenStats) => {
-      const shouldShow = isCommunityListEnabled || token.type === 'balanced';
+      const shouldShow = token.symbol !== 'wICX' && (isCommunityListEnabled || token.type === 'balanced');
       const tokenName = token.name.toLowerCase();
       const tokenSymbol = token.symbol.toLowerCase();
       const tokenXChains = getSupportedXChainForToken(COMBINED_TOKENS_MAP_BY_ADDRESS[token.address])?.map(

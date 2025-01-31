@@ -331,6 +331,10 @@ msgstr "Couldn't transfer {inputCurrency} to {network}. Try again."
 msgid "Available since {0}"
 msgstr "Available since {0}"
 
+#: src/app/pages/trade/xswap/_components/TokenList/index.tsx
+msgid "To protect liquidity, many assets include a withdrawal limit that resets over 24 hours."
+msgstr "To protect liquidity, many assets include a withdrawal limit that resets over 24 hours."
+
 #: src/app/pages/vote/_components/BribesPanel/index.tsx
 msgid "Liquidity bribes"
 msgstr "Liquidity bribes"
@@ -785,8 +789,8 @@ msgid "bBALN holders received"
 msgstr "bBALN holders received"
 
 #: src/app/components/WithdrawalLimitWarning/index.tsx
-msgid "Only {0}% can be withdrawn at a time. Limit will reset gradually over the next {1} hours."
-msgstr "Only {0}% can be withdrawn at a time. Limit will reset gradually over the next {1} hours."
+#~ msgid "Only {0}% can be withdrawn at a time. Limit will reset gradually over the next {1} hours."
+#~ msgstr "Only {0}% can be withdrawn at a time. Limit will reset gradually over the next {1} hours."
 
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "Unstaking BALN..."
@@ -1257,8 +1261,8 @@ msgstr "Add <0>{0}</0> item"
 #~ msgstr "Revert transaction."
 
 #: src/app/pages/trade/xswap/_components/TokenList/index.tsx
-msgid "It does not reflect the total market cap for multi-chain assets."
-msgstr "It does not reflect the total market cap for multi-chain assets."
+#~ msgid "It does not reflect the total market cap for multi-chain assets."
+#~ msgstr "It does not reflect the total market cap for multi-chain assets."
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Cross-chain swap requested."
@@ -1419,8 +1423,8 @@ msgstr "Wallet: {0} {1}"
 #~ msgstr "The fee APR is calculated from the swap fees earned by a pool in the last 30 days."
 
 #: src/app/pages/trade/xswap/_components/TokenList/index.tsx
-msgid "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
-msgstr "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
+#~ msgid "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
+#~ msgstr "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
 
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Couldn't supply {0} liquidity. Try again."
@@ -2867,6 +2871,10 @@ msgstr "To borrow bnUSD, deposit collateral."
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX is ready to claim"
 msgstr "{0} ICX is ready to claim"
+
+#: src/app/components/AssetManagerTokenBreakdown/index.tsx
+msgid "Liquidity is held on ICON, with varied availability on other blockchains:"
+msgstr "Liquidity is held on ICON, with varied availability on other blockchains:"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Pay a {0} BALN fee to unlock early."

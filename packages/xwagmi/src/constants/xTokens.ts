@@ -121,14 +121,6 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'sARCH',
       'Staked Arch',
     ),
-    new XToken(
-      'archway-1',
-      'archway-1',
-      'ibc/43897B9739BD63E3A08A88191999C632E052724AB96BD4C74AE31375C991F48D',
-      6,
-      'USDC',
-      'USDC on Archway',
-    ),
   ],
   '0xa86a.avax': [
     new XToken('0xa86a.avax', 43114, '0x0000000000000000000000000000000000000000', 18, 'AVAX', 'AVAX'),

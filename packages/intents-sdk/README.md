@@ -119,11 +119,36 @@ SDK abstracts away the wallet and public RPC clients using `ChainProviderType` T
 
 - `EvmProvider`: Provider used for EVM type chains (ETH, BSC, etc..). Implemented using [viem](https://viem.sh/docs/clients/wallet#json-rpc-accounts).
 - `SuiProvider`: Provider used for SUI type chains (SUI). Implemented using [@mysten/sui](https://github.com/MystenLabs/sui) and [@mysten/wallet-standard](https://docs.sui.io/standards/wallet-standard).
+- `IconProvider`: Provider used for ICON blockchain. Implemented using [icon-sdk-js](https://www.npmjs.com/package/icon-sdk-js).
 
 Optionally, you can supply EVM providers (wallet and public clients) yourself (see `EvmInitializedConfig`).
 SUI accepts only initialized Wallet, Account and Client.
 
 Providers are used to request wallet actions (prompts wallet extension) and make RPC calls to the RPC nodes.
+
+ICON Provider example:
+
+```typescript
+import { IconProvider } from "@balancednetwork/intents-sdk"
+
+// uninitialized mainnet config
+const iconProvider = new IconProvider({
+  iconRpcUrl: "https://ctz.solidwallet.io/api/v3",
+  iconDebugRpcUrl: "https://ctz.solidwallet.io/api/v3d",
+  wallet: {
+    address: "hx601020c5797Cdd34f64476b9bf887a353150Cb9a", // providing address assumes that browser wallet is connected
+    // privateKey: "0x0000000000000000000000000000000000000000000000000000000000000000", // optional
+  },
+})
+
+// initialized config
+const iconProvider = new IconProvider({
+  iconService: new IconService(new HttpProvider("https://lisbon.net.solidwallet.io/api/v3")),
+  iconDebugRpcUrl: "https://lisbon.net.solidwallet.io/api/v3/debug",
+  http: new HttpProvider("https://lisbon.net.solidwallet.io/api/v3"),
+  wallet: "hx601020c5797Cdd34f64476b9bf887a353150Cb9a",// providing address assumes that browser wallet is connected, provide IconWallet instance in case of private key based initialization
+})
+```
 
 EVM Provider example:
 

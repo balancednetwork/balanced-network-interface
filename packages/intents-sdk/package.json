@@ -17,7 +17,7 @@
     "build": "tsc",
     "test": "vitest run",
     "dev": "vitest",
-    "ci": "pnpm run pretty && pnpm run build && npm run check-exports",
+    "ci": "pnpm run pretty && pnpm run build && npm run check-exports && pnpm run test",
     "pretty": "biome format . --write",
     "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
     "prepublishOnly": "npm run ci",
@@ -38,6 +38,9 @@
   "peerDependencies": {
     "viem": "^2.21.35",
     "@mysten/sui": "^1.14.1",
-    "@mysten/wallet-standard": "^0.13.16"
+    "@mysten/wallet-standard": "^0.13.16",
+    "icon-sdk-js": "1.5.3",
+    "rlp": "3.0.0",
+    "bignumber.js": "9.0.1"
   }
 }

@@ -1,7 +1,7 @@
 import type { Address } from 'viem';
 
-export type ChainType = 'evm' | 'sui';
-export type ChainName = 'sui' | 'arb' | 'pol';
+export type ChainType = 'evm' | 'sui' | 'icon';
+export type ChainName = 'sui' | 'arb' | 'pol' | 'icon';
 export type ChainInfo<T extends ChainType> = {
   name: ChainName;
   type: T;
@@ -13,6 +13,10 @@ export type Token = {
   decimals: number;
   address: string;
 };
+
+export type IconAddress = `hx${string}` | `cx${string}`;
+export type IconSmartContractAddress = `cx${string}`;
+export type IconEoaAddress = `hx${string}`;
 
 export enum IntentStatusCode {
   NOT_FOUND = -1,
@@ -50,7 +54,12 @@ export type SuiChainConfig = BaseChainConfig<'sui'> & {
   nativeToken: string;
 };
 
-export type ChainConfig = EvmChainConfig | SuiChainConfig;
+export type IconChainConfig = BaseChainConfig<'icon'> & {
+  intentContract: IconSmartContractAddress;
+  nativeToken: IconSmartContractAddress;
+};
+
+export type ChainConfig = EvmChainConfig | SuiChainConfig | IconChainConfig;
 
 export type GetChainConfigType<T extends ChainName> = T extends 'sui'
   ? SuiChainConfig
@@ -124,4 +133,27 @@ export type CreateIntentOrderPayload = {
 
 export type IntentServiceConfig = {
   solverApiEndpoint: string;
+};
+
+export type HttpPrefixedUrl = `http${string}`;
+
+export type PrivateKeyHolder<T = string> = {
+  privateKey: T;
+};
+
+export type WalletAddressHolder<T = string> = {
+  address: T;
+};
+
+export type AddressOrPrivateKeyInit<PkType = string, AddressType = string> =
+  | PrivateKeyHolder<PkType>
+  | WalletAddressHolder<AddressType>;
+
+export type IconEventLog = {
+  indexed: string[];
+  data: string[];
+};
+
+export type IconTransactionEventLogs = {
+  eventLogs: IconEventLog[];
 };

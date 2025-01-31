@@ -1,9 +1,10 @@
 import type { Chain } from 'viem';
 import { arbitrum, polygon } from 'viem/chains';
-import type { ChainConfig, ChainName, EvmChainConfig, SuiChainConfig } from './types.js';
+import type { ChainConfig, ChainName, EvmChainConfig, IconChainConfig, SuiChainConfig } from './types.js';
 
 export const DEFAULT_MAX_RETRY = 3;
 export const DEFAULT_RETRY_DELAY_MS = 2000;
+export const ICON_TX_RESULT_WAIT_MAX_RETRY = 10;
 
 export const supportedChains: ChainName[] = ['arb', 'sui', 'pol'];
 
@@ -137,4 +138,39 @@ export const chainConfig: Record<ChainName, ChainConfig> = {
       },
     ],
   } satisfies SuiChainConfig,
+  ['icon']: {
+    chain: {
+      name: 'icon',
+      type: 'icon',
+    },
+    nid: '0x1.icon',
+    intentContract: 'cx55f6ac86d82a14022c338c8c0033eeceeeab382d',
+    nativeToken: 'cx0000000000000000000000000000000000000000',
+    supportedTokens: [
+      {
+        symbol: 'wICX',
+        name: 'Wrapped ICX',
+        decimals: 18,
+        address: 'cx3975b43d260fb8ec802cef6e60c2f4d07486f11d',
+      },
+      {
+        symbol: 'sICX',
+        name: 'Staked ICX',
+        decimals: 18,
+        address: 'cx2609b924e33ef00b648a409245c7ea394c467824',
+      },
+      {
+        symbol: 'bnUSD',
+        name: 'Balanced Network USD',
+        decimals: 18,
+        address: 'cx88fd7df7ddff82f7cc735c871dc519838cb235bb',
+      },
+      {
+        symbol: 'BALN',
+        name: 'Balance Token',
+        decimals: 18,
+        address: 'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619',
+      },
+    ],
+  } satisfies IconChainConfig,
 } as const;

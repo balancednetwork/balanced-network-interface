@@ -1,4 +1,6 @@
 import { fromBytes } from 'viem';
+import { uintToBytes } from '../utils/index.js';
+import { encode as rlpEncode } from 'rlp';
 
 interface ISwapOrder {
   id: bigint; // uint256 -> BigInt (to handle large numbers)
@@ -127,6 +129,30 @@ export class SwapOrder implements ISwapOrder {
       toAmount: this.toAmount,
       data: this.data,
     };
+  }
+
+  /**
+   * Converts the SwapOrder to RLP encoded bytes for ICON compatibility
+   * Matches the Java contract's RLP encoding format
+   */
+  public toICONBytes(): Uint8Array {
+    // Create array of values in the same order as Java contract
+    const values = [
+      uintToBytes(this.id.valueOf()), // uint256 -> bytes
+      Buffer.from(this.emitter), // string -> bytes
+      Buffer.from(this.srcNID), // string -> bytes
+      Buffer.from(this.dstNID), // string -> bytes
+      Buffer.from(this.creator), // string -> bytes
+      Buffer.from(this.destinationAddress), // string -> bytes
+      Buffer.from(this.token), // string -> bytes
+      uintToBytes(this.amount.valueOf()), // uint256 -> bytes
+      Buffer.from(this.toToken), // string -> bytes
+      uintToBytes(this.toAmount.valueOf()), // uint256 -> bytes
+      Buffer.from(this.data), // already bytes
+    ];
+
+    // RLP encode the array
+    return new Uint8Array(rlpEncode(values));
   }
 
   public equals(other: SwapOrder): boolean {

@@ -345,7 +345,7 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
         parsedAmounts={parsedAmounts}
         pool={pool}
         withdrawPortion={portion}
-        successCallback={resetValue}
+        onSuccess={resetValue}
       />
     </>
   );

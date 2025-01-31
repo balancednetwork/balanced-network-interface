@@ -1,13 +1,17 @@
 import React, { useCallback, useEffect } from 'react';
 
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
-import { Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
+import { useQueryClient } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from '@/app/components/Button';
+import { StyledButton } from '@/app/components/Button/StyledButton';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
+import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { Pool } from '@/hooks/useV2Pairs';
@@ -16,7 +20,16 @@ import { Field } from '@/store/mint/reducer';
 import { formatBigNumber, multiplyCABN } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { getNetworkDisplayName, getXChainType, useXAccount, useXRemoveLiquidity } from '@balancednetwork/xwagmi';
+import {
+  ICON_XCALL_NETWORK_ID,
+  XTransactionStatus,
+  getNetworkDisplayName,
+  getXChainType,
+  useXAccount,
+  useXCallFee,
+  useXRemoveLiquidity,
+  useXTransactionStore,
+} from '@balancednetwork/xwagmi';
 
 interface ModalProps {
   isOpen: boolean;
@@ -24,7 +37,7 @@ interface ModalProps {
   parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> };
   withdrawPortion: number;
   pool: Pool;
-  successCallback?: () => void;
+  onSuccess?: () => void;
 }
 
 export default function WithdrawLiquidityModal({
@@ -33,23 +46,67 @@ export default function WithdrawLiquidityModal({
   pool,
   parsedAmounts,
   withdrawPortion,
-  successCallback,
+  onSuccess,
 }: ModalProps) {
+  const queryClient = useQueryClient();
+
+  const [isPending, setIsPending] = React.useState(false);
+  const [pendingTx, setPendingTx] = React.useState('');
+  const currentXTransaction = useXTransactionStore(state => state.transactions[pendingTx]);
+
+  const isExecuted = React.useMemo(
+    () =>
+      currentXTransaction?.status === XTransactionStatus.success ||
+      currentXTransaction?.status === XTransactionStatus.failure,
+    [currentXTransaction],
+  );
+
+  const handleDismiss = useCallback(() => {
+    onClose();
+    setTimeout(() => {
+      queryClient.invalidateQueries({ queryKey: ['XTokenDepositAmount'] });
+      setIsPending(false);
+      setPendingTx('');
+      onSuccess && onSuccess();
+    }, 500);
+  }, [onClose, queryClient, onSuccess]);
+
+  const slowDismiss = useCallback(() => {
+    setTimeout(() => {
+      handleDismiss();
+    }, 2000);
+  }, [handleDismiss]);
+
+  useEffect(() => {
+    if (isExecuted) {
+      slowDismiss();
+      queryClient.invalidateQueries({ queryKey: ['pools'] });
+    }
+  }, [isExecuted, slowDismiss, queryClient]);
+
   const xAccount = useXAccount(getXChainType(pool.xChainId));
   const xRemoveLiquidity = useXRemoveLiquidity();
 
   const handleWithdraw = async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
-    const numPortion = new BigNumber(withdrawPortion / 100);
-    const withdrawAmount = multiplyCABN(pool.balance, numPortion);
-    await xRemoveLiquidity(xAccount.address, pool.poolId, pool.xChainId, withdrawAmount);
-    onClose();
-    successCallback && successCallback();
+    try {
+      setIsPending(true);
+
+      const numPortion = new BigNumber(withdrawPortion / 100);
+      const withdrawAmount = multiplyCABN(pool.balance, numPortion);
+      const txHash = await xRemoveLiquidity(xAccount.address, pool.poolId, pool.xChainId, withdrawAmount);
+      if (txHash) setPendingTx(txHash);
+      else setIsPending(false);
+    } catch (error) {
+      console.error('error', error);
+      setIsPending(false);
+    }
 
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
   };
 
+  const { formattedXCallFee } = useXCallFee(pool.xChainId, ICON_XCALL_NETWORK_ID);
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(pool.xChainId);
   const gasChecker = useXCallGasChecker(pool.xChainId, undefined);
 
@@ -70,22 +127,49 @@ export default function WithdrawLiquidityModal({
           {formatSymbol(parsedAmounts[Field.CURRENCY_B]?.currency.symbol) || '...'}
         </Typography>
 
-        <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-          <TextButton onClick={onClose}>
-            <Trans>Cancel</Trans>
-          </TextButton>
+        {pool.xChainId !== ICON_XCALL_NETWORK_ID && (
+          <Flex justifyContent="center" alignItems="center" mt={2} style={{ gap: 4 }}>
+            <Typography textAlign="center" as="h3" fontWeight="normal">
+              <Trans>Transfer fee: </Trans>
+            </Typography>
+            <Typography fontWeight="bold">{formattedXCallFee}</Typography>
+          </Flex>
+        )}
 
-          {isWrongChain ? (
-            <Button onClick={handleSwitchChain} fontSize={14}>
-              <Trans>Switch to</Trans>
-              {` ${getNetworkDisplayName(pool.xChainId)}`}
-            </Button>
-          ) : (
-            <Button onClick={handleWithdraw} disabled={!gasChecker.hasEnoughGas}>
-              <Trans>Withdraw</Trans>
-            </Button>
+        {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
+        <AnimatePresence>
+          {((!isExecuted && isPending) || !isPending) && (
+            <motion.div
+              key={'tx-actions'}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              style={{ overflow: 'hidden' }}
+            >
+              <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+                <TextButton onClick={onClose}>
+                  <Trans>Cancel</Trans>
+                </TextButton>
+
+                {isWrongChain ? (
+                  <Button onClick={handleSwitchChain} fontSize={14}>
+                    <Trans>Switch to</Trans>
+                    {` ${getNetworkDisplayName(pool.xChainId)}`}
+                  </Button>
+                ) : (
+                  <StyledButton
+                    onClick={handleWithdraw}
+                    // disabled={!gasChecker.hasEnoughGas}
+                    disabled={!gasChecker.hasEnoughGas || isPending || isWrongChain}
+                    $loading={isPending}
+                  >
+                    {isPending ? t`Withdrawing` : t`Withdraw`}
+                  </StyledButton>
+                )}
+              </Flex>
+            </motion.div>
           )}
-        </Flex>
+        </AnimatePresence>
 
         {!gasChecker.hasEnoughGas && (
           <Flex justifyContent="center" paddingY={2}>

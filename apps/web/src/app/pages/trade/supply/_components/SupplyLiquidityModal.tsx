@@ -5,7 +5,7 @@ import { Trans, t } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
-import { Button, TextButton } from '@/app/components/Button';
+import { TextButton } from '@/app/components/Button';
 import { StyledButton } from '@/app/components/Button/StyledButton';
 import { UnderlineText } from '@/app/components/DropdownText';
 import Modal from '@/app/components/Modal';

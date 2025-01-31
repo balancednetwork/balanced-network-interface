@@ -24,7 +24,6 @@ import {
   useXTransactionStore,
   xChainMap,
 } from '@balancednetwork/xwagmi';
-import { useQueryClient } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 
 interface SendRemoveXTokenProps {

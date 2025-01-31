@@ -2,7 +2,7 @@ import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
-import { convertCurrency, isSpokeToken, uintToBytes } from '@/utils';
+import { convertCurrency, convertCurrencyAmount, isSpokeToken, uintToBytes } from '@/utils';
 import { getRlpEncodedSwapData, toICONDecimals } from '@/xcall';
 import { XTransactionInput, XTransactionType } from '@/xcall/types';
 import { bnJs } from '@/xchains/icon/bnJs';
@@ -199,11 +199,10 @@ export abstract class XWalletClient {
 
   async withdrawXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
     const { account, inputAmount, xCallFee, direction } = xTransactionInput;
-
+    const _inputAmount = convertCurrencyAmount(ICON_XCALL_NETWORK_ID, inputAmount)!;
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
-    const amount = BigInt(inputAmount.quotient.toString());
-    const xTokenOnIcon = convertCurrency(ICON_XCALL_NETWORK_ID, inputAmount.currency)!;
-    const data = Buffer.from(getWithdrawData(xTokenOnIcon.address, amount));
+    const amount = BigInt(_inputAmount.quotient.toString());
+    const data = Buffer.from(getWithdrawData(_inputAmount.currency.address, amount));
 
     return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
   }

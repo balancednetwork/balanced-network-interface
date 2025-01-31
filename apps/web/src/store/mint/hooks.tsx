@@ -19,6 +19,7 @@ import {
   XChainId,
   XToken,
   convertCurrency,
+  convertCurrencyAmount,
   getXChainType,
   useXAccount,
   xTokenMap,
@@ -322,10 +323,10 @@ export function useDerivedMintInfo(): {
   const mintableLiquidity = React.useMemo(() => {
     const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = {
       [Field.CURRENCY_A]: currencyBalances[Field.CURRENCY_A]
-        ? CurrencyAmount.fromRawAmount(currencyAOnIcon!, currencyBalances[Field.CURRENCY_A]?.quotient)
+        ? convertCurrencyAmount(ICON_XCALL_NETWORK_ID, currencyBalances[Field.CURRENCY_A])
         : undefined,
       [Field.CURRENCY_B]: currencyBalances[Field.CURRENCY_B]
-        ? CurrencyAmount.fromRawAmount(currencyBOnIcon!, currencyBalances[Field.CURRENCY_B]?.quotient)
+        ? convertCurrencyAmount(ICON_XCALL_NETWORK_ID, currencyBalances[Field.CURRENCY_B])
         : undefined,
     };
 
@@ -352,7 +353,7 @@ export function useDerivedMintInfo(): {
     } else {
       return undefined;
     }
-  }, [currencyBalances, pair, totalSupply, currencyAOnIcon, currencyBOnIcon]);
+  }, [currencyBalances, pair, totalSupply]);
 
   const poolTokenPercentage = React.useMemo(() => {
     if (liquidityMinted && totalSupply) {

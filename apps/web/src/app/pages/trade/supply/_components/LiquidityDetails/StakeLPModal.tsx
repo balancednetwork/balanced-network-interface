@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import {
+  ICON_XCALL_NETWORK_ID,
+  XTransactionStatus,
   getNetworkDisplayName,
   getXChainType,
   useXAccount,
+  useXCallFee,
   useXStakeLPToken,
+  useXTransactionStore,
   useXUnstakeLPToken,
 } from '@balancednetwork/xwagmi';
-import { Trans } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass/styled-components';
 
@@ -19,30 +23,66 @@ import { ZERO } from '@/constants/index';
 import { Pool } from '@/hooks/useV2Pairs';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 
+import { StyledButton } from '@/app/components/Button/StyledButton';
+import XTransactionState from '@/app/components/XTransactionState';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export default function StakeLPModal({
-  open,
-  toggleOpen,
+  isOpen,
+  onClose,
   pool,
   beforeAmount,
   afterAmount,
-  handleCancel,
+  onSuccess,
 }: {
-  open: boolean;
-  toggleOpen: () => void;
+  isOpen: boolean;
+  onClose: () => void;
   pool: Pool;
   beforeAmount: BigNumber;
   afterAmount: BigNumber;
-  handleCancel: () => void;
+  onSuccess: () => void;
 }) {
   const { pair } = pool;
+  const { formattedXCallFee } = useXCallFee(pool.xChainId, ICON_XCALL_NETWORK_ID);
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(pool.xChainId);
   const gasChecker = useXCallGasChecker(pool.xChainId, undefined);
   const xStakeLPToken = useXStakeLPToken();
   const xUnstakeLPToken = useXUnstakeLPToken();
   const xAccount = useXAccount(getXChainType(pool.xChainId));
+
+  const [isPending, setIsPending] = React.useState(false);
+  const [pendingTx, setPendingTx] = React.useState('');
+  const currentXTransaction = useXTransactionStore(state => state.transactions[pendingTx]);
+
+  const isExecuted = React.useMemo(
+    () =>
+      currentXTransaction?.status === XTransactionStatus.success ||
+      currentXTransaction?.status === XTransactionStatus.failure,
+    [currentXTransaction],
+  );
+
+  const handleDismiss = useCallback(() => {
+    onClose();
+    onSuccess?.();
+    setTimeout(() => {
+      setIsPending(false);
+      setPendingTx('');
+    }, 500);
+  }, [onClose, onSuccess]);
+
+  const slowDismiss = useCallback(() => {
+    setTimeout(() => {
+      handleDismiss();
+    }, 2000);
+  }, [handleDismiss]);
+
+  useEffect(() => {
+    if (isExecuted) {
+      slowDismiss();
+    }
+  }, [isExecuted, slowDismiss]);
 
   const differenceAmount = afterAmount.minus(beforeAmount?.toFixed() || ZERO);
   const shouldStake = differenceAmount.isPositive();
@@ -51,24 +91,40 @@ export default function StakeLPModal({
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     try {
-      const decimals = Math.ceil((pair.token0.decimals + pair.token1.decimals) / 2);
-      if (shouldStake) {
-        await xStakeLPToken(xAccount.address, pool.poolId, pool.xChainId, differenceAmount.toFixed(), decimals);
-      } else {
-        await xUnstakeLPToken(xAccount.address, pool.poolId, pool.xChainId, differenceAmount.abs().toFixed(), decimals);
-      }
+      setIsPending(true);
 
-      toggleOpen();
-      handleCancel();
-    } catch (e) {
-      console.error(e);
+      const decimals = Math.ceil((pair.token0.decimals + pair.token1.decimals) / 2);
+
+      let txHash;
+      if (shouldStake) {
+        txHash = await xStakeLPToken(
+          xAccount.address,
+          pool.poolId,
+          pool.xChainId,
+          differenceAmount.toFixed(),
+          decimals,
+        );
+      } else {
+        txHash = await xUnstakeLPToken(
+          xAccount.address,
+          pool.poolId,
+          pool.xChainId,
+          differenceAmount.abs().toFixed(),
+          decimals,
+        );
+      }
+      if (txHash) setPendingTx(txHash);
+      else setIsPending(false);
+    } catch (error) {
+      console.error('error', error);
+      setIsPending(false);
     }
 
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
   };
 
   return (
-    <Modal isOpen={open} onDismiss={toggleOpen}>
+    <Modal isOpen={isOpen} onDismiss={onClose}>
       <ModalContent noMessages>
         <Typography textAlign="center" mb="5px">
           {shouldStake ? 'Stake LP tokens?' : 'Unstake LP tokens?'}
@@ -94,21 +150,48 @@ export default function StakeLPModal({
         <Typography textAlign="center">
           {shouldStake ? "You'll earn BALN until you unstake them." : "You'll stop earning BALN from them."}
         </Typography>
-        <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-          <TextButton onClick={toggleOpen} fontSize={14}>
-            Cancel
-          </TextButton>
-          {isWrongChain ? (
-            <Button onClick={handleSwitchChain} fontSize={14}>
-              <Trans>Switch to</Trans>
-              {` ${getNetworkDisplayName(pool.xChainId)}`}
-            </Button>
-          ) : (
-            <Button onClick={handleConfirm} fontSize={14} disabled={!gasChecker.hasEnoughGas}>
-              {shouldStake ? 'Stake' : 'Unstake'}
-            </Button>
+
+        {pool.xChainId !== ICON_XCALL_NETWORK_ID && (
+          <Flex justifyContent="center" alignItems="center" mt={2} style={{ gap: 4 }}>
+            <Typography textAlign="center" as="h3" fontWeight="normal">
+              <Trans>Transfer fee: </Trans>
+            </Typography>
+            <Typography fontWeight="bold">{formattedXCallFee}</Typography>
+          </Flex>
+        )}
+
+        {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
+        <AnimatePresence>
+          {((!isExecuted && isPending) || !isPending) && (
+            <motion.div
+              key={'tx-actions'}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              style={{ overflow: 'hidden' }}
+            >
+              <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+                <TextButton onClick={onClose} fontSize={14}>
+                  Cancel
+                </TextButton>
+                {isWrongChain ? (
+                  <Button onClick={handleSwitchChain} fontSize={14}>
+                    <Trans>Switch to</Trans>
+                    {` ${getNetworkDisplayName(pool.xChainId)}`}
+                  </Button>
+                ) : (
+                  <StyledButton
+                    onClick={handleConfirm}
+                    disabled={!gasChecker.hasEnoughGas || isPending || isWrongChain}
+                    $loading={isPending}
+                  >
+                    {isPending ? (shouldStake ? t`Staking` : t`Unstaking`) : shouldStake ? t`Stake` : t`Unstake`}
+                  </StyledButton>
+                )}
+              </Flex>
+            </motion.div>
           )}
-        </Flex>
+        </AnimatePresence>
         {!gasChecker.hasEnoughGas && (
           <Flex justifyContent="center" paddingY={2}>
             <Typography maxWidth="320px" color="alert" textAlign="center">

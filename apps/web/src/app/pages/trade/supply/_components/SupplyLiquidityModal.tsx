@@ -215,23 +215,13 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                     <Trans>Cancel</Trans>
                   </TextButton>
 
-                  {pair ? (
-                    <StyledButton
-                      disabled={!isEnabled || !gasChecker.hasEnoughGas || isPending || isWrongChain}
-                      onClick={handleSupplyConfirm}
-                      $loading={isPending}
-                    >
-                      {isPending ? t`Supplying` : t`Supply`}
-                    </StyledButton>
-                  ) : (
-                    <StyledButton
-                      disabled={!isEnabled || !gasChecker.hasEnoughGas || isPending || isWrongChain}
-                      onClick={handleSupplyConfirm}
-                      $loading={isPending}
-                    >
-                      {isPending ? t`Creating pool` : t`Create pool`}
-                    </StyledButton>
-                  )}
+                  <StyledButton
+                    disabled={!isEnabled || !gasChecker.hasEnoughGas || isPending || isWrongChain}
+                    onClick={handleSupplyConfirm}
+                    $loading={isPending}
+                  >
+                    {isPending ? (pair ? t`Supplying` : t`Creating pool`) : pair ? t`Supply` : t`Create pool`}
+                  </StyledButton>
                 </Flex>
               </motion.div>
             )}

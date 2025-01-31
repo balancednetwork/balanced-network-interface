@@ -62,9 +62,6 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
 
   // modal
   const [open, setOpen] = React.useState(false);
-  const toggleOpen = () => {
-    setOpen(!open);
-  };
 
   const beforeAmount = stakedBalance;
   const afterAmount = stakedPercent.multipliedBy(totalStaked).div(100);
@@ -118,7 +115,7 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
             ) : (
               <>
                 <TextButton onClick={handleCancel}>Cancel</TextButton>
-                <Button onClick={toggleOpen}>Confirm</Button>
+                <Button onClick={() => setOpen(true)}>Confirm</Button>
               </>
             )}
           </Flex>
@@ -134,12 +131,12 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
       )}
 
       <StakeLPModal
-        open={open}
-        toggleOpen={toggleOpen}
+        isOpen={open}
+        onClose={() => setOpen(false)}
         beforeAmount={beforeAmount}
         afterAmount={afterAmount}
         pool={pool}
-        handleCancel={handleCancel}
+        onSuccess={handleCancel}
       />
     </Box>
   );

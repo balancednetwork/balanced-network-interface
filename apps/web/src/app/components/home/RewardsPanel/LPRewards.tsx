@@ -5,23 +5,17 @@ import BigNumber from 'bignumber.js';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
-import { Button, TextButton } from '@/app/components/Button';
 import { UnderlineText } from '@/app/components/DropdownText';
-import Modal from '@/app/components/Modal';
-import ModalContent from '@/app/components/ModalContent';
 import { QuestionWrapper } from '@/app/components/QuestionHelper';
 import Tooltip from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import QuestionIcon from '@/assets/icons/question.svg';
 import { useLPRewards } from '@/queries/reward';
 import { useBBalnAmount, useDynamicBBalnAmount, useIncentivisedSources, useTotalSupply } from '@/store/bbaln/hooks';
-import { useHasEnoughICX } from '@/store/wallet/hooks';
-import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { bnJs, getNetworkDisplayName, getXChainType, useXAccount, useXClaimRewards } from '@balancednetwork/xwagmi';
+import { getXChainType, useXAccount } from '@balancednetwork/xwagmi';
 
-import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
-import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useSavingsXChainId } from '@/store/savings/hooks';
+import ClaimLPRewardsModal from './ClaimLPRewardsModal';
 import PositionRewardsInfo from './PositionRewardsInfo';
 import RewardsGrid from './RewardsGrid';
 
@@ -39,7 +33,6 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   const totalSupplyBBaln = useTotalSupply();
   const dynamicBBalnAmount = useDynamicBBalnAmount();
   const bBalnAmount = useBBalnAmount();
-  const hasEnoughICX = useHasEnoughICX();
   const isSmall = useMedia('(max-width: 1050px)');
   const isExtraSmall = useMedia('(max-width: 800px)');
   const [tooltipHovered, setTooltipHovered] = React.useState(false);
@@ -47,10 +40,6 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
     () => (sources ? Object.values(sources).filter(source => source.balance.isGreaterThan(100)).length : 0),
     [sources],
   );
-
-  const toggleOpen = React.useCallback(() => {
-    setOpen(!isOpen);
-  }, [isOpen]);
 
   const maxRewardThreshold = React.useMemo(() => {
     if (sources && totalSupplyBBaln && bBalnAmount) {
@@ -80,22 +69,6 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   ) : (
     <Trans>You receive maximum rewards for your position.</Trans>
   );
-
-  const xClaimRewards = useXClaimRewards();
-
-  const handleClaim = async () => {
-    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-    try {
-      const txHash = await xClaimRewards(xAccount.address, savingsXChainId);
-    } catch (error) {
-      console.error('error', error);
-    }
-
-    window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-  };
-
-  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(savingsXChainId);
-  const gasChecker = useXCallGasChecker(savingsXChainId, undefined);
 
   return (
     <>
@@ -143,7 +116,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
           </Flex>
           {rewards?.some(reward => reward.greaterThan(0)) && (
             <UnderlineText>
-              <Typography color="primaryBright" onClick={toggleOpen}>
+              <Typography color="primaryBright" onClick={() => setOpen(true)}>
                 <Trans>Claim</Trans>
               </Typography>
             </UnderlineText>
@@ -158,47 +131,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
         )}
       </Box>
 
-      <Modal isOpen={isOpen} onDismiss={toggleOpen}>
-        <ModalContent noMessages>
-          <Typography textAlign="center" mb={1}>
-            <Trans>Claim liquidity rewards?</Trans>
-          </Typography>
-
-          <Flex flexDirection="column" alignItems="center" mt={2}>
-            {rewards?.map((reward, index) => (
-              <Typography key={index} variant="p">
-                {`${reward.toFixed(2, { groupSeparator: ',' })}`}{' '}
-                <Typography as="span" color="text1">
-                  {reward.currency.symbol}
-                </Typography>
-              </Typography>
-            ))}
-          </Flex>
-
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen} fontSize={14}>
-              <Trans>Not now</Trans>
-            </TextButton>
-            {isWrongChain ? (
-              <Button onClick={handleSwitchChain} fontSize={14}>
-                <Trans>Switch to</Trans>
-                {` ${getNetworkDisplayName(savingsXChainId)}`}
-              </Button>
-            ) : (
-              <Button onClick={handleClaim} fontSize={14} disabled={!hasEnoughICX}>
-                <Trans>Claim</Trans>
-              </Button>
-            )}
-          </Flex>
-          {!gasChecker.hasEnoughGas && (
-            <Flex justifyContent="center" paddingY={2}>
-              <Typography maxWidth="320px" color="alert" textAlign="center">
-                {gasChecker.errorMessage}
-              </Typography>
-            </Flex>
-          )}
-        </ModalContent>
-      </Modal>
+      <ClaimLPRewardsModal isOpen={isOpen} onClose={() => setOpen(false)} />
     </>
   );
 };

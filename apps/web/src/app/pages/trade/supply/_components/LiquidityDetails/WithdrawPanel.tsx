@@ -24,14 +24,13 @@ import { useChangeWithdrawnValue, useStakedLPPercent } from '@/store/stakedLP/ho
 import { tryParseAmount } from '@/store/swap/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
-import { formatBigNumber, multiplyCABN, toDec } from '@/utils';
+import { formatBigNumber } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { bnJs, getNetworkDisplayName, getXChainType, useXAccount, useXRemoveLiquidity } from '@balancednetwork/xwagmi';
+import { bnJs } from '@balancednetwork/xwagmi';
 
 import { EXA, WEIGHT } from '@/app/components/home/BBaln/utils';
-import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
-import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { formatSymbol } from '@/utils/formatter';
+import WithdrawLiquidityModal from './WithdrawLiquidityModal';
 
 const Wrapper = styled(Flex)`
   padding-left: 0;
@@ -161,7 +160,7 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
   const price =
     independentField === Field.CURRENCY_A ? pair.token0Price || FRACTION_ONE : pair.token1Price || FRACTION_ONE;
 
-  let parsedAmount: { [field in Field]?: CurrencyAmount<Currency> }, formattedAmounts;
+  let parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> }, formattedAmounts;
 
   const percent = useMemo(() => new Percent(Math.floor(portion * 100), 10_000), [portion]);
   const stakedLPPercent = useStakedLPPercent(poolId);
@@ -171,14 +170,14 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
   const availableQuote = bBalance.multiply(availablePercent.toFixed(0)).divide(100);
 
   if (inputType === 'slider') {
-    parsedAmount = {
+    parsedAmounts = {
       [Field.CURRENCY_A]: availableBase?.multiply(percent),
       [Field.CURRENCY_B]: availableQuote?.multiply(percent),
     };
 
     formattedAmounts = {
-      [Field.CURRENCY_A]: parsedAmount[Field.CURRENCY_A]?.toSignificant(6) ?? '',
-      [Field.CURRENCY_B]: parsedAmount[Field.CURRENCY_B]?.toSignificant(6) ?? '',
+      [Field.CURRENCY_A]: parsedAmounts[Field.CURRENCY_A]?.toSignificant(6) ?? '',
+      [Field.CURRENCY_B]: parsedAmounts[Field.CURRENCY_B]?.toSignificant(6) ?? '',
     };
   } else {
     const [independentToken, dependentToken] =
@@ -187,7 +186,7 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
     const independentAmount = tryParseAmount(typedValue, independentToken);
     const dependentAmountFrac = independentAmount?.multiply(price);
 
-    parsedAmount = {
+    parsedAmounts = {
       [independentField]: independentAmount,
       [dependentField]:
         dependentAmountFrac &&
@@ -200,7 +199,7 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
 
     formattedAmounts = {
       [independentField]: typedValue,
-      [dependentField]: parsedAmount[dependentField]?.toFixed(6) ?? '',
+      [dependentField]: parsedAmounts[dependentField]?.toFixed(6) ?? '',
     };
   }
 
@@ -253,31 +252,8 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
 
   const [open, setOpen] = React.useState(false);
 
-  const toggleOpen = () => {
-    setOpen(!open);
-  };
-
-  const resetValue = () => {
-    sliderInstance.current?.noUiSlider.set(0);
-    setState({ typedValue, independentField, inputType: 'slider', portion: 0 });
-  };
-
-  const xAccount = useXAccount(getXChainType(pool.xChainId));
-  const xRemoveLiquidity = useXRemoveLiquidity();
-  const handleWithdraw = async () => {
-    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    const numPortion = new BigNumber(portion / 100);
-    const withdrawAmount = multiplyCABN(pool.balance, numPortion);
-    await xRemoveLiquidity(xAccount.address, poolId, pool.xChainId, withdrawAmount);
-    toggleOpen();
-    resetValue();
-
-    window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-  };
-
   const handleShowConfirm = () => {
-    toggleOpen();
+    setOpen(true);
   };
 
   const isValid =
@@ -288,8 +264,10 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
 
   const hasUnstakedLP = availableBase?.greaterThan(0) && availableQuote?.greaterThan(0);
 
-  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(pool.xChainId);
-  const gasChecker = useXCallGasChecker(pool.xChainId, undefined);
+  const resetValue = () => {
+    sliderInstance.current?.noUiSlider.set(0);
+    setState({ typedValue, independentField, inputType: 'slider', portion: 0 });
+  };
 
   return (
     <>
@@ -320,16 +298,16 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
           {`Available:
           ${formatBigNumber(
             new BigNumber(
-              parsedAmount[Field.CURRENCY_A]
-                ? (availableBase as CurrencyAmount<Currency>)?.subtract(parsedAmount[Field.CURRENCY_A]).toFixed()
+              parsedAmounts[Field.CURRENCY_A]
+                ? (availableBase as CurrencyAmount<Currency>)?.subtract(parsedAmounts[Field.CURRENCY_A]).toFixed()
                 : availableBase?.toFixed() || 0,
             ),
             'currency',
           )} ${formatSymbol(pair.token0.symbol) || '...'} /
           ${formatBigNumber(
             new BigNumber(
-              parsedAmount[Field.CURRENCY_B]
-                ? (availableQuote as CurrencyAmount<Currency>)?.subtract(parsedAmount[Field.CURRENCY_B]).toFixed()
+              parsedAmounts[Field.CURRENCY_B]
+                ? (availableQuote as CurrencyAmount<Currency>)?.subtract(parsedAmounts[Field.CURRENCY_B]).toFixed()
                 : availableQuote?.toFixed() || 0,
             ),
             'currency',
@@ -361,47 +339,14 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
         </Flex>
       </Wrapper>
 
-      <Modal isOpen={open} onDismiss={toggleOpen}>
-        <ModalContent noMessages>
-          <Typography textAlign="center" mb={3} as="h3" fontWeight="normal">
-            <Trans>Withdraw liquidity?</Trans>
-          </Typography>
-
-          <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(new BigNumber(parsedAmount[Field.CURRENCY_A]?.toFixed() || 0), 'currency')}{' '}
-            {formatSymbol(parsedAmount[Field.CURRENCY_A]?.currency.symbol) || '...'}
-          </Typography>
-
-          <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(new BigNumber(parsedAmount[Field.CURRENCY_B]?.toFixed() || 0), 'currency')}{' '}
-            {formatSymbol(parsedAmount[Field.CURRENCY_B]?.currency.symbol) || '...'}
-          </Typography>
-
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen}>
-              <Trans>Cancel</Trans>
-            </TextButton>
-
-            {isWrongChain ? (
-              <Button onClick={handleSwitchChain} fontSize={14}>
-                <Trans>Switch to</Trans>
-                {` ${getNetworkDisplayName(pool.xChainId)}`}
-              </Button>
-            ) : (
-              <Button onClick={handleWithdraw} disabled={!gasChecker.hasEnoughGas}>
-                <Trans>Withdraw</Trans>
-              </Button>
-            )}
-          </Flex>
-          {!gasChecker.hasEnoughGas && (
-            <Flex justifyContent="center" paddingY={2}>
-              <Typography maxWidth="320px" color="alert" textAlign="center">
-                {gasChecker.errorMessage}
-              </Typography>
-            </Flex>
-          )}
-        </ModalContent>
-      </Modal>
+      <WithdrawLiquidityModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        parsedAmounts={parsedAmounts}
+        pool={pool}
+        withdrawPortion={portion}
+        successCallback={resetValue}
+      />
     </>
   );
 };

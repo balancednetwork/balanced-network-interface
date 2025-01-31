@@ -10,14 +10,14 @@ import { useCheckSolanaAccount } from '@/app/components/SolanaAccountExistenceWa
 import { NETWORK_ID } from '@/constants/config';
 import { canBeQueue } from '@/constants/currency';
 import { PRICE_IMPACT_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
-import { useICX, wICX } from '@/constants/tokens';
+import { SUPPORTED_TOKENS_LIST, useICX, wICX } from '@/constants/tokens';
 import { useAllXTokens } from '@/hooks/Tokens';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
-import { convertCurrency, getXChainType } from '@balancednetwork/xwagmi';
+import { bnJs, convertCurrency, getXChainType } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import { StellarAccountValidation, useValidateStellarAccount } from '@balancednetwork/xwagmi';
@@ -33,6 +33,12 @@ import {
   typeInput,
 } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
+
+import { intentService } from '@/lib/intent';
+import { useAllTokensByAddress } from '@/queries/backendv2';
+import { WithdrawalFloorDataType } from '@/types';
+import { CallData } from '@balancednetwork/balanced-js';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);
@@ -118,6 +124,106 @@ export function tryParseAmount<T extends Currency>(value?: string, currency?: T)
   return undefined;
 }
 
+// Fetch limits for exchange withdrawals
+export function useWithdrawalsFloorDEXData(): UseQueryResult<WithdrawalFloorDataType[]> {
+  const { data: allTokens, isSuccess: tokensSuccess } = useAllTokensByAddress();
+
+  const fetchWithdrawalData = async () => {
+    if (!allTokens) return;
+    const USDC = SUPPORTED_TOKENS_LIST.find(token => token.symbol === 'USDC');
+    const stabilityFundTokens = [USDC];
+    const tokenAddresses = SUPPORTED_TOKENS_LIST.map(token => token.address);
+
+    const cdsArray: CallData[][] = tokenAddresses.map(address => [
+      { target: bnJs.Dex.address, method: 'getCurrentFloor', params: [address] },
+      { target: address, method: 'balanceOf', params: [bnJs.Dex.address] },
+      { target: bnJs.Dex.address, method: 'getFloorPercentage', params: [address] },
+      { target: bnJs.Dex.address, method: 'getTimeDelayMicroSeconds', params: [address] },
+    ]);
+
+    const stabilityFundTokensCds = stabilityFundTokens.map(
+      token =>
+        token && [
+          { target: bnJs.StabilityFund.address, method: 'getCurrentFloor', params: [token.address] },
+          { target: token.address, method: 'balanceOf', params: [bnJs.StabilityFund.address] },
+          { target: bnJs.StabilityFund.address, method: 'getFloorPercentage', params: [] },
+          { target: bnJs.StabilityFund.address, method: 'getTimeDelayMicroSeconds', params: [] },
+        ],
+    );
+
+    const data = await Promise.all(cdsArray.map(cds => bnJs.Multicall.getAggregateData(cds)));
+    const stabilityFundData = await Promise.all(
+      stabilityFundTokensCds.map(cds => cds && bnJs.Multicall.getAggregateData(cds)),
+    );
+
+    const limits = data.map((assetDataSet, index) => {
+      try {
+        const token = SUPPORTED_TOKENS_LIST.find(token => token.address === tokenAddresses[index]);
+
+        if (!token) return null;
+
+        const floor = new BigNumber(assetDataSet[0]);
+        const current = new BigNumber(assetDataSet[1]);
+        const percentageFloor = new BigNumber(assetDataSet[2]).div(10000);
+        const floorTimeDecayInHours = new BigNumber(assetDataSet[3]).div(1000 * 1000 * 60 * 60);
+        const available = CurrencyAmount.fromRawAmount(
+          token,
+          current.minus(floor).isNaN() ? 0 : current.minus(floor).toFixed(0),
+        );
+
+        return {
+          token,
+          floor,
+          current,
+          available,
+          percentageFloor,
+          floorTimeDecayInHours,
+        };
+      } catch (error) {
+        console.error('Error fetching DEX withdrawal limits:', error);
+        return null;
+      }
+    });
+
+    const stabilityFundLimits = stabilityFundData.map((assetDataSet, index) => {
+      try {
+        const token = stabilityFundTokens[index];
+        if (!token) return null;
+
+        const floor = new BigNumber(assetDataSet[0]);
+        const current = new BigNumber(assetDataSet[1]);
+        const percentageFloor = new BigNumber(assetDataSet[2]).div(10000);
+        const floorTimeDecayInHours = new BigNumber(assetDataSet[3]).div(1000 * 1000 * 60 * 60);
+        const available = CurrencyAmount.fromRawAmount(
+          token,
+          current.minus(floor).isNaN() ? 0 : current.minus(floor).toFixed(0),
+        );
+        return {
+          token,
+          floor,
+          current,
+          available,
+          percentageFloor,
+          floorTimeDecayInHours,
+        };
+      } catch (error) {
+        console.error('Error fetching Stability Fund withdrawal limits:', error);
+        return null;
+      }
+    });
+
+    return [...limits, ...stabilityFundLimits].filter(item => item && item.floor.isGreaterThan(0));
+  };
+
+  return useQuery({
+    queryKey: [`withdrawalsFloorDEXData-${tokensSuccess ? 'tokens' : ''}`],
+    queryFn: fetchWithdrawalData,
+    placeholderData: keepPreviousData,
+    refetchInterval: 5000,
+    enabled: tokensSuccess,
+  });
+}
+
 // from the current swap inputs, compute the best trade and return it.
 export function useDerivedSwapInfo(): {
   account: string | undefined;
@@ -139,6 +245,8 @@ export function useDerivedSwapInfo(): {
   };
   canBridge: boolean;
   maximumBridgeAmount: CurrencyAmount<XToken> | undefined;
+  canSwap: boolean;
+  maximumOutputAmount: CurrencyAmount<Currency> | undefined;
   stellarValidation?: StellarAccountValidation;
 } {
   const {
@@ -152,6 +260,8 @@ export function useDerivedSwapInfo(): {
   const account = useXAccount(getXChainType(inputCurrency?.xChainId)).address;
 
   const crossChainWallet = useCrossChainWalletBalances();
+
+  const { data: withdrawalsFloorData } = useWithdrawalsFloorDEXData();
 
   const isExactIn: boolean = independentField === Field.INPUT;
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
@@ -339,6 +449,20 @@ export function useDerivedSwapInfo(): {
     to: currencies[Field.OUTPUT]?.xChainId || '0x1.icon',
   };
 
+  //check for the maximum output amount against the withdrawal limit
+  const maximumOutputAmount = useMemo(() => {
+    if (withdrawalsFloorData) {
+      const limit = withdrawalsFloorData.find(item => item?.token.symbol === currencies[Field.OUTPUT]?.symbol);
+      if (limit) {
+        return limit.available;
+      }
+    }
+  }, [withdrawalsFloorData, currencies[Field.OUTPUT]]);
+
+  const canSwap = useMemo(() => {
+    return maximumOutputAmount && outputCurrencyAmount ? !maximumOutputAmount.lessThan(outputCurrencyAmount) : true;
+  }, [maximumOutputAmount, outputCurrencyAmount]);
+
   //temporary check for valid stellar account
   const stellarValidationQuery = useValidateStellarAccount(direction.to === 'stellar' ? recipient : undefined);
   const { data: stellarValidation } = stellarValidationQuery;
@@ -369,6 +493,8 @@ export function useDerivedSwapInfo(): {
     canBridge,
     maximumBridgeAmount,
     stellarValidation,
+    maximumOutputAmount,
+    canSwap,
   };
 }
 
@@ -419,9 +545,6 @@ export function useInitialSwapLoad(): void {
     }
   }, [currencies, pair, navigate, firstLoad]);
 }
-
-import { intentService } from '@/lib/intent';
-import { useQuery } from '@tanstack/react-query';
 
 export interface MMTrade {
   inputAmount: CurrencyAmount<XToken>;

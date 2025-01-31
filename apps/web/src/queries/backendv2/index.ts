@@ -121,6 +121,7 @@ export function useAllTokensByAddress() {
 
 export type TokenStats = {
   symbol: string;
+  decimals: number;
   name: string;
   address: string;
   chain_id: number;

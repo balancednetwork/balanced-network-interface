@@ -57,6 +57,7 @@ msgid "then create the pool."
 msgstr "puis créer le pool."
 
 #: src/app/components/BridgeLimitWarning/index.tsx
+#: src/app/components/WithdrawalLimitWarning/index.tsx
 msgid "Only"
 msgstr ""
 
@@ -816,6 +817,10 @@ msgstr ""
 msgid "bBALN holders received"
 msgstr ""
 
+#: src/app/components/WithdrawalLimitWarning/index.tsx
+msgid "Only {0}% can be withdrawn at a time. Limit will reset gradually over the next {1} hours."
+msgstr ""
+
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "Unstaking BALN..."
 msgstr "Déstaking de BALN..."
@@ -1083,6 +1088,10 @@ msgstr ""
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "Recieve sICX, which you can trade or unstake from the wallet section later."
 #~ msgstr ""
+
+#: src/app/components/WithdrawalLimitInfo/index.tsx
+msgid "{0}h withdrawal limit:"
+msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 #~ msgid "Liquidity incentives"
@@ -1621,8 +1630,8 @@ msgstr ""
 #~ msgstr "Rechercher un nom ou un contrat"
 
 #: src/store/bridge/hooks.tsx
-msgid "Connect wallet"
-msgstr ""
+#~ msgid "Connect wallet"
+#~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/CollateralPanel.tsx
@@ -2174,6 +2183,10 @@ msgstr ""
 #~ msgid "Enter an amount"
 #~ msgstr "Entrer un montant"
 
+#: src/app/components/WithdrawalLimitWarning/index.tsx
+msgid "available."
+msgstr ""
+
 #: src/app/pages/trade/bridge/_components/XCallItem.tsx
 #~ msgid "Execution failed."
 #~ msgstr ""
@@ -2666,6 +2679,10 @@ msgstr "Chandeliers"
 msgid "Past month"
 msgstr "Mois dernier"
 
+#: src/app/components/WithdrawalLimitInfo/index.tsx
+msgid "Available to trade:"
+msgstr ""
+
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "You rejected"
 msgstr "Vous avez rejeté"
@@ -2797,6 +2814,7 @@ msgstr ""
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
+#: src/store/swap/hooks.ts
 msgid "Swap"
 msgstr "Échanger"
 
@@ -2986,6 +3004,7 @@ msgstr ""
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/store/bridge/hooks.tsx
 msgid "Transfer"
 msgstr ""
 

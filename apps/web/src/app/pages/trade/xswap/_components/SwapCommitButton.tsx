@@ -28,12 +28,14 @@ interface SwapCommitButtonProps {
   canBridge: boolean;
   hidden: boolean;
   stellarValidation?: StellarAccountValidation;
+  canSwap: boolean;
 }
 
 const SwapCommitButton: React.FC<SwapCommitButtonProps> = memo(props => {
-  const { trade, currencies, error, account, direction, canBridge, recipient, hidden, stellarValidation } = props;
+  const { trade, currencies, error, account, direction, canBridge, recipient, hidden, stellarValidation, canSwap } =
+    props;
 
-  const isValid = !error && canBridge && stellarValidation?.ok;
+  const isValid = !error && canBridge && canSwap && stellarValidation?.ok;
 
   const isXSwap = !(direction.from === '0x1.icon' && direction.to === '0x1.icon');
 
@@ -100,7 +102,7 @@ const SwapCommitButton: React.FC<SwapCommitButtonProps> = memo(props => {
         </Button>
       ) : (
         <Button
-          disabled={!account || !!error || !canBridge || stellarValidation?.ok === false}
+          disabled={!account || !!error || !canBridge || !canSwap || stellarValidation?.ok === false}
           color="primary"
           onClick={handleSwap}
           hidden={hidden}

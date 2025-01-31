@@ -7,8 +7,7 @@ import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from '@/app/components/Button';
-import Modal from '@/app/components/Modal';
-import ModalContent from '@/app/components/ModalContent';
+import Skeleton from '@/app/components/Skeleton';
 import { Typography } from '@/app/theme';
 import { SLIDER_RANGE_MAX_BOTTOM_THRESHOLD, ZERO } from '@/constants/index';
 import { Pool, usePoolTokenAmounts } from '@/hooks/useV2Pairs';
@@ -18,21 +17,9 @@ import { useBBalnAmount, useSources, useTotalSupply } from '@/store/bbaln/hooks'
 import { useRewards } from '@/store/reward/hooks';
 import { useChangeStakedLPPercent, useStakedLPPercent } from '@/store/stakedLP/hooks';
 import { formatBigNumber } from '@/utils';
-import { showMessageOnBeforeUnload } from '@/utils/messages';
-import {
-  getNetworkDisplayName,
-  getXChainType,
-  useXAccount,
-  useXStakeLPToken,
-  useXUnstakeLPToken,
-} from '@balancednetwork/xwagmi';
-
-import Skeleton from '@/app/components/Skeleton';
-import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
-import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { formatValue } from '@/utils/formatter';
-import { Fraction } from '@balancednetwork/sdk-core';
 import { getFormattedExternalRewards, getFormattedRewards, stakedFraction } from '../utils';
+import StakeLPModal from './StakeLPModal';
 import { getExternalShareReward, getShareReward } from './WithdrawPanel';
 
 export default function StakeLPPanel({ pool }: { pool: Pool }) {
@@ -90,35 +77,6 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
 
   const beforeAmount = stakedBalance;
   const afterAmount = stakedPercent.multipliedBy(totalStaked).div(100);
-  const differenceAmount = afterAmount.minus(beforeAmount?.toFixed() || ZERO);
-  const shouldStake = differenceAmount.isPositive();
-
-  const xStakeLPToken = useXStakeLPToken();
-  const xUnstakeLPToken = useXUnstakeLPToken();
-  const xAccount = useXAccount(getXChainType(pool.xChainId));
-
-  const handleConfirm = async () => {
-    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    try {
-      const decimals = Math.ceil((pair.token0.decimals + pair.token1.decimals) / 2);
-      if (shouldStake) {
-        await xStakeLPToken(xAccount.address, poolId, pool.xChainId, differenceAmount.toFixed(), decimals);
-      } else {
-        console.log('differenceAmount.toFixed()', differenceAmount.toFixed());
-        await xUnstakeLPToken(xAccount.address, poolId, pool.xChainId, differenceAmount.abs().toFixed(), decimals);
-      }
-
-      toggleOpen();
-      handleCancel();
-    } catch (e) {
-      console.error(e);
-    }
-
-    window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-  };
-
-  const description = shouldStake ? "You'll earn BALN until you unstake them." : "You'll stop earning BALN from them.";
 
   const upSmall = useMedia('(min-width: 800px)');
   const prices = useRatesWithOracle();
@@ -223,9 +181,6 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
     );
   };
 
-  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(pool.xChainId);
-  const gasChecker = useXCallGasChecker(pool.xChainId, undefined);
-
   return (
     <Box width={upSmall ? 1 / 2 : 1}>
       {!upSmall && <RespoRewardsInfo />}
@@ -268,55 +223,6 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
               </>
             )}
           </Flex>
-
-          <Modal isOpen={open} onDismiss={toggleOpen}>
-            <ModalContent noMessages>
-              <Typography textAlign="center" mb="5px">
-                {shouldStake ? 'Stake LP tokens?' : 'Unstake LP tokens?'}
-              </Typography>
-              <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-                {differenceAmount.abs().dp(2).toFormat()}
-              </Typography>
-              <Flex my={5}>
-                <Box width={1 / 2} className="border-right">
-                  <Typography textAlign="center">Before</Typography>
-                  <Typography variant="p" textAlign="center">
-                    {beforeAmount.dp(2).toFormat()}
-                  </Typography>
-                </Box>
-
-                <Box width={1 / 2}>
-                  <Typography textAlign="center">After</Typography>
-                  <Typography variant="p" textAlign="center">
-                    {afterAmount.dp(2).toFormat()}
-                  </Typography>
-                </Box>
-              </Flex>
-              <Typography textAlign="center">{description}</Typography>
-              <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-                <TextButton onClick={toggleOpen} fontSize={14}>
-                  Cancel
-                </TextButton>
-                {isWrongChain ? (
-                  <Button onClick={handleSwitchChain} fontSize={14}>
-                    <Trans>Switch to</Trans>
-                    {` ${getNetworkDisplayName(pool.xChainId)}`}
-                  </Button>
-                ) : (
-                  <Button onClick={handleConfirm} fontSize={14} disabled={!gasChecker.hasEnoughGas}>
-                    {shouldStake ? 'Stake' : 'Unstake'}
-                  </Button>
-                )}
-              </Flex>
-              {!gasChecker.hasEnoughGas && (
-                <Flex justifyContent="center" paddingY={2}>
-                  <Typography maxWidth="320px" color="alert" textAlign="center">
-                    {gasChecker.errorMessage}
-                  </Typography>
-                </Flex>
-              )}
-            </ModalContent>
-          </Modal>
         </>
       ) : (
         <Typography my={1}>
@@ -327,6 +233,15 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
           . You may be able to stake them on another platform to earn more rewards.
         </Typography>
       )}
+
+      <StakeLPModal
+        open={open}
+        toggleOpen={toggleOpen}
+        beforeAmount={beforeAmount}
+        afterAmount={afterAmount}
+        pool={pool}
+        handleCancel={handleCancel}
+      />
     </Box>
   );
 }

@@ -11,6 +11,7 @@ import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { useDerivedMintInfo } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
+import { formatSymbol } from '@/utils/formatter';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import {
   XToken,
@@ -138,7 +139,7 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
             {!isDeposited ? (
               <>
                 <Typography variant="p" fontWeight="bold" textAlign="center">
-                  {parsedAmount?.toSignificant(6)} {xToken?.symbol}
+                  {parsedAmount?.toSignificant(6)} {formatSymbol(xToken?.symbol)}
                 </Typography>
 
                 {!isPending && approvalState !== ApprovalState.APPROVED ? (
@@ -175,7 +176,7 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
             ) : (
               <>
                 <Typography variant="p" fontWeight="bold" textAlign="center">
-                  {depositAmount?.toSignificant(6)} {xToken?.symbol}
+                  {depositAmount?.toSignificant(6)} {formatSymbol(xToken?.symbol)}
                 </Typography>
 
                 <RemoveButton disabled={isPending || isWrongChain} mt={2} onClick={handleRemove}>

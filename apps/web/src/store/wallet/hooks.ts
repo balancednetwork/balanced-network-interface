@@ -181,6 +181,17 @@ export function useWalletFetchBalances() {
     bscBalances && dispatch(changeBalances({ xChainId: '0x38.bsc', balances: bscBalances }));
   }, [bscBalances, dispatch]);
 
+  // fetch balances on polygon
+  const polygonTokens = useXTokens('0x89.polygon');
+  const { data: polygonBalances } = useXBalances({
+    xChainId: '0x89.polygon',
+    xTokens: polygonTokens,
+    address,
+  });
+  React.useEffect(() => {
+    polygonBalances && dispatch(changeBalances({ xChainId: '0x89.polygon', balances: polygonBalances }));
+  }, [polygonBalances, dispatch]);
+
   // fetch balances on arb
   const arbTokens = useXTokens('0xa4b1.arbitrum');
   const { data: arbBalances } = useXBalances({

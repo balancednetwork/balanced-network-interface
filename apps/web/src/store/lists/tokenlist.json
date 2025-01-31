@@ -203,6 +203,14 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/bnb.png"
     },
     {
+      "address": "cx...",
+      "chainId": 1,
+      "name": "Polygon",
+      "symbol": "POL",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/pol.png"
+    },
+    {
       "address": "cx66a031cc3bd305c76371fb586e93801b948254f0",
       "chainId": 1,
       "name": "AVAX",

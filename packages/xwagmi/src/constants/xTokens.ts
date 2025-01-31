@@ -23,6 +23,7 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   vSUI: 'sui',
   SOL: 'solana',
   JitoSOL: 'solana',
+  POL: '0x89.polygon',
 };
 
 export const wICX = new XToken('0x1.icon', ChainId.MAINNET, addresses[ChainId.MAINNET].wicx, 18, 'wICX', 'Wrapped ICX');
@@ -130,6 +131,13 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('0xa86a.avax', 43114, '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7', 6, 'USDT', 'Tether USD'),
     new XToken('0xa86a.avax', 43114, '0xC7FE3f5B4970Ddc36d850A98e87bb28FaBb866D2', 18, 'sICX', 'Staked ICX'),
     new XToken('0xa86a.avax', 43114, '0x542245f2B93B30994a4670121541B38226f1208c', 18, 'BALN', 'Balance Token'),
+  ],
+  '0x89.polygon': [
+    new XToken('0x89.polygon', 137, '0x0000000000000000000000000000000000000000', 18, 'POL', 'Polygon'),
+    new XToken('0x89.polygon', 137, '0xc65132325bD4FcF2Ec5F3a9375487163B6999206', 18, 'bnUSD', 'Balanced Dollar'),
+    new XToken('0x89.polygon', 137, '0x6185D52640EA3b683AedD8bA52d18053A41fee09', 18, 'sICX', 'Staked ICX'),
+    new XToken('0x89.polygon', 137, '0x51260f53933db7C3319a61ee444fD9548cFF94D5', 18, 'BALN', 'Balance Token'),
+    new XToken('0x89.polygon', 137, '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359', 6, 'USDC', 'USD Coin'),
   ],
   '0x38.bsc': [
     new XToken('0x38.bsc', 56, '0x0000000000000000000000000000000000000000', 18, 'BNB', 'BNB'),

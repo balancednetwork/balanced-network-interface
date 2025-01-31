@@ -15,7 +15,8 @@ export type XChainId =
   | 'injective-1'
   | 'sui'
   | 'stellar'
-  | 'solana';
+  | 'solana'
+  | '0x89.polygon';
 
 export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH' | 'INJECTIVE' | 'SUI' | 'STELLAR' | 'SOLANA';
 

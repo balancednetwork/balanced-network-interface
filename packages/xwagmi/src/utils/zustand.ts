@@ -1,5 +1,5 @@
-import { allXTokens } from '@/constants/xTokens';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { findXTokenById } from '.';
 
 export const jsonStorageOptions: {
   reviver?: (key: string, value: unknown) => unknown;
@@ -21,7 +21,7 @@ export const jsonStorageOptions: {
     // @ts-ignore
     if (value && value.type === 'CurrencyAmount') {
       // @ts-ignore
-      return CurrencyAmount.fromRawAmount(allXTokens.find(t => t.id === value.value.tokenId)!, value.value.quotient);
+      return CurrencyAmount.fromRawAmount(findXTokenById(value.value.tokenId)!, value.value.quotient);
     }
     return value;
   },

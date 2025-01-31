@@ -3,7 +3,7 @@ import { RLP } from '@ethereumjs/rlp';
 import BigNumber from 'bignumber.js';
 
 import { xChainMap } from '@/constants/xChains';
-import { wICX, xTokenMapBySymbol } from '@/constants/xTokens';
+import { allXTokens, wICX, xTokenMapBySymbol } from '@/constants/xTokens';
 import { XToken } from '../types';
 
 // Function to get the last i bytes of an integer
@@ -144,6 +144,12 @@ export const convertCurrency = (xChainId: XChainId, currency: Currency | XToken 
   }
 
   return token;
+};
+
+export const findXTokenById = (id: string): XToken | undefined => {
+  if (id === wICX.id) return wICX;
+
+  return allXTokens.find(t => t.id === id);
 };
 
 export function isIconTransaction(from: XChainId | undefined, to: XChainId | undefined): boolean {

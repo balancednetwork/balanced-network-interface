@@ -163,7 +163,7 @@ export function useDerivedMintInfo(): {
   const dependentField = independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
 
   // tokens
-  const currencies: { [field in Field]?: XToken } = React.useMemo(
+  const currencies: { [field in Field]?: XToken } = useMemo(
     () => ({
       [Field.CURRENCY_A]: currencyA ?? undefined,
       [Field.CURRENCY_B]: currencyB ?? undefined,
@@ -185,17 +185,14 @@ export function useDerivedMintInfo(): {
     return convertCurrency(ICON_XCALL_NETWORK_ID, currencyB?.wrapped);
   }, [currencyB]);
 
-  const currenciesOnIcon: { [field in Field]?: XToken } = React.useMemo(() => {
+  const currenciesOnIcon: { [field in Field]?: XToken } = useMemo(() => {
     return {
       [Field.CURRENCY_A]: currencyAOnIcon ?? undefined,
       [Field.CURRENCY_B]: currencyBOnIcon ?? undefined,
     };
   }, [currencyAOnIcon, currencyBOnIcon]);
 
-  // For queue, currencies[Field.CURRENCY_A] = ICX and currencies[Field.CURRENCY_B] = undefined
-  // so used `useQueuePair` in addition to `useV2Pair`.
-  const [pairState1, pair1] = useV2Pair(currencyAOnIcon, currencyBOnIcon);
-  const [pairState, pair] = [pairState1, pair1];
+  const [pairState, pair] = useV2Pair(currencyAOnIcon, currencyBOnIcon);
 
   const totalSupply = pair?.totalSupply;
   const noLiquidity: boolean =
@@ -206,10 +203,10 @@ export function useDerivedMintInfo(): {
     );
 
   // balances
-  const currencyArr = React.useMemo(() => [currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]], [currencies]);
+  const currencyArr = useMemo(() => [currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]], [currencies]);
 
   const balances = useXTokenBalances(currencyArr);
-  const currencyBalances: { [field in Field]?: CurrencyAmount<XToken> } = React.useMemo(() => {
+  const currencyBalances: { [field in Field]?: CurrencyAmount<XToken> } = useMemo(() => {
     const currencyABalance = balances[0];
     const currencyBBalance = balances[1];
     return {
@@ -234,7 +231,7 @@ export function useDerivedMintInfo(): {
     typedValue,
     currenciesOnIcon[independentField],
   );
-  const dependentAmount: CurrencyAmount<Currency> | undefined = React.useMemo(() => {
+  const dependentAmount: CurrencyAmount<Currency> | undefined = useMemo(() => {
     if (noLiquidity) {
       if (otherTypedValue && currenciesOnIcon[dependentField]) {
         return tryParseAmount(otherTypedValue, currenciesOnIcon[dependentField]);
@@ -271,14 +268,14 @@ export function useDerivedMintInfo(): {
     currencyBOnIcon,
   ]);
 
-  const parsedAmounts: { [field in Field]: CurrencyAmount<Currency> | undefined } = React.useMemo(() => {
+  const parsedAmounts: { [field in Field]: CurrencyAmount<Currency> | undefined } = useMemo(() => {
     return {
       [Field.CURRENCY_A]: independentField === Field.CURRENCY_A ? independentAmount : dependentAmount,
       [Field.CURRENCY_B]: independentField === Field.CURRENCY_A ? dependentAmount : independentAmount,
     };
   }, [dependentAmount, independentAmount, independentField]);
 
-  const price = React.useMemo(() => {
+  const price = useMemo(() => {
     if (noLiquidity) {
       const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
       if (currencyAAmount?.greaterThan(0) && currencyBAmount?.greaterThan(0)) {
@@ -292,7 +289,7 @@ export function useDerivedMintInfo(): {
   }, [currencyAOnIcon, noLiquidity, pair, parsedAmounts]);
 
   // liquidity minted
-  const liquidityMinted = React.useMemo(() => {
+  const liquidityMinted = useMemo(() => {
     const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
     const [tokenAmountA, tokenAmountB] = [currencyAAmount?.wrapped, currencyBAmount?.wrapped];
     if (
@@ -320,7 +317,7 @@ export function useDerivedMintInfo(): {
   }, [parsedAmounts, pair, totalSupply]);
 
   // mintable liquidity by using balances
-  const mintableLiquidity = React.useMemo(() => {
+  const mintableLiquidity = useMemo(() => {
     const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = {
       [Field.CURRENCY_A]: currencyBalances[Field.CURRENCY_A]
         ? convertCurrencyAmount(ICON_XCALL_NETWORK_ID, currencyBalances[Field.CURRENCY_A])
@@ -355,7 +352,7 @@ export function useDerivedMintInfo(): {
     }
   }, [currencyBalances, pair, totalSupply]);
 
-  const poolTokenPercentage = React.useMemo(() => {
+  const poolTokenPercentage = useMemo(() => {
     if (liquidityMinted && totalSupply) {
       return new Percent(liquidityMinted.quotient, totalSupply.add(liquidityMinted).quotient);
     } else {

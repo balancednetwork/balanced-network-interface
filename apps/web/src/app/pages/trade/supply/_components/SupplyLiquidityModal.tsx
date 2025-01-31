@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
@@ -10,6 +10,7 @@ import { StyledButton } from '@/app/components/Button/StyledButton';
 import { UnderlineText } from '@/app/components/DropdownText';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
+import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
@@ -27,6 +28,7 @@ import {
   useXTransactionStore,
 } from '@balancednetwork/xwagmi';
 import { useQueryClient } from '@tanstack/react-query';
+import { AnimatePresence, motion } from 'framer-motion';
 import { SendRemoveXToken } from './SendRemoveXToken';
 
 interface ModalProps {
@@ -45,19 +47,35 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
   const [pendingTx, setPendingTx] = React.useState('');
   const currentXTransaction = useXTransactionStore(state => state.transactions[pendingTx]);
 
+  const isExecuted = React.useMemo(
+    () =>
+      currentXTransaction?.status === XTransactionStatus.success ||
+      currentXTransaction?.status === XTransactionStatus.failure,
+    [currentXTransaction],
+  );
+
+  const handleDismiss = useCallback(() => {
+    onClose();
+    setTimeout(() => {
+      queryClient.invalidateQueries({ queryKey: ['XTokenDepositAmount'] });
+      setIsPending(false);
+      setPendingTx('');
+      setHasErrorMessage(false);
+    }, 500);
+  }, [onClose, queryClient]);
+
+  const slowDismiss = useCallback(() => {
+    setTimeout(() => {
+      handleDismiss();
+    }, 2000);
+  }, [handleDismiss]);
+
   useEffect(() => {
-    if (currentXTransaction?.status === XTransactionStatus.success) {
-      onClose();
+    if (isExecuted) {
+      slowDismiss();
       queryClient.invalidateQueries({ queryKey: ['pools'] });
     }
-
-    if (
-      currentXTransaction?.status === XTransactionStatus.success ||
-      currentXTransaction?.status === XTransactionStatus.failure
-    ) {
-      setIsPending(false);
-    }
-  }, [currentXTransaction, onClose, queryClient]);
+  }, [isExecuted, slowDismiss, queryClient]);
 
   const { data: depositAmountA } = useXTokenDepositAmount(account, currencies[Field.CURRENCY_A]?.wrapped);
   const { data: depositAmountB } = useXTokenDepositAmount(account, currencies[Field.CURRENCY_B]?.wrapped);
@@ -82,22 +100,12 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
   };
 
-  // refresh Modal UI
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  React.useEffect(() => {
-    if (!isOpen) {
-      setIsPending(false);
-      setPendingTx('');
-      setHasErrorMessage(false);
-    }
-  }, [isOpen, pair]);
-
   const isEnabled = !!depositAmountA?.greaterThan(0) && !!depositAmountB?.greaterThan(0);
 
   const [hasErrorMessage, setHasErrorMessage] = React.useState(false);
   const handleCancelSupply = () => {
     if (!depositAmountA?.greaterThan(0) && !depositAmountB?.greaterThan(0)) {
-      onClose();
+      handleDismiss();
     } else {
       setHasErrorMessage(true);
     }
@@ -190,29 +198,44 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
               </Typography>
             </Flex>
           )}
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={handleCancelSupply}>
-              <Trans>Cancel</Trans>
-            </TextButton>
 
-            {pair ? (
-              <StyledButton
-                disabled={!isEnabled || !gasChecker.hasEnoughGas || isPending || isWrongChain}
-                onClick={handleSupplyConfirm}
-                $loading={isPending}
+          {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
+
+          <AnimatePresence>
+            {((!isExecuted && isPending) || !isPending) && (
+              <motion.div
+                key={'tx-actions'}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                style={{ overflow: 'hidden' }}
               >
-                {isPending ? t`Supplying` : t`Supply`}
-              </StyledButton>
-            ) : (
-              <StyledButton
-                disabled={!isEnabled || !gasChecker.hasEnoughGas || isPending || isWrongChain}
-                onClick={handleSupplyConfirm}
-                $loading={isPending}
-              >
-                {isPending ? t`Creating pool` : t`Create pool`}
-              </StyledButton>
+                <Flex justifyContent="center" mt={4} pt={4} className="border-top">
+                  <TextButton onClick={handleCancelSupply}>
+                    <Trans>Cancel</Trans>
+                  </TextButton>
+
+                  {pair ? (
+                    <StyledButton
+                      disabled={!isEnabled || !gasChecker.hasEnoughGas || isPending || isWrongChain}
+                      onClick={handleSupplyConfirm}
+                      $loading={isPending}
+                    >
+                      {isPending ? t`Supplying` : t`Supply`}
+                    </StyledButton>
+                  ) : (
+                    <StyledButton
+                      disabled={!isEnabled || !gasChecker.hasEnoughGas || isPending || isWrongChain}
+                      onClick={handleSupplyConfirm}
+                      $loading={isPending}
+                    >
+                      {isPending ? t`Creating pool` : t`Create pool`}
+                    </StyledButton>
+                  )}
+                </Flex>
+              </motion.div>
             )}
-          </Flex>
+          </AnimatePresence>
 
           {!isPending && !gasChecker.hasEnoughGas && (
             <Flex justifyContent="center" paddingY={2}>

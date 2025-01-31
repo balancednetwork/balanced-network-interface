@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
+import { formatUnits } from 'viem';
 
 import { TextButton } from '@/app/components/Button';
 import { StyledButton } from '@/app/components/Button/StyledButton';
@@ -21,11 +22,13 @@ import {
   ICON_XCALL_NETWORK_ID,
   XToken,
   XTransactionStatus,
+  convertCurrencyAmount,
   getNetworkDisplayName,
   useXAddLiquidity,
   useXCallFee,
   useXTokenDepositAmount,
   useXTransactionStore,
+  xChainMap,
 } from '@balancednetwork/xwagmi';
 import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -111,9 +114,22 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
     }
   };
 
-  const { formattedXCallFee } = useXCallFee(lpXChainId, ICON_XCALL_NETWORK_ID);
+  const { xCallFee } = useXCallFee(lpXChainId, ICON_XCALL_NETWORK_ID);
+  const formattedXCallFee: string = useMemo(() => {
+    return xCallFee
+      ? formatUnits(xCallFee.rollback * 3n, xChainMap[lpXChainId].nativeCurrency.decimals) +
+          ' ' +
+          xChainMap[lpXChainId].nativeCurrency.symbol
+      : '';
+  }, [xCallFee, lpXChainId]);
+
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(lpXChainId);
-  const gasChecker = useXCallGasChecker(lpXChainId, undefined);
+  const gasChecker = useXCallGasChecker(
+    lpXChainId,
+    parsedAmounts[Field.CURRENCY_A] ? convertCurrencyAmount(lpXChainId, parsedAmounts[Field.CURRENCY_A]) : undefined,
+    3,
+  );
+
   return (
     <>
       <Modal isOpen={isOpen} onDismiss={() => undefined}>

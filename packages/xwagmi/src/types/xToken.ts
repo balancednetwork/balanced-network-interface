@@ -1,6 +1,5 @@
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token, XChainId } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
-import { XChainId } from './xChain';
 
 export class XToken extends Token {
   xChainId: XChainId;

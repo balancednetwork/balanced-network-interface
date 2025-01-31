@@ -10,10 +10,10 @@ import { getXPublicClient } from '@/actions';
 //   NotificationPending,
 //   NotificationSuccess,
 // } from '@/app/components/Notification/TransactionNotification';
-import { XChainId } from '@/types';
 import { isIconTransaction } from '@/utils';
 import { getTrackerLink } from '@/utils';
 import { Transaction, TransactionStatus, XTransactionType } from '@/xcall/types';
+import { XChainId } from '@balancednetwork/sdk-core';
 import { persist } from 'zustand/middleware';
 import { xTransactionActions } from './useXTransactionStore';
 

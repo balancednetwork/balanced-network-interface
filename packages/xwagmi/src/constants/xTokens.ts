@@ -1,5 +1,7 @@
-import { XChainId, XToken } from '@/types';
 import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balanced-js';
+import { XChainId } from '@balancednetwork/sdk-core';
+
+import { XToken } from '@/types';
 
 export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   bnUSD: '0x1.icon',
@@ -26,7 +28,6 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
 };
 
 export const wICX = XToken.wICX;
-
 export const xTokenMap: { [key in XChainId]: XToken[] } = {
   '0x1.icon': [
     new XToken('0x1.icon', ChainId.MAINNET, 'cx0000000000000000000000000000000000000000', 18, 'ICX', 'ICX'),

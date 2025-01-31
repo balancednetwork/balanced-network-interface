@@ -25,6 +25,8 @@ export type * from './types';
 export * from './xcall/types';
 export type * from './xcall/types';
 
+export { XChainId, XChainType } from '@balancednetwork/sdk-core';
+
 export { useAccount, useSwitchChain } from 'wagmi';
 export { useSignTransaction, useCurrentAccount, useCurrentWallet, useSuiClient } from '@mysten/dapp-kit';
 export { RLP } from '@ethereumjs/rlp';

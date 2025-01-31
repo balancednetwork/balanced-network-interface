@@ -1,6 +1,6 @@
 import { xChains } from '@/constants/xChains';
-import { XChainId, XChainType } from '@/types';
 import { BalancedJs } from '@balancednetwork/balanced-js';
+import { XChainId, XChainType } from '@balancednetwork/sdk-core';
 import { useCurrentAccount, useCurrentWallet, useSuiClient } from '@mysten/dapp-kit';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useEffect } from 'react';

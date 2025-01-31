@@ -1,10 +1,10 @@
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token, XChainId } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
 import BigNumber from 'bignumber.js';
 
 import { xChainMap } from '@/constants/xChains';
 import { wICX, xTokenMapBySymbol } from '@/constants/xTokens';
-import { XChainId, XToken } from '../types';
+import { XToken } from '../types';
 
 // Function to get the last i bytes of an integer
 function lastBytesOf(x: bigint, i: number): Uint8Array {

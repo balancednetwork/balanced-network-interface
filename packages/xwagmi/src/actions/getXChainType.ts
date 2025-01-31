@@ -1,5 +1,6 @@
+import { XChainId, XChainType } from '@balancednetwork/sdk-core';
+
 import { xChainMap } from '@/constants/xChains';
-import { XChainId, XChainType } from '@/types';
 
 export function getXChainType(xChainId: XChainId | undefined): XChainType | undefined {
   if (!xChainId) {

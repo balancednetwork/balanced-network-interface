@@ -1,4 +1,6 @@
-import { XChain, XChainId } from '@/types';
+import { XChainId } from '@balancednetwork/sdk-core';
+
+import { XChain } from '@/types';
 
 export const archway: XChain = {
   id: 'archway-1',

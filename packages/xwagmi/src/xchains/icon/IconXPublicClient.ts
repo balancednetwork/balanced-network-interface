@@ -3,10 +3,10 @@ import { BigNumber, Converter } from 'icon-sdk-js';
 import bnJs from './bnJs';
 
 import { XPublicClient } from '@/core/XPublicClient';
-import { XChainId, XToken } from '@/types';
+import { XToken } from '@/types';
 import { sleep } from '@/utils';
 import { CallData } from '@balancednetwork/balanced-js';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
 import {
   TransactionStatus,
   XCallEvent,

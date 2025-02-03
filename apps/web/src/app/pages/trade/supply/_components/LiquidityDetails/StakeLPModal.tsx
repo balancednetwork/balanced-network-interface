@@ -103,6 +103,8 @@ export default function StakeLPModal({
           pool.xChainId,
           differenceAmount.toFixed(),
           decimals,
+          pair.token0,
+          pair.token1,
         );
       } else {
         txHash = await xUnstakeLPToken(
@@ -111,6 +113,8 @@ export default function StakeLPModal({
           pool.xChainId,
           differenceAmount.abs().toFixed(),
           decimals,
+          pair.token0,
+          pair.token1,
         );
       }
       if (txHash) setPendingTx(txHash);

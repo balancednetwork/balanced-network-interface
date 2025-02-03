@@ -310,7 +310,7 @@ export function getAccumulatedInterest(principal: BigNumber, rate: BigNumber, da
   return accumulatedInterest;
 }
 
-export function getTransactionText(xTransactionInput: XTransactionInput) {
+export function getTransactionAttributes(xTransactionInput: XTransactionInput) {
   let descriptionAction: string, descriptionAmount: string;
   switch (xTransactionInput.type) {
     case XTransactionType.BRIDGE: {
@@ -413,18 +413,35 @@ export function getTransactionText(xTransactionInput: XTransactionInput) {
     }
 
     // TODO:
-    // case XTransactionType.LP_REMOVE_LIQUIDITY: {
-    //   break;
-    // }
     // case XTransactionType.LP_CLAIM_REWARDS: {
     //   break;
     // }
-    // case XTransactionType.LP_STAKE: {
-    //   break;
-    // }
-    // case XTransactionType.LP_UNSTAKE: {
-    //   break;
-    // }
+
+    case XTransactionType.LP_REMOVE_LIQUIDITY: {
+      const { tokenA, tokenB, withdrawAmountA, withdrawAmountB } = xTransactionInput;
+
+      const _formmatedAmountA = formatBigNumber(new BigNumber(withdrawAmountA?.toFixed() || 0), 'currency');
+      const _formmatedAmountB = formatBigNumber(new BigNumber(withdrawAmountB?.toFixed() || 0), 'currency');
+
+      descriptionAction = `Withdraw ${formatSymbol(tokenA?.symbol)} / ${tokenB?.symbol} liquidity`;
+      descriptionAmount = `${_formmatedAmountA} ${formatSymbol(tokenA?.symbol)} and ${_formmatedAmountB} ${tokenB?.symbol}`;
+      break;
+    }
+
+    case XTransactionType.LP_STAKE: {
+      const { tokenA, tokenB } = xTransactionInput;
+      descriptionAction = `Stake ${formatSymbol(tokenA?.symbol)} / ${tokenB?.symbol} LP tokens`;
+      descriptionAmount = ``;
+
+      break;
+    }
+    case XTransactionType.LP_UNSTAKE: {
+      const { tokenA, tokenB } = xTransactionInput;
+      descriptionAction = `Unstake ${formatSymbol(tokenA?.symbol)} / ${tokenB?.symbol} LP tokens`;
+      descriptionAmount = ``;
+
+      break;
+    }
 
     default: {
       descriptionAction = 'Unknown';

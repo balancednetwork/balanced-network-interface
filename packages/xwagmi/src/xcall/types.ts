@@ -12,7 +12,7 @@ export interface IXCallFee {
   rollback: bigint;
 }
 
-import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, Token, XChainId } from '@balancednetwork/sdk-core';
 import { RouteAction } from '@balancednetwork/v1-sdk';
 
 import { CurrencyKey, XToken } from '@/types';
@@ -80,7 +80,13 @@ export type XTransactionInput = {
   path?: RouteAction[];
   usedCollateral?: CurrencyKey;
   isLiquidFinanceEnabled?: boolean;
-  poolId?: number; // liquidity pool id
+
+  // liquidity
+  poolId?: number;
+  tokenA?: Token;
+  tokenB?: Token;
+  withdrawAmountA?: CurrencyAmount<XToken>;
+  withdrawAmountB?: CurrencyAmount<XToken>;
 };
 
 export type Transaction = {

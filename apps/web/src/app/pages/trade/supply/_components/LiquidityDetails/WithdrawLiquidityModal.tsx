@@ -49,6 +49,7 @@ export default function WithdrawLiquidityModal({
   onSuccess,
 }: ModalProps) {
   const queryClient = useQueryClient();
+  const { pair } = pool;
 
   const [isPending, setIsPending] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
@@ -94,7 +95,16 @@ export default function WithdrawLiquidityModal({
 
       const numPortion = new BigNumber(withdrawPortion / 100);
       const withdrawAmount = multiplyCABN(pool.balance, numPortion);
-      const txHash = await xRemoveLiquidity(xAccount.address, pool.poolId, pool.xChainId, withdrawAmount);
+      const txHash = await xRemoveLiquidity(
+        xAccount.address,
+        pool.poolId,
+        pool.xChainId,
+        withdrawAmount,
+        pair.token0,
+        pair.token1,
+        parsedAmounts[Field.CURRENCY_A]!,
+        parsedAmounts[Field.CURRENCY_B]!,
+      );
       if (txHash) setPendingTx(txHash);
       else setIsPending(false);
     } catch (error) {

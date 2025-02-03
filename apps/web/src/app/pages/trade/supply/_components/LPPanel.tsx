@@ -15,13 +15,14 @@ import { BrightPanel, SectionPanel } from '@/app/components/Panel';
 import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import { Typography } from '@/app/theme';
 import { BIGINT_ZERO } from '@/constants/misc';
-import { PairState } from '@/hooks/useV2Pairs';
+import { PairState, usePool } from '@/hooks/useV2Pairs';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedMintInfo, useInitialSupplyLoad, useMintActionHandlers, useMintState } from '@/store/mint/hooks';
 import { Field, InputType } from '@/store/mint/reducer';
 import { maxAmountSpend } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
 import LPDescription from './LPDescription';
+import SuggestStakingLPModal from './LiquidityDetails/SuggestStakingLPModal';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 import WalletSection from './WalletSection';
 
@@ -38,6 +39,7 @@ export default function LPPanel() {
 
   // modal
   const [showSupplyConfirm, setShowSupplyConfirm] = React.useState(false);
+  const [showSuggestStakingLP, setShowSuggestStakingLP] = React.useState(false);
 
   const handleSupplyConfirmDismiss = () => {
     setShowSupplyConfirm(false);
@@ -81,6 +83,8 @@ export default function LPPanel() {
   const sliderInstance = React.useRef<any>(null);
 
   const [{ percent, needUpdate }, setPercent] = React.useState({ percent: 0, needUpdate: false });
+
+  const pool = usePool(pair?.poolId, `${lpXChainId}/${account}`);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
@@ -313,7 +317,16 @@ export default function LPPanel() {
         onClose={handleSupplyConfirmDismiss}
         parsedAmounts={amounts}
         currencies={currencies}
+        onSuccess={() => setShowSuggestStakingLP(true)}
       />
+
+      {pool && (
+        <SuggestStakingLPModal
+          isOpen={showSuggestStakingLP}
+          onClose={() => setShowSuggestStakingLP(false)}
+          pool={pool}
+        />
+      )}
     </>
   );
 }

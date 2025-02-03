@@ -15,6 +15,7 @@ import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
+import { useIncentivisedPairs } from '@/queries/reward';
 import { useDerivedMintInfo } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
@@ -40,11 +41,14 @@ interface ModalProps {
   children?: React.ReactNode;
   parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> };
   currencies: { [field in Field]?: XToken };
+  onSuccess?: () => void;
 }
 
-export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, currencies }: ModalProps) {
+export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, currencies, onSuccess }: ModalProps) {
   const queryClient = useQueryClient();
   const { account, pair, lpXChainId } = useDerivedMintInfo();
+
+  const { data: incentivisedPairs } = useIncentivisedPairs();
 
   const [isPending, setIsPending] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
@@ -59,13 +63,23 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
   const handleDismiss = useCallback(() => {
     onClose();
+
+    if (
+      currentXTransaction?.status === XTransactionStatus.success &&
+      pair &&
+      incentivisedPairs &&
+      incentivisedPairs.find(p => p.id === pair.poolId)
+    ) {
+      onSuccess?.();
+    }
+
     setTimeout(() => {
       queryClient.invalidateQueries({ queryKey: ['XTokenDepositAmount'] });
       setIsPending(false);
       setPendingTx('');
       setHasErrorMessage(false);
     }, 500);
-  }, [onClose, queryClient]);
+  }, [onClose, queryClient, onSuccess, pair, incentivisedPairs, currentXTransaction]);
 
   const slowDismiss = useCallback(() => {
     setTimeout(() => {

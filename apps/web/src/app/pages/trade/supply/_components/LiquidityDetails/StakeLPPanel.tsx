@@ -85,7 +85,7 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
       </Typography>
       {isIncentivised ? (
         <>
-          <Typography my={1}>Stake your LP tokens to earn BALN from this liquidity pool.</Typography>
+          <Typography my={1}>Stake your LP tokens to earn rewards from this liquidity pool.</Typography>
 
           <Box my={3}>
             <Nouislider

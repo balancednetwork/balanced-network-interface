@@ -148,7 +148,7 @@ export default function StakeLPModal({
           </Box>
         </Flex>
         <Typography textAlign="center">
-          {shouldStake ? "You'll earn BALN until you unstake them." : "You'll stop earning BALN from them."}
+          {shouldStake ? "You'll earn rewards until you unstake them." : "You'll stop earning rewards from them."}
         </Typography>
 
         {pool.xChainId !== ICON_XCALL_NETWORK_ID && (

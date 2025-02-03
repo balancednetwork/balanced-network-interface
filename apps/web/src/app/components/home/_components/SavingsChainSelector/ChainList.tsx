@@ -53,7 +53,7 @@ const ChainItem = ({ chain, setChainId, isLast, rewardAmount }: ChainItemProps) 
           </Typography>
         </Flex>
       </ChainItemWrap>
-      {rewardAmount.gt(0) ? (
+      {rewardAmount.gt(0.01) ? (
         <Typography
           color="inherit"
           style={{ transition: 'all ease 0.3s', opacity: rewardAmount.gt(0) ? 1 : 0.75 }}

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useCallback, useMemo } from 'react';
 
 import { Currency, Fraction, Token } from '@balancednetwork/sdk-core';
@@ -121,7 +120,7 @@ export default function CurrencyRow({
       return [bridgeDirection.from];
     }
 
-    if (currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE) {
+    if (currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE && selectedChainId) {
       return [selectedChainId];
     }
 

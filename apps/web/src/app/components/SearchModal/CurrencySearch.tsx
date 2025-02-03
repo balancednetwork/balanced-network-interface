@@ -59,6 +59,17 @@ function filterUntradeableTokens(tokens: { [address: string]: Token }): { [addre
     }, {});
 }
 
+function filterUnsupportedTokens(xChainId: XChainId, bases: { [address: string]: Token }) {
+  return xChainId === 'archway-1' || xChainId === '0x100.icon'
+    ? Object.values(bases)
+        .filter(token => token.symbol !== 'sICX')
+        .reduce((acc, token) => {
+          acc[token.address] = token;
+          return acc;
+        }, {})
+    : bases;
+}
+
 interface CurrencySearchProps {
   account?: string | null;
   isOpen: boolean;
@@ -132,14 +143,14 @@ export function CurrencySearch({
       case CurrencySelectionType.TRADE_MINT_BASE:
         return removeStableTokens(filterUntradeableTokens(tokens));
       case CurrencySelectionType.TRADE_MINT_QUOTE:
-        return bases;
+        return filterUnsupportedTokens(xChainId, bases);
       case CurrencySelectionType.VOTE_FUNDING:
         return FUNDING_TOKENS_LIST;
       case CurrencySelectionType.BRIDGE: {
         return xTokens || [];
       }
     }
-  }, [currencySelectionType, tokens, bases, xTokens]);
+  }, [currencySelectionType, tokens, bases, xTokens, xChainId]);
 
   //select first currency from list if there is none selected for bridging
   useEffect(() => {

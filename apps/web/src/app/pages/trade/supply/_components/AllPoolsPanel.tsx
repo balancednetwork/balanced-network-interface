@@ -20,7 +20,7 @@ import RewardsDisplay from '@/app/components/RewardsDisplay/RewardsDisplay';
 import { HeaderText } from '@/app/components/SearchModal/styleds';
 import Skeleton from '@/app/components/Skeleton';
 import { PairInfo } from '@/types';
-import { xChainMap } from '@balancednetwork/xwagmi';
+import { DEFAULT_TOKEN_CHAIN, XChainId, xChainMap } from '@balancednetwork/xwagmi';
 import { useMedia } from 'react-use';
 
 const COMPACT_ITEM_COUNT = 8;
@@ -176,12 +176,21 @@ const PairItem = ({ pair, onClick, isLast }: PairItemProps) => {
   );
 };
 
+function getDefaultChain(pair: PairInfo): XChainId {
+  const defaultChain = DEFAULT_TOKEN_CHAIN[pair.baseToken.symbol];
+  if (defaultChain === '0x100.icon') {
+    return '0x1.icon';
+  } else {
+    return defaultChain || '0x1.icon';
+  }
+}
+
 export default function AllPoolsPanel({ query }: { query: string }) {
   const { data: allPairs } = useAllPairsById();
   const { data: nolPairs } = useNOLPools();
   const { sortBy, handleSortSelect, sortData } = useSort({ key: 'apyTotal', order: 'DESC' });
   const { noLiquidity } = useDerivedMintInfo();
-  const { onCurrencySelection } = useMintActionHandlers(noLiquidity);
+  const { onCurrencySelection, onChainSelection } = useMintActionHandlers(noLiquidity);
   const showAPRTooltip = useMedia('(min-width: 700px)');
   const [showingExpanded, setShowingExpanded] = React.useState(false);
 
@@ -191,6 +200,11 @@ export default function AllPoolsPanel({ query }: { query: string }) {
     } else {
       onCurrencySelection(Field.CURRENCY_A, pair.baseToken);
       onCurrencySelection(Field.CURRENCY_B, pair.quoteToken);
+    }
+
+    const defaultChain = getDefaultChain(pair);
+    if (defaultChain !== '0x1.icon') {
+      onChainSelection(Field.CURRENCY_A, defaultChain);
     }
   };
 

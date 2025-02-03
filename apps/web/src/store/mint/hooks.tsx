@@ -11,7 +11,6 @@ import { useICX } from '@/constants/tokens';
 import { useAllTokens, useCommonBases } from '@/hooks/Tokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { tryParseAmount } from '@/store/swap/hooks';
-import { useAllTransactions } from '@/store/transactions/hooks';
 import { useXTokenBalances } from '@/store/wallet/hooks';
 import { formatSymbol } from '@/utils/formatter';
 import {
@@ -24,7 +23,6 @@ import {
   useXAccount,
   xTokenMap,
 } from '@balancednetwork/xwagmi';
-import { bnJs } from '@balancednetwork/xwagmi';
 import { AppDispatch, AppState } from '../index';
 import { Field, INITIAL_MINT, InputType, selectChain, selectCurrency, typeInput } from './reducer';
 
@@ -112,36 +110,12 @@ export function useMintActionHandlers(noLiquidity: boolean | undefined): {
 
 const ZERO = 0n;
 
-// TODO: update this function not to use useCurrentXCallState, which is removed
-const useCurrencyDeposit = (
-  account: string | undefined | null,
-  currency: Currency | undefined,
-): CurrencyAmount<Currency> | undefined => {
-  const token = currency?.wrapped;
-  const transactions = useAllTransactions();
-  const [result, setResult] = React.useState<string | undefined>();
-  // const currentXCallState = useCurrentXCallState();
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  React.useEffect(() => {
-    (async () => {
-      if (token?.address && account) {
-        const res = await bnJs.Dex.getDeposit(token?.address || '', account || '');
-        setResult(res);
-      }
-    })();
-  }, [transactions, token, account]);
-
-  return token && result ? CurrencyAmount.fromRawAmount<Currency>(token, BigInt(result)) : undefined;
-};
-
 export function useDerivedMintInfo(): {
   dependentField: Field;
   currencies: { [field in Field]?: XToken };
   pair?: Pair | null;
   pairState: PairState;
   currencyBalances: { [field in Field]?: CurrencyAmount<Currency> };
-  currencyDeposits: { [field in Field]?: CurrencyAmount<Currency> };
   parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> };
   price?: Price<Currency, Currency>;
   noLiquidity?: boolean;
@@ -214,17 +188,6 @@ export function useDerivedMintInfo(): {
       [Field.CURRENCY_B]: currencyBBalance, // quote token
     };
   }, [balances]);
-
-  // deposits
-  const depositA = useCurrencyDeposit(account ?? undefined, currencyAOnIcon);
-  const depositB = useCurrencyDeposit(account ?? undefined, currencyBOnIcon);
-  const currencyDeposits: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(
-    () => ({
-      [Field.CURRENCY_A]: depositA,
-      [Field.CURRENCY_B]: depositB,
-    }),
-    [depositA, depositB],
-  );
 
   // amounts
   const independentAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(
@@ -389,7 +352,6 @@ export function useDerivedMintInfo(): {
     pair,
     pairState,
     currencyBalances,
-    currencyDeposits,
     parsedAmounts,
     price,
     noLiquidity,

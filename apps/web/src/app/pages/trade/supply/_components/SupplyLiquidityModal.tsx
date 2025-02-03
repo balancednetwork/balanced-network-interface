@@ -185,7 +185,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
           {lpXChainId !== ICON_XCALL_NETWORK_ID && (
             <Flex justifyContent="center" alignItems="center" mt={2} style={{ gap: 4 }}>
               <Typography textAlign="center" as="h3" fontWeight="normal">
-                <Trans>Transfer fee (x3): </Trans>
+                <Trans>Transfer fees: </Trans>
               </Typography>
               <Typography fontWeight="bold">{formattedXCallFee}</Typography>
             </Flex>

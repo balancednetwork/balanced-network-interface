@@ -1,7 +1,7 @@
 import type { Address } from 'viem';
 
 export type ChainType = 'evm' | 'sui';
-export type ChainName = 'sui' | 'arb';
+export type ChainName = 'sui' | 'arb' | 'pol';
 export type ChainInfo<T extends ChainType> = {
   name: ChainName;
   type: T;
@@ -51,10 +51,10 @@ export type SuiChainConfig = BaseChainConfig<'sui'> & {
 
 export type ChainConfig = EvmChainConfig | SuiChainConfig;
 
-export type GetChainConfigType<T extends ChainName> = T extends 'arb'
-  ? EvmChainConfig
-  : T extends 'sui'
-    ? SuiChainConfig
+export type GetChainConfigType<T extends ChainName> = T extends 'sui'
+  ? SuiChainConfig
+  : T extends 'arb' | 'pol'
+    ? EvmChainConfig
     : never;
 
 export type Result<T, E = Error | unknown> = { ok: true; value: T } | { ok: false; error: E };

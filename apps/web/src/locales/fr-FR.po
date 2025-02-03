@@ -170,6 +170,7 @@ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/index.tsx
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
 msgid "Unstaking"
 msgstr "Déstaking"
 
@@ -352,7 +353,7 @@ msgid "Sign in"
 msgstr "Se connecter"
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
-#: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/RespoRewardsInfo.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "Daily rewards"
 msgstr "Récompenses quotidiennes"
@@ -427,7 +428,7 @@ msgstr "Propositions"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
-#: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/RespoRewardsInfo.tsx
 msgid "APR"
 msgstr ""
 
@@ -1067,6 +1068,10 @@ msgstr "Échanger"
 msgid "Swapping"
 msgstr ""
 
+#: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
+msgid "Stake"
+msgstr ""
+
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 #~ msgid "Incentives are recalculated every week. You can adjust your allocation once every 10 days."
 #~ msgstr ""
@@ -1118,6 +1123,14 @@ msgstr "Supprimez vos actifs pour annuler cette transaction."
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #~ msgid "Withdrawing..."
 #~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
+msgid "Staking"
+msgstr ""
+
+#: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
+msgid "Claiming"
+msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "{0} BALN withdrawn."
@@ -1277,6 +1290,7 @@ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/index.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
 msgid "Unstake"
 msgstr "Déstaker"
 
@@ -1304,7 +1318,7 @@ msgstr ""
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/home/Savings/index.tsx
-#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw"
@@ -1331,7 +1345,7 @@ msgstr ""
 msgid "Check that your contract calls are set up correctly before you submit the proposal."
 msgstr ""
 
-#: src/app/components/home/RewardsPanel/LPRewards.tsx
+#: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #: src/app/components/home/RewardsPanel/SavingsRewards.tsx
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
@@ -1391,6 +1405,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
 msgid "Withdrawing"
 msgstr ""
 
@@ -1493,7 +1508,10 @@ msgstr "({0}% requis)"
 msgid "Claimed {0} ICX."
 msgstr "{0} ICX réclamé."
 
+#: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Transfer fee:"
 msgstr ""
@@ -1637,7 +1655,7 @@ msgstr ""
 msgid "Withdrawing collateral..."
 msgstr "Retrait de garantie..."
 
-#: src/app/components/home/RewardsPanel/LPRewards.tsx
+#: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
 msgid "Claim liquidity rewards?"
 msgstr ""
 
@@ -1984,7 +2002,7 @@ msgstr ""
 #: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
-#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
@@ -2159,7 +2177,7 @@ msgstr ""
 msgid "Copy"
 msgstr ""
 
-#: src/app/components/home/RewardsPanel/LPRewards.tsx
+#: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
 #: src/app/components/home/RewardsPanel/LPRewards.tsx
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
@@ -2288,7 +2306,7 @@ msgstr "Déposer"
 msgid "Swap & transfer cross-chain."
 msgstr ""
 
-#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdraw liquidity?"
 msgstr "Retirer des liquidités ?"
@@ -2746,9 +2764,9 @@ msgid "FEES (24H)"
 msgstr ""
 
 #: src/app/components/home/_components/xCollateralModal/index.tsx
-#: src/app/components/home/RewardsPanel/LPRewards.tsx
-#: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPPanel.tsx
-#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
+#: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
 msgid "Switch to"
 msgstr ""
 

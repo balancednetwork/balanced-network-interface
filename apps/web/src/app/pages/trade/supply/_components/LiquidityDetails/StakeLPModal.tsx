@@ -172,7 +172,7 @@ export default function StakeLPModal({
             >
               <Flex justifyContent="center" mt={4} pt={4} className="border-top">
                 <TextButton onClick={onClose} fontSize={14}>
-                  Cancel
+                  <Trans>{isPending ? 'Close' : 'Cancel'}</Trans>
                 </TextButton>
                 {isWrongChain ? (
                   <Button onClick={handleSwitchChain} fontSize={14}>

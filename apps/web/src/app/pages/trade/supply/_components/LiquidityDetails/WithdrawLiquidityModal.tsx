@@ -147,7 +147,7 @@ export default function WithdrawLiquidityModal({
             >
               <Flex justifyContent="center" mt={4} pt={4} className="border-top">
                 <TextButton onClick={onClose}>
-                  <Trans>Cancel</Trans>
+                  <Trans>{isPending ? 'Close' : 'Cancel'}</Trans>
                 </TextButton>
 
                 {isWrongChain ? (

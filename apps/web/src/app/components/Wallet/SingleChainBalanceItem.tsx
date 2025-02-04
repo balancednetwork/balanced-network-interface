@@ -32,10 +32,15 @@ const SingleChainBalanceItem = ({
   const { symbol } = currency || {};
   const theme = useTheme();
   const claimableICX = useClaimableICX();
-  const hasNotification = baseToken.symbol === 'ICX' && claimableICX.isGreaterThan(0);
   const isICONAsset = xChainId === ICON_XCALL_NETWORK_ID;
   const [isOpen, setOpen] = React.useState(false);
   const rates = useRatesWithOracle();
+
+  //tmp
+  const hasBTCB = currency?.symbol === 'BTCB' && balance?.greaterThan(0);
+  //end of tmp
+
+  const hasNotification = (baseToken.symbol === 'ICX' && claimableICX.isGreaterThan(0)) || hasBTCB;
 
   const closeModal = React.useCallback(() => {
     setOpen(false);

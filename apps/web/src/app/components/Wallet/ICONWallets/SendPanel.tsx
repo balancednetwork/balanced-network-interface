@@ -44,9 +44,9 @@ export default function SendPanel({ currency }: { currency: Currency }) {
   const wallet = useICONWalletBalances();
   const rates = useRatesWithOracle();
 
-  const walletAmount = wallet[currency.wrapped.address];
+  const walletAmount = wallet[currency.address];
 
-  const maxAmount = maxAmountSpend(walletAmount) ?? CurrencyAmount.fromRawAmount(currency.wrapped, BIGINT_ZERO);
+  const maxAmount = maxAmountSpend(walletAmount) ?? CurrencyAmount.fromRawAmount(currency, BIGINT_ZERO);
 
   const handleMax = () => {
     setValue(maxAmount.toFixed());
@@ -62,7 +62,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
   const beforeAmount = wallet[currency.wrapped.address];
 
   const differenceAmount = toCurrencyAmount(
-    beforeAmount.currency.wrapped,
+    beforeAmount.currency,
     Number.isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value),
   );
 

@@ -244,6 +244,7 @@ export default function CurrencyRow({
   };
 
   const handleXChainCurrencySelect = useCallback(
+    // click event for single row
     (currency: Currency, xChainId: XChainId) => {
       onSelect(currency, false);
       onChainSelect && onChainSelect(xChainId);
@@ -252,12 +253,13 @@ export default function CurrencyRow({
   );
 
   const handleClick = (currency: Currency, XChainIds: XChainId[]) => {
+    // click event for multiple row
     if (basedOnWallet && XChainIds.length === 1) {
       handleXChainCurrencySelect(currency, XChainIds[0]);
     } else if (currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE) {
       handleXChainCurrencySelect(currency, XChainIds[0]);
     } else {
-      onSelect(currency, false);
+      onSelect(currency, true);
     }
   };
 

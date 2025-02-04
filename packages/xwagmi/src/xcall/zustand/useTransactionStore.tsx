@@ -145,7 +145,7 @@ export const useFetchTransaction = (hash: string) => {
   const { data: rawTx, isLoading } = useQuery({
     queryKey: ['transaction', xChainId, hash],
     queryFn: async () => {
-      if (!xChainId) return;
+      if (!xChainId) return null;
 
       const xPublicClient = getXPublicClient(xChainId);
       try {

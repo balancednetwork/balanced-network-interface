@@ -22,7 +22,8 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   haSUI: 'sui',
   vSUI: 'sui',
   SOL: 'solana',
-  JitoSOL: 'solana',
+  JITOSOL: 'solana',
+  mSUI: 'sui',
 };
 
 export const wICX = XToken.wICX;
@@ -99,6 +100,14 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       9,
       'afSUI',
       'Aftermath Staked SUI',
+    ),
+    new XToken(
+      '0x1.icon',
+      ChainId.MAINNET,
+      'cxb8cf9a4700e0c804b780978bf9d9de759c62e787',
+      9,
+      'mSUI',
+      'Mirai Staked SUI',
     ),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx2609b924e33ef00b648a409245c7ea394c467824', 18, 'sICX', 'Staked ICX'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619', 18, 'BALN', 'Balance Token'),
@@ -297,6 +306,14 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       9,
       'afSUI',
       'Aftermath Staked SUI',
+    ),
+    new XToken(
+      'sui',
+      'sui',
+      '0x922d15d7f55c13fd790f6e54397470ec592caa2b508df292a2e8553f3d3b274f::msui::MSUI',
+      9,
+      'mSUI',
+      'Mirai Staked SUI',
     ),
     new XToken(
       'sui',

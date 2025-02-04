@@ -313,14 +313,6 @@
       "symbol": "afSUI",
       "decimals": 9,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/afsui.png"
-    },
-    {
-      "address": "cxb8cf9a4700e0c804b780978bf9d9de759c62e787",
-      "chainId": 1,
-      "name": "Mirai Staked SUI",
-      "symbol": "mSUI",
-      "decimals": 9,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/msui.png"
     }
   ]
 }

@@ -62,11 +62,13 @@ export default function SendPanel({ currency }: { currency: Currency }) {
   const beforeAmount = wallet[currency.wrapped.address];
 
   const differenceAmount = toCurrencyAmount(
-    beforeAmount.currency.wrapped,
+    currency.wrapped,
     Number.isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value),
   );
 
-  const afterAmount = beforeAmount.subtract(differenceAmount);
+  const afterAmount = beforeAmount?.currency?.equals(differenceAmount?.currency)
+    ? beforeAmount.subtract(differenceAmount)
+    : CurrencyAmount.fromRawAmount(currency.wrapped, BIGINT_ZERO);
 
   const addTransaction = useTransactionAdder();
 

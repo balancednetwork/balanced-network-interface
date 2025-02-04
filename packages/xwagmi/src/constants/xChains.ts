@@ -232,6 +232,7 @@ export const polygon: XChain = {
   gasThreshold: 0.5,
   testnet: false,
   useXCallScanner: false,
+  intentChainId: 'pol',
 };
 
 export const arbitrum: XChain = {
@@ -257,6 +258,7 @@ export const arbitrum: XChain = {
   gasThreshold: 0.0001,
   testnet: false,
   useXCallScanner: false,
+  intentChainId: 'arb',
 };
 
 export const base: XChain = {
@@ -358,6 +360,7 @@ export const sui: XChain = {
   gasThreshold: 0.1, // xCall fee: 0.05 SUI
   testnet: false,
   useXCallScanner: true,
+  intentChainId: 'sui',
 };
 
 // TODO: complete solana chain

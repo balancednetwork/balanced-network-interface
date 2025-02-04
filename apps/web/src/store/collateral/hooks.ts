@@ -655,7 +655,8 @@ export function useUserPositionsData(): UseQueryResult<XPositionsRecord[]> {
         })
         .filter((item): item is XPositionsRecord => Boolean(item));
     },
-    enabled: allWallets?.length > 0 && !!prices,
+    // enabled: allWallets?.length > 0 && !!prices,
+    enabled: allWallets?.length > 0,
     placeholderData: keepPreviousData,
     refetchInterval: 4000,
   });

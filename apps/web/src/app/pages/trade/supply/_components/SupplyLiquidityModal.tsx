@@ -138,10 +138,21 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
   }, [xCallFee, lpXChainId]);
 
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(lpXChainId);
+
+  const gasMultiplier = useMemo(() => {
+    if (depositAmountA?.greaterThan(0) && depositAmountB?.greaterThan(0)) {
+      return 1;
+    } else if (depositAmountA?.greaterThan(0) || depositAmountB?.greaterThan(0)) {
+      return 2;
+    } else {
+      return 3;
+    }
+  }, [depositAmountA, depositAmountB]);
+
   const gasChecker = useXCallGasChecker(
     lpXChainId,
     parsedAmounts[Field.CURRENCY_A] ? convertCurrencyAmount(lpXChainId, parsedAmounts[Field.CURRENCY_A]) : undefined,
-    3,
+    gasMultiplier,
   );
 
   return (

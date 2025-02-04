@@ -6,11 +6,6 @@ export enum MessageType {
   CallMessagePersisted,
 }
 
-export enum CSResponseType {
-  CSMessageFailure,
-  CSResponseSuccess,
-}
-
 export enum CSMessageType {
   CSMessageRequest = 1,
   CSMessageResult,

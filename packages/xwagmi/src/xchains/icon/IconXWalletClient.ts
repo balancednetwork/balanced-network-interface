@@ -1,4 +1,3 @@
-import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from './bnJs';
 
 import { XWalletClient } from '@/core/XWalletClient';
@@ -63,39 +62,29 @@ export class IconXWalletClient extends XWalletClient {
   }
 
   async _executeSwap(xTransactionInput: XTransactionInput) {
-    const { executionTrade, account, direction, recipient, slippageTolerance } = xTransactionInput;
+    const { account, direction, recipient, inputAmount, minReceived, path } = xTransactionInput;
 
-    if (!executionTrade || !slippageTolerance) {
+    if (!minReceived || !path) {
       return;
     }
 
-    const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
     const receiver = `${direction.to}/${recipient}`;
 
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
-    let txResult;
-    if (executionTrade.inputAmount.currency.symbol === 'ICX') {
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade).toString('hex');
+    const inputToken = inputAmount.currency;
 
-      txResult = await bnJs
-        .inject({ account })
-        .Router.swapICXV2(toDec(executionTrade.inputAmount), rlpEncodedData, toDec(minReceived), receiver);
-    } else {
-      const inputToken = executionTrade.inputAmount.currency.wrapped;
-      const outputToken = executionTrade.outputAmount.currency.wrapped;
+    const cx = inputToken.symbol === 'wICX' ? bnJs.wICX : bnJs.getContract(inputToken.address);
 
-      const cx = bnJs.inject({ account }).getContract(inputToken.address);
+    const rlpEncodedData = getRlpEncodedSwapData(path, '_swap', receiver, minReceived).toString('hex');
 
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived).toString('hex');
-
-      txResult = await cx.swapUsingRouteV2(toDec(executionTrade.inputAmount), rlpEncodedData);
-    }
+    const txResult = await cx.inject({ account }).swapUsingRouteV2(toDec(inputAmount), rlpEncodedData);
 
     const { result: hash } = txResult || {};
     if (hash) {
       return hash;
     }
+    return undefined;
   }
 
   async _executeBorrow(xTransactionInput: XTransactionInput) {
@@ -122,29 +111,27 @@ export class IconXWalletClient extends XWalletClient {
   }
 
   async _executeSwapOnIcon(xTransactionInput: XTransactionInput) {
-    const { executionTrade, account, direction, recipient, slippageTolerance } = xTransactionInput;
-    if (!executionTrade || !slippageTolerance) {
+    const { account, recipient, minReceived, path, inputAmount } = xTransactionInput;
+    if (!minReceived || !path) {
       return;
     }
 
-    const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-
     let txResult;
-    if (executionTrade.inputAmount.currency.symbol === 'ICX') {
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade).toString('hex');
+    if (inputAmount.currency.symbol === 'ICX') {
+      const rlpEncodedData = getRlpEncodedSwapData(path).toString('hex');
 
       txResult = await bnJs
         .inject({ account })
-        .Router.swapICXV2(toDec(executionTrade.inputAmount), rlpEncodedData, toDec(minReceived), recipient);
+        .Router.swapICXV2(toDec(inputAmount), rlpEncodedData, toDec(minReceived), recipient);
     } else {
-      const token = executionTrade.inputAmount.currency.wrapped;
+      const token = inputAmount.currency.wrapped;
 
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', recipient, minReceived).toString('hex');
+      const rlpEncodedData = getRlpEncodedSwapData(path, '_swap', recipient, minReceived).toString('hex');
 
       txResult = await bnJs
         .inject({ account })
         .getContract(token.address)
-        .swapUsingRouteV2(toDec(executionTrade.inputAmount), rlpEncodedData);
+        .swapUsingRouteV2(toDec(inputAmount), rlpEncodedData);
     }
 
     const { result: hash } = txResult || {};

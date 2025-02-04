@@ -12,8 +12,8 @@ export interface IXCallFee {
   rollback: bigint;
 }
 
-import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
-import { Trade } from '@balancednetwork/v1-sdk';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { RouteAction } from '@balancednetwork/v1-sdk';
 
 import { CurrencyKey, XChainId, XToken } from '@/types';
 
@@ -30,14 +30,18 @@ export enum XTransactionStatus {
 }
 
 export enum XTransactionType {
+  //swap & bridge
   SWAP = 'swap',
   BRIDGE = 'bridge',
-  SUPPLY = 'supply',
+  SWAP_ON_ICON = 'swap_on_icon',
+
+  // lend & borrow
   DEPOSIT = 'deposit',
   WITHDRAW = 'withdraw',
   BORROW = 'borrow',
   REPAY = 'repay',
-  SWAP_ON_ICON = 'swap_on_icon',
+
+  // add liquidity
 }
 
 export enum XMessageStatus {
@@ -61,12 +65,12 @@ export type XTransactionInput = {
   inputAmount: CurrencyAmount<XToken>;
   account: string;
   xCallFee: IXCallFee;
-  callback?: () => void;
   // xswap
   recipient?: string;
-  executionTrade?: Trade<Currency, Currency, TradeType>;
+  outputAmount?: CurrencyAmount<XToken>;
+  minReceived?: CurrencyAmount<XToken>;
+  path?: RouteAction[];
   usedCollateral?: CurrencyKey;
-  slippageTolerance?: number;
   isLiquidFinanceEnabled?: boolean;
 };
 
@@ -149,7 +153,6 @@ export type XTransaction = {
   finalDestinationChainId: XChainId;
   finalDestinationChainInitialBlockHeight: bigint;
 
-  attributes: Record<string, any>;
-
   createdAt: number; // timestamp in milliseconds
+  input: XTransactionInput;
 };

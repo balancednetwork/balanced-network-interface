@@ -3,7 +3,7 @@ import { Token } from '@balancednetwork/sdk-core';
 
 import { sARCH } from '@/constants/tokens1';
 
-import { ICX, sICX, bnUSD, IUSDC, USDS, OMM, IUSDT, BTCB } from './tokens';
+import { BTCB, ICX, IUSDC, OMM, USDS, bnUSD, sICX, wICX } from './tokens';
 
 export const MAX_HOPS = 4;
 
@@ -56,9 +56,12 @@ export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
   [ChainId.LISBON]: [sICX[ChainId.LISBON], bnUSD[ChainId.LISBON]],
 };
 export const PINNED_PAIRS: { readonly [chainId: number]: [Token, Token][] } = {
-  [ChainId.MAINNET]: [[ICX[ChainId.MAINNET], sICX[ChainId.MAINNET]]],
-  [ChainId.YEOUIDO]: [[ICX[ChainId.YEOUIDO], sICX[ChainId.YEOUIDO]]],
-  [ChainId.SEJONG]: [[ICX[ChainId.SEJONG], sICX[ChainId.SEJONG]]],
-  [ChainId.BERLIN]: [[ICX[ChainId.BERLIN], sICX[ChainId.BERLIN]]],
-  [ChainId.LISBON]: [[ICX[ChainId.LISBON], sICX[ChainId.LISBON]]],
+  [ChainId.MAINNET]: [
+    [ICX[ChainId.MAINNET], sICX[ChainId.MAINNET]],
+    [wICX[ChainId.MAINNET], sICX[ChainId.MAINNET]],
+  ],
+  [ChainId.YEOUIDO]: [[wICX[ChainId.YEOUIDO], sICX[ChainId.YEOUIDO]]],
+  [ChainId.SEJONG]: [[wICX[ChainId.SEJONG], sICX[ChainId.SEJONG]]],
+  [ChainId.BERLIN]: [[wICX[ChainId.BERLIN], sICX[ChainId.BERLIN]]],
+  [ChainId.LISBON]: [[wICX[ChainId.LISBON], sICX[ChainId.LISBON]]],
 };

@@ -1,4 +1,4 @@
-import { Modal } from '@/app/components2/Modal';
+import { Modal } from '@/app/components/Modal';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
@@ -38,7 +38,7 @@ const columns: ColumnDef<any>[] = [
 
 const DEFAULT_XCHAIN_ID = 'all';
 
-export const UNTRADEABLE_TOKENS = ['tBTC', 'weETH', 'wstETH', 'HASUI', 'AFSUI', 'VSUI', 'JITOSOL', 'aARCH'];
+export const UNTRADEABLE_TOKENS = ['JitoSOL', 'aARCH'];
 
 export function TokenSelectModal({ open, onDismiss, account, onCurrencySelect, selectedCurrency }) {
   const [xChainId, setXChainId] = useState<XChainId | 'all'>(DEFAULT_XCHAIN_ID);

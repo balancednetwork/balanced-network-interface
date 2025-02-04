@@ -8,7 +8,8 @@ import { Typography } from '@/app/theme';
 import ArrowIcon from '@/assets/icons/arrow-white.svg';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 
-import { XTransaction, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
+import { getTransactionText } from '@/utils';
+import { XTransaction, XTransactionStatus } from '@balancednetwork/xwagmi';
 import { useXMessageStore, xMessageActions } from '@balancednetwork/xwagmi';
 import { xTransactionActions } from '@balancednetwork/xwagmi';
 
@@ -109,16 +110,14 @@ const XTransactionHistoryItem = ({ xTransaction }: { xTransaction: XTransaction 
         <Flex alignItems="center">
           {getNetworkDisplayName(sourceChainId)}
           <ArrowIcon width="13px" style={{ margin: '0 7px' }} />
-          {xTransaction.type === XTransactionType.REPAY
-            ? getNetworkDisplayName(xTransaction.attributes?.collateralChainId || finalDestinationChainId)
-            : getNetworkDisplayName(finalDestinationChainId)}
+          {getNetworkDisplayName(finalDestinationChainId)}
         </Flex>
         <Flex justifyContent="center" flexDirection="column">
           <Typography fontWeight={700} color="text">
-            {xTransaction.attributes?.descriptionAction}
+            {getTransactionText(xTransaction.input)?.descriptionAction}
           </Typography>
           <Typography opacity={0.75} fontSize={14}>
-            {xTransaction.attributes?.descriptionAmount}
+            {getTransactionText(xTransaction.input)?.descriptionAmount}
           </Typography>
         </Flex>
         <Flex justifyContent="center" flexDirection="column" alignItems="flex-end" className="status-check">

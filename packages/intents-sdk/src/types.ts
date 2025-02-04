@@ -9,6 +9,7 @@ export type ChainInfo<T extends ChainType> = {
 
 export type Token = {
   symbol: string;
+  name: string;
   decimals: number;
   address: string;
 };
@@ -18,8 +19,7 @@ export enum IntentStatusCode {
   NOT_STARTED_YET = 1, // It's in the task pool, but not started yet
   STARTED_NOT_FINISHED = 2,
   SOLVED = 3,
-  SOLVED_REBALANCING_FAILED = 4,
-  NOT_SOLVED_FAILED = 5,
+  FAILED = 4,
 }
 
 export enum IntentErrorCode {
@@ -119,4 +119,8 @@ export type CreateIntentOrderPayload = {
   amount: bigint; // amount in token decimal scale
   toToken: string;
   toAmount: bigint; // amount in token decimal scale
+};
+
+export type IntentServiceConfig = {
+  solverApiEndpoint: string;
 };

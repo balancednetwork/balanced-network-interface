@@ -1,18 +1,14 @@
-import { Percent } from '@balancednetwork/sdk-core';
-import bnJs from '../icon/bnJs';
-
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
-import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xcall/utils';
-
 import { FROM_SOURCES, TO_SOURCES, injective } from '@/constants/xChains';
 import { xTokenMap } from '@/constants/xTokens';
 import { XWalletClient } from '@/core';
-import { XToken } from '@/types';
 import { uintToBytes } from '@/utils';
 import { XTransactionInput, XTransactionType } from '@/xcall/types';
+import { getBytesFromString, getRlpEncodedSwapData, toICONDecimals } from '@/xcall/utils';
 import { RLP } from '@ethereumjs/rlp';
 import { MsgExecuteContractCompat } from '@injectivelabs/sdk-ts';
 import { isDenomAsset, isSpokeToken } from '../archway/utils';
+import bnJs from '../icon/bnJs';
 import { InjectiveXService } from './InjectiveXService';
 
 export class InjectiveXWalletClient extends XWalletClient {
@@ -25,20 +21,18 @@ export class InjectiveXWalletClient extends XWalletClient {
   }
 
   async executeTransaction(xTransactionInput: XTransactionInput) {
-    const { type, direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } =
-      xTransactionInput;
+    const { type, direction, inputAmount, account, recipient, xCallFee, minReceived, path } = xTransactionInput;
 
     const token = inputAmount.currency.wrapped;
     const receiver = `${direction.to}/${recipient}`;
 
     let data;
     if (type === XTransactionType.SWAP) {
-      if (!executionTrade || !slippageTolerance) {
+      if (!minReceived || !path) {
         return;
       }
 
-      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived);
+      const rlpEncodedData = getRlpEncodedSwapData(path, '_swap', receiver, minReceived);
       data = Array.from(rlpEncodedData);
     } else if (type === XTransactionType.BRIDGE) {
       data = getBytesFromString(
@@ -63,12 +57,12 @@ export class InjectiveXWalletClient extends XWalletClient {
     }
 
     const _isSpokeToken = isSpokeToken(inputAmount.currency);
-    const isDenom = inputAmount && inputAmount.currency instanceof XToken ? isDenomAsset(inputAmount.currency) : false;
+    const isDenom = isDenomAsset(inputAmount.currency);
 
     if (_isSpokeToken) {
       const amount = inputAmount.quotient.toString();
       const msg = MsgExecuteContractCompat.fromJSON({
-        contractAddress: injective.contracts.bnUSD!,
+        contractAddress: token.address.replace('factory/inj14ejqjyq8um4p3xfqj74yld5waqljf88f9eneuk/', ''),
         sender: account,
         msg: {
           cross_transfer: {

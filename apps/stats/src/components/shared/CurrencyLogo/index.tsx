@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 
-import { Currency } from '@balancednetwork/sdk-core';
 import { useAllTokensByAddress } from '@/queries/backendv2';
+import { Currency } from '@balancednetwork/sdk-core';
 import styled from 'styled-components';
 
 import ICONLogo from '@/assets/images/icon-logo.png';
@@ -67,6 +67,9 @@ export function CurrencyLogoFromURI({
 }) {
   const { data: allTokens } = useAllTokensByAddress();
   const [rawGithubLogo, setRawGithubLogo] = React.useState<string | null>(null);
+
+  //switch wICX to ICX address
+  address = address === 'cx3975b43d260fb8ec802cef6e60c2f4d07486f11d' ? 'ICX' : address;
 
   useEffect(() => {
     if (allTokens && address && allTokens[address] && allTokens[address].logo_uri) return;

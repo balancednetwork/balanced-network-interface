@@ -6,16 +6,18 @@ import { t } from '@lingui/macro';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { useCheckSolanaAccount } from '@/app/components/SolanaAccountExistenceWarning';
+import { NETWORK_ID } from '@/constants/config';
 import { canBeQueue } from '@/constants/currency';
-import { SLIPPAGE_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
+import { PRICE_IMPACT_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
+import { SUPPORTED_TOKENS_LIST, useICX, wICX } from '@/constants/tokens';
 import { useAllXTokens } from '@/hooks/Tokens';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
-import { getXTokenBySymbol } from '@/utils/xTokens';
-import { getXChainType } from '@balancednetwork/xwagmi';
+import { bnJs, convertCurrency, getXChainType } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import { StellarAccountValidation, useValidateStellarAccount } from '@balancednetwork/xwagmi';
@@ -31,6 +33,12 @@ import {
   typeInput,
 } from './reducer';
 import { useTradeExactIn, useTradeExactOut } from './trade';
+
+import { intentService } from '@/lib/intent';
+import { useAllTokensByAddress } from '@/queries/backendv2';
+import { WithdrawalFloorDataType } from '@/types';
+import { CallData } from '@balancednetwork/balanced-js';
+import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap);
@@ -116,6 +124,106 @@ export function tryParseAmount<T extends Currency>(value?: string, currency?: T)
   return undefined;
 }
 
+// Fetch limits for exchange withdrawals
+export function useWithdrawalsFloorDEXData(): UseQueryResult<WithdrawalFloorDataType[]> {
+  const { data: allTokens, isSuccess: tokensSuccess } = useAllTokensByAddress();
+
+  const fetchWithdrawalData = async () => {
+    if (!allTokens) return;
+    const USDC = SUPPORTED_TOKENS_LIST.find(token => token.symbol === 'USDC');
+    const stabilityFundTokens = [USDC];
+    const tokenAddresses = SUPPORTED_TOKENS_LIST.map(token => token.address);
+
+    const cdsArray: CallData[][] = tokenAddresses.map(address => [
+      { target: bnJs.Dex.address, method: 'getCurrentFloor', params: [address] },
+      { target: address, method: 'balanceOf', params: [bnJs.Dex.address] },
+      { target: bnJs.Dex.address, method: 'getFloorPercentage', params: [address] },
+      { target: bnJs.Dex.address, method: 'getTimeDelayMicroSeconds', params: [address] },
+    ]);
+
+    const stabilityFundTokensCds = stabilityFundTokens.map(
+      token =>
+        token && [
+          { target: bnJs.StabilityFund.address, method: 'getCurrentFloor', params: [token.address] },
+          { target: token.address, method: 'balanceOf', params: [bnJs.StabilityFund.address] },
+          { target: bnJs.StabilityFund.address, method: 'getFloorPercentage', params: [] },
+          { target: bnJs.StabilityFund.address, method: 'getTimeDelayMicroSeconds', params: [] },
+        ],
+    );
+
+    const data = await Promise.all(cdsArray.map(cds => bnJs.Multicall.getAggregateData(cds)));
+    const stabilityFundData = await Promise.all(
+      stabilityFundTokensCds.map(cds => cds && bnJs.Multicall.getAggregateData(cds)),
+    );
+
+    const limits = data.map((assetDataSet, index) => {
+      try {
+        const token = SUPPORTED_TOKENS_LIST.find(token => token.address === tokenAddresses[index]);
+
+        if (!token) return null;
+
+        const floor = new BigNumber(assetDataSet[0]);
+        const current = new BigNumber(assetDataSet[1]);
+        const percentageFloor = new BigNumber(assetDataSet[2]).div(10000);
+        const floorTimeDecayInHours = new BigNumber(assetDataSet[3]).div(1000 * 1000 * 60 * 60);
+        const available = CurrencyAmount.fromRawAmount(
+          token,
+          current.minus(floor).isNaN() ? 0 : current.minus(floor).toFixed(0),
+        );
+
+        return {
+          token,
+          floor,
+          current,
+          available,
+          percentageFloor,
+          floorTimeDecayInHours,
+        };
+      } catch (error) {
+        console.error('Error fetching DEX withdrawal limits:', error);
+        return null;
+      }
+    });
+
+    const stabilityFundLimits = stabilityFundData.map((assetDataSet, index) => {
+      try {
+        const token = stabilityFundTokens[index];
+        if (!token) return null;
+
+        const floor = new BigNumber(assetDataSet[0]);
+        const current = new BigNumber(assetDataSet[1]);
+        const percentageFloor = new BigNumber(assetDataSet[2]).div(10000);
+        const floorTimeDecayInHours = new BigNumber(assetDataSet[3]).div(1000 * 1000 * 60 * 60);
+        const available = CurrencyAmount.fromRawAmount(
+          token,
+          current.minus(floor).isNaN() ? 0 : current.minus(floor).toFixed(0),
+        );
+        return {
+          token,
+          floor,
+          current,
+          available,
+          percentageFloor,
+          floorTimeDecayInHours,
+        };
+      } catch (error) {
+        console.error('Error fetching Stability Fund withdrawal limits:', error);
+        return null;
+      }
+    });
+
+    return [...limits, ...stabilityFundLimits].filter(item => item && item.floor.isGreaterThan(0));
+  };
+
+  return useQuery({
+    queryKey: [`withdrawalsFloorDEXData-${tokensSuccess ? 'tokens' : ''}`],
+    queryFn: fetchWithdrawalData,
+    placeholderData: keepPreviousData,
+    refetchInterval: 5000,
+    enabled: tokensSuccess,
+  });
+}
+
 // from the current swap inputs, compute the best trade and return it.
 export function useDerivedSwapInfo(): {
   account: string | undefined;
@@ -137,6 +245,8 @@ export function useDerivedSwapInfo(): {
   };
   canBridge: boolean;
   maximumBridgeAmount: CurrencyAmount<XToken> | undefined;
+  canSwap: boolean;
+  maximumOutputAmount: CurrencyAmount<Currency> | undefined;
   stellarValidation?: StellarAccountValidation;
 } {
   const {
@@ -150,6 +260,8 @@ export function useDerivedSwapInfo(): {
   const account = useXAccount(getXChainType(inputCurrency?.xChainId)).address;
 
   const crossChainWallet = useCrossChainWalletBalances();
+
+  const { data: withdrawalsFloorData } = useWithdrawalsFloorDEXData();
 
   const isExactIn: boolean = independentField === Field.INPUT;
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
@@ -181,11 +293,9 @@ export function useDerivedSwapInfo(): {
   const _currencies: { [field in Field]?: Currency } = useMemo(() => {
     return {
       [Field.INPUT]:
-        inputCurrency?.xChainId === '0x1.icon' ? inputCurrency : getXTokenBySymbol('0x1.icon', inputCurrency?.symbol),
+        inputCurrency?.xChainId === '0x1.icon' ? inputCurrency : convertCurrency('0x1.icon', inputCurrency),
       [Field.OUTPUT]:
-        outputCurrency?.xChainId === '0x1.icon'
-          ? outputCurrency
-          : getXTokenBySymbol('0x1.icon', outputCurrency?.symbol),
+        outputCurrency?.xChainId === '0x1.icon' ? outputCurrency : convertCurrency('0x1.icon', outputCurrency),
     };
   }, [inputCurrency, outputCurrency]);
   const _parsedAmount = tryParseAmount(
@@ -200,8 +310,51 @@ export function useDerivedSwapInfo(): {
   const trade2 = useTradeExactOut(_currencies[Field.INPUT], !isExactIn ? _parsedAmount : undefined, {
     maxHops: queue ? 1 : undefined,
   });
-  const trade = isExactIn ? trade1 : trade2;
-  const swapDisabled = trade?.priceImpact.greaterThan(SLIPPAGE_SWAP_DISABLED_THRESHOLD);
+  let trade = isExactIn ? trade1 : trade2;
+
+  //TODO: Remove this when the queue is emptied
+  //temporary solution for determining better trade between using wICX and queue pairs
+  const ICX = useICX();
+
+  //check trade setup for ICX output
+  const parsedAmountTMP1 = tryParseAmount(typedValue, (isExactIn ? _currencies[Field.INPUT] : ICX) ?? undefined);
+  const queueTMP = canBeQueue(_currencies[Field.INPUT], ICX);
+  const trade1TMP = useTradeExactIn(isExactIn ? parsedAmountTMP1 : undefined, ICX, {
+    maxHops: queueTMP ? 1 : undefined,
+  });
+  const trade2TMP = useTradeExactOut(_currencies[Field.INPUT], !isExactIn ? parsedAmountTMP1 : undefined, {
+    maxHops: queueTMP ? 1 : undefined,
+  });
+  const tradeICX = isExactIn ? trade1TMP : trade2TMP;
+
+  //if output is wICX, set the trade to the one with the better execution amount
+  if (_currencies[Field.OUTPUT]?.symbol === 'wICX') {
+    // Pick the trade with the better execution amount
+    if (tradeICX && (!trade || tradeICX.executionPrice.greaterThan(trade.executionPrice))) {
+      trade = tradeICX;
+    }
+  }
+  //TODO: end of temporary solution
+
+  //check trade setup for wICX input
+  //compares trades starting with ICX token and picks better route between staking first or using wICX pool
+  const parsedAmountTMP2 = tryParseAmount(
+    typedValue,
+    (isExactIn ? wICX[NETWORK_ID] : _currencies[Field.OUTPUT]) ?? undefined,
+  );
+  const trade1TMP2 = useTradeExactIn(isExactIn ? parsedAmountTMP2 : undefined, _currencies[Field.OUTPUT]);
+  const trade2TMP2 = useTradeExactOut(wICX[NETWORK_ID], !isExactIn ? parsedAmountTMP2 : undefined);
+  const tradeWICX = isExactIn ? trade1TMP2 : trade2TMP2;
+
+  //if input is ICX, set the trade to the one with the better execution amount
+  if (_currencies[Field.INPUT]?.symbol === 'ICX') {
+    // Pick the trade with the better execution amount
+    if (tradeWICX && (!trade || tradeWICX.executionPrice.greaterThan(trade.executionPrice))) {
+      trade = tradeWICX;
+    }
+  }
+
+  const swapDisabled = trade?.priceImpact.greaterThan(PRICE_IMPACT_SWAP_DISABLED_THRESHOLD);
 
   let inputError: string | undefined;
   if (account && !recipient) {
@@ -235,7 +388,7 @@ export function useDerivedSwapInfo(): {
     currencies[Field.INPUT] && currencies[Field.OUTPUT] && parsedAmount?.greaterThan(0),
   );
 
-  if (userHasSpecifiedInputOutput && !trade) inputError = t`Insufficient liquidity`;
+  if (userHasSpecifiedInputOutput && !trade) inputError = t`Swap not supported`;
 
   const [pairState, pair] = useV2Pair(_currencies[Field.INPUT], _currencies[Field.OUTPUT]);
 
@@ -296,12 +449,31 @@ export function useDerivedSwapInfo(): {
     to: currencies[Field.OUTPUT]?.xChainId || '0x1.icon',
   };
 
+  //check for the maximum output amount against the withdrawal limit
+  const maximumOutputAmount = useMemo(() => {
+    if (withdrawalsFloorData) {
+      const limit = withdrawalsFloorData.find(item => item?.token.symbol === currencies[Field.OUTPUT]?.symbol);
+      if (limit) {
+        return limit.available;
+      }
+    }
+  }, [withdrawalsFloorData, currencies[Field.OUTPUT]]);
+
+  const canSwap = useMemo(() => {
+    return maximumOutputAmount && outputCurrencyAmount ? !maximumOutputAmount.lessThan(outputCurrencyAmount) : true;
+  }, [maximumOutputAmount, outputCurrencyAmount]);
+
   //temporary check for valid stellar account
   const stellarValidationQuery = useValidateStellarAccount(direction.to === 'stellar' ? recipient : undefined);
   const { data: stellarValidation } = stellarValidationQuery;
 
   if (stellarValidationQuery.isLoading) {
     inputError = t`Validating Stellar account`;
+  }
+
+  const isSolanaAccountActive = useCheckSolanaAccount(direction.to, parsedAmounts[Field.OUTPUT], recipient ?? '');
+  if (!isSolanaAccountActive) {
+    inputError = t`Swap`;
   }
 
   return {
@@ -321,6 +493,8 @@ export function useDerivedSwapInfo(): {
     canBridge,
     maximumBridgeAmount,
     stellarValidation,
+    maximumOutputAmount,
+    canSwap,
   };
 }
 
@@ -372,9 +546,6 @@ export function useInitialSwapLoad(): void {
   }, [currencies, pair, navigate, firstLoad]);
 }
 
-import { IntentService } from '@balancednetwork/intents-sdk';
-import { useQuery } from '@tanstack/react-query';
-
 export interface MMTrade {
   inputAmount: CurrencyAmount<XToken>;
   outputAmount: CurrencyAmount<XToken>;
@@ -384,18 +555,6 @@ export interface MMTrade {
 }
 
 export function useMMTrade(inputAmount: CurrencyAmount<XToken> | undefined, outputCurrency: XToken | undefined) {
-  const isMMTrade =
-    inputAmount?.currency &&
-    outputCurrency &&
-    ((inputAmount.currency.xChainId === '0xa4b1.arbitrum' &&
-      inputAmount.currency.isNativeToken &&
-      outputCurrency.xChainId === 'sui' &&
-      outputCurrency.isNativeToken) ||
-      (inputAmount.currency.xChainId === 'sui' &&
-        inputAmount.currency.isNativeToken &&
-        outputCurrency.xChainId === '0xa4b1.arbitrum' &&
-        outputCurrency.isNativeToken));
-
   return useQuery<MMTrade | undefined>({
     queryKey: ['quote', inputAmount, outputCurrency],
     queryFn: async () => {
@@ -403,7 +562,7 @@ export function useMMTrade(inputAmount: CurrencyAmount<XToken> | undefined, outp
         return;
       }
 
-      const res = await IntentService.getQuote({
+      const res = await intentService.getQuote({
         token_src: inputAmount.currency.address,
         token_src_blockchain_id: inputAmount.currency.xChainId,
         token_dst: outputCurrency.address,
@@ -429,7 +588,7 @@ export function useMMTrade(inputAmount: CurrencyAmount<XToken> | undefined, outp
       return;
     },
     refetchInterval: 10_000,
-    enabled: !!inputAmount && !!outputCurrency && isMMTrade,
+    enabled: !!inputAmount && !!outputCurrency,
   });
 }
 
@@ -463,7 +622,7 @@ export function useDerivedMMTradeInfo(trade: Trade<Currency, Currency, TradeType
   const swapOutput = convert(outputCurrency, trade?.outputAmount);
 
   return {
-    isMMBetter: mmTrade?.outputAmount && swapOutput && mmTrade.outputAmount.greaterThan(swapOutput),
+    isMMBetter: mmTrade?.outputAmount && (swapOutput ? mmTrade.outputAmount.greaterThan(swapOutput) : true),
     trade: mmTrade,
   };
 }

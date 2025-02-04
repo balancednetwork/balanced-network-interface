@@ -29,6 +29,7 @@ import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { bnJs } from '@balancednetwork/xwagmi';
 
 import { EXA, WEIGHT } from '@/app/components/home/BBaln/utils';
+import { formatSymbol } from '@/utils/formatter';
 import { withdrawMessage } from '../utils';
 
 const Wrapper = styled(Flex)`
@@ -77,7 +78,7 @@ export function getShareReward(
 ): BigNumber {
   //handle icx queue
   if (!stakedRatio && boostData) {
-    return totalReward.times(boostData.workingBalance.div(boostData.workingSupply));
+    return totalReward?.times(boostData.workingBalance.div(boostData.workingSupply));
   }
 
   //handle standard LPs
@@ -103,6 +104,40 @@ export function getShareReward(
   }
 
   return new BigNumber(0);
+}
+
+export function getExternalShareReward(
+  totalReward: CurrencyAmount<Currency>,
+  userBalances?: BalanceData,
+  stakedRatio?: Fraction,
+  totalPoolStakedBalance?: BigNumber,
+): CurrencyAmount<Currency> {
+  if (!userBalances || !stakedRatio || !totalPoolStakedBalance) {
+    return CurrencyAmount.fromRawAmount(totalReward.currency, 0);
+  }
+
+  const stakedFractionNumber = new BigNumber(stakedRatio.toFixed(8)).div(100);
+  if (stakedFractionNumber.isEqualTo(0)) {
+    return CurrencyAmount.fromRawAmount(totalReward.currency, 0);
+  }
+
+  // Calculate user's share based on their balance and staked ratio
+  const totalUserBalance = new BigNumber(userBalances.balance.toExact() || 0)
+    .plus(new BigNumber(userBalances.stakedLPBalance?.toExact() || 0))
+    .times(10 ** userBalances.balance.currency.decimals);
+
+  const userDynamicStakedLP = totalUserBalance.times(stakedFractionNumber);
+
+  const userShare = userDynamicStakedLP.div(
+    totalPoolStakedBalance.plus(new BigNumber(userBalances.balance.toExact() || 0)),
+  );
+
+  const rewardAmount = userShare.times(new BigNumber(totalReward.toFixed()));
+
+  return CurrencyAmount.fromRawAmount(
+    totalReward.currency,
+    new BigNumber(rewardAmount.times(10 ** totalReward.currency.decimals)).toFixed(0),
+  );
 }
 
 export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: BalanceData; poolId: number }) => {
@@ -298,9 +333,9 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
       <Wrapper>
         <Typography variant="h3" mb={3}>
           <Trans>Withdraw:</Trans>&nbsp;
-          <Typography as="span" fontSize="16px" fontWeight="normal">{`${aBalance.currency.symbol || '...'} / ${
-            bBalance.currency.symbol || '...'
-          }`}</Typography>
+          <Typography as="span" fontSize="16px" fontWeight="normal">{`${
+            formatSymbol(aBalance.currency.symbol) || '...'
+          } / ${formatSymbol(bBalance.currency.symbol) || '...'}`}</Typography>
         </Typography>
         <Box mb={3}>
           <CurrencyInputPanel
@@ -327,7 +362,7 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
                 : availableBase?.toFixed() || 0,
             ),
             'currency',
-          )} ${balances[0]?.currency.symbol || '...'} /
+          )} ${formatSymbol(balances[0]?.currency.symbol) || '...'} /
           ${formatBigNumber(
             new BigNumber(
               parsedAmount[Field.CURRENCY_B]
@@ -335,7 +370,7 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
                 : availableQuote?.toFixed() || 0,
             ),
             'currency',
-          )} ${balances[1]?.currency.symbol || '...'}`}
+          )} ${formatSymbol(balances[1]?.currency.symbol) || '...'}`}
         </Typography>
         <Box mb={5}>
           {hasUnstakedLP && (
@@ -371,12 +406,12 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
             {formatBigNumber(new BigNumber(parsedAmount[Field.CURRENCY_A]?.toFixed() || 0), 'currency')}{' '}
-            {parsedAmount[Field.CURRENCY_A]?.currency.symbol || '...'}
+            {formatSymbol(parsedAmount[Field.CURRENCY_A]?.currency.symbol) || '...'}
           </Typography>
 
           <Typography variant="p" fontWeight="bold" textAlign="center">
             {formatBigNumber(new BigNumber(parsedAmount[Field.CURRENCY_B]?.toFixed() || 0), 'currency')}{' '}
-            {parsedAmount[Field.CURRENCY_B]?.currency.symbol || '...'}
+            {formatSymbol(parsedAmount[Field.CURRENCY_B]?.currency.symbol) || '...'}
           </Typography>
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">

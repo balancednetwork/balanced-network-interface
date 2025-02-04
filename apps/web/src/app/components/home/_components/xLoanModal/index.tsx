@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass';
@@ -13,11 +13,11 @@ import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
-import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useCollateralType } from '@/store/collateral/hooks';
 import { useDerivedLoanInfo, useLoanActionHandlers, useLoanRecipientNetwork } from '@/store/loan/hooks';
-import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
+import { useWrongSymbol } from '@/utils/formatter';
+import { ICON_XCALL_NETWORK_ID, useSendXTransaction } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import { useXCallFee } from '@balancednetwork/xwagmi';
@@ -109,7 +109,7 @@ const XLoanModal = ({
     }
   }, [currentXTransaction, slowDismiss]);
 
-  const { sendXTransaction } = useSendXTransaction();
+  const sendXTransaction = useSendXTransaction();
   const handleXLoanAction = async () => {
     if (!collateralAccount) return;
     if (!loanNetworkAddress) return;
@@ -123,13 +123,13 @@ const XLoanModal = ({
         storedModalValues.action === XLoanAction.BORROW ? direction : { from: loanNetwork, to: ICON_XCALL_NETWORK_ID },
       account: storedModalValues.action === XLoanAction.BORROW ? collateralAccount : receiver.split('/')[1],
       inputAmount: _inputAmount,
-      usedCollateral: collateralType,
+      usedCollateral: useWrongSymbol(collateralType),
       recipient: storedModalValues.action === XLoanAction.BORROW ? receiver : collateralNetworkAddress,
       xCallFee,
-      callback: cancelAdjusting,
     };
 
     const xTransactionId = await sendXTransaction(xTransactionInput);
+    cancelAdjusting();
     setCurrentId(xTransactionId || null);
   };
 

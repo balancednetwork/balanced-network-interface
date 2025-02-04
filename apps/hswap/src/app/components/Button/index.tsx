@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { ArrowIcon, ArrowWhiteIcon } from '../Icons';
-import { cn } from '@/lib/utils';
 
-interface WhiteButtonProps {
+import { Button, ButtonProps } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { ArrowIcon, ArrowWhiteIcon } from '../Icons';
+
+interface WhiteButtonProps extends ButtonProps {
   children: React.ReactNode;
   className?: string;
   onClick?: () => void;
@@ -19,13 +20,11 @@ export const WhiteButton = ({ children, className, ...props }: WhiteButtonProps)
   );
 };
 
-interface BlueButtonProps {
+interface BlueButtonProps extends ButtonProps {
   children: React.ReactNode;
   className?: string;
-  onClick?: () => void;
   icon?: React.ReactNode;
   hoverIcon?: React.ReactNode;
-  [key: string]: any;
 }
 
 export const BlueButton = ({

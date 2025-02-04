@@ -5,18 +5,19 @@ import { t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { useCheckSolanaAccount } from '@/app/components/SolanaAccountExistenceWarning';
 import { sARCH } from '@/constants/tokens1';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { AppState } from '@/store';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { formatSymbol } from '@/utils/formatter';
-import { getXTokenBySymbol } from '@/utils/xTokens';
-import { getXChainType } from '@balancednetwork/xwagmi';
+import { convertCurrency, getXChainType } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import { isDenomAsset } from '@balancednetwork/xwagmi';
 import { useValidateStellarAccount } from '@balancednetwork/xwagmi';
+import { useWithdrawalsFloorDEXData } from '../swap/hooks';
 import {
   Field,
   selectChain,
@@ -114,6 +115,7 @@ export function useBridgeActionHandlers() {
 export function useDerivedBridgeInfo() {
   const state = useBridgeState();
   const bridgeDirection = useBridgeDirection();
+  const { data: withdrawalsFloorData } = useWithdrawalsFloorDEXData();
   const { typedValue, currency: currencyToBridge, recipient } = state;
 
   const currencyAmountToBridge = React.useMemo(() => {
@@ -136,9 +138,9 @@ export function useDerivedBridgeInfo() {
   const stellarValidationQuery = useValidateStellarAccount(bridgeDirection.to === 'stellar' ? recipient : undefined);
   const { data: stellarValidation } = stellarValidationQuery;
 
-  const errorMessage = useMemo(() => {
-    if (!account) return t`Connect wallet`;
+  const isSolanaAccountActive = useCheckSolanaAccount(bridgeDirection.to, currencyAmountToBridge, recipient ?? '');
 
+  const errorMessage = useMemo(() => {
     if (!currencyAmountToBridge) return t`Enter amount`;
 
     if (!recipient) return t`Enter address`;
@@ -161,6 +163,9 @@ export function useDerivedBridgeInfo() {
         if (stellarValidationQuery.isLoading) {
           return t`Validating Stellar account`;
         }
+        if (!isSolanaAccountActive) {
+          return t`Transfer`;
+        }
         return undefined;
       }
     }
@@ -169,9 +174,9 @@ export function useDerivedBridgeInfo() {
     crossChainWallet,
     currencyAmountToBridge,
     signedInWallets,
-    account,
     recipient,
     stellarValidationQuery,
+    isSolanaAccountActive,
   ]);
 
   const selectedTokenWalletBalance = React.useMemo(() => {
@@ -187,7 +192,7 @@ export function useDerivedBridgeInfo() {
   // get output currency
   const outputCurrency = useMemo(() => {
     if (currencyToBridge) {
-      return getXTokenBySymbol(bridgeDirection.to, currencyToBridge.symbol);
+      return convertCurrency(bridgeDirection.to, currencyToBridge);
     }
   }, [bridgeDirection.to, currencyToBridge]);
 
@@ -212,6 +217,20 @@ export function useDerivedBridgeInfo() {
     return maximumBridgeAmount && outputCurrencyAmount ? maximumBridgeAmount?.greaterThan(outputCurrencyAmount) : true;
   }, [maximumBridgeAmount, outputCurrencyAmount]);
 
+  //check for the maximum output amount against the withdrawal limit
+  const maximumTransferAmount = useMemo(() => {
+    if (withdrawalsFloorData) {
+      const limit = withdrawalsFloorData.find(item => item?.token.symbol === currencyToBridge?.symbol);
+      if (limit) {
+        return limit.available;
+      }
+    }
+  }, [withdrawalsFloorData, currencyToBridge]);
+
+  const canTransfer = useMemo(() => {
+    return maximumTransferAmount && outputCurrencyAmount ? !maximumTransferAmount.lessThan(outputCurrencyAmount) : true;
+  }, [maximumTransferAmount, outputCurrencyAmount]);
+
   return {
     errorMessage,
     currencyAmountToBridge,
@@ -222,5 +241,7 @@ export function useDerivedBridgeInfo() {
     canBridge,
     maximumBridgeAmount,
     stellarValidation,
+    canTransfer,
+    maximumTransferAmount,
   };
 }

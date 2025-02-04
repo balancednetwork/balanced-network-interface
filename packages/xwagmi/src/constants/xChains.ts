@@ -10,7 +10,7 @@ export const archway: XChain = {
     name: 'Archway',
     symbol: 'ARCH',
   },
-  tracker: 'https://www.mintscan.io/archway/tx/',
+  tracker: { tx: 'https://www.mintscan.io/archway/tx' },
   rpc: {
     http: 'https://rpc.mainnet.archway.io',
     ws: 'wss://rpc.mainnet.archway.io:443/websocket',
@@ -37,7 +37,7 @@ export const archwayTestnet: XChain = {
     name: 'Archway',
     symbol: 'ARCH',
   },
-  tracker: 'https://www.mintscan.io/archway/tx/',
+  tracker: { tx: 'https://www.mintscan.io/archway/tx' },
   rpc: {
     http: 'https://rpc.mainnet.archway.io',
     ws: 'wss://rpc.mainnet.archway.io:443/websocket',
@@ -59,7 +59,7 @@ export const icon: XChain = {
   name: 'ICON',
   xChainId: '0x1.icon',
   xChainType: 'ICON',
-  tracker: '',
+  tracker: { tx: 'https://tracker.icon.community/transaction' },
   nativeCurrency: {
     decimals: 18,
     name: 'ICON',
@@ -86,7 +86,7 @@ export const lisbon: XChain = {
   name: 'Lisbon Testnet',
   xChainId: '0x2.icon',
   xChainType: 'ICON',
-  tracker: '',
+  tracker: { tx: '' },
   nativeCurrency: {
     decimals: 18,
     name: 'ICON',
@@ -113,7 +113,7 @@ export const avalanche: XChain = {
   name: 'Avalanche',
   xChainId: '0xa86a.avax',
   xChainType: 'EVM',
-  tracker: 'https://snowscan.xyz',
+  tracker: { tx: 'https://snowscan.xyz/tx' },
   nativeCurrency: {
     decimals: 18,
     name: 'Avalanche',
@@ -138,7 +138,7 @@ export const fuji: XChain = {
   name: 'Fuji Testnet',
   xChainId: '0xa869.fuji',
   xChainType: 'EVM',
-  tracker: 'https://snowscan.xyz',
+  tracker: { tx: 'https://snowscan.xyz' },
   nativeCurrency: {
     decimals: 18,
     name: 'Avalanche',
@@ -163,7 +163,7 @@ export const havah: XChain = {
   name: 'Havah',
   xChainId: '0x100.icon',
   xChainType: 'HAVAH',
-  tracker: 'https://scan.havah.io',
+  tracker: { tx: 'https://scan.havah.io/txn' },
   nativeCurrency: {
     decimals: 18,
     name: 'Havah',
@@ -189,7 +189,7 @@ export const bsc: XChain = {
   name: 'BNB Chain',
   xChainId: '0x38.bsc',
   xChainType: 'EVM',
-  tracker: 'https://bscscan.com/',
+  tracker: { tx: 'https://bscscan.com/tx' },
   nativeCurrency: {
     decimals: 18,
     name: 'BNB',
@@ -214,7 +214,7 @@ export const arbitrum: XChain = {
   name: 'Arbitrum',
   xChainId: '0xa4b1.arbitrum',
   xChainType: 'EVM',
-  tracker: 'https://arbiscan.io/',
+  tracker: { tx: 'https://arbiscan.io/tx' },
   nativeCurrency: {
     decimals: 18,
     name: 'ETH',
@@ -239,7 +239,7 @@ export const base: XChain = {
   name: 'Base',
   xChainId: '0x2105.base',
   xChainType: 'EVM',
-  tracker: 'https://basescan.org/',
+  tracker: { tx: 'https://basescan.org/tx' },
   nativeCurrency: {
     decimals: 18,
     name: 'ETH',
@@ -264,7 +264,7 @@ export const injective: XChain = {
   name: 'Injective',
   xChainId: 'injective-1',
   xChainType: 'INJECTIVE',
-  tracker: 'https://explorer.injective.network/',
+  tracker: { tx: 'https://explorer.injective.network/transaction' },
   nativeCurrency: {
     decimals: 18,
     name: 'INJ',
@@ -289,7 +289,7 @@ export const stellar: XChain = {
   name: 'Stellar',
   xChainId: 'stellar',
   xChainType: 'STELLAR',
-  tracker: 'https://stellar.expert/explorer/public/',
+  tracker: { tx: 'https://stellar.expert/explorer/public/tx' },
   nativeCurrency: {
     decimals: 7,
     name: 'XLM',
@@ -315,7 +315,7 @@ export const sui: XChain = {
   name: 'Sui',
   xChainId: 'sui',
   xChainType: 'SUI',
-  tracker: 'https://suiscan.xyz/mainnet/',
+  tracker: { tx: 'https://suiscan.xyz/mainnet/tx' },
   nativeCurrency: {
     decimals: 9,
     name: 'SUI',
@@ -341,7 +341,7 @@ export const solana: XChain = {
   name: 'Solana',
   xChainId: 'solana',
   xChainType: 'SOLANA',
-  tracker: 'https://solscan.io/',
+  tracker: { tx: 'https://solscan.io/tx' },
   nativeCurrency: {
     decimals: 9,
     name: 'SOL',
@@ -367,7 +367,7 @@ export const optimism: XChain = {
   name: 'Optimism',
   xChainId: '0xa.optimism',
   xChainType: 'EVM',
-  tracker: 'https://optimistic.etherscan.io',
+  tracker: { tx: 'https://optimistic.etherscan.io/tx' },
   nativeCurrency: {
     decimals: 18,
     name: 'ETH',
@@ -411,11 +411,12 @@ export const SUPPORTED_XCALL_CHAINS = xChains.map(({ xChainId }) => xChainId);
 
 // you can the following values by calling getProtocols function of the XCallManager contract on ICON
 /** from other chain to icon sources */
+// destinations
 export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   '0x2105.base': ['0x8A47E036B9c4594dF95F2dbFA09fb475Fa75469d', '0x6185D52640EA3b683AedD8bA52d18053A41fee09'],
   '0xa4b1.arbitrum': ['0x4c6C68E8F5206EE4a1690C808cfF5c3fD35b512F', '0x1F8B1e9d3633229d38BDFc93dCa50B6453Ad8E97'],
   '0xa.optimism': ['0x8A47E036B9c4594dF95F2dbFA09fb475Fa75469d', '0x3A930aA00cDfbb2D4A2646E9Bdd19B27e54354Ba'],
-  '0x38.bsc': ['0x24415977c566f9300Ea6F0aC75AEA0c09C500e46', '0xF3F1ab667a6176CCa4f916062e55115B576425F8'],
+  '0x38.bsc': ['0x20b056e975EEB8Ad4552FAD829F7990dE45d23D5'],
   '0xa86a.avax': ['0xC1a39C4e7AA98DEC394eF54559960873Bd619cA3', '0x7F3665eF19258cD5cE15eA39d014F47Fc942AE0C'],
   '0x100.icon': ['cxcf2c8d58fd7bbd25866de0660b155f057ea489eb'],
   'injective-1': ['inj15jcde723hrm5f4fx3r2stnq59jykt2askud8ht'],
@@ -428,11 +429,12 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
 };
 
 /** to other chain from icon sources */
+// sources
 export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   '0x2105.base': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
   '0xa4b1.arbitrum': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
   '0xa.optimism': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
-  '0x38.bsc': ['cxee7a00755a757e3c519a0616456030e33dc9d47f', 'cx59d899fce52cadd1feb5128ff5e6672f03943eec'],
+  '0x38.bsc': ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
   '0xa86a.avax': ['cx59d899fce52cadd1feb5128ff5e6672f03943eec', 'cx917f88460d4ebec1fd656d4dbe51131a37d16837'],
   '0x100.icon': ['cxee7a00755a757e3c519a0616456030e33dc9d47f'],
   'injective-1': ['cx6f86ed848f9f0d03ba1220811d95d864c72da88c'],

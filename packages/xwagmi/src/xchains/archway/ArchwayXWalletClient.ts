@@ -1,4 +1,3 @@
-import { Percent } from '@balancednetwork/sdk-core';
 import bnJs from '../icon/bnJs';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
@@ -6,7 +5,7 @@ import { archway } from '@/constants/xChains';
 import { XWalletClient } from '@/core/XWalletClient';
 import { XToken } from '@/types';
 import { XSigningArchwayClient } from '@/xchains/archway/XSigningArchwayClient';
-import { getFeeParam, isDenomAsset } from '@/xchains/archway/utils';
+import { isDenomAsset } from '@/xchains/archway/utils';
 import { CurrencyAmount, MaxUint256 } from '@balancednetwork/sdk-core';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getBytesFromString, getRlpEncodedSwapData } from '../../xcall/utils';
@@ -36,7 +35,7 @@ export class ArchwayXWalletClient extends XWalletClient {
       },
     };
 
-    const hash = await this.getWalletClient().executeSync(owner, xToken.address, msg, getFeeParam(400000));
+    const hash = await this.getWalletClient().executeSync(owner, xToken.address, msg, 'auto');
 
     if (hash) {
       return hash;
@@ -44,20 +43,18 @@ export class ArchwayXWalletClient extends XWalletClient {
   }
 
   async executeTransaction(xTransactionInput: XTransactionInput) {
-    const { type, direction, inputAmount, executionTrade, account, recipient, xCallFee, slippageTolerance } =
-      xTransactionInput;
+    const { type, direction, inputAmount, account, recipient, xCallFee, minReceived, path } = xTransactionInput;
 
     const token = inputAmount.currency.wrapped;
     const receiver = `${direction.to}/${recipient}`;
 
     let data;
     if (type === XTransactionType.SWAP) {
-      if (!executionTrade || !slippageTolerance) {
+      if (!path || !minReceived) {
         return;
       }
 
-      const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade, '_swap', receiver, minReceived);
+      const rlpEncodedData = getRlpEncodedSwapData(path, '_swap', receiver, minReceived);
       data = Array.from(rlpEncodedData);
     } else if (type === XTransactionType.BRIDGE) {
       data = getBytesFromString(
@@ -111,7 +108,7 @@ export class ArchwayXWalletClient extends XWalletClient {
           account,
           archway.contracts.assetManager,
           msg,
-          getFeeParam(1200000),
+          'auto',
           undefined,
           [
             { amount: xCallFee.rollback.toString(), denom: ARCHWAY_FEE_TOKEN_SYMBOL },

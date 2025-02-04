@@ -13,9 +13,8 @@ import { useRatesWithOracle } from '@/queries/reward';
 import { COMMON_PERCENTS } from '@/store/swap/reducer';
 import { escapeRegExp } from '@/utils';
 import { formatBalance, formatSymbol } from '@/utils/formatter';
-import { DEFAULT_TOKEN_CHAIN } from '@balancednetwork/xwagmi';
+import { DEFAULT_TOKEN_CHAIN, getSupportedXChainForSwapToken } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
-import { getSupportedXChainForToken } from '@balancednetwork/xwagmi';
 import { isMobile } from 'react-device-detect';
 import { HorizontalList, Option } from '../List';
 import { CurrencySelectionType, SelectorType } from '../SearchModal/CurrencySearch';
@@ -109,6 +108,7 @@ interface CurrencyInputPanelProps {
   showCommunityListControl?: boolean;
   selectorType?: SelectorType;
   showDollarValue?: boolean;
+  showWarning?: boolean;
 
   // cross chain stuff
   xChainId?: XChainId;
@@ -136,6 +136,7 @@ export default function CurrencyInputPanel({
   showCommunityListControl = true,
   selectorType,
   showDollarValue = true,
+  showWarning = false,
 
   // cross chain stuff
   xChainId = '0x1.icon',
@@ -180,7 +181,7 @@ export default function CurrencyInputPanel({
       currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
       currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE
         ? []
-        : getSupportedXChainForToken(currency),
+        : getSupportedXChainForSwapToken(currency),
     [currency, currencySelectionType],
   );
 
@@ -193,7 +194,7 @@ export default function CurrencyInputPanel({
           currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
           currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE
             ? []
-            : getSupportedXChainForToken(currency);
+            : getSupportedXChainForSwapToken(currency);
         const defaultXChainId = DEFAULT_TOKEN_CHAIN[currency.symbol];
         if (defaultXChainId && (xChains?.length ?? 0) > 1) {
           onChainSelect && onChainSelect(defaultXChainId);
@@ -273,9 +274,7 @@ export default function CurrencyInputPanel({
           $active={(onPercentSelect && isActive) || !!showCrossChainOptions}
           $showDollarValue={showDollarValue}
         />
-        {showDollarValue && (
-          <DollarValue amount={value} price={price} showWarning={selectorType === SelectorType.SWAP_OUT} />
-        )}
+        {showDollarValue && <DollarValue amount={value} price={price} showWarning={showWarning} />}
 
         {onPercentSelect && (
           <SelectorPopover show={isActive} anchorEl={ref.current} placement="bottom-end">

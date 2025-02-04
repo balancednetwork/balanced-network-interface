@@ -1,40 +1,41 @@
 import BigNumber from 'bignumber.js';
 import { Converter as IconConverter } from 'icon-sdk-js';
 
-import { SupportedChainId as NetworkId, SupportedChainId, ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO } from './chain';
+import { ALL_SUPPORTED_CHAIN_IDS, CHAIN_INFO, SupportedChainId as NetworkId, SupportedChainId } from './chain';
+import ContractSettings, { AccountType } from './contractSettings';
 import Airdrip from './contracts/Airdrip';
+import AssetManager from './contracts/AssetManager';
 import BALN from './contracts/BALN';
+import BBALN from './contracts/BBALN';
+import BalancedOracle from './contracts/BalancedOracle';
 import Band from './contracts/Band';
-import bnUSD from './contracts/bnUSD';
-import { Contract } from './contracts/contract';
+import Bribe from './contracts/Bribe';
 import DAOFund from './contracts/DAOFund';
 import Dex from './contracts/Dex';
 import Dividends from './contracts/Dividends';
+import FeeHandler from './contracts/FeeHandler';
 import Governance from './contracts/Governance';
 import ICX from './contracts/ICX';
+import ICXBurner from './contracts/ICXBurner';
+import IISS from './contracts/IISS';
 import IRC2 from './contracts/IRC2';
 import LiquidationDisbursement from './contracts/LiquidationDisbursement';
 import Loans from './contracts/Loans';
 import Multicall, { CallData } from './contracts/Multicall';
+import NOL from './contracts/NOL';
 import Rebalancing from './contracts/Rebalancing';
 import Rewards from './contracts/Rewards';
 import Router from './contracts/Router';
-import sICX from './contracts/sICX';
-import Staking from './contracts/Staking';
-import IISS from './contracts/IISS';
-import StabilityFund from './contracts/StabilityFund';
-import ContractSettings, { AccountType } from './contractSettings';
-import StakedLP from './contracts/StakedLP';
-import BalancedOracle from './contracts/BalancedOracle';
-import BBALN from './contracts/BBALN';
-import FeeHandler from './contracts/FeeHandler';
-import Bribe from './contracts/Bribe';
-import XCall from './contracts/XCall';
-import AssetManager from './contracts/AssetManager';
 import Savings from './contracts/Savings';
+import StabilityFund from './contracts/StabilityFund';
+import StakedLP from './contracts/StakedLP';
+import Staking from './contracts/Staking';
 import Trickler from './contracts/Trickler';
-import NOL from './contracts/NOL';
-import ICXBurner from './contracts/ICXBurner';
+import XCall from './contracts/XCall';
+import bnUSD from './contracts/bnUSD';
+import { Contract } from './contracts/contract';
+import sICX from './contracts/sICX';
+import wICX from './contracts/wICX';
 
 export * from './contractSettings';
 export { default as addresses } from './addresses';
@@ -92,6 +93,7 @@ export class BalancedJs {
   Trickler: Trickler;
   NOL: NOL;
   ICXBurner: ICXBurner;
+  wICX: wICX;
 
   static utils = {
     toLoop(value: BigNumber | number | string, currencyKey?: string): BigNumber {
@@ -165,6 +167,7 @@ export class BalancedJs {
     this.Trickler = new Trickler(this.contractSettings);
     this.NOL = new NOL(this.contractSettings);
     this.ICXBurner = new ICXBurner(this.contractSettings);
+    this.wICX = new wICX(this.contractSettings);
   }
 
   inject({ account }: SettingInjection) {

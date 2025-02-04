@@ -1,7 +1,7 @@
 import rlp from 'rlp';
 
-import { Currency, CurrencyAmount, TradeType } from '@balancednetwork/sdk-core';
-import { Trade } from '@balancednetwork/v1-sdk';
+import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { RouteAction } from '@balancednetwork/v1-sdk';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { xTokenMap } from '@/constants/xTokens';
@@ -26,7 +26,7 @@ export function getRlpEncodedMsg(msg: string | any[]) {
 }
 
 export function getRlpEncodedSwapData(
-  executionTrade: Trade<Currency, Currency, TradeType>,
+  path: RouteAction[],
   method?: string,
   receiver?: string,
   minReceived?: CurrencyAmount<Currency>,
@@ -42,7 +42,7 @@ export function getRlpEncodedSwapData(
     encodedComponents.push(uintToBytes(minReceived.quotient));
   }
 
-  const routeActionPathEncoding = executionTrade.route.routeActionPath.map(action => [
+  const routeActionPathEncoding = path.map(action => [
     getBytesFromNumber(action.type),
     getBytesFromAddress(action.address),
   ]);
@@ -84,6 +84,29 @@ export const getSupportedXChainForToken = (currency?: Currency | XToken | null):
   if (!currency) return;
 
   const xChainIds = getSupportedXChainIdsForToken(currency) || [];
+
+  return xChains.filter(x => xChainIds.includes(x.xChainId));
+};
+
+const unTradeableTokenAddress = [
+  // 'cxb940dbfbc45c92f3a0cde464c4331102e7a84da8',
+  '0xc1cba3fcea344f92d9239c08c0568f6f2f0ee452',
+  // 'cxce7b23917ddf57656010decd6017fe5016de681b',
+  '0x04C0599Ae5A44757c0af6F9eC3b93da8976c150A',
+];
+
+export const getSupportedXChainIdsForSwapToken = (currency: Currency | XToken): XChainId[] => {
+  return Object.values(xTokenMap)
+    .flat()
+    .filter(t => t.symbol === currency?.symbol)
+    .filter(t => !unTradeableTokenAddress.find(addr => addr.toLowerCase() === t.address.toLowerCase()))
+    .map(t => t.xChainId);
+};
+
+export const getSupportedXChainForSwapToken = (currency?: Currency | XToken | null): XChain[] | undefined => {
+  if (!currency) return;
+
+  const xChainIds = getSupportedXChainIdsForSwapToken(currency) || [];
 
   return xChains.filter(x => xChainIds.includes(x.xChainId));
 };

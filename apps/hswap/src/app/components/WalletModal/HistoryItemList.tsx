@@ -1,10 +1,33 @@
-import { Separator } from '@/components/ui/separator';
-import { useXTransactionStore } from '@balancednetwork/xwagmi';
 import React, { useMemo } from 'react';
+
+import { XTransaction, useXTransactionStore } from '@balancednetwork/xwagmi';
+
+import { Separator } from '@/components/ui/separator';
+import { useSignedInWallets } from '@/hooks/useWallets';
+import { MMTransaction, useMMTransactionStore } from '@/store/transactions/useMMTransactionStore';
 import HistoryItem from './HistoryItem';
+import IntentHistoryItem from './IntentHistoryItem';
+
+const isMMTransaction = (transaction: MMTransaction | XTransaction): transaction is MMTransaction => {
+  return !!(transaction as MMTransaction).orderId;
+};
 
 const HistoryItemList = () => {
   const xTransactions = useXTransactionStore(state => state.getTransactions());
+  const mmTransactions = useMMTransactionStore(state => state.getTransactions());
+  const mergedTransactions = useMemo(
+    () => [...xTransactions, ...mmTransactions].sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0)),
+    [xTransactions, mmTransactions],
+  );
+
+  const signedWallets = useSignedInWallets();
+  const filteredTransactions = useMemo(() => {
+    return mergedTransactions.filter(t =>
+      isMMTransaction(t)
+        ? !!signedWallets.find(w => w.address.toLowerCase() === t.executor.toLowerCase())
+        : !!signedWallets.find(w => w.address.toLowerCase() === t.input.account.toLowerCase()),
+    );
+  }, [mergedTransactions, signedWallets]);
 
   return (
     <>
@@ -14,13 +37,17 @@ const HistoryItemList = () => {
       </div>
 
       <div className="flex flex-col gap-4">
-        {xTransactions.length === 0 && <div className="text-center my-10">No items</div>}
-        {xTransactions.length > 0 && (
+        {filteredTransactions.length === 0 && <div className="text-center my-10">No items</div>}
+        {filteredTransactions.length > 0 && (
           <>
             <Separator className="h-1 bg-[#ffffff59]" />
-            {xTransactions.map(xTransaction => (
-              <HistoryItem key={xTransaction.id} xTransaction={xTransaction} />
-            ))}
+            {filteredTransactions.map(transaction =>
+              isMMTransaction(transaction) ? (
+                <IntentHistoryItem key={transaction.id} transaction={transaction} />
+              ) : (
+                <HistoryItem key={transaction.id} xTransaction={transaction} />
+              ),
+            )}
           </>
         )}
       </div>

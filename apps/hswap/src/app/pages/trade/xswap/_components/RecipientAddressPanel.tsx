@@ -59,11 +59,11 @@ export default function RecipientAddressPanel() {
   useEffect(() => {
     if (outputAccount.address) {
       setChecked(false);
-      onChangeRecipient(outputAccount.address || '');
+      onChangeRecipient(outputAccount.address);
       setEditable(false);
     } else {
       setChecked(false);
-      onChangeRecipient('');
+      onChangeRecipient(null);
       setEditable(true);
     }
   }, [onChangeRecipient, outputAccount.address]);
@@ -89,13 +89,13 @@ export default function RecipientAddressPanel() {
             if (_checked !== 'indeterminate') {
               setChecked(_checked);
               if (_checked) {
-                onChangeRecipient('');
+                onChangeRecipient(null);
               } else {
                 onChangeRecipient(outputAccount.address || '');
               }
             }
           }}
-          className="border-light-purple data-[state=checked]:bg-light-purple data-[state=checked]:text-primary rounded-full border-2"
+          className="border-[#695682] data-[state=checked]:border-light-purple data-[state=checked]:bg-light-purple data-[state=checked]:text-primary rounded-full border-2"
         />
       </div>
       {checked && currencies[Field.OUTPUT]?.xChainId && (
@@ -157,7 +157,7 @@ function AddressInputForm({
           }}
           autoFocus
           className={cn(
-            'py-0 h-7 rounded-full bg-transparent border-none px-2 focus-visible:ring-0 focus-visible:ring-offset-0 font-medium text-sm text-center',
+            'py-0 h-7 rounded-full bg-transparent border-none px-2 focus-visible:ring-0 focus-visible:ring-offset-0 font-medium text-sm text-center placeholder:text-[#695682]',
             editable ? 'w-full' : 'w-0',
           )}
           autoComplete="off"

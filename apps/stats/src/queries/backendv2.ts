@@ -1,5 +1,5 @@
 import { useBnJsContractQuery, useIncentivisedPairs } from '@/queries';
-import { Fraction } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Fraction } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import BigNumber from 'bignumber.js';
@@ -7,7 +7,7 @@ import BigNumber from 'bignumber.js';
 import bnJs from '@/bnJs';
 import { predefinedCollateralTypes } from '@/components/CollateralSelector/CollateralTypeList';
 import { TOKEN_BLACKLIST } from '@/constants/tokens';
-import { formatUnits } from '@/utils';
+import { formatUnits, getRewardApr } from '@/utils';
 import { useMemo } from 'react';
 
 export const API_ENDPOINT = 'https://balanced.icon.community/api/v1/';
@@ -81,7 +81,15 @@ export function useAllTokens() {
       const response = await axios.get(`${API_ENDPOINT}tokens`);
 
       if (response.status === 200) {
-        return response.data
+        const rawData = response.data;
+        const wICXToken = rawData.find(item => item.symbol === 'wICX');
+        const ICXToken = rawData.find(item => item.symbol === 'ICX');
+
+        if (wICXToken && ICXToken) {
+          ICXToken.liquidity += wICXToken.liquidity;
+        }
+
+        return rawData
           .map(item => {
             item['market_cap'] = item.total_supply * item.price;
             item['price_24h_change'] = ((item.price - item.price_24h) / item.price_24h) * 100;
@@ -130,6 +138,9 @@ export type Pair = {
   feesApy: number;
   balnApy?: number;
   totalSupply: number;
+  externalRewards?: CurrencyAmount<Currency>[];
+  externalRewardsTotalAPR?: number;
+  stakedRatio?: Fraction;
 };
 
 export function useAllPairs() {
@@ -211,19 +222,34 @@ export function useAllPairsIncentivised() {
               ? new Fraction(incentivisedPair.totalStaked, item['totalSupply'])
               : new Fraction(1);
           item['balnApy'] = dailyDistribution
-            .times(new BigNumber(incentivisedPair.rewards.toFixed(4)))
+            .times(new BigNumber(incentivisedPair.rewards?.toFixed(4)))
             .times(365)
             .times(balnPrice)
             .div(new BigNumber(stakedRatio.toFixed(18)).times(item.liquidity))
             .toNumber();
+          item['externalRewards'] = incentivisedPair.externalRewards;
           item['stakedRatio'] = stakedRatio;
+
+          const totalExternalRewardApr = incentivisedPair.externalRewards?.reduce((acc, reward) => {
+            const rewardPrice =
+              Object.values(allTokens || {}).find(token => token.symbol === reward.currency.symbol)?.price || 0;
+            const rewardApr = getRewardApr(
+              reward,
+              { stakedRatio: stakedRatio, liquidity: item.liquidity },
+              rewardPrice,
+            );
+
+            return acc + rewardApr.toNumber();
+          }, 0);
+
+          item['externalRewardsTotalAPR'] = totalExternalRewardApr || 0;
 
           return item;
         }
         return item;
       });
     }
-  }, [allPairs, incentivisedPairs, dailyDistribution, balnPrice]);
+  }, [allPairs, incentivisedPairs, dailyDistribution, balnPrice, allTokens]);
 }
 
 export function useAllPairsIncentivisedById() {

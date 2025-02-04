@@ -13,11 +13,10 @@ import { Typography } from '@/app/theme';
 import { ApprovalState, useApproveCallback } from '@/hooks/useApproveCallback';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import { MODAL_ID, modalActions, useModalOpen } from '@/hooks/useModalStore';
-import { useSendXTransaction } from '@/hooks/useSendXTransaction';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
 import { useCollateralActionHandlers, useDerivedCollateralInfo } from '@/store/collateral/hooks';
-import { formatSymbol } from '@/utils/formatter';
-import { xChainMap } from '@balancednetwork/xwagmi';
+import { formatSymbol, useWrongSymbol } from '@/utils/formatter';
+import { useSendXTransaction, xChainMap } from '@balancednetwork/xwagmi';
 import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import { useXCallFee } from '@balancednetwork/xwagmi';
 import { XTransactionInput, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
@@ -97,7 +96,7 @@ const XCollateralModal = ({
     }
   }, [currentXTransaction, slowDismiss]);
 
-  const { sendXTransaction } = useSendXTransaction();
+  const sendXTransaction = useSendXTransaction();
   const handleXCollateralAction = async () => {
     if (!account) return;
     if (!xCallFee) return;
@@ -117,11 +116,11 @@ const XCollateralModal = ({
       account,
       inputAmount: _inputAmount,
       xCallFee,
-      usedCollateral: collateralType,
-      callback: cancelAdjusting,
+      usedCollateral: useWrongSymbol(collateralType),
     };
 
     const xTransactionId = await sendXTransaction(xTransactionInput);
+    cancelAdjusting();
     setCurrentId(xTransactionId || null);
   };
 
@@ -209,7 +208,11 @@ const XCollateralModal = ({
                       <>
                         {approvalState !== ApprovalState.APPROVED ? (
                           <Button onClick={approveCallback} disabled={approvalState === ApprovalState.PENDING}>
-                            {approvalState === ApprovalState.PENDING ? 'Approving' : 'Approve transfer'}
+                            {approvalState === ApprovalState.PENDING ? (
+                              <Trans>Approving</Trans>
+                            ) : (
+                              <Trans>Approve transfer</Trans>
+                            )}
                           </Button>
                         ) : (
                           <StyledButton onClick={handleXCollateralAction} disabled={!gasChecker.hasEnoughGas}>

@@ -12,8 +12,8 @@ import { PairData, PairState } from './useV2Pairs';
 export function useQueuePair(): PairData {
   const [pair, setPair] = useState<PairData>([PairState.LOADING, null, null]);
 
-  const ICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address].wrapped;
-  const sICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.sICX.address].wrapped;
+  const ICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address]?.wrapped;
+  const sICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.sICX.address]?.wrapped;
 
   const last = useLastCount(10000);
 
@@ -21,6 +21,11 @@ export function useQueuePair(): PairData {
   useEffect(() => {
     const fetchReserves = async () => {
       try {
+        if (!ICX || !sICX) {
+          setPair([PairState.INVALID, null, null]);
+          return;
+        }
+
         const poolId = BalancedJs.utils.POOL_IDS.sICXICX;
 
         const stats = await bnJs.Dex.getPoolStats(poolId);

@@ -1,8 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { XChainId } from '@balancednetwork/xwagmi';
+import { XChainId, convertCurrency } from '@balancednetwork/xwagmi';
 
-import { getXTokenBySymbol } from '@/utils/xTokens';
 import { Currency } from '@balancednetwork/sdk-core';
 
 export enum Field {
@@ -66,7 +65,7 @@ const bridgeSlice = createSlice({
       state[Field.FROM].chainId = state[Field.TO].chainId;
       state[Field.TO].chainId = fromChain;
 
-      state.currency = getXTokenBySymbol(state[Field.FROM].chainId, state.currency?.symbol);
+      state.currency = convertCurrency(state[Field.FROM].chainId, state.currency);
       // const fromCurrency = state[Field.FROM].currency;
       // state[Field.FROM].currency = state[Field.TO].currency;
       // state[Field.TO].currency = fromCurrency;

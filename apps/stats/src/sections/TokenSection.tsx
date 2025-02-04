@@ -274,16 +274,20 @@ export default React.memo(function TokenSection() {
   const [showingExpanded, setShowingExpanded] = useState(false);
   const [searched, setSearched] = useState('');
 
-  const tokens = useMemo(() => {
+  const tokensWithoutWrappedICX = useMemo(() => {
     if (!allTokens) return [];
-    const filteredTokens = Object.values(allTokens).filter(token => {
+    return Object.values(allTokens).filter(token => token.symbol !== 'wICX');
+  }, [allTokens]);
+
+  const tokens = useMemo(() => {
+    const filteredTokens = tokensWithoutWrappedICX.filter(token => {
       const tokenName = token.name.toLowerCase();
       const tokenSymbol = token.symbol.toLowerCase();
       const search = searched.toLowerCase();
       return tokenName.includes(search) || tokenSymbol.includes(search);
     });
     return sortData(filteredTokens);
-  }, [allTokens, searched, sortData]);
+  }, [tokensWithoutWrappedICX, searched, sortData]);
 
   const noTokensFound = searched && tokens.length === 0;
   const isSmallScreen = useMedia('(max-width: 800px)');
@@ -366,18 +370,7 @@ export default React.memo(function TokenSection() {
               >
                 Available
               </HeaderText>
-              <HeaderText
-                style={{ cursor: 'default' }}
-                // role="button"
-                // className={sortBy.key === 'holders' ? sortBy.order : ''}
-                // onClick={() =>
-                //   handleSortSelect({
-                //     key: 'holders',
-                //   })
-                // }
-              >
-                7d trend
-              </HeaderText>
+              <HeaderText style={{ cursor: 'default' }}>7d trend</HeaderText>
             </DashGrid>
           )}
 

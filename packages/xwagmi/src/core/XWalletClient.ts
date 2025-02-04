@@ -14,5 +14,5 @@ export abstract class XWalletClient {
     owner: string,
   ): Promise<string | undefined>;
 
-  abstract executeTransaction(xTransactionInput: XTransactionInput, options?: any): Promise<string | undefined>;
+  abstract executeTransaction(xTransactionInput: XTransactionInput): Promise<string | undefined>;
 }

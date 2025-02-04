@@ -25,7 +25,7 @@ const COMPACT_ITEM_COUNT = 8;
 
 const List = styled.div`
   -webkit-overflow-scrolling: touch;
-  min-width: 840px;
+  min-width: 915px;
   overflow: hidden;
 `;
 
@@ -34,9 +34,9 @@ export const Grid = styled.div`
   margin: 20px 0;
   gap: 1em;
   align-items: center;
-  grid-template-columns: 6fr 5fr 6fr 5fr 7fr;
+  grid-template-columns: 12fr 10fr 12fr 12fr 13fr;
   ${({ theme }) => theme.mediaWidth.upLarge`
-    grid-template-columns: 25fr 14fr 15fr 14fr 15fr;
+    grid-template-columns: 24fr 14fr 15fr 14fr 15fr;
   `}
 
   > *, ${HeaderText} {
@@ -68,7 +68,7 @@ const TokenList = () => {
   const tokens = React.useMemo(() => {
     if (!allTokens) return [];
     const filteredTokens = Object.values(allTokens).filter((token: TokenStats) => {
-      const shouldShow = isCommunityListEnabled || token.type === 'balanced';
+      const shouldShow = token.symbol !== 'wICX' && (isCommunityListEnabled || token.type === 'balanced');
       const tokenName = token.name.toLowerCase();
       const tokenSymbol = token.symbol.toLowerCase();
       const tokenXChains = getSupportedXChainForToken(COMBINED_TOKENS_MAP_BY_ADDRESS[token.address])?.map(
@@ -123,36 +123,6 @@ const TokenList = () => {
               >
                 PRICE (24H)
               </HeaderText>
-              <Flex>
-                <QuestionWrapper style={{ transform: 'translate3d(-5px, 1px, 0)' }}>
-                  <QuestionHelper
-                    width={275}
-                    text={
-                      <>
-                        <Typography color="text1">
-                          <Trans>
-                            Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain.
-                          </Trans>
-                        </Typography>
-                        <Typography color="text1" mt={2}>
-                          <Trans>It does not reflect the total market cap for multi-chain assets.</Trans>
-                        </Typography>
-                      </>
-                    }
-                  />
-                </QuestionWrapper>
-                <HeaderText
-                  role="button"
-                  className={sortBy.key === 'market_cap' ? sortBy.order : ''}
-                  onClick={() =>
-                    handleSortSelect({
-                      key: 'market_cap',
-                    })
-                  }
-                >
-                  MARKET CAP
-                </HeaderText>
-              </Flex>
               <HeaderText
                 role="button"
                 className={sortBy.key === 'liquidity' ? sortBy.order : ''}
@@ -162,8 +132,23 @@ const TokenList = () => {
                   })
                 }
               >
-                Available
+                Liquidity
               </HeaderText>
+              <Flex>
+                <QuestionWrapper style={{ transform: 'translate3d(-5px, 1px, 0)' }}>
+                  <QuestionHelper
+                    width={290}
+                    text={
+                      <Typography color="text1">
+                        <Trans>
+                          To protect liquidity, many assets include a withdrawal limit that resets over 24 hours.
+                        </Trans>
+                      </Typography>
+                    }
+                  />
+                </QuestionWrapper>
+                <HeaderText style={{ cursor: 'default' }}>Available</HeaderText>
+              </Flex>
               <HeaderText style={{ cursor: 'default' }}>7d trend</HeaderText>
             </Grid>
           )}

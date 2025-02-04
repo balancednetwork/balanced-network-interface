@@ -25,7 +25,7 @@ import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { xTokenMap } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
-import { getSupportedXChainIdsForToken } from '@balancednetwork/xwagmi';
+import { getSupportedXChainIdsForSwapToken } from '@balancednetwork/xwagmi';
 import { ChainLogo } from '../ChainLogo';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
 import { MouseoverTooltip } from '../Tooltip';
@@ -88,7 +88,7 @@ function CurrencyRow({
   selectorType: SelectorType;
   width?: number;
 }) {
-  const currencyXChainIds = useMemo(() => getSupportedXChainIdsForToken(currency), [currency]);
+  const currencyXChainIds = useMemo(() => getSupportedXChainIdsForSwapToken(currency), [currency]);
   const balance = useXCurrencyBalance(currency, selectedChainId);
   const hasSigned = useHasSignedIn();
   const xWallet = useCrossChainWalletBalances();
@@ -134,7 +134,7 @@ function CurrencyRow({
   const [show, setShow] = useState(false);
   const open = useCallback(() => setShow(true), []);
   const close = useCallback(() => setShow(false), []);
-  const price = rateFracs && new BigNumber(rateFracs[currency.symbol!]?.toFixed(8));
+  const price = rateFracs && new BigNumber(rateFracs[formatSymbol(currency.symbol)]?.toFixed(8));
   const hideBecauseOfLowValue =
     basedOnWallet &&
     (price && !price.isNaN() ? basedOnWallet && balance?.times(price).isLessThan(0.01) : balance?.isLessThan(0.01));
@@ -189,7 +189,9 @@ function CurrencyRow({
             </Flex>
 
             <Typography variant="span" fontSize={14} fontWeight={400} color="text2" display="block">
-              {rateFracs && rateFracs[currency.symbol!] && formatPrice(rateFracs[currency.symbol!].toFixed(18))}
+              {rateFracs &&
+                rateFracs[formatSymbol(currency.symbol!)] &&
+                formatPrice(rateFracs[formatSymbol(currency.symbol!)].toFixed(18))}
             </Typography>
           </Flex>
         </Flex>
@@ -252,7 +254,9 @@ function CurrencyRow({
         </Flex>
         <Flex justifyContent="flex-end" alignItems="center">
           <DataText variant="p" textAlign="right">
-            {rateFracs && rateFracs[currency.symbol!] && formatPrice(rateFracs[currency.symbol!].toFixed(18))}
+            {rateFracs &&
+              rateFracs[formatSymbol(currency.symbol!)] &&
+              formatPrice(rateFracs[formatSymbol(currency.symbol!)].toFixed(18))}
           </DataText>
           {isUserAddedToken && (isMobile || show) && (
             <MinusCircle

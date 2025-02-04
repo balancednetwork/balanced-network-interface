@@ -26,19 +26,28 @@ import { useRewards } from '@/store/reward/hooks';
 import { useStakedLPPercent, useWithdrawnPercent } from '@/store/stakedLP/hooks';
 
 import { QuestionWrapper } from '@/app/components/QuestionHelper';
+import RewardsDisplay from '@/app/components/RewardsDisplay/RewardsDisplay';
 import Skeleton from '@/app/components/Skeleton';
 import { MouseoverTooltip } from '@/app/components/Tooltip';
 import QuestionIcon from '@/assets/icons/question.svg';
+import { useRatesWithOracle } from '@/queries/reward';
 import { formatBigNumber } from '@/utils';
-import { getFormattedNumber } from '@/utils/formatter';
+import { formatSymbol, getFormattedNumber } from '@/utils/formatter';
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Banner } from '../../../../components/Banner';
 import Spinner from '../../../../components/Spinner';
 import { StyledAccordionButton, StyledAccordionItem, StyledAccordionPanel } from './LiquidityDetails/Accordion';
 import StakeLPPanel from './LiquidityDetails/StakeLPPanel';
-import { WithdrawPanel, WithdrawPanelQ, getABBalance, getShareReward } from './LiquidityDetails/WithdrawPanel';
+import {
+  WithdrawPanel,
+  WithdrawPanelQ,
+  getABBalance,
+  getExternalShareReward,
+  getShareReward,
+} from './LiquidityDetails/WithdrawPanel';
 import { StyledBoxPanel } from './LiquidityDetails/shared';
 import { usePoolPanelContext } from './PoolPanelContext';
-import { getFormattedRewards, stakedFraction, totalSupply } from './utils';
+import { getFormattedExternalRewards, getFormattedRewards, stakedFraction, totalSupply } from './utils';
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
@@ -89,7 +98,7 @@ export default function LiquidityDetails() {
     }, {});
 
   const hasLiquidity = shouldShowQueue || userPools.length;
-  const isLiquidityInfoLoading = shouldShowQueue === undefined;
+  const isLiquidityInfoLoading = shouldShowQueue === undefined && userPools.length === 0;
 
   return (
     <>
@@ -121,14 +130,12 @@ export default function LiquidityDetails() {
                   text={
                     <>
                       <Trans>
-                        The BALN APR is calculated from the USD value of BALN rewards allocated to a pool. Your rate
-                        will vary based on the amount of bBALN you hold.
+                        Based on the USD value of liquidity rewards (claimable from the Home page) and fees earned by a
+                        pool over the past 30 days.
                       </Trans>
                       <br />
                       <br />
-                      <Trans>
-                        The fee APR is calculated from the swap fees earned by a pool over the last 30 days.
-                      </Trans>
+                      <Trans>BALN rewards depend on your position size and bBALN holdings.</Trans>
                     </>
                   }
                   placement="top"
@@ -151,7 +158,7 @@ export default function LiquidityDetails() {
           </DashGrid>
 
           <Accordion collapsible>
-            {shouldShowQueue && (
+            {/* {shouldShowQueue && (
               <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} $border={userPools.length !== 0}>
                 <StyledAccordionButton onClick={() => setIsHided(false)}>
                   <PoolRecordQ
@@ -174,7 +181,7 @@ export default function LiquidityDetails() {
                   </StyledBoxPanel>
                 </StyledAccordionPanel>
               </StyledAccordionItem>
-            )}
+            )} */}
             {balancesWithoutQ &&
               userPools.map((poolId, index, arr) => (
                 <StyledAccordionItem key={poolId} $border={index !== arr.length - 1}>
@@ -185,10 +192,13 @@ export default function LiquidityDetails() {
                       pair={sortedPairs[poolId]}
                       pairData={allPairs && allPairs[poolId]}
                       //hotfix due to the fact that sICX/BTCB pair has wrong name on contract side
-                      totalReward={
+                      balnReward={
                         allPairs && allPairs[poolId]
                           ? rewards[allPairs[poolId].name === 'sICX/BTCB' ? 'BTCB/sICX' : allPairs[poolId].name]
                           : new BigNumber(0)
+                      }
+                      externalRewards={
+                        allPairs && allPairs[parseInt(poolId)] ? allPairs[parseInt(poolId)].externalRewards : []
                       }
                       boostData={sources}
                       apy={allPairs && allPairs[parseInt(poolId)] ? allPairs[parseInt(poolId)].balnApy : 0}
@@ -282,7 +292,8 @@ const PoolRecord = ({
   pair,
   pairData,
   balance,
-  totalReward,
+  balnReward,
+  externalRewards,
   boostData,
   apy,
 }: {
@@ -290,14 +301,18 @@ const PoolRecord = ({
   pairData?: PairData;
   balance: BalanceData;
   poolId: number;
-  totalReward: BigNumber;
+  balnReward: BigNumber;
+  externalRewards: CurrencyAmount<Token>[] | undefined;
   boostData: { [key in string]: Source } | undefined;
   apy: number | null;
 }) => {
   const upSmall = useMedia('(min-width: 800px)');
+  const prices = useRatesWithOracle();
   const stakedLPPercent = useStakedLPPercent(poolId);
   const [aBalance, bBalance] = getABBalance(pair, balance);
-  const pairName = `${aBalance.currency.symbol || '...'}/${bBalance.currency.symbol || '...'}`;
+  const pairName = `${formatSymbol(aBalance.currency.symbol) || '...'}/${
+    formatSymbol(bBalance.currency.symbol) || '...'
+  }`;
   const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
   const { baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
   const balances = useBalance(poolId);
@@ -305,7 +320,7 @@ const PoolRecord = ({
   const totalbBaln = useTotalSupply();
   const userBbaln = useBBalnAmount();
   const reward = getShareReward(
-    totalReward,
+    balnReward,
     boostData && boostData[sourceName],
     balances,
     stakedFractionValue,
@@ -341,7 +356,7 @@ const PoolRecord = ({
             <Typography fontSize={16}>{`${formatBigNumber(
               new BigNumber(baseCurrencyTotalSupply?.toFixed() || 0),
               'currency',
-            )} ${aBalance.currency.symbol}`}</Typography>
+            )} ${formatSymbol(aBalance.currency.symbol)}`}</Typography>
           ) : (
             <Skeleton width={100}></Skeleton>
           )}
@@ -349,7 +364,7 @@ const PoolRecord = ({
             <Typography fontSize={16}>{`${formatBigNumber(
               new BigNumber(quoteCurrencyTotalSupply?.toFixed() || 0),
               'currency',
-            )} ${bBalance.currency.symbol}`}</Typography>
+            )} ${formatSymbol(bBalance.currency.symbol)}`}</Typography>
           ) : (
             <Skeleton width={100}></Skeleton>
           )}
@@ -357,47 +372,38 @@ const PoolRecord = ({
 
         {upSmall && (
           <DataText>
-            {boostData ? (
-              apy &&
-              boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName] &&
-              boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].balance.isGreaterThan(0) ? (
-                <>
-                  <APYItem>
-                    <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                      BALN:
-                    </Typography>
-                    {new BigNumber(apy)
-                      .times(
-                        //hotfix pairName due to wrong source name on contract side
-                        boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].workingBalance.dividedBy(
-                          boostData[pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName].balance,
-                        ),
-                      )
-                      .times(100)
-                      .toFormat(2)}
-                    %
-                  </APYItem>
+            {pairData && <RewardsDisplay pair={pairData} boost={boostData} />}
 
-                  {pairData?.feesApy && (
-                    <APYItem>
-                      <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                        <Trans>Fees:</Trans>
-                      </Typography>
-                      {getFormattedNumber(pairData.feesApy, 'percent2')}
-                    </APYItem>
-                  )}
-                </>
-              ) : (
-                '-'
-              )
-            ) : (
-              <Skeleton width={100}></Skeleton>
+            {pairData?.feesApy && (
+              <APYItem>
+                <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
+                  <Trans>Fees:</Trans>
+                </Typography>
+                {getFormattedNumber(pairData.feesApy, 'percent2')}
+              </APYItem>
             )}
           </DataText>
         )}
         {upSmall && (
           //hotfix pairName due to wrong source name on contract side
-          <DataText>{getFormattedRewards(reward)}</DataText>
+          <DataText>
+            <Typography fontSize={16}>
+              {getFormattedRewards(reward, !externalRewards || externalRewards.length === 0)}
+            </Typography>
+            {externalRewards ? (
+              externalRewards.map(reward => {
+                const rewardPrice = prices?.[reward.currency.wrapped.symbol];
+                const rewardShare = getExternalShareReward(reward, balances, stakedFractionValue, pairData?.stakedLP);
+                return (
+                  <Typography key={reward.currency.symbol} fontSize={16}>
+                    {getFormattedExternalRewards(rewardShare, rewardPrice?.toFixed())}
+                  </Typography>
+                );
+              })
+            ) : (
+              <Skeleton width={100}></Skeleton>
+            )}
+          </DataText>
         )}
       </ListItem>
     </>
@@ -431,9 +437,7 @@ const PoolRecordQ = ({
   return (
     <ListItem onClick={handlePoolClick}>
       <StyledDataText>
-        <DataText>{`${balance.balance.currency.symbol || '...'}/${
-          balance.balance1?.currency.symbol || '...'
-        }`}</DataText>
+        <DataText>ICX queue</DataText>
         <StyledArrowDownIcon />
       </StyledDataText>
 
@@ -451,9 +455,14 @@ const PoolRecordQ = ({
             ? new BigNumber(apy)
                 .times(100)
                 .times(source.workingBalance.div(source.balance) || 1)
-                .toFormat(2)
+                .isNaN()
+              ? '-'
+              : new BigNumber(apy)
+                  .times(100)
+                  .times(source.workingBalance.div(source.balance) || 1)
+                  .toFormat(2) + '%'
             : '-'
-        }%`}</DataText>
+        }`}</DataText>
       )}
       {upSmall && <DataText>{`~ ${reward.toFormat(2, BigNumber.ROUND_HALF_UP) || '-'} BALN`}</DataText>}
     </ListItem>

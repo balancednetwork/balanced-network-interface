@@ -8,19 +8,15 @@ import { getFullnodeUrl } from '@mysten/sui/client';
 import { wagmiConfig } from '@/xchains/evm/wagmiConfig';
 import { WagmiProvider } from 'wagmi';
 
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 // solana
 import {
   ConnectionProvider as SolanaConnectionProvider,
   WalletProvider as SolanaWalletProvider,
 } from '@solana/wallet-adapter-react';
 import { UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
-import { clusterApiUrl } from '@solana/web3.js';
 
-const solanaNetwork = WalletAdapterNetwork.Mainnet;
 const suiNetworks = {
   mainnet: { url: getFullnodeUrl('mainnet') },
-  // devnet: { url: getFullnodeUrl('devnet') },
 };
 
 export const XWagmiProviders = ({ children }) => {

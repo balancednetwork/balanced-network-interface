@@ -10,8 +10,12 @@ import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { BrightPanel } from '@/app/components/Panel';
 import { SelectorType } from '@/app/components/SearchModal/CurrencySearch';
+import SolanaAccountExistenceWarning from '@/app/components/SolanaAccountExistenceWarning';
+import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
+import WithdrawalLimitWarning from '@/app/components/WithdrawalLimitWarning';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/flip.svg';
+import { PRICE_IMPACT_WARNING_THRESHOLD } from '@/constants/misc';
 import useManualAddresses from '@/hooks/useManualAddresses';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
@@ -24,7 +28,7 @@ import {
 } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { maxAmountSpend } from '@/utils';
-import { formatBalance } from '@/utils/formatter';
+import { formatBalance, formatSymbol } from '@/utils/formatter';
 import { XToken, getXChainType } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
@@ -50,6 +54,9 @@ export default function SwapPanel() {
     maximumBridgeAmount,
     canBridge,
     stellarValidation,
+    canSwap,
+    maximumOutputAmount,
+    parsedAmounts,
   } = useDerivedSwapInfo();
   const mmTrade = useDerivedMMTradeInfo(trade);
 
@@ -133,7 +140,13 @@ export default function SwapPanel() {
     onUserInput(Field.OUTPUT, amount?.toFixed(4));
   };
 
+  const handleMaxWithdrawAmountClick = (amount: CurrencyAmount<Currency>) => {
+    onUserInput(Field.OUTPUT, amount?.toFixed(4));
+  };
+
   const rates = useRatesWithOracle();
+
+  const showWarning = trade?.priceImpact.greaterThan(PRICE_IMPACT_WARNING_THRESHOLD);
 
   return (
     <>
@@ -146,7 +159,10 @@ export default function SwapPanel() {
             {account && currencyBalances[Field.INPUT] && (
               <Typography as="div" hidden={!account}>
                 <Trans>Wallet:</Trans>{' '}
-                {`${formatBalance(currencyBalances[Field.INPUT]?.toFixed(), rates?.[currencyBalances[Field.INPUT]?.currency.symbol]?.toFixed())} ${currencies[Field.INPUT]?.symbol}`}
+                {`${formatBalance(
+                  currencyBalances[Field.INPUT]?.toFixed(),
+                  rates?.[currencyBalances[Field.INPUT]?.currency.symbol]?.toFixed(),
+                )} ${currencies[Field.INPUT]?.symbol}`}
               </Typography>
             )}
           </Flex>
@@ -184,7 +200,14 @@ export default function SwapPanel() {
                   {isRecipientCustom ? (
                     <Trans>Custom</Trans>
                   ) : (
-                    `${currencyBalances[Field.OUTPUT] ? formatBalance(currencyBalances[Field.OUTPUT]?.toFixed(), rates?.[currencyBalances[Field.OUTPUT]?.currency.symbol]?.toFixed()) : '0'} ${currencies[Field.OUTPUT]?.symbol}`
+                    `${
+                      currencyBalances[Field.OUTPUT]
+                        ? formatBalance(
+                            currencyBalances[Field.OUTPUT]?.toFixed(),
+                            rates?.[currencyBalances[Field.OUTPUT]?.currency.symbol]?.toFixed(),
+                          )
+                        : '0'
+                    } ${formatSymbol(currencies[Field.OUTPUT]?.symbol)}`
                   )}
                 </>
               )}
@@ -206,6 +229,7 @@ export default function SwapPanel() {
               addressEditable
               selectorType={SelectorType.SWAP_OUT}
               setManualAddress={setManualAddress}
+              showWarning={mmTrade.isMMBetter ? false : showWarning}
             />
           </Flex>
         </AutoColumn>
@@ -223,6 +247,7 @@ export default function SwapPanel() {
               recipient={recipient}
               trade={mmTrade.trade}
               direction={direction}
+              stellarValidation={stellarValidation}
             />
             <SwapCommitButton
               hidden={!!mmTrade.isMMBetter}
@@ -233,18 +258,36 @@ export default function SwapPanel() {
               account={account}
               recipient={recipient}
               direction={direction}
+              stellarValidation={stellarValidation}
+              canSwap={canSwap}
             />
           </Flex>
 
-          {stellarValidation?.ok === false && stellarValidation.error && (
-            <Flex alignItems="center" justifyContent="center" mt={2}>
-              <Typography textAlign="center">{stellarValidation.error}</Typography>
+          {stellarValidation?.ok === false && stellarValidation.error && recipient && (
+            <Flex alignItems="center" justifyContent="center" mt={2} flexDirection="column">
+              <StellarSponsorshipModal text={'Activate your Stellar wallet.'} address={recipient} />
             </Flex>
           )}
 
-          {!canBridge && maximumBridgeAmount && (
+          {!canBridge && maximumBridgeAmount && trade && (
             <BridgeLimitWarning limitAmount={maximumBridgeAmount} onLimitAmountClick={handleMaxBridgeAmountClick} />
           )}
+
+          {!canSwap && maximumOutputAmount && (
+            <WithdrawalLimitWarning
+              limitAmount={maximumOutputAmount}
+              onLimitAmountClick={handleMaxWithdrawAmountClick}
+            />
+          )}
+
+          <SolanaAccountExistenceWarning
+            destinationChainId={direction.to}
+            currencyAmount={parsedAmounts[Field.OUTPUT]}
+            recipient={recipient ?? ''}
+            onActivate={() => {
+              handleOutputType('0.002');
+            }}
+          />
 
           <MMPendingIntents />
         </AutoColumn>

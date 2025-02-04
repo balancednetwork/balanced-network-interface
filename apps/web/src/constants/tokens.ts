@@ -224,4 +224,4 @@ export const ORACLE_PRICED_TOKENS = ['USDC', 'USDT'];
 
 export const STABLE_TOKENS = ['bnUSD', 'USDC', 'USDT'];
 
-export const UNTRADEABLE_TOKENS = ['JitoSOL'];
+export const UNTRADEABLE_TOKENS = ['JitoSOL', 'mSUI'];

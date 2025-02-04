@@ -54,6 +54,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/BridgeLimitWarning/index.tsx
+#: src/app/components/WithdrawalLimitWarning/index.tsx
 msgid "Only"
 msgstr ""
 
@@ -331,6 +332,10 @@ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Available since {0}"
+msgstr ""
+
+#: src/app/pages/trade/xswap/_components/TokenList/index.tsx
+msgid "To protect liquidity, many assets include a withdrawal limit that resets over 24 hours."
 msgstr ""
 
 #: src/app/pages/vote/_components/BribesPanel/index.tsx
@@ -795,6 +800,10 @@ msgstr ""
 msgid "bBALN holders received"
 msgstr ""
 
+#: src/app/components/WithdrawalLimitWarning/index.tsx
+#~ msgid "Only {0}% can be withdrawn at a time. Limit will reset gradually over the next {1} hours."
+#~ msgstr ""
+
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "Unstaking BALN..."
 msgstr ""
@@ -1052,6 +1061,10 @@ msgstr ""
 #~ msgid "Recieve sICX, which you can trade or unstake from the wallet section later."
 #~ msgstr ""
 
+#: src/app/components/WithdrawalLimitInfo/index.tsx
+msgid "{0}h withdrawal limit:"
+msgstr ""
+
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 #~ msgid "Liquidity incentives"
 #~ msgstr ""
@@ -1264,8 +1277,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/TokenList/index.tsx
-msgid "It does not reflect the total market cap for multi-chain assets."
-msgstr ""
+#~ msgid "It does not reflect the total market cap for multi-chain assets."
+#~ msgstr ""
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Cross-chain swap requested."
@@ -1428,8 +1441,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/xswap/_components/TokenList/index.tsx
-msgid "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
-msgstr ""
+#~ msgid "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Couldn't supply {0} liquidity. Try again."
@@ -2144,6 +2157,10 @@ msgstr ""
 #~ msgid "Enter an amount"
 #~ msgstr ""
 
+#: src/app/components/WithdrawalLimitWarning/index.tsx
+msgid "available."
+msgstr ""
+
 #: src/app/pages/trade/bridge/_components/XCallItem.tsx
 #~ msgid "Execution failed."
 #~ msgstr ""
@@ -2638,6 +2655,10 @@ msgstr ""
 msgid "Past month"
 msgstr ""
 
+#: src/app/components/WithdrawalLimitInfo/index.tsx
+msgid "Available to trade:"
+msgstr ""
+
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "You rejected"
 msgstr ""
@@ -2888,6 +2909,10 @@ msgstr ""
 
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX is ready to claim"
+msgstr ""
+
+#: src/app/components/AssetManagerTokenBreakdown/index.tsx
+msgid "Liquidity is held on ICON, with varied availability on other blockchains:"
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx

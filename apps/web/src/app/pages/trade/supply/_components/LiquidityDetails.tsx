@@ -147,7 +147,7 @@ export default function LiquidityDetails() {
           </DashGrid>
 
           <Accordion collapsible>
-            {shouldShowQueue && (
+            {/* {shouldShowQueue && (
               <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} $border={userPools.length !== 0}>
                 <StyledAccordionButton onClick={() => setIsHided(false)}>
                   <PoolRecordQ
@@ -170,7 +170,7 @@ export default function LiquidityDetails() {
                   </StyledBoxPanel>
                 </StyledAccordionPanel>
               </StyledAccordionItem>
-            )}
+            )} */}
             {balancesWithoutQ &&
               userPools.map((pool, index) => (
                 <StyledAccordionItem key={`${pool.poolId}-${pool.xChainId}`} $border={index !== userPools.length - 1}>

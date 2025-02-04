@@ -14,6 +14,7 @@ import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySear
 import SolanaAccountExistenceWarning from '@/app/components/SolanaAccountExistenceWarning';
 import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
 import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
+import WithdrawalLimitWarning from '@/app/components/WithdrawalLimitWarning';
 import { Typography } from '@/app/theme';
 import FlipIcon from '@/assets/icons/horizontal-flip.svg';
 import useManualAddresses from '@/hooks/useManualAddresses';
@@ -92,6 +93,8 @@ export default function BridgeTransferForm({ openModal }) {
     canBridge,
     maximumBridgeAmount,
     stellarValidation,
+    canTransfer,
+    maximumTransferAmount,
     currencyAmountToBridge,
   } = useDerivedBridgeInfo();
   const xChainType = getXChainType(bridgeDirection.from);
@@ -114,9 +117,17 @@ export default function BridgeTransferForm({ openModal }) {
     validateAddress(recipient || '', bridgeDirection.to).then(setValid);
   }, [recipient, bridgeDirection.to]);
 
+  //handle the maximum bridge amount based on asset manager amount
   const handleMaximumBridgeAmountClick = () => {
     if (maximumBridgeAmount) {
       onUserInput(maximumBridgeAmount?.toFixed(4));
+    }
+  };
+
+  //handle the maximum transfer amount based on withdrawal security limit
+  const handleMaximumTransferAmountClick = () => {
+    if (maximumTransferAmount) {
+      onUserInput(maximumTransferAmount?.toFixed(4));
     }
   };
 
@@ -204,7 +215,11 @@ export default function BridgeTransferForm({ openModal }) {
               <Button
                 onClick={handleSubmit}
                 disabled={
-                  !!errorMessage || !isValid || !canBridge || (stellarValidation ? !stellarValidation?.ok : false)
+                  !!errorMessage ||
+                  !isValid ||
+                  !canBridge ||
+                  !canTransfer ||
+                  (stellarValidation ? !stellarValidation?.ok : false)
                 }
               >
                 {errorMessage ? errorMessage : <Trans>Transfer</Trans>}
@@ -222,6 +237,13 @@ export default function BridgeTransferForm({ openModal }) {
 
           {!canBridge && maximumBridgeAmount && (
             <BridgeLimitWarning limitAmount={maximumBridgeAmount} onLimitAmountClick={handleMaximumBridgeAmountClick} />
+          )}
+
+          {!canTransfer && maximumTransferAmount && (
+            <WithdrawalLimitWarning
+              limitAmount={maximumTransferAmount}
+              onLimitAmountClick={handleMaximumTransferAmountClick}
+            />
           )}
 
           <SolanaAccountExistenceWarning

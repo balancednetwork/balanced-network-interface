@@ -54,6 +54,7 @@ msgstr "Legacy bridge"
 #~ msgstr "then create the pool."
 
 #: src/app/components/BridgeLimitWarning/index.tsx
+#: src/app/components/WithdrawalLimitWarning/index.tsx
 msgid "Only"
 msgstr "Only"
 
@@ -334,6 +335,10 @@ msgstr "Couldn't transfer {inputCurrency} to {network}. Try again."
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Available since {0}"
 msgstr "Available since {0}"
+
+#: src/app/pages/trade/xswap/_components/TokenList/index.tsx
+msgid "To protect liquidity, many assets include a withdrawal limit that resets over 24 hours."
+msgstr "To protect liquidity, many assets include a withdrawal limit that resets over 24 hours."
 
 #: src/app/pages/vote/_components/BribesPanel/index.tsx
 msgid "Liquidity bribes"
@@ -797,6 +802,10 @@ msgstr "Balanced Intent"
 msgid "bBALN holders received"
 msgstr "bBALN holders received"
 
+#: src/app/components/WithdrawalLimitWarning/index.tsx
+#~ msgid "Only {0}% can be withdrawn at a time. Limit will reset gradually over the next {1} hours."
+#~ msgstr "Only {0}% can be withdrawn at a time. Limit will reset gradually over the next {1} hours."
+
 #: src/app/components/home/BBaln/UnstakePrompt.tsx
 msgid "Unstaking BALN..."
 msgstr "Unstaking BALN..."
@@ -1056,6 +1065,10 @@ msgstr "Manage wallets"
 #~ msgid "Recieve sICX, which you can trade or unstake from the wallet section later."
 #~ msgstr "Recieve sICX, which you can trade or unstake from the wallet section later."
 
+#: src/app/components/WithdrawalLimitInfo/index.tsx
+msgid "{0}h withdrawal limit:"
+msgstr "{0}h withdrawal limit:"
+
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 #~ msgid "Liquidity incentives"
 #~ msgstr "Liquidity incentives"
@@ -1268,8 +1281,8 @@ msgstr "Add <0>{0}</0> item"
 #~ msgstr "Revert transaction."
 
 #: src/app/pages/trade/xswap/_components/TokenList/index.tsx
-msgid "It does not reflect the total market cap for multi-chain assets."
-msgstr "It does not reflect the total market cap for multi-chain assets."
+#~ msgid "It does not reflect the total market cap for multi-chain assets."
+#~ msgstr "It does not reflect the total market cap for multi-chain assets."
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Cross-chain swap requested."
@@ -1432,8 +1445,8 @@ msgstr "If bnUSD ever falls below ${redeemLimit}, traders can use the smart cont
 #~ msgstr "The fee APR is calculated from the swap fees earned by a pool in the last 30 days."
 
 #: src/app/pages/trade/xswap/_components/TokenList/index.tsx
-msgid "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
-msgstr "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
+#~ msgid "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
+#~ msgstr "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
 
 #: src/app/pages/trade/supply/_components/utils.tsx
 msgid "Couldn't supply {0} liquidity. Try again."
@@ -2150,6 +2163,10 @@ msgstr "Swap fee (included):"
 #~ msgid "Enter an amount"
 #~ msgstr "Enter an amount"
 
+#: src/app/components/WithdrawalLimitWarning/index.tsx
+msgid "available."
+msgstr "available."
+
 #: src/app/pages/trade/bridge/_components/XCallItem.tsx
 #~ msgid "Execution failed."
 #~ msgstr "Execution failed."
@@ -2646,6 +2663,10 @@ msgstr "Candles"
 msgid "Past month"
 msgstr "Past month"
 
+#: src/app/components/WithdrawalLimitInfo/index.tsx
+msgid "Available to trade:"
+msgstr "Available to trade:"
+
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "You rejected"
 msgstr "You rejected"
@@ -2897,6 +2918,10 @@ msgstr "To borrow bnUSD, deposit collateral."
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
 msgid "{0} ICX is ready to claim"
 msgstr "{0} ICX is ready to claim"
+
+#: src/app/components/AssetManagerTokenBreakdown/index.tsx
+msgid "Liquidity is held on ICON, with varied availability on other blockchains:"
+msgstr "Liquidity is held on ICON, with varied availability on other blockchains:"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
 msgid "Pay a {0} BALN fee to unlock early."

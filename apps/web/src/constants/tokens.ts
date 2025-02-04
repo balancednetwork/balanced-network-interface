@@ -12,14 +12,6 @@ export const isNativeCurrency = (token?: Currency): boolean => {
   return !!token && (token as any)?.address === NULL_CONTRACT_ADDRESS;
 };
 
-export const isBALN = (token?: Token): boolean => {
-  return !!token && BALN[token.chainId]?.address === token.address;
-};
-
-export const isFIN = (token?: Token): boolean => {
-  return !!token && FIN[token.chainId]?.address === token.address;
-};
-
 export const useICX = () => {
   const networkId = useIconNetworkId();
   return ICX[networkId];
@@ -65,62 +57,6 @@ export const BALN: TokenMap = {
   [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, addresses[ChainId.YEOUIDO].baln, 18, 'BALN', 'Balance Token'),
   [ChainId.BERLIN]: new Token(ChainId.BERLIN, addresses[ChainId.BERLIN].baln, 18, 'BALN', 'Balance Token'),
   [ChainId.LISBON]: new Token(ChainId.LISBON, addresses[ChainId.LISBON].baln, 18, 'BALN', 'Balance Token'),
-};
-
-// disable prettier printWidth rule
-// prettier-ignore
-export const IUSDC: TokenMap = {
-  [ChainId.MAINNET]: new Token(
-    ChainId.MAINNET,
-    'cxae3034235540b924dfcc1b45836c293dcc82bfb7',
-    6,
-    'IUSDC',
-    'ICON USD Coin',
-  ),
-  [ChainId.YEOUIDO]: new Token(
-    ChainId.YEOUIDO,
-    'cx65f639254090820361da483df233f6d0e69af9b7',
-    6,
-    'IUSDC',
-    'ICON USD Coin',
-  ),
-  [ChainId.SEJONG]: new Token(
-    ChainId.SEJONG,
-    'cx599d58885e5b1736c934fca7e53e04c797ab05be',
-    6,
-    'IUSDC',
-    'ICON USD Coin',
-  ),
-  [ChainId.BERLIN]: new Token(
-    ChainId.BERLIN,
-    'cx538a925f49427d4f1078aed638c8cb525071fc68',
-    6,
-    'IUSDC',
-    'ICON USD Coin',
-  ),
-  [ChainId.LISBON]: new Token(
-    ChainId.LISBON,
-    'cx9634be155fc77754c4b2e1bceddc1c63d973f1f3',
-    6,
-    'IUSDC',
-    'ICON USD Coin',
-  ),
-};
-
-// disable prettier printWidth rule
-// prettier-ignore
-export const USDS: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cxbb2871f468a3008f80b08fdde5b8b951583acf06', 18, 'USDS', 'Stably USD'),
-  [ChainId.YEOUIDO]: new Token(ChainId.YEOUIDO, 'cxc0666df567a6e0b49342648e98ccbe5362b264ea', 18, 'USDS', 'Stably USD'),
-  [ChainId.SEJONG]: new Token(ChainId.SEJONG, 'cxc0dbb2eb24719f8355a7ec3c1aaa93826669ab8e', 18, 'USDS', 'Stably USD'),
-  [ChainId.BERLIN]: new Token(ChainId.BERLIN, 'cx91a9327ca44e78983e143b1cfb18e8024a1f31d9', 18, 'USDS', 'Stably USD'),
-  [ChainId.LISBON]: new Token(ChainId.LISBON, 'cx313388571690e0f77546cf3885d37da1d40ff207', 18, 'USDS', 'Stably USD'),
-};
-
-// disable prettier printWidth rule
-// prettier-ignore
-export const FIN: TokenMap = {
-  [ChainId.MAINNET]: new Token(ChainId.MAINNET, 'cx785d504f44b5d2c8dac04c5a1ecd75f18ee57d16', 18, 'FIN', 'Fin Token'),
 };
 
 export const OMM: TokenMap = {

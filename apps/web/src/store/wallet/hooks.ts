@@ -16,8 +16,6 @@ import {
   COMBINED_TOKENS_LIST,
   SUPPORTED_TOKENS_LIST,
   SUPPORTED_TOKENS_MAP_BY_ADDRESS,
-  isBALN,
-  isFIN,
   isNativeCurrency,
   wICX,
 } from '@/constants/tokens';

@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { MessageDescriptor } from '@lingui/core';
 import { defineMessage } from '@lingui/macro';
 import { Helmet } from 'react-helmet-async';
-import { Routes, Route, useLocation, Outlet } from 'react-router-dom';
+import { Outlet, Route, Routes, useLocation } from 'react-router-dom';
 
 import { DefaultLayout } from '@/app/components/Layout';
 
@@ -18,21 +18,20 @@ const TradePageLayout = lazyLoad(
   () => import('./pages/trade/layout'),
   module => module.TradePageLayout,
 );
-import { TradePage } from './pages/trade/xswap/page';
-import { SupplyPage } from './pages/trade/supply/page';
-import { BridgePage } from './pages/trade/bridge/page';
-import { LegacyBridge } from './pages/legacy-bridge/page';
 import { TestPage } from './pages/test/page';
+import { BridgePage } from './pages/trade/bridge/page';
+import { SupplyPage } from './pages/trade/supply/page';
+import { TradePage } from './pages/trade/xswap/page';
 
 const VotePage = lazyLoad(
   () => import('./pages/vote/page'),
   module => module.VotePage,
 );
-import { ProposalListPage } from './pages/vote/proposals/page';
-import { useLoanActionHandlers } from '@/store/loan/hooks';
-import { useCollateralActionHandlers } from '@/store/collateral/hooks';
 import { useBBalnSliderActionHandlers } from '@/store/bbaln/hooks';
+import { useCollateralActionHandlers } from '@/store/collateral/hooks';
+import { useLoanActionHandlers } from '@/store/loan/hooks';
 import { useSavingsSliderActionHandlers } from '@/store/savings/hooks';
+import { ProposalListPage } from './pages/vote/proposals/page';
 const ProposalDetailsPage = lazyLoad(
   () => import('./pages/vote/proposals/[proposalId]/page'),
   module => module.ProposalDetailsPage,
@@ -117,7 +116,6 @@ export default function RootRoutes() {
 
         {process.env.NODE_ENV === 'development' && <Route path="test" element={<TestPage />} />}
 
-        <Route path="legacy-bridge" element={<LegacyBridge />} />
         <Route path="airdrip" element={<Redirect to="https://balanced.network/" />} />
         <Route path="*" element={<Redirect to="https://balanced.network/404" />} />
       </Route>

@@ -79,8 +79,6 @@
     "serve": "11.3.2",
     "styled-components": "6.1.8",
     "tiny-invariant": "1.1.0",
-    "toformat": "2.0.0",
-    "uuid": "9.0.0",
     "viem": "^2.21.35",
     "zustand": "4.5.2"
   },

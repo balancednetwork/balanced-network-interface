@@ -127,6 +127,8 @@ const MMSwapModal = ({
       return;
     }
 
+    setOrderStatus(IntentOrderStatus.SigningAndCreating);
+
     const order: CreateIntentOrderPayload = {
       quote_uuid: trade.uuid,
       fromAddress: account, // address we are sending funds from (fromChain)

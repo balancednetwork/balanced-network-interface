@@ -506,7 +506,7 @@ export function useInterestRate(symbol: string): UseQueryResult<BigNumber> {
   return useQuery({
     queryKey: [`interestRate`, symbol],
     queryFn: async () => {
-      const data = await bnJs.Loans.getInterestRate(symbol);
+      const data = await bnJs.Loans.getInterestRate(useWrongSymbol(symbol));
 
       if (data) {
         return new BigNumber(data).div(10000);

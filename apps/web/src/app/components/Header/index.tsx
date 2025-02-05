@@ -27,6 +27,7 @@ import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { MouseoverTooltip } from '../Tooltip';
 import Wallet from '../Wallet';
 import { notificationCSS } from '../Wallet/ICONWallets/utils';
+import { useHasBTCB } from '../Wallet/useClaimableICX';
 
 const StyledLogo = styled(Logo)`
   margin-right: 15px;
@@ -135,6 +136,7 @@ export default function Header(props: { title?: string; className?: string }) {
   const upSmall = useMedia('(min-width: 600px)');
   const wallets = useSignedInWallets();
   const { data: claimableICX } = useClaimableICX();
+  const hasBTCB = useHasBTCB();
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
@@ -214,7 +216,7 @@ export default function Header(props: { title?: string; className?: string }) {
               )}
             </WalletInfo>
 
-            <WalletButtonWrapper $hasnotification={claimableICX?.isGreaterThan(0)}>
+            <WalletButtonWrapper $hasnotification={claimableICX?.isGreaterThan(0) || hasBTCB}>
               <ClickAwayListener onClickAway={e => handleWalletClose(e)}>
                 <div>
                   <IconButton ref={walletButtonRef} onClick={toggleWalletMenu}>

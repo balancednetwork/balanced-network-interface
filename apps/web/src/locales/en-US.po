@@ -89,10 +89,9 @@ msgstr ""
 
 #: src/btp/src/connectors/helper.ts
 #: src/btp/src/connectors/MetaMask/index.ts
-msgid "Your transaction has failed. Please go back and try again."
-msgstr "Your transaction has failed. Please go back and try again."
+#~ msgid "Your transaction has failed. Please go back and try again."
+#~ msgstr "Your transaction has failed. Please go back and try again."
 
-#: src/hooks/useApproveCallback.tsx
 #: src/hooks/useApproveCallback.tsx
 msgid "{0} transfer approval failed."
 msgstr "{0} transfer approval failed."
@@ -256,12 +255,12 @@ msgid "Increasing lock duration..."
 msgstr "Increasing lock duration..."
 
 #: src/btp/src/connectors/helper.ts
-msgid "Approved {0} for cross-chain transfers."
-msgstr "Approved {0} for cross-chain transfers."
+#~ msgid "Approved {0} for cross-chain transfers."
+#~ msgstr "Approved {0} for cross-chain transfers."
 
 #: src/btp/src/connectors/helper.ts
-msgid "Sending {0} to the bridge contract..."
-msgstr "Sending {0} to the bridge contract..."
+#~ msgid "Sending {0} to the bridge contract..."
+#~ msgstr "Sending {0} to the bridge contract..."
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Supplying"
@@ -510,8 +509,8 @@ msgid "Proposal submitted."
 msgstr "Proposal submitted."
 
 #: src/btp/src/connectors/helper.ts
-msgid "Removing {0} from the bridge contract..."
-msgstr "Removing {0} from the bridge contract..."
+#~ msgid "Removing {0} from the bridge contract..."
+#~ msgstr "Removing {0} from the bridge contract..."
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #~ msgid "Transfer fee(x3): {formattedXCallFee}"
@@ -627,8 +626,8 @@ msgstr "Withdraw sICX?"
 #~ msgstr "{0} queue"
 
 #: src/btp/src/connectors/MetaMask/index.ts
-msgid "Transaction failed!"
-msgstr "Transaction failed!"
+#~ msgid "Transaction failed!"
+#~ msgstr "Transaction failed!"
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferForm.tsx
 #: src/app/pages/trade/xswap/_components/SwapPanel.tsx
@@ -1366,8 +1365,8 @@ msgid "Validating Stellar account"
 msgstr "Validating Stellar account"
 
 #: src/btp/src/connectors/helper.ts
-msgid "Couldn't transfer {0} to {1}. Try again."
-msgstr "Couldn't transfer {0} to {1}. Try again."
+#~ msgid "Couldn't transfer {0} to {1}. Try again."
+#~ msgstr "Couldn't transfer {0} to {1}. Try again."
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Each redemption is spread across a group of borrowers to minimise the impact. The smaller your loan, the less it will affect you."
@@ -1529,8 +1528,8 @@ msgid "Deposited {0} ICX as collateral."
 msgstr "Deposited {0} ICX as collateral."
 
 #: src/btp/src/connectors/helper.ts
-msgid "Removed {0} from the bridge contract."
-msgstr "Removed {0} from the bridge contract."
+#~ msgid "Removed {0} from the bridge contract."
+#~ msgstr "Removed {0} from the bridge contract."
 
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
@@ -1558,8 +1557,8 @@ msgid "{0} {1} per {2}"
 msgstr "{0} {1} per {2}"
 
 #: src/btp/src/connectors/helper.ts
-msgid "Couldn't remove {0} from {1}. Try again."
-msgstr "Couldn't remove {0} from {1}. Try again."
+#~ msgid "Couldn't remove {0} from {1}. Try again."
+#~ msgstr "Couldn't remove {0} from {1}. Try again."
 
 #: src/app/components/ProposalInfo/components.tsx
 msgid "{value}% voted"
@@ -1671,8 +1670,8 @@ msgid "Contract doesn't exist on this network."
 msgstr "Contract doesn't exist on this network."
 
 #: src/btp/src/connectors/helper.ts
-msgid "Approving {0} for cross-chain transfers..."
-msgstr "Approving {0} for cross-chain transfers..."
+#~ msgid "Approving {0} for cross-chain transfers..."
+#~ msgstr "Approving {0} for cross-chain transfers..."
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
@@ -1726,8 +1725,8 @@ msgid "Your collateral"
 msgstr "Your collateral"
 
 #: src/btp/src/connectors/helper.ts
-msgid "Couldn't SEND {0} for cross-chain transfers."
-msgstr "Couldn't SEND {0} for cross-chain transfers."
+#~ msgid "Couldn't SEND {0} for cross-chain transfers."
+#~ msgstr "Couldn't SEND {0} for cross-chain transfers."
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "Withdrawing sICX..."
@@ -1770,7 +1769,6 @@ msgstr "from network fees over the last 30 days."
 msgid "Approve"
 msgstr "Approve"
 
-#: src/btp/src/connectors/helper.ts
 #: src/store/transactions/hooks.tsx
 msgid "Processing transaction..."
 msgstr "Processing transaction..."
@@ -2296,8 +2294,8 @@ msgid "Vote"
 msgstr "Vote"
 
 #: src/btp/src/connectors/helper.ts
-msgid "Your transaction has successed."
-msgstr "Your transaction has successed."
+#~ msgid "Your transaction has successed."
+#~ msgstr "Your transaction has successed."
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #~ msgid "The fee APY is calculated from the swap fees earned by a pool in the last 30 days."
@@ -2351,8 +2349,8 @@ msgid "{0} {1} added to your wallet."
 msgstr "{0} {1} added to your wallet."
 
 #: src/btp/src/connectors/helper.ts
-msgid "Sent {0} to the bridge contract."
-msgstr "Sent {0} to the bridge contract."
+#~ msgid "Sent {0} to the bridge contract."
+#~ msgstr "Sent {0} to the bridge contract."
 
 #: src/app/pages/trade/_components/XCallSwapModalOld.tsx
 #~ msgid "Swap {0} for {1}"
@@ -2596,8 +2594,8 @@ msgid "No price chart available for this pair."
 msgstr "No price chart available for this pair."
 
 #: src/btp/src/connectors/helper.ts
-msgid "Transferred {0} {1} to {2}."
-msgstr "Transferred {0} {1} to {2}."
+#~ msgid "Transferred {0} {1} to {2}."
+#~ msgstr "Transferred {0} {1} to {2}."
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 msgid "APY"
@@ -2696,8 +2694,8 @@ msgstr ", the current rewards will be adjusted to reflect this allocation."
 #~ msgstr "Requesting cross-chain supply..."
 
 #: src/btp/src/connectors/helper.ts
-msgid "Transferring {0} from {1} to {2}..."
-msgstr "Transferring {0} from {1} to {2}..."
+#~ msgid "Transferring {0} from {1} to {2}..."
+#~ msgstr "Transferring {0} from {1} to {2}..."
 
 #: src/app/pages/trade/supply/_components/SendRemoveXToken.tsx
 #~ msgid "Remove"
@@ -2788,7 +2786,6 @@ msgstr "All collateral locked"
 #~ msgid "Approve {0} for cross-chain transfer."
 #~ msgstr "Approve {0} for cross-chain transfer."
 
-#: src/btp/src/connectors/transactionToast.tsx
 #: src/store/transactions/hooks.tsx
 msgid "Learn how to resolve common transaction errors."
 msgstr "Learn how to resolve common transaction errors."
@@ -3008,5 +3005,5 @@ msgid "You'll see an error message before you sign the transaction. If it ends w
 msgstr "You'll see an error message before you sign the transaction. If it ends with Reverted(20), the contract calls have been verified."
 
 #: src/btp/src/connectors/helper.ts
-msgid "Couldn't APPROVE {0} for cross-chain transfers."
-msgstr "Couldn't APPROVE {0} for cross-chain transfers."
+#~ msgid "Couldn't APPROVE {0} for cross-chain transfers."
+#~ msgstr "Couldn't APPROVE {0} for cross-chain transfers."

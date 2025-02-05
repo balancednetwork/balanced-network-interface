@@ -72,27 +72,19 @@ export class IconXWalletClient extends XWalletClient {
 
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
-    let txResult;
-    if (inputAmount.currency.symbol === 'ICX') {
-      const rlpEncodedData = getRlpEncodedSwapData(path).toString('hex');
+    const inputToken = inputAmount.currency;
 
-      txResult = await bnJs
-        .inject({ account })
-        .Router.swapICXV2(toDec(inputAmount), rlpEncodedData, toDec(minReceived), receiver);
-    } else {
-      const inputToken = inputAmount.currency.wrapped;
+    const cx = inputToken.symbol === 'wICX' ? bnJs.wICX : bnJs.getContract(inputToken.address);
 
-      const cx = inputToken.symbol === 'wICX' ? bnJs.wICX : bnJs.getContract(inputToken.address);
+    const rlpEncodedData = getRlpEncodedSwapData(path, '_swap', receiver, minReceived).toString('hex');
 
-      const rlpEncodedData = getRlpEncodedSwapData(path, '_swap', receiver, minReceived).toString('hex');
-
-      txResult = await cx.inject({ account }).swapUsingRouteV2(toDec(inputAmount), rlpEncodedData);
-    }
+    const txResult = await cx.inject({ account }).swapUsingRouteV2(toDec(inputAmount), rlpEncodedData);
 
     const { result: hash } = txResult || {};
     if (hash) {
       return hash;
     }
+    return undefined;
   }
 
   async _executeBorrow(xTransactionInput: XTransactionInput) {

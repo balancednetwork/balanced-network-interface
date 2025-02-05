@@ -4,8 +4,6 @@ import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { t } from '@lingui/macro';
 import { useQuery } from '@tanstack/react-query';
 
-import { openToast } from '@/btp/src/connectors/transactionToast';
-import { TransactionStatus } from '@/store/transactions/hooks';
 import {
   XToken,
   getXChainType,
@@ -89,10 +87,6 @@ export const useApproveCallback = (amountToApprove?: CurrencyAmount<XToken>, spe
       }
     } catch (e) {
       setPending(false);
-      openToast({
-        message: t`${token.symbol} transfer approval failed.`,
-        transactionStatus: TransactionStatus.failure,
-      });
       throw e;
     }
   }, [spender, token, account, amountToApprove, refetch, xWalletClient, xPublicClient, xChainId]);

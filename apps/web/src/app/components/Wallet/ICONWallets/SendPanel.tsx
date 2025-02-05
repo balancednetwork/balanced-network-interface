@@ -28,12 +28,17 @@ import { Grid, MaxButton } from './utils';
 
 export default function SendPanel({ currency }: { currency: Currency }) {
   const [value, setValue] = React.useState('');
+  //tmp
+  const isBTCB = currency.symbol === 'BTCB';
+  const BTC_CLAIM_ADDRESS = 'cx9c901eb3a50d3b3de6d8ba65400f74bb3666c185';
+  const BTC_CLAIM_NOTICE = t`ICON-bridged BTCB has been retired, and the bridge shut down. Use the prefilled address to upgrade to the new BTC token.`;
+  //end of tmp
 
   const handleCurrencyInput = (value: string) => {
     setValue(value);
   };
 
-  const [address, setAddress] = React.useState('');
+  const [address, setAddress] = React.useState(isBTCB ? BTC_CLAIM_ADDRESS : '');
 
   const handleAddressInput = (value: string) => {
     setAddress(value);
@@ -44,9 +49,9 @@ export default function SendPanel({ currency }: { currency: Currency }) {
   const wallet = useICONWalletBalances();
   const rates = useRatesWithOracle();
 
-  const walletAmount = wallet[currency.wrapped.address];
+  const walletAmount = wallet[currency.address];
 
-  const maxAmount = maxAmountSpend(walletAmount) ?? CurrencyAmount.fromRawAmount(currency.wrapped, BIGINT_ZERO);
+  const maxAmount = maxAmountSpend(walletAmount) ?? CurrencyAmount.fromRawAmount(currency, BIGINT_ZERO);
 
   const handleMax = () => {
     setValue(maxAmount.toFixed());
@@ -62,7 +67,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
   const beforeAmount = wallet[currency.wrapped.address];
 
   const differenceAmount = toCurrencyAmount(
-    beforeAmount.currency.wrapped,
+    beforeAmount.currency,
     Number.isNaN(parseFloat(value)) ? new BigNumber(0) : new BigNumber(value),
   );
 
@@ -131,6 +136,12 @@ export default function SendPanel({ currency }: { currency: Currency }) {
 
         <AddressInputPanel value={address} onUserInput={handleAddressInput} />
       </Grid>
+
+      {isBTCB && (
+        <Typography textAlign="center" color="text1" mt={4}>
+          {BTC_CLAIM_NOTICE}
+        </Typography>
+      )}
 
       <Flex alignItems="center" justifyContent="center" mt={5}>
         <Button onClick={toggleOpen} disabled={isDisabled}>

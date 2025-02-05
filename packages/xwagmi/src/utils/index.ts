@@ -1,5 +1,5 @@
 import { xChainMap } from '@/constants/xChains';
-import { allXTokens, xTokenMap } from '@/constants/xTokens';
+import { allXTokens, wICX, xTokenMap } from '@/constants/xTokens';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
 import BigNumber from 'bignumber.js';
@@ -163,7 +163,11 @@ export const convertCurrencyAmount = (
   xChainId: XChainId,
   amount: CurrencyAmount<Currency | XToken>,
 ): CurrencyAmount<XToken> => {
-  const token = xTokenMap[xChainId].find(t => t.symbol === amount.currency.symbol)!;
+  const token = convertCurrency(xChainId, amount.currency);
+
+  if (!token) {
+    throw new Error(`XToken ${amount.currency.symbol} is not supported on ${xChainId}`);
+  }
 
   return CurrencyAmount.fromRawAmount(
     token,
@@ -174,7 +178,19 @@ export const convertCurrencyAmount = (
 export const convertCurrency = (xChainId: XChainId, currency: Currency | XToken | undefined): XToken | undefined => {
   if (!currency) return undefined;
 
+  if (currency.symbol === 'wICX') return wICX;
+
   const token = xTokenMap[xChainId].find(t => t.symbol === currency.symbol)!;
 
+  if (!token) {
+    throw new Error(`XToken ${currency.symbol} is not supported on ${xChainId}`);
+  }
+
   return token;
+};
+
+export const findXTokenById = (id: string): XToken | undefined => {
+  if (id === wICX.id) return wICX;
+
+  return allXTokens.find(t => t.id === id);
 };

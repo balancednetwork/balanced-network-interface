@@ -144,7 +144,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
   ],
   '0x89.polygon': [
     new XToken('0x89.polygon', 137, '0x0000000000000000000000000000000000000000', 18, 'POL', 'Polygon'),
-    new XToken('0x89.polygon', 137, '0xc65132325bD4FcF2Ec5F3a9375487163B6999206', 18, 'bnUSD', 'Balanced Dollar'),
+    new XToken('0x89.polygon', 137, '0x9990Be34D6666C0a69C9504310aebd6fbdb8E699', 18, 'bnUSD', 'Balanced Dollar'),
     new XToken('0x89.polygon', 137, '0x6185D52640EA3b683AedD8bA52d18053A41fee09', 18, 'sICX', 'Staked ICX'),
     new XToken('0x89.polygon', 137, '0x51260f53933db7C3319a61ee444fD9548cFF94D5', 18, 'BALN', 'Balance Token'),
     new XToken('0x89.polygon', 137, '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359', 6, 'USDC', 'USD Coin'),

@@ -1,11 +1,11 @@
 import rlp from 'rlp';
 
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
 import { RouteAction } from '@balancednetwork/v1-sdk';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { xTokenMap } from '@/constants/xTokens';
-import { XChain, XChainId, XToken } from '@/types';
+import { XChain, XToken } from '@/types';
 import { uintToBytes } from '@/utils';
 import { xChains } from '../constants/xChains';
 

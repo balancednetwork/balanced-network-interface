@@ -1,7 +1,7 @@
 import { xChainMap } from '@/constants/xChains';
 import { XPublicClient } from '@/core/XPublicClient';
-import { XChainId, XToken } from '@/types';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XToken } from '@/types';
+import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
 import { Program } from '@coral-xyz/anchor';
 import { getAccount, getAssociatedTokenAddressSync } from '@solana/spl-token';
 import { PublicKey } from '@solana/web3.js';

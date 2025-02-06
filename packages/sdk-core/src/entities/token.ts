@@ -49,6 +49,13 @@ export class Token extends BaseCurrency {
     return this;
   }
 
+  /**
+   * Return this token, which does not need to be unwrapped
+   */
+  public get unwrapped(): Token {
+    return this;
+  }
+
   public get isNativeToken() {
     const nativeAddresses = [
       'cx0000000000000000000000000000000000000000',

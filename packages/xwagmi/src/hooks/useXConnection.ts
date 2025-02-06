@@ -1,8 +1,9 @@
+import { XChainType } from '@balancednetwork/sdk-core';
 import { useCurrentAccount, useCurrentWallet } from '@mysten/dapp-kit';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useMemo } from 'react';
 import { useAccount, useConnections } from 'wagmi';
-import { XChainType, XConnection } from '../types';
+import { XConnection } from '../types';
 import { useXWagmiStore } from '../useXWagmiStore';
 
 export function useXConnection(xChainType: XChainType | undefined): XConnection | undefined {

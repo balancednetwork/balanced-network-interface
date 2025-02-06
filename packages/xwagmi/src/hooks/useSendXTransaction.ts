@@ -1,10 +1,8 @@
 import { getXWalletClient } from '@/actions';
-import { xChainMap } from '@/constants';
-import { XChainId } from '@/types';
+import { ICON_XCALL_NETWORK_ID, xChainMap } from '@/constants';
+import { isIconTransaction } from '@/utils';
 import { transactionActions, xChainHeightActions, xMessageActions, xTransactionActions } from '@/xcall';
 import { XMessage, XMessageStatus, XTransaction, XTransactionInput, XTransactionStatus } from '@/xcall/types';
-
-const iconChainId: XChainId = '0x1.icon';
 
 const sendXTransaction = async (xTransactionInput: XTransactionInput) => {
   const { direction } = xTransactionInput;
@@ -26,7 +24,8 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput) => {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   const finalDestinationChainId = direction.to;
-  const primaryDestinationChainId = sourceChainId === iconChainId ? finalDestinationChainId : iconChainId;
+  const primaryDestinationChainId =
+    sourceChainId === ICON_XCALL_NETWORK_ID ? finalDestinationChainId : ICON_XCALL_NETWORK_ID;
 
   const primaryDestinationChainInitialBlockHeight =
     xChainHeightActions.getXChainHeight(primaryDestinationChainId) - 20n;
@@ -46,20 +45,22 @@ const sendXTransaction = async (xTransactionInput: XTransactionInput) => {
   };
   xTransactionActions.add(xTransaction);
 
-  const xMessage: XMessage = {
-    id: `${sourceChainId}/${sourceTransactionHash}`,
-    xTransactionId: xTransaction.id,
-    sourceChainId: sourceChainId,
-    destinationChainId: primaryDestinationChainId,
-    sourceTransactionHash,
-    status: XMessageStatus.REQUESTED,
-    events: {},
-    destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
-    isPrimary: true,
-    createdAt: now,
-    useXCallScanner: xChainMap[primaryDestinationChainId].useXCallScanner || xChainMap[sourceChainId].useXCallScanner,
-  };
-  xMessageActions.add(xMessage);
+  if (!isIconTransaction(sourceChainId, finalDestinationChainId)) {
+    const xMessage: XMessage = {
+      id: `${sourceChainId}/${sourceTransactionHash}`,
+      xTransactionId: xTransaction.id,
+      sourceChainId,
+      destinationChainId: primaryDestinationChainId,
+      sourceTransactionHash,
+      status: XMessageStatus.REQUESTED,
+      events: {},
+      destinationChainInitialBlockHeight: primaryDestinationChainInitialBlockHeight,
+      isPrimary: true,
+      createdAt: now,
+      useXCallScanner: xChainMap[primaryDestinationChainId].useXCallScanner || xChainMap[sourceChainId].useXCallScanner,
+    };
+    xMessageActions.add(xMessage);
+  }
 
   return xTransaction.id;
 };

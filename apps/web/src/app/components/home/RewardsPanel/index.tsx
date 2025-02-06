@@ -51,7 +51,7 @@ const RewardsPanel = () => {
     <StyledBoxPanel bg="bg3">
       <Flex
         mb="30px"
-        width={'400px'}
+        maxWidth={'400px'}
         alignItems="flex-end"
         flexWrap="wrap"
         justifyContent="justify-start"

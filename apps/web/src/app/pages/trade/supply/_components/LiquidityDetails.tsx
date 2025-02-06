@@ -147,7 +147,7 @@ export default function LiquidityDetails() {
           </DashGrid>
 
           <Accordion collapsible>
-            {/* {shouldShowQueue && (
+            {shouldShowQueue && (
               <StyledAccordionItem key={BalancedJs.utils.POOL_IDS.sICXICX} $border={userPools.length !== 0}>
                 <StyledAccordionButton onClick={() => setIsHided(false)}>
                   <PoolRecordQ
@@ -155,7 +155,7 @@ export default function LiquidityDetails() {
                     pair={queuePair}
                     totalReward={queueReward}
                     source={sources && sources['sICX/ICX']}
-                    apy={allPairs ? allPairs[1].balnApy : 0}
+                    apy={0}
                   />
                 </StyledAccordionButton>
                 <StyledAccordionPanel hidden={isHided}>
@@ -164,13 +164,13 @@ export default function LiquidityDetails() {
                       balance={queueBalance}
                       pair={queuePair}
                       totalReward={queueReward}
-                      apy={allPairs ? allPairs[1].balnApy : 0}
+                      apy={0}
                       source={sources && sources['sICX/ICX']}
                     />
                   </StyledBoxPanel>
                 </StyledAccordionPanel>
               </StyledAccordionItem>
-            )} */}
+            )}
             {balancesWithoutQ &&
               userPools.map((pool, index) => (
                 <StyledAccordionItem key={`${pool.poolId}-${pool.xChainId}`} $border={index !== userPools.length - 1}>
@@ -330,7 +330,7 @@ const PoolRecordQ = ({
             : '-'
         }`}</DataText>
       )}
-      {upSmall && <DataText>{`~ ${reward.toFormat(2, BigNumber.ROUND_HALF_UP) || '-'} BALN`}</DataText>}
+      {upSmall && <DataText>-</DataText>}
     </ListItem>
   );
 };

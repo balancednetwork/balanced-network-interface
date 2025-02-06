@@ -209,6 +209,32 @@ export const bsc: XChain = {
   useXCallScanner: false,
 };
 
+export const polygon: XChain = {
+  id: 137,
+  name: 'Polygon',
+  xChainId: '0x89.polygon',
+  xChainType: 'EVM',
+  tracker: { tx: 'https://polygonscan.com/tx/' },
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Polygon',
+    symbol: 'POL',
+  },
+  rpc: {
+    http: 'https://polygon.llamarpc.com',
+  },
+  contracts: {
+    xCall: '0xfC83a3F252090B26f92F91DFB9dC3Eb710AdAf1b',
+    assetManager: '0x18274b9755C9d0D31e8863aDd1D6019B16a0B316',
+    bnUSD: '0x9990Be34D6666C0a69C9504310aebd6fbdb8E699',
+  },
+  autoExecution: true,
+  gasThreshold: 0.5,
+  testnet: false,
+  useXCallScanner: false,
+  intentChainId: 'pol',
+};
+
 export const arbitrum: XChain = {
   id: 42161,
   name: 'Arbitrum',
@@ -232,6 +258,7 @@ export const arbitrum: XChain = {
   gasThreshold: 0.0001,
   testnet: false,
   useXCallScanner: false,
+  intentChainId: 'arb',
 };
 
 export const base: XChain = {
@@ -333,6 +360,7 @@ export const sui: XChain = {
   gasThreshold: 0.15, // xCall fee: 0.05 SUI
   testnet: false,
   useXCallScanner: true,
+  intentChainId: 'sui',
 };
 
 // TODO: complete solana chain
@@ -400,6 +428,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   '0x38.bsc': bsc,
   '0x2105.base': base,
   '0xa.optimism': optimism,
+  '0x89.polygon': polygon,
   'injective-1': injective,
   stellar: stellar,
   sui: sui,
@@ -426,6 +455,7 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   ],
   sui: ['centralized-1', 'centralized-2'],
   solana: ['3FYPqMDqxXi1jtFxj4weW3etedRb1bXMnMTPVS9UHgvH', 'DWhzoYAJPvRnPspzDs6PNNzTh5povHNWLpjSn5xCamuk'],
+  '0x89.polygon': ['0x9863CCECe5028b4906798C3e45Ae04b1207de63e', '0x5EA66080F222d8C7AF0c6f184ADa90c9b7f20b91'],
 };
 
 /** to other chain from icon sources */
@@ -441,4 +471,5 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   stellar: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
   sui: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
   solana: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
+  '0x89.polygon': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
 };

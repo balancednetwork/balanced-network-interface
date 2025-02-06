@@ -1,7 +1,7 @@
+import { Typography } from '@/app/theme';
+import { Box } from 'rebass';
 import styled, { css, keyframes } from 'styled-components';
 import SearchInput from '../SearchModal/SearchInput';
-import { Box } from 'rebass';
-import { Typography } from '@/app/theme';
 
 const mobileWalletBreakpoint = '530px';
 
@@ -175,7 +175,7 @@ export const XChainsWrap = styled.div<{ signedIn: boolean }>`
   `};
 
   img {
-    margin: 5px 8px;
+    margin: 5px 6px;
   }
 
   @media screen and (min-width: ${mobileWalletBreakpoint}) {

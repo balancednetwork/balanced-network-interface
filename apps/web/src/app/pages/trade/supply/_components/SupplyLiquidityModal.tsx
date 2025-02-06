@@ -6,9 +6,8 @@ import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 import { formatUnits } from 'viem';
 
-import { TextButton } from '@/app/components/Button';
+import { Button, TextButton } from '@/app/components/Button';
 import { StyledButton } from '@/app/components/Button/StyledButton';
-import { UnderlineText } from '@/app/components/DropdownText';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import XTransactionState from '@/app/components/XTransactionState';
@@ -220,25 +219,6 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
               <Trans>Remove your assets to cancel this transaction.</Trans>
             </Typography>
           )}
-          {isWrongChain && (
-            <Flex
-              justifyContent="center"
-              alignItems="center"
-              mt={2}
-              pt={2}
-              pb={3}
-              style={{ gap: 4, backgroundColor: '#0b385c', borderRadius: '10px' }}
-            >
-              <UnderlineText>
-                <Typography color="primaryBright" onClick={handleSwitchChain}>
-                  Switch to {getNetworkDisplayName(lpXChainId)}
-                </Typography>
-              </UnderlineText>
-              <Typography textAlign="center" mt={'1px'}>
-                <Trans> to make this transaction.</Trans>
-              </Typography>
-            </Flex>
-          )}
 
           {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
 
@@ -256,13 +236,20 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                     <Trans>Cancel</Trans>
                   </TextButton>
 
-                  <StyledButton
-                    disabled={!isEnabled || !gasChecker.hasEnoughGas || isPending || isWrongChain}
-                    onClick={handleSupplyConfirm}
-                    $loading={isPending}
-                  >
-                    {isPending ? (pair ? t`Supplying` : t`Creating pool`) : pair ? t`Supply` : t`Create pool`}
-                  </StyledButton>
+                  {isWrongChain ? (
+                    <Button onClick={handleSwitchChain} fontSize={14}>
+                      <Trans>Switch to</Trans>
+                      {` ${getNetworkDisplayName(lpXChainId)}`}
+                    </Button>
+                  ) : (
+                    <StyledButton
+                      disabled={!isEnabled || !gasChecker.hasEnoughGas || isPending || isWrongChain}
+                      onClick={handleSupplyConfirm}
+                      $loading={isPending}
+                    >
+                      {isPending ? (pair ? t`Supplying` : t`Creating pool`) : pair ? t`Supply` : t`Create pool`}
+                    </StyledButton>
+                  )}
                 </Flex>
               </motion.div>
             )}

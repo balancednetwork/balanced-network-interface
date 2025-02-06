@@ -267,12 +267,8 @@ export function useDerivedSwapInfo(): {
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
   const currencyBalances: { [field in Field]?: CurrencyAmount<XToken> } = React.useMemo(() => {
     return {
-      [Field.INPUT]: inputCurrency
-        ? crossChainWallet[inputCurrency.xChainId]?.[inputCurrency?.wrapped.address]
-        : undefined,
-      [Field.OUTPUT]: outputCurrency
-        ? crossChainWallet[outputCurrency.xChainId]?.[outputCurrency?.wrapped.address]
-        : undefined,
+      [Field.INPUT]: inputCurrency ? crossChainWallet[inputCurrency.xChainId]?.[inputCurrency?.address] : undefined,
+      [Field.OUTPUT]: outputCurrency ? crossChainWallet[outputCurrency.xChainId]?.[outputCurrency?.address] : undefined,
     };
   }, [crossChainWallet, inputCurrency, outputCurrency]);
 

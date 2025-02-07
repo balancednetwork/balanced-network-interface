@@ -7,8 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useCheckSolanaAccount } from '@/app/components/SolanaAccountExistenceWarning';
-import { NETWORK_ID } from '@/constants/config';
-import { canBeQueue } from '@/constants/currency';
 import { PRICE_IMPACT_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
 import { SUPPORTED_TOKENS_LIST, useICX, wICX } from '@/constants/tokens';
 import { useAllXTokens } from '@/hooks/Tokens';
@@ -52,7 +50,7 @@ export function useSwapActionHandlers() {
       dispatch(
         selectCurrency({
           field,
-          currency: currency instanceof XToken ? currency : XToken.getXToken('0x1.icon', currency.wrapped),
+          currency: currency instanceof XToken ? currency : XToken.getXToken('0x1.icon', currency),
         }),
       );
     },
@@ -256,7 +254,6 @@ export function useDerivedSwapInfo(): {
     [Field.INPUT]: { currency: inputCurrency, percent: inputPercent },
     [Field.OUTPUT]: { currency: outputCurrency },
   } = useSwapState();
-
   const account = useXAccount(getXChainType(inputCurrency?.xChainId)).address;
 
   const crossChainWallet = useCrossChainWalletBalances();
@@ -298,57 +295,15 @@ export function useDerivedSwapInfo(): {
     typedValue,
     (isExactIn ? _currencies[Field.INPUT] : _currencies[Field.OUTPUT]) ?? undefined,
   );
-  // cannot call `useTradeExactIn` or `useTradeExactOut` conditionally because they are hooks
-  const queue = canBeQueue(_currencies[Field.INPUT], _currencies[Field.OUTPUT]);
   const trade1 = useTradeExactIn(isExactIn ? _parsedAmount : undefined, _currencies[Field.OUTPUT], {
-    maxHops: queue ? 1 : undefined,
+    maxHops: undefined,
   });
+  console.log('_currencies', _parsedAmount, _currencies[Field.OUTPUT], trade1);
   const trade2 = useTradeExactOut(_currencies[Field.INPUT], !isExactIn ? _parsedAmount : undefined, {
-    maxHops: queue ? 1 : undefined,
+    maxHops: undefined,
   });
-  let trade = isExactIn ? trade1 : trade2;
 
-  //TODO: Remove this when the queue is emptied
-  //temporary solution for determining better trade between using wICX and queue pairs
-  const ICX = useICX();
-
-  //check trade setup for ICX output
-  const parsedAmountTMP1 = tryParseAmount(typedValue, (isExactIn ? _currencies[Field.INPUT] : ICX) ?? undefined);
-  const queueTMP = canBeQueue(_currencies[Field.INPUT], ICX);
-  const trade1TMP = useTradeExactIn(isExactIn ? parsedAmountTMP1 : undefined, ICX, {
-    maxHops: queueTMP ? 1 : undefined,
-  });
-  const trade2TMP = useTradeExactOut(_currencies[Field.INPUT], !isExactIn ? parsedAmountTMP1 : undefined, {
-    maxHops: queueTMP ? 1 : undefined,
-  });
-  const tradeICX = isExactIn ? trade1TMP : trade2TMP;
-
-  //if output is wICX, set the trade to the one with the better execution amount
-  if (_currencies[Field.OUTPUT]?.symbol === 'wICX') {
-    // Pick the trade with the better execution amount
-    if (tradeICX && (!trade || tradeICX.executionPrice.greaterThan(trade.executionPrice))) {
-      trade = tradeICX;
-    }
-  }
-  //TODO: end of temporary solution
-
-  //check trade setup for wICX input
-  //compares trades starting with ICX token and picks better route between staking first or using wICX pool
-  const parsedAmountTMP2 = tryParseAmount(
-    typedValue,
-    (isExactIn ? wICX[NETWORK_ID] : _currencies[Field.OUTPUT]) ?? undefined,
-  );
-  const trade1TMP2 = useTradeExactIn(isExactIn ? parsedAmountTMP2 : undefined, _currencies[Field.OUTPUT]);
-  const trade2TMP2 = useTradeExactOut(wICX[NETWORK_ID], !isExactIn ? parsedAmountTMP2 : undefined);
-  const tradeWICX = isExactIn ? trade1TMP2 : trade2TMP2;
-
-  //if input is ICX, set the trade to the one with the better execution amount
-  if (_currencies[Field.INPUT]?.symbol === 'ICX') {
-    // Pick the trade with the better execution amount
-    if (tradeWICX && (!trade || tradeWICX.executionPrice.greaterThan(trade.executionPrice))) {
-      trade = tradeWICX;
-    }
-  }
+  const trade = isExactIn ? trade1 : trade2;
 
   const swapDisabled = trade?.priceImpact.greaterThan(PRICE_IMPACT_SWAP_DISABLED_THRESHOLD);
 

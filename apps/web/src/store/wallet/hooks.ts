@@ -80,12 +80,7 @@ export function useAvailableBalances(
       if (!(balance.quotient > BIGINT_ZERO) && balance.currency.wrapped.address !== bnJs.BALN.address) {
         return acc;
       }
-      acc[balance.currency.wrapped.address] = balance;
-
-      //add wICX balance to the list
-      if (balance.currency.symbol === 'ICX') {
-        acc[bnJs.wICX.address] = CurrencyAmount.fromRawAmount(wICX[NETWORK_ID], balance.quotient.toString());
-      }
+      acc[balance.currency.address] = balance;
 
       return acc;
     }, {});

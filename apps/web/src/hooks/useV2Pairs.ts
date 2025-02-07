@@ -7,7 +7,6 @@ import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 
 import { usePoolPanelContext } from '@/app/pages/trade/supply/_components/PoolPanelContext';
-import { canBeQueue } from '@/constants/currency';
 import { BIGINT_ZERO, FRACTION_ZERO } from '@/constants/misc';
 import { bnUSD } from '@/constants/tokens';
 import { fetchStabilityFundBalances, getAcceptedTokens } from '@/store/stabilityFund/hooks';
@@ -69,19 +68,11 @@ export async function fetchV2Pairs(currencies: [Currency | undefined, Currency |
   try {
     const callData: CallData[] = tokens.map(([tokenA, tokenB]) => {
       if (tokenA && tokenB && tokenA.chainId === tokenB.chainId && !tokenA.equals(tokenB)) {
-        if (canBeQueue(tokenA, tokenB)) {
-          return {
-            target: bnJs.Dex.address,
-            method: 'getPoolStats',
-            params: [`0x${BalancedJs.utils.POOL_IDS.sICXICX.toString(16)}`],
-          };
-        } else {
-          return {
-            target: bnJs.Dex.address,
-            method: 'getPoolStatsForPair',
-            params: [tokenA.address, tokenB.address],
-          };
-        }
+        return {
+          target: bnJs.Dex.address,
+          method: 'getPoolStatsForPair',
+          params: [tokenA.address, tokenB.address],
+        };
       } else {
         // Useless, just a placeholder
         return {

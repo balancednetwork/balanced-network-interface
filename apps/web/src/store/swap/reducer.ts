@@ -1,8 +1,5 @@
-import { NETWORK_ID } from '@/constants/config';
-import { ICX } from '@/constants/tokens';
 import { XToken, convertCurrency, xTokenMap } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
-import { wICX } from '@balancednetwork/xwagmi';
 import { createSlice } from '@reduxjs/toolkit';
 
 // !TODO: use one Field for swap and bridge panel
@@ -53,22 +50,7 @@ const swapSlice = createSlice({
       (state, { payload: { currency, field } }) => {
         const otherField = field === Field.INPUT ? Field.OUTPUT : Field.INPUT;
         // the case where we have to swap the order
-        // and handle icx vs wicx
-        if (currency?.symbol === 'ICX' && state[otherField].currency?.symbol === 'wICX') {
-          return {
-            ...state,
-            independentField: state.independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
-            [field]: { ...state[otherField], currency: ICX[NETWORK_ID] },
-            [otherField]: state[field],
-          };
-        } else if (currency?.symbol === 'wICX' && state[otherField].currency?.symbol === 'ICX') {
-          return {
-            ...state,
-            independentField: state.independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT,
-            [field]: { ...state[otherField], currency: wICX[NETWORK_ID] },
-            [otherField]: state[field],
-          };
-        } else if (currency?.symbol === state[otherField].currency?.symbol) {
+        if (currency?.symbol === state[otherField].currency?.symbol) {
           // the case where we have to swap the order
           return {
             ...state,
@@ -96,9 +78,8 @@ const swapSlice = createSlice({
       },
     ),
     switchCurrencies: create.reducer<void>(state => {
-      const inputCurrency = state[Field.INPUT].currency?.symbol === 'ICX' ? wICX : state[Field.INPUT].currency;
-      const outputCurrency =
-        state[Field.OUTPUT].currency?.symbol === 'wICX' ? xTokenMap['0x1.icon'][0] : state[Field.OUTPUT].currency;
+      const inputCurrency = state[Field.INPUT].currency;
+      const outputCurrency = state[Field.OUTPUT].currency;
 
       return {
         ...state,

@@ -5,7 +5,6 @@ import BigNumber from 'bignumber.js';
 
 import { ONE } from '@/constants';
 import { NETWORK_ID } from '@/constants/config';
-import { canBeQueue } from '@/constants/currency';
 import { BIGINT_ZERO } from '@/constants/misc';
 import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
 import { PairData, PairState } from '@/hooks/useV2Pairs';
@@ -208,8 +207,6 @@ export function getQueuePair(stats, tokenA: Token, tokenB: Token) {
 }
 
 export function getPair(stats, tokenA: Token, tokenB: Token): PairData {
-  if (canBeQueue(tokenA, tokenB)) return getQueuePair(stats, tokenA, tokenB);
-
   const poolId = parseInt(stats['id'], 16);
   if (poolId === 0) return [PairState.NOT_EXISTS, null, null];
 

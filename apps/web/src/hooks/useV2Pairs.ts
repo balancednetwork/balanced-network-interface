@@ -10,7 +10,7 @@ import { usePoolPanelContext } from '@/app/pages/trade/supply/_components/PoolPa
 import { BIGINT_ZERO, FRACTION_ZERO } from '@/constants/misc';
 import { bnUSD } from '@/constants/tokens';
 import { fetchStabilityFundBalances, getAcceptedTokens } from '@/store/stabilityFund/hooks';
-import { getPair } from '@/utils';
+import { getPair, getStakingPair } from '@/utils';
 import { bnJs } from '@balancednetwork/xwagmi';
 
 import { NETWORK_ID } from '@/constants/config';
@@ -28,7 +28,7 @@ export enum PairState {
 
 export type PairData = [PairState, Pair | null, BigNumber | null] | [PairState, Pair | null];
 
-export const fetchStabilityFundPairs = async () => {
+const fetchStabilityFundPairs = async () => {
   const acceptedTokens = await getAcceptedTokens();
   const stabilityFundBalances = await fetchStabilityFundBalances(
     acceptedTokens.filter(
@@ -49,6 +49,21 @@ export const useStabilityFundPairs = () => {
   });
 
   return stabilityFundPairs || [];
+};
+
+const fetchStakingPair = async () => {
+  const res = await bnJs.Dex.getPoolStats(1);
+  return getStakingPair(res);
+};
+
+export const useStakingPair = () => {
+  const { data: stakingPair } = useQuery({
+    queryKey: ['stakingPair'],
+    queryFn: fetchStakingPair,
+    refetchInterval: 10_000,
+  });
+
+  return stakingPair;
 };
 
 const chunkArray = <T>(array: T[], chunkSize: number): T[][] => {

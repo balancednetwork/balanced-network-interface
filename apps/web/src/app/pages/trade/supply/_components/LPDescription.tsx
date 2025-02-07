@@ -66,11 +66,7 @@ export default function LPDescription() {
 
   const apy = useMemo(() => pairData && new BigNumber(pairData.balnApy), [pairData]);
 
-  const balances = useSuppliedTokens(
-    pair?.poolId ?? -1,
-    currencies[Field.CURRENCY_A],
-    pair?.isQueue ? pair?.token1 : currencies[Field.CURRENCY_B],
-  );
+  const balances = useSuppliedTokens(pair?.poolId ?? -1, currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]);
 
   const userPoolBalances = useBalance(pair?.poolId || -1);
 

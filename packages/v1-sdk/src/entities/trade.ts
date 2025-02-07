@@ -181,9 +181,7 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
       this.inputAmount.quotient,
       this.outputAmount.quotient,
     );
-    this.priceImpact = this.isQueue
-      ? new Percent(0)
-      : computePriceImpact(route.midPrice, this.inputAmount.subtract(this.fee), this.outputAmount);
+    this.priceImpact = computePriceImpact(route.midPrice, this.inputAmount.subtract(this.fee), this.outputAmount);
   }
 
   /**
@@ -416,30 +414,15 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
         if (inputCurrencySymbol === 'bnUSD') {
           result = result.multiply(STABILITY_FUND_FRACTION);
         }
-      } else if (inputCurrencySymbol === 'sICX' && outputCurrencySymbol === 'ICX') {
-        result = result.multiply(new Fraction(99, 100));
-      } else if (inputCurrencySymbol === 'ICX' && outputCurrencySymbol === 'sICX') {
-        // result = result.multiply(new Fraction(ONE));
+      } else if (pair.isStaking) {
+        result = result.multiply(new Fraction(100, 100));
       } else if (outputCurrencySymbol === 'ARCH') {
         result = result.multiply(new Fraction(99, 100));
       } else {
-        // TODO: what is this for?
         result = result.multiply(new Fraction(997, 1000));
       }
     }
 
     return (this._fee = this.inputAmount.multiply(new Fraction(ONE).subtract(result)));
-  }
-
-  get isQueue(): boolean {
-    if (this.inputAmount.currency.symbol === 'sICX' && this.outputAmount.currency.symbol === 'ICX') {
-      return true;
-    }
-
-    if (this.inputAmount.currency.symbol === 'ICX' && this.outputAmount.currency.symbol === 'sICX') {
-      return true;
-    }
-
-    return false;
   }
 }

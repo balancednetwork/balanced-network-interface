@@ -298,7 +298,7 @@ export function useDerivedSwapInfo(): {
   const trade1 = useTradeExactIn(isExactIn ? _parsedAmount : undefined, _currencies[Field.OUTPUT], {
     maxHops: undefined,
   });
-  console.log('_currencies', _parsedAmount, _currencies[Field.OUTPUT], trade1);
+
   const trade2 = useTradeExactOut(_currencies[Field.INPUT], !isExactIn ? _parsedAmount : undefined, {
     maxHops: undefined,
   });

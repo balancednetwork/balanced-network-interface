@@ -46,10 +46,7 @@ export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
 };
 
 export const PINNED_PAIRS: { readonly [chainId: number]: [Token, Token][] } = {
-  [ChainId.MAINNET]: [
-    [ICX[ChainId.MAINNET], sICX[ChainId.MAINNET]],
-    [wICX[ChainId.MAINNET], sICX[ChainId.MAINNET]],
-  ],
+  [ChainId.MAINNET]: [[wICX[ChainId.MAINNET], sICX[ChainId.MAINNET]]],
   [ChainId.YEOUIDO]: [[wICX[ChainId.YEOUIDO], sICX[ChainId.YEOUIDO]]],
   [ChainId.SEJONG]: [[wICX[ChainId.SEJONG], sICX[ChainId.SEJONG]]],
   [ChainId.BERLIN]: [[wICX[ChainId.BERLIN], sICX[ChainId.BERLIN]]],

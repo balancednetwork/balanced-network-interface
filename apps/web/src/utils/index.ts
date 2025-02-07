@@ -6,7 +6,7 @@ import BigNumber from 'bignumber.js';
 import { ONE } from '@/constants';
 import { NETWORK_ID } from '@/constants/config';
 import { BIGINT_ZERO } from '@/constants/misc';
-import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
+import { COMBINED_TOKENS_LIST, sICX, wICX } from '@/constants/tokens';
 import { PairData, PairState } from '@/hooks/useV2Pairs';
 import { Field } from '@/store/swap/reducer';
 import { PairInfo } from '@/types';
@@ -173,37 +173,24 @@ export function getPairName(pair: PairInfo) {
 }
 
 /**
- * @returns ICX/sICX pair
+ * @returns ICX->sICX staking pair
  * @param {tokenA} ICX
  * @param {tokenB} sICX
  *  */
-export function getQueuePair(stats, tokenA: Token, tokenB: Token) {
+export function getStakingPair(stats) {
   const rate = new BigNumber(stats['price'], 16).div(LOOP);
 
-  const icxSupply = new BigNumber(stats['total_supply'], 16);
+  const icxSupply = new BigNumber(10 ** 18);
   const sicxSupply = icxSupply.div(rate);
 
   const totalSupply = icxSupply.toFixed();
-
-  const [ICX, sICX] = tokenA.symbol === 'ICX' ? [tokenA, tokenB] : [tokenB, tokenA];
-
-  const minQuoteTokenAmount = BalancedJs.utils.toFormat(new BigNumber(stats['min_quote'], 16), stats['quote_decimals']);
-
-  // ICX/sICX
-  const pair: [PairState, Pair, BigNumber] = [
-    PairState.EXISTS,
-    new Pair(
-      CurrencyAmount.fromRawAmount(ICX, totalSupply),
-      CurrencyAmount.fromRawAmount(sICX, sicxSupply.toFixed(0)),
-      {
-        poolId: BalancedJs.utils.POOL_IDS.sICXICX,
-        totalSupply,
-      },
-    ),
-    minQuoteTokenAmount,
-  ];
-
-  return pair;
+  return new Pair(
+    CurrencyAmount.fromRawAmount(wICX[NetworkId.MAINNET], totalSupply),
+    CurrencyAmount.fromRawAmount(sICX[NetworkId.MAINNET], sicxSupply.toFixed(0)),
+    {
+      isStaking: true,
+    },
+  );
 }
 
 export function getPair(stats, tokenA: Token, tokenB: Token): PairData {

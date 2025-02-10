@@ -43,11 +43,21 @@ const SavingsChainSelector = ({
     if (!lpRewards) return xChains;
 
     return [...xChains].sort((a: XChain, b: XChain) => {
-      const aRewardAmount = lpRewards[a.xChainId]?.totalValueInUSD || 0;
-      const bRewardAmount = lpRewards[b.xChainId]?.totalValueInUSD || 0;
+      const aRewardAmount = parseFloat(lpRewards[a.xChainId]?.totalValueInUSD.toFixed(2) || '0');
+      const bRewardAmount = parseFloat(lpRewards[b.xChainId]?.totalValueInUSD.toFixed(2) || '0');
 
-      if (aRewardAmount === bRewardAmount) return 0;
-      return bRewardAmount > aRewardAmount ? 1 : -1;
+      const aXChainName = xChainMap[a.xChainId].name;
+      const bXChainName = xChainMap[b.xChainId].name;
+      const aXChainNameAscii = aXChainName.charCodeAt(0);
+      const bXChainNameAscii = bXChainName.charCodeAt(0);
+
+      if (aRewardAmount > 0.01 || bRewardAmount > 0.01) {
+        if (aRewardAmount === bRewardAmount) return 0;
+        return bRewardAmount > aRewardAmount ? 1 : -1;
+      } else {
+        if (aXChainNameAscii === bXChainNameAscii) return 0;
+        return bXChainNameAscii > aXChainNameAscii ? -1 : 1;
+      }
     });
   }, [lpRewards]);
 

@@ -49,9 +49,22 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
   const { data: incentivisedPairs } = useIncentivisedPairs();
 
+  // supply
   const [isPending, setIsPending] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
   const currentXTransaction = useXTransactionStore(state => state.transactions[pendingTx]);
+
+  // tokenA
+  const [isSendingTokenA, setIsSendingTokenA] = React.useState(false);
+  const [isRemovingTokenA, setIsRemovingTokenA] = React.useState(false);
+  const [isSigningTokenA, setIsSigningTokenA] = React.useState(false);
+  const [pendingTxTokenA, setPendingTxTokenA] = React.useState('');
+
+  // tokenB
+  const [isSendingTokenB, setIsSendingTokenB] = React.useState(false);
+  const [isRemovingTokenB, setIsRemovingTokenB] = React.useState(false);
+  const [isSigningTokenB, setIsSigningTokenB] = React.useState(false);
+  const [pendingTxTokenB, setPendingTxTokenB] = React.useState('');
 
   const isExecuted = React.useMemo(
     () =>
@@ -195,12 +208,28 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
               currencies={currencies}
               parsedAmounts={parsedAmounts}
               onResetError={() => setHasErrorMessage(false)}
+              isSending={isSendingTokenA}
+              isRemoving={isRemovingTokenA}
+              isSigning={isSigningTokenA}
+              pendingTx={pendingTxTokenA}
+              setIsSending={setIsSendingTokenA}
+              setIsRemoving={setIsRemovingTokenA}
+              setIsSigning={setIsSigningTokenA}
+              setPendingTx={setPendingTxTokenA}
             />
             <SendRemoveXToken
               field={Field.CURRENCY_B}
               currencies={currencies}
               parsedAmounts={parsedAmounts}
               onResetError={() => setHasErrorMessage(false)}
+              isSending={isSendingTokenB}
+              isRemoving={isRemovingTokenB}
+              isSigning={isSigningTokenB}
+              pendingTx={pendingTxTokenB}
+              setIsSending={setIsSendingTokenB}
+              setIsRemoving={setIsRemovingTokenB}
+              setIsSigning={setIsSigningTokenB}
+              setPendingTx={setPendingTxTokenB}
             />
           </div>
           <Typography textAlign="center" as="h3" fontWeight="normal">

@@ -31,14 +31,31 @@ interface SendRemoveXTokenProps {
   parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> };
   currencies: { [field in Field]?: XToken };
   onResetError: () => void;
+  isSending: boolean;
+  isRemoving: boolean;
+  pendingTx: string;
+  isSigning: boolean;
+  setIsSending: (isSending: boolean) => void;
+  setIsRemoving: (isRemoving: boolean) => void;
+  setIsSigning: (isSigning: boolean) => void;
+  setPendingTx: (tx: string) => void;
 }
 
-export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetError }: SendRemoveXTokenProps) {
+export function SendRemoveXToken({
+  field,
+  currencies,
+  parsedAmounts,
+  onResetError,
+  isSending,
+  isRemoving,
+  setIsSending,
+  setIsRemoving,
+  isSigning,
+  setIsSigning,
+  pendingTx,
+  setPendingTx,
+}: SendRemoveXTokenProps) {
   const { lpXChainId } = useDerivedMintInfo();
-
-  const [isPending, setIsPending] = React.useState(false);
-  const [isSigning, setIsSigning] = React.useState(false);
-  const [pendingTx, setPendingTx] = React.useState('');
 
   const currentXTransaction = useXTransactionStore(state => state.transactions[pendingTx]);
 
@@ -66,20 +83,22 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
     const invalidateAndClear = async () => {
       if (currentXTransaction?.status === XTransactionStatus.success) {
         await refetch();
-        setIsPending(false);
+        setIsSending(false);
+        setIsRemoving(false);
         setPendingTx('');
       }
     };
 
     invalidateAndClear();
-  }, [currentXTransaction, refetch]);
+  }, [currentXTransaction, refetch, setIsSending, setIsRemoving, setPendingTx]);
 
   useEffect(() => {
     if (currentXTransaction?.status === XTransactionStatus.failure) {
-      setIsPending(false);
+      setIsSending(false);
+      setIsRemoving(false);
       setPendingTx('');
     }
-  }, [currentXTransaction]);
+  }, [currentXTransaction, setIsSending, setIsRemoving, setPendingTx]);
 
   const depositXToken = useDepositXToken();
   const withdrawXToken = useWithdrawXToken();
@@ -91,7 +110,7 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
       return;
     }
     onResetError();
-    setIsPending(true);
+    setIsSending(true);
 
     try {
       setIsSigning(true);
@@ -99,10 +118,10 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
       setIsSigning(false);
 
       if (txHash) setPendingTx(txHash);
-      else setIsPending(false);
+      else setIsSending(false);
     } catch (error) {
       console.error('error', error);
-      setIsPending(false);
+      setIsSending(false);
     }
   };
 
@@ -112,7 +131,7 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
       return;
     }
     onResetError();
-    setIsPending(true);
+    setIsRemoving(true);
 
     try {
       setIsSigning(true);
@@ -120,10 +139,10 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
       setIsSigning(false);
 
       if (txHash) setPendingTx(txHash);
-      else setIsPending(false);
+      else setIsRemoving(false);
     } catch (error) {
       console.error('error', error);
-      setIsPending(false);
+      setIsRemoving(false);
     }
   };
 
@@ -141,7 +160,7 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
                   {parsedAmount?.toSignificant(6)} {formatSymbol(xToken?.symbol)}
                 </Typography>
 
-                {!isPending && approvalState !== ApprovalState.APPROVED ? (
+                {!isSending && approvalState !== ApprovalState.APPROVED ? (
                   <SupplyButton
                     disabled={approvalState === ApprovalState.PENDING || isWrongChain}
                     mt={2}
@@ -150,10 +169,10 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
                     {approvalState !== ApprovalState.PENDING ? t`Approve` : t`Approving`}
                   </SupplyButton>
                 ) : (
-                  <SupplyButton disabled={isPending || isWrongChain} mt={2} onClick={handleAdd}>
-                    {!isPending && 'Send'}
-                    {isPending && isSigning && 'Send'}
-                    {isPending && !isSigning && 'Sending'}
+                  <SupplyButton disabled={isSending || isWrongChain} mt={2} onClick={handleAdd}>
+                    {!isSending && 'Send'}
+                    {isSending && isSigning && 'Send'}
+                    {isSending && !isSigning && 'Sending'}
                   </SupplyButton>
                 )}
               </>
@@ -178,10 +197,10 @@ export function SendRemoveXToken({ field, currencies, parsedAmounts, onResetErro
                   {depositAmount?.toSignificant(6)} {formatSymbol(xToken?.symbol)}
                 </Typography>
 
-                <RemoveButton disabled={isPending || isWrongChain} mt={2} onClick={handleRemove}>
-                  {!isPending && 'Remove'}
-                  {isPending && isSigning && 'Remove'}
-                  {isPending && !isSigning && 'Removing'}
+                <RemoveButton disabled={isRemoving || isWrongChain} mt={2} onClick={handleRemove}>
+                  {!isRemoving && 'Remove'}
+                  {isRemoving && isSigning && 'Remove'}
+                  {isRemoving && !isSigning && 'Removing'}
                 </RemoveButton>
               </>
             )}

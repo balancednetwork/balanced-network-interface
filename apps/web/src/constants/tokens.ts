@@ -158,4 +158,4 @@ export const FUNDING_TOKENS_LIST = FUNDING_TOKENS[NETWORK_ID];
 
 export const ORACLE_PRICED_TOKENS = ['USDC', 'USDT'];
 
-export const UNTRADEABLE_TOKENS = ['JitoSOL', 'mSUI'];
+export const UNTRADEABLE_TOKENS = ['JitoSOL'];

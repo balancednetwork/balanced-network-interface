@@ -94,17 +94,16 @@ export function maxAmountSpend(
 ): CurrencyAmount<Currency> | undefined {
   if (!currencyAmount) return undefined;
 
-  let minCurrencyGas: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(currencyAmount?.currency, 0);
+  const minCurrencyGas = currencyAmount.currency.isNativeToken
+    ? CurrencyAmount.fromRawAmount(
+        currencyAmount.currency,
+        new BigNumber(xChainMap[xChainId].gasThreshold)
+          .times(2)
+          .times(10 ** currencyAmount.currency.decimals)
+          .toString(),
+      )
+    : CurrencyAmount.fromRawAmount(currencyAmount.currency, 0n);
 
-  if (currencyAmount.currency.isNativeToken) {
-    minCurrencyGas = CurrencyAmount.fromRawAmount(
-      currencyAmount.currency,
-      new BigNumber(xChainMap[xChainId].gasThreshold)
-        .times(2)
-        .times(10 ** currencyAmount.currency.decimals)
-        .toString(),
-    );
-  }
   return currencyAmount.subtract(minCurrencyGas).greaterThan(0)
     ? currencyAmount.subtract(minCurrencyGas)
     : CurrencyAmount.fromRawAmount(currencyAmount.currency, 0n);

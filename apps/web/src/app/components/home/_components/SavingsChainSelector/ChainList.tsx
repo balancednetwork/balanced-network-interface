@@ -59,10 +59,10 @@ const ChainItem = ({ chain, setChainId, isLast, rewardAmount }: ChainItemProps) 
           style={{ transition: 'all ease 0.3s', opacity: rewardAmount.gt(0) ? 1 : 0.75 }}
           fontSize={rewardAmount.gt(0) ? 14 : 12}
         >
-          {rewardAmount.gt(0) ? formatPrice(rewardAmount.toString()) : '-'}
+          {rewardAmount.toFixed(2)}
         </Typography>
       ) : (
-        <Typography>-</Typography>
+        <Typography>N/A</Typography>
       )}
     </Grid>
   );

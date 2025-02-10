@@ -75,9 +75,6 @@ export function useAvailableBalances(
   return React.useMemo(() => {
     return balances.reduce((acc, balance) => {
       if (!balance) return acc;
-      if (!(balance.quotient > BIGINT_ZERO) && balance.currency.wrapped.address !== bnJs.BALN.address) {
-        return acc;
-      }
       acc[balance.currency.address] = balance;
 
       return acc;

@@ -22,9 +22,9 @@ const useIntentProvider = (currency?: XToken): UseQueryResult<EvmProvider | SuiP
     const chain = xChainMap[currency.xChainId];
     if (!chain) return null;
 
-    if (chain.xChainType === 'EVM') {
-      const evmWalletClient = await evmXService.getWalletClient(xChainMap[currency.chainId]);
-      const evmPublicClient = evmXService.getPublicClient(xChainMap[currency.chainId]);
+    if (chain.xChainType === 'EVM' && chain.intentChainId && chain.id) {
+      const evmWalletClient = await evmXService.getWalletClient(chain.id);
+      const evmPublicClient = evmXService.getPublicClient(chain.id);
 
       // @ts-ignore
       return new EvmProvider({ walletClient: evmWalletClient, publicClient: evmPublicClient });

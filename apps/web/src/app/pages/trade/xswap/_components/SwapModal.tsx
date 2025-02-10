@@ -56,31 +56,60 @@ const SwapModal = (props: SwapModalProps) => {
 
     const minReceived = executionTrade.minimumAmountOut(new Percent(slippageTolerance, 10_000));
 
-    if (executionTrade.inputAmount.currency.symbol === 'ICX') {
-      const rlpEncodedData = getRlpEncodedSwapData(executionTrade.route.routeActionPath).toString('hex');
+    if (executionTrade.inputAmount.currency.address === 'cx0000000000000000000000000000000000000000') {
+      const firstPair = executionTrade.route.pairs[0];
+      if (firstPair.isStaking) {
+        const rlpEncodedData = getRlpEncodedSwapData(executionTrade.route.routeActionPath).toString('hex');
 
-      bnJs
-        .inject({ account })
-        .Router.swapICXV2(toDec(executionTrade.inputAmount), rlpEncodedData, toDec(minReceived), recipient)
-        .then((res: any) => {
-          addTransaction(
-            { hash: res.result },
-            {
-              pending: message.pendingMessage,
-              summary: message.successMessage,
-            },
-          );
-          handleDismiss();
-        })
-        .catch(e => {
-          console.error('error', e);
-        })
-        .finally(() => {
-          window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-        });
+        bnJs
+          .inject({ account })
+          .Router.swapICXV2(toDec(executionTrade.inputAmount), rlpEncodedData, toDec(minReceived), recipient)
+          .then((res: any) => {
+            addTransaction(
+              { hash: res.result },
+              {
+                pending: message.pendingMessage,
+                summary: message.successMessage,
+              },
+            );
+            handleDismiss();
+          })
+          .catch(e => {
+            console.error('error', e);
+          })
+          .finally(() => {
+            window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+          });
+      } else {
+        const rlpEncodedData = getRlpEncodedSwapData(
+          executionTrade.route.routeActionPath,
+          '_swap',
+          recipient,
+          minReceived,
+        ).toString('hex');
+
+        bnJs.wICX
+          .inject({ account })
+          .swapUsingRouteV2(toDec(executionTrade.inputAmount), rlpEncodedData)
+          .then((res: any) => {
+            addTransaction(
+              { hash: res.result },
+              {
+                pending: message.pendingMessage,
+                summary: message.successMessage,
+              },
+            );
+            handleDismiss();
+          })
+          .catch(e => {
+            console.error('error', e);
+          })
+          .finally(() => {
+            window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+          });
+      }
     } else {
       const token = executionTrade.inputAmount.currency as Token;
-      const outputToken = executionTrade.outputAmount.currency as Token;
 
       const rlpEncodedData = getRlpEncodedSwapData(
         executionTrade.route.routeActionPath,
@@ -88,7 +117,7 @@ const SwapModal = (props: SwapModalProps) => {
         recipient,
         minReceived,
       ).toString('hex');
-      const contract = token.symbol === 'wICX' ? bnJs.wICX : bnJs.getContract(token.address);
+      const contract = bnJs.getContract(token.address);
 
       contract
         .inject({ account })

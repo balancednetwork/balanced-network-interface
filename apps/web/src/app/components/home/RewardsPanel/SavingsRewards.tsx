@@ -9,7 +9,7 @@ import { UnderlineText } from '@/app/components/DropdownText';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
-import { useLockedAmount, useUnclaimedRewards } from '@/store/savings/hooks';
+import { useLockedAmount, useSavingsXChainId, useUnclaimedRewards } from '@/store/savings/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
@@ -18,6 +18,8 @@ import { bnJs } from '@balancednetwork/xwagmi';
 import RewardsGrid from './RewardsGrid';
 
 const SavingsRewards = () => {
+  const savingsXChainId = useSavingsXChainId();
+
   const { data: rewards } = useUnclaimedRewards();
   const { account } = useIconReact();
   const addTransaction = useTransactionAdder();
@@ -61,15 +63,17 @@ const SavingsRewards = () => {
               Savings rate
             </Typography>
           </Flex>
-          {(hasRewards || (lockedAmount && lockedAmount.greaterThan(0) && account)) && (
-            <UnderlineText>
-              <Typography color="primaryBright" onClick={toggleOpen}>
-                <Trans>Claim</Trans>
-              </Typography>
-            </UnderlineText>
-          )}
+          {savingsXChainId === '0x1.icon' &&
+            (hasRewards || (lockedAmount && lockedAmount.greaterThan(0) && account)) && (
+              <UnderlineText>
+                <Typography color="primaryBright" onClick={toggleOpen}>
+                  <Trans>Claim</Trans>
+                </Typography>
+              </UnderlineText>
+            )}
         </Flex>
-        {(account && hasRewards) || (lockedAmount && lockedAmount.greaterThan(0)) ? (
+        {savingsXChainId === '0x1.icon' &&
+        ((account && hasRewards) || (lockedAmount && lockedAmount.greaterThan(0))) ? (
           <RewardsGrid rewards={rewards} />
         ) : (
           <Typography fontSize={14} opacity={0.75} mb={5}>

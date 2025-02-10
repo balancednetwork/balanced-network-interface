@@ -283,7 +283,7 @@ function CurrencyRow({
   );
 
   const handleClick = (currency: Currency, XChainIds: XChainId[]) => {
-    if (basedOnWallet && XChainIds.length === 1) {
+    if (XChainIds.length === 1) {
       handleXChainCurrencySelect(currency, XChainIds[0]);
     } else {
       onSelect(currency);

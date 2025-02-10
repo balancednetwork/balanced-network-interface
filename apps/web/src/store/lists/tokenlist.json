@@ -211,6 +211,14 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/pol.png"
     },
     {
+      "address": "cx1000000000000000000000000000000000000000",
+      "chainId": 1,
+      "name": "Wrapped Polygon",
+      "symbol": "wPOL",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/wpol.png"
+    },
+    {
       "address": "cx66a031cc3bd305c76371fb586e93801b948254f0",
       "chainId": 1,
       "name": "AVAX",
@@ -281,6 +289,14 @@
       "symbol": "weETH",
       "decimals": 18,
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/weeth.png"
+    },
+    {
+      "address": "cx2000000000000000000000000000000000000000",
+      "chainId": 1,
+      "name": "Wrapped Ether",
+      "symbol": "wETH",
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/weth.png"
     },
     {
       "address": "cx65c9e3d4fea842e00add0d32a5b4c5e4e04c7a6b",

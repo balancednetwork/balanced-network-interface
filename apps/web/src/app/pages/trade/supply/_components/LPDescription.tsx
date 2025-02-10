@@ -51,8 +51,8 @@ export default function LPDescription() {
       ? pair.getLiquidityValue(pair.token0, totalPoolTokens, userPoolBalance, false)
       : undefined;
   const pairName = useMemo(() => {
-    if (currencies && currencies.CURRENCY_A && currencies.CURRENCY_B) {
-      const name = `${currencies.CURRENCY_A.symbol}/${currencies.CURRENCY_B.symbol}`;
+    if (currencies && currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B]) {
+      const name = `${currencies[Field.CURRENCY_A]}/${currencies[Field.CURRENCY_B]}`;
       return name.startsWith('ICX/') ? 'sICX/ICX' : name;
     } else {
       return '';

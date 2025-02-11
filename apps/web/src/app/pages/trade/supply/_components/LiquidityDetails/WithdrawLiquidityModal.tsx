@@ -67,15 +67,15 @@ export default function WithdrawLiquidityModal({
     setTimeout(() => {
       setIsPending(false);
       setPendingTx('');
-      onSuccess && onSuccess();
     }, 500);
-  }, [onClose, onSuccess]);
+  }, [onClose]);
 
   const slowDismiss = useCallback(() => {
+    onSuccess && onSuccess();
     setTimeout(() => {
       handleDismiss();
     }, 2000);
-  }, [handleDismiss]);
+  }, [handleDismiss, onSuccess]);
 
   useEffect(() => {
     if (isExecuted) {

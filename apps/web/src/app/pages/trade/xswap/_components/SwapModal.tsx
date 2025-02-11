@@ -2,7 +2,7 @@ import React from 'react';
 
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { Currency, Percent, Token, TradeType } from '@balancednetwork/sdk-core';
-import { Trade } from '@balancednetwork/v1-sdk';
+import { PairType, Trade } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass/styled-components';
@@ -58,7 +58,7 @@ const SwapModal = (props: SwapModalProps) => {
 
     if (executionTrade.inputAmount.currency.address === 'cx0000000000000000000000000000000000000000') {
       const firstPair = executionTrade.route.pairs[0];
-      if (firstPair.isStaking) {
+      if (firstPair.type === PairType.STAKING) {
         const rlpEncodedData = getRlpEncodedSwapData(executionTrade.route.routeActionPath).toString('hex');
 
         bnJs

@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
-import { Pair } from '@balancednetwork/v1-sdk';
+import { Pair, PairType } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 
 import { usePoolPanelContext } from '@/app/pages/trade/supply/_components/PoolPanelContext';
@@ -36,7 +36,7 @@ const fetchStabilityFundPairs = async () => {
     ), // only USDC and USDT
   );
   const stabilityFundPairs = Object.values(stabilityFundBalances).map(balance => {
-    return new Pair(balance, CurrencyAmount.fromRawAmount(bnUSD[NETWORK_ID], '1'), { isStabilityFund: true });
+    return new Pair(balance, CurrencyAmount.fromRawAmount(bnUSD[NETWORK_ID], '1'), { type: PairType.STABILITY_FUND });
   });
   return stabilityFundPairs;
 };

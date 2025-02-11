@@ -13,7 +13,7 @@ import {
 } from '@balancednetwork/sdk-core';
 
 import { ONE, STABILITY_FUND_FRACTION, ZERO } from '../constants';
-import { Pair } from './pair';
+import { Pair, PairType } from './pair';
 import { Route } from './route';
 
 // minimal interface so the input output comparator may be shared across types
@@ -250,7 +250,8 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
       const pair = pairs[i];
       // pair irrelevant
       if (!pair.token0.equals(amountIn.currency) && !pair.token1.equals(amountIn.currency)) continue;
-      if (!pair.isStabilityFund && (pair.reserve0.equalTo(ZERO) || pair.reserve1.equalTo(ZERO))) continue;
+      if (!(pair.type === PairType.STABILITY_FUND) && (pair.reserve0.equalTo(ZERO) || pair.reserve1.equalTo(ZERO)))
+        continue;
 
       let amountOut: CurrencyAmount<Token>;
       try {
@@ -410,11 +411,11 @@ export class Trade<TInput extends Currency, TOutput extends Currency, TTradeType
       const inputCurrencySymbol = this.route.path[i].symbol;
       const outputCurrencySymbol = this.route.path[i + 1].symbol;
 
-      if (pair.isStabilityFund) {
+      if (pair.type === PairType.STABILITY_FUND) {
         if (inputCurrencySymbol === 'bnUSD') {
           result = result.multiply(STABILITY_FUND_FRACTION);
         }
-      } else if (pair.isStaking) {
+      } else if (pair.type === PairType.STAKING) {
         result = result.multiply(new Fraction(100, 100));
       } else if (outputCurrencySymbol === 'ARCH') {
         result = result.multiply(new Fraction(99, 100));

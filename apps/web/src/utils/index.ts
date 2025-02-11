@@ -1,6 +1,6 @@
 import { BalancedJs, CHAIN_INFO, LOOP, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
-import { Pair } from '@balancednetwork/v1-sdk';
+import { Pair, PairType } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 
 import { ONE } from '@/constants';
@@ -187,7 +187,7 @@ export function getStakingPair(stats) {
     CurrencyAmount.fromRawAmount(wICX[NetworkId.MAINNET], totalSupply),
     CurrencyAmount.fromRawAmount(sICX[NetworkId.MAINNET], sicxSupply.toFixed(0)),
     {
-      isStaking: true,
+      type: PairType.STAKING,
     },
   );
 }

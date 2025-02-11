@@ -2,6 +2,7 @@ import bnJs from './bnJs';
 
 import { XWalletClient } from '@/core/XWalletClient';
 import { showMessageOnBeforeUnload, toDec } from '@/utils';
+import { PairType } from '@balancednetwork/v1-sdk';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData } from '../../xcall/utils';
 import { isSpokeToken } from '../archway/utils';
@@ -74,6 +75,17 @@ export class IconXWalletClient extends XWalletClient {
 
     const inputToken = inputAmount.currency;
 
+    if (inputAmount.currency.isNativeToken && path[0].type === PairType.STAKING) {
+      const rlpEncodedData = getRlpEncodedSwapData(path).toString('hex');
+
+      const txResult = await bnJs
+        .inject({ account })
+        .Router.swapICXV2(toDec(inputAmount), rlpEncodedData, '0', receiver);
+
+      const { result: hash } = txResult || {};
+      return hash ? hash : undefined;
+    }
+
     const cx = inputToken.isNativeToken ? bnJs.wICX : bnJs.getContract(inputToken.address);
 
     const rlpEncodedData = getRlpEncodedSwapData(path, '_swap', receiver, minReceived).toString('hex');
@@ -81,10 +93,8 @@ export class IconXWalletClient extends XWalletClient {
     const txResult = await cx.inject({ account }).swapUsingRouteV2(toDec(inputAmount), rlpEncodedData);
 
     const { result: hash } = txResult || {};
-    if (hash) {
-      return hash;
-    }
-    return undefined;
+
+    return hash ? hash : undefined;
   }
 
   async _executeBorrow(xTransactionInput: XTransactionInput) {

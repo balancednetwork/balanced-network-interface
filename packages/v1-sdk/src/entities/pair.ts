@@ -36,12 +36,17 @@ export const computePairAddress = ({
   );
 };
 
+export enum PairType {
+  NORMAL = 1,
+  STABILITY_FUND = 2,
+  STAKING = 3,
+}
+
 export class Pair {
   public readonly liquidityToken: Token;
   private readonly tokenAmounts: [CurrencyAmount<Token>, CurrencyAmount<Token>];
 
-  public readonly isStabilityFund: boolean;
-  public readonly isStaking: boolean;
+  public readonly type: PairType = PairType.NORMAL;
 
   public readonly poolId?: number;
   public readonly totalSupply?: CurrencyAmount<Token>;
@@ -58,13 +63,11 @@ export class Pair {
       poolId?: number;
       totalSupply?: string;
       baseAddress?: string;
-      isStabilityFund?: boolean;
-      isStaking?: boolean;
+      type?: PairType;
     },
   ) {
-    if (additionalArgs?.isStabilityFund) {
-      this.isStabilityFund = true;
-      this.isStaking = false;
+    if (additionalArgs?.type === PairType.STABILITY_FUND) {
+      this.type = PairType.STABILITY_FUND;
 
       const tokenAmounts = [currencyAmountA, tokenAmountB];
       const tokenADecimals = tokenAmounts[0].currency.decimals;
@@ -80,9 +83,8 @@ export class Pair {
         'Balanced Stability Fund Pair',
       );
       this.tokenAmounts = tokenAmounts as [CurrencyAmount<Token>, CurrencyAmount<Token>];
-    } else if (additionalArgs?.isStaking) {
-      this.isStabilityFund = false;
-      this.isStaking = true;
+    } else if (additionalArgs?.type === PairType.STAKING) {
+      this.type = PairType.STAKING;
 
       const tokenAmounts = [currencyAmountA, tokenAmountB];
       const tokenADecimals = tokenAmounts[0].currency.decimals;
@@ -98,8 +100,7 @@ export class Pair {
       );
       this.tokenAmounts = tokenAmounts as [CurrencyAmount<Token>, CurrencyAmount<Token>];
     } else {
-      this.isStabilityFund = false;
-      this.isStaking = false;
+      this.type = PairType.NORMAL;
 
       let tokenAmounts = [currencyAmountA, tokenAmountB];
       // Also, as a rule, sICX is always on the right side (except for sICX/bnUSD). bnUSD is also always on the right side (Exception for sICX/BTCB)
@@ -199,7 +200,7 @@ export class Pair {
   public getOutputAmount(inputAmount: CurrencyAmount<Token>): [CurrencyAmount<Token>, Pair] {
     invariant(this.involvesToken(inputAmount.currency), 'TOKEN');
 
-    if (this.isStabilityFund) {
+    if (this.type === PairType.STABILITY_FUND) {
       // this.token1 is always bnUSD
       if (inputAmount.currency.symbol === 'bnUSD') {
         // bnUSD -> USDC
@@ -233,7 +234,7 @@ export class Pair {
     const inputReserve = this.reserveOf(inputAmount.currency);
     const outputReserve = this.reserveOf(inputAmount.currency.equals(this.token0) ? this.token1 : this.token0);
 
-    if (this.isStaking) {
+    if (this.type === PairType.STAKING) {
       if (inputAmount.currency.address.toLowerCase() === 'cx3975b43d260fb8ec802cef6e60c2f4d07486f11d') {
         // wICX -> sICX
         const numerator = inputAmount.numerator * outputReserve.quotient;
@@ -258,7 +259,7 @@ export class Pair {
 
   public getInputAmount(outputAmount: CurrencyAmount<Token>): [CurrencyAmount<Token>, Pair] {
     invariant(this.involvesToken(outputAmount.currency), 'TOKEN');
-    if (this.isStabilityFund) {
+    if (this.type === PairType.STABILITY_FUND) {
       // this.token1 is always bnUSD
       if (outputAmount.currency.symbol === 'bnUSD') {
         // USDC -> bnUSD
@@ -297,7 +298,7 @@ export class Pair {
     const outputReserve = this.reserveOf(outputAmount.currency);
     const inputReserve = this.reserveOf(outputAmount.currency.equals(this.token0) ? this.token1 : this.token0);
 
-    if (this.isStaking) {
+    if (this.type === PairType.STAKING) {
       if (outputAmount.currency.address.toLowerCase() !== 'cx3975b43d260fb8ec802cef6e60c2f4d07486f11d') {
         const numerator = outputAmount.numerator * inputReserve.quotient;
         const denominator = outputAmount.denominator * outputReserve.quotient;

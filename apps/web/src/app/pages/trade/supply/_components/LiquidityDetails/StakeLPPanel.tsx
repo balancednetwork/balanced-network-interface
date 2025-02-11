@@ -19,6 +19,9 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
   const { poolId, balance: lpBalance, stakedLPBalance } = pool;
   const { data: incentivisedPairs } = useIncentivisedPairs();
 
+  const [executionBeforeAmount, setExecutionBeforeAmount] = React.useState<BigNumber>(new BigNumber(0));
+  const [executionAfterAmount, setExecutionAfterAmount] = React.useState<BigNumber>(new BigNumber(0));
+
   const stakedBalance = useMemo(() => new BigNumber(stakedLPBalance?.toFixed() || 0), [stakedLPBalance]);
 
   // TODO: rename to totalLPBalance
@@ -115,7 +118,15 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
             ) : (
               <>
                 <TextButton onClick={handleCancel}>Cancel</TextButton>
-                <Button onClick={() => setOpen(true)}>Confirm</Button>
+                <Button
+                  onClick={() => {
+                    setExecutionBeforeAmount(beforeAmount);
+                    setExecutionAfterAmount(afterAmount);
+                    setOpen(true);
+                  }}
+                >
+                  Confirm
+                </Button>
               </>
             )}
           </Flex>
@@ -133,8 +144,8 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
       <StakeLPModal
         isOpen={open}
         onClose={() => setOpen(false)}
-        beforeAmount={beforeAmount}
-        afterAmount={afterAmount}
+        beforeAmount={executionBeforeAmount}
+        afterAmount={executionAfterAmount}
         pool={pool}
         onSuccess={handleCancel}
       />

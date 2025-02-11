@@ -43,8 +43,8 @@ const SavingsChainSelector = ({
     if (!lpRewards) return xChains;
 
     return [...xChains].sort((a: XChain, b: XChain) => {
-      const aRewardAmount = parseFloat(lpRewards[a.xChainId]?.totalValueInUSD.toFixed(2) || '0');
-      const bRewardAmount = parseFloat(lpRewards[b.xChainId]?.totalValueInUSD.toFixed(2) || '0');
+      const aRewardAmount = parseFloat(lpRewards[a.xChainId]?.totalValueInUSD.toFixed() || '0');
+      const bRewardAmount = parseFloat(lpRewards[b.xChainId]?.totalValueInUSD.toFixed() || '0');
 
       const aXChainName = xChainMap[a.xChainId].name;
       const bXChainName = xChainMap[b.xChainId].name;

@@ -54,7 +54,7 @@ export const useContractMethodsDataQuery = (
 };
 
 const MIN_TOKEN_LIQUIDITY_TO_INCLUDE = 500;
-export const TOKEN_BLACKLIST = ['IUSDC', 'USDS', 'BUSD', 'BTCB', 'FIN', 'METX'];
+export const TOKEN_BLACKLIST = ['IUSDC', 'USDS', 'BUSD', 'BTCB', 'FIN', 'METX', 'FRMD'];
 export const TOKEN_WHITELIST = ['USDC'];
 
 export function useAllTokens() {

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { Pair, useAllPairsIncentivisedById, useAllPairsTotal, useTokenPrices } from '@/queries/backendv2';
+import { Pair, useAllPairsIncentivisedById, useAllPairsTotal } from '@/queries/backendv2';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
 import { Box, Flex, Text } from 'rebass/styled-components';
@@ -155,8 +155,6 @@ const PairItem = ({
   pair: Pair;
   isLast: boolean;
 }) => {
-  const { data: prices } = useTokenPrices();
-
   return (
     <>
       <DashGrid my={2}>

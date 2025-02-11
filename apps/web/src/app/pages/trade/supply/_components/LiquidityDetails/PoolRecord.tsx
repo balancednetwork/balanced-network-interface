@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
 import ArrowDownIcon from '@/assets/icons/arrow-line.svg';
-import { Pool, useBalance, usePoolTokenAmounts } from '@/hooks/useV2Pairs';
+import { Pool, usePoolTokenAmounts } from '@/hooks/useV2Pairs';
 import { PairData } from '@/queries/backendv2';
 import { Source, useBBalnAmount, useTotalSupply } from '@/store/bbaln/hooks';
 import { useMintActionHandlers } from '@/store/mint/hooks';
@@ -113,14 +113,13 @@ export const PoolRecord = ({
   const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
 
   const { baseValue: baseWithdrawValue, quoteValue: quoteWithdrawValue } = useWithdrawnPercent(poolId) || {};
-  const balances = useBalance(poolId);
   const stakedFractionValue = stakedFraction(stakedLPPercent);
   const totalbBaln = useTotalSupply();
   const userBbaln = useBBalnAmount();
   const reward = getShareReward(
     balnReward,
     boostData && boostData[sourceName],
-    balances,
+    pool,
     stakedFractionValue,
     totalbBaln,
     userBbaln,
@@ -192,7 +191,7 @@ export const PoolRecord = ({
             {externalRewards ? (
               externalRewards.map(reward => {
                 const rewardPrice = prices?.[reward.currency.wrapped.symbol];
-                const rewardShare = getExternalShareReward(reward, balances, stakedFractionValue, pairData?.stakedLP);
+                const rewardShare = getExternalShareReward(reward, pool, stakedFractionValue, pairData?.stakedLP);
                 return (
                   <Typography key={reward.currency.symbol} fontSize={16}>
                     {getFormattedExternalRewards(rewardShare, rewardPrice?.toFixed())}

@@ -22,7 +22,7 @@ export const useXTokenDepositAmount = (
   };
 
   return useQuery({
-    queryKey: ['XTokenDepositAmount', xToken, account],
+    queryKey: ['XTokenDepositAmount', xToken?.id, account],
     queryFn: fetchDepositAmount,
     enabled: !!xToken && !!account,
   });

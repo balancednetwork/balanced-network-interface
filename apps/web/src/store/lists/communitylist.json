@@ -27,14 +27,6 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/gbet.png"
     },
     {
-      "address": "cx2aa9b28a657e3121b75d3d4fe65e569398645d56",
-      "chainId": 1,
-      "name": "FRAMD Token",
-      "symbol": "FRMD",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/frmd.png"
-    },
-    {
       "address": "cx28b2ec885b50c8a93da752f2d0467a67127a70e8",
       "chainId": 1,
       "name": "CROWN Token",

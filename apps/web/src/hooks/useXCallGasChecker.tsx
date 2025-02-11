@@ -16,6 +16,7 @@ function useXCallGasChecker(
   xChainId: XChainId,
   inputAmount: CurrencyAmount<XToken> | CurrencyAmount<Currency> | undefined,
   multiplier: number | undefined = 1,
+  isSupply: boolean = false,
 ): { hasEnoughGas: boolean; errorMessage: string } {
   const balances = useCrossChainWalletBalances();
 
@@ -39,9 +40,13 @@ function useXCallGasChecker(
         );
 
       const errorMessage = !hasEnoughGas
-        ? `You need at least ${formatBigNumber(new BigNumber(xChain.gasThreshold * multiplier), 'currency')} ${
-            nativeCurrency.symbol
-          } in your wallet to pay for transaction fees on ${getNetworkDisplayName(xChainId)}.`
+        ? isSupply
+          ? `You need at least ${formatBigNumber(new BigNumber(xChain.gasThreshold * multiplier), 'currency')} ${
+              nativeCurrency.symbol
+            } in your wallet to supply liquidity on ${getNetworkDisplayName(xChainId)}.`
+          : `You need at least ${formatBigNumber(new BigNumber(xChain.gasThreshold * multiplier), 'currency')} ${
+              nativeCurrency.symbol
+            } in your wallet to pay for transaction fees on ${getNetworkDisplayName(xChainId)}.`
         : '';
 
       return { hasEnoughGas: !!hasEnoughGas, errorMessage };
@@ -50,7 +55,7 @@ function useXCallGasChecker(
     }
 
     return { hasEnoughGas: false, errorMessage: 'Unknown' };
-  }, [balances, xChainId, inputAmount, multiplier]);
+  }, [balances, xChainId, inputAmount, multiplier, isSupply]);
 }
 
 export default useXCallGasChecker;

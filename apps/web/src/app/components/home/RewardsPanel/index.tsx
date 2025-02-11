@@ -12,6 +12,8 @@ import { Typography } from '@/app/theme';
 import { useHasAnyKindOfRewards } from '@/store/reward/hooks';
 
 import useWidth from '@/hooks/useWidth';
+import { useSavingsXChainId } from '@/store/savings/hooks';
+import { getXChainType, useXAccount } from '@balancednetwork/xwagmi';
 import BBalnSlider from '../BBaln/BBalnSlider';
 import Savings from '../Savings';
 import SavingsChainSelector from '../_components/SavingsChainSelector';
@@ -38,7 +40,10 @@ const RewardsPanel = () => {
   const [showGlobalTooltip, setGlobalTooltip] = React.useState(false);
   const isMedium = useMedia('(max-width: 1050px)');
   const isSmall = useMedia('(max-width: 800px)');
-  const { account } = useIconReact();
+
+  const savingsXChainId = useSavingsXChainId();
+
+  const account = useXAccount(getXChainType(savingsXChainId));
   const hasAnyKindOfRewards = useHasAnyKindOfRewards();
 
   const handleSetGlobalTooltip = React.useCallback((shouldShow: boolean) => {
@@ -80,7 +85,7 @@ const RewardsPanel = () => {
         </SliderWrap>
       </Flex>
       <BoxPanel bg="bg2" mt="35px" style={{ padding: '17px 20px' }} className="drop-shadow-inset">
-        {account && hasAnyKindOfRewards ? (
+        {account.address && hasAnyKindOfRewards ? (
           <Flex flexWrap={isSmall ? 'wrap' : 'nowrap'}>
             <SavingsRewards />
             {!isSmall ? (

@@ -74,7 +74,7 @@ export class IconXWalletClient extends XWalletClient {
 
     const inputToken = inputAmount.currency;
 
-    const cx = inputToken.symbol === 'wICX' ? bnJs.wICX : bnJs.getContract(inputToken.address);
+    const cx = inputToken.isNativeToken ? bnJs.wICX : bnJs.getContract(inputToken.address);
 
     const rlpEncodedData = getRlpEncodedSwapData(path, '_swap', receiver, minReceived).toString('hex');
 

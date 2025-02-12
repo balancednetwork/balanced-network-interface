@@ -1,4 +1,4 @@
-import { Flex, Box } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 export const FlexPanel = styled(Flex)<{
@@ -6,7 +6,7 @@ export const FlexPanel = styled(Flex)<{
   border?: string;
   borderRadius?: string;
 }>`
-  border-radius: 10px;
+  border-radius: 15px;
   padding: 25px;
   padding: ${({ padding }) => padding};
   border-radius: ${({ borderRadius }) => borderRadius};

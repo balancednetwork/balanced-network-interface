@@ -28,7 +28,7 @@ export default function UnstakePanel({ claimableICX }: UnstakePanelProps) {
   const ICX = SUPPORTED_TOKENS_MAP_BY_ADDRESS[icxContractAddress];
   const icxBalance = balances[icxContractAddress];
 
-  const claimableICXCA = toCurrencyAmount(ICX.wrapped, claimableICX);
+  const claimableICXCA = toCurrencyAmount(ICX, claimableICX);
   const { data: icxUnstakingTime } = useICXUnstakingTime();
 
   // to detect if transaction change and reload cliamableICX

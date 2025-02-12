@@ -64,7 +64,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
     setOpen(!open);
   };
 
-  const beforeAmount = wallet[currency.wrapped.address];
+  const beforeAmount = wallet[currency.address];
 
   const differenceAmount = toCurrencyAmount(
     beforeAmount.currency,
@@ -79,9 +79,9 @@ export default function SendPanel({ currency }: { currency: Currency }) {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
     const contract =
-      currency.wrapped.address === bnJs.ICX.address
+      currency.address === bnJs.ICX.address
         ? bnJs.inject({ account })
-        : bnJs.inject({ account }).getContract(currency.wrapped.address);
+        : bnJs.inject({ account }).getContract(currency.address);
 
     contract
       .transfer(address, toDec(differenceAmount))
@@ -186,7 +186,7 @@ export default function SendPanel({ currency }: { currency: Currency }) {
               </Typography>
             </Box>
           </Flex>
-          {currency?.wrapped.address === bnJs.sICX.address && (
+          {currency?.address === bnJs.sICX.address && (
             <Typography variant="content" textAlign="center" color={theme.colors.alert}>
               <Trans>Do not send sICX to an exchange.</Trans>
             </Typography>

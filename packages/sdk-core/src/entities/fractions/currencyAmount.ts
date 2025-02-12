@@ -88,7 +88,7 @@ export class CurrencyAmount<T extends Currency> extends Fraction {
   }
 
   public get wrapped(): CurrencyAmount<Token> {
-    if (this.currency.isToken) return this as CurrencyAmount<Token>;
+    if (this.currency.symbol !== 'ICX') return this as CurrencyAmount<Token>;
     return CurrencyAmount.fromFractionalAmount(this.currency.wrapped, this.numerator, this.denominator);
   }
 

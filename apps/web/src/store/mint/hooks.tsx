@@ -8,9 +8,8 @@ import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { isNativeCurrency, useICX } from '@/constants/tokens';
+import { useICX } from '@/constants/tokens';
 import { useAllTokens, useCommonBases } from '@/hooks/Tokens';
-import { useQueuePair } from '@/hooks/useQueuePair';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { tryParseAmount } from '@/store/swap/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
@@ -170,14 +169,7 @@ export function useDerivedMintInfo(
     [currencyA, currencyB],
   );
 
-  // pair
-  const isQueue = isNativeCurrency(currencies[Field.CURRENCY_A]);
-
-  // For queue, currencies[Field.CURRENCY_A] = ICX and currencies[Field.CURRENCY_B] = undefined
-  // so used `useQueuePair` in addition to `useV2Pair`.
-  const [pairState1, pair1] = useV2Pair(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]);
-  const [pairState2, pair2] = useQueuePair();
-  const [pairState, pair] = isQueue ? [pairState2, pair2] : [pairState1, pair1];
+  const [pairState, pair] = useV2Pair(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]);
 
   const totalSupply = pair?.totalSupply;
   const noLiquidity: boolean =
@@ -342,30 +334,18 @@ export function useDerivedMintInfo(
     error = error ?? <Trans>Invalid pair</Trans>;
   }
 
-  if (isQueue) {
-    if (!parsedAmounts[Field.CURRENCY_A]) {
-      error = error ?? <Trans>Enter amount</Trans>;
-    }
+  if (!parsedAmounts[Field.CURRENCY_A] || !parsedAmounts[Field.CURRENCY_B]) {
+    error = error ?? <Trans>Enter amount</Trans>;
+  }
 
-    const { [Field.CURRENCY_A]: currencyAAmount } = parsedAmounts;
+  const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
 
-    if (currencyAAmount && currencyBalances?.[Field.CURRENCY_A]?.lessThan(currencyAAmount)) {
-      error = <>Insufficient {formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} balance</>;
-    }
-  } else {
-    if (!parsedAmounts[Field.CURRENCY_A] || !parsedAmounts[Field.CURRENCY_B]) {
-      error = error ?? <Trans>Enter amount</Trans>;
-    }
+  if (currencyAAmount && currencyBalances?.[Field.CURRENCY_A]?.lessThan(currencyAAmount)) {
+    error = <Trans>Insufficient {formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} balance</Trans>;
+  }
 
-    const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
-
-    if (currencyAAmount && currencyBalances?.[Field.CURRENCY_A]?.lessThan(currencyAAmount)) {
-      error = <Trans>Insufficient {formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} balance</Trans>;
-    }
-
-    if (currencyBAmount && currencyBalances?.[Field.CURRENCY_B]?.lessThan(currencyBAmount)) {
-      error = <Trans>Insufficient {formatSymbol(currencies[Field.CURRENCY_B]?.symbol)} balance</Trans>;
-    }
+  if (currencyBAmount && currencyBalances?.[Field.CURRENCY_B]?.lessThan(currencyBAmount)) {
+    error = <Trans>Insufficient {formatSymbol(currencies[Field.CURRENCY_B]?.symbol)} balance</Trans>;
   }
 
   return {

@@ -2,7 +2,7 @@ import invariant from 'tiny-invariant';
 
 import { Currency, Price, Token } from '@balancednetwork/sdk-core';
 
-import { Pair, PairType } from './pair';
+import { Pair } from './pair';
 
 export type RouteAction = {
   type: number;
@@ -50,7 +50,7 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
     const prices: Price<Currency, Currency>[] = [];
     /* @ts-ignore */
     for (const [i, pair] of this.pairs.entries()) {
-      if (pair.type === PairType.STABILITY_FUND) {
+      if (pair.isStabilityFund) {
         let price;
         // pair.token1 is always bnUSD
         if (this.path[i].symbol === 'bnUSD') {
@@ -109,7 +109,7 @@ export class Route<TInput extends Currency, TOutput extends Currency> {
     const path: RouteAction[] = [];
     for (let i = 0; i < this.pairs.length; i++) {
       const pair: Pair = this.pairs[i];
-      path.push({ type: pair.type, address: this.pathForSwap[i] });
+      path.push({ type: pair.isStabilityFund ? 2 : 1, address: this.pathForSwap[i] });
     }
     return path;
   }

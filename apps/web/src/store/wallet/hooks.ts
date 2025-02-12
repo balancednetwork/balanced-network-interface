@@ -17,6 +17,7 @@ import {
   SUPPORTED_TOKENS_LIST,
   SUPPORTED_TOKENS_MAP_BY_ADDRESS,
   isNativeCurrency,
+  wICX,
 } from '@/constants/tokens';
 import { useBnJsContractQuery } from '@/queries/utils';
 import { useTokenListConfig } from '@/store/lists/hooks';
@@ -33,6 +34,7 @@ import { changeBalances } from './reducer';
 import { useXBalances } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 
+import { NETWORK_ID } from '@/constants/config';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
 import { useRatesWithOracle } from '@/queries/reward';
@@ -75,7 +77,15 @@ export function useAvailableBalances(
   return React.useMemo(() => {
     return balances.reduce((acc, balance) => {
       if (!balance) return acc;
-      acc[balance.currency.address] = balance;
+      if (!(balance.quotient > BIGINT_ZERO) && balance.currency.wrapped.address !== bnJs.BALN.address) {
+        return acc;
+      }
+      acc[balance.currency.wrapped.address] = balance;
+
+      //add wICX balance to the list
+      if (balance.currency.symbol === 'ICX') {
+        acc[bnJs.wICX.address] = CurrencyAmount.fromRawAmount(wICX[NETWORK_ID], balance.quotient.toString());
+      }
 
       return acc;
     }, {});
@@ -368,7 +378,7 @@ export function useCurrencyBalances(
   const tokenBalances = useTokenBalances(account, tokens);
 
   const containsICX: boolean = useMemo(
-    () => currencies?.some(currency => isNativeCurrency(currency)) ?? false,
+    () => currencies?.some(currency => isNativeCurrency(currency) || currency?.symbol === 'wICX') ?? false,
     [currencies],
   );
   const accounts = useMemo(() => (containsICX ? [account] : []), [containsICX, account]);
@@ -380,7 +390,16 @@ export function useCurrencyBalances(
         if (!account || !currency) return undefined;
         if (isNativeCurrency(currency)) return icxBalance[account];
         if (currency.isToken) {
-          return tokenBalances[currency.address];
+          if (currency.address === bnJs.wICX.address) {
+            try {
+              return CurrencyAmount.fromRawAmount(wICX[NETWORK_ID], icxBalance[account]?.quotient.toString() || '0');
+            } catch (e) {
+              console.error('Error while duplicating wICX balance', e);
+              return undefined;
+            }
+          } else {
+            return tokenBalances[currency.address];
+          }
         }
         return undefined;
       }),

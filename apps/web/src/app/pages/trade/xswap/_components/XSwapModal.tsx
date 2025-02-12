@@ -72,7 +72,7 @@ const XSwapModal = ({
   const _inputAmount = useMemo(() => {
     return executionTrade?.inputAmount && currencies[Field.INPUT]
       ? CurrencyAmount.fromRawAmount(
-          XToken.getXToken(direction.from, currencies[Field.INPUT]),
+          XToken.getXToken(direction.from, currencies[Field.INPUT].wrapped),
           new BigNumber(executionTrade.inputAmount.toFixed())
             .times((10n ** BigInt(currencies[Field.INPUT].decimals)).toString())
             .toFixed(0),

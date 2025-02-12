@@ -1,12 +1,13 @@
 import { BalancedJs, CHAIN_INFO, LOOP, SupportedChainId as NetworkId } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
-import { Pair, PairType } from '@balancednetwork/v1-sdk';
+import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 
 import { ONE } from '@/constants';
 import { NETWORK_ID } from '@/constants/config';
+import { canBeQueue } from '@/constants/currency';
 import { BIGINT_ZERO } from '@/constants/misc';
-import { COMBINED_TOKENS_LIST, sICX, wICX } from '@/constants/tokens';
+import { COMBINED_TOKENS_LIST } from '@/constants/tokens';
 import { PairData, PairState } from '@/hooks/useV2Pairs';
 import { Field } from '@/store/swap/reducer';
 import { PairInfo } from '@/types';
@@ -94,16 +95,21 @@ export function maxAmountSpend(
 ): CurrencyAmount<Currency> | undefined {
   if (!currencyAmount) return undefined;
 
-  const minCurrencyGas = currencyAmount.currency.isNativeToken
-    ? CurrencyAmount.fromRawAmount(
-        currencyAmount.currency,
-        new BigNumber(xChainMap[xChainId].gasThreshold)
-          .times(2)
-          .times(10 ** currencyAmount.currency.decimals)
-          .toString(),
-      )
-    : CurrencyAmount.fromRawAmount(currencyAmount.currency, 0n);
+  let minCurrencyGas: CurrencyAmount<Currency> = CurrencyAmount.fromRawAmount(currencyAmount?.currency, 0);
 
+  if (
+    (xChainId === '0x1.icon' && currencyAmount.currency.symbol === 'ICX') ||
+    (xChainId === 'archway-1' && currencyAmount.currency.symbol === 'ARCH') ||
+    currencyAmount.currency.isNativeToken
+  ) {
+    minCurrencyGas = CurrencyAmount.fromRawAmount(
+      currencyAmount.currency,
+      new BigNumber(xChainMap[xChainId].gasThreshold)
+        .times(2)
+        .times(10 ** currencyAmount.currency.decimals)
+        .toString(),
+    );
+  }
   return currencyAmount.subtract(minCurrencyGas).greaterThan(0)
     ? currencyAmount.subtract(minCurrencyGas)
     : CurrencyAmount.fromRawAmount(currencyAmount.currency, 0n);
@@ -172,27 +178,42 @@ export function getPairName(pair: PairInfo) {
 }
 
 /**
- * @returns ICX->sICX staking pair
+ * @returns ICX/sICX pair
  * @param {tokenA} ICX
  * @param {tokenB} sICX
  *  */
-export function getStakingPair(stats) {
+export function getQueuePair(stats, tokenA: Token, tokenB: Token) {
   const rate = new BigNumber(stats['price'], 16).div(LOOP);
 
-  const icxSupply = new BigNumber(10 ** 18);
+  const icxSupply = new BigNumber(stats['total_supply'], 16);
   const sicxSupply = icxSupply.div(rate);
 
   const totalSupply = icxSupply.toFixed();
-  return new Pair(
-    CurrencyAmount.fromRawAmount(wICX[NetworkId.MAINNET], totalSupply),
-    CurrencyAmount.fromRawAmount(sICX[NetworkId.MAINNET], sicxSupply.toFixed(0)),
-    {
-      type: PairType.STAKING,
-    },
-  );
+
+  const [ICX, sICX] = tokenA.symbol === 'ICX' ? [tokenA, tokenB] : [tokenB, tokenA];
+
+  const minQuoteTokenAmount = BalancedJs.utils.toFormat(new BigNumber(stats['min_quote'], 16), stats['quote_decimals']);
+
+  // ICX/sICX
+  const pair: [PairState, Pair, BigNumber] = [
+    PairState.EXISTS,
+    new Pair(
+      CurrencyAmount.fromRawAmount(ICX, totalSupply),
+      CurrencyAmount.fromRawAmount(sICX, sicxSupply.toFixed(0)),
+      {
+        poolId: BalancedJs.utils.POOL_IDS.sICXICX,
+        totalSupply,
+      },
+    ),
+    minQuoteTokenAmount,
+  ];
+
+  return pair;
 }
 
 export function getPair(stats, tokenA: Token, tokenB: Token): PairData {
+  if (canBeQueue(tokenA, tokenB)) return getQueuePair(stats, tokenA, tokenB);
+
   const poolId = parseInt(stats['id'], 16);
   if (poolId === 0) return [PairState.NOT_EXISTS, null, null];
 

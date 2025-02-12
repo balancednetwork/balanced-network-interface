@@ -1039,6 +1039,7 @@ msgstr ""
 #: src/store/bridge/hooks.tsx
 #: src/store/bridge/hooks.tsx
 #: src/store/mint/hooks.tsx
+#: src/store/mint/hooks.tsx
 #: src/store/swap/hooks.ts
 msgid "Enter amount"
 msgstr "Vul bedrag in"

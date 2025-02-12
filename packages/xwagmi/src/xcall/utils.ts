@@ -1,7 +1,7 @@
 import rlp from 'rlp';
 
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
-import { PairType, RouteAction } from '@balancednetwork/v1-sdk';
+import { RouteAction } from '@balancednetwork/v1-sdk';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { xTokenMap } from '@/constants/xTokens';
@@ -43,7 +43,7 @@ export function getRlpEncodedSwapData(
   }
 
   const routeActionPathEncoding = path.map(action => [
-    getBytesFromNumber(action.type === PairType.STABILITY_FUND ? 2 : 1),
+    getBytesFromNumber(action.type),
     getBytesFromAddress(action.address),
   ]);
 

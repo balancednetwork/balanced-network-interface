@@ -3,14 +3,15 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
-import { Pair, PairType } from '@balancednetwork/v1-sdk';
+import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 
 import { usePoolPanelContext } from '@/app/pages/trade/supply/_components/PoolPanelContext';
+import { canBeQueue } from '@/constants/currency';
 import { BIGINT_ZERO, FRACTION_ZERO } from '@/constants/misc';
 import { bnUSD } from '@/constants/tokens';
 import { fetchStabilityFundBalances, getAcceptedTokens } from '@/store/stabilityFund/hooks';
-import { getPair, getStakingPair } from '@/utils';
+import { getPair } from '@/utils';
 import { bnJs } from '@balancednetwork/xwagmi';
 
 import { NETWORK_ID } from '@/constants/config';
@@ -28,7 +29,7 @@ export enum PairState {
 
 export type PairData = [PairState, Pair | null, BigNumber | null] | [PairState, Pair | null];
 
-const fetchStabilityFundPairs = async () => {
+export const fetchStabilityFundPairs = async () => {
   const acceptedTokens = await getAcceptedTokens();
   const stabilityFundBalances = await fetchStabilityFundBalances(
     acceptedTokens.filter(
@@ -36,7 +37,7 @@ const fetchStabilityFundPairs = async () => {
     ), // only USDC and USDT
   );
   const stabilityFundPairs = Object.values(stabilityFundBalances).map(balance => {
-    return new Pair(balance, CurrencyAmount.fromRawAmount(bnUSD[NETWORK_ID], '1'), { type: PairType.STABILITY_FUND });
+    return new Pair(balance, CurrencyAmount.fromRawAmount(bnUSD[NETWORK_ID], '1'), { isStabilityFund: true });
   });
   return stabilityFundPairs;
 };
@@ -49,21 +50,6 @@ export const useStabilityFundPairs = () => {
   });
 
   return stabilityFundPairs || [];
-};
-
-const fetchStakingPair = async () => {
-  const res = await bnJs.Dex.getPoolStats(1);
-  return getStakingPair(res);
-};
-
-export const useStakingPair = () => {
-  const { data: stakingPair } = useQuery({
-    queryKey: ['stakingPair'],
-    queryFn: fetchStakingPair,
-    refetchInterval: 10_000,
-  });
-
-  return stakingPair;
 };
 
 const chunkArray = <T>(array: T[], chunkSize: number): T[][] => {
@@ -83,11 +69,19 @@ export async function fetchV2Pairs(currencies: [Currency | undefined, Currency |
   try {
     const callData: CallData[] = tokens.map(([tokenA, tokenB]) => {
       if (tokenA && tokenB && tokenA.chainId === tokenB.chainId && !tokenA.equals(tokenB)) {
-        return {
-          target: bnJs.Dex.address,
-          method: 'getPoolStatsForPair',
-          params: [tokenA.address, tokenB.address],
-        };
+        if (canBeQueue(tokenA, tokenB)) {
+          return {
+            target: bnJs.Dex.address,
+            method: 'getPoolStats',
+            params: [`0x${BalancedJs.utils.POOL_IDS.sICXICX.toString(16)}`],
+          };
+        } else {
+          return {
+            target: bnJs.Dex.address,
+            method: 'getPoolStatsForPair',
+            params: [tokenA.address, tokenB.address],
+          };
+        }
       } else {
         // Useless, just a placeholder
         return {

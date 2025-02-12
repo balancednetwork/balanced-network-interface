@@ -11,14 +11,6 @@
   "keywords": ["balanced", "default"],
   "tokens": [
     {
-      "address": "cx0000000000000000000000000000000000000000",
-      "chainId": 1,
-      "name": "ICX",
-      "symbol": "ICX",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/icx.png"
-    },
-    {
       "address": "cx2609b924e33ef00b648a409245c7ea394c467824",
       "chainId": 1,
       "name": "Staked ICX",

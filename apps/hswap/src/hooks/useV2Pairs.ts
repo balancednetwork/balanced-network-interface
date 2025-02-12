@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
-import { Pair, PairType } from '@balancednetwork/v1-sdk';
+import { Pair } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 
 import { canBeQueue } from '@/constants/currency';
@@ -33,7 +33,7 @@ export const fetchStabilityFundPairs = async () => {
     ), // only USDC and USDT
   );
   const stabilityFundPairs = Object.values(stabilityFundBalances).map(balance => {
-    return new Pair(balance, CurrencyAmount.fromRawAmount(bnUSD[NETWORK_ID], '1'), { type: PairType.STABILITY_FUND });
+    return new Pair(balance, CurrencyAmount.fromRawAmount(bnUSD[NETWORK_ID], '1'), { isStabilityFund: true });
   });
   return stabilityFundPairs;
 };

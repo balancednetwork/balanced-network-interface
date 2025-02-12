@@ -85,8 +85,9 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
             >
               <Tooltip
                 show={
-                  (!!numberOfPositions && showGlobalTooltip && !isExtraSmall) ||
-                  (!!numberOfPositions && isExtraSmall && tooltipHovered)
+                  savingsXChainId === '0x1.icon' &&
+                  ((!!numberOfPositions && showGlobalTooltip && !isExtraSmall) ||
+                    (!!numberOfPositions && isExtraSmall && tooltipHovered))
                 }
                 text={
                   <>

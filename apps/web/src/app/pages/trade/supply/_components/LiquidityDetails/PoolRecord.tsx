@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Pair } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
@@ -19,7 +19,8 @@ import { useStakedLPPercent, useWithdrawnPercent } from '@/store/stakedLP/hooks'
 import PoolLogoWithNetwork from '@/app/components/PoolLogoWithNetwork';
 import RewardsDisplay from '@/app/components/RewardsDisplay/RewardsDisplay';
 import Skeleton from '@/app/components/Skeleton';
-import { useRatesWithOracle } from '@/queries/reward';
+import { useIncentivisedPairs, useRatesWithOracle } from '@/queries/reward';
+import { useEmissions } from '@/store/reward/hooks';
 import { formatBigNumber } from '@/utils';
 import { formatSymbol, getFormattedNumber } from '@/utils/formatter';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
@@ -125,6 +126,18 @@ export const PoolRecord = ({
     userBbaln,
   );
 
+  const { data: dailyEmissions } = useEmissions();
+  const { data: incentivisedPairs } = useIncentivisedPairs();
+
+  const xDailyReward = useMemo(() => {
+    const pair = incentivisedPairs?.find(pair => pair.id === pool.poolId);
+    if (pair && pool.stakedLPBalance && dailyEmissions) {
+      return new BigNumber(pool.stakedLPBalance.divide(pair.totalStaked).multiply(dailyEmissions.toFixed()).toFixed());
+    }
+
+    return new BigNumber(0);
+  }, [pool, incentivisedPairs, dailyEmissions]);
+
   const baseSupplyAmount = totalSupply(baseWithdrawValue, baseAmount);
   const quoteSupplyAmount = totalSupply(quoteWithdrawValue, quoteAmount);
 
@@ -171,7 +184,6 @@ export const PoolRecord = ({
           <DataText>
             <DataText>
               {pairData && <RewardsDisplay pair={pairData} boost={boostData} xChainId={xChainId} />}
-
               {pairData?.feesApy && (
                 <APYItem>
                   <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
@@ -186,7 +198,9 @@ export const PoolRecord = ({
         {upSmall && (
           <DataText>
             <Typography fontSize={16}>
-              {getFormattedRewards(reward, !externalRewards || externalRewards.length === 0)}
+              {xChainId === '0x1.icon'
+                ? getFormattedRewards(reward, !externalRewards || externalRewards.length === 0)
+                : getFormattedRewards(xDailyReward)}
             </Typography>
             {externalRewards ? (
               externalRewards.map(reward => {

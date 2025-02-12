@@ -45,9 +45,13 @@ export default function LPDescription() {
   const userPoolBalance = useLiquidityTokenBalance(`${lpXChainId}/${xAccount?.address}`, pair);
   const totalPoolTokens = pair?.totalSupply;
   const pairName = useMemo(() => {
-    if (!pair) return '';
-    return `${pair.token0.symbol}/${pair.token1.symbol}`;
-  }, [pair]);
+    if (currencies && currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B]) {
+      const name = `${currencies[Field.CURRENCY_A]}/${currencies[Field.CURRENCY_B]}`;
+      return name.startsWith('ICX/') ? 'sICX/ICX' : name;
+    } else {
+      return '';
+    }
+  }, [currencies]);
   const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
 
   const { data: allPairs } = useAllPairsByName();

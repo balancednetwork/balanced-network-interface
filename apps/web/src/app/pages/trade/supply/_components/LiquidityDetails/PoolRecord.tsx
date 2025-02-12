@@ -202,7 +202,7 @@ export const PoolRecord = ({
                 ? getFormattedRewards(reward, !externalRewards || externalRewards.length === 0)
                 : getFormattedRewards(xDailyReward)}
             </Typography>
-            {externalRewards ? (
+            {xChainId === '0x1.icon' && externalRewards ? (
               externalRewards.map(reward => {
                 const rewardPrice = prices?.[reward.currency.wrapped.symbol];
                 const rewardShare = getExternalShareReward(reward, pool, stakedFractionValue, pairData?.stakedLP);

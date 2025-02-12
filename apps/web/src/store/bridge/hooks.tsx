@@ -141,8 +141,6 @@ export function useDerivedBridgeInfo() {
   const isSolanaAccountActive = useCheckSolanaAccount(bridgeDirection.to, currencyAmountToBridge, recipient ?? '');
 
   const errorMessage = useMemo(() => {
-    if (!account) return;
-
     if (!currencyAmountToBridge) return t`Enter amount`;
 
     if (!recipient) return t`Enter address`;
@@ -172,7 +170,6 @@ export function useDerivedBridgeInfo() {
       }
     }
   }, [
-    account,
     bridgeDirection.from,
     crossChainWallet,
     currencyAmountToBridge,

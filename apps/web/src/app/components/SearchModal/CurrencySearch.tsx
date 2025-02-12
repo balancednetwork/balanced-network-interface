@@ -1,9 +1,9 @@
 import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Currency, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import { isMobile } from 'react-device-detect';
-import { Flex } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
@@ -15,18 +15,22 @@ import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 import useToggle from '@/hooks/useToggle';
 import { useHasSignedIn } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
+import { useRatesWithOracle } from '@/queries/reward';
 import { useBridgeDirection } from '@/store/bridge/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { isAddress } from '@/utils';
-import { XChainId } from '@balancednetwork/xwagmi';
+import { XChainId, xChainMap, xTokenMap } from '@balancednetwork/xwagmi';
+import BigNumber from 'bignumber.js';
 import { ChartControlButton as AssetsTabButton } from '../ChartControl';
 import Column from '../Column';
 import CommunityListToggle from '../CommunityListToggle';
 import CurrencyList from './CurrencyList';
 import ImportRow from './ImportRow';
 import SearchInput from './SearchInput';
+import XChainFilter from './XChainFilter';
 import { filterTokens, useSortedTokensByQuery } from './filtering';
 import { useTokenComparator } from './sorting';
+import { shouldHideBecauseOfLowValue } from './utils';
 
 export enum CurrencySelectionType {
   NORMAL,
@@ -49,6 +53,25 @@ export enum SelectorType {
   BRIDGE,
   OTHER,
 }
+
+const FilterWrap = styled(Flex)`
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+
+  & > input {
+    flex: 1;
+  }
+
+  & > button {
+    flex: none;
+  }
+
+  & > div {
+    flex-basis: 100%;
+  }  
+`;
 
 const removeBnUSD = (tokens: { [address: string]: Token }) => {
   return Object.values(tokens)
@@ -108,8 +131,14 @@ export function CurrencySearch({
   selectorType = SelectorType.OTHER,
 }: CurrencySearchProps) {
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [filterState, setFilterState] = useState<XChainId[]>([]);
   const debouncedQuery = useDebounce(searchQuery, 200);
   const hasSignedIn = useHasSignedIn();
+  const rates = useRatesWithOracle();
+
+  const handleChainClick = useCallback((xChainId: XChainId) => {
+    setFilterState(prev => (prev.includes(xChainId) ? prev.filter(id => id !== xChainId) : [...prev, xChainId]));
+  }, []);
 
   const [invertSearchOrder] = useState<boolean>(false);
 
@@ -170,6 +199,36 @@ export function CurrencySearch({
   const filteredTokens: Token[] = useMemo(() => {
     return filterTokens(Object.values(allTokens), debouncedQuery);
   }, [allTokens, debouncedQuery]);
+
+  const xChainFilterItems: XChainId[] = useMemo(() => {
+    const filteredSymbols = filteredTokens.map(token => token.symbol);
+
+    if (assetsTab === AssetsTab.ALL) {
+      if (!!debouncedQuery) {
+        const xChainIds = Object.values(xTokenMap)
+          .flat()
+          .filter(xToken => filteredSymbols.includes(xToken.symbol))
+          .map(xToken => xToken.xChainId);
+        return [...new Set(xChainIds)];
+      } else {
+        return Object.values(xChainMap)
+          .filter(xChain => !xChain.testnet)
+          .map(xChain => xChain.xChainId);
+      }
+    } else {
+      const xChainIds = Object.keys(xWallet).filter(xChainId => {
+        return Object.values(xWallet[xChainId]).some(
+          currencyAmount =>
+            !shouldHideBecauseOfLowValue(
+              true,
+              rates?.[(currencyAmount as CurrencyAmount<Currency>).currency.symbol],
+              new BigNumber((currencyAmount as CurrencyAmount<Currency>).toFixed()),
+            ) && filteredSymbols.includes((currencyAmount as CurrencyAmount<Currency>).currency.symbol),
+        );
+      });
+      return xChainIds;
+    }
+  }, [filteredTokens, assetsTab, xWallet, rates, debouncedQuery]);
 
   const sortedTokens: Token[] = useMemo(() => {
     return [...filteredTokens].sort(tokenComparator);
@@ -262,7 +321,7 @@ export function CurrencySearch({
 
   return (
     <Wrapper width={width}>
-      <Flex px="25px">
+      <FilterWrap px="25px">
         <SearchInput
           type="text"
           id="token-search-input"
@@ -273,7 +332,8 @@ export function CurrencySearch({
           tabIndex={isMobile ? -1 : 1}
           onChange={handleInput}
         />
-      </Flex>
+        <XChainFilter filterItems={xChainFilterItems} filterState={filterState} onChainClick={handleChainClick} />
+      </FilterWrap>
       {hasSignedIn && (selectorType === SelectorType.SWAP_IN || selectorType === SelectorType.SWAP_OUT) ? (
         <Flex justifyContent="center" mt={3}>
           <AssetsTabButton $active={assetsTab === AssetsTab.YOUR} mr={2} onClick={() => setAssetsTab(AssetsTab.YOUR)}>

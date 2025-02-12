@@ -33,6 +33,7 @@ import { BalanceBreakdown } from '../Wallet/styledComponents';
 import { SelectorType } from './CurrencySearch';
 import CurrencyXChainItem from './CurrencyXChainItem';
 import { HeaderText, XChainLogoList } from './styleds';
+import { currencyKey, shouldHideBecauseOfLowValue } from './utils';
 
 const DashGrid = styled(Box)`
   display: grid;
@@ -58,10 +59,6 @@ const StyledBalanceBreakdown = styled(BalanceBreakdown)`
 const StyledHeaderText = styled(HeaderText)`
   font-size: 12px;
 `;
-
-function currencyKey(currency: Currency): string {
-  return currency.isToken ? currency.address : 'ICX';
-}
 
 const MemoizedCurrencyXChainItem = React.memo(CurrencyXChainItem);
 
@@ -135,9 +132,7 @@ function CurrencyRow({
   const open = useCallback(() => setShow(true), []);
   const close = useCallback(() => setShow(false), []);
   const price = rateFracs && new BigNumber(rateFracs[formatSymbol(currency.symbol)]?.toFixed(8));
-  const hideBecauseOfLowValue =
-    basedOnWallet &&
-    (price && !price.isNaN() ? basedOnWallet && balance?.times(price).isLessThan(0.01) : balance?.isLessThan(0.01));
+  const hideBecauseOfLowValue = shouldHideBecauseOfLowValue(basedOnWallet, price, balance);
 
   const shouldForceNetworkIcon =
     selectorType === SelectorType.SUPPLY_BASE || selectorType === SelectorType.SUPPLY_QUOTE || SelectorType.BRIDGE;

@@ -132,7 +132,12 @@ export const PoolRecord = ({
   const xDailyReward = useMemo(() => {
     const pair = incentivisedPairs?.find(pair => pair.id === pool.poolId);
     if (pair && pool.stakedLPBalance && dailyEmissions) {
-      return new BigNumber(pool.stakedLPBalance.divide(pair.totalStaked).multiply(dailyEmissions.toFixed()).toFixed());
+      return new BigNumber(
+        new BigNumber(pool.stakedLPBalance.toFixed())
+          .times(10 ** pool.stakedLPBalance.currency.decimals)
+          .div(pair.totalStaked)
+          .times(dailyEmissions.times(pair.rewards.toFixed(8))),
+      );
     }
 
     return new BigNumber(0);
@@ -200,21 +205,19 @@ export const PoolRecord = ({
             <Typography fontSize={16}>
               {xChainId === '0x1.icon'
                 ? getFormattedRewards(reward, !externalRewards || externalRewards.length === 0)
-                : getFormattedRewards(xDailyReward)}
+                : getFormattedRewards(xDailyReward, true)}
             </Typography>
-            {xChainId === '0x1.icon' && externalRewards ? (
-              externalRewards.map(reward => {
-                const rewardPrice = prices?.[reward.currency.wrapped.symbol];
-                const rewardShare = getExternalShareReward(reward, pool, stakedFractionValue, pairData?.stakedLP);
-                return (
-                  <Typography key={reward.currency.symbol} fontSize={16}>
-                    {getFormattedExternalRewards(rewardShare, rewardPrice?.toFixed())}
-                  </Typography>
-                );
-              })
-            ) : (
-              <Skeleton width={100}></Skeleton>
-            )}
+            {xChainId === '0x1.icon' && externalRewards
+              ? externalRewards.map(reward => {
+                  const rewardPrice = prices?.[reward.currency.wrapped.symbol];
+                  const rewardShare = getExternalShareReward(reward, pool, stakedFractionValue, pairData?.stakedLP);
+                  return (
+                    <Typography key={reward.currency.symbol} fontSize={16}>
+                      {getFormattedExternalRewards(rewardShare, rewardPrice?.toFixed())}
+                    </Typography>
+                  );
+                })
+              : null}
           </DataText>
         )}
       </ListItem>

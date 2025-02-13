@@ -140,9 +140,27 @@ const XChainFilter: React.FC<XChainFilterProps> = props => {
                   {filterItems.map(item => (
                     <motion.div
                       key={item}
-                      initial={{ opacity: 0, scale: 0, width: 0 }}
-                      animate={{ opacity: 1, scale: 1, width: 'auto' }}
-                      exit={{ opacity: 0, scale: 0, width: 0 }}
+                      initial={{ scale: 0, width: 0, opacity: 0 }}
+                      animate={{
+                        scale: 1,
+                        width: 'auto',
+                        opacity: 1,
+                        transition: {
+                          scale: { duration: 0.2 },
+                          width: { duration: 0.2 },
+                          opacity: { duration: 0.2, delay: 0.1 },
+                        },
+                      }}
+                      exit={{
+                        scale: 0,
+                        width: 0,
+                        opacity: 0,
+                        transition: {
+                          opacity: { duration: 0.1 },
+                          scale: { duration: 0.2, delay: 0.1 },
+                          width: { duration: 0.2, delay: 0.1 },
+                        },
+                      }}
                     >
                       <MouseoverTooltip text={`${xChainMap[item].name}`} autoWidth placement="top">
                         <ChainLogoWrap

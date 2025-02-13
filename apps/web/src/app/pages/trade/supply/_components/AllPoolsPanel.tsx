@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { Trans, t } from '@lingui/macro';
+import { Trans } from '@lingui/macro';
 import { Box, Flex, Text } from 'rebass/styled-components';
 import styled from 'styled-components';
 
@@ -19,7 +19,6 @@ import DropdownLink from '@/app/components/DropdownLink';
 import RewardsDisplay from '@/app/components/RewardsDisplay/RewardsDisplay';
 import { HeaderText } from '@/app/components/SearchModal/styleds';
 import Skeleton from '@/app/components/Skeleton';
-import { useRatesWithOracle } from '@/queries/reward';
 import { PairInfo } from '@/types';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { useMedia } from 'react-use';
@@ -138,11 +137,7 @@ type PairItemProps = {
 };
 
 const PairItem = ({ pair, onClick, isLast }: PairItemProps) => {
-  const prices = useRatesWithOracle();
-  const pairName =
-    pair.info.id === 1
-      ? t`ICX queue`
-      : `${formatSymbol(pair.info.baseCurrencyKey)} / ${formatSymbol(pair.info.quoteCurrencyKey)}`;
+  const pairName = `${formatSymbol(pair.info.baseCurrencyKey)} / ${formatSymbol(pair.info.quoteCurrencyKey)}`;
 
   return (
     <>
@@ -188,12 +183,8 @@ export default function AllPoolsPanel({ query }: { query: string }) {
   const [showingExpanded, setShowingExpanded] = React.useState(false);
 
   const handlePoolLick = (pair: PairInfo) => {
-    if (pair.id === 1) {
-      onCurrencySelection(Field.CURRENCY_A, pair.quoteToken);
-    } else {
-      onCurrencySelection(Field.CURRENCY_A, pair.baseToken);
-      onCurrencySelection(Field.CURRENCY_B, pair.quoteToken);
-    }
+    onCurrencySelection(Field.CURRENCY_A, pair.baseToken.unwrapped);
+    onCurrencySelection(Field.CURRENCY_B, pair.quoteToken);
   };
 
   //show only incentivised, cross native or NOL pairs

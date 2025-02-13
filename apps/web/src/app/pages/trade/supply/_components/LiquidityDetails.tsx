@@ -336,10 +336,10 @@ const PoolRecord = ({
 
   const handlePoolClick = () => {
     if (pairData) {
-      onCurrencySelection(Field.CURRENCY_A, pairData.info.baseToken);
+      onCurrencySelection(Field.CURRENCY_A, pairData.info.baseToken.unwrapped);
       onCurrencySelection(Field.CURRENCY_B, pairData.info.quoteToken);
     } else {
-      onCurrencySelection(Field.CURRENCY_A, pair.reserve0.currency);
+      onCurrencySelection(Field.CURRENCY_A, pair.reserve0.currency.unwrapped);
       onCurrencySelection(Field.CURRENCY_B, pair.reserve1.currency);
     }
   };

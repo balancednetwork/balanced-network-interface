@@ -594,6 +594,10 @@ msgstr ""
 msgid "Past day"
 msgstr "Afgelopen dag"
 
+#: src/app/components/WalletModal/index.tsx
+msgid "Borrow. Swap. Supply. Earn. Vote."
+msgstr ""
+
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Adjust liquidity allocation?"
 msgstr ""
@@ -1024,7 +1028,11 @@ msgid "Lock up Balance Tokens?"
 msgstr "Balance Tokens vergrendelen?"
 
 #: src/app/components/home/LoanPanel.tsx
+#: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/SuggestStakingLPModal.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
@@ -1137,6 +1145,7 @@ msgstr "Verwijder je activa om deze transactie te annuleren."
 #~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/SuggestStakingLPModal.tsx
 msgid "Staking"
 msgstr ""
 
@@ -1357,7 +1366,6 @@ msgstr ""
 msgid "Check that your contract calls are set up correctly before you submit the proposal."
 msgstr ""
 
-#: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 #: src/app/components/home/RewardsPanel/SavingsRewards.tsx
 #: src/app/components/Wallet/ICONWallets/ICXWallet/UnstakePanel.tsx
@@ -1406,6 +1414,10 @@ msgstr ""
 #: src/btp/src/connectors/helper.ts
 #~ msgid "Couldn't transfer {0} to {1}. Try again."
 #~ msgstr ""
+
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
+msgid "Transfer fees:"
+msgstr ""
 
 #: src/app/components/home/PositionDetailPanel.tsx
 msgid "Each redemption is spread across a group of borrowers to minimise the impact. The smaller your loan, the less it will affect you."
@@ -1482,6 +1494,10 @@ msgstr ""
 #~ msgid "The fee APR is calculated from the swap fees earned by a pool in the last 30 days."
 #~ msgstr ""
 
+#: src/app/pages/trade/supply/_components/LiquidityDetails/SuggestStakingLPModal.tsx
+msgid "Stake LP tokens"
+msgstr ""
+
 #: src/app/pages/trade/xswap/_components/TokenList/index.tsx
 #~ msgid "Based on the amount of tokens that have interacted with Balanced and/or the ICON blockchain."
 #~ msgstr ""
@@ -1523,6 +1539,7 @@ msgstr "{0} BALN geclaimd."
 #: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
 #: src/app/pages/trade/bridge/_components/XTransferModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/SuggestStakingLPModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 msgid "Transfer fee:"
@@ -1915,8 +1932,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
-msgid "Transfer fee (x3):"
-msgstr ""
+#~ msgid "Transfer fee (x3):"
+#~ msgstr ""
 
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
@@ -2017,7 +2034,6 @@ msgstr "BALN staking is geüpgraded naar een lock-up model genaamd Boosted BALN.
 #: src/app/components/StellarSponsorshipModal/index.tsx
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
-#: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
@@ -2113,6 +2129,14 @@ msgstr "Afgewezen"
 #: src/app/pages/trade/xswap/_components/XSwapModal.tsx
 #~ msgid "Includes a fee of"
 #~ msgstr ""
+
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+msgid "Borrow. Swap. Supply. Earn."
+msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #~ msgid "To deposit {collateralType}"
@@ -2266,8 +2290,8 @@ msgstr ""
 #~ msgstr "Kies een portemonnee uit je Ledger:"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
-msgid "ICX queue"
-msgstr ""
+#~ msgid "ICX queue"
+#~ msgstr ""
 
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
 #~ msgid "Revert"
@@ -2325,8 +2349,8 @@ msgstr "Storten"
 
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
-msgid "Swap & transfer cross-chain."
-msgstr ""
+#~ msgid "Swap & transfer cross-chain."
+#~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
@@ -2448,8 +2472,8 @@ msgid "Verifying contract calls..."
 msgstr ""
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
-msgid "to make this transaction."
-msgstr ""
+#~ msgid "to make this transaction."
+#~ msgstr ""
 
 #: src/app/components/home/CollateralPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
@@ -2695,8 +2719,8 @@ msgstr ""
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
 #: src/app/components/WalletModal/index.tsx
-msgid "Borrow, swap, & transfer cross-chain."
-msgstr ""
+#~ msgid "Borrow, swap, & transfer cross-chain."
+#~ msgstr ""
 
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "You approved"
@@ -2792,7 +2816,9 @@ msgstr "FEES (24U)"
 #: src/app/components/home/_components/xCollateralModal/index.tsx
 #: src/app/components/home/RewardsPanel/ClaimLPRewardsModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
+#: src/app/pages/trade/supply/_components/LiquidityDetails/SuggestStakingLPModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 msgid "Switch to"
 msgstr ""
 
@@ -2970,6 +2996,11 @@ msgstr ""
 msgid "Create pool"
 msgstr "Pool aanmaken"
 
+#: src/app/components/WalletModal/index.tsx
+#: src/app/components/WalletModal/index.tsx
+msgid "Swap and supply liquidity."
+msgstr ""
+
 #: src/app/components/CollateralTypeSwitcher/CollateralTypeListWrap.tsx
 msgid "Search assets..."
 msgstr ""
@@ -3033,8 +3064,8 @@ msgid "Vote cast."
 msgstr "Stem uitgebracht."
 
 #: src/app/components/WalletModal/index.tsx
-msgid "Borrow, swap, & transfer cross-chain. Supply liquidity. Vote."
-msgstr ""
+#~ msgid "Borrow, swap, & transfer cross-chain. Supply liquidity. Vote."
+#~ msgstr ""
 
 #: src/app/components/home/RewardsPanel/NetworkFeesRewards.tsx
 msgid "Network fees"

@@ -62,7 +62,7 @@ const ChainItem = ({ chain, setChainId, isLast, rewardAmount }: ChainItemProps) 
           {rewardAmount.toFixed(2)}
         </Typography>
       ) : (
-        <Typography>N/A</Typography>
+        <Typography>-</Typography>
       )}
     </Grid>
   );

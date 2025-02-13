@@ -144,6 +144,11 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
   const { pair, poolId } = pool;
   const onChangeWithdrawnValue = useChangeWithdrawnValue();
 
+  const [executionWithdrawPortion, setExecutionWithdrawPortion] = React.useState<number>(0);
+  const [executionParsedAmounts, setExecutionParsedAmounts] = React.useState<{
+    [field in Field]?: CurrencyAmount<Currency>;
+  }>({});
+
   const [{ typedValue, independentField, inputType, portion }, setState] = React.useState<{
     typedValue: string;
     independentField: Field;
@@ -253,6 +258,8 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
   const [open, setOpen] = React.useState(false);
 
   const handleShowConfirm = () => {
+    setExecutionParsedAmounts(parsedAmounts);
+    setExecutionWithdrawPortion(portion);
     setOpen(true);
   };
 
@@ -267,6 +274,11 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
   const resetValue = () => {
     sliderInstance.current?.noUiSlider.set(0);
     setState({ typedValue, independentField, inputType: 'slider', portion: 0 });
+    // availableBase &&
+    //   availableQuote &&
+    //   availableBase.greaterThan(0) &&
+    //   availableQuote.greaterThan(0) &&
+    //   onChangeWithdrawnValue(poolId, new BigNumber(0), availableBase.multiply(0), availableQuote.multiply(0));
   };
 
   return (
@@ -342,9 +354,9 @@ export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
       <WithdrawLiquidityModal
         isOpen={open}
         onClose={() => setOpen(false)}
-        parsedAmounts={parsedAmounts}
+        parsedAmounts={executionParsedAmounts}
         pool={pool}
-        withdrawPortion={portion}
+        withdrawPortion={executionWithdrawPortion}
         onSuccess={resetValue}
       />
     </>

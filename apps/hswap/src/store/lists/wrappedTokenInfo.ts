@@ -78,11 +78,13 @@ export class WrappedTokenInfo implements Token {
   }
 
   public get wrapped(): Token {
-    return this;
+    if (this.symbol === 'ICX') return Token.wICX;
+    else return this;
   }
 
   public get unwrapped(): Token {
-    return this;
+    if (this.symbol === 'wICX') return Token.ICX;
+    else return this;
   }
 
   public get isNativeToken() {

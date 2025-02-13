@@ -1,13 +1,12 @@
 import React, { useCallback, ReactNode, useEffect, useMemo } from 'react';
 
-import { Currency, CurrencyAmount, Percent, Price, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Price, Token } from '@balancednetwork/sdk-core';
 import { Pair } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useICX } from '@/constants/tokens';
 import { useAllTokens, useCommonBases } from '@/hooks/Tokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { tryParseAmount } from '@/store/swap/hooks';
@@ -121,7 +120,6 @@ export function useDerivedMintInfo(): {
   noLiquidity?: boolean;
   liquidityMinted?: CurrencyAmount<Token>;
   mintableLiquidity?: CurrencyAmount<Token>;
-  poolTokenPercentage?: Percent;
   error?: ReactNode;
   minQuoteTokenAmount?: BigNumber | null;
   lpXChainId: XChainId;
@@ -315,14 +313,6 @@ export function useDerivedMintInfo(): {
     }
   }, [currencyBalances, pair, totalSupply]);
 
-  const poolTokenPercentage = useMemo(() => {
-    if (liquidityMinted && totalSupply) {
-      return new Percent(liquidityMinted.quotient, totalSupply.add(liquidityMinted).quotient);
-    } else {
-      return undefined;
-    }
-  }, [liquidityMinted, totalSupply]);
-
   let error: ReactNode | undefined;
   if (!account) {
     error = <Trans>Connect Wallet</Trans>;
@@ -357,7 +347,6 @@ export function useDerivedMintInfo(): {
     noLiquidity,
     liquidityMinted,
     mintableLiquidity,
-    poolTokenPercentage,
     error,
     lpXChainId,
     account,
@@ -372,7 +361,6 @@ export function useInitialSupplyLoad(): void {
   const { onCurrencySelection } = useMintActionHandlers(true);
   const { currencies } = useDerivedMintInfo();
   const { pair = '' } = useParams<{ pair: string }>();
-  const ICX = useICX();
 
   React.useEffect(() => {
     if (firstLoad && Object.values(tokens).length > 0 && Object.values(bases).length > 0) {
@@ -391,8 +379,6 @@ export function useInitialSupplyLoad(): void {
       if (currencyB && currencyA) {
         onCurrencySelection(Field.CURRENCY_A, convertCurrency(xChainId, currencyA)!);
         onCurrencySelection(Field.CURRENCY_B, convertCurrency(xChainId, currencyB)!);
-      } else if (currentCurrA?.toLowerCase() === 'icx') {
-        ICX && onCurrencySelection(Field.CURRENCY_A, convertCurrency(xChainId, ICX)!);
       } else {
         // TODO: is this necessary?
         if (currencies.CURRENCY_A && currencies.CURRENCY_B) {
@@ -411,17 +397,7 @@ export function useInitialSupplyLoad(): void {
       }
       setFirstLoad(false);
     }
-  }, [
-    firstLoad,
-    tokens,
-    onCurrencySelection,
-    currencies.CURRENCY_A,
-    currencies.CURRENCY_B,
-    bases,
-    ICX,
-    pair,
-    navigate,
-  ]);
+  }, [firstLoad, tokens, onCurrencySelection, currencies.CURRENCY_A, currencies.CURRENCY_B, bases, pair, navigate]);
 
   useEffect(() => {
     if (!firstLoad && currencies && currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B]) {

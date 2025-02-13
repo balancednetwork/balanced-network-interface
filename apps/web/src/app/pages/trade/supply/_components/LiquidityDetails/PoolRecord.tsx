@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Pair } from '@balancednetwork/v1-sdk';
 import { Trans } from '@lingui/macro';
@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
 import ArrowDownIcon from '@/assets/icons/arrow-line.svg';
-import { Pool, useBalance, usePoolTokenAmounts } from '@/hooks/useV2Pairs';
+import { Pool, usePoolTokenAmounts } from '@/hooks/useV2Pairs';
 import { PairData } from '@/queries/backendv2';
 import { Source, useBBalnAmount, useTotalSupply } from '@/store/bbaln/hooks';
 import { useMintActionHandlers } from '@/store/mint/hooks';
@@ -19,7 +19,8 @@ import { useStakedLPPercent, useWithdrawnPercent } from '@/store/stakedLP/hooks'
 import PoolLogoWithNetwork from '@/app/components/PoolLogoWithNetwork';
 import RewardsDisplay from '@/app/components/RewardsDisplay/RewardsDisplay';
 import Skeleton from '@/app/components/Skeleton';
-import { useRatesWithOracle } from '@/queries/reward';
+import { useIncentivisedPairs, useRatesWithOracle } from '@/queries/reward';
+import { useEmissions } from '@/store/reward/hooks';
 import { formatBigNumber } from '@/utils';
 import { formatSymbol, getFormattedNumber } from '@/utils/formatter';
 import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
@@ -113,18 +114,36 @@ export const PoolRecord = ({
   const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
 
   const { baseValue: baseWithdrawValue, quoteValue: quoteWithdrawValue } = useWithdrawnPercent(poolId) || {};
-  const balances = useBalance(poolId);
   const stakedFractionValue = stakedFraction(stakedLPPercent);
   const totalbBaln = useTotalSupply();
   const userBbaln = useBBalnAmount();
   const reward = getShareReward(
     balnReward,
     boostData && boostData[sourceName],
-    balances,
+    pool,
     stakedFractionValue,
     totalbBaln,
     userBbaln,
   );
+
+  const { data: dailyEmissions } = useEmissions();
+  const { data: incentivisedPairs } = useIncentivisedPairs();
+
+  const xDailyReward = useMemo(() => {
+    const pair = incentivisedPairs?.find(pair => pair.id === pool.poolId);
+    if (pair && pool.stakedLPBalance && dailyEmissions) {
+      const stakedFractionNumber = new BigNumber(stakedFractionValue.toFixed(8)).div(100);
+      return new BigNumber(
+        new BigNumber(pool.balance.add(pool.stakedLPBalance).toFixed())
+          .times(stakedFractionNumber)
+          .times(10 ** pool.stakedLPBalance.currency.decimals)
+          .div(pair.totalStaked)
+          .times(dailyEmissions.times(pair.rewards.toFixed(8))),
+      );
+    }
+
+    return new BigNumber(0);
+  }, [pool, incentivisedPairs, dailyEmissions, stakedFractionValue]);
 
   const baseSupplyAmount = totalSupply(baseWithdrawValue, baseAmount);
   const quoteSupplyAmount = totalSupply(quoteWithdrawValue, quoteAmount);
@@ -172,7 +191,6 @@ export const PoolRecord = ({
           <DataText>
             <DataText>
               {pairData && <RewardsDisplay pair={pairData} boost={boostData} xChainId={xChainId} />}
-
               {pairData?.feesApy && (
                 <APYItem>
                   <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
@@ -187,21 +205,21 @@ export const PoolRecord = ({
         {upSmall && (
           <DataText>
             <Typography fontSize={16}>
-              {getFormattedRewards(reward, !externalRewards || externalRewards.length === 0)}
+              {xChainId === '0x1.icon'
+                ? getFormattedRewards(reward, !externalRewards || externalRewards.length === 0)
+                : getFormattedRewards(xDailyReward, true)}
             </Typography>
-            {externalRewards ? (
-              externalRewards.map(reward => {
-                const rewardPrice = prices?.[reward.currency.wrapped.symbol];
-                const rewardShare = getExternalShareReward(reward, balances, stakedFractionValue, pairData?.stakedLP);
-                return (
-                  <Typography key={reward.currency.symbol} fontSize={16}>
-                    {getFormattedExternalRewards(rewardShare, rewardPrice?.toFixed())}
-                  </Typography>
-                );
-              })
-            ) : (
-              <Skeleton width={100}></Skeleton>
-            )}
+            {xChainId === '0x1.icon' && externalRewards
+              ? externalRewards.map(reward => {
+                  const rewardPrice = prices?.[reward.currency.wrapped.symbol];
+                  const rewardShare = getExternalShareReward(reward, pool, stakedFractionValue, pairData?.stakedLP);
+                  return (
+                    <Typography key={reward.currency.symbol} fontSize={16}>
+                      {getFormattedExternalRewards(rewardShare, rewardPrice?.toFixed())}
+                    </Typography>
+                  );
+                })
+              : null}
           </DataText>
         )}
       </ListItem>

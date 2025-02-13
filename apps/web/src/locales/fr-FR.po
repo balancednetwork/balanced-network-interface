@@ -2184,6 +2184,10 @@ msgstr ""
 #~ msgid "To deposit {collateralType} from {0},"
 #~ msgstr ""
 
+#: src/app/components/SearchModal/CurrencySearch.tsx
+msgid "Search token..."
+msgstr ""
+
 #: src/store/mint/hooks.tsx
 #: src/store/mint/hooks.tsx
 #~ msgid "Enter an amount"
@@ -2767,8 +2771,8 @@ msgid "Adjust allocation"
 msgstr ""
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
-msgid "Search name or contract..."
-msgstr ""
+#~ msgid "Search name or contract..."
+#~ msgstr ""
 
 #: src/app/components/WalletModal/IconWalletModal.tsx
 #~ msgid "Make sure it's connected and try again."

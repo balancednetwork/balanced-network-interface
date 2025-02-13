@@ -1,10 +1,11 @@
 // Start Generation Here
-import { XChainId } from '@balancednetwork/xwagmi';
+import { XChainId, xChainMap } from '@balancednetwork/xwagmi';
 import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
-import { Box } from 'rebass';
+import { Box, Flex } from 'rebass';
 import styled, { useTheme } from 'styled-components';
 import { Button } from '../Button';
+import { ChainLogo } from '../ChainLogo';
 
 interface XChainFilterProps {
   filterItems: XChainId[];
@@ -12,11 +13,32 @@ interface XChainFilterProps {
   onChainClick: (xChainId: XChainId) => void;
 }
 
-const FilterContentWrap = styled(Box)``;
+const FilterContentWrap = styled(Box)<{ $isOpen: boolean }>`
+  transition: padding-top 0.3s ease-in-out, padding-bottom 0.3s ease-in-out;
+  padding-top: ${({ $isOpen }) => ($isOpen ? '7px' : '0px')};
+  padding-bottom: ${({ $isOpen }) => ($isOpen ? '7px' : '0px')};
+`;
 
 const FilterButton = styled(Button)`
   padding-left: 12px;
   padding-right: 12px;
+`;
+
+const ChainsWrap = styled(Flex)`
+  flex-wrap: wrap;
+  background-color: ${({ theme }) => theme.colors.bg3};
+  padding: 10px;
+  border-radius: 10px;
+`;
+
+const ChainLogoWrap = styled(Box)`
+  padding: 5px 7px;
+`;
+
+const ButtonAll = styled(Button)`
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 14px;
 `;
 
 const XChainFilter: React.FC<XChainFilterProps> = props => {
@@ -37,7 +59,7 @@ const XChainFilter: React.FC<XChainFilterProps> = props => {
         {buttonText}
       </FilterButton>
 
-      <FilterContentWrap>
+      <FilterContentWrap $isOpen={isOpen}>
         <AnimatePresence>
           {isOpen && (
             <motion.div
@@ -45,9 +67,23 @@ const XChainFilter: React.FC<XChainFilterProps> = props => {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
             >
-              {filterItems.map(item => (
-                <div key={item}>{item}</div>
-              ))}
+              <ChainsWrap>
+                <ButtonAll onClick={() => alert('hey')}>All</ButtonAll>
+                <AnimatePresence>
+                  {filterItems.map(item => (
+                    <motion.div
+                      key={item}
+                      initial={{ opacity: 0, scale: 0, width: 0 }}
+                      animate={{ opacity: 1, scale: 1, width: 'auto' }}
+                      exit={{ opacity: 0, scale: 0, width: 0 }}
+                    >
+                      <ChainLogoWrap>
+                        <ChainLogo chain={xChainMap[item]} size="22px" />
+                      </ChainLogoWrap>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </ChainsWrap>
             </motion.div>
           )}
         </AnimatePresence>

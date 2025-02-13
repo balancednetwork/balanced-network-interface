@@ -63,17 +63,15 @@ const SavingsRewards = () => {
               Savings rate
             </Typography>
           </Flex>
-          {savingsXChainId === '0x1.icon' &&
-            (hasRewards || (lockedAmount && lockedAmount.greaterThan(0) && account)) && (
-              <UnderlineText>
-                <Typography color="primaryBright" onClick={toggleOpen}>
-                  <Trans>Claim</Trans>
-                </Typography>
-              </UnderlineText>
-            )}
+          {(hasRewards || (lockedAmount && lockedAmount.greaterThan(0) && account)) && (
+            <UnderlineText>
+              <Typography color="primaryBright" onClick={toggleOpen}>
+                <Trans>Claim</Trans>
+              </Typography>
+            </UnderlineText>
+          )}
         </Flex>
-        {savingsXChainId === '0x1.icon' &&
-        ((account && hasRewards) || (lockedAmount && lockedAmount.greaterThan(0))) ? (
+        {(account && hasRewards) || (lockedAmount && lockedAmount.greaterThan(0)) ? (
           <RewardsGrid rewards={rewards} />
         ) : (
           <Typography fontSize={14} opacity={0.75} mb={5}>

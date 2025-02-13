@@ -10,6 +10,7 @@ import { XToken } from '../types';
 import {
   getAddLPData,
   getClaimRewardData,
+  getLockData,
   getStakeData,
   getUnStakeData,
   getWithdrawData,
@@ -78,6 +79,11 @@ export abstract class XWalletClient {
         return await this.unstake(xTransactionInput);
       case XTransactionType.LP_CLAIM_REWARDS:
         return await this.claimRewards(xTransactionInput);
+
+      case XTransactionType.LOCK_STABLE_TOKEN:
+        return await this.lockStableToken(xTransactionInput);
+      case XTransactionType.UNLOCK_STABLE_TOKEN:
+        return await this.unlockStableToken(xTransactionInput);
 
       default:
         throw new Error('Invalid XTransactionType');
@@ -275,5 +281,48 @@ export abstract class XWalletClient {
     const data = Buffer.from(getClaimRewardData('', []));
 
     return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
+  }
+
+  // lock stable token
+  async lockStableToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { account, inputAmount, direction, xCallFee } = xTransactionInput;
+
+    // Depositing bnUSD on spoke chain is the normal process of bnUSD crossTransfer from spoke chain. But the data field shouldn't be empty in this case. Data should contain a rlp encoded value as specified on below code for solana spoke chain:
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Savings.address}`;
+
+    const data = getLockData('_lock', {});
+    const hash = await this._crossTransfer({ account, inputAmount, destination, data, fee: xCallFee.rollback });
+    return hash;
+
+    // Another way of bnUSD deposit from the spoke chain using other supported tokens is deposit token to Asset Manager contract of the spoke chain.
+    // Doing that the to field should be the 'ICON Router Contract Address' and data should be prepared on the following way.
+
+    // const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
+
+    // // const lockData = getLockData('_lock', { to: direction.from }); //direction.from is 0xa4b1.arbitrum
+    // // const lockData = getLockData('_lock', { to: '0x1.icon' });
+    // const lockData = getLockData('_lock', {});
+
+    // console.log('lockData', lockData);
+    // const receiver = Buffer.from(bnJs.Savings.address, 'utf8');
+    // const data = Buffer.from(
+    //   RLP.encode([
+    //     '_swap',
+    //     receiver,
+    //     '0x00', // minimum amount to receive
+    //     lockData,
+    //     ['0x01', bnJs.bnUSD.address],
+    //   ]),
+    // );
+
+    // console.log('data', data);
+
+    // return await this._deposit({ account, inputAmount, destination, data, fee: 0n });
+  }
+
+  // unlock stable token
+
+  async unlockStableToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Not implemented');
   }
 }

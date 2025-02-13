@@ -203,7 +203,7 @@ const Savings = () => {
               </QuestionWrapper>
             </Flex>
           </Flex>
-          {savingsXChainId === '0x1.icon' && account && bnUSDCombinedTotal > 0 && (
+          {account && bnUSDCombinedTotal > 0 && (
             <Flex>
               {isAdjusting && <TextButton onClick={handleCancel}>{t`Cancel`}</TextButton>}
               <Button
@@ -222,7 +222,7 @@ const Savings = () => {
             </Flex>
           )}
         </Flex>
-        {savingsXChainId === '0x1.icon' && account && bnUSDCombinedTotal > 0 ? (
+        {account && bnUSDCombinedTotal > 0 ? (
           <>
             <Box margin="25px 0 10px">
               <Nouislider
@@ -266,7 +266,7 @@ const Savings = () => {
               )}
             </Flex>
           </>
-        ) : (!account && signedInWallet.length > 0) || savingsXChainId !== '0x1.icon' ? (
+        ) : !account && signedInWallet.length > 0 ? (
           <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>
             <Trans>Sign in on ICON, then deposit bnUSD to earn rewards.</Trans>
           </Typography>

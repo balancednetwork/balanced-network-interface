@@ -1,21 +1,34 @@
 import { Button } from '@/app/components/Button';
 import { tryParseAmount } from '@/store/swap/hooks';
 import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
-import { useXAccount } from '@balancednetwork/xwagmi';
+import {
+  XTransactionInput,
+  XTransactionType,
+  bnJs,
+  getXCallFee,
+  useSendXTransaction,
+  useXAccount,
+  xTokenMapBySymbol,
+} from '@balancednetwork/xwagmi';
 import React from 'react';
 import { Flex } from 'rebass/styled-components';
+
+const bnUSD = xTokenMapBySymbol['0xa4b1.arbitrum']['bnUSD'];
 
 export function TestPage() {
   const [isProcessing, setIsProcessing] = React.useState(false);
   const iconAccount = useXAccount('ICON');
-  const suiAccount = useXAccount('SUI');
+  const evmAccount = useXAccount('EVM');
 
-  const getAllBalances = async () => {
-    try {
-    } catch (error) {}
+  const sendXTransaction = useSendXTransaction();
+
+  const getLockedAmount = async userNetworkAddress => {
+    const lockedAmount = await bnJs.Savings.getLockedAmount(userNetworkAddress);
+    console.log('lockedAmount', Number(lockedAmount));
+    return lockedAmount;
   };
 
-  const bridge = async (currency: Currency, currencyInValue: string) => {
+  const deposit = async (currency: Currency, currencyInValue: string) => {
     if (isProcessing) {
       return;
     }
@@ -23,30 +36,39 @@ export function TestPage() {
     setIsProcessing(true);
 
     try {
-      const currencyAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(currencyInValue, currency);
+      await getLockedAmount(`0xa4b1.arbitrum/${evmAccount.address}`);
+      // const currencyAmount: CurrencyAmount<Currency> | undefined = tryParseAmount(currencyInValue, currency);
+      // const direction = {
+      //   from: '0xa4b1.arbitrum',
+      //   to: '0x1.icon',
+      // };
+      // const input: XTransactionInput = {
+      //   direction,
+      //   type: XTransactionType.LOCK_STABLE_TOKEN,
+      //   account: evmAccount.address,
+      //   inputAmount: currencyAmount,
+      //   xCallFee: await getXCallFee(direction.from, direction.to),
+      // };
 
-      if (!currencyAmount) {
-        throw new Error('Invalid amount');
-      }
+      // console.log('input', input);
 
-      console.log('currencyAmount', currencyAmount);
+      // const txHash = await sendXTransaction(input);
+      // console.log('txHash', txHash);
     } catch (error) {
       console.error('error', error);
     }
     setIsProcessing(false);
   };
-  const handleBridgeSUIFromSuiToIcon = async () => {
+  const handleDeposit = async () => {
     console.log('handleBridgeSUIFromSuiToIcon');
-    // await bridge(SUI, '1');
-    // await getFee();
-    await getAllBalances();
+    deposit(bnUSD, '0.12');
   };
 
   return (
     <Flex bg="bg3" flex={1} p={2} style={{ gap: 2 }} flexDirection={'column'}>
       <Flex flexDirection={'row'} style={{ gap: 2 }}>
-        <Button onClick={handleBridgeSUIFromSuiToIcon} disabled={isProcessing}>
-          Bridge SUI from Icon to SUI
+        <Button onClick={handleDeposit} disabled={isProcessing}>
+          deposit bnUSD on Arbitrum
         </Button>
       </Flex>
       <Flex>{/* Result here */}</Flex>

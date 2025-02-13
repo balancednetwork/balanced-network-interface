@@ -183,7 +183,8 @@ export const convertCurrency = (xChainId: XChainId, currency: Currency | XToken 
   const token = xTokenMap[xChainId].find(t => t.symbol === currency.symbol)!;
 
   if (!token) {
-    throw new Error(`XToken ${currency.symbol} is not supported on ${xChainId}`);
+    return undefined;
+    // throw new Error(`XToken ${currency.symbol} is not supported on ${xChainId}`);
   }
 
   return token;

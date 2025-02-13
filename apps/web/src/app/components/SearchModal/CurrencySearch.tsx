@@ -164,6 +164,11 @@ export function CurrencySearch({
     }
   }, [hasSignedIn, selectorType]);
 
+  const handleTabClick = useCallback((tab: AssetsTab) => {
+    setAssetsTab(tab);
+    setFilterState([]);
+  }, []);
+
   const bridgeDirection = useBridgeDirection();
   const xTokens = useXTokens(bridgeDirection.from, bridgeDirection.to);
 
@@ -233,6 +238,12 @@ export function CurrencySearch({
       return xChainIds;
     }
   }, [filteredTokens, assetsTab, xWallet, rates, debouncedQuery]);
+
+  const sortedXChainFilterItems = useMemo(() => {
+    return [...xChainFilterItems].sort((a, b) => {
+      return xChainMap[a].name.localeCompare(xChainMap[b].name);
+    });
+  }, [xChainFilterItems]);
 
   const sortedTokens: Token[] = useMemo(() => {
     return [...filteredTokens].sort(tokenComparator);
@@ -336,14 +347,14 @@ export function CurrencySearch({
           tabIndex={isMobile ? -1 : 1}
           onChange={handleInput}
         />
-        <XChainFilter filterItems={xChainFilterItems} filterState={filterState} onChainClick={handleChainClick} />
+        <XChainFilter filterItems={sortedXChainFilterItems} filterState={filterState} onChainClick={handleChainClick} />
       </FilterWrap>
       {hasSignedIn && (selectorType === SelectorType.SWAP_IN || selectorType === SelectorType.SWAP_OUT) ? (
         <Flex justifyContent="center" mt={3}>
-          <AssetsTabButton $active={assetsTab === AssetsTab.YOUR} mr={2} onClick={() => setAssetsTab(AssetsTab.YOUR)}>
+          <AssetsTabButton $active={assetsTab === AssetsTab.YOUR} mr={2} onClick={() => handleTabClick(AssetsTab.YOUR)}>
             <Trans>Your assets</Trans>
           </AssetsTabButton>
-          <AssetsTabButton $active={assetsTab === AssetsTab.ALL} onClick={() => setAssetsTab(AssetsTab.ALL)}>
+          <AssetsTabButton $active={assetsTab === AssetsTab.ALL} onClick={() => handleTabClick(AssetsTab.ALL)}>
             <Trans>All assets</Trans>
           </AssetsTabButton>
         </Flex>
@@ -355,6 +366,7 @@ export function CurrencySearch({
       ) : filteredSortedTokensWithICX?.length > 0 && shouldShowCurrencyList ? (
         <CurrencyList
           currencies={filterCurrencies}
+          filterState={filterState}
           onCurrencySelect={handleCurrencySelect}
           onChainSelect={onChainSelect}
           showRemoveView={showRemoveView}

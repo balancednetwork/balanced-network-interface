@@ -73,8 +73,10 @@ function CurrencyRow({
   basedOnWallet,
   selectorType,
   width,
+  filterState,
 }: {
   currency: Currency;
+  filterState: XChainId[];
   showCrossChainBreakdown: boolean;
   onSelect: (currency: Currency, setDefaultChain?: boolean) => void;
   onChainSelect?: (chainId: XChainId) => void;
@@ -90,6 +92,7 @@ function CurrencyRow({
   const hasSigned = useHasSignedIn();
   const xWallet = useCrossChainWalletBalances();
   const isSwapSelector = selectorType === SelectorType.SWAP_IN || selectorType === SelectorType.SWAP_OUT;
+  const prices = useRatesWithOracle();
 
   const sortedXChains = useMemo(() => {
     return basedOnWallet
@@ -98,7 +101,14 @@ function CurrencyRow({
             const xCurrencyAmount = Object.values(xWallet[xChainId] || {}).find(
               currencyAmount => currencyAmount.currency.symbol === currency.symbol,
             );
-            return xCurrencyAmount?.greaterThan(0);
+            return prices
+              ? xCurrencyAmount?.greaterThan(0) &&
+                  !shouldHideBecauseOfLowValue(
+                    true,
+                    prices[currency.symbol!],
+                    new BigNumber(xCurrencyAmount?.toFixed()),
+                  )
+              : xCurrencyAmount?.greaterThan(0);
           })
           .sort((xChainIdA, xChainIdAB) => {
             const xCurrencyAmountA = Object.values(xWallet[xChainIdA] || {}).find(
@@ -119,10 +129,7 @@ function CurrencyRow({
       : [...currencyXChainIds].sort((a, b) => {
           return xChainMap[a].name.localeCompare(xChainMap[b].name);
         });
-  }, [currencyXChainIds, basedOnWallet, currency, xWallet]);
-
-  const isSingleChain = sortedXChains.length === 1 || sortedXChains.length === 0;
-  const showBreakdown = showCrossChainBreakdown && currencyXChainIds.length && !isSingleChain;
+  }, [currencyXChainIds, basedOnWallet, currency, xWallet, prices]);
 
   const isUserAddedToken = useIsUserAddedToken(currency as Token);
   const theme = useTheme();
@@ -150,14 +157,25 @@ function CurrencyRow({
       return [bridgeDirection.from];
     }
 
-    return sortedXChains;
-  }, [sortedXChains, shouldForceNetworkIcon, selectorType, bridgeDirection.from]);
+    return filterState.length > 0 ? sortedXChains.filter(xChainId => filterState.includes(xChainId)) : sortedXChains;
+  }, [sortedXChains, shouldForceNetworkIcon, selectorType, bridgeDirection.from, filterState]);
+
+  const isSingleChain = sortedXChains.length === 1 || sortedXChains.length === 0;
+  const showBreakdown = basedOnWallet
+    ? showCrossChainBreakdown && currencyXChainIds.length && !isSingleChain
+    : (filterState.length === 0 || finalXChainIds.length > 1) && !isSingleChain;
+
+  const shouldShowNetworkIcon =
+    (basedOnWallet || shouldForceNetworkIcon) && finalXChainIds.length === 1 && !showBreakdown;
+
+  const hideBecauseOfXChainFilter =
+    filterState.length > 0 && !finalXChainIds.some(xChainId => filterState.includes(xChainId));
 
   const RowContentSignedIn = () => {
     return (
       <>
         <Flex alignItems={'center'}>
-          {(basedOnWallet || shouldForceNetworkIcon) && finalXChainIds.length === 1 ? (
+          {shouldShowNetworkIcon ? (
             <CurrencyLogoWithNetwork
               currency={currency}
               bgColor={theme.colors.bg4}
@@ -229,7 +247,7 @@ function CurrencyRow({
               currency={currency}
               bgColor={theme.colors.bg4}
               chainId={ICON_XCALL_NETWORK_ID}
-              size={'24px'}
+              size={'22px'}
             />
           ) : shouldForceNetworkIcon && finalXChainIds.length === 1 ? (
             <CurrencyLogoWithNetwork
@@ -278,7 +296,7 @@ function CurrencyRow({
   );
 
   const handleClick = (currency: Currency, XChainIds: XChainId[]) => {
-    if (basedOnWallet && XChainIds.length === 1) {
+    if (XChainIds.length === 1) {
       handleXChainCurrencySelect(currency, XChainIds[0]);
     } else {
       onSelect(currency);
@@ -288,7 +306,8 @@ function CurrencyRow({
   const itemContent = hasSigned ? <RowContentSignedIn /> : <RowContentNotSignedIn />;
   const itemSwapContent = hasSigned && basedOnWallet ? <RowContentSignedIn /> : <RowContentNotSignedIn />;
 
-  if (hideBecauseOfLowValue) return null;
+  if (hideBecauseOfLowValue || hideBecauseOfXChainFilter) return null;
+
   return (
     <>
       <ListItem
@@ -316,7 +335,7 @@ function CurrencyRow({
               ))
             ) : (
               <XChainLogoList>
-                {sortedXChains?.map(xChainId => {
+                {finalXChainIds?.map(xChainId => {
                   const spokeAssetVersion: string | undefined = xTokenMap[xChainId].find(
                     xToken => xToken.symbol === currency?.symbol,
                   )?.spokeVersion;
@@ -359,6 +378,7 @@ export default function CurrencyList({
   basedOnWallet,
   selectorType,
   width,
+  filterState,
 }: {
   currencies: Currency[];
   showCrossChainBreakdown: boolean;
@@ -372,6 +392,7 @@ export default function CurrencyList({
   basedOnWallet: boolean;
   selectorType: SelectorType;
   width?: number;
+  filterState: XChainId[];
 }) {
   const handleEscape = useKeyPress('Escape');
   const hasSignedIn = useHasSignedIn();
@@ -461,6 +482,7 @@ export default function CurrencyList({
           basedOnWallet={basedOnWallet}
           selectorType={selectorType}
           width={width}
+          filterState={filterState}
         />
       ))}
     </List1>

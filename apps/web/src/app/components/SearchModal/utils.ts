@@ -5,7 +5,6 @@ export const shouldHideBecauseOfLowValue = (
   basedOnWallet: boolean,
   price: BigNumber | undefined,
   balance: BigNumber | undefined,
-  symbol?: string,
 ): boolean => {
   if (!price || !balance) {
     return false;

@@ -132,8 +132,10 @@ export const PoolRecord = ({
   const xDailyReward = useMemo(() => {
     const pair = incentivisedPairs?.find(pair => pair.id === pool.poolId);
     if (pair && pool.stakedLPBalance && dailyEmissions) {
+      const stakedFractionNumber = new BigNumber(stakedFractionValue.toFixed(8)).div(100);
       return new BigNumber(
-        new BigNumber(pool.stakedLPBalance.toFixed())
+        new BigNumber(pool.balance.add(pool.stakedLPBalance).toFixed())
+          .times(stakedFractionNumber)
           .times(10 ** pool.stakedLPBalance.currency.decimals)
           .div(pair.totalStaked)
           .times(dailyEmissions.times(pair.rewards.toFixed(8))),
@@ -141,7 +143,7 @@ export const PoolRecord = ({
     }
 
     return new BigNumber(0);
-  }, [pool, incentivisedPairs, dailyEmissions]);
+  }, [pool, incentivisedPairs, dailyEmissions, stakedFractionValue]);
 
   const baseSupplyAmount = totalSupply(baseWithdrawValue, baseAmount);
   const quoteSupplyAmount = totalSupply(quoteWithdrawValue, quoteAmount);

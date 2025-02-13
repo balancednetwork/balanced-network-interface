@@ -8,15 +8,12 @@ import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { isNativeCurrency, useICX } from '@/constants/tokens';
 import { useAllTokens, useCommonBases } from '@/hooks/Tokens';
-import { useQueuePair } from '@/hooks/useQueuePair';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { tryParseAmount } from '@/store/swap/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCurrencyBalances } from '@/store/wallet/hooks';
 import { formatSymbol } from '@/utils/formatter';
-import { XChainId } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
 import { AppDispatch, AppState } from '../index';
 import { Field, INITIAL_MINT, InputType, selectCurrency, typeInput } from './reducer';
@@ -45,18 +42,11 @@ export function useMintActionHandlers(noLiquidity: boolean | undefined): {
       );
 
       if (field === Field.CURRENCY_A) {
-        if (currency.symbol === 'ICX') {
-          // history.replace(`/trade/supply/${currency.symbol}`);
-          navigate(`/trade/supply/${currency.symbol}`, { replace: true });
-        } else {
-          const currentQuote = pair.split('_')[1];
-          // history.replace(`/trade/supply/${currency.symbol}` + (currentQuote ? `_${currentQuote}` : ''));
-          navigate(`/trade/supply/${currency.symbol}` + (currentQuote ? `_${currentQuote}` : ''), { replace: true });
-        }
+        const currentQuote = pair.split('_')[1];
+        navigate(`/trade/supply/${currency.symbol}` + (currentQuote ? `_${currentQuote}` : ''), { replace: true });
       }
       if (field === Field.CURRENCY_B) {
         const currentBase = pair.split('_')[0];
-        // history.replace(`/trade/supply/${currentBase}_${currency.symbol}`);
         navigate(`/trade/supply/${currentBase}_${currency.symbol}`, { replace: true });
       }
     },
@@ -131,10 +121,7 @@ const useCurrencyDeposit = (
   return token && result ? CurrencyAmount.fromRawAmount<Currency>(token, BigInt(result)) : undefined;
 };
 
-export function useDerivedMintInfo(
-  AChain: XChainId = '0x1.icon',
-  BChain: XChainId = '0x1.icon',
-): {
+export function useDerivedMintInfo(): {
   dependentField: Field;
   currencies: { [field in Field]?: Currency };
   pair?: Pair | null;
@@ -146,7 +133,6 @@ export function useDerivedMintInfo(
   noLiquidity?: boolean;
   liquidityMinted?: CurrencyAmount<Token>;
   mintableLiquidity?: CurrencyAmount<Token>;
-  poolTokenPercentage?: Percent;
   error?: ReactNode;
   minQuoteTokenAmount?: BigNumber | null;
 } {
@@ -170,14 +156,7 @@ export function useDerivedMintInfo(
     [currencyA, currencyB],
   );
 
-  // pair
-  const isQueue = isNativeCurrency(currencies[Field.CURRENCY_A]);
-
-  // For queue, currencies[Field.CURRENCY_A] = ICX and currencies[Field.CURRENCY_B] = undefined
-  // so used `useQueuePair` in addition to `useV2Pair`.
-  const [pairState1, pair1] = useV2Pair(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]);
-  const [pairState2, pair2] = useQueuePair();
-  const [pairState, pair] = isQueue ? [pairState2, pair2] : [pairState1, pair1];
+  const [pairState, pair] = useV2Pair(currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]);
 
   const totalSupply = pair?.totalSupply;
   const noLiquidity: boolean =
@@ -305,8 +284,7 @@ export function useDerivedMintInfo(
       totalSupply &&
       tokenAmountA &&
       tokenAmountB &&
-      ((pair.token0.symbol as string) === (tokenAmountA.currency.symbol as string) ||
-        (pair.token1.symbol as string) === (tokenAmountA.currency.symbol as string)) &&
+      pair.involvesToken(tokenAmountA.currency) &&
       pair.involvesToken(tokenAmountB.currency) &&
       !tokenAmountA.currency.equals(tokenAmountB.currency)
     ) {
@@ -325,14 +303,6 @@ export function useDerivedMintInfo(
     }
   }, [currencyBalances, pair, totalSupply]);
 
-  const poolTokenPercentage = React.useMemo(() => {
-    if (liquidityMinted && totalSupply) {
-      return new Percent(liquidityMinted.quotient, totalSupply.add(liquidityMinted).quotient);
-    } else {
-      return undefined;
-    }
-  }, [liquidityMinted, totalSupply]);
-
   let error: ReactNode | undefined;
   if (!account) {
     error = <Trans>Connect Wallet</Trans>;
@@ -342,30 +312,18 @@ export function useDerivedMintInfo(
     error = error ?? <Trans>Invalid pair</Trans>;
   }
 
-  if (isQueue) {
-    if (!parsedAmounts[Field.CURRENCY_A]) {
-      error = error ?? <Trans>Enter amount</Trans>;
-    }
+  if (!parsedAmounts[Field.CURRENCY_A] || !parsedAmounts[Field.CURRENCY_B]) {
+    error = error ?? <Trans>Enter amount</Trans>;
+  }
 
-    const { [Field.CURRENCY_A]: currencyAAmount } = parsedAmounts;
+  const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
 
-    if (currencyAAmount && currencyBalances?.[Field.CURRENCY_A]?.lessThan(currencyAAmount)) {
-      error = <>Insufficient {formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} balance</>;
-    }
-  } else {
-    if (!parsedAmounts[Field.CURRENCY_A] || !parsedAmounts[Field.CURRENCY_B]) {
-      error = error ?? <Trans>Enter amount</Trans>;
-    }
+  if (currencyAAmount && currencyBalances?.[Field.CURRENCY_A]?.lessThan(currencyAAmount)) {
+    error = <Trans>Insufficient {formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} balance</Trans>;
+  }
 
-    const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = parsedAmounts;
-
-    if (currencyAAmount && currencyBalances?.[Field.CURRENCY_A]?.lessThan(currencyAAmount)) {
-      error = <Trans>Insufficient {formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} balance</Trans>;
-    }
-
-    if (currencyBAmount && currencyBalances?.[Field.CURRENCY_B]?.lessThan(currencyBAmount)) {
-      error = <Trans>Insufficient {formatSymbol(currencies[Field.CURRENCY_B]?.symbol)} balance</Trans>;
-    }
+  if (currencyBAmount && currencyBalances?.[Field.CURRENCY_B]?.lessThan(currencyBAmount)) {
+    error = <Trans>Insufficient {formatSymbol(currencies[Field.CURRENCY_B]?.symbol)} balance</Trans>;
   }
 
   return {
@@ -380,7 +338,6 @@ export function useDerivedMintInfo(
     noLiquidity,
     liquidityMinted,
     mintableLiquidity,
-    poolTokenPercentage,
     error,
   };
 }
@@ -393,7 +350,6 @@ export function useInitialSupplyLoad(): void {
   const { onCurrencySelection } = useMintActionHandlers(true);
   const { currencies } = useDerivedMintInfo();
   const { pair = '' } = useParams<{ pair: string }>();
-  const ICX = useICX();
 
   React.useEffect(() => {
     if (firstLoad && Object.values(tokens).length > 0 && Object.values(bases).length > 0) {
@@ -408,14 +364,12 @@ export function useInitialSupplyLoad(): void {
       if (currencyB && currencyA) {
         onCurrencySelection(Field.CURRENCY_A, currencyA);
         onCurrencySelection(Field.CURRENCY_B, currencyB);
-      } else if (currentCurrA?.toLowerCase() === 'icx') {
-        ICX && onCurrencySelection(Field.CURRENCY_A, ICX);
       } else {
-        if (currencies.CURRENCY_A && currencies.CURRENCY_B) {
-          // history.replace(`/trade/supply/${currencies.CURRENCY_A.symbol}_${currencies.CURRENCY_B.symbol}`);
-          navigate(`/trade/supply/${currencies.CURRENCY_A.symbol}_${currencies.CURRENCY_B.symbol}`, { replace: true });
+        if (currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B]) {
+          navigate(`/trade/supply/${currencies[Field.CURRENCY_A].symbol}_${currencies[Field.CURRENCY_B].symbol}`, {
+            replace: true,
+          });
         } else {
-          // history.replace(`/trade/supply/${INITIAL_MINT.currencyA.symbol}_${INITIAL_MINT.currencyB.symbol}`);
           navigate(`/trade/supply/${INITIAL_MINT.currencyA.symbol}_${INITIAL_MINT.currencyB.symbol}`, {
             replace: true,
           });
@@ -423,15 +377,5 @@ export function useInitialSupplyLoad(): void {
       }
       setFirstLoad(false);
     }
-  }, [
-    firstLoad,
-    tokens,
-    onCurrencySelection,
-    currencies.CURRENCY_A,
-    currencies.CURRENCY_B,
-    bases,
-    ICX,
-    pair,
-    navigate,
-  ]);
+  }, [firstLoad, tokens, onCurrencySelection, currencies, bases, pair, navigate]);
 }

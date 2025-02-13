@@ -21,7 +21,7 @@ import { usePriceChartDataQuery } from '@/queries/swap';
 import { useRatio } from '@/store/ratio/hooks';
 import { useDerivedSwapInfo, useSwapActionHandlers } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
-import { generateChartData, toFraction } from '@/utils';
+import { toFraction } from '@/utils';
 import { formatSymbol, formatUnitPrice } from '@/utils/formatter';
 import { bnJs } from '@balancednetwork/xwagmi';
 

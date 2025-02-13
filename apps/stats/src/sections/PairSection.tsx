@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { Pair, useAllPairsIncentivisedById, useAllPairsTotal, useTokenPrices } from '@/queries/backendv2';
+import { Pair, useAllPairsIncentivisedById, useAllPairsTotal } from '@/queries/backendv2';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
 import { Box, Flex, Text } from 'rebass/styled-components';
@@ -155,8 +155,6 @@ const PairItem = ({
   pair: Pair;
   isLast: boolean;
 }) => {
-  const { data: prices } = useTokenPrices();
-
   return (
     <>
       <DashGrid my={2}>
@@ -165,7 +163,7 @@ const PairItem = ({
             <Box sx={{ minWidth: '95px' }}>
               <PoolLogo baseCurrency={baseAddress} quoteCurrency={quoteAddress} />
             </Box>
-            <Text ml={2}>{name.replace('sICX/ICX', 'ICX queue').replace('wICX', 'ICX').replace('/', ' / ')}</Text>
+            <Text ml={2}>{name.replace('wICX', 'ICX').replace('/', ' / ')}</Text>
           </Flex>
         </DataText>
         <DataText className="apy-column">

@@ -177,21 +177,6 @@ export function CurrencySearch({
 
   const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery, assetsTab === AssetsTab.YOUR);
 
-  const icx = useICX();
-
-  const filteredSortedTokensWithICX: Currency[] = useMemo(() => {
-    const s = debouncedQuery.toLowerCase().trim();
-    if ('0x1.icon'.indexOf(s) >= 0 || 'icx'.indexOf(s) >= 0) {
-      if (selectorType === SelectorType.SUPPLY_BASE || selectorType === SelectorType.SWAP_OUT) {
-        //ensure wrapped ICX is used instead of native ICX for trade output and liquidity supplying
-        return [wICX[NETWORK_ID], ...filteredSortedTokens];
-      } else {
-        return icx ? [icx, ...filteredSortedTokens] : filteredSortedTokens;
-      }
-    }
-    return filteredSortedTokens;
-  }, [debouncedQuery, icx, filteredSortedTokens, selectorType]);
-
   const handleCurrencySelect = useCallback(
     (currency: Currency, setDefaultChain = true) => {
       onCurrencySelect(currency, setDefaultChain);
@@ -231,15 +216,7 @@ export function CurrencySearch({
   const node = useRef<HTMLDivElement>();
   useOnClickOutside(node, open ? toggle : undefined);
 
-  const filterCurrencies = useMemo(() => {
-    const currencies =
-      currencySelectionType === CurrencySelectionType.NORMAL ||
-      currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
-        ? filteredSortedTokensWithICX
-        : filteredSortedTokens;
-
-    return currencies;
-  }, [currencySelectionType, filteredSortedTokens, filteredSortedTokensWithICX]);
+  const filterCurrencies = filteredSortedTokens;
 
   const selectedChainId = useMemo(() => {
     return currencySelectionType === CurrencySelectionType.NORMAL ? undefined : xChainId;
@@ -249,7 +226,7 @@ export function CurrencySearch({
     if (assetsTab === AssetsTab.ALL) {
       return true;
     }
-    return filteredSortedTokensWithICX.some(
+    return filteredSortedTokens.some(
       token =>
         xWallet &&
         Object.values(xWallet).filter(wallet =>
@@ -258,7 +235,7 @@ export function CurrencySearch({
           ),
         ).length > 0,
     );
-  }, [assetsTab, filteredSortedTokensWithICX, xWallet]);
+  }, [assetsTab, filteredSortedTokens, xWallet]);
 
   return (
     <Wrapper width={width}>
@@ -288,7 +265,7 @@ export function CurrencySearch({
         <Column style={{ padding: '20px 0', height: '100%' }}>
           <ImportRow token={searchToken} showImportView={showImportView} setImportToken={setImportToken} />
         </Column>
-      ) : filteredSortedTokensWithICX?.length > 0 && shouldShowCurrencyList ? (
+      ) : filteredSortedTokens?.length > 0 && shouldShowCurrencyList ? (
         <CurrencyList
           currencies={filterCurrencies}
           onCurrencySelect={handleCurrencySelect}

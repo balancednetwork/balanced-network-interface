@@ -1039,7 +1039,6 @@ msgstr ""
 #: src/store/bridge/hooks.tsx
 #: src/store/bridge/hooks.tsx
 #: src/store/mint/hooks.tsx
-#: src/store/mint/hooks.tsx
 #: src/store/swap/hooks.ts
 msgid "Enter amount"
 msgstr "Entrer le montant"
@@ -1456,8 +1455,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
-msgid "Wallet: {0} {1}"
-msgstr "Portefeuille : {0} {1}"
+#~ msgid "Wallet: {0} {1}"
+#~ msgstr "Portefeuille : {0} {1}"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
@@ -2542,8 +2541,8 @@ msgid "Your BALN will be locked until"
 msgstr ""
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
-msgid "This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this happens."
-msgstr "Ce pool fonctionne comme une file d'attente, ainsi vos ICX sont progressivement convertis en sICX. Vous gagnerez du BALN jusqu'à ce que cela se produise."
+#~ msgid "This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this happens."
+#~ msgstr "Ce pool fonctionne comme une file d'attente, ainsi vos ICX sont progressivement convertis en sICX. Vous gagnerez du BALN jusqu'à ce que cela se produise."
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 msgid "Rewards will be updated in"

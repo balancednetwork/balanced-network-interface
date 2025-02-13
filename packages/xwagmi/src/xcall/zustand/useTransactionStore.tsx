@@ -149,7 +149,7 @@ export const useFetchTransaction = (hash: string) => {
       const xPublicClient = getXPublicClient(xChainId);
       try {
         const rawTx = await xPublicClient.getTxReceipt(hash);
-        return rawTx;
+        return rawTx || null;
       } catch (err: any) {
         console.error(`failed to check transaction hash: ${hash}`, err);
         throw new Error(err?.message);

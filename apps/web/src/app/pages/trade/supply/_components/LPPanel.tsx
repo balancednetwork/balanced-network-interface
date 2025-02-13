@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
-import Nouislider from '@/packages/nouislider-react';
 import { Currency, CurrencyAmount, Fraction, Percent } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -9,21 +7,21 @@ import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Button } from '@/app/components/Button';
+import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
+import { BrightPanel, SectionPanel } from '@/app/components/Panel';
+import { CurrencySelectionType, SelectorType } from '@/app/components/SearchModal/CurrencySearch';
 import { Typography } from '@/app/theme';
 import { BIGINT_ZERO } from '@/constants/misc';
-import { isNativeCurrency } from '@/constants/tokens';
 import { PairState } from '@/hooks/useV2Pairs';
+import { useIconReact } from '@/packages/icon-react';
+import Nouislider from '@/packages/nouislider-react';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedMintInfo, useInitialSupplyLoad, useMintActionHandlers, useMintState } from '@/store/mint/hooks';
 import { Field, InputType } from '@/store/mint/reducer';
 import { formatBigNumber, maxAmountSpend } from '@/utils';
-import { XChainId } from '@balancednetwork/xwagmi';
-
-import { AutoColumn } from '@/app/components/Column';
-import { BrightPanel, SectionPanel } from '@/app/components/Panel';
-import { CurrencySelectionType, SelectorType } from '@/app/components/SearchModal/CurrencySearch';
 import { formatSymbol } from '@/utils/formatter';
+import { XChainId } from '@balancednetwork/xwagmi';
 import LPDescription from './LPDescription';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
 
@@ -44,9 +42,9 @@ function subtract(
   return CurrencyAmount.fromRawAmount(amountA.currency, diff.quotient);
 }
 
-function WalletSection({ AChain, BChain }: { AChain?: XChainId; BChain?: XChainId }) {
+function WalletSection() {
   const { account } = useIconReact();
-  const { currencies, currencyBalances, parsedAmounts } = useDerivedMintInfo(AChain, BChain);
+  const { currencies, currencyBalances, parsedAmounts } = useDerivedMintInfo();
 
   const remains: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(
     () => ({
@@ -72,24 +70,14 @@ function WalletSection({ AChain, BChain }: { AChain?: XChainId; BChain?: XChainI
     return null;
   }
 
-  if (isNativeCurrency(currencies[Field.CURRENCY_A])) {
-    return (
-      <Flex flexDirection="row" justifyContent="center" alignItems="center">
-        <Typography>
-          {t`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${currencies[Field.CURRENCY_A]?.symbol}`}
-        </Typography>
-      </Flex>
-    );
-  } else {
-    return (
-      <Flex flexDirection="row" justifyContent="center" alignItems="center">
-        <Typography sx={{ whiteSpace: 'nowrap' }}>
-          {t`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} /
+  return (
+    <Flex flexDirection="row" justifyContent="center" alignItems="center">
+      <Typography sx={{ whiteSpace: 'nowrap' }}>
+        {t`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} /
                       ${formattedRemains[Field.CURRENCY_B]} ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}`}
-        </Typography>
-      </Flex>
-    );
-  }
+      </Typography>
+    </Flex>
+  );
 }
 
 export default function LPPanel() {
@@ -135,7 +123,7 @@ export default function LPPanel() {
     pairState,
     liquidityMinted,
     mintableLiquidity,
-  } = useDerivedMintInfo(crossChainCurrencyA, crossChainCurrencyB);
+  } = useDerivedMintInfo();
   const { onFieldAInput, onFieldBInput, onSlide, onCurrencySelection } = useMintActionHandlers(noLiquidity);
 
   const sliderInstance = React.useRef<any>(null);
@@ -178,17 +166,13 @@ export default function LPPanel() {
       if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
         const p = new Percent(Math.floor(percent * 100), 10_000);
 
-        if (isNativeCurrency(currencies[Field.CURRENCY_A])) {
-          onSlide(Field.CURRENCY_A, percent !== 0 ? balanceA.multiply(p).toFixed() : '');
-        } else {
-          const field = balanceA.multiply(pair?.reserve1).lessThan(balanceB.multiply(pair?.reserve0))
-            ? Field.CURRENCY_A
-            : Field.CURRENCY_B;
-          onSlide(field, percent !== 0 ? currencyBalances[field]!.multiply(p).toFixed() : '');
-        }
+        const field = balanceA.multiply(pair?.reserve1).lessThan(balanceB.multiply(pair?.reserve0))
+          ? Field.CURRENCY_A
+          : Field.CURRENCY_B;
+        onSlide(field, percent !== 0 ? currencyBalances[field]!.multiply(p).toFixed() : '');
       }
     }
-  }, [percent, needUpdate, currencyBalances, onSlide, pair, currencies]);
+  }, [percent, needUpdate, currencyBalances, onSlide, pair]);
 
   // get formatted amounts
   const formattedAmounts = {
@@ -243,8 +227,6 @@ export default function LPPanel() {
       : onFieldBInput(maxAmounts[Field.CURRENCY_B]?.multiply(percent).divide(100)?.toExact() ?? '');
   };
 
-  const isQueue = isNativeCurrency(currencies[Field.CURRENCY_A]);
-
   return (
     <>
       <SectionPanel bg="bg2">
@@ -281,7 +263,7 @@ export default function LPPanel() {
               </Flex>
             </AutoColumn>
 
-            <AutoColumn gap="md" hidden={isQueue}>
+            <AutoColumn gap="md">
               <Flex>
                 <CurrencyInputPanel
                   account={account}
@@ -300,40 +282,35 @@ export default function LPPanel() {
             </AutoColumn>
           </AutoColumn>
           <Flex mt={3} justifyContent="flex-end">
-            <WalletSection AChain={crossChainCurrencyA} BChain={crossChainCurrencyB} />
+            <WalletSection />
           </Flex>
-          {currencies[Field.CURRENCY_A] &&
-            currencies[Field.CURRENCY_B] &&
-            !isQueue &&
-            pairState === PairState.NOT_EXISTS && (
-              <PoolPriceBar>
-                <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
-                  <Typography>
-                    <Typography color="white" as="span">
-                      {price?.toSignificant(6) ?? '-'}
-                    </Typography>{' '}
-                    {formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}
-                  </Typography>
-                  <Typography pt={1}>per {formatSymbol(currencies[Field.CURRENCY_A]?.symbol)}</Typography>
-                </Flex>
-                <VerticalDivider />
-                <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
-                  <Typography>
-                    <Typography color="white" as="span">
-                      {price?.invert()?.toSignificant(6) ?? '-'}
-                    </Typography>{' '}
-                    {formatSymbol(currencies[Field.CURRENCY_A]?.symbol)}
-                  </Typography>
-                  <Typography pt={1}>per {formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}</Typography>
-                </Flex>
-              </PoolPriceBar>
-            )}
+          {currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B] && pairState === PairState.NOT_EXISTS && (
+            <PoolPriceBar>
+              <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
+                <Typography>
+                  <Typography color="white" as="span">
+                    {price?.toSignificant(6) ?? '-'}
+                  </Typography>{' '}
+                  {formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}
+                </Typography>
+                <Typography pt={1}>per {formatSymbol(currencies[Field.CURRENCY_A]?.symbol)}</Typography>
+              </Flex>
+              <VerticalDivider />
+              <Flex flexDirection="column" alignItems="center" my={3} flex={1}>
+                <Typography>
+                  <Typography color="white" as="span">
+                    {price?.invert()?.toSignificant(6) ?? '-'}
+                  </Typography>{' '}
+                  {formatSymbol(currencies[Field.CURRENCY_A]?.symbol)}
+                </Typography>
+                <Typography pt={1}>per {formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}</Typography>
+              </Flex>
+            </PoolPriceBar>
+          )}
           {pairState === PairState.EXISTS &&
             account &&
-            ((currencyBalances[Field.CURRENCY_A]?.currency.symbol === 'ICX' &&
-              maxAmountSpend(currencyBalances[Field.CURRENCY_A])?.greaterThan(BIGINT_ZERO)) ||
-              (maxAmountSpend(currencyBalances[Field.CURRENCY_A])?.greaterThan(BIGINT_ZERO) &&
-                maxAmountSpend(currencyBalances[Field.CURRENCY_B])?.greaterThan(BIGINT_ZERO))) && (
+            maxAmountSpend(currencyBalances[Field.CURRENCY_A])?.greaterThan(0n) &&
+            maxAmountSpend(currencyBalances[Field.CURRENCY_B])?.greaterThan(0n) && (
               <Slider mt={5}>
                 <Nouislider
                   start={[0]}

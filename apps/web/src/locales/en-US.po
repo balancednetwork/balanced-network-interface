@@ -996,7 +996,6 @@ msgstr "Bridge"
 #: src/store/bridge/hooks.tsx
 #: src/store/bridge/hooks.tsx
 #: src/store/mint/hooks.tsx
-#: src/store/mint/hooks.tsx
 #: src/store/swap/hooks.ts
 msgid "Enter amount"
 msgstr "Enter amount"
@@ -1413,8 +1412,8 @@ msgstr "If bnUSD ever falls below ${redeemLimit}, traders can use the smart cont
 #~ msgstr "Claim Balanced incentives?"
 
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
-msgid "Wallet: {0} {1}"
-msgstr "Wallet: {0} {1}"
+#~ msgid "Wallet: {0} {1}"
+#~ msgstr "Wallet: {0} {1}"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
@@ -2478,8 +2477,8 @@ msgid "Your BALN will be locked until"
 msgstr "Your BALN will be locked until"
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
-msgid "This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this happens."
-msgstr "This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this happens."
+#~ msgid "This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this happens."
+#~ msgstr "This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this happens."
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 msgid "Rewards will be updated in"

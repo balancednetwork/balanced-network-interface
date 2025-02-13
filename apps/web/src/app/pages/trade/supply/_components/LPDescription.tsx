@@ -51,9 +51,9 @@ export default function LPDescription() {
       ? pair.getLiquidityValue(pair.token0, totalPoolTokens, userPoolBalance, false)
       : undefined;
   const pairName = useMemo(() => {
-    if (currencies && currencies.CURRENCY_A && currencies.CURRENCY_B) {
-      const name = `${currencies.CURRENCY_A.symbol}/${currencies.CURRENCY_B.symbol}`;
-      return name.startsWith('ICX/') ? 'sICX/ICX' : name;
+    if (currencies && currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B]) {
+      const name = `${currencies[Field.CURRENCY_A].wrapped.symbol}/${currencies[Field.CURRENCY_B].wrapped.symbol}`;
+      return name;
     } else {
       return '';
     }
@@ -66,11 +66,7 @@ export default function LPDescription() {
 
   const apy = useMemo(() => pairData && new BigNumber(pairData.balnApy), [pairData]);
 
-  const balances = useSuppliedTokens(
-    pair?.poolId ?? -1,
-    currencies[Field.CURRENCY_A],
-    pair?.isQueue ? pair?.token1 : currencies[Field.CURRENCY_B],
-  );
+  const balances = useSuppliedTokens(pair?.poolId ?? -1, currencies[Field.CURRENCY_A], currencies[Field.CURRENCY_B]);
 
   const userPoolBalances = useBalance(pair?.poolId || -1);
 

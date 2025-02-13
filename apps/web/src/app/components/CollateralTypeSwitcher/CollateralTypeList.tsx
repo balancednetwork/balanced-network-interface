@@ -84,7 +84,8 @@ const CollateralTypeList = ({
         xPosition.baseToken.symbol.toLowerCase().includes(query.toLowerCase()) ||
         xPosition.baseToken.name?.toLowerCase().includes(query.toLowerCase()) ||
         getSpokeVersions(xPosition.baseToken.symbol).some(v => v.toLowerCase().includes(query.toLowerCase())) ||
-        Object.keys(xPosition.positions).some(x => xChainMap[x].name.toLowerCase().includes(query.toLowerCase())),
+        (Object.keys(xPosition.positions).some(x => xChainMap[x].name.toLowerCase().includes(query.toLowerCase())) &&
+          xPosition.baseToken.symbol !== 'sICX'),
     );
   }, [positions, query]);
 

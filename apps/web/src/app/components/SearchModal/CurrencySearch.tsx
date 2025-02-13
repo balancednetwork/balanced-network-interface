@@ -126,7 +126,11 @@ export function CurrencySearch({
   }, [hasSignedIn, assetsTab]);
 
   useEffect(() => {
-    if (hasSignedIn && currencySelectionType === CurrencySelectionType.TRADE_IN) {
+    if (
+      hasSignedIn &&
+      (currencySelectionType === CurrencySelectionType.TRADE_IN ||
+        currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE)
+    ) {
       setAssetsTab(AssetsTab.YOUR);
     }
   }, [hasSignedIn, currencySelectionType]);

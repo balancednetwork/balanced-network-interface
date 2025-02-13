@@ -1646,6 +1646,10 @@ msgstr "Retrait de garantie..."
 msgid "Claim liquidity rewards?"
 msgstr ""
 
+#: src/app/components/Wallet/ICONWallets/SendPanel.tsx
+msgid "ICON-bridged BTCB has been retired, and the bridge shut down. Use the prefilled address to upgrade to the new BTC token."
+msgstr ""
+
 #: src/app/pages/claim-legacy-fees/page.tsx
 msgid "No fees to claim"
 msgstr ""
@@ -2292,8 +2296,8 @@ msgid "Withdraw liquidity?"
 msgstr "Retirer des liquidités ?"
 
 #: src/app/components/home/PositionDetailPanel.tsx
-msgid "If the {0} price reaches ${1}, some of your collateral will be liquidated to reduce your risk."
-msgstr ""
+#~ msgid "If the {0} price reaches ${1}, some of your collateral will be liquidated to reduce your risk."
+#~ msgstr ""
 
 #: src/app/components/home/Savings/index.tsx
 msgid "Buy or borrow bnUSD, then deposit it here to earn rewards."
@@ -2802,6 +2806,10 @@ msgstr "Tout le collatéral verrouillé"
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #~ msgid "Approve {0} for cross-chain transfer."
 #~ msgstr ""
+
+#: src/app/components/home/PositionDetailPanel.tsx
+msgid "If the {0} price reaches {1}, some of your collateral will be liquidated to reduce your risk."
+msgstr ""
 
 #: src/store/transactions/hooks.tsx
 msgid "Learn how to resolve common transaction errors."

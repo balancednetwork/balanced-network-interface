@@ -43,12 +43,18 @@ export class Token extends BaseCurrency {
   }
 
   static wICX = new Token(1, 'cx3975b43d260fb8ec802cef6e60c2f4d07486f11d', 18, 'wICX', 'Wrapped ICX');
+  static ICX = new Token(1, 'cx0000000000000000000000000000000000000000', 18, 'ICX', 'ICX');
 
   /**
    * Return this token, which does not need to be wrapped
    */
   public get wrapped(): Token {
     if (this.symbol === 'ICX') return Token.wICX;
+    else return this;
+  }
+
+  public get unwrapped(): Token {
+    if (this.symbol === 'wICX') return Token.ICX;
     else return this;
   }
 

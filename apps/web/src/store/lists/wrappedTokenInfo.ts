@@ -82,6 +82,11 @@ export class WrappedTokenInfo implements Token {
     else return this;
   }
 
+  public get unwrapped(): Token {
+    if (this.symbol === 'wICX') return Token.ICX;
+    else return this;
+  }
+
   public get isNativeToken() {
     const nativeAddresses = [
       'cx0000000000000000000000000000000000000000',

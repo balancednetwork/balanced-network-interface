@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
-import { BalancedJs } from '@balancednetwork/balanced-js';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import { Box, Flex } from 'rebass/styled-components';
@@ -66,7 +65,8 @@ export default function SupplyLiquidityModal({
   const handleRemove = (field: Field, amountWithdraw?: CurrencyAmount<Currency>) => async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
-    const token = currencies[field] as Token;
+    const token = currencies[field]?.wrapped;
+    if (!token) return;
 
     try {
       const res: any = await bnJs.inject({ account }).Dex.withdraw(token.address, toDec(amountWithdraw));
@@ -93,62 +93,34 @@ export default function SupplyLiquidityModal({
   const handleSupplyConfirm = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
 
-    if (isQueue) {
-      const t = parsedAmounts[Field.CURRENCY_A];
+    const baseToken = currencies[Field.CURRENCY_A]?.wrapped as Token;
+    const quoteToken = currencies[Field.CURRENCY_B]?.wrapped as Token;
+    bnJs
+      .inject({ account })
+      .Dex.add(
+        baseToken.address,
+        quoteToken.address,
+        toDec(currencyDeposits[Field.CURRENCY_A]),
+        toDec(currencyDeposits[Field.CURRENCY_B]),
+        DEFAULT_SLIPPAGE_LP,
+      )
+      .then((res: any) => {
+        addTransaction(
+          { hash: res.result },
+          {
+            pending: supplyMessage(getPairName(currencies)).pendingMessage,
+            summary: supplyMessage(getPairName(currencies)).successMessage,
+          },
+        );
 
-      bnJs
-        .inject({ account })
-        .Dex.transferICX(toDec(t))
-        .then((res: any) => {
-          addTransaction(
-            { hash: res.result },
-            {
-              pending: supplyMessage(currencies[Field.CURRENCY_A]?.symbol!).pendingMessage,
-              summary: supplyMessage(currencies[Field.CURRENCY_A]?.symbol!).successMessage,
-            },
-          );
-          if (confirmTxStatus === TransactionStatus.failure) {
-            setConfirmTx('');
-          } else {
-            setConfirmTx(res.result);
-          }
-        })
-        .catch(e => {
-          console.error('errors', e);
-        })
-        .finally(() => {
-          window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-        });
-    } else {
-      const baseToken = currencies[Field.CURRENCY_A] as Token;
-      const quoteToken = currencies[Field.CURRENCY_B] as Token;
-      bnJs
-        .inject({ account })
-        .Dex.add(
-          baseToken.address,
-          quoteToken.address,
-          toDec(currencyDeposits[Field.CURRENCY_A]),
-          toDec(currencyDeposits[Field.CURRENCY_B]),
-          DEFAULT_SLIPPAGE_LP,
-        )
-        .then((res: any) => {
-          addTransaction(
-            { hash: res.result },
-            {
-              pending: supplyMessage(getPairName(currencies)).pendingMessage,
-              summary: supplyMessage(getPairName(currencies)).successMessage,
-            },
-          );
-
-          setConfirmTx(res.result);
-        })
-        .catch(e => {
-          console.error('error', e);
-        })
-        .finally(() => {
-          window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-        });
-    }
+        setConfirmTx(res.result);
+      })
+      .catch(e => {
+        console.error('error', e);
+      })
+      .finally(() => {
+        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
+      });
   };
 
   const confirmTxStatus = useTransactionStatus(confirmTx);
@@ -175,11 +147,8 @@ export default function SupplyLiquidityModal({
   const removingATxStatus: TransactionStatus | undefined = useTransactionStatus(removingTxs[Field.CURRENCY_A]);
   const removingBTxStatus: TransactionStatus | undefined = useTransactionStatus(removingTxs[Field.CURRENCY_B]);
 
-  const isQueue = !!(pair && pair.poolId === BalancedJs.utils.POOL_IDS.sICXICX);
-
-  const isEnabled = isQueue
-    ? true
-    : !!currencyDeposits[Field.CURRENCY_A]?.greaterThan(0) && !!currencyDeposits[Field.CURRENCY_B]?.greaterThan(0);
+  const isEnabled =
+    !!currencyDeposits[Field.CURRENCY_A]?.greaterThan(0) && !!currencyDeposits[Field.CURRENCY_B]?.greaterThan(0);
 
   const UIStatus = React.useMemo(
     () => ({
@@ -222,7 +191,7 @@ export default function SupplyLiquidityModal({
     const token = currencies[field] as Token;
 
     try {
-      const contract = token.symbol === 'wICX' ? bnJs.wICX : bnJs.getContract(token.address);
+      const contract = token.isNativeToken ? bnJs.wICX : bnJs.getContract(token.address);
       const res: any = await contract.inject({ account }).deposit(toDec(parsedAmounts[field]));
 
       addTransaction(
@@ -261,11 +230,11 @@ export default function SupplyLiquidityModal({
           <Typography textAlign="center" mb={2} as="h3" fontWeight="normal">
             {pair ? t`Supply liquidity?` : t`Create liquidity pool?`}
           </Typography>
-          <Typography variant="p" textAlign="center" mb={4} hidden={isQueue}>
+          <Typography variant="p" textAlign="center" mb={4}>
             <Trans>Send each asset to the contract</Trans>, <br />
             {pair ? t`then click Supply.` : t`then create the pool.`}
           </Typography>
-          <Flex alignItems="center" mb={1} hidden={isQueue}>
+          <Flex alignItems="center" mb={1}>
             <Box
               width={1 / 2}
               sx={{
@@ -339,19 +308,6 @@ export default function SupplyLiquidityModal({
                   </Box>
                 ))}
               </StyledDL>
-            </Box>
-          </Flex>
-          <Flex alignItems="center" hidden={!isQueue}>
-            <Box width={1}>
-              <Typography fontWeight="bold" textAlign={isQueue ? 'center' : 'right'} fontSize="20px" as="h3">
-                {parsedAmounts[Field.CURRENCY_A]?.toSignificant(4)} {currencies[Field.CURRENCY_A]?.symbol}
-              </Typography>
-              <Typography mt={2} textAlign="center">
-                <Trans>
-                  This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this
-                  happens.
-                </Trans>
-              </Typography>
             </Box>
           </Flex>
           {hasErrorMessage && (

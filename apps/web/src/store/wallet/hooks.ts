@@ -11,7 +11,6 @@ import { forEach } from 'lodash-es';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { MINIMUM_ICX_FOR_TX } from '@/constants/index';
-import { BIGINT_ZERO } from '@/constants/misc';
 import {
   COMBINED_TOKENS_LIST,
   SUPPORTED_TOKENS_LIST,

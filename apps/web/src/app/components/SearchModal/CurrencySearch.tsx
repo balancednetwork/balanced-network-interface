@@ -136,8 +136,12 @@ export function CurrencySearch({
   const hasSignedIn = useHasSignedIn();
   const rates = useRatesWithOracle();
 
-  const handleChainClick = useCallback((xChainId: XChainId) => {
-    setFilterState(prev => (prev.includes(xChainId) ? prev.filter(id => id !== xChainId) : [...prev, xChainId]));
+  const handleChainClick = useCallback((xChainId?: XChainId) => {
+    if (xChainId) {
+      setFilterState(prev => (prev.includes(xChainId) ? prev.filter(id => id !== xChainId) : [...prev, xChainId]));
+    } else {
+      setFilterState([]);
+    }
   }, []);
 
   const [invertSearchOrder] = useState<boolean>(false);
@@ -325,7 +329,7 @@ export function CurrencySearch({
         <SearchInput
           type="text"
           id="token-search-input"
-          placeholder={t`Search name or contract...`}
+          placeholder={t`Search token...`}
           autoComplete="off"
           value={searchQuery}
           ref={inputRef as RefObject<HTMLInputElement>}

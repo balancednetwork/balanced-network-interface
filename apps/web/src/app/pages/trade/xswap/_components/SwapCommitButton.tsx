@@ -34,8 +34,7 @@ interface SwapCommitButtonProps {
 const SwapCommitButton: React.FC<SwapCommitButtonProps> = memo(props => {
   const { trade, currencies, error, account, direction, canBridge, recipient, hidden, stellarValidation, canSwap } =
     props;
-
-  const isValid = !error && canBridge && canSwap && stellarValidation?.ok;
+  const isValid = !error && canBridge && canSwap && (stellarValidation ? stellarValidation?.ok : true);
 
   const isXSwap = !(direction.from === '0x1.icon' && direction.to === '0x1.icon');
 

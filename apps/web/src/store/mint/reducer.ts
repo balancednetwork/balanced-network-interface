@@ -2,7 +2,7 @@ import { Currency } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
 
 import { NETWORK_ID } from '@/constants/config';
-import { bnUSD, sICX, wICX } from '@/constants/tokens';
+import { ICX, sICX } from '@/constants/tokens';
 
 export enum Field {
   CURRENCY_A = 'CURRENCY_A',
@@ -29,7 +29,7 @@ export interface MintState {
 }
 
 export const INITIAL_MINT = {
-  currencyA: wICX[NETWORK_ID],
+  currencyA: ICX[NETWORK_ID],
   currencyB: sICX[NETWORK_ID],
 };
 

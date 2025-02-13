@@ -57,7 +57,6 @@ export enum SelectorType {
 const FilterWrap = styled(Flex)`
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 10px;
   width: 100%;
 
   & > input {

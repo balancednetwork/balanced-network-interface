@@ -26,6 +26,7 @@ const FilterButton = styled(Button)<{ $isOpen: boolean }>`
   text-align: center; 
   width: 40px;
   background-color: ${({ theme }) => theme.colors.bg3};
+  margin-left: 10px;
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.primary};

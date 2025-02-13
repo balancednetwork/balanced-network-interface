@@ -16,7 +16,7 @@ interface XChainFilterProps {
 
 const FilterContentWrap = styled(Box)<{ $isOpen: boolean }>`
   transition: padding-top 0.3s ease-in-out, padding-bottom 0.3s ease-in-out;
-  padding-top: ${({ $isOpen }) => ($isOpen ? '7px' : '0px')};
+  padding-top: ${({ $isOpen }) => ($isOpen ? '17px' : '0px')};
   padding-bottom: ${({ $isOpen }) => ($isOpen ? '7px' : '0px')};
 `;
 

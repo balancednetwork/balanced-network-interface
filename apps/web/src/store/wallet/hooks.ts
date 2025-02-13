@@ -269,19 +269,19 @@ export const useXCurrencyBalance = (
     if (!xBalances) return;
 
     if (selectedChainId) {
-      return new BigNumber(xBalances[selectedChainId]?.[currency.wrapped.address]?.toFixed() || 0);
+      return new BigNumber(xBalances[selectedChainId]?.[currency.address]?.toFixed() || 0);
     } else {
       if (isXToken(currency)) {
         return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
           if (xBalances[xChainId]) {
-            const tokenAddress = getXTokenAddress(xChainId, currency.wrapped.symbol);
+            const tokenAddress = getXTokenAddress(xChainId, currency.symbol);
             const balance = new BigNumber(xBalances[xChainId]?.[tokenAddress ?? -1]?.toFixed() || 0);
             sum = sum.plus(balance);
           }
           return sum;
         }, new BigNumber(0));
       } else {
-        return new BigNumber(xBalances['0x1.icon']?.[currency.wrapped.address]?.toFixed() || 0);
+        return new BigNumber(xBalances['0x1.icon']?.[currency.address]?.toFixed() || 0);
       }
     }
   }, [xBalances, currency, selectedChainId]);

@@ -43,6 +43,7 @@ export class Token extends BaseCurrency {
   }
 
   static wICX = new Token(1, 'cx3975b43d260fb8ec802cef6e60c2f4d07486f11d', 18, 'wICX', 'Wrapped ICX');
+  static ICX = new Token(1, 'cx0000000000000000000000000000000000000000', 18, 'ICX', 'ICX');
 
   /**
    * Return this token, which does not need to be wrapped
@@ -52,11 +53,9 @@ export class Token extends BaseCurrency {
     else return this;
   }
 
-  /**
-   * Return this token, which does not need to be unwrapped
-   */
   public get unwrapped(): Token {
-    return this;
+    if (this.symbol === 'wICX') return Token.ICX;
+    else return this;
   }
 
   public get isNativeToken() {

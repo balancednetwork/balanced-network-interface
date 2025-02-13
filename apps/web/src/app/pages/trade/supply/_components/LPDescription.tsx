@@ -46,8 +46,8 @@ export default function LPDescription() {
   const totalPoolTokens = pair?.totalSupply;
   const pairName = useMemo(() => {
     if (currencies && currencies[Field.CURRENCY_A] && currencies[Field.CURRENCY_B]) {
-      const name = `${currencies[Field.CURRENCY_A]}/${currencies[Field.CURRENCY_B]}`;
-      return name.startsWith('ICX/') ? 'sICX/ICX' : name;
+      const name = `${currencies[Field.CURRENCY_A].wrapped.symbol}/${currencies[Field.CURRENCY_B].wrapped.symbol}`;
+      return name;
     } else {
       return '';
     }

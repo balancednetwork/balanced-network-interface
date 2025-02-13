@@ -13,7 +13,7 @@ import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from '@/h
 import useDebounce from '@/hooks/useDebounce';
 import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 import useToggle from '@/hooks/useToggle';
-import { useHasSignedIn } from '@/hooks/useWallets';
+import { useHasSignedIn, useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
 import { useRatesWithOracle } from '@/queries/reward';
 import { useBridgeDirection } from '@/store/bridge/hooks';
@@ -135,6 +135,7 @@ export function CurrencySearch({
   const debouncedQuery = useDebounce(searchQuery, 200);
   const hasSignedIn = useHasSignedIn();
   const rates = useRatesWithOracle();
+  const wallets = useSignedInWallets();
 
   const handleChainClick = useCallback((xChainId?: XChainId) => {
     if (xChainId) {
@@ -334,6 +335,13 @@ export function CurrencySearch({
     );
   }, [assetsTab, filteredSortedTokensWithICX, xWallet]);
 
+  const shouldShowXChainFilter = useMemo(() => {
+    if (selectorType === SelectorType.SWAP_IN || selectorType === SelectorType.SWAP_OUT) {
+      return assetsTab === AssetsTab.ALL || wallets.length > 1;
+    }
+    return false;
+  }, [wallets, selectorType, assetsTab]);
+
   return (
     <Wrapper width={width}>
       <FilterWrap px="25px">
@@ -347,7 +355,13 @@ export function CurrencySearch({
           tabIndex={isMobile ? -1 : 1}
           onChange={handleInput}
         />
-        <XChainFilter filterItems={sortedXChainFilterItems} filterState={filterState} onChainClick={handleChainClick} />
+        {shouldShowXChainFilter && (
+          <XChainFilter
+            filterItems={sortedXChainFilterItems}
+            filterState={filterState}
+            onChainClick={handleChainClick}
+          />
+        )}
       </FilterWrap>
       {hasSignedIn && (selectorType === SelectorType.SWAP_IN || selectorType === SelectorType.SWAP_OUT) ? (
         <Flex justifyContent="center" mt={3}>

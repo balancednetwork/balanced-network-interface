@@ -2287,8 +2287,8 @@ msgstr ""
 #~ msgstr "Choisissez un portefeuille de votre Ledger :"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
-msgid "ICX queue"
-msgstr ""
+#~ msgid "ICX queue"
+#~ msgstr ""
 
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
 #~ msgid "Revert"

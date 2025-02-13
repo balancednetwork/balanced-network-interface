@@ -2231,8 +2231,8 @@ msgstr "Unlocked {0} BALN."
 #~ msgstr "Choose a wallet from your Ledger:"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
-msgid "ICX queue"
-msgstr "ICX queue"
+#~ msgid "ICX queue"
+#~ msgstr "ICX queue"
 
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
 #~ msgid "Revert"

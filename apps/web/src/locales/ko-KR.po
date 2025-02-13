@@ -1455,8 +1455,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/pages/trade/supply/_components/LPPanel.tsx
-msgid "Wallet: {0} {1}"
-msgstr "지갑: {0} {1}"
+#~ msgid "Wallet: {0} {1}"
+#~ msgstr "지갑: {0} {1}"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails.tsx
@@ -2543,8 +2543,8 @@ msgid "Your BALN will be locked until"
 msgstr ""
 
 #: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
-msgid "This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this happens."
-msgstr ""
+#~ msgid "This pool works like a queue, so your ICX is gradually converted to sICX. You'll earn BALN until this happens."
+#~ msgstr ""
 
 #: src/app/pages/vote/_components/LieVotingPanel/index.tsx
 msgid "Rewards will be updated in"

@@ -112,7 +112,10 @@ const XChainFilter: React.FC<XChainFilterProps> = props => {
     setIsOpen(prev => !prev);
   };
 
-  const buttonText = filterState.length > 0 ? '...' : 'All';
+  const allSelected =
+    filterState.length === filterItems.length && filterItems.every(item => filterState.includes(item));
+
+  const buttonText = filterState.length > 0 && !allSelected ? '...' : 'All';
 
   return (
     <>
@@ -129,7 +132,7 @@ const XChainFilter: React.FC<XChainFilterProps> = props => {
               exit={{ opacity: 0, height: 0 }}
             >
               <ChainsWrap>
-                <ButtonAll onClick={() => onChainClick()} $isActive={filterState.length === 0}>
+                <ButtonAll onClick={() => onChainClick()} $isActive={filterState.length === 0 || allSelected}>
                   All
                 </ButtonAll>
                 <AnimatePresence>

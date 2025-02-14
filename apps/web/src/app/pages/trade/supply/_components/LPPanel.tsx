@@ -180,12 +180,12 @@ export default function LPPanel() {
   );
 
   const handlePercentSelect = (field: Field) => (percent: number) => {
+    const p = new Percent(Math.floor(percent * 100), 10_000);
+
     const balanceA = maxAmountSpend(currencyBalances[Field.CURRENCY_A]);
     const balanceB = maxAmountSpend(currencyBalances[Field.CURRENCY_B]);
 
     if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
-      const p = new Percent(Math.floor(percent * 100), 10_000);
-
       if (field === Field.CURRENCY_A) {
         field = balanceA.multiply(pair?.reserve1).multiply(p).lessThan(balanceB.multiply(pair?.reserve0))
           ? Field.CURRENCY_A
@@ -198,8 +198,8 @@ export default function LPPanel() {
     }
 
     field === Field.CURRENCY_A
-      ? onFieldAInput(maxAmounts[Field.CURRENCY_A]?.multiply(percent).divide(100)?.toExact() ?? '')
-      : onFieldBInput(maxAmounts[Field.CURRENCY_B]?.multiply(percent).divide(100)?.toExact() ?? '');
+      ? onFieldAInput(maxAmounts[Field.CURRENCY_A]?.multiply(p).toExact() ?? '')
+      : onFieldBInput(maxAmounts[Field.CURRENCY_B]?.multiply(p).toExact() ?? '');
   };
 
   const handleLPChainSelection = useCallback(

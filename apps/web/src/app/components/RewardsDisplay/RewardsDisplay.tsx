@@ -7,6 +7,7 @@ import { PairData } from '@/queries/backendv2';
 import { useRatesWithOracle } from '@/queries/reward';
 import { Source } from '@/store/bbaln/hooks';
 import { formatValue } from '@/utils/formatter';
+import { XChainId } from '@balancednetwork/xwagmi';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import React, { Fragment, useMemo } from 'react';
@@ -15,6 +16,7 @@ import styled from 'styled-components';
 
 type RewardsDisplayProps = {
   pair: PairData;
+  xChainId?: XChainId;
   boost?: {
     [x: string]: Source;
   };
@@ -79,9 +81,10 @@ const TooltipContent = ({
   </>
 );
 
-const RewardsDisplay: React.FC<RewardsDisplayProps> = ({ pair, boost }) => {
+const RewardsDisplay: React.FC<RewardsDisplayProps> = ({ pair, boost, xChainId }) => {
   const prices = useRatesWithOracle();
   const pairName = pair.name;
+  const isICON = xChainId === undefined || xChainId === '0x1.icon';
   const pairBoost = useMemo(() => {
     if (boost) {
       const pairBoostData = boost[pairName];
@@ -128,12 +131,14 @@ const RewardsDisplay: React.FC<RewardsDisplayProps> = ({ pair, boost }) => {
           <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
             <Trans>BALN:</Trans>
           </Typography>
-          {pairBoost
-            ? `${formatValue((balnApy * pairBoost + externalApy).toFixed(4), false)}%`
-            : `${formatValue((balnApy + externalApy).toFixed(4), false)}% - ${formatValue(
-                (balnApy * 2.5 + externalApy).toFixed(4),
-                false,
-              )}%`}
+          {isICON
+            ? pairBoost
+              ? `${formatValue((balnApy * pairBoost + externalApy).toFixed(4), false)}%`
+              : `${formatValue((balnApy + externalApy).toFixed(4), false)}% - ${formatValue(
+                  (balnApy * 2.5 + externalApy).toFixed(4),
+                  false,
+                )}%`
+            : `${formatValue((balnApy + externalApy).toFixed(4), false)}%`}
         </APYItem>
       </Wrapper>
     );

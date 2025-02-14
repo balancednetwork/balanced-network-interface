@@ -7,8 +7,7 @@ import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
-import { NETWORK_ID } from '@/constants/config';
-import { FUNDING_TOKENS_LIST, UNTRADEABLE_TOKENS, useICX, wICX } from '@/constants/tokens';
+import { FUNDING_TOKENS_LIST, STABLE_TOKENS, UNTRADEABLE_TOKENS } from '@/constants/tokens';
 import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from '@/hooks/Tokens';
 import useDebounce from '@/hooks/useDebounce';
 import { useOnClickOutside } from '@/hooks/useOnClickOutside';
@@ -29,7 +28,8 @@ import { filterTokens, useSortedTokensByQuery } from './filtering';
 import { useTokenComparator } from './sorting';
 
 export enum CurrencySelectionType {
-  NORMAL,
+  TRADE_IN,
+  TRADE_OUT,
   TRADE_MINT_BASE,
   TRADE_MINT_QUOTE,
   VOTE_FUNDING,
@@ -41,18 +41,9 @@ export enum AssetsTab {
   YOUR = 'your',
 }
 
-export enum SelectorType {
-  SWAP_IN,
-  SWAP_OUT,
-  SUPPLY_QUOTE,
-  SUPPLY_BASE,
-  BRIDGE,
-  OTHER,
-}
-
-const removeBnUSD = (tokens: { [address: string]: Token }) => {
+const removeStableTokens = (tokens: { [address: string]: Token }) => {
   return Object.values(tokens)
-    .filter(token => token.symbol !== 'bnUSD')
+    .filter(token => !STABLE_TOKENS.includes(token.symbol))
     .reduce((tokenMap, token) => {
       tokenMap[token.address] = token;
       return tokenMap;
@@ -66,6 +57,17 @@ function filterUntradeableTokens(tokens: { [address: string]: Token }): { [addre
       tokenMap[token.address] = token;
       return tokenMap;
     }, {});
+}
+
+function filterUnsupportedTokens(xChainId: XChainId, bases: { [address: string]: Token }) {
+  return xChainId === 'archway-1' || xChainId === '0x100.icon'
+    ? Object.values(bases)
+        .filter(token => token.symbol !== 'sICX')
+        .reduce((acc, token) => {
+          acc[token.address] = token;
+          return acc;
+        }, {})
+    : bases;
 }
 
 interface CurrencySearchProps {
@@ -85,7 +87,6 @@ interface CurrencySearchProps {
   showCommunityListControl?: boolean;
   xChainId: XChainId;
   showCrossChainBreakdown: boolean;
-  selectorType?: SelectorType;
 }
 
 export function CurrencySearch({
@@ -105,7 +106,6 @@ export function CurrencySearch({
   width,
   showCommunityListControl,
   xChainId,
-  selectorType = SelectorType.OTHER,
 }: CurrencySearchProps) {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const debouncedQuery = useDebounce(searchQuery, 200);
@@ -126,30 +126,35 @@ export function CurrencySearch({
   }, [hasSignedIn, assetsTab]);
 
   useEffect(() => {
-    if (hasSignedIn && selectorType === SelectorType.SWAP_IN) {
+    if (
+      hasSignedIn &&
+      (currencySelectionType === CurrencySelectionType.TRADE_IN ||
+        currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE)
+    ) {
       setAssetsTab(AssetsTab.YOUR);
     }
-  }, [hasSignedIn, selectorType]);
+  }, [hasSignedIn, currencySelectionType]);
 
   const bridgeDirection = useBridgeDirection();
   const xTokens = useXTokens(bridgeDirection.from, bridgeDirection.to);
 
   const allTokens: { [address: string]: Token } = useMemo(() => {
     switch (currencySelectionType) {
-      case CurrencySelectionType.NORMAL: {
+      case CurrencySelectionType.TRADE_IN:
         return filterUntradeableTokens(tokens);
-      }
+      case CurrencySelectionType.TRADE_OUT:
+        return filterUntradeableTokens(tokens);
       case CurrencySelectionType.TRADE_MINT_BASE:
-        return removeBnUSD(filterUntradeableTokens(tokens));
+        return removeStableTokens(filterUntradeableTokens(tokens));
       case CurrencySelectionType.TRADE_MINT_QUOTE:
-        return bases;
+        return filterUnsupportedTokens(xChainId, bases);
       case CurrencySelectionType.VOTE_FUNDING:
         return FUNDING_TOKENS_LIST;
       case CurrencySelectionType.BRIDGE: {
         return xTokens || [];
       }
     }
-  }, [currencySelectionType, tokens, bases, xTokens]);
+  }, [currencySelectionType, tokens, bases, xTokens, xChainId]);
 
   //select first currency from list if there is none selected for bridging
   useEffect(() => {
@@ -216,10 +221,12 @@ export function CurrencySearch({
   const node = useRef<HTMLDivElement>();
   useOnClickOutside(node, open ? toggle : undefined);
 
-  const filterCurrencies = filteredSortedTokens;
-
   const selectedChainId = useMemo(() => {
-    return currencySelectionType === CurrencySelectionType.NORMAL ? undefined : xChainId;
+    return currencySelectionType === CurrencySelectionType.TRADE_IN ||
+      currencySelectionType === CurrencySelectionType.TRADE_OUT ||
+      currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE
+      ? undefined
+      : xChainId;
   }, [currencySelectionType, xChainId]);
 
   const shouldShowCurrencyList = useMemo(() => {
@@ -251,7 +258,9 @@ export function CurrencySearch({
           onChange={handleInput}
         />
       </Flex>
-      {hasSignedIn && (selectorType === SelectorType.SWAP_IN || selectorType === SelectorType.SWAP_OUT) ? (
+      {hasSignedIn &&
+      (currencySelectionType === CurrencySelectionType.TRADE_IN ||
+        currencySelectionType === CurrencySelectionType.TRADE_OUT) ? (
         <Flex justifyContent="center" mt={3}>
           <AssetsTabButton $active={assetsTab === AssetsTab.YOUR} mr={2} onClick={() => setAssetsTab(AssetsTab.YOUR)}>
             <Trans>Your assets</Trans>
@@ -267,7 +276,7 @@ export function CurrencySearch({
         </Column>
       ) : filteredSortedTokens?.length > 0 && shouldShowCurrencyList ? (
         <CurrencyList
-          currencies={filterCurrencies}
+          currencies={filteredSortedTokens}
           onCurrencySelect={handleCurrencySelect}
           onChainSelect={onChainSelect}
           showRemoveView={showRemoveView}
@@ -277,8 +286,8 @@ export function CurrencySearch({
           selectedChainId={selectedChainId}
           showCrossChainBreakdown={showCrossChainBreakdown}
           basedOnWallet={assetsTab === AssetsTab.YOUR}
-          selectorType={selectorType}
           width={width}
+          currencySelectionType={currencySelectionType}
         />
       ) : (
         <Column style={{ padding: '20px 20px 0 20px' }} mb={showCommunityListControl ? -4 : 0}>

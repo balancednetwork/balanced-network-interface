@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, Token, XChainId } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,7 +16,11 @@ import { NETWORK_ID } from '@/constants/config';
 import { AppState } from '..';
 import { useBlockDetails } from '../application/hooks';
 import { Field } from '../loan/reducer';
-import { adjust, cancel, changeLockedAmount, type } from './reducer';
+import { adjust, cancel, changeLockedAmount, changeSavingsXChainId, type } from './reducer';
+
+export function useSavingsXChainId(): AppState['savings']['savingsXChainId'] {
+  return useSelector((state: AppState) => state.savings.savingsXChainId);
+}
 
 export function useLockedAmount(): AppState['savings']['lockedAmount'] {
   return useSelector((state: AppState) => state.savings.lockedAmount);
@@ -295,4 +299,17 @@ export function useSavingsRateInfo(): UseQueryResult<
     placeholderData: keepPreviousData,
     enabled: !!tokenPrices && !!tokenList && !!collateralTokens && !!totalLocked && !!periodInBlocks,
   });
+}
+export function useSavingsActionHandlers() {
+  const dispatch = useDispatch();
+  const onSavingsXChainSelection = React.useCallback(
+    (savingsXChainId: XChainId) => {
+      dispatch(changeSavingsXChainId({ savingsXChainId }));
+    },
+    [dispatch],
+  );
+
+  return {
+    onSavingsXChainSelection,
+  };
 }

@@ -103,11 +103,14 @@ export default function LPDescription() {
     }
   }, []);
 
-  const baseCurrencyTotalSupply = useMemo(
-    () => new BigNumber(totalSupply(baseValue, baseAmount)?.toFixed() || '0'),
-    [totalSupply, baseValue, baseAmount],
-  );
-  const quoteCurrencyTotalSupply = new BigNumber(totalSupply(quoteValue, quoteAmount)?.toFixed() || '0');
+  const baseCurrencyTotalSupply = useMemo(() => {
+    const result = new BigNumber(totalSupply(baseValue, baseAmount)?.toFixed() || '0');
+    return result.isNegative() ? new BigNumber(0) : result;
+  }, [totalSupply, baseValue, baseAmount]);
+  const quoteCurrencyTotalSupply = useMemo(() => {
+    const result = new BigNumber(totalSupply(quoteValue, quoteAmount)?.toFixed() || '0');
+    return result.isNegative() ? new BigNumber(0) : result;
+  }, [totalSupply, quoteValue, quoteAmount]);
 
   const responsiveRewardShare = useMemo(
     () =>

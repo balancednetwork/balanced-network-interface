@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import { Button, TextButton } from '@/app/components/Button';
 import CurrencyBalanceErrorMessage from '@/app/components/CurrencyBalanceErrorMessage';
 import Divider from '@/app/components/Divider';
-import { UnderlineTextWithArrow } from '@/app/components/DropdownText';
+import { UnderlineText, UnderlineTextWithArrow } from '@/app/components/DropdownText';
 import { MenuItem, MenuList } from '@/app/components/Menu';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
@@ -44,12 +44,13 @@ import { useBALNDetails, useHasEnoughICX } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { getFormattedNumber } from '@/utils/formatter';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { bnJs, getXChainType, useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
 
 import { DropdownPopper } from '@/app/components/Popover';
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useSavingsXChainId } from '@/store/savings/hooks';
+import { handleConnectWallet } from '../../WalletModal/WalletItem';
 import { MetaData } from '../PositionDetailPanel';
 import UnstakePrompt from './UnstakePrompt';
 import { BalnPreviewInput, ButtonsWrap, SliderWrap, Threshold } from './styledComponents';
@@ -452,6 +453,13 @@ export default function BBalnSlider({
     setGlobalTooltip && setGlobalTooltip(isHover);
   };
 
+  const xChainType = getXChainType('0x1.icon');
+  const xConnectors = useXConnectors(xChainType);
+  const xConnect = useXConnect();
+  const handleConnectICON = () => {
+    handleConnectWallet(xChainType, xConnectors, xConnect);
+  };
+
   return (
     <>
       {account &&
@@ -748,9 +756,16 @@ export default function BBalnSlider({
           </Typography>
           {simple ? (
             (!account && signedInWallets.length > 0) || savingsXChainId !== '0x1.icon' ? (
-              <Typography fontSize={14} opacity={0.75} mb={5}>
-                <Trans>Sign in on ICON, then lock up BALN to boost your rewards.</Trans>
-              </Typography>
+              <Flex>
+                <Typography color="primaryBright">
+                  <UnderlineText onClick={handleConnectICON}>
+                    <Trans>Sign in on ICON</Trans>
+                  </UnderlineText>
+                </Typography>
+                <Typography fontSize={14} opacity={0.75} mb={5}>
+                  <Trans>, then lock up BALN to boost your rewards.</Trans>
+                </Typography>
+              </Flex>
             ) : (
               <Typography fontSize={14} opacity={0.75} mb={5}>
                 <Trans>Earn or buy BALN, then lock it up here to boost your rewards.</Trans>

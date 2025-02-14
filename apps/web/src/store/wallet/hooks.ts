@@ -14,6 +14,7 @@ import { useBnJsContractQuery } from '@/queries/utils';
 import { useTokenListConfig } from '@/store/lists/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useUserAddedTokens } from '@/store/user/hooks';
+import { getXTokenAddress, isXToken } from '@/utils/xTokens';
 import { XToken, XWalletAssetRecord } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
 
@@ -27,7 +28,7 @@ import { XChainId } from '@balancednetwork/xwagmi';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
 import { useRatesWithOracle } from '@/queries/reward';
-import { stellar } from '@balancednetwork/xwagmi';
+import { SUPPORTED_XCALL_CHAINS, stellar } from '@balancednetwork/xwagmi';
 import { useXAccount } from '@balancednetwork/xwagmi';
 
 export function useCrossChainWalletBalances(): AppState['wallet'] {
@@ -258,10 +259,32 @@ export function useAllTokenBalances(account: string | undefined | null): {
   return balances ?? {};
 }
 
-export const useXTokenBalance = (token: XToken | undefined): CurrencyAmount<XToken> | undefined => {
-  const arr = useMemo(() => [token], [token]);
-  const balances = useXTokenBalances(arr);
-  return balances[0];
+export const useXCurrencyBalance = (
+  currency: Currency,
+  selectedChainId: XChainId | undefined,
+): BigNumber | undefined => {
+  const xBalances = useCrossChainWalletBalances();
+
+  return React.useMemo(() => {
+    if (!xBalances) return;
+
+    if (selectedChainId) {
+      return new BigNumber(xBalances[selectedChainId]?.[currency.address]?.toFixed() || 0);
+    } else {
+      if (isXToken(currency)) {
+        return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
+          if (xBalances[xChainId]) {
+            const tokenAddress = getXTokenAddress(xChainId, currency.symbol);
+            const balance = new BigNumber(xBalances[xChainId]?.[tokenAddress ?? -1]?.toFixed() || 0);
+            sum = sum.plus(balance);
+          }
+          return sum;
+        }, new BigNumber(0));
+      } else {
+        return new BigNumber(xBalances['0x1.icon']?.[currency.address]?.toFixed() || 0);
+      }
+    }
+  }, [xBalances, currency, selectedChainId]);
 };
 
 export function useXTokenBalances(xTokens: (XToken | undefined)[]): (CurrencyAmount<XToken> | undefined)[] {
@@ -273,6 +296,18 @@ export function useXTokenBalances(xTokens: (XToken | undefined)[]): (CurrencyAmo
       return walletState[xToken.xChainId]?.[xToken.address];
     });
   }, [xTokens, walletState]);
+}
+
+// TODO: deprecate
+export function useCurrencyBalances(currencies: (Currency | undefined)[]): (CurrencyAmount<XToken> | undefined)[] {
+  const walletState = useSelector((state: AppState) => state.wallet);
+
+  return useMemo(() => {
+    return currencies.map(currency => {
+      if (!currency) return undefined;
+      return walletState['0x1.icon']?.[currency.address];
+    });
+  }, [walletState, currencies]);
 }
 
 export function useLiquidityTokenBalance(account: string | undefined | null, pair: Pair | undefined | null) {

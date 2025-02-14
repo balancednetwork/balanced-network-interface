@@ -140,7 +140,7 @@ export const convertCurrency = (xChainId: XChainId, currency: Currency | XToken 
   const token = xTokenMapBySymbol[xChainId][currency.symbol];
 
   if (!token) {
-    return XToken.getXToken(xChainId, currency);
+    throw new Error(`XToken ${currency.symbol} is not supported on ${xChainId}`);
   }
 
   return token;

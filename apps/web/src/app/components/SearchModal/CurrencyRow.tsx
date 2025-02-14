@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 
 import { Currency, Fraction, Token } from '@balancednetwork/sdk-core';
-import { ICON_XCALL_NETWORK_ID, convertCurrency } from '@balancednetwork/xwagmi';
+import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { xTokenMap } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
@@ -15,10 +15,11 @@ import styled, { useTheme } from 'styled-components';
 import CurrencyLogo from '@/app/components/CurrencyLogo';
 import { DataText, ListItem } from '@/app/components/List';
 import { Typography } from '@/app/theme';
+
 import { useHasSignedIn } from '@/hooks/useWallets';
 import { useBridgeDirection } from '@/store/bridge/hooks';
 import { useIsUserAddedToken } from '@/store/user/hooks';
-import { useCrossChainWalletBalances, useXTokenBalance } from '@/store/wallet/hooks';
+import { useCrossChainWalletBalances, useXCurrencyBalance } from '@/store/wallet/hooks';
 import { formatBalance, formatPrice, formatSymbol, formatValue } from '@/utils/formatter';
 import { ChainLogo } from '../ChainLogo';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
@@ -58,8 +59,7 @@ export default function CurrencyRow({
   currencySelectionType: CurrencySelectionType;
 }) {
   const currencyXChainIds = useMemo(() => getSupportedXChainIdsForToken(currency), [currency]);
-  const balanceAmount = useXTokenBalance(convertCurrency(selectedChainId || '0x1.icon', currency));
-  const balance = useMemo(() => (balanceAmount ? new BigNumber(balanceAmount?.toFixed()) : undefined), [balanceAmount]);
+  const balance = useXCurrencyBalance(currency, selectedChainId);
   const hasSigned = useHasSignedIn();
   const xWallet = useCrossChainWalletBalances();
   const isSwapSelector =

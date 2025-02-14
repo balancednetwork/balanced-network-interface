@@ -15,7 +15,7 @@ import { BrightPanel, SectionPanel } from '@/app/components/Panel';
 import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import { Typography } from '@/app/theme';
 import { BIGINT_ZERO } from '@/constants/misc';
-import { PairState, usePool } from '@/hooks/useV2Pairs';
+import { PairState, Pool, usePool } from '@/hooks/useV2Pairs';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedMintInfo, useInitialSupplyLoad, useMintActionHandlers, useMintState } from '@/store/mint/hooks';
 import { Field, InputType } from '@/store/mint/reducer';
@@ -40,6 +40,8 @@ export default function LPPanel() {
   // modal
   const [showSupplyConfirm, setShowSupplyConfirm] = React.useState(false);
   const [showSuggestStakingLP, setShowSuggestStakingLP] = React.useState(false);
+
+  const [executionPool, setExecutionPool] = React.useState<Pool | undefined>(undefined);
 
   const handleSupplyConfirmDismiss = () => {
     setShowSupplyConfirm(false);
@@ -334,14 +336,17 @@ export default function LPPanel() {
         onClose={handleSupplyConfirmDismiss}
         parsedAmounts={amounts}
         currencies={currencies}
-        onSuccess={() => setShowSuggestStakingLP(true)}
+        onSuccess={() => {
+          setExecutionPool(pool);
+          setShowSuggestStakingLP(true);
+        }}
       />
 
-      {pool && (
+      {executionPool && (
         <SuggestStakingLPModal
           isOpen={showSuggestStakingLP}
           onClose={() => setShowSuggestStakingLP(false)}
-          pool={pool}
+          pool={executionPool}
         />
       )}
     </>

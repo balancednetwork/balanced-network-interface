@@ -53,7 +53,6 @@ export default function BridgeTransferForm({ openModal }) {
     () =>
       maxAmountSpend(
         currencyToBridge ? crossChainWallet[bridgeDirection.from]?.[currencyToBridge.wrapped.address] : undefined,
-        bridgeDirection.from,
       ),
     [currencyToBridge, bridgeDirection.from, crossChainWallet],
   );

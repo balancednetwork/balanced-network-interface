@@ -123,10 +123,7 @@ export default function SwapPanel() {
     [onCurrencySelection],
   );
 
-  const maxInputAmount = useMemo(
-    () => maxAmountSpend(currencyBalances[Field.INPUT], direction.from),
-    [currencyBalances, direction.from],
-  );
+  const maxInputAmount = useMemo(() => maxAmountSpend(currencyBalances[Field.INPUT]), [currencyBalances]);
 
   const handleInputPercentSelect = useCallback(
     (percent: number) => {

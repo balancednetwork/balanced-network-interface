@@ -154,7 +154,7 @@ export default function LPPanel() {
     (accumulator, field) => {
       return {
         ...accumulator,
-        [field]: maxAmountSpend(currencyBalances[field], lpXChainId),
+        [field]: maxAmountSpend(currencyBalances[field]),
       };
     },
     {},
@@ -289,8 +289,8 @@ export default function LPPanel() {
           )}
           {pairState === PairState.EXISTS &&
             account &&
-            maxAmountSpend(currencyBalances[Field.CURRENCY_A])?.greaterThan(BIGINT_ZERO) &&
-            maxAmountSpend(currencyBalances[Field.CURRENCY_B])?.greaterThan(BIGINT_ZERO) && (
+            maxAmountSpend(currencyBalances[Field.CURRENCY_A])?.greaterThan(0) &&
+            maxAmountSpend(currencyBalances[Field.CURRENCY_B])?.greaterThan(0) && (
               <Slider mt={5}>
                 <Nouislider
                   start={[0]}

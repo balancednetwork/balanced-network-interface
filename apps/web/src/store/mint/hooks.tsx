@@ -114,7 +114,7 @@ export function useDerivedMintInfo(): {
   currencies: { [field in Field]?: XToken };
   pair?: Pair | null;
   pairState: PairState;
-  currencyBalances: { [field in Field]?: CurrencyAmount<Currency> };
+  currencyBalances: { [field in Field]?: CurrencyAmount<XToken> };
   parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> };
   price?: Price<Currency, Currency>;
   noLiquidity?: boolean;

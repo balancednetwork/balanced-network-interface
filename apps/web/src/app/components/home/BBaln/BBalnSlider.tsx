@@ -49,8 +49,7 @@ import { bnJs, getXChainType, useXConnect, useXConnectors } from '@balancednetwo
 import { DropdownPopper } from '@/app/components/Popover';
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { useSavingsXChainId } from '@/store/savings/hooks';
-import { handleConnectWallet } from '../../WalletModal/WalletItem';
+import { useSavingsActionHandlers, useSavingsXChainId } from '@/store/savings/hooks';
 import { MetaData } from '../PositionDetailPanel';
 import UnstakePrompt from './UnstakePrompt';
 import { BalnPreviewInput, ButtonsWrap, SliderWrap, Threshold } from './styledComponents';
@@ -453,11 +452,14 @@ export default function BBalnSlider({
     setGlobalTooltip && setGlobalTooltip(isHover);
   };
 
+  const { onSavingsXChainSelection } = useSavingsActionHandlers();
   const xChainType = getXChainType('0x1.icon');
   const xConnectors = useXConnectors(xChainType);
   const xConnect = useXConnect();
-  const handleConnectICON = () => {
-    handleConnectWallet(xChainType, xConnectors, xConnect);
+  const handleConnectICON = async () => {
+    if (!xConnectors[0]) return;
+    await xConnect(xConnectors[0]);
+    onSavingsXChainSelection('0x1.icon');
   };
 
   return (

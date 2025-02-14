@@ -15,6 +15,7 @@ import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import {
   useLockedAmount,
+  useSavingsActionHandlers,
   useSavingsRateInfo,
   useSavingsRatePastMonthPayout,
   useSavingsSliderActionHandlers,
@@ -25,11 +26,12 @@ import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
 import { escapeRegExp, parseUnits } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { bnJs, getXChainType, useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
 
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { formatValue } from '@/utils/formatter';
+import { UnderlineText } from '../../DropdownText';
 import { BalnPreviewInput as SavingsPreviewInput } from '../BBaln/styledComponents';
 
 const Savings = () => {
@@ -155,6 +157,16 @@ const Savings = () => {
     adjust(false);
   };
 
+  const { onSavingsXChainSelection } = useSavingsActionHandlers();
+  const xChainType = getXChainType('0x1.icon');
+  const xConnectors = useXConnectors(xChainType);
+  const xConnect = useXConnect();
+  const handleConnectICON = async () => {
+    if (!xConnectors[0]) return;
+    await xConnect(xConnectors[0]);
+    onSavingsXChainSelection('0x1.icon');
+  };
+
   return (
     <>
       <Box>
@@ -267,9 +279,16 @@ const Savings = () => {
             </Flex>
           </>
         ) : (!account && signedInWallet.length > 0) || savingsXChainId !== '0x1.icon' ? (
-          <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>
-            <Trans>Sign in on ICON, then deposit bnUSD to earn rewards.</Trans>
-          </Typography>
+          <Flex>
+            <Typography color="primaryBright" mt={6} mb={5}>
+              <UnderlineText onClick={handleConnectICON}>
+                <Trans>Sign in on ICON</Trans>
+              </UnderlineText>
+            </Typography>
+            <Typography fontSize={14} opacity={0.75} mt={6} mb={5}>
+              <Trans>, then deposit bnUSD to earn rewards.</Trans>
+            </Typography>
+          </Flex>
         ) : (
           <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>
             <Trans>Buy or borrow bnUSD, then deposit it here to earn rewards.</Trans>

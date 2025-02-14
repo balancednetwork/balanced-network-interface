@@ -78,6 +78,7 @@ export default function LPPanel() {
     mintableLiquidity,
     lpXChainId,
     account,
+    maxAmounts,
   } = useDerivedMintInfo();
   const { onFieldAInput, onFieldBInput, onSlide, onCurrencySelection, onChainSelection } =
     useMintActionHandlers(noLiquidity);
@@ -119,18 +120,18 @@ export default function LPPanel() {
 
   React.useEffect(() => {
     if (needUpdate) {
-      const balanceA = maxAmountSpend(currencyBalances[Field.CURRENCY_A]);
-      const balanceB = maxAmountSpend(currencyBalances[Field.CURRENCY_B]);
+      const balanceA = maxAmounts[Field.CURRENCY_A];
+      const balanceB = maxAmounts[Field.CURRENCY_B];
       if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
         const p = new Percent(Math.floor(percent * 100), 10_000);
 
         const field = balanceA.multiply(pair?.reserve1).lessThan(balanceB.multiply(pair?.reserve0))
           ? Field.CURRENCY_A
           : Field.CURRENCY_B;
-        onSlide(field, percent !== 0 ? currencyBalances[field]!.multiply(p).toFixed() : '');
+        onSlide(field, percent !== 0 ? maxAmounts[field]?.multiply(p).toFixed() ?? '' : '');
       }
     }
-  }, [percent, needUpdate, currencyBalances, onSlide, pair]);
+  }, [percent, needUpdate, maxAmounts, onSlide, pair]);
 
   // get formatted amounts
   const formattedAmounts = {
@@ -152,16 +153,6 @@ export default function LPPanel() {
     [onCurrencySelection],
   );
 
-  const maxAmounts: { [field in Field]?: CurrencyAmount<Currency> } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
-    (accumulator, field) => {
-      return {
-        ...accumulator,
-        [field]: maxAmountSpend(currencyBalances[field]),
-      };
-    },
-    {},
-  );
-
   const handleTypeAInput = React.useCallback(
     (typed: string) => {
       if (new BigNumber(typed).isLessThan(maxAmounts[Field.CURRENCY_A]?.toFixed() || 0) || typed === '') {
@@ -170,6 +161,7 @@ export default function LPPanel() {
     },
     [maxAmounts, onFieldAInput],
   );
+
   const handleTypeBInput = React.useCallback(
     (typed: string) => {
       if (new BigNumber(typed).isLessThan(maxAmounts[Field.CURRENCY_B]?.toFixed() || 0) || typed === '') {
@@ -182,8 +174,8 @@ export default function LPPanel() {
   const handlePercentSelect = (field: Field) => (percent: number) => {
     const p = new Percent(Math.floor(percent * 100), 10_000);
 
-    const balanceA = maxAmountSpend(currencyBalances[Field.CURRENCY_A]);
-    const balanceB = maxAmountSpend(currencyBalances[Field.CURRENCY_B]);
+    const balanceA = maxAmounts[Field.CURRENCY_A];
+    const balanceB = maxAmounts[Field.CURRENCY_B];
 
     if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
       if (field === Field.CURRENCY_A) {

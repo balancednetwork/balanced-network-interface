@@ -80,10 +80,10 @@ export abstract class XWalletClient {
       case XTransactionType.LP_CLAIM_REWARDS:
         return await this.claimRewards(xTransactionInput);
 
-      case XTransactionType.LOCK_STABLE_TOKEN:
-        return await this.lockStableToken(xTransactionInput);
-      case XTransactionType.UNLOCK_STABLE_TOKEN:
-        return await this.unlockStableToken(xTransactionInput);
+      case XTransactionType.LOCK_BNUSD:
+        return await this.lockBnUSD(xTransactionInput);
+      case XTransactionType.UNLOCK_BNUSD:
+        return await this.unlockBnUSD(xTransactionInput);
 
       default:
         throw new Error('Invalid XTransactionType');
@@ -284,7 +284,7 @@ export abstract class XWalletClient {
   }
 
   // lock stable token
-  async lockStableToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+  async lockBnUSD(xTransactionInput: XTransactionInput): Promise<string | undefined> {
     const { account, inputAmount, direction, xCallFee } = xTransactionInput;
 
     // Depositing bnUSD on spoke chain is the normal process of bnUSD crossTransfer from spoke chain. But the data field shouldn't be empty in this case. Data should contain a rlp encoded value as specified on below code for solana spoke chain:
@@ -322,7 +322,7 @@ export abstract class XWalletClient {
 
   // unlock stable token
 
-  async unlockStableToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+  async unlockBnUSD(xTransactionInput: XTransactionInput): Promise<string | undefined> {
     throw new Error('Not implemented');
   }
 }

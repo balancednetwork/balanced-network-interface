@@ -51,8 +51,8 @@ export enum XTransactionType {
   LP_CLAIM_REWARDS = 'lp_claim_rewards',
 
   // savings
-  LOCK_STABLE_TOKEN = 'lock_stable_token',
-  UNLOCK_STABLE_TOKEN = 'unlock_stable_token',
+  LOCK_BNUSD = 'lock_bnusd',
+  UNLOCK_BNUSD = 'unlock_bnusd',
 }
 
 export enum XMessageStatus {

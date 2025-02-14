@@ -21,14 +21,12 @@ import {
   useSavingsSliderState,
   useSavingsXChainId,
 } from '@/store/savings/hooks';
-import { useTransactionAdder } from '@/store/transactions/hooks';
-import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
-import { escapeRegExp, parseUnits } from '@/utils';
+import { useHasEnoughICX, useICONWalletBalances, useWalletBalances } from '@/store/wallet/hooks';
+import { escapeRegExp } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { bnJs, getNetworkDisplayName, getXChainType, useXAccount } from '@balancednetwork/xwagmi';
 
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
-import { useSignedInWallets } from '@/hooks/useWallets';
 import { formatValue } from '@/utils/formatter';
 import { BalnPreviewInput as SavingsPreviewInput } from '../BBaln/styledComponents';
 
@@ -40,14 +38,15 @@ const Savings = () => {
   const balances = useICONWalletBalances();
   const bnUSDBalance = balances?.[bnJs.bnUSD.address];
   const sliderInstance = React.useRef<any>(null);
-  const addTransaction = useTransactionAdder();
   const hasEnoughICX = useHasEnoughICX();
   const [isOpen, setOpen] = React.useState(false);
   const isSmallScreen = useMedia('(max-width: 540px)');
   const { data: savingsRate } = useSavingsRateInfo();
   const { data: savingsPastMonthPayout } = useSavingsRatePastMonthPayout();
-  const signedInWallet = useSignedInWallets();
   const savingsXChainId = useSavingsXChainId();
+  const xAccount = useXAccount(getXChainType(savingsXChainId));
+  // useWalletBalances;
+  const walletBalances = useWalletBalances(savingsXChainId);
 
   const toggleOpen = React.useCallback(() => {
     setOpen(!isOpen);
@@ -125,26 +124,26 @@ const Savings = () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
     if (account) {
       try {
-        bnJs.inject({ account });
-        if (bnUSDDiff.isGreaterThan(0)) {
-          const { result: hash } = await bnJs.bnUSD.stake(parseUnits(bnUSDDiff.toFixed()));
-          addTransaction(
-            { hash },
-            {
-              pending: t`Depositing bnUSD...`,
-              summary: t`Deposited ${bnUSDDiff.abs().toFormat(2)} bnUSD.`,
-            },
-          );
-        } else if (bnUSDDiff.isLessThan(0)) {
-          const { result: hash } = await bnJs.Savings.unlock(parseUnits(bnUSDDiff.abs().toFixed()));
-          addTransaction(
-            { hash },
-            {
-              pending: t`Withdrawing bnUSD...`,
-              summary: t`Withdrew ${bnUSDDiff.abs().toFormat(2)} bnUSD.`,
-            },
-          );
-        }
+        // bnJs.inject({ account });
+        // if (bnUSDDiff.isGreaterThan(0)) {
+        //   const { result: hash } = await bnJs.bnUSD.stake(parseUnits(bnUSDDiff.toFixed()));
+        //   addTransaction(
+        //     { hash },
+        //     {
+        //       pending: t`Depositing bnUSD...`,
+        //       summary: t`Deposited ${bnUSDDiff.abs().toFormat(2)} bnUSD.`,
+        //     },
+        //   );
+        // } else if (bnUSDDiff.isLessThan(0)) {
+        //   const { result: hash } = await bnJs.Savings.unlock(parseUnits(bnUSDDiff.abs().toFixed()));
+        //   addTransaction(
+        //     { hash },
+        //     {
+        //       pending: t`Withdrawing bnUSD...`,
+        //       summary: t`Withdrew ${bnUSDDiff.abs().toFormat(2)} bnUSD.`,
+        //     },
+        //   );
+        // }
         toggleOpen();
       } catch (error) {
         console.error('staking/unlocking bnUSD error: ', error);
@@ -203,7 +202,7 @@ const Savings = () => {
               </QuestionWrapper>
             </Flex>
           </Flex>
-          {account && bnUSDCombinedTotal > 0 && (
+          {xAccount.address && bnUSDCombinedTotal > 0 && (
             <Flex>
               {isAdjusting && <TextButton onClick={handleCancel}>{t`Cancel`}</TextButton>}
               <Button
@@ -222,7 +221,7 @@ const Savings = () => {
             </Flex>
           )}
         </Flex>
-        {account && bnUSDCombinedTotal > 0 ? (
+        {xAccount.address && bnUSDCombinedTotal > 0 ? (
           <>
             <Box margin="25px 0 10px">
               <Nouislider
@@ -266,9 +265,9 @@ const Savings = () => {
               )}
             </Flex>
           </>
-        ) : !account && signedInWallet.length > 0 ? (
+        ) : !xAccount.address ? (
           <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>
-            <Trans>Sign in on ICON, then deposit bnUSD to earn rewards.</Trans>
+            <Trans>Sign in on {getNetworkDisplayName(savingsXChainId)}, then deposit bnUSD to earn rewards.</Trans>
           </Typography>
         ) : (
           <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>

@@ -151,12 +151,9 @@ export default function StakeLPModal({
             </Typography>
           </Box>
         </Flex>
-        <Typography textAlign="center">
-          {shouldStake ? "You'll earn rewards until you unstake them." : "You'll stop earning rewards from them."}
-        </Typography>
 
         {pool.xChainId !== ICON_XCALL_NETWORK_ID && (
-          <Flex justifyContent="center" alignItems="center" mt={2} style={{ gap: 4 }}>
+          <Flex justifyContent="center" alignItems="center" mb={2} style={{ gap: 4 }}>
             <Typography textAlign="center" as="h3" fontWeight="normal">
               <Trans>Transfer fee: </Trans>
             </Typography>
@@ -164,7 +161,12 @@ export default function StakeLPModal({
           </Flex>
         )}
 
+        <Typography textAlign="center">
+          {shouldStake ? "You'll earn rewards until you unstake them." : "You'll stop earning rewards from them."}
+        </Typography>
+
         {currentXTransaction && <XTransactionState xTransaction={currentXTransaction} />}
+
         <AnimatePresence>
           {((!isExecuted && isPending) || !isPending) && (
             <motion.div

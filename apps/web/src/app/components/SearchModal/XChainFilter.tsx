@@ -178,7 +178,7 @@ const XChainFilter: React.FC<XChainFilterProps> = props => {
                         },
                       }}
                     >
-                      <MouseoverTooltip text={`${xChainMap[item].name}`} autoWidth placement="top">
+                      <MouseoverTooltip text={`${xChainMap[item].name}`} autoWidth placement="bottom">
                         <ChainLogoWrap
                           onClick={() => onChainClick(item)}
                           $isActive={filterState.length === 0 || filterState.includes(item)}

@@ -214,13 +214,15 @@ export abstract class XWalletClient {
       throw new Error('outputAmount is required');
     }
 
+    const _inputAmount = convertCurrencyAmount(ICON_XCALL_NETWORK_ID, inputAmount)!;
+    const _outputAmount = convertCurrencyAmount(ICON_XCALL_NETWORK_ID, outputAmount)!;
+
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Dex.address}`;
-    const amountA = BigInt(inputAmount.quotient.toString());
-    const amountB = BigInt(outputAmount.quotient.toString());
-    const xTokenAOnIcon = convertCurrency(ICON_XCALL_NETWORK_ID, inputAmount.currency)!;
-    const xTokenBOnIcon = convertCurrency(ICON_XCALL_NETWORK_ID, outputAmount.currency)!;
+    const amountA = BigInt(_inputAmount.quotient.toString());
+    const amountB = BigInt(_outputAmount.quotient.toString());
+
     const data = Buffer.from(
-      getAddLPData(xTokenAOnIcon.address, xTokenBOnIcon.address, amountA, amountB, true, 1_000n),
+      getAddLPData(_inputAmount.currency.address, _outputAmount.currency.address, amountA, amountB, true, 1_000n),
     );
 
     return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });

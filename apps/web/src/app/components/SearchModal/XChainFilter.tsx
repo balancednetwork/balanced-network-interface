@@ -23,10 +23,12 @@ const FilterContentWrap = styled(Box)<{ $isOpen: boolean }>`
 const FilterButton = styled(Button)<{ $isOpen: boolean }>`
   padding-left: 5px;
   padding-right: 5px;
-  text-align: center; 
   width: 40px;
   background-color: ${({ theme }) => theme.colors.bg3};
   margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.primary};
@@ -116,12 +118,26 @@ const XChainFilter: React.FC<XChainFilterProps> = props => {
   const allSelected =
     filterState.length === filterItems.length && filterItems.every(item => filterState.includes(item));
 
-  const buttonText = filterState.length > 0 && !allSelected ? '...' : 'All';
+  const ButtonContent = () => {
+    if (filterState.length === 0 || allSelected) {
+      return 'All';
+    }
+
+    if (filterState.length > 1) {
+      return filterState.length;
+    }
+
+    if (filterState.length === 1) {
+      return <ChainLogo chain={xChainMap[filterState[0]]} size="20px" />;
+    }
+
+    return '...';
+  };
 
   return (
     <>
       <FilterButton onClick={handleToggle} $isOpen={isOpen}>
-        {buttonText}
+        <ButtonContent />
       </FilterButton>
 
       <FilterContentWrap $isOpen={isOpen}>

@@ -15,7 +15,7 @@ import { useTokenListConfig } from '@/store/lists/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useUserAddedTokens } from '@/store/user/hooks';
 import { getXTokenAddress, isXToken } from '@/utils/xTokens';
-import { XToken, XWalletAssetRecord } from '@balancednetwork/xwagmi';
+import { XToken, XWalletAssetRecord, convertCurrency } from '@balancednetwork/xwagmi';
 import { bnJs } from '@balancednetwork/xwagmi';
 
 import { AppState } from '..';
@@ -269,7 +269,8 @@ export const useXCurrencyBalance = (
     if (!xBalances) return;
 
     if (selectedChainId) {
-      return new BigNumber(xBalances[selectedChainId]?.[currency.address]?.toFixed() || 0);
+      const xToken = convertCurrency(selectedChainId, currency)!;
+      return new BigNumber(xBalances[selectedChainId]?.[xToken.address]?.toFixed() || 0);
     } else {
       if (isXToken(currency)) {
         return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
@@ -296,18 +297,6 @@ export function useXTokenBalances(xTokens: (XToken | undefined)[]): (CurrencyAmo
       return walletState[xToken.xChainId]?.[xToken.address];
     });
   }, [xTokens, walletState]);
-}
-
-// TODO: deprecate
-export function useCurrencyBalances(currencies: (Currency | undefined)[]): (CurrencyAmount<XToken> | undefined)[] {
-  const walletState = useSelector((state: AppState) => state.wallet);
-
-  return useMemo(() => {
-    return currencies.map(currency => {
-      if (!currency) return undefined;
-      return walletState['0x1.icon']?.[currency.address];
-    });
-  }, [walletState, currencies]);
 }
 
 export function useLiquidityTokenBalance(account: string | undefined | null, pair: Pair | undefined | null) {

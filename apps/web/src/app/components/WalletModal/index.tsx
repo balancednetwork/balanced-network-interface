@@ -162,13 +162,13 @@ export default function WalletModal() {
           description: t`Borrow, swap, & transfer cross-chain.`,
           keyWords: ['sui'],
         },
-        {
-          name: 'Solana',
-          xChainType: 'SOLANA',
-          logo: <SolanaWalletIcon width="40" height="40" style={{ color: '#000' }} />,
-          description: t`Borrow, swap, & transfer cross-chain.`,
-          keyWords: ['solana'],
-        },
+        // {
+        //   name: 'Solana',
+        //   xChainType: 'SOLANA',
+        //   logo: <SolanaWalletIcon width="40" height="40" style={{ color: '#000' }} />,
+        //   description: t`Borrow, swap, & transfer cross-chain.`,
+        //   keyWords: ['solana'],
+        // },
       ].sort((a, b) => a.name.localeCompare(b.name)),
     ] as WalletItemProps[];
   }, [switchChain]);

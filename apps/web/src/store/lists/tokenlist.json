@@ -219,14 +219,6 @@
       "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/pol.png"
     },
     {
-      "address": "cx1000000000000000000000000000000000000000",
-      "chainId": 1,
-      "name": "Wrapped Polygon",
-      "symbol": "wPOL",
-      "decimals": 18,
-      "logoURI": "https://raw.githubusercontent.com/balancednetwork/icons/master/tokens/wpol.png"
-    },
-    {
       "address": "cx66a031cc3bd305c76371fb586e93801b948254f0",
       "chainId": 1,
       "name": "AVAX",

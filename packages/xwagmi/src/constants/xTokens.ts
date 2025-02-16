@@ -25,7 +25,6 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   POL: '0x89.polygon',
   JitoSOL: 'solana',
   mSUI: 'sui',
-  wPOL: '0x89.polygon',
   wETH: '0x89.polygon',
 };
 

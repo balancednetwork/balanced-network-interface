@@ -6,10 +6,11 @@ import {
   type ChainProviderType,
   EvmProvider,
   type GetChainProviderType,
+  IconProvider,
   SuiProvider,
   SwapOrder,
 } from '../entities/index.js';
-import { isEvmChainConfig, isSuiChainConfig } from '../guards.js';
+import { isEvmChainConfig, isIconChainConfig, isSuiChainConfig } from '../guards.js';
 import {
   type ChainConfig,
   type ChainName,
@@ -27,6 +28,7 @@ import {
 import { EvmIntentService } from './EvmIntentService.js';
 import { SolverApiService } from './SolverApiService.js';
 import { SuiIntentService } from './SuiIntentService.js';
+import { IconIntentService } from './IconIntentService.js';
 
 export class IntentService {
   private readonly config: IntentServiceConfig;
@@ -99,8 +101,8 @@ export class IntentService {
             error: new Error(`[IntentService.isAllowanceValid] provider should be of type EvmProvider`),
           };
         }
-      } else if (isSuiChainConfig(fromChainConfig)) {
-        // no allowance required on SUI
+      } else if (isSuiChainConfig(fromChainConfig || isIconChainConfig(fromChainConfig))) {
+        // no allowance supported/required on SUI or Icon
         return {
           ok: true,
           value: true,
@@ -214,6 +216,15 @@ export class IntentService {
             error: new Error(`[IntentService.createIntentOrder] provider should be of type SuiProvider`),
           };
         }
+      } else if (isIconChainConfig(fromChainConfig)) {
+        if (provider instanceof IconProvider) {
+          return IconIntentService.createIntentOrder(payload, fromChainConfig, toChainConfig, provider);
+        } else {
+          return {
+            ok: false,
+            error: new Error(`[IntentService.createIntentOrder] provider should be of type IconProvider`),
+          };
+        }
       } else {
         return {
           ok: false,
@@ -261,6 +272,15 @@ export class IntentService {
             error: new Error(`[IntentService.cancelIntentOrder] provider should be of type SuiProvider`),
           };
         }
+      } else if (isIconChainConfig(chainConfig)) {
+        if (provider instanceof IconProvider) {
+          return IconIntentService.cancelIntentOrder(orderId, chainConfig, provider);
+        } else {
+          return {
+            ok: false,
+            error: new Error(`IntentService.cancelIntentOrder] provider should be of type IconProvider`),
+          };
+        }
       } else {
         return {
           ok: false,
@@ -292,6 +312,8 @@ export class IntentService {
       return EvmIntentService.getOrder(txHash as Address, chainConfig, provider);
     } else if (provider instanceof SuiProvider && isSuiChainConfig(chainConfig)) {
       return SuiIntentService.getOrder(txHash, chainConfig, provider);
+    } else if (provider instanceof IconProvider && isIconChainConfig(chainConfig)) {
+      return IconIntentService.getOrder(txHash, chainConfig, provider);
     } else {
       return {
         ok: false,

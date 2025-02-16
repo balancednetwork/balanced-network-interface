@@ -2,6 +2,7 @@
 import { XChainId, xChainMap } from '@balancednetwork/xwagmi';
 import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
+import { isMobile } from 'react-device-detect';
 import { Box, Flex } from 'rebass';
 import styled, { css, useTheme } from 'styled-components';
 import { Button } from '../Button';
@@ -178,7 +179,12 @@ const XChainFilter: React.FC<XChainFilterProps> = props => {
                         },
                       }}
                     >
-                      <MouseoverTooltip text={`${xChainMap[item].name}`} autoWidth placement="bottom">
+                      <MouseoverTooltip
+                        text={`${xChainMap[item].name}`}
+                        autoWidth
+                        placement="bottom"
+                        closeAfterDelay={isMobile ? 1000 : undefined}
+                      >
                         <ChainLogoWrap
                           onClick={() => onChainClick(item)}
                           $isActive={filterState.length === 0 || filterState.includes(item)}

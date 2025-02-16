@@ -14,7 +14,7 @@ export const shouldHideBecauseOfLowValue = (
     return balance.isLessThan(0.01);
   }
 
-  return basedOnWallet && balance.times(price).isLessThan(0.01);
+  return basedOnWallet && balance.times(price).isLessThan(0.0001);
 };
 
 export function currencyKey(currency: Currency): string {

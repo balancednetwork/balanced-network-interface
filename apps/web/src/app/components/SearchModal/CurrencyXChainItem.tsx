@@ -6,10 +6,12 @@ import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { xTokenMap } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
+import BigNumber from 'bignumber.js';
 import React from 'react';
 import { Flex } from 'rebass';
 import styled, { useTheme } from 'styled-components';
 import CurrencyLogoWithNetwork from '../CurrencyLogoWithNetwork';
+import { shouldHideBecauseOfLowValue } from './utils';
 
 const CurrencyXChainItemWrap = styled(Flex)`
   width: 100%;
@@ -40,6 +42,16 @@ const CurrencyXChainItem = ({
   const currencyBalance: CurrencyAmount<Currency> | undefined = xWallet[xChainId]?.[xToken?.wrapped.address ?? ''];
   const hasSignedIn = useHasSignedIn();
   const theme = useTheme();
+
+  const hideBecauseOfLowValue = shouldHideBecauseOfLowValue(
+    true,
+    new BigNumber(price),
+    new BigNumber(currencyBalance?.toFixed() || 0),
+  );
+
+  if (hideBecauseOfLowValue) {
+    return null;
+  }
 
   return (
     <CurrencyXChainItemWrap onClick={() => onSelect(currency, xChainId)}>

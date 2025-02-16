@@ -16,21 +16,22 @@ export const useCheckSolanaAccount = (
 ) => {
   const [isActive, setIsActive] = useState(true);
 
-  useEffect(() => {
-    const checkAccount = async () => {
-      if (destinationChainId === 'solana' && recipient && currencyAmount?.currency.symbol === 'SOL') {
-        if ((await isAccountNonExistent(recipient)) && currencyAmount.lessThan(SOL_MINIMUM_AMOUNT)) {
-          setIsActive(false);
-        } else {
-          setIsActive(true);
-        }
-      } else {
-        setIsActive(true);
-      }
-    };
+  // useEffect(() => {
+  //   const checkAccount = async () => {
+  //      setIsActive(true);
+  //     if (destinationChainId === 'solana' && recipient && currencyAmount?.currency.symbol === 'SOL') {
+  //       if ((await isAccountNonExistent(recipient)) && currencyAmount.lessThan(SOL_MINIMUM_AMOUNT)) {
+  //         setIsActive(false);
+  //       } else {
+  //         setIsActive(true);
+  //       }
+  //     } else {
+  //       setIsActive(true);
+  //     }
+  //   };
 
-    checkAccount();
-  }, [destinationChainId, currencyAmount, recipient]);
+  //   checkAccount();
+  // }, [destinationChainId, currencyAmount, recipient]);
 
   return isActive;
 };

@@ -339,7 +339,7 @@ export const sui: XChain = {
 export const solana: XChain = {
   id: 'solana',
   name: 'Solana',
-  xChainId: 'solana',
+  xChainId: '0x1.icon',
   xChainType: 'SOLANA',
   tracker: { tx: 'https://solscan.io/tx' },
   nativeCurrency: {
@@ -403,7 +403,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   'injective-1': injective,
   stellar: stellar,
   sui: sui,
-  solana: solana,
+  // solana: solana,
 };
 
 export const xChains = Object.values(xChainMap).filter(xChain => !xChain.testnet);
@@ -425,7 +425,7 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
     'CBXK5AZWM7AE5HF7KKZYXU7NVMMXIA4K3D5H5LV7LW23ZBE7HBAH3RVC',
   ],
   sui: ['centralized-1', 'centralized-2'],
-  solana: ['FMPY4m3kZNvFyoAtc87dCPkPrfJuLFpWyS8sbsWFkGC9'],
+  // solana: ['FMPY4m3kZNvFyoAtc87dCPkPrfJuLFpWyS8sbsWFkGC9'],
 };
 
 /** to other chain from icon sources */
@@ -440,5 +440,5 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   'injective-1': ['cx6f86ed848f9f0d03ba1220811d95d864c72da88c'],
   stellar: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
   sui: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
-  solana: ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
+  // solana: ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
 };

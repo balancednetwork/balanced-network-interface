@@ -2229,8 +2229,8 @@ msgstr ""
 #~ msgstr "Ledger에서 지갑 선택:"
 
 #: src/app/pages/trade/supply/_components/AllPoolsPanel.tsx
-msgid "ICX queue"
-msgstr ""
+#~ msgid "ICX queue"
+#~ msgstr ""
 
 #: src/app/components/trade/XCallExecutionHandlerICON.tsx
 #~ msgid "Revert"

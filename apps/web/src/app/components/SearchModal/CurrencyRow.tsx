@@ -120,9 +120,7 @@ export default function CurrencyRow({
   const hideBecauseOfLowValue = shouldHideBecauseOfLowValue(basedOnWallet, price, balance);
 
   const shouldForceNetworkIcon =
-    currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
-    currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE ||
-    currencySelectionType === CurrencySelectionType.BRIDGE;
+    currencySelectionType === CurrencySelectionType.BRIDGE || (!basedOnWallet && filterState.length === 1);
 
   const bridgeDirection = useBridgeDirection();
   const finalXChainIds = useMemo(() => {
@@ -142,9 +140,11 @@ export default function CurrencyRow({
   }, [sortedXChains, shouldForceNetworkIcon, currencySelectionType, bridgeDirection.from, filterState]);
 
   const isSingleChain = sortedXChains.length === 1 || sortedXChains.length === 0;
-  const showBreakdown = basedOnWallet
-    ? showCrossChainBreakdown && currencyXChainIds.length && !isSingleChain
-    : (filterState.length === 0 || finalXChainIds.length > 1) && !isSingleChain;
+  const showBreakdown =
+    !!showCrossChainBreakdown &&
+    (basedOnWallet
+      ? showCrossChainBreakdown && currencyXChainIds.length && !isSingleChain
+      : (filterState.length === 0 || finalXChainIds.length > 1) && !isSingleChain);
 
   const shouldShowNetworkIcon =
     (basedOnWallet || shouldForceNetworkIcon) && finalXChainIds.length === 1 && !showBreakdown;
@@ -228,9 +228,9 @@ export default function CurrencyRow({
               currency={currency}
               bgColor={theme.colors.bg4}
               chainId={ICON_XCALL_NETWORK_ID}
-              size={'22px'}
+              size={'24px'}
             />
-          ) : shouldForceNetworkIcon && finalXChainIds.length === 1 ? (
+          ) : shouldForceNetworkIcon || finalXChainIds.length === 1 ? (
             <CurrencyLogoWithNetwork
               currency={currency}
               bgColor={theme.colors.bg4}

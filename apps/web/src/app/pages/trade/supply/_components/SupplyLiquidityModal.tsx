@@ -66,6 +66,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
   const [isSigningTokenB, setIsSigningTokenB] = React.useState(false);
   const [pendingTxTokenB, setPendingTxTokenB] = React.useState('');
 
+  const [isDismissing, setIsDismissing] = React.useState(false);
+
   const isExecuted = React.useMemo(
     () =>
       currentXTransaction?.status === XTransactionStatus.success ||
@@ -87,24 +89,30 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
     setTimeout(() => {
       queryClient.invalidateQueries({ queryKey: ['XTokenDepositAmount'] });
+      queryClient.invalidateQueries({ queryKey: ['pools'] });
+
       setIsPending(false);
       setPendingTx('');
       setHasErrorMessage(false);
     }, 500);
+
+    setIsDismissing(false);
   }, [onClose, queryClient, onSuccess, pair, incentivisedPairs, currentXTransaction]);
 
   const slowDismiss = useCallback(() => {
+    if (isDismissing) return;
+    setIsDismissing(true);
+
     setTimeout(() => {
       handleDismiss();
     }, 2000);
-  }, [handleDismiss]);
+  }, [handleDismiss, isDismissing]);
 
   useEffect(() => {
     if (isExecuted) {
       slowDismiss();
-      queryClient.invalidateQueries({ queryKey: ['pools'] });
     }
-  }, [isExecuted, slowDismiss, queryClient]);
+  }, [isExecuted, slowDismiss]);
 
   const { data: depositAmountA } = useXTokenDepositAmount(account, currencies[Field.CURRENCY_A]?.wrapped);
   const { data: depositAmountB } = useXTokenDepositAmount(account, currencies[Field.CURRENCY_B]?.wrapped);

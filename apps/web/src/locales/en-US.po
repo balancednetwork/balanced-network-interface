@@ -898,6 +898,10 @@ msgstr "Slippage tolerance"
 msgid "For every bnUSD they redeem, they'll receive ${redeemLimit} of collateral. The bnUSD is burned, and {redeemRepaidAmt} bnUSD of borrower debt repaid."
 msgstr "For every bnUSD they redeem, they'll receive ${redeemLimit} of collateral. The bnUSD is burned, and {redeemRepaidAmt} bnUSD of borrower debt repaid."
 
+#: src/app/components/home/Savings/index.tsx
+msgid ", then deposit bnUSD to earn rewards."
+msgstr ", then deposit bnUSD to earn rewards."
+
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #~ msgid "Transferring {0} to {1}..."
@@ -1134,6 +1138,10 @@ msgstr "Unlock {0} BALN"
 #: src/app/components/WalletModal/index.tsx
 #~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer crypto cross-chain."
 #~ msgstr "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer crypto cross-chain."
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+msgid ", then lock up BALN to boost your rewards."
+msgstr ", then lock up BALN to boost your rewards."
 
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "Casting your vote..."
@@ -2938,6 +2946,11 @@ msgstr "Create pool"
 msgid "Swap and supply liquidity."
 msgstr "Swap and supply liquidity."
 
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/Savings/index.tsx
+msgid "Sign in on ICON"
+msgstr "Sign in on ICON"
+
 #: src/app/components/CollateralTypeSwitcher/CollateralTypeListWrap.tsx
 msgid "Search assets..."
 msgstr "Search assets..."
@@ -2980,12 +2993,12 @@ msgid "VOLUME (24H)"
 msgstr "VOLUME (24H)"
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
-msgid "Sign in on ICON, then lock up BALN to boost your rewards."
-msgstr "Sign in on ICON, then lock up BALN to boost your rewards."
+#~ msgid "Sign in on ICON, then lock up BALN to boost your rewards."
+#~ msgstr "Sign in on ICON, then lock up BALN to boost your rewards."
 
 #: src/app/components/home/Savings/index.tsx
-msgid "Sign in on ICON, then deposit bnUSD to earn rewards."
-msgstr "Sign in on ICON, then deposit bnUSD to earn rewards."
+#~ msgid "Sign in on ICON, then deposit bnUSD to earn rewards."
+#~ msgstr "Sign in on ICON, then deposit bnUSD to earn rewards."
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx

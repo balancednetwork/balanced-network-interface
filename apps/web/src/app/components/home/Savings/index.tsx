@@ -15,6 +15,7 @@ import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import {
   useLockedAmount,
+  useSavingsActionHandlers,
   useSavingsRateInfo,
   useSavingsRatePastMonthPayout,
   useSavingsSliderActionHandlers,
@@ -25,9 +26,12 @@ import { useHasEnoughICX, useICONWalletBalances, useWalletBalances } from '@/sto
 import { escapeRegExp } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { bnJs, getNetworkDisplayName, getXChainType, useXAccount } from '@balancednetwork/xwagmi';
+import { useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
 
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
 import { formatValue } from '@/utils/formatter';
+import { UnderlineText } from '../../DropdownText';
+import { handleConnectWallet } from '../../WalletModal/WalletItem';
 import { BalnPreviewInput as SavingsPreviewInput } from '../BBaln/styledComponents';
 
 const Savings = () => {
@@ -154,6 +158,15 @@ const Savings = () => {
     adjust(false);
   };
 
+  // const { onSavingsXChainSelection } = useSavingsActionHandlers();
+  const xChainType = getXChainType(savingsXChainId);
+  const xConnectors = useXConnectors(xChainType);
+  const xConnect = useXConnect();
+
+  const handleConnect = () => {
+    handleConnectWallet(xChainType, xConnectors, xConnect);
+  };
+
   return (
     <>
       <Box>
@@ -266,9 +279,16 @@ const Savings = () => {
             </Flex>
           </>
         ) : !xAccount.address ? (
-          <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>
-            <Trans>Sign in on {getNetworkDisplayName(savingsXChainId)}, then deposit bnUSD to earn rewards.</Trans>
-          </Typography>
+          <Flex>
+            <Typography color="primaryBright" mt={6} mb={5}>
+              <UnderlineText onClick={handleConnect}>
+                <Trans>Sign in on {getNetworkDisplayName(savingsXChainId)}</Trans>
+              </UnderlineText>
+            </Typography>
+            <Typography fontSize={14} opacity={0.75} mt={6} mb={5}>
+              <Trans>, then deposit bnUSD to earn rewards.</Trans>
+            </Typography>
+          </Flex>
         ) : (
           <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>
             <Trans>Buy or borrow bnUSD, then deposit it here to earn rewards.</Trans>

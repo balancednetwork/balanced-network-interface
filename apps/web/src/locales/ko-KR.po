@@ -929,6 +929,10 @@ msgstr "오차 범위"
 msgid "For every bnUSD they redeem, they'll receive ${redeemLimit} of collateral. The bnUSD is burned, and {redeemRepaidAmt} bnUSD of borrower debt repaid."
 msgstr ""
 
+#: src/app/components/home/Savings/index.tsx
+msgid ", then deposit bnUSD to earn rewards."
+msgstr ""
+
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #~ msgid "Transferring {0} to {1}..."
@@ -1173,6 +1177,10 @@ msgstr ""
 #: src/app/components/WalletModal/index.tsx
 #~ msgid "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer crypto cross-chain."
 #~ msgstr ""
+
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+msgid ", then lock up BALN to boost your rewards."
+msgstr ""
 
 #: src/app/pages/vote/proposals/[proposalId]/page.tsx
 msgid "Casting your vote..."
@@ -3000,6 +3008,11 @@ msgstr "풀 생성하기"
 msgid "Swap and supply liquidity."
 msgstr ""
 
+#: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/Savings/index.tsx
+msgid "Sign in on ICON"
+msgstr ""
+
 #: src/app/components/CollateralTypeSwitcher/CollateralTypeListWrap.tsx
 msgid "Search assets..."
 msgstr ""
@@ -3046,12 +3059,12 @@ msgid "VOLUME (24H)"
 msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
-msgid "Sign in on ICON, then lock up BALN to boost your rewards."
-msgstr ""
+#~ msgid "Sign in on ICON, then lock up BALN to boost your rewards."
+#~ msgstr ""
 
 #: src/app/components/home/Savings/index.tsx
-msgid "Sign in on ICON, then deposit bnUSD to earn rewards."
-msgstr ""
+#~ msgid "Sign in on ICON, then deposit bnUSD to earn rewards."
+#~ msgstr ""
 
 #: src/app/components/ArchwayWallet/index.tsx
 #: src/app/components/EVMWallet/index.tsx

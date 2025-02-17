@@ -88,11 +88,9 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
   }
 }
 
-export function maxAmountSpend(
-  currencyAmount?: CurrencyAmount<Currency>,
-  xChainId: XChainId = '0x1.icon',
-): CurrencyAmount<Currency> | undefined {
+export function maxAmountSpend<T extends Token>(currencyAmount?: CurrencyAmount<T>): CurrencyAmount<T> | undefined {
   if (!currencyAmount) return undefined;
+  const xChainId: XChainId = currencyAmount.currency instanceof XToken ? currencyAmount.currency.xChainId : '0x1.icon';
 
   const minCurrencyGas = currencyAmount.currency.isNativeToken
     ? CurrencyAmount.fromRawAmount(

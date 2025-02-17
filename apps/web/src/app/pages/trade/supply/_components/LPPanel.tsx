@@ -15,7 +15,7 @@ import { BrightPanel, SectionPanel } from '@/app/components/Panel';
 import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import { Typography } from '@/app/theme';
 import { BIGINT_ZERO } from '@/constants/misc';
-import { PairState, usePool } from '@/hooks/useV2Pairs';
+import { PairState, Pool, usePool } from '@/hooks/useV2Pairs';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedMintInfo, useInitialSupplyLoad, useMintActionHandlers, useMintState } from '@/store/mint/hooks';
 import { Field, InputType } from '@/store/mint/reducer';
@@ -40,6 +40,8 @@ export default function LPPanel() {
   // modal
   const [showSupplyConfirm, setShowSupplyConfirm] = React.useState(false);
   const [showSuggestStakingLP, setShowSuggestStakingLP] = React.useState(false);
+
+  const [executionPool, setExecutionPool] = React.useState<Pool | undefined>(undefined);
 
   const handleSupplyConfirmDismiss = () => {
     setShowSupplyConfirm(false);
@@ -76,6 +78,7 @@ export default function LPPanel() {
     mintableLiquidity,
     lpXChainId,
     account,
+    maxAmounts,
   } = useDerivedMintInfo();
   const { onFieldAInput, onFieldBInput, onSlide, onCurrencySelection, onChainSelection } =
     useMintActionHandlers(noLiquidity);
@@ -117,18 +120,18 @@ export default function LPPanel() {
 
   React.useEffect(() => {
     if (needUpdate) {
-      const balanceA = maxAmountSpend(currencyBalances[Field.CURRENCY_A]);
-      const balanceB = maxAmountSpend(currencyBalances[Field.CURRENCY_B]);
+      const balanceA = maxAmounts[Field.CURRENCY_A];
+      const balanceB = maxAmounts[Field.CURRENCY_B];
       if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
         const p = new Percent(Math.floor(percent * 100), 10_000);
 
         const field = balanceA.multiply(pair?.reserve1).lessThan(balanceB.multiply(pair?.reserve0))
           ? Field.CURRENCY_A
           : Field.CURRENCY_B;
-        onSlide(field, percent !== 0 ? currencyBalances[field]!.multiply(p).toFixed() : '');
+        onSlide(field, percent !== 0 ? maxAmounts[field]?.multiply(p).toFixed() ?? '' : '');
       }
     }
-  }, [percent, needUpdate, currencyBalances, onSlide, pair]);
+  }, [percent, needUpdate, maxAmounts, onSlide, pair]);
 
   // get formatted amounts
   const formattedAmounts = {
@@ -150,16 +153,6 @@ export default function LPPanel() {
     [onCurrencySelection],
   );
 
-  const maxAmounts: { [field in Field]?: CurrencyAmount<Currency> } = [Field.CURRENCY_A, Field.CURRENCY_B].reduce(
-    (accumulator, field) => {
-      return {
-        ...accumulator,
-        [field]: maxAmountSpend(currencyBalances[field], lpXChainId),
-      };
-    },
-    {},
-  );
-
   const handleTypeAInput = React.useCallback(
     (typed: string) => {
       if (new BigNumber(typed).isLessThan(maxAmounts[Field.CURRENCY_A]?.toFixed() || 0) || typed === '') {
@@ -168,6 +161,7 @@ export default function LPPanel() {
     },
     [maxAmounts, onFieldAInput],
   );
+
   const handleTypeBInput = React.useCallback(
     (typed: string) => {
       if (new BigNumber(typed).isLessThan(maxAmounts[Field.CURRENCY_B]?.toFixed() || 0) || typed === '') {
@@ -178,12 +172,12 @@ export default function LPPanel() {
   );
 
   const handlePercentSelect = (field: Field) => (percent: number) => {
-    const balanceA = maxAmountSpend(currencyBalances[Field.CURRENCY_A]);
-    const balanceB = maxAmountSpend(currencyBalances[Field.CURRENCY_B]);
+    const p = new Percent(Math.floor(percent * 100), 10_000);
+
+    const balanceA = maxAmounts[Field.CURRENCY_A];
+    const balanceB = maxAmounts[Field.CURRENCY_B];
 
     if (balanceA && balanceB && pair && pair.reserve0 && pair.reserve1) {
-      const p = new Percent(Math.floor(percent * 100), 10_000);
-
       if (field === Field.CURRENCY_A) {
         field = balanceA.multiply(pair?.reserve1).multiply(p).lessThan(balanceB.multiply(pair?.reserve0))
           ? Field.CURRENCY_A
@@ -196,8 +190,8 @@ export default function LPPanel() {
     }
 
     field === Field.CURRENCY_A
-      ? onFieldAInput(maxAmounts[Field.CURRENCY_A]?.multiply(percent).divide(100)?.toExact() ?? '')
-      : onFieldBInput(maxAmounts[Field.CURRENCY_B]?.multiply(percent).divide(100)?.toExact() ?? '');
+      ? onFieldAInput(maxAmounts[Field.CURRENCY_A]?.multiply(p).toExact() ?? '')
+      : onFieldBInput(maxAmounts[Field.CURRENCY_B]?.multiply(p).toExact() ?? '');
   };
 
   const handleLPChainSelection = useCallback(
@@ -289,8 +283,8 @@ export default function LPPanel() {
           )}
           {pairState === PairState.EXISTS &&
             account &&
-            maxAmountSpend(currencyBalances[Field.CURRENCY_A])?.greaterThan(BIGINT_ZERO) &&
-            maxAmountSpend(currencyBalances[Field.CURRENCY_B])?.greaterThan(BIGINT_ZERO) && (
+            maxAmountSpend(currencyBalances[Field.CURRENCY_A])?.greaterThan(0) &&
+            maxAmountSpend(currencyBalances[Field.CURRENCY_B])?.greaterThan(0) && (
               <Slider mt={5}>
                 <Nouislider
                   start={[0]}
@@ -334,14 +328,17 @@ export default function LPPanel() {
         onClose={handleSupplyConfirmDismiss}
         parsedAmounts={amounts}
         currencies={currencies}
-        onSuccess={() => setShowSuggestStakingLP(true)}
+        onSuccess={() => {
+          setExecutionPool(pool);
+          setShowSuggestStakingLP(true);
+        }}
       />
 
-      {pool && (
+      {executionPool && (
         <SuggestStakingLPModal
           isOpen={showSuggestStakingLP}
           onClose={() => setShowSuggestStakingLP(false)}
-          pool={pool}
+          pool={executionPool}
         />
       )}
     </>

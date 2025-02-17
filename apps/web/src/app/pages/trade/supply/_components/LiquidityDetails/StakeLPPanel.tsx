@@ -22,6 +22,8 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
   const [executionBeforeAmount, setExecutionBeforeAmount] = React.useState<BigNumber>(new BigNumber(0));
   const [executionAfterAmount, setExecutionAfterAmount] = React.useState<BigNumber>(new BigNumber(0));
 
+  const [prevStakedPercent, setPrevStakedPercent] = React.useState<BigNumber>(new BigNumber(0));
+
   const stakedBalance = useMemo(() => new BigNumber(stakedLPBalance?.toFixed() || 0), [stakedLPBalance]);
 
   // TODO: rename to totalLPBalance
@@ -32,9 +34,11 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
 
   const [isAdjusting, setAdjusting] = React.useState(false);
   const handleAdjust = () => {
+    setPrevStakedPercent(totalStaked.isZero() ? ZERO : stakedBalance.dividedBy(totalStaked).multipliedBy(100));
     setAdjusting(true);
   };
   const handleCancel = () => {
+    setPrevStakedPercent(ZERO);
     setAdjusting(false);
   };
 
@@ -79,7 +83,6 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
       !!incentivisedPairs.find(pair => pair.name === (pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName)),
     [incentivisedPairs, pairName],
   );
-
   return (
     <Box width={upSmall ? 1 / 2 : 1}>
       {!upSmall && <RespoRewardsInfo pool={pool} />}
@@ -124,6 +127,7 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
                     setExecutionAfterAmount(afterAmount);
                     setOpen(true);
                   }}
+                  disabled={prevStakedPercent.toFixed(2) === stakedPercent.toFixed(2)}
                 >
                   Confirm
                 </Button>

@@ -233,17 +233,20 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
               setPendingTx={setPendingTxTokenB}
             />
           </div>
-          <Typography textAlign="center" as="h3" fontWeight="normal">
-            <Trans>Send your liquidity to Balanced, then click Supply.</Trans>
-          </Typography>
+
           {lpXChainId !== ICON_XCALL_NETWORK_ID && (
-            <Flex justifyContent="center" alignItems="center" mt={2} style={{ gap: 4 }}>
+            <Flex justifyContent="center" alignItems="center" mt={2} mb={1} style={{ gap: 4 }}>
               <Typography textAlign="center" as="h3" fontWeight="normal">
                 <Trans>Transfer fees: </Trans>
               </Typography>
               <Typography fontWeight="bold">{formattedXCallFee}</Typography>
             </Flex>
           )}
+
+          <Typography textAlign="center" as="h3" fontWeight="normal">
+            <Trans>Send your liquidity to Balanced, then click Supply.</Trans>
+          </Typography>
+
           {hasErrorMessage && (
             <Typography textAlign="center" color="alert">
               <Trans>Remove your assets to cancel this transaction.</Trans>

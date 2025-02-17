@@ -11,6 +11,7 @@ import { useAllTokens, useCommonBases } from '@/hooks/Tokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { tryParseAmount } from '@/store/swap/hooks';
 import { useXTokenBalances } from '@/store/wallet/hooks';
+import { maxAmountSpend } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
 import {
   ICON_XCALL_NETWORK_ID,
@@ -114,7 +115,8 @@ export function useDerivedMintInfo(): {
   currencies: { [field in Field]?: XToken };
   pair?: Pair | null;
   pairState: PairState;
-  currencyBalances: { [field in Field]?: CurrencyAmount<Currency> };
+  currencyBalances: { [field in Field]?: CurrencyAmount<XToken> };
+  maxAmounts: { [field in Field]?: CurrencyAmount<XToken> };
   parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> };
   price?: Price<Currency, Currency>;
   noLiquidity?: boolean;
@@ -277,14 +279,22 @@ export function useDerivedMintInfo(): {
     }
   }, [parsedAmounts, pair, totalSupply]);
 
+  const maxAmounts = useMemo(
+    () => ({
+      [Field.CURRENCY_A]: maxAmountSpend(currencyBalances[Field.CURRENCY_A]),
+      [Field.CURRENCY_B]: maxAmountSpend(currencyBalances[Field.CURRENCY_B]),
+    }),
+    [currencyBalances],
+  );
+
   // mintable liquidity by using balances
   const mintableLiquidity = useMemo(() => {
     const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = {
-      [Field.CURRENCY_A]: currencyBalances[Field.CURRENCY_A]
-        ? convertCurrencyAmount(ICON_XCALL_NETWORK_ID, currencyBalances[Field.CURRENCY_A])
+      [Field.CURRENCY_A]: maxAmounts[Field.CURRENCY_A]
+        ? convertCurrencyAmount(ICON_XCALL_NETWORK_ID, maxAmounts[Field.CURRENCY_A])
         : undefined,
-      [Field.CURRENCY_B]: currencyBalances[Field.CURRENCY_B]
-        ? convertCurrencyAmount(ICON_XCALL_NETWORK_ID, currencyBalances[Field.CURRENCY_B])
+      [Field.CURRENCY_B]: maxAmounts[Field.CURRENCY_B]
+        ? convertCurrencyAmount(ICON_XCALL_NETWORK_ID, maxAmounts[Field.CURRENCY_B])
         : undefined,
     };
 
@@ -311,7 +321,7 @@ export function useDerivedMintInfo(): {
     } else {
       return undefined;
     }
-  }, [currencyBalances, pair, totalSupply]);
+  }, [maxAmounts, pair, totalSupply]);
 
   let error: ReactNode | undefined;
   if (!account) {
@@ -343,6 +353,7 @@ export function useDerivedMintInfo(): {
     pairState,
     currencyBalances,
     parsedAmounts,
+    maxAmounts,
     price,
     noLiquidity,
     liquidityMinted,

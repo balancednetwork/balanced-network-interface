@@ -94,6 +94,16 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
       setIsPending(false);
       setPendingTx('');
       setHasErrorMessage(false);
+
+      setIsSendingTokenA(false);
+      setIsRemovingTokenA(false);
+      setIsSigningTokenA(false);
+      setPendingTxTokenA('');
+
+      setIsSendingTokenB(false);
+      setIsRemovingTokenB(false);
+      setIsSigningTokenB(false);
+      setPendingTxTokenB('');
     }, 500);
 
     setIsDismissing(false);

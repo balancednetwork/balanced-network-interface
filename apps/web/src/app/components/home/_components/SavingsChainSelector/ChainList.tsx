@@ -53,13 +53,13 @@ const ChainItem = ({ chain, setChainId, isLast, rewardAmount }: ChainItemProps) 
           </Typography>
         </Flex>
       </ChainItemWrap>
-      {rewardAmount.gt(0.01) ? (
+      {rewardAmount.gt(0) ? (
         <Typography
           color="inherit"
           style={{ transition: 'all ease 0.3s', opacity: rewardAmount.gt(0) ? 1 : 0.75 }}
           fontSize={rewardAmount.gt(0) ? 14 : 12}
         >
-          {rewardAmount.toFixed(2)}
+          {rewardAmount.gt(0.01) ? rewardAmount.toFixed(2) : 'Pending'}
         </Typography>
       ) : (
         <Typography>-</Typography>

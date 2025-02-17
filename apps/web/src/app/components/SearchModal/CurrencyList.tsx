@@ -48,6 +48,7 @@ export default function CurrencyList({
   basedOnWallet,
   width,
   currencySelectionType,
+  filterState,
 }: {
   currencies: Currency[];
   showCrossChainBreakdown: boolean;
@@ -61,6 +62,7 @@ export default function CurrencyList({
   basedOnWallet: boolean;
   width?: number;
   currencySelectionType: CurrencySelectionType;
+  filterState: XChainId[];
 }) {
   const handleEscape = useKeyPress('Escape');
   const hasSignedIn = useHasSignedIn();
@@ -150,8 +152,9 @@ export default function CurrencyList({
           selectedChainId={selectedChainId}
           showCrossChainBreakdown={showCrossChainBreakdown}
           basedOnWallet={basedOnWallet}
-          currencySelectionType={currencySelectionType}
           width={width}
+          filterState={filterState}
+          currencySelectionType={currencySelectionType}
         />
       ))}
     </List1>

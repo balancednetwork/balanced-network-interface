@@ -2192,6 +2192,10 @@ msgstr "Swap fee (included):"
 #~ msgid "To deposit {collateralType} from {0},"
 #~ msgstr "To deposit {collateralType} from {0},"
 
+#: src/app/components/SearchModal/CurrencySearch.tsx
+#~ msgid "Search token..."
+#~ msgstr "Search token..."
+
 #: src/store/mint/hooks.tsx
 #: src/store/mint/hooks.tsx
 #~ msgid "Enter an amount"
@@ -2784,8 +2788,8 @@ msgid "Adjust allocation"
 msgstr "Adjust allocation"
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
-msgid "Search name or contract..."
-msgstr "Search name or contract..."
+#~ msgid "Search name or contract..."
+#~ msgstr "Search name or contract..."
 
 #: src/app/components/WalletModal/IconWalletModal.tsx
 #~ msgid "Make sure it's connected and try again."
@@ -2952,6 +2956,7 @@ msgid "Sign in on ICON"
 msgstr "Sign in on ICON"
 
 #: src/app/components/CollateralTypeSwitcher/CollateralTypeListWrap.tsx
+#: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "Search assets..."
 msgstr "Search assets..."
 

@@ -1,11 +1,10 @@
 import React, { useState, useCallback, useMemo } from 'react';
 
 import { Currency, Fraction, Token } from '@balancednetwork/sdk-core';
-import { ICON_XCALL_NETWORK_ID } from '@balancednetwork/xwagmi';
+import { ICON_XCALL_NETWORK_ID, getSupportedXChainIdsForSwapToken } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { xTokenMap } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
-import { getSupportedXChainIdsForToken } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
 import { MinusCircle } from 'react-feather';
@@ -17,6 +16,7 @@ import { DataText, ListItem } from '@/app/components/List';
 import { Typography } from '@/app/theme';
 
 import { useHasSignedIn } from '@/hooks/useWallets';
+import { useRatesWithOracle } from '@/queries/reward';
 import { useBridgeDirection } from '@/store/bridge/hooks';
 import { useIsUserAddedToken } from '@/store/user/hooks';
 import { useCrossChainWalletBalances, useXCurrencyBalance } from '@/store/wallet/hooks';
@@ -28,12 +28,15 @@ import { BalanceBreakdown } from '../Wallet/styledComponents';
 import { CurrencySelectionType } from './CurrencySearch';
 import CurrencyXChainItem from './CurrencyXChainItem';
 import { XChainLogoList } from './styleds';
+import { shouldHideBecauseOfLowValue } from './utils';
 
 const StyledBalanceBreakdown = styled(BalanceBreakdown)`
   margin-top: 18px;
   grid-column: span 2;
   color: ${({ theme }) => theme.colors.text2};
 `;
+
+const MemoizedCurrencyXChainItem = React.memo(CurrencyXChainItem);
 
 export default function CurrencyRow({
   currency,
@@ -44,10 +47,12 @@ export default function CurrencyRow({
   selectedChainId,
   showCrossChainBreakdown,
   basedOnWallet,
-  width,
   currencySelectionType,
+  width,
+  filterState,
 }: {
   currency: Currency;
+  filterState: XChainId[];
   showCrossChainBreakdown: boolean;
   onSelect: (currency: Currency, setDefaultChain?: boolean) => void;
   onChainSelect?: (chainId: XChainId) => void;
@@ -55,16 +60,17 @@ export default function CurrencyRow({
   rateFracs: { [key in string]: Fraction } | undefined;
   selectedChainId: XChainId | undefined;
   basedOnWallet: boolean;
-  width?: number;
   currencySelectionType: CurrencySelectionType;
+  width?: number;
 }) {
-  const currencyXChainIds = useMemo(() => getSupportedXChainIdsForToken(currency), [currency]);
+  const currencyXChainIds = useMemo(() => getSupportedXChainIdsForSwapToken(currency), [currency]);
   const balance = useXCurrencyBalance(currency, selectedChainId);
   const hasSigned = useHasSignedIn();
   const xWallet = useCrossChainWalletBalances();
   const isSwapSelector =
     currencySelectionType === CurrencySelectionType.TRADE_IN ||
     currencySelectionType === CurrencySelectionType.TRADE_OUT;
+  const prices = useRatesWithOracle();
 
   const sortedXChains = useMemo(() => {
     return basedOnWallet
@@ -73,7 +79,14 @@ export default function CurrencyRow({
             const xCurrencyAmount = Object.values(xWallet[xChainId] || {}).find(
               currencyAmount => currencyAmount.currency.symbol === currency.symbol,
             );
-            return xCurrencyAmount?.greaterThan(0);
+            return prices
+              ? xCurrencyAmount?.greaterThan(0) &&
+                  !shouldHideBecauseOfLowValue(
+                    true,
+                    prices[currency.symbol!],
+                    new BigNumber(xCurrencyAmount?.toFixed()),
+                  )
+              : xCurrencyAmount?.greaterThan(0);
           })
           .sort((xChainIdA, xChainIdAB) => {
             const xCurrencyAmountA = Object.values(xWallet[xChainIdA] || {}).find(
@@ -94,10 +107,7 @@ export default function CurrencyRow({
       : [...currencyXChainIds].sort((a, b) => {
           return xChainMap[a].name.localeCompare(xChainMap[b].name);
         });
-  }, [currencyXChainIds, basedOnWallet, currency, xWallet]);
-
-  const isSingleChain = sortedXChains.length === 1 || sortedXChains.length === 0;
-  const showBreakdown = showCrossChainBreakdown && currencyXChainIds.length && !isSingleChain;
+  }, [currencyXChainIds, basedOnWallet, currency, xWallet, prices]);
 
   const isUserAddedToken = useIsUserAddedToken(currency as Token);
   const theme = useTheme();
@@ -107,31 +117,46 @@ export default function CurrencyRow({
   const open = useCallback(() => setShow(true), []);
   const close = useCallback(() => setShow(false), []);
   const price = rateFracs && new BigNumber(rateFracs[formatSymbol(currency.symbol)]?.toFixed(8));
-  const hideBecauseOfLowValue =
-    basedOnWallet &&
-    (price && !price.isNaN() ? basedOnWallet && balance?.times(price).isLessThan(0.01) : balance?.isLessThan(0.01));
+  const hideBecauseOfLowValue = shouldHideBecauseOfLowValue(basedOnWallet, price, balance);
+
   const shouldForceNetworkIcon =
-    currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE ||
-    currencySelectionType === CurrencySelectionType.BRIDGE;
+    currencySelectionType === CurrencySelectionType.BRIDGE || (!basedOnWallet && filterState.length === 1);
 
   const bridgeDirection = useBridgeDirection();
   const finalXChainIds = useMemo(() => {
-    if (currencySelectionType === CurrencySelectionType.BRIDGE) {
+    if (
+      shouldForceNetworkIcon &&
+      (currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
+        currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE)
+    ) {
+      return [ICON_XCALL_NETWORK_ID];
+    }
+
+    if (shouldForceNetworkIcon && currencySelectionType === CurrencySelectionType.BRIDGE) {
       return [bridgeDirection.from];
     }
 
-    if (currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE && selectedChainId) {
-      return [selectedChainId];
-    }
+    return filterState.length > 0 ? sortedXChains.filter(xChainId => filterState.includes(xChainId)) : sortedXChains;
+  }, [sortedXChains, shouldForceNetworkIcon, currencySelectionType, bridgeDirection.from, filterState]);
 
-    return sortedXChains;
-  }, [sortedXChains, currencySelectionType, bridgeDirection.from, selectedChainId]);
+  const isSingleChain = sortedXChains.length === 1 || sortedXChains.length === 0;
+  const showBreakdown =
+    !!showCrossChainBreakdown &&
+    (basedOnWallet
+      ? showCrossChainBreakdown && currencyXChainIds.length && !isSingleChain
+      : (filterState.length === 0 || finalXChainIds.length > 1) && !isSingleChain);
+
+  const shouldShowNetworkIcon =
+    (basedOnWallet || shouldForceNetworkIcon) && finalXChainIds.length === 1 && !showBreakdown;
+
+  const hideBecauseOfXChainFilter =
+    filterState.length > 0 && !finalXChainIds.some(xChainId => filterState.includes(xChainId));
 
   const RowContentSignedIn = () => {
     return (
       <>
         <Flex alignItems={'center'}>
-          {(basedOnWallet || shouldForceNetworkIcon) && finalXChainIds.length === 1 ? (
+          {shouldShowNetworkIcon ? (
             <CurrencyLogoWithNetwork
               currency={currency}
               bgColor={theme.colors.bg4}
@@ -205,7 +230,7 @@ export default function CurrencyRow({
               chainId={ICON_XCALL_NETWORK_ID}
               size={'24px'}
             />
-          ) : shouldForceNetworkIcon && finalXChainIds.length === 1 ? (
+          ) : shouldForceNetworkIcon || finalXChainIds.length === 1 ? (
             <CurrencyLogoWithNetwork
               currency={currency}
               bgColor={theme.colors.bg4}
@@ -244,7 +269,6 @@ export default function CurrencyRow({
   };
 
   const handleXChainCurrencySelect = useCallback(
-    // click event for single row
     (currency: Currency, xChainId: XChainId) => {
       onSelect(currency, false);
       onChainSelect && onChainSelect(xChainId);
@@ -253,22 +277,17 @@ export default function CurrencyRow({
   );
 
   const handleClick = (currency: Currency, XChainIds: XChainId[]) => {
-    // click event for multiple row
-    if (
-      currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE ||
-      currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
-      (basedOnWallet && XChainIds.length === 1)
-    ) {
+    if (XChainIds.length === 1) {
       handleXChainCurrencySelect(currency, XChainIds[0]);
     } else {
-      onSelect(currency, true);
+      onSelect(currency);
     }
   };
 
   const itemContent = hasSigned ? <RowContentSignedIn /> : <RowContentNotSignedIn />;
   const itemSwapContent = hasSigned && basedOnWallet ? <RowContentSignedIn /> : <RowContentNotSignedIn />;
 
-  if (hideBecauseOfLowValue) return null;
+  if (hideBecauseOfLowValue || hideBecauseOfXChainFilter) return null;
 
   return (
     <>
@@ -287,7 +306,7 @@ export default function CurrencyRow({
           <StyledBalanceBreakdown $arrowPosition={currency.symbol ? `${currency.symbol.length * 5 + 26}px` : '40px'}>
             {basedOnWallet ? (
               finalXChainIds.map(xChainId => (
-                <CurrencyXChainItem
+                <MemoizedCurrencyXChainItem
                   key={`${currency.symbol}-${xChainId}`}
                   xChainId={xChainId}
                   currency={currency}
@@ -297,7 +316,7 @@ export default function CurrencyRow({
               ))
             ) : (
               <XChainLogoList>
-                {sortedXChains?.map(xChainId => {
+                {finalXChainIds?.map(xChainId => {
                   const spokeAssetVersion: string | undefined = xTokenMap[xChainId].find(
                     xToken => xToken.symbol === currency?.symbol,
                   )?.spokeVersion;

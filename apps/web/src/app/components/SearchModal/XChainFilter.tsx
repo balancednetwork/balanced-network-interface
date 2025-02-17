@@ -24,6 +24,7 @@ const FilterContentWrap = styled(Box)<{ $isOpen: boolean }>`
 const FilterButton = styled(Button)<{ $isOpen: boolean }>`
   padding-left: 5px;
   padding-right: 5px;
+  font-size: 14px;
   width: 40px;
   background-color: ${({ theme }) => theme.colors.bg3};
   margin-left: 10px;

@@ -45,15 +45,6 @@ export enum AssetsTab {
   YOUR = 'your',
 }
 
-export enum SelectorType {
-  SWAP_IN,
-  SWAP_OUT,
-  SUPPLY_QUOTE,
-  SUPPLY_BASE,
-  BRIDGE,
-  OTHER,
-}
-
 const FilterWrap = styled(Flex)`
   flex-direction: row;
   flex-wrap: wrap;
@@ -118,7 +109,6 @@ interface CurrencySearchProps {
   showCommunityListControl?: boolean;
   xChainId: XChainId;
   showCrossChainBreakdown: boolean;
-  selectorType?: SelectorType;
 }
 
 export function CurrencySearch({
@@ -138,7 +128,6 @@ export function CurrencySearch({
   width,
   showCommunityListControl,
   xChainId,
-  selectorType,
 }: CurrencySearchProps) {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [filterState, setFilterState] = useState<XChainId[]>([]);
@@ -330,11 +319,14 @@ export function CurrencySearch({
   }, [assetsTab, filteredSortedTokens, xWallet]);
 
   const shouldShowXChainFilter = useMemo(() => {
-    if (selectorType === SelectorType.SWAP_IN || selectorType === SelectorType.SWAP_OUT) {
+    if (
+      currencySelectionType === CurrencySelectionType.TRADE_IN ||
+      currencySelectionType === CurrencySelectionType.TRADE_OUT
+    ) {
       return assetsTab === AssetsTab.ALL || wallets.length > 1;
     }
     return false;
-  }, [wallets, selectorType, assetsTab]);
+  }, [wallets, currencySelectionType, assetsTab]);
 
   return (
     <Wrapper width={width}>
@@ -357,7 +349,9 @@ export function CurrencySearch({
           />
         )}
       </FilterWrap>
-      {hasSignedIn && (selectorType === SelectorType.SWAP_IN || selectorType === SelectorType.SWAP_OUT) ? (
+      {hasSignedIn &&
+      (currencySelectionType === CurrencySelectionType.TRADE_IN ||
+        currencySelectionType === CurrencySelectionType.TRADE_OUT) ? (
         <Flex justifyContent="center" mt={3}>
           <AssetsTabButton $active={assetsTab === AssetsTab.YOUR} mr={2} onClick={() => handleTabClick(AssetsTab.YOUR)}>
             <Trans>Your assets</Trans>

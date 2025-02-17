@@ -13,7 +13,7 @@ import { useHasSignedIn } from '@/hooks/useWallets';
 import { useRatesWithOracle } from '@/queries/reward';
 import { toFraction } from '@/utils';
 import CurrencyRow from './CurrencyRow';
-import { CurrencySelectionType, SelectorType } from './CurrencySearch';
+import { CurrencySelectionType } from './CurrencySearch';
 import { HeaderText } from './styleds';
 
 const DashGrid = styled(Box)`
@@ -49,7 +49,6 @@ export default function CurrencyList({
   width,
   currencySelectionType,
   filterState,
-  selectorType,
 }: {
   currencies: Currency[];
   showCrossChainBreakdown: boolean;
@@ -64,7 +63,6 @@ export default function CurrencyList({
   width?: number;
   currencySelectionType: CurrencySelectionType;
   filterState: XChainId[];
-  selectorType: SelectorType;
 }) {
   const handleEscape = useKeyPress('Escape');
   const hasSignedIn = useHasSignedIn();
@@ -156,7 +154,7 @@ export default function CurrencyList({
           basedOnWallet={basedOnWallet}
           width={width}
           filterState={filterState}
-          selectorType={selectorType}
+          currencySelectionType={currencySelectionType}
         />
       ))}
     </List1>

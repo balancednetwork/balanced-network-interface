@@ -64,3 +64,7 @@ export function getLockData(method: string, params: Record<string, any>): Buffer
   const jsonString = JSON.stringify(map);
   return Buffer.from(jsonString, 'utf-8');
 }
+
+export function getUnlockData(amount: bigint): Uint8Array {
+  return RLP.encode(['xunlock', uintToBytes(amount)]);
+}

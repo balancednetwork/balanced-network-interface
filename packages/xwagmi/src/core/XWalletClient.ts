@@ -2,7 +2,7 @@ import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
-import { convertCurrency, convertCurrencyAmount, isSpokeToken, uintToBytes } from '@/utils';
+import { convertCurrencyAmount, isSpokeToken, uintToBytes } from '@/utils';
 import { getRlpEncodedSwapData, toICONDecimals } from '@/xcall';
 import { XTransactionInput, XTransactionType } from '@/xcall/types';
 import { bnJs } from '@/xchains/icon/bnJs';
@@ -13,6 +13,7 @@ import {
   getLockData,
   getStakeData,
   getUnStakeData,
+  getUnlockData,
   getWithdrawData,
   getXRemoveData,
   tokenData,
@@ -287,7 +288,7 @@ export abstract class XWalletClient {
 
   // lock stable token
   async lockBnUSD(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    const { account, inputAmount, direction, xCallFee } = xTransactionInput;
+    const { account, inputAmount, xCallFee } = xTransactionInput;
 
     // Depositing bnUSD on spoke chain is the normal process of bnUSD crossTransfer from spoke chain. But the data field shouldn't be empty in this case. Data should contain a rlp encoded value as specified on below code for solana spoke chain:
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Savings.address}`;
@@ -323,8 +324,13 @@ export abstract class XWalletClient {
   }
 
   // unlock stable token
-
   async unlockBnUSD(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    throw new Error('Not implemented');
+    const { account, inputAmount, xCallFee, direction } = xTransactionInput;
+    const _inputAmount = convertCurrencyAmount(ICON_XCALL_NETWORK_ID, inputAmount)!;
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Savings.address}`;
+    const amount = BigInt(_inputAmount.quotient.toString());
+    const data = Buffer.from(getUnlockData(amount));
+
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
   }
 }

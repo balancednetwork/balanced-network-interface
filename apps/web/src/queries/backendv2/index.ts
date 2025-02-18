@@ -63,7 +63,16 @@ export function useAllTokens() {
     queryFn: async () => {
       const response = await axios.get<TokenStats[]>(`${API_ENDPOINT}/tokens`);
       if (response.status === 200) {
-        const tokens = response.data
+        const rawData = response.data.filter(item => item.address !== 'cx0000000000000000000000000000000000000000');
+
+        const wICXToken = rawData.find(item => item.symbol === 'wICX');
+        const ICXToken = rawData.find(item => item.address === 'ICX');
+
+        if (wICXToken && ICXToken) {
+          ICXToken.liquidity += wICXToken.liquidity;
+        }
+
+        const tokens = rawData
           .map(item => {
             item.market_cap = item.total_supply * item.price;
             item.price_24h_change = ((item.price - item.price_24h) / item.price_24h) * 100;

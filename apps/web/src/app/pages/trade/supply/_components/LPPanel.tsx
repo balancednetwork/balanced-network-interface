@@ -14,7 +14,6 @@ import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { BrightPanel, SectionPanel } from '@/app/components/Panel';
 import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import { Typography } from '@/app/theme';
-import { BIGINT_ZERO } from '@/constants/misc';
 import { PairState, Pool, usePool } from '@/hooks/useV2Pairs';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedMintInfo, useInitialSupplyLoad, useMintActionHandlers, useMintState } from '@/store/mint/hooks';

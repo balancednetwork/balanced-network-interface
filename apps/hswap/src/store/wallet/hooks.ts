@@ -193,17 +193,17 @@ export function useWalletFetchBalances() {
   }, [stellarBalances, dispatch, accountStellar]);
 
   // fetch balances on solanax
-  const { address: accountSolana } = useXAccount('SOLANA');
-  const solanaTokens = useXTokens('solana');
-  const { data: solanaBalances } = useXBalances({
-    xChainId: 'solana',
-    xTokens: solanaTokens,
-    address: accountSolana,
-  });
-  React.useEffect(() => {
-    solanaBalances &&
-      dispatch(changeBalances({ xChainType: 'SOLANA', account: accountSolana, balances: solanaBalances }));
-  }, [solanaBalances, dispatch, accountSolana]);
+  // const { address: accountSolana } = useXAccount('SOLANA');
+  // const solanaTokens = useXTokens('solana');
+  // const { data: solanaBalances } = useXBalances({
+  //   xChainId: 'solana',
+  //   xTokens: solanaTokens,
+  //   address: accountSolana,
+  // });
+  // React.useEffect(() => {
+  //   solanaBalances &&
+  //     dispatch(changeBalances({ xChainType: 'SOLANA', account: accountSolana, balances: solanaBalances }));
+  // }, [solanaBalances, dispatch, accountSolana]);
 }
 
 export function useTokenBalances(

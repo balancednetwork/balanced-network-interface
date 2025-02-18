@@ -14,8 +14,8 @@ export type XChainId =
   | '0xa.optimism'
   | 'injective-1'
   | 'sui'
-  | 'stellar'
-  | 'solana';
+  | 'stellar';
+// | 'solana';
 
 export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH' | 'INJECTIVE' | 'SUI' | 'STELLAR' | 'SOLANA';
 

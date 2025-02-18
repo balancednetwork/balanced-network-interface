@@ -21,8 +21,8 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   afSUI: 'sui',
   haSUI: 'sui',
   vSUI: 'sui',
-  SOL: 'solana',
-  JITOSOL: 'solana',
+  // SOL: 'solana',
+  // JITOSOL: 'solana',
   mSUI: 'sui',
 };
 
@@ -75,15 +75,15 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('0x1.icon', ChainId.MAINNET, 'cx16f3cb9f09f5cdd902cf07aa752c8b3bd1bc9609', 6, 'USDT', 'Tether USD'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx518f64edcd35db9044a2de63fdc10abfd5f7d611', 7, 'XLM', 'XLM'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx508002ec116fbf3ab406329c0df28e70d7e75fb3', 9, 'SUI', 'SUI'),
-    new XToken('0x1.icon', ChainId.MAINNET, 'cx65c9e3d4fea842e00add0d32a5b4c5e4e04c7a6b', 9, 'SOL', 'SOL'),
-    new XToken(
-      '0x1.icon',
-      ChainId.MAINNET,
-      'cx4b48a4789636aa737285feec8908c765d8bc8042',
-      9,
-      'JitoSOL',
-      'Jito Staked SOL',
-    ),
+    // new XToken('0x1.icon', ChainId.MAINNET, 'cx65c9e3d4fea842e00add0d32a5b4c5e4e04c7a6b', 9, 'SOL', 'SOL'),
+    // new XToken(
+    //   '0x1.icon',
+    //   ChainId.MAINNET,
+    //   'cx4b48a4789636aa737285feec8908c765d8bc8042',
+    //   9,
+    //   'JitoSOL',
+    //   'Jito Staked SOL',
+    // ),
     new XToken('0x1.icon', ChainId.MAINNET, 'cxb9d0727849a6ce6453f8c9dda2dec2fd543075d4', 9, 'vSUI', 'Volo Staked SUI'),
     new XToken(
       '0x1.icon',
@@ -348,13 +348,13 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
       'Balance Token',
     ),
   ],
-  solana: [
-    new XToken('solana', 'solana', '11111111111111111111111111111111', 9, 'SOL', 'SOL'),
-    new XToken('solana', 'solana', '2yN29zk8jgRTW7GUF9WwYAEz8vvABVnvbfQc5DpGi9CJ', 9, 'bnUSD', 'Balanced Dollar'),
-    new XToken('solana', 'solana', 'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn', 9, 'JitoSOL', 'Jito Staked SOL'),
-    new XToken('solana', 'solana', '5N43m6JGxrZ6fW7MrwdbjgY93yjCj7krkcaTA7oRknj6', 9, 'sICX', 'Staked ICX'),
-    new XToken('solana', 'solana', 'BH4TZqN9TXnkjiLEQZ9xuXo85YaGoonM4PHpcjHEoTAx', 9, 'BALN', 'Balance Token'),
-  ],
+  // solana: [
+  //   new XToken('solana', 'solana', '11111111111111111111111111111111', 9, 'SOL', 'SOL'),
+  //   new XToken('solana', 'solana', '2yN29zk8jgRTW7GUF9WwYAEz8vvABVnvbfQc5DpGi9CJ', 9, 'bnUSD', 'Balanced Dollar'),
+  //   new XToken('solana', 'solana', 'J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn', 9, 'JitoSOL', 'Jito Staked SOL'),
+  //   new XToken('solana', 'solana', '5N43m6JGxrZ6fW7MrwdbjgY93yjCj7krkcaTA7oRknj6', 9, 'sICX', 'Staked ICX'),
+  //   new XToken('solana', 'solana', 'BH4TZqN9TXnkjiLEQZ9xuXo85YaGoonM4PHpcjHEoTAx', 9, 'BALN', 'Balance Token'),
+  // ],
 };
 
 export const allXTokens = Object.values(xTokenMap).reduce((acc, xTokens) => {

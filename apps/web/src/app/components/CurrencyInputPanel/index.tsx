@@ -104,7 +104,6 @@ interface CurrencyInputPanelProps {
   bg?: string;
   placeholder?: string;
   className?: string;
-  account?: string | null;
   showCommunityListControl?: boolean;
   showDollarValue?: boolean;
   showWarning?: boolean;
@@ -131,7 +130,6 @@ export default function CurrencyInputPanel({
   bg = 'bg2',
   placeholder = '0',
   className,
-  account,
   showCommunityListControl = true,
   showDollarValue = true,
   showWarning = false,
@@ -221,13 +219,11 @@ export default function CurrencyInputPanel({
 
             {onCurrencySelect && (
               <CurrencySearchModal
-                account={account}
                 isOpen={open}
                 onDismiss={handleDismiss}
                 onCurrencySelect={onCurrencySelectWithXChain}
                 onChainSelect={onChainSelect}
                 currencySelectionType={currencySelectionType}
-                showCurrencyAmount={false}
                 anchorEl={ref.current}
                 width={width ? width + (!isMobile ? 40 : 0) : undefined}
                 selectedCurrency={currency}

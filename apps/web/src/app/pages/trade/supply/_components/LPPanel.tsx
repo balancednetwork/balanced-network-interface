@@ -222,7 +222,6 @@ export default function LPPanel() {
             <AutoColumn gap="md">
               <Flex>
                 <CurrencyInputPanel
-                  account={account}
                   value={formattedAmounts[Field.CURRENCY_A]}
                   currencySelectionType={CurrencySelectionType.TRADE_MINT_BASE}
                   currency={currencies[Field.CURRENCY_A]}
@@ -240,7 +239,6 @@ export default function LPPanel() {
             <AutoColumn gap="md">
               <Flex>
                 <CurrencyInputPanel
-                  account={account}
                   value={formattedAmounts[Field.CURRENCY_B]}
                   currencySelectionType={CurrencySelectionType.TRADE_MINT_QUOTE}
                   currency={currencies[Field.CURRENCY_B]}

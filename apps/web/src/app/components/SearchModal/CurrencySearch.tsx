@@ -3,7 +3,7 @@ import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } f
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import { isMobile } from 'react-device-detect';
-import { Box, Flex } from 'rebass/styled-components';
+import { Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
@@ -28,7 +28,6 @@ import ImportRow from './ImportRow';
 import SearchInput from './SearchInput';
 import XChainFilter from './XChainFilter';
 import { filterTokens, useSortedTokensByQuery } from './filtering';
-import { useTokenComparator } from './sorting';
 import { shouldHideBecauseOfLowValue } from './utils';
 
 export enum CurrencySelectionType {
@@ -93,14 +92,12 @@ function filterUnsupportedTokens(xChainId: XChainId, bases: { [address: string]:
 }
 
 interface CurrencySearchProps {
-  account?: string | null;
   isOpen: boolean;
   onDismiss: () => void;
   selectedCurrency?: Currency | null;
   onCurrencySelect: (currency: Currency, setDefaultChain?: boolean) => void;
   onChainSelect?: (chainId: XChainId) => void;
   currencySelectionType: CurrencySelectionType;
-  showCurrencyAmount?: boolean;
   showImportView: () => void;
   setImportToken: (token: Token) => void;
   showRemoveView: () => void;
@@ -112,13 +109,11 @@ interface CurrencySearchProps {
 }
 
 export function CurrencySearch({
-  account,
   selectedCurrency,
   onCurrencySelect,
   onChainSelect,
   showCrossChainBreakdown,
   currencySelectionType,
-  showCurrencyAmount,
   onDismiss,
   isOpen,
   showImportView,
@@ -143,8 +138,6 @@ export function CurrencySearch({
       setFilterState([]);
     }
   }, []);
-
-  const [invertSearchOrder] = useState<boolean>(false);
 
   const xWallet = useCrossChainWalletBalances();
   const tokens = useAllTokens();
@@ -208,8 +201,6 @@ export function CurrencySearch({
 
   const searchTokenIsAdded = useIsUserAddedToken(searchToken);
 
-  const tokenComparator = useTokenComparator(account, invertSearchOrder);
-
   const filteredTokens: Token[] = useMemo(() => {
     return filterTokens(Object.values(allTokens), debouncedQuery);
   }, [allTokens, debouncedQuery]);
@@ -250,11 +241,7 @@ export function CurrencySearch({
     });
   }, [xChainFilterItems]);
 
-  const sortedTokens: Token[] = useMemo(() => {
-    return [...filteredTokens].sort(tokenComparator);
-  }, [filteredTokens, tokenComparator]);
-
-  const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery, assetsTab === AssetsTab.YOUR);
+  const filteredSortedTokens = useSortedTokensByQuery(filteredTokens, debouncedQuery, assetsTab === AssetsTab.YOUR);
 
   const handleCurrencySelect = useCallback(
     (currency: Currency, setDefaultChain = true) => {

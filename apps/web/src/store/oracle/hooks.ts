@@ -20,8 +20,8 @@ export function useOraclePrice(symbol?: string): BigNumber | undefined {
   }, [oraclePrices, collateralType, symbol]);
 }
 
-// fetch price data every 5 secs
-const PERIOD = 5 * 1000;
+// fetch price data every 10 secs
+const PERIOD = 10 * 1000;
 
 export function useOraclePrices() {
   const { data: supportedCollateralTokens } = useSupportedCollateralTokens();

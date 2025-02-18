@@ -1,9 +1,8 @@
 import React, { useState, useCallback, useMemo } from 'react';
 
 import { Currency, Fraction, Token } from '@balancednetwork/sdk-core';
-import { ICON_XCALL_NETWORK_ID, getSupportedXChainIdsForSwapToken } from '@balancednetwork/xwagmi';
+import { ICON_XCALL_NETWORK_ID, convertCurrency, getSupportedXChainIdsForSwapToken } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
-import { xTokenMap } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
@@ -35,8 +34,6 @@ const StyledBalanceBreakdown = styled(BalanceBreakdown)`
   grid-column: span 2;
   color: ${({ theme }) => theme.colors.text2};
 `;
-
-const MemoizedCurrencyXChainItem = React.memo(CurrencyXChainItem);
 
 export default function CurrencyRow({
   currency,
@@ -305,21 +302,22 @@ export default function CurrencyRow({
         <Box style={{ width: width ? `${width - 50}px` : 'auto' }}>
           <StyledBalanceBreakdown $arrowPosition={currency.symbol ? `${currency.symbol.length * 5 + 26}px` : '40px'}>
             {basedOnWallet ? (
-              finalXChainIds.map(xChainId => (
-                <MemoizedCurrencyXChainItem
-                  key={`${currency.symbol}-${xChainId}`}
-                  xChainId={xChainId}
-                  currency={currency}
-                  price={rateFracs && rateFracs[currency.symbol!] ? rateFracs[currency.symbol!].toFixed(18) : '0'}
-                  onSelect={handleXChainCurrencySelect}
-                />
-              ))
+              finalXChainIds.map(xChainId => {
+                const _c = convertCurrency(xChainId, currency)!;
+                return (
+                  <CurrencyXChainItem
+                    key={`${currency.symbol}-${xChainId}`}
+                    price={rateFracs && rateFracs[currency.symbol!]}
+                    balance={xWallet[_c.xChainId]?.[_c?.address]}
+                    onSelect={onSelect}
+                  />
+                );
+              })
             ) : (
               <XChainLogoList>
                 {finalXChainIds?.map(xChainId => {
-                  const spokeAssetVersion: string | undefined = xTokenMap[xChainId].find(
-                    xToken => xToken.symbol === currency?.symbol,
-                  )?.spokeVersion;
+                  const _c = convertCurrency(xChainId, currency)!;
+                  const spokeAssetVersion = _c?.spokeVersion;
                   return isMobile ? (
                     <Box key={xChainId} onClick={() => handleXChainCurrencySelect(currency, xChainId)}>
                       <ChainLogo chain={xChainMap[xChainId]} size="18px" />

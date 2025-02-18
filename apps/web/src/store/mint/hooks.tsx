@@ -48,6 +48,12 @@ export function useMintActionHandlers(noLiquidity: boolean | undefined): {
           currency: _currency.unwrapped,
         }),
       );
+      dispatch(
+        selectChain({
+          field,
+          xChainId: _currency.xChainId,
+        }),
+      );
     },
     [dispatch],
   );

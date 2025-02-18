@@ -230,7 +230,6 @@ export default function LPPanel() {
                   xChainId={currencies[Field.CURRENCY_A]?.xChainId}
                   onChainSelect={handleLPChainSelection}
                   showCrossChainOptions={true}
-                  showCrossChainBreakdown={true}
                 />
               </Flex>
             </AutoColumn>
@@ -246,7 +245,6 @@ export default function LPPanel() {
                   onPercentSelect={handlePercentSelect(Field.CURRENCY_B)}
                   xChainId={currencies[Field.CURRENCY_B]?.xChainId}
                   showCrossChainOptions={true}
-                  showCrossChainBreakdown={false}
                   onChainSelect={handleLPChainSelection}
                 />
               </Flex>

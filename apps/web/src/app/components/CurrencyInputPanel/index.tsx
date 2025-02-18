@@ -112,7 +112,6 @@ interface CurrencyInputPanelProps {
   xChainId?: XChainId;
   onChainSelect?: (_chainId: XChainId) => void;
   showCrossChainOptions?: boolean;
-  showCrossChainBreakdown?: boolean;
   addressEditable?: boolean;
   setManualAddress?: (xChainId: XChainId, address?: string | undefined) => void;
 }
@@ -138,7 +137,6 @@ export default function CurrencyInputPanel({
   xChainId = '0x1.icon',
   onChainSelect,
   showCrossChainOptions = false,
-  showCrossChainBreakdown = true,
   addressEditable = false,
   setManualAddress,
 }: CurrencyInputPanelProps) {
@@ -222,14 +220,12 @@ export default function CurrencyInputPanel({
                 isOpen={open}
                 onDismiss={handleDismiss}
                 onCurrencySelect={onCurrencySelectWithXChain}
-                onChainSelect={onChainSelect}
                 currencySelectionType={currencySelectionType}
                 anchorEl={ref.current}
                 width={width ? width + (!isMobile ? 40 : 0) : undefined}
                 selectedCurrency={currency}
                 showCommunityListControl={showCommunityListControl}
                 xChainId={xChainId}
-                showCrossChainBreakdown={showCrossChainBreakdown}
               />
             )}
           </div>

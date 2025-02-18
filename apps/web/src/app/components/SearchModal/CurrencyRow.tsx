@@ -37,11 +37,9 @@ const StyledBalanceBreakdown = styled(BalanceBreakdown)`
 export default function CurrencyRow({
   currency,
   onSelect,
-  onChainSelect,
   onRemove,
   rateFracs,
   selectedChainId,
-  showCrossChainBreakdown,
   basedOnWallet,
   currencySelectionType,
   width,
@@ -49,9 +47,7 @@ export default function CurrencyRow({
 }: {
   currency: Currency;
   filterState: XChainId[];
-  showCrossChainBreakdown: boolean;
   onSelect: (currency: Currency, setDefaultChain?: boolean) => void;
-  onChainSelect?: (chainId: XChainId) => void;
   onRemove: () => void;
   rateFracs: { [key in string]: Fraction } | undefined;
   selectedChainId: XChainId | undefined;
@@ -126,12 +122,7 @@ export default function CurrencyRow({
     return filterState.length > 0 ? sortedXChains.filter(xChainId => filterState.includes(xChainId)) : sortedXChains;
   }, [sortedXChains, currencySelectionType, filterState, selectedChainId]);
 
-  const isSingleChain = sortedXChains.length === 1 || sortedXChains.length === 0;
-  const showBreakdown =
-    !!showCrossChainBreakdown &&
-    (basedOnWallet
-      ? showCrossChainBreakdown && currencyXChainIds.length && !isSingleChain
-      : (filterState.length === 0 || finalXChainIds.length > 1) && !isSingleChain);
+  const showBreakdown = finalXChainIds.length > 1;
 
   const hideBecauseOfXChainFilter =
     filterState.length > 0 && !finalXChainIds.some(xChainId => filterState.includes(xChainId));

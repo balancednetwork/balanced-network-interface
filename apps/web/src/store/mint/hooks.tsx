@@ -13,6 +13,7 @@ import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
 import { tryParseAmount } from '@/store/swap/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
 import { useCurrencyBalances } from '@/store/wallet/hooks';
+import { maxAmountSpend } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
 import { bnJs } from '@balancednetwork/xwagmi';
 import { AppDispatch, AppState } from '../index';
@@ -135,6 +136,7 @@ export function useDerivedMintInfo(): {
   mintableLiquidity?: CurrencyAmount<Token>;
   error?: ReactNode;
   minQuoteTokenAmount?: BigNumber | null;
+  maxAmounts: { [field in Field]?: CurrencyAmount<Currency> };
 } {
   const { account } = useIconReact();
 
@@ -275,9 +277,17 @@ export function useDerivedMintInfo(): {
     }
   }, [parsedAmounts, pair, totalSupply]);
 
+  const maxAmounts = React.useMemo(
+    () => ({
+      [Field.CURRENCY_A]: maxAmountSpend(currencyBalances[Field.CURRENCY_A]),
+      [Field.CURRENCY_B]: maxAmountSpend(currencyBalances[Field.CURRENCY_B]),
+    }),
+    [currencyBalances],
+  );
+
   // mintable liquidity by using balances
   const mintableLiquidity = React.useMemo(() => {
-    const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = currencyBalances;
+    const { [Field.CURRENCY_A]: currencyAAmount, [Field.CURRENCY_B]: currencyBAmount } = maxAmounts;
     const [tokenAmountA, tokenAmountB] = [currencyAAmount?.wrapped, currencyBAmount?.wrapped];
     if (
       pair &&
@@ -301,7 +311,7 @@ export function useDerivedMintInfo(): {
     } else {
       return undefined;
     }
-  }, [currencyBalances, pair, totalSupply]);
+  }, [pair, totalSupply, maxAmounts]);
 
   let error: ReactNode | undefined;
   if (!account) {
@@ -339,6 +349,7 @@ export function useDerivedMintInfo(): {
     liquidityMinted,
     mintableLiquidity,
     error,
+    maxAmounts,
   };
 }
 

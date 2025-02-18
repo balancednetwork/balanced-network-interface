@@ -27,6 +27,7 @@ import { StyledButton } from '@/app/components/Button/StyledButton';
 import XTransactionState from '@/app/components/XTransactionState';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
+import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function StakeLPModal({
@@ -44,6 +45,8 @@ export default function StakeLPModal({
   afterAmount: BigNumber;
   onSuccess: () => void;
 }) {
+  const queryClient = useQueryClient();
+
   const { pair } = pool;
   const { formattedXCallFee } = useXCallFee(pool.xChainId, ICON_XCALL_NETWORK_ID);
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(pool.xChainId);
@@ -65,18 +68,20 @@ export default function StakeLPModal({
 
   const handleDismiss = useCallback(() => {
     onClose();
-    onSuccess?.();
     setTimeout(() => {
+      onSuccess?.();
       setIsPending(false);
       setPendingTx('');
     }, 500);
   }, [onClose, onSuccess]);
 
   const slowDismiss = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['pools'] });
+
     setTimeout(() => {
       handleDismiss();
     }, 2000);
-  }, [handleDismiss]);
+  }, [handleDismiss, queryClient]);
 
   useEffect(() => {
     if (isExecuted) {

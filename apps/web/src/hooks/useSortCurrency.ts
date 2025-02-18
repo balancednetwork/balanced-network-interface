@@ -4,7 +4,7 @@ import { WalletState } from '@/store/wallet/reducer';
 import { formatSymbol } from '@/utils/formatter';
 import { getXTokenAddress, isXToken } from '@/utils/xTokens';
 import { Currency } from '@balancednetwork/sdk-core';
-import { SUPPORTED_XCALL_CHAINS } from '@balancednetwork/xwagmi';
+import { SUPPORTED_XCALL_CHAINS, convertCurrency } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useState } from 'react';
@@ -22,7 +22,8 @@ const getXCurrencyBalance = (
   if (!xBalances) return;
 
   if (selectedChainId) {
-    return new BigNumber(xBalances[selectedChainId]?.[currency.address]?.toFixed() || 0);
+    const xToken = convertCurrency(selectedChainId, currency)!;
+    return new BigNumber(xBalances[selectedChainId]?.[xToken.address]?.toFixed() || 0);
   } else {
     if (isXToken(currency)) {
       return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {

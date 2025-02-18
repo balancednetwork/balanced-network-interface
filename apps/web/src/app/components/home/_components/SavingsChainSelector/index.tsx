@@ -51,7 +51,7 @@ const SavingsChainSelector = ({
       const aXChainNameAscii = aXChainName.charCodeAt(0);
       const bXChainNameAscii = bXChainName.charCodeAt(0);
 
-      if (aRewardAmount > 0.01 || bRewardAmount > 0.01) {
+      if (aRewardAmount > 0 || bRewardAmount > 0) {
         if (aRewardAmount === bRewardAmount) return 0;
         return bRewardAmount > aRewardAmount ? 1 : -1;
       } else {

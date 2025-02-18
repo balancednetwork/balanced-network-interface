@@ -81,9 +81,9 @@ export function useAllTokens() {
       const response = await axios.get(`${API_ENDPOINT}tokens`);
 
       if (response.status === 200) {
-        const rawData = response.data;
+        const rawData = response.data.filter(item => item.address !== 'cx0000000000000000000000000000000000000000');
         const wICXToken = rawData.find(item => item.symbol === 'wICX');
-        const ICXToken = rawData.find(item => item.symbol === 'ICX');
+        const ICXToken = rawData.find(item => item.address === 'ICX');
 
         if (wICXToken && ICXToken) {
           ICXToken.liquidity += wICXToken.liquidity;

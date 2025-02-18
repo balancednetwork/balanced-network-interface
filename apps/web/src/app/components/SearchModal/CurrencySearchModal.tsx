@@ -12,14 +12,12 @@ import { ImportToken } from './ImportToken';
 import { RemoveToken } from './RemoveToken';
 
 interface CurrencySearchModalProps {
-  account?: string | null;
   isOpen: boolean;
   onDismiss: () => void;
   selectedCurrency?: Currency | null;
   onCurrencySelect: (currency: Currency, setDefaultChain?: boolean) => void;
   onChainSelect?: (chainId: XChainId) => void;
   showCrossChainBreakdown: boolean;
-  showCurrencyAmount?: boolean;
   currencySelectionType?: CurrencySelectionType;
   width?: number;
   anchorEl?: any;
@@ -36,14 +34,12 @@ export enum CurrencyModalView {
 }
 
 export default function CurrencySearchModal({
-  account,
   isOpen,
   onDismiss,
   onCurrencySelect,
   onChainSelect,
   selectedCurrency,
   currencySelectionType = CurrencySelectionType.TRADE_IN,
-  showCurrencyAmount = true,
   width,
   anchorEl,
   showCommunityListControl,
@@ -106,14 +102,12 @@ export default function CurrencySearchModal({
         }
       >
         <CurrencySearch
-          account={account}
           isOpen={isOpen}
           onDismiss={onDismiss}
           onCurrencySelect={handleCurrencySelect}
           onChainSelect={onChainSelect}
           selectedCurrency={selectedCurrency}
           currencySelectionType={currencySelectionType}
-          showCurrencyAmount={showCurrencyAmount}
           showImportView={showImportView}
           setImportToken={setImportToken}
           showRemoveView={showRemoveView}

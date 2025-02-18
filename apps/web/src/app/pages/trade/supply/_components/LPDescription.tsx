@@ -244,7 +244,7 @@ export default function LPDescription() {
                         {userRewards && (
                           <Typography textAlign="center" variant="p">
                             {poolRewards
-                              ? isInitialSupply
+                              ? isInitialSupply && lpXChainId === '0x1.icon'
                                 ? `${formatBigNumber(
                                     poolRewards.times(responsiveRewardShare),
                                     'currency',

@@ -1,6 +1,6 @@
 import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Currency, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import { isMobile } from 'react-device-detect';
 import { Flex } from 'rebass/styled-components';
@@ -12,20 +12,23 @@ import { useAllTokens, useCommonBases, useIsUserAddedToken, useToken } from '@/h
 import useDebounce from '@/hooks/useDebounce';
 import { useOnClickOutside } from '@/hooks/useOnClickOutside';
 import useToggle from '@/hooks/useToggle';
-import { useHasSignedIn } from '@/hooks/useWallets';
+import { useHasSignedIn, useSignedInWallets } from '@/hooks/useWallets';
 import useXTokens from '@/hooks/useXTokens';
+import { useRatesWithOracle } from '@/queries/reward';
 import { useBridgeDirection } from '@/store/bridge/hooks';
 import { useCrossChainWalletBalances } from '@/store/wallet/hooks';
 import { isAddress } from '@/utils';
-import { XChainId } from '@balancednetwork/xwagmi';
+import { XChainId, xChainMap, xTokenMap } from '@balancednetwork/xwagmi';
+import BigNumber from 'bignumber.js';
 import { ChartControlButton as AssetsTabButton } from '../ChartControl';
 import Column from '../Column';
 import CommunityListToggle from '../CommunityListToggle';
 import CurrencyList from './CurrencyList';
 import ImportRow from './ImportRow';
 import SearchInput from './SearchInput';
+import XChainFilter from './XChainFilter';
 import { filterTokens, useSortedTokensByQuery } from './filtering';
-import { useTokenComparator } from './sorting';
+import { shouldHideBecauseOfLowValue } from './utils';
 
 export enum CurrencySelectionType {
   TRADE_IN,
@@ -40,6 +43,24 @@ export enum AssetsTab {
   ALL = 'all',
   YOUR = 'your',
 }
+
+const FilterWrap = styled(Flex)`
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+
+  & > input {
+    flex: 1;
+  }
+
+  & > button {
+    flex: none;
+  }
+
+  & > div {
+    flex-basis: 100%;
+  }  
+`;
 
 const removeStableTokens = (tokens: { [address: string]: Token }) => {
   return Object.values(tokens)
@@ -71,14 +92,12 @@ function filterUnsupportedTokens(xChainId: XChainId, bases: { [address: string]:
 }
 
 interface CurrencySearchProps {
-  account?: string | null;
   isOpen: boolean;
   onDismiss: () => void;
   selectedCurrency?: Currency | null;
   onCurrencySelect: (currency: Currency, setDefaultChain?: boolean) => void;
   onChainSelect?: (chainId: XChainId) => void;
   currencySelectionType: CurrencySelectionType;
-  showCurrencyAmount?: boolean;
   showImportView: () => void;
   setImportToken: (token: Token) => void;
   showRemoveView: () => void;
@@ -90,13 +109,11 @@ interface CurrencySearchProps {
 }
 
 export function CurrencySearch({
-  account,
   selectedCurrency,
   onCurrencySelect,
   onChainSelect,
   showCrossChainBreakdown,
   currencySelectionType,
-  showCurrencyAmount,
   onDismiss,
   isOpen,
   showImportView,
@@ -108,10 +125,19 @@ export function CurrencySearch({
   xChainId,
 }: CurrencySearchProps) {
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [filterState, setFilterState] = useState<XChainId[]>([]);
   const debouncedQuery = useDebounce(searchQuery, 200);
   const hasSignedIn = useHasSignedIn();
+  const rates = useRatesWithOracle();
+  const wallets = useSignedInWallets();
 
-  const [invertSearchOrder] = useState<boolean>(false);
+  const handleChainClick = useCallback((xChainId?: XChainId) => {
+    if (xChainId) {
+      setFilterState(prev => (prev.includes(xChainId) ? prev.filter(id => id !== xChainId) : [...prev, xChainId]));
+    } else {
+      setFilterState([]);
+    }
+  }, []);
 
   const xWallet = useCrossChainWalletBalances();
   const tokens = useAllTokens();
@@ -134,6 +160,11 @@ export function CurrencySearch({
       setAssetsTab(AssetsTab.YOUR);
     }
   }, [hasSignedIn, currencySelectionType]);
+
+  const handleTabClick = useCallback((tab: AssetsTab) => {
+    setAssetsTab(tab);
+    setFilterState([]);
+  }, []);
 
   const bridgeDirection = useBridgeDirection();
   const xTokens = useXTokens(bridgeDirection.from, bridgeDirection.to);
@@ -170,17 +201,47 @@ export function CurrencySearch({
 
   const searchTokenIsAdded = useIsUserAddedToken(searchToken);
 
-  const tokenComparator = useTokenComparator(account, invertSearchOrder);
-
   const filteredTokens: Token[] = useMemo(() => {
     return filterTokens(Object.values(allTokens), debouncedQuery);
   }, [allTokens, debouncedQuery]);
 
-  const sortedTokens: Token[] = useMemo(() => {
-    return [...filteredTokens].sort(tokenComparator);
-  }, [filteredTokens, tokenComparator]);
+  const xChainFilterItems: XChainId[] = useMemo(() => {
+    const filteredSymbols = filteredTokens.map(token => token.symbol);
 
-  const filteredSortedTokens = useSortedTokensByQuery(sortedTokens, debouncedQuery, assetsTab === AssetsTab.YOUR);
+    if (assetsTab === AssetsTab.ALL) {
+      if (!!debouncedQuery) {
+        const xChainIds = Object.values(xTokenMap)
+          .flat()
+          .filter(xToken => filteredSymbols.includes(xToken.symbol))
+          .map(xToken => xToken.xChainId);
+        return [...new Set(xChainIds)];
+      } else {
+        return Object.values(xChainMap)
+          .filter(xChain => !xChain.testnet)
+          .map(xChain => xChain.xChainId);
+      }
+    } else {
+      const xChainIds = Object.keys(xWallet).filter(xChainId => {
+        return Object.values(xWallet[xChainId]).some(
+          currencyAmount =>
+            !shouldHideBecauseOfLowValue(
+              true,
+              rates?.[(currencyAmount as CurrencyAmount<Currency>).currency.symbol],
+              new BigNumber((currencyAmount as CurrencyAmount<Currency>).toFixed()),
+            ) && filteredSymbols.includes((currencyAmount as CurrencyAmount<Currency>).currency.symbol),
+        );
+      });
+      return xChainIds;
+    }
+  }, [filteredTokens, assetsTab, xWallet, rates, debouncedQuery]);
+
+  const sortedXChainFilterItems = useMemo(() => {
+    return [...xChainFilterItems].sort((a, b) => {
+      return xChainMap[a].name.localeCompare(xChainMap[b].name);
+    });
+  }, [xChainFilterItems]);
+
+  const filteredSortedTokens = useSortedTokensByQuery(filteredTokens, debouncedQuery, assetsTab === AssetsTab.YOUR);
 
   const handleCurrencySelect = useCallback(
     (currency: Currency, setDefaultChain = true) => {
@@ -244,28 +305,45 @@ export function CurrencySearch({
     );
   }, [assetsTab, filteredSortedTokens, xWallet]);
 
+  const shouldShowXChainFilter = useMemo(() => {
+    if (
+      currencySelectionType === CurrencySelectionType.TRADE_IN ||
+      currencySelectionType === CurrencySelectionType.TRADE_OUT
+    ) {
+      return assetsTab === AssetsTab.ALL || wallets.length > 1;
+    }
+    return false;
+  }, [wallets, currencySelectionType, assetsTab]);
+
   return (
     <Wrapper width={width}>
-      <Flex px="25px">
+      <FilterWrap px="25px">
         <SearchInput
           type="text"
           id="token-search-input"
-          placeholder={t`Search name or contract...`}
+          placeholder={t`Search assets...`}
           autoComplete="off"
           value={searchQuery}
           ref={inputRef as RefObject<HTMLInputElement>}
           tabIndex={isMobile ? -1 : 1}
           onChange={handleInput}
         />
-      </Flex>
+        {shouldShowXChainFilter && (
+          <XChainFilter
+            filterItems={sortedXChainFilterItems}
+            filterState={filterState}
+            onChainClick={handleChainClick}
+          />
+        )}
+      </FilterWrap>
       {hasSignedIn &&
       (currencySelectionType === CurrencySelectionType.TRADE_IN ||
         currencySelectionType === CurrencySelectionType.TRADE_OUT) ? (
         <Flex justifyContent="center" mt={3}>
-          <AssetsTabButton $active={assetsTab === AssetsTab.YOUR} mr={2} onClick={() => setAssetsTab(AssetsTab.YOUR)}>
+          <AssetsTabButton $active={assetsTab === AssetsTab.YOUR} mr={2} onClick={() => handleTabClick(AssetsTab.YOUR)}>
             <Trans>Your assets</Trans>
           </AssetsTabButton>
-          <AssetsTabButton $active={assetsTab === AssetsTab.ALL} onClick={() => setAssetsTab(AssetsTab.ALL)}>
+          <AssetsTabButton $active={assetsTab === AssetsTab.ALL} onClick={() => handleTabClick(AssetsTab.ALL)}>
             <Trans>All assets</Trans>
           </AssetsTabButton>
         </Flex>
@@ -277,6 +355,7 @@ export function CurrencySearch({
       ) : filteredSortedTokens?.length > 0 && shouldShowCurrencyList ? (
         <CurrencyList
           currencies={filteredSortedTokens}
+          filterState={filterState}
           onCurrencySelect={handleCurrencySelect}
           onChainSelect={onChainSelect}
           showRemoveView={showRemoveView}

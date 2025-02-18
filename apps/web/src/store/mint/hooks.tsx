@@ -321,7 +321,7 @@ export function useDerivedMintInfo(): {
     } else {
       return undefined;
     }
-  }, [maxAmounts, pair, totalSupply]);
+  }, [pair, totalSupply, maxAmounts]);
 
   let error: ReactNode | undefined;
   if (!account) {

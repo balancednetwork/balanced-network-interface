@@ -14,7 +14,6 @@ import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { BrightPanel, SectionPanel } from '@/app/components/Panel';
 import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import { Typography } from '@/app/theme';
-import { BIGINT_ZERO } from '@/constants/misc';
 import { PairState, Pool, usePool } from '@/hooks/useV2Pairs';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedMintInfo, useInitialSupplyLoad, useMintActionHandlers, useMintState } from '@/store/mint/hooks';
@@ -222,7 +221,6 @@ export default function LPPanel() {
             <AutoColumn gap="md">
               <Flex>
                 <CurrencyInputPanel
-                  account={account}
                   value={formattedAmounts[Field.CURRENCY_A]}
                   currencySelectionType={CurrencySelectionType.TRADE_MINT_BASE}
                   currency={currencies[Field.CURRENCY_A]}
@@ -240,7 +238,6 @@ export default function LPPanel() {
             <AutoColumn gap="md">
               <Flex>
                 <CurrencyInputPanel
-                  account={account}
                   value={formattedAmounts[Field.CURRENCY_B]}
                   currencySelectionType={CurrencySelectionType.TRADE_MINT_QUOTE}
                   currency={currencies[Field.CURRENCY_B]}

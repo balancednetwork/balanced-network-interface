@@ -166,7 +166,6 @@ export default function SwapPanel() {
 
           <Flex>
             <CurrencyInputPanel
-              account={account}
               value={formattedAmounts[Field.INPUT]}
               currency={currencies[Field.INPUT]}
               onUserInput={handleInputType}
@@ -213,7 +212,6 @@ export default function SwapPanel() {
 
           <Flex>
             <CurrencyInputPanel
-              account={account}
               value={
                 mmTrade.isMMBetter ? mmTrade.trade?.outputAmount.toSignificant() ?? '' : formattedAmounts[Field.OUTPUT]
               }

@@ -291,10 +291,12 @@ export function useDerivedSwapInfo(): {
         outputCurrency?.xChainId === '0x1.icon' ? outputCurrency : convertCurrency('0x1.icon', outputCurrency),
     };
   }, [inputCurrency, outputCurrency]);
-  const _parsedAmount = tryParseAmount(
-    typedValue,
-    (isExactIn ? _currencies[Field.INPUT] : _currencies[Field.OUTPUT]) ?? undefined,
+
+  const _parsedAmount = useMemo(
+    () => tryParseAmount(typedValue, (isExactIn ? _currencies[Field.INPUT] : _currencies[Field.OUTPUT]) ?? undefined),
+    [typedValue, isExactIn, _currencies],
   );
+
   const trade1 = useTradeExactIn(isExactIn ? _parsedAmount : undefined, _currencies[Field.OUTPUT], {
     maxHops: undefined,
   });

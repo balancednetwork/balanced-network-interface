@@ -10,9 +10,10 @@ import { getXPublicClient } from '@/actions';
 //   NotificationPending,
 //   NotificationSuccess,
 // } from '@/app/components/Notification/TransactionNotification';
-import { XChainId } from '@/types';
+import { isIconTransaction } from '@/utils';
 import { getTrackerLink } from '@/utils';
 import { Transaction, TransactionStatus, XTransactionType } from '@/xcall/types';
+import { XChainId } from '@balancednetwork/sdk-core';
 import { persist } from 'zustand/middleware';
 import { xTransactionActions } from './useXTransactionStore';
 
@@ -95,8 +96,8 @@ export const transactionActions = {
     if (_transaction) {
       if (status === TransactionStatus.success) {
         const xTransaction = xTransactionActions.get(`${xChainId}/${_transaction.hash}`);
-        if (xTransaction?.type === XTransactionType.SWAP_ON_ICON) {
-          xTransactionActions.success(xTransaction.id);
+        if (isIconTransaction(xTransaction?.sourceChainId, xTransaction?.finalDestinationChainId)) {
+          xTransaction && xTransactionActions.success(xTransaction.id);
         }
         const toastProps = {
           onClick: () => window.open(getTrackerLink(xChainId, _transaction.hash, 'transaction'), '_blank'),
@@ -118,8 +119,8 @@ export const transactionActions = {
 
       if (status === TransactionStatus.failure) {
         const xTransaction = xTransactionActions.get(`${xChainId}/${_transaction.hash}`);
-        if (xTransaction?.type === XTransactionType.SWAP_ON_ICON) {
-          xTransactionActions.fail(xTransaction.id);
+        if (isIconTransaction(xTransaction?.sourceChainId, xTransaction?.finalDestinationChainId)) {
+          xTransaction && xTransactionActions.fail(xTransaction.id);
         }
 
         const toastProps = {
@@ -144,7 +145,7 @@ export const useFetchTransaction = (hash: string) => {
   const { data: rawTx, isLoading } = useQuery({
     queryKey: ['transaction', xChainId, hash],
     queryFn: async () => {
-      if (!xChainId) return;
+      if (!xChainId) return null;
 
       const xPublicClient = getXPublicClient(xChainId);
       try {

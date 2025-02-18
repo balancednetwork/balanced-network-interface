@@ -1,10 +1,10 @@
+import { XChainType } from '@balancednetwork/sdk-core';
 import { useDisconnectWallet } from '@mysten/dapp-kit';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { useCallback } from 'react';
 import { useDisconnect } from 'wagmi';
 import { getXService } from '../actions';
-import { XChainType } from '../types';
 import { useXWagmiStore } from '../useXWagmiStore';
-import { useWallet } from '@solana/wallet-adapter-react';
 
 export function useXDisconnect() {
   const xConnections = useXWagmiStore(state => state.xConnections);

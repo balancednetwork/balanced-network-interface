@@ -1,9 +1,11 @@
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, Token, XChainId } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
 
 import { Field } from '../loan/reducer';
 
 export interface SavingsState {
+  savingsXChainId: XChainId;
+
   lockedAmount: CurrencyAmount<Token> | undefined;
 
   state: {
@@ -15,6 +17,7 @@ export interface SavingsState {
 }
 
 const initialState: SavingsState = {
+  savingsXChainId: '0x1.icon',
   lockedAmount: undefined,
 
   state: {
@@ -47,9 +50,12 @@ const savingsSlice = createSlice({
         state.state.inputType = inputType || state.state.inputType;
       },
     ),
+    changeSavingsXChainId: create.reducer<{ savingsXChainId: XChainId }>((state, { payload: { savingsXChainId } }) => {
+      state.savingsXChainId = savingsXChainId;
+    }),
   }),
 });
 
-export const { adjust, cancel, type, changeLockedAmount } = savingsSlice.actions;
+export const { adjust, cancel, type, changeLockedAmount, changeSavingsXChainId } = savingsSlice.actions;
 
 export default savingsSlice.reducer;

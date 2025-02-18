@@ -1,5 +1,8 @@
 import { useMemo } from 'react';
-import { XAccount, XChainType } from '../types';
+
+import { XChainType } from '@balancednetwork/sdk-core';
+
+import { XAccount } from '../types';
 import { useXConnection } from './useXConnection';
 
 export function useXAccount(xChainType: XChainType | undefined): XAccount {

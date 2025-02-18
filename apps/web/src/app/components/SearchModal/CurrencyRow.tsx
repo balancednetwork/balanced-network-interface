@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 
 import { Currency, Fraction, Token } from '@balancednetwork/sdk-core';
-import { ICON_XCALL_NETWORK_ID, convertCurrency, getSupportedXChainIdsForSwapToken } from '@balancednetwork/xwagmi';
+import { convertCurrency, getSupportedXChainIdsForSwapToken } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
@@ -116,25 +116,18 @@ export default function CurrencyRow({
   const price = rateFracs && new BigNumber(rateFracs[formatSymbol(currency.symbol)]?.toFixed(8));
   const hideBecauseOfLowValue = shouldHideBecauseOfLowValue(basedOnWallet, price, balance);
 
-  const shouldForceNetworkIcon =
-    currencySelectionType === CurrencySelectionType.BRIDGE || (!basedOnWallet && filterState.length === 1);
-
   const bridgeDirection = useBridgeDirection();
   const finalXChainIds = useMemo(() => {
-    if (
-      shouldForceNetworkIcon &&
-      (currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
-        currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE)
-    ) {
-      return [ICON_XCALL_NETWORK_ID];
+    if (currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE) {
+      return [selectedChainId!];
     }
 
-    if (shouldForceNetworkIcon && currencySelectionType === CurrencySelectionType.BRIDGE) {
+    if (currencySelectionType === CurrencySelectionType.BRIDGE) {
       return [bridgeDirection.from];
     }
 
     return filterState.length > 0 ? sortedXChains.filter(xChainId => filterState.includes(xChainId)) : sortedXChains;
-  }, [sortedXChains, shouldForceNetworkIcon, currencySelectionType, bridgeDirection.from, filterState]);
+  }, [sortedXChains, currencySelectionType, bridgeDirection.from, filterState, selectedChainId]);
 
   const isSingleChain = sortedXChains.length === 1 || sortedXChains.length === 0;
   const showBreakdown =
@@ -143,9 +136,6 @@ export default function CurrencyRow({
       ? showCrossChainBreakdown && currencyXChainIds.length && !isSingleChain
       : (filterState.length === 0 || finalXChainIds.length > 1) && !isSingleChain);
 
-  const shouldShowNetworkIcon =
-    (basedOnWallet || shouldForceNetworkIcon) && finalXChainIds.length === 1 && !showBreakdown;
-
   const hideBecauseOfXChainFilter =
     filterState.length > 0 && !finalXChainIds.some(xChainId => filterState.includes(xChainId));
 
@@ -153,18 +143,11 @@ export default function CurrencyRow({
     return (
       <>
         <Flex alignItems={'center'}>
-          {shouldShowNetworkIcon ? (
+          {finalXChainIds.length === 1 ? (
             <CurrencyLogoWithNetwork
               currency={currency}
               bgColor={theme.colors.bg4}
               chainId={finalXChainIds[0]}
-              size={'24px'}
-            />
-          ) : finalXChainIds.length === 0 && showCrossChainBreakdown ? (
-            <CurrencyLogoWithNetwork
-              currency={currency}
-              bgColor={theme.colors.bg4}
-              chainId={ICON_XCALL_NETWORK_ID}
               size={'24px'}
             />
           ) : (
@@ -220,14 +203,7 @@ export default function CurrencyRow({
     return (
       <>
         <Flex>
-          {sortedXChains.length === 0 && showCrossChainBreakdown ? (
-            <CurrencyLogoWithNetwork
-              currency={currency}
-              bgColor={theme.colors.bg4}
-              chainId={ICON_XCALL_NETWORK_ID}
-              size={'24px'}
-            />
-          ) : shouldForceNetworkIcon || finalXChainIds.length === 1 ? (
+          {finalXChainIds.length === 1 ? (
             <CurrencyLogoWithNetwork
               currency={currency}
               bgColor={theme.colors.bg4}

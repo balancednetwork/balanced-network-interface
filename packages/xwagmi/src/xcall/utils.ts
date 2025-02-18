@@ -96,11 +96,13 @@ const unTradeableTokenAddress = [
 ];
 
 export const getSupportedXChainIdsForSwapToken = (currency: Currency | XToken): XChainId[] => {
-  return Object.values(xTokenMap)
+  const chainIds = Object.values(xTokenMap)
     .flat()
     .filter(t => t.symbol === currency?.symbol)
     .filter(t => !unTradeableTokenAddress.find(addr => addr.toLowerCase() === t.address.toLowerCase()))
     .map(t => t.xChainId);
+
+  return chainIds.length === 0 ? [ICON_XCALL_NETWORK_ID] : chainIds;
 };
 
 export const getSupportedXChainForSwapToken = (currency?: Currency | XToken | null): XChain[] | undefined => {

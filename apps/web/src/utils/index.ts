@@ -395,13 +395,16 @@ export function getTransactionAttributes(xTransactionInput: XTransactionInput) {
     // }
 
     case XTransactionType.LP_REMOVE_LIQUIDITY: {
-      const { tokenA, tokenB, withdrawAmountA, withdrawAmountB } = xTransactionInput;
+      const { withdrawAmountA, withdrawAmountB } = xTransactionInput;
 
       const _formmatedAmountA = formatBigNumber(new BigNumber(withdrawAmountA?.toFixed() || 0), 'currency');
       const _formmatedAmountB = formatBigNumber(new BigNumber(withdrawAmountB?.toFixed() || 0), 'currency');
 
-      descriptionAction = `Withdraw ${formatSymbol(tokenA?.symbol)} / ${tokenB?.symbol} liquidity`;
-      descriptionAmount = `${_formmatedAmountA} ${formatSymbol(tokenA?.symbol)} and ${_formmatedAmountB} ${tokenB?.symbol}`;
+      const symbolA = withdrawAmountA?.currency.symbol;
+      const symbolB = withdrawAmountB?.currency.symbol;
+
+      descriptionAction = `Withdraw ${formatSymbol(symbolA)} / ${symbolB} liquidity`;
+      descriptionAmount = `${_formmatedAmountA} ${formatSymbol(symbolA)} and ${_formmatedAmountB} ${symbolB}`;
       break;
     }
 
@@ -409,7 +412,6 @@ export function getTransactionAttributes(xTransactionInput: XTransactionInput) {
       const { tokenA, tokenB } = xTransactionInput;
       descriptionAction = `Stake ${formatSymbol(tokenA?.symbol)} / ${tokenB?.symbol} LP tokens`;
       descriptionAmount = ``;
-
       break;
     }
     case XTransactionType.LP_UNSTAKE: {

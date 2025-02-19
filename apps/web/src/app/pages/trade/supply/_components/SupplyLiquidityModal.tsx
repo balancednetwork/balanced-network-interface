@@ -96,7 +96,6 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
     setTimeout(() => {
       queryClient.invalidateQueries({ queryKey: ['XTokenDepositAmount'] });
-      queryClient.invalidateQueries({ queryKey: ['pools'] });
 
       setIsPending(false);
       setPendingTx('');
@@ -130,8 +129,9 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
   useEffect(() => {
     if (isExecuted) {
       slowDismiss();
+      queryClient.invalidateQueries({ queryKey: ['pools'] });
     }
-  }, [isExecuted, slowDismiss]);
+  }, [isExecuted, slowDismiss, queryClient]);
 
   const { data: depositAmountA } = useXTokenDepositAmount(account, currencies[Field.CURRENCY_A]?.wrapped);
   const { data: depositAmountB } = useXTokenDepositAmount(account, currencies[Field.CURRENCY_B]?.wrapped);

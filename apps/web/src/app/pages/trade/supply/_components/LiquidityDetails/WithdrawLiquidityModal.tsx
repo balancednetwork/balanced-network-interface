@@ -81,6 +81,7 @@ export default function WithdrawLiquidityModal({
     if (isExecuted) {
       slowDismiss();
       queryClient.invalidateQueries({ queryKey: ['pools'] });
+      queryClient.invalidateQueries({ queryKey: ['v2Pairs'] });
     }
   }, [isExecuted, slowDismiss, queryClient]);
 

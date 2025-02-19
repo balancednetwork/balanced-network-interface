@@ -54,6 +54,13 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
   const [pendingTx, setPendingTx] = React.useState('');
   const currentXTransaction = useXTransactionStore(state => state.transactions[pendingTx]);
 
+  const [executionDepositAmountA, setExecutionDepositAmountA] = React.useState<CurrencyAmount<XToken> | undefined>(
+    undefined,
+  );
+  const [executionDepositAmountB, setExecutionDepositAmountB] = React.useState<CurrencyAmount<XToken> | undefined>(
+    undefined,
+  );
+
   // tokenA
   const [isSendingTokenA, setIsSendingTokenA] = React.useState(false);
   const [isRemovingTokenA, setIsRemovingTokenA] = React.useState(false);
@@ -94,6 +101,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
       setIsPending(false);
       setPendingTx('');
       setHasErrorMessage(false);
+      setExecutionDepositAmountA(undefined);
+      setExecutionDepositAmountB(undefined);
 
       setIsSendingTokenA(false);
       setIsRemovingTokenA(false);
@@ -135,6 +144,9 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
     try {
       if (depositAmountA && depositAmountB) {
         setIsPending(true);
+
+        setExecutionDepositAmountA(depositAmountA);
+        setExecutionDepositAmountB(depositAmountB);
 
         const txHash = await xAddLiquidity(account, depositAmountA, depositAmountB);
         if (txHash) setPendingTx(txHash);
@@ -235,6 +247,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
               setIsRemoving={setIsRemovingTokenA}
               setIsSigning={setIsSigningTokenA}
               setPendingTx={setPendingTxTokenA}
+              isSupplying={isPending}
+              executionDepositAmount={executionDepositAmountA}
             />
             <SendRemoveXToken
               field={Field.CURRENCY_B}
@@ -249,6 +263,8 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
               setIsRemoving={setIsRemovingTokenB}
               setIsSigning={setIsSigningTokenB}
               setPendingTx={setPendingTxTokenB}
+              isSupplying={isPending}
+              executionDepositAmount={executionDepositAmountB}
             />
           </div>
 

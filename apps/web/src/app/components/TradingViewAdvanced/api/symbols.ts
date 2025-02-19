@@ -13,8 +13,6 @@ export interface BalancedLibrarySymbolInfo extends LibrarySymbolInfo {
   decimal: number;
 }
 
-const SUPPORTED_PAIRS_WITHOUT_QUEUE = SUPPORTED_PAIRS.filter(pair => pair.name !== 'sICX/ICX');
-
 const getPairTokens = (pairName: string): { base: Token; quote: Token } | undefined => {
   const name = pairName.replaceAll(' ', '').split('/');
   const base = SUPPORTED_TOKENS_LIST.find(token => token.symbol === name[0]);
@@ -74,7 +72,7 @@ export const getFilteredSupportedPairNames = (query: string = ''): SearchSymbolR
     );
   };
 
-  return SUPPORTED_PAIRS_WITHOUT_QUEUE.filter(pair => {
+  return SUPPORTED_PAIRS.filter(pair => {
     return (
       isQueried(query, pair.baseToken) ||
       isQueried(query, pair.quoteToken) ||

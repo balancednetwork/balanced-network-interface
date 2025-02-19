@@ -10,15 +10,7 @@ import { usePoolPanelContext } from '../PoolPanelContext';
 
 export const useHasLiquidity = (): boolean => {
   // fetch the reserves for all V2 pools
-  const { pairs, balances, pools } = usePoolPanelContext();
-  const queuePair = pairs[BalancedJs.utils.POOL_IDS.sICXICX];
-  const queueBalance = balances[BalancedJs.utils.POOL_IDS.sICXICX];
-
-  const shouldShowQueue =
-    queuePair &&
-    queueBalance &&
-    (queueBalance.balance.quotient > BIGINT_ZERO ||
-      (queueBalance.balance1 && queueBalance.balance1.quotient > BIGINT_ZERO));
+  const { pools } = usePoolPanelContext();
 
   const userPools = pools.filter(
     pool =>
@@ -26,7 +18,7 @@ export const useHasLiquidity = (): boolean => {
       Number(pool.stakedLPBalance?.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL,
   );
 
-  return !!shouldShowQueue || !!userPools.length;
+  return !!userPools.length;
 };
 
 export const StyledBoxPanel = styled(BoxPanel)`

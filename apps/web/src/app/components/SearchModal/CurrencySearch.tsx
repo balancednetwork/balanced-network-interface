@@ -334,7 +334,8 @@ export function CurrencySearch({
       </FilterWrap>
       {hasSignedIn &&
       (currencySelectionType === CurrencySelectionType.TRADE_IN ||
-        currencySelectionType === CurrencySelectionType.TRADE_OUT) ? (
+        currencySelectionType === CurrencySelectionType.TRADE_OUT ||
+        currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE) ? (
         <Flex justifyContent="center" mt={3}>
           <AssetsTabButton $active={assetsTab === AssetsTab.YOUR} mr={2} onClick={() => handleTabClick(AssetsTab.YOUR)}>
             <Trans>Your assets</Trans>

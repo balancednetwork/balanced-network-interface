@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
 import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
-import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Fraction, Token, XChainId } from '@balancednetwork/sdk-core';
 import { Pair, PairType } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 
@@ -201,44 +201,28 @@ export function useBalances(
 
       const poolKeys = Object.keys(pools);
 
-      const cds = poolKeys
-        .map(poolId => {
-          if (+poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-            return {
-              target: bnJs.Dex.address,
-              method: 'getICXBalance',
-              params: [account],
-            };
-          } else {
-            return [
-              {
-                target: bnJs.Dex.address,
-                method: 'balanceOf',
-                params: [account, `0x${(+poolId).toString(16)}`],
-              },
-              {
-                target: bnJs.Dex.address,
-                method: 'totalSupply',
-                params: [`0x${(+poolId).toString(16)}`],
-              },
-              {
-                target: bnJs.StakedLP.address,
-                method: 'balanceOf',
-                params: [account, `0x${(+poolId).toString(16)}`],
-              },
-            ];
-          }
-        })
-        .concat({
-          target: bnJs.Dex.address,
-          method: 'getSicxEarnings',
-          params: [account],
-        });
+      const cds = poolKeys.map(poolId => {
+        return [
+          {
+            target: bnJs.Dex.address,
+            method: 'balanceOf',
+            params: [account, `0x${(+poolId).toString(16)}`],
+          },
+          {
+            target: bnJs.Dex.address,
+            method: 'totalSupply',
+            params: [`0x${(+poolId).toString(16)}`],
+          },
+          {
+            target: bnJs.StakedLP.address,
+            method: 'balanceOf',
+            params: [account, `0x${(+poolId).toString(16)}`],
+          },
+        ];
+      });
 
       const cdsFlatted: CallData[] = cds.flat();
       const data: any[] = await bnJs.Multicall.getAggregateData(cdsFlatted);
-      const sicxBalance = data[data.length - 1];
-      const icxBalance = !Array.isArray(data[0]) ? data[0] : 0;
 
       // Remapping the result was returned by multicall based on the order of the cds
       let trackedIdx = 0;
@@ -266,26 +250,15 @@ export function useBalances(
 
         if (!pool) return undefined;
 
-        if (+poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-          return {
-            poolId: +poolId,
-            balance: CurrencyAmount.fromRawAmount(pool.token0, new BigNumber(icxBalance, 16).toFixed()),
-            balance1: CurrencyAmount.fromRawAmount(pool.token1, new BigNumber(sicxBalance || 0, 16).toFixed()),
-          };
-        } else {
-          return {
-            poolId: +poolId,
-            balance: CurrencyAmount.fromRawAmount(pool.liquidityToken, new BigNumber(balance || 0, 16).toFixed()),
-            suppliedLP: CurrencyAmount.fromRawAmount(
-              pool.liquidityToken,
-              new BigNumber(totalSupply || 0, 16).toFixed(),
-            ),
-            stakedLPBalance: CurrencyAmount.fromRawAmount(
-              pool.liquidityToken,
-              new BigNumber(stakedLPBalance || 0, 16).toFixed(),
-            ),
-          };
-        }
+        return {
+          poolId: +poolId,
+          balance: CurrencyAmount.fromRawAmount(pool.liquidityToken, new BigNumber(balance || 0, 16).toFixed()),
+          suppliedLP: CurrencyAmount.fromRawAmount(pool.liquidityToken, new BigNumber(totalSupply || 0, 16).toFixed()),
+          stakedLPBalance: CurrencyAmount.fromRawAmount(
+            pool.liquidityToken,
+            new BigNumber(stakedLPBalance || 0, 16).toFixed(),
+          ),
+        };
       });
 
       if (balances.length > 0) {
@@ -311,26 +284,126 @@ export function useSuppliedTokens(poolId: number, tokenA?: Currency, tokenB?: Cu
 
   return useMemo(() => {
     if (pair && balance) {
-      let suppliedBaseTokens: CurrencyAmount<Currency>;
-      let suppliedQuoteTokens: CurrencyAmount<Currency>;
-
-      if (poolId === BalancedJs.utils.POOL_IDS.sICXICX) {
-        suppliedBaseTokens = balance.balance;
-        suppliedQuoteTokens = balance.balance;
-      } else {
-        suppliedBaseTokens = pair.reserve0.multiply(share || 0);
-        suppliedQuoteTokens = pair.reserve1.multiply(share || 0);
-      }
+      const suppliedBaseTokens: CurrencyAmount<Currency> = pair.reserve0.multiply(share || 0);
+      const suppliedQuoteTokens: CurrencyAmount<Currency> = pair.reserve1.multiply(share || 0);
 
       return {
         base: suppliedBaseTokens,
         quote: suppliedQuoteTokens,
       };
     } else return;
-  }, [pair, balance, poolId, share]);
+  }, [pair, balance, share]);
 }
 
 export function useBalance(poolId: number) {
   const { balances } = usePoolPanelContext();
   return balances[poolId];
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////
+export interface Pool {
+  poolId: number;
+  xChainId: XChainId;
+  account: string; // TODO: name to owner?
+  balance: CurrencyAmount<Token>;
+  stakedLPBalance?: CurrencyAmount<Token>;
+  suppliedLP?: CurrencyAmount<Token>;
+  pair: Pair;
+}
+
+export function usePools(pairs: { [poolId: number]: Pair }, accounts: string[]): Pool[] | undefined {
+  const { data: balances } = useQuery<Pool[]>({
+    queryKey: ['pools', pairs, accounts],
+    queryFn: async (): Promise<Pool[]> => {
+      if (!accounts.length) return [];
+
+      const poolKeys = Object.keys(pairs);
+
+      const cds = poolKeys.flatMap(poolId => {
+        return accounts.flatMap(account => [
+          {
+            target: bnJs.Dex.address,
+            method: 'xBalanceOf',
+            params: [account, `0x${(+poolId).toString(16)}`],
+          },
+          {
+            target: bnJs.Dex.address,
+            method: 'totalSupply',
+            params: [`0x${(+poolId).toString(16)}`],
+          },
+          {
+            target: bnJs.StakedLP.address,
+            method: 'xBalanceOf',
+            params: [account, `0x${(+poolId).toString(16)}`],
+          },
+        ]);
+      });
+
+      const chunks = chunkArray(cds, MULTI_CALL_BATCH_SIZE);
+      const chunkedData = await Promise.all(chunks.map(async chunk => await bnJs.Multicall.getAggregateData(chunk)));
+      const data: any[] = chunkedData.flat();
+
+      const pools = poolKeys.map((poolId, poolIndex) => {
+        const pair = pairs[+poolId];
+
+        const accountPools = accounts.map((account, accountIndex) => {
+          const _startIndex = poolIndex * accounts.length * 3 + accountIndex * 3;
+          const balance = data[_startIndex];
+          const totalSupply = data[_startIndex + 1];
+          const stakedLPBalance = data[_startIndex + 2];
+
+          const xChainId = account.split('/')[0] as XChainId;
+          return {
+            poolId: +poolId,
+            xChainId,
+            account,
+            balance: CurrencyAmount.fromRawAmount(pair.liquidityToken, new BigNumber(balance || 0, 16).toFixed()),
+            suppliedLP: CurrencyAmount.fromRawAmount(
+              pair.liquidityToken,
+              new BigNumber(totalSupply || 0, 16).toFixed(),
+            ),
+            stakedLPBalance: CurrencyAmount.fromRawAmount(
+              pair.liquidityToken,
+              new BigNumber(stakedLPBalance || 0, 16).toFixed(),
+            ),
+            pair,
+          };
+        });
+
+        return accountPools;
+      });
+
+      return pools.flat();
+    },
+    refetchInterval: 10_000,
+    placeholderData: keepPreviousData,
+  });
+
+  return balances;
+}
+
+export const usePoolTokenAmounts = (pool?: Pool) => {
+  const { balance, stakedLPBalance, pair } = pool || {};
+
+  const rate = useMemo(() => {
+    if (pair?.totalSupply && pair.totalSupply.quotient > BIGINT_ZERO) {
+      const amount = (stakedLPBalance ? balance!.add(stakedLPBalance) : balance!).divide(pair.totalSupply);
+      return new Fraction(amount.numerator, amount.denominator);
+    }
+    return FRACTION_ZERO;
+  }, [balance, pair, stakedLPBalance]);
+
+  const [base, quote] = useMemo(() => {
+    if (pair) {
+      return [pair.reserve0.multiply(rate), pair.reserve1.multiply(rate)];
+    }
+    return [CurrencyAmount.fromRawAmount(bnUSD[NETWORK_ID], '0'), CurrencyAmount.fromRawAmount(bnUSD[NETWORK_ID], '0')];
+  }, [pair, rate]);
+
+  return [base, quote];
+};
+
+export const usePool = (poolId: number | undefined, account: string): Pool | undefined => {
+  const { pools } = usePoolPanelContext();
+  return pools.find(pool => pool.poolId === poolId && pool.account === account);
+};

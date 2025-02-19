@@ -27,6 +27,7 @@ type CrossChainOptionsProps = {
   width?: number;
   containerRef: HTMLDivElement | null;
   setManualAddress?: (xChainId: XChainId, address?: string | undefined) => void;
+  showAddress: boolean;
 };
 
 export const Wrap = styled(Flex)`
@@ -65,6 +66,7 @@ const CrossChainOptions = ({
   width,
   containerRef,
   setManualAddress,
+  showAddress,
 }: CrossChainOptionsProps) => {
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
   const [arrowRef] = useWidth();
@@ -153,7 +155,9 @@ const CrossChainOptions = ({
         </Flex>
       )}
 
-      <CrossChainWalletConnect xChainId={xChainId} editable={editable} setManualAddress={setManualAddress} />
+      {showAddress && (
+        <CrossChainWalletConnect xChainId={xChainId} editable={editable} setManualAddress={setManualAddress} />
+      )}
     </Wrap>
   );
 };

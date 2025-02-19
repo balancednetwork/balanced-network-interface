@@ -1,6 +1,5 @@
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token, XChainId } from '@balancednetwork/sdk-core';
 import BigNumber from 'bignumber.js';
-import { XChainId } from './xChain';
 
 export class XToken extends Token {
   xChainId: XChainId;
@@ -16,6 +15,8 @@ export class XToken extends Token {
     'Wrapped ICX',
     'wICX',
   );
+
+  static ICX = new XToken('0x1.icon', '0x1.icon', 'cx0000000000000000000000000000000000000000', 18, 'ICX', 'ICX');
 
   public constructor(
     xChainId: XChainId,
@@ -33,6 +34,7 @@ export class XToken extends Token {
     this.spokeVersion = spokeVersion;
   }
 
+  // TODO: deprecate
   static getXToken(xChainId: XChainId, token: Token) {
     return new XToken(xChainId, token.chainId, token.address, token.decimals, token.symbol, token.name);
   }
@@ -46,6 +48,14 @@ export class XToken extends Token {
    */
   public get wrapped(): XToken {
     if (this.symbol === 'ICX') return XToken.wICX;
+    else return this;
+  }
+
+  /**
+   * Return this token, which does not need to be unwrapped
+   */
+  public get unwrapped(): XToken {
+    if (this.symbol === 'wICX') return XToken.ICX;
     else return this;
   }
 }

@@ -3,9 +3,10 @@ import { BigNumber, Converter } from 'icon-sdk-js';
 import bnJs from './bnJs';
 
 import { XPublicClient } from '@/core/XPublicClient';
-import { XChainId, XToken } from '@/types';
+import { XToken } from '@/types';
 import { sleep } from '@/utils';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { CallData } from '@balancednetwork/balanced-js';
+import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
 import {
   TransactionStatus,
   XCallEvent,
@@ -42,6 +43,39 @@ export class IconXPublicClient extends XPublicClient {
   async getBalance(address: string | undefined, xToken: XToken) {
     // not used
     return Promise.resolve(undefined);
+  }
+
+  async getBalances(address: string | undefined, xTokens: XToken[]): Promise<Record<string, CurrencyAmount<XToken>>> {
+    if (!address) return {};
+
+    const balances = {};
+
+    const nativeXToken = xTokens.find(xToken => xToken.isNativeToken);
+    const nonNativeXTokens = xTokens.filter(xToken => !xToken.isNativeToken);
+
+    if (nativeXToken) {
+      const balance = await bnJs.ICX.balanceOf(address).then(res => res.toFixed());
+      balances[nativeXToken.address] = CurrencyAmount.fromRawAmount(nativeXToken, balance || 0);
+    }
+
+    const cds: CallData[] = nonNativeXTokens.map(token => {
+      return {
+        target: token.address,
+        method: 'balanceOf',
+        params: [address],
+      };
+    });
+
+    const data: any[] = await bnJs.Multicall.getAggregateData(cds.filter(cd => cd.target.startsWith('cx')));
+
+    return nonNativeXTokens.reduce((agg, token, idx) => {
+      const balance = data[idx];
+
+      if (balance) agg[token.address] = CurrencyAmount.fromRawAmount(token, String(balance));
+      else agg[token.address] = CurrencyAmount.fromRawAmount(token, 0);
+
+      return agg;
+    }, balances);
   }
 
   async getXCallFee(xChainId: XChainId, nid: XChainId, rollback: boolean, sources?: string[]) {

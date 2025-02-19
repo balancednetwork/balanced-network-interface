@@ -455,7 +455,7 @@ export function useAvailableCollateral() {
       : collateralCurrency && crossChainWallet[sourceChain]?.[collateralCurrency?.wrapped.address];
   }, [collateralCurrency, crossChainWallet, sourceChain, icxAddress, shouldGetIcx]);
 
-  const maxSpent = maxAmountSpend(currencyAmount, sourceChain);
+  const maxSpent = maxAmountSpend(currencyAmount);
 
   return useMemo(() => {
     return new BigNumber(maxSpent?.toFixed() || 0);

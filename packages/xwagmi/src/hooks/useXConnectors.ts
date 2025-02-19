@@ -1,14 +1,14 @@
+import { XChainType } from '@balancednetwork/sdk-core';
 import { useWallets } from '@mysten/dapp-kit';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { useMemo } from 'react';
 import { useConnectors } from 'wagmi';
 import { XConnector } from '../core';
-import { XChainType } from '../types';
 import { EvmXConnector } from '../xchains/evm';
+import { SolanaXConnector } from '../xchains/solana';
 import { useStellarXConnectors } from '../xchains/stellar/useStellarXConnectors';
 import { SuiXConnector } from '../xchains/sui';
 import { useXService } from './useXService';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { SolanaXConnector } from '../xchains/solana';
 
 export function useXConnectors(xChainType: XChainType | undefined): XConnector[] {
   const xService = useXService(xChainType);

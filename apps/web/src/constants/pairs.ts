@@ -11,16 +11,6 @@ const SUPPORTED_PAIRS_INFO: { [ChainId: number]: PairInfo[] } = {
   [ChainId.MAINNET]: [
     {
       chainId: 1,
-      id: 1,
-      name: 'sICX/ICX',
-      baseCurrencyKey: 'sICX',
-      quoteCurrencyKey: 'ICX',
-      rewards: 0.03,
-      baseToken: sICX[ChainId.MAINNET],
-      quoteToken: ICX[ChainId.MAINNET],
-    },
-    {
-      chainId: 1,
       id: 2,
       name: 'sICX/bnUSD',
       baseCurrencyKey: 'sICX',

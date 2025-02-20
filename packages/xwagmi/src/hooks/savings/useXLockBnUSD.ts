@@ -13,7 +13,7 @@ export const useXLockBnUSD = () => {
     () => async (account, inputAmount: CurrencyAmount<XToken>) => {
       const direction = { from: inputAmount.currency.xChainId, to: ICON_XCALL_NETWORK_ID };
       const xTransactionInput: XTransactionInput = {
-        type: XTransactionType.LOCK_BNUSD,
+        type: XTransactionType.SAVINGS_LOCK_BNUSD,
         account: account,
         inputAmount,
         xCallFee: await getXCallFee(direction.from, direction.to),

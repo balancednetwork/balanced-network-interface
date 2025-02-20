@@ -3,23 +3,19 @@ import React from 'react';
 import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass';
 
-import { Button, TextButton } from '@/app/components/Button';
 import { UnderlineText } from '@/app/components/DropdownText';
-import Modal from '@/app/components/Modal';
-import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import { useSavingsXChainId, useUnclaimedRewards } from '@/store/savings/hooks';
-import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { getXChainType, useXAccount, useXLockedBnUSDAmount } from '@balancednetwork/xwagmi';
 
 import { calculateTotal, useRatesWithOracle } from '@/queries/reward';
+import ClaimSavingsRewardsModal from './ClaimSavingsRewardsModal';
 import RewardsGrid from './RewardsGrid';
 
 const SavingsRewards = () => {
   const savingsXChainId = useSavingsXChainId();
   const xAccount = useXAccount(getXChainType(savingsXChainId));
   const { data: savingsRewards } = useUnclaimedRewards();
-  const hasEnoughICX = useHasEnoughICX();
   const [isOpen, setOpen] = React.useState(false);
   const { data: lockedAmount } = useXLockedBnUSDAmount(xAccount?.address, savingsXChainId);
 
@@ -27,30 +23,6 @@ const SavingsRewards = () => {
 
   const totalRewardInUSD = calculateTotal(savingsRewards?.['0x1.icon'] || [], rates);
   const hasRewards = !!savingsRewards && totalRewardInUSD.gt(0);
-
-  const toggleOpen = React.useCallback(() => {
-    setOpen(!isOpen);
-  }, [isOpen]);
-
-  const handleClaim = async () => {
-    // if (!account) return;
-    // window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-    // try {
-    //   const { result: hash } = await bnJs.inject({ account }).Savings.claimRewards();
-    //   addTransaction(
-    //     { hash },
-    //     {
-    //       pending: t`Claiming Savings Rate rewards...`,
-    //       summary: t`Claimed Savings Rate rewards.`,
-    //     },
-    //   );
-    //   toggleOpen();
-    // } catch (e) {
-    //   console.error('claiming savings rewards error: ', e);
-    // } finally {
-    //   window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-    // }
-  };
 
   return (
     <>
@@ -63,7 +35,7 @@ const SavingsRewards = () => {
           </Flex>
           {(hasRewards || (lockedAmount && lockedAmount.greaterThan(0) && xAccount.address)) && (
             <UnderlineText>
-              <Typography color="primaryBright" onClick={toggleOpen}>
+              <Typography color="primaryBright" onClick={() => setOpen(true)}>
                 <Trans>Claim</Trans>
               </Typography>
             </UnderlineText>
@@ -78,35 +50,7 @@ const SavingsRewards = () => {
         )}
       </Box>
 
-      <Modal isOpen={isOpen} onDismiss={toggleOpen}>
-        <ModalContent>
-          <Typography textAlign="center" mb={1}>
-            <Trans>Claim Savings Rate rewards?</Trans>
-          </Typography>
-
-          <Flex flexDirection="column" alignItems="center" mt={2}>
-            {savingsRewards &&
-              savingsRewards[savingsXChainId]?.map((reward, index) => (
-                <Typography key={index} variant="p">
-                  {/* {`${reward.toFixed(2, { groupSeparator: ',' })}`}{' '} */}
-                  {`${reward.toFixed()}`}{' '}
-                  <Typography as="span" color="text1">
-                    {reward.currency.symbol}
-                  </Typography>
-                </Typography>
-              ))}
-          </Flex>
-
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen} fontSize={14}>
-              <Trans>Not now</Trans>
-            </TextButton>
-            <Button onClick={handleClaim} fontSize={14} disabled={!hasEnoughICX}>
-              <Trans>Claim</Trans>
-            </Button>
-          </Flex>
-        </ModalContent>
-      </Modal>
+      <ClaimSavingsRewardsModal isOpen={isOpen} onClose={() => setOpen(false)} />
     </>
   );
 };

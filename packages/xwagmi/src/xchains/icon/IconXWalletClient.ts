@@ -278,4 +278,11 @@ export class IconXWalletClient extends XWalletClient {
     const { result: hash } = await bnJs.inject({ account }).Savings.unlock(toDec(inputAmount));
     return hash;
   }
+
+  async claimSaivngsRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { account } = xTransactionInput;
+
+    const { result: hash } = await bnJs.inject({ account }).Savings.claimRewards();
+    return hash;
+  }
 }

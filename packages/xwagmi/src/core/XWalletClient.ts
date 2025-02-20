@@ -81,10 +81,12 @@ export abstract class XWalletClient {
       case XTransactionType.LP_CLAIM_REWARDS:
         return await this.claimRewards(xTransactionInput);
 
-      case XTransactionType.LOCK_BNUSD:
+      case XTransactionType.SAVINGS_LOCK_BNUSD:
         return await this.lockBnUSD(xTransactionInput);
-      case XTransactionType.UNLOCK_BNUSD:
+      case XTransactionType.SAVINGS_UNLOCK_BNUSD:
         return await this.unlockBnUSD(xTransactionInput);
+      case XTransactionType.SAVINGS_CLAIM_REWARDS:
+        return await this.claimSaivngsRewards(xTransactionInput);
 
       default:
         throw new Error('Invalid XTransactionType');
@@ -330,6 +332,15 @@ export abstract class XWalletClient {
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Savings.address}`;
     const amount = BigInt(_inputAmount.quotient.toString());
     const data = Buffer.from(getUnlockData(amount));
+
+    return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
+  }
+
+  async claimSaivngsRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { account, xCallFee, direction } = xTransactionInput;
+
+    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Savings.address}`;
+    const data = Buffer.from(getClaimRewardData('', []));
 
     return await this._sendCall({ account, sourceChainId: direction.from, destination, data, fee: xCallFee.rollback });
   }

@@ -13,7 +13,7 @@ export const useXUnlockBnUSD = () => {
     () => async (account, inputAmount: CurrencyAmount<XToken>) => {
       const direction = { from: inputAmount.currency.xChainId, to: ICON_XCALL_NETWORK_ID };
       const xTransactionInput: XTransactionInput = {
-        type: XTransactionType.UNLOCK_BNUSD,
+        type: XTransactionType.SAVINGS_UNLOCK_BNUSD,
         account: account,
         inputAmount,
         xCallFee: await getXCallFee(direction.from, direction.to),

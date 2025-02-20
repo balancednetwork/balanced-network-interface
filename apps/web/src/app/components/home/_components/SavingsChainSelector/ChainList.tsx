@@ -8,9 +8,7 @@ import { StyledHeaderText } from '@/app/pages/trade/bridge/_components/XChainLis
 import { Typography } from '@/app/theme';
 import useSortXPositions from '@/hooks/useSortXPositions';
 import { useHasSignedIn, useSignedInWallets } from '@/hooks/useWallets';
-import { LPRewards } from '@/queries/reward';
 import { useCollateralType } from '@/store/collateral/hooks';
-import { formatPrice } from '@/utils/formatter';
 import { xChains } from '@balancednetwork/xwagmi';
 import { XChain, XChainId } from '@balancednetwork/xwagmi';
 import { Trans, t } from '@lingui/macro';
@@ -24,7 +22,7 @@ type ChainListProps = {
   setChainId: (chain: XChainId) => void;
   chains?: XChain[];
   width: number | undefined;
-  lpRewards: LPRewards;
+  rewards: Record<XChainId, BigNumber>;
 };
 
 type ChainItemProps = {
@@ -68,7 +66,7 @@ const ChainItem = ({ chain, setChainId, isLast, rewardAmount }: ChainItemProps) 
   );
 };
 
-const ChainList = ({ chainId, setChainId, chains, width, lpRewards }: ChainListProps) => {
+const ChainList = ({ chainId, setChainId, chains, width, rewards }: ChainListProps) => {
   const relevantChains = chains || xChains;
   const [searchQuery, setSearchQuery] = useState<string>('');
   const collateralType = useCollateralType();
@@ -140,7 +138,7 @@ const ChainList = ({ chainId, setChainId, chains, width, lpRewards }: ChainListP
               isActive={chainId === chainItem.xChainId}
               isLast={sortedFilteredChains.length === index + 1}
               setChainId={setChainId}
-              rewardAmount={lpRewards[chainItem.xChainId]?.totalValueInUSD || new BigNumber(0)}
+              rewardAmount={rewards[chainItem.xChainId] || new BigNumber(0)}
             />
           </Box>
         ))}

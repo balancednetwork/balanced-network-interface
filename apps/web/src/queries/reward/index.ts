@@ -109,25 +109,44 @@ export const useLPRewards = (): UseQueryResult<LPRewards | undefined> => {
   return useQuery<LPRewards | undefined>({
     queryKey: ['rewards', accounts],
     queryFn: async () => {
-      if (!accounts || accounts.length === 0) return {};
+      try {
+        if (!accounts || accounts.length === 0) return {};
 
-      const allRewards = await Promise.all(
-        accounts.map(async account => {
-          const res = await bnJs.Rewards.getRewards(account);
-          return { account, res };
-        }),
-      );
+        // const cds = accounts.map(account => {
+        //   return {
+        //     target: bnJs.Rewards.address,
+        //     method: 'getRewards',
+        //     params: [account],
+        //   };
+        // });
 
-      return allRewards.reduce((acc, { account, res }) => {
-        const xChainId = account.split('/')[0];
-        const rewards = Object.entries(res).map(([address, amount]) => {
-          const currency = xTokenMap[ICON_XCALL_NETWORK_ID].find(token => token.address === address);
-          return CurrencyAmount.fromRawAmount(currency, amount as string);
-        });
-        const totalValueInUSD = calculateTotal(rewards, rates);
-        acc[xChainId] = { rewards, totalValueInUSD };
-        return acc;
-      }, {});
+        // console.log('cds', cds);
+
+        // const rawRewards = await bnJs.Multicall.getAggregateData(cds);
+
+        // console.log('rawRewards', rawRewards);
+
+        const allRewards = await Promise.all(
+          accounts.map(async account => {
+            const res = await bnJs.Rewards.getRewards(account);
+            return { account, res };
+          }),
+        );
+
+        return allRewards.reduce((acc, { account, res }) => {
+          const xChainId = account.split('/')[0];
+          const rewards = Object.entries(res).map(([address, amount]) => {
+            const currency = xTokenMap[ICON_XCALL_NETWORK_ID].find(token => token.address === address);
+            return CurrencyAmount.fromRawAmount(currency, amount as string);
+          });
+          const totalValueInUSD = calculateTotal(rewards, rates);
+          acc[xChainId] = { rewards, totalValueInUSD };
+          return acc;
+        }, {});
+      } catch (e) {
+        console.log('error', e);
+        return {};
+      }
     },
     refetchInterval: 10_000,
     placeholderData: keepPreviousData,

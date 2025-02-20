@@ -37,9 +37,7 @@ const StyledHeaderText = styled(HeaderText)`
 
 export default function CurrencyList({
   currencies,
-  showCrossChainBreakdown = true,
   onCurrencySelect,
-  onChainSelect,
   showRemoveView,
   setRemoveToken,
   isOpen,
@@ -51,9 +49,7 @@ export default function CurrencyList({
   filterState,
 }: {
   currencies: Currency[];
-  showCrossChainBreakdown: boolean;
   onCurrencySelect: (currency: Currency, setDefaultChain?: boolean) => void;
-  onChainSelect?: (chainId: XChainId) => void;
   showRemoveView: () => void;
   setRemoveToken: (token: Token) => void;
   isOpen: boolean;
@@ -143,14 +139,12 @@ export default function CurrencyList({
           key={currency.address}
           currency={currency}
           onSelect={onCurrencySelect}
-          onChainSelect={onChainSelect}
           onRemove={() => {
             setRemoveToken(currency as Token);
             showRemoveView();
           }}
           rateFracs={rateFracs}
           selectedChainId={selectedChainId}
-          showCrossChainBreakdown={showCrossChainBreakdown}
           basedOnWallet={basedOnWallet}
           width={width}
           filterState={filterState}

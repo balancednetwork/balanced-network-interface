@@ -96,7 +96,6 @@ interface CurrencySearchProps {
   onDismiss: () => void;
   selectedCurrency?: Currency | null;
   onCurrencySelect: (currency: Currency, setDefaultChain?: boolean) => void;
-  onChainSelect?: (chainId: XChainId) => void;
   currencySelectionType: CurrencySelectionType;
   showImportView: () => void;
   setImportToken: (token: Token) => void;
@@ -105,14 +104,11 @@ interface CurrencySearchProps {
   width?: number;
   showCommunityListControl?: boolean;
   xChainId: XChainId;
-  showCrossChainBreakdown: boolean;
 }
 
 export function CurrencySearch({
   selectedCurrency,
   onCurrencySelect,
-  onChainSelect,
-  showCrossChainBreakdown,
   currencySelectionType,
   onDismiss,
   isOpen,
@@ -338,7 +334,8 @@ export function CurrencySearch({
       </FilterWrap>
       {hasSignedIn &&
       (currencySelectionType === CurrencySelectionType.TRADE_IN ||
-        currencySelectionType === CurrencySelectionType.TRADE_OUT) ? (
+        currencySelectionType === CurrencySelectionType.TRADE_OUT ||
+        currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE) ? (
         <Flex justifyContent="center" mt={3}>
           <AssetsTabButton $active={assetsTab === AssetsTab.YOUR} mr={2} onClick={() => handleTabClick(AssetsTab.YOUR)}>
             <Trans>Your assets</Trans>
@@ -357,13 +354,11 @@ export function CurrencySearch({
           currencies={filteredSortedTokens}
           filterState={filterState}
           onCurrencySelect={handleCurrencySelect}
-          onChainSelect={onChainSelect}
           showRemoveView={showRemoveView}
           setRemoveToken={setRemoveToken}
           isOpen={isOpen}
           onDismiss={onDismiss}
           selectedChainId={selectedChainId}
-          showCrossChainBreakdown={showCrossChainBreakdown}
           basedOnWallet={assetsTab === AssetsTab.YOUR}
           width={width}
           currencySelectionType={currencySelectionType}

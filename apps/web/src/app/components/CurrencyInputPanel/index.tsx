@@ -112,7 +112,6 @@ interface CurrencyInputPanelProps {
   xChainId?: XChainId;
   onChainSelect?: (_chainId: XChainId) => void;
   showCrossChainOptions?: boolean;
-  showCrossChainBreakdown?: boolean;
   addressEditable?: boolean;
   setManualAddress?: (xChainId: XChainId, address?: string | undefined) => void;
 }
@@ -138,7 +137,6 @@ export default function CurrencyInputPanel({
   xChainId = '0x1.icon',
   onChainSelect,
   showCrossChainOptions = false,
-  showCrossChainBreakdown = true,
   addressEditable = false,
   setManualAddress,
 }: CurrencyInputPanelProps) {
@@ -172,11 +170,7 @@ export default function CurrencyInputPanel({
   }, []);
 
   const [xChainOptionsOpen, setXChainOptionsOpen] = React.useState(false);
-  const xChains = useMemo(
-    () =>
-      currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE ? [] : getSupportedXChainForSwapToken(currency),
-    [currency, currencySelectionType],
-  );
+  const xChains = useMemo(() => getSupportedXChainForSwapToken(currency), [currency]);
 
   const onCurrencySelectWithXChain = useCallback(
     (currency: Currency, setDefaultChain = true) => {
@@ -184,13 +178,13 @@ export default function CurrencyInputPanel({
 
       if (setDefaultChain && currency?.symbol) {
         const defaultXChainId = DEFAULT_TOKEN_CHAIN[currency.symbol];
-        if (defaultXChainId && (xChains?.length ?? 0) > 1) {
+        if (defaultXChainId) {
           onChainSelect && onChainSelect(defaultXChainId);
           setTimeout(() => setXChainOptionsOpen(true), 100);
         }
       }
     },
-    [onCurrencySelect, onChainSelect, xChains],
+    [onCurrencySelect, onChainSelect],
   );
 
   return (
@@ -222,14 +216,12 @@ export default function CurrencyInputPanel({
                 isOpen={open}
                 onDismiss={handleDismiss}
                 onCurrencySelect={onCurrencySelectWithXChain}
-                onChainSelect={onChainSelect}
                 currencySelectionType={currencySelectionType}
                 anchorEl={ref.current}
                 width={width ? width + (!isMobile ? 40 : 0) : undefined}
                 selectedCurrency={currency}
                 showCommunityListControl={showCommunityListControl}
                 xChainId={xChainId}
-                showCrossChainBreakdown={showCrossChainBreakdown}
               />
             )}
           </div>
@@ -282,7 +274,7 @@ export default function CurrencyInputPanel({
           setXChainId={onChainSelect || (() => {})}
           isOpen={xChainOptionsOpen}
           setOpen={setXChainOptionsOpen}
-          xChains={xChains}
+          xChains={currencySelectionType !== CurrencySelectionType.TRADE_MINT_QUOTE ? xChains : []}
           editable={addressEditable}
           currency={currency}
           width={width ? width + (!isMobile ? 40 : 0) : undefined}

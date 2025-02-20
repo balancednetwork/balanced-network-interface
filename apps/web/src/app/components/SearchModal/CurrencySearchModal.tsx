@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Currency, Token } from '@balancednetwork/sdk-core';
 
 import useLast from '@/hooks/useLast';
-
 import { XChainId } from '@balancednetwork/xwagmi';
 import Modal from '../Modal';
 import { PopperWithoutArrow } from '../Popover';
@@ -16,8 +15,6 @@ interface CurrencySearchModalProps {
   onDismiss: () => void;
   selectedCurrency?: Currency | null;
   onCurrencySelect: (currency: Currency, setDefaultChain?: boolean) => void;
-  onChainSelect?: (chainId: XChainId) => void;
-  showCrossChainBreakdown: boolean;
   currencySelectionType?: CurrencySelectionType;
   width?: number;
   anchorEl?: any;
@@ -37,13 +34,11 @@ export default function CurrencySearchModal({
   isOpen,
   onDismiss,
   onCurrencySelect,
-  onChainSelect,
   selectedCurrency,
   currencySelectionType = CurrencySelectionType.TRADE_IN,
   width,
   anchorEl,
   showCommunityListControl,
-  showCrossChainBreakdown,
   xChainId,
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage);
@@ -105,7 +100,6 @@ export default function CurrencySearchModal({
           isOpen={isOpen}
           onDismiss={onDismiss}
           onCurrencySelect={handleCurrencySelect}
-          onChainSelect={onChainSelect}
           selectedCurrency={selectedCurrency}
           currencySelectionType={currencySelectionType}
           showImportView={showImportView}
@@ -115,7 +109,6 @@ export default function CurrencySearchModal({
           width={width}
           showCommunityListControl={showCommunityListControl}
           xChainId={xChainId}
-          showCrossChainBreakdown={showCrossChainBreakdown}
         />
       </PopperWithoutArrow>
 

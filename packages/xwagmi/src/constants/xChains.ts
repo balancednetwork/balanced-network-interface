@@ -233,7 +233,7 @@ export const arbitrum: XChain = {
   autoExecution: true,
   gasThreshold: 0.0001,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const base: XChain = {
@@ -306,7 +306,7 @@ export const stellar: XChain = {
     bnUSD: 'CCT4ZYIYZ3TUO2AWQFEOFGBZ6HQP3GW5TA37CK7CRZVFRDXYTHTYX7KP',
   },
   autoExecution: true,
-  gasThreshold: 2, // xCall fee: 1.07 XLM
+  gasThreshold: 0.2, // xCall fee: 0.1 XLM
   testnet: false,
   useXCallScanner: true,
 };

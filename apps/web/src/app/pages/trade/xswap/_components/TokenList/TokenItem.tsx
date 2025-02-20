@@ -13,7 +13,7 @@ import { TokenStats, useTokenTrendData } from '@/queries/backendv2';
 import { useWithdrawalsFloorDEXData } from '@/store/swap/hooks';
 import { formatBalance, formatPrice, formatPriceChange, getFormattedNumber } from '@/utils/formatter';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
-import { ICON_XCALL_NETWORK_ID, getSupportedXChainIdsForSwapToken } from '@balancednetwork/xwagmi';
+import { getSupportedXChainIdsForSwapToken } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { xTokenMap } from '@balancednetwork/xwagmi';
 import { XToken } from '@balancednetwork/xwagmi';
@@ -57,9 +57,7 @@ const TokenItem = ({ token, price, isLast }: TokenItemProps) => {
 
   const xChainIds = React.useMemo(() => {
     const currencyXChainIds = getSupportedXChainIdsForSwapToken(currency);
-    return currencyXChainIds.length
-      ? currencyXChainIds.sort((a, b) => xChainMap[a].name.localeCompare(xChainMap[b].name))
-      : [ICON_XCALL_NETWORK_ID];
+    return currencyXChainIds.sort((a, b) => xChainMap[a].name.localeCompare(xChainMap[b].name));
   }, [currency]);
 
   const amounts = React.useMemo(() => {

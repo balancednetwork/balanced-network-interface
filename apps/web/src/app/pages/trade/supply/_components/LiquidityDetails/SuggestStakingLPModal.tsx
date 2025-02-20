@@ -9,11 +9,10 @@ import {
   useXCallFee,
   useXStakeLPToken,
   useXTransactionStore,
-  useXUnstakeLPToken,
 } from '@balancednetwork/xwagmi';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
-import { Box, Flex } from 'rebass/styled-components';
+import { Flex } from 'rebass/styled-components';
 
 import { Button, TextButton } from '@/app/components/Button';
 import Modal from '@/app/components/Modal';
@@ -26,6 +25,7 @@ import { StyledButton } from '@/app/components/Button/StyledButton';
 import XTransactionState from '@/app/components/XTransactionState';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
+import { formatSymbol } from '@/utils/formatter';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function SuggestStakingLPModal({
@@ -113,10 +113,10 @@ export default function SuggestStakingLPModal({
             Stake LP tokens?
           </Typography>
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={16}>
-            {differenceAmount.abs().dp(2).toFormat()}
+            {differenceAmount.abs().dp(4).toFormat()}
           </Typography>
           <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={16}>
-            BALN / bnUSD
+            {formatSymbol(pair.token0.symbol)} / {formatSymbol(pair.token1.symbol)}
           </Typography>
 
           {pool.xChainId !== ICON_XCALL_NETWORK_ID && (

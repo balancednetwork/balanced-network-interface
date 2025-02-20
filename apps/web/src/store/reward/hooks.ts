@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { PLUS_INFINITY } from '@/constants/index';
 import { useAllPairs } from '@/queries/backendv2';
-import { useLPRewards } from '@/queries/reward';
+import { calculateTotal, useLPRewards, useRatesWithOracle } from '@/queries/reward';
 import { useBBalnAmount, useDynamicBBalnAmount, useSources } from '@/store/bbaln/hooks';
 import { useCollateralInputAmountAbsolute } from '@/store/collateral/hooks';
 import { useHasUnclaimedFees } from '@/store/fees/hooks';
@@ -201,6 +201,7 @@ export function useHasAnyKindOfRewards() {
   const hasUnclaimedFees = useHasUnclaimedFees();
   const { data: lpRewards } = useLPRewards();
   const { data: savingsRewards } = useUnclaimedRewards();
+  const rates = useRatesWithOracle();
 
   const numberOfPositions = React.useMemo(
     () => (sources ? Object.values(sources).filter(source => source.balance.isGreaterThan(100)).length : 0),
@@ -210,7 +211,7 @@ export function useHasAnyKindOfRewards() {
   return (
     hasUnclaimedFees ||
     Object.values(lpRewards || {}).some(({ totalValueInUSD }) => totalValueInUSD > new BigNumber(0)) ||
-    savingsRewards?.some(reward => reward.greaterThan(0)) ||
+    Object.values(savingsRewards || {}).some(rewards => calculateTotal(rewards, rates).gt(0)) ||
     dynamicBBalnAmount.isGreaterThan(0) ||
     bnUSDDeposit?.greaterThan(0) ||
     numberOfPositions > 0

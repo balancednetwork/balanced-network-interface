@@ -48,20 +48,15 @@ const SavingsChainSelector = ({
   const rewards = useMemo(() => {
     return xChains.reduce((acc, xChain) => {
       let total = new BigNumber(0);
-      if (xChain.xChainId === '0x1.icon') {
-        if (lpRewards?.[xChain.xChainId]) {
-          total = total.plus(lpRewards[xChain.xChainId].totalValueInUSD || 0);
-        }
-        if (feesRewards) {
-          total = total.plus(calculateTotal(feesRewards, rates) || 0);
-        }
-        if (savingsRewards) {
-          total = total.plus(calculateTotal(savingsRewards, rates) || 0);
-        }
-      } else {
-        if (lpRewards?.[xChain.xChainId]) {
-          total = total.plus(lpRewards[xChain.xChainId].totalValueInUSD || 0);
-        }
+      if (lpRewards?.[xChain.xChainId]) {
+        total = total.plus(lpRewards[xChain.xChainId].totalValueInUSD || 0);
+      }
+      if (savingsRewards) {
+        total = total.plus(calculateTotal(savingsRewards[xChain.xChainId] || [], rates) || 0);
+      }
+
+      if (xChain.xChainId === '0x1.icon' && feesRewards) {
+        total = total.plus(calculateTotal(feesRewards, rates) || 0);
       }
 
       acc[xChain.xChainId] = total;

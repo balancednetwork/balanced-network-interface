@@ -112,6 +112,20 @@ export const useLPRewards = (): UseQueryResult<LPRewards | undefined> => {
       try {
         if (!accounts || accounts.length === 0) return {};
 
+        // const cds = accounts.map(account => {
+        //   return {
+        //     target: bnJs.Rewards.address,
+        //     method: 'getRewards',
+        //     params: [account],
+        //   };
+        // });
+
+        // console.log('cds', cds);
+
+        // const rawRewards = await bnJs.Multicall.getAggregateData(cds);
+
+        // console.log('rawRewards', rawRewards);
+
         const allRewards = await Promise.all(
           accounts.map(async account => {
             const res = await bnJs.Rewards.getRewards(account);

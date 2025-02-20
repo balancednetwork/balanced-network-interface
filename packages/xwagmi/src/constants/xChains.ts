@@ -233,7 +233,7 @@ export const arbitrum: XChain = {
   autoExecution: true,
   gasThreshold: 0.0001,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const base: XChain = {

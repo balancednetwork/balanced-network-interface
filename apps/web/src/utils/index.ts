@@ -389,10 +389,11 @@ export function getTransactionAttributes(xTransactionInput: XTransactionInput) {
       break;
     }
 
-    // TODO:
-    // case XTransactionType.LP_CLAIM_REWARDS: {
-    //   break;
-    // }
+    case XTransactionType.LP_CLAIM_REWARDS: {
+      descriptionAction = `Claim LP Rewards`;
+      descriptionAmount = ``;
+      break;
+    }
 
     case XTransactionType.LP_REMOVE_LIQUIDITY: {
       const { withdrawAmountA, withdrawAmountB, tokenASymbol, tokenBSymbol } = xTransactionInput;

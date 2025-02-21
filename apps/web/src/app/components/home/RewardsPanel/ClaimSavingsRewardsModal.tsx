@@ -12,8 +12,9 @@ import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
-import { useSavingsXChainId, useUnclaimedRewards } from '@/store/savings/hooks';
+import { useSavingsXChainId } from '@/store/savings/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import {
   ICON_XCALL_NETWORK_ID,
   XTransactionStatus,
@@ -28,13 +29,12 @@ import {
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
+  rewards?: CurrencyAmount<Token>[];
+  onSuccess?: () => void;
 }
 
-export default function ClaimSavingsRewardsModal({ isOpen, onClose }: ModalProps) {
+export default function ClaimSavingsRewardsModal({ isOpen, onClose, rewards, onSuccess }: ModalProps) {
   const savingsXChainId = useSavingsXChainId();
-
-  const { data: savingsRewards, refetch } = useUnclaimedRewards();
-  const rewards = useMemo(() => savingsRewards?.[savingsXChainId], [savingsRewards, savingsXChainId]);
 
   const [isPending, setIsPending] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
@@ -64,9 +64,9 @@ export default function ClaimSavingsRewardsModal({ isOpen, onClose }: ModalProps
   useEffect(() => {
     if (isExecuted) {
       slowDismiss();
-      refetch();
+      onSuccess?.();
     }
-  }, [isExecuted, slowDismiss, refetch]);
+  }, [isExecuted, slowDismiss, onSuccess]);
 
   const xAccount = useXAccount(getXChainType(savingsXChainId));
   const xClaimSavingsRewards = useXClaimSavingsRewards();

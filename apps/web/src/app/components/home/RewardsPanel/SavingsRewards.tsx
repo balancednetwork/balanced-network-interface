@@ -9,15 +9,19 @@ import { useSavingsXChainId, useUnclaimedRewards } from '@/store/savings/hooks';
 import { getXChainType, useXAccount, useXLockedBnUSDAmount } from '@balancednetwork/xwagmi';
 
 import { calculateTotal, useRatesWithOracle } from '@/queries/reward';
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { useQueryClient } from '@tanstack/react-query';
 import ClaimSavingsRewardsModal from './ClaimSavingsRewardsModal';
 import RewardsGrid from './RewardsGrid';
 
 const SavingsRewards = () => {
+  const queryClient = useQueryClient();
   const savingsXChainId = useSavingsXChainId();
   const xAccount = useXAccount(getXChainType(savingsXChainId));
   const { data: savingsRewards } = useUnclaimedRewards();
   const [isOpen, setOpen] = React.useState(false);
   const { data: lockedAmount } = useXLockedBnUSDAmount(xAccount?.address, savingsXChainId);
+  const [executionRewards, setExecutionRewards] = React.useState<CurrencyAmount<Token>[] | undefined>(undefined);
 
   const rates = useRatesWithOracle();
 
@@ -35,7 +39,13 @@ const SavingsRewards = () => {
           </Flex>
           {(hasRewards || (lockedAmount && lockedAmount.greaterThan(0) && xAccount.address)) && (
             <UnderlineText>
-              <Typography color="primaryBright" onClick={() => setOpen(true)}>
+              <Typography
+                color="primaryBright"
+                onClick={() => {
+                  setOpen(true);
+                  setExecutionRewards(savingsRewards?.[savingsXChainId]);
+                }}
+              >
                 <Trans>Claim</Trans>
               </Typography>
             </UnderlineText>
@@ -50,7 +60,14 @@ const SavingsRewards = () => {
         )}
       </Box>
 
-      <ClaimSavingsRewardsModal isOpen={isOpen} onClose={() => setOpen(false)} />
+      <ClaimSavingsRewardsModal
+        isOpen={isOpen}
+        onClose={() => setOpen(false)}
+        rewards={executionRewards}
+        onSuccess={() => {
+          queryClient.invalidateQueries({ queryKey: ['savingsRewards'] });
+        }}
+      />
     </>
   );
 };

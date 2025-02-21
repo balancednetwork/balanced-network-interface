@@ -83,8 +83,8 @@ export type XTransactionInput = {
 
   // liquidity
   poolId?: number;
-  tokenA?: Token;
-  tokenB?: Token;
+  tokenASymbol?: string;
+  tokenBSymbol?: string;
   withdrawAmountA?: CurrencyAmount<XToken>;
   withdrawAmountB?: CurrencyAmount<XToken>;
 };

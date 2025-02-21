@@ -44,6 +44,7 @@ export default function LPPanel() {
 
   const handleSupplyConfirmDismiss = () => {
     setShowSupplyConfirm(false);
+    setAmounts({ [Field.CURRENCY_A]: undefined, [Field.CURRENCY_B]: undefined });
   };
 
   const [amounts, setAmounts] = React.useState<{ [field in Field]?: CurrencyAmount<Currency> }>({
@@ -324,6 +325,7 @@ export default function LPPanel() {
         parsedAmounts={amounts}
         currencies={currencies}
         onSuccess={() => {
+          setAmounts({ [Field.CURRENCY_A]: undefined, [Field.CURRENCY_B]: undefined });
           setExecutionPool(pool);
           setShowSuggestStakingLP(true);
         }}

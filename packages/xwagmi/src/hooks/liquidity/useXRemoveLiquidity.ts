@@ -39,8 +39,8 @@ export const useXRemoveLiquidity = () => {
           poolId,
           xCallFee: await getXCallFee(direction.from, direction.to),
           direction,
-          tokenA,
-          tokenB,
+          tokenASymbol: tokenA.symbol,
+          tokenBSymbol: tokenB.symbol,
           withdrawAmountA: convertCurrencyAmount(direction.from, withdrawAmountA),
           withdrawAmountB: convertCurrencyAmount(direction.from, withdrawAmountB),
         };

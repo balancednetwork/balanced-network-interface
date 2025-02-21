@@ -67,7 +67,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
     {
       name: 'xTransaction-store',
       storage: createJSONStorage(() => localStorage, jsonStorageOptions),
-      version: 3,
+      version: 4,
       migrate: (state, version) => {
         return { transactions: {}, currentId: null };
       },

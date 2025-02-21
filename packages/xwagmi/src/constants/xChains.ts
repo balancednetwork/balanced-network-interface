@@ -26,7 +26,7 @@ export const archway: XChain = {
   autoExecution: true,
   gasThreshold: 2,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const archwayTestnet: XChain = {
@@ -53,7 +53,7 @@ export const archwayTestnet: XChain = {
   autoExecution: true,
   gasThreshold: 10,
   testnet: true,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const icon: XChain = {
@@ -80,7 +80,7 @@ export const icon: XChain = {
   autoExecution: true,
   gasThreshold: 2.5,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const lisbon: XChain = {
@@ -107,7 +107,7 @@ export const lisbon: XChain = {
   autoExecution: true,
   gasThreshold: 4,
   testnet: true,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const avalanche: XChain = {
@@ -132,7 +132,7 @@ export const avalanche: XChain = {
   autoExecution: true,
   gasThreshold: 0.05,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const fuji: XChain = {
@@ -157,7 +157,7 @@ export const fuji: XChain = {
   autoExecution: true,
   gasThreshold: 0,
   testnet: true,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const havah: XChain = {
@@ -183,7 +183,7 @@ export const havah: XChain = {
   autoExecution: true,
   gasThreshold: 0.2,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const bsc: XChain = {
@@ -208,7 +208,7 @@ export const bsc: XChain = {
   autoExecution: true,
   gasThreshold: 0.005,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const arbitrum: XChain = {
@@ -258,7 +258,7 @@ export const base: XChain = {
   autoExecution: true,
   gasThreshold: 0.0001,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const injective: XChain = {
@@ -283,7 +283,7 @@ export const injective: XChain = {
   autoExecution: true,
   gasThreshold: 0.01,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 export const stellar: XChain = {
@@ -386,7 +386,7 @@ export const optimism: XChain = {
   autoExecution: true,
   gasThreshold: 0.0001,
   testnet: false,
-  useXCallScanner: true,
+  useXCallScanner: false,
 };
 
 // the order is important, using manual order to display in the UI

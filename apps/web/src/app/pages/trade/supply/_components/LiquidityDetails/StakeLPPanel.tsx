@@ -16,7 +16,7 @@ import RespoRewardsInfo from './RespoRewardsInfo';
 import StakeLPModal from './StakeLPModal';
 
 export default function StakeLPPanel({ pool }: { pool: Pool }) {
-  const { poolId, balance: lpBalance, stakedLPBalance } = pool;
+  const { poolId, balance: lpBalance, stakedLPBalance, xChainId } = pool;
   const { data: incentivisedPairs } = useIncentivisedPairs();
 
   const [executionBeforeAmount, setExecutionBeforeAmount] = React.useState<BigNumber>(new BigNumber(0));
@@ -80,8 +80,10 @@ export default function StakeLPPanel({ pool }: { pool: Pool }) {
   const isIncentivised = useMemo(
     () =>
       incentivisedPairs &&
-      !!incentivisedPairs.find(pair => pair.name === (pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName)),
-    [incentivisedPairs, pairName],
+      !!incentivisedPairs.find(pair => pair.name === (pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName)) &&
+      xChainId !== 'archway-1' &&
+      xChainId !== '0x100.icon',
+    [incentivisedPairs, pairName, xChainId],
   );
   return (
     <Box width={upSmall ? 1 / 2 : 1}>

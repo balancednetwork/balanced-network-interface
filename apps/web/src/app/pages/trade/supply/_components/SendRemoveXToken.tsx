@@ -41,6 +41,7 @@ interface SendRemoveXTokenProps {
   setPendingTx: (tx: string) => void;
   isSupplying?: boolean;
   executionDepositAmount?: CurrencyAmount<XToken>;
+  isDisabled?: boolean;
 }
 
 export function SendRemoveXToken({
@@ -58,6 +59,7 @@ export function SendRemoveXToken({
   setPendingTx,
   isSupplying,
   executionDepositAmount,
+  isDisabled = false,
 }: SendRemoveXTokenProps) {
   const { lpXChainId } = useDerivedMintInfo();
 
@@ -199,7 +201,7 @@ export function SendRemoveXToken({
                         {approvalState !== ApprovalState.PENDING ? t`Approve` : t`Approving`}
                       </SupplyButton>
                     ) : (
-                      <SupplyButton disabled={isSending || isWrongChain} mt={2} onClick={handleAdd}>
+                      <SupplyButton disabled={isSending || isWrongChain || isDisabled} mt={2} onClick={handleAdd}>
                         {!isSending && 'Send'}
                         {isSending && isSigning && 'Send'}
                         {isSending && !isSigning && 'Sending'}
@@ -227,7 +229,7 @@ export function SendRemoveXToken({
                       {depositAmount?.toSignificant(6)} {formatSymbol(xToken?.symbol)}
                     </Typography>
 
-                    <RemoveButton disabled={isRemoving || isWrongChain} mt={2} onClick={handleRemove}>
+                    <RemoveButton disabled={isRemoving || isWrongChain || isDisabled} mt={2} onClick={handleRemove}>
                       {!isRemoving && 'Remove'}
                       {isRemoving && isSigning && 'Remove'}
                       {isRemoving && !isSigning && 'Removing'}
@@ -263,6 +265,7 @@ const RemoveButton = styled(SupplyButton)`
 
   &:disabled {
     color: #fb6a6a;
+    opacity: 0.5;
     background-color: transparent;
   }
 `;

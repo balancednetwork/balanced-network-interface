@@ -159,7 +159,13 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
   };
 
-  const isEnabled = !!depositAmountA?.greaterThan(0) && !!depositAmountB?.greaterThan(0);
+  const isEnabled =
+    !!depositAmountA?.greaterThan(0) &&
+    !!depositAmountB?.greaterThan(0) &&
+    !isSendingTokenA &&
+    !isSendingTokenB &&
+    !isRemovingTokenA &&
+    !isRemovingTokenB;
 
   const [hasErrorMessage, setHasErrorMessage] = React.useState(false);
   const handleCancelSupply = () => {

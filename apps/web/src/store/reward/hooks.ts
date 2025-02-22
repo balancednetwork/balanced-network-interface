@@ -210,7 +210,7 @@ export function useHasAnyKindOfRewards() {
 
   return (
     hasUnclaimedFees ||
-    Object.values(lpRewards || {}).some(({ totalValueInUSD }) => totalValueInUSD > new BigNumber(0)) ||
+    Object.values(lpRewards || {}).some(rewards => calculateTotal(rewards, rates).gt(0)) ||
     Object.values(savingsRewards || {}).some(rewards => calculateTotal(rewards, rates).gt(0)) ||
     dynamicBBalnAmount.isGreaterThan(0) ||
     bnUSDDeposit?.greaterThan(0) ||

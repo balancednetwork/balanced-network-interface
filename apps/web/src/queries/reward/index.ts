@@ -83,13 +83,6 @@ export const useLPReward = account => {
   });
 };
 
-export type LPRewards = {
-  [chainId in XChainId]?: {
-    rewards: CurrencyAmount<XToken>[];
-    totalValueInUSD: BigNumber;
-  };
-};
-
 export const calculateTotal = (balances, rates): BigNumber => {
   return balances.reduce((sum, balance) => {
     sum = sum.plus(new BigNumber(balance.toFixed()).times(rates?.[balance.currency.symbol] || 0));
@@ -97,16 +90,14 @@ export const calculateTotal = (balances, rates): BigNumber => {
   }, new BigNumber(0));
 };
 
-export const useLPRewards = (): UseQueryResult<LPRewards | undefined> => {
+export const useLPRewards = (): UseQueryResult<Partial<Record<XChainId, CurrencyAmount<Token>[]>>> => {
   const signedWallets = useSignedInWallets();
   const accounts = useMemo(
     () => signedWallets.filter(wallet => wallet.address).map(wallet => `${wallet.xChainId}/${wallet.address}`),
     [signedWallets],
   );
 
-  const rates = useRatesWithOracle();
-
-  return useQuery<LPRewards | undefined>({
+  return useQuery({
     queryKey: ['rewards', accounts],
     queryFn: async () => {
       try {
@@ -139,8 +130,7 @@ export const useLPRewards = (): UseQueryResult<LPRewards | undefined> => {
             const currency = xTokenMap[ICON_XCALL_NETWORK_ID].find(token => token.address === address);
             return CurrencyAmount.fromRawAmount(currency, amount as string);
           });
-          const totalValueInUSD = calculateTotal(rewards, rates);
-          acc[xChainId] = { rewards, totalValueInUSD };
+          acc[xChainId] = rewards;
           return acc;
         }, {});
       } catch (e) {

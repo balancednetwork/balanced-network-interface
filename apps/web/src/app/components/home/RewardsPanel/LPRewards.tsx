@@ -25,7 +25,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   const account = xAccount?.address;
 
   const { data: lpRewards } = useLPRewards();
-  const rewards = useMemo(() => lpRewards?.[savingsXChainId]?.rewards, [lpRewards, savingsXChainId]);
+  const rewards = useMemo(() => lpRewards?.[savingsXChainId], [lpRewards, savingsXChainId]);
 
   const [isOpen, setOpen] = React.useState(false);
 

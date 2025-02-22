@@ -35,7 +35,7 @@ export default function ClaimLPRewardsModal({ isOpen, onClose }: ModalProps) {
   const savingsXChainId = useSavingsXChainId();
 
   const { data: lpRewards, refetch } = useLPRewards();
-  const rewards = useMemo(() => lpRewards?.[savingsXChainId]?.rewards, [lpRewards, savingsXChainId]);
+  const rewards = useMemo(() => lpRewards?.[savingsXChainId], [lpRewards, savingsXChainId]);
 
   const [isPending, setIsPending] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');

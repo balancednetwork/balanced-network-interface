@@ -36,11 +36,13 @@ import { BalnPreviewInput as SavingsPreviewInput } from '../BBaln/styledComponen
 import SavingsModal from './SavingsModal';
 
 const Savings = () => {
-  const queryClient = useQueryClient();
   const savingsXChainId = useSavingsXChainId();
   const xAccount = useXAccount(getXChainType(savingsXChainId));
 
-  const { data: lockedAmount, refetch } = useXLockedBnUSDAmount(xAccount?.address, savingsXChainId);
+  const { data: lockedAmount, refetch } = useXLockedBnUSDAmount({
+    address: xAccount?.address,
+    xChainId: savingsXChainId,
+  });
 
   const { typedValue, isAdjusting, inputType } = useSavingsSliderState();
   const { onFieldAInput, onSlide, onAdjust: adjust } = useSavingsSliderActionHandlers();

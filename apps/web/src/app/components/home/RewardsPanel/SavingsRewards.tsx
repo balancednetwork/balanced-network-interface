@@ -20,7 +20,7 @@ const SavingsRewards = () => {
   const xAccount = useXAccount(getXChainType(savingsXChainId));
   const { data: savingsRewards } = useUnclaimedRewards();
   const [isOpen, setOpen] = React.useState(false);
-  const { data: lockedAmount } = useXLockedBnUSDAmount(xAccount?.address, savingsXChainId);
+  const { data: lockedAmount } = useXLockedBnUSDAmount({ address: xAccount?.address, xChainId: savingsXChainId });
   const [executionRewards, setExecutionRewards] = React.useState<CurrencyAmount<Token>[] | undefined>(undefined);
 
   const rates = useRatesWithOracle();

@@ -1,10 +1,11 @@
 import { StyledArrowDownIcon } from '@/app/components/DropdownText';
 import { DropdownPopper } from '@/app/components/Popover';
 import { Typography } from '@/app/theme';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { calculateTotal, useLPRewards, useRatesWithOracle } from '@/queries/reward';
 import { useUnclaimedFees } from '@/store/fees/hooks';
 import { useSavingsActionHandlers, useSavingsXChainId, useUnclaimedRewards } from '@/store/savings/hooks';
-import { XChain, xChainMap, xChains } from '@balancednetwork/xwagmi';
+import { XChain, useXLockedBnUSDAmounts, xChainMap, xChains } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import React, { useEffect, useMemo } from 'react';
@@ -39,50 +40,36 @@ const SavingsChainSelector = ({
   const savingsXChainId = useSavingsXChainId();
   const { onSavingsXChainSelection } = useSavingsActionHandlers();
 
+  const signedWallets = useSignedInWallets();
+  const { data: lockedAmounts } = useXLockedBnUSDAmounts(signedWallets);
+
   const { data: lpRewards } = useLPRewards();
   const rates = useRatesWithOracle();
 
   const { data: savingsRewards } = useUnclaimedRewards();
   const { data: feesRewards } = useUnclaimedFees();
 
-  const rewards = useMemo(() => {
-    return xChains.reduce((acc, xChain) => {
+  const rows = useMemo(() => {
+    return xChains.map(({ xChainId }) => {
       let total = new BigNumber(0);
       if (lpRewards) {
-        total = total.plus(calculateTotal(lpRewards[xChain.xChainId] || [], rates) || 0);
+        total = total.plus(calculateTotal(lpRewards[xChainId] || [], rates) || 0);
       }
       if (savingsRewards) {
-        total = total.plus(calculateTotal(savingsRewards[xChain.xChainId] || [], rates) || 0);
+        total = total.plus(calculateTotal(savingsRewards[xChainId] || [], rates) || 0);
       }
-
-      if (xChain.xChainId === '0x1.icon' && feesRewards) {
+      if (xChainId === '0x1.icon' && feesRewards) {
         total = total.plus(calculateTotal(feesRewards, rates) || 0);
       }
 
-      acc[xChain.xChainId] = total;
-      return acc;
-    }, {});
-  }, [lpRewards, savingsRewards, feesRewards, rates]);
-
-  const sortedChains = useMemo(() => {
-    return [...xChains].sort((a: XChain, b: XChain) => {
-      const aRewardAmount = parseFloat(rewards[a.xChainId].toFixed());
-      const bRewardAmount = parseFloat(rewards[b.xChainId].toFixed());
-
-      const aXChainName = xChainMap[a.xChainId].name;
-      const bXChainName = xChainMap[b.xChainId].name;
-      const aXChainNameAscii = aXChainName.charCodeAt(0);
-      const bXChainNameAscii = bXChainName.charCodeAt(0);
-
-      if (aRewardAmount > 0 || bRewardAmount > 0) {
-        if (aRewardAmount === bRewardAmount) return 0;
-        return bRewardAmount > aRewardAmount ? 1 : -1;
-      } else {
-        if (aXChainNameAscii === bXChainNameAscii) return 0;
-        return bXChainNameAscii > aXChainNameAscii ? -1 : 1;
-      }
+      return {
+        xChainId,
+        name: xChainMap[xChainId].name,
+        lockedAmount: lockedAmounts?.[xChainId] ? calculateTotal([lockedAmounts?.[xChainId]], rates) : new BigNumber(0),
+        rewardAmount: total,
+      };
     });
-  }, [rewards]);
+  }, [lockedAmounts, lpRewards, savingsRewards, feesRewards, rates]);
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
@@ -140,13 +127,7 @@ const SavingsChainSelector = ({
             containerOffset={containerRef ? containerRef.getBoundingClientRect().x + 2 : 0}
             strategy="absolute"
           >
-            <ChainList
-              setChainId={setChainWrap}
-              chainId={savingsXChainId}
-              chains={sortedChains}
-              width={width}
-              rewards={rewards}
-            />
+            <ChainList setChainId={setChainWrap} chainId={savingsXChainId} rows={rows} width={width} />
           </DropdownPopper>
         </div>
       </ClickAwayListener>

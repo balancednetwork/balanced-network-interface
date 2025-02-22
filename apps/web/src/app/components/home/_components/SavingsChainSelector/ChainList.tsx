@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { Box, Flex } from 'rebass';
 
@@ -6,38 +6,47 @@ import { ChainLogo } from '@/app/components/ChainLogo';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { StyledHeaderText } from '@/app/pages/trade/bridge/_components/XChainList';
 import { Typography } from '@/app/theme';
-import useSortXPositions from '@/hooks/useSortXPositions';
-import { useHasSignedIn, useSignedInWallets } from '@/hooks/useWallets';
-import { useCollateralType } from '@/store/collateral/hooks';
-import { xChains } from '@balancednetwork/xwagmi';
-import { XChain, XChainId } from '@balancednetwork/xwagmi';
+import { useSignedInWallets } from '@/hooks/useWallets';
+import { XChainId } from '@balancednetwork/xwagmi';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
-import { ChainItemWrap, Grid, ScrollHelper, SelectorWrap } from '../LoanChainSelector/styledComponents';
+import styled from 'styled-components';
+import { ChainItemWrap, ScrollHelper, SelectorWrap } from '../LoanChainSelector/styledComponents';
+
+export const Grid = styled(Box)<{ $isSignedIn?: boolean }>`
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  width: 100%;
+  align-items: center;
+  padding: 8px 0;
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.text};
+
+  &:hover {
+  color: ${({ theme }) => theme.colors.primaryBright};
+  }
+`;
 
 type ChainListProps = {
   chainId: XChainId;
   setChainId: (chain: XChainId) => void;
-  chains?: XChain[];
+  rows: any[];
   width: number | undefined;
-  rewards: Record<XChainId, BigNumber>;
 };
 
 type ChainItemProps = {
-  chain: XChain;
+  chain: any;
   isActive: boolean;
   isLast: boolean;
   setChainId: (chain: XChainId) => void;
-  rewardAmount: BigNumber;
 };
 
-const ChainItem = ({ chain, setChainId, isLast, rewardAmount }: ChainItemProps) => {
+const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const signedInWallets = useSignedInWallets();
   const isSignedIn = signedInWallets.some(wallet => wallet.xChainId === chain.xChainId);
   const isSmall = useMedia('(max-width: 440px)');
-
   return (
     <Grid $isSignedIn={isSignedIn} className={isLast ? '' : 'border-bottom'} onClick={e => setChainId(chain.xChainId)}>
       <ChainItemWrap>
@@ -51,44 +60,85 @@ const ChainItem = ({ chain, setChainId, isLast, rewardAmount }: ChainItemProps) 
           </Typography>
         </Flex>
       </ChainItemWrap>
-      {rewardAmount.gt(0) ? (
+      {chain.lockedAmount.gt(0) ? (
         <Typography
           color="inherit"
-          style={{ transition: 'all ease 0.3s', opacity: rewardAmount.gt(0) ? 1 : 0.75 }}
-          fontSize={rewardAmount.gt(0) ? 14 : 12}
+          style={{ transition: 'all ease 0.3s', opacity: chain.lockedAmount.gt(0) ? 1 : 0.75 }}
+          fontSize={chain.lockedAmount.gt(0) ? 14 : 12}
+          textAlign="right"
         >
-          {rewardAmount.gt(0.01) ? rewardAmount.toFixed(2) : 'Pending'}
+          {chain.lockedAmount.toFixed(2)}
         </Typography>
       ) : (
-        <Typography>-</Typography>
+        <Typography textAlign="right">-</Typography>
+      )}
+      {chain.rewardAmount.gt(0) ? (
+        <Typography
+          color="inherit"
+          style={{ transition: 'all ease 0.3s', opacity: chain.rewardAmount.gt(0) ? 1 : 0.75 }}
+          fontSize={chain.rewardAmount.gt(0) ? 14 : 12}
+          textAlign="right"
+        >
+          {chain.rewardAmount.gt(0.01) ? chain.rewardAmount.toFixed(2) : 'Pending'}
+        </Typography>
+      ) : (
+        <Typography textAlign="right">-</Typography>
       )}
     </Grid>
   );
 };
 
-const ChainList = ({ chainId, setChainId, chains, width, rewards }: ChainListProps) => {
-  const relevantChains = chains || xChains;
+const ChainList = ({ chainId, setChainId, rows, width }: ChainListProps) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const collateralType = useCollateralType();
-  const hasSignedIn = useHasSignedIn();
-  const { sortBy, handleSortSelect, sortData } = useSortXPositions(
-    hasSignedIn ? { key: 'value', order: 'DESC' } : { key: 'symbol', order: 'ASC' },
-    collateralType,
-  );
 
-  const filteredChains = React.useMemo(() => {
-    if (searchQuery === '') return relevantChains;
+  const [sortBy, setSortBy] = useState<{ key: string; order: 'ASC' | 'DESC' }>({ key: 'default', order: 'DESC' });
 
-    return relevantChains.filter(
-      chain =>
-        chain.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        chain.xChainId.toLowerCase().includes(searchQuery.toLowerCase()),
+  const filteredRows = React.useMemo(() => {
+    if (searchQuery === '') return rows;
+
+    return rows.filter(
+      row =>
+        row.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        row.xChainId.toLowerCase().includes(searchQuery.toLowerCase()),
     );
-  }, [relevantChains, searchQuery]);
+  }, [rows, searchQuery]);
 
-  const sortedFilteredChains = React.useMemo(() => {
-    return sortData(filteredChains, collateralType);
-  }, [filteredChains, sortData, collateralType]);
+  const sortedRows = useMemo(() => {
+    if (sortBy.key === 'default') {
+      return [...filteredRows].sort(
+        (a, b) =>
+          b.lockedAmount.comparedTo(a.lockedAmount) ||
+          b.rewardAmount.comparedTo(a.rewardAmount) ||
+          a.name.localeCompare(b.name),
+      );
+    }
+
+    return filteredRows.sort((a, b) => {
+      if (sortBy.key === 'name') {
+        return sortBy.order === 'ASC' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+      }
+      if (sortBy.key === 'savings') {
+        return sortBy.order === 'ASC'
+          ? a.lockedAmount.comparedTo(b.lockedAmount)
+          : b.lockedAmount.comparedTo(a.lockedAmount);
+      }
+      if (sortBy.key === 'rewards') {
+        return sortBy.order === 'ASC'
+          ? a.rewardAmount.comparedTo(b.rewardAmount)
+          : b.rewardAmount.comparedTo(a.rewardAmount);
+      }
+
+      return 0;
+    });
+  }, [filteredRows, sortBy]);
+
+  const handleSortSelect = (key: string, defaultOrder: 'ASC' | 'DESC' = 'ASC') => {
+    if (sortBy.key === key) {
+      setSortBy({ key, order: sortBy.order === 'ASC' ? 'DESC' : 'ASC' });
+    } else {
+      setSortBy({ key, order: defaultOrder });
+    }
+  };
 
   return (
     <SelectorWrap $width={width}>
@@ -103,15 +153,11 @@ const ChainList = ({ chainId, setChainId, chains, width, rewards }: ChainListPro
         }}
       />
       <ScrollHelper>
-        <Flex width="100%" justifyContent="space-between">
+        <Grid>
           <StyledHeaderText
             role="button"
             className={sortBy.key === 'name' ? sortBy.order : ''}
-            onClick={() =>
-              handleSortSelect({
-                key: 'name',
-              })
-            }
+            onClick={() => handleSortSelect('name')}
           >
             <span>
               <Trans>Blockchain</Trans>
@@ -119,30 +165,34 @@ const ChainList = ({ chainId, setChainId, chains, width, rewards }: ChainListPro
           </StyledHeaderText>
           <StyledHeaderText
             role="button"
-            className={sortBy.key === 'position' ? sortBy.order : ''}
-            onClick={() =>
-              handleSortSelect({
-                key: 'position',
-              })
-            }
+            className={sortBy.key === 'savings' ? sortBy.order : ''}
+            onClick={() => handleSortSelect('savings', 'DESC')}
           >
-            <span>
+            <span style={{ textAlign: 'right', width: '100%' }}>
+              <Trans>Savings</Trans>
+            </span>
+          </StyledHeaderText>
+          <StyledHeaderText
+            role="button"
+            className={sortBy.key === 'rewards' ? sortBy.order : ''}
+            onClick={() => handleSortSelect('rewards', 'DESC')}
+          >
+            <span style={{ textAlign: 'right', width: '100%' }}>
               <Trans>Rewards</Trans>
             </span>
           </StyledHeaderText>
-        </Flex>
-        {sortedFilteredChains.map((chainItem, index) => (
+        </Grid>
+        {sortedRows.map((chainItem, index) => (
           <Box key={chainItem.xChainId}>
             <ChainItem
               chain={chainItem}
               isActive={chainId === chainItem.xChainId}
-              isLast={sortedFilteredChains.length === index + 1}
+              isLast={sortedRows.length === index + 1}
               setChainId={setChainId}
-              rewardAmount={rewards[chainItem.xChainId] || new BigNumber(0)}
             />
           </Box>
         ))}
-        {sortedFilteredChains.length === 0 && searchQuery !== '' && (
+        {sortedRows.length === 0 && searchQuery !== '' && (
           <Typography textAlign="center" mt="20px" pb="22px">
             No blockchains found.
           </Typography>

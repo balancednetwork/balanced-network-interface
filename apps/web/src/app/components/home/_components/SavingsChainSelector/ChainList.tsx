@@ -72,11 +72,11 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
       ) : (
         <Typography textAlign="right">-</Typography>
       )}
-      {chain.rewardAmount.gt(0) ? (
+      {chain.rewardAmount.gte(0) ? (
         <Typography
           color="inherit"
-          style={{ transition: 'all ease 0.3s', opacity: chain.rewardAmount.gt(0) ? 1 : 0.75 }}
-          fontSize={chain.rewardAmount.gt(0) ? 14 : 12}
+          style={{ transition: 'all ease 0.3s', opacity: chain.rewardAmount.gte(0) ? 1 : 0.75 }}
+          fontSize={chain.rewardAmount.gte(0) ? 14 : 12}
           textAlign="right"
         >
           {chain.rewardAmount.gt(0.01) ? chain.rewardAmount.toFixed(2) : 'Pending'}

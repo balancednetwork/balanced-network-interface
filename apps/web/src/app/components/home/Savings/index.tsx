@@ -36,10 +36,11 @@ import { BalnPreviewInput as SavingsPreviewInput } from '../BBaln/styledComponen
 import SavingsModal from './SavingsModal';
 
 const Savings = () => {
+  const queryClient = useQueryClient();
   const savingsXChainId = useSavingsXChainId();
   const xAccount = useXAccount(getXChainType(savingsXChainId));
 
-  const { data: lockedAmount, refetch } = useXLockedBnUSDAmount({
+  const { data: lockedAmount } = useXLockedBnUSDAmount({
     address: xAccount?.address,
     xChainId: savingsXChainId,
   });
@@ -273,8 +274,8 @@ const Savings = () => {
         lockedAmount={lockedAmount}
         onSuccess={() => {
           adjust(false);
-          refetch();
-          // queryClient.invalidateQueries({ queryKey: ['xLockedBnUSDAmount'] });
+          queryClient.invalidateQueries({ queryKey: ['xLockedBnUSDAmount'] });
+          queryClient.invalidateQueries({ queryKey: ['xLockedBnUSDAmounts'] });
         }}
       />
     </>

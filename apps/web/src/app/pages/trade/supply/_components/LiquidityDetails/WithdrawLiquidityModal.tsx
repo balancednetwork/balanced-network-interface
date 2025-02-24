@@ -121,7 +121,7 @@ export default function WithdrawLiquidityModal({
   const gasChecker = useXCallGasChecker(pool.xChainId, undefined);
 
   return (
-    <Modal isOpen={isOpen} onDismiss={onClose}>
+    <Modal isOpen={isOpen} onDismiss={handleDismiss}>
       <ModalContent noMessages>
         <Typography textAlign="center" mb={3} as="h3" fontWeight="normal">
           <Trans>Withdraw liquidity?</Trans>
@@ -157,7 +157,7 @@ export default function WithdrawLiquidityModal({
               style={{ overflow: 'hidden' }}
             >
               <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-                <TextButton onClick={onClose}>
+                <TextButton onClick={handleDismiss}>
                   <Trans>{isPending ? 'Close' : 'Cancel'}</Trans>
                 </TextButton>
 
@@ -180,7 +180,7 @@ export default function WithdrawLiquidityModal({
           )}
         </AnimatePresence>
 
-        {!gasChecker.hasEnoughGas && (
+        {!isPending && !gasChecker.hasEnoughGas && (
           <Flex justifyContent="center" paddingY={2}>
             <Typography maxWidth="320px" color="alert" textAlign="center">
               {gasChecker.errorMessage}

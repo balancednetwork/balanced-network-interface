@@ -106,7 +106,7 @@ export default function SuggestStakingLPModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onDismiss={onClose}>
+    <Modal isOpen={isOpen} onDismiss={handleDismiss}>
       <ModalContent noMessages>
         <Flex flexDirection="column" justifyContent="center" alignItems="center" style={{ gap: 6 }}>
           <Typography textAlign="center" mb="5px">
@@ -143,7 +143,7 @@ export default function SuggestStakingLPModal({
               style={{ overflow: 'hidden' }}
             >
               <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-                <TextButton onClick={onClose} fontSize={14}>
+                <TextButton onClick={handleDismiss} fontSize={14}>
                   <Trans>{isPending ? 'Close' : 'Cancel'}</Trans>
                 </TextButton>
                 {isWrongChain ? (
@@ -164,7 +164,7 @@ export default function SuggestStakingLPModal({
             </motion.div>
           )}
         </AnimatePresence>
-        {!gasChecker.hasEnoughGas && (
+        {!isPending && !gasChecker.hasEnoughGas && (
           <Flex justifyContent="center" paddingY={2}>
             <Typography maxWidth="320px" color="alert" textAlign="center">
               {gasChecker.errorMessage}

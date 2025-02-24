@@ -185,7 +185,7 @@ export abstract class XWalletClient {
       JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
     );
 
-    const _inputAmount = inputAmount.multiply(-1);
+    const _inputAmount = convertCurrencyAmount(direction.from, inputAmount.multiply(-1))!;
     return await this._crossTransfer({ account, inputAmount: _inputAmount, destination, data, fee: xCallFee.rollback });
   }
 

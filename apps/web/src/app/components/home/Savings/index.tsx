@@ -250,16 +250,12 @@ const Savings = () => {
             </Flex>
           </>
         ) : !xAccount.address ? (
-          <Flex>
-            <Typography color="primaryBright" mt={6} mb={5}>
-              <UnderlineText onClick={handleConnect}>
-                <Trans>Sign in on {getNetworkDisplayName(savingsXChainId)}</Trans>
-              </UnderlineText>
-            </Typography>
-            <Typography fontSize={14} opacity={0.75} mt={6} mb={5}>
-              <Trans>, then deposit bnUSD to earn rewards.</Trans>
-            </Typography>
-          </Flex>
+          <Typography mt={6} mb={5}>
+            <UnderlineText onClick={handleConnect} style={{ color: '#2fccdc' }}>
+              <Trans>Sign in on {getNetworkDisplayName(savingsXChainId)}</Trans>
+            </UnderlineText>
+            <Trans>, then deposit bnUSD to earn rewards.</Trans>
+          </Typography>
         ) : (
           <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>
             <Trans>Buy or borrow bnUSD, then deposit it here to earn rewards.</Trans>

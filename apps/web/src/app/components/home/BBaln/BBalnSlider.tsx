@@ -758,16 +758,12 @@ export default function BBalnSlider({
           </Typography>
           {simple ? (
             (!account && signedInWallets.length > 0) || savingsXChainId !== '0x1.icon' ? (
-              <Flex>
-                <Typography color="primaryBright">
-                  <UnderlineText onClick={handleConnectICON}>
-                    <Trans>Sign in on ICON</Trans>
-                  </UnderlineText>
-                </Typography>
-                <Typography fontSize={14} opacity={0.75} mb={5}>
-                  <Trans>, then lock up BALN to boost your rewards.</Trans>
-                </Typography>
-              </Flex>
+              <Typography>
+                <UnderlineText onClick={handleConnectICON} style={{ color: '#2fccdc' }}>
+                  <Trans>Sign in on ICON</Trans>
+                </UnderlineText>
+                <Trans>, then lock up BALN to boost your rewards.</Trans>
+              </Typography>
             ) : (
               <Typography fontSize={14} opacity={0.75} mb={5}>
                 <Trans>Earn or buy BALN, then lock it up here to boost your rewards.</Trans>

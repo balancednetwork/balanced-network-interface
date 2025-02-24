@@ -279,16 +279,12 @@ const Savings = () => {
             </Flex>
           </>
         ) : (!account && signedInWallet.length > 0) || savingsXChainId !== '0x1.icon' ? (
-          <Flex>
-            <Typography color="primaryBright" mt={6} mb={5}>
-              <UnderlineText onClick={handleConnectICON}>
-                <Trans>Sign in on ICON</Trans>
-              </UnderlineText>
-            </Typography>
-            <Typography fontSize={14} opacity={0.75} mt={6} mb={5}>
-              <Trans>, then deposit bnUSD to earn rewards.</Trans>
-            </Typography>
-          </Flex>
+          <Typography mt={6} mb={5}>
+            <UnderlineText onClick={handleConnectICON} style={{ color: '#2fccdc' }}>
+              <Trans>Sign in on ICON</Trans>
+            </UnderlineText>
+            <Trans>, then lock up BALN to boost your rewards.</Trans>{' '}
+          </Typography>
         ) : (
           <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>
             <Trans>Buy or borrow bnUSD, then deposit it here to earn rewards.</Trans>

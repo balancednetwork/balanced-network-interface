@@ -193,8 +193,8 @@ const SavingsModal = ({
                     >
                       {isPending
                         ? shouldDeposit
-                          ? t`Depositing bnUSD...`
-                          : t`Withdrawing bnUSD...`
+                          ? t`Depositing bnUSD`
+                          : t`Withdrawing bnUSD`
                         : shouldDeposit
                           ? t`Deposit bnUSD`
                           : t`Withdraw bnUSD`}

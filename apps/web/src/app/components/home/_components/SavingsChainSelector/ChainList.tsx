@@ -57,7 +57,7 @@ const ChainItem = ({ chain, setChainId, isLast, rewardAmount }: ChainItemProps) 
           style={{ transition: 'all ease 0.3s', opacity: rewardAmount.gt(0) ? 1 : 0.75 }}
           fontSize={rewardAmount.gt(0) ? 14 : 12}
         >
-          {rewardAmount.gt(0.01) ? rewardAmount.toFixed(2) : 'Pending'}
+          {rewardAmount.gt(0.01) ? `$${rewardAmount.toFixed(2)}` : 'Pending'}
         </Typography>
       ) : (
         <Typography>-</Typography>

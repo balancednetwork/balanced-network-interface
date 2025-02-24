@@ -164,7 +164,7 @@ export default function SuggestStakingLPModal({
             </motion.div>
           )}
         </AnimatePresence>
-        {!gasChecker.hasEnoughGas && (
+        {!isPending && !gasChecker.hasEnoughGas && (
           <Flex justifyContent="center" paddingY={2}>
             <Typography maxWidth="320px" color="alert" textAlign="center">
               {gasChecker.errorMessage}

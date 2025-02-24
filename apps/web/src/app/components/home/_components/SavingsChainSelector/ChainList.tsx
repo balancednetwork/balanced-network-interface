@@ -67,7 +67,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
           fontSize={chain.lockedAmount.gt(0) ? 14 : 12}
           textAlign="right"
         >
-          {chain.lockedAmount.toFixed(2)}
+          ${chain.lockedAmount.toFixed(2)}
         </Typography>
       ) : (
         <Typography textAlign="right">-</Typography>
@@ -79,7 +79,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
           fontSize={chain.rewardAmount.gte(0) ? 14 : 12}
           textAlign="right"
         >
-          {chain.rewardAmount.gt(0.01) ? chain.rewardAmount.toFixed(2) : 'Pending'}
+          {chain.rewardAmount.gt(0.01) ? `$${chain.rewardAmount.toFixed(2)}` : 'Pending'}
         </Typography>
       ) : (
         <Typography textAlign="right">-</Typography>

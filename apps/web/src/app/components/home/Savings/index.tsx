@@ -19,6 +19,7 @@ import {
 import { useXTokenBalances } from '@/store/wallet/hooks';
 import { escapeRegExp } from '@/utils';
 import {
+  XToken,
   getNetworkDisplayName,
   getXChainType,
   useXAccount,
@@ -29,6 +30,7 @@ import { useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
 
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
 import { formatValue } from '@/utils/formatter';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { useQueryClient } from '@tanstack/react-query';
 import { UnderlineText } from '../../DropdownText';
 import { handleConnectWallet } from '../../WalletModal/WalletItem';
@@ -45,6 +47,11 @@ const Savings = () => {
     xChainId: savingsXChainId,
   });
 
+  const [executionBnUSDDiff, setExecutionBnUSDDiff] = React.useState<BigNumber | undefined>(undefined);
+  const [executionLockedAmount, setExecutionLockedAmount] = React.useState<CurrencyAmount<XToken> | null | undefined>(
+    undefined,
+  );
+
   const { typedValue, isAdjusting, inputType } = useSavingsSliderState();
   const { onFieldAInput, onSlide, onAdjust: adjust } = useSavingsSliderActionHandlers();
   const sliderInstance = React.useRef<any>(null);
@@ -55,8 +62,6 @@ const Savings = () => {
 
   const bnUSD = xTokenMapBySymbol[savingsXChainId]['bnUSD'];
   const [bnUSDBalance] = useXTokenBalances([bnUSD]);
-
-  // console.log('lockedAmount', lockedAmount?.toExact(), 'bnUSDBalance', bnUSDBalance?.toExact());
 
   const toggleOpen = React.useCallback(() => {
     setOpen(!isOpen);
@@ -191,7 +196,15 @@ const Savings = () => {
               {isAdjusting && <TextButton onClick={handleCancel}>{t`Cancel`}</TextButton>}
               <Button
                 fontSize={14}
-                onClick={isAdjusting ? () => toggleOpen() : () => adjust(true)}
+                onClick={
+                  isAdjusting
+                    ? () => {
+                        setExecutionBnUSDDiff(bnUSDDiff);
+                        setExecutionLockedAmount(lockedAmount);
+                        setOpen(true);
+                      }
+                    : () => adjust(true)
+                }
                 disabled={isAdjusting && bnUSDDiff.isEqualTo(0)}
               >
                 {isAdjusting
@@ -266,8 +279,8 @@ const Savings = () => {
       <SavingsModal
         isOpen={isOpen}
         onClose={() => setOpen(false)}
-        bnUSDDiff={bnUSDDiff}
-        lockedAmount={lockedAmount}
+        bnUSDDiff={executionBnUSDDiff || new BigNumber(0)}
+        lockedAmount={executionLockedAmount}
         onSuccess={() => {
           adjust(false);
           queryClient.invalidateQueries({ queryKey: ['xLockedBnUSDAmount'] });

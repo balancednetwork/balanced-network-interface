@@ -127,7 +127,7 @@ const SavingsModal = ({
   return (
     <>
       <Modal isOpen={isOpen} onDismiss={onClose}>
-        <ModalContent>
+        <ModalContent noMessages>
           <Typography textAlign="center" mb="5px">
             {shouldDeposit ? t`Deposit bnUSD?` : t`Withdraw bnUSD?`}
           </Typography>

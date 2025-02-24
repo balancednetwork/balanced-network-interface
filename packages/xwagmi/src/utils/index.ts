@@ -1,3 +1,4 @@
+import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { xChainMap } from '@/constants/xChains';
 import { allXTokens, wICX, xTokenMap } from '@/constants/xTokens';
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
@@ -183,6 +184,9 @@ export const convertCurrency = (xChainId: XChainId, currency: Currency | XToken 
   const token = xTokenMap[xChainId].find(t => t.symbol === currency.symbol)!;
 
   if (!token) {
+    if (xChainId === ICON_XCALL_NETWORK_ID) {
+      return XToken.getXToken(xChainId, currency);
+    }
     throw new Error(`XToken ${currency.symbol} is not supported on ${xChainId}`);
   }
 

@@ -3,7 +3,7 @@ import React, { RefObject, useCallback, useEffect, useMemo, useRef, useState } f
 import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
 import { isMobile } from 'react-device-detect';
-import { Flex } from 'rebass/styled-components';
+import { Box, Flex } from 'rebass/styled-components';
 import styled from 'styled-components';
 
 import { Typography } from '@/app/theme';
@@ -23,6 +23,7 @@ import BigNumber from 'bignumber.js';
 import { ChartControlButton as AssetsTabButton } from '../ChartControl';
 import Column from '../Column';
 import CommunityListToggle from '../CommunityListToggle';
+import CancelSearchButton from './CancelSearchButton';
 import CurrencyList from './CurrencyList';
 import ImportRow from './ImportRow';
 import SearchInput from './SearchInput';
@@ -44,13 +45,20 @@ export enum AssetsTab {
   YOUR = 'your',
 }
 
+export const SearchWrap = styled(Box)`
+  position: relative;
+`;
+
 const FilterWrap = styled(Flex)`
   flex-direction: row;
   flex-wrap: wrap;
   width: 100%;
 
-  & > input {
+  & > ${SearchWrap} {
     flex: 1;
+    input {
+      padding-right: 30px;
+    }
   }
 
   & > button {
@@ -314,16 +322,20 @@ export function CurrencySearch({
   return (
     <Wrapper width={width}>
       <FilterWrap px="25px">
-        <SearchInput
-          type="text"
-          id="token-search-input"
-          placeholder={t`Search assets...`}
-          autoComplete="off"
-          value={searchQuery}
-          ref={inputRef as RefObject<HTMLInputElement>}
-          tabIndex={isMobile ? -1 : 1}
-          onChange={handleInput}
-        />
+        <SearchWrap>
+          <SearchInput
+            type="text"
+            id="token-search-input"
+            placeholder={t`Search assets...`}
+            autoComplete="off"
+            value={searchQuery}
+            ref={inputRef as RefObject<HTMLInputElement>}
+            tabIndex={isMobile ? -1 : 1}
+            onChange={handleInput}
+          />
+          <CancelSearchButton isActive={searchQuery.length > 0} onClick={() => setSearchQuery('')}></CancelSearchButton>
+        </SearchWrap>
+
         {shouldShowXChainFilter && (
           <XChainFilter
             filterItems={sortedXChainFilterItems}

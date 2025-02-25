@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Box, Flex } from 'rebass';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
+import CancelSearchButton from '@/app/components/SearchModal/CancelSearchButton';
+import { SearchWrap } from '@/app/components/SearchModal/CurrencySearch';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { StyledHeaderText } from '@/app/pages/trade/bridge/_components/XChainList';
 import { Typography } from '@/app/theme';
@@ -92,16 +94,20 @@ const ChainList = ({ chainId, setChainId, chains, width, rewards }: ChainListPro
 
   return (
     <SelectorWrap $width={width}>
-      <SearchInput
-        type="text"
-        placeholder={t`Search blockchains...`}
-        autoComplete="off"
-        value={searchQuery}
-        tabIndex={isMobile ? -1 : 1}
-        onChange={e => {
-          setSearchQuery(e.target.value);
-        }}
-      />
+      <SearchWrap>
+        <SearchInput
+          type="text"
+          placeholder={t`Search blockchains...`}
+          autoComplete="off"
+          value={searchQuery}
+          tabIndex={isMobile ? -1 : 1}
+          onChange={e => {
+            setSearchQuery(e.target.value);
+          }}
+        />
+        <CancelSearchButton isActive={searchQuery.length > 0} onClick={() => setSearchQuery('')}></CancelSearchButton>
+      </SearchWrap>
+
       <ScrollHelper>
         <Flex width="100%" justifyContent="space-between">
           <StyledHeaderText

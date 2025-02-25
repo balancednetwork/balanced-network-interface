@@ -11,6 +11,8 @@ import React, { RefObject, useEffect, useRef, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
+import CancelSearchButton from '../SearchModal/CancelSearchButton';
+import { SearchWrap } from '../SearchModal/CurrencySearch';
 import SearchInput from '../SearchModal/SearchInput';
 import MultiChainBalanceItem from './MultiChainBalanceItem';
 import SingleChainBalanceItem from './SingleChainBalanceItem';
@@ -116,16 +118,22 @@ const Wallet = ({ close }: WalletProps) => {
       </WalletMenu>
       <WalletContent>
         <Box px="25px" marginBottom={'15px'}>
-          <SearchInput
-            type="text"
-            id="token-search-input"
-            placeholder={t`Search assets and blockchains...`}
-            autoComplete="off"
-            value={searchQuery}
-            ref={inputRef as RefObject<HTMLInputElement>}
-            tabIndex={isMobile ? -1 : 1}
-            onChange={handleSearchQuery}
-          />
+          <SearchWrap>
+            <SearchInput
+              type="text"
+              id="token-search-input"
+              placeholder={t`Search assets and blockchains...`}
+              autoComplete="off"
+              value={searchQuery}
+              ref={inputRef as RefObject<HTMLInputElement>}
+              tabIndex={isMobile ? -1 : 1}
+              onChange={handleSearchQuery}
+            />
+            <CancelSearchButton
+              isActive={searchQuery.length > 0}
+              onClick={() => setSearchQuery('')}
+            ></CancelSearchButton>
+          </SearchWrap>
         </Box>
         <List>
           <DashGrid>

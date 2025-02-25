@@ -4,12 +4,11 @@ import { Box, Flex } from 'rebass';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
-import { StyledHeaderText } from '@/app/pages/trade/bridge/_components/XChainList';
+import { HeaderText } from '@/app/components/SearchModal/styleds';
 import { Typography } from '@/app/theme';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { XChainId } from '@balancednetwork/xwagmi';
 import { Trans, t } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
 import styled from 'styled-components';
@@ -26,6 +25,13 @@ export const Grid = styled(Box)<{ $isSignedIn?: boolean }>`
 
   &:hover {
   color: ${({ theme }) => theme.colors.primaryBright};
+  }
+`;
+
+export const StyledHeaderText = styled(HeaderText)`
+  font-size: 12px;
+  @media (max-width: 440px) {
+    font-size: 9px;
   }
 `;
 
@@ -54,7 +60,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
           <ChainLogo chain={chain} />
         </Box>
         <Flex flexDirection={isSmall ? 'column' : 'row'} alignItems={'start'}>
-          <Typography fontWeight="bold" fontSize={14} color="inherit" mr={'6px'}>
+          <Typography fontWeight="bold" fontSize={isSmall ? 11 : 14} color="inherit" mr={'6px'}>
             {chain.name}
             <span style={{ fontWeight: 'normal' }}></span>
           </Typography>
@@ -64,7 +70,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
         <Typography
           color="inherit"
           style={{ transition: 'all ease 0.3s', opacity: chain.lockedAmount.gt(0) ? 1 : 0.75 }}
-          fontSize={chain.lockedAmount.gt(0) ? 14 : 12}
+          fontSize={isSmall ? 11 : chain.lockedAmount.gt(0) ? 14 : 12}
           textAlign="right"
         >
           ${chain.lockedAmount.toFixed(2)}
@@ -76,7 +82,7 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
         <Typography
           color="inherit"
           style={{ transition: 'all ease 0.3s', opacity: chain.rewardAmount.gte(0) ? 1 : 0.75 }}
-          fontSize={chain.rewardAmount.gte(0) ? 14 : 12}
+          fontSize={isSmall ? 11 : chain.rewardAmount.gte(0) ? 14 : 12}
           textAlign="right"
         >
           {chain.rewardAmount.gt(0.01) ? `$${chain.rewardAmount.toFixed(2)}` : 'Pending'}

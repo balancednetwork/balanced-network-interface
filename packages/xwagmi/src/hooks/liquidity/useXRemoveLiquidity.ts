@@ -23,9 +23,9 @@ export const useXRemoveLiquidity = () => {
         withdrawAmountA: CurrencyAmount<Token>,
         withdrawAmountB: CurrencyAmount<Token>,
       ) => {
-        const BALN = xTokenMapBySymbol[xChainId]['BALN'];
+        const bnUSD = xTokenMapBySymbol[xChainId]['bnUSD'];
         const inputAmount = CurrencyAmount.fromRawAmount(
-          BALN,
+          bnUSD,
           new BigNumber(withdrawAmount.toFixed())
             .times((10n ** BigInt(withdrawAmount.currency.decimals)).toString())
             .toFixed(0),

@@ -21,9 +21,9 @@ export const useXStakeLPToken = () => {
         tokenA: XToken,
         tokenB: XToken,
       ) => {
-        const BALN = xTokenMapBySymbol[xChainId]['BALN'];
+        const bnUSD = xTokenMapBySymbol[xChainId]['bnUSD'];
         const inputAmount = CurrencyAmount.fromRawAmount(
-          BALN,
+          bnUSD,
           new BigNumber(rawStakeAmount).times((10n ** BigInt(decimals)).toString()).toFixed(0),
         );
         const direction = { from: xChainId, to: ICON_XCALL_NETWORK_ID };

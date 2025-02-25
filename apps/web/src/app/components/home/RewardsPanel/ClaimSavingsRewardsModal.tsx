@@ -90,7 +90,7 @@ export default function ClaimSavingsRewardsModal({ isOpen, onClose, rewards, onS
   const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(savingsXChainId);
   const gasChecker = useXCallGasChecker(savingsXChainId, undefined);
   return (
-    <Modal isOpen={isOpen} onDismiss={onClose}>
+    <Modal isOpen={isOpen} onDismiss={handleDismiss}>
       <ModalContent noMessages>
         <Typography textAlign="center" mb={1}>
           <Trans>Claim Savings Rate rewards?</Trans>
@@ -127,7 +127,7 @@ export default function ClaimSavingsRewardsModal({ isOpen, onClose, rewards, onS
               style={{ overflow: 'hidden' }}
             >
               <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-                <TextButton onClick={onClose} fontSize={14}>
+                <TextButton onClick={handleDismiss} fontSize={14}>
                   <Trans>{isPending ? 'Close' : 'Not now'}</Trans>
                 </TextButton>
                 {isWrongChain ? (

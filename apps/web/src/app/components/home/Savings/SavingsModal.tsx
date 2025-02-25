@@ -126,7 +126,7 @@ const SavingsModal = ({
 
   return (
     <>
-      <Modal isOpen={isOpen} onDismiss={onClose}>
+      <Modal isOpen={isOpen} onDismiss={handleDismiss}>
         <ModalContent noMessages>
           <Typography textAlign="center" mb="5px">
             {shouldDeposit ? t`Deposit bnUSD?` : t`Withdraw bnUSD?`}
@@ -176,7 +176,7 @@ const SavingsModal = ({
                 style={{ overflow: 'hidden' }}
               >
                 <Flex justifyContent="center" mt={4} pt={4} className="border-top" flexWrap={'wrap'}>
-                  <TextButton onClick={onClose} fontSize={14}>
+                  <TextButton onClick={handleDismiss} fontSize={14}>
                     <Trans>{isPending ? 'Close' : 'Cancel'}</Trans>
                   </TextButton>
 

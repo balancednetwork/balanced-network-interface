@@ -899,8 +899,8 @@ msgid "For every bnUSD they redeem, they'll receive ${redeemLimit} of collateral
 msgstr "For every bnUSD they redeem, they'll receive ${redeemLimit} of collateral. The bnUSD is burned, and {redeemRepaidAmt} bnUSD of borrower debt repaid."
 
 #: src/app/components/home/Savings/index.tsx
-msgid ", then deposit bnUSD to earn rewards."
-msgstr ", then deposit bnUSD to earn rewards."
+#~ msgid ", then deposit bnUSD to earn rewards."
+#~ msgstr ", then deposit bnUSD to earn rewards."
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
@@ -998,6 +998,7 @@ msgstr "Lock up Balance Tokens?"
 #: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/SuggestStakingLPModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
@@ -1140,6 +1141,7 @@ msgstr "Unlock {0} BALN"
 #~ msgstr "Borrow bnUSD. Vote. Supply liquidity. Swap & transfer crypto cross-chain."
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/Savings/index.tsx
 msgid ", then lock up BALN to boost your rewards."
 msgstr ", then lock up BALN to boost your rewards."
 
@@ -1379,6 +1381,10 @@ msgstr "less then a minute"
 #: src/store/swap/hooks.ts
 msgid "Validating Stellar account"
 msgstr "Validating Stellar account"
+
+#: src/app/components/home/RewardsPanel/index.tsx
+msgid "No rewards available on {0}."
+msgstr "No rewards available on {0}."
 
 #: src/btp/src/connectors/helper.ts
 #~ msgid "Couldn't transfer {0} to {1}. Try again."
@@ -1985,7 +1991,6 @@ msgstr "BALN staking has been upgraded to a lock-up model called Boosted BALN."
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
-#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Cancel"

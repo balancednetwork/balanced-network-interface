@@ -930,8 +930,8 @@ msgid "For every bnUSD they redeem, they'll receive ${redeemLimit} of collateral
 msgstr ""
 
 #: src/app/components/home/Savings/index.tsx
-msgid ", then deposit bnUSD to earn rewards."
-msgstr ""
+#~ msgid ", then deposit bnUSD to earn rewards."
+#~ msgstr ""
 
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
 #: src/app/pages/trade/bridge/_components/BridgeTransferConfirmModal.tsx
@@ -1037,6 +1037,7 @@ msgstr ""
 #: src/app/pages/trade/supply/_components/LiquidityDetails/StakeLPModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/SuggestStakingLPModal.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawLiquidityModal.tsx
+#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
 #: src/app/pages/trade/xswap/_components/MMSwapModal.tsx
@@ -1179,6 +1180,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/home/BBaln/BBalnSlider.tsx
+#: src/app/components/home/Savings/index.tsx
 msgid ", then lock up BALN to boost your rewards."
 msgstr ""
 
@@ -1417,6 +1419,10 @@ msgstr "menos de un minuto"
 #: src/store/bridge/hooks.tsx
 #: src/store/swap/hooks.ts
 msgid "Validating Stellar account"
+msgstr ""
+
+#: src/app/components/home/RewardsPanel/index.tsx
+msgid "No rewards available on {0}."
 msgstr ""
 
 #: src/btp/src/connectors/helper.ts
@@ -2043,7 +2049,6 @@ msgstr ""
 #: src/app/components/Wallet/ICONWallets/SendPanel.tsx
 #: src/app/components/Wallet/ICONWallets/SICXWallet/UnstakePanel.tsx
 #: src/app/pages/trade/supply/_components/LiquidityDetails/WithdrawPanel.tsx
-#: src/app/pages/trade/supply/_components/SupplyLiquidityModal.tsx
 #: src/app/pages/trade/xswap/_components/SwapModal.tsx
 #: src/app/pages/vote/_components/LieVotingPanel/VotingComponent.tsx
 msgid "Cancel"

@@ -75,7 +75,7 @@ export default function SuggestStakingLPModal({
     }
   }, [isExecuted, slowDismiss]);
 
-  const differenceAmount = new BigNumber(pool.balance.toFixed());
+  const differenceAmount = new BigNumber(pool?.balance?.toFixed() || 0);
 
   const handleConfirm = async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);

@@ -25,7 +25,7 @@ const SavingsRewards = () => {
 
   const rates = useRatesWithOracle();
 
-  const totalRewardInUSD = calculateTotal(savingsRewards?.['0x1.icon'] || [], rates);
+  const totalRewardInUSD = calculateTotal(savingsRewards?.[savingsXChainId] || [], rates);
   const hasRewards = !!savingsRewards && totalRewardInUSD.gt(0);
 
   return (

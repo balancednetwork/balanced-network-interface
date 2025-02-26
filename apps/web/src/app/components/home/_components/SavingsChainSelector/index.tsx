@@ -7,7 +7,9 @@ import { calculateTotal, useLPRewards, useRatesWithOracle } from '@/queries/rewa
 import { useUnclaimedFees } from '@/store/fees/hooks';
 import { useSavingsActionHandlers, useSavingsXChainId, useUnclaimedRewards } from '@/store/savings/hooks';
 import { useTrackedTokenPairs } from '@/store/user/hooks';
-import { useXLockedBnUSDAmounts, xChainMap, xChains } from '@balancednetwork/xwagmi';
+import { useCrossChainWalletBalances, useXTokenBalances } from '@/store/wallet/hooks';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XToken, useXLockedBnUSDAmounts, xChainMap, xChains, xTokenMapBySymbol } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import React, { useCallback, useEffect, useMemo } from 'react';
@@ -52,6 +54,7 @@ const SavingsChainSelector = ({
   );
   const pools = usePools(pairs, accounts);
 
+  const crossChainBalances = useCrossChainWalletBalances();
   const isStaked = useCallback(
     (xChainId: XChainId) => {
       if (!pools) {
@@ -91,14 +94,17 @@ const SavingsChainSelector = ({
         total = new BigNumber(-1);
       }
 
+      const bnUSD = xTokenMapBySymbol[xChainId]['bnUSD']!;
+      const bnUSDBalance: CurrencyAmount<XToken> | undefined = crossChainBalances[xChainId]?.[bnUSD.address];
       return {
         xChainId,
         name: xChainMap[xChainId].name,
         lockedAmount,
         rewardAmount: total,
+        bnUSDBalance,
       };
     });
-  }, [lockedAmounts, lpRewards, savingsRewards, feesRewards, rates, isStaked]);
+  }, [lockedAmounts, lpRewards, savingsRewards, feesRewards, rates, isStaked, crossChainBalances]);
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 

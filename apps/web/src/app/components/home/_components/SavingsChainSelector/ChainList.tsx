@@ -7,7 +7,8 @@ import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { HeaderText } from '@/app/components/SearchModal/styleds';
 import { Typography } from '@/app/theme';
 import { useSignedInWallets } from '@/hooks/useWallets';
-import { XChainId } from '@balancednetwork/xwagmi';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XChainId, XToken } from '@balancednetwork/xwagmi';
 import { Trans, t } from '@lingui/macro';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
@@ -76,7 +77,20 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
           ${chain.lockedAmount.toFixed(2)}
         </Typography>
       ) : (
-        <Typography textAlign="right">-</Typography>
+        <>
+          {chain.bnUSDBalance?.greaterThan(0) ? (
+            <Typography
+              color="inherit"
+              style={{ transition: 'all ease 0.3s', opacity: chain.bnUSDBalance.greaterThan(0) ? 1 : 0.75 }}
+              fontSize={isSmall ? 10 : chain.bnUSDBalance.greaterThan(0) ? 12 : 10}
+              textAlign="right"
+            >
+              ${chain.bnUSDBalance.toFixed(2)} available
+            </Typography>
+          ) : (
+            <Typography textAlign="right">-</Typography>
+          )}
+        </>
       )}
       {chain.rewardAmount.gte(0) ? (
         <Typography
@@ -92,6 +106,13 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
       )}
     </Grid>
   );
+};
+
+const compareCurrencyAmount = (a: CurrencyAmount<XToken> | undefined, b: CurrencyAmount<XToken> | undefined) => {
+  if (!a && !b) return 0;
+  if (!a) return -1;
+  if (!b) return 1;
+  return a.equalTo(b) ? 0 : a.lessThan(b) ? -1 : 1;
 };
 
 const ChainList = ({ chainId, setChainId, rows, width }: ChainListProps) => {
@@ -114,6 +135,7 @@ const ChainList = ({ chainId, setChainId, rows, width }: ChainListProps) => {
       return [...filteredRows].sort(
         (a, b) =>
           b.lockedAmount.comparedTo(a.lockedAmount) ||
+          compareCurrencyAmount(b.bnUSDBalance, a.bnUSDBalance) ||
           b.rewardAmount.comparedTo(a.rewardAmount) ||
           a.name.localeCompare(b.name),
       );
@@ -125,13 +147,17 @@ const ChainList = ({ chainId, setChainId, rows, width }: ChainListProps) => {
       }
       if (sortBy.key === 'savings') {
         return sortBy.order === 'ASC'
-          ? a.lockedAmount.comparedTo(b.lockedAmount)
-          : b.lockedAmount.comparedTo(a.lockedAmount);
+          ? a.lockedAmount.comparedTo(b.lockedAmount) ||
+              compareCurrencyAmount(a.bnUSDBalance, b.bnUSDBalance) ||
+              b.name.localeCompare(a.name)
+          : b.lockedAmount.comparedTo(a.lockedAmount) ||
+              compareCurrencyAmount(b.bnUSDBalance, a.bnUSDBalance) ||
+              a.name.localeCompare(b.name);
       }
       if (sortBy.key === 'rewards') {
         return sortBy.order === 'ASC'
-          ? a.rewardAmount.comparedTo(b.rewardAmount)
-          : b.rewardAmount.comparedTo(a.rewardAmount);
+          ? a.rewardAmount.comparedTo(b.rewardAmount) || b.name.localeCompare(a.name)
+          : b.rewardAmount.comparedTo(a.rewardAmount) || a.name.localeCompare(b.name);
       }
 
       return 0;

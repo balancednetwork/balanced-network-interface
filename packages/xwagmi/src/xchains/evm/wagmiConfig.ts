@@ -1,8 +1,8 @@
 import { http, createConfig } from 'wagmi';
-import { arbitrum, avalanche, avalancheFuji, base, bsc, mainnet, optimism } from 'wagmi/chains';
+import { arbitrum, avalanche, avalancheFuji, base, bsc, mainnet, optimism, polygon } from 'wagmi/chains';
 
 export const wagmiConfig = createConfig({
-  chains: [avalanche, bsc, avalancheFuji, arbitrum, base, optimism],
+  chains: [avalanche, bsc, avalancheFuji, arbitrum, base, optimism, polygon],
   connectors: [],
   transports: {
     [mainnet.id]: http(),
@@ -12,5 +12,6 @@ export const wagmiConfig = createConfig({
     [arbitrum.id]: http(),
     [optimism.id]: http(),
     [base.id]: http(),
+    [polygon.id]: http(),
   },
 });

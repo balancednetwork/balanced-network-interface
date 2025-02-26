@@ -11,8 +11,8 @@ export const useXClaimRewards = () => {
   const xClaimRewards = useMemo(
     () => async (account, xChainId: XChainId) => {
       const direction = { from: xChainId, to: ICON_XCALL_NETWORK_ID };
-      const BALN = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID]['BALN'];
-      const inputAmount = CurrencyAmount.fromRawAmount(BALN, '0');
+      const bnUSD = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID]['bnUSD'];
+      const inputAmount = CurrencyAmount.fromRawAmount(bnUSD, '0');
       const xTransactionInput: XTransactionInput = {
         type: XTransactionType.LP_CLAIM_REWARDS,
         account,

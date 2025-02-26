@@ -263,7 +263,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
               setPendingTx={setPendingTxTokenA}
               isSupplying={isPending}
               executionDepositAmount={executionDepositAmountA}
-              isDisabled={lpXChainId === 'stellar' && (isSendingTokenB || isRemovingTokenB)}
+              isDisabled={isSendingTokenB || isRemovingTokenB}
             />
             <SendRemoveXToken
               field={Field.CURRENCY_B}
@@ -280,7 +280,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
               setPendingTx={setPendingTxTokenB}
               isSupplying={isPending}
               executionDepositAmount={executionDepositAmountB}
-              isDisabled={lpXChainId === 'stellar' && (isSendingTokenA || isRemovingTokenA)}
+              isDisabled={isSendingTokenA || isRemovingTokenA}
             />
           </div>
 

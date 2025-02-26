@@ -355,7 +355,7 @@ const XMessageUpdater = ({ xMessage }: { xMessage: XMessage }) => {
   useEffect(() => {
     const interval = setInterval(() => {
       const now = Date.now();
-      setIsStale(now - createdAt >= 2 * 60 * 1000); // 2mins
+      setIsStale(now - createdAt >= 1 * 60 * 1000); // 1 min
     }, 1000);
 
     return () => clearInterval(interval);

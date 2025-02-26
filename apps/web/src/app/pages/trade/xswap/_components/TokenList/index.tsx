@@ -9,6 +9,8 @@ import Divider from '@/app/components/Divider';
 import DropdownLink from '@/app/components/DropdownLink';
 import { BoxPanel } from '@/app/components/Panel';
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
+import CancelSearchButton from '@/app/components/SearchModal/CancelSearchButton';
+import { SearchWrap } from '@/app/components/SearchModal/CurrencySearch';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { HeaderText } from '@/app/components/SearchModal/styleds';
 import { Typography } from '@/app/theme';
@@ -94,7 +96,10 @@ const TokenList = () => {
           <Trans>Tokens</Trans>
         </Typography>
         <Box width={isSmallScreen ? '100%' : '295px'} mb={isSmallScreen ? '25px' : 0}>
-          <SearchInput value={query} onChange={e => setQuery(e.target.value)} />
+          <SearchWrap>
+            <SearchInput value={query} onChange={e => setQuery(e.target.value)} />
+            <CancelSearchButton isActive={query.length > 0} onClick={() => setQuery('')}></CancelSearchButton>
+          </SearchWrap>
         </Box>
       </Flex>
       <Box overflow="auto">

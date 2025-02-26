@@ -290,12 +290,12 @@ export abstract class XWalletClient {
 
   // lock stable token
   async lockBnUSD(xTransactionInput: XTransactionInput): Promise<string | undefined> {
-    const { account, inputAmount, xCallFee } = xTransactionInput;
+    const { account, inputAmount, xCallFee, direction } = xTransactionInput;
 
     // Depositing bnUSD on spoke chain is the normal process of bnUSD crossTransfer from spoke chain. But the data field shouldn't be empty in this case. Data should contain a rlp encoded value as specified on below code for solana spoke chain:
     const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Savings.address}`;
 
-    const data = getLockData('_lock', {});
+    const data = getLockData('_lock', { to: `${direction.from}/${account}` });
     const hash = await this._crossTransfer({ account, inputAmount, destination, data, fee: xCallFee.rollback });
     return hash;
 

@@ -63,10 +63,6 @@ const Savings = () => {
   const bnUSD = xTokenMapBySymbol[savingsXChainId]['bnUSD'];
   const [bnUSDBalance] = useXTokenBalances([bnUSD]);
 
-  const toggleOpen = React.useCallback(() => {
-    setOpen(!isOpen);
-  }, [isOpen]);
-
   const [typedValueBN, lockedAmountBN] = React.useMemo(() => {
     return [new BigNumber(parseFloat(typedValue)), new BigNumber(lockedAmount?.toFixed() || 0)];
   }, [lockedAmount, typedValue]);

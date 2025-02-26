@@ -255,11 +255,6 @@ export function CurrencySearch({
     [onDismiss, onCurrencySelect],
   );
 
-  // clear the input on open
-  useEffect(() => {
-    if (isOpen) setSearchQuery('');
-  }, [isOpen]);
-
   // manage focus on modal show
   const inputRef = useRef<HTMLInputElement>();
   const handleInput = useCallback(event => {

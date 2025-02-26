@@ -12,7 +12,7 @@ import {
   type IntentServiceConfig,
 } from '../types.js';
 import invariant from 'tiny-invariant';
-import { retry } from '../utils.js';
+import { retry } from '../utils/index.js';
 
 export class SolverApiService {
   private constructor() {}

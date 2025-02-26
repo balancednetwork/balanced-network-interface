@@ -1,16 +1,19 @@
 import type { Chain } from 'viem';
-import { arbitrum } from 'viem/chains';
-import type { ChainConfig, ChainName, EvmChainConfig, SuiChainConfig } from './types.js';
+import { arbitrum, polygon } from 'viem/chains';
+import type { ChainConfig, ChainName, EvmChainConfig, IconChainConfig, SuiChainConfig } from './types.js';
 
 export const DEFAULT_MAX_RETRY = 3;
 export const DEFAULT_RETRY_DELAY_MS = 2000;
+export const ICON_TX_RESULT_WAIT_MAX_RETRY = 10;
 
-export const supportedChains: ChainName[] = ['arb', 'sui'];
+export const supportedChains: ChainName[] = ['arb', 'sui', 'pol'];
 
 export function getEvmViemChain(chainName: ChainName): Chain {
   switch (chainName) {
     case 'arb':
       return arbitrum;
+    case 'pol':
+      return polygon;
     default:
       throw new Error(`Unsupported EVM chain: ${chainName}`);
   }
@@ -58,6 +61,47 @@ export const chainConfig: Record<ChainName, ChainConfig> = {
       },
     ],
   } satisfies EvmChainConfig,
+  ['pol']: {
+    chain: {
+      name: 'pol',
+      type: 'evm',
+    },
+    nid: '0x89.polygon',
+    intentContract: '0xa3e6E49B5eDceb922f3729D2Ef8efd1c42aFFF0e',
+    nativeToken: '0x0000000000000000000000000000000000000000',
+    supportedTokens: [
+      {
+        symbol: 'POL',
+        name: 'Polygon',
+        decimals: 18,
+        address: '0x0000000000000000000000000000000000000000',
+      },
+      {
+        symbol: 'WETH',
+        name: 'Wrapped Ether',
+        decimals: 18,
+        address: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
+      },
+      {
+        symbol: 'USDT',
+        name: 'Tether USD (PoS)',
+        decimals: 6,
+        address: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+      },
+      {
+        symbol: 'USDC',
+        name: 'USD Coin (PoS)',
+        decimals: 6,
+        address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+      },
+      {
+        symbol: 'WPOL',
+        name: 'Wrapped Polygon Ecosystem Token',
+        decimals: 18,
+        address: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+      },
+    ],
+  } satisfies EvmChainConfig,
   ['sui']: {
     chain: {
       name: 'sui',
@@ -100,4 +144,39 @@ export const chainConfig: Record<ChainName, ChainConfig> = {
       },
     ],
   } satisfies SuiChainConfig,
+  ['icon']: {
+    chain: {
+      name: 'icon',
+      type: 'icon',
+    },
+    nid: '0x1.icon',
+    intentContract: 'cx55f6ac86d82a14022c338c8c0033eeceeeab382d',
+    nativeToken: 'cx0000000000000000000000000000000000000000',
+    supportedTokens: [
+      {
+        symbol: 'wICX',
+        name: 'Wrapped ICX',
+        decimals: 18,
+        address: 'cx3975b43d260fb8ec802cef6e60c2f4d07486f11d',
+      },
+      {
+        symbol: 'sICX',
+        name: 'Staked ICX',
+        decimals: 18,
+        address: 'cx2609b924e33ef00b648a409245c7ea394c467824',
+      },
+      {
+        symbol: 'bnUSD',
+        name: 'Balanced Network USD',
+        decimals: 18,
+        address: 'cx88fd7df7ddff82f7cc735c871dc519838cb235bb',
+      },
+      {
+        symbol: 'BALN',
+        name: 'Balance Token',
+        decimals: 18,
+        address: 'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619',
+      },
+    ],
+  } satisfies IconChainConfig,
 } as const;

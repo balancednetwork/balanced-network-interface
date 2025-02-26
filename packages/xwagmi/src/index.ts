@@ -1,7 +1,11 @@
 export * from './actions';
 export * from './constants';
 export * from './core';
+
 export * from './utils';
+export * from './utils/address';
+export * from './utils/zustand';
+
 export * from './xchains/archway';
 export * from './xchains/evm';
 export * from './xchains/havah';
@@ -21,7 +25,10 @@ export type * from './types';
 export * from './xcall/types';
 export type * from './xcall/types';
 
+export type { XChainId, XChainType } from '@balancednetwork/sdk-core';
+
 export { useAccount, useSwitchChain } from 'wagmi';
 export { useSignTransaction, useCurrentAccount, useCurrentWallet, useSuiClient } from '@mysten/dapp-kit';
+export { RLP } from '@ethereumjs/rlp';
 
 export { BASE_FEE, Networks, Operation, TransactionBuilder } from '@stellar/stellar-sdk';

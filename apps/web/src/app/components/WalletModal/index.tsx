@@ -32,6 +32,8 @@ import { useSignedInWallets } from '@/hooks/useWallets';
 import { getXChainType, useSwitchChain, useXDisconnectAll, xChainMap } from '@balancednetwork/xwagmi';
 import Divider from '../Divider';
 import { DropdownPopper } from '../Popover';
+import CancelSearchButton from '../SearchModal/CancelSearchButton';
+import { SearchWrap } from '../SearchModal/CurrencySearch';
 import { EVMWalletModal } from './EVMWalletModal';
 import { InjectiveWalletOptionsModal } from './InjectiveWalletOptionsModal';
 import { SolanaWalletOptionsModal } from './SolanaWalletOptionsModal';
@@ -89,87 +91,83 @@ export default function WalletModal() {
   };
 
   const walletConfig = useMemo(() => {
-    const iconConfig = {
-      name: 'ICON',
-      xChainType: 'ICON',
-      logo: <IconWalletIcon width="32" />,
-      description: t`Borrow, swap, & transfer cross-chain. Supply liquidity. Vote.`,
-      keyWords: ['iconex', 'hana'],
-      xChains: undefined,
-      switchChain: undefined,
-    };
-
     return [
-      iconConfig,
-      ...[
-        {
-          name: 'Ethereum & EVM ecosystem',
-          xChainType: 'EVM',
-          logo: <ETHIcon width="32" />,
-          description: t`Borrow, swap, & transfer cross-chain.`,
-          keyWords: [
-            'evm',
-            'ethereum',
-            'metamask',
-            'rabby',
-            'avalanche',
-            'avax',
-            'bnb',
-            'bsc',
-            'arb',
-            'arbitrum',
-            'optimism',
-            'binance',
-            'base',
-          ],
-          xChains: Object.values(xChainMap)
-            .filter(xChain => getXChainType(xChain.xChainId) === 'EVM' && !xChain.testnet)
-            .sort((a, b) => a.name.localeCompare(b.name)),
-          switchChain: switchChain,
-        },
-        {
-          name: 'Havah',
-          xChainType: 'HAVAH',
-          logo: <HavahWalletIcon width="40" height="40" />,
-          description: t`Swap & transfer cross-chain.`,
-          keyWords: ['iconex', 'hana'],
-        },
-        {
-          name: 'Archway',
-          xChainType: 'ARCHWAY',
-          logo: <ArchWalletIcon width="32" />,
-          description: t`Swap & transfer cross-chain.`,
-          keyWords: ['archway', 'cosmos', 'keplr', 'leap'],
-        },
-        {
-          name: 'Injective',
-          xChainType: 'INJECTIVE',
-          logo: <InjectiveWalletIcon width="40" height="40" />,
-          description: t`Borrow, swap, & transfer cross-chain.`,
-          keyWords: ['injective', 'cosmos', 'keplr', 'leap'],
-        },
-        {
-          name: 'Stellar',
-          xChainType: 'STELLAR',
-          logo: <StellarWalletIcon width="40" height="40" />,
-          description: t`Borrow, swap, & transfer cross-chain.`,
-          keyWords: ['stellar', 'lumens', 'xlm'],
-        },
-        {
-          name: 'Sui',
-          xChainType: 'SUI',
-          logo: <SuiWalletIcon width="40" height="40" />,
-          description: t`Borrow, swap, & transfer cross-chain.`,
-          keyWords: ['sui'],
-        },
-        {
-          name: 'Solana',
-          xChainType: 'SOLANA',
-          logo: <SolanaWalletIcon width="40" height="40" style={{ color: '#000' }} />,
-          description: t`Borrow, swap, & transfer cross-chain.`,
-          keyWords: ['solana'],
-        },
-      ].sort((a, b) => a.name.localeCompare(b.name)),
+      {
+        name: 'Ethereum & EVM chains',
+        xChainType: 'EVM',
+        logo: <ETHIcon width="32" />,
+        description: t`Borrow. Swap. Supply. Earn.`,
+        keyWords: [
+          'evm',
+          'ethereum',
+          'metamask',
+          'rabby',
+          'avalanche',
+          'avax',
+          'bnb',
+          'bsc',
+          'arb',
+          'arbitrum',
+          'optimism',
+          'binance',
+          'base',
+        ],
+        xChains: Object.values(xChainMap)
+          .filter(xChain => getXChainType(xChain.xChainId) === 'EVM' && !xChain.testnet)
+          .sort((a, b) => a.name.localeCompare(b.name)),
+        switchChain: switchChain,
+      },
+      {
+        name: 'ICON',
+        xChainType: 'ICON',
+        logo: <IconWalletIcon width="32" />,
+        description: t`Borrow. Swap. Supply. Earn. Vote.`,
+        keyWords: ['iconex', 'hana'],
+        xChains: undefined,
+        switchChain: undefined,
+      },
+      {
+        name: 'Injective',
+        xChainType: 'INJECTIVE',
+        logo: <InjectiveWalletIcon width="40" height="40" />,
+        description: t`Borrow. Swap. Supply. Earn.`,
+        keyWords: ['injective', 'cosmos', 'keplr', 'leap'],
+      },
+      {
+        name: 'Solana',
+        xChainType: 'SOLANA',
+        logo: <SolanaWalletIcon width="40" height="40" style={{ color: '#000' }} />,
+        description: t`Borrow. Swap. Supply. Earn.`,
+        keyWords: ['solana'],
+      },
+      {
+        name: 'Sui',
+        xChainType: 'SUI',
+        logo: <SuiWalletIcon width="40" height="40" />,
+        description: t`Borrow. Swap. Supply. Earn.`,
+        keyWords: ['sui'],
+      },
+      {
+        name: 'Stellar',
+        xChainType: 'STELLAR',
+        logo: <StellarWalletIcon width="40" height="40" />,
+        description: t`Borrow. Swap. Supply. Earn.`,
+        keyWords: ['stellar', 'lumens', 'xlm'],
+      },
+      {
+        name: 'Archway',
+        xChainType: 'ARCHWAY',
+        logo: <ArchWalletIcon width="32" />,
+        description: t`Swap and supply liquidity.`,
+        keyWords: ['archway', 'cosmos', 'keplr', 'leap'],
+      },
+      {
+        name: 'Havah',
+        xChainType: 'HAVAH',
+        logo: <HavahWalletIcon width="40" height="40" />,
+        description: t`Swap and supply liquidity.`,
+        keyWords: ['iconex', 'hana'],
+      },
     ] as WalletItemProps[];
   }, [switchChain]);
 
@@ -236,14 +234,17 @@ export default function WalletModal() {
             </Box>
           )}
 
-          <StyledSearchInput
-            type="text"
-            value={chainQuery}
-            onChange={handleChainQuery}
-            placeholder="Search blockchains..."
-            style={{ minHeight: '40px' }}
-            tabIndex={isMobile ? -1 : 1}
-          />
+          <SearchWrap>
+            <StyledSearchInput
+              type="text"
+              value={chainQuery}
+              onChange={handleChainQuery}
+              placeholder="Search blockchains..."
+              style={{ minHeight: '40px' }}
+              tabIndex={isMobile ? -1 : 1}
+            />
+            <CancelSearchButton isActive={chainQuery.length > 0} onClick={() => setChainQuery('')}></CancelSearchButton>
+          </SearchWrap>
 
           <SignInOptionsWrap>
             <AnimatePresence>

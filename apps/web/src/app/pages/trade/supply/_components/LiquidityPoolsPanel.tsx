@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
 import { Trans } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Box, Flex } from 'rebass/styled-components';
@@ -10,7 +9,10 @@ import { ChartControlButton, ChartControlGroup } from '@/app/components/ChartCon
 import { BoxPanel } from '@/app/components/Panel';
 import { Typography } from '@/app/theme';
 
+import CancelSearchButton from '@/app/components/SearchModal/CancelSearchButton';
+import { SearchWrap } from '@/app/components/SearchModal/CurrencySearch';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { useMedia } from 'react-use';
 import AllPoolsPanel from './AllPoolsPanel';
 import LiquidityDetails from './LiquidityDetails';
@@ -33,11 +35,12 @@ const Wrapper = styled(Flex)`
 `;
 
 export default function LiquidityPoolsPanel() {
-  const { account } = useIconReact();
   const [panelType, setPanelType] = useState<PanelType>(PanelType.AllPools);
   const theme = useTheme();
   const isSmallScreen = useMedia(`(minWidth: ${theme.mediaWidth.upSmall})`);
   const [query, setQuery] = React.useState('');
+  const signedInWallets = useSignedInWallets();
+  const signedIn = useMemo(() => signedInWallets.length > 0, [signedInWallets]);
 
   const handleSwitch = (v: PanelType) => {
     setPanelType(v);
@@ -46,12 +49,12 @@ export default function LiquidityPoolsPanel() {
   const hasLiquidity = useHasLiquidity();
 
   useEffect(() => {
-    if (account && hasLiquidity) {
+    if (signedIn && hasLiquidity) {
       setPanelType(PanelType.YourPools);
     } else {
       setPanelType(PanelType.AllPools);
     }
-  }, [account, hasLiquidity]);
+  }, [signedIn, hasLiquidity]);
 
   return (
     <BoxPanel bg="bg2" mb={10}>
@@ -61,7 +64,7 @@ export default function LiquidityPoolsPanel() {
             <Trans>Liquidity pools</Trans>
           </Typography>
 
-          {account && hasLiquidity && (
+          {signedIn && hasLiquidity && (
             <ChartControlGroup mb={'-3px'}>
               <ChartControlButton
                 type="button"
@@ -90,7 +93,14 @@ export default function LiquidityPoolsPanel() {
               exit={{ opacity: 0, x: -10 }}
             >
               <Box width={isSmallScreen ? '100%' : '295px'} mb={isSmallScreen ? '25px' : 0} mt={['15px', '15px', '0']}>
-                <SearchInput value={query} onChange={e => setQuery(e.target.value)} style={{ marginBottom: '-10px' }} />
+                <SearchWrap>
+                  <SearchInput
+                    value={query}
+                    onChange={e => setQuery(e.target.value)}
+                    style={{ marginBottom: '-10px' }}
+                  />
+                  <CancelSearchButton isActive={query.length > 0} onClick={() => setQuery('')}></CancelSearchButton>
+                </SearchWrap>
               </Box>
             </motion.div>
           ) : null}

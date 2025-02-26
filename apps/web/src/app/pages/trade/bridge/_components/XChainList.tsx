@@ -4,6 +4,8 @@ import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
 
 import { ChainLogo } from '@/app/components/ChainLogo';
+import CancelSearchButton from '@/app/components/SearchModal/CancelSearchButton';
+import { SearchWrap } from '@/app/components/SearchModal/CurrencySearch';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { HeaderText } from '@/app/components/SearchModal/styleds';
 import { ScrollHelper } from '@/app/components/home/_components/LoanChainSelector/styledComponents';
@@ -161,17 +163,21 @@ const XChainList = ({
 
   return (
     <Box p={'25px 25px 5px'} width={width}>
-      <SearchInput
-        type="text"
-        id="blockchain-search-input"
-        style={{ marginBottom: hasSignedIn ? '15px' : '-10px' }}
-        placeholder={t`Search blockchains...`}
-        tabIndex={isMobile ? -1 : 1}
-        autoComplete="off"
-        value={searchQuery}
-        onChange={handleInputChange}
-        ref={inputRef as React.RefObject<HTMLInputElement>}
-      />
+      <SearchWrap>
+        <SearchInput
+          type="text"
+          id="blockchain-search-input"
+          style={{ marginBottom: hasSignedIn ? '15px' : '-10px' }}
+          placeholder={t`Search blockchains...`}
+          tabIndex={isMobile ? -1 : 1}
+          autoComplete="off"
+          value={searchQuery}
+          onChange={handleInputChange}
+          ref={inputRef as React.RefObject<HTMLInputElement>}
+        />
+        <CancelSearchButton isActive={searchQuery.length > 0} onClick={() => setSearchQuery('')}></CancelSearchButton>
+      </SearchWrap>
+
       <ScrollHelper $height="285px">
         {hasSignedIn ? (
           <Flex width="100%" justifyContent="space-between">

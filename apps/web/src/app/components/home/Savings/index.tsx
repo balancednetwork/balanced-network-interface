@@ -15,20 +15,23 @@ import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import {
   useLockedAmount,
+  useSavingsActionHandlers,
   useSavingsRateInfo,
   useSavingsRatePastMonthPayout,
   useSavingsSliderActionHandlers,
   useSavingsSliderState,
+  useSavingsXChainId,
 } from '@/store/savings/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
 import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
 import { escapeRegExp, parseUnits } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { bnJs, getXChainType, useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
 
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { formatValue } from '@/utils/formatter';
+import { UnderlineText } from '../../DropdownText';
 import { BalnPreviewInput as SavingsPreviewInput } from '../BBaln/styledComponents';
 
 const Savings = () => {
@@ -46,6 +49,7 @@ const Savings = () => {
   const { data: savingsRate } = useSavingsRateInfo();
   const { data: savingsPastMonthPayout } = useSavingsRatePastMonthPayout();
   const signedInWallet = useSignedInWallets();
+  const savingsXChainId = useSavingsXChainId();
 
   const toggleOpen = React.useCallback(() => {
     setOpen(!isOpen);
@@ -153,6 +157,16 @@ const Savings = () => {
     adjust(false);
   };
 
+  const { onSavingsXChainSelection } = useSavingsActionHandlers();
+  const xChainType = getXChainType('0x1.icon');
+  const xConnectors = useXConnectors(xChainType);
+  const xConnect = useXConnect();
+  const handleConnectICON = async () => {
+    if (!xConnectors[0]) return;
+    await xConnect(xConnectors[0]);
+    onSavingsXChainSelection('0x1.icon');
+  };
+
   return (
     <>
       <Box>
@@ -178,7 +192,7 @@ const Savings = () => {
                         <Typography mr={1}>
                           Paid in bnUSD{' '}
                           <span style={{ opacity: 0.75 }}>{`(${savingsRate.percentAPRbnUSD.toFormat(2)}%)`}</span>, sICX{' '}
-                          <span style={{ opacity: 0.75 }}>{`(${savingsRate.percentAPRsICX.toFormat(2)}%)`}</span> and
+                          <span style={{ opacity: 0.75 }}>{`(${savingsRate.percentAPRsICX.toFormat(2)}%)`}</span>, and
                           BALN <span style={{ opacity: 0.75 }}>{`(${savingsRate.percentAPRBALN.toFormat(2)}%)`}</span>.
                         </Typography>
                       )}
@@ -201,7 +215,7 @@ const Savings = () => {
               </QuestionWrapper>
             </Flex>
           </Flex>
-          {account && bnUSDCombinedTotal > 0 && (
+          {savingsXChainId === '0x1.icon' && account && bnUSDCombinedTotal > 0 && (
             <Flex>
               {isAdjusting && <TextButton onClick={handleCancel}>{t`Cancel`}</TextButton>}
               <Button
@@ -220,7 +234,7 @@ const Savings = () => {
             </Flex>
           )}
         </Flex>
-        {account && bnUSDCombinedTotal > 0 ? (
+        {savingsXChainId === '0x1.icon' && account && bnUSDCombinedTotal > 0 ? (
           <>
             <Box margin="25px 0 10px">
               <Nouislider
@@ -264,9 +278,12 @@ const Savings = () => {
               )}
             </Flex>
           </>
-        ) : !account && signedInWallet.length > 0 ? (
-          <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>
-            <Trans>Sign in on ICON, then deposit bnUSD to earn rewards.</Trans>
+        ) : (!account && signedInWallet.length > 0) || savingsXChainId !== '0x1.icon' ? (
+          <Typography mt={6} mb={5}>
+            <UnderlineText onClick={handleConnectICON} style={{ color: '#2fccdc' }}>
+              <Trans>Sign in on ICON</Trans>
+            </UnderlineText>
+            <Trans>, then lock up BALN to boost your rewards.</Trans>{' '}
           </Typography>
         ) : (
           <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>

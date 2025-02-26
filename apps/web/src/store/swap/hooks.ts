@@ -8,7 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { useCheckSolanaAccount } from '@/app/components/SolanaAccountExistenceWarning';
 import { PRICE_IMPACT_SWAP_DISABLED_THRESHOLD } from '@/constants/misc';
-import { SUPPORTED_TOKENS_LIST, useICX, wICX } from '@/constants/tokens';
+import { SUPPORTED_TOKENS_LIST } from '@/constants/tokens';
 import { useAllXTokens } from '@/hooks/Tokens';
 import { useAssetManagerTokens } from '@/hooks/useAssetManagerTokens';
 import { PairState, useV2Pair } from '@/hooks/useV2Pairs';
@@ -264,8 +264,8 @@ export function useDerivedSwapInfo(): {
   const parsedAmount = tryParseAmount(typedValue, (isExactIn ? inputCurrency : outputCurrency) ?? undefined);
   const currencyBalances: { [field in Field]?: CurrencyAmount<XToken> } = React.useMemo(() => {
     return {
-      [Field.INPUT]: inputCurrency ? crossChainWallet[inputCurrency.xChainId]?.[inputCurrency?.address] : undefined,
-      [Field.OUTPUT]: outputCurrency ? crossChainWallet[outputCurrency.xChainId]?.[outputCurrency?.address] : undefined,
+      [Field.INPUT]: inputCurrency ? crossChainWallet[inputCurrency.xChainId]?.[inputCurrency.address] : undefined,
+      [Field.OUTPUT]: outputCurrency ? crossChainWallet[outputCurrency.xChainId]?.[outputCurrency.address] : undefined,
     };
   }, [crossChainWallet, inputCurrency, outputCurrency]);
 
@@ -291,10 +291,12 @@ export function useDerivedSwapInfo(): {
         outputCurrency?.xChainId === '0x1.icon' ? outputCurrency : convertCurrency('0x1.icon', outputCurrency),
     };
   }, [inputCurrency, outputCurrency]);
-  const _parsedAmount = tryParseAmount(
-    typedValue,
-    (isExactIn ? _currencies[Field.INPUT] : _currencies[Field.OUTPUT]) ?? undefined,
+
+  const _parsedAmount = useMemo(
+    () => tryParseAmount(typedValue, (isExactIn ? _currencies[Field.INPUT] : _currencies[Field.OUTPUT]) ?? undefined),
+    [typedValue, isExactIn, _currencies],
   );
+
   const trade1 = useTradeExactIn(isExactIn ? _parsedAmount : undefined, _currencies[Field.OUTPUT], {
     maxHops: undefined,
   });

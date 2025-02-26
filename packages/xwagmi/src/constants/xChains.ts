@@ -1,4 +1,6 @@
-import { XChain, XChainId } from '@/types';
+import { XChainId } from '@balancednetwork/sdk-core';
+
+import { XChain } from '@/types';
 
 export const archway: XChain = {
   id: 'archway-1',
@@ -304,7 +306,7 @@ export const stellar: XChain = {
     bnUSD: 'CCT4ZYIYZ3TUO2AWQFEOFGBZ6HQP3GW5TA37CK7CRZVFRDXYTHTYX7KP',
   },
   autoExecution: true,
-  gasThreshold: 2, // xCall fee: 1.07 XLM
+  gasThreshold: 1, // xCall fee: 0.1 XLM
   testnet: false,
   useXCallScanner: true,
 };
@@ -426,6 +428,7 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   ],
   sui: ['centralized-1', 'centralized-2'],
   solana: ['FMPY4m3kZNvFyoAtc87dCPkPrfJuLFpWyS8sbsWFkGC9'],
+  'archway-1': [],
 };
 
 /** to other chain from icon sources */
@@ -441,4 +444,5 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   stellar: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
   sui: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
   solana: ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
+  'archway-1': [],
 };

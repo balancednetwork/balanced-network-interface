@@ -14,7 +14,7 @@ import { Field } from '@/store/swap/reducer';
 import { formatBigNumber, formatElapsedTime } from '@/utils';
 import { Currency, TradeType } from '@balancednetwork/sdk-core';
 import { Trade } from '@balancednetwork/v1-sdk';
-import { xChainMap } from '@balancednetwork/xwagmi';
+import { isIconTransaction, xChainMap } from '@balancednetwork/xwagmi';
 import { XToken } from '@balancednetwork/xwagmi';
 import { useXCallFee } from '@balancednetwork/xwagmi';
 import { XTransactionInput, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
@@ -164,7 +164,7 @@ const XSwapModal = ({
                   </span>
                 </div>
               )}
-              {xTransactionType !== XTransactionType.SWAP_ON_ICON && (
+              {!isIconTransaction(currentXTransaction?.sourceChainId, currentXTransaction?.finalDestinationChainId) && (
                 <div className="flex justify-between">
                   <span className="text-[#d4c5f9] text-sm font-medium">Bridge Fee</span>
                   <span className="text-white text-sm">{formattedXCallFee}</span>

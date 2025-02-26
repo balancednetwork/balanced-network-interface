@@ -3,29 +3,23 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Currency, Token } from '@balancednetwork/sdk-core';
 
 import useLast from '@/hooks/useLast';
-
 import { XChainId } from '@balancednetwork/xwagmi';
 import Modal from '../Modal';
 import { PopperWithoutArrow } from '../Popover';
-import { CurrencySearch, CurrencySelectionType, SelectorType } from './CurrencySearch';
+import { CurrencySearch, CurrencySelectionType } from './CurrencySearch';
 import { ImportToken } from './ImportToken';
 import { RemoveToken } from './RemoveToken';
 
 interface CurrencySearchModalProps {
-  account?: string | null;
   isOpen: boolean;
   onDismiss: () => void;
   selectedCurrency?: Currency | null;
   onCurrencySelect: (currency: Currency, setDefaultChain?: boolean) => void;
-  onChainSelect?: (chainId: XChainId) => void;
-  showCrossChainBreakdown: boolean;
-  showCurrencyAmount?: boolean;
   currencySelectionType?: CurrencySelectionType;
   width?: number;
   anchorEl?: any;
   showCommunityListControl: boolean;
   xChainId: XChainId;
-  selectorType?: SelectorType;
 }
 
 export enum CurrencyModalView {
@@ -37,20 +31,15 @@ export enum CurrencyModalView {
 }
 
 export default function CurrencySearchModal({
-  account,
   isOpen,
   onDismiss,
   onCurrencySelect,
-  onChainSelect,
   selectedCurrency,
-  currencySelectionType = CurrencySelectionType.NORMAL,
-  showCurrencyAmount = true,
+  currencySelectionType = CurrencySelectionType.TRADE_IN,
   width,
   anchorEl,
   showCommunityListControl,
-  showCrossChainBreakdown,
   xChainId,
-  selectorType,
 }: CurrencySearchModalProps) {
   const [modalView, setModalView] = useState<CurrencyModalView>(CurrencyModalView.manage);
   const lastOpen = useLast(isOpen);
@@ -81,7 +70,6 @@ export default function CurrencySearchModal({
   const closeRemoveView = useCallback(() => {
     setModalView(CurrencyModalView.search);
   }, []);
-  const showManageView = useCallback(() => setModalView(CurrencyModalView.manage), []);
 
   const handleCurrencySelect = useCallback(
     (currency: Currency, setDefaultChain = true) => {
@@ -100,23 +88,20 @@ export default function CurrencySearchModal({
         placement="bottom"
         forcePlacement={true}
         offset={
-          selectorType === SelectorType.SWAP_IN ||
-          selectorType === SelectorType.SWAP_OUT ||
-          selectorType === SelectorType.SUPPLY_QUOTE ||
-          selectorType === SelectorType.SUPPLY_BASE
+          currencySelectionType === CurrencySelectionType.TRADE_IN ||
+          currencySelectionType === CurrencySelectionType.TRADE_OUT ||
+          currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
+          currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE
             ? [0, 35]
             : [0, 10]
         }
       >
         <CurrencySearch
-          account={account}
           isOpen={isOpen}
           onDismiss={onDismiss}
           onCurrencySelect={handleCurrencySelect}
-          onChainSelect={onChainSelect}
           selectedCurrency={selectedCurrency}
           currencySelectionType={currencySelectionType}
-          showCurrencyAmount={showCurrencyAmount}
           showImportView={showImportView}
           setImportToken={setImportToken}
           showRemoveView={showRemoveView}
@@ -124,8 +109,6 @@ export default function CurrencySearchModal({
           width={width}
           showCommunityListControl={showCommunityListControl}
           xChainId={xChainId}
-          showCrossChainBreakdown={showCrossChainBreakdown}
-          selectorType={selectorType}
         />
       </PopperWithoutArrow>
 

@@ -159,3 +159,10 @@ export const FUNDING_TOKENS_LIST = FUNDING_TOKENS[NETWORK_ID];
 export const ORACLE_PRICED_TOKENS = ['USDC', 'USDT'];
 
 export const UNTRADEABLE_TOKENS = ['JitoSOL'];
+
+export const PYTH_PRICED_TOKENS = [
+  {
+    symbol: 'wETH',
+    pythId: 'ff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace',
+  },
+];

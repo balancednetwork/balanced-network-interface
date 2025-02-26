@@ -11,6 +11,7 @@ import { formatUnits } from '@/utils';
 import { bnJs } from '@balancednetwork/xwagmi';
 
 import { ORACLE_PRICED_TOKENS } from '@/constants/tokens';
+import axios from 'axios';
 import { AppState } from '..';
 import { changeOraclePrice } from './reducer';
 

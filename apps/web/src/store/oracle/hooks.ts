@@ -79,23 +79,40 @@ export function useOraclePrices() {
         }
       });
 
-      //get prices based on Pyth oracle
-      if (PYTH_PRICED_TOKENS) {
-        const ids = PYTH_PRICED_TOKENS.map(token => `ids%5B%5D=${token.pythId}`).join(',');
-        const response = await axios.get<{ parsed: { id: string; price: { price: string; expo: number } }[] }>(
-          `https://hermes.pyth.network/v2/updates/price/latest?${ids}`,
+      // Get prices from Pyth oracle if tokens are configured
+      if (PYTH_PRICED_TOKENS.length > 0) {
+        // Create lookup map for faster token matching
+        const pythTokenMap = PYTH_PRICED_TOKENS.reduce(
+          (acc, token) => {
+            acc[token.pythId] = token;
+            return acc;
+          },
+          {} as { [key: string]: (typeof PYTH_PRICED_TOKENS)[0] },
         );
-        const data = response?.data;
 
-        if (data.parsed) {
-          data.parsed.forEach(pythTokenResponse => {
-            const pythToken = PYTH_PRICED_TOKENS.find(t => t.pythId === pythTokenResponse.id);
+        // Build query string once
+        const queryString = PYTH_PRICED_TOKENS.map(token => `ids%5B%5D=${token.pythId}`).join('&');
+
+        try {
+          const { data } = await axios.get<{
+            parsed: Array<{
+              id: string;
+              price: {
+                price: string;
+                expo: number;
+              };
+            }>;
+          }>(`https://hermes.pyth.network/v2/updates/price/latest?${queryString}`);
+
+          // Process price data
+          data.parsed?.forEach(({ id, price }) => {
+            const pythToken = pythTokenMap[id];
             if (pythToken) {
-              result[pythToken.symbol] = new BigNumber(pythTokenResponse.price.price).times(
-                10 ** pythTokenResponse.price.expo,
-              );
+              result[pythToken.symbol] = new BigNumber(price.price).times(10 ** price.expo);
             }
           });
+        } catch (error) {
+          console.error('Failed to fetch Pyth prices:', error);
         }
       }
 

@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
-import { Currency, CurrencyAmount, Fraction, Percent } from '@balancednetwork/sdk-core';
+import Nouislider from '@/packages/nouislider-react';
+import { Currency, CurrencyAmount, Percent } from '@balancednetwork/sdk-core';
+import { XChainId } from '@balancednetwork/xwagmi';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { Box, Flex } from 'rebass/styled-components';
@@ -10,20 +12,18 @@ import { Button } from '@/app/components/Button';
 import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { BrightPanel, SectionPanel } from '@/app/components/Panel';
-import { CurrencySelectionType, SelectorType } from '@/app/components/SearchModal/CurrencySearch';
+import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import { Typography } from '@/app/theme';
-import { BIGINT_ZERO } from '@/constants/misc';
-import { PairState } from '@/hooks/useV2Pairs';
-import { useIconReact } from '@/packages/icon-react';
-import Nouislider from '@/packages/nouislider-react';
+import { PairState, Pool, usePool } from '@/hooks/useV2Pairs';
 import { useWalletModalToggle } from '@/store/application/hooks';
 import { useDerivedMintInfo, useInitialSupplyLoad, useMintActionHandlers, useMintState } from '@/store/mint/hooks';
 import { Field, InputType } from '@/store/mint/reducer';
-import { formatBigNumber, maxAmountSpend } from '@/utils';
+import { maxAmountSpend } from '@/utils';
 import { formatSymbol } from '@/utils/formatter';
-import { XChainId } from '@balancednetwork/xwagmi';
 import LPDescription from './LPDescription';
+import SuggestStakingLPModal from './LiquidityDetails/SuggestStakingLPModal';
 import SupplyLiquidityModal from './SupplyLiquidityModal';
+import WalletSection from './WalletSection';
 
 const Slider = styled(Box)`
   margin-top: 40px;
@@ -32,64 +32,19 @@ const Slider = styled(Box)`
   `}
 `;
 
-function subtract(
-  amountA: CurrencyAmount<Currency> | undefined,
-  amountB: CurrencyAmount<Currency> | undefined,
-): CurrencyAmount<Currency> | undefined {
-  if (!amountA) return undefined;
-  if (!amountB) return amountA;
-  const diff = new Fraction(`${amountA.quotient}`).subtract(new Fraction(`${amountB.quotient}`));
-  return CurrencyAmount.fromRawAmount(amountA.currency, diff.quotient);
-}
-
-function WalletSection() {
-  const { account } = useIconReact();
-  const { currencies, currencyBalances, parsedAmounts } = useDerivedMintInfo();
-
-  const remains: { [field in Field]?: CurrencyAmount<Currency> } = React.useMemo(
-    () => ({
-      [Field.CURRENCY_A]: subtract(currencyBalances[Field.CURRENCY_A], parsedAmounts[Field.CURRENCY_A]),
-      [Field.CURRENCY_B]: subtract(currencyBalances[Field.CURRENCY_B], parsedAmounts[Field.CURRENCY_B]),
-    }),
-    [currencyBalances, parsedAmounts],
-  );
-
-  const formattedRemains: { [field in Field]?: string } = React.useMemo(
-    () => ({
-      [Field.CURRENCY_A]: remains[Field.CURRENCY_A]?.lessThan(BIGINT_ZERO)
-        ? '0'
-        : formatBigNumber(new BigNumber(remains[Field.CURRENCY_A]?.toFixed() || 0), 'currency'),
-      [Field.CURRENCY_B]: remains[Field.CURRENCY_B]?.lessThan(BIGINT_ZERO)
-        ? '0'
-        : formatBigNumber(new BigNumber(remains[Field.CURRENCY_B]?.toFixed() || 0), 'currency'),
-    }),
-    [remains],
-  );
-
-  if (!account) {
-    return null;
-  }
-
-  return (
-    <Flex flexDirection="row" justifyContent="center" alignItems="center">
-      <Typography sx={{ whiteSpace: 'nowrap' }}>
-        {t`Wallet: ${formattedRemains[Field.CURRENCY_A]} ${formatSymbol(currencies[Field.CURRENCY_A]?.symbol)} /
-                      ${formattedRemains[Field.CURRENCY_B]} ${formatSymbol(currencies[Field.CURRENCY_B]?.symbol)}`}
-      </Typography>
-    </Flex>
-  );
-}
-
 export default function LPPanel() {
   useInitialSupplyLoad();
-  const { account } = useIconReact();
   const toggleWalletModal = useWalletModalToggle();
 
   // modal
   const [showSupplyConfirm, setShowSupplyConfirm] = React.useState(false);
+  const [showSuggestStakingLP, setShowSuggestStakingLP] = React.useState(false);
+
+  const [executionPool, setExecutionPool] = React.useState<Pool | undefined>(undefined);
 
   const handleSupplyConfirmDismiss = () => {
     setShowSupplyConfirm(false);
+    setAmounts({ [Field.CURRENCY_A]: undefined, [Field.CURRENCY_B]: undefined });
   };
 
   const [amounts, setAmounts] = React.useState<{ [field in Field]?: CurrencyAmount<Currency> }>({
@@ -109,8 +64,6 @@ export default function LPPanel() {
   };
 
   const { independentField, typedValue, otherTypedValue, inputType } = useMintState();
-  const [crossChainCurrencyA] = React.useState<XChainId>('0x1.icon');
-  const [crossChainCurrencyB] = React.useState<XChainId>('0x1.icon');
   const {
     dependentField,
     parsedAmounts,
@@ -123,13 +76,18 @@ export default function LPPanel() {
     pairState,
     liquidityMinted,
     mintableLiquidity,
+    lpXChainId,
+    account,
     maxAmounts,
   } = useDerivedMintInfo();
-  const { onFieldAInput, onFieldBInput, onSlide, onCurrencySelection } = useMintActionHandlers(noLiquidity);
+  const { onFieldAInput, onFieldBInput, onSlide, onCurrencySelection, onChainSelection } =
+    useMintActionHandlers(noLiquidity);
 
   const sliderInstance = React.useRef<any>(null);
 
   const [{ percent, needUpdate }, setPercent] = React.useState({ percent: 0, needUpdate: false });
+
+  const pool = usePool(pair?.poolId, `${lpXChainId}/${account}`);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   React.useEffect(() => {
@@ -170,7 +128,7 @@ export default function LPPanel() {
         const field = balanceA.multiply(pair?.reserve1).lessThan(balanceB.multiply(pair?.reserve0))
           ? Field.CURRENCY_A
           : Field.CURRENCY_B;
-        onSlide(field, percent !== 0 ? maxAmounts[field]!.multiply(p).toFixed() : '');
+        onSlide(field, percent !== 0 ? maxAmounts[field]?.multiply(p).toFixed() ?? '' : '');
       }
     }
   }, [percent, needUpdate, maxAmounts, onSlide, pair]);
@@ -203,6 +161,7 @@ export default function LPPanel() {
     },
     [maxAmounts, onFieldAInput],
   );
+
   const handleTypeBInput = React.useCallback(
     (typed: string) => {
       if (new BigNumber(typed).isLessThan(maxAmounts[Field.CURRENCY_B]?.toFixed() || 0) || typed === '') {
@@ -235,6 +194,13 @@ export default function LPPanel() {
       : onFieldBInput(maxAmounts[Field.CURRENCY_B]?.multiply(p).toExact() ?? '');
   };
 
+  const handleLPChainSelection = useCallback(
+    (xChainId: XChainId) => {
+      onChainSelection(Field.CURRENCY_A, xChainId);
+    },
+    [onChainSelection],
+  );
+
   return (
     <>
       <SectionPanel bg="bg2">
@@ -256,17 +222,15 @@ export default function LPPanel() {
             <AutoColumn gap="md">
               <Flex>
                 <CurrencyInputPanel
-                  account={account}
                   value={formattedAmounts[Field.CURRENCY_A]}
                   currencySelectionType={CurrencySelectionType.TRADE_MINT_BASE}
                   currency={currencies[Field.CURRENCY_A]}
                   onUserInput={handleTypeAInput}
                   onCurrencySelect={handleCurrencyASelect}
                   onPercentSelect={handlePercentSelect(Field.CURRENCY_A)}
-                  xChainId={'0x1.icon'}
+                  xChainId={currencies[Field.CURRENCY_A]?.xChainId}
+                  onChainSelect={handleLPChainSelection}
                   showCrossChainOptions={true}
-                  showCrossChainBreakdown={false}
-                  selectorType={SelectorType.SUPPLY_BASE}
                 />
               </Flex>
             </AutoColumn>
@@ -274,17 +238,15 @@ export default function LPPanel() {
             <AutoColumn gap="md">
               <Flex>
                 <CurrencyInputPanel
-                  account={account}
                   value={formattedAmounts[Field.CURRENCY_B]}
                   currencySelectionType={CurrencySelectionType.TRADE_MINT_QUOTE}
                   currency={currencies[Field.CURRENCY_B]}
                   onUserInput={handleTypeBInput}
                   onCurrencySelect={handleCurrencyBSelect}
                   onPercentSelect={handlePercentSelect(Field.CURRENCY_B)}
-                  xChainId={'0x1.icon'}
+                  xChainId={currencies[Field.CURRENCY_B]?.xChainId}
                   showCrossChainOptions={true}
-                  showCrossChainBreakdown={false}
-                  selectorType={SelectorType.SUPPLY_QUOTE}
+                  onChainSelect={handleLPChainSelection}
                 />
               </Flex>
             </AutoColumn>
@@ -317,8 +279,8 @@ export default function LPPanel() {
           )}
           {pairState === PairState.EXISTS &&
             account &&
-            maxAmountSpend(currencyBalances[Field.CURRENCY_A])?.greaterThan(0n) &&
-            maxAmountSpend(currencyBalances[Field.CURRENCY_B])?.greaterThan(0n) && (
+            maxAmountSpend(currencyBalances[Field.CURRENCY_A])?.greaterThan(0) &&
+            maxAmountSpend(currencyBalances[Field.CURRENCY_B])?.greaterThan(0) && (
               <Slider mt={5}>
                 <Nouislider
                   start={[0]}
@@ -362,9 +324,20 @@ export default function LPPanel() {
         onClose={handleSupplyConfirmDismiss}
         parsedAmounts={amounts}
         currencies={currencies}
-        AChain={crossChainCurrencyA}
-        BChain={crossChainCurrencyB}
+        onSuccess={() => {
+          setAmounts({ [Field.CURRENCY_A]: undefined, [Field.CURRENCY_B]: undefined });
+          setExecutionPool(pool);
+          setShowSuggestStakingLP(true);
+        }}
       />
+
+      {executionPool && (
+        <SuggestStakingLPModal
+          isOpen={showSuggestStakingLP}
+          onClose={() => setShowSuggestStakingLP(false)}
+          pool={executionPool}
+        />
+      )}
     </>
   );
 }

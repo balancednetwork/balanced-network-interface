@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js';
 
 import { Typography } from '@/app/theme';
 import { useTokenPrices } from '@/queries/backendv2';
+import { formatBalance } from '@/utils/formatter';
 
 const RewardTokenItem = ({ reward }: { reward: CurrencyAmount<Token> }) => {
   const { data: prices } = useTokenPrices();
@@ -13,7 +14,7 @@ const RewardTokenItem = ({ reward }: { reward: CurrencyAmount<Token> }) => {
   return (
     <>
       <Typography color="text1" textAlign="right">
-        {reward.toFixed(2, { groupSeparator: ',' })}
+        {formatBalance(reward.toExact(), price?.toFixed())}
       </Typography>
       <Typography color="text2">{reward.currency.symbol}</Typography>
       <Typography color="text1" textAlign="right">

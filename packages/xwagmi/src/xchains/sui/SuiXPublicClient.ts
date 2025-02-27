@@ -1,6 +1,7 @@
+import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
+
 import { XPublicClient } from '@/core/XPublicClient';
-import { XChainId, XToken } from '@/types';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { XToken } from '@/types';
 import { TransactionStatus, XCallEvent, XTransactionInput } from '../../xcall/types';
 import { SuiXService } from './SuiXService';
 

@@ -1,4 +1,4 @@
-import { XChainType } from './xChain';
+import { XChainType } from '@balancednetwork/sdk-core';
 
 export type XAccount = {
   address: string | undefined;
@@ -12,9 +12,6 @@ export type XConnection = {
 
 export type CurrencyKey = string;
 
-export * from './xChain';
-export * from './xToken';
-
 export enum WalletId {
   METAMASK = 'metamask',
   HANA = 'hana',
@@ -23,3 +20,6 @@ export enum WalletId {
   KEPLR = 'keplr',
   HAVAH = 'havah',
 }
+
+export * from './xChain';
+export * from './xToken';

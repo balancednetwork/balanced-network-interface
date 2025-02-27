@@ -4,7 +4,7 @@ import { WalletState } from '@/store/wallet/reducer';
 import { formatSymbol } from '@/utils/formatter';
 import { getXTokenAddress, isXToken } from '@/utils/xTokens';
 import { Currency } from '@balancednetwork/sdk-core';
-import { SUPPORTED_XCALL_CHAINS } from '@balancednetwork/xwagmi';
+import { SUPPORTED_XCALL_CHAINS, convertCurrency } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useState } from 'react';
@@ -22,19 +22,20 @@ const getXCurrencyBalance = (
   if (!xBalances) return;
 
   if (selectedChainId) {
-    return new BigNumber(xBalances[selectedChainId]?.[currency.wrapped.address]?.toFixed() || 0);
+    const xToken = convertCurrency(selectedChainId, currency)!;
+    return new BigNumber(xBalances[selectedChainId]?.[xToken.address]?.toFixed() || 0);
   } else {
     if (isXToken(currency)) {
       return SUPPORTED_XCALL_CHAINS.reduce((sum, xChainId) => {
         if (xBalances[xChainId]) {
-          const tokenAddress = getXTokenAddress(xChainId, currency.wrapped.symbol);
+          const tokenAddress = getXTokenAddress(xChainId, currency.symbol);
           const balance = new BigNumber(xBalances[xChainId]?.[tokenAddress ?? -1]?.toFixed() || 0);
           sum = sum.plus(balance);
         }
         return sum;
       }, new BigNumber(0));
     } else {
-      return new BigNumber(xBalances['0x1.icon']?.[currency.wrapped.address]?.toFixed() || 0);
+      return new BigNumber(xBalances['0x1.icon']?.[currency.address]?.toFixed() || 0);
     }
   }
 };

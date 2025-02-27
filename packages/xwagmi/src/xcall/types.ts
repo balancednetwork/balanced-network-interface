@@ -49,6 +49,11 @@ export enum XTransactionType {
   LP_STAKE = 'lp_stake',
   LP_UNSTAKE = 'lp_unstake',
   LP_CLAIM_REWARDS = 'lp_claim_rewards',
+
+  // savings
+  SAVINGS_LOCK_BNUSD = 'savings_lock_bnusd',
+  SAVINGS_UNLOCK_BNUSD = 'savings_unlock_bnusd',
+  SAVINGS_CLAIM_REWARDS = 'savings_claim_rewards',
 }
 
 export enum XMessageStatus {

@@ -12,9 +12,9 @@ import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
-import { useLPRewards } from '@/queries/reward';
 import { useSavingsXChainId } from '@/store/savings/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import {
   ICON_XCALL_NETWORK_ID,
   XTransactionStatus,
@@ -22,20 +22,19 @@ import {
   getXChainType,
   useXAccount,
   useXCallFee,
-  useXClaimRewards,
+  useXClaimSavingsRewards,
   useXTransactionStore,
 } from '@balancednetwork/xwagmi';
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
+  rewards?: CurrencyAmount<Token>[];
+  onSuccess?: () => void;
 }
 
-export default function ClaimLPRewardsModal({ isOpen, onClose }: ModalProps) {
+export default function ClaimSavingsRewardsModal({ isOpen, onClose, rewards, onSuccess }: ModalProps) {
   const savingsXChainId = useSavingsXChainId();
-
-  const { data: lpRewards, refetch } = useLPRewards();
-  const rewards = useMemo(() => lpRewards?.[savingsXChainId], [lpRewards, savingsXChainId]);
 
   const [isPending, setIsPending] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
@@ -65,18 +64,18 @@ export default function ClaimLPRewardsModal({ isOpen, onClose }: ModalProps) {
   useEffect(() => {
     if (isExecuted) {
       slowDismiss();
-      refetch();
+      onSuccess?.();
     }
-  }, [isExecuted, slowDismiss, refetch]);
+  }, [isExecuted, slowDismiss, onSuccess]);
 
   const xAccount = useXAccount(getXChainType(savingsXChainId));
-  const xClaimRewards = useXClaimRewards();
+  const xClaimSavingsRewards = useXClaimSavingsRewards();
 
   const handleClaim = async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
     try {
       setIsPending(true);
-      const txHash = await xClaimRewards(xAccount.address, savingsXChainId);
+      const txHash = await xClaimSavingsRewards(xAccount.address, savingsXChainId);
       if (txHash) setPendingTx(txHash);
       else setIsPending(false);
     } catch (error) {
@@ -94,7 +93,7 @@ export default function ClaimLPRewardsModal({ isOpen, onClose }: ModalProps) {
     <Modal isOpen={isOpen} onDismiss={handleDismiss}>
       <ModalContent noMessages>
         <Typography textAlign="center" mb={1}>
-          <Trans>Claim liquidity rewards?</Trans>
+          <Trans>Claim Savings Rate rewards?</Trans>
         </Typography>
 
         <Flex flexDirection="column" alignItems="center" mt={2}>
@@ -150,7 +149,7 @@ export default function ClaimLPRewardsModal({ isOpen, onClose }: ModalProps) {
           )}
         </AnimatePresence>
 
-        {!isPending && !gasChecker.hasEnoughGas && (
+        {!gasChecker.hasEnoughGas && (
           <Flex justifyContent="center" paddingY={2}>
             <Typography maxWidth="320px" color="alert" textAlign="center">
               {gasChecker.errorMessage}

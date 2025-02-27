@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
 import { CurrencyAmount, Token, XChainId } from '@balancednetwork/sdk-core';
@@ -10,9 +10,10 @@ import { SUPPORTED_TOKENS_MAP_BY_ADDRESS, bnUSD } from '@/constants/tokens';
 import { useTokenPrices } from '@/queries/backendv2';
 import { useSupportedCollateralTokens } from '@/store/collateral/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { ICON_XCALL_NETWORK_ID, bnJs, xTokenMap } from '@balancednetwork/xwagmi';
 
 import { NETWORK_ID } from '@/constants/config';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { AppState } from '..';
 import { useBlockDetails } from '../application/hooks';
 import { Field } from '../loan/reducer';
@@ -129,27 +130,41 @@ export function useSavingsSliderActionHandlers() {
     onAdjust,
   };
 }
-
-export function useUnclaimedRewards(): UseQueryResult<CurrencyAmount<Token>[] | undefined> {
-  const { account } = useIconReact();
+export function useUnclaimedRewards(): UseQueryResult<Partial<Record<XChainId, CurrencyAmount<Token>[]>>> {
+  const signedWallets = useSignedInWallets();
+  const accounts = useMemo(
+    () => signedWallets.filter(wallet => wallet.address).map(wallet => `${wallet.xChainId}/${wallet.address}`),
+    [signedWallets],
+  );
 
   return useQuery({
-    queryKey: ['savingsRewards', account],
+    queryKey: ['savingsRewards', accounts],
     queryFn: async () => {
-      if (!account) return;
+      try {
+        const allRewards = await Promise.all(
+          accounts.map(async account => {
+            const xChainId = account.split('/')[0];
+            const address = account.split('/')[1];
+            const res = await bnJs.Savings.getUnclaimedRewards(xChainId === '0x1.icon' ? address : account);
+            return { account, res };
+          }),
+        );
 
-      const rewardsRaw = await bnJs.Savings.getUnclaimedRewards(account);
-
-      const rewards = Object.entries(rewardsRaw).reduce((acc, cur) => {
-        const [address, rawAmount] = cur;
-        acc.push(CurrencyAmount.fromRawAmount(SUPPORTED_TOKENS_MAP_BY_ADDRESS[address], rawAmount as string));
-        return acc;
-      }, [] as CurrencyAmount<Token>[]);
-
-      return rewards;
+        return allRewards.reduce((acc, { account, res }) => {
+          const xChainId = account.split('/')[0];
+          const rewards = Object.entries(res).map(([address, amount]) => {
+            const currency = xTokenMap[ICON_XCALL_NETWORK_ID].find(token => token.address === address);
+            return CurrencyAmount.fromRawAmount(currency, amount as string);
+          });
+          acc[xChainId] = rewards;
+          return acc;
+        }, {});
+      } catch (e) {
+        console.log(e);
+      }
     },
     placeholderData: keepPreviousData,
-    enabled: !!account,
+    enabled: !!accounts && accounts.length > 0,
     refetchInterval: 5000,
   });
 }

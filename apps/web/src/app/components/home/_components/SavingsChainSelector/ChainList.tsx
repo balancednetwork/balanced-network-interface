@@ -13,7 +13,7 @@ import { Trans, t } from '@lingui/macro';
 import { isMobile } from 'react-device-detect';
 import { useMedia } from 'react-use';
 import styled from 'styled-components';
-import { ChainItemWrap, ScrollHelper, SelectorWrap } from '../LoanChainSelector/styledComponents';
+import { ChainItemWrap, SelectorWrap } from '../LoanChainSelector/styledComponents';
 
 export const Grid = styled(Box)<{ $isSignedIn?: boolean }>`
   display: grid;
@@ -33,6 +33,18 @@ export const StyledHeaderText = styled(HeaderText)`
   font-size: 12px;
   @media (max-width: 440px) {
     font-size: 10px;
+  }
+`;
+
+export const ScrollHelper = styled(Box)<{ $height?: string }>`
+  max-height: ${({ $height }) => ($height ? $height : '280px')}; 
+  overflow: auto; 
+  padding: 0 20px;
+  margin: 15px -20px 0 !important;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
   }
 `;
 

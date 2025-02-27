@@ -128,8 +128,15 @@ export const useLPRewards = (): UseQueryResult<LPRewards | undefined> => {
 
         const allRewards = await Promise.all(
           accounts.map(async account => {
-            const res = await bnJs.Rewards.getRewards(account);
-            return { account, res };
+            const xChainId = account.split('/')[0];
+            try {
+              const res = await bnJs.Rewards.getRewards(account);
+              // console.log('res', xChainId, res);
+              return { account, res };
+            } catch (e) {
+              // console.log('error', xChainId, account, e);
+              return { account, res: {} };
+            }
           }),
         );
 

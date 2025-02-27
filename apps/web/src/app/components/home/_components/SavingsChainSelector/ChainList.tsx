@@ -90,11 +90,14 @@ const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
         </Typography>
       ) : (
         <>
-          {chain.bnUSDBalance?.greaterThan(0) ? (
+          {chain.bnUSDBalance?.greaterThan(1) ? (
             <Typography
               color="inherit"
-              style={{ transition: 'all ease 0.3s', opacity: chain.bnUSDBalance.greaterThan(0) ? 1 : 0.75 }}
-              fontSize={isSmall ? 10 : chain.bnUSDBalance.greaterThan(0) ? 12 : 10}
+              style={{
+                transition: 'all ease 0.3s',
+                opacity: chain.bnUSDBalance.greaterThan(1) ? 1 : 0.75,
+              }}
+              fontSize={isSmall ? 10 : chain.bnUSDBalance.greaterThan(1) ? 12 : 10}
               textAlign="right"
             >
               ${chain.bnUSDBalance.toFixed(2)} available

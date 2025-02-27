@@ -74,36 +74,38 @@ const SavingsChainSelector = ({
   const { data: feesRewards } = useUnclaimedFees();
 
   const rows = useMemo(() => {
-    return xChains.map(({ xChainId }) => {
-      const lockedAmount = lockedAmounts?.[xChainId]
-        ? calculateTotal([lockedAmounts?.[xChainId]], rates)
-        : new BigNumber(0);
-      let total = new BigNumber(0);
-      if (lpRewards) {
-        total = total.plus(calculateTotal(lpRewards[xChainId] || [], rates) || 0);
-      }
-      if (savingsRewards) {
-        total = total.plus(calculateTotal(savingsRewards[xChainId] || [], rates) || 0);
-      }
-      if (xChainId === '0x1.icon' && feesRewards) {
-        total = total.plus(calculateTotal(feesRewards, rates) || 0);
-      }
+    return xChains
+      .filter(chain => chain.xChainId !== 'archway-1' && chain.xChainId !== '0x100.icon')
+      .map(({ xChainId }) => {
+        const lockedAmount = lockedAmounts?.[xChainId]
+          ? calculateTotal([lockedAmounts?.[xChainId]], rates)
+          : new BigNumber(0);
+        let total = new BigNumber(0);
+        if (lpRewards) {
+          total = total.plus(calculateTotal(lpRewards[xChainId] || [], rates) || 0);
+        }
+        if (savingsRewards) {
+          total = total.plus(calculateTotal(savingsRewards[xChainId] || [], rates) || 0);
+        }
+        if (xChainId === '0x1.icon' && feesRewards) {
+          total = total.plus(calculateTotal(feesRewards, rates) || 0);
+        }
 
-      // if (no staked lp tokens and no locked amount and less than 0.01, set -1)
-      if (!isStaked(xChainId) && !lockedAmount.gt(0) && total.lt(0.01)) {
-        total = new BigNumber(-1);
-      }
+        // if (no staked lp tokens and no locked amount and less than 0.01, set -1)
+        if (!isStaked(xChainId) && !lockedAmount.gt(0) && total.lt(0.01)) {
+          total = new BigNumber(-1);
+        }
 
-      const bnUSD = xTokenMapBySymbol[xChainId]['bnUSD']!;
-      const bnUSDBalance: CurrencyAmount<XToken> | undefined = crossChainBalances[xChainId]?.[bnUSD.address];
-      return {
-        xChainId,
-        name: xChainMap[xChainId].name,
-        lockedAmount,
-        rewardAmount: total,
-        bnUSDBalance,
-      };
-    });
+        const bnUSD = xTokenMapBySymbol[xChainId]['bnUSD']!;
+        const bnUSDBalance: CurrencyAmount<XToken> | undefined = crossChainBalances[xChainId]?.[bnUSD.address];
+        return {
+          xChainId,
+          name: xChainMap[xChainId].name,
+          lockedAmount,
+          rewardAmount: total,
+          bnUSDBalance,
+        };
+      });
   }, [lockedAmounts, lpRewards, savingsRewards, feesRewards, rates, isStaked, crossChainBalances]);
 
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);

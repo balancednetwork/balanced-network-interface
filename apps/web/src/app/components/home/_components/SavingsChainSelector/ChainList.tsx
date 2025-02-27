@@ -130,7 +130,7 @@ const compareCurrencyAmount = (a: CurrencyAmount<XToken> | undefined, b: Currenc
 const ChainList = ({ chainId, setChainId, rows, width }: ChainListProps) => {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const [sortBy, setSortBy] = useState<{ key: string; order: 'ASC' | 'DESC' }>({ key: 'default', order: 'DESC' });
+  const [sortBy, setSortBy] = useState<{ key: string; order: 'ASC' | 'DESC' }>({ key: 'savings', order: 'DESC' });
 
   const filteredRows = React.useMemo(() => {
     if (searchQuery === '') return rows;
@@ -143,16 +143,6 @@ const ChainList = ({ chainId, setChainId, rows, width }: ChainListProps) => {
   }, [rows, searchQuery]);
 
   const sortedRows = useMemo(() => {
-    if (sortBy.key === 'default') {
-      return [...filteredRows].sort(
-        (a, b) =>
-          b.lockedAmount.comparedTo(a.lockedAmount) ||
-          compareCurrencyAmount(b.bnUSDBalance, a.bnUSDBalance) ||
-          b.rewardAmount.comparedTo(a.rewardAmount) ||
-          a.name.localeCompare(b.name),
-      );
-    }
-
     return filteredRows.sort((a, b) => {
       if (sortBy.key === 'name') {
         return sortBy.order === 'ASC' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
@@ -161,15 +151,23 @@ const ChainList = ({ chainId, setChainId, rows, width }: ChainListProps) => {
         return sortBy.order === 'ASC'
           ? a.lockedAmount.comparedTo(b.lockedAmount) ||
               compareCurrencyAmount(a.bnUSDBalance, b.bnUSDBalance) ||
+              a.rewardAmount.comparedTo(b.rewardAmount) ||
               b.name.localeCompare(a.name)
           : b.lockedAmount.comparedTo(a.lockedAmount) ||
               compareCurrencyAmount(b.bnUSDBalance, a.bnUSDBalance) ||
+              b.rewardAmount.comparedTo(a.rewardAmount) ||
               a.name.localeCompare(b.name);
       }
       if (sortBy.key === 'rewards') {
         return sortBy.order === 'ASC'
-          ? a.rewardAmount.comparedTo(b.rewardAmount) || b.name.localeCompare(a.name)
-          : b.rewardAmount.comparedTo(a.rewardAmount) || a.name.localeCompare(b.name);
+          ? a.rewardAmount.comparedTo(b.rewardAmount) ||
+              a.lockedAmount.comparedTo(b.lockedAmount) ||
+              compareCurrencyAmount(a.bnUSDBalance, b.bnUSDBalance) ||
+              b.name.localeCompare(a.name)
+          : b.rewardAmount.comparedTo(a.rewardAmount) ||
+              b.lockedAmount.comparedTo(a.lockedAmount) ||
+              compareCurrencyAmount(b.bnUSDBalance, a.bnUSDBalance) ||
+              a.name.localeCompare(b.name);
       }
 
       return 0;

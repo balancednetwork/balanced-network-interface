@@ -59,6 +59,7 @@ export const icon: XChain = {
   name: 'ICON',
   xChainId: '0x1.icon',
   xChainType: 'ICON',
+  intentChainId: 'icon',
   tracker: { tx: 'https://tracker.icon.community/transaction' },
   nativeCurrency: {
     decimals: 18,

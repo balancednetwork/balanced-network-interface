@@ -1,3 +1,6 @@
+import { NETWORK_ID } from '@/constants/config';
+import { useIconReact } from '@/packages/icon-react';
+import { CHAIN_INFO } from '@balancednetwork/balanced-js';
 import {
   EvmXService,
   XToken,
@@ -8,13 +11,15 @@ import {
 } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
-import { EvmProvider, SuiProvider } from 'icon-intents-sdk';
+import { EvmProvider, IconProvider, SuiProvider } from 'icon-intents-sdk';
+import IconService, { HttpProvider } from 'icon-sdk-js';
 
 const useIntentProvider = (currency?: XToken): UseQueryResult<EvmProvider | SuiProvider | null> => {
   const evmXService = useXService('EVM') as unknown as EvmXService;
   const suiClient = useSuiClient();
   const { currentWallet: suiWallet } = useCurrentWallet();
   const suiAccount = useCurrentAccount();
+  const { account: iconAccount } = useIconReact();
 
   async function getProvider() {
     if (!currency) return null;
@@ -31,6 +36,13 @@ const useIntentProvider = (currency?: XToken): UseQueryResult<EvmProvider | SuiP
     } else if (chain.xChainType === 'SUI') {
       // @ts-ignore
       return new SuiProvider({ client: suiClient, wallet: suiWallet, account: suiAccount });
+    } else if (chain.xChainType === 'ICON' && iconAccount) {
+      return new IconProvider({
+        iconService: new IconService(new HttpProvider(CHAIN_INFO[NETWORK_ID].APIEndpoint)),
+        iconDebugRpcUrl: CHAIN_INFO[NETWORK_ID].debugAPIEndpoint as `http${string}`,
+        http: new HttpProvider(CHAIN_INFO[NETWORK_ID].APIEndpoint),
+        wallet: iconAccount as `hx${string}`,
+      });
     }
 
     return null;

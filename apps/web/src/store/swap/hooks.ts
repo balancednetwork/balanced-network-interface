@@ -505,39 +505,48 @@ export interface MMTrade {
   uuid: string;
 }
 
-export function useMMTrade(inputAmount: CurrencyAmount<XToken> | undefined, outputCurrency: XToken | undefined) {
+export function useMMTrade(
+  queriedCurrencyAmount: CurrencyAmount<XToken> | undefined,
+  otherCurrency: XToken | undefined,
+  quoteType: 'exact_input' | 'exact_output',
+) {
   return useQuery<MMTrade | undefined>({
-    queryKey: ['quote', inputAmount, outputCurrency],
+    queryKey: ['quote', queriedCurrencyAmount, otherCurrency],
     queryFn: async () => {
-      if (!inputAmount || !outputCurrency) {
+      if (!queriedCurrencyAmount || !otherCurrency) {
         return;
       }
 
+      const isExactInput = quoteType === 'exact_input';
+
       const res = await intentService.getQuote({
-        token_src: inputAmount.currency.address,
-        token_src_blockchain_id: inputAmount.currency.xChainId,
-        token_dst: outputCurrency.address,
-        token_dst_blockchain_id: outputCurrency.xChainId,
-        amount: inputAmount.quotient,
-        quote_type: 'exact_input',
+        token_src: isExactInput ? queriedCurrencyAmount.currency.address : otherCurrency.address,
+        token_src_blockchain_id: isExactInput ? queriedCurrencyAmount.currency.xChainId : otherCurrency.xChainId,
+        token_dst: isExactInput ? otherCurrency.address : queriedCurrencyAmount.currency.address,
+        token_dst_blockchain_id: isExactInput ? otherCurrency.xChainId : queriedCurrencyAmount.currency.xChainId,
+        amount: queriedCurrencyAmount.quotient,
+        quote_type: quoteType,
       });
 
       if (res.ok) {
-        const outputAmount = CurrencyAmount.fromRawAmount(outputCurrency, BigInt(res.value.quoted_amount ?? 0));
+        const quoteAmount = CurrencyAmount.fromRawAmount(
+          isExactInput ? otherCurrency : queriedCurrencyAmount.currency,
+          BigInt(res.value.quoted_amount ?? 0),
+        );
 
         return {
-          inputAmount: inputAmount,
-          outputAmount: outputAmount,
-          executionPrice: new Price({ baseAmount: inputAmount, quoteAmount: outputAmount }),
+          inputAmount: isExactInput ? queriedCurrencyAmount : quoteAmount,
+          outputAmount: isExactInput ? quoteAmount : queriedCurrencyAmount,
+          executionPrice: new Price({ baseAmount: queriedCurrencyAmount, quoteAmount: quoteAmount }),
           uuid: res.value.uuid,
-          fee: outputAmount.multiply(new Fraction(3, 1_000)),
+          fee: quoteAmount.multiply(new Fraction(3, 1_000)),
         };
       }
 
       return;
     },
     refetchInterval: 10_000,
-    enabled: !!inputAmount && !!outputCurrency,
+    enabled: !!queriedCurrencyAmount && !!otherCurrency,
   });
 }
 
@@ -559,19 +568,26 @@ export function useDerivedMMTradeInfo(trade: Trade<Currency, Currency, TradeType
     typedValue,
   } = useSwapState();
 
+  const tradeType = independentField === Field.INPUT ? 'exact_input' : 'exact_output';
+  const isExactInput = tradeType === 'exact_input';
+
   // assume independentField is Field.Input
   const mmTradeQuery = useMMTrade(
-    independentField === Field.INPUT ? tryParseAmount(typedValue, inputCurrency) : undefined,
-    outputCurrency,
+    tryParseAmount(typedValue, isExactInput ? inputCurrency : outputCurrency),
+    isExactInput ? outputCurrency : inputCurrency,
+    tradeType,
   );
 
   // compare mmTradeQuery result and trade
   const mmTrade = mmTradeQuery.data;
 
   const swapOutput = convert(outputCurrency, trade?.outputAmount);
+  const swapInput = convert(inputCurrency, trade?.inputAmount);
 
   return {
-    isMMBetter: mmTrade?.outputAmount && (swapOutput ? mmTrade.outputAmount.greaterThan(swapOutput) : true),
+    isMMBetter: isExactInput
+      ? mmTrade?.outputAmount && (swapOutput ? mmTrade.outputAmount.greaterThan(swapOutput) : true)
+      : mmTrade?.inputAmount && (swapInput ? mmTrade.inputAmount.lessThan(swapInput) : true),
     trade: mmTrade,
   };
 }

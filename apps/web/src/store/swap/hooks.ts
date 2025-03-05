@@ -518,20 +518,18 @@ export function useMMTrade(inputAmount: CurrencyAmount<XToken> | undefined, outp
         token_src_blockchain_id: inputAmount.currency.xChainId,
         token_dst: outputCurrency.address,
         token_dst_blockchain_id: outputCurrency.xChainId,
-        src_amount: inputAmount.quotient,
+        amount: inputAmount.quotient,
+        quote_type: 'exact_input',
       });
 
       if (res.ok) {
-        const outputAmount = CurrencyAmount.fromRawAmount(
-          outputCurrency,
-          BigInt(res.value.output.expected_output ?? 0),
-        );
+        const outputAmount = CurrencyAmount.fromRawAmount(outputCurrency, BigInt(res.value.quoted_amount ?? 0));
 
         return {
           inputAmount: inputAmount,
           outputAmount: outputAmount,
           executionPrice: new Price({ baseAmount: inputAmount, quoteAmount: outputAmount }),
-          uuid: res.value.output.uuid,
+          uuid: res.value.uuid,
           fee: outputAmount.multiply(new Fraction(3, 1_000)),
         };
       }

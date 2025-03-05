@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
-import { EvmProvider, SuiProvider } from '@balancednetwork/intents-sdk';
 import { EvmXService, useCurrentAccount, useCurrentWallet, useSuiClient, useXService } from '@balancednetwork/xwagmi';
+import { EvmProvider, SuiProvider } from 'icon-intents-sdk';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
 

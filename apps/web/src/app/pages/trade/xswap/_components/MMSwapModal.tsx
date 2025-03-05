@@ -26,7 +26,6 @@ import {
 } from '@/store/transactions/useMMTransactionStore';
 import { formatBigNumber, shortenAddress } from '@/utils';
 import { getNetworkDisplayName } from '@/utils/xTokens';
-import { ChainName, CreateIntentOrderPayload, SolverApiService } from '@balancednetwork/intents-sdk';
 import {
   EvmXService,
   XToken,
@@ -37,6 +36,7 @@ import {
   xChainMap,
 } from '@balancednetwork/xwagmi';
 import { AnimatePresence, motion } from 'framer-motion';
+import { ChainName, CreateIntentOrderPayload, SolverApiService } from 'icon-intents-sdk';
 import { WriteContractErrorType } from 'viem';
 
 type MMSwapModalProps = {

@@ -1,4 +1,3 @@
-import { EvmProvider, SuiProvider } from '@balancednetwork/intents-sdk';
 import {
   EvmXService,
   XToken,
@@ -9,6 +8,7 @@ import {
 } from '@balancednetwork/xwagmi';
 import { xChainMap } from '@balancednetwork/xwagmi';
 import { UseQueryResult, useQuery } from '@tanstack/react-query';
+import { EvmProvider, SuiProvider } from 'icon-intents-sdk';
 
 const useIntentProvider = (currency?: XToken): UseQueryResult<EvmProvider | SuiProvider | null> => {
   const evmXService = useXService('EVM') as unknown as EvmXService;

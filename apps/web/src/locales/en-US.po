@@ -2122,8 +2122,8 @@ msgstr "Swap fee (included):"
 #~ msgstr "To deposit {collateralType} from {0},"
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
-msgid "Search token..."
-msgstr "Search token..."
+#~ msgid "Search token..."
+#~ msgstr "Search token..."
 
 #: src/store/mint/hooks.tsx
 #: src/store/mint/hooks.tsx
@@ -2864,6 +2864,7 @@ msgid "Create pool"
 msgstr "Create pool"
 
 #: src/app/components/CollateralTypeSwitcher/CollateralTypeListWrap.tsx
+#: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "Search assets..."
 msgstr "Search assets..."
 

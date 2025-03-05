@@ -2184,8 +2184,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/app/components/SearchModal/CurrencySearch.tsx
-msgid "Search token..."
-msgstr ""
+#~ msgid "Search token..."
+#~ msgstr ""
 
 #: src/store/mint/hooks.tsx
 #: src/store/mint/hooks.tsx
@@ -2931,6 +2931,7 @@ msgid "Create pool"
 msgstr "Pool aanmaken"
 
 #: src/app/components/CollateralTypeSwitcher/CollateralTypeListWrap.tsx
+#: src/app/components/SearchModal/CurrencySearch.tsx
 msgid "Search assets..."
 msgstr ""
 

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { EvmProvider, SuiProvider } from '@balancednetwork/intents-sdk';
 import { EvmXService, useCurrentAccount, useCurrentWallet, useSuiClient, useXService } from '@balancednetwork/xwagmi';
+import { EvmProvider, SuiProvider } from 'icon-intents-sdk';
 
 import { intentService } from '@/lib/intent';
 import { MMTransaction, MMTransactionActions } from '@/store/transactions/useMMTransactionStore';

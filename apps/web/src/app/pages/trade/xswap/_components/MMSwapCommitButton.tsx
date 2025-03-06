@@ -46,7 +46,7 @@ const UseMMDerivedInfo = (
     error = error ?? t`Enter amount`;
   }
 
-  const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], parsedAmount];
+  const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], trade?.inputAmount];
 
   // decimal scales are different for different chains for the same token
   if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {

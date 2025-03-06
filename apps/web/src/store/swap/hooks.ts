@@ -529,17 +529,19 @@ export function useMMTrade(
       });
 
       if (res.ok) {
-        const quoteAmount = CurrencyAmount.fromRawAmount(
-          isExactInput ? otherCurrency : queriedCurrencyAmount.currency,
-          BigInt(res.value.quoted_amount ?? 0),
-        );
+        const quoteAmount = CurrencyAmount.fromRawAmount(otherCurrency, BigInt(res.value.quoted_amount ?? 0));
+
+        // For exact_input: queriedCurrencyAmount is input, quoteAmount is output
+        // For exact_output: quoteAmount is input, queriedCurrencyAmount is output
+        const inputAmount = isExactInput ? queriedCurrencyAmount : quoteAmount;
+        const outputAmount = isExactInput ? quoteAmount : queriedCurrencyAmount;
 
         return {
-          inputAmount: isExactInput ? queriedCurrencyAmount : quoteAmount,
-          outputAmount: isExactInput ? quoteAmount : queriedCurrencyAmount,
-          executionPrice: new Price({ baseAmount: queriedCurrencyAmount, quoteAmount: quoteAmount }),
+          inputAmount,
+          outputAmount,
+          executionPrice: new Price({ baseAmount: inputAmount, quoteAmount: outputAmount }),
           uuid: res.value.uuid,
-          fee: quoteAmount.multiply(new Fraction(3, 1_000)),
+          fee: outputAmount.multiply(new Fraction(3, 1_000)),
         };
       }
 

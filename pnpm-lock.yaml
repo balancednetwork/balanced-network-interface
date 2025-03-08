@@ -533,8 +533,8 @@ importers:
         specifier: 2.11.0
         version: 2.11.0
       icon-intents-sdk:
-        specifier: 1.0.0-rc3
-        version: 1.0.0-rc3(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@6.0.5)(zod@3.23.8)
+        specifier: 1.0.0-rc4
+        version: 1.0.0-rc4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@6.0.5)(zod@3.23.8)
       icon-sdk-js:
         specifier: 1.5.3
         version: 1.5.3
@@ -8672,8 +8672,8 @@ packages:
   icon-intents-sdk@1.0.0-rc1:
     resolution: {integrity: sha512-xQVppCSjVyZzCabopEF/9NUaJKQQbBA6PlBtibO/EyyUZnjidXnO8jEmNddwXu5yPfUGc/wUe9F3ER7JnxAS3w==}
 
-  icon-intents-sdk@1.0.0-rc3:
-    resolution: {integrity: sha512-D6R991+Jc+WLt3plIs8dl8bRa5faiDhPPmL6vgQ1WsNSBWb/F5zlftQGR49VIwcfaLpKPMLBdYd1o8m4i/qpHA==}
+  icon-intents-sdk@1.0.0-rc4:
+    resolution: {integrity: sha512-VvYt3QXlD8wr5jFzVovbuKpq8gSr+X2Uo6/IFsvySGZd1/IpPzD14Hv+ewrZtu3G+HoxH3mLaK8v3hhIoFWM0w==}
 
   icon-sdk-js@1.5.3:
     resolution: {integrity: sha512-ghs/jwsFfitOuK4yiEpF87mdLrhMyWv61CzDIb0mEAr4Yaw8VrVVrjTIxriWL8RzRHzluIhkU+1PApa2iodu5A==}
@@ -26189,7 +26189,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  icon-intents-sdk@1.0.0-rc3(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@6.0.5)(zod@3.23.8):
+  icon-intents-sdk@1.0.0-rc4(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@6.0.5)(zod@3.23.8):
     dependencies:
       '@mysten/sui': 1.18.0(typescript@5.5.4)
       '@mysten/wallet-standard': 0.13.20(typescript@5.5.4)

@@ -25,6 +25,7 @@ import {
   useMMTransactionStore,
 } from '@/store/transactions/useMMTransactionStore';
 import { formatBigNumber, shortenAddress } from '@/utils';
+import { formatSymbol } from '@/utils/formatter';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 import {
   EvmXService,
@@ -135,8 +136,8 @@ const MMSwapModal = ({
       toAddress: recipient, // destination address where funds are transfered to (toChain)
       fromChain: intentFromChainName,
       toChain: intentToChainName,
-      token: currencies[Field.INPUT]?.address,
-      toToken: currencies[Field.OUTPUT]?.address,
+      token: currencies[Field.INPUT]?.wrapped.address,
+      toToken: currencies[Field.OUTPUT]?.wrapped.address,
       amount: trade.inputAmount.quotient,
       toAmount: trade.outputAmount.quotient,
     };
@@ -147,6 +148,7 @@ const MMSwapModal = ({
         console.error('Invalid provider');
         return;
       }
+
       const intentHash = await intentService.createIntentOrder(order, intentProvider);
 
       setOrderStatus(IntentOrderStatus.Executing);
@@ -219,14 +221,14 @@ const MMSwapModal = ({
       <ModalContent noMessages={isProcessing} noCurrencyBalanceErrorMessage>
         <Typography textAlign="center" mb="5px" as="h3" fontWeight="normal">
           <Trans>
-            Swap {currencies[Field.INPUT]?.symbol} for {currencies[Field.OUTPUT]?.symbol}?
+            Swap {formatSymbol(currencies[Field.INPUT]?.symbol)} for {formatSymbol(currencies[Field.OUTPUT]?.symbol)}?
           </Trans>
         </Typography>
 
         <Typography variant="p" fontWeight="bold" textAlign="center" color="text">
           <Trans>
-            {`${trade?.executionPrice.toSignificant(6)} ${trade?.executionPrice.quoteCurrency.symbol} 
-              per ${trade?.executionPrice.baseCurrency.symbol}`}
+            {`${trade?.executionPrice.toSignificant(6)} ${formatSymbol(trade?.executionPrice.quoteCurrency.symbol)} 
+              per ${formatSymbol(trade?.executionPrice.baseCurrency.symbol)}`}
           </Trans>
         </Typography>
 
@@ -267,7 +269,8 @@ const MMSwapModal = ({
         <Typography textAlign="center">
           <Trans>Swap fee (included):</Trans>{' '}
           <strong>
-            {formatBigNumber(new BigNumber(trade?.fee.toFixed() || 0), 'currency')} {trade?.fee.currency.symbol}
+            {formatBigNumber(new BigNumber(trade?.fee.toFixed() || 0), 'currency')}{' '}
+            {formatSymbol(trade?.fee.currency.symbol)}
           </strong>
         </Typography>
 

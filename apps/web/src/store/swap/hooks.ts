@@ -575,16 +575,16 @@ export function useDerivedMMTradeInfo(trade: Trade<Currency, Currency, TradeType
 
   // assume independentField is Field.Input
   const mmTradeQuery = useMMTrade(
-    tryParseAmount(typedValue, isExactInput ? inputCurrency : outputCurrency),
-    isExactInput ? outputCurrency : inputCurrency,
+    tryParseAmount(typedValue, isExactInput ? inputCurrency?.wrapped : outputCurrency?.wrapped),
+    isExactInput ? outputCurrency?.wrapped : inputCurrency?.wrapped,
     tradeType,
   );
 
   // compare mmTradeQuery result and trade
   const mmTrade = mmTradeQuery.data;
 
-  const swapOutput = convert(outputCurrency, trade?.outputAmount);
-  const swapInput = convert(inputCurrency, trade?.inputAmount);
+  const swapOutput = convert(outputCurrency?.wrapped, trade?.outputAmount);
+  const swapInput = convert(inputCurrency?.wrapped, trade?.inputAmount);
 
   return {
     isMMBetter: isExactInput

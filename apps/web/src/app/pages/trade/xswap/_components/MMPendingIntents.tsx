@@ -16,7 +16,7 @@ import {
   MMTransactionStatus,
   useMMTransactionStore,
 } from '@/store/transactions/useMMTransactionStore';
-import { formatBalance } from '@/utils/formatter';
+import { formatBalance, formatSymbol } from '@/utils/formatter';
 
 export default function MMPendingIntents() {
   const { transactions } = useMMTransactionStore();
@@ -125,12 +125,12 @@ function PendingIntent({ transaction }: { transaction: MMTransaction }) {
       <Typography textAlign="center">
         <strong>
           {formatBalance(transaction.fromAmount.toFixed(), rates?.[transaction.fromAmount.currency.symbol]?.toFixed())}{' '}
-          {transaction.fromAmount.currency.symbol}
+          {formatSymbol(transaction.fromAmount.currency.symbol)}
         </strong>{' '}
         for{' '}
         <strong>
           {formatBalance(transaction.toAmount.toFixed(), rates?.[transaction.toAmount.currency.symbol]?.toFixed())}{' '}
-          {transaction.toAmount.currency.symbol}
+          {formatSymbol(transaction.toAmount.currency.symbol)}
         </strong>
       </Typography>{' '}
       |{' '}

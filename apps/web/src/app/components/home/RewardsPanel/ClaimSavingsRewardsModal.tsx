@@ -128,7 +128,7 @@ export default function ClaimSavingsRewardsModal({ isOpen, onClose, rewards, onS
             >
               <Flex justifyContent="center" mt={4} pt={4} className="border-top">
                 <TextButton onClick={handleDismiss} fontSize={14}>
-                  <Trans>{isPending ? 'Close' : 'Not now'}</Trans>
+                  <Trans>{isPending ? 'Close' : 'Cancel'}</Trans>
                 </TextButton>
                 {isWrongChain ? (
                   <Button onClick={handleSwitchChain} fontSize={14}>

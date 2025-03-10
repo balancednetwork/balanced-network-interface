@@ -44,7 +44,7 @@ const RewardsPanel = () => {
   const savingsXChainId = useSavingsXChainId();
 
   const account = useXAccount(getXChainType(savingsXChainId));
-  const hasAnyKindOfRewards = useHasAnyKindOfRewards();
+  const hasAnyKindOfRewards = useHasAnyKindOfRewards(savingsXChainId);
 
   const handleSetGlobalTooltip = React.useCallback((shouldShow: boolean) => {
     setGlobalTooltip(shouldShow);

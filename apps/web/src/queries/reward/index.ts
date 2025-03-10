@@ -103,43 +103,48 @@ export const useLPRewards = (): UseQueryResult<Partial<Record<XChainId, Currency
       try {
         if (!accounts || accounts.length === 0) return {};
 
-        // const cds = accounts.map(account => {
-        //   return {
-        //     target: bnJs.Rewards.address,
-        //     method: 'getRewards',
-        //     params: [account],
-        //   };
-        // });
+        const cds = accounts.map(account => {
+          return {
+            target: bnJs.Rewards.address,
+            method: 'getRewards',
+            params: [account],
+          };
+        });
+        const rawRewards = await bnJs.Multicall.getAggregateData(cds);
 
-        // console.log('cds', cds);
-
-        // const rawRewards = await bnJs.Multicall.getAggregateData(cds);
-
-        // console.log('rawRewards', rawRewards);
-
-        const allRewards = await Promise.all(
-          accounts.map(async account => {
-            const xChainId = account.split('/')[0];
-            try {
-              const res = await bnJs.Rewards.getRewards(account);
-              // console.log('res', xChainId, res);
-              return { account, res };
-            } catch (e) {
-              // console.log('error', xChainId, account, e);
-              return { account, res: {} };
-            }
-          }),
-        );
-
-        return allRewards.reduce((acc, { account, res }) => {
+        return accounts.reduce((acc, account, index) => {
           const xChainId = account.split('/')[0];
-          const rewards = Object.entries(res).map(([address, amount]) => {
+          const rewards = Object.entries(rawRewards[index]).map(([address, amount]) => {
             const currency = xTokenMap[ICON_XCALL_NETWORK_ID].find(token => token.address === address);
             return CurrencyAmount.fromRawAmount(currency, amount as string);
           });
           acc[xChainId] = rewards;
           return acc;
         }, {});
+
+        // const allRewards = await Promise.all(
+        //   accounts.map(async account => {
+        //     const xChainId = account.split('/')[0];
+        //     try {
+        //       const res = await bnJs.Rewards.getRewards(account);
+        //       // console.log('res', xChainId, res);
+        //       return { account, res };
+        //     } catch (e) {
+        //       // console.log('error', xChainId, account, e);
+        //       return { account, res: {} };
+        //     }
+        //   }),
+        // );
+
+        // return allRewards.reduce((acc, { account, res }) => {
+        //   const xChainId = account.split('/')[0];
+        //   const rewards = Object.entries(res).map(([address, amount]) => {
+        //     const currency = xTokenMap[ICON_XCALL_NETWORK_ID].find(token => token.address === address);
+        //     return CurrencyAmount.fromRawAmount(currency, amount as string);
+        //   });
+        //   acc[xChainId] = rewards;
+        //   return acc;
+        // }, {});
       } catch (e) {
         console.log('error', e);
         return {};

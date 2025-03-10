@@ -119,7 +119,7 @@ export default function BBalnSlider({
   const [tooltipHovered, setTooltipHovered] = useState(false);
   const signedInWallets = useSignedInWallets();
   const { data: pastMonthFees } = usePastMonthFeesDistributed();
-  const hasAnyKindOfRewards = useHasAnyKindOfRewards();
+  const hasAnyKindOfRewards = useHasAnyKindOfRewards('0x1.icon');
   const savingsXChainId = useSavingsXChainId();
 
   const balnBalanceAvailable = useMemo(

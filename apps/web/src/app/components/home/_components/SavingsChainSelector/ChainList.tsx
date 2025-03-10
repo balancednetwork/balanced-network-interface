@@ -65,7 +65,7 @@ type ChainItemProps = {
 const ChainItem = ({ chain, setChainId, isLast }: ChainItemProps) => {
   const signedInWallets = useSignedInWallets();
   const isSignedIn = signedInWallets.some(wallet => wallet.xChainId === chain.xChainId);
-  const isSmall = useMedia('(max-width: 440px)');
+  const isSmall = useMedia('(max-width: 460px)');
   return (
     <Grid $isSignedIn={isSignedIn} className={isLast ? '' : 'border-bottom'} onClick={e => setChainId(chain.xChainId)}>
       <ChainItemWrap>

@@ -439,7 +439,7 @@ export function getTransactionAttributes(xTransactionInput: XTransactionInput) {
       break;
     }
     case XTransactionType.SAVINGS_CLAIM_REWARDS: {
-      descriptionAction = `Claim Savings Rewards`;
+      descriptionAction = `Claim Savings rewards`;
       descriptionAmount = ``;
       break;
     }

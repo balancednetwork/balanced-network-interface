@@ -14,7 +14,7 @@ import { UseQueryResult, useQuery } from '@tanstack/react-query';
 import { EvmProvider, IconProvider, SuiProvider } from 'icon-intents-sdk';
 import IconService, { HttpProvider } from 'icon-sdk-js';
 
-const useIntentProvider = (currency?: XToken): UseQueryResult<EvmProvider | SuiProvider | null> => {
+const useIntentProvider = (currency?: XToken): UseQueryResult<EvmProvider | SuiProvider | IconProvider | null> => {
   const evmXService = useXService('EVM') as unknown as EvmXService;
   const suiClient = useSuiClient();
   const { currentWallet: suiWallet } = useCurrentWallet();

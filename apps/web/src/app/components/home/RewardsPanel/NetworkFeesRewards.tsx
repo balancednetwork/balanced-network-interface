@@ -187,7 +187,7 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen} fontSize={14}>
-              <Trans>Not now</Trans>
+              <Trans>Cancel</Trans>
             </TextButton>
             <Button onClick={handleClaim} fontSize={14} disabled={!hasEnoughICX}>
               <Trans>Claim</Trans>

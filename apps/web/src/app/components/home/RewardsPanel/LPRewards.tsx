@@ -36,6 +36,8 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
   const isSmall = useMedia('(max-width: 1050px)');
   const isExtraSmall = useMedia('(max-width: 800px)');
   const [tooltipHovered, setTooltipHovered] = React.useState(false);
+
+  // TODO: review this logic if numberOfPositions is needed
   const numberOfPositions = React.useMemo(
     () => (sources ? Object.values(sources).filter(source => source.balance.isGreaterThan(100)).length : 0),
     [sources],
@@ -101,7 +103,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
                 offset={[0, 19]}
               >
                 Liquidity rewards
-                {isExtraSmall && account && !!numberOfPositions && (
+                {/* {isExtraSmall && account && !!numberOfPositions && (
                   <QuestionWrapper
                     style={{ transform: 'translateY(1px)', marginLeft: '8px' }}
                     onMouseEnter={() => setTooltipHovered(true)}
@@ -111,7 +113,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
                   >
                     <QuestionIcon width={14} />
                   </QuestionWrapper>
-                )}
+                )} */}
               </Tooltip>
             </Typography>
           </Flex>

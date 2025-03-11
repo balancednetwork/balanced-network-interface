@@ -47,6 +47,7 @@ const SavingsModal = ({
   const xAccount = useXAccount(getXChainType(savingsXChainId));
 
   const [isPending, setIsPending] = React.useState(false);
+  const [isSigning, setIsSigning] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
   const currentXTransaction = useXTransactionStore(state => state.transactions[pendingTx]);
 
@@ -62,6 +63,7 @@ const SavingsModal = ({
     setTimeout(() => {
       onSuccess?.();
       setIsPending(false);
+      setIsSigning(false);
       setPendingTx('');
     }, 500);
   }, [onClose, onSuccess]);
@@ -87,6 +89,7 @@ const SavingsModal = ({
     if (xAccount.address) {
       try {
         setIsPending(true);
+        setIsSigning(true);
         const bnUSD = xTokenMapBySymbol[savingsXChainId]['bnUSD'];
 
         let txHash;
@@ -109,10 +112,12 @@ const SavingsModal = ({
             ),
           );
         }
+        setIsSigning(false);
         if (txHash) setPendingTx(txHash);
         else setIsPending(false);
       } catch (error) {
         setIsPending(false);
+        setIsSigning(false);
         console.error('staking/unlocking bnUSD error: ', error);
       } finally {
         window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
@@ -177,7 +182,7 @@ const SavingsModal = ({
               >
                 <Flex justifyContent="center" mt={4} pt={4} className="border-top" flexWrap={'wrap'}>
                   <TextButton onClick={handleDismiss} fontSize={14}>
-                    <Trans>{isPending ? 'Close' : 'Cancel'}</Trans>
+                    <Trans>{isPending && !isSigning ? 'Close' : 'Cancel'}</Trans>
                   </TextButton>
 
                   {isWrongChain ? (
@@ -191,7 +196,7 @@ const SavingsModal = ({
                       disabled={!gasChecker.hasEnoughGas || isPending || isWrongChain}
                       $loading={isPending}
                     >
-                      {isPending
+                      {isPending && !isSigning
                         ? shouldDeposit
                           ? t`Depositing bnUSD`
                           : t`Withdrawing bnUSD`

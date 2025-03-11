@@ -52,6 +52,7 @@ export default function WithdrawLiquidityModal({
   const { pair } = pool;
 
   const [isPending, setIsPending] = React.useState(false);
+  const [isSigning, setIsSigning] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
   const currentXTransaction = useXTransactionStore(state => state.transactions[pendingTx]);
 
@@ -66,6 +67,7 @@ export default function WithdrawLiquidityModal({
     onClose();
     setTimeout(() => {
       setIsPending(false);
+      setIsSigning(false);
       setPendingTx('');
     }, 500);
   }, [onClose]);
@@ -96,6 +98,7 @@ export default function WithdrawLiquidityModal({
 
       const numPortion = new BigNumber(withdrawPortion / 100);
       const withdrawAmount = multiplyCABN(pool.balance, numPortion);
+      setIsSigning(true);
       const txHash = await xRemoveLiquidity(
         xAccount.address,
         pool.poolId,
@@ -106,11 +109,13 @@ export default function WithdrawLiquidityModal({
         parsedAmounts[Field.CURRENCY_A]!,
         parsedAmounts[Field.CURRENCY_B]!,
       );
+      setIsSigning(false);
       if (txHash) setPendingTx(txHash);
       else setIsPending(false);
     } catch (error) {
       console.error('error', error);
       setIsPending(false);
+      setIsSigning(false);
     }
 
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
@@ -158,7 +163,7 @@ export default function WithdrawLiquidityModal({
             >
               <Flex justifyContent="center" mt={4} pt={4} className="border-top">
                 <TextButton onClick={handleDismiss}>
-                  <Trans>{isPending ? 'Close' : 'Cancel'}</Trans>
+                  <Trans>{isPending && !isSigning ? 'Close' : 'Cancel'}</Trans>
                 </TextButton>
 
                 {isWrongChain ? (
@@ -172,7 +177,7 @@ export default function WithdrawLiquidityModal({
                     disabled={!gasChecker.hasEnoughGas || isPending || isWrongChain}
                     $loading={isPending}
                   >
-                    {isPending ? t`Withdrawing` : t`Withdraw`}
+                    {isPending && !isSigning ? t`Withdrawing` : t`Withdraw`}
                   </StyledButton>
                 )}
               </Flex>

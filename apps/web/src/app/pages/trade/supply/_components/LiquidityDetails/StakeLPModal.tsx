@@ -56,6 +56,7 @@ export default function StakeLPModal({
   const xAccount = useXAccount(getXChainType(pool.xChainId));
 
   const [isPending, setIsPending] = React.useState(false);
+  const [isSigning, setIsSigning] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
   const currentXTransaction = useXTransactionStore(state => state.transactions[pendingTx]);
 
@@ -71,6 +72,7 @@ export default function StakeLPModal({
     setTimeout(() => {
       onSuccess?.();
       setIsPending(false);
+      setIsSigning(false);
       setPendingTx('');
     }, 500);
   }, [onClose, onSuccess]);
@@ -97,7 +99,7 @@ export default function StakeLPModal({
 
     try {
       setIsPending(true);
-
+      setIsSigning(true);
       const decimals = Math.ceil((pair.token0.decimals + pair.token1.decimals) / 2);
 
       let txHash;
@@ -122,11 +124,13 @@ export default function StakeLPModal({
           pair.token1,
         );
       }
+      setIsSigning(false);
       if (txHash) setPendingTx(txHash);
       else setIsPending(false);
     } catch (error) {
       console.error('error', error);
       setIsPending(false);
+      setIsSigning(false);
     }
 
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
@@ -183,7 +187,7 @@ export default function StakeLPModal({
             >
               <Flex justifyContent="center" mt={4} pt={4} className="border-top">
                 <TextButton onClick={handleDismiss} fontSize={14}>
-                  <Trans>{isPending ? 'Close' : 'Cancel'}</Trans>
+                  <Trans>{isPending && !isSigning ? 'Close' : 'Cancel'}</Trans>
                 </TextButton>
                 {isWrongChain ? (
                   <Button onClick={handleSwitchChain} fontSize={14}>
@@ -196,7 +200,13 @@ export default function StakeLPModal({
                     disabled={!gasChecker.hasEnoughGas || isPending || isWrongChain}
                     $loading={isPending}
                   >
-                    {isPending ? (shouldStake ? t`Staking` : t`Unstaking`) : shouldStake ? t`Stake` : t`Unstake`}
+                    {isPending && !isSigning
+                      ? shouldStake
+                        ? t`Staking`
+                        : t`Unstaking`
+                      : shouldStake
+                        ? t`Stake`
+                        : t`Unstake`}
                   </StyledButton>
                 )}
               </Flex>

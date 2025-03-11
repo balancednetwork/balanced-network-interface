@@ -159,3 +159,15 @@ export const FUNDING_TOKENS_LIST = FUNDING_TOKENS[NETWORK_ID];
 export const ORACLE_PRICED_TOKENS = ['USDC', 'USDT'];
 
 export const UNTRADEABLE_TOKENS = ['JitoSOL'];
+
+//search for Pyth ID here https://hermes.pyth.network/docs/#/rest/price_feeds_metadata
+export const PYTH_PRICED_TOKENS = [
+  {
+    symbol: 'wETH',
+    pythId: 'ff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace',
+  },
+  {
+    symbol: 'POL',
+    pythId: 'ffd11c5a1cfd42f80afb2df4d9f264c15f956d68153335374ec10722edd70472',
+  },
+];

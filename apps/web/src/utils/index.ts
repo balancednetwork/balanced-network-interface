@@ -390,7 +390,7 @@ export function getTransactionAttributes(xTransactionInput: XTransactionInput) {
     }
 
     case XTransactionType.LP_CLAIM_REWARDS: {
-      descriptionAction = `Claim LP Rewards`;
+      descriptionAction = `Claim liquidity rewards`;
       descriptionAmount = ``;
       break;
     }

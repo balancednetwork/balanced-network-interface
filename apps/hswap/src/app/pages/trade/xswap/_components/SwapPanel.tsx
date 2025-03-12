@@ -104,7 +104,9 @@ export default function SwapPanel() {
             </label>
             <CurrencyInputPanel
               account={account}
-              value={formattedAmounts[Field.INPUT]}
+              value={
+                mmTrade.isMMBetter ? mmTrade.trade?.inputAmount.toSignificant() ?? '' : formattedAmounts[Field.INPUT]
+              }
               currency={currencies[Field.INPUT]}
               onUserInput={handleTypeInput}
               onCurrencySelect={handleInputSelect}

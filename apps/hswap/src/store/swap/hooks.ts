@@ -439,17 +439,19 @@ export function useMMTrade(
       });
 
       if (res.ok) {
-        const quoteAmount = CurrencyAmount.fromRawAmount(
-          isExactInput ? otherCurrency : queriedCurrencyAmount.currency,
-          BigInt(res.value.quoted_amount ?? 0),
-        );
+        const quoteAmount = CurrencyAmount.fromRawAmount(otherCurrency, BigInt(res.value.quoted_amount ?? 0));
+
+        // For exact_input: queriedCurrencyAmount is input, quoteAmount is output
+        // For exact_output: quoteAmount is input, queriedCurrencyAmount is output
+        const inputAmount = isExactInput ? queriedCurrencyAmount : quoteAmount;
+        const outputAmount = isExactInput ? quoteAmount : queriedCurrencyAmount;
 
         return {
-          inputAmount: isExactInput ? queriedCurrencyAmount : quoteAmount,
-          outputAmount: isExactInput ? quoteAmount : queriedCurrencyAmount,
-          executionPrice: new Price({ baseAmount: queriedCurrencyAmount, quoteAmount: quoteAmount }),
+          inputAmount,
+          outputAmount,
+          executionPrice: new Price({ baseAmount: inputAmount, quoteAmount: outputAmount }),
           uuid: res.value.uuid,
-          fee: quoteAmount.multiply(new Fraction(3, 1_000)),
+          fee: outputAmount.multiply(new Fraction(3, 1_000)),
         };
       }
 
@@ -483,16 +485,16 @@ export function useDerivedMMTradeInfo(trade: Trade<Currency, Currency, TradeType
 
   // assume independentField is Field.Input
   const mmTradeQuery = useMMTrade(
-    tryParseAmount(typedValue, isExactInput ? inputCurrency : outputCurrency),
-    isExactInput ? outputCurrency : inputCurrency,
+    tryParseAmount(typedValue, isExactInput ? inputCurrency?.wrapped : outputCurrency?.wrapped),
+    isExactInput ? outputCurrency?.wrapped : inputCurrency?.wrapped,
     tradeType,
   );
 
   // compare mmTradeQuery result and trade
   const mmTrade = mmTradeQuery.data;
 
-  const swapOutput = convert(outputCurrency, trade?.outputAmount);
-  const swapInput = convert(inputCurrency, trade?.inputAmount);
+  const swapOutput = convert(outputCurrency?.wrapped, trade?.outputAmount);
+  const swapInput = convert(inputCurrency?.wrapped, trade?.inputAmount);
 
   return {
     isMMBetter: isExactInput

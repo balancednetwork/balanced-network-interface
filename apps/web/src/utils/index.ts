@@ -425,7 +425,7 @@ export function getTransactionAttributes(xTransactionInput: XTransactionInput) {
         new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
         'currency',
       );
-      descriptionAction = `Lock bnUSD`;
+      descriptionAction = `Deposit bnUSD`;
       descriptionAmount = `${_formattedAmount} bnUSD`;
       break;
     }
@@ -434,7 +434,7 @@ export function getTransactionAttributes(xTransactionInput: XTransactionInput) {
         new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
         'currency',
       );
-      descriptionAction = `Unlock bnUSD`;
+      descriptionAction = `Withdraw bnUSD`;
       descriptionAmount = `${_formattedAmount} bnUSD`;
       break;
     }

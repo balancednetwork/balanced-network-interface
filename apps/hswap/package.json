@@ -39,7 +39,7 @@
     "cmdk": "1.0.0",
     "dayjs": "1.10.7",
     "i18next": "19.7.0",
-    "icon-intents-sdk": "1.0.0-rc1",
+    "icon-intents-sdk": "1.0.0",
     "icon-sdk-js": "1.5.3",
     "immer": "10.1.1",
     "lucide-react": "0.428.0",

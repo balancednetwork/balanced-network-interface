@@ -1,56 +1,32 @@
 import React from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
-import { Trans, t } from '@lingui/macro';
+import { Trans } from '@lingui/macro';
 import { Box, Flex } from 'rebass';
 
-import { Button, TextButton } from '@/app/components/Button';
 import { UnderlineText } from '@/app/components/DropdownText';
-import Modal from '@/app/components/Modal';
-import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
-import { useLockedAmount, useUnclaimedRewards } from '@/store/savings/hooks';
-import { useTransactionAdder } from '@/store/transactions/hooks';
-import { useHasEnoughICX } from '@/store/wallet/hooks';
-import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { useSavingsXChainId, useUnclaimedRewards } from '@/store/savings/hooks';
+import { getXChainType, useXAccount, useXLockedBnUSDAmount } from '@balancednetwork/xwagmi';
 
+import { calculateTotal, useRatesWithOracle } from '@/queries/reward';
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { useQueryClient } from '@tanstack/react-query';
+import ClaimSavingsRewardsModal from './ClaimSavingsRewardsModal';
 import RewardsGrid from './RewardsGrid';
 
 const SavingsRewards = () => {
-  const { data: rewards } = useUnclaimedRewards();
-  const { account } = useIconReact();
-  const addTransaction = useTransactionAdder();
-  const hasEnoughICX = useHasEnoughICX();
+  const queryClient = useQueryClient();
+  const savingsXChainId = useSavingsXChainId();
+  const xAccount = useXAccount(getXChainType(savingsXChainId));
+  const { data: savingsRewards } = useUnclaimedRewards();
   const [isOpen, setOpen] = React.useState(false);
-  const lockedAmount = useLockedAmount();
-  const hasRewards = rewards?.some(reward => reward.greaterThan(0));
+  const { data: lockedAmount } = useXLockedBnUSDAmount({ address: xAccount?.address, xChainId: savingsXChainId });
+  const [executionRewards, setExecutionRewards] = React.useState<CurrencyAmount<Token>[] | undefined>(undefined);
 
-  const toggleOpen = React.useCallback(() => {
-    setOpen(!isOpen);
-  }, [isOpen]);
+  const rates = useRatesWithOracle();
 
-  const handleClaim = async () => {
-    if (!account) return;
-
-    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    try {
-      const { result: hash } = await bnJs.inject({ account }).Savings.claimRewards();
-      addTransaction(
-        { hash },
-        {
-          pending: t`Claiming Savings Rate rewards...`,
-          summary: t`Claimed Savings Rate rewards.`,
-        },
-      );
-      toggleOpen();
-    } catch (e) {
-      console.error('claiming savings rewards error: ', e);
-    } finally {
-      window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-    }
-  };
+  const totalRewardInUSD = calculateTotal(savingsRewards?.[savingsXChainId] || [], rates);
+  const hasRewards = !!savingsRewards && totalRewardInUSD.gt(0);
 
   return (
     <>
@@ -61,16 +37,22 @@ const SavingsRewards = () => {
               Savings rate
             </Typography>
           </Flex>
-          {(hasRewards || (lockedAmount && lockedAmount.greaterThan(0) && account)) && (
+          {(hasRewards || (lockedAmount && lockedAmount.greaterThan(0) && xAccount.address)) && (
             <UnderlineText>
-              <Typography color="primaryBright" onClick={toggleOpen}>
+              <Typography
+                color="primaryBright"
+                onClick={() => {
+                  setOpen(true);
+                  setExecutionRewards(savingsRewards?.[savingsXChainId]);
+                }}
+              >
                 <Trans>Claim</Trans>
               </Typography>
             </UnderlineText>
           )}
         </Flex>
-        {(account && hasRewards) || (lockedAmount && lockedAmount.greaterThan(0)) ? (
-          <RewardsGrid rewards={rewards} />
+        {savingsRewards && ((xAccount.address && hasRewards) || (lockedAmount && lockedAmount.greaterThan(0))) ? (
+          <RewardsGrid rewards={savingsRewards[savingsXChainId]} />
         ) : (
           <Typography fontSize={14} opacity={0.75} mb={5}>
             Deposit bnUSD into the savings rate to earn interest.
@@ -78,33 +60,14 @@ const SavingsRewards = () => {
         )}
       </Box>
 
-      <Modal isOpen={isOpen} onDismiss={toggleOpen}>
-        <ModalContent>
-          <Typography textAlign="center" mb={1}>
-            <Trans>Claim Savings Rate rewards?</Trans>
-          </Typography>
-
-          <Flex flexDirection="column" alignItems="center" mt={2}>
-            {rewards?.map((reward, index) => (
-              <Typography key={index} variant="p">
-                {`${reward.toFixed(2, { groupSeparator: ',' })}`}{' '}
-                <Typography as="span" color="text1">
-                  {reward.currency.symbol}
-                </Typography>
-              </Typography>
-            ))}
-          </Flex>
-
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen} fontSize={14}>
-              <Trans>Not now</Trans>
-            </TextButton>
-            <Button onClick={handleClaim} fontSize={14} disabled={!hasEnoughICX}>
-              <Trans>Claim</Trans>
-            </Button>
-          </Flex>
-        </ModalContent>
-      </Modal>
+      <ClaimSavingsRewardsModal
+        isOpen={isOpen}
+        onClose={() => setOpen(false)}
+        rewards={executionRewards}
+        onSuccess={() => {
+          queryClient.invalidateQueries({ queryKey: ['savingsRewards'] });
+        }}
+      />
     </>
   );
 };

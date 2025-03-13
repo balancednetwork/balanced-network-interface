@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Box, Flex } from 'rebass';
 import styled from 'styled-components';
@@ -8,7 +8,7 @@ import { Typography } from '@/app/theme';
 import ArrowIcon from '@/assets/icons/arrow-white.svg';
 import { getNetworkDisplayName } from '@/utils/xTokens';
 
-import { getTransactionText } from '@/utils';
+import { getTransactionAttributes } from '@/utils';
 import { XTransaction, XTransactionStatus } from '@balancednetwork/xwagmi';
 import { useXMessageStore, xMessageActions } from '@balancednetwork/xwagmi';
 import { xTransactionActions } from '@balancednetwork/xwagmi';
@@ -96,6 +96,8 @@ const XTransactionHistoryItem = ({ xTransaction }: { xTransaction: XTransaction 
     xTransactionActions.remove(xTransaction.id);
   };
 
+  const transactionAttributes = useMemo(() => getTransactionAttributes(xTransaction.input), [xTransaction]);
+
   return (
     <>
       <Wrap
@@ -108,16 +110,22 @@ const XTransactionHistoryItem = ({ xTransaction }: { xTransaction: XTransaction 
         }}
       >
         <Flex alignItems="center">
-          {getNetworkDisplayName(sourceChainId)}
-          <ArrowIcon width="13px" style={{ margin: '0 7px' }} />
-          {getNetworkDisplayName(finalDestinationChainId)}
+          {sourceChainId === finalDestinationChainId ? (
+            getNetworkDisplayName(sourceChainId)
+          ) : (
+            <>
+              {getNetworkDisplayName(sourceChainId)}
+              <ArrowIcon width="13px" style={{ margin: '0 7px' }} />
+              {getNetworkDisplayName(finalDestinationChainId)}
+            </>
+          )}
         </Flex>
         <Flex justifyContent="center" flexDirection="column">
           <Typography fontWeight={700} color="text">
-            {getTransactionText(xTransaction.input)?.descriptionAction}
+            {transactionAttributes?.descriptionAction}
           </Typography>
           <Typography opacity={0.75} fontSize={14}>
-            {getTransactionText(xTransaction.input)?.descriptionAmount}
+            {transactionAttributes?.descriptionAmount}
           </Typography>
         </Flex>
         <Flex justifyContent="center" flexDirection="column" alignItems="flex-end" className="status-check">

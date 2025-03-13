@@ -1,7 +1,7 @@
 import { XPublicClient } from '@/core';
-import { XChainId, XToken } from '@/types';
+import { XToken } from '@/types';
 import { TransactionStatus, XCallEvent, XTransactionInput } from '@/xcall/types';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
 import * as StellarSdk from '@stellar/stellar-sdk';
 import { StellarXService } from './StellarXService';
 import { getTokenBalance } from './utils';

@@ -1,4 +1,5 @@
-import { XChainId } from '@/types';
+import { XChainId } from '@balancednetwork/sdk-core';
+
 import { XPublicClient } from '../core/XPublicClient';
 import { useXWagmiStore } from '../useXWagmiStore';
 

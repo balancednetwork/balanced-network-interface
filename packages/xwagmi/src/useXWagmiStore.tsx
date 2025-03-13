@@ -1,6 +1,6 @@
 import { xChains } from '@/constants/xChains';
-import { XChainId, XChainType } from '@/types';
 import { BalancedJs } from '@balancednetwork/balanced-js';
+import { XChainId, XChainType } from '@balancednetwork/sdk-core';
 import { useCurrentAccount, useCurrentWallet, useSuiClient } from '@mysten/dapp-kit';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useEffect } from 'react';
@@ -11,7 +11,7 @@ import { getXChainType } from './actions';
 import { XPublicClient, XService, XWalletClient } from './core';
 import { useXConnection } from './hooks';
 import { XConnection } from './types';
-import { jsonStorageOptions } from './utils';
+import { jsonStorageOptions } from './utils/zustand';
 import { ArchwayXConnector, ArchwayXPublicClient, ArchwayXService, ArchwayXWalletClient } from './xchains/archway';
 import { EvmXPublicClient, EvmXService, EvmXWalletClient } from './xchains/evm';
 import {

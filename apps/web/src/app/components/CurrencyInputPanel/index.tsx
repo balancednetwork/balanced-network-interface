@@ -17,7 +17,7 @@ import { DEFAULT_TOKEN_CHAIN, getSupportedXChainForSwapToken } from '@balancedne
 import { XChainId } from '@balancednetwork/xwagmi';
 import { isMobile } from 'react-device-detect';
 import { HorizontalList, Option } from '../List';
-import { CurrencySelectionType, SelectorType } from '../SearchModal/CurrencySearch';
+import { CurrencySelectionType } from '../SearchModal/CurrencySearch';
 import CurrencySearchModal from '../SearchModal/CurrencySearchModal';
 import CrossChainOptions from '../trade/CrossChainOptions';
 import DollarValue from './DollarValue';
@@ -104,9 +104,7 @@ interface CurrencyInputPanelProps {
   bg?: string;
   placeholder?: string;
   className?: string;
-  account?: string | null;
   showCommunityListControl?: boolean;
-  selectorType?: SelectorType;
   showDollarValue?: boolean;
   showWarning?: boolean;
 
@@ -114,7 +112,6 @@ interface CurrencyInputPanelProps {
   xChainId?: XChainId;
   onChainSelect?: (_chainId: XChainId) => void;
   showCrossChainOptions?: boolean;
-  showCrossChainBreakdown?: boolean;
   addressEditable?: boolean;
   setManualAddress?: (xChainId: XChainId, address?: string | undefined) => void;
 }
@@ -132,9 +129,7 @@ export default function CurrencyInputPanel({
   bg = 'bg2',
   placeholder = '0',
   className,
-  account,
   showCommunityListControl = true,
-  selectorType,
   showDollarValue = true,
   showWarning = false,
 
@@ -142,7 +137,6 @@ export default function CurrencyInputPanel({
   xChainId = '0x1.icon',
   onChainSelect,
   showCrossChainOptions = false,
-  showCrossChainBreakdown = true,
   addressEditable = false,
   setManualAddress,
 }: CurrencyInputPanelProps) {
@@ -176,33 +170,21 @@ export default function CurrencyInputPanel({
   }, []);
 
   const [xChainOptionsOpen, setXChainOptionsOpen] = React.useState(false);
-  const xChains = useMemo(
-    () =>
-      currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
-      currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE
-        ? []
-        : getSupportedXChainForSwapToken(currency),
-    [currency, currencySelectionType],
-  );
+  const xChains = useMemo(() => getSupportedXChainForSwapToken(currency), [currency]);
 
   const onCurrencySelectWithXChain = useCallback(
     (currency: Currency, setDefaultChain = true) => {
       onCurrencySelect && onCurrencySelect(currency);
 
       if (setDefaultChain && currency?.symbol) {
-        const xChains =
-          currencySelectionType === CurrencySelectionType.TRADE_MINT_BASE ||
-          currencySelectionType === CurrencySelectionType.TRADE_MINT_QUOTE
-            ? []
-            : getSupportedXChainForSwapToken(currency);
         const defaultXChainId = DEFAULT_TOKEN_CHAIN[currency.symbol];
-        if (defaultXChainId && (xChains?.length ?? 0) > 1) {
+        if (defaultXChainId) {
           onChainSelect && onChainSelect(defaultXChainId);
           setTimeout(() => setXChainOptionsOpen(true), 100);
         }
       }
     },
-    [onCurrencySelect, onChainSelect, currencySelectionType],
+    [onCurrencySelect, onChainSelect],
   );
 
   return (
@@ -231,20 +213,15 @@ export default function CurrencyInputPanel({
 
             {onCurrencySelect && (
               <CurrencySearchModal
-                account={account}
                 isOpen={open}
                 onDismiss={handleDismiss}
                 onCurrencySelect={onCurrencySelectWithXChain}
-                onChainSelect={onChainSelect}
                 currencySelectionType={currencySelectionType}
-                showCurrencyAmount={false}
                 anchorEl={ref.current}
                 width={width ? width + (!isMobile ? 40 : 0) : undefined}
                 selectedCurrency={currency}
                 showCommunityListControl={showCommunityListControl}
                 xChainId={xChainId}
-                showCrossChainBreakdown={showCrossChainBreakdown}
-                selectorType={selectorType}
               />
             )}
           </div>
@@ -297,12 +274,13 @@ export default function CurrencyInputPanel({
           setXChainId={onChainSelect || (() => {})}
           isOpen={xChainOptionsOpen}
           setOpen={setXChainOptionsOpen}
-          xChains={xChains}
+          xChains={currencySelectionType !== CurrencySelectionType.TRADE_MINT_QUOTE ? xChains : []}
           editable={addressEditable}
           currency={currency}
           width={width ? width + (!isMobile ? 40 : 0) : undefined}
           containerRef={ref.current}
           setManualAddress={setManualAddress}
+          showAddress={currencySelectionType !== CurrencySelectionType.TRADE_MINT_QUOTE}
         />
       )}
     </Box>

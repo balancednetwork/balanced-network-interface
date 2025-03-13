@@ -10,7 +10,7 @@ import { Button } from '@/app/components/Button';
 import { AutoColumn } from '@/app/components/Column';
 import CurrencyInputPanel from '@/app/components/CurrencyInputPanel';
 import { BrightPanel } from '@/app/components/Panel';
-import { CurrencySelectionType, SelectorType } from '@/app/components/SearchModal/CurrencySearch';
+import { CurrencySelectionType } from '@/app/components/SearchModal/CurrencySearch';
 import SolanaAccountExistenceWarning from '@/app/components/SolanaAccountExistenceWarning';
 import StellarSponsorshipModal from '@/app/components/StellarSponsorshipModal';
 import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
@@ -53,7 +53,6 @@ export default function BridgeTransferForm({ openModal }) {
     () =>
       maxAmountSpend(
         currencyToBridge ? crossChainWallet[bridgeDirection.from]?.[currencyToBridge.wrapped.address] : undefined,
-        bridgeDirection.from,
       ),
     [currencyToBridge, bridgeDirection.from, crossChainWallet],
   );
@@ -179,8 +178,6 @@ export default function BridgeTransferForm({ openModal }) {
               currencySelectionType={CurrencySelectionType.BRIDGE}
               showCommunityListControl={false}
               xChainId={bridgeDirection.from}
-              showCrossChainBreakdown={false}
-              selectorType={SelectorType.BRIDGE}
             />
           </Flex>
 

@@ -12,10 +12,10 @@ export interface IXCallFee {
   rollback: bigint;
 }
 
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, Token, XChainId } from '@balancednetwork/sdk-core';
 import { RouteAction } from '@balancednetwork/v1-sdk';
 
-import { CurrencyKey, XChainId, XToken } from '@/types';
+import { CurrencyKey, XToken } from '@/types';
 
 export enum TransactionStatus {
   pending = 'pending',
@@ -41,7 +41,19 @@ export enum XTransactionType {
   BORROW = 'borrow',
   REPAY = 'repay',
 
-  // add liquidity
+  //liquidity
+  LP_DEPOSIT_XTOKEN = 'lp_deposit_xtoken',
+  LP_WITHDRAW_XTOKEN = 'lp_withdraw_xtoken',
+  LP_ADD_LIQUIDITY = 'lp_add_liquidity',
+  LP_REMOVE_LIQUIDITY = 'lp_remove_liquidity',
+  LP_STAKE = 'lp_stake',
+  LP_UNSTAKE = 'lp_unstake',
+  LP_CLAIM_REWARDS = 'lp_claim_rewards',
+
+  // savings
+  SAVINGS_LOCK_BNUSD = 'savings_lock_bnusd',
+  SAVINGS_UNLOCK_BNUSD = 'savings_unlock_bnusd',
+  SAVINGS_CLAIM_REWARDS = 'savings_claim_rewards',
 }
 
 export enum XMessageStatus {
@@ -65,13 +77,21 @@ export type XTransactionInput = {
   inputAmount: CurrencyAmount<XToken>;
   account: string;
   xCallFee: IXCallFee;
+
   // xswap
   recipient?: string;
-  outputAmount?: CurrencyAmount<XToken>;
+  outputAmount?: CurrencyAmount<XToken>; // quote token for liquidity as well
   minReceived?: CurrencyAmount<XToken>;
   path?: RouteAction[];
   usedCollateral?: CurrencyKey;
   isLiquidFinanceEnabled?: boolean;
+
+  // liquidity
+  poolId?: number;
+  tokenASymbol?: string;
+  tokenBSymbol?: string;
+  withdrawAmountA?: CurrencyAmount<XToken>;
+  withdrawAmountB?: CurrencyAmount<XToken>;
 };
 
 export type Transaction = {

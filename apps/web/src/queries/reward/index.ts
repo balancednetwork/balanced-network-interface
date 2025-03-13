@@ -2,23 +2,19 @@ import { useMemo } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
 import { BalancedJs, CallData, addresses } from '@balancednetwork/balanced-js';
-import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Fraction, Token, XChainId } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
-import BigNumber from 'bignumber.js';
 
 import { NETWORK_ID } from '@/constants/config';
-import {
-  COMBINED_TOKENS_MAP_BY_ADDRESS,
-  ORACLE_PRICED_TOKENS,
-  SUPPORTED_TOKENS_MAP_BY_ADDRESS,
-  sICX,
-} from '@/constants/tokens';
+import { COMBINED_TOKENS_MAP_BY_ADDRESS, ORACLE_PRICED_TOKENS, sICX } from '@/constants/tokens';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { useTokenPrices } from '@/queries/backendv2';
 import QUERY_KEYS from '@/queries/queryKeys';
 import { getTimestampFrom, useBlockDetails, useBlockNumber } from '@/store/application/hooks';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { useFlattenedRewardsDistribution } from '@/store/reward/hooks';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { ICON_XCALL_NETWORK_ID, XToken, bnJs, xTokenMap, xTokenMapBySymbol } from '@balancednetwork/xwagmi';
+import BigNumber from 'bignumber.js';
 
 export const BATCH_SIZE = 10;
 
@@ -67,8 +63,7 @@ export const usePlatformDayQuery = () => {
   });
 };
 
-export const useLPReward = () => {
-  const { account } = useIconReact();
+export const useLPReward = account => {
   const blockNumber = useBlockNumber();
 
   return useQuery<CurrencyAmount<Token>[] | undefined>({
@@ -76,22 +71,90 @@ export const useLPReward = () => {
     queryFn: async () => {
       if (!account) return;
 
-      try {
-        const res = await bnJs.Rewards.getRewards(account);
+      const res = await bnJs.Rewards.getRewards(account);
 
-        return Object.entries(res).map(([address, amount]) => {
-          const currency = SUPPORTED_TOKENS_MAP_BY_ADDRESS[address];
-          return CurrencyAmount.fromRawAmount(currency, amount as string);
-        });
-      } catch (e) {
-        console.error('Error while fetching rewards', e);
-      }
+      return Object.entries(res).map(([address, amount]) => {
+        const currency = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][address];
+        return CurrencyAmount.fromRawAmount(currency, amount as string);
+      });
     },
     placeholderData: keepPreviousData,
     enabled: !!account,
   });
 };
 
+export const calculateTotal = (balances, rates): BigNumber => {
+  return balances.reduce((sum, balance) => {
+    sum = sum.plus(new BigNumber(balance.toFixed()).times(rates?.[balance.currency.symbol] || 0));
+    return sum;
+  }, new BigNumber(0));
+};
+
+export const useLPRewards = (): UseQueryResult<Partial<Record<XChainId, CurrencyAmount<Token>[]>>> => {
+  const signedWallets = useSignedInWallets();
+  const accounts = useMemo(
+    () => signedWallets.filter(wallet => wallet.address).map(wallet => `${wallet.xChainId}/${wallet.address}`),
+    [signedWallets],
+  );
+
+  return useQuery({
+    queryKey: ['rewards', accounts],
+    queryFn: async () => {
+      try {
+        if (!accounts || accounts.length === 0) return {};
+
+        const cds = accounts.map(account => {
+          return {
+            target: bnJs.Rewards.address,
+            method: 'getRewards',
+            params: [account],
+          };
+        });
+        const rawRewards = await bnJs.Multicall.getAggregateData(cds);
+
+        return accounts.reduce((acc, account, index) => {
+          const xChainId = account.split('/')[0];
+          const rewards = Object.entries(rawRewards[index]).map(([address, amount]) => {
+            const currency = xTokenMap[ICON_XCALL_NETWORK_ID].find(token => token.address === address);
+            return CurrencyAmount.fromRawAmount(currency, amount as string);
+          });
+          acc[xChainId] = rewards;
+          return acc;
+        }, {});
+
+        // const allRewards = await Promise.all(
+        //   accounts.map(async account => {
+        //     const xChainId = account.split('/')[0];
+        //     try {
+        //       const res = await bnJs.Rewards.getRewards(account);
+        //       // console.log('res', xChainId, res);
+        //       return { account, res };
+        //     } catch (e) {
+        //       // console.log('error', xChainId, account, e);
+        //       return { account, res: {} };
+        //     }
+        //   }),
+        // );
+
+        // return allRewards.reduce((acc, { account, res }) => {
+        //   const xChainId = account.split('/')[0];
+        //   const rewards = Object.entries(res).map(([address, amount]) => {
+        //     const currency = xTokenMap[ICON_XCALL_NETWORK_ID].find(token => token.address === address);
+        //     return CurrencyAmount.fromRawAmount(currency, amount as string);
+        //   });
+        //   acc[xChainId] = rewards;
+        //   return acc;
+        // }, {});
+      } catch (e) {
+        console.log('error', e);
+        return {};
+      }
+    },
+    refetchInterval: 10_000,
+    placeholderData: keepPreviousData,
+    enabled: !!accounts && accounts.length > 0,
+  });
+};
 // combine rates api data & oracle data
 export const useRatesWithOracle = () => {
   const { data: rates } = useTokenPrices();

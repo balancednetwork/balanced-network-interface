@@ -1,18 +1,13 @@
-import bnJs from '../icon/bnJs';
-
-import { signTransaction } from '@mysten/wallet-standard';
-
 import { ICON_XCALL_NETWORK_ID, xTokenMap } from '@/constants';
 import { FROM_SOURCES, TO_SOURCES, sui } from '@/constants/xChains';
-import { XWalletClient } from '@/core/XWalletClient';
-import { isSpokeToken } from '@/index';
-import { uintToBytes } from '@/utils';
+import { DepositParams, SendCallParams, XWalletClient } from '@/core/XWalletClient';
 import { RLP } from '@ethereumjs/rlp';
 import { bcs } from '@mysten/sui/bcs';
 import { Transaction } from '@mysten/sui/transactions';
+import { signTransaction } from '@mysten/wallet-standard';
 import { toBytes, toHex } from 'viem';
-import { XTransactionInput, XTransactionType } from '../../xcall/types';
-import { getRlpEncodedSwapData, toICONDecimals } from '../../xcall/utils';
+import { XTransactionInput } from '../../xcall/types';
+import bnJs from '../icon/bnJs';
 import { SuiXService } from './SuiXService';
 
 const addressesMainnet = {
@@ -56,317 +51,128 @@ export class SuiXWalletClient extends XWalletClient {
     return Promise.resolve(undefined);
   }
 
-  async executeTransaction(xTransactionInput: XTransactionInput) {
-    if (!signTransaction) {
-      throw new Error('signTransaction is required');
-    }
+  async _signAndExecuteTransactionBlock(txb: Transaction): Promise<string | undefined> {
+    const { bytes, signature } = await signTransaction(this.getXService().suiWallet, {
+      transaction: txb,
+      account: this.getXService().suiAccount,
+      chain: this.getXService().suiAccount.chains[0],
+    });
 
-    const { type, account, direction, inputAmount, recipient, minReceived, path } = xTransactionInput;
+    const txResult = await this.getXService().suiClient.executeTransactionBlock({
+      transactionBlock: bytes,
+      signature,
+      options: {
+        showRawEffects: true,
+      },
+    });
 
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
-    const receiver = `${direction.to}/${recipient}`;
+    const { digest: hash } = txResult || {};
+    return hash;
+  }
 
-    let data;
-    if (type === XTransactionType.SWAP) {
-      if (!minReceived || !path) {
-        return;
+  async _deposit({ account, inputAmount, destination, data, fee }: DepositParams) {
+    const amount = BigInt(inputAmount.quotient.toString());
+
+    const coinType = inputAmount.currency.isNativeToken ? '0x2::sui::SUI' : inputAmount.currency.address;
+
+    const txb = new Transaction();
+    let depositCoin, feeCoin;
+
+    if (inputAmount.currency.isNativeToken) {
+      [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, XCALL_FEE_AMOUNT]);
+    } else {
+      const coins = (
+        await this.getXService().suiClient.getCoins({
+          owner: account,
+          coinType,
+        })
+      )?.data;
+      if (!coins || coins.length === 0) {
+        throw new Error('No coins found');
+      } else if (coins.length > 1) {
+        await txb.mergeCoins(
+          coins[0].coinObjectId,
+          coins.slice(1).map(coin => coin.coinObjectId),
+        );
       }
 
-      const rlpEncodedData = getRlpEncodedSwapData(path, '_swap', receiver, minReceived);
-      data = rlpEncodedData;
-    } else if (type === XTransactionType.BRIDGE) {
-      data = toBytes(
-        JSON.stringify({
-          method: '_swap',
-          params: {
-            path: [],
-            receiver: receiver,
-          },
-        }),
+      [depositCoin] = txb.splitCoins(coins[0].coinObjectId, [amount]);
+      [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
+    }
+
+    txb.moveCall({
+      target: `${addressesMainnet['Balanced Package Id']}::asset_manager::deposit`,
+      arguments: [
+        txb.object(addressesMainnet['Asset Manager Storage']),
+        txb.object(addressesMainnet['xCall Storage']),
+        txb.object(addressesMainnet['xCall Manager Storage']),
+        feeCoin,
+        depositCoin,
+        txb.pure(bcs.vector(bcs.string()).serialize([destination])),
+        txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([data])),
+      ],
+      typeArguments: [coinType],
+    });
+
+    return await this._signAndExecuteTransactionBlock(txb);
+  }
+
+  async _crossTransfer({ account, inputAmount, destination, data, fee }: DepositParams) {
+    const amount = BigInt(inputAmount.quotient.toString());
+
+    const coinType = inputAmount.currency.address;
+
+    const coins = (
+      await this.getXService().suiClient.getCoins({
+        owner: account,
+        coinType,
+      })
+    )?.data;
+
+    const txb = new Transaction();
+
+    if (!coins || coins.length === 0) {
+      throw new Error('No coins found');
+    } else if (coins.length > 1) {
+      await txb.mergeCoins(
+        coins[0].coinObjectId,
+        coins.slice(1).map(coin => coin.coinObjectId),
       );
-    } else if (type === XTransactionType.DEPOSIT) {
-      return await this.executeDepositCollateral(xTransactionInput);
-    } else if (type === XTransactionType.WITHDRAW) {
-      return await this.executeWithdrawCollateral(xTransactionInput);
-    } else if (type === XTransactionType.BORROW) {
-      return await this.executeBorrow(xTransactionInput);
-    } else if (type === XTransactionType.REPAY) {
-      return await this.executeRepay(xTransactionInput);
-    } else {
-      throw new Error('Invalid XTransactionType');
     }
 
-    const isNative = inputAmount.currency.isNativeToken;
-    const _isSpokeToken = isSpokeToken(inputAmount.currency);
-    const amount = BigInt(inputAmount.quotient.toString());
+    const [depositCoin] = txb.splitCoins(coins[0].coinObjectId, [amount]);
+    const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
 
-    let txResult;
-    if (isNative) {
-      const txb = new Transaction();
+    txb.moveCall({
+      target: `${TokenModuleMap[inputAmount.currency.symbol].packageId}::${TokenModuleMap[inputAmount.currency.symbol].name}::cross_transfer`,
+      arguments: [
+        txb.object(TokenModuleMap[inputAmount.currency.symbol].storage),
+        txb.object(addressesMainnet['xCall Storage']),
+        txb.object(addressesMainnet['xCall Manager Storage']),
+        feeCoin,
+        depositCoin,
+        txb.pure(bcs.string().serialize(destination)),
+        txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([data])),
+      ],
+      // typeArguments: [],
+    });
 
-      const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, XCALL_FEE_AMOUNT]);
-      txb.moveCall({
-        target: `${addressesMainnet['Balanced Package Id']}::asset_manager::deposit`,
-        arguments: [
-          txb.object(addressesMainnet['Asset Manager Storage']),
-          txb.object(addressesMainnet['xCall Storage']),
-          txb.object(addressesMainnet['xCall Manager Storage']),
-          feeCoin,
-          depositCoin,
-          txb.pure(bcs.vector(bcs.string()).serialize([destination])),
-          txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([data])),
-        ],
-        typeArguments: ['0x2::sui::SUI'],
-      });
-
-      const { bytes, signature } = await signTransaction(this.getXService().suiWallet, {
-        transaction: txb,
-        account: this.getXService().suiAccount,
-        chain: this.getXService().suiAccount.chains[0],
-      });
-
-      txResult = await this.getXService().suiClient.executeTransactionBlock({
-        transactionBlock: bytes,
-        signature,
-        options: {
-          showRawEffects: true,
-        },
-      });
-    } else if (_isSpokeToken) {
-      const coins = (
-        await this.getXService().suiClient.getCoins({
-          owner: account,
-          coinType: inputAmount.currency.wrapped.address,
-        })
-      )?.data;
-
-      const txb = new Transaction();
-
-      if (!coins || coins.length === 0) {
-        throw new Error('No coins found');
-      } else if (coins.length > 1) {
-        await txb.mergeCoins(
-          coins[0].coinObjectId,
-          coins.slice(1).map(coin => coin.coinObjectId),
-        );
-      }
-
-      const [depositCoin] = txb.splitCoins(coins[0].coinObjectId, [amount]);
-      const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
-
-      txb.moveCall({
-        target: `${TokenModuleMap[inputAmount.currency.symbol].packageId}::${TokenModuleMap[inputAmount.currency.symbol].name}::cross_transfer`,
-        arguments: [
-          txb.object(TokenModuleMap[inputAmount.currency.symbol].storage),
-          txb.object(addressesMainnet['xCall Storage']),
-          txb.object(addressesMainnet['xCall Manager Storage']),
-          feeCoin,
-          depositCoin,
-          txb.pure(bcs.string().serialize(destination)),
-          txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([data])),
-        ],
-        // typeArguments: [],
-      });
-
-      const { bytes, signature } = await signTransaction(this.getXService().suiWallet, {
-        transaction: txb,
-        account: this.getXService().suiAccount,
-        chain: this.getXService().suiAccount.chains[0],
-      });
-
-      txResult = await this.getXService().suiClient.executeTransactionBlock({
-        transactionBlock: bytes,
-        signature,
-        options: {
-          showRawEffects: true,
-        },
-      });
-    } else {
-      // USDC
-      const coins = (
-        await this.getXService().suiClient.getCoins({
-          owner: account,
-          coinType: inputAmount.currency.wrapped.address,
-        })
-      )?.data;
-
-      const txb = new Transaction();
-
-      if (!coins || coins.length === 0) {
-        throw new Error('No coins found');
-      } else if (coins.length > 1) {
-        await txb.mergeCoins(
-          coins[0].coinObjectId,
-          coins.slice(1).map(coin => coin.coinObjectId),
-        );
-      }
-
-      const [depositCoin] = txb.splitCoins(coins[0].coinObjectId, [amount]);
-      const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
-
-      txb.moveCall({
-        target: `${addressesMainnet['Balanced Package Id']}::asset_manager::deposit`,
-        arguments: [
-          txb.object(addressesMainnet['Asset Manager Storage']),
-          txb.object(addressesMainnet['xCall Storage']),
-          txb.object(addressesMainnet['xCall Manager Storage']),
-          feeCoin,
-          depositCoin,
-          txb.pure(bcs.vector(bcs.string()).serialize([destination])),
-          txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([data])),
-        ],
-        typeArguments: [inputAmount.currency.wrapped.address],
-      });
-
-      const { bytes, signature } = await signTransaction(this.getXService().suiWallet, {
-        transaction: txb,
-        account: this.getXService().suiAccount,
-        chain: this.getXService().suiAccount.chains[0],
-      });
-
-      txResult = await this.getXService().suiClient.executeTransactionBlock({
-        transactionBlock: bytes,
-        signature,
-        options: {
-          showRawEffects: true,
-        },
-      });
-    }
-
-    const { digest: hash } = txResult || {};
-
-    if (hash) {
-      return hash;
-    }
+    return await this._signAndExecuteTransactionBlock(txb);
   }
 
-  async executeDepositCollateral(xTransactionInput: XTransactionInput) {
-    const { inputAmount, account, xCallFee } = xTransactionInput;
-
-    if (!inputAmount) {
-      return;
-    }
-
-    const isNative = inputAmount.currency.isNativeToken;
-    const amount = BigInt(inputAmount.quotient.toString());
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const data = toBytes(JSON.stringify({}));
-
-    let txResult;
-    if (isNative) {
-      const txb = new Transaction();
-
-      const [depositCoin, feeCoin] = txb.splitCoins(txb.gas, [amount, XCALL_FEE_AMOUNT]);
-      txb.moveCall({
-        target: `${addressesMainnet['Balanced Package Id']}::asset_manager::deposit`,
-        arguments: [
-          txb.object(addressesMainnet['Asset Manager Storage']),
-          txb.object(addressesMainnet['xCall Storage']),
-          txb.object(addressesMainnet['xCall Manager Storage']),
-          feeCoin,
-          depositCoin,
-          txb.pure(bcs.vector(bcs.string()).serialize([destination])),
-          txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([data])),
-        ],
-        typeArguments: ['0x2::sui::SUI'],
-      });
-
-      const { bytes, signature } = await signTransaction(this.getXService().suiWallet, {
-        transaction: txb,
-        account: this.getXService().suiAccount,
-        chain: this.getXService().suiAccount.chains[0],
-      });
-
-      txResult = await this.getXService().suiClient.executeTransactionBlock({
-        transactionBlock: bytes,
-        signature,
-        options: {
-          showRawEffects: true,
-        },
-      });
-    } else {
-      // VSUI, HASUI, AFSUI
-      const coins = (
-        await this.getXService().suiClient.getCoins({
-          owner: account,
-          coinType: inputAmount.currency.wrapped.address,
-        })
-      )?.data;
-
-      const txb = new Transaction();
-
-      if (!coins || coins.length === 0) {
-        throw new Error('No coins found');
-      } else if (coins.length > 1) {
-        await txb.mergeCoins(
-          coins[0].coinObjectId,
-          coins.slice(1).map(coin => coin.coinObjectId),
-        );
-      }
-
-      const [depositCoin] = txb.splitCoins(coins[0].coinObjectId, [amount]);
-      const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
-      txb.moveCall({
-        target: `${addressesMainnet['Balanced Package Id']}::asset_manager::deposit`,
-        arguments: [
-          txb.object(addressesMainnet['Asset Manager Storage']),
-          txb.object(addressesMainnet['xCall Storage']),
-          txb.object(addressesMainnet['xCall Manager Storage']),
-          feeCoin,
-          depositCoin,
-          txb.pure(bcs.vector(bcs.string()).serialize([destination])),
-          txb.pure(bcs.vector(bcs.vector(bcs.u8())).serialize([data])),
-        ],
-        typeArguments: [inputAmount.currency.wrapped.address],
-      });
-
-      const { bytes, signature } = await signTransaction(this.getXService().suiWallet, {
-        transaction: txb,
-        account: this.getXService().suiAccount,
-        chain: this.getXService().suiAccount.chains[0],
-      });
-
-      txResult = await this.getXService().suiClient.executeTransactionBlock({
-        transactionBlock: bytes,
-        signature,
-        options: {
-          showRawEffects: true,
-        },
-      });
-    }
-
-    const { digest: hash } = txResult || {};
-
-    if (hash) {
-      return hash;
-    }
-  }
-
-  async executeWithdrawCollateral(xTransactionInput: XTransactionInput) {
-    const { inputAmount, account, xCallFee, usedCollateral, direction } = xTransactionInput;
-
-    if (!inputAmount || !usedCollateral) {
-      return;
-    }
-
-    const amount = toICONDecimals(inputAmount.multiply(-1));
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const data = toHex(RLP.encode(['xWithdraw', uintToBytes(amount), usedCollateral]));
+  async _sendCall({ account, sourceChainId, destination, data, fee }: SendCallParams) {
     const envelope = toBytes(
       toHex(
         RLP.encode([
           Buffer.from([0]),
-          data,
-          FROM_SOURCES[direction.from]?.map(Buffer.from),
-          TO_SOURCES[direction.from]?.map(Buffer.from),
+          toHex(data),
+          FROM_SOURCES[sourceChainId]?.map(Buffer.from),
+          TO_SOURCES[sourceChainId]?.map(Buffer.from),
         ]),
       ),
     );
 
     const txb = new Transaction();
-
-    console.log("addressesMainnet['xCall Storage']", addressesMainnet['xCall Storage']);
-
     const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
     txb.moveCall({
       target: `${addressesMainnet['xCall Package Id']}::main::send_call_ua`,
@@ -376,93 +182,11 @@ export class SuiXWalletClient extends XWalletClient {
         txb.pure(bcs.string().serialize(destination)),
         txb.pure(bcs.vector(bcs.u8()).serialize(envelope)),
       ],
-      // typeArguments: ['0x2::sui::SUI'],
     });
 
-    const { bytes, signature } = await signTransaction(this.getXService().suiWallet, {
-      transaction: txb,
-      account: this.getXService().suiAccount,
-      chain: this.getXService().suiAccount.chains[0],
-    });
-
-    const txResult = await this.getXService().suiClient.executeTransactionBlock({
-      transactionBlock: bytes,
-      signature,
-      options: {
-        showRawEffects: true,
-      },
-    });
-
-    const { digest: hash } = txResult || {};
-
-    if (hash) {
-      return hash;
-    }
+    return await this._signAndExecuteTransactionBlock(txb);
   }
 
-  async executeBorrow(xTransactionInput: XTransactionInput) {
-    const { inputAmount, account, xCallFee, usedCollateral, recipient, direction } = xTransactionInput;
-
-    if (!inputAmount || !usedCollateral) {
-      return;
-    }
-
-    const amount = BigInt(inputAmount.quotient.toString());
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const data = toHex(
-      RLP.encode(
-        recipient
-          ? ['xBorrow', usedCollateral, uintToBytes(amount), Buffer.from(recipient)]
-          : ['xBorrow', usedCollateral, uintToBytes(amount)],
-      ),
-    );
-    const envelope = toBytes(
-      toHex(
-        RLP.encode([
-          Buffer.from([0]),
-          data,
-          FROM_SOURCES[direction.from]?.map(Buffer.from),
-          TO_SOURCES[direction.from]?.map(Buffer.from),
-        ]),
-      ),
-    );
-
-    const txb = new Transaction();
-
-    console.log("addressesMainnet['xCall Storage']", addressesMainnet['xCall Storage']);
-
-    const [feeCoin] = txb.splitCoins(txb.gas, [XCALL_FEE_AMOUNT]);
-    txb.moveCall({
-      target: `${addressesMainnet['xCall Package Id']}::main::send_call_ua`,
-      arguments: [
-        txb.object(addressesMainnet['xCall Storage']),
-        feeCoin,
-        txb.pure(bcs.string().serialize(destination)),
-        txb.pure(bcs.vector(bcs.u8()).serialize(envelope)),
-      ],
-      // typeArguments: ['0x2::sui::SUI'],
-    });
-
-    const { bytes, signature } = await signTransaction(this.getXService().suiWallet, {
-      transaction: txb,
-      account: this.getXService().suiAccount,
-      chain: this.getXService().suiAccount.chains[0],
-    });
-
-    const txResult = await this.getXService().suiClient.executeTransactionBlock({
-      transactionBlock: bytes,
-      signature,
-      options: {
-        showRawEffects: true,
-      },
-    });
-
-    const { digest: hash } = txResult || {};
-
-    if (hash) {
-      return hash;
-    }
-  }
   async executeRepay(xTransactionInput: XTransactionInput) {
     const { inputAmount, account, xCallFee, usedCollateral, recipient, direction } = xTransactionInput;
 
@@ -483,15 +207,14 @@ export class SuiXWalletClient extends XWalletClient {
       JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
     );
 
+    const txb = new Transaction();
+
     const coins = (
       await this.getXService().suiClient.getCoins({
         owner: account,
         coinType: bnUSD.address,
       })
     )?.data;
-
-    const txb = new Transaction();
-
     if (!coins || coins.length === 0) {
       throw new Error('No coins found');
     } else if (coins.length > 1) {
@@ -522,24 +245,8 @@ export class SuiXWalletClient extends XWalletClient {
       // typeArguments: [],
     });
 
-    const { bytes, signature } = await signTransaction(this.getXService().suiWallet, {
-      transaction: txb,
-      account: this.getXService().suiAccount,
-      chain: this.getXService().suiAccount.chains[0],
-    });
-
-    const txResult = await this.getXService().suiClient.executeTransactionBlock({
-      transactionBlock: bytes,
-      signature,
-      options: {
-        showRawEffects: true,
-      },
-    });
-
-    const { digest: hash } = txResult || {};
-
-    if (hash) {
-      return hash;
-    }
+    return await this._signAndExecuteTransactionBlock(txb);
   }
 }
+
+// TODO: toBytes vs toHex?

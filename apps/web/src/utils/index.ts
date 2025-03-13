@@ -10,7 +10,7 @@ import { COMBINED_TOKENS_LIST, sICX, wICX } from '@/constants/tokens';
 import { PairData, PairState } from '@/hooks/useV2Pairs';
 import { Field } from '@/store/swap/reducer';
 import { PairInfo } from '@/types';
-import { XTransactionInput, XTransactionType, xChainMap } from '@balancednetwork/xwagmi';
+import { XToken, XTransactionInput, XTransactionType, xChainMap } from '@balancednetwork/xwagmi';
 import { XChainId } from '@balancednetwork/xwagmi';
 import { Validator } from 'icon-sdk-js';
 import { formatSymbol } from './formatter';
@@ -88,11 +88,9 @@ export function formatBigNumber(value: BigNumber | undefined, type: 'currency' |
   }
 }
 
-export function maxAmountSpend(
-  currencyAmount?: CurrencyAmount<Currency>,
-  xChainId: XChainId = '0x1.icon',
-): CurrencyAmount<Currency> | undefined {
+export function maxAmountSpend<T extends Token>(currencyAmount?: CurrencyAmount<T>): CurrencyAmount<T> | undefined {
   if (!currencyAmount) return undefined;
+  const xChainId: XChainId = currencyAmount.currency instanceof XToken ? currencyAmount.currency.xChainId : '0x1.icon';
 
   const minCurrencyGas = currencyAmount.currency.isNativeToken
     ? CurrencyAmount.fromRawAmount(
@@ -289,64 +287,169 @@ export function getAccumulatedInterest(principal: BigNumber, rate: BigNumber, da
   return accumulatedInterest;
 }
 
-export function getTransactionText(xTransactionInput: XTransactionInput) {
+export function getTransactionAttributes(xTransactionInput: XTransactionInput) {
   let descriptionAction: string, descriptionAmount: string;
-  let attributes;
+  switch (xTransactionInput.type) {
+    case XTransactionType.BRIDGE: {
+      const _tokenSymbol = formatSymbol(xTransactionInput.inputAmount.currency.symbol);
+      const _formattedAmount = formatBigNumber(
+        new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
+        'currency',
+      );
+      descriptionAction = `Transfer ${_tokenSymbol}`;
+      descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+      break;
+    }
+    case XTransactionType.SWAP: {
+      const { inputAmount, outputAmount } = xTransactionInput;
+      const _inputTokenSymbol = formatSymbol(inputAmount.currency.symbol) || '';
+      const _outputTokenSymbol = formatSymbol(outputAmount?.currency.symbol) || '';
+      const _inputAmount = formatBigNumber(new BigNumber(inputAmount.toFixed() || 0), 'currency');
+      const _outputAmount = formatBigNumber(new BigNumber(outputAmount?.toFixed() || 0), 'currency');
+      descriptionAction = `Swap ${_inputTokenSymbol} for ${_outputTokenSymbol}`;
+      descriptionAmount = `${_inputAmount} ${_inputTokenSymbol} for ${_outputAmount} ${_outputTokenSymbol}`;
+      break;
+    }
+    case XTransactionType.DEPOSIT: {
+      const _tokenSymbol = formatSymbol(xTransactionInput.inputAmount.currency.symbol);
+      const _formattedAmount = formatBigNumber(
+        new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
+        'currency',
+      );
+      descriptionAction = `Deposit ${_tokenSymbol} as collateral`;
+      descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+      break;
+    }
+    case XTransactionType.WITHDRAW: {
+      const _tokenSymbol = formatSymbol(xTransactionInput.inputAmount.currency.symbol);
+      const _formattedAmount = formatBigNumber(
+        new BigNumber(xTransactionInput?.inputAmount.multiply(-1).toFixed() || 0),
+        'currency',
+      );
+      descriptionAction = `Withdraw ${_tokenSymbol} collateral`;
+      descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+      break;
+    }
+    case XTransactionType.BORROW: {
+      const _formattedAmount = formatBigNumber(
+        new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
+        'currency',
+      );
+      descriptionAction = `Borrow bnUSD`;
+      descriptionAmount = `${_formattedAmount} bnUSD`;
+      break;
+    }
+    case XTransactionType.REPAY: {
+      const _formattedAmount = formatBigNumber(
+        new BigNumber(xTransactionInput?.inputAmount.multiply(-1).toFixed() || 0),
+        'currency',
+      );
+      descriptionAction = `Repay bnUSD`;
+      descriptionAmount = `${_formattedAmount} bnUSD`;
+      break;
+    }
 
-  if (xTransactionInput.type === XTransactionType.BRIDGE) {
-    const _tokenSymbol = formatSymbol(xTransactionInput.inputAmount.currency.symbol);
-    const _formattedAmount = formatBigNumber(new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0), 'currency');
-    descriptionAction = `Transfer ${_tokenSymbol}`;
-    descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+    case XTransactionType.LP_DEPOSIT_XTOKEN: {
+      const _tokenSymbol = formatSymbol(xTransactionInput.inputAmount.currency.symbol);
+      const _formattedAmount = formatBigNumber(
+        new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
+        'currency',
+      );
+      descriptionAction = `Supply ${_tokenSymbol}`;
+      descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+      break;
+    }
 
-    attributes = { descriptionAction, descriptionAmount };
-  } else if (xTransactionInput.type === XTransactionType.SWAP) {
-    const { inputAmount, outputAmount } = xTransactionInput;
-    const _inputTokenSymbol = formatSymbol(inputAmount.currency.symbol) || '';
-    const _outputTokenSymbol = formatSymbol(outputAmount?.currency.symbol) || '';
-    const _inputAmount = formatBigNumber(new BigNumber(inputAmount.toFixed() || 0), 'currency');
-    const _outputAmount = formatBigNumber(new BigNumber(outputAmount?.toFixed() || 0), 'currency');
+    case XTransactionType.LP_WITHDRAW_XTOKEN: {
+      const _tokenSymbol = formatSymbol(xTransactionInput.inputAmount.currency.symbol);
+      const _formattedAmount = formatBigNumber(
+        new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
+        'currency',
+      );
+      descriptionAction = `Withdraw ${_tokenSymbol}`;
+      descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+      break;
+    }
 
-    descriptionAction = `Swap ${_inputTokenSymbol} for ${_outputTokenSymbol}`;
-    descriptionAmount = `${_inputAmount} ${_inputTokenSymbol} for ${_outputAmount} ${_outputTokenSymbol}`;
-    attributes = { descriptionAction, descriptionAmount };
-  } else if (xTransactionInput.type === XTransactionType.DEPOSIT) {
-    const _tokenSymbol = formatSymbol(xTransactionInput.inputAmount.currency.symbol);
-    const _formattedAmount = formatBigNumber(new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0), 'currency');
+    case XTransactionType.LP_ADD_LIQUIDITY: {
+      const _tokenSymbol1 = formatSymbol(xTransactionInput.inputAmount.currency.symbol);
+      const _tokenSymbol2 = formatSymbol(xTransactionInput.outputAmount?.currency.symbol);
 
-    descriptionAction = `Deposit ${_tokenSymbol} as collateral`;
-    descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+      const _formattedInputAmount = formatBigNumber(
+        new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
+        'currency',
+      );
+      const _formattedOutputAmount = formatBigNumber(
+        new BigNumber(xTransactionInput?.outputAmount!.toFixed() || 0),
+        'currency',
+      );
 
-    attributes = { descriptionAction, descriptionAmount };
-  } else if (xTransactionInput.type === XTransactionType.WITHDRAW) {
-    const _tokenSymbol = formatSymbol(xTransactionInput.inputAmount.currency.symbol);
-    const _formattedAmount = formatBigNumber(
-      new BigNumber(xTransactionInput?.inputAmount.multiply(-1).toFixed() || 0),
-      'currency',
-    );
+      descriptionAction = `Supply ${_tokenSymbol1} / ${_tokenSymbol2} liquidity`;
+      descriptionAmount = `${_formattedInputAmount} ${_tokenSymbol1} and ${_formattedOutputAmount} ${_tokenSymbol2}`;
+      break;
+    }
 
-    descriptionAction = `Withdraw ${_tokenSymbol} collateral`;
-    descriptionAmount = `${_formattedAmount} ${_tokenSymbol}`;
+    case XTransactionType.LP_CLAIM_REWARDS: {
+      descriptionAction = `Claim liquidity rewards`;
+      descriptionAmount = ``;
+      break;
+    }
 
-    attributes = { descriptionAction, descriptionAmount };
-  } else if (xTransactionInput.type === XTransactionType.BORROW) {
-    const _formattedAmount = formatBigNumber(new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0), 'currency');
+    case XTransactionType.LP_REMOVE_LIQUIDITY: {
+      const { withdrawAmountA, withdrawAmountB, tokenASymbol, tokenBSymbol } = xTransactionInput;
 
-    descriptionAction = `Borrow bnUSD`;
-    descriptionAmount = `${_formattedAmount} bnUSD`;
+      const _formmatedAmountA = formatBigNumber(new BigNumber(withdrawAmountA?.toFixed() || 0), 'currency');
+      const _formmatedAmountB = formatBigNumber(new BigNumber(withdrawAmountB?.toFixed() || 0), 'currency');
 
-    attributes = { descriptionAction, descriptionAmount };
-  } else if (xTransactionInput.type === XTransactionType.REPAY) {
-    const _formattedAmount = formatBigNumber(
-      new BigNumber(xTransactionInput?.inputAmount.multiply(-1).toFixed() || 0),
-      'currency',
-    );
+      descriptionAction = `Withdraw ${formatSymbol(tokenASymbol)} / ${tokenBSymbol} liquidity`;
+      descriptionAmount = `${_formmatedAmountA} ${formatSymbol(tokenASymbol)} and ${_formmatedAmountB} ${tokenBSymbol}`;
+      break;
+    }
 
-    descriptionAction = `Repay bnUSD`;
-    descriptionAmount = `${_formattedAmount} bnUSD`;
+    case XTransactionType.LP_STAKE: {
+      const { tokenASymbol, tokenBSymbol } = xTransactionInput;
+      descriptionAction = `Stake ${formatSymbol(tokenASymbol)} / ${tokenBSymbol} LP tokens`;
+      descriptionAmount = ``;
+      break;
+    }
+    case XTransactionType.LP_UNSTAKE: {
+      const { tokenASymbol, tokenBSymbol } = xTransactionInput;
+      descriptionAction = `Unstake ${formatSymbol(tokenASymbol)} / ${tokenBSymbol} LP tokens`;
+      descriptionAmount = ``;
 
-    attributes = { descriptionAction, descriptionAmount };
+      break;
+    }
+
+    case XTransactionType.SAVINGS_LOCK_BNUSD: {
+      const _formattedAmount = formatBigNumber(
+        new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
+        'currency',
+      );
+      descriptionAction = `Deposit bnUSD`;
+      descriptionAmount = `${_formattedAmount} bnUSD`;
+      break;
+    }
+    case XTransactionType.SAVINGS_UNLOCK_BNUSD: {
+      const _formattedAmount = formatBigNumber(
+        new BigNumber(xTransactionInput?.inputAmount.toFixed() || 0),
+        'currency',
+      );
+      descriptionAction = `Withdraw bnUSD`;
+      descriptionAmount = `${_formattedAmount} bnUSD`;
+      break;
+    }
+    case XTransactionType.SAVINGS_CLAIM_REWARDS: {
+      descriptionAction = `Claim Savings rewards`;
+      descriptionAmount = ``;
+      break;
+    }
+
+    default: {
+      descriptionAction = 'Unknown';
+      descriptionAmount = 'Unknown';
+      break;
+    }
   }
 
-  return attributes;
+  return { descriptionAction, descriptionAmount };
 }

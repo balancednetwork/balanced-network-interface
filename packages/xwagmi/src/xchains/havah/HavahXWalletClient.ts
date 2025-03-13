@@ -1,11 +1,9 @@
-import bnJs from '../icon/bnJs';
-
-import { ICON_XCALL_NETWORK_ID } from '@/constants';
-import { XWalletClient } from '@/core/XWalletClient';
-import { showMessageOnBeforeUnload, toDec } from '@/utils';
+import { FROM_SOURCES, TO_SOURCES } from '@/constants';
+import { DepositParams, SendCallParams, XWalletClient } from '@/core/XWalletClient';
+import { toDec } from '@/utils';
+import { RLP } from '@ethereumjs/rlp';
 import { toHex } from 'viem';
-import { XTransactionInput, XTransactionType } from '../../xcall/types';
-import { getRlpEncodedSwapData } from '../../xcall/utils';
+import { XTransactionInput } from '../../xcall/types';
 import { HavahXService } from './HavahXService';
 
 export class HavahXWalletClient extends XWalletClient {
@@ -17,85 +15,50 @@ export class HavahXWalletClient extends XWalletClient {
     return Promise.resolve(undefined);
   }
 
-  async executeTransaction(xTransactionInput: XTransactionInput) {
-    const { type, account, direction, inputAmount, recipient, xCallFee, minReceived, path } = xTransactionInput;
-
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Router.address}`;
-    const receiver = `${direction.to}/${recipient}`;
-
-    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    let data;
-    if (type === XTransactionType.SWAP) {
-      if (!minReceived || !path) {
-        return;
-      }
-
-      const rlpEncodedData = getRlpEncodedSwapData(path, '_swap', receiver, minReceived).toString('hex');
-      data = `0x${rlpEncodedData}`;
-    } else if (type === XTransactionType.BRIDGE) {
-      data = toHex(
-        JSON.stringify({
-          method: '_swap',
-          params: {
-            path: [],
-            receiver: receiver,
-          },
-        }),
-      );
-    } else if (type === XTransactionType.REPAY) {
-      return await this._executeRepay(xTransactionInput);
-    } else {
-      throw new Error('Invalid XTransactionType');
-    }
-
+  async _deposit({ account, inputAmount, destination, data, fee }: DepositParams) {
     const isNative = inputAmount.currency.isNativeToken;
-    const isBnUSD = inputAmount.currency.symbol === 'bnUSD';
-
-    let txResult;
-    if (isBnUSD) {
-      txResult = await this.getXService()
-        .walletClient.inject({ account })
-        .bnUSD['crossTransferV2'](destination, toDec(inputAmount), data, xCallFee.rollback.toString());
-    } else {
-      if (!isNative) {
-        throw new Error('Only native token and bnUSD are supported');
-      } else {
-        console.log('isNative');
-        txResult = await this.getXService()
-          .walletClient.inject({ account })
-          .AssetManager['deposit'](parseFloat(inputAmount.toExact()), destination, data, xCallFee.rollback.toString());
-      }
+    if (!isNative) {
+      throw new Error('Only native token and bnUSD are supported');
     }
-    const { txHash: hash } = txResult || {};
-
-    if (hash) {
-      return hash;
-    }
-  }
-
-  async _executeRepay(xTransactionInput: XTransactionInput) {
-    const { account, inputAmount, recipient, xCallFee, usedCollateral } = xTransactionInput;
-
-    if (!inputAmount || !usedCollateral) {
-      return;
-    }
-
-    const amount = toDec(inputAmount.multiply(-1));
-    const destination = `${ICON_XCALL_NETWORK_ID}/${bnJs.Loans.address}`;
-    const data = toHex(
-      JSON.stringify(recipient ? { _collateral: usedCollateral, _to: recipient } : { _collateral: usedCollateral }),
-    );
-
     const txResult = await this.getXService()
       .walletClient.inject({ account })
-      .bnUSD['crossTransferV2'](destination, amount, data, xCallFee.rollback.toString());
-
-    // @ts-ignore
+      .AssetManager['deposit'](parseFloat(inputAmount.toExact()), destination, toHex(data), fee.toString());
     const { txHash: hash } = txResult || {};
+    return hash;
+  }
 
-    if (hash) {
-      return hash;
-    }
+  async _crossTransfer({ account, inputAmount, destination, data, fee }: DepositParams) {
+    const txResult = await this.getXService()
+      .walletClient.inject({ account })
+      .bnUSD['crossTransferV2'](destination, toDec(inputAmount), toHex(data), fee);
+    const { txHash: hash } = txResult || {};
+    return hash;
+  }
+
+  async _sendCall({ account, sourceChainId, destination, data, fee }: SendCallParams): Promise<string | undefined> {
+    const envelope = toHex(
+      RLP.encode([
+        Buffer.from([0]),
+        toHex(data),
+        FROM_SOURCES[sourceChainId]?.map(Buffer.from),
+        TO_SOURCES[sourceChainId]?.map(Buffer.from),
+      ]),
+    );
+
+    const txResult = await this.getXService().walletClient.inject({ account }).XCall['sendCall'](destination, envelope);
+    const { txHash: hash } = txResult || {};
+    return hash;
+  }
+
+  async executeDepositCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Not supported.');
+  }
+
+  async executeWithdrawCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Not supported.');
+  }
+
+  async executeBorrow(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Not supported.');
   }
 }

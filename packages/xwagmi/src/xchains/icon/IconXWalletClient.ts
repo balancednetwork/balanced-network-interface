@@ -1,11 +1,11 @@
 import bnJs from './bnJs';
 
-import { XWalletClient } from '@/core/XWalletClient';
+import { DepositParams, SendCallParams, XWalletClient } from '@/core/XWalletClient';
+import { isSpokeToken } from '@/utils';
 import { showMessageOnBeforeUnload, toDec } from '@/utils';
 import { PairType } from '@balancednetwork/v1-sdk';
 import { XTransactionInput, XTransactionType } from '../../xcall/types';
 import { getRlpEncodedSwapData } from '../../xcall/utils';
-import { isSpokeToken } from '../archway/utils';
 import { IconXService } from './IconXService';
 
 export class IconXWalletClient extends XWalletClient {
@@ -19,6 +19,16 @@ export class IconXWalletClient extends XWalletClient {
 
   async approve(amountToApprove, spender, owner) {
     return Promise.resolve(undefined);
+  }
+
+  async _deposit({ account, inputAmount, destination, data, fee }: DepositParams): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async _crossTransfer({ account, inputAmount, destination, data, fee }: DepositParams): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+  async _sendCall({ account, sourceChainId, destination, data, fee }: SendCallParams): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
   }
 
   async _executeBridge(xTransactionInput: XTransactionInput) {
@@ -97,29 +107,6 @@ export class IconXWalletClient extends XWalletClient {
     return hash ? hash : undefined;
   }
 
-  async _executeBorrow(xTransactionInput: XTransactionInput) {
-    const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
-
-    if (!inputAmount || !usedCollateral) {
-      return;
-    }
-
-    if (account && xCallFee) {
-      window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-      const txResult = await bnJs
-        .inject({ account: account })
-        .Loans.borrow(inputAmount.quotient.toString(), usedCollateral, 'bnUSD', recipient);
-
-      const { result: hash } = txResult || {};
-
-      if (hash) {
-        return hash;
-      }
-    }
-    return undefined;
-  }
-
   async _executeSwapOnIcon(xTransactionInput: XTransactionInput) {
     const { account, recipient, minReceived, path, inputAmount } = xTransactionInput;
     if (!minReceived || !path) {
@@ -150,7 +137,7 @@ export class IconXWalletClient extends XWalletClient {
     }
   }
 
-  async executeTransaction(xTransactionInput: XTransactionInput) {
+  async executeSwapOrBridge(xTransactionInput: XTransactionInput) {
     const { type } = xTransactionInput;
 
     if (type === XTransactionType.SWAP_ON_ICON) {
@@ -159,10 +146,143 @@ export class IconXWalletClient extends XWalletClient {
       return this._executeSwap(xTransactionInput);
     } else if (type === XTransactionType.BRIDGE) {
       return this._executeBridge(xTransactionInput);
-    } else if (type === XTransactionType.BORROW) {
-      return this._executeBorrow(xTransactionInput);
     } else {
       throw new Error('Invalid XTransactionType');
     }
+  }
+
+  async executeDepositCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+
+  async executeWithdrawCollateral(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+
+  async executeBorrow(xTransactionInput: XTransactionInput) {
+    const { inputAmount, account, xCallFee, usedCollateral, recipient } = xTransactionInput;
+
+    if (!inputAmount || !usedCollateral) {
+      return;
+    }
+
+    if (account && xCallFee) {
+      window.addEventListener('beforeunload', showMessageOnBeforeUnload);
+
+      const txResult = await bnJs
+        .inject({ account: account })
+        .Loans.borrow(inputAmount.quotient.toString(), usedCollateral, 'bnUSD', recipient);
+
+      const { result: hash } = txResult || {};
+
+      if (hash) {
+        return hash;
+      }
+    }
+    return undefined;
+  }
+
+  async executeRepay(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    throw new Error('Method not implemented.');
+  }
+
+  async depositXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { account, inputAmount } = xTransactionInput;
+
+    if (inputAmount.currency.symbol === 'wICX') {
+      const res: any = await bnJs.wICX.inject({ account }).deposit(toDec(inputAmount));
+      return res.result;
+    } else {
+      const res: any = await bnJs
+        .inject({ account })
+        .getContract(inputAmount.currency.address)
+        .deposit(toDec(inputAmount));
+      return res.result;
+    }
+  }
+  async withdrawXToken(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { account, inputAmount } = xTransactionInput;
+
+    const res: any = await bnJs.inject({ account }).Dex.withdraw(inputAmount.currency.address, toDec(inputAmount));
+
+    return res.result;
+  }
+  async addLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const DEFAULT_SLIPPAGE_LP = 200;
+    const { account, inputAmount, outputAmount } = xTransactionInput;
+
+    if (!outputAmount) {
+      throw new Error('outputAmount is required');
+    }
+
+    const baseToken = inputAmount.currency;
+    const quoteToken = outputAmount?.currency;
+    const res: any = await bnJs
+      .inject({ account })
+      .Dex.add(baseToken.address, quoteToken.address, toDec(inputAmount), toDec(outputAmount), DEFAULT_SLIPPAGE_LP);
+
+    return res.result;
+  }
+
+  async removeLiquidity(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { account, inputAmount, poolId } = xTransactionInput;
+
+    if (!poolId) {
+      throw new Error('poolId is required');
+    }
+
+    const res: any = await bnJs.inject({ account }).Dex.remove(poolId, toDec(inputAmount));
+
+    return res.result;
+  }
+
+  async stake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { account, inputAmount, poolId } = xTransactionInput;
+
+    if (!poolId) {
+      throw new Error('poolId is required');
+    }
+
+    const res: any = await bnJs.inject({ account: account }).Dex.stake(poolId, toDec(inputAmount));
+    return res.result;
+  }
+  async unstake(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { account, inputAmount, poolId } = xTransactionInput;
+
+    if (!poolId) {
+      throw new Error('poolId is required');
+    }
+
+    const res: any = await bnJs.inject({ account: account }).StakedLP.unstake(poolId, toDec(inputAmount));
+    return res.result;
+  }
+
+  async claimRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { account } = xTransactionInput;
+
+    const res: any = await bnJs.inject({ account }).Rewards.claimRewards();
+
+    return res.result;
+  }
+
+  async lockBnUSD(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { account, inputAmount } = xTransactionInput;
+
+    const { result: hash } = await bnJs.inject({ account }).bnUSD.stake(toDec(inputAmount));
+    return hash;
+  }
+
+  async unlockBnUSD(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { account, inputAmount } = xTransactionInput;
+
+    const { result: hash } = await bnJs.inject({ account }).Savings.unlock(toDec(inputAmount));
+    return hash;
+  }
+
+  async claimSaivngsRewards(xTransactionInput: XTransactionInput): Promise<string | undefined> {
+    const { account } = xTransactionInput;
+
+    const { result: hash } = await bnJs.inject({ account }).Savings.claimRewards();
+    return hash;
   }
 }

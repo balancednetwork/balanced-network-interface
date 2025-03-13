@@ -1,10 +1,12 @@
-import { useCurrentAccount } from '@mysten/dapp-kit';
 import { useMemo } from 'react';
+
+import { XChainType } from '@balancednetwork/sdk-core';
+import { useCurrentAccount } from '@mysten/dapp-kit';
+import { useWallet } from '@solana/wallet-adapter-react';
 import { useAccount } from 'wagmi';
-import { XChainType } from '../types';
+
 import { XAccount } from '../types';
 import { useXWagmiStore } from '../useXWagmiStore';
-import { useWallet } from '@solana/wallet-adapter-react';
 
 export function useXAccounts() {
   const xChainTypes = useXWagmiStore(state => Object.keys(state.xServices));

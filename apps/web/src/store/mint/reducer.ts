@@ -1,8 +1,7 @@
-import { Currency } from '@balancednetwork/sdk-core';
+import { XChainId } from '@balancednetwork/sdk-core';
 import { createSlice } from '@reduxjs/toolkit';
 
-import { NETWORK_ID } from '@/constants/config';
-import { ICX, sICX } from '@/constants/tokens';
+import { ICON_XCALL_NETWORK_ID, XToken, convertCurrency, xTokenMapBySymbol } from '@balancednetwork/xwagmi';
 
 export enum Field {
   CURRENCY_A = 'CURRENCY_A',
@@ -20,17 +19,17 @@ export interface MintState {
   readonly otherTypedValue: string;
   readonly inputType: InputType;
   readonly [Field.CURRENCY_A]: {
-    readonly currency: Currency | undefined;
+    readonly currency: XToken | undefined;
     readonly percent: number;
   };
   readonly [Field.CURRENCY_B]: {
-    readonly currency: Currency | undefined;
+    readonly currency: XToken | undefined;
   };
 }
 
 export const INITIAL_MINT = {
-  currencyA: ICX[NETWORK_ID],
-  currencyB: sICX[NETWORK_ID],
+  currencyA: xTokenMapBySymbol[ICON_XCALL_NETWORK_ID]['ICX'],
+  currencyB: xTokenMapBySymbol[ICON_XCALL_NETWORK_ID]['sICX'],
 };
 
 const initialState: MintState = {
@@ -85,28 +84,47 @@ const mintSlice = createSlice({
         }
       },
     ),
-    selectCurrency: create.reducer<{ currency: Currency; field: Field }>((state, { payload: { currency, field } }) => {
-      // const otherField = field === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A;
+    selectCurrency: create.reducer<{ currency: XToken; field: Field }>((state, { payload: { currency, field } }) => {
+      const currencyA = state[Field.CURRENCY_A].currency;
+      const currencyB = state[Field.CURRENCY_B].currency;
 
-      // if (currency === state[otherField].currency) {
-      //   // the case where we have to swap the order
-      //   return {
-      //     ...state,
-      //     independentField: state.independentField === Field.CURRENCY_A ? Field.CURRENCY_B : Field.CURRENCY_A,
-      //     [field]: { ...state[field], currency: currency, percent: 0 },
-      //     [otherField]: { ...state[otherField], currency: state[field].currency, percent: 0 },
-      //   };
-      // } else {
-      // the normal case
+      const sICX = xTokenMapBySymbol[currency.xChainId]['sICX'];
+      const bnUSD = xTokenMapBySymbol[currency.xChainId]['bnUSD'];
+
+      if (field === Field.CURRENCY_A && currency.symbol === currencyB?.symbol) {
+        return {
+          ...state,
+          [Field.CURRENCY_A]: { currency: currency, percent: 0 },
+          [Field.CURRENCY_B]: { currency: currency.symbol === sICX.symbol ? bnUSD : sICX, percent: 0 },
+        };
+      }
+      if (field === Field.CURRENCY_B && currency.symbol === currencyA?.symbol) {
+        return {
+          ...state,
+          [Field.CURRENCY_A]: { currency: currency.symbol === sICX.symbol ? bnUSD : sICX, percent: 0 },
+          [Field.CURRENCY_B]: { currency: currency, percent: 0 },
+        };
+      }
       return {
         ...state,
         [field]: { ...state[field], currency: currency, percent: 0 },
       };
-      // }
+    }),
+
+    selectChain: create.reducer<{ field: Field; xChainId: XChainId }>((state, { payload: { field, xChainId } }) => {
+      const updatedCurrencyA = convertCurrency(xChainId, state[Field.CURRENCY_A].currency);
+      let updatedCurrencyB;
+      try {
+        updatedCurrencyB = convertCurrency(xChainId, state[Field.CURRENCY_B].currency);
+      } catch (error) {
+        updatedCurrencyB = xTokenMapBySymbol[xChainId]['bnUSD'];
+      }
+      state[Field.CURRENCY_A].currency = updatedCurrencyA;
+      state[Field.CURRENCY_B].currency = updatedCurrencyB;
     }),
   }),
 });
 
-export const { resetMintState, typeInput, selectCurrency } = mintSlice.actions;
+export const { resetMintState, typeInput, selectCurrency, selectChain } = mintSlice.actions;
 
 export default mintSlice.reducer;

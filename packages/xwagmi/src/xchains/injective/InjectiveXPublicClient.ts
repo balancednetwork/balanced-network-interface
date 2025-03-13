@@ -2,7 +2,7 @@ import { fromBase64, toBase64 } from '@injectivelabs/sdk-ts';
 
 import { injective } from '@/constants/xChains';
 import { XPublicClient } from '@/core';
-import { XChainId, XToken } from '@/types';
+import { XToken } from '@/types';
 import {
   TransactionStatus,
   XCallEvent,
@@ -12,7 +12,7 @@ import {
   XCallMessageSentEvent,
   XTransactionInput,
 } from '@/xcall/types';
-import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
 import { InjectiveXService } from './InjectiveXService';
 
 const XCallEventSignatureMap = {

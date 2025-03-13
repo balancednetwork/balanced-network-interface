@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
 import Nouislider from '@/packages/nouislider-react';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
@@ -8,48 +7,61 @@ import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
 import { Button, TextButton } from '@/app/components/Button';
-import CurrencyBalanceErrorMessage from '@/app/components/CurrencyBalanceErrorMessage';
 import { inputRegex } from '@/app/components/CurrencyInputPanel';
-import Modal from '@/app/components/Modal';
-import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import {
-  useLockedAmount,
   useSavingsRateInfo,
   useSavingsRatePastMonthPayout,
   useSavingsSliderActionHandlers,
   useSavingsSliderState,
+  useSavingsXChainId,
 } from '@/store/savings/hooks';
-import { useTransactionAdder } from '@/store/transactions/hooks';
-import { useHasEnoughICX, useICONWalletBalances } from '@/store/wallet/hooks';
-import { escapeRegExp, parseUnits } from '@/utils';
-import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { useXTokenBalances } from '@/store/wallet/hooks';
+import { escapeRegExp } from '@/utils';
+import {
+  XToken,
+  getNetworkDisplayName,
+  getXChainType,
+  useXAccount,
+  useXLockedBnUSDAmount,
+  xTokenMapBySymbol,
+} from '@balancednetwork/xwagmi';
+import { useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
 
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
-import { useSignedInWallets } from '@/hooks/useWallets';
 import { formatValue } from '@/utils/formatter';
+import { CurrencyAmount } from '@balancednetwork/sdk-core';
+import { useQueryClient } from '@tanstack/react-query';
+import { UnderlineText } from '../../DropdownText';
+import { handleConnectWallet } from '../../WalletModal/WalletItem';
 import { BalnPreviewInput as SavingsPreviewInput } from '../BBaln/styledComponents';
+import SavingsModal from './SavingsModal';
 
 const Savings = () => {
-  const lockedAmount = useLockedAmount();
-  const { account } = useIconReact();
+  const queryClient = useQueryClient();
+  const savingsXChainId = useSavingsXChainId();
+  const xAccount = useXAccount(getXChainType(savingsXChainId));
+
+  const { data: lockedAmount, refetch: refetchLockedAmount } = useXLockedBnUSDAmount({
+    address: xAccount?.address,
+    xChainId: savingsXChainId,
+  });
+
+  const [executionBnUSDDiff, setExecutionBnUSDDiff] = React.useState<BigNumber | undefined>(undefined);
+  const [executionLockedAmount, setExecutionLockedAmount] = React.useState<CurrencyAmount<XToken> | null | undefined>(
+    undefined,
+  );
+
   const { typedValue, isAdjusting, inputType } = useSavingsSliderState();
   const { onFieldAInput, onSlide, onAdjust: adjust } = useSavingsSliderActionHandlers();
-  const balances = useICONWalletBalances();
-  const bnUSDBalance = balances?.[bnJs.bnUSD.address];
   const sliderInstance = React.useRef<any>(null);
-  const addTransaction = useTransactionAdder();
-  const hasEnoughICX = useHasEnoughICX();
   const [isOpen, setOpen] = React.useState(false);
   const isSmallScreen = useMedia('(max-width: 540px)');
   const { data: savingsRate } = useSavingsRateInfo();
   const { data: savingsPastMonthPayout } = useSavingsRatePastMonthPayout();
-  const signedInWallet = useSignedInWallets();
 
-  const toggleOpen = React.useCallback(() => {
-    setOpen(!isOpen);
-  }, [isOpen]);
+  const bnUSD = xTokenMapBySymbol[savingsXChainId]['bnUSD'];
+  const [bnUSDBalance] = useXTokenBalances([bnUSD]);
 
   const [typedValueBN, lockedAmountBN] = React.useMemo(() => {
     return [new BigNumber(parseFloat(typedValue)), new BigNumber(lockedAmount?.toFixed() || 0)];
@@ -119,38 +131,12 @@ const Savings = () => {
     onFieldAInput(lockedAmount?.toFixed(2) || '0');
   };
 
-  const handleConfirm = async () => {
-    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-    if (account) {
-      try {
-        bnJs.inject({ account });
-        if (bnUSDDiff.isGreaterThan(0)) {
-          const { result: hash } = await bnJs.bnUSD.stake(parseUnits(bnUSDDiff.toFixed()));
-          addTransaction(
-            { hash },
-            {
-              pending: t`Depositing bnUSD...`,
-              summary: t`Deposited ${bnUSDDiff.abs().toFormat(2)} bnUSD.`,
-            },
-          );
-        } else if (bnUSDDiff.isLessThan(0)) {
-          const { result: hash } = await bnJs.Savings.unlock(parseUnits(bnUSDDiff.abs().toFixed()));
-          addTransaction(
-            { hash },
-            {
-              pending: t`Withdrawing bnUSD...`,
-              summary: t`Withdrew ${bnUSDDiff.abs().toFormat(2)} bnUSD.`,
-            },
-          );
-        }
-        toggleOpen();
-      } catch (error) {
-        console.error('staking/unlocking bnUSD error: ', error);
-      } finally {
-        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-      }
-    }
-    adjust(false);
+  const xChainType = getXChainType(savingsXChainId);
+  const xConnectors = useXConnectors(xChainType);
+  const xConnect = useXConnect();
+
+  const handleConnect = () => {
+    handleConnectWallet(xChainType, xConnectors, xConnect);
   };
 
   return (
@@ -178,7 +164,7 @@ const Savings = () => {
                         <Typography mr={1}>
                           Paid in bnUSD{' '}
                           <span style={{ opacity: 0.75 }}>{`(${savingsRate.percentAPRbnUSD.toFormat(2)}%)`}</span>, sICX{' '}
-                          <span style={{ opacity: 0.75 }}>{`(${savingsRate.percentAPRsICX.toFormat(2)}%)`}</span> and
+                          <span style={{ opacity: 0.75 }}>{`(${savingsRate.percentAPRsICX.toFormat(2)}%)`}</span>, and
                           BALN <span style={{ opacity: 0.75 }}>{`(${savingsRate.percentAPRBALN.toFormat(2)}%)`}</span>.
                         </Typography>
                       )}
@@ -201,26 +187,34 @@ const Savings = () => {
               </QuestionWrapper>
             </Flex>
           </Flex>
-          {account && bnUSDCombinedTotal > 0 && (
+          {xAccount.address && bnUSDCombinedTotal > 0 && (
             <Flex>
               {isAdjusting && <TextButton onClick={handleCancel}>{t`Cancel`}</TextButton>}
               <Button
                 fontSize={14}
-                onClick={isAdjusting ? () => toggleOpen() : () => adjust(true)}
+                onClick={
+                  isAdjusting
+                    ? () => {
+                        setExecutionBnUSDDiff(bnUSDDiff);
+                        setExecutionLockedAmount(lockedAmount);
+                        setOpen(true);
+                      }
+                    : () => adjust(true)
+                }
                 disabled={isAdjusting && bnUSDDiff.isEqualTo(0)}
               >
                 {isAdjusting
                   ? t`Confirm`
                   : lockedAmount?.greaterThan(0) && !bnUSDBalance
                     ? t`Withdraw`
-                    : bnUSDBalance.greaterThan(0) && (!lockedAmount || lockedAmount?.equalTo(0))
+                    : bnUSDBalance?.greaterThan(0) && (!lockedAmount || lockedAmount?.equalTo(0))
                       ? 'Deposit bnUSD'
                       : 'Adjust'}
               </Button>
             </Flex>
           )}
         </Flex>
-        {account && bnUSDCombinedTotal > 0 ? (
+        {xAccount.address && bnUSDCombinedTotal > 0 ? (
           <>
             <Box margin="25px 0 10px">
               <Nouislider
@@ -264,9 +258,12 @@ const Savings = () => {
               )}
             </Flex>
           </>
-        ) : !account && signedInWallet.length > 0 ? (
-          <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>
-            <Trans>Sign in on ICON, then deposit bnUSD to earn rewards.</Trans>
+        ) : !xAccount.address ? (
+          <Typography mt={6} mb={5}>
+            <UnderlineText onClick={handleConnect} style={{ color: '#2fccdc' }}>
+              <Trans>Sign in on {getNetworkDisplayName(savingsXChainId)}</Trans>
+            </UnderlineText>
+            <Trans>, then deposit bnUSD to earn rewards.</Trans>
           </Typography>
         ) : (
           <Typography fontSize={14} opacity={0.75} mt={6} mb={5} mr={-1}>
@@ -275,50 +272,19 @@ const Savings = () => {
         )}
       </Box>
 
-      <Modal isOpen={isOpen} onDismiss={toggleOpen}>
-        <ModalContent>
-          <Typography textAlign="center" mb="5px">
-            {bnUSDDiff.isGreaterThan(0) ? t`Deposit bnUSD?` : t`Withdraw bnUSD?`}
-          </Typography>
-
-          <Typography variant="p" fontWeight="bold" textAlign="center" fontSize={20}>
-            {`${bnUSDDiff.abs().toFormat(2)} bnUSD`}
-          </Typography>
-
-          <Flex my={'25px'}>
-            <Box width={1 / 2} className="border-right">
-              <Typography textAlign="center">Before</Typography>
-              <Typography variant="p" textAlign="center">
-                {lockedAmount?.toFixed(2, { groupSeparator: ',' }) || 0} bnUSD
-              </Typography>
-            </Box>
-
-            <Box width={1 / 2}>
-              <Typography textAlign="center">After</Typography>
-              <Typography variant="p" textAlign="center">
-                {`${bnUSDDiff.plus(new BigNumber(lockedAmount?.toFixed() ?? 0)).toFixed(2)} bnUSD`}
-              </Typography>
-            </Box>
-          </Flex>
-
-          {bnUSDDiff.isGreaterThan(0) && (
-            <Typography textAlign="center" mb={4}>
-              <Trans>You can withdraw at any time.</Trans>
-            </Typography>
-          )}
-
-          <Flex justifyContent="center" pt={4} className="border-top" flexWrap={'wrap'}>
-            <TextButton onClick={toggleOpen} fontSize={14}>
-              Cancel
-            </TextButton>
-            <Button disabled={!hasEnoughICX} onClick={handleConfirm} fontSize={14}>
-              {bnUSDDiff.isGreaterThan(0) ? 'Deposit bnUSD' : t`Withdraw bnUSD`}
-            </Button>
-          </Flex>
-
-          {!hasEnoughICX && <CurrencyBalanceErrorMessage mt={3} />}
-        </ModalContent>
-      </Modal>
+      <SavingsModal
+        isOpen={isOpen}
+        onClose={() => setOpen(false)}
+        bnUSDDiff={executionBnUSDDiff || new BigNumber(0)}
+        lockedAmount={executionLockedAmount}
+        onSuccess={async () => {
+          await refetchLockedAmount();
+          // queryClient.invalidateQueries({ queryKey: ['xLockedBnUSDAmount'] });
+          queryClient.invalidateQueries({ queryKey: ['xLockedBnUSDAmounts'] });
+          queryClient.invalidateQueries({ queryKey: ['xBalances', savingsXChainId] });
+          adjust(false);
+        }}
+      />
     </>
   );
 };

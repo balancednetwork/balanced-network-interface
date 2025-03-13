@@ -17,20 +17,20 @@ import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
 import { Typography } from '@/app/theme';
 import { BIGINT_ZERO, FRACTION_ONE, FRACTION_ZERO } from '@/constants/misc';
-import { BalanceData } from '@/hooks/useV2Pairs';
+import { BalanceData, Pool, usePoolTokenAmounts } from '@/hooks/useV2Pairs';
 import { Source } from '@/store/bbaln/hooks';
 import { Field } from '@/store/mint/reducer';
 import { useChangeWithdrawnValue, useStakedLPPercent } from '@/store/stakedLP/hooks';
 import { tryParseAmount } from '@/store/swap/hooks';
 import { useTransactionAdder } from '@/store/transactions/hooks';
-import { useCurrencyBalances, useHasEnoughICX } from '@/store/wallet/hooks';
-import { formatBigNumber, multiplyCABN, toDec } from '@/utils';
+import { useHasEnoughICX } from '@/store/wallet/hooks';
+import { formatBigNumber } from '@/utils';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { bnJs } from '@balancednetwork/xwagmi';
 
 import { EXA, WEIGHT } from '@/app/components/home/BBaln/utils';
 import { formatSymbol } from '@/utils/formatter';
-import { withdrawMessage } from '../utils';
+import WithdrawLiquidityModal from './WithdrawLiquidityModal';
 
 const Wrapper = styled(Flex)`
   padding-left: 0;
@@ -140,13 +140,14 @@ export function getExternalShareReward(
   );
 }
 
-export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: BalanceData; poolId: number }) => {
-  const { account } = useIconReact();
-  const balances = useCurrencyBalances(
-    account ?? undefined,
-    useMemo(() => [pair.token0, pair.token1], [pair]),
-  );
+export const WithdrawPanel = ({ pool }: { pool: Pool }) => {
+  const { pair, poolId } = pool;
   const onChangeWithdrawnValue = useChangeWithdrawnValue();
+
+  const [executionWithdrawPortion, setExecutionWithdrawPortion] = React.useState<number>(0);
+  const [executionParsedAmounts, setExecutionParsedAmounts] = React.useState<{
+    [field in Field]?: CurrencyAmount<Currency>;
+  }>({});
 
   const [{ typedValue, independentField, inputType, portion }, setState] = React.useState<{
     typedValue: string;
@@ -164,24 +165,24 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
   const price =
     independentField === Field.CURRENCY_A ? pair.token0Price || FRACTION_ONE : pair.token1Price || FRACTION_ONE;
 
-  let parsedAmount: { [field in Field]?: CurrencyAmount<Currency> }, formattedAmounts;
+  let parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> }, formattedAmounts;
 
   const percent = useMemo(() => new Percent(Math.floor(portion * 100), 10_000), [portion]);
   const stakedLPPercent = useStakedLPPercent(poolId);
-  const [aBalance, bBalance] = getABBalance(pair, balance);
+  const [aBalance, bBalance] = usePoolTokenAmounts(pool);
   const availablePercent = new BigNumber(100).minus(stakedLPPercent).abs();
   const availableBase = aBalance.multiply(availablePercent.toFixed(0)).divide(100);
   const availableQuote = bBalance.multiply(availablePercent.toFixed(0)).divide(100);
 
   if (inputType === 'slider') {
-    parsedAmount = {
+    parsedAmounts = {
       [Field.CURRENCY_A]: availableBase?.multiply(percent),
       [Field.CURRENCY_B]: availableQuote?.multiply(percent),
     };
 
     formattedAmounts = {
-      [Field.CURRENCY_A]: parsedAmount[Field.CURRENCY_A]?.toSignificant(6) ?? '',
-      [Field.CURRENCY_B]: parsedAmount[Field.CURRENCY_B]?.toSignificant(6) ?? '',
+      [Field.CURRENCY_A]: parsedAmounts[Field.CURRENCY_A]?.toSignificant(6) ?? '',
+      [Field.CURRENCY_B]: parsedAmounts[Field.CURRENCY_B]?.toSignificant(6) ?? '',
     };
   } else {
     const [independentToken, dependentToken] =
@@ -190,7 +191,7 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
     const independentAmount = tryParseAmount(typedValue, independentToken);
     const dependentAmountFrac = independentAmount?.multiply(price);
 
-    parsedAmount = {
+    parsedAmounts = {
       [independentField]: independentAmount,
       [dependentField]:
         dependentAmountFrac &&
@@ -203,7 +204,7 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
 
     formattedAmounts = {
       [independentField]: typedValue,
-      [dependentField]: parsedAmount[dependentField]?.toFixed(6) ?? '',
+      [dependentField]: parsedAmounts[dependentField]?.toFixed(6) ?? '',
     };
   }
 
@@ -256,69 +257,11 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
 
   const [open, setOpen] = React.useState(false);
 
-  const toggleOpen = () => {
-    setOpen(!open);
-  };
-
-  const addTransaction = useTransactionAdder();
-
-  const resetValue = () => {
-    sliderInstance.current?.noUiSlider.set(0);
-    setState({ typedValue, independentField, inputType: 'slider', portion: 0 });
-  };
-
-  const handleWithdraw = () => {
-    if (!account) return;
-    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    const numPortion = new BigNumber(portion / 100);
-
-    const t = multiplyCABN(balance.balance, numPortion);
-
-    const aT = multiplyCABN(availableBase, numPortion);
-    const bT = multiplyCABN(availableQuote, numPortion);
-
-    bnJs
-      .inject({ account })
-      .Dex.remove(poolId, toDec(t))
-      .then(result => {
-        addTransaction(
-          { hash: result.result },
-          {
-            pending: withdrawMessage(
-              aT.toFixed(2, { groupSeparator: ',' }),
-              aT.currency.symbol ?? '',
-              bT.toFixed(2, { groupSeparator: ',' }),
-              bT.currency.symbol ?? '',
-            ).pendingMessage,
-            summary: withdrawMessage(
-              aT.toFixed(2, { groupSeparator: ',' }),
-              aT.currency.symbol ?? '',
-              bT.toFixed(2, { groupSeparator: ',' }),
-              bT.currency.symbol ?? '',
-            ).successMessage,
-          },
-        );
-        toggleOpen();
-      })
-      .catch(e => {
-        console.error('error', e);
-      })
-      .finally(() => {
-        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-        resetValue();
-      });
-  };
-
   const handleShowConfirm = () => {
-    toggleOpen();
+    setExecutionParsedAmounts(parsedAmounts);
+    setExecutionWithdrawPortion(portion);
+    setOpen(true);
   };
-
-  const hasEnoughICX = useHasEnoughICX();
-
-  const availableCurrency = (stakedValue, suppliedValue) =>
-    (!!stakedValue ? suppliedValue?.subtract(stakedValue) : suppliedValue)?.toFixed(2, { groupSeparator: ',' }) ||
-    '...';
 
   const isValid =
     formattedAmounts[Field.CURRENCY_A] &&
@@ -327,6 +270,16 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
     formattedAmounts[Field.CURRENCY_B] !== '0';
 
   const hasUnstakedLP = availableBase?.greaterThan(0) && availableQuote?.greaterThan(0);
+
+  const resetValue = () => {
+    sliderInstance.current?.noUiSlider.set(0);
+    setState({ typedValue, independentField, inputType: 'slider', portion: 0 });
+    // availableBase &&
+    //   availableQuote &&
+    //   availableBase.greaterThan(0) &&
+    //   availableQuote.greaterThan(0) &&
+    //   onChangeWithdrawnValue(poolId, new BigNumber(0), availableBase.multiply(0), availableQuote.multiply(0));
+  };
 
   return (
     <>
@@ -357,20 +310,20 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
           {`Available:
           ${formatBigNumber(
             new BigNumber(
-              parsedAmount[Field.CURRENCY_A]
-                ? (availableBase as CurrencyAmount<Currency>)?.subtract(parsedAmount[Field.CURRENCY_A]).toFixed()
+              parsedAmounts[Field.CURRENCY_A]
+                ? (availableBase as CurrencyAmount<Currency>)?.subtract(parsedAmounts[Field.CURRENCY_A]).toFixed()
                 : availableBase?.toFixed() || 0,
             ),
             'currency',
-          )} ${formatSymbol(balances[0]?.currency.symbol) || '...'} /
+          )} ${formatSymbol(pair.token0.symbol) || '...'} /
           ${formatBigNumber(
             new BigNumber(
-              parsedAmount[Field.CURRENCY_B]
-                ? (availableQuote as CurrencyAmount<Currency>)?.subtract(parsedAmount[Field.CURRENCY_B]).toFixed()
+              parsedAmounts[Field.CURRENCY_B]
+                ? (availableQuote as CurrencyAmount<Currency>)?.subtract(parsedAmounts[Field.CURRENCY_B]).toFixed()
                 : availableQuote?.toFixed() || 0,
             ),
             'currency',
-          )} ${formatSymbol(balances[1]?.currency.symbol) || '...'}`}
+          )} ${formatSymbol(pair.token1.symbol) || '...'}`}
         </Typography>
         <Box mb={5}>
           {hasUnstakedLP && (
@@ -398,32 +351,14 @@ export const WithdrawPanel = ({ pair, balance, poolId }: { pair: Pair; balance: 
         </Flex>
       </Wrapper>
 
-      <Modal isOpen={open} onDismiss={toggleOpen}>
-        <ModalContent>
-          <Typography textAlign="center" mb={3} as="h3" fontWeight="normal">
-            <Trans>Withdraw liquidity?</Trans>
-          </Typography>
-
-          <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(new BigNumber(parsedAmount[Field.CURRENCY_A]?.toFixed() || 0), 'currency')}{' '}
-            {formatSymbol(parsedAmount[Field.CURRENCY_A]?.currency.symbol) || '...'}
-          </Typography>
-
-          <Typography variant="p" fontWeight="bold" textAlign="center">
-            {formatBigNumber(new BigNumber(parsedAmount[Field.CURRENCY_B]?.toFixed() || 0), 'currency')}{' '}
-            {formatSymbol(parsedAmount[Field.CURRENCY_B]?.currency.symbol) || '...'}
-          </Typography>
-
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen}>
-              <Trans>Cancel</Trans>
-            </TextButton>
-            <Button onClick={handleWithdraw} disabled={!hasEnoughICX}>
-              <Trans>Withdraw</Trans>
-            </Button>
-          </Flex>
-        </ModalContent>
-      </Modal>
+      <WithdrawLiquidityModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        parsedAmounts={executionParsedAmounts}
+        pool={pool}
+        withdrawPortion={executionWithdrawPortion}
+        onSuccess={resetValue}
+      />
     </>
   );
 };

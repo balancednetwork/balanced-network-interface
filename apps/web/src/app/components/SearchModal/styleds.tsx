@@ -134,7 +134,7 @@ export const HeaderText = styled(Flex)<{ className?: string }>`
     props.className === 'DESC' &&
     css`
       padding-right: 15px;
-      padding-left: 15px;
+      padding-left: 0;
       &:before,
       &:after,
       span:after,

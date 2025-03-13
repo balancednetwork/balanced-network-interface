@@ -54,3 +54,17 @@ export function getWithdrawData(token: string, amount: bigint): Uint8Array {
 export function getClaimRewardData(to: string, sources: string[]): Uint8Array {
   return RLP.encode(['xclaimrewards', to, sources]);
 }
+
+//
+export function getLockData(method: string, params: Record<string, any>): Buffer {
+  const map = {
+    method: method,
+    params: params,
+  };
+  const jsonString = JSON.stringify(map);
+  return Buffer.from(jsonString, 'utf-8');
+}
+
+export function getUnlockData(amount: bigint): Uint8Array {
+  return RLP.encode(['xunlock', uintToBytes(amount)]);
+}

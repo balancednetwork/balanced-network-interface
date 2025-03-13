@@ -51,6 +51,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
 
   // supply
   const [isPending, setIsPending] = React.useState(false);
+  const [isSigning, setIsSigning] = React.useState(false);
   const [pendingTx, setPendingTx] = React.useState('');
   const currentXTransaction = useXTransactionStore(state => state.transactions[pendingTx]);
 
@@ -98,6 +99,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
       queryClient.invalidateQueries({ queryKey: ['XTokenDepositAmount'] });
 
       setIsPending(false);
+      setIsSigning(false);
       setPendingTx('');
       setHasErrorMessage(false);
       setExecutionDepositAmountA(undefined);
@@ -144,17 +146,19 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
     try {
       if (depositAmountA && depositAmountB) {
         setIsPending(true);
-
         setExecutionDepositAmountA(depositAmountA);
         setExecutionDepositAmountB(depositAmountB);
 
+        setIsSigning(true);
         const txHash = await xAddLiquidity(account, depositAmountA, depositAmountB);
+        setIsSigning(false);
         if (txHash) setPendingTx(txHash);
         else setIsPending(false);
       }
     } catch (error) {
       console.error('error', error);
       setIsPending(false);
+      setIsSigning(false);
     }
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
   };
@@ -316,7 +320,7 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
               >
                 <Flex justifyContent="center" mt={4} pt={4} className="border-top">
                   <TextButton onClick={handleCancelSupply}>
-                    <Trans>{isPending && !!pendingTx ? 'Close' : 'Cancel'}</Trans>
+                    <Trans>{isPending && !!pendingTx && !isSigning ? 'Close' : 'Cancel'}</Trans>
                   </TextButton>
 
                   {isWrongChain ? (
@@ -330,7 +334,13 @@ export default function SupplyLiquidityModal({ isOpen, onClose, parsedAmounts, c
                       onClick={handleSupplyConfirm}
                       $loading={isPending}
                     >
-                      {isPending ? (pair ? t`Supplying` : t`Creating pool`) : pair ? t`Supply` : t`Create pool`}
+                      {isPending && !isSigning
+                        ? pair
+                          ? t`Supplying`
+                          : t`Creating pool`
+                        : pair
+                          ? t`Supply`
+                          : t`Create pool`}
                     </StyledButton>
                   )}
                 </Flex>

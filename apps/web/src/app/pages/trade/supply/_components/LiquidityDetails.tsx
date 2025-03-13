@@ -204,12 +204,6 @@ export default function LiquidityDetails() {
           </Accordion>
         </TableWrapper>
       )}
-
-      {!tokenListConfig.community && (
-        <Banner messageID={'communityList'} embedded>
-          <Message />
-        </Banner>
-      )}
     </>
   );
 }

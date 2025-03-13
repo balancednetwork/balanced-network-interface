@@ -44,7 +44,7 @@ const RewardsPanel = () => {
   const savingsXChainId = useSavingsXChainId();
 
   const account = useXAccount(getXChainType(savingsXChainId));
-  const hasAnyKindOfRewards = useHasAnyKindOfRewards();
+  const hasAnyKindOfRewards = useHasAnyKindOfRewards(savingsXChainId);
 
   const handleSetGlobalTooltip = React.useCallback((shouldShow: boolean) => {
     setGlobalTooltip(shouldShow);
@@ -106,9 +106,22 @@ const RewardsPanel = () => {
             <NetworkFeesReward showGlobalTooltip={showGlobalTooltip} />
           </Flex>
         ) : (
-          <Typography textAlign="center" fontSize={14} opacity={0.75}>
-            <Trans>To earn rewards: supply liquidity, deposit bnUSD into the savings rate, or lock up BALN.</Trans>
-          </Typography>
+          <>
+            {savingsXChainId === '0x1.icon' ? (
+              <Typography textAlign="center" fontSize={14} opacity={0.75}>
+                <Trans>
+                  To earn rewards on ICON: supply liquidity, deposit bnUSD into the Savings Rate, or lock up BALN.
+                </Trans>
+              </Typography>
+            ) : (
+              <Typography textAlign="center" fontSize={14} opacity={0.75}>
+                <Trans>
+                  To earn rewards on {getNetworkDisplayName(savingsXChainId)}, supply liquidity or deposit bnUSD into
+                  the Savings Rate.
+                </Trans>
+              </Typography>
+            )}
+          </>
         )}
       </BoxPanel>
     </StyledBoxPanel>

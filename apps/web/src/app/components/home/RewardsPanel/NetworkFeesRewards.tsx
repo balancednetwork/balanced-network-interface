@@ -177,7 +177,7 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
           <Flex flexDirection="column" alignItems="center" mt={2}>
             {Object.values(rewards).map((reward, index) => (
               <Typography key={index} variant="p">
-                {`${reward.toFixed(2, { groupSeparator: ',' })}`}{' '}
+                {`${reward.toSignificant(2, { groupSeparator: ',' })}`}{' '}
                 <Typography as="span" color="text1">
                   {reward.currency.symbol}
                 </Typography>

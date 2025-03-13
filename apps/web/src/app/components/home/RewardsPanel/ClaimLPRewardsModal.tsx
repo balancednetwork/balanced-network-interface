@@ -105,7 +105,7 @@ export default function ClaimLPRewardsModal({ isOpen, onClose }: ModalProps) {
         <Flex flexDirection="column" alignItems="center" mt={2}>
           {rewards?.map((reward, index) => (
             <Typography key={index} variant="p">
-              {`${reward.toFixed(2, { groupSeparator: ',' })}`}{' '}
+              {reward.toSignificant(2)} {/* {`${reward.toFixed(2, { groupSeparator: ',' })}`}{' '} */}
               <Typography as="span" color="text1">
                 {reward.currency.symbol}
               </Typography>

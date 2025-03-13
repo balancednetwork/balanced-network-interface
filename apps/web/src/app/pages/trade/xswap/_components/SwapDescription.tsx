@@ -39,7 +39,7 @@ const CHART_PERIODS_LABELS = {
 };
 
 export default function SwapDescription() {
-  const { _currencies: currencies, price } = useDerivedSwapInfo();
+  const { _currencies: ICONcurrencies, price, currencies: XCurrencies } = useDerivedSwapInfo();
   const [tradingViewActive, setTradingViewActive] = useState(false);
 
   const [chartOption, setChartOption] = React.useState<{ type: CHART_TYPES; period: CHART_PERIODS }>({
@@ -49,7 +49,7 @@ export default function SwapDescription() {
 
   const [ref, width] = useWidth();
 
-  const priceChartQuery = usePriceChartDataQuery(currencies, chartOption.period);
+  const priceChartQuery = usePriceChartDataQuery(ICONcurrencies, chartOption.period);
   const isChartLoading = priceChartQuery?.isLoading;
   const data = priceChartQuery.data;
 
@@ -59,24 +59,24 @@ export default function SwapDescription() {
 
   let priceInICX: Price<Currency, Currency> | undefined;
 
-  if (price && currencies.INPUT && currencies.OUTPUT) {
+  if (price && ICONcurrencies.INPUT && ICONcurrencies.OUTPUT) {
     priceInICX =
-      currencies[Field.OUTPUT]?.wrapped.address === bnJs.sICX.address
+      ICONcurrencies[Field.OUTPUT]?.wrapped.address === bnJs.sICX.address
         ? new Price(
-            currencies.INPUT,
+            ICONcurrencies.INPUT,
             SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address],
             price.denominator * qratioFrac.denominator,
             price.numerator * qratioFrac.numerator,
           )
         : new Price(
             SUPPORTED_TOKENS_MAP_BY_ADDRESS[bnJs.ICX.address],
-            currencies.OUTPUT,
+            ICONcurrencies.OUTPUT,
             price.denominator * qratioFrac.numerator,
             price.numerator * qratioFrac.denominator,
           );
   }
 
-  const [, pair] = useV2Pair(currencies[Field.INPUT], currencies[Field.OUTPUT]);
+  const [, pair] = useV2Pair(ICONcurrencies[Field.INPUT], ICONcurrencies[Field.OUTPUT]);
 
   const handleChartPeriodChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setChartOption({
@@ -85,10 +85,10 @@ export default function SwapDescription() {
     });
   };
 
-  const hasSICX = [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('sICX');
+  const hasSICX = [ICONcurrencies[Field.INPUT]?.symbol, ICONcurrencies[Field.OUTPUT]?.symbol].includes('sICX');
   const hasICX =
-    [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('ICX') ||
-    [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol].includes('wICX');
+    [ICONcurrencies[Field.INPUT]?.symbol, ICONcurrencies[Field.OUTPUT]?.symbol].includes('ICX') ||
+    [ICONcurrencies[Field.INPUT]?.symbol, ICONcurrencies[Field.OUTPUT]?.symbol].includes('wICX');
   const shouldShowICXPrice = hasSICX && !hasICX;
 
   const handleChartTypeChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -100,24 +100,24 @@ export default function SwapDescription() {
 
   const { account } = useIconReact();
   const [activeSymbol, setActiveSymbol] = useState<string | undefined>(undefined);
-  const symbolName = `${formatSymbol(currencies[Field.INPUT]?.symbol)} / ${formatSymbol(currencies[Field.OUTPUT]?.symbol)}`;
+  const symbolName = `${formatSymbol(XCurrencies[Field.INPUT]?.symbol)} / ${formatSymbol(XCurrencies[Field.OUTPUT]?.symbol)}`;
   const isSuperSmall = useMedia('(max-width: 359px)');
 
   const hasTradingView = React.useMemo(() => {
     return (
-      SUPPORTED_TOKENS_LIST.some(token => token.symbol === currencies[Field.INPUT]?.symbol) &&
-      SUPPORTED_TOKENS_LIST.some(token => token.symbol === currencies[Field.OUTPUT]?.symbol)
+      SUPPORTED_TOKENS_LIST.some(token => token.symbol === ICONcurrencies[Field.INPUT]?.symbol) &&
+      SUPPORTED_TOKENS_LIST.some(token => token.symbol === ICONcurrencies[Field.OUTPUT]?.symbol)
     );
-  }, [currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol]);
+  }, [ICONcurrencies[Field.INPUT]?.symbol, ICONcurrencies[Field.OUTPUT]?.symbol]);
 
   const hasChart = React.useMemo(() => {
     const pairExists = !!pair;
     const isOraclePriced =
-      ORACLE_PRICED_TOKENS.includes(currencies[Field.INPUT]?.symbol!) ||
-      ORACLE_PRICED_TOKENS.includes(currencies[Field.OUTPUT]?.symbol!);
+      ORACLE_PRICED_TOKENS.includes(ICONcurrencies[Field.INPUT]?.symbol!) ||
+      ORACLE_PRICED_TOKENS.includes(ICONcurrencies[Field.OUTPUT]?.symbol!);
 
     return pairExists && !isOraclePriced;
-  }, [pair, currencies[Field.INPUT]?.symbol, currencies[Field.OUTPUT]?.symbol]);
+  }, [pair, ICONcurrencies[Field.INPUT]?.symbol, ICONcurrencies[Field.OUTPUT]?.symbol]);
 
   const { onCurrencySelection } = useSwapActionHandlers();
 
@@ -154,15 +154,15 @@ export default function SwapDescription() {
               <Typography variant="p">
                 <Trans>
                   {`${price ? formatUnitPrice(price.toFixed(10)) : '...'} 
-                    ${formatSymbol(currencies[Field.OUTPUT]?.symbol)} per ${formatSymbol(currencies[Field.INPUT]?.symbol)} `}
+                    ${formatSymbol(ICONcurrencies[Field.OUTPUT]?.symbol)} per ${formatSymbol(ICONcurrencies[Field.INPUT]?.symbol)} `}
                 </Trans>
               </Typography>
               {shouldShowICXPrice && (
                 <Typography variant="p" fontSize="14px" color="rgba(255,255,255,0.75)">
                   <Trans>
                     {`${priceInICX?.toFixed(4) || '...'} 
-                      ${currencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.OUTPUT]?.symbol} 
-                      per ${currencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : currencies[Field.INPUT]?.symbol} `}
+                      ${ICONcurrencies[Field.OUTPUT]?.symbol === 'sICX' ? 'ICX' : ICONcurrencies[Field.OUTPUT]?.symbol} 
+                      per ${ICONcurrencies[Field.INPUT]?.symbol === 'sICX' ? 'ICX' : ICONcurrencies[Field.INPUT]?.symbol} `}
                   </Trans>
                 </Typography>
               )}

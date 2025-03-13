@@ -58,10 +58,10 @@ const SavingsModal = ({
     [currentXTransaction],
   );
 
-  const handleDismiss = useCallback(() => {
+  const handleDismiss = useCallback(async () => {
+    await onSuccess?.();
     onClose();
     setTimeout(() => {
-      onSuccess?.();
       setIsPending(false);
       setIsSigning(false);
       setPendingTx('');

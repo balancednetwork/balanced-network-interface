@@ -42,7 +42,7 @@ const Savings = () => {
   const savingsXChainId = useSavingsXChainId();
   const xAccount = useXAccount(getXChainType(savingsXChainId));
 
-  const { data: lockedAmount } = useXLockedBnUSDAmount({
+  const { data: lockedAmount, refetch: refetchLockedAmount } = useXLockedBnUSDAmount({
     address: xAccount?.address,
     xChainId: savingsXChainId,
   });
@@ -277,10 +277,12 @@ const Savings = () => {
         onClose={() => setOpen(false)}
         bnUSDDiff={executionBnUSDDiff || new BigNumber(0)}
         lockedAmount={executionLockedAmount}
-        onSuccess={() => {
-          adjust(false);
-          queryClient.invalidateQueries({ queryKey: ['xLockedBnUSDAmount'] });
+        onSuccess={async () => {
+          await refetchLockedAmount();
+          // queryClient.invalidateQueries({ queryKey: ['xLockedBnUSDAmount'] });
           queryClient.invalidateQueries({ queryKey: ['xLockedBnUSDAmounts'] });
+          queryClient.invalidateQueries({ queryKey: ['xBalances', savingsXChainId] });
+          adjust(false);
         }}
       />
     </>

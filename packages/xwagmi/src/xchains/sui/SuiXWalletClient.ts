@@ -12,7 +12,7 @@ import { SuiXService } from './SuiXService';
 
 const addressesMainnet = {
   'Balanced Package Id': '0x64f781b9718f889c62f66ea934050de4b785f200ae8ac44e85efdd990150afe1',
-  'xCall Package Id': '0x3638b141b349173a97261bbfa33ccd45334d41a80584db6f30429e18736206fe',
+  'xCall Package Id': '0x2a815e1bb7e88902ae74b95d7a98a5b04d55a7cb282fcf104f9ff2c0465f6976',
   'xCall Storage': '0xe9ae3e2d32cdf659ad5db4219b1086cc0b375da5c4f8859c872148895a2eace2',
   'xCall Manager Id': '0xa1fe210d98fb18114455e75f241ab985375dfa27720181268d92fe3499a1111e',
   'xCall Manager Storage': '0x1bbf52529d14124738fac0abc1386670b7927b6d68cab7f9bd998a0c0b274042',

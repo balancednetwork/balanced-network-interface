@@ -71,7 +71,7 @@ const SavingsChainSelector = ({
   const rates = useRatesWithOracle();
 
   const { data: savingsRewards } = useUnclaimedRewards();
-  const { data: feesRewards } = useUnclaimedFees();
+  const feesRewards = useUnclaimedFees();
 
   const rows = useMemo(() => {
     return xChains
@@ -88,7 +88,7 @@ const SavingsChainSelector = ({
           total = total.plus(calculateTotal(savingsRewards[xChainId] || [], rates) || 0);
         }
         if (xChainId === '0x1.icon' && feesRewards) {
-          total = total.plus(calculateTotal(feesRewards, rates) || 0);
+          total = total.plus(calculateTotal(Object.values(feesRewards), rates) || 0);
         }
 
         // if (no staked lp tokens and no locked amount and less than 0.01, set -1)

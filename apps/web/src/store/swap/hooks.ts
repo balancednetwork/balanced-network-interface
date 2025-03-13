@@ -324,7 +324,10 @@ export function useDerivedSwapInfo(): {
     inputError = inputError ?? t`Select a token`;
   }
 
-  const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], trade?.inputAmount];
+  const [balanceIn, amountIn] = [
+    currencyBalances[Field.INPUT],
+    tryParseAmount(trade?.inputAmount.toFixed(), trade?.inputAmount.currency.wrapped),
+  ];
 
   // decimal scales are different for different chains for the same token
   if (

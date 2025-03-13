@@ -11,7 +11,7 @@ import bnJs from '../icon/bnJs';
 import { SuiXService } from './SuiXService';
 
 const addressesMainnet = {
-  'Balanced Package Id': '0xede387fa2f3789f2e64d46744741d317b21f3022488d8f8ef850b3855ae37919',
+  'Balanced Package Id': '0x64f781b9718f889c62f66ea934050de4b785f200ae8ac44e85efdd990150afe1',
   'xCall Package Id': '0x3638b141b349173a97261bbfa33ccd45334d41a80584db6f30429e18736206fe',
   'xCall Storage': '0xe9ae3e2d32cdf659ad5db4219b1086cc0b375da5c4f8859c872148895a2eace2',
   'xCall Manager Id': '0xa1fe210d98fb18114455e75f241ab985375dfa27720181268d92fe3499a1111e',
@@ -24,17 +24,17 @@ const addressesMainnet = {
 
 const TokenModuleMap = {
   bnUSD: {
-    packageId: '0xede387fa2f3789f2e64d46744741d317b21f3022488d8f8ef850b3855ae37919',
+    packageId: '0x64f781b9718f889c62f66ea934050de4b785f200ae8ac44e85efdd990150afe1',
     name: 'balanced_dollar_crosschain',
     storage: '0xd28c9da258f082d5a98556fc08760ec321451216087609acd2ff654d9827c5b5',
   },
   sICX: {
-    packageId: '0x0420fdd0afe2f06f2ecac4395503565dcb6abaf4b5310298d4abe5f2667911ad',
+    packageId: '0x5f759a134845f23cf898ae9eaaa9a39b38384a95f96e11ebaf656aafdc946322',
     name: 'sicx_crosschain',
     storage: '0x7dbf97c738741bc26fa62b1eb8fc18e5d39f551337261d45b7d75c21186fada1',
   },
   BALN: {
-    packageId: '0x0420fdd0afe2f06f2ecac4395503565dcb6abaf4b5310298d4abe5f2667911ad',
+    packageId: '0x5f759a134845f23cf898ae9eaaa9a39b38384a95f96e11ebaf656aafdc946322',
     name: 'balanced_token_crosschain',
     storage: '0x1c2bdf16b54bf2f51b4861e3b987ed8d50b5321e775682ab001e7cb0a27e57ca',
   },

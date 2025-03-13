@@ -505,10 +505,15 @@ export interface MMTrade {
   uuid: string;
 }
 
+export enum QuoteType {
+  EXACT_INPUT = 'exact_input',
+  EXACT_OUTPUT = 'exact_output',
+}
+
 export function useMMTrade(
   queriedCurrencyAmount: CurrencyAmount<XToken> | undefined,
   otherCurrency: XToken | undefined,
-  quoteType: 'exact_input' | 'exact_output',
+  quoteType: QuoteType,
 ) {
   return useQuery<MMTrade | undefined>({
     queryKey: ['quote', queriedCurrencyAmount, otherCurrency],
@@ -517,7 +522,7 @@ export function useMMTrade(
         return;
       }
 
-      const isExactInput = quoteType === 'exact_input';
+      const isExactInput = quoteType === QuoteType.EXACT_INPUT;
 
       const res = await intentService.getQuote({
         token_src: isExactInput ? queriedCurrencyAmount.currency.address : otherCurrency.address,
@@ -570,8 +575,8 @@ export function useDerivedMMTradeInfo(trade: Trade<Currency, Currency, TradeType
     typedValue,
   } = useSwapState();
 
-  const tradeType = independentField === Field.INPUT ? 'exact_input' : 'exact_output';
-  const isExactInput = tradeType === 'exact_input';
+  const tradeType = independentField === Field.INPUT ? QuoteType.EXACT_INPUT : QuoteType.EXACT_OUTPUT;
+  const isExactInput = tradeType === QuoteType.EXACT_INPUT;
 
   // assume independentField is Field.Input
   const mmTradeQuery = useMMTrade(

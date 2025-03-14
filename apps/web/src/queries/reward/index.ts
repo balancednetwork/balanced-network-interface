@@ -13,7 +13,14 @@ import QUERY_KEYS from '@/queries/queryKeys';
 import { getTimestampFrom, useBlockDetails, useBlockNumber } from '@/store/application/hooks';
 import { useOraclePrices } from '@/store/oracle/hooks';
 import { useFlattenedRewardsDistribution } from '@/store/reward/hooks';
-import { ICON_XCALL_NETWORK_ID, XToken, bnJs, xTokenMap, xTokenMapBySymbol } from '@balancednetwork/xwagmi';
+import {
+  ICON_XCALL_NETWORK_ID,
+  XToken,
+  bnJs,
+  useXAccount,
+  xTokenMap,
+  xTokenMapBySymbol,
+} from '@balancednetwork/xwagmi';
 import BigNumber from 'bignumber.js';
 
 export const BATCH_SIZE = 10;
@@ -74,7 +81,7 @@ export const useLPReward = account => {
       const res = await bnJs.Rewards.getRewards(account);
 
       return Object.entries(res).map(([address, amount]) => {
-        const currency = xTokenMapBySymbol[ICON_XCALL_NETWORK_ID][address];
+        const currency = xTokenMap[ICON_XCALL_NETWORK_ID].find(token => token.address === address);
         return CurrencyAmount.fromRawAmount(currency, amount as string);
       });
     },
@@ -92,16 +99,22 @@ export const calculateTotal = (balances, rates): BigNumber => {
 
 export const useLPRewards = (): UseQueryResult<Partial<Record<XChainId, CurrencyAmount<Token>[]>>> => {
   const signedWallets = useSignedInWallets();
+  const filteredWallets = signedWallets.filter(wallet => wallet.address && wallet.xChainId !== '0x1.icon');
   const accounts = useMemo(
-    () => signedWallets.filter(wallet => wallet.address).map(wallet => `${wallet.xChainId}/${wallet.address}`),
-    [signedWallets],
+    () => filteredWallets.map(wallet => `${wallet.xChainId}/${wallet.address}`),
+    [filteredWallets],
   );
 
+  const iconXAccount = useXAccount('ICON');
+  const { data: iconRewards } = useLPReward(iconXAccount?.address);
+
   return useQuery({
-    queryKey: ['rewards', accounts],
+    queryKey: ['rewards', accounts, iconXAccount, iconRewards],
     queryFn: async () => {
       try {
-        if (!accounts || accounts.length === 0) return {};
+        if (!accounts || accounts.length === 0) {
+          return { '0x1.icon': iconRewards || [] };
+        }
 
         const cds = accounts.map(account => {
           return {
@@ -112,7 +125,7 @@ export const useLPRewards = (): UseQueryResult<Partial<Record<XChainId, Currency
         });
         const rawRewards = await bnJs.Multicall.getAggregateData(cds);
 
-        return accounts.reduce((acc, account, index) => {
+        const rewards = accounts.reduce((acc, account, index) => {
           const xChainId = account.split('/')[0];
           const rewards = Object.entries(rawRewards[index]).map(([address, amount]) => {
             const currency = xTokenMap[ICON_XCALL_NETWORK_ID].find(token => token.address === address);
@@ -121,6 +134,9 @@ export const useLPRewards = (): UseQueryResult<Partial<Record<XChainId, Currency
           acc[xChainId] = rewards;
           return acc;
         }, {});
+
+        rewards['0x1.icon'] = iconRewards || [];
+        return rewards;
 
         // const allRewards = await Promise.all(
         //   accounts.map(async account => {
@@ -152,7 +168,7 @@ export const useLPRewards = (): UseQueryResult<Partial<Record<XChainId, Currency
     },
     refetchInterval: 10_000,
     placeholderData: keepPreviousData,
-    enabled: !!accounts && accounts.length > 0,
+    enabled: (!!accounts && accounts.length > 0) || !!iconXAccount?.address,
   });
 };
 // combine rates api data & oracle data

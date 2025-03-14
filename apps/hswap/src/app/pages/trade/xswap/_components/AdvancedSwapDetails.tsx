@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
 
-import { Percent } from '@balancednetwork/sdk-core';
-import { useXCallFee } from '@balancednetwork/xwagmi';
-import { XTransactionType } from '@balancednetwork/xwagmi';
-import { Trans } from '@lingui/macro';
-import BigNumber from 'bignumber.js';
-
 import SlippageSetting from '@/app/components/SlippageSetting';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { PRICE_IMPACT_WARNING_THRESHOLD } from '@/constants/misc';
@@ -13,6 +7,10 @@ import { useSetSlippageTolerance, useSwapSlippageTolerance } from '@/store/appli
 import { useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { formatPercent } from '@/utils';
+import { Percent } from '@balancednetwork/sdk-core';
+import { isIconTransaction, useXCallFee } from '@balancednetwork/xwagmi';
+import { Trans } from '@lingui/macro';
+import BigNumber from 'bignumber.js';
 
 import { ChevronDownGradientIcon, ChevronUpGradientIcon } from '@/app/components/Icons';
 import { cn } from '@/lib/utils';
@@ -112,7 +110,7 @@ export default function AdvancedSwapDetails() {
             </span>
           </div>
 
-          {xTransactionType !== XTransactionType.SWAP_ON_ICON && (
+          {!isIconTransaction(direction.from, direction.to) && (
             <div className="flex items-center justify-between">
               <span className="text-[#d4c5f9] text-sm font-medium flex items-center gap-1">
                 <Trans>Bridge Fee</Trans>

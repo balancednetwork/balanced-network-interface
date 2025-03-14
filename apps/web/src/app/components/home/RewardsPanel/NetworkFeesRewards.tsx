@@ -27,6 +27,7 @@ import { useHasEnoughICX } from '@/store/wallet/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
 import { bnJs } from '@balancednetwork/xwagmi';
 
+import { useSavingsXChainId } from '@/store/savings/hooks';
 import RewardsGrid from './RewardsGrid';
 
 const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
@@ -44,6 +45,7 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
   const { isAdjusting } = useBBalnSliderState();
   const [tooltipHovered, setTooltipHovered] = React.useState(false);
   const isSmallScreen = useMedia('(max-width: 800px)');
+  const savingsXChainId = useSavingsXChainId();
 
   const toggleOpen = React.useCallback(() => {
     setOpen(!isOpen);
@@ -87,60 +89,62 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
               <Trans>Network fees</Trans>
             </span>
           </Typography>
-          <Tooltip
-            text={
-              account && dynamicBalnAmount.isGreaterThan(0) ? (
-                <>
-                  <Trans>
-                    {isAdjusting ? t`You'll` : t`You`} receive{' '}
-                    {!dynamicBalnAmount.isEqualTo(0) ? (
-                      <strong>
-                        {dynamicBalnAmount.isEqualTo(0)
-                          ? 'N/A'
-                          : totalSupplyBBaln && feeShare
-                            ? `${feeShare.times(100).toPrecision(3)}%`
-                            : '-'}{' '}
-                      </strong>
+          {savingsXChainId === '0x1.icon' && (
+            <Tooltip
+              text={
+                account && dynamicBalnAmount.isGreaterThan(0) ? (
+                  <>
+                    <Trans>
+                      {isAdjusting ? t`You'll` : t`You`} receive{' '}
+                      {!dynamicBalnAmount.isEqualTo(0) ? (
+                        <strong>
+                          {dynamicBalnAmount.isEqualTo(0)
+                            ? 'N/A'
+                            : totalSupplyBBaln && feeShare
+                              ? `${feeShare.times(100).toPrecision(3)}%`
+                              : '-'}{' '}
+                        </strong>
+                      ) : (
+                        <strong>0% </strong>
+                      )}
+                      of the fees shared with bBALN holders
+                    </Trans>
+                    {feeShare ? (
+                      <>
+                        , equivalent to <strong> {t`$${pastMonthFees?.total.times(feeShare).toFormat(2)}`}</strong> over
+                        the last 30 days.
+                      </>
                     ) : (
-                      <strong>0% </strong>
+                      '.'
                     )}
-                    of the fees shared with bBALN holders
-                  </Trans>
-                  {feeShare ? (
-                    <>
-                      , equivalent to <strong> {t`$${pastMonthFees?.total.times(feeShare).toFormat(2)}`}</strong> over
-                      the last 30 days.
-                    </>
-                  ) : (
-                    '.'
-                  )}
-                </>
-              ) : (
-                <>
-                  {t`bBALN holders received`}{' '}
-                  <strong style={{ color: '#FFFFFF' }}>${pastMonthFees?.total.toFormat(0) ?? '-'} </strong>
-                  {t`from network fees in the last 30 days.`}
-                </>
-              )
-            }
-            show={tooltipHovered || (!isSmallScreen && showGlobalTooltip)}
-            placement="bottom"
-            width={300}
-            forcePlacement={true}
-          >
-            <QuestionWrapper
-              style={{ transform: 'translateY(1px)' }}
-              onMouseEnter={() => setTooltipHovered(true)}
-              onMouseLeave={() => setTooltipHovered(false)}
-              onTouchStart={() => setTooltipHovered(true)}
-              onTouchCancel={() => setTooltipHovered(false)}
+                  </>
+                ) : (
+                  <>
+                    {t`bBALN holders received`}{' '}
+                    <strong style={{ color: '#FFFFFF' }}>${pastMonthFees?.total.toFormat(0) ?? '-'} </strong>
+                    {t`from network fees in the last 30 days.`}
+                  </>
+                )
+              }
+              show={tooltipHovered || (!isSmallScreen && showGlobalTooltip)}
+              placement="bottom"
+              width={300}
+              forcePlacement={true}
             >
-              <QuestionIcon width={14} />
-            </QuestionWrapper>
-          </Tooltip>
+              <QuestionWrapper
+                style={{ transform: 'translateY(1px)' }}
+                onMouseEnter={() => setTooltipHovered(true)}
+                onMouseLeave={() => setTooltipHovered(false)}
+                onTouchStart={() => setTooltipHovered(true)}
+                onTouchCancel={() => setTooltipHovered(false)}
+              >
+                <QuestionIcon width={14} />
+              </QuestionWrapper>
+            </Tooltip>
+          )}
         </Flex>
 
-        {hasNetworkFees && (
+        {savingsXChainId === '0x1.icon' && hasNetworkFees && (
           <UnderlineText>
             <Typography color="primaryBright" onClick={toggleOpen}>
               <Trans>Claim</Trans>
@@ -148,14 +152,22 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
           </UnderlineText>
         )}
       </Flex>
-      {hasNetworkFees ? (
-        <RewardsGrid rewards={Object.values(rewards)} />
-      ) : (
+      {savingsXChainId === '0x1.icon' && (
+        <>
+          {hasNetworkFees ? (
+            <RewardsGrid rewards={Object.values(rewards)} />
+          ) : (
+            <Typography fontSize={14} opacity={0.75} mb={5}>
+              Lock up BALN to earn fees from Balanced transactions.
+            </Typography>
+          )}
+        </>
+      )}
+      {savingsXChainId !== '0x1.icon' && (
         <Typography fontSize={14} opacity={0.75} mb={5}>
-          Lock up BALN to earn fees from Balanced transactions.
+          Lock up BALN on ICON to earn fees from Balanced transactions.
         </Typography>
       )}
-
       <Modal isOpen={isOpen} onDismiss={toggleOpen}>
         <ModalContent>
           <Typography textAlign="center" mb={1}>
@@ -165,7 +177,7 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
           <Flex flexDirection="column" alignItems="center" mt={2}>
             {Object.values(rewards).map((reward, index) => (
               <Typography key={index} variant="p">
-                {`${reward.toFixed(2, { groupSeparator: ',' })}`}{' '}
+                {`${reward.toSignificant(2, { groupSeparator: ',' })}`}{' '}
                 <Typography as="span" color="text1">
                   {reward.currency.symbol}
                 </Typography>
@@ -175,7 +187,7 @@ const NetworkFeesReward = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={toggleOpen} fontSize={14}>
-              <Trans>Not now</Trans>
+              <Trans>Cancel</Trans>
             </TextButton>
             <Button onClick={handleClaim} fontSize={14} disabled={!hasEnoughICX}>
               <Trans>Claim</Trans>

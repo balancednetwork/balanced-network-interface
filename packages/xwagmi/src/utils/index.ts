@@ -1,11 +1,11 @@
-import { ICON_XCALL_NETWORK_ID } from '@/constants';
-import { xChainMap } from '@/constants/xChains';
-import { allXTokens, wICX, xTokenMap } from '@/constants/xTokens';
-import { Currency, CurrencyAmount, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Token, XChainId } from '@balancednetwork/sdk-core';
 import { RLP } from '@ethereumjs/rlp';
 import BigNumber from 'bignumber.js';
-import { XChainId, XToken } from '../types';
-export * from './address';
+
+import { ICON_XCALL_NETWORK_ID } from '@/constants';
+import { xChainMap } from '@/constants/xChains';
+import { allXTokens, wICX, xTokenMapBySymbol } from '@/constants/xTokens';
+import { XToken } from '../types';
 
 // Function to get the last i bytes of an integer
 function lastBytesOf(x: bigint, i: number): Uint8Array {
@@ -117,49 +117,6 @@ export const getTrackerLink = (
   }
 };
 
-export const jsonStorageOptions: {
-  reviver?: (key: string, value: unknown) => unknown;
-  replacer?: (key: string, value: unknown) => unknown;
-} = {
-  reviver: (_key: string, value: unknown) => {
-    if (!value) return value;
-
-    if (typeof value === 'string' && value.startsWith('BIGINT::')) {
-      return BigInt(value.substring(8));
-    }
-
-    // @ts-ignore
-    if (value && value.type === 'bigint') {
-      // @ts-ignore
-      return BigInt(value.value);
-    }
-
-    // @ts-ignore
-    if (value && value.type === 'CurrencyAmount') {
-      // @ts-ignore
-      return CurrencyAmount.fromRawAmount(allXTokens.find(t => t.id === value.value.tokenId)!, value.value.quotient);
-    }
-    return value;
-  },
-  replacer: (_key: unknown, value: unknown) => {
-    if (typeof value === 'bigint') {
-      return { type: 'bigint', value: value.toString() };
-    }
-
-    if (value instanceof CurrencyAmount) {
-      return {
-        type: 'CurrencyAmount',
-        value: {
-          tokenId: value.currency.id,
-          quotient: value.quotient.toString(),
-        },
-      };
-    }
-
-    return value;
-  },
-};
-
 export const convertCurrencyAmount = (
   xChainId: XChainId,
   amount: CurrencyAmount<Currency | XToken>,
@@ -181,7 +138,7 @@ export const convertCurrency = (xChainId: XChainId, currency: Currency | XToken 
 
   if (currency.symbol === 'wICX') return wICX;
 
-  const token = xTokenMap[xChainId].find(t => t.symbol === currency.symbol)!;
+  const token = xTokenMapBySymbol[xChainId][currency.symbol];
 
   if (!token) {
     if (xChainId === ICON_XCALL_NETWORK_ID) {
@@ -198,3 +155,11 @@ export const findXTokenById = (id: string): XToken | undefined => {
 
   return allXTokens.find(t => t.id === id);
 };
+
+export function isIconTransaction(from: XChainId | undefined, to: XChainId | undefined): boolean {
+  return from === '0x1.icon' && to === '0x1.icon';
+}
+
+export function isSpokeToken(token: XToken): boolean {
+  return ['bnUSD', 'sICX', 'BALN'].includes(token.symbol);
+}

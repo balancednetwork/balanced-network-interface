@@ -1,4 +1,6 @@
-import { XChain, XChainId } from '@/types';
+import { XChainId } from '@balancednetwork/sdk-core';
+
+import { XChain } from '@/types';
 
 export const archway: XChain = {
   id: 'archway-1',
@@ -332,7 +334,7 @@ export const stellar: XChain = {
     bnUSD: 'CCT4ZYIYZ3TUO2AWQFEOFGBZ6HQP3GW5TA37CK7CRZVFRDXYTHTYX7KP',
   },
   autoExecution: true,
-  gasThreshold: 2, // xCall fee: 1.07 XLM
+  gasThreshold: 1, // xCall fee: 0.1 XLM
   testnet: false,
   useXCallScanner: true,
 };
@@ -457,6 +459,7 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   sui: ['centralized-1', 'centralized-2'],
   solana: ['FMPY4m3kZNvFyoAtc87dCPkPrfJuLFpWyS8sbsWFkGC9'],
   '0x89.polygon': ['0x9863CCECe5028b4906798C3e45Ae04b1207de63e', '0x5EA66080F222d8C7AF0c6f184ADa90c9b7f20b91'],
+  'archway-1': [],
 };
 
 /** to other chain from icon sources */
@@ -473,4 +476,5 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   sui: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
   solana: ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
   '0x89.polygon': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
+  'archway-1': [],
 };

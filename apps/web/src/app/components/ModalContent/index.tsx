@@ -19,6 +19,7 @@ export const ModalContentWrapper = styled(Flex)`
 `;
 
 export default function ModalContent(props: Props) {
+  // TODO: deprecate
   const hasEnoughICX = useHasEnoughICX();
   const { noCurrencyBalanceErrorMessage, noMessages, children, ...rest } = props;
 

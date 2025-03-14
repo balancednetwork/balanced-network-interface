@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import { Button, TextButton } from '@/app/components/Button';
 import CurrencyBalanceErrorMessage from '@/app/components/CurrencyBalanceErrorMessage';
 import Divider from '@/app/components/Divider';
-import { UnderlineTextWithArrow } from '@/app/components/DropdownText';
+import { UnderlineText, UnderlineTextWithArrow } from '@/app/components/DropdownText';
 import { MenuItem, MenuList } from '@/app/components/Menu';
 import Modal from '@/app/components/Modal';
 import ModalContent from '@/app/components/ModalContent';
@@ -44,11 +44,12 @@ import { useBALNDetails, useHasEnoughICX } from '@/store/wallet/hooks';
 import { parseUnits } from '@/utils';
 import { getFormattedNumber } from '@/utils/formatter';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { bnJs, getXChainType, useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
 
 import { DropdownPopper } from '@/app/components/Popover';
 import QuestionHelper, { QuestionWrapper } from '@/app/components/QuestionHelper';
 import { useSignedInWallets } from '@/hooks/useWallets';
+import { useSavingsActionHandlers, useSavingsXChainId } from '@/store/savings/hooks';
 import { MetaData } from '../PositionDetailPanel';
 import UnstakePrompt from './UnstakePrompt';
 import { BalnPreviewInput, ButtonsWrap, SliderWrap, Threshold } from './styledComponents';
@@ -118,7 +119,8 @@ export default function BBalnSlider({
   const [tooltipHovered, setTooltipHovered] = useState(false);
   const signedInWallets = useSignedInWallets();
   const { data: pastMonthFees } = usePastMonthFeesDistributed();
-  const hasAnyKindOfRewards = useHasAnyKindOfRewards();
+  const hasAnyKindOfRewards = useHasAnyKindOfRewards('0x1.icon');
+  const savingsXChainId = useSavingsXChainId();
 
   const balnBalanceAvailable = useMemo(
     () => (balnDetails && balnDetails['Available balance'] ? balnDetails['Available balance']! : new BigNumber(0)),
@@ -450,9 +452,19 @@ export default function BBalnSlider({
     setGlobalTooltip && setGlobalTooltip(isHover);
   };
 
+  const { onSavingsXChainSelection } = useSavingsActionHandlers();
+  const xChainType = getXChainType('0x1.icon');
+  const xConnectors = useXConnectors(xChainType);
+  const xConnect = useXConnect();
+  const handleConnectICON = async () => {
+    if (!xConnectors[0]) return;
+    await xConnect(xConnectors[0]);
+  };
+
   return (
     <>
       {account &&
+      savingsXChainId === '0x1.icon' &&
       (balnBalanceAvailable.isGreaterThan(0) ||
         bBalnAmount.isGreaterThan(0) ||
         lockedBalnAmount?.greaterThan(0) ||
@@ -744,15 +756,29 @@ export default function BBalnSlider({
             )}
           </Typography>
           {simple ? (
-            !account && signedInWallets.length > 0 ? (
-              <Typography fontSize={14} opacity={0.75} mb={5}>
-                <Trans>Sign in on ICON, then lock up BALN to boost your rewards.</Trans>
-              </Typography>
-            ) : (
-              <Typography fontSize={14} opacity={0.75} mb={5}>
-                <Trans>Earn or buy BALN, then lock it up here to boost your rewards.</Trans>
-              </Typography>
-            )
+            <>
+              {savingsXChainId === '0x1.icon' &&
+                (!account ? (
+                  <Typography>
+                    <UnderlineText onClick={handleConnectICON} style={{ color: '#2fccdc' }}>
+                      <Trans>Sign in on ICON</Trans>
+                    </UnderlineText>
+                    <Trans>, then lock up BALN to boost your rewards.</Trans>
+                  </Typography>
+                ) : (
+                  <Typography fontSize={14} opacity={0.75} mb={5}>
+                    <Trans>Earn or buy BALN, then lock it up here to boost your rewards.</Trans>
+                  </Typography>
+                ))}
+              {savingsXChainId !== '0x1.icon' && (
+                <Typography>
+                  <UnderlineText onClick={() => onSavingsXChainSelection('0x1.icon')} style={{ color: '#2fccdc' }}>
+                    <Trans>Switch to ICON</Trans>
+                  </UnderlineText>
+                  <Trans>, then lock up BALN to boost your rewards.</Trans>
+                </Typography>
+              )}
+            </>
           ) : (
             <Typography fontSize={14} opacity={0.75}>
               <Trans>Earn or buy BALN, then lock it up here to boost your earning potential and voting power.</Trans>

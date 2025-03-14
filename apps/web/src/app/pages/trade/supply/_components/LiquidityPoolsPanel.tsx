@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
 import { Trans } from '@lingui/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Box, Flex } from 'rebass/styled-components';
@@ -11,6 +10,7 @@ import { BoxPanel } from '@/app/components/Panel';
 import { Typography } from '@/app/theme';
 
 import SearchInput from '@/app/components/SearchModal/SearchInput';
+import { useSignedInWallets } from '@/hooks/useWallets';
 import { useMedia } from 'react-use';
 import AllPoolsPanel from './AllPoolsPanel';
 import LiquidityDetails from './LiquidityDetails';
@@ -33,11 +33,12 @@ const Wrapper = styled(Flex)`
 `;
 
 export default function LiquidityPoolsPanel() {
-  const { account } = useIconReact();
   const [panelType, setPanelType] = useState<PanelType>(PanelType.AllPools);
   const theme = useTheme();
   const isSmallScreen = useMedia(`(minWidth: ${theme.mediaWidth.upSmall})`);
   const [query, setQuery] = React.useState('');
+  const signedInWallets = useSignedInWallets();
+  const signedIn = useMemo(() => signedInWallets.length > 0, [signedInWallets]);
 
   const handleSwitch = (v: PanelType) => {
     setPanelType(v);
@@ -46,12 +47,12 @@ export default function LiquidityPoolsPanel() {
   const hasLiquidity = useHasLiquidity();
 
   useEffect(() => {
-    if (account && hasLiquidity) {
+    if (signedIn && hasLiquidity) {
       setPanelType(PanelType.YourPools);
     } else {
       setPanelType(PanelType.AllPools);
     }
-  }, [account, hasLiquidity]);
+  }, [signedIn, hasLiquidity]);
 
   return (
     <BoxPanel bg="bg2" mb={10}>
@@ -61,7 +62,7 @@ export default function LiquidityPoolsPanel() {
             <Trans>Liquidity pools</Trans>
           </Typography>
 
-          {account && hasLiquidity && (
+          {signedIn && hasLiquidity && (
             <ChartControlGroup mb={'-3px'}>
               <ChartControlButton
                 type="button"

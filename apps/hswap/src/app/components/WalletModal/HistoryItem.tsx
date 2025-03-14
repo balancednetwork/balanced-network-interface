@@ -7,8 +7,8 @@ import useElapsedTime from '@/hooks/useElapsedTime';
 import { cn } from '@/lib/utils';
 import { formatRelativeTime } from '@/utils';
 import { formatBalance } from '@/utils/formatter';
-import { getNetworkDisplayName, getTrackerLink } from '@balancednetwork/xwagmi';
-import { XTransaction, XTransactionStatus, XTransactionType } from '@balancednetwork/xwagmi';
+import { getNetworkDisplayName, getTrackerLink, isIconTransaction } from '@balancednetwork/xwagmi';
+import { XTransaction, XTransactionStatus } from '@balancednetwork/xwagmi';
 import { xMessageActions } from '@balancednetwork/xwagmi';
 import { CheckIcon, ExternalLink, Loader2Icon } from 'lucide-react';
 
@@ -54,7 +54,7 @@ const HistoryItem = ({ xTransaction }: HistoryItemProps) => {
           </div>
           <a
             href={
-              xTransaction.type === XTransactionType.SWAP_ON_ICON
+              isIconTransaction(xTransaction.sourceChainId, xTransaction.finalDestinationChainId)
                 ? getTrackerLink('0x1.icon', xTransaction.id.split('/')[1])
                 : `https://xcallscan.xyz/messages/search?value=${primaryMessage?.destinationTransactionHash || primaryMessage?.sourceTransactionHash}`
             }

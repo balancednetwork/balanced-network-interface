@@ -171,3 +171,4 @@ export const PYTH_PRICED_TOKENS = [
     pythId: 'ffd11c5a1cfd42f80afb2df4d9f264c15f956d68153335374ec10722edd70472',
   },
 ];
+export const STABLE_TOKENS = ['bnUSD', 'USDC', 'USDT'];

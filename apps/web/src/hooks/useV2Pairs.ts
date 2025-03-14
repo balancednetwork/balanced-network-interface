@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
 import { BalancedJs, CallData } from '@balancednetwork/balanced-js';
-import { Currency, CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, Fraction, Token, XChainId } from '@balancednetwork/sdk-core';
 import { Pair, PairType } from '@balancednetwork/v1-sdk';
 import BigNumber from 'bignumber.js';
 
@@ -334,3 +334,111 @@ export function useBalance(poolId: number) {
   const { balances } = usePoolPanelContext();
   return balances[poolId];
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////
+export interface Pool {
+  poolId: number;
+  xChainId: XChainId;
+  account: string; // TODO: name to owner?
+  balance: CurrencyAmount<Token>;
+  stakedLPBalance?: CurrencyAmount<Token>;
+  suppliedLP?: CurrencyAmount<Token>;
+  pair: Pair;
+}
+
+export function usePools(pairs: { [poolId: number]: Pair }, accounts: string[]): Pool[] | undefined {
+  const { data: balances } = useQuery<Pool[]>({
+    queryKey: ['pools', pairs, accounts],
+    queryFn: async (): Promise<Pool[]> => {
+      if (!accounts.length) return [];
+
+      const poolKeys = Object.keys(pairs);
+
+      const cds = poolKeys.flatMap(poolId => {
+        return accounts.flatMap(account => [
+          {
+            target: bnJs.Dex.address,
+            method: 'xBalanceOf',
+            params: [account, `0x${(+poolId).toString(16)}`],
+          },
+          {
+            target: bnJs.Dex.address,
+            method: 'totalSupply',
+            params: [`0x${(+poolId).toString(16)}`],
+          },
+          {
+            target: bnJs.StakedLP.address,
+            method: 'xBalanceOf',
+            params: [account, `0x${(+poolId).toString(16)}`],
+          },
+        ]);
+      });
+
+      const chunks = chunkArray(cds, MULTI_CALL_BATCH_SIZE);
+      const chunkedData = await Promise.all(chunks.map(async chunk => await bnJs.Multicall.getAggregateData(chunk)));
+      const data: any[] = chunkedData.flat();
+
+      const pools = poolKeys.map((poolId, poolIndex) => {
+        const pair = pairs[+poolId];
+
+        const accountPools = accounts.map((account, accountIndex) => {
+          const _startIndex = poolIndex * accounts.length * 3 + accountIndex * 3;
+          const balance = data[_startIndex];
+          const totalSupply = data[_startIndex + 1];
+          const stakedLPBalance = data[_startIndex + 2];
+
+          const xChainId = account.split('/')[0] as XChainId;
+          return {
+            poolId: +poolId,
+            xChainId,
+            account,
+            balance: CurrencyAmount.fromRawAmount(pair.liquidityToken, new BigNumber(balance || 0, 16).toFixed()),
+            suppliedLP: CurrencyAmount.fromRawAmount(
+              pair.liquidityToken,
+              new BigNumber(totalSupply || 0, 16).toFixed(),
+            ),
+            stakedLPBalance: CurrencyAmount.fromRawAmount(
+              pair.liquidityToken,
+              new BigNumber(stakedLPBalance || 0, 16).toFixed(),
+            ),
+            pair,
+          };
+        });
+
+        return accountPools;
+      });
+
+      return pools.flat();
+    },
+    refetchInterval: 10_000,
+    placeholderData: keepPreviousData,
+  });
+
+  return balances;
+}
+
+export const usePoolTokenAmounts = (pool?: Pool) => {
+  const { balance, stakedLPBalance, pair } = pool || {};
+
+  const rate = useMemo(() => {
+    if (pair?.totalSupply && pair.totalSupply.quotient > BIGINT_ZERO) {
+      const amount = (stakedLPBalance ? balance!.add(stakedLPBalance) : balance!).divide(pair.totalSupply);
+      return new Fraction(amount.numerator, amount.denominator);
+    }
+    return FRACTION_ZERO;
+  }, [balance, pair, stakedLPBalance]);
+
+  const [base, quote] = useMemo(() => {
+    if (pair) {
+      return [pair.reserve0.multiply(rate), pair.reserve1.multiply(rate)];
+    }
+    return [CurrencyAmount.fromRawAmount(bnUSD[NETWORK_ID], '0'), CurrencyAmount.fromRawAmount(bnUSD[NETWORK_ID], '0')];
+  }, [pair, rate]);
+
+  return [base, quote];
+};
+
+export const usePool = (poolId: number | undefined, account: string): Pool | undefined => {
+  const { pools } = usePoolPanelContext();
+  return pools.find(pool => pool.poolId === poolId && pool.account === account);
+};

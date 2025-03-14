@@ -1,5 +1,7 @@
-import { XChainId, XToken } from '@/types';
 import { SupportedChainId as ChainId, addresses } from '@balancednetwork/balanced-js';
+import { XChainId } from '@balancednetwork/sdk-core';
+
+import { XToken } from '@/types';
 
 export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   bnUSD: '0x1.icon',
@@ -368,6 +370,25 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('solana', 'solana', 'BH4TZqN9TXnkjiLEQZ9xuXo85YaGoonM4PHpcjHEoTAx', 9, 'BALN', 'Balance Token'),
   ],
 };
+
+type XTokenMapBySymbol = {
+  [key in XChainId]: {
+    [symbol: string]: XToken;
+  };
+};
+
+export const xTokenMapBySymbol: XTokenMapBySymbol = Object.fromEntries(
+  Object.entries(xTokenMap).map(([chainId, tokens]) => [
+    chainId,
+    tokens.reduce(
+      (acc, token) => {
+        acc[token.symbol] = token;
+        return acc;
+      },
+      {} as { [symbol: string]: XToken },
+    ),
+  ]),
+) as XTokenMapBySymbol;
 
 export const allXTokens = Object.values(xTokenMap).reduce((acc, xTokens) => {
   return acc.concat(xTokens);

@@ -4,7 +4,7 @@ import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { getXPublicClient } from '@/actions';
-import { XChainId } from '@/types';
+import { XChainId } from '@balancednetwork/sdk-core';
 import { XCallEventType } from '../types';
 import { XCallDestinationEvent, XCallExecutedEvent, XCallMessageEvent } from '../types';
 import { xChainHeightActions } from './useXChainHeightStore';

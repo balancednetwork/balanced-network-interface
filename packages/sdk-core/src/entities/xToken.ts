@@ -1,5 +1,3 @@
-import { Token } from './token';
-
 export type XChainId =
   | 'archway-1'
   | 'archway'
@@ -19,30 +17,3 @@ export type XChainId =
   | '0x89.polygon';
 
 export type XChainType = 'ICON' | 'EVM' | 'ARCHWAY' | 'HAVAH' | 'INJECTIVE' | 'SUI' | 'STELLAR' | 'SOLANA';
-
-export class XToken extends Token {
-  xChainId: XChainId;
-  identifier: string;
-
-  public constructor(
-    xChainId: XChainId,
-    chainId: number | string,
-    address: string,
-    decimals: number,
-    symbol: string,
-    name?: string,
-    identifier?: string,
-  ) {
-    super(chainId, address, decimals, symbol, name);
-    this.xChainId = xChainId;
-    this.identifier = identifier || symbol;
-  }
-
-  static getXToken(xChainId: XChainId, token: Token) {
-    return new XToken(xChainId, token.chainId, token.address, token.decimals, token.symbol, token.name);
-  }
-
-  isNativeXToken() {
-    return this.address.includes('native');
-  }
-}

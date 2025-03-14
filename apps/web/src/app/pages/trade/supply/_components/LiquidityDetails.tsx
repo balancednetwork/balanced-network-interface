@@ -16,38 +16,25 @@ import { Typography } from '@/app/theme';
 import ArrowDownIcon from '@/assets/icons/arrow-line.svg';
 import { MINIMUM_B_BALANCE_TO_SHOW_POOL } from '@/constants/index';
 import { BIGINT_ZERO } from '@/constants/misc';
-import { BalanceData, useBalance, useSuppliedTokens } from '@/hooks/useV2Pairs';
-import { PairData, useAllPairsById } from '@/queries/backendv2';
-import { Source, useBBalnAmount, useSources, useTotalSupply } from '@/store/bbaln/hooks';
+import { BalanceData } from '@/hooks/useV2Pairs';
+import { useAllPairsById } from '@/queries/backendv2';
+import { Source, useSources } from '@/store/bbaln/hooks';
 import { useTokenListConfig } from '@/store/lists/hooks';
 import { useMintActionHandlers } from '@/store/mint/hooks';
 import { Field } from '@/store/mint/reducer';
 import { useRewards } from '@/store/reward/hooks';
-import { useStakedLPPercent, useWithdrawnPercent } from '@/store/stakedLP/hooks';
 
 import { QuestionWrapper } from '@/app/components/QuestionHelper';
-import RewardsDisplay from '@/app/components/RewardsDisplay/RewardsDisplay';
-import Skeleton from '@/app/components/Skeleton';
 import { MouseoverTooltip } from '@/app/components/Tooltip';
 import QuestionIcon from '@/assets/icons/question.svg';
-import { useRatesWithOracle } from '@/queries/reward';
-import { formatBigNumber } from '@/utils';
-import { formatSymbol, getFormattedNumber } from '@/utils/formatter';
-import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import { Banner } from '../../../../components/Banner';
 import Spinner from '../../../../components/Spinner';
 import { StyledAccordionButton, StyledAccordionItem, StyledAccordionPanel } from './LiquidityDetails/Accordion';
+import { PoolRecord } from './LiquidityDetails/PoolRecord';
 import StakeLPPanel from './LiquidityDetails/StakeLPPanel';
-import {
-  WithdrawPanel,
-  WithdrawPanelQ,
-  getABBalance,
-  getExternalShareReward,
-  getShareReward,
-} from './LiquidityDetails/WithdrawPanel';
+import { WithdrawPanel, WithdrawPanelQ, getShareReward } from './LiquidityDetails/WithdrawPanel';
 import { StyledBoxPanel } from './LiquidityDetails/shared';
 import { usePoolPanelContext } from './PoolPanelContext';
-import { getFormattedExternalRewards, getFormattedRewards, stakedFraction, totalSupply } from './utils';
 
 export default function LiquidityDetails() {
   const upSmall = useMedia('(min-width: 800px)');
@@ -55,7 +42,7 @@ export default function LiquidityDetails() {
   const { data: allPairs } = useAllPairsById();
   const sources = useSources();
 
-  const { pairs, balances } = usePoolPanelContext();
+  const { pairs, balances, pools } = usePoolPanelContext();
 
   const rewards = useRewards();
 
@@ -74,28 +61,28 @@ export default function LiquidityDetails() {
 
   const pairsWithoutQ = omit(pairs, [BalancedJs.utils.POOL_IDS.sICXICX]);
   const balancesWithoutQ = omit(balances, [BalancedJs.utils.POOL_IDS.sICXICX]);
-  const userPools = Object.keys(pairsWithoutQ).filter(
-    poolId =>
-      balances[poolId] &&
-      (Number(balances[poolId].balance.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL ||
-        Number(balances[poolId].stakedLPBalance.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL),
+
+  const userPools = pools.filter(
+    pool =>
+      Number(pool.balance.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL ||
+      Number(pool.stakedLPBalance?.toFixed()) > MINIMUM_B_BALANCE_TO_SHOW_POOL,
   );
 
-  const sortedPairs: { [key: string]: Pair } = userPools
-    .map(poolId => {
-      const pair: Pair = pairsWithoutQ[poolId];
+  // const sortedPairs: { [key: string]: Pair } = userPools
+  //   .map(poolId => {
+  //     const pair: Pair = pairsWithoutQ[poolId];
 
-      if (pair.baseAddress === pair.token0.address) return pair;
-      return new Pair(pair.reserve1, pair.reserve0, {
-        poolId: pair.poolId,
-        totalSupply: pair.totalSupply?.quotient.toString(),
-        baseAddress: pair.baseAddress,
-      });
-    })
-    .reduce((acc, pair) => {
-      if (pair.poolId && pair.poolId > 0) acc[pair.poolId] = pair;
-      return acc;
-    }, {});
+  //     if (pair.baseAddress === pair.token0.address) return pair;
+  //     return new Pair(pair.reserve1, pair.reserve0, {
+  //       poolId: pair.poolId,
+  //       totalSupply: pair.totalSupply?.quotient.toString(),
+  //       baseAddress: pair.baseAddress,
+  //     });
+  //   })
+  //   .reduce((acc, pair) => {
+  //     if (pair.poolId && pair.poolId > 0) acc[pair.poolId] = pair;
+  //     return acc;
+  //   }, {});
 
   const hasLiquidity = shouldShowQueue || userPools.length;
   const isLiquidityInfoLoading = shouldShowQueue === undefined && userPools.length === 0;
@@ -135,7 +122,9 @@ export default function LiquidityDetails() {
                       </Trans>
                       <br />
                       <br />
-                      <Trans>BALN rewards depend on your position size and bBALN holdings.</Trans>
+                      <Trans>
+                        BALN rewards depend on your position size and bBALN holdings (boost available on ICON only).
+                      </Trans>
                     </>
                   }
                   placement="top"
@@ -183,43 +172,37 @@ export default function LiquidityDetails() {
               </StyledAccordionItem>
             )}
             {balancesWithoutQ &&
-              userPools.map((poolId, index, arr) => (
-                <StyledAccordionItem key={poolId} $border={index !== arr.length - 1}>
+              userPools.map((pool, index) => (
+                <StyledAccordionItem key={`${pool.poolId}-${pool.xChainId}`} $border={index !== userPools.length - 1}>
                   <StyledAccordionButton onClick={() => setIsHided(false)}>
                     <PoolRecord
-                      poolId={parseInt(poolId)}
-                      balance={balances[poolId]}
-                      pair={sortedPairs[poolId]}
-                      pairData={allPairs && allPairs[poolId]}
+                      poolId={pool.poolId}
+                      pool={pool}
+                      pair={pairs[pool.poolId]}
+                      pairData={allPairs && allPairs[pool.poolId]}
                       //hotfix due to the fact that sICX/BTCB pair has wrong name on contract side
                       balnReward={
-                        allPairs && allPairs[poolId]
-                          ? rewards[allPairs[poolId].name === 'sICX/BTCB' ? 'BTCB/sICX' : allPairs[poolId].name]
+                        allPairs && allPairs[pool.poolId]
+                          ? rewards[
+                              allPairs[pool.poolId].name === 'sICX/BTCB' ? 'BTCB/sICX' : allPairs[pool.poolId].name
+                            ]
                           : new BigNumber(0)
                       }
-                      externalRewards={
-                        allPairs && allPairs[parseInt(poolId)] ? allPairs[parseInt(poolId)].externalRewards : []
-                      }
+                      externalRewards={allPairs && allPairs[pool.poolId] ? allPairs[pool.poolId].externalRewards : []}
                       boostData={sources}
-                      apy={allPairs && allPairs[parseInt(poolId)] ? allPairs[parseInt(poolId)].balnApy : 0}
+                      apy={allPairs && allPairs[pool.poolId] ? allPairs[pool.poolId].balnApy : 0}
                     />
                   </StyledAccordionButton>
                   <StyledAccordionPanel hidden={isHided}>
                     <StyledBoxPanel bg="bg3">
-                      <StakeLPPanel pair={sortedPairs[poolId]} />
-                      <WithdrawPanel poolId={parseInt(poolId)} balance={balances[poolId]} pair={sortedPairs[poolId]} />
+                      <StakeLPPanel pool={pool} />
+                      <WithdrawPanel pool={pool} />
                     </StyledBoxPanel>
                   </StyledAccordionPanel>
                 </StyledAccordionItem>
               ))}
           </Accordion>
         </TableWrapper>
-      )}
-
-      {!tokenListConfig.community && (
-        <Banner messageID={'communityList'} embedded>
-          <Message />
-        </Banner>
       )}
     </>
   );
@@ -286,129 +269,6 @@ const APYItem = styled(Flex)`
   align-items: flex-end;
   line-height: 25px;
 `;
-
-const PoolRecord = ({
-  poolId,
-  pair,
-  pairData,
-  balance,
-  balnReward,
-  externalRewards,
-  boostData,
-  apy,
-}: {
-  pair: Pair;
-  pairData?: PairData;
-  balance: BalanceData;
-  poolId: number;
-  balnReward: BigNumber;
-  externalRewards: CurrencyAmount<Token>[] | undefined;
-  boostData: { [key in string]: Source } | undefined;
-  apy: number | null;
-}) => {
-  const upSmall = useMedia('(min-width: 800px)');
-  const prices = useRatesWithOracle();
-  const stakedLPPercent = useStakedLPPercent(poolId);
-  const [aBalance, bBalance] = getABBalance(pair, balance);
-  const pairName = `${formatSymbol(aBalance.currency.symbol) || '...'}/${
-    formatSymbol(bBalance.currency.symbol) || '...'
-  }`;
-  const sourceName = pairName === 'sICX/BTCB' ? 'BTCB/sICX' : pairName;
-  const { baseValue, quoteValue } = useWithdrawnPercent(poolId) || {};
-  const balances = useBalance(poolId);
-  const stakedFractionValue = stakedFraction(stakedLPPercent);
-  const totalbBaln = useTotalSupply();
-  const userBbaln = useBBalnAmount();
-  const reward = getShareReward(
-    balnReward,
-    boostData && boostData[sourceName],
-    balances,
-    stakedFractionValue,
-    totalbBaln,
-    userBbaln,
-  );
-  const lpBalance = useSuppliedTokens(poolId, aBalance.currency, bBalance.currency);
-
-  const baseCurrencyTotalSupply = totalSupply(baseValue, lpBalance?.base);
-  const quoteCurrencyTotalSupply = totalSupply(quoteValue, lpBalance?.quote);
-
-  const { onCurrencySelection } = useMintActionHandlers(false);
-
-  const handlePoolClick = () => {
-    if (pairData) {
-      onCurrencySelection(Field.CURRENCY_A, pairData.info.baseToken.unwrapped);
-      onCurrencySelection(Field.CURRENCY_B, pairData.info.quoteToken);
-    } else {
-      onCurrencySelection(Field.CURRENCY_A, pair.reserve0.currency.unwrapped);
-      onCurrencySelection(Field.CURRENCY_B, pair.reserve1.currency);
-    }
-  };
-
-  return (
-    <>
-      <ListItem onClick={handlePoolClick}>
-        <StyledDataText>
-          <DataText>{pairName}</DataText>
-          <StyledArrowDownIcon />
-        </StyledDataText>
-        <DataText>
-          {baseCurrencyTotalSupply ? (
-            <Typography fontSize={16}>{`${formatBigNumber(
-              new BigNumber(baseCurrencyTotalSupply?.toFixed() || 0),
-              'currency',
-            )} ${formatSymbol(aBalance.currency.symbol)}`}</Typography>
-          ) : (
-            <Skeleton width={100}></Skeleton>
-          )}
-          {quoteCurrencyTotalSupply ? (
-            <Typography fontSize={16}>{`${formatBigNumber(
-              new BigNumber(quoteCurrencyTotalSupply?.toFixed() || 0),
-              'currency',
-            )} ${formatSymbol(bBalance.currency.symbol)}`}</Typography>
-          ) : (
-            <Skeleton width={100}></Skeleton>
-          )}
-        </DataText>
-
-        {upSmall && (
-          <DataText>
-            {pairData && <RewardsDisplay pair={pairData} boost={boostData} />}
-
-            {pairData?.feesApy && (
-              <APYItem>
-                <Typography color="#d5d7db" fontSize={14} marginRight={'5px'}>
-                  <Trans>Fees:</Trans>
-                </Typography>
-                {getFormattedNumber(pairData.feesApy, 'percent2')}
-              </APYItem>
-            )}
-          </DataText>
-        )}
-        {upSmall && (
-          //hotfix pairName due to wrong source name on contract side
-          <DataText>
-            <Typography fontSize={16}>
-              {getFormattedRewards(reward, !externalRewards || externalRewards.length === 0)}
-            </Typography>
-            {externalRewards ? (
-              externalRewards.map(reward => {
-                const rewardPrice = prices?.[reward.currency.wrapped.symbol];
-                const rewardShare = getExternalShareReward(reward, balances, stakedFractionValue, pairData?.stakedLP);
-                return (
-                  <Typography key={reward.currency.symbol} fontSize={16}>
-                    {getFormattedExternalRewards(rewardShare, rewardPrice?.toFixed())}
-                  </Typography>
-                );
-              })
-            ) : (
-              <Skeleton width={100}></Skeleton>
-            )}
-          </DataText>
-        )}
-      </ListItem>
-    </>
-  );
-};
 
 const PoolRecordQ = ({
   balance,

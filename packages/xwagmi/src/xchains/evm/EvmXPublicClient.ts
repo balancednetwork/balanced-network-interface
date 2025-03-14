@@ -3,9 +3,9 @@ import { Address, PublicClient, erc20Abi, getContract, parseEventLogs, toHex } f
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { xChainMap } from '@/constants/xChains';
 import { XPublicClient } from '@/core/XPublicClient';
-import { XChainId, XToken } from '@/types';
+import { XToken } from '@/types';
 import { getRlpEncodedSwapData } from '@/xcall/utils';
-import { MaxUint256 } from '@balancednetwork/sdk-core';
+import { MaxUint256, XChainId } from '@balancednetwork/sdk-core';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import {
   TransactionStatus,

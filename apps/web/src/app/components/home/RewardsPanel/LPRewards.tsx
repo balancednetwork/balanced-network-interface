@@ -1,50 +1,47 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
-import { useIconReact } from '@/packages/icon-react';
 import { Trans, t } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
 import { useMedia } from 'react-use';
 import { Box, Flex } from 'rebass';
 
-import { Button, TextButton } from '@/app/components/Button';
 import { UnderlineText } from '@/app/components/DropdownText';
-import Modal from '@/app/components/Modal';
-import ModalContent from '@/app/components/ModalContent';
 import { QuestionWrapper } from '@/app/components/QuestionHelper';
 import Tooltip from '@/app/components/Tooltip';
 import { Typography } from '@/app/theme';
 import QuestionIcon from '@/assets/icons/question.svg';
-import { useLPReward } from '@/queries/reward';
+import { useLPRewards } from '@/queries/reward';
 import { useBBalnAmount, useDynamicBBalnAmount, useIncentivisedSources, useTotalSupply } from '@/store/bbaln/hooks';
-import { useTransactionAdder } from '@/store/transactions/hooks';
-import { useHasEnoughICX } from '@/store/wallet/hooks';
-import { showMessageOnBeforeUnload } from '@/utils/messages';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { getXChainType, useXAccount } from '@balancednetwork/xwagmi';
 
+import { useSavingsXChainId } from '@/store/savings/hooks';
+import ClaimLPRewardsModal from './ClaimLPRewardsModal';
 import PositionRewardsInfo from './PositionRewardsInfo';
 import RewardsGrid from './RewardsGrid';
 
 const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
-  const { data: rewards } = useLPReward();
+  const savingsXChainId = useSavingsXChainId();
+  const xAccount = useXAccount(getXChainType(savingsXChainId));
+  const account = xAccount?.address;
+
+  const { data: lpRewards } = useLPRewards();
+  const rewards = useMemo(() => lpRewards?.[savingsXChainId], [lpRewards, savingsXChainId]);
+
   const [isOpen, setOpen] = React.useState(false);
-  const { account } = useIconReact();
-  const addTransaction = useTransactionAdder();
+
   const sources = useIncentivisedSources();
   const totalSupplyBBaln = useTotalSupply();
   const dynamicBBalnAmount = useDynamicBBalnAmount();
   const bBalnAmount = useBBalnAmount();
-  const hasEnoughICX = useHasEnoughICX();
   const isSmall = useMedia('(max-width: 1050px)');
   const isExtraSmall = useMedia('(max-width: 800px)');
   const [tooltipHovered, setTooltipHovered] = React.useState(false);
+
+  // TODO: review this logic if numberOfPositions is needed
   const numberOfPositions = React.useMemo(
     () => (sources ? Object.values(sources).filter(source => source.balance.isGreaterThan(100)).length : 0),
     [sources],
   );
-
-  const toggleOpen = React.useCallback(() => {
-    setOpen(!isOpen);
-  }, [isOpen]);
 
   const maxRewardThreshold = React.useMemo(() => {
     if (sources && totalSupplyBBaln && bBalnAmount) {
@@ -75,30 +72,6 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
     <Trans>You receive maximum rewards for your position.</Trans>
   );
 
-  const handleClaim = () => {
-    window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
-    bnJs
-      .inject({ account })
-      .Rewards.claimRewards()
-      .then(res => {
-        addTransaction(
-          { hash: res.result },
-          {
-            summary: t`Claimed liquidity rewards.`,
-            pending: t`Claiming liquidity rewards...`,
-          },
-        );
-        toggleOpen();
-      })
-      .catch(e => {
-        console.error('error', e);
-      })
-      .finally(() => {
-        window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
-      });
-  };
-
   return (
     <>
       <Box width="100%">
@@ -114,8 +87,9 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
             >
               <Tooltip
                 show={
-                  (!!numberOfPositions && showGlobalTooltip && !isExtraSmall) ||
-                  (!!numberOfPositions && isExtraSmall && tooltipHovered)
+                  savingsXChainId === '0x1.icon' &&
+                  ((!!numberOfPositions && showGlobalTooltip && !isExtraSmall) ||
+                    (!!numberOfPositions && isExtraSmall && tooltipHovered))
                 }
                 text={
                   <>
@@ -129,7 +103,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
                 offset={[0, 19]}
               >
                 Liquidity rewards
-                {isExtraSmall && account && !!numberOfPositions && (
+                {/* {isExtraSmall && account && !!numberOfPositions && (
                   <QuestionWrapper
                     style={{ transform: 'translateY(1px)', marginLeft: '8px' }}
                     onMouseEnter={() => setTooltipHovered(true)}
@@ -139,13 +113,13 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
                   >
                     <QuestionIcon width={14} />
                   </QuestionWrapper>
-                )}
+                )} */}
               </Tooltip>
             </Typography>
           </Flex>
           {rewards?.some(reward => reward.greaterThan(0)) && (
             <UnderlineText>
-              <Typography color="primaryBright" onClick={toggleOpen}>
+              <Typography color="primaryBright" onClick={() => setOpen(true)}>
                 <Trans>Claim</Trans>
               </Typography>
             </UnderlineText>
@@ -160,33 +134,7 @@ const LPRewards = ({ showGlobalTooltip }: { showGlobalTooltip: boolean }) => {
         )}
       </Box>
 
-      <Modal isOpen={isOpen} onDismiss={toggleOpen}>
-        <ModalContent>
-          <Typography textAlign="center" mb={1}>
-            <Trans>Claim liquidity rewards?</Trans>
-          </Typography>
-
-          <Flex flexDirection="column" alignItems="center" mt={2}>
-            {rewards?.map((reward, index) => (
-              <Typography key={index} variant="p">
-                {`${reward.toFixed(2, { groupSeparator: ',' })}`}{' '}
-                <Typography as="span" color="text1">
-                  {reward.currency.symbol}
-                </Typography>
-              </Typography>
-            ))}
-          </Flex>
-
-          <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-            <TextButton onClick={toggleOpen} fontSize={14}>
-              <Trans>Not now</Trans>
-            </TextButton>
-            <Button onClick={handleClaim} fontSize={14} disabled={!hasEnoughICX}>
-              <Trans>Claim</Trans>
-            </Button>
-          </Flex>
-        </ModalContent>
-      </Modal>
+      <ClaimLPRewardsModal isOpen={isOpen} onClose={() => setOpen(false)} />
     </>
   );
 };

@@ -1,9 +1,9 @@
+import { XChainId } from '@balancednetwork/sdk-core';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import { XChainId } from '@/types';
-import { jsonStorageOptions } from '@/utils';
+import { jsonStorageOptions } from '@/utils/zustand';
 import { XTransaction, XTransactionStatus } from '../types';
 
 type XTransactionStore = {
@@ -67,7 +67,7 @@ export const useXTransactionStore = create<XTransactionStore>()(
     {
       name: 'xTransaction-store',
       storage: createJSONStorage(() => localStorage, jsonStorageOptions),
-      version: 2,
+      version: 4,
       migrate: (state, version) => {
         return { transactions: {}, currentId: null };
       },

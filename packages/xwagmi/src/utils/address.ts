@@ -1,10 +1,10 @@
 import { xChainMap } from '@/constants/xChains';
+import { XChainId } from '@balancednetwork/sdk-core';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { PublicKey } from '@solana/web3.js';
 import { bech32 } from 'bech32';
 import { ethers } from 'ethers';
 import { Validator } from 'icon-sdk-js';
-import { XChainId } from '../types';
 import { SolanaXService } from '../xchains/solana';
 import { isStellarAddress } from '../xchains/stellar/utils';
 

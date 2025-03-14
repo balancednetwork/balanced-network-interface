@@ -1,11 +1,11 @@
 import rlp from 'rlp';
 
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
+import { Currency, CurrencyAmount, XChainId } from '@balancednetwork/sdk-core';
 import { PairType, RouteAction } from '@balancednetwork/v1-sdk';
 
 import { ICON_XCALL_NETWORK_ID } from '@/constants';
 import { xTokenMap } from '@/constants/xTokens';
-import { XChain, XChainId, XToken } from '@/types';
+import { XChain, XToken } from '@/types';
 import { uintToBytes } from '@/utils';
 import { xChains } from '../constants/xChains';
 
@@ -96,11 +96,13 @@ const unTradeableTokenAddress = [
 ];
 
 export const getSupportedXChainIdsForSwapToken = (currency: Currency | XToken): XChainId[] => {
-  return Object.values(xTokenMap)
+  const chainIds = Object.values(xTokenMap)
     .flat()
     .filter(t => t.symbol === currency?.symbol)
     .filter(t => !unTradeableTokenAddress.find(addr => addr.toLowerCase() === t.address.toLowerCase()))
     .map(t => t.xChainId);
+
+  return chainIds.length === 0 ? [ICON_XCALL_NETWORK_ID] : chainIds;
 };
 
 export const getSupportedXChainForSwapToken = (currency?: Currency | XToken | null): XChain[] | undefined => {

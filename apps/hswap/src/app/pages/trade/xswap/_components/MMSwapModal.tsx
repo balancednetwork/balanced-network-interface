@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { CreateIntentOrderPayload, EvmProvider, SolverApiService, SuiProvider } from '@balancednetwork/intents-sdk';
 import {
   EvmXService,
   XToken,
@@ -12,6 +11,7 @@ import {
 } from '@balancednetwork/xwagmi';
 import { Trans } from '@lingui/macro';
 import BigNumber from 'bignumber.js';
+import { CreateIntentOrderPayload, EvmProvider, SolverApiService, SuiProvider } from 'icon-intents-sdk';
 import { CheckIcon } from 'lucide-react';
 import { WriteContractErrorType } from 'viem';
 

@@ -24,8 +24,10 @@ export const DEFAULT_TOKEN_CHAIN: { [key in string]: XChainId } = {
   haSUI: 'sui',
   vSUI: 'sui',
   SOL: 'solana',
-  JITOSOL: 'solana',
+  POL: '0x89.polygon',
+  JitoSOL: 'solana',
   mSUI: 'sui',
+  wETH: '0x89.polygon',
 };
 
 export const wICX = XToken.wICX;
@@ -113,6 +115,7 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     ),
     new XToken('0x1.icon', ChainId.MAINNET, 'cx2609b924e33ef00b648a409245c7ea394c467824', 18, 'sICX', 'Staked ICX'),
     new XToken('0x1.icon', ChainId.MAINNET, 'cxf61cd5a45dc9f91c15aa65831a30a90d59a09619', 18, 'BALN', 'Balance Token'),
+    new XToken('0x1.icon', ChainId.MAINNET, 'cxf594ce6068da86b9a0fd0dfa8f969a7eab8aa7a7', 18, 'POL', 'Polygon'),
   ],
   'archway-1': [
     new XToken('archway-1', 'archway-1', '0x0000000000000000000000000000000000000000', 18, 'aARCH', 'Arch'),
@@ -141,6 +144,15 @@ export const xTokenMap: { [key in XChainId]: XToken[] } = {
     new XToken('0xa86a.avax', 43114, '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7', 6, 'USDT', 'Tether USD'),
     new XToken('0xa86a.avax', 43114, '0xC7FE3f5B4970Ddc36d850A98e87bb28FaBb866D2', 18, 'sICX', 'Staked ICX'),
     new XToken('0xa86a.avax', 43114, '0x542245f2B93B30994a4670121541B38226f1208c', 18, 'BALN', 'Balance Token'),
+  ],
+  '0x89.polygon': [
+    new XToken('0x89.polygon', 137, '0x0000000000000000000000000000000000000000', 18, 'POL', 'Polygon'),
+    new XToken('0x89.polygon', 137, '0x9990Be34D6666C0a69C9504310aebd6fbdb8E699', 18, 'bnUSD', 'Balanced Dollar'),
+    new XToken('0x89.polygon', 137, '0x6185D52640EA3b683AedD8bA52d18053A41fee09', 18, 'sICX', 'Staked ICX'),
+    new XToken('0x89.polygon', 137, '0x51260f53933db7C3319a61ee444fD9548cFF94D5', 18, 'BALN', 'Balance Token'),
+    new XToken('0x89.polygon', 137, '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359', 6, 'USDC', 'USD Coin'),
+    new XToken('0x89.polygon', 137, '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619', 18, 'wETH', 'Wrapped Ether'),
+    new XToken('0x89.polygon', 137, '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270', 18, 'wPOL', 'Wrapped POL'),
   ],
   '0x38.bsc': [
     new XToken('0x38.bsc', 56, '0x0000000000000000000000000000000000000000', 18, 'BNB', 'BNB'),

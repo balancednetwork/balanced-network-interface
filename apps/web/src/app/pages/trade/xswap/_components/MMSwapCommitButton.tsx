@@ -6,7 +6,7 @@ import { Button } from '@/app/components/Button';
 import { handleConnectWallet } from '@/app/components/WalletModal/WalletItem';
 import { MODAL_ID, modalActions } from '@/hooks/useModalStore';
 import { useWalletModalToggle } from '@/store/application/hooks';
-import { MMTrade, useDerivedSwapInfo } from '@/store/swap/hooks';
+import { MMTrade, tryParseAmount, useDerivedSwapInfo } from '@/store/swap/hooks';
 import { Field } from '@/store/swap/reducer';
 import { StellarAccountValidation, getXChainType } from '@balancednetwork/xwagmi';
 import { useXConnect, useXConnectors } from '@balancednetwork/xwagmi';
@@ -46,7 +46,10 @@ const UseMMDerivedInfo = (
     error = error ?? t`Enter amount`;
   }
 
-  const [balanceIn, amountIn] = [currencyBalances[Field.INPUT], parsedAmount];
+  const [balanceIn, amountIn] = [
+    currencyBalances[Field.INPUT],
+    tryParseAmount(trade?.inputAmount.toFixed(), trade?.inputAmount.currency.wrapped),
+  ];
 
   // decimal scales are different for different chains for the same token
   if (balanceIn && amountIn && balanceIn.lessThan(amountIn)) {

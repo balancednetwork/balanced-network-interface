@@ -1,12 +1,20 @@
 import React, { useMemo } from 'react';
 
-import { EvmProvider, SuiProvider } from '@balancednetwork/intents-sdk';
-import { EvmXService, useCurrentAccount, useCurrentWallet, useSuiClient, useXService } from '@balancednetwork/xwagmi';
+import {
+  EvmXService,
+  useCurrentAccount,
+  useCurrentWallet,
+  useSuiClient,
+  useXService,
+  xChainMap,
+} from '@balancednetwork/xwagmi';
+import { EvmProvider, SuiProvider } from 'icon-intents-sdk';
 import { Flex } from 'rebass';
 import styled from 'styled-components';
 
 import { UnderlineText } from '@/app/components/DropdownText';
 import { Typography } from '@/app/theme';
+import useIntentProvider from '@/hooks/useIntentProvider';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { intentService } from '@/lib/intent';
 import { useRatesWithOracle } from '@/queries/reward';
@@ -16,7 +24,7 @@ import {
   MMTransactionStatus,
   useMMTransactionStore,
 } from '@/store/transactions/useMMTransactionStore';
-import { formatBalance } from '@/utils/formatter';
+import { formatBalance, formatSymbol } from '@/utils/formatter';
 
 export default function MMPendingIntents() {
   const { transactions } = useMMTransactionStore();
@@ -62,58 +70,26 @@ enum TransactionStatus {
 function PendingIntent({ transaction }: { transaction: MMTransaction }) {
   const rates = useRatesWithOracle();
 
-  const [status, setStatus] = React.useState<TransactionStatus>(TransactionStatus.None);
-  // arb part
-  const evmXService = useXService('EVM') as unknown as EvmXService;
-  // end arb part
+  const { data: intentProvider } = useIntentProvider(transaction.fromAmount.currency.wrapped);
 
-  // sui part
-  const suiClient = useSuiClient();
-  const { currentWallet: suiWallet } = useCurrentWallet();
-  const suiAccount = useCurrentAccount();
-  // end sui part
+  const [status, setStatus] = React.useState<TransactionStatus>(TransactionStatus.None);
 
   const handleCancel = async () => {
-    const evmPublicClient = evmXService.getPublicClient(transaction.fromAmount.currency.chainId);
-
     setStatus(TransactionStatus.Signing);
     try {
-      const isArbitrum = transaction.fromAmount.currency.xChainId === '0xa4b1.arbitrum';
-      let provider;
-      if (isArbitrum) {
-        const evmWalletClient = await evmXService.getWalletClient(transaction.fromAmount.currency.chainId);
-        // @ts-ignore
-        provider = new EvmProvider({ walletClient: evmWalletClient, publicClient: evmPublicClient });
-      } else {
-        // @ts-ignore
-        provider = new SuiProvider({ client: suiClient, wallet: suiWallet, account: suiAccount });
-      }
+      if (intentProvider) {
+        const result = await intentService.cancelIntentOrder(
+          transaction.orderId,
+          xChainMap[transaction.fromAmount.currency.xChainId].intentChainId,
+          intentProvider,
+        );
 
-      const result = await intentService.cancelIntentOrder(transaction.orderId, isArbitrum ? 'arb' : 'sui', provider);
-
-      if (result.ok) {
-        setStatus(TransactionStatus.AwaitingConfirmation);
-
-        const waitForTransaction = async () => {
-          if (isArbitrum) {
-            return evmPublicClient.waitForTransactionReceipt({ hash: result.value as `0x${string}` });
-          } else {
-            return suiClient.waitForTransaction({
-              digest: result.value,
-              options: {
-                showEffects: false,
-                showEvents: true,
-              },
-            });
-          }
-        };
-
-        await waitForTransaction();
-        // await settlement
-        MMTransactionActions.cancel(transaction.id);
-        setStatus(TransactionStatus.Success);
-      } else {
-        setStatus(TransactionStatus.None);
+        if (result.ok) {
+          MMTransactionActions.cancel(transaction.id);
+          setStatus(TransactionStatus.Success);
+        } else {
+          setStatus(TransactionStatus.None);
+        }
       }
     } catch (e) {
       console.error(e);
@@ -125,12 +101,12 @@ function PendingIntent({ transaction }: { transaction: MMTransaction }) {
       <Typography textAlign="center">
         <strong>
           {formatBalance(transaction.fromAmount.toFixed(), rates?.[transaction.fromAmount.currency.symbol]?.toFixed())}{' '}
-          {transaction.fromAmount.currency.symbol}
+          {formatSymbol(transaction.fromAmount.currency.symbol)}
         </strong>{' '}
         for{' '}
         <strong>
           {formatBalance(transaction.toAmount.toFixed(), rates?.[transaction.toAmount.currency.symbol]?.toFixed())}{' '}
-          {transaction.toAmount.currency.symbol}
+          {formatSymbol(transaction.toAmount.currency.symbol)}
         </strong>
       </Typography>{' '}
       |{' '}

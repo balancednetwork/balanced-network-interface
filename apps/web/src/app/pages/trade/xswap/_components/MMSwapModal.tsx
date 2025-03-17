@@ -171,6 +171,9 @@ const MMSwapModal = ({
         intentFromChainName && (await intentService.getOrder(intentHash.value, intentFromChainName, intentProvider));
       console.log('intent debug 2', intentResult);
       if (!intentResult?.ok) {
+        // @ts-ignore
+        setError(intentResult.error?.message);
+        setOrderStatus(IntentOrderStatus.Failure);
         return;
       }
 

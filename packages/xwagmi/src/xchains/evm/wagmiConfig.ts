@@ -12,6 +12,6 @@ export const wagmiConfig = createConfig({
     [arbitrum.id]: http(),
     [optimism.id]: http(),
     [base.id]: http(),
-    [polygon.id]: http(),
+    [polygon.id]: http('https://polygon.llamarpc.com'),
   },
 });

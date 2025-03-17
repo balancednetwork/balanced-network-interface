@@ -166,10 +166,10 @@ const MMSwapModal = ({
         setOrderStatus(IntentOrderStatus.Failure);
         return;
       }
-
+      console.log('intent debug 1', intentHash);
       const intentResult =
         intentFromChainName && (await intentService.getOrder(intentHash.value, intentFromChainName, intentProvider));
-
+      console.log('intent debug 2', intentResult);
       if (!intentResult?.ok) {
         return;
       }
@@ -192,6 +192,8 @@ const MMSwapModal = ({
         },
         intentServiceConfig,
       );
+
+      console.log('intent debug 3', executionResult);
 
       if (executionResult.ok) {
         MMTransactionActions.setTaskId(intentHash.value, executionResult.value.task_id);

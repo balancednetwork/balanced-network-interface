@@ -458,7 +458,7 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   ],
   sui: ['centralized-1', 'centralized-2'],
   solana: ['FMPY4m3kZNvFyoAtc87dCPkPrfJuLFpWyS8sbsWFkGC9'],
-  '0x89.polygon': ['0x9863CCECe5028b4906798C3e45Ae04b1207de63e', '0x5EA66080F222d8C7AF0c6f184ADa90c9b7f20b91'],
+  '0x89.polygon': ['0x133E6B7e7E10cD3Fc68eF84EdD9622b3e39C3812'],
   'archway-1': [],
 };
 
@@ -475,6 +475,6 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   stellar: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
   sui: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
   solana: ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
-  '0x89.polygon': ['cx91a5817cf6e7adbcbcee9e8815c63f83d9a98afc', 'cxdada6921d08fbf37c6f228816852e58b219cc589'],
+  '0x89.polygon': ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
   'archway-1': [],
 };

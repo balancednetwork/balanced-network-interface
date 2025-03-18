@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 
-import { IntentStatusCode } from '@balancednetwork/intents-sdk';
 import { CurrencyAmount } from '@balancednetwork/sdk-core';
 import { XToken, jsonStorageOptions } from '@balancednetwork/xwagmi';
 import { useQuery } from '@tanstack/react-query';
+import { IntentStatusCode } from 'icon-intents-sdk';
 
 import { intentService } from '@/lib/intent';
 import { create } from 'zustand';

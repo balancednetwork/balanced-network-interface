@@ -1,27 +1,28 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { useIconReact } from '@/packages/icon-react';
-import { CurrencyAmount, Fraction, Token } from '@balancednetwork/sdk-core';
+import { CurrencyAmount, Fraction, Token, XChainId } from '@balancednetwork/sdk-core';
 import { UseQueryResult, keepPreviousData, useQuery } from '@tanstack/react-query';
 import BigNumber from 'bignumber.js';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { PLUS_INFINITY } from '@/constants/index';
 import { useAllPairs } from '@/queries/backendv2';
-import { useLPRewards } from '@/queries/reward';
+import { calculateTotal, useLPRewards, useRatesWithOracle } from '@/queries/reward';
 import { useBBalnAmount, useDynamicBBalnAmount, useSources } from '@/store/bbaln/hooks';
 import { useCollateralInputAmountAbsolute } from '@/store/collateral/hooks';
-import { useHasUnclaimedFees } from '@/store/fees/hooks';
+import { useHasUnclaimedFees, useUnclaimedFees } from '@/store/fees/hooks';
 import { WEIGHT_CONST } from '@/store/liveVoting/hooks';
 import { RewardDistribution, RewardDistributionRaw } from '@/store/liveVoting/types';
 import { useLoanInputAmount } from '@/store/loan/hooks';
 import { useOraclePrice } from '@/store/oracle/hooks';
 import { useLockedAmount, useUnclaimedRewards } from '@/store/savings/hooks';
 import { useAllTransactions } from '@/store/transactions/hooks';
-import { bnJs } from '@balancednetwork/xwagmi';
+import { bnJs, getXChainType, useXAccount, useXLockedBnUSDAmount } from '@balancednetwork/xwagmi';
 
 import { AppState } from '..';
 import { setReward } from './reducer';
+import { usePoolPanelContext } from '@/app/pages/trade/supply/_components/PoolPanelContext';
 
 export function useRewards(): AppState['reward'] {
   return useSelector((state: AppState) => state.reward);
@@ -194,25 +195,52 @@ export function useFlattenedRewardsDistribution(): UseQueryResult<Map<string, Fr
   });
 }
 
-export function useHasAnyKindOfRewards() {
+export function useHasAnyKindOfRewards(xChainId: XChainId) {
   const dynamicBBalnAmount = useDynamicBBalnAmount();
-  const bnUSDDeposit = useLockedAmount();
-  const sources = useSources();
-  const hasUnclaimedFees = useHasUnclaimedFees();
+
+  const xAccount = useXAccount(getXChainType(xChainId));
+  const { data: bnUSDDeposit } = useXLockedBnUSDAmount({
+    address: xAccount?.address,
+    xChainId: xChainId,
+  });
   const { data: lpRewards } = useLPRewards();
   const { data: savingsRewards } = useUnclaimedRewards();
+  const { data: feesRewards } = useUnclaimedFees();
 
-  const numberOfPositions = React.useMemo(
-    () => (sources ? Object.values(sources).filter(source => source.balance.isGreaterThan(100)).length : 0),
-    [sources],
+  const { pools } = usePoolPanelContext();
+
+  const isStaked = useCallback(
+    (xChainId: XChainId) => {
+      if (!pools) {
+        return false;
+      }
+      return pools.some(pool => pool.xChainId === xChainId && Number(pool.stakedLPBalance?.toFixed()) > 0);
+    },
+    [pools],
   );
 
-  return (
-    hasUnclaimedFees ||
-    Object.values(lpRewards || {}).some(({ totalValueInUSD }) => totalValueInUSD > new BigNumber(0)) ||
-    savingsRewards?.some(reward => reward.greaterThan(0)) ||
-    dynamicBBalnAmount.isGreaterThan(0) ||
-    bnUSDDeposit?.greaterThan(0) ||
-    numberOfPositions > 0
-  );
+  const rates = useRatesWithOracle();
+
+  return useMemo(() => {
+    if (!xAccount?.address) return false;
+
+    if (xChainId === '0x1.icon') {
+      return (
+        bnUSDDeposit?.greaterThan(0) ||
+        dynamicBBalnAmount.isGreaterThan(0) ||
+        (lpRewards?.[xChainId] && calculateTotal(lpRewards?.[xChainId], rates).gt(0)) ||
+        (savingsRewards?.[xChainId] && calculateTotal(savingsRewards?.[xChainId], rates).gt(0)) ||
+        (feesRewards?.[xChainId] && calculateTotal(feesRewards?.[xChainId], rates).gt(0)) ||
+        isStaked(xChainId)
+      );
+    } else {
+      return (
+        bnUSDDeposit?.greaterThan(0) ||
+        (lpRewards?.[xChainId] && calculateTotal(lpRewards?.[xChainId], rates).gt(0)) ||
+        (savingsRewards?.[xChainId] && calculateTotal(savingsRewards?.[xChainId], rates).gt(0)) ||
+        (feesRewards?.[xChainId] && calculateTotal(feesRewards?.[xChainId], rates).gt(0)) ||
+        isStaked(xChainId)
+      );
+    }
+  }, [xAccount, xChainId, lpRewards, savingsRewards, rates, dynamicBBalnAmount, bnUSDDeposit, isStaked, feesRewards]);
 }

@@ -1,9 +1,6 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { Currency, CurrencyAmount } from '@balancednetwork/sdk-core';
 import { Trans, t } from '@lingui/macro';
-import { useQueryClient } from '@tanstack/react-query';
-import BigNumber from 'bignumber.js';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Flex } from 'rebass/styled-components';
 
@@ -14,12 +11,10 @@ import ModalContent from '@/app/components/ModalContent';
 import XTransactionState from '@/app/components/XTransactionState';
 import { Typography } from '@/app/theme';
 import { useEvmSwitchChain } from '@/hooks/useEvmSwitchChain';
-import { Pool } from '@/hooks/useV2Pairs';
 import useXCallGasChecker from '@/hooks/useXCallGasChecker';
-import { Field } from '@/store/mint/reducer';
-import { formatBigNumber, multiplyCABN } from '@/utils';
-import { formatSymbol } from '@/utils/formatter';
+import { useSavingsXChainId } from '@/store/savings/hooks';
 import { showMessageOnBeforeUnload } from '@/utils/messages';
+import { CurrencyAmount, Token } from '@balancednetwork/sdk-core';
 import {
   ICON_XCALL_NETWORK_ID,
   XTransactionStatus,
@@ -27,29 +22,19 @@ import {
   getXChainType,
   useXAccount,
   useXCallFee,
-  useXRemoveLiquidity,
+  useXClaimSavingsRewards,
   useXTransactionStore,
 } from '@balancednetwork/xwagmi';
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  parsedAmounts: { [field in Field]?: CurrencyAmount<Currency> };
-  withdrawPortion: number;
-  pool: Pool;
+  rewards?: CurrencyAmount<Token>[];
   onSuccess?: () => void;
 }
 
-export default function WithdrawLiquidityModal({
-  isOpen,
-  onClose,
-  pool,
-  parsedAmounts,
-  withdrawPortion,
-  onSuccess,
-}: ModalProps) {
-  const queryClient = useQueryClient();
-  const { pair } = pool;
+export default function ClaimSavingsRewardsModal({ isOpen, onClose, rewards, onSuccess }: ModalProps) {
+  const savingsXChainId = useSavingsXChainId();
 
   const [isPending, setIsPending] = React.useState(false);
   const [isSigning, setIsSigning] = React.useState(false);
@@ -73,42 +58,27 @@ export default function WithdrawLiquidityModal({
   }, [onClose]);
 
   const slowDismiss = useCallback(() => {
-    onSuccess && onSuccess();
     setTimeout(() => {
       handleDismiss();
     }, 2000);
-  }, [handleDismiss, onSuccess]);
+  }, [handleDismiss]);
 
   useEffect(() => {
     if (isExecuted) {
       slowDismiss();
-      queryClient.invalidateQueries({ queryKey: ['pools'] });
-      queryClient.invalidateQueries({ queryKey: ['v2Pairs'] });
+      onSuccess?.();
     }
-  }, [isExecuted, slowDismiss, queryClient]);
+  }, [isExecuted, slowDismiss, onSuccess]);
 
-  const xAccount = useXAccount(getXChainType(pool.xChainId));
-  const xRemoveLiquidity = useXRemoveLiquidity();
+  const xAccount = useXAccount(getXChainType(savingsXChainId));
+  const xClaimSavingsRewards = useXClaimSavingsRewards();
 
-  const handleWithdraw = async () => {
+  const handleClaim = async () => {
     window.addEventListener('beforeunload', showMessageOnBeforeUnload);
-
     try {
       setIsPending(true);
-
-      const numPortion = new BigNumber(withdrawPortion / 100);
-      const withdrawAmount = multiplyCABN(pool.balance, numPortion);
       setIsSigning(true);
-      const txHash = await xRemoveLiquidity(
-        xAccount.address,
-        pool.poolId,
-        pool.xChainId,
-        withdrawAmount,
-        pair.token0,
-        pair.token1,
-        parsedAmounts[Field.CURRENCY_A]!,
-        parsedAmounts[Field.CURRENCY_B]!,
-      );
+      const txHash = await xClaimSavingsRewards(xAccount.address, savingsXChainId);
       setIsSigning(false);
       if (txHash) setPendingTx(txHash);
       else setIsPending(false);
@@ -121,28 +91,28 @@ export default function WithdrawLiquidityModal({
     window.removeEventListener('beforeunload', showMessageOnBeforeUnload);
   };
 
-  const { formattedXCallFee } = useXCallFee(pool.xChainId, ICON_XCALL_NETWORK_ID);
-  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(pool.xChainId);
-  const gasChecker = useXCallGasChecker(pool.xChainId, undefined);
-
+  const { formattedXCallFee } = useXCallFee(savingsXChainId, ICON_XCALL_NETWORK_ID);
+  const { isWrongChain, handleSwitchChain } = useEvmSwitchChain(savingsXChainId);
+  const gasChecker = useXCallGasChecker(savingsXChainId, undefined);
   return (
     <Modal isOpen={isOpen} onDismiss={handleDismiss}>
       <ModalContent noMessages>
-        <Typography textAlign="center" mb={3} as="h3" fontWeight="normal">
-          <Trans>Withdraw liquidity?</Trans>
+        <Typography textAlign="center" mb={1}>
+          <Trans>Claim Savings Rate rewards?</Trans>
         </Typography>
 
-        <Typography variant="p" fontWeight="bold" textAlign="center">
-          {formatBigNumber(new BigNumber(parsedAmounts[Field.CURRENCY_A]?.toFixed() || 0), 'currency')}{' '}
-          {formatSymbol(parsedAmounts[Field.CURRENCY_A]?.currency.symbol) || '...'}
-        </Typography>
+        <Flex flexDirection="column" alignItems="center" mt={2}>
+          {rewards?.map((reward, index) => (
+            <Typography key={index} variant="p">
+              {`${reward.toSignificant(2, { groupSeparator: ',' })}`}{' '}
+              <Typography as="span" color="text1">
+                {reward.currency.symbol}
+              </Typography>
+            </Typography>
+          ))}
+        </Flex>
 
-        <Typography variant="p" fontWeight="bold" textAlign="center">
-          {formatBigNumber(new BigNumber(parsedAmounts[Field.CURRENCY_B]?.toFixed() || 0), 'currency')}{' '}
-          {formatSymbol(parsedAmounts[Field.CURRENCY_B]?.currency.symbol) || '...'}
-        </Typography>
-
-        {pool.xChainId !== ICON_XCALL_NETWORK_ID && (
+        {savingsXChainId !== ICON_XCALL_NETWORK_ID && (
           <Flex justifyContent="center" alignItems="center" mt={2} style={{ gap: 4 }}>
             <Typography textAlign="center" as="h3" fontWeight="normal">
               <Trans>Transfer fee: </Trans>
@@ -162,22 +132,21 @@ export default function WithdrawLiquidityModal({
               style={{ overflow: 'hidden' }}
             >
               <Flex justifyContent="center" mt={4} pt={4} className="border-top">
-                <TextButton onClick={handleDismiss}>
+                <TextButton onClick={handleDismiss} fontSize={14}>
                   <Trans>{isPending && !isSigning ? 'Close' : 'Cancel'}</Trans>
                 </TextButton>
-
                 {isWrongChain ? (
                   <Button onClick={handleSwitchChain} fontSize={14}>
                     <Trans>Switch to</Trans>
-                    {` ${getNetworkDisplayName(pool.xChainId)}`}
+                    {` ${getNetworkDisplayName(savingsXChainId)}`}
                   </Button>
                 ) : (
                   <StyledButton
-                    onClick={handleWithdraw}
+                    onClick={handleClaim}
                     disabled={!gasChecker.hasEnoughGas || isPending || isWrongChain}
                     $loading={isPending}
                   >
-                    {isPending && !isSigning ? t`Withdrawing` : t`Withdraw`}
+                    {isPending && !isSigning ? t`Claiming` : t`Claim`}
                   </StyledButton>
                 )}
               </Flex>
@@ -185,7 +154,7 @@ export default function WithdrawLiquidityModal({
           )}
         </AnimatePresence>
 
-        {!isPending && !gasChecker.hasEnoughGas && (
+        {!gasChecker.hasEnoughGas && (
           <Flex justifyContent="center" paddingY={2}>
             <Typography maxWidth="320px" color="alert" textAlign="center">
               {gasChecker.errorMessage}

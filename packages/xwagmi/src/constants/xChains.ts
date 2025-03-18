@@ -61,6 +61,7 @@ export const icon: XChain = {
   name: 'ICON',
   xChainId: '0x1.icon',
   xChainType: 'ICON',
+  intentChainId: 'icon',
   tracker: { tx: 'https://tracker.icon.community/transaction' },
   nativeCurrency: {
     decimals: 18,
@@ -211,6 +212,32 @@ export const bsc: XChain = {
   useXCallScanner: false,
 };
 
+export const polygon: XChain = {
+  id: 137,
+  name: 'Polygon',
+  xChainId: '0x89.polygon',
+  xChainType: 'EVM',
+  tracker: { tx: 'https://polygonscan.com/tx/' },
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Polygon',
+    symbol: 'POL',
+  },
+  rpc: {
+    http: 'https://polygon.llamarpc.com',
+  },
+  contracts: {
+    xCall: '0xfC83a3F252090B26f92F91DFB9dC3Eb710AdAf1b',
+    assetManager: '0x18274b9755C9d0D31e8863aDd1D6019B16a0B316',
+    bnUSD: '0x9990Be34D6666C0a69C9504310aebd6fbdb8E699',
+  },
+  autoExecution: true,
+  gasThreshold: 0.5,
+  testnet: false,
+  useXCallScanner: false,
+  intentChainId: 'pol',
+};
+
 export const arbitrum: XChain = {
   id: 42161,
   name: 'Arbitrum',
@@ -234,6 +261,7 @@ export const arbitrum: XChain = {
   gasThreshold: 0.0001,
   testnet: false,
   useXCallScanner: false,
+  intentChainId: 'arb',
 };
 
 export const base: XChain = {
@@ -335,6 +363,7 @@ export const sui: XChain = {
   gasThreshold: 0.15, // xCall fee: 0.05 SUI
   testnet: false,
   useXCallScanner: true,
+  intentChainId: 'sui',
 };
 
 // TODO: complete solana chain
@@ -402,6 +431,7 @@ export const xChainMap: { [key in XChainId]: XChain } = {
   '0x38.bsc': bsc,
   '0x2105.base': base,
   '0xa.optimism': optimism,
+  '0x89.polygon': polygon,
   'injective-1': injective,
   stellar: stellar,
   sui: sui,
@@ -428,6 +458,7 @@ export const FROM_SOURCES: { [key in XChainId]?: string[] } = {
   ],
   sui: ['centralized-1', 'centralized-2'],
   solana: ['FMPY4m3kZNvFyoAtc87dCPkPrfJuLFpWyS8sbsWFkGC9'],
+  '0x89.polygon': ['0x133E6B7e7E10cD3Fc68eF84EdD9622b3e39C3812'],
   'archway-1': [],
 };
 
@@ -444,5 +475,6 @@ export const TO_SOURCES: { [key in XChainId]?: string[] } = {
   stellar: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
   sui: ['cxdada6921d08fbf37c6f228816852e58b219cc589', 'cx441f6ff1c4cc799d527a99b90c9538bd1178d37b'],
   solana: ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
+  '0x89.polygon': ['cxdbfb9d63e84e6ad6ab301a2f2ef6b6e6e9227cbe'],
   'archway-1': [],
 };

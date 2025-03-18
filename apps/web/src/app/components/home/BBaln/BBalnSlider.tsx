@@ -119,7 +119,7 @@ export default function BBalnSlider({
   const [tooltipHovered, setTooltipHovered] = useState(false);
   const signedInWallets = useSignedInWallets();
   const { data: pastMonthFees } = usePastMonthFeesDistributed();
-  const hasAnyKindOfRewards = useHasAnyKindOfRewards();
+  const hasAnyKindOfRewards = useHasAnyKindOfRewards('0x1.icon');
   const savingsXChainId = useSavingsXChainId();
 
   const balnBalanceAvailable = useMemo(
@@ -459,7 +459,6 @@ export default function BBalnSlider({
   const handleConnectICON = async () => {
     if (!xConnectors[0]) return;
     await xConnect(xConnectors[0]);
-    onSavingsXChainSelection('0x1.icon');
   };
 
   return (
@@ -757,18 +756,29 @@ export default function BBalnSlider({
             )}
           </Typography>
           {simple ? (
-            (!account && signedInWallets.length > 0) || savingsXChainId !== '0x1.icon' ? (
-              <Typography>
-                <UnderlineText onClick={handleConnectICON} style={{ color: '#2fccdc' }}>
-                  <Trans>Sign in on ICON</Trans>
-                </UnderlineText>
-                <Trans>, then lock up BALN to boost your rewards.</Trans>
-              </Typography>
-            ) : (
-              <Typography fontSize={14} opacity={0.75} mb={5}>
-                <Trans>Earn or buy BALN, then lock it up here to boost your rewards.</Trans>
-              </Typography>
-            )
+            <>
+              {savingsXChainId === '0x1.icon' &&
+                (!account ? (
+                  <Typography>
+                    <UnderlineText onClick={handleConnectICON} style={{ color: '#2fccdc' }}>
+                      <Trans>Sign in on ICON</Trans>
+                    </UnderlineText>
+                    <Trans>, then lock up BALN to boost your rewards.</Trans>
+                  </Typography>
+                ) : (
+                  <Typography fontSize={14} opacity={0.75} mb={5}>
+                    <Trans>Earn or buy BALN, then lock it up here to boost your rewards.</Trans>
+                  </Typography>
+                ))}
+              {savingsXChainId !== '0x1.icon' && (
+                <Typography>
+                  <UnderlineText onClick={() => onSavingsXChainSelection('0x1.icon')} style={{ color: '#2fccdc' }}>
+                    <Trans>Switch to ICON</Trans>
+                  </UnderlineText>
+                  <Trans>, then lock up BALN to boost your rewards.</Trans>
+                </Typography>
+              )}
+            </>
           ) : (
             <Typography fontSize={14} opacity={0.75}>
               <Trans>Earn or buy BALN, then lock it up here to boost your earning potential and voting power.</Trans>

@@ -19,7 +19,7 @@ export const isXToken = (token?: Currency) => {
 
   return Object.values(xTokenMap)
     .flat()
-    .some(t => t.address === token.wrapped.address);
+    .some(t => t.address === token.wrapped.address || t.symbol === token.symbol);
 };
 
 export const getAvailableXChains = (currency?: Currency | XToken | null): XChain[] | undefined => {

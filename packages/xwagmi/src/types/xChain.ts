@@ -29,6 +29,7 @@ export type XChain = Chain & {
     xCallManager?: string;
     bnUSDToken?: string;
   };
+  intentChainId?: string;
   autoExecution: boolean;
   gasThreshold: number;
   useXCallScanner: boolean;

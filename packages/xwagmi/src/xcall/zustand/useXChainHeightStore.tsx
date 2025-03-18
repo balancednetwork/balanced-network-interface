@@ -55,6 +55,7 @@ const xChainIdMap: Record<XChainId, string> = {
   sui: 'sui',
   stellar: 'stellar',
   solana: 'solana',
+  '0x89.polygon': 'polygon',
 };
 
 export const AllXChainHeightsUpdater = ({ xChains }: { xChains: XChain[] }) => {

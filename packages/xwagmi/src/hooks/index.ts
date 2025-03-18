@@ -16,3 +16,4 @@ export { useXWalletClient } from './useXWalletClient';
 
 export * from './liquidity';
 export { useSendXTransaction } from './useSendXTransaction';
+export * from './savings';

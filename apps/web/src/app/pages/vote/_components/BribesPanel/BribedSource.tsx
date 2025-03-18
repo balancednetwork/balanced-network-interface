@@ -149,7 +149,7 @@ const UserBribeState = ({ bribe }: { bribe: Bribe }) => {
 
           <Flex justifyContent="center" mt={4} pt={4} className="border-top">
             <TextButton onClick={closeModal} fontSize={14}>
-              <Trans>Not now</Trans>
+              <Trans>Cancel</Trans>
             </TextButton>
             <Button onClick={handleBribeClaim} fontSize={14} disabled={!hasEnoughICX}>
               <Trans>Claim</Trans>

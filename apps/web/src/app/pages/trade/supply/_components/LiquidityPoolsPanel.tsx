@@ -9,6 +9,8 @@ import { ChartControlButton, ChartControlGroup } from '@/app/components/ChartCon
 import { BoxPanel } from '@/app/components/Panel';
 import { Typography } from '@/app/theme';
 
+import CancelSearchButton from '@/app/components/SearchModal/CancelSearchButton';
+import { SearchWrap } from '@/app/components/SearchModal/CurrencySearch';
 import SearchInput from '@/app/components/SearchModal/SearchInput';
 import { useSignedInWallets } from '@/hooks/useWallets';
 import { useMedia } from 'react-use';
@@ -91,7 +93,14 @@ export default function LiquidityPoolsPanel() {
               exit={{ opacity: 0, x: -10 }}
             >
               <Box width={isSmallScreen ? '100%' : '295px'} mb={isSmallScreen ? '25px' : 0} mt={['15px', '15px', '0']}>
-                <SearchInput value={query} onChange={e => setQuery(e.target.value)} style={{ marginBottom: '-10px' }} />
+                <SearchWrap>
+                  <SearchInput
+                    value={query}
+                    onChange={e => setQuery(e.target.value)}
+                    style={{ marginBottom: '-10px' }}
+                  />
+                  <CancelSearchButton isActive={query.length > 0} onClick={() => setQuery('')}></CancelSearchButton>
+                </SearchWrap>
               </Box>
             </motion.div>
           ) : null}
